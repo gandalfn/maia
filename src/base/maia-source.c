@@ -97,7 +97,7 @@ maia_source_new (MaiaSourceFuncs inFuncs, gpointer inData)
 
 MaiaSource* 
 maia_source_new_from_pollfd (MaiaSourceFuncs inFuncs, GPollFD* inpFd,
-                            gpointer inData) 
+                             gpointer inData) 
 {
     g_return_val_if_fail(inpFd != NULL, NULL);
     g_return_val_if_fail(inData != NULL, NULL);

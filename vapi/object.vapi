@@ -1,7 +1,7 @@
 [CCode (cprefix = "Maia", lower_case_cprefix = "maia_")]
 namespace Maia 
 {
-    [CCode (cheader_filename = "maia-object.h")]
+    [CCode (cheader_filename = "base/maia-object.h")]
     public abstract class Object : GLib.Object
     {
         public Object ();

@@ -2,6 +2,8 @@ include $(top_srcdir)/build/common.am
 
 includedir = $(prefix)/include/maia-0.1
 
+includebasedir = $(prefix)/include/maia-0.1/base
+
 INCLUDES = \
     $(MAIA_CFLAGS) \
     -I$(top_srcdir)/build \

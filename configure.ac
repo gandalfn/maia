@@ -7,7 +7,7 @@ AC_PREREQ(2.63)
 dnl ****************************************************************************
 dnl Define default build directory
 dnl ****************************************************************************
-AC_CONFIG_SRCDIR(src/maia-object.h)
+AC_CONFIG_SRCDIR(src/base/maia-object.h)
 AC_CONFIG_AUX_DIR([build])
 AC_CONFIG_MACRO_DIR([build])
 AC_CONFIG_HEADERS(build/config.h)

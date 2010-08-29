@@ -3,10 +3,10 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 datarootdir=@datarootdir@
 datadir=@datadir@
-includedir=@includedir@/libmaia-0.1.0
+includedir=@includedir@/maia-0.1
 
 Name: libmaia
-Description: Sample library created by Anjuta project wizard.
+Description: Maia library
 Version: @VERSION@
 Requires: 
 Libs: -L${libdir} -lmaia
