@@ -1,0 +1,15 @@
+include $(top_srcdir)/build/common.am
+
+includedir = $(prefix)/include/maia-0.1
+
+INCLUDES = \
+    $(MAIA_CFLAGS) \
+    -I$(top_srcdir)/build \
+    -I$(top_srcdir)/src
+
+VALAFLAGS = \
+    --vapidir=${top_srcdir}/vapi \
+    --pkg=object \
+    --pkg=source \
+    --pkg=vala-0.10
+
