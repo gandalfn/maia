@@ -3,12 +3,12 @@
  * maia-source.c
  * Copyright (C) Nicolas Bruguier 2010 <gandalfn@club-internet.fr>
  * 
- * libmaia is free software: you can redistribute it and/or modify it
+ * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * libmaia is distributed in the hope that it will be useful, but
+ * maia is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
@@ -80,6 +80,18 @@ static GSourceFuncs s_MaiaSourceFuncs = {
     maia_source_finalize,
 };
 
+/**
+ * maia_source_new:
+ *
+ * @inFuncs: structure containing functions that implement the sources behavior.
+ * @inData: user data to pass to functions.
+ *
+ * Creates a new #MaiaSource. The source will not initially be associated with
+ * any #GMainContext and must be added to one with g_source_attach() before it
+ * will be executed.
+ *
+ * Returns: the newly-created #MaiaSource.
+ */
 MaiaSource* 
 maia_source_new (MaiaSourceFuncs inFuncs, gpointer inData) 
 {
@@ -94,7 +106,23 @@ maia_source_new (MaiaSourceFuncs inFuncs, gpointer inData)
     return self;
 }
 
-
+/**
+ * maia_source_new_from_pollfd:
+ *
+ * @inFuncs: structure containing functions that implement the sources behavior.
+ * @inpFd: a #GPollFD structure holding information about a file descriptor to
+ *         watch.
+ * @inData: user data to pass to functions.
+ *
+ * Creates a new #MaiaSource with a file descriptor polled for this source.
+ * The event source's check function will typically test the @revents field in
+ * the #GPollFD struct and return %TRUE if events need to be processed.
+ *
+ * The source will not initially be associated with any #GMainContext and must
+ * be added to one with g_source_attach() before it will be executed.
+ *
+ * Returns: the newly-created #MaiaSource.
+ */
 MaiaSource* 
 maia_source_new_from_pollfd (MaiaSourceFuncs inFuncs, GPollFD* inpFd,
                              gpointer inData) 
@@ -113,6 +141,14 @@ maia_source_new_from_pollfd (MaiaSourceFuncs inFuncs, GPollFD* inpFd,
     return self;
 }
 
+/**
+ * maia_source_ref:
+ * @self: a #MaiaSource
+ *
+ * Increases the reference count on a source by one.
+ *
+ * Return value: @self
+ **/
 MaiaSource*
 maia_source_ref (MaiaSource* self)
 {
@@ -123,6 +159,14 @@ maia_source_ref (MaiaSource* self)
     return self;
 }
 
+/**
+ * maia_source_unref:
+ * @self: a #MaiaSource
+ *
+ * Decreases the reference count of a source by one. If the
+ * resulting reference count is zero the source and associated
+ * memory will be destroyed.
+ **/
 void
 maia_source_unref (MaiaSource* self)
 {
@@ -131,6 +175,14 @@ maia_source_unref (MaiaSource* self)
     g_source_unref ((GSource*)self);
 }
 
+/**
+ * maia_source_destroy:
+ * @self: a #MaiaSource
+ *
+ * Removes a source from its #GMainContext, if any, and mark it as
+ * destroyed.  The source cannot be subsequently added to another
+ * context.
+ **/
 void
 maia_source_destroy (MaiaSource* self)
 {

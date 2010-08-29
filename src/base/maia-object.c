@@ -3,12 +3,12 @@
  * maia-object.c
  * Copyright (C) Nicolas Bruguier 2010 <gandalfn@club-internet.fr>
  * 
- * libmaia is free software: you can redistribute it and/or modify it
+ * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  * 
- * libmaia is distributed in the hope that it will be useful, but
+ * maia is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
@@ -102,9 +102,21 @@ maia_object_construct (GType inObjectType)
     return g_object_newv (inObjectType, 0, NULL);
 }
 
+/**
+ * maia_object_register:
+ *
+ * @inObjectType: Base object type
+ * @inType: Derived base object type
+ *
+ * Associate a new @inType to an @inObjectType. After this call all object 
+ * of @inObjectType or derived from @inObjectType creation return an Object of 
+ * @inType. @inType must be direct derived from @inObjectType.
+ */
 void
 maia_object_register (GType inObjectType, GType inType)
 {
+    g_return_if_fail (g_type_parent (inType) == inObjectType);
+
     MaiaObjectTypeNode* node = maia_object_factory_get (inObjectType);
 
     if (node == NULL)
@@ -131,6 +143,13 @@ maia_object_register (GType inObjectType, GType inType)
     node->m_Derived = inType;
 }
 
+/**
+ * maia_object_unregister:
+ *
+ * @inObjectType: Base object type
+ *
+ * Remove any association to an @inObjectType.
+ */
 void
 maia_object_unregister (GType inObjectType)
 {
