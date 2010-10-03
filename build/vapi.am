@@ -1,0 +1,14 @@
+$(MAIA_LIB_NAME).vapi: lib$(subst -,_,$(MAIA_LIB_NAME))_la_vala.stamp
+
+$(MAIA_LIB_NAME)-$(MAIA_ABI).vapi: $(MAIA_LIB_NAME).vapi $(MAIA_EXTRA_VAPIS)
+	@cat $^ > $@
+
+vapi_DATA = \
+    $(MAIA_LIB_NAME)-$(MAIA_ABI).vapi
+
+EXTRA_DIST += \
+    $(MAIA_EXTRA_VAPIS)
+
+CLEANFILES += \
+    $(vapi_DATA) \
+    $(MAIA_LIB_NAME).vapi

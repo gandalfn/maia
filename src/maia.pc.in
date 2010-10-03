@@ -3,11 +3,11 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 datarootdir=@datarootdir@
 datadir=@datadir@
-includedir=@includedir@/maia-0.1
+includedir=@includedir@/maia-@MAIA_ABI@
 
-Name: libmaia
+Name: maia-@MAIA_ABI@
 Description: Maia library
-Version: @VERSION@
-Requires: 
+Version: @MAIA_VERSION@
+Requires: maia-core-@MAIA_ABI@
 Libs: -L${libdir} -lmaia
 Cflags: -I${includedir}

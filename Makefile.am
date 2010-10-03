@@ -1,4 +1,4 @@
-SUBDIRS = src vapi po
+SUBDIRS = src test vapi po
 
 maiadocdir = ${prefix}/doc/maia
 maiadoc_DATA = \
@@ -11,6 +11,8 @@ maiadoc_DATA = \
 
 BUILD_FILES = \
     build/common.am \
+    build/pkgconfig.am \
+    build/vapi.am \
     build/maia.am
 
 INTLTOOL_FILES = \

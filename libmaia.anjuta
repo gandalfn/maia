@@ -41,11 +41,4 @@
                  attribute="Interfaces"
                  value="IAnjutaTodo"/>
 	</plugin>
-	<plugin name="Debug Manager"
-            url="http://anjuta.org/plugins/"
-            mandatory="no">
-		<require group="Anjuta Plugin"
-                 attribute="Interfaces"
-                 value="IAnjutaDebugManager"/>
-	</plugin>
 </anjuta>

@@ -1,0 +1,50 @@
+MAIA_LIB_NAME = maia-core
+MAIA_EXTRA_VAPIS = object.vapi source.vapi
+
+include $(top_srcdir)/build/maia.am
+include $(top_srcdir)/build/pkgconfig.am
+include $(top_srcdir)/build/vapi.am
+
+maia-core.h: libmaia_core_la_vala.stamp
+
+lib_LTLIBRARIES = libmaia-core.la
+
+includecoredir = $(includedir)/core
+
+includecore_HEADERS = \
+    maia-object.h \
+    maia-source.h \
+    maia-core.h
+
+libmaia_core_la_VALAFLAGS = \
+    --use-header \
+    --header=maia-core.h \
+    --library=maia-core
+
+libmaia_core_la_SOURCES = \
+    maia-object.c \
+    maia-source.c \
+    maia-value.vala \
+    maia-transform.vala \
+    maia-point.vala \
+    maia-rectangle.vala \
+    maia-region.vala \
+    maia-element.vala \
+    maia-task.vala \
+    maia-task-queue.vala
+
+libmaia_core_la_LDFLAGS = \
+    -version-number @MAIA_SO_VERSION@ \
+    -no-undefined
+
+libmaia_core_la_LIBADD = \
+    $(MAIA_LIBS)
+
+VALAFILES = \
+    $(filter %.vala,$(libmaia_core_la_SOURCES))
+
+CLEANFILES += \
+    maia-core.h \
+    libmaia_core_la_vala.stamp \
+    $(VALAFILES:.vala=.c) \
+    $(pkgconfig_DATA)

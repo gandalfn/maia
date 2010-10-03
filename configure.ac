@@ -7,7 +7,7 @@ AC_PREREQ(2.63)
 dnl ****************************************************************************
 dnl Define default build directory
 dnl ****************************************************************************
-AC_CONFIG_SRCDIR(src/base/maia-object.h)
+AC_CONFIG_SRCDIR(src/maia.pc.in)
 AC_CONFIG_AUX_DIR([build])
 AC_CONFIG_MACRO_DIR([build])
 AC_CONFIG_HEADERS(build/config.h)
@@ -27,13 +27,16 @@ MAIA_MAJOR_VERSION=maia_version_major
 MAIA_MINOR_VERSION=maia_version_minor
 MAIA_MICRO_VERSION=maia_version_micro
 MAIA_SO_VERSION="maia_version_major:maia_version_minor:maia_version_micro"
+MAIA_ABI=$MAIA_MAJOR_VERSION.$MAIA_MINOR_VERSION
 MAIA_VERSION=$MAIA_MAJOR_VERSION.$MAIA_MINOR_VERSION.$MAIA_MICRO_VERSION
 
 AC_DEFINE_UNQUOTED(MAIA_MAJOR_VERSION, $MAIA_MAJOR_VERSION, [Major version])
 AC_DEFINE_UNQUOTED(MAIA_MINOR_VERSION, $MAIA_MINOR_VERSION, [Minor version])
 AC_DEFINE_UNQUOTED(MAIA_MICRO_VERSION, $MAIA_MICRO_VERSION, [Micro version])
+AC_DEFINE_UNQUOTED(MAIA_ABI, $MAIA_VERSION, [Version])
 AC_DEFINE_UNQUOTED(MAIA_VERSION, $MAIA_VERSION, [Version])
 AC_SUBST(MAIA_VERSION)
+AC_SUBST(MAIA_ABI)
 AC_SUBST(MAIA_SO_VERSION)
 
 dnl ****************************************************************************
@@ -49,8 +52,10 @@ AM_GNU_GETTEXT_VERSION([0.17])
 dnl ****************************************************************************
 dnl Packages version required
 dnl ****************************************************************************
-GLIB_REQUIRED=2.12.0
-VALA_REQUIRED=0.9.7
+GLIB_REQUIRED=2.24.0
+VALA_REQUIRED=0.10.0
+GEE_REQUIRED=0.6.0
+PIXMAN_REQUIRED=0.16.4
 
 dnl ****************************************************************************
 dnl Check for build
@@ -76,7 +81,9 @@ dnl ****************************************************************************
 PKG_CHECK_MODULES(MAIA, [glib-2.0 >= $GLIB_REQUIRED
                          gobject-2.0 >= $GLIB_REQUIRED
                          gmodule-2.0 >= $GLIB_REQUIRED
-                         vala-0.10 >= $VALA_REQUIRED])
+                         vala-0.10 >= $VALA_REQUIRED
+                         gee-1.0 >= $GEE_REQUIRED
+                         pixman-1 >= $PIXMAN_REQUIRED])
 AC_SUBST(MAIA_CFLAGS)
 AC_SUBST(MAIA_LIBS)
 
@@ -85,8 +92,11 @@ dnl Generate outputs
 dnl ****************************************************************************
 AC_CONFIG_FILES([
 Makefile
-src/maia-0.1.pc
+src/maia.pc
 src/Makefile
+src/core/maia-core.pc
+src/core/Makefile
+test/Makefile
 vapi/Makefile
 po/Makefile.in])
 

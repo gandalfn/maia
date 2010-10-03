@@ -9,6 +9,8 @@ AM_CFLAGS =\
      -Wall\
      -g
 
-pkgconfigdir = $(libdir)/pkgconfig
-
 vapidir = $(pkgdatadir)/vapi
+
+EXTRA_DIST =
+
+CLEANFILES =

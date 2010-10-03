@@ -1,6 +1,6 @@
 namespace Maia
 {
-    [CCode (cheader_filename = "base/maia-source.h", ref_function = "maia_source_ref", unref_function = "maia_source_unref")]
+    [CCode (cheader_filename = "maia-source.h", ref_function = "maia_source_ref", unref_function = "maia_source_unref")]
     public class Source : GLib.Source
     {
         public Source(SourceFuncs inFuncs, void* inData);
@@ -10,17 +10,17 @@ namespace Maia
         public void destroy();
     }
 
-    [CCode (cheader_filename = "base/maia-source.h", has_target = false)]
+    [CCode (cheader_filename = "maia-source.h", has_target = false)]
     public delegate bool SourcePrepareFunc (void* inData, out int outTimeout);
-    [CCode (cheader_filename = "base/maia-source.h", has_target = false)]
+    [CCode (cheader_filename = "maia-source.h", has_target = false)]
     public delegate bool SourceCheckFunc (void* inData);
-    [CCode (cheader_filename = "base/maia-source.h", has_target = false)]
+    [CCode (cheader_filename = "maia-source.h", has_target = false)]
     public delegate bool SourceDispatchFunc (void* inData, GLib.SourceFunc inCallback);
-    [CCode (cheader_filename = "base/maia-source.h", has_target = false)]
+    [CCode (cheader_filename = "maia-source.h", has_target = false)]
     public delegate void SourceFinalizeFunc (void* inData);
 
     [SimpleType]
-    [CCode (cheader_filename = "base/maia-source.h")]
+    [CCode (cheader_filename = "maia-source.h")]
     public struct SourceFuncs 
     {
         public SourcePrepareFunc prepare;
