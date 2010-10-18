@@ -17,84 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Rectangle : GLib.Object, Value
+[Compact]
+public class Maia.Rectangle
 {
-    private Point m_Origin = new Point.xy(0.0, 0.0);
-    public Maia.Point origin {
-        get {
-            return m_Origin;
-        }
-    }
-
-    private double m_Width = 0.0;
-    public double width {
-        get {
-            return m_Width;
-        }
-        set {
-            m_Width = value;
-        }
-    }
-
-    private double m_Height = 0.0;
-    public double height {
-        get {
-            return m_Height;
-        }
-        set {
-            m_Height = value;
-        }
-    }
-
-    public bool is_empty {
-        get {
-            return m_Width == 0 || m_Height == 0;
-        }
-    }
-
-    static construct
-    {
-        GLib.Value.register_transform_func (typeof (string), typeof (Rectangle),
-                                            (ValueTransform)string_to_rectangle);
-        GLib.Value.register_transform_func (typeof (Rectangle), typeof (string),
-                                            (ValueTransform)rectangle_to_string);
-    }
-
-    static void 
-    rectangle_to_string (GLib.Value inSrc, out GLib.Value outDest) 
-        requires (inSrc.holds (typeof (Rectangle)))
-        requires ((Rectangle)inSrc != null)
-    {
-        Rectangle rectangle = (Rectangle)inSrc;
-
-        outDest = rectangle.to_string ();
-    }
-
-    static void 
-    string_to_rectangle (GLib.Value inSrc, out GLib.Value outDest)
-        requires (inSrc.holds (typeof (string)))
-        requires ((string)inSrc != null)
-    {
-        string val = (string)inSrc;
-
-        outDest = new Rectangle (val);
-    }
-
-    /**
-     * Create a new rectangle from string attribute
-     *
-     * @param inValue rectangle string attribute
-     */
-    public Rectangle (string inValue)
-    {
-        string[] val = inValue.split(",");
-        if (val.length >= 4)
-        {
-            m_Origin = new Point.xy (val[0].to_double (), val[1].to_double ());
-            m_Width = val[2].to_double ();
-            m_Height = val[3].to_double ();
-        }
-    }
+    public Point origin;
+    public Size size;
 
     /**
      * Create a new rectangle from raw values
@@ -104,11 +31,10 @@ public class Maia.Rectangle : GLib.Object, Value
      * @param inWidth width of rectangle
      * @param inHeight height of rectangle
      */
-    public Rectangle.raw (double inX, double inY, double inWidth, double inHeight)
+    public Rectangle (double inX, double inY, double inWidth, double inHeight)
     {
-        m_Origin = new Point.xy (inX, inY);
-        m_Width = inWidth;
-        m_Height= inHeight;
+        origin = { inX, inY };
+        size = { inWidth, inHeight };
     }
 
     /**
@@ -118,11 +44,39 @@ public class Maia.Rectangle : GLib.Object, Value
      */
     internal Rectangle.pixman_box (Pixman.Box32 inBox)
     {
-        double x = ((Pixman.Fixed)inBox.x1).to_double();
-        double y = ((Pixman.Fixed)inBox.y1).to_double();
-        m_Origin = new Point.xy (x, y);
-        m_Width = ((Pixman.Fixed)inBox.x2 - inBox.x1).to_double();
-        m_Height = ((Pixman.Fixed)inBox.y2 - inBox.y1).to_double();
+        double x = ((Pixman.Fixed)inBox.x1).to_double ();
+        double y = ((Pixman.Fixed)inBox.y1).to_double ();
+        double width = ((Pixman.Fixed)inBox.x2 - (Pixman.Fixed)inBox.x1).to_double ();
+        double height = ((Pixman.Fixed)inBox.y2 - (Pixman.Fixed)inBox.y1).to_double ();
+
+        origin = { x, y };
+        size = { width, height };
+    }
+
+    /**
+     * Create a new rectangle from string attribute
+     *
+     * @param inValue rectangle string attribute
+     */
+    public Rectangle.from_string (string inValue)
+    {
+        string[] val = inValue.split (",");
+        if (val.length >= 4)
+        {
+            origin = { val[0].to_double (), val[1].to_double () };
+            size = { val[2].to_double (), val[3].to_double () };
+        }
+    }
+
+    /**
+     * Check if rectangle is empty
+     *
+     * @return true is rectangle is empty
+     */
+    public bool
+    is_empty ()
+    {
+        return size.is_empty ();
     }
 
     /**
@@ -133,16 +87,8 @@ public class Maia.Rectangle : GLib.Object, Value
     public void
     transform (Maia.Transform inTransform)
     {
-        double new_width, new_height;
-        Maia.Matrix matrix = inTransform.matrix;
-
-        new_width = (matrix.m_XX * m_Width + matrix.m_XY * m_Height);
-        new_height = (matrix.m_YX * m_Width + matrix.m_YY * m_Height);
-
-        m_Width = new_width;
-        m_Height = new_height;
-
-        m_Origin.transform (inTransform);
+        origin.transform (inTransform);
+        size.transform (inTransform);
     }
 
     /**
@@ -153,7 +99,7 @@ public class Maia.Rectangle : GLib.Object, Value
     public string
     to_string ()
     {
-        return "%s,%f,%f".printf (m_Origin.to_string (), m_Width, m_Height);
+        return origin.to_string () + "," + size.to_string ();
     }
 
     /**
@@ -164,12 +110,12 @@ public class Maia.Rectangle : GLib.Object, Value
     internal Pixman.Box32 
     to_pixman_box ()
     {
-        Pixman.Box32 box = Pixman.Box32();
+        Pixman.Box32 box = Pixman.Box32 ();
 
-        box.x1 = ((Pixman.double)m_Origin.x).to_fixed();
-        box.y1 = ((Pixman.double)m_Origin.y).to_fixed();
-        box.x2 = ((Pixman.double)m_Origin.x + m_Width).to_fixed();
-        box.y2 = ((Pixman.double)m_Origin.y + m_Height).to_fixed();
+        box.x1 = ((Pixman.double)origin.x).to_fixed ();
+        box.y1 = ((Pixman.double)origin.y).to_fixed ();
+        box.x2 = ((Pixman.double)origin.x + (Pixman.double)size.width).to_fixed ();
+        box.y2 = ((Pixman.double)origin.y + (Pixman.double)size.height).to_fixed ();
 
         return box;
     }

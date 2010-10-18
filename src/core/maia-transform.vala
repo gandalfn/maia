@@ -19,52 +19,52 @@
 
 public struct Maia.Matrix
 {
-    double m_XX;
-    double m_YX;
-    double m_XY;
-    double m_YY;
-    double m_X0;
-    double m_Y0;
+    public double xx;
+    public double yx;
+    public double xy;
+    public double yy;
+    public double x0;
+    public double y0;
 
     public Matrix (double inXX, double inYX,
                    double inXY, double inYY,
                    double inX0, double inY0)
     {
-        m_XX = inXX;
-        m_YX = inYX;
-        m_XY = inXY;
-        m_YY = inYY;
-        m_X0 = inX0;
-        m_Y0 = inY0;
+        xx = inXX;
+        yx = inYX;
+        xy = inXY;
+        yy = inYY;
+        x0 = inX0;
+        y0 = inY0;
     }
 
     public Matrix.identity ()
     {
-        m_XX = 1;
-        m_YX = 0;
-        m_XY = 0;
-        m_YY = 1;
-        m_X0 = 0;
-        m_Y0 = 0;
+        xx = 1;
+        yx = 0;
+        xy = 0;
+        yy = 1;
+        x0 = 0;
+        y0 = 0;
     }
 
     public void
     multiply (Matrix inMatrix)
     {
-        Matrix m = this;
+        unowned Matrix m = this;
 
-        m_XX = m.m_XX * inMatrix.m_XX + m.m_YX * inMatrix.m_XY;
-        m_YX = m.m_XX * inMatrix.m_YX + m.m_YX * inMatrix.m_YY;
+        xx = m.xx * inMatrix.xx + m.yx * inMatrix.xy;
+        yx = m.xx * inMatrix.yx + m.yx * inMatrix.yy;
 
-        m_XY = m.m_XY * inMatrix.m_XX + m.m_YY * inMatrix.m_XY;
-        m_YY = m.m_XY * inMatrix.m_YX + m.m_YY * inMatrix.m_YY;
+        xy = m.xy * inMatrix.xx + m.yy * inMatrix.xy;
+        yy = m.xy * inMatrix.yx + m.yy * inMatrix.yy;
 
-        m_X0 = m.m_X0 * inMatrix.m_XX + m.m_Y0 * inMatrix.m_XY + inMatrix.m_X0;
-        m_Y0 = m.m_X0 * inMatrix.m_YX + m.m_Y0 * inMatrix.m_YY + inMatrix.m_Y0;
+        x0 = m.x0 * inMatrix.xx + m.y0 * inMatrix.xy + inMatrix.x0;
+        y0 = m.x0 * inMatrix.yx + m.y0 * inMatrix.yy + inMatrix.y0;
     }
 }
 
-public class Maia.Transform : Object
+public class Maia.Transform
 {
     // Base matrix
     private Maia.Matrix? m_BaseMatrix = null;
@@ -90,9 +90,9 @@ public class Maia.Transform : Object
                       double inXy, double inYy,
                       double inX0, double inY0)
     {
-        m_Queue = new Vala.HashMap<uint32, Transform>();
-        m_BaseMatrix = Matrix(inXx, inXy, inYx, inYy, inY0, inY0);
-        m_FinalMatrix = m_BaseMatrix;
+        m_Queue = new Vala.HashMap<uint32, Transform> ();
+        m_BaseMatrix = Matrix (inXx, inXy, inYx, inYy, inY0, inY0);
+        m_FinalMatrix = (owned)m_BaseMatrix;
     }
 
     /**
@@ -100,15 +100,15 @@ public class Maia.Transform : Object
      */
     public Transform.identity ()
     {
-        m_Queue = new Vala.HashMap<uint32, Transform>();
+        m_Queue = new Vala.HashMap<uint32, Transform> ();
         m_BaseMatrix = Matrix.identity ();
-        m_FinalMatrix = m_BaseMatrix;
+        m_FinalMatrix = (owned)m_BaseMatrix;
     }
 
     private void
     recalculate_final_matrix ()
     {
-        m_FinalMatrix = m_BaseMatrix;
+        m_FinalMatrix = (owned)m_BaseMatrix;
         foreach (uint32 k in m_Queue.get_keys ())
             m_FinalMatrix.multiply (m_Queue[k].m_FinalMatrix);
     }
@@ -248,7 +248,7 @@ public class Maia.Transform : Object
             m_Queue[inKey].changed.connect (recalculate_final_matrix);
 
             // remove transform in queue if exist
-            m_Queue.remove(inKey);
+            m_Queue.remove (inKey);
 
             // recalculate final matrix
             recalculate_final_matrix ();

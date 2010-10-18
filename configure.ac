@@ -45,7 +45,7 @@ dnl ****************************************************************************
 GETTEXT_PACKAGE=AC_PACKAGE_NAME
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [The gettext translation domain])
-IT_PROG_INTLTOOL([0.40.0])
+IT_PROG_INTLTOOL([0.40.1])
 AM_GNU_GETTEXT([external])
 AM_GNU_GETTEXT_VERSION([0.17])
 
@@ -81,7 +81,7 @@ dnl ****************************************************************************
 PKG_CHECK_MODULES(MAIA, [glib-2.0 >= $GLIB_REQUIRED
                          gobject-2.0 >= $GLIB_REQUIRED
                          gmodule-2.0 >= $GLIB_REQUIRED
-                         vala-0.10 >= $VALA_REQUIRED
+                         libvala-0.12 >= $VALA_REQUIRED
                          gee-1.0 >= $GEE_REQUIRED
                          pixman-1 >= $PIXMAN_REQUIRED])
 AC_SUBST(MAIA_CFLAGS)

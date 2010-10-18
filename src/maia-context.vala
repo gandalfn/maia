@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-point.vala
+ * maia-context.vala
  * Copyright (C) Nicolas Bruguier 2010 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,37 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public struct Maia.Point
+public abstract class Maia.Context : Object
 {
-    public double x;
-    public double y;
-
-    /**
-     * Transform the point by inTransform.
-     *
-     * @param inTransform transform matrix
-     */
-    public void
-    transform (Transform inTransform)
-    {
-        double new_x, new_y;
-        unowned Matrix matrix = inTransform.matrix;
-
-        new_x = (matrix.xx * x + matrix.xy * y) + matrix.x0;
-        new_y = (matrix.yx * x + matrix.yy * y) + matrix.y0;
-
-        x = new_x;
-        y = new_y;
+    private string? m_Display = null;
+    public virtual string? display {
+        get {
+            return m_Display;
+        }
+        construct {
+            m_Display = value;
+            
+        }
     }
 
-    /**
-     * Returns the string representation of point
-     *
-     * @return string representation of point
-     */
-    public string
-    to_string ()
-    {
-        return x.to_string () + "," + y.to_string ();
-    }
+    private Screen[] m_Screens;
 }

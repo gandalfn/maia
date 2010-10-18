@@ -17,48 +17,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Region : GLib.Object
+public class Maia.Region
 {
     private Pixman.Region32 m_Region;
 
+    /**
+     * Indicate if region is empty
+     */
     public bool is_empty {
         get {
             bool ret = false;
 
-            if (!m_Region.not_empty())
-            {
+            if (!m_Region.not_empty ())
                 ret = true;
-            }
             else
-            {
-                ret = clipbox.is_empty;
-            }
+                ret = clipbox.is_empty ();
 
             return ret;
         }
     }
 
+    /**
+     * The smallest rectangle which includes the entire region
+     */
     public Rectangle clipbox {
         owned get {
             return new Rectangle.pixman_box (m_Region.extents);
-        }
-    }
-
-    public Rectangle[] rectangles {
-        owned get {
-            Pixman.Box32[] boxes = m_Region.rectangles();
-            Rectangle[] rects = null;
-
-            if (boxes.length > 0)
-            {
-                rects = new Rectangle[boxes.length];
-                for (int cpt = 0; cpt < rects.length; ++cpt)
-                {
-                    rects[cpt] = new Rectangle.pixman_box (boxes[cpt]);
-                }
-            }
-
-            return rects;
         }
     }
 
@@ -67,7 +51,7 @@ public class Maia.Region : GLib.Object
      */
     public Region ()
     {
-        m_Region.init();
+        m_Region.init ();
     }
 
     /**
@@ -77,9 +61,9 @@ public class Maia.Region : GLib.Object
      */
     public Region.rectangle (Rectangle inRectangle)
     {
-        Pixman.Box32 box = inRectangle.to_pixman_box();
+        Pixman.Box32 box = inRectangle.to_pixman_box ();
 
-        m_Region.init_rects(box, 1);
+        m_Region.init_rects (box, 1);
     }
 
     /**
@@ -92,16 +76,16 @@ public class Maia.Region : GLib.Object
      */
     public Region.raw_rectangle (int inX, int inY, uint inWidth, uint inHeight)
     {
-        Rectangle rect = new Rectangle.raw (inX, inY, inWidth, inHeight);
+        Rectangle rect = new Rectangle (inX, inY, inWidth, inHeight);
 
-        Pixman.Box32 box = rect.to_pixman_box();
+        Pixman.Box32 box = rect.to_pixman_box ();
 
-        m_Region.init_rects(box, 1);
+        m_Region.init_rects (box, 1);
     }
 
     ~Region ()
     {
-        m_Region.fini();
+        m_Region.fini ();
     }
 
     private inline void 
@@ -109,7 +93,7 @@ public class Maia.Region : GLib.Object
     {
         uint shift = 1;
 
-        s.m_Region.copy(m_Region);
+        s.m_Region.copy (m_Region);
 
         while (dx != 0)
         {
@@ -149,12 +133,10 @@ public class Maia.Region : GLib.Object
     public Region? 
     copy ()
     {
-        Region region = new Region();
+        Region region = new Region ();
 
-        if (!region.m_Region.copy(m_Region))
-        {
+        if (!region.m_Region.copy (m_Region))
             region = null;
-        }
 
         return region;
     }
@@ -167,7 +149,7 @@ public class Maia.Region : GLib.Object
     public void 
     subtract (Region inOther)
     {
-        m_Region.subtract(m_Region, inOther.m_Region);
+        m_Region.subtract (m_Region, inOther.m_Region);
     }
 
     /**
@@ -178,7 +160,7 @@ public class Maia.Region : GLib.Object
     public inline void 
     union (Region inOther)
     {
-        m_Region.union(m_Region, inOther.m_Region);
+        m_Region.union (m_Region, inOther.m_Region);
     }
 
     /**
@@ -189,9 +171,9 @@ public class Maia.Region : GLib.Object
     public void 
     union_with_rect (Rectangle inRect)
     {
-        Region other = new Region.rectangle(inRect);
+        Region other = new Region.rectangle (inRect);
 
-        union(other);
+        union (other);
     }
 
     /**
@@ -202,7 +184,7 @@ public class Maia.Region : GLib.Object
     public void 
     intersect (Region inOther)
     {
-        m_Region.intersect(m_Region, inOther.m_Region);
+        m_Region.intersect (m_Region, inOther.m_Region);
     }
 
     /**
@@ -216,19 +198,19 @@ public class Maia.Region : GLib.Object
     {
         Pixman.Box32[] boxes = m_Region.rectangles ();
 
-        m_Region.extents.x1 += ((Pixman.int)inDx).to_fixed();
-        m_Region.extents.x2 += ((Pixman.int)inDx).to_fixed();
-        m_Region.extents.y1 += ((Pixman.int)inDy).to_fixed();
-        m_Region.extents.y2 += ((Pixman.int)inDy).to_fixed();
+        m_Region.extents.x1 += ((Pixman.int)inDx).to_fixed ();
+        m_Region.extents.x2 += ((Pixman.int)inDx).to_fixed ();
+        m_Region.extents.y1 += ((Pixman.int)inDy).to_fixed ();
+        m_Region.extents.y2 += ((Pixman.int)inDy).to_fixed ();
 
-        if (m_Region.get_extents() != boxes)
+        if (m_Region.get_extents () != boxes)
         {
             for (int cpt = 0; cpt < boxes.length; ++cpt)
             {
-                boxes[cpt].x1 += ((Pixman.int)inDx).to_fixed();
-                boxes[cpt].x2 += ((Pixman.int)inDx).to_fixed();
-                boxes[cpt].y1 += ((Pixman.int)inDy).to_fixed();
-                boxes[cpt].y2 += ((Pixman.int)inDy).to_fixed();
+                boxes[cpt].x1 += ((Pixman.int)inDx).to_fixed ();
+                boxes[cpt].x2 += ((Pixman.int)inDx).to_fixed ();
+                boxes[cpt].y1 += ((Pixman.int)inDy).to_fixed ();
+                boxes[cpt].y2 += ((Pixman.int)inDy).to_fixed ();
             }
         }
     }
@@ -244,9 +226,9 @@ public class Maia.Region : GLib.Object
         requires (inWidth > 0 && inHeight > 0)
     {
         int dx = ((Pixman.Fixed)(m_Region.extents.x2 - 
-                                 m_Region.extents.x1)).to_int() - (int)inWidth;
+                                 m_Region.extents.x1)).to_int () - (int)inWidth;
         int dy = ((Pixman.Fixed)(m_Region.extents.y2 - 
-                                 m_Region.extents.y1)).to_int() - (int)inHeight;
+                                 m_Region.extents.y1)).to_int () - (int)inHeight;
 
         if (dx != 0 || dy != 0)
         {
@@ -282,8 +264,8 @@ public class Maia.Region : GLib.Object
 
         return tclipbox.origin.x == oclipbox.origin.x && 
                tclipbox.origin.y == oclipbox.origin.y &&
-               tclipbox.width == oclipbox.width && 
-               tclipbox.height == oclipbox.height;
+               tclipbox.size.width == oclipbox.size.width && 
+               tclipbox.size.height == oclipbox.size.height;
     }
 
     /**
@@ -297,7 +279,7 @@ public class Maia.Region : GLib.Object
         bool first = false;
         string ret = "";
 
-        foreach (Rectangle rect in rectangles)
+        foreach (Rectangle rect in this)
         {
             if (!first)
             {
@@ -311,5 +293,57 @@ public class Maia.Region : GLib.Object
         }
 
         return ret;
+    }
+
+    /**
+     * Returns a Iterator that can be used for simple iteration over a
+     * region.
+     *
+     * @return a Iterator that can be used for simple iteration over a
+     *         region
+     */
+    public Iterator
+    iterator ()
+    {
+        return new Iterator (this);
+    }
+
+    public class Iterator
+    {
+        private Pixman.Box32[] m_Boxes;
+        private int m_Index = -1;
+
+        internal Iterator (Region inRegion)
+        {
+            m_Boxes = inRegion.m_Region.rectangles ();
+        }
+
+        /**
+         * Advances to the next rectangle in the region.
+         *
+         * @return true if the iterator has a next rectangle
+         */
+        public bool
+        next ()
+        {
+            if (m_Index < m_Boxes.length)
+                m_Index++;
+
+            return (m_Index < m_Boxes.length);
+        }
+
+        /**
+         * Returns the current rectangle in the iteration.
+         *
+         * @return the current rectangle in the iteration
+         */
+        public Rectangle?
+        get ()
+        {
+            if (m_Index < 0 || m_Index >= m_Boxes.length)
+                return null;
+
+            return new Rectangle.pixman_box (m_Boxes[m_Index]);
+        }
     }
 }

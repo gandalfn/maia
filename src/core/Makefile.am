@@ -27,9 +27,9 @@ libmaia_core_la_SOURCES = \
     maia-value.vala \
     maia-transform.vala \
     maia-point.vala \
+    maia-size.vala \
     maia-rectangle.vala \
     maia-region.vala \
-    maia-element.vala \
     maia-task.vala \
     maia-task-queue.vala
 

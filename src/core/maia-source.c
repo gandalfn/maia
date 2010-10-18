@@ -34,7 +34,7 @@ maia_source_prepare (GSource* inSource, gint* outTimeout)
     *outTimeout = -1;
 
     if (source->m_Funcs.prepare)
-        return source->m_Funcs.prepare(source->m_Data, outTimeout);
+        return source->m_Funcs.prepare (source->m_Data, outTimeout);
     else
         return FALSE;
 }
@@ -45,7 +45,7 @@ maia_source_check (GSource* inSource)
     MaiaSource* source = (MaiaSource*) inSource;
 
     if (source->m_Funcs.check)
-        return source->m_Funcs.check(source->m_Data);
+        return source->m_Funcs.check (source->m_Data);
     else
         return FALSE;
 }
@@ -58,7 +58,7 @@ maia_source_dispatch (GSource* inSource, GSourceFunc inCallback, gpointer inUser
 
     g_source_ref (inSource);
     if (source->m_Funcs.dispatch)
-        ret = source->m_Funcs.dispatch(source->m_Data, inCallback, inUserData);
+        ret = source->m_Funcs.dispatch (source->m_Data, inCallback, inUserData);
     g_source_unref (inSource);
 
     return ret;
@@ -70,7 +70,7 @@ maia_source_finalize (GSource* inSource)
     MaiaSource* source = (MaiaSource*) inSource;
 
     if (source->m_Funcs.finalize)
-        source->m_Funcs.finalize(source->m_Data);
+        source->m_Funcs.finalize (source->m_Data);
 }
 
 static GSourceFuncs s_MaiaSourceFuncs = {
@@ -95,7 +95,7 @@ static GSourceFuncs s_MaiaSourceFuncs = {
 MaiaSource* 
 maia_source_new (MaiaSourceFuncs inFuncs, gpointer inData) 
 {
-    g_return_val_if_fail(inData != NULL, NULL);
+    g_return_val_if_fail (inData != NULL, NULL);
 
     MaiaSource* self;
 
@@ -127,8 +127,8 @@ MaiaSource*
 maia_source_new_from_pollfd (MaiaSourceFuncs inFuncs, GPollFD* inpFd,
                              gpointer inData) 
 {
-    g_return_val_if_fail(inpFd != NULL, NULL);
-    g_return_val_if_fail(inData != NULL, NULL);
+    g_return_val_if_fail (inpFd != NULL, NULL);
+    g_return_val_if_fail (inData != NULL, NULL);
 
     MaiaSource* self;
 
@@ -152,7 +152,7 @@ maia_source_new_from_pollfd (MaiaSourceFuncs inFuncs, GPollFD* inpFd,
 MaiaSource*
 maia_source_ref (MaiaSource* self)
 {
-    g_return_val_if_fail(self != NULL, NULL);
+    g_return_val_if_fail (self != NULL, NULL);
 
     g_source_ref ((GSource*)self);
 
@@ -170,7 +170,7 @@ maia_source_ref (MaiaSource* self)
 void
 maia_source_unref (MaiaSource* self)
 {
-    g_return_if_fail(self != NULL);
+    g_return_if_fail (self != NULL);
 
     g_source_unref ((GSource*)self);
 }
@@ -186,7 +186,7 @@ maia_source_unref (MaiaSource* self)
 void
 maia_source_destroy (MaiaSource* self)
 {
-    g_return_if_fail(self != NULL);
+    g_return_if_fail (self != NULL);
 
     g_source_destroy ((GSource*)self);
 }

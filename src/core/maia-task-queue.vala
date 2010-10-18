@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.TaskQueue : GLib.Object
+public class Maia.TaskQueue
 {
     private TaskNode? m_Head = null;
     private unowned TaskNode? m_Tail = null;
@@ -170,11 +170,11 @@ public class Maia.TaskQueue : GLib.Object
         return m_Head.m_Task;
     }
 
-    public TaskIterator
+    public Iterator
     iterator ()
         requires (m_Size > 0)
     {
-        return new TaskIterator (this);
+        return new Iterator (this);
     }
 
     [Compact]
@@ -190,13 +190,13 @@ public class Maia.TaskQueue : GLib.Object
         }
     }
 
-    public class TaskIterator : GLib.Object
+    public class Iterator
     {
         private bool m_Started = false;
         private unowned TaskNode? m_Current;
         private TaskQueue m_Queue;
 
-        internal TaskIterator (TaskQueue inQueue)
+        internal Iterator (TaskQueue inQueue)
         {
             m_Queue = inQueue;
             m_Current = null;
@@ -222,24 +222,7 @@ public class Maia.TaskQueue : GLib.Object
             return ret;
         }
 
-        public bool
-        has_next ()
-        {
-            bool ret = false;
-
-            if (!m_Started)
-            {
-                ret = m_Queue.m_Head != null;
-            }
-            else if (m_Current != null)
-            {
-                ret = m_Current.m_Next != null;
-            }
-
-            return ret;
-        }
-
-        public new Task
+        public Task
         @get ()
             requires (m_Current != null)
         {

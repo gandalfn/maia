@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-point.vala
+ * maia-size.vala
  * Copyright (C) Nicolas Bruguier 2010 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,37 +17,60 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public struct Maia.Point
+public struct Maia.Size
 {
-    public double x;
-    public double y;
+    public double width;
+    public double height;
 
     /**
-     * Transform the point by inTransform.
+     * Create a new size from inWidth, inHeight size
+     *
+     * @param inWidth width size
+     * @param inHeight height size
+     */
+    public Size (double inWidth, double inHeight)
+    {
+        width = inWidth;
+        height = inHeight;
+    }
+
+    /**
+     * Check if size is empty.
+     *
+     * @return true if size is empty
+     */
+    public bool
+    is_empty ()
+    {
+        return width <= 0 || height <= 0;
+    }
+
+    /**
+     * Transform the size by inTransform.
      *
      * @param inTransform transform matrix
      */
     public void
     transform (Transform inTransform)
     {
-        double new_x, new_y;
+        double new_width, new_height;
         unowned Matrix matrix = inTransform.matrix;
 
-        new_x = (matrix.xx * x + matrix.xy * y) + matrix.x0;
-        new_y = (matrix.yx * x + matrix.yy * y) + matrix.y0;
+        new_width = (matrix.xx * width + matrix.xy * height);
+        new_height = (matrix.yx * width + matrix.yy * height);
 
-        x = new_x;
-        y = new_y;
+        width = new_width;
+        height = new_height;
     }
 
     /**
-     * Returns the string representation of point
+     * Returns the string representation of size
      *
-     * @return string representation of point
+     * @return string representation of size
      */
     public string
     to_string ()
     {
-        return x.to_string () + "," + y.to_string ();
+        return width.to_string () + "," + height.to_string ();
     }
 }
