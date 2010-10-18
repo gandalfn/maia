@@ -29,6 +29,4 @@ public abstract class Maia.Context : Object
             
         }
     }
-
-    private Screen[] m_Screens;
 }

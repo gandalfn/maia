@@ -1,14 +1,27 @@
 $(MAIA_LIB_NAME).vapi: lib$(subst -,_,$(MAIA_LIB_NAME))_la_vala.stamp
 
-$(MAIA_LIB_NAME)-$(MAIA_ABI).vapi: $(MAIA_LIB_NAME).vapi $(MAIA_EXTRA_VAPIS)
-	@cat $^ > $@
+$(MAIA_LIB_NAME)-$(MAIA_ABI).vapi: $(MAIA_EXTRA_VAPIS) $(MAIA_LIB_NAME).vapi
+	$(AM_V_GEN) cat $^ > $@
+
+$(MAIA_LIB_NAME)-$(MAIA_ABI).deps: $(MAIA_LIB_NAME).vapi $(MAIA_VAPI_DEPS)
+	$(AM_V_GEN) for i in $(notdir $(basename $(MAIA_VAPI_DEPS))); \
+	do \
+	    echo $$i > $@; \
+	done
+
+VALAFLAGS += \
+    $(addprefix --pkg=, $(notdir $(basename $(MAIA_EXTRA_VAPIS)))) \
+    $(addprefix --vapidir=, $(dir $(MAIA_EXTRA_VAPIS)))
 
 vapi_DATA = \
-    $(MAIA_LIB_NAME)-$(MAIA_ABI).vapi
+    $(MAIA_LIB_NAME)-$(MAIA_ABI).vapi \
+    $(MAIA_LIB_NAME)-$(MAIA_ABI).deps
 
 EXTRA_DIST += \
     $(MAIA_EXTRA_VAPIS)
 
 CLEANFILES += \
     $(vapi_DATA) \
-    $(MAIA_LIB_NAME).vapi
+    $(MAIA_LIB_NAME).vapi \
+    $(MAIA_LIB_NAME)-$(MAIA_ABI).vapi \
+    $(MAIA_LIB_NAME)-$(MAIA_ABI).deps

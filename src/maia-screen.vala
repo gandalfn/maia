@@ -19,6 +19,8 @@
 
 public abstract class Maia.Screen : Object
 {
+    public View view;
+
     private Context m_Context;
     public virtual Context context {
         get {

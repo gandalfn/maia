@@ -1,13 +1,10 @@
+MAIA_VAPI_DEPS = \
+    $(top_builddir)/src/maia-$(MAIA_ABI).vapi \
+    $(top_builddir)/src/core/maia-core-$(MAIA_ABI).vapi
+
 include $(top_srcdir)/build/maia.am
 
-INCLUDES += \
-    -I${top_builddir}/src/core
-
 noinst_PROGRAMS = maia-test
-
-maia_test_VALAFLAGS = \
-    --vapidir=${top_builddir}/src/core \
-    --pkg=maia-core
 
 maia_test_SOURCES = \
     maia-test.vala \
@@ -17,6 +14,7 @@ maia_test_SOURCES = \
 
 maia_test_LDADD = \
     $(MAIA_LIBS) \
+    ${top_builddir}/src/libmaia.la \
     ${top_builddir}/src/core/libmaia-core.la
 
 VALAFILES = \
