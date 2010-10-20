@@ -1,5 +1,5 @@
 MAIA_LIB_NAME = maia-core
-MAIA_EXTRA_VAPIS = object.vapi source.vapi
+MAIA_EXTRA_VAPIS = source.vapi
 
 include $(top_srcdir)/build/maia.am
 include $(top_srcdir)/build/pkgconfig.am
@@ -12,7 +12,6 @@ lib_LTLIBRARIES = libmaia-core.la
 includecoredir = $(includedir)/core
 
 includecore_HEADERS = \
-    maia-object.h \
     maia-source.h \
     maia-core.h
 
@@ -22,7 +21,6 @@ libmaia_core_la_VALAFLAGS = \
     --library=maia-core
 
 libmaia_core_la_SOURCES = \
-    maia-object.c \
     maia-source.c \
     maia-value.vala \
     maia-transform.vala \

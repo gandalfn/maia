@@ -20,6 +20,7 @@ libmaia_la_VALAFLAGS = \
     --library=maia
 
 libmaia_la_SOURCES = \
+    maia-backend.vala \
     maia-context.vala \
     maia-view.vala \
     maia-screen.vala
