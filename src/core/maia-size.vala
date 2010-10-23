@@ -23,18 +23,6 @@ public struct Maia.Size
     public double height;
 
     /**
-     * Create a new size from inWidth, inHeight size
-     *
-     * @param inWidth width size
-     * @param inHeight height size
-     */
-    public Size (double inWidth, double inHeight)
-    {
-        width = inWidth;
-        height = inHeight;
-    }
-
-    /**
      * Check if size is empty.
      *
      * @return true if size is empty

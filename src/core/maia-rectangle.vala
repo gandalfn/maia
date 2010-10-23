@@ -20,7 +20,14 @@
 [Compact]
 public class Maia.Rectangle
 {
+    /**
+     * Origin of rectangle
+     */
     public Point origin;
+
+    /**
+     * Size of rectangle
+     */
     public Size size;
 
     /**

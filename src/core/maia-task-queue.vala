@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.TaskQueue
+public class Maia.TaskQueue : Object
 {
     private TaskNode? m_Head = null;
     private unowned TaskNode? m_Tail = null;
@@ -190,7 +190,7 @@ public class Maia.TaskQueue
         }
     }
 
-    public class Iterator
+    public class Iterator : Object
     {
         private bool m_Started = false;
         private unowned TaskNode? m_Current;

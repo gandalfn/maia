@@ -19,7 +19,14 @@
 
 public struct Maia.Point
 {
+    /**
+     * x position
+     */
     public double x;
+
+    /**
+     * y position
+     */
     public double y;
 
     /**

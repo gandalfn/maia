@@ -28,9 +28,6 @@ public class Maia.Context : Object
         get {
             return m_Backend;
         }
-        construct {
-            m_Backend = value;
-        }
     }
 
     /**
@@ -49,7 +46,7 @@ public class Maia.Context : Object
      */
     public Context (Backend inBackend)
     {
-        Object (backend: inBackend);
+        m_Backend = inBackend;
     }
 
     /**

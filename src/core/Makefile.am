@@ -22,12 +22,15 @@ libmaia_core_la_VALAFLAGS = \
 
 libmaia_core_la_SOURCES = \
     maia-source.c \
+    maia-object.vala \
     maia-value.vala \
     maia-transform.vala \
     maia-point.vala \
     maia-size.vala \
     maia-rectangle.vala \
     maia-region.vala \
+    maia-parser.vala \
+    maia-token.vala \
     maia-task.vala \
     maia-task-queue.vala
 

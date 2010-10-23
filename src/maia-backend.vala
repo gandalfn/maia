@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.Backend : Object
+public abstract class Maia.Backend
 {
     public abstract uint nb_screens { get; default = 0; }
 

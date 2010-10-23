@@ -21,6 +21,5 @@ public class Maia.View : Object
 {
     public View (Screen inScreen)
     {
-        
     }
 }
