@@ -83,6 +83,12 @@ public class Maia.Task : Object
         m_State = State.TERMINATED;
     }
     
+    public void
+    sleep (int inMs)
+    {
+        m_State = State.SLEEPING;
+    }
+
     internal static int
     compare (Task inA, Task inB)
     {
@@ -92,11 +98,5 @@ public class Maia.Task : Object
             return 1;
         else
             return 0;
-    }
-
-    public void
-    sleep (int inMs)
-    {
-        m_State = State.SLEEPING;
     }
 }

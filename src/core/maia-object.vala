@@ -19,10 +19,166 @@
 
 public abstract class Maia.Object
 {
+    // Types
     [CCode (has_target = false)]
-    public delegate Object Create (GLib.Parameter[] inProperties);
+    public delegate Object CreateFromParameter (GLib.Parameter[] inProperties);
+    [CCode (has_target = false)]
+    public delegate Object CreateFromString (string inContent);
 
-    static Vala.HashMap <GLib.Type, Create> s_Factory;
+    private struct CreateVTable
+    {
+        public GLib.Type           m_Type;
+        public CreateFromParameter m_FromParameters;
+        public CreateFromString    m_FromString;
+    }
+
+    // Static properties
+    static CreateVTable*                            s_Factory = null;
+    static int                                      s_FactoryLength = 0;
+
+    // Properties
+    private string                                  m_Id = null;
+    private unowned Object                          m_Parent = null;
+    private List<Object>                            m_Childs = null; 
+    private Vala.HashMap<string, unowned Object>    m_IdentifiedChilds = null;
+
+    /**
+     * Object identifier
+     */
+    public string id {
+        get {
+            return m_Id;
+        }
+        protected set {
+            // object have a old id
+            if (m_Parent != null && m_Id != null && m_Parent.m_IdentifiedChilds != null)
+            {
+                // remove object from identified object
+                m_Parent.m_IdentifiedChilds.remove (m_Id);
+            }
+
+            // set identifier
+            m_Id = value;
+
+            // object have a parent
+            if (m_Id != null && m_Parent != null)
+            {
+                m_Parent.create_child_arrays ();
+                // add object in identified childs
+                m_Parent.m_IdentifiedChilds[m_Id] = this;
+            }
+        }
+    }
+
+    /**
+     * Object parent
+     */
+    public Object parent {
+        get {
+            return m_Parent;
+        }
+        protected set {
+            // object have already a parent
+            if (m_Parent != null && m_Parent.m_Childs != null)
+            {
+                // remove object from childs of old parent
+                m_Parent.m_Childs.remove (this);
+                // remove object from identified childs of old parent
+                if (m_Id != null && m_Parent.m_IdentifiedChilds != null)
+                {
+                    m_Parent.m_IdentifiedChilds.remove (m_Id);
+                }
+            }
+
+            // set parent property
+            m_Parent = value;
+
+            // add object to childs of parent
+            if (m_Parent != null)
+            {
+                m_Parent.create_child_arrays ();
+                m_Parent.m_Childs.add (this);
+                if (m_Id != null)
+                {
+                    m_Parent.m_IdentifiedChilds[m_Id] = this;
+                }
+            }
+        }
+    }
+
+    /**
+     * Object childs
+     */
+    public List<Object> childs {
+        get {
+            return m_Childs;
+        }
+    }
+
+    protected Object (string? inId = null, Object? inParent = null)
+    {
+        // Set properties
+        if (inId != null) id = inId;
+        if (inParent != null) parent = inParent;
+    }
+
+    private void
+    create_child_arrays ()
+    {
+        if (m_Childs == null)
+        {
+            m_Childs = new List <Object> ();
+        }
+        if (m_IdentifiedChilds == null)
+        {
+            m_IdentifiedChilds = new Vala.HashMap<string, unowned Object> ();
+        }
+    }
+
+    private static CreateVTable*
+    get_vtable (GLib.Type inType)
+    {
+        if (s_Factory != null)
+        {
+            int left = 0, right = s_FactoryLength - 1;
+
+            if (right != -1)
+            {
+                while (right >= left)
+                {
+                    int medium = (left + right) / 2;
+                    CreateVTable* vtable = &s_Factory[medium];
+
+                    if (inType == vtable->m_Type)
+                    {
+                        return vtable;
+                    }
+                    else if (inType < vtable->m_Type)
+                    {
+                        right = medium - 1;
+                    }
+                    else
+                    {
+                        left = medium + 1;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public bool
+    contains (string inId)
+    {
+        return inId in m_IdentifiedChilds;
+    }
+
+    public Object
+    get_child (string inId)
+    {
+        return m_IdentifiedChilds[inId];
+    }
 
     /**
      * Register a create function for a specified type. The function can be
@@ -32,36 +188,31 @@ public abstract class Maia.Object
      * @param inFunc create function
      */
     public static void
-    register (GLib.Type inType, Create inFunc)
+    register (GLib.Type inType, CreateFromParameter? inFromParameters, CreateFromString? inFromString)
     {
-        if (s_Factory == null)
-        {
-            s_Factory = new Vala.HashMap <GLib.Type, Create> ();
-        }
+        CreateVTable* vtable = get_vtable (inType);
 
-        if (!(inType in s_Factory))
+        if (vtable == null)
         {
-            s_Factory[inType] = inFunc;
-        }
-    }
+            int index = s_FactoryLength;
 
-    /**
-     * Unregister a create function for a specified type
-     *
-     * @param inType type to register
-     * @param inFunc create function
-     */
-    public static void
-    unregister (GLib.Type inType)
-    {
-        if (s_Factory == null)
-        {
-            s_Factory = new Vala.HashMap <GLib.Type, Create> ();
-        }
+            s_FactoryLength++;
+            if (s_Factory == null)
+                s_Factory = GLib.Slice.alloc (s_FactoryLength * sizeof (CreateVTable));
+            else
+                s_Factory = GLib.Slice.copy (s_FactoryLength * sizeof (CreateVTable), s_Factory);
 
-        if (inType in s_Factory)
-        {
-            s_Factory.remove (inType);
+            while (index > 0 && s_Factory[index - 1].m_Type > inType)
+            {
+                s_Factory[index].m_Type = s_Factory[index - 1].m_Type;
+                s_Factory[index].m_FromParameters = s_Factory[index - 1].m_FromParameters;
+                s_Factory[index].m_FromString = s_Factory[index - 1].m_FromString;
+                index--;
+            }
+
+            s_Factory[index].m_Type = inType;
+            s_Factory[index].m_FromParameters = inFromParameters;
+            s_Factory[index].m_FromString = inFromString;
         }
     }
 
@@ -76,11 +227,32 @@ public abstract class Maia.Object
     newv (GLib.Type inType, GLib.Parameter[] inProperties)
     {
         Object result = null;
-        Create func = s_Factory[inType];
+        CreateVTable* vtable = get_vtable (inType);
 
-        if (func != null)
+        if (vtable != null && vtable->m_FromParameters != null)
         {
-            result = func (inProperties);
+            result = vtable->m_FromParameters (inProperties);
+        }
+
+        return result;
+    }
+
+    /**
+     * Create a new object for a specified type. The create function must be
+     * registered before.
+     *
+     * @param inType type of object
+     * @param inContent string content to pass of creation of object
+     */
+    public static Object
+    news (GLib.Type inType, string inContent)
+    {
+        Object result = null;
+        CreateVTable* vtable = get_vtable (inType);
+
+        if (vtable != null && vtable->m_FromString != null)
+        {
+            result = vtable->m_FromString (inContent);
         }
 
         return result;

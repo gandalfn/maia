@@ -12,7 +12,6 @@ VALAFLAGS = \
     --vapidir=${top_srcdir}/vapi \
     --pkg=posix \
     --pkg=libvala-0.12 \
-    --pkg=gee-1.0 \
     --pkg=pixman-1 \
     $(addprefix --pkg=, $(notdir $(basename $(MAIA_VAPI_DEPS)))) \
     $(addprefix --vapidir=, $(dir $(MAIA_VAPI_DEPS)))

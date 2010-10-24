@@ -17,38 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.Token : Object
+public enum Maia.Token
 {
-    private string m_Id = null;
-    private Token m_Parent = null;
+    NONE,
+    ELEMENT,
+    END_ELEMENT,
+    TEXT,
+    EOF;
 
-    /**
-     * Token identifier
-     */
-    public string id {
-        get {
-            return m_Id;
-        }
-    }
-
-    /**
-     * Parent token
-     */
-    public Token parent {
-        get {
-            return m_Parent;
-        }
-    }
-
-    /**
-     * Create a new token
-     *
-     * @param inId token identifier
-     * @param inParent parent token
-     */
-    public Token (string inId, Token? inParent)
-    {
-        m_Id = inId;
-        m_Parent = inParent;
-    }
+    
 }

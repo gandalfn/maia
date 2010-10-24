@@ -19,24 +19,29 @@
 
 public abstract class Maia.Parser : Object
 {
-    private unowned string m_Content;
-    private Vala.HashMap <string, Token> m_Dictionnary;
+    // Properties
+    private class Vala.HashMap <string, GLib.Type> c_Grammar;
+
+    private unowned string m_Content = null;
+    private Token m_CurrentToken = Token.NONE;
+
+    class construct 
+    {
+        c_Grammar = new Vala.HashMap <string, GLib.Type> ();
+    }
 
     /**
      * Create a new parser
-     *
-     * @param inContent string to parse
      */
     public Parser (string inContent)
     {
         m_Content = inContent;
-        m_Dictionnary = new Vala.HashMap <string, Token> ();
     }
 
     /**
      * Parse the content and construct the dictionnary
      */
-    public abstract void parse ();
+    public abstract unowned string parse (string inContent);
 
     /**
      * Get a token by its identifier
@@ -45,10 +50,10 @@ public abstract class Maia.Parser : Object
      *
      * @return Token identified by inId
      */
-    public new Token
+    public new GLib.Type
     @get (string inId)
     {
-        return m_Dictionnary[inId];
+        return c_Grammar[inId];
     }
 
     /**
@@ -57,10 +62,10 @@ public abstract class Maia.Parser : Object
      * @param inId token identifier
      * @param inToken token
      */
-    public void
-    @set (string inId, Token inToken)
+    public class void
+    @set (string inId, GLib.Type inType)
     {
-        m_Dictionnary[inId] = inToken;
+        c_Grammar[inId] = inType;
     }
 
     /**
@@ -76,13 +81,13 @@ public abstract class Maia.Parser : Object
         return new Iterator (this);
     }
 
-    public class Iterator : Object
+    public class Iterator
     {
-        private Vala.Iterator <Token> m_Iterator;
+        private Vala.Iterator <GLib.Type> m_Iterator;
 
         internal Iterator (Parser inParser)
         {
-            m_Iterator = inParser.m_Dictionnary.get_values ().iterator ();
+            m_Iterator = inParser.c_Grammar.get_values ().iterator ();
         }
 
         /**
@@ -101,7 +106,7 @@ public abstract class Maia.Parser : Object
          *
          * @return the current Token in the iteration
          */
-        public Token?
+        public GLib.Type?
         get ()
         {
             return m_Iterator.get ();

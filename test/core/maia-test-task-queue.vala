@@ -19,7 +19,7 @@
 
 public class Maia.TestTaskQueue : Maia.TestCase
 {
-    const int NB_TASKS = 1000;
+    const int NB_TASKS = 10000;
 
     private TaskQueue m_Queue;
     private Task[] m_Tasks;

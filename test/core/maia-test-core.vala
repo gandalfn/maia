@@ -24,5 +24,6 @@ public class Maia.TestCore : Maia.TestCase
         base ("core");
 
         suite.add_suite (new TestTaskQueue ().suite);
+        suite.add_suite (new TestTree ().suite);
     }
 }

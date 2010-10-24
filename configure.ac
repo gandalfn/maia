@@ -53,8 +53,7 @@ dnl ****************************************************************************
 dnl Packages version required
 dnl ****************************************************************************
 GLIB_REQUIRED=2.24.0
-VALA_REQUIRED=0.10.0
-GEE_REQUIRED=0.6.0
+VALA_REQUIRED=0.11.0
 PIXMAN_REQUIRED=0.16.4
 
 dnl ****************************************************************************
@@ -82,7 +81,6 @@ PKG_CHECK_MODULES(MAIA, [glib-2.0 >= $GLIB_REQUIRED
                          gobject-2.0 >= $GLIB_REQUIRED
                          gmodule-2.0 >= $GLIB_REQUIRED
                          libvala-0.12 >= $VALA_REQUIRED
-                         gee-1.0 >= $GEE_REQUIRED
                          pixman-1 >= $PIXMAN_REQUIRED])
 AC_SUBST(MAIA_CFLAGS)
 AC_SUBST(MAIA_LIBS)
