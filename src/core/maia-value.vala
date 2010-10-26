@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public interface Maia.Value
+namespace Maia.Value
 {
     private static bool s_SimpleTypeRegistered = false;
 

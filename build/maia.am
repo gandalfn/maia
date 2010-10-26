@@ -9,6 +9,7 @@ INCLUDES = \
     $(addprefix -I, $(dir $(MAIA_VAPI_DEPS)))
 
 VALAFLAGS = \
+    --vapidir=$(VALA_VAPI_PATH) \
     --vapidir=${top_srcdir}/vapi \
     --pkg=posix \
     --pkg=libvala-0.12 \

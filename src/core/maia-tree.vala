@@ -19,6 +19,9 @@
 
 public class Maia.Tree<K, T>
 {
+    [CCode (has_target = false)]
+    public delegate string ToStringFunc (void* inData);
+
     // Types
     private class Node<K, T>
     {
@@ -41,6 +44,7 @@ public class Maia.Tree<K, T>
     // Properties
     private Node<K, T>?      m_Root = null;
     private GLib.CompareFunc m_CompareFunc = null;
+    private ToStringFunc     m_ToStringFunc = null;
 
     /**
      * The elements compare testing function.
@@ -51,9 +55,10 @@ public class Maia.Tree<K, T>
         }
     }
 
-    public class Tree (GLib.CompareFunc inFunc)
+    public class Tree (GLib.CompareFunc inFunc, ToStringFunc? inToStringFunc = null)
     {
         m_CompareFunc = inFunc;
+        m_ToStringFunc = inToStringFunc;
     }
 
     private unowned Node<K, T>?
@@ -209,5 +214,69 @@ public class Maia.Tree<K, T>
         {
             node.m_Data = inData;
         }
+    }
+
+    public void
+    unset (K inKey)
+    {
+        unowned Node<K, T> node = get_node (inKey);
+
+        if (node != null)
+        {
+            Node<K, T> replace = node.m_Left;
+            if (replace != null)
+            {
+                while (replace.m_Right != null)
+                    replace = replace.m_Right;
+            }
+
+            if (replace == null)
+            {
+                if (node == m_Root)
+                    m_Root = node.m_Right;
+                else if (node.m_Parent.m_Left == node)
+                    node.m_Parent.m_Left = node.m_Right;
+                else
+                    node.m_Parent.m_Right = node.m_Right;
+
+                if (node.m_Right != null)
+                    node.m_Right.m_Parent = node.m_Parent;
+            }
+            else
+            {
+                node.m_Key = replace.m_Key;
+                node.m_Data = replace.m_Data;
+                if (replace.m_Parent.m_Left == replace)
+                    replace.m_Parent.m_Left = replace.m_Left;
+                else
+                    replace.m_Parent.m_Right = replace.m_Left;
+                if (replace.m_Left != null)
+                    replace.m_Left.m_Parent = replace.m_Parent;
+            }
+        }
+    }
+
+    private string
+    node_to_string (Node<K, T>? inNode)
+    {
+        string str = ";\n";
+        if (inNode != null)
+        {
+            string left = "", right = "";
+            string data = m_ToStringFunc (inNode.m_Data);
+            str = node_to_string (inNode.m_Left);
+            left = data + (str != ";\n" ? " -- " + str : str);
+            str = node_to_string (inNode.m_Right);
+            right = data + (str != ";\n" ? " -- " + str : str);
+            str = left + " " + right;
+        }
+
+        return str;
+    }
+
+    public string
+    to_dot ()
+    {
+        return "graph graphname {\n " + node_to_string (m_Root) + "}";
     }
 }

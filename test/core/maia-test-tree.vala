@@ -19,7 +19,7 @@
 
 public class Maia.TestTree : Maia.TestCase
 {
-    const int NB_KEYS = 200;
+    const int NB_KEYS = 26;
 
     private Tree<string, string> m_Tree;
     private uint32[] m_Keys;
@@ -31,14 +31,21 @@ public class Maia.TestTree : Maia.TestCase
         add_test ("get", test_tree_get);
     }
 
+    private static string
+    data_to_string (string inData)
+    {
+        return "%c".printf((char)inData.to_int());
+    }
+
     public override void
     set_up ()
     {
-        m_Tree = new Tree<string, string> ((GLib.CompareFunc)GLib.strcmp);
+        m_Tree = new Tree<string, string> ((GLib.CompareFunc)GLib.strcmp,
+                                           (Tree.ToStringFunc)data_to_string);
         m_Keys = new uint32[NB_KEYS];
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
-            m_Keys[cpt] = Test.rand_int ();
+            m_Keys[cpt] = Test.rand_int_range ('A', 'Z');
         }
     }
 
@@ -51,27 +58,32 @@ public class Maia.TestTree : Maia.TestCase
     public void
     test_tree_get ()
     {
-        Vala.HashMap <string, string> hash = new Vala.HashMap <string, string> (GLib.str_hash, GLib.str_equal);
-        for (int cpt = 0; cpt < NB_KEYS; ++cpt)
-        {
-            hash[m_Keys[cpt].to_string ()] = m_Keys[cpt].to_string ();
-        }
-        Test.timer_start ();
-        for (int cpt = 0; cpt < NB_KEYS; ++cpt)
-        {
-            assert (hash[m_Keys[cpt].to_string ()] == m_Keys[cpt].to_string ());
-        }
-        message ("hash %s s", (Test.timer_elapsed () * 1000).to_string ());
-
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
             m_Tree[m_Keys[cpt].to_string ()] = m_Keys[cpt].to_string ();
+            try
+            {
+                FileUtils.set_contents ("test-tree-unset-%i.dot".printf(cpt), m_Tree.to_dot ());
+                Process.spawn_command_line_sync ("dot -Tsvg test-tree-set-%i.dot -otest-tree-set-%i.svg".printf (cpt, cpt));
+            }
+            catch (GLib.Error err)
+            {
+                assert (false);
+            }
         }
-        Test.timer_start ();
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
-            assert (m_Tree[m_Keys[cpt].to_string ()] == m_Keys[cpt].to_string ());
+            //assert (m_Tree[m_Keys[cpt].to_string ()] == m_Keys[cpt].to_string ());
+            m_Tree.unset (m_Keys[cpt].to_string ());
+            try
+            {
+                FileUtils.set_contents ("test-tree-unset-%i.dot".printf(cpt), m_Tree.to_dot ());
+                Process.spawn_command_line_sync ("dot -Tsvg test-tree-unset-%i.dot -otest-tree-unset-%i.svg".printf (cpt, cpt));
+            }
+            catch (GLib.Error err)
+            {
+                assert (false);
+            }
         }
-        message ("tree %s s", (Test.timer_elapsed () * 1000).to_string ());
     }
 }

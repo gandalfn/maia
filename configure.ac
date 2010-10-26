@@ -70,11 +70,6 @@ LT_PREREQ([2.2])
 LT_INIT([disable-static])
 
 dnl ****************************************************************************
-dnl Check for vala
-dnl ****************************************************************************
-AM_PROG_VALAC($VALA_REQUIRED)
-
-dnl ****************************************************************************
 dnl Check for packages
 dnl ****************************************************************************
 PKG_CHECK_MODULES(MAIA, [glib-2.0 >= $GLIB_REQUIRED
@@ -84,6 +79,13 @@ PKG_CHECK_MODULES(MAIA, [glib-2.0 >= $GLIB_REQUIRED
                          pixman-1 >= $PIXMAN_REQUIRED])
 AC_SUBST(MAIA_CFLAGS)
 AC_SUBST(MAIA_LIBS)
+
+dnl ****************************************************************************
+dnl Check for vala
+dnl ****************************************************************************
+AM_PROG_VALAC($VALA_REQUIRED)
+VALA_VAPI_PATH=$($PKG_CONFIG --variable=vapidir libvala-0.12)
+AC_SUBST(VALA_VAPI_PATH)
 
 dnl ****************************************************************************
 dnl Generate outputs
