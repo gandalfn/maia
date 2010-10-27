@@ -223,6 +223,7 @@ public class Maia.Tree<K, T>
 
         if (node != null)
         {
+            unowned Node<K, T> parent = node.m_Parent;
             Node<K, T> replace = node.m_Left;
             if (replace != null)
             {
@@ -253,6 +254,8 @@ public class Maia.Tree<K, T>
                 if (replace.m_Left != null)
                     replace.m_Left.m_Parent = replace.m_Parent;
             }
+
+            balance (parent);
         }
     }
 

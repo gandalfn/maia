@@ -28,7 +28,9 @@ public class Maia.TestTree : Maia.TestCase
     {
         base ("tree");
 
-        add_test ("get", test_tree_get);
+        add_test ("set", test_tree_set);
+        add_test ("unset", test_tree_unset);
+        //add_test ("dot", test_tree_dot);
     }
 
     private static string
@@ -56,14 +58,42 @@ public class Maia.TestTree : Maia.TestCase
     }
 
     public void
-    test_tree_get ()
+    test_tree_set ()
     {
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
             m_Tree[m_Keys[cpt].to_string ()] = m_Keys[cpt].to_string ();
+        }
+        for (int cpt = 0; cpt < NB_KEYS; ++cpt)
+        {
+            assert (m_Tree[m_Keys[cpt].to_string ()] == m_Keys[cpt].to_string ());
+        }
+    }
+
+    public void
+    test_tree_unset ()
+    {
+        for (int cpt = 0; cpt < NB_KEYS; ++cpt)
+        {
+            m_Tree[m_Keys[cpt].to_string ()] = m_Keys[cpt].to_string ();
+        }
+        for (int cpt = 0; cpt < NB_KEYS; ++cpt)
+        {
+            m_Tree.unset (m_Keys[cpt].to_string ());
+            //assert (m_Tree[m_Keys[cpt].to_string ()] == null);
+        }
+    }
+
+    public void
+    test_tree_dot ()
+    {
+        for (int cpt = 0; cpt < NB_KEYS; ++cpt)
+        {
+            message ("set %s", data_to_string (m_Keys[cpt].to_string ()));
+            m_Tree[m_Keys[cpt].to_string ()] = m_Keys[cpt].to_string ();
             try
             {
-                FileUtils.set_contents ("test-tree-unset-%i.dot".printf(cpt), m_Tree.to_dot ());
+                FileUtils.set_contents ("test-tree-set-%i.dot".printf(cpt), m_Tree.to_dot ());
                 Process.spawn_command_line_sync ("dot -Tsvg test-tree-set-%i.dot -otest-tree-set-%i.svg".printf (cpt, cpt));
             }
             catch (GLib.Error err)
@@ -71,9 +101,10 @@ public class Maia.TestTree : Maia.TestCase
                 assert (false);
             }
         }
+        message ("unset");
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
-            //assert (m_Tree[m_Keys[cpt].to_string ()] == m_Keys[cpt].to_string ());
+            message ("unset %s", data_to_string (m_Keys[cpt].to_string ()));
             m_Tree.unset (m_Keys[cpt].to_string ());
             try
             {

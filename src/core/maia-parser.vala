@@ -20,14 +20,21 @@
 public abstract class Maia.Parser : Object
 {
     // Properties
-    private class Vala.HashMap <string, GLib.Type> c_Grammar;
+    private static Tree <string, GLib.Type> s_Grammar;
 
-    private unowned string m_Content = null;
+    private unowned string m_Content;
     private Token m_CurrentToken = Token.NONE;
+    private List<Object> m_Objects;
 
-    class construct 
+    static construct 
     {
-        c_Grammar = new Vala.HashMap <string, GLib.Type> ();
+        s_Grammar = new Tree <string, GLib.Type> ((GLib.CompareFunc)GLib.strcmp);
+    }
+
+    public static void
+    add_syntax (string inSyntax, GLib.Type inType)
+    {
+        s_Grammar[inSyntax] = inType;
     }
 
     /**
@@ -36,80 +43,15 @@ public abstract class Maia.Parser : Object
     public Parser (string inContent)
     {
         m_Content = inContent;
+        m_Objects = new List<Object> ();
     }
 
     /**
      * Parse the content and construct the dictionnary
      */
-    public abstract unowned string parse (string inContent);
-
-    /**
-     * Get a token by its identifier
-     *
-     * @param inId token identifier
-     *
-     * @return Token identified by inId
-     */
-    public new GLib.Type
-    @get (string inId)
+    public void
+    parse ()
     {
-        return c_Grammar[inId];
-    }
-
-    /**
-     * Set or add a token
-     *
-     * @param inId token identifier
-     * @param inToken token
-     */
-    public class void
-    @set (string inId, GLib.Type inType)
-    {
-        c_Grammar[inId] = inType;
-    }
-
-    /**
-     * Returns a Iterator that can be used for simple iteration over a
-     * token dictionnary.
-     *
-     * @return a Iterator that can be used for simple iteration over a
-     *         token dictionnary
-     */
-    public Iterator
-    iterator ()
-    {
-        return new Iterator (this);
-    }
-
-    public class Iterator
-    {
-        private Vala.Iterator <GLib.Type> m_Iterator;
-
-        internal Iterator (Parser inParser)
-        {
-            m_Iterator = inParser.c_Grammar.get_values ().iterator ();
-        }
-
-        /**
-         * Advances to the next Token in the dictionnary.
-         *
-         * @return true if the iterator has a next Token
-         */
-        public bool
-        next ()
-        {
-            return m_Iterator.next ();
-        }
-
-        /**
-         * Returns the current Token in the iteration.
-         *
-         * @return the current Token in the iteration
-         */
-        public GLib.Type?
-        get ()
-        {
-            return m_Iterator.get ();
-        }
+        
     }
 }
