@@ -30,6 +30,7 @@ public class Maia.TestTree : Maia.TestCase
 
         add_test ("set", test_tree_set);
         add_test ("unset", test_tree_unset);
+        add_test ("parse", test_tree_parse);
         //add_test ("dot", test_tree_dot);
     }
 
@@ -80,7 +81,7 @@ public class Maia.TestTree : Maia.TestCase
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
             m_Tree.unset (m_Keys[cpt].to_string ());
-            //assert (m_Tree[m_Keys[cpt].to_string ()] == null);
+            assert (m_Tree[m_Keys[cpt].to_string ()] == null);
         }
     }
 
@@ -115,6 +116,24 @@ public class Maia.TestTree : Maia.TestCase
             {
                 assert (false);
             }
+        }
+    }
+
+    public void
+    test_tree_parse ()
+    {
+        for (int cpt = 0; cpt < NB_KEYS; ++cpt)
+        {
+            m_Tree[m_Keys[cpt].to_string ()] = m_Keys[cpt].to_string ();
+        }
+        string prev = null;
+        foreach (string data in m_Tree)
+        {
+            if (prev != null)
+            {
+                assert (prev.to_int () < data.to_int ());
+            }
+            prev = data;
         }
     }
 }

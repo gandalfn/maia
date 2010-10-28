@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Region
+public class Maia.Region : Object
 {
     private Pixman.Region32 m_Region;
 

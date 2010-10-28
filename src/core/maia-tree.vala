@@ -41,6 +41,56 @@ public class Maia.Tree<K, T>
         }
     }
 
+    private class Iterator<K, T> : Vala.Iterator <T>
+    {
+        private int m_Index = -1;
+        private Tree<K, T> m_Tree;
+        private Node<K, T>[] m_Nodes;
+
+        internal Iterator (Tree<K, T> inTree)
+        {
+            m_Tree = inTree;
+            m_Nodes = {};
+            add_node (m_Tree.m_Root);
+        }
+
+        private void
+        add_node (Node<K,T>? inNode)
+        {
+            if (inNode != null)
+            {
+                add_node (inNode.m_Left);
+                m_Nodes += inNode;
+                add_node (inNode.m_Right);
+            }
+        }
+
+        public override bool
+        next ()
+        {
+            bool ret = false;
+
+            if (m_Index < 0 && m_Nodes.length > 0)
+            {
+                m_Index = 0;
+                ret = true;
+            }
+            else
+            {
+                m_Index++;
+                ret = m_Index < m_Nodes.length;
+            }
+
+            return ret;
+        }
+
+        public override T?
+        get ()
+        {
+            return m_Nodes[m_Index].m_Data;
+        }
+    }
+
     // Properties
     private Node<K, T>?      m_Root = null;
     private GLib.CompareFunc m_CompareFunc = null;
@@ -224,7 +274,7 @@ public class Maia.Tree<K, T>
         if (node != null)
         {
             unowned Node<K, T> parent = node.m_Parent;
-            Node<K, T> replace = node.m_Left;
+            unowned Node<K, T> replace = node.m_Left;
             if (replace != null)
             {
                 while (replace.m_Right != null)
@@ -233,26 +283,28 @@ public class Maia.Tree<K, T>
 
             if (replace == null)
             {
+                if (node.m_Right != null)
+                    node.m_Right.m_Parent = node.m_Parent;
+
                 if (node == m_Root)
                     m_Root = node.m_Right;
                 else if (node.m_Parent.m_Left == node)
                     node.m_Parent.m_Left = node.m_Right;
                 else
                     node.m_Parent.m_Right = node.m_Right;
-
-                if (node.m_Right != null)
-                    node.m_Right.m_Parent = node.m_Parent;
             }
             else
             {
                 node.m_Key = replace.m_Key;
                 node.m_Data = replace.m_Data;
+
+                if (replace.m_Left != null)
+                    replace.m_Left.m_Parent = replace.m_Parent;
+
                 if (replace.m_Parent.m_Left == replace)
                     replace.m_Parent.m_Left = replace.m_Left;
                 else
                     replace.m_Parent.m_Right = replace.m_Left;
-                if (replace.m_Left != null)
-                    replace.m_Left.m_Parent = replace.m_Parent;
             }
 
             balance (parent);
@@ -281,5 +333,11 @@ public class Maia.Tree<K, T>
     to_dot ()
     {
         return "graph graphname {\n " + node_to_string (m_Root) + "}";
+    }
+
+    public Vala.Iterator<T>
+    iterator ()
+    {
+        return new Iterator<K, T> (this);
     }
 }
