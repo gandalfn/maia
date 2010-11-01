@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-backend.vala
+ * maia-iterator.vala
  * Copyright (C) Nicolas Bruguier 2010 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,9 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.Backend : Object
+/**
+ * Implemented by classes that support a simple iteration over instances of the
+ * collection.
+ */
+public abstract class Maia.Iterator<V>
 {
-    public abstract uint nb_screens { get; default = 0; }
+    internal int stamp;
 
-    public abstract Screen get_screen (int inNumScreen);
+    /**
+     * Advances to the next element in the iteration.
+     *
+     * @return true if the iterator has a next element
+     */
+    public abstract bool next ();
+
+    /**
+     * Returns the current element in the iteration.
+     *
+     * @return the current element in the iteration
+     */
+    public abstract V? get ();
 }

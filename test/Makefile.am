@@ -10,7 +10,11 @@ maia_test_SOURCES = \
     maia-test.vala \
     maia-test-case.vala \
     core/maia-test-core.vala \
-    core/maia-test-tree.vala \
+    core/maia-test-array.vala \
+    core/maia-test-list.vala \
+    core/maia-test-set.vala \
+    core/maia-test-map.vala \
+    core/maia-test-object.vala \
     core/maia-test-task-queue.vala
 
 maia_test_LDADD = \

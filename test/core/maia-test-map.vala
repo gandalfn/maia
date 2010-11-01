@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-test-tree.vala
+ * maia-test-map.vala
  * Copyright (C) Nicolas Bruguier 2010 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,27 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.TestTree : Maia.TestCase
+public class Maia.TestMap : Maia.TestCase
 {
     const int NB_KEYS = 1000;
 
-    private Tree<int, string> m_Tree;
+    private Map<int, string> m_Map;
 
     private int[] m_Keys;
 
-    public TestTree ()
+    public TestMap ()
     {
-        base ("tree");
+        base ("map");
 
-        add_test ("set", test_tree_set);
-        add_test ("unset", test_tree_unset);
-        add_test ("search", test_tree_search);
-        add_test ("parse", test_tree_parse);
-        add_test ("benchmark-set", test_tree_benchmark_set);
-        add_test ("benchmark-unset", test_tree_benchmark_unset);
-        add_test ("benchmark-search", test_tree_benchmark_search);
-        add_test ("benchmark-parse", test_tree_benchmark_parse);
-        //add_test ("dot", test_tree_dot);
+        add_test ("set", test_map_set);
+        add_test ("unset", test_map_unset);
+        add_test ("search", test_map_search);
+        add_test ("parse", test_map_parse);
+        //add_test ("benchmark-set", test_map_benchmark_set);
+        //add_test ("benchmark-unset", test_map_benchmark_unset);
+        //add_test ("benchmark-search", test_map_benchmark_search);
+        //add_test ("benchmark-parse", test_map_benchmark_parse);
+        //add_test ("dot", test_map_dot);
     }
 
     private static string
@@ -62,8 +62,8 @@ public class Maia.TestTree : Maia.TestCase
     public override void
     set_up ()
     {
-        m_Tree = new Tree<int, string> ((GLib.CompareDataFunc)key_cmp,
-                                        (Tree.ToStringFunc)data_to_string);
+        m_Map = new Map<int, string> ((Collection.CompareFunc)key_cmp,
+                                      (Collection.ToStringFunc)data_to_string);
 
         m_Keys = new int[NB_KEYS];
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
@@ -75,78 +75,78 @@ public class Maia.TestTree : Maia.TestCase
     public override void
     tear_down ()
     {
-        m_Tree = null;
+        m_Map = null;
     }
 
     public void
-    test_tree_set ()
+    test_map_set ()
     {
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
-            m_Tree[m_Keys[cpt]] = m_Keys[cpt].to_string ();
+            m_Map[m_Keys[cpt]] = m_Keys[cpt].to_string ();
         }
 
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
-            assert (m_Tree[m_Keys[cpt]] == m_Keys[cpt].to_string ());
+            assert (m_Map[m_Keys[cpt]] == m_Keys[cpt].to_string ());
         }
     }
 
     public void
-    test_tree_unset ()
+    test_map_unset ()
     {
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
-            m_Tree[m_Keys[cpt]] = m_Keys[cpt].to_string ();
+            m_Map[m_Keys[cpt]] = m_Keys[cpt].to_string ();
         }
 
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
-            m_Tree.unset (m_Keys[cpt]);
-            assert (m_Tree[m_Keys[cpt]] == null);
+            m_Map.unset (m_Keys[cpt]);
+            assert (m_Map[m_Keys[cpt]] == null);
         }
-        assert (m_Tree.nb_items == 0);
+        assert (m_Map.nb_items == 0);
     }
 
     public void
-    test_tree_search ()
+    test_map_search ()
     {
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
-            m_Tree[m_Keys[cpt]] = m_Keys[cpt].to_string ();
+            m_Map[m_Keys[cpt]] = m_Keys[cpt].to_string ();
         }
 
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
             int index = Test.rand_int_range (0, NB_KEYS - 1);
-            assert (m_Tree[m_Keys[index]] == m_Keys[index].to_string ());
+            assert (m_Map[m_Keys[index]] == m_Keys[index].to_string ());
         }
     }
 
     public void
-    test_tree_parse ()
+    test_map_parse ()
     {
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
-            m_Tree[m_Keys[cpt]] = m_Keys[cpt].to_string ();
+            m_Map[m_Keys[cpt]] = m_Keys[cpt].to_string ();
         }
 
         string prev = null;
         int count = 0;
-        foreach (string val in m_Tree)
+        foreach (Pair<int, string> val in m_Map)
         {
             if (prev != null)
             {
-                assert (prev.to_int () < val.to_int ());
+                assert (prev.to_int () < val.second.to_int ());
             }
-            prev = val;
+            prev = val.second;
             count++;
         }
-        assert (count == m_Tree.nb_items);
+        assert (count == m_Map.nb_items);
     }
 
     public void
-    test_tree_benchmark_set ()
+    test_map_benchmark_set ()
     {
         double min = double.MAX, max = 0;
         for (int iter = 0; iter < 100; ++iter)
@@ -154,105 +154,105 @@ public class Maia.TestTree : Maia.TestCase
             Test.timer_start ();
             for (int cpt = 0; cpt < NB_KEYS; ++cpt)
             {
-                m_Tree[m_Keys[cpt]] = m_Keys[cpt].to_string ();
+                m_Map[m_Keys[cpt]] = m_Keys[cpt].to_string ();
             }
             double elapsed = Test.timer_elapsed () * 1000;
             min = double.min (elapsed, min);
             max = double.max (elapsed, max);
-            m_Tree.clear ();
+            m_Map.clear ();
         }
-        Test.minimized_result (min, "Tree set min time %f ms", min); 
-        Test.maximized_result (min, "Tree set max time %f ms", max);
+        Test.minimized_result (min, "Map set min time %f ms", min); 
+        Test.maximized_result (min, "Map set max time %f ms", max);
     }
 
     public void
-    test_tree_benchmark_search ()
+    test_map_benchmark_search ()
     {
         double min = double.MAX, max = 0;
         for (int iter = 0; iter < 100; ++iter)
         {
             for (int cpt = 0; cpt < NB_KEYS; ++cpt)
             {
-                m_Tree[m_Keys[cpt]] = m_Keys[cpt].to_string ();
+                m_Map[m_Keys[cpt]] = m_Keys[cpt].to_string ();
             }
             Test.timer_start ();
             for (int cpt = 0; cpt < NB_KEYS; ++cpt)
             {
                 int index = Test.rand_int_range (0, NB_KEYS - 1);
-                assert (m_Tree[m_Keys[index]] == m_Keys[index].to_string ());
+                assert (m_Map[m_Keys[index]] == m_Keys[index].to_string ());
             }
             double elapsed = Test.timer_elapsed () * 1000;
             min = double.min (elapsed, min);
             max = double.max (elapsed, max);
-            m_Tree.clear ();
+            m_Map.clear ();
         }
-        Test.minimized_result (min, "Tree search min time %f ms", min); 
-        Test.maximized_result (min, "Tree search max time %f ms", max); 
+        Test.minimized_result (min, "Map search min time %f ms", min); 
+        Test.maximized_result (min, "Map search max time %f ms", max); 
     }
 
     public void
-    test_tree_benchmark_parse ()
+    test_map_benchmark_parse ()
     {
         double min = double.MAX, max = 0;
         for (int iter = 0; iter < 100; ++iter)
         {
             for (int cpt = 0; cpt < NB_KEYS; ++cpt)
             {
-                m_Tree[m_Keys[cpt]] = m_Keys[cpt].to_string ();
+                m_Map[m_Keys[cpt]] = m_Keys[cpt].to_string ();
             }
             Test.timer_start ();
             string prev = null;
-            foreach (string data in m_Tree)
+            foreach (Pair<int, string> data in m_Map)
             {
                 if (prev != null)
                 {
-                    assert (prev.to_int () < data.to_int ());
+                    assert (prev.to_int () < data.second.to_int ());
                 }
-                prev = data;
+                prev = data.second;
             }
             double elapsed = Test.timer_elapsed () * 1000;
             min = double.min (elapsed, min);
             max = double.max (elapsed, max);
-            m_Tree.clear ();
+            m_Map.clear ();
         }
-        Test.minimized_result (min, "Tree parse min time %f ms", min); 
-        Test.maximized_result (min, "Tree parse max time %f ms", max); 
+        Test.minimized_result (min, "Map parse min time %f ms", min); 
+        Test.maximized_result (min, "Map parse max time %f ms", max); 
     }
 
     public void
-    test_tree_benchmark_unset ()
+    test_map_benchmark_unset ()
     {
         double min = double.MAX, max = 0;
         for (int iter = 0; iter < 100; ++iter)
         {
             for (int cpt = 0; cpt < NB_KEYS; ++cpt)
             {
-                m_Tree[m_Keys[cpt]] = m_Keys[cpt].to_string ();
+                m_Map[m_Keys[cpt]] = m_Keys[cpt].to_string ();
             }
             Test.timer_start ();
             for (int cpt = 0; cpt < NB_KEYS; ++cpt)
             {
-                m_Tree.unset (m_Keys[cpt]);
-                assert (m_Tree[m_Keys[cpt]] == null);
+                m_Map.unset (m_Keys[cpt]);
+                assert (m_Map[m_Keys[cpt]] == null);
             }
             double elapsed = Test.timer_elapsed () * 1000;
             min = double.min (elapsed, min);
             max = double.max (elapsed, max);
         }
-        Test.minimized_result (min, "Tree unset min time %f ms", min); 
-        Test.maximized_result (min, "Tree unset max time %f ms", max); 
+        Test.minimized_result (min, "Map unset min time %f ms", min); 
+        Test.maximized_result (min, "Map unset max time %f ms", max); 
     }
 
     public void
-    test_tree_dot ()
+    test_map_dot ()
     {
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
-            m_Tree[m_Keys[cpt]] = m_Keys[cpt].to_string ();
+            m_Map[m_Keys[cpt]] = m_Keys[cpt].to_string ();
             try
             {
-                FileUtils.set_contents ("test-tree-set-%i.dot".printf(cpt), m_Tree.to_dot ());
-                Process.spawn_command_line_sync ("dot -Tpng test-tree-set-%i.dot -otest-tree-set-%i.png".printf (cpt, cpt));
+                FileUtils.set_contents ("test-map-set-%i.dot".printf(cpt), m_Map.to_dot ());
+                Process.spawn_command_line_sync ("dot -Tpng test-map-set-%i.dot -otest-map-set-%i.png".printf (cpt, cpt));
             }
             catch (GLib.Error err)
             {
@@ -261,11 +261,11 @@ public class Maia.TestTree : Maia.TestCase
         }
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
-            m_Tree.unset (m_Keys[cpt]);
+            m_Map.unset (m_Keys[cpt]);
             try
             {
-                FileUtils.set_contents ("test-tree-unset-%i.dot".printf(cpt), m_Tree.to_dot ());
-                Process.spawn_command_line_sync ("dot -Tpng test-tree-unset-%i.dot -otest-tree-unset-%i.png".printf (cpt, cpt));
+                FileUtils.set_contents ("test-map-unset-%i.dot".printf(cpt), m_Map.to_dot ());
+                Process.spawn_command_line_sync ("dot -Tpng test-map-unset-%i.dot -otest-map-unset-%i.png".printf (cpt, cpt));
             }
             catch (GLib.Error err)
             {

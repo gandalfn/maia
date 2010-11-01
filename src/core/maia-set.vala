@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-tree.vala
+ * maia-set.vala
  * Copyright (C) Nicolas Bruguier 2010 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,23 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Tree<K, V> : Vala.Iterable <V>
+public class Maia.Set<V> : Collection<V>
 {
-    public delegate string ToStringFunc (void* inData);
-
     // Types
-    private class Node<K, V>
+    private class Node<V>
     {
         // Properties
-        private unowned Node<K, V>?  m_Parent;
-        private Node<K, V>?          m_Right;
-        private Node<K, V>?          m_Left;
+        private unowned Node<V>?     m_Parent;
+        private Node<V>?             m_Right;
+        private Node<V>?             m_Left;
         private int                  m_Depth;
 
-        public K                     key;
         public V                     val;
 
-        public Node<K, V> parent {
+        public Node<V> parent {
             get {
                 return m_Parent;
             }
@@ -44,7 +41,7 @@ public class Maia.Tree<K, V> : Vala.Iterable <V>
             }
         }
 
-        public Node<K, V> left {
+        public Node<V> left {
             get {
                 return m_Left;
             }
@@ -55,7 +52,7 @@ public class Maia.Tree<K, V> : Vala.Iterable <V>
             }
         }
 
-        public Node<K, V> right {
+        public Node<V> right {
             get {
                 return m_Right;
             }
@@ -75,10 +72,9 @@ public class Maia.Tree<K, V> : Vala.Iterable <V>
             }
         }
 
-        public Node (owned K inKey, owned V? inValue, Node<K, V>? inParent = null)
+        public Node (owned V inValue, Node<V>? inParent = null)
         {
-            key = (owned)inKey;
-            val = inValue != null ? (owned)inValue : null;
+            val = (owned)inValue;
             m_Depth = 1;
             right = null;
             left = null;
@@ -96,16 +92,16 @@ public class Maia.Tree<K, V> : Vala.Iterable <V>
             if (m_Parent != null) m_Parent.calc_depth ();
         }
 
-        public bool
+        public inline bool
         is_left ()
         {
             return m_Parent != null && m_Parent.m_Left == this;
         }
 
-        public unowned Node<K, V>
+        public unowned Node<V>
         next ()
         {
-            unowned Node<K, V> node = null;
+            unowned Node<V> node = null;
 
             if (m_Right != null)
             {
@@ -121,7 +117,7 @@ public class Maia.Tree<K, V> : Vala.Iterable <V>
                 }
                 else if (m_Parent != null)
                 {
-                    Node<K, V> r = (owned)m_Parent.m_Right;
+                    Node<V> r = (owned)m_Parent.m_Right;
                     m_Parent.m_Right = null;
                     node = m_Parent.next ();
                     m_Parent.m_Right = r;
@@ -132,25 +128,36 @@ public class Maia.Tree<K, V> : Vala.Iterable <V>
         }
     }
 
-    private class Iterator<K, V> : Vala.Iterator <V>
+    private class Iterator<V> : Maia.Iterator<V>
     {
-        private Tree<K, V> m_Tree;
-        private unowned Node<K, V> m_Current;
+        private Set<V>          m_Set;
+        private unowned Node<V> m_Current;
 
-        internal Iterator (Tree<K, V> inTree)
-        {
-            m_Tree = inTree;
-            m_Current = null;
+        internal unowned Node<V> current {
+            get {
+                return m_Current;
+            }
         }
 
+        internal Iterator (Set<V>? inSet, Node<V>? inNode = null)
+        {
+            m_Set = inSet;
+            m_Current = inNode;
+            stamp = m_Set.stamp;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
         public override bool
         next ()
+            requires (m_Set.stamp == stamp)
         {
             bool ret = false;
 
-            if (m_Current == null && m_Tree.m_Root != null)
+            if (m_Current == null && m_Set.m_Root != null)
             {
-                m_Current = m_Tree.m_Root;
+                m_Current = m_Set.m_Root;
 
                 while (m_Current.left != null)
                     m_Current = m_Current.left;
@@ -166,8 +173,12 @@ public class Maia.Tree<K, V> : Vala.Iterable <V>
             return ret;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         public override V?
         @get ()
+            requires (m_Set.stamp == stamp)
         {
             return m_Current.val;
         }
@@ -175,41 +186,37 @@ public class Maia.Tree<K, V> : Vala.Iterable <V>
 
     // Properties
     private int                  m_Size = 0;
-    private Node<K, V>?          m_Root = null;
-    private GLib.CompareDataFunc m_CompareFunc = null;
-    private ToStringFunc         m_ToStringFunc = null;
+    private Node<V>?             m_Root = null;
 
-    public int nb_items {
+    /**
+     * {@inheritDoc}
+     */
+    public override int nb_items {
         get {
             return m_Size;
         }
     }
 
-    /**
-     * The elements compare testing function.
-     */
-    public GLib.CompareDataFunc compare_func {
-        get {
-            return m_CompareFunc;
-        }
+    public class Set (Collection.CompareFunc inCompareFunc, Collection.ToStringFunc? inToStringFunc = null)
+    {
+        base (inCompareFunc, inToStringFunc);
     }
 
-    public class Tree (GLib.CompareDataFunc inFunc, ToStringFunc? inToStringFunc = null)
+    internal class Set.inherit ()
     {
-        m_CompareFunc = inFunc;
-        m_ToStringFunc = inToStringFunc;
+        base (null, null);
     }
 
-    private unowned Node<K, V>?
-    get_node (K inKey, out unowned Node<K, V>? outParent = null)
+    private unowned Node<V>?
+    get_node (V inValue, out unowned Node<V>? outParent = null)
     {
-        unowned Node<K, V> node = m_Root;
+        unowned Node<V> node = m_Root;
 
         while (node != null)
         {
             outParent = node;
 
-            int res = m_CompareFunc (inKey, node.key);
+            int res = compare_func ((void*)inValue, (void*)node.val);
             if (res > 0)
             {
                 node = node.right;
@@ -228,12 +235,55 @@ public class Maia.Tree<K, V> : Vala.Iterable <V>
     }
 
     private void
-    rotate_left (owned Node<K, V> inNode)
+    remove_node (Node<V> inNode)
+    {
+        unowned Node<V> parent = inNode.parent;
+        unowned Node<V> replace = inNode.left;
+        if (replace != null)
+        {
+            while (replace.right != null)
+                replace = replace.right;
+        }
+
+        if (replace == null)
+        {
+            if (inNode.right != null)
+                inNode.right.parent = inNode.parent;
+
+            if (inNode == m_Root)
+                m_Root = inNode.right;
+            else if (inNode.parent.left == inNode)
+                inNode.parent.left = inNode.right;
+            else
+                inNode.parent.right = inNode.right;
+        }
+        else
+        {
+            inNode.val = replace.val;
+
+            if (replace.left != null)
+                replace.left.parent = replace.parent;
+
+            if (replace.parent.left == replace)
+                replace.parent.left = replace.left;
+            else
+                replace.parent.right = replace.left;
+        }
+
+        balance (parent);
+
+        m_Size--;
+
+        stamp++;
+    }
+
+    private void
+    rotate_left (owned Node<V> inNode)
     {
         if (inNode == null)
             return;
 
-        Node<K, V> pivot = inNode.right;
+        Node<V> pivot = inNode.right;
         if (inNode.parent != null)
         {
             if (inNode.parent.right == inNode)
@@ -254,12 +304,12 @@ public class Maia.Tree<K, V> : Vala.Iterable <V>
     }
 
     private void
-    rotate_right (owned Node<K, V>? inNode)
+    rotate_right (owned Node<V>? inNode)
     {
         if (inNode == null)
             return;
 
-        Node<K, V> pivot = inNode.left;
+        Node<V> pivot = inNode.left;
         if (inNode.parent != null)
         {
             if (inNode.parent.left == inNode)
@@ -280,7 +330,7 @@ public class Maia.Tree<K, V> : Vala.Iterable <V>
     }
 
     private void
-    balance (Node<K, V>? inNode)
+    balance (Node<V>? inNode)
     {
         if (inNode == null)
             return;
@@ -305,13 +355,13 @@ public class Maia.Tree<K, V> : Vala.Iterable <V>
     }
 
     private string
-    node_to_string (Node<K, V>? inNode)
+    node_to_string (Node<V>? inNode)
     {
         string str = ";\n";
         if (inNode != null)
         {
             string left = "", right = "";
-            string data = "\"" + m_ToStringFunc (inNode.val) + "\"";
+            string data = "\"" + to_string_func (inNode.val) + "\"";
             str = node_to_string (inNode.left);
             left = data + (str != ";\n" ? " -- " + str : str);
             str = node_to_string (inNode.right);
@@ -322,56 +372,37 @@ public class Maia.Tree<K, V> : Vala.Iterable <V>
         return str;
     }
 
-    /**
-     * Determines whether this tree contains the specified key.
-     *
-     * @param inKey the key to locate in the tree
-     *
-     * @return true if key is found, false otherwise
-     */
-    public bool
-    contains (K inKey)
+    internal unowned V?
+    find (V inValue)
     {
-        return get_node (inKey) != null;
+        unowned Node<V> node = get_node (inValue);
+
+        if (node != null)
+        {
+            return node.val;
+        }
+
+        return null;
     }
 
     /**
-     * Returns the value of the specified key in this tree.
-     *
-     * @param inKey the key whose value is to be retrieved
-     *
-     * @return the value associated with the key, or null if the key
-     *         couldn't be found
+     * {@inheritDoc}
      */
-    public new unowned V?
-    @get (K inKey)
+    public override void
+    insert (V inValue)
     {
-        unowned Node<K, V> node = get_node (inKey);
-
-        return node == null ? null : node.val;
-    }
-
-    /**
-     * Inserts a new key and value into this tree.
-     *
-     * @param inKey the key to insert
-     * @param inValue the value to associate with the key
-     */
-    public virtual void
-    @set (K inKey, V inValue)
-    {
-        unowned Node<K, V> parent = null;
-        Node<K, V> node = get_node (inKey, out parent);
+        unowned Node<V> parent = null;
+        Node<V> node = get_node (inValue, out parent);
 
         if (node == null)
         {
-            node = new Node<K, V> (inKey, inValue, parent);
+            node = new Node<V> (inValue, parent);
 
             if (parent == null)
             {
                 m_Root = node;
             }
-            else if (m_CompareFunc (inKey, parent.key) > 0)
+            else if (compare_func ((void*)inValue, (void*)parent.val) > 0)
             {
                 parent.right = node;
             }
@@ -383,6 +414,8 @@ public class Maia.Tree<K, V> : Vala.Iterable <V>
             balance (node);
 
             m_Size++;
+
+            stamp++;
         }
         else
         {
@@ -391,61 +424,51 @@ public class Maia.Tree<K, V> : Vala.Iterable <V>
     }
 
     /**
-     * Removes the specified key from this tree.
-     *
-     * @param inKey the key to remove from the tree
+     * {@inheritDoc}
      */
-    public virtual void
-    unset (K inKey)
+    public override void
+    remove (V inValue)
     {
-        unowned Node<K, V> node = get_node (inKey);
+        unowned Node<V> node = get_node (inValue);
 
-        if (node != null)
-        {
-            unowned Node<K, V> parent = node.parent;
-            unowned Node<K, V> replace = node.left;
-            if (replace != null)
-            {
-                while (replace.right != null)
-                    replace = replace.right;
-            }
-
-            if (replace == null)
-            {
-                if (node.right != null)
-                    node.right.parent = node.parent;
-
-                if (node == m_Root)
-                    m_Root = node.right;
-                else if (node.parent.left == node)
-                    node.parent.left = node.right;
-                else
-                    node.parent.right = node.right;
-            }
-            else
-            {
-                node.key = replace.key;
-                node.val = replace.val;
-
-                if (replace.left != null)
-                    replace.left.parent = replace.parent;
-
-                if (replace.parent.left == replace)
-                    replace.parent.left = replace.left;
-                else
-                    replace.parent.right = replace.left;
-            }
-
-            balance (parent);
-
-            m_Size--;
-        }
+        if (node != null) remove_node (node);
     }
 
     /**
-     * Removes all items from this tree.
+     * Returns the iterator of the specified value in this set.
+     *
+     * @param inValue the value whose iterator is to be retrieved
+     *
+     * @return the iterator associated with the value, or null if the value
+     *         couldn't be found
      */
-    public void
+    public new Maia.Iterator<V>
+    @get (V inValue)
+    {
+        unowned Node<V> node = get_node (inValue);
+        Maia.Iterator<V> iterator = null;
+
+        if (node != null)
+        {
+            iterator = new Iterator<V> (this, node);
+        }
+
+        return iterator;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public override bool
+    contains (V inValue)
+    {
+        return get_node (inValue) != null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public override void
     clear ()
     {
         m_Root = null;
@@ -453,7 +476,7 @@ public class Maia.Tree<K, V> : Vala.Iterable <V>
     }
 
     /**
-     * Return dot representation of the tree
+     * Return dot representation of the set
      */
     public string
     to_dot ()
@@ -464,18 +487,22 @@ public class Maia.Tree<K, V> : Vala.Iterable <V>
     /**
      * {@inheritDoc}
      */
-    public override Type
-    get_element_type ()
+    public override Maia.Iterator<V>
+    iterator ()
     {
-        return typeof (V);
+        return new Iterator<V> (this);
     }
 
     /**
      * {@inheritDoc}
      */
-    public override Vala.Iterator<V>
-    iterator ()
+    public override void
+    erase (Maia.Iterator<V> inIterator)
+        requires (inIterator is Iterator<V>)
+        requires (inIterator.stamp == stamp)
     {
-        return new Iterator<K, V> (this);
+        Iterator<V> iterator = inIterator as Iterator<V>;
+
+        remove_node (iterator.current);
     }
 }

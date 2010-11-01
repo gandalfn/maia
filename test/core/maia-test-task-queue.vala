@@ -50,8 +50,8 @@ public class Maia.TestTaskQueue : Maia.TestCase
             else
                 m_Tasks[cpt] = new Task (test_task_callback);
 
-            m_Queue.add (m_Tasks[cpt]);
-            assert (m_Queue.size == cpt + 1);
+            m_Queue.insert (m_Tasks[cpt]);
+            assert (m_Queue.nb_items == cpt + 1);
         }
     }
 
@@ -104,10 +104,10 @@ public class Maia.TestTaskQueue : Maia.TestCase
     {
         create_tasks (true);
 
-        assert (m_Queue.remove (m_Tasks[24]));
-        assert (m_Queue.size == NB_TASKS - 1);
-        assert (m_Queue.remove (m_Tasks[74]));
-        assert (m_Queue.size == NB_TASKS - 2);
+        m_Queue.remove (m_Tasks[24]);
+        assert (m_Queue.nb_items == NB_TASKS - 1);
+        m_Queue.remove (m_Tasks[74]);
+        assert (m_Queue.nb_items == NB_TASKS - 2);
 
         unowned Task? prev = null;
         foreach (Task task in m_Queue)

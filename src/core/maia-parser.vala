@@ -20,7 +20,7 @@
 public abstract class Maia.Parser : Object
 {
     // Properties
-    private static Tree <string, GLib.Type> s_Grammar;
+    private static Map <string, GLib.Type> s_Grammar;
 
     private unowned string m_Content;
     private Token m_CurrentToken = Token.NONE;
@@ -28,7 +28,7 @@ public abstract class Maia.Parser : Object
 
     static construct 
     {
-        s_Grammar = new Tree <string, GLib.Type> ((GLib.CompareFunc)GLib.strcmp);
+        s_Grammar = new Map <string, GLib.Type> ((Collection.CompareFunc)GLib.strcmp);
     }
 
     public static void

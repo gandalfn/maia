@@ -17,50 +17,109 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.List<T> : Vala.Collection<T>
+public class Maia.List<V> : Collection<V>
 {
+    // Types
+    [Compact]
+    private class Node<V>
+    {
+        public V m_Value;
+        public unowned Node<V>? m_Prev = null;
+        public Node<V>? m_Next = null;
+
+        public Node (owned V inValue) 
+        {
+            m_Value = inValue;
+        }
+    }
+
+    private class Iterator<V> : Maia.Iterator<V>
+    {
+        private bool m_Started = false;
+        private List<V> m_List;
+        private unowned Node<V>? m_Current;
+
+        public unowned Node<V>? current {
+            get {
+                return m_Current;
+            }
+        }
+
+        internal Iterator (List<V> inList, Node<V>? inNode = null)
+        {
+            m_List = inList;
+            m_Current = inNode;
+            stamp = m_List.stamp;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public override bool
+        next ()
+            requires (m_List.stamp == stamp)
+        {
+            bool ret = false;
+
+            if (!m_Started && m_List.m_Head != null)
+            {
+                m_Started = true;
+                m_Current = m_List.m_Head;
+                ret = true;
+            }
+            else if (m_Current != null && m_Current.m_Next != null)
+            {
+                m_Current = m_Current.m_Next;
+                ret = true;
+            }
+
+            return ret;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        public override V?
+        get ()
+            requires (m_List.stamp == stamp)
+            requires (m_Current != null)
+        {
+            return m_Current.m_Value;
+        }
+    }
+
     // Properties
     private int              m_Size = 0;
-    private Node<T>?         m_Head = null;
-    private unowned Node<T>? m_Tail = null;
-    private GLib.CompareFunc m_CompareFunc = null;
+    private Node<V>?         m_Head = null;
+    private unowned Node<V>? m_Tail = null;
 
     /**
      * {@inheritDoc}
      */
-    public override int size {
+    public override int nb_items {
         get {
             return m_Size;
         }
     }
 
-    /**
-     * The elements compare testing function.
-     */
-    public GLib.CompareFunc compare_func {
-        get {
-            return m_CompareFunc;
-        }
+    public class List (Collection.CompareFunc? inCompareFunc = null)
+    {
+        base (inCompareFunc);
     }
 
-    public class List (GLib.CompareFunc? inFunc = null)
+    private unowned Node<V>?
+    get_node (V inValue)
     {
-        m_CompareFunc = inFunc;
-    }
-
-    private unowned Node<T>?
-    get_node (T inData)
-    {
-        unowned Node<T>? ret = null;
+        unowned Node<V>? ret = null;
 
         // Search task node in queue
-        for (unowned Node<T> node = m_Head; node != null && ret == null; node = node.m_Next)
+        for (unowned Node<V> node = m_Head; node != null && ret == null; node = node.m_Next)
         {
-            if (m_CompareFunc != null && m_CompareFunc (node.m_Data, inData) == 0)
+            if (compare_func != null && compare_func ((void*)node.m_Value, (void*)inValue) == 0)
             {
                 ret = node;
             }
-            else if (m_CompareFunc == null && node.m_Data == inData)
+            else if (compare_func == null && node.m_Value == inValue)
             {
                 ret = node;
             }
@@ -70,10 +129,10 @@ public class Maia.List<T> : Vala.Collection<T>
     }
 
     private void
-    remove_node (Node<T> inNode)
+    remove_node (Node<V> inNode)
     {
-        Node<T> n;
-        unowned Node<T> next;
+        Node<V> n;
+        unowned Node<V> next;
 
         if (inNode == m_Head)
         {
@@ -97,37 +156,29 @@ public class Maia.List<T> : Vala.Collection<T>
 
         n.m_Prev = null;
         n.m_Next = null;
-        n.m_Data = null;
+        n.m_Value = null;
         m_Size--;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public override Type
-    get_element_type ()
-    {
-        return typeof (T);
+        stamp++;
     }
 
     /**
      * {@inheritDoc}
      */
     public override bool
-    contains (T inData)
+    contains (V inValue)
         requires (m_Size > 0)
     {
-        return get_node (inData) != null;
+        return get_node (inValue) != null;
     }
 
     /**
      * {@inheritDoc}
      */
-    public override bool
-    add (T inData)
+    public override void
+    insert (V inValue)
     {
         // Create new node
-        Node<T> new_node = new Node<T> (inData);
+        Node<V> new_node = new Node<V> (inValue);
 
         // List is empty
         if (m_Head == null && m_Tail == null)
@@ -136,20 +187,20 @@ public class Maia.List<T> : Vala.Collection<T>
             m_Head = (owned)new_node;
         }
         // Insert at end of list
-        else if (m_CompareFunc == null)
+        else if (compare_func == null)
         {
             new_node.m_Prev = m_Tail;
-            m_Tail.m_Next = (owned)new_node;
             m_Tail = new_node;
+            m_Tail.m_Prev.m_Next = (owned)new_node;
         }
         else
         {
-            unowned Node<T>? found = null;
+            unowned Node<V>? found = null;
 
             // Search node position
-            for (unowned Node<T> node = m_Tail; node != null; node = node.m_Prev)
+            for (unowned Node<V> node = m_Tail; node != null; node = node.m_Prev)
             {
-                if (m_CompareFunc (new_node.m_Data, node.m_Data) >= 0)
+                if (compare_func ((void*)new_node.m_Value, (void*)node.m_Value) >= 0)
                 {
                     found = node;
                     break;
@@ -175,45 +226,60 @@ public class Maia.List<T> : Vala.Collection<T>
 
         m_Size++;
 
-        return true;
+        stamp++;
     }
 
     /**
      * {@inheritDoc}
      */
-    public override bool
-    remove (T inData)
+    public override void
+    remove (V inValue)
         requires (m_Size > 0)
     {
-        bool ret = false;
-        unowned Node<T>? node = get_node (inData);
+        unowned Node<V>? node = get_node (inValue);
 
-        if (node != null)
-        {
-            remove_node (node);
-            ret = true;
-        }
-
-        return ret;
+        if (node != null) remove_node (node);
     }
 
     public void
     check ()
     {
-        if (m_CompareFunc != null)
+        if (compare_func != null)
         {
             // Check each node in queue
-            for (unowned Node<T> node = m_Head; node != null && node.m_Next != null; node = node.m_Next)
+            for (unowned Node<V> node = m_Head; node != null && node.m_Next != null; node = node.m_Next)
             {
-                if (m_CompareFunc (node.m_Data, node.m_Next.m_Data) > 0)
+                if (compare_func ((void*)node.m_Value, (void*)node.m_Next.m_Value) > 0)
                 {
                     // swap node data
-                    T swap = node.m_Data;
-                    node.m_Data = node.m_Next.m_Data;
-                    node.m_Next.m_Data = swap;
+                    V swap = node.m_Value;
+                    node.m_Value = node.m_Next.m_Value;
+                    node.m_Next.m_Value = swap;
                 }
             }
         }
+    }
+
+    /**
+     * Returns the iterator of the specified value in this list.
+     *
+     * @param inValue the value whose iterator is to be retrieved
+     *
+     * @return the iterator associated with the value, or null if the value
+     *         couldn't be found
+     */
+    public Maia.Iterator<V>?
+    @get (V inValue)
+    {
+        unowned Node<V> node = get_node (inValue);
+        Maia.Iterator<V> iterator = null;
+
+        if (node != null)
+        {
+            iterator = new Iterator<V> (this, node);
+        }
+
+        return iterator;
     }
 
     /**
@@ -227,86 +293,39 @@ public class Maia.List<T> : Vala.Collection<T>
         this.m_Size = 0;
     }
 
-    public T
+    public V
     first ()
         requires (m_Size > 0)
     {
-        return m_Head.m_Data;
+        return m_Head.m_Value;
     }
 
-    public T
+    public V
     last ()
         requires (m_Size > 0)
     {
-        return m_Tail.m_Data;
+        return m_Tail.m_Value;
     }
 
     /**
      * {@inheritDoc}
      */
-    public override Vala.Iterator<T>
+    public override Maia.Iterator<V>
     iterator ()
         requires (m_Size > 0)
     {
-        return new Iterator<T> (this);
+        return new Iterator<V> (this);
     }
 
-    [Compact]
-    private class Node<T>
+    /**
+     * {@inheritDoc}
+     */
+    public override void
+    erase (Maia.Iterator<V> inIterator)
+        requires (inIterator.stamp == stamp)
     {
-        public T m_Data;
-        public unowned Node<T>? m_Prev = null;
-        public Node<T>? m_Next = null;
+        Iterator<V> iter = inIterator as Iterator<V>;
 
-        public Node (owned T inData) 
-        {
-            m_Data = inData;
-        }
-    }
-
-    private class Iterator<T> : Vala.Iterator<T>
-    {
-        private bool m_Started = false;
-        private unowned Node<T>? m_Current;
-        private List<T> m_List;
-
-        internal Iterator (List<T> inList)
-        {
-            m_List = inList;
-            m_Current = null;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public override bool
-        next ()
-        {
-            bool ret = false;
-
-            if (!m_Started && m_List.m_Head != null)
-            {
-                m_Started = true;
-                m_Current = m_List.m_Head;
-                ret = true;
-            }
-            else if (m_Current != null && m_Current.m_Next != null)
-            {
-                m_Current = m_Current.m_Next;
-                ret = true;
-            }
-
-            return ret;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        public override T?
-        get ()
-            requires (m_Current != null)
-        {
-            return m_Current.m_Data;
-        }
-    }
+        remove_node (iter.current);
+   }
 }
