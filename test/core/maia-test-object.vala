@@ -40,6 +40,52 @@ public class Maia.FooObject : Maia.Object
     }
 }
 
+public class Maia.PooObject : Maia.Object
+{
+    public static Object
+    create_from_parameter (GLib.Parameter[] inProperties)
+    {
+        string id = null;
+        Object parent = null;
+        foreach (GLib.Parameter parameter in inProperties)
+        {
+            if (parameter.name == "id")
+                id = (string)parameter.value;
+            if (parameter.name == "parent")
+                parent = (Object)parameter.value;
+        }
+        return (Object)new PooObject (id, parent);
+    }
+
+    public PooObject (string? inId = null, Object? inParent = null)
+    {
+        base (inId, inParent);
+    }
+}
+
+public class Maia.TooObject : Maia.Object
+{
+    public static Object
+    create_from_parameter (GLib.Parameter[] inProperties)
+    {
+        string id = null;
+        Object parent = null;
+        foreach (GLib.Parameter parameter in inProperties)
+        {
+            if (parameter.name == "id")
+                id = (string)parameter.value;
+            if (parameter.name == "parent")
+                parent = (Object)parameter.value;
+        }
+        return (Object)new TooObject (id, parent);
+    }
+
+    public TooObject (string? inId = null, Object? inParent = null)
+    {
+        base (inId, inParent);
+    }
+}
+
 public class Maia.TestObject : Maia.TestCase
 {
     public TestObject ()
@@ -56,6 +102,8 @@ public class Maia.TestObject : Maia.TestCase
     set_up ()
     {
         Object.register (typeof (FooObject), FooObject.create_from_parameter);
+        Object.register (typeof (PooObject), PooObject.create_from_parameter);
+        Object.register (typeof (TooObject), TooObject.create_from_parameter);
     }
 
     public void
@@ -105,31 +153,31 @@ public class Maia.TestObject : Maia.TestCase
         assert (parent.id == "parent");
 
         parameters = new GLib.Parameter[2];
-        parameters[0] = { "id", "foo1" };
+        parameters[0] = { "id", "foo" };
         parameters[1] = { "parent", parent };
         Object foo1 = Object.newv (typeof (FooObject), parameters);
 
         assert (foo1 is FooObject);
-        assert (foo1.id == "foo1");
+        assert (foo1.id == "foo");
 
         parameters = new GLib.Parameter[2];
-        parameters[0] = { "id", "foo2" };
+        parameters[0] = { "id", "too" };
         parameters[1] = { "parent", parent };
-        Object foo2 = Object.newv (typeof (FooObject), parameters);
+        Object foo2 = Object.newv (typeof (PooObject), parameters);
 
-        assert (foo2 is FooObject);
-        assert (foo2.id == "foo2");
+        assert (foo2 is PooObject);
+        assert (foo2.id == "too");
 
         parameters = new GLib.Parameter[1];
         parameters[0] = { "parent", parent };
-        Object foo3 = Object.newv (typeof (FooObject), parameters);
+        Object foo3 = Object.newv (typeof (TooObject), parameters);
 
-        assert (foo3 is FooObject);
+        assert (foo3 is TooObject);
 
         assert (parent.childs.nb_items == 3);
-        assert ("foo1" in parent);
-        assert ("foo2" in parent);
-        assert (!("foo3" in parent));
+        assert ("foo" in parent);
+        assert ("too" in parent);
+        assert (!("poo" in parent));
     }
 
     public void
@@ -143,42 +191,42 @@ public class Maia.TestObject : Maia.TestCase
         assert (parent.id == "parent");
 
         parameters = new GLib.Parameter[2];
-        parameters[0] = { "id", "foo1" };
+        parameters[0] = { "id", "foo" };
         parameters[1] = { "parent", parent };
         Object foo1 = Object.newv (typeof (FooObject), parameters);
 
         assert (foo1 is FooObject);
 
         parameters = new GLib.Parameter[2];
-        parameters[0] = { "id", "foo2" };
+        parameters[0] = { "id", "poo" };
         parameters[1] = { "parent", parent };
-        Object foo2 = Object.newv (typeof (FooObject), parameters);
+        Object foo2 = Object.newv (typeof (PooObject), parameters);
 
-        assert (foo2 is FooObject);
+        assert (foo2 is PooObject);
 
         parameters = new GLib.Parameter[2];
-        parameters[0] = { "id", "foo3" };
+        parameters[0] = { "id", "too" };
         parameters[1] = { "parent", parent };
-        Object foo3 = Object.newv (typeof (FooObject), parameters);
+        Object foo3 = Object.newv (typeof (TooObject), parameters);
 
-        assert (foo3 is FooObject);
+        assert (foo3 is TooObject);
 
         assert (parent.childs.nb_items == 3);
 
-        bool found_foo1 = false,
-             found_foo2 = false,
-             found_foo3 = false;
+        bool found_foo = false,
+             found_poo = false,
+             found_too = false;
         foreach (Object object in parent.childs)
         {
-            if (object.id == "foo1")
-                found_foo1 = true;
-            else if (object.id == "foo2")
-                found_foo2 = true;
-            else if (object.id == "foo3")
-                found_foo3 = true;
+            if (object.id == "foo")
+                found_foo = true;
+            else if (object.id == "poo")
+                found_poo = true;
+            else if (object.id == "too")
+                found_too = true;
         }
-        assert (found_foo1);
-        assert (found_foo2);
-        assert (found_foo3);
+        assert (found_foo);
+        assert (found_poo);
+        assert (found_too);
     }
 }
