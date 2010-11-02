@@ -293,14 +293,14 @@ public class Maia.List<V> : Collection<V>
         this.m_Size = 0;
     }
 
-    public V
+    public unowned V?
     first ()
         requires (m_Size > 0)
     {
         return m_Head.m_Value;
     }
 
-    public V
+    public unowned V?
     last ()
         requires (m_Size > 0)
     {
