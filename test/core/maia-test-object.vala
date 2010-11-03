@@ -26,10 +26,18 @@ public class Maia.FooObject : Maia.Object
         Object parent = null;
         foreach (GLib.Parameter parameter in inProperties)
         {
-            if (parameter.name == "id")
-                id = (string)parameter.value;
-            if (parameter.name == "parent")
-                parent = (Object)parameter.value;
+            switch (parameter.name)
+            {
+                case "id":
+                    id = (string)parameter.value;
+                    break;
+                case "parent":
+                    parent = (Object)parameter.value;
+                    break;
+                default:
+                    assert (false);
+                    break;
+            }
         }
         return (Object)new FooObject (id, parent);
     }
@@ -49,10 +57,18 @@ public class Maia.PooObject : Maia.Object
         Object parent = null;
         foreach (GLib.Parameter parameter in inProperties)
         {
-            if (parameter.name == "id")
-                id = (string)parameter.value;
-            if (parameter.name == "parent")
-                parent = (Object)parameter.value;
+            switch (parameter.name)
+            {
+                case "id":
+                    id = (string)parameter.value;
+                    break;
+                case "parent":
+                    parent = (Object)parameter.value;
+                    break;
+                default:
+                    assert (false);
+                    break;
+            }
         }
         return (Object)new PooObject (id, parent);
     }
@@ -218,12 +234,21 @@ public class Maia.TestObject : Maia.TestCase
              found_too = false;
         foreach (Object object in parent.childs)
         {
-            if (object.id == "foo")
-                found_foo = true;
-            else if (object.id == "poo")
-                found_poo = true;
-            else if (object.id == "too")
-                found_too = true;
+            switch (object.id)
+            {
+                case "foo":
+                    found_foo = true;
+                    break;
+                case "poo":
+                    found_poo = true;
+                    break;
+                case "too":
+                    found_too = true;
+                    break;
+                default:
+                    assert (false);
+                    break;
+            }
         }
         assert (found_foo);
         assert (found_poo);
