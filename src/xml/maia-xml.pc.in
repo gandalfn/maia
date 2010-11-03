@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+includedir=@includedir@/maia-@MAIA_ABI@/xml
+
+Name: maia-xml-@MAIA_ABI@
+Description: Maia xml library
+Version: @MAIA_VERSION@
+Requires: maia-core-@MAIA_ABI@
+Libs: -L${libdir} -lmaia-xml
+Cflags: -I${includedir}

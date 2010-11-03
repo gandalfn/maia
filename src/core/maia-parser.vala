@@ -17,6 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+public errordomain Maia.ParseError
+{
+    OPEN,
+    INVALID,
+    PARSE,
+    NOT_SUPPORTED,
+    INVALID_UTF8,
+    INVALID_NAME
+}
+
 public abstract class Maia.Parser : Object
 {
     // Types
@@ -51,14 +61,14 @@ public abstract class Maia.Parser : Object
     }
 
     // Properties
-    private List<Callbacks?>   m_Callbacks = null;
+    private List<Callbacks?>      m_Callbacks = null;
 
-    protected char*            m_pBegin;
-    protected char*            m_pEnd;
-    protected char*            m_pCurrent;
-    protected string           m_Element    = null;
-    protected GLib.Parameter[] m_Attributes = null;
-    protected string           m_Text       = null;
+    protected char*               m_pBegin;
+    protected char*               m_pEnd;
+    protected char*               m_pCurrent;
+    protected string              m_Element    = null;
+    protected Map<string, string> m_Attributes = null;
+    protected string              m_Text       = null;
 
     // Accessors
     public string current_element {
@@ -68,8 +78,18 @@ public abstract class Maia.Parser : Object
     }
 
     public GLib.Parameter[] attributes {
-        get {
-            return m_Attributes;
+        owned get {
+            GLib.Parameter[] parameter = new GLib.Parameter[m_Attributes.nb_items];
+
+            int cpt = 0;
+            foreach (Pair<string, string> pair in m_Attributes)
+            {
+                parameter[cpt].name = pair.first;
+                parameter[cpt].value = pair.second;
+                cpt++;
+            }
+
+            return parameter;
         }
     }
 
@@ -102,8 +122,13 @@ public abstract class Maia.Parser : Object
     /**
      * Create a new parser
      */
-    public Parser (char* inpBegin, char* inpEnd)
+    public Parser (char* inpBegin, char* inpEnd) throws ParseError
     {
+        if (inpBegin <= inpEnd)
+        {
+            throw new ParseError.INVALID ("Invalid content");
+        }
+
         m_pBegin = inpBegin;
         m_pEnd = inpEnd;
         m_pCurrent = m_pBegin;
@@ -119,7 +144,7 @@ public abstract class Maia.Parser : Object
             m_pCurrent++;
     }
 
-    protected abstract Token next_token ();
+    protected abstract Token next_token () throws ParseError;
 
     public void
     push ()
@@ -138,7 +163,7 @@ public abstract class Maia.Parser : Object
     }
 
     public void
-    parse ()
+    parse () throws ParseError
     {
         Token token = next_token ();
 
@@ -149,7 +174,7 @@ public abstract class Maia.Parser : Object
                 case Token.START_ELEMENT:
                     StartElementFunc func = m_Callbacks.last().m_StartElementFunc;
                     if (func != null) 
-                        func (this, m_Element, m_Attributes);
+                        func (this, m_Element, attributes);
                     break;
                 case Token.TEXT:
                     TextFunc func = m_Callbacks.last().m_TextFunc;

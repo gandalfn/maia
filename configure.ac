@@ -96,6 +96,8 @@ src/maia.pc
 src/Makefile
 src/core/maia-core.pc
 src/core/Makefile
+src/xml/maia-xml.pc
+src/xml/Makefile
 test/Makefile
 vapi/Makefile
 po/Makefile.in])

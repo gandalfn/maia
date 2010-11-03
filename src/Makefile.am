@@ -1,11 +1,14 @@
 MAIA_LIB_NAME = maia
-MAIA_VAPI_DEPS = $(top_builddir)/src/core/maia-core-$(MAIA_ABI).vapi
+
+MAIA_VAPI_DEPS = \
+    $(top_builddir)/src/core/maia-core-$(MAIA_ABI).vapi \
+    $(top_builddir)/src/xml/maia-xml-$(MAIA_ABI).vapi
 
 include $(top_srcdir)/build/maia.am
 include $(top_srcdir)/build/pkgconfig.am
 include $(top_srcdir)/build/vapi.am
 
-SUBDIRS = core
+SUBDIRS = core xml
 
 maia.h: libmaia_la_vala.stamp
 
