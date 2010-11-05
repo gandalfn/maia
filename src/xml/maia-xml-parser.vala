@@ -79,6 +79,21 @@ public class Maia.XmlParser : Parser
         }
     }
 
+    private void
+    skip_processing_instruction ()
+    {
+        m_pCurrent++;
+        while (m_pCurrent < m_pEnd - 1)
+        {
+            if (m_pCurrent[0] == '?' && m_pCurrent[1] == '>')
+            {
+                m_pCurrent += 2;
+                break;
+            }
+            m_pCurrent++;
+        }
+    }
+
     private string
     read_name () throws ParseError
     {
@@ -106,6 +121,8 @@ public class Maia.XmlParser : Parser
     private void
     read_attributes () throws ParseError
     {
+        m_Attributes = new Map<string, string> ((Collection.CompareFunc)GLib.strcmp);
+
         while (m_pCurrent < m_pEnd && m_pCurrent[0] != '>' && m_pCurrent[0] != '/')
         {
             string name = read_name ();
@@ -117,7 +134,7 @@ public class Maia.XmlParser : Parser
                 throw new ParseError.PARSE ("Unexpected end of element %s", m_Element);
 
             m_pCurrent++;
-            string value = "";
+            string val = "";
             //string val = text ('"', false);
 
             if (m_pCurrent >= m_pEnd || m_pCurrent[0] != '"')
@@ -125,7 +142,7 @@ public class Maia.XmlParser : Parser
 
             m_pCurrent++;
 
-            m_Attributes[name] = value;
+            m_Attributes[name] = val;
             skip_space ();
         }
     }
@@ -150,7 +167,8 @@ public class Maia.XmlParser : Parser
             }
             else if (m_pCurrent[0] == '?')
             {
-                throw new ParseError.NOT_SUPPORTED ("Processing is not yet supported");
+                skip_processing_instruction ();
+                token = next_token ();
             }
             else if (m_pCurrent[0] == '!')
             {

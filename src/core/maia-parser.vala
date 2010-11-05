@@ -30,90 +30,65 @@ public errordomain Maia.ParseError
 public abstract class Maia.Parser : Object
 {
     // Types
-    public delegate void StartElementFunc (Parser inParser, string inName,
-                                           GLib.Parameter[] inParameter);
-    public delegate void TextFunc         (Parser inParser, string inText);
-    public delegate void EndElementFunc   (Parser inParser, string inName);
-
     public enum Token
     {
         NONE,
         START_ELEMENT,
-        TEXT,
         END_ELEMENT,
+        CHARACTERS,
         EOF
     }
 
-    private struct Callbacks
+    public class Iterator
     {
-        public StartElementFunc   m_StartElementFunc;
-        public TextFunc           m_TextFunc;
-        public EndElementFunc     m_EndElementFunc;
+        private Parser       m_Parser;
+        private Parser.Token m_Current;
 
-        public Callbacks (StartElementFunc? inStartElementFunc,
-                          TextFunc?         inTextFunc,
-                          EndElementFunc?   inEndElementFunc)
+        internal Iterator (Parser inParser)
         {
-            m_StartElementFunc = inStartElementFunc;
-            m_TextFunc = inTextFunc;
-            m_EndElementFunc = inEndElementFunc;
+            m_Parser = inParser;
+        }
+
+        public bool
+        next () throws ParseError
+        {
+            m_Current = m_Parser.next_token ();
+
+            return m_Current != Parser.Token.EOF;
+        }
+
+        public unowned Token
+        get ()
+        {
+            return m_Current;
         }
     }
 
     // Properties
-    private List<Callbacks?>      m_Callbacks = null;
-
     protected char*               m_pBegin;
     protected char*               m_pEnd;
     protected char*               m_pCurrent;
+
     protected string              m_Element    = null;
     protected Map<string, string> m_Attributes = null;
-    protected string              m_Text       = null;
+    protected string              m_Characters = null;
 
     // Accessors
-    public string current_element {
+    public string element {
         get {
             return m_Element;
         }
     }
 
-    public GLib.Parameter[] attributes {
-        owned get {
-            GLib.Parameter[] parameter = new GLib.Parameter[m_Attributes.nb_items];
-
-            int cpt = 0;
-            foreach (Pair<string, string> pair in m_Attributes)
-            {
-                parameter[cpt].name = pair.first;
-                parameter[cpt].value = pair.second;
-                cpt++;
-            }
-
-            return parameter;
-        }
-    }
-
-    public string text {
+    public Map<string, string> attributes {
         get {
-            return m_Text;
+            return m_Attributes;
         }
     }
 
-    public StartElementFunc start_element {
-        set {
-            m_Callbacks.last().m_StartElementFunc = value;
-        }
-    }
-
-    public TextFunc text_element {
-        set {
-            m_Callbacks.last().m_TextFunc = value;
-        }
-    }
-
-    public EndElementFunc end_element {
-        set {
-            m_Callbacks.last().m_EndElementFunc = value;
+    public string characters {
+        get {
+            return m_Characters;
         }
     }
 
@@ -132,64 +107,23 @@ public abstract class Maia.Parser : Object
         m_pBegin = inpBegin;
         m_pEnd = inpEnd;
         m_pCurrent = m_pBegin;
-
-        m_Callbacks = new List<Callbacks?> ();
-        push ();
     }
 
     protected void
     skip_space ()
     {
-        while (m_pCurrent < m_pEnd && m_pCurrent[0].isspace ())
+        while (m_pCurrent < m_pEnd && 
+               (m_pCurrent[0] == ' '  || m_pCurrent[0] == '\n' ||
+                m_pCurrent[0] == '\r' || m_pCurrent[0] == '\t'))
             m_pCurrent++;
     }
 
     protected abstract Token next_token () throws ParseError;
 
-    public void
-    push ()
+    public Iterator
+    iterator ()
     {
-        m_Callbacks.insert (Callbacks (null, null, null));
-    }
-
-    public void
-    pop ()
-    {
-        if (m_Callbacks.nb_items > 1)
-        {
-            Iterator<Callbacks?> iterator = m_Callbacks[m_Callbacks.last ()];
-            m_Callbacks.erase (iterator);
-        }
-    }
-
-    public void
-    parse () throws ParseError
-    {
-        Token token = next_token ();
-
-        while (token != Token.EOF)
-        {
-            switch (token)
-            {
-                case Token.START_ELEMENT:
-                    StartElementFunc func = m_Callbacks.last().m_StartElementFunc;
-                    if (func != null) 
-                        func (this, m_Element, attributes);
-                    break;
-                case Token.TEXT:
-                    TextFunc func = m_Callbacks.last().m_TextFunc;
-                    if (func != null) 
-                        func (this, m_Text);
-                    break;
-                case Token.END_ELEMENT:
-                    EndElementFunc func = m_Callbacks.last().m_EndElementFunc;
-                    if (func != null) 
-                        func (this, m_Element);
-                    break;
-                default:
-                    break;
-            }
-            token = next_token ();
-        }
+        m_pCurrent = m_pBegin;
+        return new Iterator (this);
     }
 }
