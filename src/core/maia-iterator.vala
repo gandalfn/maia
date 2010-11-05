@@ -37,5 +37,5 @@ public abstract class Maia.Iterator<V>
      *
      * @return the current element in the iteration
      */
-    public abstract V? get ();
+    public abstract unowned V? get ();
 }

@@ -79,7 +79,7 @@ public class Maia.List<V> : Collection<V>
         /**
          * {@inheritDoc}
          */
-        public override V?
+        public override unowned V?
         get ()
             requires (m_List.stamp == stamp)
             requires (m_Current != null)

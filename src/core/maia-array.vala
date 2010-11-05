@@ -63,7 +63,7 @@ public class Maia.Array <V> : Collection <V>
             return ret;
         }
 
-        public override V?
+        public override unowned V?
         get ()
             requires (m_Array.stamp == stamp)
             requires (m_Index >= 0)

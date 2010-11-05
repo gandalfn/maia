@@ -176,7 +176,7 @@ public class Maia.Set<V> : Collection<V>
         /**
          * {@inheritDoc}
          */
-        public override V?
+        public override unowned V?
         @get ()
             requires (m_Set.stamp == stamp)
         {
