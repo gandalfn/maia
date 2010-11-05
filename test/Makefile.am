@@ -16,12 +16,15 @@ maia_test_SOURCES = \
     core/maia-test-set.vala \
     core/maia-test-map.vala \
     core/maia-test-object.vala \
-    core/maia-test-task-queue.vala
+    core/maia-test-task-queue.vala \
+    xml/maia-test-xml.vala \
+    xml/maia-test-parser.vala
 
 maia_test_LDADD = \
     $(MAIA_LIBS) \
     ${top_builddir}/src/libmaia.la \
-    ${top_builddir}/src/core/libmaia-core.la
+    ${top_builddir}/src/core/libmaia-core.la \
+    ${top_builddir}/src/xml/libmaia-xml.la
 
 VALAFILES = \
     $(filter %.vala,$(maia_test_SOURCES))

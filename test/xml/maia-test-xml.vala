@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-test.vala
+ * maia-test-xml.vala
  * Copyright (C) Nicolas Bruguier 2010 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,12 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-void main (string[] args)
+public class Maia.TestXml : Maia.TestCase
 {
-    Test.init (ref args);
+    public TestXml ()
+    {
+        base ("xml");
 
-    TestSuite.get_root ().add_suite (new Maia.TestCore ().suite);
-    TestSuite.get_root ().add_suite (new Maia.TestXml ().suite);
-
-    Test.run ();
+        suite.add_suite (new TestParser ().suite);
+    }
 }

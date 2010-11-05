@@ -22,6 +22,7 @@ public class Maia.XmlParser : Parser
     // Properties
     private string      m_Filename = null;
     private MappedFile  m_File;
+    private bool        m_EmptyElement = false;
 
     // Methods
 
@@ -54,7 +55,7 @@ public class Maia.XmlParser : Parser
      */
     public XmlParser.from_buffer (string inContent, long inLength) throws ParseError
     {
-        char* begin = inContent;
+        char* begin = (char*)inContent;
         char* end = begin + inLength;
 
         base (begin, end);
@@ -134,8 +135,7 @@ public class Maia.XmlParser : Parser
                 throw new ParseError.PARSE ("Unexpected end of element %s", m_Element);
 
             m_pCurrent++;
-            string val = "";
-            //string val = text ('"', false);
+            string val = text ('"', false);
 
             if (m_pCurrent >= m_pEnd || m_pCurrent[0] != '"')
                 throw new ParseError.PARSE ("Unexpected end of element %s", m_Element);
@@ -147,10 +147,99 @@ public class Maia.XmlParser : Parser
         }
     }
 
-    public override Parser.Token
+    private string
+    text (char inEndChar, bool inRmTrailingWhitespace) throws ParseError
+    {
+        StringBuilder content = new StringBuilder ();
+        char* text_begin = m_pCurrent;
+        char* last_linebreak = m_pCurrent;
+
+        while (m_pCurrent < m_pEnd && m_pCurrent[0] != inEndChar)
+        {
+            unichar u = ((string) m_pCurrent).get_char_validated ((long) (m_pEnd - m_pCurrent));
+            if (u == (unichar) (-1))
+            {
+                throw new ParseError.INVALID_UTF8 ("invalid UTF-8 character");
+            }
+            else if (u == '&')
+            {
+                char* next_pos = m_pCurrent + u.to_utf8 (null);
+                if (((string) next_pos).has_prefix ("amp;"))
+                {
+                    content.append (((string) text_begin).ndup (m_pCurrent - text_begin));
+                    content.append_c ('&');
+                    m_pCurrent += 5;
+                    text_begin = m_pCurrent;
+                }
+                else if (((string) next_pos).has_prefix ("quot;"))
+                {
+                    content.append (((string) text_begin).ndup (m_pCurrent - text_begin));
+                    content.append_c ('"');
+                    m_pCurrent += 6;
+                    text_begin = m_pCurrent;
+                }
+                else if (((string) next_pos).has_prefix ("apos;"))
+                {
+                    content.append (((string) text_begin).ndup (m_pCurrent - text_begin));
+                    content.append_c ('\'');
+                    m_pCurrent += 6;
+                    text_begin = m_pCurrent;
+                }
+                else if (((string) next_pos).has_prefix ("lt;"))
+                {
+                    content.append (((string) text_begin).ndup (m_pCurrent - text_begin));
+                    content.append_c ('<');
+                    m_pCurrent += 4;
+                    text_begin = m_pCurrent;
+                }
+                else if (((string) next_pos).has_prefix ("gt;"))
+                {
+                    content.append (((string) text_begin).ndup (m_pCurrent - text_begin));
+                    content.append_c ('>');
+                    m_pCurrent += 4;
+                    text_begin = m_pCurrent;
+                }
+                else
+                {
+                    m_pCurrent += u.to_utf8 (null);
+                }
+            }
+            else
+            {
+                if (u == '\n')
+                {
+                    last_linebreak = m_pCurrent;
+                }
+
+                m_pCurrent += u.to_utf8 (null);
+            }
+        }
+
+        if (text_begin != m_pCurrent)
+        {
+            content.append (((string) text_begin).ndup (m_pCurrent - text_begin));
+        }
+
+        if (inRmTrailingWhitespace)
+        {
+            char* str_pos = ((char*)content.str) + content.len;
+            for (str_pos--; str_pos > ((char*)content.str) && str_pos[0].isspace(); str_pos--);
+            content.erase ((ssize_t) (str_pos-((char*) content.str) + 1), -1);
+        }
+
+        return content.str;
+    }
+
+    protected override Parser.Token
     next_token () throws ParseError
     {
         Parser.Token token = Parser.Token.NONE;
+
+        if (m_EmptyElement)
+        {
+            m_EmptyElement = false;
+            return Parser.Token.END_ELEMENT;
+        }
 
         skip_space ();
 
@@ -189,7 +278,39 @@ public class Maia.XmlParser : Parser
                 token = Parser.Token.START_ELEMENT;
                 m_Element = read_name ();
                 skip_space ();
+                read_attributes ();
+
+                if (m_pCurrent[0] == '/')
+                {
+                    m_EmptyElement = true;
+                    m_pCurrent++;
+                    skip_space ();
+                }
+                else
+                {
+                    m_EmptyElement = false;
+                }
+                if (m_pCurrent >= m_pEnd || m_pCurrent[0] != '>')
+                {
+                    throw new ParseError.PARSE ("Unexpected end of element %s", m_Element);
+                }
+                m_pCurrent++;
             }
+        }
+        else
+        {
+            skip_space ();
+
+            if (m_pCurrent[0] != '<')
+            {
+                m_Characters = text ('<', true);
+            }
+            else
+            {
+                return next_token ();
+            }
+
+            token = Parser.Token.CHARACTERS;
         }
 
         return token;

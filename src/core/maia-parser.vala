@@ -99,7 +99,7 @@ public abstract class Maia.Parser : Object
      */
     public Parser (char* inpBegin, char* inpEnd) throws ParseError
     {
-        if (inpBegin <= inpEnd)
+        if (inpBegin >= inpEnd)
         {
             throw new ParseError.INVALID ("Invalid content");
         }
