@@ -23,17 +23,18 @@ public abstract class Maia.Object
     [CCode (has_target = false)]
     public delegate Object CreateFromParameter (GLib.Parameter[] inProperties);
     [CCode (has_target = false)]
-    public delegate Object CreateFromString (string inContent);
+    public delegate Object CreateFromString (string inValue);
 
     private struct CreateVTable
     {
-        public GLib.Type           type;
         public CreateFromParameter create_from_paramaters;
+        public CreateFromString    create_from_string;
 
-        public CreateVTable (GLib.Type inType, CreateFromParameter inCreateFromParameters)
+        public CreateVTable (CreateFromParameter? inCreateFromParameters,
+                             CreateFromString? inCreateFromString)
         {
-            type = inType;
             create_from_paramaters = inCreateFromParameters;
+            create_from_string = inCreateFromString;
         }
     }
 
@@ -121,6 +122,26 @@ public abstract class Maia.Object
         return inA > inB ? 1 : (inA < inB ? -1 : 0);
     }
 
+    static void
+    object_to_string (GLib.Value inSrc, out GLib.Value outDest)
+    {
+        outDest = ((Object)inSrc).to_string ();
+    }
+
+    static void
+    string_to_object (GLib.Value inSrc, out GLib.Value outDest)
+    {
+        if (s_Factory != null)
+        {
+            CreateVTable? vtable = s_Factory[outDest.get_gtype()];
+
+            if (vtable != null)
+            {
+                outDest = vtable.create_from_string ((string)inSrc);
+            }
+        }
+    }
+
     protected Object (string? inId = null, Object? inParent = null)
     {
         // Set properties
@@ -166,14 +187,26 @@ public abstract class Maia.Object
     }
 
     /**
+     * Returns string representation of object
+     *
+     * @return string representation of object
+     */
+    public virtual string
+    to_string ()
+    {
+        return m_Id;
+    }
+
+    /**
      * Register a create function for a specified type. The function can be
      * called multiple time but only first call is really effective
      *
      * @param inType type to register
-     * @param inFunc create function
+     * @param inFromParameters create function with parameters
+     * @param inFromString create function with string (optional)
      */
     public static void
-    register (GLib.Type inType, CreateFromParameter? inFromParameters)
+    register (GLib.Type inType, CreateFromParameter inFromParameters, CreateFromString? inFromString = null)
     {
         if (s_Factory == null)
             s_Factory = new Map<GLib.Type, CreateVTable?> ((Collection.CompareFunc)compare_type);
@@ -181,7 +214,17 @@ public abstract class Maia.Object
         CreateVTable? vtable = s_Factory[inType];
 
         if (vtable == null)
-            s_Factory[inType] = CreateVTable (inType, inFromParameters);
+        {
+            s_Factory[inType] = CreateVTable (inFromParameters, inFromString);
+
+            if (inFromString != null)
+            {
+                GLib.Value.register_transform_func (typeof (string), inType,
+                                                    (ValueTransform)string_to_object);
+                GLib.Value.register_transform_func (inType, typeof (string),
+                                                    (ValueTransform)object_to_string);
+            }
+        }
     }
 
     /**
@@ -190,6 +233,8 @@ public abstract class Maia.Object
      *
      * @param inType type of object
      * @param inProperties array of properties to pass of creation of object
+     *
+     * @return Object
      */
     public static Object?
     newv (GLib.Type inType, GLib.Parameter[] inProperties)

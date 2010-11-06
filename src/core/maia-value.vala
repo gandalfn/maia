@@ -21,7 +21,7 @@ namespace Maia.Value
 {
     private static bool s_SimpleTypeRegistered = false;
 
-    internal static void
+    static void
     register_simple_type ()
     {
         GLib.Value.register_transform_func (typeof (string), typeof (double),

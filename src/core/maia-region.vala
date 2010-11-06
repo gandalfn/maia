@@ -273,7 +273,7 @@ public class Maia.Region : Object
      *
      * @return string representation
      */
-    public string
+    public override string
     to_string ()
     {
         bool first = false;
