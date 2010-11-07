@@ -73,7 +73,7 @@ public class Maia.Transform
     private Maia.Matrix? m_FinalMatrix = null;
 
     // Matrix queue
-    private Vala.HashMap<uint32, Transform> m_Queue;
+    private Map<uint32, Transform> m_Queue;
 
     public Maia.Matrix matrix {
         get {
@@ -83,6 +83,12 @@ public class Maia.Transform
 
     public signal void changed ();
 
+    private int
+    compare_uint32 (uint32 inA, uint32 inB)
+    {
+        return inA < inB ? - 1 : (inA > inB ? 1 : 0);
+    }
+
     /**
      * Create a new transform stack
      */
@@ -90,7 +96,7 @@ public class Maia.Transform
                       double inXy, double inYy,
                       double inX0, double inY0)
     {
-        m_Queue = new Vala.HashMap<uint32, Transform> ();
+        m_Queue = new Map<uint32, Transform> ((Collection.CompareFunc)compare_uint32);
         m_BaseMatrix = Matrix (inXx, inXy, inYx, inYy, inY0, inY0);
         m_FinalMatrix = (owned)m_BaseMatrix;
     }
@@ -100,7 +106,7 @@ public class Maia.Transform
      */
     public Transform.identity ()
     {
-        m_Queue = new Vala.HashMap<uint32, Transform> ();
+        m_Queue = new Map<uint32, Transform> ((Collection.CompareFunc)compare_uint32);
         m_BaseMatrix = Matrix.identity ();
         m_FinalMatrix = (owned)m_BaseMatrix;
     }
@@ -109,8 +115,8 @@ public class Maia.Transform
     recalculate_final_matrix ()
     {
         m_FinalMatrix = (owned)m_BaseMatrix;
-        foreach (uint32 k in m_Queue.get_keys ())
-            m_FinalMatrix.multiply (m_Queue[k].m_FinalMatrix);
+        foreach (Pair<uint32, Transform> pair in m_Queue)
+            m_FinalMatrix.multiply (pair.second.m_FinalMatrix);
     }
 
     /**
@@ -248,7 +254,7 @@ public class Maia.Transform
             m_Queue[inKey].changed.connect (recalculate_final_matrix);
 
             // remove transform in queue if exist
-            m_Queue.remove (inKey);
+            m_Queue.unset (inKey);
 
             // recalculate final matrix
             recalculate_final_matrix ();

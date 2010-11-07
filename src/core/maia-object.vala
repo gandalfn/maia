@@ -39,13 +39,13 @@ public abstract class Maia.Object
     }
 
     // Static properties
-    static Map<GLib.Type, CreateVTable?>            s_Factory = null;
+    static Map<GLib.Type, CreateVTable?> s_Factory = null;
 
     // Properties
-    private string                                  m_Id = null;
-    private unowned Object                          m_Parent = null;
-    private List<Object>                            m_Childs = null; 
-    private Map<string, unowned Object>             m_IdentifiedChilds = null;
+    private string                       m_Id = null;
+    private unowned Object               m_Parent = null;
+    private List<Object>                 m_Childs = null; 
+    private Map<string, unowned Object>  m_IdentifiedChilds = null;
 
     // Accessors
 

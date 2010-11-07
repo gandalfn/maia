@@ -75,7 +75,6 @@ dnl ****************************************************************************
 PKG_CHECK_MODULES(MAIA, [glib-2.0 >= $GLIB_REQUIRED
                          gobject-2.0 >= $GLIB_REQUIRED
                          gmodule-2.0 >= $GLIB_REQUIRED
-                         libvala-0.12 >= $VALA_REQUIRED
                          pixman-1 >= $PIXMAN_REQUIRED])
 AC_SUBST(MAIA_CFLAGS)
 AC_SUBST(MAIA_LIBS)
