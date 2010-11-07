@@ -64,7 +64,7 @@ public struct Maia.Matrix
     }
 }
 
-public class Maia.Transform
+public class Maia.Transform : Object
 {
     // Base matrix
     private Maia.Matrix? m_BaseMatrix = null;
@@ -81,7 +81,7 @@ public class Maia.Transform
         }
     }
 
-    public signal void changed ();
+    public Notification changed;
 
     private int
     compare_uint32 (uint32 inA, uint32 inB)
@@ -97,6 +97,7 @@ public class Maia.Transform
                       double inX0, double inY0)
     {
         m_Queue = new Map<uint32, Transform> ((Collection.CompareFunc)compare_uint32);
+        changed = new Notification ("changed", this);
         m_BaseMatrix = Matrix (inXx, inXy, inYx, inYy, inY0, inY0);
         m_FinalMatrix = (owned)m_BaseMatrix;
     }
@@ -136,7 +137,7 @@ public class Maia.Transform
         recalculate_final_matrix ();
 
         // send changed signal
-        changed ();
+        changed.post ();
     }
 
     /**
@@ -156,7 +157,7 @@ public class Maia.Transform
         recalculate_final_matrix ();
 
         // send changed signal
-        changed ();
+        changed.post ();
     }
 
     /**
@@ -177,7 +178,7 @@ public class Maia.Transform
         recalculate_final_matrix ();
 
         // send changed signal
-        changed ();
+        changed.post ();
     }
 
     /**
@@ -196,7 +197,7 @@ public class Maia.Transform
         recalculate_final_matrix ();
 
         // send changed signal
-        changed ();
+        changed.post ();
     }
 
     /**
@@ -215,7 +216,7 @@ public class Maia.Transform
         recalculate_final_matrix ();
 
         // send changed signal
-        changed ();
+        changed.post ();
     }
 
     /**
@@ -236,7 +237,7 @@ public class Maia.Transform
             recalculate_final_matrix ();
 
             // connect on transform changed signal
-            inTransform.changed.connect (recalculate_final_matrix);
+            inTransform.changed.watch (recalculate_final_matrix);
         }
     }
 
@@ -251,7 +252,7 @@ public class Maia.Transform
         if (inKey in m_Queue)
         {
             // disconnect from transform changed
-            m_Queue[inKey].changed.connect (recalculate_final_matrix);
+            m_Queue[inKey].changed.unwatch (recalculate_final_matrix);
 
             // remove transform in queue if exist
             m_Queue.unset (inKey);
