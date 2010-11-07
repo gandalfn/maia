@@ -1,4 +1,4 @@
-SUBDIRS = src test vapi po
+SUBDIRS = lib test vapi po
 
 maiadocdir = ${prefix}/doc/maia
 maiadoc_DATA = \

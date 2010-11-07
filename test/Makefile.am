@@ -1,7 +1,7 @@
 MAIA_VAPI_DEPS = \
-    $(top_builddir)/src/maia-$(MAIA_ABI).vapi \
-    $(top_builddir)/src/core/maia-core-$(MAIA_ABI).vapi \
-    $(top_builddir)/src/xml/maia-xml-$(MAIA_ABI).vapi
+    $(top_builddir)/lib/maia-$(MAIA_ABI).vapi \
+    $(top_builddir)/lib/core/maia-core-$(MAIA_ABI).vapi \
+    $(top_builddir)/lib/xml/maia-xml-$(MAIA_ABI).vapi
 
 include $(top_srcdir)/build/maia.am
 
@@ -22,9 +22,9 @@ maia_test_SOURCES = \
 
 maia_test_LDADD = \
     $(MAIA_LIBS) \
-    ${top_builddir}/src/libmaia.la \
-    ${top_builddir}/src/core/libmaia-core.la \
-    ${top_builddir}/src/xml/libmaia-xml.la
+    ${top_builddir}/lib/libmaia.la \
+    ${top_builddir}/lib/core/libmaia-core.la \
+    ${top_builddir}/lib/xml/libmaia-xml.la
 
 VALAFILES = \
     $(filter %.vala,$(maia_test_SOURCES))

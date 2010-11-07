@@ -7,7 +7,7 @@ AC_PREREQ(2.63)
 dnl ****************************************************************************
 dnl Define default build directory
 dnl ****************************************************************************
-AC_CONFIG_SRCDIR(src/maia.pc.in)
+AC_CONFIG_SRCDIR(lib/maia.pc.in)
 AC_CONFIG_AUX_DIR([build])
 AC_CONFIG_MACRO_DIR([build])
 AC_CONFIG_HEADERS(build/config.h)
@@ -91,12 +91,12 @@ dnl Generate outputs
 dnl ****************************************************************************
 AC_CONFIG_FILES([
 Makefile
-src/maia.pc
-src/Makefile
-src/core/maia-core.pc
-src/core/Makefile
-src/xml/maia-xml.pc
-src/xml/Makefile
+lib/maia.pc
+lib/Makefile
+lib/core/maia-core.pc
+lib/core/Makefile
+lib/xml/maia-xml.pc
+lib/xml/Makefile
 test/Makefile
 vapi/Makefile
 po/Makefile.in])
