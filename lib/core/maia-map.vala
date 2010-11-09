@@ -24,8 +24,8 @@ public class Maia.Map <K, V> : Set <Pair <K, V>>
     private Collection.ToStringFunc m_ToStringFunc;
     private Pair<K, V>              m_SearchKey;
 
-    public class Map (Collection.CompareFunc inCompareFunc,
-                      Collection.ToStringFunc? inToStringFunc = null)
+    public Map (Collection.CompareFunc inCompareFunc,
+                Collection.ToStringFunc? inToStringFunc = null)
     {
         base.inherit ();
 

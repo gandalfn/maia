@@ -197,12 +197,12 @@ public class Maia.Set<V> : Collection<V>
         }
     }
 
-    public class Set (Collection.CompareFunc inCompareFunc, Collection.ToStringFunc? inToStringFunc = null)
+    public Set (Collection.CompareFunc inCompareFunc, Collection.ToStringFunc? inToStringFunc = null)
     {
         base (inCompareFunc, inToStringFunc);
     }
 
-    internal class Set.inherit ()
+    internal Set.inherit ()
     {
         base (null, null);
     }
