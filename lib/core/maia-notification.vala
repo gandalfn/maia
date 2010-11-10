@@ -29,40 +29,13 @@ public class Maia.Notification
         [CCode (has_target = false)]
         public delegate void ActionFunc (void* inTarget, Args inArgs);
 
-        private unowned Notification m_Notification;
         private ActionFunc           m_Func;
         private void*                m_Target;
 
-        internal Notification notification {
-            get {
-                return m_Notification;
-            }
-        }
-
-        internal ActionFunc func {
-            get {
-                return m_Func;
-            }
-        }
-
-        internal void* target {
-            get {
-                return m_Target;
-            }
-        } 
-
-        internal Observer (Notification inNotification, ActionFunc inFunc, void* inTarget)
+        protected Observer (ActionFunc inFunc, void* inTarget)
         {
-            m_Notification = inNotification;
             m_Func = inFunc;
             m_Target = inTarget;
-
-            m_Notification.m_Observers.insert (this);
-        }
-
-        ~Observer ()
-        {
-            unwatch ();
         }
 
         internal void
@@ -71,22 +44,17 @@ public class Maia.Notification
             m_Func (m_Target, inArgs);
         }
 
-        public void
-        unwatch ()
+        internal bool
+        equals (Observer inOther)
         {
-            if (m_Notification != null)
-            {
-                m_Notification.m_Observers.remove (this);
-
-                m_Notification = null;
-            }
+            return m_Func == inOther.m_Func && m_Target == inOther.m_Target;
         }
     }
 
     // properties
-    private string         m_Name;
-    private Object         m_Owner;
-    private List<Observer> m_Observers;
+    private string          m_Name;
+    private Object          m_Owner;
+    private Array<Observer> m_Observers;
 
     // accessors
     public string name {
@@ -113,7 +81,7 @@ public class Maia.Notification
     {
         m_Name = inName;
         m_Owner = inOwner;
-        m_Observers = new List<Observer> ();
+        m_Observers = new Array<Observer> ();
     }
 
     /**
@@ -127,33 +95,25 @@ public class Maia.Notification
     }
 
     /**
-     * Watch the notification
+     * Add an observer to notification
      *
-     * @param inFunc function to call on notification post
+     * @param inObserver observer to add to notification
      */
-    public Observer
-    watch (Observer.ActionFunc inFunc, void* inTarget = null)
+    public void
+    watch (Observer inObserver)
     {
-        return new Observer (this, inFunc, inTarget);
+        m_Observers.insert (inObserver);
     }
 
     /**
-     * Unwatch a notification
+     * Remove an observer from notification
      *
-     * @param inFunc function to remove from notification watch
+     * @param inObserver observer to remove from notification
      */
     public void
-    unwatch (Observer.ActionFunc inFunc, void* inTarget = null)
+    unwatch (Observer inObserver)
     {
-        foreach (unowned Observer observer in m_Observers)
-        {
-            if (observer.notification == this &&
-                observer.func == inFunc &&
-                observer.target == inTarget)
-            {
-                observer.unwatch ();
-                break;
-            }
-        }
+        Iterator<Observer> iter = m_Observers[inObserver];
+        if (iter != null) m_Observers.erase (iter);
     }
 }
