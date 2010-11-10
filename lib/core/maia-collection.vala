@@ -20,10 +20,12 @@
 public abstract class Maia.Collection<V>
 {
     // Types
+    public delegate bool EqualFunc (void* inA, void* inB);
     public delegate int CompareFunc (void* inA, void* inB);
     public delegate string ToStringFunc (void* inValue);
 
     // Properties
+    internal EqualFunc    equal_func;
     internal CompareFunc  compare_func;
     internal ToStringFunc to_string_func;
     internal int          stamp;
@@ -31,6 +33,7 @@ public abstract class Maia.Collection<V>
     // Methods
     public Collection (CompareFunc? inCompareFunc = null, ToStringFunc? inToStringFunc = null)
     {
+        equal_func = null;
         compare_func = inCompareFunc;
         to_string_func = inToStringFunc;
         stamp = 0;

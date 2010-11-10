@@ -86,9 +86,18 @@ public class Maia.Array <V> : Collection <V>
     }
 
     // Methods
-    public Array (Collection.ToStringFunc? inToStringFunc = null)
+    static bool
+    direct_equal_func (V inA, V inB)
+    {
+        return inA == inB;
+    }
+
+    public Array (Collection.EqualFunc? inEqualFunc = null,
+                  Collection.ToStringFunc? inToStringFunc = null)
     {
         base (null, inToStringFunc);
+
+        equal_func = inEqualFunc == null ? (Collection.EqualFunc)direct_equal_func : inEqualFunc;
 
         m_pContent = new Node<V> [m_ReservedSize];
     }
@@ -125,7 +134,7 @@ public class Maia.Array <V> : Collection <V>
         {
             for (int cpt = 0; iterator == null && cpt < m_Size; ++cpt)
             {
-                if (m_pContent[cpt].val == inValue)
+                if (equal_func (m_pContent[cpt].val, inValue))
                     iterator = new Iterator<V> (this, cpt);
             }
         }
