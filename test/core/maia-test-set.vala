@@ -34,10 +34,10 @@ public class Maia.TestSet : Maia.TestCase
         add_test ("erase", test_set_erase);
         add_test ("search", test_set_search);
         add_test ("parse", test_set_parse);
-        //add_test ("benchmark-insert", test_set_benchmark_insert);
-        //add_test ("benchmark-remove", test_set_benchmark_remove);
-        //add_test ("benchmark-search", test_set_benchmark_search);
-        //add_test ("benchmark-parse", test_set_benchmark_parse);
+        add_test ("benchmark-insert", test_set_benchmark_insert);
+        add_test ("benchmark-remove", test_set_benchmark_remove);
+        add_test ("benchmark-search", test_set_benchmark_search);
+        add_test ("benchmark-parse", test_set_benchmark_parse);
     }
 
     private static string

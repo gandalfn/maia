@@ -33,7 +33,7 @@ public class Maia.TestParser : Maia.TestCase
         base ("parser");
 
         add_test ("simple", test_parser_simple);
-        add_test ("filename", test_parser_file);
+        //add_test ("filename", test_parser_file);
     }
 
     public void

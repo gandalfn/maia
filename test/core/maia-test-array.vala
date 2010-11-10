@@ -21,6 +21,7 @@ public class Maia.TestArray : Maia.TestCase
 {
     const int NB_KEYS = 1000;
 
+    private Array<int> m_ArrayNoSorted;
     private Array<int> m_Array;
 
     private int[] m_Keys;
@@ -34,11 +35,12 @@ public class Maia.TestArray : Maia.TestCase
         add_test ("erase", test_array_erase);
         add_test ("search", test_array_search);
         add_test ("parse", test_array_parse);
-        //add_test ("benchmark-insert", test_array_benchmark_insert);
-        //add_test ("benchmark-insert-reserve", test_array_benchmark_insert_reserve);
-        //add_test ("benchmark-remove", test_array_benchmark_remove);
-        //add_test ("benchmark-search", test_array_benchmark_search);
-        //add_test ("benchmark-parse", test_array_benchmark_parse);
+        add_test ("benchmark-insert", test_array_benchmark_insert);
+        add_test ("benchmark-insert-no-sorted", test_array_no_sorted_benchmark_insert);
+        add_test ("benchmark-insert-reserve", test_array_benchmark_insert_reserve);
+        add_test ("benchmark-remove", test_array_benchmark_remove);
+        add_test ("benchmark-search", test_array_benchmark_search);
+        add_test ("benchmark-parse", test_array_benchmark_parse);
     }
 
     private static string
@@ -63,6 +65,7 @@ public class Maia.TestArray : Maia.TestCase
     public override void
     set_up ()
     {
+        m_ArrayNoSorted = new Array<int> ();
         m_Array = new Array<int>.sorted ((Collection.CompareFunc)key_cmp,
                                          (Collection.ToStringFunc)data_to_string);
 
@@ -183,6 +186,26 @@ public class Maia.TestArray : Maia.TestCase
             min = double.min (elapsed, min);
             max = double.max (elapsed, max);
             m_Array.clear ();
+        }
+        Test.minimized_result (min, "Array set min time %f ms", min); 
+        Test.maximized_result (min, "Array set max time %f ms", max);
+    }
+
+    public void
+    test_array_no_sorted_benchmark_insert ()
+    {
+        double min = double.MAX, max = 0;
+        for (int iter = 0; iter < 100; ++iter)
+        {
+            Test.timer_start ();
+            for (int cpt = 0; cpt < NB_KEYS; ++cpt)
+            {
+                m_ArrayNoSorted.insert (m_Keys[cpt]);
+            }
+            double elapsed = Test.timer_elapsed () * 1000;
+            min = double.min (elapsed, min);
+            max = double.max (elapsed, max);
+            m_ArrayNoSorted.clear ();
         }
         Test.minimized_result (min, "Array set min time %f ms", min); 
         Test.maximized_result (min, "Array set max time %f ms", max);

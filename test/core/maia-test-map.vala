@@ -33,10 +33,10 @@ public class Maia.TestMap : Maia.TestCase
         add_test ("unset", test_map_unset);
         add_test ("search", test_map_search);
         add_test ("parse", test_map_parse);
-        //add_test ("benchmark-set", test_map_benchmark_set);
-        //add_test ("benchmark-unset", test_map_benchmark_unset);
-        //add_test ("benchmark-search", test_map_benchmark_search);
-        //add_test ("benchmark-parse", test_map_benchmark_parse);
+        add_test ("benchmark-set", test_map_benchmark_set);
+        add_test ("benchmark-unset", test_map_benchmark_unset);
+        add_test ("benchmark-search", test_map_benchmark_search);
+        add_test ("benchmark-parse", test_map_benchmark_parse);
         //add_test ("dot", test_map_dot);
     }
 
