@@ -20,41 +20,36 @@
 public class Maia.Notification
 {
     // types
+    [CCode (has_target = false)]
+    public delegate void ActionFunc (void* inTarget, Args inArgs);
+
+
     public abstract class Args
     {
     }
 
-    public class Observer
+    public struct Observer
     {
-        [CCode (has_target = false)]
-        public delegate void ActionFunc (void* inTarget, Args inArgs);
+        public ActionFunc           func;
+        public void*                target;
 
-        private ActionFunc           m_Func;
-        private void*                m_Target;
-
-        protected Observer (ActionFunc inFunc, void* inTarget)
+        public Observer (ActionFunc inFunc, void* inTarget)
         {
-            m_Func = inFunc;
-            m_Target = inTarget;
-        }
-
-        internal void
-        notify (Args inArgs)
-        {
-            m_Func (m_Target, inArgs);
+            func = inFunc;
+            target = inTarget;
         }
 
         internal bool
         equals (Observer inOther)
         {
-            return m_Func == inOther.m_Func && m_Target == inOther.m_Target;
+            return func == inOther.func && target == inOther.target;
         }
     }
 
     // properties
-    private string          m_Name;
-    private Object          m_Owner;
-    private Array<Observer> m_Observers;
+    private string           m_Name;
+    private Object           m_Owner;
+    private Array<Observer?> m_Observers;
 
     // accessors
     public string name {
@@ -81,7 +76,8 @@ public class Maia.Notification
     {
         m_Name = inName;
         m_Owner = inOwner;
-        m_Observers = new Array<Observer> ();
+        m_Observers = new Array<Observer?> ();
+        m_Observers.equal_func = (Collection.EqualFunc)Observer.equals;
     }
 
     /**
@@ -91,7 +87,7 @@ public class Maia.Notification
     post (Args? inArgs = null)
     {
         foreach (unowned Observer observer in m_Observers)
-            observer.notify (inArgs);
+            observer.func (observer.target, inArgs);
     }
 
     /**
@@ -113,7 +109,7 @@ public class Maia.Notification
     public void
     unwatch (Observer inObserver)
     {
-        Iterator<Observer> iter = m_Observers[inObserver];
+        Iterator<Observer?> iter = m_Observers[inObserver];
         if (iter != null) m_Observers.erase (iter);
     }
 }
