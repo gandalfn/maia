@@ -57,7 +57,7 @@ public class Maia.TestNotification : Maia.TestCase
     }
 
     private void
-    on_notification (FooArgs inArgs)
+    on_notification (Notification inNotification, FooArgs inArgs)
     {
         notification_elapsed = Test.timer_elapsed () * 1000;
     }

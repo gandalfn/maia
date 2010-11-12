@@ -44,7 +44,7 @@ public abstract class Maia.Object
     // Properties
     private string                       m_Id = null;
     private unowned Object               m_Parent = null;
-    private List<Object>                 m_Childs = null; 
+    private Array<Object>                m_Childs = null; 
     private Map<string, unowned Object>  m_IdentifiedChilds = null;
 
     // Accessors
@@ -56,7 +56,7 @@ public abstract class Maia.Object
         get {
             return m_Id;
         }
-        protected set {
+        set {
             // object have a old id
             if (m_Parent != null && m_Id != null && m_Parent.m_IdentifiedChilds != null)
                 // remove object from identified object
@@ -82,7 +82,7 @@ public abstract class Maia.Object
         get {
             return m_Parent;
         }
-        protected set {
+        set {
             // object have already a parent
             if (m_Parent != null && m_Parent.m_Childs != null)
             {
@@ -110,8 +110,9 @@ public abstract class Maia.Object
     /**
      * Object childs
      */
-    public List<Object> childs {
+    public Array<Object> childs {
         get {
+            create_child_arrays ();
             return m_Childs;
         }
     }
@@ -147,7 +148,7 @@ public abstract class Maia.Object
     create_child_arrays ()
     {
         if (m_Childs == null)
-            m_Childs = new List <Object> ();
+            m_Childs = new Array <Object> ();
 
         if (m_IdentifiedChilds == null)
             m_IdentifiedChilds = new Map<string, unowned Object> ();

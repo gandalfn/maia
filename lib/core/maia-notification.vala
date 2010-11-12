@@ -21,7 +21,7 @@ public class Maia.Notification
 {
     // types
     [CCode (has_target = false)]
-    public delegate void ActionFunc (void* inTarget, Args inArgs);
+    public delegate void ActionFunc (void* inTarget, Notification inNotification, Args inArgs);
 
 
     public abstract class Args
@@ -87,7 +87,7 @@ public class Maia.Notification
     post (Args? inArgs = null)
     {
         foreach (unowned Observer observer in m_Observers)
-            observer.func (observer.target, inArgs);
+            observer.func (observer.target, this, inArgs);
     }
 
     /**

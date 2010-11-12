@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-test-core.vala
+ * maia-test-dispatcher.vala
  * Copyright (C) Nicolas Bruguier 2010 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,19 +17,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.TestCore : Maia.TestCase
+public class Maia.TestDispatcher : Maia.TestCase
 {
-    public TestCore ()
-    {
-        base ("core");
+    private Maia.Dispatcher dispatcher;
 
-        suite.add_suite (new TestTaskQueue ().suite);
-        suite.add_suite (new TestArray ().suite);
-        suite.add_suite (new TestList ().suite);
-        suite.add_suite (new TestSet ().suite);
-        suite.add_suite (new TestMap ().suite);
-        suite.add_suite (new TestObject ().suite);
-        suite.add_suite (new TestNotification ().suite);
-        suite.add_suite (new TestDispatcher ().suite);
+    public TestDispatcher ()
+    {
+        base ("dispatcher");
+
+        add_test ("task", test_task);
+    }
+
+    public override void
+    set_up ()
+    {
+        dispatcher = new Dispatcher ();
+    }
+
+    private void
+    on_task ()
+    {
+        Test.message ("elapsed = %f s", Test.timer_elapsed ());
+        dispatcher.finish ();
+    }
+
+    public void
+    test_task ()
+    {
+        Task task = new Task (on_task);
+        task.parent = dispatcher;
+
+        Test.timer_start ();
+        task.sleep (500);
+
+        dispatcher.run ();
     }
 }

@@ -19,6 +19,7 @@
 
 public class Maia.Task : Object
 {
+    // Types
     public enum Priority
     {
         HIGH = -20,
@@ -29,24 +30,27 @@ public class Maia.Task : Object
     public enum State
     {
         UNKNOWN,
-        READY,
-        SLEEPING,
+        TERMINATED,
         RUNNING,
-        TERMINATED
+        SLEEPING,
+        READY
     }
 
     public delegate void Func ();
 
+    // Properties
     private Func m_Func;
-
     private Priority m_Priority;
+    private State m_State = State.UNKNOWN;
+    internal int wait_fd;
+
+    // Accessors
     public Priority priority {
         get {
             return m_Priority;
         }
     }
 
-    private State m_State = State.UNKNOWN;
     public State state {
         get {
             return m_State;
@@ -56,48 +60,60 @@ public class Maia.Task : Object
         }
     }
 
-    public Task (Func inFunc, Priority inPriority = Priority.NORMAL)
+    // Methods
+    public Task (Func? inFunc, Priority inPriority = Priority.NORMAL)
     {
         m_Func = inFunc;
         m_Priority = inPriority;
-    }
-
-    internal virtual void
-    init ()
-    {
         m_State = State.READY;
     }
 
-    internal virtual void*
+    ~Task ()
+    {
+        if (wait_fd >= 0) Posix.close (wait_fd);
+    }
+
+    public virtual void*
     run ()
     {
         m_State = State.RUNNING;
-        m_Func ();
+
+        if (m_Func != null) m_Func ();
 
         return null;
     }
 
-    internal virtual void
+    public virtual void
     finish ()
     {
         m_State = State.TERMINATED;
     }
     
     public void
-    sleep (int inMs)
+    sleep (ulong inTimeout)
     {
-        m_State = State.SLEEPING;
+        if (parent != null)
+        {
+            (parent as Dispatcher).sleep (this, inTimeout);
+            m_State = State.SLEEPING;
+        }
     }
 
     public override int
     compare (Object inOther)
         requires (inOther is Task)
     {
-        if (m_Priority < (inOther as Task).m_Priority)
-            return -1;
-        else if (m_Priority > (inOther as Task).m_Priority)
-            return 1;
-        else
-            return 0;
+        int ret = 0;
+
+        if (m_State > ((Task)inOther).m_State)
+            ret = 1;
+        else if (m_State < ((Task)inOther).m_State)
+            ret = -1;
+        else if (m_Priority < ((Task)inOther).m_Priority)
+            ret =  -1;
+        else if (m_Priority > ((Task)inOther).m_Priority)
+            ret = 1;
+
+        return ret;
     }
 }

@@ -225,7 +225,7 @@ public class Maia.Array <V> : Collection <V>
     public override void
     clear ()
     {
-        GLib.Slice.free (sizeof(Node<V>) * m_ReservedSize, m_pContent);
+        delete m_pContent;
         m_ReservedSize = 4;
         m_Size = 0;
         m_pContent = new Node<V>[m_ReservedSize];
@@ -258,7 +258,7 @@ public class Maia.Array <V> : Collection <V>
     {
         unowned V? ret = null;
 
-        if (m_Size > 0 && inIndex > 0 && inIndex < m_Size)
+        if (m_Size > 0 && inIndex >= 0 && inIndex < m_Size)
         {
             ret = m_pContent[inIndex].val;
         }
