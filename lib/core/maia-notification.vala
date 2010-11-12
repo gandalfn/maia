@@ -28,7 +28,7 @@ public class Maia.Notification
     {
     }
 
-    public struct Observer
+    public class Observer
     {
         public ActionFunc           func;
         public void*                target;
@@ -48,7 +48,7 @@ public class Maia.Notification
 
     // properties
     private string           m_Name;
-    private Object           m_Owner;
+    private void*            m_Owner;
     private Array<Observer?> m_Observers;
 
     // accessors
@@ -58,7 +58,7 @@ public class Maia.Notification
         }
     }
 
-    public Object owner {
+    public void* owner {
         get {
             return m_Owner;
         }
@@ -72,7 +72,7 @@ public class Maia.Notification
      * @param inName name of notification
      * @param inOwner notification object owner
      */
-    public Notification (string inName, Object? inOwner = null)
+    public Notification (string inName, void* inOwner = null)
     {
         m_Name = inName;
         m_Owner = inOwner;
