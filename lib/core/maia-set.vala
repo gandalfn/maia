@@ -197,14 +197,9 @@ public class Maia.Set<V> : Collection<V>
         }
     }
 
-    public Set (Collection.CompareFunc inCompareFunc, Collection.ToStringFunc? inToStringFunc = null)
+    public Set ()
     {
-        base (inCompareFunc, inToStringFunc);
-    }
-
-    internal Set.inherit ()
-    {
-        base (null, null);
+        compare_func = get_compare_func_for<V> ();
     }
 
     private unowned Node<V>?

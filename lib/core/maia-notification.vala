@@ -77,7 +77,7 @@ public class Maia.Notification
         m_Name = inName;
         m_Owner = inOwner;
         m_Observers = new Array<Observer?> ();
-        m_Observers.equal_func = (Collection.EqualFunc)Observer.equals;
+        m_Observers.equal_func = (EqualFunc)Observer.equals;
     }
 
     /**

@@ -89,12 +89,13 @@ public class Maia.Task : Object
         m_State = State.SLEEPING;
     }
 
-    internal static int
-    compare (Task inA, Task inB)
+    public override int
+    compare (Object inOther)
+        requires (inOther is Task)
     {
-        if (inA.m_Priority < inB.m_Priority)
+        if (m_Priority < (inOther as Task).m_Priority)
             return -1;
-        else if (inA.m_Priority > inB.m_Priority)
+        else if (m_Priority > (inOther as Task).m_Priority)
             return 1;
         else
             return 0;

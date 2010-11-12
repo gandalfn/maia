@@ -20,36 +20,12 @@
 public class Maia.Map <K, V> : Set <Pair <K, V>>
 {
     // Properties
-    private Collection.CompareFunc  m_CompareFunc;
-    private Collection.ToStringFunc m_ToStringFunc;
-    private Pair<K, V>              m_SearchKey;
+    private Pair<K, V>   m_SearchKey;
 
-    public Map (Collection.CompareFunc inCompareFunc,
-                Collection.ToStringFunc? inToStringFunc = null)
+    // Methods
+    public Map ()
     {
-        base.inherit ();
-
-        m_CompareFunc = inCompareFunc;
-        m_ToStringFunc = inToStringFunc;
         m_SearchKey = new Pair<K, V> (null, null);
-
-        compare_func = (Collection.CompareFunc)compare_value;
-        if (m_ToStringFunc != null)
-            to_string_func = (Collection.ToStringFunc)to_string_value;
-    }
-
-    [CCode (instance_pos = -1)]
-    private int
-    compare_value (Pair<K, V> inA, Pair<K, V> inB)
-    {
-        return m_CompareFunc (inA.first, inB.first);
-    }
-
-    [CCode (instance_pos = -1)]
-    private string
-    to_string_value (Pair<K, V> inValue)
-    {
-        return m_ToStringFunc ((void*)inValue.second);
     }
 
     /**

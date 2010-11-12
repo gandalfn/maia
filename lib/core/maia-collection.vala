@@ -19,23 +19,47 @@
 
 public abstract class Maia.Collection<V>
 {
-    // Types
-    public delegate bool EqualFunc (void* inA, void* inB);
-    public delegate int CompareFunc (void* inA, void* inB);
-    public delegate string ToStringFunc (void* inValue);
-
     // Properties
-    internal EqualFunc    equal_func;
-    internal CompareFunc  compare_func;
-    internal ToStringFunc to_string_func;
-    internal int          stamp;
+    private EqualFunc<V>    m_EqualFunc;
+    private CompareFunc<V>  m_CompareFunc;
+    private ToStringFunc<V> m_ToStringFunc;
+
+    internal int            stamp;
+
+    // Accessors
+    public virtual EqualFunc<V> equal_func {
+        get {
+            return m_EqualFunc;
+        }
+        set {
+            m_EqualFunc = value;
+        }
+    }
+
+    public virtual CompareFunc<V> compare_func {
+        get {
+            return m_CompareFunc;
+        }
+        set {
+            m_CompareFunc = value;
+        }
+    }
+
+    public virtual ToStringFunc<V> to_string_func {
+        get {
+            return m_ToStringFunc;
+        }
+        set {
+            m_ToStringFunc = value;
+        }
+    }
 
     // Methods
-    public Collection (CompareFunc? inCompareFunc = null, ToStringFunc? inToStringFunc = null)
+    public Collection ()
     {
-        equal_func = null;
-        compare_func = inCompareFunc;
-        to_string_func = inToStringFunc;
+        equal_func = get_equal_func_for<V> ();
+        compare_func = null;
+        to_string_func = get_to_string_func_for<V> ();
         stamp = 0;
     }
 

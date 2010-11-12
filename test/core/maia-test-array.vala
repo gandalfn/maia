@@ -35,39 +35,23 @@ public class Maia.TestArray : Maia.TestCase
         add_test ("erase", test_array_erase);
         add_test ("search", test_array_search);
         add_test ("parse", test_array_parse);
-        add_test ("benchmark-insert", test_array_benchmark_insert);
-        add_test ("benchmark-insert-no-sorted", test_array_no_sorted_benchmark_insert);
-        add_test ("benchmark-insert-reserve", test_array_benchmark_insert_reserve);
-        add_test ("benchmark-remove", test_array_benchmark_remove);
-        add_test ("benchmark-search", test_array_benchmark_search);
-        add_test ("benchmark-parse", test_array_benchmark_parse);
-    }
-
-    private static string
-    data_to_string (int inData)
-    {
-        return "%d".printf(inData);
-    }
-
-    private static int
-    key_cmp (int inA, int inB)
-    {
-        int ret = 0;
-
-        if (inA < inB)
-            ret = -1;
-        else if (inA > inB)
-            ret = 1;
-
-        return ret;
+        if (Test.perf())
+        {
+            add_test ("benchmark-insert", test_array_benchmark_insert);
+            add_test ("benchmark-insert-no-sorted", test_array_no_sorted_benchmark_insert);
+            add_test ("benchmark-insert-reserve", test_array_benchmark_insert_reserve);
+            add_test ("benchmark-remove", test_array_benchmark_remove);
+            add_test ("benchmark-search", test_array_benchmark_search);
+            add_test ("benchmark-parse", test_array_benchmark_parse);
+        }
     }
 
     public override void
     set_up ()
     {
         m_ArrayNoSorted = new Array<int> ();
-        m_Array = new Array<int>.sorted ((Collection.CompareFunc)key_cmp,
-                                         (Collection.ToStringFunc)data_to_string);
+        m_Array = new Array<int> ();
+        m_Array.compare_func = (CompareFunc<int>)Maia.direct_compare;
 
         m_Keys = new int[NB_KEYS];
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)

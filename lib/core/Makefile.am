@@ -22,6 +22,9 @@ libmaia_core_la_VALAFLAGS = \
 
 libmaia_core_la_SOURCES = \
     maia-source.c \
+    maia-object.vala \
+    maia-value.vala \
+    maia-utils.vala \
     maia-iterator.vala \
     maia-collection.vala \
     maia-pair.vala \
@@ -29,8 +32,6 @@ libmaia_core_la_SOURCES = \
     maia-set.vala \
     maia-map.vala \
     maia-list.vala \
-    maia-object.vala \
-    maia-value.vala \
     maia-transform.vala \
     maia-point.vala \
     maia-size.vala \

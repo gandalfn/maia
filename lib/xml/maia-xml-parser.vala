@@ -125,7 +125,7 @@ public class Maia.XmlParser : Parser
     private void
     read_attributes () throws ParseError
     {
-        m_Attributes = new Map<string, string> ((Collection.CompareFunc)GLib.strcmp);
+        m_Attributes = new Map<string, string> ();
 
         while (m_pCurrent < m_pEnd && m_pCurrent[0] != '>' && m_pCurrent[0] != '/')
         {

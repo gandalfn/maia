@@ -102,11 +102,6 @@ public class Maia.List<V> : Collection<V>
         }
     }
 
-    public List (Collection.CompareFunc? inCompareFunc = null)
-    {
-        base (inCompareFunc);
-    }
-
     private unowned Node<V>?
     get_node (V inValue)
     {
@@ -115,11 +110,11 @@ public class Maia.List<V> : Collection<V>
         // Search task node in queue
         for (unowned Node<V> node = m_Head; node != null && ret == null; node = node.m_Next)
         {
-            if (compare_func != null && compare_func ((void*)node.m_Value, (void*)inValue) == 0)
+            if (compare_func != null && compare_func (node.m_Value, inValue) == 0)
             {
                 ret = node;
             }
-            else if (compare_func == null && node.m_Value == inValue)
+            else if (equal_func (node.m_Value, inValue))
             {
                 ret = node;
             }
@@ -200,7 +195,7 @@ public class Maia.List<V> : Collection<V>
             // Search node position
             for (unowned Node<V> node = m_Tail; node != null; node = node.m_Prev)
             {
-                if (compare_func ((void*)new_node.m_Value, (void*)node.m_Value) >= 0)
+                if (compare_func (new_node.m_Value, node.m_Value) >= 0)
                 {
                     found = node;
                     break;
@@ -249,7 +244,7 @@ public class Maia.List<V> : Collection<V>
             // Check each node in queue
             for (unowned Node<V> node = m_Head; node != null && node.m_Next != null; node = node.m_Next)
             {
-                if (compare_func ((void*)node.m_Value, (void*)node.m_Next.m_Value) > 0)
+                if (compare_func (node.m_Value, node.m_Next.m_Value) > 0)
                 {
                     // swap node data
                     V swap = node.m_Value;

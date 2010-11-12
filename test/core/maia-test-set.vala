@@ -34,10 +34,13 @@ public class Maia.TestSet : Maia.TestCase
         add_test ("erase", test_set_erase);
         add_test ("search", test_set_search);
         add_test ("parse", test_set_parse);
-        add_test ("benchmark-insert", test_set_benchmark_insert);
-        add_test ("benchmark-remove", test_set_benchmark_remove);
-        add_test ("benchmark-search", test_set_benchmark_search);
-        add_test ("benchmark-parse", test_set_benchmark_parse);
+        if (Test.perf())
+        {
+            add_test ("benchmark-insert", test_set_benchmark_insert);
+            add_test ("benchmark-remove", test_set_benchmark_remove);
+            add_test ("benchmark-search", test_set_benchmark_search);
+            add_test ("benchmark-parse", test_set_benchmark_parse);
+        }
     }
 
     private static string
@@ -46,24 +49,11 @@ public class Maia.TestSet : Maia.TestCase
         return "%d".printf(inData);
     }
 
-    private static int
-    key_cmp (int inA, int inB)
-    {
-        int ret = 0;
-
-        if (inA < inB)
-            ret = -1;
-        else if (inA > inB)
-            ret = 1;
-
-        return ret;
-    }
-
     public override void
     set_up ()
     {
-        m_Set = new Set<int> ((Collection.CompareFunc)key_cmp,
-                              (Collection.ToStringFunc)data_to_string);
+        m_Set = new Set<int> ();
+        m_Set.to_string_func = (ToStringFunc<int>)data_to_string;
 
         m_Keys = new int[NB_KEYS];
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)

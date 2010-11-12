@@ -35,31 +35,22 @@ public class Maia.TestList : Maia.TestCase
         add_test ("erase", test_list_erase);
         add_test ("search", test_list_search);
         add_test ("parse", test_list_parse);
-        add_test ("benchmark-insert", test_list_benchmark_insert);
-        add_test ("benchmark-no-sorted-insert", test_list_no_sorted_benchmark_insert);
-        add_test ("benchmark-remove", test_list_benchmark_remove);
-        add_test ("benchmark-search", test_list_benchmark_search);
-        add_test ("benchmark-parse", test_list_benchmark_parse);
-    }
-
-    private static int
-    key_cmp (int inA, int inB)
-    {
-        int ret = 0;
-
-        if (inA < inB)
-            ret = -1;
-        else if (inA > inB)
-            ret = 1;
-
-        return ret;
+        if (Test.perf())
+        {
+            add_test ("benchmark-insert", test_list_benchmark_insert);
+            add_test ("benchmark-no-sorted-insert", test_list_no_sorted_benchmark_insert);
+            add_test ("benchmark-remove", test_list_benchmark_remove);
+            add_test ("benchmark-search", test_list_benchmark_search);
+            add_test ("benchmark-parse", test_list_benchmark_parse);
+        }
     }
 
     public override void
     set_up ()
     {
         m_ListNoSorted = new List<int> ();
-        m_List = new List<int> ((Collection.CompareFunc)key_cmp);
+        m_List = new List<int> ();
+        m_List.compare_func = (CompareFunc<int>)Maia.direct_compare;
 
         m_Keys = new int[NB_KEYS];
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)

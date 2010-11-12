@@ -116,12 +116,6 @@ public abstract class Maia.Object
         }
     }
 
-    static int
-    compare_type (GLib.Type inA, GLib.Type inB)
-    {
-        return inA > inB ? 1 : (inA < inB ? -1 : 0);
-    }
-
     static void
     object_to_string (GLib.Value inSrc, out GLib.Value outDest)
     {
@@ -156,7 +150,7 @@ public abstract class Maia.Object
             m_Childs = new List <Object> ();
 
         if (m_IdentifiedChilds == null)
-            m_IdentifiedChilds = new Map<string, unowned Object> ((Collection.CompareFunc)GLib.strcmp);
+            m_IdentifiedChilds = new Map<string, unowned Object> ();
     }
 
     /**
@@ -198,6 +192,33 @@ public abstract class Maia.Object
     }
 
     /**
+     * Check if an object equals this object 
+     *
+     * @param inOther the object to compare to
+     *
+     * @return true if object are same
+     */
+    public virtual bool
+    equals (Object inOther)
+    {
+        return inOther == this;
+    }
+    
+    /**
+     * Compare this object with another
+     *
+     * @param inOther the object to compare to.
+     *
+     * @return < 0 if this object is lesser then inOther, > 0 if this object is
+     *             greater than inObject, 0 otherwise.
+     */
+    public virtual int
+    compare (Object inOther)
+    {
+        return (void*)this > (void*)inOther ? 1 : ((void*)this < (void*)inOther ? -1 : 0);
+    }
+
+    /**
      * Register a create function for a specified type. The function can be
      * called multiple time but only first call is really effective
      *
@@ -209,7 +230,7 @@ public abstract class Maia.Object
     register (GLib.Type inType, CreateFromParameter inFromParameters, CreateFromString? inFromString = null)
     {
         if (s_Factory == null)
-            s_Factory = new Map<GLib.Type, CreateVTable?> ((Collection.CompareFunc)compare_type);
+            s_Factory = new Map<GLib.Type, CreateVTable?> ();
 
         CreateVTable? vtable = s_Factory[inType];
 

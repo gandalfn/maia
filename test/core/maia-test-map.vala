@@ -33,37 +33,20 @@ public class Maia.TestMap : Maia.TestCase
         add_test ("unset", test_map_unset);
         add_test ("search", test_map_search);
         add_test ("parse", test_map_parse);
-        add_test ("benchmark-set", test_map_benchmark_set);
-        add_test ("benchmark-unset", test_map_benchmark_unset);
-        add_test ("benchmark-search", test_map_benchmark_search);
-        add_test ("benchmark-parse", test_map_benchmark_parse);
+        if (Test.perf())
+        {
+            add_test ("benchmark-set", test_map_benchmark_set);
+            add_test ("benchmark-unset", test_map_benchmark_unset);
+            add_test ("benchmark-search", test_map_benchmark_search);
+            add_test ("benchmark-parse", test_map_benchmark_parse);
+        }
         //add_test ("dot", test_map_dot);
-    }
-
-    private static string
-    data_to_string (string inData)
-    {
-        return "%s".printf(inData);
-    }
-
-    private static int
-    key_cmp (int inA, int inB)
-    {
-        int ret = 0;
-
-        if (inA < inB)
-            ret = -1;
-        else if (inA > inB)
-            ret = 1;
-
-        return ret;
     }
 
     public override void
     set_up ()
     {
-        m_Map = new Map<int, string> ((Collection.CompareFunc)key_cmp,
-                                      (Collection.ToStringFunc)data_to_string);
+        m_Map = new Map<int, string> ();
 
         m_Keys = new int[NB_KEYS];
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)

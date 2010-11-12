@@ -21,6 +21,6 @@ public class Maia.TaskQueue : List<Task>
 {
     public TaskQueue ()
     {
-        base ((Collection.CompareFunc)Task.compare);
+        compare_func = (CompareFunc)Task.compare;
     }
 }

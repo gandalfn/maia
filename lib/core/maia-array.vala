@@ -86,27 +86,8 @@ public class Maia.Array <V> : Collection <V>
     }
 
     // Methods
-    static bool
-    direct_equal_func (V inA, V inB)
+    public Array ()
     {
-        return inA == inB;
-    }
-
-    public Array (Collection.EqualFunc? inEqualFunc = null,
-                  Collection.ToStringFunc? inToStringFunc = null)
-    {
-        base (null, inToStringFunc);
-
-        equal_func = inEqualFunc == null ? (Collection.EqualFunc)direct_equal_func : inEqualFunc;
-
-        m_pContent = new Node<V> [m_ReservedSize];
-    }
-
-    public Array.sorted (Collection.CompareFunc? inCompareFunc,
-                         Collection.ToStringFunc? inToStringFunc = null)
-    {
-        base (inCompareFunc, inToStringFunc);
-
         m_pContent = new Node<V> [m_ReservedSize];
     }
 
@@ -203,7 +184,7 @@ public class Maia.Array <V> : Collection <V>
                 m_Size++;
                 grow ();
 
-                while (index > 0 && compare_func ((void*)m_pContent[index - 1].val, (void*)inValue) > 0)
+                while (index > 0 && compare_func (m_pContent[index - 1].val, inValue) > 0)
                 {
                     m_pContent[index].val = m_pContent[index - 1].val;
                     index--;

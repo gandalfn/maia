@@ -42,7 +42,8 @@ public class Maia.TestNotification : Maia.TestCase
     {
         base ("notification");
 
-        add_test ("benchmark", test_benchmark_notification);
+        if (Test.perf())
+            add_test ("benchmark", test_benchmark_notification);
     }
 
     public override void

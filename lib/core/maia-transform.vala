@@ -83,12 +83,6 @@ public class Maia.Transform : Object
 
     public Notification changed;
 
-    private int
-    compare_uint32 (uint32 inA, uint32 inB)
-    {
-        return inA < inB ? - 1 : (inA > inB ? 1 : 0);
-    }
-
     /**
      * Create a new transform stack
      */
@@ -96,7 +90,7 @@ public class Maia.Transform : Object
                       double inXy, double inYy,
                       double inX0, double inY0)
     {
-        m_Queue = new Map<uint32, Transform> ((Collection.CompareFunc)compare_uint32);
+        m_Queue = new Map<uint32, Transform> ();
         changed = new Notification ("changed", this);
         m_BaseMatrix = Matrix (inXx, inXy, inYx, inYy, inY0, inY0);
         m_FinalMatrix = (owned)m_BaseMatrix;
@@ -107,7 +101,7 @@ public class Maia.Transform : Object
      */
     public Transform.identity ()
     {
-        m_Queue = new Map<uint32, Transform> ((Collection.CompareFunc)compare_uint32);
+        m_Queue = new Map<uint32, Transform> ();
         m_BaseMatrix = Matrix.identity ();
         m_FinalMatrix = (owned)m_BaseMatrix;
     }
