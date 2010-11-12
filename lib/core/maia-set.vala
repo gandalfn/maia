@@ -211,7 +211,7 @@ public class Maia.Set<V> : Collection<V>
         {
             outParent = node;
 
-            int res = compare_func ((void*)inValue, (void*)node.val);
+            int res = compare_func (inValue, node.val);
             if (res > 0)
             {
                 node = node.right;
@@ -397,7 +397,7 @@ public class Maia.Set<V> : Collection<V>
             {
                 m_Root = node;
             }
-            else if (compare_func ((void*)inValue, (void*)parent.val) > 0)
+            else if (compare_func (inValue, parent.val) > 0)
             {
                 parent.right = node;
             }

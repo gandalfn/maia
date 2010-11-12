@@ -44,14 +44,14 @@ public class Maia.Pair <F, S> : Object
     equals (Object inOther)
         requires (inOther is Pair <F, S>)
     {
-        return m_EqualFunc (first, (inOther as Pair<F, S>).first);
+        return m_EqualFunc (first, ((Pair<F, S>)inOther).first);
     }
 
     public override int
     compare (Object inOther)
         requires (inOther is Pair <F, S>)
     {
-        return m_CompareFunc (first, (inOther as Pair<F, S>).first);
+        return m_CompareFunc (first, ((Pair<F, S>)inOther).first);
     }
 
     public override string

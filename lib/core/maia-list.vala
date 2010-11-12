@@ -108,7 +108,7 @@ public class Maia.List<V> : Collection<V>
         unowned Node<V>? ret = null;
 
         // Search task node in queue
-        for (unowned Node<V> node = m_Head; node != null && ret == null; node = node.m_Next)
+        for (unowned Node<V> node = m_Head; ret == null && node != null; node = node.m_Next)
         {
             if (compare_func != null && compare_func (node.m_Value, inValue) == 0)
             {
