@@ -19,8 +19,51 @@
 
 public class Maia.Region : Object
 {
+    // Types
+    public class Iterator
+    {
+        private Pixman.Box32[] m_Boxes;
+        private int m_Index = -1;
+
+        internal Iterator (Region inRegion)
+        {
+            m_Boxes = inRegion.m_Region.rectangles ();
+        }
+
+        /**
+         * Advances to the next rectangle in the region.
+         *
+         * @return true if the iterator has a next rectangle
+         */
+        public bool
+        next ()
+        {
+            if (m_Index < m_Boxes.length)
+                m_Index++;
+
+            return (m_Index < m_Boxes.length);
+        }
+
+        /**
+         * Returns the current rectangle in the iteration.
+         *
+         * @return the current rectangle in the iteration
+         */
+        public Rectangle?
+        get ()
+        {
+            if (m_Index < 0 || m_Index >= m_Boxes.length)
+                return null;
+
+            return new Rectangle.pixman_box (m_Boxes[m_Index]);
+        }
+    }
+
+    // Properties
     private Pixman.Region32 m_Region;
 
+    // Accessors
+    
     /**
      * Indicate if region is empty
      */
@@ -45,6 +88,8 @@ public class Maia.Region : Object
             return new Rectangle.pixman_box (m_Region.extents);
         }
     }
+
+    // Methods
 
     /**
      * Creates a new empty Region.
@@ -250,17 +295,14 @@ public class Maia.Region : Object
     }
 
     /**
-     * Check if the region cover the same area than inOther
-     *
-     * @param inOther region to compare to
-     *
-     * @return true if region cover the same area
+     * {@inheritDoc}
      */
-    public bool
-    equal (Region inOther)
+    public override bool
+    equals (Object inOther)
+        requires (inOther is Region)
     {
         Rectangle tclipbox = clipbox;
-        Rectangle oclipbox = inOther.clipbox;
+        Rectangle oclipbox = ((Region)inOther).clipbox;
 
         return tclipbox.origin.x == oclipbox.origin.x && 
                tclipbox.origin.y == oclipbox.origin.y &&
@@ -269,9 +311,7 @@ public class Maia.Region : Object
     }
 
     /**
-     * Convert to string format
-     *
-     * @return string representation
+     * {@inheritDoc}
      */
     public override string
     to_string ()
@@ -306,44 +346,5 @@ public class Maia.Region : Object
     iterator ()
     {
         return new Iterator (this);
-    }
-
-    public class Iterator
-    {
-        private Pixman.Box32[] m_Boxes;
-        private int m_Index = -1;
-
-        internal Iterator (Region inRegion)
-        {
-            m_Boxes = inRegion.m_Region.rectangles ();
-        }
-
-        /**
-         * Advances to the next rectangle in the region.
-         *
-         * @return true if the iterator has a next rectangle
-         */
-        public bool
-        next ()
-        {
-            if (m_Index < m_Boxes.length)
-                m_Index++;
-
-            return (m_Index < m_Boxes.length);
-        }
-
-        /**
-         * Returns the current rectangle in the iteration.
-         *
-         * @return the current rectangle in the iteration
-         */
-        public Rectangle?
-        get ()
-        {
-            if (m_Index < 0 || m_Index >= m_Boxes.length)
-                return null;
-
-            return new Rectangle.pixman_box (m_Boxes[m_Index]);
-        }
     }
 }
