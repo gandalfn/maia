@@ -16,6 +16,7 @@ maia_test_SOURCES = \
     core/maia-test-set.vala \
     core/maia-test-map.vala \
     core/maia-test-object.vala \
+    core/maia-test-notification.vala \
     core/maia-test-task-queue.vala \
     xml/maia-test-xml.vala \
     xml/maia-test-parser.vala

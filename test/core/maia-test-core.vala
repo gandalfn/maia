@@ -29,5 +29,6 @@ public class Maia.TestCore : Maia.TestCase
         suite.add_suite (new TestSet ().suite);
         suite.add_suite (new TestMap ().suite);
         suite.add_suite (new TestObject ().suite);
+        suite.add_suite (new TestNotification ().suite);
     }
 }
