@@ -101,8 +101,10 @@ public class Maia.Array <V> : Collection <V>
     {
         if (m_Size > m_ReservedSize)
         {
+            int oldReservedSize = m_ReservedSize;
             m_ReservedSize = 2 * m_ReservedSize;
             m_pContent = GLib.realloc (m_pContent, m_ReservedSize * sizeof (Node<V>));
+            GLib.Memory.set (&m_pContent[oldReservedSize], 0, oldReservedSize * sizeof (Node<V>));
         }
     }
 
@@ -154,8 +156,10 @@ public class Maia.Array <V> : Collection <V>
     {
         if (inSize > m_ReservedSize)
         {
+            int oldReservedSize = m_ReservedSize;
             m_ReservedSize = inSize;
             m_pContent = GLib.realloc (m_pContent, m_ReservedSize * sizeof (Node<V>));
+            GLib.Memory.set (&m_pContent[oldReservedSize], 0, (m_ReservedSize - oldReservedSize) * sizeof (Node<V>));
         }
     }
 
@@ -176,24 +180,20 @@ public class Maia.Array <V> : Collection <V>
     {
         if (compare_func != null)
         {
-            Iterator<V>? iterator = get_iterator (inValue);
-            if (iterator == null)
+            int index = m_Size;
+
+            m_Size++;
+            grow ();
+
+            while (index > 0 && compare_func (m_pContent[index - 1].val, inValue) > 0)
             {
-                int index = m_Size;
-
-                m_Size++;
-                grow ();
-
-                while (index > 0 && compare_func (m_pContent[index - 1].val, inValue) > 0)
-                {
-                    m_pContent[index].val = m_pContent[index - 1].val;
-                    index--;
-                }
-
-                m_pContent[index].val = inValue;
-
-                stamp++;
+                m_pContent[index].val = m_pContent[index - 1].val;
+                index--;
             }
+
+            m_pContent[index].val = inValue;
+
+            stamp++;
         }
         else
         {
