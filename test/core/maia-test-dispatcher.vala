@@ -41,9 +41,9 @@ public class Maia.TestDispatcher : Maia.TestCase
         Task task = (Task)inNotification.owner;
 
         Test.message ("running elapsed = %f s", Test.timer_elapsed ());
-        if (count < 1000)
+        if (count < 10)
         {
-            task.sleep (20);
+            task.sleep (500);
             ++count;
         }
         else
@@ -70,7 +70,7 @@ public class Maia.TestDispatcher : Maia.TestCase
         task.parent = dispatcher;
 
         Test.timer_start ();
-        task.sleep (20);
+        task.sleep (500);
 
         dispatcher.run ();
     }

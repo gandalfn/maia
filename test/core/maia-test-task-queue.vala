@@ -21,7 +21,7 @@ public class Maia.TestTaskQueue : Maia.TestCase
 {
     const int NB_TASKS = 10000;
 
-    private TaskQueue m_Queue;
+    private Array<Task> m_Queue;
     private Task[] m_Tasks;
 
     public TestTaskQueue ()
@@ -39,8 +39,12 @@ public class Maia.TestTaskQueue : Maia.TestCase
         for (uint cpt = 0; cpt  < NB_TASKS; ++cpt)
         {
             if (inRandom)
+            {
                 m_Tasks[cpt] = new Task ((Task.Priority)Test.rand_int_range (Task.Priority.HIGH,
                                                                              Task.Priority.LOW));
+                m_Tasks[cpt].state = (Task.State)Test.rand_int_range (Task.State.UNKNOWN,
+                                                                      Task.State.READY);
+            }
             else
                 m_Tasks[cpt] = new Task ();
 
@@ -52,7 +56,8 @@ public class Maia.TestTaskQueue : Maia.TestCase
     public override void
     set_up ()
     {
-        m_Queue = new TaskQueue ();
+        m_Queue = new Array<Task> ();
+        m_Queue.compare_func = get_compare_func_for<Task> ();
         m_Tasks = new Task[NB_TASKS];
     }
 
@@ -66,7 +71,10 @@ public class Maia.TestTaskQueue : Maia.TestCase
     public void
     test_task_add_linear ()
     {
+        Test.timer_start ();
         create_tasks (false);
+        double elapsed = Test.timer_elapsed ();
+        Test.message ("Add linear time %f ms", elapsed); 
 
         uint cpt = 0;
 
@@ -80,14 +88,17 @@ public class Maia.TestTaskQueue : Maia.TestCase
     public void
     test_task_add_random ()
     {
+        Test.timer_start ();
         create_tasks (true);
+        double elapsed = Test.timer_elapsed ();
+        Test.message ("Add random time %f ms", elapsed); 
 
         unowned Task? prev = null;
         foreach (Task task in m_Queue)
         {
             if (prev != null)
             {
-                assert (prev.priority <= task.priority);
+                assert (prev.state > task.state || (prev.state == task.state && prev.priority <= task.priority));
             }
             prev = task;
         }
@@ -98,19 +109,11 @@ public class Maia.TestTaskQueue : Maia.TestCase
     {
         create_tasks (true);
 
-        m_Queue.remove (m_Tasks[24]);
-        assert (m_Queue.nb_items == NB_TASKS - 1);
-        m_Queue.remove (m_Tasks[74]);
-        assert (m_Queue.nb_items == NB_TASKS - 2);
-
-        unowned Task? prev = null;
-        foreach (Task task in m_Queue)
+        for (int cpt = 0; cpt < NB_TASKS; ++cpt)
         {
-            if (prev != null)
-            {
-                assert (prev.priority <= task.priority);
-            }
-            prev = task;
+            int nb_items = m_Queue.nb_items;
+            m_Queue.remove (m_Tasks[cpt]);
+            assert (m_Queue.nb_items == nb_items - 1);
         }
     }
 }

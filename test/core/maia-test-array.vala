@@ -90,8 +90,9 @@ public class Maia.TestArray : Maia.TestCase
 
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
+            int nb_items = m_Array.nb_items;
             m_Array.remove (m_Keys[cpt]);
-            assert (!(m_Keys[cpt] in m_Array));
+            assert (m_Array.nb_items == nb_items - 1);
         }
         assert (m_Array.nb_items == 0);
     }
@@ -112,7 +113,6 @@ public class Maia.TestArray : Maia.TestCase
             if (found != null)
             {
                 m_Array.erase (found);
-                assert (!(m_Keys[index] in m_Array));
                 assert (m_Array.nb_items == size - 1);
             }
         }
@@ -147,7 +147,7 @@ public class Maia.TestArray : Maia.TestCase
         {
             if (prev >= 0)
             {
-                assert (prev < val);
+                assert (prev <= val);
             }
             prev = val;
             count++;
@@ -257,7 +257,7 @@ public class Maia.TestArray : Maia.TestCase
             {
                 if (prev >= 0)
                 {
-                    assert (prev < val);
+                    assert (prev <= val);
                 }
                 prev = val;
             }
@@ -283,8 +283,9 @@ public class Maia.TestArray : Maia.TestCase
             Test.timer_start ();
             for (int cpt = 0; cpt < NB_KEYS; ++cpt)
             {
+                int nb_items = m_Array.nb_items;
                 m_Array.remove (m_Keys[cpt]);
-                assert (!(m_Keys[cpt] in m_Array));
+                assert (m_Array.nb_items == nb_items - 1);
             }
             double elapsed = Test.timer_elapsed () * 1000;
             min = double.min (elapsed, min);
