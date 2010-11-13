@@ -28,8 +28,8 @@ public class Maia.Observer
     }
 
     // Properties
-    internal ActionFunc   m_Func;
-    internal void*        m_pTarget;
+    private ActionFunc   m_Func;
+    private void*        m_pTarget;
 
     // Methods
     public Observer (ActionFunc inFunc, void* inTarget)
