@@ -36,6 +36,12 @@ public class Maia.Dispatcher : Task
         Posix.close (m_PollFd);
     }
 
+    public override bool
+    can_append_child (Object inChild)
+    {
+        return inChild is Task;
+    }
+
     public override void*
     run ()
     {

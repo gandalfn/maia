@@ -26,13 +26,16 @@ public class Maia.TestDispatcher : Maia.TestCase
     {
         base ("dispatcher");
 
-        add_test ("task", test_task);
+        add_test ("add-task", test_add_task);
+        add_test ("sleep", test_sleep);
     }
 
     public override void
     set_up ()
     {
         dispatcher = new Dispatcher ();
+        assert (dispatcher.state == Task.State.READY);
+        assert (dispatcher.childs.nb_items == 0);
     }
 
     private void
@@ -60,7 +63,21 @@ public class Maia.TestDispatcher : Maia.TestCase
     }
 
     public void
-    test_task ()
+    test_add_task ()
+    {
+        Task task = new Task ();
+        task.parent = dispatcher;
+
+        assert (task.parent != null);
+        assert (dispatcher.childs.nb_items == 1);
+
+        Pair<string, string> pair  = new Pair <string, string> ("test", "task");
+        pair.parent = dispatcher;
+        assert (pair.parent == null);
+    }
+
+    public void
+    test_sleep ()
     {
         Task task = new Task ();
 
@@ -73,5 +90,8 @@ public class Maia.TestDispatcher : Maia.TestCase
         task.sleep (500);
 
         dispatcher.run ();
+        assert (task.state == Task.State.TERMINATED);
+        assert (dispatcher.state == Task.State.TERMINATED);
+        assert (count >= 10);
     }
 }
