@@ -112,9 +112,9 @@ public class Maia.Task : Object
     {
         int ret = 0;
 
-        if (m_State > ((Task)inOther).m_State)
+        if (m_State < ((Task)inOther).m_State)
             ret = 1;
-        else if (m_State < ((Task)inOther).m_State)
+        else if (m_State > ((Task)inOther).m_State)
             ret = -1;
         else if (m_Priority < ((Task)inOther).m_Priority)
             ret =  -1;
