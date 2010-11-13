@@ -25,7 +25,7 @@ public class Maia.Dispatcher : Task
     // Methods
     public Dispatcher ()
     {
-        base (null, Priority.HIGH);
+        base (Priority.HIGH);
 
         m_PollFd = Os.EPoll (Os.EPOLL_CLOEXEC);
         childs.compare_func = get_compare_func_for<Task> ();
@@ -44,10 +44,10 @@ public class Maia.Dispatcher : Task
         Array<unowned Task> ready_tasks = new Array<unowned Task> ();
         ready_tasks.compare_func = get_compare_func_for<Task> ();
 
+        Os.EPollEvent events[64];
+
         while (state == Task.State.RUNNING)
         {
-            Os.EPollEvent events[64];
-
             int timeout = childs.nb_items > 0 && ((Task)childs.at (0)).state == Task.State.READY ? 0 : -1;
 
             int nb_fds = m_PollFd.wait (events, timeout);

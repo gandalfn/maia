@@ -20,6 +20,7 @@
 public class Maia.TestDispatcher : Maia.TestCase
 {
     private Maia.Dispatcher dispatcher;
+    private int count;
 
     public TestDispatcher ()
     {
@@ -35,20 +36,41 @@ public class Maia.TestDispatcher : Maia.TestCase
     }
 
     private void
-    on_task ()
+    on_task_running (Notification inNotification)
     {
-        Test.message ("elapsed = %f s", Test.timer_elapsed ());
+        Task task = (Task)inNotification.owner;
+
+        Test.message ("running elapsed = %f s", Test.timer_elapsed ());
+        if (count < 1000)
+        {
+            task.sleep (20);
+            ++count;
+        }
+        else
+        {
+            task.finish ();
+        }
+    }
+
+    private void
+    on_task_finished (Notification inNotification)
+    {
+        Test.message ("finished elapsed = %f s", Test.timer_elapsed ());
         dispatcher.finish ();
     }
 
     public void
     test_task ()
     {
-        Task task = new Task (on_task);
+        Task task = new Task ();
+
+        count = 0;
+        task.running.watch (new Notification.Observer (on_task_running, this));
+        task.finished.watch (new Notification.Observer (on_task_finished, this));
         task.parent = dispatcher;
 
         Test.timer_start ();
-        task.sleep (500);
+        task.sleep (20);
 
         dispatcher.run ();
     }

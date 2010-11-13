@@ -39,10 +39,13 @@ public class Maia.Task : Object
     public delegate void Func ();
 
     // Properties
-    private Func m_Func;
     private Priority m_Priority;
     private State m_State = State.UNKNOWN;
     internal int wait_fd;
+
+    // Notifications
+    public Notification running;
+    public Notification finished;
 
     // Accessors
     public Priority priority {
@@ -55,15 +58,17 @@ public class Maia.Task : Object
         get {
             return m_State;
         }
-        internal set {
+        set {
             m_State = value;
         }
     }
 
     // Methods
-    public Task (Func? inFunc, Priority inPriority = Priority.NORMAL)
+    public Task (Priority inPriority = Priority.NORMAL)
     {
-        m_Func = inFunc;
+        running = new Notification ("running", this);
+        finished = new Notification ("finished", this);
+
         m_Priority = inPriority;
         m_State = State.READY;
     }
@@ -78,7 +83,7 @@ public class Maia.Task : Object
     {
         m_State = State.RUNNING;
 
-        if (m_Func != null) m_Func ();
+        running.post ();
 
         return null;
     }
@@ -87,6 +92,8 @@ public class Maia.Task : Object
     finish ()
     {
         m_State = State.TERMINATED;
+
+        finished.post ();
     }
     
     public void

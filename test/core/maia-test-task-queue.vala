@@ -34,21 +34,15 @@ public class Maia.TestTaskQueue : Maia.TestCase
     }
 
     private void
-    test_task_callback ()
-    {
-    }
-
-    private void
     create_tasks (bool inRandom)
     {
         for (uint cpt = 0; cpt  < NB_TASKS; ++cpt)
         {
             if (inRandom)
-                m_Tasks[cpt] = new Task (test_task_callback, 
-                                         (Task.Priority)Test.rand_int_range (Task.Priority.HIGH,
+                m_Tasks[cpt] = new Task ((Task.Priority)Test.rand_int_range (Task.Priority.HIGH,
                                                                              Task.Priority.LOW));
             else
-                m_Tasks[cpt] = new Task (test_task_callback);
+                m_Tasks[cpt] = new Task ();
 
             m_Queue.insert (m_Tasks[cpt]);
             assert (m_Queue.nb_items == cpt + 1);
