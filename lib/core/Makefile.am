@@ -40,8 +40,7 @@ libmaia_core_la_SOURCES = \
     maia-parser.vala \
     maia-notification.vala \
     maia-task.vala \
-    maia-dispatcher.vala \
-    maia-task-queue.vala
+    maia-dispatcher.vala
 
 libmaia_core_la_LDFLAGS = \
     -version-number @MAIA_SO_VERSION@ \
