@@ -93,16 +93,31 @@ public abstract class Maia.Object
                     m_Parent.m_IdentifiedChilds.unset (m_Id);
             }
 
-            // set parent property
-            m_Parent = value;
-
-            // add object to childs of parent
-            if (m_Parent != null)
+            if (value != null)
             {
-                m_Parent.create_child_arrays ();
-                m_Parent.m_Childs.insert (this);
-                if (m_Id != null)
-                    m_Parent.m_IdentifiedChilds[m_Id] = this;
+                if (value.can_append_child (this))
+                {
+                    // set parent property
+                    m_Parent = value;
+
+                    // add object to childs of parent
+                    if (m_Parent != null)
+                    {
+                        m_Parent.create_child_arrays ();
+                        m_Parent.m_Childs.insert (this);
+                        if (m_Id != null)
+                            m_Parent.m_IdentifiedChilds[m_Id] = this;
+                    }
+                }
+                else
+                {
+                    m_Parent = null;
+                }
+            }
+            else
+            {
+                // set parent property
+                m_Parent = value;
             }
         }
     }
@@ -152,6 +167,20 @@ public abstract class Maia.Object
 
         if (m_IdentifiedChilds == null)
             m_IdentifiedChilds = new Map<string, unowned Object> ();
+    }
+
+    /**
+     * Check if an object can be added to this object
+     *
+     * @param inChild object child to test
+     *
+     * @return `true` if the child object can be added to this node, 
+     *         `false` otherwise
+     */
+    public inline virtual bool 
+    can_append_child (Object inChild)
+    {
+        return true; 
     }
 
     /**

@@ -40,15 +40,4 @@ public abstract class Maia.XmlNode : Object
      * Node type
      */
     public abstract XmlNodeType node_type { get; default = XmlNodeType.INVALID_NODE; }
-
-    /**
-     * Check if a node can be added to this node
-     *
-     * @param inChild node child to test
-     *
-     * @return `true` if the child node can be added to this node, 
-     *         `false` otherwise
-     */
-    public abstract bool 
-    can_append_child (XmlNode inChild);
 }
