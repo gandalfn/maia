@@ -38,6 +38,7 @@ libmaia_core_la_SOURCES = \
     maia-rectangle.vala \
     maia-region.vala \
     maia-parser.vala \
+    maia-observer.vala \
     maia-notification.vala \
     maia-task.vala \
     maia-dispatcher.vala

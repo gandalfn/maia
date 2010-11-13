@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class FooArgs : Maia.Notification.Args
+public class FooArgs : Maia.Observer.Args
 {
     public int a;
     public string b;
@@ -50,14 +50,14 @@ public class Maia.TestNotification : Maia.TestCase
     set_up ()
     {
         notification = new Maia.Notification("test", this);
-        notification.watch (new Notification.Observer ((Maia.Notification.ActionFunc)on_notification, this));
+        notification.watch (new Observer (on_notification, this));
         notification_elapsed = 0.0;
         signal_test.connect (on_signal);
         signal_elapsed = 0.0;
     }
 
     private void
-    on_notification (Notification inNotification, FooArgs inArgs)
+    on_notification (Notification inNotification, Observer.Args inArgs)
     {
         notification_elapsed = Test.timer_elapsed () * 1000;
     }

@@ -82,8 +82,8 @@ public class Maia.TestDispatcher : Maia.TestCase
         Task task = new Task ();
 
         count = 0;
-        task.running.watch (new Notification.Observer (on_task_running, this));
-        task.finished.watch (new Notification.Observer (on_task_finished, this));
+        task.running.watch (new Observer (on_task_running, this));
+        task.finished.watch (new Observer (on_task_finished, this));
         task.parent = dispatcher;
 
         Test.timer_start ();

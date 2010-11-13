@@ -19,33 +19,6 @@
 
 public class Maia.Notification
 {
-    // types
-    [CCode (has_target = false)]
-    public delegate void ActionFunc (void* inTarget, Notification inNotification, Args inArgs);
-
-
-    public abstract class Args
-    {
-    }
-
-    public class Observer
-    {
-        public ActionFunc           func;
-        public void*                target;
-
-        public Observer (ActionFunc inFunc, void* inTarget)
-        {
-            func = inFunc;
-            target = inTarget;
-        }
-
-        internal bool
-        equals (Observer inOther)
-        {
-            return func == inOther.func && target == inOther.target;
-        }
-    }
-
     // properties
     private string           m_Name;
     private void*            m_Owner;
@@ -84,10 +57,10 @@ public class Maia.Notification
      * Post notification
      */
     public void
-    post (Args? inArgs = null)
+    post (Observer.Args? inArgs = null)
     {
         foreach (unowned Observer observer in m_Observers)
-            observer.func (observer.target, this, inArgs);
+            observer.notify (this, inArgs);
     }
 
     /**

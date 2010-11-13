@@ -37,8 +37,6 @@ public class Maia.Task : Object
         READY
     }
 
-    public delegate void Func ();
-
     // Properties
     private Priority m_Priority;
     private State m_State = State.UNKNOWN;
