@@ -31,6 +31,7 @@ public class Maia.Task : Object
     {
         UNKNOWN,
         TERMINATED,
+        PAUSING,
         RUNNING,
         SLEEPING,
         READY
