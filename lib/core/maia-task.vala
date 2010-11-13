@@ -96,7 +96,7 @@ public class Maia.Task : Object
 
         finished.post ();
     }
-    
+
     public void
     sleep (ulong inTimeout)
     {
@@ -107,6 +107,9 @@ public class Maia.Task : Object
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public override int
     compare (Object inOther)
         requires (inOther is Task)

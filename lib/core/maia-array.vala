@@ -130,7 +130,7 @@ public class Maia.Array <V> : Collection <V>
                 while (iterator == null && right >= left)
                 {
                     int medium = (left + right) / 2;
-                    int res = compare_func ((void*)m_pContent[medium].val, (void*)inValue);
+                    int res = compare_func (m_pContent[medium].val, inValue);
 
                     if (res == 0)
                     {
@@ -160,6 +160,25 @@ public class Maia.Array <V> : Collection <V>
             m_ReservedSize = inSize;
             m_pContent = GLib.realloc (m_pContent, m_ReservedSize * sizeof (Node<V>));
             GLib.Memory.set (&m_pContent[oldReservedSize], 0, (m_ReservedSize - oldReservedSize) * sizeof (Node<V>));
+        }
+    }
+
+    public void
+    check ()
+    {
+        if (compare_func != null)
+        {
+            // Check each val in array
+            for (uint cpt = 0; cpt < m_Size - 1; ++cpt)
+            {
+                if (compare_func (m_pContent[cpt].val, m_pContent[cpt + 1].val) > 0)
+                {
+                    // swap data
+                    V swap = m_pContent[cpt].val;
+                    m_pContent[cpt].val = m_pContent[cpt + 1].val;
+                    m_pContent[cpt + 1].val = swap;
+                }
+            }
         }
     }
 
@@ -289,8 +308,9 @@ public class Maia.Array <V> : Collection <V>
 
         int index = iter.index;
 
-        for (int cpt = index; cpt < m_Size; ++cpt)
-            m_pContent[cpt].val = m_pContent[cpt + 1].val;
+        if (index != m_Size)
+            GLib.Memory.move (&m_pContent[index], &m_pContent[index + 1],
+                              (m_Size - index) * sizeof (V));
 
         m_pContent[m_Size].val = null;
 
