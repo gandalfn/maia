@@ -48,12 +48,19 @@ public class Maia.Task : Object
     public Notification finished;
 
     // Accessors
+
+    /**
+     * Task priority
+     */
     public Priority priority {
         get {
             return m_Priority;
         }
     }
 
+    /**
+     * Task state
+     */
     public State state {
         get {
             return m_State;
@@ -73,6 +80,12 @@ public class Maia.Task : Object
     }
 
     // Methods
+
+    /**
+     * Create a new Task
+     *
+     * @param inPriority task priority
+     */
     public Task (Priority inPriority = Priority.NORMAL)
     {
         running = new Notification ("running", this);

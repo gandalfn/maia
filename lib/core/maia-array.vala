@@ -151,6 +151,11 @@ public class Maia.Array <V> : Collection <V>
         return iterator;
     }
 
+    /**
+     * Reserve the size of array
+     *
+     * @param inSize the reserved size
+     */
     public void
     reserve (int inSize)
     {
@@ -163,6 +168,9 @@ public class Maia.Array <V> : Collection <V>
         }
     }
 
+    /**
+     * Check if array is correctly sorted
+     */
     public void
     check ()
     {

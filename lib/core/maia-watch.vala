@@ -33,6 +33,10 @@ public class Maia.Watch : Task
     private Flags m_Flags;
 
     // Accessors
+
+    /**
+     * {@inheritDoc}
+     */
     public override Object parent {
         get {
             return base.parent;
@@ -48,6 +52,9 @@ public class Maia.Watch : Task
         }
     }
 
+    /**
+     * File descriptor watched
+     */
     public int fd {
         get {
             return m_Fd;
@@ -61,6 +68,9 @@ public class Maia.Watch : Task
         }
     }
 
+    /**
+     * Watch flags
+     */
     public Flags flags {
         get {
             return m_Flags;
@@ -68,8 +78,17 @@ public class Maia.Watch : Task
     }
 
     // Methods
-    public Watch (int inFd, Flags inFlags)
+
+    /**
+     * Create a new File descriptor watcher
+     *
+     * @param inFd file descriptor to watch
+     * @param inPriority watch priority
+     */
+    public Watch (int inFd, Flags inFlags, Task.Priority inPriority = Task.Priority.NORMAL)
     {
+        base (inPriority);
+
         m_Fd = inFd;
         m_Flags = inFlags;
         m_WatchFd = Posix.dup (inFd);
@@ -82,6 +101,9 @@ public class Maia.Watch : Task
         m_WatchFd = -1;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public override void*
     run ()
     {
@@ -93,7 +115,7 @@ public class Maia.Watch : Task
     }
 
     internal virtual void
-    unset_watch_fd ()
+    close_watch_fd ()
     {
         if (m_WatchFd >= 0) Posix.close (m_WatchFd);
         m_WatchFd = -1;

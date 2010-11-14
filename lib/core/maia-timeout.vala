@@ -26,12 +26,7 @@ public class Maia.Timeout : Watch
 
         public class Args : Maia.Observer.Args
         {
-            public bool return_val;
-
-            public Args ()
-            {
-                return_val = false;
-            }
+            public bool return_val = false;
         }
 
         public Observer (ActionFunc inFunc, void* inpTarget)
@@ -75,17 +70,27 @@ public class Maia.Timeout : Watch
     }
 
     // Methods
-    public Timeout (ulong inTimeoutMs)
+
+    /**
+     * Create a new Timeout
+     *
+     * @param inTimeoutMs timeout in milliseconds
+     * @param inPriority timeout priority
+     */
+    public Timeout (ulong inTimeoutMs, Task.Priority inPriority = Task.Priority.NORMAL)
     {
         Os.TimerFd timer_fd = Os.TimerFd (Os.CLOCK_MONOTONIC, Os.TFD_CLOEXEC);
         
-        base (timer_fd, Watch.Flags.IN);
+        base (timer_fd, Watch.Flags.IN, inPriority);
 
         m_TimeoutMs = inTimeoutMs;
 
         elapsed = new Notification ("elapsed", this);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public override void*
     run ()
     {
@@ -102,7 +107,7 @@ public class Maia.Timeout : Watch
     }
 
     internal override void
-    unset_watch_fd ()
+    close_watch_fd ()
     {
         if (m_WatchSet)
         {

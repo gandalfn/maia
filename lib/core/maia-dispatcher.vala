@@ -143,6 +143,6 @@ public class Maia.Dispatcher : Task
     remove_watch (Watch inWatch)
     {
         m_PollFd.ctl (Os.EPOLL_CTL_DEL, inWatch.watch_fd, null);
-        inWatch.unset_watch_fd ();
+        inWatch.close_watch_fd ();
     }
 }
