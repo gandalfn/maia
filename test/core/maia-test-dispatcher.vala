@@ -47,7 +47,7 @@ public class Maia.TestDispatcher : Maia.TestCase
         Test.message ("running elapsed = %f s", Test.timer_elapsed ());
         if (count < 10)
         {
-            task.sleep (500);
+            task.sleep (50);
             ++count;
         }
         else
@@ -108,7 +108,7 @@ public class Maia.TestDispatcher : Maia.TestCase
         task.parent = dispatcher;
 
         Test.timer_start ();
-        task.sleep (500);
+        task.sleep (50);
 
         dispatcher.run ();
         assert (task.state == Task.State.TERMINATED);
@@ -119,7 +119,7 @@ public class Maia.TestDispatcher : Maia.TestCase
     public void
     test_timeout ()
     {
-        Timeout timeout = new Timeout (500);
+        Timeout timeout = new Timeout (50);
 
         count = 0;
         timeout.elapsed.watch (new Timeout.Observer (on_timeout_elapsed, this));

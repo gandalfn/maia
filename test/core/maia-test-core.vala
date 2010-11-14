@@ -23,12 +23,12 @@ public class Maia.TestCore : Maia.TestCase
     {
         base ("core");
 
-        /*suite.add_suite (new TestArray ().suite);
+        suite.add_suite (new TestArray ().suite);
         suite.add_suite (new TestList ().suite);
         suite.add_suite (new TestSet ().suite);
         suite.add_suite (new TestMap ().suite);
         suite.add_suite (new TestObject ().suite);
-        suite.add_suite (new TestNotification ().suite);*/
+        suite.add_suite (new TestNotification ().suite);
         suite.add_suite (new TestDispatcher ().suite);
     }
 }
