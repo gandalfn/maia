@@ -1,5 +1,4 @@
 MAIA_LIB_NAME = maia-core
-MAIA_EXTRA_VAPIS = source.vapi
 
 include $(top_srcdir)/build/maia.am
 include $(top_srcdir)/build/pkgconfig.am
@@ -12,7 +11,6 @@ lib_LTLIBRARIES = libmaia-core.la
 includecoredir = $(includedir)/core
 
 includecore_HEADERS = \
-    maia-source.h \
     maia-core.h
 
 libmaia_core_la_VALAFLAGS = \
@@ -21,7 +19,6 @@ libmaia_core_la_VALAFLAGS = \
     --library=maia-core
 
 libmaia_core_la_SOURCES = \
-    maia-source.c \
     maia-object.vala \
     maia-value.vala \
     maia-utils.vala \
@@ -41,6 +38,8 @@ libmaia_core_la_SOURCES = \
     maia-observer.vala \
     maia-notification.vala \
     maia-task.vala \
+    maia-watch.vala \
+    maia-timeout.vala \
     maia-dispatcher.vala
 
 libmaia_core_la_LDFLAGS = \

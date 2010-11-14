@@ -45,8 +45,8 @@ namespace Os
         public int gettime (out ITimerSpec outCurrentValue);
     }
 
-    public const int32 CLOCK_MONOTONIC;
-    public const int32 TFD_CLOEXEC;
+    public const int CLOCK_MONOTONIC;
+    public const int TFD_CLOEXEC;
 
     [CCode (cname = "int", cprefix = "epoll_")]
     public struct EPoll : int
@@ -62,7 +62,7 @@ namespace Os
     public struct EPollData
     {
         public void* ptr;
-        public int32 fd;
+        public int fd;
         public uint32 u32;
         public uint64 u64;
     }
@@ -74,10 +74,11 @@ namespace Os
         public EPollData data;
     }
 
-    public const int32 EPOLL_CLOEXEC;
-    public const int32 EPOLL_CTL_ADD;
-    public const int32 EPOLL_CTL_MOD;
-    public const int32 EPOLL_CTL_DEL;
-    public const int32 EPOLLIN;
-    public const int32 EPOLLOUT;
+    public const int EPOLL_CLOEXEC;
+    public const int EPOLL_CTL_ADD;
+    public const int EPOLL_CTL_MOD;
+    public const int EPOLL_CTL_DEL;
+    public const int EPOLLIN;
+    public const int EPOLLOUT;
+    public const int EPOLLERR;
 }

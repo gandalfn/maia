@@ -78,7 +78,7 @@ public abstract class Maia.Object
     /**
      * Object parent
      */
-    public Object parent {
+    public virtual Object parent {
         get {
             return m_Parent;
         }

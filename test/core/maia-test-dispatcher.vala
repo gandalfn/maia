@@ -19,7 +19,7 @@
 
 public class Maia.TestDispatcher : Maia.TestCase
 {
-    private Maia.Dispatcher dispatcher;
+    private Maia.Dispatcher dispatcher = null;
     private int count;
 
     public TestDispatcher ()
@@ -28,6 +28,7 @@ public class Maia.TestDispatcher : Maia.TestCase
 
         add_test ("add-task", test_add_task);
         add_test ("sleep", test_sleep);
+        add_test ("timeout", test_timeout);
     }
 
     public override void
@@ -62,6 +63,26 @@ public class Maia.TestDispatcher : Maia.TestCase
         dispatcher.finish ();
     }
 
+    private bool
+    on_timeout_elapsed ()
+    {
+        bool ret = true;
+
+        Test.message ("timeout elapsed = %f s", Test.timer_elapsed ());
+        if (count < 10)
+        {
+            ++count;
+        }
+        else
+        {
+            ret = false;
+        }
+
+        Test.timer_start ();
+
+        return ret;
+    }
+
     public void
     test_add_task ()
     {
@@ -91,6 +112,24 @@ public class Maia.TestDispatcher : Maia.TestCase
 
         dispatcher.run ();
         assert (task.state == Task.State.TERMINATED);
+        assert (dispatcher.state == Task.State.TERMINATED);
+        assert (count >= 10);
+    }
+
+    public void
+    test_timeout ()
+    {
+        Timeout timeout = new Timeout (500);
+
+        count = 0;
+        timeout.elapsed.watch (new Timeout.Observer (on_timeout_elapsed, this));
+        timeout.finished.watch (new Observer (on_task_finished, this));
+        timeout.parent = dispatcher;
+
+        Test.timer_start ();
+
+        dispatcher.run ();
+        assert (timeout.state == Task.State.TERMINATED);
         assert (dispatcher.state == Task.State.TERMINATED);
         assert (count >= 10);
     }

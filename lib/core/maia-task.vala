@@ -32,6 +32,7 @@ public class Maia.Task : Object
         UNKNOWN,
         TERMINATED,
         PAUSING,
+        WAITING,
         RUNNING,
         SLEEPING,
         READY
@@ -40,7 +41,7 @@ public class Maia.Task : Object
     // Properties
     private Priority m_Priority;
     private State m_State = State.UNKNOWN;
-    internal int wait_fd;
+    private int m_SleepFd = -1;
 
     // Notifications
     public Notification running;
@@ -62,6 +63,15 @@ public class Maia.Task : Object
         }
     }
 
+    internal int sleep_fd {
+        get {
+            return m_SleepFd;
+        }
+        set {
+            m_SleepFd = value;
+        }
+    }
+
     // Methods
     public Task (Priority inPriority = Priority.NORMAL)
     {
@@ -74,7 +84,9 @@ public class Maia.Task : Object
 
     ~Task ()
     {
-        if (wait_fd >= 0) Posix.close (wait_fd);
+        if (m_SleepFd >= 0) Posix.close (m_SleepFd);
+        m_SleepFd = -1;
+        parent = null;
     }
 
     public virtual void*

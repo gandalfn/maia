@@ -169,12 +169,12 @@ public class Maia.Array <V> : Collection <V>
         if (compare_func != null)
         {
             // Check each val in array
-            for (uint cpt = 0; cpt < m_Size - 1; ++cpt)
+            for (int cpt = 0; cpt < m_Size - 1; ++cpt)
             {
                 if (compare_func (m_pContent[cpt].val, m_pContent[cpt + 1].val) > 0)
                 {
                     // swap data
-                    V swap = m_pContent[cpt].val;
+                    V swap = (owned)m_pContent[cpt].val;
                     m_pContent[cpt].val = m_pContent[cpt + 1].val;
                     m_pContent[cpt + 1].val = swap;
                 }

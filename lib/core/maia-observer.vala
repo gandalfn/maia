@@ -31,6 +31,19 @@ public class Maia.Observer
     private ActionFunc   m_Func;
     private void*        m_pTarget;
 
+    // Accessors
+    public ActionFunc func {
+        get {
+            return m_Func;
+        }
+    }
+
+    public void* target {
+        get {
+            return m_pTarget;
+        }
+    }
+
     // Methods
     public Observer (ActionFunc inFunc, void* inTarget)
     {
@@ -38,7 +51,7 @@ public class Maia.Observer
         m_pTarget = inTarget;
     }
 
-    internal void
+    public virtual void
     notify (Notification inNotification, Args? inArgs = null)
     {
         m_Func (m_pTarget, inNotification, inArgs);

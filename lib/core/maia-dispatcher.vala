@@ -20,7 +20,7 @@
 public class Maia.Dispatcher : Task
 {
     // Properties
-    private Os.EPoll m_PollFd;
+    private Os.EPoll m_PollFd = -1;
 
     // Methods
     public Dispatcher ()
@@ -33,7 +33,9 @@ public class Maia.Dispatcher : Task
 
     ~Dispatcher ()
     {
-        Posix.close (m_PollFd);
+        if (m_PollFd >= 0)
+            Posix.close (m_PollFd);
+        m_PollFd = -1;
     }
 
     /**
@@ -79,11 +81,13 @@ public class Maia.Dispatcher : Task
             for (int cpt = 0; cpt < nb_fds; ++cpt)
             {
                 unowned Task task = (Task)events[cpt].data.ptr;
+                if (task.state == Task.State.SLEEPING)
+                {
+                    m_PollFd.ctl (Os.EPOLL_CTL_DEL, task.sleep_fd, null);
+                    Posix.close (task.sleep_fd);
+                    task.sleep_fd = -1;
+                }
                 task.state = Task.State.READY;
-
-                m_PollFd.ctl (Os.EPOLL_CTL_DEL, task.wait_fd, null);
-                Posix.close (task.wait_fd);
-                task.wait_fd = -1;
                 ready_tasks.insert (task);
             }
 
@@ -93,9 +97,7 @@ public class Maia.Dispatcher : Task
 
                 task.parent = null;
                 if (task.state != Task.State.TERMINATED)
-                {
                     task.parent = this;
-                }
             }
 
             ready_tasks.clear ();
@@ -120,6 +122,27 @@ public class Maia.Dispatcher : Task
         event.data.ptr = inTask;
         m_PollFd.ctl (Os.EPOLL_CTL_ADD, timer_fd, event);
 
-        inTask.wait_fd = timer_fd;
+        inTask.sleep_fd = timer_fd;
+    }
+
+    internal void
+    add_watch (Watch inWatch)
+    {
+        Os.EPollEvent event = Os.EPollEvent ();
+        if ((inWatch.flags & Watch.Flags.IN) == Watch.Flags.IN)
+            event.events |= Os.EPOLLIN;
+        if ((inWatch.flags & Watch.Flags.OUT) == Watch.Flags.OUT)
+            event.events |= Os.EPOLLOUT;
+        if ((inWatch.flags & Watch.Flags.ERR) == Watch.Flags.ERR)
+            event.events |= Os.EPOLLERR;
+        event.data.ptr = inWatch;
+        m_PollFd.ctl (Os.EPOLL_CTL_ADD, inWatch.watch_fd, event);
+    }
+
+    internal void
+    remove_watch (Watch inWatch)
+    {
+        m_PollFd.ctl (Os.EPOLL_CTL_DEL, inWatch.watch_fd, null);
+        inWatch.unset_watch_fd ();
     }
 }
