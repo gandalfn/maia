@@ -121,6 +121,8 @@ public class Maia.Task : Object
     {
         if (parent != null)
         {
+            wakeup ();
+
             ulong ustime = inTimeout * 1000;
             Os.ITimerSpec itimer_spec = Os.ITimerSpec ();
             itimer_spec.it_value.tv_sec = (time_t)(ustime / 1000000);
