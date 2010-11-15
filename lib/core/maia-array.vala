@@ -96,6 +96,41 @@ public class Maia.Array <V> : Collection <V>
         delete m_pContent;
     }
 
+    private int
+    get_nearest_pos (V inValue)
+    {
+        int ret = m_Size;
+        int left = 0, right = m_Size - 1;
+
+        if (right != -1)
+        {
+            while (right >= left)
+            {
+                int medium = (left + right) / 2;
+                int res = compare_func (m_pContent[medium].val, inValue);
+
+                if (res == 0)
+                {
+                    while (compare_func (m_pContent[medium].val, inValue) == 0)
+                        medium++;
+                    return medium;
+                }
+                else if (res > 0)
+                {
+                    right = medium - 1;
+                }
+                else
+                {
+                    left = medium + 1;
+                }
+
+                ret = (int)Posix.ceil((double)(left + right) / 2);
+            }
+        }
+
+        return ret;
+    }
+
     private void
     grow ()
     {
@@ -207,18 +242,16 @@ public class Maia.Array <V> : Collection <V>
     {
         if (compare_func != null)
         {
-            int index = m_Size;
+            int pos = get_nearest_pos (inValue);
 
             m_Size++;
             grow ();
 
-            while (index > 0 && compare_func (m_pContent[index - 1].val, inValue) > 0)
-            {
-                m_pContent[index].val = m_pContent[index - 1].val;
-                index--;
-            }
+            if (pos < m_Size - 1)
+                GLib.Memory.move (&m_pContent[pos + 1], &m_pContent[pos],
+                                  (m_Size - pos - 1) * sizeof (Node<V>));
 
-            m_pContent[index].val = inValue;
+            m_pContent[pos].val = inValue;
 
             stamp++;
         }
