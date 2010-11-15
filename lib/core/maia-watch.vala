@@ -91,7 +91,7 @@ public class Maia.Watch : Task
 
         m_Fd = inFd;
         m_Flags = inFlags;
-        m_WatchFd = Posix.dup (inFd);
+        m_WatchFd = -1;
         state = Task.State.WAITING;
     }
 
@@ -112,6 +112,20 @@ public class Maia.Watch : Task
         state = Task.State.WAITING;
 
         return ret;
+    }
+
+    public override void
+    sleep (ulong inTimeoutMs)
+    {
+        base.sleep (inTimeoutMs);
+        close_watch_fd ();
+    }
+
+    public override void
+    wakeup ()
+    {
+        state = Task.State.WAITING;
+        base.wakeup ();
     }
 
     internal virtual void

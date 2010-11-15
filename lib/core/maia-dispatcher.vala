@@ -80,15 +80,18 @@ public class Maia.Dispatcher : Task
 
             for (int cpt = 0; cpt < nb_fds; ++cpt)
             {
-                unowned Task task = (Task)events[cpt].data.ptr;
+                Task task = (Task)events[cpt].data.ptr;
                 if (task.state == Task.State.SLEEPING)
                 {
-                    m_PollFd.ctl (Os.EPOLL_CTL_DEL, task.sleep_fd, null);
-                    Posix.close (task.sleep_fd);
-                    task.sleep_fd = -1;
+                    task.wakeup ();
                 }
-                task.state = Task.State.READY;
-                ready_tasks.insert (task);
+                else
+                {
+                    task.state = Task.State.READY;
+                }
+
+                if (task.state == Task.State.READY)
+                    ready_tasks.insert (task);
             }
 
             foreach (unowned Task task in ready_tasks)
@@ -107,22 +110,23 @@ public class Maia.Dispatcher : Task
     }
 
     internal new void
-    sleep (Task inTask, ulong inTimeout)
+    sleep (Task inTask)
     {
-        ulong ustime = inTimeout * 1000;
-        Os.ITimerSpec itimer_spec = Os.ITimerSpec ();
-        itimer_spec.it_value.tv_sec = (time_t)(ustime / 1000000);
-        itimer_spec.it_value.tv_nsec = (long)(1000 * (ustime % 1000000));
-
-        Os.TimerFd timer_fd = Os.TimerFd (Os.CLOCK_MONOTONIC, Os.TFD_CLOEXEC);
-        timer_fd.settime (0, itimer_spec, null);
-
         Os.EPollEvent event = Os.EPollEvent ();
         event.events = Os.EPOLLIN;
         event.data.ptr = inTask;
-        m_PollFd.ctl (Os.EPOLL_CTL_ADD, timer_fd, event);
+        m_PollFd.ctl (Os.EPOLL_CTL_ADD, inTask.sleep_fd, event);
+        inTask.parent = null;
+        inTask.parent = this;
+    }
 
-        inTask.sleep_fd = timer_fd;
+    internal new void
+    wakeup (Task inTask)
+    {
+        m_PollFd.ctl (Os.EPOLL_CTL_DEL, inTask.sleep_fd, null);
+        inTask.parent = null;
+        if (inTask.state != Task.State.TERMINATED)
+            inTask.parent = this;
     }
 
     internal void

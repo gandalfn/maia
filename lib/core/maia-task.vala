@@ -31,17 +31,16 @@ public class Maia.Task : Object
     {
         UNKNOWN,
         TERMINATED,
-        PAUSING,
+        SLEEPING,
         WAITING,
         RUNNING,
-        SLEEPING,
         READY
     }
 
     // Properties
     private Priority m_Priority;
     private State m_State = State.UNKNOWN;
-    private int m_SleepFd = -1;
+    private Os.TimerFd m_SleepFd = -1;
 
     // Notifications
     public Notification running;
@@ -73,9 +72,6 @@ public class Maia.Task : Object
     internal int sleep_fd {
         get {
             return m_SleepFd;
-        }
-        set {
-            m_SleepFd = value;
         }
     }
 
@@ -120,13 +116,37 @@ public class Maia.Task : Object
         finished.post ();
     }
 
-    public void
+    public virtual void
     sleep (ulong inTimeout)
     {
         if (parent != null)
         {
-            (parent as Dispatcher).sleep (this, inTimeout);
+            ulong ustime = inTimeout * 1000;
+            Os.ITimerSpec itimer_spec = Os.ITimerSpec ();
+            itimer_spec.it_value.tv_sec = (time_t)(ustime / 1000000);
+            itimer_spec.it_value.tv_nsec = (long)(1000 * (ustime % 1000000));
+
+            m_SleepFd = Os.TimerFd (Os.CLOCK_MONOTONIC, Os.TFD_CLOEXEC);
+            m_SleepFd.settime (0, itimer_spec, null);
+
+            (parent as Dispatcher).sleep (this);
+
             m_State = State.SLEEPING;
+        }
+    }
+
+    public virtual void
+    wakeup ()
+    {
+        if (parent != null && m_SleepFd >= 0)
+        {
+            if (m_State == State.SLEEPING)
+                m_State = State.READY;
+
+            (parent as Dispatcher).wakeup (this);
+
+            Posix.close (m_SleepFd);
+            m_SleepFd = -1;
         }
     }
 
