@@ -229,7 +229,7 @@ public class Maia.TestMap : Maia.TestCase
     public void
     test_map_dot ()
     {
-        for (int cpt = 0; cpt < NB_KEYS; ++cpt)
+        for (int cpt = 0; cpt < 10; ++cpt)
         {
             m_Map[m_Keys[cpt]] = m_Keys[cpt].to_string ();
             try
@@ -242,7 +242,7 @@ public class Maia.TestMap : Maia.TestCase
                 assert (false);
             }
         }
-        for (int cpt = 0; cpt < NB_KEYS; ++cpt)
+        for (int cpt = 0; cpt < 10; ++cpt)
         {
             m_Map.unset (m_Keys[cpt]);
             try

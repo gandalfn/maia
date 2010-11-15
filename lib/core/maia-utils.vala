@@ -28,6 +28,18 @@ namespace Maia
     public delegate string ToStringFunc<V> (V inValue);
 
     // Methods
+    static string
+    long_to_string (long a)
+    {
+        return a.to_string ();
+    }
+
+    static string
+    double_to_string (long a)
+    {
+        return a.to_string ();
+    }
+
     public static int
     direct_compare (void* inA, void* inB)
     {
@@ -67,6 +79,11 @@ namespace Maia
 
         if (typeof (V) == typeof (string))
             func = (ToStringFunc)string.dup;
+        else if (typeof (V) == typeof (int) || typeof (V) == typeof (uint) ||
+                 typeof (V) == typeof (long) || typeof (V) == typeof (ulong))
+            func = (ToStringFunc)long_to_string;
+        else if (typeof (V) == typeof (float) || typeof (V) == typeof (double))
+            func = (ToStringFunc)double_to_string;
         else if (typeof (V).is_a (typeof (Object)))
             func = (ToStringFunc)Object.to_string;
 
