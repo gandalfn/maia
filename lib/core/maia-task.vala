@@ -98,6 +98,9 @@ public class Maia.Task : Object
         parent = null;
     }
 
+    /**
+     * Runs a task until finish() is called. 
+     */
     public virtual void*
     run ()
     {
@@ -108,6 +111,9 @@ public class Maia.Task : Object
         return null;
     }
 
+    /**
+     * Finish a task
+     */
     public virtual void
     finish ()
     {
@@ -116,6 +122,11 @@ public class Maia.Task : Object
         finished.post ();
     }
 
+    /**
+     * Sleeping a task inTimeout milliseconds
+     *
+     * @param inTimeout sleeping tim in milliseconds
+     */
     public virtual void
     sleep (ulong inTimeout)
     {
@@ -137,6 +148,9 @@ public class Maia.Task : Object
         }
     }
 
+    /**
+     * Wakeup a sleeping task
+     */
     public virtual void
     wakeup ()
     {

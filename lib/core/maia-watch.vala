@@ -114,6 +114,9 @@ public class Maia.Watch : Task
         return ret;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public override void
     sleep (ulong inTimeoutMs)
     {
@@ -121,6 +124,9 @@ public class Maia.Watch : Task
         close_watch_fd ();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public override void
     wakeup ()
     {
