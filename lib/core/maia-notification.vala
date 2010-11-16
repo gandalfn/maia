@@ -60,7 +60,7 @@ public class Maia.Notification
     post (Observer.Args? inArgs = null)
     {
         foreach (unowned Observer observer in m_Observers)
-            observer.notify (this, inArgs);
+            observer.notify (inArgs);
     }
 
     /**

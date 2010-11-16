@@ -19,31 +19,6 @@
 
 public class Maia.Timeout : Watch
 {
-    public class Observer : Maia.Observer
-    {
-        [CCode (has_target = false)]
-        public delegate bool ActionFunc (void* inpTarget);
-
-        public class Args : Maia.Observer.Args
-        {
-            public bool return_val = false;
-        }
-
-        public Observer (ActionFunc inFunc, void* inpTarget)
-        {
-            base ((Maia.Observer.ActionFunc)inFunc, inpTarget);
-        }
-
-        public override void
-        notify (Maia.Notification inNotification, Maia.Observer.Args? inArgs = null)
-        {
-            Args args = (Args)inArgs;
-            ActionFunc callback = (ActionFunc)func;
-
-            args.return_val |= callback (target);
-        }
-    }
-
     // Properties
     private ulong m_TimeoutMs;
     private bool m_WatchSet = false;
@@ -96,7 +71,8 @@ public class Maia.Timeout : Watch
     {
         void* ret = base.run ();
 
-        Observer.Args args = new Observer.Args ();
+        ObserverR0.Args<bool> args = new ObserverR0.Args<bool> (get_accumulator_func_for<bool> ());
+        args.return_val = false;
         elapsed.post (args);
         if (args.return_val)
             state = Task.State.WAITING;

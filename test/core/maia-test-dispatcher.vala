@@ -40,24 +40,22 @@ public class Maia.TestDispatcher : Maia.TestCase
     }
 
     private void
-    on_task_running (Notification inNotification)
+    on_task_running (Task inTask)
     {
-        Task task = (Task)inNotification.owner;
-
         Test.message ("running elapsed = %f s", Test.timer_elapsed ());
         if (count < 10)
         {
-            task.sleep (50);
+            inTask.sleep (50);
             ++count;
         }
         else
         {
-            task.finish ();
+            inTask.finish ();
         }
     }
 
     private void
-    on_task_finished (Notification inNotification)
+    on_task_finished (Task inTask)
     {
         Test.message ("finished elapsed = %f s", Test.timer_elapsed ());
         dispatcher.finish ();
@@ -103,8 +101,8 @@ public class Maia.TestDispatcher : Maia.TestCase
         Task task = new Task ();
 
         count = 0;
-        task.running.watch (new Observer (on_task_running, this));
-        task.finished.watch (new Observer (on_task_finished, this));
+        task.running.watch (new Observer1<Task> (on_task_running, this));
+        task.finished.watch (new Observer1<Task> (on_task_finished, this));
         task.parent = dispatcher;
 
         Test.timer_start ();
@@ -122,8 +120,8 @@ public class Maia.TestDispatcher : Maia.TestCase
         Timeout timeout = new Timeout (50);
 
         count = 0;
-        timeout.elapsed.watch (new Timeout.Observer (on_timeout_elapsed, this));
-        timeout.finished.watch (new Observer (on_task_finished, this));
+        timeout.elapsed.watch (new ObserverR0<bool> (on_timeout_elapsed, this));
+        timeout.finished.watch (new Observer1<Task> (on_task_finished, this));
         timeout.parent = dispatcher;
 
         Test.timer_start ();

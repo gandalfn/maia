@@ -116,7 +116,6 @@ public class Maia.Dispatcher : Task
         event.events = Os.EPOLLIN;
         event.data.ptr = inTask;
         m_PollFd.ctl (Os.EPOLL_CTL_ADD, inTask.sleep_fd, event);
-        inTask.parent = null;
         inTask.parent = this;
     }
 

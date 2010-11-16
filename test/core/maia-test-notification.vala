@@ -17,18 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class FooArgs : Maia.Observer.Args
-{
-    public int a;
-    public string b;
-
-    public FooArgs (int inA, string inB)
-    {
-        a = inA;
-        b = inB;
-    }
-}
-
 public class Maia.TestNotification : Maia.TestCase
 {
     const int NB_ITERATIONS = 1000000;
@@ -50,14 +38,14 @@ public class Maia.TestNotification : Maia.TestCase
     set_up ()
     {
         notification = new Maia.Notification("test", this);
-        notification.watch (new Observer (on_notification, this));
+        notification.watch (new Observer2<int, string> (on_notification, this));
         notification_elapsed = 0.0;
         signal_test.connect (on_signal);
         signal_elapsed = 0.0;
     }
 
     private void
-    on_notification (Notification inNotification, Observer.Args inArgs)
+    on_notification (int a, string b)
     {
         notification_elapsed = Test.timer_elapsed () * 1000;
     }
@@ -91,7 +79,7 @@ public class Maia.TestNotification : Maia.TestCase
         for (int iter = 0; iter < NB_ITERATIONS; ++iter)
         {
             Test.timer_start ();
-            notification.post (new FooArgs(12, "test"));
+            notification.post (new Observer2.Args<int, string> (12, "test"));
             total += notification_elapsed;
             min = double.min (notification_elapsed, min);
             max = double.max (notification_elapsed, max);

@@ -26,6 +26,8 @@ namespace Maia
     public delegate int    CompareFunc<V>  (V inA, V inB);
     [CCode (has_target = false)]
     public delegate string ToStringFunc<V> (V inValue);
+    [CCode (has_target = false)]
+    public delegate V AccumulateFunc<V> (V inA, V inB);
 
     // Methods
     static string
@@ -44,6 +46,54 @@ namespace Maia
     direct_compare (void* inA, void* inB)
     {
         return (long)inA > (long)inB ? 1 : ((long)inA < (long)inB ? -1 : 0);
+    }
+
+    static bool
+    bool_accumulator (bool inA, bool inB)
+    {
+        return inA | inB;
+    }
+
+    static int
+    int_accumulator (int inA, int inB)
+    {
+        return inA + inB;
+    }
+
+    static uint
+    uint_accumulator (uint inA, uint inB)
+    {
+        return inA + inB;
+    }
+
+    static long
+    long_accumulator (long inA, long inB)
+    {
+        return inA + inB;
+    }
+
+    static ulong
+    ulong_accumulator (ulong inA, ulong inB)
+    {
+        return inA + inB;
+    }
+
+    static float
+    float_accumulator (float inA, float inB)
+    {
+        return inA + inB;
+    }
+
+    static double
+    double_accumulator (double inA, double inB)
+    {
+        return inA + inB;
+    }
+
+    static string
+    string_accumulator (string inA, string inB)
+    {
+        return inA + inB;
     }
 
     public static EqualFunc
@@ -86,6 +136,31 @@ namespace Maia
             func = (ToStringFunc)double_to_string;
         else if (typeof (V).is_a (typeof (Object)))
             func = (ToStringFunc)Object.to_string;
+
+        return func;
+    }
+
+    public static AccumulateFunc
+    get_accumulator_func_for<V> ()
+    {
+        AccumulateFunc func = null;
+
+        if (typeof (V) == typeof (bool))
+            func = (AccumulateFunc)bool_accumulator;
+        else if (typeof (V) == typeof (int))
+            func = (AccumulateFunc)int_accumulator;
+        else if (typeof (V) == typeof (uint))
+            func = (AccumulateFunc)uint_accumulator;
+        else if (typeof (V) == typeof (long))
+            func = (AccumulateFunc)long_accumulator;
+        else if (typeof (V) == typeof (ulong))
+            func = (AccumulateFunc)ulong_accumulator;
+        else if (typeof (V) == typeof (float))
+            func = (AccumulateFunc)float_accumulator;
+        else if (typeof (V) == typeof (double))
+            func = (AccumulateFunc)double_accumulator;
+        else if (typeof (V) == typeof (string))
+            func = (AccumulateFunc)string_accumulator;
 
         return func;
     }
