@@ -81,7 +81,7 @@ public class Maia.Transform : Object
         }
     }
 
-    public Notification changed;
+    public Notification<void> changed;
 
     /**
      * Create a new transform stack
@@ -91,7 +91,7 @@ public class Maia.Transform : Object
                       double inX0, double inY0)
     {
         m_Queue = new Map<uint32, Transform> ();
-        changed = new Notification ("changed", this);
+        changed = new Notification<void> ("changed");
         m_BaseMatrix = Matrix (inXx, inXy, inYx, inYy, inY0, inY0);
         m_FinalMatrix = (owned)m_BaseMatrix;
     }
@@ -131,7 +131,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed.post ();
+        changed.post (this);
     }
 
     /**
@@ -151,7 +151,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed.post ();
+        changed.post (this);
     }
 
     /**
@@ -172,7 +172,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed.post ();
+        changed.post (this);
     }
 
     /**
@@ -191,7 +191,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed.post ();
+        changed.post (this);
     }
 
     /**
@@ -210,7 +210,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed.post ();
+        changed.post (this);
     }
 
     /**

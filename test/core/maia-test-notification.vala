@@ -22,7 +22,7 @@ public class Maia.TestNotification : Maia.TestCase
     const int NB_ITERATIONS = 1000000;
 
     private signal void signal_test (int a, string b);
-    private Maia.Notification notification;
+    private Maia.Notification<void> notification;
     private double signal_elapsed;
     private double notification_elapsed;
 
@@ -37,7 +37,7 @@ public class Maia.TestNotification : Maia.TestCase
     public override void
     set_up ()
     {
-        notification = new Maia.Notification("test", this);
+        notification = new Maia.Notification<void> ("test");
         notification.watch (new Observer2<void, int, string> (on_notification, this));
         notification_elapsed = 0.0;
         signal_test.connect (on_signal);
@@ -47,12 +47,16 @@ public class Maia.TestNotification : Maia.TestCase
     private void
     on_notification (int a, string b)
     {
+        assert (a == 12);
+        assert (b == "test");
         notification_elapsed = Test.timer_elapsed () * 1000;
     }
 
     private void
     on_signal (int a, string b)
     {
+        assert (a == 12);
+        assert (b == "test");
         signal_elapsed = Test.timer_elapsed () * 1000;
     }
 
@@ -79,7 +83,7 @@ public class Maia.TestNotification : Maia.TestCase
         for (int iter = 0; iter < NB_ITERATIONS; ++iter)
         {
             Test.timer_start ();
-            notification.post (new Observer2.Args<void, int, string> (12, "test"));
+            notification.post (null, 12, "test");
             total += notification_elapsed;
             min = double.min (notification_elapsed, min);
             max = double.max (notification_elapsed, max);

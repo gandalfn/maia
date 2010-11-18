@@ -43,8 +43,8 @@ public class Maia.Task : Object
     private Os.TimerFd m_SleepFd = -1;
 
     // Notifications
-    public Notification running;
-    public Notification finished;
+    public Notification<void> running;
+    public Notification<void> finished;
 
     // Accessors
 
@@ -84,8 +84,8 @@ public class Maia.Task : Object
      */
     public Task (Priority inPriority = Priority.NORMAL)
     {
-        running = new Notification ("running", this);
-        finished = new Notification ("finished", this);
+        running = new Notification<void> ("running");
+        finished = new Notification<void> ("finished");
 
         m_Priority = inPriority;
         m_State = State.READY;
@@ -106,7 +106,7 @@ public class Maia.Task : Object
     {
         m_State = State.RUNNING;
 
-        running.post (new Observer1.Args<void, Task> (this));
+        running.post (this);
 
         return null;
     }
@@ -119,7 +119,7 @@ public class Maia.Task : Object
     {
         m_State = State.TERMINATED;
 
-        finished.post (new Observer1.Args<void, Task> (this));
+        finished.post (this);
     }
 
     /**

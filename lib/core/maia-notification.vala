@@ -17,23 +17,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Notification
+public class Maia.Notification<R>
 {
     // properties
     private string           m_Name;
-    private void*            m_Owner;
     private Array<Observer?> m_Observers;
+    private AccumulateFunc   m_Accumulator;
 
     // accessors
     public string name {
         get {
             return m_Name;
-        }
-    }
-
-    public void* owner {
-        get {
-            return m_Owner;
         }
     }
 
@@ -45,22 +39,37 @@ public class Maia.Notification
      * @param inName name of notification
      * @param inOwner notification object owner
      */
-    public Notification (string inName, void* inOwner = null)
+    public Notification (string inName, AccumulateFunc? inAccumulator = null)
     {
         m_Name = inName;
-        m_Owner = inOwner;
         m_Observers = new Array<Observer?> ();
         m_Observers.equal_func = (EqualFunc)Observer.equals;
+        m_Accumulator = inAccumulator == null ? get_accumulator_func_for<R> () : inAccumulator;
     }
 
     /**
      * Post notification
      */
-    public void
-    post (Observer.Args? inArgs = null)
+    public R
+    post (void* inOwner, ...)
     {
-        foreach (unowned Observer observer in m_Observers)
-            observer.notify (inArgs);
+        va_list args = va_list ();
+        R result = null;
+
+        foreach (unowned Observer<R> observer in m_Observers)
+        {
+            if (m_Accumulator != null)
+            {
+                R ret = observer.notify (inOwner, args);
+                result = m_Accumulator (result, ret);
+            }
+            else
+            {
+                result = observer.notify (inOwner, args);
+            }
+        }
+
+        return result;
     }
 
     /**

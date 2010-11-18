@@ -24,7 +24,7 @@ public class Maia.Timeout : Watch
     private bool m_WatchSet = false;
 
     // Notifications
-    public Notification elapsed;
+    public Notification<bool> elapsed;
 
     // Accessors
     internal override int watch_fd {
@@ -60,7 +60,7 @@ public class Maia.Timeout : Watch
 
         m_TimeoutMs = inTimeoutMs;
 
-        elapsed = new Notification ("elapsed", this);
+        elapsed = new Notification<bool> ("elapsed");
     }
 
     /**
@@ -71,10 +71,7 @@ public class Maia.Timeout : Watch
     {
         void* ret = base.run ();
 
-        Observer.Args<bool> args = new Observer.Args<bool> ();
-        args.return_val = false;
-        elapsed.post (args);
-        if (args.return_val)
+        if (elapsed.post (this))
             state = Task.State.WAITING;
         else
             finish ();

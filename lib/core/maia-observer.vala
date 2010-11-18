@@ -21,64 +21,29 @@ public class Maia.Observer<R>
 {
     // types
     [CCode (has_target = false)]
-    public delegate R ActionFunc<R> (void* inTarget);
-
-    public class Args<R>
-    {
-        private R m_ReturnVal;
-        internal AccumulateFunc accumulator;
-
-        public R return_val {
-            get {
-                return m_ReturnVal;
-            }
-            set {
-                m_ReturnVal = accumulator == null ? value : accumulator (m_ReturnVal, value);
-            }
-        }
-
-        public Args (AccumulateFunc? inFunc = null)
-        {
-            accumulator = inFunc == null ? get_accumulator_func_for<R> () : inFunc;
-        }
-    }
+    public delegate R ActionFunc<R> (void* inTarget, void* inOwner);
 
     // Properties
-    private ActionFunc   m_Func;
-    private void*        m_pTarget;
-
-    // Accessors
-    public ActionFunc func {
-        get {
-            return m_Func;
-        }
-    }
-
-    public void* target {
-        get {
-            return m_pTarget;
-        }
-    }
+    internal ActionFunc   func;
+    internal void*        target;
 
     // Methods
     public Observer (ActionFunc<R> inFunc, void* inTarget)
     {
-        m_Func = inFunc;
-        m_pTarget = inTarget;
+        func = inFunc;
+        target = inTarget;
     }
 
-    public virtual void notify (Args<R>? inArgs = null)
+    public virtual R
+    notify (void* inOwner, va_list inArgs)
     {
-        if (inArgs != null)
-            inArgs.return_val = func (target);
-        else
-            func (target);
+        return func (target, inOwner);
     }
 
     internal bool
     equals (Observer inOther)
     {
-        return m_Func == inOther.m_Func && m_pTarget == inOther.m_pTarget;
+        return func == inOther.func && target == inOther.target;
     }
 }
 
@@ -86,19 +51,7 @@ public class Maia.Observer1<R, A> : Observer<R>
 {
     // types
     [CCode (has_target = false)]
-    public delegate R ActionFunc<R, A> (void* inTarget, A inArgs1);
-
-    public class Args<R, A> : Observer.Args<R>
-    {
-        public A args1;
-
-        public Args (A inArgs1, AccumulateFunc? inFunc = null)
-        {
-            base (inFunc);
-
-            args1 = inArgs1;
-        }
-    }
+    public delegate R ActionFunc<R, A> (void* inTarget, A inA, void* inOwner);
 
     // Methods
     public Observer1 (ActionFunc<R, A> inFunc, void* inTarget)
@@ -106,14 +59,13 @@ public class Maia.Observer1<R, A> : Observer<R>
         base ((Observer.ActionFunc)inFunc, inTarget);
     }
 
-    public override void
-    notify (Observer.Args<R>? inArgs = null)
-        requires (inArgs != null)
+    public override R
+    notify (void* inOwner, va_list inArgs)
     {
-        unowned Args<R, A> args = (Args<R, A>)inArgs;
         ActionFunc<R, A> callback = (ActionFunc<R, A>)func;
+        A args1 = inArgs.arg ();
 
-        args.return_val = callback (target, args.args1);
+        return callback (target, args1, inOwner);
     }
 }
 
@@ -121,20 +73,7 @@ public class Maia.Observer2<R, A, B> : Observer<R>
 {
     // types
     [CCode (has_target = false)]
-    public delegate R ActionFunc<R, A, B> (void* inTarget, A inArgs1, B inArgs2);
-
-    public class Args<R, A, B> : Observer.Args<R>
-    {
-        public A args1;
-        public B args2;
-
-        public Args (A inArgs1, B inArgs2, AccumulateFunc? inFunc = null)
-        {
-            base (inFunc);
-            args1 = inArgs1;
-            args2 = inArgs2;
-        }
-    }
+    public delegate R ActionFunc<R, A, B> (void* inTarget, A inA, B inB, void* inOwner);
 
     // Methods
     public Observer2 (ActionFunc<R, A, B> inFunc, void* inTarget)
@@ -142,14 +81,14 @@ public class Maia.Observer2<R, A, B> : Observer<R>
         base ((Observer.ActionFunc)inFunc, inTarget);
     }
 
-    public override void
-    notify (Observer.Args<R>? inArgs = null)
-        requires (inArgs != null)
+    public override R
+    notify (void* inOwner, va_list inArgs)
     {
-        unowned Args<R, A, B> args = (Args<R, A, B>)inArgs;
         ActionFunc<R, A, B> callback = (ActionFunc<R, A, B>)func;
+        A args1 = inArgs.arg ();
+        B args2 = inArgs.arg ();
 
-        args.return_val = callback (target, args.args1, args.args2);
+        return callback (target, args1, args2, inOwner);
     }
 }
 
@@ -157,23 +96,8 @@ public class Maia.Observer3<R, A, B, C> : Observer<R>
 {
     // types
     [CCode (has_target = false)]
-    public delegate R ActionFunc<R, A, B, C> (void* inTarget, A inArgs1,
-                                              B inArgs2, C inArgs3);
-
-    public class Args<R, A, B, C> : Observer.Args<R>
-    {
-        public A args1;
-        public B args2;
-        public C args3;
-
-        public Args (A inArgs1, B inArgs2, C inArgs3, AccumulateFunc? inFunc = null)
-        {
-            base (inFunc);
-            args1 = inArgs1;
-            args2 = inArgs2;
-            args3 = inArgs3;
-        }
-    }
+    public delegate R ActionFunc<R, A, B, C> (void* inTarget, A inA,
+                                              B inB, C inC, void* inOwner);
 
     // Methods
     public Observer3 (ActionFunc<R, A, B, C> inFunc, void* inTarget)
@@ -181,13 +105,14 @@ public class Maia.Observer3<R, A, B, C> : Observer<R>
         base ((Observer.ActionFunc)inFunc, inTarget);
     }
 
-    public override void
-    notify (Observer.Args<R>? inArgs = null)
-        requires (inArgs != null)
+    public override R
+    notify (void* inOwner, va_list inArgs)
     {
-        unowned Args<R, A, B, C> args = (Args<R, A, B, C>)inArgs;
         ActionFunc<R, A, B, C> callback = (ActionFunc<R, A, B, C>)func;
+        A args1 = inArgs.arg ();
+        B args2 = inArgs.arg ();
+        C args3 = inArgs.arg ();
 
-        args.return_val = callback (target, args.args1, args.args2, args.args3);
+        return callback (target, args1, args2, args3, inOwner);
     }
 }
