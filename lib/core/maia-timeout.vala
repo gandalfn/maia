@@ -71,7 +71,7 @@ public class Maia.Timeout : Watch
     {
         void* ret = base.run ();
 
-        ObserverR0.Args<bool> args = new ObserverR0.Args<bool> (get_accumulator_func_for<bool> ());
+        Observer.Args<bool> args = new Observer.Args<bool> ();
         args.return_val = false;
         elapsed.post (args);
         if (args.return_val)

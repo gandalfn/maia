@@ -106,7 +106,7 @@ public class Maia.Task : Object
     {
         m_State = State.RUNNING;
 
-        running.post (new Observer1.Args<Task> (this));
+        running.post (new Observer1.Args<void, Task> (this));
 
         return null;
     }
@@ -119,7 +119,7 @@ public class Maia.Task : Object
     {
         m_State = State.TERMINATED;
 
-        finished.post (new Observer1.Args<Task> (this));
+        finished.post (new Observer1.Args<void, Task> (this));
     }
 
     /**
