@@ -55,12 +55,17 @@ public class Maia.Timeout : Watch
     public Timeout (ulong inTimeoutMs, Task.Priority inPriority = Task.Priority.NORMAL)
     {
         Os.TimerFd timer_fd = Os.TimerFd (Os.CLOCK_MONOTONIC, Os.TFD_CLOEXEC);
-        
-        base (timer_fd, Watch.Flags.IN, inPriority);
 
+        base (timer_fd, Watch.Flags.IN, inPriority);
+        
         m_TimeoutMs = inTimeoutMs;
 
         elapsed = new Notification<bool> ("elapsed");
+    }
+
+    ~Timeout ()
+    {
+        if (fd >= 0) Posix.close (fd);
     }
 
     /**

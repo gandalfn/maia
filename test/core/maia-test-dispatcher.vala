@@ -39,6 +39,12 @@ public class Maia.TestDispatcher : Maia.TestCase
         assert (dispatcher.childs.nb_items == 0);
     }
 
+    public override void
+    tear_down ()
+    {
+        dispatcher = null;
+    }
+
     private void
     on_task_running (Task inTask)
     {
