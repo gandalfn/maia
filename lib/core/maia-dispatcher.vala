@@ -98,9 +98,8 @@ public class Maia.Dispatcher : Task
             {
                 task.run ();
 
-                task.parent = null;
-                if (task.state != Task.State.TERMINATED)
-                    task.parent = this;
+                if (task.state == Task.State.TERMINATED)
+                    task.parent = null;
             }
 
             ready_tasks.clear ();
@@ -116,16 +115,12 @@ public class Maia.Dispatcher : Task
         event.events = Os.EPOLLIN;
         event.data.ptr = inTask;
         m_PollFd.ctl (Os.EPOLL_CTL_ADD, inTask.sleep_fd, event);
-        inTask.parent = this;
     }
 
     internal new void
     wakeup (Task inTask)
     {
         m_PollFd.ctl (Os.EPOLL_CTL_DEL, inTask.sleep_fd, null);
-        inTask.parent = null;
-        if (inTask.state != Task.State.TERMINATED)
-            inTask.parent = this;
     }
 
     internal void

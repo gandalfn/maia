@@ -73,13 +73,20 @@ public class Maia.Timeout : Watch
      */
     public override void*
     run ()
+        requires (parent != null)
     {
+        (parent as Dispatcher).remove_watch (this);
+
         void* ret = base.run ();
 
         if (elapsed.post (this))
-            state = Task.State.WAITING;
+        {
+            (parent as Dispatcher).add_watch (this);
+        }
         else
+        {
             finish ();
+        }
 
         return ret;
     }

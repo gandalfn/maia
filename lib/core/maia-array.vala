@@ -111,7 +111,7 @@ public class Maia.Array <V> : Collection <V>
 
                 if (res == 0)
                 {
-                    while (compare_func (m_pContent[medium].val, inValue) == 0)
+                    while (medium < m_Size && compare_func (m_pContent[medium].val, inValue) == 0)
                         medium++;
                     return medium;
                 }
@@ -204,23 +204,33 @@ public class Maia.Array <V> : Collection <V>
     }
 
     /**
-     * Check if array is correctly sorted
+     * Check if an iterator of array is correctly sorted
+     *
+     * @param inIterator array iterator
      */
     public void
-    check ()
+    check (Maia.Iterator<V> inIterator)
+        requires (inIterator is Iterator<V>)
+        requires (inIterator.stamp == stamp)
     {
         if (compare_func != null)
         {
-            // Check each val in array
-            for (int cpt = 0; cpt < m_Size - 1; ++cpt)
+            Iterator<V> iter = inIterator as Iterator<V>;
+            int pos = get_nearest_pos (inIterator.get ());
+
+            if (pos < iter.index)
             {
-                if (compare_func (m_pContent[cpt].val, m_pContent[cpt + 1].val) > 0)
-                {
-                    // swap data
-                    V swap = (owned)m_pContent[cpt].val;
-                    m_pContent[cpt].val = m_pContent[cpt + 1].val;
-                    m_pContent[cpt + 1].val = swap;
-                }
+                V val = m_pContent[iter.index].val;
+                GLib.Memory.move (&m_pContent[pos + 1], &m_pContent[pos],
+                                  (iter.index - pos - 1) * sizeof (Node<V>));
+                m_pContent[pos].val = val;
+            }
+            else if (pos > iter.index)
+            {
+                V val = m_pContent[iter.index].val;
+                GLib.Memory.move (&m_pContent[iter.index], &m_pContent[iter.index + 1],
+                                  (pos - iter.index - 1) * sizeof (Node<V>));
+                m_pContent[pos].val = val;
             }
         }
     }

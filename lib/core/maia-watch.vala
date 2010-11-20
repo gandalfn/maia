@@ -42,13 +42,16 @@ public class Maia.Watch : Task
             return base.parent;
         }
         set {
-            if (base.parent != null)
-                ((Dispatcher)base.parent).remove_watch (this);
+            if (base.parent != value)
+            {
+                if (base.parent != null)
+                    ((Dispatcher)base.parent).remove_watch (this);
 
-            base.parent = value;
+                base.parent = value;
 
-            if (value != null)
-                ((Dispatcher)value).add_watch (this);
+                if (value != null)
+                    ((Dispatcher)value).add_watch (this);
+            }
         }
     }
 

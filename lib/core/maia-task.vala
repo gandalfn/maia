@@ -65,7 +65,19 @@ public class Maia.Task : Object
             return m_State;
         }
         set {
-            m_State = value;
+            if (m_State != value)
+            {
+                Dispatcher dispatcher = parent as Dispatcher;
+                Iterator<Object> iter = null;
+
+                if (dispatcher != null)
+                    iter = dispatcher.childs[this];
+
+                m_State = value;
+
+                if (dispatcher != null && iter != null)
+                    dispatcher.childs.check (iter);
+            }
         }
     }
 
@@ -104,7 +116,7 @@ public class Maia.Task : Object
     public virtual void*
     run ()
     {
-        m_State = State.RUNNING;
+        state = State.RUNNING;
 
         running.post (this);
 
@@ -117,7 +129,7 @@ public class Maia.Task : Object
     public virtual void
     finish ()
     {
-        m_State = State.TERMINATED;
+        state = State.TERMINATED;
 
         finished.post (this);
     }
@@ -144,7 +156,7 @@ public class Maia.Task : Object
 
             (parent as Dispatcher).sleep (this);
 
-            m_State = State.SLEEPING;
+            state = State.SLEEPING;
         }
     }
 
