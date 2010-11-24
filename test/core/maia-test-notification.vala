@@ -38,7 +38,7 @@ public class Maia.TestNotification : Maia.TestCase
     set_up ()
     {
         notification = new Maia.Notification<void> ("test");
-        notification.watch (new Observer2<void, int, string> (on_notification, this));
+        notification.watch (new Observer2<void, int, string> (on_notification));
         notification_elapsed = 0.0;
         signal_test.connect (on_signal);
         signal_elapsed = 0.0;

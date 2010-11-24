@@ -32,8 +32,8 @@ namespace Os
     [CCode (cname = "struct timespec")]
     public struct TimeSpec
     {
-        time_t tv_sec;
-        long tv_nsec;
+        public time_t tv_sec;
+        public long tv_nsec;
     }
 
     [CCode (cname = "int", cprefix = "timerfd_")]
