@@ -17,31 +17,75 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+namespace Maia
+{
+    public delegate R ActionFunc<R> ();
+    public delegate R ActionFunc1<R, A> (A inA);
+    public delegate R ActionFunc2<R, A, B> (A inA, B inB);
+    public delegate R ActionFunc3<R, A, B, C> (A inA, B inB, C inC);
+    public delegate R ActionFunc4<R, A, B, C, D> (A inA, B inB, C inC, D inD);
+    public delegate R ActionFunc5<R, A, B, C, D, E> (A inA, B inB, C inC, D inD, E inE);
+    public delegate R ActionFunc6<R, A, B, C, D, E, F> (A inA, B inB, C inC, D inD, E inE, F inF);
+}
+
 public class Maia.Observer<R>
 {
     // types
-    public delegate R ActionFunc<R> ();
-    public delegate R ActionFunc1<R, A> (A inArgs1);
+    private class Bind1<R, A> : Observer<R> 
+    {
+        public Bind1 (ActionFunc1<R, A> inFunc, A inA)
+        {
+            func = () => { return inFunc (inA); };
+        }
+    }
+
+    private class Bind2<R, A, B> : Observer<R> 
+    {
+        public Bind2 (ActionFunc2<R, A, B> inFunc, A inA, B inB)
+        {
+            func = () => { return inFunc (inA, inB); };
+        }
+    }
+
+    private class Bind3<R, A, B, C> : Observer<R> 
+    {
+        public Bind3 (ActionFunc3<R, A, B, C> inFunc, A inA, B inB, C inC)
+        {
+            func = () => { return inFunc (inA, inB, inC); };
+        }
+    }
 
     // Properties
     internal ActionFunc   func;
 
     // Methods
-    private Observer (ActionFunc<R> inFunc)
+    internal Observer.with_fun (ActionFunc<R> inFunc)
     {
         func = inFunc;
     }
 
     public static Observer<R>
-    mem_fun<R> (ActionFunc<R> inFunc)
+    fun<R> (ActionFunc<R> inFunc)
     {
-        return new Observer<R> (inFunc);
+        return new Observer<R>.with_fun (inFunc);
     }
 
     public static Observer<R>
-    bind<R, A> (ActionFunc1<R, A> inFunc, A inArgs1)
+    bind1<R, A> (ActionFunc1<R, A> inFunc, A inA)
     {
-        return new Observer<R> (() => { return inFunc (inArgs1); });
+        return new Observer.Bind1<R, A> (inFunc, inA);
+    }
+
+    public static Observer<R>
+    bind2<R, A, B> (ActionFunc2<R, A, B> inFunc, A inA, B inB)
+    {
+        return new Observer.Bind2<R, A, B> (inFunc, inA, inB);
+    }
+
+    public static Observer<R>
+    bind3<R, A, B, C> (ActionFunc3<R, A, B, C> inFunc, A inA, B inB, C inC)
+    {
+        return new Observer.Bind3<R, A, B, C> (inFunc, inA, inB, inC);
     }
 
     public virtual R
@@ -61,18 +105,23 @@ public class Maia.Observer<R>
 public class Maia.Observer1<R, A> : Observer<R>
 {
     // types
-    public delegate R ActionFunc<R, A> (A inA);
 
     // Methods
-    public Observer1 (ActionFunc<R, A> inFunc)
+    internal Observer1.with_fun (ActionFunc1<R, A> inFunc)
     {
-        base ((Observer.ActionFunc)inFunc);
+        func = (ActionFunc)inFunc;
+    }
+
+    public static new Observer1<R, A>
+    fun<R, A> (ActionFunc1<R, A> inFunc)
+    {
+        return new Observer1<R, A>.with_fun (inFunc);
     }
 
     public override R
     notify (void* inOwner, va_list inArgs)
     {
-        ActionFunc<R, A> callback = (ActionFunc<R, A>)func;
+        ActionFunc1<R, A> callback = (ActionFunc1<R, A>)func;
         A args1 = inArgs.arg ();
 
         return callback (args1);
@@ -82,18 +131,23 @@ public class Maia.Observer1<R, A> : Observer<R>
 public class Maia.Observer2<R, A, B> : Observer<R>
 {
     // types
-    public delegate R ActionFunc<R, A, B> (A inA, B inB);
 
     // Methods
-    public Observer2 (ActionFunc<R, A, B> inFunc)
+    internal Observer2.with_fun (ActionFunc2<R, A, B> inFunc)
     {
-        base ((Observer.ActionFunc)inFunc);
+        func = (ActionFunc)inFunc;
+    }
+
+    public static new Observer2<R, A, B>
+    fun<R, A, B> (ActionFunc2<R, A, B> inFunc)
+    {
+        return new Observer2<R, A, B>.with_fun (inFunc);
     }
 
     public override R
     notify (void* inOwner, va_list inArgs)
     {
-        ActionFunc<R, A, B> callback = (ActionFunc<R, A, B>)func;
+        ActionFunc2<R, A, B> callback = (ActionFunc2<R, A, B>)func;
         A args1 = inArgs.arg ();
         B args2 = inArgs.arg ();
 

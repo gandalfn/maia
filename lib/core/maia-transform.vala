@@ -231,7 +231,7 @@ public class Maia.Transform : Object
             recalculate_final_matrix ();
 
             // connect on transform changed signal
-            inTransform.changed.watch (Observer.mem_fun<void> (recalculate_final_matrix));
+            inTransform.changed.watch (Observer.fun<void> (recalculate_final_matrix));
         }
     }
 
@@ -246,7 +246,7 @@ public class Maia.Transform : Object
         if (inKey in m_Queue)
         {
             // disconnect from transform changed
-            m_Queue[inKey].changed.unwatch (Observer.mem_fun<void> (recalculate_final_matrix));
+            m_Queue[inKey].changed.unwatch (Observer.fun<void> (recalculate_final_matrix));
 
             // remove transform in queue if exist
             m_Queue.unset (inKey);
