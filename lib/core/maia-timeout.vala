@@ -79,7 +79,7 @@ public class Maia.Timeout : Watch
 
         void* ret = base.run ();
 
-        if (elapsed.post (this))
+        if (elapsed.post ())
         {
             (parent as Dispatcher).add_watch (this);
         }

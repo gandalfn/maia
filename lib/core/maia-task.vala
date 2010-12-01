@@ -118,7 +118,7 @@ public class Maia.Task : Object
     {
         state = State.RUNNING;
 
-        running.post (this);
+        running.post ();
 
         return null;
     }
@@ -131,7 +131,7 @@ public class Maia.Task : Object
     {
         state = State.TERMINATED;
 
-        finished.post (this);
+        finished.post ();
     }
 
     /**

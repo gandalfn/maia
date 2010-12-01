@@ -76,7 +76,7 @@ namespace Maia.Value
     }
 
     public static GLib.Value
-    from_string (Type inType, string inValue)
+    from_string (GLib.Type inType, string inValue)
     {
         if (inType.is_classed ())
             inType.class_ref ();

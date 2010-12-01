@@ -51,22 +51,19 @@ public class Maia.Notification<R>
      * Post notification
      */
     public R
-    post (void* inOwner, ...)
+    post (int inNbArgs = 0, ...)
     {
         va_list args = va_list ();
         R result = null;
 
         foreach (unowned Observer<R> observer in m_Observers)
         {
+            R ret = observer.notify (inNbArgs, args);
+
             if (m_Accumulator != null)
-            {
-                R ret = observer.notify (inOwner, args);
                 result = m_Accumulator (result, ret);
-            }
             else
-            {
-                result = observer.notify (inOwner, args);
-            }
+                result = ret;
         }
 
         return result;
