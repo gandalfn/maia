@@ -63,6 +63,11 @@ public abstract class Maia.Collection<V>
         stamp = 0;
     }
 
+    ~Collection ()
+    {
+        clear ();
+    }
+
     /**
      * The number of items in this collection.
      */

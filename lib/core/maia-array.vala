@@ -91,11 +91,6 @@ public class Maia.Array <V> : Collection <V>
         m_pContent = new Node<V> [m_ReservedSize];
     }
 
-    ~Array ()
-    {
-        delete m_pContent;
-    }
-
     private int
     get_nearest_pos (V inValue)
     {
@@ -295,11 +290,14 @@ public class Maia.Array <V> : Collection <V>
     public override void
     clear ()
     {
-        delete m_pContent;
-        m_ReservedSize = 4;
-        m_Size = 0;
-        m_pContent = new Node<V>[m_ReservedSize];
-        stamp++;
+        if (m_pContent != null)
+        {
+            delete m_pContent;
+            m_ReservedSize = 4;
+            m_Size = 0;
+            m_pContent = new Node<V>[m_ReservedSize];
+            stamp++;
+        }
     }
 
     /**
