@@ -41,11 +41,15 @@ public abstract class Maia.Object
     // Static properties
     static Map<GLib.Type, CreateVTable?> s_Factory = null;
 
+    // Class properties
+    internal class Set<GLib.Type>        c_Implements = null;
+
     // Properties
     private string                       m_Id = null;
     private unowned Object               m_Parent = null;
     private Array<Object>                m_Childs = null; 
-    private Map<string, unowned Object>  m_IdentifiedChilds = null;
+    private Set<unowned Object>          m_IdentifiedChilds = null;
+    private Set<Delegate>                m_Delegates = null;
 
     // Accessors
 
@@ -60,7 +64,7 @@ public abstract class Maia.Object
             // object have a old id
             if (m_Parent != null && m_Id != null && m_Parent.m_IdentifiedChilds != null)
                 // remove object from identified object
-                m_Parent.m_IdentifiedChilds.unset (m_Id);
+                m_Parent.identified_childs.remove (this);
 
             // set identifier
             m_Id = value;
@@ -68,9 +72,8 @@ public abstract class Maia.Object
             // object have a parent
             if (m_Id != null && m_Parent != null)
             {
-                m_Parent.create_child_arrays ();
                 // add object in identified childs
-                m_Parent.m_IdentifiedChilds[m_Id] = this;
+                m_Parent.identified_childs.insert (this);
             }
         }
     }
@@ -84,13 +87,14 @@ public abstract class Maia.Object
         }
         set {
             // object have already a parent
-            if (m_Parent != null && m_Parent.m_Childs != null)
+            if (m_Parent != null)
             {
                 // remove object from childs of old parent
-                m_Parent.m_Childs.remove (this);
+                if (m_Parent.m_Childs != null)
+                    m_Parent.m_Childs.remove (this);
                 // remove object from identified childs of old parent
                 if (m_Id != null && m_Parent.m_IdentifiedChilds != null)
-                    m_Parent.m_IdentifiedChilds.unset (m_Id);
+                    m_Parent.m_IdentifiedChilds.remove (this);
             }
 
             if (value != null)
@@ -103,10 +107,9 @@ public abstract class Maia.Object
                     // add object to childs of parent
                     if (m_Parent != null)
                     {
-                        m_Parent.create_child_arrays ();
-                        m_Parent.m_Childs.insert (this);
+                        m_Parent.childs.insert (this);
                         if (m_Id != null)
-                            m_Parent.m_IdentifiedChilds[m_Id] = this;
+                            m_Parent.identified_childs.insert (this);
                     }
                 }
                 else
@@ -127,11 +130,21 @@ public abstract class Maia.Object
      */
     public Array<Object> childs {
         get {
-            create_child_arrays ();
+            if (m_Childs == null)
+                m_Childs = new Array<Object> ();
             return m_Childs;
         }
     }
 
+    private Set<unowned Object> identified_childs {
+        get {
+            if (m_IdentifiedChilds == null)
+                m_IdentifiedChilds = new Set<unowned Object> ();
+            return m_IdentifiedChilds;
+        }
+    }
+
+    // Methods
     static void
     object_to_string (GLib.Value inSrc, out GLib.Value outDest)
     {
@@ -152,21 +165,53 @@ public abstract class Maia.Object
         }
     }
 
+    static int
+    compare_object_with_id (string inId, Object inObject)
+    {
+        return GLib.strcmp (inId, inObject.m_Id);
+    }
+
+    class construct
+    {
+        if (c_Implements == null) c_Implements = new Set<GLib.Type> ();
+    }
+
+    protected class void
+    @delegate (GLib.Type inType)
+        requires (inType.is_a (typeof (Delegate)))
+    {
+        c_Implements.insert (inType);
+    }
+
     protected Object (string? inId = null, Object? inParent = null)
     {
         // Set properties
         if (inId != null) id = inId;
         if (inParent != null) parent = inParent;
+
+        // Create delegate objects
+        if (c_Implements.nb_items > 0)
+        {
+            m_Delegates = new Set<Delegate> ();
+            foreach (GLib.Type type in c_Implements)
+            {
+                m_Delegates.insert (create_delegate (type));
+            }
+        }
     }
 
-    private void
-    create_child_arrays ()
+    protected virtual Delegate
+    create_delegate (Type inType)
     {
-        if (m_Childs == null)
-            m_Childs = new Array <Object> ();
+        return (Delegate)GType.create_instance (inType);
+    }
 
-        if (m_IdentifiedChilds == null)
-            m_IdentifiedChilds = new Map<string, unowned Object> ();
+    public unowned T?
+    delegate_cast<T> ()
+    {
+        if (m_Delegates == null) return null;
+
+        return m_Delegates.search (typeof (T), (Set.CompareFunc)Delegate.compare_type_delegate);
     }
 
     /**
@@ -193,7 +238,7 @@ public abstract class Maia.Object
     public bool
     contains (string inId)
     {
-        return inId in m_IdentifiedChilds;
+        return get_child (inId) != null;
     }
 
     /**
@@ -207,7 +252,7 @@ public abstract class Maia.Object
     public Object
     get_child (string inId)
     {
-        return m_IdentifiedChilds[inId];
+        return m_IdentifiedChilds.search<string> (inId, (Set.CompareFunc)compare_object_with_id);
     }
 
     /**

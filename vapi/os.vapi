@@ -17,6 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+namespace Maia
+{
+    public class GType
+    {
+        [CCode (cname = "g_type_create_instance")]
+        public static void* create_instance (GLib.Type inType);
+    }
+}
+
 [CCode (cprefix = "", lower_case_cprefix = "", cheader_filename = "sys/epoll.h,sys/timerfd.h,unistd.h")]
 namespace Os
 {

@@ -20,6 +20,7 @@ libmaia_core_la_VALAFLAGS = \
 
 libmaia_core_la_SOURCES = \
     maia-object.vala \
+    maia-delegate.vala \
     maia-value.vala \
     maia-utils.vala \
     maia-iterator.vala \

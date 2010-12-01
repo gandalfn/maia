@@ -17,8 +17,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+public class Maia.FooDelegate : Maia.Delegate
+{
+    public virtual void
+    f ()
+    {
+        message ("delegate");
+    }
+}
+
 public class Maia.FooObject : Maia.Object
 {
+    class construct
+    {
+        delegate (typeof (FooDelegate));
+    }
+
     public static Object
     create_from_parameter (GLib.Parameter[] inProperties)
     {
@@ -45,6 +59,12 @@ public class Maia.FooObject : Maia.Object
     public FooObject (string? inId = null, Object? inParent = null)
     {
         base (inId, inParent);
+    }
+
+    public void
+    f ()
+    {
+        delegate_cast<FooDelegate> ().f ();
     }
 }
 
@@ -131,6 +151,8 @@ public class Maia.TestObject : Maia.TestCase
 
         assert (foo is FooObject);
         assert (foo.id == "foo");
+        assert (foo.delegate_cast<FooDelegate> () != null); 
+        (foo as FooObject).f ();
     }
 
     public void
