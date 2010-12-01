@@ -20,6 +20,8 @@
 public class Maia.Set<V> : Collection<V>
 {
     // Types
+    public delegate int CompareFunc<V, A> (V inV, A inA);
+
     private class Node<V>
     {
         // Properties
@@ -375,6 +377,31 @@ public class Maia.Set<V> : Collection<V>
         if (node != null)
         {
             return node.val;
+        }
+
+        return null;
+    }
+
+    public unowned V?
+    search<A> (A inValue, CompareFunc<A> inFunc)
+    {
+        unowned Node<V> node = m_Root;
+
+        while (node != null)
+        {
+            int res = inFunc (inValue, node.val);
+            if (res > 0)
+            {
+                node = node.right;
+            }
+            else if (res < 0)
+            {
+                node = node.left;
+            }
+            else
+            {
+                return node.val;
+            }
         }
 
         return null;
