@@ -42,7 +42,7 @@ public abstract class Maia.Object
     static Map<GLib.Type, CreateVTable?> s_Factory = null;
 
     // Class properties
-    internal class Set<GLib.Type>        c_Implements = null;
+    internal class Set<GLib.Type>        c_Implements = new Set<GLib.Type> ();
 
     // Properties
     private string                       m_Id = null;
@@ -166,16 +166,16 @@ public abstract class Maia.Object
     }
 
     static int
-    compare_object_with_id (string inId, Object inObject)
+    compare_object_with_id (Object inObject, string inId)
     {
         return GLib.strcmp (inId, inObject.m_Id);
     }
 
-    class construct
-    {
-        if (c_Implements == null) c_Implements = new Set<GLib.Type> ();
-    }
-
+    /**
+     * Register a Object delegation
+     *
+     * @param inType delegate object type
+     */
     protected class void
     @delegate (GLib.Type inType)
         requires (inType.is_a (typeof (Delegate)))
@@ -206,12 +206,17 @@ public abstract class Maia.Object
         return (Delegate)GType.create_instance (inType);
     }
 
+    /**
+     * Cast object to implemented delegate object
+     * 
+     * @return Delegate object
+     */
     public unowned T?
     delegate_cast<T> ()
     {
         if (m_Delegates == null) return null;
 
-        return m_Delegates.search (typeof (T), (Set.CompareFunc)Delegate.compare_type_delegate);
+        return m_Delegates.search (typeof (T), (Collection.ValueCompareFunc)Delegate.compare_type_delegate);
     }
 
     /**
@@ -252,7 +257,7 @@ public abstract class Maia.Object
     public Object
     get_child (string inId)
     {
-        return m_IdentifiedChilds.search<string> (inId, (Set.CompareFunc)compare_object_with_id);
+        return m_IdentifiedChilds.search<string> (inId, (Collection.ValueCompareFunc)compare_object_with_id);
     }
 
     /**

@@ -382,14 +382,14 @@ public class Maia.Set<V> : Collection<V>
         return null;
     }
 
-    public unowned V?
-    search<A> (A inValue, CompareFunc<A> inFunc)
+    public override unowned V?
+    search<A> (A inValue, Collection.ValueCompareFunc<A> inFunc)
     {
         unowned Node<V> node = m_Root;
 
         while (node != null)
         {
-            int res = inFunc (inValue, node.val);
+            int res = inFunc (node.val, inValue);
             if (res > 0)
             {
                 node = node.right;

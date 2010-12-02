@@ -242,6 +242,52 @@ public class Maia.Array <V> : Collection <V>
     /**
      * {@inheritDoc}
      */
+    public override unowned V?
+    search<A> (A inValue, Collection.ValueCompareFunc<A> inFunc)
+    {
+        unowned V? ret = null;
+
+        if (compare_func == null)
+        {
+            for (int cpt = 0; ret == null && cpt < m_Size; ++cpt)
+            {
+                if (inFunc (m_pContent[cpt].val, inValue) == 0)
+                    ret = m_pContent[cpt].val;
+            }
+        }
+        else
+        {
+            int left = 0, right = m_Size - 1;
+
+            if (right != -1)
+            {
+                while (ret == null && right >= left)
+                {
+                    int medium = (left + right) / 2;
+                    int res = inFunc (m_pContent[medium].val, inValue);
+
+                    if (res == 0)
+                    {
+                        ret = m_pContent[medium].val;
+                    }
+                    else if (res > 0)
+                    {
+                        right = medium - 1;
+                    }
+                    else
+                    {
+                        left = medium + 1;
+                    }
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public override void
     insert (V inValue)
     {

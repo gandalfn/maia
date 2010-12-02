@@ -19,6 +19,9 @@
 
 public abstract class Maia.Collection<V>
 {
+    // Types
+    public delegate int ValueCompareFunc<V, A> (V inV, A inA);
+
     // Properties
     private EqualFunc<V>    m_EqualFunc;
     private CompareFunc<V>  m_CompareFunc;
@@ -81,6 +84,16 @@ public abstract class Maia.Collection<V>
      * @return true if value is found, false otherwise
      */
     public abstract bool contains (V inValue);
+
+    /**
+     * Search if the specified is in this collection.
+     *
+     * @param inValue the value to locate in the collection
+     * @param inCompareFunc custom compare function
+     *
+     * @return true if value is found, false otherwise
+     */
+    public abstract unowned V? search<A> (A inValue, ValueCompareFunc<A> inFunc);     
 
     /**
      * Insert a value to this collection.

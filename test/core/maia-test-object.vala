@@ -19,10 +19,10 @@
 
 public class Maia.FooDelegate : Maia.Delegate
 {
-    public virtual void
+    public int
     f ()
     {
-        message ("delegate");
+        return 1;
     }
 }
 
@@ -61,10 +61,10 @@ public class Maia.FooObject : Maia.Object
         base (inId, inParent);
     }
 
-    public void
+    public int
     f ()
     {
-        delegate_cast<FooDelegate> ().f ();
+        return delegate_cast<FooDelegate> ().f ();
     }
 }
 
@@ -124,11 +124,14 @@ public class Maia.TooObject : Maia.Object
 
 public class Maia.TestObject : Maia.TestCase
 {
+    const long n = 200000000;
+
     public TestObject ()
     {
         base ("object");
 
         add_test ("create", test_object_create);
+        add_test ("delegate", test_object_delegate);
         add_test ("parent", test_object_parent);
         add_test ("identified", test_object_identified);
         add_test ("parse", test_object_parse);
@@ -153,6 +156,29 @@ public class Maia.TestObject : Maia.TestCase
         assert (foo.id == "foo");
         assert (foo.delegate_cast<FooDelegate> () != null); 
         (foo as FooObject).f ();
+    }
+
+    public void
+    test_object_delegate ()
+    {
+        GLib.Parameter[] parameters = new GLib.Parameter[1];
+        parameters[0] = { "id", "foo" };
+        FooObject foo = Object.newv (typeof (FooObject), parameters) as FooObject;
+
+        Test.timer_start ();
+        for (long i = 0; i < n; ++i)
+        {
+            foo.f ();
+        }
+        Test.message ("delegate: %i", (int)(Test.timer_elapsed () * 1000));
+
+        FooDelegate delegate_foo = foo.delegate_cast<FooDelegate> ();
+        Test.timer_start ();
+        for (long i = 0; i < n; ++i)
+        {
+            delegate_foo.f ();
+        }
+        Test.message ("delegate: %i", (int)(Test.timer_elapsed () * 1000));
     }
 
     public void

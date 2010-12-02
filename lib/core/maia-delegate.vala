@@ -20,15 +20,15 @@
 public abstract class Maia.Delegate : Object
 {
     internal static int
-    compare_type_delegate (GLib.Type inType, Delegate inDelegate)
+    compare_type_delegate (Delegate inDelegate, GLib.Type inType)
     {
         GLib.Type instance_type = GLib.Type.from_instance (inDelegate);
-        return inType < instance_type ? -1 : (inType > instance_type ? 1 : 0);
+        return inType > instance_type ? -1 : (inType < instance_type ? 1 : 0);
     }
 
     public override int
     compare (Object inOther)
     {
-        return compare_type_delegate (GLib.Type.from_instance (this), (Delegate)inOther);
+        return compare_type_delegate ((Delegate)inOther, GLib.Type.from_instance (this));
     }
 }
