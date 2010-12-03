@@ -20,6 +20,7 @@
 public abstract class Maia.Collection<V>
 {
     // Types
+    [CCode (has_target = false)]
     public delegate int ValueCompareFunc<V, A> (V inV, A inA);
 
     // Properties
@@ -91,7 +92,7 @@ public abstract class Maia.Collection<V>
      * @param inValue the value to locate in the collection
      * @param inCompareFunc custom compare function
      *
-     * @return true if value is found, false otherwise
+     * @return value found or null otherwise
      */
     public abstract unowned V? search<A> (A inValue, ValueCompareFunc<A> inFunc);     
 
