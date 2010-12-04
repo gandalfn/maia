@@ -388,11 +388,11 @@ public class Maia.Set<V> : Collection<V>
         while (node != null)
         {
             int res = inFunc (node.val, inValue);
-            if (res > 0)
+            if (res < 0)
             {
                 node = node.right;
             }
-            else if (res < 0)
+            else if (res > 0)
             {
                 node = node.left;
             }

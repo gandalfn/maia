@@ -139,7 +139,12 @@ public abstract class Maia.Object
     private Set<unowned Object> identified_childs {
         get {
             if (m_IdentifiedChilds == null)
+            {
                 m_IdentifiedChilds = new Set<unowned Object> ();
+                m_IdentifiedChilds.compare_func = (a, b) => {
+                    return GLib.strcmp (a.m_Id, b.m_Id);
+                };
+            }
             return m_IdentifiedChilds;
         }
     }
@@ -163,12 +168,6 @@ public abstract class Maia.Object
                 outDest = vtable.create_from_string ((string)inSrc);
             }
         }
-    }
-
-    static int
-    compare_object_with_id (Object inObject, string inId)
-    {
-        return GLib.strcmp (inId, inObject.m_Id);
     }
 
     /**
@@ -257,7 +256,9 @@ public abstract class Maia.Object
     public Object
     get_child (string inId)
     {
-        return m_IdentifiedChilds.search<string> (inId, compare_object_with_id);
+        return m_IdentifiedChilds.search<string> (inId, (o, i) => {
+                   return GLib.strcmp (o.m_Id, i);
+               });
     }
 
     /**
