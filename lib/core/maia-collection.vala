@@ -94,7 +94,7 @@ public abstract class Maia.Collection<V>
      *
      * @return value found or null otherwise
      */
-    public abstract unowned V? search<A> (A inValue, ValueCompareFunc<A> inFunc);     
+    public abstract unowned V? search<A> (A inValue, ValueCompareFunc<V, A> inFunc);     
 
     /**
      * Insert a value to this collection.

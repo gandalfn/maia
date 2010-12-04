@@ -216,7 +216,7 @@ public abstract class Maia.Object
     {
         if (m_Delegates == null) return null;
 
-        return m_Delegates.search (typeof (T), (Collection.ValueCompareFunc)Delegate.compare_type_delegate);
+        return m_Delegates.search<GLib.Type> (typeof (T), Delegate.compare_type_delegate);
     }
 
     /**
@@ -257,7 +257,7 @@ public abstract class Maia.Object
     public Object
     get_child (string inId)
     {
-        return m_IdentifiedChilds.search<string> (inId, (Collection.ValueCompareFunc)compare_object_with_id);
+        return m_IdentifiedChilds.search<string> (inId, compare_object_with_id);
     }
 
     /**

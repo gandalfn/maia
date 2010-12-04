@@ -20,8 +20,6 @@
 public class Maia.Set<V> : Collection<V>
 {
     // Types
-    public delegate int CompareFunc<V, A> (V inV, A inA);
-
     private class Node<V>
     {
         // Properties
