@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.FooDelegate : Maia.Delegate
+public class Maia.FooDelegate : Maia.Object
 {
     public int
     f ()
@@ -30,35 +30,7 @@ public class Maia.FooObject : Maia.Object
 {
     class construct
     {
-        delegate (typeof (FooDelegate));
-    }
-
-    public static Object
-    create_from_parameter (GLib.Parameter[] inProperties)
-    {
-        string id = null;
-        Object parent = null;
-        foreach (GLib.Parameter parameter in inProperties)
-        {
-            switch (parameter.name)
-            {
-                case "id":
-                    id = (string)parameter.value;
-                    break;
-                case "parent":
-                    parent = (Object)parameter.value;
-                    break;
-                default:
-                    assert (false);
-                    break;
-            }
-        }
-        return (Object)new FooObject (id, parent);
-    }
-
-    public FooObject (string? inId = null, Object? inParent = null)
-    {
-        base (inId, inParent);
+        delegate<FooObject> (typeof (FooDelegate));
     }
 
     public int
@@ -70,56 +42,10 @@ public class Maia.FooObject : Maia.Object
 
 public class Maia.PooObject : Maia.Object
 {
-    public static Object
-    create_from_parameter (GLib.Parameter[] inProperties)
-    {
-        string id = null;
-        Object parent = null;
-        foreach (GLib.Parameter parameter in inProperties)
-        {
-            switch (parameter.name)
-            {
-                case "id":
-                    id = (string)parameter.value;
-                    break;
-                case "parent":
-                    parent = (Object)parameter.value;
-                    break;
-                default:
-                    assert (false);
-                    break;
-            }
-        }
-        return (Object)new PooObject (id, parent);
-    }
-
-    public PooObject (string? inId = null, Object? inParent = null)
-    {
-        base (inId, inParent);
-    }
 }
 
 public class Maia.TooObject : Maia.Object
 {
-    public static Object
-    create_from_parameter (GLib.Parameter[] inProperties)
-    {
-        string id = null;
-        Object parent = null;
-        foreach (GLib.Parameter parameter in inProperties)
-        {
-            if (parameter.name == "id")
-                id = (string)parameter.value;
-            if (parameter.name == "parent")
-                parent = (Object)parameter.value;
-        }
-        return (Object)new TooObject (id, parent);
-    }
-
-    public TooObject (string? inId = null, Object? inParent = null)
-    {
-        base (inId, inParent);
-    }
 }
 
 public class Maia.TestObject : Maia.TestCase
@@ -140,17 +66,13 @@ public class Maia.TestObject : Maia.TestCase
     public override void
     set_up ()
     {
-        Object.register (typeof (FooObject), FooObject.create_from_parameter);
-        Object.register (typeof (PooObject), PooObject.create_from_parameter);
-        Object.register (typeof (TooObject), TooObject.create_from_parameter);
+        
     }
 
     public void
     test_object_create ()
     {
-        GLib.Parameter[] parameters = new GLib.Parameter[1];
-        parameters[0] = { "id", "foo" };
-        Object foo = Object.newv (typeof (FooObject), parameters);
+        Object foo = GLib.Object.new (typeof (FooObject), id: "foo") as Object;
 
         assert (foo is FooObject);
         assert (foo.id == "foo");
@@ -161,9 +83,7 @@ public class Maia.TestObject : Maia.TestCase
     public void
     test_object_delegate ()
     {
-        GLib.Parameter[] parameters = new GLib.Parameter[1];
-        parameters[0] = { "id", "foo" };
-        FooObject foo = Object.newv (typeof (FooObject), parameters) as FooObject;
+        FooObject foo = GLib.Object.new (typeof (FooObject), id: "foo") as FooObject;
 
         Test.timer_start ();
         for (long i = 0; i < n; ++i)
@@ -173,6 +93,8 @@ public class Maia.TestObject : Maia.TestCase
         Test.message ("delegate: %i", (int)(Test.timer_elapsed () * 1000));
 
         FooDelegate delegate_foo = foo.delegate_cast<FooDelegate> ();
+        assert (foo.id == "foo");
+
         Test.timer_start ();
         for (long i = 0; i < n; ++i)
         {
@@ -184,22 +106,16 @@ public class Maia.TestObject : Maia.TestCase
     public void
     test_object_parent ()
     {
-        GLib.Parameter[] parameters = new GLib.Parameter[1];
-        parameters[0] = { "id", "parent" };
-        Object parent = Object.newv (typeof (FooObject), parameters);
+        Object parent = GLib.Object.new (typeof (FooObject), id: "parent") as Object;
 
         assert (parent is FooObject);
         assert (parent.id == "parent");
 
-        parameters = new GLib.Parameter[1];
-        parameters[0] = { "parent", parent };
-        Object foo1 = Object.newv (typeof (FooObject), parameters);
+        Object foo1 = GLib.Object.new (typeof (FooObject), parent: parent) as Object;
 
         assert (foo1 is FooObject);
 
-        parameters = new GLib.Parameter[1];
-        parameters[0] = { "parent", parent };
-        Object foo2 = Object.newv (typeof (FooObject), parameters);
+        Object foo2 = GLib.Object.new (typeof (FooObject), parent: parent) as Object;
 
         assert (foo2 is FooObject);
 
@@ -209,32 +125,22 @@ public class Maia.TestObject : Maia.TestCase
     public void
     test_object_identified ()
     {
-        GLib.Parameter[] parameters = new GLib.Parameter[1];
-        parameters[0] = { "id", "parent" };
-        Object parent = Object.newv (typeof (FooObject), parameters);
+        Object parent = GLib.Object.new (typeof (FooObject), id: "parent") as Object;
 
         assert (parent is FooObject);
         assert (parent.id == "parent");
 
-        parameters = new GLib.Parameter[2];
-        parameters[0] = { "id", "foo" };
-        parameters[1] = { "parent", parent };
-        Object foo1 = Object.newv (typeof (FooObject), parameters);
+        Object foo1 = GLib.Object.new (typeof (FooObject), id: "foo", parent: parent) as Object;
 
         assert (foo1 is FooObject);
         assert (foo1.id == "foo");
 
-        parameters = new GLib.Parameter[2];
-        parameters[0] = { "id", "too" };
-        parameters[1] = { "parent", parent };
-        Object foo2 = Object.newv (typeof (PooObject), parameters);
+        Object foo2 = GLib.Object.new (typeof (PooObject), id: "too", parent: parent) as Object;
 
         assert (foo2 is PooObject);
         assert (foo2.id == "too");
 
-        parameters = new GLib.Parameter[1];
-        parameters[0] = { "parent", parent };
-        Object foo3 = Object.newv (typeof (TooObject), parameters);
+        Object foo3 = GLib.Object.new (typeof (TooObject), parent: parent) as Object;
 
         assert (foo3 is TooObject);
 
@@ -247,31 +153,20 @@ public class Maia.TestObject : Maia.TestCase
     public void
     test_object_parse ()
     {
-        GLib.Parameter[] parameters = new GLib.Parameter[1];
-        parameters[0] = { "id", "parent" };
-        Object parent = Object.newv (typeof (FooObject), parameters);
+        Object parent = GLib.Object.new (typeof (FooObject), id: "parent") as Object;
 
         assert (parent is FooObject);
         assert (parent.id == "parent");
 
-        parameters = new GLib.Parameter[2];
-        parameters[0] = { "id", "foo" };
-        parameters[1] = { "parent", parent };
-        Object foo1 = Object.newv (typeof (FooObject), parameters);
+        Object foo1 = GLib.Object.new (typeof (FooObject), id: "foo", parent: parent) as Object;
 
         assert (foo1 is FooObject);
 
-        parameters = new GLib.Parameter[2];
-        parameters[0] = { "id", "poo" };
-        parameters[1] = { "parent", parent };
-        Object foo2 = Object.newv (typeof (PooObject), parameters);
+        Object foo2 = GLib.Object.new (typeof (PooObject), id: "poo", parent: parent) as Object;
 
         assert (foo2 is PooObject);
 
-        parameters = new GLib.Parameter[2];
-        parameters[0] = { "id", "too" };
-        parameters[1] = { "parent", parent };
-        Object foo3 = Object.newv (typeof (TooObject), parameters);
+        Object foo3 = GLib.Object.new (typeof (TooObject), id: "too", parent: parent) as Object;
 
         assert (foo3 is TooObject);
 

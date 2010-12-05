@@ -22,15 +22,16 @@ public class Maia.Watch : Task
     // Types
     public enum Flags
     {
-        IN  = 1 << 0,
-        OUT = 1 << 1,
-        ERR = 1 << 2
+        NONE = 0,
+        IN   = 1 << 0,
+        OUT  = 1 << 1,
+        ERR  = 1 << 2
     }
 
     // Properties
     private int m_Fd;
     private int m_WatchFd;
-    private Flags m_Flags;
+    private Flags m_Flags = Flags.NONE;
 
     // Accessors
 

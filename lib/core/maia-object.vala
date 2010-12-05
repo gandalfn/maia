@@ -17,39 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.Object
+public abstract class Maia.Object : GLib.Object
 {
     // Types
     [CCode (has_target = false)]
-    public delegate Object CreateFromParameter (GLib.Parameter[] inProperties);
-    [CCode (has_target = false)]
     public delegate Object CreateFromString (string inValue);
 
-    private struct CreateVTable
-    {
-        public CreateFromParameter create_from_paramaters;
-        public CreateFromString    create_from_string;
-
-        public CreateVTable (CreateFromParameter? inCreateFromParameters,
-                             CreateFromString? inCreateFromString)
-        {
-            create_from_paramaters = inCreateFromParameters;
-            create_from_string = inCreateFromString;
-        }
-    }
-
     // Static properties
-    static Map<GLib.Type, CreateVTable?> s_Factory = null;
+    static Map<Type, CreateFromString?> s_Factory = null;
+    static Map<Type, Set<Type>>         s_Delegations = null;
 
     // Class properties
-    internal class Set<GLib.Type>        c_Implements = new Set<GLib.Type> ();
+    internal class bool                 c_Initialized = false;
+    internal class unowned Set<Type>    c_Delegations = null;
 
     // Properties
-    private string                       m_Id = null;
-    private unowned Object               m_Parent = null;
-    private Array<Object>                m_Childs = null; 
-    private Set<unowned Object>          m_IdentifiedChilds = null;
-    private Set<Delegate>                m_Delegates = null;
+    private string                      m_Id = null;
+    private unowned Object              m_Parent = null;
+    private unowned Object              m_Delegator = null;
+    private Array<Object>               m_Childs = null; 
+    private Set<unowned Object>         m_IdentifiedChilds = null;
+    private Set<Object>                 m_Delegates = null;
 
     // Accessors
 
@@ -58,22 +46,29 @@ public abstract class Maia.Object
      */
     public string id {
         get {
-            return m_Id;
+            return m_Delegator == null ? m_Id : m_Delegator.m_Id;
         }
         set {
-            // object have a old id
-            if (m_Parent != null && m_Id != null && m_Parent.m_IdentifiedChilds != null)
-                // remove object from identified object
-                m_Parent.identified_childs.remove (this);
-
-            // set identifier
-            m_Id = value;
-
-            // object have a parent
-            if (m_Id != null && m_Parent != null)
+            if (m_Delegator == null)
             {
-                // add object in identified childs
-                m_Parent.identified_childs.insert (this);
+                // object have a old id
+                if (m_Parent != null && m_Id != null && m_Parent.m_IdentifiedChilds != null)
+                    // remove object from identified object
+                    m_Parent.identified_childs.remove (this);
+
+                // set identifier
+                m_Id = value;
+
+                // object have a parent
+                if (m_Id != null && m_Parent != null)
+                {
+                    // add object in identified childs
+                    m_Parent.identified_childs.insert (this);
+                }
+            }
+            else
+            {
+                m_Delegator.id = value;
             }
         }
     }
@@ -83,45 +78,64 @@ public abstract class Maia.Object
      */
     public virtual Object parent {
         get {
-            return m_Parent;
+            return m_Delegator == null ? m_Parent : m_Delegator.m_Parent;
         }
         set {
-            // object have already a parent
-            if (m_Parent != null)
+            if (m_Delegator == null)
             {
-                // remove object from childs of old parent
-                if (m_Parent.m_Childs != null)
-                    m_Parent.m_Childs.remove (this);
-                // remove object from identified childs of old parent
-                if (m_Id != null && m_Parent.m_IdentifiedChilds != null)
-                    m_Parent.m_IdentifiedChilds.remove (this);
-            }
-
-            if (value != null)
-            {
-                if (value.can_append_child (this))
+                // object have already a parent
+                if (m_Parent != null)
                 {
-                    // set parent property
-                    m_Parent = value;
+                    // remove object from childs of old parent
+                    if (m_Parent.m_Childs != null)
+                        m_Parent.m_Childs.remove (this);
+                    // remove object from identified childs of old parent
+                    if (m_Id != null && m_Parent.m_IdentifiedChilds != null)
+                        m_Parent.m_IdentifiedChilds.remove (this);
+                }
 
-                    // add object to childs of parent
-                    if (m_Parent != null)
+                if (value != null)
+                {
+                    if (value.can_append_child (this))
                     {
-                        m_Parent.childs.insert (this);
-                        if (m_Id != null)
-                            m_Parent.identified_childs.insert (this);
+                        // set parent property
+                        m_Parent = value;
+
+                        // add object to childs of parent
+                        if (m_Parent != null)
+                        {
+                            m_Parent.childs.insert (this);
+                            if (m_Id != null)
+                                m_Parent.identified_childs.insert (this);
+                        }
+                    }
+                    else
+                    {
+                        m_Parent = null;
                     }
                 }
                 else
                 {
-                    m_Parent = null;
+                    // set parent property
+                    m_Parent = value;
                 }
             }
             else
             {
-                // set parent property
-                m_Parent = value;
+                m_Delegator.parent = value;
             }
+        }
+    }
+
+    /**
+     * Object delegator
+     */
+    public unowned Object? delegator {
+        get {
+            return m_Delegator;
+        }
+        construct {
+            m_Delegator = value;
         }
     }
 
@@ -130,22 +144,36 @@ public abstract class Maia.Object
      */
     public Array<Object> childs {
         get {
-            if (m_Childs == null)
-                m_Childs = new Array<Object> ();
-            return m_Childs;
+            if (m_Delegator == null)
+            {
+                if (m_Childs == null)
+                    m_Childs = new Array<Object> ();
+                return m_Childs;
+            }
+            else
+            {
+                return m_Delegator.childs;
+            }
         }
     }
 
     private Set<unowned Object> identified_childs {
         get {
-            if (m_IdentifiedChilds == null)
+            if (m_Delegator == null)
             {
-                m_IdentifiedChilds = new Set<unowned Object> ();
-                m_IdentifiedChilds.compare_func = (a, b) => {
-                    return GLib.strcmp (a.m_Id, b.m_Id);
-                };
+                if (m_IdentifiedChilds == null)
+                {
+                    m_IdentifiedChilds = new Set<unowned Object> ();
+                    m_IdentifiedChilds.compare_func = (a, b) => {
+                        return GLib.strcmp (a.m_Id, b.m_Id);
+                    };
+                }
+                return m_IdentifiedChilds;
             }
-            return m_IdentifiedChilds;
+            else
+            {
+                return m_Delegator.identified_childs;
+            }
         }
     }
 
@@ -159,15 +187,19 @@ public abstract class Maia.Object
     static void
     string_to_object (GLib.Value inSrc, out GLib.Value outDest)
     {
-        if (s_Factory != null)
-        {
-            CreateVTable? vtable = s_Factory[outDest.get_gtype()];
+        outDest = create_from_string (outDest.get_gtype(), (string)inSrc);
+    }
 
-            if (vtable != null)
-            {
-                outDest = vtable.create_from_string ((string)inSrc);
-            }
-        }
+    static int
+    compare_type (Type inA, Type inB)
+    {
+        return inA < inB ? -1 : (inA > inB ? 1 : 0);
+    }
+
+    static int
+    compare_object_with_type (Object inA, Type inB)
+    {
+        return compare_type (inA.get_type (), inB);
     }
 
     /**
@@ -176,33 +208,46 @@ public abstract class Maia.Object
      * @param inType delegate object type
      */
     protected class void
-    @delegate (GLib.Type inType)
-        requires (inType.is_a (typeof (Delegate)))
+    @delegate<T> (Type inType)
+        requires (inType.is_a (typeof (Object)))
+        requires (inType != typeof (T))
     {
-        c_Implements.insert (inType);
+        if (s_Delegations == null)
+            s_Delegations = new Map<Type, Set<Type>> ();
+
+        if (s_Delegations[typeof (T)] == null)
+            s_Delegations[typeof (T)] = new Set<Type> ();
+
+        s_Delegations[typeof (T)].insert (inType);
     }
 
-    protected Object (string? inId = null, Object? inParent = null)
+    construct
     {
-        // Set properties
-        if (inId != null) id = inId;
-        if (inParent != null) parent = inParent;
-
         // Create delegate objects
-        if (c_Implements.nb_items > 0)
+        if (!c_Initialized)
         {
-            m_Delegates = new Set<Delegate> ();
-            foreach (GLib.Type type in c_Implements)
+            if (s_Delegations != null)
+                c_Delegations = s_Delegations[get_type ()];
+            c_Initialized = true;
+        }
+
+        if (c_Delegations != null)
+        {
+            m_Delegates = new Set<Object> ();
+            m_Delegates.compare_func = (a, b) => {
+                return compare_type (a.get_type (), b.get_type ());
+            };
+            foreach (Type type in c_Delegations)
             {
                 m_Delegates.insert (create_delegate (type));
             }
         }
     }
 
-    protected virtual Delegate
+    protected virtual Object
     create_delegate (Type inType)
     {
-        return (Delegate)GType.create_instance (inType);
+        return GLib.Object.new (inType, delegator: this, id: m_Id, parent: m_Parent) as Object;
     }
 
     /**
@@ -215,7 +260,7 @@ public abstract class Maia.Object
     {
         if (m_Delegates == null) return null;
 
-        return m_Delegates.search<GLib.Type> (typeof (T), Delegate.compare_type_delegate);
+        return m_Delegates.search<Type> (typeof (T), compare_object_with_type);
     }
 
     /**
@@ -226,7 +271,7 @@ public abstract class Maia.Object
      * @return `true` if the child object can be added to this node, 
      *         `false` otherwise
      */
-    public inline virtual bool 
+    public virtual bool 
     can_append_child (Object inChild)
     {
         return true; 
@@ -304,53 +349,50 @@ public abstract class Maia.Object
      * called multiple time but only first call is really effective
      *
      * @param inType type to register
-     * @param inFromParameters create function with parameters
-     * @param inFromString create function with string (optional)
+     * @param inFromString create function with string
      */
     public static void
-    register (GLib.Type inType, CreateFromParameter inFromParameters, CreateFromString? inFromString = null)
+    register_create_from_string (Type inType, CreateFromString inFromString)
     {
         if (s_Factory == null)
-            s_Factory = new Map<GLib.Type, CreateVTable?> ();
+            s_Factory = new Map<Type, CreateFromString?> ();
 
-        CreateVTable? vtable = s_Factory[inType];
+        CreateFromString? func = s_Factory[inType];
 
-        if (vtable == null)
+        if (func == null)
         {
-            s_Factory[inType] = CreateVTable (inFromParameters, inFromString);
+            s_Factory[inType] = inFromString;
 
-            if (inFromString != null)
-            {
-                GLib.Value.register_transform_func (typeof (string), inType,
-                                                    (ValueTransform)string_to_object);
-                GLib.Value.register_transform_func (inType, typeof (string),
-                                                    (ValueTransform)object_to_string);
-            }
+            GLib.Value.register_transform_func (typeof (string), inType,
+                                                (ValueTransform)string_to_object);
+            GLib.Value.register_transform_func (inType, typeof (string),
+                                                (ValueTransform)object_to_string);
         }
     }
 
     /**
-     * Create a new object for a specified type. The create function must be
-     * registered before.
+     * Create an object from string
      *
-     * @param inType type of object
-     * @param inProperties array of properties to pass of creation of object
+     * @param inType object type
+     * @param inParameters string representation of object properties
      *
-     * @return Object
+     * @return a new Object
      */
     public static Object?
-    newv (GLib.Type inType, GLib.Parameter[] inProperties)
+    create_from_string (Type inType, string inParameters)
     {
-        Object result = null;
+        Object ret = null;
 
         if (s_Factory != null)
         {
-            CreateVTable? vtable = s_Factory[inType];
+            CreateFromString? func = s_Factory[inType];
 
-            if (vtable != null)
-                result = vtable.create_from_paramaters (inProperties);
+            if (func != null)
+            {
+                ret = func (inParameters);
+            }
         }
 
-        return result;
+        return ret;
     }
 }
