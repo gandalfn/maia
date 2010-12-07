@@ -36,7 +36,7 @@ public class Maia.Observer<R>
     }
 
     public virtual R
-    notify (int inNbArgs, va_list inArgs)
+    notify (va_list inArgs)
     {
         return func ();
     }
@@ -68,17 +68,16 @@ public class Maia.Observer1<R, A> : Observer<R>
     }
 
     public override R
-    notify (int inNbArgs, va_list inArgs)
+    notify (va_list inArgs)
     {
-        if (inNbArgs >= 1)
+        A a = inArgs.arg ();
+        if (a == null)
         {
-            ActionFunc<R, A> callback = (ActionFunc<R, A>)func;
-            A a = inArgs.arg ();
-
-            return callback (a);
+            return base.notify (inArgs);
         }
 
-        return base.notify (inNbArgs, inArgs);
+        ActionFunc<R, A> callback = (ActionFunc<R, A>)func;
+        return callback (a);
     }
 }
 
@@ -108,24 +107,23 @@ public class Maia.Observer2<R, A, B> : Observer<R>
     }
 
     public override R
-    notify (int inNbArgs, va_list inArgs)
+    notify (va_list inArgs)
     {
-        if (inNbArgs >= 2)
+        A a = inArgs.arg ();
+        if (a == null)
         {
-            ActionFunc<R, A, B> callback = (ActionFunc<R, A, B>)func;
-            A a = inArgs.arg ();
-            A b = inArgs.arg ();
-
-            return callback (a, b);
+            return base.notify (inArgs);
         }
-        else if (inNbArgs == 1)
+
+        B b = inArgs.arg ();
+        if (b == null)
         {
             Observer1.ActionFunc<R, A> callback = (Observer1.ActionFunc<R, A>)func;
-            A a = inArgs.arg ();
-
             return callback (a);
         }
 
-        return base.notify (inNbArgs, inArgs);
+        ActionFunc<R, A, B> callback = (ActionFunc<R, A, B>)func;
+
+        return callback (a, b);
     }
 }

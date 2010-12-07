@@ -83,7 +83,7 @@ public class Maia.TestNotification : Maia.TestCase
         for (int iter = 0; iter < NB_ITERATIONS; ++iter)
         {
             Test.timer_start ();
-            notification.post (2, 12, "test");
+            notification.post (12, "test");
             total += notification_elapsed;
             min = double.min (notification_elapsed, min);
             max = double.max (notification_elapsed, max);
