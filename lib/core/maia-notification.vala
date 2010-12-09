@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Notification<R>
+public class Maia.Notification<R> : Object
 {
     // properties
     private string           m_Name;
