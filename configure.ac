@@ -97,6 +97,8 @@ lib/core/maia-core.pc
 lib/core/Makefile
 lib/xml/maia-xml.pc
 lib/xml/Makefile
+lib/graphic/maia-graphic.pc
+lib/graphic/Makefile
 test/Makefile
 vapi/Makefile
 po/Makefile.in])

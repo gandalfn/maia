@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-backend.vala
+ * maia-graphic-context.vala
  * Copyright (C) Nicolas Bruguier 2010 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,9 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.Backend : Object
+public class Maia.GraphicContext : Object
 {
-    public abstract uint nb_screens { get; default = 0; }
-
-    public abstract Screen get_screen (int inNumScreen);
+    
 }

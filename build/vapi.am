@@ -4,9 +4,10 @@ $(MAIA_LIB_NAME)-$(MAIA_ABI).vapi: $(MAIA_EXTRA_VAPIS) $(MAIA_LIB_NAME).vapi
 	$(AM_V_GEN) cat $^ > $@
 
 $(MAIA_LIB_NAME)-$(MAIA_ABI).deps: $(MAIA_LIB_NAME).vapi $(MAIA_VAPI_DEPS)
-	$(AM_V_GEN) for i in $(notdir $(basename $(MAIA_VAPI_DEPS))); \
+	$(AM_V_GEN) touch $@; \
+	for i in $(notdir $(basename $(MAIA_VAPI_DEPS))); \
 	do \
-	    echo $$i > $@; \
+	    echo $$i >> $@; \
 	done
 
 VALAFLAGS += \

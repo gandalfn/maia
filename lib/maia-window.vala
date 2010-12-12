@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-view.vala
+ * maia-window.vala
  * Copyright (C) Nicolas Bruguier 2010 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,15 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.View : Object
+public class Maia.Window : Device
 {
-    // properties
-    private Region m_Geometry;
-
-    // accessors
-    public Region geometry {
-        get {
-            return m_Geometry;
-        }
+    public Window (Workspace inWorkspace)
+    {
+        base (inWorkspace);
     }
 }

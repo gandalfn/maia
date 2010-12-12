@@ -207,7 +207,7 @@ public abstract class Maia.Object : GLib.Object
      *
      * @param inType delegate object type
      */
-    protected class void
+    protected static void
     @delegate<T> (Type inType)
         requires (inType.is_a (typeof (Object)))
         requires (inType != typeof (T))

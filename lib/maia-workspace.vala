@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-screen.vala
+ * maia-workspace.vala
  * Copyright (C) Nicolas Bruguier 2010 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,28 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Screen : Object
+public class Maia.Workspace : View
 {
-    private View m_View;
-    public View view {
-        get {
-            return m_View;
-        }
-    }
-
-    private Context m_Context;
-    public Context context {
-        get {
-            return m_Context;
-        }
-    }
-
-    public Screen (Context inContext)
+    public Workspace (Desktop inDesktop)
     {
-        // Construct screen object
-        m_Context = inContext;
-
-        // Create delegate view object
-        m_View = new View (this);
+        GLib.Object (parent: inDesktop);
     }
 }

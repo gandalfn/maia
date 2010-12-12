@@ -1,7 +1,8 @@
 MAIA_VAPI_DEPS = \
     $(top_builddir)/lib/maia-$(MAIA_ABI).vapi \
     $(top_builddir)/lib/core/maia-core-$(MAIA_ABI).vapi \
-    $(top_builddir)/lib/xml/maia-xml-$(MAIA_ABI).vapi
+    $(top_builddir)/lib/xml/maia-xml-$(MAIA_ABI).vapi \
+    $(top_builddir)/lib/graphic/maia-graphic-$(MAIA_ABI).vapi
 
 include $(top_srcdir)/build/maia.am
 

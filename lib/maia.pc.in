@@ -8,6 +8,6 @@ includedir=@includedir@/maia-@MAIA_ABI@
 Name: maia-@MAIA_ABI@
 Description: Maia library
 Version: @MAIA_VERSION@
-Requires: maia-core-@MAIA_ABI@ maia-xml-@MAIA_ABI@
+Requires: maia-core-@MAIA_ABI@ maia-xml-@MAIA_ABI@ maia-graphic-@MAIA_ABI@
 Libs: -L${libdir} -lmaia
 Cflags: -I${includedir}
