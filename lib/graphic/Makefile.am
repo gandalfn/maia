@@ -1,5 +1,8 @@
 MAIA_LIB_NAME = maia-graphic
 
+MAIA_VAPI_DEPS = \
+    $(top_builddir)/lib/core/maia-core-$(MAIA_ABI).vapi
+
 include $(top_srcdir)/build/maia.am
 include $(top_srcdir)/build/pkgconfig.am
 include $(top_srcdir)/build/vapi.am

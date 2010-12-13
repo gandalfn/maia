@@ -99,6 +99,8 @@ lib/xml/maia-xml.pc
 lib/xml/Makefile
 lib/graphic/maia-graphic.pc
 lib/graphic/Makefile
+lib/xcb/maia-xcb-backend.pc
+lib/xcb/Makefile
 test/Makefile
 vapi/Makefile
 po/Makefile.in])

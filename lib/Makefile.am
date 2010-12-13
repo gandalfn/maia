@@ -9,7 +9,7 @@ include $(top_srcdir)/build/maia.am
 include $(top_srcdir)/build/pkgconfig.am
 include $(top_srcdir)/build/vapi.am
 
-SUBDIRS = core xml graphic
+SUBDIRS = core xml graphic . xcb
 
 maia.h: libmaia_la_vala.stamp
 
@@ -28,7 +28,9 @@ libmaia_la_SOURCES = \
     maia-desktop.vala \
     maia-workspace.vala \
     maia-device.vala \
-    maia-window.vala
+    maia-window.vala \
+    maia-desktop-proxy.vala \
+    maia-workspace-proxy.vala
 
 libmaia_la_LDFLAGS = \
     -version-number @MAIA_SO_VERSION@ \

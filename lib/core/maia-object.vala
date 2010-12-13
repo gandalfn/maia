@@ -44,7 +44,7 @@ public abstract class Maia.Object : GLib.Object
     /**
      * Object identifier
      */
-    public string id {
+    public virtual string id {
         get {
             return m_Delegator == null ? m_Id : m_Delegator.m_Id;
         }

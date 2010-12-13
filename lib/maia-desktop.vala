@@ -53,6 +53,12 @@ public class Maia.Desktop : Object
         }
     }
 
+    public Workspace default_workspace {
+        get {
+            return  delegate_cast<DesktopProxy> ().default_workspace;
+        }
+    }
+
     // methods
     public Desktop ()
     {

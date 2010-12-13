@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+includedir=@includedir@/maia-@MAIA_ABI@/graphic
+
+Name: maia-xcb-backend-@MAIA_ABI@
+Description: Maia XCB Backend library
+Version: @MAIA_VERSION@
+Requires: maia-core-@MAIA_ABI@
+Libs: -L${libdir} -lmaia-xcb-backend
+Cflags: -I${includedir}
