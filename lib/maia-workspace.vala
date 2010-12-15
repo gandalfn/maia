@@ -19,10 +19,19 @@
 
 public class Maia.Workspace : View
 {
+    // properties
+    private WorkspaceProxy m_Proxy;
+
     // accessors
     public uint num {
         get {
-            return delegate_cast<WorkspaceProxy> ().num;
+            return m_Proxy.num;
+        }
+    }
+
+    public override Region geometry {
+        get {
+            return m_Proxy.geometry;
         }
     }
 
@@ -30,5 +39,6 @@ public class Maia.Workspace : View
     public Workspace (Desktop inDesktop)
     {
         GLib.Object (parent: inDesktop);
+        m_Proxy = delegate_cast<WorkspaceProxy> ();
     }
 }

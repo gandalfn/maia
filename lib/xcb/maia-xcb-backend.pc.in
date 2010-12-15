@@ -3,7 +3,7 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 datarootdir=@datarootdir@
 datadir=@datadir@
-includedir=@includedir@/maia-@MAIA_ABI@/graphic
+includedir=@includedir@/maia-@MAIA_ABI@/xcb
 
 Name: maia-xcb-backend-@MAIA_ABI@
 Description: Maia XCB Backend library

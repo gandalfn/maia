@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-device.vala
+ * maia-xcb-application.vala
  * Copyright (C) Nicolas Bruguier 2010 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,15 +17,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.Device : Object
+internal class Maia.XcbApplication : Application
 {
-    static construct
-    {
-        delegate<Device> (typeof (GraphicContext));
+    // properties
+    private Desktop m_Desktop = null;
+    
+    // accessors
+    public override Desktop desktop {
+        get {
+            return m_Desktop;
+        }
+        construct {
+            m_Desktop = value;
+        }
     }
 
-    public Device (Workspace inWorkspace)
+    static construct
     {
-        GLib.Object (parent: inWorkspace);
+        delegate <Desktop> (typeof (XcbDesktop));
+        delegate <Workspace> (typeof (XcbWorkspace));
+    }
+
+    public XcbApplication (string[] inArgs)
+    {
+        Desktop desktop = new Desktop ();
+        GLib.Object (desktop: desktop);
     }
 }

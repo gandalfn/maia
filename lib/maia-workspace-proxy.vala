@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.WorkspaceProxy : Object
+public abstract class Maia.WorkspaceProxy : View
 {
-    public abstract uint num { get; internal set; }
+    public abstract uint num { get; set; }
 }

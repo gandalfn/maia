@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-device.vala
+ * maia-xcb-backend.vala
  * Copyright (C) Nicolas Bruguier 2010 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,15 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.Device : Object
+namespace Maia.XcbBackend
 {
-    static construct
+    // methods
+    public static Application
+    create_application (string[] inArgs)
     {
-        delegate<Device> (typeof (GraphicContext));
-    }
-
-    public Device (Workspace inWorkspace)
-    {
-        GLib.Object (parent: inWorkspace);
+        return new XcbApplication (inArgs);
     }
 }

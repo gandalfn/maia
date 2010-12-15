@@ -17,15 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.XcbWorkspace : WorkspaceProxy
+internal class Maia.XcbWorkspace : WorkspaceProxy
 {
     // properties
     private uint            m_Num       = 0;
     private Xcb.Screen      m_XcbScreen = null;
     private Xcb.VisualType? m_XcbVisual = null;
+    private Region          m_Geometry  = null;
 
     // accessors
-    internal Xcb.Screen xcb_screen {
+    public Xcb.Screen xcb_screen {
         get {
             return m_XcbScreen;
         }
@@ -34,7 +35,7 @@ public class Maia.XcbWorkspace : WorkspaceProxy
         }
     }
 
-    internal Xcb.VisualType? xcb_visual {
+    public Xcb.VisualType? xcb_visual {
         get {
             if (m_XcbScreen != null && m_XcbVisual == null)
             {
@@ -55,6 +56,19 @@ public class Maia.XcbWorkspace : WorkspaceProxy
             }
 
             return m_XcbVisual;
+        }
+    }
+
+    public override Region geometry {
+        get {
+            if (m_Geometry == null)
+            {
+                m_Geometry = new Region.raw_rectangle (0, 0,
+                                                       m_XcbScreen.width_in_pixels,
+                                                       m_XcbScreen.height_in_pixels);
+            }
+
+            return m_Geometry;
         }
     }
 

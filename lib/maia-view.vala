@@ -17,15 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.View : Object
+public abstract class Maia.View : Object
 {
-    // properties
-    private Region m_Geometry;
-
     // accessors
-    public Region geometry {
-        get {
-            return m_Geometry;
-        }
-    }
+    public abstract Region geometry { get; }
 }

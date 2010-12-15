@@ -17,14 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.XcbDesktop : DesktopProxy
+internal class Maia.XcbDesktop : DesktopProxy
 {
     // properties
     private Xcb.Connection m_Connection       = null;
     private int            m_DefaultScreenNum = 0;
 
     // accessors
-    internal Xcb.Connection connection {
+    public Xcb.Connection connection {
         get {
             return m_Connection;
         }

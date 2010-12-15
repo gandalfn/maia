@@ -52,7 +52,8 @@ namespace Xcb {
 	}
 
 	[Compact]
-	[CCode (cname = "xcb_setup_t", ref_function = "", unref_function = "")]
+	[Immutable]
+	[CCode (cname = "const xcb_setup_t", ref_function = "", unref_function = "")]
 	public class Setup {
 		public int roots_length ();
 		public ScreenIterator roots_iterator ();

@@ -24,6 +24,7 @@ libmaia_la_VALAFLAGS = \
     --library=maia
 
 libmaia_la_SOURCES = \
+    maia-application.vala \
     maia-view.vala \
     maia-desktop.vala \
     maia-workspace.vala \
