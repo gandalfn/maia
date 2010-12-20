@@ -21,13 +21,13 @@ namespace Maia
 {
     // Types
     [CCode (has_target = false)]
-    public delegate bool   EqualFunc<V>    (V inA, V inB);
+    public delegate bool   EqualFunc<V>      (V inA, V inB);
     [CCode (has_target = false)]
-    public delegate int    CompareFunc<V>  (V inA, V inB);
+    public delegate int    CompareFunc<V>    (V inA, V inB);
     [CCode (has_target = false)]
-    public delegate string ToStringFunc<V> (V inValue);
+    public delegate string ToStringFunc<V>   (V inValue);
     [CCode (has_target = false)]
-    public delegate V AccumulateFunc<V> (V inA, V inB);
+    public delegate V      AccumulateFunc<V> (V inA, V inB);
 
     // Methods
     static string
@@ -96,71 +96,71 @@ namespace Maia
         return inA + inB;
     }
 
-    public static EqualFunc
+    public static EqualFunc<V>
     get_equal_func_for<V> ()
     {
-        EqualFunc func = (EqualFunc)GLib.direct_equal;
+        EqualFunc<V> func = (EqualFunc<V>)GLib.direct_equal;
 
         if (typeof (V) == typeof (string))
-            func = (EqualFunc)GLib.str_equal;
+            func = (EqualFunc<V>)GLib.str_equal;
         else if (typeof (V).is_a (typeof (Object)))
-            func = (EqualFunc)Object.equals;
+            func = (EqualFunc<V>)Object.equals;
 
         return func;
     }
 
-    public static CompareFunc
+    public static CompareFunc<V>
     get_compare_func_for<V> ()
     {
-        CompareFunc func = (CompareFunc)direct_compare;
+        CompareFunc<V> func = (CompareFunc<V>)direct_compare;
 
         if (typeof (V) == typeof (string))
-            func = (CompareFunc)GLib.strcmp;
+            func = (CompareFunc<V>)GLib.strcmp;
         else if (typeof (V).is_a (typeof (Object)))
-            func = (CompareFunc)Object.compare;
+            func = (CompareFunc<V>)Object.compare;
 
         return func;
     }
 
-    public static ToStringFunc
+    public static ToStringFunc<V>
     get_to_string_func_for<V> ()
     {
-        ToStringFunc func = null;
+        ToStringFunc<V> func = null;
 
         if (typeof (V) == typeof (string))
-            func = (ToStringFunc)string.dup;
+            func = (ToStringFunc<V>)string.dup;
         else if (typeof (V) == typeof (int) || typeof (V) == typeof (uint) ||
                  typeof (V) == typeof (long) || typeof (V) == typeof (ulong))
-            func = (ToStringFunc)long_to_string;
+            func = (ToStringFunc<V>)long_to_string;
         else if (typeof (V) == typeof (float) || typeof (V) == typeof (double))
-            func = (ToStringFunc)double_to_string;
+            func = (ToStringFunc<V>)double_to_string;
         else if (typeof (V).is_a (typeof (Object)))
-            func = (ToStringFunc)Object.to_string;
+            func = (ToStringFunc<V>)Object.to_string;
 
         return func;
     }
 
-    public static AccumulateFunc
+    public static AccumulateFunc<V>
     get_accumulator_func_for<V> ()
     {
-        AccumulateFunc func = null;
+        AccumulateFunc<V> func = null;
 
         if (typeof (V) == typeof (bool))
-            func = (AccumulateFunc)bool_accumulator;
+            func = (AccumulateFunc<V>)bool_accumulator;
         else if (typeof (V) == typeof (int))
-            func = (AccumulateFunc)int_accumulator;
+            func = (AccumulateFunc<V>)int_accumulator;
         else if (typeof (V) == typeof (uint))
-            func = (AccumulateFunc)uint_accumulator;
+            func = (AccumulateFunc<V>)uint_accumulator;
         else if (typeof (V) == typeof (long))
-            func = (AccumulateFunc)long_accumulator;
+            func = (AccumulateFunc<V>)long_accumulator;
         else if (typeof (V) == typeof (ulong))
-            func = (AccumulateFunc)ulong_accumulator;
+            func = (AccumulateFunc<V>)ulong_accumulator;
         else if (typeof (V) == typeof (float))
-            func = (AccumulateFunc)float_accumulator;
+            func = (AccumulateFunc<V>)float_accumulator;
         else if (typeof (V) == typeof (double))
-            func = (AccumulateFunc)double_accumulator;
+            func = (AccumulateFunc<V>)double_accumulator;
         else if (typeof (V) == typeof (string))
-            func = (AccumulateFunc)string_accumulator;
+            func = (AccumulateFunc<V>)string_accumulator;
 
         return func;
     }
