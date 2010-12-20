@@ -108,10 +108,10 @@ public class Maia.Watch : Task
     /**
      * {@inheritDoc}
      */
-    public override void*
-    run ()
+    protected override void*
+    main ()
     {
-        void* ret = base.run ();
+        void* ret = base.main ();
 
         state = Task.State.WAITING;
 

@@ -57,7 +57,7 @@ public class Maia.Timeout : Watch
         Os.TimerFd timer_fd = Os.TimerFd (Os.CLOCK_MONOTONIC, Os.TFD_CLOEXEC);
 
         base (timer_fd, Watch.Flags.IN, inPriority);
-        
+
         m_TimeoutMs = inTimeoutMs;
 
         elapsed = new Notification<bool> ("elapsed");
@@ -72,12 +72,12 @@ public class Maia.Timeout : Watch
      * {@inheritDoc}
      */
     public override void*
-    run ()
+    main ()
         requires (parent != null)
     {
         (parent as Dispatcher).remove_watch (this);
 
-        void* ret = base.run ();
+        void* ret = base.main ();
 
         if (elapsed.post ())
         {

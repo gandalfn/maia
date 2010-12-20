@@ -19,10 +19,33 @@
 
 public class Maia.Dispatcher : Task
 {
+    // Static properties
+    static Set<unowned Dispatcher> s_Dispatchers;
+
     // Properties
     private Os.EPoll m_PollFd = -1;
 
     // Methods
+    static construct
+    {
+        s_Dispatchers = new Set<unowned Dispatcher> ();
+        s_Dispatchers.compare_func = (a, b) => {
+            return direct_compare (a.thread_id, b.thread_id);
+        };
+    }
+
+    public static unowned Dispatcher?
+    self ()
+    {
+        lock (s_Dispatchers)
+        {
+            return s_Dispatchers.search<unowned GLib.Thread<void*>> (GLib.Thread.self<void*> (),
+                                                                     (v, a) => {
+                                                                         return direct_compare (v.thread_id, a);
+                                                                     });
+        }
+    }
+
     public Dispatcher ()
     {
         base (Priority.HIGH);
@@ -33,6 +56,11 @@ public class Maia.Dispatcher : Task
 
     ~Dispatcher ()
     {
+        lock (s_Dispatchers)
+        {
+            s_Dispatchers.remove (this);
+        }
+
         if (m_PollFd >= 0)
             Posix.close (m_PollFd);
         m_PollFd = -1;
@@ -50,10 +78,17 @@ public class Maia.Dispatcher : Task
     /**
      * {@inheritDoc}
      */
-    public override void*
-    run ()
+    protected override void*
+    main ()
     {
-        void* ret = base.run ();
+        void* ret = base.main ();
+
+        lock (s_Dispatchers)
+        {
+            assert (!(this in s_Dispatchers));
+
+            s_Dispatchers.insert (this);
+        }
 
         Array<unowned Task> ready_tasks = new Array<unowned Task> ();
         ready_tasks.compare_func = get_compare_func_for<Task> ();
@@ -105,7 +140,20 @@ public class Maia.Dispatcher : Task
             ready_tasks.clear ();
         }
 
+        finished.post ();
+
         return ret;
+    }
+
+    public override void
+    finish ()
+    {
+        state = State.TERMINATED;
+
+        if (is_thread && self () != this)
+        {
+            thread_id.join ();
+        }
     }
 
     internal new void

@@ -81,4 +81,33 @@ namespace Os
     public const int EPOLLIN;
     public const int EPOLLOUT;
     public const int EPOLLERR;
+
+    public delegate void* ThreadFunc ();
+
+    [SimpleType]
+    [CCode (cname = "pthread_t", cprefix = "pthread_", cheader_filename = "pthread.h")]
+    public struct Thread
+    {
+        public static int create (out Thread outThread, ThreadAttr? inAttr, ThreadFunc inFunc);
+        public static int exit (void* inRet);
+
+        public int detach ();
+        public int join (out void* outRetval);
+    }
+
+    [CCode (cname = "pthread_attr_t", cheader_filename = "pthread.h")]
+    public struct ThreadAttr
+    {
+    }
+
+    [CCode (cname = "pthread_spinlock_t", cprefix = "pthread_spin_", cheader_filename = "pthread.h")]
+    public struct ThreadSpin
+    {
+        [CCode (cname = "pthread_spin_init")]
+        public ThreadSpin (bool inPShared = false);
+
+        public int lock ();
+        public int try_lock ();
+        public int unlock ();
+    }
 }

@@ -38,15 +38,35 @@ public class Maia.Task : Object
     }
 
     // Properties
-    private Priority m_Priority;
-    private State m_State = State.UNKNOWN;
-    private Os.TimerFd m_SleepFd = -1;
+    private bool                       m_Thread;
+    private unowned GLib.Thread<void*> m_ThreadId = null;
+    private Priority                   m_Priority;
+    private State                      m_State = State.READY;
+    private Os.TimerFd                 m_SleepFd = -1;
 
     // Notifications
     public Notification<void> running;
     public Notification<void> finished;
 
     // Accessors
+
+    /**
+     * Task is threaded
+     */
+    public bool is_thread {
+        get {
+            return m_Thread;
+        }
+    }
+
+    /**
+     * Task thread id
+     */
+    public GLib.Thread<void*> thread_id {
+        get {
+            return m_ThreadId;
+        }
+    }
 
     /**
      * Task priority
@@ -94,13 +114,13 @@ public class Maia.Task : Object
      *
      * @param inPriority task priority
      */
-    public Task (Priority inPriority = Priority.NORMAL)
+    public Task (Priority inPriority = Priority.NORMAL, bool inThread = false)
     {
         running = new Notification<void> ("running");
         finished = new Notification<void> ("finished");
 
-        m_Priority = inPriority;
-        m_State = State.READY;
+        m_Thread    = inThread;
+        m_Priority  = inPriority;
     }
 
     ~Task ()
@@ -113,8 +133,33 @@ public class Maia.Task : Object
     /**
      * Runs a task until finish() is called. 
      */
-    public virtual void*
+    public void
     run ()
+    {
+        if (m_Thread)
+        {
+            try
+            {
+                m_ThreadId = GLib.Thread.create<void*> (main, true);
+            }
+            catch (GLib.ThreadError error)
+            {
+                GLib.error ("%s", error.message);
+            }
+        }
+        else
+        {
+            if (m_ThreadId == null) m_ThreadId = GLib.Thread.self<void*> ();
+
+            main ();
+        }
+    }
+
+    /**
+     * Runs a task until finish() is called. 
+     */
+    protected virtual void*
+    main ()
     {
         state = State.RUNNING;
 
