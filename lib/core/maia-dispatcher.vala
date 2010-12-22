@@ -24,6 +24,8 @@ public class Maia.Dispatcher : Task
 
     // Properties
     private Os.EPoll m_PollFd = -1;
+    private GLib.Mutex m_Mutex;
+    private GLib.Cond m_Cond;
 
     // Methods
     static construct
@@ -51,6 +53,8 @@ public class Maia.Dispatcher : Task
         base (Priority.HIGH);
 
         m_PollFd = Os.EPoll (Os.EPOLL_CLOEXEC);
+        m_Mutex = new GLib.Mutex ();
+        m_Cond = new GLib.Cond ();
         childs.compare_func = get_compare_func_for<Task> ();
     }
 
@@ -98,6 +102,12 @@ public class Maia.Dispatcher : Task
         while (state == Task.State.RUNNING)
         {
             int timeout = childs.nb_items > 0 && ((Task)childs.at (0)).state == Task.State.READY ? 0 : -1;
+
+            m_Mutex.lock ();
+            {
+                m_Cond.broadcast ();
+            }
+            m_Mutex.unlock ();
 
             int nb_fds = m_PollFd.wait (events, timeout);
 
@@ -148,12 +158,33 @@ public class Maia.Dispatcher : Task
     public override void
     finish ()
     {
-        state = State.TERMINATED;
-
         if (is_thread && self () != this)
         {
+            m_Mutex.lock();
+            {
+                m_Cond.wait (m_Mutex);
+                state = State.TERMINATED;
+            }
+            m_Mutex.unlock ();
             thread_id.join ();
         }
+        else
+        {
+            state = State.TERMINATED;
+        }
+    }
+
+    public void
+    lock ()
+    {
+        m_Mutex.lock ();
+        m_Cond.wait (m_Mutex);
+    }
+
+    public void
+    unlock ()
+    {
+        m_Mutex.unlock ();
     }
 
     internal new void
