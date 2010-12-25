@@ -26,11 +26,36 @@ public class Maia.FooDelegate : Maia.Object
     }
 }
 
+public class Maia.FooDelegate1 : Maia.Object
+{
+}
+
+public class Maia.FooDelegate2 : Maia.Object
+{
+}
+
+public class Maia.FooDelegate3 : Maia.Object
+{
+}
+
+public class Maia.FooDelegate4 : Maia.Object
+{
+}
+
+public class Maia.FooDelegate5 : Maia.Object
+{
+}
+
 public class Maia.FooObject : Maia.Object
 {
     class construct
     {
         delegate<FooObject> (typeof (FooDelegate));
+        delegate<FooObject> (typeof (FooDelegate1));
+        delegate<FooObject> (typeof (FooDelegate2));
+        delegate<FooObject> (typeof (FooDelegate3));
+        delegate<FooObject> (typeof (FooDelegate4));
+        delegate<FooObject> (typeof (FooDelegate5));
     }
 
     public int
