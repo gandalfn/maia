@@ -26,6 +26,7 @@ libmaia_core_la_SOURCES = \
     maia-collection.vala \
     maia-pair.vala \
     maia-array.vala \
+    maia-queue.vala \
     maia-set.vala \
     maia-map.vala \
     maia-list.vala \
