@@ -42,6 +42,12 @@ namespace Maia
         return a.to_string ();
     }
 
+    static string
+    type_to_string (GLib.Type inType)
+    {
+        return inType.name ().dup ();
+    }
+
     public static int
     direct_compare (void* inA, void* inB)
     {
@@ -134,6 +140,8 @@ namespace Maia
             func = (ToStringFunc<V>)long_to_string;
         else if (typeof (V) == typeof (float) || typeof (V) == typeof (double))
             func = (ToStringFunc<V>)double_to_string;
+        else if (typeof (V) == typeof (GLib.Type))
+            func = (ToStringFunc)type_to_string;
         else if (typeof (V).is_a (typeof (Object)))
             func = (ToStringFunc<V>)Object.to_string;
 
