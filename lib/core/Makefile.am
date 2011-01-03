@@ -4,6 +4,9 @@ include $(top_srcdir)/build/maia.am
 include $(top_srcdir)/build/pkgconfig.am
 include $(top_srcdir)/build/vapi.am
 
+AM_CFLAGS += \
+    -DG_LOG_DOMAIN=\""Maia.Core"\"
+
 maia-core.h: libmaia_core_la_vala.stamp
 
 lib_LTLIBRARIES = libmaia-core.la
@@ -19,6 +22,7 @@ libmaia_core_la_VALAFLAGS = \
     --library=maia-core
 
 libmaia_core_la_SOURCES = \
+    maia-log.vala \
     maia-object.vala \
     maia-value.vala \
     maia-utils.vala \
@@ -41,7 +45,8 @@ libmaia_core_la_SOURCES = \
     maia-task.vala \
     maia-watch.vala \
     maia-timeout.vala \
-    maia-dispatcher.vala
+    maia-dispatcher.vala \
+    maia-core.vala
 
 libmaia_core_la_LDFLAGS = \
     -version-number @MAIA_SO_VERSION@ \

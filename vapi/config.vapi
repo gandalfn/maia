@@ -9,4 +9,5 @@ namespace Config
     public const string PACKAGE_NAME;
     public const string PACKAGE_VERSION;
     public const string VERSION;
+    public const string G_LOG_DOMAIN;
 }

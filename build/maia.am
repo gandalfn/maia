@@ -11,6 +11,7 @@ INCLUDES = \
 VALAFLAGS = \
     --vapidir=$(VALA_VAPI_PATH) \
     --vapidir=${top_srcdir}/vapi \
+    --pkg=config \
     --pkg=posix \
     --pkg=os \
     --pkg=pixman-1 \

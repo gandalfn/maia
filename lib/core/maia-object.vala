@@ -38,6 +38,8 @@ public abstract class Maia.Object : GLib.Object
     private Array<Object>               m_Childs = null; 
     private Set<unowned Object>         m_IdentifiedChilds = null;
     private Set<Object>                 m_Delegates = null;
+    private GLib.Mutex                  m_Mutex;
+    private GLib.Cond                   m_Cond;
 
     // Accessors
 
@@ -212,6 +214,9 @@ public abstract class Maia.Object : GLib.Object
         requires (inType.is_a (typeof (Object)))
         requires (inType != typeof (T))
     {
+        debug ("%s: type = %s, delegate type = %s", GLib.Log.METHOD,
+               typeof (T).name (), inType.name ());
+
         if (s_Delegations == null)
             s_Delegations = new Map<Type, Set<Type>> ();
 
@@ -242,6 +247,9 @@ public abstract class Maia.Object : GLib.Object
                 m_Delegates.insert (create_delegate (type));
             }
         }
+
+        m_Mutex = new GLib.Mutex ();
+        m_Cond = new GLib.Cond ();
     }
 
     protected virtual Object
@@ -261,6 +269,31 @@ public abstract class Maia.Object : GLib.Object
         if (m_Delegates == null) return null;
 
         return m_Delegates.search<Type> (typeof (T), compare_object_with_type);
+    }
+
+    protected void
+    lock_signal ()
+    {
+        m_Cond.signal ();
+    }
+
+    public void
+    @lock ()
+    {
+        m_Mutex.lock ();
+    }
+
+    public void
+    lock_wait ()
+    {
+        m_Mutex.lock ();
+        m_Cond.wait (m_Mutex);
+    }
+
+    public void
+    unlock ()
+    {
+        m_Mutex.unlock ();
     }
 
     /**

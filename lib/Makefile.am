@@ -11,6 +11,9 @@ include $(top_srcdir)/build/vapi.am
 
 SUBDIRS = core xml graphic . xcb
 
+AM_CFLAGS += \
+    -DG_LOG_DOMAIN=0
+
 maia.h: libmaia_la_vala.stamp
 
 lib_LTLIBRARIES = libmaia.la
