@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-xcb-backend.vala
+ * iterator.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,12 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Maia.XcbBackend
+/**
+ * Implemented by classes that support a simple iteration over instances of the
+ * collection.
+ */
+public abstract class Maia.Iterator<V>
 {
-    // methods
-    public static Application
-    create_application (string[] inArgs)
-    {
-        return new XcbApplication (inArgs);
-    }
+    internal int stamp;
+
+    /**
+     * Advances to the next element in the iteration.
+     *
+     * @return true if the iterator has a next element
+     */
+    public abstract bool next ();
+
+    /**
+     * Returns the current element in the iteration.
+     *
+     * @return the current element in the iteration
+     */
+    public abstract unowned V? get ();
 }

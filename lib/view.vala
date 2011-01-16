@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-xcb-backend.vala
+ * view.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,12 +17,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Maia.XcbBackend
+public abstract class Maia.View : Object
 {
-    // methods
-    public static Application
-    create_application (string[] inArgs)
+    // properties
+    private Region m_Geometry = null;
+
+    // accessors
+    public virtual Region geometry {
+        get {
+            return m_Geometry;
+        }
+    }
+
+    public override void
+    constructor (va_list inArgs)
     {
-        return new XcbApplication (inArgs);
+        base.constructor (inArgs);
+
+        bool end = false;
+        va_list args = va_list.copy (inArgs);
+
+        while (!end)
+        {
+            string? property = args.arg ();
+            switch (property)
+            {
+                case null:
+                    end = true;
+                    break;
+                case "geometry":
+                    m_Geometry = args.arg ();
+                    break;
+            }
+        }
     }
 }

@@ -27,10 +27,8 @@ libmaia_xcb_backend_la_VALAFLAGS = \
     --pkg=xcb-atom
 
 libmaia_xcb_backend_la_SOURCES = \
-    maia-xcb-backend.vala \
-    maia-xcb-application.vala \
-    maia-xcb-desktop.vala \
-    maia-xcb-workspace.vala
+    xcb-desktop.vala \
+    xcb-workspace.vala
 
 libmaia_xcb_backend_la_LDFLAGS = \
     -version-number @MAIA_SO_VERSION@ \

@@ -27,14 +27,11 @@ libmaia_la_VALAFLAGS = \
     --library=maia
 
 libmaia_la_SOURCES = \
-    maia-application.vala \
-    maia-view.vala \
-    maia-desktop.vala \
-    maia-workspace.vala \
-    maia-device.vala \
-    maia-window.vala \
-    maia-desktop-proxy.vala \
-    maia-workspace-proxy.vala
+    view.vala \
+    desktop.vala \
+    desktop-proxy.vala \
+    workspace.vala \
+    workspace-proxy.vala
 
 libmaia_la_LDFLAGS = \
     -version-number @MAIA_SO_VERSION@ \

@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-xcb-backend.vala
+ * desktop-proxy.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,12 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Maia.XcbBackend
+public abstract class Maia.DesktopProxy : Object
 {
-    // methods
-    public static Application
-    create_application (string[] inArgs)
-    {
-        return new XcbApplication (inArgs);
-    }
+    public abstract Workspace default_workspace { get; }
 }

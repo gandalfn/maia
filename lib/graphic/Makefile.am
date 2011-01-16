@@ -22,7 +22,7 @@ libmaia_graphic_la_VALAFLAGS = \
     --library=maia-graphic
 
 libmaia_graphic_la_SOURCES = \
-    maia-graphic-context.vala
+    graphic-context.vala
 
 libmaia_graphic_la_LDFLAGS = \
     -version-number @MAIA_SO_VERSION@ \

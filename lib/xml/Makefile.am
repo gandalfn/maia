@@ -22,8 +22,8 @@ libmaia_xml_la_VALAFLAGS = \
     --library=maia-xml
 
 libmaia_xml_la_SOURCES = \
-    maia-xml-parser.vala \
-    maia-xml-node.vala
+    xml-parser.vala \
+    xml-node.vala
 
 libmaia_xml_la_LDFLAGS = \
     -version-number @MAIA_SO_VERSION@ \

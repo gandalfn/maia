@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-xcb-backend.vala
+ * workspace.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,12 +17,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Maia.XcbBackend
+public class Maia.Workspace : View
 {
+    // properties
+    private WorkspaceProxy m_Proxy;
+
+    // accessors
+    public override GLib.Type object_type {
+        get {
+            return typeof (Workspace);
+        }
+    }
+
+    public uint num {
+        get {
+            return m_Proxy.num;
+        }
+    }
+
     // methods
-    public static Application
-    create_application (string[] inArgs)
+    public Workspace (Desktop inDesktop)
     {
-        return new XcbApplication (inArgs);
+        base.new (typeof (Workspace), parent: inDesktop);
+    }
+
+    internal Workspace.newv (va_list inArgs)
+    {
+        base.newv (inArgs);
+    }
+
+    protected override void
+    constructor (va_list inArgs)
+    {
+        base.constructor (inArgs);
+
+        m_Proxy = delegate_cast<WorkspaceProxy> ();
     }
 }

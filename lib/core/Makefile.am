@@ -22,31 +22,29 @@ libmaia_core_la_VALAFLAGS = \
     --library=maia-core
 
 libmaia_core_la_SOURCES = \
-    maia-log.vala \
-    maia-object.vala \
-    maia-value.vala \
-    maia-utils.vala \
-    maia-iterator.vala \
-    maia-collection.vala \
-    maia-pair.vala \
-    maia-array.vala \
-    maia-queue.vala \
-    maia-set.vala \
-    maia-map.vala \
-    maia-list.vala \
-    maia-transform.vala \
-    maia-point.vala \
-    maia-size.vala \
-    maia-rectangle.vala \
-    maia-region.vala \
-    maia-parser.vala \
-    maia-observer.vala \
-    maia-notification.vala \
-    maia-task.vala \
-    maia-watch.vala \
-    maia-timeout.vala \
-    maia-dispatcher.vala \
-    maia-core.vala
+    functions.vala \
+    iterator.vala \
+    collection.vala \
+    array.vala \
+    list.vala \
+    set.vala \
+    pair.vala \
+    map.vala \
+    object.vala \
+    notification.vala \
+    observer.vala \
+    log.vala \
+    transform.vala \
+    point.vala \
+    size.vala \
+    rectangle.vala \
+    region.vala \
+    task.vala \
+    watch.vala \
+    timeout.vala \
+    dispatcher.vala \
+    parser.vala \
+    core.vala
 
 libmaia_core_la_LDFLAGS = \
     -version-number @MAIA_SO_VERSION@ \

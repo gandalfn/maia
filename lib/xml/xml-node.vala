@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-xcb-backend.vala
+ * xml-node.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,12 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Maia.XcbBackend
+public enum Maia.XmlNodeType
 {
-    // methods
-    public static Application
-    create_application (string[] inArgs)
-    {
-        return new XcbApplication (inArgs);
-    }
+    INVALID_NODE = 0,
+    ELEMENT_NODE,
+    ATTRIBUTE_NODE,
+    TEXT_NODE,
+    CDATA_SECTION_NODE,
+    ENTITY_REFERENCE_NODE,
+    ENTITY_NODE,
+    PROCESSING_INSTRUCTION_NODE,
+    COMMENT_NODE,
+    DOCUMENT_NODE,
+    DOCUMENT_TYPE_NODE,
+    DOCUMENT_FRAGMENT_NODE,
+    NOTATION_NODE
+}
+
+public abstract class Maia.XmlNode : Object
+{
+    /**
+     * Node type
+     */
+    public abstract XmlNodeType node_type { get; default = XmlNodeType.INVALID_NODE; }
 }
