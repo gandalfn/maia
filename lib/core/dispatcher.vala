@@ -134,7 +134,7 @@ public class Maia.Dispatcher : Task
             {
                 int timeout = childs.nb_items > 0 && ((Task)childs.at (0)).state == Task.State.READY ? 0 : -1;
 
-                lock_signal ();
+                lock_broadcast ();
 
                 int nb_fds = m_PollFd.wait (events, timeout);
 

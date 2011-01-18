@@ -47,6 +47,12 @@ public class Maia.Desktop : Object
     }
 
     // accessors
+    public override GLib.Type object_type {
+        get {
+            return typeof (Desktop);
+        }
+    }
+
     public int nb_workspaces {
         get {
             return childs.nb_items;
@@ -62,6 +68,12 @@ public class Maia.Desktop : Object
     // methods
     public Desktop ()
     {
+    }
+
+    public override bool 
+    can_append_child (Object inChild)
+    {
+        return inChild is Workspace; 
     }
 
     public new Workspace?

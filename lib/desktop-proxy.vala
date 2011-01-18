@@ -19,5 +19,12 @@
 
 public abstract class Maia.DesktopProxy : Object
 {
+    // accessors
+    public override GLib.Type object_type {
+        get {
+            return typeof (DesktopProxy);
+        }
+    }
+
     public abstract Workspace default_workspace { get; }
 }

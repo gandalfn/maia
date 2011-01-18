@@ -63,15 +63,6 @@ public class Maia.Set<V> : Collection<V>
             }
         }
 
-        public int balance_factor {
-            get {
-                int right_depth = m_Right != null ? m_Right.m_Depth : 0;
-                int left_depth = m_Left != null ? m_Left.m_Depth : 0;
-                
-                return right_depth - left_depth;
-            }
-        }
-
         public Node (owned V inValue, Node<V>? inParent = null)
         {
             val = (owned)inValue;
@@ -90,6 +81,15 @@ public class Maia.Set<V> : Collection<V>
             m_Depth = int.max(right_depth, left_depth) + 1;
 
             if (m_Parent != null) m_Parent.calc_depth ();
+        }
+
+        public inline int
+        balance_factor ()
+        {
+            int right_depth = m_Right != null ? m_Right.m_Depth : 0;
+            int left_depth = m_Left != null ? m_Left.m_Depth : 0;
+
+            return right_depth - left_depth;
         }
 
         public inline bool
@@ -325,17 +325,17 @@ public class Maia.Set<V> : Collection<V>
         if (inNode == null)
             return;
 
-        int factor = inNode.balance_factor;
+        int factor = inNode.balance_factor ();
         if (factor == 2)
         {
-            int right = inNode.right.balance_factor;
+            int right = inNode.right.balance_factor ();
             if (right == -1)
                 rotate_right (inNode.right);
             rotate_left (inNode);
         }
         else if (factor == -2)
         {
-            int left = inNode.left.balance_factor;
+            int left = inNode.left.balance_factor ();
             if (left == 1)
                 rotate_left (inNode.left);
             rotate_right (inNode);
@@ -366,10 +366,11 @@ public class Maia.Set<V> : Collection<V>
     search<A> (A inValue, ValueCompareFunc<V, A> inFunc)
     {
         unowned Node<V> node = m_Root;
+        int res;
 
         while (node != null)
         {
-            int res = inFunc (node.val, inValue);
+            res = inFunc (node.val, inValue);
             if (res < 0)
             {
                 node = node.right;

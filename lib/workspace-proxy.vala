@@ -19,8 +19,16 @@
 
 public abstract class Maia.WorkspaceProxy : View
 {
+    // accessors
+    public override GLib.Type object_type {
+        get {
+            return typeof (WorkspaceProxy);
+        }
+    }
+
     public abstract uint num { get; set; }
 
+    // methods
     public override void
     constructor (va_list inArgs)
     {

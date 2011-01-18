@@ -23,6 +23,12 @@ public abstract class Maia.View : Object
     private Region m_Geometry = null;
 
     // accessors
+    public override GLib.Type object_type {
+        get {
+            return typeof (View);
+        }
+    }
+
     public virtual Region geometry {
         get {
             return m_Geometry;

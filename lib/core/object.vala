@@ -192,8 +192,8 @@ public abstract class Maia.Object
         return inA < inB ? -1 : (inA > inB ? 1 : 0);
     }
 
-    static int
-    compare_object_with_type (Object inA, Type inB)
+    static inline int
+    compare_object_with_type (Object? inA, Type inB)
     {
         return inA.m_Type < inB ? -1 : (inA.m_Type > inB ? 1 : 0);
     }
@@ -319,7 +319,6 @@ public abstract class Maia.Object
                     id = args.arg ();
                     break;
                 case "parent":
-                    GLib.debug ("%s: set parent", GLib.Log.METHOD);
                     parent = args.arg ();
                     break;
                 case "delegator":
@@ -338,7 +337,7 @@ public abstract class Maia.Object
     }
 
     protected void
-    lock_signal ()
+    lock_broadcast ()
     {
         m_Cond.broadcast ();
     }
@@ -369,9 +368,8 @@ public abstract class Maia.Object
      */
     public unowned T?
     delegate_cast<T> ()
+        requires (m_Delegates != null)
     {
-        if (m_Delegates == null) return null;
-
         return m_Delegates.search<Type> (typeof (T), compare_object_with_type);
     }
 
