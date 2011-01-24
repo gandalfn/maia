@@ -22,7 +22,7 @@ public class Maia.Queue<V> : Array<V>
     // methods
     public Queue ()
     {
-        
+        base.sorted ();
     }
 
     public V?

@@ -20,35 +20,5 @@
 public abstract class Maia.WorkspaceProxy : View
 {
     // accessors
-    public override GLib.Type object_type {
-        get {
-            return typeof (WorkspaceProxy);
-        }
-    }
-
-    public abstract uint num { get; set; }
-
-    // methods
-    public override void
-    constructor (va_list inArgs)
-    {
-        base.constructor (inArgs);
-
-        bool end = false;
-        va_list args = va_list.copy (inArgs);
-
-        while (!end)
-        {
-            string? property = args.arg ();
-            switch (property)
-            {
-                case null:
-                    end = true;
-                    break;
-                case "num":
-                    num = args.arg ();
-                    break;
-            }
-        }
-    }
+    public abstract uint num { get; }
 }

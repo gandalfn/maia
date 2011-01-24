@@ -46,13 +46,10 @@ public class Maia.Desktop : Object
         }
     }
 
-    // accessors
-    public override GLib.Type object_type {
-        get {
-            return typeof (Desktop);
-        }
-    }
+    // properties
+    private DesktopProxy m_Proxy;
 
+    // accessors
     public int nb_workspaces {
         get {
             return childs.nb_items;
@@ -61,13 +58,14 @@ public class Maia.Desktop : Object
 
     public Workspace default_workspace {
         get {
-            return  delegate_cast<DesktopProxy> ().default_workspace;
+            return m_Proxy.default_workspace;
         }
     }
 
     // methods
-    public Desktop ()
+    construct
     {
+        m_Proxy = delegate_cast<DesktopProxy> ();
     }
 
     public override bool 

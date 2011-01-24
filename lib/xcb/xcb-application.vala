@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-xcb-application.vala
+ * xcb-application.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -27,9 +27,6 @@ internal class Maia.XcbApplication : Application
         get {
             return m_Desktop;
         }
-        construct {
-            m_Desktop = value;
-        }
     }
 
     static construct
@@ -38,9 +35,9 @@ internal class Maia.XcbApplication : Application
         delegate <Workspace> (typeof (XcbWorkspace));
     }
 
-    public XcbApplication (string[] inArgs)
+    public XcbApplication ()
     {
-        Desktop desktop = new Desktop ();
-        GLib.Object (desktop: desktop);
+        m_Desktop = new Desktop ();
+        m_Desktop.id = null;
     }
 }

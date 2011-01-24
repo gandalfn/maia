@@ -12,7 +12,7 @@ include $(top_srcdir)/build/vapi.am
 SUBDIRS = core xml graphic . xcb
 
 AM_CFLAGS += \
-    -DG_LOG_DOMAIN=0
+    -DMAIA_LOG_CONTEXT=\""Maia"\"
 
 maia.h: libmaia_la_vala.stamp
 
@@ -31,7 +31,8 @@ libmaia_la_SOURCES = \
     desktop.vala \
     desktop-proxy.vala \
     workspace.vala \
-    workspace-proxy.vala
+    workspace-proxy.vala \
+    application.vala
 
 libmaia_la_LDFLAGS = \
     -version-number @MAIA_SO_VERSION@ \

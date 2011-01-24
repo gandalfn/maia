@@ -19,17 +19,6 @@
 
 public class Maia.FooDelegate : Maia.Object
 {
-    public override GLib.Type object_type {
-        get {
-            return typeof (FooDelegate);
-        }
-    }
-
-    public FooDelegate.newv (va_list inArgs)
-    {
-        constructor (inArgs);
-    }
-
     public int
     f ()
     {
@@ -39,82 +28,26 @@ public class Maia.FooDelegate : Maia.Object
 
 public class Maia.FooDelegate1 : Maia.Object
 {
-    public override GLib.Type object_type {
-        get {
-            return typeof (FooDelegate1);
-        }
-    }
-
-    public FooDelegate1.newv (va_list inArgs)
-    {
-        constructor (inArgs);
-    }
 }
 
 public class Maia.FooDelegate2 : Maia.Object
 {
-    public override GLib.Type object_type {
-        get {
-            return typeof (FooDelegate2);
-        }
-    }
-
-    public FooDelegate2.newv (va_list inArgs)
-    {
-        constructor (inArgs);
-    }
 }
 
 public class Maia.FooDelegate3 : Maia.Object
 {
-    public override GLib.Type object_type {
-        get {
-            return typeof (FooDelegate3);
-        }
-    }
-
-    public FooDelegate3.newv (va_list inArgs)
-    {
-        constructor (inArgs);
-    }
 }
 
 public class Maia.FooDelegate4 : Maia.Object
 {
-    public override GLib.Type object_type {
-        get {
-            return typeof (FooDelegate4);
-        }
-    }
-
-    public FooDelegate4.newv (va_list inArgs)
-    {
-        constructor (inArgs);
-    }
 }
 
 public class Maia.FooDelegate5 : Maia.Object
 {
-    public override GLib.Type object_type {
-        get {
-            return typeof (FooDelegate5);
-        }
-    }
-
-    public FooDelegate5.newv (va_list inArgs)
-    {
-        constructor (inArgs);
-    }
 }
 
 public class Maia.FooObject : Maia.Object
 {
-    public override GLib.Type object_type {
-        get {
-            return typeof (FooObject);
-        }
-    }
-
     class construct
     {
         delegate<FooObject> (typeof (FooDelegate));
@@ -123,11 +56,6 @@ public class Maia.FooObject : Maia.Object
         delegate<FooObject> (typeof (FooDelegate3));
         delegate<FooObject> (typeof (FooDelegate4));
         delegate<FooObject> (typeof (FooDelegate5));
-    }
-
-    public FooObject.newv (va_list inArgs)
-    {
-        constructor (inArgs);
     }
 
     public int
@@ -139,30 +67,10 @@ public class Maia.FooObject : Maia.Object
 
 public class Maia.PooObject : Maia.Object
 {
-    public override GLib.Type object_type {
-        get {
-            return typeof (PooObject);
-        }
-    }
-
-    public PooObject.newv (va_list inArgs)
-    {
-        constructor (inArgs);
-    }
 }
 
 public class Maia.TooObject : Maia.Object
 {
-    public override GLib.Type object_type {
-        get {
-            return typeof (TooObject);
-        }
-    }
-
-    public TooObject.newv (va_list inArgs)
-    {
-        constructor (inArgs);
-    }
 }
 
 public class Maia.TestObject : Maia.TestCase
@@ -183,21 +91,13 @@ public class Maia.TestObject : Maia.TestCase
     public override void
     set_up ()
     {
-        Object.register_object (typeof (FooObject), (Maia.Object.CreateFunc)FooObject.newv);
-        Object.register_object (typeof (PooObject), (Maia.Object.CreateFunc)PooObject.newv);
-        Object.register_object (typeof (TooObject), (Maia.Object.CreateFunc)TooObject.newv);
-        Object.register_object (typeof (FooDelegate), (Maia.Object.CreateFunc)FooDelegate.newv);
-        Object.register_object (typeof (FooDelegate1), (Maia.Object.CreateFunc)FooDelegate1.newv);
-        Object.register_object (typeof (FooDelegate2), (Maia.Object.CreateFunc)FooDelegate2.newv);
-        Object.register_object (typeof (FooDelegate3), (Maia.Object.CreateFunc)FooDelegate3.newv);
-        Object.register_object (typeof (FooDelegate4), (Maia.Object.CreateFunc)FooDelegate4.newv);
-        Object.register_object (typeof (FooDelegate5), (Maia.Object.CreateFunc)FooDelegate5.newv);
+        
     }
 
     public void
     test_object_create ()
     {
-        Object foo = Maia.Object.create (typeof (FooObject), id: "foo");
+        Object foo = GLib.Object.new (typeof (FooObject), id: "foo") as Object;
 
         assert (foo is FooObject);
         assert (foo.id == "foo");
@@ -208,7 +108,7 @@ public class Maia.TestObject : Maia.TestCase
     public void
     test_object_delegate ()
     {
-        FooObject foo = Maia.Object.create (typeof (FooObject), id: "foo") as FooObject;
+        FooObject foo = GLib.Object.new (typeof (FooObject), id: "foo") as FooObject;
 
         Test.timer_start ();
         for (long i = 0; i < n; ++i)
@@ -231,16 +131,16 @@ public class Maia.TestObject : Maia.TestCase
     public void
     test_object_parent ()
     {
-        Object parent = Maia.Object.create (typeof (FooObject), id: "parent");
+        Object parent = GLib.Object.new (typeof (FooObject), id: "parent") as Object;
 
         assert (parent is FooObject);
         assert (parent.id == "parent");
 
-        Object foo1 = Maia.Object.create (typeof (FooObject), parent: parent);
+        Object foo1 = GLib.Object.new (typeof (FooObject), parent: parent) as Object;
 
         assert (foo1 is FooObject);
 
-        Object foo2 = Maia.Object.create (typeof (FooObject), parent: parent);
+        Object foo2 = GLib.Object.new (typeof (FooObject), parent: parent) as Object;
 
         assert (foo2 is FooObject);
 
@@ -250,22 +150,22 @@ public class Maia.TestObject : Maia.TestCase
     public void
     test_object_identified ()
     {
-        Object parent = Maia.Object.create (typeof (FooObject), id: "parent");
+        Object parent = GLib.Object.new (typeof (FooObject), id: "parent") as Object;
 
         assert (parent is FooObject);
         assert (parent.id == "parent");
 
-        Object foo1 = Maia.Object.create (typeof (FooObject), id: "foo", parent: parent);
+        Object foo1 = GLib.Object.new (typeof (FooObject), id: "foo", parent: parent) as Object;
 
         assert (foo1 is FooObject);
         assert (foo1.id == "foo");
 
-        Object foo2 = Maia.Object.create (typeof (PooObject), id: "too", parent: parent);
+        Object foo2 = GLib.Object.new (typeof (PooObject), id: "too", parent: parent) as Object;
 
         assert (foo2 is PooObject);
         assert (foo2.id == "too");
 
-        Object foo3 = Maia.Object.create (typeof (TooObject), parent: parent);
+        Object foo3 = GLib.Object.new (typeof (TooObject), parent: parent) as Object;
 
         assert (foo3 is TooObject);
 
@@ -278,20 +178,20 @@ public class Maia.TestObject : Maia.TestCase
     public void
     test_object_parse ()
     {
-        Object parent = Maia.Object.create (typeof (FooObject), id: "parent");
+        Object parent = GLib.Object.new (typeof (FooObject), id: "parent") as Object;
 
         assert (parent is FooObject);
         assert (parent.id == "parent");
 
-        Object foo1 = Maia.Object.create (typeof (FooObject), id: "foo", parent: parent);
+        Object foo1 = GLib.Object.new (typeof (FooObject), id: "foo", parent: parent) as Object;
 
         assert (foo1 is FooObject);
 
-        Object foo2 = Maia.Object.create (typeof (PooObject), id: "poo", parent: parent);
+        Object foo2 = GLib.Object.new (typeof (PooObject), id: "poo", parent: parent) as Object;
 
         assert (foo2 is PooObject);
 
-        Object foo3 = Maia.Object.create (typeof (TooObject), id: "too", parent: parent);
+        Object foo3 = GLib.Object.new (typeof (TooObject), id: "too", parent: parent) as Object;
 
         assert (foo3 is TooObject);
 

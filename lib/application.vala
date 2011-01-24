@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * desktop-proxy.vala
+ * application.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,8 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.DesktopProxy : Object
+public abstract class Maia.Application : Object
 {
     // accessors
-    public abstract Workspace default_workspace { get; }
+    public abstract Desktop  desktop { get; }
 }

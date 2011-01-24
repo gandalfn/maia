@@ -63,11 +63,6 @@ public class Maia.Region : Object
     private Pixman.Region32 m_Region;
 
     // Accessors
-    public override Type object_type {
-        get {
-            return typeof (Region);
-        }
-    }
 
     /**
      * Indicate if region is empty

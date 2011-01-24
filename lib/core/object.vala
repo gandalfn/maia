@@ -17,22 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.Object
+public abstract class Maia.Object : GLib.Object
 {
-    // Types
-    [CCode (has_target = false)]
-    public delegate Object CreateFunc (GLib.Type inType, va_list inArgs);
-
     // Static properties
-    static Map<Type, CreateFunc?>       s_Factory = null;
     static Map<Type, Set<Type>>         s_Delegations = null;
 
     // Class properties
     internal class bool                 c_Initialized = false;
     internal class unowned Set<Type>    c_Delegations = null;
-
+    
     // Properties
-    private GLib.Type                   m_Type;
     private string                      m_Id = null;
     private unowned Object              m_Parent = null;
     private unowned Object              m_Delegator = null;
@@ -43,15 +37,6 @@ public abstract class Maia.Object
     private GLib.Cond                   m_Cond;
 
     // Accessors
-    /**
-     * Object type
-     */
-    public virtual GLib.Type object_type {
-        get {
-            return typeof (Object);
-        }
-    }
-
     /**
      * Object identifier
      */
@@ -145,6 +130,9 @@ public abstract class Maia.Object
         get {
             return m_Delegator;
         }
+        construct {
+            m_Delegator = value;
+        }
     }
 
     /**
@@ -189,13 +177,19 @@ public abstract class Maia.Object
     static inline int
     compare_type (Type inA, Type inB)
     {
-        return inA < inB ? -1 : (inA > inB ? 1 : 0);
+        Type aParentType = inA.parent ();
+        Type bParentType = inB.parent ();
+
+        return inA == inB         ||
+               aParentType == inB ||
+               inA == bParentType ||
+               aParentType == bParentType ? 0 : (inA < inB ? -1 : 1);
     }
 
     static inline int
     compare_object_with_type (Object? inA, Type inB)
     {
-        return inA.m_Type < inB ? -1 : (inA.m_Type > inB ? 1 : 0);
+        return compare_type (inA.get_type (), inB);
     }
 
     /**
@@ -208,7 +202,7 @@ public abstract class Maia.Object
         requires (inType.is_a (typeof (Object)))
         requires (inType != typeof (T))
     {
-        debug ("%s: type = %s, delegate type = %s", GLib.Log.METHOD,
+        audit (GLib.Log.METHOD, "type = %s, delegate type = %s",
                typeof (T).name (), inType.name ());
 
         if (s_Delegations == null)
@@ -220,53 +214,15 @@ public abstract class Maia.Object
         s_Delegations[typeof (T)].insert (inType);
     }
 
-    /**
-     * Register a create function for a specified type. The function can be
-     * called multiple time but only first call is really effective
-     *
-     * @param inType type to register
-     * @param inFromString create function
-     */
-    public static void
-    register_object (Type inType, CreateFunc inCreateFunc)
+    construct
     {
-        if (s_Factory == null)
-            s_Factory = new Map<Type, CreateFunc?> ();
-
-        CreateFunc? func = s_Factory[inType];
-
-        if (func == null)
-        {
-            s_Factory[inType] = inCreateFunc;
-        }
-    }
-
-    public static Object?
-    create (Type inType, ...)
-    {
-        Object? object = null;
-        CreateFunc? func = s_Factory[inType];
-
-        if (func != null)
-        {
-            va_list args = va_list();
-            object = func (inType, args);
-        }
-
-        return object;
-    }
-
-    public Object ()
-    {
-        GLib.debug ("%s: create", GLib.Log.METHOD);
-
-        m_Type = object_type;
+        audit ("Maia.Object.construct", "");
 
         // Create delegate objects
         if (!c_Initialized)
         {
             if (s_Delegations != null)
-                c_Delegations = s_Delegations[m_Type];
+                c_Delegations = s_Delegations[get_type ()];
             c_Initialized = true;
         }
 
@@ -274,7 +230,7 @@ public abstract class Maia.Object
         {
             m_Delegates = new Set<Object> ();
             m_Delegates.compare_func = (a, b) => {
-                return compare_type (a.m_Type, b.m_Type);
+                return compare_type (a.get_type (), b.get_type ());
             };
             foreach (Type type in c_Delegations)
             {
@@ -286,54 +242,12 @@ public abstract class Maia.Object
         m_Cond = new GLib.Cond ();
     }
 
-    public Object.new (GLib.Type inType, ...)
-    {
-        va_list args = va_list ();
-
-        this.newv (args);
-    }
-
-    public Object.newv (va_list inArgs)
-    {
-        this ();
-
-        constructor (inArgs);
-    }
-
-    protected virtual void
-    constructor (va_list inArgs)
-    {
-        va_list args = va_list.copy (inArgs);
-
-        bool end = false;
-
-        while (!end) 
-        {
-            string? property = args.arg();
-            switch (property)
-            {
-                case null:
-                    end = true;
-                    break;
-                case "id":
-                    id = args.arg ();
-                    break;
-                case "parent":
-                    parent = args.arg ();
-                    break;
-                case "delegator":
-                    m_Delegator = args.arg ();
-                    break;
-            }
-        }
-    }
-
-    protected virtual Object
+    protected Object
     create_delegate (Type inType)
     {
-        GLib.debug ("%s: delegate type = %s", GLib.Log.METHOD, inType.name ());
+        audit (GLib.Log.METHOD, "delegate type = %s", inType.name ());
 
-        return Object.create (inType, id: m_Id, parent: m_Parent, delegator: this);
+        return GLib.Object.new (inType, id: m_Id, parent: m_Parent, delegator: this) as Object;
     }
 
     protected void
@@ -370,7 +284,7 @@ public abstract class Maia.Object
     delegate_cast<T> ()
         requires (m_Delegates != null)
     {
-        return m_Delegates.search<Type> (typeof (T), compare_object_with_type);
+        return m_Delegates.search<Type> (typeof (T), (ValueCompareFunc)compare_object_with_type);
     }
 
     /**

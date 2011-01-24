@@ -25,14 +25,8 @@ public class Maia.Dispatcher : Task
     static Set<unowned Dispatcher> s_Dispatchers;
 
     // Properties
-    private Os.EPoll m_PollFd = -1;
-
-    // Accessors
-    public override Type object_type {
-        get {
-            return typeof (Dispatcher);
-        }
-    }
+    private Os.EPoll        m_PollFd = -1;
+    private EventDispatcher m_EventDispatcher = null;
 
     // Methods
     static construct
@@ -50,14 +44,14 @@ public class Maia.Dispatcher : Task
         {
             return s_Dispatchers.search<unowned GLib.Thread<void*>> (GLib.Thread.self<void*> (),
                                                                      (v, a) => {
-                                                                         return direct_compare (v.thread_id, a);
-                                                                     });
+                        return direct_compare (v.thread_id, a);
+                    });
         }
     }
 
     public Dispatcher ()
     {
-        debug (GLib.Log.METHOD);
+        audit (GLib.Log.METHOD, "");
         base (Priority.HIGH);
 
         m_PollFd = Os.EPoll (Os.EPOLL_CLOEXEC);
@@ -66,7 +60,7 @@ public class Maia.Dispatcher : Task
 
     ~Dispatcher ()
     {
-        debug ("Maia.Dispatcher.finalize");
+        audit ("Maia.Dispatcher.finalize", "");
         lock (s_Dispatchers)
         {
             s_Dispatchers.remove (this);
@@ -113,7 +107,7 @@ public class Maia.Dispatcher : Task
     protected override void*
     main ()
     {
-        debug (GLib.Log.METHOD);
+        audit (GLib.Log.METHOD, "");
         void* ret = base.main ();
 
         lock (s_Dispatchers)
@@ -123,8 +117,7 @@ public class Maia.Dispatcher : Task
             s_Dispatchers.insert (this);
         }
 
-        Array<unowned Task> ready_tasks = new Array<unowned Task> ();
-        ready_tasks.compare_func = get_compare_func_for<Task> ();
+        Array<unowned Task> ready_tasks = new Array<unowned Task>.sorted ();
 
         Os.EPollEvent events[64];
 
@@ -142,7 +135,7 @@ public class Maia.Dispatcher : Task
 
                 foreach (unowned Object object in childs)
                 {
-                    Task task = (Task)object;
+                    Task task = object as Task;
 
                     if (task.state != Task.State.READY)
                         break;
@@ -152,7 +145,7 @@ public class Maia.Dispatcher : Task
 
                 for (int cpt = 0; cpt < nb_fds; ++cpt)
                 {
-                    Task task = (Task)events[cpt].data.ptr;
+                    Task task = events[cpt].data.ptr as Task;
                     if (task.state == Task.State.SLEEPING)
                     {
                         task.wakeup ();
@@ -179,7 +172,7 @@ public class Maia.Dispatcher : Task
         }
         this.unlock ();
 
-        finished.post ();
+        finished ();
 
         return ret;
     }
@@ -187,7 +180,7 @@ public class Maia.Dispatcher : Task
     public override void
     finish ()
     {
-        debug (GLib.Log.METHOD);
+        audit (GLib.Log.METHOD, "");
         thread_safe_call<void> (() => {
             state = State.TERMINATED;
         });
@@ -198,7 +191,7 @@ public class Maia.Dispatcher : Task
     internal new void
     sleep (Task inTask)
     {
-        debug (GLib.Log.METHOD);
+        audit (GLib.Log.METHOD, "");
         thread_safe_call<void> (() => {
             Os.EPollEvent event = Os.EPollEvent ();
             event.events = Os.EPOLLIN;
@@ -210,7 +203,7 @@ public class Maia.Dispatcher : Task
     internal new void
     wakeup (Task inTask)
     {
-        debug (GLib.Log.METHOD);
+        audit (GLib.Log.METHOD, "");
         thread_safe_call<void> (() => {
             m_PollFd.ctl (Os.EPOLL_CTL_DEL, inTask.sleep_fd, null);
         });
@@ -219,7 +212,7 @@ public class Maia.Dispatcher : Task
     internal void
     add_watch (Watch inWatch)
     {
-        debug (GLib.Log.METHOD);
+        audit (GLib.Log.METHOD, "");
         thread_safe_call<void> (() => {
             Os.EPollEvent event = Os.EPollEvent ();
             if ((inWatch.flags & Watch.Flags.IN) == Watch.Flags.IN)
@@ -236,7 +229,7 @@ public class Maia.Dispatcher : Task
     internal void
     remove_watch (Watch inWatch)
     {
-        debug (GLib.Log.METHOD);
+        audit (GLib.Log.METHOD, "");
         thread_safe_call<void> (() => {
             m_PollFd.ctl (Os.EPOLL_CTL_DEL, inWatch.watch_fd, null);
             inWatch.close_watch_fd ();

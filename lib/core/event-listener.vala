@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-xcb-backend.vala
+ * event-listener.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,12 +17,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Maia.XcbBackend
+internal class Maia.EventListener : Object
 {
+    // properties
+    private Type m_OwnerType = GLib.Type.INVALID;
+    public Type owner_type {
+        get {
+            return m_OwnerType;
+        }
+    }
+
     // methods
-    public static Application
-    create_application (string[] inArgs)
+    public EventListener (Event inEvent)
     {
-        return new XcbApplication (inArgs);
+        GLib.Object (id: inEvent.id);
+        if (inEvent.owner != null)
+        {
+            m_OwnerType = inEvent.owner.get_type (); 
+        }
     }
 }

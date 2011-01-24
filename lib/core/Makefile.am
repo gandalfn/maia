@@ -1,11 +1,13 @@
 MAIA_LIB_NAME = maia-core
 
+MAIA_EXTRA_VAPIS = log.vapi
+
 include $(top_srcdir)/build/maia.am
 include $(top_srcdir)/build/pkgconfig.am
 include $(top_srcdir)/build/vapi.am
 
 AM_CFLAGS += \
-    -DG_LOG_DOMAIN=\""Maia.Core"\"
+    -DMAIA_LOG_CONTEXT=\""Maia.Core"\"
 
 maia-core.h: libmaia_core_la_vala.stamp
 
@@ -22,18 +24,17 @@ libmaia_core_la_VALAFLAGS = \
     --library=maia-core
 
 libmaia_core_la_SOURCES = \
+    log.c \
     functions.vala \
     iterator.vala \
     collection.vala \
     array.vala \
+    queue.vala \
     list.vala \
     set.vala \
     pair.vala \
     map.vala \
     object.vala \
-    notification.vala \
-    observer.vala \
-    log.vala \
     transform.vala \
     point.vala \
     size.vala \
@@ -44,7 +45,9 @@ libmaia_core_la_SOURCES = \
     timeout.vala \
     dispatcher.vala \
     parser.vala \
-    core.vala
+    event.vala \
+    event-listener.vala \
+    event-dispatcher.vala
 
 libmaia_core_la_LDFLAGS = \
     -version-number @MAIA_SO_VERSION@ \

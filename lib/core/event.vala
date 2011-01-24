@@ -1,6 +1,19 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * core.vala
+ * event.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,14 +30,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Maia.Core
+public class Maia.Event : Object
 {
-    public static void
-    init (GLib.LogLevelFlags inLevel = GLib.LogLevelFlags.LEVEL_ERROR    |
-                                       GLib.LogLevelFlags.LEVEL_CRITICAL |
-                                       GLib.LogLevelFlags.LEVEL_WARNING,
-          string? inFilename = null)
+    // properties
+    private Object m_Owner = null;
+
+    // accessors
+    internal Object? owner {
+        get {
+            return m_Owner;
+        }
+    }
+
+    // methods
+    public Event (string inName, Object? inOwner = null)
     {
-        Maia.Log.init (Config.G_LOG_DOMAIN, inLevel, inFilename);
+        GLib.Object (id: inName);
+        m_Owner = inOwner;
+    }
+
+    public void
+    emit ()
+    {
+        
     }
 }

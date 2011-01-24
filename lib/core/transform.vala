@@ -76,19 +76,13 @@ public class Maia.Transform : Object
     private Map<uint32, Transform> m_Queue;
 
     // Accessors
-    public override Type object_type {
-        get {
-            return typeof (Transform);
-        }
-    }
-
     public Maia.Matrix matrix {
         get {
             return m_FinalMatrix;
         }
     }
 
-    public Notification<void> changed;
+    public signal void changed ();
 
     /**
      * Create a new transform stack
@@ -98,7 +92,6 @@ public class Maia.Transform : Object
                       double inX0, double inY0)
     {
         m_Queue = new Map<uint32, Transform> ();
-        changed = new Notification<void> ("changed");
         m_BaseMatrix = Matrix (inXx, inXy, inYx, inYy, inY0, inY0);
         m_FinalMatrix = (owned)m_BaseMatrix;
     }
@@ -138,7 +131,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed.post ();
+        changed ();
     }
 
     /**
@@ -158,7 +151,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed.post ();
+        changed ();
     }
 
     /**
@@ -179,7 +172,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed.post ();
+        changed ();
     }
 
     /**
@@ -198,7 +191,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed.post ();
+        changed ();
     }
 
     /**
@@ -217,7 +210,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed.post ();
+        changed ();
     }
 
     /**
@@ -238,7 +231,7 @@ public class Maia.Transform : Object
             recalculate_final_matrix ();
 
             // connect on transform changed signal
-            inTransform.changed.watch (new Observer<void> (recalculate_final_matrix));
+            changed.connect (recalculate_final_matrix);
         }
     }
 
@@ -253,7 +246,7 @@ public class Maia.Transform : Object
         if (inKey in m_Queue)
         {
             // disconnect from transform changed
-            m_Queue[inKey].changed.unwatch (new Observer<void> (recalculate_final_matrix));
+            changed.connect (recalculate_final_matrix);
 
             // remove transform in queue if exist
             m_Queue.unset (inKey);

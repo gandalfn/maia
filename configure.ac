@@ -75,9 +75,37 @@ dnl ****************************************************************************
 PKG_CHECK_MODULES(MAIA, [glib-2.0 >= $GLIB_REQUIRED
                          gobject-2.0 >= $GLIB_REQUIRED
                          gmodule-2.0 >= $GLIB_REQUIRED
-                         pixman-1 >= $PIXMAN_REQUIRED])
+                         pixman-1 >= $PIXMAN_REQUIRED
+                         xcb])
 AC_SUBST(MAIA_CFLAGS)
 AC_SUBST(MAIA_LIBS)
+
+dnl ***************************************************************************
+dnl check for log
+dnl ***************************************************************************
+AC_ARG_ENABLE(log,
+  [  --enable-log        Enable log message],
+  [log=$enableval], [log=no])
+
+if test x"$log" = xyes; then
+    MAIA_CFLAGS="$MAIA_CFLAGS -DMAIA_ENABLE_LOG"
+
+    AC_SEARCH_LIBS(backtrace_symbols, [execinfo])
+    AC_CHECK_FUNCS(backtrace_symbols)
+
+    AC_ARG_ENABLE(enhanced-debug,
+      [  --enable-enhanced-debug        Enable enhanced debug message],
+      [enhanced_debug=$enableval], [enhanced_debug=no])
+
+    if test x"$enhanced_debug" = xyes; then
+        AC_CHECK_LIB(bfd, main, [BFD_LIBS="-lbfd"], [])
+        AC_CHECK_LIB(iberty, main, [IBERTY_LIBS="-liberty"], [])
+        MAIA_LIBS="$MAIA_LIBS $BFD_LIBS $IBERTY_LIBS"
+        if test "$ENHANCED_DEBUG_LIBS" = "-lbfd -liberty"; then
+            AC_DEFINE(HAVE_ENHANCED_DEBUG, 1, [Enhanced debug enabled])
+        fi
+    fi
+fi
 
 dnl ****************************************************************************
 dnl Check for vala

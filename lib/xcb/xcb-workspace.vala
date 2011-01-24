@@ -30,9 +30,6 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
         get {
             return m_XcbScreen;
         }
-        set {
-            m_XcbScreen = value;
-        }
     }
 
     public Xcb.VisualType? xcb_visual {
@@ -40,11 +37,11 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
             if (m_XcbScreen != null && m_XcbVisual == null)
             {
                 for (Xcb.DepthIterator depth_iter = m_XcbScreen.allowed_depths_iterator (); 
-                     depth_iter.rem != 0 && m_XcbVisual == null; 
+                     depth_iter.rem > 0 && m_XcbVisual == null; 
                      Xcb.DepthIterator.next (out depth_iter))
                 {
                     for (Xcb.VisualTypeIterator visual_iter = depth_iter.data.visuals_iterator (); 
-                         visual_iter.rem != 0 && m_XcbVisual == null; 
+                         visual_iter.rem > 0 && m_XcbVisual == null; 
                          Xcb.VisualTypeIterator.next(out visual_iter))
                     {
                         if (visual_iter.data.visual_id == m_XcbScreen.root_visual)
@@ -76,10 +73,13 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
         get {
             return m_Num;
         }
-        set {
-            m_Num = value;
-        }
     }
 
-    // methods
+    // Methods
+    public void
+    init (Xcb.Screen inScreen, uint inNum)
+    {
+        m_Num = inNum;
+        m_XcbScreen = inScreen;
+    }
 }

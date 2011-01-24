@@ -74,12 +74,6 @@ public abstract class Maia.Parser : Object
     protected string              m_Characters = null;
 
     // Accessors
-    public override Type object_type {
-        get {
-            return typeof (Parser);
-        }
-    }
-
     public string element {
         get {
             return m_Element;

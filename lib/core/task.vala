@@ -44,16 +44,11 @@ public class Maia.Task : Object
     private State                      m_State = State.READY;
     private Os.TimerFd                 m_SleepFd = -1;
 
-    // Notifications
-    public Notification<void> running;
-    public Notification<void> finished;
+    // Signals
+    public signal void running  ();
+    public signal void finished ();
 
     // Accessors
-    public override Type object_type {
-        get {
-            return typeof (Task);
-        }
-    }
 
     /**
      * Task is threaded
@@ -121,9 +116,6 @@ public class Maia.Task : Object
      */
     public Task (Priority inPriority = Priority.NORMAL, bool inThread = false)
     {
-        running = new Notification<void> ("running");
-        finished = new Notification<void> ("finished");
-
         m_Thread    = inThread;
         m_Priority  = inPriority;
     }
@@ -138,7 +130,7 @@ public class Maia.Task : Object
     /**
      * Runs a task until finish() is called. 
      */
-    public void
+    public virtual void
     run ()
     {
         if (m_Thread)
@@ -149,7 +141,7 @@ public class Maia.Task : Object
             }
             catch (GLib.ThreadError error)
             {
-                GLib.error ("%s", error.message);
+                Maia.error (GLib.Log.METHOD, "%s", error.message);
             }
         }
         else
@@ -168,7 +160,7 @@ public class Maia.Task : Object
     {
         state = State.RUNNING;
 
-        running.post ();
+        running ();
 
         return null;
     }
@@ -181,7 +173,7 @@ public class Maia.Task : Object
     {
         state = State.TERMINATED;
 
-        finished.post ();
+        finished ();
     }
 
     /**

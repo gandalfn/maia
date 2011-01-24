@@ -103,8 +103,8 @@ public class Maia.TestDispatcher : Maia.TestCase
         Task task = new Task ();
 
         count = 0;
-        task.running.watch (new Observer1<void, Task>.bind (on_task_running, task));
-        task.finished.watch (new Observer<void> (on_task_finished));
+        task.running.connect (on_task_running);
+        task.finished.connect (on_task_finished);
         task.parent = dispatcher;
 
         Test.timer_start ();
@@ -122,8 +122,8 @@ public class Maia.TestDispatcher : Maia.TestCase
         Timeout timeout = new Timeout (50);
 
         count = 0;
-        timeout.elapsed.watch (new Observer<bool> (on_timeout_elapsed));
-        timeout.finished.watch (new Observer<void> (on_task_finished));
+        timeout.elapsed.connect (on_timeout_elapsed);
+        timeout.finished.connect (on_task_finished);
         timeout.parent = dispatcher;
 
         Test.timer_start ();

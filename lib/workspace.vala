@@ -23,33 +23,24 @@ public class Maia.Workspace : View
     private WorkspaceProxy m_Proxy;
 
     // accessors
-    public override GLib.Type object_type {
-        get {
-            return typeof (Workspace);
-        }
-    }
-
     public uint num {
         get {
             return m_Proxy.num;
         }
     }
 
+    public override Region geometry {
+        get {
+            return m_Proxy.geometry;
+        }
+    }
+
     // methods
     public Workspace (Desktop inDesktop)
     {
-        base.new (typeof (Workspace), parent: inDesktop);
-    }
+        audit (GLib.Log.METHOD, "Create workspace");
 
-    internal Workspace.newv (va_list inArgs)
-    {
-        base.newv (inArgs);
-    }
-
-    protected override void
-    constructor (va_list inArgs)
-    {
-        base.constructor (inArgs);
+        GLib.Object (parent: inDesktop);
 
         m_Proxy = delegate_cast<WorkspaceProxy> ();
     }

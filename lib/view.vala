@@ -19,42 +19,6 @@
 
 public abstract class Maia.View : Object
 {
-    // properties
-    private Region m_Geometry = null;
-
     // accessors
-    public override GLib.Type object_type {
-        get {
-            return typeof (View);
-        }
-    }
-
-    public virtual Region geometry {
-        get {
-            return m_Geometry;
-        }
-    }
-
-    public override void
-    constructor (va_list inArgs)
-    {
-        base.constructor (inArgs);
-
-        bool end = false;
-        va_list args = va_list.copy (inArgs);
-
-        while (!end)
-        {
-            string? property = args.arg ();
-            switch (property)
-            {
-                case null:
-                    end = true;
-                    break;
-                case "geometry":
-                    m_Geometry = args.arg ();
-                    break;
-            }
-        }
-    }
+    public abstract Region geometry { get; }
 }
