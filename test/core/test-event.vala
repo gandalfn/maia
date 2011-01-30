@@ -49,6 +49,7 @@ public class Maia.TestEvent : Maia.TestCase
         base ("event");
 
         add_test ("simple-event", test_simple_event);
+        add_test ("thread-event", test_thread_event);
     }
 
     public override void
@@ -75,21 +76,20 @@ public class Maia.TestEvent : Maia.TestCase
     private bool
     on_timeout_elapsed ()
     {
-        bool ret = true;
-
         count++;
         foo.test_event.post (new FooEventArgs (count));
 
         Test.timer_start ();
 
-        return ret;
+        return count <= 4;
     }
 
     private void
     on_test_event (Maia.EventArgs? inArgs)
     {
         FooEventArgs args = inArgs as FooEventArgs;
-        Test.message ("Event received %i = %f s", args.count, Test.timer_elapsed ());
+        Test.message ("%lx: Event received %i = %f s",
+                      (ulong)Dispatcher.self ().thread_id, args.count, Test.timer_elapsed ());
         if (args.count > 4)
         {
             dispatcher.finish ();
@@ -102,5 +102,16 @@ public class Maia.TestEvent : Maia.TestCase
         foo.test_event.listen (on_test_event, dispatcher);
 
         dispatcher.run ();
+    }
+
+    public void
+    test_thread_event ()
+    {
+        Dispatcher thread_dispatcher = new Dispatcher (true);
+        foo.test_event.listen (on_test_event, thread_dispatcher);
+
+        thread_dispatcher.run ();
+        dispatcher.run ();
+        thread_dispatcher.finish ();
     }
 }

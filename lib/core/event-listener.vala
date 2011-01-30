@@ -20,13 +20,13 @@
 internal class Maia.EventListener : Object
 {
     // properties
-    private Type m_OwnerType = GLib.Type.INVALID;
+    private unowned Object m_Owner = null;
     private Event.Callback m_Callback;
 
     // accessors
-    public Type owner_type {
+    public Object owner {
         get {
-            return m_OwnerType;
+            return m_Owner;
         }
     }
 
@@ -35,10 +35,7 @@ internal class Maia.EventListener : Object
     {
         GLib.Object (id: inEvent.id);
         m_Callback = inCallback;
-        if (inEvent.owner != null)
-        {
-            m_OwnerType = inEvent.owner.get_type (); 
-        }
+        m_Owner = inEvent.owner;
     }
 
     public new void

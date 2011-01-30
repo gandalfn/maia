@@ -52,15 +52,15 @@ internal class Maia.EventDispatcher : Watch
 
     private class ListenerQueue : List<EventListener>
     {
-        private string m_EventId;
-        private Type   m_OwnerType;
+        private string         m_EventId;
+        private unowned Object m_Owner;
 
         public class ListenerQueue (EventListener inListener)
         {
             base ();
 
-            m_EventId   = inListener.id;
-            m_OwnerType = inListener.owner_type;
+            m_EventId = inListener.id;
+            m_Owner = inListener.owner;
 
             base.insert (inListener);
         }
@@ -68,7 +68,7 @@ internal class Maia.EventDispatcher : Watch
         public override void
         insert (EventListener inListener)
             requires (m_EventId == inListener.id)
-            requires (m_OwnerType == inListener.owner_type)
+            requires (m_Owner == inListener.owner)
         {
             base.insert (inListener);
         }
@@ -76,7 +76,7 @@ internal class Maia.EventDispatcher : Watch
         public override void
         remove (EventListener inListener)
             requires (m_EventId == inListener.id)
-            requires (m_OwnerType == inListener.owner_type)
+            requires (m_Owner == inListener.owner)
         {
             base.remove (inListener);
         }
@@ -88,7 +88,7 @@ internal class Maia.EventDispatcher : Watch
 
             if (ret == 0)
             {
-                ret = m_OwnerType < inOther.m_OwnerType ? - 1 : (m_OwnerType > inOther.m_OwnerType ? 1 : 0);
+                ret = direct_compare (m_Owner, inOther.m_Owner);
             }
 
             return ret;
@@ -101,8 +101,7 @@ internal class Maia.EventDispatcher : Watch
 
             if (ret == 0)
             {
-                Type owner_type = inEvent.owner != null ? inEvent.owner.get_type () : Type.INVALID;
-                ret = m_OwnerType < owner_type ? - 1 : (m_OwnerType > owner_type ? 1 : 0);
+                ret = direct_compare (m_Owner, inEvent.owner);
             }
 
             return ret;
@@ -115,7 +114,7 @@ internal class Maia.EventDispatcher : Watch
 
             if (ret == 0)
             {
-                ret = m_OwnerType < inListener.owner_type ? - 1 : (m_OwnerType > inListener.owner_type ? 1 : 0);
+                ret = direct_compare (m_Owner, inListener.owner);
             }
 
             return ret;

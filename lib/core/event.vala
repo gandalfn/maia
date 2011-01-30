@@ -23,8 +23,8 @@ public class Maia.Event : Object
     public delegate void Callback (EventArgs? inArgs);
 
     // properties
-    private Object    m_Owner = null;
-    private EventArgs m_Args = null;
+    private unowned Object m_Owner = null;
+    private EventArgs      m_Args = null;
 
     // accessors
     internal Object? owner {

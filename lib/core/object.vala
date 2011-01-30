@@ -79,6 +79,8 @@ public abstract class Maia.Object : GLib.Object
         set {
             if (m_Delegator == null)
             {
+                this.ref ();
+
                 // object have already a parent
                 if (m_Parent != null)
                 {
@@ -115,6 +117,8 @@ public abstract class Maia.Object : GLib.Object
                     // set parent property
                     m_Parent = value;
                 }
+
+                this.unref ();
             }
             else
             {
@@ -253,18 +257,23 @@ public abstract class Maia.Object : GLib.Object
     protected void
     lock_broadcast ()
     {
+        audit (GLib.Log.METHOD, "%lx", (ulong)GLib.Thread.self<void*> ());
+        m_Mutex.lock ();
         m_Cond.broadcast ();
+        m_Mutex.unlock ();
     }
 
     public void
     @lock ()
     {
+        audit (GLib.Log.METHOD, "%lx", (ulong)GLib.Thread.self<void*> ());
         m_Mutex.lock ();
     }
 
     public void
     lock_wait ()
     {
+        audit (GLib.Log.METHOD, "%lx", (ulong)GLib.Thread.self<void*> ());
         m_Mutex.lock ();
         m_Cond.wait (m_Mutex);
     }
@@ -272,6 +281,7 @@ public abstract class Maia.Object : GLib.Object
     public void
     unlock ()
     {
+        audit (GLib.Log.METHOD, "%lx", (ulong)GLib.Thread.self<void*> ());
         m_Mutex.unlock ();
     }
 

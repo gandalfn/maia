@@ -124,7 +124,6 @@ public class Maia.Task : Object
     {
         if (m_SleepFd >= 0) Posix.close (m_SleepFd);
         m_SleepFd = -1;
-        parent = null;
     }
 
     /**
@@ -137,6 +136,7 @@ public class Maia.Task : Object
         {
             try
             {
+                audit (GLib.Log.METHOD, "Start task has thread");
                 m_ThreadId = GLib.Thread.create<void*> (main, true);
             }
             catch (GLib.ThreadError error)
@@ -148,6 +148,7 @@ public class Maia.Task : Object
         {
             if (m_ThreadId == null) m_ThreadId = GLib.Thread.self<void*> ();
 
+            audit (GLib.Log.METHOD, "Start task has main");
             main ();
         }
     }

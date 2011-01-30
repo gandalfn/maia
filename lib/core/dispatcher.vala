@@ -27,6 +27,7 @@ public class Maia.Dispatcher : Task
     // Properties
     private Os.EPoll        m_PollFd = -1;
     private EventDispatcher m_EventDispatcher = null;
+    private Event           m_FinishEvent = null;
 
     // Methods
     static construct
@@ -49,16 +50,19 @@ public class Maia.Dispatcher : Task
         }
     }
 
-    public Dispatcher ()
+    public Dispatcher (bool inThreaded = false)
     {
         audit (GLib.Log.METHOD, "");
-        base (Priority.HIGH);
+        base (Priority.HIGH, inThreaded);
 
         m_PollFd = Os.EPoll (Os.EPOLL_CLOEXEC);
         childs.compare_func = get_compare_func_for<Task> ();
 
         m_EventDispatcher = new EventDispatcher ();
         m_EventDispatcher.parent = this;
+
+        m_FinishEvent = new Event ("finish", this);
+        m_FinishEvent.listen (on_finish, this);
     }
 
     ~Dispatcher ()
@@ -74,25 +78,11 @@ public class Maia.Dispatcher : Task
         m_PollFd = -1;
     }
 
-    protected R
-    thread_safe_call<R> (ThreadSafeCallback<R> inCallback)
+    private void
+    on_finish (EventArgs? inArgs)
     {
-        R ret;
-
-        if (is_thread && self () != this)
-        {
-            this.lock_wait ();
-            {
-                ret = inCallback ();
-            }
-            this.unlock ();
-        }
-        else
-        {
-            ret = inCallback ();
-        }
-
-        return ret;
+        audit (GLib.Log.METHOD, "Finish %lx", (ulong)thread_id);
+        state = State.TERMINATED;
     }
 
     /**
@@ -124,56 +114,50 @@ public class Maia.Dispatcher : Task
 
         Os.EPollEvent events[64];
 
-        this.lock ();
+        while (state == Task.State.RUNNING)
         {
-            while (state == Task.State.RUNNING)
+            int timeout = childs.nb_items > 0 && ((Task)childs.at (0)).state == Task.State.READY ? 0 : -1;
+
+            int nb_fds = m_PollFd.wait (events, timeout);
+
+            assert (nb_fds >= 0);
+
+            foreach (unowned Object object in childs)
             {
-                int timeout = childs.nb_items > 0 && ((Task)childs.at (0)).state == Task.State.READY ? 0 : -1;
+                Task task = object as Task;
 
-                lock_broadcast ();
+                if (task.state != Task.State.READY)
+                    break;
 
-                int nb_fds = m_PollFd.wait (events, timeout);
-
-                assert (nb_fds >= 0);
-
-                foreach (unowned Object object in childs)
-                {
-                    Task task = object as Task;
-
-                    if (task.state != Task.State.READY)
-                        break;
-
-                    ready_tasks.insert (task);
-                }
-
-                for (int cpt = 0; cpt < nb_fds; ++cpt)
-                {
-                    Task task = events[cpt].data.ptr as Task;
-                    if (task.state == Task.State.SLEEPING)
-                    {
-                        task.wakeup ();
-                    }
-                    else
-                    {
-                        task.state = Task.State.READY;
-                    }
-
-                    if (task.state == Task.State.READY)
-                        ready_tasks.insert (task);
-                }
-
-                foreach (unowned Task task in ready_tasks)
-                {
-                    task.run ();
-
-                    if (task.state == Task.State.TERMINATED)
-                        task.parent = null;
-                }
-
-                ready_tasks.clear ();
+                ready_tasks.insert (task);
             }
+
+            for (int cpt = 0; cpt < nb_fds; ++cpt)
+            {
+                Task task = events[cpt].data.ptr as Task;
+                if (task.state == Task.State.SLEEPING)
+                {
+                    task.wakeup ();
+                }
+                else
+                {
+                    task.state = Task.State.READY;
+                }
+
+                if (task.state == Task.State.READY)
+                    ready_tasks.insert (task);
+            }
+
+            foreach (unowned Task task in ready_tasks)
+            {
+                task.run ();
+
+                if (task.state == Task.State.TERMINATED)
+                    task.parent = null;
+            }
+
+            ready_tasks.clear ();
         }
-        this.unlock ();
 
         finished ();
 
@@ -184,9 +168,7 @@ public class Maia.Dispatcher : Task
     finish ()
     {
         audit (GLib.Log.METHOD, "");
-        thread_safe_call<void> (() => {
-            state = State.TERMINATED;
-        });
+        m_FinishEvent.post ();
         if (is_thread && self () != this)
             thread_id.join ();
     }
@@ -208,37 +190,41 @@ public class Maia.Dispatcher : Task
     add_listener (EventListener inEventListener)
     {
         audit (GLib.Log.METHOD, "Listen event id = %s", inEventListener.id);
-        thread_safe_call<void> (() => {
+        lock (m_EventDispatcher)
+        {
             m_EventDispatcher.listen (inEventListener);
-        });
+        }
     }
 
     internal new void
     sleep (Task inTask)
     {
         audit (GLib.Log.METHOD, "");
-        thread_safe_call<void> (() => {
+        lock (m_PollFd)
+        {
             Os.EPollEvent event = Os.EPollEvent ();
             event.events = Os.EPOLLIN;
             event.data.ptr = inTask;
             m_PollFd.ctl (Os.EPOLL_CTL_ADD, inTask.sleep_fd, event);
-        });
+        }
     }
 
     internal new void
     wakeup (Task inTask)
     {
         audit (GLib.Log.METHOD, "");
-        thread_safe_call<void> (() => {
+        lock (m_PollFd)
+        {
             m_PollFd.ctl (Os.EPOLL_CTL_DEL, inTask.sleep_fd, null);
-        });
+        }
     }
 
     internal void
     add_watch (Watch inWatch)
     {
         audit (GLib.Log.METHOD, "");
-        thread_safe_call<void> (() => {
+        lock (m_PollFd)
+        {
             Os.EPollEvent event = Os.EPollEvent ();
             if ((inWatch.flags & Watch.Flags.IN) == Watch.Flags.IN)
                 event.events |= Os.EPOLLIN;
@@ -248,16 +234,18 @@ public class Maia.Dispatcher : Task
                 event.events |= Os.EPOLLERR;
             event.data.ptr = inWatch;
             m_PollFd.ctl (Os.EPOLL_CTL_ADD, inWatch.watch_fd, event);
-        });
+        }
     }
 
     internal void
     remove_watch (Watch inWatch)
     {
         audit (GLib.Log.METHOD, "");
-        thread_safe_call<void> (() => {
+
+        lock (m_PollFd)
+        {
             m_PollFd.ctl (Os.EPOLL_CTL_DEL, inWatch.watch_fd, null);
             inWatch.close_watch_fd ();
-        });
+        }
     }
 }
