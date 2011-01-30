@@ -19,6 +19,21 @@
 
 public abstract class Maia.Application : Object
 {
+    // Properties
+    private Dispatcher m_Dispatcher;
+
     // accessors
     public abstract Desktop  desktop { get; }
+
+    // methods
+    construct 
+    {
+        m_Dispatcher = new Dispatcher ();
+    }
+
+    public void
+    run ()
+    {
+        m_Dispatcher.run ();
+    }
 }
