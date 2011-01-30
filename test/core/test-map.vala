@@ -120,7 +120,7 @@ public class Maia.TestMap : Maia.TestCase
         {
             if (prev != null)
             {
-                assert (prev.to_int () < val.second.to_int ());
+                assert (int.parse (prev) < int.parse (val.second));
             }
             prev = val.second;
             count++;
@@ -189,7 +189,7 @@ public class Maia.TestMap : Maia.TestCase
             {
                 if (prev != null)
                 {
-                    assert (prev.to_int () < data.second.to_int ());
+                    assert (int.parse (prev) < int.parse (data.second));
                 }
                 prev = data.second;
             }

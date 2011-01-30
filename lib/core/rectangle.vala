@@ -70,8 +70,8 @@ public class Maia.Rectangle
         string[] val = inValue.split (",");
         if (val.length >= 4)
         {
-            origin = { val[0].to_double (), val[1].to_double () };
-            size = { val[2].to_double (), val[3].to_double () };
+            origin = { double.parse (val[0]), double.parse (val[1]) };
+            size = { double.parse (val[2]), double.parse (val[3]) };
         }
     }
 
