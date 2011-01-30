@@ -298,7 +298,7 @@ public class Maia.Array <V> : Collection <V>
     public override void
     insert (V inValue)
     {
-        if (!m_Sorted)
+        if (m_Sorted)
         {
             int pos = get_nearest_pos (inValue);
 
@@ -306,8 +306,11 @@ public class Maia.Array <V> : Collection <V>
             grow ();
 
             if (pos < m_Size - 1)
+            {
                 GLib.Memory.move (&m_pContent[pos + 1], &m_pContent[pos],
                                   (m_Size - pos - 1) * sizeof (Node<V>));
+                GLib.Memory.set (&m_pContent[pos], 0, sizeof (Node<V>));
+            }
 
             m_pContent[pos].val = inValue;
 
