@@ -62,7 +62,7 @@ internal class Maia.EventDispatcher : Watch
             m_EventId   = inListener.id;
             m_OwnerType = inListener.owner_type;
 
-            insert (inListener);
+            base.insert (inListener);
         }
 
         public override void
@@ -122,41 +122,10 @@ internal class Maia.EventDispatcher : Watch
         }
     }
 
-    // static properties
-    static Set<EventDispatcher> s_EventDispatcher = null;
-
     // properties
     private int                 m_MessageTunnel[2];
     private Queue<Event>        m_EventQueue;
     private Set<ListenerQueue>  m_Listeners;
-
-    // static methods
-    public static new unowned EventDispatcher
-    @get (GLib.Thread<void*> inThreadId = GLib.Thread.self<void*> ())
-    {
-        lock (s_EventDispatcher)
-        {
-            if (s_EventDispatcher == null)
-            {
-                s_EventDispatcher = new Set<EventDispatcher> ();
-                s_EventDispatcher.compare_func = (a, b) => {
-                    return direct_compare (a.thread_id, b.thread_id);
-                };
-            }
-            unowned EventDispatcher? event_dispatcher =
-                s_EventDispatcher.search<unowned GLib.Thread<void*>> (inThreadId,
-                                                                      (a, b) => {
-                            return direct_compare (a.thread_id, b);
-                        });
-            if (event_dispatcher == null)
-            {
-                EventDispatcher dispatcher = new EventDispatcher ();
-                event_dispatcher = dispatcher.ref () as EventDispatcher;
-            }
-
-            return event_dispatcher;
-        }
-    }
 
     // methods
     public EventDispatcher ()
@@ -180,15 +149,6 @@ internal class Maia.EventDispatcher : Watch
     private void
     dispatch (Message inMsg)
     {
-        // Send event to all other event dispatcher
-        foreach (unowned EventDispatcher event_dispatcher in s_EventDispatcher)
-        {
-            if (event_dispatcher != this)
-            {
-                event_dispatcher.post (inMsg.m_Event);
-            }
-        }
-
         // Check if we have listener for event in this dispatcher
         lock (m_Listeners)
         {
@@ -197,35 +157,11 @@ internal class Maia.EventDispatcher : Watch
 
             if (queue != null)
             {
-                debug (GLib.Log.METHOD, "Found listener notify");
-            }
-        }
-    }
-
-    public override void
-    run ()
-    {
-        base.run ();
-
-        lock (s_EventDispatcher)
-        {
-            unowned EventDispatcher? event_dispatcher =
-                s_EventDispatcher.search<unowned GLib.Thread<void*>> (thread_id,
-                                                                      (a, b) => {
-                            return direct_compare (a.thread_id, b);
-                        });
-            if (event_dispatcher != null)
-            {
-                foreach (ListenerQueue queue in m_Listeners)
+                foreach (EventListener event_listener in queue)
                 {
-                    event_dispatcher.m_Listeners.insert (queue);
+                    event_listener.notify (inMsg.m_Event.args);
                 }
             }
-            else
-            {
-                s_EventDispatcher.insert (this);
-            }
-            unref ();
         }
     }
 
@@ -256,6 +192,25 @@ internal class Maia.EventDispatcher : Watch
         {
             Message msg = Message (MessageType.POST_EVENT, inEvent);
             msg.push (m_MessageTunnel[1]);
+        }
+    }
+
+    public void
+    listen (EventListener inEventListener)
+    {
+        lock (m_Listeners)
+        {
+            ListenerQueue queue = m_Listeners.search<EventListener> (inEventListener,
+                                                                     ListenerQueue.compare_with_listener);
+            if (queue == null)
+            {
+                queue = new ListenerQueue (inEventListener);
+                m_Listeners.insert (queue);
+            }
+            else
+            {
+                queue.insert (inEventListener);
+            }
         }
     }
 }

@@ -50,7 +50,7 @@ public class Maia.TestArray : Maia.TestCase
     set_up ()
     {
         m_ArrayNoSorted = new Array<int> ();
-        m_Array = new Array<int> ();
+        m_Array = new Array<int>.sorted ();
         m_Array.compare_func = (CompareFunc<int>)Maia.direct_compare;
 
         m_Keys = new int[NB_KEYS];

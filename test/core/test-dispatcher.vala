@@ -36,7 +36,7 @@ public class Maia.TestDispatcher : Maia.TestCase
     {
         dispatcher = new Dispatcher ();
         assert (dispatcher.state == Task.State.READY);
-        assert (dispatcher.childs.nb_items == 0);
+        assert (dispatcher.childs.nb_items == 1);
     }
 
     public override void
@@ -94,7 +94,7 @@ public class Maia.TestDispatcher : Maia.TestCase
         task.parent = dispatcher;
 
         assert (task.parent != null);
-        assert (dispatcher.childs.nb_items == 1);
+        assert (dispatcher.childs.nb_items == 2);
     }
 
     public void

@@ -1,16 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * event.vala
@@ -32,8 +19,12 @@
 
 public class Maia.Event : Object
 {
+    // types
+    public delegate void Callback (EventArgs? inArgs);
+
     // properties
-    private Object m_Owner = null;
+    private Object    m_Owner = null;
+    private EventArgs m_Args = null;
 
     // accessors
     internal Object? owner {
@@ -42,16 +33,50 @@ public class Maia.Event : Object
         }
     }
 
+    internal EventArgs args {
+        get {
+            return m_Args;
+        }
+    }
+
     // methods
+
+    /**
+     * Create a new event
+     *
+     * @param inName event name
+     * @param inOwner event object owner
+     */
     public Event (string inName, Object? inOwner = null)
     {
         GLib.Object (id: inName);
         m_Owner = inOwner;
     }
 
+    /**
+     * Post event
+     *
+     * @param inArgs event args
+     * @param inDispatcher dispatcher
+     */
     public void
-    emit ()
+    post (EventArgs? inArgs = null, Dispatcher inDispatcher = Dispatcher.self ())
     {
-        
+        Event event = new Event (id, m_Owner);
+        event.m_Args = inArgs;
+        inDispatcher.post_event (event);
+    }
+
+    /**
+     * Listen event
+     *
+     * @param inCallback event callback
+     * @param inDispatcher dispatcher
+     */
+    public void
+    listen (Callback inCallback, Dispatcher inDispatcher = Dispatcher.self ())
+    {
+        EventListener event_listener = new EventListener (this, inCallback);
+        inDispatcher.add_listener (event_listener);
     }
 }

@@ -46,6 +46,7 @@ libmaia_core_la_SOURCES = \
     dispatcher.vala \
     parser.vala \
     event.vala \
+    event-args.vala \
     event-listener.vala \
     event-dispatcher.vala
 

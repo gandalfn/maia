@@ -56,6 +56,9 @@ public class Maia.Dispatcher : Task
 
         m_PollFd = Os.EPoll (Os.EPOLL_CLOEXEC);
         childs.compare_func = get_compare_func_for<Task> ();
+
+        m_EventDispatcher = new EventDispatcher ();
+        m_EventDispatcher.parent = this;
     }
 
     ~Dispatcher ()
@@ -186,6 +189,28 @@ public class Maia.Dispatcher : Task
         });
         if (is_thread && self () != this)
             thread_id.join ();
+    }
+
+    internal void
+    post_event (Event inEvent)
+    {
+        audit (GLib.Log.METHOD, "Event id = %s", inEvent.id);
+        lock (s_Dispatchers)
+        {
+            foreach (Dispatcher dispatcher in s_Dispatchers)
+            {
+                dispatcher.m_EventDispatcher.post (inEvent);
+            }
+        }
+    }
+
+    internal void
+    add_listener (EventListener inEventListener)
+    {
+        audit (GLib.Log.METHOD, "Listen event id = %s", inEventListener.id);
+        thread_safe_call<void> (() => {
+            m_EventDispatcher.listen (inEventListener);
+        });
     }
 
     internal new void

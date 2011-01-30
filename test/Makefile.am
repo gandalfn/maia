@@ -20,6 +20,7 @@ test_SOURCES = \
     core/test-object.vala \
     core/test-dispatcher.vala \
     core/test-application.vala \
+    core/test-event.vala \
     xml/test-xml.vala \
     xml/test-parser.vala
 
