@@ -63,6 +63,8 @@ public class Maia.TestList : Maia.TestCase
     tear_down ()
     {
         m_List = null;
+        m_ListNoSorted = null;
+        m_Keys = null;
     }
 
     public void

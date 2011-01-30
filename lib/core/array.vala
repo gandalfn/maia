@@ -98,6 +98,16 @@ public class Maia.Array <V> : Collection <V>
         m_Sorted = true;
     }
 
+    ~Array ()
+    {
+        clear ();
+
+        if (m_pContent != null)
+            delete m_pContent;
+
+        m_pContent = null;
+    }
+
     private int
     get_nearest_pos (V inValue)
     {
@@ -348,6 +358,9 @@ public class Maia.Array <V> : Collection <V>
     {
         if (m_pContent != null)
         {
+            for (int cpt = 0; cpt < m_Size; ++cpt)
+                m_pContent[cpt].val = null;
+
             delete m_pContent;
             m_ReservedSize = 4;
             m_Size = 0;

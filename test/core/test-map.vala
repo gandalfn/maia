@@ -59,6 +59,7 @@ public class Maia.TestMap : Maia.TestCase
     tear_down ()
     {
         m_Map = null;
+        m_Keys = null;
     }
 
     public void

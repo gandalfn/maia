@@ -309,6 +309,8 @@ public class Maia.List<V> : Collection<V>
     public override void
     clear ()
     {
+        while (m_Head != null)
+            remove_node (m_Head);
         this.m_Head = null;
         this.m_Tail = null;
         this.m_Size = 0;

@@ -64,6 +64,8 @@ public class Maia.TestArray : Maia.TestCase
     tear_down ()
     {
         m_Array = null;
+        m_ArrayNoSorted = null;
+        m_Keys = null;
     }
 
     public void

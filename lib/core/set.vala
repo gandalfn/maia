@@ -474,6 +474,8 @@ public class Maia.Set<V> : Collection<V>
     public override void
     clear ()
     {
+        while (m_Root != null)
+            remove_node (m_Root);
         m_Root = null;
         m_Size = 0;
     }
