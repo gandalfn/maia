@@ -38,6 +38,6 @@ internal class Maia.XcbApplication : Application
     public XcbApplication ()
     {
         m_Desktop = new Desktop ();
-        m_Desktop.id = null;
+        m_Desktop.name = null;
     }
 }

@@ -52,7 +52,7 @@ internal class Maia.EventDispatcher : Watch
 
     private class ListenerQueue : List<EventListener>
     {
-        private string         m_EventId;
+        private Quark          m_EventId;
         private unowned Object m_Owner;
 
         public class ListenerQueue (EventListener inListener)
@@ -84,7 +84,7 @@ internal class Maia.EventDispatcher : Watch
         public int
         compare (ListenerQueue inOther)
         {
-            int ret = GLib.strcmp (m_EventId, inOther.m_EventId);
+            int ret = quark_compare (m_EventId, inOther.m_EventId);
 
             if (ret == 0)
             {
@@ -97,7 +97,7 @@ internal class Maia.EventDispatcher : Watch
         public int
         compare_with_event (Event inEvent)
         {
-            int ret = GLib.strcmp (m_EventId, inEvent.id);
+            int ret = quark_compare (m_EventId, inEvent.id);
 
             if (ret == 0)
             {
@@ -110,7 +110,7 @@ internal class Maia.EventDispatcher : Watch
         public int
         compare_with_listener (EventListener inListener)
         {
-            int ret = GLib.strcmp (m_EventId, inListener.id);
+            int ret = quark_compare (m_EventId, inListener.id);
 
             if (ret == 0)
             {
@@ -174,7 +174,7 @@ internal class Maia.EventDispatcher : Watch
         switch (msg.m_Type)
         {
             case MessageType.POST_EVENT:
-                debug (GLib.Log.METHOD, "Received event %s", msg.m_Event.id);
+                debug (GLib.Log.METHOD, "Received event %s", msg.m_Event.name);
                 dispatch (msg);
                 break;
         }
@@ -185,7 +185,7 @@ internal class Maia.EventDispatcher : Watch
     public void
     post (Event inEvent)
     {
-        debug (GLib.Log.METHOD, "Post event %s", inEvent.id);
+        debug (GLib.Log.METHOD, "Post event %s", inEvent.name);
 
         lock (m_MessageTunnel)
         {

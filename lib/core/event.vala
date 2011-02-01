@@ -49,7 +49,7 @@ public class Maia.Event : Object
      */
     public Event (string inName, Object? inOwner = null)
     {
-        GLib.Object (id: inName);
+        GLib.Object (name: inName);
         m_Owner = inOwner;
     }
 
@@ -62,7 +62,7 @@ public class Maia.Event : Object
     public void
     post (EventArgs? inArgs = null, Dispatcher inDispatcher = Dispatcher.self ())
     {
-        Event event = new Event (id, m_Owner);
+        Event event = new Event (name, m_Owner);
         event.m_Args = inArgs;
         inDispatcher.post_event (event);
     }

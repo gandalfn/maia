@@ -30,9 +30,9 @@ internal class Maia.XcbDesktop : DesktopProxy
         }
     }
 
-    public override string id {
+    public override string name {
         get {
-            return base.id;
+            return base.name;
         }
         set {
             if (m_Connection == null)
@@ -60,7 +60,7 @@ internal class Maia.XcbDesktop : DesktopProxy
                     proxy.init (iter.data, cpt);
                 }
 
-                base.id = value;
+                base.name = value;
             }
         }
     }

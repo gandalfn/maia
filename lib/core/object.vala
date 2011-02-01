@@ -27,7 +27,7 @@ public abstract class Maia.Object : GLib.Object
     internal class unowned Set<Type>    c_Delegations = null;
     
     // Properties
-    private string                      m_Id = null;
+    private Quark                       m_Id = 0;
     private unowned Object              m_Parent = null;
     private unowned Object              m_Delegator = null;
     private Array<Object>               m_Childs = null; 
@@ -37,10 +37,11 @@ public abstract class Maia.Object : GLib.Object
     private GLib.Cond                   m_Cond;
 
     // Accessors
+
     /**
      * Object identifier
      */
-    public virtual string id {
+    public Quark id {
         get {
             return m_Delegator == null ? m_Id : m_Delegator.m_Id;
         }
@@ -48,7 +49,7 @@ public abstract class Maia.Object : GLib.Object
             if (m_Delegator == null)
             {
                 // object have a old id
-                if (m_Parent != null && m_Id != null && m_Parent.m_IdentifiedChilds != null)
+                if (m_Parent != null && m_Id != 0 && m_Parent.m_IdentifiedChilds != null)
                     // remove object from identified object
                     m_Parent.identified_childs.remove (this);
 
@@ -56,7 +57,7 @@ public abstract class Maia.Object : GLib.Object
                 m_Id = value;
 
                 // object have a parent
-                if (m_Id != null && m_Parent != null)
+                if (m_Id != 0 && m_Parent != null)
                 {
                     // add object in identified childs
                     m_Parent.identified_childs.insert (this);
@@ -66,6 +67,15 @@ public abstract class Maia.Object : GLib.Object
             {
                 m_Delegator.id = value;
             }
+        }
+    }
+
+    public virtual string name {
+        get {
+            return id.to_string ();
+        }
+        set {
+            id = Quark.from_string (value);
         }
     }
 
@@ -88,7 +98,7 @@ public abstract class Maia.Object : GLib.Object
                     if (m_Parent.m_Childs != null)
                         m_Parent.m_Childs.remove (this);
                     // remove object from identified childs of old parent
-                    if (m_Id != null && m_Parent.m_IdentifiedChilds != null)
+                    if (m_Id != 0 && m_Parent.m_IdentifiedChilds != null)
                         m_Parent.m_IdentifiedChilds.remove (this);
                 }
 
@@ -103,7 +113,7 @@ public abstract class Maia.Object : GLib.Object
                         if (m_Parent != null)
                         {
                             m_Parent.childs.insert (this);
-                            if (m_Id != null)
+                            if (m_Id != 0)
                                 m_Parent.identified_childs.insert (this);
                         }
                     }
@@ -165,7 +175,7 @@ public abstract class Maia.Object : GLib.Object
                 {
                     m_IdentifiedChilds = new Set<unowned Object> ();
                     m_IdentifiedChilds.compare_func = (a, b) => {
-                        return GLib.strcmp (a.m_Id, b.m_Id);
+                        return quark_compare (a.m_Id, b.m_Id);
                     };
                 }
                 return m_IdentifiedChilds;
@@ -251,7 +261,7 @@ public abstract class Maia.Object : GLib.Object
     {
         audit (GLib.Log.METHOD, "delegate type = %s", inType.name ());
 
-        return GLib.Object.new (inType, id: m_Id, parent: m_Parent, delegator: this) as Object;
+        return GLib.Object.new (inType, name: name, parent: m_Parent, delegator: this) as Object;
     }
 
     protected void
@@ -327,16 +337,17 @@ public abstract class Maia.Object : GLib.Object
     /**
      * Returns the object of the specified id in this object.
      *
-     * @param inId the id whose object is to be retrieved
+     * @param inName the name whose object is to be retrieved
      *
      * @return the object associated with the id, or null if the id
      *         couldn't be found
      */
     public Object
-    get_child (string inId)
+    get_child (string inName)
     {
-        return m_IdentifiedChilds.search<string> (inId, (o, i) => {
-                   return GLib.strcmp (o.m_Id, i);
+        Quark id = Quark.from_string (inName);
+        return m_IdentifiedChilds.search<Quark> (id, (o, i) => {
+                   return quark_compare (o.m_Id, i);
                });
     }
 
@@ -348,7 +359,7 @@ public abstract class Maia.Object : GLib.Object
     public virtual string
     to_string ()
     {
-        return m_Id;
+        return m_Id.to_string ();
     }
 
     /**

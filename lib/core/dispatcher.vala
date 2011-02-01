@@ -176,7 +176,7 @@ public class Maia.Dispatcher : Task
     internal void
     post_event (Event inEvent)
     {
-        audit (GLib.Log.METHOD, "Event id = %s", inEvent.id);
+        audit (GLib.Log.METHOD, "Event id = %s", inEvent.name);
         lock (s_Dispatchers)
         {
             foreach (Dispatcher dispatcher in s_Dispatchers)
@@ -189,7 +189,7 @@ public class Maia.Dispatcher : Task
     internal void
     add_listener (EventListener inEventListener)
     {
-        audit (GLib.Log.METHOD, "Listen event id = %s", inEventListener.id);
+        audit (GLib.Log.METHOD, "Listen event id = %s", inEventListener.name);
         lock (m_EventDispatcher)
         {
             m_EventDispatcher.listen (inEventListener);

@@ -36,6 +36,12 @@ namespace Maia
         return (long)inA > (long)inB ? 1 : ((long)inA < (long)inB ? -1 : 0);
     }
 
+    public static int
+    quark_compare (Quark inA, Quark inB)
+    {
+        return inA > inB ? 1 : (inA < inB ? -1 : 0);
+    }
+
     static string
     type_to_string (GLib.Type inType)
     {
@@ -101,6 +107,8 @@ namespace Maia
             func = (CompareFunc<V>)Pair.compare;
         else if (typeof (V).is_a (typeof (Object)))
             func = (CompareFunc<V>)Object.compare;
+        else if (typeof (V) == typeof (Quark))
+            func = (CompareFunc<V>)quark_compare;
 
         return func;
     }
@@ -128,6 +136,8 @@ namespace Maia
             func = (ToStringFunc)type_to_string;
         else if (typeof (V) == typeof (Pair))
             func = (ToStringFunc<V>)Pair.to_string;
+        else if (typeof (V) == typeof (Quark))
+            func = (ToStringFunc<V>)Quark.to_string;
         else if (typeof (V).is_a (typeof (Object)))
             func = (ToStringFunc<V>)Object.to_string;
 
