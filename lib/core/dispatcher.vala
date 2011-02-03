@@ -79,7 +79,7 @@ public class Maia.Dispatcher : Task
     }
 
     private void
-    on_finish (EventArgs? inArgs)
+    on_finish ()
     {
         audit (GLib.Log.METHOD, "Finish %lx", (ulong)thread_id);
         state = State.TERMINATED;

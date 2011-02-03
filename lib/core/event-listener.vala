@@ -20,27 +20,66 @@
 internal class Maia.EventListener : Object
 {
     // properties
-    private unowned Object m_Owner = null;
-    private Event.Callback m_Callback;
-
-    // accessors
-    public Object owner {
-        get {
-            return m_Owner;
-        }
-    }
+    public unowned Object owner = null;
+    public Event.Func func;
 
     // methods
-    public EventListener (Event inEvent, Event.Callback inCallback)
+    public EventListener (Event inEvent)
     {
         GLib.Object (id: inEvent.id);
-        m_Callback = inCallback;
-        m_Owner = inEvent.owner;
+        owner = inEvent.owner;
     }
 
     public new void
     notify (EventArgs? inArgs)
     {
-        m_Callback (inArgs);
+        func (inArgs);
+    }
+}
+
+internal class Maia.EventListener0 : EventListener
+{
+    public EventListener0 (Event inEvent, Event.Callback inCallback)
+    {
+        base (inEvent);
+        func = (a) => {
+            inCallback ();
+        };
+    }
+}
+
+internal class Maia.EventListenerR0<R> : EventListener
+{
+    public EventListenerR0 (Event inEvent, Event.CallbackR<R> inCallback)
+    {
+        base (inEvent);
+        func = (a) => {
+            EventArgsR<R> args = (EventArgsR<R>)a;
+            args.ret = inCallback ();
+        };
+    }
+}
+
+internal class Maia.EventListener1<A> : EventListener
+{
+    public EventListener1 (Event inEvent, Event.Callback1<A> inCallback)
+    {
+        base (inEvent);
+        func = (a) => {
+            unowned EventArgs1<A> args = (EventArgs1<A>)a;
+            inCallback (args.m_A);
+        };
+    }
+}
+
+internal class Maia.EventListenerR1<R, A> : EventListener
+{
+    public EventListenerR1 (Event inEvent, Event.CallbackR1<R, A> inCallback)
+    {
+        base (inEvent);
+        func = (a) => {
+            unowned EventArgsR1<R, A> args = (EventArgsR1<R, A>)a;
+            args.ret = inCallback (args.m_A);
+        };
     }
 }

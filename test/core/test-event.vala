@@ -17,16 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class FooEventArgs : Maia.EventArgs
-{
-    public int count = 0;
-
-    public FooEventArgs (int inCount)
-    {
-        count = inCount;
-    }
-}
-
 public class Foo : Maia.Object
 {
     public Maia.Event test_event;
@@ -77,20 +67,19 @@ public class Maia.TestEvent : Maia.TestCase
     on_timeout_elapsed ()
     {
         count++;
-        foo.test_event.post (new FooEventArgs (count));
+        foo.test_event.post1<int> (count);
 
         Test.timer_start ();
 
-        return count <= 4;
+        return count <= 9;
     }
 
     private void
-    on_test_event (Maia.EventArgs? inArgs)
+    on_test_event (int count)
     {
-        FooEventArgs args = inArgs as FooEventArgs;
         Test.message ("%lx: Event received %i = %f s",
-                      (ulong)Dispatcher.self ().thread_id, args.count, Test.timer_elapsed ());
-        if (args.count > 4)
+                      (ulong)Dispatcher.self ().thread_id, count, Test.timer_elapsed ());
+        if (count > 9)
         {
             dispatcher.finish ();
         }
@@ -99,7 +88,7 @@ public class Maia.TestEvent : Maia.TestCase
     public void
     test_simple_event ()
     {
-        foo.test_event.listen (on_test_event, dispatcher);
+        foo.test_event.listen1<int> (on_test_event, dispatcher);
 
         dispatcher.run ();
     }
@@ -108,7 +97,7 @@ public class Maia.TestEvent : Maia.TestCase
     test_thread_event ()
     {
         Dispatcher thread_dispatcher = new Dispatcher (true);
-        foo.test_event.listen (on_test_event, thread_dispatcher);
+        foo.test_event.listen1<int> (on_test_event, thread_dispatcher);
 
         thread_dispatcher.run ();
         dispatcher.run ();

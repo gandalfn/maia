@@ -17,6 +17,65 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.EventArgs : Object
+internal class Maia.EventArgs
 {
+}
+
+internal class Maia.EventArgsR<R> : EventArgs
+{
+    // properties
+    private R                 m_Ret;
+    private AccumulateFunc<R> m_AccumulateFunc;
+
+    // accessors
+    public R ret {
+        get {
+            lock (m_Ret)
+            {
+                return m_Ret;
+            }
+        }
+        set {
+            lock (m_Ret)
+            {
+                m_Ret = m_AccumulateFunc (m_Ret, value);
+            }
+        }
+    }
+
+    public AccumulateFunc<R> accumulate_func {
+        set {
+            m_AccumulateFunc = value;
+        }
+    }
+
+    // methods
+    public EventArgsR ()
+    {
+        m_AccumulateFunc = get_accumulator_func_for<R> ();
+    }
+}
+
+internal class Maia.EventArgs1<A> : EventArgs
+{
+    // properties
+    public A m_A;
+
+    // methods
+    public EventArgs1(A inA)
+    {
+        m_A = inA;
+    }
+}
+
+internal class Maia.EventArgsR1<R, A> : EventArgsR<R>
+{
+    // properties
+    public A m_A;
+
+    // methods
+    public EventArgsR1(A inA)
+    {
+        m_A = inA;
+    }
 }
