@@ -29,6 +29,7 @@ public class Maia.TestDispatcher : Maia.TestCase
         add_test ("add-task", test_add_task);
         add_test ("sleep", test_sleep);
         add_test ("timeout", test_timeout);
+        add_test ("tictac", test_tictac);
     }
 
     public override void
@@ -87,6 +88,28 @@ public class Maia.TestDispatcher : Maia.TestCase
         return ret;
     }
 
+    private bool
+    on_tictac_bell ()
+    {
+        bool ret = true;
+
+        Test.message ("numframe = %u titac bell = %f s", count, Test.timer_elapsed ());
+        if (count < 50)
+        {
+            ++count;
+        }
+        else
+        {
+            ret = false;
+        }
+
+        int delay = Test.rand_int_range (0, 30);
+        Test.message ("delay %i ms", delay);
+        Posix.usleep (delay * 1000);
+
+        return ret;
+    }
+
     public void
     test_add_task ()
     {
@@ -132,5 +155,22 @@ public class Maia.TestDispatcher : Maia.TestCase
         assert (timeout.state == Task.State.TERMINATED);
         assert (dispatcher.state == Task.State.TERMINATED);
         assert (count >= 10);
+    }
+
+    public void
+    test_tictac ()
+    {
+        TicTac tictac = new TicTac (50);
+
+        count = 0;
+        tictac.bell.connect (on_tictac_bell);
+        tictac.finished.connect (on_task_finished);
+        tictac.parent = dispatcher;
+
+        Test.timer_start ();
+
+        dispatcher.run ();
+        assert (tictac.state == Task.State.TERMINATED);
+        assert (dispatcher.state == Task.State.TERMINATED);
     }
 }

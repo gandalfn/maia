@@ -20,7 +20,7 @@
 [CCode (cprefix = "", lower_case_cprefix = "", cheader_filename = "sys/epoll.h,sys/timerfd.h,unistd.h")]
 namespace Os
 {
-    int clock_gettime (int inClockId, TimeSpec inTimerSpec);
+    int clock_gettime (int inClockId, out TimeSpec inTimerSpec);
 
     [CCode (cname = "struct itimerspec")]
     public struct ITimerSpec

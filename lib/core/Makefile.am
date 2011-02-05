@@ -43,6 +43,7 @@ libmaia_core_la_SOURCES = \
     task.vala \
     watch.vala \
     timeout.vala \
+    tictac.vala \
     dispatcher.vala \
     parser.vala \
     event.vala \
