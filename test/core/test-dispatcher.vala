@@ -30,6 +30,7 @@ public class Maia.TestDispatcher : Maia.TestCase
         add_test ("sleep", test_sleep);
         add_test ("timeout", test_timeout);
         add_test ("tictac", test_tictac);
+        add_test ("timeline", test_timeline);
     }
 
     public override void
@@ -110,6 +111,22 @@ public class Maia.TestDispatcher : Maia.TestCase
         return ret;
     }
 
+    private void
+    on_timeline_new_frame (int inNumFrame)
+    {
+        Test.message ("numframe = %u timeline new frame = %f s", inNumFrame, Test.timer_elapsed ());
+        int delay = Test.rand_int_range (0, 300);
+        Test.message ("delay %i ms", delay);
+        Posix.usleep (delay * 1000);
+    }
+
+    private void
+    on_timeline_completed ()
+    {
+        Test.message ("completed elapsed = %f s", Test.timer_elapsed ());
+        dispatcher.finish ();
+    }
+
     public void
     test_add_task ()
     {
@@ -171,6 +188,22 @@ public class Maia.TestDispatcher : Maia.TestCase
 
         dispatcher.run ();
         assert (tictac.state == Task.State.TERMINATED);
+        assert (dispatcher.state == Task.State.TERMINATED);
+    }
+
+    public void
+    test_timeline ()
+    {
+        Timeline timeline = new Timeline (60, 60, dispatcher);
+
+        timeline.new_frame.connect (on_timeline_new_frame);
+        timeline.completed.connect (on_timeline_completed);
+
+        Test.timer_start ();
+
+        timeline.start ();
+        dispatcher.run ();
+
         assert (dispatcher.state == Task.State.TERMINATED);
     }
 }

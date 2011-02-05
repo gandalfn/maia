@@ -48,11 +48,11 @@ public class Maia.TicTac : Watch
                     m_StartTime.tv_sec = current_time.tv_sec - (time_t)(frame_time / 1000000);
                     m_StartTime.tv_nsec = current_time.tv_nsec - (long)(1000 * (frame_time % 1000000));
                     m_FrameCount = 0;
-                    delay = 1;
+                    delay = 100;
                 }
                 else if (new_frame_num > m_FrameCount)
                 {
-                    delay = 1;
+                    delay = 100;
                 }
                 else
                 {
