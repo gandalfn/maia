@@ -25,12 +25,6 @@ internal class Maia.XcbWindow : WindowProxy
     private Region     m_Geometry;
 
     // accessors
-    public override Workspace workspace {
-        get {
-            return parent as Workspace;
-        }
-    }
-
     public Xcb.Window xcb_window {
         get {
             return m_XcbWindow;
@@ -55,8 +49,8 @@ internal class Maia.XcbWindow : WindowProxy
     create (Region inGeometry)
     {
         m_Geometry = inGeometry;
-        m_XcbDesktop = (workspace.parent as Desktop).delegate_cast<XcbDesktop> ();
-        XcbWorkspace xcb_workspace = workspace.delegate_cast<XcbWorkspace> ();
+        XcbWorkspace xcb_workspace = (parent as Workspace).delegate_cast<XcbWorkspace> ();
+        m_XcbDesktop = (parent.parent as Desktop).delegate_cast<XcbDesktop> ();
         m_XcbWindow = Xcb.Window (m_XcbDesktop.connection);
 
         m_XcbDesktop.connection.create_window (Xcb.CopyFromParent, 

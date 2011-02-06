@@ -71,7 +71,7 @@ public class Maia.Desktop : Object
     public override bool 
     can_append_child (Object inChild)
     {
-        return inChild is Workspace; 
+        return inChild is Workspace;
     }
 
     public new Workspace?

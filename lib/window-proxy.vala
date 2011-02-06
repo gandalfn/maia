@@ -19,9 +19,6 @@
 
 public abstract class Maia.WindowProxy : View
 {
-    // accessors
-    public abstract Workspace workspace { get; }
-
     // methods
     public abstract void show ();
     public abstract void hide ();

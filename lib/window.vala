@@ -29,12 +29,6 @@ public class Maia.Window : View
         }
     }
 
-    public Workspace workspace {
-        get {
-            return m_Proxy.workspace;
-        } 
-    }
-
     // methods
     construct
     {
