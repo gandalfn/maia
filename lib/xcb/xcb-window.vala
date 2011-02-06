@@ -52,7 +52,7 @@ internal class Maia.XcbWindow : WindowProxy
     }
 
     public void
-    init (Region inGeometry)
+    create (Region inGeometry)
     {
         m_Geometry = inGeometry;
         m_XcbDesktop = (workspace.parent as Desktop).delegate_cast<XcbDesktop> ();
