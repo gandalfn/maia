@@ -20,7 +20,9 @@
 public class Maia.TestDispatcher : Maia.TestCase
 {
     private Maia.Dispatcher dispatcher = null;
+    private Maia.TicTac tictac = null;
     private int count;
+    private int count_tictac_delay;
 
     public TestDispatcher ()
     {
@@ -30,6 +32,7 @@ public class Maia.TestDispatcher : Maia.TestCase
         add_test ("sleep", test_sleep);
         add_test ("timeout", test_timeout);
         add_test ("tictac", test_tictac);
+        add_test ("tictac-delay", test_tictac_delay);
         add_test ("timeline", test_timeline);
     }
 
@@ -85,6 +88,26 @@ public class Maia.TestDispatcher : Maia.TestCase
         }
 
         Test.timer_start ();
+
+        return ret;
+    }
+
+    private bool
+    on_timeout_tictac_delay_elapsed ()
+    {
+        bool ret = true;
+        count_tictac_delay++;
+
+        if ((count_tictac_delay % 2) != 0)
+        {
+            Test.message ("sleep tictac");
+            tictac.sleep ();
+        }
+        else
+        {
+            Test.message ("wakeup tictac");
+            tictac.wakeup ();
+        }
 
         return ret;
     }
@@ -177,9 +200,31 @@ public class Maia.TestDispatcher : Maia.TestCase
     public void
     test_tictac ()
     {
-        TicTac tictac = new TicTac (50);
+        tictac = new TicTac (50);
 
         count = 0;
+        tictac.bell.connect (on_tictac_bell);
+        tictac.finished.connect (on_task_finished);
+        tictac.parent = dispatcher;
+
+        Test.timer_start ();
+
+        dispatcher.run ();
+        assert (tictac.state == Task.State.TERMINATED);
+        assert (dispatcher.state == Task.State.TERMINATED);
+    }
+
+    public void
+    test_tictac_delay ()
+    {
+        Timeout timeout = new Timeout (350);
+        timeout.elapsed.connect (on_timeout_tictac_delay_elapsed);
+        timeout.parent = dispatcher;
+
+        tictac = new TicTac (10);
+
+        count = 0;
+        count_tictac_delay = 0;
         tictac.bell.connect (on_tictac_bell);
         tictac.finished.connect (on_task_finished);
         tictac.parent = dispatcher;

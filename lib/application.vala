@@ -23,7 +23,7 @@ public abstract class Maia.Application : Object
     private Dispatcher m_Dispatcher;
 
     // accessors
-    public abstract Desktop  desktop { get; }
+    public abstract Desktop desktop { get; }
 
     // methods
     construct 

@@ -180,10 +180,10 @@ public class Maia.Task : Object
     /**
      * Sleeping a task inTimeout milliseconds
      *
-     * @param inTimeout sleeping tim in milliseconds
+     * @param inTimeout sleeping time in milliseconds
      */
     public virtual void
-    sleep (ulong inTimeout)
+    sleep (ulong inTimeout = 0)
     {
         if (parent != null)
         {

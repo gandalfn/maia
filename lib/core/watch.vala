@@ -125,7 +125,10 @@ public class Maia.Watch : Task
     sleep (ulong inTimeoutMs)
     {
         base.sleep (inTimeoutMs);
-        close_watch_fd ();
+        if (parent != null)
+        {
+            (parent as Dispatcher).remove_watch (this);
+        }
     }
 
     /**
@@ -134,8 +137,12 @@ public class Maia.Watch : Task
     public override void
     wakeup ()
     {
-        state = Task.State.WAITING;
         base.wakeup ();
+        if (parent != null)
+        {
+            (parent as Dispatcher).add_watch (this);
+            state = Task.State.WAITING;
+        }
     }
 
     internal virtual void

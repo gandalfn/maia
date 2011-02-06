@@ -151,10 +151,12 @@ public class Maia.Dispatcher : Task
             foreach (unowned Task task in ready_tasks)
             {
                 task.ref ();
-                task.run ();
+                {
+                    task.run ();
 
-                if (task.state == Task.State.TERMINATED)
-                    task.parent = null;
+                    if (task.state == Task.State.TERMINATED)
+                        task.parent = null;
+                }
                 task.unref ();
             }
 
