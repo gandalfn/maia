@@ -32,6 +32,8 @@ libmaia_la_SOURCES = \
     desktop-proxy.vala \
     workspace.vala \
     workspace-proxy.vala \
+    window.vala \
+    window-proxy.vala \
     application.vala
 
 libmaia_la_LDFLAGS = \

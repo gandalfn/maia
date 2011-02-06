@@ -82,4 +82,13 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
         m_Num = inNum;
         m_XcbScreen = inScreen;
     }
+
+    public override Window
+    create_window (Region inGeometry)
+    {
+        Window window = GLib.Object.new (typeof (Window), parent: this) as Window;
+        window.delegate_cast<XcbWindow> ().init (inGeometry);
+
+        return window;
+    }
 }

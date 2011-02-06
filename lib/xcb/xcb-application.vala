@@ -33,6 +33,7 @@ internal class Maia.XcbApplication : Application
     {
         delegate <Desktop> (typeof (XcbDesktop));
         delegate <Workspace> (typeof (XcbWorkspace));
+        delegate <Window> (typeof (XcbWindow));
     }
 
     public XcbApplication ()

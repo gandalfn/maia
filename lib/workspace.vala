@@ -44,4 +44,10 @@ public class Maia.Workspace : View
 
         m_Proxy = delegate_cast<WorkspaceProxy> ();
     }
+
+    public Window
+    create_window (Region geometry)
+    {
+        return m_Proxy.create_window (geometry);
+    }
 }

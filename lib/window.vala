@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * workspace-proxy.vala
+ * window.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,11 +17,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.WorkspaceProxy : View
+public class Maia.Window : View
 {
+    // properties
+    private WindowProxy m_Proxy;
+
     // accessors
-    public abstract uint num { get; }
+    public override Region geometry {
+        get {
+            return m_Proxy.geometry;
+        }
+    }
+
+    public Workspace workspace {
+        get {
+            return m_Proxy.workspace;
+        } 
+    }
 
     // methods
-    public abstract Window create_window (Region inGeometry);
+    construct
+    {
+        m_Proxy = delegate_cast<WindowProxy> ();
+    }
+
+    public void
+    show ()
+    {
+        m_Proxy.show ();
+    }
+
+    public void
+    hide ()
+    {
+        m_Proxy.hide ();
+    }
 }
