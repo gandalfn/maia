@@ -7,7 +7,9 @@ MAIA_VAPI_DEPS = \
 
 include $(top_srcdir)/build/maia.am
 
-noinst_PROGRAMS = test
+noinst_PROGRAMS = \
+    test \
+    test-window
 
 test_SOURCES = \
     test.vala \
@@ -25,6 +27,16 @@ test_SOURCES = \
     xml/test-parser.vala
 
 test_LDADD = \
+    $(MAIA_LIBS) \
+    ${top_builddir}/lib/libmaia.la \
+    ${top_builddir}/lib/core/libmaia-core.la \
+    ${top_builddir}/lib/xml/libmaia-xml.la \
+    ${top_builddir}/lib/xcb/libmaia-xcb-backend.la
+
+test_window_SOURCES = \
+    test-window.vala
+
+test_window_LDADD = \
     $(MAIA_LIBS) \
     ${top_builddir}/lib/libmaia.la \
     ${top_builddir}/lib/core/libmaia-core.la \

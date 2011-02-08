@@ -25,6 +25,8 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
     private Xcb.VisualType? m_XcbVisual = null;
     private Region          m_Geometry  = null;
 
+    private Window          m_Root      = null;
+
     // accessors
     public Xcb.Screen xcb_screen {
         get {
@@ -75,6 +77,18 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
         }
     }
 
+    public override Window root {
+        get {
+            if (m_Root == null)
+            {
+                m_Root = GLib.Object.new (typeof (Window), parent: delegator) as Window;
+                m_Root.delegate_cast<XcbWindow> ().foreign (m_XcbScreen.root);
+            }
+
+            return m_Root;
+        }
+    }
+
     // Methods
     public void
     init (Xcb.Screen inScreen, uint inNum)
@@ -86,7 +100,7 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
     public override Window
     create_window (Region inGeometry)
     {
-        Window window = GLib.Object.new (typeof (Window), parent: this) as Window;
+        Window window = GLib.Object.new (typeof (Window), parent: delegator) as Window;
         window.delegate_cast<XcbWindow> ().create (inGeometry);
 
         return window;

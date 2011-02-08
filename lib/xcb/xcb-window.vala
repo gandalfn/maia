@@ -46,6 +46,19 @@ internal class Maia.XcbWindow : WindowProxy
     }
 
     public void
+    foreign (Xcb.Window inWindow)
+    {
+        m_XcbWindow = inWindow;
+        m_XcbDesktop = (parent.parent as Desktop).delegate_cast<XcbDesktop> ();
+
+        Xcb.GetGeometryCookie cookie = m_XcbWindow.get_geometry (m_XcbDesktop.connection);
+        Xcb.GetGeometryReply reply = cookie.reply (m_XcbDesktop.connection, null);
+        m_Geometry = new Region.raw_rectangle (reply.x, reply.y,
+                                               reply.width + (reply.border_width * 2),
+                                               reply.height + (reply.border_width * 2));
+    }
+
+    public void
     create (Region inGeometry)
     {
         m_Geometry = inGeometry;

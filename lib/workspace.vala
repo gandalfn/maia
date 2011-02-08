@@ -35,6 +35,12 @@ public class Maia.Workspace : View
         }
     }
 
+    public Window root {
+        get {
+            return m_Proxy.root;
+        }
+    }
+
     // methods
     public Workspace (Desktop inDesktop)
     {
