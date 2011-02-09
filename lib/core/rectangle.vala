@@ -114,16 +114,16 @@ public class Maia.Rectangle
      *
      * @return Pixman Box
      */
-    internal Pixman.Box32 
+    internal Pixman.Box32 []
     to_pixman_box ()
     {
-        Pixman.Box32 box = Pixman.Box32 ();
+        Pixman.Box32[] boxes = new Pixman.Box32 [1];
 
-        box.x1 = ((Pixman.double)origin.x).to_fixed ();
-        box.y1 = ((Pixman.double)origin.y).to_fixed ();
-        box.x2 = ((Pixman.double)origin.x + (Pixman.double)size.width).to_fixed ();
-        box.y2 = ((Pixman.double)origin.y + (Pixman.double)size.height).to_fixed ();
+        boxes[0].x1 = Pixman.Fixed.double(origin.x);
+        boxes[0].y1 = Pixman.Fixed.double(origin.y);
+        boxes[0].x2 = Pixman.Fixed.double(origin.x + size.width);
+        boxes[0].y2 = Pixman.Fixed.double(origin.y + size.height);
 
-        return box;
+        return boxes;
     }
 }

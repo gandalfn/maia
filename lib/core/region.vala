@@ -96,7 +96,7 @@ public class Maia.Region : Object
      */
     public Region ()
     {
-        m_Region.init ();
+        m_Region = Pixman.Region32 ();
     }
 
     /**
@@ -106,9 +106,9 @@ public class Maia.Region : Object
      */
     public Region.rectangle (Rectangle inRectangle)
     {
-        Pixman.Box32 box = inRectangle.to_pixman_box ();
+        Pixman.Box32[] box = inRectangle.to_pixman_box ();
 
-        m_Region.init_rects (box, 1);
+        m_Region = Pixman.Region32.rects (box);
     }
 
     /**
@@ -123,14 +123,13 @@ public class Maia.Region : Object
     {
         Rectangle rect = new Rectangle (inX, inY, inWidth, inHeight);
 
-        Pixman.Box32 box = rect.to_pixman_box ();
+        Pixman.Box32[] box = rect.to_pixman_box ();
 
-        m_Region.init_rects (box, 1);
+        m_Region = Pixman.Region32.rects (box);
     }
 
     ~Region ()
     {
-        m_Region.fini ();
     }
 
     private inline void 
@@ -138,7 +137,7 @@ public class Maia.Region : Object
     {
         uint shift = 1;
 
-        s.m_Region.copy (m_Region);
+        s.m_Region.copy (out m_Region);
 
         while (dx != 0)
         {
@@ -156,7 +155,7 @@ public class Maia.Region : Object
                 dx -= shift;
                 if (dx == 0) break;
             }
-            t.m_Region.copy (s.m_Region);
+            t.m_Region.copy (out s.m_Region);
             if (xdir) 
                 s.offset (-(int) shift,0);
             else 
@@ -180,7 +179,7 @@ public class Maia.Region : Object
     {
         Region region = new Region ();
 
-        if (!region.m_Region.copy (m_Region))
+        if (!region.m_Region.copy (out m_Region))
             region = null;
 
         return region;
@@ -194,7 +193,7 @@ public class Maia.Region : Object
     public void 
     subtract (Region inOther)
     {
-        m_Region.subtract (m_Region, inOther.m_Region);
+        m_Region.subtract (out m_Region, inOther.m_Region);
     }
 
     /**
@@ -205,7 +204,7 @@ public class Maia.Region : Object
     public inline void 
     union (Region inOther)
     {
-        m_Region.union (m_Region, inOther.m_Region);
+        m_Region.union (out m_Region, inOther.m_Region);
     }
 
     /**
@@ -229,7 +228,7 @@ public class Maia.Region : Object
     public void 
     intersect (Region inOther)
     {
-        m_Region.intersect (m_Region, inOther.m_Region);
+        m_Region.intersect (out m_Region, inOther.m_Region);
     }
 
     /**
@@ -243,19 +242,19 @@ public class Maia.Region : Object
     {
         Pixman.Box32[] boxes = m_Region.rectangles ();
 
-        m_Region.extents.x1 += ((Pixman.int)inDx).to_fixed ();
-        m_Region.extents.x2 += ((Pixman.int)inDx).to_fixed ();
-        m_Region.extents.y1 += ((Pixman.int)inDy).to_fixed ();
-        m_Region.extents.y2 += ((Pixman.int)inDy).to_fixed ();
+        m_Region.extents.x1 += Pixman.Fixed.int(inDx);
+        m_Region.extents.x2 += Pixman.Fixed.int(inDx);
+        m_Region.extents.y1 += Pixman.Fixed.int(inDy);
+        m_Region.extents.y2 += Pixman.Fixed.int(inDy);
 
         if (m_Region.get_extents () != boxes)
         {
             for (int cpt = 0; cpt < boxes.length; ++cpt)
             {
-                boxes[cpt].x1 += ((Pixman.int)inDx).to_fixed ();
-                boxes[cpt].x2 += ((Pixman.int)inDx).to_fixed ();
-                boxes[cpt].y1 += ((Pixman.int)inDy).to_fixed ();
-                boxes[cpt].y2 += ((Pixman.int)inDy).to_fixed ();
+                boxes[cpt].x1 += Pixman.Fixed.int(inDx);
+                boxes[cpt].x2 += Pixman.Fixed.int(inDx);
+                boxes[cpt].y1 += Pixman.Fixed.int(inDy);
+                boxes[cpt].y2 += Pixman.Fixed.int(inDy);
             }
         }
     }
