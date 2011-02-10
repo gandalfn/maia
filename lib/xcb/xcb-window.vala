@@ -77,6 +77,10 @@ internal class Maia.XcbWindow : WindowProxy
                                                Xcb.CW.BACK_PIXEL, 
                                                { xcb_workspace.xcb_screen.black_pixel });
 
+        m_XcbWindow.change_attributes (m_XcbDesktop.connection,
+                                       Xcb.CW.EVENT_MASK,
+                                       { Xcb.EventMask.EXPOSURE });
+
         m_XcbDesktop.connection.flush ();
     }
 

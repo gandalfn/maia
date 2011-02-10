@@ -20,8 +20,10 @@
 internal class Maia.XcbApplication : Application
 {
     // properties
-    private Desktop m_Desktop = null;
-    
+    private Desktop            m_Desktop = null;
+    private XcbEventDispatcher m_EventDispatcher = null;
+    private Dispatcher         m_EventRedrawDispatcher = null;
+
     // accessors
     public override Desktop desktop {
         get {
@@ -40,5 +42,23 @@ internal class Maia.XcbApplication : Application
     {
         m_Desktop = new Desktop ();
         m_Desktop.name = null;
+
+        m_EventDispatcher = new XcbEventDispatcher (m_Desktop.delegate_cast<XcbDesktop> ());
+        dispatcher.running.connect (on_dispatcher_running);
+        dispatcher.finished.connect (on_dispatcher_finished);
+    }
+
+    private void
+    on_dispatcher_running ()
+    {
+        m_EventRedrawDispatcher = new Dispatcher (true);
+        m_EventDispatcher.parent = m_EventRedrawDispatcher;
+        m_EventRedrawDispatcher.run ();
+    }
+
+    private void
+    on_dispatcher_finished ()
+    {
+        m_EventRedrawDispatcher.finish ();
     }
 }
