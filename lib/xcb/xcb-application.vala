@@ -51,7 +51,7 @@ internal class Maia.XcbApplication : Application
     private void
     on_dispatcher_running ()
     {
-        m_EventRedrawDispatcher = new Dispatcher (true);
+        m_EventRedrawDispatcher = new Dispatcher.thread ();
         m_EventDispatcher.parent = m_EventRedrawDispatcher;
         m_EventRedrawDispatcher.run ();
     }

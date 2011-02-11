@@ -50,10 +50,25 @@ public class Maia.Dispatcher : Task
         }
     }
 
-    public Dispatcher (bool inThreaded = false)
+    public Dispatcher ()
     {
         audit (GLib.Log.METHOD, "");
-        base (Priority.HIGH, inThreaded);
+        base (Priority.HIGH, false);
+
+        m_PollFd = Os.EPoll (Os.EPOLL_CLOEXEC);
+        childs.compare_func = get_compare_func_for<Task> ();
+
+        m_EventDispatcher = new EventDispatcher ();
+        m_EventDispatcher.parent = this;
+
+        m_FinishEvent = new Event ("finish", this);
+        m_FinishEvent.listen (on_finish, this);
+    }
+
+    public Dispatcher.thread ()
+    {
+        audit (GLib.Log.METHOD, "");
+        base (Priority.HIGH, true);
 
         m_PollFd = Os.EPoll (Os.EPOLL_CLOEXEC);
         childs.compare_func = get_compare_func_for<Task> ();

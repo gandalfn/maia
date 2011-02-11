@@ -96,7 +96,7 @@ public class Maia.TestEvent : Maia.TestCase
     public void
     test_thread_event ()
     {
-        Dispatcher thread_dispatcher = new Dispatcher (true);
+        Dispatcher thread_dispatcher = new Dispatcher.thread ();
         foo.test_event.listen1<int> (on_test_event, thread_dispatcher);
 
         thread_dispatcher.run ();
