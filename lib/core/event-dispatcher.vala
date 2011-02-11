@@ -55,7 +55,7 @@ internal class Maia.EventDispatcher : Watch
         private Quark m_EventId;
         private void* m_Owner;
 
-        public class ListenerQueue (EventListener inListener)
+        public ListenerQueue (EventListener inListener)
         {
             base ();
 

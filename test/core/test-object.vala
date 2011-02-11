@@ -75,7 +75,7 @@ public class Maia.TooObject : Maia.Object
 
 public class Maia.TestObject : Maia.TestCase
 {
-    const long n = 200000000;
+    const long n = 2000000;
 
     public TestObject ()
     {
