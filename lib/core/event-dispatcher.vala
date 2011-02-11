@@ -52,8 +52,8 @@ internal class Maia.EventDispatcher : Watch
 
     private class ListenerQueue : List<EventListener>
     {
-        private Quark          m_EventId;
-        private unowned Object m_Owner;
+        private Quark m_EventId;
+        private void* m_Owner;
 
         public class ListenerQueue (EventListener inListener)
         {
@@ -124,6 +124,7 @@ internal class Maia.EventDispatcher : Watch
     // properties
     private int                 m_MessageTunnel[2];
     private Queue<Event>        m_EventQueue;
+    private GLib.StaticRWLock   m_ListenersMutex;
     private Set<ListenerQueue>  m_Listeners;
 
     // methods
@@ -137,6 +138,7 @@ internal class Maia.EventDispatcher : Watch
 
         m_MessageTunnel = fds;
         m_EventQueue = new Queue<Event> ();
+        m_ListenersMutex = GLib.StaticRWLock ();
         m_Listeners = new Set<ListenerQueue> ();
         m_Listeners.compare_func = ListenerQueue.compare;
     }
@@ -149,7 +151,7 @@ internal class Maia.EventDispatcher : Watch
     dispatch (Message inMsg)
     {
         // Check if we have listener for event in this dispatcher
-        lock (m_Listeners)
+        m_ListenersMutex.reader_lock ();
         {
             unowned ListenerQueue? queue = m_Listeners.search<Event> (inMsg.m_Event,
                                                                       ListenerQueue.compare_with_event);
@@ -162,6 +164,7 @@ internal class Maia.EventDispatcher : Watch
                 }
             }
         }
+        m_ListenersMutex.reader_unlock ();
     }
 
     public override void*
@@ -187,17 +190,32 @@ internal class Maia.EventDispatcher : Watch
     {
         debug (GLib.Log.METHOD, "Post event %s", inEvent.name);
 
-        lock (m_MessageTunnel)
+        bool listen_event = false;
+
+        // Check if we have listener for event in this dispatcher
+        m_ListenersMutex.reader_lock ();
         {
-            Message msg = Message (MessageType.POST_EVENT, inEvent);
-            msg.push (m_MessageTunnel[1]);
+            unowned ListenerQueue? queue = m_Listeners.search<Event> (inEvent,
+                                                                      ListenerQueue.compare_with_event);
+
+            listen_event = queue != null;
+        }
+        m_ListenersMutex.reader_unlock ();
+
+        if (listen_event)
+        {
+            lock (m_MessageTunnel)
+            {
+                Message msg = Message (MessageType.POST_EVENT, inEvent);
+                msg.push (m_MessageTunnel[1]);
+            }
         }
     }
 
     public void
     listen (EventListener inEventListener)
     {
-        lock (m_Listeners)
+        m_ListenersMutex.writer_lock ();
         {
             ListenerQueue queue = m_Listeners.search<EventListener> (inEventListener,
                                                                      ListenerQueue.compare_with_listener);
@@ -211,5 +229,6 @@ internal class Maia.EventDispatcher : Watch
                 queue.insert (inEventListener);
             }
         }
+        m_ListenersMutex.writer_unlock ();
     }
 }

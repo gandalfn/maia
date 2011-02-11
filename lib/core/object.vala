@@ -25,7 +25,7 @@ public abstract class Maia.Object : GLib.Object
     // Class properties
     internal class bool                 c_Initialized = false;
     internal class unowned Set<Type>    c_Delegations = null;
-    
+
     // Properties
     private Quark                       m_Id = 0;
     private unowned Object              m_Parent = null;
@@ -347,8 +347,8 @@ public abstract class Maia.Object : GLib.Object
     {
         Quark id = Quark.from_string (inName);
         return m_IdentifiedChilds.search<Quark> (id, (o, i) => {
-                   return quark_compare (o.m_Id, i);
-               });
+                    return quark_compare (o.m_Id, i);
+                });
     }
 
     /**
@@ -373,6 +373,6 @@ public abstract class Maia.Object : GLib.Object
     public virtual int
     compare (Object inOther)
     {
-        return (void*)this > (void*)inOther ? 1 : ((void*)this < (void*)inOther ? -1 : 0);
+        return direct_compare (this, inOther);
     }
 }

@@ -20,7 +20,7 @@
 internal class Maia.EventListener : Object
 {
     // properties
-    public unowned Object owner = null;
+    public void*      owner = null;
     public Event.Func func;
 
     // methods

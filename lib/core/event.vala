@@ -28,11 +28,11 @@ public class Maia.Event : Object
     internal delegate void Func (EventArgs? inArgs);
 
     // properties
-    private unowned Object m_Owner = null;
-    private EventArgs      m_Args  = null;
+    private void*     m_Owner = null;
+    private EventArgs m_Args  = null;
 
     // accessors
-    internal Object? owner {
+    internal void* owner {
         get {
             return m_Owner;
         }
@@ -52,7 +52,7 @@ public class Maia.Event : Object
      * @param inName event name
      * @param inOwner event object owner
      */
-    public Event (string inName, Object? inOwner = null)
+    public Event (string inName, void* inOwner = null)
     {
         GLib.Object (name: inName);
         m_Owner = inOwner;
