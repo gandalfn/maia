@@ -56,7 +56,7 @@ public class Maia.Dispatcher : Task
         base (Priority.HIGH, false);
 
         m_PollFd = Os.EPoll (Os.EPOLL_CLOEXEC);
-        childs.compare_func = get_compare_func_for<Task> ();
+        childs.is_sorted = true;
 
         m_EventDispatcher = new EventDispatcher ();
         m_EventDispatcher.parent = this;
@@ -71,7 +71,7 @@ public class Maia.Dispatcher : Task
         base (Priority.HIGH, true);
 
         m_PollFd = Os.EPoll (Os.EPOLL_CLOEXEC);
-        childs.compare_func = get_compare_func_for<Task> ();
+        childs.is_sorted = true;
 
         m_EventDispatcher = new EventDispatcher ();
         m_EventDispatcher.parent = this;
@@ -139,23 +139,25 @@ public class Maia.Dispatcher : Task
 
             foreach (unowned Object object in childs)
             {
-                Task task = object as Task;
+                unowned Task task = object as Task;
 
                 if (task.state != Task.State.READY)
                     break;
 
+                debug (GLib.Log.METHOD, "ready task 0x%lx", (ulong)task);
                 ready_tasks.insert (task);
             }
 
             for (int cpt = 0; cpt < nb_fds; ++cpt)
             {
-                Task task = events[cpt].data.ptr as Task;
+                unowned Task task = events[cpt].data.ptr as Task;
                 if (task.state == Task.State.SLEEPING)
                 {
                     task.wakeup ();
                 }
                 else
                 {
+                    debug (GLib.Log.METHOD, "ready watch 0x%lx", (ulong)task);
                     task.state = Task.State.READY;
                 }
 

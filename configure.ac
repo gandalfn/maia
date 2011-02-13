@@ -100,7 +100,8 @@ if test x"$log" = xyes; then
     if test x"$enhanced_debug" = xyes; then
         AC_CHECK_LIB(bfd, main, [BFD_LIBS="-lbfd"], [])
         AC_CHECK_LIB(iberty, main, [IBERTY_LIBS="-liberty"], [])
-        MAIA_LIBS="$MAIA_LIBS $BFD_LIBS $IBERTY_LIBS"
+        ENHANCED_DEBUG_LIBS="$BFD_LIBS $IBERTY_LIBS"
+        MAIA_LIBS="$MAIA_LIBS $ENHANCED_DEBUG_LIBS"
         if test "$ENHANCED_DEBUG_LIBS" = "-lbfd -liberty"; then
             AC_DEFINE(HAVE_ENHANCED_DEBUG, 1, [Enhanced debug enabled])
         fi

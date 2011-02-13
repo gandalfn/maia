@@ -30,6 +30,7 @@ internal class Maia.XcbDesktop : DesktopProxy
         }
     }
 
+    [CCode (notify = false)]
     public override string name {
         get {
             return base.name;
@@ -52,7 +53,7 @@ internal class Maia.XcbDesktop : DesktopProxy
 
                 int cpt = 0;
                 for (Xcb.ScreenIterator iter = m_Connection.get_setup().roots_iterator(); 
-                     iter.rem != 0 && cpt < nbScreens; Xcb.ScreenIterator.next(out iter), ++cpt)
+                     cpt < nbScreens; Xcb.ScreenIterator.next(out iter), ++cpt)
                 {
                     debug (GLib.Log.METHOD, "create xcb workspace %i", cpt);
                     Workspace workspace = new Workspace (delegator as Desktop);
@@ -68,6 +69,15 @@ internal class Maia.XcbDesktop : DesktopProxy
     public override Workspace default_workspace {
         get {
             return childs.at (m_DefaultScreenNum) as Workspace;
+        }
+    }
+
+    // methods
+    ~Desktop ()
+    {
+        if (m_Connection != null)
+        {
+            m_Connection.disconnect ();
         }
     }
 }

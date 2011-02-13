@@ -47,6 +47,7 @@ public class Maia.Timeline : Object
     /**
      * Timeline direction
      */
+    [CCode (notify = false)]
     public Direction direction { 
         get {
             return m_Direction; 
@@ -63,6 +64,7 @@ public class Maia.Timeline : Object
     /**
      * Timeline speed in frame per second
      */
+    [CCode (notify = false)]
     public uint speed { 
         get {
             return m_Fps;
@@ -84,6 +86,7 @@ public class Maia.Timeline : Object
     /**
      * Number of frame in Timeline 
      */
+    [CCode (notify = false)]
     public uint n_frames {
         get {
             return m_NFrames;
@@ -96,6 +99,7 @@ public class Maia.Timeline : Object
     /**
      * Timeline loop
      */
+    [CCode (notify = false)]
     public bool loop {
         get {
             return m_Loop;

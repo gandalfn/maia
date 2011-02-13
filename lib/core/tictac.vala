@@ -31,7 +31,7 @@ public class Maia.TicTac : Watch
     // Accessors
     internal override int watch_fd {
         get {
-            if (!m_WatchSet)
+            if (!m_WatchSet && state != Task.State.TERMINATED)
             {
                 Os.TimeSpec current_time = Os.TimeSpec ();
                 Os.clock_gettime (Os.CLOCK_MONOTONIC, out current_time);

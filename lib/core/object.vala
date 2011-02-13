@@ -41,6 +41,7 @@ public abstract class Maia.Object : GLib.Object
     /**
      * Object identifier
      */
+    [CCode (notify = false)]
     public Quark id {
         get {
             return m_Delegator == null ? m_Id : m_Delegator.m_Id;
@@ -70,6 +71,7 @@ public abstract class Maia.Object : GLib.Object
         }
     }
 
+    [CCode (notify = false)]
     public virtual string name {
         get {
             return id.to_string ();
@@ -82,6 +84,7 @@ public abstract class Maia.Object : GLib.Object
     /**
      * Object parent
      */
+    [CCode (notify = false)]
     public virtual Object parent {
         get {
             return m_Delegator == null ? m_Parent : m_Delegator.m_Parent;
@@ -89,11 +92,10 @@ public abstract class Maia.Object : GLib.Object
         set {
             if (m_Delegator == null)
             {
-                this.ref ();
-
                 // object have already a parent
                 if (m_Parent != null)
                 {
+                    debug ("Maia.Object.parent.set", "Remove object %s from parent %s", get_type ().name (), m_Parent.get_type ().name ());
                     // remove object from childs of old parent
                     if (m_Parent.m_Childs != null)
                         m_Parent.m_Childs.remove (this);
@@ -112,6 +114,7 @@ public abstract class Maia.Object : GLib.Object
                         // add object to childs of parent
                         if (m_Parent != null)
                         {
+                            debug ("Maia.Object.parent.set", "Add object %s from parent %s", get_type ().name (), m_Parent.get_type ().name ());
                             m_Parent.childs.insert (this);
                             if (m_Id != 0)
                                 m_Parent.identified_childs.insert (this);
@@ -127,8 +130,6 @@ public abstract class Maia.Object : GLib.Object
                     // set parent property
                     m_Parent = value;
                 }
-
-                this.unref ();
             }
             else
             {
@@ -140,6 +141,7 @@ public abstract class Maia.Object : GLib.Object
     /**
      * Object delegator
      */
+    [CCode (notify = false)]
     public unowned Object? delegator {
         get {
             return m_Delegator;
@@ -230,7 +232,7 @@ public abstract class Maia.Object : GLib.Object
 
     construct
     {
-        audit ("Maia.Object.construct", "");
+        audit ("Maia.Object.construct", "construct %s", get_type ().name ());
 
         // Create delegate objects
         if (!c_Initialized)
@@ -254,6 +256,11 @@ public abstract class Maia.Object : GLib.Object
 
         m_Mutex = new GLib.Mutex ();
         m_Cond = new GLib.Cond ();
+    }
+
+    ~Object ()
+    {
+        audit ("Maia.~Object", "destroy %s", get_type ().name ());
     }
 
     protected Object

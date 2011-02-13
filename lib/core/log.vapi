@@ -43,8 +43,8 @@ namespace Maia
     public static void log_print (string inContext, string inFunction,
                                   uint inLevel, string inMessage, ...);
 
-    [CCode (cheader_filename = "log.h", cname = "maia_log_print_backtrace")]
-    public static void print_backtrace ();
+    [CCode (cheader_filename = "log.h", cname = "maia_log_backtrace")]
+    public static void backtrace ();
 
     [CCode (cheader_filename = "log.h", cname = "maia_log_backtrace_on_crash")]
     public static void backtrace_on_crash ();

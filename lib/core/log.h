@@ -63,6 +63,10 @@ void            maia_log_backtrace_on_crash ();
     __log_level = level;                                                       \
 } G_STMT_END
 
+#define maia_log_backtrace() G_STMT_START {                                    \
+    maia_log_print_backtrace (MAIA_LOG_CONTEXT);                               \
+} G_STMT_END
+
 #ifdef G_HAVE_ISO_VARARGS
 
 #define maia_debug(function, ...) G_STMT_START {                               \

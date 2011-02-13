@@ -86,6 +86,12 @@ public class Maia.Array <V> : Collection <V>
         }
     }
 
+    internal bool is_sorted {
+        set {
+            m_Sorted = value;
+        }
+    }
+
     // Methods
     public Array ()
     {
@@ -216,34 +222,38 @@ public class Maia.Array <V> : Collection <V>
     }
 
     /**
-     * Check if an iterator of array is correctly sorted
+     * Check if the element at pos of array is correctly sorted
      *
-     * @param inIterator array iterator
+     * @param pos of element
      */
     public void
-    check (Maia.Iterator<V> inIterator)
-        requires (inIterator is Iterator<V>)
-        requires (inIterator.stamp == stamp)
+    sort (uint inPos)
+        requires (inPos <= m_Size)
     {
         if (m_Sorted)
         {
-            Iterator<V> iter = inIterator as Iterator<V>;
-            int pos = get_nearest_pos (inIterator.get ());
+            debug (GLib.Log.METHOD, "sort %u: size = %i", inPos, m_Size);
 
-            if (pos < iter.index)
+            unowned V val = m_pContent[inPos].val;
+            m_Size--;
+            
+            if (inPos != m_Size)
+                GLib.Memory.move (&m_pContent[inPos], &m_pContent[inPos + 1],
+                                  (m_Size - inPos) * sizeof (V));
+
+            int pos = get_nearest_pos (val);
+
+            debug (GLib.Log.METHOD, "sort old_pos = %u, pos = %i", inPos, pos);
+            m_Size++;
+
+            if (pos < m_Size - 1)
             {
-                V val = m_pContent[iter.index].val;
                 GLib.Memory.move (&m_pContent[pos + 1], &m_pContent[pos],
-                                  (iter.index - pos - 1) * sizeof (Node<V>));
-                m_pContent[pos].val = val;
+                                  (m_Size - pos - 1) * sizeof (Node<V>));
+                GLib.Memory.set (&m_pContent[pos], 0, sizeof (Node<V>));
             }
-            else if (pos > iter.index)
-            {
-                V val = m_pContent[iter.index].val;
-                GLib.Memory.move (&m_pContent[iter.index], &m_pContent[iter.index + 1],
-                                  (pos - iter.index - 1) * sizeof (Node<V>));
-                m_pContent[pos].val = val;
-            }
+
+            GLib.Memory.copy (&m_pContent[pos].val, &val, sizeof (V*));
         }
     }
 
@@ -381,6 +391,27 @@ public class Maia.Array <V> : Collection <V>
     get (V inValue)
     {
         return get_iterator (inValue);
+    }
+
+    /**
+     * Returns the index of the specified value in this array.
+     *
+     * @param inValue the value whose index is to be retrieved
+     *
+     * @return the index associated with the value, or -1 if the value
+     *         couldn't be found
+     */
+    public int
+    index_of (V inValue)
+    {
+        int pos = -1;
+        Iterator<V>? iter = get_iterator (inValue);
+        if (iter != null)
+        {
+            pos = iter.index;
+        }
+
+        return pos;
     }
 
     /**

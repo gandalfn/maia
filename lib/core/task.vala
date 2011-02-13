@@ -34,7 +34,27 @@ public class Maia.Task : Object
         SLEEPING,
         WAITING,
         RUNNING,
-        READY
+        READY;
+
+        public string
+        to_string ()
+        {
+            switch (this)
+            {
+                case TERMINATED:
+                    return "terminated";
+                case SLEEPING:
+                    return "sleeping";
+                case WAITING:
+                    return "waiting";
+                case RUNNING:
+                    return "running";
+                case READY:
+                    return "ready";
+            }
+
+            return "unknown";
+        }
     }
 
     // Properties
@@ -80,6 +100,7 @@ public class Maia.Task : Object
     /**
      * Task state
      */
+    [CCode (notify = false)]
     public State state {
         get {
             return m_State;
@@ -88,15 +109,15 @@ public class Maia.Task : Object
             if (m_State != value)
             {
                 Dispatcher dispatcher = parent as Dispatcher;
-                Iterator<Object> iter = null;
-
+                int pos = -1;
                 if (dispatcher != null)
-                    iter = dispatcher.childs[this];
+                    pos = dispatcher.childs.index_of (this);
 
+                debug ("Maia.Task.state.set", "state = %s", value.to_string ());
                 m_State = value;
 
-                if (dispatcher != null && iter != null)
-                    dispatcher.childs.check (iter);
+                if (dispatcher != null && pos >= 0)
+                    dispatcher.childs.sort (pos);
             }
         }
     }
@@ -113,6 +134,7 @@ public class Maia.Task : Object
      * Create a new Task
      *
      * @param inPriority task priority
+     * @param inThread set task is running in seperated thread
      */
     public Task (Priority inPriority = Priority.NORMAL, bool inThread = false)
     {
@@ -212,7 +234,7 @@ public class Maia.Task : Object
         if (parent != null && m_SleepFd >= 0)
         {
             if (m_State == State.SLEEPING)
-                m_State = State.READY;
+                state = State.READY;
 
             (parent as Dispatcher).wakeup (this);
 
@@ -238,6 +260,8 @@ public class Maia.Task : Object
             ret =  -1;
         else if (m_Priority > ((Task)inOther).m_Priority)
             ret = 1;
+        else
+            ret = base.compare (inOther);
 
         return ret;
     }

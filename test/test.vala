@@ -21,6 +21,12 @@ void main (string[] args)
 {
     Test.init (ref args);
 
+    if (Test.thorough ())
+    {
+        Maia.log_set_level (Maia.Level.DEBUG);
+        Maia.backtrace_on_crash ();
+    }
+
     TestSuite.get_root ().add_suite (new Maia.TestCore ().suite);
     TestSuite.get_root ().add_suite (new Maia.TestXml ().suite);
 

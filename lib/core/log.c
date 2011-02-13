@@ -70,7 +70,7 @@
 
 #include "log.h"
 
-unsigned int __log_level = 0;
+unsigned int __log_level = 1;
 static GTimer *timer = NULL;
 
 #ifdef HAVE_ENHANCED_DEBUG

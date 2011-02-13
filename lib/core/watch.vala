@@ -38,6 +38,7 @@ public class Maia.Watch : Task
     /**
      * {@inheritDoc}
      */
+    [CCode (notify = false)]
     public override Object parent {
         get {
             return base.parent;
