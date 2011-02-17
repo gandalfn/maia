@@ -7,6 +7,9 @@ include $(top_srcdir)/build/maia.am
 include $(top_srcdir)/build/pkgconfig.am
 include $(top_srcdir)/build/vapi.am
 
+AM_CFLAGS += \
+    -DMAIA_LOG_CONTEXT=\""Maia.Xml"\"
+
 maia-xml.h: libmaia_xml_la_vala.stamp
 
 lib_LTLIBRARIES = libmaia-xml.la
