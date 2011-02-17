@@ -27,7 +27,7 @@ public abstract class Maia.Object : GLib.Object
     internal class unowned Set<Type>    c_Delegations = null;
 
     // Properties
-    private Quark                       m_Id = 0;
+    private uint32                      m_Id = 0;
     private unowned Object              m_Parent = null;
     private unowned Object              m_Delegator = null;
     private Array<Object>               m_Childs = null; 
@@ -42,7 +42,7 @@ public abstract class Maia.Object : GLib.Object
      * Object identifier
      */
     [CCode (notify = false)]
-    public Quark id {
+    public uint32 id {
         get {
             return m_Delegator == null ? m_Id : m_Delegator.m_Id;
         }
@@ -74,10 +74,10 @@ public abstract class Maia.Object : GLib.Object
     [CCode (notify = false)]
     public virtual string name {
         get {
-            return id.to_string ();
+            return m_Delegator == null ? Atom.to_string (m_Id) : m_Delegator.name;
         }
         set {
-            id = Quark.from_string (value);
+            id = Atom.from_string (value);
         }
     }
 
@@ -177,7 +177,7 @@ public abstract class Maia.Object : GLib.Object
                 {
                     m_IdentifiedChilds = new Set<unowned Object> ();
                     m_IdentifiedChilds.compare_func = (a, b) => {
-                        return quark_compare (a.m_Id, b.m_Id);
+                        return atom_compare (a.id, b.id);
                     };
                 }
                 return m_IdentifiedChilds;
@@ -352,9 +352,9 @@ public abstract class Maia.Object : GLib.Object
     public Object
     get_child (string inName)
     {
-        Quark id = Quark.from_string (inName);
-        return m_IdentifiedChilds.search<Quark> (id, (o, i) => {
-                    return quark_compare (o.m_Id, i);
+        uint32 id = Atom.from_string (inName);
+        return m_IdentifiedChilds.search<uint32> (id, (o, i) => {
+                    return atom_compare (o.m_Id, i);
                 });
     }
 

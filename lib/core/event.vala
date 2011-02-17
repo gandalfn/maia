@@ -32,9 +32,12 @@ public class Maia.Event : Object
     private EventArgs m_Args  = null;
 
     // accessors
-    internal void* owner {
+    public void* owner {
         get {
             return m_Owner;
+        }
+        construct {
+            m_Owner = value;
         }
     }
 
@@ -54,8 +57,7 @@ public class Maia.Event : Object
      */
     public Event (string inName, void* inOwner = null)
     {
-        GLib.Object (name: inName);
-        m_Owner = inOwner;
+        GLib.Object (name: inName, owner: inOwner);
     }
 
     /**

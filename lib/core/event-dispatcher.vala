@@ -52,8 +52,8 @@ internal class Maia.EventDispatcher : Watch
 
     private class ListenerQueue : List<EventListener>
     {
-        private Quark m_EventId;
-        private void* m_Owner;
+        private uint32 m_EventId;
+        private void*  m_Owner;
 
         public ListenerQueue (EventListener inListener)
         {
@@ -84,7 +84,7 @@ internal class Maia.EventDispatcher : Watch
         public int
         compare (ListenerQueue inOther)
         {
-            int ret = quark_compare (m_EventId, inOther.m_EventId);
+            int ret = atom_compare (m_EventId, inOther.m_EventId);
 
             if (ret == 0)
             {
@@ -97,7 +97,7 @@ internal class Maia.EventDispatcher : Watch
         public int
         compare_with_event (Event inEvent)
         {
-            int ret = quark_compare (m_EventId, inEvent.id);
+            int ret = atom_compare (m_EventId, inEvent.id);
 
             if (ret == 0)
             {
@@ -110,7 +110,7 @@ internal class Maia.EventDispatcher : Watch
         public int
         compare_with_listener (EventListener inListener)
         {
-            int ret = quark_compare (m_EventId, inListener.id);
+            int ret = atom_compare (m_EventId, inListener.id);
 
             if (ret == 0)
             {

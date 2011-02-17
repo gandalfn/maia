@@ -37,7 +37,7 @@ namespace Maia
     }
 
     public static int
-    quark_compare (Quark inA, Quark inB)
+    atom_compare (uint32 inA, uint32 inB)
     {
         return inA > inB ? 1 : (inA < inB ? -1 : 0);
     }
@@ -107,8 +107,8 @@ namespace Maia
             func = (CompareFunc<V>)Pair.compare;
         else if (typeof (V).is_a (typeof (Object)))
             func = (CompareFunc<V>)Object.compare;
-        else if (typeof (V) == typeof (Quark))
-            func = (CompareFunc<V>)quark_compare;
+        else if (typeof (V) == typeof (uint32))
+            func = (CompareFunc<V>)atom_compare;
 
         return func;
     }
@@ -136,8 +136,8 @@ namespace Maia
             func = (ToStringFunc)type_to_string;
         else if (typeof (V) == typeof (Pair))
             func = (ToStringFunc<V>)Pair.to_string;
-        else if (typeof (V) == typeof (Quark))
-            func = (ToStringFunc<V>)Quark.to_string;
+        else if (typeof (V) == typeof (uint32))
+            func = (ToStringFunc<V>)Atom.to_string;
         else if (typeof (V).is_a (typeof (Object)))
             func = (ToStringFunc<V>)Object.to_string;
 

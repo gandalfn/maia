@@ -34,6 +34,7 @@ libmaia_core_la_SOURCES = \
     set.vala \
     pair.vala \
     map.vala \
+    atom.vala \
     object.vala \
     transform.vala \
     point.vala \
