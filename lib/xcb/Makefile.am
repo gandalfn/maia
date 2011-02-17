@@ -30,9 +30,12 @@ libmaia_xcb_backend_la_VALAFLAGS = \
     --pkg=xcb-atom
 
 libmaia_xcb_backend_la_SOURCES = \
+    xcb-atom.vala \
     xcb-desktop.vala \
     xcb-workspace.vala \
     xcb-window.vala \
+    xcb-event.vala \
+    xcb-event-expose.vala \
     xcb-event-dispatcher.vala \
     xcb-application.vala \
     xcb-backend.vala

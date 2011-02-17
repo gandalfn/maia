@@ -31,6 +31,12 @@ internal class Maia.XcbWindow : WindowProxy
         }
     }
 
+    public XcbDesktop xcb_desktop {
+        get {
+            return m_XcbDesktop;
+        }
+    }
+
     public override Region geometry {
         get {
             return m_Geometry;

@@ -23,6 +23,8 @@ internal class Maia.XcbDesktop : DesktopProxy
     private Xcb.Connection m_Connection       = null;
     private int            m_DefaultScreenNum = 0;
 
+    private XcbAtoms       m_Atoms            = null;
+
     // accessors
     public Xcb.Connection connection {
         get {
@@ -45,6 +47,10 @@ internal class Maia.XcbDesktop : DesktopProxy
                     error ("Error on open display %s", value);
                 }
 
+                // Get atoms
+                m_Atoms = new XcbAtoms (this);
+
+                // Create screen collection
                 int nbScreens = m_Connection.get_setup().roots_length();
                 if (nbScreens <= 0)
                 {
@@ -69,6 +75,12 @@ internal class Maia.XcbDesktop : DesktopProxy
     public override Workspace default_workspace {
         get {
             return childs.at (m_DefaultScreenNum) as Workspace;
+        }
+    }
+
+    public XcbAtoms atoms {
+        get {
+            return m_Atoms;
         }
     }
 

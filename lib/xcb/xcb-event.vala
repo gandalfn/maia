@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * xcb-event-dispatcher.vala
+ * xcb-event.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,36 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal class Maia.XcbEventDispatcher : Watch
+internal abstract class Maia.XcbEvent : Event
 {
-    // properties
-    private XcbApplication m_Application;
-    private Xcb.Connection m_Connection;
-    private Set<XcbEvent>     m_Events;
+    // accessors
+    public abstract uint32 mask { get; }
 
     // methods
-    public XcbEventDispatcher (XcbApplication inApplication)
+    public XcbEvent (uint32 inId, void* inOwner)
     {
-        XcbDesktop xcb_desktop = inApplication.desktop.delegate_cast<XcbDesktop> ();
-
-        base (xcb_desktop.connection.get_file_descriptor (), Watch.Flags.IN);
-
-        m_Application = inApplication;
-        m_Connection = xcb_desktop.connection;
-        m_Events = new Set<XcbEvent> ();
+        GLib.Object (id: inId, owner: inOwner);
     }
 
-    public override void*
-    main ()
+    public override int
+    compare (Object inOther)
+        requires (inOther is XcbEvent)
     {
-        Xcb.GenericEvent? evt = null;
+        int ret = 0;
+        XcbEvent other = inOther as XcbEvent;
 
-        while ((evt = m_Connection.poll_for_event ()) != null)
+        ret = atom_compare (id, other.id);
+
+        if (ret == 0)
         {
-            int response_type = evt.response_type & ~0x80;
-            audit (GLib.Log.METHOD, "received %i", response_type);
+            ret = direct_compare (owner, other.owner);
         }
 
-        return base.main ();
+        return ret;
     }
 }
