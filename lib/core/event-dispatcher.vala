@@ -158,7 +158,7 @@ internal class Maia.EventDispatcher : Watch
 
             if (queue != null)
             {
-                foreach (EventListener event_listener in queue)
+                foreach (unowned EventListener event_listener in queue)
                 {
                     event_listener.notify (inMsg.m_Event.args);
                 }

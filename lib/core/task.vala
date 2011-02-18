@@ -108,7 +108,7 @@ public class Maia.Task : Object
         set {
             if (m_State != value)
             {
-                Dispatcher dispatcher = parent as Dispatcher;
+                unowned Dispatcher dispatcher = parent as Dispatcher;
                 int pos = -1;
                 if (dispatcher != null)
                     pos = dispatcher.childs.index_of (this);

@@ -200,7 +200,7 @@ public class Maia.Dispatcher : Task
         audit (GLib.Log.METHOD, "Event id = %s", inEvent.name);
         lock (s_Dispatchers)
         {
-            foreach (Dispatcher dispatcher in s_Dispatchers)
+            foreach (unowned Dispatcher dispatcher in s_Dispatchers)
             {
                 dispatcher.m_EventDispatcher.post (inEvent);
             }

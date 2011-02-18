@@ -304,7 +304,6 @@ public class Maia.Region : Object
         Rectangle tclipbox = clipbox;
         Rectangle oclipbox = ((Region)inOther).clipbox;
 
-        
         if (tclipbox.origin.x == oclipbox.origin.x && 
             tclipbox.origin.y == oclipbox.origin.y &&
             tclipbox.size.width == oclipbox.size.width && 
