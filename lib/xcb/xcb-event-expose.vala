@@ -19,6 +19,9 @@
 
 internal class Maia.XcbEventExpose : XcbEvent
 {
+    // properties
+    private Region m_Area = null;
+
     // accessors
     public override uint32 mask {
         get {
@@ -29,6 +32,13 @@ internal class Maia.XcbEventExpose : XcbEvent
     // methods
     public XcbEventExpose (XcbWindow inWindow)
     {
-        base (Atom.from_string ("event-expose"), inWindow);
+        base (Xcb.EXPOSE, inWindow);
+    }
+
+    public XcbEventExpose.post (Xcb.GenericEvent inEvent)
+    {
+        Xcb.ExposeEvent evt = (Xcb.ExposeEvent)inEvent;
+        base (Xcb.EXPOSE, ((uint)evt.window).to_pointer ());
+        m_Area = new Region.raw_rectangle (evt.x, evt.y, evt.width, evt.height);
     }
 }
