@@ -56,11 +56,13 @@ public class Maia.TestDispatcher : Maia.TestCase
         Test.message ("running elapsed = %f s", Test.timer_elapsed ());
         if (count < 10)
         {
+            Test.message ("sleep 0x%lx", (ulong)inTask);
             inTask.sleep (50);
             ++count;
         }
         else
         {
+            Test.message ("finish 0x%lx", (ulong)inTask);
             inTask.finish ();
         }
     }
