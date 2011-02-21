@@ -97,11 +97,10 @@ public abstract class Maia.Object : GLib.Object
                 {
                     debug ("Maia.Object.parent.set", "Remove object %s from parent %s", get_type ().name (), m_Parent.get_type ().name ());
                     // remove object from childs of old parent
-                    if (m_Parent.m_Childs != null)
-                        m_Parent.m_Childs.remove (this);
+                    m_Parent.childs.remove (this);
                     // remove object from identified childs of old parent
-                    if (m_Id != 0 && m_Parent.m_IdentifiedChilds != null)
-                        m_Parent.m_IdentifiedChilds.remove (this);
+                    if (m_Id != 0)
+                        m_Parent.identified_childs.remove (this);
                 }
 
                 if (value != null)
@@ -311,7 +310,7 @@ public abstract class Maia.Object : GLib.Object
     delegate_cast<T> ()
         requires (m_Delegates != null)
     {
-        return m_Delegates.search<Type> (typeof (T), (ValueCompareFunc)compare_object_with_type);
+        return m_Delegates.search<Type> (typeof (T), compare_object_with_type);
     }
 
     /**
