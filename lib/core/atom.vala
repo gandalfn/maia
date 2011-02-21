@@ -36,7 +36,13 @@ namespace Maia.Atom
             m_FingerPrint = 0;
             m_Name = inName;
 
-            m_FingerPrint = mur_mur_hash ((void*)inName);
+            int len = inName.length;
+            char* str = (char*)inName;
+            for (int cpt = 0; cpt < (len + 1) / 2; ++cpt)
+            {
+                m_FingerPrint = m_FingerPrint * 27 + str[cpt];
+                m_FingerPrint = m_FingerPrint * 27 + str[len - 1 - cpt];
+            }
         }
 
         public Node.from_finger_print (uint inFingerPrint)
@@ -50,65 +56,11 @@ namespace Maia.Atom
     }
 
     // static properties
-    static Node?  s_Root = null;
-    static Node[] s_AtomTable = null;
-    static int    s_LastAtom = 0;
+    static unowned Node? s_Root = null;
+    static Node[]        s_AtomTable = null;
+    static int           s_LastAtom = 0;
 
     // static methods
-    static uint
-    mur_mur_hash (void* inKey)
-    {
-        uint m = 0x5bd1e995;
-        int r = 24;
-        uint l = 0;
-
-        unowned uchar* data = (uchar*)inKey;
-
-        uint h = 0;
-
-        while (data[l] != 0     && data[l + 1] != 0 &&
-               data[l + 2] != 0 && data[l + 3] != 0)
-        {
-            uint k = *(uint*)data;
-
-            k *= m;
-            k ^= k >> r;
-            k *= m;
-            h *= m;
-            h ^= k;
-
-            data += 4;
-            l += 4;
-        }
-
-        uint t = 0;
-
-        if (data[1] == 0)
-        {
-            t ^= data[0];
-            h *= m;
-        }
-        else if (data[2] == 0)
-        {
-            t ^= data[1] << 8;
-            t ^= data[0];
-            h *= m;
-        }
-        else if (data[3] == 0)
-        {
-            t ^= data[2] << 16;
-            t ^= data[1] << 8;
-            t ^= data[0];
-            h *= m;
-        }
-
-        h ^= h >> 13;
-        h *= m;
-        h ^= h >> 15;
-
-        return h;
-    }
-
     public static uint32
     from_string (string? inName)
     {
@@ -127,11 +79,6 @@ namespace Maia.Atom
                 np = np.m_Left;
             }
             else if (node.m_FingerPrint > np.m_FingerPrint)
-            {
-                nd = &np.m_Right;
-                np = np.m_Right;
-            }
-            else if (np.m_Name == null)
             {
                 nd = &np.m_Right;
                 np = np.m_Right;
@@ -163,58 +110,21 @@ namespace Maia.Atom
 
         if (s_LastAtom + 1 >= s_AtomTable.length)
         {
+            char* o = (char*)s_AtomTable;
+            int l = s_AtomTable.length;
             s_AtomTable.resize (s_LastAtom * 2);
-        }
-
-        s_LastAtom++;
-        node.m_Pos = s_LastAtom;
-        s_AtomTable [s_LastAtom] = node;
-        *(Node**)nd = (Node*)s_AtomTable+s_LastAtom;
-
-        return node.m_Pos;
-    }
-
-    public static uint32
-    from_uint (uint inValue)
-    {
-        Node node = Node.from_finger_print (inValue);
-
-        unowned Node? np = s_Root;
-        void* nd = &s_Root;
-        while (np != null)
-        {
-            if (node.m_FingerPrint < np.m_FingerPrint)
+            char* n = (char*)s_AtomTable;
+            if (o != n)
             {
-                nd = &np.m_Left;
-                np = np.m_Left;
-            }
-            else if (node.m_FingerPrint > np.m_FingerPrint)
-            {
-                nd = &np.m_Right;
-                np = np.m_Right;
-            }
-            else if (node.m_FingerPrint == np.m_FingerPrint)
-            {
-                if (np.m_Name != null)
+                for (int cpt = 0; cpt < l; ++cpt)
                 {
-                    nd = &np.m_Left;
-                    np = np.m_Left;
+                    if (s_AtomTable[cpt].m_Left != null)
+                        s_AtomTable[cpt].m_Left = (Node?)((char*)s_AtomTable[cpt].m_Left + (n - o));
+                    if (s_AtomTable[cpt].m_Right != null)
+                        s_AtomTable[cpt].m_Right = (Node?)((char*)s_AtomTable[cpt].m_Right + (n - o));
                 }
-                else
-                {
-                    return np.m_Pos;
-                }
+                s_Root = (Node?)((Node*)s_AtomTable + 1);
             }
-        }
-
-        if (s_AtomTable == null)
-        {
-            s_AtomTable = new Node[100];
-        }
-
-        if (s_LastAtom + 1 >= s_AtomTable.length)
-        {
-            s_AtomTable.resize (s_LastAtom * 2);
         }
 
         s_LastAtom++;
@@ -229,11 +139,5 @@ namespace Maia.Atom
     to_string (uint32 inAtom)
     {
         return s_AtomTable != null && inAtom <= s_LastAtom ? s_AtomTable[inAtom].m_Name : null;
-    }
-
-    public uint
-    to_uint (uint32 inAtom)
-    {
-        return s_AtomTable != null && inAtom <= s_LastAtom ? s_AtomTable[inAtom].m_FingerPrint : 0;
     }
 }
