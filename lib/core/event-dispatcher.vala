@@ -204,11 +204,8 @@ internal class Maia.EventDispatcher : Watch
 
         if (listen_event)
         {
-            lock (m_MessageTunnel)
-            {
-                Message msg = Message (MessageType.POST_EVENT, inEvent);
-                msg.push (m_MessageTunnel[1]);
-            }
+            Message msg = Message (MessageType.POST_EVENT, inEvent);
+            msg.push (m_MessageTunnel[1]);
         }
     }
 
