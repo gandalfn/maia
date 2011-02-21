@@ -88,6 +88,8 @@ public class Maia.Dispatcher : Task
             s_Dispatchers.remove (this);
         }
 
+        m_EventDispatcher.parent = null;
+
         if (m_PollFd >= 0)
             Posix.close (m_PollFd);
         m_PollFd = -1;
@@ -170,9 +172,6 @@ public class Maia.Dispatcher : Task
                 task.ref ();
                 {
                     task.run ();
-
-                    if (task.state == Task.State.TERMINATED)
-                        task.parent = null;
                 }
                 task.unref ();
             }
@@ -194,7 +193,7 @@ public class Maia.Dispatcher : Task
             thread_id.join ();
     }
 
-    internal void
+    public void
     post_event (Event inEvent)
     {
         audit (GLib.Log.METHOD, "Event id = %s", inEvent.name);
@@ -207,7 +206,7 @@ public class Maia.Dispatcher : Task
         }
     }
 
-    internal void
+    public void
     add_listener (EventListener inEventListener)
     {
         audit (GLib.Log.METHOD, "Listen event id = %s", inEventListener.name);
@@ -221,41 +220,35 @@ public class Maia.Dispatcher : Task
     sleep (Task inTask)
     {
         audit (GLib.Log.METHOD, "");
-        lock (m_PollFd)
-        {
-            Os.EPollEvent event = Os.EPollEvent ();
-            event.events = Os.EPOLLIN;
-            event.data.ptr = inTask;
-            m_PollFd.ctl (Os.EPOLL_CTL_ADD, inTask.sleep_fd, event);
-        }
+
+        Os.EPollEvent event = Os.EPollEvent ();
+        event.events = Os.EPOLLIN;
+        event.data.ptr = inTask;
+        m_PollFd.ctl (Os.EPOLL_CTL_ADD, inTask.sleep_fd, event);
     }
 
     internal new void
     wakeup (Task inTask)
     {
         audit (GLib.Log.METHOD, "");
-        lock (m_PollFd)
-        {
-            m_PollFd.ctl (Os.EPOLL_CTL_DEL, inTask.sleep_fd, null);
-        }
+        m_PollFd.ctl (Os.EPOLL_CTL_DEL, inTask.sleep_fd, null);
     }
 
     internal void
     add_watch (Watch inWatch)
     {
         audit (GLib.Log.METHOD, "");
-        lock (m_PollFd)
-        {
-            Os.EPollEvent event = Os.EPollEvent ();
-            if ((inWatch.flags & Watch.Flags.IN) == Watch.Flags.IN)
-                event.events |= Os.EPOLLIN;
-            if ((inWatch.flags & Watch.Flags.OUT) == Watch.Flags.OUT)
-                event.events |= Os.EPOLLOUT;
-            if ((inWatch.flags & Watch.Flags.ERR) == Watch.Flags.ERR)
-                event.events |= Os.EPOLLERR;
-            event.data.ptr = inWatch;
-            m_PollFd.ctl (Os.EPOLL_CTL_ADD, inWatch.watch_fd, event);
-        }
+
+        Os.EPollEvent event = Os.EPollEvent ();
+        event.events = Os.EPOLLERR | Os.EPOLLHUP;
+        if ((inWatch.flags & Watch.Flags.IN) == Watch.Flags.IN)
+            event.events |= Os.EPOLLIN;
+        if ((inWatch.flags & Watch.Flags.OUT) == Watch.Flags.OUT)
+            event.events |= Os.EPOLLOUT;
+        if ((inWatch.flags & Watch.Flags.ERR) == Watch.Flags.ERR)
+            event.events |= Os.EPOLLERR;
+        event.data.ptr = inWatch;
+        m_PollFd.ctl (Os.EPOLL_CTL_ADD, inWatch.watch_fd, event);
     }
 
     internal void
@@ -263,10 +256,7 @@ public class Maia.Dispatcher : Task
     {
         audit (GLib.Log.METHOD, "");
 
-        lock (m_PollFd)
-        {
-            m_PollFd.ctl (Os.EPOLL_CTL_DEL, inWatch.watch_fd, null);
-            inWatch.close_watch_fd ();
-        }
+        m_PollFd.ctl (Os.EPOLL_CTL_DEL, inWatch.watch_fd, null);
+        inWatch.close_watch_fd ();
     }
 }
