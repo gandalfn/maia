@@ -19,17 +19,83 @@
 
 public abstract class Maia.TestCase : GLib.Object
 {
-    private Adaptor[] m_Adaptors = new Adaptor[0];
+    // types
+    public delegate void TestMethod ();
 
+    private class Adaptor
+    {
+        // properties
+        private string m_Name;
+        private TestMethod m_Test;
+        private TestCase m_TestCase;
+
+        // accessors
+        public string name {
+            get {
+                return m_Name;
+
+            }
+        }
+
+        // methods
+        public Adaptor (string inName, TestMethod inTest, TestCase inTestCase)
+        {
+            m_Name = inName;
+            m_Test = inTest;
+            m_TestCase = inTestCase;
+        }
+
+        public void
+        set_up (void* inFixture)
+        {
+            m_TestCase.set_up ();
+        }
+
+        public void
+        run (void* inFixture)
+        {
+            m_Test ();
+        }
+
+        public void
+        tear_down (void* inFixture)
+        {
+            m_TestCase.tear_down ();
+        }
+    }
+
+    // properties
+    private Adaptor[]      m_Adaptors = new Adaptor[0];
     private GLib.TestSuite m_Suite;
+
+    // accessors
     public GLib.TestSuite suite {
         get {
             return m_Suite;
         }
     }
 
-    public delegate void TestMethod ();
+    // static methods
+    public static string
+    rand_string (int inLength)
+    {
+        StringBuilder name = new StringBuilder ();
 
+        string letters[2];
+        letters[0] = "bcdfghjklmnpqrstvwxyz";
+        letters[1] = "aeiouy";
+        int letterlen[2];
+        letterlen[0] = letters[0].length;
+        letterlen[1] = letters[1].length;
+
+        for (int i = 0; i < inLength; ++i)
+        {
+            name.append_c (letters[i%2][Random.next_int()%letterlen[i%2]]);
+        }
+        return name.str;
+    }
+
+    // methods
     public TestCase (string inName)
     {
         m_Suite = new GLib.TestSuite (inName);
@@ -55,43 +121,5 @@ public abstract class Maia.TestCase : GLib.Object
     public virtual void
     tear_down ()
     {
-    }
-
-    private class Adaptor
-    {
-        private string m_Name;
-        public string name {
-            get {
-                return m_Name;
-
-            }
-        }
-        private TestMethod m_Test;
-        private TestCase m_TestCase;
-
-        public Adaptor (string inName, TestMethod inTest, TestCase inTestCase)
-        {
-            m_Name = inName;
-            m_Test = inTest;
-            m_TestCase = inTestCase;
-        }
-
-        public void
-        set_up (void* inFixture)
-        {
-            m_TestCase.set_up ();
-        }
-
-        public void
-        run (void* inFixture)
-        {
-            m_Test ();
-        }
-
-        public void
-        tear_down (void* inFixture)
-        {
-            m_TestCase.tear_down ();
-        }
     }
 }
