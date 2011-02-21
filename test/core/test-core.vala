@@ -23,6 +23,7 @@ public class Maia.TestCore : Maia.TestCase
     {
         base ("core");
 
+        suite.add_suite (new TestAtom ().suite);
         suite.add_suite (new TestArray ().suite);
         suite.add_suite (new TestList ().suite);
         suite.add_suite (new TestSet ().suite);
