@@ -123,6 +123,7 @@ namespace Maia.Atom
                     if (s_AtomTable[cpt].m_Right != null)
                         s_AtomTable[cpt].m_Right = (Node?)((char*)s_AtomTable[cpt].m_Right + (n - o));
                 }
+                nd = (void*)((char*)nd + (n - o));
                 s_Root = (Node?)((Node*)s_AtomTable + 1);
             }
         }
