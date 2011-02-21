@@ -17,10 +17,43 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal class Maia.XcbEventExpose : XcbEvent
+internal class Maia.XcbEventExposeArgs : EventArgs
 {
     // properties
-    private Region m_Area = null;
+    private Region m_Area;
+
+    // accessors
+    public Region area {
+        get {
+            return m_Area;
+        }
+    }
+
+    // methods
+    public XcbEventExposeArgs (Xcb.ExposeEvent inXcbExposeEvent)
+    {
+        m_Area = new Region.raw_rectangle (inXcbExposeEvent.x, inXcbExposeEvent.y,
+                                           inXcbExposeEvent.width, inXcbExposeEvent.height);
+    }
+}
+
+internal class Maia.XcbEventExposeListener : EventListener
+{
+    // methods
+    public XcbEventExposeListener (XcbEventExpose inEvent, XcbEventExpose.Callback inCallback)
+    {
+        base (inEvent);
+        func = (a) => {
+            XcbEventExposeArgs args = (XcbEventExposeArgs)a;
+            inCallback (args.area);
+        };
+    }
+}
+
+internal class Maia.XcbEventExpose : XcbEvent
+{
+    // types
+    public delegate void Callback (Region inExposeArea);
 
     // accessors
     public override uint32 mask {
@@ -30,15 +63,22 @@ internal class Maia.XcbEventExpose : XcbEvent
     }
 
     // methods
-    public XcbEventExpose (XcbWindow inWindow)
+    public XcbEventExpose (Xcb.Window inWindow)
     {
-        base (Xcb.EXPOSE, inWindow);
+        base (Xcb.EXPOSE, ((uint)inWindow).to_pointer ());
     }
 
-    public XcbEventExpose.post (Xcb.GenericEvent inEvent)
+    public XcbEventExpose.from_xcb_event (Xcb.GenericEvent inEvent)
     {
         Xcb.ExposeEvent evt = (Xcb.ExposeEvent)inEvent;
-        base (Xcb.EXPOSE, ((uint)evt.window).to_pointer ());
-        m_Area = new Region.raw_rectangle (evt.x, evt.y, evt.width, evt.height);
+        XcbEventExposeArgs args = new XcbEventExposeArgs (evt);
+        base.with_args (Xcb.EXPOSE, ((uint)evt.window).to_pointer (), args);
+    }
+
+    public new void
+    listen (Callback inCallback, Dispatcher inDispatcher = Dispatcher.self ())
+    {
+        XcbEventExposeListener event_listener = new XcbEventExposeListener (this, inCallback);
+        inDispatcher.add_listener (event_listener);
     }
 }

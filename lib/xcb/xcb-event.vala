@@ -28,6 +28,11 @@ internal abstract class Maia.XcbEvent : Event
         GLib.Object (id: inId, owner: inOwner);
     }
 
+    public XcbEvent.with_args (uint32 inId, void* inOwner, EventArgs inArgs)
+    {
+        GLib.Object (id: inId, owner: inOwner, args: inArgs);
+    }
+
     public override int
     compare (Object inOther)
         requires (inOther is XcbEvent)
