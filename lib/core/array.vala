@@ -228,7 +228,7 @@ public class Maia.Array <V> : Collection <V>
      */
     public void
     sort (uint inPos)
-        requires (inPos <= m_Size)
+        requires (inPos < m_Size)
     {
         if (m_Sorted)
         {
@@ -239,7 +239,7 @@ public class Maia.Array <V> : Collection <V>
             
             if (inPos != m_Size)
                 GLib.Memory.move (&m_pContent[inPos], &m_pContent[inPos + 1],
-                                  (m_Size - inPos) * sizeof (V));
+                                  (m_Size - inPos) * sizeof (Node<V>));
 
             int pos = get_nearest_pos (val);
 
@@ -363,6 +363,26 @@ public class Maia.Array <V> : Collection <V>
     /**
      * {@inheritDoc}
      */
+    public void
+    remove_at (uint inPos)
+        requires (inPos < m_Size)
+    {
+        m_Size--;
+
+        m_pContent[inPos].val = null;
+
+        if (inPos != m_Size)
+            GLib.Memory.move (&m_pContent[inPos], &m_pContent[inPos + 1],
+                              (m_Size - inPos) * sizeof (Node<V>));
+
+        GLib.Memory.set (&m_pContent[m_Size], 0, sizeof (Node<V>));
+
+        stamp++;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public override void
     clear ()
     {
@@ -453,16 +473,6 @@ public class Maia.Array <V> : Collection <V>
     {
         Iterator<V> iter = inIterator as Iterator<V>;
 
-        m_Size--;
-
-        int index = iter.index;
-
-        if (index != m_Size)
-            GLib.Memory.move (&m_pContent[index], &m_pContent[index + 1],
-                              (m_Size - index) * sizeof (V));
-
-        m_pContent[m_Size].val = null;
-
-        stamp++;
+        remove_at (iter.index);
     }
 }
