@@ -25,7 +25,7 @@ public class Maia.Event : Object
     public delegate void Callback1<A> (A inA);
     public delegate R CallbackR1<R, A> (A inA);
 
-    internal delegate void Func (EventArgs? inArgs);
+    public delegate void Func (EventArgs? inArgs);
 
     // properties
     private void*     m_Owner = null;
@@ -41,9 +41,12 @@ public class Maia.Event : Object
         }
     }
 
-    internal EventArgs args {
+    public EventArgs args {
         get {
             return m_Args;
+        }
+        construct {
+            m_Args = value;
         }
     }
 

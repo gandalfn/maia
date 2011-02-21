@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal class Maia.EventListener : Object
+public class Maia.EventListener : Object
 {
     // properties
     public void*      owner = null;
