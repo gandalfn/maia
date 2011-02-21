@@ -108,16 +108,22 @@ public class Maia.Task : Object
         set {
             if (m_State != value)
             {
-                unowned Dispatcher dispatcher = parent as Dispatcher;
-                int pos = -1;
-                if (dispatcher != null)
-                    pos = dispatcher.childs.index_of (this);
+                debug ("Maia.Task.state.set", "0x%lx state = %s", (ulong)this, value.to_string ());
 
-                debug ("Maia.Task.state.set", "state = %s", value.to_string ());
+                unowned Object p = parent;
+                int pos = -1;
+                if (p != null)
+                    pos = p.childs.index_of (this);
+
                 m_State = value;
 
-                if (dispatcher != null && pos >= 0)
-                    dispatcher.childs.sort (pos);
+                if (pos >= 0)
+                {
+                    if (m_State == State.TERMINATED)
+                        p.childs.remove_at (pos);
+                    else
+                        p.childs.sort (pos);
+                }
             }
         }
     }
@@ -194,6 +200,7 @@ public class Maia.Task : Object
     public virtual void
     finish ()
     {
+        audit (GLib.Log.METHOD, "Finish 0x%lx", (ulong)this);
         state = State.TERMINATED;
 
         finished ();
