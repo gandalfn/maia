@@ -81,6 +81,7 @@ namespace Os
     public const int EPOLLIN;
     public const int EPOLLOUT;
     public const int EPOLLERR;
+    public const int EPOLLHUP;
 
     public delegate void* ThreadFunc ();
 
