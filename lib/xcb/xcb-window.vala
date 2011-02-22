@@ -22,6 +22,7 @@ internal class Maia.XcbWindow : WindowProxy
     // properties
     private XcbDesktop m_XcbDesktop;
     private Xcb.Window m_XcbWindow;
+    private bool       m_Foreign = false;
     private Region     m_Geometry;
 
     // events
@@ -56,14 +57,18 @@ internal class Maia.XcbWindow : WindowProxy
     ~XcbWindow ()
     {
         // Destroy xcb window
-        m_XcbWindow.destroy (m_XcbDesktop.connection);
-        m_XcbDesktop.connection.flush ();
+        if (m_Foreign)
+        {
+            m_XcbWindow.destroy (m_XcbDesktop.connection);
+            m_XcbDesktop.connection.flush ();
+        }
     }
 
     public void
     foreign (Xcb.Window inWindow)
     {
         m_XcbWindow = inWindow;
+        m_Foreign = true;
         m_XcbDesktop = (parent.parent as Desktop).delegate_cast<XcbDesktop> ();
 
         Xcb.GetGeometryCookie cookie = m_XcbWindow.get_geometry (m_XcbDesktop.connection);
