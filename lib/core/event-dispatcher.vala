@@ -145,6 +145,8 @@ internal class Maia.EventDispatcher : Watch
 
     ~EventDispatcher ()
     {
+        Posix.close (m_MessageTunnel[0]);
+        Posix.close (m_MessageTunnel[1]);
     }
 
     private void

@@ -83,6 +83,11 @@ public class Maia.TicTac : Watch
         Os.clock_gettime (Os.CLOCK_MONOTONIC, out m_StartTime);
     }
 
+    ~TicTac ()
+    {
+        if (fd >= 0) Posix.close (fd);
+    }
+
     private inline uint
     get_ticks (Os.TimeSpec inCurrentTime)
     {
