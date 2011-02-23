@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * xcb-event.vala
+ * xcb-damage-event.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,36 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal abstract class Maia.XcbEvent : Event
+internal class Maia.XcbDamageEvent : DamageEvent
 {
     // accessors
-    public abstract uint32 mask { get; }
+    public uint32 mask {
+        get {
+            return Xcb.EventMask.EXPOSURE;
+        }
+    }
+
+    // static methods
+    public static void
+    post_event (Xcb.GenericEvent inEvent)
+    {
+        Xcb.ExposeEvent evt = (Xcb.ExposeEvent)inEvent;
+        XcbDamageEvent damage_event = new XcbDamageEvent (evt.window);
+
+        damage_event.post (new Region.raw_rectangle (evt.x, evt.y, evt.width, evt.height));
+    }
 
     // methods
-    public XcbEvent (uint32 inId, void* inOwner)
+    public XcbDamageEvent (Xcb.Window inWindow)
     {
-        GLib.Object (id: inId, owner: inOwner);
-    }
-
-    public XcbEvent.with_args (uint32 inId, void* inOwner, EventArgs inArgs)
-    {
-        GLib.Object (id: inId, owner: inOwner, args: inArgs);
-    }
-
-    public override int
-    compare (Object inOther)
-        requires (inOther is XcbEvent)
-    {
-        int ret = 0;
-        XcbEvent other = inOther as XcbEvent;
-
-        ret = atom_compare (id, other.id);
-
-        if (ret == 0)
-        {
-            ret = direct_compare (owner, other.owner);
-        }
-
-        return ret;
+        void* owner = ((uint)inWindow).to_pointer ();
+        GLib.Object (id: Xcb.EXPOSE, owner: owner);
     }
 }

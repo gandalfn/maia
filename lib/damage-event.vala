@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * xcb-event-expose.vala
+ * damage-event.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal class Maia.XcbEventExposeArgs : EventArgs
+internal class Maia.DamageEventArgs : EventArgs
 {
     // properties
     private Region m_Area;
@@ -30,55 +30,50 @@ internal class Maia.XcbEventExposeArgs : EventArgs
     }
 
     // methods
-    public XcbEventExposeArgs (Xcb.ExposeEvent inXcbExposeEvent)
+    public DamageEventArgs (Region inArea)
     {
-        m_Area = new Region.raw_rectangle (inXcbExposeEvent.x, inXcbExposeEvent.y,
-                                           inXcbExposeEvent.width, inXcbExposeEvent.height);
+        m_Area = inArea;
     }
 }
 
-internal class Maia.XcbEventExposeListener : EventListener
+internal class Maia.DamageEventListener : EventListener
 {
     // methods
-    public XcbEventExposeListener (XcbEventExpose inEvent, XcbEventExpose.Callback inCallback)
+    public DamageEventListener (DamageEvent inEvent, DamageEvent.Callback inCallback)
     {
         base (inEvent);
         func = (a) => {
-            XcbEventExposeArgs args = (XcbEventExposeArgs)a;
+            DamageEventArgs args = (DamageEventArgs)a;
             inCallback (args.area);
         };
     }
 }
 
-internal class Maia.XcbEventExpose : XcbEvent
+public class Maia.DamageEvent : Event
 {
     // types
-    public delegate void Callback (Region inExposeArea);
-
-    // accessors
-    public override uint32 mask {
-        get {
-            return Xcb.EventMask.EXPOSURE;
-        }
-    }
+    public delegate void Callback (Region inDamagedArea);
 
     // methods
-    public XcbEventExpose (Xcb.Window inWindow)
+    internal DamageEvent (View inView)
     {
-        base (Xcb.EXPOSE, ((uint)inWindow).to_pointer ());
+        GLib.Object (owner: inView);
     }
 
-    public XcbEventExpose.from_xcb_event (Xcb.GenericEvent inEvent)
+    public new void
+    post (Region inDamagedArea, Dispatcher inDispatcher = Dispatcher.self ())
     {
-        Xcb.ExposeEvent evt = (Xcb.ExposeEvent)inEvent;
-        XcbEventExposeArgs args = new XcbEventExposeArgs (evt);
-        base.with_args (Xcb.EXPOSE, ((uint)evt.window).to_pointer (), args);
+        DamageEventArgs args = new DamageEventArgs (inDamagedArea);
+        DamageEvent event = GLib.Object.new (get_type (), id: id, owner: owner, args: args) as DamageEvent;
+
+        inDispatcher.post_event (event);
     }
 
     public new void
     listen (Callback inCallback, Dispatcher inDispatcher = Dispatcher.self ())
     {
-        XcbEventExposeListener event_listener = new XcbEventExposeListener (this, inCallback);
+        DamageEventListener event_listener = new DamageEventListener (this, inCallback);
+
         inDispatcher.add_listener (event_listener);
     }
 }
