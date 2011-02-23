@@ -22,7 +22,6 @@ internal class Maia.XcbEventDispatcher : Watch
     // properties
     private XcbApplication m_Application;
     private Xcb.Connection m_Connection;
-    private Set<XcbEvent>     m_Events;
 
     // methods
     public XcbEventDispatcher (XcbApplication inApplication)
@@ -33,7 +32,6 @@ internal class Maia.XcbEventDispatcher : Watch
 
         m_Application = inApplication;
         m_Connection = xcb_desktop.connection;
-        m_Events = new Set<XcbEvent> ();
     }
 
     public override void*

@@ -25,7 +25,7 @@ internal class Maia.XcbWindow : WindowProxy
     private Region     m_Geometry;
 
     // events
-    public XcbEventExpose m_ExposeEvent;
+    private XcbDamageEvent m_DamageEvent;
 
     // accessors
     public Xcb.Window xcb_window {
@@ -43,6 +43,12 @@ internal class Maia.XcbWindow : WindowProxy
     public override Region geometry {
         get {
             return m_Geometry;
+        }
+    }
+
+    public override DamageEvent damage_event {
+        get {
+            return m_DamageEvent;
         }
     }
 
@@ -66,7 +72,7 @@ internal class Maia.XcbWindow : WindowProxy
                                                reply.width + (reply.border_width * 2),
                                                reply.height + (reply.border_width * 2));
 
-        m_ExposeEvent = new XcbEventExpose (m_XcbWindow);
+        m_DamageEvent = new XcbDamageEvent (m_XcbWindow);
     }
 
     public void
@@ -88,13 +94,13 @@ internal class Maia.XcbWindow : WindowProxy
                                                Xcb.CW.BACK_PIXEL, 
                                                { xcb_workspace.xcb_screen.black_pixel });
 
+        m_DamageEvent = new XcbDamageEvent (m_XcbWindow);
+
         m_XcbWindow.change_attributes (m_XcbDesktop.connection,
                                        Xcb.CW.EVENT_MASK,
-                                       { Xcb.EventMask.EXPOSURE });
+                                       { m_DamageEvent.mask });
 
         m_XcbDesktop.connection.flush ();
-
-        m_ExposeEvent = new XcbEventExpose (m_XcbWindow);
     }
 
     public override void

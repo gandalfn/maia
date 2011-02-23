@@ -19,6 +19,9 @@
 
 public abstract class Maia.View : Object
 {
+    // events
+    public abstract DamageEvent damage_event { get; }
+
     // accessors
     public abstract Region geometry { get; }
 }

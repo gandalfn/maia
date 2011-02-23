@@ -34,8 +34,7 @@ libmaia_xcb_backend_la_SOURCES = \
     xcb-desktop.vala \
     xcb-workspace.vala \
     xcb-window.vala \
-    xcb-event.vala \
-    xcb-event-expose.vala \
+    xcb-damage-event.vala \
     xcb-event-dispatcher.vala \
     xcb-application.vala \
     xcb-backend.vala

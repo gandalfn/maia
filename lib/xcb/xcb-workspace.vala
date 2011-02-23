@@ -89,6 +89,13 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
         }
     }
 
+    // Events
+    public override DamageEvent damage_event {
+        get {
+            return root.damage_event;
+        }
+    }
+
     // Methods
     public void
     init (Xcb.Screen inScreen, uint inNum)

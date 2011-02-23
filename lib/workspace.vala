@@ -35,6 +35,12 @@ public class Maia.Workspace : View
         }
     }
 
+    public override DamageEvent damage_event {
+        get {
+            return m_Proxy.damage_event;
+        }
+    }
+
     public Window root {
         get {
             return m_Proxy.root;

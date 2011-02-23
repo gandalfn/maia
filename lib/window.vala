@@ -22,6 +22,13 @@ public class Maia.Window : View
     // properties
     private WindowProxy m_Proxy;
 
+    // events
+    public override DamageEvent damage_event {
+        get {
+            return m_Proxy.damage_event;
+        }
+    }
+
     // accessors
     public override Region geometry {
         get {
