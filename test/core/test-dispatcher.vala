@@ -48,6 +48,7 @@ public class Maia.TestDispatcher : Maia.TestCase
     tear_down ()
     {
         dispatcher = null;
+        tictac = null;
     }
 
     private void

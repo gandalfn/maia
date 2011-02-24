@@ -17,19 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Event : Object
+public class Maia.Event<A> : Object
 {
     // types
-    public delegate void Callback ();
-    public delegate R CallbackR<R> ();
-    public delegate void Callback1<A> (A inA);
-    public delegate R CallbackR1<R, A> (A inA);
-
-    public delegate void Func (EventArgs? inArgs);
+    public delegate void Handler<A> (A? inArgs);
 
     // properties
     private void*     m_Owner = null;
-    private EventArgs m_Args  = null;
+    private A         m_Args  = null;
 
     // accessors
     public void* owner {
@@ -41,7 +36,7 @@ public class Maia.Event : Object
         }
     }
 
-    public EventArgs args {
+    public A args {
         get {
             return m_Args;
         }
@@ -59,6 +54,7 @@ public class Maia.Event : Object
      * @param inOwner event object owner
      */
     public Event (string inName, void* inOwner = null)
+        requires (typeof (A).is_a (typeof (EventArgs)))
     {
         GLib.Object (name: inName, owner: inOwner);
     }
@@ -68,51 +64,10 @@ public class Maia.Event : Object
      *
      * @param inDispatcher dispatcher
      */
-    public void
-    post (Dispatcher inDispatcher = Dispatcher.self ())
+    public virtual void
+    post (A? inArgs = null, Dispatcher inDispatcher = Dispatcher.self ())
     {
-        Event event = new Event (name, m_Owner);
-        inDispatcher.post_event (event);
-    }
-
-    /**
-     * Post event
-     *
-     * @param inDispatcher dispatcher
-     */
-    public void
-    postR<R> (Dispatcher inDispatcher = Dispatcher.self ())
-    {
-        Event event = new Event (name, m_Owner);
-        event.m_Args = new EventArgsR<R> ();
-        inDispatcher.post_event (event);
-    }
-
-    /**
-     * Post event
-     *
-     * @param inA event args
-     * @param inDispatcher dispatcher
-     */
-    public void
-    post1<A> (A inA, Dispatcher inDispatcher = Dispatcher.self ())
-    {
-        Event event = new Event (name, m_Owner);
-        event.m_Args = new EventArgs1<A> (inA);
-        inDispatcher.post_event (event);
-    }
-
-    /**
-     * Post event
-     *
-     * @param inA event args
-     * @param inDispatcher dispatcher
-     */
-    public void
-    postR1<R, A> (A inA, Dispatcher inDispatcher = Dispatcher.self ())
-    {
-        Event event = new Event (name, m_Owner);
-        event.m_Args = new EventArgsR1<R, A> (inA);
+        Event event = GLib.Object.new (get_type (), id: id, owner: owner, args: inArgs) as Event;
         inDispatcher.post_event (event);
     }
 
@@ -122,49 +77,10 @@ public class Maia.Event : Object
      * @param inCallback event callback
      * @param inDispatcher dispatcher
      */
-    public void
-    listen (Callback inCallback, Dispatcher inDispatcher = Dispatcher.self ())
+    public virtual void
+    listen (Handler<A> inHandler, Dispatcher inDispatcher = Dispatcher.self ())
     {
-        EventListener event_listener = new EventListener0 (this, inCallback);
-        inDispatcher.add_listener (event_listener);
-    }
-
-    /**
-     * Listen event
-     *
-     * @param inCallback event callback
-     * @param inDispatcher dispatcher
-     */
-    public void
-    listenR<R> (CallbackR<R> inCallback, Dispatcher inDispatcher = Dispatcher.self ())
-    {
-        EventListener event_listener = new EventListenerR0<R> (this, inCallback);
-        inDispatcher.add_listener (event_listener);
-    }
-
-    /**
-     * Listen event
-     *
-     * @param inCallback event callback
-     * @param inDispatcher dispatcher
-     */
-    public void
-    listen1<A> (Callback1<A> inCallback, Dispatcher inDispatcher = Dispatcher.self ())
-    {
-        EventListener event_listener = new EventListener1<A> (this, inCallback);
-        inDispatcher.add_listener (event_listener);
-    }
-
-    /**
-     * Listen event
-     *
-     * @param inCallback event callback
-     * @param inDispatcher dispatcher
-     */
-    public void
-    listenR1<R, A> (CallbackR1<R, A> inCallback, Dispatcher inDispatcher = Dispatcher.self ())
-    {
-        EventListener event_listener = new EventListenerR1<R, A> (this, inCallback);
+        EventListener event_listener = new EventListener (this, inHandler);
         inDispatcher.add_listener (event_listener);
     }
 }

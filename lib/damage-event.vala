@@ -17,63 +17,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal class Maia.DamageEventArgs : EventArgs
+public class Maia.DamageEventArgs : EventArgs
 {
-    // properties
-    private Region m_Area;
-
     // accessors
-    public Region area {
-        get {
-            return m_Area;
-        }
-    }
+    public Region area { get; private set; }
 
     // methods
     public DamageEventArgs (Region inArea)
     {
-        m_Area = inArea;
+        area = inArea;
     }
 }
 
-internal class Maia.DamageEventListener : EventListener
+public class Maia.DamageEvent : Event<DamageEventArgs>
 {
-    // methods
-    public DamageEventListener (DamageEvent inEvent, DamageEvent.Callback inCallback)
-    {
-        base (inEvent);
-        func = (a) => {
-            DamageEventArgs args = (DamageEventArgs)a;
-            inCallback (args.area);
-        };
-    }
-}
-
-public class Maia.DamageEvent : Event
-{
-    // types
-    public delegate void Callback (Region inDamagedArea);
-
     // methods
     internal DamageEvent (View inView)
     {
         GLib.Object (owner: inView);
-    }
-
-    public new void
-    post (Region inDamagedArea, Dispatcher inDispatcher = Dispatcher.self ())
-    {
-        DamageEventArgs args = new DamageEventArgs (inDamagedArea);
-        DamageEvent event = GLib.Object.new (get_type (), id: id, owner: owner, args: args) as DamageEvent;
-
-        inDispatcher.post_event (event);
-    }
-
-    public new void
-    listen (Callback inCallback, Dispatcher inDispatcher = Dispatcher.self ())
-    {
-        DamageEventListener event_listener = new DamageEventListener (this, inCallback);
-
-        inDispatcher.add_listener (event_listener);
     }
 }

@@ -19,11 +19,11 @@
 
 public class Foo : Maia.Object
 {
-    public Maia.Event test_event;
+    public Maia.Event<Maia.EventArgs1<int>> test_event;
 
     public Foo ()
     {
-        test_event = new Maia.Event ("test-event", this);
+        test_event = new Maia.Event<Maia.EventArgs1<int>> ("test-event", this);
     }
 }
 
@@ -67,7 +67,7 @@ public class Maia.TestEvent : Maia.TestCase
     on_timeout_elapsed ()
     {
         count++;
-        foo.test_event.post1<int> (count);
+        foo.test_event.post (new Maia.EventArgs1<int> (count));
 
         Test.timer_start ();
 
@@ -75,10 +75,10 @@ public class Maia.TestEvent : Maia.TestCase
     }
 
     private void
-    on_test_event (int count)
+    on_test_event (EventArgs1<int>? inArgs)
     {
         Test.message ("%lx: Event received %i = %f s",
-                      (ulong)Dispatcher.self ().thread_id, count, Test.timer_elapsed ());
+                      (ulong)Dispatcher.self ().thread_id, inArgs.a, Test.timer_elapsed ());
         if (count > 9)
         {
             dispatcher.finish ();
@@ -88,7 +88,7 @@ public class Maia.TestEvent : Maia.TestCase
     public void
     test_simple_event ()
     {
-        foo.test_event.listen1<int> (on_test_event, dispatcher);
+        foo.test_event.listen(on_test_event, dispatcher);
 
         dispatcher.run ();
     }
@@ -97,7 +97,7 @@ public class Maia.TestEvent : Maia.TestCase
     test_thread_event ()
     {
         Dispatcher thread_dispatcher = new Dispatcher.thread ();
-        foo.test_event.listen1<int> (on_test_event, thread_dispatcher);
+        foo.test_event.listen (on_test_event, thread_dispatcher);
 
         thread_dispatcher.run ();
         dispatcher.run ();

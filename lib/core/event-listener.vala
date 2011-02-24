@@ -17,69 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.EventListener : Object
+internal class Maia.EventListener : Object
 {
     // properties
-    public void*      owner = null;
-    public Event.Func func;
+    private Event.Handler m_Handler;
+    private Event         m_Event;
+
+    // accessors
+    public Event event {
+        get {
+            return m_Event;
+        }
+    }
 
     // methods
-    public EventListener (Event inEvent)
+    public EventListener (Event inEvent, Event.Handler inHandler)
     {
-        GLib.Object (id: inEvent.id);
-        owner = inEvent.owner;
+        m_Event = inEvent;
+        m_Handler = inHandler;
     }
 
     public new void
     notify (EventArgs? inArgs)
+        requires (m_Event != null)
+        requires (m_Handler != null)
     {
-        func (inArgs);
-    }
-}
-
-internal class Maia.EventListener0 : EventListener
-{
-    public EventListener0 (Event inEvent, Event.Callback inCallback)
-    {
-        base (inEvent);
-        func = (a) => {
-            inCallback ();
-        };
-    }
-}
-
-internal class Maia.EventListenerR0<R> : EventListener
-{
-    public EventListenerR0 (Event inEvent, Event.CallbackR<R> inCallback)
-    {
-        base (inEvent);
-        func = (a) => {
-            EventArgsR<R> args = (EventArgsR<R>)a;
-            args.ret = inCallback ();
-        };
-    }
-}
-
-internal class Maia.EventListener1<A> : EventListener
-{
-    public EventListener1 (Event inEvent, Event.Callback1<A> inCallback)
-    {
-        base (inEvent);
-        func = (a) => {
-            unowned EventArgs1<A> args = (EventArgs1<A>)a;
-            inCallback (args.m_A);
-        };
-    }
-}
-
-internal class Maia.EventListenerR1<R, A> : EventListener
-{
-    public EventListenerR1 (Event inEvent, Event.CallbackR1<R, A> inCallback)
-    {
-        base (inEvent);
-        func = (a) => {
-            unowned EventArgsR1<R, A> args = (EventArgsR1<R, A>)a;
-            args.ret = inCallback (args.m_A);
-        };
+        m_Handler (inArgs);
     }
 }

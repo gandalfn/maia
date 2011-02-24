@@ -32,8 +32,9 @@ internal class Maia.XcbDamageEvent : DamageEvent
     {
         Xcb.ExposeEvent evt = (Xcb.ExposeEvent)inEvent;
         XcbDamageEvent damage_event = new XcbDamageEvent (evt.window);
+        DamageEventArgs args = new DamageEventArgs (new Region.raw_rectangle (evt.x, evt.y, evt.width, evt.height));
 
-        damage_event.post (new Region.raw_rectangle (evt.x, evt.y, evt.width, evt.height));
+        damage_event.post (args);
     }
 
     // methods

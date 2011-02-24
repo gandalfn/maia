@@ -25,9 +25,9 @@ public class Maia.Dispatcher : Task
     static Set<unowned Dispatcher> s_Dispatchers;
 
     // Properties
-    private Os.EPoll        m_PollFd = -1;
-    private EventDispatcher m_EventDispatcher = null;
-    private Event           m_FinishEvent = null;
+    private Os.EPoll         m_PollFd = -1;
+    private EventDispatcher  m_EventDispatcher = null;
+    private Event<EventArgs> m_FinishEvent = null;
 
     // Methods
     static construct
@@ -61,7 +61,7 @@ public class Maia.Dispatcher : Task
         m_EventDispatcher = new EventDispatcher ();
         m_EventDispatcher.parent = this;
 
-        m_FinishEvent = new Event ("finish", this);
+        m_FinishEvent = new Event<EventArgs> ("finish", this);
         m_FinishEvent.listen (on_finish, this);
     }
 
@@ -76,7 +76,7 @@ public class Maia.Dispatcher : Task
         m_EventDispatcher = new EventDispatcher ();
         m_EventDispatcher.parent = this;
 
-        m_FinishEvent = new Event ("finish", this);
+        m_FinishEvent = new Event<EventArgs> ("finish", this);
         m_FinishEvent.listen (on_finish, this);
     }
 
@@ -188,12 +188,12 @@ public class Maia.Dispatcher : Task
     finish ()
     {
         audit (GLib.Log.METHOD, "");
-        m_FinishEvent.post ();
+        m_FinishEvent.post<EventArgs> ();
         if (is_thread && self () != this)
             thread_id.join ();
     }
 
-    public void
+    internal void
     post_event (Event inEvent)
     {
         audit (GLib.Log.METHOD, "Event id = %s", inEvent.name);
@@ -206,7 +206,7 @@ public class Maia.Dispatcher : Task
         }
     }
 
-    public void
+    internal void
     add_listener (EventListener inEventListener)
     {
         audit (GLib.Log.METHOD, "Listen event id = %s", inEventListener.name);
