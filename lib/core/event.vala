@@ -64,7 +64,7 @@ public class Maia.Event<A> : Object
      *
      * @param inDispatcher dispatcher
      */
-    public virtual void
+    public void
     post (A? inArgs = null, Dispatcher inDispatcher = Dispatcher.self ())
     {
         Event event = GLib.Object.new (get_type (), id: id, owner: owner, args: inArgs) as Event;
@@ -77,7 +77,7 @@ public class Maia.Event<A> : Object
      * @param inCallback event callback
      * @param inDispatcher dispatcher
      */
-    public virtual void
+    public void
     listen (Handler<A> inHandler, Dispatcher inDispatcher = Dispatcher.self ())
     {
         EventListener event_listener = new EventListener (this, inHandler);
