@@ -17,9 +17,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+namespace Maia.XcbBackend
+{
+    [CCode (cprefix = "MaiaXcbBackend", lower_case_cprefix = "maia_xcb_backend_")]
+    internal extern Maia.Application create_application ();
+}
+
 public abstract class Maia.Application : Object
 {
-    // Properties
+    // static properties
+    static Application s_Default = null;
+
+    // properties
     private Dispatcher m_Dispatcher;
 
     // accessors
@@ -30,6 +39,23 @@ public abstract class Maia.Application : Object
     }
 
     public abstract Desktop desktop { get; }
+
+    // static methods
+    public static Application
+    create ()
+    {
+        if (s_Default == null)
+        {
+            s_Default = Maia.XcbBackend.create_application ();
+        }
+        return s_Default;
+    }
+
+    public static new Application?
+    @get ()
+    {
+        return s_Default;
+    }
 
     // methods
     construct 

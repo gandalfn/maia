@@ -24,5 +24,5 @@ public abstract class Maia.WorkspaceProxy : View
     public abstract Window root { get; }
 
     // methods
-    public abstract Window create_window (Region inGeometry);
+    public abstract void create_window (Window inWindow, Region inGeometry);
 }

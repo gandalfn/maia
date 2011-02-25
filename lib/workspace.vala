@@ -63,9 +63,9 @@ public class Maia.Workspace : View
         return inChild is Window; 
     }
 
-    public Window
-    create_window (Region geometry)
+    public void
+    create_window (Window inWindow, Region inGeometry)
     {
-        return m_Proxy.create_window (geometry);
+        m_Proxy.create_window (inWindow, inGeometry);
     }
 }

@@ -36,10 +36,30 @@ public class Maia.Window : View
         }
     }
 
-    // methods
-    construct
+    public Window (Region inGeometry)
+        requires (Application.get () != null)
     {
+        Workspace workspace = Application.get ().desktop.default_workspace;
+        GLib.Object (parent: workspace);
+
+        workspace.create_window (this, inGeometry);
+
         m_Proxy = delegate_cast<WindowProxy> ();
+        assert (m_Proxy != null);
+
+        m_Proxy.damage_event.listen (on_damage_event, Application.get ().dispatcher);
+    }
+
+    private void
+    on_damage_event (DamageEventArgs inArgs)
+    {
+        Maia.audit (GLib.Log.METHOD, "%s", inArgs.area.to_string ());
+        paint (inArgs.area);
+    }
+
+    protected virtual void
+    paint (Region inExposeArea)
+    {
     }
 
     public void
