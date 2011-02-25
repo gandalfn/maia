@@ -59,24 +59,24 @@ internal class Maia.EventDispatcher : Watch
         {
             base ();
 
-            m_EventId = inListener.event.id;
-            m_Owner = inListener.event.owner;
+            m_EventId = inListener.id;
+            m_Owner = inListener.owner;
 
             base.insert (inListener);
         }
 
         public override void
         insert (EventListener inListener)
-            requires (m_EventId == inListener.event.id)
-            requires (m_Owner == inListener.event.owner)
+            requires (m_EventId == inListener.id)
+            requires (m_Owner == inListener.owner)
         {
             base.insert (inListener);
         }
 
         public override void
         remove (EventListener inListener)
-            requires (m_EventId == inListener.event.id)
-            requires (m_Owner == inListener.event.owner)
+            requires (m_EventId == inListener.id)
+            requires (m_Owner == inListener.owner)
         {
             base.remove (inListener);
         }
@@ -110,7 +110,14 @@ internal class Maia.EventDispatcher : Watch
         public int
         compare_with_listener (EventListener inListener)
         {
-            return compare_with_event (inListener.event);
+            int ret = atom_compare (m_EventId, inListener.id);
+
+            if (ret == 0)
+            {
+                ret = direct_compare (m_Owner, inListener.owner);
+            }
+
+            return ret;
         }
     }
 

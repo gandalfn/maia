@@ -43,6 +43,12 @@ internal class Maia.XcbEventDispatcher : Watch
         {
             int response_type = evt.response_type & ~0x80;
             audit (GLib.Log.METHOD, "received %i", response_type);
+            switch (response_type)
+            {
+                case Xcb.EXPOSE:
+                    XcbDamageEvent.post_event (evt);
+                    break;
+            }
         }
 
         return base.main ();

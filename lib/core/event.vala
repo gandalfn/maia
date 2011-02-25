@@ -23,8 +23,8 @@ public class Maia.Event<A> : Object
     public delegate void Handler<A> (A? inArgs);
 
     // properties
-    private void*     m_Owner = null;
-    private A         m_Args  = null;
+    private void* m_Owner = null;
+    private A     m_Args  = null;
 
     // accessors
     public void* owner {
@@ -39,9 +39,6 @@ public class Maia.Event<A> : Object
     public A args {
         get {
             return m_Args;
-        }
-        construct {
-            m_Args = value;
         }
     }
 
@@ -67,7 +64,9 @@ public class Maia.Event<A> : Object
     public void
     post (A? inArgs = null, Dispatcher inDispatcher = Dispatcher.self ())
     {
-        Event event = GLib.Object.new (get_type (), id: id, owner: owner, args: inArgs) as Event;
+        Event<A> event = GLib.Object.new (get_type (), id: id, owner: owner) as Event<A>;
+        event.m_Args = inArgs;
+        Maia.debug (GLib.Log.METHOD, "post event 0x%lx", (ulong)event);
         inDispatcher.post_event (event);
     }
 

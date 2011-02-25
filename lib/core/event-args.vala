@@ -19,6 +19,10 @@
 
 public abstract class Maia.EventArgs
 {
+    ~EventArgs ()
+    {
+        Maia.audit ("Maia.~EventArgs", "destroy");
+    }
 }
 
 public class Maia.EventArgs1<A> : EventArgs

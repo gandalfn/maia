@@ -59,12 +59,14 @@ internal class Maia.XcbDesktop : DesktopProxy
 
                 int cpt = 0;
                 for (Xcb.ScreenIterator iter = m_Connection.get_setup().roots_iterator(); 
-                     cpt < nbScreens; Xcb.ScreenIterator.next(out iter), ++cpt)
+                     cpt < nbScreens; )
                 {
                     debug (GLib.Log.METHOD, "create xcb workspace %i", cpt);
                     Workspace workspace = new Workspace (delegator as Desktop);
                     XcbWorkspace proxy = workspace.delegate_cast<XcbWorkspace> ();
                     proxy.init (iter.data, cpt);
+                    if (++cpt < nbScreens)
+                        Xcb.ScreenIterator.next(out iter);
                 }
 
                 base.name = value;

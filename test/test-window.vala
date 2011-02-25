@@ -17,6 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+static void
+on_damage_event (Maia.DamageEventArgs inArgs)
+{
+    Maia.audit (GLib.Log.METHOD, "%s", inArgs.area.to_string ());
+}
+
 static int
 main (string[] args)
 {
@@ -25,6 +31,8 @@ main (string[] args)
     Maia.Application application = Maia.XcbBackend.create_application ();
 
     Maia.Window window = application.desktop.default_workspace.create_window (new Maia.Region.raw_rectangle (0, 0, 200, 200));
+
+    window.damage_event.listen (on_damage_event, application.dispatcher);
 
     window.show ();
 

@@ -21,26 +21,25 @@ internal class Maia.EventListener : Object
 {
     // properties
     private Event.Handler m_Handler;
-    private Event         m_Event;
+    private void*         m_Owner;
 
     // accessors
-    public Event event {
+    public void* owner {
         get {
-            return m_Event;
+            return m_Owner;
         }
     }
 
     // methods
     public EventListener (Event inEvent, Event.Handler inHandler)
     {
-        m_Event = inEvent;
+        GLib.Object (id: inEvent.id);
+        m_Owner = inEvent.owner;
         m_Handler = inHandler;
     }
 
     public new void
     notify (EventArgs? inArgs)
-        requires (m_Event != null)
-        requires (m_Handler != null)
     {
         m_Handler (inArgs);
     }
