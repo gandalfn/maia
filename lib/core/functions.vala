@@ -33,13 +33,13 @@ namespace Maia
     public static int
     direct_compare (void* inA, void* inB)
     {
-        return (long)inA > (long)inB ? 1 : ((long)inA < (long)inB ? -1 : 0);
+        return (int)((ulong)inA - (ulong)inB);
     }
 
     public static int
     atom_compare (uint32 inA, uint32 inB)
     {
-        return inA > inB ? 1 : (inA < inB ? -1 : 0);
+        return (int)(inA - inB);
     }
 
     static string

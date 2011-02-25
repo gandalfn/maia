@@ -24,7 +24,7 @@ public abstract class Maia.Object : GLib.Object
 
     // Class properties
     internal class bool                 c_Initialized = false;
-    internal class unowned Set<Type>    c_Delegations = null;
+    internal class Set<Type>            c_Delegations = null;
 
     // Properties
     private uint32                      m_Id = 0;
@@ -198,7 +198,7 @@ public abstract class Maia.Object : GLib.Object
         return inA == inB         ||
                aParentType == inB ||
                inA == bParentType ||
-               aParentType == bParentType ? 0 : (inA < inB ? -1 : 1);
+               aParentType == bParentType ? 0 : inA - inB;
     }
 
     static inline int
@@ -237,7 +237,24 @@ public abstract class Maia.Object : GLib.Object
         if (!c_Initialized)
         {
             if (s_Delegations != null)
-                c_Delegations = s_Delegations[get_type ()];
+            {
+                for (Type type = get_type (); type != typeof (Object); type = type.parent ())
+                {
+                    if (type in s_Delegations)
+                    {
+                        foreach (Type delegate_type in s_Delegations[type])
+                        {
+                            audit ("Maia.Object.construct", "add delegate %s for %s", delegate_type.name (), get_type ().name ());
+                            if (c_Delegations == null)
+                            {
+                                c_Delegations = new Set<Type> ();
+                                c_Delegations.compare_func = compare_type;
+                            }
+                            c_Delegations.insert (delegate_type);
+                        }
+                    }
+                }
+            }
             c_Initialized = true;
         }
 
