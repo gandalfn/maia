@@ -32,8 +32,8 @@ public class Maia.DamageEventArgs : EventArgs
 public class Maia.DamageEvent : Event<DamageEventArgs>
 {
     // methods
-    internal DamageEvent (View inView)
+    public DamageEvent (uint32 inId, void* inOwner)
     {
-        GLib.Object (owner: inView);
+        base.with_id (inId, inOwner);
     }
 }

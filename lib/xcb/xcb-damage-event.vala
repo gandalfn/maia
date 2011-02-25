@@ -40,7 +40,6 @@ internal class Maia.XcbDamageEvent : DamageEvent
     // methods
     public XcbDamageEvent (Xcb.Window inWindow)
     {
-        void* owner = ((uint)inWindow).to_pointer ();
-        GLib.Object (id: Xcb.EXPOSE, owner: owner);
+        base (Xcb.EXPOSE, ((uint)inWindow).to_pointer ());
     }
 }

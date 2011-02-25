@@ -57,6 +57,18 @@ public class Maia.Event<A> : Object
     }
 
     /**
+     * Create a new event
+     *
+     * @param inId event id
+     * @param inOwner event object owner
+     */
+    public Event.with_id (uint32 inId, void* inOwner = null)
+        requires (typeof (A).is_a (typeof (EventArgs)))
+    {
+        GLib.Object (id: inId, owner: inOwner);
+    }
+
+    /**
      * Post event
      *
      * @param inDispatcher dispatcher
