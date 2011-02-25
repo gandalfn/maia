@@ -80,7 +80,7 @@ namespace Xcb {
 		public int rem;
 		public int index;
 		[CCode (cname = "xcb_screen_next")]
-		public static void next(out ScreenIterator iter);
+		public static void next(ref ScreenIterator iter);
 	}
 
 	[SimpleType]
@@ -148,7 +148,7 @@ namespace Xcb {
 		public unowned Depth data;
 		public int rem;
 		[CCode (cname = "xcb_depth_next")]
-		public static void next (out DepthIterator iter);
+		public static void next (ref DepthIterator iter);
 	}
 
 	[SimpleType]
@@ -170,7 +170,7 @@ namespace Xcb {
 		public unowned VisualType data;
 		public int rem;
 		[CCode (cname = "xcb_visualtype_next")]
-		public static void next (out VisualTypeIterator iter);
+		public static void next (ref VisualTypeIterator iter);
 	}
 
 	[CCode (cname = "xcb_rectangle_t")]

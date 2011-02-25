@@ -40,11 +40,11 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
             {
                 for (Xcb.DepthIterator depth_iter = m_XcbScreen.allowed_depths_iterator (); 
                      depth_iter.rem > 0 && m_XcbVisual == null; 
-                     Xcb.DepthIterator.next (out depth_iter))
+                     Xcb.DepthIterator.next (ref depth_iter))
                 {
                     for (Xcb.VisualTypeIterator visual_iter = depth_iter.data.visuals_iterator (); 
                          visual_iter.rem > 0 && m_XcbVisual == null; 
-                         Xcb.VisualTypeIterator.next(out visual_iter))
+                         Xcb.VisualTypeIterator.next(ref visual_iter))
                     {
                         if (visual_iter.data.visual_id == m_XcbScreen.root_visual)
                         {
