@@ -76,7 +76,7 @@ public class Maia.Event<A> : Object
     public void
     post (A? inArgs = null, Dispatcher inDispatcher = Dispatcher.self ())
     {
-        Event<A> event = GLib.Object.new (get_type (), id: id, owner: owner) as Event<A>;
+        Event<A> event = new Event<A>.with_id (id, owner);
         event.m_Args = inArgs;
         Maia.debug (GLib.Log.METHOD, "post event 0x%lx", (ulong)event);
         inDispatcher.post_event (event);
