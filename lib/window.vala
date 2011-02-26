@@ -47,7 +47,8 @@ public class Maia.Window : View
         m_Proxy = delegate_cast<WindowProxy> ();
         assert (m_Proxy != null);
 
-        m_Proxy.damage_event.listen (on_damage_event, Application.get ().dispatcher);
+        unowned Dispatcher? dispatcher = Dispatcher.self () == null ? Application.get ().dispatcher : Dispatcher.self ();
+        m_Proxy.damage_event.listen (on_damage_event, dispatcher);
     }
 
     private void
