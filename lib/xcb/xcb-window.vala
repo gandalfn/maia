@@ -21,13 +21,25 @@ internal class Maia.XcbWindow : WindowProxy
 {
     // properties
     private XcbDesktop m_XcbDesktop;
-    private Xcb.Window m_XcbWindow;
+    private Xcb.Window m_XcbWindow = 0;
     private bool       m_Foreign = false;
     private Region     m_Geometry;
 
     // events
     private XcbDamageEvent m_DamageEvent;
     private XcbDeleteEvent m_DeleteEvent;
+
+    public override DamageEvent damage_event {
+        get {
+            return m_DamageEvent;
+        }
+    }
+
+    public override DeleteEvent delete_event {
+        get {
+            return m_DeleteEvent;
+        }
+    }
 
     // accessors
     public Xcb.Window xcb_window {
@@ -48,27 +60,12 @@ internal class Maia.XcbWindow : WindowProxy
         }
     }
 
-    public override DamageEvent damage_event {
-        get {
-            return m_DamageEvent;
-        }
-    }
-
-    public override DeleteEvent delete_event {
-        get {
-            return m_DeleteEvent;
-        }
-    }
-
     // methods
     ~XcbWindow ()
     {
         // Destroy xcb window
-        if (m_Foreign)
-        {
-            m_XcbWindow.destroy (m_XcbDesktop.connection);
-            m_XcbDesktop.connection.flush ();
-        }
+        if (!m_Foreign && m_XcbWindow > 0)
+            destroy ();
     }
 
     private void
@@ -147,5 +144,6 @@ internal class Maia.XcbWindow : WindowProxy
     {
         m_XcbWindow.destroy(m_XcbDesktop.connection);
         m_XcbDesktop.connection.flush ();
+        m_XcbWindow = 0;
     }
 }
