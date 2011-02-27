@@ -69,9 +69,10 @@ public abstract class Maia.Application : Object
         m_Dispatcher.run ();
     }
 
-    public void
+    public static void
     quit ()
+        requires (s_Default != null)
     {
-        m_Dispatcher.finish ();
+        s_Default.m_Dispatcher.finish ();
     }
 }

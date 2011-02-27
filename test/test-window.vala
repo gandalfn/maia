@@ -34,7 +34,7 @@ public class TestWindow : Maia.Window
     destroy ()
     {
         base.destroy ();
-        Maia.Application.get ().quit ();
+        Maia.Application.quit ();
     }
 }
 
