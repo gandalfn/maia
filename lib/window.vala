@@ -29,6 +29,12 @@ public class Maia.Window : View
         }
     }
 
+    public DeleteEvent delete_event {
+        get {
+            return m_Proxy.delete_event;
+        }
+    }
+
     // accessors
     public override Region geometry {
         get {
@@ -49,6 +55,7 @@ public class Maia.Window : View
 
         unowned Dispatcher? dispatcher = Dispatcher.self () == null ? Application.get ().dispatcher : Dispatcher.self ();
         m_Proxy.damage_event.listen (on_damage_event, dispatcher);
+        m_Proxy.delete_event.listen (on_delete_event, dispatcher);
     }
 
     private void
@@ -58,9 +65,22 @@ public class Maia.Window : View
         paint (inArgs.area);
     }
 
+    private void
+    on_delete_event ()
+    {
+        Maia.audit (GLib.Log.METHOD, "");
+        destroy ();
+    }
+
     protected virtual void
     paint (Region inExposeArea)
     {
+    }
+
+    protected virtual void
+    destroy ()
+    {
+        m_Proxy.destroy ();
     }
 
     public void

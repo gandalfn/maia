@@ -20,8 +20,9 @@
 internal class Maia.XcbEventDispatcher : Watch
 {
     // properties
-    private XcbApplication m_Application;
-    private Xcb.Connection m_Connection;
+    private XcbApplication        m_Application;
+    private Xcb.Connection        m_Connection;
+    private XcbClientMessageEvent m_ClientMessageEvent;
 
     // methods
     public XcbEventDispatcher (XcbApplication inApplication)
@@ -32,6 +33,7 @@ internal class Maia.XcbEventDispatcher : Watch
 
         m_Application = inApplication;
         m_Connection = xcb_desktop.connection;
+        m_ClientMessageEvent = new XcbClientMessageEvent (xcb_desktop);
     }
 
     public override void*
@@ -47,6 +49,9 @@ internal class Maia.XcbEventDispatcher : Watch
             {
                 case Xcb.EXPOSE:
                     XcbDamageEvent.post_event (evt);
+                    break;
+                case Xcb.CLIENT_MESSAGE:
+                    m_ClientMessageEvent.dispatch (evt);
                     break;
             }
         }

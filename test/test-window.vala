@@ -29,6 +29,13 @@ public class TestWindow : Maia.Window
     {
         Maia.audit (GLib.Log.METHOD, "%s", inArea.to_string ());
     }
+
+    public override void
+    destroy ()
+    {
+        base.destroy ();
+        Maia.Application.get ().quit ();
+    }
 }
 
 static int

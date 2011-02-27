@@ -27,6 +27,7 @@ internal class Maia.XcbWindow : WindowProxy
 
     // events
     private XcbDamageEvent m_DamageEvent;
+    private XcbDeleteEvent m_DeleteEvent;
 
     // accessors
     public Xcb.Window xcb_window {
@@ -53,6 +54,12 @@ internal class Maia.XcbWindow : WindowProxy
         }
     }
 
+    public override DeleteEvent delete_event {
+        get {
+            return m_DeleteEvent;
+        }
+    }
+
     // methods
     ~XcbWindow ()
     {
@@ -62,6 +69,15 @@ internal class Maia.XcbWindow : WindowProxy
             m_XcbWindow.destroy (m_XcbDesktop.connection);
             m_XcbDesktop.connection.flush ();
         }
+    }
+
+    private void
+    set_wm_protocols ()
+    {
+        Xcb.Atom[] atoms = { m_XcbDesktop.atoms[XcbAtomType.WM_DELETE_WINDOW] };
+        m_XcbWindow.change_property (m_XcbDesktop.connection, Xcb.PropMode.REPLACE,
+                                     m_XcbDesktop.atoms[XcbAtomType.WM_PROTOCOLS],
+                                     Xcb.AtomType.ATOM, 32, 1, atoms);
     }
 
     public void
@@ -77,7 +93,8 @@ internal class Maia.XcbWindow : WindowProxy
                                                reply.width + (reply.border_width * 2),
                                                reply.height + (reply.border_width * 2));
 
-        m_DamageEvent = new XcbDamageEvent (m_XcbWindow);
+        m_DamageEvent = new XcbDamageEvent (this);
+        m_DeleteEvent = new XcbDeleteEvent (this);
     }
 
     public void
@@ -99,11 +116,14 @@ internal class Maia.XcbWindow : WindowProxy
                                                Xcb.CW.BACK_PIXEL, 
                                                { xcb_workspace.xcb_screen.black_pixel });
 
-        m_DamageEvent = new XcbDamageEvent (m_XcbWindow);
+        m_DamageEvent = new XcbDamageEvent (this);
+        m_DeleteEvent = new XcbDeleteEvent (this);
 
         m_XcbWindow.change_attributes (m_XcbDesktop.connection,
                                        Xcb.CW.EVENT_MASK,
-                                       { m_DamageEvent.mask });
+                                       { m_DamageEvent.mask | m_DeleteEvent.mask });
+
+        set_wm_protocols ();
 
         m_XcbDesktop.connection.flush ();
     }
@@ -112,7 +132,6 @@ internal class Maia.XcbWindow : WindowProxy
     show ()
     {
         m_XcbWindow.map (m_XcbDesktop.connection);
-
         m_XcbDesktop.connection.flush ();
     }
 
@@ -120,5 +139,13 @@ internal class Maia.XcbWindow : WindowProxy
     hide ()
     {
         //m_XcbWindow.unmap (m_XcbDesktop.connection);
+        m_XcbDesktop.connection.flush ();
+    }
+
+    public override void
+    destroy ()
+    {
+        m_XcbWindow.destroy(m_XcbDesktop.connection);
+        m_XcbDesktop.connection.flush ();
     }
 }

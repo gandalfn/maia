@@ -68,4 +68,10 @@ public abstract class Maia.Application : Object
     {
         m_Dispatcher.run ();
     }
+
+    public void
+    quit ()
+    {
+        m_Dispatcher.finish ();
+    }
 }

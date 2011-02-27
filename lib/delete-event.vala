@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * window-proxy.vala
+ * delete-event.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,13 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.WindowProxy : View
+public class Maia.DeleteEvent : Event<EventArgs>
 {
-    // accessors
-    public abstract DeleteEvent delete_event { get; }
-
     // methods
-    public abstract void show ();
-    public abstract void hide ();
-    public abstract void destroy ();
+    public DeleteEvent (uint32 inId, void* inOwner)
+    {
+        base.with_id (inId, inOwner);
+    }
 }

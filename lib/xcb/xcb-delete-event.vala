@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * window-proxy.vala
+ * xcb-delete-event.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,13 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.WindowProxy : View
+internal class Maia.XcbDeleteEvent : DeleteEvent
 {
     // accessors
-    public abstract DeleteEvent delete_event { get; }
+    public uint32 mask {
+        get {
+            return 0;
+        }
+    }
 
     // methods
-    public abstract void show ();
-    public abstract void hide ();
-    public abstract void destroy ();
+    public XcbDeleteEvent (XcbWindow inWindow)
+    {
+        Xcb.Atom atom = inWindow.xcb_desktop.atoms[XcbAtomType.WM_DELETE_WINDOW];
+        base (atom, ((uint)inWindow.xcb_window).to_pointer ());
+    }
+
+    public XcbDeleteEvent.from_event (Xcb.ClientMessageEvent inEvent)
+    {
+        Xcb.Atom atom = inEvent.data.data32[0];
+        base (atom, ((uint)inEvent.window).to_pointer ());
+    }
 }

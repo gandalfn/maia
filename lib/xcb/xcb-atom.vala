@@ -56,7 +56,13 @@ internal struct Maia.XcbAtom
     public int
     compare (XcbAtom? inOther)
     {
-        return m_Type < inOther.m_Type ? -1 : (m_Type > inOther.m_Type ? 1 : 0);
+        return m_Type - inOther.m_Type;
+    }
+
+    public int
+    compare_with_type (XcbAtomType inType)
+    {
+        return m_Type - inType;
     }
 }
 
@@ -95,5 +101,13 @@ internal class Maia.XcbAtoms : Set<XcbAtom?>
                 insert (atom);
             }
         }
+    }
+
+    public new Xcb.Atom
+    @get (XcbAtomType inType)
+    {
+        unowned XcbAtom? atom = search<XcbAtomType> (inType, (ValueCompareFunc<XcbAtomType>)XcbAtom.compare_with_type);
+
+        return atom != null ? atom.m_XcbAtom : Xcb.AtomType.NONE;
     }
 }
