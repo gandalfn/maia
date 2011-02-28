@@ -25,15 +25,15 @@ public class TestWindow : Maia.Window
     }
 
     public override void
-    paint (Maia.Region inArea)
+    on_paint (Maia.Region inArea)
     {
         Maia.audit (GLib.Log.METHOD, "%s", inArea.to_string ());
     }
 
     public override void
-    destroy ()
+    on_destroy ()
     {
-        base.destroy ();
+        base.on_destroy ();
         Maia.Application.quit ();
     }
 }

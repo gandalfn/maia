@@ -62,23 +62,23 @@ public class Maia.Window : View
     on_damage_event (DamageEventArgs inArgs)
     {
         Maia.audit (GLib.Log.METHOD, "%s", inArgs.area.to_string ());
-        paint (inArgs.area);
+        on_paint (inArgs.area);
     }
 
     private void
     on_delete_event ()
     {
         Maia.audit (GLib.Log.METHOD, "");
-        destroy ();
+        on_destroy ();
     }
 
     protected virtual void
-    paint (Region inExposeArea)
+    on_paint (Region inExposeArea)
     {
     }
 
     protected virtual void
-    destroy ()
+    on_destroy ()
     {
         m_Proxy.destroy ();
     }
