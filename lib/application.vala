@@ -61,6 +61,14 @@ public abstract class Maia.Application : Object
     construct 
     {
         m_Dispatcher = new Dispatcher ();
+        m_Dispatcher.finished.connect (on_dispatcher_finished);
+    }
+
+    private void
+    on_dispatcher_finished ()
+    {
+        if (this == s_Default)
+            s_Default = null;
     }
 
     public void

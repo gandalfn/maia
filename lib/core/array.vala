@@ -232,8 +232,6 @@ public class Maia.Array <V> : Collection <V>
     {
         if (m_Sorted)
         {
-            debug (GLib.Log.METHOD, "sort %u: size = %i", inPos, m_Size);
-
             unowned V val = m_pContent[inPos].val;
             m_Size--;
             
@@ -243,7 +241,6 @@ public class Maia.Array <V> : Collection <V>
 
             int pos = get_nearest_pos (val);
 
-            debug (GLib.Log.METHOD, "sort old_pos = %u, pos = %i", inPos, pos);
             m_Size++;
 
             if (pos < m_Size - 1)
