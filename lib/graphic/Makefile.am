@@ -25,7 +25,12 @@ libmaia_graphic_la_VALAFLAGS = \
     --library=maia-graphic
 
 libmaia_graphic_la_SOURCES = \
-    graphic-context.vala
+    graphic-color.vala \
+    graphic-pattern.vala \
+    graphic-shape.vala \
+    graphic-paint.vala \
+    graphic-context.vala \
+    graphic-device.vala
 
 libmaia_graphic_la_LDFLAGS = \
     -version-number @MAIA_SO_VERSION@ \
