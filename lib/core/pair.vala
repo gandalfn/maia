@@ -20,18 +20,36 @@
 public class Maia.Pair <F, S>
 {
     // properties
+    private F               m_First;
+    private S               m_Second;
     private CompareFunc<F>  m_CompareFunc;
     private ToStringFunc<F> m_ToStringFuncFirst;
     private ToStringFunc<S> m_ToStringFuncSecond;
 
-    public F first;
-    public S second;
+    // accessors
+    public F first { 
+        get {
+            return m_First;
+        }
+        set {
+            m_First = value;
+        }
+    }
+
+    public S second { 
+        get {
+            return m_Second;
+        }
+        set {
+            m_Second = value;
+        }
+    }
 
     // methods
-    public Pair (owned F inFirst, owned S inSecond)
+    public Pair (F inFirst, S inSecond)
     {
-        first = (owned)inFirst;
-        second = (owned)inSecond;
+        m_First = inFirst;
+        m_Second = inSecond;
 
         m_CompareFunc = get_compare_func_for<F> ();
         m_ToStringFuncFirst = get_to_string_func_for<F> ();
@@ -42,12 +60,18 @@ public class Maia.Pair <F, S>
     compare (Object inOther)
         requires (inOther is Pair <F, S>)
     {
-        return m_CompareFunc (first, ((Pair<F, S>)inOther).first);
+        return m_CompareFunc (m_First, ((Pair<F, S>)inOther).m_First);
+    }
+
+    internal int
+    compare_with_first (F inFirst)
+    {
+        return m_CompareFunc (m_First, inFirst);
     }
 
     public string
     to_string ()
     {
-        return m_ToStringFuncFirst (first) + " " + m_ToStringFuncSecond (second);
+        return m_ToStringFuncFirst (m_First) + " " + m_ToStringFuncSecond (m_Second);
     }
 }

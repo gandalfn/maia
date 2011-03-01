@@ -19,13 +19,13 @@
 
 public class Maia.Map <K, V> : Set <Pair <K, V>>
 {
-    // Properties
-    private Pair<K, V>   m_SearchKey;
-
-    // Methods
-    public Map ()
+    // methods
+    private inline unowned Pair<K, V>?
+    search_for_key (K inKey)
     {
-        m_SearchKey = new Pair<K, V> (null, null);
+        return search<K> (inKey, (p, k) => {
+            return p.compare_with_first (k);
+        });
     }
 
     /**
@@ -38,8 +38,9 @@ public class Maia.Map <K, V> : Set <Pair <K, V>>
     public new bool
     contains (K inKey)
     {
-        m_SearchKey.first = inKey;
-        return base.contains (m_SearchKey);
+        unowned Pair<K, V>? pair = search_for_key (inKey);
+
+        return pair != null;
     }
 
     /**
@@ -53,10 +54,9 @@ public class Maia.Map <K, V> : Set <Pair <K, V>>
     public new unowned V?
     @get (K inKey)
     {
-        m_SearchKey.first = inKey;
-        Iterator <Pair <K, V>>? iterator = base.get (m_SearchKey);
+        unowned Pair<K, V>? pair = search_for_key (inKey);
  
-        return iterator != null && iterator.get () != null ? iterator.get ().second : null;
+        return pair != null ? pair.second : null;
     }
 
     /**
@@ -79,7 +79,11 @@ public class Maia.Map <K, V> : Set <Pair <K, V>>
     public void
     unset (K inKey)
     {
-        m_SearchKey.first = inKey;
-        remove (m_SearchKey);
+        unowned Pair<K, V>? pair = search_for_key (inKey);
+
+        if (pair != null)
+        {
+            remove (pair);
+        }
     }
 }
