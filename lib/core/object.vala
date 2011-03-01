@@ -248,7 +248,6 @@ public abstract class Maia.Object : GLib.Object
                             if (c_Delegations == null)
                             {
                                 c_Delegations = new Set<Type> ();
-                                c_Delegations.compare_func = compare_type;
                             }
                             c_Delegations.insert (delegate_type);
                         }
@@ -327,7 +326,7 @@ public abstract class Maia.Object : GLib.Object
     delegate_cast<T> ()
         requires (m_Delegates != null)
     {
-        return m_Delegates.search<Type> (typeof (T), compare_object_with_type);
+        return m_Delegates.search<Type> (typeof (T), (ValueCompareFunc<Type>)compare_object_with_type);
     }
 
     /**
