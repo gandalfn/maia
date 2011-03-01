@@ -39,6 +39,7 @@ public class Maia.TestSet : Maia.TestCase
             add_test ("benchmark-insert", test_set_benchmark_insert);
             add_test ("benchmark-remove", test_set_benchmark_remove);
             add_test ("benchmark-search", test_set_benchmark_search);
+            add_test ("benchmark-search-key", test_set_benchmark_search_key);
             add_test ("benchmark-parse", test_set_benchmark_parse);
         }
     }
@@ -193,6 +194,33 @@ public class Maia.TestSet : Maia.TestCase
             {
                 int index = Test.rand_int_range (0, NB_KEYS - 1);
                 assert (m_Keys[index] in m_Set);
+            }
+            double elapsed = Test.timer_elapsed () * 1000;
+            min = double.min (elapsed, min);
+            max = double.max (elapsed, max);
+            m_Set.clear ();
+        }
+        Test.minimized_result (min, "Set search min time %f ms", min); 
+        Test.maximized_result (min, "Set search max time %f ms", max); 
+    }
+
+    public void
+    test_set_benchmark_search_key ()
+    {
+        double min = double.MAX, max = 0;
+        for (int iter = 0; iter < 100; ++iter)
+        {
+            for (int cpt = 0; cpt < NB_KEYS; ++cpt)
+            {
+                m_Set.insert (m_Keys[cpt]);
+            }
+            Test.timer_start ();
+            for (int cpt = 0; cpt < NB_KEYS; ++cpt)
+            {
+                int index = Test.rand_int_range (0, NB_KEYS - 1);
+                m_Set.search<int> (m_Keys[index], (v, k) => {
+                    return v - k;
+                });
             }
             double elapsed = Test.timer_elapsed () * 1000;
             min = double.min (elapsed, min);
