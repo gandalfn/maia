@@ -136,7 +136,8 @@ internal class Maia.EventDispatcher : Watch
 
         base (fds[0], Watch.Flags.IN);
 
-        m_MessageTunnel = fds;
+        m_MessageTunnel[0] = fds[0];
+        m_MessageTunnel[1] = fds[1];
         m_EventQueue = new Queue<Event> ();
         m_ListenersMutex = GLib.StaticRWLock ();
         m_Listeners = new Set<ListenerQueue> ();
