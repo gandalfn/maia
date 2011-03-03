@@ -20,9 +20,9 @@
 internal class Maia.XcbClientMessageEvent
 {
     // properties
-    private XcbDesktop m_Desktop;
-    private Xcb.Atom   m_WMProtocolsAtom;
-    private Xcb.Atom   m_DeleteWindowAtom;
+    private unowned XcbDesktop m_Desktop;
+    private Xcb.Atom           m_WMProtocolsAtom;
+    private Xcb.Atom           m_DeleteWindowAtom;
 
     // methods
     public XcbClientMessageEvent (XcbDesktop inDesktop)

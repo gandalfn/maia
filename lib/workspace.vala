@@ -20,7 +20,7 @@
 public class Maia.Workspace : View
 {
     // properties
-    private WorkspaceProxy m_Proxy;
+    private unowned WorkspaceProxy m_Proxy;
 
     // accessors
     public uint num {
@@ -55,6 +55,12 @@ public class Maia.Workspace : View
         GLib.Object (parent: inDesktop);
 
         m_Proxy = delegate_cast<WorkspaceProxy> ();
+    }
+
+    ~Workspace ()
+    {
+        foreach (Object child in childs)
+            child.unref ();
     }
 
     public override bool

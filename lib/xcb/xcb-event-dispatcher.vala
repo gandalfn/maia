@@ -20,9 +20,9 @@
 internal class Maia.XcbEventDispatcher : Watch
 {
     // properties
-    private XcbApplication        m_Application;
-    private Xcb.Connection        m_Connection;
-    private XcbClientMessageEvent m_ClientMessageEvent;
+    private unowned XcbApplication m_Application;
+    private Xcb.Connection         m_Connection;
+    private XcbClientMessageEvent  m_ClientMessageEvent;
 
     // methods
     public XcbEventDispatcher (XcbApplication inApplication)

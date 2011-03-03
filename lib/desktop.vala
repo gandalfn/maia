@@ -47,7 +47,7 @@ public class Maia.Desktop : Object
     }
 
     // properties
-    private DesktopProxy m_Proxy;
+    private unowned DesktopProxy m_Proxy;
 
     // accessors
     public int nb_workspaces {
@@ -66,6 +66,12 @@ public class Maia.Desktop : Object
     construct
     {
         m_Proxy = delegate_cast<DesktopProxy> ();
+    }
+
+    ~Desktop ()
+    {
+        foreach (Object child in childs)
+            child.unref ();
     }
 
     public override bool 

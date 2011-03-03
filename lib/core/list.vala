@@ -20,7 +20,6 @@
 public class Maia.List<V> : Collection<V>
 {
     // Types
-    [Compact]
     private class Node<V>
     {
         public V m_Value;

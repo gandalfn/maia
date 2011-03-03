@@ -60,6 +60,7 @@ public class Maia.Dispatcher : Task
 
         m_EventDispatcher = new EventDispatcher ();
         m_EventDispatcher.parent = this;
+        m_EventDispatcher.unref ();
 
         m_FinishEvent = new Event<EventArgs> ("finish", this);
         m_FinishEvent.listen (on_finish, this);
@@ -75,6 +76,7 @@ public class Maia.Dispatcher : Task
 
         m_EventDispatcher = new EventDispatcher ();
         m_EventDispatcher.parent = this;
+        m_EventDispatcher.unref ();
 
         m_FinishEvent = new Event<EventArgs> ("finish", this);
         m_FinishEvent.listen (on_finish, this);

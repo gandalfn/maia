@@ -69,7 +69,7 @@ internal struct Maia.XcbAtom
 internal class Maia.XcbAtoms : Set<XcbAtom?>
 {
     // properties
-    private XcbDesktop m_XcbDesktop;
+    private unowned XcbDesktop m_XcbDesktop;
 
     // methods
     public XcbAtoms (XcbDesktop inDesktop)

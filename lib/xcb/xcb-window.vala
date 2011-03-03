@@ -20,10 +20,10 @@
 internal class Maia.XcbWindow : WindowProxy
 {
     // properties
-    private XcbDesktop m_XcbDesktop;
-    private Xcb.Window m_XcbWindow = 0;
-    private bool       m_Foreign = false;
-    private Region     m_Geometry;
+    private unowned XcbDesktop m_XcbDesktop;
+    private Xcb.Window         m_XcbWindow = 0;
+    private bool               m_Foreign = false;
+    private Region             m_Geometry;
 
     // events
     private XcbDamageEvent m_DamageEvent;

@@ -20,7 +20,7 @@
 public class Maia.Window : View
 {
     // properties
-    private WindowProxy m_Proxy;
+    private unowned WindowProxy m_Proxy;
 
     // events
     public override DamageEvent damage_event {
