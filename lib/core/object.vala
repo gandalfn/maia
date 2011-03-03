@@ -92,6 +92,8 @@ public abstract class Maia.Object : GLib.Object
         set {
             if (m_Delegator == null)
             {
+                ref ();
+
                 // object have already a parent
                 if (m_Parent != null)
                 {
@@ -129,6 +131,8 @@ public abstract class Maia.Object : GLib.Object
                     // set parent property
                     m_Parent = value;
                 }
+
+                unref ();
             }
             else
             {
@@ -192,13 +196,27 @@ public abstract class Maia.Object : GLib.Object
     static inline int
     compare_type (Type inA, Type inB)
     {
-        Type aParentType = inA.parent ();
-        Type bParentType = inB.parent ();
+        int ret = inA - inB;
+        if (ret != 0)
+        {
+            Type aParentType = inA.parent ();
+            Type bParentType = inB.parent ();
 
-        return inA == inB         ||
-               aParentType == inB ||
-               inA == bParentType ||
-               aParentType == bParentType ? 0 : inA - inB;
+            if ((aParentType - inB) == 0)
+            {
+                ret = 0;
+            }
+            else if ((inA - bParentType) == 0)
+            {
+                ret = 0;
+            }
+            else if ((aParentType - bParentType) == 0)
+            {
+                ret = 0;
+            }
+        }
+
+        return ret;
     }
 
     static inline int
@@ -276,6 +294,14 @@ public abstract class Maia.Object : GLib.Object
     ~Object ()
     {
         audit ("Maia.~Object", "destroy %s", get_type ().name ());
+        if (m_Childs != null)
+        {
+            int nb = m_Childs.nb_items;
+            for (int cpt = 0; cpt < nb; ++cpt)
+            {
+                m_Childs.at(0).parent = null;
+            }
+        }
     }
 
     protected Object

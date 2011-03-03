@@ -68,12 +68,6 @@ public class Maia.Desktop : Object
         m_Proxy = delegate_cast<DesktopProxy> ();
     }
 
-    ~Desktop ()
-    {
-        foreach (Object child in childs)
-            child.unref ();
-    }
-
     public override bool 
     can_append_child (Object inChild)
     {

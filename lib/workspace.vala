@@ -57,12 +57,6 @@ public class Maia.Workspace : View
         m_Proxy = delegate_cast<WorkspaceProxy> ();
     }
 
-    ~Workspace ()
-    {
-        foreach (Object child in childs)
-            child.unref ();
-    }
-
     public override bool
     can_append_child (Object inChild)
     {

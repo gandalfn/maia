@@ -366,7 +366,9 @@ public class Maia.Array <V> : Collection <V>
     {
         m_Size--;
 
-        m_pContent[inPos].val = null;
+        // vala bug workaround get owned value for it can be freed
+        V val = (owned)m_pContent[inPos].val;
+        val = null;
 
         if (inPos != m_Size)
             GLib.Memory.move (&m_pContent[inPos], &m_pContent[inPos + 1],
