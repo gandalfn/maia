@@ -24,7 +24,7 @@
 [CCode (lower_case_cprefix = "xcb_", cheader_filename = "xcb/xcb.h,xcb/xcbext.h")]
 namespace Xcb {
 	[Compact]
-	[CCode (cname = "xcb_connection_t", cprefix = "xcb_", ref_function = "", unref_function = "", destroy_function = "xcb_disconnect")]
+	[CCode (cname = "xcb_connection_t", cprefix = "xcb_", free_function = "xcb_disconnect")]
 	public class Connection {
 		[CCode (cname = "xcb_connect")]
 		public Connection (string? display = null, out int screen = null);
@@ -215,7 +215,7 @@ namespace Xcb {
 	}
 
 	[Compact]
-	[CCode (cname = "xcb_intern_atom_reply_t", ref_function = "", unref_function = "free")]
+	[CCode (cname = "xcb_intern_atom_reply_t", free_function = "free")]
 	public class InternAtomReply {
 		public uint8 response_type;
 		public uint16 sequence;
@@ -224,7 +224,7 @@ namespace Xcb {
 	}
 
 	[Compact]
-	[CCode (cname = "xcb_get_geometry_reply_t", ref_function = "", unref_function = "free")]
+	[CCode (cname = "xcb_get_geometry_reply_t", free_function = "free")]
 	public class GetGeometryReply {
 		public uint8 response_type;
 		public uint16 sequence;
@@ -238,7 +238,7 @@ namespace Xcb {
 	}
 
 	[Compact]
-	[CCode (cname = "xcb_generic_event_t", ref_function = "", unref_function = "")]
+	[CCode (cname = "xcb_generic_event_t", free_function = "free")]
 	public class GenericEvent {
 		public uint8 response_type;
 		public uint16 sequence;

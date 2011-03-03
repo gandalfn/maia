@@ -83,13 +83,4 @@ internal class Maia.XcbDesktop : DesktopProxy
             return m_Atoms;
         }
     }
-
-    // methods
-    ~Desktop ()
-    {
-        if (m_Connection != null)
-        {
-            m_Connection.disconnect ();
-        }
-    }
 }
