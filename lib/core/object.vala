@@ -199,20 +199,19 @@ public abstract class Maia.Object : GLib.Object
         int ret = inA - inB;
         if (ret != 0)
         {
-            Type aParentType = inA.parent ();
             Type bParentType = inB.parent ();
 
-            if ((aParentType - inB) == 0)
+            if ((inA - bParentType) == 0)
             {
-                ret = 0;
+                return 0;
             }
-            else if ((inA - bParentType) == 0)
+            else
             {
-                ret = 0;
-            }
-            else if ((aParentType - bParentType) == 0)
-            {
-                ret = 0;
+                Type aParentType = inA.parent ();
+                if ((aParentType - inB) == 0 || (aParentType - bParentType) == 0)
+                {
+                    return 0;
+                }
             }
         }
 
