@@ -119,6 +119,11 @@ namespace Xcb {
 		public VoidCookie change_attributes (Connection inConnection, uint32 value_mask, 
 		                                     [CCode (array_length = false)] uint32[]? value_list);
 
+		[CCode (cname = "xcb_get_property", instance_pos = 2.2)]
+		public GetPropertyCookie get_property (Connection inConnection, bool inDelete,
+		                                       Atom inProperty, Atom inType, 
+		                                       uint32 inLongOffset, uint32 inLongLength);
+
 		[CCode (cname = "xcb_change_property", instance_pos = 2.2)]
 		public VoidCookie change_property (Connection inConnection, PropMode prop_mode, 
 		                                   Atom property, Atom type, uint8 format,
@@ -189,6 +194,23 @@ namespace Xcb {
 		public uint16 children_len;
 		[CCode (cname = "xcb_query_tree_children", array_length = false)]
 		public Window* children();
+	}
+
+	[Compact]
+	[CCode (cname = "xcb_get_property_reply_t", ref_function = "", unref_function = "")]
+	public class GetPropertyReply {
+		public uint8  response_type;
+		public uint8  format;
+		public uint16 sequence;
+		public uint32 length;
+		public Atom   type;
+		public uint32 bytes_after;
+		public uint32 value_len;
+
+		[CCode (cname = "xcb_get_property_value")]
+		public void* get_value ();
+		[CCode (cname = "xcb_get_property_value_length")]
+		public int get_length ();
 	}
 
 	[SimpleType]
@@ -499,6 +521,15 @@ namespace Xcb {
 
 		[CCode (cname = "xcb_intern_atom_reply", instance_pos = 1.1)]
 		public InternAtomReply reply (Connection connection, out GenericError? error = null);
+	}
+
+	[SimpleType]
+	[CCode (cname = "xcb_get_property_cookie_t")]
+	public struct GetPropertyCookie {
+		public uint sequence;
+
+		[CCode (cname = "xcb_get_property_reply", instance_pos = 1.1)]
+		public GetPropertyReply reply (Connection connection, out GenericError? error = null);
 	}
 
 	[CCode (cname = "xcb_window_class_t", cprefix = "XCB_WINDOW_CLASS_", has_type_id = false)]

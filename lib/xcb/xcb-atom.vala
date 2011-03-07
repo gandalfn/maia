@@ -18,26 +18,14 @@
  */
 
 // types
+[CCode (cprefix="")]
 internal enum Maia.XcbAtomType
 {
     WM_PROTOCOLS,
     WM_DELETE_WINDOW,
+    WM_TAKE_FOCUS,
 
     N;
-
-    public string?
-    to_string ()
-    {
-        switch (this)
-        {
-            case WM_PROTOCOLS:
-                return "WM_PROTOCOLS";
-            case WM_DELETE_WINDOW:
-                return "WM_DELETE_WINDOW";
-        }
-
-        return null;
-    }
 }
 
 internal struct Maia.XcbAtom

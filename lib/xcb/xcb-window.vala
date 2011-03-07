@@ -25,6 +25,9 @@ internal class Maia.XcbWindow : WindowProxy
     private bool               m_Foreign = false;
     private Region             m_Geometry;
 
+    private XcbWindowICCCMProperties m_ICCCMProperties;
+    private WindowHintType           m_HintType = WindowHintType.NORMAL;
+
     // events
     private XcbDamageEvent m_DamageEvent;
     private XcbDeleteEvent m_DeleteEvent;
@@ -60,21 +63,18 @@ internal class Maia.XcbWindow : WindowProxy
         }
     }
 
+    public override WindowHintType hint_type {
+        get {
+            return m_HintType;
+        }
+    }
+
     // methods
     ~XcbWindow ()
     {
         // Destroy xcb window
         if (!m_Foreign && m_XcbWindow > 0)
             destroy ();
-    }
-
-    private void
-    set_wm_protocols ()
-    {
-        Xcb.Atom[] atoms = { m_XcbDesktop.atoms[XcbAtomType.WM_DELETE_WINDOW] };
-        m_XcbWindow.change_property (m_XcbDesktop.connection, Xcb.PropMode.REPLACE,
-                                     m_XcbDesktop.atoms[XcbAtomType.WM_PROTOCOLS],
-                                     Xcb.AtomType.ATOM, 32, 1, atoms);
     }
 
     public void
@@ -97,11 +97,13 @@ internal class Maia.XcbWindow : WindowProxy
     public void
     create (Region inGeometry)
     {
+        // Get properties
         m_Geometry = inGeometry;
         XcbWorkspace xcb_workspace = (parent as Workspace).delegate_cast<XcbWorkspace> ();
         m_XcbDesktop = (parent.parent as Desktop).delegate_cast<XcbDesktop> ();
         m_XcbWindow = Xcb.Window (m_XcbDesktop.connection);
 
+        // Create xcb window
         m_XcbDesktop.connection.create_window (Xcb.CopyFromParent, 
                                                m_XcbWindow, xcb_workspace.xcb_screen.root,
                                                (int16)inGeometry.clipbox.origin.x,
@@ -113,14 +115,19 @@ internal class Maia.XcbWindow : WindowProxy
                                                Xcb.CW.BACK_PIXEL, 
                                                { xcb_workspace.xcb_screen.black_pixel });
 
+        // Get ICCCM properties
+        m_ICCCMProperties = new XcbWindowICCCMProperties (this);
+        m_ICCCMProperties.delete_event = true;
+        m_ICCCMProperties.take_focus = true;
+        m_ICCCMProperties.commit ();
+
+        // Create events
         m_DamageEvent = new XcbDamageEvent (this);
         m_DeleteEvent = new XcbDeleteEvent (this);
 
         m_XcbWindow.change_attributes (m_XcbDesktop.connection,
                                        Xcb.CW.EVENT_MASK,
                                        { m_DamageEvent.mask | m_DeleteEvent.mask });
-
-        set_wm_protocols ();
 
         m_XcbDesktop.connection.flush ();
     }

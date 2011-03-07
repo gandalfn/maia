@@ -17,6 +17,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+public enum Maia.WindowHintType
+{
+    UNKNOWN,
+    DESKTOP,
+    NORMAL,
+    DIALOG,
+    SPLASH,
+    UTILITY,
+    DND,
+    TOOLTIP,
+    NOTIFICATION,
+    TOOLBAR,
+    COMBO,
+    DROPDOWN_MENU,
+    POPUP_MENU,
+    MENU,
+    DOCK
+}
+
 public class Maia.Window : View
 {
     // properties
@@ -39,6 +58,12 @@ public class Maia.Window : View
     public override Region geometry {
         get {
             return m_Proxy.geometry;
+        }
+    }
+
+    public WindowHintType hint_type {
+        get {
+            return m_Proxy.hint_type;
         }
     }
 
