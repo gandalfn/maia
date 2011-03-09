@@ -17,32 +17,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal class Maia.XcbWindowProperty<V>
+internal class Maia.XcbWindowProperty<V> : Array<V>
 {
+    // types
+    public enum Format
+    {
+        U8  = 8,
+        U16 = 16,
+        U32 = 32
+    }
+
     // properties
-    private XcbWindow             m_Window;
-    private Array<V>              m_Values;
+    private unowned XcbWindow     m_Window;
     private Xcb.Atom              m_Property;
     private Xcb.Atom              m_Type;
-    private uint8                 m_Size;
+    private Format                m_Format;
     private bool                  m_QueryPending = false;
     private Xcb.GetPropertyCookie m_Cookie;
 
     // methods
     public XcbWindowProperty (XcbWindow inWindow, XcbAtomType inProperty,
-                              Xcb.Atom inType, uint8 inSize)
+                              Xcb.Atom inType, Format inFormat)
     {
         m_Window = inWindow;
-        m_Values = new Array<V> ();
         m_Property = m_Window.xcb_desktop.atoms[inProperty];
         m_Type = inType;
-        m_Size = inSize;
+        m_Format = inFormat;
     }
 
     public void
     query ()
     {
-        m_Values.clear ();
+        clear ();
 
         XcbDesktop desktop = m_Window.xcb_desktop;
         m_Cookie = m_Window.xcb_window.get_property (desktop.connection, false,
@@ -59,59 +65,140 @@ internal class Maia.XcbWindowProperty<V>
         {
             XcbDesktop desktop = m_Window.xcb_desktop;
             Xcb.GetPropertyReply reply = m_Cookie.reply (desktop.connection);
-            char* values = reply.get_value ();
-            char* pos = values;
-            int length = reply.get_length ();
-
-            for (int cpt = 0; cpt < length; ++cpt)
+            switch (m_Format)
             {
-                V val = (V)pos;
-                pos = pos + (m_Size / 8);
-                m_Values.insert (val);
-            }
-            GLib.free (values);
+                case Format.U32:
+                    {
+                        uint32* values = reply.get_value ();
+                        int length = reply.get_length ();
 
+                        for (int cpt = 0; cpt < length; ++cpt)
+                        {
+                            V val = (V)(ulong)values[cpt];
+                            insert (val);
+                        }
+                        GLib.free (values);
+                    }
+                    break;
+
+                case Format.U16:
+                    {
+                        uint16* values = reply.get_value ();
+                        int length = reply.get_length ();
+
+                        for (int cpt = 0; cpt < length; ++cpt)
+                        {
+                            V val = (V)(ulong)values[cpt];
+                            insert (val);
+                        }
+                        GLib.free (values);
+                    }
+                    break;
+
+                case Format.U8:
+                    {
+                        if (typeof (V) == typeof (string))
+                        {
+                            string data = (string)reply.get_value ();
+                            int length = reply.get_length ();
+                            if (data.validate (length))
+                            {
+                                string val = data.substring (0, length);
+                                insert (val);
+                            }
+                        }
+                        else
+                        {
+                            uint8* values = reply.get_value ();
+                            int length = reply.get_length ();
+
+                            for (int cpt = 0; cpt < length; ++cpt)
+                            {
+                                V val = (V)(ulong)values[cpt];
+                                insert (val);
+                            }
+                            GLib.free (values);
+                        }
+                    }
+                    break;
+            }
             m_QueryPending = false;
         }
 
-        return m_Values.at (inIndex);
-    }
-
-    public new bool
-    contains (V inValue)
-    {
-        return inValue in m_Values;
-    }
-
-    public void
-    insert (V inValue)
-    {
-        m_Values.insert (inValue);
-    }
-
-    public void
-    remove (V inValue)
-    {
-        m_Values.remove (inValue);
+        return inIndex < nb_items ? at (inIndex) : null;
     }
 
     public void
     commit ()
     {
         XcbDesktop desktop = m_Window.xcb_desktop;
-        int n = m_Values.nb_items;
-        char** values = GLib.Slice.alloc ((m_Size / 8) * n);
-        char* pos = (char*)values;
+        char** values = null;
+        int n = nb_items;
 
-        foreach (V val in m_Values)
+        switch (m_Format)
         {
-            GLib.Memory.copy (pos, &val, (m_Size / 8));
-            pos = pos + (m_Size / 8);
+            case Format.U32:
+                {
+                    uint32* vals = GLib.malloc (sizeof (uint32) * n);
+
+                    int cpt = 0;
+                    foreach (V val in this)
+                    {
+                        vals[cpt] = (uint32)(ulong)val;
+                        cpt++;
+                    }
+                    values = (char**)vals;
+                }
+                break;
+
+             case Format.U16:
+                {
+                    uint16* vals = GLib.malloc (sizeof (uint16) * n);
+
+                    int cpt = 0;
+                    foreach (V val in this)
+                    {
+                        vals[cpt] = (uint16)(ulong)val;
+                        cpt++;
+                    }
+                    values = (char**)vals;
+                }
+                break;
+
+             case Format.U8:
+                {
+                    if (typeof (V) == typeof (string))
+                    {
+                        string data = (string)at(0);
+                        if (data != null)
+                        {
+                            n = data.length;
+                            values = (char**)data.substring (0, n);
+                        }
+                        else
+                        {
+                            n = 0;
+                        }
+                    }
+                    else
+                    {
+                        uint8* vals = GLib.malloc (sizeof (uint8) * n);
+
+                        int cpt = 0;
+                        foreach (V val in this)
+                        {
+                            vals[cpt] = (uint8)(ulong)val;
+                            cpt++;
+                        }
+                        values = (char**)vals;
+                    }
+                }
+                break;
         }
 
         m_Window.xcb_window.change_property (desktop.connection, Xcb.PropMode.REPLACE,
-                                             m_Property, m_Type, m_Size, n, values);
+                                             m_Property, m_Type, m_Format, n, values);
 
-        GLib.Slice.free ((m_Size / 8) * n, values);
+        GLib.free (values);
     }
 }

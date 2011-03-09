@@ -115,10 +115,11 @@ internal class Maia.XcbWindow : WindowProxy
                                                Xcb.CW.BACK_PIXEL, 
                                                { xcb_workspace.xcb_screen.black_pixel });
 
-        // Get ICCCM properties
+        // Set ICCCM properties
         m_ICCCMProperties = new XcbWindowICCCMProperties (this);
         m_ICCCMProperties.delete_event = true;
         m_ICCCMProperties.take_focus = true;
+        m_ICCCMProperties.name = name;
         m_ICCCMProperties.commit ();
 
         // Create events

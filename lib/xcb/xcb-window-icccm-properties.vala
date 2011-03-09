@@ -17,11 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal class Maia.XcbWindowICCCMProperties : Object
+internal class Maia.XcbWindowICCCMProperties
 {
     // properties
-    private XcbWindow                 m_Window;
+    private unowned XcbWindow         m_Window;
     private XcbWindowProperty<uint32> m_WMProtocols;
+    private XcbWindowProperty<string> m_WMName;
     private Xcb.Atom                  m_WMDeleteWindowAtom;
     private Xcb.Atom                  m_WMTakeFocusAtom;
 
@@ -50,12 +51,28 @@ internal class Maia.XcbWindowICCCMProperties : Object
         }
     }
 
+    public string name {
+        get {
+            return m_WMName[0];
+        }
+        set {
+            m_WMName.insert (value);
+        }
+    }
+
     // methods
     public XcbWindowICCCMProperties (XcbWindow inWindow)
     {
         m_Window = inWindow;
-        m_WMProtocols = new XcbWindowProperty<uint32> (inWindow, XcbAtomType.WM_PROTOCOLS,
-                                                       Xcb.AtomType.ATOM, 32);
+        m_WMProtocols = new XcbWindowProperty<uint32> (inWindow,
+                                                       XcbAtomType.WM_PROTOCOLS,
+                                                       Xcb.AtomType.ATOM,
+                                                       XcbWindowProperty.Format.U32);
+
+        m_WMName = new XcbWindowProperty<string> (inWindow,
+                                                  XcbAtomType.WM_NAME,
+                                                  Xcb.AtomType.STRING,
+                                                  XcbWindowProperty.Format.U8);
 
         XcbDesktop desktop = m_Window.xcb_desktop;
         m_WMDeleteWindowAtom = desktop.atoms [XcbAtomType.WM_DELETE_WINDOW];
@@ -67,6 +84,9 @@ internal class Maia.XcbWindowICCCMProperties : Object
     {
         // query wm protocols properties
         m_WMProtocols.query ();
+
+        // query wm name property
+        m_WMName.query ();
     }
 
     public void
@@ -74,5 +94,8 @@ internal class Maia.XcbWindowICCCMProperties : Object
     {
         // commit wm protocols properties
         m_WMProtocols.commit ();
+
+        // commit wm name property
+        m_WMName.commit ();
     }
 }

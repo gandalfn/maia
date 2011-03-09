@@ -24,6 +24,7 @@ internal enum Maia.XcbAtomType
     WM_PROTOCOLS,
     WM_DELETE_WINDOW,
     WM_TAKE_FOCUS,
+    WM_NAME,
 
     N;
 }

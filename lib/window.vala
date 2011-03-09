@@ -67,11 +67,11 @@ public class Maia.Window : View
         }
     }
 
-    public Window (Region inGeometry)
+    public Window (string inName, Region inGeometry)
         requires (Application.get () != null)
     {
         Workspace workspace = Application.get ().desktop.default_workspace;
-        GLib.Object (parent: workspace);
+        GLib.Object (name: inName, parent: workspace);
 
         workspace.create_window (this, inGeometry);
 

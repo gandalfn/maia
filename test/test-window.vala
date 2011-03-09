@@ -21,7 +21,7 @@ public class TestWindow : Maia.Window
 {
     public TestWindow ()
     {
-        base (new Maia.Region.raw_rectangle (0, 0, 200, 200));
+        base ("test-window", new Maia.Region.raw_rectangle (0, 0, 200, 200));
     }
 
     public override void
