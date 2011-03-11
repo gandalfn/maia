@@ -388,7 +388,11 @@ public class Maia.Array <V> : Collection <V>
         if (m_pContent != null)
         {
             for (int cpt = 0; cpt < m_Size; ++cpt)
-                m_pContent[cpt].val = null;
+            {
+                // vala bug workaround get owned value for it can be freed
+                V val = (owned)m_pContent[cpt].val;
+                val = null;
+            }
 
             delete m_pContent;
             m_ReservedSize = 4;
@@ -407,9 +411,47 @@ public class Maia.Array <V> : Collection <V>
      *         couldn't be found
      */
     public Maia.Iterator<V>?
-    get (V inValue)
+    get_iter (V inValue)
     {
         return get_iterator (inValue);
+    }
+
+    /**
+     * Returns the value at the specified index in this collection.
+     *
+     * @param inIndex zero-based index of the value to be returned
+     *
+     * @return the value at the specified index in the collection
+     */
+    public unowned V?
+    get (int inIndex)
+    {
+        return at (inIndex);
+    }
+
+    /**
+     * Sets the item at the specified index in this list.
+     *
+     * @param inIndex zero-based index of the value position
+     * @param inValue the value to add to the collection
+     */
+    public void
+    set (int inIndex, V inValue)
+        requires (inIndex <= m_Size)
+    {
+        if (inIndex < m_Size)
+        {
+            // vala bug workaround get owned value for it can be freed
+            {
+                V val = (owned)m_pContent[inIndex].val;
+                val = null;
+            }
+            m_pContent[inIndex].val = inValue;
+        }
+        else if (inIndex == m_Size)
+        {
+            insert (inValue);
+        }
     }
 
     /**
