@@ -19,13 +19,6 @@
 
 internal class Maia.XcbDeleteEvent : DeleteEvent
 {
-    // accessors
-    public uint32 mask {
-        get {
-            return 0;
-        }
-    }
-
     // methods
     public XcbDeleteEvent (XcbWindow inWindow)
     {

@@ -23,13 +23,6 @@ internal class Maia.XcbDamageEvent : DamageEvent
     private unowned XcbWindow m_Window = null;
     private int m_ListenCount          = 0;
 
-    // accessors
-    public uint32 mask {
-        get {
-            return Xcb.EventMask.EXPOSURE;
-        }
-    }
-
     // static methods
     public static void
     post_event (Xcb.GenericEvent inEvent)

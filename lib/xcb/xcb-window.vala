@@ -151,9 +151,6 @@ internal class Maia.XcbWindow : WindowProxy
         m_DamageEvent = new XcbDamageEvent (this);
         m_DeleteEvent = new XcbDeleteEvent (this);
 
-        // Set attributes
-        m_Attributes.event_mask = m_DamageEvent.mask | m_DeleteEvent.mask;
-
         // Set ICCCM properties
         m_ICCCMProperties.delete_event = true;
         m_ICCCMProperties.take_focus = true;
