@@ -42,6 +42,7 @@ libmaia_core_la_SOURCES = \
     rectangle.vala \
     region.vala \
     task.vala \
+    task-once.vala \
     watch.vala \
     timeout.vala \
     tictac.vala \
