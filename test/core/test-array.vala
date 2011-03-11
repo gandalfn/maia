@@ -110,7 +110,7 @@ public class Maia.TestArray : Maia.TestCase
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
             int index = Test.rand_int_range (0, NB_KEYS - 1);
-            Iterator<int> found = m_Array[m_Keys[index]];
+            Iterator<int> found = m_Array.get_iter (m_Keys[index]);
             int size = m_Array.nb_items;
             if (found != null)
             {

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal class Maia.XcbWindowProperty<V> : Array<V>
+internal class Maia.XcbWindowProperty<V> : XcbRequest
 {
     // types
     public enum Format
@@ -28,121 +28,103 @@ internal class Maia.XcbWindowProperty<V> : Array<V>
     }
 
     // properties
-    private unowned XcbWindow     m_Window;
     private Xcb.Atom              m_Property;
     private Xcb.Atom              m_Type;
     private Format                m_Format;
-    private bool                  m_QueryPending = false;
-    private Xcb.GetPropertyCookie m_Cookie;
+    private Array<V>              m_Values;
 
     // methods
     public XcbWindowProperty (XcbWindow inWindow, XcbAtomType inProperty,
                               Xcb.Atom inType, Format inFormat)
     {
-        m_Window = inWindow;
-        m_Property = m_Window.xcb_desktop.atoms[inProperty];
+        base (inWindow);
+        m_Property = window.xcb_desktop.atoms[inProperty];
         m_Type = inType;
         m_Format = inFormat;
+        m_Values = new Array<V> ();
     }
 
-    public void
-    query ()
+    protected override void
+    on_reply ()
     {
-        clear ();
+        m_Values.clear ();
 
-        XcbDesktop desktop = m_Window.xcb_desktop;
-        m_Cookie = m_Window.xcb_window.get_property (desktop.connection, false,
-                                                     m_Property, m_Type,
-                                                     0, uint32.MAX);
-
-        m_QueryPending = true;
-    }
-
-    public new unowned V?
-    @get (int inIndex)
-    {
-        if (m_QueryPending)
-        {
-            XcbDesktop desktop = m_Window.xcb_desktop;
-            Xcb.GetPropertyReply reply = m_Cookie.reply (desktop.connection);
-            switch (m_Format)
-            {
-                case Format.U32:
-                    {
-                        uint32* values = reply.get_value ();
-                        int length = reply.get_length ();
-
-                        for (int cpt = 0; cpt < length; ++cpt)
-                        {
-                            V val = (V)(ulong)values[cpt];
-                            insert (val);
-                        }
-                        GLib.free (values);
-                    }
-                    break;
-
-                case Format.U16:
-                    {
-                        uint16* values = reply.get_value ();
-                        int length = reply.get_length ();
-
-                        for (int cpt = 0; cpt < length; ++cpt)
-                        {
-                            V val = (V)(ulong)values[cpt];
-                            insert (val);
-                        }
-                        GLib.free (values);
-                    }
-                    break;
-
-                case Format.U8:
-                    {
-                        if (typeof (V) == typeof (string))
-                        {
-                            string data = (string)reply.get_value ();
-                            int length = reply.get_length ();
-                            if (data.validate (length))
-                            {
-                                string val = data.substring (0, length);
-                                insert (val);
-                            }
-                        }
-                        else
-                        {
-                            uint8* values = reply.get_value ();
-                            int length = reply.get_length ();
-
-                            for (int cpt = 0; cpt < length; ++cpt)
-                            {
-                                V val = (V)(ulong)values[cpt];
-                                insert (val);
-                            }
-                            GLib.free (values);
-                        }
-                    }
-                    break;
-            }
-            m_QueryPending = false;
-        }
-
-        return inIndex < nb_items ? at (inIndex) : null;
-    }
-
-    public void
-    commit ()
-    {
-        XcbDesktop desktop = m_Window.xcb_desktop;
-        char** values = null;
-        int n = nb_items;
+        XcbDesktop desktop = window.xcb_desktop;
+        Xcb.GetPropertyReply reply = ((Xcb.GetPropertyCookie?)cookie).reply (desktop.connection);
 
         switch (m_Format)
         {
             case Format.U32:
                 {
-                    uint32* vals = GLib.malloc (sizeof (uint32) * n);
+                    uint32* values = reply.get_value ();
+                    int length = reply.get_length ();
+
+                    for (int cpt = 0; cpt < length; ++cpt)
+                    {
+                        V val = (V)(ulong)values[cpt];
+                        m_Values.insert (val);
+                    }
+                    delete values;
+                }
+                break;
+
+            case Format.U16:
+                {
+                    uint16* values = reply.get_value ();
+                    int length = reply.get_length ();
+
+                    for (int cpt = 0; cpt < length; ++cpt)
+                    {
+                        V val = (V)(ulong)values[cpt];
+                        m_Values.insert (val);
+                    }
+                    delete values;
+                }
+                break;
+
+            case Format.U8:
+                {
+                    if (typeof (V) == typeof (string))
+                    {
+                        string data = (string)reply.get_value ();
+                        int length = reply.get_length ();
+                        if (data.validate (length))
+                        {
+                            m_Values[0] = data.substring (0, length);
+                        }
+                    }
+                    else
+                    {
+                        uint8* values = reply.get_value ();
+                        int length = reply.get_length ();
+
+                        for (int cpt = 0; cpt < length; ++cpt)
+                        {
+                            V val = (V)(ulong)values[cpt];
+                            m_Values.insert (val);
+                        }
+                        delete values;
+                    }
+                }
+                break;
+        }
+    }
+
+    public override void
+    on_commit ()
+    {
+        XcbDesktop desktop = window.xcb_desktop;
+        char** values = null;
+        int n = m_Values.nb_items;
+
+        switch (m_Format)
+        {
+            case Format.U32:
+                {
+                    uint32* vals = new uint32[n];
 
                     int cpt = 0;
-                    foreach (V val in this)
+                    foreach (V val in m_Values)
                     {
                         vals[cpt] = (uint32)(ulong)val;
                         cpt++;
@@ -153,10 +135,10 @@ internal class Maia.XcbWindowProperty<V> : Array<V>
 
              case Format.U16:
                 {
-                    uint16* vals = GLib.malloc (sizeof (uint16) * n);
+                    uint16* vals = new uint16[n];
 
                     int cpt = 0;
-                    foreach (V val in this)
+                    foreach (V val in m_Values)
                     {
                         vals[cpt] = (uint16)(ulong)val;
                         cpt++;
@@ -169,7 +151,7 @@ internal class Maia.XcbWindowProperty<V> : Array<V>
                 {
                     if (typeof (V) == typeof (string))
                     {
-                        string data = (string)at(0);
+                        string data = (string)m_Values[0];
                         if (data != null)
                         {
                             n = data.length;
@@ -182,10 +164,10 @@ internal class Maia.XcbWindowProperty<V> : Array<V>
                     }
                     else
                     {
-                        uint8* vals = GLib.malloc (sizeof (uint8) * n);
+                        uint8* vals = new uint8[n];
 
                         int cpt = 0;
-                        foreach (V val in this)
+                        foreach (V val in m_Values)
                         {
                             vals[cpt] = (uint8)(ulong)val;
                             cpt++;
@@ -196,9 +178,52 @@ internal class Maia.XcbWindowProperty<V> : Array<V>
                 break;
         }
 
-        m_Window.xcb_window.change_property (desktop.connection, Xcb.PropMode.REPLACE,
-                                             m_Property, m_Type, m_Format, n, values);
+        window.xcb_window.change_property (desktop.connection, Xcb.PropMode.REPLACE,
+                                           m_Property, m_Type, m_Format, n, values);
 
-        GLib.free (values);
+        delete values;
+
+        base.on_commit ();
+    }
+
+    public override void
+    query ()
+    {
+        XcbDesktop desktop = window.xcb_desktop;
+        cookie = window.xcb_window.get_property (desktop.connection, false,
+                                                 m_Property, m_Type,
+                                                 0, uint32.MAX);
+    }
+
+    public new unowned V?
+    @get (int inIndex)
+    {
+        query_finish ();
+
+        return inIndex < m_Values.nb_items ? m_Values[inIndex] : null;
+    }
+
+    public new void
+    @set (int inIndex, V inValue)
+    {
+        m_Values[inIndex] = inValue;
+    }
+
+    public new bool
+    contains (V inValue)
+    {
+        return inValue in m_Values;
+    }
+
+    public void
+    insert (V inValue)
+    {
+        m_Values.insert (inValue);
+    }
+
+    public void
+    remove (V inValue)
+    {
+        m_Values.remove (inValue);
     }
 }

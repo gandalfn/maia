@@ -25,6 +25,7 @@ internal class Maia.XcbWindow : WindowProxy
     private bool               m_Foreign = false;
     private Region             m_Geometry;
 
+    private XcbWindowAttributes      m_Attributes;
     private XcbWindowICCCMProperties m_ICCCMProperties;
     private WindowHintType           m_HintType = WindowHintType.NORMAL;
 
@@ -63,7 +64,19 @@ internal class Maia.XcbWindow : WindowProxy
         }
     }
 
-    public override WindowHintType hint_type {
+    public XcbWindowAttributes attributes {
+        get {
+            return m_Attributes;
+        }
+    }
+
+    public XcbWindowICCCMProperties icccm {
+        get {
+            return m_ICCCMProperties;
+        }
+    }
+
+   public override WindowHintType hint_type {
         get {
             return m_HintType;
         }
@@ -90,6 +103,19 @@ internal class Maia.XcbWindow : WindowProxy
                                                reply.width + (reply.border_width * 2),
                                                reply.height + (reply.border_width * 2));
 
+        // Create attributes fetcher
+        m_Attributes = new XcbWindowAttributes (this);
+
+        // Create ICCCM properties fetcher
+        m_ICCCMProperties = new XcbWindowICCCMProperties (this);
+
+        // query attributes
+        m_Attributes.query ();
+
+        // query iccm properties
+        m_ICCCMProperties.query ();
+
+        // create events
         m_DamageEvent = new XcbDamageEvent (this);
         m_DeleteEvent = new XcbDeleteEvent (this);
     }
@@ -115,43 +141,51 @@ internal class Maia.XcbWindow : WindowProxy
                                                Xcb.CW.BACK_PIXEL, 
                                                { xcb_workspace.xcb_screen.black_pixel });
 
-        // Set ICCCM properties
+        // Create attributes fetcher
+        m_Attributes = new XcbWindowAttributes (this);
+
+        // Create ICCCM properties fetcher
         m_ICCCMProperties = new XcbWindowICCCMProperties (this);
-        m_ICCCMProperties.delete_event = true;
-        m_ICCCMProperties.take_focus = true;
-        m_ICCCMProperties.name = name;
-        m_ICCCMProperties.commit ();
 
         // Create events
         m_DamageEvent = new XcbDamageEvent (this);
         m_DeleteEvent = new XcbDeleteEvent (this);
 
-        m_XcbWindow.change_attributes (m_XcbDesktop.connection,
-                                       Xcb.CW.EVENT_MASK,
-                                       { m_DamageEvent.mask | m_DeleteEvent.mask });
+        // Set attributes
+        m_Attributes.event_mask = m_DamageEvent.mask | m_DeleteEvent.mask;
 
-        m_XcbDesktop.connection.flush ();
+        // Set ICCCM properties
+        m_ICCCMProperties.delete_event = true;
+        m_ICCCMProperties.take_focus = true;
+        m_ICCCMProperties.name = name;
+
+        // Commit requests
+        m_ICCCMProperties.commit ();
+        m_Attributes.commit ();
+
+        // Flush connection
+        m_XcbDesktop.flush ();
     }
 
     public override void
     show ()
     {
         m_XcbWindow.map (m_XcbDesktop.connection);
-        m_XcbDesktop.connection.flush ();
+        m_XcbDesktop.flush ();
     }
 
     public override void
     hide ()
     {
         //m_XcbWindow.unmap (m_XcbDesktop.connection);
-        m_XcbDesktop.connection.flush ();
+        m_XcbDesktop.flush ();
     }
 
     public override void
     destroy ()
     {
         m_XcbWindow.destroy(m_XcbDesktop.connection);
-        m_XcbDesktop.connection.flush ();
+        m_XcbDesktop.flush ();
         m_XcbWindow = 0;
     }
 }

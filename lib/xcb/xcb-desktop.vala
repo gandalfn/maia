@@ -24,6 +24,7 @@ internal class Maia.XcbDesktop : DesktopProxy
     private int            m_DefaultScreenNum = 0;
 
     private XcbAtoms       m_Atoms            = null;
+    private TaskOnce       m_FlushTask        = null;
 
     // accessors
     public Xcb.Connection connection {
@@ -81,6 +82,26 @@ internal class Maia.XcbDesktop : DesktopProxy
     public XcbAtoms atoms {
         get {
             return m_Atoms;
+        }
+    }
+
+    // methods
+    public void
+    flush (bool inSync = false)
+    {
+        if (!inSync && m_FlushTask == null)
+        {
+            m_FlushTask = new TaskOnce (() => {
+                m_Connection.flush ();
+            });
+            m_FlushTask.finished.connect (() => {
+                m_FlushTask = null;
+            });
+            m_FlushTask.parent = Dispatcher.self () == null ? Application.get ().dispatcher : Dispatcher.self ();
+        }
+        else if (inSync)
+        {
+            m_Connection.flush ();
         }
     }
 }

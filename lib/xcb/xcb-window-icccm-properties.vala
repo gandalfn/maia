@@ -17,10 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal class Maia.XcbWindowICCCMProperties
+internal class Maia.XcbWindowICCCMProperties : XcbRequest
 {
     // properties
-    private unowned XcbWindow         m_Window;
     private XcbWindowProperty<uint32> m_WMProtocols;
     private XcbWindowProperty<string> m_WMName;
     private Xcb.Atom                  m_WMDeleteWindowAtom;
@@ -51,19 +50,19 @@ internal class Maia.XcbWindowICCCMProperties
         }
     }
 
-    public string name {
+    public override string name {
         get {
             return m_WMName[0];
         }
         set {
-            m_WMName.insert (value);
+            m_WMName[0] = value;
         }
     }
 
     // methods
     public XcbWindowICCCMProperties (XcbWindow inWindow)
     {
-        m_Window = inWindow;
+        base (inWindow);
         m_WMProtocols = new XcbWindowProperty<uint32> (inWindow,
                                                        XcbAtomType.WM_PROTOCOLS,
                                                        Xcb.AtomType.ATOM,
@@ -74,12 +73,12 @@ internal class Maia.XcbWindowICCCMProperties
                                                   Xcb.AtomType.STRING,
                                                   XcbWindowProperty.Format.U8);
 
-        XcbDesktop desktop = m_Window.xcb_desktop;
+        XcbDesktop desktop = inWindow.xcb_desktop;
         m_WMDeleteWindowAtom = desktop.atoms [XcbAtomType.WM_DELETE_WINDOW];
         m_WMTakeFocusAtom = desktop.atoms [XcbAtomType.WM_TAKE_FOCUS];
     }
 
-    public void
+    public override void
     query ()
     {
         // query wm protocols properties
@@ -89,7 +88,7 @@ internal class Maia.XcbWindowICCCMProperties
         m_WMName.query ();
     }
 
-    public void
+    public override void
     commit ()
     {
         // commit wm protocols properties

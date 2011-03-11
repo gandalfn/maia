@@ -34,6 +34,8 @@ libmaia_xcb_backend_la_SOURCES = \
     xcb-desktop.vala \
     xcb-workspace.vala \
     xcb-window.vala \
+    xcb-request.vala \
+    xcb-window-attributes.vala \
     xcb-window-property.vala \
     xcb-window-icccm-properties.vala \
     xcb-damage-event.vala \

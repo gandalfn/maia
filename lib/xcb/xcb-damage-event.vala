@@ -19,6 +19,10 @@
 
 internal class Maia.XcbDamageEvent : DamageEvent
 {
+    // properties
+    private unowned XcbWindow m_Window = null;
+    private int m_ListenCount          = 0;
+
     // accessors
     public uint32 mask {
         get {
@@ -41,10 +45,22 @@ internal class Maia.XcbDamageEvent : DamageEvent
     public XcbDamageEvent (XcbWindow inWindow)
     {
         base (Xcb.EXPOSE, ((uint)inWindow.xcb_window).to_pointer ());
+        m_Window = inWindow;
     }
 
     public XcbDamageEvent.from_event (Xcb.ExposeEvent inEvent)
     {
         base (Xcb.EXPOSE, ((uint)inEvent.window).to_pointer ());
+    }
+
+    protected override void
+    on_listen ()
+    {
+        if (m_Window != null && m_ListenCount == 0)
+        {
+            m_Window.attributes.event_mask |= Xcb.EventMask.EXPOSURE;
+            m_Window.attributes.commit ();
+        }
+        ++m_ListenCount;
     }
 }

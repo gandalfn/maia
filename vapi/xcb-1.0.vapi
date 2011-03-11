@@ -115,6 +115,9 @@ namespace Xcb {
 		[CCode (cname = "xcb_destroy_window", instance_pos = -1)]
 		public VoidCookie destroy (Connection inConnection);
 
+		[CCode (cname = "xcb_get_window_attributes", instance_pos = 1.1)]
+		public GetWindowAttributesCookie get_attributes (Connection inConnection);
+
 		[CCode (cname = "xcb_change_window_attributes", instance_pos = 1.1)]
 		public VoidCookie change_attributes (Connection inConnection, uint32 value_mask, 
 		                                     [CCode (array_length = false)] uint32[]? value_list);
@@ -194,6 +197,29 @@ namespace Xcb {
 		public uint16 children_len;
 		[CCode (cname = "xcb_query_tree_children", array_length = false)]
 		public Window* children();
+	}
+
+	[Compact]
+	[CCode (cname = "xcb_get_window_attributes_reply_t", ref_function = "", unref_function = "")]
+	public class GetWindowAttributesReply {
+		public uint8    response_type;
+		public uint8    backing_store;
+		public uint16   sequence;
+		public uint32   length;
+		public VisualID visual;
+		public uint16   _class;
+		public uint8    bit_gravity;
+		public uint8    win_gravity;
+		public uint32   backing_planes;
+		public uint32   backing_pixel;
+		public uint8    save_under;
+		public uint8    map_is_installed;
+		public uint8    map_state;
+		public uint8    override_redirect;
+//		public Colormap colormap;
+		public uint32   all_event_masks;
+		public uint32   your_event_mask;
+		public uint32   do_not_propagate_mask;
 	}
 
 	[Compact]
@@ -501,33 +527,33 @@ namespace Xcb {
 
 	[SimpleType]
 	[CCode (cname = "xcb_query_tree_cookie_t")]
-	public struct QueryTreeCookie {
-		public uint sequence;
+	public struct QueryTreeCookie : VoidCookie {
+	}
+
+	[SimpleType]
+	[CCode (cname = "xcb_get_window_attributes_cookie_t")]
+	public struct GetWindowAttributesCookie : VoidCookie {
+		[CCode (cname = "xcb_get_window_attributes_reply", instance_pos = 1.1)]
+		public GetWindowAttributesReply reply (Connection connection, out GenericError? error = null);
 	}
 
 	[SimpleType]
 	[CCode (cname = "xcb_get_geometry_cookie_t")]
-	public struct GetGeometryCookie {
-		public uint sequence;
-
+	public struct GetGeometryCookie : VoidCookie {
 		[CCode (cname = "xcb_get_geometry_reply", instance_pos = 1.1)]
 		public GetGeometryReply reply (Connection connection, out GenericError? error = null);
 	}
 
 	[SimpleType]
 	[CCode (cname = "xcb_intern_atom_cookie_t")]
-	public struct InternAtomCookie {
-		public uint sequence;
-
+	public struct InternAtomCookie : VoidCookie {
 		[CCode (cname = "xcb_intern_atom_reply", instance_pos = 1.1)]
 		public InternAtomReply reply (Connection connection, out GenericError? error = null);
 	}
 
 	[SimpleType]
 	[CCode (cname = "xcb_get_property_cookie_t")]
-	public struct GetPropertyCookie {
-		public uint sequence;
-
+	public struct GetPropertyCookie : VoidCookie {
 		[CCode (cname = "xcb_get_property_reply", instance_pos = 1.1)]
 		public GetPropertyReply reply (Connection connection, out GenericError? error = null);
 	}
