@@ -68,6 +68,11 @@ public class Maia.Event<A> : Object
         GLib.Object (id: inId, owner: inOwner);
     }
 
+    protected virtual void
+    on_listen ()
+    {
+    }
+
     /**
      * Post event
      *
@@ -93,5 +98,6 @@ public class Maia.Event<A> : Object
     {
         EventListener event_listener = new EventListener (this, inHandler);
         inDispatcher.add_listener (event_listener);
+        on_listen ();
     }
 }
