@@ -38,6 +38,7 @@ libmaia_xcb_backend_la_SOURCES = \
     xcb-window-attributes.vala \
     xcb-window-property.vala \
     xcb-window-icccm-properties.vala \
+    xcb-window-ewmh-properties.vala \
     xcb-damage-event.vala \
     xcb-delete-event.vala \
     xcb-client-message-event.vala \

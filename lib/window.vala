@@ -65,6 +65,9 @@ public class Maia.Window : View
         get {
             return m_Proxy.hint_type;
         }
+        set {
+            m_Proxy.hint_type = value;
+        }
     }
 
     public Window (string inName, Region inGeometry)

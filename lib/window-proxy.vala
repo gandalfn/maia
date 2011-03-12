@@ -23,7 +23,7 @@ public abstract class Maia.WindowProxy : View
     public abstract DeleteEvent delete_event { get; }
 
     // accessors
-    public abstract WindowHintType hint_type { get; }
+    public abstract WindowHintType hint_type { get; set; }
 
     // methods
     public abstract void show ();

@@ -27,7 +27,7 @@ internal class Maia.XcbWindow : WindowProxy
 
     private XcbWindowAttributes      m_Attributes;
     private XcbWindowICCCMProperties m_ICCCMProperties;
-    private WindowHintType           m_HintType = WindowHintType.NORMAL;
+    private XcbWindowEWMHProperties  m_EWMHProperties;
 
     // events
     private XcbDamageEvent m_DamageEvent;
@@ -76,9 +76,12 @@ internal class Maia.XcbWindow : WindowProxy
         }
     }
 
-   public override WindowHintType hint_type {
+    public override WindowHintType hint_type {
         get {
-            return m_HintType;
+            return m_EWMHProperties.hint_type;
+        }
+        set {
+            m_EWMHProperties.hint_type = value;
         }
     }
 
@@ -109,11 +112,17 @@ internal class Maia.XcbWindow : WindowProxy
         // Create ICCCM properties fetcher
         m_ICCCMProperties = new XcbWindowICCCMProperties (this);
 
+        // Create EWMH properties fetcher
+        m_EWMHProperties = new XcbWindowEWMHProperties (this);
+
         // query attributes
         m_Attributes.query ();
 
         // query iccm properties
         m_ICCCMProperties.query ();
+
+        // query ewmh properties
+        m_EWMHProperties.query ();
 
         // create events
         m_DamageEvent = new XcbDamageEvent (this);
@@ -147,6 +156,9 @@ internal class Maia.XcbWindow : WindowProxy
         // Create ICCCM properties fetcher
         m_ICCCMProperties = new XcbWindowICCCMProperties (this);
 
+        // Create EWMH properties fetcher
+        m_EWMHProperties = new XcbWindowEWMHProperties (this);
+
         // Create events
         m_DamageEvent = new XcbDamageEvent (this);
         m_DeleteEvent = new XcbDeleteEvent (this);
@@ -156,9 +168,13 @@ internal class Maia.XcbWindow : WindowProxy
         m_ICCCMProperties.take_focus = true;
         m_ICCCMProperties.name = name;
 
+        // Set EWMH properties
+        m_EWMHProperties.hint_type = WindowHintType.NORMAL;
+
         // Commit requests
-        m_ICCCMProperties.commit ();
         m_Attributes.commit ();
+        m_ICCCMProperties.commit ();
+        m_EWMHProperties.commit ();
 
         // Flush connection
         m_XcbDesktop.flush ();
