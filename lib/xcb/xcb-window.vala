@@ -76,7 +76,7 @@ internal class Maia.XcbWindow : WindowProxy
         }
     }
 
-    public override WindowHintType hint_type {
+    public override Window.HintType hint_type {
         get {
             return m_EWMHProperties.hint_type;
         }
@@ -169,7 +169,8 @@ internal class Maia.XcbWindow : WindowProxy
         m_ICCCMProperties.name = name;
 
         // Set EWMH properties
-        m_EWMHProperties.hint_type = WindowHintType.NORMAL;
+        m_EWMHProperties.hint_type = Window.HintType.NORMAL;
+        m_EWMHProperties.name = name;
 
         // Commit requests
         m_Attributes.commit ();

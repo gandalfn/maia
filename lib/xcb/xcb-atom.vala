@@ -26,6 +26,8 @@ internal enum Maia.XcbAtomType
     WM_TAKE_FOCUS,
     WM_NAME,
 
+    _NET_WM_NAME,
+
     _NET_WM_WINDOW_TYPE,
     _NET_WM_WINDOW_TYPE_DESKTOP,
     _NET_WM_WINDOW_TYPE_DOCK,
@@ -40,7 +42,6 @@ internal enum Maia.XcbAtomType
     _NET_WM_WINDOW_TYPE_NOTIFICATION,
     _NET_WM_WINDOW_TYPE_COMBO,
     _NET_WM_WINDOW_TYPE_DND,
-
     _NET_WM_WINDOW_TYPE_NORMAL,
 
     N;

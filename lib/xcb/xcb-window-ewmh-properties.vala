@@ -21,87 +21,97 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
 {
     // properties
     private XcbWindowProperty<uint32> m_HintType;
+    private XcbWindowProperty<string> m_WMName;
 
     // accessors
-    public WindowHintType hint_type {
+    public Window.HintType hint_type {
         get {
             if (m_HintType[0] == window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_DESKTOP])
-                return WindowHintType.DESKTOP;
+                return Window.HintType.DESKTOP;
             else if (m_HintType[0] == window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_NORMAL])
-                return WindowHintType.NORMAL;
+                return Window.HintType.NORMAL;
             else if (m_HintType[0] == window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_DIALOG])
-                return WindowHintType.DIALOG;
+                return Window.HintType.DIALOG;
             else if (m_HintType[0] == window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_SPLASH])
-                return WindowHintType.SPLASH;
+                return Window.HintType.SPLASH;
             else if (m_HintType[0] == window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_UTILITY])
-                return WindowHintType.UTILITY;
+                return Window.HintType.UTILITY;
             else if (m_HintType[0] == window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_DND])
-                return WindowHintType.DND;
+                return Window.HintType.DND;
             else if (m_HintType[0] == window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_TOOLTIP])
-                return WindowHintType.TOOLTIP;
+                return Window.HintType.TOOLTIP;
             else if (m_HintType[0] == window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_NOTIFICATION])
-                return WindowHintType.NOTIFICATION;
+                return Window.HintType.NOTIFICATION;
             else if (m_HintType[0] == window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_TOOLBAR])
-                return WindowHintType.TOOLBAR;
+                return Window.HintType.TOOLBAR;
             else if (m_HintType[0] == window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_COMBO])
-                return WindowHintType.COMBO;
+                return Window.HintType.COMBO;
             else if (m_HintType[0] == window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_DROPDOWN_MENU])
-                return WindowHintType.DROPDOWN_MENU;
+                return Window.HintType.DROPDOWN_MENU;
             else if (m_HintType[0] == window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_POPUP_MENU])
-                return WindowHintType.POPUP_MENU;
+                return Window.HintType.POPUP_MENU;
             else if (m_HintType[0] == window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_MENU])
-                return WindowHintType.MENU;
+                return Window.HintType.MENU;
             else if (m_HintType[0] == window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_DOCK])
-                return WindowHintType.DOCK;
+                return Window.HintType.DOCK;
             else
-                return WindowHintType.UNKNOWN;
+                return Window.HintType.UNKNOWN;
         }
         set {
             switch (value)
             {
-                case WindowHintType.DESKTOP:
+                case Window.HintType.DESKTOP:
                     m_HintType[0] = window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_DESKTOP];
                     break;
-                case WindowHintType.NORMAL:
+                case Window.HintType.NORMAL:
                     m_HintType[0] = window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_NORMAL];
                     break;
-                case WindowHintType.DIALOG:
+                case Window.HintType.DIALOG:
                     m_HintType[0] = window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_DIALOG];
                     break;
-                case WindowHintType.SPLASH:
+                case Window.HintType.SPLASH:
                     m_HintType[0] = window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_SPLASH];
                     break;
-                case WindowHintType.UTILITY:
+                case Window.HintType.UTILITY:
                     m_HintType[0] = window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_UTILITY];
                     break;
-                case WindowHintType.DND:
+                case Window.HintType.DND:
                     m_HintType[0] = window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_DND];
                     break;
-                case WindowHintType.TOOLTIP:
+                case Window.HintType.TOOLTIP:
                     m_HintType[0] = window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_TOOLTIP];
                     break;
-                case WindowHintType.NOTIFICATION:
+                case Window.HintType.NOTIFICATION:
                     m_HintType[0] = window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_NOTIFICATION];
                     break;
-                case WindowHintType.TOOLBAR:
+                case Window.HintType.TOOLBAR:
                     m_HintType[0] = window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_TOOLBAR];
                     break;
-                case WindowHintType.COMBO:
+                case Window.HintType.COMBO:
                     m_HintType[0] = window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_COMBO];
                     break;
-                case WindowHintType.DROPDOWN_MENU:
+                case Window.HintType.DROPDOWN_MENU:
                     m_HintType[0] = window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_DROPDOWN_MENU];
                     break;
-                case WindowHintType.POPUP_MENU:
+                case Window.HintType.POPUP_MENU:
                     m_HintType[0] = window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_POPUP_MENU];
                     break;
-                case WindowHintType.MENU:
+                case Window.HintType.MENU:
                     m_HintType[0] = window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_MENU];
                     break;
-                case WindowHintType.DOCK:
+                case Window.HintType.DOCK:
                     m_HintType[0] = window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_DOCK];
                     break;
             }
+        }
+    }
+
+    public override string name {
+        get {
+            return m_WMName[0];
+        }
+        set {
+            m_WMName[0] = value;
         }
     }
 
@@ -114,6 +124,11 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
                                                     XcbAtomType._NET_WM_WINDOW_TYPE,
                                                     Xcb.AtomType.ATOM,
                                                     XcbWindowProperty.Format.U32);
+
+        m_WMName = new XcbWindowProperty<string> (inWindow,
+                                                  XcbAtomType._NET_WM_NAME,
+                                                  Xcb.AtomType.STRING,
+                                                  XcbWindowProperty.Format.U8);
     }
 
     public override void
@@ -121,6 +136,9 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
     {
         // query hint type property
         m_HintType.query ();
+
+        // query name property
+        m_WMName.query ();
     }
 
     public override void
@@ -128,5 +146,8 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
     {
         // commit hint type property
         m_HintType.commit ();
+
+        // commit name property
+        m_WMName.commit ();
     }
 }

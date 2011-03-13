@@ -17,27 +17,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public enum Maia.WindowHintType
-{
-    UNKNOWN,
-    DESKTOP,
-    NORMAL,
-    DIALOG,
-    SPLASH,
-    UTILITY,
-    DND,
-    TOOLTIP,
-    NOTIFICATION,
-    TOOLBAR,
-    COMBO,
-    DROPDOWN_MENU,
-    POPUP_MENU,
-    MENU,
-    DOCK
-}
-
 public class Maia.Window : View
 {
+    // types
+    public enum HintType
+    {
+        UNKNOWN,
+        DESKTOP,
+        NORMAL,
+        DIALOG,
+        SPLASH,
+        UTILITY,
+        DND,
+        TOOLTIP,
+        NOTIFICATION,
+        TOOLBAR,
+        COMBO,
+        DROPDOWN_MENU,
+        POPUP_MENU,
+        MENU,
+        DOCK
+    }
+
     // properties
     private unowned WindowProxy m_Proxy;
 
@@ -61,7 +62,7 @@ public class Maia.Window : View
         }
     }
 
-    public WindowHintType hint_type {
+    public HintType hint_type {
         get {
             return m_Proxy.hint_type;
         }
@@ -70,6 +71,7 @@ public class Maia.Window : View
         }
     }
 
+    // methods
     public Window (string inName, Region inGeometry)
         requires (Application.get () != null)
     {
