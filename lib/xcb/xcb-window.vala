@@ -191,7 +191,7 @@ internal class Maia.XcbWindow : WindowProxy
     public override void
     hide ()
     {
-        //m_XcbWindow.unmap (m_XcbDesktop.connection);
+        m_XcbWindow.unmap (m_XcbDesktop.connection);
         m_XcbDesktop.flush ();
     }
 

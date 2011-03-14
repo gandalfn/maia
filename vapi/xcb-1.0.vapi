@@ -112,6 +112,9 @@ namespace Xcb {
 		[CCode (cname = "xcb_map_window", instance_pos = -1)]
 		public VoidCookie map (Connection inConnection);
 
+		[CCode (cname = "xcb_unmap_window", instance_pos = -1)]
+		public VoidCookie unmap (Connection inConnection);
+
 		[CCode (cname = "xcb_destroy_window", instance_pos = -1)]
 		public VoidCookie destroy (Connection inConnection);
 
