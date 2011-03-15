@@ -73,9 +73,9 @@ public class Maia.Window : View
 
     // methods
     public Window (string inName, Region inGeometry)
-        requires (Application.get () != null)
+        requires (Application.self != null)
     {
-        Workspace workspace = Application.get ().desktop.default_workspace;
+        Workspace workspace = Application.default.desktop.default_workspace;
         GLib.Object (name: inName, parent: workspace);
 
         workspace.create_window (this, inGeometry);
@@ -83,7 +83,7 @@ public class Maia.Window : View
         m_Proxy = delegate_cast<WindowProxy> ();
         assert (m_Proxy != null);
 
-        unowned Dispatcher? dispatcher = Dispatcher.self () == null ? Application.get ().dispatcher : Dispatcher.self ();
+        unowned Dispatcher? dispatcher = Application.self;
         m_Proxy.damage_event.listen (on_damage_event, dispatcher);
         m_Proxy.delete_event.listen (on_delete_event, dispatcher);
     }

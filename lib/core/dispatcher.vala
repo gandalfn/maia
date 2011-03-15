@@ -29,6 +29,19 @@ public class Maia.Dispatcher : Task
     private EventDispatcher  m_EventDispatcher = null;
     private Event<EventArgs> m_FinishEvent = null;
 
+    // Accessors
+    public static unowned Dispatcher? self {
+        get {
+            lock (s_Dispatchers)
+            {
+                return s_Dispatchers.search<unowned GLib.Thread<void*>> (GLib.Thread.self<void*> (),
+                                                                         (v, a) => {
+                                                                             return direct_compare (v.thread_id, a);
+                                                                         });
+            }
+        }
+    }
+
     // Methods
     static construct
     {
@@ -36,18 +49,6 @@ public class Maia.Dispatcher : Task
         s_Dispatchers.compare_func = (a, b) => {
             return direct_compare (a.thread_id, b.thread_id);
         };
-    }
-
-    public static unowned Dispatcher?
-    self ()
-    {
-        lock (s_Dispatchers)
-        {
-            return s_Dispatchers.search<unowned GLib.Thread<void*>> (GLib.Thread.self<void*> (),
-                                                                     (v, a) => {
-                        return direct_compare (v.thread_id, a);
-                    });
-        }
     }
 
     public Dispatcher ()
@@ -189,7 +190,7 @@ public class Maia.Dispatcher : Task
     {
         audit (GLib.Log.METHOD, "");
         m_FinishEvent.post<EventArgs> ();
-        if (is_thread && self () != this)
+        if (is_thread && self != this)
             thread_id.join ();
     }
 

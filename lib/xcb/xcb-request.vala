@@ -110,7 +110,7 @@ internal abstract class Maia.XcbRequest : Object
                 s_Commiter = null;
             });
 
-            s_Commiter.parent = Dispatcher.self () == null ? Application.get ().dispatcher : Dispatcher.self ();
+            s_Commiter.parent = Application.self;
         }
         parent = s_Commiter;
     }

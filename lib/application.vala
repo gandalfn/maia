@@ -32,6 +32,18 @@ public abstract class Maia.Application : Object
     private Dispatcher m_Dispatcher;
 
     // accessors
+    public static unowned Application? default {
+        get {
+            return s_Default;
+        }
+    }
+
+    public static unowned Dispatcher? self {
+        get {
+            return Dispatcher.self != null ? Dispatcher.self : s_Default.m_Dispatcher;
+        }
+    }
+
     public Dispatcher dispatcher {
         get {
             return m_Dispatcher;
@@ -48,12 +60,6 @@ public abstract class Maia.Application : Object
         {
             s_Default = Maia.XcbBackend.create_application ();
         }
-        return s_Default;
-    }
-
-    public static new Application?
-    @get ()
-    {
         return s_Default;
     }
 

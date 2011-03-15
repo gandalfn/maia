@@ -97,7 +97,7 @@ internal class Maia.XcbDesktop : DesktopProxy
             m_FlushTask.finished.connect (() => {
                 m_FlushTask = null;
             });
-            m_FlushTask.parent = Dispatcher.self () == null ? Application.get ().dispatcher : Dispatcher.self ();
+            m_FlushTask.parent = Application.self;
         }
         else if (inSync)
         {

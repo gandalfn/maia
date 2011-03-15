@@ -78,7 +78,7 @@ public class Maia.TestEvent : Maia.TestCase
     on_test_event (EventArgs1<int>? inArgs)
     {
         Test.message ("%lx: Event received %i = %f s",
-                      (ulong)Dispatcher.self ().thread_id, inArgs.a, Test.timer_elapsed ());
+                      (ulong)Dispatcher.self.thread_id, inArgs.a, Test.timer_elapsed ());
         if (count > 9)
         {
             dispatcher.finish ();

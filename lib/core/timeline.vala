@@ -145,7 +145,7 @@ public class Maia.Timeline : Object
     }
 
     // methods
-    public Timeline (uint inFps, uint inNFrames, Dispatcher inDispatcher = Dispatcher.self ())
+    public Timeline (uint inFps, uint inNFrames, Dispatcher inDispatcher = Dispatcher.self)
     {
         m_Fps        = inFps;
         m_NFrames    = inNFrames;
