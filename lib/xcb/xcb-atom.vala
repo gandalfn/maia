@@ -47,43 +47,18 @@ internal enum Maia.XcbAtomType
     N;
 }
 
-internal struct Maia.XcbAtom
-{
-    // properties
-    public XcbAtomType m_Type;
-    public Xcb.Atom    m_XcbAtom;
-
-    // methods
-    public XcbAtom (XcbAtomType inType, Xcb.Atom inXcbAtom)
-    {
-        m_Type = inType;
-        m_XcbAtom = inXcbAtom;
-    }
-
-    public int
-    compare (XcbAtom? inOther)
-    {
-        return m_Type - inOther.m_Type;
-    }
-
-    public int
-    compare_with_type (XcbAtomType inType)
-    {
-        return m_Type - inType;
-    }
-}
-
-internal class Maia.XcbAtoms : Set<XcbAtom?>
+internal class Maia.XcbAtoms
 {
     // properties
     private unowned XcbDesktop m_XcbDesktop;
+    private Xcb.Atom[]         m_Atoms;
 
     // methods
     public XcbAtoms (XcbDesktop inDesktop)
     {
         m_XcbDesktop = inDesktop;
-        compare_func = XcbAtom.compare;
 
+        m_Atoms = new Xcb.Atom[XcbAtomType.N];
         Xcb.InternAtomCookie[] cookies = new Xcb.InternAtomCookie[XcbAtomType.N];
 
         for (int cpt = 0; cpt < (int)XcbAtomType.N; ++cpt)
@@ -99,13 +74,11 @@ internal class Maia.XcbAtoms : Set<XcbAtom?>
             Xcb.InternAtomReply reply = cookies [cpt].reply (m_XcbDesktop.connection);
             if (reply == null)
             {
-                XcbAtom atom = XcbAtom ((XcbAtomType)cpt, Xcb.AtomType.NONE);
-                insert (atom);
+                m_Atoms[cpt] = Xcb.AtomType.NONE;
             }
             else
             {
-                XcbAtom atom = XcbAtom ((XcbAtomType)cpt, reply.atom);
-                insert (atom);
+                m_Atoms[cpt] = reply.atom;
             }
         }
     }
@@ -113,8 +86,6 @@ internal class Maia.XcbAtoms : Set<XcbAtom?>
     public new Xcb.Atom
     @get (XcbAtomType inType)
     {
-        unowned XcbAtom? atom = search<XcbAtomType> (inType, (ValueCompareFunc<XcbAtomType>)XcbAtom.compare_with_type);
-
-        return atom != null ? atom.m_XcbAtom : Xcb.AtomType.NONE;
+        return m_Atoms[inType];
     }
 }
