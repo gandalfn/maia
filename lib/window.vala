@@ -56,6 +56,23 @@ public class Maia.Window : View
     }
 
     // accessors
+    public unowned WindowProxy proxy {
+        get {
+            return m_Proxy;
+        }
+        set {
+            if (m_Proxy == null)
+            {
+                m_Proxy = value;
+                assert(m_Proxy != null);
+
+                unowned Dispatcher? dispatcher = Application.self;
+                m_Proxy.damage_event.listen (on_damage_event, dispatcher);
+                m_Proxy.delete_event.listen (on_delete_event, dispatcher);
+            }
+        }
+    }
+
     public override Region geometry {
         get {
             return m_Proxy.geometry;
@@ -80,12 +97,7 @@ public class Maia.Window : View
 
         workspace.create_window (this, inGeometry);
 
-        m_Proxy = delegate_cast<WindowProxy> ();
-        assert (m_Proxy != null);
-
-        unowned Dispatcher? dispatcher = Application.self;
-        m_Proxy.damage_event.listen (on_damage_event, dispatcher);
-        m_Proxy.delete_event.listen (on_delete_event, dispatcher);
+        proxy = delegate_cast<WindowProxy> ();
     }
 
     private void

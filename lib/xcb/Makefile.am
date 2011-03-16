@@ -42,6 +42,7 @@ libmaia_xcb_backend_la_SOURCES = \
     xcb-damage-event.vala \
     xcb-delete-event.vala \
     xcb-client-message-event.vala \
+    xcb-create-window-event.vala \
     xcb-event-dispatcher.vala \
     xcb-application.vala \
     xcb-backend.vala

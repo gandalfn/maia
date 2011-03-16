@@ -82,7 +82,9 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
             if (m_Root == null)
             {
                 m_Root = GLib.Object.new (typeof (Window), parent: delegator) as Window;
-                m_Root.delegate_cast<XcbWindow> ().foreign (m_XcbScreen.root);
+                unowned XcbWindow? proxy = m_Root.delegate_cast<XcbWindow> ();
+                proxy.foreign (m_XcbScreen.root);
+                m_Root.proxy = proxy;
             }
 
             return m_Root;
@@ -90,6 +92,18 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
     }
 
     // Events
+    private XcbCreateWindowEvent m_CreateWindowEvent = null;
+
+    public override CreateWindowEvent create_window_event {
+        get {
+            if (m_CreateWindowEvent == null)
+            {
+                m_CreateWindowEvent = new XcbCreateWindowEvent (root.proxy as XcbWindow);
+            }
+            return m_CreateWindowEvent;
+        }
+    }
+
     public override DamageEvent damage_event {
         get {
             return root.damage_event;

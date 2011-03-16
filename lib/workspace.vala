@@ -41,6 +41,12 @@ public class Maia.Workspace : View
         }
     }
 
+    public CreateWindowEvent create_window_event {
+        get {
+            return m_Proxy.create_window_event;
+        }
+    }
+
     public Window root {
         get {
             return m_Proxy.root;

@@ -1,13 +1,13 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * test-window.vala
+ * create-window-event.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
- *
+ * 
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * 
  * maia is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
@@ -17,42 +17,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class TestWindow : Maia.Window
+public class Maia.CreateWindowEventArgs : EventArgs
 {
-    public TestWindow ()
-    {
-        base ("test-window", new Maia.Region.raw_rectangle (100, 100, 200, 200));
-    }
+    // accessors
+    public Window window { get; private set; }
 
-    public override void
-    on_paint (Maia.Region inArea)
+    // methods
+    public CreateWindowEventArgs (Window inWindow)
     {
-        Maia.audit (GLib.Log.METHOD, "%s", inArea.to_string ());
-    }
-
-    public override void
-    on_destroy ()
-    {
-        base.on_destroy ();
-        Maia.Application.quit ();
+        window = inWindow;
     }
 }
 
-static int
-main (string[] args)
+public class Maia.CreateWindowEvent : Event<CreateWindowEventArgs>
 {
-    //Maia.log_set_level (Maia.Level.DEBUG);
-
-    Maia.Application application = Maia.Application.create ();
-
-    TestWindow window = new TestWindow ();
-    window.show ();
-
-    application.desktop.default_workspace.create_window_event.listen (() => {
-        message ("New Window");
-    }, Maia.Application.self);
-
-    application.run ();
-
-    return 0;
+    // methods
+    public CreateWindowEvent (uint32 inId, void* inOwner)
+    {
+        base.with_id (inId, inOwner);
+    }
 }

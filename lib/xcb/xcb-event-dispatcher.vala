@@ -47,6 +47,9 @@ internal class Maia.XcbEventDispatcher : Watch
             audit (GLib.Log.METHOD, "received %i", response_type);
             switch (response_type)
             {
+                case Xcb.CREATE_NOTIFY:
+                    XcbCreateWindowEvent.post_event (evt);
+                    break;
                 case Xcb.EXPOSE:
                     XcbDamageEvent.post_event (evt);
                     break;

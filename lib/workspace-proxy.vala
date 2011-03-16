@@ -23,6 +23,9 @@ public abstract class Maia.WorkspaceProxy : View
     public abstract uint num { get; }
     public abstract Window root { get; }
 
+    // events
+    public abstract CreateWindowEvent create_window_event { get; }
+
     // methods
     public abstract void create_window (Window inWindow, Region inGeometry);
 }

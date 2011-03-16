@@ -371,6 +371,18 @@ namespace Xcb {
 		public Window window;
 	}
 
+	[CCode (cname = "xcb_create_notify_event_t", ref_function = "", unref_function = "")]
+	public class CreateNotifyEvent : GenericEvent {
+		public Window parent;
+		public Window window;
+		public int16  x;
+		public int16  y;
+		public uint16 width;
+		public uint16 height;
+		public uint16 border_width;
+		public uint8  override_redirect;
+	}
+
 	[CCode (cname = "xcb_destroy_notify_event_t", ref_function = "", unref_function = "")]
 	public class DestroyNotifyEvent : GenericEvent {
 		public Window event;
@@ -568,6 +580,7 @@ namespace Xcb {
 		INPUT_ONLY
 	}
 
+	public const uint8 CREATE_NOTIFY;
 	public const uint8 BUTTON_PRESS;
 	public const uint8 BUTTON_RELEASE;
 	public const uint8 EXPOSE;
