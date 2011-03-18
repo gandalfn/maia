@@ -138,7 +138,8 @@ public class Maia.Dispatcher : Task
 
             int nb_fds = m_PollFd.wait (events, timeout);
 
-            assert (nb_fds >= 0);
+            if (nb_fds < 0)
+                continue;
 
             foreach (unowned Object object in childs)
             {

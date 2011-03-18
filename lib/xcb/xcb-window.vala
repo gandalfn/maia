@@ -76,6 +76,7 @@ internal class Maia.XcbWindow : WindowProxy
         }
     }
 
+    [CCode (notify = false)]
     public override Window.HintType hint_type {
         get {
             return m_EWMHProperties.hint_type;
@@ -101,10 +102,13 @@ internal class Maia.XcbWindow : WindowProxy
         m_XcbDesktop = (parent.parent as Desktop).delegate_cast<XcbDesktop> ();
 
         Xcb.GetGeometryCookie cookie = m_XcbWindow.get_geometry (m_XcbDesktop.connection);
-        Xcb.GetGeometryReply reply = cookie.reply (m_XcbDesktop.connection, null);
-        m_Geometry = new Region.raw_rectangle (reply.x, reply.y,
-                                               reply.width + (reply.border_width * 2),
-                                               reply.height + (reply.border_width * 2));
+        Xcb.GetGeometryReply reply = cookie.reply (m_XcbDesktop.connection);
+        if (reply != null)
+        {
+            m_Geometry = new Region.raw_rectangle (reply.x, reply.y,
+                                                   reply.width + (reply.border_width * 2),
+                                                   reply.height + (reply.border_width * 2));
+        }
 
         // Create attributes fetcher
         m_Attributes = new XcbWindowAttributes (this);
@@ -115,16 +119,16 @@ internal class Maia.XcbWindow : WindowProxy
         // Create EWMH properties fetcher
         m_EWMHProperties = new XcbWindowEWMHProperties (this);
 
-        // query attributes
+        // Query attributes
         m_Attributes.query ();
 
-        // query iccm properties
+        // Query iccm properties
         m_ICCCMProperties.query ();
 
-        // query ewmh properties
+         // Query ewmh properties
         m_EWMHProperties.query ();
 
-        // create events
+        // Create events
         m_DamageEvent = new XcbDamageEvent (this);
         m_DeleteEvent = new XcbDeleteEvent (this);
     }

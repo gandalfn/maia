@@ -22,19 +22,7 @@ public class Maia.Workspace : View
     // properties
     private unowned WorkspaceProxy m_Proxy;
 
-    // accessors
-    public uint num {
-        get {
-            return m_Proxy.num;
-        }
-    }
-
-    public override Region geometry {
-        get {
-            return m_Proxy.geometry;
-        }
-    }
-
+    // events
     public override DamageEvent damage_event {
         get {
             return m_Proxy.damage_event;
@@ -47,9 +35,34 @@ public class Maia.Workspace : View
         }
     }
 
+    // accessors
+    public unowned WorkspaceProxy? proxy {
+        get {
+            return m_Proxy;
+        }
+    }
+
+    public uint num {
+        get {
+            return m_Proxy.num;
+        }
+    }
+
+    public override Region geometry {
+        get {
+            return m_Proxy.geometry;
+        }
+    }
+
     public Window root {
         get {
             return m_Proxy.root;
+        }
+    }
+
+    public Array<unowned Window> stack {
+        get {
+            return m_Proxy.stack;
         }
     }
 

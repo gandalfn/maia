@@ -25,6 +25,7 @@ internal class Maia.XcbWindowAttributes : XcbRequest
     private uint m_EventMask = 0;
 
     // accessors
+    [CCode (notify = false)]
     public bool override_redirect {
         get {
             return m_OverrideRedirect;
@@ -35,6 +36,7 @@ internal class Maia.XcbWindowAttributes : XcbRequest
         }
     }
 
+    [CCode (notify = false)]
     public uint event_mask {
         get {
             return m_EventMask;

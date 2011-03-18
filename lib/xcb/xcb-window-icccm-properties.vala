@@ -26,6 +26,7 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
     private Xcb.Atom                  m_WMTakeFocusAtom;
 
     // accessors
+    [CCode (notify = false)]
     public bool delete_event {
         get {
             return m_WMDeleteWindowAtom in m_WMProtocols;
@@ -38,6 +39,7 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
         }
     }
 
+    [CCode (notify = false)]
     public bool take_focus {
         get {
             return m_WMTakeFocusAtom in m_WMProtocols;
@@ -50,6 +52,7 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
         }
     }
 
+    [CCode (notify = false)]
     public override string name {
         get {
             return m_WMName[0];

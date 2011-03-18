@@ -248,7 +248,7 @@ namespace Xcb {
 	}
 
 	[Compact]
-	[CCode (cname = "xcb_generic_error_t", ref_function = "", unref_function = "")]
+	[CCode (cname = "xcb_generic_error_t", free_function = "free")]
 	public class GenericError {
 		public uint8 response_type;
 		public uint8 error_code;
@@ -259,7 +259,7 @@ namespace Xcb {
 	}
 
 	[Compact]
-	[CCode (cname = "xcb_generic_reply_t", ref_function = "", unref_function = "free")]
+	[CCode (cname = "xcb_generic_reply_t", free_function = "free")]
 	public class GenericReply {
 		public uint8 response_type;
 		public uint16 sequence;

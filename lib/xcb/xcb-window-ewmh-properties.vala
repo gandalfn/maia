@@ -24,6 +24,7 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
     private XcbWindowProperty<string> m_WMName;
 
     // accessors
+    [CCode (notify = false)]
     public Window.HintType hint_type {
         get {
             if (m_HintType[0] == window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_DESKTOP])
@@ -106,6 +107,7 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
         }
     }
 
+    [CCode (notify = false)]
     public override string name {
         get {
             return m_WMName[0];

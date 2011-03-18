@@ -25,7 +25,8 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
     private Xcb.VisualType? m_XcbVisual = null;
     private Region          m_Geometry  = null;
 
-    private Window          m_Root      = null;
+    private Window                m_Root  = null;
+    private Array<unowned Window> m_Stack = null;
 
     // accessors
     public Xcb.Screen xcb_screen {
@@ -91,7 +92,13 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
         }
     }
 
-    // Events
+    public override Array<unowned Window> stack {
+        get {
+            return m_Stack;
+        }
+    }
+
+    // events
     private XcbCreateWindowEvent m_CreateWindowEvent = null;
 
     public override CreateWindowEvent create_window_event {
@@ -110,17 +117,43 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
         }
     }
 
-    // Methods
+    // methods
     public void
     init (Xcb.Screen inScreen, uint inNum)
     {
         m_Num = inNum;
         m_XcbScreen = inScreen;
+        m_Stack = new Array<unowned Window>.sorted ();
+        m_Stack.compare_func = (a, b) => {
+            XcbWindow awindow = a.proxy as XcbWindow;
+            XcbWindow bwindow = b.proxy as XcbWindow;
+
+            if (awindow == null && bwindow != null)
+                return -1;
+
+            if (awindow != null && bwindow == null)
+                return 1;
+
+            if (awindow == null && bwindow == null)
+                return 0;
+
+            return (int)(awindow.xcb_window - bwindow.xcb_window);
+        };
     }
 
     public override void
     create_window (Window inWindow, Region inGeometry)
     {
         inWindow.delegate_cast<XcbWindow> ().create (inGeometry);
+    }
+
+    public unowned Window?
+    find_window (Xcb.Window inXcbWindow)
+    {
+        return m_Stack.search<Xcb.Window> (inXcbWindow, (a, b) => {
+            Window awindow = a as Window;
+            if (awindow.proxy == null) return -1;
+            return (int)((awindow.proxy as XcbWindow).xcb_window - b);
+        }) as Window;
     }
 }

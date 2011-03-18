@@ -33,6 +33,7 @@ internal abstract class Maia.XcbRequest : Object
         }
     }
 
+    [CCode (notify = false)]
     public Xcb.VoidCookie? cookie {
         get {
             return m_Cookie;
@@ -112,6 +113,9 @@ internal abstract class Maia.XcbRequest : Object
 
             s_Commiter.parent = Application.self;
         }
-        parent = s_Commiter;
+        if (!(this in s_Commiter.childs))
+        {
+            parent = s_Commiter;
+        }
     }
 }

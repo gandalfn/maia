@@ -56,6 +56,25 @@ public class Maia.Window : View
     }
 
     // accessors
+    [CCode (notify = false)]
+    public override Object parent {
+        get {
+            return base.parent;
+        }
+        set {
+            if (base.parent is Workspace)
+            {
+                (base.parent as Workspace).stack.remove (this);
+            }
+            base.parent = value;
+            if (value is Workspace && m_Proxy != null)
+            {
+                (value as Workspace).stack.insert (this);
+            }
+        }
+    }
+
+    [CCode (notify = false)]
     public unowned WindowProxy proxy {
         get {
             return m_Proxy;
@@ -65,6 +84,11 @@ public class Maia.Window : View
             {
                 m_Proxy = value;
                 assert(m_Proxy != null);
+
+                if (parent is Workspace)
+                {
+                    (parent as Workspace).stack.insert (this);
+                }
 
                 unowned Dispatcher? dispatcher = Application.self;
                 m_Proxy.damage_event.listen (on_damage_event, dispatcher);

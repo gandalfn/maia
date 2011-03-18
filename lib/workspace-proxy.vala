@@ -20,8 +20,9 @@
 public abstract class Maia.WorkspaceProxy : View
 {
     // accessors
-    public abstract uint num { get; }
-    public abstract Window root { get; }
+    public abstract uint                  num   { get; }
+    public abstract Window                root  { get; }
+    public abstract Array<unowned Window> stack { get; }
 
     // events
     public abstract CreateWindowEvent create_window_event { get; }

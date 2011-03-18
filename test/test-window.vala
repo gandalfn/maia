@@ -41,7 +41,7 @@ public class TestWindow : Maia.Window
 static int
 main (string[] args)
 {
-    //Maia.log_set_level (Maia.Level.DEBUG);
+    Maia.log_set_level (Maia.Level.DEBUG);
 
     Maia.Application application = Maia.Application.create ();
 
