@@ -112,8 +112,28 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
         get {
             return m_WMName[0];
         }
-        set {
+        construct set {
             m_WMName[0] = value;
+        }
+    }
+
+    [CCode (notify = false)]
+    public override XcbWindow window {
+        get {
+            return base.window;
+        }
+        construct set {
+            base.window = value;
+
+            m_HintType = new XcbWindowProperty<uint32> (value,
+                                                        XcbAtomType._NET_WM_WINDOW_TYPE,
+                                                        Xcb.AtomType.ATOM,
+                                                        XcbWindowProperty.Format.U32);
+
+            m_WMName = new XcbWindowProperty<string> (value,
+                                                      XcbAtomType._NET_WM_NAME,
+                                                      Xcb.AtomType.STRING,
+                                                      XcbWindowProperty.Format.U8);
         }
     }
 
@@ -121,16 +141,6 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
     public XcbWindowEWMHProperties (XcbWindow inWindow)
     {
         base (inWindow);
-
-        m_HintType = new XcbWindowProperty<uint32> (inWindow,
-                                                    XcbAtomType._NET_WM_WINDOW_TYPE,
-                                                    Xcb.AtomType.ATOM,
-                                                    XcbWindowProperty.Format.U32);
-
-        m_WMName = new XcbWindowProperty<string> (inWindow,
-                                                  XcbAtomType._NET_WM_NAME,
-                                                  Xcb.AtomType.STRING,
-                                                  XcbWindowProperty.Format.U8);
     }
 
     public override void

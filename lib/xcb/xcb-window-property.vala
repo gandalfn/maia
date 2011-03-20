@@ -178,8 +178,8 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
                 break;
         }
 
-        window.xcb_window.change_property (desktop.connection, Xcb.PropMode.REPLACE,
-                                           m_Property, m_Type, m_Format, n, values);
+        ((Xcb.Window)window.id).change_property (desktop.connection, Xcb.PropMode.REPLACE,
+                                                 m_Property, m_Type, m_Format, n, values);
 
         delete values;
 
@@ -190,9 +190,9 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
     query ()
     {
         XcbDesktop desktop = window.xcb_desktop;
-        cookie = window.xcb_window.get_property (desktop.connection, false,
-                                                 m_Property, m_Type,
-                                                 0, uint32.MAX);
+        cookie = ((Xcb.Window)window.id).get_property (desktop.connection, false,
+                                                       m_Property, m_Type,
+                                                       0, uint32.MAX);
     }
 
     public new unowned V?

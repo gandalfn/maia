@@ -38,7 +38,7 @@ internal class Maia.XcbDesktop : DesktopProxy
         get {
             return base.name;
         }
-        set {
+        construct set {
             if (m_Connection == null)
             {
                 // Open connection

@@ -80,13 +80,13 @@ internal class Maia.XcbWindowAttributes : XcbRequest
 
         debug (GLib.Log.METHOD, "");
         XcbDesktop desktop = window.xcb_desktop;
-        window.xcb_window.change_attributes (desktop.connection, m_Mask, values_list);
+        ((Xcb.Window)window.id).change_attributes (desktop.connection, m_Mask, values_list);
     }
 
     public override void
     query ()
     {
         XcbDesktop desktop = window.xcb_desktop;
-        cookie = window.xcb_window.get_attributes (desktop.connection);
+        cookie = ((Xcb.Window)window.id).get_attributes (desktop.connection);
     }
 }

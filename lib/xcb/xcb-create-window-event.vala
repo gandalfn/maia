@@ -35,11 +35,7 @@ internal class Maia.XcbCreateWindowEvent : CreateWindowEvent
         {
             XcbCreateWindowEvent create_window_event = new XcbCreateWindowEvent.from_event (evt);
 
-            Window new_window = GLib.Object.new (typeof (Window), parent: parent.parent) as Window;
-            unowned XcbWindow? proxy = new_window.delegate_cast<XcbWindow> ();
-            proxy.foreign (evt.window);
-            new_window.proxy = proxy;
-
+            Window new_window = new Window.foreign (evt.window, parent.workspace) as Window;
             CreateWindowEventArgs args = new CreateWindowEventArgs (new_window);
             create_window_event.post (args);
         }
@@ -48,7 +44,7 @@ internal class Maia.XcbCreateWindowEvent : CreateWindowEvent
     // methods
     public XcbCreateWindowEvent (XcbWindow inWindow)
     {
-        base (Xcb.CREATE_NOTIFY, ((uint)inWindow.xcb_window).to_pointer ());
+        base (Xcb.CREATE_NOTIFY, ((uint)inWindow.id).to_pointer ());
         m_Window = inWindow;
     }
 
@@ -62,7 +58,7 @@ internal class Maia.XcbCreateWindowEvent : CreateWindowEvent
     {
         if (m_Window != null && m_ListenCount == 0)
         {
-            m_Window.attributes.event_mask |= Xcb.EventMask.STRUCTURE_NOTIFY      |
+            m_Window.attributes.event_mask |= Xcb.EventMask.STRUCTURE_NOTIFY |
                                               Xcb.EventMask.SUBSTRUCTURE_NOTIFY;
             m_Window.attributes.commit ();
         }

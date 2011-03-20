@@ -25,8 +25,8 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
     private Xcb.VisualType? m_XcbVisual = null;
     private Region          m_Geometry  = null;
 
-    private Window                m_Root  = null;
-    private Array<unowned Window> m_Stack = null;
+    private Window          m_Root      = null;
+    private Array<Window>   m_Stack     = null;
 
     // accessors
     public Xcb.Screen xcb_screen {
@@ -70,6 +70,8 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
 
             return m_Geometry;
         }
+        internal set {
+        }
     }
 
     public override uint num {
@@ -82,10 +84,7 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
         get {
             if (m_Root == null)
             {
-                m_Root = GLib.Object.new (typeof (Window), parent: delegator) as Window;
-                unowned XcbWindow? proxy = m_Root.delegate_cast<XcbWindow> ();
-                proxy.foreign (m_XcbScreen.root);
-                m_Root.proxy = proxy;
+                m_Root = new Window.foreign (m_XcbScreen.root, delegator as Workspace);
             }
 
             return m_Root;
@@ -118,12 +117,17 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
     }
 
     // methods
+    ~XcbWorkspace ()
+    {
+        m_Stack.clear ();
+    }
+
     public void
     init (Xcb.Screen inScreen, uint inNum)
     {
         m_Num = inNum;
         m_XcbScreen = inScreen;
-        m_Stack = new Array<unowned Window>.sorted ();
+        m_Stack = new Array<Window>.sorted ();
         m_Stack.compare_func = (a, b) => {
             XcbWindow awindow = a.proxy as XcbWindow;
             XcbWindow bwindow = b.proxy as XcbWindow;
@@ -137,14 +141,8 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
             if (awindow == null && bwindow == null)
                 return 0;
 
-            return (int)(awindow.xcb_window - bwindow.xcb_window);
+            return (int)(awindow.id - bwindow.id);
         };
-    }
-
-    public override void
-    create_window (Window inWindow, Region inGeometry)
-    {
-        inWindow.delegate_cast<XcbWindow> ().create (inGeometry);
     }
 
     public unowned Window?
@@ -153,7 +151,7 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
         return m_Stack.search<Xcb.Window> (inXcbWindow, (a, b) => {
             Window awindow = a as Window;
             if (awindow.proxy == null) return -1;
-            return (int)((awindow.proxy as XcbWindow).xcb_window - b);
+            return (int)((awindow.proxy as XcbWindow).id - b);
         }) as Window;
     }
 }

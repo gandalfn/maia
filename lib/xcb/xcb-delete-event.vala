@@ -23,7 +23,7 @@ internal class Maia.XcbDeleteEvent : DeleteEvent
     public XcbDeleteEvent (XcbWindow inWindow)
     {
         Xcb.Atom atom = inWindow.xcb_desktop.atoms[XcbAtomType.WM_DELETE_WINDOW];
-        base (atom, ((uint)inWindow.xcb_window).to_pointer ());
+        base (atom, ((uint)inWindow.id).to_pointer ());
     }
 
     public XcbDeleteEvent.from_event (Xcb.ClientMessageEvent inEvent)

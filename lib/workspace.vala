@@ -52,6 +52,8 @@ public class Maia.Workspace : View
         get {
             return m_Proxy.geometry;
         }
+        internal set {
+        }
     }
 
     public Window root {
@@ -80,11 +82,5 @@ public class Maia.Workspace : View
     can_append_child (Object inChild)
     {
         return inChild is Window; 
-    }
-
-    public void
-    create_window (Window inWindow, Region inGeometry)
-    {
-        m_Proxy.create_window (inWindow, inGeometry);
     }
 }

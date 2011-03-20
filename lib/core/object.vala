@@ -42,11 +42,11 @@ public abstract class Maia.Object : GLib.Object
      * Object identifier
      */
     [CCode (notify = false)]
-    public uint32 id {
+    public virtual uint32 id {
         get {
             return m_Delegator == null ? m_Id : m_Delegator.m_Id;
         }
-        set {
+        construct set {
             if (m_Delegator == null)
             {
                 // object have a old id
@@ -76,8 +76,14 @@ public abstract class Maia.Object : GLib.Object
         get {
             return m_Delegator == null ? Atom.to_string (m_Id) : m_Delegator.name;
         }
-        set {
-            id = Atom.from_string (value);
+        construct set {
+            if (value != null)
+            {
+                if (m_Delegator == null)
+                    id = Atom.from_string (value);
+                else
+                    m_Delegator.name = value;
+            }
         }
     }
 
@@ -89,50 +95,56 @@ public abstract class Maia.Object : GLib.Object
         get {
             return m_Delegator == null ? m_Parent : m_Delegator.m_Parent;
         }
-        set {
+        construct set {
             if (m_Delegator == null)
             {
-                ref ();
-
-                // object have already a parent
-                if (m_Parent != null)
+                if (m_Parent != value)
                 {
-                    debug ("Maia.Object.parent.set", "Remove object %s from parent %s", get_type ().name (), m_Parent.get_type ().name ());
-                    // remove object from childs of old parent
-                    m_Parent.childs.remove (this);
-                    // remove object from identified childs of old parent
-                    if (m_Id != 0)
-                        m_Parent.identified_childs.remove (this);
-                }
+                    ref ();
 
-                if (value != null)
-                {
-                    if (value.can_append_child (this))
+                    // object have already a parent
+                    if (m_Parent != null)
                     {
-                        // set parent property
-                        m_Parent = value;
+                        debug ("Maia.Object.parent.set", "Remove object %s from parent %s", get_type ().name (), m_Parent.get_type ().name ());
+                        // remove object from childs of old parent
+                        m_Parent.childs.remove (this);
+                        // remove object from identified childs of old parent
+                        if (m_Id != 0)
+                            m_Parent.identified_childs.remove (this);
+                    }
 
-                        // add object to childs of parent
-                        if (m_Parent != null)
+                    if (value != null)
+                    {
+                        if (value.can_append_child (this))
                         {
-                            debug ("Maia.Object.parent.set", "Add object %s from parent %s", get_type ().name (), m_Parent.get_type ().name ());
-                            m_Parent.childs.insert (this);
-                            if (m_Id != 0)
-                                m_Parent.identified_childs.insert (this);
+                            // set parent property
+                            m_Parent = value;
+
+                            // add object to childs of parent
+                            if (m_Parent != null)
+                            {
+                                debug ("Maia.Object.parent.set",
+                                       "Add object %s from parent %s",
+                                       get_type ().name (),
+                                       m_Parent.get_type ().name ());
+                                m_Parent.childs.insert (this);
+                                if (m_Id != 0)
+                                    m_Parent.identified_childs.insert (this);
+                            }
+                        }
+                        else
+                        {
+                            m_Parent = null;
                         }
                     }
                     else
                     {
-                        m_Parent = null;
+                        // set parent property
+                        m_Parent = value;
                     }
-                }
-                else
-                {
-                    // set parent property
-                    m_Parent = value;
-                }
 
-                unref ();
+                    unref ();
+                }
             }
             else
             {
@@ -308,7 +320,7 @@ public abstract class Maia.Object : GLib.Object
     {
         audit (GLib.Log.METHOD, "delegate type = %s", inType.name ());
 
-        return GLib.Object.new (inType, name: name, parent: m_Parent, delegator: this) as Object;
+        return GLib.Object.new (inType, delegator: this, name: name, parent: m_Parent) as Object;
     }
 
     protected void

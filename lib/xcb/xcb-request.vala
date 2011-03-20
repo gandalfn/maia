@@ -27,9 +27,13 @@ internal abstract class Maia.XcbRequest : Object
     private Xcb.VoidCookie?   m_Cookie = null;
 
     // accessors
-    public XcbWindow window {
+    [CCode (notify = false)]
+    public virtual XcbWindow window {
         get {
             return m_Window;
+        }
+        construct set {
+            m_Window = value;
         }
     }
 
@@ -46,7 +50,7 @@ internal abstract class Maia.XcbRequest : Object
     // methods
     public XcbRequest (XcbWindow inWindow)
     {
-        m_Window = inWindow;
+        GLib.Object (window: inWindow);
     }
 
     protected virtual void

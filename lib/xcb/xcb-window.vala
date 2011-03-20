@@ -22,7 +22,6 @@ internal class Maia.XcbWindow : WindowProxy
     // properties
     private unowned XcbDesktop m_XcbDesktop;
     private Xcb.Window         m_XcbWindow = 0;
-    private bool               m_Foreign = false;
     private Region             m_Geometry;
 
     private XcbWindowAttributes      m_Attributes;
@@ -46,9 +45,12 @@ internal class Maia.XcbWindow : WindowProxy
     }
 
     // accessors
-    public Xcb.Window xcb_window {
+    public override uint32 id {
         get {
             return m_XcbWindow;
+        }
+        construct set {
+            m_XcbWindow = value;
         }
     }
 
@@ -61,6 +63,12 @@ internal class Maia.XcbWindow : WindowProxy
     public override Region geometry {
         get {
             return m_Geometry;
+        }
+        set {
+            if (m_XcbWindow == 0 && !(delegator as Window).is_foreign)
+            {
+                create (value);
+            }
         }
     }
 
@@ -87,19 +95,28 @@ internal class Maia.XcbWindow : WindowProxy
     }
 
     // methods
+    construct
+    {
+        debug ("Maia.XcbWindow.construct", "construct %s", (delegator as Window).is_foreign.to_string ());
+
+        if ((delegator as Window).is_foreign)
+        {
+            foreign (delegator.id);
+        }
+    }
+
     ~XcbWindow ()
     {
         // Destroy xcb window
-        if (!m_Foreign && m_XcbWindow > 0)
+        if (!(delegator as Window).is_foreign && m_XcbWindow > 0)
             destroy ();
     }
 
-    public void
+    private void
     foreign (Xcb.Window inWindow)
     {
         m_XcbWindow = inWindow;
-        m_Foreign = true;
-        m_XcbDesktop = (parent.parent as Desktop).delegate_cast<XcbDesktop> ();
+        m_XcbDesktop = ((delegator as Window).workspace.parent as Desktop).delegate_cast<XcbDesktop> ();
 
         Xcb.GetGeometryCookie cookie = m_XcbWindow.get_geometry (m_XcbDesktop.connection);
         Xcb.GetGeometryReply reply = cookie.reply (m_XcbDesktop.connection);
@@ -133,7 +150,7 @@ internal class Maia.XcbWindow : WindowProxy
         m_DeleteEvent = new XcbDeleteEvent (this);
     }
 
-    public void
+    private void
     create (Region inGeometry)
     {
         // Get properties

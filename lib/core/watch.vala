@@ -43,7 +43,7 @@ public class Maia.Watch : Task
         get {
             return base.parent;
         }
-        set {
+        construct set {
             if (base.parent != value)
             {
                 if (base.parent != null)

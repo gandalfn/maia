@@ -37,7 +37,7 @@ internal class Maia.XcbDamageEvent : DamageEvent
     // methods
     public XcbDamageEvent (XcbWindow inWindow)
     {
-        base (Xcb.EXPOSE, ((uint)inWindow.xcb_window).to_pointer ());
+        base (Xcb.EXPOSE, ((uint)inWindow.id).to_pointer ());
         m_Window = inWindow;
     }
 

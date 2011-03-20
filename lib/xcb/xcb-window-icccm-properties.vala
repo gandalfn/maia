@@ -57,8 +57,32 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
         get {
             return m_WMName[0];
         }
-        set {
+        construct set {
             m_WMName[0] = value;
+        }
+    }
+
+    [CCode (notify = false)]
+    public override XcbWindow window {
+        get {
+            return base.window;
+        }
+        construct set {
+            base.window = value;
+
+            m_WMProtocols = new XcbWindowProperty<uint32> (value,
+                                                       XcbAtomType.WM_PROTOCOLS,
+                                                       Xcb.AtomType.ATOM,
+                                                       XcbWindowProperty.Format.U32);
+
+            m_WMName = new XcbWindowProperty<string> (value,
+                                                      XcbAtomType.WM_NAME,
+                                                      Xcb.AtomType.STRING,
+                                                      XcbWindowProperty.Format.U8);
+
+            XcbDesktop desktop = window.xcb_desktop;
+            m_WMDeleteWindowAtom = desktop.atoms [XcbAtomType.WM_DELETE_WINDOW];
+            m_WMTakeFocusAtom = desktop.atoms [XcbAtomType.WM_TAKE_FOCUS];
         }
     }
 
@@ -66,19 +90,6 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
     public XcbWindowICCCMProperties (XcbWindow inWindow)
     {
         base (inWindow);
-        m_WMProtocols = new XcbWindowProperty<uint32> (inWindow,
-                                                       XcbAtomType.WM_PROTOCOLS,
-                                                       Xcb.AtomType.ATOM,
-                                                       XcbWindowProperty.Format.U32);
-
-        m_WMName = new XcbWindowProperty<string> (inWindow,
-                                                  XcbAtomType.WM_NAME,
-                                                  Xcb.AtomType.STRING,
-                                                  XcbWindowProperty.Format.U8);
-
-        XcbDesktop desktop = inWindow.xcb_desktop;
-        m_WMDeleteWindowAtom = desktop.atoms [XcbAtomType.WM_DELETE_WINDOW];
-        m_WMTakeFocusAtom = desktop.atoms [XcbAtomType.WM_TAKE_FOCUS];
     }
 
     public override void

@@ -21,7 +21,14 @@ public class TestWindow : Maia.Window
 {
     public TestWindow ()
     {
-        base ("test-window", new Maia.Region.raw_rectangle (100, 100, 200, 200));
+        base ("test-window", 200, 200);
+        workspace.create_window_event.listen (on_new_window, Maia.Application.self);
+    }
+
+    private void
+    on_new_window (Maia.CreateWindowEventArgs inArgs)
+    {
+        message ("new window");
     }
 
     public override void
@@ -41,16 +48,13 @@ public class TestWindow : Maia.Window
 static int
 main (string[] args)
 {
-    Maia.log_set_level (Maia.Level.DEBUG);
+    //Maia.log_set_level (Maia.Level.DEBUG);
+    //Maia.backtrace_on_crash ();
 
     Maia.Application application = Maia.Application.create ();
 
     TestWindow window = new TestWindow ();
     window.show ();
-
-    application.desktop.default_workspace.create_window_event.listen (() => {
-        message ("New Window");
-    }, Maia.Application.self);
 
     application.run ();
 

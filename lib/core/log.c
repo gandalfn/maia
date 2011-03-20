@@ -362,7 +362,7 @@ maia_log_print_valist (const char* ctx, const char *function,
 
     formatted = g_strdup_vprintf (format, varargs);
 
-    g_printf ("%s|%s|%4.06f|%s|%s\n", ctx, function,
+    g_printf ("%s|%s|%4.06f|%s|%s\n", ctx != NULL ? ctx : "", function,
               g_timer_elapsed (timer, NULL), maia_log_level_name (level),
               formatted);
     g_free (formatted);

@@ -40,6 +40,7 @@ public class Maia.Window : View
     }
 
     // properties
+    private bool                m_Foreign = false;
     private unowned WindowProxy m_Proxy;
 
     // events
@@ -57,20 +58,50 @@ public class Maia.Window : View
 
     // accessors
     [CCode (notify = false)]
+    public override string name { get; construct set; default = null; }
+
+    [CCode (notify = false)]
     public override Object parent {
         get {
             return base.parent;
         }
-        set {
-            if (base.parent is Workspace)
+        construct set {
+            unowned Object? parent = base.parent;
+
+            if (parent != null && parent is Workspace)
             {
-                (base.parent as Workspace).stack.remove (this);
+                (parent as Workspace).stack.remove (this);
             }
+
             base.parent = value;
-            if (value is Workspace && m_Proxy != null)
+
+            if (value != null && value is Workspace && m_Proxy != null)
             {
+                debug ("Maia.Window.parent.set", "insert in workspace stack %s", m_Foreign.to_string ());
                 (value as Workspace).stack.insert (this);
             }
+        }
+    }
+
+    public unowned Workspace? workspace {
+        get {
+            unowned Object? p = parent;
+            for (; p != null && !(p is Workspace); p = p.parent);
+
+            if (p != null && p is Workspace)
+                return p as Workspace;
+
+            return null;
+        }
+    }
+
+    [CCode (notify = false)]
+    public bool is_foreign {
+        get {
+            return m_Foreign;
+        }
+        construct {
+            m_Foreign = value;
         }
     }
 
@@ -89,20 +120,21 @@ public class Maia.Window : View
                 {
                     (parent as Workspace).stack.insert (this);
                 }
-
-                unowned Dispatcher? dispatcher = Application.self;
-                m_Proxy.damage_event.listen (on_damage_event, dispatcher);
-                m_Proxy.delete_event.listen (on_delete_event, dispatcher);
             }
         }
     }
 
+    [CCode (notify = false)]
     public override Region geometry {
         get {
             return m_Proxy.geometry;
         }
+        set {
+            m_Proxy.geometry = value;
+        }
     }
 
+    [CCode (notify = false)]
     public HintType hint_type {
         get {
             return m_Proxy.hint_type;
@@ -113,15 +145,31 @@ public class Maia.Window : View
     }
 
     // methods
-    public Window (string inName, Region inGeometry)
+    construct
+    {
+        audit ("Maia.Window.construct", "create window");
+
+        proxy = delegate_cast<WindowProxy> ();
+    }
+
+    public Window (string inName, int inWidth, int inHeight)
         requires (Application.self != null)
     {
         Workspace workspace = Application.default.desktop.default_workspace;
-        GLib.Object (name: inName, parent: workspace);
+        Region geometry = new Region.raw_rectangle (0, 0, inWidth, inHeight);
+        GLib.Object (name: inName, parent: workspace, geometry: geometry);
 
-        workspace.create_window (this, inGeometry);
+        unowned Dispatcher? dispatcher = Application.self;
+        m_Proxy.damage_event.listen (on_damage_event, dispatcher);
+        m_Proxy.delete_event.listen (on_delete_event, dispatcher);
+    }
 
-        proxy = delegate_cast<WindowProxy> ();
+    public Window.foreign (uint32 inId, Workspace inWorkspace)
+    {
+        GLib.Object (id: inId, is_foreign: true, parent: inWorkspace);
+
+        unowned Dispatcher? dispatcher = Application.self;
+        m_Proxy.damage_event.listen (on_damage_event, dispatcher);
     }
 
     private void
