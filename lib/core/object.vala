@@ -20,21 +20,21 @@
 public abstract class Maia.Object : GLib.Object
 {
     // Static properties
-    static Map<Type, Set<Type>>         s_Delegations = null;
+    static Map<Type, Set<Type>> s_Delegations = null;
 
     // Class properties
-    internal class bool                 c_Initialized = false;
-    internal class Set<Type>            c_Delegations = null;
+    internal class bool         c_Initialized = false;
+    internal class Set<Type>    c_Delegations = null;
 
     // Properties
-    private uint32                      m_Id = 0;
-    private unowned Object              m_Parent = null;
-    private unowned Object              m_Delegator = null;
-    private Array<Object>               m_Childs = null; 
-    private Set<unowned Object>         m_IdentifiedChilds = null;
-    private Set<Object>                 m_Delegates = null;
-    private GLib.Mutex                  m_Mutex;
-    private GLib.Cond                   m_Cond;
+    private uint32              m_Id = 0;
+    private unowned Object      m_Parent = null;
+    private unowned Object      m_Delegator = null;
+    private Array<Object>       m_Childs = null; 
+    private Set<unowned Object> m_IdentifiedChilds = null;
+    private Set<Object>         m_Delegates = null;
+    private GLib.Mutex          m_Mutex;
+    private GLib.Cond           m_Cond;
 
     // Accessors
 
@@ -42,7 +42,7 @@ public abstract class Maia.Object : GLib.Object
      * Object identifier
      */
     [CCode (notify = false)]
-    public virtual uint32 id {
+    public uint32 id {
         get {
             return m_Delegator == null ? m_Id : m_Delegator.m_Id;
         }
@@ -67,22 +67,6 @@ public abstract class Maia.Object : GLib.Object
             else
             {
                 m_Delegator.id = value;
-            }
-        }
-    }
-
-    [CCode (notify = false)]
-    public virtual string name {
-        get {
-            return m_Delegator == null ? Atom.to_string (m_Id) : m_Delegator.name;
-        }
-        construct set {
-            if (value != null)
-            {
-                if (m_Delegator == null)
-                    id = Atom.from_string (value);
-                else
-                    m_Delegator.name = value;
             }
         }
     }
@@ -320,7 +304,7 @@ public abstract class Maia.Object : GLib.Object
     {
         audit (GLib.Log.METHOD, "delegate type = %s", inType.name ());
 
-        return GLib.Object.new (inType, delegator: this, name: name, parent: m_Parent) as Object;
+        return GLib.Object.new (inType, delegator: this, id: id, parent: m_Parent) as Object;
     }
 
     protected void
@@ -418,7 +402,7 @@ public abstract class Maia.Object : GLib.Object
     public virtual string
     to_string ()
     {
-        return m_Id.to_string ();
+        return Atom.to_string (m_Id);
     }
 
     /**

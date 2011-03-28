@@ -47,14 +47,16 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
     protected override void
     on_reply ()
     {
-        m_Values.clear ();
-
         XcbDesktop desktop = window.xcb_desktop;
         Xcb.GetPropertyReply reply = ((Xcb.GetPropertyCookie?)cookie).reply (desktop.connection);
 
-        switch (m_Format)
+        if (reply != null)
         {
-            case Format.U32:
+            m_Values.clear ();
+
+            switch (m_Format)
+            {
+                case Format.U32:
                 {
                     uint32* values = reply.get_value ();
                     int length = reply.get_length ();
@@ -66,9 +68,9 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
                     }
                     delete values;
                 }
-                break;
+                    break;
 
-            case Format.U16:
+                case Format.U16:
                 {
                     uint16* values = reply.get_value ();
                     int length = reply.get_length ();
@@ -80,9 +82,9 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
                     }
                     delete values;
                 }
-                break;
+                    break;
 
-            case Format.U8:
+                case Format.U8:
                 {
                     if (typeof (V) == typeof (string))
                     {
@@ -106,7 +108,8 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
                         delete values;
                     }
                 }
-                break;
+                    break;
+            }
         }
     }
 

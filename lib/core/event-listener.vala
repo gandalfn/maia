@@ -24,6 +24,12 @@ internal class Maia.EventListener : Object
     private void*         m_Owner;
 
     // accessors
+    public string name {
+        get {
+            return Atom.to_string (id);
+        }
+    }
+
     public void* owner {
         get {
             return m_Owner;
@@ -33,6 +39,7 @@ internal class Maia.EventListener : Object
     // methods
     public EventListener (Event inEvent, Event.Handler inHandler)
     {
+        Maia.debug (GLib.Log.METHOD, "create eventlistener = %lu", inEvent.id);
         GLib.Object (id: inEvent.id);
         m_Owner = inEvent.owner;
         m_Handler = inHandler;

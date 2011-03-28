@@ -59,6 +59,7 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
         }
     }
 
+    [CCode (notify = false)]
     public override Region geometry {
         get {
             if (m_Geometry == null)
@@ -91,7 +92,7 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
         }
     }
 
-    public override Array<unowned Window> stack {
+    public override Array<Window> stack {
         get {
             return m_Stack;
         }
@@ -120,6 +121,19 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
     ~XcbWorkspace ()
     {
         m_Stack.clear ();
+    }
+
+    public override string
+    to_string ()
+    {
+        string ret = "num = %u\n".printf (m_Num);
+        ret += "stack:\n";
+        foreach (Window window in m_Stack)
+        {
+            ret += window.to_string ();
+        }
+
+        return ret;
     }
 
     public void

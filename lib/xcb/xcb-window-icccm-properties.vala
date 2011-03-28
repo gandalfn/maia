@@ -53,7 +53,7 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
     }
 
     [CCode (notify = false)]
-    public override string name {
+    public string name {
         get {
             return m_WMName[0];
         }
@@ -90,6 +90,16 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
     public XcbWindowICCCMProperties (XcbWindow inWindow)
     {
         base (inWindow);
+    }
+
+    public override string
+    to_string ()
+    {
+        string ret = "    name = %s\n".printf (name);
+        ret += "    delete event = %s\n".printf (delete_event.to_string ());
+        ret += "    take focus = %s\n".printf (take_focus.to_string ());
+
+        return ret;
     }
 
     public override void

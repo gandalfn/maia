@@ -20,6 +20,7 @@
 public class Maia.CreateWindowEventArgs : EventArgs
 {
     // accessors
+    [CCode (notify = false)]
     public Window window { get; private set; }
 
     // methods

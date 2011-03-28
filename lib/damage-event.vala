@@ -20,6 +20,7 @@
 public class Maia.DamageEventArgs : EventArgs
 {
     // accessors
+    [CCode (notify = false)]
     public Region area { get; private set; }
 
     // methods

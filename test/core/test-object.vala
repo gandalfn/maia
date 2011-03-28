@@ -97,10 +97,11 @@ public class Maia.TestObject : Maia.TestCase
     public void
     test_object_create ()
     {
-        Object foo = GLib.Object.new (typeof (FooObject), name: "foo") as Object;
+        Object foo = GLib.Object.new (typeof (FooObject), id: Atom.from_string ("foo")) as Object;
 
+        Test.message ("name = %s", Atom.to_string (foo.id));
         assert (foo is FooObject);
-        assert (foo.name == "foo");
+        assert (foo.id == Atom.from_string ("foo"));
         assert (foo.delegate_cast<FooDelegate> () != null); 
         (foo as FooObject).f ();
     }
@@ -108,7 +109,7 @@ public class Maia.TestObject : Maia.TestCase
     public void
     test_object_delegate ()
     {
-        FooObject foo = GLib.Object.new (typeof (FooObject), name: "foo") as FooObject;
+        FooObject foo = GLib.Object.new (typeof (FooObject), id: Atom.from_string ("foo")) as FooObject;
 
         Test.timer_start ();
         for (long i = 0; i < n; ++i)
@@ -118,7 +119,7 @@ public class Maia.TestObject : Maia.TestCase
         Test.message ("delegate: %i", (int)(Test.timer_elapsed () * 1000));
 
         FooDelegate delegate_foo = foo.delegate_cast<FooDelegate> ();
-        assert (foo.name == "foo");
+        assert (foo.id == Atom.from_string ("foo"));
 
         Test.timer_start ();
         for (long i = 0; i < n; ++i)
@@ -131,10 +132,10 @@ public class Maia.TestObject : Maia.TestCase
     public void
     test_object_parent ()
     {
-        Object parent = GLib.Object.new (typeof (FooObject), name: "parent") as Object;
+        Object parent = GLib.Object.new (typeof (FooObject), id: Atom.from_string ("parent")) as Object;
 
         assert (parent is FooObject);
-        assert (parent.name == "parent");
+        assert (parent.id == Atom.from_string ("parent"));
 
         Object foo1 = GLib.Object.new (typeof (FooObject), parent: parent) as Object;
 
@@ -150,20 +151,20 @@ public class Maia.TestObject : Maia.TestCase
     public void
     test_object_identified ()
     {
-        Object parent = GLib.Object.new (typeof (FooObject), name: "parent") as Object;
+        Object parent = GLib.Object.new (typeof (FooObject), id: Atom.from_string ("parent")) as Object;
 
         assert (parent is FooObject);
-        assert (parent.name == "parent");
+        assert (parent.id == Atom.from_string ("parent"));
 
-        Object foo1 = GLib.Object.new (typeof (FooObject), name: "foo", parent: parent) as Object;
+        Object foo1 = GLib.Object.new (typeof (FooObject), id: Atom.from_string ("foo"), parent: parent) as Object;
 
         assert (foo1 is FooObject);
-        assert (foo1.name == "foo");
+        assert (foo1.id == Atom.from_string ("foo"));
 
-        Object foo2 = GLib.Object.new (typeof (PooObject), name: "too", parent: parent) as Object;
+        Object foo2 = GLib.Object.new (typeof (PooObject), id: Atom.from_string ("too"), parent: parent) as Object;
 
         assert (foo2 is PooObject);
-        assert (foo2.name == "too");
+        assert (foo2.id == Atom.from_string ("too"));
 
         Object foo3 = GLib.Object.new (typeof (TooObject), parent: parent) as Object;
 
@@ -178,20 +179,20 @@ public class Maia.TestObject : Maia.TestCase
     public void
     test_object_parse ()
     {
-        Object parent = GLib.Object.new (typeof (FooObject), name: "parent") as Object;
+        Object parent = GLib.Object.new (typeof (FooObject), id: Atom.from_string ("parent")) as Object;
 
         assert (parent is FooObject);
-        assert (parent.name == "parent");
+        assert (parent.id == Atom.from_string ("parent"));
 
-        Object foo1 = GLib.Object.new (typeof (FooObject), name: "foo", parent: parent) as Object;
+        Object foo1 = GLib.Object.new (typeof (FooObject), id: Atom.from_string ("foo"), parent: parent) as Object;
 
         assert (foo1 is FooObject);
 
-        Object foo2 = GLib.Object.new (typeof (PooObject), name: "poo", parent: parent) as Object;
+        Object foo2 = GLib.Object.new (typeof (PooObject), id: Atom.from_string ("poo"), parent: parent) as Object;
 
         assert (foo2 is PooObject);
 
-        Object foo3 = GLib.Object.new (typeof (TooObject), name: "too", parent: parent) as Object;
+        Object foo3 = GLib.Object.new (typeof (TooObject), id: Atom.from_string ("too"), parent: parent) as Object;
 
         assert (foo3 is TooObject);
 
@@ -202,7 +203,7 @@ public class Maia.TestObject : Maia.TestCase
              found_too = false;
         foreach (Object object in parent.childs)
         {
-            switch (object.name)
+            switch (Atom.to_string (object.id))
             {
                 case "foo":
                     found_foo = true;

@@ -48,6 +48,7 @@ public class Maia.Workspace : View
         }
     }
 
+    [CCode (notify = false)]
     public override Region geometry {
         get {
             return m_Proxy.geometry;
@@ -76,6 +77,12 @@ public class Maia.Workspace : View
         GLib.Object (parent: inDesktop);
 
         m_Proxy = delegate_cast<WorkspaceProxy> ();
+    }
+
+    public override string
+    to_string ()
+    {
+        return m_Proxy.to_string ();
     }
 
     public override bool

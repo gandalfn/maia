@@ -27,6 +27,13 @@ public class Maia.Event<A> : Object
     private A     m_Args  = null;
 
     // accessors
+    public string name {
+        get {
+            return Atom.to_string (id);
+        }
+    }
+
+    [CCode (notify = false)]
     public void* owner {
         get {
             return m_Owner;
@@ -53,7 +60,7 @@ public class Maia.Event<A> : Object
     public Event (string inName, void* inOwner = null)
         requires (typeof (A).is_a (typeof (EventArgs)))
     {
-        GLib.Object (name: inName, owner: inOwner);
+        GLib.Object (id: Atom.from_string (inName), owner: inOwner);
     }
 
     /**

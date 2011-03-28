@@ -21,7 +21,6 @@ internal class Maia.XcbWindow : WindowProxy
 {
     // properties
     private unowned XcbDesktop m_XcbDesktop;
-    private Xcb.Window         m_XcbWindow = 0;
     private Region             m_Geometry;
 
     private XcbWindowAttributes      m_Attributes;
@@ -45,27 +44,19 @@ internal class Maia.XcbWindow : WindowProxy
     }
 
     // accessors
-    public override uint32 id {
-        get {
-            return m_XcbWindow;
-        }
-        construct set {
-            m_XcbWindow = value;
-        }
-    }
-
     public XcbDesktop xcb_desktop {
         get {
             return m_XcbDesktop;
         }
     }
 
+    [CCode (notify = false)]
     public override Region geometry {
         get {
             return m_Geometry;
         }
         set {
-            if (m_XcbWindow == 0 && !(delegator as Window).is_foreign)
+            if (id == 0 && !(delegator as Window).is_foreign)
             {
                 create (value);
             }
@@ -99,6 +90,10 @@ internal class Maia.XcbWindow : WindowProxy
     {
         debug ("Maia.XcbWindow.construct", "construct %s", (delegator as Window).is_foreign.to_string ());
 
+        // Get xcb desktop
+        m_XcbDesktop = ((delegator as Window).workspace.parent as Desktop).proxy as XcbDesktop;
+
+        // If window is foreign create it with id
         if ((delegator as Window).is_foreign)
         {
             foreign (delegator.id);
@@ -108,17 +103,14 @@ internal class Maia.XcbWindow : WindowProxy
     ~XcbWindow ()
     {
         // Destroy xcb window
-        if (!(delegator as Window).is_foreign && m_XcbWindow > 0)
+        if (!(delegator as Window).is_foreign && id > 0)
             destroy ();
     }
 
     private void
     foreign (Xcb.Window inWindow)
     {
-        m_XcbWindow = inWindow;
-        m_XcbDesktop = ((delegator as Window).workspace.parent as Desktop).delegate_cast<XcbDesktop> ();
-
-        Xcb.GetGeometryCookie cookie = m_XcbWindow.get_geometry (m_XcbDesktop.connection);
+        Xcb.GetGeometryCookie cookie = ((Xcb.Window)id).get_geometry (m_XcbDesktop.connection);
         Xcb.GetGeometryReply reply = cookie.reply (m_XcbDesktop.connection);
         if (reply != null)
         {
@@ -155,13 +147,12 @@ internal class Maia.XcbWindow : WindowProxy
     {
         // Get properties
         m_Geometry = inGeometry;
-        XcbWorkspace xcb_workspace = (parent as Workspace).delegate_cast<XcbWorkspace> ();
-        m_XcbDesktop = (parent.parent as Desktop).delegate_cast<XcbDesktop> ();
-        m_XcbWindow = Xcb.Window (m_XcbDesktop.connection);
+        XcbWorkspace xcb_workspace = (delegator as Window).workspace.proxy as XcbWorkspace;
+        Xcb.Window window = Xcb.Window (m_XcbDesktop.connection);
 
         // Create xcb window
         m_XcbDesktop.connection.create_window (Xcb.CopyFromParent, 
-                                               m_XcbWindow, xcb_workspace.xcb_screen.root,
+                                               window, xcb_workspace.xcb_screen.root,
                                                (int16)inGeometry.clipbox.origin.x,
                                                (int16)inGeometry.clipbox.origin.y, 
                                                (uint16)inGeometry.clipbox.size.width,
@@ -170,6 +161,7 @@ internal class Maia.XcbWindow : WindowProxy
                                                xcb_workspace.xcb_screen.root_visual, 
                                                Xcb.CW.BACK_PIXEL, 
                                                { xcb_workspace.xcb_screen.black_pixel });
+        id = window;
 
         // Create attributes fetcher
         m_Attributes = new XcbWindowAttributes (this);
@@ -187,11 +179,11 @@ internal class Maia.XcbWindow : WindowProxy
         // Set ICCCM properties
         m_ICCCMProperties.delete_event = true;
         m_ICCCMProperties.take_focus = true;
-        m_ICCCMProperties.name = name;
+        m_ICCCMProperties.name = (delegator as Window).name;
 
         // Set EWMH properties
         m_EWMHProperties.hint_type = Window.HintType.NORMAL;
-        m_EWMHProperties.name = name;
+        m_EWMHProperties.name = (delegator as Window).name;
 
         // Commit requests
         m_Attributes.commit ();
@@ -202,25 +194,37 @@ internal class Maia.XcbWindow : WindowProxy
         m_XcbDesktop.flush ();
     }
 
+    public override string
+    to_string ()
+    {
+        string ret = "id = 0x%x\n".printf (id);
+        if (m_Geometry != null)
+            ret += "  geometry = %s\n".printf (m_Geometry.to_string ());
+        ret += "  attributes:\n%s".printf (m_Attributes.to_string ());
+        ret += "  ICCM:\n%s".printf (m_ICCCMProperties.to_string ());
+
+        return ret;
+    }
+
     public override void
     show ()
     {
-        m_XcbWindow.map (m_XcbDesktop.connection);
+        ((Xcb.Window)id).map (m_XcbDesktop.connection);
         m_XcbDesktop.flush ();
     }
 
     public override void
     hide ()
     {
-        m_XcbWindow.unmap (m_XcbDesktop.connection);
+        ((Xcb.Window)id).unmap (m_XcbDesktop.connection);
         m_XcbDesktop.flush ();
     }
 
     public override void
     destroy ()
     {
-        m_XcbWindow.destroy(m_XcbDesktop.connection);
+        ((Xcb.Window)id).destroy(m_XcbDesktop.connection);
         m_XcbDesktop.flush ();
-        m_XcbWindow = 0;
+        id = 0;
     }
 }

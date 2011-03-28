@@ -33,46 +33,6 @@ internal class Maia.XcbDesktop : DesktopProxy
         }
     }
 
-    [CCode (notify = false)]
-    public override string name {
-        get {
-            return base.name;
-        }
-        construct set {
-            if (m_Connection == null)
-            {
-                // Open connection
-                m_Connection = new Xcb.Connection(value, out m_DefaultScreenNum);
-                if (m_Connection == null)
-                {
-                    error ("Error on open display %s", value);
-                }
-
-                // Get atoms
-                m_Atoms = new XcbAtoms (this);
-
-                // Create screen collection
-                int nbScreens = m_Connection.get_setup().roots_length();
-                if (nbScreens <= 0)
-                {
-                    error ("Error on create screen list %s", value);
-                }
-
-                int cpt = 0;
-                for (Xcb.ScreenIterator iter = m_Connection.get_setup().roots_iterator(); 
-                     cpt < nbScreens; ++cpt, Xcb.ScreenIterator.next(ref iter))
-                {
-                    debug (GLib.Log.METHOD, "create xcb workspace %i", cpt);
-                    Workspace workspace = new Workspace (delegator as Desktop);
-                    XcbWorkspace proxy = workspace.delegate_cast<XcbWorkspace> ();
-                    proxy.init (iter.data, cpt);
-                }
-
-                base.name = value;
-            }
-        }
-    }
-
     public override Workspace default_workspace {
         get {
             return childs.at (m_DefaultScreenNum) as Workspace;
@@ -86,6 +46,51 @@ internal class Maia.XcbDesktop : DesktopProxy
     }
 
     // methods
+    construct
+    {
+        string? name = Atom.to_string (id);
+
+        // Open connection
+        m_Connection = new Xcb.Connection(name, out m_DefaultScreenNum);
+        if (m_Connection == null)
+        {
+            error ("Error on open display %s", name);
+        }
+
+        // Get atoms
+        m_Atoms = new XcbAtoms (this);
+
+        // Create screen collection
+        int nbScreens = m_Connection.get_setup().roots_length();
+        if (nbScreens <= 0)
+        {
+            error ("Error on create screen list %s", name);
+        }
+
+        int cpt = 0;
+        for (Xcb.ScreenIterator iter = m_Connection.get_setup().roots_iterator(); 
+             cpt < nbScreens; ++cpt, Xcb.ScreenIterator.next(ref iter))
+        {
+            debug (GLib.Log.METHOD, "create xcb workspace %i", cpt);
+            Workspace workspace = new Workspace (delegator as Desktop);
+            XcbWorkspace proxy = workspace.delegate_cast<XcbWorkspace> ();
+            proxy.init (iter.data, cpt);
+        }
+    }
+
+    public override string
+    to_string ()
+    {
+        string ret = "";
+
+        foreach (Object child in childs)
+        {
+            ret += child.to_string ();
+        }
+
+        return ret;
+    }
+
     public void
     flush (bool inSync = false)
     {

@@ -50,6 +50,12 @@ public class Maia.Desktop : Object
     private unowned DesktopProxy m_Proxy;
 
     // accessors
+    public unowned DesktopProxy proxy {
+        get {
+            return m_Proxy;
+        }
+    }
+
     public int nb_workspaces {
         get {
             return childs.nb_items;
@@ -72,6 +78,12 @@ public class Maia.Desktop : Object
     can_append_child (Object inChild)
     {
         return inChild is Workspace;
+    }
+
+    public override string
+    to_string ()
+    {
+        return m_Proxy.to_string ();
     }
 
     public new Workspace?

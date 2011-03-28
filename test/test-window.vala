@@ -29,6 +29,7 @@ public class TestWindow : Maia.Window
     on_new_window (Maia.CreateWindowEventArgs inArgs)
     {
         message ("new window");
+        message ("%s", workspace.to_string ());
     }
 
     public override void
@@ -49,7 +50,7 @@ static int
 main (string[] args)
 {
     //Maia.log_set_level (Maia.Level.DEBUG);
-    //Maia.backtrace_on_crash ();
+    Maia.backtrace_on_crash ();
 
     Maia.Application application = Maia.Application.create ();
 

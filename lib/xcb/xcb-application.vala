@@ -41,7 +41,6 @@ internal class Maia.XcbApplication : Application
     public XcbApplication ()
     {
         m_Desktop = new Desktop ();
-        m_Desktop.name = null;
 
         m_EventDispatcher = new XcbEventDispatcher (this);
         dispatcher.running.connect (on_dispatcher_running);

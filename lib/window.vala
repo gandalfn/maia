@@ -42,6 +42,7 @@ public class Maia.Window : View
     // properties
     private bool                m_Foreign = false;
     private unowned WindowProxy m_Proxy;
+    private string              m_Name = null;
 
     // events
     public override DamageEvent damage_event {
@@ -58,7 +59,14 @@ public class Maia.Window : View
 
     // accessors
     [CCode (notify = false)]
-    public override string name { get; construct set; default = null; }
+    public string name {
+        get {
+            return m_Name;
+        }
+        construct set {
+            m_Name = value;
+        }
+    }
 
     [CCode (notify = false)]
     public override Object parent {
@@ -195,6 +203,12 @@ public class Maia.Window : View
     on_destroy ()
     {
         m_Proxy.destroy ();
+    }
+
+    public override string
+    to_string ()
+    {
+        return m_Proxy.to_string ();
     }
 
     public void

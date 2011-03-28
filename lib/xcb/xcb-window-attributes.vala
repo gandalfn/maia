@@ -89,4 +89,13 @@ internal class Maia.XcbWindowAttributes : XcbRequest
         XcbDesktop desktop = window.xcb_desktop;
         cookie = ((Xcb.Window)window.id).get_attributes (desktop.connection);
     }
+
+    public override string
+    to_string ()
+    {
+        string ret = "    override redirect = %s\n".printf (m_OverrideRedirect.to_string ());
+        ret += "    event mask %s\n".printf (m_EventMask.to_string ());
+
+        return ret;
+    }
 }

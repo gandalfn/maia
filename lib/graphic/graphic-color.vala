@@ -191,6 +191,16 @@ public class Maia.GraphicColor : Object
     private bool   m_IsSet = false; 
 
     // accessors
+    [CCode (notify = false)]
+    public string name {
+        get {
+            return Atom.to_string (id);
+        }
+        private set {
+            id = Atom.from_string (value);
+        }
+    }
+
     public double red {
         get {
             return m_Red;

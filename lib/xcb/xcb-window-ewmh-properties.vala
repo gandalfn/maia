@@ -108,7 +108,7 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
     }
 
     [CCode (notify = false)]
-    public override string name {
+    public string name {
         get {
             return m_WMName[0];
         }
