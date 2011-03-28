@@ -23,12 +23,21 @@ public class TestWindow : Maia.Window
     {
         base ("test-window", 200, 200);
         workspace.create_window_event.listen (on_new_window, Maia.Application.self);
+        workspace.destroy_window_event.listen (on_window_destroyed, Maia.Application.self);
     }
 
     private void
     on_new_window (Maia.CreateWindowEventArgs inArgs)
     {
-        message ("new window");
+        message ("new window 0x%x", inArgs.window.id);
+        message ("%s", workspace.to_string ());
+    }
+
+    private void
+    on_window_destroyed (Maia.DestroyWindowEventArgs inArgs)
+    {
+        message ("window destroyed 0x%x", inArgs.window.id);
+        inArgs.window.parent = null;
         message ("%s", workspace.to_string ());
     }
 

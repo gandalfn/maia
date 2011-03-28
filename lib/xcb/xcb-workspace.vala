@@ -100,6 +100,7 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
 
     // events
     private XcbCreateWindowEvent m_CreateWindowEvent = null;
+    private XcbDestroyWindowEvent m_DestroyWindowEvent = null;
 
     public override CreateWindowEvent create_window_event {
         get {
@@ -108,6 +109,16 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
                 m_CreateWindowEvent = new XcbCreateWindowEvent (root.proxy as XcbWindow);
             }
             return m_CreateWindowEvent;
+        }
+    }
+
+    public override DestroyWindowEvent destroy_window_event {
+        get {
+            if (m_DestroyWindowEvent == null)
+            {
+                m_DestroyWindowEvent = new XcbDestroyWindowEvent (root.proxy as XcbWindow);
+            }
+            return m_DestroyWindowEvent;
         }
     }
 

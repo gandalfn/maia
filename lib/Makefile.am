@@ -37,6 +37,7 @@ libmaia_la_SOURCES = \
     damage-event.vala \
     delete-event.vala \
     create-window-event.vala \
+    destroy-window-event.vala \
     application.vala
 
 libmaia_la_LDFLAGS = \

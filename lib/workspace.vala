@@ -35,6 +35,12 @@ public class Maia.Workspace : View
         }
     }
 
+    public DestroyWindowEvent destroy_window_event {
+        get {
+            return m_Proxy.destroy_window_event;
+        }
+    }
+
     // accessors
     public unowned WorkspaceProxy? proxy {
         get {

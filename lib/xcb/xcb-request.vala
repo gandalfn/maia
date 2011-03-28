@@ -53,6 +53,11 @@ internal abstract class Maia.XcbRequest : Object
         GLib.Object (window: inWindow);
     }
 
+    ~XcbRequest ()
+    {
+        parent = null;
+    }
+
     protected virtual void
     on_reply ()
     {

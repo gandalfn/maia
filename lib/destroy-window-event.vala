@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * workspace-proxy.vala
+ * destroy-window-event.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,14 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.WorkspaceProxy : View
+public class Maia.DestroyWindowEventArgs : EventArgs
 {
     // accessors
-    public abstract uint                  num   { get; }
-    public abstract Window                root  { get; }
-    public abstract Array<unowned Window> stack { get; }
+    [CCode (notify = false)]
+    public Window window { get; private set; }
 
-    // events
-    public abstract CreateWindowEvent create_window_event { get; }
-    public abstract DestroyWindowEvent destroy_window_event { get; }
+    // methods
+    public DestroyWindowEventArgs (Window inWindow)
+    {
+        window = inWindow;
+    }
+}
+
+public class Maia.DestroyWindowEvent : Event<DestroyWindowEventArgs>
+{
+    // methods
+    public DestroyWindowEvent (uint32 inId, void* inOwner)
+    {
+        base.with_id (inId, inOwner);
+    }
 }

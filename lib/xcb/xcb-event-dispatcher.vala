@@ -50,6 +50,9 @@ internal class Maia.XcbEventDispatcher : Watch
                 case Xcb.CREATE_NOTIFY:
                     XcbCreateWindowEvent.post_event (evt);
                     break;
+                case Xcb.DESTROY_NOTIFY:
+                    XcbDestroyWindowEvent.post_event (evt);
+                    break;
                 case Xcb.EXPOSE:
                     XcbDamageEvent.post_event (evt);
                     break;
