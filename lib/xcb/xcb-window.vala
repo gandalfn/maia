@@ -60,6 +60,10 @@ internal class Maia.XcbWindow : WindowProxy
             {
                 create (value);
             }
+            else
+            {
+                m_Geometry = value;
+            }
         }
     }
 

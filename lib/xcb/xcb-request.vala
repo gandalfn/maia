@@ -104,13 +104,17 @@ internal abstract class Maia.XcbRequest : Object
                     }
                     if (request != null)
                     {
-                        request.on_commit ();
-                        if (desktop == null)
+                        request.ref ();
                         {
-                            desktop = request.m_Window.xcb_desktop;
+                            request.on_commit ();
+                            if (desktop == null)
+                            {
+                                desktop = request.m_Window.xcb_desktop;
+                            }
                         }
+                        request.unref ();
+                        prev = request;
                     }
-                    prev = request;
                 }
 
                 if (desktop != null) desktop.flush ();

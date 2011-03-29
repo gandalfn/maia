@@ -36,6 +36,7 @@ internal class Maia.XcbCreateWindowEvent : CreateWindowEvent
             XcbCreateWindowEvent create_window_event = new XcbCreateWindowEvent.from_event (evt);
 
             Window new_window = new Window.foreign (evt.window, parent.workspace) as Window;
+            (new_window.proxy as XcbWindow).attributes.override_redirect = (bool)evt.override_redirect;
             CreateWindowEventArgs args = new CreateWindowEventArgs (new_window);
             create_window_event.post (args);
         }

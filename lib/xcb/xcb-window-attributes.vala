@@ -56,10 +56,15 @@ internal class Maia.XcbWindowAttributes : XcbRequest
     protected override void
     on_reply ()
     {
+        base.on_reply ();
+
         XcbDesktop desktop = window.xcb_desktop;
         Xcb.GetWindowAttributesReply reply = ((Xcb.GetWindowAttributesCookie?)cookie).reply (desktop.connection);
-        m_OverrideRedirect = (bool)reply.override_redirect;
-        m_EventMask = reply.all_event_masks;
+        if (reply != null)
+        {
+            m_OverrideRedirect = (bool)reply.override_redirect;
+            m_EventMask = reply.all_event_masks;
+        }
     }
 
     protected override void

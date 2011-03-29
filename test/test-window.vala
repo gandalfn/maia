@@ -37,7 +37,6 @@ public class TestWindow : Maia.Window
     on_window_destroyed (Maia.DestroyWindowEventArgs inArgs)
     {
         message ("window destroyed 0x%x", inArgs.window.id);
-        inArgs.window.parent = null;
         message ("%s", workspace.to_string ());
     }
 
