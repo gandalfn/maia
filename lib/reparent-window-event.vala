@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * workspace-proxy.vala
+ * reparent-window-event.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,15 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.WorkspaceProxy : View
+public class Maia.ReparentWindowEventArgs : EventArgs
 {
     // accessors
-    public abstract uint                  num   { get; }
-    public abstract Window                root  { get; }
-    public abstract Array<unowned Window> stack { get; }
+    [CCode (notify = false)]
+    public Window parent { get; private set; }
+    [CCode (notify = false)]
+    public Window window { get; private set; }
 
-    // events
-    public abstract CreateWindowEvent create_window_event { get; }
-    public abstract DestroyWindowEvent destroy_window_event { get; }
-    public abstract ReparentWindowEvent reparent_window_event { get; }
+    // methods
+    public ReparentWindowEventArgs (Window inParent, Window inWindow)
+    {
+        parent = inParent;
+        window = inWindow;
+    }
+}
+
+public class Maia.ReparentWindowEvent : Event<ReparentWindowEventArgs>
+{
+    // methods
+    public ReparentWindowEvent (uint32 inId, void* inOwner)
+    {
+        base.with_id (inId, inOwner);
+    }
 }

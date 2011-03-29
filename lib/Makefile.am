@@ -38,6 +38,7 @@ libmaia_la_SOURCES = \
     delete-event.vala \
     create-window-event.vala \
     destroy-window-event.vala \
+    reparent-window-event.vala \
     application.vala
 
 libmaia_la_LDFLAGS = \

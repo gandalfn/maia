@@ -41,6 +41,12 @@ public class Maia.Workspace : View
         }
     }
 
+    public ReparentWindowEvent reparent_window_event {
+        get {
+            return m_Proxy.reparent_window_event;
+        }
+    }
+
     // accessors
     public unowned WorkspaceProxy? proxy {
         get {

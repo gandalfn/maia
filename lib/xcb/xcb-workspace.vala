@@ -101,6 +101,7 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
     // events
     private XcbCreateWindowEvent m_CreateWindowEvent = null;
     private XcbDestroyWindowEvent m_DestroyWindowEvent = null;
+    private XcbReparentWindowEvent m_ReparentWindowEvent = null;
 
     public override CreateWindowEvent create_window_event {
         get {
@@ -109,6 +110,13 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
                 m_CreateWindowEvent = new XcbCreateWindowEvent (root.proxy as XcbWindow);
                 destroy_window_event.listen ((a) => {
                     a.window.parent = null;
+                }, Application.self);
+                reparent_window_event.listen ((a) => {
+                    audit (GLib.Log.METHOD, "reparent 0x%lx : 0x%lx", a.window.id, a.parent.id);
+                    if (a.parent != root)
+                        a.window.parent = a.parent;
+					else
+						a.window.parent = this;
                 }, Application.self);
             }
             return m_CreateWindowEvent;
@@ -122,6 +130,16 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
                 m_DestroyWindowEvent = new XcbDestroyWindowEvent (root.proxy as XcbWindow);
             }
             return m_DestroyWindowEvent;
+        }
+    }
+
+    public override ReparentWindowEvent reparent_window_event {
+        get {
+            if (m_ReparentWindowEvent == null)
+            {
+                m_ReparentWindowEvent = new XcbReparentWindowEvent (root.proxy as XcbWindow);
+            }
+            return m_ReparentWindowEvent;
         }
     }
 

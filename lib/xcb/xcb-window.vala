@@ -201,11 +201,24 @@ internal class Maia.XcbWindow : WindowProxy
     public override string
     to_string ()
     {
-        string ret = "id = 0x%x\n".printf (id);
+        string ret = "--------------------------\n";
+
+        ret += "id = 0x%x\n".printf (id);
         if (m_Geometry != null)
-            ret += "  geometry = %s\n".printf (m_Geometry.to_string ());
-        ret += "  attributes:\n%s".printf (m_Attributes.to_string ());
-        ret += "  ICCM:\n%s".printf (m_ICCCMProperties.to_string ());
+            ret += "geometry = %s\n".printf (m_Geometry.to_string ());
+        ret += "attributes:\n%s".printf (m_Attributes.to_string ());
+        ret += "ICCM:\n%s".printf (m_ICCCMProperties.to_string ());
+
+        if (childs.nb_items > 0)
+        {
+            ret += "--------------------------\n";
+            ret += "childs of 0x%x\n".printf (id);
+        }
+
+        foreach (unowned Object object in childs)
+        {
+            ret += (object as Window).to_string ();
+        }
 
         return ret;
     }
