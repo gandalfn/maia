@@ -108,15 +108,16 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
             if (m_CreateWindowEvent == null)
             {
                 m_CreateWindowEvent = new XcbCreateWindowEvent (root.proxy as XcbWindow);
+
                 destroy_window_event.listen ((a) => {
                     a.window.parent = null;
                 }, Application.self);
+
                 reparent_window_event.listen ((a) => {
-                    audit (GLib.Log.METHOD, "reparent 0x%lx : 0x%lx", a.window.id, a.parent.id);
                     if (a.parent != root)
                         a.window.parent = a.parent;
-					else
-						a.window.parent = this;
+                    else
+                        a.window.parent = this;
                 }, Application.self);
             }
             return m_CreateWindowEvent;
