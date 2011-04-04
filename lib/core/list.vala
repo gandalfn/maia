@@ -216,11 +216,12 @@ public class Maia.List<V> : Collection<V>
         else
         {
             unowned Node<V>? found = null;
+            CompareFunc<V> func = compare_func;
 
             // Search node position
             for (unowned Node<V> node = m_Tail; node != null; node = node.m_Prev)
             {
-                if (compare_func (new_node.m_Value, node.m_Value) >= 0)
+                if (func (new_node.m_Value, node.m_Value) >= 0)
                 {
                     found = node;
                     break;
@@ -266,10 +267,12 @@ public class Maia.List<V> : Collection<V>
     {
         if (m_Sorted)
         {
+            CompareFunc<V> func = compare_func;
+
             // Check each node in queue
             for (unowned Node<V> node = m_Head; node != null && node.m_Next != null; node = node.m_Next)
             {
-                if (compare_func (node.m_Value, node.m_Next.m_Value) > 0)
+                if (func (node.m_Value, node.m_Next.m_Value) > 0)
                 {
                     // swap node data
                     V swap = node.m_Value;

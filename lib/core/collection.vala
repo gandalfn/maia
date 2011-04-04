@@ -20,29 +20,11 @@
 public abstract class Maia.Collection<V>
 {
     // Properties
-    private CompareFunc<V>  m_CompareFunc;
-    private ToStringFunc<V> m_ToStringFunc;
-
     internal int            stamp;
 
     // Accessors
-    public virtual CompareFunc<V> compare_func {
-        get {
-            return m_CompareFunc;
-        }
-        set {
-            m_CompareFunc = value;
-        }
-    }
-
-    public virtual ToStringFunc<V> to_string_func {
-        get {
-            return m_ToStringFunc;
-        }
-        set {
-            m_ToStringFunc = value;
-        }
-    }
+    public CompareFunc<V> compare_func { get; set; }
+    public ToStringFunc<V> to_string_func { get; set; }
 
     // Methods
     public Collection ()

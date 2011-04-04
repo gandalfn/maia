@@ -201,12 +201,13 @@ public class Maia.Set<V> : Collection<V>
     get_node (V inValue, out unowned Node<V>? outParent = null)
     {
         unowned Node<V> node = m_Root;
+        CompareFunc<V> func = compare_func;
 
         while (node != null)
         {
             outParent = node;
 
-            int res = compare_func (inValue, node.val);
+            int res = func (inValue, node.val);
             if (res > 0)
             {
                 node = node.right;

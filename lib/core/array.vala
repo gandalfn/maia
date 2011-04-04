@@ -122,14 +122,16 @@ public class Maia.Array <V> : Collection <V>
 
         if (right != -1)
         {
+            CompareFunc<V> func = compare_func;
+
             while (right >= left)
             {
                 int medium = (left + right) / 2;
-                int res = compare_func (m_pContent[medium].val, inValue);
+                int res = func (m_pContent[medium].val, inValue);
 
                 if (res == 0)
                 {
-                    while (medium < m_Size && compare_func (m_pContent[medium].val, inValue) == 0)
+                    while (medium < m_Size && func (m_pContent[medium].val, inValue) == 0)
                         medium++;
                     return medium;
                 }
@@ -168,9 +170,11 @@ public class Maia.Array <V> : Collection <V>
 
         if (!m_Sorted)
         {
+            CompareFunc<V> func = compare_func;
+
             for (int cpt = 0; iterator == null && cpt < m_Size; ++cpt)
             {
-                if (compare_func (m_pContent[cpt].val, inValue) == 0)
+                if (func (m_pContent[cpt].val, inValue) == 0)
                     iterator = new Iterator<V> (this, cpt);
             }
         }
@@ -180,10 +184,12 @@ public class Maia.Array <V> : Collection <V>
 
             if (right != -1)
             {
+                CompareFunc<V> func = compare_func;
+
                 while (iterator == null && right >= left)
                 {
                     int medium = (left + right) / 2;
-                    int res = compare_func (m_pContent[medium].val, inValue);
+                    int res = func (m_pContent[medium].val, inValue);
 
                     if (res == 0)
                     {
