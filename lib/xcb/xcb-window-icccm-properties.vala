@@ -52,9 +52,9 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
         }
     }
 
-    [CCode (notify = false)]
     public string name {
         get {
+            audit ("XcbWindowICCCMProperties.name.get", "%s", m_WMName[0]);
             return m_WMName[0];
         }
         construct set {
@@ -71,14 +71,18 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
             base.window = value;
 
             m_WMProtocols = new XcbWindowProperty<uint32> (value,
-                                                       XcbAtomType.WM_PROTOCOLS,
-                                                       Xcb.AtomType.ATOM,
-                                                       XcbWindowProperty.Format.U32);
+                                                           XcbAtomType.WM_PROTOCOLS,
+                                                           Xcb.AtomType.ATOM,
+                                                           XcbWindowProperty.Format.U32);
 
             m_WMName = new XcbWindowProperty<string> (value,
                                                       XcbAtomType.WM_NAME,
                                                       Xcb.AtomType.STRING,
-                                                      XcbWindowProperty.Format.U8);
+                                                      XcbWindowProperty.Format.U8,
+                                                      () => {
+                                                          audit (GLib.Log.METHOD, "name changed");
+                                                          notify_property ("name");
+                                                      });
 
             XcbDesktop desktop = window.xcb_desktop;
             m_WMDeleteWindowAtom = desktop.atoms [XcbAtomType.WM_DELETE_WINDOW];
@@ -87,19 +91,19 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
     }
 
     // methods
+    construct
+    {
+        GLib.BindingFlags flags = GLib.BindingFlags.BIDIRECTIONAL;
+
+        if (!(window.delegator as Window).is_foreign)
+            flags |= GLib.BindingFlags.SYNC_CREATE;
+
+        window.delegator.bind_property ("name", this, "name", flags);
+    }
+
     public XcbWindowICCCMProperties (XcbWindow inWindow)
     {
         base (inWindow);
-    }
-
-    public override string
-    to_string ()
-    {
-        string ret = "    name = %s\n".printf (name);
-        ret += "    delete event = %s\n".printf (delete_event.to_string ());
-        ret += "    take focus = %s\n".printf (take_focus.to_string ());
-
-        return ret;
     }
 
     public override void

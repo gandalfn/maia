@@ -24,7 +24,6 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
     private XcbWindowProperty<string> m_WMName;
 
     // accessors
-    [CCode (notify = false)]
     public Window.HintType hint_type {
         get {
             if (m_HintType[0] == window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_DESKTOP])
@@ -107,9 +106,9 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
         }
     }
 
-    [CCode (notify = false)]
     public string name {
         get {
+            audit ("XcbWindowEWMHProperties.name.get", "%s", m_WMName[0]);
             return m_WMName[0];
         }
         construct set {
@@ -128,16 +127,34 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
             m_HintType = new XcbWindowProperty<uint32> (value,
                                                         XcbAtomType._NET_WM_WINDOW_TYPE,
                                                         Xcb.AtomType.ATOM,
-                                                        XcbWindowProperty.Format.U32);
+                                                        XcbWindowProperty.Format.U32,
+                                                        () => {
+                                                            notify_property ("hint-type");
+                                                        });
 
             m_WMName = new XcbWindowProperty<string> (value,
                                                       XcbAtomType._NET_WM_NAME,
                                                       Xcb.AtomType.STRING,
-                                                      XcbWindowProperty.Format.U8);
+                                                      XcbWindowProperty.Format.U8,
+                                                      () => {
+                                                          audit (GLib.Log.METHOD, "name changed");
+                                                          notify_property ("name");
+                                                      });
         }
     }
 
     // methods
+    construct
+    {
+        GLib.BindingFlags flags = GLib.BindingFlags.BIDIRECTIONAL;
+
+        if (!(window.delegator as Window).is_foreign)
+            flags |= GLib.BindingFlags.SYNC_CREATE;
+
+        window.delegator.bind_property ("hint-type", this, "hint-type", flags);
+        window.delegator.bind_property ("name", this, "name", flags);
+    }
+
     public XcbWindowEWMHProperties (XcbWindow inWindow)
     {
         base (inWindow);

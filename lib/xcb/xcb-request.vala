@@ -61,30 +61,51 @@ internal abstract class Maia.XcbRequest : Object
     protected virtual void
     on_reply ()
     {
+        audit (GLib.Log.METHOD, "xid: 0x%x", m_Window.id);
     }
 
     protected virtual void
     on_commit ()
     {
-        debug (GLib.Log.METHOD, "");
+        audit (GLib.Log.METHOD, "xid: 0x%x", m_Window.id);
         parent = null;
     }
 
     protected void
     query_finish ()
     {
+        audit (GLib.Log.METHOD, "xid: 0x%x", m_Window.id);
+
         if (m_Cookie != null)
         {
+            debug (GLib.Log.METHOD, "Flush query");
+
             on_reply ();
             m_Cookie = null;
         }
     }
 
-    public abstract void query ();
+    public virtual void
+    query ()
+    {
+        audit (GLib.Log.METHOD, "xid: 0x%x", m_Window.id);
+
+        if (parent != null)
+        {
+            debug (GLib.Log.METHOD, "Flush commit");
+
+            m_Window.xcb_desktop.flush (true);
+            on_commit ();
+        }
+    }
 
     public virtual void
     commit ()
     {
+        audit (GLib.Log.METHOD, "xid: 0x%x", m_Window.id);
+
+        query_finish ();
+
         if (s_Commiter == null)
         {
             s_Commiter = new TaskOnce (() => {

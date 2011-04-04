@@ -19,25 +19,28 @@
 
 public class TestWindow : Maia.Window
 {
+    private int count = 0;
+
     public TestWindow ()
     {
         base ("test-window", 200, 200);
         workspace.create_window_event.listen (on_new_window, Maia.Application.self);
-        workspace.destroy_window_event.listen (on_window_destroyed, Maia.Application.self);
     }
 
     private void
     on_new_window (Maia.CreateWindowEventArgs inArgs)
     {
         message ("new window 0x%x", inArgs.window.id);
-        message ("%s", workspace.to_string ());
-    }
-
-    private void
-    on_window_destroyed (Maia.DestroyWindowEventArgs inArgs)
-    {
-        message ("window destroyed 0x%x", inArgs.window.id);
-        message ("%s", workspace.to_string ());
+        try
+        {
+            FileUtils.set_contents ("test-window-%i.dot".printf(count), workspace.to_string ());
+            Process.spawn_command_line_sync ("dot -Tpng test-window-%i.dot -otest-window-%i.png".printf (count, count));
+            ++count;
+        }
+        catch (GLib.Error err)
+        {
+            assert (false);
+        }
     }
 
     public override void
@@ -57,7 +60,7 @@ public class TestWindow : Maia.Window
 static int
 main (string[] args)
 {
-    //Maia.log_set_level (Maia.Level.DEBUG);
+    Maia.log_set_level (Maia.Level.DEBUG);
     Maia.backtrace_on_crash ();
 
     Maia.Application application = Maia.Application.create ();

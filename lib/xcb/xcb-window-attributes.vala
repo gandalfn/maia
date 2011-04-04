@@ -21,36 +21,41 @@ internal class Maia.XcbWindowAttributes : XcbRequest
 {
     // properties
     private uint m_Mask = 0;
-    private bool m_OverrideRedirect = false;
-    private uint m_EventMask = 0;
 
     // accessors
+    public bool override_redirect { get; set; default = false; }
     [CCode (notify = false)]
-    public bool override_redirect {
-        get {
-            return m_OverrideRedirect;
-        }
-        set {
-            m_OverrideRedirect = value;
-            m_Mask |= Xcb.CW.OVERRIDE_REDIRECT;
-        }
-    }
-
+    public bool is_viewable { get; protected set; default = false; }
     [CCode (notify = false)]
-    public uint event_mask {
-        get {
-            return m_EventMask;
-        }
-        set {
-            m_EventMask = value;
-            m_Mask |= Xcb.CW.EVENT_MASK;
-        }
-    }
+    public bool is_input_only { get; protected set; default = false; }
+    public uint event_mask { get; set; default = 0; }
 
     // methods
+    construct
+    {
+        bind_property ("event-mask", window, "event-mask", 
+                       GLib.BindingFlags.BIDIRECTIONAL,
+                       null, on_set_event_mask);
+        bind_property ("is-viewable", window.delegator, "is-viewable", 
+                       GLib.BindingFlags.BIDIRECTIONAL);
+        bind_property ("is-input-only", window.delegator, "is-input-only", 
+                       GLib.BindingFlags.BIDIRECTIONAL);
+    }
+
     public XcbWindowAttributes (XcbWindow inWindow)
     {
         base (inWindow);
+    }
+
+    private bool
+    on_set_event_mask (GLib.Binding inBinding, GLib.Value inSrc, GLib.Value inTarget)
+    {
+        audit (GLib.Log.METHOD, "id: 0x%lx mask: %u", window.id, (uint)inSrc);
+        inTarget = inSrc;
+        m_Mask |= Xcb.CW.EVENT_MASK;
+        commit ();
+
+        return true;
     }
 
     protected override void
@@ -62,9 +67,27 @@ internal class Maia.XcbWindowAttributes : XcbRequest
         Xcb.GetWindowAttributesReply reply = ((Xcb.GetWindowAttributesCookie?)cookie).reply (desktop.connection);
         if (reply != null)
         {
-            m_OverrideRedirect = (bool)reply.override_redirect;
-            m_EventMask = reply.all_event_masks;
+            if ((m_Mask & Xcb.CW.OVERRIDE_REDIRECT) != Xcb.CW.OVERRIDE_REDIRECT &&
+                override_redirect != (bool)reply.override_redirect)
+            {
+                override_redirect = (bool)reply.override_redirect;
+            }
+            if ((m_Mask & Xcb.CW.EVENT_MASK) != Xcb.CW.EVENT_MASK &&
+                event_mask != reply.all_event_masks)
+            {
+                event_mask = reply.all_event_masks;
+            }
+            if (is_viewable = (reply.map_state == Xcb.MapState.VIEWABLE))
+            {
+                is_viewable = reply.map_state == Xcb.MapState.VIEWABLE;
+            }
+            if (is_input_only != (reply._class == Xcb.WindowClass.INPUT_ONLY))
+            {
+                is_input_only = reply._class == Xcb.WindowClass.INPUT_ONLY;
+            }
         }
+        else 
+            error (GLib.Log.METHOD, "Error on get window attributes");
     }
 
     protected override void
@@ -76,11 +99,11 @@ internal class Maia.XcbWindowAttributes : XcbRequest
 
         if ((m_Mask & Xcb.CW.OVERRIDE_REDIRECT) == Xcb.CW.OVERRIDE_REDIRECT)
         {
-            values_list += (uint32)m_OverrideRedirect;
+            values_list += (uint32)override_redirect;
         }
         if ((m_Mask & Xcb.CW.EVENT_MASK) == Xcb.CW.EVENT_MASK)
         {
-            values_list += (uint32)m_EventMask;
+            values_list += (uint32)event_mask;
         }
 
         debug (GLib.Log.METHOD, "");
@@ -91,16 +114,9 @@ internal class Maia.XcbWindowAttributes : XcbRequest
     public override void
     query ()
     {
+        base.query ();
+
         XcbDesktop desktop = window.xcb_desktop;
         cookie = ((Xcb.Window)window.id).get_attributes (desktop.connection);
-    }
-
-    public override string
-    to_string ()
-    {
-        string ret = "    override redirect = %s\n".printf (m_OverrideRedirect.to_string ());
-        ret += "    event mask %s\n".printf (m_EventMask.to_string ());
-
-        return ret;
     }
 }

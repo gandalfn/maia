@@ -22,9 +22,6 @@ public abstract class Maia.WindowProxy : View
     // events
     public abstract DeleteEvent delete_event { get; }
 
-    // accessors
-    public abstract Window.HintType hint_type { get; set; }
-
     // methods
     public abstract void show ();
     public abstract void hide ();

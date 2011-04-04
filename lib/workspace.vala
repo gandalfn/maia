@@ -94,7 +94,18 @@ public class Maia.Workspace : View
     public override string
     to_string ()
     {
-        return m_Proxy.to_string ();
+        string ret = "digraph {\n ";
+        foreach (Window window in stack)
+        {
+            ret += window.to_string ();
+            if (window != root)
+            {
+                ret += "%s -> %s;\n".printf (root.id.to_string (), window.id.to_string());
+            }
+        }
+        ret += "}\n";
+
+        return ret;
     }
 
     public override bool

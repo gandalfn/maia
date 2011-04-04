@@ -580,6 +580,13 @@ namespace Xcb {
 		INPUT_ONLY
 	}
 
+	[CCode (cname = "xcb_map_state_t", cprefix = "XCB_MAP_STATE_", has_type_id = false)]
+	public enum MapState {
+		UNMAPPED,
+		UNVIEWABLE,
+		VIEWABLE
+	}
+
 	public const uint8 CREATE_NOTIFY;
 	public const uint8 BUTTON_PRESS;
 	public const uint8 BUTTON_RELEASE;

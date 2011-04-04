@@ -59,9 +59,8 @@ internal class Maia.XcbCreateWindowEvent : CreateWindowEvent
     {
         if (m_Window != null && m_ListenCount == 0)
         {
-            m_Window.attributes.event_mask |= Xcb.EventMask.STRUCTURE_NOTIFY |
-                                              Xcb.EventMask.SUBSTRUCTURE_NOTIFY;
-            m_Window.attributes.commit ();
+            m_Window.event_mask |= Xcb.EventMask.STRUCTURE_NOTIFY |
+                                   Xcb.EventMask.SUBSTRUCTURE_NOTIFY;
         }
         ++m_ListenCount;
     }

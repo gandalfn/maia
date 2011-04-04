@@ -156,19 +156,6 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
         m_Stack.clear ();
     }
 
-    public override string
-    to_string ()
-    {
-        string ret = "num = %u\n".printf (m_Num);
-        ret += "stack:\n";
-        foreach (Window window in m_Stack)
-        {
-            ret += window.to_string ();
-        }
-
-        return ret;
-    }
-
     public void
     init (Xcb.Screen inScreen, uint inNum)
     {

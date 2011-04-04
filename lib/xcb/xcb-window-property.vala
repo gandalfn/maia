@@ -27,21 +27,26 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
         U32 = 32
     }
 
+    public delegate void UpdatedFunc ();
+
     // properties
     private Xcb.Atom              m_Property;
     private Xcb.Atom              m_Type;
     private Format                m_Format;
     private Array<V>              m_Values;
+    private UpdatedFunc           m_UpdatedFunc;
 
     // methods
     public XcbWindowProperty (XcbWindow inWindow, XcbAtomType inProperty,
-                              Xcb.Atom inType, Format inFormat)
+                              Xcb.Atom inType, Format inFormat,
+                              UpdatedFunc? inUpdatedFunc = null)
     {
         base (inWindow);
         m_Property = window.xcb_desktop.atoms[inProperty];
         m_Type = inType;
         m_Format = inFormat;
         m_Values = new Array<V> ();
+        m_UpdatedFunc = inUpdatedFunc;
     }
 
     protected override void
@@ -57,47 +62,8 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
             switch (m_Format)
             {
                 case Format.U32:
-                {
-                    uint32* values = reply.get_value ();
-                    int length = reply.get_length ();
-
-                    for (int cpt = 0; cpt < length; ++cpt)
                     {
-                        V val = (V)(ulong)values[cpt];
-                        m_Values.insert (val);
-                    }
-                    delete values;
-                }
-                    break;
-
-                case Format.U16:
-                {
-                    uint16* values = reply.get_value ();
-                    int length = reply.get_length ();
-
-                    for (int cpt = 0; cpt < length; ++cpt)
-                    {
-                        V val = (V)(ulong)values[cpt];
-                        m_Values.insert (val);
-                    }
-                    delete values;
-                }
-                    break;
-
-                case Format.U8:
-                {
-                    if (typeof (V) == typeof (string))
-                    {
-                        string data = (string)reply.get_value ();
-                        int length = reply.get_length ();
-                        if (data.validate (length))
-                        {
-                            m_Values[0] = data.substring (0, length);
-                        }
-                    }
-                    else
-                    {
-                        uint8* values = reply.get_value ();
+                        uint32* values = reply.get_value ();
                         int length = reply.get_length ();
 
                         for (int cpt = 0; cpt < length; ++cpt)
@@ -107,9 +73,52 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
                         }
                         delete values;
                     }
-                }
+                    break;
+
+                case Format.U16:
+                    {
+                        uint16* values = reply.get_value ();
+                        int length = reply.get_length ();
+
+                        for (int cpt = 0; cpt < length; ++cpt)
+                        {
+                            V val = (V)(ulong)values[cpt];
+                            m_Values.insert (val);
+                        }
+                        delete values;
+                    }
+                    break;
+
+                case Format.U8:
+                    {
+                        if (typeof (V) == typeof (string))
+                        {
+                            string data = (string)reply.get_value ();
+                            int length = reply.get_length ();
+                            if (data.validate (length))
+                            {
+                                m_Values[0] = data.substring (0, length);
+                            }
+                        }
+                        else
+                        {
+                            uint8* values = reply.get_value ();
+                            int length = reply.get_length ();
+
+                            for (int cpt = 0; cpt < length; ++cpt)
+                            {
+                                V val = (V)(ulong)values[cpt];
+                                m_Values.insert (val);
+                            }
+                            delete values;
+                        }
+                    }
                     break;
             }
+
+            // Call updated delegate
+            if (m_UpdatedFunc != null)
+                m_UpdatedFunc ();
         }
     }
 

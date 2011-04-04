@@ -98,7 +98,7 @@ internal class Maia.XcbDesktop : DesktopProxy
         {
             m_FlushTask = new TaskOnce (() => {
                 m_Connection.flush ();
-            });
+            }, Task.Priority.NORMAL - 1);
             m_FlushTask.finished.connect (() => {
                 m_FlushTask = null;
             });
@@ -107,6 +107,7 @@ internal class Maia.XcbDesktop : DesktopProxy
         else if (inSync)
         {
             m_Connection.flush ();
+            m_FlushTask = null;
         }
     }
 }

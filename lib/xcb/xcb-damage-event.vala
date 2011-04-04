@@ -51,8 +51,7 @@ internal class Maia.XcbDamageEvent : DamageEvent
     {
         if (m_Window != null && m_ListenCount == 0)
         {
-            m_Window.attributes.event_mask |= Xcb.EventMask.EXPOSURE;
-            m_Window.attributes.commit ();
+            m_Window.event_mask |= Xcb.EventMask.EXPOSURE;
         }
         ++m_ListenCount;
     }

@@ -40,9 +40,7 @@ public class Maia.Window : View
     }
 
     // properties
-    private bool                m_Foreign = false;
     private unowned WindowProxy m_Proxy;
-    private string              m_Name = null;
 
     // events
     public override DamageEvent damage_event {
@@ -58,16 +56,6 @@ public class Maia.Window : View
     }
 
     // accessors
-    [CCode (notify = false)]
-    public string name {
-        get {
-            return m_Name;
-        }
-        construct set {
-            m_Name = value;
-        }
-    }
-
     [CCode (notify = false)]
     public override Object parent {
         get {
@@ -85,7 +73,7 @@ public class Maia.Window : View
 
             if (value != null && value is Workspace && m_Proxy != null)
             {
-                debug ("Maia.Window.parent.set", "insert in workspace stack %s", m_Foreign.to_string ());
+                debug ("Maia.Window.parent.set", @"insert in workspace stack $is_foreign");
                 (value as Workspace).stack.insert (this);
             }
         }
@@ -103,32 +91,9 @@ public class Maia.Window : View
         }
     }
 
-    [CCode (notify = false)]
-    public bool is_foreign {
-        get {
-            return m_Foreign;
-        }
-        construct {
-            m_Foreign = value;
-        }
-    }
-
-    [CCode (notify = false)]
     public unowned WindowProxy proxy {
         get {
             return m_Proxy;
-        }
-        set {
-            if (m_Proxy == null)
-            {
-                m_Proxy = value;
-                assert(m_Proxy != null);
-
-                if (parent is Workspace)
-                {
-                    (parent as Workspace).stack.insert (this);
-                }
-            }
         }
     }
 
@@ -142,22 +107,24 @@ public class Maia.Window : View
         }
     }
 
-    [CCode (notify = false)]
-    public HintType hint_type {
-        get {
-            return m_Proxy.hint_type;
-        }
-        set {
-            m_Proxy.hint_type = value;
-        }
-    }
+    public string name { get; construct set; default = null; }
+    public bool is_foreign { get; construct; default = false; }
+    public bool is_viewable { get; protected set; default = false; }
+    public bool is_input_only { get; protected set; default = false; }
+    public HintType hint_type { get; set; default = HintType.NORMAL; }
 
     // methods
     construct
     {
         audit ("Maia.Window.construct", "create window");
 
-        proxy = delegate_cast<WindowProxy> ();
+        m_Proxy = delegate_cast<WindowProxy> ();
+        assert(m_Proxy != null);
+
+        if (parent is Workspace)
+        {
+            (parent as Workspace).stack.insert (this);
+        }
     }
 
     public Window (string inName, int inWidth, int inHeight)
@@ -208,7 +175,26 @@ public class Maia.Window : View
     public override string
     to_string ()
     {
-        return m_Proxy.to_string ();
+        string ret = @"$id [label=<<table border=\"0\" cellborder=\"1\" cellspacing=\"0\"><tr><td>";
+
+        if (name != null)
+            ret += @"name: $name<br/>";
+        ret += "id: 0x%x<br/>".printf (id);
+        ret += @"foreign: $is_foreign<br/>";
+        ret += @"viewable: $is_viewable<br/>";
+        ret += @"input only: $is_input_only<br/>";
+        ret += "wm type: %s<br/>".printf (hint_type.to_string ());
+        if (geometry != null)
+            ret += "geometry: %s".printf (geometry.to_string ());
+        ret += "</td></tr></table>>];\n";
+
+        foreach (unowned Object object in childs)
+        {
+            ret += (object as Window).to_string ();
+            ret += "%s -> %s;\n".printf (id.to_string (), (object as Window).id.to_string ());
+        }
+
+        return ret;
     }
 
     public void
