@@ -183,9 +183,9 @@ public class Maia.Window : View
         ret += @"foreign: $is_foreign<br/>";
         ret += @"viewable: $is_viewable<br/>";
         ret += @"input only: $is_input_only<br/>";
-        ret += "wm type: %s<br/>".printf (hint_type.to_string ());
+        ret += @"wm type: $hint_type<br/>";
         if (geometry != null)
-            ret += "geometry: %s".printf (geometry.to_string ());
+            ret += @"geometry: $geometry";
         ret += "</td></tr></table>>];\n";
 
         foreach (unowned Object object in childs)

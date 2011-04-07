@@ -106,7 +106,7 @@ public class Maia.Rectangle
     public string
     to_string ()
     {
-        return origin.to_string () + "," + size.to_string ();
+        return @"$origin,$size";
     }
 
     /**

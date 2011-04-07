@@ -55,6 +55,6 @@ public struct Maia.Point
     public string
     to_string ()
     {
-        return x.to_string () + "," + y.to_string ();
+        return @"$x,$y";
     }
 }
