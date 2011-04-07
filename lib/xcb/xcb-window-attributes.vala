@@ -24,9 +24,7 @@ internal class Maia.XcbWindowAttributes : XcbRequest
 
     // accessors
     public bool override_redirect { get; set; default = false; }
-    [CCode (notify = false)]
     public bool is_viewable { get; protected set; default = false; }
-    [CCode (notify = false)]
     public bool is_input_only { get; protected set; default = false; }
     public uint event_mask { get; set; default = 0; }
 
@@ -67,24 +65,10 @@ internal class Maia.XcbWindowAttributes : XcbRequest
         Xcb.GetWindowAttributesReply reply = ((Xcb.GetWindowAttributesCookie?)cookie).reply (desktop.connection);
         if (reply != null)
         {
-            if ((m_Mask & Xcb.CW.OVERRIDE_REDIRECT) != Xcb.CW.OVERRIDE_REDIRECT &&
-                override_redirect != (bool)reply.override_redirect)
-            {
-                override_redirect = (bool)reply.override_redirect;
-            }
-            if ((m_Mask & Xcb.CW.EVENT_MASK) != Xcb.CW.EVENT_MASK &&
-                event_mask != reply.all_event_masks)
-            {
-                event_mask = reply.all_event_masks;
-            }
-            if (is_viewable = (reply.map_state == Xcb.MapState.VIEWABLE))
-            {
-                is_viewable = reply.map_state == Xcb.MapState.VIEWABLE;
-            }
-            if (is_input_only != (reply._class == Xcb.WindowClass.INPUT_ONLY))
-            {
-                is_input_only = reply._class == Xcb.WindowClass.INPUT_ONLY;
-            }
+            override_redirect = (bool)reply.override_redirect;
+            event_mask = reply.all_event_masks;
+            is_viewable = reply.map_state == Xcb.MapState.VIEWABLE;
+            is_input_only = reply._class == Xcb.WindowClass.INPUT_ONLY;
         }
         else 
             error (GLib.Log.METHOD, "Error on get window attributes");
@@ -93,8 +77,6 @@ internal class Maia.XcbWindowAttributes : XcbRequest
     protected override void
     on_commit ()
     {
-        base.on_commit ();
-
         uint32[] values_list = {};
 
         if ((m_Mask & Xcb.CW.OVERRIDE_REDIRECT) == Xcb.CW.OVERRIDE_REDIRECT)
@@ -109,14 +91,16 @@ internal class Maia.XcbWindowAttributes : XcbRequest
         debug (GLib.Log.METHOD, "");
         XcbDesktop desktop = window.xcb_desktop;
         ((Xcb.Window)window.id).change_attributes (desktop.connection, m_Mask, values_list);
+
+        base.on_commit ();
     }
 
     public override void
     query ()
     {
-        base.query ();
-
         XcbDesktop desktop = window.xcb_desktop;
         cookie = ((Xcb.Window)window.id).get_attributes (desktop.connection);
+
+        base.query ();
     }
 }

@@ -193,7 +193,7 @@ namespace Xcb {
 	}
 
 	[Compact]
-	[CCode (cname = "xcb_query_tree_reply_t", ref_function = "", unref_function = "")]
+	[CCode (cname = "xcb_query_tree_reply_t", free_function = "free")]
 	public class QueryTreeReply {
 		public Window root;
 		public Window parent;
@@ -203,7 +203,7 @@ namespace Xcb {
 	}
 
 	[Compact]
-	[CCode (cname = "xcb_get_window_attributes_reply_t", ref_function = "", unref_function = "")]
+	[CCode (cname = "xcb_get_window_attributes_reply_t", free_function = "free")]
 	public class GetWindowAttributesReply {
 		public uint8    response_type;
 		public uint8    backing_store;
@@ -226,7 +226,7 @@ namespace Xcb {
 	}
 
 	[Compact]
-	[CCode (cname = "xcb_get_property_reply_t", ref_function = "", unref_function = "")]
+	[CCode (cname = "xcb_get_property_reply_t", free_function = "free")]
 	public class GetPropertyReply {
 		public uint8  response_type;
 		public uint8  format;

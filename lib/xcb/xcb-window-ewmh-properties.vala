@@ -152,7 +152,7 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
             flags |= GLib.BindingFlags.SYNC_CREATE;
 
         window.delegator.bind_property ("hint-type", this, "hint-type", flags);
-        window.delegator.bind_property ("name", this, "name", flags);
+        //window.delegator.bind_property ("name", this, "name", flags);
     }
 
     public XcbWindowEWMHProperties (XcbWindow inWindow)

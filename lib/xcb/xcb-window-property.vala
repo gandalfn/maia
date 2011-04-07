@@ -68,10 +68,9 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
 
                         for (int cpt = 0; cpt < length; ++cpt)
                         {
-                            V val = (V)(ulong)values[cpt];
+                            unowned V val = (V)(ulong)values[cpt];
                             m_Values.insert (val);
                         }
-                        delete values;
                     }
                     break;
 
@@ -82,10 +81,9 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
 
                         for (int cpt = 0; cpt < length; ++cpt)
                         {
-                            V val = (V)(ulong)values[cpt];
+                            unowned V val = (V)(ulong)values[cpt];
                             m_Values.insert (val);
                         }
-                        delete values;
                     }
                     break;
 
@@ -93,7 +91,7 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
                     {
                         if (typeof (V) == typeof (string))
                         {
-                            string data = (string)reply.get_value ();
+                            unowned string? data = (string)reply.get_value ();
                             int length = reply.get_length ();
                             if (data.validate (length))
                             {
@@ -107,10 +105,9 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
 
                             for (int cpt = 0; cpt < length; ++cpt)
                             {
-                                V val = (V)(ulong)values[cpt];
+                                unowned V val = (V)(ulong)values[cpt];
                                 m_Values.insert (val);
                             }
-                            delete values;
                         }
                     }
                     break;
@@ -120,6 +117,8 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
             if (m_UpdatedFunc != null)
                 m_UpdatedFunc ();
         }
+
+        base.on_reply ();
     }
 
     public override void
@@ -205,13 +204,13 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
         cookie = ((Xcb.Window)window.id).get_property (desktop.connection, false,
                                                        m_Property, m_Type,
                                                        0, uint32.MAX);
+
+        base.query ();
     }
 
     public new unowned V?
     @get (int inIndex)
     {
-        query_finish ();
-
         return inIndex < m_Values.nb_items ? m_Values[inIndex] : null;
     }
 

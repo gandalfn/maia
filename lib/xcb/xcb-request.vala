@@ -20,7 +20,8 @@
 internal abstract class Maia.XcbRequest : Object
 {
     // static properties
-    private static TaskOnce s_Commiter = null;
+    private static TaskOnce s_QueryTask;
+    private static TaskOnce s_CommitTask;
 
     // properties
     private unowned XcbWindow m_Window;
@@ -58,10 +59,65 @@ internal abstract class Maia.XcbRequest : Object
         parent = null;
     }
 
+    private void
+    start_query_task ()
+    {
+        audit (GLib.Log.METHOD, "start query task");
+        if (s_QueryTask == null)
+        {
+            s_QueryTask = new TaskOnce (() => {
+                audit (GLib.Log.METHOD, "process query requests");
+
+                int n = s_QueryTask.childs.nb_items;
+                for (int cpt = 0; cpt < n; ++cpt)
+                {
+                    unowned XcbRequest request = (XcbRequest)s_QueryTask.childs.at (0);
+                    request.query_finish ();
+                }
+            }, Task.Priority.NORMAL + 1);
+
+            s_QueryTask.finished.connect (() => {
+                s_QueryTask = null;
+            });
+
+            s_QueryTask.parent = Application.self;
+        }
+
+        parent = s_QueryTask;
+    }
+
+    private void
+    start_commit_task ()
+    {
+        audit (GLib.Log.METHOD, "start commit task");
+        if (s_CommitTask == null)
+        {
+            s_CommitTask = new TaskOnce (() => {
+                audit (GLib.Log.METHOD, "process commit requests");
+
+                int n = s_CommitTask.childs.nb_items;
+                for (int cpt = 0; cpt < n; ++cpt)
+                {
+                    unowned XcbRequest request = (XcbRequest)s_CommitTask.childs.at (0);
+                    request.on_commit ();
+                }
+            }, Task.Priority.NORMAL - 1);
+
+            s_CommitTask.finished.connect (() => {
+                s_CommitTask = null;
+            });
+
+            s_CommitTask.parent = Application.self;
+        }
+
+        parent = s_CommitTask;
+    }
+
     protected virtual void
     on_reply ()
     {
         audit (GLib.Log.METHOD, "xid: 0x%x", m_Window.id);
+        parent = null;
     }
 
     protected virtual void
@@ -88,68 +144,22 @@ internal abstract class Maia.XcbRequest : Object
     public virtual void
     query ()
     {
-        audit (GLib.Log.METHOD, "xid: 0x%x", m_Window.id);
-
-        if (parent != null)
+        if (s_QueryTask == null || parent != s_QueryTask)
         {
-            debug (GLib.Log.METHOD, "Flush commit");
+            audit (GLib.Log.METHOD, "xid: 0x%x", m_Window.id);
 
-            m_Window.xcb_desktop.flush (true);
-            on_commit ();
+            start_query_task ();
         }
     }
 
     public virtual void
     commit ()
     {
-        audit (GLib.Log.METHOD, "xid: 0x%x", m_Window.id);
-
-        query_finish ();
-
-        if (s_Commiter == null)
+        if (s_CommitTask == null || parent != s_CommitTask)
         {
-            s_Commiter = new TaskOnce (() => {
-                debug (GLib.Log.METHOD, "");
+            audit (GLib.Log.METHOD, "xid: 0x%x", m_Window.id);
 
-                unowned XcbRequest? prev = null;
-                unowned XcbDesktop? desktop = null;
-                int n = s_Commiter.childs.nb_items;
-                int index = 0;
-                for (int cpt = 0; cpt < n; ++cpt)
-                {
-                    unowned XcbRequest? request = s_Commiter.childs.at (index) as XcbRequest;
-                    if (request == prev)
-                    {
-                        ++index;
-                        request = s_Commiter.childs.at (index) as XcbRequest;
-                    }
-                    if (request != null)
-                    {
-                        request.ref ();
-                        {
-                            request.on_commit ();
-                            if (desktop == null)
-                            {
-                                desktop = request.m_Window.xcb_desktop;
-                            }
-                        }
-                        request.unref ();
-                        prev = request;
-                    }
-                }
-
-                if (desktop != null) desktop.flush ();
-            });
-
-            s_Commiter.finished.connect (() => {
-                s_Commiter = null;
-            });
-
-            s_Commiter.parent = Application.self;
-        }
-        if (!(this in s_Commiter.childs))
-        {
-            parent = s_Commiter;
+            start_commit_task ();
         }
     }
 }
