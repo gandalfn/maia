@@ -100,6 +100,8 @@ internal abstract class Maia.XcbRequest : Object
                 {
                     unowned XcbRequest request = (XcbRequest)s_CommitTask.childs.at (0);
                     request.on_commit ();
+                    if (request.cookie != null)
+                        start_query_task ();
                 }
             }, Task.Priority.NORMAL - 1);
 
@@ -148,7 +150,8 @@ internal abstract class Maia.XcbRequest : Object
         {
             audit (GLib.Log.METHOD, "xid: 0x%x", m_Window.id);
 
-            start_query_task ();
+            if (parent == null)
+                start_query_task ();
         }
     }
 
