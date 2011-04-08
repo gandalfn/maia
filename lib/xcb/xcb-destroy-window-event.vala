@@ -28,15 +28,28 @@ internal class Maia.XcbDestroyWindowEvent : DestroyWindowEvent
     post_event (Xcb.GenericEvent inEvent)
     {
         Xcb.DestroyNotifyEvent evt = (Xcb.DestroyNotifyEvent)inEvent;
-        XcbWorkspace workspace = Application.default.desktop.default_workspace.proxy as XcbWorkspace;
-        unowned Window? window = workspace.find_window (evt.window);
+        unowned Application? application = Application.default;
 
-        if (window != null)
+        if (application != null)
         {
-            XcbDestroyWindowEvent destroy_window_event = new XcbDestroyWindowEvent.from_event (evt);
+            unowned Desktop? desktop = application.desktop;
 
-            DestroyWindowEventArgs args = new DestroyWindowEventArgs (window);
-            destroy_window_event.post (args);
+            if (desktop != null)
+            {
+                foreach (unowned Workspace workspace in desktop)
+                {
+                    unowned Window? window = (workspace.proxy as XcbWorkspace).find_window (evt.window);
+
+                    if (window != null)
+                    {
+                        XcbDestroyWindowEvent destroy_window_event = new XcbDestroyWindowEvent.from_event (evt);
+
+                        DestroyWindowEventArgs args = new DestroyWindowEventArgs (window);
+                        destroy_window_event.post (args);
+                        break;
+                    }
+                }
+            }
         }
     }
 

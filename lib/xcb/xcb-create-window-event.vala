@@ -28,17 +28,31 @@ internal class Maia.XcbCreateWindowEvent : CreateWindowEvent
     post_event (Xcb.GenericEvent inEvent)
     {
         Xcb.CreateNotifyEvent evt = (Xcb.CreateNotifyEvent)inEvent;
-        XcbWorkspace workspace = Application.default.desktop.default_workspace.proxy as XcbWorkspace;
-        unowned Window? parent = workspace.find_window (evt.parent);
+        unowned Application? application = Application.default;
 
-        if (parent != null)
+        if (application != null)
         {
-            XcbCreateWindowEvent create_window_event = new XcbCreateWindowEvent.from_event (evt);
+            unowned Desktop? desktop = application.desktop;
 
-            Window new_window = new Window.foreign (evt.window, parent.workspace) as Window;
-            (new_window.proxy as XcbWindow).attributes.override_redirect = (bool)evt.override_redirect;
-            CreateWindowEventArgs args = new CreateWindowEventArgs (new_window);
-            create_window_event.post (args);
+            if (desktop != null)
+            {
+                foreach (unowned Workspace workspace in desktop)
+                {
+                    unowned Window? parent = (workspace.proxy as XcbWorkspace).find_window (evt.parent);
+
+                    if (parent != null)
+                    {
+                        XcbCreateWindowEvent create_window_event = new XcbCreateWindowEvent.from_event (evt);
+
+                        Window new_window = new Window.foreign (evt.window, parent.workspace) as Window;
+                        (new_window.proxy as XcbWindow).attributes.override_redirect = (bool)evt.override_redirect;
+                        CreateWindowEventArgs args = new CreateWindowEventArgs (new_window);
+                        create_window_event.post (args);
+
+                        break;
+                    }
+                }
+            }
         }
     }
 

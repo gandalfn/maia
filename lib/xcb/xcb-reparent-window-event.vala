@@ -28,16 +28,30 @@ internal class Maia.XcbReparentWindowEvent : ReparentWindowEvent
     post_event (Xcb.GenericEvent inEvent)
     {
         Xcb.ReparentNotifyEvent evt = (Xcb.ReparentNotifyEvent)inEvent;
-        XcbWorkspace workspace = Application.default.desktop.default_workspace.proxy as XcbWorkspace;
-        unowned Window? parent = workspace.find_window (evt.parent);
-        unowned Window? window = workspace.find_window (evt.window);
+        unowned Application? application = Application.default;
 
-        if (parent != null && window != null)
+        if (application != null)
         {
-            XcbReparentWindowEvent reparent_window_event = new XcbReparentWindowEvent.from_event (evt);
+            unowned Desktop? desktop = application.desktop;
 
-            ReparentWindowEventArgs args = new ReparentWindowEventArgs (parent, window);
-            reparent_window_event.post (args);
+            if (desktop != null)
+            {
+                foreach (unowned Workspace workspace in desktop)
+                {
+                    unowned Window? parent = (workspace.proxy as XcbWorkspace).find_window (evt.parent);
+                    unowned Window? window = (workspace.proxy as XcbWorkspace).find_window (evt.window);
+
+                    if (parent != null && window != null)
+                    {
+                        XcbReparentWindowEvent reparent_window_event = new XcbReparentWindowEvent.from_event (evt);
+
+                        ReparentWindowEventArgs args = new ReparentWindowEventArgs (parent, window);
+                        reparent_window_event.post (args);
+
+                        break;
+                    }
+                }
+            }
         }
     }
 
