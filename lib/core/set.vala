@@ -149,7 +149,7 @@ public class Maia.Set<V> : Collection<V>
         /**
          * {@inheritDoc}
          */
-        public override bool
+        internal override bool
         next ()
             requires (m_Set.stamp == stamp)
         {
@@ -176,7 +176,7 @@ public class Maia.Set<V> : Collection<V>
         /**
          * {@inheritDoc}
          */
-        public override unowned V?
+        internal override unowned V?
         @get ()
             requires (m_Set.stamp == stamp)
         {
@@ -191,7 +191,7 @@ public class Maia.Set<V> : Collection<V>
     /**
      * {@inheritDoc}
      */
-    public override int nb_items {
+    internal override int nb_items {
         get {
             return m_Size;
         }
@@ -363,7 +363,7 @@ public class Maia.Set<V> : Collection<V>
         return str;
     }
 
-    public override unowned V?
+    internal override unowned V?
     search<A> (A inValue, ValueCompareFunc<V, A> inFunc)
     {
         unowned Node<V> node = m_Root;
@@ -392,7 +392,7 @@ public class Maia.Set<V> : Collection<V>
     /**
      * {@inheritDoc}
      */
-    public override void
+    internal override void
     insert (V inValue)
     {
         unowned Node<V> parent = null;
@@ -430,7 +430,7 @@ public class Maia.Set<V> : Collection<V>
     /**
      * {@inheritDoc}
      */
-    public override void
+    internal override void
     remove (V inValue)
     {
         unowned Node<V> node = get_node (inValue);
@@ -463,7 +463,7 @@ public class Maia.Set<V> : Collection<V>
     /**
      * {@inheritDoc}
      */
-    public override bool
+    internal override bool
     contains (V inValue)
     {
         return get_node (inValue) != null;
@@ -472,7 +472,7 @@ public class Maia.Set<V> : Collection<V>
     /**
      * {@inheritDoc}
      */
-    public override void
+    internal override void
     clear ()
     {
         while (m_Root != null)
@@ -493,7 +493,7 @@ public class Maia.Set<V> : Collection<V>
     /**
      * {@inheritDoc}
      */
-    public override Maia.Iterator<V>
+    internal override Maia.Iterator<V>
     iterator ()
     {
         return new Iterator<V> (this);
@@ -502,7 +502,7 @@ public class Maia.Set<V> : Collection<V>
     /**
      * {@inheritDoc}
      */
-    public override void
+    internal override void
     erase (Maia.Iterator<V> inIterator)
         requires (inIterator is Iterator<V>)
         requires (inIterator.stamp == stamp)

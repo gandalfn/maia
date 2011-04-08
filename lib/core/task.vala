@@ -253,7 +253,7 @@ public class Maia.Task : Object
     /**
      * {@inheritDoc}
      */
-    public override int
+    internal override int
     compare (Object inOther)
         requires (inOther is Task)
     {

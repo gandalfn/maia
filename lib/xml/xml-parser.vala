@@ -233,7 +233,7 @@ public class Maia.XmlParser : Parser
         return content.str;
     }
 
-    protected override Parser.Token
+    internal override Parser.Token
     next_token () throws ParseError
     {
         Parser.Token token = Parser.Token.NONE;

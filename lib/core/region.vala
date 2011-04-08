@@ -296,7 +296,7 @@ public class Maia.Region : Object
     /**
      * {@inheritDoc}
      */
-    public override int
+    internal override int
     compare (Object inOther)
         requires (inOther is Region)
     {
@@ -319,7 +319,7 @@ public class Maia.Region : Object
     /**
      * {@inheritDoc}
      */
-    public override string
+    internal override string
     to_string ()
     {
         bool first = false;

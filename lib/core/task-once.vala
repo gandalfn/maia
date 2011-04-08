@@ -32,7 +32,7 @@ public class Maia.TaskOnce : Task
         m_Callback = inCallback;
     }
 
-    protected override void*
+    internal override void*
     main ()
     {
         void* ret = base.main ();

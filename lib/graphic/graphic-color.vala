@@ -328,7 +328,7 @@ public class Maia.GraphicColor : Object
         }
     }
 
-    public override int
+    internal override int
     compare (Object inOther)
         requires (inOther is GraphicColor)
     {
@@ -337,7 +337,7 @@ public class Maia.GraphicColor : Object
         return (int)(argb - other.argb);
     }
 
-    public override string
+    internal override string
     to_string ()
     {
         string ret;

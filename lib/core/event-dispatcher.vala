@@ -65,7 +65,7 @@ internal class Maia.EventDispatcher : Watch
             base.insert (inListener);
         }
 
-        public override void
+        internal override void
         insert (EventListener inListener)
             requires (m_EventId == inListener.id)
             requires (m_Owner == inListener.owner)
@@ -73,7 +73,7 @@ internal class Maia.EventDispatcher : Watch
             base.insert (inListener);
         }
 
-        public override void
+        internal override void
         remove (EventListener inListener)
             requires (m_EventId == inListener.id)
             requires (m_Owner == inListener.owner)
@@ -170,7 +170,7 @@ internal class Maia.EventDispatcher : Watch
         m_ListenersMutex.reader_unlock ();
     }
 
-    public override void*
+    internal override void*
     main ()
     {
         base.main ();

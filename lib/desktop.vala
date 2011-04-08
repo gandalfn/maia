@@ -62,7 +62,7 @@ public class Maia.Desktop : Object
         }
     }
 
-    public Workspace default_workspace {
+    public unowned Workspace? default_workspace {
         get {
             return m_Proxy.default_workspace;
         }
@@ -74,19 +74,19 @@ public class Maia.Desktop : Object
         m_Proxy = delegate_cast<DesktopProxy> ();
     }
 
-    public override bool 
+    internal override bool 
     can_append_child (Object inChild)
     {
         return inChild is Workspace;
     }
 
-    public override string
+    internal override string
     to_string ()
     {
         return m_Proxy.to_string ();
     }
 
-    public new Workspace?
+    public new unowned Workspace?
     @get (int inNumWorkspace)
     {
         return childs.at (inNumWorkspace) as Workspace;

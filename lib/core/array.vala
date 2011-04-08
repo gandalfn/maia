@@ -43,7 +43,7 @@ public class Maia.Array <V> : Collection <V>
             stamp = m_Array.stamp;
         }
 
-        public override bool
+        internal override bool
         next ()
             requires (m_Array.stamp == stamp)
         {
@@ -63,7 +63,7 @@ public class Maia.Array <V> : Collection <V>
             return ret;
         }
 
-        public override unowned V?
+        internal override unowned V?
         get ()
             requires (m_Array.stamp == stamp)
             requires (m_Index >= 0)
@@ -80,7 +80,7 @@ public class Maia.Array <V> : Collection <V>
     private Node<V>* m_pContent;
 
     // Accessors
-    public override int nb_items {
+    internal override int nb_items {
         get {
             return m_Size;
         }
@@ -263,7 +263,7 @@ public class Maia.Array <V> : Collection <V>
     /**
      * {@inheritDoc}
      */
-    public override bool
+    internal override bool
     contains (V inValue)
     {
         return get_iterator (inValue) != null;
@@ -272,7 +272,7 @@ public class Maia.Array <V> : Collection <V>
     /**
      * {@inheritDoc}
      */
-    public override unowned V?
+    internal override unowned V?
     search<A> (A inValue, ValueCompareFunc<V, A> inFunc)
     {
         unowned V? ret = null;
@@ -318,7 +318,7 @@ public class Maia.Array <V> : Collection <V>
     /**
      * {@inheritDoc}
      */
-    public override void
+    internal override void
     insert (V inValue)
     {
         if (m_Sorted)
@@ -353,7 +353,7 @@ public class Maia.Array <V> : Collection <V>
     /**
      * {@inheritDoc}
      */
-    public override void
+    internal override void
     remove (V inValue)
     {
         Iterator<V>? iterator = get_iterator (inValue);
@@ -388,7 +388,7 @@ public class Maia.Array <V> : Collection <V>
     /**
      * {@inheritDoc}
      */
-    public override void
+    internal override void
     clear ()
     {
         if (m_pContent != null)
@@ -504,7 +504,7 @@ public class Maia.Array <V> : Collection <V>
     /**
      * {@inheritDoc}
      */
-    public override Maia.Iterator<V>
+    internal override Maia.Iterator<V>
     iterator ()
     {
         return new Iterator<V> (this);
@@ -513,7 +513,7 @@ public class Maia.Array <V> : Collection <V>
     /**
      * {@inheritDoc}
      */
-    public override void
+    internal override void
     erase (Maia.Iterator<V> inIterator)
         requires (inIterator is Iterator<V>)
         requires (inIterator.stamp == stamp)

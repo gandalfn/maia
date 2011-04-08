@@ -43,13 +43,13 @@ public class Maia.Window : View
     private unowned WindowProxy m_Proxy;
 
     // events
-    public override DamageEvent damage_event {
+    internal override DamageEvent damage_event {
         get {
             return m_Proxy.damage_event;
         }
     }
 
-    public DeleteEvent delete_event {
+    internal DeleteEvent delete_event {
         get {
             return m_Proxy.delete_event;
         }
@@ -98,7 +98,7 @@ public class Maia.Window : View
     }
 
     [CCode (notify = false)]
-    public override Region geometry {
+    internal override Region geometry {
         get {
             return m_Proxy.geometry;
         }
@@ -172,7 +172,7 @@ public class Maia.Window : View
         m_Proxy.destroy ();
     }
 
-    public override string
+    internal override string
     to_string ()
     {
         string ret = @"$id [label=<<table border=\"0\" cellborder=\"1\" cellspacing=\"0\"><tr><td>";

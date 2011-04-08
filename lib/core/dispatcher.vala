@@ -106,7 +106,7 @@ public class Maia.Dispatcher : Task
     /**
      * {@inheritDoc}
      */
-    public override bool
+    internal override bool
     can_append_child (Object inChild)
     {
         return inChild is Task;
@@ -115,7 +115,7 @@ public class Maia.Dispatcher : Task
     /**
      * {@inheritDoc}
      */
-    protected override void*
+    internal override void*
     main ()
     {
         audit (GLib.Log.METHOD, "");
@@ -186,7 +186,7 @@ public class Maia.Dispatcher : Task
         return ret;
     }
 
-    public override void
+    internal override void
     finish ()
     {
         audit (GLib.Log.METHOD, "");

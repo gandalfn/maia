@@ -109,7 +109,7 @@ public class Maia.Watch : Task
     /**
      * {@inheritDoc}
      */
-    protected override void*
+    internal override void*
     main ()
     {
         void* ret = base.main ();
@@ -122,7 +122,7 @@ public class Maia.Watch : Task
     /**
      * {@inheritDoc}
      */
-    public override void
+    internal override void
     sleep (ulong inTimeoutMs)
     {
         base.sleep (inTimeoutMs);
@@ -135,7 +135,7 @@ public class Maia.Watch : Task
     /**
      * {@inheritDoc}
      */
-    public override void
+    internal override void
     wakeup ()
     {
         base.wakeup ();

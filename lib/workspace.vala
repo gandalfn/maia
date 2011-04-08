@@ -23,7 +23,7 @@ public class Maia.Workspace : View
     private unowned WorkspaceProxy m_Proxy;
 
     // events
-    public override DamageEvent damage_event {
+    internal override DamageEvent damage_event {
         get {
             return m_Proxy.damage_event;
         }
@@ -61,7 +61,7 @@ public class Maia.Workspace : View
     }
 
     [CCode (notify = false)]
-    public override Region geometry {
+    internal override Region geometry {
         get {
             return m_Proxy.geometry;
         }
@@ -91,7 +91,7 @@ public class Maia.Workspace : View
         m_Proxy = delegate_cast<WorkspaceProxy> ();
     }
 
-    public override string
+    internal override string
     to_string ()
     {
         string ret = "digraph {\n ";
@@ -108,7 +108,7 @@ public class Maia.Workspace : View
         return ret;
     }
 
-    public override bool
+    internal override bool
     can_append_child (Object inChild)
     {
         return inChild is Window; 
