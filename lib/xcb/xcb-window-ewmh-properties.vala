@@ -160,6 +160,12 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
         base (inWindow);
     }
 
+    ~XcbWindowEWMHProperties ()
+    {
+        m_HintType.parent = null;
+        m_WMName.parent = null;
+    }
+
     public override void
     query ()
     {

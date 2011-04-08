@@ -101,6 +101,11 @@ internal class Maia.XcbWindow : WindowProxy
         // Destroy xcb window
         if (!(delegator as Window).is_foreign && id > 0)
             destroy ();
+
+        // Unset request parent to cancel any pendings
+        m_Attributes.parent = null;
+        m_ICCCMProperties.parent = null;
+        m_EWMHProperties.parent = null;
     }
 
     private void

@@ -106,6 +106,12 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
         base (inWindow);
     }
 
+    ~XcbWindowICCCMProperties ()
+    {
+        m_WMProtocols.parent = null;
+        m_WMName.parent = null;
+    }
+
     public override void
     query ()
     {

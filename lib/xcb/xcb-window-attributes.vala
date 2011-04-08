@@ -92,6 +92,8 @@ internal class Maia.XcbWindowAttributes : XcbRequest
         XcbDesktop desktop = window.xcb_desktop;
         ((Xcb.Window)window.id).change_attributes (desktop.connection, m_Mask, values_list);
 
+        m_Mask = 0;
+
         base.on_commit ();
     }
 
