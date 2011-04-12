@@ -110,6 +110,7 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
                 m_CreateWindowEvent = new XcbCreateWindowEvent (root.proxy as XcbWindow);
 
                 destroy_window_event.listen ((a) => {
+                    audit (GLib.Log.METHOD, "destroy window xid: 0x%lx", a.window.id);
                     a.window.parent = null;
                 }, Application.self);
 
@@ -182,10 +183,17 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
     public unowned Window?
     find_window (Xcb.Window inXcbWindow)
     {
-        return m_Stack.search<Xcb.Window> (inXcbWindow, (a, b) => {
-            Window awindow = a as Window;
-            if (awindow.proxy == null) return -1;
-            return (int)((awindow.proxy as XcbWindow).id - b);
-        }) as Window;
+        unowned Window? window = null;
+        this.lock ();
+        {
+            window = m_Stack.search<Xcb.Window> (inXcbWindow, (a, b) => {
+                Window awindow = a as Window;
+                if (awindow.proxy == null) return -1;
+                return (int)((awindow.proxy as XcbWindow).id - b);
+            }) as Window;
+        }
+        this.unlock ();
+
+        return window;
     }
 }
