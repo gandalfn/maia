@@ -56,6 +56,7 @@ internal abstract class Maia.XcbRequest : Object
 
     ~XcbRequest ()
     {
+        cookie = null;
         parent = null;
     }
 
@@ -63,24 +64,40 @@ internal abstract class Maia.XcbRequest : Object
     start_query_task ()
     {
         audit (GLib.Log.METHOD, "start query task");
-        if (s_QueryTask == null)
+
+        lock (s_QueryTask)
         {
-            s_QueryTask = new TaskOnce (() => {
-                audit (GLib.Log.METHOD, "process query requests");
+            if (s_QueryTask == null)
+            {
+                s_QueryTask = new TaskOnce (() => {
+                    audit (GLib.Log.METHOD, "process query requests");
 
-                int n = s_QueryTask.childs.nb_items;
-                for (int cpt = 0; cpt < n; ++cpt)
-                {
-                    unowned XcbRequest request = (XcbRequest)s_QueryTask.childs.at (0);
-                    request.query_finish ();
-                }
-            }, Task.Priority.NORMAL + 1);
+                    s_QueryTask.lock ();
+                    {
+                        while (s_QueryTask.childs.nb_items > 0)
+                        {
+                            unowned Object? child = s_QueryTask.childs.at (0);
+                            if (child != null)
+                            {
+                                child.ref ();
+                                ((XcbRequest)child).query_finish ();
+                                child.unref ();
+                            }
+                        }
+                    }
+                    s_QueryTask.unlock ();
+                }, Task.Priority.NORMAL + 1);
 
-            s_QueryTask.finished.connect (() => {
-                s_QueryTask = null;
-            });
+                s_QueryTask.finished.connect (() => {
+                    lock (s_QueryTask)
+                    {
+                        s_QueryTask.lock ();
+                        s_QueryTask = null;
+                    }
+                });
 
-            s_QueryTask.parent = Application.self;
+                s_QueryTask.parent = Application.self;
+            }
         }
 
         parent = s_QueryTask;
@@ -90,26 +107,45 @@ internal abstract class Maia.XcbRequest : Object
     start_commit_task ()
     {
         audit (GLib.Log.METHOD, "start commit task");
-        if (s_CommitTask == null)
+
+        lock (s_CommitTask)
         {
-            s_CommitTask = new TaskOnce (() => {
-                audit (GLib.Log.METHOD, "process commit requests");
+            if (s_CommitTask == null)
+            {
+                s_CommitTask = new TaskOnce (() => {
+                    audit (GLib.Log.METHOD, "process commit requests");
 
-                int n = s_CommitTask.childs.nb_items;
-                for (int cpt = 0; cpt < n; ++cpt)
-                {
-                    unowned XcbRequest request = (XcbRequest)s_CommitTask.childs.at (0);
-                    request.on_commit ();
-                    if (request.cookie != null)
-                        start_query_task ();
-                }
-            }, Task.Priority.NORMAL - 1);
+                    s_CommitTask.lock ();
+                    {
+                        while (s_CommitTask.childs.nb_items > 0)
+                        {
+                            unowned Object? child = s_CommitTask.childs.at (0);
+                            if (child != null)
+                            {
+                                child.ref ();
+                                unowned XcbRequest request = (XcbRequest)child;
 
-            s_CommitTask.finished.connect (() => {
-                s_CommitTask = null;
-            });
+                                request.on_commit ();
+                                if (request.cookie != null)
+                                    start_query_task ();
 
-            s_CommitTask.parent = Application.self;
+                                child.unref ();
+                            }
+                        }
+                    }
+                    s_CommitTask.unlock ();
+                }, Task.Priority.NORMAL - 1);
+
+                s_CommitTask.finished.connect (() => {
+                    lock (s_CommitTask)
+                    {
+                        s_CommitTask.lock ();
+                        s_CommitTask = null;
+                    }
+                });
+
+                s_CommitTask.parent = Application.self;
+            }
         }
 
         parent = s_CommitTask;
@@ -140,6 +176,10 @@ internal abstract class Maia.XcbRequest : Object
 
             on_reply ();
             m_Cookie = null;
+        }
+        else
+        {
+            parent = null;
         }
     }
 
