@@ -29,14 +29,27 @@ public class Maia.Desktop : Object
         internal Iterator (Desktop inDesktop)
         {
             m_Desktop = inDesktop;
-            m_Index = 0;
+            m_Index = -1;
         }
 
         public bool
         next ()
         {
-            m_Index++;
-            return m_Index < m_Desktop.childs.nb_items;
+            bool ret = false;
+            int nb_items = m_Desktop.childs.nb_items;
+
+            if (m_Index == -1 && nb_items > 0)
+            {
+                m_Index = 0;
+                ret = true;
+            }
+            else if (m_Index < nb_items)
+            {
+                m_Index++;
+                ret = m_Index < nb_items;
+            }
+
+            return ret;
         }
 
         public unowned Workspace?
