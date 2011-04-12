@@ -372,9 +372,7 @@ public class Maia.Array <V> : Collection <V>
     {
         m_Size--;
 
-        // vala bug workaround get owned value for it can be freed
-        V val = (owned)m_pContent[inPos].val;
-        val = null;
+        m_pContent[inPos].val = null;
 
         if (inPos != m_Size)
             GLib.Memory.move (&m_pContent[inPos], &m_pContent[inPos + 1],
@@ -395,9 +393,7 @@ public class Maia.Array <V> : Collection <V>
         {
             for (int cpt = 0; cpt < m_Size; ++cpt)
             {
-                // vala bug workaround get owned value for it can be freed
-                V val = (owned)m_pContent[cpt].val;
-                val = null;
+                m_pContent[cpt].val = null;
             }
 
             delete m_pContent;
@@ -447,11 +443,6 @@ public class Maia.Array <V> : Collection <V>
     {
         if (inIndex < m_Size)
         {
-            // vala bug workaround get owned value for it can be freed
-            {
-                V val = (owned)m_pContent[inIndex].val;
-                val = null;
-            }
             m_pContent[inIndex].val = inValue;
         }
         else if (inIndex == m_Size)
