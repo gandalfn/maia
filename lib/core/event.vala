@@ -90,7 +90,7 @@ public class Maia.Event<A> : Object
     {
         Event<A> event = new Event<A>.with_id (id, owner);
         event.m_Args = inArgs;
-        Maia.debug (GLib.Log.METHOD, "post event 0x%lx", (ulong)event);
+        Maia.debug (GLib.Log.METHOD, "post event 0x%lx", id);
         inDispatcher.post_event (event);
     }
 
