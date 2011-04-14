@@ -65,6 +65,7 @@ internal class Maia.XcbDestroyWindowEvent : DestroyWindowEvent
     {
         audit (GLib.Log.METHOD, "event: 0x%lx, id: 0x%lx", inEvent.event, inEvent.window);
         base (Xcb.DESTROY_NOTIFY, ((uint)inEvent.event).to_pointer ());
+        is_sender = true;
     }
 
     protected override void

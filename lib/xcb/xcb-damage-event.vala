@@ -44,6 +44,7 @@ internal class Maia.XcbDamageEvent : DamageEvent
     public XcbDamageEvent.from_event (Xcb.ExposeEvent inEvent)
     {
         base (Xcb.EXPOSE, ((uint)inEvent.window).to_pointer ());
+        is_sender = true;
     }
 
     protected override void

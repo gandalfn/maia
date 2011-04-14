@@ -231,4 +231,35 @@ internal class Maia.EventDispatcher : Watch
         }
         m_ListenersMutex.writer_unlock ();
     }
+
+    public void
+    deafen (EventListener inEventListener)
+    {
+        m_ListenersMutex.writer_lock ();
+        {
+            unowned ListenerQueue? queue = m_Listeners.search<EventListener> (inEventListener,
+                                                                              ListenerQueue.compare_with_listener);
+            if (queue != null)
+            {
+                queue.remove (inEventListener);
+            }
+        }
+        m_ListenersMutex.writer_unlock ();
+    }
+
+    public void
+    deafen_event (Event inEvent)
+    {
+        m_ListenersMutex.writer_lock ();
+        {
+            unowned ListenerQueue? queue = m_Listeners.search<Event> (inEvent,
+                                                                      ListenerQueue.compare_with_event);
+            if (queue != null)
+            {
+                queue.clear ();
+                m_Listeners.remove (queue);
+            }
+        }
+        m_ListenersMutex.writer_unlock ();
+    }
 }

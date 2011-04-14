@@ -50,4 +50,25 @@ internal class Maia.EventListener : Object
     {
         m_Handler (inArgs);
     }
+
+    internal override int
+    compare (Object inOther)
+        requires (inOther is EventListener)
+    {
+        unowned EventListener other = inOther as EventListener;
+
+        int ret = atom_compare (id, other.id);
+
+        if (ret == 0)
+        {
+            ret = direct_compare (m_Owner, other.m_Owner);
+        }
+
+        if (ret == 0)
+        {
+             ret = m_Handler == other.m_Handler ? 0 : 1;
+        }
+
+        return ret;
+    }
 }

@@ -30,5 +30,6 @@ internal class Maia.XcbDeleteEvent : DeleteEvent
     {
         Xcb.Atom atom = inEvent.data.data32[0];
         base (atom, ((uint)inEvent.window).to_pointer ());
+        is_sender = true;
     }
 }

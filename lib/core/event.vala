@@ -23,8 +23,9 @@ public class Maia.Event<A> : Object
     public delegate void Handler<A> (A? inArgs);
 
     // properties
-    private void* m_Owner = null;
-    private A     m_Args  = null;
+    private void* m_Owner  = null;
+    private A     m_Args   = null;
+    private bool  m_Sender = false;
 
     // accessors
     public string name {
@@ -40,6 +41,13 @@ public class Maia.Event<A> : Object
         }
         construct {
             m_Owner = value;
+        }
+    }
+
+    [CCode (notify = false)]
+    public bool is_sender {
+        set {
+            m_Sender = value;
         }
     }
 
@@ -75,6 +83,14 @@ public class Maia.Event<A> : Object
         GLib.Object (id: inId, owner: inOwner);
     }
 
+    ~Event ()
+    {
+        if (!m_Sender)
+        {
+            Dispatcher.remove_event_listeners (this);
+        }
+    }
+
     protected virtual void
     on_listen ()
     {
@@ -90,6 +106,7 @@ public class Maia.Event<A> : Object
     {
         Event<A> event = new Event<A>.with_id (id, owner);
         event.m_Args = inArgs;
+        event.m_Sender = true;
         Maia.debug (GLib.Log.METHOD, "post event 0x%lx", id);
         inDispatcher.post_event (event);
     }

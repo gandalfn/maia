@@ -66,6 +66,7 @@ internal class Maia.XcbCreateWindowEvent : CreateWindowEvent
     public XcbCreateWindowEvent.from_event (Xcb.CreateNotifyEvent inEvent)
     {
         base (Xcb.CREATE_NOTIFY, ((uint)inEvent.parent).to_pointer ());
+        is_sender = true;
     }
 
     protected override void

@@ -65,6 +65,7 @@ internal class Maia.XcbReparentWindowEvent : ReparentWindowEvent
     public XcbReparentWindowEvent.from_event (Xcb.ReparentNotifyEvent inEvent)
     {
         base (Xcb.REPARENT_NOTIFY, ((uint)inEvent.event).to_pointer ());
+        is_sender = true;
     }
 
     protected override void

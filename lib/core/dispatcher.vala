@@ -51,6 +51,22 @@ public class Maia.Dispatcher : Task
         };
     }
 
+    internal static void
+    remove_event_listeners (Event inEvent)
+    {
+        audit (GLib.Log.METHOD, "Leaf event id = %s", inEvent.name);
+        lock (s_Dispatchers)
+        {
+            foreach (unowned Dispatcher dispatcher in s_Dispatchers)
+            {
+                lock (dispatcher.m_EventDispatcher)
+                {
+                    dispatcher.m_EventDispatcher.deafen_event (inEvent);
+                }
+            }
+        }
+    }
+
     public Dispatcher ()
     {
         audit (GLib.Log.METHOD, "");
@@ -215,6 +231,16 @@ public class Maia.Dispatcher : Task
         lock (m_EventDispatcher)
         {
             m_EventDispatcher.listen (inEventListener);
+        }
+    }
+
+    internal void
+    remove_listener (EventListener inEventListener)
+    {
+        audit (GLib.Log.METHOD, "Deaf event id = %s", inEventListener.name);
+        lock (m_EventDispatcher)
+        {
+            m_EventDispatcher.deafen (inEventListener);
         }
     }
 
