@@ -27,13 +27,14 @@ public abstract class Maia.Object : GLib.Object
     internal class Set<Type>    c_Delegations = null;
 
     // Properties
+    private GLib.Type           m_Type;
     private uint32              m_Id = 0;
     private unowned Object      m_Parent = null;
     private unowned Object      m_Delegator = null;
     private Array<Object>       m_Childs = null; 
     private Set<unowned Object> m_IdentifiedChilds = null;
     private Set<Object>         m_Delegates = null;
-    private GLib.StaticRecMutex m_Mutex;
+    private GLib.StaticRWLock   m_Lock;
 
     // Accessors
 
@@ -48,20 +49,34 @@ public abstract class Maia.Object : GLib.Object
         construct set {
             if (m_Delegator == null)
             {
-                // object have a old id
-                if (m_Parent != null && m_Id != 0 && m_Parent.m_IdentifiedChilds != null)
-                    // remove object from identified object
-                    m_Parent.identified_childs.remove (this);
-
-                // set identifier
-                m_Id = value;
-
-                // object have a parent
-                if (m_Id != 0 && m_Parent != null)
+                write_lock ();
+                if (m_Parent != null)
                 {
-                    // add object in identified childs
-                    m_Parent.identified_childs.insert (this);
+                    m_Parent.write_lock ();
+                    {
+                        // object have a old id
+                        if (m_Id != 0 && m_Parent.m_IdentifiedChilds != null)
+                            // remove object from identified object
+                            m_Parent.identified_childs.remove (this);
+
+                        // set identifier
+                        m_Id = value;
+
+                        // object have a parent
+                        if (m_Id != 0)
+                        {
+                            // add object in identified childs
+                            m_Parent.identified_childs.insert (this);
+                        }
+                    }
+                    m_Parent.write_unlock ();
                 }
+                else
+                {
+                    // set identifier
+                    m_Id = value;
+                }
+                write_unlock ();
             }
             else
             {
@@ -81,56 +96,56 @@ public abstract class Maia.Object : GLib.Object
         construct set {
             if (m_Delegator == null)
             {
-                debug ("Maia.Object.parent.set", "Object %s", get_type ().name ());
+                debug ("Maia.Object.parent.set", "Object %s", m_Type.name ());
+
                 if (m_Parent != value)
                 {
                     ref ();
+                    write_lock ();
 
                     // object have already a parent
                     if (m_Parent != null)
                     {
-                        debug ("Maia.Object.parent.set", "Remove object %s from parent %s", get_type ().name (), m_Parent.get_type ().name ());
-                        m_Parent.lock ();
+                        m_Parent.write_lock ();
+
+                        debug ("Maia.Object.parent.set",
+                               "Remove object %s from parent %s",
+                               m_Type.name (), m_Parent.m_Type.name ());
+
                         // remove object from childs of old parent
                         m_Parent.childs.remove (this);
                         // remove object from identified childs of old parent
                         if (m_Id != 0)
                             m_Parent.identified_childs.remove (this);
-                        m_Parent.unlock ();
+
+                        m_Parent.write_unlock ();
+
+                        m_Parent = null;
                     }
 
                     if (value != null)
                     {
+                        value.write_lock ();
+
                         if (value.can_append_child (this))
                         {
                             // set parent property
                             m_Parent = value;
 
                             // add object to childs of parent
-                            if (m_Parent != null)
-                            {
-                                debug ("Maia.Object.parent.set",
-                                       "Add object %s from parent %s",
-                                       get_type ().name (),
-                                       m_Parent.get_type ().name ());
-                                m_Parent.lock ();
-                                m_Parent.childs.insert (this);
-                                if (m_Id != 0)
-                                    m_Parent.identified_childs.insert (this);
-                                m_Parent.unlock ();
-                            }
+                            debug ("Maia.Object.parent.set",
+                                   "Add object %s from parent %s",
+                                   m_Type.name (),
+                                   m_Parent.m_Type.name ());
+                            m_Parent.childs.insert (this);
+                            if (m_Id != 0)
+                                m_Parent.identified_childs.insert (this);
                         }
-                        else
-                        {
-                            m_Parent = null;
-                        }
-                    }
-                    else
-                    {
-                        // set parent property
-                        m_Parent = value;
+
+                        value.write_unlock ();
                     }
 
+                    write_unlock ();
                     unref ();
                 }
             }
@@ -221,7 +236,7 @@ public abstract class Maia.Object : GLib.Object
     static inline int
     compare_object_with_type (Object? inA, Type inB)
     {
-        return compare_type (inA.get_type (), inB);
+        return compare_type (inA.m_Type, inB);
     }
 
     /**
@@ -248,20 +263,22 @@ public abstract class Maia.Object : GLib.Object
 
     construct
     {
-        audit ("Maia.Object.construct", "construct %s", get_type ().name ());
+        m_Type = get_type ();
+
+        audit ("Maia.Object.construct", "construct %s", m_Type.name ());
 
         // Create delegate objects
         if (!c_Initialized)
         {
             if (s_Delegations != null)
             {
-                for (Type type = get_type (); type != typeof (Object); type = type.parent ())
+                for (Type type = m_Type; type != typeof (Object); type = type.parent ())
                 {
                     if (type in s_Delegations)
                     {
                         foreach (Type delegate_type in s_Delegations[type])
                         {
-                            audit ("Maia.Object.construct", "add delegate %s for %s", delegate_type.name (), get_type ().name ());
+                            audit ("Maia.Object.construct", "add delegate %s for %s", delegate_type.name (), m_Type.name ());
                             if (c_Delegations == null)
                             {
                                 c_Delegations = new Set<Type> ();
@@ -278,7 +295,7 @@ public abstract class Maia.Object : GLib.Object
         {
             m_Delegates = new Set<Object> ();
             m_Delegates.compare_func = (a, b) => {
-                return compare_type (a.get_type (), b.get_type ());
+                return compare_type (a.m_Type, b.m_Type);
             };
             foreach (Type type in c_Delegations)
             {
@@ -289,7 +306,7 @@ public abstract class Maia.Object : GLib.Object
 
     ~Object ()
     {
-        audit ("Maia.~Object", "destroy %s", get_type ().name ());
+        audit ("Maia.~Object", "destroy %s", m_Type.name ());
         if (m_Childs != null)
         {
             int nb = m_Childs.nb_items;
@@ -309,30 +326,58 @@ public abstract class Maia.Object : GLib.Object
     }
 
     public void
-    @lock ()
+    read_lock ()
     {
         if (m_Delegator == null)
         {
-            audit (GLib.Log.METHOD, "lock: %s, thread: 0x%lx", get_type ().name (), (ulong)GLib.Thread.self<void*> ());
-            m_Mutex.lock ();
+            //audit (GLib.Log.METHOD, "read lock: %s, thread: 0x%lx", m_Type.name (), (ulong)GLib.Thread.self<void*> ());
+            m_Lock.reader_lock ();
         }
         else
         {
-            m_Delegator.lock ();
+            m_Delegator.read_lock ();
         }
     }
 
     public void
-    unlock ()
+    read_unlock ()
     {
         if (m_Delegator == null)
         {
-            audit (GLib.Log.METHOD, "unlock: %s, thread: 0x%lx", get_type ().name (), (ulong)GLib.Thread.self<void*> ());
-            m_Mutex.unlock ();
+            //audit (GLib.Log.METHOD, "read unlock: %s, thread: 0x%lx", m_Type.name (), (ulong)GLib.Thread.self<void*> ());
+            m_Lock.reader_unlock ();
         }
         else
         {
-            m_Delegator.unlock ();
+            m_Delegator.read_unlock ();
+        }
+    }
+
+    public void
+    write_lock ()
+    {
+        if (m_Delegator == null)
+        {
+            //audit (GLib.Log.METHOD, "write lock: %s, thread: 0x%lx", m_Type.name (), (ulong)GLib.Thread.self<void*> ());
+            m_Lock.writer_lock ();
+        }
+        else
+        {
+            m_Delegator.write_lock ();
+        }
+    }
+
+    public void
+    write_unlock ()
+    {
+        if (m_Delegator == null)
+        {
+            //audit (GLib.Log.METHOD, "write unlock: %s, thread: 0x%lx", m_Type.name (), (ulong)GLib.Thread.self<void*> ());
+            m_Lock.writer_unlock ();
+        }
+        else
+        {
+            m_Delegator.write_unlock ();
         }
     }
 
