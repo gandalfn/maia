@@ -72,6 +72,7 @@
 
 unsigned int __log_level = 1;
 static GTimer *timer = NULL;
+G_LOCK_DEFINE_STATIC (maia_log);
 
 #ifdef HAVE_ENHANCED_DEBUG
 static asymbol **syms;      /* Symbol table.  */
@@ -357,6 +358,7 @@ maia_log_print_valist (const char* ctx, const char *function,
 {
     gchar *formatted;
 
+    G_LOCK (maia_log);
     if (!timer)
         timer = g_timer_new ();
 
@@ -366,6 +368,7 @@ maia_log_print_valist (const char* ctx, const char *function,
               g_timer_elapsed (timer, NULL), maia_log_level_name (level),
               formatted);
     g_free (formatted);
+    G_UNLOCK (maia_log);
 }
 
 void

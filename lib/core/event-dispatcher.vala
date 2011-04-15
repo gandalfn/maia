@@ -35,11 +35,13 @@ internal class Maia.EventDispatcher : Watch
         {
             m_Type = inType;
             m_Event = inEvent;
+            audit (GLib.Log.METHOD, "event ref_count: %u", m_Event.ref_count);
         }
 
         public Message.pop (int inFd)
         {
             Posix.read (inFd, &this, sizeof (Message));
+            audit (GLib.Log.METHOD, "event ref_count: %u", m_Event.ref_count);
         }
 
         public void
@@ -47,6 +49,7 @@ internal class Maia.EventDispatcher : Watch
         {
             m_Event.ref ();
             Posix.write (inFd, &this, sizeof (Message));
+            audit (GLib.Log.METHOD, "event ref_count: %u", m_Event.ref_count);
         }
     }
 
