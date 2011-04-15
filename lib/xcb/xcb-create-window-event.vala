@@ -40,14 +40,12 @@ internal class Maia.XcbCreateWindowEvent : CreateWindowEvent
                 {
                     unowned Window? parent = (workspace.proxy as XcbWorkspace).find_window (evt.parent);
 
-                    if (parent != null)
+                    if (parent != null && parent == workspace.root)
                     {
-                        XcbCreateWindowEvent create_window_event = new XcbCreateWindowEvent.from_event (evt);
-
                         Window new_window = new Window.foreign (evt.window, workspace) as Window;
                         (new_window.proxy as XcbWindow).attributes.override_redirect = (bool)evt.override_redirect;
                         CreateWindowEventArgs args = new CreateWindowEventArgs (new_window);
-                        create_window_event.post (args);
+                        workspace.create_window_event.post (args);
 
                         break;
                     }
@@ -61,12 +59,6 @@ internal class Maia.XcbCreateWindowEvent : CreateWindowEvent
     {
         base (Xcb.CREATE_NOTIFY, ((uint)inWindow.id).to_pointer ());
         m_Window = inWindow;
-    }
-
-    public XcbCreateWindowEvent.from_event (Xcb.CreateNotifyEvent inEvent)
-    {
-        base (Xcb.CREATE_NOTIFY, ((uint)inEvent.parent).to_pointer ());
-        is_sender = true;
     }
 
     protected override void

@@ -28,10 +28,29 @@ internal class Maia.XcbDamageEvent : DamageEvent
     post_event (Xcb.GenericEvent inEvent)
     {
         Xcb.ExposeEvent evt = (Xcb.ExposeEvent)inEvent;
-        XcbDamageEvent damage_event = new XcbDamageEvent.from_event (evt);
-        DamageEventArgs args = new DamageEventArgs (new Region.raw_rectangle (evt.x, evt.y, evt.width, evt.height));
+        unowned Application? application = Application.default;
 
-        damage_event.post (args);
+        if (application != null)
+        {
+            unowned Desktop? desktop = application.desktop;
+
+            if (desktop != null)
+            {
+                foreach (unowned Workspace workspace in desktop)
+                {
+                    unowned Window? window = (workspace.proxy as XcbWorkspace).find_window (evt.window);
+
+                    if (window != null)
+                    {
+                        DamageEventArgs args = new DamageEventArgs (new Region.raw_rectangle (evt.x, evt.y, evt.width, evt.height));
+
+                        window.damage_event.post (args);
+
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     // methods

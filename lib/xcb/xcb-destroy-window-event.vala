@@ -38,14 +38,13 @@ internal class Maia.XcbDestroyWindowEvent : DestroyWindowEvent
             {
                 foreach (unowned Workspace workspace in desktop)
                 {
+                    unowned Window? event = (workspace.proxy as XcbWorkspace).find_window (evt.event);
                     unowned Window? window = (workspace.proxy as XcbWorkspace).find_window (evt.window);
 
-                    if (window != null)
+                    if (event != null && event == workspace.root && window != null)
                     {
-                        XcbDestroyWindowEvent destroy_window_event = new XcbDestroyWindowEvent.from_event (evt);
-
                         DestroyWindowEventArgs args = new DestroyWindowEventArgs (window);
-                        destroy_window_event.post (args);
+                        workspace.destroy_window_event.post (args);
                         break;
                     }
                 }
@@ -59,13 +58,6 @@ internal class Maia.XcbDestroyWindowEvent : DestroyWindowEvent
         audit (GLib.Log.METHOD, "id: 0x%lx", inWindow.id);
         base (Xcb.DESTROY_NOTIFY, ((uint)inWindow.id).to_pointer ());
         m_Window = inWindow;
-    }
-
-    public XcbDestroyWindowEvent.from_event (Xcb.DestroyNotifyEvent inEvent)
-    {
-        audit (GLib.Log.METHOD, "event: 0x%lx, id: 0x%lx", inEvent.event, inEvent.window);
-        base (Xcb.DESTROY_NOTIFY, ((uint)inEvent.event).to_pointer ());
-        is_sender = true;
     }
 
     protected override void
