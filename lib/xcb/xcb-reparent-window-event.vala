@@ -24,7 +24,7 @@ internal class Maia.XcbReparentWindowEvent : ReparentWindowEvent
     private int m_ListenCount          = 0;
 
     // static methods
-    public static void
+    public static new void
     post_event (Xcb.GenericEvent inEvent)
     {
         Xcb.ReparentNotifyEvent evt = (Xcb.ReparentNotifyEvent)inEvent;
@@ -38,17 +38,20 @@ internal class Maia.XcbReparentWindowEvent : ReparentWindowEvent
             {
                 foreach (unowned Workspace workspace in desktop)
                 {
-                    unowned Window? parent = (workspace.proxy as XcbWorkspace).find_window (evt.parent);
-                    unowned Window? window = (workspace.proxy as XcbWorkspace).find_window (evt.window);
+                    unowned Window? event = (workspace.proxy as XcbWorkspace).find_window (evt.event);
 
-                    if (parent != null && window != null)
+                    if (event != null && event == workspace.root)
                     {
-                        XcbReparentWindowEvent reparent_window_event = new XcbReparentWindowEvent.from_event (evt);
+                        unowned Window? parent = (workspace.proxy as XcbWorkspace).find_window (evt.parent);
+                        unowned Window? window = (workspace.proxy as XcbWorkspace).find_window (evt.window);
 
-                        ReparentWindowEventArgs args = new ReparentWindowEventArgs (parent, window);
-                        reparent_window_event.post (args);
+                        if (parent != null && window != null)
+                        {
+                            ReparentWindowEventArgs args = new ReparentWindowEventArgs (parent, window);
+                            workspace.reparent_window_event.post (args);
 
-                        break;
+                            break;
+                        }
                     }
                 }
             }
@@ -60,12 +63,6 @@ internal class Maia.XcbReparentWindowEvent : ReparentWindowEvent
     {
         base (Xcb.REPARENT_NOTIFY, ((uint)inWindow.id).to_pointer ());
         m_Window = inWindow;
-    }
-
-    public XcbReparentWindowEvent.from_event (Xcb.ReparentNotifyEvent inEvent)
-    {
-        base (Xcb.REPARENT_NOTIFY, ((uint)inEvent.event).to_pointer ());
-        is_sender = true;
     }
 
     protected override void

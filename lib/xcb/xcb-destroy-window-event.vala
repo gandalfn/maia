@@ -24,7 +24,7 @@ internal class Maia.XcbDestroyWindowEvent : DestroyWindowEvent
     private int m_ListenCount          = 0;
 
     // static methods
-    public static void
+    public static new void
     post_event (Xcb.GenericEvent inEvent)
     {
         Xcb.DestroyNotifyEvent evt = (Xcb.DestroyNotifyEvent)inEvent;

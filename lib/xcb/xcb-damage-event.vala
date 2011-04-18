@@ -24,33 +24,12 @@ internal class Maia.XcbDamageEvent : DamageEvent
     private int m_ListenCount          = 0;
 
     // static methods
-    public static void
+    public static new void
     post_event (Xcb.GenericEvent inEvent)
     {
         Xcb.ExposeEvent evt = (Xcb.ExposeEvent)inEvent;
-        unowned Application? application = Application.default;
-
-        if (application != null)
-        {
-            unowned Desktop? desktop = application.desktop;
-
-            if (desktop != null)
-            {
-                foreach (unowned Workspace workspace in desktop)
-                {
-                    unowned Window? window = (workspace.proxy as XcbWorkspace).find_window (evt.window);
-
-                    if (window != null)
-                    {
-                        DamageEventArgs args = new DamageEventArgs (new Region.raw_rectangle (evt.x, evt.y, evt.width, evt.height));
-
-                        window.damage_event.post (args);
-
-                        break;
-                    }
-                }
-            }
-        }
+        DamageEventArgs args = new DamageEventArgs (new Region.raw_rectangle (evt.x, evt.y, evt.width, evt.height));
+        Event.post_event<DamageEventArgs> (Xcb.EXPOSE, ((uint)evt.window).to_pointer (), args);
     }
 
     // methods
@@ -58,12 +37,6 @@ internal class Maia.XcbDamageEvent : DamageEvent
     {
         base (Xcb.EXPOSE, ((uint)inWindow.id).to_pointer ());
         m_Window = inWindow;
-    }
-
-    public XcbDamageEvent.from_event (Xcb.ExposeEvent inEvent)
-    {
-        base (Xcb.EXPOSE, ((uint)inEvent.window).to_pointer ());
-        is_sender = true;
     }
 
     protected override void

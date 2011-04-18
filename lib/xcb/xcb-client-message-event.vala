@@ -38,8 +38,7 @@ internal class Maia.XcbClientMessageEvent
         Xcb.Atom request = inEvent.data.data32[0];
         if (request == m_DeleteWindowAtom)
         {
-            XcbDeleteEvent event = new XcbDeleteEvent.from_event (inEvent);
-            event.post ();
+            XcbDeleteEvent.post_event (inEvent);
         }
     }
 

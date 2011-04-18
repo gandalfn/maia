@@ -24,7 +24,7 @@ internal class Maia.XcbCreateWindowEvent : CreateWindowEvent
     private int m_ListenCount          = 0;
 
     // static methods
-    public static void
+    public static new void
     post_event (Xcb.GenericEvent inEvent)
     {
         Xcb.CreateNotifyEvent evt = (Xcb.CreateNotifyEvent)inEvent;
