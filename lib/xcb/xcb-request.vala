@@ -72,7 +72,7 @@ internal abstract class Maia.XcbRequest : Object
                 s_QueryTask = new TaskOnce (() => {
                     audit (GLib.Log.METHOD, "process query requests");
 
-                    s_QueryTask.read_lock ();
+                    if (s_QueryTask.lock ())
                     {
                         while (s_QueryTask.childs.nb_items > 0)
                         {
@@ -80,14 +80,12 @@ internal abstract class Maia.XcbRequest : Object
                             if (child != null)
                             {
                                 child.ref ();
-                                s_QueryTask.read_unlock ();
                                 ((XcbRequest)child).query_finish ();
-                                s_QueryTask.read_lock ();
                                 child.unref ();
                             }
                         }
+                        s_QueryTask.unlock ();
                     }
-                    s_QueryTask.read_unlock ();
                 }, Task.Priority.NORMAL + 1);
 
                 s_QueryTask.finished.connect (() => {
@@ -116,7 +114,7 @@ internal abstract class Maia.XcbRequest : Object
                 s_CommitTask = new TaskOnce (() => {
                     audit (GLib.Log.METHOD, "process commit requests");
 
-                    s_CommitTask.read_lock ();
+                    if (s_CommitTask.lock ())
                     {
                         while (s_CommitTask.childs.nb_items > 0)
                         {
@@ -126,17 +124,15 @@ internal abstract class Maia.XcbRequest : Object
                                 child.ref ();
                                 unowned XcbRequest request = (XcbRequest)child;
 
-                                s_CommitTask.read_unlock ();
                                 request.on_commit ();
                                 if (request.cookie != null)
                                     start_query_task ();
-                                s_CommitTask.read_lock ();
 
                                 child.unref ();
                             }
                         }
+                        s_CommitTask.unlock ();
                     }
-                    s_CommitTask.read_unlock ();
                 }, Task.Priority.NORMAL - 1);
 
                 s_CommitTask.finished.connect (() => {

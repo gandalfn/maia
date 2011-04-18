@@ -95,7 +95,7 @@ public class Maia.Workspace : View
     to_string ()
     {
         string ret = "digraph {\n ";
-        this.read_lock ();
+        if (this.lock ())
         {
             foreach (Window window in stack)
             {
@@ -106,8 +106,8 @@ public class Maia.Workspace : View
                 }
             }
             ret += "}\n";
+            this.unlock ();
         }
-        this.read_unlock ();
 
         return ret;
     }
