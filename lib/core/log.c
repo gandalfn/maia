@@ -397,7 +397,8 @@ maia_log_print_backtrace (const char* ctx)
     strings = backtrace_symbols (array, size);
 #endif /* HAVE_EDEBUG */
 
-    maia_log_print (ctx, "Backtrace", MAIA_LOG_LEVEL_ERROR, "");
+    maia_log_print (ctx, "Backtrace", MAIA_LOG_LEVEL_ERROR, "0x%lx",
+                    (unsigned long)g_thread_self ());
     for (i = 0; i < size; i++)
         g_print ("%5.5s%s\n", " ", strings[i]);
 
