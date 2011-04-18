@@ -44,17 +44,23 @@ public class Maia.Event<A> : Object
         }
     }
 
-    [CCode (notify = false)]
-    public bool is_sender {
-        set {
-            m_Sender = value;
-        }
-    }
-
     public A args {
         get {
             return m_Args;
         }
+    }
+
+    // static methods
+
+    public static void
+    post_event<A> (uint32 inId, void* inOwner, A? inArgs = null,
+                   Dispatcher inDispatcher = Dispatcher.self)
+    {
+        Event<A> event = new Event<A>.with_id (inId, inOwner);
+        event.m_Args = inArgs;
+        event.m_Sender = true;
+        Maia.debug (GLib.Log.METHOD, "post event 0x%lx", inId);
+        inDispatcher.post_event (event);
     }
 
     // methods
