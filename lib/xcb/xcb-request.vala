@@ -72,20 +72,18 @@ internal abstract class Maia.XcbRequest : Object
                 s_QueryTask = new TaskOnce (() => {
                     audit (GLib.Log.METHOD, "process query requests");
 
-                    if (s_QueryTask.lock ())
+                    s_QueryTask.lock ();
+                    while (s_QueryTask.childs.nb_items > 0)
                     {
-                        while (s_QueryTask.childs.nb_items > 0)
+                        unowned Object? child = s_QueryTask.childs.at (0);
+                        if (child != null)
                         {
-                            unowned Object? child = s_QueryTask.childs.at (0);
-                            if (child != null)
-                            {
-                                child.ref ();
-                                ((XcbRequest)child).query_finish ();
-                                child.unref ();
-                            }
+                            child.ref ();
+                            ((XcbRequest)child).query_finish ();
+                            child.unref ();
                         }
-                        s_QueryTask.unlock ();
                     }
+                    s_QueryTask.unlock ();
                 }, Task.Priority.NORMAL + 1);
 
                 s_QueryTask.finished.connect (() => {
@@ -114,25 +112,23 @@ internal abstract class Maia.XcbRequest : Object
                 s_CommitTask = new TaskOnce (() => {
                     audit (GLib.Log.METHOD, "process commit requests");
 
-                    if (s_CommitTask.lock ())
+                    s_CommitTask.lock ();
+                    while (s_CommitTask.childs.nb_items > 0)
                     {
-                        while (s_CommitTask.childs.nb_items > 0)
+                        unowned Object? child = s_CommitTask.childs.at (0);
+                        if (child != null)
                         {
-                            unowned Object? child = s_CommitTask.childs.at (0);
-                            if (child != null)
-                            {
-                                child.ref ();
-                                unowned XcbRequest request = (XcbRequest)child;
+                            child.ref ();
+                            unowned XcbRequest request = (XcbRequest)child;
 
-                                request.on_commit ();
-                                if (request.cookie != null)
-                                    start_query_task ();
+                            request.on_commit ();
+                            if (request.cookie != null)
+                                start_query_task ();
 
-                                child.unref ();
-                            }
+                            child.unref ();
                         }
-                        s_CommitTask.unlock ();
                     }
+                    s_CommitTask.unlock ();
                 }, Task.Priority.NORMAL - 1);
 
                 s_CommitTask.finished.connect (() => {

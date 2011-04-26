@@ -19,133 +19,6 @@
 
 public abstract class Maia.Object : GLib.Object
 {
-    // types
-    private class Token
-    {
-        private GLib.Mutex                 m_Mutex;
-        private GLib.Mutex                 m_MutexDestroy;
-        private GLib.Cond                  m_Cond;
-        private unowned GLib.Thread<void*> m_Owner;
-        private uint                       m_Queue;
-        private uint                       m_Depth;
-        private bool                       m_Destroy;
-
-        public Token ()
-        {
-            m_Mutex = new GLib.Mutex ();
-            m_MutexDestroy = new GLib.Mutex ();
-            m_Cond = new GLib.Cond ();
-            m_Owner = null;
-            m_Queue = 0;
-            m_Depth = 0;
-            m_Destroy = false;
-        }
-
-        ~Token ()
-        {
-            //release ();
-            lock (m_Queue)
-            {
-                m_Destroy = true;
-                if (m_Queue > 0)
-                {
-                    audit (GLib.Log.METHOD, "Wait queued before destroy : 0x%lx",
-                           (ulong)GLib.Thread.self<void*> ());
-                    m_MutexDestroy.lock ();
-                    m_Cond.wait (m_MutexDestroy);
-                    m_MutexDestroy.unlock ();
-                }
-            }
-        }
-
-        public inline bool
-        acquire ()
-        {
-            bool same_thread = false;
-            unowned GLib.Thread<void*> self = GLib.Thread.self<void*> ();
-
-            lock (m_Owner)
-            {
-                same_thread = self == m_Owner;
-                audit (GLib.Log.METHOD, "same thread 0x%lx == 0x%lx, %s",
-                       (ulong)self, (ulong)m_Owner, same_thread.to_string ());
-            }
-
-            if (!same_thread)
-            {
-                lock (m_Queue)
-                {
-                    if (!m_Destroy)
-                    {
-                        m_Queue++;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-
-                m_Mutex.lock ();
-
-                lock (m_Owner)
-                {
-                    m_Owner = self;
-                    audit (GLib.Log.METHOD, "lock 0x%lx", (ulong)m_Owner);
-                }
-                m_Depth++;
-            }
-            else
-            {
-                audit (GLib.Log.METHOD, "lock 0x%lx, depth = %u", (ulong)m_Owner, m_Depth);
-                m_Depth++;
-            }
-
-            return true;
-        }
-
-        public inline void
-        release ()
-        {
-            bool same_thread = false;
-            unowned GLib.Thread<void*> self = GLib.Thread.self<void*> ();
-
-            lock (m_Owner)
-            {
-                same_thread = self == m_Owner;
-                audit (GLib.Log.METHOD, "same thread 0x%lx == 0x%lx, %s",
-                       (ulong)self, (ulong)m_Owner, same_thread.to_string ());
-            }
-
-            if (same_thread)
-            {
-                if (m_Depth > 0) m_Depth--;
-
-                audit (GLib.Log.METHOD, "unlock 0x%lx, depth = %u", (ulong)m_Owner, m_Depth);
-                if (m_Depth == 0)
-                {
-                    lock (m_Owner)
-                    {
-                        audit (GLib.Log.METHOD, "unlock 0x%lx", (ulong)m_Owner);
-                        m_Owner = null;
-                    }
-
-                    m_Mutex.unlock ();
-                    lock (m_Queue)
-                    {
-                        if (m_Queue > 0) m_Queue--;
-
-                        if (m_Queue == 0 && m_Destroy)
-                        {
-                            m_MutexDestroy.lock ();
-                            m_Cond.signal ();
-                            m_MutexDestroy.unlock ();
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     // Static properties
     static Map<Type, Set<Type>> s_Delegations = null;
 
@@ -161,7 +34,7 @@ public abstract class Maia.Object : GLib.Object
     private Array<Object>       m_Childs = null; 
     private Set<unowned Object> m_IdentifiedChilds = null;
     private Set<Object>         m_Delegates = null;
-    private Token               m_Token = new Token ();
+    private Token               m_Token;
 
     // Accessors
 
@@ -178,7 +51,7 @@ public abstract class Maia.Object : GLib.Object
             {
                 if (m_Parent != null)
                 {
-                    if (m_Parent.lock ())
+                    m_Parent.lock ();
                     {
                         // object have a old id
                         if (m_Id != 0 && m_Parent.m_IdentifiedChilds != null)
@@ -194,8 +67,8 @@ public abstract class Maia.Object : GLib.Object
                             // add object in identified childs
                             m_Parent.identified_childs.insert (this);
                         }
-                        m_Parent.unlock ();
                     }
+                    m_Parent.unlock ();
                 }
                 else
                 {
@@ -223,34 +96,33 @@ public abstract class Maia.Object : GLib.Object
             {
                 debug ("Maia.Object.parent.set", "Object %s", m_Type.name ());
 
-                if (m_Parent != value)
+                this.lock ();
                 {
-                    ref ();
-
-                    if (this.lock ())
+                    if (m_Parent != value)
                     {
+                        ref ();
+
                         // object have already a parent
                         if (m_Parent != null)
                         {
-                            if (m_Parent.lock ())
-                            {
-                                debug ("Maia.Object.parent.set",
-                                       "Remove object %s from parent %s",
-                                       m_Type.name (), m_Parent.m_Type.name ());
+                            m_Parent.lock ();
+                            debug ("Maia.Object.parent.set",
+                                   "Remove object %s from parent %s",
+                                   m_Type.name (), m_Parent.m_Type.name ());
 
-                                // remove object from childs of old parent
-                                m_Parent.childs.remove (this);
-                                // remove object from identified childs of old parent
-                                if (m_Id != 0)
-                                    m_Parent.identified_childs.remove (this);
+                            // remove object from childs of old parent
+                            m_Parent.childs.remove (this);
+                            // remove object from identified childs of old parent
+                            if (m_Id != 0)
+                                m_Parent.identified_childs.remove (this);
 
-                                m_Parent.unlock ();
-                            }
+                            m_Parent.unlock ();
                             m_Parent = null;
                         }
 
-                        if (value != null && value.lock ())
+                        if (value != null)
                         {
+                            value.lock ();
                             if (value.can_append_child (this))
                             {
                                 // set parent property
@@ -265,13 +137,13 @@ public abstract class Maia.Object : GLib.Object
                                 if (m_Id != 0)
                                     m_Parent.identified_childs.insert (this);
                             }
-
                             value.unlock ();
                         }
-                        this.unlock ();
+
+                        unref ();
                     }
-                    unref ();
                 }
+                this.unlock ();
             }
             else
             {
@@ -450,17 +322,19 @@ public abstract class Maia.Object : GLib.Object
         return GLib.Object.new (inType, delegator: this, id: id, parent: m_Parent) as Object;
     }
 
-    public bool
+    public void
     lock ()
     {
         if (m_Delegator == null)
         {
             audit (GLib.Log.METHOD, "lock: %s, thread: 0x%lx", m_Type.name (), (ulong)GLib.Thread.self<void*> ());
-            return m_Token.acquire ();
+            if (m_Token == null)
+                m_Token = Token.get ((uint32)this);
+            m_Token.acquire ();
         }
         else
         {
-            return m_Delegator.lock ();
+            m_Delegator.lock ();
         }
     }
 
@@ -470,7 +344,8 @@ public abstract class Maia.Object : GLib.Object
         if (m_Delegator == null)
         {
             audit (GLib.Log.METHOD, "unlock: %s, thread: 0x%lx", m_Type.name (), (ulong)GLib.Thread.self<void*> ());
-            m_Token.release ();
+            if (m_Token != null)
+                m_Token.release ();
         }
         else
         {

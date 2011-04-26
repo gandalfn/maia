@@ -184,15 +184,14 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
     find_window (Xcb.Window inXcbWindow)
     {
         unowned Window? window = null;
-        if (this.lock ())
-        {
-            window = m_Stack.search<Xcb.Window> (inXcbWindow, (a, b) => {
-                Window awindow = a as Window;
-                if (awindow.proxy == null) return -1;
-                return (int)((awindow.proxy as XcbWindow).id - b);
-            }) as Window;
-            this.unlock ();
-        }
+
+        this.lock ();
+        window = m_Stack.search<Xcb.Window> (inXcbWindow, (a, b) => {
+            Window awindow = a as Window;
+            if (awindow.proxy == null) return -1;
+            return (int)((awindow.proxy as XcbWindow).id - b);
+        }) as Window;
+        this.unlock ();
 
         return window;
     }

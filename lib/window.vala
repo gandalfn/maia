@@ -66,11 +66,9 @@ public class Maia.Window : View
 
             if (parent != null && parent is Workspace)
             {
-                if (parent.lock ())
-                {
-                    (parent as Workspace).stack.remove (this);
-                    parent.unlock ();
-                }
+                parent.lock ();
+                (parent as Workspace).stack.remove (this);
+                parent.unlock ();
             }
 
             base.parent = value;
@@ -78,11 +76,9 @@ public class Maia.Window : View
             if (value != null && value is Workspace && m_Proxy != null)
             {
                 debug ("Maia.Window.parent.set", @"insert in workspace stack $is_foreign");
-                if (parent.lock ())
-                {
-                    (value as Workspace).stack.insert (this);
-                    parent.unlock ();
-                }
+                parent.lock ();
+                (value as Workspace).stack.insert (this);
+                parent.unlock ();
             }
         }
     }
@@ -132,11 +128,9 @@ public class Maia.Window : View
         if (parent is Workspace)
         {
             unowned Workspace? workspace = parent as Workspace;
-            if (workspace.lock ())
-            {
-                workspace.stack.insert (this);
-                workspace.unlock ();
-            }
+            workspace.lock ();
+            workspace.stack.insert (this);
+            workspace.unlock ();
         }
     }
 

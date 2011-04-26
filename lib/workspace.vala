@@ -95,19 +95,17 @@ public class Maia.Workspace : View
     to_string ()
     {
         string ret = "digraph {\n ";
-        if (this.lock ())
+        this.lock ();
+        foreach (Window window in stack)
         {
-            foreach (Window window in stack)
+            ret += window.to_string ();
+            if (window != root)
             {
-                ret += window.to_string ();
-                if (window != root)
-                {
-                    ret += "%s -> %s;\n".printf (root.id.to_string (), window.id.to_string());
-                }
+                ret += "%s -> %s;\n".printf (root.id.to_string (), window.id.to_string());
             }
-            ret += "}\n";
-            this.unlock ();
         }
+        ret += "}\n";
+        this.unlock ();
 
         return ret;
     }

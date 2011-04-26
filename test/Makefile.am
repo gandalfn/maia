@@ -9,7 +9,9 @@ include $(top_srcdir)/build/maia.am
 
 noinst_PROGRAMS = \
     test \
-    test-window
+    test-window \
+    test-thread \
+    test-token
 
 test_SOURCES = \
     test.vala \
@@ -44,8 +46,25 @@ test_window_LDADD = \
     ${top_builddir}/lib/xml/libmaia-xml.la \
     ${top_builddir}/lib/xcb/libmaia-xcb-backend.la
 
+test_thread_SOURCES = \
+    test-thread.vala
+
+test_thread_LDADD = \
+    $(MAIA_LIBS) \
+    ${top_builddir}/lib/core/libmaia-core.la
+
+test_token_SOURCES = \
+    test-token.vala
+
+test_token_LDADD = \
+    $(MAIA_LIBS) \
+    ${top_builddir}/lib/core/libmaia-core.la
+
 VALAFILES = \
-    $(filter %.vala,$(test_SOURCES))
+    $(filter %.vala,$(test_SOURCES)) \
+    $(filter %.vala,$(test_window_SOURCES)) \
+    $(filter %.vala,$(test_thread_SOURCES)) \
+    $(filter %.vala,$(test_token_SOURCES))
 
 CLEANFILES += \
     test_vala.stamp \
