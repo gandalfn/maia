@@ -51,7 +51,7 @@ public abstract class Maia.Object : GLib.Object
             {
                 if (m_Parent != null)
                 {
-                    m_Parent.lock ();
+                    Token parent = Token.get_for_object (m_Parent);
                     {
                         // object have a old id
                         if (m_Id != 0 && m_Parent.m_IdentifiedChilds != null)
@@ -68,7 +68,7 @@ public abstract class Maia.Object : GLib.Object
                             m_Parent.identified_childs.insert (this);
                         }
                     }
-                    m_Parent.unlock ();
+                    parent.release ();
                 }
                 else
                 {
@@ -96,7 +96,7 @@ public abstract class Maia.Object : GLib.Object
             {
                 debug ("Maia.Object.parent.set", "Object %s", m_Type.name ());
 
-                this.lock ();
+                Token token = Token.get_for_object (this);
                 {
                     if (m_Parent != value)
                     {
@@ -105,25 +105,28 @@ public abstract class Maia.Object : GLib.Object
                         // object have already a parent
                         if (m_Parent != null)
                         {
-                            m_Parent.lock ();
-                            debug ("Maia.Object.parent.set",
-                                   "Remove object %s from parent %s",
-                                   m_Type.name (), m_Parent.m_Type.name ());
+                            Token parent = Token.get_for_object (m_Parent);
+                            if (m_Parent != null)
+                            {
+                                debug ("Maia.Object.parent.set",
+                                       "Remove object %s from parent %s",
+                                       m_Type.name (), m_Parent.m_Type.name ());
 
-                            // remove object from childs of old parent
-                            m_Parent.childs.remove (this);
-                            // remove object from identified childs of old parent
-                            if (m_Id != 0)
-                                m_Parent.identified_childs.remove (this);
+                                // remove object from childs of old parent
+                                m_Parent.childs.remove (this);
+                                // remove object from identified childs of old parent
+                                if (m_Id != 0)
+                                    m_Parent.identified_childs.remove (this);
 
-                            m_Parent.unlock ();
+                                parent.release ();
+                            }
                             m_Parent = null;
                         }
 
                         if (value != null)
                         {
-                            value.lock ();
-                            if (value.can_append_child (this))
+                            Token parent = Token.get_for_object (value);
+                            if (value is Object && value.can_append_child (this))
                             {
                                 // set parent property
                                 m_Parent = value;
@@ -137,13 +140,13 @@ public abstract class Maia.Object : GLib.Object
                                 if (m_Id != 0)
                                     m_Parent.identified_childs.insert (this);
                             }
-                            value.unlock ();
+                            parent.release ();
                         }
 
                         unref ();
                     }
                 }
-                this.unlock ();
+                token.release ();
             }
             else
             {
@@ -328,9 +331,7 @@ public abstract class Maia.Object : GLib.Object
         if (m_Delegator == null)
         {
             audit (GLib.Log.METHOD, "lock: %s, thread: 0x%lx", m_Type.name (), (ulong)GLib.Thread.self<void*> ());
-            if (m_Token == null)
-                m_Token = Token.get ((uint32)this);
-            m_Token.acquire ();
+            m_Token = Token.get_for_object (this);
         }
         else
         {

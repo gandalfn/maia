@@ -181,7 +181,7 @@ public class Maia.Token
     }
 
     public static Token
-    acquire_object (Object inObject)
+    get_for_object (Object inObject)
     {
         Token token = get ((uint32)inObject);
         token.acquire ();
