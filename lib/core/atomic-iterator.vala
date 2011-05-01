@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * atomic-list.vala
+ * atomic-iterator.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,23 +17,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.AtomicList<T>
+public abstract class Maia.AtomicIterator<T> : Iterator<T>
 {
-    // properties
-    private AtomicNode<T> m_First;
     private AtomicNode<T> m_Last;
+    private AtomicNode<T> m_Target;
+    private AtomicNode<T> m_PreAux;
+    private AtomicNode<T> m_PreCell;
 
-    public AtomicList ()
+    public AtomicIterator (AtomicNode<T> inFirst, AtomicNode<T> inLast)
     {
-        m_First = AtomicNode.create (null);
-        m_Last = AtomicNode.create (null);
-        m_First.next = m_Last;
+        m_Last = inLast;
+        m_PreCell = inFirst;
+        m_PreAux = inFirst.next;
+        m_Target = null;
+
+        update ();
     }
 
-    public void
-    insert (T inData)
+    private void
+    update ()
     {
-        AtomicNode<T> node = AtomicNode.create (inData);
-        m_First.next = node;
+        if (m_PreAux.next == m_Target)
+            return;
+
+        unowned AtomicNode<T>? p = m_PreAux;
+        AtomicNode<T> n = p.next;
+        m_Target = null;
+
+        while (n != m_Last && n.data == null)
+        {
+            GLib.AtomicPointer.compare_and_exchange (&m_PreCell.next, p, n);
+            p.unref ();
+            p = n;
+            n = p.next;
+        }
+
+        m_PreAux = p;
+        m_Target = n;
     }
 }

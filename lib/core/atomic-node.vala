@@ -18,15 +18,16 @@
  */
 
 [Compact]
+[CCode (ref_function = "maia_atomic_node_ref", unref_function = "maia_atomic_node_unref")]
 public class Maia.AtomicNode<T>
 {
     // static properties
-    static AtomicNode* s_pFreeList = null;
+    static AtomicNode<T> s_FreeList;
 
     // properties
-    public   T           data;
-    internal int         ref_count_claim = 1;
-    internal AtomicNode* pNext = null;
+    public   T             data;
+    internal int           ref_count_claim = 1;
+    internal AtomicNode<T> next = null;
 
     // static methods
     private static inline int
@@ -59,86 +60,83 @@ public class Maia.AtomicNode<T>
     }
 
     private static void
-    reclaim<T> (AtomicNode<T>* inpNode)
+    reclaim (AtomicNode<T> inNode)
     {
-        AtomicNode<T>* pNode = null;
+        unowned AtomicNode<T>? node = null;
 
         do
         {
-            pNode = (AtomicNode<T>*)GLib.AtomicPointer.get (&s_pFreeList);;
-            GLib.AtomicPointer.set (&inpNode->pNext, pNode);
-        } while (GLib.AtomicPointer.compare_and_exchange (&s_pFreeList, pNode, inpNode));
+            node = (AtomicNode<T>?)GLib.AtomicPointer.get (&s_FreeList);;
+            GLib.AtomicPointer.set (&inNode.next, node);
+        } while (GLib.AtomicPointer.compare_and_exchange (&s_FreeList, node, inNode));
 
-        inpNode->data = null;
+        inNode.data = null;
     }
 
-    private static AtomicNode<T>*
-    safe_read<T> (AtomicNode<T>* inpNode)
+    private static unowned AtomicNode<T>?
+    safe_read (AtomicNode<T> inNode)
     {
         while (true)
         {
-            AtomicNode<T>* pNode = (AtomicNode<T>*)GLib.AtomicPointer.get (&inpNode);
-            if (pNode == null)
+            unowned AtomicNode<T>? node = (AtomicNode<T>?)GLib.AtomicPointer.get (&inNode);
+            if (node == null)
                 return null;
-            GLib.AtomicInt.add (ref pNode->ref_count_claim, 2);
-            if (pNode == GLib.AtomicPointer.get (&inpNode))
-                return pNode;
+            GLib.AtomicInt.add (ref node.ref_count_claim, 2);
+            if (node == GLib.AtomicPointer.get (&inNode))
+                return node;
             else
-                pNode->unref<T> ();
+                node.unref ();
         }
     }
 
     private static void
-    release<T> (AtomicNode<T>* inpNode)
+    release (AtomicNode<T> inNode)
     {
-        if (inpNode != null)
+        if (inNode != null)
         {
-            if (dec_and_test_and_set (ref inpNode->ref_count_claim) == 1)
+            if (dec_and_test_and_set (ref inNode.ref_count_claim) == 1)
                 return;
 
-            release<T> (inpNode->pNext);
+            release (inNode.next);
 
-            reclaim<T> (inpNode);
+            reclaim (inNode);
         }
     }
 
-    internal AtomicNode (owned T? inData)
+    internal AtomicNode (T? inData)
     {
         data = inData;
     }
 
-    public static unowned AtomicNode<T>?
-    create<T> (T? inData)
+    public static AtomicNode<T>?
+    create (T? inData)
     {
         while (true)
         {
-            AtomicNode<T>* pNode = safe_read<T> (s_pFreeList);
-            if (pNode == null)
+            AtomicNode<T> node = s_FreeList;
+            if (node == null)
             {
-                pNode = new AtomicNode<T> (inData);
-                reclaim<T> (pNode);
+                node = new AtomicNode<T> (inData);
                 continue;
             }
 
-            if (GLib.AtomicPointer.compare_and_exchange (&s_pFreeList, pNode, pNode->pNext))
+            if (GLib.AtomicPointer.compare_and_exchange (&s_FreeList, node, node.next))
             {
-                clear_lowest_bit (ref pNode->ref_count_claim);
-                pNode->data = inData;
-                return pNode;
+                clear_lowest_bit (ref node.ref_count_claim);
+                node.data = inData;
+                return node;
             }
-            else
-                pNode->unref<T> ();
         };
     }
 
     public unowned AtomicNode<T>?
-    ref<T> ()
+    ref ()
     {
         return safe_read<T> (this);
     }
 
     public void
-    unref<T> ()
+    unref ()
     {
         release<T> (this);
     }

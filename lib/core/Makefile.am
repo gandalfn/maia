@@ -36,6 +36,7 @@ libmaia_core_la_SOURCES = \
     map.vala \
     atom.vala \
     atomic-node.vala \
+    atomic-iterator.vala \
     atomic-list.vala \
     atomic-queue.vala \
     token.vala \
