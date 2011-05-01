@@ -164,8 +164,8 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
         m_XcbScreen = inScreen;
         m_Stack = new Array<Window>.sorted ();
         m_Stack.compare_func = (a, b) => {
-            XcbWindow awindow = a.proxy as XcbWindow;
-            XcbWindow bwindow = b.proxy as XcbWindow;
+            unowned XcbWindow awindow = (XcbWindow)a.proxy;
+            unowned XcbWindow bwindow = (XcbWindow)b.proxy;
 
             if (awindow == null && bwindow != null)
                 return -1;
@@ -187,7 +187,7 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
 
         this.lock ();
         window = m_Stack.search<Xcb.Window> (inXcbWindow, (a, b) => {
-            Window awindow = a as Window;
+            unowned Window awindow = (Window)a;
             if (awindow.proxy == null) return -1;
             return (int)((awindow.proxy as XcbWindow).id - b);
         }) as Window;
