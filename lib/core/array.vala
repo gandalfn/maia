@@ -163,6 +163,16 @@ public class Maia.Array <V> : Collection <V>
         }
     }
 
+    private void
+    reduce ()
+    {
+        if (m_Size < (int)(m_ReservedSize / 2.5))
+        {
+            m_ReservedSize = (int)(m_ReservedSize / 2.5);
+            m_pContent = GLib.realloc (m_pContent, m_ReservedSize * sizeof (Node<V>));
+        }
+    }
+
     private Iterator<V>?
     get_iterator (V? inValue)
     {
@@ -360,6 +370,7 @@ public class Maia.Array <V> : Collection <V>
         if (iterator != null)
         {
             erase (iterator);
+            reduce ();
         }
     }
 
@@ -379,6 +390,7 @@ public class Maia.Array <V> : Collection <V>
                               (m_Size - inPos) * sizeof (Node<V>));
 
         GLib.Memory.set (&m_pContent[m_Size], 0, sizeof (Node<V>));
+        reduce ();
 
         stamp++;
     }
