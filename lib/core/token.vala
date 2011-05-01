@@ -17,10 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Token
+public class Maia.Token : GLib.Object
 {
     // types
-    private class Thread
+    private class Thread : GLib.Object
     {
         public uint32     m_Id;
         public Set<Token> m_Tokens;
@@ -68,7 +68,7 @@ public class Maia.Token
         }
     }
 
-    private class Pool
+    private class Pool : GLib.Object
     {
         // properties
         private Set<Thread>         m_Pool;
