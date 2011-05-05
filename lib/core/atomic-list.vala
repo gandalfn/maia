@@ -31,9 +31,9 @@ public class Maia.AtomicList<T>
     }
 
     public void
-    insert (T inData)
+    insert (owned T inData)
     {
-        AtomicNode<T> node = AtomicNode.create (inData);
+        AtomicNode<T> node = AtomicNode.create (new AtomicNode.Data<T> (inData));
         m_First.next = node;
     }
 }

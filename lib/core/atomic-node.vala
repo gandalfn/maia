@@ -21,11 +21,22 @@
 [CCode (ref_function = "maia_atomic_node_ref", unref_function = "maia_atomic_node_unref")]
 public class Maia.AtomicNode<T>
 {
+    // types
+    public class Data<T>
+    {
+        public T value;
+
+        public Data (owned T inValue)
+        {
+            value = (owned)inValue;
+        }
+    }
+
     // static properties
     static AtomicNode<T> s_FreeList;
 
     // properties
-    public   T             data;
+    public   Data<T>?      data = null;
     internal int           ref_count_claim = 1;
     internal AtomicNode<T> next = null;
 
@@ -103,13 +114,13 @@ public class Maia.AtomicNode<T>
         }
     }
 
-    internal AtomicNode (T? inData)
+    internal AtomicNode (owned Data<T>? inData)
     {
-        data = inData;
+        data = (owned)inData;
     }
 
     public static AtomicNode<T>?
-    create (T? inData)
+    create (owned Data<T>? inData)
     {
         while (true)
         {
@@ -123,7 +134,7 @@ public class Maia.AtomicNode<T>
             if (GLib.AtomicPointer.compare_and_exchange (&s_FreeList, node, node.next))
             {
                 clear_lowest_bit (ref node.ref_count_claim);
-                node.data = inData;
+                node.data = (owned)inData;
                 return node;
             }
         };

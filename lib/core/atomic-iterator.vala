@@ -55,4 +55,44 @@ public abstract class Maia.AtomicIterator<T> : Iterator<T>
         m_PreAux = p;
         m_Target = n;
     }
+
+    internal bool
+    try_insert (AtomicNode<T> inNode, AtomicNode<T>inAux)
+    {
+        GLib.AtomicPointer.set (&inNode.next, inAux);
+        GLib.AtomicPointer.set (&inAux.next, m_Target);
+
+        return GLib.AtomicPointer.compare_and_exchange (&m_PreAux, m_Target, inNode);
+    }
+
+    internal bool
+    search (T inValue, CompareFunc<T> inFunc)
+    {
+        while (m_Target != m_Last)
+        {
+            int res = inFunc (m_Target.data.value, inValue);
+            if (res == 0)
+                return true;
+            else if (res > 0)
+                return false;
+            else
+                next ();
+        }
+
+        return false;
+    }
+
+    public override bool
+    next ()
+    {
+        if (m_Target == m_Last)
+            return false;
+
+        m_PreCell = m_Target;
+        m_PreAux = m_Target.next;
+
+        update ();
+
+        return true;
+    }
 }
