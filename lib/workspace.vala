@@ -75,12 +75,6 @@ public class Maia.Workspace : View
         }
     }
 
-    public Array<unowned Window> stack {
-        get {
-            return m_Proxy.stack;
-        }
-    }
-
     // methods
     public Workspace (Desktop inDesktop)
     {
@@ -95,8 +89,8 @@ public class Maia.Workspace : View
     to_string ()
     {
         string ret = "digraph {\n ";
-        this.lock ();
-        foreach (Window window in stack)
+        Token token = Token.get_for_object (this);
+        foreach (unowned Object window in this)
         {
             ret += window.to_string ();
             if (window != root)
@@ -105,7 +99,7 @@ public class Maia.Workspace : View
             }
         }
         ret += "}\n";
-        this.unlock ();
+        token.release ();
 
         return ret;
     }

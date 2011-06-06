@@ -23,9 +23,7 @@ public class Maia.Map <K, V> : Set <Pair <K, V>>
     private inline unowned Pair<K, V>?
     search_for_key (K inKey)
     {
-        return search<K> (inKey, (p, k) => {
-            return p.compare_with_first (k);
-        });
+        return search<K> (inKey, (ValueCompareFunc<K>)Pair.compare_with_first);
     }
 
     /**

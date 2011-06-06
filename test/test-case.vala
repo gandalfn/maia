@@ -26,7 +26,7 @@ public abstract class Maia.TestCase : GLib.Object
     {
         // properties
         private string m_Name;
-        private TestMethod m_Test;
+        private unowned TestMethod m_Test;
         private TestCase m_TestCase;
 
         // accessors

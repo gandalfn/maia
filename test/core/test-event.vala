@@ -49,10 +49,10 @@ public class Maia.TestEvent : Maia.TestCase
         foo = new Foo ();
         timeout = new Timeout (50);
         timeout.parent = dispatcher;
-        timeout.elapsed.connect (on_timeout_elapsed);
+        timeout.elapsed.watch (on_timeout_elapsed);
         count = 0;
         assert (dispatcher.state == Task.State.READY);
-        assert (dispatcher.childs.nb_items == 2);
+        assert (dispatcher.nb_childs == 2);
     }
 
     public override void

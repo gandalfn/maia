@@ -24,7 +24,7 @@
 [CCode (lower_case_cprefix = "xcb_", cheader_filename = "xcb/xcb.h,xcb/xcbext.h")]
 namespace Xcb {
 	[Compact]
-	[CCode (cname = "xcb_connection_t", cprefix = "xcb_", free_function = "xcb_disconnect")]
+	[CCode (cname = "xcb_connection_t", cprefix = "xcb_", ref_function = "", unref_function = "xcb_disconnect")]
 	public class Connection {
 		[CCode (cname = "xcb_connect")]
 		public Connection (string? display = null, out int screen = null);

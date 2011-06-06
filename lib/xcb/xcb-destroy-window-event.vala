@@ -38,8 +38,8 @@ internal class Maia.XcbDestroyWindowEvent : DestroyWindowEvent
             {
                 foreach (unowned Workspace workspace in desktop)
                 {
-                    unowned Window? event = (workspace.proxy as XcbWorkspace).find_window (evt.event);
-                    unowned Window? window = (workspace.proxy as XcbWorkspace).find_window (evt.window);
+                    unowned Window? event = (Window)workspace[evt.event];
+                    unowned Window? window = (Window)workspace[evt.window];
 
                     if (event != null && event == workspace.root && window != null)
                     {

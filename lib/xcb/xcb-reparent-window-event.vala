@@ -38,12 +38,12 @@ internal class Maia.XcbReparentWindowEvent : ReparentWindowEvent
             {
                 foreach (unowned Workspace workspace in desktop)
                 {
-                    unowned Window? event = (workspace.proxy as XcbWorkspace).find_window (evt.event);
+                    unowned Window? event = (Window)workspace[evt.event];
 
                     if (event != null && event == workspace.root)
                     {
-                        unowned Window? parent = (workspace.proxy as XcbWorkspace).find_window (evt.parent);
-                        unowned Window? window = (workspace.proxy as XcbWorkspace).find_window (evt.window);
+                        unowned Window? parent = (Window)workspace[evt.parent];
+                        unowned Window? window = (Window)workspace[evt.window];
 
                         if (parent != null && window != null)
                         {

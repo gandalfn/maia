@@ -34,9 +34,23 @@ public abstract class Maia.Object : GLib.Object
     private Array<Object>       m_Childs = null; 
     private Set<unowned Object> m_IdentifiedChilds = null;
     private Set<Object>         m_Delegates = null;
-    private Token               m_Token;
 
     // Accessors
+
+    [CCode (notify = false)]
+    internal bool sorted_childs {
+        set {
+            if (m_Delegator == null)
+            {
+                // check array
+                check_childs_array ();
+                // TODO resort if array contains any items
+                m_Childs.is_sorted = value;
+            }
+            else
+                m_Delegator.sorted_childs = value;
+        }
+    }
 
     /**
      * Object identifier
@@ -49,32 +63,28 @@ public abstract class Maia.Object : GLib.Object
         construct set {
             if (m_Delegator == null)
             {
+                Token token = Token.get_for_object (this);
                 if (m_Parent != null)
                 {
-                    Token parent = Token.get_for_object (m_Parent);
-                    {
-                        // object have a old id
-                        if (m_Id != 0 && m_Parent.m_IdentifiedChilds != null)
-                            // remove object from identified object
-                            m_Parent.identified_childs.remove (this);
+                    // object have a old id
+                    if (m_Id != 0)
+                        // remove object from identified object
+                        m_Parent.remove_identified_child (this);
 
-                        // set identifier
-                        m_Id = value;
+                    // set identifier
+                    m_Id = value;
 
-                        // object have a parent
-                        if (m_Id != 0)
-                        {
-                            // add object in identified childs
-                            m_Parent.identified_childs.insert (this);
-                        }
-                    }
-                    parent.release ();
+                    // object have a parent
+                    if (m_Id != 0)
+                        // add object in identified childs
+                        m_Parent.insert_identified_child (this);
                 }
                 else
                 {
                     // set identifier
                     m_Id = value;
                 }
+                token.release ();
             }
             else
             {
@@ -94,8 +104,6 @@ public abstract class Maia.Object : GLib.Object
         construct set {
             if (m_Delegator == null)
             {
-                debug ("Maia.Object.parent.set", "Object %s", m_Type.name ());
-
                 Token token = Token.get_for_object (this);
                 {
                     if (m_Parent != value)
@@ -105,42 +113,12 @@ public abstract class Maia.Object : GLib.Object
                         // object have already a parent
                         if (m_Parent != null)
                         {
-                            Token parent = Token.get_for_object (m_Parent);
-                            if (m_Parent != null)
-                            {
-                                debug ("Maia.Object.parent.set",
-                                       "Remove object %s from parent %s",
-                                       m_Type.name (), m_Parent.m_Type.name ());
-
-                                // remove object from childs of old parent
-                                m_Parent.childs.remove (this);
-                                // remove object from identified childs of old parent
-                                if (m_Id != 0)
-                                    m_Parent.identified_childs.remove (this);
-
-                                parent.release ();
-                            }
-                            m_Parent = null;
+                            m_Parent.remove_child (this);
                         }
 
                         if (value != null)
                         {
-                            Token parent = Token.get_for_object (value);
-                            if (value is Object && value.can_append_child (this))
-                            {
-                                // set parent property
-                                m_Parent = value;
-
-                                // add object to childs of parent
-                                debug ("Maia.Object.parent.set",
-                                       "Add object %s from parent %s",
-                                       m_Type.name (),
-                                       m_Parent.m_Type.name ());
-                                m_Parent.childs.insert (this);
-                                if (m_Id != 0)
-                                    m_Parent.identified_childs.insert (this);
-                            }
-                            parent.release ();
+                            value.insert_child (this);
                         }
 
                         unref ();
@@ -169,39 +147,17 @@ public abstract class Maia.Object : GLib.Object
     }
 
     /**
-     * Object childs
+     * Number of child objects
      */
-    public Array<Object> childs {
+    public int nb_childs {
         get {
             if (m_Delegator == null)
             {
-                if (m_Childs == null)
-                    m_Childs = new Array<Object> ();
-                return m_Childs;
+                return m_Childs.nb_items;
             }
             else
             {
-                return m_Delegator.childs;
-            }
-        }
-    }
-
-    private Set<unowned Object> identified_childs {
-        get {
-            if (m_Delegator == null)
-            {
-                if (m_IdentifiedChilds == null)
-                {
-                    m_IdentifiedChilds = new Set<unowned Object> ();
-                    m_IdentifiedChilds.compare_func = (a, b) => {
-                        return atom_compare (a.id, b.id);
-                    };
-                }
-                return m_IdentifiedChilds;
-            }
-            else
-            {
-                return m_Delegator.identified_childs;
+                return m_Delegator.nb_childs;
             }
         }
     }
@@ -260,8 +216,26 @@ public abstract class Maia.Object : GLib.Object
         s_Delegations[typeof (T)].insert (inType);
     }
 
+    public static bool
+    atomic_compare_and_exchange (void* inObject, GLib.Object? inOldObject,
+                                 owned GLib.Object? inNewObject)
+    {
+        bool ret = GLib.AtomicPointer.compare_and_exchange (inObject, inOldObject, inNewObject);
+
+        if (ret)
+        {
+            if (inNewObject != null)
+                inNewObject.ref ();
+            else if (inOldObject != null)
+                inOldObject.unref ();
+        }
+
+        return ret;
+    }
+
     construct
     {
+        // Get object type 
         m_Type = get_type ();
 
         audit ("Maia.Object.construct", "construct %s", m_Type.name ());
@@ -317,7 +291,125 @@ public abstract class Maia.Object : GLib.Object
         }
     }
 
-    protected Object
+    private inline void
+    check_childs_array ()
+    {
+        if (m_Childs == null)
+        {
+            Token token = Token.get_for_object (this);
+            if (m_Childs == null)
+            {
+                m_Childs = new Array<Object> ();
+            }
+            token.release ();
+        }
+    }
+
+    private inline void
+    check_identified_childs_array ()
+    {
+        if (m_IdentifiedChilds == null)
+        {
+            Token token = Token.get_for_object (this);
+            if (m_IdentifiedChilds == null)
+            {
+                m_IdentifiedChilds = new Set<unowned Object> ();
+                m_IdentifiedChilds.compare_func = (a, b) => {
+                    return atom_compare (a.id, b.id);
+                };
+            }
+            token.release ();
+        }
+    }
+
+    private void
+    insert_child (Object inObject)
+    {
+        if (m_Delegator == null)
+        {
+            Token token = Token.get_for_object (this);
+            if (inObject is Object && can_append_child (inObject))
+            {
+                // check array
+                check_childs_array ();
+
+                // set parent property
+                inObject.m_Parent = this;
+
+                // add object to childs of parent
+                debug (GLib.Log.METHOD, "Insert object %s to parent %s",
+                       inObject.m_Type.name (), m_Type.name ());
+
+                m_Childs.insert (inObject);
+
+                // insert object in identified if needed
+                insert_identified_child (inObject);
+            }
+            token.release ();
+        }
+        else
+            m_Delegator.insert_child (inObject);
+    }
+
+    private void
+    insert_identified_child (Object inObject)
+    {
+        if (m_Delegator == null)
+        {
+            Token token = Token.get_for_object (this);
+            if (this is Object && inObject.m_Id != 0)
+            {
+                // check array
+                check_identified_childs_array ();
+
+                m_IdentifiedChilds.insert (inObject);
+            }
+            token.release ();
+        }
+        else
+            m_Delegator.insert_identified_child (inObject);
+    }
+
+    private void
+    remove_child (Object inObject)
+    {
+        if (m_Delegator == null)
+        {
+            Token token = Token.get_for_object (this);
+            if (inObject.m_Parent == this)
+            {
+                debug ("Maia.Object.parent.set", "Remove object %s from parent %s",
+                       inObject.m_Type.name (), m_Type.name ());
+
+                // remove object from childs of old parent
+                m_Childs.remove (inObject);
+                // remove object from identified childs of old parent
+                remove_identified_child (inObject);
+                // unset parent object
+                inObject.m_Parent = null;
+            }
+            token.release ();
+        }
+        else
+            m_Delegator.remove_child (inObject);
+    }
+
+    private void
+    remove_identified_child (Object inObject)
+    {
+        if (m_Delegator == null)
+        {
+            // remove object from identified childs of old parent
+            Token token = Token.get_for_object (this);
+            if (m_IdentifiedChilds != null && inObject.m_Id != 0)
+                m_IdentifiedChilds.remove (inObject);
+            token.release ();
+        }
+        else
+            m_Delegator.remove_child (inObject);
+    }
+
+    private Object
     create_delegate (Type inType)
     {
         audit (GLib.Log.METHOD, "delegate type = %s", inType.name ());
@@ -325,33 +417,13 @@ public abstract class Maia.Object : GLib.Object
         return GLib.Object.new (inType, delegator: this, id: id, parent: m_Parent) as Object;
     }
 
-    public void
-    lock ()
+    internal void
+    check_child_pos (int inIndex)
     {
         if (m_Delegator == null)
-        {
-            audit (GLib.Log.METHOD, "lock: %s, thread: 0x%lx", m_Type.name (), (ulong)GLib.Thread.self<void*> ());
-            m_Token = Token.get_for_object (this);
-        }
+            m_Childs.sort (inIndex);
         else
-        {
-            m_Delegator.lock ();
-        }
-    }
-
-    public void
-    unlock ()
-    {
-        if (m_Delegator == null)
-        {
-            audit (GLib.Log.METHOD, "unlock: %s, thread: 0x%lx", m_Type.name (), (ulong)GLib.Thread.self<void*> ());
-            if (m_Token != null)
-                m_Token.release ();
-        }
-        else
-        {
-            m_Delegator.unlock ();
-        }
+            m_Delegator.check_child_pos (inIndex);
     }
 
     /**
@@ -381,6 +453,41 @@ public abstract class Maia.Object : GLib.Object
     }
 
     /**
+     * Returns the first child of Object.
+     *
+     * @return the first child of Object
+     */
+    public unowned Object?
+    first ()
+    {
+        unowned Object? ret = null;
+
+        if (m_Delegator == null)
+        {
+            check_childs_array ();
+            ret = m_Childs.nb_items > 0 ? m_Childs.at (0) : null;
+        }
+        else
+            ret = m_Delegator.first ();
+
+        return ret;
+    }
+
+    /**
+     * Returns a Iterator that can be used for simple iteration over
+     * childs object.
+     *
+     * @return a Iterator that can be used for simple iteration over childs
+     *         object
+     */
+    public Iterator<Object>
+    iterator ()
+    {
+        check_childs_array ();
+        return m_Delegator == null ? m_Childs.iterator () : m_Delegator.iterator ();
+    }
+
+    /**
      * Determines whether this object contains the object identified by inId.
      *
      * @param inId the object id to locate in this object
@@ -388,26 +495,67 @@ public abstract class Maia.Object : GLib.Object
      * @return true if object is found, false otherwise
      */
     public bool
-    contains (string inId)
+    contains (uint32 inId)
     {
-        return get_child (inId) != null;
+        check_childs_array ();
+        return m_Delegator == null ? get (inId) != null : m_Delegator.contains (inId);
     }
 
     /**
      * Returns the object of the specified id in this object.
      *
-     * @param inName the name whose object is to be retrieved
+     * @param inId the id whose object is to be retrieved
      *
      * @return the object associated with the id, or null if the id
      *         couldn't be found
      */
-    public Object
-    get_child (string inName)
+    public new unowned Object?
+    @get (uint32 inId)
     {
-        uint32 id = Atom.from_string (inName);
-        return m_IdentifiedChilds.search<uint32> (id, (o, i) => {
-                    return atom_compare (o.m_Id, i);
-                });
+        unowned Object? ret = null;
+
+        if (m_Delegator == null)
+        {
+            Token token = Token.get_for_object (this);
+            check_identified_childs_array ();
+            ret = m_IdentifiedChilds.search<uint32> (inId, (o, i) => {
+                return atom_compare (o.m_Id, i);
+            });
+            token.release ();
+        }
+        else
+            ret = m_Delegator.get (inId);
+
+        return ret;
+    }
+
+    /**
+     * Returns the index of the specified object in childs of this object.
+     *
+     * @param inObject object child whose index is to be retrieved
+     *
+     * @return the index associated with the object child, or -1 if the value
+     *         couldn't be found
+     */
+    public int
+    index_of_child (Object inObject)
+    {
+        check_childs_array ();
+        return m_Delegator == null ? m_Childs.index_of (inObject) : m_Delegator.index_of_child (inObject);
+    }
+
+    /**
+     * Returns the child object at the specified index in object childs.
+     *
+     * @param inIndex zero-based index of the child object to be returned
+     *
+     * @return the child objet at the specified index in object childs
+     */
+    public unowned Object?
+    get_child_at (int inIndex)
+    {
+        check_childs_array ();
+        return m_Delegator == null ? m_Childs.at (inIndex) : m_Delegator.get_child_at (inIndex);
     }
 
     /**

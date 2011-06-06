@@ -64,11 +64,16 @@ public class Maia.Task : Object
     private State                      m_State = State.READY;
     private Os.TimerFd                 m_SleepFd = -1;
 
-    // Signals
-    public signal void running  ();
-    public signal void finished ();
+    // Notifications
+    public Notification<Task> running;
+    public Notification<Task> finished;
 
     // Accessors
+    construct
+    {
+        running = new Notification<Task> (this);
+        finished = new Notification<Task> (this);
+    }
 
     /**
      * Task is threaded
@@ -113,16 +118,16 @@ public class Maia.Task : Object
                 unowned Object p = parent;
                 int pos = -1;
                 if (p != null)
-                    pos = p.childs.index_of (this);
+                    pos = p.index_of_child (this);
 
                 m_State = value;
 
                 if (pos >= 0)
                 {
                     if (m_State == State.TERMINATED)
-                        p.childs.remove_at (pos);
+                        parent = null;
                     else
-                        p.childs.sort (pos);
+                        p.check_child_pos (pos);
                 }
             }
         }
@@ -189,7 +194,7 @@ public class Maia.Task : Object
     {
         state = State.RUNNING;
 
-        running ();
+        running.send ();
 
         return null;
     }
@@ -203,7 +208,7 @@ public class Maia.Task : Object
         audit (GLib.Log.METHOD, "Finish 0x%lx", (ulong)this);
         state = State.TERMINATED;
 
-        finished ();
+        finished.send ();
     }
 
     /**

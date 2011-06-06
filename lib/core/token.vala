@@ -41,13 +41,18 @@ public class Maia.Token : GLib.Object
         public void
         sleep ()
         {
-            audit (GLib.Log.METHOD, "Sleep 0x%lx", m_Id);
             foreach (unowned Token token in m_Tokens)
             {
-                audit (GLib.Log.METHOD, "Unlock %u: 0x%lx", token.m_Id, m_Id);
                 GLib.AtomicPointer.compare_and_exchange (&token.m_Ref, this, null);
-                token.m_WaitDepth = token.m_Depth;
-                token.m_Depth = 0;
+                int depth = 0, wait_depth = 0;
+
+                do
+                {
+                    depth = GLib.AtomicInt.get (ref token.m_Depth);
+                    wait_depth = GLib.AtomicInt.get (ref token.m_WaitDepth);
+                    GLib.AtomicInt.compare_and_exchange (ref token.m_WaitDepth, wait_depth, depth);
+                } while (!GLib.AtomicInt.compare_and_exchange (ref token.m_Depth, depth, 0));
+
                 token.m_WaitMutex.lock ();
                 token.m_WaitCond.signal ();
                 token.m_WaitMutex.unlock ();
@@ -57,11 +62,9 @@ public class Maia.Token : GLib.Object
         public void
         wake_up ()
         {
-            audit (GLib.Log.METHOD, "Wakeup 0x%lx", m_Id);
             foreach (unowned Token token in m_Tokens)
             {
                 GLib.AtomicPointer.compare_and_exchange (&token.m_Ref, null, this);
-                audit (GLib.Log.METHOD, "Lock %u: 0x%lx", token.m_Id, m_Id);
                 token.m_Depth = token.m_WaitDepth;
                 token.m_WaitDepth = 0;
             }
@@ -80,7 +83,7 @@ public class Maia.Token : GLib.Object
         {
             m_Pool = new Set<Thread> ();
             m_Pool.compare_func = Thread.compare;
-            m_Tokens = new Set<Token> ();
+            m_Tokens = new Set<unowned Token?> ();
             m_Tokens.compare_func = (CompareFunc<unowned Token>)Token.compare;
         }
 
@@ -151,39 +154,52 @@ public class Maia.Token : GLib.Object
     // properties
     private uint32          m_Id;
     private unowned Thread? m_Ref = null;
-    private uint            m_Depth = 0;
-    private uint            m_WaitDepth = 0;
+    private int             m_Depth = 0;
+    private int             m_WaitDepth = 0;
     private GLib.Mutex      m_WaitMutex;
     private GLib.Cond       m_WaitCond;
 
     // static methods
-    static construct
-    {
-        lock (s_Pool)
-        {
-            if (s_Pool == null)
-                s_Pool = new Pool ();
-        }
-    }
-
     public static new Token
     get (uint32 inTokenId)
     {
-        if (s_Pool == null)
-        {
-            lock (s_Pool)
-            {
-                s_Pool = new Pool ();
-            }
-        }
+        Token token = null;
 
-        return s_Pool.get_token (inTokenId);
+        if (GLib.AtomicPointer.get (&s_Pool) == null)
+        {
+            Object.atomic_compare_and_exchange (&s_Pool, null, new Pool ());
+        }
+        token = s_Pool.get_token (inTokenId);
+
+        return token;
+    }
+
+    public static Token
+    get_for_class (void* inClass)
+    {
+        uint32 id = (uint32)inClass;
+
+        Token token = get (id);
+        token.acquire ();
+
+        return token;
     }
 
     public static Token
     get_for_object (Object inObject)
     {
-        Token token = get ((uint32)inObject);
+        uint32 id = (uint32)inObject;
+
+        if (id != 0)
+        {
+            unowned Object? delegator = inObject.delegator;
+            if (delegator != null)
+            {
+                id = (uint32)delegator;
+            }
+        }
+
+        Token token = get (id);
         token.acquire ();
 
         return token;
@@ -199,9 +215,8 @@ public class Maia.Token : GLib.Object
 
     ~Token ()
     {
-        release ();
-
         s_Pool.remove_token (this);
+        release ();
     }
 
     internal int
@@ -223,7 +238,6 @@ public class Maia.Token : GLib.Object
             {
                 if (GLib.AtomicPointer.compare_and_exchange (&m_Ref, null, self))
                 {
-                    audit (GLib.Log.METHOD, "Lock %u: 0x%lx", m_Id, self.m_Id);
                     self.m_Tokens.insert (this);
                     break;
                 }
@@ -232,15 +246,14 @@ public class Maia.Token : GLib.Object
 
             if (ref == self)
             {
-                m_Depth++;
+                GLib.AtomicInt.inc (ref m_Depth);
                 break;
             }
 
-            m_WaitMutex.lock ();
             self.sleep ();
+            m_WaitMutex.lock ();
             while (m_Ref != null)
             {
-                audit (GLib.Log.METHOD, "Wait %u: 0x%lx", m_Id, self.m_Id);
                 m_WaitCond.wait (m_WaitMutex);
             }
             self.wake_up ();
@@ -255,14 +268,19 @@ public class Maia.Token : GLib.Object
 
         if (self == m_Ref)
         {
-            if (m_Depth > 0) m_Depth--;
+            int depth = 0;
 
-            if (m_Depth == 0)
+            do
+            {
+                depth = GLib.AtomicInt.get (ref m_Depth);
+                if (depth == 0) break;
+            } while (!GLib.AtomicInt.compare_and_exchange (ref m_Depth, depth, depth - 1));
+
+            if (GLib.AtomicInt.get (ref m_Depth) == 0)
             {
                 self.m_Tokens.remove (this);
                 if (GLib.AtomicPointer.compare_and_exchange (&m_Ref, self, null))
                 {
-                    audit (GLib.Log.METHOD, "Release %u: 0x%lx", m_Id, self.m_Id);
                     m_WaitMutex.lock ();
                     m_WaitCond.signal ();
                     m_WaitMutex.unlock ();

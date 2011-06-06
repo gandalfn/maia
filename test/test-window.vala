@@ -25,22 +25,23 @@ public class TestWindow : Maia.Window
     {
         base ("test-window", 200, 200);
         workspace.create_window_event.listen (on_new_window, Maia.Application.self);
+        workspace.destroy_window_event.listen (on_destroy_window, Maia.Application.self);
     }
 
     private void
     on_new_window (Maia.CreateWindowEventArgs inArgs)
     {
-        message ("new window 0x%x", inArgs.window.id);
-        try
-        {
-            //FileUtils.set_contents ("test-window-%i.dot".printf(count), workspace.to_string ());
-            //Process.spawn_command_line_sync ("dot -Tpng test-window-%i.dot -otest-window-%i.png".printf (count, count));
-            ++count;
-        }
-        catch (GLib.Error err)
-        {
-            assert (false);
-        }
+        Maia.Window window = inArgs.window;
+        message ("new window 0x%x: name = %s", window.id, window.name);
+        ++count;
+    }
+
+    private void
+    on_destroy_window (Maia.DestroyWindowEventArgs inArgs)
+    {
+        unowned Maia.Window? window = inArgs.window;
+        message ("destroy window 0x%x: name = %s, ref = %u", window.id, window.name, window.ref_count);
+        --count;
     }
 
     public override void

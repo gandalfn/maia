@@ -383,7 +383,9 @@ public class Maia.Array <V> : Collection <V>
     {
         m_Size--;
 
+        V val = (owned)m_pContent[inPos].val;
         m_pContent[inPos].val = null;
+        val = null;
 
         if (inPos != m_Size)
             GLib.Memory.move (&m_pContent[inPos], &m_pContent[inPos + 1],

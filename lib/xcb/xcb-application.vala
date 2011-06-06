@@ -43,8 +43,8 @@ internal class Maia.XcbApplication : Application
         m_Desktop = new Desktop ();
 
         m_EventDispatcher = new XcbEventDispatcher (this);
-        dispatcher.running.connect (on_dispatcher_running);
-        dispatcher.finished.connect (on_dispatcher_finished);
+        dispatcher.running.watch (on_dispatcher_running);
+        dispatcher.finished.watch (on_dispatcher_finished);
     }
 
     private void

@@ -32,13 +32,18 @@ public class Maia.Dispatcher : Task
     // Accessors
     public static unowned Dispatcher? self {
         get {
-            lock (s_Dispatchers)
+            unowned Dispatcher ret = null;
+
+            Token token = Token.get_for_class (s_Dispatchers);
             {
-                return s_Dispatchers.search<unowned GLib.Thread<void*>> (GLib.Thread.self<void*> (),
-                                                                         (v, a) => {
-                                                                             return direct_compare (v.thread_id, a);
-                                                                         });
+                ret = s_Dispatchers.search<unowned GLib.Thread<void*>> (GLib.Thread.self<void*> (),
+                                                                        (v, a) => {
+                                                                            return direct_compare (v.thread_id, a);
+                                                                        });
             }
+            token.release ();
+
+            return ret;
         }
     }
 
@@ -55,16 +60,18 @@ public class Maia.Dispatcher : Task
     remove_event_listeners (Event inEvent)
     {
         audit (GLib.Log.METHOD, "Leaf event id = %s", inEvent.name);
-        lock (s_Dispatchers)
+        Token token = Token.get_for_class (s_Dispatchers);
         {
             foreach (unowned Dispatcher dispatcher in s_Dispatchers)
             {
-                lock (dispatcher.m_EventDispatcher)
+                Token token_event_dispatcher = Token.get_for_object (dispatcher.m_EventDispatcher);
                 {
                     dispatcher.m_EventDispatcher.deafen_event (inEvent);
                 }
+                token_event_dispatcher.release ();
             }
         }
+        token.release ();
     }
 
     public Dispatcher ()
@@ -73,7 +80,7 @@ public class Maia.Dispatcher : Task
         base (Priority.HIGH, false);
 
         m_PollFd = Os.EPoll (Os.EPOLL_CLOEXEC);
-        childs.is_sorted = true;
+        sorted_childs = true;
 
         m_EventDispatcher = new EventDispatcher ();
         m_EventDispatcher.parent = this;
@@ -88,7 +95,7 @@ public class Maia.Dispatcher : Task
         base (Priority.HIGH, true);
 
         m_PollFd = Os.EPoll (Os.EPOLL_CLOEXEC);
-        childs.is_sorted = true;
+        sorted_childs = true;
 
         m_EventDispatcher = new EventDispatcher ();
         m_EventDispatcher.parent = this;
@@ -100,10 +107,11 @@ public class Maia.Dispatcher : Task
     ~Dispatcher ()
     {
         audit ("Maia.Dispatcher.finalize", "");
-        lock (s_Dispatchers)
+        Token token = Token.get_for_class (s_Dispatchers);
         {
             s_Dispatchers.remove (this);
         }
+        token.release ();
 
         m_EventDispatcher.parent = null;
 
@@ -137,27 +145,28 @@ public class Maia.Dispatcher : Task
         audit (GLib.Log.METHOD, "");
         void* ret = base.main ();
 
-        lock (s_Dispatchers)
+        Token token = Token.get_for_class (s_Dispatchers);
         {
             assert (!(this in s_Dispatchers));
 
             s_Dispatchers.insert (this);
         }
+        token.release ();
 
         Array<unowned Task> ready_tasks = new Array<unowned Task>.sorted ();
 
-        Os.EPollEvent events[64];
+        Os.EPollEvent[] events = new Os.EPollEvent[64];
 
         while (state == Task.State.RUNNING)
         {
-            int timeout = childs.nb_items > 0 && ((Task)childs.at (0)).state == Task.State.READY ? 0 : -1;
+            int timeout = nb_childs > 0 && ((Task)first ()).state == Task.State.READY ? 0 : -1;
 
             int nb_fds = m_PollFd.wait (events, timeout);
 
             if (nb_fds < 0)
                 continue;
 
-            foreach (unowned Object object in childs)
+            foreach (unowned Object object in this)
             {
                 unowned Task task = object as Task;
 
@@ -197,7 +206,7 @@ public class Maia.Dispatcher : Task
             ready_tasks.clear ();
         }
 
-        finished ();
+        finished.send ();
 
         return ret;
     }
@@ -215,33 +224,36 @@ public class Maia.Dispatcher : Task
     post_event (Event inEvent)
     {
         audit (GLib.Log.METHOD, "Event id = %s", inEvent.name);
-        lock (s_Dispatchers)
+        Token token = Token.get_for_class (s_Dispatchers);
         {
             foreach (unowned Dispatcher dispatcher in s_Dispatchers)
             {
                 dispatcher.m_EventDispatcher.post (inEvent);
             }
         }
+        token.release ();
     }
 
     internal void
     add_listener (EventListener inEventListener)
     {
         audit (GLib.Log.METHOD, "Listen event id = %s", inEventListener.name);
-        lock (m_EventDispatcher)
+        Token token = Token.get_for_class (s_Dispatchers);
         {
             m_EventDispatcher.listen (inEventListener);
         }
+        token.release ();
     }
 
     internal void
     remove_listener (EventListener inEventListener)
     {
         audit (GLib.Log.METHOD, "Deaf event id = %s", inEventListener.name);
-        lock (m_EventDispatcher)
+        Token token = Token.get_for_class (s_Dispatchers);
         {
             m_EventDispatcher.deafen (inEventListener);
         }
+        token.release ();
     }
 
     internal new void

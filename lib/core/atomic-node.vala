@@ -49,10 +49,9 @@ public class Maia.AtomicNode<T>
         do
         {
             o = inVal;
-            if (o >> 1 == 0)
+            n = o - 2;
+            if (n <= 0)
                 n = 1;
-            else
-                n = o - 2;
         } while (!GLib.AtomicInt.compare_and_exchange (ref inVal, o, n));
 
         return (o - n) & 1;
@@ -66,20 +65,20 @@ public class Maia.AtomicNode<T>
         do
         {
             o = inVal;
-            n = o & ~1;
+            n = o - 1;
         } while (!GLib.AtomicInt.compare_and_exchange (ref inVal, o, n));
     }
 
     private static void
     reclaim (AtomicNode<T> inNode)
     {
-        unowned AtomicNode<T>? node = null;
+        void* node = null;
 
         do
         {
-            node = (AtomicNode<T>?)GLib.AtomicPointer.get (&s_FreeList);;
+            node = GLib.AtomicPointer.get (&s_FreeList);
             GLib.AtomicPointer.set (&inNode.next, node);
-        } while (GLib.AtomicPointer.compare_and_exchange (&s_FreeList, node, inNode));
+        } while (!GLib.AtomicPointer.compare_and_exchange (&s_FreeList, node, inNode));
 
         inNode.data = null;
     }
@@ -89,23 +88,23 @@ public class Maia.AtomicNode<T>
     {
         while (true)
         {
-            unowned AtomicNode<T>? node = (AtomicNode<T>?)GLib.AtomicPointer.get (&inNode);
+            void* node = GLib.AtomicPointer.get (&inNode);
             if (node == null)
                 return null;
-            GLib.AtomicInt.add (ref node.ref_count_claim, 2);
+            GLib.AtomicInt.add (ref ((AtomicNode<T>)node).ref_count_claim, 2);
             if (node == GLib.AtomicPointer.get (&inNode))
-                return node;
+                return ((AtomicNode<T>)node);
             else
-                node.unref ();
+                ((AtomicNode<T>)node).unref ();
         }
     }
 
     private static void
-    release (AtomicNode<T> inNode)
+    release (AtomicNode<T>? inNode)
     {
         if (inNode != null)
         {
-            if (dec_and_test_and_set (ref inNode.ref_count_claim) == 1)
+            if (dec_and_test_and_set (ref inNode.ref_count_claim) == 0)
                 return;
 
             release (inNode.next);
@@ -124,10 +123,11 @@ public class Maia.AtomicNode<T>
     {
         while (true)
         {
-            AtomicNode<T> node = s_FreeList;
+            unowned AtomicNode<T> node = s_FreeList;
             if (node == null)
             {
-                node = new AtomicNode<T> (inData);
+                AtomicNode<T> n = new AtomicNode<T> (null);
+                GLib.AtomicPointer.compare_and_exchange (&s_FreeList, node, n);
                 continue;
             }
 
@@ -135,9 +135,16 @@ public class Maia.AtomicNode<T>
             {
                 clear_lowest_bit (ref node.ref_count_claim);
                 node.data = (owned)inData;
+                node.next = null;
                 return node;
             }
         };
+    }
+
+    public static AtomicNode<T>?
+    create_aux ()
+    {
+        return create (null);
     }
 
     public unowned AtomicNode<T>?

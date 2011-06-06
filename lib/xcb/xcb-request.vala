@@ -65,17 +65,19 @@ internal abstract class Maia.XcbRequest : Object
     {
         audit (GLib.Log.METHOD, "start query task");
 
-        lock (s_QueryTask)
+        TaskOnce query_task = (TaskOnce)GLib.AtomicPointer.get (&s_QueryTask);
+
+        do
         {
-            if (s_QueryTask == null)
+            if (query_task == null)
             {
-                s_QueryTask = new TaskOnce (() => {
+                query_task = new TaskOnce (() => {
                     audit (GLib.Log.METHOD, "process query requests");
 
-                    s_QueryTask.lock ();
-                    while (s_QueryTask.childs.nb_items > 0)
+                    Token token = Token.get_for_object (s_QueryTask);
+                    while (s_QueryTask.nb_childs > 0)
                     {
-                        unowned Object? child = s_QueryTask.childs.at (0);
+                        unowned Object? child = s_QueryTask.first ();
                         if (child != null)
                         {
                             child.ref ();
@@ -83,21 +85,24 @@ internal abstract class Maia.XcbRequest : Object
                             child.unref ();
                         }
                     }
-                    s_QueryTask.unlock ();
+                    Object.atomic_compare_and_exchange (&s_QueryTask, query_task, null);
+                    token.release ();
                 }, Task.Priority.NORMAL + 1);
 
-                s_QueryTask.finished.connect (() => {
-                    lock (s_QueryTask)
-                    {
-                        s_QueryTask = null;
-                    }
-                });
-
-                s_QueryTask.parent = Application.self;
+                if (Object.atomic_compare_and_exchange (&s_QueryTask, null, query_task))
+                {
+                    query_task.parent = Application.self;
+                }
             }
-        }
 
-        parent = s_QueryTask;
+            Token token = Token.get_for_object (query_task);
+            query_task = (TaskOnce)GLib.AtomicPointer.get (&s_QueryTask);
+            if (query_task != null)
+            {
+                parent = query_task;
+            }
+            token.release ();
+        } while (query_task == null);
     }
 
     private void
@@ -105,17 +110,19 @@ internal abstract class Maia.XcbRequest : Object
     {
         audit (GLib.Log.METHOD, "start commit task");
 
-        lock (s_CommitTask)
+        TaskOnce commit_task = (TaskOnce)GLib.AtomicPointer.get (&s_CommitTask);
+
+        do
         {
-            if (s_CommitTask == null)
+            if (commit_task == null)
             {
-                s_CommitTask = new TaskOnce (() => {
+                commit_task = new TaskOnce (() => {
                     audit (GLib.Log.METHOD, "process commit requests");
 
-                    s_CommitTask.lock ();
-                    while (s_CommitTask.childs.nb_items > 0)
+                    Token token = Token.get_for_object (s_CommitTask);
+                    while (s_CommitTask.nb_childs > 0)
                     {
-                        unowned Object? child = s_CommitTask.childs.at (0);
+                        unowned Object? child = s_CommitTask.first ();
                         if (child != null)
                         {
                             child.ref ();
@@ -123,26 +130,29 @@ internal abstract class Maia.XcbRequest : Object
 
                             request.on_commit ();
                             if (request.cookie != null)
-                                start_query_task ();
+                                request.start_query_task ();
 
                             child.unref ();
                         }
                     }
-                    s_CommitTask.unlock ();
+                    Object.atomic_compare_and_exchange (&s_CommitTask, commit_task, null);
+                    token.release ();
                 }, Task.Priority.NORMAL - 1);
 
-                s_CommitTask.finished.connect (() => {
-                    lock (s_CommitTask)
-                    {
-                        s_CommitTask = null;
-                    }
-                });
-
-                s_CommitTask.parent = Application.self;
+                if (Object.atomic_compare_and_exchange (&s_CommitTask, null, commit_task))
+                {
+                    commit_task.parent = Application.self;
+                }
             }
-        }
 
-        parent = s_CommitTask;
+            Token token = Token.get_for_object (commit_task);
+            commit_task = (TaskOnce)GLib.AtomicPointer.get (&s_CommitTask);
+            if (commit_task != null)
+            {
+                parent = commit_task;
+            }
+            token.release ();
+        } while (commit_task == null);
     }
 
     protected virtual void
@@ -180,7 +190,8 @@ internal abstract class Maia.XcbRequest : Object
     public virtual void
     query ()
     {
-        if (s_QueryTask == null || parent != s_QueryTask)
+        unowned TaskOnce query_task = (TaskOnce)GLib.AtomicPointer.get (&s_QueryTask);
+        if (query_task == null || parent != query_task)
         {
             audit (GLib.Log.METHOD, "xid: 0x%x", m_Window.id);
 
@@ -192,7 +203,8 @@ internal abstract class Maia.XcbRequest : Object
     public virtual void
     commit ()
     {
-        if (s_CommitTask == null || parent != s_CommitTask)
+        unowned TaskOnce commit_task = (TaskOnce)GLib.AtomicPointer.get (&s_CommitTask);
+        if (commit_task == null || parent != commit_task)
         {
             audit (GLib.Log.METHOD, "xid: 0x%x", m_Window.id);
 

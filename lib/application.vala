@@ -67,7 +67,7 @@ public abstract class Maia.Application : Object
     construct 
     {
         m_Dispatcher = new Dispatcher ();
-        m_Dispatcher.finished.connect (on_dispatcher_finished);
+        m_Dispatcher.finished.watch (on_dispatcher_finished);
     }
 
     private void

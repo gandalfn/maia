@@ -34,7 +34,7 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
     private Xcb.Atom              m_Type;
     private Format                m_Format;
     private Array<V>              m_Values;
-    private UpdatedFunc           m_UpdatedFunc;
+    private unowned UpdatedFunc   m_UpdatedFunc;
 
     // methods
     public XcbWindowProperty (XcbWindow inWindow, XcbAtomType inProperty,
@@ -91,11 +91,11 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
                     {
                         if (typeof (V) == typeof (string))
                         {
-                            unowned string? data = (string)reply.get_value ();
+                            void* data = reply.get_value ();
                             int length = reply.get_length ();
-                            if (data.validate (length))
+                            if (((string)data).validate (length))
                             {
-                                m_Values[0] = data.substring (0, length);
+                                m_Values[0] = ((string)data).substring (0, length);
                             }
                         }
                         else

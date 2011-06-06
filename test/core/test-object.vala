@@ -145,7 +145,7 @@ public class Maia.TestObject : Maia.TestCase
 
         assert (foo2 is FooObject);
 
-        assert (parent.childs.nb_items == 2);
+        assert (parent.nb_childs == 2);
     }
 
     public void
@@ -170,10 +170,10 @@ public class Maia.TestObject : Maia.TestCase
 
         assert (foo3 is TooObject);
 
-        assert (parent.childs.nb_items == 3);
-        assert ("foo" in parent);
-        assert ("too" in parent);
-        assert (!("poo" in parent));
+        assert (parent.nb_childs == 3);
+        assert (Atom.from_string ("foo") in parent);
+        assert (Atom.from_string ("too") in parent);
+        assert (!(Atom.from_string ("poo") in parent));
     }
 
     public void
@@ -196,12 +196,12 @@ public class Maia.TestObject : Maia.TestCase
 
         assert (foo3 is TooObject);
 
-        assert (parent.childs.nb_items == 3);
+        assert (parent.nb_childs == 3);
 
         bool found_foo = false,
              found_poo = false,
              found_too = false;
-        foreach (Object object in parent.childs)
+        foreach (Object object in parent)
         {
             switch (Atom.to_string (object.id))
             {

@@ -84,13 +84,13 @@ internal class Maia.XcbWindow : WindowProxy
     // methods
     construct
     {
-        debug ("Maia.XcbWindow.construct", "construct %s", (delegator as Window).is_foreign.to_string ());
+        debug ("Maia.XcbWindow.construct", "construct %s", ((Window)delegator).is_foreign.to_string ());
 
         // Get xcb desktop
-        m_XcbDesktop = ((delegator as Window).workspace.parent as Desktop).proxy as XcbDesktop;
+        m_XcbDesktop = (((Window)delegator).workspace.parent as Desktop).proxy as XcbDesktop;
 
         // If window is foreign create it with id
-        if ((delegator as Window).is_foreign)
+        if (((Window)delegator).is_foreign)
         {
             foreign (delegator.id);
         }
@@ -142,6 +142,9 @@ internal class Maia.XcbWindow : WindowProxy
         // Create events
         m_DamageEvent = new XcbDamageEvent (this);
         m_DeleteEvent = new XcbDeleteEvent (this);
+
+        // Flush connection
+        m_XcbDesktop.flush ();
     }
 
     private void
@@ -149,7 +152,7 @@ internal class Maia.XcbWindow : WindowProxy
     {
         // Get properties
         m_Geometry = inGeometry;
-        XcbWorkspace xcb_workspace = (delegator as Window).workspace.proxy as XcbWorkspace;
+        XcbWorkspace xcb_workspace = ((Window)delegator).workspace.proxy as XcbWorkspace;
         Xcb.Window window = Xcb.Window (m_XcbDesktop.connection);
 
         // Create xcb window

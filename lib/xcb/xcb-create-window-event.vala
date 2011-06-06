@@ -38,14 +38,15 @@ internal class Maia.XcbCreateWindowEvent : CreateWindowEvent
             {
                 foreach (unowned Workspace workspace in desktop)
                 {
-                    unowned Window? parent = (workspace.proxy as XcbWorkspace).find_window (evt.parent);
+                    unowned Window? parent = (Window)workspace[evt.parent];
 
                     if (parent != null && parent == workspace.root)
                     {
-                        Window new_window = new Window.foreign (evt.window, workspace) as Window;
-                        (new_window.proxy as XcbWindow).attributes.override_redirect = (bool)evt.override_redirect;
+                        Window new_window = new Window.foreign (evt.window, workspace);
+                        ((XcbWindow)new_window.proxy).attributes.override_redirect = (bool)evt.override_redirect;
                         CreateWindowEventArgs args = new CreateWindowEventArgs (new_window);
                         workspace.create_window_event.post (args);
+                        audit (GLib.Log.METHOD, "window %u", new_window.ref_count);
 
                         break;
                     }

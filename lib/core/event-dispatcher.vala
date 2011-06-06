@@ -127,7 +127,6 @@ internal class Maia.EventDispatcher : Watch
     // properties
     private int                 m_MessageTunnel[2];
     private Queue<Event>        m_EventQueue;
-    private GLib.StaticRWLock   m_ListenersMutex;
     private Set<ListenerQueue>  m_Listeners;
 
     // methods
@@ -142,7 +141,6 @@ internal class Maia.EventDispatcher : Watch
         m_MessageTunnel[0] = fds[0];
         m_MessageTunnel[1] = fds[1];
         m_EventQueue = new Queue<Event> ();
-        m_ListenersMutex = GLib.StaticRWLock ();
         m_Listeners = new Set<ListenerQueue> ();
         m_Listeners.compare_func = ListenerQueue.compare;
     }
@@ -157,7 +155,7 @@ internal class Maia.EventDispatcher : Watch
     dispatch (Message inMsg)
     {
         // Check if we have listener for event in this dispatcher
-        m_ListenersMutex.reader_lock ();
+        Token token = Token.get_for_class (m_Listeners);
         {
             unowned ListenerQueue? queue = m_Listeners.search<Event> (inMsg.m_Event,
                                                                       ListenerQueue.compare_with_event);
@@ -170,7 +168,7 @@ internal class Maia.EventDispatcher : Watch
                 }
             }
         }
-        m_ListenersMutex.reader_unlock ();
+        token.release ();
     }
 
     internal override void*
@@ -199,14 +197,14 @@ internal class Maia.EventDispatcher : Watch
         bool listen_event = false;
 
         // Check if we have listener for event in this dispatcher
-        m_ListenersMutex.reader_lock ();
+        Token token = Token.get_for_class (m_Listeners);
         {
             unowned ListenerQueue? queue = m_Listeners.search<Event> (inEvent,
                                                                       ListenerQueue.compare_with_event);
 
             listen_event = queue != null;
         }
-        m_ListenersMutex.reader_unlock ();
+        token.release ();
 
         if (listen_event)
         {
@@ -218,7 +216,7 @@ internal class Maia.EventDispatcher : Watch
     public void
     listen (EventListener inEventListener)
     {
-        m_ListenersMutex.writer_lock ();
+        Token token = Token.get_for_class (m_Listeners);
         {
             ListenerQueue queue = m_Listeners.search<EventListener> (inEventListener,
                                                                      ListenerQueue.compare_with_listener);
@@ -232,13 +230,13 @@ internal class Maia.EventDispatcher : Watch
                 queue.insert (inEventListener);
             }
         }
-        m_ListenersMutex.writer_unlock ();
+        token.release ();
     }
 
     public void
     deafen (EventListener inEventListener)
     {
-        m_ListenersMutex.writer_lock ();
+        Token token = Token.get_for_class (m_Listeners);
         {
             unowned ListenerQueue? queue = m_Listeners.search<EventListener> (inEventListener,
                                                                               ListenerQueue.compare_with_listener);
@@ -247,13 +245,13 @@ internal class Maia.EventDispatcher : Watch
                 queue.remove (inEventListener);
             }
         }
-        m_ListenersMutex.writer_unlock ();
+        token.release ();
     }
 
     public void
     deafen_event (Event inEvent)
     {
-        m_ListenersMutex.writer_lock ();
+        Token token = Token.get_for_class (m_Listeners);
         {
             unowned ListenerQueue? queue = m_Listeners.search<Event> (inEvent,
                                                                       ListenerQueue.compare_with_event);
@@ -263,6 +261,6 @@ internal class Maia.EventDispatcher : Watch
                 m_Listeners.remove (queue);
             }
         }
-        m_ListenersMutex.writer_unlock ();
+        token.release ();
     }
 }

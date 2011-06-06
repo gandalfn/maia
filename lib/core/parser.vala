@@ -120,7 +120,7 @@ public abstract class Maia.Parser : Object
 
     protected abstract Token next_token () throws ParseError;
 
-    public Iterator
+    public new Iterator
     iterator ()
     {
         m_pCurrent = m_pBegin;

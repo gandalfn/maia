@@ -337,7 +337,6 @@ public class Maia.List<V> : Collection<V>
      */
     internal override Maia.Iterator<V>
     iterator ()
-        requires (m_Size > 0)
     {
         return new Iterator<V> (this);
     }

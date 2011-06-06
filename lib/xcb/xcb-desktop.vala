@@ -35,7 +35,7 @@ internal class Maia.XcbDesktop : DesktopProxy
 
     public override Workspace default_workspace {
         get {
-            return childs.at (m_DefaultScreenNum) as Workspace;
+            return (Workspace)get_child_at (m_DefaultScreenNum);
         }
     }
 
@@ -83,7 +83,7 @@ internal class Maia.XcbDesktop : DesktopProxy
     {
         string ret = "";
 
-        foreach (Object child in childs)
+        foreach (Object child in this)
         {
             ret += child.to_string ();
         }
@@ -100,7 +100,7 @@ internal class Maia.XcbDesktop : DesktopProxy
                 audit (GLib.Log.METHOD, "Flush");
                 m_Connection.flush ();
             });
-            m_FlushTask.finished.connect (() => {
+            m_FlushTask.finished.watch (() => {
                 m_FlushTask = null;
             });
             m_FlushTask.parent = Application.self;

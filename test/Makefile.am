@@ -11,7 +11,8 @@ noinst_PROGRAMS = \
     test \
     test-window \
     test-thread \
-    test-token
+    test-token \
+    test-atomic-list
 
 test_SOURCES = \
     test.vala \
@@ -26,6 +27,7 @@ test_SOURCES = \
     core/test-dispatcher.vala \
     core/test-application.vala \
     core/test-event.vala \
+    core/test-notification.vala \
     xml/test-xml.vala \
     xml/test-parser.vala
 
@@ -53,6 +55,13 @@ test_thread_LDADD = \
     $(MAIA_LIBS) \
     ${top_builddir}/lib/core/libmaia-core.la
 
+test_atomic_list_SOURCES = \
+    test-atomic-list.vala
+
+test_atomic_list_LDADD = \
+    $(MAIA_LIBS) \
+    ${top_builddir}/lib/core/libmaia-core.la
+
 test_token_SOURCES = \
     test-token.vala
 
@@ -63,6 +72,7 @@ test_token_LDADD = \
 VALAFILES = \
     $(filter %.vala,$(test_SOURCES)) \
     $(filter %.vala,$(test_window_SOURCES)) \
+    $(filter %.vala,$(test_atomic_list_SOURCES)) \
     $(filter %.vala,$(test_thread_SOURCES)) \
     $(filter %.vala,$(test_token_SOURCES))
 

@@ -20,8 +20,8 @@
 internal class Maia.EventListener : Object
 {
     // properties
-    private Event.Handler m_Handler;
-    private void*         m_Owner;
+    private unowned Event.Handler m_Handler;
+    private void*                 m_Owner;
 
     // accessors
     public string name {

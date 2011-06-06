@@ -23,7 +23,7 @@ public class Maia.TaskOnce : Task
     public delegate void Callback ();
 
     // properties
-    private Callback m_Callback;
+    private unowned Callback m_Callback;
 
     // methods
     public TaskOnce (Callback inCallback, Task.Priority inPriority = Priority.NORMAL, bool inThread = false)

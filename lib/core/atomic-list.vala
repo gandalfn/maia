@@ -20,20 +20,42 @@
 public class Maia.AtomicList<T>
 {
     // properties
-    private AtomicNode<T> m_First;
-    private AtomicNode<T> m_Last;
+    private AtomicNode<T>         m_First;
+    private unowned AtomicNode<T> m_Last;
 
     public AtomicList ()
     {
         m_First = AtomicNode.create (null);
-        m_Last = AtomicNode.create (null);
-        m_First.next = m_Last;
+        m_First.next = AtomicNode.create (null);
+        m_First.next.next = AtomicNode.create (null);
+        m_Last = m_First.next.next;
+
+        AtomicIterator<T> iter = new AtomicIterator<T> (m_First, m_Last);
+        iter.update ();
     }
 
     public void
     insert (owned T inData)
     {
+        AtomicIterator<T> iter = new AtomicIterator<T> (m_First, m_Last);
+        CompareFunc<T> func = get_compare_func_for<T> ();
+
         AtomicNode<T> node = AtomicNode.create (new AtomicNode.Data<T> (inData));
-        m_First.next = node;
+        AtomicNode<T> aux = AtomicNode.create_aux ();
+
+        while (true)
+        {
+            if (iter.search (inData, func)) break;
+
+            if (iter.try_insert (node, aux)) break;
+
+            iter.update ();
+        };
+    }
+
+    public AtomicIterator<T>
+    iterator ()
+    {
+        return new AtomicIterator<T> (m_First, m_Last);
     }
 }

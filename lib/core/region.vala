@@ -348,7 +348,7 @@ public class Maia.Region : Object
      * @return a Iterator that can be used for simple iteration over a
      *         region
      */
-    public Iterator
+    public new Iterator
     iterator ()
     {
         return new Iterator (this);

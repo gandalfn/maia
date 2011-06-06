@@ -82,11 +82,17 @@ public class Maia.Transform : Object
         }
     }
 
-    public signal void changed ();
+    // Notifications
+    public Notification<Transform> changed;
 
     /**
      * Create a new transform stack
      */
+    construct
+    {
+        changed = new Notification<Transform> (this);
+    }
+
     public Transform (double inXx, double inYx, 
                       double inXy, double inYy,
                       double inX0, double inY0)
@@ -131,7 +137,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed ();
+        changed.send ();
     }
 
     /**
@@ -151,7 +157,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed ();
+        changed.send ();
     }
 
     /**
@@ -172,7 +178,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed ();
+        changed.send ();
     }
 
     /**
@@ -191,7 +197,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed ();
+        changed.send ();
     }
 
     /**
@@ -210,7 +216,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed ();
+        changed.send ();
     }
 
     /**
@@ -231,7 +237,7 @@ public class Maia.Transform : Object
             recalculate_final_matrix ();
 
             // connect on transform changed signal
-            changed.connect (recalculate_final_matrix);
+            changed.watch (recalculate_final_matrix);
         }
     }
 
@@ -246,7 +252,7 @@ public class Maia.Transform : Object
         if (inKey in m_Queue)
         {
             // disconnect from transform changed
-            changed.connect (recalculate_final_matrix);
+            changed.watch (recalculate_final_matrix);
 
             // remove transform in queue if exist
             m_Queue.unset (inKey);

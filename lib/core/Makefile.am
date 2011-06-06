@@ -54,6 +54,7 @@ libmaia_core_la_SOURCES = \
     timeline.vala \
     dispatcher.vala \
     parser.vala \
+    notification.vala \
     event.vala \
     event-args.vala \
     event-listener.vala \

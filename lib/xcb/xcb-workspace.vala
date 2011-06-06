@@ -26,7 +26,6 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
     private Region          m_Geometry  = null;
 
     private Window          m_Root      = null;
-    private Array<Window>   m_Stack     = null;
 
     // accessors
     public Xcb.Screen xcb_screen {
@@ -85,16 +84,10 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
         get {
             if (m_Root == null)
             {
-                m_Root = new Window.foreign (m_XcbScreen.root, delegator as Workspace);
+                m_Root = new Window.foreign (m_XcbScreen.root, (Workspace)delegator);
             }
 
             return m_Root;
-        }
-    }
-
-    public override Array<Window> stack {
-        get {
-            return m_Stack;
         }
     }
 
@@ -107,11 +100,12 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
         get {
             if (m_CreateWindowEvent == null)
             {
-                m_CreateWindowEvent = new XcbCreateWindowEvent (root.proxy as XcbWindow);
+                m_CreateWindowEvent = new XcbCreateWindowEvent ((XcbWindow)root.proxy);
 
                 destroy_window_event.listen ((a) => {
-                    audit (GLib.Log.METHOD, "destroy window xid: 0x%lx", a.window.id);
+                    audit (GLib.Log.METHOD, "destroy window xid: 0x%lx, %u", a.window.id, a.window.ref_count);
                     a.window.parent = null;
+                    audit (GLib.Log.METHOD, "destroy window xid: 0x%lx, %u", a.window.id, a.window.ref_count);
                 }, Application.self);
 
                 reparent_window_event.listen ((a) => {
@@ -129,7 +123,7 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
         get {
             if (m_DestroyWindowEvent == null)
             {
-                m_DestroyWindowEvent = new XcbDestroyWindowEvent (root.proxy as XcbWindow);
+                m_DestroyWindowEvent = new XcbDestroyWindowEvent ((XcbWindow)root.proxy);
             }
             return m_DestroyWindowEvent;
         }
@@ -139,7 +133,7 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
         get {
             if (m_ReparentWindowEvent == null)
             {
-                m_ReparentWindowEvent = new XcbReparentWindowEvent (root.proxy as XcbWindow);
+                m_ReparentWindowEvent = new XcbReparentWindowEvent ((XcbWindow)root.proxy);
             }
             return m_ReparentWindowEvent;
         }
@@ -152,47 +146,10 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
     }
 
     // methods
-    ~XcbWorkspace ()
-    {
-        m_Stack.clear ();
-    }
-
     public void
     init (Xcb.Screen inScreen, uint inNum)
     {
         m_Num = inNum;
         m_XcbScreen = inScreen;
-        m_Stack = new Array<Window>.sorted ();
-        m_Stack.compare_func = (a, b) => {
-            unowned XcbWindow awindow = (XcbWindow)a.proxy;
-            unowned XcbWindow bwindow = (XcbWindow)b.proxy;
-
-            if (awindow == null && bwindow != null)
-                return -1;
-
-            if (awindow != null && bwindow == null)
-                return 1;
-
-            if (awindow == null && bwindow == null)
-                return 0;
-
-            return (int)(awindow.id - bwindow.id);
-        };
-    }
-
-    public unowned Window?
-    find_window (Xcb.Window inXcbWindow)
-    {
-        unowned Window? window = null;
-
-        this.lock ();
-        window = m_Stack.search<Xcb.Window> (inXcbWindow, (a, b) => {
-            unowned Window awindow = (Window)a;
-            if (awindow.proxy == null) return -1;
-            return (int)((awindow.proxy as XcbWindow).id - b);
-        }) as Window;
-        this.unlock ();
-
-        return window;
     }
 }

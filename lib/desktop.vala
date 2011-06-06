@@ -36,7 +36,7 @@ public class Maia.Desktop : Object
         next ()
         {
             bool ret = false;
-            int nb_items = m_Desktop.childs.nb_items;
+            int nb_items = m_Desktop.nb_childs;
 
             if (m_Index == -1 && nb_items > 0)
             {
@@ -55,7 +55,7 @@ public class Maia.Desktop : Object
         public unowned Workspace?
         get ()
         {
-            return m_Desktop.childs.at (m_Index) as Workspace;
+            return (Workspace)m_Desktop.get_child_at (m_Index);
         }
     }
 
@@ -71,7 +71,7 @@ public class Maia.Desktop : Object
 
     public int nb_workspaces {
         get {
-            return childs.nb_items;
+            return nb_childs;
         }
     }
 
@@ -102,10 +102,10 @@ public class Maia.Desktop : Object
     public new unowned Workspace?
     @get (int inNumWorkspace)
     {
-        return childs.at (inNumWorkspace) as Workspace;
+        return (Workspace)get_child_at (inNumWorkspace);
     }
 
-    public Iterator
+    public new Iterator
     iterator ()
     {
         return new Iterator (this);

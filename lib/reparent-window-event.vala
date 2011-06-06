@@ -21,9 +21,9 @@ public class Maia.ReparentWindowEventArgs : EventArgs
 {
     // accessors
     [CCode (notify = false)]
-    public Window parent { get; private set; }
+    public unowned Window parent { get; private set; }
     [CCode (notify = false)]
-    public Window window { get; private set; }
+    public unowned Window window { get; private set; }
 
     // methods
     public ReparentWindowEventArgs (Window inParent, Window inWindow)

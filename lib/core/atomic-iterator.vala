@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.AtomicIterator<T> : Iterator<T>
+public class Maia.AtomicIterator<T>
 {
     private AtomicNode<T> m_Last;
     private AtomicNode<T> m_Target;
@@ -34,7 +34,7 @@ public abstract class Maia.AtomicIterator<T> : Iterator<T>
         update ();
     }
 
-    private void
+    internal void
     update ()
     {
         if (m_PreAux.next == m_Target)
@@ -57,12 +57,18 @@ public abstract class Maia.AtomicIterator<T> : Iterator<T>
     }
 
     internal bool
-    try_insert (AtomicNode<T> inNode, AtomicNode<T>inAux)
+    try_insert (AtomicNode<T> inNode, AtomicNode<T> inAux)
     {
-        GLib.AtomicPointer.set (&inNode.next, inAux);
+        inNode.next = inAux;
         GLib.AtomicPointer.set (&inAux.next, m_Target);
 
-        return GLib.AtomicPointer.compare_and_exchange (&m_PreAux, m_Target, inNode);
+        bool ret = GLib.AtomicPointer.compare_and_exchange (&m_PreAux.next, m_Target, inNode);
+        if (ret) 
+            inNode.ref ();
+        else
+            inNode.next = null;
+
+        return ret;
     }
 
     internal bool
@@ -82,7 +88,7 @@ public abstract class Maia.AtomicIterator<T> : Iterator<T>
         return false;
     }
 
-    public override bool
+    public bool
     next ()
     {
         if (m_Target == m_Last)
@@ -93,6 +99,12 @@ public abstract class Maia.AtomicIterator<T> : Iterator<T>
 
         update ();
 
-        return true;
+        return m_Target != m_Last;
+    }
+
+    public unowned T?
+    get ()
+    {
+        return m_Target.data.value;
     }
 }

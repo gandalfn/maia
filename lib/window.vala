@@ -2,17 +2,17 @@
 /*
  * window.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
- * 
+ *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * maia is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -56,45 +56,6 @@ public class Maia.Window : View
     }
 
     // accessors
-    [CCode (notify = false)]
-    public override Object parent {
-        get {
-            return base.parent;
-        }
-        construct set {
-            unowned Object? parent = base.parent;
-
-            if (parent != null && parent is Workspace)
-            {
-                parent.lock ();
-                (parent as Workspace).stack.remove (this);
-                parent.unlock ();
-            }
-
-            base.parent = value;
-
-            if (value != null && value is Workspace && m_Proxy != null)
-            {
-                debug ("Maia.Window.parent.set", @"insert in workspace stack $is_foreign");
-                parent.lock ();
-                (value as Workspace).stack.insert (this);
-                parent.unlock ();
-            }
-        }
-    }
-
-    public unowned Workspace? workspace {
-        get {
-            unowned Object? p = parent;
-            for (; p != null && !(p is Workspace); p = p.parent);
-
-            if (p != null && p is Workspace)
-                return p as Workspace;
-
-            return null;
-        }
-    }
-
     public unowned WindowProxy proxy {
         get {
             return m_Proxy;
@@ -111,6 +72,22 @@ public class Maia.Window : View
         }
     }
 
+    public unowned Workspace? workspace {
+        get {
+            unowned Workspace? ret = null;
+            for (unowned Object? p = parent; p != null; p = p.parent)
+            {
+                if (p is Workspace)
+                {
+                    ret = (Workspace)p;
+                    break;
+                }
+            }
+
+            return ret;
+        }
+    }
+
     public string name { get; construct set; default = null; }
     public bool is_foreign { get; construct; default = false; }
     public bool is_viewable { get; protected set; default = false; }
@@ -120,18 +97,10 @@ public class Maia.Window : View
     // methods
     construct
     {
-        audit ("Maia.Window.construct", "create window");
+        audit ("Maia.Window.construct", "create window %u", ref_count);
 
         m_Proxy = delegate_cast<WindowProxy> ();
         assert(m_Proxy != null);
-
-        if (parent is Workspace)
-        {
-            unowned Workspace? workspace = parent as Workspace;
-            workspace.lock ();
-            workspace.stack.insert (this);
-            workspace.unlock ();
-        }
     }
 
     public Window (string inName, int inWidth, int inHeight)
@@ -152,6 +121,7 @@ public class Maia.Window : View
 
         unowned Dispatcher? dispatcher = Application.self;
         m_Proxy.damage_event.listen (on_damage_event, dispatcher);
+        audit(GLib.Log.METHOD, "%u", ref_count);
     }
 
     private void
@@ -195,7 +165,7 @@ public class Maia.Window : View
             ret += @"geometry: $geometry";
         ret += "</td></tr></table>>];\n";
 
-        foreach (unowned Object object in childs)
+        foreach (unowned Object object in this)
         {
             ret += (object as Window).to_string ();
             ret += "%s -> %s;\n".printf (id.to_string (), (object as Window).id.to_string ());
