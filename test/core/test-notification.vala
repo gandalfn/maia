@@ -120,7 +120,12 @@ public class Maia.TestNotification : Maia.TestCase
             elapsed = Test.timer_elapsed () * 1000;
         });
 
-        for (int cpt = 0; cpt < 100000; ++cpt)
+        foo.test_signal.connect ((i) => {
+            int a = i;
+            a++;
+        });
+
+        for (int cpt = 0; cpt < 200000; ++cpt)
         {
             Test.timer_start ();
             foo.test_signal (1);
@@ -139,8 +144,11 @@ public class Maia.TestNotification : Maia.TestCase
         foo.test_notification.watch (() => {
             elapsed = Test.timer_elapsed () * 1000;
         });
-
-        for (int cpt = 0; cpt < 100000; ++cpt)
+        foo.test_notification.watch ((o, i) => {
+            int a = i;
+            a++;
+        });
+        for (int cpt = 0; cpt < 200000; ++cpt)
         {
             Test.timer_start ();
             foo.test_notification.send (1);

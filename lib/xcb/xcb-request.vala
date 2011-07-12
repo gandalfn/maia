@@ -211,4 +211,12 @@ internal abstract class Maia.XcbRequest : Object
             start_commit_task ();
         }
     }
+
+    public virtual void
+    cancel ()
+    {
+        audit (GLib.Log.METHOD, "xid: 0x%x", m_Window.id);
+        parent = null;
+        m_Cookie = null;
+    }
 }

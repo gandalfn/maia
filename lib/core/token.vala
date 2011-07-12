@@ -22,20 +22,14 @@ public class Maia.Token : GLib.Object
     // types
     private class Thread : GLib.Object
     {
-        public uint32     m_Id;
-        public Set<Token> m_Tokens;
+        public uint32               m_Id;
+        public Array<unowned Token> m_Tokens;
 
         public Thread (GLib.Thread<void*> inThreadId)
         {
             m_Id = (uint32)inThreadId;
-            m_Tokens = new Set<Token> ();
+            m_Tokens = new Array<unowned Token> ();
             m_Tokens.compare_func = Token.compare;
-        }
-
-        public int
-        compare (Thread inOther)
-        {
-            return (int)(m_Id - inOther.m_Id);
         }
 
         public void
@@ -53,9 +47,7 @@ public class Maia.Token : GLib.Object
                     GLib.AtomicInt.compare_and_exchange (ref token.m_WaitDepth, wait_depth, depth);
                 } while (!GLib.AtomicInt.compare_and_exchange (ref token.m_Depth, depth, 0));
 
-                token.m_WaitMutex.lock ();
-                token.m_WaitCond.signal ();
-                token.m_WaitMutex.unlock ();
+                token.m_Spin.unlock ();
             }
         }
 
@@ -64,9 +56,11 @@ public class Maia.Token : GLib.Object
         {
             foreach (unowned Token token in m_Tokens)
             {
+                int wait_depth = GLib.AtomicInt.get (ref token.m_WaitDepth);
+
                 GLib.AtomicPointer.compare_and_exchange (&token.m_Ref, null, this);
-                token.m_Depth = token.m_WaitDepth;
-                token.m_WaitDepth = 0;
+                GLib.AtomicInt.compare_and_exchange (ref token.m_Depth, 0, wait_depth);
+                GLib.AtomicInt.compare_and_exchange (ref token.m_WaitDepth, wait_depth, 0);
             }
         }
     }
@@ -74,66 +68,48 @@ public class Maia.Token : GLib.Object
     private class Pool : GLib.Object
     {
         // properties
-        private Set<Thread>         m_Pool;
-        private Set<unowned Token?> m_Tokens;
-        private GLib.StaticRWLock   m_Lock;
+        private GLib.Private        m_Private;
+        private Set<Token>          m_Tokens;
 
         // methods
         public Pool ()
         {
-            m_Pool = new Set<Thread> ();
-            m_Pool.compare_func = Thread.compare;
-            m_Tokens = new Set<unowned Token?> ();
+            m_Private = new GLib.Private (GLib.Object.unref);
+            m_Tokens = new Set<Token> ();
             m_Tokens.compare_func = (CompareFunc<unowned Token>)Token.compare;
         }
 
-        public unowned Thread?
+        public inline unowned Thread?
         current_thread ()
         {
             unowned GLib.Thread<void*> self = GLib.Thread.self<void*> ();
-
-            m_Lock.reader_lock ();
-            unowned Thread? thread = m_Pool.search<unowned GLib.Thread<void*>> (self, (t, i) => {
-                return (int)(t.m_Id - (uint32)i);
-            });
-            m_Lock.reader_unlock ();
+            unowned Thread? thread = (Thread?)m_Private.get ();
 
             if (thread == null)
             {
                 Thread new_thread = new Thread (self);
-                m_Lock.writer_lock ();
-                m_Pool.insert (new_thread);
-                m_Lock.writer_unlock ();
+                m_Private.set (new_thread.ref ());
                 thread = new_thread;
             }
-
             return thread;
         }
 
-        public Token
+        public inline Token
         get_token (uint32 inTokenId)
         {
-            m_Lock.reader_lock ();
-            Token token = m_Tokens.search<uint32> (inTokenId, (t, i) => {
-                return (int)(t.m_Id - i);
-            });
-            m_Lock.reader_unlock ();
+            Token token = null;
 
-            if (token == null)
+            lock (m_Tokens)
             {
-                m_Lock.writer_lock ();
-                token = new Token (inTokenId);
-                if (!(token in m_Tokens))
+                token = m_Tokens.search<uint32> (inTokenId, (t, i) => {
+                    return (int)(t.m_Id - i);
+                });
+
+                if (token == null)
                 {
+                    token = new Token (inTokenId);
                     m_Tokens.insert (token);
                 }
-                else
-                {
-                    token = m_Tokens.search<uint32> (inTokenId, (t, i) => {
-                        return (int)(t.m_Id - i);
-                    });
-                }
-                m_Lock.writer_unlock ();
             }
 
             return token;
@@ -142,9 +118,10 @@ public class Maia.Token : GLib.Object
         public void
         remove_token (Token inToken)
         {
-            s_Pool.m_Lock.writer_lock ();
-            s_Pool.m_Tokens.remove (inToken);
-            s_Pool.m_Lock.writer_unlock ();
+            lock (m_Tokens)
+            {
+                m_Tokens.remove (inToken);
+            }
         }
     }
 
@@ -156,8 +133,7 @@ public class Maia.Token : GLib.Object
     private unowned Thread? m_Ref = null;
     private int             m_Depth = 0;
     private int             m_WaitDepth = 0;
-    private GLib.Mutex      m_WaitMutex;
-    private GLib.Cond       m_WaitCond;
+    private Os.ThreadSpin   m_Spin;
 
     // static methods
     public static new Token
@@ -209,8 +185,7 @@ public class Maia.Token : GLib.Object
     internal Token (uint32 inId)
     {
         m_Id = inId;
-        m_WaitMutex = new GLib.Mutex ();
-        m_WaitCond = new GLib.Cond ();
+        m_Spin = Os.ThreadSpin ();
     }
 
     ~Token ()
@@ -251,13 +226,8 @@ public class Maia.Token : GLib.Object
             }
 
             self.sleep ();
-            m_WaitMutex.lock ();
-            while (m_Ref != null)
-            {
-                m_WaitCond.wait (m_WaitMutex);
-            }
+            m_Spin.lock ();
             self.wake_up ();
-            m_WaitMutex.unlock ();
         }
     }
 
@@ -276,14 +246,12 @@ public class Maia.Token : GLib.Object
                 if (depth == 0) break;
             } while (!GLib.AtomicInt.compare_and_exchange (ref m_Depth, depth, depth - 1));
 
-            if (GLib.AtomicInt.get (ref m_Depth) == 0)
+            if (depth == 0)
             {
                 self.m_Tokens.remove (this);
                 if (GLib.AtomicPointer.compare_and_exchange (&m_Ref, self, null))
                 {
-                    m_WaitMutex.lock ();
-                    m_WaitCond.signal ();
-                    m_WaitMutex.unlock ();
+                    m_Spin.unlock ();
                 }
             }
         }

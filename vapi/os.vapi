@@ -20,7 +20,14 @@
 [CCode (cprefix = "", lower_case_cprefix = "", cheader_filename = "sys/epoll.h,sys/timerfd.h,unistd.h")]
 namespace Os
 {
-    int clock_gettime (int inClockId, out TimeSpec inTimerSpec);
+    public int dup (int fd);
+    public int pipe ([CCode (array_length = false, null_terminated = false)] int[] pipefd);
+    public ssize_t read (int fd, void* buf, size_t count);
+    public ssize_t write (int fd, void* buf, size_t count);
+    public int close (int fd);
+    public uint usleep (uint useconds);
+
+    public int clock_gettime (int inClockId, out TimeSpec inTimerSpec);
 
     [CCode (cname = "struct itimerspec")]
     public struct ITimerSpec

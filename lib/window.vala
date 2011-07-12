@@ -152,17 +152,17 @@ public class Maia.Window : View
     internal override string
     to_string ()
     {
-        string ret = @"$id [label=<<table border=\"0\" cellborder=\"1\" cellspacing=\"0\"><tr><td>";
+        string ret = "%lu [label=<<table border=\"0\" cellborder=\"1\" cellspacing=\"0\"><tr><td>".printf (id);
 
         if (name != null)
-            ret += @"name: $name<br/>";
+            ret += "name: %s<br/>".printf (name);
         ret += "id: 0x%x<br/>".printf (id);
-        ret += @"foreign: $is_foreign<br/>";
-        ret += @"viewable: $is_viewable<br/>";
-        ret += @"input only: $is_input_only<br/>";
-        ret += @"wm type: $hint_type<br/>";
+        ret += "foreign: " + is_foreign.to_string () + "<br/>";
+        ret += "viewable: " + is_viewable.to_string () + "<br/>";
+        ret += "input only: " + is_input_only.to_string () + "<br/>";
+        ret += "wm type: " + hint_type.to_string () + "<br/>";
         if (geometry != null)
-            ret += @"geometry: $geometry";
+            ret += "geometry: " + geometry.to_string ();
         ret += "</td></tr></table>>];\n";
 
         foreach (unowned Object object in this)

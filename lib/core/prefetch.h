@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * point.vala
+ * prefetch.h
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,44 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public struct Maia.Point
+#ifndef __MAIA_PREFETCH_H__
+#define __MAIA_PREFETCH_H__
+
+static inline void maia_prefetch(const void *x)
 {
-    /**
-     * x position
-     */
-    public double x;
-
-    /**
-     * y position
-     */
-    public double y;
-
-    /**
-     * Transform the point by inTransform.
-     *
-     * @param inTransform transform matrix
-     */
-    public void
-    transform (Transform inTransform)
-    {
-        double new_x, new_y;
-        unowned Matrix matrix = inTransform.matrix;
-
-        new_x = (matrix.xx * x + matrix.xy * y) + matrix.x0;
-        new_y = (matrix.yx * x + matrix.yy * y) + matrix.y0;
-
-        x = new_x;
-        y = new_y;
-    }
-
-    /**
-     * Returns the string representation of point
-     *
-     * @return string representation of point
-     */
-    public string
-    to_string ()
-    {
-        return "%f,%f".printf (x, y);
-    }
+    asm volatile ("prefetchnta (%0)":: "r" (x));
 }
+
+#endif /* __MAIA_PREFETCH_H__ */

@@ -21,7 +21,7 @@
  * 	Jürg Billeter <j@bitron.ch>
  */
 
-[CCode (lower_case_cprefix = "xcb_", cheader_filename = "xcb/xcb.h,xcb/xcbext.h")]
+[CCode (lower_case_cprefix = "xcb_", cheader_filename = "xcb/xcb.h,xcb/xcbext.h,xcb/xproto.h")]
 namespace Xcb {
 	[Compact]
 	[CCode (cname = "xcb_connection_t", cprefix = "xcb_", ref_function = "", unref_function = "xcb_disconnect")]
@@ -542,19 +542,22 @@ namespace Xcb {
 
 	[SimpleType]
 	[CCode (cname = "xcb_query_tree_cookie_t")]
-	public struct QueryTreeCookie : VoidCookie {
+	public struct QueryTreeCookie {
+		public uint sequence;
 	}
 
 	[SimpleType]
 	[CCode (cname = "xcb_get_window_attributes_cookie_t")]
-	public struct GetWindowAttributesCookie : VoidCookie {
+	public struct GetWindowAttributesCookie {
+		public uint sequence;
 		[CCode (cname = "xcb_get_window_attributes_reply", instance_pos = 1.1)]
 		public GetWindowAttributesReply reply (Connection connection, out GenericError? error = null);
 	}
 
 	[SimpleType]
 	[CCode (cname = "xcb_get_geometry_cookie_t")]
-	public struct GetGeometryCookie : VoidCookie {
+	public struct GetGeometryCookie {
+		public uint sequence;
 		[CCode (cname = "xcb_get_geometry_reply", instance_pos = 1.1)]
 		public GetGeometryReply reply (Connection connection, out GenericError? error = null);
 	}
@@ -562,6 +565,7 @@ namespace Xcb {
 	[SimpleType]
 	[CCode (cname = "xcb_intern_atom_cookie_t")]
 	public struct InternAtomCookie : VoidCookie {
+		public uint sequence;
 		[CCode (cname = "xcb_intern_atom_reply", instance_pos = 1.1)]
 		public InternAtomReply reply (Connection connection, out GenericError? error = null);
 	}
@@ -569,6 +573,7 @@ namespace Xcb {
 	[SimpleType]
 	[CCode (cname = "xcb_get_property_cookie_t")]
 	public struct GetPropertyCookie : VoidCookie {
+		public uint sequence;
 		[CCode (cname = "xcb_get_property_reply", instance_pos = 1.1)]
 		public GetPropertyReply reply (Connection connection, out GenericError? error = null);
 	}

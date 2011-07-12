@@ -10,10 +10,9 @@ include $(top_srcdir)/build/maia.am
 noinst_PROGRAMS = \
     test \
     test-window \
-    test-thread \
     test-token \
     test-atomic-list
-
+    
 test_SOURCES = \
     test.vala \
     test-case.vala \

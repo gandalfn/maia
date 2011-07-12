@@ -95,7 +95,7 @@ public class Maia.Array <V> : Collection <V>
     // Methods
     public Array ()
     {
-        m_pContent = new Node<V> [m_ReservedSize];
+        m_pContent = GLib.Slice.alloc0 (m_ReservedSize * sizeof (Node<V>));
     }
 
     public Array.sorted ()
@@ -109,7 +109,7 @@ public class Maia.Array <V> : Collection <V>
         clear ();
 
         if (m_pContent != null)
-            delete m_pContent;
+            GLib.Slice.free (m_ReservedSize * sizeof (Node<V>), m_pContent);
 
         m_pContent = null;
     }
@@ -144,7 +144,7 @@ public class Maia.Array <V> : Collection <V>
                     left = medium + 1;
                 }
 
-                ret = (int)Posix.ceil((double)(left + right) / 2);
+                ret = (int)GLib.Math.ceil((double)(left + right) / 2);
             }
         }
 
@@ -158,8 +158,10 @@ public class Maia.Array <V> : Collection <V>
         {
             int oldReservedSize = m_ReservedSize;
             m_ReservedSize = 2 * m_ReservedSize;
-            m_pContent = GLib.realloc (m_pContent, m_ReservedSize * sizeof (Node<V>));
-            GLib.Memory.set (&m_pContent[oldReservedSize], 0, oldReservedSize * sizeof (Node<V>));
+            void* o = (void*)m_pContent;
+            m_pContent = GLib.Slice.alloc0 (m_ReservedSize * sizeof (Node<V>));
+            GLib.Memory.copy (m_pContent, o, oldReservedSize * sizeof (Node<V>));
+            GLib.Slice.free (oldReservedSize * sizeof (Node<V>), o);
         }
     }
 
@@ -168,8 +170,11 @@ public class Maia.Array <V> : Collection <V>
     {
         if (m_Size < (int)(m_ReservedSize / 2.5))
         {
+            int oldReservedSize = m_ReservedSize;
             m_ReservedSize = (int)(m_ReservedSize / 2.5);
-            m_pContent = GLib.realloc (m_pContent, m_ReservedSize * sizeof (Node<V>));
+            void* o = (void*)m_pContent;
+            m_pContent = GLib.Slice.copy (m_ReservedSize * sizeof (Node<V>), o);
+            GLib.Slice.free (oldReservedSize * sizeof (Node<V>), o);
         }
     }
 
@@ -232,8 +237,10 @@ public class Maia.Array <V> : Collection <V>
         {
             int oldReservedSize = m_ReservedSize;
             m_ReservedSize = inSize;
-            m_pContent = GLib.realloc (m_pContent, m_ReservedSize * sizeof (Node<V>));
-            GLib.Memory.set (&m_pContent[oldReservedSize], 0, (m_ReservedSize - oldReservedSize) * sizeof (Node<V>));
+            void* o = (void*)m_pContent;
+            m_pContent = GLib.Slice.alloc0 (m_ReservedSize * sizeof (Node<V>));
+            GLib.Memory.copy (m_pContent, o, oldReservedSize * sizeof (Node<V>));
+            GLib.Slice.free (oldReservedSize * sizeof (Node<V>), o);
         }
     }
 
@@ -410,10 +417,10 @@ public class Maia.Array <V> : Collection <V>
                 m_pContent[cpt].val = null;
             }
 
-            delete m_pContent;
+            GLib.Slice.free (m_ReservedSize * sizeof (Node<V>), m_pContent);
             m_ReservedSize = 4;
             m_Size = 0;
-            m_pContent = new Node<V>[m_ReservedSize];
+            m_pContent = GLib.Slice.alloc0 (m_ReservedSize * sizeof (Node<V>));
             stamp++;
         }
     }

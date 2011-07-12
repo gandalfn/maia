@@ -67,7 +67,7 @@ public class Maia.Timeout : Watch
 
     ~Timeout ()
     {
-        if (fd >= 0) Posix.close (fd);
+        if (fd >= 0) Os.close (fd);
     }
 
     /**

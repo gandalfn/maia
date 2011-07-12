@@ -59,6 +59,6 @@ public struct Maia.Size
     public string
     to_string ()
     {
-        return @"$width,$height";
+        return "%f,%f".printf (width, height);
     }
 }

@@ -29,6 +29,7 @@ public class Maia.Notification<O> : Object
         internal unowned Handler<O> m_Callback;
 
         // accessors
+        [CCode (notify = false)]
         public bool block {
             get {
                 return m_BlockParent != null;
@@ -53,7 +54,7 @@ public class Maia.Notification<O> : Object
             m_Callback = inCallback;
         }
 
-        internal bool
+        internal inline bool
         equal (Handler<O> inCallback)
         {
             char* ptr = (char*)m_Callback;
@@ -64,7 +65,7 @@ public class Maia.Notification<O> : Object
             return m_Callback == inCallback && this_target == in_target;
         }
 
-        internal new void
+        internal inline new void
         notify ()
         {
             m_Callback (((Notification<O>)parent).m_Owner);
@@ -139,7 +140,7 @@ public class Maia.NotificationR<O, R> : Notification<O>
             base ((Notification.Handler<O>)inCallback);
         }
 
-        internal new R
+        internal inline new R
         notify ()
         {
             return ((Handler<O, R>)m_Callback) (((Notification<O>)parent).m_Owner);
@@ -191,7 +192,7 @@ public class Maia.Notification1<O, A> : Notification<O>
             base ((Notification.Handler<O>)inCallback);
         }
 
-        internal new void
+        internal inline new void
         notify (A inA)
         {
             ((Handler<O, A>)m_Callback) (((Notification<O>)parent).m_Owner, inA);

@@ -33,8 +33,8 @@ main (string[] inArgs)
         GLib.Rand rand = new GLib.Rand ();
         for (int cpt = 0; cpt < 1000; ++cpt)
         {
-            s_Queue.push (@"thread 1: count = $cpt");
-            Posix.usleep (rand.int_range (0, 20) * 1000);
+            s_Queue.push ("thread 1: count = " + cpt.to_string ());
+            Os.usleep (rand.int_range (0, 20) * 1000);
         }
         GLib.AtomicInt.dec_and_test (ref nb);
         return null;
@@ -44,8 +44,8 @@ main (string[] inArgs)
         GLib.Rand rand = new GLib.Rand ();
         for (int cpt = 0; cpt < 1000; ++cpt)
         {
-            s_Queue.push (@"thread 2: count = $cpt");
-            Posix.usleep (rand.int_range (0, 20) * 1000);
+            s_Queue.push ("thread 2: count = " + cpt.to_string ());
+            Os.usleep (rand.int_range (0, 20) * 1000);
         }
         GLib.AtomicInt.dec_and_test (ref nb);
         return null;
@@ -55,8 +55,8 @@ main (string[] inArgs)
         GLib.Rand rand = new GLib.Rand ();
         for (int cpt = 0; cpt < 1000; ++cpt)
         {
-            s_Queue.push (@"thread 3: count = $cpt");
-            Posix.usleep (rand.int_range (0, 20) * 1000);
+            s_Queue.push ("thread 3: count = " + cpt.to_string ());
+            Os.usleep (rand.int_range (0, 20) * 1000);
         }
         GLib.AtomicInt.dec_and_test (ref nb);
         return null;

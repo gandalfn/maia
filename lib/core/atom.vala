@@ -85,7 +85,7 @@ namespace Maia.Atom
             }
             else
             {
-                int comp = Posix.strncmp (node.m_Name, np.m_Name, len);
+                int comp = GLib.Memory.cmp (node.m_Name, np.m_Name, len);
                 if ((comp < 0) || ((comp == 0) && (len < (long)np.m_Name.length)))
                 {
                     nd = &np.m_Left;

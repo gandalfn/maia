@@ -90,7 +90,7 @@ public class Maia.TicTac : Watch
 
     ~TicTac ()
     {
-        if (fd >= 0) Posix.close (fd);
+        if (fd >= 0) Os.close (fd);
     }
 
     private inline uint

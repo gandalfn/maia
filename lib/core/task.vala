@@ -113,8 +113,6 @@ public class Maia.Task : Object
         set {
             if (m_State != value)
             {
-                debug ("Maia.Task.state.set", "0x%lx state = %s", (ulong)this, value.to_string ());
-
                 unowned Object p = parent;
                 int pos = -1;
                 if (p != null)
@@ -155,7 +153,7 @@ public class Maia.Task : Object
 
     ~Task ()
     {
-        if (m_SleepFd >= 0) Posix.close (m_SleepFd);
+        if (m_SleepFd >= 0) Os.close (m_SleepFd);
         m_SleepFd = -1;
     }
 
@@ -250,7 +248,7 @@ public class Maia.Task : Object
 
             (parent as Dispatcher).wakeup (this);
 
-            Posix.close (m_SleepFd);
+            Os.close (m_SleepFd);
             m_SleepFd = -1;
         }
     }

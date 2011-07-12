@@ -68,7 +68,7 @@ public class Maia.Watch : Task
 
     internal virtual int watch_fd {
         get {
-            if (m_WatchFd < 0) m_WatchFd = Posix.dup (m_Fd);
+            if (m_WatchFd < 0) m_WatchFd = Os.dup (m_Fd);
             return m_WatchFd;
         }
     }
@@ -102,7 +102,7 @@ public class Maia.Watch : Task
 
     ~Watch ()
     {
-        if (m_WatchFd >= 0) Posix.close (m_WatchFd);
+        if (m_WatchFd >= 0) Os.close (m_WatchFd);
         m_WatchFd = -1;
     }
 
@@ -149,7 +149,7 @@ public class Maia.Watch : Task
     internal virtual void
     close_watch_fd ()
     {
-        if (m_WatchFd >= 0) Posix.close (m_WatchFd);
+        if (m_WatchFd >= 0) Os.close (m_WatchFd);
         m_WatchFd = -1;
     }
 }

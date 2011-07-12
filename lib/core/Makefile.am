@@ -1,6 +1,6 @@
 MAIA_LIB_NAME = maia-core
 
-MAIA_EXTRA_VAPIS = log.vapi
+MAIA_EXTRA_VAPIS = log.vapi prefetch.vapi
 
 include $(top_srcdir)/build/maia.am
 include $(top_srcdir)/build/pkgconfig.am

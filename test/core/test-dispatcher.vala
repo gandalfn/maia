@@ -132,7 +132,7 @@ public class Maia.TestDispatcher : Maia.TestCase
 
         int delay = Test.rand_int_range (0, 30);
         Test.message ("delay %i ms", delay);
-        Posix.usleep (delay * 1000);
+        Os.usleep (delay * 1000);
 
         return ret;
     }
@@ -143,7 +143,7 @@ public class Maia.TestDispatcher : Maia.TestCase
         Test.message ("numframe = %u timeline new frame = %f s", inNumFrame, Test.timer_elapsed ());
         int delay = Test.rand_int_range (0, 300);
         Test.message ("delay %i ms", delay);
-        Posix.usleep (delay * 1000);
+        Os.usleep (delay * 1000);
     }
 
     private void

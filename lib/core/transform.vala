@@ -169,8 +169,8 @@ public class Maia.Transform : Object
     rotate (double inRadians)
     {
         // translate base matrix
-        double s = Posix.sin(inRadians);
-        double c = Posix.cos(inRadians);
+        double s = GLib.Math.sin(inRadians);
+        double c = GLib.Math.cos(inRadians);
         Matrix matrix = Matrix (c, s, -s, c, 0, 0);
         m_BaseMatrix.multiply (matrix);
 
@@ -190,7 +190,7 @@ public class Maia.Transform : Object
     skew_x (double inRadians)
     {
         // translate base matrix
-        Matrix matrix = Matrix (1, 0, Posix.tan(inRadians), 1, 0, 0);
+        Matrix matrix = Matrix (1, 0, GLib.Math.tan(inRadians), 1, 0, 0);
         m_BaseMatrix.multiply (matrix);
 
         // recalculate final matrix
@@ -209,7 +209,7 @@ public class Maia.Transform : Object
     skew_y (double inRadians)
     {
         // translate base matrix
-        Matrix matrix = Matrix (1, Posix.tan(inRadians), 0, 1, 0, 0);
+        Matrix matrix = Matrix (1, GLib.Math.tan(inRadians), 0, 1, 0, 0);
         m_BaseMatrix.multiply (matrix);
 
         // recalculate final matrix

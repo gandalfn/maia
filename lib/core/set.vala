@@ -72,7 +72,7 @@ public class Maia.Set<V> : Collection<V>
             parent = inParent;
         }
 
-        private void
+        private inline void
         calc_depth ()
         {
             int right_depth = m_Right != null ? m_Right.m_Depth : 0;
@@ -80,6 +80,7 @@ public class Maia.Set<V> : Collection<V>
 
             m_Depth = int.max(right_depth, left_depth) + 1;
 
+            prefetch (m_Parent);
             if (m_Parent != null) m_Parent.calc_depth ();
         }
 
@@ -210,10 +211,12 @@ public class Maia.Set<V> : Collection<V>
             int res = func (inValue, node.val);
             if (res > 0)
             {
+                prefetch (node.right);
                 node = node.right;
             }
             else if (res < 0)
             {
+                prefetch (node.left);
                 node = node.left;
             }
             else
@@ -363,7 +366,7 @@ public class Maia.Set<V> : Collection<V>
         return str;
     }
 
-    internal override unowned V?
+    internal inline override unowned V?
     search<A> (A inValue, ValueCompareFunc<V, A> inFunc)
     {
         unowned Node<V> node = m_Root;
@@ -374,10 +377,12 @@ public class Maia.Set<V> : Collection<V>
             res = inFunc (node.val, inValue);
             if (res < 0)
             {
+                prefetch (node.right);
                 node = node.right;
             }
             else if (res > 0)
             {
+                prefetch (node.left);
                 node = node.left;
             }
             else

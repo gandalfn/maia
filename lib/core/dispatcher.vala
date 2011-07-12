@@ -116,7 +116,7 @@ public class Maia.Dispatcher : Task
         m_EventDispatcher.parent = null;
 
         if (m_PollFd >= 0)
-            Posix.close (m_PollFd);
+            Os.close (m_PollFd);
         m_PollFd = -1;
     }
 

@@ -40,7 +40,7 @@ internal class Maia.EventDispatcher : Watch
 
         public Message.pop (int inFd)
         {
-            Posix.read (inFd, &this, sizeof (Message));
+            Os.read (inFd, &this, sizeof (Message));
             audit (GLib.Log.METHOD, "event ref_count: %u", m_Event.ref_count);
         }
 
@@ -48,7 +48,7 @@ internal class Maia.EventDispatcher : Watch
         push (int inFd)
         {
             m_Event.ref ();
-            Posix.write (inFd, &this, sizeof (Message));
+            Os.write (inFd, &this, sizeof (Message));
             audit (GLib.Log.METHOD, "event ref_count: %u", m_Event.ref_count);
         }
     }
@@ -134,7 +134,7 @@ internal class Maia.EventDispatcher : Watch
     {
         int fds[2];
 
-        Posix.pipe (fds);
+        Os.pipe (fds);
 
         base (fds[0], Watch.Flags.IN);
 
@@ -147,8 +147,8 @@ internal class Maia.EventDispatcher : Watch
 
     ~EventDispatcher ()
     {
-        Posix.close (m_MessageTunnel[0]);
-        Posix.close (m_MessageTunnel[1]);
+        Os.close (m_MessageTunnel[0]);
+        Os.close (m_MessageTunnel[1]);
     }
 
     private void
