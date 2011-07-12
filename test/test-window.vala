@@ -32,6 +32,10 @@ public class TestWindow : Maia.Window
     on_new_window (Maia.CreateWindowEventArgs inArgs)
     {
         Maia.Window window = inArgs.window;
+        window.property_changed.watch ((o, n) => {
+            if (n == "name")
+                message ("new window 0x%x: name = %s", window.id, window.name);
+        });
         message ("new window 0x%x: name = %s", window.id, window.name);
         ++count;
     }
@@ -61,7 +65,7 @@ public class TestWindow : Maia.Window
 static int
 main (string[] args)
 {
-    //Maia.log_set_level (Maia.Level.DEBUG);
+    Maia.log_set_level (Maia.Level.DEBUG);
     //Maia.backtrace_on_crash ();
 
     Maia.Application application = Maia.Application.create ();

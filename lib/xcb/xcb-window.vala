@@ -22,6 +22,7 @@ internal class Maia.XcbWindow : WindowProxy
     // properties
     private unowned XcbDesktop m_XcbDesktop;
     private Region             m_Geometry;
+    private uint               m_EventMask;
 
     private XcbWindowAttributes      m_Attributes;
     private XcbWindowICCCMProperties m_ICCCMProperties;
@@ -67,7 +68,16 @@ internal class Maia.XcbWindow : WindowProxy
         }
     }
 
-    public uint event_mask { get; set; }
+    [CCode (notify = false)]
+    public uint event_mask {
+        get {
+            return m_EventMask;
+        }
+        set {
+            m_EventMask = value;
+            on_property_changed ("event-mask");
+        }
+    }
 
     public XcbWindowAttributes attributes {
         get {

@@ -41,6 +41,11 @@ public class Maia.Window : View
 
     // properties
     private unowned WindowProxy m_Proxy;
+    private string              m_Name = null;
+    private bool                m_IsForeign = false;
+    private bool                m_IsViewable = false;
+    private bool                m_IsInputOnly = false;
+    private HintType            m_HintType = HintType.NORMAL;
 
     // events
     internal override DamageEvent damage_event {
@@ -88,11 +93,59 @@ public class Maia.Window : View
         }
     }
 
-    public string name { get; construct set; default = null; }
-    public bool is_foreign { get; construct; default = false; }
-    public bool is_viewable { get; protected set; default = false; }
-    public bool is_input_only { get; protected set; default = false; }
-    public HintType hint_type { get; set; default = HintType.NORMAL; }
+    [CCode (notify = false)]
+    public string name {
+        get {
+            return m_Name;
+        }
+        construct set {
+            m_Name = value;
+            on_property_changed ("name");
+        }
+    }
+
+    [CCode (notify = false)]
+    public bool is_foreign {
+        get {
+            return m_IsForeign;
+        }
+        construct {
+            m_IsForeign = value;
+        }
+    }
+
+    [CCode (notify = false)]
+    public bool is_viewable {
+        get {
+            return m_IsViewable;
+        }
+        set {
+            m_IsViewable = value;
+            on_property_changed("is-viewable");
+        }
+    }
+
+    [CCode (notify = false)]
+    public bool is_input_only {
+        get {
+            return m_IsInputOnly;
+        }
+        set {
+            m_IsInputOnly = value;
+            on_property_changed("is-input-only");
+        }
+    }
+
+    [CCode (notify = false)]
+    public HintType hint_type {
+        get {
+            return m_HintType;
+        }
+        set {
+            m_HintType = value;
+            on_property_changed("hint-type");
+        }
+    }
 
     // methods
     construct

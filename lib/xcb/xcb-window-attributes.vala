@@ -21,23 +21,67 @@ internal class Maia.XcbWindowAttributes : XcbRequest
 {
     // properties
     private uint m_Mask = 0;
+    private bool m_OverrideRedirect = false;
+    private bool m_IsViewable = false;
+    private bool m_IsInputOnly = false;
+    private uint m_EventMask = 0;
+
+    private unowned Notification1.Observer<Object, string>? m_XcbWindowPropertyObserver;
+    private unowned Notification1.Observer<Object, string>? m_WindowPropertyObserver;
 
     // accessors
-    public bool override_redirect { get; set; default = false; }
-    public bool is_viewable { get; protected set; default = false; }
-    public bool is_input_only { get; protected set; default = false; }
-    public uint event_mask { get; set; default = 0; }
+    [CCode (notify = false)]
+    public bool override_redirect {
+        get {
+            return m_OverrideRedirect;
+        }
+        set {
+            m_OverrideRedirect = value;
+            on_property_changed ("override-redirect");
+        }
+    }
+
+    [CCode (notify = false)]
+    public bool is_viewable {
+        get {
+            return m_IsViewable;
+        }
+        protected set {
+            m_IsViewable = value;
+            on_property_changed ("is-viewable");
+        }
+    }
+
+    [CCode (notify = false)]
+    public bool is_input_only {
+        get {
+            return m_IsInputOnly;
+        }
+        protected set {
+            m_IsInputOnly = value;
+            on_property_changed ("is-input-only");
+        }
+    }
+
+    [CCode (notify = false)]
+    public uint event_mask {
+        get {
+            return m_EventMask;
+        }
+        set {
+            m_EventMask = value;
+            on_property_changed ("event-mask");
+        }
+    }
 
     // methods
     construct
     {
-        bind_property ("event-mask", window, "event-mask", 
-                       GLib.BindingFlags.BIDIRECTIONAL,
-                       null, on_set_event_mask);
-        bind_property ("is-viewable", window.delegator, "is-viewable", 
-                       GLib.BindingFlags.BIDIRECTIONAL);
-        bind_property ("is-input-only", window.delegator, "is-input-only", 
-                       GLib.BindingFlags.BIDIRECTIONAL);
+        m_XcbWindowPropertyObserver = window.property_changed.watch (on_xcb_window_property_changed);
+        m_WindowPropertyObserver = window.delegator.property_changed.watch (on_window_property_changed);
+        m_EventMask = window.event_mask;
+        m_IsViewable = ((Window)window.delegator).is_viewable;
+        m_IsInputOnly = ((Window)window.delegator).is_input_only;
     }
 
     public XcbWindowAttributes (XcbWindow inWindow)
@@ -54,6 +98,59 @@ internal class Maia.XcbWindowAttributes : XcbRequest
         commit ();
 
         return true;
+    }
+
+    private void
+    on_xcb_window_property_changed (Object inObject, string inName)
+    {
+        switch (inName)
+        {
+            case "event-mask":
+                m_EventMask = ((XcbWindow)inObject).event_mask; 
+                m_Mask |= Xcb.CW.EVENT_MASK;
+                commit ();
+                break;
+        }
+    }
+
+    private void
+    on_window_property_changed (Object inObject, string inName)
+    {
+        switch (inName)
+        {
+            case "is-viewable":
+                m_IsViewable = ((Window)inObject).is_viewable;
+                break;
+            case "is-input-only":
+                m_IsInputOnly = ((Window)inObject).is_input_only;
+                break;
+        }
+    }
+
+    internal override void
+    on_property_changed (string inName)
+    {
+        switch (inName)
+        {
+            case "event-mask":
+                if (m_XcbWindowPropertyObserver != null) m_XcbWindowPropertyObserver.block = true;
+                window.event_mask = m_EventMask;
+                if (m_XcbWindowPropertyObserver != null) m_XcbWindowPropertyObserver.block = false;
+                break;
+
+            case "is-viewable":
+                if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = true;
+                ((Window)window.delegator).is_viewable = m_IsViewable;
+                if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = false;
+                break;
+
+            case "is-input-only":
+                if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = true;
+                ((Window)window.delegator).is_input_only = m_IsInputOnly;
+                if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = false;
+                break;
+        }
+        base.on_property_changed (inName);
     }
 
     protected override void

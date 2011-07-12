@@ -35,8 +35,10 @@ public abstract class Maia.Object : GLib.Object
     private Set<unowned Object> m_IdentifiedChilds = null;
     private Set<Object>         m_Delegates = null;
 
-    // Accessors
+    // notifications
+    public Notification1<Object, string> m_PropertyChanged = null;
 
+    // accessors
     [CCode (notify = false)]
     internal bool sorted_childs {
         set {
@@ -49,6 +51,17 @@ public abstract class Maia.Object : GLib.Object
             }
             else
                 m_Delegator.sorted_childs = value;
+        }
+    }
+
+    public Notification1<Object, string> property_changed {
+        get {
+            if (m_PropertyChanged == null)
+            {
+                m_PropertyChanged = new Notification1<Object, string> (this);
+            }
+
+            return m_PropertyChanged;
         }
     }
 
@@ -424,6 +437,20 @@ public abstract class Maia.Object : GLib.Object
             m_Childs.sort (inIndex);
         else
             m_Delegator.check_child_pos (inIndex);
+    }
+
+    /**
+     * Send property changed notification
+     *
+     * @param inName the property name
+     */
+    protected virtual void
+    on_property_changed (string inName)
+    {
+        if (m_PropertyChanged != null)
+        {
+            m_PropertyChanged.send (inName);
+        }
     }
 
     /**

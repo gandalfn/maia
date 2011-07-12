@@ -39,9 +39,11 @@ public class Maia.Notification<O> : Object
                 {
                     parent = m_BlockParent;
                     m_BlockParent = null;
+                    unref ();
                 }
                 else if (m_BlockParent == null && value)
                 {
+                    ref ();
                     m_BlockParent = parent;
                     parent = null;
                 }

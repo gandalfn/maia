@@ -25,6 +25,9 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
     private Xcb.Atom                  m_WMDeleteWindowAtom;
     private Xcb.Atom                  m_WMTakeFocusAtom;
 
+    // observers
+    private unowned Notification1.Observer<Object, string>? m_WindowPropertyObserver;
+
     // accessors
     [CCode (notify = false)]
     public bool delete_event {
@@ -52,6 +55,7 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
         }
     }
 
+    [CCode (notify = false)]
     public string name {
         get {
             audit ("XcbWindowICCCMProperties.name.get", "%s", m_WMName[0]);
@@ -59,6 +63,7 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
         }
         construct set {
             m_WMName[0] = value;
+            on_property_changed ("name");
         }
     }
 
@@ -81,7 +86,7 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
                                                       XcbWindowProperty.Format.U8,
                                                       () => {
                                                           audit (GLib.Log.METHOD, "name changed");
-                                                          notify_property ("name");
+                                                          on_property_changed ("name");
                                                       });
 
             XcbDesktop desktop = window.xcb_desktop;
@@ -93,12 +98,11 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
     // methods
     construct
     {
-        GLib.BindingFlags flags = GLib.BindingFlags.BIDIRECTIONAL;
-
-        if (!(window.delegator as Window).is_foreign)
-            flags |= GLib.BindingFlags.SYNC_CREATE;
-
-        window.delegator.bind_property ("name", this, "name", flags);
+        m_WindowPropertyObserver = window.delegator.property_changed.watch (on_window_property_changed);
+        if (!((Window)window.delegator).is_foreign)
+        {
+            m_WMName[0] = ((Window)window.delegator).name;
+        }
     }
 
     public XcbWindowICCCMProperties (XcbWindow inWindow)
@@ -110,6 +114,31 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
     {
         m_WMProtocols.parent = null;
         m_WMName.parent = null;
+    }
+
+    private void
+    on_window_property_changed (Object inObject, string inName)
+    {
+        switch (inName)
+        {
+            case "name":
+                m_WMName[0] = ((Window)inObject).name;
+                break;
+        }
+    }
+
+    internal override void
+    on_property_changed (string inName)
+    {
+        switch (inName)
+        {
+            case "name":
+                if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = true;
+                ((Window)window.delegator).name = m_WMName[0];
+                if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = false;
+                break;
+        }
+        base.on_property_changed (inName);
     }
 
     public override void
