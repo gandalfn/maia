@@ -192,7 +192,7 @@ public class Maia.Set<V> : Collection<V>
     /**
      * {@inheritDoc}
      */
-    internal override int nb_items {
+    internal override int length {
         get {
             return m_Size;
         }

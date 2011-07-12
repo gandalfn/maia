@@ -52,13 +52,13 @@ public class Maia.TestParser : Maia.TestCase
                         Test.message ("Start element %s", parser.element);
 
                         if (parser.element == "root")
-                            assert (parser.attributes.nb_items == 0);
+                            assert (parser.attributes.length == 0);
 
                         if (parser.element == "element1")
-                            assert (parser.attributes.nb_items == 2);
+                            assert (parser.attributes.length == 2);
 
                         if (parser.element == "element2")
-                            assert (parser.attributes.nb_items == 3);
+                            assert (parser.attributes.length == 3);
 
                         foreach (Maia.Pair<string, string> attribute in parser.attributes)
                         {

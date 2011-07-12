@@ -80,7 +80,7 @@ public class Maia.Array <V> : Collection <V>
     private Node<V>* m_pContent;
 
     // Accessors
-    internal override int nb_items {
+    internal override int length {
         get {
             return m_Size;
         }

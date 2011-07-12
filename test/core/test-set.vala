@@ -97,7 +97,7 @@ public class Maia.TestSet : Maia.TestCase
             m_Set.remove (m_Keys[cpt]);
             assert (!(m_Keys[cpt] in m_Set));
         }
-        assert (m_Set.nb_items == 0);
+        assert (m_Set.length == 0);
     }
 
     public void
@@ -112,12 +112,12 @@ public class Maia.TestSet : Maia.TestCase
         {
             int index = Test.rand_int_range (0, NB_KEYS - 1);
             Iterator<int> found = m_Set[m_Keys[index]];
-            int size = m_Set.nb_items;
+            int size = m_Set.length;
             if (found != null)
             {
                 m_Set.erase (found);
                 assert (!(m_Keys[index] in m_Set));
-                assert (m_Set.nb_items == size - 1);
+                assert (m_Set.length == size - 1);
             }
         }
     }
@@ -156,7 +156,7 @@ public class Maia.TestSet : Maia.TestCase
             prev = val;
             count++;
         }
-        assert (count == m_Set.nb_items);
+        assert (count == m_Set.length);
     }
 
     public void

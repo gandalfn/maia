@@ -89,7 +89,7 @@ public class Maia.TestMap : Maia.TestCase
             m_Map.unset (m_Keys[cpt]);
             assert (m_Map[m_Keys[cpt]] == null);
         }
-        assert (m_Map.nb_items == 0);
+        assert (m_Map.length == 0);
     }
 
     public void
@@ -126,7 +126,7 @@ public class Maia.TestMap : Maia.TestCase
             prev = val.second;
             count++;
         }
-        assert (count == m_Map.nb_items);
+        assert (count == m_Map.length);
     }
 
     public void

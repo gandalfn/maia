@@ -126,7 +126,7 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
     {
         XcbDesktop desktop = window.xcb_desktop;
         char** values = null;
-        int n = m_Values.nb_items;
+        int n = m_Values.length;
 
         switch (m_Format)
         {
@@ -211,7 +211,7 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
     public new unowned V?
     @get (int inIndex)
     {
-        return inIndex < m_Values.nb_items ? m_Values[inIndex] : null;
+        return inIndex < m_Values.length ? m_Values[inIndex] : null;
     }
 
     public new void

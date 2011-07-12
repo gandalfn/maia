@@ -153,7 +153,7 @@ public abstract class Maia.Object : GLib.Object
         get {
             if (m_Delegator == null)
             {
-                return m_Childs.nb_items;
+                return m_Childs.length;
             }
             else
             {
@@ -283,7 +283,7 @@ public abstract class Maia.Object : GLib.Object
 
         if (m_Childs != null)
         {
-            int nb = m_Childs.nb_items;
+            int nb = m_Childs.length;
             for (int cpt = 0; cpt < nb; ++cpt)
             {
                 m_Childs.at(0).parent = null;
@@ -465,7 +465,7 @@ public abstract class Maia.Object : GLib.Object
         if (m_Delegator == null)
         {
             check_childs_array ();
-            ret = m_Childs.nb_items > 0 ? m_Childs.at (0) : null;
+            ret = m_Childs.length > 0 ? m_Childs.at (0) : null;
         }
         else
             ret = m_Delegator.first ();

@@ -42,7 +42,7 @@ public abstract class Maia.Collection<V>
     /**
      * The number of items in this collection.
      */
-    public abstract int nb_items { get; }
+    public abstract int length { get; }
 
     /**
      * Determines whether this collection contains the specified value.

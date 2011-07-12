@@ -91,11 +91,11 @@ public class Maia.TestList : Maia.TestCase
 
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
-            int nb_items = m_List.nb_items;
+            int nb_items = m_List.length;
             m_List.remove (m_Keys[cpt]);
-            assert (nb_items != m_List.nb_items);
+            assert (nb_items != m_List.length);
         }
-        assert (m_List.nb_items == 0);
+        assert (m_List.length == 0);
     }
 
     public void
@@ -110,11 +110,11 @@ public class Maia.TestList : Maia.TestCase
         {
             int index = Test.rand_int_range (0, NB_KEYS - 1);
             Iterator<int> found = m_List[m_Keys[index]];
-            int size = m_List.nb_items;
+            int size = m_List.length;
             if (found != null)
             {
                 m_List.erase (found);
-                assert (m_List.nb_items == size - 1);
+                assert (m_List.length == size - 1);
             }
         }
     }
@@ -153,7 +153,7 @@ public class Maia.TestList : Maia.TestCase
             prev = val;
             count++;
         }
-        assert (count == m_List.nb_items);
+        assert (count == m_List.length);
     }
 
     public void
@@ -263,9 +263,9 @@ public class Maia.TestList : Maia.TestCase
             Test.timer_start ();
             for (int cpt = 0; cpt < NB_KEYS; ++cpt)
             {
-                int nb_items = m_List.nb_items;
+                int nb_items = m_List.length;
                 m_List.remove (m_Keys[cpt]);
-                assert (nb_items != m_List.nb_items);
+                assert (nb_items != m_List.length);
             }
             double elapsed = Test.timer_elapsed () * 1000;
             min = double.min (elapsed, min);
