@@ -134,7 +134,8 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
         {
             case "name":
                 if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = true;
-                ((Window)window.delegator).name = m_WMName[0];
+                audit (GLib.Log.METHOD, "name changed %s", name);
+                ((Window)window.delegator).name = name;
                 if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = false;
                 break;
         }

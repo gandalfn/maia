@@ -33,10 +33,18 @@ public class TestWindow : Maia.Window
     {
         Maia.Window window = inArgs.window;
         window.property_changed.watch ((o, n) => {
-            if (n == "name")
-                message ("new window 0x%x: name = %s", window.id, window.name);
+            switch (n)
+            {
+                case "name":
+                    message ("0x%x: name = %s", ((Maia.Window)o).id, ((Maia.Window)o).name);
+                    break;
+
+                case "hint-type":
+                    message ("0x%x: hint_type = %s", ((Maia.Window)o).id, ((Maia.Window)o).hint_type.to_string ());
+                    break;
+            }
         });
-        message ("new window 0x%x: name = %s", window.id, window.name);
+        message ("new window 0x%x: name = %s hint_type = %s", window.id, window.name, window.hint_type.to_string ());
         ++count;
     }
 
@@ -65,7 +73,7 @@ public class TestWindow : Maia.Window
 static int
 main (string[] args)
 {
-    Maia.log_set_level (Maia.Level.DEBUG);
+    //Maia.log_set_level (Maia.Level.DEBUG);
     //Maia.backtrace_on_crash ();
 
     Maia.Application application = Maia.Application.create ();

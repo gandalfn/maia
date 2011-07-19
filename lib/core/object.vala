@@ -239,7 +239,7 @@ public abstract class Maia.Object : GLib.Object
         {
             if (inNewObject != null)
                 inNewObject.ref ();
-            else if (inOldObject != null)
+            if (inOldObject != null)
                 inOldObject.unref ();
         }
 

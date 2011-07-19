@@ -74,10 +74,11 @@ internal abstract class Maia.XcbRequest : Object
                 query_task = new TaskOnce (() => {
                     audit (GLib.Log.METHOD, "process query requests");
 
-                    Token token = Token.get_for_object (s_QueryTask);
-                    while (s_QueryTask.nb_childs > 0)
+                    TaskOnce t = (TaskOnce)GLib.AtomicPointer.get (&s_QueryTask);
+                    Token token = Token.get_for_object (t);
+                    while (t.nb_childs > 0)
                     {
-                        unowned Object? child = s_QueryTask.first ();
+                        unowned Object? child = t.first ();
                         if (child != null)
                         {
                             child.ref ();
@@ -85,7 +86,7 @@ internal abstract class Maia.XcbRequest : Object
                             child.unref ();
                         }
                     }
-                    Object.atomic_compare_and_exchange (&s_QueryTask, query_task, null);
+                    Object.atomic_compare_and_exchange (&s_QueryTask, t, null);
                     token.release ();
                 }, Task.Priority.NORMAL + 1);
 
@@ -119,10 +120,11 @@ internal abstract class Maia.XcbRequest : Object
                 commit_task = new TaskOnce (() => {
                     audit (GLib.Log.METHOD, "process commit requests");
 
-                    Token token = Token.get_for_object (s_CommitTask);
-                    while (s_CommitTask.nb_childs > 0)
+                    TaskOnce t = (TaskOnce)GLib.AtomicPointer.get (&s_CommitTask);
+                    Token token = Token.get_for_object (t);
+                    while (t.nb_childs > 0)
                     {
-                        unowned Object? child = s_CommitTask.first ();
+                        unowned Object? child = t.first ();
                         if (child != null)
                         {
                             child.ref ();
@@ -135,7 +137,7 @@ internal abstract class Maia.XcbRequest : Object
                             child.unref ();
                         }
                     }
-                    Object.atomic_compare_and_exchange (&s_CommitTask, commit_task, null);
+                    Object.atomic_compare_and_exchange (&s_CommitTask, t, null);
                     token.release ();
                 }, Task.Priority.NORMAL - 1);
 

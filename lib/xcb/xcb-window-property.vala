@@ -93,6 +93,7 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
                         {
                             void* data = reply.get_value ();
                             int length = reply.get_length ();
+                            audit (GLib.Log.METHOD, "string value %s", (string)data);
                             if (((string)data).validate (length))
                             {
                                 m_Values[0] = ((string)data).substring (0, length);
