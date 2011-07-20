@@ -89,17 +89,6 @@ internal class Maia.XcbWindowAttributes : XcbRequest
         base (inWindow);
     }
 
-    private bool
-    on_set_event_mask (GLib.Binding inBinding, GLib.Value inSrc, GLib.Value inTarget)
-    {
-        audit (GLib.Log.METHOD, "id: 0x%lx mask: %u", window.id, (uint)inSrc);
-        inTarget = inSrc;
-        m_Mask |= Xcb.CW.EVENT_MASK;
-        commit ();
-
-        return true;
-    }
-
     private void
     on_xcb_window_property_changed (Object inObject, string inName)
     {
@@ -163,7 +152,7 @@ internal class Maia.XcbWindowAttributes : XcbRequest
         if (reply != null)
         {
             override_redirect = (bool)reply.override_redirect;
-            event_mask = reply.all_event_masks;
+            //event_mask = reply.all_event_masks;
             is_viewable = reply.map_state == Xcb.MapState.VIEWABLE;
             is_input_only = reply._class == Xcb.WindowClass.INPUT_ONLY;
         }
@@ -171,7 +160,7 @@ internal class Maia.XcbWindowAttributes : XcbRequest
             error (GLib.Log.METHOD, "Error on get window attributes");
     }
 
-    protected override void
+    public override void
     on_commit ()
     {
         uint32[] values_list = {};

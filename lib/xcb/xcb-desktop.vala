@@ -20,11 +20,13 @@
 internal class Maia.XcbDesktop : DesktopProxy
 {
     // properties
-    private Xcb.Connection m_Connection       = null;
-    private int            m_DefaultScreenNum = 0;
+    private Xcb.Connection    m_Connection       = null;
+    private int               m_DefaultScreenNum = 0;
 
-    private XcbAtoms       m_Atoms            = null;
-    private TaskOnce       m_FlushTask        = null;
+    private XcbAtoms          m_Atoms            = null;
+
+    private AtomicQueue<XcbRequest> m_QueryRequests    = null;
+    private AtomicQueue<XcbRequest> m_CommitRequests   = null;
 
     // accessors
     public Xcb.Connection connection {
@@ -48,6 +50,11 @@ internal class Maia.XcbDesktop : DesktopProxy
     // methods
     construct
     {
+        // Create request queue
+        m_QueryRequests = new AtomicQueue<XcbRequest> ();
+        m_CommitRequests = new AtomicQueue<XcbRequest> ();
+
+        // Get name
         string? name = Atom.to_string (id);
 
         // Open connection
@@ -56,6 +63,7 @@ internal class Maia.XcbDesktop : DesktopProxy
         {
             error ("Error on open display %s", name);
         }
+        m_Connection.prefetch_maximum_request_length ();
 
         // Get atoms
         m_Atoms = new XcbAtoms (this);
@@ -92,23 +100,31 @@ internal class Maia.XcbDesktop : DesktopProxy
     }
 
     public void
-    flush (bool inSync = false)
+    add_query_request (XcbRequest inRequest)
     {
-        if (!inSync && m_FlushTask == null)
+        m_QueryRequests.push (inRequest);
+    }
+
+    public void
+    add_commit_request (XcbRequest inRequest)
+    {
+        m_CommitRequests.push (inRequest);
+    }
+
+    public void
+    flush ()
+    {
+        XcbRequest request = null;
+        while ((request = m_CommitRequests.pop ()) != null)
         {
-            m_FlushTask = new TaskOnce (() => {
-                audit (GLib.Log.METHOD, "Flush");
-                m_Connection.flush ();
-            });
-            m_FlushTask.finished.watch (() => {
-                m_FlushTask = null;
-            });
-            m_FlushTask.parent = Application.self;
+            request.on_commit ();
         }
-        else if (inSync)
+
+        m_Connection.flush ();
+
+        while ((request = m_QueryRequests.pop ()) != null)
         {
-            m_Connection.flush ();
-            m_FlushTask = null;
+            request.query_finish ();
         }
     }
 }

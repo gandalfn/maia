@@ -202,8 +202,8 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
     query ()
     {
         XcbDesktop desktop = window.xcb_desktop;
-        Xcb.GetPropertyCookie? c = ((Xcb.Window)window.id).get_property (desktop.connection, false,
-                                                                         m_Property, m_Type, 0, uint32.MAX);
+        Xcb.GetPropertyCookie? c = ((Xcb.Window)window.id).get_property_unchecked (desktop.connection, false,
+                                                                                   m_Property, m_Type, 0, uint32.MAX);
         cookie = c;
 
         base.query ();

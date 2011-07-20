@@ -35,6 +35,9 @@ namespace Xcb {
 		public void flush ();
 		public Setup get_setup ();
 
+		[CCode (cname = "xcb_prefetch_maximum_request_length")]
+		public void prefetch_maximum_request_length ();
+
 		public GenericEvent wait_for_event ();
 		public GenericEvent poll_for_event ();
 
@@ -129,6 +132,11 @@ namespace Xcb {
 		public GetPropertyCookie get_property (Connection inConnection, bool inDelete,
 		                                       Atom inProperty, Atom inType, 
 		                                       uint32 inLongOffset, uint32 inLongLength);
+
+		[CCode (cname = "xcb_get_property_unchecked", instance_pos = 2.2)]
+		public GetPropertyCookie get_property_unchecked (Connection inConnection, bool inDelete,
+		                                                 Atom inProperty, Atom inType, 
+		                                                 uint32 inLongOffset, uint32 inLongLength);
 
 		[CCode (cname = "xcb_change_property", instance_pos = 2.2)]
 		public VoidCookie change_property (Connection inConnection, PropMode prop_mode, 
