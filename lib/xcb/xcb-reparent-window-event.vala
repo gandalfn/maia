@@ -48,6 +48,7 @@ internal class Maia.XcbReparentWindowEvent : ReparentWindowEvent
                         if (parent != null && window != null)
                         {
                             ReparentWindowEventArgs args = new ReparentWindowEventArgs (parent, window);
+                            window.parent = parent;
                             workspace.reparent_window_event.post (args);
 
                             break;

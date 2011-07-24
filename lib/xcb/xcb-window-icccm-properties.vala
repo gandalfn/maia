@@ -22,6 +22,7 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
     // properties
     private XcbWindowProperty<uint32> m_WMProtocols;
     private XcbWindowProperty<string> m_WMName;
+    private XcbWindowProperty<uint32> m_WMState;
     private Xcb.Atom                  m_WMDeleteWindowAtom;
     private Xcb.Atom                  m_WMTakeFocusAtom;
 
@@ -58,12 +59,27 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
     [CCode (notify = false)]
     public string name {
         get {
-            audit ("XcbWindowICCCMProperties.name.get", "%s", m_WMName[0]);
             return m_WMName[0];
         }
         construct set {
             m_WMName[0] = value;
             on_property_changed ("name");
+        }
+    }
+
+    [CCode (notify = false)]
+    public Window.State wm_state {
+        get {
+            if (!m_WMState.is_set ())
+                return Window.State.UNSET;
+            else if (m_WMState[0] == Xcb.WMStateType.WITHDRAWN)
+                return Window.State.HIDDEN;
+            else if (m_WMState[0] == Xcb.WMStateType.NORMAL)
+                return Window.State.VISIBLE;
+            else if (m_WMState[0] == Xcb.WMStateType.ICONIC)
+                return Window.State.ICONIC;
+
+            return Window.State.UNSET;
         }
     }
 
@@ -74,6 +90,7 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
         }
         construct set {
             base.window = value;
+            XcbDesktop desktop = window.xcb_desktop;
 
             m_WMProtocols = new XcbWindowProperty<uint32> (value,
                                                            XcbAtomType.WM_PROTOCOLS,
@@ -85,11 +102,18 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
                                                       Xcb.AtomType.STRING,
                                                       XcbWindowProperty.Format.U8,
                                                       () => {
-                                                          audit (GLib.Log.METHOD, "name changed");
                                                           on_property_changed ("name");
                                                       });
 
-            XcbDesktop desktop = window.xcb_desktop;
+            m_WMState = new XcbWindowProperty<uint32> (value,
+                                                       XcbAtomType.WM_STATE,
+                                                       desktop.atoms [XcbAtomType.WM_STATE],
+                                                       XcbWindowProperty.Format.U32,
+                                                       () => {
+                                                           on_property_changed ("state");
+                                                       });
+            m_WMState.query ();
+
             m_WMDeleteWindowAtom = desktop.atoms [XcbAtomType.WM_DELETE_WINDOW];
             m_WMTakeFocusAtom = desktop.atoms [XcbAtomType.WM_TAKE_FOCUS];
         }
@@ -102,6 +126,7 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
         if (!((Window)window.delegator).is_foreign)
         {
             m_WMName[0] = ((Window)window.delegator).name;
+            m_WMName.commit ();
         }
     }
 
@@ -112,8 +137,9 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
 
     ~XcbWindowICCCMProperties ()
     {
-        m_WMProtocols.parent = null;
-        m_WMName.parent = null;
+        m_WMProtocols = null;
+        m_WMName = null;
+        m_WMState = null;
     }
 
     private void
@@ -123,6 +149,7 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
         {
             case "name":
                 m_WMName[0] = ((Window)inObject).name;
+                m_WMName.commit ();
                 break;
         }
     }
@@ -134,8 +161,13 @@ internal class Maia.XcbWindowICCCMProperties : XcbRequest
         {
             case "name":
                 if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = true;
-                audit (GLib.Log.METHOD, "name changed %s", name);
                 ((Window)window.delegator).name = name;
+                if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = false;
+                break;
+
+            case "state":
+                if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = true;
+                ((Window)window.delegator).state = wm_state;
                 if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = false;
                 break;
         }

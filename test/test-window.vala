@@ -25,6 +25,7 @@ public class TestWindow : Maia.Window
     {
         base ("test-window", 200, 200);
         workspace.create_window_event.listen (on_new_window, Maia.Application.self);
+        workspace.reparent_window_event.listen (on_window_reparented, Maia.Application.self);
         workspace.destroy_window_event.listen (on_destroy_window, Maia.Application.self);
     }
 
@@ -33,25 +34,25 @@ public class TestWindow : Maia.Window
     {
         Maia.Window window = inArgs.window;
         window.property_changed.watch ((o, n) => {
-            switch (n)
-            {
-                case "name":
-                    message ("0x%x: name = %s", ((Maia.Window)o).id, ((Maia.Window)o).name);
-                    break;
-
-                case "hint-type":
-                    message ("0x%x: hint_type = %s", ((Maia.Window)o).id, ((Maia.Window)o).hint_type.to_string ());
-                    break;
-            }
+            message ("property changed %s", ((Maia.Window)o).to_string ());
         });
-        message ("new window 0x%x: name = %s hint_type = %s", window.id, window.name, window.hint_type.to_string ());
+        message ("new window: %s", window.to_string ());
         ++count;
+    }
+
+    private void
+    on_window_reparented (Maia.ReparentWindowEventArgs inArgs)
+    {
+        unowned Maia.Window? window = inArgs.window;
+        unowned Maia.Window? parent = inArgs.parent;
+        message ("reparent window 0x%x into 0x%x", window.id, parent.id);
+        message ("%s", parent.to_string ());
     }
 
     private void
     on_destroy_window (Maia.DestroyWindowEventArgs inArgs)
     {
-        unowned Maia.Window? window = inArgs.window;
+        Maia.Window window = inArgs.window;
         message ("destroy window 0x%x: name = %s, ref = %u", window.id, window.name, window.ref_count);
         --count;
     }

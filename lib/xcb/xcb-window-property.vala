@@ -34,6 +34,7 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
     private Xcb.Atom              m_Type;
     private Format                m_Format;
     private Array<V>              m_Values;
+    private bool                  m_IsSet = true;
     private unowned UpdatedFunc   m_UpdatedFunc;
 
     // methods
@@ -55,53 +56,33 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
         XcbDesktop desktop = window.xcb_desktop;
         Xcb.GetPropertyReply reply = ((Xcb.GetPropertyCookie?)cookie).reply (desktop.connection);
 
+        m_Values.clear ();
+
         if (reply != null)
         {
-            m_Values.clear ();
+            m_IsSet = reply.type != Xcb.AtomType.NONE;
 
-            switch (m_Format)
+            if (m_IsSet)
             {
-                case Format.U32:
-                    {
-                        uint32* values = reply.get_value ();
-                        int length = reply.get_length ();
-
-                        for (int cpt = 0; cpt < length; ++cpt)
+                switch (m_Format)
+                {
+                    case Format.U32:
                         {
-                            unowned V val = (V)(ulong)values[cpt];
-                            m_Values.insert (val);
-                        }
-                    }
-                    break;
-
-                case Format.U16:
-                    {
-                        uint16* values = reply.get_value ();
-                        int length = reply.get_length ();
-
-                        for (int cpt = 0; cpt < length; ++cpt)
-                        {
-                            unowned V val = (V)(ulong)values[cpt];
-                            m_Values.insert (val);
-                        }
-                    }
-                    break;
-
-                case Format.U8:
-                    {
-                        if (typeof (V) == typeof (string))
-                        {
-                            void* data = reply.get_value ();
+                            uint32* values = reply.get_value ();
                             int length = reply.get_length ();
-                            audit (GLib.Log.METHOD, "string value %s", (string)data);
-                            if (((string)data).validate (length))
+                            error (GLib.Log.METHOD, "length = %i", length);
+
+                            for (int cpt = 0; cpt < length; ++cpt)
                             {
-                                m_Values[0] = ((string)data).substring (0, length);
+                                unowned V val = (V)(ulong)values[cpt];
+                                m_Values.insert (val);
                             }
                         }
-                        else
+                        break;
+
+                    case Format.U16:
                         {
-                            uint8* values = reply.get_value ();
+                            uint16* values = reply.get_value ();
                             int length = reply.get_length ();
 
                             for (int cpt = 0; cpt < length; ++cpt)
@@ -110,19 +91,45 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
                                 m_Values.insert (val);
                             }
                         }
-                    }
-                    break;
-            }
+                        break;
 
-            // Call updated delegate
-            if (m_UpdatedFunc != null)
-                m_UpdatedFunc ();
+                    case Format.U8:
+                        {
+                            if (typeof (V) == typeof (string))
+                            {
+                                void* data = reply.get_value ();
+                                int length = reply.get_length ();
+                                audit (GLib.Log.METHOD, "string value %s", (string)data);
+                                if (((string)data).validate (length))
+                                {
+                                    m_Values[0] = ((string)data).substring (0, length);
+                                }
+                            }
+                            else
+                            {
+                                uint8* values = reply.get_value ();
+                                int length = reply.get_length ();
+
+                                for (int cpt = 0; cpt < length; ++cpt)
+                                {
+                                    unowned V val = (V)(ulong)values[cpt];
+                                    m_Values.insert (val);
+                                }
+                            }
+                        }
+                        break;
+                }
+            }
         }
+
+        // Call updated delegate
+        if (m_UpdatedFunc != null)
+            m_UpdatedFunc ();
 
         base.on_reply ();
     }
 
-    public override void
+    protected override void
     on_commit ()
     {
         XcbDesktop desktop = window.xcb_desktop;
@@ -207,6 +214,12 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
         cookie = c;
 
         base.query ();
+    }
+
+    public bool
+    is_set ()
+    {
+        return m_IsSet;
     }
 
     public new unowned V?

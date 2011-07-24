@@ -45,8 +45,7 @@ test_window_LDADD = \
     ${top_builddir}/lib/libmaia.la \
     ${top_builddir}/lib/core/libmaia-core.la \
     ${top_builddir}/lib/xml/libmaia-xml.la \
-    ${top_builddir}/lib/xcb/libmaia-xcb-backend.la \
-    /usr/lib/libprofiler.so.0
+    ${top_builddir}/lib/xcb/libmaia-xcb-backend.la
 
 test_thread_SOURCES = \
     test-thread.vala

@@ -19,14 +19,21 @@
 
 internal class Maia.XcbDesktop : DesktopProxy
 {
+    // types
+    private enum RequestQueue
+    {
+        QUERY,
+        COMMIT,
+        N
+    }
+
     // properties
     private Xcb.Connection    m_Connection       = null;
     private int               m_DefaultScreenNum = 0;
 
     private XcbAtoms          m_Atoms            = null;
 
-    private AtomicQueue<XcbRequest> m_QueryRequests    = null;
-    private AtomicQueue<XcbRequest> m_CommitRequests   = null;
+    private Queue<unowned XcbRequest?> m_Requests[2];
 
     // accessors
     public Xcb.Connection connection {
@@ -51,8 +58,10 @@ internal class Maia.XcbDesktop : DesktopProxy
     construct
     {
         // Create request queue
-        m_QueryRequests = new AtomicQueue<XcbRequest> ();
-        m_CommitRequests = new AtomicQueue<XcbRequest> ();
+        for (int cpt = 0; cpt < RequestQueue.N; ++cpt)
+        {
+            m_Requests[cpt] = new Queue<unowned XcbRequest?> (); 
+        }
 
         // Get name
         string? name = Atom.to_string (id);
@@ -100,31 +109,55 @@ internal class Maia.XcbDesktop : DesktopProxy
     }
 
     public void
-    add_query_request (XcbRequest inRequest)
+    add_request (XcbRequest inRequest)
     {
-        m_QueryRequests.push (inRequest);
+        Token token = Token.get_for_class (m_Requests);
+        switch (inRequest.state)
+        {
+            case XcbRequest.State.QUERYING:
+                m_Requests[RequestQueue.QUERY].push (inRequest);
+                break;
+
+            case XcbRequest.State.COMMITING:
+                m_Requests[RequestQueue.COMMIT].push (inRequest);
+                break;
+        }
+        token.release ();
     }
 
     public void
-    add_commit_request (XcbRequest inRequest)
+    remove_request (XcbRequest inRequest)
     {
-        m_CommitRequests.push (inRequest);
+        Token token = Token.get_for_class (m_Requests);
+        for (int cpt = 0; cpt < RequestQueue.N; ++cpt)
+        {
+            m_Requests[cpt].remove (inRequest);
+        }
+        token.release ();
     }
 
     public void
     flush ()
     {
-        XcbRequest request = null;
-        while ((request = m_CommitRequests.pop ()) != null)
+        unowned XcbRequest? request = null;
+
+        Token token_requests = Token.get_for_class (m_Requests);
+        while ((request = m_Requests[RequestQueue.COMMIT].pop ()) != null)
         {
-            request.on_commit ();
+            Token token = Token.get_for_object (request);
+            request.process ();
+            token.release ();
         }
 
         m_Connection.flush ();
 
-        while ((request = m_QueryRequests.pop ()) != null)
+        while ((request = m_Requests[RequestQueue.QUERY].pop ()) != null)
         {
-            request.query_finish ();
+            Token token = Token.get_for_object (request);
+            if (request.state == XcbRequest.State.QUERYING)
+                request.process ();
+            token.release ();
         }
+        token_requests.release ();
     }
 }

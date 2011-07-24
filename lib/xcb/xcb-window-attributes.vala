@@ -147,12 +147,12 @@ internal class Maia.XcbWindowAttributes : XcbRequest
     {
         base.on_reply ();
 
-        XcbDesktop desktop = window.xcb_desktop;
+        unowned XcbDesktop desktop = window.xcb_desktop;
         Xcb.GetWindowAttributesReply reply = ((Xcb.GetWindowAttributesCookie?)cookie).reply (desktop.connection);
         if (reply != null)
         {
             override_redirect = (bool)reply.override_redirect;
-            //event_mask = reply.all_event_masks;
+            event_mask = reply.all_event_masks;
             is_viewable = reply.map_state == Xcb.MapState.VIEWABLE;
             is_input_only = reply._class == Xcb.WindowClass.INPUT_ONLY;
         }
@@ -160,7 +160,7 @@ internal class Maia.XcbWindowAttributes : XcbRequest
             error (GLib.Log.METHOD, "Error on get window attributes");
     }
 
-    public override void
+    protected override void
     on_commit ()
     {
         uint32[] values_list = {};
@@ -174,7 +174,7 @@ internal class Maia.XcbWindowAttributes : XcbRequest
             values_list += (uint32)event_mask;
         }
 
-        debug (GLib.Log.METHOD, "");
+        debug (GLib.Log.METHOD, "%u", m_Mask);
         XcbDesktop desktop = window.xcb_desktop;
         ((Xcb.Window)window.id).change_attributes (desktop.connection, m_Mask, values_list);
 

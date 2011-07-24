@@ -30,7 +30,9 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
     [CCode (notify = false)]
     public Window.HintType hint_type {
         get {
-            if (m_HintType[0] == window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_DESKTOP])
+            if (!m_HintType.is_set ())
+                return Window.HintType.UNKNOWN;
+            else if (m_HintType[0] == window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_DESKTOP])
                 return Window.HintType.DESKTOP;
             else if (m_HintType[0] == window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_NORMAL])
                 return Window.HintType.NORMAL;
@@ -157,8 +159,10 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
 
         if (!((Window)window.delegator).is_foreign)
         {
-            ((Window)window.delegator).hint_type = hint_type;
-            ((Window)window.delegator).name = name;
+            //m_HintType = ((Window)window.delegator).hint_type;
+            
+            m_WMName[0] = ((Window)window.delegator).name;
+            m_WMName.commit ();
         }
     }
 
@@ -169,8 +173,8 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
 
     ~XcbWindowEWMHProperties ()
     {
-        m_HintType.parent = null;
-        m_WMName.parent = null;
+        m_HintType = null;
+        m_WMName = null;
     }
 
     private void
@@ -180,6 +184,7 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
         {
             case "name":
                 m_WMName[0] = ((Window)inObject).name;
+                m_WMName.commit ();
                 break;
         }
     }
@@ -191,7 +196,7 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
         {
             case "name":
                 if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = true;
-                ((Window)window.delegator).name = name;
+                //((Window)window.delegator).name = name;
                 if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = false;
                 break;
 

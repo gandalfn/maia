@@ -26,8 +26,7 @@ libmaia_xcb_backend_la_VALAFLAGS = \
     --use-header \
     --header=maia-xcb-backend.h \
     --library=maia-xcb-backend \
-    --pkg=xcb-1.0 \
-    --pkg=xcb-atom
+    --pkg=xcb-1.0
 
 libmaia_xcb_backend_la_SOURCES = \
     xcb-atom.vala \
@@ -36,6 +35,7 @@ libmaia_xcb_backend_la_SOURCES = \
     xcb-window.vala \
     xcb-request.vala \
     xcb-window-attributes.vala \
+    xcb-window-geometry.vala \
     xcb-window-property.vala \
     xcb-window-icccm-properties.vala \
     xcb-window-ewmh-properties.vala \

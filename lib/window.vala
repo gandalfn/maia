@@ -20,6 +20,14 @@
 public class Maia.Window : View
 {
     // types
+    public enum State
+    {
+        UNSET,
+        HIDDEN,
+        VISIBLE,
+        ICONIC
+    }
+
     public enum HintType
     {
         UNKNOWN,
@@ -42,6 +50,7 @@ public class Maia.Window : View
     // properties
     private unowned WindowProxy m_Proxy;
     private string              m_Name = null;
+    private State               m_State = State.HIDDEN;
     private bool                m_IsForeign = false;
     private bool                m_IsViewable = false;
     private bool                m_IsInputOnly = false;
@@ -74,6 +83,7 @@ public class Maia.Window : View
         }
         set {
             m_Proxy.geometry = value;
+            on_property_changed ("geometry");
         }
     }
 
@@ -101,6 +111,17 @@ public class Maia.Window : View
         construct set {
             m_Name = value;
             on_property_changed ("name");
+        }
+    }
+
+    [CCode (notify = false)]
+    public State state {
+        get {
+            return m_State;
+        }
+        set {
+            m_State = value;
+            on_property_changed("state");
         }
     }
 
@@ -205,23 +226,23 @@ public class Maia.Window : View
     internal override string
     to_string ()
     {
-        string ret = "%lu [label=<<table border=\"0\" cellborder=\"1\" cellspacing=\"0\"><tr><td>".printf (id);
+        string ret = "";
 
+        ret += "id: 0x%x\n".printf (id);
         if (name != null)
-            ret += "name: %s<br/>".printf (name);
-        ret += "id: 0x%x<br/>".printf (id);
-        ret += "foreign: " + is_foreign.to_string () + "<br/>";
-        ret += "viewable: " + is_viewable.to_string () + "<br/>";
-        ret += "input only: " + is_input_only.to_string () + "<br/>";
-        ret += "wm type: " + hint_type.to_string () + "<br/>";
+            ret += "name: %s\n".printf (name);
+        ret += "id: 0x%x\n".printf (id);
+        ret += "state: " + state.to_string () + "\n";
+        ret += "foreign: " + is_foreign.to_string () + "\n";
+        ret += "viewable: " + is_viewable.to_string () + "\n";
+        ret += "input only: " + is_input_only.to_string () + "\n";
+        ret += "wm type: " + hint_type.to_string () + "\n";
         if (geometry != null)
-            ret += "geometry: " + geometry.to_string ();
-        ret += "</td></tr></table>>];\n";
+            ret += "geometry: " + geometry.to_string () + "\n";
 
         foreach (unowned Object object in this)
         {
-            ret += (object as Window).to_string ();
-            ret += "%s -> %s;\n".printf (id.to_string (), (object as Window).id.to_string ());
+            ret += "--\n%s\n--\n".printf (((Window)object).to_string ());
         }
 
         return ret;

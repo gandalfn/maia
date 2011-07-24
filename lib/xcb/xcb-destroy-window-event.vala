@@ -44,6 +44,7 @@ internal class Maia.XcbDestroyWindowEvent : DestroyWindowEvent
                     if (event != null && event == workspace.root && window != null)
                     {
                         DestroyWindowEventArgs args = new DestroyWindowEventArgs (window);
+                        window.parent = null;
                         workspace.destroy_window_event.post (args);
                         break;
                     }

@@ -85,6 +85,7 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
             if (m_Root == null)
             {
                 m_Root = new Window.foreign (m_XcbScreen.root, (Workspace)delegator);
+                ((XcbWindow)m_Root.proxy).event_mask = 0;
             }
 
             return m_Root;
@@ -101,19 +102,6 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
             if (m_CreateWindowEvent == null)
             {
                 m_CreateWindowEvent = new XcbCreateWindowEvent ((XcbWindow)root.proxy);
-
-                destroy_window_event.listen ((a) => {
-                    audit (GLib.Log.METHOD, "destroy window xid: 0x%lx, %u", a.window.id, a.window.ref_count);
-                    a.window.parent = null;
-                    audit (GLib.Log.METHOD, "destroy window xid: 0x%lx, %u", a.window.id, a.window.ref_count);
-                }, Application.self);
-
-                reparent_window_event.listen ((a) => {
-                    if (a.parent != root)
-                        a.window.parent = a.parent;
-                    else
-                        a.window.parent = this;
-                }, Application.self);
             }
             return m_CreateWindowEvent;
         }

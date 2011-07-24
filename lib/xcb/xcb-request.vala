@@ -19,13 +19,26 @@
 
 internal abstract class Maia.XcbRequest : Object
 {
+    // types
+    public enum State
+    {
+        IDLE,
+        QUERYING,
+        COMMITING
+    }
+
     // properties
     private unowned XcbWindow m_Window;
     private Xcb.VoidCookie?   m_Cookie = null;
-    private bool              m_IsQueryQueued = false;
-    private bool              m_IsCommitQueued = false;
+    private State             m_State = State.IDLE;
 
     // accessors
+    public State state {
+        get {
+            return m_State;
+        }
+    }
+
     [CCode (notify = false)]
     public virtual XcbWindow window {
         get {
@@ -55,23 +68,29 @@ internal abstract class Maia.XcbRequest : Object
     ~XcbRequest ()
     {
         audit ("~XcbRequest", "Destroy request");
-        cookie = null;
+
+        if (m_State != State.IDLE)
+        {
+            m_Window.xcb_desktop.remove_request (this);
+        }
+
+        if (m_Cookie != null)
+        {
+            m_Window.xcb_desktop.connection.discard_reply (m_Cookie.sequence);
+            m_Cookie = null;
+        }
     }
 
     protected virtual void
     on_reply ()
     {
-        audit (GLib.Log.METHOD, "xid: 0x%x", m_Window.id);
-        m_IsQueryQueued = false;
+        m_State = State.IDLE;
     }
 
-    public virtual void
+    protected virtual void
     on_commit ()
     {
-        audit (GLib.Log.METHOD, "xid: 0x%x", m_Window.id);
-        m_IsCommitQueued = false;
-        m_IsQueryQueued = false;
-        m_Cookie = null;
+        m_State = State.IDLE;
     }
 
     public void
@@ -88,23 +107,52 @@ internal abstract class Maia.XcbRequest : Object
         }
     }
 
+    public void
+    process ()
+    {
+        switch (m_State)
+        {
+            case State.QUERYING:
+                query_finish ();
+                break;
+            case State.COMMITING:
+                on_commit ();
+                break;
+            default:
+                break;
+        }
+    }
+
     public virtual void
     query ()
     {
-        if (!m_IsQueryQueued)
+        Token token = Token.get_for_object (this);
+        if (m_State == State.IDLE)
         {
-            m_IsQueryQueued = true;
-            m_Window.xcb_desktop.add_query_request (this);
+            m_State = State.QUERYING;
+            m_Window.xcb_desktop.add_request (this);
         }
+        token.release ();
     }
 
     public virtual void
     commit ()
     {
-        if (!m_IsCommitQueued)
+        Token token = Token.get_for_object (this);
+        if (m_State == State.QUERYING)
         {
-            m_IsCommitQueued = true;
-            m_Window.xcb_desktop.add_commit_request (this);
+            if (m_Cookie != null)
+            {
+                m_Window.xcb_desktop.connection.discard_reply (m_Cookie.sequence);
+                m_Cookie = null;
+            }
+            m_State = State.COMMITING;
         }
+        else if (m_State == State.IDLE)
+        {
+            m_State = State.COMMITING;
+            m_Window.xcb_desktop.add_request (this);
+        }
+        token.release ();
     }
 }

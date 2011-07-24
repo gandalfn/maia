@@ -35,22 +35,26 @@ namespace Xcb {
 		public void flush ();
 		public Setup get_setup ();
 
-		[CCode (cname = "xcb_prefetch_maximum_request_length")]
+		public uint32 get_maximum_request_length ();
 		public void prefetch_maximum_request_length ();
 
 		public GenericEvent wait_for_event ();
 		public GenericEvent poll_for_event ();
+		public GenericError request_check (VoidCookie cookie);
+
+		public void discard_reply (uint sequence);
+
+		[CCode (cname = "xcb_connection_has_error")]
+		public bool has_error ();
 
 		public void* wait_for_reply (uint request, out GenericError? e = null);
 		public bool poll_for_reply (uint request, out void* reply, out GenericError? e = null);
 
-		[CCode (cname = "xcb_create_window")]
 		public VoidCookie create_window (uint8 depth, Window wid, Window parent, 
 		                                 int16 x, int16 y, uint16 width, uint16 height, uint16 border_width, 
 		                                 WindowClass _class, VisualID visual, uint32 value_mask, 
 		                                 [CCode (array_length = false)] uint32[]? value_list);
 
-		[CCode (cname = "xcb_intern_atom")]
 		public InternAtomCookie intern_atom (bool only_if_exist, uint16 name_len, string name);
 	}
 
@@ -540,6 +544,17 @@ namespace Xcb {
 		CAP_HEIGHT,
 		WM_CLASS,
 		WM_TRANSIENT_FOR
+	}
+
+	[CCode (cprefix = "")]
+	public enum WMStateType
+	{
+		[CCode (cname = "0")]
+		WITHDRAWN,
+		[CCode (cname = "1")]
+		NORMAL,
+		[CCode (cname = "3")]
+		ICONIC
 	}
 
 	[SimpleType]

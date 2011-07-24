@@ -40,6 +40,8 @@ internal class Maia.XcbCreateWindowEvent : CreateWindowEvent
                 {
                     unowned Window? parent = (Window)workspace[evt.parent];
 
+                    while (workspace[evt.window] != null);
+
                     if (parent != null && parent == workspace.root)
                     {
                         Window new_window = new Window.foreign (evt.window, workspace);

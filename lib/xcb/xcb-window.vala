@@ -25,6 +25,7 @@ internal class Maia.XcbWindow : WindowProxy
     private uint               m_EventMask;
 
     private XcbWindowAttributes      m_Attributes;
+    private XcbWindowGeometry        m_GeometryProperty;
     private XcbWindowICCCMProperties m_ICCCMProperties;
     private XcbWindowEWMHProperties  m_EWMHProperties;
 
@@ -108,28 +109,27 @@ internal class Maia.XcbWindow : WindowProxy
 
     ~XcbWindow ()
     {
+        // Unset request parent to cancel any pendings
+        m_GeometryProperty = null;
+        m_Attributes = null;
+        m_ICCCMProperties = null;
+        m_EWMHProperties = null;
+
         // Destroy xcb window
         if (!(delegator as Window).is_foreign && id > 0)
-            destroy ();
-
-        // Unset request parent to cancel any pendings
-        m_Attributes.parent = null;
-        m_ICCCMProperties.parent = null;
-        m_EWMHProperties.parent = null;
+        {
+            ((Xcb.Window)id).destroy(m_XcbDesktop.connection);
+            id = 0;
+        }
     }
 
     private void
     foreign (Xcb.Window inWindow)
     {
         audit (GLib.Log.METHOD, "xid 0x%lx", inWindow);
-        Xcb.GetGeometryCookie cookie = ((Xcb.Window)id).get_geometry (m_XcbDesktop.connection);
-        Xcb.GetGeometryReply reply = cookie.reply (m_XcbDesktop.connection);
-        if (reply != null)
-        {
-            m_Geometry = new Region.raw_rectangle (reply.x, reply.y,
-                                                   reply.width + (reply.border_width * 2),
-                                                   reply.height + (reply.border_width * 2));
-        }
+
+        // Create geometry fetcher
+        m_GeometryProperty = new XcbWindowGeometry (this);
 
         // Create attributes fetcher
         m_Attributes = new XcbWindowAttributes (this);
@@ -139,6 +139,9 @@ internal class Maia.XcbWindow : WindowProxy
 
         // Create EWMH properties fetcher
         m_EWMHProperties = new XcbWindowEWMHProperties (this);
+
+        // Query geometry
+        m_GeometryProperty.query ();
 
         // Query attributes
         m_Attributes.query ();
@@ -162,7 +165,7 @@ internal class Maia.XcbWindow : WindowProxy
     {
         // Get properties
         m_Geometry = inGeometry;
-        XcbWorkspace xcb_workspace = ((Window)delegator).workspace.proxy as XcbWorkspace;
+        unowned XcbWorkspace xcb_workspace = (XcbWorkspace)((Window)delegator).workspace.proxy;
         Xcb.Window window = Xcb.Window (m_XcbDesktop.connection);
 
         // Create xcb window
@@ -179,6 +182,9 @@ internal class Maia.XcbWindow : WindowProxy
         id = window;
         audit (GLib.Log.METHOD, "xid 0x%lx", window);
 
+        // Create geometry fetcher
+        m_GeometryProperty = new XcbWindowGeometry (this);
+
         // Create attributes fetcher
         m_Attributes = new XcbWindowAttributes (this);
 
@@ -191,6 +197,9 @@ internal class Maia.XcbWindow : WindowProxy
         // Create events
         m_DamageEvent = new XcbDamageEvent (this);
         m_DeleteEvent = new XcbDeleteEvent (this);
+
+        // Set geometry property
+        m_GeometryProperty.area = m_Geometry;
 
         // Set ICCCM properties
         m_ICCCMProperties.delete_event = true;
