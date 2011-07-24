@@ -80,7 +80,6 @@ public class Maia.Set<V> : Collection<V>
 
             m_Depth = int.max(right_depth, left_depth) + 1;
 
-            prefetch (m_Parent);
             if (m_Parent != null) m_Parent.calc_depth ();
         }
 
@@ -211,12 +210,10 @@ public class Maia.Set<V> : Collection<V>
             int res = func (inValue, node.val);
             if (res > 0)
             {
-                prefetch (node.right);
                 node = node.right;
             }
             else if (res < 0)
             {
-                prefetch (node.left);
                 node = node.left;
             }
             else
@@ -377,12 +374,10 @@ public class Maia.Set<V> : Collection<V>
             res = inFunc (node.val, inValue);
             if (res < 0)
             {
-                prefetch (node.right);
                 node = node.right;
             }
             else if (res > 0)
             {
-                prefetch (node.left);
                 node = node.left;
             }
             else

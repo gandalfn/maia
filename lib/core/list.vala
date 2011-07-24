@@ -182,7 +182,6 @@ public class Maia.List<V> : Collection<V>
         // Search task node in queue
         for (unowned Node<V> node = m_Head; ret == null && node != null; node = node.m_Next)
         {
-            prefetch (node.m_Next);
             if (inFunc (node.m_Value, inValue) == 0)
             {
                 ret = node.m_Value;
