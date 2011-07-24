@@ -19,8 +19,6 @@
 
 public class Maia.Dispatcher : Task
 {
-    protected delegate R ThreadSafeCallback<R> ();
-
     // Static properties
     static Set<unowned Dispatcher> s_Dispatchers;
 
