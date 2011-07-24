@@ -5,9 +5,7 @@ AM_CPPFLAGS = \
     -DPACKAGE_SRC_DIR=\""$(srcdir)"\" \
     -DPACKAGE_DATA_DIR=\""$(datadir)"\" 
 
-AM_CFLAGS =\
-     -Wall\
-     -g
+AM_CFLAGS =
 
 vapidir = $(pkgdatadir)/vapi
 
