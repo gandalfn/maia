@@ -115,6 +115,26 @@ AM_PROG_VALAC($VALA_REQUIRED)
 VALA_VAPI_PATH=$($PKG_CONFIG --variable=vapidir libvala-0.14)
 AC_SUBST(VALA_VAPI_PATH)
 
+AC_ARG_ENABLE(valadoc,
+  AS_HELP_STRING([--enable-valadoc[=@<:@no/auto/yes@:>@]], [Enable valadoc support]),,
+    [enable_valadoc=auto])
+
+dnl ****************************************************************************
+dnl Check for valadoc
+dnl ****************************************************************************
+found_valadoc=no
+AS_IF([test "x$enable_valadoc" != "xno"], [
+    AC_PATH_PROG(VALADOC, valadoc, :)
+    AS_IF([test -x "$VALADOC"], [
+      found_valadoc=yes
+      AC_SUBST(VALADOC)
+    ], [
+      AS_IF([test "x$enable_valadoc" == "xyes"], AC_MSG_ERROR([Unable to find valadoc]))
+    ])
+  ])
+
+AM_CONDITIONAL(ENABLE_VALADOC, test x$found_valadoc = xyes)
+
 dnl ****************************************************************************
 dnl Generate outputs
 dnl ****************************************************************************
@@ -130,6 +150,7 @@ lib/graphic/maia-graphic.pc
 lib/graphic/Makefile
 lib/xcb/maia-xcb-backend.pc
 lib/xcb/Makefile
+doc/Makefile
 test/Makefile
 vapi/Makefile
 po/Makefile.in])
