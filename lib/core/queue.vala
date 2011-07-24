@@ -25,10 +25,10 @@ public class Maia.Queue<V> : Array<V>
         base.sorted ();
     }
 
-    public V?
+    public unowned V?
     pop ()
     {
-        V? val = at (0);
+        unowned V? val = at (0);
         if (val != null)
         {
             remove (val);
