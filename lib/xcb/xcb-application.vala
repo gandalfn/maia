@@ -20,11 +20,11 @@
 internal class Maia.XcbApplication : Application
 {
     // properties
-    private Desktop             m_Desktop = null;
-    private XcbEventDispatcher  m_EventDispatcher = null;
-    private Dispatcher          m_Event = null;
-    private XcbRedrawDispatcher m_RedrawDispatcher = null;
-    private Dispatcher          m_Redraw = null;
+    private Desktop               m_Desktop = null;
+    private XcbEventDispatcher    m_EventDispatcher = null;
+    private Dispatcher            m_Event = null;
+    private XcbRedrawDispatcher[] m_RedrawDispatchers = null;
+    private Dispatcher[]          m_Redraws = null;
 
     // accessors
     public override Desktop desktop {
@@ -45,7 +45,11 @@ internal class Maia.XcbApplication : Application
         m_Desktop = new Desktop ();
 
         m_EventDispatcher = new XcbEventDispatcher (this);
-        m_RedrawDispatcher = new XcbRedrawDispatcher (m_Desktop.default_workspace);
+        foreach (unowned Workspace workspace in m_Desktop)
+        {
+            XcbRedrawDispatcher redraw_dispatcher = new XcbRedrawDispatcher (workspace);
+            m_RedrawDispatchers += redraw_dispatcher;
+        }
         dispatcher.running.watch (on_dispatcher_running);
         dispatcher.finished.watch (on_dispatcher_finished);
     }
@@ -59,15 +63,22 @@ internal class Maia.XcbApplication : Application
         m_Event.run ();
 
         // Start redraw loop
-        m_Redraw = new Dispatcher.thread ();
-        m_RedrawDispatcher.parent = m_Redraw;
-        m_Redraw.run ();
+        foreach (unowned XcbRedrawDispatcher redraw_dispatcher in m_RedrawDispatchers)
+        {
+            Dispatcher redraw = new Dispatcher.thread ();
+            redraw_dispatcher.parent = redraw;
+            redraw.run ();
+            m_Redraws += redraw;
+        }
     }
 
     private void
     on_dispatcher_finished ()
     {
         m_Event.finish ();
-        m_Redraw.finish ();
+        foreach (unowned Dispatcher redraw in m_Redraws)
+        {
+            redraw.finish ();
+        }
     }
 }
