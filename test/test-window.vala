@@ -74,7 +74,7 @@ public class TestWindow : Maia.Window
 static int
 main (string[] args)
 {
-    //Maia.log_set_level (Maia.Level.DEBUG);
+    Maia.log_set_level (Maia.Level.DEBUG);
     //Maia.backtrace_on_crash ();
 
     Maia.Application application = Maia.Application.create ();

@@ -34,6 +34,7 @@ libmaia_la_SOURCES = \
     workspace-proxy.vala \
     window.vala \
     window-proxy.vala \
+    queue-draw-event.vala \
     damage-event.vala \
     delete-event.vala \
     create-window-event.vala \

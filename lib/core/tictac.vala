@@ -27,6 +27,7 @@ public class Maia.TicTac : Watch
 
     // notifications
     public NotificationR<TicTac, bool> bell;
+    public Notification<TicTac>        end_bell;
 
     // Accessors
     internal override int watch_fd {
@@ -76,6 +77,7 @@ public class Maia.TicTac : Watch
     construct
     {
         bell = new NotificationR<TicTac, bool> (this);
+        end_bell = new Notification<TicTac> (this);
     }
 
     public TicTac (uint inFps, Task.Priority inPriority = Task.Priority.NORMAL)
@@ -114,6 +116,7 @@ public class Maia.TicTac : Watch
         {
             ++m_FrameCount;
             (parent as Dispatcher).add_watch (this);
+            end_bell.send ();
         }
         else
         {

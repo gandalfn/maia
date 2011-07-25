@@ -20,9 +20,11 @@
 internal class Maia.XcbApplication : Application
 {
     // properties
-    private Desktop            m_Desktop = null;
-    private XcbEventDispatcher m_EventDispatcher = null;
-    private Dispatcher         m_EventRedrawDispatcher = null;
+    private Desktop             m_Desktop = null;
+    private XcbEventDispatcher  m_EventDispatcher = null;
+    private Dispatcher          m_Event = null;
+    private XcbRedrawDispatcher m_RedrawDispatcher = null;
+    private Dispatcher          m_Redraw = null;
 
     // accessors
     public override Desktop desktop {
@@ -43,6 +45,7 @@ internal class Maia.XcbApplication : Application
         m_Desktop = new Desktop ();
 
         m_EventDispatcher = new XcbEventDispatcher (this);
+        m_RedrawDispatcher = new XcbRedrawDispatcher (m_Desktop.default_workspace);
         dispatcher.running.watch (on_dispatcher_running);
         dispatcher.finished.watch (on_dispatcher_finished);
     }
@@ -50,14 +53,21 @@ internal class Maia.XcbApplication : Application
     private void
     on_dispatcher_running ()
     {
-        m_EventRedrawDispatcher = new Dispatcher.thread ();
-        m_EventDispatcher.parent = m_EventRedrawDispatcher;
-        m_EventRedrawDispatcher.run ();
+        // Start event loop
+        m_Event = new Dispatcher.thread ();
+        m_EventDispatcher.parent = m_Event;
+        m_Event.run ();
+
+        // Start redraw loop
+        m_Redraw = new Dispatcher.thread ();
+        m_RedrawDispatcher.parent = m_Redraw;
+        m_Redraw.run ();
     }
 
     private void
     on_dispatcher_finished ()
     {
-        m_EventRedrawDispatcher.finish ();
+        m_Event.finish ();
+        m_Redraw.finish ();
     }
 }

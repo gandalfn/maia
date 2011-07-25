@@ -21,11 +21,18 @@ public class Maia.Workspace : View
 {
     // properties
     private unowned WorkspaceProxy m_Proxy;
+    private QueueDrawEvent         m_EventQueueDraw;
 
     // events
     internal override DamageEvent damage_event {
         get {
             return m_Proxy.damage_event;
+        }
+    }
+
+    public QueueDrawEvent queue_draw_event {
+        get {
+            return m_EventQueueDraw;
         }
     }
 
@@ -83,6 +90,7 @@ public class Maia.Workspace : View
         GLib.Object (parent: inDesktop);
 
         m_Proxy = delegate_cast<WorkspaceProxy> ();
+        m_EventQueueDraw = new QueueDrawEvent (this);
     }
 
     internal override string
@@ -108,5 +116,11 @@ public class Maia.Workspace : View
     can_append_child (Object inChild)
     {
         return inChild is Window; 
+    }
+
+    public void
+    queue_draw (Region inArea)
+    {
+        m_EventQueueDraw.post (new QueueDrawEventArgs (inArea));
     }
 }

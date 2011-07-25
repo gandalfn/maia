@@ -203,6 +203,7 @@ public class Maia.Window : View
     {
         Maia.audit (GLib.Log.METHOD, "%s", inArgs.area.to_string ());
         on_paint (inArgs.area);
+        workspace.queue_draw (inArgs.area);
     }
 
     private void

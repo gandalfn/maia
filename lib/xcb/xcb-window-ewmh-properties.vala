@@ -160,7 +160,6 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
         if (!((Window)window.delegator).is_foreign)
         {
             //m_HintType = ((Window)window.delegator).hint_type;
-            
             m_WMName[0] = ((Window)window.delegator).name;
             m_WMName.commit ();
         }
