@@ -22,7 +22,7 @@ internal class Maia.XcbRedrawDispatcher : Object
     // properties
     private unowned Workspace m_Workspace = null;
     private TicTac            m_RefreshTicTac = null;
-    private bool              m_NeedRedraw = true;
+    private Region            m_DamagedArea = null;
 
     // accessors
     public override Object parent {
@@ -54,9 +54,11 @@ internal class Maia.XcbRedrawDispatcher : Object
     private bool
     on_refresh ()
     {
-        audit (GLib.Log.METHOD, "refresh");
-
-        m_NeedRedraw = false;
+        if (m_DamagedArea != null)
+        {
+            audit (GLib.Log.METHOD, "refresh %s", m_DamagedArea.to_string ());
+        }
+        m_DamagedArea = null;
 
         return true;
     }
@@ -64,17 +66,21 @@ internal class Maia.XcbRedrawDispatcher : Object
     private void
     on_end_refresh ()
     {
-        if (!m_NeedRedraw)
+        if (m_DamagedArea == null)
             m_RefreshTicTac.sleep ();
     }
 
     private void
     on_queue_draw (QueueDrawEventArgs inArgs)
     {
-        if (!m_NeedRedraw)
+        if (m_DamagedArea == null)
         {
-            m_NeedRedraw = true;
+            m_DamagedArea = inArgs.area;
             m_RefreshTicTac.wakeup ();
+        }
+        else
+        {
+            m_DamagedArea.union (inArgs.area);
         }
     }
 }

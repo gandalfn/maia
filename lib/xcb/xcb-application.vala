@@ -23,8 +23,8 @@ internal class Maia.XcbApplication : Application
     private Desktop               m_Desktop = null;
     private XcbEventDispatcher    m_EventDispatcher = null;
     private Dispatcher            m_Event = null;
-    private XcbRedrawDispatcher[] m_RedrawDispatchers = null;
-    private Dispatcher[]          m_Redraws = null;
+    private XcbRedrawDispatcher[] m_RedrawDispatchers = {};
+    private Dispatcher[]          m_Redraws = {};
 
     // accessors
     public override Desktop desktop {
