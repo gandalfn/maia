@@ -20,7 +20,6 @@ includegraphic_HEADERS = \
     maia-graphic.h
 
 libmaia_graphic_la_VALAFLAGS = \
-    --use-header \
     --header=maia-graphic.h \
     --library=maia-graphic
 

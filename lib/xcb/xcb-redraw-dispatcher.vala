@@ -23,6 +23,7 @@ internal class Maia.XcbRedrawDispatcher : Object
     private unowned Workspace m_Workspace = null;
     private TicTac            m_RefreshTicTac = null;
     private Region            m_DamagedArea = null;
+    private Set<uint32>       m_DamagedWindow = null;
 
     // accessors
     public override Object parent {
@@ -45,6 +46,9 @@ internal class Maia.XcbRedrawDispatcher : Object
         // Get workspace
         m_Workspace = inWorkspace;
 
+        // Create damaged window queue
+        m_DamagedWindow = new Set<uint32> ();
+
         // Create redraw timeline
         m_RefreshTicTac = new TicTac (60);
         m_RefreshTicTac.bell.watch (on_refresh);
@@ -57,7 +61,29 @@ internal class Maia.XcbRedrawDispatcher : Object
         if (m_DamagedArea != null)
         {
             audit (GLib.Log.METHOD, "refresh %s", m_DamagedArea.to_string ());
+
+            foreach (uint32 id in m_DamagedWindow)
+            {
+                unowned Window? window = (Window)m_Workspace[id];
+                if (window != null)
+                {
+                    ((XcbWindow)window.proxy).swap_buffer (m_DamagedArea);
+                }
+                else
+                {
+                    foreach (unowned Object child in m_Workspace)
+                    {
+                        window = (Window)child[id];
+                        if (window != null)
+                        {
+                            ((XcbWindow)window.proxy).swap_buffer (m_DamagedArea);
+                            break;
+                        }
+                    }
+                }
+            }
         }
+        m_DamagedWindow.clear ();
         m_DamagedArea = null;
 
         return true;
@@ -73,6 +99,10 @@ internal class Maia.XcbRedrawDispatcher : Object
     private void
     on_queue_draw (QueueDrawEventArgs inArgs)
     {
+        audit (GLib.Log.METHOD, "");
+        if (inArgs.window != null)
+            m_DamagedWindow.insert (inArgs.window.id);
+
         if (m_DamagedArea == null)
         {
             m_DamagedArea = inArgs.area;

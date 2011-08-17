@@ -20,7 +20,6 @@ includexml_HEADERS = \
     maia-xml.h
 
 libmaia_xml_la_VALAFLAGS = \
-    --use-header \
     --header=maia-xml.h \
     --library=maia-xml
 

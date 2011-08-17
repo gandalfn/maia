@@ -55,6 +55,9 @@ namespace Xcb {
 		                                 WindowClass _class, VisualID visual, uint32 value_mask, 
 		                                 [CCode (array_length = false)] uint32[]? value_list);
 
+		public VoidCookie create_pixmap (uint8 depth, Pixmap pid, Drawable drawable, 
+		                                 uint16 width, uint16 height);
+
 		public InternAtomCookie intern_atom (bool only_if_exist, uint16 name_len, string name);
 	}
 
@@ -105,6 +108,16 @@ namespace Xcb {
 		public Drawable (Connection inConnection);
 	}
 
+	[Compact]
+	[CCode (cname = "cairo_surface_t", cheader_filename = "cairo-xcb.h")]
+	public class CairoSurface : Cairo.Surface {
+		[CCode (cname = "cairo_xcb_surface_create")]
+		public CairoSurface (Xcb.Connection connection, Xcb.Drawable drawable, Xcb.VisualType visual, int width, 
+int height);
+		[CCode (cname = "cairo_xcb_surface_set_size")]
+		public void set_size (int width, int height);
+	}
+
 	[SimpleType]
 	[IntegerType (rank = 9)]
 	[CCode (cname = "xcb_window_t", type_id = "G_TYPE_UINT",
@@ -122,7 +135,7 @@ namespace Xcb {
 		[CCode (cname = "xcb_unmap_window", instance_pos = -1)]
 		public VoidCookie unmap (Connection inConnection);
 
-		[CCode (cname = "xcb_destroy_window", instance_pos = -1)]
+		[CCode (cname = "xcb_destroy_window_checked", instance_pos = -1)]
 		public VoidCookie destroy (Connection inConnection);
 
 		[CCode (cname = "xcb_get_window_attributes", instance_pos = 1.1)]
@@ -146,6 +159,21 @@ namespace Xcb {
 		public VoidCookie change_property (Connection inConnection, PropMode prop_mode, 
 		                                   Atom property, Atom type, uint8 format,
 		                                   uint32 data_len, void* data);
+	}
+
+	[SimpleType]
+	[IntegerType (rank = 9)]
+	[CCode (cname = "xcb_pixmap_t", type_id = "G_TYPE_UINT",
+	        marshaller_type_name = "UINT",
+	        get_value_function = "g_value_get_uint",
+	        set_value_function = "g_value_set_uint", default_value = "0",
+	        type_signature = "u")]
+ 	public struct Pixmap : Drawable {
+		[CCode (cname = "xcb_generate_id")]
+		public Pixmap (Connection inConnection);
+
+		[CCode (cname = "xcb_free_pixmap_checked", instance_pos = -1)]
+		public VoidCookie destroy (Connection inConnection);
 	}
 
 	[SimpleType]

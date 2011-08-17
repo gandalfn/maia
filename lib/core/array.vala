@@ -126,7 +126,7 @@ public class Maia.Array <V> : Collection <V>
 
             while (right >= left)
             {
-                int medium = (left + right) / 2;
+                int medium = (int)(((uint)left + (uint)right) >> 1);
                 int res = func (m_pContent[medium].val, inValue);
 
                 if (res == 0)
@@ -203,7 +203,7 @@ public class Maia.Array <V> : Collection <V>
 
                 while (iterator == null && right >= left)
                 {
-                    int medium = (left + right) / 2;
+                    int medium = (int)(((uint)left + (uint)right) >> 1);
                     int res = func (m_pContent[medium].val, inValue);
 
                     if (res == 0)
@@ -310,7 +310,7 @@ public class Maia.Array <V> : Collection <V>
             {
                 while (ret == null && right >= left)
                 {
-                    int medium = (left + right) / 2;
+                    int medium = (int)(((uint)left + (uint)right) >> 1);
                     int res = inFunc (m_pContent[medium].val, inValue);
 
                     if (res == 0)

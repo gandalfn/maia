@@ -240,23 +240,7 @@ public class Maia.Region : Object
     public inline void 
     offset (int inDx, int inDy)
     {
-        Pixman.Box32[] boxes = m_Region.rectangles ();
-
-        m_Region.extents.x1 += Pixman.Fixed.int(inDx);
-        m_Region.extents.x2 += Pixman.Fixed.int(inDx);
-        m_Region.extents.y1 += Pixman.Fixed.int(inDy);
-        m_Region.extents.y2 += Pixman.Fixed.int(inDy);
-
-        if (m_Region.get_extents () != boxes)
-        {
-            for (int cpt = 0; cpt < boxes.length; ++cpt)
-            {
-                boxes[cpt].x1 += Pixman.Fixed.int(inDx);
-                boxes[cpt].x2 += Pixman.Fixed.int(inDx);
-                boxes[cpt].y1 += Pixman.Fixed.int(inDy);
-                boxes[cpt].y2 += Pixman.Fixed.int(inDy);
-            }
-        }
+        m_Region.translate (Pixman.Fixed.int(inDx), Pixman.Fixed.int(inDy));
     }
 
     /**

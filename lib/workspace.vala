@@ -76,6 +76,28 @@ public class Maia.Workspace : View
         }
     }
 
+    [CCode (notify = false)]
+    internal override bool double_buffered {
+        get {
+            return m_Proxy.double_buffered;
+        }
+        set {
+            m_Proxy.double_buffered = value;
+        }
+    }
+
+    internal override unowned GraphicDevice? back_buffer {
+        get {
+            return m_Proxy.back_buffer;
+        }
+    }
+
+    internal override unowned GraphicDevice? front_buffer {
+        get {
+            return m_Proxy.front_buffer;
+        }
+    }
+
     public Window root {
         get {
             return m_Proxy.root;
@@ -96,17 +118,14 @@ public class Maia.Workspace : View
     internal override string
     to_string ()
     {
-        string ret = "digraph {\n ";
+        string ret = "";
+
         Token token = Token.get_for_object (this);
         foreach (unowned Object window in this)
         {
-            ret += window.to_string ();
-            if (window != root)
-            {
-                ret += "%s -> %s;\n".printf (root.id.to_string (), window.id.to_string());
-            }
+            ret += window.to_string () + "\n";
         }
-        ret += "}\n";
+        ret += "\n";
         token.release ();
 
         return ret;
@@ -119,8 +138,8 @@ public class Maia.Workspace : View
     }
 
     public void
-    queue_draw (Region inArea)
+    queue_draw (Window? inWindow, Region inArea)
     {
-        m_EventQueueDraw.post (new QueueDrawEventArgs (inArea));
+        m_EventQueueDraw.post (new QueueDrawEventArgs (inWindow, inArea));
     }
 }

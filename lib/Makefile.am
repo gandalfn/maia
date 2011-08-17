@@ -9,7 +9,7 @@ include $(top_srcdir)/build/maia.am
 include $(top_srcdir)/build/pkgconfig.am
 include $(top_srcdir)/build/vapi.am
 
-SUBDIRS = core xml graphic . xcb
+SUBDIRS = core xml graphic . cairo xcb
 
 AM_CFLAGS += \
     -DMAIA_LOG_CONTEXT=\""Maia"\"
@@ -22,7 +22,6 @@ include_HEADERS = \
     maia.h
 
 libmaia_la_VALAFLAGS = \
-    --use-header \
     --header=maia.h \
     --library=maia
 
@@ -35,6 +34,7 @@ libmaia_la_SOURCES = \
     window.vala \
     window-proxy.vala \
     queue-draw-event.vala \
+    geometry-event.vala \
     damage-event.vala \
     delete-event.vala \
     create-window-event.vala \

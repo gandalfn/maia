@@ -134,6 +134,7 @@ public class Maia.Token : GLib.Object
     private int             m_Depth = 0;
     private int             m_WaitDepth = 0;
     private Os.ThreadSpin   m_Spin;
+    //private GLib.StaticRecMutex m_Spin;
 
     // static methods
     public static new Token
@@ -186,6 +187,7 @@ public class Maia.Token : GLib.Object
     {
         m_Id = inId;
         m_Spin = Os.ThreadSpin ();
+        //m_Spin = new GLib.StaticRecMutex ();
     }
 
     ~Token ()

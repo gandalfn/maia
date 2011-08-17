@@ -4,6 +4,7 @@ MAIA_VAPI_DEPS = \
     $(top_builddir)/lib/core/maia-core-$(MAIA_ABI).vapi \
     $(top_builddir)/lib/xml/maia-xml-$(MAIA_ABI).vapi \
     $(top_builddir)/lib/graphic/maia-graphic-$(MAIA_ABI).vapi \
+    $(top_builddir)/lib/cairo/maia-cairo-graphic-$(MAIA_ABI).vapi \
     $(top_builddir)/lib/maia-$(MAIA_ABI).vapi
 
 include $(top_srcdir)/build/maia.am
@@ -23,10 +24,10 @@ includexcbbackend_HEADERS = \
     maia-xcb-backend.h
 
 libmaia_xcb_backend_la_VALAFLAGS = \
-    --use-header \
     --header=maia-xcb-backend.h \
     --library=maia-xcb-backend \
-    --pkg=xcb-1.0
+    --pkg=xcb-1.0 \
+    --pkg=cairo
 
 libmaia_xcb_backend_la_SOURCES = \
     xcb-atom.vala \
@@ -39,7 +40,10 @@ libmaia_xcb_backend_la_SOURCES = \
     xcb-window-property.vala \
     xcb-window-icccm-properties.vala \
     xcb-window-ewmh-properties.vala \
+    xcb-window-graphic-device.vala \
+    xcb-offscreen-graphic-device.vala \
     xcb-damage-event.vala \
+    xcb-geometry-event.vala \
     xcb-delete-event.vala \
     xcb-client-message-event.vala \
     xcb-create-window-event.vala \
@@ -55,7 +59,8 @@ libmaia_xcb_backend_la_LDFLAGS = \
     -no-undefined
 
 libmaia_xcb_backend_la_LIBADD = \
-    $(MAIA_LIBS)
+    $(MAIA_LIBS) \
+    $(top_builddir)/lib/cairo/libmaia-cairo-graphic.la
 
 VALAFILES = \
     $(filter %.vala,$(libmaia_xcb_backend_la_SOURCES))

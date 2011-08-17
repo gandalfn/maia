@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * window-proxy.vala
+ * cairo-graphic-device.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,14 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.WindowProxy : View
+public abstract class Maia.CairoGraphicDevice : Maia.GraphicDevice
 {
-    // events
-    public abstract DeleteEvent   delete_event   { get; }
-    public abstract GeometryEvent geometry_event { get; }
+    // accessors
+    public abstract Cairo.Surface surface { get; }
 
     // methods
-    public abstract void show    ();
-    public abstract void hide    ();
-    public abstract void destroy ();
+    public override GraphicContext
+    create_context ()
+    {
+        return new CairoGraphicContext (this);
+    }
 }

@@ -1,6 +1,6 @@
 /* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * window-proxy.vala
+ * geometry-event.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  * 
  * maia is free software: you can redistribute it and/or modify it
@@ -17,14 +17,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.WindowProxy : View
+public class Maia.GeometryEventArgs : EventArgs
 {
-    // events
-    public abstract DeleteEvent   delete_event   { get; }
-    public abstract GeometryEvent geometry_event { get; }
+    // accessors
+    [CCode (notify = false)]
+    public Region geometry { get; private set; }
 
     // methods
-    public abstract void show    ();
-    public abstract void hide    ();
-    public abstract void destroy ();
+    public GeometryEventArgs (Region inGeometry)
+    {
+        geometry = inGeometry;
+    }
+}
+
+public class Maia.GeometryEvent : Event<GeometryEventArgs>
+{
+    // methods
+    public GeometryEvent (uint32 inId, void* inOwner)
+    {
+        base.with_id (inId, inOwner);
+    }
 }

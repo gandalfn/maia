@@ -20,13 +20,25 @@
 public class TestWindow : Maia.Window
 {
     private int count = 0;
+    private Maia.Timeline timeline;
 
     public TestWindow ()
     {
-        base ("test-window", 200, 200);
-        workspace.create_window_event.listen (on_new_window, Maia.Application.self);
-        workspace.reparent_window_event.listen (on_window_reparented, Maia.Application.self);
-        workspace.destroy_window_event.listen (on_destroy_window, Maia.Application.self);
+        base ("test-window", 400, 400);
+        //workspace.create_window_event.listen (on_new_window, Maia.Application.self);
+        //workspace.reparent_window_event.listen (on_window_reparented, Maia.Application.self);
+        //workspace.destroy_window_event.listen (on_destroy_window, Maia.Application.self);
+
+        timeline = new Maia.Timeline (50, 200, Maia.Application.self);
+        timeline.loop = true;
+        timeline.new_frame.watch (on_new_frame);
+        timeline.start ();
+    }
+
+    private void
+    on_new_frame (Maia.Timeline inTimeline, int inFrame)
+    {
+        queue_draw ();
     }
 
     private void
@@ -58,9 +70,33 @@ public class TestWindow : Maia.Window
     }
 
     public override void
+    on_move_resize (Maia.Region inNewGeometry)
+    {
+        message ("Move resize %s", inNewGeometry.to_string ());
+    }
+
+    public override void
     on_paint (Maia.Region inArea)
     {
-        Maia.audit (GLib.Log.METHOD, "%s", inArea.to_string ());
+        message ("Paint %s", inArea.to_string ());
+        try
+        {
+            Maia.GraphicContext ctx = back_buffer.create_context ();
+            ctx.pattern.color = new Maia.GraphicColor (0.0, 0.0, 0.0, 1.0);
+            ctx.paint.paint ();
+            ctx.pattern.color = new Maia.GraphicColor (1.0, 0.0, 0.0, 1.0);
+            ctx.shape.rectangle (20, 20, inArea.clipbox.size.width - 40, inArea.clipbox.size.height - 40, 5, 5);
+            ctx.paint.line_width = 5;
+            ctx.paint.stroke ();
+            ctx.pattern.color = new Maia.GraphicColor (0.0, 0.0, 1.0, 1.0);
+            ctx.shape.arc (inArea.clipbox.size.width * timeline.progress, inArea.clipbox.size.height / 2.0,
+                           20, 20, 0, 2 * GLib.Math.PI);
+            ctx.paint.stroke ();
+        }
+        catch (Maia.GraphicError err)
+        {
+            message ("Error on paint %s", err.message);
+        }
     }
 
     public override void
@@ -74,7 +110,7 @@ public class TestWindow : Maia.Window
 static int
 main (string[] args)
 {
-    Maia.log_set_level (Maia.Level.DEBUG);
+    //Maia.log_set_level (Maia.Level.DEBUG);
     //Maia.backtrace_on_crash ();
 
     Maia.Application application = Maia.Application.create ();

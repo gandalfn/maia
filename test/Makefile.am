@@ -3,6 +3,7 @@ MAIA_VAPI_DEPS = \
     $(top_builddir)/lib/core/maia-core-$(MAIA_ABI).vapi \
     $(top_builddir)/lib/xml/maia-xml-$(MAIA_ABI).vapi \
     $(top_builddir)/lib/graphic/maia-graphic-$(MAIA_ABI).vapi \
+    $(top_builddir)/lib/cairo/maia-cairo-graphic-$(MAIA_ABI).vapi \
     $(top_builddir)/lib/xcb/maia-xcb-backend-$(MAIA_ABI).vapi
 
 include $(top_srcdir)/build/maia.am
@@ -45,6 +46,8 @@ test_window_LDADD = \
     ${top_builddir}/lib/libmaia.la \
     ${top_builddir}/lib/core/libmaia-core.la \
     ${top_builddir}/lib/xml/libmaia-xml.la \
+    ${top_builddir}/lib/graphic/libmaia-graphic.la \
+    ${top_builddir}/lib/cairo/libmaia-cairo-graphic.la \
     ${top_builddir}/lib/xcb/libmaia-xcb-backend.la
 
 test_thread_SOURCES = \

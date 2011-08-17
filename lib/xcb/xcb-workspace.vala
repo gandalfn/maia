@@ -20,12 +20,13 @@
 internal class Maia.XcbWorkspace : WorkspaceProxy
 {
     // properties
-    private uint            m_Num       = 0;
-    private Xcb.Screen      m_XcbScreen = null;
-    private Xcb.VisualType? m_XcbVisual = null;
-    private Region          m_Geometry  = null;
+    private uint            m_Num            = 0;
+    private Xcb.Screen      m_XcbScreen      = null;
+    private Xcb.VisualType? m_XcbVisual      = null;
+    private Region          m_Geometry       = null;
+    private bool            m_DoubleBuffered = true;
 
-    private Window          m_Root      = null;
+    private Window          m_Root           = null;
 
     // accessors
     public Xcb.Screen xcb_screen {
@@ -71,6 +72,28 @@ internal class Maia.XcbWorkspace : WorkspaceProxy
             return m_Geometry;
         }
         internal set {
+        }
+    }
+
+    [CCode (notify = false)]
+    public override bool double_buffered {
+        get {
+            return m_DoubleBuffered;
+        }
+        set {
+            m_DoubleBuffered = value;
+        }
+    }
+
+    public override unowned GraphicDevice? back_buffer {
+        get {
+            return null;
+        }
+    }
+
+    public override unowned GraphicDevice? front_buffer {
+        get {
+            return null;
         }
     }
 

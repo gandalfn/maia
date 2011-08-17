@@ -23,8 +23,8 @@ public abstract class Maia.Object : GLib.Object
     static Map<Type, Set<Type>> s_Delegations = null;
 
     // Class properties
-    internal class bool         c_Initialized = false;
-    internal class Set<Type>    c_Delegations = null;
+    private class bool         c_Initialized = false;
+    private class Set<Type>    c_Delegations = null;
 
     // Properties
     private GLib.Type           m_Type;
@@ -179,7 +179,7 @@ public abstract class Maia.Object : GLib.Object
     static inline int
     compare_type (Type inA, Type inB)
     {
-        int ret = inA - inB;
+        int ret = (int)((uint32)inA - (uint32)inB);
         if (ret != 0)
         {
             Type bParentType = inB.parent ();

@@ -19,14 +19,28 @@
 
 public class Maia.QueueDrawEventArgs : EventArgs
 {
+    // properties
+    private Region          m_Area;
+    private unowned Window? m_Window;
+
     // accessors
-    [CCode (notify = false)]
-    public Region area { get; private set; }
+    public Region area {
+        get {
+            return m_Area; 
+        }
+    }
+
+    public unowned Window? window {
+        get {
+            return m_Window;
+        }
+    }
 
     // methods
-    public QueueDrawEventArgs (Region inArea)
+    public QueueDrawEventArgs (Window? inWindow, Region inArea)
     {
-        area = inArea;
+        m_Window = inWindow;
+        m_Area = inArea;
     }
 }
 

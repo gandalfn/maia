@@ -43,6 +43,8 @@ public abstract class Maia.GraphicContext : Object
     public abstract GraphicShape   shape   { get; }
     public abstract GraphicPaint   paint   { get; }
 
+    public abstract Region?        clip { get; set; }
+
     // methods
     public abstract void save () throws GraphicError;
     public abstract void restore () throws GraphicError;

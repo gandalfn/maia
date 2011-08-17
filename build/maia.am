@@ -9,13 +9,13 @@ INCLUDES = \
     $(addprefix -I, $(dir $(MAIA_VAPI_DEPS)))
 
 VALAFLAGS = \
-    --debug \
     --thread \
     --vapidir=$(VALA_VAPI_PATH) \
     --vapidir=${top_srcdir}/vapi \
     --pkg=config \
     --pkg=os \
     --pkg=pixman-1 \
+    --pkg=cairo \
     $(addprefix --pkg=, $(notdir $(basename $(MAIA_VAPI_DEPS)))) \
     $(addprefix --vapidir=, $(dir $(MAIA_VAPI_DEPS)))
 

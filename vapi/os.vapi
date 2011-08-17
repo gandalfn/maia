@@ -115,7 +115,7 @@ namespace Os
         public ThreadSpin (bool inPShared = false);
 
         public int lock ();
-        public int try_lock ();
+        public int trylock ();
         public int unlock ();
     }
 }

@@ -19,7 +19,6 @@ includecore_HEADERS = \
     maia-core.h
 
 libmaia_core_la_VALAFLAGS = \
-    --use-header \
     --header=maia-core.h \
     --library=maia-core
 

@@ -69,6 +69,12 @@ public class Maia.Window : View
         }
     }
 
+    internal GeometryEvent geometry_event {
+        get {
+            return m_Proxy.geometry_event;
+        }
+    }
+
     // accessors
     public unowned WindowProxy proxy {
         get {
@@ -84,6 +90,28 @@ public class Maia.Window : View
         set {
             m_Proxy.geometry = value;
             on_property_changed ("geometry");
+        }
+    }
+
+    [CCode (notify = false)]
+    internal override bool double_buffered {
+        get {
+            return m_Proxy.double_buffered;
+        }
+        set {
+            m_Proxy.double_buffered = value;
+        }
+    }
+
+    internal override unowned GraphicDevice? back_buffer {
+        get {
+            return m_Proxy.back_buffer;
+        }
+    }
+
+    internal override unowned GraphicDevice? front_buffer {
+        get {
+            return m_Proxy.front_buffer;
         }
     }
 
@@ -186,6 +214,7 @@ public class Maia.Window : View
 
         unowned Dispatcher? dispatcher = Application.self;
         m_Proxy.damage_event.listen (on_damage_event, dispatcher);
+        m_Proxy.geometry_event.listen (on_geometry_event, dispatcher);
         m_Proxy.delete_event.listen (on_delete_event, dispatcher);
     }
 
@@ -195,15 +224,31 @@ public class Maia.Window : View
 
         unowned Dispatcher? dispatcher = Application.self;
         m_Proxy.damage_event.listen (on_damage_event, dispatcher);
+        m_Proxy.geometry_event.listen (on_geometry_event, dispatcher);
         audit(GLib.Log.METHOD, "%u", ref_count);
+    }
+
+    private void
+    on_geometry_event (GeometryEventArgs inArgs)
+    {
+        Maia.audit (GLib.Log.METHOD, "%s", inArgs.geometry.to_string ());
+        geometry = inArgs.geometry;
+        on_move_resize (inArgs.geometry);
     }
 
     private void
     on_damage_event (DamageEventArgs inArgs)
     {
         Maia.audit (GLib.Log.METHOD, "%s", inArgs.area.to_string ());
+
+        // Paint window
+        Token token = Token.get_for_object (double_buffered ? back_buffer : front_buffer);
         on_paint (inArgs.area);
-        workspace.queue_draw (inArgs.area);
+        token.release ();
+
+        // Send queue draw event
+        if (double_buffered)
+            workspace.queue_draw (this, inArgs.area);
     }
 
     private void
@@ -211,6 +256,11 @@ public class Maia.Window : View
     {
         Maia.audit (GLib.Log.METHOD, "");
         on_destroy ();
+    }
+
+    protected virtual void
+    on_move_resize (Region inNewGeometry)
+    {
     }
 
     protected virtual void
@@ -259,5 +309,11 @@ public class Maia.Window : View
     hide ()
     {
         m_Proxy.hide ();
+    }
+
+    public void
+    queue_draw ()
+    {
+        damage_event.post (new DamageEventArgs (geometry));
     }
 }

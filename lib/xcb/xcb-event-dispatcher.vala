@@ -56,6 +56,9 @@ internal class Maia.XcbEventDispatcher : Watch
                 case Xcb.REPARENT_NOTIFY:
                     XcbReparentWindowEvent.post_event (evt);
                     break;
+                case Xcb.CONFIGURE_NOTIFY:
+                    XcbGeometryEvent.post_event (evt);
+                    break;
                 case Xcb.EXPOSE:
                     XcbDamageEvent.post_event (evt);
                     break;

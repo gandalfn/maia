@@ -19,4 +19,6 @@
 
 public abstract class Maia.GraphicDevice : Object
 {
+    // methods
+    public abstract GraphicContext create_context (); 
 }

@@ -24,18 +24,29 @@ internal class Maia.XcbWindow : WindowProxy
     private Region             m_Geometry;
     private uint               m_EventMask;
 
+    private bool               m_DoubleBuffered = true;
+    private CairoGraphicDevice m_BackBuffer     = null;
+    private CairoGraphicDevice m_FrontBuffer    = null;
+
     private XcbWindowAttributes      m_Attributes;
     private XcbWindowGeometry        m_GeometryProperty;
     private XcbWindowICCCMProperties m_ICCCMProperties;
     private XcbWindowEWMHProperties  m_EWMHProperties;
 
     // events
-    private XcbDamageEvent m_DamageEvent;
-    private XcbDeleteEvent m_DeleteEvent;
+    private XcbDamageEvent   m_DamageEvent;
+    private XcbGeometryEvent m_GeometryEvent;
+    private XcbDeleteEvent   m_DeleteEvent;
 
     public override DamageEvent damage_event {
         get {
             return m_DamageEvent;
+        }
+    }
+
+    public override GeometryEvent geometry_event {
+        get {
+            return m_GeometryEvent;
         }
     }
 
@@ -65,7 +76,42 @@ internal class Maia.XcbWindow : WindowProxy
             else if (id != 0)
             {
                 m_Geometry = value;
+                on_property_changed ("geometry");
             }
+        }
+    }
+
+    [CCode (notify = false)]
+    public override bool double_buffered {
+        get {
+            return m_DoubleBuffered;
+        }
+        set {
+            m_DoubleBuffered = value;
+        }
+    }
+
+    public override unowned GraphicDevice? back_buffer {
+        get {
+            if (GLib.AtomicPointer.get (&m_BackBuffer) == null)
+            {
+                Object.atomic_compare_and_exchange (&m_BackBuffer, null, 
+                                                    new XcbOffscreenGraphicDevice (this));
+            }
+
+            return m_BackBuffer;
+        }
+    }
+
+    public override unowned GraphicDevice? front_buffer {
+        get {
+            if (GLib.AtomicPointer.get (&m_FrontBuffer) == null)
+            {
+                Object.atomic_compare_and_exchange (&m_FrontBuffer, null, 
+                                                    new XcbWindowGraphicDevice (this));
+            }
+
+            return m_FrontBuffer;
         }
     }
 
@@ -153,8 +199,9 @@ internal class Maia.XcbWindow : WindowProxy
         m_EWMHProperties.query ();
 
         // Create events
-        m_DamageEvent = new XcbDamageEvent (this);
-        m_DeleteEvent = new XcbDeleteEvent (this);
+        m_DamageEvent   = new XcbDamageEvent   (this);
+        m_GeometryEvent = new XcbGeometryEvent (this);
+        m_DeleteEvent   = new XcbDeleteEvent   (this);
 
         // Flush connection
         m_XcbDesktop.flush ();
@@ -178,7 +225,7 @@ internal class Maia.XcbWindow : WindowProxy
                                                0, Xcb.WindowClass.INPUT_OUTPUT, 
                                                xcb_workspace.xcb_screen.root_visual, 
                                                Xcb.CW.BACK_PIXEL, 
-                                               { xcb_workspace.xcb_screen.black_pixel });
+                                               { xcb_workspace.xcb_screen.white_pixel });
         id = window;
         audit (GLib.Log.METHOD, "xid 0x%lx", window);
 
@@ -195,8 +242,9 @@ internal class Maia.XcbWindow : WindowProxy
         m_EWMHProperties = new XcbWindowEWMHProperties (this);
 
         // Create events
-        m_DamageEvent = new XcbDamageEvent (this);
-        m_DeleteEvent = new XcbDeleteEvent (this);
+        m_DamageEvent   = new XcbDamageEvent   (this);
+        m_GeometryEvent = new XcbGeometryEvent (this);
+        m_DeleteEvent   = new XcbDeleteEvent   (this);
 
         // Set geometry property
         m_GeometryProperty.area = m_Geometry;
@@ -212,6 +260,34 @@ internal class Maia.XcbWindow : WindowProxy
 
         // Flush connection
         m_XcbDesktop.flush ();
+    }
+
+    public void
+    swap_buffer (Region? inArea = null)
+    {
+        if (m_DoubleBuffered)
+        {
+            Token token_front = Token.get_for_object (front_buffer);
+            Token token_back = Token.get_for_object (back_buffer);
+
+            try
+            {
+                audit (GLib.Log.METHOD, "Swap buffer");
+                Maia.GraphicContext ctx = m_FrontBuffer.create_context ();
+                ctx.clip = new Region.raw_rectangle (0, 0,
+                                                     (uint)geometry.clipbox.size.width,
+                                                     (uint)geometry.clipbox.size.height);
+                ctx.pattern.source = m_BackBuffer;
+                ctx.paint.paint (); 
+            }
+            catch (GraphicError err)
+            {
+                error (GLib.Log.METHOD, "Error on swap buffer: %s", err.message);
+            }
+
+            token_front.release ();
+            token_back.release ();
+        }
     }
 
     public override void
@@ -232,7 +308,6 @@ internal class Maia.XcbWindow : WindowProxy
     destroy ()
     {
         ((Xcb.Window)id).destroy(m_XcbDesktop.connection);
-        m_XcbDesktop.flush ();
         id = 0;
     }
 }
