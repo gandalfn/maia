@@ -38,6 +38,7 @@ libmaia_core_la_SOURCES = \
     atomic-iterator.vala \
     atomic-list.vala \
     atomic-queue.vala \
+    spinlock.vala \
     token.vala \
     object.vala \
     transform.vala \

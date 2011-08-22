@@ -6,6 +6,7 @@ INCLUDES = \
     $(MAIA_CFLAGS) \
     -I$(top_srcdir)/build \
     -I$(top_srcdir)/src \
+    -I$(top_srcdir)/vapi \
     $(addprefix -I, $(dir $(MAIA_VAPI_DEPS)))
 
 VALAFLAGS = \

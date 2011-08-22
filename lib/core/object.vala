@@ -230,10 +230,10 @@ public abstract class Maia.Object : GLib.Object
     }
 
     public static bool
-    atomic_compare_and_exchange (void* inObject, GLib.Object? inOldObject,
+    atomic_compare_and_exchange (void** inObject, GLib.Object? inOldObject,
                                  owned GLib.Object? inNewObject)
     {
-        bool ret = GLib.AtomicPointer.compare_and_exchange (inObject, inOldObject, inNewObject);
+        bool ret = Os.Atomic.pointer_compare_and_exchange (inObject, inOldObject, inNewObject);
 
         if (ret)
         {

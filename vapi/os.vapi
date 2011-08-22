@@ -118,4 +118,53 @@ namespace Os
         public int trylock ();
         public int unlock ();
     }
+
+    [CCode (cheader_filename = "os.h")]
+    namespace Memory
+    {
+        [CCode (cname = "os_memory_barrier")]
+        public static void barrier ();
+    }
+
+    [CCode (cheader_filename = "os.h")]
+    namespace Cpu
+    {
+        [CCode (cname = "os_cpu_relax")]
+        public static void relax ();
+    }
+
+    [CCode (cheader_filename = "os.h")]
+    namespace Atomic
+    {
+        [CCode (cname = "os_atomic_fetch_and_add")]
+        public static ushort ushort_fetch_and_add (ref ushort P, ushort val);
+        [CCode (cname = "os_atomic_fetch_and_add")]
+        public static int int_fetch_and_add (ref int P, int val);
+
+        [CCode (cname = "os_atomic_inc")]
+        public static ushort ushort_inc (ref ushort P);
+        [CCode (cname = "os_atomic_inc")]
+        public static int int_inc (ref int P);
+        [CCode (cname = "os_atomic_dec")]
+        public static ushort ushort_dec (ref ushort P);
+        [CCode (cname = "os_atomic_dec")]
+        public static int int_dec (ref int P);
+
+        [CCode (cname = "os_atomic_compare_and_exchange")]
+        public static bool uint_compare_and_exchange (uint* P, uint old, uint val);
+        [CCode (cname = "os_atomic_compare_and_exchange")]
+        public static bool int_compare_and_exchange (int* P, int old, int val);
+        [CCode (cname = "os_atomic_compare_and_exchange")]
+        public static bool pointer_compare_and_exchange (void** P, void* old, void* val);
+
+        [CCode (cname = "os_atomic_compare")]
+        public static bool ushort_compare (ushort a, ushort b);
+        [CCode (cname = "os_atomic_compare")]
+        public static bool int_compare (int a, int b);
+        [CCode (cname = "os_atomic_compare")]
+        public static bool pointer_compare (void* a, void* b);
+
+        [CCode (cname = "os_atomic_exchange_32")]
+        public static uint32 exchange_32 (ref uint32 P, uint32 val);
+    }
 }

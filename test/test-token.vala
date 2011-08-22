@@ -34,9 +34,9 @@ main (string[] inArgs)
             token1.acquire ();
             Os.usleep (rand.int_range (0, 20) * 1000);
 
-            message ("Lock t1: 0x%lx", (ulong)GLib.Thread.self<void*> ());
-            token1.acquire ();
-            Os.usleep (rand.int_range (0, 20) * 1000);
+            //message ("Lock t1: 0x%lx", (ulong)GLib.Thread.self<void*> ());
+            //token1.acquire ();
+            //Os.usleep (rand.int_range (0, 20) * 1000);
 
             message ("Lock t2: 0x%lx", (ulong)GLib.Thread.self<void*> ());
             token2.acquire ();
@@ -46,9 +46,9 @@ main (string[] inArgs)
             token2.release ();
             Os.usleep (rand.int_range (0, 20) * 1000);
 
-            message ("Unlock t1: 0x%lx", (ulong)GLib.Thread.self<void*> ());
-            token1.release ();
-            Os.usleep (rand.int_range (0, 20) * 1000);
+            //message ("Unlock t1: 0x%lx", (ulong)GLib.Thread.self<void*> ());
+            //token1.release ();
+            //Os.usleep (rand.int_range (0, 20) * 1000);
 
             message ("Unlock t1: 0x%lx", (ulong)GLib.Thread.self<void*> ());
             token1.release ();

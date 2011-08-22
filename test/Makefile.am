@@ -19,6 +19,7 @@ test_SOURCES = \
     test-case.vala \
     core/test-core.vala \
     core/test-atom.vala \
+    core/test-spinlock.vala \
     core/test-array.vala \
     core/test-list.vala \
     core/test-set.vala \
