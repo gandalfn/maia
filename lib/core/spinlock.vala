@@ -29,12 +29,13 @@ public struct Maia.SpinLock
     public ushort
     lock ()
     {
-        message("lock: %u, 0x%lx", users, (ulong)GLib.Thread.self<void*> ());
         ushort me = Os.Atomic.ushort_fetch_and_add (ref users, 1);
 
-        message("wait: %u, 0x%lx", me, (ulong)GLib.Thread.self<void*> ());
-        while (ticket != me) Os.Cpu.relax ();
-        message("get: %u, 0x%lx", me, (ulong)GLib.Thread.self<void*> ());
+        while (ticket != me)
+        {
+            Os.Cpu.relax ();
+            Os.Cpu.relax ();
+        }
 
         return me;
     }
@@ -42,9 +43,7 @@ public struct Maia.SpinLock
     public void
     unlock ()
     {
-        message("unlock: %u, 0x%lx", ticket, (ulong)GLib.Thread.self<void*> ());
         Os.Atomic.ushort_inc (ref ticket);
-        message("next: %u, 0x%lx", ticket, (ulong)GLib.Thread.self<void*> ());
     }
 
     public bool

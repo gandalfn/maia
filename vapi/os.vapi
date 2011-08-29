@@ -151,9 +151,17 @@ namespace Os
         public static int int_dec (ref int P);
 
         [CCode (cname = "os_atomic_compare_and_exchange")]
+        public static bool ushort_compare_and_exchange (ushort* P, ushort old, ushort val);
+        [CCode (cname = "os_atomic_compare_and_exchange")]
+        public static bool short_compare_and_exchange (short* P, short old, short val);
+        [CCode (cname = "os_atomic_compare_and_exchange")]
         public static bool uint_compare_and_exchange (uint* P, uint old, uint val);
         [CCode (cname = "os_atomic_compare_and_exchange")]
         public static bool int_compare_and_exchange (int* P, int old, int val);
+        [CCode (cname = "os_atomic_compare_and_exchange")]
+        public static bool ulong_compare_and_exchange (ulong* P, ulong old, ulong val);
+        [CCode (cname = "os_atomic_compare_and_exchange")]
+        public static bool long_compare_and_exchange (long* P, long old, long val);
         [CCode (cname = "os_atomic_compare_and_exchange")]
         public static bool pointer_compare_and_exchange (void** P, void* old, void* val);
 

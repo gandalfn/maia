@@ -20,12 +20,10 @@
 public class Maia.Token : GLib.Object
 {
     // types
-    private struct ThreadTokenNode
+    private class ThreadTokenNode
     {
         public unowned Token?           m_Token;
-        public int                      m_Depth;
-        public unowned ThreadTokenNode? m_Prev;
-        public ThreadTokenNode?         m_Next;
+        public ulong                    m_Ref;
 
         public ThreadTokenNode (Token inToken)
         {
@@ -35,87 +33,59 @@ public class Maia.Token : GLib.Object
 
     private class Thread : GLib.Object
     {
-        public uint32                   m_Id;
-        public ThreadTokenNode?         m_Head = null;
-        public unowned ThreadTokenNode? m_Tail = null;
+        public uint32                 m_Id;
+        public Array<ThreadTokenNode> m_Tokens = null;
 
         public Thread (GLib.Thread<void*> inThreadId)
         {
             m_Id = (uint32)inThreadId;
+            m_Tokens = new Array<ThreadTokenNode> ();
         }
 
         public void
         add_token (Token inToken)
         {
-            if (m_Head == null)
-            {
-                m_Head = ThreadTokenNode (inToken);
-                m_Tail = m_Head;
-            }
-            else
-            {
-                m_Tail.m_Next = ThreadTokenNode (inToken);
-                m_Tail.m_Next.m_Prev = m_Tail;
-                m_Tail = m_Tail.m_Next;
-            }
+            ThreadTokenNode node = new ThreadTokenNode (inToken);
+            m_Tokens.insert (node);
         }
 
         public void
         remove_token (Token inToken)
         {
-            for (unowned ThreadTokenNode? node = m_Head; node != null; node = node.m_Next)
+            foreach (unowned ThreadTokenNode node in m_Tokens)
             {
                 if (node.m_Token.m_Id == inToken.m_Id)
                 {
-                    if (node.m_Prev == null)
-                    {
-                        m_Head = node.m_Next;
-                    }
-                    else
-                    {
-                        node.m_Prev.m_Next = node.m_Next;
-                    }
-
-                    if (node.m_Next == null)
-                    {
-                        m_Tail = node.m_Prev;
-                    }
-
+                    m_Tokens.remove (node);
                     break;
                 }
             }
         }
 
         public void
-        sleep (Token inToken)
+        sleep ()
         {
-            for (unowned ThreadTokenNode? node = m_Head; node != null; node = node.m_Next)
+            foreach (unowned ThreadTokenNode node in m_Tokens)
             {
-                if (node.m_Token.m_Id != inToken.m_Id &&
-                    Os.Atomic.pointer_compare_and_exchange (&node.m_Token.m_Ref, this, null))
+                ulong current_ref = node.m_Token.m_Ref;
+                if ((uint32)(current_ref >> 32) == m_Id)
                 {
-                    do
-                    {
-                        node.m_Depth = node.m_Token.m_Depth;
-                    } while (!Os.Atomic.int_compare_and_exchange (&node.m_Token.m_Depth, node.m_Depth, 0));
-
-                    message ("sleep: 0x%lx", (ulong)GLib.Thread.self<void*> ());
-                    if (node.m_Token.m_SpinLocked != 0)
-                        node.m_Token.m_Spin.unlock ();
+                    node.m_Ref = current_ref;
+                    Os.Atomic.ulong_compare_and_exchange (&node.m_Token.m_Ref, current_ref, 0);
                 }
             }
         }
 
-        public void
+        public bool
         wake_up ()
         {
-            for (unowned ThreadTokenNode? node = m_Head; node != null; node = node.m_Next)
+            foreach (unowned ThreadTokenNode node in m_Tokens)
             {
-                if (Os.Atomic.pointer_compare_and_exchange (&node.m_Token.m_Ref, null, this))
-                {
-                    Os.Atomic.int_fetch_and_add (ref node.m_Token.m_Depth, node.m_Depth);
-                }
+                if (!Os.Atomic.ulong_compare_and_exchange (&node.m_Token.m_Ref, 0, node.m_Ref))
+                    return false;
             }
+
+            return true;
         }
     }
 
@@ -151,13 +121,13 @@ public class Maia.Token : GLib.Object
         }
 
         public inline Token
-        get_token (uint32 inTokenId)
+        get_token (ulong inTokenId)
         {
             Token token = null;
 
             m_TokensSpin.lock ();
             {
-                token = m_Tokens.search<uint32> (inTokenId, (t, i) => {
+                token = m_Tokens.search<ulong> (inTokenId, (t, i) => {
                     return (int)(t.m_Id - i);
                 });
 
@@ -187,16 +157,12 @@ public class Maia.Token : GLib.Object
     private static Pool s_Pool;
 
     // properties
-    private uint32          m_Id;
-    private unowned Thread? m_Ref = null;
-    private int             m_Depth = 0;
-    private SpinLock        m_Spin;
-    private ushort          m_SpinLocked = 0;
- 
+    private ulong     m_Id;
+    private ulong     m_Ref = 0;
 
     // static methods
     public static new Token
-    get (uint32 inTokenId)
+    get (ulong inTokenId)
     {
         Token token = null;
 
@@ -212,7 +178,7 @@ public class Maia.Token : GLib.Object
     public static Token
     get_for_class (void* inClass)
     {
-        uint32 id = (uint32)inClass;
+        ulong id = (ulong)inClass;
 
         Token token = get (id);
         token.acquire ();
@@ -223,14 +189,14 @@ public class Maia.Token : GLib.Object
     public static Token
     get_for_object (Object inObject)
     {
-        uint32 id = (uint32)inObject;
+        ulong id = (ulong)inObject;
 
         if (id != 0)
         {
             unowned Object? delegator = inObject.delegator;
             if (delegator != null)
             {
-                id = (uint32)delegator;
+                id = (ulong)delegator;
             }
         }
 
@@ -241,10 +207,9 @@ public class Maia.Token : GLib.Object
     }
 
     // methods
-    internal Token (uint32 inId)
+    internal Token (ulong inId)
     {
         m_Id = inId;
-        m_Spin = SpinLock ();
     }
 
     ~Token ()
@@ -265,12 +230,12 @@ public class Maia.Token : GLib.Object
 
         while (true)
         {
-            Os.Memory.barrier ();
-            unowned Thread? ref = m_Ref;
+            ulong current_ref = m_Ref;
 
-            if (ref == null)
+            if (current_ref == 0)
             {
-                if (Os.Atomic.pointer_compare_and_exchange (&m_Ref, null, self))
+                ulong new_ref = ((ulong)self.m_Id << 32) + 1;
+                if (Os.Atomic.ulong_compare_and_exchange (&m_Ref, 0, new_ref))
                 {
                     self.add_token (this);
                     break;
@@ -278,16 +243,25 @@ public class Maia.Token : GLib.Object
                 continue;
             }
 
-            if (ref == self)
+            if ((uint32)(current_ref >> 32) == self.m_Id)
             {
-                Os.Atomic.int_inc (ref m_Depth);
-                break;
+                ulong new_ref = current_ref + 1;
+                if (Os.Atomic.ulong_compare_and_exchange (&m_Ref, current_ref, new_ref))
+                {
+                    break;
+                }
+                continue;
             }
 
-            self.sleep (this);
-            message ("acquire: 0x%lx", (ulong)GLib.Thread.self<void*> ());
-            m_SpinLocked = m_Spin.lock ();
-            self.wake_up ();
+            self.sleep ();
+
+            while (!Os.Atomic.ulong_compare_and_exchange(&m_Ref, 0, ((ulong)self.m_Id << 32) + 1))
+            {
+                Os.Cpu.relax ();
+                Os.Cpu.relax ();
+            }
+            if (self.wake_up ())
+                break;
         }
     }
 
@@ -295,29 +269,20 @@ public class Maia.Token : GLib.Object
     release ()
     {
         unowned Thread? self = s_Pool.current_thread ();
+        ulong current_ref = m_Ref;
 
-        if (self == m_Ref && !Os.Atomic.int_compare (m_Depth, 0))
+        if (self.m_Id == (uint32)(current_ref >> 32))
         {
-            int depth = 0;
+            int32 depth = (int32)((current_ref << 32) >> 32) - 1;
 
-            do
+            if (depth <= 0)
             {
-                depth = m_Depth;
-                if (depth == 0) break;
-            } while (!Os.Atomic.int_compare_and_exchange (&m_Depth, depth, depth - 1));
-
-            if (depth == 0)
+                self.remove_token (this);
+                Os.Atomic.ulong_compare_and_exchange (&m_Ref, current_ref, 0);
+            }
+            else
             {
-                if (Os.Atomic.pointer_compare_and_exchange (&m_Ref, self, null))
-                {
-                    self.remove_token (this);
-
-                    message ("release: 0x%lx", (ulong)GLib.Thread.self<void*> ());
-                    if (m_SpinLocked != 0)
-                    {
-                        m_Spin.unlock ();
-                    }
-                }
+                Os.Atomic.ulong_compare_and_exchange (&m_Ref, current_ref, ((ulong)self.m_Id << 32) + (ulong)depth);
             }
         }
     }
