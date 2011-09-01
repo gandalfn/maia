@@ -20,43 +20,49 @@
 public class Maia.Token : GLib.Object
 {
     // types
-    private class ThreadTokenNode
-    {
-        public unowned Token?           m_Token;
-        public ulong                    m_Ref;
-
-        public ThreadTokenNode (Token inToken)
-        {
-            m_Token = inToken;
-        }
-    }
-
     private class Thread : GLib.Object
     {
-        public uint32                 m_Id;
-        public Array<ThreadTokenNode> m_Tokens = null;
+        // types
+        private struct Node
+        {
+            public unowned Token?           m_Token;
+            public ulong                    m_Ref;
+        }
 
+        // properties
+        public uint32 m_Id;
+        private Node  m_Tokens[256];
+        private uint  m_LastToken;
+
+        // methods
         public Thread (GLib.Thread<void*> inThreadId)
         {
             m_Id = (uint32)inThreadId;
-            m_Tokens = new Array<ThreadTokenNode> ();
+            m_LastToken = 0;
         }
 
         public void
         add_token (Token inToken)
+            requires (m_LastToken < m_Tokens.length)
         {
-            ThreadTokenNode node = new ThreadTokenNode (inToken);
-            m_Tokens.insert (node);
+            m_Tokens[m_LastToken].m_Token = inToken;
+            m_Tokens[m_LastToken].m_Ref = 0;
+            m_LastToken++;
         }
 
         public void
         remove_token (Token inToken)
         {
-            foreach (unowned ThreadTokenNode node in m_Tokens)
+            for (uint cpt = 0; cpt < m_LastToken; ++cpt)
             {
-                if (node.m_Token.m_Id == inToken.m_Id)
+                if (m_Tokens[cpt].m_Token.m_Id == inToken.m_Id)
                 {
-                    m_Tokens.remove (node);
+                    --m_LastToken;
+                    if (cpt != m_LastToken)
+                        GLib.Memory.move (&m_Tokens[cpt], &m_Tokens[cpt + 1],
+                                          (m_LastToken - cpt) * sizeof (Node));
+
+                    GLib.Memory.set (&m_Tokens[m_LastToken], 0, sizeof (Node));
                     break;
                 }
             }
@@ -65,13 +71,13 @@ public class Maia.Token : GLib.Object
         public void
         sleep ()
         {
-            foreach (unowned ThreadTokenNode node in m_Tokens)
+            for (uint cpt = 0; cpt < m_LastToken; ++cpt)
             {
-                ulong current_ref = node.m_Token.m_Ref;
+                ulong current_ref = m_Tokens[cpt].m_Token.m_Ref;
                 if ((uint32)(current_ref >> 32) == m_Id)
                 {
-                    node.m_Ref = current_ref;
-                    Os.Atomic.ulong_compare_and_exchange (&node.m_Token.m_Ref, current_ref, 0);
+                    m_Tokens[cpt].m_Ref = current_ref;
+                    Os.Atomic.ulong_compare_and_exchange (&m_Tokens[cpt].m_Token.m_Ref, current_ref, 0);
                 }
             }
         }
@@ -79,9 +85,9 @@ public class Maia.Token : GLib.Object
         public bool
         wake_up ()
         {
-            foreach (unowned ThreadTokenNode node in m_Tokens)
+            for (uint cpt = 0; cpt < m_LastToken; ++cpt)
             {
-                if (!Os.Atomic.ulong_compare_and_exchange (&node.m_Token.m_Ref, 0, node.m_Ref))
+                if (!Os.Atomic.ulong_compare_and_exchange (&m_Tokens[cpt].m_Token.m_Ref, 0, m_Tokens[cpt].m_Ref))
                     return false;
             }
 
@@ -153,14 +159,24 @@ public class Maia.Token : GLib.Object
         }
     }
 
+    // const properties
+    private const int c_MaxTime = 200;
+
     // static properties
     private static Pool s_Pool;
 
     // properties
-    private ulong     m_Id;
-    private ulong     m_Ref = 0;
+    private ulong m_Id;
+    private ulong m_Ref = 0;
 
     // static methods
+    private static inline void
+    wait (int inIteration)
+    {
+        while (--inIteration > 0) Os.Cpu.relax ();
+    }
+
+
     public static new Token
     get (ulong inTokenId)
     {
@@ -237,6 +253,7 @@ public class Maia.Token : GLib.Object
                 ulong new_ref = ((ulong)self.m_Id << 32) + 1;
                 if (Os.Atomic.ulong_compare_and_exchange (&m_Ref, 0, new_ref))
                 {
+                    audit (GLib.Log.METHOD, "get %lu", m_Id);
                     self.add_token (this);
                     break;
                 }
@@ -248,6 +265,7 @@ public class Maia.Token : GLib.Object
                 ulong new_ref = current_ref + 1;
                 if (Os.Atomic.ulong_compare_and_exchange (&m_Ref, current_ref, new_ref))
                 {
+                    audit (GLib.Log.METHOD, "get %lu nb: %lu", m_Id, (new_ref << 32) >> 32);
                     break;
                 }
                 continue;
@@ -255,13 +273,21 @@ public class Maia.Token : GLib.Object
 
             self.sleep ();
 
+            int nTimes = 0;
             while (!Os.Atomic.ulong_compare_and_exchange(&m_Ref, 0, ((ulong)self.m_Id << 32) + 1))
             {
-                Os.Cpu.relax ();
-                Os.Cpu.relax ();
+                nTimes = int.min (nTimes + 1, c_MaxTime);
+
+                wait (nTimes << 1);
             }
-            if (self.wake_up ())
-                break;
+            if (!self.wake_up ())
+            {
+                Os.Atomic.ulong_compare_and_exchange(&m_Ref, ((ulong)self.m_Id << 32) + 1, 0);
+                audit (GLib.Log.METHOD, "wake up fail %lu", m_Id);
+                continue;
+            }
+            audit (GLib.Log.METHOD, "get after wait %lu", m_Id);
+            break;
         }
     }
 
@@ -278,10 +304,12 @@ public class Maia.Token : GLib.Object
             if (depth <= 0)
             {
                 self.remove_token (this);
+                audit (GLib.Log.METHOD, "release %lu", m_Id);
                 Os.Atomic.ulong_compare_and_exchange (&m_Ref, current_ref, 0);
             }
             else
             {
+                audit (GLib.Log.METHOD, "release %lu nb: %i", m_Id, depth);
                 Os.Atomic.ulong_compare_and_exchange (&m_Ref, current_ref, ((ulong)self.m_Id << 32) + (ulong)depth);
             }
         }

@@ -93,7 +93,7 @@ internal class Maia.XcbWindow : WindowProxy
 
     public override unowned GraphicDevice? back_buffer {
         get {
-            if (GLib.AtomicPointer.get (&m_BackBuffer) == null)
+            if (m_BackBuffer == null)
             {
                 Object.atomic_compare_and_exchange (&m_BackBuffer, null, 
                                                     new XcbOffscreenGraphicDevice (this));
@@ -105,7 +105,7 @@ internal class Maia.XcbWindow : WindowProxy
 
     public override unowned GraphicDevice? front_buffer {
         get {
-            if (GLib.AtomicPointer.get (&m_FrontBuffer) == null)
+            if (m_FrontBuffer == null)
             {
                 Object.atomic_compare_and_exchange (&m_FrontBuffer, null, 
                                                     new XcbWindowGraphicDevice (this));
@@ -285,8 +285,8 @@ internal class Maia.XcbWindow : WindowProxy
                 error (GLib.Log.METHOD, "Error on swap buffer: %s", err.message);
             }
 
-            token_front.release ();
             token_back.release ();
+            token_front.release ();
         }
     }
 
