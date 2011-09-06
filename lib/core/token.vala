@@ -25,8 +25,8 @@ public class Maia.Token : GLib.Object
         // types
         private struct Node
         {
-            public unowned Token?           m_Token;
-            public ulong                    m_Ref;
+            public unowned Token? m_Token;
+            public ulong          m_Ref;
         }
 
         // properties
@@ -89,6 +89,7 @@ public class Maia.Token : GLib.Object
             {
                 if (!Os.Atomic.ulong_compare_and_exchange (&m_Tokens[cpt].m_Token.m_Ref, 0, m_Tokens[cpt].m_Ref))
                     return false;
+                m_Tokens[cpt].m_Ref = 0;
             }
 
             return true;
@@ -98,9 +99,9 @@ public class Maia.Token : GLib.Object
     private class Pool : GLib.Object
     {
         // properties
-        private GLib.Private        m_Private;
-        private Set<Token>          m_Tokens;
-        private SpinLock            m_TokensSpin;
+        private GLib.Private m_Private;
+        private Set<Token>   m_Tokens;
+        private SpinLock     m_TokensSpin;
 
         // methods
         public Pool ()
@@ -160,14 +161,15 @@ public class Maia.Token : GLib.Object
     }
 
     // const properties
-    private const int c_MaxTime = 200;
+    private const int c_MaxTime = 20;
 
     // static properties
     private static Pool s_Pool;
 
     // properties
-    private ulong m_Id;
-    private ulong m_Ref = 0;
+    private ulong               m_Id;
+    private ulong               m_Ref = 0;
+    private AtomicQueue<ulong?> m_WaitingRefs;
 
     // static methods
     private static inline void
@@ -226,6 +228,7 @@ public class Maia.Token : GLib.Object
     internal Token (ulong inId)
     {
         m_Id = inId;
+        m_WaitingRefs = new AtomicQueue<ulong?> ();
     }
 
     ~Token ()
@@ -247,25 +250,23 @@ public class Maia.Token : GLib.Object
         while (true)
         {
             ulong current_ref = m_Ref;
+            ulong new_ref = ((ulong)self.m_Id << 32) + 1;
 
-            if (current_ref == 0)
+            if ((uint32)(current_ref >> 32) == self.m_Id)
             {
-                ulong new_ref = ((ulong)self.m_Id << 32) + 1;
-                if (Os.Atomic.ulong_compare_and_exchange (&m_Ref, 0, new_ref))
+                new_ref = current_ref + 1;
+                if (Os.Atomic.ulong_compare_and_exchange (&m_Ref, current_ref, new_ref))
                 {
-                    audit (GLib.Log.METHOD, "get %lu", m_Id);
-                    self.add_token (this);
                     break;
                 }
                 continue;
             }
 
-            if ((uint32)(current_ref >> 32) == self.m_Id)
+            if (current_ref == 0)
             {
-                ulong new_ref = current_ref + 1;
-                if (Os.Atomic.ulong_compare_and_exchange (&m_Ref, current_ref, new_ref))
+                if (Os.Atomic.ulong_compare_and_exchange (&m_Ref, 0, new_ref))
                 {
-                    audit (GLib.Log.METHOD, "get %lu nb: %lu", m_Id, (new_ref << 32) >> 32);
+                    self.add_token (this);
                     break;
                 }
                 continue;
@@ -273,21 +274,22 @@ public class Maia.Token : GLib.Object
 
             self.sleep ();
 
+            m_WaitingRefs.push (new_ref);
             int nTimes = 0;
-            while (!Os.Atomic.ulong_compare_and_exchange(&m_Ref, 0, ((ulong)self.m_Id << 32) + 1))
+            while (!Os.Atomic.ulong_compare(m_Ref, new_ref))
             {
                 nTimes = int.min (nTimes + 1, c_MaxTime);
 
                 wait (nTimes << 1);
             }
-            if (!self.wake_up ())
+
+            if (self.wake_up ())
             {
-                Os.Atomic.ulong_compare_and_exchange(&m_Ref, ((ulong)self.m_Id << 32) + 1, 0);
-                audit (GLib.Log.METHOD, "wake up fail %lu", m_Id);
-                continue;
+                self.add_token (this);
+                break;
             }
-            audit (GLib.Log.METHOD, "get after wait %lu", m_Id);
-            break;
+
+            Os.Atomic.ulong_compare_and_exchange(&m_Ref, ((ulong)self.m_Id << 32) + 1, 0);
         }
     }
 
@@ -304,12 +306,14 @@ public class Maia.Token : GLib.Object
             if (depth <= 0)
             {
                 self.remove_token (this);
-                audit (GLib.Log.METHOD, "release %lu", m_Id);
-                Os.Atomic.ulong_compare_and_exchange (&m_Ref, current_ref, 0);
+                ulong? new_ref = m_WaitingRefs.pop ();
+                if (new_ref != null)
+                    Os.Atomic.ulong_compare_and_exchange (&m_Ref, current_ref, new_ref);
+                else
+                    Os.Atomic.ulong_compare_and_exchange (&m_Ref, current_ref, 0);
             }
             else
             {
-                audit (GLib.Log.METHOD, "release %lu nb: %i", m_Id, depth);
                 Os.Atomic.ulong_compare_and_exchange (&m_Ref, current_ref, ((ulong)self.m_Id << 32) + (ulong)depth);
             }
         }

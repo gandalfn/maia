@@ -12,7 +12,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -33,6 +33,14 @@ thread_1 ()
 
         message ("Lock t2: 0x%lx", (ulong)GLib.Thread.self<void*> ());
         token2.acquire ();
+        Os.usleep (rand.int_range (0, 20) * 1000);
+
+        message ("Lock t1: 0x%lx", (ulong)GLib.Thread.self<void*> ());
+        token1.acquire ();
+        Os.usleep (rand.int_range (0, 20) * 1000);
+
+        message ("Unlock t1: 0x%lx", (ulong)GLib.Thread.self<void*> ());
+        token1.release ();
         Os.usleep (rand.int_range (0, 20) * 1000);
 
         message ("Unlock t2: 0x%lx", (ulong)GLib.Thread.self<void*> ());
@@ -72,7 +80,7 @@ thread_2 ()
         message ("Unlock t2: 0x%lx", (ulong)GLib.Thread.self<void*> ());
         token2.release ();
         Os.usleep (rand.int_range (0, 20) * 1000);
-    } 
+    }
 
     return null;
 }
@@ -81,7 +89,7 @@ static int
 main (string[] inArgs)
 {
     Maia.log_set_level (Maia.Level.AUDIT);
-    unowned GLib.Thread<void*> id[4];
+    unowned GLib.Thread<void*> id[8];
 
     for (int cpt = 0; cpt < id.length; cpt += 2)
     {

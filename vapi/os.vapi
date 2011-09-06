@@ -137,9 +137,17 @@ namespace Os
     namespace Atomic
     {
         [CCode (cname = "os_atomic_fetch_and_add")]
+        public static short short_fetch_and_add (ref short P, short val);
+        [CCode (cname = "os_atomic_fetch_and_add")]
         public static ushort ushort_fetch_and_add (ref ushort P, ushort val);
         [CCode (cname = "os_atomic_fetch_and_add")]
         public static int int_fetch_and_add (ref int P, int val);
+        [CCode (cname = "os_atomic_fetch_and_add")]
+        public static uint uint_fetch_and_add (ref uint P, uint val);
+        [CCode (cname = "os_atomic_fetch_and_add")]
+        public static long long_fetch_and_add (ref long P, long val);
+        [CCode (cname = "os_atomic_fetch_and_add")]
+        public static ulong ulong_fetch_and_add (ref ulong P, ulong val);
 
         [CCode (cname = "os_atomic_inc")]
         public static ushort ushort_inc (ref ushort P);
@@ -166,9 +174,17 @@ namespace Os
         public static bool pointer_compare_and_exchange (void** P, void* old, void* val);
 
         [CCode (cname = "os_atomic_compare")]
+        public static bool short_compare (short a, short b);
+        [CCode (cname = "os_atomic_compare")]
         public static bool ushort_compare (ushort a, ushort b);
         [CCode (cname = "os_atomic_compare")]
         public static bool int_compare (int a, int b);
+        [CCode (cname = "os_atomic_compare")]
+        public static bool uint_compare (uint a, uint b);
+        [CCode (cname = "os_atomic_compare")]
+        public static bool long_compare (long a, long b);
+        [CCode (cname = "os_atomic_compare")]
+        public static bool ulong_compare (ulong a, ulong b);
         [CCode (cname = "os_atomic_compare")]
         public static bool pointer_compare (void* a, void* b);
 

@@ -12,7 +12,8 @@ noinst_PROGRAMS = \
     test \
     test-window \
     test-token \
-    test-atomic-list
+    test-atomic-list \
+    test-atomic-queue
     
 test_SOURCES = \
     test.vala \
@@ -62,6 +63,13 @@ test_atomic_list_SOURCES = \
     test-atomic-list.vala
 
 test_atomic_list_LDADD = \
+    $(MAIA_LIBS) \
+    ${top_builddir}/lib/core/libmaia-core.la
+
+test_atomic_queue_SOURCES = \
+    test-atomic-queue.vala
+
+test_atomic_queue_LDADD = \
     $(MAIA_LIBS) \
     ${top_builddir}/lib/core/libmaia-core.la
 
