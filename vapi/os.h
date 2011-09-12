@@ -20,18 +20,26 @@
 #ifndef __OS_H__
 #define __OS_H__
 
-#define os_atomic_fetch_and_add(P, V)           __sync_fetch_and_add((P), (V))
-#define os_atomic_compare_and_exchange(P, O, N) __sync_bool_compare_and_swap((P), (O), (N))
-#define os_atomic_inc(P)                        __sync_add_and_fetch((P), 1)
-#define os_atomic_dec(P)                        __sync_add_and_fetch((P), -1) 
-#define os_atomic_add(P, V)                     __sync_add_and_fetch((P), (V))
-#define os_atomic_set_bit(P, V)                 __sync_or_and_fetch((P), 1<<(V))
-#define os_atomic_clear_bit(P, V)               __sync_and_and_fetch((P), ~(1<<(V)))
-#define os_atomic_compare(A, B)                 (os_memory_barrier (), (A) == (B))
+#define os_cpu_relax()                          __asm__ __volatile__("mfence; pause\n" : : : "memory");
 
-#define os_memory_barrier()                     __sync_synchronize ()
+#define os_memory_barrier()                     __sync_synchronize()
 
-#define os_cpu_relax()                          asm volatile("pause\n": : :"memory")
+#define os_atomic_get(P)                        ({ os_memory_barrier(); *(P); })
+#define os_atomic_set(P, V)                     ({ *(P) = V; os_memory_barrier(); })
+#define os_atomic_fetch_and_add(P, V)           ({ __sync_fetch_and_add((P), (V)); })
+#define os_atomic_compare_and_exchange(P, O, N) ({ __sync_bool_compare_and_swap((P), (O), (N)); })
+#define os_atomic_inc(P)                        ({ __sync_add_and_fetch((P), 1); })
+#define os_atomic_dec(P)                        ({ __sync_add_and_fetch((P), -1); }) 
+#define os_atomic_add(P, V)                     ({ __sync_add_and_fetch((P), (V)); })
+#define os_atomic_compare(P, V)                 ({ os_atomic_get(P) == (V); })
+#define os_atomic_cast_ushort(P)                (volatile gushort*)P
+#define os_atomic_cast_short(P)                 (volatile gshort*)P
+#define os_atomic_cast_uint(P)                  (volatile guint*)P
+#define os_atomic_cast_int(P)                   (volatile gint*)P
+#define os_atomic_cast_ulong(P)                 (volatile gulong*)P
+#define os_atomic_cast_long(P)                  (volatile glong*)P
+#define os_atomic_cast_pointer(P)               (volatile gpointer*)P
+
 
 static inline void*
 os_atomic_exchange_64(void *ptr, void *x)

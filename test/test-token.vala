@@ -22,34 +22,43 @@ thread_1 ()
 {
     Maia.Token token1 = Maia.Token.get (1);
     Maia.Token token2 = Maia.Token.get (2);
+    Maia.Token token3 = Maia.Token.get (3);
 
     GLib.Rand rand = new GLib.Rand ();
 
     for (int cpt = 0; cpt < 10; ++ cpt)
     {
-        message ("Lock t1: 0x%lx", (ulong)GLib.Thread.self<void*> ());
+        message ("Lock t1: 0x%x", Os.gettid());
         token1.acquire ();
-        Os.usleep (rand.int_range (0, 20) * 1000);
+        Os.usleep (rand.int_range (0, 200) * 1000);
 
-        message ("Lock t2: 0x%lx", (ulong)GLib.Thread.self<void*> ());
+        message ("Lock t2: 0x%x", Os.gettid());
         token2.acquire ();
-        Os.usleep (rand.int_range (0, 20) * 1000);
+        Os.usleep (rand.int_range (0, 200) * 1000);
 
-        message ("Lock t1: 0x%lx", (ulong)GLib.Thread.self<void*> ());
+        message ("Lock t1: 0x%x", Os.gettid());
         token1.acquire ();
-        Os.usleep (rand.int_range (0, 20) * 1000);
+        Os.usleep (rand.int_range (0, 200) * 1000);
 
-        message ("Unlock t1: 0x%lx", (ulong)GLib.Thread.self<void*> ());
+        message ("Lock t3: 0x%x", Os.gettid());
+        token3.acquire ();
+        Os.usleep (rand.int_range (0, 200) * 1000);
+
+        message ("Unlock t3: 0x%x", Os.gettid());
+        token3.release ();
+        Os.usleep (rand.int_range (0, 200) * 1000);
+
+        message ("Unlock t1: 0x%x", Os.gettid());
         token1.release ();
-        Os.usleep (rand.int_range (0, 20) * 1000);
+        Os.usleep (rand.int_range (0, 200) * 1000);
 
-        message ("Unlock t2: 0x%lx", (ulong)GLib.Thread.self<void*> ());
+        message ("Unlock t2: 0x%x", Os.gettid());
         token2.release ();
-        Os.usleep (rand.int_range (0, 20) * 1000);
+        Os.usleep (rand.int_range (0, 200) * 1000);
 
-        message ("Unlock t1: 0x%lx", (ulong)GLib.Thread.self<void*> ());
+        message ("Unlock t1: 0x%x", Os.gettid());
         token1.release ();
-        Os.usleep (rand.int_range (0, 20) * 1000);
+        Os.usleep (rand.int_range (0, 200) * 1000);
     }
 
     return null;
@@ -60,26 +69,35 @@ thread_2 ()
 {
     Maia.Token token1 = Maia.Token.get (1);
     Maia.Token token2 = Maia.Token.get (2);
+    Maia.Token token3 = Maia.Token.get (3);
 
     GLib.Rand rand = new GLib.Rand ();
 
     for (int cpt = 0; cpt < 10; ++ cpt)
     {
-        message ("Lock t2: 0x%lx", (ulong)GLib.Thread.self<void*> ());
+        message ("Lock t2: 0x%x", Os.gettid());
         token2.acquire ();
-        Os.usleep (rand.int_range (0, 20) * 1000);
+        Os.usleep (rand.int_range (0, 200) * 1000);
 
-        message ("Lock t1: 0x%lx", (ulong)GLib.Thread.self<void*> ());
+        message ("Lock t1: 0x%x", Os.gettid());
         token1.acquire ();
-        Os.usleep (rand.int_range (0, 20) * 1000);
+        Os.usleep (rand.int_range (0, 200) * 1000);
 
-        message ("Unlock t1: 0x%lx", (ulong)GLib.Thread.self<void*> ());
+        message ("Lock t3: 0x%x", Os.gettid());
+        token3.acquire ();
+        Os.usleep (rand.int_range (0, 200) * 1000);
+
+        message ("Unlock t3: 0x%x", Os.gettid());
+        token3.release ();
+        Os.usleep (rand.int_range (0, 200) * 1000);
+
+        message ("Unlock t1: 0x%x", Os.gettid());
         token1.release ();
-        Os.usleep (rand.int_range (0, 20) * 1000);
+        Os.usleep (rand.int_range (0, 200) * 1000);
 
-        message ("Unlock t2: 0x%lx", (ulong)GLib.Thread.self<void*> ());
+        message ("Unlock t2: 0x%x", Os.gettid());
         token2.release ();
-        Os.usleep (rand.int_range (0, 20) * 1000);
+        Os.usleep (rand.int_range (0, 200) * 1000);
     }
 
     return null;
@@ -90,6 +108,11 @@ main (string[] inArgs)
 {
     Maia.log_set_level (Maia.Level.AUDIT);
     unowned GLib.Thread<void*> id[8];
+    Os.Atomic.ULong test = Os.Atomic.ULong ();
+
+    test.set (1);
+    test.fetch_and_add (1);
+    message ("%lu",sizeof (GLib.Pid)); 
 
     for (int cpt = 0; cpt < id.length; cpt += 2)
     {

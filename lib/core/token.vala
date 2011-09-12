@@ -35,9 +35,9 @@ public class Maia.Token : GLib.Object
         private uint  m_LastToken;
 
         // methods
-        public Thread (GLib.Thread<void*> inThreadId)
+        public Thread ()
         {
-            m_Id = (uint32)inThreadId;
+            m_Id = Os.gettid ();
             m_LastToken = 0;
         }
 
@@ -73,11 +73,11 @@ public class Maia.Token : GLib.Object
         {
             for (uint cpt = 0; cpt < m_LastToken; ++cpt)
             {
-                ulong current_ref = m_Tokens[cpt].m_Token.m_Ref;
+                ulong current_ref = m_Tokens[cpt].m_Token.m_Ref.get ();
                 if ((uint32)(current_ref >> 32) == m_Id)
                 {
                     m_Tokens[cpt].m_Ref = current_ref;
-                    Os.Atomic.ulong_compare_and_exchange (&m_Tokens[cpt].m_Token.m_Ref, current_ref, 0);
+                    m_Tokens[cpt].m_Token.m_Ref.compare_and_exchange (current_ref, 0);
                 }
             }
         }
@@ -87,7 +87,7 @@ public class Maia.Token : GLib.Object
         {
             for (uint cpt = 0; cpt < m_LastToken; ++cpt)
             {
-                if (!Os.Atomic.ulong_compare_and_exchange (&m_Tokens[cpt].m_Token.m_Ref, 0, m_Tokens[cpt].m_Ref))
+                if (!m_Tokens[cpt].m_Token.m_Ref.compare_and_exchange (0, m_Tokens[cpt].m_Ref))
                     return false;
                 m_Tokens[cpt].m_Ref = 0;
             }
@@ -115,12 +115,11 @@ public class Maia.Token : GLib.Object
         public inline unowned Thread?
         current_thread ()
         {
-            unowned GLib.Thread<void*> self = GLib.Thread.self<void*> ();
             unowned Thread? thread = (Thread?)m_Private.get ();
 
             if (thread == null)
             {
-                Thread new_thread = new Thread (self);
+                Thread new_thread = new Thread ();
                 m_Private.set (new_thread.ref ());
                 thread = new_thread;
             }
@@ -161,14 +160,14 @@ public class Maia.Token : GLib.Object
     }
 
     // const properties
-    private const int c_MaxTime = 20;
+    private const int c_MaxTime = 200;
 
     // static properties
     private static Pool s_Pool;
 
     // properties
     private ulong               m_Id;
-    private ulong               m_Ref = 0;
+    private Os.Atomic.ULong     m_Ref;
     private AtomicQueue<ulong?> m_WaitingRefs;
 
     // static methods
@@ -184,7 +183,7 @@ public class Maia.Token : GLib.Object
     {
         Token token = null;
 
-        if (Os.Atomic.pointer_compare (s_Pool, null))
+        if (Os.Atomic.Pointer.cast (&s_Pool).compare (null))
         {
             Object.atomic_compare_and_exchange (&s_Pool, null, new Pool ());
         }
@@ -249,13 +248,13 @@ public class Maia.Token : GLib.Object
 
         while (true)
         {
-            ulong current_ref = m_Ref;
+            ulong current_ref = m_Ref.get ();
             ulong new_ref = ((ulong)self.m_Id << 32) + 1;
 
             if ((uint32)(current_ref >> 32) == self.m_Id)
             {
                 new_ref = current_ref + 1;
-                if (Os.Atomic.ulong_compare_and_exchange (&m_Ref, current_ref, new_ref))
+                if (m_Ref.compare_and_exchange (current_ref, new_ref))
                 {
                     break;
                 }
@@ -264,7 +263,7 @@ public class Maia.Token : GLib.Object
 
             if (current_ref == 0)
             {
-                if (Os.Atomic.ulong_compare_and_exchange (&m_Ref, 0, new_ref))
+                if (m_Ref.compare_and_exchange (0, new_ref))
                 {
                     self.add_token (this);
                     break;
@@ -276,7 +275,7 @@ public class Maia.Token : GLib.Object
 
             m_WaitingRefs.push (new_ref);
             int nTimes = 0;
-            while (!Os.Atomic.ulong_compare(m_Ref, new_ref))
+            while (!m_Ref.compare(new_ref))
             {
                 nTimes = int.min (nTimes + 1, c_MaxTime);
 
@@ -289,7 +288,7 @@ public class Maia.Token : GLib.Object
                 break;
             }
 
-            Os.Atomic.ulong_compare_and_exchange(&m_Ref, ((ulong)self.m_Id << 32) + 1, 0);
+            m_Ref.compare_and_exchange (new_ref, 0);
         }
     }
 
@@ -297,7 +296,7 @@ public class Maia.Token : GLib.Object
     release ()
     {
         unowned Thread? self = s_Pool.current_thread ();
-        ulong current_ref = m_Ref;
+        ulong current_ref = m_Ref.get ();
 
         if (self.m_Id == (uint32)(current_ref >> 32))
         {
@@ -308,13 +307,13 @@ public class Maia.Token : GLib.Object
                 self.remove_token (this);
                 ulong? new_ref = m_WaitingRefs.pop ();
                 if (new_ref != null)
-                    Os.Atomic.ulong_compare_and_exchange (&m_Ref, current_ref, new_ref);
+                    m_Ref.compare_and_exchange (current_ref, new_ref);
                 else
-                    Os.Atomic.ulong_compare_and_exchange (&m_Ref, current_ref, 0);
+                    m_Ref.compare_and_exchange (current_ref, 0);
             }
             else
             {
-                Os.Atomic.ulong_compare_and_exchange (&m_Ref, current_ref, ((ulong)self.m_Id << 32) + (ulong)depth);
+                m_Ref.compare_and_exchange (current_ref, ((ulong)self.m_Id << 32) + (ulong)depth);
             }
         }
     }

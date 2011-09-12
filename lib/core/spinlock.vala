@@ -19,19 +19,21 @@
  
 public struct Maia.SpinLock
 {
-    internal ushort ticket;
-    internal ushort users;
+    internal Os.Atomic.UShort ticket;
+    internal Os.Atomic.UShort users;
 
     public SpinLock ()
     {
+        ticket = Os.Atomic.UShort ();
+        users = Os.Atomic.UShort ();
     }
 
     public ushort
     lock ()
     {
-        ushort me = Os.Atomic.ushort_fetch_and_add (ref users, 1);
+        ushort me = users.fetch_and_add (1);
 
-        while (ticket != me)
+        while (!ticket.compare (me))
         {
             Os.Cpu.relax ();
             Os.Cpu.relax ();
@@ -43,25 +45,23 @@ public struct Maia.SpinLock
     public void
     unlock ()
     {
-        Os.Atomic.ushort_inc (ref ticket);
+        ticket.inc ();
     }
 
     public bool
     try_lock ()
     {
-        ushort me = users;
+        ushort me = users.get ();
         ushort menew = me + 1;
         uint cmp = ((uint) me << 16) + me;
         uint cmpnew = ((uint) menew << 16) + me;
-        SpinLock* ptr = &this;
-        uint* u = (uint*)ptr;
 
-        return Os.Atomic.uint_compare_and_exchange (u, cmp, cmpnew);
+        return Os.Atomic.UInt.cast (&this).compare_and_exchange (cmp, cmpnew);
     }
 
     public bool
     is_lockable ()
     {
-        return Os.Atomic.ushort_compare (users, ticket);
+        return users.compare (ticket.get ());
     }
 }

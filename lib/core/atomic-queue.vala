@@ -22,8 +22,8 @@ public class Maia.AtomicQueue<V>
     // types
     private struct Node<V>
     {
-        public Node<V>* m_pNext;
-        public V        m_Data;
+        public Os.Atomic.Pointer m_Next;
+        public V                 m_Data;
     }
 
     private struct FreeList<V>
@@ -32,7 +32,7 @@ public class Maia.AtomicQueue<V>
 
         public FreeList ()
         {
-            m_pHead = GLib.malloc0 (sizeof (Node<V>));
+            m_pHead = GLib.Slice.alloc0 (sizeof (Node<V>));
         }
 
         public void
@@ -41,8 +41,8 @@ public class Maia.AtomicQueue<V>
             inpNode->m_Data = null;
             do
             {
-                inpNode->m_pNext = m_pHead->m_pNext;
-            } while (!Os.Atomic.pointer_compare_and_exchange(&m_pHead->m_pNext, inpNode->m_pNext, inpNode));
+                inpNode->m_Next.set (m_pHead->m_Next.get ());
+            } while (!m_pHead->m_Next.compare_and_exchange(inpNode->m_Next.get (), inpNode));
         }
 
         public Node<V>*
@@ -52,22 +52,22 @@ public class Maia.AtomicQueue<V>
 
             do
             {
-                pNode = m_pHead->m_pNext;
+                pNode = m_pHead->m_Next.get ();
                 if (pNode == null)
-                    return GLib.malloc0 (sizeof (Node<V>));
-            } while (!Os.Atomic.pointer_compare_and_exchange(&m_pHead->m_pNext, pNode, pNode->m_pNext));
+                    return GLib.Slice.alloc0 (sizeof (Node<V>));
+            } while (!m_pHead->m_Next.compare_and_exchange(pNode, pNode->m_Next.get ()));
 
-            pNode->m_pNext = null;
+            pNode->m_Next.set (null);
 
             return pNode;
         }
     }
 
     // properties
-    private FreeList<V> m_Stack = FreeList<V> ();
-    private Node<V>*    m_pHead = null;
-    private Node<V>*    m_pTail = null;
-    private int         m_Length = 0;
+    private FreeList<V>   m_Stack = FreeList<V> ();
+    private Node<V>*      m_pHead = null;
+    private Node<V>*      m_pTail = null;
+    private Os.Atomic.Int m_Length;
 
     // methods
     public AtomicQueue ()
@@ -81,20 +81,20 @@ public class Maia.AtomicQueue<V>
 
         do
         {
-            length = m_Length;
-        } while (!Os.Atomic.int_compare_and_exchange (&m_Length, length, -1));
+            length = m_Length.get ();
+        } while (!m_Length.compare_and_exchange (length, -1));
 
         Node<V>* pLink;
 
         do
         {
             pLink = m_Stack.m_pHead;
-        } while (!Os.Atomic.pointer_compare_and_exchange (&m_Stack.m_pHead, pLink, null));
+        } while (!Os.Atomic.Pointer.cast (&m_Stack.m_pHead).compare_and_exchange (pLink, null));
 
         while (pLink != null)
         {
-            Node<V>* pNext = pLink->m_pNext;
-            if (pLink != null) delete pLink;
+            Node<V>* pNext = pLink->m_Next.get ();
+            GLib.Slice.free (sizeof (Node<V>), pLink);
             pLink = pNext;
         }
     }
@@ -105,26 +105,26 @@ public class Maia.AtomicQueue<V>
         Node<V>* pNode = m_Stack.get_node ();
         pNode.m_Data = inData;
 
-        while (!Os.Atomic.int_compare (m_Length, -1))
+        while (!m_Length.compare (-1))
         {
             Node<V>* pLast = m_pTail;
-            Node<V>* pNext = pLast->m_pNext;
+            Node<V>* pNext = pLast->m_Next.get ();
 
             if (m_pTail == pLast)
             {
                 if (pNext == null)
                 {
-                    if (Os.Atomic.pointer_compare_and_exchange (&m_pTail->m_pNext, pNext, pNode))
+                    if (m_pTail->m_Next.compare_and_exchange (pNext, pNode))
                     {
-                        Os.Atomic.pointer_compare_and_exchange (&m_pTail, pLast, pNode);
-                        Os.Atomic.int_inc (ref m_Length);
+                        Os.Atomic.Pointer.cast(&m_pTail).compare_and_exchange (pLast, pNode);
+                        m_Length.inc ();
                         break;
                     }
                 }
             }
             else
             {
-                Os.Atomic.pointer_compare_and_exchange (&m_pTail->m_pNext, pLast, pNext);
+                m_pTail->m_Next.compare_and_exchange (pLast, pNext);
             }
         }
     }
@@ -138,7 +138,7 @@ public class Maia.AtomicQueue<V>
         {
             Node<V>* pFirst = m_pHead;
             Node<V>* pLast = m_pTail;
-            Node<V>* pNext = pFirst->m_pNext;
+            Node<V>* pNext = pFirst->m_Next.get ();
 
             if (pFirst == m_pHead)
             {
@@ -146,14 +146,14 @@ public class Maia.AtomicQueue<V>
                 {
                     if (pNext == null)
                         break;
-                    Os.Atomic.pointer_compare_and_exchange (&m_pTail, pLast, pNext);
+                    Os.Atomic.Pointer.cast(&m_pTail).compare_and_exchange (pLast, pNext);
                 }
                 else
                 {
-                    if (Os.Atomic.pointer_compare_and_exchange(&m_pHead, pFirst, pNext))
+                    if (Os.Atomic.Pointer.cast(&m_pHead).compare_and_exchange(pFirst, pNext))
                     {
-                        Os.Atomic.int_dec (ref m_Length);
-                        data = (owned)pNext->m_Data;
+                        m_Length.dec ();
+                        data = pNext->m_Data;
                         m_Stack.free_node (pFirst);
                         break;
                     }

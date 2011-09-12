@@ -90,6 +90,20 @@ namespace Os
     public const int EPOLLERR;
     public const int EPOLLHUP;
 
+    // emulate gettid(2) for which no glib wrapper exists via syscall
+    public GLib.Pid gettid() {
+        return (GLib.Pid) syscall( SysCall.gettid );
+    }
+
+    // syscall(2)
+    [CCode (cprefix = "SYS_", has_type_id = false, cname = "int")]
+    public enum SysCall {
+        gettid
+    }
+
+    [CCode (cname = "syscall", cheader_filename = "unistd.h,sys/syscall.h")]
+    public int syscall (int number, ...);
+
     public delegate void* ThreadFunc ();
 
     [SimpleType]
@@ -136,59 +150,151 @@ namespace Os
     [CCode (cheader_filename = "os.h")]
     namespace Atomic
     {
-        [CCode (cname = "os_atomic_fetch_and_add")]
-        public static short short_fetch_and_add (ref short P, short val);
-        [CCode (cname = "os_atomic_fetch_and_add")]
-        public static ushort ushort_fetch_and_add (ref ushort P, ushort val);
-        [CCode (cname = "os_atomic_fetch_and_add")]
-        public static int int_fetch_and_add (ref int P, int val);
-        [CCode (cname = "os_atomic_fetch_and_add")]
-        public static uint uint_fetch_and_add (ref uint P, uint val);
-        [CCode (cname = "os_atomic_fetch_and_add")]
-        public static long long_fetch_and_add (ref long P, long val);
-        [CCode (cname = "os_atomic_fetch_and_add")]
-        public static ulong ulong_fetch_and_add (ref ulong P, ulong val);
+        [CCode (cname = "volatile gushort")]
+        public struct UShort
+        {
+            [CCode (cname = "os_atomic_get")]
+            public ushort get ();
+            [CCode (cname = "os_atomic_set")]
+            public void set (ushort inVal);
+            [CCode (cname = "os_atomic_fetch_and_add")]
+            public ushort fetch_and_add (ushort val);
+            [CCode (cname = "os_atomic_inc")]
+            public ushort inc ();
+            [CCode (cname = "os_atomic_dec")]
+            public ushort dec ();
+            [CCode (cname = "os_atomic_compare")]
+            public bool compare (ushort inVal);
+            [CCode (cname = "os_atomic_compare_and_exchange")]
+            public bool compare_and_exchange (ushort inOld, ushort inVal);
+            [CCode (cname = "os_atomic_cast_ushort")]
+            public static unowned UShort? cast (void* inpVal);
+        }
 
-        [CCode (cname = "os_atomic_inc")]
-        public static ushort ushort_inc (ref ushort P);
-        [CCode (cname = "os_atomic_inc")]
-        public static int int_inc (ref int P);
-        [CCode (cname = "os_atomic_dec")]
-        public static ushort ushort_dec (ref ushort P);
-        [CCode (cname = "os_atomic_dec")]
-        public static int int_dec (ref int P);
+        [CCode (cname = "volatile gshort")]
+        public struct Short
+        {
+            [CCode (cname = "os_atomic_get")]
+            public short get ();
+            [CCode (cname = "os_atomic_set")]
+            public void set (short inVal);
+            [CCode (cname = "os_atomic_fetch_and_add")]
+            public short fetch_and_add (short val);
+            [CCode (cname = "os_atomic_inc")]
+            public short inc ();
+            [CCode (cname = "os_atomic_dec")]
+            public short dec ();
+            [CCode (cname = "os_atomic_compare")]
+            public bool compare (short inVal);
+            [CCode (cname = "os_atomic_compare_and_exchange")]
+            public bool compare_and_exchange (short inOld, short inVal);
+            [CCode (cname = "os_atomic_cast_short")]
+            public static unowned Short? cast (void* inpVal);
+        }
 
-        [CCode (cname = "os_atomic_compare_and_exchange")]
-        public static bool ushort_compare_and_exchange (ushort* P, ushort old, ushort val);
-        [CCode (cname = "os_atomic_compare_and_exchange")]
-        public static bool short_compare_and_exchange (short* P, short old, short val);
-        [CCode (cname = "os_atomic_compare_and_exchange")]
-        public static bool uint_compare_and_exchange (uint* P, uint old, uint val);
-        [CCode (cname = "os_atomic_compare_and_exchange")]
-        public static bool int_compare_and_exchange (int* P, int old, int val);
-        [CCode (cname = "os_atomic_compare_and_exchange")]
-        public static bool ulong_compare_and_exchange (ulong* P, ulong old, ulong val);
-        [CCode (cname = "os_atomic_compare_and_exchange")]
-        public static bool long_compare_and_exchange (long* P, long old, long val);
-        [CCode (cname = "os_atomic_compare_and_exchange")]
-        public static bool pointer_compare_and_exchange (void** P, void* old, void* val);
+        [CCode (cname = "volatile guint")]
+        public struct UInt
+        {
+            [CCode (cname = "os_atomic_get")]
+            public uint get ();
+            [CCode (cname = "os_atomic_set")]
+            public void set (uint inVal);
+            [CCode (cname = "os_atomic_fetch_and_add")]
+            public uint fetch_and_add (uint val);
+            [CCode (cname = "os_atomic_inc")]
+            public uint inc ();
+            [CCode (cname = "os_atomic_dec")]
+            public uint dec ();
+            [CCode (cname = "os_atomic_compare")]
+            public bool compare (uint inVal);
+            [CCode (cname = "os_atomic_compare_and_exchange")]
+            public bool compare_and_exchange (uint inOld, uint inVal);
+            [CCode (cname = "os_atomic_cast_uint")]
+            public static unowned UInt? cast (void* inpVal);
+        }
 
-        [CCode (cname = "os_atomic_compare")]
-        public static bool short_compare (short a, short b);
-        [CCode (cname = "os_atomic_compare")]
-        public static bool ushort_compare (ushort a, ushort b);
-        [CCode (cname = "os_atomic_compare")]
-        public static bool int_compare (int a, int b);
-        [CCode (cname = "os_atomic_compare")]
-        public static bool uint_compare (uint a, uint b);
-        [CCode (cname = "os_atomic_compare")]
-        public static bool long_compare (long a, long b);
-        [CCode (cname = "os_atomic_compare")]
-        public static bool ulong_compare (ulong a, ulong b);
-        [CCode (cname = "os_atomic_compare")]
-        public static bool pointer_compare (void* a, void* b);
+        [CCode (cname = "volatile gint")]
+        public struct Int
+        {
+            [CCode (cname = "os_atomic_get")]
+            public int get ();
+            [CCode (cname = "os_atomic_set")]
+            public void set (int inVal);
+            [CCode (cname = "os_atomic_fetch_and_add")]
+            public int fetch_and_add (int val);
+            [CCode (cname = "os_atomic_inc")]
+            public int inc ();
+            [CCode (cname = "os_atomic_dec")]
+            public int dec ();
+            [CCode (cname = "os_atomic_compare")]
+            public bool compare (int inVal);
+            [CCode (cname = "os_atomic_compare_and_exchange")]
+            public bool compare_and_exchange (int inOld, int inVal);
+            [CCode (cname = "os_atomic_cast_int")]
+            public static unowned Int? cast (void* inpVal);
+        }
 
-        [CCode (cname = "os_atomic_exchange_32")]
-        public static uint32 exchange_32 (ref uint32 P, uint32 val);
+        [CCode (cname = "volatile gulong")]
+        public struct ULong
+        {
+            [CCode (cname = "os_atomic_get")]
+            public ulong get ();
+            [CCode (cname = "os_atomic_set")]
+            public void set (ulong inVal);
+            [CCode (cname = "os_atomic_fetch_and_add")]
+            public ulong fetch_and_add (ulong val);
+            [CCode (cname = "os_atomic_inc")]
+            public ulong inc ();
+            [CCode (cname = "os_atomic_dec")]
+            public ulong dec ();
+            [CCode (cname = "os_atomic_compare")]
+            public bool compare (ulong inVal);
+            [CCode (cname = "os_atomic_compare_and_exchange")]
+            public bool compare_and_exchange (ulong inOld, ulong inVal);
+            [CCode (cname = "os_atomic_cast_ulong")]
+            public static unowned ULong? cast (void* inpVal);
+        }
+
+        [CCode (cname = "volatile glong")]
+        public struct Long
+        {
+            [CCode (cname = "os_atomic_get")]
+            public long get ();
+            [CCode (cname = "os_atomic_set")]
+            public void set (long inVal);
+            [CCode (cname = "os_atomic_fetch_and_add")]
+            public long fetch_and_add (long val);
+            [CCode (cname = "os_atomic_inc")]
+            public long inc ();
+            [CCode (cname = "os_atomic_dec")]
+            public long dec ();
+            [CCode (cname = "os_atomic_compare")]
+            public bool compare (long inVal);
+            [CCode (cname = "os_atomic_compare_and_exchange")]
+            public bool compare_and_exchange (long inOld, long inVal);
+            [CCode (cname = "os_atomic_cast_long")]
+            public static unowned Long? cast (void* inpVal);
+        }
+
+        [CCode (cname = "volatile gpointer")]
+        public struct Pointer
+        {
+            [CCode (cname = "os_atomic_get")]
+            public void* get ();
+            [CCode (cname = "os_atomic_set")]
+            public void set (void* inVal);
+            [CCode (cname = "os_atomic_fetch_and_add")]
+            public void* fetch_and_add (void* val);
+            [CCode (cname = "os_atomic_inc")]
+            public void* inc ();
+            [CCode (cname = "os_atomic_dec")]
+            public void* dec ();
+            [CCode (cname = "os_atomic_compare")]
+            public bool compare (void* inVal);
+            [CCode (cname = "os_atomic_compare_and_exchange")]
+            public bool compare_and_exchange (void* inOld, void* inVal);
+            [CCode (cname = "os_atomic_cast_pointer")]
+            public static unowned Pointer? cast (void* inpVal);
+        }
     }
 }
