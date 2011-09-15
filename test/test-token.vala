@@ -30,35 +30,35 @@ thread_1 ()
     {
         message ("Lock t1: 0x%x", Os.gettid());
         token1.acquire ();
-        Os.usleep (rand.int_range (0, 200) * 1000);
+        Os.usleep (rand.int_range (0, 20) * 1000);
 
         message ("Lock t2: 0x%x", Os.gettid());
         token2.acquire ();
-        Os.usleep (rand.int_range (0, 200) * 1000);
+        Os.usleep (rand.int_range (0, 20) * 1000);
 
         message ("Lock t1: 0x%x", Os.gettid());
         token1.acquire ();
-        Os.usleep (rand.int_range (0, 200) * 1000);
+        Os.usleep (rand.int_range (0, 20) * 1000);
 
         message ("Lock t3: 0x%x", Os.gettid());
         token3.acquire ();
-        Os.usleep (rand.int_range (0, 200) * 1000);
+        Os.usleep (rand.int_range (0, 20) * 1000);
 
         message ("Unlock t3: 0x%x", Os.gettid());
         token3.release ();
-        Os.usleep (rand.int_range (0, 200) * 1000);
+        Os.usleep (rand.int_range (0, 20) * 1000);
 
         message ("Unlock t1: 0x%x", Os.gettid());
         token1.release ();
-        Os.usleep (rand.int_range (0, 200) * 1000);
+        Os.usleep (rand.int_range (0, 20) * 1000);
 
         message ("Unlock t2: 0x%x", Os.gettid());
         token2.release ();
-        Os.usleep (rand.int_range (0, 200) * 1000);
+        Os.usleep (rand.int_range (0, 20) * 1000);
 
         message ("Unlock t1: 0x%x", Os.gettid());
         token1.release ();
-        Os.usleep (rand.int_range (0, 200) * 1000);
+        Os.usleep (rand.int_range (0, 20) * 1000);
     }
 
     return null;
@@ -77,27 +77,27 @@ thread_2 ()
     {
         message ("Lock t2: 0x%x", Os.gettid());
         token2.acquire ();
-        Os.usleep (rand.int_range (0, 200) * 1000);
+        Os.usleep (rand.int_range (0, 20) * 1000);
 
         message ("Lock t1: 0x%x", Os.gettid());
         token1.acquire ();
-        Os.usleep (rand.int_range (0, 200) * 1000);
+        Os.usleep (rand.int_range (0, 20) * 1000);
 
         message ("Lock t3: 0x%x", Os.gettid());
         token3.acquire ();
-        Os.usleep (rand.int_range (0, 200) * 1000);
+        Os.usleep (rand.int_range (0, 20) * 1000);
 
         message ("Unlock t3: 0x%x", Os.gettid());
         token3.release ();
-        Os.usleep (rand.int_range (0, 200) * 1000);
+        Os.usleep (rand.int_range (0, 20) * 1000);
 
         message ("Unlock t1: 0x%x", Os.gettid());
         token1.release ();
-        Os.usleep (rand.int_range (0, 200) * 1000);
+        Os.usleep (rand.int_range (0, 20) * 1000);
 
         message ("Unlock t2: 0x%x", Os.gettid());
         token2.release ();
-        Os.usleep (rand.int_range (0, 200) * 1000);
+        Os.usleep (rand.int_range (0, 20) * 1000);
     }
 
     return null;

@@ -74,7 +74,7 @@ public class Maia.Token : GLib.Object
             for (uint cpt = 0; cpt < m_LastToken; ++cpt)
             {
                 ulong current_ref = m_Tokens[cpt].m_Token.m_Ref.get ();
-                if ((uint32)(current_ref >> 32) == m_Id)
+                if ((uint32)(current_ref >> 16) == m_Id)
                 {
                     m_Tokens[cpt].m_Ref = current_ref;
                     m_Tokens[cpt].m_Token.m_Ref.compare_and_exchange (current_ref, 0);
@@ -171,13 +171,6 @@ public class Maia.Token : GLib.Object
     private AtomicQueue<ulong?> m_WaitingRefs;
 
     // static methods
-    private static inline void
-    wait (int inIteration)
-    {
-        while (--inIteration > 0) Os.Cpu.relax ();
-    }
-
-
     public static new Token
     get (ulong inTokenId)
     {
@@ -249,9 +242,9 @@ public class Maia.Token : GLib.Object
         while (true)
         {
             ulong current_ref = m_Ref.get ();
-            ulong new_ref = ((ulong)self.m_Id << 32) + 1;
+            ulong new_ref = ((ulong)self.m_Id << 16) + 1;
 
-            if ((uint32)(current_ref >> 32) == self.m_Id)
+            if ((uint32)(current_ref >> 16) == self.m_Id)
             {
                 new_ref = current_ref + 1;
                 if (m_Ref.compare_and_exchange (current_ref, new_ref))
@@ -274,12 +267,9 @@ public class Maia.Token : GLib.Object
             self.sleep ();
 
             m_WaitingRefs.push (new_ref);
-            int nTimes = 0;
             while (!m_Ref.compare(new_ref))
             {
-                nTimes = int.min (nTimes + 1, c_MaxTime);
-
-                wait (nTimes << 1);
+                Os.usleep (10);
             }
 
             if (self.wake_up ())
@@ -289,6 +279,8 @@ public class Maia.Token : GLib.Object
             }
 
             m_Ref.compare_and_exchange (new_ref, 0);
+
+            self.sleep ();
         }
     }
 
@@ -298,9 +290,9 @@ public class Maia.Token : GLib.Object
         unowned Thread? self = s_Pool.current_thread ();
         ulong current_ref = m_Ref.get ();
 
-        if (self.m_Id == (uint32)(current_ref >> 32))
+        if (self.m_Id == (uint32)(current_ref >> 16))
         {
-            int32 depth = (int32)((current_ref << 32) >> 32) - 1;
+            int32 depth = (int32)(current_ref - (self.m_Id << 16) - 1);
 
             if (depth <= 0)
             {
@@ -313,7 +305,7 @@ public class Maia.Token : GLib.Object
             }
             else
             {
-                m_Ref.compare_and_exchange (current_ref, ((ulong)self.m_Id << 32) + (ulong)depth);
+                m_Ref.compare_and_exchange (current_ref, ((ulong)self.m_Id << 16) + (ulong)depth);
             }
         }
     }

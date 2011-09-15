@@ -20,7 +20,7 @@
 #ifndef __OS_H__
 #define __OS_H__
 
-#define os_cpu_relax()                          __asm__ __volatile__("mfence; pause\n" : : : "memory");
+#define os_cpu_relax()                          __asm__ __volatile__("rep; nop" ::: "memory");
 
 #define os_memory_barrier()                     __sync_synchronize()
 

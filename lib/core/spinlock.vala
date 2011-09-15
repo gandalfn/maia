@@ -35,8 +35,7 @@ public struct Maia.SpinLock
 
         while (!ticket.compare (me))
         {
-            Os.Cpu.relax ();
-            Os.Cpu.relax ();
+            Os.usleep (10);
         }
 
         return me;
