@@ -106,11 +106,16 @@ internal class Maia.XcbRedrawDispatcher : Object
         if (m_DamagedArea == null)
         {
             m_DamagedArea = inArgs.area;
-            m_RefreshTicTac.wakeup ();
         }
         else
         {
             m_DamagedArea.union (inArgs.area);
+        }
+
+        on_refresh ();
+        if (false && m_RefreshTicTac.state == Task.State.SLEEPING)
+        {
+            m_RefreshTicTac.wakeup ();
         }
     }
 }

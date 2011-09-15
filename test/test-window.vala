@@ -29,7 +29,7 @@ public class TestWindow : Maia.Window
         //workspace.reparent_window_event.listen (on_window_reparented, Maia.Application.self);
         //workspace.destroy_window_event.listen (on_destroy_window, Maia.Application.self);
 
-        timeline = new Maia.Timeline (50, 200, Maia.Application.self);
+        timeline = new Maia.Timeline (60, 300, Maia.Application.self);
         timeline.loop = true;
         timeline.new_frame.watch (on_new_frame);
         timeline.start ();
@@ -78,7 +78,7 @@ public class TestWindow : Maia.Window
     public override void
     on_paint (Maia.Region inArea)
     {
-        message ("Paint %s", inArea.to_string ());
+        //message ("Paint %s", inArea.to_string ());
         try
         {
             Maia.GraphicContext ctx = back_buffer.create_context ();
