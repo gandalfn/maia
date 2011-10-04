@@ -57,6 +57,25 @@ public class Maia.Region : Object
 
             return new Rectangle.pixman_box (m_Boxes[m_Index]);
         }
+
+        /**
+         * Calls inFunc for each element in the collection iterator.
+         * 
+         * @param inFunc the function to call for each element's data
+         **/
+        public void
+        @foreach (ForeachFunc<Rectangle> inFunc)
+        {
+            if (m_Index < 0)
+                m_Index = 0;
+
+            for (;m_Index < m_Boxes.length; ++m_Index)
+            {
+                Rectangle rect = new Rectangle.pixman_box (m_Boxes[m_Index]);
+                if (!inFunc (rect))
+                    return;
+            }
+        }
     }
 
     // Properties
@@ -309,8 +328,7 @@ public class Maia.Region : Object
         bool first = false;
         string ret = "";
 
-        foreach (Rectangle rect in this)
-        {
+        iterator ().foreach ((rect) => {
             if (!first)
             {
                 ret += rect.to_string ();
@@ -320,7 +338,8 @@ public class Maia.Region : Object
             {
                 ret += " " + rect.to_string ();
             }
-        }
+            return true;
+        });
 
         return ret;
     }

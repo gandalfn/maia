@@ -28,6 +28,7 @@ namespace Maia
     public delegate int    ValueCompareFunc<V, A> (V inV, A inA);
     [CCode (has_target = false)]
     public delegate V      AccumulateFunc<V>      (V inA, V inB);
+    public delegate bool  ForeachFunc<V>          (V inData);
 
     // static methods
     public static int

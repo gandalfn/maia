@@ -43,6 +43,9 @@ public class Maia.Array <V> : Collection <V>
             stamp = m_Array.stamp;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         internal override bool
         next ()
             requires (m_Array.stamp == stamp)
@@ -63,6 +66,9 @@ public class Maia.Array <V> : Collection <V>
             return ret;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         internal override unowned V?
         get ()
             requires (m_Array.stamp == stamp)
@@ -70,6 +76,23 @@ public class Maia.Array <V> : Collection <V>
             requires (m_Index < m_Array.m_Size)
         {
             return m_Array.m_pContent[m_Index].val;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        internal override void
+        @foreach (ForeachFunc<V> inFunc)
+        {
+            if (m_Index == -1 && m_Array.m_Size > 0)
+            {
+                m_Index = 0;
+            }
+            for (; m_Index >= 0 && m_Index < m_Array.m_Size; ++m_Index)
+            {
+                if (!inFunc (m_Array.m_pContent[m_Index].val))
+                    return;
+            }
         }
     }
 

@@ -35,6 +35,7 @@ public class Maia.TestArray : Maia.TestCase
         add_test ("erase", test_array_erase);
         add_test ("search", test_array_search);
         add_test ("parse", test_array_parse);
+        add_test ("parse-foreach", test_array_parse_foreach);
         if (Test.perf())
         {
             add_test ("benchmark-insert", test_array_benchmark_insert);
@@ -43,6 +44,7 @@ public class Maia.TestArray : Maia.TestCase
             add_test ("benchmark-remove", test_array_benchmark_remove);
             add_test ("benchmark-search", test_array_benchmark_search);
             add_test ("benchmark-parse", test_array_benchmark_parse);
+            add_test ("benchmark-parse-foreach", test_array_benchmark_parse_foreach);
         }
     }
 
@@ -158,6 +160,28 @@ public class Maia.TestArray : Maia.TestCase
     }
 
     public void
+    test_array_parse_foreach ()
+    {
+        for (int cpt = 0; cpt < NB_KEYS; ++cpt)
+        {
+            m_Array.insert (m_Keys[cpt]);
+        }
+
+        int prev = -1;
+        int count = 0;
+        m_Array.iterator ().foreach ((val) => {
+            if (prev >= 0)
+            {
+                assert (prev <= val);
+            }
+            prev = val;
+            count++;
+            return true;
+        });
+        assert (count == m_Array.length);
+    }
+    
+    public void
     test_array_benchmark_insert ()
     {
         double min = double.MAX, max = 0;
@@ -263,6 +287,35 @@ public class Maia.TestArray : Maia.TestCase
                 }
                 prev = val;
             }
+            double elapsed = Test.timer_elapsed () * 1000;
+            min = double.min (elapsed, min);
+            max = double.max (elapsed, max);
+            m_Array.clear ();
+        }
+        Test.minimized_result (min, "Array parse min time %f ms", min); 
+        Test.maximized_result (min, "Array parse max time %f ms", max); 
+    }
+
+    public void
+    test_array_benchmark_parse_foreach ()
+    {
+        double min = double.MAX, max = 0;
+        for (int iter = 0; iter < 100; ++iter)
+        {
+            for (int cpt = 0; cpt < NB_KEYS; ++cpt)
+            {
+                m_Array.insert (m_Keys[cpt]);
+            }
+            Test.timer_start ();
+            int prev = -1;
+            m_Array.iterator ().foreach ((val) => {
+                if (prev >= 0)
+                {
+                    assert (prev <= val);
+                }
+                prev = val;
+                return true;
+            });
             double elapsed = Test.timer_elapsed () * 1000;
             min = double.min (elapsed, min);
             max = double.max (elapsed, max);

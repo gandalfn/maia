@@ -93,16 +93,18 @@ public class Maia.Notification<O> : Object
     internal unowned Observer<O>?
     get_observer (Handler<O> inCallback)
     {
-        foreach (unowned Object? child in this)
-        {
-            unowned Observer<O>? observer = (Observer<O>)child;
-            if (observer.equal (inCallback))
+        unowned Observer<O>? observer = null;
+        iterator ().foreach ((child) => {
+            if (((Observer<O>)child).equal (inCallback))
             {
-                return observer;
+                observer = (Observer<O>)child;
+                return false;
             }
-        }
 
-        return null;
+            return true;
+        });
+
+        return observer;
     }
 
     public unowned Observer<O>?
@@ -121,11 +123,10 @@ public class Maia.Notification<O> : Object
     public void
     send ()
     {
-        foreach (unowned Object? child in this)
-        {
-            unowned Observer<O> observer = (Observer<O>)child;
-            observer.notify ();
-        }
+        iterator ().foreach ((child) => {
+            ((Observer<O>)child).notify ();
+            return true;
+        });
     }
 }
 

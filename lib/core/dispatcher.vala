@@ -164,16 +164,16 @@ public class Maia.Dispatcher : Task
             if (nb_fds < 0)
                 continue;
 
-            foreach (unowned Object object in this)
-            {
+            iterator ().foreach ((object) => {
                 unowned Task task = object as Task;
 
                 if (task.state != Task.State.READY)
-                    break;
+                    return false;
 
                 debug (GLib.Log.METHOD, "ready task 0x%lx", (ulong)task);
                 ready_tasks.insert (task);
-            }
+                return true;
+            });
 
             for (int cpt = 0; cpt < nb_fds; ++cpt)
             {
@@ -192,14 +192,15 @@ public class Maia.Dispatcher : Task
                     ready_tasks.insert (task);
             }
 
-            foreach (unowned Task task in ready_tasks)
-            {
+            ready_tasks.iterator ().foreach ((task) => {
                 task.ref ();
                 {
                     task.run ();
                 }
                 task.unref ();
-            }
+
+                return true;
+            });
 
             ready_tasks.clear ();
         }
@@ -224,10 +225,10 @@ public class Maia.Dispatcher : Task
         audit (GLib.Log.METHOD, "Event id = %s", inEvent.name);
         Token token = Token.get_for_class (s_Dispatchers);
         {
-            foreach (unowned Dispatcher dispatcher in s_Dispatchers)
-            {
+            s_Dispatchers.iterator ().foreach ((dispatcher) => {
                 dispatcher.m_EventDispatcher.post (inEvent);
-            }
+                return true;
+            });
         }
         token.release ();
     }

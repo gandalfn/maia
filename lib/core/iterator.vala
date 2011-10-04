@@ -38,4 +38,11 @@ public abstract class Maia.Iterator<V>
      * @return the current element in the iteration
      */
     public abstract unowned V? get ();
+
+    /**
+     * Calls inFunc for each element in the collection iterator.
+     * 
+     * @param inFunc the function to call for each element's data
+     **/
+    public abstract void foreach (ForeachFunc<V> inFunc);
 }

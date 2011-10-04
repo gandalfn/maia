@@ -291,10 +291,10 @@ public class Maia.Window : View
         if (geometry != null)
             ret += "geometry: " + geometry.to_string () + "\n";
 
-        foreach (unowned Object object in this)
-        {
+        iterator ().foreach ((object) => {
             ret += "--\n%s\n--\n".printf (((Window)object).to_string ());
-        }
+            return true;
+        });
 
         return ret;
     }

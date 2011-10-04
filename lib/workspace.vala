@@ -121,10 +121,10 @@ public class Maia.Workspace : View
         string ret = "";
 
         Token token = Token.get_for_object (this);
-        foreach (unowned Object window in this)
-        {
+        iterator ().foreach ((window) => {
             ret += window.to_string () + "\n";
-        }
+            return true;
+        });
         ret += "\n";
         token.release ();
 

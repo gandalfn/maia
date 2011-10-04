@@ -85,6 +85,25 @@ public class Maia.List<V> : Collection<V>
         {
             return m_Current.m_Value;
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        internal override void
+        @foreach (ForeachFunc<V> inFunc)
+        {
+            if (!m_Started && m_List.m_Head != null)
+            {
+                m_Started = true;
+                m_Current = m_List.m_Head;
+            }
+
+            for (;m_Started && m_Current != null; m_Current = m_Current.m_Next)
+            {
+                if (!inFunc (m_Current.m_Value))
+                    return;
+            }
+        }
     }
 
     // Properties

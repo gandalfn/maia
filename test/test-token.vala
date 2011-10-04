@@ -107,7 +107,7 @@ static int
 main (string[] inArgs)
 {
     Maia.log_set_level (Maia.Level.AUDIT);
-    unowned GLib.Thread<void*> id[8];
+    unowned GLib.Thread<void*> id[2];
     Os.Atomic.ULong test = Os.Atomic.ULong ();
 
     test.set (1);

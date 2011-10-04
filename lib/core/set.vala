@@ -182,6 +182,27 @@ public class Maia.Set<V> : Collection<V>
         {
             return m_Current.val;
         }
+
+        /**
+         * {@inheritDoc}
+         */
+        internal override void
+        @foreach (ForeachFunc<V> inFunc)
+        {
+            if (m_Current == null && m_Set.m_Root != null)
+            {
+                m_Current = m_Set.m_Root;
+
+                while (m_Current.left != null)
+                    m_Current = m_Current.left;
+            }
+
+            for (;m_Current != null; m_Current = m_Current.next ())
+            {
+                if (!inFunc (m_Current.val))
+                    return;
+            }
+        }
     }
 
     // Properties

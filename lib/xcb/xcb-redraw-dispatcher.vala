@@ -62,8 +62,7 @@ internal class Maia.XcbRedrawDispatcher : Object
         {
             audit (GLib.Log.METHOD, "refresh %s", m_DamagedArea.to_string ());
 
-            foreach (uint32 id in m_DamagedWindow)
-            {
+            m_DamagedWindow.iterator ().foreach ((id) => {
                 unowned Window? window = (Window)m_Workspace[id];
                 if (window != null)
                 {
@@ -71,17 +70,18 @@ internal class Maia.XcbRedrawDispatcher : Object
                 }
                 else
                 {
-                    foreach (unowned Object child in m_Workspace)
-                    {
+                    m_Workspace.iterator ().foreach ((child) => {
                         window = (Window)child[id];
                         if (window != null)
                         {
                             ((XcbWindow)window.proxy).swap_buffer (m_DamagedArea);
-                            break;
+                            return false;
                         }
-                    }
+                        return true;
+                    });
                 }
-            }
+                return true;
+            });
         }
         m_DamagedWindow.clear ();
         m_DamagedArea = null;

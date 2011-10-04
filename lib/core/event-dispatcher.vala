@@ -162,10 +162,10 @@ internal class Maia.EventDispatcher : Watch
 
             if (queue != null)
             {
-                foreach (unowned EventListener event_listener in queue)
-                {
+                queue.iterator ().foreach ((event_listener) => {
                     event_listener.notify (inMsg.m_Event.args);
-                }
+                    return true;
+                });
             }
         }
         token.release ();

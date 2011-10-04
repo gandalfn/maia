@@ -262,15 +262,15 @@ public abstract class Maia.Object : GLib.Object
                 {
                     if (type in s_Delegations)
                     {
-                        foreach (Type delegate_type in s_Delegations[type])
-                        {
+                        s_Delegations[type].iterator ().foreach ((delegate_type) => {
                             audit ("Maia.Object.construct", "add delegate %s for %s", delegate_type.name (), m_Type.name ());
                             if (c_Delegations == null)
                             {
                                 c_Delegations = new Set<Type> ();
                             }
                             c_Delegations.insert (delegate_type);
-                        }
+                            return true;
+                        });
                     }
                 }
             }
@@ -283,10 +283,10 @@ public abstract class Maia.Object : GLib.Object
             m_Delegates.compare_func = (a, b) => {
                 return compare_type (a.m_Type, b.m_Type);
             };
-            foreach (Type type in c_Delegations)
-            {
+            c_Delegations.iterator ().foreach ((type) => {
                 m_Delegates.insert (create_delegate (type));
-            }
+                return true;
+            });
         }
     }
 
