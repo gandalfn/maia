@@ -27,72 +27,81 @@ public class Maia.Token : GLib.Object
         {
             public unowned Token? m_Token;
             public ulong          m_Ref;
+
+            public int
+            compare (Node? inNode)
+            {
+                return m_Token.compare (inNode.m_Token);
+            }
         }
 
         // properties
-        public uint32 m_Id;
-        private Node  m_Tokens[256];
-        private uint  m_LastToken;
+        public uint32        m_Id;
+        private Array<Node?> m_Tokens;
 
         // methods
         public Thread ()
         {
             m_Id = Os.gettid ();
-            m_LastToken = 0;
+            m_Tokens = new Array<Node?> ();
+            m_Tokens.compare_func = Node.compare;
         }
 
-        public void
+        public inline void
         add_token (Token inToken)
-            requires (m_LastToken < m_Tokens.length)
         {
-            m_Tokens[m_LastToken].m_Token = inToken;
-            m_Tokens[m_LastToken].m_Ref = 0;
-            m_LastToken++;
+            Node node = {inToken, 0 };
+            m_Tokens.insert (node);
+            message ("%s 0x%x %i", GLib.Log.METHOD, Os.gettid (), m_Tokens.length); 
         }
 
-        public void
+        public inline void
         remove_token (Token inToken)
         {
-            for (uint cpt = 0; cpt < m_LastToken; ++cpt)
-            {
-                if (m_Tokens[cpt].m_Token.m_Id == inToken.m_Id)
-                {
-                    --m_LastToken;
-                    if (cpt != m_LastToken)
-                        GLib.Memory.move (&m_Tokens[cpt], &m_Tokens[cpt + 1],
-                                          (m_LastToken - cpt) * sizeof (Node));
-
-                    GLib.Memory.set (&m_Tokens[m_LastToken], 0, sizeof (Node));
-                    break;
-                }
-            }
+            m_Tokens.remove ({inToken, 0 });
+            message ("%s 0x%x %i", GLib.Log.METHOD, Os.gettid (), m_Tokens.length); 
         }
 
-        public void
+        public inline void
         sleep ()
         {
-            for (uint cpt = 0; cpt < m_LastToken; ++cpt)
-            {
-                ulong current_ref = m_Tokens[cpt].m_Token.m_Ref.get ();
+            m_Tokens.iterator ().foreach ((node) => {
+                ulong current_ref = node.m_Token.m_Ref.get ();
                 if ((uint32)(current_ref >> 16) == m_Id)
                 {
-                    m_Tokens[cpt].m_Ref = current_ref;
-                    m_Tokens[cpt].m_Token.m_Ref.compare_and_exchange (current_ref, 0);
+                    ulong? new_ref = node.m_Token.m_WaitingRefs.pop ();
+                    message ("%s pop 0x%x %lu 0x%lx", GLib.Log.METHOD, Os.gettid (), node.m_Token.m_Id, new_ref != null? new_ref : 0);
+                    node.m_Token.m_WaitingRefs.push (current_ref);
+                    message ("%s push 0x%x %lu 0x%lx", GLib.Log.METHOD, Os.gettid (), node.m_Token.m_Id, current_ref);
+                    node.m_Ref = current_ref;
+                    if (new_ref != null)
+                        node.m_Token.m_Ref.compare_and_exchange (current_ref, new_ref);
+                    else
+                        node.m_Token.m_Ref.compare_and_exchange (current_ref, 0);
+                    message ("%s 0x%x %lu 0x%lx", GLib.Log.METHOD, Os.gettid (), node.m_Token.m_Id, node.m_Token.m_Ref.get ()); 
                 }
-            }
+
+                return true;
+            });
         }
 
-        public bool
-        wake_up ()
+        public inline void
+        acquire_all ()
         {
-            for (uint cpt = 0; cpt < m_LastToken; ++cpt)
-            {
-                if (!m_Tokens[cpt].m_Token.m_Ref.compare_and_exchange (0, m_Tokens[cpt].m_Ref))
-                    return false;
-                m_Tokens[cpt].m_Ref = 0;
-            }
+            m_Tokens.iterator ().foreach ((node) => {
+                ulong current_ref = node.m_Token.m_Ref.get ();
 
-            return true;
+                while ((uint32)(current_ref >> 16) != m_Id)
+                {
+                    Os.usleep (1);
+                    current_ref = node.m_Token.m_Ref.get ();
+                }
+                node.m_Ref = 0;
+
+                message ("%s 0x%x %lu 0x%lx", GLib.Log.METHOD, Os.gettid (), node.m_Token.m_Id, node.m_Token.m_Ref.get ()); 
+
+                return true;
+            });
         }
     }
 
@@ -228,6 +237,22 @@ public class Maia.Token : GLib.Object
         s_Pool.remove_token (this);
     }
 
+    internal void
+    wait ()
+    {
+        unowned Thread? self = s_Pool.current_thread ();
+
+        self.sleep ();
+
+        ulong current_ref = m_Ref.get ();
+        while ((uint32)(current_ref >> 16) != self.m_Id)
+        {
+            Os.usleep (1);
+            current_ref = m_Ref.get ();
+        }
+        message ("%s 0x%x %lu 0x%lx", GLib.Log.METHOD, Os.gettid (), m_Id, m_Ref.get ());
+    }
+
     internal int
     compare (Token inOther)
     {
@@ -249,7 +274,8 @@ public class Maia.Token : GLib.Object
                 new_ref = current_ref + 1;
                 if (m_Ref.compare_and_exchange (current_ref, new_ref))
                 {
-                    break;
+                    message ("%s 0x%x %lu 0x%lx", GLib.Log.METHOD, Os.gettid (), m_Id, m_Ref.get ());
+                    return;
                 }
                 continue;
             }
@@ -258,29 +284,23 @@ public class Maia.Token : GLib.Object
             {
                 if (m_Ref.compare_and_exchange (0, new_ref))
                 {
+                    message ("%s 0x%x %lu 0x%lx", GLib.Log.METHOD, Os.gettid (), m_Id, m_Ref.get ());
                     self.add_token (this);
-                    break;
+                    return;
                 }
                 continue;
             }
 
-            self.sleep ();
-
+            message ("%s push 0x%x %lu 0x%lx", GLib.Log.METHOD, Os.gettid (), m_Id, new_ref);
             m_WaitingRefs.push (new_ref);
-            while (!m_Ref.compare(new_ref))
-            {
-                Os.usleep (10);
-            }
 
-            if (self.wake_up ())
-            {
-                self.add_token (this);
-                break;
-            }
+            wait ();
 
-            m_Ref.compare_and_exchange (new_ref, 0);
+            self.add_token (this);
 
-            self.sleep ();
+            self.acquire_all ();
+
+            return;
         }
     }
 
@@ -290,22 +310,26 @@ public class Maia.Token : GLib.Object
         unowned Thread? self = s_Pool.current_thread ();
         ulong current_ref = m_Ref.get ();
 
+        message ("%s 0x%x %lu 0x%lx", GLib.Log.METHOD, Os.gettid (), m_Id, m_Ref.get ());
         if (self.m_Id == (uint32)(current_ref >> 16))
         {
-            int32 depth = (int32)(current_ref - (self.m_Id << 16) - 1);
+            int32 depth = (int32)((current_ref & 0x0FFFF) - 1);
 
             if (depth <= 0)
             {
                 self.remove_token (this);
                 ulong? new_ref = m_WaitingRefs.pop ();
+                message ("%s pop 0x%x %lu 0x%lx", GLib.Log.METHOD, Os.gettid (), m_Id, new_ref != null ? new_ref : 0);
                 if (new_ref != null)
                     m_Ref.compare_and_exchange (current_ref, new_ref);
                 else
                     m_Ref.compare_and_exchange (current_ref, 0);
+                message ("%s 0x%x %lu 0x%lx", GLib.Log.METHOD, Os.gettid (), m_Id, m_Ref.get ());
             }
             else
             {
                 m_Ref.compare_and_exchange (current_ref, ((ulong)self.m_Id << 16) + (ulong)depth);
+                message ("%s 0x%x %lu 0x%lx", GLib.Log.METHOD, Os.gettid (), m_Id, m_Ref.get ());
             }
         }
     }
