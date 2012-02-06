@@ -1,18 +1,18 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * xcb-desktop.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
- * 
+ *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * maia is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -60,7 +60,7 @@ internal class Maia.XcbDesktop : DesktopProxy
         // Create request queue
         for (int cpt = 0; cpt < RequestQueue.N; ++cpt)
         {
-            m_Requests[cpt] = new Queue<unowned XcbRequest?> (); 
+            m_Requests[cpt] = new Queue<unowned XcbRequest?> ();
         }
 
         // Get name
@@ -85,7 +85,7 @@ internal class Maia.XcbDesktop : DesktopProxy
         }
 
         int cpt = 0;
-        for (Xcb.ScreenIterator iter = m_Connection.get_setup().roots_iterator(); 
+        for (Xcb.ScreenIterator iter = m_Connection.get_setup().roots_iterator();
              cpt < nbScreens; ++cpt, Xcb.ScreenIterator.next(ref iter))
         {
             debug (GLib.Log.METHOD, "create xcb workspace %i", cpt);
@@ -111,29 +111,31 @@ internal class Maia.XcbDesktop : DesktopProxy
     public void
     add_request (XcbRequest inRequest)
     {
-        Token token = Token.get_for_class (m_Requests);
-        switch (inRequest.state)
+        lock (m_Requests)
         {
-            case XcbRequest.State.QUERYING:
-                m_Requests[RequestQueue.QUERY].push (inRequest);
-                break;
+            switch (inRequest.state)
+            {
+                case XcbRequest.State.QUERYING:
+                    m_Requests[RequestQueue.QUERY].push (inRequest);
+                    break;
 
-            case XcbRequest.State.COMMITING:
-                m_Requests[RequestQueue.COMMIT].push (inRequest);
-                break;
+                case XcbRequest.State.COMMITING:
+                    m_Requests[RequestQueue.COMMIT].push (inRequest);
+                    break;
+            }
         }
-        token.release ();
     }
 
     public void
     remove_request (XcbRequest inRequest)
     {
-        Token token = Token.get_for_class (m_Requests);
-        for (int cpt = 0; cpt < RequestQueue.N; ++cpt)
+        lock (m_Requests)
         {
-            m_Requests[cpt].remove (inRequest);
+            for (int cpt = 0; cpt < RequestQueue.N; ++cpt)
+            {
+                m_Requests[cpt].remove (inRequest);
+            }
         }
-        token.release ();
     }
 
     public void
@@ -141,23 +143,24 @@ internal class Maia.XcbDesktop : DesktopProxy
     {
         unowned XcbRequest? request = null;
 
-        Token token_requests = Token.get_for_class (m_Requests);
-        while ((request = m_Requests[RequestQueue.COMMIT].pop ()) != null)
+        lock (m_Requests)
         {
-            Token token = Token.get_for_object (request);
-            request.process ();
-            token.release ();
-        }
-
-        m_Connection.flush ();
-
-        while ((request = m_Requests[RequestQueue.QUERY].pop ()) != null)
-        {
-            Token token = Token.get_for_object (request);
-            if (request.state == XcbRequest.State.QUERYING)
+            while ((request = m_Requests[RequestQueue.COMMIT].pop ()) != null)
+            {
+                request.lock ();
                 request.process ();
-            token.release ();
+                request.unlock ();
+            }
+
+            m_Connection.flush ();
+
+            while ((request = m_Requests[RequestQueue.QUERY].pop ()) != null)
+            {
+                request.lock ();
+                if (request.state == XcbRequest.State.QUERYING)
+                    request.process ();
+                request.unlock ();
+            }
         }
-        token_requests.release ();
     }
 }

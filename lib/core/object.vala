@@ -1,18 +1,18 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * object.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
- * 
+ *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * maia is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -31,9 +31,11 @@ public abstract class Maia.Object : GLib.Object
     private uint32              m_Id = 0;
     private unowned Object      m_Parent = null;
     private unowned Object      m_Delegator = null;
-    private Array<Object>       m_Childs = null; 
+    private Array<Object>       m_Childs = null;
     private Set<unowned Object> m_IdentifiedChilds = null;
     private Set<Object>         m_Delegates = null;
+
+    protected ReadWriteSpinLock rw_lock;
 
     // notifications
     public Notification1<Object, string> m_PropertyChanged = null;
@@ -71,12 +73,15 @@ public abstract class Maia.Object : GLib.Object
     [CCode (notify = false)]
     public uint32 id {
         get {
-            return m_Delegator == null ? m_Id : m_Delegator.m_Id;
+            rw_lock.read_lock ();
+            uint32 ret = m_Delegator == null ? m_Id : m_Delegator.id;
+            rw_lock.read_unlock ();
+            return ret;
         }
         construct set {
+            rw_lock.write_lock ();
             if (m_Delegator == null)
             {
-                Token token = Token.get_for_object (this);
                 if (m_Parent != null)
                 {
                     // object have a old id
@@ -97,12 +102,12 @@ public abstract class Maia.Object : GLib.Object
                     // set identifier
                     m_Id = value;
                 }
-                token.release ();
             }
             else
             {
                 m_Delegator.id = value;
             }
+            rw_lock.write_unlock ();
         }
     }
 
@@ -112,37 +117,35 @@ public abstract class Maia.Object : GLib.Object
     [CCode (notify = false)]
     public virtual Object parent {
         get {
-            return m_Delegator == null ? m_Parent : m_Delegator.m_Parent;
+            rw_lock.read_lock ();
+            unowned Object? ret = m_Delegator == null ? m_Parent : m_Delegator.m_Parent;
+            rw_lock.read_unlock ();
+
+            return ret;
         }
         construct set {
+            rw_lock.write_lock ();
             if (m_Delegator == null)
             {
-                Token token = Token.get_for_object (this);
+                if (m_Parent != value)
                 {
-                    if (m_Parent != value)
-                    {
-                        ref ();
+                    ref ();
 
-                        // object have already a parent
-                        if (m_Parent != null)
-                        {
-                            m_Parent.remove_child (this);
-                        }
+                    // object have already a parent
+                    if (m_Parent != null)
+                        m_Parent.remove_child (this);
 
-                        if (value != null)
-                        {
-                            value.insert_child (this);
-                        }
+                    if (value != null)
+                        value.insert_child (this);
 
-                        unref ();
-                    }
+                    unref ();
                 }
-                token.release ();
             }
             else
             {
                 m_Delegator.parent = value;
             }
+            rw_lock.write_unlock ();
         }
     }
 
@@ -152,10 +155,16 @@ public abstract class Maia.Object : GLib.Object
     [CCode (notify = false)]
     public unowned Object? delegator {
         get {
-            return m_Delegator;
+            rw_lock.read_lock ();
+            unowned Object? ret = m_Delegator;
+            rw_lock.read_unlock ();
+
+            return ret;
         }
         construct {
+            rw_lock.write_lock ();
             m_Delegator = value;
+            rw_lock.write_unlock ();
         }
     }
 
@@ -164,14 +173,18 @@ public abstract class Maia.Object : GLib.Object
      */
     public int nb_childs {
         get {
+            int ret = 0;
+            rw_lock.read_lock ();
             if (m_Delegator == null)
             {
-                return m_Childs.length;
+                ret = m_Childs.length;
             }
             else
             {
-                return m_Delegator.nb_childs;
+                ret = m_Delegator.nb_childs;
             }
+            rw_lock.read_unlock ();
+            return ret;
         }
     }
 
@@ -217,8 +230,8 @@ public abstract class Maia.Object : GLib.Object
         requires (inType.is_a (typeof (Object)))
         requires (inType != typeof (T))
     {
-        audit (GLib.Log.METHOD, "type = %s, delegate type = %s",
-               typeof (T).name (), inType.name ());
+        Log.audit (GLib.Log.METHOD, "type = %s, delegate type = %s",
+                   typeof (T).name (), inType.name ());
 
         if (s_Delegations == null)
             s_Delegations = new Map<Type, Set<Type>> ();
@@ -233,7 +246,7 @@ public abstract class Maia.Object : GLib.Object
     atomic_compare_and_exchange (void** inObject, GLib.Object? inOldObject,
                                  owned GLib.Object? inNewObject)
     {
-        bool ret = Os.Atomic.Pointer.cast (inObject).compare_and_exchange (inOldObject, inNewObject);
+        bool ret = Machine.Memory.Atomic.Pointer.cast (&inObject).compare_and_swap (inOldObject, inNewObject);
 
         if (ret)
         {
@@ -248,10 +261,10 @@ public abstract class Maia.Object : GLib.Object
 
     construct
     {
-        // Get object type 
+        // Get object type
         m_Type = get_type ();
 
-        audit ("Maia.Object.construct", "construct %s", m_Type.name ());
+        Log.audit ("Maia.Object.construct", "construct %s", m_Type.name ());
 
         // Create delegate objects
         if (!c_Initialized)
@@ -263,7 +276,7 @@ public abstract class Maia.Object : GLib.Object
                     if (type in s_Delegations)
                     {
                         s_Delegations[type].iterator ().foreach ((delegate_type) => {
-                            audit ("Maia.Object.construct", "add delegate %s for %s", delegate_type.name (), m_Type.name ());
+                            Log.audit ("Maia.Object.construct", "add delegate %s for %s", delegate_type.name (), m_Type.name ());
                             if (c_Delegations == null)
                             {
                                 c_Delegations = new Set<Type> ();
@@ -292,7 +305,7 @@ public abstract class Maia.Object : GLib.Object
 
     ~Object ()
     {
-        audit ("Maia.~Object", "destroy %s", m_Type.name ());
+        Log.audit ("Maia.~Object", "destroy %s", m_Type.name ());
 
         if (m_Childs != null)
         {
@@ -309,12 +322,7 @@ public abstract class Maia.Object : GLib.Object
     {
         if (m_Childs == null)
         {
-            Token token = Token.get_for_object (this);
-            if (m_Childs == null)
-            {
-                m_Childs = new Array<Object> ();
-            }
-            token.release ();
+            m_Childs = new Array<Object> ();
         }
     }
 
@@ -323,15 +331,13 @@ public abstract class Maia.Object : GLib.Object
     {
         if (m_IdentifiedChilds == null)
         {
-            Token token = Token.get_for_object (this);
             if (m_IdentifiedChilds == null)
             {
                 m_IdentifiedChilds = new Set<unowned Object> ();
                 m_IdentifiedChilds.compare_func = (a, b) => {
-                    return atom_compare (a.id, b.id);
+                    return atom_compare (a.m_Id, b.m_Id);
                 };
             }
-            token.release ();
         }
     }
 
@@ -340,7 +346,6 @@ public abstract class Maia.Object : GLib.Object
     {
         if (m_Delegator == null)
         {
-            Token token = Token.get_for_object (this);
             if (inObject is Object && can_append_child (inObject))
             {
                 // check array
@@ -358,7 +363,6 @@ public abstract class Maia.Object : GLib.Object
                 // insert object in identified if needed
                 insert_identified_child (inObject);
             }
-            token.release ();
         }
         else
             m_Delegator.insert_child (inObject);
@@ -369,7 +373,6 @@ public abstract class Maia.Object : GLib.Object
     {
         if (m_Delegator == null)
         {
-            Token token = Token.get_for_object (this);
             if (this is Object && inObject.m_Id != 0)
             {
                 // check array
@@ -377,7 +380,6 @@ public abstract class Maia.Object : GLib.Object
 
                 m_IdentifiedChilds.insert (inObject);
             }
-            token.release ();
         }
         else
             m_Delegator.insert_identified_child (inObject);
@@ -388,11 +390,10 @@ public abstract class Maia.Object : GLib.Object
     {
         if (m_Delegator == null)
         {
-            Token token = Token.get_for_object (this);
             if (inObject.m_Parent == this)
             {
-                debug ("Maia.Object.parent.set", "Remove object %s from parent %s",
-                       inObject.m_Type.name (), m_Type.name ());
+                Log.debug ("Maia.Object.parent.set", "Remove object %s from parent %s",
+                           inObject.m_Type.name (), m_Type.name ());
 
                 // remove object from childs of old parent
                 m_Childs.remove (inObject);
@@ -401,7 +402,6 @@ public abstract class Maia.Object : GLib.Object
                 // unset parent object
                 inObject.m_Parent = null;
             }
-            token.release ();
         }
         else
             m_Delegator.remove_child (inObject);
@@ -413,10 +413,8 @@ public abstract class Maia.Object : GLib.Object
         if (m_Delegator == null)
         {
             // remove object from identified childs of old parent
-            Token token = Token.get_for_object (this);
             if (m_IdentifiedChilds != null && inObject.m_Id != 0)
                 m_IdentifiedChilds.remove (inObject);
-            token.release ();
         }
         else
             m_Delegator.remove_child (inObject);
@@ -425,7 +423,7 @@ public abstract class Maia.Object : GLib.Object
     private Object
     create_delegate (Type inType)
     {
-        audit (GLib.Log.METHOD, "delegate type = %s", inType.name ());
+        Log.audit (GLib.Log.METHOD, "delegate type = %s", inType.name ());
 
         return GLib.Object.new (inType, delegator: this, id: id, parent: m_Parent) as Object;
     }
@@ -453,9 +451,21 @@ public abstract class Maia.Object : GLib.Object
         }
     }
 
+    public void
+    @lock ()
+    {
+        rw_lock.write_lock ();
+    }
+
+    public void
+    @unlock ()
+    {
+        rw_lock.write_unlock ();
+    }
+
     /**
      * Cast object to implemented delegate object
-     * 
+     *
      * @return Delegate object
      */
     public unowned T?
@@ -470,13 +480,13 @@ public abstract class Maia.Object : GLib.Object
      *
      * @param inChild object child to test
      *
-     * @return `true` if the child object can be added to this node, 
+     * @return `true` if the child object can be added to this node,
      *         `false` otherwise
      */
-    public virtual bool 
+    public virtual bool
     can_append_child (Object inChild)
     {
-        return true; 
+        return true;
     }
 
     /**
@@ -489,6 +499,7 @@ public abstract class Maia.Object : GLib.Object
     {
         unowned Object? ret = null;
 
+        rw_lock.read_lock ();
         if (m_Delegator == null)
         {
             check_childs_array ();
@@ -496,6 +507,7 @@ public abstract class Maia.Object : GLib.Object
         }
         else
             ret = m_Delegator.first ();
+        rw_lock.read_unlock ();
 
         return ret;
     }
@@ -524,8 +536,12 @@ public abstract class Maia.Object : GLib.Object
     public bool
     contains (uint32 inId)
     {
+        rw_lock.read_lock ();
         check_childs_array ();
-        return m_Delegator == null ? get (inId) != null : m_Delegator.contains (inId);
+        bool ret = m_Delegator == null ? get (inId) != null : m_Delegator.contains (inId);
+        rw_lock.read_unlock ();
+
+        return ret;
     }
 
     /**
@@ -541,17 +557,17 @@ public abstract class Maia.Object : GLib.Object
     {
         unowned Object? ret = null;
 
+        rw_lock.read_lock ();
         if (m_Delegator == null)
         {
-            Token token = Token.get_for_object (this);
             check_identified_childs_array ();
             ret = m_IdentifiedChilds.search<uint32> (inId, (o, i) => {
                 return atom_compare (o.m_Id, i);
             });
-            token.release ();
         }
         else
             ret = m_Delegator.get (inId);
+        rw_lock.read_unlock ();
 
         return ret;
     }
@@ -567,8 +583,12 @@ public abstract class Maia.Object : GLib.Object
     public int
     index_of_child (Object inObject)
     {
+        rw_lock.read_lock ();
         check_childs_array ();
-        return m_Delegator == null ? m_Childs.index_of (inObject) : m_Delegator.index_of_child (inObject);
+        int ret = m_Delegator == null ? m_Childs.index_of (inObject) : m_Delegator.index_of_child (inObject);
+        rw_lock.read_unlock ();
+
+        return ret;
     }
 
     /**
@@ -581,8 +601,12 @@ public abstract class Maia.Object : GLib.Object
     public unowned Object?
     get_child_at (int inIndex)
     {
+        rw_lock.read_lock ();
         check_childs_array ();
-        return m_Delegator == null ? m_Childs.at (inIndex) : m_Delegator.get_child_at (inIndex);
+        unowned Object? ret = m_Delegator == null ? m_Childs.at (inIndex) : m_Delegator.get_child_at (inIndex);
+        rw_lock.read_unlock ();
+
+        return ret;
     }
 
     /**
@@ -593,7 +617,11 @@ public abstract class Maia.Object : GLib.Object
     public virtual string
     to_string ()
     {
-        return Atom.to_string (m_Id);
+        rw_lock.read_lock ();
+        string ret = Atom.to_string (m_Id);
+        rw_lock.read_unlock ();
+
+        return ret;
     }
 
     /**

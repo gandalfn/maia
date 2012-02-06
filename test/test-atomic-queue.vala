@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * test-atomic-queue.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
@@ -12,65 +12,54 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 // static properties
-static Maia.AtomicQueue<string> s_Queue = null;
+static Maia.Atomic.Queue<string> s_Queue = null;
+const int s_Cpt = 200;
+const int s_NbThreads = 5;
 
 // methods
 static int
 main (string[] inArgs)
 {
     GLib.Test.init (ref inArgs);
+    unowned GLib.Thread<void*> id[5];
 
-    s_Queue = new Maia.AtomicQueue<string> ();
+    s_Queue = new Maia.Atomic.Queue<string> ();
 
-    unowned GLib.Thread<void*> id1 = GLib.Thread.create<void*> (() => {
-        GLib.Rand rand = new GLib.Rand ();
-        for (int cpt = 0; cpt < 1000; ++cpt)
-        {
-            s_Queue.push ("thread 1: count = " + cpt.to_string ());
-            Os.usleep (rand.int_range (0, 5) * 1000);
-        }
-        return null;
-    }, true);
-
-    unowned GLib.Thread<void*> id2 = GLib.Thread.create<void*> (() => {
-        GLib.Rand rand = new GLib.Rand ();
-        for (int cpt = 0; cpt < 1000; ++cpt)
-        {
-            s_Queue.push ("thread 2: count = " + cpt.to_string ());
-            Os.usleep (rand.int_range (0, 5) * 1000);
-        }
-        return null;
-    }, true);
-
-    unowned GLib.Thread<void*> id3 = GLib.Thread.create<void*> (() => {
-        GLib.Rand rand = new GLib.Rand ();
-        for (int cpt = 0; cpt < 1000; ++cpt)
-        {
-            s_Queue.push ("thread 3: count = " + cpt.to_string ());
-            Os.usleep (rand.int_range (0, 5) * 1000);
-        }
-        return null;
-    }, true);
-
-    for (int cpt = 0; cpt < 3000;)
+    for (int i = 0; i < s_NbThreads; ++i)
     {
-        string? data = s_Queue.pop ();
+        id[i] = GLib.Thread.create<void*> (() => {
+            GLib.Rand rand = new GLib.Rand ();
+            for (int cpt = 0; cpt < s_Cpt; ++cpt)
+            {
+                s_Queue.enqueue ("thread 0x%lx: count = %i".printf ((ulong)GLib.Thread.self<void*> (), cpt));
+                Os.usleep (rand.int_range (0, 20) * 1000);
+            }
+            return null;
+        }, true);
+    }
+
+    GLib.Rand rand = new GLib.Rand ();
+    for (int cpt = 0; cpt < s_Cpt * s_NbThreads;)
+    {
+        string? data = s_Queue.dequeue ();
         if (data != null)
         {
             message ("data = %s", data);
             ++cpt;
         }
+        Os.usleep (rand.int_range (0, 20) * 1000);
     }
 
-    id1.join ();
-    id2.join ();
-    id3.join ();
+    for (int i = 0; i < s_NbThreads; ++i)
+    {
+        id[i].join ();
+    }
 
     s_Queue = null;
 

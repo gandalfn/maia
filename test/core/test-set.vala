@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * test-set.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
@@ -12,7 +12,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -200,7 +200,7 @@ public class Maia.TestSet : Maia.TestCase
             max = double.max (elapsed, max);
             m_Set.clear ();
         }
-        Test.minimized_result (min, "Set set min time %f ms", min); 
+        Test.minimized_result (min, "Set set min time %f ms", min);
         Test.maximized_result (min, "Set set max time %f ms", max);
     }
 
@@ -225,8 +225,8 @@ public class Maia.TestSet : Maia.TestCase
             max = double.max (elapsed, max);
             m_Set.clear ();
         }
-        Test.minimized_result (min, "Set search min time %f ms", min); 
-        Test.maximized_result (min, "Set search max time %f ms", max); 
+        Test.minimized_result (min, "Set search min time %f ms", min);
+        Test.maximized_result (min, "Set search max time %f ms", max);
     }
 
     public void
@@ -252,8 +252,8 @@ public class Maia.TestSet : Maia.TestCase
             max = double.max (elapsed, max);
             m_Set.clear ();
         }
-        Test.minimized_result (min, "Set search min time %f ms", min); 
-        Test.maximized_result (min, "Set search max time %f ms", max); 
+        Test.minimized_result (min, "Set search min time %f ms", min);
+        Test.maximized_result (min, "Set search max time %f ms", max);
     }
 
     public void
@@ -281,8 +281,8 @@ public class Maia.TestSet : Maia.TestCase
             max = double.max (elapsed, max);
             m_Set.clear ();
         }
-        Test.minimized_result (min, "Set parse min time %f ms", min); 
-        Test.maximized_result (min, "Set parse max time %f ms", max); 
+        Test.minimized_result (min, "Set parse min time %f ms", min);
+        Test.maximized_result (min, "Set parse max time %f ms", max);
     }
 
     public void
@@ -311,8 +311,8 @@ public class Maia.TestSet : Maia.TestCase
             max = double.max (elapsed, max);
             m_Set.clear ();
         }
-        Test.minimized_result (min, "Set parse min time %f ms", min); 
-        Test.maximized_result (min, "Set parse max time %f ms", max); 
+        Test.minimized_result (min, "Set parse min time %f ms", min);
+        Test.maximized_result (min, "Set parse max time %f ms", max);
     }
 
     public void
@@ -335,7 +335,7 @@ public class Maia.TestSet : Maia.TestCase
             min = double.min (elapsed, min);
             max = double.max (elapsed, max);
         }
-        Test.minimized_result (min, "Set unset min time %f ms", min); 
-        Test.maximized_result (min, "Set unset max time %f ms", max); 
+        Test.minimized_result (min, "Set unset min time %f ms", min);
+        Test.maximized_result (min, "Set unset max time %f ms", max);
     }
 }

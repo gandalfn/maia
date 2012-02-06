@@ -1,20 +1,20 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * timeline.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
- * 
+ *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * maia is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
- * along 
+ * along
  */
 
 public class Maia.Timeline : Object
@@ -48,9 +48,9 @@ public class Maia.Timeline : Object
      * Timeline direction
      */
     [CCode (notify = false)]
-    public Direction direction { 
+    public Direction direction {
         get {
-            return m_Direction; 
+            return m_Direction;
         }
         set {
             if (m_Direction != value)
@@ -65,7 +65,7 @@ public class Maia.Timeline : Object
      * Timeline speed in frame per second
      */
     [CCode (notify = false)]
-    public uint speed { 
+    public uint speed {
         get {
             return m_Fps;
         }
@@ -84,7 +84,7 @@ public class Maia.Timeline : Object
     }
 
     /**
-     * Number of frame in Timeline 
+     * Number of frame in Timeline
      */
     [CCode (notify = false)]
     public uint n_frames {
@@ -119,7 +119,7 @@ public class Maia.Timeline : Object
     }
 
     /**
-     * Timeline progress 
+     * Timeline progress
      */
     public double progress {
         get {
@@ -291,7 +291,7 @@ public class Maia.Timeline : Object
     }
 
     /**
-     * Skip inNbFrames 
+     * Skip inNbFrames
      *
      * @param inNbFrames number of frames to skip
      */

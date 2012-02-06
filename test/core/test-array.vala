@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * test-array.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
@@ -12,7 +12,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -129,7 +129,7 @@ public class Maia.TestArray : Maia.TestCase
         {
             m_Array.insert (m_Keys[cpt]);
         }
-        
+
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
             int index = Test.rand_int_range (0, NB_KEYS - 1);
@@ -180,7 +180,7 @@ public class Maia.TestArray : Maia.TestCase
         });
         assert (count == m_Array.length);
     }
-    
+
     public void
     test_array_benchmark_insert ()
     {
@@ -197,7 +197,7 @@ public class Maia.TestArray : Maia.TestCase
             max = double.max (elapsed, max);
             m_Array.clear ();
         }
-        Test.minimized_result (min, "Array set min time %f ms", min); 
+        Test.minimized_result (min, "Array set min time %f ms", min);
         Test.maximized_result (min, "Array set max time %f ms", max);
     }
 
@@ -217,7 +217,7 @@ public class Maia.TestArray : Maia.TestCase
             max = double.max (elapsed, max);
             m_ArrayNoSorted.clear ();
         }
-        Test.minimized_result (min, "Array set min time %f ms", min); 
+        Test.minimized_result (min, "Array set min time %f ms", min);
         Test.maximized_result (min, "Array set max time %f ms", max);
     }
 
@@ -238,7 +238,7 @@ public class Maia.TestArray : Maia.TestCase
             max = double.max (elapsed, max);
             m_Array.clear ();
         }
-        Test.minimized_result (min, "Array set min time %f ms", min); 
+        Test.minimized_result (min, "Array set min time %f ms", min);
         Test.maximized_result (min, "Array set max time %f ms", max);
     }
 
@@ -263,8 +263,8 @@ public class Maia.TestArray : Maia.TestCase
             max = double.max (elapsed, max);
             m_Array.clear ();
         }
-        Test.minimized_result (min, "Array search min time %f ms", min); 
-        Test.maximized_result (min, "Array search max time %f ms", max); 
+        Test.minimized_result (min, "Array search min time %f ms", min);
+        Test.maximized_result (min, "Array search max time %f ms", max);
     }
 
     public void
@@ -292,8 +292,8 @@ public class Maia.TestArray : Maia.TestCase
             max = double.max (elapsed, max);
             m_Array.clear ();
         }
-        Test.minimized_result (min, "Array parse min time %f ms", min); 
-        Test.maximized_result (min, "Array parse max time %f ms", max); 
+        Test.minimized_result (min, "Array parse min time %f ms", min);
+        Test.maximized_result (min, "Array parse max time %f ms", max);
     }
 
     public void
@@ -321,8 +321,8 @@ public class Maia.TestArray : Maia.TestCase
             max = double.max (elapsed, max);
             m_Array.clear ();
         }
-        Test.minimized_result (min, "Array parse min time %f ms", min); 
-        Test.maximized_result (min, "Array parse max time %f ms", max); 
+        Test.minimized_result (min, "Array parse min time %f ms", min);
+        Test.maximized_result (min, "Array parse max time %f ms", max);
     }
 
     public void
@@ -346,7 +346,7 @@ public class Maia.TestArray : Maia.TestCase
             min = double.min (elapsed, min);
             max = double.max (elapsed, max);
         }
-        Test.minimized_result (min, "Array unset min time %f ms", min); 
-        Test.maximized_result (min, "Set unset max time %f ms", max); 
+        Test.minimized_result (min, "Array unset min time %f ms", min);
+        Test.maximized_result (min, "Set unset max time %f ms", max);
     }
 }

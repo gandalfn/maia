@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * window.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
@@ -199,7 +199,7 @@ public class Maia.Window : View
     // methods
     construct
     {
-        audit ("Maia.Window.construct", "create window %u", ref_count);
+        Log.audit ("Maia.Window.construct", "create window %u", ref_count);
 
         m_Proxy = delegate_cast<WindowProxy> ();
         assert(m_Proxy != null);
@@ -225,13 +225,13 @@ public class Maia.Window : View
         unowned Dispatcher? dispatcher = Application.self;
         m_Proxy.damage_event.listen (on_damage_event, dispatcher);
         m_Proxy.geometry_event.listen (on_geometry_event, dispatcher);
-        audit(GLib.Log.METHOD, "%u", ref_count);
+        Log.audit(GLib.Log.METHOD, "%u", ref_count);
     }
 
     private void
     on_geometry_event (GeometryEventArgs inArgs)
     {
-        Maia.audit (GLib.Log.METHOD, "%s", inArgs.geometry.to_string ());
+        Log.audit (GLib.Log.METHOD, "%s", inArgs.geometry.to_string ());
         geometry = inArgs.geometry;
         on_move_resize (inArgs.geometry);
     }
@@ -239,12 +239,21 @@ public class Maia.Window : View
     private void
     on_damage_event (DamageEventArgs inArgs)
     {
-        Maia.audit (GLib.Log.METHOD, "%s", inArgs.area.to_string ());
+        Log.audit (GLib.Log.METHOD, "%s", inArgs.area.to_string ());
 
         // Paint window
-        Token token = Token.get_for_object (double_buffered ? back_buffer : front_buffer);
-        on_paint (inArgs.area);
-        token.release ();
+        if (double_buffered)
+        {
+            back_buffer.rw_lock.write_lock ();
+            on_paint (inArgs.area);
+            back_buffer.rw_lock.write_unlock ();
+        }
+        else
+        {
+            front_buffer.rw_lock.write_lock ();
+            on_paint (inArgs.area);
+            front_buffer.rw_lock.write_unlock ();
+        }
 
         // Send queue draw event
         if (double_buffered)
@@ -254,7 +263,7 @@ public class Maia.Window : View
     private void
     on_delete_event ()
     {
-        Maia.audit (GLib.Log.METHOD, "");
+        Log.audit (GLib.Log.METHOD, "");
         on_destroy ();
     }
 

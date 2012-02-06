@@ -1,18 +1,18 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * tictac.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
- * 
+ *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * maia is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -57,7 +57,7 @@ public class Maia.TicTac : Watch
                 }
                 else
                 {
-                    delay = (int)(((m_FrameCount + 1) * 1000 / m_Fps - elapsed) * 1000);
+                    delay = int.max ((int)(((m_FrameCount + 1) * 1000 / m_Fps - elapsed) * 1000), 100);
                 }
 
                 Os.ITimerSpec itimer_spec = Os.ITimerSpec ();
@@ -98,7 +98,7 @@ public class Maia.TicTac : Watch
     private inline uint
     get_ticks (Os.TimeSpec inCurrentTime)
     {
-        return (uint)((inCurrentTime.tv_sec - m_StartTime.tv_sec) * 1000 + 
+        return (uint)((inCurrentTime.tv_sec - m_StartTime.tv_sec) * 1000 +
                       (inCurrentTime.tv_nsec - m_StartTime.tv_nsec) / 1000000);
     }
 

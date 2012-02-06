@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * geometry-event.vala
+ * backoff.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,24 +17,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.GeometryEventArgs : EventArgs
+internal struct Maia.BackOff
 {
-    // accessors
-    [CCode (notify = false)]
-    public Region geometry { get; private set; }
+    const uint CEILING = ((1 << 21) - 1);
+    const uint INITIALIZER = ((1 << 9) - 1);
 
-    // methods
-    public GeometryEventArgs (Region inGeometry)
+    Machine.Memory.Volatile.uint val;
+
+    public BackOff ()
     {
-        geometry = inGeometry;
+        val = INITIALIZER;
     }
-}
 
-public class Maia.GeometryEvent : Event<GeometryEventArgs>
-{
-    // methods
-    public GeometryEvent (uint32 inId, void* inOwner)
+    /**
+     * This is an exponential back-off implementation.
+     */
+    public void
+    exponential_block ()
     {
-        base.with_id (inId, inOwner);
+        uint ceiling = val;
+
+        for (Machine.Memory.Volatile.uint i = 0; i < ceiling; i++);
+
+        ceiling *= ceiling;
+        ceiling &= CEILING;
+        ceiling += INITIALIZER;
+
+        val = ceiling;
     }
 }

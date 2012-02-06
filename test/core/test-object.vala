@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * test-object.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
@@ -12,7 +12,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -127,7 +127,7 @@ public class Maia.TestObject : Maia.TestCase
         Test.message ("name = %s", Atom.to_string (foo.id));
         assert (foo is FooObject);
         assert (foo.id == Atom.from_string ("foo"));
-        assert (foo.delegate_cast<FooDelegate> () != null); 
+        assert (foo.delegate_cast<FooDelegate> () != null);
         (foo as FooObject).f ();
     }
 

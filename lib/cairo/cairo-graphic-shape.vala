@@ -1,18 +1,18 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * cairo-graphic-shape.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
- * 
+ *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * maia is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -87,7 +87,7 @@ internal class Maia.CairoGraphicShape : GraphicShape
         m_LastControlY = 0.0;
     }
 
-    public override void 
+    public override void
     move_to (double inX, double inY) throws GraphicError
     {
         m_Context.context.move_to (inX, inY);
@@ -99,7 +99,7 @@ internal class Maia.CairoGraphicShape : GraphicShape
         m_LastControlY = 0.0;
     }
 
-    public override void 
+    public override void
     rel_move_to (double inX, double inY) throws GraphicError
     {
         unowned Cairo.Context ctx = m_Context.context;
@@ -116,7 +116,7 @@ internal class Maia.CairoGraphicShape : GraphicShape
         m_LastControlY = 0.0;
     }
 
-    public override void 
+    public override void
     line_to (double inX, double inY) throws GraphicError
     {
         m_Context.context.line_to (inX, inY);
@@ -126,7 +126,7 @@ internal class Maia.CairoGraphicShape : GraphicShape
         m_LastControlY = 0.0;
     }
 
-    public override void 
+    public override void
     rel_line_to (double inX, double inY) throws GraphicError
     {
         m_Context.context.rel_line_to (inX, inY);
@@ -136,7 +136,7 @@ internal class Maia.CairoGraphicShape : GraphicShape
         m_LastControlY = 0.0;
     }
 
-    public override void 
+    public override void
     horizontal_line_to (double inX) throws GraphicError
     {
         Cairo.Context ctx = m_Context.context;
@@ -151,7 +151,7 @@ internal class Maia.CairoGraphicShape : GraphicShape
         m_LastControlY = 0.0;
     }
 
-    public override void 
+    public override void
     rel_horizontal_line_to (double inX) throws GraphicError
     {
         Cairo.Context ctx = m_Context.context;
@@ -166,7 +166,7 @@ internal class Maia.CairoGraphicShape : GraphicShape
         m_LastControlY = 0.0;
     }
 
-    public override void 
+    public override void
     vertical_line_to (double inY) throws GraphicError
     {
         Cairo.Context ctx = m_Context.context;
@@ -181,7 +181,7 @@ internal class Maia.CairoGraphicShape : GraphicShape
         m_LastControlY = 0.0;
     }
 
-    public override void 
+    public override void
     rel_vertical_line_to (double inY) throws GraphicError
     {
         Cairo.Context ctx = m_Context.context;
@@ -196,7 +196,7 @@ internal class Maia.CairoGraphicShape : GraphicShape
         m_LastControlY = 0.0;
     }
 
-    public override void 
+    public override void
     curve_to (double inX, double inY, double inX1, double inY1,
               double inX2, double inY2) throws GraphicError
     {
@@ -207,7 +207,7 @@ internal class Maia.CairoGraphicShape : GraphicShape
         m_LastControlY = inY2;
     }
 
-    public override void 
+    public override void
     rel_curve_to (double inX, double inY, double inX1, double inY1,
                   double inX2, double inY2) throws GraphicError
     {
@@ -223,8 +223,8 @@ internal class Maia.CairoGraphicShape : GraphicShape
         m_LastControlY = y0 + inY2;
     }
 
-    public override void 
-    smooth_curve_to (double inX, double inY, 
+    public override void
+    smooth_curve_to (double inX, double inY,
                      double inX2, double inY2) throws GraphicError
     {
         double x0, y0, x1, y1;
@@ -241,7 +241,7 @@ internal class Maia.CairoGraphicShape : GraphicShape
         curve_to (inX, inY, x1, y1, inX2, inY2);
     }
 
-    public override void 
+    public override void
     rel_smooth_curve_to (double inX, double inY,
                          double inX2, double inY2) throws GraphicError
     {
@@ -253,7 +253,7 @@ internal class Maia.CairoGraphicShape : GraphicShape
     }
 
     public override void
-    quadratic_curve_to (double inX, double inY, 
+    quadratic_curve_to (double inX, double inY,
                         double inX1, double inY1) throws GraphicError
     {
         Cairo.Context ctx = m_Context.context;
@@ -275,8 +275,8 @@ internal class Maia.CairoGraphicShape : GraphicShape
         m_LastControlY = inY1;
     }
 
-    public override void 
-    rel_quadratic_curve_to (double inX, double inY, 
+    public override void
+    rel_quadratic_curve_to (double inX, double inY,
                             double inX1, double inY1) throws GraphicError
     {
         double x0, y0;
@@ -286,7 +286,7 @@ internal class Maia.CairoGraphicShape : GraphicShape
         quadratic_curve_to (x0 + inX, y0 + inY, x0 + inX1, y0 + inY1);
     }
 
-    public override void 
+    public override void
     smooth_quadratic_curve_to (double inX, double inY) throws GraphicError
     {
         double x0, y0, x1, y1;
@@ -303,7 +303,7 @@ internal class Maia.CairoGraphicShape : GraphicShape
         quadratic_curve_to (inX, inY, x1, y1);
     }
 
-    public override void 
+    public override void
     rel_smooth_quadratic_curve_to (double inX, double inY) throws GraphicError
     {
         double x0, y0;
@@ -314,7 +314,7 @@ internal class Maia.CairoGraphicShape : GraphicShape
     }
 
     public override void
-    arc_to (double inRx, double inRy, 
+    arc_to (double inRx, double inRy,
             double inXAxisRotation, bool inLargeArcFlag, bool inSweepFlag,
             double inX, double inY) throws GraphicError
     {
@@ -417,7 +417,7 @@ internal class Maia.CairoGraphicShape : GraphicShape
         if (angle_delta > 0.0)
             ctx.arc (0.0, 0.0, 1.0, start_angle, start_angle + angle_delta);
         else
-            ctx.arc_negative (0.0, 0.0, 1.0, start_angle, 
+            ctx.arc_negative (0.0, 0.0, 1.0, start_angle,
                               start_angle + angle_delta);
         m_Context.status ();
 
@@ -430,7 +430,7 @@ internal class Maia.CairoGraphicShape : GraphicShape
     }
 
     public override void
-    rel_arc_to (double inRx, double inRy, 
+    rel_arc_to (double inRx, double inRy,
                 double inXAxisRotation, bool inLargeArcFlag, bool inSweepFlag,
                 double inX, double inY) throws GraphicError
     {
@@ -439,12 +439,12 @@ internal class Maia.CairoGraphicShape : GraphicShape
         m_Context.context.get_current_point (out x, out y);
         m_Context.status ();
 
-        arc_to (inRx, inRy, inXAxisRotation, inLargeArcFlag, inSweepFlag, 
+        arc_to (inRx, inRy, inXAxisRotation, inLargeArcFlag, inSweepFlag,
                 x + inX , y + inY);
     }
 
-    public override void 
-    rectangle (double inX, double inY, 
+    public override void
+    rectangle (double inX, double inY,
                double inWidth, double inHeight,
                double inRx, double inRy) throws GraphicError
     {
@@ -481,8 +481,8 @@ internal class Maia.CairoGraphicShape : GraphicShape
         }
     }
 
-    public override void 
-    arc (double inXc, double inYc, double inRx, double inRy, 
+    public override void
+    arc (double inXc, double inYc, double inRx, double inRy,
          double inAngle1, double inAngle2) throws GraphicError
     {
         Cairo.Context ctx = m_Context.context;

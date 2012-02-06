@@ -1,18 +1,18 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * list.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
- * 
+ *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * maia is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -26,7 +26,7 @@ public class Maia.List<V> : Collection<V>
         public unowned Node<V>? m_Prev = null;
         public Node<V>? m_Next = null;
 
-        public Node (owned V inValue) 
+        public Node (owned V inValue)
         {
             m_Value = inValue;
         }
@@ -337,6 +337,11 @@ public class Maia.List<V> : Collection<V>
         this.m_Size = 0;
     }
 
+    /**
+     * Get the first element of the list
+     *
+     * @return the first of element of the list
+     */
     public unowned V?
     first ()
         requires (m_Size > 0)
@@ -344,6 +349,11 @@ public class Maia.List<V> : Collection<V>
         return m_Head.m_Value;
     }
 
+    /**
+     * Get the last element of the list
+     *
+     * @return the last of element of the list
+     */
     public unowned V?
     last ()
         requires (m_Size > 0)
@@ -372,3 +382,4 @@ public class Maia.List<V> : Collection<V>
         remove_node (iter.current);
    }
 }
+

@@ -11,9 +11,6 @@ include $(top_srcdir)/build/vapi.am
 
 SUBDIRS = core xml graphic . cairo xcb
 
-AM_CFLAGS += \
-    -DMAIA_LOG_CONTEXT=\""Maia"\"
-
 maia.h: libmaia_la_vala.stamp
 
 lib_LTLIBRARIES = libmaia.la
@@ -60,3 +57,4 @@ CLEANFILES += \
     libmaia_la_vala.stamp \
     $(VALAFILES:.vala=.c) \
     $(pkgconfig_DATA)
+

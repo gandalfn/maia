@@ -1,13 +1,8 @@
 MAIA_LIB_NAME = maia-core
 
-MAIA_EXTRA_VAPIS = log.vapi
-
 include $(top_srcdir)/build/maia.am
 include $(top_srcdir)/build/pkgconfig.am
 include $(top_srcdir)/build/vapi.am
-
-AM_CFLAGS += \
-    -DMAIA_LOG_CONTEXT=\""Maia.Core"\"
 
 maia-core.h: libmaia_core_la_vala.stamp
 
@@ -23,8 +18,9 @@ libmaia_core_la_VALAFLAGS = \
     --library=maia-core
 
 libmaia_core_la_SOURCES = \
-    log.c \
+    logger.vala \
     functions.vala \
+    backoff.vala \
     iterator.vala \
     collection.vala \
     array.vala \
@@ -34,12 +30,12 @@ libmaia_core_la_SOURCES = \
     pair.vala \
     map.vala \
     atom.vala \
-    atomic-node.vala \
-    atomic-iterator.vala \
-    atomic-list.vala \
-    atomic-queue.vala \
     spinlock.vala \
-    token.vala \
+    read-write-spinlock.vala \
+    atomic-node.vala \
+    atomic-stack.vala \
+    atomic-queue.vala \
+    atomic-list.vala \
     object.vala \
     transform.vala \
     point.vala \
@@ -75,3 +71,4 @@ CLEANFILES += \
     libmaia_core_la_vala.stamp \
     $(VALAFILES:.vala=.c) \
     $(pkgconfig_DATA)
+

@@ -1,18 +1,18 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * region.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
- * 
+ *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * maia is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -60,7 +60,7 @@ public class Maia.Region : Object
 
         /**
          * Calls inFunc for each element in the collection iterator.
-         * 
+         *
          * @param inFunc the function to call for each element's data
          **/
         public void
@@ -151,7 +151,7 @@ public class Maia.Region : Object
     {
     }
 
-    private inline void 
+    private inline void
     compress (Region s, Region t, uint dx, bool xdir, bool grow)
     {
         uint shift = 1;
@@ -162,27 +162,27 @@ public class Maia.Region : Object
         {
             if ((dx & shift) != 0)
             {
-                if (xdir) 
+                if (xdir)
                     offset (-(int) shift,0);
-                else 
+                else
                     offset (0, -(int) shift);
 
-                if (grow) 
+                if (grow)
                     union (s);
-                else 
+                else
                     intersect (s);
                 dx -= shift;
                 if (dx == 0) break;
             }
             t.m_Region.copy (out s.m_Region);
-            if (xdir) 
+            if (xdir)
                 s.offset (-(int) shift,0);
-            else 
+            else
                 s.offset (0, -(int) shift);
 
-            if (grow) 
+            if (grow)
                 s.union (t);
-            else 
+            else
                 s.intersect (t);
             shift <<= 1;
         }
@@ -193,7 +193,7 @@ public class Maia.Region : Object
      *
      * @return region copied
      */
-    public Region? 
+    public Region?
     copy ()
     {
         Region region = new Region ();
@@ -209,7 +209,7 @@ public class Maia.Region : Object
      *
      * @param inOther region to subtract
      */
-    public void 
+    public void
     subtract (Region inOther)
     {
         m_Region.subtract (out m_Region, inOther.m_Region);
@@ -220,7 +220,7 @@ public class Maia.Region : Object
      *
      * @param inOther region to union with
      */
-    public inline void 
+    public inline void
     union (Region inOther)
     {
         m_Region.union (out m_Region, inOther.m_Region);
@@ -231,7 +231,7 @@ public class Maia.Region : Object
      *
      * @param inRect rectangle to union with
      */
-    public void 
+    public void
     union_with_rect (Rectangle inRect)
     {
         Region other = new Region.rectangle (inRect);
@@ -244,7 +244,7 @@ public class Maia.Region : Object
      *
      * @param inOther region to intersect to
      */
-    public void 
+    public void
     intersect (Region inOther)
     {
         m_Region.intersect (out m_Region, inOther.m_Region);
@@ -256,7 +256,7 @@ public class Maia.Region : Object
      * @param inDx x offset to add at region
      * @param inDy y offset to add at region
      */
-    public inline void 
+    public inline void
     offset (int inDx, int inDy)
     {
         m_Region.translate (Pixman.Fixed.int(inDx), Pixman.Fixed.int(inDy));
@@ -268,13 +268,13 @@ public class Maia.Region : Object
      * @param inWidth new region width
      * @param inHeight new region height
      */
-    public void 
+    public void
     resize (uint inWidth, uint inHeight)
         requires (inWidth > 0 && inHeight > 0)
     {
-        int dx = ((Pixman.Fixed)(m_Region.extents.x2 - 
+        int dx = ((Pixman.Fixed)(m_Region.extents.x2 -
                                  m_Region.extents.x1)).to_int () - (int)inWidth;
-        int dy = ((Pixman.Fixed)(m_Region.extents.y2 - 
+        int dy = ((Pixman.Fixed)(m_Region.extents.y2 -
                                  m_Region.extents.y1)).to_int () - (int)inHeight;
 
         if (dx != 0 || dy != 0)
@@ -307,9 +307,9 @@ public class Maia.Region : Object
         Rectangle tclipbox = clipbox;
         Rectangle oclipbox = ((Region)inOther).clipbox;
 
-        if (tclipbox.origin.x == oclipbox.origin.x && 
+        if (tclipbox.origin.x == oclipbox.origin.x &&
             tclipbox.origin.y == oclipbox.origin.y &&
-            tclipbox.size.width == oclipbox.size.width && 
+            tclipbox.size.width == oclipbox.size.width &&
             tclipbox.size.height == oclipbox.size.height)
             ret = 0;
         else if (tclipbox.size.width * tclipbox.size.height <

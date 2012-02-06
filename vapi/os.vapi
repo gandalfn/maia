@@ -2,17 +2,17 @@
 /*
  * os.vapi
  * Copyright (C) Nicolas Bruguier 2009 <gandalfn@club-internet.fr>
- * 
+ *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * maia is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -133,168 +133,16 @@ namespace Os
         public int unlock ();
     }
 
-    [CCode (cheader_filename = "os.h")]
-    namespace Memory
-    {
-        [CCode (cname = "os_memory_barrier")]
-        public static void barrier ();
+    [CCode (cprefix = "EFD_", has_type_id = false, cheader_filename = "sys/eventfd.h")]
+    public enum EventFdFlags {
+        CLOEXEC,
+        NONBLOCK,
+        SEMAPHORE
     }
 
-    [CCode (cheader_filename = "os.h")]
-    namespace Cpu
-    {
-        [CCode (cname = "os_cpu_relax")]
-        public static void relax ();
-    }
-
-    [CCode (cheader_filename = "os.h")]
-    namespace Atomic
-    {
-        [CCode (cname = "volatile gushort")]
-        public struct UShort
-        {
-            [CCode (cname = "os_atomic_get")]
-            public ushort get ();
-            [CCode (cname = "os_atomic_set")]
-            public void set (ushort inVal);
-            [CCode (cname = "os_atomic_fetch_and_add")]
-            public ushort fetch_and_add (ushort val);
-            [CCode (cname = "os_atomic_inc")]
-            public ushort inc ();
-            [CCode (cname = "os_atomic_dec")]
-            public ushort dec ();
-            [CCode (cname = "os_atomic_compare")]
-            public bool compare (ushort inVal);
-            [CCode (cname = "os_atomic_compare_and_exchange")]
-            public bool compare_and_exchange (ushort inOld, ushort inVal);
-            [CCode (cname = "os_atomic_cast_ushort")]
-            public static unowned UShort? cast (void* inpVal);
-        }
-
-        [CCode (cname = "volatile gshort")]
-        public struct Short
-        {
-            [CCode (cname = "os_atomic_get")]
-            public short get ();
-            [CCode (cname = "os_atomic_set")]
-            public void set (short inVal);
-            [CCode (cname = "os_atomic_fetch_and_add")]
-            public short fetch_and_add (short val);
-            [CCode (cname = "os_atomic_inc")]
-            public short inc ();
-            [CCode (cname = "os_atomic_dec")]
-            public short dec ();
-            [CCode (cname = "os_atomic_compare")]
-            public bool compare (short inVal);
-            [CCode (cname = "os_atomic_compare_and_exchange")]
-            public bool compare_and_exchange (short inOld, short inVal);
-            [CCode (cname = "os_atomic_cast_short")]
-            public static unowned Short? cast (void* inpVal);
-        }
-
-        [CCode (cname = "volatile guint")]
-        public struct UInt
-        {
-            [CCode (cname = "os_atomic_get")]
-            public uint get ();
-            [CCode (cname = "os_atomic_set")]
-            public void set (uint inVal);
-            [CCode (cname = "os_atomic_fetch_and_add")]
-            public uint fetch_and_add (uint val);
-            [CCode (cname = "os_atomic_inc")]
-            public uint inc ();
-            [CCode (cname = "os_atomic_dec")]
-            public uint dec ();
-            [CCode (cname = "os_atomic_compare")]
-            public bool compare (uint inVal);
-            [CCode (cname = "os_atomic_compare_and_exchange")]
-            public bool compare_and_exchange (uint inOld, uint inVal);
-            [CCode (cname = "os_atomic_cast_uint")]
-            public static unowned UInt? cast (void* inpVal);
-        }
-
-        [CCode (cname = "volatile gint")]
-        public struct Int
-        {
-            [CCode (cname = "os_atomic_get")]
-            public int get ();
-            [CCode (cname = "os_atomic_set")]
-            public void set (int inVal);
-            [CCode (cname = "os_atomic_fetch_and_add")]
-            public int fetch_and_add (int val);
-            [CCode (cname = "os_atomic_inc")]
-            public int inc ();
-            [CCode (cname = "os_atomic_dec")]
-            public int dec ();
-            [CCode (cname = "os_atomic_compare")]
-            public bool compare (int inVal);
-            [CCode (cname = "os_atomic_compare_and_exchange")]
-            public bool compare_and_exchange (int inOld, int inVal);
-            [CCode (cname = "os_atomic_cast_int")]
-            public static unowned Int? cast (void* inpVal);
-        }
-
-        [CCode (cname = "volatile gulong")]
-        public struct ULong
-        {
-            [CCode (cname = "os_atomic_get")]
-            public ulong get ();
-            [CCode (cname = "os_atomic_set")]
-            public void set (ulong inVal);
-            [CCode (cname = "os_atomic_fetch_and_add")]
-            public ulong fetch_and_add (ulong val);
-            [CCode (cname = "os_atomic_inc")]
-            public ulong inc ();
-            [CCode (cname = "os_atomic_dec")]
-            public ulong dec ();
-            [CCode (cname = "os_atomic_compare")]
-            public bool compare (ulong inVal);
-            [CCode (cname = "os_atomic_compare_and_exchange")]
-            public bool compare_and_exchange (ulong inOld, ulong inVal);
-            [CCode (cname = "os_atomic_cast_ulong")]
-            public static unowned ULong? cast (void* inpVal);
-        }
-
-        [CCode (cname = "volatile glong")]
-        public struct Long
-        {
-            [CCode (cname = "os_atomic_get")]
-            public long get ();
-            [CCode (cname = "os_atomic_set")]
-            public void set (long inVal);
-            [CCode (cname = "os_atomic_fetch_and_add")]
-            public long fetch_and_add (long val);
-            [CCode (cname = "os_atomic_inc")]
-            public long inc ();
-            [CCode (cname = "os_atomic_dec")]
-            public long dec ();
-            [CCode (cname = "os_atomic_compare")]
-            public bool compare (long inVal);
-            [CCode (cname = "os_atomic_compare_and_exchange")]
-            public bool compare_and_exchange (long inOld, long inVal);
-            [CCode (cname = "os_atomic_cast_long")]
-            public static unowned Long? cast (void* inpVal);
-        }
-
-        [CCode (cname = "volatile gpointer")]
-        public struct Pointer
-        {
-            [CCode (cname = "os_atomic_get")]
-            public void* get ();
-            [CCode (cname = "os_atomic_set")]
-            public void set (void* inVal);
-            [CCode (cname = "os_atomic_fetch_and_add")]
-            public void* fetch_and_add (void* val);
-            [CCode (cname = "os_atomic_inc")]
-            public void* inc ();
-            [CCode (cname = "os_atomic_dec")]
-            public void* dec ();
-            [CCode (cname = "os_atomic_compare")]
-            public bool compare (void* inVal);
-            [CCode (cname = "os_atomic_compare_and_exchange")]
-            public bool compare_and_exchange (void* inOld, void* inVal);
-            [CCode (cname = "os_atomic_cast_pointer")]
-            public static unowned Pointer? cast (void* inpVal);
-        }
-    }
+    [CCode (cheader_filename = "sys/eventfd.h")]
+    public int eventfd (uint count = 0, EventFdFlags flags = 0);
+    public int eventfd_read (int fd, out uint64 value);
+    public int eventfd_write (int fd, uint64 value);
 }
+

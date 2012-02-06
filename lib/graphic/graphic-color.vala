@@ -1,18 +1,18 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * graphics-color.vala
  * Copyright (C) Nicolas Bruguier 2010 <gandalfn@club-internet.fr>
- * 
+ *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * maia is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -188,7 +188,7 @@ public class Maia.GraphicColor : Object
     private double m_Green = 0.0;
     private double m_Blue  = 0.0;
     private double m_Alpha = 0.0;
-    private bool   m_IsSet = false; 
+    private bool   m_IsSet = false;
 
     // accessors
     [CCode (notify = false)]
@@ -246,18 +246,22 @@ public class Maia.GraphicColor : Object
     }
 
     // static methods
-    static construct
+    private static void
+    create_standard_colors ()
     {
-        s_StandardColors = new Set <GraphicColor> ();
-
-        for (int cpt = 0; g_StandardColors[cpt].m_Name != null; ++cpt)
+        if (s_StandardColors == null)
         {
-            GraphicColor color = new GraphicColor ((double)g_StandardColors[cpt].m_Red / 255,
-                                                   (double)g_StandardColors[cpt].m_Green / 255,
-                                                   (double)g_StandardColors[cpt].m_Blue / 255,
-                                                   1 - (double)(g_StandardColors[cpt].m_Opacity / 255));
+            s_StandardColors = new Set <GraphicColor> ();
 
-            s_StandardColors.insert (color);
+            for (int cpt = 0; g_StandardColors[cpt].m_Name != null; ++cpt)
+            {
+                GraphicColor color = new GraphicColor ((double)g_StandardColors[cpt].m_Red / 255,
+                                                       (double)g_StandardColors[cpt].m_Green / 255,
+                                                       (double)g_StandardColors[cpt].m_Blue / 255,
+                                                       1 - (double)(g_StandardColors[cpt].m_Opacity / 255));
+
+                s_StandardColors.insert (color);
+            }
         }
     }
 
@@ -307,6 +311,8 @@ public class Maia.GraphicColor : Object
         }
         else
         {
+            create_standard_colors ();
+
             unowned GraphicColor? color = s_StandardColors.search<string> (inValue,
                                                                           (a, v) => {
                                                return GLib.strcmp (a.name, v);

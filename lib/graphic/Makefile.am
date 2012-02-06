@@ -7,9 +7,6 @@ include $(top_srcdir)/build/maia.am
 include $(top_srcdir)/build/pkgconfig.am
 include $(top_srcdir)/build/vapi.am
 
-AM_CFLAGS += \
-    -DMAIA_LOG_CONTEXT=\""Maia.Graphic"\"
-
 maia-graphic.h: libmaia_graphic_la_vala.stamp
 
 lib_LTLIBRARIES = libmaia-graphic.la
@@ -46,3 +43,4 @@ CLEANFILES += \
     libmaia_graphic_la_vala.stamp \
     $(VALAFILES:.vala=.c) \
     $(pkgconfig_DATA)
+

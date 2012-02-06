@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * test-window.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
@@ -12,7 +12,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -25,11 +25,12 @@ public class TestWindow : Maia.Window
     public TestWindow ()
     {
         base ("test-window", 400, 400);
+
         //workspace.create_window_event.listen (on_new_window, Maia.Application.self);
         //workspace.reparent_window_event.listen (on_window_reparented, Maia.Application.self);
         //workspace.destroy_window_event.listen (on_destroy_window, Maia.Application.self);
 
-        timeline = new Maia.Timeline (60, 300, Maia.Application.self);
+        timeline = new Maia.Timeline (20, 100, Maia.Application.self);
         timeline.loop = true;
         timeline.new_frame.watch (on_new_frame);
         timeline.start ();
@@ -78,7 +79,7 @@ public class TestWindow : Maia.Window
     public override void
     on_paint (Maia.Region inArea)
     {
-        //message ("Paint %s", inArea.to_string ());
+        message ("Paint %s", inArea.to_string ());
         try
         {
             Maia.GraphicContext ctx = back_buffer.create_context ();
@@ -110,8 +111,7 @@ public class TestWindow : Maia.Window
 static int
 main (string[] args)
 {
-    //Maia.log_set_level (Maia.Level.DEBUG);
-    //Maia.backtrace_on_crash ();
+    Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, "test-window"));
 
     Maia.Application application = Maia.Application.create ();
 

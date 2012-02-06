@@ -11,9 +11,6 @@ include $(top_srcdir)/build/maia.am
 include $(top_srcdir)/build/pkgconfig.am
 include $(top_srcdir)/build/vapi.am
 
-AM_CFLAGS += \
-    -DMAIA_LOG_CONTEXT=\""Maia.Xcb"\"
-
 maia-xcb-backend.h: libmaia_xcb_backend_la_vala.stamp
 
 lib_LTLIBRARIES = libmaia-xcb-backend.la
@@ -70,3 +67,4 @@ CLEANFILES += \
     libmaia_xcb_backend_la_vala.stamp \
     $(VALAFILES:.vala=.c) \
     $(pkgconfig_DATA)
+

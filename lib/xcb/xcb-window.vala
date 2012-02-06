@@ -1,18 +1,18 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * xcb-window.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
- * 
+ *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * maia is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -95,8 +95,7 @@ internal class Maia.XcbWindow : WindowProxy
         get {
             if (m_BackBuffer == null)
             {
-                Object.atomic_compare_and_exchange (&m_BackBuffer, null, 
-                                                    new XcbOffscreenGraphicDevice (this));
+                m_BackBuffer = new XcbOffscreenGraphicDevice (this);
             }
 
             return m_BackBuffer;
@@ -107,8 +106,7 @@ internal class Maia.XcbWindow : WindowProxy
         get {
             if (m_FrontBuffer == null)
             {
-                Object.atomic_compare_and_exchange (&m_FrontBuffer, null, 
-                                                    new XcbWindowGraphicDevice (this));
+                m_FrontBuffer = new XcbWindowGraphicDevice (this);
             }
 
             return m_FrontBuffer;
@@ -141,7 +139,7 @@ internal class Maia.XcbWindow : WindowProxy
     // methods
     construct
     {
-        debug ("Maia.XcbWindow.construct", "construct %s", ((Window)delegator).is_foreign.to_string ());
+        Log.debug ("Maia.XcbWindow.construct", "construct %s", ((Window)delegator).is_foreign.to_string ());
 
         // Get xcb desktop
         m_XcbDesktop = (((Window)delegator).workspace.parent as Desktop).proxy as XcbDesktop;
@@ -172,7 +170,7 @@ internal class Maia.XcbWindow : WindowProxy
     private void
     foreign (Xcb.Window inWindow)
     {
-        audit (GLib.Log.METHOD, "xid 0x%lx", inWindow);
+        Log.audit (GLib.Log.METHOD, "xid 0x%lx", inWindow);
 
         // Create geometry fetcher
         m_GeometryProperty = new XcbWindowGeometry (this);
@@ -216,18 +214,18 @@ internal class Maia.XcbWindow : WindowProxy
         Xcb.Window window = Xcb.Window (m_XcbDesktop.connection);
 
         // Create xcb window
-        m_XcbDesktop.connection.create_window (Xcb.CopyFromParent, 
+        m_XcbDesktop.connection.create_window (Xcb.CopyFromParent,
                                                window, xcb_workspace.xcb_screen.root,
                                                (int16)inGeometry.clipbox.origin.x,
-                                               (int16)inGeometry.clipbox.origin.y, 
+                                               (int16)inGeometry.clipbox.origin.y,
                                                (uint16)inGeometry.clipbox.size.width,
                                                (uint16)inGeometry.clipbox.size.height,
-                                               0, Xcb.WindowClass.INPUT_OUTPUT, 
-                                               xcb_workspace.xcb_screen.root_visual, 
-                                               Xcb.CW.BACK_PIXEL, 
+                                               0, Xcb.WindowClass.INPUT_OUTPUT,
+                                               xcb_workspace.xcb_screen.root_visual,
+                                               Xcb.CW.BACK_PIXEL,
                                                { xcb_workspace.xcb_screen.white_pixel });
         id = window;
-        audit (GLib.Log.METHOD, "xid 0x%lx", window);
+        Log.audit (GLib.Log.METHOD, "xid 0x%lx", window);
 
         // Create geometry fetcher
         m_GeometryProperty = new XcbWindowGeometry (this);
@@ -267,26 +265,26 @@ internal class Maia.XcbWindow : WindowProxy
     {
         if (m_DoubleBuffered)
         {
-            Token token_front = Token.get_for_object (front_buffer);
-            Token token_back = Token.get_for_object (back_buffer);
+            front_buffer.lock ();
+            back_buffer.lock ();
 
             try
             {
-                audit (GLib.Log.METHOD, "Swap buffer");
+                Log.audit (GLib.Log.METHOD, "Swap buffer");
                 Maia.GraphicContext ctx = m_FrontBuffer.create_context ();
                 ctx.clip = new Region.raw_rectangle (0, 0,
                                                      (uint)geometry.clipbox.size.width,
                                                      (uint)geometry.clipbox.size.height);
                 ctx.pattern.source = m_BackBuffer;
-                ctx.paint.paint (); 
+                ctx.paint.paint ();
             }
             catch (GraphicError err)
             {
-                error (GLib.Log.METHOD, "Error on swap buffer: %s", err.message);
+                Log.error (GLib.Log.METHOD, "Error on swap buffer: %s", err.message);
             }
 
-            token_back.release ();
-            token_front.release ();
+            back_buffer.unlock ();
+            front_buffer.unlock ();
         }
     }
 

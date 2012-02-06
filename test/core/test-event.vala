@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * test-event.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
@@ -12,7 +12,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -47,7 +47,7 @@ public class Maia.TestEvent : Maia.TestCase
     {
         dispatcher = new Dispatcher ();
         foo = new Foo ();
-        timeout = new Timeout (50);
+        timeout = new Timeout (5);
         timeout.parent = dispatcher;
         timeout.elapsed.watch (on_timeout_elapsed);
         count = 0;
@@ -71,7 +71,7 @@ public class Maia.TestEvent : Maia.TestCase
 
         Test.timer_start ();
 
-        return count <= 9;
+        return count <= 507;
     }
 
     private void
@@ -79,7 +79,7 @@ public class Maia.TestEvent : Maia.TestCase
     {
         Test.message ("%lx: Event received %i = %f s",
                       (ulong)Dispatcher.self.thread_id, inArgs.a, Test.timer_elapsed ());
-        if (count > 9)
+        if (count > 507)
         {
             dispatcher.finish ();
         }

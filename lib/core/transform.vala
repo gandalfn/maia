@@ -1,18 +1,18 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * transform.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
- * 
+ *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * maia is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -93,7 +93,7 @@ public class Maia.Transform : Object
         changed = new Notification<Transform> (this);
     }
 
-    public Transform (double inXx, double inYx, 
+    public Transform (double inXx, double inYx,
                       double inXy, double inYy,
                       double inX0, double inY0)
     {
@@ -126,7 +126,7 @@ public class Maia.Transform : Object
      * @param inTx amount to translate in the X direction
      * @param inTy amount to translate in the Y direction
      */
-    public void 
+    public void
     translate (double inTx, double inTy)
     {
         // translate base matrix
@@ -146,7 +146,7 @@ public class Maia.Transform : Object
      * @param inSx scale factor in the X direction
      * @param inSy scale factor in the Y direction
      */
-    public void 
+    public void
     scale (double inSx, double inSy)
     {
         // translate base matrix
@@ -165,7 +165,7 @@ public class Maia.Transform : Object
      *
      * @param inRadians angle of rotations, in radians.
      */
-    public void 
+    public void
     rotate (double inRadians)
     {
         // translate base matrix
@@ -186,7 +186,7 @@ public class Maia.Transform : Object
      *
      * @param inRadians Skew angle.
      */
-    public void 
+    public void
     skew_x (double inRadians)
     {
         // translate base matrix
@@ -205,7 +205,7 @@ public class Maia.Transform : Object
      *
      * @param inRadians Skew angle.
      */
-    public void 
+    public void
     skew_y (double inRadians)
     {
         // translate base matrix

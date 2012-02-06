@@ -1,81 +1,69 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * dispatcher.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
- * 
+ *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * maia is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 public class Maia.Dispatcher : Task
 {
-    // Static properties
-    static Set<unowned Dispatcher> s_Dispatchers;
+    // static properties
+    static GLib.Private                    s_Private;
+    static Atomic.List<unowned Dispatcher> s_Dispatchers;
 
-    // Properties
+    // properties
     private Os.EPoll         m_PollFd = -1;
     private EventDispatcher  m_EventDispatcher = null;
     private Event<EventArgs> m_FinishEvent = null;
 
-    // Accessors
+    // accessors
     public static unowned Dispatcher? self {
         get {
-            unowned Dispatcher ret = null;
-
-            Token token = Token.get_for_class (s_Dispatchers);
-            {
-                ret = s_Dispatchers.search<unowned GLib.Thread<void*>> (GLib.Thread.self<void*> (),
-                                                                        (v, a) => {
-                                                                            return direct_compare (v.thread_id, a);
-                                                                        });
-            }
-            token.release ();
-
-            return ret;
+            return (Dispatcher?)s_Private.get ();
         }
     }
 
-    // Methods
+    // static methods
     static construct
     {
-        s_Dispatchers = new Set<unowned Dispatcher> ();
+        s_Private = new GLib.Private (null);
+        s_Private.set (null);
+
+        s_Dispatchers = new Atomic.List<unowned Dispatcher> ();
         s_Dispatchers.compare_func = (a, b) => {
             return direct_compare (a.thread_id, b.thread_id);
         };
     }
 
+    // methods
     internal static void
     remove_event_listeners (Event inEvent)
     {
-        audit (GLib.Log.METHOD, "Leaf event id = %s", inEvent.name);
-        Token token = Token.get_for_class (s_Dispatchers);
-        {
-            foreach (unowned Dispatcher dispatcher in s_Dispatchers)
-            {
-                Token token_event_dispatcher = Token.get_for_object (dispatcher.m_EventDispatcher);
-                {
-                    dispatcher.m_EventDispatcher.deafen_event (inEvent);
-                }
-                token_event_dispatcher.release ();
-            }
-        }
-        token.release ();
+        Log.audit (GLib.Log.METHOD, "Remove event listeners for event id = %s", inEvent.name);
+
+        unowned Event evt = inEvent;
+        s_Dispatchers.foreach ((dispatcher) => {
+            dispatcher.m_EventDispatcher.deafen_event (evt);
+            return true;
+        });
     }
 
     public Dispatcher ()
     {
-        audit (GLib.Log.METHOD, "");
         base (Priority.HIGH, false);
+        Log.audit (GLib.Log.METHOD, "0x%lx", (ulong)this);
 
         m_PollFd = Os.EPoll (Os.EPOLL_CLOEXEC);
         sorted_childs = true;
@@ -85,12 +73,17 @@ public class Maia.Dispatcher : Task
 
         m_FinishEvent = new Event<EventArgs> ("finish", this);
         m_FinishEvent.listen (on_finish, this);
+
+        assert (!(this in s_Dispatchers));
+
+        s_Dispatchers.insert (this);
+        s_Private.set (this);
     }
 
     public Dispatcher.thread ()
     {
-        audit (GLib.Log.METHOD, "");
         base (Priority.HIGH, true);
+        Log.audit (GLib.Log.METHOD, "0x%lx", (ulong)this);
 
         m_PollFd = Os.EPoll (Os.EPOLL_CLOEXEC);
         sorted_childs = true;
@@ -104,12 +97,10 @@ public class Maia.Dispatcher : Task
 
     ~Dispatcher ()
     {
-        audit ("Maia.Dispatcher.finalize", "");
-        Token token = Token.get_for_class (s_Dispatchers);
-        {
-            s_Dispatchers.remove (this);
-        }
-        token.release ();
+        Log.audit ("Maia.Dispatcher.finalize", "");
+
+        s_Private.set (null);
+        s_Dispatchers.remove (this);
 
         m_EventDispatcher.parent = null;
 
@@ -121,7 +112,7 @@ public class Maia.Dispatcher : Task
     private void
     on_finish ()
     {
-        audit (GLib.Log.METHOD, "Finish %lx", (ulong)thread_id);
+        Log.audit (GLib.Log.METHOD, "Finish %lx 0x%lx", (ulong)thread_id, (ulong)this);
         state = State.TERMINATED;
     }
 
@@ -140,16 +131,16 @@ public class Maia.Dispatcher : Task
     internal override void*
     main ()
     {
-        audit (GLib.Log.METHOD, "");
+        Log.audit (GLib.Log.METHOD, "");
         void* ret = base.main ();
 
-        Token token = Token.get_for_class (s_Dispatchers);
+        if (is_thread)
         {
             assert (!(this in s_Dispatchers));
 
             s_Dispatchers.insert (this);
+            s_Private.set (this);
         }
-        token.release ();
 
         Array<unowned Task> ready_tasks = new Array<unowned Task>.sorted ();
 
@@ -213,52 +204,47 @@ public class Maia.Dispatcher : Task
     internal override void
     finish ()
     {
-        audit (GLib.Log.METHOD, "");
-        m_FinishEvent.post<EventArgs> ();
-        if (is_thread && self != this)
-            thread_id.join ();
+        Log.audit (GLib.Log.METHOD, "0x%lx", (ulong)this);
+        if (state != State.TERMINATED)
+        {
+            m_FinishEvent.post ();
+            if (is_thread && self != this)
+                thread_id.join ();
+        }
     }
 
     internal void
     post_event (Event inEvent)
     {
-        audit (GLib.Log.METHOD, "Event id = %s", inEvent.name);
-        Token token = Token.get_for_class (s_Dispatchers);
+        Log.audit (GLib.Log.METHOD, "Event id = %i", inEvent.id);
+        inEvent.ref ();
         {
-            s_Dispatchers.iterator ().foreach ((dispatcher) => {
+            s_Dispatchers.foreach ((dispatcher) => {
                 dispatcher.m_EventDispatcher.post (inEvent);
                 return true;
             });
         }
-        token.release ();
+        inEvent.unref ();
     }
 
     internal void
     add_listener (EventListener inEventListener)
     {
-        audit (GLib.Log.METHOD, "Listen event id = %s", inEventListener.name);
-        Token token = Token.get_for_class (s_Dispatchers);
-        {
-            m_EventDispatcher.listen (inEventListener);
-        }
-        token.release ();
+        Log.audit (GLib.Log.METHOD, "Listen event id = %i", inEventListener.id);
+        m_EventDispatcher.listen (inEventListener);
     }
 
     internal void
     remove_listener (EventListener inEventListener)
     {
-        audit (GLib.Log.METHOD, "Deaf event id = %s", inEventListener.name);
-        Token token = Token.get_for_class (s_Dispatchers);
-        {
-            m_EventDispatcher.deafen (inEventListener);
-        }
-        token.release ();
+        Log.audit (GLib.Log.METHOD, "Deaf event id = %i", inEventListener.id);
+        m_EventDispatcher.deafen (inEventListener);
     }
 
     internal new void
     sleep (Task inTask)
     {
-        audit (GLib.Log.METHOD, "");
+        Log.audit (GLib.Log.METHOD, "");
 
         Os.EPollEvent event = Os.EPollEvent ();
         event.events = Os.EPOLLIN;
@@ -269,14 +255,14 @@ public class Maia.Dispatcher : Task
     internal new void
     wakeup (Task inTask)
     {
-        audit (GLib.Log.METHOD, "");
+        Log.audit (GLib.Log.METHOD, "");
         m_PollFd.ctl (Os.EPOLL_CTL_DEL, inTask.sleep_fd, null);
     }
 
     internal void
     add_watch (Watch inWatch)
     {
-        audit (GLib.Log.METHOD, "");
+        Log.audit (GLib.Log.METHOD, "");
 
         Os.EPollEvent event = Os.EPollEvent ();
         event.events = Os.EPOLLERR | Os.EPOLLHUP;
@@ -293,7 +279,7 @@ public class Maia.Dispatcher : Task
     internal void
     remove_watch (Watch inWatch)
     {
-        audit (GLib.Log.METHOD, "");
+        Log.audit (GLib.Log.METHOD, "");
 
         m_PollFd.ctl (Os.EPOLL_CTL_DEL, inWatch.watch_fd, null);
         inWatch.close_watch_fd ();

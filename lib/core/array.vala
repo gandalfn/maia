@@ -1,4 +1,4 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * array.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
@@ -550,7 +550,6 @@ public class Maia.Array <V> : Collection <V>
      */
     internal override void
     erase (Maia.Iterator<V> inIterator)
-        requires (inIterator is Iterator<V>)
         requires (inIterator.stamp == stamp)
     {
         Iterator<V> iter = inIterator as Iterator<V>;

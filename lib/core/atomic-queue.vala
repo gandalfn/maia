@@ -1,166 +1,118 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * atomic-queue.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
- * 
+ *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * maia is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.AtomicQueue<V>
+public class Maia.Atomic.Queue<V> : GLib.Object
 {
     // types
-    private struct Node<V>
-    {
-        public Os.Atomic.Pointer m_Next;
-        public V                 m_Data;
-    }
-
-    private struct FreeList<V>
-    {
-        private Node<V>* m_pHead;
-
-        public FreeList ()
-        {
-            m_pHead = GLib.Slice.alloc0 (sizeof (Node<V>));
-        }
-
-        public void
-        free_node (Node<V>* inpNode)
-        {
-            inpNode->m_Data = null;
-            do
-            {
-                inpNode->m_Next.set (m_pHead->m_Next.get ());
-            } while (!m_pHead->m_Next.compare_and_exchange(inpNode->m_Next.get (), inpNode));
-        }
-
-        public Node<V>*
-        get_node ()
-        {
-            Node<V>* pNode = null;
-
-            do
-            {
-                pNode = m_pHead->m_Next.get ();
-                if (pNode == null)
-                    return GLib.Slice.alloc0 (sizeof (Node<V>));
-            } while (!m_pHead->m_Next.compare_and_exchange(pNode, pNode->m_Next.get ()));
-
-            pNode->m_Next.set (null);
-
-            return pNode;
-        }
-    }
+    public delegate bool ForeachFunc<V> (V? inValue);
 
     // properties
-    private FreeList<V>   m_Stack = FreeList<V> ();
-    private Node<V>*      m_pHead = null;
-    private Node<V>*      m_pTail = null;
-    private Os.Atomic.Int m_Length;
+    private NodePool<V>      m_Pool= NodePool<V> ();
+    private unowned Node<V>? m_Head = null;
+    private unowned Node<V>? m_Tail = null;
 
     // methods
-    public AtomicQueue ()
+    public Queue ()
     {
-        m_pHead = m_pTail = m_Stack.get_node ();
+        m_Pool = NodePool<V> ();
+        m_Head = m_Tail = m_Pool.alloc_node ();
     }
 
-    ~AtomicQueue ()
+    ~Queue ()
     {
-        int length;
-
-        do
-        {
-            length = m_Length.get ();
-        } while (!m_Length.compare_and_exchange (length, -1));
-
-        Node<V>* pLink;
-
-        do
-        {
-            pLink = m_Stack.m_pHead;
-        } while (!Os.Atomic.Pointer.cast (&m_Stack.m_pHead).compare_and_exchange (pLink, null));
-
-        while (pLink != null)
-        {
-            Node<V>* pNext = pLink->m_Next.get ();
-            GLib.Slice.free (sizeof (Node<V>), pLink);
-            pLink = pNext;
-        }
+        while (dequeue () != null);
+        m_Head.data = null;
+        m_Pool.free_node (m_Head);
+        m_Pool.clear ();
     }
 
+    /**
+     * Adds an item to the end of the queue.
+     *
+     * @param inData The data to add.
+     */
     public void
-    push (V inData)
+    enqueue (owned V inData)
     {
-        Node<V>* pNode = m_Stack.get_node ();
-        pNode.m_Data = inData;
-
-        while (!m_Length.compare (-1))
-        {
-            Node<V>* pLast = m_pTail;
-            Node<V>* pNext = pLast->m_Next.get ();
-
-            if (m_pTail == pLast)
-            {
-                if (pNext == null)
-                {
-                    if (m_pTail->m_Next.compare_and_exchange (pNext, pNode))
-                    {
-                        Os.Atomic.Pointer.cast(&m_pTail).compare_and_exchange (pLast, pNode);
-                        m_Length.inc ();
-                        break;
-                    }
-                }
-            }
-            else
-            {
-                m_pTail->m_Next.compare_and_exchange (pLast, pNext);
-            }
-        }
-    }
-
-    public V?
-    pop ()
-    {
-        V? data = null;
+        unowned Node<V>? node = m_Pool.alloc_node ();
+        node.data = inData;
 
         while (true)
         {
-            Node<V>* pFirst = m_pHead;
-            Node<V>* pLast = m_pTail;
-            Node<V>* pNext = pFirst->m_Next.get ();
-
-            if (pFirst == m_pHead)
+            unowned Node<V>? cur_tail = m_Tail;
+            if (Machine.Memory.Atomic.Pointer.cast (&m_Tail.next).compare_and_swap (null, (void*)node))
             {
-                if (pFirst == pLast)
-                {
-                    if (pNext == null)
-                        break;
-                    Os.Atomic.Pointer.cast(&m_pTail).compare_and_exchange (pLast, pNext);
-                }
-                else
-                {
-                    if (Os.Atomic.Pointer.cast(&m_pHead).compare_and_exchange(pFirst, pNext))
-                    {
-                        m_Length.dec ();
-                        data = pNext->m_Data;
-                        m_Stack.free_node (pFirst);
-                        break;
-                    }
-                }
+                Machine.Memory.Atomic.Pointer.cast (&m_Tail).compare_and_swap ((void*)cur_tail, (void*)node);
+                return;
             }
+            else
+                Machine.Memory.Atomic.Pointer.cast (&m_Tail).compare_and_swap ((void*)cur_tail, (void*)cur_tail.next);
+            Machine.CPU.pause ();
         }
+    }
 
-        return data;
+    /**
+     * Attempts to remove an item from the start of the queue.
+     *
+     * @return The data dequeued if successful.
+     */
+    public V?
+    dequeue ()
+    {
+        while (true)
+        {
+            unowned Node<V>? cur_head = m_Head;
+            unowned Node<V>? cur_tail = m_Tail;
+            unowned Node<V>? cur_head_next = cur_head.next;
+            if ((void*)cur_head == (void*)cur_tail)
+            {
+                if (cur_head_next == null)
+                    return null;
+                else
+                    Machine.Memory.Atomic.Pointer.cast (&m_Tail).compare_and_swap ((void*)cur_tail, (void*)cur_head_next);
+            }
+            if (Machine.Memory.Atomic.Pointer.cast (&m_Head).compare_and_swap ((void*)cur_head, (void*)cur_head_next))
+            {
+                V? data = cur_head_next.data;
+                cur_head_next.data = null;
+                m_Pool.free_node (cur_head);
+                return data;
+            }
+            Machine.CPU.pause ();
+        }
+    }
+
+    /**
+     * Calls inFunc for each element in the queue.
+     *
+     * @param inFunc the function to call for each element's data
+     **/
+    public void
+    @foreach (ForeachFunc<V> inFunc)
+    {
+        unowned Node<V>? cursor = null, next = null;
+        for (cursor = m_Head.next; cursor != null; cursor = next)
+        {
+            V? data = cursor.data;
+            if (!inFunc (data))
+                break;
+            next = cursor.next;
+        }
     }
 }

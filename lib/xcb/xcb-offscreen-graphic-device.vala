@@ -1,18 +1,18 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * xcb-offscreen-graphic-device.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
- * 
+ *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * maia is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -21,7 +21,7 @@ internal class Maia.XcbOffscreenGraphicDevice : CairoGraphicDevice
 {
     // properties
     private unowned XcbWindow? m_Window = null;
-    private Xcb.CairoSurface   m_Surface = null;
+    private Cairo.Surface      m_Surface = null;
     private Notification1.Observer<Object, string> m_PropertyChangedObserver;
 
     // accessors
@@ -46,33 +46,34 @@ internal class Maia.XcbOffscreenGraphicDevice : CairoGraphicDevice
     ~XcbOffscreenGraphicDevice ()
     {
         m_PropertyChangedObserver.destroy ();
-        ((Xcb.Pixmap)id).destroy (m_Window.xcb_desktop.connection);
+        //((Xcb.Pixmap)id).destroy (m_Window.xcb_desktop.connection);
         id = 0;
     }
 
     private void
     create_surface ()
     {
-        unowned Xcb.Connection? connection = m_Window.xcb_desktop.connection;
+//        unowned Xcb.Connection? connection = m_Window.xcb_desktop.connection;
 
         // Create pixmap
-        Xcb.Pixmap pixmap = Xcb.Pixmap (connection);
-        connection.create_pixmap (24, pixmap, (Xcb.Drawable)m_Window.id,
-                                  (uint16)m_Window.geometry.clipbox.size.width,
-                                  (uint16)m_Window.geometry.clipbox.size.height);
-        if (id != 0)
-            ((Xcb.Pixmap)id).destroy (m_Window.xcb_desktop.connection);
-        id = pixmap;
+//        Xcb.Pixmap pixmap = Xcb.Pixmap (connection);
+//        connection.create_pixmap (24, pixmap, (Xcb.Drawable)m_Window.id,
+//                                  (uint16)m_Window.geometry.clipbox.size.width,
+//                                  (uint16)m_Window.geometry.clipbox.size.height);
+//        if (id != 0)
+//            ((Xcb.Pixmap)id).destroy (m_Window.xcb_desktop.connection);
+//        id = pixmap;
 
-        audit (GLib.Log.METHOD, "pixmap %lu", pixmap);
+//        Log.audit (GLib.Log.METHOD, "pixmap %lu", pixmap);
 
-        // Create surface
-        unowned XcbWorkspace? xcb_workspace = (XcbWorkspace)((Window)m_Window.delegator).workspace.proxy;
-        m_Surface = new Xcb.CairoSurface (connection, pixmap,
-                                          xcb_workspace.xcb_visual, 
-                                          (int)m_Window.geometry.clipbox.size.width,
-                                          (int)m_Window.geometry.clipbox.size.height);
-
+//        unowned XcbWorkspace? xcb_workspace = (XcbWorkspace)((Window)m_Window.delegator).workspace.proxy;
+//        m_Surface = new Xcb.CairoSurface (connection, pixmap,
+//                                          xcb_workspace.xcb_visual,
+//                                          (int)m_Window.geometry.clipbox.size.width,
+//                                          (int)m_Window.geometry.clipbox.size.height);
+        m_Surface = new Cairo.ImageSurface (Cairo.Format.RGB24,
+                                            (int)m_Window.geometry.clipbox.size.width,
+                                            (int)m_Window.geometry.clipbox.size.height);
         // Cleanup pixmap
         var ctx = new Cairo.Context (m_Surface);
         ctx.set_operator (Cairo.Operator.CLEAR);
@@ -85,9 +86,9 @@ internal class Maia.XcbOffscreenGraphicDevice : CairoGraphicDevice
         switch (inName)
         {
             case "geometry":
-                Token token = Token.get_for_object (this);
+                this.lock ();
                 create_surface ();
-                token.release ();
+                this.unlock ();
                 break;
         }
     }

@@ -1,18 +1,18 @@
-/* -*- Mode: C; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * set.vala
  * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
- * 
+ *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * maia is distributed in the hope that it will be useful, but
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the GNU Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
@@ -63,9 +63,9 @@ public class Maia.Set<V> : Collection<V>
             }
         }
 
-        public Node (owned V inValue, Node<V>? inParent = null)
+        public Node (V inValue, Node<V>? inParent = null)
         {
-            val = (owned)inValue;
+            val = inValue;
             m_Depth = 1;
             right = null;
             left = null;
@@ -223,12 +223,13 @@ public class Maia.Set<V> : Collection<V>
     {
         unowned Node<V> node = m_Root;
         CompareFunc<V> func = compare_func;
+        int res;
 
         while (node != null)
         {
             outParent = node;
 
-            int res = func (inValue, node.val);
+            res = func (inValue, node.val);
             if (res > 0)
             {
                 node = node.right;
@@ -525,7 +526,6 @@ public class Maia.Set<V> : Collection<V>
      */
     internal override void
     erase (Maia.Iterator<V> inIterator)
-        requires (inIterator is Iterator<V>)
         requires (inIterator.stamp == stamp)
     {
         Iterator<V> iterator = inIterator as Iterator<V>;

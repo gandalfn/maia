@@ -11,10 +11,8 @@ include $(top_srcdir)/build/maia.am
 noinst_PROGRAMS = \
     test \
     test-window \
-    test-token \
-    test-atomic-list \
     test-atomic-queue
-    
+
 test_SOURCES = \
     test.vala \
     test-case.vala \
@@ -59,13 +57,6 @@ test_thread_LDADD = \
     $(MAIA_LIBS) \
     ${top_builddir}/lib/core/libmaia-core.la
 
-test_atomic_list_SOURCES = \
-    test-atomic-list.vala
-
-test_atomic_list_LDADD = \
-    $(MAIA_LIBS) \
-    ${top_builddir}/lib/core/libmaia-core.la
-
 test_atomic_queue_SOURCES = \
     test-atomic-queue.vala
 
@@ -73,20 +64,13 @@ test_atomic_queue_LDADD = \
     $(MAIA_LIBS) \
     ${top_builddir}/lib/core/libmaia-core.la
 
-test_token_SOURCES = \
-    test-token.vala
-
-test_token_LDADD = \
-    $(MAIA_LIBS) \
-    ${top_builddir}/lib/core/libmaia-core.la
-
 VALAFILES = \
     $(filter %.vala,$(test_SOURCES)) \
     $(filter %.vala,$(test_window_SOURCES)) \
-    $(filter %.vala,$(test_atomic_list_SOURCES)) \
-    $(filter %.vala,$(test_thread_SOURCES)) \
-    $(filter %.vala,$(test_token_SOURCES))
+    $(filter %.vala,$(test_atomic_queue_SOURCES)) \
+    $(filter %.vala,$(test_thread_SOURCES))
 
 CLEANFILES += \
     test_vala.stamp \
     $(VALAFILES:.vala=.c)
+
