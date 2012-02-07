@@ -80,7 +80,6 @@ namespace Maia.Log
         private string   m_Domain     = "";
         private Level    m_Level      = Level.INFO;
         private bool     m_Colorized  = false;
-        private SpinLock m_Lock       = SpinLock ();
 
         // accessors
         public Level level {
@@ -157,21 +156,18 @@ namespace Maia.Log
         {
             if (inLevel <= m_Level)
             {
-                //m_Lock.lock ();
-                //GLib.DateTime now = new GLib.DateTime.now_local ();
+                Posix.timeval now = Posix.timeval ();
+                now.get_time_of_day ();
+                GLib.Time time = GLib.Time.local (now.tv_sec);
 
-                /*string msg = "[%.2d:%.2d:%.2d.%.6d] [%s] %s %s".printf (now.get_hour (),
-                                                                        now.get_minute (),
-                                                                        now.get_second (),
-                                                                        now.get_microsecond (),
+                string msg = "[%.2d:%.2d:%.2d.%.6lu] [%s] %s %s".printf (time.hour,
+                                                                        time.minute,
+                                                                        time.second,
+                                                                        now.tv_usec,
                                                                         m_Domain,
                                                                         inLevel.to_string (),
-                                                                        inMessage);*/
-                string msg = "[%s] %s %s".printf (m_Domain,
-                                                  inLevel.to_string (),
-                                                  inMessage);
+                                                                        inMessage);
                 write (m_Domain, inLevel, m_Colorized ? colorize (inLevel, msg) : msg);
-                //m_Lock.unlock ();
             }
         }
 

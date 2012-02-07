@@ -150,7 +150,7 @@ namespace Machine
                 public static unowned int? cast (void* inV);
             }
 
-            [CCode (cname = "uint", default_value = "0")]
+            [CCode (cname = "unsigned int", default_value = "0")]
             public struct uint
             {
                 [CCode (cname = "machine_memory_atomic_load_uint")]

@@ -109,10 +109,10 @@ public class Maia.Atomic.Queue<V> : GLib.Object
         unowned Node<V>? cursor = null, next = null;
         for (cursor = m_Head.next; cursor != null; cursor = next)
         {
+            next = cursor.next;
             V? data = cursor.data;
             if (!inFunc (data))
                 break;
-            next = cursor.next;
         }
     }
 }

@@ -27,11 +27,14 @@ internal struct Maia.Atomic.Node<T>
 internal struct Maia.Atomic.NodePool<T>
 {
     // properties
-    public unowned Node<T>? m_Head;
+    public Node<T>[]                  m_Magazin;
+    public Machine.Memory.Atomic.uint m_Index;
+    public unowned Node<T>?           m_Head;
 
     // methods
-    public inline NodePool ()
+    public inline NodePool (int inReserved = 1024)
     {
+        m_Magazin = new Node<T>[inReserved];
         m_Head = null;
     }
 
@@ -46,13 +49,7 @@ internal struct Maia.Atomic.NodePool<T>
             if (Machine.Memory.Atomic.Pointer.cast (&m_Head).compare_and_swap ((void*)node, null))
                 break;
         } while (true);
-
-        while (node != null)
-        {
-            unowned Node<T>? tmp = node.next;
-            GLib.free ((void*)node);
-            node = tmp;
-        }
+        m_Magazin = null;
     }
 
     public inline void
@@ -76,10 +73,15 @@ internal struct Maia.Atomic.NodePool<T>
         {
             node = m_Head;
             if (node == null)
-                return (Node<T>?)GLib.malloc0 (sizeof (Node<T>));
+            {
+                m_Index.inc ();
+                assert (m_Index.get () < m_Magazin.length);
+                void* ptr = &m_Magazin [m_Index.get ()];
+                return (Node<T>?)ptr;
+            }
         } while (!Machine.Memory.Atomic.Pointer.cast (&m_Head).compare_and_swap((void*)node, (void*)node.next));
 
-        node.next = null;
+        Machine.Memory.Atomic.Pointer.cast (&node.next).set (null);
 
         return node;
     }

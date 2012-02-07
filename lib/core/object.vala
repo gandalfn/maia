@@ -79,35 +79,37 @@ public abstract class Maia.Object : GLib.Object
             return ret;
         }
         construct set {
-            rw_lock.write_lock ();
             if (m_Delegator == null)
             {
                 if (m_Parent != null)
                 {
                     // object have a old id
-                    if (m_Id != 0)
+                    if (id != 0)
                         // remove object from identified object
-                        m_Parent.remove_identified_child (this);
+                        parent.remove_identified_child (this);
 
                     // set identifier
+                    rw_lock.write_lock ();
                     m_Id = value;
+                    rw_lock.write_unlock ();
 
                     // object have a parent
-                    if (m_Id != 0)
+                    if (id != 0)
                         // add object in identified childs
-                        m_Parent.insert_identified_child (this);
+                        parent.insert_identified_child (this);
                 }
                 else
                 {
                     // set identifier
+                    rw_lock.write_lock ();
                     m_Id = value;
+                    rw_lock.write_unlock ();
                 }
             }
             else
             {
                 m_Delegator.id = value;
             }
-            rw_lock.write_unlock ();
         }
     }
 
@@ -124,16 +126,15 @@ public abstract class Maia.Object : GLib.Object
             return ret;
         }
         construct set {
-            rw_lock.write_lock ();
             if (m_Delegator == null)
             {
-                if (m_Parent != value)
+                if (parent != value)
                 {
                     ref ();
 
                     // object have already a parent
-                    if (m_Parent != null)
-                        m_Parent.remove_child (this);
+                    if (parent != null)
+                        parent.remove_child (this);
 
                     if (value != null)
                         value.insert_child (this);
@@ -145,7 +146,6 @@ public abstract class Maia.Object : GLib.Object
             {
                 m_Delegator.parent = value;
             }
-            rw_lock.write_unlock ();
         }
     }
 
@@ -352,7 +352,9 @@ public abstract class Maia.Object : GLib.Object
                 check_childs_array ();
 
                 // set parent property
+                inObject.rw_lock.write_lock ();
                 inObject.m_Parent = this;
+                inObject.rw_lock.write_unlock ();
 
                 // add object to childs of parent
                 debug (GLib.Log.METHOD, "Insert object %s to parent %s",
@@ -399,8 +401,11 @@ public abstract class Maia.Object : GLib.Object
                 m_Childs.remove (inObject);
                 // remove object from identified childs of old parent
                 remove_identified_child (inObject);
+
                 // unset parent object
+                inObject.rw_lock.write_lock ();
                 inObject.m_Parent = null;
+                inObject.rw_lock.write_unlock ();
             }
         }
         else

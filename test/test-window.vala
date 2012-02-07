@@ -92,7 +92,7 @@ public class TestWindow : Maia.Window
             ctx.pattern.color = new Maia.GraphicColor (0.0, 0.0, 1.0, 1.0);
             ctx.shape.arc (inArea.clipbox.size.width * timeline.progress, inArea.clipbox.size.height / 2.0,
                            20, 20, 0, 2 * GLib.Math.PI);
-            ctx.paint.stroke ();
+            ctx.paint.fill ();
         }
         catch (Maia.GraphicError err)
         {

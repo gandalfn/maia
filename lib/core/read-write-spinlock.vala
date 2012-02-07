@@ -17,23 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal struct Maia.RWTicket16
-{
-    public uint16 rw;
-    public uint16 users;
-
-    internal static inline unowned RWTicket16?
-    cast (void* inLck)
-    {
-        return (RWTicket16?)inLck;
-    }
-}
-
 internal struct Maia.RWTicket8
 {
     public uint8 writers;
     public uint8 readers;
-    public uint8 users;
 
     internal static inline unowned RWTicket8?
     cast (void* inLck)

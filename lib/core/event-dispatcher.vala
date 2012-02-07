@@ -17,12 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-private errordomain Maia.MessageError
-{
-    POP,
-    PUSH
-}
-
 internal class Maia.EventDispatcher : Watch
 {
     // types
@@ -109,15 +103,10 @@ internal class Maia.EventDispatcher : Watch
     private void
     dispatch (Event inEvent)
     {
-        Log.audit (GLib.Log.METHOD, "Dispatch %i", inEvent.id);
         m_Listeners.foreach ((queue) => {
-            Log.debug (GLib.Log.METHOD, "Notify %lu %lu 0x%lx 0x%lx",
-                       inEvent.id, queue.m_EventId, inEvent.owner, queue.m_Owner);
             if (queue.compare_with_event (inEvent) == 0)
             {
-                Log.debug (GLib.Log.METHOD, "Notify %i", inEvent.id);
                 queue.foreach ((event_listener) => {
-                    Log.debug (GLib.Log.METHOD, "Notify %i", inEvent.id);
                     event_listener.notify (inEvent.event_args);
                     return true;
                 });

@@ -108,21 +108,27 @@ public class Maia.Task : Object
     [CCode (notify = false)]
     public State state {
         get {
-            return m_State;
+            rw_lock.read_lock ();
+            State ret = m_State;
+            rw_lock.read_unlock ();
+
+            return ret;
         }
         set {
-            if (m_State != value)
+            if (state != value)
             {
                 unowned Object p = parent;
                 int pos = -1;
                 if (p != null)
                     pos = p.index_of_child (this);
 
+                rw_lock.write_lock ();
                 m_State = value;
+                rw_lock.write_unlock ();
 
                 if (pos >= 0)
                 {
-                    if (m_State == State.TERMINATED)
+                    if (state == State.TERMINATED)
                         parent = null;
                     else
                         p.check_child_pos (pos);

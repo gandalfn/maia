@@ -31,6 +31,7 @@ public class Maia.TestEvent : Maia.TestCase
 {
     private Maia.Dispatcher dispatcher = null;
     private Maia.Timeout timeout = null;
+    private Maia.SpinLock lck = Maia.SpinLock ();
     private Foo foo = null;
     public int count = 0;
 
@@ -66,10 +67,12 @@ public class Maia.TestEvent : Maia.TestCase
     private bool
     on_timeout_elapsed ()
     {
+        lck.lock ();
         count++;
         foo.test_event.post (new Maia.EventArgs1<int> (count));
 
         Test.timer_start ();
+        lck.unlock ();
 
         return count <= 507;
     }
@@ -77,12 +80,14 @@ public class Maia.TestEvent : Maia.TestCase
     private void
     on_test_event (EventArgs1<int>? inArgs)
     {
+        lck.lock ();
         Test.message ("%lx: Event received %i = %f s",
                       (ulong)Dispatcher.self.thread_id, inArgs.a, Test.timer_elapsed ());
         if (count > 507)
         {
             dispatcher.finish ();
         }
+        lck.unlock ();
     }
 
     public void
