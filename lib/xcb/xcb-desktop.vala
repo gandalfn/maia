@@ -33,7 +33,7 @@ internal class Maia.XcbDesktop : DesktopProxy
 
     private XcbAtoms          m_Atoms            = null;
 
-    private Queue<unowned XcbRequest?> m_Requests[2];
+    private Atomic.Queue<unowned XcbRequest?> m_Requests[2];
 
     // accessors
     public Xcb.Connection connection {
@@ -60,7 +60,7 @@ internal class Maia.XcbDesktop : DesktopProxy
         // Create request queue
         for (int cpt = 0; cpt < RequestQueue.N; ++cpt)
         {
-            m_Requests[cpt] = new Queue<unowned XcbRequest?> ();
+            m_Requests[cpt] = new Atomic.Queue<unowned XcbRequest?> ();
         }
 
         // Get name
@@ -111,30 +111,15 @@ internal class Maia.XcbDesktop : DesktopProxy
     public void
     add_request (XcbRequest inRequest)
     {
-        lock (m_Requests)
+        switch (inRequest.state)
         {
-            switch (inRequest.state)
-            {
-                case XcbRequest.State.QUERYING:
-                    m_Requests[RequestQueue.QUERY].push (inRequest);
-                    break;
+            case XcbRequest.State.QUERYING:
+                m_Requests[RequestQueue.QUERY].enqueue (inRequest);
+                break;
 
-                case XcbRequest.State.COMMITING:
-                    m_Requests[RequestQueue.COMMIT].push (inRequest);
-                    break;
-            }
-        }
-    }
-
-    public void
-    remove_request (XcbRequest inRequest)
-    {
-        lock (m_Requests)
-        {
-            for (int cpt = 0; cpt < RequestQueue.N; ++cpt)
-            {
-                m_Requests[cpt].remove (inRequest);
-            }
+            case XcbRequest.State.COMMITING:
+                m_Requests[RequestQueue.COMMIT].enqueue (inRequest);
+                break;
         }
     }
 
@@ -143,24 +128,19 @@ internal class Maia.XcbDesktop : DesktopProxy
     {
         unowned XcbRequest? request = null;
 
-        lock (m_Requests)
+        while ((request = m_Requests[RequestQueue.COMMIT].dequeue ()) != null &&
+                request is XcbRequest)
         {
-            while ((request = m_Requests[RequestQueue.COMMIT].pop ()) != null)
-            {
-                request.lock ();
+            request.process ();
+        }
+
+        m_Connection.flush ();
+
+        while ((request = m_Requests[RequestQueue.QUERY].dequeue ()) != null &&
+               request is XcbRequest)
+        {
+            if (request.state == XcbRequest.State.QUERYING)
                 request.process ();
-                request.unlock ();
-            }
-
-            m_Connection.flush ();
-
-            while ((request = m_Requests[RequestQueue.QUERY].pop ()) != null)
-            {
-                request.lock ();
-                if (request.state == XcbRequest.State.QUERYING)
-                    request.process ();
-                request.unlock ();
-            }
         }
     }
 }

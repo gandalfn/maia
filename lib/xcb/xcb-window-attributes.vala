@@ -157,7 +157,7 @@ internal class Maia.XcbWindowAttributes : XcbRequest
             is_input_only = reply._class == Xcb.WindowClass.INPUT_ONLY;
         }
         else
-            error (GLib.Log.METHOD, "Error on get window attributes");
+            Log.error (GLib.Log.METHOD, "Error on get window attributes");
     }
 
     protected override void

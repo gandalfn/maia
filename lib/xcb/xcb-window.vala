@@ -265,26 +265,20 @@ internal class Maia.XcbWindow : WindowProxy
     {
         if (m_DoubleBuffered)
         {
-            front_buffer.lock ();
-            back_buffer.lock ();
-
             try
             {
                 Log.audit (GLib.Log.METHOD, "Swap buffer");
-                Maia.GraphicContext ctx = m_FrontBuffer.create_context ();
+                Maia.GraphicContext ctx = front_buffer.create_context ();
                 ctx.clip = new Region.raw_rectangle (0, 0,
                                                      (uint)geometry.clipbox.size.width,
                                                      (uint)geometry.clipbox.size.height);
-                ctx.pattern.source = m_BackBuffer;
+                ctx.pattern.source = back_buffer;
                 ctx.paint.paint ();
             }
             catch (GraphicError err)
             {
                 Log.error (GLib.Log.METHOD, "Error on swap buffer: %s", err.message);
             }
-
-            back_buffer.unlock ();
-            front_buffer.unlock ();
         }
     }
 

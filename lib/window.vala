@@ -244,15 +244,11 @@ public class Maia.Window : View
         // Paint window
         if (double_buffered)
         {
-            back_buffer.rw_lock.write_lock ();
             on_paint (inArgs.area);
-            back_buffer.rw_lock.write_unlock ();
         }
         else
         {
-            front_buffer.rw_lock.write_lock ();
             on_paint (inArgs.area);
-            front_buffer.rw_lock.write_unlock ();
         }
 
         // Send queue draw event

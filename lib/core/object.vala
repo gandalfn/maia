@@ -456,18 +456,6 @@ public abstract class Maia.Object : GLib.Object
         }
     }
 
-    public void
-    @lock ()
-    {
-        rw_lock.write_lock ();
-    }
-
-    public void
-    @unlock ()
-    {
-        rw_lock.write_unlock ();
-    }
-
     /**
      * Cast object to implemented delegate object
      *

@@ -26,7 +26,10 @@ internal class Maia.XcbWindowGraphicDevice : CairoGraphicDevice
     // accessors
     public override Cairo.Surface surface {
         get {
-            return m_Surface;
+            rw_lock.read_lock ();
+            unowned Cairo.Surface? ret = m_Surface;
+            rw_lock.read_unlock ();
+            return ret;
         }
     }
 
@@ -52,10 +55,10 @@ internal class Maia.XcbWindowGraphicDevice : CairoGraphicDevice
         switch (inName)
         {
             case "geometry":
-                this.lock ();
+                rw_lock.write_lock ();
                 m_Surface.set_size ((int)m_Window.geometry.clipbox.size.width,
                                     (int)m_Window.geometry.clipbox.size.height);
-                this.unlock ();
+                rw_lock.write_unlock ();
                 break;
         }
     }

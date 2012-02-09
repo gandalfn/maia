@@ -35,7 +35,10 @@ internal abstract class Maia.XcbRequest : Object
     // accessors
     public State state {
         get {
-            return m_State;
+            rw_lock.read_lock ();
+            State ret = m_State;
+            rw_lock.read_unlock ();
+            return ret;
         }
     }
 
@@ -52,10 +55,15 @@ internal abstract class Maia.XcbRequest : Object
     [CCode (notify = false)]
     public Xcb.VoidCookie? cookie {
         get {
-            return m_Cookie;
+            rw_lock.read_lock ();
+            unowned Xcb.VoidCookie? ret = m_Cookie;
+            rw_lock.read_unlock ();
+            return ret;
         }
         set {
+            rw_lock.write_lock ();
             m_Cookie = value;
+            rw_lock.write_unlock ();
         }
     }
 
@@ -69,28 +77,27 @@ internal abstract class Maia.XcbRequest : Object
     {
         Log.audit ("~XcbRequest", "Destroy request");
 
-        if (m_State != State.IDLE)
-        {
-            m_Window.xcb_desktop.remove_request (this);
-        }
-
-        if (m_Cookie != null)
+        if (cookie != null)
         {
             m_Window.xcb_desktop.connection.discard_reply (m_Cookie.sequence);
-            m_Cookie = null;
+            cookie = null;
         }
     }
 
     protected virtual void
     on_reply ()
     {
+        rw_lock.write_lock ();
         m_State = State.IDLE;
+        rw_lock.write_unlock ();
     }
 
     protected virtual void
     on_commit ()
     {
+        rw_lock.write_lock ();
         m_State = State.IDLE;
+        rw_lock.write_unlock ();
     }
 
     public void
@@ -98,19 +105,19 @@ internal abstract class Maia.XcbRequest : Object
     {
         Log.audit (GLib.Log.METHOD, "xid: 0x%x", m_Window.id);
 
-        if (m_Cookie != null)
+        if (cookie != null)
         {
             Log.debug (GLib.Log.METHOD, "Flush query");
 
             on_reply ();
-            m_Cookie = null;
+            cookie = null;
         }
     }
 
     public void
     process ()
     {
-        switch (m_State)
+        switch (state)
         {
             case State.QUERYING:
                 query_finish ();
@@ -126,42 +133,36 @@ internal abstract class Maia.XcbRequest : Object
     public virtual void
     query ()
     {
-        rw_lock.write_lock ();
-        if (m_State == State.IDLE)
+        if (state == State.IDLE)
         {
+            rw_lock.write_lock ();
             m_State = State.QUERYING;
             rw_lock.write_unlock ();
             m_Window.xcb_desktop.add_request (this);
-        }
-        else
-        {
-            rw_lock.write_unlock ();
         }
     }
 
     public virtual void
     commit ()
     {
-        rw_lock.write_lock ();
-        if (m_State == State.QUERYING)
+        if (state == State.QUERYING)
         {
             if (m_Cookie != null)
             {
                 m_Window.xcb_desktop.connection.discard_reply (m_Cookie.sequence);
                 m_Cookie = null;
             }
+            rw_lock.write_lock ();
             m_State = State.COMMITING;
             rw_lock.write_unlock ();
         }
-        else if (m_State == State.IDLE)
+        else if (state == State.IDLE)
         {
+            rw_lock.write_lock ();
             m_State = State.COMMITING;
             rw_lock.write_unlock ();
+
             m_Window.xcb_desktop.add_request (this);
-        }
-        else
-        {
-            rw_lock.write_unlock ();
         }
     }
 }
