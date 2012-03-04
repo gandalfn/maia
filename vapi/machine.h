@@ -47,16 +47,16 @@ MACHINE_MEMORY_FENCE(memory,        "mfence")
 
 #undef MACHINE_MEMORY_FENCE
 
-#define MACHINE_MEMORY_ATOMIC_FAS(S, M, T, C, I)    \
-    inline static T                                 \
-    machine_memory_atomic_fas_##S(M *target, T v)   \
-    {                                               \
-        __asm__ __volatile__(I " %0, %1"            \
-                    : "+m" (*(C *)target),          \
-                      "+q" (v)                      \
-                    :                               \
-                    : "memory");                    \
-        return v;                                   \
+#define MACHINE_MEMORY_ATOMIC_FAS(S, M, T, C, I)            \
+    inline static T                                         \
+    machine_memory_atomic_fas_##S(volatile M *target, T v)  \
+    {                                                       \
+        __asm__ __volatile__(I " %0, %1"                    \
+                    : "+m" (*(C *)target),                  \
+                      "+q" (v)                              \
+                    :                                       \
+                    : "memory");                            \
+        return v;                                           \
     }
 
 MACHINE_MEMORY_ATOMIC_FAS(ptr, void, void *, char, "xchgl")
@@ -75,16 +75,16 @@ MACHINE_MEMORY_ATOMIC_FAS_S(8,      guint8,       "xchgb")
 #undef MACHINE_MEMORY_ATOMIC_FAS_S
 #undef MACHINE_MEMORY_ATOMIC_FAS
 
-#define MACHINE_MEMORY_ATOMIC_LOAD(S, M, T, C, I)   \
-    inline static T                                 \
-    machine_memory_atomic_load_##S(M *target)       \
-    {                                               \
-        T r;                                        \
-        __asm__ __volatile__(I " %1, %0"            \
-                    : "=q" (r)                      \
-                    : "m"  (*(C *)target)           \
-                    : "memory");                    \
-        return (r);                                 \
+#define MACHINE_MEMORY_ATOMIC_LOAD(S, M, T, C, I)       \
+    inline static T                                     \
+    machine_memory_atomic_load_##S(volatile M *target)  \
+    {                                                   \
+        T r;                                            \
+        __asm__ __volatile__(I " %1, %0"                \
+                    : "=q" (r)                          \
+                    : "m"  (*(C *)target)               \
+                    : "memory");                        \
+        return (r);                                     \
     }
 
 MACHINE_MEMORY_ATOMIC_LOAD(ptr, void, void *, char, "movq")
@@ -103,15 +103,15 @@ MACHINE_MEMORY_ATOMIC_LOAD_S(8,      guint8,       "movb")
 #undef MACHINE_MEMORY_ATOMIC_LOAD_S
 #undef MACHINE_MEMORY_ATOMIC_LOAD
 
-#define MACHINE_MEMORY_ATOMIC_STORE(S, M, T, C, I)  \
-    inline static void                              \
-    machine_memory_atomic_store_##S(M *target, T v) \
-    {                                               \
-        __asm__ __volatile__(I " %1, %0"            \
-                    : "=m" (*(C *)target)           \
-                    : "i" "q" (v)                   \
-                    : "memory");                    \
-        return;	                                    \
+#define MACHINE_MEMORY_ATOMIC_STORE(S, M, T, C, I)          \
+    inline static void                                      \
+    machine_memory_atomic_store_##S(volatile M *target, T v)\
+    {                                                       \
+        __asm__ __volatile__(I " %1, %0"                    \
+                    : "=m" (*(C *)target)                   \
+                    : "i" "q" (v)                           \
+                    : "memory");                            \
+        return;                                             \
     }
 
 MACHINE_MEMORY_ATOMIC_STORE(ptr, void, void *, char, "movq")
@@ -130,16 +130,16 @@ MACHINE_MEMORY_ATOMIC_STORE_S(8,      guint8,       "movb")
 #undef MACHINE_MEMORY_ATOMIC_STORE_S
 #undef MACHINE_MEMORY_ATOMIC_STORE
 
-#define MACHINE_MEMORY_ATOMIC_FAA(S, M, T, C, I)    \
-    inline static T                                 \
-    machine_memory_atomic_faa_##S(M *target, T d)   \
-    {                                               \
-        __asm__ __volatile__("lock " I " %1, %0"    \
-                    : "+m" (*(C *)target),          \
-                      "+q" (d)                      \
-                    :                               \
-                    : "memory", "cc");              \
-        return (d);                                 \
+#define MACHINE_MEMORY_ATOMIC_FAA(S, M, T, C, I)            \
+    inline static T                                         \
+    machine_memory_atomic_faa_##S(volatile M *target, T d)  \
+    {                                                       \
+        __asm__ __volatile__("lock " I " %1, %0"            \
+                    : "+m" (*(C *)target),                  \
+                      "+q" (d)                              \
+                    :                                       \
+                    : "memory", "cc");                      \
+        return (d);                                         \
     }
 
 MACHINE_MEMORY_ATOMIC_FAA(ptr, void, unsigned int *, char, "xaddq")
@@ -163,7 +163,7 @@ MACHINE_MEMORY_ATOMIC_FAA_S(8,        guint8,       "xaddb")
 
 #define MACHINE_MEMORY_ATOMIC_UNARY_R(K, S, T, C, I)            \
     inline static void                                          \
-    machine_memory_atomic_##K##_##S(T *target)                  \
+    machine_memory_atomic_##K##_##S(volatile T *target)         \
     {                                                           \
         __asm__ __volatile__("lock " I " %0"                    \
                     : "+m" (*(C *)target)                       \
@@ -172,16 +172,16 @@ MACHINE_MEMORY_ATOMIC_FAA_S(8,        guint8,       "xaddb")
         return;                                                 \
     }
 
-#define MACHINE_MEMORY_ATOMIC_UNARY_V(K, S, T, C, I)            \
-    inline static void                                          \
-    machine_memory_atomic_##K##_##S##_zero(T *target, bool *r)  \
-    {                                                           \
-        __asm__ __volatile__("lock " I " %0; setz %1"           \
-                    : "+m" (*(C *)target),                      \
-                      "=m" (*r)                                 \
-                    :                                           \
-                    : "memory", "cc");                          \
-        return;                                                 \
+#define MACHINE_MEMORY_ATOMIC_UNARY_V(K, S, T, C, I)                    \
+    inline static void                                                  \
+    machine_memory_atomic_##K##_##S##_zero(volatile T *target, bool *r) \
+    {                                                                   \
+        __asm__ __volatile__("lock " I " %0; setz %1"                   \
+                    : "+m" (*(C *)target),                              \
+                      "=m" (*r)                                         \
+                    :                                                   \
+                    : "memory", "cc");                                  \
+        return;                                                         \
     }
 
 
@@ -211,18 +211,18 @@ MACHINE_MEMORY_ATOMIC_GENERATE(not)
 #undef MACHINE_MEMORY_ATOMIC_UNARY_R
 #undef MACHINE_MEMORY_ATOMIC_UNARY
 
-#define MACHINE_MEMORY_ATOMIC_CAS(S, M, T, C, I)                \
-    inline static bool                                          \
-    machine_memory_atomic_cas_##S(M *target, T compare, T set)  \
-    {                                                           \
-        bool z;                                                 \
-        __asm__ __volatile__("lock " I " %2, %0; setz %1"       \
-                    : "+m"  (*(C *)target),                     \
-                      "=a"  (z)                                 \
-                    : "q"   (set),                              \
-                      "a"   (compare)                           \
-                    : "memory", "cc");                          \
-        return z;                                               \
+#define MACHINE_MEMORY_ATOMIC_CAS(S, M, T, C, I)                        \
+    inline static bool                                                  \
+    machine_memory_atomic_cas_##S(volatile M *target, T compare, T set) \
+    {                                                                   \
+        bool z;                                                         \
+        __asm__ __volatile__("lock " I " %2, %0; setz %1"               \
+                    : "+m"  (*(C *)target),                             \
+                      "=a"  (z)                                         \
+                    : "q"   (set),                                      \
+                      "a"   (compare)                                   \
+                    : "memory", "cc");                                  \
+        return z;                                                       \
     }
 
 MACHINE_MEMORY_ATOMIC_CAS(ptr, void, void *, char, "cmpxchgq")
@@ -241,21 +241,21 @@ MACHINE_MEMORY_ATOMIC_CAS_S(8,      guint8,         "cmpxchgb")
 #undef MACHINE_MEMORY_ATOMIC_CAS_S
 #undef MACHINE_MEMORY_ATOMIC_CAS
 
-#define MACHINE_MEMORY_ATOMIC_CAS_O(S, M, T, C, I, R)                       \
-    inline static bool                                                      \
-    machine_memory_atomic_cas_##S##_value(M *target, T compare, T set, M *v)\
-    {                                                                       \
-        bool z;                                                             \
-        __asm__ __volatile__("lock " "cmpxchg" I " %3, %0;"                 \
-                     "mov %% " R ", %2;"                                    \
-                     "setz %1;"                                             \
-                    : "+m"  (*(C *)target),                                 \
-                      "=a"  (z),                                            \
-                      "=m"  (*(C *)v)                                       \
-                    : "q"   (set),                                          \
-                      "a"   (compare)                                       \
-                    : "memory", "cc");                                      \
-        return z;                                                           \
+#define MACHINE_MEMORY_ATOMIC_CAS_O(S, M, T, C, I, R)                                \
+    inline static bool                                                               \
+    machine_memory_atomic_cas_##S##_value(volatile M *target, T compare, T set, M *v)\
+    {                                                                                \
+        bool z;                                                                      \
+        __asm__ __volatile__("lock " "cmpxchg" I " %3, %0;"                          \
+                     "mov %% " R ", %2;"                                             \
+                     "setz %1;"                                                      \
+                    : "+m"  (*(C *)target),                                          \
+                      "=a"  (z),                                                     \
+                      "=m"  (*(C *)v)                                                \
+                    : "q"   (set),                                                   \
+                      "a"   (compare)                                                \
+                    : "memory", "cc");                                               \
+        return z;                                                                    \
     }
 
 MACHINE_MEMORY_ATOMIC_CAS_O(ptr, void, void *, char, "q", "rax")
@@ -276,7 +276,7 @@ MACHINE_MEMORY_ATOMIC_CAS_O_S(8,      guint8,       "b", "al")
 #undef MACHINE_MEMORY_ATOMIC_CAS_O
 
 #define MACHINE_MEMORY_ATOMIC_CAST(S, T)                                    \
-    inline static T *                                                       \
+    inline static volatile T *                                              \
     machine_memory_atomic_cast_##S(void *v)                                 \
     {                                                                       \
         return (T *)v;                                                      \
@@ -296,7 +296,7 @@ MACHINE_MEMORY_ATOMIC_CAST(8,      guint8)
 
 #define MACHINE_MEMORY_ATOMIC_SET(S, M, T)                                  \
     inline static void                                                      \
-    machine_memory_atomic_set_##S(M *v, T val)                              \
+    machine_memory_atomic_set_##S(volatile M *v, T val)                     \
     {                                                                       \
         machine_memory_fence_strict_store ();                               \
         *v = val;                                                           \
@@ -316,10 +316,10 @@ MACHINE_MEMORY_ATOMIC_SET(8,      guint8,       guint8)
 
 #define MACHINE_MEMORY_ATOMIC_GET(S, M, T)                                  \
     inline static T                                                         \
-    machine_memory_atomic_get_##S(M *v)                                     \
+    machine_memory_atomic_get_##S(volatile M *v)                            \
     {                                                                       \
         machine_memory_fence_strict_load ();                                \
-        return *v;                                                          \
+        return (T)*v;                                                       \
     }
 
 MACHINE_MEMORY_ATOMIC_GET(ptr,    void*,        void*)
@@ -335,4 +335,3 @@ MACHINE_MEMORY_ATOMIC_GET(8,      guint8,       guint8)
 #undef MACHINE_MEMORY_ATOMIC_GET
 
 #endif /* __MACHINE_H__ */
-

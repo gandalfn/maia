@@ -28,8 +28,6 @@ public class Maia.TestSpinLock : Maia.TestCase
         base ("spinlock");
 
         add_test ("lock", test_lock);
-        add_test ("trylock", test_try_lock);
-        add_test ("lockable", test_is_lockable);
     }
 
     public override void
@@ -46,35 +44,24 @@ public class Maia.TestSpinLock : Maia.TestCase
     public void
     test_lock ()
     {
+        int i = 0;
         m_SpinLock.lock ();
 
         try
         {
             unowned GLib.Thread<void*> id = GLib.Thread.create<void*> (() => {
+                i++;
                 m_SpinLock.unlock ();
                 return null;
             }, true);
 
+            m_SpinLock.lock ();
+            assert (i != 0);
             id.join ();
         }
         catch (GLib.ThreadError err)
         {
             Test.message ("error on create thread %s", err.message);
         }
-    }
-
-    public void
-    test_try_lock ()
-    {
-        assert (m_SpinLock.try_lock ());
-        assert (!m_SpinLock.try_lock ());
-    }
-
-    public void
-    test_is_lockable ()
-    {
-        assert (m_SpinLock.is_lockable ());
-        m_SpinLock.lock ();
-        assert (!m_SpinLock.is_lockable ());
     }
 }

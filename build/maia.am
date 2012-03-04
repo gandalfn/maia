@@ -21,4 +21,3 @@ VALAFLAGS = \
     --pkg=cairo \
     $(addprefix --pkg=, $(notdir $(basename $(MAIA_VAPI_DEPS)))) \
     $(addprefix --vapidir=, $(dir $(MAIA_VAPI_DEPS)))
-

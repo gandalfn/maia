@@ -23,27 +23,27 @@ public class Maia.Atomic.Stack<V> : GLib.Object
     public delegate bool ForeachFunc<V> (V? inValue);
 
     // properties
-    private NodePool<V>      m_Pool= NodePool<V> ();
-    private unowned Node<V>? m_Head = null;
+    private NodePool<V>                   m_Pool= NodePool<V> ();
+    private Machine.Memory.Atomic.Pointer m_Head;
 
     // accessors
     public bool is_empty {
         get {
-            return m_Head.next == null;
+            return ((Node<V>?)m_Head.get ()).next.get () == null;
         }
     }
 
     // methods
     public Stack ()
     {
-        m_Head = m_Pool.alloc_node ();
+        m_Head.set ((void*)m_Pool.alloc_node ());
     }
 
     ~Stack ()
     {
         while (pop () != null);
-        m_Head.data = null;
-        m_Pool.free_node (m_Head);
+        ((Node<V>?)m_Head.get ()).data = null;
+        m_Pool.free_node (m_Head.get ());
         m_Pool.clear ();
     }
 
@@ -57,16 +57,17 @@ public class Maia.Atomic.Stack<V> : GLib.Object
     {
         unowned Node<V>? node = m_Pool.alloc_node ();
         node.data = inValue;
-        unowned Node<V>? next = node.next = m_Head.next;
-        BackOff bo = BackOff ();
+        node.next.set (((Node<V>?)m_Head.get ()).next.get ());
+        unowned Node<V>? next = (Node<V>?)node.next.get ();
 
         while (true)
         {
             void* old_next;
-            if (Machine.Memory.Atomic.Pointer.cast (&m_Head.next).compare_and_swap_value ((void*)next, (void*)node, out old_next))
+            if ((((Node<V>?)m_Head.get ()).next).compare_and_swap_value ((void*)next, (void*)node, out old_next))
                 break;
-            next = node.next = (Node<V>?)old_next;
-            bo.exponential_block ();
+            node.next.set (old_next);
+            next = (Node<V>?)old_next;
+            Machine.CPU.pause ();
         }
     }
 
@@ -78,23 +79,21 @@ public class Maia.Atomic.Stack<V> : GLib.Object
     public V?
     pop ()
     {
-        BackOff bo = BackOff ();
-
         while (true)
         {
-            unowned Node<V>? node = m_Head.next;
+            unowned Node<V>? node = (Node<V>?)((Node<V>?)m_Head.get ()).next.get ();
             if (node == null)
                 return null;
 
-            unowned Node<V>? next = node.next;
-            if (Machine.Memory.Atomic.Pointer.cast (&m_Head.next).compare_and_swap ((void*)node, (void*)next))
+            unowned Node<V>? next = (Node<V>?)node.next.get ();
+            if (((Node<V>?)m_Head.get ()).next.compare_and_swap ((void*)node, (void*)next))
             {
                 V? data = node.data;
                 node.data = null;
-                m_Pool.free_node (node);
+                m_Pool.free_node ((void*)node);
                 return data;
             }
-            bo.exponential_block ();
+            Machine.CPU.pause ();
         }
     }
 
@@ -106,7 +105,7 @@ public class Maia.Atomic.Stack<V> : GLib.Object
     public V?
     peek ()
     {
-        unowned Node<V>? node = m_Head.next;
+        unowned Node<V>? node = (Node<V>?)((Node<V>?)m_Head.get ()).next.get ();
         if (node != null)
             return node.data;
 
@@ -122,11 +121,11 @@ public class Maia.Atomic.Stack<V> : GLib.Object
     @foreach (ForeachFunc<V> inFunc)
     {
         unowned Node<V>? cursor = null, next = null;
-        for (cursor = m_Head.next; cursor != null; cursor = next)
+        for (cursor = (Node<V>?)((Node<V>?)m_Head.get ()).next.get (); cursor != null; cursor = next)
         {
             if (!inFunc (cursor.data))
                 break;
-            next = cursor.next;
+            next = (Node<V>?)cursor.next.get ();
         }
     }
 }

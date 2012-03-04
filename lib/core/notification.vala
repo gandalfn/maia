@@ -93,6 +93,7 @@ public class Maia.Notification<O> : Object
     internal unowned Observer<O>?
     get_observer (Handler<O> inCallback)
     {
+        rw_lock.read_lock ();
         unowned Observer<O>? observer = null;
         iterator ().foreach ((child) => {
             if (((Observer<O>)child).equal (inCallback))
@@ -103,6 +104,7 @@ public class Maia.Notification<O> : Object
 
             return true;
         });
+        rw_lock.read_unlock ();
 
         return observer;
     }

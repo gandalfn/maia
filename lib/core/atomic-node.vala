@@ -20,22 +20,22 @@
 internal struct Maia.Atomic.Node<T>
 {
     // properties
-    public T                data;
-    public unowned Node<T>? next;
+    public T                             data;
+    public Machine.Memory.Atomic.Pointer next;
 }
 
 internal struct Maia.Atomic.NodePool<T>
 {
     // properties
-    public Node<T>[]                  m_Magazin;
-    public Machine.Memory.Atomic.uint m_Index;
-    public unowned Node<T>?           m_Head;
+    public Node<T>[]                     m_Magazin;
+    public Machine.Memory.Atomic.uint    m_Index;
+    public Machine.Memory.Atomic.Pointer m_Head;
 
     // methods
     public inline NodePool (int inReserved = 1024)
     {
         m_Magazin = new Node<T>[inReserved];
-        m_Head = null;
+        m_Head.set (null);
     }
 
     public inline void
@@ -45,23 +45,23 @@ internal struct Maia.Atomic.NodePool<T>
 
         do
         {
-            node = m_Head;
-            if (Machine.Memory.Atomic.Pointer.cast (&m_Head).compare_and_swap ((void*)node, null))
+            node = (Node<T>?)m_Head.get ();
+            if (m_Head.compare_and_swap ((void*)node, null))
                 break;
         } while (true);
         m_Magazin = null;
     }
 
     public inline void
-    free_node (Node<T>? inNode)
+    free_node (void* inNode)
     {
         unowned Node<T>? node = null;
 
         do
         {
-            node = inNode.next;
-            Machine.Memory.Atomic.Pointer.cast (&inNode.next).compare_and_swap ((void*)node, (void*)m_Head);
-        } while (!Machine.Memory.Atomic.Pointer.cast (&m_Head).compare_and_swap((void*)inNode.next, (void*)inNode));
+            node = (Node<T>?)((Node<T>?)inNode).next.get ();
+            ((Node<T>?)inNode).next.compare_and_swap ((void*)node, m_Head.get ());
+        } while (!m_Head.compare_and_swap((void*)((Node<T>?)inNode).next.get (), inNode));
     }
 
     public inline unowned Node<T>?
@@ -71,7 +71,7 @@ internal struct Maia.Atomic.NodePool<T>
 
         do
         {
-            node = m_Head;
+            node = (Node<T>?)m_Head.get ();
             if (node == null)
             {
                 m_Index.inc ();
@@ -79,9 +79,9 @@ internal struct Maia.Atomic.NodePool<T>
                 void* ptr = &m_Magazin [m_Index.get ()];
                 return (Node<T>?)ptr;
             }
-        } while (!Machine.Memory.Atomic.Pointer.cast (&m_Head).compare_and_swap((void*)node, (void*)node.next));
+        } while (!m_Head.compare_and_swap((void*)node, (void*)node.next));
 
-        Machine.Memory.Atomic.Pointer.cast (&node.next).set (null);
+        node.next.set (null);
 
         return node;
     }

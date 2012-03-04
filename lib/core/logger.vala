@@ -25,8 +25,8 @@ namespace Maia.Log
         ERROR,
         CRITICAL,
         WARNING,
-        AUDIT,
         INFO,
+        AUDIT,
         DEBUG;
 
         public string
@@ -77,9 +77,9 @@ namespace Maia.Log
         }
 
         // properties
-        private string   m_Domain     = "";
-        private Level    m_Level      = Level.INFO;
-        private bool     m_Colorized  = false;
+        private  string   m_Domain     = "";
+        internal Level    m_Level      = Level.INFO;
+        private  bool     m_Colorized  = false;
 
         // accessors
         public Level level {
@@ -210,6 +210,12 @@ namespace Maia.Log
         }
 
         // methods
+        public File (string inFilename, Level inLevel, string inDomain)
+        {
+            int f = Posix.open (inFilename, Posix.O_RDWR | Posix.O_CREAT, 0644);
+            GLib.Object (domain: inDomain, level: inLevel, fd: f, close_on_destroy: true);
+        }
+
         ~File ()
         {
             if (m_CloseOnDestroy)
@@ -313,7 +319,7 @@ namespace Maia.Log
     /**
      * Set default logger object
      */
-    public static void
+    public static inline void
     set_default_logger (Logger inLogger)
     {
         s_Logger = inLogger;
@@ -326,12 +332,33 @@ namespace Maia.Log
      * @param inFunction function name
      * @param inMessage log message
      */
-    public static void
+    public static inline void
     debug (string inFunction, string inMessage, ...)
     {
-        va_list args = va_list ();
-        string msg = inMessage.vprintf (args);
-        logger ().log (Level.DEBUG, "%s: %s".printf (inFunction, msg));
+        if (logger ().m_Level <= Level.DEBUG)
+        {
+            va_list args = va_list ();
+            string msg = inMessage.vprintf (args);
+            logger ().log (Level.DEBUG, "%s: %s".printf (inFunction, msg));
+        }
+    }
+
+    /**
+     * A convenience function to log a debug message.
+     *
+     * @param inCond condition which determines the trace
+     * @param inFunction function name
+     * @param inMessage log message
+     */
+    public static inline void
+    debug_cond (bool inCond, string inFunction, string inMessage, ...)
+    {
+        if (logger ().m_Level <= Level.DEBUG && inCond)
+        {
+            va_list args = va_list ();
+            string msg = inMessage.vprintf (args);
+            logger ().log (Level.DEBUG, "%s: %s".printf (inFunction, msg));
+        }
     }
 
     /**
@@ -340,12 +367,33 @@ namespace Maia.Log
      * @param inFunction function name
      * @param inMessage log message
      */
-    public static void
+    public static inline void
     info (string inFunction, string inMessage, ...)
     {
-        va_list args = va_list ();
-        string msg = inMessage.vprintf (args);
-        logger ().log (Level.INFO, "%s: %s".printf (inFunction, msg));
+        if (logger ().m_Level <= Level.INFO)
+        {
+            va_list args = va_list ();
+            string msg = inMessage.vprintf (args);
+            logger ().log (Level.INFO, "%s: %s".printf (inFunction, msg));
+        }
+    }
+
+    /**
+     * A convenience function to log a info message.
+     *
+     * @param inCond condition which determines the trace
+     * @param inFunction function name
+     * @param inMessage log message
+     */
+    public static inline void
+    info_cond (bool inCond, string inFunction, string inMessage, ...)
+    {
+        if (logger ().m_Level <= Level.INFO && inCond)
+        {
+            va_list args = va_list ();
+            string msg = inMessage.vprintf (args);
+            logger ().log (Level.INFO, "%s: %s".printf (inFunction, msg));
+        }
     }
 
     /**
@@ -354,12 +402,33 @@ namespace Maia.Log
      * @param inFunction function name
      * @param inMessage log message
      */
-    public static void
+    public static inline void
     audit (string inFunction, string inMessage, ...)
     {
-        va_list args = va_list ();
-        string msg = inMessage.vprintf (args);
-        logger ().log (Level.AUDIT, "%s: %s".printf (inFunction, msg));
+        if (logger ().m_Level <= Level.AUDIT)
+        {
+            va_list args = va_list ();
+            string msg = inMessage.vprintf (args);
+            logger ().log (Level.AUDIT, "%s: %s".printf (inFunction, msg));
+        }
+    }
+
+    /**
+     * A convenience function to log a audit message.
+     *
+     * @param inCond condition which determines the trace
+     * @param inFunction function name
+     * @param inMessage log message
+     */
+    public static inline void
+    audit_cond (bool inCond, string inFunction, string inMessage, ...)
+    {
+        if (logger ().m_Level <= Level.AUDIT && inCond)
+        {
+            va_list args = va_list ();
+            string msg = inMessage.vprintf (args);
+            logger ().log (Level.AUDIT, "%s: %s".printf (inFunction, msg));
+        }
     }
 
     /**
@@ -368,12 +437,33 @@ namespace Maia.Log
      * @param inFunction function name
      * @param inMessage log message
      */
-    public static void
+    public static inline void
     warning (string inFunction, string inMessage, ...)
     {
-        va_list args = va_list ();
-        string msg = inMessage.vprintf (args);
-        logger ().log (Level.WARNING, "%s: %s".printf (inFunction, msg));
+        if (logger ().m_Level <= Level.WARNING)
+        {
+            va_list args = va_list ();
+            string msg = inMessage.vprintf (args);
+            logger ().log (Level.WARNING, "%s: %s".printf (inFunction, msg));
+        }
+    }
+
+    /**
+     * A convenience function to log a warning message.
+     *
+     * @param inCond condition which determines the trace
+     * @param inFunction function name
+     * @param inMessage log message
+     */
+    public static inline void
+    warning_cond (bool inCond, string inFunction, string inMessage, ...)
+    {
+        if (logger ().m_Level <= Level.WARNING && inCond)
+        {
+            va_list args = va_list ();
+            string msg = inMessage.vprintf (args);
+            logger ().log (Level.WARNING, "%s: %s".printf (inFunction, msg));
+        }
     }
 
     /**
@@ -382,12 +472,33 @@ namespace Maia.Log
      * @param inFunction function name
      * @param inMessage log message
      */
-    public static void
+    public static inline void
     critical (string inFunction, string inMessage, ...)
     {
-        va_list args = va_list ();
-        string msg = inMessage.vprintf (args);
-        logger ().log (Level.CRITICAL, "%s: %s".printf (inFunction, msg));
+        if (logger ().m_Level <= Level.CRITICAL)
+        {
+            va_list args = va_list ();
+            string msg = inMessage.vprintf (args);
+            logger ().log (Level.CRITICAL, "%s: %s".printf (inFunction, msg));
+        }
+    }
+
+    /**
+     * A convenience function to log a critical message.
+     *
+     * @param inCond condition which determines the trace
+     * @param inFunction function name
+     * @param inMessage log message
+     */
+    public static inline void
+    critical_cond (bool inCond, string inFunction, string inMessage, ...)
+    {
+        if (logger ().m_Level <= Level.CRITICAL && inCond)
+        {
+            va_list args = va_list ();
+            string msg = inMessage.vprintf (args);
+            logger ().log (Level.CRITICAL, "%s: %s".printf (inFunction, msg));
+        }
     }
 
     /**
@@ -396,11 +507,32 @@ namespace Maia.Log
      * @param inFunction function name
      * @param inMessage log message
      */
-    public static void
+    public static inline void
     error (string inFunction, string inMessage, ...)
     {
-        va_list args = va_list ();
-        string msg = inMessage.vprintf (args);
-        logger ().log (Level.ERROR, "%s: %s".printf (inFunction, msg));
+        if (logger ().m_Level <= Level.ERROR)
+        {
+            va_list args = va_list ();
+            string msg = inMessage.vprintf (args);
+            logger ().log (Level.ERROR, "%s: %s".printf (inFunction, msg));
+        }
+    }
+
+    /**
+     * A convenience function to log a error message.
+     *
+     * @param inCond condition which determines the trace
+     * @param inFunction function name
+     * @param inMessage log message
+     */
+    public static inline void
+    error_cond (bool inCond, string inFunction, string inMessage, ...)
+    {
+        if (logger ().m_Level <= Level.ERROR && inCond)
+        {
+            va_list args = va_list ();
+            string msg = inMessage.vprintf (args);
+            logger ().log (Level.ERROR, "%s: %s".printf (inFunction, msg));
+        }
     }
 }

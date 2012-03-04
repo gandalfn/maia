@@ -21,4 +21,7 @@ public abstract class Maia.DesktopProxy : Object
 {
     // accessors
     public abstract Workspace default_workspace { get; }
+
+    // methods
+    public abstract void flush ();
 }

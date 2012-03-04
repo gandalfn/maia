@@ -110,4 +110,10 @@ public class Maia.Desktop : Object
     {
         return new Iterator (this);
     }
+
+    public void
+    flush ()
+    {
+        m_Proxy.flush ();
+    }
 }

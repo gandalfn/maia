@@ -48,7 +48,7 @@ namespace Machine
 
         namespace Atomic
         {
-            [CCode (cname = "void*", default_value = "NULL")]
+            [CCode (cname = "volatile void*", default_value = "NULL")]
             public struct Pointer
             {
                 [CCode (cname = "machine_memory_atomic_load_ptr")]
@@ -82,7 +82,7 @@ namespace Machine
                 public static unowned Pointer? cast (void* inV);
             }
 
-            [CCode (cname = "char", default_value = "0")]
+            [CCode (cname = "volatile char", default_value = "0")]
             public struct char
             {
                 [CCode (cname = "machine_memory_atomic_load_char")]
@@ -116,7 +116,7 @@ namespace Machine
                 public static unowned char? cast (void* inV);
             }
 
-            [CCode (cname = "int", default_value = "0")]
+            [CCode (cname = "volatile int", default_value = "0")]
             public struct int
             {
                 [CCode (cname = "machine_memory_atomic_load_int")]
@@ -150,7 +150,7 @@ namespace Machine
                 public static unowned int? cast (void* inV);
             }
 
-            [CCode (cname = "unsigned int", default_value = "0")]
+            [CCode (cname = "volatile unsigned int", default_value = "0")]
             public struct uint
             {
                 [CCode (cname = "machine_memory_atomic_load_uint")]
@@ -184,7 +184,7 @@ namespace Machine
                 public static unowned uint? cast (void* inV);
             }
 
-            [CCode (cname = "guint8", default_value = "0")]
+            [CCode (cname = "volatile guint8", default_value = "0")]
             public struct uint8
             {
                 [CCode (cname = "machine_memory_atomic_load_8")]
@@ -218,7 +218,7 @@ namespace Machine
                 public static unowned uint8? cast (void* inV);
             }
 
-            [CCode (cname = "guint16", default_value = "0")]
+            [CCode (cname = "volatile guint16", default_value = "0")]
             public struct uint16
             {
                 [CCode (cname = "machine_memory_atomic_load_16")]
@@ -252,7 +252,7 @@ namespace Machine
                 public static unowned uint16? cast (void* inV);
             }
 
-            [CCode (cname = "guint32", default_value = "0")]
+            [CCode (cname = "volatile guint32", default_value = "0")]
             public struct uint32
             {
                 [CCode (cname = "machine_memory_atomic_get_32")]
@@ -286,7 +286,7 @@ namespace Machine
                 public static unowned uint32? cast (void* inV);
             }
 
-            [CCode (cname = "guint64", default_value = "0")]
+            [CCode (cname = "volatile guint64", default_value = "0")]
             public struct uint64
             {
                 [CCode (cname = "machine_memory_atomic_load_64")]

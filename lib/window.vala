@@ -242,14 +242,10 @@ public class Maia.Window : View
         Log.audit (GLib.Log.METHOD, "%s", inArgs.area.to_string ());
 
         // Paint window
-        if (double_buffered)
-        {
-            on_paint (inArgs.area);
-        }
-        else
-        {
-            on_paint (inArgs.area);
-        }
+        back_buffer.rw_lock.write_lock ();
+        on_paint (inArgs.area);
+        ((Desktop)workspace.parent).flush ();
+        back_buffer.rw_lock.write_unlock ();
 
         // Send queue draw event
         if (double_buffered)

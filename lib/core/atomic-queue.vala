@@ -23,22 +23,24 @@ public class Maia.Atomic.Queue<V> : GLib.Object
     public delegate bool ForeachFunc<V> (V? inValue);
 
     // properties
-    private NodePool<V>      m_Pool= NodePool<V> ();
-    private unowned Node<V>? m_Head = null;
-    private unowned Node<V>? m_Tail = null;
+    private NodePool<V>                   m_Pool= NodePool<V> ();
+    private SpinLock                      m_DataLock = SpinLock ();
+    private Machine.Memory.Atomic.Pointer m_Head;
+    private Machine.Memory.Atomic.Pointer m_Tail;
 
     // methods
     public Queue ()
     {
         m_Pool = NodePool<V> ();
-        m_Head = m_Tail = m_Pool.alloc_node ();
+        m_Head.set ((void*)m_Pool.alloc_node ());
+        m_Tail.set (m_Head.get ());
     }
 
     ~Queue ()
     {
         while (dequeue () != null);
-        m_Head.data = null;
-        m_Pool.free_node (m_Head);
+        ((Node<V>?)m_Head.get ()).data = null;
+        m_Pool.free_node (m_Head.get ());
         m_Pool.clear ();
     }
 
@@ -51,18 +53,20 @@ public class Maia.Atomic.Queue<V> : GLib.Object
     enqueue (owned V inData)
     {
         unowned Node<V>? node = m_Pool.alloc_node ();
+        m_DataLock.lock ();
         node.data = inData;
+        m_DataLock.unlock ();
 
         while (true)
         {
-            unowned Node<V>? cur_tail = m_Tail;
-            if (Machine.Memory.Atomic.Pointer.cast (&m_Tail.next).compare_and_swap (null, (void*)node))
+            unowned Node<V>? cur_tail = (Node<V>?)m_Tail.get ();
+            if (((Node<V>?)m_Tail.get ()).next.compare_and_swap (null, (void*)node))
             {
-                Machine.Memory.Atomic.Pointer.cast (&m_Tail).compare_and_swap ((void*)cur_tail, (void*)node);
+                m_Tail.compare_and_swap ((void*)cur_tail, (void*)node);
                 return;
             }
             else
-                Machine.Memory.Atomic.Pointer.cast (&m_Tail).compare_and_swap ((void*)cur_tail, (void*)cur_tail.next);
+                m_Tail.compare_and_swap ((void*)cur_tail, (void*)cur_tail.next);
             Machine.CPU.pause ();
         }
     }
@@ -77,21 +81,23 @@ public class Maia.Atomic.Queue<V> : GLib.Object
     {
         while (true)
         {
-            unowned Node<V>? cur_head = m_Head;
-            unowned Node<V>? cur_tail = m_Tail;
-            unowned Node<V>? cur_head_next = cur_head.next;
+            unowned Node<V>? cur_head = (Node<V>?)m_Head.get ();
+            unowned Node<V>? cur_tail = (Node<V>?)m_Tail.get ();
+            unowned Node<V>? cur_head_next = (Node<V>?)cur_head.next.get ();
             if ((void*)cur_head == (void*)cur_tail)
             {
                 if (cur_head_next == null)
                     return null;
                 else
-                    Machine.Memory.Atomic.Pointer.cast (&m_Tail).compare_and_swap ((void*)cur_tail, (void*)cur_head_next);
+                    m_Tail.compare_and_swap ((void*)cur_tail, (void*)cur_head_next);
             }
-            if (Machine.Memory.Atomic.Pointer.cast (&m_Head).compare_and_swap ((void*)cur_head, (void*)cur_head_next))
+            if (m_Head.compare_and_swap ((void*)cur_head, (void*)cur_head_next))
             {
+                m_DataLock.lock ();
                 V? data = cur_head_next.data;
                 cur_head_next.data = null;
-                m_Pool.free_node (cur_head);
+                m_DataLock.unlock ();
+                m_Pool.free_node ((void*)cur_head);
                 return data;
             }
             Machine.CPU.pause ();
@@ -107,10 +113,12 @@ public class Maia.Atomic.Queue<V> : GLib.Object
     @foreach (ForeachFunc<V> inFunc)
     {
         unowned Node<V>? cursor = null, next = null;
-        for (cursor = m_Head.next; cursor != null; cursor = next)
+        for (cursor = (Node<V>?)((Node<V>?)m_Head.get ()).next.get (); cursor != null; cursor = next)
         {
-            next = cursor.next;
+            next = (Node<V>?)cursor.next.get ();
+            m_DataLock.lock ();
             V? data = cursor.data;
+            m_DataLock.unlock ();
             if (!inFunc (data))
                 break;
         }

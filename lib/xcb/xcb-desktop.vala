@@ -123,7 +123,7 @@ internal class Maia.XcbDesktop : DesktopProxy
         }
     }
 
-    public void
+    public override void
     flush ()
     {
         unowned XcbRequest? request = null;
@@ -140,7 +140,9 @@ internal class Maia.XcbDesktop : DesktopProxy
                request is XcbRequest)
         {
             if (request.state == XcbRequest.State.QUERYING)
+            {
                 request.process ();
+            }
         }
     }
 }

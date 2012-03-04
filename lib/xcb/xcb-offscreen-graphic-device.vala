@@ -27,9 +27,7 @@ internal class Maia.XcbOffscreenGraphicDevice : CairoGraphicDevice
     // accessors
     public override Cairo.Surface surface {
         get {
-            rw_lock.read_lock ();
             unowned Cairo.Surface? ret = m_Surface;
-            rw_lock.read_unlock ();
 
             return ret;
         }
@@ -50,44 +48,39 @@ internal class Maia.XcbOffscreenGraphicDevice : CairoGraphicDevice
     ~XcbOffscreenGraphicDevice ()
     {
         m_PropertyChangedObserver.destroy ();
-//        ((Xcb.Pixmap)id).destroy (m_Window.xcb_desktop.connection);
+        ((Xcb.Pixmap)id).destroy (m_Window.xcb_desktop.connection);
         id = 0;
     }
 
     private void
     create_surface ()
     {
-//        unowned Xcb.Connection? connection = m_Window.xcb_desktop.connection;
+        unowned Xcb.Connection? connection = m_Window.xcb_desktop.connection;
 
         // Create pixmap
-//        Xcb.Pixmap pixmap = Xcb.Pixmap (connection);
-//        connection.create_pixmap (24, pixmap, (Xcb.Drawable)m_Window.id,
-//                                  (uint16)m_Window.geometry.clipbox.size.width,
-//                                  (uint16)m_Window.geometry.clipbox.size.height);
-//        if (id != 0)
-//            ((Xcb.Pixmap)id).destroy (m_Window.xcb_desktop.connection);
-//        id = pixmap;
+        Xcb.Pixmap pixmap = Xcb.Pixmap (connection);
+        connection.create_pixmap (24, pixmap, (Xcb.Drawable)m_Window.id,
+                                  (uint16)m_Window.geometry.clipbox.size.width,
+                                  (uint16)m_Window.geometry.clipbox.size.height);
+        if (id != 0)
+            ((Xcb.Pixmap)id).destroy (m_Window.xcb_desktop.connection);
+        id = pixmap;
 
-//        Log.audit (GLib.Log.METHOD, "pixmap %lu", pixmap);
+        Log.audit (GLib.Log.METHOD, "pixmap %lu", pixmap);
 
-//        unowned XcbWorkspace? xcb_workspace = (XcbWorkspace)((Window)m_Window.delegator).workspace.proxy;
+        unowned XcbWorkspace? xcb_workspace = (XcbWorkspace)((Window)m_Window.delegator).workspace.proxy;
 
-        rw_lock.write_lock ();
-
-//        m_Surface = new Xcb.CairoSurface (connection, pixmap,
-//                                          xcb_workspace.xcb_visual,
-//                                          (int)m_Window.geometry.clipbox.size.width,
-//                                          (int)m_Window.geometry.clipbox.size.height);
-
-        m_Surface = new Cairo.ImageSurface (Cairo.Format.RGB24,
-                                            (int)m_Window.geometry.clipbox.size.width,
-                                            (int)m_Window.geometry.clipbox.size.height);
+        m_Surface = new Xcb.CairoSurface (connection, pixmap,
+                                          xcb_workspace.xcb_visual,
+                                          (int)m_Window.geometry.clipbox.size.width,
+                                          (int)m_Window.geometry.clipbox.size.height);
 
         // Cleanup pixmap
         var ctx = new Cairo.Context (m_Surface);
         ctx.set_operator (Cairo.Operator.CLEAR);
         ctx.paint ();
-        rw_lock.write_unlock ();
+
+        m_Window.xcb_desktop.flush ();
     }
 
     private void

@@ -70,7 +70,7 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
                         {
                             uint32* values = reply.get_value ();
                             int length = reply.get_length ();
-                            Log.info (GLib.Log.METHOD, "length = %i", length);
+                            Log.debug (GLib.Log.METHOD, "length = %i", length);
 
                             for (int cpt = 0; cpt < length; ++cpt)
                             {

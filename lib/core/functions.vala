@@ -31,73 +31,73 @@ namespace Maia
     public delegate bool  ForeachFunc<V>          (V inData);
 
     // static methods
-    public static int
+    public static inline int
     direct_compare (void* inA, void* inB)
     {
         return (int)((ulong)inA - (ulong)inB);
     }
 
-    public static int
+    public static inline int
     atom_compare (uint32 inA, uint32 inB)
     {
         return (int)(inA - inB);
     }
 
-    static string
+    static inline string
     type_to_string (GLib.Type inType)
     {
         return inType.name ().dup ();
     }
 
-    static bool
+    static inline bool
     bool_accumulator (bool inA, bool inB)
     {
         return inA | inB;
     }
 
-    static int
+    static inline int
     int_accumulator (int inA, int inB)
     {
         return inA + inB;
     }
 
-    static uint
+    static inline uint
     uint_accumulator (uint inA, uint inB)
     {
         return inA + inB;
     }
 
-    static long
+    static inline long
     long_accumulator (long inA, long inB)
     {
         return inA + inB;
     }
 
-    static ulong
+    static inline ulong
     ulong_accumulator (ulong inA, ulong inB)
     {
         return inA + inB;
     }
 
-    static float
+    static inline float
     float_accumulator (float inA, float inB)
     {
         return inA + inB;
     }
 
-    static double
+    static inline double
     double_accumulator (double inA, double inB)
     {
         return inA + inB;
     }
 
-    static string
+    static inline string
     string_accumulator (string inA, string inB)
     {
         return inA + inB;
     }
 
-    public static CompareFunc<V>
+    public static inline CompareFunc<V>
     get_compare_func_for<V> ()
     {
         CompareFunc<V> func = (CompareFunc<V>)direct_compare;
@@ -114,7 +114,7 @@ namespace Maia
         return func;
     }
 
-    public static ToStringFunc<V>
+    public static inline ToStringFunc<V>
     get_to_string_func_for<V> ()
     {
         ToStringFunc<V> func = null;
@@ -145,7 +145,7 @@ namespace Maia
         return func;
     }
 
-    public static AccumulateFunc<V>
+    public static inline AccumulateFunc<V>
     get_accumulator_func_for<V> ()
     {
         AccumulateFunc<V> func = null;

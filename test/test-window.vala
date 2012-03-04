@@ -30,7 +30,7 @@ public class TestWindow : Maia.Window
         workspace.reparent_window_event.listen (on_window_reparented, Maia.Application.self);
         workspace.destroy_window_event.listen (on_destroy_window, Maia.Application.self);
 
-        timeline = new Maia.Timeline (20, 100, Maia.Application.self);
+        timeline = new Maia.Timeline (25, 100, Maia.Application.self);
         timeline.loop = true;
         timeline.new_frame.watch (on_new_frame);
         timeline.start ();
@@ -112,7 +112,7 @@ public class TestWindow : Maia.Window
 static int
 main (string[] args)
 {
-    Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.ERROR, "test-window"));
+    Maia.Log.set_default_logger (new Maia.Log.File ("out.log", Maia.Log.Level.ERROR, "test-window"));
 
     Maia.Application application = Maia.Application.create ();
 

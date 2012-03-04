@@ -17,50 +17,47 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+internal struct Maia.Ticket16
+{
+    public uint16 ticket;
+
+    internal static inline unowned Ticket16?
+    cast (void* inLck)
+    {
+        return (Ticket16?)inLck;
+    }
+}
+
 public struct Maia.SpinLock
 {
-    internal Machine.Memory.Atomic.uint16 ticket;
-    internal Machine.Memory.Atomic.uint16 users;
+    internal Machine.Memory.Atomic.uint32 lck;
 
-    public void
+    public inline void
     lock ()
     {
-        uint16 me = users.fetch_and_add (1);
+        uint32 me = lck.fetch_and_add (1 << 16);
+        uint16 val = (uint16)(me >> 16);
+        unowned Ticket16? l = Ticket16.cast (&lck);
 
-        while (ticket.get () != me)
+        while (val != l.ticket)
             Machine.CPU.pause ();
     }
 
-    public void
-    lock_eb ()
-    {
-        uint16 me = users.fetch_and_add (1);
-        BackOff bo = BackOff ();
-
-        while (ticket.get () != me)
-            bo.exponential_block ();
-    }
-
-    public void
+    public inline void
     unlock ()
     {
-        ticket.inc ();
-    }
+        uint32 val = 0, inc = 0;
+        do
+        {
+            val = lck.get ();
+            inc = val;
 
-    public bool
-    try_lock ()
-    {
-        uint16 me = users.get ();
-        uint16 menew = me + 1;
-        uint32 cmp = ((uint32) me << 16) + me;
-        uint32 cmpnew = ((uint32) menew << 16) + me;
+            unowned Ticket16 l = Ticket16.cast (&lck);
 
-        return Machine.Memory.Atomic.uint32.cast (&this).compare_and_swap (cmp, cmpnew);
-    }
-
-    public bool
-    is_lockable ()
-    {
-        return users.get () == ticket.get ();
+            if (l.ticket == 0xFFFF)
+                inc += 1 - (1 << 16);
+            else
+                inc += 1;
+        } while (!lck.compare_and_swap (val, inc));
     }
 }

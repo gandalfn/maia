@@ -89,7 +89,11 @@ public class Maia.Task : Object
      */
     public GLib.Thread<void*> thread_id {
         get {
-            return m_ThreadId;
+            rw_lock.read_lock ();
+            unowned GLib.Thread<void*> ret = m_ThreadId;
+            rw_lock.read_unlock ();
+
+            return ret;
         }
     }
 
@@ -174,7 +178,9 @@ public class Maia.Task : Object
             try
             {
                 Log.audit (GLib.Log.METHOD, "Start task has thread");
+                rw_lock.write_lock ();
                 m_ThreadId = GLib.Thread.create<void*> (main, true);
+                rw_lock.write_unlock ();
             }
             catch (GLib.ThreadError error)
             {

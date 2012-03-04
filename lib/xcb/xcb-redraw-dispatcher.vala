@@ -113,6 +113,8 @@ internal class Maia.XcbRedrawDispatcher : Object
         }
 
         on_refresh ();
+        ((Desktop)m_Workspace.parent).flush ();
+
         if (m_RefreshTicTac.state == Task.State.SLEEPING)
         {
             m_RefreshTicTac.wakeup ();

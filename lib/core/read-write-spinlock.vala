@@ -40,25 +40,31 @@ public struct Maia.ReadWriteSpinLock
         uint8 val = (uint8)(me >> 16);
         unowned RWTicket8? l = RWTicket8.cast (&lck);
 
-        if (val != l.writers)
-            Log.warning (GLib.Log.METHOD, "write %u %u", val, l.writers);
+        Log.warning_cond (val != l.writers, GLib.Log.METHOD, "write %u %u", val, l.writers);
+
         while (val != l.writers) Machine.CPU.pause ();
     }
 
     public inline void
     write_unlock ()
     {
-        unowned RWTicket8? l = RWTicket8.cast (&lck);
-        uint32 inc = 0;
-        if (l.readers == 255)
-            inc += (1 << 8) - (1 << 16);
-        else
-            inc += (1 << 8);
-        if (l.writers == 255)
-            inc += 1 - (1 << 8);
-        else
-            inc += 1;
-        lck.fetch_and_add (inc);
+        uint32 val = 0, inc = 0;
+        do
+        {
+            val = lck.get ();
+            inc = val;
+
+            unowned RWTicket8? l = RWTicket8.cast (&val);
+
+            if (l.readers == 255)
+                inc += (1 << 8) - (1 << 16);
+            else
+                inc += (1 << 8);
+            if (l.writers == 255)
+                inc += 1 - (1 << 8);
+            else
+                inc += 1;
+        } while (!lck.compare_and_swap (val, inc));
     }
 
     public inline void
@@ -68,9 +74,10 @@ public struct Maia.ReadWriteSpinLock
         uint8 val = (uint8)(me >> 16);
         unowned RWTicket8? l = RWTicket8.cast (&lck);
 
-        if (val != l.readers)
-            Log.warning (GLib.Log.METHOD, "read %u %u", val, l.readers);
+        Log.warning_cond (val != l.readers, GLib.Log.METHOD, "read %u %u", val, l.readers);
+
         while (val != l.readers) Machine.CPU.pause ();
+
         if (val != 255)
             lck.fetch_and_add (1 << 8);
         else
@@ -78,22 +85,20 @@ public struct Maia.ReadWriteSpinLock
     }
 
     public inline void
-    read_lock_eb ()
-    {
-        uint32 me = lck.fetch_and_add (1 << 16);
-        uint8 val = (uint8)(me >> 16);
-        unowned RWTicket8? l = RWTicket8.cast (&lck);
-        BackOff bo = BackOff ();
-
-        if (val != l.readers)
-            Log.warning (GLib.Log.METHOD, "read %u %u", val, l.readers);
-        while (val != l.readers) bo.exponential_block ();
-        lck.fetch_and_add (1 << 8);
-    }
-
-    public inline void
     read_unlock ()
     {
-        Machine.Memory.Atomic.uint8.cast (&lck).inc ();
+        uint32 val = 0, inc = 0;
+        do
+        {
+            val = lck.get ();
+            inc = val;
+
+            unowned RWTicket8? l = RWTicket8.cast (&val);
+
+            if (l.writers == 255)
+                inc += 1 - (1 << 8);
+            else
+                inc += 1;
+        } while (!lck.compare_and_swap (val, inc));
     }
 }
