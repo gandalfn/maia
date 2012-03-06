@@ -22,12 +22,12 @@ namespace Maia.Log
     // types
     public enum Level
     {
-        ERROR,
-        CRITICAL,
-        WARNING,
-        INFO,
-        AUDIT,
-        DEBUG;
+        ERROR    = 0,
+        CRITICAL = 1,
+        WARNING  = 2,
+        INFO     = 3,
+        AUDIT    = 4,
+        DEBUG    = 5;
 
         public string
         to_string ()
@@ -212,7 +212,7 @@ namespace Maia.Log
         // methods
         public File (string inFilename, Level inLevel, string inDomain)
         {
-            int f = Posix.open (inFilename, Posix.O_RDWR | Posix.O_CREAT, 0644);
+            int f = Posix.open (inFilename, Posix.O_RDWR | Posix.O_CREAT | Posix.O_TRUNC, 0644);
             GLib.Object (domain: inDomain, level: inLevel, fd: f, close_on_destroy: true);
         }
 
@@ -335,7 +335,7 @@ namespace Maia.Log
     public static inline void
     debug (string inFunction, string inMessage, ...)
     {
-        if (logger ().m_Level <= Level.DEBUG)
+        if (logger ().m_Level >= Level.DEBUG)
         {
             va_list args = va_list ();
             string msg = inMessage.vprintf (args);
@@ -353,7 +353,7 @@ namespace Maia.Log
     public static inline void
     debug_cond (bool inCond, string inFunction, string inMessage, ...)
     {
-        if (logger ().m_Level <= Level.DEBUG && inCond)
+        if (logger ().m_Level >= Level.DEBUG && inCond)
         {
             va_list args = va_list ();
             string msg = inMessage.vprintf (args);
@@ -370,7 +370,7 @@ namespace Maia.Log
     public static inline void
     info (string inFunction, string inMessage, ...)
     {
-        if (logger ().m_Level <= Level.INFO)
+        if (logger ().m_Level >= Level.INFO)
         {
             va_list args = va_list ();
             string msg = inMessage.vprintf (args);
@@ -388,7 +388,7 @@ namespace Maia.Log
     public static inline void
     info_cond (bool inCond, string inFunction, string inMessage, ...)
     {
-        if (logger ().m_Level <= Level.INFO && inCond)
+        if (logger ().m_Level >= Level.INFO && inCond)
         {
             va_list args = va_list ();
             string msg = inMessage.vprintf (args);
@@ -405,7 +405,7 @@ namespace Maia.Log
     public static inline void
     audit (string inFunction, string inMessage, ...)
     {
-        if (logger ().m_Level <= Level.AUDIT)
+        if (logger ().m_Level >= Level.AUDIT)
         {
             va_list args = va_list ();
             string msg = inMessage.vprintf (args);
@@ -423,7 +423,7 @@ namespace Maia.Log
     public static inline void
     audit_cond (bool inCond, string inFunction, string inMessage, ...)
     {
-        if (logger ().m_Level <= Level.AUDIT && inCond)
+        if (logger ().m_Level >= Level.AUDIT && inCond)
         {
             va_list args = va_list ();
             string msg = inMessage.vprintf (args);
@@ -440,7 +440,7 @@ namespace Maia.Log
     public static inline void
     warning (string inFunction, string inMessage, ...)
     {
-        if (logger ().m_Level <= Level.WARNING)
+        if (logger ().m_Level >= Level.WARNING)
         {
             va_list args = va_list ();
             string msg = inMessage.vprintf (args);
@@ -458,7 +458,7 @@ namespace Maia.Log
     public static inline void
     warning_cond (bool inCond, string inFunction, string inMessage, ...)
     {
-        if (logger ().m_Level <= Level.WARNING && inCond)
+        if (logger ().m_Level >= Level.WARNING && inCond)
         {
             va_list args = va_list ();
             string msg = inMessage.vprintf (args);
@@ -475,7 +475,7 @@ namespace Maia.Log
     public static inline void
     critical (string inFunction, string inMessage, ...)
     {
-        if (logger ().m_Level <= Level.CRITICAL)
+        if (logger ().m_Level >= Level.CRITICAL)
         {
             va_list args = va_list ();
             string msg = inMessage.vprintf (args);
@@ -493,7 +493,7 @@ namespace Maia.Log
     public static inline void
     critical_cond (bool inCond, string inFunction, string inMessage, ...)
     {
-        if (logger ().m_Level <= Level.CRITICAL && inCond)
+        if (logger ().m_Level >= Level.CRITICAL && inCond)
         {
             va_list args = va_list ();
             string msg = inMessage.vprintf (args);
@@ -510,7 +510,7 @@ namespace Maia.Log
     public static inline void
     error (string inFunction, string inMessage, ...)
     {
-        if (logger ().m_Level <= Level.ERROR)
+        if (logger ().m_Level >= Level.ERROR)
         {
             va_list args = va_list ();
             string msg = inMessage.vprintf (args);
@@ -528,7 +528,7 @@ namespace Maia.Log
     public static inline void
     error_cond (bool inCond, string inFunction, string inMessage, ...)
     {
-        if (logger ().m_Level <= Level.ERROR && inCond)
+        if (logger ().m_Level >= Level.ERROR && inCond)
         {
             va_list args = va_list ();
             string msg = inMessage.vprintf (args);

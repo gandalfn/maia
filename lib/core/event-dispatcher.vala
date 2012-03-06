@@ -103,10 +103,12 @@ internal class Maia.EventDispatcher : Watch
     private void
     dispatch (Event inEvent)
     {
+        Log.debug (GLib.Log.METHOD, "dispatch %s", inEvent.name);
         m_Listeners.foreach ((queue) => {
             if (queue.compare_with_event (inEvent) == 0)
             {
                 queue.foreach ((event_listener) => {
+                    Log.debug (GLib.Log.METHOD, "notify %s", inEvent.name);
                     event_listener.notify (inEvent.event_args);
                     return true;
                 });
@@ -163,7 +165,7 @@ internal class Maia.EventDispatcher : Watch
             if (queue.compare_with_listener (inEventListener) == 0)
             {
                 have_queue = true;
-                Log.debug (GLib.Log.METHOD, "Add listener %i", inEventListener.id);
+                Log.debug (GLib.Log.METHOD, "Add listener %s", inEventListener.name);
                 queue.insert (inEventListener);
                 return false;
             }
@@ -174,9 +176,11 @@ internal class Maia.EventDispatcher : Watch
         if (!have_queue)
         {
             ListenerQueue queue = new ListenerQueue (inEventListener);
-            bool ret = queue.insert (inEventListener);
-            bool ret1 = m_Listeners.insert (queue);
-            Log.debug (GLib.Log.METHOD, "Add listener %i %s %s", inEventListener.id, ret.to_string (), ret1.to_string ());
+            while (!queue.insert (inEventListener))
+                Machine.CPU.pause ();
+            while (m_Listeners.insert (queue))
+                Machine.CPU.pause ();
+            Log.debug (GLib.Log.METHOD, "Add listener %s", inEventListener.name);
         }
     }
 

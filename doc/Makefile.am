@@ -13,7 +13,7 @@ VALADOC_FLAGS = \
     --pkg pixman-1 \
     --pkg os \
     --pkg machine \
-    --pkg log \
+    --pkg posix \
     -b $(top_srcdir)/lib \
     --package-name Maia \
     --package-version @MAIA_VERSION@
@@ -45,4 +45,3 @@ all-local: valadoc-html valadoc-devhelp
 .NOTPARALLEL: valadoc-html valadoc-devhelp
 
 endif
-

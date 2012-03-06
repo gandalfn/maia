@@ -20,7 +20,6 @@ libmaia_core_la_VALAFLAGS = \
 libmaia_core_la_SOURCES = \
     logger.vala \
     functions.vala \
-    backoff.vala \
     iterator.vala \
     collection.vala \
     array.vala \

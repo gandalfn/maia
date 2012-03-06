@@ -39,7 +39,7 @@ internal class Maia.EventListener : Object
     // methods
     public EventListener (Event inEvent, Event.Handler inHandler)
     {
-        Log.debug (GLib.Log.METHOD, "create eventlistener = %lu", inEvent.id);
+        Log.debug (GLib.Log.METHOD, "create eventlistener = %s", inEvent.name);
         GLib.Object (id: inEvent.id);
         m_Owner = inEvent.owner;
         m_Handler = inHandler;
