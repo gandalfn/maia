@@ -33,8 +33,8 @@ public class Maia.DestroyWindowEventArgs : EventArgs
 public class Maia.DestroyWindowEvent : Event<DestroyWindowEventArgs>
 {
     // methods
-    public DestroyWindowEvent (uint32 inId, void* inOwner)
+    public DestroyWindowEvent (void* inOwner)
     {
-        base.with_id (inId, inOwner);
+        base ("detroy-window-event", inOwner);
     }
 }

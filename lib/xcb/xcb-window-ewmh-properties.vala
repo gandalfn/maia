@@ -23,11 +23,7 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
     private XcbWindowProperty<uint32> m_HintType;
     private XcbWindowProperty<string> m_WMName;
 
-    // observers
-    private unowned Notification1.Observer<Object, string>? m_WindowPropertyObserver;
-
     // accessors
-    [CCode (notify = false)]
     public Window.HintType hint_type {
         get {
             if (!m_HintType.is_set ())
@@ -109,11 +105,9 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
                     m_HintType[0] = window.xcb_desktop.atoms[XcbAtomType._NET_WM_WINDOW_TYPE_DOCK];
                     break;
             }
-            on_property_changed ("hint-type");
         }
     }
 
-    [CCode (notify = false)]
     public string name {
         get {
             Log.audit ("XcbWindowEWMHProperties.name.get", "%s", m_WMName[0]);
@@ -121,7 +115,6 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
         }
         construct set {
             m_WMName[0] = value;
-            on_property_changed ("name");
         }
     }
 
@@ -138,7 +131,7 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
                                                         Xcb.AtomType.ATOM,
                                                         XcbWindowProperty.Format.U32,
                                                         () => {
-                                                            on_property_changed ("hint-type");
+                                                            notify_property ("hint-type");
                                                         });
 
             m_WMName = new XcbWindowProperty<string> (value,
@@ -147,7 +140,7 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
                                                       XcbWindowProperty.Format.U8,
                                                       () => {
                                                           Log.audit (GLib.Log.METHOD, "name changed");
-                                                          on_property_changed ("name");
+                                                          notify_property ("name");
                                                       });
         }
     }
@@ -155,7 +148,17 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
     // methods
     construct
     {
-        m_WindowPropertyObserver = window.delegator.property_changed.watch (on_window_property_changed);
+        notify["name"].connect (() => {
+            //((Window)window.delegator).name = name;
+        });
+        notify["hint-type"].connect (() => {
+            ((Window)window.delegator).hint_type = hint_type;
+        });
+
+        window.delegator.notify["name"].connect (() => {
+            m_WMName[0] = ((Window)window.delegator).name;
+            m_WMName.commit ();
+        });
 
         if (!((Window)window.delegator).is_foreign)
         {
@@ -174,39 +177,6 @@ internal class Maia.XcbWindowEWMHProperties : XcbRequest
     {
         m_HintType = null;
         m_WMName = null;
-    }
-
-    private void
-    on_window_property_changed (Object inObject, string inName)
-    {
-        switch (inName)
-        {
-            case "name":
-                m_WMName[0] = ((Window)inObject).name;
-                m_WMName.commit ();
-                break;
-        }
-    }
-
-    internal override void
-    on_property_changed (string inName)
-    {
-        switch (inName)
-        {
-            case "name":
-                if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = true;
-                //((Window)window.delegator).name = name;
-                if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = false;
-                break;
-
-            case "hint-type":
-                if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = true;
-                ((Window)window.delegator).hint_type = hint_type;
-                if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = false;
-                break;
-        }
-
-        base.on_property_changed (inName);
     }
 
     public override void

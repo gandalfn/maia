@@ -27,7 +27,6 @@ test_SOURCES = \
     core/test-dispatcher.vala \
     core/test-application.vala \
     core/test-event.vala \
-    core/test-notification.vala \
     xml/test-xml.vala \
     xml/test-parser.vala
 
@@ -73,4 +72,3 @@ VALAFILES = \
 CLEANFILES += \
     test_vala.stamp \
     $(VALAFILES:.vala=.c)
-

@@ -30,14 +30,14 @@ public class TestWindow : Maia.Window
         workspace.reparent_window_event.listen (on_window_reparented, Maia.Application.self);
         workspace.destroy_window_event.listen (on_destroy_window, Maia.Application.self);
 
-        timeline = new Maia.Timeline (25, 100, Maia.Application.self);
+        timeline = new Maia.Timeline (30, 100, Maia.Application.self);
         timeline.loop = true;
-        timeline.new_frame.watch (on_new_frame);
+        timeline.new_frame.connect (on_new_frame);
         timeline.start ();
     }
 
     private void
-    on_new_frame (Maia.Timeline inTimeline, int inFrame)
+    on_new_frame (int inFrame)
     {
         queue_draw ();
     }
@@ -46,9 +46,6 @@ public class TestWindow : Maia.Window
     on_new_window (Maia.CreateWindowEventArgs inArgs)
     {
         Maia.Window window = inArgs.window;
-        window.property_changed.watch ((o, n) => {
-            message ("property changed %s", ((Maia.Window)o).to_string ());
-        });
         message ("new window: %s", window.to_string ());
         ++count;
     }
@@ -79,7 +76,7 @@ public class TestWindow : Maia.Window
     public override void
     on_paint (Maia.Region inArea)
     {
-        message ("Paint %s", inArea.to_string ());
+        //message ("Paint %s", inArea.to_string ());
         try
         {
             Maia.GraphicContext ctx = back_buffer.create_context ();
@@ -112,7 +109,8 @@ public class TestWindow : Maia.Window
 static int
 main (string[] args)
 {
-    Maia.Log.set_default_logger (new Maia.Log.File ("out.log", Maia.Log.Level.ERROR, "test-window"));
+    Maia.Log.set_default_logger (new Maia.Log.File ("out.log", Maia.Log.Level.AUDIT, "test-window"));
+    //Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.INFO, "test-window"));
 
     Maia.Application application = Maia.Application.create ();
 

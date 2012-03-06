@@ -10,6 +10,7 @@ INCLUDES = \
     $(addprefix -I, $(dir $(MAIA_VAPI_DEPS)))
 
 VALAFLAGS = \
+    --debug \
     --thread \
     --vapidir=$(VALA_VAPI_PATH) \
     --vapidir=${top_srcdir}/vapi \

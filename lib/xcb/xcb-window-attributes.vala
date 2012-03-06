@@ -26,120 +26,77 @@ internal class Maia.XcbWindowAttributes : XcbRequest
     private bool m_IsInputOnly = false;
     private uint m_EventMask = 0;
 
-    private unowned Notification1.Observer<Object, string>? m_XcbWindowPropertyObserver;
-    private unowned Notification1.Observer<Object, string>? m_WindowPropertyObserver;
-
     // accessors
-    [CCode (notify = false)]
     public bool override_redirect {
         get {
             return m_OverrideRedirect;
         }
         set {
             m_OverrideRedirect = value;
-            on_property_changed ("override-redirect");
         }
     }
 
-    [CCode (notify = false)]
     public bool is_viewable {
         get {
             return m_IsViewable;
         }
         protected set {
             m_IsViewable = value;
-            on_property_changed ("is-viewable");
         }
     }
 
-    [CCode (notify = false)]
     public bool is_input_only {
         get {
             return m_IsInputOnly;
         }
         protected set {
             m_IsInputOnly = value;
-            on_property_changed ("is-input-only");
         }
     }
 
-    [CCode (notify = false)]
     public uint event_mask {
         get {
             return m_EventMask;
         }
         set {
             m_EventMask = value;
-            on_property_changed ("event-mask");
         }
     }
 
     // methods
     construct
     {
-        m_XcbWindowPropertyObserver = window.property_changed.watch (on_xcb_window_property_changed);
-        m_WindowPropertyObserver = window.delegator.property_changed.watch (on_window_property_changed);
+        window.notify["event-mask"].connect (() => {
+            m_EventMask = window.event_mask;
+            m_Mask |= Xcb.CW.EVENT_MASK;
+            commit ();
+        });
+
+        window.delegator.notify["is-viewable"].connect (() => {
+            m_IsViewable = ((Window)window.delegator).is_viewable;
+        });
+        window.delegator.notify["is-input-only"].connect (() => {
+            m_IsInputOnly = ((Window)window.delegator).is_input_only;
+        });
+
         m_EventMask = window.event_mask;
         m_IsViewable = ((Window)window.delegator).is_viewable;
         m_IsInputOnly = ((Window)window.delegator).is_input_only;
+
+        notify["event-mask"].connect (() => {
+            window.event_mask = m_EventMask;
+        });
+        notify["is-viewable"].connect (() => {
+            ((Window)window.delegator).is_viewable = m_IsViewable;
+        });
+        notify["is-input-only"].connect (() => {
+            ((Window)window.delegator).is_input_only = m_IsInputOnly;
+        });
     }
 
     public XcbWindowAttributes (XcbWindow inWindow)
     {
         base (inWindow);
-    }
-
-    private void
-    on_xcb_window_property_changed (Object inObject, string inName)
-    {
-        switch (inName)
-        {
-            case "event-mask":
-                m_EventMask = ((XcbWindow)inObject).event_mask;
-                m_Mask |= Xcb.CW.EVENT_MASK;
-                commit ();
-                break;
-        }
-    }
-
-    private void
-    on_window_property_changed (Object inObject, string inName)
-    {
-        switch (inName)
-        {
-            case "is-viewable":
-                m_IsViewable = ((Window)inObject).is_viewable;
-                break;
-            case "is-input-only":
-                m_IsInputOnly = ((Window)inObject).is_input_only;
-                break;
-        }
-    }
-
-    internal override void
-    on_property_changed (string inName)
-    {
-        switch (inName)
-        {
-            case "event-mask":
-                if (m_XcbWindowPropertyObserver != null) m_XcbWindowPropertyObserver.block = true;
-                window.event_mask = m_EventMask;
-                if (m_XcbWindowPropertyObserver != null) m_XcbWindowPropertyObserver.block = false;
-                break;
-
-            case "is-viewable":
-                if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = true;
-                ((Window)window.delegator).is_viewable = m_IsViewable;
-                if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = false;
-                break;
-
-            case "is-input-only":
-                if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = true;
-                ((Window)window.delegator).is_input_only = m_IsInputOnly;
-                if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = false;
-                break;
-        }
-        base.on_property_changed (inName);
     }
 
     protected override void

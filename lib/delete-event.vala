@@ -20,8 +20,8 @@
 public class Maia.DeleteEvent : Event<EventArgs>
 {
     // methods
-    public DeleteEvent (uint32 inId, void* inOwner)
+    public DeleteEvent (void* inOwner)
     {
-        base.with_id (inId, inOwner);
+        base ("delete-event", inOwner);
     }
 }

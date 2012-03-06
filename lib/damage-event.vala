@@ -33,8 +33,8 @@ public class Maia.DamageEventArgs : EventArgs
 public class Maia.DamageEvent : Event<DamageEventArgs>
 {
     // methods
-    public DamageEvent (uint32 inId, void* inOwner)
+    public DamageEvent (void* inOwner)
     {
-        base.with_id (inId, inOwner);
+        base ("damage-event", inOwner);
     }
 }

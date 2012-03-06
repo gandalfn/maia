@@ -23,8 +23,8 @@ public class Maia.Timeout : Watch
     private ulong m_TimeoutMs;
     private bool m_WatchSet = false;
 
-    // Notifications
-    public NotificationR<Timeout, bool> elapsed;
+    // signals
+    public signal bool elapsed ();
 
     // Accessors
     internal override int watch_fd {
@@ -45,11 +45,6 @@ public class Maia.Timeout : Watch
     }
 
     // Methods
-    construct
-    {
-        elapsed = new NotificationR<Timeout, bool> (this);
-    }
-
     /**
      * Create a new Timeout
      *
@@ -81,9 +76,7 @@ public class Maia.Timeout : Watch
 
         void* ret = base.main ();
 
-        bool ret_elapsed = false;
-        elapsed.send (ref ret_elapsed);
-        if (ret_elapsed)
+        if (elapsed ())
         {
             (parent as Dispatcher).add_watch (this);
         }

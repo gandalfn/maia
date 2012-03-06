@@ -64,17 +64,11 @@ public class Maia.Task : Object
     private State                      m_State = State.READY;
     private Os.TimerFd                 m_SleepFd = -1;
 
-    // Notifications
-    public Notification<Task> running;
-    public Notification<Task> finished;
+    // Signals
+    public signal void running ();
+    public signal void finished ();
 
     // Accessors
-    construct
-    {
-        running = new Notification<Task> (this);
-        finished = new Notification<Task> (this);
-    }
-
     /**
      * Task is threaded
      */
@@ -204,7 +198,7 @@ public class Maia.Task : Object
     {
         state = State.RUNNING;
 
-        running.send ();
+        running ();
 
         return null;
     }
@@ -218,7 +212,7 @@ public class Maia.Task : Object
         Log.audit (GLib.Log.METHOD, "Finish 0x%lx", (ulong)this);
         state = State.TERMINATED;
 
-        finished.send ();
+        finished ();
     }
 
     /**

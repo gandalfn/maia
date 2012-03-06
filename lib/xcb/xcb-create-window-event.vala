@@ -60,7 +60,7 @@ internal class Maia.XcbCreateWindowEvent : CreateWindowEvent
     // methods
     public XcbCreateWindowEvent (XcbWindow inWindow)
     {
-        base (Xcb.CREATE_NOTIFY, ((uint)inWindow.id).to_pointer ());
+        base (((uint)inWindow.id).to_pointer ());
         m_Window = inWindow;
     }
 

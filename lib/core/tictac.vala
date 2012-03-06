@@ -25,9 +25,9 @@ public class Maia.TicTac : Watch
     private Os.TimeSpec m_StartTime;
     private bool        m_WatchSet = false;
 
-    // notifications
-    public NotificationR<TicTac, bool> bell;
-    public Notification<TicTac>        end_bell;
+    // signals
+    public signal bool bell ();
+    public signal void end_bell ();
 
     // Accessors
     internal override int watch_fd {
@@ -74,12 +74,6 @@ public class Maia.TicTac : Watch
     }
 
     // methods
-    construct
-    {
-        bell = new NotificationR<TicTac, bool> (this);
-        end_bell = new Notification<TicTac> (this);
-    }
-
     public TicTac (uint inFps, Task.Priority inPriority = Task.Priority.NORMAL)
     {
         Os.TimerFd timer_fd = Os.TimerFd (Os.CLOCK_MONOTONIC, Os.TFD_CLOEXEC);
@@ -110,13 +104,11 @@ public class Maia.TicTac : Watch
 
         void* ret = base.main ();
 
-        bool bell_ret = false;
-        bell.send (ref bell_ret);
-        if (bell_ret)
+        if (bell ())
         {
             ++m_FrameCount;
             (parent as Dispatcher).add_watch (this);
-            end_bell.send ();
+            end_bell ();
         }
         else
         {

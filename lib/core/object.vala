@@ -37,9 +37,6 @@ public abstract class Maia.Object : GLib.Object
 
     protected ReadWriteSpinLock rw_lock;
 
-    // notifications
-    public Notification1<Object, string> m_PropertyChanged = null;
-
     // accessors
     [CCode (notify = false)]
     internal bool sorted_childs {
@@ -58,21 +55,9 @@ public abstract class Maia.Object : GLib.Object
         }
     }
 
-    public Notification1<Object, string> property_changed {
-        get {
-            if (m_PropertyChanged == null)
-            {
-                m_PropertyChanged = new Notification1<Object, string> (this);
-            }
-
-            return m_PropertyChanged;
-        }
-    }
-
     /**
      * Object identifier
      */
-    [CCode (notify = false)]
     public uint32 id {
         get {
             rw_lock.read_lock ();
@@ -106,11 +91,6 @@ public abstract class Maia.Object : GLib.Object
                     rw_lock.write_lock ();
                     m_Id = value;
                     rw_lock.write_unlock ();
-
-                    // object have a parent
-                    if (id != 0)
-                        // add object in identified childs
-                        parent.insert_identified_child (this);
                 }
             }
             else
@@ -453,20 +433,6 @@ public abstract class Maia.Object : GLib.Object
         }
         else
             delegator.check_child_pos (inIndex);
-    }
-
-    /**
-     * Send property changed notification
-     *
-     * @param inName the property name
-     */
-    protected virtual void
-    on_property_changed (string inName)
-    {
-        if (m_PropertyChanged != null)
-        {
-            m_PropertyChanged.send (inName);
-        }
     }
 
     /**

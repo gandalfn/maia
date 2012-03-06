@@ -57,7 +57,7 @@ internal class Maia.XcbDestroyWindowEvent : DestroyWindowEvent
     public XcbDestroyWindowEvent (XcbWindow inWindow)
     {
         Log.audit (GLib.Log.METHOD, "id: 0x%lx", inWindow.id);
-        base (Xcb.DESTROY_NOTIFY, ((uint)inWindow.id).to_pointer ());
+        base (((uint)inWindow.id).to_pointer ());
         m_Window = inWindow;
     }
 

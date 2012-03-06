@@ -17,22 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.FooProperty : Maia.Object
-{
-    private string m_Property = "Property value";
-
-    [CCode (notify = false)]
-    public string prop {
-        get {
-            return m_Property;
-        }
-        set {
-            m_Property = value;
-            on_property_changed ("prop");
-        }
-    }
-}
-
 public class Maia.FooDelegate : Maia.Object
 {
     public int
@@ -99,7 +83,6 @@ public class Maia.TestObject : Maia.TestCase
         base ("object");
 
         add_test ("create", test_object_create);
-        add_test ("property", test_object_property);
         add_test ("delegate", test_object_delegate);
         add_test ("parent", test_object_parent);
         add_test ("identified", test_object_identified);
@@ -112,13 +95,6 @@ public class Maia.TestObject : Maia.TestCase
         notified = false;
     }
 
-    private void
-    on_foo_property_changed (Object inObject, string inName)
-    {
-        Test.message ("property %s changed = %s", inName, ((FooProperty)inObject).prop);
-        notified = true;
-    }
-
     public void
     test_object_create ()
     {
@@ -129,16 +105,6 @@ public class Maia.TestObject : Maia.TestCase
         assert (foo.id == Atom.from_string ("foo"));
         assert (foo.delegate_cast<FooDelegate> () != null);
         (foo as FooObject).f ();
-    }
-
-    public void
-    test_object_property ()
-    {
-        FooProperty foo = new FooProperty ();
-
-        foo.property_changed.watch (on_foo_property_changed);
-        foo.prop = "Test property changed";
-        assert (notified);
     }
 
     public void

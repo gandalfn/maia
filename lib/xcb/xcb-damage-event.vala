@@ -29,13 +29,13 @@ internal class Maia.XcbDamageEvent : DamageEvent
     {
         Xcb.ExposeEvent evt = (Xcb.ExposeEvent)inEvent;
         DamageEventArgs args = new DamageEventArgs (new Region.raw_rectangle (evt.x, evt.y, evt.width, evt.height));
-        Event.post_event<DamageEventArgs> (Xcb.EXPOSE, ((uint)evt.window).to_pointer (), args);
+        Event.post_event<DamageEventArgs> ("damage-event", ((uint)evt.window).to_pointer (), args);
     }
 
     // methods
     public XcbDamageEvent (XcbWindow inWindow)
     {
-        base (Xcb.EXPOSE, ((uint)inWindow.id).to_pointer ());
+        base (((uint)inWindow.id).to_pointer ());
         m_Window = inWindow;
     }
 

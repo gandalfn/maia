@@ -196,7 +196,7 @@ public class Maia.Dispatcher : Task
             ready_tasks.clear ();
         }
 
-        finished.send ();
+        finished ();
 
         return ret;
     }

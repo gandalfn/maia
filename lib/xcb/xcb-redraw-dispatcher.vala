@@ -51,8 +51,8 @@ internal class Maia.XcbRedrawDispatcher : Object
 
         // Create redraw timeline
         m_RefreshTicTac = new TicTac (60);
-        m_RefreshTicTac.bell.watch (on_refresh);
-        m_RefreshTicTac.end_bell.watch (on_end_refresh);
+        m_RefreshTicTac.bell.connect (on_refresh);
+        m_RefreshTicTac.end_bell.connect (on_end_refresh);
     }
 
     private bool

@@ -50,8 +50,8 @@ internal class Maia.XcbApplication : Application
             XcbRedrawDispatcher redraw_dispatcher = new XcbRedrawDispatcher (workspace);
             m_RedrawDispatchers += redraw_dispatcher;
         }
-        dispatcher.running.watch (on_dispatcher_running);
-        dispatcher.finished.watch (on_dispatcher_finished);
+        dispatcher.running.connect (on_dispatcher_running);
+        dispatcher.finished.connect (on_dispatcher_finished);
     }
 
     private void

@@ -169,8 +169,8 @@ public class Maia.TestDispatcher : Maia.TestCase
         Task task = new Task ();
 
         count = 0;
-        task.running.watch (on_task_running);
-        task.finished.watch (on_task_finished);
+        task.running.connect (() => { on_task_running (task); });
+        task.finished.connect (on_task_finished);
         task.parent = dispatcher;
 
         Test.timer_start ();
@@ -188,8 +188,8 @@ public class Maia.TestDispatcher : Maia.TestCase
         Timeout timeout = new Timeout (50);
 
         count = 0;
-        timeout.elapsed.watch (on_timeout_elapsed);
-        timeout.finished.watch (on_task_finished);
+        timeout.elapsed.connect (on_timeout_elapsed);
+        timeout.finished.connect (on_task_finished);
         timeout.parent = dispatcher;
 
         Test.timer_start ();
@@ -206,8 +206,8 @@ public class Maia.TestDispatcher : Maia.TestCase
         tictac = new TicTac (50);
 
         count = 0;
-        tictac.bell.watch (on_tictac_bell);
-        tictac.finished.watch (on_task_finished);
+        tictac.bell.connect (on_tictac_bell);
+        tictac.finished.connect (on_task_finished);
         tictac.parent = dispatcher;
 
         Test.timer_start ();
@@ -221,15 +221,15 @@ public class Maia.TestDispatcher : Maia.TestCase
     test_tictac_delay ()
     {
         Timeout timeout = new Timeout (350);
-        timeout.elapsed.watch (on_timeout_tictac_delay_elapsed);
+        timeout.elapsed.connect (on_timeout_tictac_delay_elapsed);
         timeout.parent = dispatcher;
 
         tictac = new TicTac (10);
 
         count = 0;
         count_tictac_delay = 0;
-        tictac.bell.watch (on_tictac_bell);
-        tictac.finished.watch (on_task_finished);
+        tictac.bell.connect (on_tictac_bell);
+        tictac.finished.connect (on_task_finished);
         tictac.parent = dispatcher;
 
         Test.timer_start ();
@@ -244,8 +244,8 @@ public class Maia.TestDispatcher : Maia.TestCase
     {
         Timeline timeline = new Timeline (60, 60, dispatcher);
 
-        timeline.new_frame.watch (on_timeline_new_frame);
-        timeline.completed.watch (on_timeline_completed);
+        timeline.new_frame.connect (on_timeline_new_frame);
+        timeline.completed.connect (on_timeline_completed);
 
         Test.timer_start ();
 

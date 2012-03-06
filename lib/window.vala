@@ -82,14 +82,12 @@ public class Maia.Window : View
         }
     }
 
-    [CCode (notify = false)]
     internal override Region geometry {
         get {
             return m_Proxy.geometry;
         }
         set {
             m_Proxy.geometry = value;
-            on_property_changed ("geometry");
         }
     }
 
@@ -131,25 +129,21 @@ public class Maia.Window : View
         }
     }
 
-    [CCode (notify = false)]
     public string name {
         get {
             return m_Name;
         }
         construct set {
             m_Name = value;
-            on_property_changed ("name");
         }
     }
 
-    [CCode (notify = false)]
     public State state {
         get {
             return m_State;
         }
         set {
             m_State = value;
-            on_property_changed("state");
         }
     }
 
@@ -163,36 +157,30 @@ public class Maia.Window : View
         }
     }
 
-    [CCode (notify = false)]
     public bool is_viewable {
         get {
             return m_IsViewable;
         }
         set {
             m_IsViewable = value;
-            on_property_changed("is-viewable");
         }
     }
 
-    [CCode (notify = false)]
     public bool is_input_only {
         get {
             return m_IsInputOnly;
         }
         set {
             m_IsInputOnly = value;
-            on_property_changed("is-input-only");
         }
     }
 
-    [CCode (notify = false)]
     public HintType hint_type {
         get {
             return m_HintType;
         }
         set {
             m_HintType = value;
-            on_property_changed("hint-type");
         }
     }
 

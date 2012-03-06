@@ -36,8 +36,8 @@ public class Maia.ReparentWindowEventArgs : EventArgs
 public class Maia.ReparentWindowEvent : Event<ReparentWindowEventArgs>
 {
     // methods
-    public ReparentWindowEvent (uint32 inId, void* inOwner)
+    public ReparentWindowEvent (void* inOwner)
     {
-        base.with_id (inId, inOwner);
+        base ("reparent-window-event", inOwner);
     }
 }

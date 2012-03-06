@@ -50,7 +50,7 @@ public class Maia.TestEvent : Maia.TestCase
         foo = new Foo ();
         timeout = new Timeout (5);
         timeout.parent = dispatcher;
-        timeout.elapsed.watch (on_timeout_elapsed);
+        timeout.elapsed.connect (on_timeout_elapsed);
         count = 0;
         assert (dispatcher.state == Task.State.READY);
         assert (dispatcher.nb_childs == 2);

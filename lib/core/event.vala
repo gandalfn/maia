@@ -58,13 +58,13 @@ public class Maia.Event<A> : Object
 
     // static methods
     public static void
-    post_event<A> (uint32 inId, void* inOwner, owned A? inArgs = null,
+    post_event<A> (string inName, void* inOwner, owned A? inArgs = null,
                    Dispatcher inDispatcher = Dispatcher.self)
     {
-        Event<A> event = new Event<A>.with_id (inId, inOwner);
+        Event<A> event = new Event<A> (inName, inOwner);
         event.m_Args = inArgs;
         event.m_Sender = true;
-        Log.debug (GLib.Log.METHOD, "post event 0x%lx", inId);
+        Log.debug (GLib.Log.METHOD, "post event %s", inName);
         inDispatcher.post_event (event);
     }
 
@@ -88,7 +88,7 @@ public class Maia.Event<A> : Object
      * @param inId event id
      * @param inOwner event object owner
      */
-    public Event.with_id (uint32 inId, void* inOwner = null)
+    private Event.with_id (uint32 inId, void* inOwner = null)
         requires (typeof (A).is_a (typeof (EventArgs)))
     {
         GLib.Object (id: inId, owner: inOwner);

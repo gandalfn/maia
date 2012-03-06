@@ -82,17 +82,12 @@ public class Maia.Transform : Object
         }
     }
 
-    // Notifications
-    public Notification<Transform> changed;
+    // Signals
+    public signal void changed ();
 
     /**
      * Create a new transform stack
      */
-    construct
-    {
-        changed = new Notification<Transform> (this);
-    }
-
     public Transform (double inXx, double inYx,
                       double inXy, double inYy,
                       double inX0, double inY0)
@@ -137,7 +132,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed.send ();
+        changed ();
     }
 
     /**
@@ -157,7 +152,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed.send ();
+        changed ();
     }
 
     /**
@@ -178,7 +173,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed.send ();
+        changed ();
     }
 
     /**
@@ -197,7 +192,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed.send ();
+        changed ();
     }
 
     /**
@@ -216,7 +211,7 @@ public class Maia.Transform : Object
         recalculate_final_matrix ();
 
         // send changed signal
-        changed.send ();
+        changed ();
     }
 
     /**
@@ -237,7 +232,7 @@ public class Maia.Transform : Object
             recalculate_final_matrix ();
 
             // connect on transform changed signal
-            changed.watch (recalculate_final_matrix);
+            changed.connect (recalculate_final_matrix);
         }
     }
 
@@ -251,8 +246,8 @@ public class Maia.Transform : Object
     {
         if (inKey in m_Queue)
         {
-            // disconnect from transform changed
-            changed.watch (recalculate_final_matrix);
+            // connect to transform changed
+            changed.connect (recalculate_final_matrix);
 
             // remove transform in queue if exist
             m_Queue.unset (inKey);

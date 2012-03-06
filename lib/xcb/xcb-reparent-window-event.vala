@@ -62,7 +62,7 @@ internal class Maia.XcbReparentWindowEvent : ReparentWindowEvent
     // methods
     public XcbReparentWindowEvent (XcbWindow inWindow)
     {
-        base (Xcb.REPARENT_NOTIFY, ((uint)inWindow.id).to_pointer ());
+        base (((uint)inWindow.id).to_pointer ());
         m_Window = inWindow;
     }
 

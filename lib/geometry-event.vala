@@ -33,8 +33,8 @@ public class Maia.GeometryEventArgs : EventArgs
 public class Maia.GeometryEvent : Event<GeometryEventArgs>
 {
     // methods
-    public GeometryEvent (uint32 inId, void* inOwner)
+    public GeometryEvent (void* inOwner)
     {
-        base.with_id (inId, inOwner);
+        base ("geometry-event", inOwner);
     }
 }

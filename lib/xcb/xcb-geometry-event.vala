@@ -31,13 +31,13 @@ internal class Maia.XcbGeometryEvent : GeometryEvent
         GeometryEventArgs args = new GeometryEventArgs (new Region.raw_rectangle (evt.x, evt.y,
                                                                                   evt.width + (evt.border_width * 2),
                                                                                   evt.height + (evt.border_width * 2)));
-        Event.post_event<GeometryEventArgs> (Xcb.CONFIGURE_NOTIFY, ((uint)evt.window).to_pointer (), args);
+        Event.post_event<GeometryEventArgs> ("geometry-event", ((uint)evt.window).to_pointer (), args);
     }
 
     // methods
     public XcbGeometryEvent (XcbWindow inWindow)
     {
-        base (Xcb.CONFIGURE_NOTIFY, ((uint)inWindow.id).to_pointer ());
+        base (((uint)inWindow.id).to_pointer ());
         m_Window = inWindow;
     }
 

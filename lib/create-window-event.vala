@@ -33,9 +33,8 @@ public class Maia.CreateWindowEventArgs : EventArgs
 public class Maia.CreateWindowEvent : Event<CreateWindowEventArgs>
 {
     // methods
-    public CreateWindowEvent (uint32 inId, void* inOwner)
+    public CreateWindowEvent (void* inOwner)
     {
-        base.with_id (inId, inOwner);
+        base ("create-window-event", inOwner);
     }
 }
-

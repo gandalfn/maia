@@ -63,7 +63,6 @@ internal class Maia.XcbWindow : WindowProxy
         }
     }
 
-    [CCode (notify = false)]
     public override Region geometry {
         get {
             return m_Geometry;
@@ -76,7 +75,7 @@ internal class Maia.XcbWindow : WindowProxy
             else if (id != 0)
             {
                 m_Geometry = value;
-                on_property_changed ("geometry");
+                notify_property ("geometry");
             }
         }
     }
@@ -113,14 +112,12 @@ internal class Maia.XcbWindow : WindowProxy
         }
     }
 
-    [CCode (notify = false)]
     public uint event_mask {
         get {
             return m_EventMask;
         }
         set {
             m_EventMask = value;
-            on_property_changed ("event-mask");
         }
     }
 

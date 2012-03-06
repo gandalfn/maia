@@ -22,17 +22,16 @@ internal class Maia.XcbWindowGeometry : XcbRequest
     // properties
     private Region m_Area;
 
-    private unowned Notification1.Observer<Object, string>? m_WindowPropertyObserver;
-
     // accessors
-    [CCode (notify = false)]
     public Region area {
         get {
             return m_Area;
         }
         set {
             m_Area = value;
-            on_property_changed ("area");
+            window.delegator.notify["geometry"].disconnect (on_window_property_changed);
+            window.geometry = m_Area;
+            window.delegator.notify["geometry"].connect (on_window_property_changed);
         }
     }
 
@@ -41,7 +40,7 @@ internal class Maia.XcbWindowGeometry : XcbRequest
     {
         m_Area = new Region ();
 
-        m_WindowPropertyObserver = window.delegator.property_changed.watch (on_window_property_changed);
+        window.delegator.notify["geometry"].connect (on_window_property_changed);
         if (!((Window)window.delegator).is_foreign)
         {
             m_Area = ((Window)window.delegator).geometry;
@@ -55,28 +54,9 @@ internal class Maia.XcbWindowGeometry : XcbRequest
     }
 
     private void
-    on_window_property_changed (Object inObject, string inName)
+    on_window_property_changed ()
     {
-        switch (inName)
-        {
-            case "geometry":
-                m_Area = ((Window)inObject).geometry;
-                break;
-        }
-    }
-
-    internal override void
-    on_property_changed (string inName)
-    {
-        switch (inName)
-        {
-            case "area":
-                if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = true;
-                window.geometry = m_Area;
-                if (m_WindowPropertyObserver != null) m_WindowPropertyObserver.block = false;
-                break;
-        }
-        base.on_property_changed (inName);
+        m_Area = window.geometry;
     }
 
     protected override void
@@ -92,7 +72,7 @@ internal class Maia.XcbWindowGeometry : XcbRequest
             m_Area = new Region.raw_rectangle (reply.x, reply.y,
                                                reply.width + (reply.border_width * 2),
                                                reply.height + (reply.border_width * 2));
-            on_property_changed ("area");
+            notify_property ("area");
         }
     }
 

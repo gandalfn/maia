@@ -79,7 +79,7 @@ internal struct Maia.Atomic.NodePool<T>
                 void* ptr = &m_Magazin [m_Index.get ()];
                 return (Node<T>?)ptr;
             }
-        } while (!m_Head.compare_and_swap((void*)node, (void*)node.next));
+        } while (!m_Head.compare_and_swap((void*)node, node.next.get ()));
 
         node.next.set (null);
 

@@ -53,7 +53,12 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
     protected override void
     on_reply ()
     {
+        if (cookie == null) return;
+
         XcbDesktop desktop = window.xcb_desktop;
+
+        if (desktop == null) return;
+
         Xcb.GetPropertyReply reply = ((Xcb.GetPropertyCookie?)cookie).reply (desktop.connection);
 
         m_Values.clear ();

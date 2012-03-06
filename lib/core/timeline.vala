@@ -36,11 +36,11 @@ public class Maia.Timeline : Object
     private int         m_CurrentFrameNum = 0;
     private Os.TimeSpec m_PrevFrameTime;
 
-    // notifications
-    public Notification<Timeline> started;
-    public Notification1<Timeline, int> new_frame;
-    public Notification<Timeline> paused;
-    public Notification<Timeline> completed;
+    // signals
+    public signal void started ();
+    public signal void new_frame (int inNumFrame);
+    public signal void paused ();
+    public signal void completed ();
 
     // accessors
 
@@ -77,7 +77,7 @@ public class Maia.Timeline : Object
                 {
                     m_TicTac = new TicTac (m_Fps);
                     m_TicTac.parent = m_Dispatcher;
-                    m_TicTac.bell.watch (on_tictac_bell);
+                    m_TicTac.bell.connect (on_tictac_bell);
                 }
             }
         }
@@ -145,14 +145,6 @@ public class Maia.Timeline : Object
     }
 
     // methods
-    construct
-    {
-        started   = new Notification<Timeline> (this);
-        new_frame = new Notification1<Timeline, int> (this);
-        paused    = new Notification<Timeline> (this);
-        completed = new Notification<Timeline> (this);
-    }
-
     public Timeline (uint inFps, uint inNFrames, Dispatcher inDispatcher = Dispatcher.self)
     {
         m_Fps        = inFps;
@@ -198,7 +190,7 @@ public class Maia.Timeline : Object
 
         if (!is_complete ())
         {
-            new_frame.send (m_CurrentFrameNum);
+            new_frame (m_CurrentFrameNum);
 
             if (m_TicTac == null)
             {
@@ -224,7 +216,7 @@ public class Maia.Timeline : Object
 
             end_frame = m_CurrentFrameNum;
 
-            new_frame.send (m_CurrentFrameNum);
+            new_frame (m_CurrentFrameNum);
 
             if (m_CurrentFrameNum != end_frame)
                 return true;
@@ -234,7 +226,7 @@ public class Maia.Timeline : Object
                 m_TicTac = null;
             }
 
-            completed.send ();
+            completed ();
 
             if (m_CurrentFrameNum != end_frame &&
                 !((m_CurrentFrameNum == 0 && end_frame == m_NFrames) ||
@@ -324,10 +316,10 @@ public class Maia.Timeline : Object
         if (m_TicTac != null) return;
 
         m_TicTac = new TicTac (m_Fps);
-        m_TicTac.bell.watch (on_tictac_bell);
+        m_TicTac.bell.connect (on_tictac_bell);
         m_TicTac.parent = m_Dispatcher;
 
-        started.send ();
+        started ();
     }
 
     /**
@@ -341,7 +333,7 @@ public class Maia.Timeline : Object
         m_PrevFrameTime.tv_sec = 0;
         m_PrevFrameTime.tv_nsec = 0;
 
-        paused.send ();
+        paused ();
     }
 
     /**

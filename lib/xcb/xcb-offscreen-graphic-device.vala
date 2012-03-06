@@ -22,7 +22,6 @@ internal class Maia.XcbOffscreenGraphicDevice : CairoGraphicDevice
     // properties
     private unowned XcbWindow? m_Window = null;
     private Cairo.Surface      m_Surface = null;
-    private Notification1.Observer<Object, string> m_PropertyChangedObserver;
 
     // accessors
     public override Cairo.Surface surface {
@@ -39,7 +38,7 @@ internal class Maia.XcbOffscreenGraphicDevice : CairoGraphicDevice
         m_Window = inWindow;
 
         // Connect on geometry changed
-        m_PropertyChangedObserver = m_Window.property_changed.watch (on_window_property_changed);
+        m_Window.notify["geometry"].connect (create_surface);
 
         // Create surface
         create_surface ();
@@ -47,7 +46,6 @@ internal class Maia.XcbOffscreenGraphicDevice : CairoGraphicDevice
 
     ~XcbOffscreenGraphicDevice ()
     {
-        m_PropertyChangedObserver.destroy ();
         ((Xcb.Pixmap)id).destroy (m_Window.xcb_desktop.connection);
         id = 0;
     }
@@ -81,16 +79,5 @@ internal class Maia.XcbOffscreenGraphicDevice : CairoGraphicDevice
         ctx.paint ();
 
         m_Window.xcb_desktop.flush ();
-    }
-
-    private void
-    on_window_property_changed (Object? inObject, string inName)
-    {
-        switch (inName)
-        {
-            case "geometry":
-                create_surface ();
-                break;
-        }
     }
 }

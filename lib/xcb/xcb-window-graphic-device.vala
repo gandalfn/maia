@@ -39,7 +39,7 @@ internal class Maia.XcbWindowGraphicDevice : CairoGraphicDevice
         m_Window = inWindow;
 
         // Connect on geometry changed
-        m_Window.property_changed.watch (on_window_property_changed);
+        m_Window.notify["geometry"].connect (on_window_property_changed);
 
         // Create surface
         unowned XcbWorkspace? xcb_workspace = (XcbWorkspace)((Window)m_Window.delegator).workspace.proxy;
@@ -50,16 +50,11 @@ internal class Maia.XcbWindowGraphicDevice : CairoGraphicDevice
     }
 
     private void
-    on_window_property_changed (Object? inObject, string inName)
+    on_window_property_changed ()
     {
-        switch (inName)
-        {
-            case "geometry":
-                rw_lock.write_lock ();
-                m_Surface.set_size ((int)m_Window.geometry.clipbox.size.width,
-                                    (int)m_Window.geometry.clipbox.size.height);
-                rw_lock.write_unlock ();
-                break;
-        }
+        rw_lock.write_lock ();
+        m_Surface.set_size ((int)m_Window.geometry.clipbox.size.width,
+                            (int)m_Window.geometry.clipbox.size.height);
+        rw_lock.write_unlock ();
     }
 }
