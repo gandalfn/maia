@@ -25,6 +25,4 @@ public abstract class Maia.View : Object
     // accessors
     public abstract Region                  geometry        { get; set; }
     public abstract bool                    double_buffered { get; set; }
-    public abstract unowned GraphicDevice?  back_buffer     { get; }
-    public abstract unowned GraphicDevice?  front_buffer    { get; }
 }

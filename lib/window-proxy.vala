@@ -20,8 +20,12 @@
 public abstract class Maia.WindowProxy : View
 {
     // events
-    public abstract DeleteEvent   delete_event   { get; }
-    public abstract GeometryEvent geometry_event { get; }
+    public abstract DeleteEvent             delete_event   { get; }
+    public abstract GeometryEvent           geometry_event { get; }
+
+    // accessors
+    public abstract unowned GraphicDevice?  back_buffer    { get; }
+    public abstract unowned GraphicDevice?  front_buffer   { get; }
 
     // methods
     public abstract void show    ();

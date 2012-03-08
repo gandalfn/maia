@@ -86,18 +86,6 @@ public class Maia.Workspace : View
         }
     }
 
-    internal override unowned GraphicDevice? back_buffer {
-        get {
-            return m_Proxy.back_buffer;
-        }
-    }
-
-    internal override unowned GraphicDevice? front_buffer {
-        get {
-            return m_Proxy.front_buffer;
-        }
-    }
-
     public Window root {
         get {
             return m_Proxy.root;

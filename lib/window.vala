@@ -101,18 +101,6 @@ public class Maia.Window : View
         }
     }
 
-    internal override unowned GraphicDevice? back_buffer {
-        get {
-            return m_Proxy.back_buffer;
-        }
-    }
-
-    internal override unowned GraphicDevice? front_buffer {
-        get {
-            return m_Proxy.front_buffer;
-        }
-    }
-
     public unowned Workspace? workspace {
         get {
             unowned Workspace? ret = null;
@@ -230,14 +218,20 @@ public class Maia.Window : View
         Log.audit (GLib.Log.METHOD, "%s", inArgs.area.to_string ());
 
         // Paint window
-        back_buffer.rw_lock.write_lock ();
-        on_paint (inArgs.area);
-        ((Desktop)workspace.parent).flush ();
-        back_buffer.rw_lock.write_unlock ();
-
-        // Send queue draw event
         if (double_buffered)
+        {
+            m_Proxy.back_buffer.rw_lock.write_lock ();
+            on_paint (inArgs.area);
+            ((Desktop)workspace.parent).flush ();
+            m_Proxy.back_buffer.rw_lock.write_unlock ();
+
             workspace.queue_draw (this, inArgs.area);
+        }
+        else
+        {
+            on_paint (inArgs.area);
+            ((Desktop)workspace.parent).flush ();
+        }
     }
 
     private void
@@ -304,5 +298,16 @@ public class Maia.Window : View
     queue_draw ()
     {
         damage_event.post (new DamageEventArgs (geometry));
+    }
+
+    public GraphicContext
+    create_context ()
+    {
+        if (!double_buffered)
+        {
+            return m_Proxy.front_buffer.create_context ();
+        }
+
+        return m_Proxy.back_buffer.create_context ();
     }
 }

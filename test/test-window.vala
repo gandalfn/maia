@@ -26,6 +26,8 @@ public class TestWindow : Maia.Window
     {
         base ("test-window", 400, 400);
 
+        //double_buffered = false;
+
         workspace.create_window_event.listen (on_new_window, Maia.Application.self);
         workspace.reparent_window_event.listen (on_window_reparented, Maia.Application.self);
         workspace.destroy_window_event.listen (on_destroy_window, Maia.Application.self);
@@ -79,7 +81,7 @@ public class TestWindow : Maia.Window
         //message ("Paint %s", inArea.to_string ());
         try
         {
-            Maia.GraphicContext ctx = back_buffer.create_context ();
+            Maia.GraphicContext ctx = create_context ();
 
             ctx.pattern.color = new Maia.GraphicColor (0.0, 0.0, 0.0, 1.0);
             ctx.paint.paint ();
@@ -109,8 +111,8 @@ public class TestWindow : Maia.Window
 static int
 main (string[] args)
 {
-    Maia.Log.set_default_logger (new Maia.Log.File ("out.log", Maia.Log.Level.DEBUG, "test-window"));
-    //Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.INFO, "test-window"));
+    //Maia.Log.set_default_logger (new Maia.Log.File ("out.log", Maia.Log.Level.DEBUG, "test-window"));
+    Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.INFO, "test-window"));
 
     Maia.Application application = Maia.Application.create ();
 

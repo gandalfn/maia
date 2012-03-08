@@ -23,7 +23,11 @@ public abstract class Maia.WorkspaceProxy : View
     public abstract uint                  num   { get; }
     public abstract Window                root  { get; }
 
-    // events
+    // accessors
+    public abstract unowned GraphicDevice?  back_buffer    { get; }
+    public abstract unowned GraphicDevice?  front_buffer   { get; }
+
+    // // events
     public abstract CreateWindowEvent create_window_event { get; }
     public abstract DestroyWindowEvent destroy_window_event { get; }
     public abstract ReparentWindowEvent reparent_window_event { get; }
