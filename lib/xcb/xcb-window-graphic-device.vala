@@ -26,10 +26,7 @@ internal class Maia.XcbWindowGraphicDevice : CairoGraphicDevice
     // accessors
     public override Cairo.Surface surface {
         get {
-            rw_lock.read_lock ();
-            unowned Cairo.Surface? ret = m_Surface;
-            rw_lock.read_unlock ();
-            return ret;
+            return m_Surface;
         }
     }
 

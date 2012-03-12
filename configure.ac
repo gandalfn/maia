@@ -68,7 +68,7 @@ dnl ****************************************************************************
 dnl Check for libtool
 dnl ****************************************************************************
 LT_PREREQ([2.2])
-LT_INIT([disable-static])
+LT_INIT([disable-static pic-only])
 
 dnl ****************************************************************************
 dnl Check for packages
@@ -81,6 +81,22 @@ PKG_CHECK_MODULES(MAIA, [glib-2.0 >= $GLIB_REQUIRED
                          xcb])
 AC_SUBST(MAIA_CFLAGS)
 AC_SUBST(MAIA_LIBS)
+
+dnl ***************************************************************************
+dnl check for valgrind
+dnl ***************************************************************************
+AC_ARG_ENABLE(valgrind,
+  AS_HELP_STRING([--enable-valgrind],
+                 [Enable valgrind support]),
+  [use_valgrind=$enableval], [use_valgrind=no])
+
+if test "x$use_valgrind" = "xyes"; then
+    PKG_CHECK_MODULES(MAIA_VALGRIND, [valgrind])
+    AC_SUBST(MAIA_VALGRIND_CFLAGS)
+    AC_SUBST(MAIA_VALGRIND_LIBS)
+fi
+
+AM_CONDITIONAL(USE_VALGRIND, test "x$use_valgrind" = "xyes")
 
 dnl ***************************************************************************
 dnl check for log

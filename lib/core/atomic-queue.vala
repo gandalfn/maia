@@ -24,7 +24,6 @@ public class Maia.Atomic.Queue<V> : GLib.Object
 
     // properties
     private NodePool<V>                   m_Pool= NodePool<V> ();
-    private SpinLock                      m_DataLock = SpinLock ();
     private Machine.Memory.Atomic.Pointer m_Head;
     private Machine.Memory.Atomic.Pointer m_Tail;
 
@@ -50,12 +49,12 @@ public class Maia.Atomic.Queue<V> : GLib.Object
      * @param inData The data to add.
      */
     public void
-    enqueue (owned V inData)
+    enqueue (V inData)
     {
         unowned Node<V>? node = m_Pool.alloc_node ();
-        m_DataLock.lock ();
+        node.lck.lock ();
         node.data = inData;
-        m_DataLock.unlock ();
+        node.lck.unlock ();
 
         while (true)
         {
@@ -93,10 +92,10 @@ public class Maia.Atomic.Queue<V> : GLib.Object
             }
             if (m_Head.compare_and_swap ((void*)cur_head, (void*)cur_head_next))
             {
-                m_DataLock.lock ();
+                cur_head_next.lck.lock ();
                 V? data = cur_head_next.data;
                 cur_head_next.data = null;
-                m_DataLock.unlock ();
+                cur_head_next.lck.unlock ();
                 m_Pool.free_node ((void*)cur_head);
                 return data;
             }
@@ -116,9 +115,9 @@ public class Maia.Atomic.Queue<V> : GLib.Object
         for (cursor = (Node<V>?)((Node<V>?)m_Head.get ()).next.get (); cursor != null; cursor = next)
         {
             next = (Node<V>?)cursor.next.get ();
-            m_DataLock.lock ();
+            cursor.lck.lock ();
             V? data = cursor.data;
-            m_DataLock.unlock ();
+            cursor.lck.unlock ();
             if (!inFunc (data))
                 break;
         }

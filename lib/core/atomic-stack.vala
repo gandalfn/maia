@@ -53,10 +53,12 @@ public class Maia.Atomic.Stack<V> : GLib.Object
      * @param inValue The value to add.
      */
     public void
-    push (owned V inValue)
+    push (V inValue)
     {
         unowned Node<V>? node = m_Pool.alloc_node ();
+        node.lck.lock ();
         node.data = inValue;
+        node.lck.unlock ();
         node.next.set (((Node<V>?)m_Head.get ()).next.get ());
         unowned Node<V>? next = (Node<V>?)node.next.get ();
 
@@ -88,8 +90,10 @@ public class Maia.Atomic.Stack<V> : GLib.Object
             unowned Node<V>? next = (Node<V>?)node.next.get ();
             if (((Node<V>?)m_Head.get ()).next.compare_and_swap ((void*)node, (void*)next))
             {
+                node.lck.lock ();
                 V? data = node.data;
                 node.data = null;
+                node.lck.unlock ();
                 m_Pool.free_node ((void*)node);
                 return data;
             }

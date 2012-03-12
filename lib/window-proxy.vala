@@ -24,8 +24,8 @@ public abstract class Maia.WindowProxy : View
     public abstract GeometryEvent           geometry_event { get; }
 
     // accessors
-    public abstract unowned GraphicDevice?  back_buffer    { get; }
-    public abstract unowned GraphicDevice?  front_buffer   { get; }
+    public abstract unowned GraphicDevice?  back_buffer    { owned get; }
+    public abstract unowned GraphicDevice?  front_buffer   { owned get; }
 
     // methods
     public abstract void show    ();

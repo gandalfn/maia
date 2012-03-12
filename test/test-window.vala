@@ -32,7 +32,7 @@ public class TestWindow : Maia.Window
         workspace.reparent_window_event.listen (on_window_reparented, Maia.Application.self);
         workspace.destroy_window_event.listen (on_destroy_window, Maia.Application.self);
 
-        timeline = new Maia.Timeline (30, 100, Maia.Application.self);
+        timeline = new Maia.Timeline (60, 100, Maia.Application.self);
         timeline.loop = true;
         timeline.new_frame.connect (on_new_frame);
         timeline.start ();

@@ -56,7 +56,11 @@ internal class Maia.XcbWindowAttributes : XcbRequest
 
     public uint event_mask {
         get {
-            return m_EventMask;
+            rw_lock.read_lock ();
+            uint ret = m_EventMask;
+            rw_lock.read_unlock ();
+
+            return ret;
         }
         set {
             m_EventMask = value;
@@ -67,8 +71,10 @@ internal class Maia.XcbWindowAttributes : XcbRequest
     construct
     {
         window.notify["event-mask"].connect (() => {
+            rw_lock.write_lock ();
             m_EventMask = window.event_mask;
             m_Mask |= Xcb.CW.EVENT_MASK;
+            rw_lock.write_unlock ();
             commit ();
         });
 
@@ -122,20 +128,26 @@ internal class Maia.XcbWindowAttributes : XcbRequest
     {
         uint32[] values_list = {};
 
-        if ((m_Mask & Xcb.CW.OVERRIDE_REDIRECT) == Xcb.CW.OVERRIDE_REDIRECT)
+        rw_lock.read_lock ();
+        uint mask = m_Mask;
+        rw_lock.read_unlock ();
+
+        if ((mask & Xcb.CW.OVERRIDE_REDIRECT) == Xcb.CW.OVERRIDE_REDIRECT)
         {
             values_list += (uint32)override_redirect;
         }
-        if ((m_Mask & Xcb.CW.EVENT_MASK) == Xcb.CW.EVENT_MASK)
+        if ((mask & Xcb.CW.EVENT_MASK) == Xcb.CW.EVENT_MASK)
         {
             values_list += (uint32)event_mask;
         }
 
-        debug (GLib.Log.METHOD, "%u", m_Mask);
+        debug (GLib.Log.METHOD, "%u", mask);
         XcbDesktop desktop = window.xcb_desktop;
-        ((Xcb.Window)window.id).change_attributes (desktop.connection, m_Mask, values_list);
+        ((Xcb.Window)window.id).change_attributes (desktop.connection, mask, values_list);
 
+        rw_lock.write_lock ();
         m_Mask = 0;
+        rw_lock.write_unlock ();
 
         base.on_commit ();
     }

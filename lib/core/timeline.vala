@@ -262,7 +262,7 @@ public class Maia.Timeline : Object
     /**
      * Advance timeline to frame inNumFrame
      *
-     * @param inNFrames frame number to advance to
+     * @param inNumFrame frame number to advance to
      */
     public void
     advance (uint inNumFrame)

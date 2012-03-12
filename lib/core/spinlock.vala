@@ -35,17 +35,29 @@ public struct Maia.SpinLock
     public inline void
     lock ()
     {
+#if USE_VALGRIND
+        Valgrind.Helgrind.mutex_lock_pre (&this, 0);
+#endif
+
         uint32 me = lck.fetch_and_add (1 << 16);
         uint16 val = (uint16)(me >> 16);
         unowned Ticket16? l = Ticket16.cast (&lck);
 
         while (val != l.ticket)
             Machine.CPU.pause ();
+
+#if USE_VALGRIND
+        Valgrind.Helgrind.mutex_lock_post (&this);
+#endif
     }
 
     public inline void
     unlock ()
     {
+#if USE_VALGRIND
+        Valgrind.Helgrind.mutex_unlock_pre (&this);
+#endif
+
         uint32 val = 0, inc = 0;
         do
         {
@@ -59,5 +71,9 @@ public struct Maia.SpinLock
             else
                 inc += 1;
         } while (!lck.compare_and_swap (val, inc));
+
+#if USE_VALGRIND
+        Valgrind.Helgrind.mutex_unlock_post (&this);
+#endif
     }
 }

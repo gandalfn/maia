@@ -57,7 +57,7 @@ public abstract class Maia.Collection<V>
      * Search if the specified is in this collection.
      *
      * @param inValue the value to locate in the collection
-     * @param inCompareFunc custom compare function
+     * @param inFunc custom compare function
      *
      * @return value found or null otherwise
      */

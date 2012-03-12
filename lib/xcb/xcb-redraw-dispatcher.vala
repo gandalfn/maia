@@ -100,6 +100,7 @@ internal class Maia.XcbRedrawDispatcher : Object
     on_queue_draw (QueueDrawEventArgs inArgs)
     {
         Log.audit (GLib.Log.METHOD, "");
+
         if (inArgs.window != null)
             m_DamagedWindow.insert (inArgs.window.id);
 
@@ -111,9 +112,6 @@ internal class Maia.XcbRedrawDispatcher : Object
         {
             m_DamagedArea.union (inArgs.area);
         }
-
-        on_refresh ();
-        ((Desktop)m_Workspace.parent).flush ();
 
         if (m_RefreshTicTac.state == Task.State.SLEEPING)
         {

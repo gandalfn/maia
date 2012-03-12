@@ -63,6 +63,8 @@ public class Maia.Array <V> : Collection <V>
                 ret = m_Index < m_Array.m_Size;
             }
 
+            if (!ret) end_iterate ();
+
             return ret;
         }
 
@@ -91,8 +93,12 @@ public class Maia.Array <V> : Collection <V>
             for (; m_Index >= 0 && m_Index < m_Array.m_Size; ++m_Index)
             {
                 if (!inFunc (m_Array.m_pContent[m_Index].val))
+                {
+                    end_iterate ();
                     return;
+                }
             }
+            end_iterate ();
         }
     }
 
@@ -270,7 +276,7 @@ public class Maia.Array <V> : Collection <V>
     /**
      * Check if the element at pos of array is correctly sorted
      *
-     * @param pos of element
+     * @param inPos pos of element
      */
     public void
     sort (uint inPos)

@@ -17,6 +17,12 @@ libmaia_core_la_VALAFLAGS = \
     --header=maia-core.h \
     --library=maia-core
 
+if USE_VALGRIND
+libmaia_core_la_VALAFLAGS += \
+    --pkg=valgrind \
+    --define=USE_VALGRIND
+endif
+
 libmaia_core_la_SOURCES = \
     logger.vala \
     functions.vala \

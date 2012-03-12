@@ -494,8 +494,19 @@ public abstract class Maia.Object : GLib.Object
     public Iterator<Object>
     iterator ()
     {
+        if (delegator != null)
+        {
+            return delegator.iterator ();
+        }
+
         check_childs_array ();
-        return delegator == null ? m_Childs.iterator () : delegator.iterator ();
+        rw_lock.read_lock ();
+        Iterator<Object> iter = m_Childs.iterator ();
+        iter.end_iterate_func = () => {
+            rw_lock.read_unlock ();
+        };
+
+        return iter;
     }
 
     /**

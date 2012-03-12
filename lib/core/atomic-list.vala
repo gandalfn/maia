@@ -61,7 +61,6 @@ public class Maia.Atomic.List<V> : GLib.Object
     private Machine.Memory.Atomic.Pointer m_Head;
     private Machine.Memory.Atomic.Pointer m_Tail;
     private CompareFunc<V>                m_CompareFunc;
-    private SpinLock                      m_DataLock = SpinLock ();
 
     // accessors
     public CompareFunc<V> compare_func {
@@ -144,9 +143,9 @@ public class Maia.Atomic.List<V> : GLib.Object
 
             if (outLeft.next.compare_and_swap ((void*)left_node_next, (void*)right_node))
             {
-                m_DataLock.lock ();
+                left_node_next.lck.lock ();
                 left_node_next.data = null;
-                m_DataLock.unlock ();
+                left_node_next.lck.unlock ();
                 m_Pool.free_node ((void*)left_node_next);
 
                 if (((void*)right_node != m_Tail.get ()) && Pointer.cast ((Node<V>?)right_node.next.get ()).is_marked_reference())
@@ -162,7 +161,7 @@ public class Maia.Atomic.List<V> : GLib.Object
     /**
      * Determines whether this list contains the specified value.
      *
-     * @param inValue the value to locate in the list
+     * @param inData the value to locate in the list
      *
      * @return true if value is found, false otherwise
      */
@@ -172,9 +171,9 @@ public class Maia.Atomic.List<V> : GLib.Object
         unowned Node<V>? left_node = null;
         unowned Node<V>? right_node = get_node (ref left_node, inData);
 
-        m_DataLock.lock ();
+        right_node.lck.lock ();
         bool ret = (void*)right_node != m_Tail.get () && m_CompareFunc (right_node.data, inData) == 0;
-        m_DataLock.unlock ();
+        right_node.lck.unlock ();
 
         return ret;
     }
@@ -182,17 +181,17 @@ public class Maia.Atomic.List<V> : GLib.Object
     /**
      * Insert a value to this list.
      *
-     * @param inValue the value to add to the list
+     * @param inData the value to add to the list
      *
      * @return true if value is added to the list, false otherwise
      */
     public bool
-    insert (owned V inData)
+    insert (V inData)
     {
         unowned Node<V>? node = m_Pool.alloc_node ();
-        m_DataLock.lock ();
+        node.lck.lock ();
         node.data = inData;
-        m_DataLock.unlock ();
+        node.lck.unlock ();
 
         unowned Node<V>? left_node = null, right_node = null;
         while (m_Alive.get () > 0)
@@ -200,9 +199,9 @@ public class Maia.Atomic.List<V> : GLib.Object
             right_node = get_node (ref left_node, inData);
             if ((void*)right_node != m_Tail.get () && m_CompareFunc (node.data, inData) == 0)
             {
-                m_DataLock.lock ();
+                node.lck.lock ();
                 node.data = null;
-                m_DataLock.unlock ();
+                node.lck.unlock ();
                 m_Pool.free_node ((void*)node);
                 return false;
             }
@@ -218,7 +217,7 @@ public class Maia.Atomic.List<V> : GLib.Object
     /**
      * Removes the first occurence of a value from this list.
      *
-     * @param inValue the value to remove from the list
+     * @param inData the value to remove from the list
      *
      * @return true if value is added from this list, false otherwise
      */
@@ -230,9 +229,9 @@ public class Maia.Atomic.List<V> : GLib.Object
         while (m_Alive.get () > 0)
         {
             right_node = get_node (ref left_node, inData);
-            m_DataLock.lock ();
+            right_node.lck.lock ();
             bool ret = (void*)right_node == m_Tail.get () || m_CompareFunc (right_node.data, inData) != 0;
-            m_DataLock.unlock ();
+            right_node.lck.unlock ();
             if (ret) return false;
 
             right_node_next = (Node<V>?)right_node.next.get ();
@@ -249,9 +248,9 @@ public class Maia.Atomic.List<V> : GLib.Object
         }
         else
         {
-            m_DataLock.lock ();
+            right_node.lck.lock ();
             right_node.data = null;
-            m_DataLock.unlock ();
+            right_node.lck.unlock ();
             m_Pool.free_node ((void*)right_node);
         }
 
@@ -277,9 +276,9 @@ public class Maia.Atomic.List<V> : GLib.Object
 
             if (!Pointer.cast (t_next).is_marked_reference())
             {
-                m_DataLock.lock ();
+                t.lck.lock ();
                 V? data = t.data;
-                m_DataLock.unlock ();
+                t.lck.unlock ();
                 if (!inFunc (data))
                     return;
             }

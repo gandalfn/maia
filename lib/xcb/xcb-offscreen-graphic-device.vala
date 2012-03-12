@@ -26,9 +26,7 @@ internal class Maia.XcbOffscreenGraphicDevice : CairoGraphicDevice
     // accessors
     public override Cairo.Surface surface {
         get {
-            unowned Cairo.Surface? ret = m_Surface;
-
-            return ret;
+            return m_Surface;
         }
     }
 
@@ -55,16 +53,18 @@ internal class Maia.XcbOffscreenGraphicDevice : CairoGraphicDevice
     {
         unowned Xcb.Connection? connection = m_Window.xcb_desktop.connection;
 
+        // destroy old pixmap
+        Xcb.Pixmap pixmap = (Xcb.Pixmap)id;
+
+        rw_lock.write_lock ();
+        if (pixmap != 0)
+            pixmap.destroy (m_Window.xcb_desktop.connection);
+
         // Create pixmap
-        Xcb.Pixmap pixmap = Xcb.Pixmap (connection);
+        pixmap = Xcb.Pixmap (connection);
         connection.create_pixmap (24, pixmap, (Xcb.Drawable)m_Window.id,
                                   (uint16)m_Window.geometry.clipbox.size.width,
                                   (uint16)m_Window.geometry.clipbox.size.height);
-        if (id != 0)
-            ((Xcb.Pixmap)id).destroy (m_Window.xcb_desktop.connection);
-        id = pixmap;
-
-        Log.audit (GLib.Log.METHOD, "pixmap %lu", pixmap);
 
         unowned XcbWorkspace? xcb_workspace = (XcbWorkspace)((Window)m_Window.delegator).workspace.proxy;
 
@@ -77,6 +77,10 @@ internal class Maia.XcbOffscreenGraphicDevice : CairoGraphicDevice
         var ctx = new Cairo.Context (m_Surface);
         ctx.set_operator (Cairo.Operator.CLEAR);
         ctx.paint ();
+        rw_lock.write_unlock ();
+
+        id = pixmap;
+        Log.audit (GLib.Log.METHOD, "pixmap %lu", pixmap);
 
         m_Window.xcb_desktop.flush ();
     }

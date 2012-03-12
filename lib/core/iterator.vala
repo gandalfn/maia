@@ -23,7 +23,28 @@
  */
 public abstract class Maia.Iterator<V>
 {
+    // properties
+    private bool m_EndIterateCalled = false;
+    private EndIterateFunc m_EndIterateFunc = null;
     internal int stamp;
+
+    // accessors
+    public EndIterateFunc end_iterate_func {
+        set {
+            m_EndIterateFunc = value;
+        }
+    }
+
+    // methods
+    internal inline void
+    end_iterate ()
+    {
+        if (!m_EndIterateCalled && m_EndIterateFunc != null)
+        {
+            m_EndIterateFunc ();
+            m_EndIterateCalled = true;
+        }
+    }
 
     /**
      * Advances to the next element in the iteration.

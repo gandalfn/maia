@@ -65,7 +65,11 @@ internal class Maia.XcbWindow : WindowProxy
 
     public override Region geometry {
         get {
-            return m_Geometry;
+            rw_lock.read_lock ();
+            unowned Region ret = m_Geometry;
+            rw_lock.read_unlock ();
+
+            return ret;
         }
         set {
             if (id == 0 && !(delegator as Window).is_foreign)
@@ -74,7 +78,9 @@ internal class Maia.XcbWindow : WindowProxy
             }
             else if (id != 0)
             {
+                rw_lock.write_lock ();
                 m_Geometry = value;
+                rw_lock.write_unlock ();
                 notify_property ("geometry");
             }
         }
@@ -91,7 +97,7 @@ internal class Maia.XcbWindow : WindowProxy
     }
 
     public override unowned GraphicDevice? back_buffer {
-        get {
+        owned get {
             if (m_BackBuffer == null)
             {
                 m_BackBuffer = new XcbOffscreenGraphicDevice (this);
@@ -102,7 +108,7 @@ internal class Maia.XcbWindow : WindowProxy
     }
 
     public override unowned GraphicDevice? front_buffer {
-        get {
+        owned get {
             if (m_FrontBuffer == null)
             {
                 m_FrontBuffer = new XcbWindowGraphicDevice (this);
@@ -267,12 +273,14 @@ internal class Maia.XcbWindow : WindowProxy
                 Log.audit (GLib.Log.METHOD, "Swap buffer");
                 back_buffer.rw_lock.read_lock ();
                 Maia.GraphicContext ctx = front_buffer.create_context ();
+                front_buffer.rw_lock.write_lock ();
                 ctx.clip = new Region.raw_rectangle (0, 0,
                                                      (uint)geometry.clipbox.size.width,
                                                      (uint)geometry.clipbox.size.height);
                 ctx.pattern.source = back_buffer;
                 ctx.paint.paint ();
                 m_XcbDesktop.flush ();
+                front_buffer.rw_lock.write_unlock ();
                 back_buffer.rw_lock.read_unlock ();
             }
             catch (GraphicError err)

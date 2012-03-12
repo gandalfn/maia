@@ -8,6 +8,10 @@ MAIA_VAPI_DEPS = \
 
 include $(top_srcdir)/build/maia.am
 
+if USE_VALGRIND
+INCLUDES += $(MAIA_VALGRIND_CFLAGS)
+endif
+
 noinst_PROGRAMS = \
     test \
     test-window \
@@ -32,10 +36,15 @@ test_SOURCES = \
 
 test_LDADD = \
     $(MAIA_LIBS) \
+    $(MAIA_VALGRIND_LIBS) \
     ${top_builddir}/lib/libmaia.la \
     ${top_builddir}/lib/core/libmaia-core.la \
     ${top_builddir}/lib/xml/libmaia-xml.la \
     ${top_builddir}/lib/xcb/libmaia-xcb-backend.la
+
+if USE_VALGRIND
+test_LDADD += $(MAIA_VALGRIND_LIBS)
+endif
 
 test_window_SOURCES = \
     test-window.vala
@@ -49,6 +58,10 @@ test_window_LDADD = \
     ${top_builddir}/lib/cairo/libmaia-cairo-graphic.la \
     ${top_builddir}/lib/xcb/libmaia-xcb-backend.la
 
+if USE_VALGRIND
+test_window_LDADD += $(MAIA_VALGRIND_LIBS)
+endif
+
 test_thread_SOURCES = \
     test-thread.vala
 
@@ -56,12 +69,20 @@ test_thread_LDADD = \
     $(MAIA_LIBS) \
     ${top_builddir}/lib/core/libmaia-core.la
 
+if USE_VALGRIND
+test_thread_LDADD += $(MAIA_VALGRIND_LIBS)
+endif
+
 test_atomic_queue_SOURCES = \
     test-atomic-queue.vala
 
 test_atomic_queue_LDADD = \
     $(MAIA_LIBS) \
     ${top_builddir}/lib/core/libmaia-core.la
+
+if USE_VALGRIND
+test_atomic_queue_LDADD += $(MAIA_VALGRIND_LIBS)
+endif
 
 VALAFILES = \
     $(filter %.vala,$(test_SOURCES)) \

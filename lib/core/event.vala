@@ -113,7 +113,7 @@ public class Maia.Event<A> : Object
      * @param inDispatcher dispatcher
      */
     public void
-    post (owned A? inArgs = null, Dispatcher inDispatcher = Dispatcher.self)
+    post (A? inArgs = null, Dispatcher inDispatcher = Dispatcher.self)
     {
         Event<A> event = new Event<A>.with_id (id, owner);
         event.m_Args = inArgs;
@@ -125,7 +125,7 @@ public class Maia.Event<A> : Object
     /**
      * Listen event
      *
-     * @param inCallback event callback
+     * @param inHandler event handler
      * @param inDispatcher dispatcher
      */
     public void

@@ -61,7 +61,9 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
 
         Xcb.GetPropertyReply reply = ((Xcb.GetPropertyCookie?)cookie).reply (desktop.connection);
 
+        rw_lock.write_lock ();
         m_Values.clear ();
+        rw_lock.write_unlock ();
 
         if (reply != null)
         {
@@ -80,7 +82,9 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
                             for (int cpt = 0; cpt < length; ++cpt)
                             {
                                 unowned V val = (V)(ulong)values[cpt];
+                                rw_lock.write_lock ();
                                 m_Values.insert (val);
+                                rw_lock.write_unlock ();
                             }
                         }
                         break;
@@ -93,7 +97,9 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
                             for (int cpt = 0; cpt < length; ++cpt)
                             {
                                 unowned V val = (V)(ulong)values[cpt];
+                                rw_lock.write_lock ();
                                 m_Values.insert (val);
+                                rw_lock.write_unlock ();
                             }
                         }
                         break;
@@ -107,7 +113,9 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
                                 Log.audit (GLib.Log.METHOD, "string value %s", (string)data);
                                 if (((string)data).validate (length))
                                 {
+                                    rw_lock.write_lock ();
                                     m_Values[0] = ((string)data).substring (0, length);
+                                    rw_lock.write_unlock ();
                                 }
                             }
                             else
@@ -118,7 +126,9 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
                                 for (int cpt = 0; cpt < length; ++cpt)
                                 {
                                     unowned V val = (V)(ulong)values[cpt];
+                                    rw_lock.write_lock ();
                                     m_Values.insert (val);
+                                    rw_lock.write_unlock ();
                                 }
                             }
                         }
@@ -139,7 +149,9 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
     {
         XcbDesktop desktop = window.xcb_desktop;
         char** values = null;
+        rw_lock.read_lock ();
         int n = m_Values.length;
+        rw_lock.read_unlock ();
 
         switch (m_Format)
         {
@@ -148,11 +160,13 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
                     uint32* vals = new uint32[n];
 
                     int cpt = 0;
+                    rw_lock.read_lock ();
                     foreach (V val in m_Values)
                     {
                         vals[cpt] = (uint32)(ulong)val;
                         cpt++;
                     }
+                    rw_lock.read_unlock ();
                     values = (char**)vals;
                 }
                 break;
@@ -162,11 +176,13 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
                     uint16* vals = new uint16[n];
 
                     int cpt = 0;
+                    rw_lock.read_lock ();
                     foreach (V val in m_Values)
                     {
                         vals[cpt] = (uint16)(ulong)val;
                         cpt++;
                     }
+                    rw_lock.read_unlock ();
                     values = (char**)vals;
                 }
                 break;
@@ -175,7 +191,9 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
                 {
                     if (typeof (V) == typeof (string))
                     {
+                        rw_lock.read_lock ();
                         string data = (string)m_Values[0];
+                        rw_lock.read_unlock ();
                         if (data != null)
                         {
                             n = data.length;
@@ -191,11 +209,13 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
                         uint8* vals = new uint8[n];
 
                         int cpt = 0;
+                        rw_lock.read_lock ();
                         foreach (V val in m_Values)
                         {
                             vals[cpt] = (uint8)(ulong)val;
                             cpt++;
                         }
+                        rw_lock.read_unlock ();
                         values = (char**)vals;
                     }
                 }
@@ -230,30 +250,44 @@ internal class Maia.XcbWindowProperty<V> : XcbRequest
     public new unowned V?
     @get (int inIndex)
     {
-        return inIndex < m_Values.length ? m_Values[inIndex] : null;
+        rw_lock.read_lock ();
+        unowned V? ret =  inIndex < m_Values.length ? m_Values[inIndex] : null;
+        rw_lock.read_unlock ();
+
+        return ret;
     }
 
     public new void
     @set (int inIndex, V inValue)
     {
+        rw_lock.write_lock ();
         m_Values[inIndex] = inValue;
+        rw_lock.write_unlock ();
     }
 
     public new bool
     contains (V inValue)
     {
-        return inValue in m_Values;
+        rw_lock.read_lock ();
+        bool ret = inValue in m_Values;
+        rw_lock.read_unlock ();
+
+        return ret;
     }
 
     public void
     insert (V inValue)
     {
+        rw_lock.write_lock ();
         m_Values.insert (inValue);
+        rw_lock.write_unlock ();
     }
 
     public void
     remove (V inValue)
     {
+        rw_lock.write_lock ();
         m_Values.remove (inValue);
+        rw_lock.write_unlock ();
     }
 }

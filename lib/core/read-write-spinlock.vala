@@ -43,6 +43,10 @@ public struct Maia.ReadWriteSpinLock
         Log.warning_cond (val != l.writers, GLib.Log.METHOD, "write %u %u", val, l.writers);
 
         while (val != l.writers) Machine.CPU.pause ();
+
+#if USE_VALGRIND
+        Valgrind.Helgrind.rwlock_acquired (&this, 1);
+#endif
     }
 
     public inline void
@@ -65,6 +69,10 @@ public struct Maia.ReadWriteSpinLock
             else
                 inc += 1;
         } while (!lck.compare_and_swap (val, inc));
+
+#if USE_VALGRIND
+        Valgrind.Helgrind.rwlock_released (&this, 1);
+#endif
     }
 
     public inline void
@@ -82,6 +90,10 @@ public struct Maia.ReadWriteSpinLock
             lck.fetch_and_add (1 << 8);
         else
             lck.fetch_and_add ((1 << 8) - (1 << 16));
+
+#if USE_VALGRIND
+        Valgrind.Helgrind.rwlock_acquired (&this, 0);
+#endif
     }
 
     public inline void
@@ -100,5 +112,9 @@ public struct Maia.ReadWriteSpinLock
             else
                 inc += 1;
         } while (!lck.compare_and_swap (val, inc));
+
+#if USE_VALGRIND
+        Valgrind.Helgrind.rwlock_released (&this, 0);
+#endif
     }
 }

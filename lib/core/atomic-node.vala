@@ -20,6 +20,7 @@
 internal struct Maia.Atomic.Node<T>
 {
     // properties
+    public SpinLock                      lck;
     public T                             data;
     public Machine.Memory.Atomic.Pointer next;
 }
