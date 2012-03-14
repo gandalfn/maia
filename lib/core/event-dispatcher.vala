@@ -145,7 +145,7 @@ internal class Maia.EventDispatcher : Watch
         m_Listeners.foreach ((queue) => {
             if (queue.compare_with_event (inEvent) == 0)
             {
-                Log.debug (GLib.Log.METHOD, "Post event %i", inEvent.id);
+                Log.debug (GLib.Log.METHOD, "Post event %s", inEvent.name);
 
                 m_EventQueue.enqueue (inEvent);
                 Os.eventfd_write (fd, 1);

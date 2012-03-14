@@ -44,5 +44,12 @@ namespace Valgrind
         public static void rwlock_acquired (void* _lock, ulong is_w);
         [CCode (cname="ANNOTATE_RWLOCK_RELEASED")]
         public static void rwlock_released (void* _lock, ulong is_w);
+
+        [CCode (cname="ANNOTATE_HAPPENS_BEFORE")]
+        public static void happens_before (void* obj);
+        [CCode (cname="ANNOTATE_HAPPENS_AFTER")]
+        public static void happens_after (void* obj);
+        [CCode (cname="ANNOTATE_HAPPENS_BEFORE_FORGET_ALL")]
+        public static void happens_before_forget_all (void* obj);
     }
 }

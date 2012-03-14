@@ -23,6 +23,18 @@ public struct Maia.Size
     public double height;
 
     /**
+     * Affect size from inOther
+     *
+     * @param inOther size
+     */
+    public void
+    @set (Size inOther)
+    {
+        width = inOther.width;
+        height = inOther.height;
+    }
+
+    /**
      * Check if size is empty.
      *
      * @return true if size is empty
@@ -49,6 +61,19 @@ public struct Maia.Size
 
         width = new_width;
         height = new_height;
+    }
+
+    /**
+     * Compare size with inOther size
+     *
+     * @param inOther size to compare to
+     *
+     * @return true if size are equal false otherwise
+     */
+    public bool
+    compare (Size inOther)
+    {
+        return width == inOther.width && height == inOther.height;
     }
 
     /**

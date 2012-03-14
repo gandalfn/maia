@@ -22,6 +22,7 @@ internal class Maia.XcbWindowGraphicDevice : CairoGraphicDevice
     // properties
     private unowned XcbWindow? m_Window = null;
     private Xcb.CairoSurface   m_Surface = null;
+    private Size               m_Size = Size ();
 
     // accessors
     public override Cairo.Surface surface {
@@ -49,9 +50,16 @@ internal class Maia.XcbWindowGraphicDevice : CairoGraphicDevice
     private void
     on_window_property_changed ()
     {
-        rw_lock.write_lock ();
-        m_Surface.set_size ((int)m_Window.geometry.clipbox.size.width,
-                            (int)m_Window.geometry.clipbox.size.height);
-        rw_lock.write_unlock ();
+        if (m_Surface == null || !m_Window.geometry.clipbox.size.compare (m_Size))
+        {
+            // Affect current size
+            m_Size.set (m_Window.geometry.clipbox.size);
+
+            // Set surface size
+            rw_lock.write_lock ();
+            m_Surface.set_size ((int)m_Window.geometry.clipbox.size.width,
+                                (int)m_Window.geometry.clipbox.size.height);
+            rw_lock.write_unlock ();
+        }
     }
 }

@@ -216,7 +216,7 @@ public class Maia.Dispatcher : Task
     internal void
     post_event (Event inEvent)
     {
-        Log.audit (GLib.Log.METHOD, "Event id = %i", inEvent.id);
+        Log.audit (GLib.Log.METHOD, "Event id = %s", inEvent.name);
         inEvent.ref ();
         {
             s_Dispatchers.foreach ((dispatcher) => {

@@ -60,27 +60,21 @@ internal class Maia.CairoGraphicPaint : GraphicPaint
     public override void
     fill () throws GraphicError
     {
-        rw_lock.write_lock ();
         m_Context.context.fill_preserve ();
         m_Context.status ();
-        rw_lock.write_unlock ();
     }
 
     public override void
     stroke () throws GraphicError
     {
-        rw_lock.write_lock ();
         m_Context.context.stroke ();
         m_Context.status ();
-        rw_lock.write_unlock ();
     }
 
     public override void
     paint () throws GraphicError
     {
-        rw_lock.write_lock ();
         m_Context.context.paint ();
         m_Context.status ();
-        rw_lock.write_unlock ();
     }
 }

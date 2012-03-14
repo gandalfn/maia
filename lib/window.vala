@@ -222,8 +222,9 @@ public class Maia.Window : View
         {
             m_Proxy.back_buffer.rw_lock.write_lock ();
             on_paint (inArgs.area);
-            ((Desktop)workspace.parent).flush ();
             m_Proxy.back_buffer.rw_lock.write_unlock ();
+
+            ((Desktop)workspace.parent).flush ();
 
             workspace.queue_draw (this, inArgs.area);
         }

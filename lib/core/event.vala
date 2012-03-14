@@ -118,7 +118,7 @@ public class Maia.Event<A> : Object
         Event<A> event = new Event<A>.with_id (id, owner);
         event.m_Args = inArgs;
         event.m_Sender = true;
-        Log.debug (GLib.Log.METHOD, "post event 0x%lx", id);
+        Log.debug (GLib.Log.METHOD, "post event %s", name);
         inDispatcher.post_event (event);
     }
 

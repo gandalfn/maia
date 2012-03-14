@@ -33,6 +33,14 @@ public struct Maia.ReadWriteSpinLock
 {
     internal Machine.Memory.Atomic.uint32 lck;
 
+    public ReadWriteSpinLock ()
+    {
+        lck.set (0);
+#if USE_VALGRIND
+        Valgrind.Helgrind.rwlock_create (&this);
+#endif
+    }
+
     public inline void
     write_lock ()
     {

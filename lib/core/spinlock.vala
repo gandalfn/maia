@@ -32,6 +32,14 @@ public struct Maia.SpinLock
 {
     internal Machine.Memory.Atomic.uint32 lck;
 
+    public SpinLock ()
+    {
+        lck.set (0);
+#if USE_VALGRIND
+        Valgrind.Helgrind.mutex_init_post (&this, 0);
+#endif
+    }
+
     public inline void
     lock ()
     {
