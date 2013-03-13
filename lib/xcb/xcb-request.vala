@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * xcb-request.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -35,9 +35,9 @@ internal abstract class Maia.XcbRequest : Object
     // accessors
     public State state {
         get {
-            rw_lock.read_lock ();
+            read_lock ();
             State ret = m_State;
-            rw_lock.read_unlock ();
+            read_unlock ();
             return ret;
         }
     }
@@ -55,15 +55,15 @@ internal abstract class Maia.XcbRequest : Object
     [CCode (notify = false)]
     public Xcb.VoidCookie? cookie {
         get {
-            rw_lock.read_lock ();
+            read_lock ();
             unowned Xcb.VoidCookie? ret = m_Cookie;
-            rw_lock.read_unlock ();
+            read_unlock ();
             return ret;
         }
         set {
-            rw_lock.write_lock ();
+            write_lock ();
             m_Cookie = value;
-            rw_lock.write_unlock ();
+            write_unlock ();
         }
     }
 
@@ -87,17 +87,17 @@ internal abstract class Maia.XcbRequest : Object
     protected virtual void
     on_reply ()
     {
-        rw_lock.write_lock ();
+        write_lock ();
         m_State = State.IDLE;
-        rw_lock.write_unlock ();
+        write_unlock ();
     }
 
     protected virtual void
     on_commit ()
     {
-        rw_lock.write_lock ();
+        write_lock ();
         m_State = State.IDLE;
-        rw_lock.write_unlock ();
+        write_unlock ();
     }
 
     public void
@@ -135,9 +135,9 @@ internal abstract class Maia.XcbRequest : Object
     {
         if (state == State.IDLE)
         {
-            rw_lock.write_lock ();
+            write_lock ();
             m_State = State.QUERYING;
-            rw_lock.write_unlock ();
+            write_unlock ();
             m_Window.xcb_desktop.add_request (this);
         }
     }
@@ -152,15 +152,15 @@ internal abstract class Maia.XcbRequest : Object
                 m_Window.xcb_desktop.connection.discard_reply (m_Cookie.sequence);
                 m_Cookie = null;
             }
-            rw_lock.write_lock ();
+            write_lock ();
             m_State = State.COMMITING;
-            rw_lock.write_unlock ();
+            write_unlock ();
         }
         else if (state == State.IDLE)
         {
-            rw_lock.write_lock ();
+            write_lock ();
             m_State = State.COMMITING;
-            rw_lock.write_unlock ();
+            write_unlock ();
 
             m_Window.xcb_desktop.add_request (this);
         }

@@ -20,7 +20,6 @@
 public class Maia.TestDispatcher : Maia.TestCase
 {
     private Maia.Dispatcher dispatcher = null;
-    private Maia.TicTac tictac = null;
     private int count;
     private int count_tictac_delay;
 
@@ -31,9 +30,6 @@ public class Maia.TestDispatcher : Maia.TestCase
         add_test ("add-task", test_add_task);
         add_test ("sleep", test_sleep);
         add_test ("timeout", test_timeout);
-        add_test ("tictac", test_tictac);
-        add_test ("tictac-delay", test_tictac_delay);
-        add_test ("timeline", test_timeline);
     }
 
     public override void
@@ -95,64 +91,6 @@ public class Maia.TestDispatcher : Maia.TestCase
         return ret;
     }
 
-    private bool
-    on_timeout_tictac_delay_elapsed ()
-    {
-        bool ret = true;
-        count_tictac_delay++;
-
-        if ((count_tictac_delay % 2) != 0)
-        {
-            Test.message ("sleep tictac");
-            tictac.sleep ();
-        }
-        else
-        {
-            Test.message ("wakeup tictac");
-            tictac.wakeup ();
-        }
-
-        return ret;
-    }
-
-    private bool
-    on_tictac_bell ()
-    {
-        bool ret = true;
-
-        Test.message ("numframe = %u titac bell = %f s", count, Test.timer_elapsed ());
-        if (count < 50)
-        {
-            ++count;
-        }
-        else
-        {
-            ret = false;
-        }
-
-        int delay = Test.rand_int_range (0, 30);
-        Test.message ("delay %i ms", delay);
-        Os.usleep (delay * 1000);
-
-        return ret;
-    }
-
-    private void
-    on_timeline_new_frame (Timeline? inTimeline, int inNumFrame)
-    {
-        Test.message ("numframe = %u timeline new frame = %f s", inNumFrame, Test.timer_elapsed ());
-        int delay = Test.rand_int_range (0, 300);
-        Test.message ("delay %i ms", delay);
-        Os.usleep (delay * 1000);
-    }
-
-    private void
-    on_timeline_completed ()
-    {
-        Test.message ("completed elapsed = %f s", Test.timer_elapsed ());
-        dispatcher.finish ();
-    }
-
     public void
     test_add_task ()
     {
@@ -198,60 +136,5 @@ public class Maia.TestDispatcher : Maia.TestCase
         assert (timeout.state == Task.State.TERMINATED);
         assert (dispatcher.state == Task.State.TERMINATED);
         assert (count >= 10);
-    }
-
-    public void
-    test_tictac ()
-    {
-        tictac = new TicTac (50);
-
-        count = 0;
-        tictac.bell.connect (on_tictac_bell);
-        tictac.finished.connect (on_task_finished);
-        tictac.parent = dispatcher;
-
-        Test.timer_start ();
-
-        dispatcher.run ();
-        assert (tictac.state == Task.State.TERMINATED);
-        assert (dispatcher.state == Task.State.TERMINATED);
-    }
-
-    public void
-    test_tictac_delay ()
-    {
-        Timeout timeout = new Timeout (350);
-        timeout.elapsed.connect (on_timeout_tictac_delay_elapsed);
-        timeout.parent = dispatcher;
-
-        tictac = new TicTac (10);
-
-        count = 0;
-        count_tictac_delay = 0;
-        tictac.bell.connect (on_tictac_bell);
-        tictac.finished.connect (on_task_finished);
-        tictac.parent = dispatcher;
-
-        Test.timer_start ();
-
-        dispatcher.run ();
-        assert (tictac.state == Task.State.TERMINATED);
-        assert (dispatcher.state == Task.State.TERMINATED);
-    }
-
-    public void
-    test_timeline ()
-    {
-        Timeline timeline = new Timeline (60, 60, dispatcher);
-
-        timeline.new_frame.connect (on_timeline_new_frame);
-        timeline.completed.connect (on_timeline_completed);
-
-        Test.timer_start ();
-
-        timeline.start ();
-        dispatcher.run ();
-
-        assert (dispatcher.state == Task.State.TERMINATED);
     }
 }

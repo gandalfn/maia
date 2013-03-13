@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * read-write-spinlock.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,18 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+[CCode (has_type_id = false)]
 internal struct Maia.RWTicket8
 {
     public uint8 writers;
     public uint8 readers;
-
-    internal static inline unowned RWTicket8?
-    cast (void* inLck)
-    {
-        return (RWTicket8?)inLck;
-    }
 }
 
+[CCode (has_type_id = false)]
 public struct Maia.ReadWriteSpinLock
 {
     internal Machine.Memory.Atomic.uint32 lck;
@@ -46,7 +42,7 @@ public struct Maia.ReadWriteSpinLock
     {
         uint32 me = lck.fetch_and_add (1 << 16);
         uint8 val = (uint8)(me >> 16);
-        unowned RWTicket8? l = RWTicket8.cast (&lck);
+        unowned RWTicket8? l = (RWTicket8?) (&lck);
 
         Log.warning_cond (val != l.writers, GLib.Log.METHOD, "write %u %u", val, l.writers);
 
@@ -66,7 +62,7 @@ public struct Maia.ReadWriteSpinLock
             val = lck.get ();
             inc = val;
 
-            unowned RWTicket8? l = RWTicket8.cast (&val);
+            unowned RWTicket8? l = (RWTicket8?) (&val);
 
             if (l.readers == 255)
                 inc += (1 << 8) - (1 << 16);
@@ -88,7 +84,7 @@ public struct Maia.ReadWriteSpinLock
     {
         uint32 me = lck.fetch_and_add (1 << 16);
         uint8 val = (uint8)(me >> 16);
-        unowned RWTicket8? l = RWTicket8.cast (&lck);
+        unowned RWTicket8? l = (RWTicket8?) (&lck);
 
         Log.warning_cond (val != l.readers, GLib.Log.METHOD, "read %u %u", val, l.readers);
 
@@ -113,7 +109,7 @@ public struct Maia.ReadWriteSpinLock
             val = lck.get ();
             inc = val;
 
-            unowned RWTicket8? l = RWTicket8.cast (&val);
+            unowned RWTicket8? l = (RWTicket8?) (&val);
 
             if (l.writers == 255)
                 inc += 1 - (1 << 8);

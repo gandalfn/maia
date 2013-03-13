@@ -19,11 +19,21 @@
 
 public class Foo : Maia.Object
 {
-    public Maia.Event<Maia.EventArgs1<int>> test_event;
+    public class Args : Maia.EventArgs
+    {
+        public int a { get; construct; default = 0; }
+
+        public Args (int inA)
+        {
+            GLib.Object (a: inA);
+        }
+    }
+
+    public Maia.Event<Args> test_event;
 
     public Foo ()
     {
-        test_event = new Maia.Event<Maia.EventArgs1<int>> ("test-event", this);
+        test_event = new Maia.Event<Args> ("test-event", this);
     }
 }
 
@@ -78,7 +88,7 @@ public class Maia.TestEvent : Maia.TestCase
     }
 
     private void
-    on_test_event (EventArgs1<int>? inArgs)
+    on_test_event (Foo.Args inArgs)
     {
         lck.lock ();
         Test.message ("%lx: Event received %i = %f s",

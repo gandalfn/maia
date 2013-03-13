@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * spinlock.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,17 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+[CCode (has_type_id = false)]
 internal struct Maia.Ticket16
 {
     public uint16 ticket;
-
-    internal static inline unowned Ticket16?
-    cast (void* inLck)
-    {
-        return (Ticket16?)inLck;
-    }
 }
 
+[CCode (has_type_id = false)]
 public struct Maia.SpinLock
 {
     internal Machine.Memory.Atomic.uint32 lck;
@@ -49,7 +45,7 @@ public struct Maia.SpinLock
 
         uint32 me = lck.fetch_and_add (1 << 16);
         uint16 val = (uint16)(me >> 16);
-        unowned Ticket16? l = Ticket16.cast (&lck);
+        unowned Ticket16? l = (Ticket16?) (&lck);
 
         while (val != l.ticket)
             Machine.CPU.pause ();
@@ -72,7 +68,7 @@ public struct Maia.SpinLock
             val = lck.get ();
             inc = val;
 
-            unowned Ticket16 l = Ticket16.cast (&lck);
+            unowned Ticket16 l = (Ticket16?) (&lck);
 
             if (l.ticket == 0xFFFF)
                 inc += 1 - (1 << 16);

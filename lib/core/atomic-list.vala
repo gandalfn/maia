@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * atomic-queue.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -24,7 +24,7 @@ public class Maia.Atomic.List<V> : GLib.Object
 
     [SimpleType]
     [IntegerType (rank = 9)]
-    [CCode (cname = "volatile gpointer", default_value = "0UL", has_type_id = "false", has_copy_function = "false", has_destroy_function = "")]
+    [CCode (cname = "volatile void*", default_value = "0UL", has_type_id = "false", has_copy_function = "false", has_destroy_function = "")]
     private struct Pointer : ulong
     {
         public static inline Pointer
@@ -210,8 +210,7 @@ public class Maia.Atomic.List<V> : GLib.Object
                 return true;
         }
 
-        return false
-        ;
+        return false;
     }
 
     /**
@@ -219,7 +218,7 @@ public class Maia.Atomic.List<V> : GLib.Object
      *
      * @param inData the value to remove from the list
      *
-     * @return true if value is added from this list, false otherwise
+     * @return true if value is removed from this list, false otherwise
      */
     public bool
     remove (V inData)

@@ -29,13 +29,13 @@ public class Maia.TestApplication : Maia.TestCase
     public void
     test_create ()
     {
-        Maia.Application application = Maia.XcbBackend.create_application ();
+        Maia.Application application = Maia.Application.create ();
 
-        Maia.Desktop desktop = application.desktop;
+        /*Maia.Desktop desktop = application.desktop;
 
         assert (desktop != null);
         assert (desktop.nb_workspaces > 0);
 
-        Test.message ("workspace geometry %s", desktop.default_workspace.geometry.to_string ());
+        Test.message ("workspace geometry %s", desktop.default_workspace.geometry.extents.to_string ());*/
     }
 }

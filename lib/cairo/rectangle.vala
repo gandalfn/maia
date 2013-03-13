@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * cairo-graphic-device.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * rectangle.vala
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,15 +17,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.CairoGraphicDevice : Maia.GraphicDevice
+[CCode (has_type_id = false)]
+internal struct Maia.Graphic.CairoRectangle : global::Cairo.RectangleInt
 {
-    // accessors
-    public abstract Cairo.Surface surface { get; }
-
     // methods
-    public override GraphicContext
-    create_context ()
+    public CairoRectangle (Rectangle inRect)
     {
-        return new CairoGraphicContext (this);
+        x = Fixed.from_double (inRect.origin.x);
+        y = Fixed.from_double (inRect.origin.y);
+        width = Fixed.from_double (inRect.size.width);
+        height = Fixed.from_double (inRect.size.height);
+    }
+
+    public inline Rectangle
+    to_rectangle ()
+    {
+        return Rectangle (((Fixed)x).to_double (), ((Fixed)y).to_double (),
+                          ((Fixed)width).to_double (), ((Fixed)height).to_double ());
     }
 }

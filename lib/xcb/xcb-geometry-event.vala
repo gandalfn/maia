@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * xcb-geometry-event.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -28,9 +28,10 @@ internal class Maia.XcbGeometryEvent : GeometryEvent
     post_event (Xcb.GenericEvent inEvent)
     {
         Xcb.ConfigureNotifyEvent evt = (Xcb.ConfigureNotifyEvent)inEvent;
-        GeometryEventArgs args = new GeometryEventArgs (new Region.raw_rectangle (evt.x, evt.y,
-                                                                                  evt.width + (evt.border_width * 2),
-                                                                                  evt.height + (evt.border_width * 2)));
+        GeometryEventArgs args = new GeometryEventArgs (Graphic.Region.create (Graphic.Rectangle(evt.x, evt.y,
+                                                                                                 evt.width + (evt.border_width * 2),
+                                                                                                 evt.height + (evt.border_width * 2))));
+        Log.audit (GLib.Log.METHOD, "0x%lx", evt.window);
         Event.post_event<GeometryEventArgs> ("geometry-event", ((uint)evt.window).to_pointer (), args);
     }
 

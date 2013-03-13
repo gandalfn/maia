@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * iterator.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -25,7 +25,7 @@ public abstract class Maia.Iterator<V>
 {
     // properties
     private bool m_EndIterateCalled = false;
-    private EndIterateFunc m_EndIterateFunc = null;
+    private unowned EndIterateFunc? m_EndIterateFunc = null;
     internal int stamp;
 
     // accessors

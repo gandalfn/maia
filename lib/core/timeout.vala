@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * timeout.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,85 +17,111 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Timeout : Watch
+public class Maia.Timeout : Task
 {
-    // Properties
-    private ulong m_TimeoutMs;
-    private bool m_WatchSet = false;
+    // types
+    public delegate bool ElapsedFunc ();
 
-    // signals
-    public signal bool elapsed ();
+    // properties
+    private uint64      m_StartTime;
+    private ulong       m_Interval;
+    private long        m_Delay;
+    private ElapsedFunc m_Callback;
 
-    // Accessors
-    internal override int watch_fd {
+    // accessors
+    public long delay {
         get {
-            if (!m_WatchSet)
-            {
-                ulong ustime = m_TimeoutMs * 1000;
-                Os.ITimerSpec itimer_spec = Os.ITimerSpec ();
-                itimer_spec.it_value.tv_sec = (time_t)(ustime / 1000000);
-                itimer_spec.it_value.tv_nsec = (long)(1000 * (ustime % 1000000));
-
-                ((Os.TimerFd)fd).settime (0, itimer_spec, null);
-
-                m_WatchSet = true;
-            }
-            return fd;
+            return m_Delay;
         }
     }
 
-    // Methods
+    // methods
     /**
      * Create a new Timeout
      *
      * @param inTimeoutMs timeout in milliseconds
      * @param inPriority timeout priority
      */
-    public Timeout (ulong inTimeoutMs, Task.Priority inPriority = Task.Priority.NORMAL)
+    internal Timeout (ulong inTimeoutMs, owned ElapsedFunc inFunc, int inPriority = GLib.Priority.DEFAULT)
     {
-        Os.TimerFd timer_fd = Os.TimerFd (Os.CLOCK_MONOTONIC, Os.TFD_CLOEXEC);
+        base (inPriority);
 
-        base (timer_fd, Watch.Flags.IN, inPriority);
-
-        m_TimeoutMs = inTimeoutMs;
+        m_Interval = inTimeoutMs;
+        m_Callback = (owned)inFunc;
     }
 
-    ~Timeout ()
+    private inline ulong
+    get_ticks (uint64 inCurrentTime)
     {
-        if (fd >= 0) Os.close (fd);
+        return (ulong)(inCurrentTime - m_StartTime) / 1000;
     }
 
     /**
      * {@inheritDoc}
      */
-    internal override void*
-    main ()
-        requires (parent != null)
+    internal override void
+    start ()
     {
-        (parent as Dispatcher).remove_watch (this);
+        m_StartTime = GLib.get_monotonic_time ();
+    }
 
-        void* ret = base.main ();
-
-        if (elapsed ())
+    /**
+     * {@inheritDoc}
+     */
+    internal override void
+    run ()
+    {
+        if (m_Callback ())
         {
-            (parent as Dispatcher).add_watch (this);
+            base.run ();
+        }
+        else
+            state = Task.State.TERMINATED;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    internal override int
+    compare (Object inOther)
+    {
+        if (inOther is Timeout)
+        {
+            unowned Timeout other = inOther as Timeout;
+            int diff = (int)(m_Delay - other.m_Delay);
+            if (diff == 0)
+                return compare (inOther);
+
+            return diff;
+        }
+
+        return compare (inOther);
+    }
+
+    internal void
+    prepare (uint64 inCurrentTime)
+    {
+        ulong elapsed_time = get_ticks (inCurrentTime);
+        double diff = (double)elapsed_time / (double)m_Interval;
+
+        if (diff >= 1.0)
+        {
+            m_StartTime += (uint64)(((int)diff * m_Interval) * 1000.0);
+
+            m_Delay = 0;
         }
         else
         {
-            finish ();
+            m_Delay = int.max (((int)m_Interval - ((int)elapsed_time % (int)m_Interval)), 0);
         }
 
-        return ret;
-    }
-
-    internal override void
-    close_watch_fd ()
-    {
-        if (m_WatchSet)
+        if (m_Delay == 0)
         {
-            Os.ITimerSpec itimer_spec = Os.ITimerSpec ();
-            ((Os.TimerFd)fd).settime (0, itimer_spec, null);
-            m_WatchSet = false;
+            state = Task.State.READY;
+        }
+        else
+        {
+            reorder ();
         }
     }
 }

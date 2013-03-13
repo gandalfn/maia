@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * xcb-atom.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -72,13 +72,13 @@ internal enum Maia.XcbAtomType
 internal class Maia.XcbAtoms
 {
     // properties
-    private unowned XcbDesktop m_XcbDesktop;
-    private Xcb.Atom[]         m_Atoms;
+    private unowned XcbApplication m_Application;
+    private Xcb.Atom[]             m_Atoms;
 
     // methods
-    public XcbAtoms (XcbDesktop inDesktop)
+    public XcbAtoms (XcbApplication inApplication)
     {
-        m_XcbDesktop = inDesktop;
+        m_Application = inApplication;
 
         m_Atoms = new Xcb.Atom[XcbAtomType.N];
         Xcb.InternAtomCookie[] cookies = new Xcb.InternAtomCookie[XcbAtomType.N];
@@ -86,14 +86,13 @@ internal class Maia.XcbAtoms
         for (int cpt = 0; cpt < (int)XcbAtomType.N; ++cpt)
         {
             string name = ((XcbAtomType)cpt).to_string ();
-            cookies[cpt] = m_XcbDesktop.connection.intern_atom (false,
-                                                                (uint16)name.length,
-                                                                name);
+            cookies[cpt] = m_Application.connection.intern_atom (false,
+                                                                 name.to_utf8 ());
         }
 
         for (int cpt = 0; cpt < (int)XcbAtomType.N; ++cpt)
         {
-            Xcb.InternAtomReply reply = cookies [cpt].reply (m_XcbDesktop.connection);
+            Xcb.InternAtomReply reply = cookies [cpt].reply (m_Application.connection);
             if (reply == null)
             {
                 m_Atoms[cpt] = Xcb.AtomType.NONE;

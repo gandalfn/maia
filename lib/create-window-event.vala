@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * create-window-event.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -21,17 +21,24 @@ public class Maia.CreateWindowEventArgs : EventArgs
 {
     // accessors
     [CCode (notify = false)]
-    public Window window { get; private set; }
+    public Window window { get; construct; }
 
     // methods
     public CreateWindowEventArgs (Window inWindow)
     {
-        window = inWindow;
+        GLib.Object (window: inWindow);
     }
 }
 
 public class Maia.CreateWindowEvent : Event<CreateWindowEventArgs>
 {
+    // static methods
+    public static new void
+    post (void* inOwner, CreateWindowEventArgs inArgs)
+    {
+        Dispatcher.post_event ("create-window-event", inOwner, inArgs);
+    }
+
     // methods
     public CreateWindowEvent (void* inOwner)
     {

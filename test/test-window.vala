@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class TestWindow : Maia.Window
+/*public class TestWindow : Maia.Window
 {
     private int count = 0;
     private Maia.Timeline timeline;
@@ -26,7 +26,7 @@ public class TestWindow : Maia.Window
     {
         base ("test-window", 400, 400);
 
-        //double_buffered = false;
+        double_buffered = false;
 
         workspace.create_window_event.listen (on_new_window, Maia.Application.self);
         workspace.reparent_window_event.listen (on_window_reparented, Maia.Application.self);
@@ -41,7 +41,8 @@ public class TestWindow : Maia.Window
     private void
     on_new_frame (int inFrame)
     {
-        queue_draw ();
+        //message ("new frame %i", inFrame);
+        damage ();
     }
 
     private void
@@ -70,56 +71,85 @@ public class TestWindow : Maia.Window
     }
 
     public override void
-    on_move_resize (Maia.Region inNewGeometry)
+    on_move ()
     {
-        message ("Move resize %s", inNewGeometry.to_string ());
+        message ("Move %s", geometry.extents.to_string ());
     }
 
     public override void
-    on_paint (Maia.Region inArea)
+    on_resize ()
     {
-        //message ("Paint %s", inArea.to_string ());
+        message ("Resize %s", geometry.extents.to_string ());
+    }
+
+    public override void
+    on_paint (Maia.Graphic.Context inContext, Maia.Graphic.Region inArea)
+    {
+        //message ("Paint %s", inArea.extents.to_string ());
         try
         {
-            Maia.GraphicContext ctx = create_context ();
+            inContext.pattern = new Maia.Graphic.Color (0.0, 0.0, 0.0, 1.0);
+            inContext.paint ();
 
-            ctx.pattern.color = new Maia.GraphicColor (0.0, 0.0, 0.0, 1.0);
-            ctx.paint.paint ();
-            ctx.pattern.color = new Maia.GraphicColor (1.0, 0.0, 0.0, 1.0);
-            ctx.shape.rectangle (20, 20, inArea.clipbox.size.width - 40, inArea.clipbox.size.height - 40, 5, 5);
-            ctx.paint.line_width = 5;
-            ctx.paint.stroke ();
-            ctx.pattern.color = new Maia.GraphicColor (0.0, 0.0, 1.0, 1.0);
-            ctx.shape.arc (inArea.clipbox.size.width * timeline.progress, inArea.clipbox.size.height / 2.0,
+            inContext.pattern = new Maia.Graphic.Color (1.0, 0.0, 0.0, 1.0);
+            inContext.rectangle (20, 20, inArea.extents.size.width - 40, inArea.extents.size.height - 40, 5, 5);
+            //inContext.paint.line_width = 5;
+            inContext.stroke ();
+            inContext.pattern = new Maia.Graphic.Color (0.0, 0.0, 1.0, 1.0);
+            inContext.arc (inArea.extents.size.width * timeline.progress, inArea.extents.size.height / 2.0,
                            20, 20, 0, 2 * GLib.Math.PI);
-            ctx.paint.fill ();
+            inContext.fill ();
         }
-        catch (Maia.GraphicError err)
+        catch (Maia.Graphic.Error err)
         {
             message ("Error on paint %s", err.message);
         }
+
+        base.on_paint (inContext, inArea);
     }
 
     public override void
     on_destroy ()
     {
+        message ("Destroy");
         base.on_destroy ();
         Maia.Application.quit ();
     }
-}
+}*/
 
 static int
 main (string[] args)
 {
     //Maia.Log.set_default_logger (new Maia.Log.File ("out.log", Maia.Log.Level.DEBUG, "test-window"));
-    Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.INFO, "test-window"));
+    Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, "test-window"));
 
-    Maia.Application application = Maia.Application.create ();
+    Maia.Manifest manifest = new Maia.Manifest ("test.manifest");
 
-    TestWindow window = new TestWindow ();
-    window.show ();
+    foreach (Maia.Parser.Token token in manifest)
+    {
+        switch (token)
+        {
+            case Maia.Parser.Token.START_ELEMENT:
+                message ("Element: %s", manifest.element);
+                break;
 
-    application.run ();
+            case Maia.Parser.Token.ATTRIBUTE:
+                message ("  Attribute: %s = %s", manifest.current_attribute, manifest.current_value);
+                break;
+
+            case Maia.Parser.Token.END_ELEMENT:
+                message ("End element: %s", manifest.element);
+                break;
+        }
+    }
+
+    Maia.Application.init (args);
+
+    /*TestWindow window = new TestWindow ();*/
+    Maia.Window window = new Maia.Window ("toto", 400, 400);
+    window.visible = true;
+
+    Maia.Application.run ();
 
     return 0;
 }

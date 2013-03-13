@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * graphics-color.vala
- * Copyright (C) Nicolas Bruguier 2010 <gandalfn@club-internet.fr>
+ * color.vala
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,7 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal struct Maia.NamedColor {
+[CCode (has_type_id = false)]
+internal struct Maia.Graphic.NamedColor {
     public string m_Name;
     public uint m_Red;
     public uint m_Green;
@@ -25,7 +26,7 @@ internal struct Maia.NamedColor {
     public uint m_Opacity;
 }
 
-const Maia.NamedColor[] g_StandardColors = {
+const Maia.Graphic.NamedColor[] g_StandardColors = {
     {"aliceblue", 240, 248, 255, 0},
     {"antiquewhite", 250, 235, 215, 0},
     {"aqua", 0, 255, 255, 0},
@@ -177,10 +178,10 @@ const Maia.NamedColor[] g_StandardColors = {
     {null, 0, 0, 0, 0}
 };
 
-public class Maia.GraphicColor : Object
+public class Maia.Graphic.Color : Pattern
 {
     // static properties
-    static Set <GraphicColor> s_StandardColors = null;
+    static Set <Color> s_StandardColors = null;
 
     // properties
     private string m_Name  = null;
@@ -194,10 +195,10 @@ public class Maia.GraphicColor : Object
     [CCode (notify = false)]
     public string name {
         get {
-            return Atom.to_string (id);
+            return ((GLib.Quark)id).to_string ();
         }
         private set {
-            id = Atom.from_string (value);
+            id = GLib.Quark.from_string (value);
         }
     }
 
@@ -251,14 +252,14 @@ public class Maia.GraphicColor : Object
     {
         if (s_StandardColors == null)
         {
-            s_StandardColors = new Set <GraphicColor> ();
+            s_StandardColors = new Set <Color> ();
 
             for (int cpt = 0; g_StandardColors[cpt].m_Name != null; ++cpt)
             {
-                GraphicColor color = new GraphicColor ((double)g_StandardColors[cpt].m_Red / 255,
-                                                       (double)g_StandardColors[cpt].m_Green / 255,
-                                                       (double)g_StandardColors[cpt].m_Blue / 255,
-                                                       1 - (double)(g_StandardColors[cpt].m_Opacity / 255));
+                Color color = new Color ((double)g_StandardColors[cpt].m_Red / 255,
+                                         (double)g_StandardColors[cpt].m_Green / 255,
+                                         (double)g_StandardColors[cpt].m_Blue / 255,
+                                         1 - (double)(g_StandardColors[cpt].m_Opacity / 255));
 
                 s_StandardColors.insert (color);
             }
@@ -273,7 +274,7 @@ public class Maia.GraphicColor : Object
      * @param inBlue blue component of color
      * @param inAlpha alpha component of color
      */
-    public GraphicColor(double inRed, double inGreen, double inBlue, double inAlpha = 1.0)
+    public Color (double inRed, double inGreen, double inBlue, double inAlpha = 1.0)
     {
         m_Red = inRed;
         m_Green = inGreen;
@@ -287,7 +288,7 @@ public class Maia.GraphicColor : Object
      *
      * @param inValue string color to parse
      */
-    public GraphicColor.parse(string inValue)
+    public Color.parse(string inValue)
     {
         if (inValue == "none")
         {
@@ -313,8 +314,8 @@ public class Maia.GraphicColor : Object
         {
             create_standard_colors ();
 
-            unowned GraphicColor? color = s_StandardColors.search<string> (inValue,
-                                                                          (a, v) => {
+            unowned Color? color = s_StandardColors.search<string> (inValue,
+                                                                    (a, v) => {
                                                return GLib.strcmp (a.name, v);
                                            });
 
@@ -336,9 +337,9 @@ public class Maia.GraphicColor : Object
 
     internal override int
     compare (Object inOther)
-        requires (inOther is GraphicColor)
+        requires (inOther is Color)
     {
-        GraphicColor other = inOther as GraphicColor;
+        Color other = inOther as Color;
 
         return (int)(argb - other.argb);
     }

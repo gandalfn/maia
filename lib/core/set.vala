@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * set.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -225,6 +225,8 @@ public class Maia.Set<V> : Collection<V>
         CompareFunc<V> func = compare_func;
         int res;
 
+        outParent = null;
+
         while (node != null)
         {
             outParent = node;
@@ -414,11 +416,12 @@ public class Maia.Set<V> : Collection<V>
     /**
      * {@inheritDoc}
      */
-    internal override void
+    internal override Maia.Iterator<V>
     insert (V inValue)
     {
         unowned Node<V> parent = null;
         Node<V> node = get_node (inValue, out parent);
+        Iterator<V> iter;
 
         if (node == null)
         {
@@ -441,12 +444,18 @@ public class Maia.Set<V> : Collection<V>
 
             m_Size++;
 
+            iter = new Iterator<V> (this, node);
+
             stamp++;
         }
         else
         {
             node.val = inValue;
+
+            iter = new Iterator<V> (this, node);
         }
+
+        return iter;
     }
 
     /**

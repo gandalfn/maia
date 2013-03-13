@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * task-once.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -26,7 +26,7 @@ public class Maia.TaskOnce : Task
     private unowned Callback m_Callback;
 
     // methods
-    public TaskOnce (Callback inCallback, Task.Priority inPriority = Priority.NORMAL, bool inThread = false)
+    public TaskOnce (Callback inCallback, int inPriority = GLib.Priority.NORMAL, bool inThread = false)
     {
         base (inPriority, inThread);
         m_Callback = inCallback;

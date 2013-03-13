@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * functions.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -23,6 +23,8 @@ namespace Maia
     [CCode (has_target = false)]
     public delegate string ToStringFunc<V>        (V inValue);
     [CCode (has_target = false)]
+    public delegate V      FromStringFunc<V>      (string inStr);
+    [CCode (has_target = false)]
     public delegate int    CompareFunc<V>         (V inA, V inB);
     [CCode (has_target = false)]
     public delegate int    ValueCompareFunc<V, A> (V inV, A inA);
@@ -39,7 +41,7 @@ namespace Maia
     }
 
     public static inline int
-    atom_compare (uint32 inA, uint32 inB)
+    uint32_compare (uint32 inA, uint32 inB)
     {
         return (int)(inA - inB);
     }
@@ -110,7 +112,7 @@ namespace Maia
         else if (typeof (V).is_a (typeof (Object)))
             func = (CompareFunc<V>)Object.compare;
         else if (typeof (V) == typeof (uint32))
-            func = (CompareFunc<V>)atom_compare;
+            func = (CompareFunc<V>)uint32_compare;
 
         return func;
     }
@@ -139,9 +141,32 @@ namespace Maia
         else if (typeof (V) == typeof (Pair))
             func = (ToStringFunc<V>)Pair.to_string;
         else if (typeof (V) == typeof (uint32))
-            func = (ToStringFunc<V>)Atom.to_string;
+            func = (ToStringFunc<V>)uint32.to_string;
         else if (typeof (V).is_a (typeof (Object)))
             func = (ToStringFunc<V>)Object.to_string;
+
+        return func;
+    }
+
+    public static inline FromStringFunc<V>
+    get_from_string_func_for<V> ()
+    {
+        FromStringFunc<V> func = null;
+
+        if (typeof (V) == typeof (string))
+            func = (FromStringFunc<V>)string.dup;
+        else if (typeof (V) == typeof (int))
+            func = (FromStringFunc<V>)int.parse;
+        else if (typeof (V) == typeof (uint))
+            func = (FromStringFunc<V>)int.parse;
+        else if (typeof (V) == typeof (long))
+            func = (FromStringFunc<V>)long.parse;
+        else if (typeof (V) == typeof (ulong))
+            func = (FromStringFunc<V>)long.parse;
+        else if (typeof (V) == typeof (float))
+            func = (FromStringFunc<V>)double.parse;
+        else if (typeof (V) == typeof (double))
+            func = (FromStringFunc<V>)double.parse;
 
         return func;
     }

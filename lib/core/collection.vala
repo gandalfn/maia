@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * collection.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -68,7 +68,7 @@ public abstract class Maia.Collection<V>
      *
      * @param inValue the value to add to the collection
      */
-    public abstract void insert (V inValue);
+    public abstract Iterator<V> insert (V inValue);
 
     /**
      * Removes the first occurence of a value from this collection.
@@ -81,7 +81,6 @@ public abstract class Maia.Collection<V>
      * Removes all values from this collection.
      */
     public abstract void clear ();
-
 
     /**
      * Returns a Iterator that can be used for simple iteration over a

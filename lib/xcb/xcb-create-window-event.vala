@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * xcb-create-window-event.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -20,58 +20,35 @@
 internal class Maia.XcbCreateWindowEvent : CreateWindowEvent
 {
     // properties
-    private unowned XcbWindow m_Window = null;
-    private int m_ListenCount          = 0;
+    private unowned XcbWorkspace m_Workspace;
 
     // static methods
-    public static new void
+    public static void
     post_event (Xcb.GenericEvent inEvent)
     {
-        Xcb.CreateNotifyEvent evt = (Xcb.CreateNotifyEvent)inEvent;
-        unowned Application? application = Application.default;
+        unowned Xcb.CreateNotifyEvent? evt = (Xcb.CreateNotifyEvent?)inEvent;
 
-        if (application != null)
-        {
-            unowned Desktop? desktop = application.desktop;
+        XcbWindow window = new XcbWindow (evt.window);
 
-            if (desktop != null)
-            {
-                foreach (unowned Workspace workspace in desktop)
-                {
-                    unowned Window? parent = (Window)workspace[evt.parent];
-
-                    while (workspace[evt.window] != null);
-
-                    if (parent != null && parent == workspace.root)
-                    {
-                        Window new_window = new Window.foreign (evt.window, workspace);
-                        ((XcbWindow)new_window.proxy).attributes.override_redirect = (bool)evt.override_redirect;
-                        CreateWindowEventArgs args = new CreateWindowEventArgs (new_window);
-                        workspace.create_window_event.post (args);
-                        Log.audit (GLib.Log.METHOD, "window %u", new_window.ref_count);
-
-                        break;
-                    }
-                }
-            }
-        }
+        CreateWindowEvent.post (((uint)evt.parent).to_pointer (), new CreateWindowEventArgs (window));
     }
 
     // methods
-    public XcbCreateWindowEvent (XcbWindow inWindow)
+    public XcbCreateWindowEvent (XcbWorkspace inWorkspace)
     {
-        base (((uint)inWindow.id).to_pointer ());
-        m_Window = inWindow;
+        base (((uint)inWorkspace.root.id).to_pointer ());
+        m_Workspace = inWorkspace;
     }
 
-    protected override void
+    public override void
     on_listen ()
     {
-        if (m_Window != null && m_ListenCount == 0)
+        uint32 mask = m_Workspace.root.event_mask;
+
+        if ((mask & Xcb.EventMask.STRUCTURE_NOTIFY) != Xcb.EventMask.STRUCTURE_NOTIFY ||
+            (mask & Xcb.EventMask.SUBSTRUCTURE_NOTIFY) != Xcb.EventMask.SUBSTRUCTURE_NOTIFY)
         {
-            m_Window.event_mask |= Xcb.EventMask.STRUCTURE_NOTIFY |
-                                   Xcb.EventMask.SUBSTRUCTURE_NOTIFY;
+            m_Workspace.root.event_mask |= Xcb.EventMask.STRUCTURE_NOTIFY | Xcb.EventMask.SUBSTRUCTURE_NOTIFY;
         }
-        ++m_ListenCount;
     }
 }

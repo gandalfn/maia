@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * event-dispatcher.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -32,9 +32,11 @@ internal class Maia.EventDispatcher : Watch
         }
 
         public int
-        compare (ListenerQueue inOther)
+        compare (ListenerQueue? inOther)
         {
-            int ret = atom_compare (m_EventId, inOther.m_EventId);
+            if (inOther == null) return -1;
+
+            int ret = uint32_compare (m_EventId, inOther.m_EventId);
 
             if (ret == 0)
             {
@@ -47,7 +49,7 @@ internal class Maia.EventDispatcher : Watch
         public int
         compare_with_event (Event inEvent)
         {
-            int ret = atom_compare (m_EventId, inEvent.id);
+            int ret = uint32_compare (m_EventId, inEvent.id);
 
             if (ret == 0)
             {
@@ -60,7 +62,7 @@ internal class Maia.EventDispatcher : Watch
         public int
         compare_with_listener (EventListener inListener)
         {
-            int ret = atom_compare (m_EventId, inListener.id);
+            int ret = uint32_compare (m_EventId, inListener.id);
 
             if (ret == 0)
             {
@@ -72,8 +74,9 @@ internal class Maia.EventDispatcher : Watch
     }
 
     // properties
-    private Atomic.Queue<Event>        m_EventQueue;
-    private Atomic.List<ListenerQueue> m_Listeners;
+    private Atomic.Queue<Event> m_EventQueue;
+    private SpinLock            m_ListenersLock;
+    private Set<ListenerQueue>  m_Listeners;
 
     // accessors
     internal override int watch_fd {
@@ -91,7 +94,8 @@ internal class Maia.EventDispatcher : Watch
         base (event_fd, Watch.Flags.IN);
 
         m_EventQueue = new Atomic.Queue<Event> ();
-        m_Listeners = new Atomic.List<ListenerQueue> ();
+        m_ListenersLock = SpinLock ();
+        m_Listeners = new Set<ListenerQueue> ();
         m_Listeners.compare_func = ListenerQueue.compare;
     }
 
@@ -104,20 +108,18 @@ internal class Maia.EventDispatcher : Watch
     dispatch (Event inEvent)
     {
         Log.debug (GLib.Log.METHOD, "dispatch %s", inEvent.name);
-        m_Listeners.foreach ((queue) => {
-            if (queue.compare_with_event (inEvent) == 0)
-            {
-                queue.foreach ((event_listener) => {
-                    Log.debug (GLib.Log.METHOD, "notify %s", inEvent.name);
-                    event_listener.notify (inEvent.event_args);
-                    return true;
-                });
+        m_ListenersLock.lock ();
+        unowned ListenerQueue? queue = m_Listeners.search<Event> (inEvent, ListenerQueue.compare_with_event);
+        m_ListenersLock.unlock ();
 
-                return false;
-            }
-
-            return true;
-        });
+        if (queue != null)
+        {
+            queue.foreach ((event_listener) => {
+                Log.debug (GLib.Log.METHOD, "notify %s", inEvent.name);
+                event_listener.notify (inEvent);
+                return true;
+            });
+        }
     }
 
     internal override void*
@@ -142,72 +144,63 @@ internal class Maia.EventDispatcher : Watch
     public void
     post (Event inEvent)
     {
-        m_Listeners.foreach ((queue) => {
-            if (queue.compare_with_event (inEvent) == 0)
-            {
-                Log.debug (GLib.Log.METHOD, "Post event %s", inEvent.name);
+        m_ListenersLock.lock ();
+        unowned ListenerQueue? queue = m_Listeners.search<Event> (inEvent, ListenerQueue.compare_with_event);
+        m_ListenersLock.unlock ();
 
-                m_EventQueue.enqueue (inEvent);
-                Os.eventfd_write (fd, 1);
+        if (queue != null)
+        {
+            Log.debug (GLib.Log.METHOD, "Post event %s", inEvent.name);
 
-                return false;
-            }
-
-            return true;
-        });
+            m_EventQueue.enqueue (inEvent);
+            Os.eventfd_write (fd, 1);
+        }
     }
 
     public void
     listen (EventListener inEventListener)
     {
-        bool have_queue = false;
-        m_Listeners.foreach ((queue) => {
-            if (queue.compare_with_listener (inEventListener) == 0)
-            {
-                have_queue = true;
-                Log.debug (GLib.Log.METHOD, "Add listener %s", inEventListener.name);
-                queue.insert (inEventListener);
-                return false;
-            }
-            return true;
-        });
+        m_ListenersLock.lock ();
+        unowned ListenerQueue? queue = m_Listeners.search<EventListener> (inEventListener, ListenerQueue.compare_with_listener);
 
-
-        if (!have_queue)
+        if (queue != null)
         {
-            ListenerQueue queue = new ListenerQueue (inEventListener);
-            while (!queue.insert (inEventListener))
-                Machine.CPU.pause ();
-            while (m_Listeners.insert (queue))
-                Machine.CPU.pause ();
+            Log.debug (GLib.Log.METHOD, "Add listener %s", inEventListener.name);
+            queue.insert (inEventListener);
+        }
+        else
+        {
+            ListenerQueue new_queue = new ListenerQueue (inEventListener);
+            new_queue.insert (inEventListener);
+            m_Listeners.insert (new_queue);
             Log.debug (GLib.Log.METHOD, "Add listener %s", inEventListener.name);
         }
+        m_ListenersLock.unlock ();
     }
 
     public void
     deafen (EventListener inEventListener)
     {
-        m_Listeners.foreach ((queue) => {
-            if (queue.compare_with_listener (inEventListener) == 0)
-            {
-                queue.remove (inEventListener);
-                return false;
-            }
-            return true;
-        });
+        m_ListenersLock.lock ();
+        unowned ListenerQueue? queue = m_Listeners.search<EventListener> (inEventListener, ListenerQueue.compare_with_listener);
+        m_ListenersLock.unlock ();
+
+        if (queue != null)
+        {
+            queue.remove (inEventListener);
+        }
     }
 
     public void
     deafen_event (Event inEvent)
     {
-        unowned Event evt = inEvent;
-        m_Listeners.foreach ((queue) => {
-            if (queue.compare_with_event (evt) == 0)
-            {
-                m_Listeners.remove (queue);
-                return false;
-            }
-            return true;
-        });
+        m_ListenersLock.lock ();
+        unowned ListenerQueue? queue = m_Listeners.search<Event> (inEvent, ListenerQueue.compare_with_event);
+        m_ListenersLock.unlock ();
+
+        if (queue != null)
+        {
+            m_Listeners.remove (queue);
+        }
     }
 }

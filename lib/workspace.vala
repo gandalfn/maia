@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * workspace.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -19,88 +19,27 @@
 
 public class Maia.Workspace : View
 {
-    // properties
-    private unowned WorkspaceProxy m_Proxy;
-    private QueueDrawEvent         m_EventQueueDraw;
+    // accessors
+    public unowned Dispatcher dispatcher {
+        get {
+            return (parent as Application).dispatcher;
+        }
+    }
 
     // events
-    internal override DamageEvent damage_event {
-        get {
-            return m_Proxy.damage_event;
-        }
-    }
-
-    public QueueDrawEvent queue_draw_event {
-        get {
-            return m_EventQueueDraw;
-        }
-    }
-
-    public CreateWindowEvent create_window_event {
-        get {
-            return m_Proxy.create_window_event;
-        }
-    }
-
-    public DestroyWindowEvent destroy_window_event {
-        get {
-            return m_Proxy.destroy_window_event;
-        }
-    }
-
-    public ReparentWindowEvent reparent_window_event {
-        get {
-            return m_Proxy.reparent_window_event;
-        }
-    }
-
-    // accessors
-    public unowned WorkspaceProxy? proxy {
-        get {
-            return m_Proxy;
-        }
-    }
-
-    public uint num {
-        get {
-            return m_Proxy.num;
-        }
-    }
-
-    [CCode (notify = false)]
-    internal override Region geometry {
-        get {
-            return m_Proxy.geometry;
-        }
-        internal set {
-        }
-    }
-
-    [CCode (notify = false)]
-    internal override bool double_buffered {
-        get {
-            return m_Proxy.double_buffered;
-        }
-        set {
-            m_Proxy.double_buffered = value;
-        }
-    }
-
-    public Window root {
-        get {
-            return m_Proxy.root;
-        }
-    }
+    public CreateWindowEvent  create_window_event  { get; set; default = null; }
+    public DestroyWindowEvent destroy_window_event { get; set; default = null; }
 
     // methods
-    public Workspace (Desktop inDesktop)
+    construct
     {
-        Log.audit (GLib.Log.METHOD, "Create workspace");
-
-        GLib.Object (parent: inDesktop);
-
-        m_Proxy = delegate_cast<WorkspaceProxy> ();
-        m_EventQueueDraw = new QueueDrawEvent (this);
+        // listen events
+        create_window_event.listen ((a) => {
+            on_window_added (a.window);
+        }, dispatcher);
+        destroy_window_event.listen ((a) => {
+            on_window_removed (a.window);
+        }, dispatcher);
     }
 
     internal override string
@@ -108,13 +47,11 @@ public class Maia.Workspace : View
     {
         string ret = "";
 
-        rw_lock.read_lock ();
-        iterator ().foreach ((window) => {
+        foreach (unowned Object window in this)
+        {
             ret += window.to_string () + "\n";
-            return true;
-        });
+        }
         ret += "\n";
-        rw_lock.read_unlock ();
 
         return ret;
     }
@@ -125,9 +62,15 @@ public class Maia.Workspace : View
         return inChild is Window;
     }
 
-    public void
-    queue_draw (Window? inWindow, Region inArea)
+    protected virtual void
+    on_window_added (Window inWindow)
     {
-        m_EventQueueDraw.post (new QueueDrawEventArgs (inWindow, inArea));
+        inWindow.parent = this;
+    }
+
+    protected virtual void
+    on_window_removed (Window inWindow)
+    {
+        inWindow.parent = null;
     }
 }

@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * xcb-application.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -20,65 +20,66 @@
 internal class Maia.XcbApplication : Application
 {
     // properties
-    private Desktop               m_Desktop = null;
-    private XcbEventDispatcher    m_EventDispatcher = null;
-    private Dispatcher            m_Event = null;
-    private XcbRedrawDispatcher[] m_RedrawDispatchers = {};
-    private Dispatcher[]          m_Redraws = {};
+    private Xcb.Connection m_Connection;
+    private int            m_DefaultScreen;
+    private XcbAtoms       m_Atoms;
 
     // accessors
-    public override Desktop desktop {
+    public Xcb.Connection connection {
         get {
-            return m_Desktop;
+            return m_Connection;
         }
     }
 
+    public override unowned Workspace? default_workspace {
+        get {
+            return this[m_DefaultScreen];
+        }
+    }
+
+    // static methods
     static construct
     {
-        delegate <Desktop> (typeof (XcbDesktop));
-        delegate <Workspace> (typeof (XcbWorkspace));
-        delegate <Window> (typeof (XcbWindow));
+        Any.delegate (typeof (Workspace), typeof (XcbWorkspace));
+        Any.delegate (typeof (Window), typeof (XcbWindow));
     }
 
-    public XcbApplication ()
+    // methods
+    public XcbApplication (string? inDisplay)
     {
-        m_Desktop = new Desktop ();
+        GLib.Object (id: GLib.Quark.from_string (inDisplay));
 
-        m_EventDispatcher = new XcbEventDispatcher (this);
-        foreach (unowned Workspace workspace in m_Desktop)
+        // create the xcb connection and get default screen
+        m_Connection = new Xcb.Connection (inDisplay, out m_DefaultScreen);
+
+        // fetch atoms
+        m_Atoms = new XcbAtoms (this);
+
+        // create workspaces
+        int cpt = 0;
+        foreach (unowned Xcb.Screen screen in m_Connection.roots)
         {
-            XcbRedrawDispatcher redraw_dispatcher = new XcbRedrawDispatcher (workspace);
-            m_RedrawDispatchers += redraw_dispatcher;
-        }
-        dispatcher.running.connect (on_dispatcher_running);
-        dispatcher.finished.connect (on_dispatcher_finished);
-    }
-
-    private void
-    on_dispatcher_running ()
-    {
-        // Start event loop
-        m_Event = new Dispatcher.thread ();
-        m_EventDispatcher.parent = m_Event;
-        m_Event.run ();
-
-        // Start redraw loop
-        foreach (unowned XcbRedrawDispatcher redraw_dispatcher in m_RedrawDispatchers)
-        {
-            Dispatcher redraw = new Dispatcher.thread ();
-            redraw_dispatcher.parent = redraw;
-            redraw.run ();
-            m_Redraws += redraw;
+            new XcbWorkspace (this, screen, cpt);
+            cpt++;
         }
     }
 
-    private void
-    on_dispatcher_finished ()
+    public override string
+    to_string ()
     {
-        m_Event.finish ();
-        foreach (unowned Dispatcher redraw in m_Redraws)
+        string ret = "";
+
+        foreach (Object child in this)
         {
-            redraw.finish ();
+            ret += child.to_string ();
         }
+
+        return ret;
+    }
+
+    public void
+    request_check (Xcb.VoidCookie inCookie, owned XcbVoidCookie.Callback inCallback)
+    {
+        new XcbVoidCookie (this, inCookie, (owned)inCallback);
     }
 }

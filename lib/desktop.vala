@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * desktop.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -19,101 +19,33 @@
 
 public class Maia.Desktop : Object
 {
-    // types
-    [Compact]
-    public class Iterator
-    {
-        internal Desktop m_Desktop;
-        internal int m_Index;
-
-        internal Iterator (Desktop inDesktop)
-        {
-            m_Desktop = inDesktop;
-            m_Index = -1;
-        }
-
-        public bool
-        next ()
-        {
-            bool ret = false;
-            int nb_items = m_Desktop.nb_childs;
-
-            if (m_Index == -1 && nb_items > 0)
-            {
-                m_Index = 0;
-                ret = true;
-            }
-            else if (m_Index < nb_items)
-            {
-                m_Index++;
-                ret = m_Index < nb_items;
-            }
-
-            return ret;
-        }
-
-        public unowned Workspace?
-        get ()
-        {
-            return (Workspace)m_Desktop.get_child_at (m_Index);
-        }
-    }
-
-    // properties
-    private unowned DesktopProxy m_Proxy;
-
     // accessors
-    public unowned DesktopProxy proxy {
+    public virtual unowned Workspace? default_workspace {
         get {
-            return m_Proxy;
-        }
-    }
-
-    public int nb_workspaces {
-        get {
-            return nb_childs;
-        }
-    }
-
-    public unowned Workspace? default_workspace {
-        get {
-            return m_Proxy.default_workspace;
+            return null;
         }
     }
 
     // methods
-    construct
-    {
-        m_Proxy = delegate_cast<DesktopProxy> ();
-    }
-
     internal override bool
     can_append_child (Object inChild)
     {
         return inChild is Workspace;
     }
 
-    internal override string
-    to_string ()
-    {
-        return m_Proxy.to_string ();
-    }
-
     public new unowned Workspace?
     @get (int inNumWorkspace)
     {
-        return (Workspace)get_child_at (inNumWorkspace);
-    }
+        int cpt = 0;
 
-    public new Iterator
-    iterator ()
-    {
-        return new Iterator (this);
-    }
-
-    public void
-    flush ()
-    {
-        m_Proxy.flush ();
+        foreach (unowned Object child in this)
+        {
+            if (cpt == inNumWorkspace)
+            {
+                return child as Workspace;
+            }
+            cpt++;
+        }
+        return null;
     }
 }

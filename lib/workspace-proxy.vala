@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * workspace-proxy.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,17 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.WorkspaceProxy : View
+internal abstract class Maia.WorkspaceProxy : View
 {
     // accessors
-    public abstract uint                  num   { get; }
-    public abstract Window                root  { get; }
+    public abstract uint   num   { get; }
+    public abstract Window root  { get; }
 
-    // accessors
-    public abstract unowned GraphicDevice?  back_buffer    { get; }
-    public abstract unowned GraphicDevice?  front_buffer   { get; }
-
-    // // events
+    // events
     public abstract CreateWindowEvent create_window_event { get; }
     public abstract DestroyWindowEvent destroy_window_event { get; }
     public abstract ReparentWindowEvent reparent_window_event { get; }

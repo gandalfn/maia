@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * xcb-window-geometry.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -20,25 +20,22 @@
 internal class Maia.XcbWindowGeometry : XcbRequest
 {
     // properties
-    private Region m_Area;
+    private Graphic.Region m_Area;
 
     // accessors
-    public Region area {
+    public Graphic.Region area {
         get {
             return m_Area;
         }
         set {
             m_Area = value;
-            window.delegator.notify["geometry"].disconnect (on_window_property_changed);
-            window.geometry = m_Area;
-            window.delegator.notify["geometry"].connect (on_window_property_changed);
         }
     }
 
     // methods
     construct
     {
-        m_Area = new Region ();
+        m_Area = Graphic.Region.create ();
 
         window.delegator.notify["geometry"].connect (on_window_property_changed);
         if (!((Window)window.delegator).is_foreign)
@@ -69,9 +66,9 @@ internal class Maia.XcbWindowGeometry : XcbRequest
 
         if (reply != null)
         {
-            m_Area = new Region.raw_rectangle (reply.x, reply.y,
-                                               reply.width + (reply.border_width * 2),
-                                               reply.height + (reply.border_width * 2));
+            m_Area = Graphic.Region.create (Graphic.Rectangle (reply.x, reply.y,
+                                                               reply.width + (reply.border_width * 2),
+                                                               reply.height + (reply.border_width * 2)));
             notify_property ("area");
         }
     }

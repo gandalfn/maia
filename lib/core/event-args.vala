@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * event-args.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,31 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.EventArgs
+public abstract class Maia.EventArgs : GLib.Object
 {
     ~EventArgs ()
     {
         Log.audit ("Maia.~EventArgs", "destroy");
-    }
-}
-
-public class Maia.EventArgs1<A> : EventArgs
-{
-    public A a { get; private set; }
-
-    public EventArgs1 (A inA)
-    {
-        a = inA;
-    }
-}
-
-public class Maia.EventArgs2<A, B> : EventArgs1<A>
-{
-    public B b { get; private set; }
-
-    public EventArgs2 (A inA, B inB)
-    {
-        base (inA);
-        b = inB;
     }
 }

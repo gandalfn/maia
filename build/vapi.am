@@ -1,16 +1,30 @@
 $(MAIA_LIB_NAME).vapi: lib$(subst -,_,$(MAIA_LIB_NAME))_la_vala.stamp
 
+$(MAIA_LIB_NAME).h: lib$(subst -,_,$(MAIA_LIB_NAME))_la_vala.stamp
+
 $(MAIA_LIB_NAME)-$(MAIA_ABI).vapi: $(MAIA_EXTRA_VAPIS) $(MAIA_LIB_NAME).vapi
 	$(AM_V_GEN) cat $^ > $@
 
-$(MAIA_LIB_NAME)-$(MAIA_ABI).deps: $(MAIA_LIB_NAME).vapi $(MAIA_VAPI_DEPS)
+$(MAIA_LIB_NAME).deps: $(MAIA_LIB_NAME).vapi $(addprefix $(top_builddir)/lib/, $(addsuffix -$(MAIA_ABI).vapi, $(MAIA_VAPI_DEPS)))
 	$(AM_V_GEN) touch $@; \
-	for i in $(notdir $(basename $(MAIA_VAPI_DEPS))); \
-	do \
-	    echo $$i >> $@; \
-	done
+    echo "$(notdir $(basename $(MAIA_EXTRA_VAPIS)))" >> $@
+
+$(MAIA_LIB_NAME)-$(MAIA_ABI).deps: $(MAIA_LIB_NAME).vapi $(MAIA_LIB_NAME).deps $(addprefix $(top_builddir)/lib/, $(addsuffix -$(MAIA_ABI).vapi, $(MAIA_VAPI_DEPS)))
+	$(AM_V_GEN) touch $@; \
+    for i in $(notdir $(basename $(MAIA_VAPI_DEPS))); \
+    do \
+        echo $$i-$(MAIA_ABI) >> $@; \
+    done
+
+includelib_HEADERS = \
+    $(MAIA_LIB_NAME).h \
+    $(addsuffix .h, $(notdir $(basename $(MAIA_EXTRA_VAPIS))))
 
 VALAFLAGS += \
+    --header=$(MAIA_LIB_NAME).h \
+    --internal-header=$(MAIA_LIB_NAME)-internal.h \
+    --library=$(MAIA_LIB_NAME) \
+    --internal-vapi=$(MAIA_LIB_NAME)-internal.vapi \
     $(addprefix --pkg=, $(notdir $(basename $(MAIA_EXTRA_VAPIS)))) \
     $(addprefix --vapidir=, $(dir $(MAIA_EXTRA_VAPIS)))
 
@@ -23,6 +37,10 @@ EXTRA_DIST += \
 
 CLEANFILES += \
     $(vapi_DATA) \
+    $(MAIA_LIB_NAME).h \
     $(MAIA_LIB_NAME).vapi \
+    $(MAIA_LIB_NAME).deps \
+    $(MAIA_LIB_NAME)-internal.h \
+    $(MAIA_LIB_NAME)-internal.vapi \
     $(MAIA_LIB_NAME)-$(MAIA_ABI).vapi \
     $(MAIA_LIB_NAME)-$(MAIA_ABI).deps

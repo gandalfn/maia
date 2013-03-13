@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * watch.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,139 +17,90 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Watch : Task
+public abstract class Maia.Watch : Object
 {
-    // Types
-    public enum Flags
-    {
-        NONE = 0,
-        IN   = 1 << 0,
-        OUT  = 1 << 1,
-        ERR  = 1 << 2
-    }
+    // properties
+    private GLib.Source m_Source;
+    private GLib.PollFD m_Fd = GLib.PollFD ();
 
-    // Properties
-    private int m_Fd;
-    private int m_WatchFd;
-    private Flags m_Flags = Flags.NONE;
-
-    // Accessors
-
-    /**
-     * {@inheritDoc}
-     */
-    [CCode (notify = false)]
-    public override Object parent {
-        get {
-            return base.parent;
-        }
-        construct set {
-            if (base.parent != value)
-            {
-                if (base.parent != null)
-                    ((Dispatcher)base.parent).remove_watch (this);
-
-                base.parent = value;
-
-                if (value != null)
-                    ((Dispatcher)value).add_watch (this);
-            }
-        }
-    }
-
+    // accessors
     /**
      * File descriptor watched
      */
     public int fd {
         get {
-            return m_Fd;
+            return m_Fd.fd;
         }
     }
 
-    internal virtual int watch_fd {
-        get {
-            if (m_WatchFd < 0) m_WatchFd = Os.dup (m_Fd);
-            return m_WatchFd;
-        }
-    }
-
-    /**
-     * Watch flags
-     */
-    public Flags flags {
-        get {
-            return m_Flags;
-        }
-    }
-
-    // Methods
-
+    // methods
     /**
      * Create a new File descriptor watcher
      *
      * @param inFd file descriptor to watch
      * @param inPriority watch priority
      */
-    public Watch (int inFd, Flags inFlags, Task.Priority inPriority = Task.Priority.NORMAL)
+    public Watch (int inFd, GLib.MainContext? inContext = null, int inPriority = GLib.Priority.DEFAULT)
     {
-        base (inPriority);
+        m_Fd.fd = inFd;
+        m_Fd.events = GLib.IOCondition.IN  | GLib.IOCondition.PRI |
+                      GLib.IOCondition.ERR | GLib.IOCondition.HUP;
 
-        m_Fd = inFd;
-        m_Flags = inFlags;
-        m_WatchFd = -1;
-        state = Task.State.WAITING;
+        m_Source = new Source (on_prepare, on_check, on_dispatch);
+        m_Source.add_poll (ref m_Fd);
+        m_Source.set_can_recurse (true);
+        m_Source.set_priority (inPriority);
+
+        m_Source.attach (inContext);
     }
 
     ~Watch ()
     {
-        if (m_WatchFd >= 0) Os.close (m_WatchFd);
-        m_WatchFd = -1;
+        m_Source.destroy ();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    internal override void*
-    main ()
+    private bool
+    check ()
     {
-        void* ret = base.main ();
-
-        state = Task.State.WAITING;
-
-        return ret;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    internal override void
-    sleep (ulong inTimeoutMs)
-    {
-        base.sleep (inTimeoutMs);
-        if (parent != null)
+        if ((m_Fd.revents & GLib.IOCondition.ERR)  == GLib.IOCondition.ERR ||
+            (m_Fd.revents & GLib.IOCondition.HUP)  == GLib.IOCondition.HUP ||
+            (m_Fd.revents & GLib.IOCondition.NVAL) == GLib.IOCondition.NVAL)
         {
-            (parent as Dispatcher).remove_watch (this);
+            on_error ();
+            return false;
         }
+
+        return ((m_Fd.revents & GLib.IOCondition.IN)  == GLib.IOCondition.IN ||
+                (m_Fd.revents & GLib.IOCondition.PRI) == GLib.IOCondition.PRI);
+    }
+
+    private bool
+    on_dispatch (SourceFunc inCallback)
+    {
+        return on_process ();
+    }
+
+    protected virtual bool
+    on_prepare (out int outTimeout)
+    {
+        outTimeout = -1;
+
+        return check ();
+    }
+
+    protected virtual bool
+    on_check ()
+    {
+        return check ();
     }
 
     /**
-     * {@inheritDoc}
+     * Called when an error occur on fd
      */
-    internal override void
-    wakeup ()
-    {
-        base.wakeup ();
-        if (parent != null)
-        {
-            (parent as Dispatcher).add_watch (this);
-            state = Task.State.WAITING;
-        }
-    }
+    protected abstract void on_error ();
 
-    internal virtual void
-    close_watch_fd ()
-    {
-        if (m_WatchFd >= 0) Os.close (m_WatchFd);
-        m_WatchFd = -1;
-    }
+    /**
+     * Called when a data has been available on fd
+     */
+    protected abstract bool on_process ();
 }

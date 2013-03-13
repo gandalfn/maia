@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * xcb-redraw-dispatcher.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -22,7 +22,7 @@ internal class Maia.XcbRedrawDispatcher : Object
     // properties
     private unowned Workspace m_Workspace = null;
     private TicTac            m_RefreshTicTac = null;
-    private Region            m_DamagedArea = null;
+    private Graphic.Region    m_DamagedArea = null;
     private Set<uint32>       m_DamagedWindow = null;
 
     // accessors
@@ -34,9 +34,6 @@ internal class Maia.XcbRedrawDispatcher : Object
             base.parent = value;
             if (m_RefreshTicTac != null)
                 m_RefreshTicTac.parent = value;
-
-            if (m_Workspace != null)
-                m_Workspace.queue_draw_event.listen (on_queue_draw, ((Dispatcher)value));
         }
     }
 
@@ -60,7 +57,7 @@ internal class Maia.XcbRedrawDispatcher : Object
     {
         if (m_DamagedArea != null)
         {
-            Log.audit (GLib.Log.METHOD, "refresh %s", m_DamagedArea.to_string ());
+            Log.audit (GLib.Log.METHOD, "refresh %s", m_DamagedArea.extents.to_string ());
 
             m_DamagedWindow.iterator ().foreach ((id) => {
                 unowned Window? window = (Window)m_Workspace[id];
@@ -94,28 +91,5 @@ internal class Maia.XcbRedrawDispatcher : Object
     {
         if (m_DamagedArea == null)
             m_RefreshTicTac.sleep ();
-    }
-
-    private void
-    on_queue_draw (QueueDrawEventArgs inArgs)
-    {
-        Log.audit (GLib.Log.METHOD, "");
-
-        if (inArgs.window != null)
-            m_DamagedWindow.insert (inArgs.window.id);
-
-        if (m_DamagedArea == null)
-        {
-            m_DamagedArea = inArgs.area;
-        }
-        else
-        {
-            m_DamagedArea.union (inArgs.area);
-        }
-
-        if (m_RefreshTicTac.state == Task.State.SLEEPING)
-        {
-            m_RefreshTicTac.wakeup ();
-        }
     }
 }

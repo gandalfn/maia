@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * event.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -20,86 +20,67 @@
 public class Maia.Event<A> : Object
 {
     // types
+    internal struct Hash
+    {
+        public void*  owner;
+        public uint32 id;
+
+        public Hash (void* inOwner, uint32 inId)
+        {
+            owner = inOwner;
+            id = inId;
+        }
+
+        public int
+        compare (Hash inOther)
+        {
+            int ret = direct_compare (owner, inOther.owner);
+            if (ret == 0)
+            {
+                return (int)(id - inOther.id);
+            }
+
+            return ret;
+        }
+    }
+
+    /**
+     * The listen event handler
+     *
+     * @param inArgs EventArgs of notification
+     */
     public delegate void Handler<A> (A? inArgs);
 
-    // properties
-    private void* m_Owner  = null;
-    private A     m_Args   = null;
-    private bool  m_Sender = false;
-
     // accessors
+    /**
+     * The name of event
+     */
     public string name {
-        get {
-            return Atom.to_string (id);
+        owned get {
+            return id.to_string ();
         }
     }
 
-    [CCode (notify = false)]
-    public void* owner {
-        get {
-            return m_Owner;
-        }
-        construct {
-            m_Owner = value;
-        }
-    }
-
-    public A args {
-        get {
-            return m_Args;
-        }
-    }
-
-    internal EventArgs event_args {
-        get {
-            return (EventArgs)m_Args;
-        }
-    }
-
-    // static methods
-    public static void
-    post_event<A> (string inName, void* inOwner, owned A? inArgs = null,
-                   Dispatcher inDispatcher = Dispatcher.self)
-    {
-        Event<A> event = new Event<A> (inName, inOwner);
-        event.m_Args = inArgs;
-        event.m_Sender = true;
-        Log.debug (GLib.Log.METHOD, "post event %s", inName);
-        inDispatcher.post_event (event);
-    }
+    /**
+     * The owner of event
+     */
+    public void* owner { get; construct; default = null; }
 
     // methods
-
     /**
      * Create a new event
      *
      * @param inName event name
-     * @param inOwner event object owner
+     * @param inOwner owner of event
      */
     public Event (string inName, void* inOwner = null)
-        requires (typeof (A).is_a (typeof (EventArgs)))
     {
-        GLib.Object (id: Atom.from_string (inName), owner: inOwner);
-    }
-
-    /**
-     * Create a new event
-     *
-     * @param inId event id
-     * @param inOwner event object owner
-     */
-    private Event.with_id (uint32 inId, void* inOwner = null)
-        requires (typeof (A).is_a (typeof (EventArgs)))
-    {
-        GLib.Object (id: inId, owner: inOwner);
+        GLib.Object (id: GLib.Quark.from_string (inName), owner: inOwner);
     }
 
     ~Event ()
     {
-        if (!m_Sender)
-        {
-            Dispatcher.remove_event_listeners (this);
-        }
+        Dispatcher.MessageDestroyEvent (Event.Hash (owner, id)).post ();
     }
 
     protected virtual void
@@ -110,16 +91,15 @@ public class Maia.Event<A> : Object
     /**
      * Post event
      *
-     * @param inDispatcher dispatcher
+     * @param inArgs event args
      */
     public void
-    post (A? inArgs = null, Dispatcher inDispatcher = Dispatcher.self)
+    post (A? inArgs = null)
+        requires (inArgs is EventArgs)
     {
-        Event<A> event = new Event<A>.with_id (id, owner);
-        event.m_Args = inArgs;
-        event.m_Sender = true;
         Log.debug (GLib.Log.METHOD, "post event %s", name);
-        inDispatcher.post_event (event);
+
+        Dispatcher.MessageEvent (Event.Hash (owner, id), inArgs as EventArgs).post ();
     }
 
     /**
@@ -128,11 +108,27 @@ public class Maia.Event<A> : Object
      * @param inHandler event handler
      * @param inDispatcher dispatcher
      */
-    public void
-    listen (Handler<A> inHandler, Dispatcher inDispatcher = Dispatcher.self)
+    public unowned EventListener?
+    listen (owned Handler<A> inHandler, Dispatcher inDispatcher = Dispatcher.self)
     {
-        EventListener event_listener = new EventListener (this, inHandler);
-        inDispatcher.add_listener (event_listener);
-        on_listen ();
+        unowned EventListener? listener = inDispatcher.create_event_listener (Event.Hash (owner, id), (owned)inHandler);
+        if (listener != null)
+        {
+            on_listen ();
+        }
+
+        return listener;
+    }
+
+    internal override int
+    compare (Object inObject)
+    {
+        int ret = direct_compare (owner, (inObject as Event).owner);
+        if (ret == 0)
+        {
+            return base.compare (inObject);
+        }
+
+        return ret;
     }
 }

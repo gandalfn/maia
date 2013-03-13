@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * damage-event.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -21,10 +21,10 @@ public class Maia.DamageEventArgs : EventArgs
 {
     // accessors
     [CCode (notify = false)]
-    public Region area { get; private set; }
+    public Graphic.Region area { get; private set; }
 
     // methods
-    public DamageEventArgs (Region inArea)
+    public DamageEventArgs (Graphic.Region inArea)
     {
         area = inArea;
     }
@@ -33,8 +33,8 @@ public class Maia.DamageEventArgs : EventArgs
 public class Maia.DamageEvent : Event<DamageEventArgs>
 {
     // methods
-    public DamageEvent (void* inOwner)
+    public DamageEvent (View inView)
     {
-        base ("damage-event", inOwner);
+        base ("damage-event", inView);
     }
 }

@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * maia-queue.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -25,10 +25,11 @@ public class Maia.Queue<V> : Array<V>
         base ();
     }
 
-    public unowned V?
+    public V
     pop ()
+        requires (length > 0)
     {
-        unowned V? val = at (0);
+        V? val = at (length - 1);
         if (val != null)
         {
             remove (val);

@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * xcb-backend.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -20,9 +20,11 @@
 namespace Maia.XcbBackend
 {
     // methods
+    [CCode (cname = "maia_xcb_create_application")]
     public static Application
-    create_application ()
+    create_application (string[] inArgs)
     {
-        return new XcbApplication ();
+        Graphic.Cairo.init ();
+        return new XcbApplication (null);
     }
 }

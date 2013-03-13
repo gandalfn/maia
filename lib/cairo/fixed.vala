@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * graphic-device.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * fixed.vala
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,8 +17,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.GraphicDevice : Object
+[SimpleType, IntegerType (rank = 6), CCode (has_type_id = false)]
+internal struct Maia.Graphic.Fixed : int32
 {
+    // constants
+    const Fixed e = 1;
+
+    // static methods
+    public static inline Fixed
+    from_int (int inVal)
+    {
+        return (Fixed)(inVal << 16);
+    }
+
+    public static inline Fixed
+    from_double (double inVal)
+    {
+        return (Fixed)(inVal * 65536.0);
+    }
+
     // methods
-    public abstract GraphicContext create_context ();
+    public inline int
+    to_int ()
+    {
+        return (int)(this >> 16);
+    }
+
+    public inline double
+    to_double ()
+    {
+        return (double)this / (double)from_int (1);
+    }
 }

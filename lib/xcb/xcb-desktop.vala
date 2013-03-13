@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * xcb-desktop.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -19,21 +19,10 @@
 
 internal class Maia.XcbDesktop : DesktopProxy
 {
-    // types
-    private enum RequestQueue
-    {
-        QUERY,
-        COMMIT,
-        N
-    }
-
     // properties
-    private Xcb.Connection    m_Connection       = null;
-    private int               m_DefaultScreenNum = 0;
-
-    private XcbAtoms          m_Atoms            = null;
-
-    private Atomic.Queue<unowned XcbRequest?> m_Requests[2];
+    private Xcb.Connection m_Connection       = null;
+    private int            m_DefaultScreenNum = 0;
+    private XcbAtoms       m_Atoms            = null;
 
     // accessors
     public Xcb.Connection connection {
@@ -42,9 +31,9 @@ internal class Maia.XcbDesktop : DesktopProxy
         }
     }
 
-    public override Workspace default_workspace {
+    public override int default_workspace {
         get {
-            return (Workspace)get_child_at (m_DefaultScreenNum);
+            return m_DefaultScreenNum;
         }
     }
 
@@ -57,17 +46,11 @@ internal class Maia.XcbDesktop : DesktopProxy
     // methods
     construct
     {
-        // Create request queue
-        for (int cpt = 0; cpt < RequestQueue.N; ++cpt)
-        {
-            m_Requests[cpt] = new Atomic.Queue<unowned XcbRequest?> ();
-        }
-
         // Get name
-        string? name = Atom.to_string (id);
+        string? name = GLib.Quark.to_string (id);
 
         // Open connection
-        m_Connection = new Xcb.Connection(name, out m_DefaultScreenNum);
+        m_Connection = new Xcb.Connection (name, out m_DefaultScreenNum);
         if (m_Connection == null)
         {
             error ("Error on open display %s", name);
@@ -77,21 +60,23 @@ internal class Maia.XcbDesktop : DesktopProxy
         // Get atoms
         m_Atoms = new XcbAtoms (this);
 
+        // Create cookies queue
+        m_Cookies = new Set<XcbCookie> ();
+
         // Create screen collection
-        int nbScreens = m_Connection.get_setup().roots_length();
-        if (nbScreens <= 0)
+        if (m_Connection.roots.length <= 0)
         {
             error ("Error on create screen list %s", name);
         }
 
         int cpt = 0;
-        for (Xcb.ScreenIterator iter = m_Connection.get_setup().roots_iterator();
-             cpt < nbScreens; ++cpt, Xcb.ScreenIterator.next(ref iter))
+        foreach (unowned Xcb.Screen? screen in m_Connection.roots)
         {
             debug (GLib.Log.METHOD, "create xcb workspace %i", cpt);
             Workspace workspace = new Workspace (delegator as Desktop);
             XcbWorkspace proxy = workspace.delegate_cast<XcbWorkspace> ();
-            proxy.init (iter.data, cpt);
+            proxy.init (screen, cpt);
+            cpt++;
         }
     }
 
@@ -108,41 +93,9 @@ internal class Maia.XcbDesktop : DesktopProxy
         return ret;
     }
 
-    public void
-    add_request (XcbRequest inRequest)
-    {
-        switch (inRequest.state)
-        {
-            case XcbRequest.State.QUERYING:
-                m_Requests[RequestQueue.QUERY].enqueue (inRequest);
-                break;
-
-            case XcbRequest.State.COMMITING:
-                m_Requests[RequestQueue.COMMIT].enqueue (inRequest);
-                break;
-        }
-    }
-
     public override void
     flush ()
     {
-        unowned XcbRequest? request = null;
-
-        while ((request = m_Requests[RequestQueue.COMMIT].dequeue ()) != null &&
-                request is XcbRequest)
-        {
-            request.process ();
-        }
-
         m_Connection.flush ();
-
-        while ((request = m_Requests[RequestQueue.QUERY].dequeue ()) != null &&
-               request is XcbRequest)
-        {
-            if (request.state == XcbRequest.State.QUERYING)
-            {
-                request.process ();
-            }
-        }
     }
 }

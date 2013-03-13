@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * xcb-window-attributes.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -56,9 +56,9 @@ internal class Maia.XcbWindowAttributes : XcbRequest
 
     public uint event_mask {
         get {
-            rw_lock.read_lock ();
+            read_lock ();
             uint ret = m_EventMask;
-            rw_lock.read_unlock ();
+            read_unlock ();
 
             return ret;
         }
@@ -71,10 +71,10 @@ internal class Maia.XcbWindowAttributes : XcbRequest
     construct
     {
         window.notify["event-mask"].connect (() => {
-            rw_lock.write_lock ();
+            write_lock ();
             m_EventMask = window.event_mask;
             m_Mask |= Xcb.CW.EVENT_MASK;
-            rw_lock.write_unlock ();
+            write_unlock ();
             commit ();
         });
 
@@ -128,9 +128,9 @@ internal class Maia.XcbWindowAttributes : XcbRequest
     {
         uint32[] values_list = {};
 
-        rw_lock.read_lock ();
+        read_lock ();
         uint mask = m_Mask;
-        rw_lock.read_unlock ();
+        read_unlock ();
 
         if ((mask & Xcb.CW.OVERRIDE_REDIRECT) == Xcb.CW.OVERRIDE_REDIRECT)
         {
@@ -145,9 +145,9 @@ internal class Maia.XcbWindowAttributes : XcbRequest
         XcbDesktop desktop = window.xcb_desktop;
         ((Xcb.Window)window.id).change_attributes (desktop.connection, mask, values_list);
 
-        rw_lock.write_lock ();
+        write_lock ();
         m_Mask = 0;
-        rw_lock.write_unlock ();
+        write_unlock ();
 
         base.on_commit ();
     }

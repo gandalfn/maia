@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * geometry-event.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -21,10 +21,10 @@ public class Maia.GeometryEventArgs : EventArgs
 {
     // accessors
     [CCode (notify = false)]
-    public Region geometry { get; private set; }
+    public Graphic.Region geometry { get; private set; }
 
     // methods
-    public GeometryEventArgs (Region inGeometry)
+    public GeometryEventArgs (Graphic.Region inGeometry)
     {
         geometry = inGeometry;
     }
@@ -33,8 +33,8 @@ public class Maia.GeometryEventArgs : EventArgs
 public class Maia.GeometryEvent : Event<GeometryEventArgs>
 {
     // methods
-    public GeometryEvent (void* inOwner)
+    public GeometryEvent (View inView)
     {
-        base ("geometry-event", inOwner);
+        base ("geometry-event", inView);
     }
 }

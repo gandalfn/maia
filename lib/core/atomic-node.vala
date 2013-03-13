@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * atomic-node.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+[CCode (has_type_id = false)]
 internal struct Maia.Atomic.Node<T>
 {
     // properties
@@ -25,6 +26,7 @@ internal struct Maia.Atomic.Node<T>
     public Machine.Memory.Atomic.Pointer next;
 }
 
+[CCode (has_type_id = false)]
 internal struct Maia.Atomic.NodePool<T>
 {
     // properties

@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * array.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -364,9 +364,11 @@ public class Maia.Array <V> : Collection <V>
     /**
      * {@inheritDoc}
      */
-    internal override void
+    internal override Maia.Iterator<V>
     insert (V inValue)
     {
+        Iterator<V> iter;
+
         if (m_Sorted)
         {
             int pos = get_nearest_pos (inValue);
@@ -383,6 +385,8 @@ public class Maia.Array <V> : Collection <V>
 
             m_pContent[pos].val = inValue;
 
+            iter = new Iterator<V> (this, pos);
+
             stamp++;
         }
         else
@@ -392,8 +396,12 @@ public class Maia.Array <V> : Collection <V>
 
             m_pContent[m_Size - 1].val = inValue;
 
+            iter = new Iterator<V> (this, m_Size - 1);
+
             stamp++;
         }
+
+        return iter;
     }
 
     /**

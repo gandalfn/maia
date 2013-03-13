@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * xcb-reparent-window-event.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -48,7 +48,7 @@ internal class Maia.XcbReparentWindowEvent : ReparentWindowEvent
                         if (parent != null && window != null)
                         {
                             ReparentWindowEventArgs args = new ReparentWindowEventArgs (parent, window);
-                            window.parent = parent;
+                            window.proxy.parent = parent;
                             workspace.reparent_window_event.post (args);
 
                             break;

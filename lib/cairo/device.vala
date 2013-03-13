@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * graphic-pattern.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * cairo-graphic-device.vala
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,11 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.GraphicPattern : Object
+public abstract class Maia.Graphic.Cairo.Device : Maia.Graphic.Device
 {
     // accessors
-    public abstract GraphicContext context       { get; }
-    public abstract GraphicColor   color         { get; set; }
-    public abstract Point          source_offset { get; set; }
-    public abstract GraphicDevice  source        { get; set; }
+    public abstract global::Cairo.Surface surface { get; }
+
+    // methods
+    public override Graphic.Context
+    create_context ()
+    {
+        return new Context (this);
+    }
 }

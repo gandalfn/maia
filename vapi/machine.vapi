@@ -39,13 +39,6 @@ namespace Machine
             public static void memory ();
         }
 
-        namespace Volatile
-        {
-            [CCode (cname = "volatile guint")]
-            public struct uint : global::uint {
-            }
-        }
-
         namespace Atomic
         {
             [CCode (cname = "volatile void*", default_value = "NULL")]
@@ -255,10 +248,10 @@ namespace Machine
             [CCode (cname = "volatile guint32", default_value = "0")]
             public struct uint32
             {
-                [CCode (cname = "machine_memory_atomic_get_32")]
+                [CCode (cname = "machine_memory_atomic_load_32")]
                 public global::uint32 get ();
 
-                [CCode (cname = "machine_memory_atomic_set_32")]
+                [CCode (cname = "machine_memory_atomic_store_32")]
                 public void set (global::uint32 inVal);
 
                 [CCode (cname = "machine_memory_atomic_fas_32")]

@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * parser.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -34,6 +34,7 @@ public abstract class Maia.Parser : Object
     {
         NONE,
         START_ELEMENT,
+        ATTRIBUTE,
         END_ELEMENT,
         CHARACTERS,
         EOF
@@ -52,12 +53,15 @@ public abstract class Maia.Parser : Object
         public bool
         next () throws ParseError
         {
-            m_Current = m_Parser.next_token ();
+            if (m_Current != Parser.Token.EOF)
+            {
+                m_Current = m_Parser.next_token ();
+            }
 
             return m_Current != Parser.Token.EOF;
         }
 
-        public unowned Token
+        public new unowned Token
         get ()
         {
             return m_Current;
@@ -69,9 +73,11 @@ public abstract class Maia.Parser : Object
     protected char*               m_pEnd;
     protected char*               m_pCurrent;
 
-    protected string              m_Element    = null;
-    protected Map<string, string> m_Attributes = null;
-    protected string              m_Characters = null;
+    protected string              m_Element          = null;
+    protected Map<string, string> m_Attributes       = null;
+    protected string              m_Characters       = null;
+    protected string              m_CurrentAttribute = null;
+    protected string              m_CurrentValue     = null;
 
     // Accessors
     public string element {
@@ -83,6 +89,18 @@ public abstract class Maia.Parser : Object
     public Map<string, string> attributes {
         get {
             return m_Attributes;
+        }
+    }
+
+    public string current_attribute {
+        get {
+            return m_CurrentAttribute;
+        }
+    }
+
+    public string current_value {
+        get {
+            return m_CurrentValue;
         }
     }
 
@@ -123,7 +141,6 @@ public abstract class Maia.Parser : Object
     public new Iterator
     iterator ()
     {
-        m_pCurrent = m_pBegin;
         return new Iterator (this);
     }
 }

@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * list.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -213,9 +213,11 @@ public class Maia.List<V> : Collection<V>
     /**
      * {@inheritDoc}
      */
-    internal override void
+    internal override Maia.Iterator<V>
     insert (V inValue)
     {
+        Iterator<V> iter;
+
         // Create new node
         Node<V> new_node = new Node<V> (inValue);
 
@@ -224,6 +226,7 @@ public class Maia.List<V> : Collection<V>
         {
             m_Tail = new_node;
             m_Head = (owned)new_node;
+            iter = new Iterator<V> (this, new_node);
         }
         // Insert at end of list
         else if (!m_Sorted)
@@ -231,6 +234,7 @@ public class Maia.List<V> : Collection<V>
             new_node.m_Prev = m_Tail;
             m_Tail = new_node;
             m_Tail.m_Prev.m_Next = (owned)new_node;
+            iter = new Iterator<V> (this, new_node);
         }
         else
         {
@@ -262,11 +266,15 @@ public class Maia.List<V> : Collection<V>
                 new_node.m_Next.m_Prev = new_node;
                 m_Head = (owned)new_node;
             }
+
+            iter = new Iterator<V> (this, new_node);
         }
 
         m_Size++;
 
         stamp++;
+
+        return iter;
     }
 
     /**
@@ -382,4 +390,3 @@ public class Maia.List<V> : Collection<V>
         remove_node (iter.current);
    }
 }
-

@@ -1,24 +1,15 @@
+includelibdir = $(includedir)/xml
+
 MAIA_LIB_NAME = maia-xml
 
 MAIA_VAPI_DEPS = \
-    $(top_builddir)/lib/core/maia-core-$(MAIA_ABI).vapi
+    core/maia-core
 
 include $(top_srcdir)/build/maia.am
 include $(top_srcdir)/build/pkgconfig.am
 include $(top_srcdir)/build/vapi.am
 
-maia-xml.h: libmaia_xml_la_vala.stamp
-
 lib_LTLIBRARIES = libmaia-xml.la
-
-includexmldir = $(includedir)/xml
-
-includexml_HEADERS = \
-    maia-xml.h
-
-libmaia_xml_la_VALAFLAGS = \
-    --header=maia-xml.h \
-    --library=maia-xml
 
 libmaia_xml_la_SOURCES = \
     xml-parser.vala \
@@ -36,8 +27,6 @@ VALAFILES = \
     $(filter %.vala,$(libmaia_xml_la_SOURCES))
 
 CLEANFILES += \
-    maia-xml.h \
     libmaia_xml_la_vala.stamp \
     $(VALAFILES:.vala=.c) \
     $(pkgconfig_DATA)
-

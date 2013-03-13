@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * reparent-window-event.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -36,8 +36,8 @@ public class Maia.ReparentWindowEventArgs : EventArgs
 public class Maia.ReparentWindowEvent : Event<ReparentWindowEventArgs>
 {
     // methods
-    public ReparentWindowEvent (void* inOwner)
+    public ReparentWindowEvent (Workspace inWorkspace)
     {
-        base ("reparent-window-event", inOwner);
+        base ("reparent-window-event", inWorkspace);
     }
 }

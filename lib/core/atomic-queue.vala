@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * atomic-queue.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -21,6 +21,7 @@ public class Maia.Atomic.Queue<V> : GLib.Object
 {
     // types
     public delegate bool ForeachFunc<V> (V? inValue);
+
 
     // properties
     private NodePool<V>                   m_Pool= NodePool<V> ();
@@ -64,8 +65,6 @@ public class Maia.Atomic.Queue<V> : GLib.Object
                 m_Tail.compare_and_swap ((void*)cur_tail, (void*)node);
                 return;
             }
-            else
-                m_Tail.compare_and_swap ((void*)cur_tail, (void*)cur_tail.next);
             Machine.CPU.pause ();
         }
     }
@@ -86,9 +85,14 @@ public class Maia.Atomic.Queue<V> : GLib.Object
             if ((void*)cur_head == (void*)cur_tail)
             {
                 if (cur_head_next == null)
+                {
                     return null;
+                }
                 else
+                {
                     m_Tail.compare_and_swap ((void*)cur_tail, (void*)cur_head_next);
+                    continue;
+                }
             }
             if (m_Head.compare_and_swap ((void*)cur_head, (void*)cur_head_next))
             {

@@ -1,10 +1,9 @@
 MAIA_VAPI_DEPS = \
-    $(top_builddir)/lib/maia-$(MAIA_ABI).vapi \
-    $(top_builddir)/lib/core/maia-core-$(MAIA_ABI).vapi \
-    $(top_builddir)/lib/xml/maia-xml-$(MAIA_ABI).vapi \
-    $(top_builddir)/lib/graphic/maia-graphic-$(MAIA_ABI).vapi \
-    $(top_builddir)/lib/cairo/maia-cairo-graphic-$(MAIA_ABI).vapi \
-    $(top_builddir)/lib/xcb/maia-xcb-backend-$(MAIA_ABI).vapi
+    maia \
+    core/maia-core \
+    xml/maia-xml \
+    graphic/maia-graphic \
+    cairo/maia-cairo-graphic
 
 include $(top_srcdir)/build/maia.am
 
@@ -16,6 +15,10 @@ noinst_PROGRAMS = \
     test \
     test-window \
     test-atomic-queue
+
+test_VALAFLAGS = \
+    --pkg=xcb-1.0 \
+    --pkg=cairo
 
 test_SOURCES = \
     test.vala \
@@ -40,6 +43,8 @@ test_LDADD = \
     ${top_builddir}/lib/libmaia.la \
     ${top_builddir}/lib/core/libmaia-core.la \
     ${top_builddir}/lib/xml/libmaia-xml.la \
+    ${top_builddir}/lib/graphic/libmaia-graphic.la \
+    ${top_builddir}/lib/cairo/libmaia-cairo-graphic.la \
     ${top_builddir}/lib/xcb/libmaia-xcb-backend.la
 
 if USE_VALGRIND
@@ -48,6 +53,10 @@ endif
 
 test_window_SOURCES = \
     test-window.vala
+
+test_window_VALAFLAGS = \
+    --pkg=xcb-1.0 \
+    --pkg=cairo
 
 test_window_LDADD = \
     $(MAIA_LIBS) \

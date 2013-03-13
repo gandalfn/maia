@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * logger.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -332,6 +332,7 @@ namespace Maia.Log
      * @param inFunction function name
      * @param inMessage log message
      */
+    [PrintfFormat]
     public static inline void
     debug (string inFunction, string inMessage, ...)
     {
@@ -350,6 +351,7 @@ namespace Maia.Log
      * @param inFunction function name
      * @param inMessage log message
      */
+    [PrintfFormat]
     public static inline void
     debug_cond (bool inCond, string inFunction, string inMessage, ...)
     {
@@ -367,6 +369,7 @@ namespace Maia.Log
      * @param inFunction function name
      * @param inMessage log message
      */
+    [PrintfFormat]
     public static inline void
     info (string inFunction, string inMessage, ...)
     {
@@ -385,6 +388,7 @@ namespace Maia.Log
      * @param inFunction function name
      * @param inMessage log message
      */
+    [PrintfFormat]
     public static inline void
     info_cond (bool inCond, string inFunction, string inMessage, ...)
     {
@@ -402,6 +406,7 @@ namespace Maia.Log
      * @param inFunction function name
      * @param inMessage log message
      */
+    [PrintfFormat]
     public static inline void
     audit (string inFunction, string inMessage, ...)
     {
@@ -420,6 +425,7 @@ namespace Maia.Log
      * @param inFunction function name
      * @param inMessage log message
      */
+    [PrintfFormat]
     public static inline void
     audit_cond (bool inCond, string inFunction, string inMessage, ...)
     {
@@ -437,6 +443,7 @@ namespace Maia.Log
      * @param inFunction function name
      * @param inMessage log message
      */
+    [PrintfFormat]
     public static inline void
     warning (string inFunction, string inMessage, ...)
     {
@@ -455,6 +462,7 @@ namespace Maia.Log
      * @param inFunction function name
      * @param inMessage log message
      */
+    [PrintfFormat]
     public static inline void
     warning_cond (bool inCond, string inFunction, string inMessage, ...)
     {
@@ -472,6 +480,7 @@ namespace Maia.Log
      * @param inFunction function name
      * @param inMessage log message
      */
+    [PrintfFormat]
     public static inline void
     critical (string inFunction, string inMessage, ...)
     {
@@ -490,6 +499,7 @@ namespace Maia.Log
      * @param inFunction function name
      * @param inMessage log message
      */
+    [PrintfFormat]
     public static inline void
     critical_cond (bool inCond, string inFunction, string inMessage, ...)
     {
@@ -507,6 +517,7 @@ namespace Maia.Log
      * @param inFunction function name
      * @param inMessage log message
      */
+    [PrintfFormat]
     public static inline void
     error (string inFunction, string inMessage, ...)
     {
@@ -525,6 +536,7 @@ namespace Maia.Log
      * @param inFunction function name
      * @param inMessage log message
      */
+    [PrintfFormat]
     public static inline void
     error_cond (bool inCond, string inFunction, string inMessage, ...)
     {

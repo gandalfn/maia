@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * xcb-damage-event.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -28,7 +28,9 @@ internal class Maia.XcbDamageEvent : DamageEvent
     post_event (Xcb.GenericEvent inEvent)
     {
         Xcb.ExposeEvent evt = (Xcb.ExposeEvent)inEvent;
-        DamageEventArgs args = new DamageEventArgs (new Region.raw_rectangle (evt.x, evt.y, evt.width, evt.height));
+        DamageEventArgs args = new DamageEventArgs (Graphic.Region.create (Graphic.Rectangle (evt.x, evt.y,
+                                                                                              evt.width, evt.height)));
+        Log.debug (GLib.Log.METHOD, "0x%lx %s", evt.window, args.area.extents.to_string ());
         Event.post_event<DamageEventArgs> ("damage-event", ((uint)evt.window).to_pointer (), args);
     }
 

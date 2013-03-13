@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * rectangle.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,8 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-[Compact]
-public class Maia.Rectangle
+public struct Maia.Graphic.Rectangle
 {
     /**
      * Origin of rectangle
@@ -42,22 +41,6 @@ public class Maia.Rectangle
     {
         origin = { inX, inY };
         size = { inWidth, inHeight };
-    }
-
-    /**
-     * Create a new rectangle from a pixman box
-     *
-     * @param inBox a pixman box
-     */
-    internal Rectangle.pixman_box (Pixman.Box32 inBox)
-    {
-        double x = ((Pixman.Fixed)inBox.x1).to_double ();
-        double y = ((Pixman.Fixed)inBox.y1).to_double ();
-        double width = ((Pixman.Fixed)inBox.x2 - (Pixman.Fixed)inBox.x1).to_double ();
-        double height = ((Pixman.Fixed)inBox.y2 - (Pixman.Fixed)inBox.y1).to_double ();
-
-        origin = { x, y };
-        size = { width, height };
     }
 
     /**
@@ -92,7 +75,7 @@ public class Maia.Rectangle
      * @param inTransform transform matrix
      */
     public void
-    transform (Maia.Transform inTransform)
+    transform (Transform inTransform)
     {
         origin.transform (inTransform);
         size.transform (inTransform);
@@ -107,23 +90,5 @@ public class Maia.Rectangle
     to_string ()
     {
         return origin.to_string () + " " + size.to_string ();
-    }
-
-    /**
-     * Returrn the pixman box representation of rectangle
-     *
-     * @return Pixman Box
-     */
-    internal Pixman.Box32 []
-    to_pixman_box ()
-    {
-        Pixman.Box32[] boxes = new Pixman.Box32 [1];
-
-        boxes[0].x1 = Pixman.Fixed.double(origin.x);
-        boxes[0].y1 = Pixman.Fixed.double(origin.y);
-        boxes[0].x2 = Pixman.Fixed.double(origin.x + size.width);
-        boxes[0].y2 = Pixman.Fixed.double(origin.y + size.height);
-
-        return boxes;
     }
 }

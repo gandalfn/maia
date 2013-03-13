@@ -7,12 +7,11 @@ INCLUDES = \
     -I$(top_srcdir)/build \
     -I$(top_srcdir)/src \
     -I$(top_srcdir)/vapi \
-    $(addprefix -I, $(dir $(MAIA_VAPI_DEPS)))
+    $(addprefix -I$(top_builddir)/lib/, $(dir $(MAIA_VAPI_DEPS)))
 
 VALAFLAGS = \
-    --debug \
+    --target-glib=2.32 \
     --thread \
-    --vapidir=$(VALA_VAPI_PATH) \
     --vapidir=${top_srcdir}/vapi \
     --pkg=config \
     --pkg=os \
@@ -20,5 +19,5 @@ VALAFLAGS = \
     --pkg=machine \
     --pkg=pixman-1 \
     --pkg=cairo \
-    $(addprefix --pkg=, $(notdir $(basename $(MAIA_VAPI_DEPS)))) \
-    $(addprefix --vapidir=, $(dir $(MAIA_VAPI_DEPS)))
+    $(addprefix --pkg=, $(addsuffix -internal, $(notdir $(basename $(MAIA_VAPI_DEPS))))) \
+    $(addprefix --vapidir=$(top_builddir)/lib/, $(dir $(MAIA_VAPI_DEPS)))

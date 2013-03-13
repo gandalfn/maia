@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * atom.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -20,6 +20,7 @@
 namespace Maia.Atom
 {
     // types
+    [CCode (has_type_id = false)]
     internal struct Node
     {
         public unowned Node?  m_Left;
@@ -142,4 +143,3 @@ namespace Maia.Atom
         return s_AtomTable != null && inAtom <= s_LastAtom ? s_AtomTable[inAtom].m_Name : null;
     }
 }
-

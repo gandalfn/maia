@@ -1,31 +1,29 @@
+SUBDIRS = . test
+
+MAIA_EXTRA_VAPIS = maia-any.vapi
+
+includelibdir = $(includedir)/core
+
 MAIA_LIB_NAME = maia-core
 
 include $(top_srcdir)/build/maia.am
 include $(top_srcdir)/build/pkgconfig.am
 include $(top_srcdir)/build/vapi.am
 
-maia-core.h: libmaia_core_la_vala.stamp
-
 lib_LTLIBRARIES = libmaia-core.la
 
-includecoredir = $(includedir)/core
-
-includecore_HEADERS = \
-    maia-core.h
-
-libmaia_core_la_VALAFLAGS = \
-    --header=maia-core.h \
-    --library=maia-core
-
 if USE_VALGRIND
-libmaia_core_la_VALAFLAGS += \
+libmaia_core_la_VALAFLAGS = \
     --pkg=valgrind \
     --define=USE_VALGRIND
 endif
 
 libmaia_core_la_SOURCES = \
+    any.c \
+    maia-any.h \
     logger.vala \
     functions.vala \
+    value.vala \
     iterator.vala \
     collection.vala \
     array.vala \
@@ -34,31 +32,20 @@ libmaia_core_la_SOURCES = \
     set.vala \
     pair.vala \
     map.vala \
-    atom.vala \
     spinlock.vala \
-    read-write-spinlock.vala \
-    atomic-node.vala \
-    atomic-stack.vala \
-    atomic-queue.vala \
-    atomic-list.vala \
     object.vala \
-    transform.vala \
-    point.vala \
-    size.vala \
-    rectangle.vala \
-    region.vala \
+    state-machine.vala \
     task.vala \
-    task-once.vala \
+    source.vala \
     watch.vala \
     timeout.vala \
-    tictac.vala \
-    timeline.vala \
+    timeout-pool.vala \
     dispatcher.vala \
-    parser.vala \
-    event.vala \
     event-args.vala \
+    event.vala \
     event-listener.vala \
-    event-dispatcher.vala
+    parser.vala \
+    node.vala
 
 libmaia_core_la_LDFLAGS = \
     -version-number @MAIA_SO_VERSION@ \
@@ -71,7 +58,6 @@ VALAFILES = \
     $(filter %.vala,$(libmaia_core_la_SOURCES))
 
 CLEANFILES += \
-    maia-core.h \
     libmaia_core_la_vala.stamp \
     $(VALAFILES:.vala=.c) \
     $(pkgconfig_DATA)
