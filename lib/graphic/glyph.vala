@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * init.vala
+ * glyph.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,12 +17,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Maia.Graphic.Cairo
+public class Maia.Graphic.Glyph : Object
 {
-    public static void
-    init ()
+    // accessors
+    public string font_description { get; construct set; }
+    public string text             { get; set; }
+    public Point  origin           { get; set; }
+
+    public virtual Size size {
+        get {
+            return Size (0, 0);
+        }
+    }
+
+    // methods
+    public Glyph (string inFontDescription)
     {
-        Any.delegate (typeof (Maia.Graphic.Region), typeof (Maia.Graphic.CairoRegion));
-        Any.delegate (typeof (Maia.Graphic.Glyph), typeof (Maia.Graphic.Cairo.Glyph));
+        GLib.Object (font_description: inFontDescription);
+    }
+
+    public virtual void
+    update (Context inContext)
+    {
     }
 }

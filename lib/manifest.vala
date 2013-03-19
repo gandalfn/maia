@@ -25,6 +25,12 @@ public class Maia.Manifest : Parser
     private string        m_LastName;
     private Queue<string> m_ElementQueue;
 
+    // Static methods
+    static construct
+    {
+        Element.register ("Label", typeof (Maia.Label));
+    }
+
     // Methods
     construct
     {
@@ -69,18 +75,16 @@ public class Maia.Manifest : Parser
     private void
     skip_comment ()
     {
-        m_pCurrent++;
-        if (m_pCurrent < m_pEnd && m_pCurrent[0] == '/')
+        if (m_pCurrent < m_pEnd - 1 && m_pCurrent[0] == '/' && m_pCurrent[1] == '/')
         {
-            m_pCurrent ++;
             while (m_pCurrent < m_pEnd)
             {
                 if (m_pCurrent[0] == '\n')
                 {
-                    m_pCurrent++;
+                    next_char ();
                     break;
                 }
-                m_pCurrent++;
+                next_char ();
             }
         }
     }
@@ -93,15 +97,14 @@ public class Maia.Manifest : Parser
         while (m_pCurrent < m_pEnd)
         {
             if (m_pCurrent[0] == '{' || m_pCurrent[0] == '\n' || m_pCurrent[0] == '}' ||
-                m_pCurrent[0] == ';' || m_pCurrent[0] == '='  || m_pCurrent[0] == '"' ||
-                m_pCurrent[0] == ' ')
+                m_pCurrent[0] == ';' || m_pCurrent[0] == ':')
                 break;
 
             unichar u = ((string) m_pCurrent).get_char_validated ((long) (m_pEnd - m_pCurrent));
             if (u != (unichar) (-1))
-                m_pCurrent += u.to_utf8 (null);
+                next_unichar (u);
             else
-                throw new ParseError.INVALID_UTF8 ("invalid UTF-8 character");
+                throw new ParseError.INVALID_UTF8 ("Invalid UTF-8 character at %i,%i", m_Line, m_Col);
 
             skip_space ();
         }
@@ -109,30 +112,24 @@ public class Maia.Manifest : Parser
         if (m_pCurrent == begin)
             return "";
 
-        return ((string) begin).substring (0, (int) (m_pCurrent - begin - 1));
+        return ((string) begin).substring (0, (int) (m_pCurrent - begin)).chomp ();
     }
 
     private void
     read_attribute_value () throws ParseError
     {
-        m_CurrentValue = text ('"', true);
-
-        if (m_pCurrent[0] != '"')
-            throw new ParseError.INVALID_NAME ("unexpected end of line %s: missing \"", m_CurrentAttribute);
-        m_pCurrent++;
-        skip_space ();
-
-        if (m_pCurrent == m_pEnd)
-            throw new ParseError.INVALID_NAME ("unexpected end of line %s: end of file", m_CurrentAttribute);
+        m_Value = text (';', true);
 
         if (m_pCurrent[0] != ';')
-            throw new ParseError.INVALID_NAME ("unexpected end of line %s: missing ;, %c", m_CurrentAttribute, m_pCurrent[0]);
-        m_pCurrent++;
+            throw new ParseError.INVALID_NAME ("Error on read attribute value %s: unexpected end of line at %i,%i missing ;",
+                                               m_Attribute, m_Line, m_Col);
+        next_char ();
 
         if (m_pCurrent == m_pEnd)
-            throw new ParseError.INVALID_NAME ("unexpected end of line %s: end of file", m_CurrentAttribute);
+            throw new ParseError.INVALID_NAME ("Error on read attribute value %s: unexpected end of line at %i,%i",
+                                               m_Attribute, m_Line, m_Col);
 
-        m_Attributes[m_CurrentAttribute] = m_CurrentValue;
+        m_Attributes[m_Attribute] = m_Value;
     }
 
     private string
@@ -147,7 +144,7 @@ public class Maia.Manifest : Parser
             unichar u = ((string) m_pCurrent).get_char_validated ((long) (m_pEnd - m_pCurrent));
             if (u == (unichar) (-1))
             {
-                throw new ParseError.INVALID_UTF8 ("invalid UTF-8 character");
+                throw new ParseError.INVALID_UTF8 ("Invalid UTF-8 character at %i,%i", m_Line, m_Col);
             }
             else
             {
@@ -156,7 +153,7 @@ public class Maia.Manifest : Parser
                     last_linebreak = m_pCurrent;
                 }
 
-                m_pCurrent += u.to_utf8 (null);
+                next_unichar (u);
             }
         }
 
@@ -186,52 +183,69 @@ public class Maia.Manifest : Parser
         {
             token = Parser.Token.EOF;
         }
+        else if (m_pCurrent[0] == '/')
+        {
+            skip_comment ();
+            token = next_token ();
+        }
         else
         {
             m_LastName = read_name ();
-            if (m_pCurrent[0] == '/')
-            {
-                skip_comment ();
-                token = next_token ();
-            }
-            else if (m_pCurrent[0] == '{')
+            if (m_pCurrent[0] == '{')
             {
                 token = Parser.Token.START_ELEMENT;
-                m_pCurrent++;
+                next_char ();
                 m_Element = m_LastName;
                 m_ElementQueue.push (m_Element);
                 m_Attributes = new Map<string, string> ();
             }
-            else if (m_pCurrent[0] == '=')
+            else if (m_pCurrent[0] == ':')
             {
-                m_CurrentAttribute = m_LastName;
-                m_pCurrent++;
+                token = Parser.Token.ATTRIBUTE;
+                next_char ();
                 skip_space ();
-                if (m_pCurrent[0] == '"')
-                {
-                    m_pCurrent++;
-                    read_attribute_value ();
-                    token = Parser.Token.ATTRIBUTE;
-                }
-                else
-                {
-                    m_pCurrent++;
-                    throw new ParseError.PARSE ("Unexpected attribute value %s", m_LastName);
-                }
+                m_Attribute = m_LastName;
+                read_attribute_value ();
             }
             else if (m_pCurrent[0] == '}')
             {
                 token = Parser.Token.END_ELEMENT;
                 m_Element = m_ElementQueue.pop ();
-                m_pCurrent++;
+                next_char ();
             }
             else
             {
-                m_pCurrent++;
-                throw new ParseError.PARSE ("Unexpected data %s %c", m_Element, m_pCurrent[0]);
+                next_char ();
+                throw new ParseError.PARSE ("Unexpected data for %s at %i,%i", m_Element, m_Line, m_Col);
             }
         }
 
         return token;
+    }
+
+    public new Element?
+    @get (string inElement) throws ParseError
+    {
+        // return on begining of file
+        m_pCurrent = m_pBegin;
+
+        // search first element which match
+        foreach (Parser.Token token in this)
+        {
+            if (token == Parser.Token.START_ELEMENT)
+            {
+                if (element == inElement)
+                {
+                    Element? ret = Element.create (element);
+                    if (ret != null)
+                    {
+                        ret.read_manifest (this);
+                    }
+                    return ret;
+                }
+            }
+        }
+
+        return null;
     }
 }

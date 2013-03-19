@@ -18,7 +18,8 @@ noinst_PROGRAMS = \
 
 test_VALAFLAGS = \
     --pkg=xcb-1.0 \
-    --pkg=cairo
+    --pkg=cairo \
+    --pkg=pangocairo
 
 test_SOURCES = \
     test.vala \
@@ -56,7 +57,8 @@ test_window_SOURCES = \
 
 test_window_VALAFLAGS = \
     --pkg=xcb-1.0 \
-    --pkg=cairo
+    --pkg=cairo \
+    --pkg=pangocairo
 
 test_window_LDADD = \
     $(MAIA_LIBS) \

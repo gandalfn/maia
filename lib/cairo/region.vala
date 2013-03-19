@@ -30,6 +30,9 @@ internal class Maia.Graphic.CairoRegion : Maia.Graphic.Region
         get {
             return ((CairoRectangle)m_Region.get_extents ()).to_rectangle ();
         }
+        construct set {
+            m_Region = new global::Cairo.Region.rectangle (CairoRectangle (value));
+        }
     }
 
     /**
@@ -41,23 +44,7 @@ internal class Maia.Graphic.CairoRegion : Maia.Graphic.Region
         }
     }
 
-    // static methods
-    public static new Region
-    create (Rectangle? inExtents)
-    {
-        return new CairoRegion (inExtents);
-    }
-
-    // methods
-    public CairoRegion (Rectangle? inExtents)
-    {
-        if (inExtents == null)
-            m_Region = new global::Cairo.Region ();
-        else
-            m_Region = new global::Cairo.Region.rectangle (CairoRectangle (inExtents));
-    }
-
-    public CairoRegion.region (global::Cairo.Region inRegion)
+    internal CairoRegion.region (global::Cairo.Region inRegion)
     {
         m_Region = inRegion;
     }

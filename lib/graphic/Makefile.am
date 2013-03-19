@@ -19,6 +19,8 @@ libmaia_graphic_la_SOURCES = \
     rectangle.vala \
     region.vala \
     color.vala \
+    path.vala \
+    glyph.vala \
     context.vala \
     pattern.vala \
     device.vala

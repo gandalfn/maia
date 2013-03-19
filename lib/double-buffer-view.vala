@@ -29,7 +29,7 @@ public class Maia.DoubleBufferView : View
     /**
      * The graphic device of front buffer
      */
-    protected Graphic.Device? front_device {
+    protected virtual Graphic.Device? front_device {
         get {
             return null;
         }
@@ -58,7 +58,7 @@ public class Maia.DoubleBufferView : View
                 Log.audit (GLib.Log.METHOD, "Swap buffer");
                 Graphic.Context ctx = front_device.create_context ();
                 ctx.save ();
-                ctx.add_clip_region (area);
+                ctx.clip (new Graphic.Path.from_region (area));
                 ctx.pattern = device;
                 ctx.paint ();
                 ctx.restore ();

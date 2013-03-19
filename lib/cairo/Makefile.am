@@ -15,7 +15,8 @@ include $(top_srcdir)/build/vapi.am
 lib_LTLIBRARIES = libmaia-cairo-graphic.la
 
 libmaia_cairo_graphic_la_VALAFLAGS = \
-    --pkg=cairo
+    --pkg=cairo \
+    --pkg=pangocairo
 
 libmaia_cairo_graphic_la_SOURCES = \
     fixed.vala \
@@ -23,7 +24,8 @@ libmaia_cairo_graphic_la_SOURCES = \
     region.vala \
     init.vala \
     device.vala \
-    context.vala
+    context.vala \
+    glyph.vala
 
 libmaia_cairo_graphic_la_LDFLAGS = \
     -version-number @MAIA_SO_VERSION@ \

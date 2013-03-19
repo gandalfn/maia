@@ -20,8 +20,16 @@
 [CCode (has_type_id = false)]
 public struct Maia.Graphic.Size
 {
+    // properties
     public double width;
     public double height;
+
+    // methods
+    public Size (double inWidth, double inHeight)
+    {
+        width = inWidth;
+        height = inHeight;
+    }
 
     /**
      * Affect size from inOther

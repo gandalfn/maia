@@ -56,6 +56,7 @@ GLIB_REQUIRED=2.24.0
 VALA_REQUIRED=0.18.0
 PIXMAN_REQUIRED=0.16.4
 CAIRO_REQUIRED=1.10.2
+PANGO_REQUIRED=1.30.0
 
 dnl ****************************************************************************
 dnl Check for build
@@ -78,6 +79,7 @@ PKG_CHECK_MODULES(MAIA, [glib-2.0 >= $GLIB_REQUIRED
                          gmodule-2.0 >= $GLIB_REQUIRED
                          pixman-1 >= $PIXMAN_REQUIRED
                          cairo >= $CAIRO_REQUIRED
+                         pangocairo >= $PANGO_REQUIRED
                          xcb])
 AC_SUBST(MAIA_CFLAGS)
 AC_SUBST(MAIA_LIBS)

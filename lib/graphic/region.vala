@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.Graphic.Region : GLib.Object
+public class Maia.Graphic.Region : Any
 {
     // types
     public enum Overlap
@@ -56,49 +56,89 @@ public abstract class Maia.Graphic.Region : GLib.Object
         }
     }
 
-    [CCode (has_target = false)]
-    internal delegate Region CreateFunc (Rectangle? inExtents);
-
-    // static properties
-    private static CreateFunc s_CreateRegion = null;
-
     // accessors
-    public abstract Rectangle extents { get; }
-    public abstract int length { get; }
+    public virtual Rectangle extents { get; construct set; }
 
-    // static methods
-    internal static void
-    set_create_func (CreateFunc inFunc)
-    {
-        s_CreateRegion = inFunc;
+    public virtual int length {
+        get {
+            return 0;
+        }
     }
 
+    // static methods
+    static construct
+    {
+        GLib.Value.register_transform_func (typeof (string), typeof (Region),
+                                            (ValueTransform)string_to_region);
+        GLib.Value.register_transform_func (typeof (Region), typeof (string),
+                                            (ValueTransform)region_to_string);
+
+        GLib.Value.register_transform_func (typeof (string), typeof (Rectangle),
+                                            (ValueTransform)Rectangle.string_to_rectangle);
+        GLib.Value.register_transform_func (typeof (Rectangle), typeof (string),
+                                            (ValueTransform)Rectangle.rectangle_to_string);
+    }
+
+    internal static void
+    region_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (Region)))
+    {
+        Region val = (Region)inSrc;
+
+        outDest = val.extents.to_string ();
+    }
+
+    internal static void
+    string_to_region (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (string)))
+        requires ((string)inSrc != null)
+    {
+        string val = (string)inSrc;
+
+        outDest = new Region.from_string (val);
+    }
+
+    // methods
     /**
      * Allocates a new region object containing inExtents.
      *
      * @param inExtents a Rectangle or ``null`` to create empty region
      */
-    public static Region?
-    create (Rectangle? inExtents = null)
-        requires (s_CreateRegion != null)
+    public Region (Rectangle? inExtents = null)
     {
-        return s_CreateRegion (inExtents);
+        GLib.Object (extents: inExtents == null ? Rectangle (0, 0, 0, 0) : inExtents);
     }
 
-    // methods
+    /**
+     * Allocates a new region object containing inExtents.
+     *
+     * @param inExtents a Rectangle string representation
+     */
+    public Region.from_string (string inExtents)
+    {
+        GLib.Object (extents: Rectangle.from_string (inExtents));
+    }
+
     /**
      * Checks whether region is empty.
      *
      * @return ``true`` if region is empty, ``false`` if it isn't.
      */
-    public abstract bool is_empty ();
+    public virtual bool
+    is_empty ()
+    {
+        return true;
+    }
 
     /**
      * Translates region by inOffset
      *
      * @param inOffset Amount to translate
      */
-    public abstract void translate (Point inOffset);
+    public virtual void
+    translate (Point inOffset)
+    {
+    }
 
     /**
      * Transform region
@@ -114,7 +154,11 @@ public abstract class Maia.Graphic.Region : GLib.Object
      *
      * @return ``true`` if inPoint is contained in region, ``false`` if it is not.
      */
-    public abstract bool contains (Point inPoint);
+    public virtual bool
+    contains (Point inPoint)
+    {
+        return false;
+    }
 
     /**
      * Returns the rectangle at the specified index in this region.
@@ -123,7 +167,11 @@ public abstract class Maia.Graphic.Region : GLib.Object
      *
      * @return the Rectangle at the specified index in the region
      */
-    public abstract new Rectangle @get (int inIndex);
+    public virtual new Rectangle
+    @get (int inIndex)
+    {
+        return Rectangle (0, 0, 0, 0);
+    }
 
     /**
      * Returns a Iterator that can be used for simple iteration of region rectangles.
@@ -141,7 +189,11 @@ public abstract class Maia.Graphic.Region : GLib.Object
      *
      * @return A newly allocated Region
      */
-    public abstract Region copy ();
+    public virtual Region
+    copy ()
+    {
+        return new Region ();
+    }
 
     /**
      * Compares whether this is equivalent to inOther.
@@ -150,28 +202,41 @@ public abstract class Maia.Graphic.Region : GLib.Object
      *
      * @return ``true`` if both regions contained the same coverage, ``false`` if it is not
      */
-    public abstract bool equal (Region inOther);
+    public virtual bool
+    equal (Region inOther)
+    {
+        return false;
+    }
 
     /**
      * Computes the union of this with inOther and places the result in this
      *
      * @param inOther another Region
      */
-    public abstract void union_ (Region inOther);
+    public virtual void
+    union_ (Region inOther)
+    {
+    }
 
     /**
      * Computes the intersection of this with inOther and places the result in this
      *
      * @param inOther another Region
      */
-    public abstract void intersect (Region inOther);
+    public virtual void
+    intersect (Region inOther)
+    {
+    }
 
     /**
      * Subtracts inOther from this and places the result in this
      *
      * @param inOther another Region
      */
-    public abstract void subtract (Region inOther);
+    public virtual void
+    subtract (Region inOther)
+    {
+    }
 
     /**
      * Computes the exclusive difference of this with inOther and places the result
@@ -180,7 +245,10 @@ public abstract class Maia.Graphic.Region : GLib.Object
      *
      * @param inOther another Region
      */
-    public abstract void xor (Region inOther);
+    public virtual void
+    xor (Region inOther)
+    {
+    }
 
     /**
      * Checks whether inRect is inside, outside or partially contained in region
@@ -191,5 +259,9 @@ public abstract class Maia.Graphic.Region : GLib.Object
      * is entirely outside region, or Overlap.PART if inRect is partially inside
      * and partially outside region.
      */
-    public abstract Overlap contains_rectangle (Rectangle inRect);
+    public virtual Overlap
+    contains_rectangle (Rectangle inRect)
+    {
+        return Overlap.OUT;
+    }
 }

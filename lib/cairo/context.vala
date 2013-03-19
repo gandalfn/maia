@@ -19,25 +19,9 @@
 
 internal class Maia.Graphic.Cairo.Context : Graphic.Context
 {
-    private enum PathType
-    {
-        UNKNOWN,
-        CLOSEPATH,
-        MOVETO,
-        LINETO,
-        CURVETO,
-        CURVETO_QUADRATIC,
-        ARC
-    }
-
     // properties
     private global::Cairo.Context m_Context = null;
     private Device                m_Device = null;
-    private PathType              m_LastPath = PathType.UNKNOWN;
-    private double m_OriginX      = 0.0;
-    private double m_OriginY      = 0.0;
-    private double m_LastControlX = 0.0;
-    private double m_LastControlY = 0.0;
 
     // accessors
     internal global::Cairo.Context context {
@@ -74,34 +58,70 @@ internal class Maia.Graphic.Cairo.Context : Graphic.Context
         }
     }
 
-    // static methods
-    private static inline double
-    calc_angle (double inUx, double inUy, double inVx, double inVy)
-    {
-        double top, u_magnitude, v_magnitude, angle_cos, angle;
-
-        top = inUx * inVx + inUy * inVy;
-        u_magnitude = GLib.Math.sqrt (inUx * inUx + inUy * inUy);
-        v_magnitude = GLib.Math.sqrt (inVx * inVx + inVy * inVy);
-        angle_cos = top / (u_magnitude * v_magnitude);
-
-        if (angle_cos >= 1.0)
-            angle = 0.0;
-        if (angle_cos <= -1.0)
-            angle = GLib.Math.PI;
-        else
-            angle = GLib.Math.acos (angle_cos);
-
-        if (inUx * inVy - inUy * inVx < 0)
-            angle = -angle;
-
-        return angle;
-    }
-
     // methods
     internal Context (Device inDevice)
     {
         m_Device = inDevice;
+    }
+
+    private void
+    set_path (Path inPath) throws Graphic.Error
+    {
+        switch (inPath.data_type)
+        {
+            case Graphic.Path.DataType.PATH:
+                foreach (unowned Object child in inPath)
+                {
+                    set_path (child as Path);
+                }
+                break;
+
+            case Graphic.Path.DataType.MOVETO:
+                context.move_to (inPath.points[0].x, inPath.points[0].y);
+                status ();
+                break;
+
+            case Graphic.Path.DataType.LINETO:
+                context.line_to (inPath.points[0].x, inPath.points[0].y);
+                status ();
+                break;
+
+            case Graphic.Path.DataType.CURVETO:
+                context.curve_to (inPath.points[0].x, inPath.points[0].y,
+                                  inPath.points[1].x, inPath.points[1].y,
+                                  inPath.points[2].x, inPath.points[2].y);
+                status ();
+                break;
+
+            case Graphic.Path.DataType.ARC:
+                context.save ();
+                context.translate (inPath.points[0].x, inPath.points[0].y);
+                status ();
+                context.scale (inPath.points[1].x, inPath.points[1].y);
+                status ();
+                context.arc (0, 0, 1, inPath.points[2].x, inPath.points[2].y);
+                status ();
+                context.restore ();
+                break;
+
+            case Graphic.Path.DataType.ARC_NEGATIVE:
+                context.save ();
+                context.translate (inPath.points[0].x, inPath.points[0].y);
+                status ();
+                context.scale (inPath.points[1].x, inPath.points[1].y);
+                status ();
+                context.arc_negative (0, 0, 1, inPath.points[2].x, inPath.points[2].y);
+                status ();
+                context.restore ();
+                break;
+
+            case Graphic.Path.DataType.RECTANGLE:
+                context.rectangle (inPath.points[0].x, inPath.points[0].y,
+                                   inPath.points[1].x + inPath.points[0].x,
+                                   inPath.points[1].y + inPath.points[0].y);
+                status ();
+                break;
+        }
     }
 
     public override void
@@ -153,463 +173,10 @@ internal class Maia.Graphic.Cairo.Context : Graphic.Context
     }
 
     public override void
-    new_path () throws Graphic.Error
+    clip (Path inPath) throws Graphic.Error
     {
-        context.new_path ();
-        context.move_to(0.0, 0.0);
-        status ();
-
-        m_LastPath = PathType.UNKNOWN;
-        m_OriginX = 0.0;
-        m_OriginY = 0.0;
-        m_LastControlX = 0.0;
-        m_LastControlY = 0.0;
-    }
-
-    public override void
-    move_to (double inX, double inY) throws Graphic.Error
-    {
-        context.move_to (inX, inY);
-        status ();
-
-        m_LastPath = PathType.MOVETO;
-        m_OriginX = inX;
-        m_OriginY = inY;
-        m_LastControlX = 0.0;
-        m_LastControlY = 0.0;
-    }
-
-    public override void
-    rel_move_to (double inX, double inY) throws Graphic.Error
-    {
-        double x0, y0;
-
-        context.get_current_point (out x0, out y0);
-        status ();
-
-        context.rel_move_to (inX, inY);
-        status ();
-
-        m_LastPath = PathType.MOVETO;
-        m_OriginX = inX + x0;
-        m_OriginY = inY + y0;
-        m_LastControlX = 0.0;
-        m_LastControlY = 0.0;
-    }
-
-    public override void
-    line_to (double inX, double inY) throws Graphic.Error
-    {
-        context.line_to (inX, inY);
-        status ();
-
-        m_LastPath = PathType.LINETO;
-        m_LastControlX = 0.0;
-        m_LastControlY = 0.0;
-    }
-
-    public override void
-    rel_line_to (double inX, double inY) throws Graphic.Error
-    {
-        context.rel_line_to (inX, inY);
-        status ();
-
-        m_LastPath = PathType.LINETO;
-        m_LastControlX = 0.0;
-        m_LastControlY = 0.0;
-    }
-
-    public override void
-    horizontal_line_to (double inX) throws Graphic.Error
-    {
-        double x0, y0;
-
-        context.get_current_point (out x0, out y0);
-        status ();
-
-        context.line_to (inX, y0);
-        status ();
-
-        m_LastPath = PathType.LINETO;
-        m_LastControlX = 0.0;
-        m_LastControlY = 0.0;
-    }
-
-    public override void
-    rel_horizontal_line_to (double inX) throws Graphic.Error
-    {
-        double x0, y0;
-
-        context.get_current_point (out x0, out y0);
-        status ();
-
-        context.line_to (inX + x0, y0);
-        status ();
-
-        m_LastPath = PathType.LINETO;
-        m_LastControlX = 0.0;
-        m_LastControlY = 0.0;
-    }
-
-    public override void
-    vertical_line_to (double inY) throws Graphic.Error
-    {
-        double x0, y0;
-
-        context.get_current_point (out x0, out y0);
-        status ();
-
-        context.line_to (x0, inY);
-        status ();
-
-        m_LastPath = PathType.LINETO;
-        m_LastControlX = 0.0;
-        m_LastControlY = 0.0;
-    }
-
-    public override void
-    rel_vertical_line_to (double inY) throws Graphic.Error
-    {
-        double x0, y0;
-
-        context.get_current_point (out x0, out y0);
-        status ();
-
-        context.line_to (x0, y0 + inY);
-        status ();
-
-        m_LastPath = PathType.LINETO;
-        m_LastControlX = 0.0;
-        m_LastControlY = 0.0;
-    }
-
-    public override void
-    curve_to (double inX, double inY, double inX1, double inY1,
-              double inX2, double inY2) throws Graphic.Error
-    {
-        context.curve_to (inX1, inY1, inX2, inY2, inX, inY);
-        status ();
-
-        m_LastPath = PathType.CURVETO;
-        m_LastControlX = inX2;
-        m_LastControlY = inY2;
-    }
-
-    public override void
-    rel_curve_to (double inX, double inY, double inX1, double inY1,
-                  double inX2, double inY2) throws Graphic.Error
-    {
-        double x0, y0;
-
-        context.get_current_point (out x0, out y0);
-        status ();
-
-        context.rel_curve_to (inX1, inY1, inX2, inY2, inX, inY);
-        status ();
-
-        m_LastPath = PathType.CURVETO;
-        m_LastControlX = x0 + inX2;
-        m_LastControlY = y0 + inY2;
-    }
-
-    public override void
-    smooth_curve_to (double inX, double inY,
-                     double inX2, double inY2) throws Graphic.Error
-    {
-        double x0, y0, x1, y1;
-
-        context.get_current_point (out x0, out y0);
-        status ();
-
-        x1 = x0;
-        y1 = y0;
-        if (m_LastPath == PathType.CURVETO)
-        {
-            x1 = x0 + (x0 - m_LastControlX);
-            y1 = y0 + (y0 - m_LastControlY);
-        }
-        curve_to (inX, inY, x1, y1, inX2, inY2);
-    }
-
-    public override void
-    rel_smooth_curve_to (double inX, double inY,
-                         double inX2, double inY2) throws Graphic.Error
-    {
-        double x0, y0;
-
-        context.get_current_point (out x0, out y0);
-        status ();
-        smooth_curve_to (x0 + inX, y0 + inY, x0 + inX2, y0 + inY2);
-    }
-
-    public override void
-    quadratic_curve_to (double inX, double inY,
-                        double inX1, double inY1) throws Graphic.Error
-    {
-        double x0, y0, xx1, yy1, xx2, yy2;
-
-        context.get_current_point (out x0, out y0);
-        status ();
-
-        xx1 = x0 + (2.0 / 3.0) * (inX1 - x0);
-        yy1 = y0 + (2.0 / 3.0) * (inY1 - y0);
-
-        xx2 = inX + (2.0 / 3.0) * (inX1 - inX);
-        yy2 = inY + (2.0 / 3.0) * (inY1 - inY);
-
-        context.curve_to (xx1, yy1, xx2, yy2, inX, inY);
-        status ();
-
-        m_LastPath = PathType.CURVETO_QUADRATIC;
-        m_LastControlX = inX1;
-        m_LastControlY = inY1;
-    }
-
-    public override void
-    rel_quadratic_curve_to (double inX, double inY,
-                            double inX1, double inY1) throws Graphic.Error
-    {
-        double x0, y0;
-
-        context.get_current_point (out x0, out y0);
-        status ();
-        quadratic_curve_to (x0 + inX, y0 + inY, x0 + inX1, y0 + inY1);
-    }
-
-    public override void
-    smooth_quadratic_curve_to (double inX, double inY) throws Graphic.Error
-    {
-        double x0, y0, x1, y1;
-
-        context.get_current_point (out x0, out y0);
-        status ();
-        x1 = x0;
-        y1 = y0;
-        if (m_LastPath == PathType.CURVETO_QUADRATIC)
-        {
-            x1 = x0 + (x0 - m_LastControlX);
-            y1 = y0 + (y0 - m_LastControlY);
-        }
-        quadratic_curve_to (inX, inY, x1, y1);
-    }
-
-    public override void
-    rel_smooth_quadratic_curve_to (double inX, double inY) throws Graphic.Error
-    {
-        double x0, y0;
-
-        context.get_current_point (out x0, out y0);
-        status ();
-        smooth_quadratic_curve_to (x0 + inX, y0 + inY);
-    }
-
-    public override void
-    arc_to (double inRx, double inRy,
-            double inXAxisRotation, bool inLargeArcFlag, bool inSweepFlag,
-            double inX, double inY) throws Graphic.Error
-    {
-        double x1, y1, x2, y2, lambda;
-        double v1, v2, angle, angle_sin, angle_cos, x11, y11;
-        double rx_squared, ry_squared, x11_squared, y11_squared, top, bottom;
-        double c, cx1, cy1, cx, cy, start_angle, angle_delta;
-
-        context.get_current_point (out x1, out y1);
-        status ();
-
-        x2 = inX;
-        y2 = inY;
-
-        if (x1 == x2 && y1 == y2)
-        {
-            return;
-        }
-
-        if (inRx == 0.0 || inRy == 0.0)
-        {
-            context.line_to (x2, y2);
-            return;
-        }
-
-        v1 = (x1 - x2) / 2.0;
-        v2 = (y1 - y2) / 2.0;
-
-        angle = inXAxisRotation * (GLib.Math.PI / 180.0);
-        angle_sin = GLib.Math.sin (angle);
-        angle_cos = GLib.Math.cos (angle);
-
-        x11 = (angle_cos * v1) + (angle_sin * v2);
-        y11 = - (angle_sin * v1) + (angle_cos * v2);
-
-        inRx = inRx > 0.0 ? inRx : - inRx;
-        inRy = inRy > 0.0 ? inRy : - inRy;
-        lambda = (x11 * x11) / (inRx * inRx) + (y11 * y11) / (inRy * inRy);
-        if (lambda > 1.0)
-        {
-            double square_root = GLib.Math.sqrt (lambda);
-            inRx *= square_root;
-            inRy *= square_root;
-        }
-
-        rx_squared = inRx * inRx;
-        ry_squared = inRy * inRy;
-        x11_squared = x11 * x11;
-        y11_squared = y11 * y11;
-
-        top = (rx_squared * ry_squared) - (rx_squared * y11_squared) - (ry_squared * x11_squared);
-        if (top < 0.0)
-        {
-            c = 0.0;
-        }
-        else
-        {
-            bottom = (rx_squared * y11_squared) + (ry_squared * x11_squared);
-            c = GLib.Math.sqrt (top / bottom);
-        }
-
-        if (inLargeArcFlag == inSweepFlag)
-            c = - c;
-
-        cx1 = c * ((inRx * y11) / inRy);
-        cy1 = c * (- (inRy * x11) / inRx);
-
-        cx = (angle_cos * cx1) - (angle_sin * cy1) + (x1 + x2) / 2;
-        cy = (angle_sin * cx1) + (angle_cos * cy1) + (y1 + y2) / 2;
-
-        v1 = (x11 - cx1) / inRx;
-        v2 = (y11 - cy1) / inRy;
-
-        start_angle = calc_angle (1, 0, v1, v2);
-        angle_delta = calc_angle (v1, v2, (-x11 - cx1) / inRx, (-y11 - cy1) / inRy);
-
-        if (!inSweepFlag && angle_delta > 0.0)
-            angle_delta -= 2 * GLib.Math.PI;
-        else if (inSweepFlag && angle_delta < 0.0)
-            angle_delta += 2 * GLib.Math.PI;
-
-        context.save ();
-        context.translate (cx, cy);
-        status ();
-
-        context.rotate (angle);
-        status ();
-
-        context.scale (inRx, inRy);
-        status ();
-
-        if (angle_delta > 0.0)
-            context.arc (0.0, 0.0, 1.0, start_angle, start_angle + angle_delta);
-        else
-            context.arc_negative (0.0, 0.0, 1.0, start_angle, start_angle + angle_delta);
-        status ();
-
-        context.restore ();
-        status ();
-
-        m_LastPath = PathType.ARC;
-        m_LastControlX = 0.0;
-        m_LastControlY = 0.0;
-    }
-
-    public override void
-    rel_arc_to (double inRx, double inRy,
-                double inXAxisRotation, bool inLargeArcFlag, bool inSweepFlag,
-                double inX, double inY) throws Graphic.Error
-    {
-        double x, y;
-
-        context.get_current_point (out x, out y);
-        status ();
-
-        arc_to (inRx, inRy, inXAxisRotation, inLargeArcFlag, inSweepFlag, x + inX , y + inY);
-    }
-
-    public override void
-    rectangle (double inX, double inY,
-               double inWidth, double inHeight,
-               double inRx, double inRy) throws Graphic.Error
-    {
-        context.new_path ();
-
-        if (inRx > inWidth / 2.0) inRx = inWidth / 2.0;
-        if (inRy > inHeight / 2.0) inRy = inHeight / 2.0;
-        if (inRx > 0 && inRy == 0) inRy = inRx;
-        if (inRy > 0 && inRx == 0) inRx = inRy;
-
-        if (inRx > 0 && inRy > 0)
-        {
-            context.move_to(inX + inRx, inY);
-            status ();
-
-            context.line_to (inX + inWidth - inRx, inY);
-            status ();
-
-            arc_to  (inRx, inRy, 0, false, true, inX + inWidth, inY + inRy);
-            context.line_to (inX + inWidth, inY + inHeight - inRy);
-            status ();
-
-            arc_to  (inRx, inRy, 0, false, true, inX + inWidth - inRx, inY + inHeight);
-            context.line_to (inX + inRx, inY + inHeight);
-            status ();
-
-            arc_to  (inRx, inRy, 0, false, true, inX, inY + inHeight - inRy);
-            context.line_to (inX, inY + inRy);
-            status ();
-
-            arc_to  (inRx, inRy, 0, false, true, inX + inRx, inY);
-        }
-        else
-        {
-            context.rectangle (inX, inY, inWidth, inHeight);
-            status ();
-        }
-    }
-
-    public override void
-    arc (double inXc, double inYc, double inRx, double inRy,
-         double inAngle1, double inAngle2) throws Graphic.Error
-    {
-        context.save ();
-        context.new_path ();
-        context.translate (inXc, inYc);
-        status ();
-
-        context.scale (inRx, inRy);
-        status ();
-
-        context.arc (0, 0, 1, inAngle1, inAngle2);
-        status ();
-
-        context.restore ();
-        status ();
-    }
-
-    public override void
-    close_path () throws Graphic.Error
-    {
-        context.close_path ();
-        context.move_to (m_OriginX, m_OriginY);
-        status ();
-
-        m_LastPath = PathType.UNKNOWN;
-        m_LastControlX = 0.0;
-        m_LastControlY = 0.0;
-    }
-
-    public override void
-    add_clip_region (Graphic.Region inRegion) throws Graphic.Error
-    {
-        foreach (Rectangle rect in inRegion)
-        {
-            context.rectangle (rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-        }
+        set_path (inPath);
         context.clip ();
-        context.status ();
-    }
-
-    public override void
-    reset_clip () throws Graphic.Error
-    {
-        context.reset_clip ();
         context.status ();
     }
 
@@ -621,16 +188,26 @@ internal class Maia.Graphic.Cairo.Context : Graphic.Context
     }
 
     public override void
-    fill () throws Graphic.Error
+    fill (Path inPath) throws Graphic.Error
     {
+        set_path (inPath);
         context.fill ();
         context.status ();
     }
 
     public override void
-    stroke () throws Graphic.Error
+    stroke (Path inPath) throws Graphic.Error
     {
+        set_path (inPath);
         context.stroke ();
         context.status ();
+    }
+
+    public override void
+    render (Graphic.Glyph inGlyph) throws Graphic.Error
+    {
+        context.move_to (inGlyph.origin.x, inGlyph.origin.y);
+        (inGlyph as Cairo.Glyph).update (this);
+        Pango.cairo_show_layout (context, (inGlyph as Cairo.Glyph).layout);
     }
 }

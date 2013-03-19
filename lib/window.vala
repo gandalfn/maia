@@ -88,7 +88,7 @@ public class Maia.Window : DoubleBufferView
     public Window (string inName, int inWidth, int inHeight)
     {
         Workspace workspace = Application.default.default_workspace;
-        Graphic.Region geometry = Graphic.Region.create (Graphic.Rectangle (0, 0, inWidth, inHeight));
+        Graphic.Region geometry = new Graphic.Region (Graphic.Rectangle (0, 0, inWidth, inHeight));
         GLib.Object (parent: workspace, name: inName, geometry: geometry);
     }
 
@@ -117,7 +117,7 @@ public class Maia.Window : DoubleBufferView
                 on_move ();
             }
 
-            if (old_clipbox.size.width != new_clipbox.size.width ||
+            if (old_clipbox.size.width  != new_clipbox.size.width ||
                 old_clipbox.size.height != new_clipbox.size.height)
             {
                 on_resize ();

@@ -134,7 +134,7 @@ main (string[] args)
                 break;
 
             case Maia.Parser.Token.ATTRIBUTE:
-                message ("  Attribute: %s = %s", manifest.current_attribute, manifest.current_value);
+                message ("Attribute: %s = %s", manifest.attribute, manifest.val);
                 break;
 
             case Maia.Parser.Token.END_ELEMENT:
@@ -143,10 +143,13 @@ main (string[] args)
         }
     }
 
+    Maia.Label label = manifest["Label"] as Maia.Label;
+    message ("Label: %s %s", label.font_description, label.text);
+
     Maia.Application.init (args);
 
     /*TestWindow window = new TestWindow ();*/
-    Maia.Window window = new Maia.Window ("toto", 400, 400);
+    Maia.Window window = new Maia.Window ("toto", 800, 600);
     window.visible = true;
 
     Maia.Application.run ();

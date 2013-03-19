@@ -31,6 +31,18 @@ public struct Maia.Graphic.Point
     public double y;
 
     /**
+     * Create a new point
+     *
+     * @param inX x point coordinate
+     * @param inY y point coordinate
+     */
+    public Point (double inX, double inY)
+    {
+        x = inX;
+        y = inY;
+    }
+
+    /**
      * Transform the point by inTransform.
      *
      * @param inTransform transform matrix

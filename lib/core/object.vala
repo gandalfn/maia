@@ -299,6 +299,17 @@ public abstract class Maia.Object : Any
     }
 
     /**
+     * Add child to object
+     *
+     * @param inObject child to add
+     */
+    public virtual void
+    add (Object inObject)
+    {
+        inObject.parent = this;
+    }
+
+    /**
      * Determines whether this object contains the child object.
      *
      * @param inObject the child object to locate in the object

@@ -72,12 +72,14 @@ public abstract class Maia.Parser : Object
     protected char*               m_pBegin;
     protected char*               m_pEnd;
     protected char*               m_pCurrent;
+    protected int                 m_Line;
+    protected int                 m_Col;
 
-    protected string              m_Element          = null;
-    protected Map<string, string> m_Attributes       = null;
-    protected string              m_Characters       = null;
-    protected string              m_CurrentAttribute = null;
-    protected string              m_CurrentValue     = null;
+    protected string              m_Element    = null;
+    protected Map<string, string> m_Attributes = null;
+    protected string              m_Characters = null;
+    protected string              m_Attribute  = null;
+    protected string              m_Value      = null;
 
     // Accessors
     public string element {
@@ -92,15 +94,15 @@ public abstract class Maia.Parser : Object
         }
     }
 
-    public string current_attribute {
+    public string attribute {
         get {
-            return m_CurrentAttribute;
+            return m_Attribute;
         }
     }
 
-    public string current_value {
+    public string val {
         get {
-            return m_CurrentValue;
+            return m_Value;
         }
     }
 
@@ -127,13 +129,39 @@ public abstract class Maia.Parser : Object
         m_pCurrent = m_pBegin;
     }
 
+    protected inline void
+    next_char ()
+    {
+        if (m_pCurrent[0] == '\n')
+        {
+            m_Line++;
+            m_Col = 0;
+        }
+        else
+            m_Col++;
+        m_pCurrent++;
+    }
+
+    protected inline void
+    next_unichar (unichar inChar)
+    {
+        if (inChar == '\n')
+        {
+            m_Line++;
+            m_Col = 0;
+        }
+        else
+            m_Col++;
+        m_pCurrent += inChar.to_utf8 (null);
+    }
+
     protected void
     skip_space ()
     {
         while (m_pCurrent < m_pEnd &&
                (m_pCurrent[0] == ' '  || m_pCurrent[0] == '\n' ||
                 m_pCurrent[0] == '\r' || m_pCurrent[0] == '\t'))
-            m_pCurrent++;
+            next_char ();
     }
 
     protected abstract Token next_token () throws ParseError;

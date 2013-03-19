@@ -46,60 +46,9 @@ public abstract class Maia.Graphic.Context : Object
     public abstract void restore () throws Error;
     public abstract void status  () throws Error;
 
-    public abstract void new_path () throws Error;
-
-    public abstract void move_to     (double inX, double inY) throws Error;
-    public abstract void rel_move_to (double inX, double inY) throws Error;
-
-    public abstract void line_to     (double inX, double inY) throws Error;
-    public abstract void rel_line_to (double inX, double inY) throws Error;
-
-    public abstract void horizontal_line_to     (double inX) throws Error;
-    public abstract void rel_horizontal_line_to (double inX) throws Error;
-
-    public abstract void vertical_line_to     (double inY) throws Error;
-    public abstract void rel_vertical_line_to (double inY) throws Error;
-
-    public abstract void curve_to     (double inX, double inY,
-                                       double inX1, double inY1,
-                                       double inX2, double inY2) throws Error;
-    public abstract void rel_curve_to (double inX, double inY,
-                                       double inX1, double inY1,
-                                       double inX2, double inY2) throws Error;
-
-    public abstract void smooth_curve_to     (double inX, double inY,
-                                              double inX2, double inY2) throws Error;
-    public abstract void rel_smooth_curve_to (double inX, double inY,
-                                              double inX2, double inY2) throws Error;
-
-    public abstract void quadratic_curve_to     (double inX, double inY,
-                                                 double inX1, double inY1) throws Error;
-    public abstract void rel_quadratic_curve_to (double inX, double inY,
-                                                 double inX1, double inY1) throws Error;
-
-    public abstract void smooth_quadratic_curve_to     (double inX, double inY) throws Error;
-    public abstract void rel_smooth_quadratic_curve_to (double inX, double inY) throws Error;
-
-    public abstract void arc_to     (double inRx, double inRy,
-                                     double inXAxisRotation, bool inLargeArcFlag,
-                                     bool inSweepFlag, double inX, double inY) throws Error;
-    public abstract void rel_arc_to (double inRx, double inRy,
-                                     double inXAxisRotation, bool inLargeArcFlag,
-                                     bool inSweepFlag, double inX, double inY) throws Error;
-
-    public abstract void rectangle (double inX, double inY,
-                                    double inWidth, double inHeight,
-                                    double inRx, double inRy) throws Error;
-
-    public abstract void arc (double inXc, double inYc,
-                              double inRx, double inRy,
-                              double inAngle1, double inAngle2) throws Error;
-
-    public abstract void close_path () throws Error;
-
-    public abstract void add_clip_region (Region inRegion) throws Error;
-    public abstract void reset_clip      () throws Error;
-    public abstract void paint           () throws Error;
-    public abstract void fill            () throws Error;
-    public abstract void stroke          () throws Error;
+    public abstract void clip   (Path inPath)   throws Error;
+    public abstract void paint  ()              throws Error;
+    public abstract void fill   (Path inPath)   throws Error;
+    public abstract void stroke (Path inPath)   throws Error;
+    public abstract void render (Glyph inGlyph) throws Error;
 }

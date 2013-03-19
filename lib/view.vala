@@ -23,8 +23,8 @@ public class Maia.View : Input
     private Graphic.Region? m_DamagedArea = null;
 
     // events
-    public DamageEvent   damage_event   { get; set; default = null; }
-    public RepairEvent   repair_event   { get; set; default = null; }
+    public DamageEvent damage_event { get; set; default = null; }
+    public RepairEvent repair_event { get; set; default = null; }
 
     // accessors
     /**
@@ -55,7 +55,6 @@ public class Maia.View : Input
      */
     public virtual Graphic.Device? device {
         get {
-
             return null;
         }
     }

@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * init.vala
+ * widget.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,12 +17,44 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Maia.Graphic.Cairo
+public abstract class Maia.Widget : View
 {
-    public static void
-    init ()
+    // accessors
+    public Window window {
+        get {
+            unowned Window? ret = null;
+            for (unowned Object? p = parent; p != null; p = p.parent)
+            {
+                if (p is Window)
+                {
+                    ret = (Window)p;
+                    break;
+                }
+            }
+
+            return ret;
+        }
+    }
+
+    public override Graphic.Device? device {
+        get {
+            return window.device;
+        }
+    }
+
+    // methods
+    public virtual
+    get_requested_size (out Size outSize)
     {
-        Any.delegate (typeof (Maia.Graphic.Region), typeof (Maia.Graphic.CairoRegion));
-        Any.delegate (typeof (Maia.Graphic.Glyph), typeof (Maia.Graphic.Cairo.Glyph));
+        outSize = Size (0, 0);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public override bool
+    can_append_child (Object inChild)
+    {
+        return inChild is View;
     }
 }

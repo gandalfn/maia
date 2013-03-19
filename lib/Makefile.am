@@ -22,6 +22,7 @@ libmaia_la_SOURCES = \
     double-buffer-view.vala \
     workspace.vala \
     window.vala \
+    element.vala \
     manifest.vala \
     geometry-event.vala \
     damage-event.vala \
@@ -29,7 +30,9 @@ libmaia_la_SOURCES = \
     delete-event.vala \
     create-window-event.vala \
     destroy-window-event.vala \
-    reparent-window-event.vala
+    reparent-window-event.vala \
+    widget.vala \
+    label.vala
 
 libmaia_la_LDFLAGS = \
     -version-number @MAIA_SO_VERSION@ \
