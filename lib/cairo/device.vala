@@ -17,15 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.Graphic.Cairo.Device : Maia.Graphic.Device
+public class Maia.Graphic.Cairo.Device : Maia.Graphic.Device
 {
     // accessors
-    public abstract global::Cairo.Surface surface { get; }
+    public global::Cairo.Surface surface { get; construct set; }
 
     // methods
-    public override Graphic.Context
-    create_context ()
+    public Device (global::Cairo.Surface inSurface)
     {
-        return new Context (this);
+        GLib.Object (surface: inSurface);
     }
 }

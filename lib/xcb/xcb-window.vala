@@ -23,6 +23,8 @@ internal class Maia.XcbWindow : Window
     private unowned Xcb.Connection m_Connection;
     private uint                   m_EventMask;
     private bool                   m_Visible = false;
+    private Graphic.Cairo.Device   m_BackBuffer;
+    private Graphic.Cairo.Device   m_FrontBuffer;
 
     // accessors
     public override bool visible {
@@ -34,10 +36,40 @@ internal class Maia.XcbWindow : Window
             {
                 m_Visible = value;
                 if (m_Visible)
+                {
                     ((Xcb.Window)id).map (connection);
+                    m_FrontBuffer = new Graphic.Cairo.Device (new Cairo.XcbSurface (m_Connection,
+                                                                                    ((Xcb.Drawable)id),
+                                                                                    (workspace as XcbWorkspace).visual,
+                                                                                    (int)geometry.extents.size.width,
+                                                                                    (int)geometry.extents.size.height));
+                    if (double_buffered)
+                    {
+                        m_BackBuffer = new Graphic.Cairo.Device (new Cairo.Surface.similar (m_FrontBuffer.surface,
+                                                                                            Cairo.Content.COLOR_ALPHA,
+                                                                                            (int)geometry.extents.size.width,
+                                                                                            (int)geometry.extents.size.height));
+                    }
+                }
                 else
+                {
                     ((Xcb.Window)id).unmap (connection);
+                    m_FrontBuffer = null;
+                    m_BackBuffer = null;
+                }
             }
+        }
+    }
+
+    public override Graphic.Device? device {
+        get {
+            return double_buffered ? m_BackBuffer : m_FrontBuffer;
+        }
+    }
+
+    public override Graphic.Device? front_device {
+        get {
+            return m_FrontBuffer;
         }
     }
 

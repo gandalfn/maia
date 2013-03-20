@@ -35,20 +35,63 @@ public errordomain Maia.Graphic.Error
     UNKNOWN
 }
 
-public abstract class Maia.Graphic.Context : Object
+public class Maia.Graphic.Context : Object
 {
     // accessors
-    public abstract Device  device  { get; }
-    public abstract Pattern pattern { set; }
+    public virtual Device  device  { get; construct set; }
+    public virtual Pattern pattern { get; set; }
 
     // methods
-    public abstract void save    () throws Error;
-    public abstract void restore () throws Error;
-    public abstract void status  () throws Error;
+    public Context (Device inDevice)
+    {
+        GLib.Object (device: inDevice);
+    }
 
-    public abstract void clip   (Path inPath)   throws Error;
-    public abstract void paint  ()              throws Error;
-    public abstract void fill   (Path inPath)   throws Error;
-    public abstract void stroke (Path inPath)   throws Error;
-    public abstract void render (Glyph inGlyph) throws Error;
+    public virtual void
+    save () throws Error
+    {
+        throw new Error.NOT_IMPLEMENTED ("Save context not implemented");
+    }
+
+    public virtual void
+    restore () throws Error
+    {
+        throw new Error.NOT_IMPLEMENTED ("Restore context not implemented");
+    }
+
+    public virtual void
+    status  () throws Error
+    {
+        throw new Error.NOT_IMPLEMENTED ("Context status not implemented");
+    }
+
+    public virtual void
+    clip (Path inPath) throws Error
+    {
+        throw new Error.NOT_IMPLEMENTED ("Context clip not implemented");
+    }
+
+    public virtual void
+    paint () throws Error
+    {
+        throw new Error.NOT_IMPLEMENTED ("Context paint not implemented");
+    }
+
+    public virtual void
+    fill (Path inPath) throws Error
+    {
+        throw new Error.NOT_IMPLEMENTED ("Context fill not implemented");
+    }
+
+    public virtual void
+    stroke (Path inPath) throws Error
+    {
+        throw new Error.NOT_IMPLEMENTED ("Context stroke not implemented");
+    }
+
+    public virtual void
+    render (Glyph inGlyph) throws Error
+    {
+        throw new Error.NOT_IMPLEMENTED ("Context render not implemented");
+    }
 }

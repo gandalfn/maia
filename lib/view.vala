@@ -59,15 +59,6 @@ public class Maia.View : Input
         }
     }
 
-    /**
-     * Graphic context of view
-     */
-    public Graphic.Context context {
-        owned get {
-            return device.create_context ();
-        }
-    }
-
     // methods
     /**
      * Called when view need to be repaint
@@ -75,8 +66,8 @@ public class Maia.View : Input
      * @param inContext graphic context of view
      * @param inArea area to repaint
      */
-    protected virtual void
-    on_paint (Graphic.Context inContext, Graphic.Region inArea)
+    public virtual signal void
+    paint (Graphic.Context inContext, Graphic.Region inArea)
     {
     }
 
@@ -134,6 +125,9 @@ public class Maia.View : Input
         // If view has no geometry do nothing
         if (geometry == null || geometry.is_empty ()) return;
 
+        // No device created return
+        if (device == null) return;
+
         // If area is null repair all damaged view areas
         if (inArea == null)
         {
@@ -143,7 +137,8 @@ public class Maia.View : Input
             area.translate ({ -geometry.extents.origin.x, -geometry.extents.origin.y });
 
             // Repaint view
-            on_paint (context, area);
+            Graphic.Context context = new Graphic.Context (device);
+            paint (context, area);
 
             // Clear damaged area
             m_DamagedArea = null;
@@ -163,7 +158,8 @@ public class Maia.View : Input
             area.translate ({ -geometry.extents.origin.x, -geometry.extents.origin.y });
 
             // Repaint view
-            on_paint (context, area);
+            Graphic.Context context = new Graphic.Context (device);
+            paint (context, area);
 
             // Remove repaired area
             m_DamagedArea.subtract (area);

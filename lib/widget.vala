@@ -43,10 +43,10 @@ public abstract class Maia.Widget : View
     }
 
     // methods
-    public virtual
-    get_requested_size (out Size outSize)
+    public virtual void
+    get_requested_size (out Graphic.Size outSize)
     {
-        outSize = Size (0, 0);
+        outSize = Graphic.Size (0, 0);
     }
 
     /**

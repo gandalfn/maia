@@ -38,8 +38,8 @@ public class Maia.Label : Widget, Element
         GLib.Object (text: inText);
     }
 
-    protected override void
-    on_paint (Graphic.Context inContext, Graphic.Region inArea)
+    public override void
+    paint (Graphic.Context inContext, Graphic.Region inArea)
     {
         try
         {
@@ -54,16 +54,17 @@ public class Maia.Label : Widget, Element
     }
 
     public override void
-    get_requested_size (out Size outSize)
+    get_requested_size (out Graphic.Size outSize)
     {
         if (device != null)
         {
             m_Glyph = new Graphic.Glyph (font_description);
             m_Glyph.text = text;
+            Graphic.Context context = new Graphic.Context (device);
             m_Glyph.update (context);
             outSize = m_Glyph.size;
         }
         else
-            base (out outSize);
+            base.get_requested_size (out outSize);
     }
 }

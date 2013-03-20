@@ -56,7 +56,7 @@ public class Maia.DoubleBufferView : View
             try
             {
                 Log.audit (GLib.Log.METHOD, "Swap buffer");
-                Graphic.Context ctx = front_device.create_context ();
+                Graphic.Context ctx = new Graphic.Context (front_device);
                 ctx.save ();
                 ctx.clip (new Graphic.Path.from_region (area));
                 ctx.pattern = device;

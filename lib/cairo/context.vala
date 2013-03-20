@@ -21,47 +21,50 @@ internal class Maia.Graphic.Cairo.Context : Graphic.Context
 {
     // properties
     private global::Cairo.Context m_Context = null;
-    private Device                m_Device = null;
 
     // accessors
     internal global::Cairo.Context context {
         get {
-            if (m_Context == null && device != null)
-            {
-                m_Context = new global::Cairo.Context (m_Device.surface);
-            }
-
             return m_Context;
         }
     }
 
     public override Graphic.Device device {
         get {
-            return m_Device;
+            return base.device;
+        }
+        construct set {
+            base.device = value;
+            m_Context = new global::Cairo.Context ((value as Device).surface);
         }
     }
 
+
     public override Graphic.Pattern pattern {
+        get {
+            return base.pattern;
+        }
         set {
+            base.pattern = value;
             if (value is Graphic.Device)
             {
                 global::Cairo.Pattern pattern = new global::Cairo.Pattern.for_surface (((Cairo.Device)value).surface);
-                context.set_source (pattern);
+                m_Context.set_source (pattern);
             }
             else if (value is Graphic.Color)
             {
-                context.set_source_rgba (((Graphic.Color)value).red,
-                                         ((Graphic.Color)value).green,
-                                         ((Graphic.Color)value).blue,
-                                         ((Graphic.Color)value).alpha);
+                m_Context.set_source_rgba (((Graphic.Color)value).red,
+                                           ((Graphic.Color)value).green,
+                                           ((Graphic.Color)value).blue,
+                                           ((Graphic.Color)value).alpha);
             }
         }
     }
 
     // methods
-    internal Context (Device inDevice)
+    public Context (Device inDevice)
     {
-        m_Device = inDevice;
+        base (inDevice);
     }
 
     private void
@@ -77,48 +80,48 @@ internal class Maia.Graphic.Cairo.Context : Graphic.Context
                 break;
 
             case Graphic.Path.DataType.MOVETO:
-                context.move_to (inPath.points[0].x, inPath.points[0].y);
+                m_Context.move_to (inPath.points[0].x, inPath.points[0].y);
                 status ();
                 break;
 
             case Graphic.Path.DataType.LINETO:
-                context.line_to (inPath.points[0].x, inPath.points[0].y);
+                m_Context.line_to (inPath.points[0].x, inPath.points[0].y);
                 status ();
                 break;
 
             case Graphic.Path.DataType.CURVETO:
-                context.curve_to (inPath.points[0].x, inPath.points[0].y,
-                                  inPath.points[1].x, inPath.points[1].y,
-                                  inPath.points[2].x, inPath.points[2].y);
+                m_Context.curve_to (inPath.points[0].x, inPath.points[0].y,
+                                    inPath.points[1].x, inPath.points[1].y,
+                                    inPath.points[2].x, inPath.points[2].y);
                 status ();
                 break;
 
             case Graphic.Path.DataType.ARC:
-                context.save ();
-                context.translate (inPath.points[0].x, inPath.points[0].y);
+                m_Context.save ();
+                m_Context.translate (inPath.points[0].x, inPath.points[0].y);
                 status ();
-                context.scale (inPath.points[1].x, inPath.points[1].y);
+                m_Context.scale (inPath.points[1].x, inPath.points[1].y);
                 status ();
-                context.arc (0, 0, 1, inPath.points[2].x, inPath.points[2].y);
+                m_Context.arc (0, 0, 1, inPath.points[2].x, inPath.points[2].y);
                 status ();
-                context.restore ();
+                m_Context.restore ();
                 break;
 
             case Graphic.Path.DataType.ARC_NEGATIVE:
-                context.save ();
-                context.translate (inPath.points[0].x, inPath.points[0].y);
+                m_Context.save ();
+                m_Context.translate (inPath.points[0].x, inPath.points[0].y);
                 status ();
-                context.scale (inPath.points[1].x, inPath.points[1].y);
+                m_Context.scale (inPath.points[1].x, inPath.points[1].y);
                 status ();
-                context.arc_negative (0, 0, 1, inPath.points[2].x, inPath.points[2].y);
+                m_Context.arc_negative (0, 0, 1, inPath.points[2].x, inPath.points[2].y);
                 status ();
-                context.restore ();
+                m_Context.restore ();
                 break;
 
             case Graphic.Path.DataType.RECTANGLE:
-                context.rectangle (inPath.points[0].x, inPath.points[0].y,
-                                   inPath.points[1].x + inPath.points[0].x,
-                                   inPath.points[1].y + inPath.points[0].y);
+                m_Context.rectangle (inPath.points[0].x, inPath.points[0].y,
+                                     inPath.points[1].x + inPath.points[0].x,
+                                     inPath.points[1].y + inPath.points[0].y);
                 status ();
                 break;
         }
@@ -127,21 +130,21 @@ internal class Maia.Graphic.Cairo.Context : Graphic.Context
     public override void
     save () throws Graphic.Error
     {
-        context.save ();
+        m_Context.save ();
         status ();
     }
 
     public override void
     restore () throws Graphic.Error
     {
-        context.restore ();
+        m_Context.restore ();
         status ();
     }
 
     public override void
     status () throws Graphic.Error
     {
-        global::Cairo.Status status = context.status ();
+        global::Cairo.Status status = m_Context.status ();
 
         switch (status)
         {
@@ -176,38 +179,38 @@ internal class Maia.Graphic.Cairo.Context : Graphic.Context
     clip (Path inPath) throws Graphic.Error
     {
         set_path (inPath);
-        context.clip ();
-        context.status ();
+        m_Context.clip ();
+        m_Context.status ();
     }
 
     public override void
     paint () throws Graphic.Error
     {
-        context.paint ();
-        context.status ();
+        m_Context.paint ();
+        m_Context.status ();
     }
 
     public override void
     fill (Path inPath) throws Graphic.Error
     {
         set_path (inPath);
-        context.fill ();
-        context.status ();
+        m_Context.fill ();
+        m_Context.status ();
     }
 
     public override void
     stroke (Path inPath) throws Graphic.Error
     {
         set_path (inPath);
-        context.stroke ();
-        context.status ();
+        m_Context.stroke ();
+        m_Context.status ();
     }
 
     public override void
     render (Graphic.Glyph inGlyph) throws Graphic.Error
     {
-        context.move_to (inGlyph.origin.x, inGlyph.origin.y);
+        m_Context.move_to (inGlyph.origin.x, inGlyph.origin.y);
         (inGlyph as Cairo.Glyph).update (this);
-        Pango.cairo_show_layout (context, (inGlyph as Cairo.Glyph).layout);
+        Pango.cairo_show_layout (m_Context, (inGlyph as Cairo.Glyph).layout);
     }
 }

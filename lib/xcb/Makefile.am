@@ -18,6 +18,7 @@ lib_LTLIBRARIES = libmaia-xcb-backend.la
 libmaia_xcb_backend_la_VALAFLAGS = \
     --pkg=xcb \
     --pkg=cairo \
+    --pkg=cairo-xcb \
     --pkg=pangocairo
 
 libmaia_xcb_backend_la_SOURCES = \

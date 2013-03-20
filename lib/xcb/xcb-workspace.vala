@@ -20,7 +20,8 @@
 internal class Maia.XcbWorkspace : Workspace
 {
     // properties
-    private XcbWindow m_Root;
+    private XcbWindow       m_Root;
+    private Xcb.VisualType? m_Visual;
 
     // accessors
     public unowned Xcb.Screen screen { get; construct; default = null; }
@@ -33,6 +34,26 @@ internal class Maia.XcbWorkspace : Workspace
                 m_Root.parent = this;
             }
             return m_Root;
+        }
+    }
+
+     public Xcb.VisualType? visual {
+        get {
+            if (screen != null && m_Visual == null)
+            {
+                for (int i = 0; i < screen.allowed_depths_length; ++i)
+                {
+                    for (int j = 0; j < screen.allowed_depths[i].visuals_length; ++j)
+                    {
+                        if (screen.allowed_depths[i].visuals[j].visual_id == screen.root_visual)
+                        {
+                            m_Visual = screen.allowed_depths[i].visuals[j];
+                        }
+                    }
+                }
+            }
+
+            return m_Visual;
         }
     }
 

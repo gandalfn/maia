@@ -19,6 +19,4 @@
 
 public abstract class Maia.Graphic.Device : Pattern
 {
-    // methods
-    public abstract Context create_context ();
 }

@@ -22,7 +22,8 @@ namespace Maia.Graphic.Cairo
     public static void
     init ()
     {
-        Any.delegate (typeof (Maia.Graphic.Region), typeof (Maia.Graphic.CairoRegion));
-        Any.delegate (typeof (Maia.Graphic.Glyph), typeof (Maia.Graphic.Cairo.Glyph));
+        Any.delegate (typeof (Maia.Graphic.Region),  typeof (Maia.Graphic.CairoRegion));
+        Any.delegate (typeof (Maia.Graphic.Glyph),   typeof (Maia.Graphic.Cairo.Glyph));
+        Any.delegate (typeof (Maia.Graphic.Context), typeof (Maia.Graphic.Cairo.Context));
     }
 }
