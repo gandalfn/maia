@@ -145,7 +145,7 @@ internal class Maia.XcbWindow : Window
                                                          0, Xcb.WindowClass.INPUT_OUTPUT,
                                                          (workspace as XcbWorkspace).screen.root_visual,
                                                          Xcb.Cw.BACK_PIXEL,
-                                                         { (workspace as XcbWorkspace).screen.black_pixel });
+                                                         { (workspace as XcbWorkspace).screen.white_pixel });
 
         (workspace.parent as XcbApplication).request_check (cookie, (c) => {
             if (c.error != null)
@@ -153,5 +153,21 @@ internal class Maia.XcbWindow : Window
             else
                 Log.debug (GLib.Log.METHOD, "Window has been created successfully");
         });
+    }
+
+    public override void
+    paint (Graphic.Context inContext, Graphic.Region inArea)
+    {
+        base.paint (inContext, inArea);
+
+        m_Connection.flush ();
+    }
+
+    public override void
+    swap_buffer (Graphic.Region? inArea = null)
+    {
+        base.swap_buffer (inArea);
+
+        m_Connection.flush ();
     }
 }

@@ -149,8 +149,14 @@ main (string[] args)
     Maia.Application.init (args);
 
     /*TestWindow window = new TestWindow ();*/
-    Maia.Window window = new Maia.Window ("toto", 800, 600);
+    Maia.Window window = new Maia.Window ("toto", 400, 200);
     window.visible = true;
+    window.add (label);
+    Maia.Graphic.Size size;
+    label.get_requested_size (out size);
+    window.draw ();
+
+    window.swap_buffer ();
 
     Maia.Application.run ();
 

@@ -66,6 +66,12 @@ public class Maia.Graphic.Context : Object
     }
 
     public virtual void
+    translate (Point inOffset) throws Error
+    {
+        throw new Error.NOT_IMPLEMENTED ("Context translate not implemented");
+    }
+
+    public virtual void
     clip (Path inPath) throws Error
     {
         throw new Error.NOT_IMPLEMENTED ("Context clip not implemented");

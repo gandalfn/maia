@@ -97,7 +97,10 @@ public class Maia.View : Input
                 m_DamagedArea.union_ (area);
 
             // Emit damage event
-            damage_event.post (new DamageEventArgs (area));
+            if (damage_event != null)
+            {
+                damage_event.post (new DamageEventArgs (area));
+            }
         }
         else
         {
@@ -108,7 +111,10 @@ public class Maia.View : Input
             m_DamagedArea = area;
 
             // Emit damage event
-            damage_event.post (new DamageEventArgs (area));
+            if (damage_event != null)
+            {
+                damage_event.post (new DamageEventArgs (area));
+            }
         }
     }
 
@@ -144,7 +150,10 @@ public class Maia.View : Input
             m_DamagedArea = null;
 
             // Emit repair event
-            repair_event.post (new RepairEventArgs (geometry));
+            if (repair_event != null)
+            {
+                repair_event.post (new RepairEventArgs (geometry));
+            }
         }
         // Repair the specified area
         else if (m_DamagedArea != null)
@@ -169,7 +178,10 @@ public class Maia.View : Input
                 m_DamagedArea = null;
 
             // Emit repair event
-            repair_event.post (new RepairEventArgs (area));
+            if (repair_event != null)
+            {
+                repair_event.post (new RepairEventArgs (area));
+            }
         }
     }
 }

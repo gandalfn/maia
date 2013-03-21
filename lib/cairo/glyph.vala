@@ -55,7 +55,7 @@ internal class Maia.Graphic.Cairo.Glyph : Graphic.Glyph
         m_Layout = Pango.cairo_create_layout (((Cairo.Context)inContext).context);
         Pango.FontDescription desc = Pango.FontDescription.from_string (font_description);
         m_Layout.set_font_description (desc);
-        m_Layout.set_text (text, text.length);
+        m_Layout.set_text (text, -1);
         Pango.cairo_update_layout (((Cairo.Context)inContext).context, m_Layout);
     }
 }

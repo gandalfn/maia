@@ -31,6 +31,7 @@ public class Maia.Label : Widget, Element
 
     public string font_description { get; construct set; default = null; }
     public string text             { get; construct set; default = null; }
+    public Graphic.Color color     { get; construct set; default = null; }
 
     // methods
     public Label (string inText)
@@ -44,8 +45,11 @@ public class Maia.Label : Widget, Element
         try
         {
             Graphic.Path clip_path = new Graphic.Path.from_region (inArea);
+            inContext.save ();
             inContext.clip (clip_path);
+            inContext.pattern = color;
             inContext.render (m_Glyph);
+            inContext.restore ();
         }
         catch (Graphic.Error err)
         {

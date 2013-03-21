@@ -149,6 +149,32 @@ public class Maia.Window : DoubleBufferView
     {
     }
 
+    public override void
+    paint (Graphic.Context inContext, Graphic.Region inArea)
+    {
+        foreach (unowned Object child in this)
+        {
+            if (child is View)
+            {
+                try
+                {
+                    View view = child as View;
+                    Graphic.Path path = new Graphic.Path.from_region (inArea);
+
+                    inContext.save ();
+                    inContext.clip (path);
+                    inContext.translate (view.geometry.extents.origin);
+                    view.paint (inContext, inArea);
+                    inContext.restore ();
+                }
+                catch (Graphic.Error err)
+                {
+                    Log.critical ("Error on paint: %s", err.message);
+                }
+            }
+        }
+    }
+
     internal override string
     to_string ()
     {

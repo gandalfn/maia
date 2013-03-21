@@ -247,6 +247,33 @@ public class Maia.Graphic.Color : Pattern
     }
 
     // static methods
+    static construct
+    {
+        GLib.Value.register_transform_func (typeof (string), typeof (Color),
+                                            (ValueTransform)string_to_color);
+        GLib.Value.register_transform_func (typeof (Color), typeof (string),
+                                            (ValueTransform)color_to_string);
+    }
+
+    internal static void
+    color_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (Color)))
+    {
+        Color val = (Color)inSrc;
+
+        outDest = val.to_string ();
+    }
+
+    internal static void
+    string_to_color (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (string)))
+        requires ((string)inSrc != null)
+    {
+        string val = (string)inSrc;
+
+        outDest = new Color.parse (val);
+    }
+
     private static void
     create_standard_colors ()
     {
@@ -266,6 +293,7 @@ public class Maia.Graphic.Color : Pattern
         }
     }
 
+    // methods
     /**
      * Create a new color
      *
@@ -290,6 +318,7 @@ public class Maia.Graphic.Color : Pattern
      */
     public Color.parse(string inValue)
     {
+        Log.debug (GLib.Log.METHOD, inValue);
         if (inValue == "none")
         {
             name = inValue;

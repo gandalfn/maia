@@ -3345,10 +3345,10 @@ namespace Xcb
 			[CCode (cname = "xcb_screen_allowed_depths_length")]
 			get;
 		}
-		[CCode (array_length = false)]
-		public unowned Depth[] allowed_depths {
-			[CCode (cname = "xcb_screen_allowed_depths")]
-			get;
+		[CCode (cname = "xcb_screen_allowed_depths_iterator")]
+		_DepthIterator _iterator ();
+		public DepthIterator iterator () {
+			return (DepthIterator) _iterator ();
 		}
 	}
 

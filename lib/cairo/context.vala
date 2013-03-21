@@ -179,15 +179,22 @@ internal class Maia.Graphic.Cairo.Context : Graphic.Context
     clip (Path inPath) throws Graphic.Error
     {
         set_path (inPath);
-        m_Context.clip ();
-        m_Context.status ();
+        //m_Context.clip ();
+        status ();
+    }
+
+    public override void
+    translate (Point inOffset) throws Graphic.Error
+    {
+        m_Context.translate (inOffset.x, inOffset.y);
+        status ();
     }
 
     public override void
     paint () throws Graphic.Error
     {
         m_Context.paint ();
-        m_Context.status ();
+        status ();
     }
 
     public override void
@@ -195,7 +202,7 @@ internal class Maia.Graphic.Cairo.Context : Graphic.Context
     {
         set_path (inPath);
         m_Context.fill ();
-        m_Context.status ();
+        status ();
     }
 
     public override void
@@ -203,14 +210,16 @@ internal class Maia.Graphic.Cairo.Context : Graphic.Context
     {
         set_path (inPath);
         m_Context.stroke ();
-        m_Context.status ();
+        status ();
     }
 
     public override void
     render (Graphic.Glyph inGlyph) throws Graphic.Error
     {
         m_Context.move_to (inGlyph.origin.x, inGlyph.origin.y);
+        status ();
         (inGlyph as Cairo.Glyph).update (this);
         Pango.cairo_show_layout (m_Context, (inGlyph as Cairo.Glyph).layout);
+        status ();
     }
 }

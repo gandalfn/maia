@@ -41,13 +41,13 @@ internal class Maia.XcbWorkspace : Workspace
         get {
             if (screen != null && m_Visual == null)
             {
-                for (int i = 0; i < screen.allowed_depths_length; ++i)
+                foreach (unowned Xcb.Depth? depth in screen)
                 {
-                    for (int j = 0; j < screen.allowed_depths[i].visuals_length; ++j)
+                    for (int j = 0; j < depth.visuals_length; ++j)
                     {
-                        if (screen.allowed_depths[i].visuals[j].visual_id == screen.root_visual)
+                        if (depth.visuals[j].visual_id == screen.root_visual)
                         {
-                            m_Visual = screen.allowed_depths[i].visuals[j];
+                            m_Visual = depth.visuals[j];
                         }
                     }
                 }
