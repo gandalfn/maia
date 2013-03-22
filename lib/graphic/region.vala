@@ -264,4 +264,14 @@ public class Maia.Graphic.Region : Any
     {
         return Overlap.OUT;
     }
+
+    /**
+     * Resize region
+     *
+     * @param inSize new region size
+     */
+    public virtual void
+    resize (Size inSize)
+    {
+    }
 }

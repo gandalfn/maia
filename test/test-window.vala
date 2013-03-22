@@ -123,6 +123,8 @@ main (string[] args)
     //Maia.Log.set_default_logger (new Maia.Log.File ("out.log", Maia.Log.Level.DEBUG, "test-window"));
     Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, "test-window"));
 
+    Maia.Application.init (args);
+
     Maia.Manifest manifest = new Maia.Manifest ("test.manifest");
 
     foreach (Maia.Parser.Token token in manifest)
@@ -144,19 +146,16 @@ main (string[] args)
     }
 
     Maia.Label label = manifest["Label"] as Maia.Label;
-    message ("Label: %s %s", label.font_description, label.text);
-
-    Maia.Application.init (args);
 
     /*TestWindow window = new TestWindow ();*/
     Maia.Window window = new Maia.Window ("toto", 400, 200);
     window.visible = true;
     window.add (label);
-    Maia.Graphic.Size size;
-    label.get_requested_size (out size);
     window.draw ();
 
     window.swap_buffer ();
+
+    message ("Label: %s %s %s", label.font_description, label.text, label.geometry.extents.to_string ());
 
     Maia.Application.run ();
 

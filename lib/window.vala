@@ -150,6 +150,23 @@ public class Maia.Window : DoubleBufferView
     }
 
     public override void
+    add (Object inObject)
+    {
+        base.add (inObject);
+
+        if (inObject is Widget)
+        {
+            Widget widget = inObject as Widget;
+
+            Graphic.Size size_request;
+            widget.get_size_request (out size_request);
+            widget.geometry.resize (size_request);
+            Log.debug (GLib.Log.METHOD, "size allocate: %s - %s", size_request.to_string (),
+                                                                  widget.geometry.extents.to_string ());
+        }
+    }
+
+    public override void
     paint (Graphic.Context inContext, Graphic.Region inArea)
     {
         foreach (unowned Object child in this)

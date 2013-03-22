@@ -58,7 +58,7 @@ public class Maia.Label : Widget, Element
     }
 
     public override void
-    get_requested_size (out Graphic.Size outSize)
+    get_size_request (out Graphic.Size outSize)
     {
         if (device != null)
         {
@@ -69,6 +69,6 @@ public class Maia.Label : Widget, Element
             outSize = m_Glyph.size;
         }
         else
-            base.get_requested_size (out outSize);
+            base.get_size_request (out outSize);
     }
 }

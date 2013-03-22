@@ -46,7 +46,56 @@ internal class Maia.Graphic.CairoRegion : Maia.Graphic.Region
 
     internal CairoRegion.region (global::Cairo.Region inRegion)
     {
-        m_Region = inRegion;
+        m_Region = copy_region (inRegion);
+    }
+
+    private static inline global::Cairo.Region
+    copy_region (global::Cairo.Region inRegion)
+    {
+        global::Cairo.RectangleInt[] rects = {};
+        for (int cpt = 0; cpt < inRegion.num_rectangles (); ++cpt)
+        {
+            rects += inRegion.get_rectangle (cpt);
+        }
+
+        return new global::Cairo.Region.rectangles (rects);
+    }
+
+    private inline void
+    compress (CairoRegion s, CairoRegion t, uint dx, bool xdir, bool grow)
+    {
+        uint shift = 1;
+
+        m_Region = copy_region (s.m_Region);
+
+        while (dx != 0)
+        {
+            if ((dx & shift) != 0)
+            {
+                if (xdir)
+                    translate (Point (-(int) shift, 0));
+                else
+                    translate (Point (0, -(int) shift));
+
+                if (grow)
+                    union_ (s);
+                else
+                    intersect (s);
+                dx -= shift;
+                if (dx == 0) break;
+            }
+            s.m_Region = copy_region (t.m_Region);
+            if (xdir)
+                s.translate (Point (-(int) shift,0));
+            else
+                s.translate (Point (0, -(int) shift));
+
+            if (grow)
+                s.union_ (t);
+            else
+                s.intersect (t);
+            shift <<= 1;
+        }
     }
 
     /**
@@ -146,5 +195,38 @@ internal class Maia.Graphic.CairoRegion : Maia.Graphic.Region
     xor (Region inOther)
     {
         m_Region.xor (((CairoRegion)inOther).m_Region);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public override void
+    resize (Size inSize)
+        requires (!inSize.is_empty ())
+    {
+        int dx = (int)extents.size.width - (int)inSize.width;
+        int dy = (int)extents.size.height - (int)inSize.height;
+
+        Log.debug (GLib.Log.METHOD, "%i %i", dx, dy);
+        if (dx != 0 || dy != 0)
+        {
+            Log.debug (GLib.Log.METHOD, "%s", extents.to_string ());
+            Region s = new Region ();
+            Region t = new Region ();
+
+            bool grow = (dx < 0);
+            if (grow) dx = -dx;
+            if (dx != 0) compress ((CairoRegion)s, (CairoRegion)t, (uint) dx, true, grow);
+            if (grow) dx = -dx;
+
+            grow = (dy < 0);
+            if (grow) dy = -dy;
+            if (dy != 0) compress ((CairoRegion)s, (CairoRegion)t, (uint) dy, false, grow);
+            if (grow) dy = -dy;
+
+            Log.debug (GLib.Log.METHOD, "%s", extents.to_string ());
+
+            translate (Point (dx <= 0 ? -dx : 0, dy <= 0 ? -dy : 0));
+        }
     }
 }
