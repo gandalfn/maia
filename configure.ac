@@ -164,7 +164,6 @@ lib/maia.pc
 lib/Makefile
 lib/core/maia-core.pc
 lib/core/Makefile
-lib/core/test/Makefile
 lib/xml/maia-xml.pc
 lib/xml/Makefile
 lib/graphic/maia-graphic.pc

@@ -20,7 +20,7 @@
  * Author: Jürg Billeter <j@bitron.ch>
  */
 
-public class Maia.XmlParser : Parser
+public class Maia.Xml.Parser : Maia.Parser
 {
     // Properties
     private string      m_Filename = null;
@@ -34,7 +34,7 @@ public class Maia.XmlParser : Parser
      *
      * @param inFilename xml filename
      */
-    public XmlParser (string inFilename) throws ParseError
+    public Parser (string inFilename) throws ParseError
     {
         try
         {
@@ -56,7 +56,7 @@ public class Maia.XmlParser : Parser
      * @param inContent buffer content
      * @param inLength buffer length
      */
-    public XmlParser.from_buffer (string inContent, long inLength) throws ParseError
+    public Parser.from_buffer (string inContent, long inLength) throws ParseError
     {
         char* begin = (char*)inContent;
         char* end = begin + inLength;
@@ -233,22 +233,22 @@ public class Maia.XmlParser : Parser
         return content.str;
     }
 
-    internal override Parser.Token
+    internal override Maia.Parser.Token
     next_token () throws ParseError
     {
-        Parser.Token token = Parser.Token.NONE;
+        Maia.Parser.Token token = Maia.Parser.Token.NONE;
 
         if (m_EmptyElement)
         {
             m_EmptyElement = false;
-            return Parser.Token.END_ELEMENT;
+            return Maia.Parser.Token.END_ELEMENT;
         }
 
         skip_space ();
 
         if (m_pCurrent >= m_pEnd)
         {
-            token = Parser.Token.EOF;
+            token = Maia.Parser.Token.EOF;
         }
         else if (m_pCurrent[0] == '<')
         {
@@ -269,7 +269,7 @@ public class Maia.XmlParser : Parser
             }
             else if (m_pCurrent[0] == '/')
             {
-                token = Parser.Token.END_ELEMENT;
+                token = Maia.Parser.Token.END_ELEMENT;
                 m_pCurrent++;
                 m_Element = read_name ();
                 if (m_pCurrent >= m_pEnd || m_pCurrent[0] != '>')
@@ -278,7 +278,7 @@ public class Maia.XmlParser : Parser
             }
             else
             {
-                token = Parser.Token.START_ELEMENT;
+                token = Maia.Parser.Token.START_ELEMENT;
                 m_Element = read_name ();
                 skip_space ();
                 read_attributes ();
@@ -313,7 +313,7 @@ public class Maia.XmlParser : Parser
                 return next_token ();
             }
 
-            token = Parser.Token.CHARACTERS;
+            token = Maia.Parser.Token.CHARACTERS;
         }
 
         return token;

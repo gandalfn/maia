@@ -1,5 +1,3 @@
-SUBDIRS = . test
-
 MAIA_EXTRA_VAPIS = maia-any.vapi
 
 includelibdir = $(includedir)/core

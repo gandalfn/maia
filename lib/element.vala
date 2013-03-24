@@ -124,7 +124,7 @@ public interface Maia.Element : View
      *
      * @param inManifest manifest
      *
-     * @throw ParserError when somethings goes wrong
+     * @throws ParseError when somethings goes wrong
      */
     public void
     read_manifest (Manifest inManifest) throws ParseError

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public enum Maia.XmlNodeType
+public enum Maia.Xml.NodeType
 {
     INVALID_NODE = 0,
     ELEMENT_NODE,
@@ -34,10 +34,10 @@ public enum Maia.XmlNodeType
     NOTATION_NODE
 }
 
-public abstract class Maia.XmlNode : Object
+public abstract class Maia.Xml.Node : Object
 {
     /**
      * Node type
      */
-    public abstract XmlNodeType node_type { get; default = XmlNodeType.INVALID_NODE; }
+    public abstract Xml.NodeType node_type { get; default = Xml.NodeType.INVALID_NODE; }
 }

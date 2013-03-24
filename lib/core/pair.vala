@@ -21,8 +21,6 @@ public class Maia.Pair <F, S>
 {
     // properties
     private CompareFunc<F>  m_CompareFunc;
-    private ToStringFunc<F> m_ToStringFuncFirst;
-    private ToStringFunc<S> m_ToStringFuncSecond;
 
     // accessors
     public F first { get; set; }
@@ -35,8 +33,6 @@ public class Maia.Pair <F, S>
         second = inSecond;
 
         m_CompareFunc = get_compare_func_for<F> ();
-        m_ToStringFuncFirst = get_to_string_func_for<F> ();
-        m_ToStringFuncSecond = get_to_string_func_for<S> ();
     }
 
     public int
@@ -49,11 +45,5 @@ public class Maia.Pair <F, S>
     compare_with_first (F inFirst)
     {
         return m_CompareFunc (first, inFirst);
-    }
-
-    public string
-    to_string ()
-    {
-        return m_ToStringFuncFirst (first) + " " + m_ToStringFuncSecond (second);
     }
 }

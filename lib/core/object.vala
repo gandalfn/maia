@@ -96,6 +96,11 @@ public abstract class Maia.Object : Any
         }
     }
 
+    /**
+     * Insert inObject in child list if can be append
+     *
+     * @param inObject object to add to childs object
+     */
     protected virtual void
     insert_child (Object inObject)
     {
@@ -156,6 +161,11 @@ public abstract class Maia.Object : Any
         }
     }
 
+    /**
+     * Remove inObject from child list
+     *
+     * @param inObject object to remove from childs object
+     */
     protected virtual void
     remove_child (Object inObject)
     {
@@ -168,11 +178,11 @@ public abstract class Maia.Object : Any
 
             if (inObject == m_Head)
             {
-                m_Head = (owned)inObject.m_Next;
+                m_Head = inObject.m_Next;
             }
             else
             {
-                inObject.m_Prev.m_Next = (owned)inObject.m_Next;
+                inObject.m_Prev.m_Next = inObject.m_Next;
             }
 
             if (inObject == m_Tail)
@@ -235,22 +245,40 @@ public abstract class Maia.Object : Any
             {
                 ref ();
 
-                // remove object from parent childs
-                m_Parent.remove_child (this);
+                unowned Object? next = m_Next;
+
+                // unlink object
+                if (this == m_Head)
+                {
+                    m_Head = m_Next;
+                }
+                else
+                {
+                    m_Prev.m_Next = m_Next;
+                }
+
+                if (this == m_Tail)
+                {
+                    m_Tail = m_Prev;
+                }
+                else
+                {
+                    next.m_Prev = m_Prev;
+                }
 
                 // move child to after sibling
                 if (sibling != null)
                 {
                     if (sibling == m_Parent.m_Tail) m_Parent.m_Tail = this;
                     m_Prev = sibling;
-                    m_Next = (owned)sibling.m_Next;
+                    m_Next = sibling.m_Next;
                     if (m_Next != null) m_Next.m_Prev = this;
                     sibling.m_Next = this;
                 }
                 // add child on head of parent childs
                 else
                 {
-                    m_Next = (owned)m_Head;
+                    m_Next = m_Head;
                     m_Head.m_Prev = this;
                     m_Head = this;
                 }
@@ -303,7 +331,7 @@ public abstract class Maia.Object : Any
      *
      * @param inObject child to add
      */
-    public virtual void
+    public void
     add (Object inObject)
     {
         inObject.parent = this;

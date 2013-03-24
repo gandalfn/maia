@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * test-map.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -40,7 +40,6 @@ public class Maia.TestMap : Maia.TestCase
             add_test ("benchmark-search", test_map_benchmark_search);
             add_test ("benchmark-parse", test_map_benchmark_parse);
         }
-        //add_test ("dot", test_map_dot);
     }
 
     public override void
@@ -225,36 +224,5 @@ public class Maia.TestMap : Maia.TestCase
         }
         Test.minimized_result (min, "Map unset min time %f ms", min);
         Test.maximized_result (min, "Map unset max time %f ms", max);
-    }
-
-    public void
-    test_map_dot ()
-    {
-        for (int cpt = 0; cpt < 10; ++cpt)
-        {
-            m_Map[m_Keys[cpt]] = m_Keys[cpt].to_string ();
-            try
-            {
-                FileUtils.set_contents ("test-map-set-%i.dot".printf(cpt), m_Map.to_dot ());
-                Process.spawn_command_line_sync ("dot -Tpng test-map-set-%i.dot -otest-map-set-%i.png".printf (cpt, cpt));
-            }
-            catch (GLib.Error err)
-            {
-                assert (false);
-            }
-        }
-        for (int cpt = 0; cpt < 10; ++cpt)
-        {
-            m_Map.unset (m_Keys[cpt]);
-            try
-            {
-                FileUtils.set_contents ("test-map-unset-%i.dot".printf(cpt), m_Map.to_dot ());
-                Process.spawn_command_line_sync ("dot -Tpng test-map-unset-%i.dot -otest-map-unset-%i.png".printf (cpt, cpt));
-            }
-            catch (GLib.Error err)
-            {
-                assert (false);
-            }
-        }
     }
 }

@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * test-object.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -17,211 +17,284 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.FooDelegate : Maia.Object
-{
-    public int
-    f ()
-    {
-        return 1;
-    }
-}
-
-public class Maia.FooDelegate1 : Maia.Object
-{
-}
-
-public class Maia.FooDelegate2 : Maia.Object
-{
-}
-
-public class Maia.FooDelegate3 : Maia.Object
-{
-}
-
-public class Maia.FooDelegate4 : Maia.Object
-{
-}
-
-public class Maia.FooDelegate5 : Maia.Object
-{
-}
-
-public class Maia.FooObject : Maia.Object
-{
-    class construct
-    {
-        delegate<FooObject> (typeof (FooDelegate));
-        delegate<FooObject> (typeof (FooDelegate1));
-        delegate<FooObject> (typeof (FooDelegate2));
-        delegate<FooObject> (typeof (FooDelegate3));
-        delegate<FooObject> (typeof (FooDelegate4));
-        delegate<FooObject> (typeof (FooDelegate5));
-    }
-
-    public int
-    f ()
-    {
-        return delegate_cast<FooDelegate> ().f ();
-    }
-}
-
-public class Maia.PooObject : Maia.Object
-{
-}
-
-public class Maia.TooObject : Maia.Object
-{
-}
-
 public class Maia.TestObject : Maia.TestCase
 {
-    const long n = 200000000;
-    bool notified = false;
+    const int NB_OBJECTS = 1000;
+
+    public class TestFoo : Maia.Object
+    {
+        public TestFoo (uint32 inId)
+        {
+            GLib.Object (id: inId);
+        }
+
+        public override bool
+        can_append_child (Object inChild)
+        {
+            return inChild is TestFoo;
+        }
+    }
+
+    public class TestFoo2 : Maia.Object
+    {
+        public string name;
+
+        public TestFoo2 (uint32 inId, string inName)
+        {
+            GLib.Object (id: inId);
+            name = inName;
+        }
+
+        public override int
+        compare (Object inOther)
+        {
+            return GLib.strcmp (name, (inOther as TestFoo2).name);
+        }
+    }
 
     public TestObject ()
     {
         base ("object");
 
         add_test ("create", test_object_create);
-        add_test ("delegate", test_object_delegate);
+        add_test ("id", test_object_id);
         add_test ("parent", test_object_parent);
-        add_test ("identified", test_object_identified);
-        add_test ("parse", test_object_parse);
-    }
+        add_test ("add-child", test_object_add_child);
+        add_test ("remove-child", test_object_remove_child);
+        add_test ("first-last-child", test_object_first_last_child);
+        add_test ("can-append-child", test_object_can_append_child);
+        add_test ("child-sort", test_object_sort_child);
+        add_test ("child-reorder", test_object_child_reorder);
+        add_test ("compare", test_object_compare);
 
-    public override void
-    set_up ()
-    {
-        notified = false;
+        if (Test.perf())
+        {
+            add_test ("benchmark-add", test_object_benchmark_add);
+        }
     }
 
     public void
     test_object_create ()
     {
-        Object foo = GLib.Object.new (typeof (FooObject), id: Atom.from_string ("foo")) as Object;
+        TestFoo foo = new TestFoo(34);
 
-        Test.message ("name = %s", Atom.to_string (foo.id));
-        assert (foo is FooObject);
-        assert (foo.id == Atom.from_string ("foo"));
-        assert (foo.delegate_cast<FooDelegate> () != null);
-        (foo as FooObject).f ();
+        assert (foo != null);
     }
 
     public void
-    test_object_delegate ()
+    test_object_id ()
     {
-        FooObject foo = GLib.Object.new (typeof (FooObject), id: Atom.from_string ("foo")) as FooObject;
+        TestFoo foo = new TestFoo(34);
 
-        Test.timer_start ();
-        for (long i = 0; i < n; ++i)
-        {
-            foo.f ();
-        }
-        Test.message ("delegate: %i", (int)(Test.timer_elapsed () * 1000));
-
-        FooDelegate delegate_foo = foo.delegate_cast<FooDelegate> ();
-        assert (foo.id == Atom.from_string ("foo"));
-
-        Test.timer_start ();
-        for (long i = 0; i < n; ++i)
-        {
-            delegate_foo.f ();
-        }
-        Test.message ("delegate: %i", (int)(Test.timer_elapsed () * 1000));
+        assert (foo.id == 34);
+        foo.id = 12;
+        assert (foo.id == 12);
     }
 
     public void
     test_object_parent ()
     {
-        Object parent = GLib.Object.new (typeof (FooObject), id: Atom.from_string ("parent")) as Object;
+        TestFoo foo = new TestFoo(34);
+        TestFoo parent = new TestFoo (1);
 
-        assert (parent is FooObject);
-        assert (parent.id == Atom.from_string ("parent"));
-
-        Object foo1 = GLib.Object.new (typeof (FooObject), parent: parent) as Object;
-
-        assert (foo1 is FooObject);
-
-        Object foo2 = GLib.Object.new (typeof (FooObject), parent: parent) as Object;
-
-        assert (foo2 is FooObject);
-
-        assert (parent.nb_childs == 2);
+        assert (foo.parent == null);
+        assert (parent.parent == null);
+        foo.parent = parent;
+        assert (foo.parent == parent);
+        foo.parent = null;
+        assert (foo.parent == null);
     }
 
     public void
-    test_object_identified ()
+    test_object_add_child ()
     {
-        Object parent = GLib.Object.new (typeof (FooObject), id: Atom.from_string ("parent")) as Object;
+        TestFoo parent = new TestFoo (1);
 
-        assert (parent is FooObject);
-        assert (parent.id == Atom.from_string ("parent"));
-
-        Object foo1 = GLib.Object.new (typeof (FooObject), id: Atom.from_string ("foo"), parent: parent) as Object;
-
-        assert (foo1 is FooObject);
-        assert (foo1.id == Atom.from_string ("foo"));
-
-        Object foo2 = GLib.Object.new (typeof (PooObject), id: Atom.from_string ("too"), parent: parent) as Object;
-
-        assert (foo2 is PooObject);
-        assert (foo2.id == Atom.from_string ("too"));
-
-        Object foo3 = GLib.Object.new (typeof (TooObject), parent: parent) as Object;
-
-        assert (foo3 is TooObject);
-
-        assert (parent.nb_childs == 3);
-        assert (Atom.from_string ("foo") in parent);
-        assert (Atom.from_string ("too") in parent);
-        assert (!(Atom.from_string ("poo") in parent));
-    }
-
-    public void
-    test_object_parse ()
-    {
-        Object parent = GLib.Object.new (typeof (FooObject), id: Atom.from_string ("parent")) as Object;
-
-        assert (parent is FooObject);
-        assert (parent.id == Atom.from_string ("parent"));
-
-        Object foo1 = GLib.Object.new (typeof (FooObject), id: Atom.from_string ("foo"), parent: parent) as Object;
-
-        assert (foo1 is FooObject);
-
-        Object foo2 = GLib.Object.new (typeof (PooObject), id: Atom.from_string ("poo"), parent: parent) as Object;
-
-        assert (foo2 is PooObject);
-
-        Object foo3 = GLib.Object.new (typeof (TooObject), id: Atom.from_string ("too"), parent: parent) as Object;
-
-        assert (foo3 is TooObject);
-
-        assert (parent.nb_childs == 3);
-
-        bool found_foo = false,
-             found_poo = false,
-             found_too = false;
-        foreach (Object object in parent)
+        for (int cpt = 0; cpt < NB_OBJECTS; ++cpt)
         {
-            switch (Atom.to_string (object.id))
+            TestFoo foo = new TestFoo (cpt + 2);
+            parent.add (foo);
+            assert (foo in parent);
+        }
+
+        int nb = 0;
+        foreach (unowned Object child in parent)
+        {
+            nb++;
+            assert (child.parent == parent);
+            assert (child.ref_count == 1);
+        }
+
+        assert (nb == NB_OBJECTS);
+    }
+
+    public void
+    test_object_remove_child ()
+    {
+        TestFoo parent = new TestFoo (1);
+        unowned TestFoo child_to_remove = null;
+        int pos = Test.rand_int_range (0, NB_OBJECTS);
+
+        for (int cpt = 0; cpt < NB_OBJECTS; ++cpt)
+        {
+            TestFoo foo = new TestFoo (Test.rand_int_range (0, NB_OBJECTS));
+            parent.add (foo);
+            if (pos == cpt)
             {
-                case "foo":
-                    found_foo = true;
-                    break;
-                case "poo":
-                    found_poo = true;
-                    break;
-                case "too":
-                    found_too = true;
-                    break;
-                default:
-                    assert (false);
-                    break;
+                child_to_remove = foo;
             }
         }
-        assert (found_foo);
-        assert (found_poo);
-        assert (found_too);
+
+        child_to_remove.parent = null;
+
+        int nb = 0;
+        foreach (unowned Object child in parent)
+        {
+            nb++;
+            assert ((ulong)child != (ulong)child_to_remove);
+            assert (child.ref_count == 1);
+        }
+
+        assert (nb == NB_OBJECTS - 1);
+    }
+
+    public void
+    test_object_first_last_child ()
+    {
+        TestFoo parent = new TestFoo (1);
+        assert (parent.first () == null);
+        assert (parent.last () == null);
+
+        TestFoo first = new TestFoo (1);
+        first.parent = parent;
+        assert (parent.first () == first);
+        assert (parent.last () == first);
+
+        TestFoo middle = new TestFoo (2);
+        middle.parent = parent;
+        assert (parent.first () == first);
+        assert (parent.last () == middle);
+
+        TestFoo last = new TestFoo (3);
+        last.parent = parent;
+        assert (parent.first () == first);
+        assert (parent.last () == last);
+    }
+
+    public void
+    test_object_can_append_child ()
+    {
+        TestFoo parent = new TestFoo (1);
+        TestFoo child_ok = new TestFoo (2);
+        TestFoo2 child_nok = new TestFoo2 (3, "test-append-child");
+
+        child_ok.parent = parent;
+        child_nok.parent = parent;
+
+        int nb = 0;
+        foreach (unowned Object child in parent)
+        {
+            ++nb;
+        }
+
+        assert (nb == 1);
+        assert (child_ok.parent == parent);
+        assert (child_nok.parent == null);
+    }
+
+    public void
+    test_object_sort_child ()
+    {
+        TestFoo parent = new TestFoo (1);
+
+        for (int cpt = 0; cpt < NB_OBJECTS; ++cpt)
+        {
+            TestFoo foo = new TestFoo (Test.rand_int_range (0, NB_OBJECTS));
+            parent.add (foo);
+        }
+
+        unowned Object prev = null;
+        foreach (unowned Object child in parent)
+        {
+            if (prev != null)
+            {
+                assert (prev.id <= child.id);
+            }
+            prev = child;
+        }
+    }
+
+    public void
+    test_object_child_reorder ()
+    {
+        TestFoo parent = new TestFoo (1);
+        unowned TestFoo child_to_reorder = null;
+
+        int pos = Test.rand_int_range (0, 1000);
+        for (int cpt = 0; cpt < NB_OBJECTS; ++cpt)
+        {
+            TestFoo foo = new TestFoo (Test.rand_int_range (0, NB_OBJECTS));
+            parent.add (foo);
+            if (pos == cpt)
+            {
+                child_to_reorder = foo;
+            }
+        }
+
+        child_to_reorder.id = Test.rand_int_range (0, NB_OBJECTS);
+        child_to_reorder.reorder ();
+
+        unowned Object prev = null;
+        foreach (unowned Object child in parent)
+        {
+            if (prev != null)
+            {
+                assert (prev.id <= child.id);
+            }
+            prev = child;
+        }
+    }
+
+    public void
+    test_object_compare ()
+    {
+        TestFoo2 parent = new TestFoo2 (1, "parent");
+        TestFoo2 child1 = new TestFoo2 (4, "child1");
+        child1.parent = parent;
+        TestFoo2 child2 = new TestFoo2 (2, "child2");
+        child2.parent = parent;
+        TestFoo2 child3 = new TestFoo2 (0, "child3");
+        child3.parent = parent;
+
+        unowned Object prev = null;
+        foreach (unowned Object child in parent)
+        {
+            if (prev != null)
+            {
+                assert ((prev as TestFoo2).name <= (child as TestFoo2).name);
+            }
+            prev = child;
+        }
+    }
+
+    public void
+    test_object_benchmark_add ()
+    {
+        double min = double.MAX, max = 0;
+        for (int iter = 0; iter < 100; ++iter)
+        {
+            TestFoo parent = new TestFoo (1);
+            Test.timer_start ();
+            for (int cpt = 0; cpt < NB_OBJECTS; ++cpt)
+            {
+                TestFoo foo = new TestFoo (Test.rand_int_range (0, NB_OBJECTS));
+                parent.add (foo);
+            }
+            double elapsed = Test.timer_elapsed () * 1000;
+            min = double.min (elapsed, min);
+            max = double.max (elapsed, max);
+        }
+        Test.minimized_result (min, "Object add min time %f ms", min);
+        Test.maximized_result (min, "Object add max time %f ms", max);
     }
 }

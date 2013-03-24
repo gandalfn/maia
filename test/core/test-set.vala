@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * test-set.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -46,17 +46,10 @@ public class Maia.TestSet : Maia.TestCase
         }
     }
 
-    private static string
-    data_to_string (int inData)
-    {
-        return "%d".printf(inData);
-    }
-
     public override void
     set_up ()
     {
         m_Set = new Set<int> ();
-        m_Set.to_string_func = (ToStringFunc<int>)data_to_string;
 
         m_Keys = new int[NB_KEYS];
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)

@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * task-once.vala
+ * maia-any.vapi
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,30 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.TaskOnce : Task
+namespace Maia
 {
-    // types
-    public delegate void Callback ();
-
-    // properties
-    private unowned Callback m_Callback;
-
-    // methods
-    public TaskOnce (Callback inCallback, int inPriority = GLib.Priority.NORMAL, bool inThread = false)
+    [CCode (cheader_filename = "maia-any.h")]
+    public abstract class Any : GLib.Object
     {
-        base (inPriority, inThread);
-        m_Callback = inCallback;
-    }
+        public Any ();
 
-    internal override void*
-    main ()
-    {
-        void* ret = base.main ();
+        protected virtual void delegate_construct ();
 
-        m_Callback ();
+        public void lock ();
+        public void unlock ();
 
-        finish ();
-
-        return ret;
+        public static void @delegate  (GLib.Type inType, GLib.Type inDerived);
+        public static void undelegate (GLib.Type inType);
     }
 }

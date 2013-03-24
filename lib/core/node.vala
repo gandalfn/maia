@@ -144,7 +144,7 @@ public abstract class Maia.Node : Object
      *
      * @param inParser parser
      *
-     * @throw ParserError when somethings goes wrong
+     * @throws ParseError when somethings goes wrong
      */
     public void
     parse (Parser inParser) throws ParseError

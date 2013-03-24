@@ -150,9 +150,9 @@ public class Maia.Window : DoubleBufferView
     }
 
     public override void
-    add (Object inObject)
+    insert_child (Object inObject)
     {
-        base.add (inObject);
+        base.insert_child (inObject);
 
         if (inObject is Widget)
         {

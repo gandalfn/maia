@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * test-array.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -347,6 +347,6 @@ public class Maia.TestArray : Maia.TestCase
             max = double.max (elapsed, max);
         }
         Test.minimized_result (min, "Array unset min time %f ms", min);
-        Test.maximized_result (min, "Set unset max time %f ms", max);
+        Test.maximized_result (min, "Array unset max time %f ms", max);
     }
 }

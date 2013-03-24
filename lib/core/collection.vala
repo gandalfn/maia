@@ -24,13 +24,11 @@ public abstract class Maia.Collection<V>
 
     // Accessors
     public CompareFunc<V> compare_func { get; set; }
-    public ToStringFunc<V> to_string_func { get; set; }
 
     // Methods
     public Collection ()
     {
         compare_func = get_compare_func_for<V> ();
-        to_string_func = get_to_string_func_for<V> ();
         stamp = 0;
     }
 

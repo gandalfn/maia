@@ -10,6 +10,7 @@ INCLUDES = \
     $(addprefix -I$(top_builddir)/lib/, $(dir $(MAIA_VAPI_DEPS)))
 
 VALAFLAGS = \
+    --debug \
     --target-glib=2.32 \
     --thread \
     --vapidir=${top_srcdir}/vapi \

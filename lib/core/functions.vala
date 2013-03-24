@@ -21,10 +21,6 @@ namespace Maia
 {
     // Delegates
     [CCode (has_target = false)]
-    public delegate string ToStringFunc<V>        (V inValue);
-    [CCode (has_target = false)]
-    public delegate V      FromStringFunc<V>      (string inStr);
-    [CCode (has_target = false)]
     public delegate int    CompareFunc<V>         (V inA, V inB);
     [CCode (has_target = false)]
     public delegate int    ValueCompareFunc<V, A> (V inV, A inA);
@@ -44,12 +40,6 @@ namespace Maia
     uint32_compare (uint32 inA, uint32 inB)
     {
         return (int)(inA - inB);
-    }
-
-    static inline string
-    type_to_string (GLib.Type inType)
-    {
-        return inType.name ().dup ();
     }
 
     static inline bool
@@ -113,60 +103,6 @@ namespace Maia
             func = (CompareFunc<V>)Object.compare;
         else if (typeof (V) == typeof (uint32))
             func = (CompareFunc<V>)uint32_compare;
-
-        return func;
-    }
-
-    public static inline ToStringFunc<V>
-    get_to_string_func_for<V> ()
-    {
-        ToStringFunc<V> func = null;
-
-        if (typeof (V) == typeof (string))
-            func = (ToStringFunc<V>)string.dup;
-        else if (typeof (V) == typeof (int))
-            func = (ToStringFunc<V>)int.to_string;
-        else if (typeof (V) == typeof (uint))
-            func = (ToStringFunc<V>)uint.to_string;
-        else if (typeof (V) == typeof (long))
-            func = (ToStringFunc<V>)long.to_string;
-        else if (typeof (V) == typeof (ulong))
-            func = (ToStringFunc<V>)ulong.to_string;
-        else if (typeof (V) == typeof (float))
-            func = (ToStringFunc<V>)float.to_string;
-        else if (typeof (V) == typeof (double))
-            func = (ToStringFunc<V>)double.to_string;
-        else if (typeof (V) == typeof (GLib.Type))
-            func = (ToStringFunc)type_to_string;
-        else if (typeof (V) == typeof (Pair))
-            func = (ToStringFunc<V>)Pair.to_string;
-        else if (typeof (V) == typeof (uint32))
-            func = (ToStringFunc<V>)uint32.to_string;
-        else if (typeof (V).is_a (typeof (Object)))
-            func = (ToStringFunc<V>)Object.to_string;
-
-        return func;
-    }
-
-    public static inline FromStringFunc<V>
-    get_from_string_func_for<V> ()
-    {
-        FromStringFunc<V> func = null;
-
-        if (typeof (V) == typeof (string))
-            func = (FromStringFunc<V>)string.dup;
-        else if (typeof (V) == typeof (int))
-            func = (FromStringFunc<V>)int.parse;
-        else if (typeof (V) == typeof (uint))
-            func = (FromStringFunc<V>)int.parse;
-        else if (typeof (V) == typeof (long))
-            func = (FromStringFunc<V>)long.parse;
-        else if (typeof (V) == typeof (ulong))
-            func = (FromStringFunc<V>)long.parse;
-        else if (typeof (V) == typeof (float))
-            func = (FromStringFunc<V>)double.parse;
-        else if (typeof (V) == typeof (double))
-            func = (FromStringFunc<V>)double.parse;
 
         return func;
     }

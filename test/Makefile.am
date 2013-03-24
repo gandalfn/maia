@@ -13,8 +13,7 @@ endif
 
 noinst_PROGRAMS = \
     test \
-    test-window \
-    test-atomic-queue
+    test-window
 
 test_VALAFLAGS = \
     --pkg=xcb-1.0 \
@@ -26,16 +25,18 @@ test_SOURCES = \
     test-case.vala \
     core/test-core.vala \
     core/test-spinlock.vala \
+    core/test-any.vala \
+    core/test-object.vala \
     core/test-array.vala \
     core/test-list.vala \
     core/test-set.vala \
-    core/test-map.vala \
-    core/test-object.vala \
-    core/test-dispatcher.vala \
-    core/test-application.vala \
-    core/test-event.vala \
-    xml/test-xml.vala \
-    xml/test-parser.vala
+    core/test-map.vala
+     #~ \
+    #~ core/test-dispatcher.vala \
+    #~ core/test-application.vala \
+    #~ core/test-event.vala \
+    #~ xml/test-xml.vala \
+    #~ xml/test-parser.vala
 
 test_LDADD = \
     $(MAIA_LIBS) \
@@ -72,33 +73,9 @@ if USE_VALGRIND
 test_window_LDADD += $(MAIA_VALGRIND_LIBS)
 endif
 
-test_thread_SOURCES = \
-    test-thread.vala
-
-test_thread_LDADD = \
-    $(MAIA_LIBS) \
-    ${top_builddir}/lib/core/libmaia-core.la
-
-if USE_VALGRIND
-test_thread_LDADD += $(MAIA_VALGRIND_LIBS)
-endif
-
-test_atomic_queue_SOURCES = \
-    test-atomic-queue.vala
-
-test_atomic_queue_LDADD = \
-    $(MAIA_LIBS) \
-    ${top_builddir}/lib/core/libmaia-core.la
-
-if USE_VALGRIND
-test_atomic_queue_LDADD += $(MAIA_VALGRIND_LIBS)
-endif
-
 VALAFILES = \
     $(filter %.vala,$(test_SOURCES)) \
-    $(filter %.vala,$(test_window_SOURCES)) \
-    $(filter %.vala,$(test_atomic_queue_SOURCES)) \
-    $(filter %.vala,$(test_thread_SOURCES))
+    $(filter %.vala,$(test_window_SOURCES))
 
 CLEANFILES += \
     test_vala.stamp \

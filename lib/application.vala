@@ -68,7 +68,7 @@ public class Maia.Application : Object
     /**
      * Create the application
      *
-     * @return Application object
+     * @param inArgs command line arguments
      */
     public static void
     init (string[] inArgs)

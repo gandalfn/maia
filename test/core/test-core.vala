@@ -1,7 +1,7 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
  * test-core.vala
- * Copyright (C) Nicolas Bruguier 2010-2011 <gandalfn@club-internet.fr>
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published
@@ -24,13 +24,14 @@ public class Maia.TestCore : Maia.TestCase
         base ("core");
 
         suite.add_suite (new TestSpinLock ().suite);
+        suite.add_suite (new TestAny ().suite);
+        suite.add_suite (new TestObject ().suite);
         suite.add_suite (new TestArray ().suite);
         suite.add_suite (new TestList ().suite);
         suite.add_suite (new TestSet ().suite);
         suite.add_suite (new TestMap ().suite);
-        suite.add_suite (new TestObject ().suite);
-        suite.add_suite (new TestDispatcher ().suite);
-        suite.add_suite (new TestApplication ().suite);
-        suite.add_suite (new TestEvent ().suite);
+//~         suite.add_suite (new TestDispatcher ().suite);
+//~         suite.add_suite (new TestApplication ().suite);
+//~         suite.add_suite (new TestEvent ().suite);
     }
 }

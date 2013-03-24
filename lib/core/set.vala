@@ -369,24 +369,6 @@ public class Maia.Set<V> : Collection<V>
         balance (inNode.parent);
     }
 
-    private string
-    node_to_string (Node<V>? inNode)
-    {
-        string str = ";\n";
-        if (inNode != null)
-        {
-            string left = "", right = "";
-            string data = "\"" + to_string_func (inNode.val) + "\"";
-            str = node_to_string (inNode.left);
-            left = data + (str != ";\n" ? " -- " + str : str);
-            str = node_to_string (inNode.right);
-            right = data + (str != ";\n" ? " -- " + str : str);
-            str = left + " " + right;
-        }
-
-        return str;
-    }
-
     internal inline override unowned V?
     search<A> (A inValue, ValueCompareFunc<V, A> inFunc)
     {
@@ -510,15 +492,6 @@ public class Maia.Set<V> : Collection<V>
             remove_node (m_Root);
         m_Root = null;
         m_Size = 0;
-    }
-
-    /**
-     * Return dot representation of the set
-     */
-    public string
-    to_dot ()
-    {
-        return "graph graphname {\n " + node_to_string (m_Root) + "}";
     }
 
     /**

@@ -1,26 +1,31 @@
 if ENABLE_VALADOC
 
 VALADOC_SRCS = \
+	$(top_srcdir)/lib/core/maia-any.vapi \
     $(top_srcdir)/lib/core/*.vala \
     $(top_srcdir)/lib/graphic/*.vala \
     $(top_srcdir)/lib/xml/*.vala \
     $(top_srcdir)/lib/*.vala
 
 VALADOC_FLAGS = \
-    --vapidir @VALA_VAPI_PATH@ \
+    -D GLIB_2_32 \
+    --target-glib=2.32 \
+    -b $(top_srcdir)/lib \
+    -b $(top_srcdir)/lib/core \
     --vapidir $(top_srcdir)/vapi \
     --vapidir $(top_srcdir)/lib/core \
-    --pkg pixman-1 \
-    --pkg os \
     --pkg machine \
     --pkg posix \
-    -b $(top_srcdir)/lib \
+    --pkg os \
+    --pkg glib-2.0 \
+    --pkg gio-2.0 \
+    --pkg gio-unix-2.0 \
     --package-name Maia \
     --package-version @MAIA_VERSION@
 
 valadoc-html: $(VALADOC_SRCS)
 	$(AM_V_GEN) rm -rf html; \
-	$(VALADOC) --deps -o html $(VALADOC_FLAGS) $(VALADOC_SRCS) && \
+	$(VALADOC) -o html $(VALADOC_FLAGS) $(VALADOC_SRCS) && \
 	touch $@
 
 valadoc-devhelp: $(VALADOC_SRCS)
