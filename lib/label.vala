@@ -33,6 +33,24 @@ public class Maia.Label : Widget, Element
     public string text             { get; construct set; default = null; }
     public Graphic.Color color     { get; construct set; default = null; }
 
+    /**
+     * {@inheritDoc}
+     */
+    public override Graphic.Size natural_size {
+        get {
+            if (device != null)
+            {
+                m_Glyph = new Graphic.Glyph (font_description);
+                m_Glyph.text = text;
+                Graphic.Context context = new Graphic.Context (device);
+                m_Glyph.update (context);
+                return m_Glyph.size;
+            }
+
+            return ((View)this).natural_size;
+        }
+    }
+
     // methods
     public Label (string inText)
     {
@@ -55,20 +73,5 @@ public class Maia.Label : Widget, Element
         {
             Log.critical (GLib.Log.METHOD, "Error on paint: %s", err.message);
         }
-    }
-
-    public override void
-    get_size_request (out Graphic.Size outSize)
-    {
-        if (device != null)
-        {
-            m_Glyph = new Graphic.Glyph (font_description);
-            m_Glyph.text = text;
-            Graphic.Context context = new Graphic.Context (device);
-            m_Glyph.update (context);
-            outSize = m_Glyph.size;
-        }
-        else
-            base.get_size_request (out outSize);
     }
 }

@@ -92,6 +92,54 @@ public struct Maia.Graphic.Rectangle
     }
 
     /**
+     * Calculates the intersection of rectangle with inRect.
+     *
+     * @param inRect rectangle to intersect to
+     */
+    public void
+    intersect (Rectangle inRect)
+    {
+        double x1 = origin.x;
+        double y1 = origin.y;
+        double x2 = x1 + size.width;
+        double y2 = y1 + size.height;
+
+        double ox1 = inRect.origin.x;
+        double oy1 = inRect.origin.y;
+        double ox2 = ox1 + inRect.size.width;
+        double oy2 = oy1 + inRect.size.height;
+
+        origin.x = double.max (x1, ox1);
+        origin.y = double.max (y1, oy1);
+        size.width = double.max (0, double.min (x2, ox2) - origin.x);
+        size.height = double.max (0, double.min (y2, oy2) - origin.y);
+    }
+
+    /**
+     * Calculates the union of rectangle with inRect.
+     *
+     * @param inRect rectangle to intersect to
+     */
+    public void
+    union_ (Rectangle inRect)
+    {
+        double x1 = origin.x;
+        double y1 = origin.y;
+        double x2 = x1 + size.width;
+        double y2 = y1 + size.height;
+
+        double ox1 = inRect.origin.x;
+        double oy1 = inRect.origin.y;
+        double ox2 = ox1 + inRect.size.width;
+        double oy2 = oy1 + inRect.size.height;
+
+        origin.x = double.min (x1, ox1);
+        origin.y = double.min (y1, oy1);
+        size.width = double.max (x2, ox2) - origin.x;
+        size.height = double.max (y2, oy2) - origin.y;
+    }
+
+    /**
      * Transform the rectangle by inTransform.
      *
      * @param inTransform transform matrix

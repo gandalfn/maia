@@ -43,12 +43,6 @@ public abstract class Maia.Widget : View
     }
 
     // methods
-    public virtual void
-    get_size_request (out Graphic.Size outSize)
-    {
-        outSize = Graphic.Size (0, 0);
-    }
-
     /**
      * {@inheritDoc}
      */

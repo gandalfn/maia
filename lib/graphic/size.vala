@@ -80,7 +80,7 @@ public struct Maia.Graphic.Size
      * @return true if size are equal false otherwise
      */
     public bool
-    compare (Size inOther)
+    equal (Size inOther)
     {
         return width == inOther.width && height == inOther.height;
     }

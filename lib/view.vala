@@ -33,6 +33,11 @@ public class Maia.View : Input
     public virtual bool visible { get; set; default = false; }
 
     /**
+     * The view layer
+     */
+    public virtual uint layer { get; construct set; default = 0; }
+
+    /**
      * The damaged area of view
      */
     public virtual Graphic.Region? damaged_area {
@@ -59,7 +64,45 @@ public class Maia.View : Input
         }
     }
 
+    /**
+     * The natural size of view
+     */
+    public virtual Graphic.Size natural_size {
+        get {
+            return geometry.extents.size;
+        }
+    }
+
     // methods
+    protected override void
+    insert_child (Object inObject)
+    {
+        base.insert_child (inObject);
+
+        if (geometry != null && inObject is View)
+        {
+            View view = inObject as View;
+            Graphic.Size natural = view.natural_size;
+            double x = 0;
+            double y = 0;
+
+            if (view.geometry == null)
+            {
+                view.geometry = new Graphic.Region ();
+            }
+            else
+            {
+                x = view.geometry.extents.origin.x;
+                y = view.geometry.extents.origin.y;
+            }
+            view.geometry.resize (natural);
+
+            double dx = -x + (geometry.extents.size.width - natural.width) / 2.0;
+            double dy = -y + (geometry.extents.size.height - natural.height) / 2.0;
+            view.geometry.translate (Graphic.Point (dx, dy));
+        }
+    }
+
     /**
      * Called when view need to be repaint
      *

@@ -1,7 +1,7 @@
 Label {
     id: title;
-    geometry: 10,30,200,300;
-    font_description: Droid Sans Bold 64;
-    color: #00FF00;
+    geometry: 0,0,200,300;
+    font_description: Droid Sans Bold 32;
+    color: #000000;
     text: it's rocks;
 }

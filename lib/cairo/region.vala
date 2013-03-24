@@ -46,19 +46,7 @@ internal class Maia.Graphic.CairoRegion : Maia.Graphic.Region
 
     internal CairoRegion.region (global::Cairo.Region inRegion)
     {
-        m_Region = copy_region (inRegion);
-    }
-
-    private static inline global::Cairo.Region
-    copy_region (global::Cairo.Region inRegion)
-    {
-        global::Cairo.RectangleInt[] rects = {};
-        for (int cpt = 0; cpt < inRegion.num_rectangles (); ++cpt)
-        {
-            rects += inRegion.get_rectangle (cpt);
-        }
-
-        return new global::Cairo.Region.rectangles (rects);
+        m_Region = inRegion.copy ();
     }
 
     private inline void
@@ -66,7 +54,7 @@ internal class Maia.Graphic.CairoRegion : Maia.Graphic.Region
     {
         uint shift = 1;
 
-        m_Region = copy_region (s.m_Region);
+        s.m_Region = m_Region.copy ();
 
         while (dx != 0)
         {
@@ -84,7 +72,7 @@ internal class Maia.Graphic.CairoRegion : Maia.Graphic.Region
                 dx -= shift;
                 if (dx == 0) break;
             }
-            s.m_Region = copy_region (t.m_Region);
+            t.m_Region = s.m_Region.copy ();
             if (xdir)
                 s.translate (Point (-(int) shift,0));
             else
@@ -207,10 +195,8 @@ internal class Maia.Graphic.CairoRegion : Maia.Graphic.Region
         int dx = (int)extents.size.width - (int)inSize.width;
         int dy = (int)extents.size.height - (int)inSize.height;
 
-        Log.debug (GLib.Log.METHOD, "%i %i", dx, dy);
         if (dx != 0 || dy != 0)
         {
-            Log.debug (GLib.Log.METHOD, "%s", extents.to_string ());
             Region s = new Region ();
             Region t = new Region ();
 
@@ -223,8 +209,6 @@ internal class Maia.Graphic.CairoRegion : Maia.Graphic.Region
             if (grow) dy = -dy;
             if (dy != 0) compress ((CairoRegion)s, (CairoRegion)t, (uint) dy, false, grow);
             if (grow) dy = -dy;
-
-            Log.debug (GLib.Log.METHOD, "%s", extents.to_string ());
 
             translate (Point (dx <= 0 ? -dx : 0, dy <= 0 ? -dy : 0));
         }
