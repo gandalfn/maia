@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+includedir=@includedir@/maia-@MAIA_ABI@/manifest
+
+Name: maia-manifest-@MAIA_ABI@
+Description: Maia manifest library
+Version: @MAIA_VERSION@
+Requires: maia-core-@MAIA_ABI@
+Libs: -L${libdir} -lmaia-manifest
+Cflags: -I${includedir}

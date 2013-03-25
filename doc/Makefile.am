@@ -4,6 +4,7 @@ VALADOC_SRCS = \
 	$(top_srcdir)/lib/core/maia-any.vapi \
     $(top_srcdir)/lib/core/*.vala \
     $(top_srcdir)/lib/graphic/*.vala \
+    $(top_srcdir)/lib/manifest/*.vala \
     $(top_srcdir)/lib/xml/*.vala \
     $(top_srcdir)/lib/*.vala
 

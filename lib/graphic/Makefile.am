@@ -3,7 +3,8 @@ includelibdir = $(includedir)/graphic
 MAIA_LIB_NAME = maia-graphic
 
 MAIA_VAPI_DEPS = \
-    core/maia-core
+    core/maia-core \
+    manifest/maia-manifest
 
 include $(top_srcdir)/build/maia.am
 include $(top_srcdir)/build/pkgconfig.am
@@ -30,7 +31,8 @@ libmaia_graphic_la_LDFLAGS = \
     -no-undefined
 
 libmaia_graphic_la_LIBADD = \
-    $(MAIA_LIBS)
+    $(MAIA_LIBS) \
+    ${top_builddir}/lib/manifest/libmaia-manifest.la
 
 VALAFILES = \
     $(filter %.vala,$(libmaia_graphic_la_SOURCES))

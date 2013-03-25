@@ -166,6 +166,8 @@ lib/core/maia-core.pc
 lib/core/Makefile
 lib/xml/maia-xml.pc
 lib/xml/Makefile
+lib/manifest/maia-manifest.pc
+lib/manifest/Makefile
 lib/graphic/maia-graphic.pc
 lib/graphic/Makefile
 lib/cairo/maia-cairo-graphic.pc

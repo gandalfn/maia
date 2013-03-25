@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public interface Maia.Element : View
+public interface Maia.Manifest.Element : Object
 {
     // static properties
     private static Map<string, GLib.Type> s_Factory;
@@ -127,7 +127,7 @@ public interface Maia.Element : View
      * @throws ParseError when somethings goes wrong
      */
     public void
-    read_manifest (Manifest inManifest) throws ParseError
+    read_manifest (Document inManifest) throws ParseError
     {
         foreach (Parser.Token token in inManifest)
         {

@@ -4,6 +4,7 @@ MAIA_LIB_NAME = maia-xcb-backend
 
 MAIA_VAPI_DEPS = \
     core/maia-core \
+    manifest/maia-manifest \
     xml/maia-xml \
     graphic/maia-graphic \
     cairo/maia-cairo-graphic \
@@ -38,6 +39,7 @@ libmaia_xcb_backend_la_LDFLAGS = \
 
 libmaia_xcb_backend_la_LIBADD = \
     $(MAIA_LIBS) \
+    $(top_builddir)/lib/manifest/libmaia-manifest.la \
     $(top_builddir)/lib/cairo/libmaia-cairo-graphic.la
 
 VALAFILES = \

@@ -4,6 +4,7 @@ MAIA_LIB_NAME = maia-cairo-graphic
 
 MAIA_VAPI_DEPS = \
     core/maia-core \
+    manifest/maia-manifest \
     xml/maia-xml \
     graphic/maia-graphic \
     maia
@@ -32,7 +33,8 @@ libmaia_cairo_graphic_la_LDFLAGS = \
     -no-undefined
 
 libmaia_cairo_graphic_la_LIBADD = \
-    $(MAIA_LIBS)
+    $(MAIA_LIBS) \
+    ${top_builddir}/lib/manifest/libmaia-manifest.la
 
 VALAFILES = \
     $(filter %.vala,$(libmaia_cairo_graphic_la_SOURCES))

@@ -1,6 +1,7 @@
 MAIA_VAPI_DEPS = \
     maia \
     core/maia-core \
+    manifest/maia-manifest \
     xml/maia-xml \
     graphic/maia-graphic \
     cairo/maia-cairo-graphic
@@ -43,6 +44,7 @@ test_LDADD = \
     $(MAIA_VALGRIND_LIBS) \
     ${top_builddir}/lib/libmaia.la \
     ${top_builddir}/lib/core/libmaia-core.la \
+    ${top_builddir}/lib/manifest/libmaia-manifest.la \
     ${top_builddir}/lib/xml/libmaia-xml.la \
     ${top_builddir}/lib/graphic/libmaia-graphic.la \
     ${top_builddir}/lib/cairo/libmaia-cairo-graphic.la \
@@ -64,6 +66,7 @@ test_window_LDADD = \
     $(MAIA_LIBS) \
     ${top_builddir}/lib/libmaia.la \
     ${top_builddir}/lib/core/libmaia-core.la \
+    ${top_builddir}/lib/manifest/libmaia-manifest.la \
     ${top_builddir}/lib/xml/libmaia-xml.la \
     ${top_builddir}/lib/graphic/libmaia-graphic.la \
     ${top_builddir}/lib/cairo/libmaia-cairo-graphic.la \

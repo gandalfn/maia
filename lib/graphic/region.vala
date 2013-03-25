@@ -145,7 +145,10 @@ public class Maia.Graphic.Region : Any
      *
      * @param inTransform transformation to apply to region
      */
-    //public abstract void transform (Transform inTransform);
+    public virtual void
+    transform (Transform inTransform)
+    {
+    }
 
     /**
      * Checks whether inPoint is contained in region.

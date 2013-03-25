@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Label : Widget, Element
+public class Maia.Label : Widget, Manifest.Element
 {
     // properties
     private Graphic.Glyph m_Glyph;

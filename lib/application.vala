@@ -76,6 +76,8 @@ public class Maia.Application : Object
         if (s_Default == null)
         {
             s_Default = xcb_create_application (inArgs);
+
+            Maia.Manifest.Element.register ("Label", typeof (Maia.Label));
         }
     }
 

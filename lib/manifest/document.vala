@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * manifest.vala
+ * document.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,19 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Manifest : Parser
+public class Maia.Manifest.Document : Parser
 {
     // Properties
     private string        m_Filename = null;
     private MappedFile    m_File;
     private string        m_LastName;
     private Queue<string> m_ElementQueue;
-
-    // Static methods
-    static construct
-    {
-        Element.register ("Label", typeof (Maia.Label));
-    }
 
     // Methods
     construct
@@ -38,11 +32,11 @@ public class Maia.Manifest : Parser
     }
 
     /**
-     * Create a new manifest from a filename
+     * Create a new document manifest from a filename
      *
      * @param inFilename manifest filename
      */
-    public Manifest (string inFilename) throws ParseError
+    public Document (string inFilename) throws ParseError
     {
         try
         {
@@ -59,12 +53,12 @@ public class Maia.Manifest : Parser
     }
 
     /**
-     * Create a new manifest from a buffer
+     * Create a new document manifest from a buffer
      *
      * @param inContent buffer content
      * @param inLength buffer length
      */
-    public Manifest.from_buffer (string inContent, long inLength) throws ParseError
+    public Document.from_buffer (string inContent, long inLength) throws ParseError
     {
         char* begin = (char*)inContent;
         char* end = begin + inLength;

@@ -125,7 +125,7 @@ main (string[] args)
 
     Maia.Application.init (args);
 
-    Maia.Manifest manifest = new Maia.Manifest ("test.manifest");
+    Maia.Manifest.Document manifest = new Maia.Manifest.Document ("test.manifest");
 
     foreach (Maia.Parser.Token token in manifest)
     {
