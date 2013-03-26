@@ -319,19 +319,138 @@ public class Maia.Graphic.Color : Pattern
     public Color.parse(string inValue)
     {
         Log.debug (GLib.Log.METHOD, inValue);
-        if (inValue == "none")
+
+        try
         {
-            name = inValue;
+            Manifest.AttributeScanner scanner = new Manifest.AttributeScanner (inValue);
+            foreach (unowned Object child in ((Object)scanner))
+            {
+                // attribute is a function
+                if (child is Manifest.Function)
+                {
+                    unowned Manifest.Function func = (Manifest.Function)child;
+                    switch (func.get ())
+                    {
+                        case "rgb":
+                            parse_rgb_function (func);
+                            break;
+
+                        case "rgba":
+                            parse_rgba_function (func);
+                            break;
+
+                        default:
+                            Log.critical (GLib.Log.METHOD, "Invalid %s function name", func.get ());
+                            break;
+                    }
+                }
+                // attribute is a single string
+                else
+                {
+                    unowned Manifest.Attribute attr = (Manifest.Attribute)child;
+
+                    parse_attribute (attr);
+                }
+
+                // only parse first attribute
+                break;
+            }
+        }
+        catch (ParseError err)
+        {
+            Log.critical (GLib.Log.METHOD, "Error on parse color %s: %s", inValue, err.message);
+            m_IsSet = false;
+        }
+    }
+
+    private inline void
+    parse_rgb_function (Manifest.Function inFunction)
+    {
+        int cpt = 0;
+        foreach (unowned Object child in inFunction)
+        {
+            unowned Manifest.Attribute arg = (Manifest.Attribute)child;
+            switch (cpt)
+            {
+                case 0:
+                    m_Red = double.parse (arg.get ());
+                    break;
+                case 1:
+                    m_Green = double.parse (arg.get ());
+                    break;
+                case 2:
+                    m_Blue = double.parse (arg.get ());
+                    break;
+                default:
+                    break;
+            }
+            cpt++;
+        }
+        if (cpt > 2)
+        {
+            m_Alpha = 1.0;
+            m_IsSet = true;
+        }
+        else
+        {
+            m_IsSet = false;
+        }
+    }
+
+    private inline void
+    parse_rgba_function (Manifest.Function inFunction)
+    {
+        int cpt = 0;
+        foreach (unowned Object child in inFunction)
+        {
+            unowned Manifest.Attribute arg = (Manifest.Attribute)child;
+            switch (cpt)
+            {
+                case 0:
+                    m_Red = double.parse (arg.get ());
+                    break;
+                case 1:
+                    m_Green = double.parse (arg.get ());
+                    break;
+                case 2:
+                    m_Blue = double.parse (arg.get ());
+                    break;
+                case 3:
+                    m_Alpha = double.parse (arg.get ());
+                    break;
+                default:
+                    break;
+            }
+            cpt++;
+        }
+        if (cpt > 3)
+        {
+            m_IsSet = true;
+        }
+        else
+        {
+            m_IsSet = false;
+        }
+    }
+
+    private inline void
+    parse_attribute (Manifest.Attribute inAttribute)
+    {
+        string val = inAttribute.get ();
+
+        if (val == "none")
+        {
+            name = val;
             m_Red = 0.0;
             m_Green = 0.0;
             m_Blue = 0.0;
             m_Alpha = 0.0;
             m_IsSet = false;
         }
-        else if (inValue[0] == '#')
+        else if (val[0] == '#')
         {
             int r, g, b;
-            inValue.scanf ("#%02x%02x%02x", out r, out g, out b);
+            val.scanf ("#%02x%02x%02x", out r, out g, out b);
 
             m_Red = (double)r / 255;
             m_Green = (double)g / 255;
@@ -343,14 +462,13 @@ public class Maia.Graphic.Color : Pattern
         {
             create_standard_colors ();
 
-            unowned Color? color = s_StandardColors.search<string> (inValue,
-                                                                    (a, v) => {
-                                               return GLib.strcmp (a.name, v);
-                                           });
+            unowned Color? color = s_StandardColors.search<string> (val, (a, v) => {
+                return GLib.strcmp (a.name, v);
+            });
 
             if (color != null)
             {
-                name = inValue;
+                name = val;
                 m_Red = color.red;
                 m_Green = color.green;
                 m_Blue = color.blue;

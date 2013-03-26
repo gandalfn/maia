@@ -14,7 +14,9 @@ lib_LTLIBRARIES = libmaia-manifest.la
 libmaia_manifest_la_SOURCES = \
     document.vala \
     element.vala \
-    attribute-scanner.vala
+    attribute-scanner.vala \
+    attribute.vala \
+    function.vala
 
 libmaia_manifest_la_LDFLAGS = \
     -version-number @MAIA_SO_VERSION@ \

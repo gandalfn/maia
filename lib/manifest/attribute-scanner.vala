@@ -22,35 +22,26 @@ public class Maia.Manifest.AttributeScanner : Parser
     // Properties
     private string        m_LastName;
     private Queue<string> m_FunctionQueue;
-    private Array<string> m_Arguments;
-    private Set<string>   m_Grammar;
-
-    // Accessors
-    public Array<string> arguments {
-        get {
-            return m_Arguments;
-        }
-    }
 
     // Methods
     construct
     {
         m_FunctionQueue = new Queue<string> ();
-        m_Grammar = new Set<string> ();
     }
 
     /**
      * Create a new attribute scanner
      *
      * @param inContent buffer content
-     * @param inLength buffer length
      */
-    public AttributeScanner (string inContent, long inLength) throws ParseError
+    public AttributeScanner (string inContent) throws ParseError
     {
         char* begin = (char*)inContent;
-        char* end = begin + inLength;
+        char* end = begin + inContent.length;
 
         base (begin, end);
+
+        parse ();
     }
 
     private string
@@ -60,7 +51,9 @@ public class Maia.Manifest.AttributeScanner : Parser
 
         while (m_pCurrent < m_pEnd)
         {
-            if (m_pCurrent[0] == '(' || m_pCurrent[0] == ' ')
+            skip_space ();
+
+            if (m_pCurrent[0] == '(' || m_pCurrent[0] == ')' || m_pCurrent[0] == ',')
                 break;
 
             unichar u = ((string) m_pCurrent).get_char_validated ((long) (m_pEnd - m_pCurrent));
@@ -76,64 +69,6 @@ public class Maia.Manifest.AttributeScanner : Parser
         return ((string) begin).substring (0, (int) (m_pCurrent - begin));
     }
 
-    private string
-    extract_argument (char* inpBegin)
-    {
-        StringBuilder content = new StringBuilder ();
-
-        if (inpBegin != m_pCurrent)
-        {
-            content.append (((string) inpBegin).substring (0, (int)(m_pCurrent - inpBegin)));
-        }
-
-        return content.str;
-    }
-
-    private void
-    extract_arguments (char inEndChar) throws ParseError
-    {
-        char* begin = m_pCurrent;
-
-        while (m_pCurrent < m_pEnd && m_pCurrent[0] != inEndChar)
-        {
-            if (m_pCurrent[0] != ',')
-            {
-                unichar u = ((string) m_pCurrent).get_char_validated ((long) (m_pEnd - m_pCurrent));
-                if (u == (unichar) (-1))
-                {
-                    throw new ParseError.INVALID_UTF8 ("Invalid UTF-8 character at %i,%i", m_Line, m_Col);
-                }
-                else
-                {
-                    next_unichar (u);
-                }
-            }
-            else
-            {
-                m_Arguments.insert (extract_argument (begin));
-                next_char ();
-            }
-
-            skip_space ();
-        }
-
-        m_Arguments.insert (extract_argument (begin));
-    }
-
-    private void
-    read_arguments () throws ParseError
-    {
-        extract_arguments (')');
-
-        if (m_pCurrent[0] != ')')
-            throw new ParseError.INVALID_NAME ("Error on read arguments %s: unexpected end of line at %i,%i missing )",
-                                               m_Attribute, m_Line, m_Col);
-
-        if (m_pCurrent == m_pEnd)
-            throw new ParseError.INVALID_NAME ("Error on read arguments %s: unexpected end of line at %i,%i",
-                                               m_Attribute, m_Line, m_Col);
-    }
-
     internal override Parser.Token
     next_token () throws ParseError
     {
@@ -144,7 +79,6 @@ public class Maia.Manifest.AttributeScanner : Parser
         if (m_pCurrent >= m_pEnd)
         {
             m_Element = null;
-            m_Arguments = null;
             token = Parser.Token.EOF;
         }
         else
@@ -155,38 +89,83 @@ public class Maia.Manifest.AttributeScanner : Parser
                 token = Parser.Token.START_ELEMENT;
                 m_Element = m_LastName;
                 m_FunctionQueue.push (m_LastName);
-                m_Arguments = new Array<string> ();
                 next_char ();
-                skip_space ();
-                read_arguments ();
             }
             else if (m_pCurrent[0] == ')')
             {
-                token = Parser.Token.END_ELEMENT;
-                m_Element = m_FunctionQueue.pop ();
-                m_Arguments = null;
+                if (m_LastName != "")
+                {
+                    token = Parser.Token.ATTRIBUTE;
+                    m_Attribute = m_LastName;
+                }
+                else
+                {
+                    token = Parser.Token.END_ELEMENT;
+                    m_Attribute = null;
+                    m_Element = m_FunctionQueue.pop ();
+                    next_char ();
+                }
+            }
+            else if (m_pCurrent[0] == ',')
+            {
+                token = Parser.Token.ATTRIBUTE;
+                m_Attribute = m_LastName;
                 next_char ();
             }
             else
             {
                 token = Parser.Token.ATTRIBUTE;
-                m_Element = m_LastName;
-                m_Arguments = null;
+                m_Attribute = m_LastName;
+                next_char ();
             }
         }
 
         return token;
     }
 
-    public void
-    register_function (string inFunction)
+    private void
+    parse () throws ParseError
     {
-        m_Grammar.insert (inFunction);
+        foreach (Parser.Token token in this)
+        {
+            switch (token)
+            {
+                case Parser.Token.START_ELEMENT:
+                    Function function = new Function (m_Element);
+                    function.parent = this;
+                    function.parse (this);
+                    break;
+
+                case Parser.Token.END_ELEMENT:
+                    break;
+
+                case Parser.Token.ATTRIBUTE:
+                    Attribute attr = new Attribute (m_Attribute);
+                    attr.parent = this;
+                    break;
+
+                case Parser.Token.EOF:
+                    break;
+            }
+        }
     }
 
-    public new bool
-    contains (string inFunction)
+    /**
+     * {@inheritDoc}
+     */
+    public override bool
+    can_append_child (Object inChild)
     {
-        return inFunction in m_Grammar;
+        return inChild is Attribute;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public override int
+    compare (Object inObject)
+    {
+        // do not sort child attributes
+        return 0;
     }
 }
