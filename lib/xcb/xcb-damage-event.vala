@@ -20,18 +20,17 @@
 internal class Maia.XcbDamageEvent : DamageEvent
 {
     // properties
-    private unowned XcbWindow m_Window = null;
-    private int m_ListenCount          = 0;
+    private unowned XcbWindow m_Window;
 
     // static methods
     public static new void
     post_event (Xcb.GenericEvent inEvent)
     {
-        Xcb.ExposeEvent evt = (Xcb.ExposeEvent)inEvent;
-        DamageEventArgs args = new DamageEventArgs (Graphic.Region.create (Graphic.Rectangle (evt.x, evt.y,
-                                                                                              evt.width, evt.height)));
+        unowned Xcb.ExposeEvent evt = (Xcb.ExposeEvent)inEvent;
+        Graphic.Region area = new Graphic.Region (Graphic.Rectangle (evt.x, evt.y, evt.width, evt.height));
+        DamageEventArgs args = new DamageEventArgs (area);
         Log.debug (GLib.Log.METHOD, "0x%lx %s", evt.window, args.area.extents.to_string ());
-        Event.post_event<DamageEventArgs> ("damage-event", ((uint)evt.window).to_pointer (), args);
+        DamageEvent.post_event (((uint)evt.window).to_pointer (), args);
     }
 
     // methods
@@ -44,10 +43,11 @@ internal class Maia.XcbDamageEvent : DamageEvent
     protected override void
     on_listen ()
     {
-        if (m_Window != null && m_ListenCount == 0)
+        uint32 mask = m_Window.event_mask;
+
+        if ((mask & Xcb.EventMask.EXPOSURE) != Xcb.EventMask.EXPOSURE)
         {
             m_Window.event_mask |= Xcb.EventMask.EXPOSURE;
         }
-        ++m_ListenCount;
     }
 }

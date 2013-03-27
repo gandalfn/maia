@@ -20,24 +20,19 @@
 internal class Maia.XcbEventDispatcher : Watch
 {
     // properties
-    private unowned XcbApplication m_Application;
     private unowned Xcb.Connection m_Connection;
-    private XcbClientMessageEvent  m_ClientMessageEvent;
 
     // methods
     public XcbEventDispatcher (XcbApplication inApplication)
     {
-        XcbDesktop xcb_desktop = inApplication.desktop.delegate_cast<XcbDesktop> ();
+        Log.audit (GLib.Log.METHOD, "Create event dispatcher");
+        base (inApplication.connection.file_descriptor, inApplication.dispatcher.context);
 
-        base (xcb_desktop.connection.get_file_descriptor (), Watch.Flags.IN);
-
-        m_Application = inApplication;
-        m_Connection = xcb_desktop.connection;
-        m_ClientMessageEvent = new XcbClientMessageEvent (xcb_desktop);
+        m_Connection = inApplication.connection;
     }
 
-    public override void*
-    main ()
+    internal override bool
+    on_process ()
     {
         Xcb.GenericEvent? evt = null;
 
@@ -47,27 +42,27 @@ internal class Maia.XcbEventDispatcher : Watch
             Log.audit (GLib.Log.METHOD, "received %i", response_type);
             switch (response_type)
             {
-                case Xcb.CREATE_NOTIFY:
+                case Xcb.EventType.CREATE_NOTIFY:
                     XcbCreateWindowEvent.post_event (evt);
                     break;
-                case Xcb.DESTROY_NOTIFY:
+                case Xcb.EventType.DESTROY_NOTIFY:
                     XcbDestroyWindowEvent.post_event (evt);
                     break;
-                case Xcb.REPARENT_NOTIFY:
-                    XcbReparentWindowEvent.post_event (evt);
-                    break;
-                case Xcb.CONFIGURE_NOTIFY:
+                case Xcb.EventType.CONFIGURE_NOTIFY:
                     XcbGeometryEvent.post_event (evt);
                     break;
-                case Xcb.EXPOSE:
+                case Xcb.EventType.EXPOSE:
                     XcbDamageEvent.post_event (evt);
-                    break;
-                case Xcb.CLIENT_MESSAGE:
-                    m_ClientMessageEvent.dispatch (evt);
                     break;
             }
         }
 
-        return base.main ();
+        return true;
+    }
+
+    internal override void
+    on_error ()
+    {
+        // TODO:
     }
 }

@@ -34,7 +34,7 @@ public class Maia.CreateWindowEvent : Event<CreateWindowEventArgs>
 {
     // static methods
     public static new void
-    post (void* inOwner, CreateWindowEventArgs inArgs)
+    post_event (void* inOwner, CreateWindowEventArgs inArgs)
     {
         Dispatcher.post_event ("create-window-event", inOwner, inArgs);
     }

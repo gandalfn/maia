@@ -34,7 +34,7 @@ public class Maia.DestroyWindowEvent : Event<DestroyWindowEventArgs>
 {
     // static methods
     public static new void
-    post (void* inOwner, DestroyWindowEventArgs inArgs)
+    post_event (void* inOwner, DestroyWindowEventArgs inArgs)
     {
         Dispatcher.post_event ("destroy-window-event", inOwner, inArgs);
     }

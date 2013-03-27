@@ -27,6 +27,25 @@ internal class Maia.XcbWindow : Window
     private Graphic.Cairo.Device   m_FrontBuffer;
 
     // accessors
+    [CCode (notify = false)]
+    public override Object parent {
+        get {
+            return base.parent;
+        }
+        construct set {
+            if (damage_event == null)
+            {
+                damage_event = new XcbDamageEvent (this);
+            }
+            if (geometry_event == null)
+            {
+                geometry_event = new XcbGeometryEvent (this);
+            }
+
+            base.parent = value;
+        }
+    }
+
     public override bool visible {
         get {
             return m_Visible;
@@ -149,9 +168,16 @@ internal class Maia.XcbWindow : Window
 
         (workspace.parent as XcbApplication).request_check (cookie, (c) => {
             if (c.error != null)
+            {
                 Log.warning (GLib.Log.METHOD, "Error on create window");
+            }
             else
-                Log.debug (GLib.Log.METHOD, "Window has been created successfully");
+            {
+                Log.debug (GLib.Log.METHOD, "Window 0x%lx has been created successfully", id);
+                ((Xcb.Window)id).change_attributes (m_Connection, Xcb.Cw.EVENT_MASK, { m_EventMask });
+                m_Connection.flush ();
+                on_realize ();
+            }
         });
     }
 

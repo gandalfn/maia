@@ -21,20 +21,27 @@ public class Maia.DamageEventArgs : EventArgs
 {
     // accessors
     [CCode (notify = false)]
-    public Graphic.Region area { get; private set; }
+    public Graphic.Region area { get; construct; }
 
     // methods
     public DamageEventArgs (Graphic.Region inArea)
     {
-        area = inArea;
+        GLib.Object (area: inArea);
     }
 }
 
 public class Maia.DamageEvent : Event<DamageEventArgs>
 {
-    // methods
-    public DamageEvent (View inView)
+    // static methods
+    public static new void
+    post_event (void* inOwner, DamageEventArgs inArgs)
     {
-        base ("damage-event", inView);
+        Dispatcher.post_event ("damage-event", inOwner, inArgs);
+    }
+
+    // methods
+    public DamageEvent (void* inOwner)
+    {
+        base ("damage-event", inOwner);
     }
 }

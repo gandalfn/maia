@@ -23,14 +23,14 @@ internal class Maia.XcbCreateWindowEvent : CreateWindowEvent
     private unowned XcbWorkspace m_Workspace;
 
     // static methods
-    public static void
+    public static new void
     post_event (Xcb.GenericEvent inEvent)
     {
         unowned Xcb.CreateNotifyEvent? evt = (Xcb.CreateNotifyEvent?)inEvent;
 
         XcbWindow window = new XcbWindow (evt.window);
 
-        CreateWindowEvent.post (((uint)evt.parent).to_pointer (), new CreateWindowEventArgs (window));
+        CreateWindowEvent.post_event (((uint)evt.parent).to_pointer (), new CreateWindowEventArgs (window));
     }
 
     // methods

@@ -62,6 +62,10 @@ internal class Maia.XcbApplication : Application
             new XcbWorkspace (this, screen, cpt);
             cpt++;
         }
+
+        // create event dispatcher
+        XcbEventDispatcher event_dispatcher = new XcbEventDispatcher (this);
+        event_dispatcher.parent = dispatcher;
     }
 
     public override string

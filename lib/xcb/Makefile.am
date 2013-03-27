@@ -26,11 +26,14 @@ libmaia_xcb_backend_la_SOURCES = \
     xcb-atom.vala \
     xcb-cookie.vala \
     xcb-application.vala \
+    xcb-event-dispatcher.vala \
     xcb-workspace.vala \
     xcb-input.vala \
     xcb-window.vala \
     xcb-create-window-event.vala \
     xcb-destroy-window-event.vala \
+    xcb-geometry-event.vala \
+    xcb-damage-event.vala \
     xcb-backend.vala
 
 libmaia_xcb_backend_la_LDFLAGS = \

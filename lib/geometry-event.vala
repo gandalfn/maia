@@ -21,20 +21,27 @@ public class Maia.GeometryEventArgs : EventArgs
 {
     // accessors
     [CCode (notify = false)]
-    public Graphic.Region geometry { get; private set; }
+    public Graphic.Region geometry { get; construct; }
 
     // methods
     public GeometryEventArgs (Graphic.Region inGeometry)
     {
-        geometry = inGeometry;
+        GLib.Object (geometry: inGeometry);
     }
 }
 
 public class Maia.GeometryEvent : Event<GeometryEventArgs>
 {
-    // methods
-    public GeometryEvent (View inView)
+    // static methods
+    public static new void
+    post_event (void* inOwner, GeometryEventArgs inArgs)
     {
-        base ("geometry-event", inView);
+        Dispatcher.post_event ("geometry-event", inOwner, inArgs);
+    }
+
+    // methods
+    public GeometryEvent (void* inOwner)
+    {
+        base ("geometry-event", inOwner);
     }
 }

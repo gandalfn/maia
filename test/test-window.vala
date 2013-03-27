@@ -148,7 +148,7 @@ main (string[] args)
     Maia.Label label = manifest["Label"] as Maia.Label;
 
     /*TestWindow window = new TestWindow ();*/
-    Maia.Window window = new Maia.Window ("toto", 400, 200);
+    Maia.Window window = new Maia.Window ("toto", 250, 150);
     window.visible = true;
     window.add (label);
     window.draw ();

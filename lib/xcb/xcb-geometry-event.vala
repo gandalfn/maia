@@ -20,19 +20,18 @@
 internal class Maia.XcbGeometryEvent : GeometryEvent
 {
     // properties
-    private unowned XcbWindow m_Window = null;
-    private int m_ListenCount          = 0;
+    private unowned XcbWindow m_Window;
 
     // static methods
     public static new void
     post_event (Xcb.GenericEvent inEvent)
     {
-        Xcb.ConfigureNotifyEvent evt = (Xcb.ConfigureNotifyEvent)inEvent;
-        GeometryEventArgs args = new GeometryEventArgs (Graphic.Region.create (Graphic.Rectangle(evt.x, evt.y,
-                                                                                                 evt.width + (evt.border_width * 2),
-                                                                                                 evt.height + (evt.border_width * 2))));
+        unowned Xcb.ConfigureNotifyEvent evt = (Xcb.ConfigureNotifyEvent)inEvent;
+        GeometryEventArgs args = new GeometryEventArgs (new Graphic.Region (Graphic.Rectangle(evt.x, evt.y,
+                                                                                              evt.width + (evt.border_width * 2),
+                                                                                              evt.height + (evt.border_width * 2))));
         Log.audit (GLib.Log.METHOD, "0x%lx", evt.window);
-        Event.post_event<GeometryEventArgs> ("geometry-event", ((uint)evt.window).to_pointer (), args);
+        GeometryEvent.post_event (((uint)evt.window).to_pointer (), args);
     }
 
     // methods
@@ -45,11 +44,13 @@ internal class Maia.XcbGeometryEvent : GeometryEvent
     protected override void
     on_listen ()
     {
-        if (m_Window != null && m_ListenCount == 0)
+        uint32 mask = m_Window.event_mask;
+
+        if ((mask & Xcb.EventMask.STRUCTURE_NOTIFY) != Xcb.EventMask.STRUCTURE_NOTIFY ||
+            (mask & Xcb.EventMask.SUBSTRUCTURE_NOTIFY) != Xcb.EventMask.SUBSTRUCTURE_NOTIFY)
         {
             m_Window.event_mask |= Xcb.EventMask.STRUCTURE_NOTIFY |
                                    Xcb.EventMask.SUBSTRUCTURE_NOTIFY;
         }
-        ++m_ListenCount;
     }
 }

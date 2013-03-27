@@ -69,13 +69,29 @@ public class Maia.Window : DoubleBufferView
      */
     public HintType hint_type { get; set; default = HintType.NORMAL; }
 
+    /**
+     * {@inheritDoc}
+     */
+    [CCode (notify = false)]
+    public override Object parent {
+        get {
+            return base.parent;
+        }
+        construct set {
+            base.parent = value;
+
+            if (workspace != null)
+            {
+                damage_event.listen (on_damage_event, workspace.dispatcher);
+                geometry_event.listen (on_geometry_event, workspace.dispatcher);
+            }
+        }
+    }
+
     // methods
     construct
     {
         Log.audit ("Maia.Window.construct", "create window %u", ref_count);
-
-        //damage_event.listen (on_damage_event, workspace.dispatcher);
-        //geometry_event.listen (on_geometry_event, workspace.dispatcher);
     }
 
     /**
@@ -132,6 +148,13 @@ public class Maia.Window : DoubleBufferView
     {
         Log.audit (GLib.Log.METHOD, "");
         on_destroy ();
+    }
+
+    protected virtual void
+    on_realize ()
+    {
+        damage_event.listen (on_damage_event, workspace.dispatcher);
+        geometry_event.listen (on_geometry_event, workspace.dispatcher);
     }
 
     protected virtual void

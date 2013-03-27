@@ -23,14 +23,14 @@ internal class Maia.XcbDestroyWindowEvent : DestroyWindowEvent
     private unowned XcbWorkspace m_Workspace;
 
     // static methods
-    public static void
+    public static new void
     post_event (Xcb.GenericEvent inEvent)
     {
         unowned Xcb.DestroyNotifyEvent? evt = (Xcb.DestroyNotifyEvent?)inEvent;
 
         XcbWindow window = new XcbWindow (evt.window);
 
-        DestroyWindowEvent.post (((uint)evt.event).to_pointer (), new DestroyWindowEventArgs (window));
+        DestroyWindowEvent.post_event (((uint)evt.event).to_pointer (), new DestroyWindowEventArgs (window));
     }
 
     // methods
