@@ -23,12 +23,12 @@ internal class Maia.XcbEventDispatcher : Watch
     private unowned Xcb.Connection m_Connection;
 
     // methods
-    public XcbEventDispatcher (XcbApplication inApplication)
+    public XcbEventDispatcher (Dispatcher inDispatcher, Xcb.Connection inConnection)
     {
         Log.audit (GLib.Log.METHOD, "Create event dispatcher");
-        base (inApplication.connection.file_descriptor, inApplication.dispatcher.context);
+        base (inConnection.file_descriptor, inDispatcher.context);
 
-        m_Connection = inApplication.connection;
+        m_Connection = inConnection;
     }
 
     internal override bool

@@ -23,6 +23,7 @@ internal class Maia.XcbApplication : Application
     private Xcb.Connection m_Connection;
     private int            m_DefaultScreen;
     private XcbAtoms       m_Atoms;
+    private Dispatcher     m_EventDispatcher;
 
     // accessors
     public Xcb.Connection connection {
@@ -64,8 +65,15 @@ internal class Maia.XcbApplication : Application
         }
 
         // create event dispatcher
-        XcbEventDispatcher event_dispatcher = new XcbEventDispatcher (this);
-        event_dispatcher.parent = dispatcher;
+        m_EventDispatcher = new Dispatcher.thread ();
+        XcbEventDispatcher event_dispatcher = new XcbEventDispatcher (m_EventDispatcher, connection);
+        m_EventDispatcher.add (event_dispatcher);
+        m_EventDispatcher.run ();
+    }
+
+    ~XcbApplication ()
+    {
+        m_EventDispatcher.stop ();
     }
 
     public override string
