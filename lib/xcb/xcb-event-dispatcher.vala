@@ -25,7 +25,7 @@ internal class Maia.XcbEventDispatcher : Watch
     // methods
     public XcbEventDispatcher (Dispatcher inDispatcher, Xcb.Connection inConnection)
     {
-        Log.audit (GLib.Log.METHOD, "Create event dispatcher");
+        Log.audit (GLib.Log.METHOD, "Create event dispatcher %i", inConnection.file_descriptor);
         base (inConnection.file_descriptor, inDispatcher.context);
 
         m_Connection = inConnection;

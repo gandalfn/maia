@@ -248,18 +248,18 @@ public abstract class Maia.Object : Any
                 unowned Object? next = m_Next;
 
                 // unlink object
-                if (this == m_Head)
+                if (this == m_Parent.m_Head)
                 {
-                    m_Head = m_Next;
+                    m_Parent.m_Head = m_Next;
                 }
                 else
                 {
                     m_Prev.m_Next = m_Next;
                 }
 
-                if (this == m_Tail)
+                if (this == m_Parent.m_Tail)
                 {
-                    m_Tail = m_Prev;
+                    m_Parent.m_Tail = m_Prev;
                 }
                 else
                 {

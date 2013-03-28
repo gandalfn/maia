@@ -58,14 +58,10 @@ internal class Maia.XcbWorkspace : Workspace
     }
 
     // methods
-    public XcbWorkspace (XcbApplication inApplication, Xcb.Screen inScreen, int inNum)
+    public XcbWorkspace (Xcb.Screen inScreen, int inNum)
     {
-        GLib.Object (id: inNum, parent: inApplication, screen: inScreen);
-    }
+        GLib.Object (id: inNum, screen: inScreen);
 
-    protected override void
-    delegate_construct ()
-    {
         // create events
         create_window_event = new XcbCreateWindowEvent (this);
         destroy_window_event = new XcbDestroyWindowEvent (this);

@@ -75,6 +75,7 @@ public class Maia.Event<A> : Object
      */
     public Event (string inName, void* inOwner = null)
     {
+        Log.debug ("Event", "Create event %s %lx", inName, (ulong)inOwner);
         GLib.Object (id: GLib.Quark.from_string (inName), owner: inOwner);
     }
 

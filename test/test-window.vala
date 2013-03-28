@@ -151,10 +151,6 @@ main (string[] args)
     Maia.Window window = new Maia.Window ("toto", 250, 150);
     window.visible = true;
     window.add (label);
-    window.draw ();
-
-    window.swap_buffer ();
-
     message ("Label: %s %s %s", label.font_description, label.text, label.geometry.extents.to_string ());
 
     Maia.Application.run ();

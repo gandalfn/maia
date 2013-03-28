@@ -21,31 +21,11 @@ internal class Maia.XcbWindow : Window
 {
     // properties
     private unowned Xcb.Connection m_Connection;
-    private uint                   m_EventMask;
     private bool                   m_Visible = false;
     private Graphic.Cairo.Device   m_BackBuffer;
     private Graphic.Cairo.Device   m_FrontBuffer;
 
     // accessors
-    [CCode (notify = false)]
-    public override Object parent {
-        get {
-            return base.parent;
-        }
-        construct set {
-            if (damage_event == null)
-            {
-                damage_event = new XcbDamageEvent (this);
-            }
-            if (geometry_event == null)
-            {
-                geometry_event = new XcbGeometryEvent (this);
-            }
-
-            base.parent = value;
-        }
-    }
-
     public override bool visible {
         get {
             return m_Visible;
@@ -56,7 +36,18 @@ internal class Maia.XcbWindow : Window
                 m_Visible = value;
                 if (m_Visible)
                 {
-                    ((Xcb.Window)id).map (connection);
+                    Xcb.VoidCookie cookie = ((Xcb.Window)id).map_checked (connection);
+                    (workspace.parent as XcbApplication).request_check (cookie, (c) => {
+                        if (c.error == null)
+                        {
+                            damage_event.post (new DamageEventArgs (geometry));
+                        }
+                        else
+                        {
+                            m_Visible = false;
+                        }
+                    });
+
                     m_FrontBuffer = new Graphic.Cairo.Device (new Cairo.XcbSurface (m_Connection,
                                                                                     ((Xcb.Drawable)id),
                                                                                     (workspace as XcbWorkspace).visual,
@@ -102,14 +93,7 @@ internal class Maia.XcbWindow : Window
         }
     }
 
-    public uint event_mask {
-        get {
-            return m_EventMask;
-        }
-        set {
-            m_EventMask = value;
-        }
-    }
+    public uint event_mask { get; set; default = 0; }
 
     // methods
     public XcbWindow (Xcb.Window inWindow)
@@ -167,16 +151,25 @@ internal class Maia.XcbWindow : Window
                                                          { (workspace as XcbWorkspace).screen.white_pixel });
 
         (workspace.parent as XcbApplication).request_check (cookie, (c) => {
-            if (c.error != null)
+            if (c.error == null)
             {
-                Log.warning (GLib.Log.METHOD, "Error on create window");
+                Log.debug (GLib.Log.METHOD, "Window 0x%lx has been created successfully", id);
+
+                // Create events
+                damage_event = new XcbDamageEvent (this);
+                geometry_event = new XcbGeometryEvent (this);
+
+                // Call on realize
+                on_realize ();
+
+                // Select events to listen
+                ((Xcb.Window)id).change_attributes (m_Connection, Xcb.Cw.EVENT_MASK, { event_mask });
+                m_Connection.flush ();
             }
             else
             {
-                Log.debug (GLib.Log.METHOD, "Window 0x%lx has been created successfully", id);
-                ((Xcb.Window)id).change_attributes (m_Connection, Xcb.Cw.EVENT_MASK, { m_EventMask });
-                m_Connection.flush ();
-                on_realize ();
+                // TODO: manage window creation error
+                Log.critical (GLib.Log.METHOD, "Error on create window");
             }
         });
     }

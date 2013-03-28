@@ -138,12 +138,6 @@ public class Maia.View : Input
                 m_DamagedArea = area;
             else
                 m_DamagedArea.union_ (area);
-
-            // Emit damage event
-            if (damage_event != null)
-            {
-                damage_event.post (new DamageEventArgs (area));
-            }
         }
         else
         {
@@ -152,12 +146,6 @@ public class Maia.View : Input
             area.translate ( { -geometry.extents.origin.x, -geometry.extents.origin.y });
 
             m_DamagedArea = area;
-
-            // Emit damage event
-            if (damage_event != null)
-            {
-                damage_event.post (new DamageEventArgs (area));
-            }
         }
     }
 

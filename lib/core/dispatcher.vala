@@ -286,6 +286,11 @@ public class Maia.Dispatcher : Watch
 
     // signals
     /**
+     * Emitted on dispatcher start
+     */
+    public signal void running ();
+
+    /**
      * Emitted on dispatcher finish
      */
     public signal void finished ();
@@ -403,6 +408,8 @@ public class Maia.Dispatcher : Watch
 
         is_running = true;
 
+        running ();
+
         m_Loop.run ();
 
         return null;
@@ -411,6 +418,7 @@ public class Maia.Dispatcher : Watch
     internal unowned EventListener?
     create_event_listener (Event.Hash inEventHash, owned Event.Handler inHandler)
     {
+        Log.debug (GLib.Log.METHOD, "Create event listener %lx %u", (ulong)inEventHash.owner, inEventHash.id);
         unowned EventListener? ret = null;
 
         // Create new event listener
@@ -598,10 +606,10 @@ public class Maia.Dispatcher : Watch
     public void
     run ()
     {
-        Log.audit (GLib.Log.METHOD, "0x%lx", (ulong)this);
         if (m_Context == null)
         {
             is_running = true;
+            running ();
             m_Loop.run ();
         }
         else if (m_Thread == null)

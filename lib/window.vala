@@ -112,7 +112,7 @@ public class Maia.Window : DoubleBufferView
     on_damage_event (DamageEventArgs inArgs)
     {
         Log.audit (GLib.Log.METHOD, "%s", inArgs.area.extents.to_string ());
-        draw (inArgs.area);
+        damage (inArgs.area);
     }
 
     private void
@@ -153,6 +153,9 @@ public class Maia.Window : DoubleBufferView
     protected virtual void
     on_realize ()
     {
+        Log.debug (GLib.Log.METHOD, "window %lx realize", id);
+
+        // listen events
         damage_event.listen (on_damage_event, workspace.dispatcher);
         geometry_event.listen (on_geometry_event, workspace.dispatcher);
     }

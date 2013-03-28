@@ -41,7 +41,6 @@ internal class Maia.XcbApplication : Application
     // static methods
     static construct
     {
-        Any.delegate (typeof (Workspace), typeof (XcbWorkspace));
         Any.delegate (typeof (Window), typeof (XcbWindow));
     }
 
@@ -60,15 +59,20 @@ internal class Maia.XcbApplication : Application
         int cpt = 0;
         foreach (unowned Xcb.Screen screen in m_Connection.roots)
         {
-            new XcbWorkspace (this, screen, cpt);
+            XcbWorkspace workspace = new XcbWorkspace (screen, cpt);
+            workspace.parent = this;
             cpt++;
         }
 
         // create event dispatcher
         m_EventDispatcher = new Dispatcher.thread ();
-        XcbEventDispatcher event_dispatcher = new XcbEventDispatcher (m_EventDispatcher, connection);
+        XcbEventDispatcher event_dispatcher = new XcbEventDispatcher (m_EventDispatcher, m_Connection);
         m_EventDispatcher.add (event_dispatcher);
-        m_EventDispatcher.run ();
+
+        // connect on main dispatcher run
+        dispatcher.running.connect (() => {
+            m_EventDispatcher.run ();
+        });
     }
 
     ~XcbApplication ()

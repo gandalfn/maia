@@ -108,7 +108,6 @@ public class Maia.Task : Object
     public virtual void
     run ()
     {
-        Log.audit (GLib.Log.METHOD, "Run 0x%lx", (ulong)this);
         state = State.WAITING;
     }
 
