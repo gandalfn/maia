@@ -27,5 +27,5 @@ public class Maia.Input : Object
      * The geometry of view
      */
     [CCode (notify = false)]
-    public Graphic.Region? geometry { get; construct set; }
+    public virtual Graphic.Region? geometry { get; construct set; }
 }

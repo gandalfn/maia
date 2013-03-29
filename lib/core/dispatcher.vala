@@ -209,6 +209,50 @@ public class Maia.Dispatcher : Watch
         }
     }
 
+    internal class EventAccumulator : GLib.Object
+    {
+        // properties
+        public unowned EventListenerPool m_Pool;
+        public EventArgs                 m_Args;
+        public uint                      m_Pos;
+
+        public EventAccumulator (EventListenerPool inPool, EventArgs inArgs)
+        {
+            m_Pool = inPool;
+            m_Args = inArgs;
+        }
+
+        public inline void
+        accumulate (EventArgs inArgs)
+        {
+            m_Args.accumulate (inArgs);
+        }
+
+        public inline new void
+        notify ()
+        {
+            m_Pool.notify (m_Args);
+        }
+
+        public int
+        compare (EventAccumulator inAccumulator)
+        {
+            return m_Pool.compare (inAccumulator.m_Pool);
+        }
+
+        public int
+        compare_with_pool (EventListenerPool inPool)
+        {
+            return m_Pool.compare (inPool);
+        }
+
+        public int
+        compare_by_pos (EventAccumulator inAccumulator)
+        {
+            return (int)m_Pos - (int)inAccumulator.m_Pos;
+        }
+    }
+
     // properties
     private GLib.MainContext?       m_Context = null;
     private GLib.Thread<void*>      m_Thread = null;
@@ -516,8 +560,12 @@ public class Maia.Dispatcher : Watch
     {
         Log.audit (GLib.Log.METHOD, "0x%lx", (ulong)this);
 
+        Set<EventAccumulator> event_accumulators = new Set<EventAccumulator> ();
+        event_accumulators.compare_func = EventAccumulator.compare;
+
         // Process all received message
         Message* msg = null;
+        uint cpt = 1;
         while ((msg = Message.read (this)) != null)
         {
             switch (msg.type)
@@ -539,8 +587,18 @@ public class Maia.Dispatcher : Watch
                     });
                     if (pool != null)
                     {
-                        pool.notify (msg_event.args);
+                        unowned EventAccumulator? accumulator = event_accumulators.search<EventListenerPool> (pool, EventAccumulator.compare_with_pool);
+                        if (accumulator == null)
+                        {
+                            event_accumulators.insert (new EventAccumulator (pool, msg_event.args));
+                        }
+                        else
+                        {
+                            accumulator.m_Pos = cpt;
+                            accumulator.accumulate (msg_event.args);
+                        }
                     }
+                    cpt++;
                     if (msg_event.args != null) msg_event.args.unref ();
                     break;
 
@@ -586,6 +644,21 @@ public class Maia.Dispatcher : Watch
                     break;
             }
             child = next;
+        }
+
+        // Process events
+        // TODO: find a better way to sort compressed events
+        Array<unowned EventAccumulator> sorted_accumulators = new Array<unowned EventAccumulator> ();
+        sorted_accumulators.compare_func = EventAccumulator.compare_by_pos;
+
+        foreach (unowned EventAccumulator accumulator in event_accumulators)
+        {
+            sorted_accumulators.insert (accumulator);
+        }
+
+        foreach (unowned EventAccumulator accumulator in sorted_accumulators)
+        {
+            accumulator.notify ();
         }
 
         return true;

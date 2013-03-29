@@ -28,6 +28,13 @@ public class Maia.DamageEventArgs : EventArgs
     {
         GLib.Object (area: inArea);
     }
+
+    public override void
+    accumulate (EventArgs inArgs)
+        requires (inArgs is DamageEventArgs)
+    {
+        area.union_ ((inArgs as DamageEventArgs).area);
+    }
 }
 
 public class Maia.DamageEvent : Event<DamageEventArgs>

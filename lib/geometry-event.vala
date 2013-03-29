@@ -21,12 +21,19 @@ public class Maia.GeometryEventArgs : EventArgs
 {
     // accessors
     [CCode (notify = false)]
-    public Graphic.Region geometry { get; construct; }
+    public Graphic.Region geometry { get; construct set; }
 
     // methods
     public GeometryEventArgs (Graphic.Region inGeometry)
     {
         GLib.Object (geometry: inGeometry);
+    }
+
+    public override void
+    accumulate (EventArgs inArgs)
+        requires (inArgs is GeometryEventArgs)
+    {
+        geometry = (inArgs as GeometryEventArgs).geometry;
     }
 }
 

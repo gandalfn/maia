@@ -19,8 +19,14 @@
 
 public abstract class Maia.EventArgs : GLib.Object
 {
+    // methods
     ~EventArgs ()
     {
         Log.audit ("Maia.~EventArgs", "destroy");
+    }
+
+    public virtual void
+    accumulate (EventArgs inArgs)
+    {
     }
 }

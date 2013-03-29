@@ -130,15 +130,13 @@ public class Maia.Window : DoubleBufferView
             if (old_clipbox.origin.x != new_clipbox.origin.x ||
                 old_clipbox.origin.y != new_clipbox.origin.y)
             {
-                on_move ();
+                move ();
             }
 
             if (old_clipbox.size.width  != new_clipbox.size.width ||
                 old_clipbox.size.height != new_clipbox.size.height)
             {
-                on_resize ();
-
-                damage ();
+                resize ();
             }
         }
     }
@@ -147,11 +145,11 @@ public class Maia.Window : DoubleBufferView
     on_delete_event ()
     {
         Log.audit (GLib.Log.METHOD, "");
-        on_destroy ();
+        destroy ();
     }
 
-    protected virtual void
-    on_realize ()
+    public virtual signal void
+    realize ()
     {
         Log.debug (GLib.Log.METHOD, "window %lx realize", id);
 
@@ -160,44 +158,48 @@ public class Maia.Window : DoubleBufferView
         geometry_event.listen (on_geometry_event, workspace.dispatcher);
     }
 
-    protected virtual void
-    on_move ()
+    public virtual signal void
+    move ()
     {
     }
 
-    protected virtual void
-    on_resize ()
+    protected virtual signal void
+    resize ()
     {
     }
 
-    protected virtual void
-    on_destroy ()
+    protected virtual signal void
+    destroy ()
     {
     }
 
     public override void
     paint (Graphic.Context inContext, Graphic.Region inArea)
     {
-        foreach (unowned Object child in this)
+        try
         {
-            if (child is View)
+            Graphic.Path path = new Graphic.Path.from_region (inArea);
+
+            inContext.save ();
+            inContext.clip (path);
+            inContext.pattern = new Graphic.Color (0.6, 0.6, 0.6);
+            inContext.paint ();
+
+            foreach (unowned Object child in this)
             {
-                try
+                if (child is View)
                 {
                     View view = child as View;
-                    Graphic.Path path = new Graphic.Path.from_region (inArea);
-
-                    inContext.save ();
-                    inContext.clip (path);
                     inContext.translate (view.geometry.extents.origin);
                     view.paint (inContext, inArea);
-                    inContext.restore ();
-                }
-                catch (Graphic.Error err)
-                {
-                    Log.critical ("Error on paint: %s", err.message);
                 }
             }
+
+            inContext.restore ();
+        }
+        catch (Graphic.Error err)
+        {
+            Log.critical ("Error on paint: %s", err.message);
         }
     }
 

@@ -146,9 +146,7 @@ internal class Maia.XcbWindow : Window
                                                          (uint16)extents.size.width,
                                                          (uint16)extents.size.height,
                                                          0, Xcb.WindowClass.INPUT_OUTPUT,
-                                                         (workspace as XcbWorkspace).screen.root_visual,
-                                                         Xcb.Cw.BACK_PIXEL,
-                                                         { (workspace as XcbWorkspace).screen.white_pixel });
+                                                         (workspace as XcbWorkspace).screen.root_visual);
 
         (workspace.parent as XcbApplication).request_check (cookie, (c) => {
             if (c.error == null)
@@ -160,7 +158,7 @@ internal class Maia.XcbWindow : Window
                 geometry_event = new XcbGeometryEvent (this);
 
                 // Call on realize
-                on_realize ();
+                realize ();
 
                 // Select events to listen
                 ((Xcb.Window)id).change_attributes (m_Connection, Xcb.Cw.EVENT_MASK, { event_mask });
@@ -172,6 +170,24 @@ internal class Maia.XcbWindow : Window
                 Log.critical (GLib.Log.METHOD, "Error on create window");
             }
         });
+    }
+
+    public override void
+    resize ()
+    {
+        Log.debug (GLib.Log.METHOD, "resize %s", geometry.extents.to_string ());
+        if (m_FrontBuffer != null)
+        {
+            ((Cairo.XcbSurface)m_FrontBuffer.surface).set_size ((int)geometry.extents.size.width,
+                                                                (int)geometry.extents.size.height);
+        }
+        if (double_buffered)
+        {
+            m_BackBuffer = new Graphic.Cairo.Device (new Cairo.Surface.similar (m_FrontBuffer.surface,
+                                                                                Cairo.Content.COLOR_ALPHA,
+                                                                                (int)geometry.extents.size.width,
+                                                                                (int)geometry.extents.size.height));
+        }
     }
 
     public override void

@@ -28,6 +28,28 @@ public class Maia.View : Input
 
     // accessors
     /**
+     * {@inheritDoc}
+     */
+    [CCode (notify = false)]
+    public override Graphic.Region? geometry {
+        get {
+            return base.geometry;
+        }
+        construct set {
+            Graphic.Rectangle old_clipbox = base.geometry.extents;
+            Graphic.Rectangle new_clipbox = value.extents;
+
+            base.geometry = value;
+
+            if (old_clipbox.size.width  != new_clipbox.size.width ||
+                old_clipbox.size.height != new_clipbox.size.height)
+            {
+                check_child_allocation ();
+            }
+        }
+    }
+
+    /**
      * The view visibility
      */
     public virtual bool visible { get; set; default = false; }
@@ -74,14 +96,12 @@ public class Maia.View : Input
     }
 
     // methods
-    protected override void
-    insert_child (Object inObject)
+    private void
+    check_child_allocation ()
     {
-        base.insert_child (inObject);
-
-        if (geometry != null && inObject is View)
+        foreach (unowned Object child in this)
         {
-            View view = inObject as View;
+            View view = child as View;
             Graphic.Size natural = view.natural_size;
             double x = 0;
             double y = 0;
@@ -100,6 +120,17 @@ public class Maia.View : Input
             double dx = -x + (geometry.extents.size.width - natural.width) / 2.0;
             double dy = -y + (geometry.extents.size.height - natural.height) / 2.0;
             view.geometry.translate (Graphic.Point (dx, dy));
+        }
+    }
+
+    protected override void
+    insert_child (Object inObject)
+    {
+        base.insert_child (inObject);
+
+        if (geometry != null)
+        {
+            check_child_allocation ();
         }
     }
 
