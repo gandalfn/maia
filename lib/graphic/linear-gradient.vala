@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * widget.vala
+ * linear-gradient.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,40 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.Widget : View
+public class Maia.Graphic.LinearGradient : Gradient
 {
+    // properties
+    private Point m_Start;
+    private Point m_End;
+
     // accessors
-    public Window window {
+    public Point start {
         get {
-            unowned Window? ret = null;
-            for (unowned Object? p = parent; p != null; p = p.parent)
-            {
-                if (p is Window)
-                {
-                    ret = (Window)p;
-                    break;
-                }
-            }
-
-            return ret;
+            return m_Start;
         }
     }
 
-    public override Graphic.Device? device {
+    public Point end {
         get {
-            return window.device;
+            return m_End;
         }
     }
-
-    public double border { get; construct set; default = 0; }
 
     // methods
-    /**
-     * {@inheritDoc}
-     */
-    public override bool
-    can_append_child (Object inChild)
+    public LinearGradient (Point inStart, Point inEnd)
     {
-        return inChild is View;
+        m_Start = inStart;
+        m_End = inEnd;
     }
 }

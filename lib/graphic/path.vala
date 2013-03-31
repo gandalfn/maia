@@ -94,7 +94,7 @@ public class Maia.Graphic.Path : Object
         unowned Path? path = (Path?)first ();
         if (path != null)
         {
-            return m_Points[m_Points.length - 1];
+            return path.m_Points[path.m_Points.length - 1];
         }
 
         return Point(0, 0);
@@ -106,7 +106,7 @@ public class Maia.Graphic.Path : Object
         unowned Path? path = (Path?)last ();
         if (path != null)
         {
-            return m_Points[m_Points.length - 1];
+            return path.m_Points[path.m_Points.length - 1];
         }
 
         return Point(0, 0);
@@ -118,12 +118,12 @@ public class Maia.Graphic.Path : Object
         unowned Path? path = (Path?)last ();
         if (path != null)
         {
-            Point current = m_Points[m_Points.length - 1];
+            Point current = path.m_Points[path.m_Points.length - 1];
             if (path.data_type == DataType.CURVETO)
             {
-                Point control = m_Points[1];
-                control.x = current.x + (current.x - m_Points[1].x);
-                control.y = current.y + (current.y - m_Points[1].y);
+                Point control = path.m_Points[1];
+                control.x = current.x + (current.x - path.m_Points[1].x);
+                control.y = current.y + (current.y - path.m_Points[1].y);
                 return control;
             }
 

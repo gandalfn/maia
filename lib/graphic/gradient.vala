@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * widget.vala
+ * gradient.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,40 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.Widget : View
+public abstract class Maia.Graphic.Gradient : Pattern
 {
-    // accessors
-    public Window window {
-        get {
-            unowned Window? ret = null;
-            for (unowned Object? p = parent; p != null; p = p.parent)
-            {
-                if (p is Window)
-                {
-                    ret = (Window)p;
-                    break;
-                }
-            }
+    // type
+    public class ColorStop : Object
+    {
+        public double offset { get; construct; default = 0.0; }
+        public Color  color  { get; construct; default = null; }
 
-            return ret;
+        public ColorStop (double inOffset, Color inColor)
+        {
+            GLib.Object (offset: inOffset, color: inColor);
+        }
+
+        public override int
+        compare (Object inOther)
+            requires (inOther is ColorStop)
+        {
+            return (int)(offset - (inOther as ColorStop).offset);
         }
     }
-
-    public override Graphic.Device? device {
-        get {
-            return window.device;
-        }
-    }
-
-    public double border { get; construct set; default = 0; }
 
     // methods
-    /**
-     * {@inheritDoc}
-     */
     public override bool
     can_append_child (Object inChild)
     {
-        return inChild is View;
+        return inChild is ColorStop;
     }
 }

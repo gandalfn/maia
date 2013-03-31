@@ -44,7 +44,11 @@ public class Maia.Label : Widget, Manifest.Element
                 m_Glyph.text = text;
                 Graphic.Context context = new Graphic.Context (device);
                 m_Glyph.update (context);
-                return m_Glyph.size;
+
+                Graphic.Size size = m_Glyph.size;
+                size.width += border * 2;
+                size.height += border * 2;
+                return size;
             }
 
             return ((View)this).natural_size;
@@ -65,6 +69,17 @@ public class Maia.Label : Widget, Manifest.Element
             Graphic.Path clip_path = new Graphic.Path.from_region (inArea);
             inContext.save ();
             inContext.clip (clip_path);
+
+            Graphic.LinearGradient gradient = new Graphic.LinearGradient ({ 0, 0 }, { 0, m_Glyph.size.height });
+            gradient.add (new Graphic.Gradient.ColorStop (0,   new Graphic.Color (0.8, 0.8, 0.8, 1.0)));
+            gradient.add (new Graphic.Gradient.ColorStop (0.5, new Graphic.Color (0.3, 0.3, 0.3, 1.0)));
+            gradient.add (new Graphic.Gradient.ColorStop (1,   new Graphic.Color (0.1, 0.1, 0.1, 1.0)));
+            inContext.pattern = gradient;
+            Graphic.Path path = new Graphic.Path ();
+            path.rectangle (0, 0, natural_size.width, natural_size.height, 5, 5);
+            inContext.fill (path);
+
+            inContext.translate ({ border, border });
             inContext.pattern = color;
             inContext.render (m_Glyph);
             inContext.restore ();

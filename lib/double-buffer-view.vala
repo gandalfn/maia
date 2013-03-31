@@ -47,6 +47,7 @@ public class Maia.DoubleBufferView : View
         if (double_buffered)
         {
             Graphic.Region? area = geometry.copy ();
+            area.translate ({ -geometry.extents.origin.x, -geometry.extents.origin.y });
 
             // Only repair the specified area
             if (inArea != null)

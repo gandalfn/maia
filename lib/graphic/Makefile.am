@@ -20,6 +20,8 @@ libmaia_graphic_la_SOURCES = \
     rectangle.vala \
     region.vala \
     color.vala \
+    gradient.vala \
+    linear-gradient.vala \
     path.vala \
     glyph.vala \
     context.vala \
