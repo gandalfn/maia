@@ -22,12 +22,34 @@ public abstract class Maia.Graphic.Gradient : Pattern
     // type
     public class ColorStop : Object
     {
-        public double offset { get; construct; default = 0.0; }
-        public Color  color  { get; construct; default = null; }
+        public double offset { get; construct set; default = 0.0; }
+        public Color  color  { get; construct set; default = null; }
 
         public ColorStop (double inOffset, Color inColor)
         {
             GLib.Object (offset: inOffset, color: inColor);
+        }
+
+        internal ColorStop.from_function (Manifest.Function inFunction)
+        {
+            int cpt = 0;
+            foreach (unowned Object child in inFunction)
+            {
+                unowned Manifest.Attribute arg = (Manifest.Attribute)child;
+                switch (cpt)
+                {
+                    case 0:
+                        offset = (double)arg.transform (typeof (double));
+                        break;
+                    case 1:
+                        color = (Color)arg.transform (typeof (Color));
+                        break;
+                    default:
+                        break;
+                }
+                cpt++;
+                if (cpt > 1) break;
+            }
         }
 
         public override int

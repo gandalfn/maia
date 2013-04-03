@@ -31,20 +31,29 @@ public class Maia.View : Input
      * {@inheritDoc}
      */
     [CCode (notify = false)]
-    public override Graphic.Region? geometry {
+    public override Graphic.Region geometry {
         get {
             return base.geometry;
         }
         construct set {
-            Graphic.Rectangle old_clipbox = base.geometry.extents;
-            Graphic.Rectangle new_clipbox = value.extents;
-
-            base.geometry = value;
-
-            if (old_clipbox.size.width  != new_clipbox.size.width ||
-                old_clipbox.size.height != new_clipbox.size.height)
+            if (value != null && base.geometry != null)
             {
-                check_child_allocation ();
+                Graphic.Rectangle old_clipbox = base.geometry.extents;
+                Graphic.Rectangle new_clipbox = value.extents;
+
+                Log.debug ("View.geometry", "old: %s new: %s", old_clipbox.to_string (),
+                                                               new_clipbox.to_string ());
+                base.geometry = value;
+
+                if (old_clipbox.size.width  != new_clipbox.size.width ||
+                    old_clipbox.size.height != new_clipbox.size.height)
+                {
+                    check_child_allocation ();
+                }
+            }
+            else
+            {
+                base.geometry = value;
             }
         }
     }
@@ -91,7 +100,7 @@ public class Maia.View : Input
      */
     public virtual Graphic.Size natural_size {
         get {
-            return geometry.extents.size;
+            return geometry == null ? Graphic.Size (0, 0) : geometry.extents.size;
         }
     }
 
@@ -103,23 +112,30 @@ public class Maia.View : Input
         {
             View view = child as View;
             Graphic.Size natural = view.natural_size;
-            double x = 0;
-            double y = 0;
-
-            if (view.geometry == null)
+            if (!natural.is_empty ())
             {
-                view.geometry = new Graphic.Region ();
-            }
-            else
-            {
-                x = view.geometry.extents.origin.x;
-                y = view.geometry.extents.origin.y;
-            }
-            view.geometry.resize (natural);
+                if (view.geometry != null)
+                {
+                    double x = 0;
+                    double y = 0;
 
-            double dx = -x + (geometry.extents.size.width - natural.width) / 2.0;
-            double dy = -y + (geometry.extents.size.height - natural.height) / 2.0;
-            view.geometry.translate (Graphic.Point (dx, dy));
+                    x = view.geometry.extents.origin.x;
+                    y = view.geometry.extents.origin.y;
+
+                    view.geometry.resize (natural);
+
+                    double dx = -x + (geometry.extents.size.width - natural.width) / 2.0;
+                    double dy = -y + (geometry.extents.size.height - natural.height) / 2.0;
+                    view.geometry.translate (Graphic.Point (dx, dy));
+
+                    view.notify_property ("width");
+                    view.notify_property ("height");
+                }
+                else
+                {
+                    view.geometry = new Graphic.Region (Graphic.Rectangle (0, 0, natural.width, natural.height));
+                }
+            }
         }
     }
 

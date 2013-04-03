@@ -30,26 +30,6 @@ public struct Maia.Graphic.Rectangle
      */
     public Size size;
 
-    // static methods
-    internal static void
-    rectangle_to_string (GLib.Value inSrc, out GLib.Value outDest)
-        requires (inSrc.holds (typeof (Rectangle)))
-    {
-        Rectangle val = (Rectangle)inSrc;
-
-        outDest = val.to_string ();
-    }
-
-    internal static void
-    string_to_rectangle (GLib.Value inSrc, out GLib.Value outDest)
-        requires (inSrc.holds (typeof (string)))
-        requires ((string)inSrc != null)
-    {
-        string val = (string)inSrc;
-
-        outDest = Rectangle.from_string (val);
-    }
-
     // methods
     /**
      * Create a new rectangle from raw values
@@ -63,21 +43,6 @@ public struct Maia.Graphic.Rectangle
     {
         origin = { inX, inY };
         size = { inWidth, inHeight };
-    }
-
-    /**
-     * Create a new rectangle from string attribute
-     *
-     * @param inValue rectangle string attribute
-     */
-    public Rectangle.from_string (string inValue)
-    {
-        string[] val = inValue.split (",");
-        if (val.length >= 4)
-        {
-            origin = { double.parse (val[0]), double.parse (val[1]) };
-            size = { double.parse (val[2]), double.parse (val[3]) };
-        }
     }
 
     /**

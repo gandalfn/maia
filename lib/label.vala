@@ -29,9 +29,10 @@ public class Maia.Label : Widget, Manifest.Element
         }
     }
 
-    public string font_description { get; construct set; default = null; }
-    public string text             { get; construct set; default = null; }
-    public Graphic.Color color     { get; construct set; default = null; }
+    public string          font_description { get; construct set; default = null; }
+    public string          text             { get; construct set; default = null; }
+    public Graphic.Pattern color            { get; construct set; default = null; }
+    public Graphic.Pattern background       { get; construct set; default = null; }
 
     /**
      * {@inheritDoc}
@@ -70,11 +71,7 @@ public class Maia.Label : Widget, Manifest.Element
             inContext.save ();
             inContext.clip (clip_path);
 
-            Graphic.LinearGradient gradient = new Graphic.LinearGradient ({ 0, 0 }, { 0, m_Glyph.size.height });
-            gradient.add (new Graphic.Gradient.ColorStop (0,   new Graphic.Color (0.8, 0.8, 0.8, 1.0)));
-            gradient.add (new Graphic.Gradient.ColorStop (0.5, new Graphic.Color (0.3, 0.3, 0.3, 1.0)));
-            gradient.add (new Graphic.Gradient.ColorStop (1,   new Graphic.Color (0.1, 0.1, 0.1, 1.0)));
-            inContext.pattern = gradient;
+            inContext.pattern = background;
             Graphic.Path path = new Graphic.Path ();
             path.rectangle (0, 0, natural_size.width, natural_size.height, 5, 5);
             inContext.fill (path);

@@ -115,7 +115,18 @@ public interface Maia.Manifest.Element : Object
         // to property type and set
         if (param != null)
         {
-            set_property (name, Value.from_string (param.value_type, inValue));
+            try
+            {
+                AttributeScanner scanner = new AttributeScanner (this, inValue);
+                scanner.owner = this;
+
+                // set property from attribute scanner
+                set_property (name, scanner.transform (param.value_type));
+            }
+            catch (ParseError err)
+            {
+                Log.critical (GLib.Log.METHOD, "Error on parse color %s: %s", inValue, err.message);
+            }
         }
     }
 

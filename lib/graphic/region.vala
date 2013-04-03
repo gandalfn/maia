@@ -68,34 +68,42 @@ public class Maia.Graphic.Region : Any
     // static methods
     static construct
     {
-        GLib.Value.register_transform_func (typeof (string), typeof (Region),
-                                            (ValueTransform)string_to_region);
-        GLib.Value.register_transform_func (typeof (Region), typeof (string),
-                                            (ValueTransform)region_to_string);
-
-        GLib.Value.register_transform_func (typeof (string), typeof (Rectangle),
-                                            (ValueTransform)Rectangle.string_to_rectangle);
-        GLib.Value.register_transform_func (typeof (Rectangle), typeof (string),
-                                            (ValueTransform)Rectangle.rectangle_to_string);
+        Log.debug ("Region.static_construct", "Register transform functions");
+        Manifest.AttributeScanner.register_transform_func (typeof (Region), attributes_to_region);
     }
 
     internal static void
-    region_to_string (GLib.Value inSrc, out GLib.Value outDest)
-        requires (inSrc.holds (typeof (Region)))
+    attributes_to_region (Manifest.AttributeScanner inScanner, out GLib.Value outDest)
     {
-        Region val = (Region)inSrc;
+        Rectangle rect = Rectangle (0, 0, 0, 0);
+        int cpt = 0;
+        foreach (unowned Object child in ((Object)inScanner))
+        {
+            switch (cpt)
+            {
+                case 0:
+                    rect.origin.x = (double)(child as Manifest.Attribute).transform (typeof (double));
+                    break;
 
-        outDest = val.extents.to_string ();
-    }
+                case 1:
+                    rect.origin.y = (double)(child as Manifest.Attribute).transform (typeof (double));
+                    break;
 
-    internal static void
-    string_to_region (GLib.Value inSrc, out GLib.Value outDest)
-        requires (inSrc.holds (typeof (string)))
-        requires ((string)inSrc != null)
-    {
-        string val = (string)inSrc;
+                case 2:
+                    rect.size.width = (double)(child as Manifest.Attribute).transform (typeof (double));
+                    break;
 
-        outDest = new Region.from_string (val);
+                case 3:
+                    rect.size.height = (double)(child as Manifest.Attribute).transform (typeof (double));
+                    break;
+            }
+            cpt++;
+            if (cpt > 3) break;
+        }
+
+        Log.debug (GLib.Log.METHOD, "transform to %s", rect.to_string ());
+
+        outDest = new Region (rect);
     }
 
     // methods
@@ -107,16 +115,6 @@ public class Maia.Graphic.Region : Any
     public Region (Rectangle? inExtents = null)
     {
         GLib.Object (extents: inExtents == null ? Rectangle (0, 0, 0, 0) : inExtents);
-    }
-
-    /**
-     * Allocates a new region object containing inExtents.
-     *
-     * @param inExtents a Rectangle string representation
-     */
-    public Region.from_string (string inExtents)
-    {
-        GLib.Object (extents: Rectangle.from_string (inExtents));
     }
 
     /**

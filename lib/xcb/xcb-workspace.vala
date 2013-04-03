@@ -60,7 +60,8 @@ internal class Maia.XcbWorkspace : Workspace
     // methods
     public XcbWorkspace (Xcb.Screen inScreen, int inNum)
     {
-        GLib.Object (id: inNum, screen: inScreen);
+        Graphic.Region geometry = new Graphic.Region (Graphic.Rectangle (0, 0, inScreen.width_in_pixels, inScreen.height_in_pixels));
+        GLib.Object (id: inNum, screen: inScreen, geometry: geometry);
 
         // create events
         create_window_event = new XcbCreateWindowEvent (this);

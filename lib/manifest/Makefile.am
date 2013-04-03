@@ -16,6 +16,7 @@ libmaia_manifest_la_SOURCES = \
     element.vala \
     attribute-scanner.vala \
     attribute.vala \
+    attribute-bind.vala \
     function.vala
 
 libmaia_manifest_la_LDFLAGS = \

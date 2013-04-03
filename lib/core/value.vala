@@ -23,38 +23,16 @@ namespace Maia
     {
         private static bool s_SimpleTypeRegistered = false;
 
+        // static methods
         private static void
         register_simple_type ()
         {
-            GLib.Value.register_transform_func (typeof (string), typeof (double),
-                                                (ValueTransform)string_to_double);
-            GLib.Value.register_transform_func (typeof (double), typeof (string),
-                                                (ValueTransform)double_to_string);
-
-            GLib.Value.register_transform_func (typeof (string), typeof (int),
-                                                (ValueTransform)string_to_int);
-            GLib.Value.register_transform_func (typeof (int), typeof (string),
-                                                (ValueTransform)int_to_string);
-
-            GLib.Value.register_transform_func (typeof (string), typeof (uint),
-                                                (ValueTransform)string_to_uint);
-            GLib.Value.register_transform_func (typeof (uint), typeof (string),
-                                                (ValueTransform)uint_to_string);
-
-            GLib.Value.register_transform_func (typeof (string), typeof (ulong),
-                                                (ValueTransform)string_to_ulong);
-            GLib.Value.register_transform_func (typeof (ulong), typeof (string),
-                                                (ValueTransform)ulong_to_string);
-
-            GLib.Value.register_transform_func (typeof (string), typeof (long),
-                                                (ValueTransform)string_to_long);
-            GLib.Value.register_transform_func (typeof (long), typeof (string),
-                                                (ValueTransform)long_to_string);
-
-            GLib.Value.register_transform_func (typeof (string), typeof (bool),
-                                                (ValueTransform)string_to_bool);
-            GLib.Value.register_transform_func (typeof (bool), typeof (string),
-                                                (ValueTransform)bool_to_string);
+            register_transform_funcs (typeof (bool),   string_to_bool,   bool_to_string);
+            register_transform_funcs (typeof (int),    string_to_int,    int_to_string);
+            register_transform_funcs (typeof (uint),   string_to_uint,   uint_to_string);
+            register_transform_funcs (typeof (long),   string_to_long,   long_to_string);
+            register_transform_funcs (typeof (ulong),  string_to_ulong,  ulong_to_string);
+            register_transform_funcs (typeof (double), string_to_double, double_to_string);
 
             s_SimpleTypeRegistered = true;
         }

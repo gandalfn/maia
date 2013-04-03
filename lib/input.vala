@@ -19,13 +19,44 @@
 
 public class Maia.Input : Object
 {
+    // properties
+    private Graphic.Region m_Geometry;
+
     // events
     public GeometryEvent geometry_event { get; set; default = null; }
 
     // accessors
     /**
-     * The geometry of view
+     * The geometry of input
      */
     [CCode (notify = false)]
-    public virtual Graphic.Region? geometry { get; construct set; }
+    public virtual Graphic.Region geometry {
+        get {
+            return m_Geometry;
+        }
+        construct set {
+            Log.debug ("Input.geometry", value.extents.to_string ());
+            m_Geometry = value;
+            notify_property ("width");
+            notify_property ("height");
+        }
+    }
+
+    /**
+     * Width of input
+     */
+    public double width {
+        get {
+            return geometry == null ? 0.0 : geometry.extents.size.width;
+        }
+    }
+
+    /**
+     * Height of input
+     */
+    public double height {
+        get {
+            return geometry == null ? 0.0 : geometry.extents.size.height;
+        }
+    }
 }

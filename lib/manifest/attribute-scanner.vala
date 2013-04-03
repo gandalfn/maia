@@ -19,9 +19,55 @@
 
 public class Maia.Manifest.AttributeScanner : Parser
 {
+    // Types
+    public delegate void TransformFunc (AttributeScanner inScanner, ref GLib.Value outValue);
+
+    private class Transform : Object
+    {
+        public GLib.Type     gtype;
+        public TransformFunc func;
+
+        public Transform (GLib.Type inType, owned TransformFunc inFunc)
+        {
+            gtype = inType;
+            func = (owned)inFunc;
+        }
+
+        public override int
+        compare (Object inOther)
+        {
+            return (int)(gtype - (inOther as Transform).gtype);
+        }
+
+        public int
+        compare_with_type (GLib.Type inType)
+        {
+            return (int)(gtype - inType);
+        }
+    }
+
+    // Static properties
+    private static Set<Transform> s_Transforms;
+
     // Properties
     private string        m_LastName;
     private Queue<string> m_FunctionQueue;
+    private Object        m_Owner;
+
+    // Accessors
+    public Object owner { get; set; default = null; }
+
+    // Static methods
+    public static void
+    register_transform_func (GLib.Type inType, owned TransformFunc inFunc)
+    {
+        if (s_Transforms == null)
+        {
+            s_Transforms = new Set<Transform> ();
+        }
+        Transform transform = new Transform (inType, (owned)inFunc);
+        s_Transforms.insert (transform);
+    }
 
     // Methods
     construct
@@ -32,14 +78,16 @@ public class Maia.Manifest.AttributeScanner : Parser
     /**
      * Create a new attribute scanner
      *
+     * @param inOwner object owner of attributes
      * @param inContent buffer content
      */
-    public AttributeScanner (string inContent) throws ParseError
+    public AttributeScanner (Object inOwner, string inContent) throws ParseError
     {
         char* begin = (char*)inContent;
         char* end = begin + inContent.length;
 
         base (begin, end);
+        m_Owner = inOwner;
 
         parse ();
     }
@@ -76,6 +124,8 @@ public class Maia.Manifest.AttributeScanner : Parser
 
         skip_space ();
 
+        m_Attribute = null;
+
         if (m_pCurrent >= m_pEnd)
         {
             m_Element = null;
@@ -108,11 +158,14 @@ public class Maia.Manifest.AttributeScanner : Parser
             }
             else if (m_pCurrent[0] == ',')
             {
-                token = Parser.Token.ATTRIBUTE;
-                m_Attribute = m_LastName;
+                if (m_LastName != "")
+                {
+                    token = Parser.Token.ATTRIBUTE;
+                    m_Attribute = m_LastName;
+                }
                 next_char ();
             }
-            else
+            else if (m_LastName != "")
             {
                 token = Parser.Token.ATTRIBUTE;
                 m_Attribute = m_LastName;
@@ -131,7 +184,7 @@ public class Maia.Manifest.AttributeScanner : Parser
             switch (token)
             {
                 case Parser.Token.START_ELEMENT:
-                    Function function = new Function (m_Element);
+                    Function function = new Function (m_Owner, m_Element);
                     function.parent = this;
                     function.parse (this);
                     break;
@@ -140,8 +193,16 @@ public class Maia.Manifest.AttributeScanner : Parser
                     break;
 
                 case Parser.Token.ATTRIBUTE:
-                    Attribute attr = new Attribute (m_Attribute);
-                    attr.parent = this;
+                    if (m_Attribute.has_prefix("@"))
+                    {
+                        AttributeBind attr = new AttributeBind (m_Owner, m_Attribute);
+                        attr.parent = this;
+                    }
+                    else if (m_Attribute != "")
+                    {
+                        Attribute attr = new Attribute (m_Owner, m_Attribute);
+                        attr.parent = this;
+                    }
                     break;
 
                 case Parser.Token.EOF:
@@ -167,5 +228,41 @@ public class Maia.Manifest.AttributeScanner : Parser
     {
         // do not sort child attributes
         return 0;
+    }
+
+    /**
+     * Transform attribute scanner to Value inType
+     *
+     * @param inType value type
+     *
+     * @return the value
+     */
+    public GLib.Value
+    transform (GLib.Type inType)
+    {
+        GLib.Value val = GLib.Value (inType);
+        if (inType.is_classed () && inType.class_peek () == null)
+            inType.class_ref ();
+
+        unowned Transform? transform = null;
+        if (s_Transforms != null)
+        {
+            transform = s_Transforms.search<GLib.Type> (inType, Transform.compare_with_type);
+        }
+
+        if (transform == null)
+        {
+            foreach (unowned Object child in ((Object)this))
+            {
+                unowned Attribute attr = (Attribute)child;
+                return attr.transform (inType);
+            }
+        }
+        else
+        {
+            transform.func (this, ref val);
+        }
+
+        return val;
     }
 }

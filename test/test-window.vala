@@ -121,7 +121,7 @@ static int
 main (string[] args)
 {
     //Maia.Log.set_default_logger (new Maia.Log.File ("out.log", Maia.Log.Level.DEBUG, "test-window"));
-    Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, "test-window"));
+    Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.INFO, "test-window"));
 
     Maia.Application.init (args);
 

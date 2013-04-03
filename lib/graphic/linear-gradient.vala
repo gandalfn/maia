@@ -36,10 +36,79 @@ public class Maia.Graphic.LinearGradient : Gradient
         }
     }
 
+    public double start_x {
+        set {
+            m_Start.x = value;
+        }
+    }
+
+    public double start_y {
+        set {
+            m_Start.y = value;
+        }
+    }
+
+    public double end_x {
+        set {
+            m_End.x = value;
+        }
+    }
+
+    public double end_y {
+        set {
+            m_End.y = value;
+        }
+    }
+
     // methods
     public LinearGradient (Point inStart, Point inEnd)
     {
         m_Start = inStart;
         m_End = inEnd;
+    }
+
+    internal LinearGradient.from_function (Manifest.Function inFunction)
+    {
+        int cpt = 0;
+        foreach (unowned Object child in inFunction)
+        {
+            unowned Manifest.Attribute arg = (Manifest.Attribute)child;
+            switch (cpt)
+            {
+                case 0:
+                    if (arg is Manifest.AttributeBind)
+                        (arg as Manifest.AttributeBind).bind (this, "start-x");
+                    else
+                        m_Start.x = (double)arg.transform (typeof (double));
+                    break;
+
+                case 1:
+                    if (arg is Manifest.AttributeBind)
+                        (arg as Manifest.AttributeBind).bind (this, "start-y");
+                    else
+                        m_Start.y = (double)arg.transform (typeof (double));
+                    break;
+
+                case 2:
+                    if (arg is Manifest.AttributeBind)
+                        (arg as Manifest.AttributeBind).bind (this, "end-x");
+                    else
+                        m_End.x = (double)arg.transform (typeof (double));
+                    break;
+
+                case 3:
+                    Log.debug (GLib.Log.METHOD, "%s", (arg is Manifest.AttributeBind).to_string ());
+                    if (arg is Manifest.AttributeBind)
+                        (arg as Manifest.AttributeBind).bind (this, "end-y");
+                    else
+                        m_End.y = (double)arg.transform (typeof (double));
+                    break;
+
+                default:
+                    add ((Gradient.ColorStop)arg.transform (typeof (Gradient.ColorStop)));
+                    break;
+            }
+            cpt++;
+        }
     }
 }

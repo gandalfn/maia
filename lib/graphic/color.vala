@@ -247,33 +247,6 @@ public class Maia.Graphic.Color : Pattern
     }
 
     // static methods
-    static construct
-    {
-        GLib.Value.register_transform_func (typeof (string), typeof (Color),
-                                            (ValueTransform)string_to_color);
-        GLib.Value.register_transform_func (typeof (Color), typeof (string),
-                                            (ValueTransform)color_to_string);
-    }
-
-    internal static void
-    color_to_string (GLib.Value inSrc, out GLib.Value outDest)
-        requires (inSrc.holds (typeof (Color)))
-    {
-        Color val = (Color)inSrc;
-
-        outDest = val.to_string ();
-    }
-
-    internal static void
-    string_to_color (GLib.Value inSrc, out GLib.Value outDest)
-        requires (inSrc.holds (typeof (string)))
-        requires ((string)inSrc != null)
-    {
-        string val = (string)inSrc;
-
-        outDest = new Color.parse (val);
-    }
-
     private static void
     create_standard_colors ()
     {
@@ -311,60 +284,12 @@ public class Maia.Graphic.Color : Pattern
         m_IsSet = true;
     }
 
-    /**
-     * Create a new color from string
-     *
-     * @param inValue string color to parse
-     */
-    public Color.parse(string inValue)
+    internal Color.none ()
     {
-        Log.debug (GLib.Log.METHOD, inValue);
-
-        try
-        {
-            Manifest.AttributeScanner scanner = new Manifest.AttributeScanner (inValue);
-            foreach (unowned Object child in ((Object)scanner))
-            {
-                // attribute is a function
-                if (child is Manifest.Function)
-                {
-                    unowned Manifest.Function func = (Manifest.Function)child;
-                    switch (func.get ())
-                    {
-                        case "rgb":
-                            parse_rgb_function (func);
-                            break;
-
-                        case "rgba":
-                            parse_rgba_function (func);
-                            break;
-
-                        default:
-                            Log.critical (GLib.Log.METHOD, "Invalid %s function name", func.get ());
-                            break;
-                    }
-                }
-                // attribute is a single string
-                else
-                {
-                    unowned Manifest.Attribute attr = (Manifest.Attribute)child;
-
-                    parse_attribute (attr);
-                }
-
-                // only parse first attribute
-                break;
-            }
-        }
-        catch (ParseError err)
-        {
-            Log.critical (GLib.Log.METHOD, "Error on parse color %s: %s", inValue, err.message);
-            m_IsSet = false;
-        }
+        m_IsSet = false;
     }
 
-    private inline void
-    parse_rgb_function (Manifest.Function inFunction)
+    internal Color.from_rgb_function (Manifest.Function inFunction)
     {
         int cpt = 0;
         foreach (unowned Object child in inFunction)
@@ -373,13 +298,13 @@ public class Maia.Graphic.Color : Pattern
             switch (cpt)
             {
                 case 0:
-                    m_Red = double.parse (arg.get ());
+                    m_Red = (double)arg.transform (typeof (double));
                     break;
                 case 1:
-                    m_Green = double.parse (arg.get ());
+                    m_Green = (double)arg.transform (typeof (double));
                     break;
                 case 2:
-                    m_Blue = double.parse (arg.get ());
+                    m_Blue = (double)arg.transform (typeof (double));
                     break;
                 default:
                     break;
@@ -397,8 +322,7 @@ public class Maia.Graphic.Color : Pattern
         }
     }
 
-    private inline void
-    parse_rgba_function (Manifest.Function inFunction)
+    internal Color.from_rgba_function (Manifest.Function inFunction)
     {
         int cpt = 0;
         foreach (unowned Object child in inFunction)
@@ -407,16 +331,16 @@ public class Maia.Graphic.Color : Pattern
             switch (cpt)
             {
                 case 0:
-                    m_Red = double.parse (arg.get ());
+                    m_Red = (double)arg.transform (typeof (double));
                     break;
                 case 1:
-                    m_Green = double.parse (arg.get ());
+                    m_Green = (double)arg.transform (typeof (double));
                     break;
                 case 2:
-                    m_Blue = double.parse (arg.get ());
+                    m_Blue = (double)arg.transform (typeof (double));
                     break;
                 case 3:
-                    m_Alpha = double.parse (arg.get ());
+                    m_Alpha = (double)arg.transform (typeof (double));
                     break;
                 default:
                     break;
@@ -433,8 +357,7 @@ public class Maia.Graphic.Color : Pattern
         }
     }
 
-    private inline void
-    parse_attribute (Manifest.Attribute inAttribute)
+    internal Color.from_attribute (Manifest.Attribute inAttribute)
     {
         string val = inAttribute.get ();
 

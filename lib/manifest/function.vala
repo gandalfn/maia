@@ -19,14 +19,87 @@
 
 public class Maia.Manifest.Function : Attribute
 {
+    // Types
+    public delegate void TransformFunc (Function inFunction, ref GLib.Value outValue);
+
+    private class Transform : Object
+    {
+        public string        name;
+        public TransformFunc func;
+
+        public Transform (string inName, owned TransformFunc inFunc)
+        {
+            name = inName;
+            func = (owned)inFunc;
+        }
+
+        public override int
+        compare (Object inOther)
+        {
+            return GLib.strcmp (name, (inOther as Transform).name);
+        }
+
+        public int
+        compare_with_name (string inName)
+        {
+            return GLib.strcmp (name, inName);
+        }
+    }
+
+    // Static properties
+    private static Map<GLib.Type, Set<Transform>> s_Transforms;
+
+    // Static methods
+    public static new void
+    register_transform_func (GLib.Type inType, string inName, owned TransformFunc inFunc)
+    {
+        if (s_Transforms == null)
+        {
+            s_Transforms = new Map<GLib.Type, Set<Transform>> ();
+        }
+
+        unowned Set<Transform> functions = s_Transforms[inType];
+        if (functions == null)
+        {
+            Transform transform = new Transform (inName, (owned)inFunc);
+            Set<Transform> transform_functions = new Set<Transform> ();
+            transform_functions.insert (transform);
+            s_Transforms[inType] = transform_functions;
+        }
+        else
+        {
+            Transform transform = new Transform (inName, (owned)inFunc);
+            functions.insert (transform);
+        }
+    }
+
+    // Methods
     /**
      * Create a new function attribute
      *
+     * @param inOwner owner of function
      * @param inFunctionName function name
      */
-    public Function (string inFunctionName)
+    public Function (Object inOwner, string inFunctionName)
     {
-        base (inFunctionName);
+        base (inOwner, inFunctionName);
+    }
+
+    protected override void
+    on_transform (GLib.Type inType, ref GLib.Value outValue)
+    {
+        unowned Set<Transform>? functions = s_Transforms[inType];
+        if (functions != null)
+        {
+           unowned Transform? transform = functions.search<string> (get (), Transform.compare_with_name);
+            if (transform != null)
+            {
+                transform.func (this, ref outValue);
+                return;
+            }
+        }
+
+        base.on_transform (inType, ref outValue);
     }
 
     public void
@@ -37,7 +110,7 @@ public class Maia.Manifest.Function : Attribute
             switch (token)
             {
                 case Parser.Token.START_ELEMENT:
-                    Function function = new Function (inScanner.element);
+                    Function function = new Function (owner, inScanner.element);
                     function.parent = this;
                     function.parse (inScanner);
                     break;
@@ -48,8 +121,16 @@ public class Maia.Manifest.Function : Attribute
                     break;
 
                 case Parser.Token.ATTRIBUTE:
-                    Attribute attr = new Attribute (inScanner.attribute);
-                    attr.parent = this;
+                    if (inScanner.attribute.has_prefix("@"))
+                    {
+                        AttributeBind attr = new AttributeBind (owner, inScanner.attribute);
+                        attr.parent = this;
+                    }
+                    else
+                    {
+                        Attribute attr = new Attribute (owner, inScanner.attribute);
+                        attr.parent = this;
+                    }
                     break;
 
                 case Parser.Token.EOF:
