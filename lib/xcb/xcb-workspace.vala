@@ -58,13 +58,18 @@ internal class Maia.XcbWorkspace : Workspace
     }
 
     // methods
-    public XcbWorkspace (Xcb.Screen inScreen, int inNum)
+    public XcbWorkspace (XcbApplication inApplication, Xcb.Screen inScreen, int inNum)
     {
-        Graphic.Region geometry = new Graphic.Region (Graphic.Rectangle (0, 0, inScreen.width_in_pixels, inScreen.height_in_pixels));
-        GLib.Object (id: inNum, screen: inScreen, geometry: geometry);
+        Graphic.Region geometry = new Graphic.Region (Graphic.Rectangle (0, 0,
+                                                                         inScreen.width_in_pixels,
+                                                                         inScreen.height_in_pixels));
+        GLib.Object (id: inNum, parent: inApplication, geometry: geometry, screen: inScreen);
 
         // create events
         create_window_event = new XcbCreateWindowEvent (this);
         destroy_window_event = new XcbDestroyWindowEvent (this);
+
+        // initialize base object
+        init ();
     }
 }

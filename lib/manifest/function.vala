@@ -102,7 +102,7 @@ public class Maia.Manifest.Function : Attribute
         base.on_transform (inType, ref outValue);
     }
 
-    public void
+    internal void
     parse (AttributeScanner inScanner) throws ParseError
     {
         foreach (Parser.Token token in inScanner)

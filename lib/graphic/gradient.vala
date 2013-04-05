@@ -52,7 +52,7 @@ public abstract class Maia.Graphic.Gradient : Pattern
             }
         }
 
-        public override int
+        internal override int
         compare (Object inOther)
             requires (inOther is ColorStop)
         {
@@ -61,7 +61,7 @@ public abstract class Maia.Graphic.Gradient : Pattern
     }
 
     // methods
-    public override bool
+    internal override bool
     can_append_child (Object inChild)
     {
         return inChild is ColorStop;

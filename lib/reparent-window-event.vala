@@ -26,7 +26,7 @@ public class Maia.ReparentWindowEventArgs : EventArgs
     public unowned Window window { get; private set; }
 
     // methods
-    public ReparentWindowEventArgs (Window inParent, Window inWindow)
+    internal ReparentWindowEventArgs (Window inParent, Window inWindow)
     {
         parent = inParent;
         window = inWindow;
@@ -36,7 +36,7 @@ public class Maia.ReparentWindowEventArgs : EventArgs
 public class Maia.ReparentWindowEvent : Event<ReparentWindowEventArgs>
 {
     // methods
-    public ReparentWindowEvent (Workspace inWorkspace)
+    internal ReparentWindowEvent (Workspace inWorkspace)
     {
         base ("reparent-window-event", inWorkspace);
     }

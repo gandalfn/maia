@@ -214,7 +214,7 @@ public class Maia.Manifest.AttributeScanner : Parser
     /**
      * {@inheritDoc}
      */
-    public override bool
+    internal override bool
     can_append_child (Object inChild)
     {
         return inChild is Attribute;
@@ -223,7 +223,7 @@ public class Maia.Manifest.AttributeScanner : Parser
     /**
      * {@inheritDoc}
      */
-    public override int
+    internal override int
     compare (Object inObject)
     {
         // do not sort child attributes

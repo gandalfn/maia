@@ -24,7 +24,7 @@ public class Maia.RepairEventArgs : EventArgs
     public Graphic.Region area { get; private set; }
 
     // methods
-    public RepairEventArgs (Graphic.Region inArea)
+    internal RepairEventArgs (Graphic.Region inArea)
     {
         area = inArea;
     }
@@ -33,7 +33,7 @@ public class Maia.RepairEventArgs : EventArgs
 public class Maia.RepairEvent : Event<RepairEventArgs>
 {
     // methods
-    public RepairEvent (View inView)
+    internal RepairEvent (View inView)
     {
         base ("repair-event", inView);
     }

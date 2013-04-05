@@ -24,12 +24,12 @@ public class Maia.DamageEventArgs : EventArgs
     public Graphic.Region area { get; construct; }
 
     // methods
-    public DamageEventArgs (Graphic.Region inArea)
+    internal DamageEventArgs (Graphic.Region inArea)
     {
         GLib.Object (area: inArea);
     }
 
-    public override void
+    internal override void
     accumulate (EventArgs inArgs)
         requires (inArgs is DamageEventArgs)
     {
@@ -40,14 +40,14 @@ public class Maia.DamageEventArgs : EventArgs
 public class Maia.DamageEvent : Event<DamageEventArgs>
 {
     // static methods
-    public static new void
+    internal static new void
     post_event (void* inOwner, DamageEventArgs inArgs)
     {
         Dispatcher.post_event ("damage-event", inOwner, inArgs);
     }
 
     // methods
-    public DamageEvent (void* inOwner)
+    internal DamageEvent (void* inOwner)
     {
         base ("damage-event", inOwner);
     }

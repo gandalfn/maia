@@ -24,7 +24,7 @@ public class Maia.DestroyWindowEventArgs : EventArgs
     public Window window { get; construct; }
 
     // methods
-    public DestroyWindowEventArgs (Window inWindow)
+    internal DestroyWindowEventArgs (Window inWindow)
     {
         GLib.Object (window: inWindow);
     }
@@ -33,14 +33,14 @@ public class Maia.DestroyWindowEventArgs : EventArgs
 public class Maia.DestroyWindowEvent : Event<DestroyWindowEventArgs>
 {
     // static methods
-    public static new void
+    internal static new void
     post_event (void* inOwner, DestroyWindowEventArgs inArgs)
     {
         Dispatcher.post_event ("destroy-window-event", inOwner, inArgs);
     }
 
     // methods
-    public DestroyWindowEvent (void* inOwner)
+    internal DestroyWindowEvent (void* inOwner)
     {
         base ("destroy-window-event", inOwner);
     }

@@ -24,12 +24,12 @@ public class Maia.GeometryEventArgs : EventArgs
     public Graphic.Region geometry { get; construct set; }
 
     // methods
-    public GeometryEventArgs (Graphic.Region inGeometry)
+    internal GeometryEventArgs (Graphic.Region inGeometry)
     {
         GLib.Object (geometry: inGeometry);
     }
 
-    public override void
+    internal override void
     accumulate (EventArgs inArgs)
         requires (inArgs is GeometryEventArgs)
     {
@@ -40,14 +40,14 @@ public class Maia.GeometryEventArgs : EventArgs
 public class Maia.GeometryEvent : Event<GeometryEventArgs>
 {
     // static methods
-    public static new void
+    internal static new void
     post_event (void* inOwner, GeometryEventArgs inArgs)
     {
         Dispatcher.post_event ("geometry-event", inOwner, inArgs);
     }
 
     // methods
-    public GeometryEvent (void* inOwner)
+    internal GeometryEvent (void* inOwner)
     {
         base ("geometry-event", inOwner);
     }

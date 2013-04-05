@@ -20,7 +20,7 @@
 public class Maia.DeleteEvent : Event<EventArgs>
 {
     // methods
-    public DeleteEvent (Window inWindow)
+    internal DeleteEvent (Window inWindow)
     {
         base ("delete-event", inWindow);
     }

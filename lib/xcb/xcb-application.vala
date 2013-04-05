@@ -59,8 +59,7 @@ internal class Maia.XcbApplication : Application
         int cpt = 0;
         foreach (unowned Xcb.Screen screen in m_Connection.roots)
         {
-            XcbWorkspace workspace = new XcbWorkspace (screen, cpt);
-            workspace.parent = this;
+            new XcbWorkspace (this, screen, cpt);
             cpt++;
         }
 

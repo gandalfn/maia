@@ -362,8 +362,9 @@ public class Maia.Graphic.Path : Object
         add (path);
     }
 
-    public void rel_arc_to (double inRx, double inRy, double inXAxisRotation,
-                            bool inLargeArcFlag, bool inSweepFlag, double inX, double inY)
+    public void
+    rel_arc_to (double inRx, double inRy, double inXAxisRotation,
+                bool inLargeArcFlag, bool inSweepFlag, double inX, double inY)
     {
         Point current = get_current_point ();
         arc_to (inRx, inRy, inXAxisRotation, inLargeArcFlag, inSweepFlag, current.x + inX, current.y + inY);

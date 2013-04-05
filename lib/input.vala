@@ -35,10 +35,13 @@ public class Maia.Input : Object
             return m_Geometry;
         }
         construct set {
-            Log.debug ("Input.geometry", value.extents.to_string ());
             m_Geometry = value;
-            notify_property ("width");
-            notify_property ("height");
+
+            if (value != null)
+            {
+                notify_property ("width");
+                notify_property ("height");
+            }
         }
     }
 

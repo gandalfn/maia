@@ -24,7 +24,7 @@ public class Maia.CreateWindowEventArgs : EventArgs
     public Window window { get; construct; }
 
     // methods
-    public CreateWindowEventArgs (Window inWindow)
+    internal CreateWindowEventArgs (Window inWindow)
     {
         GLib.Object (window: inWindow);
     }
@@ -33,14 +33,14 @@ public class Maia.CreateWindowEventArgs : EventArgs
 public class Maia.CreateWindowEvent : Event<CreateWindowEventArgs>
 {
     // static methods
-    public static new void
+    internal static new void
     post_event (void* inOwner, CreateWindowEventArgs inArgs)
     {
         Dispatcher.post_event ("create-window-event", inOwner, inArgs);
     }
 
     // methods
-    public CreateWindowEvent (void* inOwner)
+    internal CreateWindowEvent (void* inOwner)
     {
         base ("create-window-event", inOwner);
     }

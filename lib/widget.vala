@@ -36,7 +36,7 @@ public abstract class Maia.Widget : View
         }
     }
 
-    public override Graphic.Device? device {
+    internal override Graphic.Device? device {
         get {
             return window.device;
         }
@@ -48,7 +48,7 @@ public abstract class Maia.Widget : View
     /**
      * {@inheritDoc}
      */
-    public override bool
+    internal override bool
     can_append_child (Object inChild)
     {
         return inChild is View;

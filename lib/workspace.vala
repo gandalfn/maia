@@ -26,34 +26,30 @@ public class Maia.Workspace : View
         }
     }
 
-    public override Object parent {
-        get {
-            return base.parent;
-        }
-        construct set {
-            base.parent = value;
-
-            if (value != null)
-            {
-                // listen events
-                create_window_event.listen ((a) => {
-                    on_window_added (a.window);
-                }, dispatcher);
-                destroy_window_event.listen ((a) => {
-                    on_window_removed (a.window);
-                }, dispatcher);
-
-                // add refresh timeout
-                dispatcher.add_timeout ((int)(1000.0 / 60.0), on_refresh);
-            }
-        }
-    }
-
     // events
     public CreateWindowEvent  create_window_event  { get; set; default = null; }
     public DestroyWindowEvent destroy_window_event { get; set; default = null; }
 
     // methods
+    private Workspace ()
+    {
+    }
+
+    internal void
+    init ()
+    {
+        // listen events
+        create_window_event.listen ((a) => {
+            on_window_added (a.window);
+        }, dispatcher);
+        destroy_window_event.listen ((a) => {
+            on_window_removed (a.window);
+        }, dispatcher);
+
+        // add refresh timeout
+        dispatcher.add_timeout ((int)(1000.0 / 60.0), on_refresh);
+    }
+
     private bool
     on_refresh ()
     {
