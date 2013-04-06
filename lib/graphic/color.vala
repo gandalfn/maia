@@ -284,6 +284,57 @@ public class Maia.Graphic.Color : Pattern
         m_IsSet = true;
     }
 
+    /**
+     * Create a new color from a string
+     *
+     * @param inValue string color to parse
+     */
+    public Color.parse (string inValue)
+    {
+        if (inValue == "none")
+        {
+            name = inValue;
+            m_Red = 0.0;
+            m_Green = 0.0;
+            m_Blue = 0.0;
+            m_Alpha = 0.0;
+            m_IsSet = false;
+        }
+        else if (inValue[0] == '#')
+        {
+            int r, g, b;
+            inValue.scanf ("#%02x%02x%02x", out r, out g, out b);
+
+            m_Red = (double)r / 255;
+            m_Green = (double)g / 255;
+            m_Blue = (double)b / 255;
+            m_Alpha = 1;
+            m_IsSet = true;
+        }
+        else
+        {
+            create_standard_colors ();
+
+            unowned Color? color = s_StandardColors.search<string> (inValue, (a, v) => {
+                return GLib.strcmp (a.name, v);
+            });
+
+            if (color != null)
+            {
+                name = inValue;
+                m_Red = color.red;
+                m_Green = color.green;
+                m_Blue = color.blue;
+                m_Alpha = color.alpha;
+                m_IsSet = true;
+            }
+            else
+            {
+                m_IsSet = false;
+            }
+        }
+    }
+
     internal Color.none ()
     {
         m_IsSet = false;
@@ -359,50 +410,7 @@ public class Maia.Graphic.Color : Pattern
 
     internal Color.from_attribute (Manifest.Attribute inAttribute)
     {
-        string val = inAttribute.get ();
-
-        if (val == "none")
-        {
-            name = val;
-            m_Red = 0.0;
-            m_Green = 0.0;
-            m_Blue = 0.0;
-            m_Alpha = 0.0;
-            m_IsSet = false;
-        }
-        else if (val[0] == '#')
-        {
-            int r, g, b;
-            val.scanf ("#%02x%02x%02x", out r, out g, out b);
-
-            m_Red = (double)r / 255;
-            m_Green = (double)g / 255;
-            m_Blue = (double)b / 255;
-            m_Alpha = 1;
-            m_IsSet = true;
-        }
-        else
-        {
-            create_standard_colors ();
-
-            unowned Color? color = s_StandardColors.search<string> (val, (a, v) => {
-                return GLib.strcmp (a.name, v);
-            });
-
-            if (color != null)
-            {
-                name = val;
-                m_Red = color.red;
-                m_Green = color.green;
-                m_Blue = color.blue;
-                m_Alpha = color.alpha;
-                m_IsSet = true;
-            }
-            else
-            {
-                m_IsSet = false;
-            }
-        }
+        this.parse (inAttribute.get ());
     }
 
     internal override int
