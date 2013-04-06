@@ -20,6 +20,8 @@
 [CCode (cprefix = "", lower_case_cprefix = "", cheader_filename = "sys/epoll.h,sys/timerfd.h,unistd.h")]
 namespace Os
 {
+    public double strtod (char* ptr, ref char* endptr);
+
     public int dup (int fd);
     public int pipe ([CCode (array_length = false, null_terminated = false)] int[] pipefd);
     public ssize_t read (int fd, void* buf, size_t count);
@@ -145,4 +147,3 @@ namespace Os
     public int eventfd_read (int fd, out uint64 value);
     public int eventfd_write (int fd, uint64 value);
 }
-

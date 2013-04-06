@@ -79,6 +79,11 @@ public class Maia.Label : Widget, Manifest.Element
             inContext.translate ({ border, border });
             inContext.pattern = color;
             inContext.render (m_Glyph);
+
+            Graphic.Path path_data = new Graphic.Path ();
+            path_data.parse ("m0 0 l20 0 l-10 20 l-10 -20Z");
+            inContext.pattern = new Graphic.Color.parse ("#FF0000");
+            inContext.fill (path_data);
             inContext.restore ();
         }
         catch (Graphic.Error err)

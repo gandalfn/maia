@@ -79,6 +79,13 @@ public class Maia.Graphic.Path : Object
         data_type = DataType.PATH;
     }
 
+    public Path.from_data (string inData)
+    {
+        data_type = DataType.PATH;
+
+        parse (inData);
+    }
+
     public Path.from_region (Region inRegion)
     {
         data_type = DataType.PATH;
@@ -86,6 +93,24 @@ public class Maia.Graphic.Path : Object
         {
             rectangle (rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
         }
+    }
+
+    private double[]
+    parse_values (ref char* inoutpCurrent, char* inpEnd)
+    {
+        double[] values = {};
+
+        for (;inoutpCurrent < inpEnd; inoutpCurrent++)
+        {
+            if (inoutpCurrent[0] == ' ')
+                continue;
+            if (inoutpCurrent[0].isalpha ())
+                break;
+
+            values += Os.strtod (inoutpCurrent, ref inoutpCurrent);
+        }
+
+        return values;
     }
 
     private Point
@@ -152,6 +177,86 @@ public class Maia.Graphic.Path : Object
         }
 
         return path;
+    }
+
+    public void
+    parse (string inData)
+    {
+        data_type = DataType.PATH;
+
+        char* current = (char*)inData;
+        char* end = current + inData.length;
+
+        while (current < end)
+        {
+            switch (current[0])
+            {
+                case 'm':
+                    current++;
+                    double[] vals = parse_values (ref current, end);
+                    if (vals.length >= 2)
+                        rel_move_to (vals[0], vals[1]);
+                    break;
+
+                case 'M':
+                    current++;
+                    double[] vals = parse_values (ref current, end);
+                    if (vals.length >= 2)
+                        move_to (vals[0], vals[1]);
+                    break;
+
+                case 'l':
+                    current++;
+                    double[] vals = parse_values (ref current, end);
+                    if (vals.length >= 2)
+                        rel_line_to (vals[0], vals[1]);
+                    break;
+
+                case 'L':
+                    current++;
+                    double[] vals = parse_values (ref current, end);
+                    if (vals.length >= 2)
+                        line_to (vals[0], vals[1]);
+                    break;
+
+                case 's':
+                    current++;
+                    double[] vals = parse_values (ref current, end);
+                    if (vals.length >= 4)
+                        rel_smooth_curve_to (vals[0], vals[1], vals[2], vals[3]);
+                    break;
+
+                case 'S':
+                    current++;
+                    double[] vals = parse_values (ref current, end);
+                    if (vals.length >= 4)
+                        smooth_curve_to (vals[0], vals[1], vals[2], vals[3]);
+                    break;
+
+                case 'c':
+                    current++;
+                    double[] vals = parse_values (ref current, end);
+                    if (vals.length >= 6)
+                        rel_curve_to (vals[0], vals[1], vals[2], vals[3], vals[4], vals[5]);
+                    break;
+
+                case 'C':
+                    current++;
+                    double[] vals = parse_values (ref current, end);
+                    if (vals.length >= 6)
+                        curve_to (vals[0], vals[1], vals[2], vals[3], vals[4], vals[5]);
+                    break;
+
+                case 'Z':
+                    current++;
+                    close ();
+                    break;
+
+                default:
+                    current++;
+                    break;
+            }
+        }
     }
 
     public void
