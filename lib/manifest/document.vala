@@ -20,10 +20,20 @@
 public class Maia.Manifest.Document : Parser
 {
     // Properties
-    private string        m_Filename = null;
-    private MappedFile    m_File;
-    private string        m_LastName;
-    private Queue<string> m_ElementQueue;
+    private string           m_Filename = null;
+    private MappedFile       m_File;
+    private string           m_LastName;
+    private Queue<string>    m_ElementQueue;
+    private AttributeScanner m_Scanner;
+
+    // Accessors
+    public Object owner { get; set; default = null; }
+
+    public AttributeScanner scanner {
+        get {
+            return m_Scanner;
+        }
+    }
 
     // Methods
     construct
@@ -112,7 +122,7 @@ public class Maia.Manifest.Document : Parser
     private void
     read_attribute_value () throws ParseError
     {
-        m_Value = text (';', true);
+        m_Scanner = new AttributeScanner (owner, ref m_pCurrent, m_pEnd, ';');
 
         if (m_pCurrent[0] != ';')
             throw new ParseError.INVALID_NAME ("Error on read attribute value %s: unexpected end of line at %i,%i missing ;",
@@ -122,48 +132,6 @@ public class Maia.Manifest.Document : Parser
         if (m_pCurrent == m_pEnd)
             throw new ParseError.INVALID_NAME ("Error on read attribute value %s: unexpected end of line at %i,%i",
                                                m_Attribute, m_Line, m_Col);
-
-        m_Attributes[m_Attribute] = m_Value;
-    }
-
-    private string
-    text (char inEndChar, bool inRmTrailingWhitespace) throws ParseError
-    {
-        StringBuilder content = new StringBuilder ();
-        char* text_begin = m_pCurrent;
-        char* last_linebreak = m_pCurrent;
-
-        while (m_pCurrent < m_pEnd && m_pCurrent[0] != inEndChar)
-        {
-            unichar u = ((string) m_pCurrent).get_char_validated ((long) (m_pEnd - m_pCurrent));
-            if (u == (unichar) (-1))
-            {
-                throw new ParseError.INVALID_UTF8 ("Invalid UTF-8 character at %i,%i", m_Line, m_Col);
-            }
-            else
-            {
-                if (u == '\n')
-                {
-                    last_linebreak = m_pCurrent;
-                }
-
-                next_unichar (u);
-            }
-        }
-
-        if (text_begin != m_pCurrent)
-        {
-            content.append (((string) text_begin).substring (0, (int)(m_pCurrent - text_begin)));
-        }
-
-        if (inRmTrailingWhitespace)
-        {
-            char* str_pos = ((char*)content.str) + content.len;
-            for (str_pos--; str_pos > ((char*)content.str) && str_pos[0].isspace(); str_pos--);
-            content.erase ((ssize_t) (str_pos-((char*) content.str) + 1), -1);
-        }
-
-        return content.str;
     }
 
     internal override Parser.Token

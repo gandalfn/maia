@@ -26,7 +26,7 @@ public class Maia.Manifest.AttributeBind : Attribute
      * @param inOwner owner of attribute
      * @param inValue attribute bind value
      */
-    public AttributeBind (Object inOwner, string inValue)
+    internal AttributeBind (Object? inOwner, string inValue)
     {
         base (inOwner, inValue.substring (1));
     }

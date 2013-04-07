@@ -80,12 +80,12 @@ public class Maia.Manifest.Function : Attribute
      * @param inOwner owner of function
      * @param inFunctionName function name
      */
-    public Function (Object inOwner, string inFunctionName)
+    internal Function (Object? inOwner, string inFunctionName)
     {
         base (inOwner, inFunctionName);
     }
 
-    protected override void
+    internal override void
     on_transform (GLib.Type inType, ref GLib.Value outValue)
     {
         unowned Set<Transform>? functions = s_Transforms[inType];

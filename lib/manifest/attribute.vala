@@ -51,8 +51,8 @@ public class Maia.Manifest.Attribute : Object
     private static Set<Transform> s_Transforms;
 
     // Properties
-    private string m_Value;
-    private Object m_Owner = null;
+    private string  m_Value;
+    private Object? m_Owner = null;
 
     // Accessors
     public Object owner {
@@ -132,13 +132,13 @@ public class Maia.Manifest.Attribute : Object
      * @param inOwner owner of attribute
      * @param inValue attribute value
      */
-    public Attribute (Object inOwner, string inValue)
+    internal Attribute (Object? inOwner, string inValue)
     {
         m_Owner = inOwner;
         m_Value = inValue;
     }
 
-    protected virtual void
+    internal virtual void
     on_transform (GLib.Type inType, ref GLib.Value outValue)
     {
         unowned Transform? transform = s_Transforms.search<GLib.Type> (inType, Transform.compare_with_type);

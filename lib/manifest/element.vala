@@ -105,7 +105,7 @@ public interface Maia.Manifest.Element : Object
     }
 
     private void
-    set_attribute (string inName, string inValue)
+    set_attribute (string inName, AttributeScanner inScanner)
     {
         // Search property in object class
         string name = format_attribute_name (inName);
@@ -115,18 +115,8 @@ public interface Maia.Manifest.Element : Object
         // to property type and set
         if (param != null)
         {
-            try
-            {
-                AttributeScanner scanner = new AttributeScanner (this, inValue);
-                scanner.owner = this;
-
-                // set property from attribute scanner
-                set_property (name, scanner.transform (param.value_type));
-            }
-            catch (ParseError err)
-            {
-                Log.critical (GLib.Log.METHOD, "Error on parse color %s: %s", inValue, err.message);
-            }
+            // set property from attribute scanner
+            set_property (name, inScanner.transform (param.value_type));
         }
     }
 
@@ -140,6 +130,7 @@ public interface Maia.Manifest.Element : Object
     public void
     read_manifest (Document inManifest) throws ParseError
     {
+        inManifest.owner = this;
         foreach (Parser.Token token in inManifest)
         {
             switch (token)
@@ -151,6 +142,7 @@ public interface Maia.Manifest.Element : Object
                     {
                         element.parent = this;
                         element.read_manifest (inManifest);
+                        inManifest.owner = this;
                     }
                     break;
 
@@ -158,7 +150,7 @@ public interface Maia.Manifest.Element : Object
                 case Parser.Token.ATTRIBUTE:
                     if (inManifest.element == tag)
                     {
-                        set_attribute (inManifest.attribute, inManifest.val);
+                        set_attribute (inManifest.attribute, inManifest.scanner);
                     }
                     break;
 

@@ -65,25 +65,30 @@ public class Maia.Label : Widget, Manifest.Element
     public override void
     paint (Graphic.Context inContext, Graphic.Region inArea)
     {
+        if (m_Glyph == null) return;
+
         try
         {
-            Graphic.Path clip_path = new Graphic.Path.from_region (inArea);
             inContext.save ();
+
+            Graphic.Path clip_path = new Graphic.Path.from_region (inArea);
             inContext.clip (clip_path);
 
-            inContext.pattern = background;
-            Graphic.Path path = new Graphic.Path ();
-            path.rectangle (0, 0, natural_size.width, natural_size.height, 5, 5);
-            inContext.fill (path);
+            if (background != null)
+            {
+                inContext.pattern = background;
+                Graphic.Path path = new Graphic.Path ();
+                path.rectangle (0, 0, natural_size.width, natural_size.height, 5, 5);
+                inContext.fill (path);
+            }
 
             inContext.translate ({ border, border });
-            inContext.pattern = color;
-            inContext.render (m_Glyph);
+            if (color != null)
+            {
+                inContext.pattern = color;
+                inContext.render (m_Glyph);
+            }
 
-            Graphic.Path path_data = new Graphic.Path ();
-            path_data.parse ("m0 0 l20 0 l-10 20 l-10 -20Z");
-            inContext.pattern = new Graphic.Color.parse ("#FF0000");
-            inContext.fill (path_data);
             inContext.restore ();
         }
         catch (Graphic.Error err)

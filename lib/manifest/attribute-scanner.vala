@@ -50,12 +50,10 @@ public class Maia.Manifest.AttributeScanner : Parser
     private static Set<Transform> s_Transforms;
 
     // Properties
+    private char          m_EndChar;
     private string        m_LastName;
     private Queue<string> m_FunctionQueue;
     private Object        m_Owner;
-
-    // Accessors
-    public Object owner { get; set; default = null; }
 
     // Static methods
     public static void
@@ -79,17 +77,20 @@ public class Maia.Manifest.AttributeScanner : Parser
      * Create a new attribute scanner
      *
      * @param inOwner object owner of attributes
-     * @param inContent buffer content
+     * @param inoutpBegin begin of buffer to parse
+     * @param inpEnd end of buffer to parse
+     * @param inEndChar the end char of buffer
      */
-    public AttributeScanner (Object inOwner, string inContent) throws ParseError
+    internal AttributeScanner (Object? inOwner, ref char* inoutpBegin, char* inpEnd, char inEndChar) throws ParseError
     {
-        char* begin = (char*)inContent;
-        char* end = begin + inContent.length;
+        base (inoutpBegin, inpEnd);
 
-        base (begin, end);
+        m_EndChar = inEndChar;
         m_Owner = inOwner;
 
         parse ();
+
+        inoutpBegin = m_pCurrent;
     }
 
     private string
@@ -97,11 +98,11 @@ public class Maia.Manifest.AttributeScanner : Parser
     {
         char* begin = m_pCurrent;
 
-        while (m_pCurrent < m_pEnd)
+        while (m_pCurrent < m_pEnd && m_pCurrent[0] != m_EndChar)
         {
             skip_space ();
 
-            if (m_pCurrent[0] == '(' || m_pCurrent[0] == ')' || m_pCurrent[0] == ',')
+            if (m_pCurrent[0] == m_EndChar || m_pCurrent[0] == '(' || m_pCurrent[0] == ')' || m_pCurrent[0] == ',')
                 break;
 
             unichar u = ((string) m_pCurrent).get_char_validated ((long) (m_pEnd - m_pCurrent));
@@ -126,7 +127,7 @@ public class Maia.Manifest.AttributeScanner : Parser
 
         m_Attribute = null;
 
-        if (m_pCurrent >= m_pEnd)
+        if (m_pCurrent >= m_pEnd || m_pCurrent[0] == m_EndChar)
         {
             m_Element = null;
             token = Parser.Token.EOF;
@@ -169,7 +170,8 @@ public class Maia.Manifest.AttributeScanner : Parser
             {
                 token = Parser.Token.ATTRIBUTE;
                 m_Attribute = m_LastName;
-                next_char ();
+                if (m_pCurrent[0] != m_EndChar)
+                    next_char ();
             }
         }
 
