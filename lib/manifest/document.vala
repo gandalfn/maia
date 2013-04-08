@@ -19,12 +19,35 @@
 
 public class Maia.Manifest.Document : Parser
 {
+    // Types
+    internal class ElementTag
+    {
+        public string m_Tag;
+        public string m_Id;
+
+        public ElementTag (string inElement)
+        {
+            string[] split = inElement.split (".", 2);
+            if (split.length == 2)
+            {
+                m_Tag = split[0];
+                m_Id = split[1];
+            }
+            else
+            {
+                m_Tag = inElement;
+                m_Id = null;
+            }
+        }
+    }
+
     // Properties
-    private string           m_Filename = null;
-    private MappedFile       m_File;
-    private string           m_LastName;
-    private Queue<string>    m_ElementQueue;
-    private AttributeScanner m_Scanner;
+    private string            m_Filename = null;
+    private MappedFile        m_File;
+    private string            m_LastName;
+    private ElementTag        m_CurrentTag = null;
+    private Queue<ElementTag> m_ElementQueue;
+    private AttributeScanner  m_Scanner;
 
     // Accessors
     public Object owner { get; set; default = null; }
@@ -35,10 +58,22 @@ public class Maia.Manifest.Document : Parser
         }
     }
 
+    public string? element_tag {
+        get {
+            return m_CurrentTag != null ? m_CurrentTag.m_Tag : null;
+        }
+    }
+
+    public string? element_id {
+        get {
+            return m_CurrentTag != null ? m_CurrentTag.m_Id : null;
+        }
+    }
+
     // Methods
     construct
     {
-        m_ElementQueue = new Queue<string> ();
+        m_ElementQueue = new Queue<ElementTag> ();
     }
 
     /**
@@ -157,8 +192,8 @@ public class Maia.Manifest.Document : Parser
             {
                 token = Parser.Token.START_ELEMENT;
                 next_char ();
-                m_Element = m_LastName;
-                m_ElementQueue.push (m_Element);
+                m_CurrentTag = new ElementTag (m_LastName);
+                m_ElementQueue.push (m_CurrentTag);
                 m_Attributes = new Map<string, string> ();
             }
             else if (m_pCurrent[0] == ':')
@@ -172,7 +207,7 @@ public class Maia.Manifest.Document : Parser
             else if (m_pCurrent[0] == '}')
             {
                 token = Parser.Token.END_ELEMENT;
-                m_Element = m_ElementQueue.pop ();
+                m_CurrentTag = m_ElementQueue.pop ();
                 next_char ();
             }
             else
@@ -186,7 +221,7 @@ public class Maia.Manifest.Document : Parser
     }
 
     public new Element?
-    @get (string inElement) throws ParseError
+    @get (string inElement, string? inId = null) throws ParseError
     {
         // return on begining of file
         m_pCurrent = m_pBegin;
@@ -196,13 +231,14 @@ public class Maia.Manifest.Document : Parser
         {
             if (token == Parser.Token.START_ELEMENT)
             {
-                if (element == inElement)
+                if (element_tag == inElement && element_id == inId)
                 {
-                    Element? ret = Element.create (element);
+                    Element? ret = Element.create (element_tag, element_id);
                     if (ret != null)
                     {
                         ret.read_manifest (this);
                     }
+
                     return ret;
                 }
             }

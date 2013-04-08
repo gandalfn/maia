@@ -53,16 +53,15 @@ public interface Maia.Manifest.Element : Object
     }
 
     public static Element?
-    create (string inName)
+    create (string inTag, string inId)
     {
         Element? node = null;
-
         if (s_Factory != null)
         {
-            GLib.Type type = s_Factory[inName];
+            GLib.Type type = s_Factory[inTag];
             if (type != 0)
             {
-                node = GLib.Object.new (type) as Element;
+                node = GLib.Object.new (type, id: GLib.Quark.from_string (inId)) as Element;
             }
         }
 
@@ -137,7 +136,7 @@ public interface Maia.Manifest.Element : Object
             {
                 // found a new child widget create it
                 case Parser.Token.START_ELEMENT:
-                    Element element = create (inManifest.element);
+                    Element element = create (inManifest.element_tag, inManifest.element_id);
                     if (element != null)
                     {
                         element.parent = this;
@@ -148,7 +147,7 @@ public interface Maia.Manifest.Element : Object
 
                 // found an attribute set it
                 case Parser.Token.ATTRIBUTE:
-                    if (inManifest.element == tag)
+                    if (inManifest.element_tag == tag)
                     {
                         set_attribute (inManifest.attribute, inManifest.scanner);
                     }
@@ -156,7 +155,7 @@ public interface Maia.Manifest.Element : Object
 
                 // end of widget manifest quit
                 case Parser.Token.END_ELEMENT:
-                    if (inManifest.element == tag)
+                    if (inManifest.element_tag == tag)
                     {
                         return;
                     }

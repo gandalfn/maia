@@ -1,5 +1,4 @@
-Label {
-    id: title;
+Label.test-label {
     geometry: 0,0,200,300;
     border: 5;
     font_description: Droid Sans Bold 32;

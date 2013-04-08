@@ -17,135 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/*public class TestWindow : Maia.Window
-{
-    private int count = 0;
-    private Maia.Timeline timeline;
-
-    public TestWindow ()
-    {
-        base ("test-window", 400, 400);
-
-        double_buffered = false;
-
-        workspace.create_window_event.listen (on_new_window, Maia.Application.self);
-        workspace.reparent_window_event.listen (on_window_reparented, Maia.Application.self);
-        workspace.destroy_window_event.listen (on_destroy_window, Maia.Application.self);
-
-        timeline = new Maia.Timeline (60, 100, Maia.Application.self);
-        timeline.loop = true;
-        timeline.new_frame.connect (on_new_frame);
-        timeline.start ();
-    }
-
-    private void
-    on_new_frame (int inFrame)
-    {
-        //message ("new frame %i", inFrame);
-        damage ();
-    }
-
-    private void
-    on_new_window (Maia.CreateWindowEventArgs inArgs)
-    {
-        Maia.Window window = inArgs.window;
-        message ("new window: %s", window.to_string ());
-        ++count;
-    }
-
-    private void
-    on_window_reparented (Maia.ReparentWindowEventArgs inArgs)
-    {
-        unowned Maia.Window? window = inArgs.window;
-        unowned Maia.Window? parent = inArgs.parent;
-        message ("reparent window 0x%x into 0x%x", window.id, parent.id);
-        message ("%s", parent.to_string ());
-    }
-
-    private void
-    on_destroy_window (Maia.DestroyWindowEventArgs inArgs)
-    {
-        Maia.Window window = inArgs.window;
-        message ("destroy window 0x%x: name = %s, ref = %u", window.id, window.name, window.ref_count);
-        --count;
-    }
-
-    public override void
-    on_move ()
-    {
-        message ("Move %s", geometry.extents.to_string ());
-    }
-
-    public override void
-    on_resize ()
-    {
-        message ("Resize %s", geometry.extents.to_string ());
-    }
-
-    public override void
-    on_paint (Maia.Graphic.Context inContext, Maia.Graphic.Region inArea)
-    {
-        //message ("Paint %s", inArea.extents.to_string ());
-        try
-        {
-            inContext.pattern = new Maia.Graphic.Color (0.0, 0.0, 0.0, 1.0);
-            inContext.paint ();
-
-            inContext.pattern = new Maia.Graphic.Color (1.0, 0.0, 0.0, 1.0);
-            inContext.rectangle (20, 20, inArea.extents.size.width - 40, inArea.extents.size.height - 40, 5, 5);
-            //inContext.paint.line_width = 5;
-            inContext.stroke ();
-            inContext.pattern = new Maia.Graphic.Color (0.0, 0.0, 1.0, 1.0);
-            inContext.arc (inArea.extents.size.width * timeline.progress, inArea.extents.size.height / 2.0,
-                           20, 20, 0, 2 * GLib.Math.PI);
-            inContext.fill ();
-        }
-        catch (Maia.Graphic.Error err)
-        {
-            message ("Error on paint %s", err.message);
-        }
-
-        base.on_paint (inContext, inArea);
-    }
-
-    public override void
-    on_destroy ()
-    {
-        message ("Destroy");
-        base.on_destroy ();
-        Maia.Application.quit ();
-    }
-}*/
-
 static int
 main (string[] args)
 {
-    Maia.Log.set_default_logger (new Maia.Log.File ("out.log", Maia.Log.Level.DEBUG, "test-window"));
+    Maia.Log.set_default_logger (new Maia.Log.File ("test-window.log", Maia.Log.Level.DEBUG, "test-window"));
     //Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, "test-window"));
 
     Maia.Application.init (args);
 
     Maia.Manifest.Document manifest = new Maia.Manifest.Document ("test.manifest");
-
-    foreach (Maia.Parser.Token token in manifest)
-    {
-        switch (token)
-        {
-            case Maia.Parser.Token.START_ELEMENT:
-                message ("Element: %s", manifest.element);
-                break;
-
-            case Maia.Parser.Token.ATTRIBUTE:
-                message ("Attribute: %s = %s", manifest.attribute, manifest.val);
-                break;
-
-            case Maia.Parser.Token.END_ELEMENT:
-                message ("End element: %s", manifest.element);
-                break;
-        }
-    }
-
-    Maia.Label label = manifest["Label"] as Maia.Label;
+    Maia.Label label = manifest["Label", "test-label"] as Maia.Label;
 
     /*TestWindow window = new TestWindow ();*/
     Maia.Window window = new Maia.Window ("toto", 250, 150);
