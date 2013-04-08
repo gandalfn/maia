@@ -4,6 +4,9 @@ noinst_DATA = \
     config.vapi \
     machine.vapi \
     os.vapi \
+    cairo.vapi \
+    cairo-xcb.deps \
+    cairo-xcb.vapi \
     valgrind.vapi \
     xcb-base.vapi \
     xcb-bigreq.vapi \

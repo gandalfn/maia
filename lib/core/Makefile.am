@@ -1,4 +1,4 @@
-MAIA_EXTRA_VAPIS = maia-any.vapi
+MAIA_VAPI_DEPS = core/maia-any
 
 includelibdir = $(includedir)/core
 
@@ -54,6 +54,10 @@ libmaia_core_la_LIBADD = \
 
 VALAFILES = \
     $(filter %.vala,$(libmaia_core_la_SOURCES))
+
+EXTRA_DIST += \
+    maia-any-$(MAIA_ABI).vapi \
+    maia-any-internal.vapi
 
 CLEANFILES += \
     libmaia_core_la_vala.stamp \

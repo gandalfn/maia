@@ -1,7 +1,7 @@
 if ENABLE_VALADOC
 
 VALADOC_SRCS = \
-	$(top_srcdir)/lib/core/maia-any.vapi \
+	$(top_srcdir)/lib/core/maia-any-$(MAIA_ABI).vapi \
     $(top_srcdir)/lib/core/*.vala \
     $(top_srcdir)/lib/graphic/*.vala \
     $(top_srcdir)/lib/manifest/*.vala \
