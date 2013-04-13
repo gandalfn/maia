@@ -70,6 +70,7 @@ public class Maia.TestObject : Maia.TestCase
         if (Test.perf())
         {
             add_test ("benchmark-add", test_object_benchmark_add);
+            add_test ("benchmark-reorder", test_object_benchmark_reorder);
         }
     }
 
@@ -230,7 +231,7 @@ public class Maia.TestObject : Maia.TestCase
         TestFoo parent = new TestFoo (1);
         unowned TestFoo child_to_reorder = null;
 
-        int pos = Test.rand_int_range (0, 1000);
+        int pos = Test.rand_int_range (0, NB_OBJECTS);
         for (int cpt = 0; cpt < NB_OBJECTS; ++cpt)
         {
             TestFoo foo = new TestFoo (Test.rand_int_range (0, NB_OBJECTS));
@@ -283,16 +284,58 @@ public class Maia.TestObject : Maia.TestCase
         double min = double.MAX, max = 0;
         for (int iter = 0; iter < 100; ++iter)
         {
-            TestFoo parent = new TestFoo (1);
-            Test.timer_start ();
+            TestFoo[] childs = {};
             for (int cpt = 0; cpt < NB_OBJECTS; ++cpt)
             {
-                TestFoo foo = new TestFoo (Test.rand_int_range (0, NB_OBJECTS));
-                parent.add (foo);
+                childs += new TestFoo (Test.rand_int_range (0, NB_OBJECTS));
+            }
+            TestFoo parent = new TestFoo (1);
+            Test.timer_start ();
+            foreach (unowned Object child in childs)
+            {
+                parent.add (child);
             }
             double elapsed = Test.timer_elapsed () * 1000;
             min = double.min (elapsed, min);
             max = double.max (elapsed, max);
+        }
+        Test.minimized_result (min, "Object add min time %f ms", min);
+        Test.maximized_result (min, "Object add max time %f ms", max);
+    }
+
+    public void
+    test_object_benchmark_reorder ()
+    {
+        double min = double.MAX, max = 0;
+        for (int iter = 0; iter < 100; ++iter)
+        {
+            TestFoo parent = new TestFoo (1);
+            TestFoo[] childs = {};
+            for (int cpt = 0; cpt < NB_OBJECTS; ++cpt)
+            {
+                TestFoo child = new TestFoo (Test.rand_int_range (0, NB_OBJECTS));
+                childs += child;
+                parent.add (child);
+            }
+            Test.timer_start ();
+            foreach (unowned Object child in childs)
+            {
+                child.id = Test.rand_int_range (0, NB_OBJECTS);
+                child.reorder ();
+            }
+            double elapsed = Test.timer_elapsed () * 1000;
+            min = double.min (elapsed, min);
+            max = double.max (elapsed, max);
+
+            unowned Object prev = null;
+            foreach (unowned Object child in parent)
+            {
+                if (prev != null)
+                {
+                    assert (prev.id <= child.id);
+                }
+                prev = child;
+            }
         }
         Test.minimized_result (min, "Object add min time %f ms", min);
         Test.maximized_result (min, "Object add max time %f ms", max);

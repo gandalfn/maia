@@ -96,6 +96,29 @@ public abstract class Maia.Object : Any
         }
     }
 
+    private inline void
+    rotate ()
+    {
+        Object? next = m_Next;
+        unowned Object? prev = m_Prev;
+
+        m_Prev = prev.m_Prev;
+        m_Next = prev;
+
+        if (m_Parent.m_Tail == this)
+            m_Parent.m_Tail = prev;
+        else
+            next.m_Prev = prev;
+
+        if (m_Parent.m_Head == prev)
+            m_Parent.m_Head = this;
+        else
+            m_Prev.m_Next = this;
+
+        prev.m_Prev = this;
+        prev.m_Next = next;
+    }
+
     /**
      * Insert inObject in child list if can be append
      *
@@ -113,7 +136,7 @@ public abstract class Maia.Object : Any
             Log.debug (GLib.Log.METHOD, "Insert object %s to parent %s",
                        inObject.get_type ().name (), get_type ().name ());
 
-            // child list is empty inset object has first
+            // child list is empty insert object has first
             if (m_Head == null && m_Tail == null)
             {
                 m_Head = inObject;
@@ -210,80 +233,17 @@ public abstract class Maia.Object : Any
     {
         if (m_Parent != null)
         {
-            bool need_reorder = false;
-            unowned Object? sibling = null;
-
             // the child must be move before
             if (m_Prev != null && compare (m_Prev) < 0)
             {
-                for (unowned Object item = m_Prev; item != null; item = item.m_Prev)
-                {
-                    if (item.compare (this) <= 0)
-                    {
-                        sibling = item;
-                        break;
-                    }
-                }
-                need_reorder = true;
+                rotate ();
+                reorder ();
             }
             // the child must be move after
             else if (m_Next != null && compare (m_Next) >= 0)
             {
-                for (unowned Object item = m_Parent.m_Tail; item != this; item = item.m_Prev)
-                {
-                    if (item.compare (this) <= 0)
-                    {
-                        sibling = item;
-                        break;
-                    }
-                }
-                need_reorder = true;
-            }
-
-            // we need to reorder object
-            if (need_reorder)
-            {
-                ref ();
-
-                unowned Object? next = m_Next;
-
-                // unlink object
-                if (this == m_Parent.m_Head)
-                {
-                    m_Parent.m_Head = m_Next;
-                }
-                else
-                {
-                    m_Prev.m_Next = m_Next;
-                }
-
-                if (this == m_Parent.m_Tail)
-                {
-                    m_Parent.m_Tail = m_Prev;
-                }
-                else
-                {
-                    next.m_Prev = m_Prev;
-                }
-
-                // move child to after sibling
-                if (sibling != null)
-                {
-                    if (sibling == m_Parent.m_Tail) m_Parent.m_Tail = this;
-                    m_Prev = sibling;
-                    m_Next = sibling.m_Next;
-                    if (m_Next != null) m_Next.m_Prev = this;
-                    sibling.m_Next = this;
-                }
-                // add child on head of parent childs
-                else
-                {
-                    m_Next = m_Head;
-                    m_Head.m_Prev = this;
-                    m_Head = this;
-                }
-
-                unref ();
+                m_Next.rotate ();
+                reorder ();
             }
         }
     }
@@ -347,13 +307,7 @@ public abstract class Maia.Object : Any
     public bool
     contains (Object inObject)
     {
-        foreach (unowned Object child in this)
-        {
-            if (child.compare (inObject) == 0)
-                return true;
-        }
-
-        return false;
+        return inObject.m_Parent == this;
     }
 
     /**
