@@ -17,6 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// TODO: I am not really convinced of this implementation of attribute scanner.
+//       I continue to thinking on better implementation of it.
 public class Maia.Manifest.AttributeScanner : Parser
 {
     // Types

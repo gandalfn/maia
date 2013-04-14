@@ -265,7 +265,7 @@ public class Maia.Dispatcher : Watch
 
     // static properties
     static GLib.StaticPrivate  s_Private;
-    static GLib.Mutex          s_PipeLock;
+    static SpinLock            s_PipeLock;
     static Set<int>            s_Pipe;
 
 
@@ -304,7 +304,7 @@ public class Maia.Dispatcher : Watch
     // static methods
     static construct
     {
-        s_PipeLock = GLib.Mutex ();
+        s_PipeLock = SpinLock ();
         s_Pipe = new Set<int> ();
     }
 
@@ -363,6 +363,10 @@ public class Maia.Dispatcher : Watch
     {
         if (self == null)
         {
+            // TODO: I do not think than pipe is the better way to manage event message.
+            //       This way provides the event message compression, filtering and sorting.
+            //       Perhaps use of AsyncQueue or somethings like this, with eventfd can be
+            //       a better way.
             int fd[2];
 
             Os.pipe (fd);

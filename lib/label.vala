@@ -29,8 +29,10 @@ public class Maia.Label : Widget, Manifest.Element
         }
     }
 
-    public string          font_description { get; construct set; default = null; }
     public string          text             { get; construct set; default = null; }
+
+    // TODO: implement this properties in a style/theme mechanism
+    public string          font_description { get; construct set; default = null; }
     public Graphic.Pattern color            { get; construct set; default = null; }
     public Graphic.Pattern background       { get; construct set; default = null; }
 

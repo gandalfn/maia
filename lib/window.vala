@@ -159,10 +159,12 @@ public class Maia.Window : DoubleBufferView
     {
         try
         {
-            Graphic.Path path = new Graphic.Path.from_region (inArea);
-
             inContext.save ();
+
+            Graphic.Path path = new Graphic.Path.from_region (inArea);
             inContext.clip (path);
+
+            // TODO: background color of window must be managed in style/theme mechanism.
             inContext.pattern = new Graphic.Color (0.6, 0.6, 0.6);
             inContext.paint ();
 

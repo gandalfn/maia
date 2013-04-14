@@ -122,6 +122,8 @@ public class Maia.Array <V> : Collection <V>
     }
 
     // Methods
+    // TODO: It is very stable ? I doubt it though even if the unit test pass.
+    //       I must check much more this class.
     public Array ()
     {
         m_pContent = GLib.Slice.alloc0 (m_ReservedSize * sizeof (Node<V>));

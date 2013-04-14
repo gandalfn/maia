@@ -33,6 +33,12 @@ public class Maia.TestObject : Maia.TestCase
         {
             return inChild is TestFoo;
         }
+
+        public override int
+        compare (Object inOther)
+        {
+            return (int)(id - inOther.id);
+        }
     }
 
     public class TestFoo2 : Maia.Object

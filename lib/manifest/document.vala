@@ -220,6 +220,8 @@ public class Maia.Manifest.Document : Parser
         return token;
     }
 
+    // TODO: the current implementation of get element requires to reparse all
+    //       document. I must find a new way which only require one parsing.
     public new Element?
     @get (string inElement, string? inId = null) throws ParseError
     {

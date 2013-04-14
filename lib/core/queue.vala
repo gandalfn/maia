@@ -20,6 +20,7 @@
 public class Maia.Queue<V> : Array<V>
 {
     // methods
+    // TODO: use Array for Queue ? perhaps List is more accurate.
     public Queue ()
     {
         base ();

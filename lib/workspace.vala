@@ -40,13 +40,15 @@ public class Maia.Workspace : View
     {
         // listen events
         create_window_event.listen ((a) => {
-            on_window_added (a.window);
+            window_added (a.window);
         }, dispatcher);
         destroy_window_event.listen ((a) => {
-            on_window_removed (a.window);
+            window_removed (a.window);
         }, dispatcher);
 
         // add refresh timeout
+        // TODO: very simplest way to implement refresh timeline.
+        //       A timeline class must be used to implement this.
         dispatcher.add_timeout ((int)(1000.0 / 60.0), on_refresh);
     }
 
@@ -55,11 +57,18 @@ public class Maia.Workspace : View
     {
         foreach (unowned Object child in this)
         {
+            // TODO: the foreign windows must be excluded from refresh loop
             if (child is View)
             {
                 unowned View view = child as View;
                 if (view.is_damaged)
                 {
+                    // TODO: better way to refresh a window ? It seems this
+                    //       is correct, first redraw window and after swap
+                    //       buffer, and all in refresh timeout.
+                    //       I will be thinking on a new way of this, like
+                    //       redraw of window in a thread, swap buffer on
+                    //       other.
                     view.draw ();
 
                     if (view is DoubleBufferView)
@@ -93,14 +102,14 @@ public class Maia.Workspace : View
         return inChild is Window;
     }
 
-    protected virtual void
-    on_window_added (Window inWindow)
+    public virtual signal void
+    window_added (Window inWindow)
     {
         inWindow.parent = this;
     }
 
-    protected virtual void
-    on_window_removed (Window inWindow)
+    public virtual signal void
+    window_removed (Window inWindow)
     {
         inWindow.parent = null;
     }

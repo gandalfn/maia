@@ -37,6 +37,9 @@ public class Maia.Input : Object
         construct set {
             m_Geometry = value;
 
+            // TODO: Send notify property for Attribute Bind is the simplest way
+            //       I found for attribute synchronisation, perhaps it will be
+            //       exist a better way for this.
             if (value != null)
             {
                 notify_property ("width");

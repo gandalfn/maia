@@ -24,6 +24,8 @@ public class Maia.View : Input
 
     // events
     public DamageEvent damage_event { get; set; default = null; }
+
+    // TODO: repair event is really needed ?
     public RepairEvent repair_event { get; set; default = null; }
 
     // accessors
@@ -45,6 +47,7 @@ public class Maia.View : Input
                                                                new_clipbox.to_string ());
                 base.geometry = value;
 
+                // TODO: very simplistic childs allocation must be improved
                 if (old_clipbox.size.width  != new_clipbox.size.width ||
                     old_clipbox.size.height != new_clipbox.size.height)
                 {
