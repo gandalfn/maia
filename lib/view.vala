@@ -21,6 +21,9 @@ public class Maia.View : Input
 {
     // properties
     private Graphic.Region? m_DamagedArea = null;
+    private uint m_Layer = 0;
+    private uint m_Row = 0;
+    private uint m_Column = 0;
 
     // events
     public DamageEvent damage_event { get; set; default = null; }
@@ -57,6 +60,7 @@ public class Maia.View : Input
             else
             {
                 base.geometry = value;
+                check_child_allocation ();
             }
         }
     }
@@ -69,7 +73,41 @@ public class Maia.View : Input
     /**
      * The view layer
      */
-    public virtual uint layer { get; construct set; default = 0; }
+    public uint layer {
+        get {
+            return m_Layer;
+        }
+        construct set {
+            m_Layer = value;
+            reorder ();
+        }
+    }
+
+    /**
+     * The view row position in parent
+     */
+    public uint row {
+        get {
+            return m_Row;
+        }
+        construct set {
+            m_Row = value;
+            reorder ();
+        }
+    }
+
+    /**
+     * The view column position in parent
+     */
+    public uint column {
+        get {
+            return m_Column;
+        }
+        construct set {
+            m_Column = value;
+            reorder ();
+        }
+    }
 
     /**
      * The damaged area of view
@@ -264,5 +302,36 @@ public class Maia.View : Input
                 repair_event.post (new RepairEventArgs (area));
             }
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    internal override int
+    compare (Object inObject)
+    {
+        // First order by layer position
+        int diff = (int)m_Layer - (int)(inObject as View).m_Layer;
+        if (diff != 0)
+        {
+            return diff;
+        }
+
+        // Second order by row position
+        diff = (int)m_Row - (int)(inObject as View).m_Row;
+        if (diff != 0)
+        {
+            return diff;
+        }
+
+        // Thrid order by column position
+        diff = (int)m_Column - (int)(inObject as View).m_Column;
+        if (diff != 0)
+        {
+            return diff;
+        }
+
+        // Finally keep order of base object
+        return base.compare (inObject);
     }
 }
