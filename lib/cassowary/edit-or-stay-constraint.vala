@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-queue.vala
+ * edit-or-stay-constraint.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,38 +17,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Queue<V> : Array<V>
+public class Maia.Cassowary.EditOrStayConstraint : Constraint
 {
-    // methods
-    // TODO: use Array for Queue ? perhaps List is more accurate.
-    public Queue ()
-    {
-        base ();
-    }
+    // properties
+    private LinearExpression m_Expression;
+    protected Variable m_Variable;
 
-    public V?
-    peek ()
-        requires (length > 0)
-    {
-        return at (length - 1);
-    }
-
-    public V?
-    pop ()
-        requires (length > 0)
-    {
-        V? val = at (length - 1);
-        if (val != null)
-        {
-            remove (val);
+    // accessoirs
+    public Variable variable {
+        get {
+            return m_Variable;
         }
-
-        return val;
     }
 
-    public void
-    push (V inVal)
+    internal override LinearExpression expression {
+        get {
+            return m_Expression;
+        }
+    }
+
+    // methods
+    public EditOrStayConstraint (Variable inVariable, Strength inStrength = Strength.required, double inWeight = 1.0)
     {
-        insert (inVal);
+        base (inStrength, inWeight);
+        m_Variable = inVariable;
+        m_Expression = new LinearExpression (m_Variable, -1.0, m_Variable.@value);
+    }
+
+    internal override string
+    to_string ()
+    {
+        return base.to_string () + ")";
     }
 }

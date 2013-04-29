@@ -27,6 +27,7 @@ void main (string[] args)
     }
 
     TestSuite.get_root ().add_suite (new Maia.TestCore ().suite);
+    TestSuite.get_root ().add_suite (new Maia.TestCassowary ().suite);
     //TestSuite.get_root ().add_suite (new Maia.TestXml ().suite);
 
     Test.run ();

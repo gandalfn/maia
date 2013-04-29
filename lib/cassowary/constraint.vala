@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * variable.vala
+ * constraint.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,61 +17,53 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Cassowary.Variable : AbstractVariable
+public abstract class Maia.Cassowary.Constraint : Object
 {
+    // properties
+    private Strength m_Strength;
+    private double m_Weight;
+
     // accessors
-    internal override bool is_external {
+    public abstract LinearExpression expression { get; }
+
+    public virtual bool is_required {
         get {
-            return true;
+            return m_Strength.is_required;
         }
     }
 
-    internal override bool is_pivotable {
+    public Strength strength {
         get {
-            return false;
+            return m_Strength;
+        }
+        set {
+            m_Strength = value;
         }
     }
 
-    internal override bool is_restricted {
+    public double weight {
         get {
-            return false;
+            return m_Weight;
+        }
+        set {
+            m_Weight = value;
         }
     }
-
-    public double @value { get; set; default = 0.0; }
 
     // methods
-    public Variable (double inValue)
+    public Constraint (Strength inStrength = Strength.required, double inWeight = 1.0)
     {
-        base ();
-        @value = inValue;
-    }
-
-    public Variable.with_name (string inName)
-    {
-        base.with_name (inName);
-    }
-
-    public Variable.with_name_and_value (string inName, double inValue)
-    {
-        base.with_name (inName);
-        @value = inValue;
-    }
-
-    public Variable.with_prefix (long inNumber, string inPrefix)
-    {
-        base.with_prefix (inNumber, inPrefix);
-    }
-
-    public Variable.with_prefix_and_value (long inNumber, string inPrefix, double inValue)
-    {
-        base.with_prefix (inNumber, inPrefix);
-        @value = inValue;
+        m_Strength = inStrength;
+        m_Weight = inWeight;
     }
 
     internal override string
     to_string ()
     {
-        return "[" + name + ":" + @value.to_string () + "]";
+        // two curly brackets escape the format, so use three to surround
+        // a format expression in brackets!
+        //
+        // example output: weak:[0,0,1] {1} (23 + -1*[update.height:23]
+        return "%s {%f} (%s".printf (m_Strength.to_string (), m_Weight, expression.to_string ());
     }
 }

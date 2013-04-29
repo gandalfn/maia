@@ -35,6 +35,14 @@ public class Maia.Pair <F, S>
         m_CompareFunc = get_compare_func_for<F> ();
     }
 
+    public Pair.empty ()
+    {
+        first = null;
+        second = null;
+
+        m_CompareFunc = get_compare_func_for<F> ();
+    }
+
     public int
     compare (Object inOther)
     {

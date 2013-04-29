@@ -27,15 +27,9 @@ public abstract class Maia.Cassowary.AbstractVariable : Object
         get {
             return ((GLib.Quark)id).to_string ();
         }
-        construct {
+        set {
             id = GLib.Quark.from_string (value);
             s_Number++;
-        }
-    }
-
-    public virtual bool is_dummy {
-        get {
-            return false;
         }
     }
 
@@ -56,6 +50,6 @@ public abstract class Maia.Cassowary.AbstractVariable : Object
 
     public AbstractVariable.with_prefix (long inVarNumber, string inPrefix)
     {
-        GLib.object (name: "%s%li".printf (inPrefix, inVarNumber));
+        GLib.Object (name: "%s%li".printf (inPrefix, inVarNumber));
     }
 }

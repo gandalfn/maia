@@ -12,7 +12,7 @@ include $(top_srcdir)/build/maia.am
 include $(top_srcdir)/build/pkgconfig.am
 include $(top_srcdir)/build/vapi.am
 
-SUBDIRS = core xml manifest graphic . cairo xcb
+SUBDIRS = core xml manifest cassowary graphic . cairo xcb
 
 lib_LTLIBRARIES = libmaia.la
 

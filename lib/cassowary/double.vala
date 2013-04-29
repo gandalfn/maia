@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * variable.vala
+ * double.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,61 +17,73 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Cassowary.Variable : AbstractVariable
+public class Maia.Cassowary.Double : Object
 {
+    // properties
+    private double m_Value;
+
     // accessors
-    internal override bool is_external {
+    public int int_value {
         get {
-            return true;
+            return (int) m_Value;
         }
     }
 
-    internal override bool is_pivotable {
+    public long long_value {
         get {
-            return false;
+            return (long) m_Value;
         }
     }
 
-    internal override bool is_restricted {
+    public float float_value {
         get {
-            return false;
+            return (float) m_Value;
         }
     }
 
-    public double @value { get; set; default = 0.0; }
+    public uint8 byte_value {
+        get {
+            return (uint8) m_Value;
+        }
+    }
+
+    public short short_value {
+        get {
+            return (short) m_Value;
+        }
+    }
+
+    public double @value {
+        get {
+            return m_Value;
+        }
+        set {
+            m_Value = value;
+        }
+    }
 
     // methods
-    public Variable (double inValue)
+    public Double (double inVal = 0.0)
     {
-        base ();
-        @value = inValue;
+        m_Value = inVal;
     }
 
-    public Variable.with_name (string inName)
+    public Double
+    clone ()
     {
-        base.with_name (inName);
-    }
-
-    public Variable.with_name_and_value (string inName, double inValue)
-    {
-        base.with_name (inName);
-        @value = inValue;
-    }
-
-    public Variable.with_prefix (long inNumber, string inPrefix)
-    {
-        base.with_prefix (inNumber, inPrefix);
-    }
-
-    public Variable.with_prefix_and_value (long inNumber, string inPrefix, double inValue)
-    {
-        base.with_prefix (inNumber, inPrefix);
-        @value = inValue;
+        return new Double (m_Value);
     }
 
     internal override string
     to_string ()
     {
-        return "[" + name + ":" + @value.to_string () + "]";
+        return m_Value.to_string ();
+    }
+
+    internal override int
+    compare (Object inObject)
+        requires (inObject is Double)
+    {
+        return (int)(m_Value - (inObject as Double).m_Value);
     }
 }

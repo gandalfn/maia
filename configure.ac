@@ -168,6 +168,8 @@ lib/xml/maia-xml.pc
 lib/xml/Makefile
 lib/manifest/maia-manifest.pc
 lib/manifest/Makefile
+lib/cassowary/maia-cassowary.pc
+lib/cassowary/Makefile
 lib/graphic/maia-graphic.pc
 lib/graphic/Makefile
 lib/cairo/maia-cairo-graphic.pc

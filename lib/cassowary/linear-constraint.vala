@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-queue.vala
+ * linear-constraint.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,38 +17,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Queue<V> : Array<V>
+public class Maia.Cassowary.LinearConstraint : Constraint
 {
-    // methods
-    // TODO: use Array for Queue ? perhaps List is more accurate.
-    public Queue ()
-    {
-        base ();
-    }
+    // properties
+    protected LinearExpression m_Expression;
 
-    public V?
-    peek ()
-        requires (length > 0)
-    {
-        return at (length - 1);
-    }
-
-    public V?
-    pop ()
-        requires (length > 0)
-    {
-        V? val = at (length - 1);
-        if (val != null)
-        {
-            remove (val);
+    // accessors
+    internal override LinearExpression expression {
+        get {
+            return m_Expression;
         }
-
-        return val;
     }
 
-    public void
-    push (V inVal)
+    // methods
+    public LinearConstraint (LinearExpression inExpression, Strength inStrength = Strength.required, double inWeight = 1.0)
     {
-        insert (inVal);
+        base (inStrength, inWeight);
+        m_Expression = inExpression;
+    }
+
+    protected void
+    set_expression (LinearExpression inExpression)
+    {
+        m_Expression = inExpression;
     }
 }

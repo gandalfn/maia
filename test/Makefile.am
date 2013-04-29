@@ -4,7 +4,8 @@ MAIA_VAPI_DEPS = \
     manifest/maia-manifest \
     xml/maia-xml \
     graphic/maia-graphic \
-    cairo/maia-cairo-graphic
+    cairo/maia-cairo-graphic \
+    cassowary/maia-cassowary
 
 include $(top_srcdir)/build/maia.am
 
@@ -31,7 +32,8 @@ test_SOURCES = \
     core/test-array.vala \
     core/test-list.vala \
     core/test-set.vala \
-    core/test-map.vala
+    core/test-map.vala \
+    cassowary/test-cassowary.vala
      #~ \
     #~ core/test-dispatcher.vala \
     #~ core/test-application.vala \
@@ -46,6 +48,7 @@ test_LDADD = \
     ${top_builddir}/lib/core/libmaia-core.la \
     ${top_builddir}/lib/manifest/libmaia-manifest.la \
     ${top_builddir}/lib/xml/libmaia-xml.la \
+    ${top_builddir}/lib/cassowary/libmaia-cassowary.la \
     ${top_builddir}/lib/graphic/libmaia-graphic.la \
     ${top_builddir}/lib/cairo/libmaia-cairo-graphic.la \
     ${top_builddir}/lib/xcb/libmaia-xcb-backend.la
@@ -68,6 +71,7 @@ test_window_LDADD = \
     ${top_builddir}/lib/core/libmaia-core.la \
     ${top_builddir}/lib/manifest/libmaia-manifest.la \
     ${top_builddir}/lib/xml/libmaia-xml.la \
+    ${top_builddir}/lib/cassowary/libmaia-cassowary.la \
     ${top_builddir}/lib/graphic/libmaia-graphic.la \
     ${top_builddir}/lib/cairo/libmaia-cairo-graphic.la \
     ${top_builddir}/lib/xcb/libmaia-xcb-backend.la
