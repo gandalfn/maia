@@ -144,17 +144,17 @@ public class Maia.Window : DoubleBufferView
     {
     }
 
-    protected virtual signal void
+    public virtual signal void
     resize ()
     {
     }
 
-    protected virtual signal void
+    public virtual signal void
     destroy ()
     {
     }
 
-    public override void
+    internal override void
     paint (Graphic.Context inContext, Graphic.Region inArea)
     {
         try

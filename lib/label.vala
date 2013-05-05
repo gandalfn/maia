@@ -39,7 +39,7 @@ public class Maia.Label : Widget, Manifest.Element
     /**
      * {@inheritDoc}
      */
-    public override Graphic.Size natural_size {
+    internal override Graphic.Size natural_size {
         get {
             if (device != null)
             {
@@ -64,7 +64,7 @@ public class Maia.Label : Widget, Manifest.Element
         GLib.Object (text: inText);
     }
 
-    public override void
+    internal override void
     paint (Graphic.Context inContext, Graphic.Region inArea)
     {
         if (m_Glyph == null) return;
