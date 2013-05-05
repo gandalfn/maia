@@ -106,7 +106,8 @@ public class Maia.Timeout : Task
 
         if (diff >= 1.0)
         {
-            m_StartTime += (uint64)(((int)diff * m_Interval) * 1000.0);
+            double delta = (double)((int)diff) - diff;
+            m_StartTime = inCurrentTime + (uint64)((delta * (double)m_Interval) * 1000.0);
 
             m_Delay = 0;
         }
