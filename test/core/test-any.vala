@@ -19,12 +19,30 @@
 
 public class Maia.TestAny : Maia.TestCase
 {
+    public class FooDelegateDual : FooAnyDual
+    {
+        protected override void
+        delegate_construct ()
+        {
+            delegate_dual_constructed = true;
+        }
+    }
+
     public class FooDelegate : FooAny
     {
         protected override void
         delegate_construct ()
         {
             delegate_constructed = true;
+        }
+    }
+
+    public class FooAnyDual : FooAny
+    {
+        public bool delegate_dual_constructed = false;
+
+        public FooAnyDual ()
+        {
         }
     }
 
@@ -44,6 +62,7 @@ public class Maia.TestAny : Maia.TestCase
         add_test ("delegate", test_any_delegate);
         add_test ("undelegate", test_any_undelegate);
         add_test ("delegate-construct", test_any_delegate_construct);
+        add_test ("delegate-dual", test_any_dual_delegate);
         add_test ("lock-unlock", test_any_lock_unlock);
     }
 
@@ -51,12 +70,14 @@ public class Maia.TestAny : Maia.TestCase
     set_up ()
     {
         Maia.Any.delegate (typeof (FooAny), typeof (FooDelegate));
+        Maia.Any.delegate (typeof (FooAnyDual), typeof (FooDelegateDual));
     }
 
     public override void
     tear_down ()
     {
         Maia.Any.undelegate (typeof (FooAny));
+        Maia.Any.undelegate (typeof (FooAnyDual));
     }
 
     public void
@@ -72,6 +93,15 @@ public class Maia.TestAny : Maia.TestCase
         Maia.Any.undelegate (typeof (FooAny));
         FooAny foo = new FooAny ();
         assert (!(foo is FooDelegate));
+    }
+
+    public void
+    test_any_dual_delegate ()
+    {
+        FooAnyDual foo = new FooAnyDual ();
+        assert (foo is FooDelegateDual);
+        assert (foo.delegate_dual_constructed);
+        assert (!foo.delegate_constructed);
     }
 
     public void
