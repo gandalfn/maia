@@ -19,9 +19,9 @@
 
 public class Maia.TestCassowary : Maia.TestCase
 {
-    const int N_CONSTRAINTS = 90;
-    const int N_VARIABLES = 90;
-    const int N_RESOLVES = 1000;
+    const int N_CONSTRAINTS = 900;
+    const int N_VARIABLES = 900;
+    const int N_RESOLVES = 10000;
 
     public TestCassowary ()
     {

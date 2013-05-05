@@ -571,12 +571,13 @@ public class Maia.Cassowary.SimplexSolver : Tableau
         // the entryVar might be non-pivotable if we're doing a
         // RemoveConstraint -- otherwise it should be a pivotable
         // variable -- enforced at call sites, hopefully
-
+        inExitVar.ref ();
         LinearExpression pexpr = remove_row (inExitVar);
 
         pexpr.change_subject (inExitVar, inEntryVar);
         substitute_out (inEntryVar, pexpr);
         add_row (inEntryVar, pexpr);
+        inExitVar.unref ();
     }
 
     /**
