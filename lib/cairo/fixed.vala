@@ -20,9 +20,6 @@
 [SimpleType, IntegerType (rank = 6), CCode (has_type_id = false)]
 internal struct Maia.Graphic.Fixed : int32
 {
-    // constants
-    const Fixed e = 1;
-
     // static methods
     public static inline Fixed
     from_int (int inVal)
