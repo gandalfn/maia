@@ -65,7 +65,7 @@ internal class Maia.XcbInput : Input
         GLib.Object (id: inWindow);
     }
 
-    ~XcbWindow ()
+    ~XcbInput ()
     {
         // Destroy xcb window
         if (id > 0)
