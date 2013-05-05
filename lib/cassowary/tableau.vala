@@ -83,7 +83,7 @@ public class Maia.Cassowary.Tableau : Object
      * the set of rows stored at m_Columns[inParamVar],
      * creating a new set if needed.
      */
-    private void
+    private inline void
     insert_col_var (AbstractVariable inParamVar, AbstractVariable inRowVar)
     {
         unowned Set<AbstractVariable> rowset = m_Columns[inParamVar];
@@ -101,7 +101,7 @@ public class Maia.Cassowary.Tableau : Object
      * inSubject (or if subject is nil then it's in the objective function).
      * Update the column cross-indices.
      */
-    public void
+    public inline void
     note_removed_variable (AbstractVariable inV, AbstractVariable inSubject)
     {
         m_Columns[inV].remove (inSubject);
@@ -111,7 +111,7 @@ public class Maia.Cassowary.Tableau : Object
      * inV has been added to the linear expression for inSubject
      * update column cross indices.
      */
-    public void
+    public inline void
     note_added_variable (AbstractVariable inV, AbstractVariable inSubject)
     {
         insert_col_var (inV, inSubject);
@@ -184,7 +184,7 @@ public class Maia.Cassowary.Tableau : Object
      * and Tableau is responsible for deleting it
      * (also, inExpr better be allocated on the heap!).
      */
-    protected void
+    protected inline void
     add_row (AbstractVariable inVariable, LinearExpression inExpr)
     {
         // for each variable in inExpr, add inVariable to the set of rows which
@@ -211,7 +211,7 @@ public class Maia.Cassowary.Tableau : Object
      * Remove inVariable from the tableau -- remove the column cross indices for inVariable
      * and remove inVariable from every expression in rows in which inVariable occurs
      */
-    protected void
+    protected inline void
     remove_column (AbstractVariable inVariable)
     {
         // remove the rows with the variables in varset
@@ -237,7 +237,7 @@ public class Maia.Cassowary.Tableau : Object
      * Remove the basic variable inVariable from the tableau row inVariable=inExpr
      * Then update column cross indices.
      */
-    protected LinearExpression
+    protected inline LinearExpression
     remove_row (AbstractVariable inVariable)
     {
         unowned LinearExpression? expr = m_Rows[inVariable];
@@ -275,7 +275,7 @@ public class Maia.Cassowary.Tableau : Object
      * Replace all occurrences of inOldVar with inExpr, and update column cross indices
      * inOldVar should now be a basic variable.
      */
-    protected void
+    protected inline void
     substitute_out (AbstractVariable inOldVar, LinearExpression inExpr)
     {
         unowned Set<AbstractVariable>? varset = m_Columns[inOldVar];
@@ -302,13 +302,13 @@ public class Maia.Cassowary.Tableau : Object
     /**
      * Return true if and only if the variable inSubject is in the columns keys
      */
-    protected bool
+    protected inline bool
     columns_has_key (AbstractVariable inSubject)
     {
         return inSubject in m_Columns;
     }
 
-    protected unowned LinearExpression?
+    protected inline unowned LinearExpression?
     row_expression (AbstractVariable inVariable)
     {
         return m_Rows[inVariable];
