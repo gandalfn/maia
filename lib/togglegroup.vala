@@ -41,6 +41,7 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
     construct
     {
         // Add not dumpable attributes
+        not_dumpable_attributes.insert ("name");
         not_dumpable_attributes.insert ("active");
 
         // Create toggle button dictionnary

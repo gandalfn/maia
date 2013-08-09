@@ -86,6 +86,7 @@ libmaia_la_SOURCES = \
     highlight.vala \
     page.vala \
     document.vala \
+    model.vala \
     canvas.vala
 
 libmaia_la_LDFLAGS = \
