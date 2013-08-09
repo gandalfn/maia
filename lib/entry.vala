@@ -66,6 +66,11 @@ public class Maia.Entry : Item, ItemPackable, Manifest.Element
             m_Glyph = null;
             geometry = null;
         });
+
+        // connect onto have docus to damage
+        notify["have-focus"].connect (() => {
+            damage ();
+        });
     }
 
     public Entry (string inId, string inLabel)
@@ -243,8 +248,6 @@ public class Maia.Entry : Item, ItemPackable, Manifest.Element
         {
             m_Cursor = (int)text.length;
             grab_focus (this);
-
-            damage ();
         }
 
         return ret;

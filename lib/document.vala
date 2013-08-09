@@ -249,16 +249,14 @@ public class Maia.Document : Item
                     child_size.resize (-Core.convert_inch_to_pixel (left_margin) - Core.convert_inch_to_pixel (right_margin),
                                        -Core.convert_inch_to_pixel (top_margin) - Core.convert_inch_to_pixel (bottom_margin));
                     child_allocation.resize (child_size);
+                    child_allocation.translate (get_page_position (page.num));
                     child_allocation.translate (Graphic.Point (Core.convert_inch_to_pixel (left_margin), Core.convert_inch_to_pixel (top_margin)));
 
                     // Update page geometry
                     page.update (inContext, child_allocation);
 
-                    child_allocation = page.geometry.copy ();
-                    child_allocation.translate (get_page_position (page.num));
-
                     // If page is in document geometry add it to visible pages
-                    if (visible_area.contains_rectangle (child_allocation.extents) != Graphic.Region.Overlap.OUT)
+                    if (visible_area.contains_rectangle (page.geometry.extents) != Graphic.Region.Overlap.OUT)
                     {
                         m_VisiblePages.insert (page);
                     }
@@ -316,8 +314,13 @@ public class Maia.Document : Item
                     inContext.pattern = m_PageShadow;
                     inContext.paint ();
                 }
+            }
+            inContext.restore ();
 
-                inContext.translate (Graphic.Point (border_width, border_width));
+            inContext.save ();
+            {
+                var offset = position;
+                inContext.translate (offset.invert ());
                 page.draw (inContext);
             }
             inContext.restore ();

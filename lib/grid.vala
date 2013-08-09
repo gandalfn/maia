@@ -487,6 +487,7 @@ public class Maia.Grid : Group, ItemPackable
             if (inArea == null)
             {
                 damaged_area = new Graphic.Region (m_Allocation.child_allocations[item.row, item.column]);
+                damaged_area.translate (Graphic.Point (item.top_padding, item.left_padding));
             }
             else
             {

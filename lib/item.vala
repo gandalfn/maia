@@ -342,7 +342,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         GLib.SList<unowned Item> list = new GLib.SList<unowned Item?> ();
         for (unowned Core.Object? item = this; item != null; item = item.parent)
         {
-            if (item is Item && !(item is Document))
+            if (item is Item)
             {
                 list.prepend (item as Item);
             }
@@ -380,7 +380,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         GLib.SList<unowned Item> list = new GLib.SList<unowned Item?> ();
         for (unowned Core.Object? item = this; item != null; item = item.parent)
         {
-            if (item is Item && !(item is Document))
+            if (item is Item)
             {
                 list.prepend (item as Item);
             }
@@ -605,10 +605,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         if (!ret)
         {
             GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
-        }
-        else
-        {
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "motion event %s in %s\n", inPoint.to_string (), name);
         }
 
         return ret;

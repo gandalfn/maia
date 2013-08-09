@@ -81,26 +81,6 @@ internal class Maia.Page : Group
         }
     }
 
-    internal override Graphic.Point origin {
-        get {
-            if (geometry != null)
-            {
-                // Get the geometry
-                Graphic.Point ret = geometry.extents.origin;
-
-                // And add the page position in document
-                if (parent is Document)
-                {
-                    ret.translate (((Document)parent).get_page_position (num));
-                }
-
-                return ret;
-            }
-
-            return Graphic.Point (0, 0);
-        }
-    }
-
     public uint num { get; set; default = 1; }
 
     // signals
