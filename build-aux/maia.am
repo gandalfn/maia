@@ -1,0 +1,25 @@
+include $(top_srcdir)/build-aux/common.am
+
+includedir = $(prefix)/include/maia-$(MAIA_ABI)
+
+INCLUDES = \
+    $(MAIA_CFLAGS) \
+    -I$(top_srcdir)/build \
+    -I$(top_srcdir)/src \
+    -I$(top_srcdir)/vapi \
+    $(addprefix -I$(top_builddir)/lib/, $(dir $(MAIA_VAPI_DEPS)))
+
+VALAFLAGS = \
+    --debug \
+    --target-glib=2.32 \
+    --thread \
+    --vapidir=${top_srcdir}/vapi \
+    --pkg=config \
+    --pkg=gio-2.0 \
+    --pkg=os \
+    --pkg=posix \
+    --pkg=cairo \
+    --pkg=gdk-keysym \
+    --pkg=gtk+-2.0 \
+    $(addprefix --pkg=, $(addsuffix -internal, $(notdir $(basename $(MAIA_VAPI_DEPS))))) \
+    $(addprefix --vapidir=$(top_builddir)/lib/, $(dir $(MAIA_VAPI_DEPS)))

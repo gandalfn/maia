@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+includedir=@includedir@/maia-@MAIA_ABI@
+
+Name: maia-gtk-@MAIA_ABI@
+Description: Maia GTK engine library
+Version: @MAIA_VERSION@
+Requires: maia-core-@MAIA_ABI@ maia-cairo-graphic-@MAIA_ABI@ maia-gdk-pixbuf-@MAIA_ABI@
+Libs: -L${libdir} -lmaia-cairo-graphic
+Cflags: -I${includedir}

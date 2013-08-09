@@ -1,0 +1,101 @@
+#!/bin/sh
+
+XKEYSYM_FILE=/usr/include/X11/keysymdef.h
+
+cat $XKEYSYM_FILE | grep "#define" | grep -v "\\\\#define" | awk '
+BEGIN {
+    start=1
+    print "/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */"
+    print "/*"
+    print " * keysym.vala"
+    print " * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>"
+    print " *"
+    print " * maia is free software: you can redistribute it and/or modify it"
+    print " * under the terms of the GNU Lesser General Public License as published"
+    print " * by the Free Software Foundation, either version 3 of the License, or"
+    print " * (at your option) any later version."
+    print " *"
+    print " * maia is distributed in the hope that it will be useful, but"
+    print " * WITHOUT ANY WARRANTY; without even the implied warranty of"
+    print " * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+    print " * See the GNU Lesser General Public License for more details."
+    print " *"
+    print " * You should have received a copy of the GNU Lesser General Public License"
+    print " * along with this program.  If not, see <http://www.gnu.org/licenses/>."
+    print " */"
+    print ""
+    printf "namespace Maia.Gtk\n{\n"
+    printf "    internal static Maia.Key\n"
+    printf "    convert_gdk_key_to_key (global::Gdk.Key inKey)\n"
+    printf "    {\n"
+}
+{
+    val=$2
+    if (val == "XF86XK_Clear")
+    {
+        val="XF86XK_WindowClear";
+    }
+    if (val == "XF86XK_Select")
+    {
+        val="XF86XK_SelectButton";
+    }
+    if (val != "XF86XK_Q" && val != "XF86XK_Calculater" && match (val, "XK_Sinh*") == 0 &&
+        val != "XK_dead_greek" && val != "XK_ch" && val != "XK_Ch" && val != "XK_CH" &&
+        val != "XK_c_h" && val != "XK_C_h" && val != "XK_C_H" && val != "XK_permille" &&
+        val != "XK_EZH" && val != "XK_ezh")
+    {
+        gsub("XK_", "", val);
+        if (val == "0")
+        {
+            val="@0";
+        }
+        if (val == "1")
+        {
+            val="@1";
+        }
+        if (val == "2")
+        {
+            val="@2";
+        }
+        if (val == "3")
+        {
+            val="@3";
+        }
+        if (val == "4")
+        {
+            val="@4";
+        }
+        if (val == "5")
+        {
+            val="@5";
+        }
+        if (val == "6")
+        {
+            val="@6";
+        }
+        if (val == "7")
+        {
+            val="@7";
+        }
+        if (val == "8")
+        {
+            val="@8";
+        }
+        if (val == "9")
+        {
+            val="@9";
+        }
+        if (start == 1)
+            printf ("        if (inKey == global::Gdk.Key.%s)\n", val);
+        else
+            printf ("        else if (inKey == global::Gdk.Key.%s)\n", val);
+        printf("            return Maia.Key.%s;\n", val);
+        start=0;
+    }
+}
+END {
+    printf "        \n"
+    printf "        return Maia.Key.VoidSymbol;\n"
+    printf "    }\n"
+    printf "}\n"
+}'

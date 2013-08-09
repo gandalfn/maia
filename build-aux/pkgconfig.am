@@ -1,0 +1,13 @@
+pkgconfigdir = $(libdir)/pkgconfig
+
+$(MAIA_LIB_NAME)-$(MAIA_ABI).pc: $(MAIA_LIB_NAME).pc
+	@cp $< $@
+
+pkgconfig_DATA = $(MAIA_LIB_NAME)-$(MAIA_ABI).pc
+
+EXTRA_DIST += \
+    $(MAIA_LIB_NAME).pc.in
+
+CLEANFILES += \
+    $(MAIA_LIB_NAME).pc \
+    $(pkgconfig_DATA)

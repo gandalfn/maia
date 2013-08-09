@@ -1,0 +1,151 @@
+Document.worksheet
+{
+    // Default page format
+    format: a4;
+    border_width: 5;
+    background: #E0E0E0;
+
+    // Main content of worksheet
+    Grid.main
+    {
+        column_spacing: 5;
+        page: 1;
+        grid_line_width: 1;
+        stroke_color: #000000;
+
+        // Left title
+        Label.left_title
+        {
+            row: 0;
+            column: 0;
+            xexpand: false;
+            background: #C0C0C0;
+            transform: rotate(pi/2);
+            stroke_color: #000000;
+            font_description: "Liberation Sans 17";
+            text: "Vascular";
+        }
+
+        // Content
+        Grid.content
+        {
+            row: 0;
+            column: 1;
+
+            // Header
+            Grid.header
+            {
+                row: 0;
+                column: 0;
+                yexpand: false;
+                grid_line_width: 1;
+                stroke_color: #000000;
+                Image.institution_logo
+                {
+                    row: 0;
+                    column: 0;
+                    xexpand: false;
+                    yexpand: false;
+                    right_padding: 5;
+                    left_padding: 5;
+                    size: 64, 64;
+                    #filename: "/home/nicolas/Bureau/logo-ssi.png";
+                    icon-name: "gnome-run";
+                }
+
+                Label.institution_name
+                {
+                    row: 0;
+                    column: 1;
+                    yexpand: false;
+                    right_padding: 5;
+                    left_padding: 5;
+                    stroke_color: #000000;
+                    font_description: "Liberation Sans 17";
+                    text: "Institution name";
+                }
+
+                Grid.exam_info
+                {
+                    row: 0;
+                    column: 2;
+                    xexpand: false;
+                    yexpand: false;
+                    homogeneous: true;
+
+                    Label.exam_num
+                    {
+                        row: 0;
+                        right_padding: 5;
+                        left_padding: 5;
+                        stroke_color: #000000;
+                        font_description: "Liberation Sans 12";
+                        text: "Mon texte toto() ;  \"escape";
+                    }
+
+                    Label.date
+                    {
+                        row: 2;
+                        right_padding: 5;
+                        left_padding: 5;
+                        stroke_color: #000000;
+                        font_description: "Liberation Sans 12";
+                        text: "21/03/2012";
+                    }
+                }
+
+                Entry.patient_info
+                {
+                    row: 1;
+                    column: 0;
+                    columns: 3;
+
+                    right_padding: 5;
+                    left_padding: 5;
+                    top_padding: 5;
+                    yexpand: false;
+                    bottom_padding: 5;
+                    stroke_color: #000000;
+                    font_description: "Liberation Sans 12";
+                    lines: 5;
+                    text: "Enter your text";
+                }
+            }
+
+            // Data content
+            Grid.data
+            {
+                row: 1;
+                column: 0;
+                yfill: true;
+
+                Label.data_value
+                {
+                    row: 0;
+                    column: 1;
+                    stroke_color: #000000;
+                    font_description: "Liberation Sans 24";
+                    text: "DATAS";
+                }
+            }
+        }
+    }
+
+    // Main content of worksheet
+    Grid.main_2
+    {
+        page: 2;
+        border_line_width: 1;
+        stroke_color: #000000;
+
+        // Left title
+        Label.title_2
+        {
+            row: 0;
+            column: 0;
+            stroke_color: #000000;
+            font_description: "Liberation Sans 17";
+            text: "Page 2";
+        }
+    }
+}
