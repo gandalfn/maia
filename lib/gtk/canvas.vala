@@ -334,8 +334,6 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     internal override bool
     key_press_event (Gdk.EventKey inEvent)
     {
-        print (@"key press event\n");
-
         // we have item send event
         if (focus_item != null)
         {

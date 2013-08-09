@@ -374,12 +374,12 @@ public class Maia.Document : Item
             {
                 var child_point = convert_to_child_item_space (page, point);
 
-                print (@"inPoint: $inPoint point: $child_point\n");
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $child_point");
 
                 // point under child
                 if (page.button_press_event (inButton, child_point))
                 {
-                    print ("press event in %s document %s\n", page.name, name);
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "press event in %s document %s", page.name, name);
 
                     // event occurate under child stop signal
                     ret = false;
@@ -407,12 +407,12 @@ public class Maia.Document : Item
             {
                 var child_point = convert_to_child_item_space (page, point);
 
-                print (@"inPoint: $inPoint point: $child_point\n");
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $child_point");
 
                 // point under child
                 if (page.button_release_event (inButton, child_point))
                 {
-                    print ("release event in %s document %s\n", page.name, name);
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "release event in %s document %s", page.name, name);
 
                     // event occurate under child stop signal
                     ret = false;
@@ -440,12 +440,12 @@ public class Maia.Document : Item
             {
                 var child_point = convert_to_child_item_space (page, point);
 
-                print (@"inPoint: $inPoint point: $child_point\n");
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $child_point");
 
                 // point under child
                 if (page.motion_event (inButton, child_point))
                 {
-                    print ("motion event in %s document %s\n", page.name, name);
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "motion event in %s document %s", page.name, name);
 
                     // event occurate under child stop signal
                     ret = false;

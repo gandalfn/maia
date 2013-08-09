@@ -608,7 +608,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
         else
         {
-            print ("motion event %s in %s\n", inPoint.to_string (), name);
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "motion event %s in %s\n", inPoint.to_string (), name);
         }
 
         return ret;
