@@ -40,6 +40,7 @@ test_SOURCES = \
     manifest/test-manifest.vala \
     manifest/test-document.vala \
     gtk/test-gtk.vala \
+    gtk/test-model.vala \
     gtk/test-canvas.vala
 
 test_LDADD = \

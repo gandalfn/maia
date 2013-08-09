@@ -23,6 +23,7 @@ public class Maia.TestGtk : Maia.TestCase
     {
         base ("gtk");
 
+        suite.add_suite (new TestModel ().suite);
         suite.add_suite (new TestCanvas ().suite);
     }
 }

@@ -68,6 +68,8 @@ public interface Maia.Canvas : Drawable
             Manifest.Element.register ("CheckButton", typeof (CheckButton));
             Manifest.Element.register ("Highlight",   typeof (Highlight));
             Manifest.Element.register ("Document",    typeof (Document));
+            Manifest.Element.register ("Model",       typeof (Model));
+            Manifest.Element.register ("Column",      typeof (Model.Column));
 
             s_ElementsRegister = true;
         }

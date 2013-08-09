@@ -63,7 +63,9 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         Maia.Cairo.init ();
 
         // Override Image item
-        Core.Any.delegate (typeof (Maia.Image), typeof (Image));
+        Core.Any.delegate (typeof (Maia.Image),        typeof (Image));
+        Core.Any.delegate (typeof (Maia.Model),        typeof (Model));
+        Core.Any.delegate (typeof (Maia.Model.Column), typeof (Model.Column));
 
         // Set scroll adjustments signal id
         set_scroll_adjustments_signal = GLib.Signal.lookup ("on_set_scroll_adjustments", typeof (Canvas));

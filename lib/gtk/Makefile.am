@@ -26,6 +26,7 @@ libmaia_gtk_la_SOURCES = \
     keysym.vala \
     surface.vala \
     image.vala \
+    model.vala \
     canvas.vala
 
 libmaia_gtk_la_LDFLAGS = \

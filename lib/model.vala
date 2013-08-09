@@ -41,6 +41,8 @@ public abstract class Maia.Model : Core.Object, Manifest.Element
             }
         }
 
+        public int column { get; set; default = -1; }
+
         // methods
         construct
         {
@@ -56,7 +58,7 @@ public abstract class Maia.Model : Core.Object, Manifest.Element
             return false;
         }
 
-        public abstract new GLib.Value @get (string inPath);
+        public abstract new GLib.Value @get (uint inPath);
     }
 
     // accessors

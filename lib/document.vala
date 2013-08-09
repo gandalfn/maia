@@ -173,7 +173,7 @@ public class Maia.Document : Item
     internal override bool
     can_append_child (Core.Object inObject)
     {
-        return inObject is Page;
+        return inObject is Page || inObject is ToggleGroup || inObject is Model;
     }
 
     internal override void
@@ -192,6 +192,10 @@ public class Maia.Document : Item
         else if (inChild is Item)
         {
             on_item_page_changed ((Item)inChild);
+        }
+        else
+        {
+            base.insert_child (inChild);
         }
     }
 

@@ -438,7 +438,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     internal override bool
     can_append_child (Core.Object inChild)
     {
-        return inChild is Item || inChild is ToggleGroup;
+        return inChild is Item || inChild is ToggleGroup || inChild is Model;
     }
 
     internal override void
