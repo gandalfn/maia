@@ -218,6 +218,38 @@ public class Maia.Document : Item
     }
 
     internal override void
+    on_child_damaged (Drawable inChild, Graphic.Region? inArea)
+    {
+        if (!(inChild is Page))
+        {
+            base.on_child_damaged (inChild, inArea);
+        }
+        else if (inChild.geometry != null)
+        {
+            Graphic.Region damaged_area;
+
+            if (inArea == null)
+            {
+                damaged_area = inChild.geometry.copy ();
+            }
+            else
+            {
+                damaged_area = inArea.copy ();
+                damaged_area.transform (inChild.transform);
+                damaged_area.translate (inChild.geometry.extents.origin);
+            }
+
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
+
+            // Remove the offset of scrolling
+            damaged_area.translate (position.invert ());
+
+            // damage item
+            damage (damaged_area);
+        }
+    }
+
+    internal override void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
         if (geometry == null)

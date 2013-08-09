@@ -51,6 +51,7 @@ public class Maia.Entry : Item, ItemPackable, Manifest.Element
     public string   font_description { get; set; default = ""; }
     public string   text             { get; set; default = ""; }
     public uint     lines            { get; set; default = 1; }
+    public double   underline_width  { get; set; default = 0.2; }
 
     // signals
     public signal void changed ();
@@ -200,7 +201,7 @@ public class Maia.Entry : Item, ItemPackable, Manifest.Element
                 inContext.render (m_Glyph);
 
                 inContext.pattern = background;
-                inContext.line_width = line_width;
+                inContext.line_width = underline_width;
                 inContext.dash = { 1.0, 2.0 };
 
                 // foreach lines add underline at end of text
@@ -217,6 +218,7 @@ public class Maia.Entry : Item, ItemPackable, Manifest.Element
                 }
                 inContext.stroke (path);
 
+                inContext.line_width = line_width;
                 inContext.dash = null;
 
                 // If have focus

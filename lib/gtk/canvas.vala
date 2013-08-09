@@ -366,7 +366,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         grab_focus ();
 
         // we have item send event
-        if (focus_item != null)
+        if (false && focus_item != null)
         {
             focus_item.button_press_event (inEvent.button, focus_item.convert_to_item_space (point));
         }
@@ -384,7 +384,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         Graphic.Point point = Graphic.Point (inEvent.x, inEvent.y);
 
         // we have item send event
-        if (focus_item != null)
+        if (false && focus_item != null)
         {
             focus_item.button_release_event (inEvent.button, focus_item.convert_to_item_space (point));
         }
@@ -402,7 +402,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         Graphic.Point point = Graphic.Point (inEvent.x, inEvent.y);
 
         // we have item send event
-        if (focus_item != null)
+        if (false && focus_item != null)
         {
             focus_item.motion_event (0, focus_item.convert_to_item_space (point));
         }
