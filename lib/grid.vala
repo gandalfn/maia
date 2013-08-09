@@ -85,7 +85,8 @@ public class Maia.Grid : Group, ItemPackable
                         {
                             rows[item.row].size.width += (item_size.width / item.columns) + item.left_padding + item.right_padding;
                             rows[item.row].nb_expands += item.xexpand ? 1 : 0;
-                            columns[item.column + cpt].size.width = columns[item.column].size.width + item.left_padding + item.right_padding;
+                            columns[item.column + cpt].size.width = double.max (columns[item.column + cpt].size.width,
+                                                                                columns[item.column].size.width + item.left_padding + item.right_padding);
                             columns[item.column + cpt].size.height += (item_size.height / item.rows) + item.top_padding + item.bottom_padding;
                             columns[item.column + cpt].nb_expands += item.yexpand ? 1 : 0;
                         }
@@ -96,7 +97,8 @@ public class Maia.Grid : Group, ItemPackable
                         for (int cpt = 1; cpt < item.rows; ++cpt)
                         {
                             rows[item.row + cpt].size.width += (item_size.width / item.columns) + item.left_padding + item.right_padding;
-                            rows[item.row + cpt].size.height = columns[item.column].size.height + item.top_padding + item.bottom_padding;
+                            rows[item.row + cpt].size.height = double.max (rows[item.row + cpt].size.height,
+                                                                           columns[item.column].size.height + item.top_padding + item.bottom_padding);
                             rows[item.row + cpt].nb_expands += item.xexpand ? 1 : 0;
                             columns[item.column].size.height += (item_size.height / item.rows) + item.top_padding + item.bottom_padding;
                             columns[item.column].nb_expands += item.yexpand ? 1 : 0;
@@ -110,23 +112,27 @@ public class Maia.Grid : Group, ItemPackable
 
             if (grid.homogeneous)
             {
+                // Search the max height of row
                 foreach (LineSizeAllocation row in rows)
                 {
                     max.height = double.max (max.height, row.size.height);
                 }
+                // Search the max width of column
                 foreach (LineSizeAllocation column in columns)
                 {
                     max.width = double.max (max.width, column.size.width);
                 }
 
+                // size is the max size of cell * dimension
                 size = Graphic.Size ((max.width * columns.length) + (grid.column_spacing * (columns.length - 1)),
                                      (max.height * rows.length) + (grid.row_spacing * (rows.length - 1)));
+
             }
             else
             {
                 size = Graphic.Size (0, 0);
 
-                // the minimal width size is the max width row
+                // the maximal width size is the max width row
                 foreach (LineSizeAllocation row in rows)
                 {
                     size.width = double.max (size.width, row.size.width);
@@ -136,7 +142,7 @@ public class Maia.Grid : Group, ItemPackable
                     size.width += grid.column_spacing / columns.length - 1;
                 }
 
-                // the minimal height size is the max height column
+                // the maximal height size is the max height column
                 foreach (LineSizeAllocation column in columns)
                 {
                     size.height = double.max (size.height, column.size.height);
@@ -352,7 +358,7 @@ public class Maia.Grid : Group, ItemPackable
                         {
                             for (int cpt = 1; cpt < item.rows; ++cpt)
                             {
-                                area.size.height += child_allocations[item.row + cpt, item.column].size.height;
+                                area.size.height += grid.row_spacing + child_allocations[item.row + cpt, item.column].size.height;
                             }
                         }
 
@@ -361,7 +367,7 @@ public class Maia.Grid : Group, ItemPackable
                         {
                             for (int cpt = 1; cpt < item.columns; ++cpt)
                             {
-                                area.size.width += child_allocations[item.row, item.column + cpt].size.width;
+                                area.size.width += grid.column_spacing + child_allocations[item.row, item.column + cpt].size.width;
                             }
                         }
 
@@ -372,29 +378,35 @@ public class Maia.Grid : Group, ItemPackable
 
                         if (item.xfill)
                         {
-                            allocation.size.width = area.size.width;
+                            allocation.size.width = area.size.width - item.left_padding - item.right_padding;
+                            allocation.origin.x += item.left_padding;
                         }
-                        else
+                        else if (item.xexpand)
                         {
                             allocation.size.width = item_size.width;
                             allocation.origin.x += (area.size.width - item_size.width) * item.xalign;
                         }
+                        else
+                        {
+                            allocation.size.width = item_size.width;
+                            allocation.origin.x += item.left_padding;
+                        }
 
                         if (item.yfill)
                         {
-                            allocation.size.height = area.size.height;
+                            allocation.size.height = area.size.height - item.top_padding - item.bottom_padding;
+                            allocation.origin.y += item.top_padding;
                         }
-                        else
+                        else if (item.yexpand)
                         {
                             allocation.size.height = item_size.height;
                             allocation.origin.y += (area.size.height - item_size.height) * item.yalign;
                         }
-
-                        // suppress padding from item allocation
-                        allocation.origin.x += item.left_padding;
-                        allocation.origin.y += item.top_padding;
-                        allocation.size.width -= item.left_padding + item.right_padding;
-                        allocation.size.height -= item.top_padding + item.bottom_padding;
+                        else
+                        {
+                            allocation.size.height = item_size.height;
+                            allocation.origin.y += item.top_padding;
+                        }
 
                         // update item
                         Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "update %s: %s", item.name, allocation.to_string ());

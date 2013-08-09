@@ -89,7 +89,10 @@ internal class Maia.Page : Group
                 Graphic.Point ret = geometry.extents.origin;
 
                 // And add the page position in document
-                ret.translate (((Document)parent).get_page_position (num));
+                if (parent is Document)
+                {
+                    ret.translate (((Document)parent).get_page_position (num));
+                }
 
                 return ret;
             }

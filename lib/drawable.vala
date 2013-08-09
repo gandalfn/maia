@@ -62,7 +62,14 @@ public interface Maia.Drawable : GLib.Object
             {
                 var area = new Graphic.Region (geometry.extents);
                 area.translate (geometry.extents.origin.invert ());
-                damaged = area;
+                if (damaged == null || !damaged.equal (area))
+                {
+                    damaged = area;
+                }
+                else
+                {
+                    GLib.Signal.stop_emission_by_name (this, "damage");
+                }
             }
         }
         else
@@ -82,9 +89,16 @@ public interface Maia.Drawable : GLib.Object
     {
         if (geometry != null && !geometry.is_empty () && damaged != null && !damaged.is_empty ())
         {
-            var area = inArea ?? geometry.copy ();
-            area.translate (geometry.extents.origin.invert ());
-            damaged.subtract (area);
+            if (inArea != null)
+            {
+                damaged.subtract (inArea);
+            }
+            else
+            {
+                var area = new Graphic.Region (geometry.extents);
+                area.translate (geometry.extents.origin.invert ());
+                damaged.subtract (area);
+            }
         }
         else
         {

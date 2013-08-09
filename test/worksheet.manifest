@@ -117,12 +117,27 @@ Document.worksheet
             {
                 row: 1;
                 column: 0;
-                yfill: true;
+
+                Entry.data_entry
+                {
+                    row: 0;
+                    column: 0;
+
+                    right_padding: 5;
+                    left_padding: 5;
+                    top_padding: 5;
+                    yexpand: false;
+                    bottom_padding: 5;
+                    stroke_color: #000000;
+                    font_description: "Liberation Sans 12";
+                    lines: 5;
+                    text: "Another";
+                }
 
                 Label.data_value
                 {
-                    row: 0;
-                    column: 1;
+                    row: 1;
+                    column: 0;
                     stroke_color: #000000;
                     font_description: "Liberation Sans 24";
                     text: "DATAS";
