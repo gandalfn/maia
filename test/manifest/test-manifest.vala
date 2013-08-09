@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * test.vala
+ * test-manifest.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,20 +17,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-void main (string[] args)
+public class Maia.TestManifest : Maia.TestCase
 {
-    Test.init (ref args);
-    Gtk.init (ref args);
-
-    if (Test.verbose ())
+    public TestManifest ()
     {
-        Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.CANVAS_GEOMETRY, "test"));
+        base ("manifest");
+
+        suite.add_suite (new TestDocument ().suite);
     }
-
-    TestSuite.get_root ().add_suite (new Maia.TestCore ().suite);
-    TestSuite.get_root ().add_suite (new Maia.TestGraphic ().suite);
-    TestSuite.get_root ().add_suite (new Maia.TestManifest ().suite);
-    TestSuite.get_root ().add_suite (new Maia.TestGtk ().suite);
-
-    Test.run ();
 }

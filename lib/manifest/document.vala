@@ -145,7 +145,7 @@ public class Maia.Manifest.Document : Core.Parser
         while (m_pCurrent < m_pEnd)
         {
             if (m_pCurrent[0] == '{' || m_pCurrent[0] == '\n' || m_pCurrent[0] == '}' ||
-                m_pCurrent[0] == ';' || m_pCurrent[0] == ':')
+                m_pCurrent[0] == ';' || m_pCurrent[0] == ':' || m_pCurrent[0] == '[')
                 break;
 
             unichar u = ((string) m_pCurrent).get_char_validated ((long) (m_pEnd - m_pCurrent));
@@ -178,6 +178,42 @@ public class Maia.Manifest.Document : Core.Parser
                                                     m_Attribute, m_Line, m_Col);
     }
 
+    private string
+    read_characters () throws Core.ParseError
+    {
+        char* begin = m_pCurrent;
+        int nb_brackets = 0;
+
+        while (m_pCurrent < m_pEnd)
+        {
+            unichar u = ((string) m_pCurrent).get_char_validated ((long) (m_pEnd - m_pCurrent));
+            if (u == (unichar) (-1))
+            {
+                throw new Core.ParseError.INVALID_UTF8 ("invalid UTF-8 character");
+            }
+            else
+            {
+                if (u == '[')
+                {
+                    nb_brackets++;
+                }
+                else if (u == ']')
+                {
+                    nb_brackets--;
+                }
+
+                if (nb_brackets == 0) break;
+
+                next_unichar (u);
+            }
+        }
+
+        if (m_pCurrent == begin)
+            return "";
+
+        return ((string) begin).substring (1, (int) (m_pCurrent - begin) - (nb_brackets == 0 ? 2 : 0)).strip ();;
+    }
+
     internal override Core.Parser.Token
     next_token () throws Core.ParseError
     {
@@ -204,6 +240,13 @@ public class Maia.Manifest.Document : Core.Parser
                 m_CurrentTag = new ElementTag (m_LastName);
                 m_ElementQueue.push (m_CurrentTag);
                 m_Attributes = new Core.Map<string, string> ();
+            }
+            else if (m_pCurrent[0] == '[')
+            {
+                token = Maia.Core.Parser.Token.CHARACTERS;
+                m_Characters = read_characters ();
+                next_char ();
+                skip_space ();
             }
             else if (m_pCurrent[0] == ':')
             {

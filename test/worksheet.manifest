@@ -13,16 +13,17 @@ Document.worksheet {
         model: model_example;
 
         Cell.cell_1 {
-            template:   "Grid.cell_1_grid {
-                            column_spacing: 5;
-                            Image.cell_1_image {
-                                icon: @icon_col;
-                            }
-                            Label.cell_1_label {
-                                column: 1;
-                                text: @name_col;
-                            }
-                        }";
+            [
+              Grid.cell_1_grid {
+                column_spacing: 5;
+                Image.cell_1_image {
+                  icon: @icon_col;
+                }
+                Label.cell_1_label {
+                    column: 1;
+                    text: @name_col;
+                }
+            ]
         }
     }
 

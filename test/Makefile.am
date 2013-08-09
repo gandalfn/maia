@@ -37,10 +37,10 @@ test_SOURCES = \
     core/test-timeline.vala \
     graphic/test-graphic.vala \
     graphic/test-transform.vala \
+    manifest/test-manifest.vala \
+    manifest/test-document.vala \
     gtk/test-gtk.vala \
     gtk/test-canvas.vala
-    #~ xml/test-xml.vala \
-    #~ xml/test-parser.vala
 
 test_LDADD = \
     $(MAIA_LIBS) \
