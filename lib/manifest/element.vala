@@ -52,6 +52,7 @@ public interface Maia.Manifest.Element : Core.Object
 
     // accessors
     public abstract string tag { get; }
+    public abstract string characters { get; set; default = null; }
 
     public unowned Element? root {
         get {
@@ -119,8 +120,9 @@ public interface Maia.Manifest.Element : Core.Object
             {
                 node = create.func (inId);
 
-                // Add id and tag in not dumpable attributes
+                // Add tag and characters in not dumpable attributes
                 node.not_dumpable_attributes.insert ("tag");
+                node.not_dumpable_attributes.insert ("characters");
             }
         }
 
@@ -242,6 +244,14 @@ public interface Maia.Manifest.Element : Core.Object
                         {
                             throw new Core.ParseError.PARSE ("Error on parse object %s attribute %s: %s", tag, inManifest.attribute, err.message);
                         }
+                    }
+                    break;
+
+                // found characters
+                case Core.Parser.Token.CHARACTERS:
+                    if (inManifest.element_tag == tag)
+                    {
+                        characters = inManifest.characters;
                     }
                     break;
 

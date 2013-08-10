@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+includedir=@includedir@/maia-@MAIA_ABI@
+
+Name: maia-rsvg-@MAIA_ABI@
+Description: Maia RSVG Graphic Image library
+Version: @MAIA_VERSION@
+Requires: maia-core-@MAIA_ABI@ maia-cairo-graphic-@MAIA_ABI@
+Libs: -L${libdir} -lmaia-rsvg
+Cflags: -I${includedir}

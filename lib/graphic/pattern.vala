@@ -37,6 +37,9 @@ public abstract class Maia.Graphic.Pattern : Core.Object
         Manifest.Function.register_transform_func (typeof (Pattern), "image", attribute_to_image);
         Manifest.Function.register_transform_func (typeof (Image),   "image", attribute_to_image);
 
+        Manifest.Function.register_transform_func (typeof (Pattern), "svg", attribute_to_svg);
+        Manifest.Function.register_transform_func (typeof (Image),   "svg", attribute_to_svg);
+
         GLib.Value.register_transform_func (typeof (Pattern), typeof (string), pattern_to_string);
     }
 
@@ -82,6 +85,32 @@ public abstract class Maia.Graphic.Pattern : Core.Object
                 case 0:
                     Log.debug (GLib.Log.METHOD, Log.Category.GRAPHIC_PARSING, "Load image %s", arg.get ());
                     outDest = Image.create (arg.get ());
+                    break;
+
+                default:
+                    throw new Manifest.Error.TOO_MANY_FUNCTION_ARGUMENT ("Too many arguments in %s function", inFunction.to_string ());
+            }
+            cpt++;
+        }
+
+        if (cpt <= 0)
+        {
+            throw new Manifest.Error.MISSING_FUNCTION_ARGUMENT ("Missing argument in %s function", inFunction.to_string ());
+        }
+    }
+
+    static void
+    attribute_to_svg (Manifest.Function inFunction, ref GLib.Value outDest) throws Manifest.Error
+    {
+        int cpt = 0;
+        foreach (unowned Core.Object child in inFunction)
+        {
+            unowned Manifest.Attribute arg = (Manifest.Attribute)child;
+            switch (cpt)
+            {
+                case 0:
+                    Log.debug (GLib.Log.METHOD, Log.Category.GRAPHIC_PARSING, "Load svg image %s", arg.get ());
+                    outDest = new ImageSvg.from_data (arg.get ());
                     break;
 
                 default:

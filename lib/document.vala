@@ -319,7 +319,7 @@ public class Maia.Document : Item
                     double scale = double.max (geometry.extents.size.width / image.size.width, geometry.extents.size.height / image.size.height);
                     image_size.width *= scale;
                     image_size.height *= scale;
-                    (background as Image).size = image_size;
+                    (background as Graphic.Image).size = image_size;
 
                     inContext.pattern = background;
                     inContext.translate (Graphic.Point ((geometry.extents.size.width - image_size.width) / 2,

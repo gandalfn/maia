@@ -61,6 +61,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         // Initialize backends
         Maia.GdkPixbuf.init ();
         Maia.Cairo.init ();
+        Maia.Rsvg.init ();
 
         // Override Image item
         Core.Any.delegate (typeof (Maia.Image),        typeof (Image));

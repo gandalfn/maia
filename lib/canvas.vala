@@ -32,10 +32,21 @@ public interface Maia.Canvas : Drawable
     [CCode (notify = false)]
     public uint refresh_rate {
         get {
-            return timeline.duration;
+            return timeline.speed;
         }
         set {
-            timeline.duration = value;
+            bool restart = false;
+            if (timeline.is_playing)
+            {
+                timeline.stop ();
+            }
+            timeline.speed = value;
+            timeline.n_frames = value;
+            if (restart)
+            {
+                timeline.rewind ();
+                timeline.start ();
+            }
         }
     }
 
@@ -106,7 +117,7 @@ public interface Maia.Canvas : Drawable
         register_manifest_elements ();
 
         // Create refresh timeline
-        timeline = new Core.Timeline.for_duration ((uint)(1000.0 / 60.0));
+        timeline = new Core.Timeline (60, 60);
         timeline.loop = true;
         timeline.new_frame.connect (on_new_frame);
 

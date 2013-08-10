@@ -58,6 +58,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
     public abstract string tag { get; }
 
+    internal string characters { get; set; default = null; }
+
     public bool is_packable {
         get {
             return m_IsPackable;

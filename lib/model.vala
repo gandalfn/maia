@@ -29,6 +29,8 @@ public abstract class Maia.Model : Core.Object, Manifest.Element
             }
         }
 
+        internal string characters { get; set; default = null; }
+
         public string name {
             owned get {
                 return ((GLib.Quark)id).to_string ();
@@ -67,6 +69,8 @@ public abstract class Maia.Model : Core.Object, Manifest.Element
             return "Model";
         }
     }
+
+    internal string characters { get; set; default = null; }
 
     public string name {
         owned get {

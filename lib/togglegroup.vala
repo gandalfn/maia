@@ -23,11 +23,13 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
     private Core.Map<string, unowned ToggleButton> m_ToggleButtons;
 
     // accessors
-    public string tag {
+    internal string tag {
         get {
             return "ToggleGroup";
         }
     }
+
+    internal string characters { get; set; default = null; }
 
     public string name {
         owned get {

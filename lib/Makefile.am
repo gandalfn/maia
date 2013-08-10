@@ -13,7 +13,7 @@ include $(top_srcdir)/build-aux/maia.am
 include $(top_srcdir)/build-aux/pkgconfig.am
 include $(top_srcdir)/build-aux/vapi.am
 
-SUBDIRS = . cairo gdk-pixbuf gtk
+SUBDIRS = . cairo rsvg gdk-pixbuf gtk
 
 include_HEADERS += \
    core/maia-any.h

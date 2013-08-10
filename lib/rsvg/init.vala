@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * image-svg.vala
+ * init.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,19 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Graphic.ImageSvg : Graphic.Image
+namespace Maia.Rsvg
 {
-    // accessors
-    public virtual string? data { get; construct set; }
+    static bool s_Initialized = false;
 
-    // methods
-    public ImageSvg (string inFilename, Graphic.Size inSize = Graphic.Size (0, 0))
+    public static void
+    init ()
     {
-        GLib.Object (filename: inFilename, size: inSize);
-    }
+        if (!s_Initialized)
+        {
+            global::Rsvg.init ();
 
-    public ImageSvg.from_data (string inData, Graphic.Size inSize = Graphic.Size (0, 0))
-    {
-        GLib.Object (data: inData, size: inSize);
+            Core.Any.delegate (typeof (Graphic.ImageSvg),  typeof (ImageSvg));
+
+            s_Initialized = true;
+        }
     }
 }

@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * image-png.vala
+ * image-svg.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal class Maia.Cairo.ImagePng : Graphic.ImagePng
+internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
 {
     // properties
     private Graphic.Size    m_Size = Graphic.Size (0, 0);
@@ -25,6 +25,7 @@ internal class Maia.Cairo.ImagePng : Graphic.ImagePng
 
     // accessors
     public override string? filename { get; construct set; }
+    public override string? data     { get; construct set; }
 
     public override Graphic.Size size {
         get {
@@ -60,29 +61,73 @@ internal class Maia.Cairo.ImagePng : Graphic.ImagePng
     }
 
     // methods
-    public ImagePng (string inFilename, Graphic.Size inSize = Graphic.Size (0, 0))
+    public ImageSvg (string inFilename, Graphic.Size inSize = Graphic.Size (0, 0))
     {
         GLib.Object (filename: inFilename, size: inSize);
+    }
+
+    public ImageSvg.from_data (string inData, Graphic.Size inSize = Graphic.Size (0, 0))
+    {
+        GLib.Object (data: inData, size: inSize);
     }
 
     private void
     load_surface ()
     {
-        if (m_Surface == null && filename != null)
+        if (m_Surface == null && (filename != null || data != null))
         {
-            var image_surface = new global::Cairo.ImageSurface.from_png (filename);
-
-            Graphic.Size current_size = m_Size;
-            m_Size = Graphic.Size (0, 0);
-
-            size = Graphic.Size ((double)image_surface.get_width (), (double)image_surface.get_height ());
-
-            m_Surface = new Surface  (image_surface, image_surface.get_width (), image_surface.get_height ());
-
-            if (!current_size.is_empty ())
+            try
             {
-                m_Surface = resize (m_Surface, current_size);
-                m_Size = current_size;
+                global::Rsvg.Handle handle = null;
+
+                // Load image
+                if (filename != null)
+                {
+                    handle = new global::Rsvg.Handle.from_file (filename);
+                }
+                else
+                {
+                    handle = new global::Rsvg.Handle.from_data ((uint8[])data.to_utf8 ());
+                }
+
+                m_Surface = new Graphic.Surface (handle.width, handle.height);
+                if (m_Surface is Cairo.Surface)
+                {
+                    m_Surface.clear ();
+
+                    var ctx = ((Cairo.Context)m_Surface.context).context;
+                    if (handle.render_cairo (ctx))
+                    {
+                        Graphic.Size current_size = m_Size;
+                        m_Size = Graphic.Size (0, 0);
+
+                        size = Graphic.Size (handle.width, handle.height);
+
+                        if (!current_size.is_empty ())
+                        {
+                            m_Surface = resize (m_Surface, current_size);
+                            m_Size = current_size;
+                        }
+                    }
+                    else
+                    {
+                        m_Surface = null;
+                        Log.critical (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW,
+                                      "Error on loading svg image %s", filename ?? data);
+                    }
+                }
+                else
+                {
+                    m_Surface = null;
+                    Log.critical (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW,
+                                  "Error on loading svg image %s: rsvg backend only works with cairo backend",
+                                  filename ?? data);
+                }
+            }
+            catch (GLib.Error err)
+            {
+                Log.critical (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "Error on loading svg image %s: %s",
+                              filename ?? data, err.message);
             }
         }
     }

@@ -191,7 +191,10 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
                     next_char ();
                     continue;
                 }
-                else if (!in_double_quote && m_pCurrent[0] == m_EndChar)
+                else if (!in_double_quote && (m_pCurrent[0] == m_EndChar ||
+                                              m_pCurrent[0] == '('       ||
+                                              m_pCurrent[0] == ')'       ||
+                                              m_pCurrent[0] == ','))
                 {
                     break;
                 }
@@ -224,7 +227,8 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
         string ret = ((string) begin).substring (0, (int) (m_pCurrent - begin)).strip ();
         if (have_double_quote)
         {
-            ret = ret.substring (1, ret.length - 2).replace ("\\\"", "\"");
+            ret = ret.substring (ret[0] == '"' ? 1 : 0,
+                                 ret.length - (ret[ret.length - 1] == '"' ? 2 : 1)).replace ("""\"""", """"""");
         }
 
         return ret;

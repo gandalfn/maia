@@ -2,6 +2,7 @@ MAIA_VAPI_DEPS = \
     maia \
     core/maia-any \
     cairo/maia-cairo-graphic \
+    rsvg/maia-rsvg \
     gdk-pixbuf/maia-gdk-pixbuf \
     gtk/maia-gtk
 
@@ -16,13 +17,15 @@ noinst_PROGRAMS = \
 
 INCLUDES += \
     $(MAIA_CAIRO_CFLAGS) \
+    $(MAIA_RSVG_CFLAGS) \
     $(MAIA_GDK_PIXBUF_CFLAGS) \
     $(MAIA_GTK_CFLAGS)
 
 test_VALAFLAGS = \
     --pkg=gtk+-2.0 \
     --pkg=cairo \
-    --pkg=pangocairo
+    --pkg=pangocairo \
+    --pkg=librsvg-2.0
 
 test_SOURCES = \
     test.vala \
@@ -51,6 +54,7 @@ test_LDADD = \
     $(MAIA_VALGRIND_LIBS) \
     ${top_builddir}/lib/libmaia.la \
     ${top_builddir}/lib/cairo/libmaia-cairo-graphic.la \
+    ${top_builddir}/lib/rsvg/libmaia-rsvg.la \
     ${top_builddir}/lib/gdk-pixbuf/libmaia-gdk-pixbuf.la \
     ${top_builddir}/lib/gtk/libmaia-gtk.la
 

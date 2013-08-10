@@ -3,6 +3,7 @@ MAIA_LIB_NAME = maia-gtk
 MAIA_VAPI_DEPS =  \
     core/maia-any \
     cairo/maia-cairo-graphic \
+    rsvg/maia-rsvg \
     gdk-pixbuf/maia-gdk-pixbuf \
     maia
 

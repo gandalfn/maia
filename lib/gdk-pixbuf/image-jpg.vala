@@ -26,7 +26,7 @@ internal class Maia.GdkPixbuf.ImageJpg : Graphic.ImageJpg, Image
     private global::Gdk.Pixbuf m_Pixbuf = null;
 
     // accessors
-    public override string filename {
+    public override string? filename {
         get {
             return m_Filename;
         }

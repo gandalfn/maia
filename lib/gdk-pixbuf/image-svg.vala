@@ -26,7 +26,7 @@ internal class Maia.GdkPixbuf.ImageSvg : Graphic.ImageSvg, Image
     private global::Gdk.Pixbuf m_Pixbuf = null;
 
     // accessors
-    public override string filename {
+    public override string? filename {
         get {
             return m_Filename;
         }
@@ -84,6 +84,15 @@ internal class Maia.GdkPixbuf.ImageSvg : Graphic.ImageSvg, Image
             }
 
             return m_Surface;
+        }
+    }
+
+    public override string? data {
+        get {
+            return null;
+        }
+        construct set {
+            Log.critical (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "gdk-pixbuf backend does not support raw svg data");
         }
     }
 

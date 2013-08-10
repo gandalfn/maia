@@ -47,6 +47,7 @@ VALA_REQUIRED=0.20.0
 PIXMAN_REQUIRED=0.16.4
 CAIRO_REQUIRED=1.10.2
 PANGO_REQUIRED=1.30.0
+RSVG_REQUIRES=2.32.1
 GDK_PIXBUF_REQUIRED=2.26.0
 GTK_REQUIRED=2.24.0
 
@@ -80,6 +81,14 @@ PKG_CHECK_MODULES(MAIA_CAIRO, [cairo >= $CAIRO_REQUIRED
                                pangocairo >= $PANGO_REQUIRED])
 AC_SUBST(MAIA_CAIRO_CFLAGS)
 AC_SUBST(MAIA_CAIRO_LIBS)
+
+dnl ****************************************************************************
+dnl Check for rsvg packages
+dnl ****************************************************************************
+PKG_CHECK_MODULES(MAIA_RSVG, [cairo >= $CAIRO_REQUIRED
+                              librsvg-2.0 >= $RSVG_REQUIRES])
+AC_SUBST(MAIA_RSVG_CFLAGS)
+AC_SUBST(MAIA_RSVG_LIBS)
 
 dnl ****************************************************************************
 dnl Check for gdk-pixbuf packages
@@ -181,6 +190,8 @@ lib/maia.pc
 lib/Makefile
 lib/cairo/maia-cairo-graphic.pc
 lib/cairo/Makefile
+lib/rsvg/maia-rsvg.pc
+lib/rsvg/Makefile
 lib/gdk-pixbuf/maia-gdk-pixbuf.pc
 lib/gdk-pixbuf/Makefile
 lib/gtk/maia-gtk.pc

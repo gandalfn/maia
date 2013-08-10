@@ -47,7 +47,7 @@ public class Maia.Image : Item, ItemPackable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
-    public string filename { get; set; default = ""; }
+    public string? filename { get; set; default = ""; }
 
     // methods
     public Image (string inId, string inFilename)
@@ -69,6 +69,18 @@ public class Maia.Image : Item, ItemPackable
             if (m_Image == null)
             {
                 m_Image = Graphic.Image.create (filename, inSize);
+            }
+
+            if (m_Image != null)
+            {
+                size = m_Image.size;
+            }
+        }
+        else if (characters != null)
+        {
+            if (m_Image == null)
+            {
+                m_Image = new Graphic.ImageSvg.from_data (characters, inSize);
             }
 
             if (m_Image != null)
