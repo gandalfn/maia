@@ -20,7 +20,7 @@
 public class Maia.Document : Item
 {
     // properties
-    private uint m_NbPages = 1;
+    private uint m_NbPages = 0;
     private Graphic.Surface m_PageShadow;
     private Core.List<unowned Page> m_VisiblePages;
 
@@ -79,7 +79,7 @@ public class Maia.Document : Item
         m_VisiblePages = new Core.List<unowned Page> ();
 
         // create first page
-        var page = new Page (name + "-" + m_NbPages.to_string (), m_NbPages);
+        var page = new Page (name + "-" + (m_NbPages + 1).to_string (), m_NbPages + 1);
         page.parent = this;
 
         // connect onto border width and format change to create page shadow
@@ -157,7 +157,7 @@ public class Maia.Document : Item
             else
             {
                 // Create missing pages
-                for (int cpt = (int)m_NbPages + 1; cpt <= inItem.page; ++cpt, ++m_NbPages)
+                for (int cpt = (int)m_NbPages + 1; cpt <= inItem.page; ++cpt)
                 {
                     var new_page = new Page (name + "-" + cpt.to_string (), cpt);
                     new_page.parent = this;
@@ -187,6 +187,9 @@ public class Maia.Document : Item
 
             // Connect onto item page changed
             ((Page)inChild).item_page_changed.connect (on_item_page_changed);
+
+            // Increment counter of pages
+            m_NbPages++;
         }
         // If child is not a page append child in good page
         else if (inChild is Item)
@@ -206,6 +209,9 @@ public class Maia.Document : Item
         {
             // Disconnect from item page changed
             ((Page)inChild).item_page_changed.disconnect (on_item_page_changed);
+
+            // Decrement the counter of pages
+            m_NbPages--;
         }
 
         base.remove_child (inChild);
