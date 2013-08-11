@@ -209,9 +209,9 @@ public class Maia.Group : Item
     }
 
     internal override bool
-    on_motion_event (uint inButton, Graphic.Point inPoint)
+    on_motion_event (Graphic.Point inPoint)
     {
-        bool ret = base.on_motion_event (inButton, inPoint);
+        bool ret = base.on_motion_event (inPoint);
 
         if (ret)
         {
@@ -227,7 +227,7 @@ public class Maia.Group : Item
                     Graphic.Point point = convert_to_child_item_space (item, inPoint);
 
                     // point under child
-                    if (item.motion_event (inButton, point))
+                    if (item.motion_event (point))
                     {
                         // event occurate under child stop signal
                         ret = false;

@@ -22,6 +22,7 @@ public class Maia.Entry : Item, ItemPackable, Manifest.Element
     // properties
     private Graphic.Glyph m_Glyph;
     private int           m_Cursor = 1;
+    private bool          m_MouseOver = false;
 
     // accessors
     internal override string tag {
@@ -85,6 +86,25 @@ public class Maia.Entry : Item, ItemPackable, Manifest.Element
     get_nb_lines ()
     {
         return text.split ("\n").length;
+    }
+
+    internal override bool
+    on_motion_event (Graphic.Point inPoint)
+    {
+        bool ret = base.on_motion_event (inPoint);
+
+        if (ret && !m_MouseOver)
+        {
+            m_MouseOver = true;
+            set_pointer_cursor (Cursor.XTERM);
+        }
+        else if (!ret && m_MouseOver)
+        {
+            m_MouseOver = false;
+            set_pointer_cursor (Cursor.TOP_LEFT_ARROW);
+        }
+
+        return ret;
     }
 
     private void

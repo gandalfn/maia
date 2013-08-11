@@ -177,7 +177,7 @@ public interface Maia.Manifest.Element : Core.Object
                     }
                     else
                     {
-                        outRet = "\"%s\"".printf (((string)val).replace ("\"", "\\\""));
+                        outRet = "'%s'".printf (((string)val).replace ("'", "\\'"));
                     }
 
                     ret = true;
@@ -338,7 +338,13 @@ public interface Maia.Manifest.Element : Core.Object
         // dump characters
         if (characters != null)
         {
-            ret += "\t[\n" + characters + "\n\t]";
+            string[] lines = characters.split ("\n");
+            ret += "\t[\n";
+            foreach (unowned string line in lines)
+            {
+                ret += "\t\t" + line.strip () + "\n";
+            }
+            ret +="\n\t]\n";
         }
 
         return ret;

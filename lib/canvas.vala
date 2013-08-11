@@ -23,8 +23,10 @@ public interface Maia.Canvas : Drawable
     static bool s_ElementsRegister = false;
 
     // accessors
-    internal abstract Core.Timeline timeline  { get; set; default = null; }
-    internal abstract Item? focus_item        { get; set; default = null; }
+    internal abstract Core.Timeline timeline           { get; set; default = null; }
+    internal abstract unowned Item? focus_item         { get; set; default = null; }
+    internal abstract unowned Item? grab_pointer_item  { get; set; default = null; }
+    internal abstract unowned Item? grab_keyboard_item { get; set; default = null; }
 
     public abstract Item root { get; set; default = null; }
     public abstract Graphic.Surface surface { get; }
@@ -137,6 +139,12 @@ public interface Maia.Canvas : Drawable
     }
 
     protected virtual void
+    on_set_pointer_cursor (Cursor inCursor)
+    {
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"set pointer cursor $inCursor");
+    }
+
+    protected virtual void
     on_grab_focus (Item? inItem)
     {
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab focus %s", inItem.name);
@@ -145,10 +153,6 @@ public interface Maia.Canvas : Drawable
         if (focus_item != null)
         {
             focus_item.have_focus = false;
-            focus_item.grab_pointer.disconnect (on_grab_pointer);
-            focus_item.ungrab_pointer.disconnect (on_ungrab_pointer);
-            focus_item.grab_keyboard.disconnect (on_grab_keyboard);
-            focus_item.ungrab_keyboard.disconnect (on_ungrab_keyboard);
         }
 
         // Set focused item
@@ -158,22 +162,19 @@ public interface Maia.Canvas : Drawable
         if (inItem != null)
         {
             focus_item.have_focus = true;
-            focus_item.grab_pointer.connect (on_grab_pointer);
-            focus_item.ungrab_pointer.connect (on_ungrab_pointer);
-            focus_item.grab_keyboard.connect (on_grab_keyboard);
-            focus_item.ungrab_keyboard.connect (on_ungrab_keyboard);
         }
     }
 
     protected virtual bool
-    on_grab_pointer ()
+    on_grab_pointer (Item inItem)
     {
         bool ret = false;
 
-        // Only focused item can grab pointer
-        if (focus_item != null)
+        // Can grab only nobody have already grab
+        if (grab_pointer_item == null)
         {
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab pointer %s", focus_item.name);
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab pointer %s", inItem.name);
+            grab_pointer_item = inItem;
             ret = true;
         }
 
@@ -181,20 +182,25 @@ public interface Maia.Canvas : Drawable
     }
 
     protected virtual void
-    on_ungrab_pointer ()
+    on_ungrab_pointer (Item inItem)
     {
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab pointer %s", focus_item.name);
+        if (grab_pointer_item == inItem)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab pointer %s", grab_pointer_item.name);
+            grab_pointer_item = null;
+        }
     }
 
     protected virtual bool
-    on_grab_keyboard ()
+    on_grab_keyboard (Item inItem)
     {
         bool ret = false;
 
         // Only focused item can grab keyboard
-        if (focus_item != null)
+        if (grab_keyboard_item != null)
         {
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab keyboard %s", focus_item.name);
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab keyboard %s", inItem.name);
+            grab_keyboard_item = inItem;
             ret = true;
         }
 
@@ -202,9 +208,13 @@ public interface Maia.Canvas : Drawable
     }
 
     protected virtual void
-    on_ungrab_keyboard ()
+    on_ungrab_keyboard (Item inItem)
     {
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab keyboard %s", focus_item.name);
+        if (grab_keyboard_item == inItem)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab keyboard %s", grab_keyboard_item.name);
+            grab_keyboard_item = null;
+        }
     }
 
     protected abstract void resize ();
@@ -223,6 +233,7 @@ public interface Maia.Canvas : Drawable
         // we have already root item disconnect from grab signals
         if (root != null)
         {
+            root.set_pointer_cursor.disconnect (on_set_pointer_cursor);
             root.grab_focus.disconnect (on_grab_focus);
             root.grab_pointer.disconnect (on_grab_pointer);
             root.ungrab_pointer.disconnect (on_ungrab_pointer);
@@ -239,6 +250,7 @@ public interface Maia.Canvas : Drawable
         // Connect under root grab signals
         if (root != null)
         {
+            root.set_pointer_cursor.connect (on_set_pointer_cursor);
             root.grab_focus.connect (on_grab_focus);
             root.grab_pointer.connect (on_grab_pointer);
             root.ungrab_pointer.connect (on_ungrab_pointer);
@@ -261,6 +273,7 @@ public interface Maia.Canvas : Drawable
         // we have already root item disconnect from grab signals
         if (root != null)
         {
+            root.set_pointer_cursor.disconnect (on_set_pointer_cursor);
             root.grab_focus.disconnect (on_grab_focus);
             root.grab_pointer.disconnect (on_grab_pointer);
             root.ungrab_pointer.disconnect (on_ungrab_pointer);
@@ -277,6 +290,7 @@ public interface Maia.Canvas : Drawable
         // Connect under root grab signals
         if (root != null)
         {
+            root.set_pointer_cursor.connect (on_set_pointer_cursor);
             root.grab_focus.connect (on_grab_focus);
             root.grab_pointer.connect (on_grab_pointer);
             root.ungrab_pointer.connect (on_ungrab_pointer);

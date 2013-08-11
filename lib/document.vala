@@ -475,9 +475,9 @@ public class Maia.Document : Item
     }
 
     internal override bool
-    on_motion_event (uint inButton, Graphic.Point inPoint)
+    on_motion_event (Graphic.Point inPoint)
     {
-        bool ret = base.on_motion_event (inButton, inPoint);
+        bool ret = base.on_motion_event (inPoint);
 
         if (ret)
         {
@@ -492,7 +492,7 @@ public class Maia.Document : Item
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $child_point");
 
                 // point under child
-                if (page.motion_event (inButton, child_point))
+                if (page.motion_event (child_point))
                 {
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "motion event in %s document %s", page.name, name);
 

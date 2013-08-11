@@ -70,6 +70,7 @@ libmaia_la_SOURCES = \
     graphic/image-svg.vala \
     graphic/image-gif.vala \
     keysym.vala \
+    cursor.vala \
     drawable.vala \
     item.vala \
     item-packable.vala \

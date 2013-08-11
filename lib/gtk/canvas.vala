@@ -47,7 +47,9 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
             }
         }
     }
-    internal Item? focus_item { get; set; default = null; }
+    internal unowned Item? focus_item         { get; set; default = null; }
+    internal unowned Item? grab_pointer_item  { get; set; default = null; }
+    internal unowned Item? grab_keyboard_item { get; set; default = null; }
 
     internal Maia.Graphic.Surface surface {
         get {
@@ -232,6 +234,15 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         m_OldBuffer = null;
     }
 
+    internal void
+    on_set_pointer_cursor (Cursor inCursor)
+    {
+        if (window != null)
+        {
+            window.set_cursor (new Gdk.Cursor (convert_cursor_to_gdk_cursor (inCursor)));
+        }
+    }
+
     internal override void
     realize ()
     {
@@ -337,8 +348,14 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     internal override bool
     key_press_event (Gdk.EventKey inEvent)
     {
-        // we have item send event
-        if (focus_item != null)
+        // we have grab keyboard item send event
+        if (grab_keyboard_item != null)
+        {
+            unichar car = Gdk.keyval_to_unicode (inEvent.keyval);
+            grab_keyboard_item.key_press_event (convert_gdk_key_to_key ((Gdk.Key)inEvent.keyval), car);
+        }
+        // we have focus item send event
+        else if (focus_item != null)
         {
             unichar car = Gdk.keyval_to_unicode (inEvent.keyval);
             focus_item.key_press_event (convert_gdk_key_to_key ((Gdk.Key)inEvent.keyval), car);
@@ -350,8 +367,14 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     internal override bool
     key_release_event (Gdk.EventKey inEvent)
     {
-        // we have item send event
-        if (focus_item != null)
+        // we have grab keyboard item send event
+        if (grab_keyboard_item != null)
+        {
+            unichar car = Gdk.keyval_to_unicode (inEvent.keyval);
+            grab_keyboard_item.key_release_event (convert_gdk_key_to_key ((Gdk.Key)inEvent.keyval), car);
+        }
+        // we have focus item send event
+        else if (focus_item != null)
         {
             unichar car = Gdk.keyval_to_unicode (inEvent.keyval);
             focus_item.key_release_event (convert_gdk_key_to_key ((Gdk.Key)inEvent.keyval), car);
@@ -368,11 +391,12 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         // grab focus on button press event
         grab_focus ();
 
-        // we have item send event
-        if (false && focus_item != null)
+        // we have grab pointer item send event
+        if (grab_pointer_item != null)
         {
-            focus_item.button_press_event (inEvent.button, focus_item.convert_to_item_space (point));
+            grab_pointer_item.button_press_event (inEvent.button, grab_pointer_item.convert_to_item_space (point));
         }
+        // else send event to root
         else if (root != null)
         {
             root.button_press_event (inEvent.button, point);
@@ -386,11 +410,12 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     {
         Graphic.Point point = Graphic.Point (inEvent.x, inEvent.y);
 
-        // we have item send event
-        if (false && focus_item != null)
+        // we have grab pointer item send event
+        if (grab_pointer_item != null)
         {
-            focus_item.button_release_event (inEvent.button, focus_item.convert_to_item_space (point));
+            grab_pointer_item.button_release_event (inEvent.button, grab_pointer_item.convert_to_item_space (point));
         }
+        // else send event to root
         else if (root != null)
         {
             root.button_release_event (inEvent.button, point);
@@ -404,14 +429,15 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     {
         Graphic.Point point = Graphic.Point (inEvent.x, inEvent.y);
 
-        // we have item send event
-        if (false && focus_item != null)
+        // we have grab pointer item send event
+        if (grab_pointer_item != null)
         {
-            focus_item.motion_event (0, focus_item.convert_to_item_space (point));
+            grab_pointer_item.motion_event (grab_pointer_item.convert_to_item_space (point));
         }
+        // else send event to root
         else if (root != null)
         {
-            root.motion_event (0, point);
+            root.motion_event (point);
         }
 
         // Get pointer position for hint motion
