@@ -330,6 +330,20 @@ public interface Maia.Manifest.Element : Core.Object
         return ret;
     }
 
+    internal string
+    dump_characters ()
+    {
+        string ret = "";
+
+        // dump characters
+        if (characters != null)
+        {
+            ret += "\t[\n" + characters + "\n\t]";
+        }
+
+        return ret;
+    }
+
     public string
     dump ()
     {
@@ -342,6 +356,8 @@ public interface Maia.Manifest.Element : Core.Object
             ret += dump_attributes ();
 
             ret += dump_childs ();
+
+            ret += dump_characters ();
 
             ret += "}\n";
         }

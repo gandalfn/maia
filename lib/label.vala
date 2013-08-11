@@ -23,11 +23,13 @@ public class Maia.Label : Item, ItemPackable, Manifest.Element
     private Graphic.Glyph m_Glyph;
 
     // accessors
-    public override string tag {
+    internal override string tag {
         get {
             return "Label";
         }
     }
+
+    internal override string characters { get; set; default = null; }
 
     internal uint   row     { get; set; default = 0; }
     internal uint   column  { get; set; default = 0; }

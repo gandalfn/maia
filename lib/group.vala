@@ -20,11 +20,13 @@
 public class Maia.Group : Item
 {
     // accessors
-    public override string tag {
+    internal override string tag {
         get {
             return "Group";
         }
     }
+
+    internal override string characters { get; set; default = null; }
 
     // methods
     public Group (string inId)

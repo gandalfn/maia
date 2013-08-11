@@ -24,11 +24,13 @@ public class Maia.Entry : Item, ItemPackable, Manifest.Element
     private int           m_Cursor = 1;
 
     // accessors
-    public override string tag {
+    internal override string tag {
         get {
             return "Entry";
         }
     }
+
+    internal override string characters { get; set; default = null; }
 
     internal uint   row     { get; set; default = 0; }
     internal uint   column  { get; set; default = 0; }

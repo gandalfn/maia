@@ -1,31 +1,31 @@
 Document.worksheet {
     // Models
-    Model.model_example {
-        Column.name_col {
-            column: 1;
-        }
-        Column.icon_col {
-            column: 2;
-        }
-    }
-
-    View.view_example {
-        model: model_example;
-
-        Cell.cell_1 {
-            [
-              Grid.cell_1_grid {
-                column_spacing: 5;
-                Image.cell_1_image {
-                  icon: @icon_col;
-                }
-                Label.cell_1_label {
-                    column: 1;
-                    text: @name_col;
-                }
-            ]
-        }
-    }
+//~     Model.model_example {
+//~         Column.name_col {
+//~             column: 1;
+//~         }
+//~         Column.icon_col {
+//~             column: 2;
+//~         }
+//~     }
+//~
+//~     View.view_example {
+//~         model: model_example;
+//~
+//~         Cell.cell_1 {
+//~             [
+//~               Grid.cell_1_grid {
+//~                 column_spacing: 5;
+//~                 Image.cell_1_image {
+//~                   icon: @icon_col;
+//~                 }
+//~                 Label.cell_1_label {
+//~                     column: 1;
+//~                     text: @name_col;
+//~                 }
+//~             ]
+//~         }
+//~     }
 
     // Default page format
     format: a4;
@@ -71,8 +71,17 @@ Document.worksheet {
                     right_padding: 5;
                     left_padding: 5;
                     size: 64, 64;
-                    #filename: "/home/nicolas/Bureau/logo-ssi.png";
-                    icon-name: "gnome-run";
+                    //filename: "/home/nicolas/Bureau/logo-ssi.png";
+                    //icon-name: "gnome-run";
+                    [
+                    <svg version="1.1" width="48px" height="48px">
+                      <g>
+                        <polygon fill="#000000" stroke="#000000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" points="19.171,32.215 16.737,12.015 31.263,26.261 	"/>
+                        <line fill="#000000" stroke="#000000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" x1="23.39" y1="25.662" x2="28.462" y2="35.984"/>
+                      </g>
+                      <path fill="none" stroke="#000000" stroke-width="3" d="M44.5,32.167c0,6.627-5.373,12-12,12h-17c-6.627,0-12-5.373-12-12V15.5c0-6.627,5.373-12,12-12h17c6.627,0,12,5.373,12,12V32.167z"/>
+                    </svg>
+                    ]
                 }
 
                 Label.institution_name {

@@ -31,6 +31,8 @@ public class Maia.Document : Item
         }
     }
 
+    internal override string characters { get; set; default = null; }
+
     public PageFormat format    { get; construct set; default = PageFormat.A4; }
     public double top_margin    { get; construct set; default = 0.25; }
     public double bottom_margin { get; construct set; default = 0.25; }
@@ -391,6 +393,8 @@ public class Maia.Document : Item
                     ret += (child as Manifest.Element).dump_childs ();
                 }
             }
+
+            ret += dump_characters ();
 
             ret += "}\n";
         }

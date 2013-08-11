@@ -23,11 +23,13 @@ public class Maia.Image : Item, ItemPackable
     private Graphic.Image m_Image;
 
     // accessors
-    public override string tag {
+    internal override string tag {
         get {
             return "Image";
         }
     }
+
+    internal override string characters { get; set; default = null; }
 
     internal uint   row     { get; set; default = 0; }
     internal uint   column  { get; set; default = 0; }
@@ -47,7 +49,7 @@ public class Maia.Image : Item, ItemPackable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
-    public string? filename { get; set; default = ""; }
+    public string? filename { get; set; default = null; }
 
     // methods
     public Image (string inId, string inFilename)
@@ -64,7 +66,7 @@ public class Maia.Image : Item, ItemPackable
     internal override Graphic.Size
     size_request (Graphic.Size inSize)
     {
-        if (filename != "")
+        if (filename != null)
         {
             if (m_Image == null)
             {

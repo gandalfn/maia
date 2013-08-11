@@ -20,11 +20,13 @@
 public class Maia.Rectangle : Item
 {
     // accessors
-    public override string tag {
+    internal override string tag {
         get {
             return "Rectangle";
         }
     }
+
+    internal override string characters { get; set; default = null; }
 
     // methods
     public Rectangle (string inId)
