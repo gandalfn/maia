@@ -471,7 +471,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     private void
     on_child_grab_focus (Item? inItem)
     {
-        Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab focus %s", inItem.name);
+        if (inItem == null)
+            Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab focus");
+        else
+            Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab focus %s", inItem.name);
         grab_focus (inItem);
     }
 

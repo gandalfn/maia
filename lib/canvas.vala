@@ -83,6 +83,7 @@ public interface Maia.Canvas : Drawable
             Manifest.Element.register ("Document",    typeof (Document));
             Manifest.Element.register ("Model",       typeof (Model));
             Manifest.Element.register ("Column",      typeof (Model.Column));
+            Manifest.Element.register ("DrawingArea", typeof (DrawingArea));
 
             s_ElementsRegister = true;
         }
@@ -147,7 +148,10 @@ public interface Maia.Canvas : Drawable
     protected virtual void
     on_grab_focus (Item? inItem)
     {
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab focus %s", inItem.name);
+        if (inItem == null)
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab focus");
+        else
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab focus %s", inItem.name);
 
         // Unset item have focus
         if (focus_item != null)

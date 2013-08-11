@@ -114,7 +114,7 @@ public class Maia.Document : Item
                 m_PageShadow.context.fill (path);
 
                 // Blur black rectangle for shadow
-                m_PageShadow.exponential_blur (border_width);
+                m_PageShadow.exponential_blur (border_width / 2);
 
                 // Paint white rectangle in page area
                 m_PageShadow.context.pattern = new Graphic.Color (1, 1, 1);
