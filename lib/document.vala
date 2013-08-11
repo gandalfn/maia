@@ -304,6 +304,10 @@ public class Maia.Document : Item
                     {
                         m_VisiblePages.insert (page);
                     }
+                    else if (m_VisiblePages.length > 0)
+                    {
+                        break;
+                    }
                 }
             }
 

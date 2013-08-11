@@ -231,6 +231,38 @@ public struct Maia.Graphic.Rectangle
     }
 
     /**
+     * Forces a rectangle must be into the inRectangle
+     *
+     * @param inRectangle where the rectangle must be in
+     */
+    public void
+    clamp (Rectangle inRectangle)
+    {
+        double ax1 = origin.x;
+        double ay1 = origin.y;
+        double ax2 = origin.x + size.width;
+        double ay2 = origin.y + size.height;
+
+        double bx1 = inRectangle.origin.x;
+        double by1 = inRectangle.origin.y;
+        double bx2 = inRectangle.origin.x + inRectangle.size.width;
+        double by2 = inRectangle.origin.y + inRectangle.size.height;
+
+        if (ax2 > bx2)
+            origin.x -= ax2 - bx2;
+
+        if (ay2 > by2)
+            origin.y -= ay2 - by2;
+
+        if (ax1 < bx1)
+            origin.x += bx1 - ax1;
+
+        if (ay1 < by1)
+            origin.y += by1 - ay1;
+    }
+
+
+    /**
      * Return string representation of rectangle
      *
      * @return string representation of rectangle

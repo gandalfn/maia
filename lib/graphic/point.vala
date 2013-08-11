@@ -58,6 +58,18 @@ public struct Maia.Graphic.Point
     }
 
     /**
+     * Subtract point by inOther
+     *
+     * @param inOther point to subtract
+     */
+    public void
+    subtract (Point inOther)
+    {
+        x -= inOther.x;
+        y -= inOther.y;
+    }
+
+    /**
      * Translates point by inOffset
      *
      * @param inOffset Amount to translate

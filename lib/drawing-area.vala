@@ -21,6 +21,8 @@ public class Maia.DrawingArea : Group, ItemPackable
 {
     // properties
     private unowned Item? m_ItemSelected = null;
+    private unowned Item? m_ItemInMove = null;
+    private Graphic.Point m_LastPointerPosition;
 
     // accessors
     internal override string tag {
@@ -139,6 +141,14 @@ public class Maia.DrawingArea : Group, ItemPackable
             selected = null;
             GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
         }
+        else if (m_ItemInMove != null)
+        {
+            m_ItemInMove = null;
+            ungrab_pointer (this);
+            set_pointer_cursor (Cursor.TOP_LEFT_ARROW);
+            ret = false;
+            GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
+        }
         else
         {
             // parse child from last to first since item has sorted by layer
@@ -160,6 +170,14 @@ public class Maia.DrawingArea : Group, ItemPackable
                         GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
 
                         // Set the selected item;
+                        if (selected == item && item is ItemMovable)
+                        {
+                            m_ItemInMove = item;
+                            m_LastPointerPosition = inPoint;
+                            grab_pointer (this);
+                            set_pointer_cursor (Cursor.BLANK_CURSOR);
+                        }
+
                         selected = item;
 
                         break;
@@ -173,6 +191,27 @@ public class Maia.DrawingArea : Group, ItemPackable
             {
                 selected = null;
             }
+        }
+
+        return ret;
+    }
+
+    internal override bool
+    on_motion_event (Graphic.Point inPoint)
+    {
+        bool ret = false;
+
+        if (m_ItemInMove != null)
+        {
+            ret = true;
+            var offset = inPoint;
+            offset.subtract (m_LastPointerPosition);
+            m_LastPointerPosition = inPoint;
+            ((ItemMovable)m_ItemInMove).move (offset);
+        }
+        else
+        {
+            ret = base.on_motion_event (inPoint);
         }
 
         return ret;

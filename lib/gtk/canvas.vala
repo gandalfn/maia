@@ -427,23 +427,26 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     internal override bool
     motion_notify_event (Gdk.EventMotion inEvent)
     {
-        Graphic.Point point = Graphic.Point (inEvent.x, inEvent.y);
-
-        // we have grab pointer item send event
-        if (grab_pointer_item != null)
+        if (inEvent.is_hint)
         {
-            grab_pointer_item.motion_event (grab_pointer_item.convert_to_item_space (point));
-        }
-        // else send event to root
-        else if (root != null)
-        {
-            root.motion_event (point);
-        }
+            Graphic.Point point = Graphic.Point (inEvent.x, inEvent.y);
 
-        // Get pointer position for hint motion
-        double x, y;
-        Gdk.ModifierType mod;
-        window.get_pointer (out x, out y, out mod);
+            // we have grab pointer item send event
+            if (grab_pointer_item != null)
+            {
+                grab_pointer_item.motion_event (grab_pointer_item.convert_to_item_space (point));
+            }
+            // else send event to root
+            else if (root != null)
+            {
+                root.motion_event (point);
+            }
+
+            // Get pointer position for hint motion
+            double x, y;
+            Gdk.ModifierType mod;
+            window.get_pointer (out x, out y, out mod);
+        }
 
         return true;
     }

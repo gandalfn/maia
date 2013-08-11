@@ -74,6 +74,7 @@ libmaia_la_SOURCES = \
     drawable.vala \
     item.vala \
     item-packable.vala \
+    item-movable.vala \
     group.vala \
     rectangle.vala \
     path.vala \

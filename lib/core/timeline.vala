@@ -144,7 +144,7 @@ public class Maia.Core.Timeline : Object
     // static methods
     static construct
     {
-        s_TimeoutPool = new TimeoutPool (s_HaveDefault ? s_DefaultPriority : Priority.DEFAULT + 10);
+        s_TimeoutPool = new TimeoutPool (s_HaveDefault ? s_DefaultPriority : Priority.DEFAULT);
     }
 
 
