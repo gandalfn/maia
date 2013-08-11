@@ -165,40 +165,40 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
     {
         char* begin = m_pCurrent;
         bool first = true;
-        bool have_double_quote = false;
-        bool in_double_quote = false;
+        char quote = 0;
+        bool in_quote = false;
 
         while (m_pCurrent < m_pEnd && m_pCurrent[0] != m_EndChar)
         {
             skip_space ();
 
-            if (first && m_pCurrent[0] == '"')
+            if (first && (m_pCurrent[0] == '"' || m_pCurrent[0] == '\''))
             {
-                have_double_quote = true;
+                quote = m_pCurrent[0];
                 next_char ();
-                in_double_quote = true;
+                in_quote = true;
                 continue;
             }
-            else if (have_double_quote)
+            else if (quote != 0)
             {
-                if (m_pCurrent + 1 < m_pEnd && m_pCurrent[0] == '\\' &&  m_pCurrent[1] == '"')
+                if (m_pCurrent + 1 < m_pEnd && m_pCurrent[0] == '\\' && m_pCurrent[1] == quote)
                 {
                     next_char ();
                 }
-                else if (m_pCurrent[0] == '"')
+                else if (m_pCurrent[0] == quote)
                 {
-                    in_double_quote = false;
+                    in_quote = false;
                     next_char ();
                     continue;
                 }
-                else if (!in_double_quote && (m_pCurrent[0] == m_EndChar ||
-                                              m_pCurrent[0] == '('       ||
-                                              m_pCurrent[0] == ')'       ||
-                                              m_pCurrent[0] == ','))
+                else if (!in_quote && (m_pCurrent[0] == m_EndChar ||
+                                       m_pCurrent[0] == '('       ||
+                                       m_pCurrent[0] == ')'       ||
+                                       m_pCurrent[0] == ','))
                 {
                     break;
                 }
-                else if (have_double_quote && !in_double_quote)
+                else if (!in_quote)
                 {
                     next_char ();
                     continue;
@@ -225,10 +225,10 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
             return "";
 
         string ret = ((string) begin).substring (0, (int) (m_pCurrent - begin)).strip ();
-        if (have_double_quote)
+        if (quote != 0)
         {
-            ret = ret.substring (ret[0] == '"' ? 1 : 0,
-                                 ret.length - (ret[ret.length - 1] == '"' ? 2 : 1)).replace ("""\"""", """"""");
+            ret = ret.substring (ret[0] == quote ? 1 : 0,
+                                 ret.length - (ret[ret.length - 1] == quote ? 2 : 1)).replace (@"\\$quote", @"$quote");
         }
 
         return ret;
