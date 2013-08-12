@@ -270,7 +270,14 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             // keep old geometry
             Graphic.Region old_geometry = geometry.copy ();
             // reset item geometry
-            geometry = null;
+            if (!(this is ItemMovable))
+            {
+                geometry = null;
+            }
+            else
+            {
+                geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
+            }
             // damage parent
             (parent as Item).damage (old_geometry);
         }

@@ -23,6 +23,7 @@ internal class Maia.Cairo.Context : Graphic.Context
     private global::Cairo.Context m_Context = null;
     private Graphic.Transform     m_Transform = new Graphic.Transform.identity ();
     private double[]?             m_Dashes = null;
+    private uint                  m_SaveCount = 0;
 
     // accessors
     internal global::Cairo.Context context {
@@ -226,19 +227,32 @@ internal class Maia.Cairo.Context : Graphic.Context
     {
         m_Context.save ();
         status ();
+        m_SaveCount++;
     }
 
     public override void
     restore () throws Graphic.Error
     {
-        m_Context.restore ();
-        status ();
+        if (m_SaveCount > 0)
+        {
+            m_Context.restore ();
+            status ();
+            m_SaveCount--;
+        }
     }
 
     public override void
     status () throws Graphic.Error
     {
         global::Cairo.Status status = m_Context.status ();
+
+        if (status != global::Cairo.Status.SUCCESS)
+        {
+            for (int cpt = 0; cpt < m_SaveCount; cpt++)
+            {
+                m_Context.restore ();
+            }
+        }
 
         switch (status)
         {

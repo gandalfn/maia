@@ -53,7 +53,9 @@ public interface Maia.ItemMovable : Item
                     area.clamp (drawing_area_geometry.extents);
                 }
 
+                damage ();
                 position = area.origin;
+                damage ();
             }
         }
     }
