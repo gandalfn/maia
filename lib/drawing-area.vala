@@ -19,10 +19,21 @@
 
 public class Maia.DrawingArea : Group, ItemPackable
 {
+    // types
+    private enum SelectedItemState
+    {
+        NONE,
+        SELECTED,
+        MOVING,
+        MOVED,
+        RESIZING
+    }
+
     // properties
-    private unowned Item? m_ItemSelected = null;
-    private unowned Item? m_ItemInMove = null;
-    private Graphic.Point m_LastPointerPosition;
+    private unowned Item?     m_SelectedItem = null;
+    private SelectedItemState m_SelectedItemState = SelectedItemState.NONE;
+    private Graphic.Point     m_LastPointerPosition;
+    public Graphic.Path       m_AnchorPath;
 
     // accessors
     internal override string tag {
@@ -51,36 +62,44 @@ public class Maia.DrawingArea : Group, ItemPackable
 
     public unowned Item? selected  {
         get {
-            return m_ItemSelected;
+            return m_SelectedItem;
         }
         set {
-            if (m_ItemSelected != value)
+            // Selected has changed
+            if (m_SelectedItem != value)
             {
                 // Damage the old selected item
-                if (m_ItemSelected != null)
+                if (m_SelectedItem != null)
                 {
-                    m_ItemSelected.damage ();
+                    m_SelectedItem.damage ();
                 }
 
-                m_ItemSelected = value;
+                m_SelectedItemState = SelectedItemState.NONE;
+                m_SelectedItem = value;
 
                 // Set selected item have focus
-                grab_focus (m_ItemSelected);
+                grab_focus (m_SelectedItem);
 
                 // Damage the new selected item
-                if (m_ItemSelected != null)
+                if (m_SelectedItem != null)
                 {
-                    m_ItemSelected.damage ();
+                    m_SelectedItemState = SelectedItemState.SELECTED;
+                    m_SelectedItem.damage ();
                 }
+            }
+            // selected has not changed update selected item state
+            else if (m_SelectedItem != null)
+            {
+                set_selected_item_state ();
             }
         }
         default = null;
     }
 
+    public double        anchor_size                { get; set; default = 12.0; }
     public double        selected_border            { get; set; default = 5.0; }
     public double        selected_border_line_width { get; set; default = 1.0; }
     public Graphic.Color selected_border_color      { get; set; default = new Graphic.Color (0, 0, 0); }
-
 
     // methods
     construct
@@ -92,6 +111,88 @@ public class Maia.DrawingArea : Group, ItemPackable
     public DrawingArea (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
+    }
+
+    private void
+    create_anchor_path ()
+    {
+        if (selected_border > 0 && selected != null && m_SelectedItemState > SelectedItemState.SELECTED)
+        {
+            double asize = anchor_size + selected_border / 2;
+            double arrow_size = anchor_size / 6;
+            Graphic.Size item_size = selected.size;
+            item_size.resize ((anchor_size + selected_border) * 2.0, (anchor_size + selected_border) * 2.0);
+
+            switch (m_SelectedItemState)
+            {
+                case SelectedItemState.MOVED:
+                case SelectedItemState.MOVING:
+
+                    // Create anchor
+                    string pathVert = "m %2$g,0 l -%3$g,%3$g m %3$g,-%3$g l %3$g,3 m -%3$g,-%3$g l 0,%1$g l -%3$g,-3 m %3$g,%3$g l %3$g,-%3$g".printf (asize, asize / 2, arrow_size);
+                    string pathHoriz = "m 0,%2$g l %3$g,-%3$g m -%3$g,%3$g l %3$g,%3$g m -%3$g,-%3$g l %1$g,0 l -%3$g,-%3$g m %3$g,%3$g l -%3$g,%3$g".printf (asize, asize / 2, arrow_size);
+
+                    m_AnchorPath = new Graphic.Path ();
+                    m_AnchorPath.parse ("M 0,0 %1$s M 0,0 %2$s". printf (pathVert, pathHoriz));
+                    break;
+
+                case SelectedItemState.RESIZING:
+                    string pathVert = "m %2$g,%3$g l -%3$g,%3$g m %3$g,-%3$g l %3$g,%3$g m -%3$g,-%3$g l 0,%1$g l -%3$g,-%3$g m %3$g,%3$g l %3$g,-%3$g". printf (asize - arrow_size , asize / 2, arrow_size);
+                    string pathHoriz = "m %3$g,%2$g l %3$g,-%3$g m -%3$g,%3$g l %3$g,%3$g m -%3$g,-%3$g l %1$g,0 l -%3$g,-%3$g m %3$g,%3$g l -%3$g,%3$g". printf (asize - arrow_size, asize / 2, arrow_size);
+                    string pathTopLeft = "m %2$g,%1$g l -%3$g,-%3$g m %3$g,%3$g l %3$g,-%3$g m -%3$g,%3$g q 0,-%2$g %2$g,-%2$g l -%3$g,-%3$g m %3$g,%3$g l -%3$g,%3$g".printf (asize, asize / 2, arrow_size);
+                    string pathTopRight = "m 0,%2$g l %3$g,-%3$g m -%3$g,%3$g l %3$g,%3$g m -%3$g,-%3$g q %2$g,0 %2$g,%2$g l -%3$g,-%3$g m %3$g,%3$g l %3$g,-%3$g".printf (asize, asize / 2, arrow_size);
+                    string pathBottomRight = "m %2$g,0 l -%3$g,%3$g m %3$g,-%3$g l %3$g,%3$g m -%3$g,-%3$g q 0,%2$g -%2$g,%2$g l %3$g,%3$g m -%3$g,-%3$g l %3$g,-%3$g".printf (asize, asize / 2, arrow_size);
+                    string pathBottomLeft = "m %2$g,0 l -%3$g,%3$g m %3$g,-%3$g l %3$g,%3$g m -%3$g,-%3$g q 0,%2$g %2$g,%2$g l -%3$g,-%3$g m %3$g,%3$g l -%3$g,%3$g".printf (asize, asize / 2, arrow_size);
+
+                    string topLeft = "M 0,0 %1$s ".printf (pathTopLeft);
+                    string top = "M %1$g,0 %2$s ".printf (item_size.width / 2, pathVert);
+                    string topRight = "M %1$g,0 %2$s ".printf (item_size.width + arrow_size, pathTopRight);
+                    string right = "M %1$g,%2$g %3$s ".printf (item_size.width + arrow_size, item_size.height / 2, pathHoriz);
+                    string bottomRight = "M %1$g,%2$g %3$s ".printf (item_size.width + arrow_size, item_size.height + arrow_size, pathBottomRight);
+                    string bottom = "M %1$g,%2$g %3$s ".printf (item_size.width / 2, item_size.height + arrow_size, pathVert);
+                    string bottomLeft = "M 0,%1$g %2$s ".printf (item_size.height + arrow_size, pathBottomLeft);
+                    string left = "M 0,%1$g %2$s ".printf (item_size.height / 2, pathHoriz);
+
+                    m_AnchorPath = new Graphic.Path ();
+                    m_AnchorPath.parse (topLeft + top + topRight + right + bottomRight + bottom + bottomLeft + left);
+                    break;
+            }
+        }
+    }
+
+    private void
+    set_selected_item_state ()
+    {
+        if (m_SelectedItemState == SelectedItemState.SELECTED && m_SelectedItem.is_movable)
+        {
+            m_SelectedItemState = SelectedItemState.MOVING;
+            m_AnchorPath = null;
+
+            // Grab pointer and set invisible
+            grab_pointer (this);
+            set_pointer_cursor (Cursor.BLANK_CURSOR);
+        }
+        else if ((m_SelectedItemState == SelectedItemState.SELECTED || m_SelectedItemState == SelectedItemState.MOVING) && m_SelectedItem.is_resizable)
+        {
+            m_SelectedItemState = SelectedItemState.RESIZING;
+            m_AnchorPath = null;
+
+            // Grab pointer and set invisible
+            grab_pointer (this);
+            set_pointer_cursor (Cursor.BLANK_CURSOR);
+        }
+        else
+        {
+            m_SelectedItemState = SelectedItemState.SELECTED;
+            m_AnchorPath = null;
+
+            // Ungrab pointer and restore cursor
+            ungrab_pointer (this);
+            set_pointer_cursor (Cursor.TOP_LEFT_ARROW);
+        }
+
+        // Damage item
+        m_SelectedItem.damage ();
     }
 
     internal override void
@@ -119,6 +220,16 @@ public class Maia.DrawingArea : Group, ItemPackable
                 damaged_area.translate (Graphic.Point (-selected_border, -selected_border));
                 var area_size = damaged_area.extents.size;
                 area_size.resize (selected_border * 2.0, selected_border * 2.0);
+
+                // If item is movable add anchor size
+                if (selected.is_movable || selected.is_resizable)
+                {
+                    Graphic.Point anchor_border = Graphic.Point (anchor_size + selected_border_line_width,
+                                                                 anchor_size + selected_border_line_width);
+                    damaged_area.translate (anchor_border.invert ());
+                    area_size.resize (anchor_border.x * 2.0, anchor_border.y * 2.0);
+                }
+
                 damaged_area.resize (area_size);
             }
 
@@ -141,16 +252,10 @@ public class Maia.DrawingArea : Group, ItemPackable
             selected = null;
             GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
         }
-        else if (m_ItemInMove != null)
+        else if (inButton == 1)
         {
-            m_ItemInMove = null;
-            ungrab_pointer (this);
-            set_pointer_cursor (Cursor.TOP_LEFT_ARROW);
-            ret = false;
-            GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
-        }
-        else
-        {
+            m_LastPointerPosition = inPoint;
+
             // parse child from last to first since item has sorted by layer
             unowned Core.Object? child = last ();
             while (child != null)
@@ -170,14 +275,6 @@ public class Maia.DrawingArea : Group, ItemPackable
                         GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
 
                         // Set the selected item;
-                        if (selected == item && item is ItemMovable)
-                        {
-                            m_ItemInMove = item;
-                            m_LastPointerPosition = inPoint;
-                            grab_pointer (this);
-                            set_pointer_cursor (Cursor.BLANK_CURSOR);
-                        }
-
                         selected = item;
 
                         break;
@@ -201,13 +298,37 @@ public class Maia.DrawingArea : Group, ItemPackable
     {
         bool ret = false;
 
-        if (m_ItemInMove != null)
+        if (m_SelectedItem != null && m_SelectedItemState > SelectedItemState.SELECTED)
         {
             ret = true;
-            var offset = inPoint;
-            offset.subtract (m_LastPointerPosition);
-            m_LastPointerPosition = inPoint;
-            ((ItemMovable)m_ItemInMove).move (offset);
+            switch (m_SelectedItemState)
+            {
+                case SelectedItemState.MOVING:
+                    m_SelectedItemState = SelectedItemState.MOVED;
+                    break;
+
+                case SelectedItemState.MOVED:
+                    if (selected.is_movable)
+                    {
+                        var offset = inPoint;
+                        offset.subtract (m_LastPointerPosition);
+                        m_LastPointerPosition = inPoint;
+                        ((ItemMovable)selected).move (offset);
+                    }
+                    break;
+
+                case SelectedItemState.RESIZING:
+                    if (selected.is_resizable)
+                    {
+                        var offset = inPoint;
+                        offset.subtract (m_LastPointerPosition);
+                        m_LastPointerPosition = inPoint;
+                        ((ItemResizable)selected).resize (offset);
+
+                        m_AnchorPath = null;
+                    }
+                    break;
+            }
         }
         else
         {
@@ -256,6 +377,19 @@ public class Maia.DrawingArea : Group, ItemPackable
 
                 if (item == selected)
                 {
+                    if (m_SelectedItemState > SelectedItemState.SELECTED)
+                    {
+                        inContext.save ();
+                        {
+                            inContext.translate (item.geometry.extents.origin);
+                            inContext.translate (Graphic.Point (selected_border + anchor_size, selected_border + anchor_size).invert ());
+                            if (m_AnchorPath == null) create_anchor_path ();
+                            inContext.pattern = selected_border_color;
+                            inContext.stroke (m_AnchorPath);
+                        }
+                        inContext.restore ();
+                    }
+
                     var path = new Graphic.Path ();
                     path.rectangle (item.geometry.extents.origin.x - selected_border / 2.0,
                                     item.geometry.extents.origin.y - selected_border / 2.0,

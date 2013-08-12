@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Entry : Item, ItemPackable, Manifest.Element
+public class Maia.Entry : Item, ItemPackable, ItemMovable
 {
     // properties
     private Graphic.Glyph m_Glyph;

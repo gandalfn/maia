@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * item-movable.vala
+ * item-resizable.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,11 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public interface Maia.ItemMovable : Item
+public interface Maia.ItemResizable : Item
 {
     // methods
     public void
-    move (Graphic.Point inOffset)
+    resize (Graphic.Point inDelta)
     {
         if (parent != null && parent is DrawingArea)
         {
@@ -30,10 +30,10 @@ public interface Maia.ItemMovable : Item
             if (drawing_area.geometry != null)
             {
                 // translate the current position
-                var new_position = position;
-                new_position.translate (inOffset);
+                var new_size = size;
+                new_size.resize (inDelta.x, inDelta.y);
 
-                var area = Graphic.Rectangle (new_position.x, new_position.y, size.width, size.height);
+                var area = Graphic.Rectangle (position.x, position.y, new_size.width, new_size.height);
 
                 // check if item is not outside parent
                 var drawing_area_geometry = drawing_area.geometry.copy ();
@@ -48,7 +48,7 @@ public interface Maia.ItemMovable : Item
                 }
 
                 damage ();
-                position = area.origin;
+                size = area.size;
                 damage ();
             }
         }

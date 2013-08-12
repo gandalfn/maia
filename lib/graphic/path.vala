@@ -189,6 +189,7 @@ public class Maia.Graphic.Path : Core.Object
 
         while (current < end)
         {
+
             switch (current[0])
             {
                 case 'm':
@@ -231,6 +232,20 @@ public class Maia.Graphic.Path : Core.Object
                     double[] vals = parse_values (ref current, end);
                     if (vals.length >= 4)
                         smooth_curve_to (vals[0], vals[1], vals[2], vals[3]);
+                    break;
+
+                case 'q':
+                    current++;
+                    double[] vals = parse_values (ref current, end);
+                    if (vals.length >= 4)
+                        rel_quadratic_curve_to (vals[2], vals[3], vals[0], vals[1]);
+                    break;
+
+                case 'Q':
+                    current++;
+                    double[] vals = parse_values (ref current, end);
+                    if (vals.length >= 4)
+                        quadratic_curve_to (vals[2], vals[3], vals[0], vals[1]);
                     break;
 
                 case 'c':

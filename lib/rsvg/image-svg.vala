@@ -87,7 +87,7 @@ internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
                 }
                 else
                 {
-                    handle = new global::Rsvg.Handle.from_data ((uint8[])data.to_utf8 ());
+                    handle = new global::Rsvg.Handle.from_data ((uint8[])data.to_utf8 (), data.to_utf8 ().length);
                 }
 
                 m_Surface = new Graphic.Surface (handle.width, handle.height);
@@ -123,6 +123,7 @@ internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
                                   "Error on loading svg image %s: rsvg backend only works with cairo backend",
                                   filename ?? data);
                 }
+                handle.close ();
             }
             catch (GLib.Error err)
             {

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Rectangle : Item
+public class Maia.Rectangle : Item, ItemMovable, ItemResizable
 {
     // accessors
     internal override string tag {

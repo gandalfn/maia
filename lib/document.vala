@@ -225,6 +225,7 @@ public class Maia.Document : Item
         var page_size = format.to_size (resolution);
         page_size.resize (border_width * 2.0, border_width * 2.0);
         page_size.height *= m_NbPages;
+        page_size.transform (transform);
 
         return page_size;
     }
@@ -255,6 +256,7 @@ public class Maia.Document : Item
 
             // Remove the offset of scrolling
             damaged_area.translate (position.invert ());
+            damaged_area.transform (transform);
 
             // damage item
             damage (damaged_area);
@@ -419,26 +421,37 @@ public class Maia.Document : Item
 
         if (ret)
         {
-            // Translate point onto offset of visible area
-            Graphic.Point point = inPoint;
-            point.translate (position);
-
-            foreach (unowned Page page in m_VisiblePages)
+            try
             {
-                var child_point = convert_to_child_item_space (page, point);
+                // Translate point onto offset of visible area
+                Graphic.Point point = inPoint;
+                Graphic.Matrix matrix = transform.matrix;
+                matrix.invert ();
+                Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
+                point.transform (item_transform);
+                point.translate (position);
 
-                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $child_point");
-
-                // point under child
-                if (page.button_press_event (inButton, child_point))
+                foreach (unowned Page page in m_VisiblePages)
                 {
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "press event in %s document %s", page.name, name);
+                    var child_point = convert_to_child_item_space (page, point);
 
-                    // event occurate under child stop signal
-                    ret = false;
-                    GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
-                    break;
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $child_point");
+
+                    // point under child
+                    if (page.button_press_event (inButton, child_point))
+                    {
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "press event in %s document %s", page.name, name);
+
+                        // event occurate under child stop signal
+                        ret = false;
+                        GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
+                        break;
+                    }
                 }
+            }
+            catch (Graphic.Error err)
+            {
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "error on convert point to page coordinates: %s", err.message);
             }
         }
 
@@ -452,26 +465,37 @@ public class Maia.Document : Item
 
         if (ret)
         {
-            // Translate point onto offset of visible area
-            Graphic.Point point = inPoint;
-            point.translate (position);
-
-            foreach (unowned Page page in m_VisiblePages)
+            try
             {
-                var child_point = convert_to_child_item_space (page, point);
+                // Translate point onto offset of visible area
+                Graphic.Point point = inPoint;
+                Graphic.Matrix matrix = transform.matrix;
+                matrix.invert ();
+                Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
+                point.transform (item_transform);
+                point.translate (position);
 
-                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $child_point");
-
-                // point under child
-                if (page.button_release_event (inButton, child_point))
+                foreach (unowned Page page in m_VisiblePages)
                 {
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "release event in %s document %s", page.name, name);
+                    var child_point = convert_to_child_item_space (page, point);
 
-                    // event occurate under child stop signal
-                    ret = false;
-                    GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
-                    break;
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $child_point");
+
+                    // point under child
+                    if (page.button_release_event (inButton, child_point))
+                    {
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "release event in %s document %s", page.name, name);
+
+                        // event occurate under child stop signal
+                        ret = false;
+                        GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
+                        break;
+                    }
                 }
+            }
+            catch (Graphic.Error err)
+            {
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "error on convert point to page coordinates: %s", err.message);
             }
         }
 
@@ -485,26 +509,37 @@ public class Maia.Document : Item
 
         if (ret)
         {
-            // Translate point onto offset of visible area
-            Graphic.Point point = inPoint;
-            point.translate (position);
-
-            foreach (unowned Page page in m_VisiblePages)
+            try
             {
-                var child_point = convert_to_child_item_space (page, point);
+                // Translate point onto offset of visible area
+                Graphic.Point point = inPoint;
+                Graphic.Matrix matrix = transform.matrix;
+                matrix.invert ();
+                Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
+                point.transform (item_transform);
+                point.translate (position);
 
-                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $child_point");
-
-                // point under child
-                if (page.motion_event (child_point))
+                foreach (unowned Page page in m_VisiblePages)
                 {
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "motion event in %s document %s", page.name, name);
+                    var child_point = convert_to_child_item_space (page, point);
 
-                    // event occurate under child stop signal
-                    ret = false;
-                    GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
-                    break;
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $child_point");
+
+                    // point under child
+                    if (page.motion_event (child_point))
+                    {
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "motion event in %s document %s", page.name, name);
+
+                        // event occurate under child stop signal
+                        ret = false;
+                        GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
+                        break;
+                    }
                 }
+            }
+            catch (Graphic.Error err)
+            {
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "error on convert point to page coordinates: %s", err.message);
             }
         }
 

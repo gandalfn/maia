@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.ToggleButton : Group, ItemPackable
+public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
 {
     // properties
     private string m_Group = null;

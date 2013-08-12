@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Image : Item, ItemPackable
+public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
 {
     // properties
     private Graphic.Image m_Image;
@@ -68,7 +68,7 @@ public class Maia.Image : Item, ItemPackable
     {
         if (filename != null)
         {
-            if (m_Image == null)
+            if (m_Image == null || m_Image.size != inSize)
             {
                 m_Image = Graphic.Image.create (filename, inSize);
             }
@@ -80,7 +80,7 @@ public class Maia.Image : Item, ItemPackable
         }
         else if (characters != null)
         {
-            if (m_Image == null)
+            if (m_Image == null || m_Image.size != inSize)
             {
                 m_Image = new Graphic.ImageSvg.from_data (characters, inSize);
             }

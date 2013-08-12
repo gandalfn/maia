@@ -28,7 +28,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     internal class uint mc_IdMotionEvent;
 
     // properties
-    private bool              m_IsPackable;
+    private bool              m_IsPackable = false;
+    private bool              m_IsMovable = false;
+    private bool              m_IsResizable = false;
     private bool              m_Visible = true;
     private Graphic.Region    m_Geometry = null;
     private Graphic.Point     m_Position = Graphic.Point (0, 0);
@@ -63,6 +65,24 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     public bool is_packable {
         get {
             return m_IsPackable;
+        }
+    }
+
+    public bool is_movable {
+        get {
+            return m_IsPackable;
+        }
+        set {
+            m_IsMovable = value;
+        }
+    }
+
+    public bool is_resizable {
+        get {
+            return m_IsResizable;
+        }
+        set {
+            m_IsResizable = value;
         }
     }
 
@@ -201,6 +221,12 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         // check if object is packable
         m_IsPackable = this is ItemPackable;
 
+        // check if object is movable
+        m_IsMovable = this is ItemMovable;
+
+        // check if object is resizable
+        m_IsResizable = this is ItemResizable;
+
         // connect to mouse events
         button_press_event.connect (on_button_press_event);
         button_release_event.connect (on_button_release_event);
@@ -270,7 +296,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             // keep old geometry
             Graphic.Region old_geometry = geometry.copy ();
             // reset item geometry
-            if (!(this is ItemMovable))
+            if (!m_IsMovable && !m_IsResizable)
             {
                 geometry = null;
             }
@@ -703,6 +729,14 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
     protected abstract void paint (Graphic.Context inContext) throws Graphic.Error;
 
+    /**
+     * Update the allocated geometry of item
+     *
+     * @param inContext graphic context where the allocation is valid
+     * @param inAllocation graphic region allocated to widget
+     *
+     * @throws Graphic.Error if something goes wrong
+     */
     public virtual void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
@@ -716,6 +750,14 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
     }
 
+    /**
+     * Convert a point in a child of item coordinate space
+     *
+     * @param inChild a child of item
+     * @param inPoint point to convert
+     *
+     * @return point in child item coordinate space
+     */
     public Graphic.Point
     convert_to_child_item_space (Item inChild, Graphic.Point inPoint)
     {
@@ -740,6 +782,13 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         return point;
     }
 
+    /**
+     * Convert a root point to item coordinate space
+     *
+     * @param inPoint point to convert
+     *
+     * @return point in item coordinate space
+     */
     public Graphic.Point
     convert_to_item_space (Graphic.Point inRootPoint)
     {
@@ -749,6 +798,13 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         return point;
     }
 
+    /**
+     * Convert a point in item coordinate space to root coordinate space
+     *
+     * @param inPoint point to convert
+     *
+     * @return point in root coordinate space
+     */
     public Graphic.Point
     convert_to_root_space (Graphic.Point inPoint)
     {

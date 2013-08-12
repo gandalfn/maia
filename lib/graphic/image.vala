@@ -51,6 +51,7 @@ public abstract class Maia.Graphic.Image : Graphic.Pattern
                     break;
 
                 case "image/svg":
+                case "image/svg+xml":
                     ret = GLib.Object.new (typeof (ImageSvg), filename: inFilename, size: inSize) as Image;
                     break;
 

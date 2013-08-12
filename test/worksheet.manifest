@@ -29,6 +29,8 @@ Document.worksheet {
 
     // Default page format
     format: a4;
+    // TODO: fix transform on document
+    //transform: scale(1.2, 1.2);
     border_width: 5;
     background: #E0E0E0;
 
@@ -183,6 +185,18 @@ Document.worksheet {
                     stroke_color: #000000;
                     font_description: "Liberation Sans 14";
                     text: "Label drawing 2";
+                }
+
+                Image.image_draw {
+                    position: 300, 200;
+                    size: 150, 200;
+                    filename: '/usr/share/icons/SSIIcons/scalable/worksheet/meuh.svg';
+                }
+
+                Rectangle.rectangle_draw {
+                    position: 200, 400;
+                    size: 100, 100;
+                    fill_color: "#00FF00";
                 }
             }
         }
