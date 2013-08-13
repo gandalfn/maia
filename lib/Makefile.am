@@ -71,6 +71,7 @@ libmaia_la_SOURCES = \
     graphic/image-gif.vala \
     keysym.vala \
     cursor.vala \
+    scroll.vala \
     drawable.vala \
     item.vala \
     item-packable.vala \

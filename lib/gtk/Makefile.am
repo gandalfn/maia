@@ -26,6 +26,7 @@ libmaia_gtk_la_VALAFLAGS = \
 libmaia_gtk_la_SOURCES = \
     keysym.vala \
     cursor.vala \
+    scroll.vala \
     surface.vala \
     image.vala \
     model.vala \

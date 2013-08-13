@@ -147,4 +147,10 @@ namespace Os
     public int eventfd (uint count = 0, EventFdFlags flags = 0);
     public int eventfd_read (int fd, out uint64 value);
     public int eventfd_write (int fd, uint64 value);
+
+    [CCode (cheader_filename = "locale.h")]
+    public unowned string setlocale (int category, string locale);
+
+    [CCode (cheader_filename = "locale.h", cname = "LC_NUMERIC")]
+    public const int LC_NUMERIC;
 }

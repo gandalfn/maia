@@ -302,6 +302,7 @@ public class Maia.TestCanvas : Maia.TestCase
         }
 
         window.add (scrolled_window);
+        window.set_size_request (700, 700);
 
         global::Gtk.main ();
     }

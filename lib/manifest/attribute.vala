@@ -85,6 +85,7 @@ public class Maia.Manifest.Attribute : Core.Object
     attribute_to_double (Attribute inAttribute, ref GLib.Value outValue)
     {
         string val = inAttribute.get ().down ().strip ();
+        string locale = Os.setlocale (Os.LC_NUMERIC, "C");
 
         if (val.has_prefix ("pi"))
         {
@@ -118,6 +119,8 @@ public class Maia.Manifest.Attribute : Core.Object
         {
             outValue = double.parse (inAttribute.get ());
         }
+
+        Os.setlocale (Os.LC_NUMERIC, locale);
     }
 
     private static void

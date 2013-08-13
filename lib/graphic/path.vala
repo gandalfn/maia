@@ -104,10 +104,14 @@ public class Maia.Graphic.Path : Core.Object
         {
             if (inoutpCurrent[0] == ' ')
                 continue;
+            if (inoutpCurrent[0] == ',')
+                continue;
             if (inoutpCurrent[0].isalpha ())
                 break;
 
+            string locale = Os.setlocale (Os.LC_NUMERIC, "C");
             values += Os.strtod (inoutpCurrent, ref inoutpCurrent);
+            Os.setlocale (Os.LC_NUMERIC, locale);
         }
 
         return values;
@@ -189,7 +193,6 @@ public class Maia.Graphic.Path : Core.Object
 
         while (current < end)
         {
-
             switch (current[0])
             {
                 case 'm':
@@ -204,6 +207,34 @@ public class Maia.Graphic.Path : Core.Object
                     double[] vals = parse_values (ref current, end);
                     if (vals.length >= 2)
                         move_to (vals[0], vals[1]);
+                    break;
+
+                case 'h':
+                    current++;
+                    double[] vals = parse_values (ref current, end);
+                    if (vals.length >= 1)
+                        rel_move_to (vals[0], get_current_point ().y);
+                    break;
+
+                case 'H':
+                    current++;
+                    double[] vals = parse_values (ref current, end);
+                    if (vals.length >= 1)
+                        move_to (vals[0], get_current_point ().y);
+                    break;
+
+                case 'v':
+                    current++;
+                    double[] vals = parse_values (ref current, end);
+                    if (vals.length >= 1)
+                        rel_move_to (get_current_point ().x, vals[1]);
+                    break;
+
+                case 'V':
+                    current++;
+                    double[] vals = parse_values (ref current, end);
+                    if (vals.length >= 1)
+                        move_to (get_current_point ().x, vals[1]);
                     break;
 
                 case 'l':
@@ -237,6 +268,7 @@ public class Maia.Graphic.Path : Core.Object
                 case 'q':
                     current++;
                     double[] vals = parse_values (ref current, end);
+
                     if (vals.length >= 4)
                         rel_quadratic_curve_to (vals[2], vals[3], vals[0], vals[1]);
                     break;
@@ -245,7 +277,7 @@ public class Maia.Graphic.Path : Core.Object
                     current++;
                     double[] vals = parse_values (ref current, end);
                     if (vals.length >= 4)
-                        quadratic_curve_to (vals[2], vals[3], vals[0], vals[1]);
+                        quadratic_curve_to (vals[0], vals[1], vals[2], vals[3]);
                     break;
 
                 case 'c':
@@ -262,6 +294,35 @@ public class Maia.Graphic.Path : Core.Object
                         curve_to (vals[0], vals[1], vals[2], vals[3], vals[4], vals[5]);
                     break;
 
+                case 't':
+                    current++;
+                    double[] vals = parse_values (ref current, end);
+                    if (vals.length >= 2)
+                        rel_smooth_quadratic_curve_to (vals[0], vals[1]);
+                    break;
+
+                case 'T':
+                    current++;
+                    double[] vals = parse_values (ref current, end);
+                    if (vals.length >= 2)
+                        smooth_quadratic_curve_to (vals[0], vals[1]);
+                    break;
+
+                case 'a':
+                    current++;
+                    double[] vals = parse_values (ref current, end);
+                    if (vals.length >= 7)
+                        rel_arc_to (vals[0], vals[1], vals[2], (bool)vals[3], (bool)vals[4], vals[5], vals[6]);
+                    break;
+
+                case 'A':
+                    current++;
+                    double[] vals = parse_values (ref current, end);
+                    if (vals.length >= 7)
+                        arc_to (vals[0], vals[1], vals[2], (bool)vals[3], (bool)vals[4], vals[5], vals[6]);
+                    break;
+
+                case 'z':
                 case 'Z':
                     current++;
                     close ();

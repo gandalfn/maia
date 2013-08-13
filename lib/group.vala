@@ -244,4 +244,39 @@ public class Maia.Group : Item
 
         return ret;
     }
+
+    internal override bool
+    on_scroll_event (Scroll inScroll, Graphic.Point inPoint)
+    {
+        bool ret = false;
+
+        if (geometry != null && inPoint in geometry)
+        {
+            // parse child from last to first since item has sorted by layer
+            unowned Core.Object? child = last ();
+            while (child != null)
+            {
+                if (child is Item)
+                {
+                    Item item = (Item)child;
+
+                    // Transform point to item coordinate space
+                    Graphic.Point point = convert_to_child_item_space (item, inPoint);
+
+                    // point under child
+                    if (item.scroll_event (inScroll, point))
+                    {
+                        ret = true;
+                        break;
+                    }
+                }
+
+                child = child.prev ();
+            }
+        }
+
+        GLib.Signal.stop_emission (this, mc_IdScrollEvent, 0);
+
+        return ret;
+    }
 }

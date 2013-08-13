@@ -26,6 +26,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     internal class uint mc_IdButtonPressEvent;
     internal class uint mc_IdButtonReleaseEvent;
     internal class uint mc_IdMotionEvent;
+    internal class uint mc_IdScrollEvent;
 
     // properties
     private bool              m_IsPackable = false;
@@ -35,6 +36,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     private Graphic.Region    m_Geometry = null;
     private Graphic.Point     m_Position = Graphic.Point (0, 0);
     private Graphic.Size      m_Size = Graphic.Size (0, 0);
+    private Graphic.Transform m_Transform = new Graphic.Transform.identity ();
     private Graphic.Transform m_TransformToItemSpace = null;
     private Graphic.Transform m_TransformToRootSpace = null;
 
@@ -147,7 +149,25 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     }
 
     public Graphic.Region damaged      { get; protected set; default = null; }
-    public Graphic.Transform transform { get; set; default = new Graphic.Transform.identity (); }
+    public Graphic.Transform transform {
+        get {
+            return m_Transform;
+        }
+        set {
+            if (m_Transform != null)
+            {
+                m_Transform.changed.disconnect (on_transform_changed);
+            }
+
+            m_Transform = value;
+
+            if (m_Transform != null)
+            {
+                m_Transform.changed.connect (on_transform_changed);
+            }
+        }
+        default = new Graphic.Transform.identity ();
+    }
 
     public uint page { get; set; default = 0; }
 
@@ -192,6 +212,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     public signal bool button_press_event (uint inButton, Graphic.Point inPosition);
     public signal bool button_release_event (uint inButton, Graphic.Point inPosition);
     public signal bool motion_event (Graphic.Point inPosition);
+    public signal bool scroll_event (Scroll inScroll, Graphic.Point inPosition);
     public signal void key_press_event (Key inKey, unichar inChar);
     public signal void key_release_event (Key inKey, unichar inChar);
 
@@ -206,6 +227,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         mc_IdButtonPressEvent = GLib.Signal.lookup ("button-press-event", typeof (Item));
         mc_IdButtonReleaseEvent = GLib.Signal.lookup ("button-release-event", typeof (Item));
         mc_IdMotionEvent = GLib.Signal.lookup ("motion-event", typeof (Item));
+        mc_IdScrollEvent = GLib.Signal.lookup ("scroll-event", typeof (Item));
     }
 
     // methods
@@ -231,12 +253,12 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         button_press_event.connect (on_button_press_event);
         button_release_event.connect (on_button_release_event);
         motion_event.connect (on_motion_event);
+        scroll_event.connect (on_scroll_event);
 
         // connect to damage event
         damage.connect (on_damage);
 
         // connect to trasnform events
-        transform.changed.connect (on_transform_changed);
         notify["transform"].connect (on_transform_changed);
 
         // reorder object on layer change
@@ -316,7 +338,15 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     private void
     on_transform_changed ()
     {
-        geometry = null;
+        // reset item geometry
+        if (!m_IsMovable && !m_IsResizable)
+        {
+            geometry = null;
+        }
+        else
+        {
+            geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
+        }
     }
 
     private void
@@ -714,6 +744,14 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
 
         return ret;
+    }
+
+    protected virtual bool
+    on_scroll_event (Scroll inScroll, Graphic.Point inPoint)
+    {
+        GLib.Signal.stop_emission (this, mc_IdScrollEvent, 0);
+
+        return false;
     }
 
     protected virtual Graphic.Size

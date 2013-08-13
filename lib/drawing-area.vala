@@ -30,6 +30,7 @@ public class Maia.DrawingArea : Group, ItemPackable
     }
 
     // properties
+    private uint              m_SelectedOldLayer = 0;
     private unowned Item?     m_SelectedItem = null;
     private SelectedItemState m_SelectedItemState = SelectedItemState.NONE;
     private Graphic.Point     m_LastPointerPosition;
@@ -71,6 +72,7 @@ public class Maia.DrawingArea : Group, ItemPackable
                 // Damage the old selected item
                 if (m_SelectedItem != null)
                 {
+                    m_SelectedItem.layer = m_SelectedOldLayer;
                     m_SelectedItem.damage ();
                 }
 
@@ -83,6 +85,8 @@ public class Maia.DrawingArea : Group, ItemPackable
                 // Damage the new selected item
                 if (m_SelectedItem != null)
                 {
+                    m_SelectedOldLayer = m_SelectedItem.layer;
+                    m_SelectedItem.layer = ((Item)last ()).layer + 1;
                     m_SelectedItemState = SelectedItemState.SELECTED;
                     m_SelectedItem.damage ();
                 }
@@ -121,28 +125,27 @@ public class Maia.DrawingArea : Group, ItemPackable
             double asize = anchor_size + selected_border / 2;
             double arrow_size = anchor_size / 6;
             Graphic.Size item_size = selected.size;
-            item_size.resize ((anchor_size + selected_border) * 2.0, (anchor_size + selected_border) * 2.0);
+            item_size.resize (anchor_size + selected_border, anchor_size + selected_border);
 
             switch (m_SelectedItemState)
             {
                 case SelectedItemState.MOVED:
                 case SelectedItemState.MOVING:
-
                     // Create anchor
                     string pathVert = "m %2$g,0 l -%3$g,%3$g m %3$g,-%3$g l %3$g,3 m -%3$g,-%3$g l 0,%1$g l -%3$g,-3 m %3$g,%3$g l %3$g,-%3$g".printf (asize, asize / 2, arrow_size);
                     string pathHoriz = "m 0,%2$g l %3$g,-%3$g m -%3$g,%3$g l %3$g,%3$g m -%3$g,-%3$g l %1$g,0 l -%3$g,-%3$g m %3$g,%3$g l -%3$g,%3$g".printf (asize, asize / 2, arrow_size);
 
                     m_AnchorPath = new Graphic.Path ();
-                    m_AnchorPath.parse ("M 0,0 %1$s M 0,0 %2$s". printf (pathVert, pathHoriz));
+                    m_AnchorPath.parse ("M 0,0 %s M 0,0 %s". printf (pathVert, pathHoriz));
                     break;
 
                 case SelectedItemState.RESIZING:
                     string pathVert = "m %2$g,%3$g l -%3$g,%3$g m %3$g,-%3$g l %3$g,%3$g m -%3$g,-%3$g l 0,%1$g l -%3$g,-%3$g m %3$g,%3$g l %3$g,-%3$g". printf (asize - arrow_size , asize / 2, arrow_size);
                     string pathHoriz = "m %3$g,%2$g l %3$g,-%3$g m -%3$g,%3$g l %3$g,%3$g m -%3$g,-%3$g l %1$g,0 l -%3$g,-%3$g m %3$g,%3$g l -%3$g,%3$g". printf (asize - arrow_size, asize / 2, arrow_size);
                     string pathTopLeft = "m %2$g,%1$g l -%3$g,-%3$g m %3$g,%3$g l %3$g,-%3$g m -%3$g,%3$g q 0,-%2$g %2$g,-%2$g l -%3$g,-%3$g m %3$g,%3$g l -%3$g,%3$g".printf (asize, asize / 2, arrow_size);
-                    string pathTopRight = "m 0,%2$g l %3$g,-%3$g m -%3$g,%3$g l %3$g,%3$g m -%3$g,-%3$g q %2$g,0 %2$g,%2$g l -%3$g,-%3$g m %3$g,%3$g l %3$g,-%3$g".printf (asize, asize / 2, arrow_size);
-                    string pathBottomRight = "m %2$g,0 l -%3$g,%3$g m %3$g,-%3$g l %3$g,%3$g m -%3$g,-%3$g q 0,%2$g -%2$g,%2$g l %3$g,%3$g m -%3$g,-%3$g l %3$g,-%3$g".printf (asize, asize / 2, arrow_size);
-                    string pathBottomLeft = "m %2$g,0 l -%3$g,%3$g m %3$g,-%3$g l %3$g,%3$g m -%3$g,-%3$g q 0,%2$g %2$g,%2$g l -%3$g,-%3$g m %3$g,%3$g l -%3$g,%3$g".printf (asize, asize / 2, arrow_size);
+                    string pathTopRight = "m 0,%1$g l %2$g,-%2$g m -%2$g,%2$g l %2$g,%2$g m -%2$g,-%2$g q %1$g,0 %1$g,%1$g l -%2$g,-%2$g m %2$g,%2$g l %2$g,-%2$g".printf (asize / 2, arrow_size);
+                    string pathBottomRight = "m %1$g,0 l -%2$g,%2$g m %2$g,-%2$g l %2$g,%2$g m -%2$g,-%2$g q 0,%1$g -%1$g,%1$g l %2$g,%2$g m -%2$g,-%2$g l %2$g,-%2$g".printf (asize / 2, arrow_size);
+                    string pathBottomLeft = "m %1$g,0 l -%2$g,%2$g m %2$g,-%2$g l %2$g,%2$g m -%2$g,-%2$g q 0,%1$g %1$g,%1$g l -%2$g,-%2$g m %2$g,%2$g l -%2$g,%2$g".printf (asize / 2, arrow_size);
 
                     string topLeft = "M 0,0 %1$s ".printf (pathTopLeft);
                     string top = "M %1$g,0 %2$s ".printf (item_size.width / 2, pathVert);
@@ -174,12 +177,15 @@ public class Maia.DrawingArea : Group, ItemPackable
         }
         else if ((m_SelectedItemState == SelectedItemState.SELECTED || m_SelectedItemState == SelectedItemState.MOVING) && m_SelectedItem.is_resizable)
         {
+            if (m_SelectedItemState == SelectedItemState.SELECTED)
+            {
+                // Grab pointer and set invisible
+                grab_pointer (this);
+                set_pointer_cursor (Cursor.BLANK_CURSOR);
+            }
+
             m_SelectedItemState = SelectedItemState.RESIZING;
             m_AnchorPath = null;
-
-            // Grab pointer and set invisible
-            grab_pointer (this);
-            set_pointer_cursor (Cursor.BLANK_CURSOR);
         }
         else
         {
@@ -247,7 +253,12 @@ public class Maia.DrawingArea : Group, ItemPackable
             ret = inPoint in geometry.extents.size;
         }
 
-        if (!ret)
+        if (m_SelectedItemState > SelectedItemState.SELECTED && inButton == 1)
+        {
+            set_selected_item_state ();
+            ret = false;
+        }
+        else if (!ret)
         {
             selected = null;
             GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
@@ -334,6 +345,46 @@ public class Maia.DrawingArea : Group, ItemPackable
         {
             ret = base.on_motion_event (inPoint);
         }
+
+        return ret;
+    }
+
+    internal override bool
+    on_scroll_event (Scroll inScroll, Graphic.Point inPoint)
+    {
+        bool ret = false;
+
+        if (m_SelectedItem != null && m_SelectedItemState == SelectedItemState.RESIZING &&
+            geometry != null && inPoint in geometry)
+        {
+            // Transform point to item coordinate space
+            Graphic.Point point = m_SelectedItem.convert_to_child_item_space (m_SelectedItem, inPoint);
+
+            // Point under selected item
+            if (m_SelectedItem.scroll_event (inScroll, point))
+            {
+                switch (inScroll)
+                {
+                    case Scroll.UP:
+                    case Scroll.LEFT:
+                        m_SelectedItem.damage ();
+                        m_SelectedItem.transform.rotate (5 * 2 * GLib.Math.PI / 360);
+                        m_SelectedItem.damage ();
+                        ret = true;
+                        break;
+
+                    case Scroll.DOWN:
+                    case Scroll.RIGHT:
+                        m_SelectedItem.damage ();
+                        m_SelectedItem.transform.rotate (-5 * 2 * GLib.Math.PI / 360);
+                        m_SelectedItem.damage ();
+                        ret = true;
+                        break;
+                }
+            }
+        }
+
+        GLib.Signal.stop_emission (this, mc_IdScrollEvent, 0);
 
         return ret;
     }

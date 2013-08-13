@@ -545,4 +545,49 @@ public class Maia.Document : Item
 
         return ret;
     }
+
+    internal override bool
+    on_scroll_event (Scroll inScroll, Graphic.Point inPoint)
+    {
+        bool ret = false;
+
+        if (geometry != null && inPoint in geometry)
+        {
+            try
+            {
+                // Translate point onto offset of visible area
+                Graphic.Point point = inPoint;
+                Graphic.Matrix matrix = transform.matrix;
+                matrix.invert ();
+                Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
+                point.transform (item_transform);
+                point.translate (position);
+
+                foreach (unowned Page page in m_VisiblePages)
+                {
+                    var child_point = convert_to_child_item_space (page, point);
+
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $child_point");
+
+                    // point under child
+                    if (page.scroll_event (inScroll, child_point))
+                    {
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "scroll event in %s document %s", page.name, name);
+
+                        // event occurate under child stop signal
+                        ret = true;
+                        break;
+                    }
+                }
+            }
+            catch (Graphic.Error err)
+            {
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "error on convert point to page coordinates: %s", err.message);
+            }
+        }
+
+        GLib.Signal.stop_emission (this, mc_IdScrollEvent, 0);
+
+        return ret;
+    }
 }

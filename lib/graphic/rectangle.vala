@@ -249,16 +249,27 @@ public struct Maia.Graphic.Rectangle
         double by2 = inRectangle.origin.y + inRectangle.size.height;
 
         if (ax2 > bx2)
-            origin.x -= ax2 - bx2;
+            ax1 -= ax2 - bx2;
 
         if (ay2 > by2)
-            origin.y -= ay2 - by2;
+            ay1 -= ay2 - by2;
 
         if (ax1 < bx1)
-            origin.x += bx1 - ax1;
+            ax1 += bx1 - ax1;
 
         if (ay1 < by1)
-            origin.y += by1 - ay1;
+            ay1 += by1 - ay1;
+
+        if (ax2 > bx2)
+            ax2 = bx2;
+
+        if (ay2 > by2)
+            ay2 = by2;
+
+        origin.x = ax1;
+        origin.y = ay1;
+        size.width = ax2 - ax1;
+        size.height = ay2 - ay1;
     }
 
 

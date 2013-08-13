@@ -21,7 +21,6 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
 {
     // properties
     private Graphic.Surface m_Buffer;
-    private Graphic.Surface m_OldBuffer;
     private Item m_Root = null;
     private Core.Pair<global::Gtk.Adjustment, global::Gtk.Adjustment> m_Adjust;
 
@@ -126,8 +125,6 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
                                                m_Adjust.second != null ? m_Adjust.second.@value : 0);
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "scroll to %s", document.position.to_string ());
 
-            queue_resize ();
-
             damage ();
         }
     }
@@ -179,10 +176,6 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "width: %u, height: %u", (uint)geometry.extents.size.width,
                                                                                                (uint)geometry.extents.size.height);
 
-            if (m_Buffer != null)
-            {
-                m_OldBuffer = m_Buffer;
-            }
             m_Buffer = new Maia.Graphic.Surface ((uint)geometry.extents.size.width,
                                                  (uint)geometry.extents.size.height);
             try
@@ -227,11 +220,12 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
             root.draw (surface.context);
         }
 
-        queue_draw ();
-
-        repair ();
-
-        m_OldBuffer = null;
+        if (window != null)
+        {
+            window.invalidate_rect (null, true);
+            window.process_updates (true);
+            repair ();
+        }
     }
 
     internal void
@@ -240,6 +234,47 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         if (window != null)
         {
             window.set_cursor (new Gdk.Cursor (convert_cursor_to_gdk_cursor (inCursor)));
+        }
+    }
+
+    internal bool
+    on_grab_pointer (Item inItem)
+    {
+        bool ret = false;
+
+        // Can grab only nobody have already grab
+        if (grab_pointer_item == null)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab pointer %s", inItem.name);
+
+            var status = Gdk.pointer_grab (window, true,
+                                           Gdk.EventMask.POINTER_MOTION_MASK      |
+                                           Gdk.EventMask.POINTER_MOTION_HINT_MASK |
+                                           Gdk.EventMask.BUTTON_MOTION_MASK       |
+                                           Gdk.EventMask.BUTTON_PRESS_MASK        |
+                                           Gdk.EventMask.BUTTON_RELEASE_MASK      |
+                                           Gdk.EventMask.SCROLL_MASK, window, null,
+                                           Gdk.CURRENT_TIME);
+
+            if (status == Gdk.GrabStatus.SUCCESS)
+            {
+                grab_pointer_item = inItem;
+                ret = true;
+            }
+        }
+
+        return ret;
+    }
+
+    internal void
+    on_ungrab_pointer (Item inItem)
+    {
+        if (grab_pointer_item == inItem)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab pointer %s", grab_pointer_item.name);
+
+            Gdk.pointer_ungrab (Gdk.CURRENT_TIME);
+            grab_pointer_item = null;
         }
     }
 
@@ -452,6 +487,28 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     }
 
     internal override bool
+    scroll_event (Gdk.EventScroll inEvent)
+    {
+        bool ret = false;
+
+        Graphic.Point point = Graphic.Point (inEvent.x, inEvent.y);
+
+        // we have grab pointer item send event
+        if (grab_pointer_item != null)
+        {
+            ret = grab_pointer_item.scroll_event (convert_gdk_scrolldirection_to_scroll (inEvent.direction),
+                                                  grab_pointer_item.convert_to_item_space (point));
+        }
+        // else send event to root
+        else if (root != null)
+        {
+            ret = root.scroll_event (convert_gdk_scrolldirection_to_scroll (inEvent.direction), point);
+        }
+
+        return ret;
+    }
+
+    internal override bool
     expose_event (Gdk.EventExpose inEvent)
     {
         if (surface != null)
@@ -460,7 +517,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
             {
                 var widget_surface = new Surface (this);
                 widget_surface.context.operator = Graphic.Operator.SOURCE;
-                widget_surface.context.pattern = m_OldBuffer ?? surface;
+                widget_surface.context.pattern = surface;
                 widget_surface.context.paint ();
             }
             catch (Graphic.Error err)
