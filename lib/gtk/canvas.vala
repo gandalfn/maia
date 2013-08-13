@@ -23,6 +23,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     private Graphic.Surface m_Buffer;
     private Item m_Root = null;
     private Core.Pair<global::Gtk.Adjustment, global::Gtk.Adjustment> m_Adjust;
+    private Graphic.Point m_LastPointerPosition;
 
     // accessors
     internal Core.Timeline timeline { get; set; default = null; }
@@ -235,6 +236,19 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         {
             window.set_cursor (new Gdk.Cursor (convert_cursor_to_gdk_cursor (inCursor)));
         }
+    }
+
+    internal void
+    on_move_pointer (Graphic.Size inDelta)
+    {
+        m_LastPointerPosition.translate (Graphic.Point (inDelta.width, inDelta.height));
+
+        int xroot, yroot;
+        window.get_root_origin (out xroot, out yroot);
+
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "move %s %i,%i", m_LastPointerPosition.to_string (), xroot + (int)m_LastPointerPosition.x, yroot + (int)m_LastPointerPosition.y);
+
+        Gdk.Display.get_default ().warp_pointer (get_screen (), xroot + (int)m_LastPointerPosition.x, yroot + (int)m_LastPointerPosition.y);
     }
 
     internal bool
@@ -466,16 +480,23 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         {
             Graphic.Point point = Graphic.Point (inEvent.x, inEvent.y);
 
-            // we have grab pointer item send event
-            if (grab_pointer_item != null)
+            if (m_LastPointerPosition.x != point.x || m_LastPointerPosition.y != point.y)
             {
-                grab_pointer_item.motion_event (grab_pointer_item.convert_to_item_space (point));
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "motion %s", point.to_string ());
+
+                // we have grab pointer item send event
+                if (grab_pointer_item != null)
+                {
+                    grab_pointer_item.motion_event (grab_pointer_item.convert_to_item_space (point));
+                }
+                // else send event to root
+                else if (root != null)
+                {
+                    root.motion_event (point);
+                }
             }
-            // else send event to root
-            else if (root != null)
-            {
-                root.motion_event (point);
-            }
+
+            m_LastPointerPosition = point;
 
             // Get pointer position for hint motion
             double x, y;

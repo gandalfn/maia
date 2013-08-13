@@ -33,6 +33,12 @@ public class Maia.Document : Item
 
     internal override string characters { get; set; default = null; }
 
+    internal override Graphic.Point origin {
+        get {
+            return position.invert ();
+        }
+    }
+
     public PageFormat format    { get; construct set; default = PageFormat.A4; }
     public double top_margin    { get; construct set; default = 0.25; }
     public double bottom_margin { get; construct set; default = 0.25; }

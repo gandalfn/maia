@@ -316,11 +316,13 @@ public class Maia.DrawingArea : Group, ItemPackable
             {
                 case SelectedItemState.MOVING:
                     m_SelectedItemState = SelectedItemState.MOVED;
+                    m_LastPointerPosition = inPoint;
                     break;
 
                 case SelectedItemState.MOVED:
                     if (selected.is_movable)
                     {
+
                         var offset = inPoint;
                         offset.subtract (m_LastPointerPosition);
                         m_LastPointerPosition = inPoint;

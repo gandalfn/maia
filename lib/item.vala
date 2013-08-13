@@ -202,8 +202,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     public double          line_width   { get; set; default = 1.0; }
 
     // signals
-    public signal void grab_focus (Item? inItem);
-    public signal void set_pointer_cursor (Cursor inCursor);
     public signal bool grab_pointer (Item inItem);
     public signal void ungrab_pointer (Item inItem);
     public signal bool grab_keyboard (Item inItem);
@@ -216,6 +214,45 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     public signal void key_press_event (Key inKey, unichar inChar);
     public signal void key_release_event (Key inKey, unichar inChar);
 
+    [Signal (run = "first")]
+    public virtual signal void
+    grab_focus (Item? inItem)
+    {
+        if (parent is Item)
+        {
+            if (inItem == null)
+                Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab focus");
+            else
+                Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab focus %s", inItem.name);
+            ((Item)parent).grab_focus (inItem);
+        }
+    }
+
+    [Signal (run = "first")]
+    public virtual signal void
+    set_pointer_cursor (Cursor inCursor)
+    {
+        if (parent is Item)
+        {
+            Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"set cursor $inCursor");
+            ((Item)parent).set_pointer_cursor (inCursor);
+        }
+    }
+
+    [Signal (run = "first")]
+    public virtual signal void
+    move_pointer (Graphic.Size inDelta)
+    {
+        if (parent is Item)
+        {
+            var delta = inDelta;
+            delta.transform (transform);
+
+            Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"$name move pointer $delta");
+
+            ((Item)parent).move_pointer (delta);
+        }
+    }
 
     // static methods
     static construct
@@ -531,23 +568,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         ungrab_keyboard (inItem);
     }
 
-    private void
-    on_child_grab_focus (Item? inItem)
-    {
-        if (inItem == null)
-            Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab focus");
-        else
-            Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab focus %s", inItem.name);
-        grab_focus (inItem);
-    }
-
-    private void
-    on_child_set_pointer_cursor (Cursor inCursor)
-    {
-        Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"set cursor $inCursor");
-        set_pointer_cursor (inCursor);
-    }
-
     internal override bool
     can_append_child (Core.Object inChild)
     {
@@ -582,9 +602,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             if (inObject is Item)
             {
-                // Connect under child grab focus
-                ((Item)inObject).grab_focus.connect (on_child_grab_focus);
-
                 // Connect under child  grab/ungrab pointer
                 ((Item)inObject).grab_pointer.connect (on_child_grab_pointer);
                 ((Item)inObject).ungrab_pointer.connect (on_child_ungrab_pointer);
@@ -592,9 +609,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 // Connect under child  grab/ungrab keyboard
                 ((Item)inObject).grab_keyboard.connect (on_child_grab_keyboard);
                 ((Item)inObject).ungrab_keyboard.connect (on_child_ungrab_keyboard);
-
-                // Connect under child set pointer cursor
-                ((Item)inObject).set_pointer_cursor.connect (on_child_set_pointer_cursor);
             }
 
             geometry = null;
@@ -621,9 +635,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             if (inObject is Item)
             {
-                // Disconnect from child grab
-                ((Item)inObject).grab_focus.disconnect (on_child_grab_focus);
-
                 // Disconnect from child  grab/ungrab pointer
                 ((Item)inObject).grab_pointer.disconnect (on_child_grab_pointer);
                 ((Item)inObject).ungrab_pointer.disconnect (on_child_ungrab_pointer);
@@ -631,9 +642,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 // Disconnect from child  grab/ungrab keyboard
                 ((Item)inObject).grab_keyboard.disconnect (on_child_grab_keyboard);
                 ((Item)inObject).ungrab_keyboard.disconnect (on_child_ungrab_keyboard);
-
-                // Disconnect from child set pointer cursor
-                ((Item)inObject).set_pointer_cursor.disconnect (on_child_set_pointer_cursor);
             }
 
             geometry = null;
@@ -816,6 +824,25 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "%s error on convert %s to child %s item space: %s",
                           name, inPoint.to_string (), inChild.name, err.message);
         }
+
+        return point;
+    }
+
+    /**
+     * Convert a point to parent item coordinate space
+     *
+     * @param inChild a child of item
+     * @param inPoint point to convert
+     *
+     * @return point in parent item coordinate space
+     */
+    public Graphic.Point
+    convert_to_parent_item_space (Graphic.Point inPoint)
+    {
+        // Transform point to item coordinate space
+        Graphic.Point point = inPoint;
+        point.translate (origin);
+        point.transform (transform);
 
         return point;
     }

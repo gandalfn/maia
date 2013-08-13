@@ -190,7 +190,7 @@ Document.worksheet {
                 Image.image_draw {
                     position: 300, 200;
                     size: 150, 200;
-                    filename: '/usr/share/icons/elementary/categories/64/ppa.svg';
+                    filename: '/usr/share/icons/SSIIcons/scalable/worksheet/meuh.svg';
                 }
 
                 Rectangle.rectangle_draw {

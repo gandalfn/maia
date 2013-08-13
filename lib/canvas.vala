@@ -146,6 +146,12 @@ public interface Maia.Canvas : Drawable
     }
 
     protected virtual void
+    on_move_pointer (Graphic.Size inDelta)
+    {
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"move pointer to $inDelta");
+    }
+
+    protected virtual void
     on_grab_focus (Item? inItem)
     {
         if (inItem == null)
@@ -238,6 +244,7 @@ public interface Maia.Canvas : Drawable
         if (root != null)
         {
             root.set_pointer_cursor.disconnect (on_set_pointer_cursor);
+            root.move_pointer.disconnect (on_move_pointer);
             root.grab_focus.disconnect (on_grab_focus);
             root.grab_pointer.disconnect (on_grab_pointer);
             root.ungrab_pointer.disconnect (on_ungrab_pointer);
@@ -255,6 +262,7 @@ public interface Maia.Canvas : Drawable
         if (root != null)
         {
             root.set_pointer_cursor.connect (on_set_pointer_cursor);
+            root.move_pointer.connect (on_move_pointer);
             root.grab_focus.connect (on_grab_focus);
             root.grab_pointer.connect (on_grab_pointer);
             root.ungrab_pointer.connect (on_ungrab_pointer);
@@ -278,6 +286,7 @@ public interface Maia.Canvas : Drawable
         if (root != null)
         {
             root.set_pointer_cursor.disconnect (on_set_pointer_cursor);
+            root.move_pointer.disconnect (on_move_pointer);
             root.grab_focus.disconnect (on_grab_focus);
             root.grab_pointer.disconnect (on_grab_pointer);
             root.ungrab_pointer.disconnect (on_ungrab_pointer);
@@ -295,6 +304,7 @@ public interface Maia.Canvas : Drawable
         if (root != null)
         {
             root.set_pointer_cursor.connect (on_set_pointer_cursor);
+            root.move_pointer.connect (on_move_pointer);
             root.grab_focus.connect (on_grab_focus);
             root.grab_pointer.connect (on_grab_pointer);
             root.ungrab_pointer.connect (on_ungrab_pointer);
