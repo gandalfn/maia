@@ -53,10 +53,11 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
     private static Core.Set<Transform> s_Transforms;
 
     // Properties
-    private char               m_EndChar;
-    private string             m_LastName;
-    private Core.Queue<string> m_FunctionQueue;
-    private Object             m_Owner;
+    private char                   m_EndChar;
+    private string                 m_LastName;
+    private Core.Queue<string>     m_FunctionQueue;
+    private Object                 m_Owner;
+    private AttributeBind.Callback m_AttributeBindCallback;
 
     // Static methods
     private static inline void
@@ -148,12 +149,14 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
      * @param inpEnd end of buffer to parse
      * @param inEndChar the end char of buffer
      */
-    internal AttributeScanner (Object? inOwner, ref char* inoutpBegin, char* inpEnd, char inEndChar) throws Core.ParseError
+    internal AttributeScanner (Object? inOwner, ref char* inoutpBegin, char* inpEnd, char inEndChar,
+                               owned AttributeBind.Callback? inAttributeBindCallback = null) throws Core.ParseError
     {
         base (inoutpBegin, inpEnd);
 
         m_EndChar = inEndChar;
         m_Owner = inOwner;
+        m_AttributeBindCallback = (owned)inAttributeBindCallback;
 
         parse ();
 
@@ -313,8 +316,15 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
                 case Core.Parser.Token.ATTRIBUTE:
                     if (m_Attribute.has_prefix("@"))
                     {
-                        AttributeBind attr = new AttributeBind (m_Owner, m_Attribute);
-                        attr.parent = this;
+                        if (m_AttributeBindCallback != null)
+                        {
+                            m_AttributeBindCallback (m_Owner, m_Attribute);
+                        }
+                        else
+                        {
+                            AttributeBind attr = new AttributeBind (m_Owner, m_Attribute);
+                            attr.parent = this;
+                        }
                     }
                     else if (m_Attribute != "")
                     {

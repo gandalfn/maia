@@ -67,15 +67,17 @@ public class Maia.Manifest.Attribute : Core.Object
     {
         if (!s_SimpleTypeRegistered)
         {
-            register_transform_func (typeof (bool),   attribute_to_bool);
-            register_transform_func (typeof (int),    attribute_to_int);
-            register_transform_func (typeof (uint),   attribute_to_uint);
-            register_transform_func (typeof (long),   attribute_to_long);
-            register_transform_func (typeof (ulong),  attribute_to_ulong);
-            register_transform_func (typeof (double), attribute_to_double);
+            register_transform_func (typeof (bool),        attribute_to_bool);
+            register_transform_func (typeof (int),         attribute_to_int);
+            register_transform_func (typeof (uint),        attribute_to_uint);
+            register_transform_func (typeof (long),        attribute_to_long);
+            register_transform_func (typeof (ulong),       attribute_to_ulong);
+            register_transform_func (typeof (double),      attribute_to_double);
+            register_transform_func (typeof (Orientation), attribute_to_orientation);
 
             GLib.Value.register_transform_func (typeof (bool), typeof (string), bool_to_string);
             GLib.Value.register_transform_func (typeof (double), typeof (string), double_to_string);
+            GLib.Value.register_transform_func (typeof (Orientation), typeof (string), orientation_to_string);
 
             s_SimpleTypeRegistered = true;
         }
@@ -154,6 +156,12 @@ public class Maia.Manifest.Attribute : Core.Object
     }
 
     private static void
+    attribute_to_orientation (Attribute inAttribute, ref GLib.Value outValue)
+    {
+        outValue = Orientation.from_string (inAttribute.get ());
+    }
+
+    private static void
     bool_to_string (GLib.Value inSrc, out GLib.Value outDest)
         requires (inSrc.holds (typeof (bool)))
     {
@@ -169,6 +177,15 @@ public class Maia.Manifest.Attribute : Core.Object
         double val = (double)inSrc;
 
         outDest = "%g".printf (val);
+    }
+
+    private static void
+    orientation_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (Orientation)))
+    {
+        Orientation val = (Orientation)inSrc;
+
+        outDest = val.to_string ();
     }
 
     public static void

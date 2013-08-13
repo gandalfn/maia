@@ -29,6 +29,8 @@ public errordomain Maia.Manifest.Error
 public class Maia.Manifest.Document : Core.Parser
 {
     // Types
+    public delegate void AttributeBindCallback (Object inOwner, string inProperty, string inValue);
+
     internal class ElementTag
     {
         public string m_Tag;
@@ -57,9 +59,16 @@ public class Maia.Manifest.Document : Core.Parser
     private ElementTag             m_CurrentTag = null;
     private Core.Queue<ElementTag> m_ElementQueue;
     private AttributeScanner       m_Scanner;
+    private AttributeBindCallback  m_AttributeBindCallback = null;
 
     // Accessors
     public Object owner { get; set; default = null; }
+
+    public AttributeBindCallback attribute_bind_func {
+        owned set {
+            m_AttributeBindCallback = (owned)value;
+        }
+    }
 
     public AttributeScanner scanner {
         get {
@@ -166,7 +175,17 @@ public class Maia.Manifest.Document : Core.Parser
     private void
     read_attribute_value () throws Core.ParseError
     {
-        m_Scanner = new AttributeScanner (owner, ref m_pCurrent, m_pEnd, ';');
+        if (m_AttributeBindCallback != null)
+        {
+            string property = m_Attribute;
+            m_Scanner = new AttributeScanner (owner, ref m_pCurrent, m_pEnd, ';', (o, a) => {
+                    m_AttributeBindCallback (o, property, a);
+                });
+        }
+        else
+        {
+            m_Scanner = new AttributeScanner (owner, ref m_pCurrent, m_pEnd, ';');
+        }
 
         if (m_pCurrent[0] != ';')
             throw new Core.ParseError.INVALID_NAME ("Error on read attribute value %s: unexpected end of line at %i,%i missing ;",
@@ -272,11 +291,23 @@ public class Maia.Manifest.Document : Core.Parser
         return token;
     }
 
+    /**
+     * Get element in document
+     *
+     * @param inId id of element to get from document else ``null`` to get
+     *             the first element found.
+     *
+     * @return the element found in document
+     *
+     * @throws Core.ParseError if something goes wrong
+     */
     // TODO: the current implementation of get element requires to reparse all
     //       document. I must find a new way which only require one parsing.
     public new Element?
-    @get (string inId) throws Core.ParseError
+    @get (string? inId = null) throws Core.ParseError
     {
+        bool first = true;
+
         // return on begining of file
         m_pCurrent = m_pBegin;
 
@@ -286,7 +317,7 @@ public class Maia.Manifest.Document : Core.Parser
             if (token == Core.Parser.Token.START_ELEMENT)
             {
                 Log.debug (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING, @"tag: $element_tag, id: $element_id");
-                if (element_id == inId)
+                if ((inId == null && first) || element_id == inId)
                 {
                     Element? ret = Element.create (element_tag, element_id);
                     if (ret != null)
@@ -296,6 +327,7 @@ public class Maia.Manifest.Document : Core.Parser
 
                     return ret;
                 }
+                first = true;
             }
         }
 

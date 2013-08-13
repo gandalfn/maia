@@ -682,9 +682,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 ret = (int)layer - (int)((Item)inOther).layer;
             }
         }
-        else if (inOther is ToggleGroup)
+        else
         {
-            // Toggle group always first
+            // Non item always first
             ret = 1;
         }
 

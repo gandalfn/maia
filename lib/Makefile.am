@@ -72,6 +72,7 @@ libmaia_la_SOURCES = \
     keysym.vala \
     cursor.vala \
     scroll.vala \
+    orientation.vala \
     drawable.vala \
     item.vala \
     item-packable.vala \
@@ -91,6 +92,7 @@ libmaia_la_SOURCES = \
     page.vala \
     document.vala \
     model.vala \
+    view.vala \
     drawing-area.vala \
     canvas.vala
 

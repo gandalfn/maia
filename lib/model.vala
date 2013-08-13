@@ -79,8 +79,37 @@ public abstract class Maia.Model : Core.Object, Manifest.Element
     }
 
     // signals
-    public signal void row_added      (uint inRow);
-    public signal void row_changed    (uint inRow);
+    [Signal (detailed = true)]
+    public signal void value_changed (uint inRow);
+
+    public virtual signal void
+    row_added (uint inRow)
+    {
+        foreach (unowned Core.Object child in this)
+        {
+            if (child is Column)
+            {
+                unowned Column column = (Column)child;
+
+                value_changed[column.name] (inRow);
+            }
+        }
+    }
+
+    public virtual signal void
+    row_changed (uint inRow)
+    {
+        foreach (unowned Core.Object child in this)
+        {
+            if (child is Column)
+            {
+                unowned Column column = (Column)child;
+
+                value_changed[column.name] (inRow);
+            }
+        }
+    }
+
     public signal void row_deleted    (uint inRow);
     public signal void rows_reordered (uint[] inNewOrder);
 

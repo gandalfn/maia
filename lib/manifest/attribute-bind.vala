@@ -19,6 +19,9 @@
 
 public class Maia.Manifest.AttributeBind : Attribute
 {
+    // Types
+    public delegate void Callback (Object inOwner, string inAttribute);
+
     // Methods
     /**
      * Create a new attribute bind
