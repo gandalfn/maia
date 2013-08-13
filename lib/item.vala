@@ -72,7 +72,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
     public bool is_movable {
         get {
-            return m_IsPackable;
+            return m_IsMovable;
         }
         set {
             m_IsMovable = value;
