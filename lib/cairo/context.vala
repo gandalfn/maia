@@ -59,7 +59,7 @@ internal class Maia.Cairo.Context : Graphic.Context
         }
     }
 
-    public override Graphic.Surface surface {
+    public override unowned Graphic.Surface surface {
         get {
             return base.surface;
         }

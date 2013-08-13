@@ -47,7 +47,6 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
     }
 
     // properties
-    private Context       m_Context;
     private Pango.Layout  m_Layout;
 
     // accessors
@@ -59,7 +58,7 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
 
     public override Graphic.Size size {
         get {
-            if (m_Context != null && m_Layout != null)
+            if (m_Layout != null)
             {
                 int width, height;
                 m_Layout.get_pixel_size (out width, out height);
@@ -76,8 +75,7 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
     }
 
     private void
-    update_layout ()
-        requires (m_Context != null)
+    update_layout (Context inContext)
     {
         // Clear childs
         while (first () != null)
@@ -86,7 +84,7 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
         }
 
         // create layout
-        m_Layout = Pango.cairo_create_layout (m_Context.context);
+        m_Layout = Pango.cairo_create_layout (inContext.context);
 
         // set layout properties
         Pango.FontDescription desc = Pango.FontDescription.from_string (font_description);
@@ -94,7 +92,7 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
         m_Layout.set_text (text, -1);
 
         // update pango layout
-        Pango.cairo_update_layout (m_Context.context, m_Layout);
+        Pango.cairo_update_layout (inContext.context, m_Layout);
 
         // add glyph lines
         for (int cpt = 0; cpt < m_Layout.get_line_count(); ++cpt)
@@ -124,7 +122,6 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
     update (Graphic.Context inContext)
         requires (inContext is Context)
     {
-        m_Context = (Context)inContext;
-        update_layout ();
+        update_layout ((Context)inContext);
     }
 }

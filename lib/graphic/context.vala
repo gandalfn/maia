@@ -71,12 +71,12 @@ public enum Maia.Graphic.Operator
 public class Maia.Graphic.Context : Core.Object
 {
     // accessors
-    public virtual Operator  operator   { get; set; default = Operator.OVER; }
-    public virtual Surface   surface    { get; construct set; }
-    public virtual Pattern   pattern    { get; set; }
-    public virtual double    line_width { get; set; }
-    public virtual double[]? dash       { get; set; }
-    public virtual Transform transform  { get; set; }
+    public virtual Operator          operator   { get; set; default = Operator.OVER; }
+    public virtual unowned Surface   surface    { get; construct set; }
+    public virtual Pattern           pattern    { get; set; }
+    public virtual double            line_width { get; set; }
+    public virtual double[]?         dash       { get; set; }
+    public virtual Transform         transform  { get; set; }
 
     // methods
     internal Context (Surface inSurface)
