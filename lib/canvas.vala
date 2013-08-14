@@ -83,6 +83,7 @@ public interface Maia.Canvas : Drawable
             Manifest.Element.register ("Document",    typeof (Document));
             Manifest.Element.register ("Model",       typeof (Model));
             Manifest.Element.register ("Column",      typeof (Model.Column));
+            Manifest.Element.register ("View",        typeof (View));
             Manifest.Element.register ("DrawingArea", typeof (DrawingArea));
 
             s_ElementsRegister = true;

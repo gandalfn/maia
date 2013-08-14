@@ -24,6 +24,7 @@ public class Maia.TestModel : Maia.TestCase
         base ("model");
 
         add_test ("create", test_model_create);
+        add_test ("view", test_model_view);
     }
 
     public void
@@ -94,5 +95,76 @@ public class Maia.TestModel : Maia.TestCase
                 assert (val_list == val_model);
             } while (list.iter_next(ref iter));
         }
+    }
+
+    public void
+    test_model_view ()
+    {
+        string manifest =   "Document.root {" +
+                            "   Model.model {" +
+                            "       Column.name {" +
+                            "           column: 0;" +
+                            "       }" +
+                            "       Column.val {" +
+                            "           column: 1;" +
+                            "       }" +
+                            "   }" +
+                            "   View.view { " +
+                            "       model: model;" +
+                            "       [" +
+                            "           Grid.cell {" +
+                            "               Label.label {" +
+                            "                   text: @name;" +
+                            "               }" +
+                            "               Label.value {" +
+                            "                   row: 1;" +
+                            "                   text: @value;" +
+                            "               }" +
+                            "           }"+
+                            "       ]" +
+                            "   }" +
+                            "}";
+
+        Maia.Gtk.Canvas canvas = new Maia.Gtk.Canvas ();
+        try
+        {
+            canvas.load (manifest, "root");
+        }
+        catch (Core.ParseError err)
+        {
+            Test.message (err.message);
+            assert (false);
+        }
+        assert (canvas.root != null);
+
+        global::Gtk.ListStore list = new global::Gtk.ListStore (2, typeof (string), typeof (string));
+        for (int cpt = 0; cpt < 10; ++cpt)
+        {
+            global::Gtk.TreeIter iter;
+            list.append (out iter);
+
+            list.set (iter, 0, "%i".printf (Test.rand_int_range (0, 200)),
+                            1, "%i".printf (Test.rand_int_range (0, 200)));
+        }
+
+        unowned Gtk.Model? model = canvas.root.find (GLib.Quark.from_string ("model")) as Gtk.Model;
+        assert (model != null);
+
+        unowned Gtk.Model.Column column_name = canvas.root.find (GLib.Quark.from_string ("name")) as Gtk.Model.Column;
+        assert (column_name != null);
+
+        unowned Gtk.Model.Column column_val = canvas.root.find (GLib.Quark.from_string ("val")) as Gtk.Model.Column;
+        assert (column_val != null);
+
+        model.treemodel = list;
+
+        var window = new global::Gtk.Window ();
+        window.show ();
+        window.destroy.connect (global::Gtk.main_quit);
+
+        canvas.show ();
+        window.add (canvas);
+
+        global::Gtk.main ();
     }
 }

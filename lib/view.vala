@@ -35,9 +35,9 @@ public class Maia.View : Maia.Grid
     public uint lines { get; set; default = 1; }
     public Orientation orientation { get; set; default = Orientation.VERTICAL; }
 
-    public Model model {
-        get {
-            return m_Model;
+    public string model {
+        owned get {
+            return m_Model != null ? m_Model.name : null;
         }
         set {
             if (m_Model != null)
@@ -47,7 +47,7 @@ public class Maia.View : Maia.Grid
                 m_Model.rows_reordered.disconnect (on_rows_reordered);
             }
 
-            m_Model = value;
+            m_Model = root.find (GLib.Quark.from_string (value)) as Model;
 
             if (m_Model != null)
             {
@@ -66,12 +66,6 @@ public class Maia.View : Maia.Grid
     }
 
     // methods
-    construct
-    {
-        // Add not dumpable attributes
-        not_dumpable_attributes.insert ("model");
-    }
-
     public View (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
@@ -80,12 +74,18 @@ public class Maia.View : Maia.Grid
     private void
     on_template_attribute_bind (Object inOwner, string inProperty, string inValue)
     {
+        print (@"$inProperty $inValue\n");
         if (m_Model != null)
         {
             // Search the direct child of view
-            unowned Core.Object? child = (Item)inOwner;
-            for (; child != null && child.parent != this; child = child.parent);
+            unowned Core.Object? child = (Core.Object)inOwner;
+            print ("child %p\n", child);
+            for (; child.parent != null && child.parent != this; child = child.parent)
+            {
+                print ("child %s\n", ((Item)child).name);
+            }
 
+            print ("child %p\n", child);
             unowned ItemPackable? item = child as ItemPackable;
             if (item != null)
             {
@@ -99,9 +99,11 @@ public class Maia.View : Maia.Grid
                 // search the associated column
                 string column_name = inValue.substring (1);
                 unowned Model.Column? column = m_Model[column_name];
+                print ("column %s\n", column_name);
                 if (column != null)
                 {
                     // Set initial value of property
+                    print ("%s = %s\n", inProperty, (string)column[row_num]);
                     inOwner.set_property (inProperty, column[row_num]);
 
                     // Connect onto value_changed

@@ -50,7 +50,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     internal double right_padding  { get; set; default = 0; }
 
     public string   font_description { get; set; default = ""; }
-    public string   text             { get; set; default = ""; }
+    public string   text             { get; set; default = null; }
 
     // methods
     construct
@@ -76,7 +76,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     internal override Graphic.Size
     size_request (Graphic.Size inSize)
     {
-        if (text.length > 0)
+        if (text != null && text.length > 0)
         {
             if (m_Glyph == null)
             {
