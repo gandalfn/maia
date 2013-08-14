@@ -31,6 +31,7 @@ public abstract class Maia.Graphic.Pattern : Core.Object
         Manifest.Function.register_transform_func (typeof (Color),   "rgba", attribute_to_rgba_color);
 
         Manifest.Function.register_transform_func (typeof (Pattern), "linear-gradient", attribute_to_linear_gradient);
+        Manifest.Function.register_transform_func (typeof (Pattern), "radial-gradient", attribute_to_radial_gradient);
 
         Manifest.Function.register_transform_func (typeof (Gradient.ColorStop), "color-stop", attribute_to_color_stop);
 
@@ -67,6 +68,12 @@ public abstract class Maia.Graphic.Pattern : Core.Object
     attribute_to_linear_gradient (Manifest.Function inFunction, ref GLib.Value outDest) throws Manifest.Error
     {
         outDest = new LinearGradient.from_function (inFunction);
+    }
+
+    static void
+    attribute_to_radial_gradient (Manifest.Function inFunction, ref GLib.Value outDest) throws Manifest.Error
+    {
+        outDest = new RadialGradient.from_function (inFunction);
     }
 
     static void

@@ -59,6 +59,8 @@ libmaia_la_SOURCES = \
     graphic/color.vala \
     graphic/gradient.vala \
     graphic/linear-gradient.vala \
+    graphic/radial-gradient.vala \
+    graphic/mesh-gradient.vala \
     graphic/path.vala \
     graphic/glyph.vala \
     graphic/context.vala \

@@ -130,12 +130,71 @@ internal class Maia.Cairo.Context : Graphic.Context
                                                                                   gradient.end.x,   gradient.end.y);
                 foreach (unowned Object child in gradient)
                 {
-                    unowned Graphic.Gradient.ColorStop? color_stop = (Graphic.Gradient.ColorStop?)child;
-                    pattern.add_color_stop_rgba (color_stop.offset,
-                                                 color_stop.color.red,
-                                                 color_stop.color.green,
-                                                 color_stop.color.blue,
-                                                 color_stop.color.alpha);
+                    if (child is Graphic.Gradient.ColorStop)
+                    {
+                        unowned Graphic.Gradient.ColorStop? color_stop = (Graphic.Gradient.ColorStop?)child;
+                        pattern.add_color_stop_rgba (color_stop.offset,
+                                                     color_stop.color.red,
+                                                     color_stop.color.green,
+                                                     color_stop.color.blue,
+                                                     color_stop.color.alpha);
+                    }
+                }
+
+                m_Context.set_source (pattern);
+            }
+            else if (value is Graphic.RadialGradient)
+            {
+                unowned Graphic.RadialGradient? gradient = (Graphic.RadialGradient?)value;
+
+                global::Cairo.Pattern pattern = new global::Cairo.Pattern.radial (gradient.start.x, gradient.start.y, gradient.start_radius,
+                                                                                  gradient.end.x,   gradient.end.y, gradient.end_radius);
+                foreach (unowned Object child in gradient)
+                {
+                    if (child is Graphic.Gradient.ColorStop)
+                    {
+                        unowned Graphic.Gradient.ColorStop? color_stop = (Graphic.Gradient.ColorStop?)child;
+                        pattern.add_color_stop_rgba (color_stop.offset,
+                                                     color_stop.color.red,
+                                                     color_stop.color.green,
+                                                     color_stop.color.blue,
+                                                     color_stop.color.alpha);
+                    }
+                }
+
+                m_Context.set_source (pattern);
+            }
+            else if (value is Graphic.MeshGradient)
+            {
+                unowned Graphic.MeshGradient? gradient = (Graphic.MeshGradient?)value;
+
+                global::Cairo.MeshPattern pattern = new global::Cairo.MeshPattern ();
+                foreach (unowned Object child in gradient)
+                {
+                    // Add mesh patch
+                    if (child is Graphic.MeshGradient.Patch)
+                    {
+                        var patch = child as Graphic.MeshGradient.Patch;
+                        pattern.begin_patch ();
+                        set_pattern_path (pattern, patch.path);
+
+                        // parse patch control
+                        foreach (unowned Object child_patch in gradient)
+                        {
+                            if (child is Graphic.MeshGradient.Patch.CornerColor)
+                            {
+                                var corner_color = (Graphic.MeshGradient.Patch.CornerColor)child;
+                                pattern.set_corner_color_rgba (corner_color.num, corner_color.color.red, corner_color.color.green,
+                                                               corner_color.color.blue, corner_color.color.alpha);
+                            }
+                            else if (child is Graphic.MeshGradient.Patch.ControlPoint)
+                            {
+                                var control_point = (Graphic.MeshGradient.Patch.ControlPoint)child;
+                                pattern.set_control_point (control_point.num, control_point.point.x, control_point.point.y);
+                            }
+                        }
+                        pattern.end_patch ();
+                    }
                 }
 
                 m_Context.set_source (pattern);
@@ -147,6 +206,39 @@ internal class Maia.Cairo.Context : Graphic.Context
     public Context (Graphic.Surface inSurface)
     {
         base (inSurface);
+    }
+
+    private void
+    set_pattern_path (global::Cairo.MeshPattern inPattern, Graphic.Path inPath)
+    {
+        switch (inPath.data_type)
+        {
+            case Graphic.Path.DataType.PATH:
+                foreach (unowned Object child in inPath)
+                {
+                    set_pattern_path (inPattern, child as Graphic.Path);
+                }
+                break;
+
+            case Graphic.Path.DataType.MOVETO:
+                Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "move to %g,%g", inPath.points[0].x, inPath.points[0].y);
+                inPattern.move_to (inPath.points[0].x, inPath.points[0].y);
+                break;
+
+            case Graphic.Path.DataType.LINETO:
+                Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "line to %g,%g", inPath.points[0].x, inPath.points[0].y);
+                inPattern.line_to (inPath.points[0].x, inPath.points[0].y);
+                break;
+
+            case Graphic.Path.DataType.CURVETO:
+                Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "curve to %g,%g %g,%g %g,%g", inPath.points[0].x, inPath.points[0].y,
+                                                                                                     inPath.points[1].x, inPath.points[1].y,
+                                                                                                     inPath.points[2].x, inPath.points[2].y);
+                inPattern.curve_to (inPath.points[0].x, inPath.points[0].y,
+                                    inPath.points[1].x, inPath.points[1].y,
+                                    inPath.points[2].x, inPath.points[2].y);
+                break;
+        }
     }
 
     private void
