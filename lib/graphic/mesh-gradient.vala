@@ -120,7 +120,34 @@ public class Maia.Graphic.MeshGradient : Gradient
         }
     }
 
+    public class ArcPatch : Patch
+    {
+        // methods
+        public ArcPatch (Graphic.Point inCenter, double inStart, double inEnd, double inRadius)
+        {
+            double r_sin_A, r_cos_A;
+            double r_sin_B, r_cos_B;
+            double h;
 
+            r_sin_A = inRadius * GLib.Math.sin (inStart);
+            r_cos_A = inRadius * GLib.Math.cos (inStart);
+            r_sin_B = inRadius * GLib.Math.sin (inEnd);
+            r_cos_B = inRadius * GLib.Math.cos (inEnd);
+
+            h = 4.0 / 3.0 * GLib.Math.tan ((inEnd - inStart) / 4.0);
+
+            // patch path
+            var path = new Path ();
+            path.move_to (inCenter.x, inCenter.y);
+            path.line_to (inCenter.x + r_cos_A, inCenter.y + r_sin_A);
+            path.curve_to (inCenter.x + r_cos_A - h * r_sin_A, inCenter.y + r_sin_A + h * r_cos_A,
+                           inCenter.x + r_cos_B + h * r_sin_B, inCenter.y + r_sin_B - h * r_cos_B,
+                           inCenter.x + r_cos_B, inCenter.y + r_sin_B);
+            path.line_to (inCenter.x, inCenter.y);
+
+            base (path);
+        }
+    }
 
     // methods
     public MeshGradient ()
