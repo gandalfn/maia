@@ -239,9 +239,9 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     }
 
     internal void
-    on_move_pointer (Graphic.Size inDelta)
+    on_move_pointer (Graphic.Point inPosition)
     {
-        m_LastPointerPosition.translate (Graphic.Point (inDelta.width, inDelta.height));
+        m_LastPointerPosition = inPosition;
 
         int xroot, yroot;
         window.get_root_origin (out xroot, out yroot);

@@ -241,16 +241,15 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
     [Signal (run = "first")]
     public virtual signal void
-    move_pointer (Graphic.Size inDelta)
+    move_pointer (Graphic.Point inPosition)
     {
         if (parent is Item)
         {
-            var delta = inDelta;
-            delta.transform (transform);
+            var point = convert_to_parent_item_space (inPosition);
 
-            Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"$name move pointer $delta");
+            Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"$name move pointer $point");
 
-            ((Item)parent).move_pointer (delta);
+            ((Item)parent).move_pointer (point);
         }
     }
 

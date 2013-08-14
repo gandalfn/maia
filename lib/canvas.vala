@@ -147,9 +147,9 @@ public interface Maia.Canvas : Drawable
     }
 
     protected virtual void
-    on_move_pointer (Graphic.Size inDelta)
+    on_move_pointer (Graphic.Point inPosition)
     {
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"move pointer to $inDelta");
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"move pointer to $inPosition");
     }
 
     protected virtual void
