@@ -20,7 +20,107 @@
 public class Maia.Manifest.AttributeBind : Attribute
 {
     // Types
-    public delegate void Callback (Object inOwner, string inAttribute);
+    [CCode (has_target = false)]
+    public delegate void BindFunc (AttributeBind inAttributeBind, Object inSrc, string inProperty);
+    public delegate void TransformFunc (AttributeBind inAttributeBind, ref GLib.Value outValue) throws Error;
+
+    private class BindClosure
+    {
+        AttributeBind  attribute;
+        string         property;
+        unowned Object src;
+        ulong          id;
+        BindFunc       func;
+
+        public BindClosure (AttributeBind inAttribute, Object inSrc, string inProperty, string inSignalName, BindFunc inFunc)
+        {
+            attribute = inAttribute;
+            src = inSrc;
+            func = inFunc;
+            property = inProperty;
+            id = GLib.Signal.connect_swapped (inSrc, inSignalName, (GLib.Callback)on_bind, this);
+        }
+
+        private void
+        on_bind ()
+        {
+            func (attribute, src, property);
+        }
+
+        public void
+        disconnect ()
+        {
+            GLib.SignalHandler.disconnect (src, id);
+        }
+    }
+
+    private class Transform : Core.Object
+    {
+        public GLib.Type     gtype;
+        public TransformFunc func;
+
+        public Transform (GLib.Type inType, owned TransformFunc inFunc)
+        {
+            gtype = inType;
+            func = (owned)inFunc;
+        }
+
+        public override int
+        compare (Core.Object inOther)
+        {
+            return (int)(gtype - (inOther as Transform).gtype);
+        }
+
+        public int
+        compare_with_type (GLib.Type inType)
+        {
+            return (int)(gtype - inType);
+        }
+
+        public inline bool
+        compare_type_is_a (GLib.Type inType)
+        {
+            return inType.is_a (gtype);
+        }
+    }
+
+    // Static properties
+    private static Core.Map<string, Core.Set<Transform>> s_Transforms;
+
+    // Static methods
+    private static void
+    on_bind_closure_destroy (void* inpData)
+    {
+        BindClosure* pClosure = (BindClosure*)inpData;
+
+        pClosure->disconnect ();
+
+        delete pClosure;
+    }
+
+    public static new void
+    register_transform_func (GLib.Type inType, string inName, owned TransformFunc inFunc)
+    {
+        if (s_Transforms == null)
+        {
+            s_Transforms = new Core.Map<string, Core.Set<Transform>> ();
+        }
+
+        unowned Core.Set<Transform> binds = s_Transforms[inName];
+        if (binds == null)
+        {
+            Transform transform = new Transform (inType, (owned)inFunc);
+            Core.Set<Transform> transform_functions = new Core.Set<Transform> ();
+            transform_functions.insert (transform);
+            s_Transforms[inName] = transform_functions;
+        }
+        else
+        {
+            Transform transform = new Transform (inType, (owned)inFunc);
+            binds.insert (transform);
+        }
+    }
+
 
     // Methods
     /**
@@ -34,22 +134,65 @@ public class Maia.Manifest.AttributeBind : Attribute
         base (inOwner, inValue.substring (1));
     }
 
-    public void
-    bind (Object inDest, string inProperty, owned GLib.BindingTransformFunc? inFunc = null)
+    internal override void
+    on_transform (GLib.Type inType, ref GLib.Value outValue) throws Error
     {
         if (owner != null)
         {
-            string[] split = get().split (".");
+            unowned Core.Set<Transform>? binds = s_Transforms[get ()];
+            if (binds != null)
+            {
+                // Search type
+                unowned Transform? transform = binds.search<GLib.Type> (owner.get_type (), Transform.compare_with_type);
+                if (transform == null)
+                {
+                    // Type not found search for derived type
+                    foreach (unowned Transform bind in binds)
+                    {
+                        if (bind.compare_type_is_a (owner.get_type ()))
+                        {
+                            transform = bind;
+                            break;
+                        }
+                    }
+                }
+                if (transform != null)
+                {
+                    transform.func (this, ref outValue);
+                    return;
+                }
+                else
+                {
+                    throw new Error.INVALID_TYPE ("Unknown attribute bind %s for value %s", get(), inType.name ());
+                }
+            }
+        }
 
-            owner.bind_property (split[0], inDest, inProperty,
-                                 GLib.BindingFlags.DEFAULT | GLib.BindingFlags.SYNC_CREATE,
-                                 (owned)inFunc);
-       }
+        base.on_transform (inType, ref outValue);
     }
 
     internal override string
     to_string ()
     {
         return "@" + get ();
+    }
+
+    public bool
+    is_bind (string inSignalName, string inProperty)
+    {
+        string quark = "MaiaAttributeBind%s%s%s".printf (owner.get_type ().name (), get (), inSignalName);
+        return owner != null ? owner.get_data<BindClosure*> (quark) != null : false;
+    }
+
+    public void
+    bind (Object inSrc, string inSignalName, string inProperty, BindFunc inFunc)
+    {
+        if (owner != null)
+        {
+            BindClosure* pClosure = new BindClosure (this, inSrc, inProperty, inSignalName, inFunc);
+            string quark = "MaiaAttributeBind%s%s%s".printf (owner.get_type ().name (), get (), inSignalName);
+
+            owner.set_data_full (quark, pClosure, on_bind_closure_destroy);
+        }
     }
 }

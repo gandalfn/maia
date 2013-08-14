@@ -33,9 +33,9 @@ public class Maia.TestCanvas : Maia.TestCase
                             "       position: 10, 10;" +
                             "       transform: scale(2, 2);" +
                             "       size: 140, 140;" +
-                            "       fill-color: linear-gradient(0, 280, 0, 10," +
+                            "       fill-color: linear-gradient(0, 0, 0, @height," +
                             "                                   color-stop(0,   rgb(0.9, 0.1, 0.1))," +
-                            "                                   color-stop(0.5, rgb(0.4, 0.1, 0.1))," +
+                            "                                   color-stop(0.5, rgb(0.1, 0.4, 0.1))," +
                             "                                   color-stop(1,   rgb(0.1, 0.1, 0.1)));" +
                             "   }" +
                             "   Image.image {" +
@@ -220,15 +220,15 @@ public class Maia.TestCanvas : Maia.TestCase
             return true;
         });
 
-        double progress = 0;
-        GLib.Timeout.add (100, () => {
-            progress += (GLib.Math.PI * 2.0) / 360;
-            var t = new Graphic.Transform.identity ();
-            t.rotate (progress);
-            label.transform = t;
-            Test.message ("label progress: %g", progress);
-            return true;
-        });
+//~         double progress = 0;
+//~         GLib.Timeout.add (100, () => {
+//~             progress += (GLib.Math.PI * 2.0) / 360;
+//~             var t = new Graphic.Transform.identity ();
+//~             t.rotate (progress);
+//~             label.transform = t;
+//~             Test.message ("label progress: %g", progress);
+//~             return true;
+//~         });
 
 
         window.add (canvas);

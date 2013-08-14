@@ -260,11 +260,40 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         // create quarks
         s_ChildGeometryQuark = GLib.Quark.from_string ("MaiaGroupChildGeometry");
 
+        // register attribute bind
+        Manifest.AttributeBind.register_transform_func (typeof (Item), "width", attribute_bind_width);
+        Manifest.AttributeBind.register_transform_func (typeof (Item), "height", attribute_bind_height);
+
         // get mouse event id
         mc_IdButtonPressEvent = GLib.Signal.lookup ("button-press-event", typeof (Item));
         mc_IdButtonReleaseEvent = GLib.Signal.lookup ("button-release-event", typeof (Item));
         mc_IdMotionEvent = GLib.Signal.lookup ("motion-event", typeof (Item));
         mc_IdScrollEvent = GLib.Signal.lookup ("scroll-event", typeof (Item));
+    }
+
+    static void
+    attribute_bind_width (Manifest.AttributeBind inAttributeBind, ref GLib.Value outValue)
+        requires (outValue.holds (typeof (double)))
+    {
+        if (inAttributeBind.owner is Item)
+        {
+            Item item = (Item)inAttributeBind.owner;
+            outValue = item.geometry != null ? item.geometry.extents.size.width : item.size.width;
+        }
+    }
+
+    static void
+    attribute_bind_height (Manifest.AttributeBind inAttributeBind, ref GLib.Value outValue)
+        requires (outValue.holds (typeof (double)))
+    {
+        Log.debug (GLib.Log.METHOD, Log.Category.MANIFEST_ATTRIBUTE, "%s", inAttributeBind.get ());
+
+        if (inAttributeBind.owner is Item)
+        {
+            Item item = (Item)inAttributeBind.owner;
+            double val = item.geometry != null ? item.geometry.extents.size.height : item.size.height;
+            outValue = val;
+        }
     }
 
     // methods

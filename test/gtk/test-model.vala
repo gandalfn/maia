@@ -100,7 +100,7 @@ public class Maia.TestModel : Maia.TestCase
     public void
     test_model_view ()
     {
-        string manifest =   "Document.root {" +
+        string manifest =   "Grid.root {" +
                             "   Model.model {" +
                             "       Column.name {" +
                             "           column: 0;" +
@@ -108,17 +108,25 @@ public class Maia.TestModel : Maia.TestCase
                             "       Column.val {" +
                             "           column: 1;" +
                             "       }" +
+                            "       Column.color {" +
+                            "           column: 2;" +
+                            "       }" +
                             "   }" +
                             "   View.view { " +
                             "       model: model;" +
+                            "       lines: 2;" +
                             "       [" +
                             "           Grid.cell {" +
                             "               Label.label {" +
+                            "                   stroke-color: @color;" +
+                            "                   font-description: 'Liberation Sans 14';" +
                             "                   text: @name;" +
                             "               }" +
                             "               Label.value {" +
                             "                   row: 1;" +
-                            "                   text: @value;" +
+                            "                   stroke-color: @color;" +
+                            "                   font-description: 'Liberation Sans 14';" +
+                            "                   text: @val;" +
                             "               }" +
                             "           }"+
                             "       ]" +
@@ -137,14 +145,15 @@ public class Maia.TestModel : Maia.TestCase
         }
         assert (canvas.root != null);
 
-        global::Gtk.ListStore list = new global::Gtk.ListStore (2, typeof (string), typeof (string));
+        global::Gtk.ListStore list = new global::Gtk.ListStore (3, typeof (string), typeof (int), typeof (string));
         for (int cpt = 0; cpt < 10; ++cpt)
         {
             global::Gtk.TreeIter iter;
             list.append (out iter);
-
+            string color = "#%02i%02i%02i".printf (Test.rand_int_range (0, 255), Test.rand_int_range (0, 255), Test.rand_int_range (0, 255));
             list.set (iter, 0, "%i".printf (Test.rand_int_range (0, 200)),
-                            1, "%i".printf (Test.rand_int_range (0, 200)));
+                            1, Test.rand_int_range (0, 200),
+                            2, color);
         }
 
         unowned Gtk.Model? model = canvas.root.find (GLib.Quark.from_string ("model")) as Gtk.Model;
@@ -164,6 +173,30 @@ public class Maia.TestModel : Maia.TestCase
 
         canvas.show ();
         window.add (canvas);
+
+         GLib.Timeout.add_seconds (3, () => {
+            int cpt = 0;
+            int r = Test.rand_int_range (0, list.iter_n_children(null));
+            global::Gtk.TreeIter iter;
+            if (list.get_iter_first(out iter))
+            {
+                do
+                {
+                    if (cpt == r)
+                    {
+                        string name = "%i".printf (Test.rand_int_range (0, 200));
+                        int val = Test.rand_int_range (0, 200);
+                        string color = "#%02i%02i%02i".printf (Test.rand_int_range (0, 255), Test.rand_int_range (0, 255), Test.rand_int_range (0, 255));
+                        Test.message (@"set $r $name $val $color");
+                        list.set (iter, 0, name, 1, val, 2, color);
+                        break;
+                    }
+                    cpt++;
+                } while (list.iter_next(ref iter));
+            }
+
+            return true;
+        });
 
         global::Gtk.main ();
     }

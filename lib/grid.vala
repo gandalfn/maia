@@ -461,7 +461,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
     internal override bool
     can_append_child (Core.Object inObject)
     {
-        return inObject is ItemPackable || inObject is ToggleGroup;
+        return inObject is ItemPackable || inObject is ToggleGroup || inObject is Model;
     }
 
     internal override Graphic.Size

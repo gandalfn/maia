@@ -29,8 +29,6 @@ public errordomain Maia.Manifest.Error
 public class Maia.Manifest.Document : Core.Parser
 {
     // Types
-    public delegate void AttributeBindCallback (Object inOwner, string inProperty, string inValue);
-
     internal class ElementTag
     {
         public string m_Tag;
@@ -59,16 +57,9 @@ public class Maia.Manifest.Document : Core.Parser
     private ElementTag             m_CurrentTag = null;
     private Core.Queue<ElementTag> m_ElementQueue;
     private AttributeScanner       m_Scanner;
-    private AttributeBindCallback  m_AttributeBindCallback = null;
 
     // Accessors
     public Object owner { get; set; default = null; }
-
-    public AttributeBindCallback attribute_bind_func {
-        owned set {
-            m_AttributeBindCallback = (owned)value;
-        }
-    }
 
     public AttributeScanner scanner {
         get {
@@ -87,6 +78,9 @@ public class Maia.Manifest.Document : Core.Parser
             return m_CurrentTag != null ? m_CurrentTag.m_Id : null;
         }
     }
+
+    // Signals
+    public signal void attribute_bind_added (AttributeBind inAttribute, string inProperty);
 
     // Methods
     construct
@@ -175,17 +169,10 @@ public class Maia.Manifest.Document : Core.Parser
     private void
     read_attribute_value () throws Core.ParseError
     {
-        if (m_AttributeBindCallback != null)
-        {
-            string property = m_Attribute;
-            m_Scanner = new AttributeScanner (owner, ref m_pCurrent, m_pEnd, ';', (o, a) => {
-                    m_AttributeBindCallback (o, property, a);
-                });
-        }
-        else
-        {
-            m_Scanner = new AttributeScanner (owner, ref m_pCurrent, m_pEnd, ';');
-        }
+        string property = m_Attribute;
+        m_Scanner = new AttributeScanner (owner, ref m_pCurrent, m_pEnd, ';', (a) => {
+            attribute_bind_added (a, property);
+        });
 
         if (m_pCurrent[0] != ';')
             throw new Core.ParseError.INVALID_NAME ("Error on read attribute value %s: unexpected end of line at %i,%i missing ;",

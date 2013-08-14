@@ -76,32 +76,19 @@ public class Maia.Graphic.LinearGradient : Gradient
             switch (cpt)
             {
                 case 0:
-                    if (arg is Manifest.AttributeBind)
-                        (arg as Manifest.AttributeBind).bind (this, "start-x");
-                    else
-                        m_Start.x = (double)arg.transform (typeof (double));
+                    m_Start.x = (double)arg.transform (typeof (double));
                     break;
 
                 case 1:
-                    if (arg is Manifest.AttributeBind)
-                        (arg as Manifest.AttributeBind).bind (this, "start-y");
-                    else
-                        m_Start.y = (double)arg.transform (typeof (double));
+                    m_Start.y = (double)arg.transform (typeof (double));
                     break;
 
                 case 2:
-                    if (arg is Manifest.AttributeBind)
-                        (arg as Manifest.AttributeBind).bind (this, "end-x");
-                    else
-                        m_End.x = (double)arg.transform (typeof (double));
+                    m_End.x = (double)arg.transform (typeof (double));
                     break;
 
                 case 3:
-                    Log.debug (GLib.Log.METHOD, Log.Category.GRAPHIC_PARSING, "%s", (arg is Manifest.AttributeBind).to_string ());
-                    if (arg is Manifest.AttributeBind)
-                        (arg as Manifest.AttributeBind).bind (this, "end-y");
-                    else
-                        m_End.y = (double)arg.transform (typeof (double));
+                    m_End.y = (double)arg.transform (typeof (double));
                     break;
 
                 default:

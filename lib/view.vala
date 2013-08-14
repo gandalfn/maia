@@ -19,9 +19,6 @@
 
 public class Maia.View : Maia.Grid
 {
-    // static properties
-    static GLib.Quark s_QuarkItemBind;
-
     // properties
     private unowned Model m_Model = null;
 
@@ -60,9 +57,39 @@ public class Maia.View : Maia.Grid
     }
 
     // static methods
-    static construct
+    private static void
+    on_bind_value_changed (Manifest.AttributeBind inAttribute, Object inSrc, string inProperty)
     {
-        s_QuarkItemBind = GLib.Quark.from_string ("MaiaViewCellItemBind");
+        // Search the direct child of view
+        unowned Core.Object? child = (Core.Object)inAttribute.owner;
+        for (; child.parent != null && !(child.parent is View); child = child.parent);
+
+        unowned ItemPackable? item = child as ItemPackable;
+        unowned View? view = item != null ? item.parent as View : null;
+
+        unowned Model? model = inSrc as Model;
+        if (item != null && view != null && model != null)
+        {
+            // Get row num of child
+            uint row_num = 0;
+            if (view.orientation == Orientation.HORIZONTAL)
+                row_num = (item.column * view.lines) + item.row;
+            else
+                row_num = (item.row * view.lines) + item.column;
+
+            // search the associated column
+            unowned Model.Column? column = model[inAttribute.get ()];
+            if (column != null)
+            {
+                // Set value of property
+                inAttribute.owner.set_property (inProperty, column[row_num]);
+            }
+            else
+            {
+                Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_ATTRIBUTE,
+                              "Error on bind %s invalid %s column name", inProperty, inAttribute.get ());
+            }
+        }
     }
 
     // methods
@@ -72,61 +99,15 @@ public class Maia.View : Maia.Grid
     }
 
     private void
-    on_template_attribute_bind (Object inOwner, string inProperty, string inValue)
+    on_template_attribute_bind (Manifest.AttributeBind inAttribute, string inProperty)
     {
-        print (@"$inProperty $inValue\n");
         if (m_Model != null)
         {
-            // Search the direct child of view
-            unowned Core.Object? child = (Core.Object)inOwner;
-            print ("child %p\n", child);
-            for (; child.parent != null && child.parent != this; child = child.parent)
+            string signal_name = "value-changed::%s".printf (inAttribute.get ());
+
+            if (!inAttribute.is_bind (signal_name, inProperty))
             {
-                print ("child %s\n", ((Item)child).name);
-            }
-
-            print ("child %p\n", child);
-            unowned ItemPackable? item = child as ItemPackable;
-            if (item != null)
-            {
-                // Get row num of child
-                uint row_num = 0;
-                if (orientation == Orientation.VERTICAL)
-                    row_num = (item.column * lines) + item.row;
-                else
-                    row_num = (item.row * lines) + item.column;
-
-                // search the associated column
-                string column_name = inValue.substring (1);
-                unowned Model.Column? column = m_Model[column_name];
-                print ("column %s\n", column_name);
-                if (column != null)
-                {
-                    // Set initial value of property
-                    print ("%s = %s\n", inProperty, (string)column[row_num]);
-                    inOwner.set_property (inProperty, column[row_num]);
-
-                    // Connect onto value_changed
-                    ulong id_changed = m_Model.value_changed [column_name].connect (() => {
-                        uint pos = 0;
-                        if (orientation == Orientation.VERTICAL)
-                            pos = (item.column * lines) + item.row;
-                        else
-                            pos = (item.row * lines) + item.column;
-
-                        inOwner.set_property (inProperty, column[pos]);
-                    });
-
-                    // Disconnect from value_changed on item cell destroy
-                    item.set_qdata_full (s_QuarkItemBind, (void*)id_changed, (d) => {
-                        GLib.SignalHandler.disconnect ((void*)m_Model, (ulong)d);
-                    });
-                }
-                else
-                {
-                    Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_ATTRIBUTE,
-                                  @"Error on bind $inProperty invalid $column_name column name");
-                }
+                inAttribute.bind (m_Model, signal_name, inProperty, on_bind_value_changed);
             }
         }
     }
@@ -138,7 +119,7 @@ public class Maia.View : Maia.Grid
         try
         {
             var document = new Manifest.Document.from_buffer (characters, characters.length);
-            document.attribute_bind_func = on_template_attribute_bind;
+            document.attribute_bind_added.connect (on_template_attribute_bind);
 
             ItemPackable? item = document.get (null) as ItemPackable;
 
@@ -169,7 +150,7 @@ public class Maia.View : Maia.Grid
 
                 uint pos = 0;
 
-                if (orientation == Orientation.VERTICAL)
+                if (orientation == Orientation.HORIZONTAL)
                     pos = (item.column * lines) + item.row;
                 else
                     pos = (item.row * lines) + item.column;
@@ -178,7 +159,7 @@ public class Maia.View : Maia.Grid
                 {
                     item.id = GLib.Quark.from_string ("%s-%u".printf (item.name, inRow));
 
-                    if (orientation == Orientation.VERTICAL)
+                    if (orientation == Orientation.HORIZONTAL)
                     {
                         item.row = (pos + 1) % lines;
                         item.column = (pos + 1) / lines;
@@ -204,7 +185,7 @@ public class Maia.View : Maia.Grid
 
                 uint pos = 0;
 
-                if (orientation == Orientation.VERTICAL)
+                if (orientation == Orientation.HORIZONTAL)
                     pos = (item.column * lines) + item.row;
                 else
                     pos = (item.row * lines) + item.column;
@@ -213,7 +194,7 @@ public class Maia.View : Maia.Grid
                 {
                     item.id = GLib.Quark.from_string ("%s-%u".printf (item.name, inRow));
 
-                    if (orientation == Orientation.VERTICAL)
+                    if (orientation == Orientation.HORIZONTAL)
                     {
                         item.row = (pos - 1) % lines;
                         item.column = (pos - 1) / lines;
@@ -238,7 +219,7 @@ public class Maia.View : Maia.Grid
             shift (inRow);
 
             // Attach item to view
-            if (orientation == Orientation.VERTICAL)
+            if (orientation == Orientation.HORIZONTAL)
             {
                 item.row = inRow % lines;
                 item.column = inRow / lines;
@@ -284,7 +265,7 @@ public class Maia.View : Maia.Grid
 
                 uint pos = 0;
 
-                if (orientation == Orientation.VERTICAL)
+                if (orientation == Orientation.HORIZONTAL)
                     pos = (item.column * lines) + item.row;
                 else
                     pos = (item.row * lines) + item.column;
@@ -293,7 +274,7 @@ public class Maia.View : Maia.Grid
                 {
                     item.id = GLib.Quark.from_string ("%s-%u".printf (item.name, pos));
 
-                    if (orientation == Orientation.VERTICAL)
+                    if (orientation == Orientation.HORIZONTAL)
                     {
                         item.row = inNewOrder[pos] % lines;
                         item.column = inNewOrder[pos] / lines;
@@ -321,7 +302,7 @@ public class Maia.View : Maia.Grid
 
                 uint pos = 0;
 
-                if (orientation == Orientation.VERTICAL)
+                if (orientation == Orientation.HORIZONTAL)
                     pos = (item.column * lines) + item.row;
                 else
                     pos = (item.row * lines) + item.column;

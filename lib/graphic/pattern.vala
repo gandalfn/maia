@@ -41,6 +41,8 @@ public abstract class Maia.Graphic.Pattern : Core.Object
         Manifest.Function.register_transform_func (typeof (Image),   "svg", attribute_to_svg);
 
         GLib.Value.register_transform_func (typeof (Pattern), typeof (string), pattern_to_string);
+        GLib.Value.register_transform_func (typeof (string),  typeof (Pattern), string_to_pattern);
+        GLib.Value.register_transform_func (typeof (string),  typeof (Color), string_to_pattern);
     }
 
     static void
@@ -132,5 +134,12 @@ public abstract class Maia.Graphic.Pattern : Core.Object
         unowned Pattern? val = (Pattern)inSrc;
 
         outDest = val.to_string ();
+    }
+
+    static void
+    string_to_pattern (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (string)))
+    {
+        outDest = new Color.parse ((string)inSrc);
     }
 }

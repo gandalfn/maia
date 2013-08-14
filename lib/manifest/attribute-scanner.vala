@@ -23,6 +23,7 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
 {
     // Types
     public delegate void TransformFunc (AttributeScanner inScanner, ref GLib.Value outValue) throws Error;
+    public delegate void AttributeBindCallback (AttributeBind inAttribute);
 
     private class Transform : Core.Object
     {
@@ -57,7 +58,7 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
     private string                 m_LastName;
     private Core.Queue<string>     m_FunctionQueue;
     private Object                 m_Owner;
-    private AttributeBind.Callback m_AttributeBindCallback;
+    private AttributeBindCallback  m_BindCallback;
 
     // Static methods
     private static inline void
@@ -149,14 +150,13 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
      * @param inpEnd end of buffer to parse
      * @param inEndChar the end char of buffer
      */
-    internal AttributeScanner (Object? inOwner, ref char* inoutpBegin, char* inpEnd, char inEndChar,
-                               owned AttributeBind.Callback? inAttributeBindCallback = null) throws Core.ParseError
+    internal AttributeScanner (Object? inOwner, ref char* inoutpBegin, char* inpEnd, char inEndChar, owned AttributeBindCallback? inCallback = null) throws Core.ParseError
     {
         base (inoutpBegin, inpEnd);
 
         m_EndChar = inEndChar;
         m_Owner = inOwner;
-        m_AttributeBindCallback = (owned)inAttributeBindCallback;
+        m_BindCallback = (owned)inCallback;
 
         parse ();
 
@@ -316,15 +316,9 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
                 case Core.Parser.Token.ATTRIBUTE:
                     if (m_Attribute.has_prefix("@"))
                     {
-                        if (m_AttributeBindCallback != null)
-                        {
-                            m_AttributeBindCallback (m_Owner, m_Attribute);
-                        }
-                        else
-                        {
-                            AttributeBind attr = new AttributeBind (m_Owner, m_Attribute);
-                            attr.parent = this;
-                        }
+                        AttributeBind attr = new AttributeBind (m_Owner, m_Attribute);
+                        attr.parent = this;
+                        if (m_BindCallback != null) m_BindCallback (attr);
                     }
                     else if (m_Attribute != "")
                     {
