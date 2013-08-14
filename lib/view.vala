@@ -229,7 +229,7 @@ public class Maia.View : Maia.Grid
                 item.row = inRow / lines;
                 item.column = inRow % lines;
             }
-            item.parent = this;
+            add (item);
         }
         else
         {

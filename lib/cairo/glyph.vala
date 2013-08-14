@@ -98,7 +98,7 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
         for (int cpt = 0; cpt < m_Layout.get_line_count(); ++cpt)
         {
             var line = new Line (cpt, m_Layout.get_line (cpt));
-            line.parent = this;
+            add (line);
         }
     }
 

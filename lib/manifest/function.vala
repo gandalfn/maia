@@ -117,7 +117,7 @@ public class Maia.Manifest.Function : Attribute
             {
                 case Core.Parser.Token.START_ELEMENT:
                     Function function = new Function (owner, inScanner.element);
-                    function.parent = this;
+                    add (function);
                     function.parse (inScanner);
                     break;
 
@@ -130,12 +130,12 @@ public class Maia.Manifest.Function : Attribute
                     if (inScanner.attribute.has_prefix("@"))
                     {
                         AttributeBind attr = new AttributeBind (owner, inScanner.attribute);
-                        attr.parent = this;
+                        add (attr);
                     }
                     else
                     {
                         Attribute attr = new Attribute (owner, inScanner.attribute);
-                        attr.parent = this;
+                        add (attr);
                     }
                     break;
 

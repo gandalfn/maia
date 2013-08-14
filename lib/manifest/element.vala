@@ -226,7 +226,7 @@ public interface Maia.Manifest.Element : Core.Object
                     Element element = create (inManifest.element_tag, inManifest.element_id);
                     if (element != null)
                     {
-                        element.parent = this;
+                        add (element);
                         element.read_manifest (inManifest);
                         inManifest.owner = this;
                     }

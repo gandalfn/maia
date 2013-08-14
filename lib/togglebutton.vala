@@ -110,7 +110,7 @@ public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
         string id_label = "%s-label".printf (name);
 
         var label_item = new Label (id_label, label);
-        label_item.parent = this;
+        add (label_item);
 
         notify["stroke-color"].connect (() => {
             label_item.stroke_color = stroke_color;

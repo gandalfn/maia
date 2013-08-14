@@ -88,7 +88,7 @@ public class Maia.Document : Item
 
         // create first page
         var page = new Page (name + "-" + (m_NbPages + 1).to_string (), m_NbPages + 1);
-        page.parent = this;
+        add (page);
 
         // connect onto border width and format change to create page shadow
         notify["format"].connect (on_page_shadow_change);
@@ -168,14 +168,14 @@ public class Maia.Document : Item
                 for (int cpt = (int)m_NbPages + 1; cpt <= inItem.page; ++cpt)
                 {
                     var new_page = new Page (name + "-" + cpt.to_string (), cpt);
-                    new_page.parent = this;
+                    add (new_page);
                     page = new_page;
                 }
             }
         }
 
         // Append child in Page
-        inItem.parent = page;
+        page.add (inItem);
     }
 
     internal override bool

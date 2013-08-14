@@ -495,14 +495,14 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             Graphic.Point pos = item.origin.invert ();
             Graphic.Transform item_translate = new Graphic.Transform.identity ();
             item_translate.translate (pos.x, pos.y);
-            item_translate.parent = ret;
+            ret.add (item_translate);
 
             try
             {
                 Graphic.Matrix matrix = item.transform.matrix;
                 matrix.invert ();
                 Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
-                item_transform.parent = ret;
+                ret.add (item_transform);
             }
             catch (Graphic.Error err)
             {
@@ -533,11 +533,11 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             Graphic.Point pos = item.origin;
             Graphic.Transform item_translate = new Graphic.Transform.identity ();
             item_translate.translate (pos.x, pos.y);
-            item_translate.parent = ret;
+            ret.add (item_translate);
 
             Graphic.Matrix matrix = item.transform.matrix;
             Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
-            item_transform.parent = ret;
+            ret.add (item_transform);
         }
 
         return ret;

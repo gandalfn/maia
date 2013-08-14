@@ -306,7 +306,7 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
             {
                 case Core.Parser.Token.START_ELEMENT:
                     Function function = new Function (m_Owner, m_Element);
-                    function.parent = this;
+                    add (function);
                     function.parse (this);
                     break;
 
@@ -317,13 +317,13 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
                     if (m_Attribute.has_prefix("@"))
                     {
                         AttributeBind attr = new AttributeBind (m_Owner, m_Attribute);
-                        attr.parent = this;
+                        add (attr);
                         if (m_BindCallback != null) m_BindCallback (attr);
                     }
                     else if (m_Attribute != "")
                     {
                         Attribute attr = new Attribute (m_Owner, m_Attribute);
-                        attr.parent = this;
+                        add (attr);
                     }
                     break;
 

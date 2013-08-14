@@ -112,7 +112,7 @@ internal class Maia.Core.TimeoutPool : Object
         timeout.callback = inFunc;
         timeout.data = inData;
         timeout.notify = inNotify;
-        timeout.parent = this;
+        add (timeout);
 
         return timeout;
     }
