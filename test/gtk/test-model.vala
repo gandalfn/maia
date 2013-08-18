@@ -176,6 +176,12 @@ public class Maia.TestModel : Maia.TestCase
         unowned Gtk.Model.Column column_val = canvas.root.find (GLib.Quark.from_string ("val")) as Gtk.Model.Column;
         assert (column_val != null);
 
+        unowned Button? button = canvas.root.find (GLib.Quark.from_string ("button")) as Button;
+        assert (button != null);
+        button.clicked.connect (() => {
+            Test.message ("clicked");
+        });
+
         model.treemodel = list;
 
         var window = new global::Gtk.Window ();

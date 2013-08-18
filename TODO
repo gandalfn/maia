@@ -10,3 +10,4 @@ Bugs:
 - ItemResizable rotation
 - Incorrect position calculation on move pointer
 - When icon is smaller than label in button the icon is not aligned
+- Toggle button must be derive from Button

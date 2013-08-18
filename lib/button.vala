@@ -105,11 +105,7 @@ public class Maia.Button : Group, ItemPackable, ItemMovable
             label_item.stroke_color = stroke_color;
         });
 
-        label_item.button_press_event.connect (on_button_press);
-
-        // Connect onto pointer button press/release event
-        button_press_event.connect (on_button_press);
-        button_release_event.connect (on_button_release);
+        label_item.button_press_event.connect (on_button_press_event);
     }
 
     public Button (string inId, string? inLabel = null)
@@ -117,32 +113,49 @@ public class Maia.Button : Group, ItemPackable, ItemMovable
         GLib.Object (id: GLib.Quark.from_string (inId), label: inLabel);
     }
 
-    private bool
-    on_button_press (uint inButton, Graphic.Point inPoint)
+    protected override bool
+    on_button_press_event (uint inButton, Graphic.Point inPoint)
     {
-        if (inButton == 1)
+        Graphic.Point pos = Graphic.Point ((geometry.extents.size.width - size_requested.width) / 2,
+                                           (geometry.extents.size.height - size_requested.height) / 2);
+        Graphic.Rectangle area = Graphic.Rectangle (pos.x, pos.y, size_requested.width, size_requested.height);
+        bool ret = inPoint in area;
+
+        if (ret && inButton == 1)
         {
             m_Clicked = true;
 
+            grab_pointer (this);
+
             damage ();
         }
 
-        return true;
+        return ret;
     }
 
-    private bool
-    on_button_release (uint inButton, Graphic.Point inPoint)
+    protected override bool
+    on_button_release_event (uint inButton, Graphic.Point inPoint)
     {
-        if (inButton == 1)
+        Graphic.Point pos = Graphic.Point ((geometry.extents.size.width - size_requested.width) / 2,
+                                           (geometry.extents.size.height - size_requested.height) / 2);
+        Graphic.Rectangle area = Graphic.Rectangle (pos.x, pos.y, size_requested.width, size_requested.height);
+        bool ret = inPoint in area;
+
+        if (inButton == 1 && m_Clicked)
         {
             m_Clicked = false;
 
+            ungrab_pointer (this);
+
             damage ();
 
-            clicked ();
+            if (ret)
+            {
+                clicked ();
+            }
         }
 
-        return true;
+        return ret;
     }
 
     private void
