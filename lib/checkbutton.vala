@@ -53,7 +53,6 @@ public class Maia.CheckButton : ToggleButton
             }
         }
 
-
         return base.size_request (inSize);
     }
 

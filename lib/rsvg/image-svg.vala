@@ -87,7 +87,7 @@ internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
                 }
                 else
                 {
-                    handle = new global::Rsvg.Handle.from_data ((uint8[])data.to_utf8 (), data.to_utf8 ().length);
+                    handle = new global::Rsvg.Handle.from_data ((uint8[])data.to_utf8 ()); //, data.to_utf8 ().length);
                 }
 
                 m_Surface = new Graphic.Surface (handle.width, handle.height);

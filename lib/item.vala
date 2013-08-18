@@ -195,6 +195,12 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
     }
 
+    public Graphic.Size size_requested {
+        get {
+            return m_Size;
+        }
+    }
+
     public uint            layer        { get; set; default = 0; }
     public Graphic.Pattern fill_color   { get; set; default = null; }
     public Graphic.Pattern stroke_color { get; set; default = null; }

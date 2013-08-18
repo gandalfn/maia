@@ -78,6 +78,7 @@ public interface Maia.Canvas : Drawable
             Manifest.Element.register ("Entry",       typeof (Entry));
             Manifest.Element.register ("Grid",        typeof (Grid));
             Manifest.Element.register ("ToggleGroup", typeof (ToggleGroup));
+            Manifest.Element.register ("Button",      typeof (Button));
             Manifest.Element.register ("CheckButton", typeof (CheckButton));
             Manifest.Element.register ("Highlight",   typeof (Highlight));
             Manifest.Element.register ("Document",    typeof (Document));

@@ -131,6 +131,17 @@ public class Maia.TestModel : Maia.TestCase
                             "           }"+
                             "       ]" +
                             "   }" +
+                            "   Button.button { " +
+                            "       stroke-color: #7997AE;" +
+                            "       button-color: #C0C0C0;" +
+                            "       row: 1;" +
+                            "       yexpand: false;" +
+                            "       top_padding: 5;" +
+                            "       bottom_padding: 5;" +
+                            "       icon-filename: '/usr/share/icons/elementary/actions/24/add.svg';" +
+                            "       font-description: 'Liberation Bold 14';" +
+                            "       label: TEST;" +
+                            "   }" +
                             "}";
 
         Maia.Gtk.Canvas canvas = new Maia.Gtk.Canvas ();

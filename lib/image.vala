@@ -52,7 +52,7 @@ public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
     public string? filename { get; set; default = null; }
 
     // methods
-    public Image (string inId, string inFilename)
+    public Image (string inId, string? inFilename)
     {
         GLib.Object (id: GLib.Quark.from_string (inId), filename: inFilename);
     }

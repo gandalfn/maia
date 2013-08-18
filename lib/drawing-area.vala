@@ -124,7 +124,7 @@ public class Maia.DrawingArea : Group, ItemPackable
         {
             double asize = anchor_size + selected_border / 2;
             double arrow_size = anchor_size / 6;
-            Graphic.Size item_size = selected.size;
+            Graphic.Size item_size = selected.size_requested;
             item_size.resize (anchor_size + selected_border, anchor_size + selected_border);
 
             switch (m_SelectedItemState)

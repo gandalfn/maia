@@ -87,6 +87,7 @@ libmaia_la_SOURCES = \
     label.vala \
     entry.vala \
     grid.vala \
+    button.vala \
     togglegroup.vala \
     togglebutton.vala \
     checkbutton.vala \

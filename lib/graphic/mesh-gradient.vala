@@ -112,6 +112,12 @@ public class Maia.Graphic.MeshGradient : Gradient
             m_Path = inPath;
         }
 
+        internal override bool
+        can_append_child (Core.Object inChild)
+        {
+            return inChild is Control;
+        }
+
         internal override int
         compare (Core.Object inOther)
         {
@@ -123,7 +129,8 @@ public class Maia.Graphic.MeshGradient : Gradient
     public class ArcPatch : Patch
     {
         // methods
-        public ArcPatch (Graphic.Point inCenter, double inStart, double inEnd, double inRadius)
+        public ArcPatch (Graphic.Point inCenter, double inStart, double inEnd, double inRadius, Graphic.Color[] inColors)
+            requires (inColors.length <= 4)
         {
             double r_sin_A, r_cos_A;
             double r_sin_B, r_cos_B;
@@ -140,17 +147,54 @@ public class Maia.Graphic.MeshGradient : Gradient
             var path = new Path ();
             path.move_to (inCenter.x, inCenter.y);
             path.line_to (inCenter.x + r_cos_A, inCenter.y + r_sin_A);
-            path.curve_to (inCenter.x + r_cos_A - h * r_sin_A, inCenter.y + r_sin_A + h * r_cos_A,
-                           inCenter.x + r_cos_B + h * r_sin_B, inCenter.y + r_sin_B - h * r_cos_B,
-                           inCenter.x + r_cos_B, inCenter.y + r_sin_B);
+            path.curve_to (inCenter.x + r_cos_B, inCenter.y + r_sin_B,
+                           inCenter.x + r_cos_A - h * r_sin_A, inCenter.y + r_sin_A + h * r_cos_A,
+                           inCenter.x + r_cos_B + h * r_sin_B, inCenter.y + r_sin_B - h * r_cos_B);
             path.line_to (inCenter.x, inCenter.y);
 
             base (path);
+
+            // add colors
+            for (int cpt = 0; cpt < inColors.length; ++cpt)
+            {
+                add (new Graphic.MeshGradient.Patch.CornerColor (cpt, inColors[cpt]));
+            }
+        }
+    }
+
+    public class LinePatch : Patch
+    {
+        // methods
+        public LinePatch (Graphic.Rectangle inRectangle, Graphic.Color[] inColors)
+            requires (inColors.length <= 4)
+        {
+            // patch path
+            var path = new Path ();
+            path.move_to (inRectangle.origin.x, inRectangle.origin.y);
+            path.line_to (inRectangle.origin.x + inRectangle.size.width, inRectangle.origin.y);
+            path.line_to (inRectangle.origin.x + inRectangle.size.width, inRectangle.origin.y + inRectangle.size.height);
+            path.line_to (inRectangle.origin.x, inRectangle.origin.y + inRectangle.size.height);
+            path.line_to (inRectangle.origin.x, inRectangle.origin.y);
+
+            base (path);
+
+            // add colors
+            for (int cpt = 0; cpt < inColors.length; ++cpt)
+            {
+                add (new Graphic.MeshGradient.Patch.CornerColor (cpt, inColors[cpt]));
+            }
         }
     }
 
     // methods
     public MeshGradient ()
     {
+
+    }
+
+    internal override bool
+    can_append_child (Core.Object inChild)
+    {
+        return inChild is Patch;
     }
 }

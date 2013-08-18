@@ -1,0 +1,12 @@
+Fonctionnality:
+- Pagination of document items
+- Arrow item
+- Animations
+- Combobox
+- Popup
+- C++ binding
+
+Bugs:
+- ItemResizable rotation
+- Incorrect position calculation on move pointer
+- When icon is smaller than label in button the icon is not aligned
