@@ -335,7 +335,7 @@ public class Maia.Document : Item
                     else if (inChild == page.footer)
                     {
                         var position = Graphic.Point (page.geometry.extents.origin.x + Core.convert_inch_to_pixel (left_margin),
-                                                      page.content_geometry.extents.size.height - inChild.geometry.extents.size.height - Core.convert_inch_to_pixel (bottom_margin));
+                                                      page.geometry.extents.size.height - inChild.geometry.extents.size.height - Core.convert_inch_to_pixel (bottom_margin));
 
                         inChild.geometry.translate (inChild.geometry.extents.origin.invert ());
                         inChild.geometry.translate (position);

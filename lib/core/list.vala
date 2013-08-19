@@ -100,9 +100,8 @@ internal class Maia.Core.List<V> : Collection<V>
         internal override unowned V?
         get ()
             requires (m_List.stamp == stamp)
-            requires (m_Current != null)
         {
-            return m_Current.m_Value;
+            return m_Current == null ? null : m_Current.m_Value;
         }
 
         /**

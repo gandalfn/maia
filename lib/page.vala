@@ -226,7 +226,7 @@ internal class Maia.Page : GLib.Object
             inContext.save ();
             {
                 var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
-                                              content_geometry.extents.size.height - footer.geometry.extents.size.height - Core.convert_inch_to_pixel (m_Document.bottom_margin));
+                                              geometry.extents.size.height - footer.geometry.extents.size.height - Core.convert_inch_to_pixel (m_Document.bottom_margin));
 
                 footer.geometry.translate (footer.geometry.extents.origin.invert ());
                 footer.geometry.translate (position);
@@ -282,7 +282,7 @@ internal class Maia.Page : GLib.Object
         if (footer != null)
         {
             var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
-                                          content_geometry.extents.size.height - footer.geometry.extents.size.height - Core.convert_inch_to_pixel (m_Document.bottom_margin));
+                                          geometry.extents.size.height - footer.geometry.extents.size.height - Core.convert_inch_to_pixel (m_Document.bottom_margin));
 
             footer.geometry.translate (footer.geometry.extents.origin.invert ());
             footer.geometry.translate (position);
@@ -345,7 +345,7 @@ internal class Maia.Page : GLib.Object
         if (footer != null)
         {
             var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
-                                          content_geometry.extents.size.height - footer.geometry.extents.size.height - Core.convert_inch_to_pixel (m_Document.bottom_margin));
+                                          geometry.extents.size.height - footer.geometry.extents.size.height - Core.convert_inch_to_pixel (m_Document.bottom_margin));
 
             footer.geometry.translate (footer.geometry.extents.origin.invert ());
             footer.geometry.translate (position);
@@ -408,7 +408,7 @@ internal class Maia.Page : GLib.Object
         if (footer != null)
         {
             var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
-                                          content_geometry.extents.size.height - footer.geometry.extents.size.height - Core.convert_inch_to_pixel (m_Document.bottom_margin));
+                                          geometry.extents.size.height - footer.geometry.extents.size.height - Core.convert_inch_to_pixel (m_Document.bottom_margin));
 
             footer.geometry.translate (footer.geometry.extents.origin.invert ());
             footer.geometry.translate (position);
@@ -471,7 +471,7 @@ internal class Maia.Page : GLib.Object
         if (footer != null)
         {
             var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
-                                          content_geometry.extents.size.height - footer.geometry.extents.size.height - Core.convert_inch_to_pixel (m_Document.bottom_margin));
+                                          geometry.extents.size.height - footer.geometry.extents.size.height - Core.convert_inch_to_pixel (m_Document.bottom_margin));
 
             footer.geometry.translate (footer.geometry.extents.origin.invert ());
             footer.geometry.translate (position);

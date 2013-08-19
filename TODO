@@ -1,5 +1,6 @@
 Fonctionnality:
-- Pagination of document items
+- Pagination of document items [ Partial ]
+- Add page break
 - Arrow item
 - Animations
 - Combobox
@@ -11,3 +12,6 @@ Bugs:
 - Incorrect position calculation on move pointer
 - When icon is smaller than label in button the icon is not aligned
 - Toggle button must be derive from Button
+- Fix transform on document
+- Fix resize in document
+- Fix document footer draw

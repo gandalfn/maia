@@ -30,7 +30,8 @@ Document.worksheet {
     //transform: scale(1.2, 1.2);
     border_width: 5;
     background: #E0E0E0;
-    header: header;
+    header: 'header';
+    footer: 'footer';
 
     // Header
     Grid.header {
@@ -94,21 +95,36 @@ Document.worksheet {
                 text: "21/03/2012";
             }
         }
+    }
 
-        Entry.patient_info {
-            row: 1;
+    // Footer
+    Grid.footer {
+        row_spacing: 5;
+
+        Label.footer_right {
+            row: 0;
             column: 0;
-            columns: 3;
-
+            xexpand: false;
             right_padding: 5;
             left_padding: 5;
-            top_padding: 5;
-            yexpand: false;
-            bottom_padding: 5;
+        }
+
+        Label.footer_page_num {
+            row: 0;
+            column: 1;
+            right_padding: 5;
+            left_padding: 5;
             stroke_color: #000000;
-            font_description: "Liberation Sans 12";
-            lines: 5;
-            text: "Enter your text";
+            font_description: "Liberation Sans 14";
+            text: "Page num";
+        }
+
+        Label.footer_right {
+            row: 2;
+            column: 0;
+            xexpand: false;
+            right_padding: 5;
+            left_padding: 5;
         }
     }
 
@@ -135,7 +151,22 @@ Document.worksheet {
         Grid.content {
             row: 0;
             column: 1;
-            size: 700, 900;
+            size: 700, 980;
+
+            Entry.patient_info {
+              row: 0;
+              column: 0;
+
+              right_padding: 5;
+              left_padding: 5;
+              top_padding: 5;
+              yexpand: false;
+              bottom_padding: 5;
+              stroke_color: #000000;
+              font_description: "Liberation Sans 12";
+              lines: 5;
+              text: "Enter your text";
+            }
 
             DrawingArea.clinical_draw {
                 row: 1;
