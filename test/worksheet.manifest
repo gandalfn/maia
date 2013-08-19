@@ -30,6 +30,87 @@ Document.worksheet {
     //transform: scale(1.2, 1.2);
     border_width: 5;
     background: #E0E0E0;
+    header: header;
+
+    // Header
+    Grid.header {
+        row_spacing: 5;
+        grid_line_width: 1;
+        stroke_color: #000000;
+        Image.institution_logo {
+            row: 0;
+            column: 0;
+            xexpand: false;
+            yexpand: false;
+            right_padding: 5;
+            left_padding: 5;
+            size: 64, 64;
+            //filename: "/home/nicolas/Bureau/logo-ssi.png";
+            //icon-name: "gnome-run";
+            [
+            <svg version="1.1" width="48px" height="48px">
+              <g>
+                <polygon fill="#000000" stroke="#000000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" points="19.171,32.215 16.737,12.015 31.263,26.261 	"/>
+                <line fill="#000000" stroke="#000000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" x1="23.39" y1="25.662" x2="28.462" y2="35.984"/>
+              </g>
+              <path fill="none" stroke="#000000" stroke-width="3" d="M44.5,32.167c0,6.627-5.373,12-12,12h-17c-6.627,0-12-5.373-12-12V15.5c0-6.627,5.373-12,12-12h17c6.627,0,12,5.373,12,12V32.167z"/>
+            </svg>
+            ]
+        }
+
+        Label.institution_name {
+            row: 0;
+            column: 1;
+            yexpand: false;
+            right_padding: 5;
+            left_padding: 5;
+            stroke_color: #000000;
+            font_description: "Liberation Sans 17";
+            text: "Institution name";
+        }
+
+        Grid.exam_info {
+            row: 0;
+            column: 2;
+            xexpand: false;
+            yexpand: false;
+            homogeneous: true;
+
+            Label.exam_num {
+                row: 0;
+                right_padding: 5;
+                left_padding: 5;
+                stroke_color: #000000;
+                font_description: "Liberation Sans 12";
+                text: "Mon texte toto() ;  \"escape";
+            }
+
+            Label.date {
+                row: 2;
+                right_padding: 5;
+                left_padding: 5;
+                stroke_color: #000000;
+                font_description: "Liberation Sans 12";
+                text: "21/03/2012";
+            }
+        }
+
+        Entry.patient_info {
+            row: 1;
+            column: 0;
+            columns: 3;
+
+            right_padding: 5;
+            left_padding: 5;
+            top_padding: 5;
+            yexpand: false;
+            bottom_padding: 5;
+            stroke_color: #000000;
+            font_description: "Liberation Sans 12";
+            lines: 5;
+            text: "Enter your text";
+        }
+    }
 
     // Main content of worksheet
     Grid.main {
@@ -54,89 +135,7 @@ Document.worksheet {
         Grid.content {
             row: 0;
             column: 1;
-
-            // Header
-            Grid.header {
-                row: 0;
-                column: 0;
-                row_spacing: 5;
-                yexpand: false;
-                grid_line_width: 1;
-                stroke_color: #000000;
-                Image.institution_logo {
-                    row: 0;
-                    column: 0;
-                    xexpand: false;
-                    yexpand: false;
-                    right_padding: 5;
-                    left_padding: 5;
-                    size: 64, 64;
-                    //filename: "/home/nicolas/Bureau/logo-ssi.png";
-                    //icon-name: "gnome-run";
-                    [
-                    <svg version="1.1" width="48px" height="48px">
-                      <g>
-                        <polygon fill="#000000" stroke="#000000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" points="19.171,32.215 16.737,12.015 31.263,26.261 	"/>
-                        <line fill="#000000" stroke="#000000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" x1="23.39" y1="25.662" x2="28.462" y2="35.984"/>
-                      </g>
-                      <path fill="none" stroke="#000000" stroke-width="3" d="M44.5,32.167c0,6.627-5.373,12-12,12h-17c-6.627,0-12-5.373-12-12V15.5c0-6.627,5.373-12,12-12h17c6.627,0,12,5.373,12,12V32.167z"/>
-                    </svg>
-                    ]
-                }
-
-                Label.institution_name {
-                    row: 0;
-                    column: 1;
-                    yexpand: false;
-                    right_padding: 5;
-                    left_padding: 5;
-                    stroke_color: #000000;
-                    font_description: "Liberation Sans 17";
-                    text: "Institution name";
-                }
-
-                Grid.exam_info {
-                    row: 0;
-                    column: 2;
-                    xexpand: false;
-                    yexpand: false;
-                    homogeneous: true;
-
-                    Label.exam_num {
-                        row: 0;
-                        right_padding: 5;
-                        left_padding: 5;
-                        stroke_color: #000000;
-                        font_description: "Liberation Sans 12";
-                        text: "Mon texte toto() ;  \"escape";
-                    }
-
-                    Label.date {
-                        row: 2;
-                        right_padding: 5;
-                        left_padding: 5;
-                        stroke_color: #000000;
-                        font_description: "Liberation Sans 12";
-                        text: "21/03/2012";
-                    }
-                }
-
-                Entry.patient_info {
-                    row: 1;
-                    column: 0;
-                    columns: 3;
-
-                    right_padding: 5;
-                    left_padding: 5;
-                    top_padding: 5;
-                    yexpand: false;
-                    bottom_padding: 5;
-                    stroke_color: #000000;
-                    font_description: "Liberation Sans 12";
-                    lines: 5;
-                    text: "Enter your text";
-                }
-            }
+            size: 700, 900;
 
             DrawingArea.clinical_draw {
                 row: 1;

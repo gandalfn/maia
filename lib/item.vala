@@ -49,8 +49,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         construct set {
             base.parent = value;
 
+            // Update transform matrix
             m_TransformToItemSpace = get_transform_to_item_space ();
             m_TransformToRootSpace = get_transform_to_root_space ();
+
         }
     }
 
@@ -310,6 +312,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         not_dumpable_attributes.insert ("geometry");
         not_dumpable_attributes.insert ("damaged");
         not_dumpable_attributes.insert ("is-packable");
+        not_dumpable_attributes.insert ("size-requested");
 
         // check if object is packable
         m_IsPackable = this is ItemPackable;
@@ -397,6 +400,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             {
                 geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
             }
+
             // damage parent
             (parent as Item).damage (old_geometry);
         }

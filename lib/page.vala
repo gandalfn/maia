@@ -72,94 +72,416 @@ public enum Maia.PageFormat
     }
 }
 
-internal class Maia.Page : Group
+internal class Maia.Page : GLib.Object
 {
+    // properties
+    private unowned Document        m_Document;
+    private Core.List<Item> m_Childs;
+
     // accessors
-    internal override string tag {
-        get {
-            return "Page";
+    public uint num { get; set; default = 1; }
+    public unowned Item? header { get; set; default = null; }
+    public unowned Item? footer { get; set; default = null; }
+
+
+    public Graphic.Region geometry {
+        owned get {
+            // Get formal position of page
+            var position = Graphic.Point (m_Document.border_width,
+                                          m_Document.border_width + ((m_Document.format.to_size ().height + (m_Document.border_width * 2.0)) * (num - 1)));
+
+            // Get formal page size
+            var size = m_Document.format.to_size ();
+
+            return new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
         }
     }
 
-    public uint num { get; set; default = 1; }
+    public Graphic.Region content_geometry {
+        owned get {
+            // Get formal position of page
+            var position = Graphic.Point (m_Document.border_width,
+                                          m_Document.border_width + ((m_Document.format.to_size ().height + (m_Document.border_width * 2.0)) * (num - 1)));
 
-    // signals
-    public signal void item_page_changed (Item inItem);
+            // Add margins
+            position.translate (Graphic.Point (Core.convert_inch_to_pixel (m_Document.left_margin),
+                                               Core.convert_inch_to_pixel (m_Document.top_margin)));
+
+            // Add header height
+            if (m_Document.header != null)
+            {
+                position.translate (Graphic.Point (0, header.size_requested.height));
+            }
+
+            // Get formal page size
+            var size = m_Document.format.to_size ();
+
+            // Suppress margins
+            size.resize (-Core.convert_inch_to_pixel (m_Document.left_margin + m_Document.right_margin),
+                         -Core.convert_inch_to_pixel (m_Document.top_margin + m_Document.bottom_margin));
+
+            // Suppress header height
+            if (m_Document.header != null)
+            {
+                size.resize (0, -header.size_requested.height);
+            }
+
+            // Suppress footer height
+            if (m_Document.footer != null)
+            {
+                size.resize (0, -footer.size_requested.height);
+            }
+
+            return new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
+        }
+    }
 
     // methods
-    public Page (string inId, uint inPageNum)
+    public Page (Document inDocument, uint inPageNum)
     {
-        GLib.Object (id: GLib.Quark.from_string (inId), num: inPageNum);
+        m_Document = inDocument;
+        m_Childs = new Core.List<Item> ();
+        num = inPageNum;
     }
 
-    private void
-    on_item_page_changed (GLib.Object inObject, GLib.ParamSpec inSpec)
+    public void
+    add (Item inItem)
     {
-        unowned Item item = (Item)inObject;
-
-        if (item.page != num)
+        if (inItem != header && inItem != footer)
         {
-            item_page_changed (item);
+            // Insert child in list
+            m_Childs.insert (inItem);
         }
     }
 
-    internal override void
-    insert_child (Core.Object inObject)
+    public void
+    remove (Maia.Item inItem)
     {
-        base.insert_child (inObject);
-
-        if (can_append_child (inObject) && inObject is Item)
+        if (inItem != header && inItem != footer)
         {
-            unowned Item item = (Item)inObject;
+            m_Childs.remove (inItem);
+        }
+    }
 
-            // update the page num of item
-            if (item.page == 0)
+    public void
+    damage (Graphic.Region inArea)
+    {
+        inArea.translate (geometry.extents.origin.invert ());
+
+        foreach (unowned Item child in m_Childs)
+        {
+            var area = inArea.copy ();
+            area.intersect (child.geometry);
+            area.translate (child.geometry.extents.origin.invert ());
+            child.damage (area);
+        }
+    }
+
+    public void
+    update (Graphic.Context inContext) throws Graphic.Error
+    {
+        foreach (unowned Item child in m_Childs)
+        {
+            // Get child position and size
+            var item_position = child.position;
+            var item_size     = child.size;
+
+            // Set child size allocation
+            var child_allocation = new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y, item_size.width, item_size.height));
+            child.update (inContext, child_allocation);
+        }
+    }
+
+    public void
+    draw (Graphic.Context inContext) throws Graphic.Error
+    {
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, "Draw page %u", num);
+
+        if (header != null)
+        {
+            inContext.save ();
             {
-                item.page = num;
+                var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
+                                              geometry.extents.origin.y + Core.convert_inch_to_pixel (m_Document.top_margin));
+
+                header.geometry.translate (header.geometry.extents.origin.invert ());
+                header.geometry.translate (position);
+
+                header.draw (inContext);
             }
-
-            // Connect onto item page changed
-            item.notify["page"].connect (on_item_page_changed);
+            inContext.restore ();
         }
-    }
 
-    internal override void
-    remove_child (Core.Object inObject)
-    {
-        base.remove_child (inObject);
-
-        if (inObject is Item)
+        foreach (unowned Item item in m_Childs)
         {
-            // Disconnect from item page changed
-            ((Item)inObject).notify["page"].disconnect (on_item_page_changed);
+            item.draw (inContext);
         }
-    }
 
-    internal override void
-    update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
-    {
-        if (geometry == null)
+        if (footer != null)
         {
-            Log.info (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "allocation: %s", inAllocation.extents.to_string ());
-
-            geometry = inAllocation;
-
-            foreach (unowned Core.Object child in this)
+            inContext.save ();
             {
-                if (child is Item)
+                var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
+                                              content_geometry.extents.size.height - footer.geometry.extents.size.height - Core.convert_inch_to_pixel (m_Document.bottom_margin));
+
+                footer.geometry.translate (footer.geometry.extents.origin.invert ());
+                footer.geometry.translate (position);
+
+                footer.draw (inContext);
+            }
+            inContext.restore ();
+        }
+    }
+
+    public bool
+    button_press_event (uint inButton, Graphic.Point inPoint)
+    {
+        // parse child from last to first since item has sorted by layer
+        Core.Iterator<unowned Item> iter = m_Childs.end ();
+        if (iter.get () != null)
+        {
+            do
+            {
+                // Transform point to item coordinate space
+                Graphic.Point point = m_Document.convert_to_child_item_space (iter.get (), inPoint);
+
+                // point under child
+                if (iter.get ().button_press_event (inButton, point))
                 {
-                    Item item = (Item)child;
-
-                    // Get child position and size
-                    var item_position = item.position;
-
-                    // Set child size allocation
-                    var child_allocation = new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y, inAllocation.extents.size.width, inAllocation.extents.size.height));
-                    item.update (inContext, child_allocation);
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button press event in %s page %u", iter.get ().name, num);
+                    return true;
                 }
-            }
-
-            damage ();
+            } while (iter.prev ());
         }
+
+        // Check if event is under header
+        if (header != null)
+        {
+            var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
+                                          geometry.extents.origin.y + Core.convert_inch_to_pixel (m_Document.top_margin));
+
+            header.geometry.translate (header.geometry.extents.origin.invert ());
+            header.geometry.translate (position);
+
+            // Transform point to item coordinate space
+            Graphic.Point point = m_Document.convert_to_child_item_space (header, inPoint);
+
+            if (header.button_press_event (inButton, point))
+            {
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button press event in header %s page %u", header.name, num);
+                return true;
+            }
+        }
+
+
+        // Check if event is under footer
+        if (footer != null)
+        {
+            var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
+                                          content_geometry.extents.size.height - footer.geometry.extents.size.height - Core.convert_inch_to_pixel (m_Document.bottom_margin));
+
+            footer.geometry.translate (footer.geometry.extents.origin.invert ());
+            footer.geometry.translate (position);
+
+            // Transform point to item coordinate space
+            Graphic.Point point = m_Document.convert_to_child_item_space (footer, inPoint);
+
+            if (footer.button_press_event (inButton, point))
+            {
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button press event in footer %s page %u", footer.name, num);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool
+    button_release_event (uint inButton, Graphic.Point inPoint)
+    {
+        // parse child from last to first since item has sorted by layer
+        Core.Iterator<unowned Item> iter = m_Childs.end ();
+        if (iter.get () != null)
+        {
+            do
+            {
+                // Transform point to item coordinate space
+                Graphic.Point point = m_Document.convert_to_child_item_space (iter.get (), inPoint);
+
+                // point under child
+                if (iter.get ().button_release_event (inButton, point))
+                {
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button release event in %s page %u", iter.get ().name, num);
+                    return true;
+                }
+            } while (iter.prev ());
+        }
+
+        // Check if event is under header
+        if (header != null)
+        {
+            var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
+                                          geometry.extents.origin.y + Core.convert_inch_to_pixel (m_Document.top_margin));
+
+            header.geometry.translate (header.geometry.extents.origin.invert ());
+            header.geometry.translate (position);
+
+            // Transform point to item coordinate space
+            Graphic.Point point = m_Document.convert_to_child_item_space (header, inPoint);
+
+            if (header.button_release_event (inButton, point))
+            {
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button release event in header %s page %u", header.name, num);
+                return true;
+            }
+        }
+
+
+        // Check if event is under footer
+        if (footer != null)
+        {
+            var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
+                                          content_geometry.extents.size.height - footer.geometry.extents.size.height - Core.convert_inch_to_pixel (m_Document.bottom_margin));
+
+            footer.geometry.translate (footer.geometry.extents.origin.invert ());
+            footer.geometry.translate (position);
+
+            // Transform point to item coordinate space
+            Graphic.Point point = m_Document.convert_to_child_item_space (footer, inPoint);
+
+            if (footer.button_release_event (inButton, point))
+            {
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button release event in footer %s page %u", footer.name, num);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool
+    motion_event (Graphic.Point inPoint)
+    {
+        // parse child from last to first since item has sorted by layer
+        Core.Iterator<unowned Item> iter = m_Childs.end ();
+        if (iter.get () != null)
+        {
+            do
+            {
+                // Transform point to item coordinate space
+                Graphic.Point point = m_Document.convert_to_child_item_space (iter.get (), inPoint);
+
+                // point under child
+                if (iter.get ().motion_event (point))
+                {
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "motion event in %s page %u", iter.get ().name, num);
+                    return true;
+                }
+            } while (iter.prev ());
+        }
+
+        // Check if event is under header
+        if (header != null)
+        {
+            var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
+                                          geometry.extents.origin.y + Core.convert_inch_to_pixel (m_Document.top_margin));
+
+            header.geometry.translate (header.geometry.extents.origin.invert ());
+            header.geometry.translate (position);
+
+            // Transform point to item coordinate space
+            Graphic.Point point = m_Document.convert_to_child_item_space (header, inPoint);
+
+            if (header.motion_event (point))
+            {
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "motion event in header %s page %u", header.name, num);
+                return true;
+            }
+        }
+
+
+        // Check if event is under footer
+        if (footer != null)
+        {
+            var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
+                                          content_geometry.extents.size.height - footer.geometry.extents.size.height - Core.convert_inch_to_pixel (m_Document.bottom_margin));
+
+            footer.geometry.translate (footer.geometry.extents.origin.invert ());
+            footer.geometry.translate (position);
+
+            // Transform point to item coordinate space
+            Graphic.Point point = m_Document.convert_to_child_item_space (footer, inPoint);
+
+            if (footer.motion_event (point))
+            {
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "motion event in footer %s page %u", footer.name, num);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public bool
+    scroll_event (Scroll inScroll, Graphic.Point inPoint)
+    {
+        // parse child from last to first since item has sorted by layer
+        Core.Iterator<unowned Item> iter = m_Childs.end ();
+        if (iter.get () != null)
+        {
+            do
+            {
+                // Transform point to item coordinate space
+                Graphic.Point point = m_Document.convert_to_child_item_space (iter.get (), inPoint);
+
+                // point under child
+                if (iter.get ().scroll_event (inScroll, point))
+                {
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "scroll event in %s page %u", iter.get ().name, num);
+                    return true;
+                }
+            } while (iter.prev ());
+        }
+
+        // Check if event is under header
+        if (header != null)
+        {
+            var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
+                                          geometry.extents.origin.y + Core.convert_inch_to_pixel (m_Document.top_margin));
+
+            header.geometry.translate (header.geometry.extents.origin.invert ());
+            header.geometry.translate (position);
+
+            // Transform point to item coordinate space
+            Graphic.Point point = m_Document.convert_to_child_item_space (header, inPoint);
+
+            if (header.scroll_event (inScroll, point))
+            {
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "scroll event in header %s page %u", header.name, num);
+                return true;
+            }
+        }
+
+
+        // Check if event is under footer
+        if (footer != null)
+        {
+            var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
+                                          content_geometry.extents.size.height - footer.geometry.extents.size.height - Core.convert_inch_to_pixel (m_Document.bottom_margin));
+
+            footer.geometry.translate (footer.geometry.extents.origin.invert ());
+            footer.geometry.translate (position);
+
+            // Transform point to item coordinate space
+            Graphic.Point point = m_Document.convert_to_child_item_space (footer, inPoint);
+
+            if (footer.scroll_event (inScroll, point))
+            {
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "scroll event in footer %s page %u", footer.name, num);
+                return true;
+            }
+        }
+
+        return false;
     }
 }

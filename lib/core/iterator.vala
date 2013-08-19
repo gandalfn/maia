@@ -35,6 +35,13 @@ public abstract class Maia.Core.Iterator<V>
     public abstract bool next ();
 
     /**
+     * Backward to the previous element in the iteration.
+     *
+     * @return true if the iterator has a next element
+     */
+    public virtual bool prev () { return false; }
+
+    /**
      * Returns the current element in the iteration.
      *
      * @return the current element in the iteration

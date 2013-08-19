@@ -78,6 +78,25 @@ internal class Maia.Core.List<V> : Collection<V>
         /**
          * {@inheritDoc}
          */
+        internal override bool
+        prev ()
+            requires (m_List.stamp == stamp)
+        {
+            bool ret = false;
+
+            if (m_Current != null && m_Current.m_Prev != null)
+            {
+                m_Started = true;
+                m_Current = m_Current.m_Prev;
+                ret = true;
+            }
+
+            return ret;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
         internal override unowned V?
         get ()
             requires (m_List.stamp == stamp)
@@ -376,6 +395,19 @@ internal class Maia.Core.List<V> : Collection<V>
     iterator ()
     {
         return new Iterator<V> (this);
+    }
+
+    /**
+     * Returns the last Iterator that can be used for simple iteration over a
+     * collection.
+     *
+     * @return a Iterator that can be used for simple iteration over a
+     *         collection
+     */
+    public Maia.Core.Iterator<V>
+    end ()
+    {
+        return new Iterator<V> (this, m_Tail);
     }
 
     /**

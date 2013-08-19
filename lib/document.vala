@@ -20,8 +20,8 @@
 public class Maia.Document : Item
 {
     // properties
-    private uint m_NbPages = 0;
-    private Graphic.Surface m_PageShadow;
+    private Graphic.Surface         m_PageShadow;
+    private Core.List<Page>         m_Pages;
     private Core.List<unowned Page> m_VisiblePages;
 
     // accessors
@@ -50,9 +50,12 @@ public class Maia.Document : Item
     public int  border_width { get; set; default = 0; }
     public uint nb_pages {
         get {
-            return m_NbPages;
+            return m_Pages.length;
         }
     }
+
+    public string header { get; set; default = null; }
+    public string footer { get; set; default = null; }
 
     // static methods
     static construct
@@ -83,12 +86,11 @@ public class Maia.Document : Item
         // Add not dumpable attributes
         not_dumpable_attributes.insert ("nb-pages");
 
+        // create pages list
+        m_Pages = new Core.List<Page> ();
+
         // create visible pages list
         m_VisiblePages = new Core.List<unowned Page> ();
-
-        // create first page
-        var page = new Page (name + "-" + (m_NbPages + 1).to_string (), m_NbPages + 1);
-        add (page);
 
         // connect onto border width and format change to create page shadow
         notify["format"].connect (on_page_shadow_change);
@@ -138,99 +140,137 @@ public class Maia.Document : Item
     }
 
     private void
-    on_item_page_changed (Item inItem)
+    append_page ()
     {
-        // Get last page
-        unowned Page page = last () as Page;
+        // Create new page
+        var page = new Page (this, m_Pages.length + 1);
 
-        // Item has a page num
-        if (inItem.page > 0)
+        // Add header if any
+        if (header != null)
         {
-            if (m_NbPages >= inItem.page)
+            unowned Item? header_item = find (GLib.Quark.from_string (header), false) as Item;
+            if (header_item != null)
             {
-                // Search page in child
-                foreach (unowned Core.Object child in this)
-                {
-                    if (child is Page)
-                    {
-                        // we found page
-                        if (((Page)child).num == inItem.page)
-                        {
-                            page = (Page)child;
-                            break;
-                        }
-                    }
-                }
+                // we found header add to page
+                page.header = header_item;
             }
             else
             {
-                // Create missing pages
-                for (int cpt = (int)m_NbPages + 1; cpt <= inItem.page; ++cpt)
-                {
-                    var new_page = new Page (name + "-" + cpt.to_string (), cpt);
-                    add (new_page);
-                    page = new_page;
-                }
+                Log.error (GLib.Log.METHOD, Log.Category.CANVAS_PARSING, "Could not find %s header item in document", header);
             }
         }
 
-        // Append child in Page
-        page.add (inItem);
+        // Add footer if any
+        if (footer != null)
+        {
+            unowned Item? footer_item = find (GLib.Quark.from_string (footer), false) as Item;
+            if (footer_item != null)
+            {
+                // we found header add to page
+                page.footer = footer_item;
+            }
+            else
+            {
+                Log.error (GLib.Log.METHOD, Log.Category.CANVAS_PARSING, "Could not find %s footer item in document", header);
+            }
+        }
+
+        // Add page to list of page
+        m_Pages.insert (page);
     }
 
-    internal override bool
-    can_append_child (Core.Object inObject)
+    private void
+    paginate_item (Item inItem, ref Graphic.Point inoutCurrentPosition)
     {
-        return inObject is Page || inObject is ToggleGroup || inObject is Model;
+        // Get last page
+        unowned Page? page = m_Pages.last ();
+
+        if (inItem != page.header && inItem != page.footer)
+        {
+            // Get item allocated size
+            var item_size = inItem.size;
+
+            // Check if item size + current position does not overlap two page
+            var page_content = page.content_geometry;
+            if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
+            {
+                bool page_added = false;
+
+                // Check if childs can be split in pages
+                foreach (unowned Core.Object child in inItem)
+                {
+                    unowned Item? child_item = child as Item;
+                    if (child_item != null)
+                    {
+                        paginate_item (child_item, ref inoutCurrentPosition);
+                        page_added = true;
+                    }
+                }
+
+                if (!page_added)
+                {
+                    // Append a new page
+                    append_page  ();
+
+                    // Set current page
+                    page = m_Pages.last ();
+
+                    // Update current position
+                    inoutCurrentPosition = page.content_geometry.extents.origin;
+                }
+            }
+
+            // Add item to this page
+            page.add (inItem);
+
+            // Set item position
+            inItem.position = inoutCurrentPosition;
+
+            // Set width has page if item is direct child
+            if (inItem.parent == this)
+            {
+                item_size.width = page.content_geometry.extents.size.width;
+                inItem.size = item_size;
+            }
+
+            // Add item height to current position
+            inoutCurrentPosition.y += item_size.height;
+        }
     }
 
-    internal override void
-    insert_child (Core.Object inChild)
+    private void
+    paginate ()
     {
-        // If child is a page append child in document
-        if (inChild is Page)
+        // Clear page list
+        m_Pages.clear ();
+
+        // Add first page
+        append_page ();
+
+        // Set current position
+        Graphic.Point current_position = m_Pages.last ().content_geometry.extents.origin;
+
+        // Parse all childs
+        foreach (unowned Core.Object child in this)
         {
-            // Add page to document
-            base.insert_child (inChild);
-
-            // Connect onto item page changed
-            ((Page)inChild).item_page_changed.connect (on_item_page_changed);
-
-            // Increment counter of pages
-            m_NbPages++;
+            unowned Item? item = child as Item;
+            if (item != null);
+            {
+                paginate_item (item, ref current_position);
+            }
         }
-        // If child is not a page append child in good page
-        else if (inChild is Item)
-        {
-            on_item_page_changed ((Item)inChild);
-        }
-        else
-        {
-            base.insert_child (inChild);
-        }
-    }
-
-    internal override void
-    remove_child (Core.Object inChild)
-    {
-        if (inChild is Page)
-        {
-            // Disconnect from item page changed
-            ((Page)inChild).item_page_changed.disconnect (on_item_page_changed);
-
-            // Decrement the counter of pages
-            m_NbPages--;
-        }
-
-        base.remove_child (inChild);
     }
 
     internal override Graphic.Size
     size_request (Graphic.Size inSize)
     {
+        // Paginate
+        paginate ();
+
+        // Calculate the size
         var page_size = format.to_size (resolution);
         page_size.resize (border_width * 2.0, border_width * 2.0);
-        page_size.height *= m_NbPages;
+        page_size.height *= m_Pages.length;
         page_size.transform (transform);
 
         return page_size;
@@ -239,11 +279,7 @@ public class Maia.Document : Item
     internal override void
     on_child_damaged (Drawable inChild, Graphic.Region? inArea)
     {
-        if (!(inChild is Page))
-        {
-            base.on_child_damaged (inChild, inArea);
-        }
-        else if (inChild.geometry != null)
+        if (inChild.geometry != null)
         {
             Graphic.Region damaged_area;
 
@@ -284,41 +320,44 @@ public class Maia.Document : Item
             // Get visible area
             var visible_area = inAllocation.copy ();
             visible_area.translate (position);
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "visible area: %s\n", visible_area.extents.to_string ());
 
-            // Update page geometry
-            foreach (unowned Core.Object child in this)
+            if (m_Pages.first () != null)
             {
-                if (child is Page)
+                unowned Page first = m_Pages.first ();
+                if (first.header != null && first.header.geometry == null)
                 {
-                    Page page = (Page)child;
+                    var item_size = first.header.size;
+                    Graphic.Region header_allocation = new Graphic.Region (Graphic.Rectangle (geometry.extents.origin.x, geometry.extents.origin.y,
+                                                                                              first.content_geometry.extents.size.width, item_size.height));
 
-                    // Get paper size
-                    Graphic.Region child_allocation = format.to_region ();
+                    first.header.update (inContext, header_allocation);
+                }
 
-                    // Add margins
-                    Graphic.Size child_size = child_allocation.extents.size;
-                    child_size.resize (-Core.convert_inch_to_pixel (left_margin) - Core.convert_inch_to_pixel (right_margin),
-                                       -Core.convert_inch_to_pixel (top_margin) - Core.convert_inch_to_pixel (bottom_margin));
-                    child_allocation.resize (child_size);
-                    child_allocation.translate (get_page_position (page.num));
-                    child_allocation.translate (Graphic.Point (Core.convert_inch_to_pixel (left_margin), Core.convert_inch_to_pixel (top_margin)));
+                if (first.footer != null && first.footer.geometry == null)
+                {
+                    var item_size = first.footer.size;
+                    Graphic.Region footer_allocation = new Graphic.Region (Graphic.Rectangle (geometry.extents.origin.x, geometry.extents.origin.y,
+                                                                                              first.content_geometry.extents.size.width, item_size.height));
 
-                    // Update page geometry
-                    page.update (inContext, child_allocation);
-
-                    // If page is in document geometry add it to visible pages
-                    if (visible_area.contains_rectangle (page.geometry.extents) != Graphic.Region.Overlap.OUT)
-                    {
-                        m_VisiblePages.insert (page);
-                    }
-                    else if (m_VisiblePages.length > 0)
-                    {
-                        break;
-                    }
+                    first.footer.update (inContext, footer_allocation);
                 }
             }
 
+            // Update each page
+            foreach (unowned Page page in m_Pages)
+            {
+                page.update (inContext);
+
+                // If page is in document geometry add it to visible pages
+                if (visible_area.contains_rectangle (page.geometry.extents) != Graphic.Region.Overlap.OUT)
+                {
+                    m_VisiblePages.insert (page);
+                }
+                else if (m_VisiblePages.length > 0)
+                {
+                    break;
+                }
+            }
 
             damage ();
         }
@@ -383,43 +422,6 @@ public class Maia.Document : Item
         }
     }
 
-    internal override string
-    to_string ()
-    {
-        string ret = dump_declaration ();
-
-        if (ret != "")
-        {
-            ret += " {\n";
-
-            ret += dump_attributes ();
-
-            foreach (unowned Core.Object child in this)
-            {
-                if (child is Page)
-                {
-                    ret += (child as Page).dump_childs ();
-                }
-                else
-                {
-                    ret += (child as Manifest.Element).dump_childs ();
-                }
-            }
-
-            ret += dump_characters ();
-
-            ret += "}\n";
-        }
-
-        return ret;
-    }
-
-    internal Graphic.Point
-    get_page_position (uint inPageNum)
-    {
-        return Graphic.Point (border_width, border_width + ((format.to_size ().height + (border_width* 2.0)) * (inPageNum - 1)));
-    }
-
     internal override bool
     on_button_press_event (uint inButton, Graphic.Point inPoint)
     {
@@ -439,15 +441,11 @@ public class Maia.Document : Item
 
                 foreach (unowned Page page in m_VisiblePages)
                 {
-                    var child_point = convert_to_child_item_space (page, point);
-
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $child_point");
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $point");
 
                     // point under child
-                    if (page.button_press_event (inButton, child_point))
+                    if (page.button_press_event (inButton, point))
                     {
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "press event in %s document %s", page.name, name);
-
                         // event occurate under child stop signal
                         ret = false;
                         GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
@@ -483,15 +481,11 @@ public class Maia.Document : Item
 
                 foreach (unowned Page page in m_VisiblePages)
                 {
-                    var child_point = convert_to_child_item_space (page, point);
-
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $child_point");
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $point");
 
                     // point under child
-                    if (page.button_release_event (inButton, child_point))
+                    if (page.button_release_event (inButton, point))
                     {
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "release event in %s document %s", page.name, name);
-
                         // event occurate under child stop signal
                         ret = false;
                         GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
@@ -527,15 +521,11 @@ public class Maia.Document : Item
 
                 foreach (unowned Page page in m_VisiblePages)
                 {
-                    var child_point = convert_to_child_item_space (page, point);
-
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $child_point");
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $point");
 
                     // point under child
-                    if (page.motion_event (child_point))
+                    if (page.motion_event (point))
                     {
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "motion event in %s document %s", page.name, name);
-
                         // event occurate under child stop signal
                         ret = false;
                         GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
@@ -571,15 +561,11 @@ public class Maia.Document : Item
 
                 foreach (unowned Page page in m_VisiblePages)
                 {
-                    var child_point = convert_to_child_item_space (page, point);
-
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $child_point");
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $point");
 
                     // point under child
-                    if (page.scroll_event (inScroll, child_point))
+                    if (page.scroll_event (inScroll, point))
                     {
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "scroll event in %s document %s", page.name, name);
-
                         // event occurate under child stop signal
                         ret = true;
                         break;
