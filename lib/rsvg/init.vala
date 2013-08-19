@@ -26,7 +26,9 @@ namespace Maia.Rsvg
     {
         if (!s_Initialized)
         {
+#if !LIBRSVG_2_36
             global::Rsvg.init ();
+#endif
 
             Core.Any.delegate (typeof (Graphic.ImageSvg),  typeof (ImageSvg));
 

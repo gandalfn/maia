@@ -17,7 +17,8 @@ libmaia_rsvg_la_CFLAGS = \
 
 libmaia_rsvg_la_VALAFLAGS = \
     --pkg=cairo \
-    --pkg=librsvg-2.0
+    --pkg=librsvg-2.0 \
+    -D $(MAIA_RSVG_VERSION)
 
 libmaia_rsvg_la_SOURCES = \
     image-svg.vala \

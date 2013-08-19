@@ -95,6 +95,9 @@ public class Maia.Document : Item
         // connect onto border width and format change to create page shadow
         notify["format"].connect (on_page_shadow_change);
         notify["border-width"].connect (on_page_shadow_change);
+
+        // connect onto position changed
+        notify["position"].connect (on_position_changed);
     }
 
     public Document (string inId, PageFormat inFormat)
@@ -199,11 +202,14 @@ public class Maia.Document : Item
                 // Check if childs can be split in pages
                 foreach (unowned Core.Object child in inItem)
                 {
-                    unowned Item? child_item = child as Item;
-                    if (child_item != null)
+                    if (child is View)
                     {
-                        paginate_item (child_item, ref inoutCurrentPosition);
-                        page_added = true;
+                        unowned Item? child_item = child as Item;
+                        if (child_item != null)
+                        {
+                            paginate_item (child_item, ref inoutCurrentPosition);
+                            page_added = true;
+                        }
                     }
                 }
 
@@ -244,6 +250,9 @@ public class Maia.Document : Item
         // Clear page list
         m_Pages.clear ();
 
+        // Clear visible page list
+        m_VisiblePages.clear ();
+
         // Add first page
         append_page ();
 
@@ -257,6 +266,35 @@ public class Maia.Document : Item
             if (item != null);
             {
                 paginate_item (item, ref current_position);
+            }
+        }
+    }
+
+    private void
+    on_position_changed ()
+    {
+        if (geometry != null)
+        {
+            // Clear visible page list
+            m_VisiblePages.clear ();
+
+            // Get visible area
+            var visible_area = geometry.copy ();
+            visible_area.translate (position);
+
+            // Update each page
+            foreach (unowned Page page in m_Pages)
+            {
+                // If page is in document geometry add it to visible pages
+                if (visible_area.contains_rectangle (page.geometry.extents) != Graphic.Region.Overlap.OUT)
+                {
+                    m_VisiblePages.insert (page);
+                    page.damage (visible_area);
+                }
+                else if (m_VisiblePages.length > 0)
+                {
+                    break;
+                }
             }
         }
     }
@@ -281,27 +319,75 @@ public class Maia.Document : Item
     {
         if (inChild.geometry != null)
         {
-            Graphic.Region damaged_area;
-
-            if (inArea == null)
+            unowned Page first = m_Pages.first ();
+            if (first != null && (first.header == inChild || first.footer == inChild))
             {
-                damaged_area = inChild.geometry.copy ();
+                foreach (unowned Page page in m_VisiblePages)
+                {
+                    if (inChild == page.header)
+                    {
+                        var position = Graphic.Point (page.geometry.extents.origin.x + Core.convert_inch_to_pixel (left_margin),
+                                                      page.geometry.extents.origin.y + Core.convert_inch_to_pixel (top_margin));
+
+                        inChild.geometry.translate (inChild.geometry.extents.origin.invert ());
+                        inChild.geometry.translate (position);
+                    }
+                    else if (inChild == page.footer)
+                    {
+                        var position = Graphic.Point (page.geometry.extents.origin.x + Core.convert_inch_to_pixel (left_margin),
+                                                      page.content_geometry.extents.size.height - inChild.geometry.extents.size.height - Core.convert_inch_to_pixel (bottom_margin));
+
+                        inChild.geometry.translate (inChild.geometry.extents.origin.invert ());
+                        inChild.geometry.translate (position);
+                    }
+
+                    Graphic.Region damaged_area;
+
+                    if (inArea == null)
+                    {
+                        damaged_area = inChild.geometry.copy ();
+                    }
+                    else
+                    {
+                        damaged_area = inArea.copy ();
+                        damaged_area.transform (inChild.transform);
+                        damaged_area.translate (inChild.geometry.extents.origin);
+                    }
+
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
+
+                    // Remove the offset of scrolling
+                    damaged_area.translate (position.invert ());
+                    damaged_area.transform (transform);
+
+                    // damage item
+                    damage (damaged_area);
+                }
             }
             else
             {
-                damaged_area = inArea.copy ();
-                damaged_area.transform (inChild.transform);
-                damaged_area.translate (inChild.geometry.extents.origin);
+                Graphic.Region damaged_area;
+
+                if (inArea == null)
+                {
+                    damaged_area = inChild.geometry.copy ();
+                }
+                else
+                {
+                    damaged_area = inArea.copy ();
+                    damaged_area.transform (inChild.transform);
+                    damaged_area.translate (inChild.geometry.extents.origin);
+                }
+
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
+
+                // Remove the offset of scrolling
+                damaged_area.translate (position.invert ());
+                damaged_area.transform (transform);
+
+                // damage item
+                damage (damaged_area);
             }
-
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
-
-            // Remove the offset of scrolling
-            damaged_area.translate (position.invert ());
-            damaged_area.transform (transform);
-
-            // damage item
-            damage (damaged_area);
         }
     }
 
@@ -313,13 +399,6 @@ public class Maia.Document : Item
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "");
 
             geometry = inAllocation;
-
-            // Clear visible page list
-            m_VisiblePages.clear ();
-
-            // Get visible area
-            var visible_area = inAllocation.copy ();
-            visible_area.translate (position);
 
             if (m_Pages.first () != null)
             {
@@ -343,20 +422,12 @@ public class Maia.Document : Item
                 }
             }
 
+            on_position_changed ();
+
             // Update each page
             foreach (unowned Page page in m_Pages)
             {
                 page.update (inContext);
-
-                // If page is in document geometry add it to visible pages
-                if (visible_area.contains_rectangle (page.geometry.extents) != Graphic.Region.Overlap.OUT)
-                {
-                    m_VisiblePages.insert (page);
-                }
-                else if (m_VisiblePages.length > 0)
-                {
-                    break;
-                }
             }
 
             damage ();
@@ -395,6 +466,8 @@ public class Maia.Document : Item
         }
 
         // paint visible pages
+        bool header_damaged = false;
+        bool footer_damaged = false;
         foreach (unowned Page page in m_VisiblePages)
         {
             inContext.save ();
@@ -414,6 +487,30 @@ public class Maia.Document : Item
 
             inContext.save ();
             {
+                if (page.header != null)
+                {
+                    if (header_damaged)
+                    {
+                        page.header.damage ();
+                    }
+                    else if (page.header.damaged != null)
+                    {
+                        header_damaged = true;
+                    }
+                }
+
+                if (page.footer != null)
+                {
+                    if (footer_damaged)
+                    {
+                        page.footer.damage ();
+                    }
+                    else if (page.footer.damaged != null)
+                    {
+                        footer_damaged = true;
+                    }
+                }
+
                 var offset = position;
                 inContext.translate (offset.invert ());
                 page.draw (inContext);

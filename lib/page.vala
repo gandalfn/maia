@@ -170,10 +170,13 @@ internal class Maia.Page : GLib.Object
 
         foreach (unowned Item child in m_Childs)
         {
-            var area = inArea.copy ();
-            area.intersect (child.geometry);
-            area.translate (child.geometry.extents.origin.invert ());
-            child.damage (area);
+            if (child.geometry != null)
+            {
+                var area = inArea.copy ();
+                area.intersect (child.geometry);
+                area.translate (child.geometry.extents.origin.invert ());
+                child.damage (area);
+            }
         }
     }
 
@@ -188,6 +191,7 @@ internal class Maia.Page : GLib.Object
 
             // Set child size allocation
             var child_allocation = new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y, item_size.width, item_size.height));
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Update page %u item %s", num, child.name);
             child.update (inContext, child_allocation);
         }
     }

@@ -24,7 +24,9 @@ void main (string[] args)
 
     if (Test.verbose ())
     {
-        Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.CANVAS_DRAW, "test"));
+        Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.CANVAS_DRAW |
+                                                                                Maia.Log.Category.CANVAS_DAMAGE |
+                                                                                Maia.Log.Category.CANVAS_GEOMETRY, "test"));
     }
 
     TestSuite.get_root ().add_suite (new Maia.TestCore ().suite);

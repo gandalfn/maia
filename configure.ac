@@ -89,6 +89,8 @@ PKG_CHECK_MODULES(MAIA_RSVG, [cairo >= $CAIRO_REQUIRED
                               librsvg-2.0 >= $RSVG_REQUIRES])
 AC_SUBST(MAIA_RSVG_CFLAGS)
 AC_SUBST(MAIA_RSVG_LIBS)
+MAIA_RSVG_VERSION=$(pkg-config --modversion librsvg-2.0  | awk -F "." '{print "LIBRSVG_"$1"_"$2;}')
+AC_SUBST(MAIA_RSVG_VERSION)
 
 dnl ****************************************************************************
 dnl Check for gdk-pixbuf packages

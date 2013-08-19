@@ -53,6 +53,11 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             m_TransformToItemSpace = get_transform_to_item_space ();
             m_TransformToRootSpace = get_transform_to_root_space ();
 
+            // If item is root do not connect on position change
+            if (value == null)
+                notify["position"].disconnect (on_move_resize);
+            else
+                notify["position"].connect (on_move_resize);
         }
     }
 
@@ -347,7 +352,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
 
         // connect on move and resize
-        notify["position"].connect (on_move_resize);
         notify["size"].connect (on_move_resize);
     }
 
