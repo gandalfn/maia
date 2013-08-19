@@ -65,8 +65,9 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         Maia.Cairo.init ();
         Maia.Rsvg.init ();
 
-        // Override Image item
+        // Override base item
         Core.Any.delegate (typeof (Maia.Image),        typeof (Image));
+        Core.Any.delegate (typeof (Maia.Button),       typeof (Button));
         Core.Any.delegate (typeof (Maia.Model),        typeof (Model));
         Core.Any.delegate (typeof (Maia.Model.Column), typeof (Model.Column));
 

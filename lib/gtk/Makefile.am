@@ -29,6 +29,7 @@ libmaia_gtk_la_SOURCES = \
     scroll.vala \
     surface.vala \
     image.vala \
+    button.vala \
     model.vala \
     canvas.vala
 

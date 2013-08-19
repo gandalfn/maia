@@ -138,7 +138,7 @@ public class Maia.TestModel : Maia.TestCase
                             "       yexpand: false;" +
                             "       top_padding: 5;" +
                             "       bottom_padding: 5;" +
-                            "       icon-filename: '/usr/share/icons/elementary/actions/24/add.svg';" +
+                            "       icon-name: 'add';" +
                             "       font-description: 'Liberation Bold 14';" +
                             "       label: TEST;" +
                             "   }" +

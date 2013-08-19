@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * image.vala
+ * button.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,39 +17,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Gtk.Image : Maia.Image
+public class Maia.Gtk.Button : Maia.Button
 {
-    // properties
-    public string m_IconName;
-
     // accessors
-    public string icon_name {
+    public string? icon_name {
         get {
-            return m_IconName;
+            unowned Image? icon_item = find (GLib.Quark.from_string ("%s-icon".printf (name)), false) as Image;
+            if (icon_item != null)
+            {
+                return icon_item.icon_name;
+            }
+
+            return null;
         }
         set {
-            m_IconName = value;
-            var icon_theme = global::Gtk.IconTheme.get_default ();
-            var info = icon_theme.lookup_icon (m_IconName, -1, global::Gtk.IconLookupFlags.FORCE_SVG);
-            filename = info.get_filename ();
-
-            if (m_IconName != null)
+            unowned Image? icon_item = find (GLib.Quark.from_string ("%s-icon".printf (name)), false) as Image;
+            if (icon_item != null)
             {
-                not_dumpable_attributes.insert ("filename");
-            }
-            else
-            {
-                not_dumpable_attributes.remove ("filename");
+                icon_item.icon_name = value;
+                if (value != null)
+                {
+                    not_dumpable_attributes.insert ("icon_filename");
+                }
+                else
+                {
+                    not_dumpable_attributes.remove ("icon_filename");
+                }
             }
         }
         default = null;
     }
 
     // methods
-    public Image (string inId, string inIconName)
+    public Button (string inId, string? inLabel = null)
     {
-        var icon_theme = global::Gtk.IconTheme.get_default ();
-        var info = icon_theme.lookup_icon (m_IconName, -1, global::Gtk.IconLookupFlags.FORCE_SVG);
-        base (inId, info.get_filename ());
+        base (inId, inLabel);
     }
 }
