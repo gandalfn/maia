@@ -1,0 +1,166 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * iterator.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(glibmm/private/object_p.h)
+
+namespace Maia
+{
+    namespace Core
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Core)
+
+        template<typename T>
+        class Iterator
+        {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+            typedef Iterator<T> CppObjectType;
+            typedef MaiaCoreIterator BaseObjectType;
+
+            static GType get_type() G_GNUC_CONST
+            {
+                return maia_core_iterator_get_type();
+            }
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+
+            Iterator() :
+                gobject_ (0)
+            {}
+
+            explicit Iterator(MaiaCoreIterator* gobject, bool make_a_copy = true) :
+                gobject_ ((make_a_copy && gobject) ? (MaiaCoreIterator*)maia_core_iterator_ref(gobject) : gobject)
+            {}
+
+            Iterator(const Iterator<T>& other) :
+                gobject_ ((other.gobject_) ? (MaiaCoreIterator*)maia_core_iterator_ref(other.gobject_) : 0)
+            {}
+
+            Iterator<T>& operator=(const Iterator<T>& other)
+            {
+                Iterator<T> temp (other);
+                swap(temp);
+                return *this;
+            }
+
+            virtual ~Iterator<T>()
+            {
+                if(gobject_)
+                    maia_core_iterator_unref(gobject_);
+            }
+
+            void swap(Iterator<T>& other)
+            {
+                MaiaCoreIterator *const temp = gobject_;
+                gobject_ = other.gobject_;
+                other.gobject_ = temp;
+            }
+
+            MaiaCoreIterator* gobj()
+            {
+                return gobject_;
+            }
+
+            const MaiaCoreIterator* gobj() const
+            {
+                return gobject_;
+            }
+
+            MaiaCoreIterator* gobj_copy() const
+            {
+                return (MaiaCoreIterator*)maia_core_iterator_ref(gobject_);
+            }
+
+            public:
+                inline Iterator<T>& operator++()
+                {
+                    next ();
+                    return *this;
+                }
+
+                inline const Iterator<T> operator++(int inCount)
+                {
+                    for (int cpt = 0; cpt < inCount && next (); ++cpt);
+                    return *this;
+                }
+
+                inline T operator*()
+                {
+                    return get ();
+                }
+
+                inline bool operator== (const Iterator<T>& rhs)
+                {
+                    return get () == rhs.get ();
+                }
+
+                inline bool operator!= (const Iterator<T>& rhs)
+                {
+                    return get () != rhs.get ();
+                }
+
+                inline T& get () const
+                {
+                    return *(T*)maia_core_iterator_get (gobj ());
+                }
+
+                bool next()
+                {
+                    return maia_core_iterator_next(gobj());
+                }
+
+            protected:
+                MaiaCoreObjectIterator* gobject_;
+       };
+
+        /** @relates Maia::Core::Iterator
+         * @param lhs The left-hand side
+         * @param rhs The right-hand side
+         */
+        template<typename T>
+        inline void swap(Iterator<T>& lhs, Iterator<T>& rhs)
+        {
+            lhs.swap(rhs);
+        }
+    }
+}
+
+namespace Glib
+{
+    /** A Glib::wrap() method for this object.
+     *
+     * @param object The C instance.
+     * @param take_copy False if the result should take ownership of the C instance. True if it should take a new copy or ref.
+     * @result A C++ instance that wraps this C instance.
+     *
+     * @relates Maia::Core::Iterator<T>
+     */
+    template<typename T>
+    Maia::Core::Iterator<T> wrap(MaiaCoreIterator* object, bool take_copy)
+    {
+        return Maia::Core::Iterator<T> (object, take_copy);
+    }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    template <typename T>
+    class Value<Maia::Core::Iterator<T> > : public Glib::Value_Boxed<Maia::Core::Iterator<T> >
+    {};
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+}

@@ -258,7 +258,7 @@ public class Maia.Graphic.Region : Core.Any
      * @param inOther another Region
      */
     public virtual void
-    xor (Region inOther)
+    xor_ (Region inOther)
     {
     }
 

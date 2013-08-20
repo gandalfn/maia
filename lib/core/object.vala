@@ -29,6 +29,11 @@ public abstract class Maia.Core.Object : Any
             m_Current = inObject.m_Head;
         }
 
+        internal Iterator.end (Object inObject)
+        {
+            m_Current = null;
+        }
+
         public unowned Object?
         next_value ()
         {
@@ -44,6 +49,12 @@ public abstract class Maia.Core.Object : Any
         get ()
         {
             return m_Current;
+        }
+
+        public bool
+        is_end ()
+        {
+            return m_Current == null;
         }
     }
 
@@ -275,6 +286,17 @@ public abstract class Maia.Core.Object : Any
     iterator ()
     {
         return new Iterator (this);
+    }
+
+    /**
+     * Returns the last Iterator of childs object.
+     *
+     * @return the last Iteratorof childs object
+     */
+    public Iterator
+    iterator_end ()
+    {
+        return new Iterator.end (this);
     }
 
     /**

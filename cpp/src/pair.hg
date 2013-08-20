@@ -1,0 +1,128 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * pair.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/collection.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(glibmm/private/object_p.h)
+
+namespace Maia
+{
+    namespace Core
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Core)
+
+        template<typename F, typename S>
+        class Pair
+        {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+            static GType get_type() G_GNUC_CONST
+            {
+                return maia_core_pair_get_type();
+            }
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+
+            Pair() :
+                gobject_ (0)
+            {}
+
+            explicit Pair(MaiaCorePair* gobject, bool make_a_copy = true) :
+                gobject_ ((make_a_copy && gobject) ? (MaiaCorePair*)maia_core_pair_ref(gobject) : gobject)
+            {}
+
+            Pair(const Pair<F, S>& other) :
+                gobject_ ((other.gobject_) ? (MaiaCorePair*)maia_core_pair_ref(other.gobject_) : 0)
+            {}
+
+            Pair<F, S>& operator=(const Pair<F, S>& other)
+            {
+                Pair<F, S> temp (other);
+                swap(temp);
+                return *this;
+            }
+
+            virtual ~Pair<F, S>()
+            {
+                if(gobject_)
+                    maia_core_pair_unref(gobject_);
+            }
+
+            void swap(Pair<F, S>& other)
+            {
+                MaiaCorePair *const temp = gobject_;
+                gobject_ = other.gobject_;
+                other.gobject_ = temp;
+            }
+
+            MaiaCorePair* gobj()
+            {
+                return gobject_;
+            }
+
+            const MaiaCorePair* gobj() const
+            {
+                return gobject_;
+            }
+
+            MaiaCorePair* gobj_copy() const
+            {
+                return (MaiaCorePair*)maia_core_pair_ref(gobject_);
+            }
+
+            public:
+
+            protected:
+                MaiaCorePair* gobject_;
+       };
+
+        /** @relates Maia::Core::Pair
+         * @param lhs The left-hand side
+         * @param rhs The right-hand side
+         */
+        template<typename F, typename S>
+        inline void swap(Pair<F, S>& lhs, Pair<F, S>& rhs)
+        {
+            lhs.swap(rhs);
+        }
+    }
+}
+
+namespace Glib
+{
+    /** A Glib::wrap() method for this object.
+     *
+     * @param object The C instance.
+     * @param take_copy False if the result should take ownership of the C instance. True if it should take a new copy or ref.
+     * @result A C++ instance that wraps this C instance.
+     *
+     * @relates Maia::Core::Pair
+     */
+    template<typename F, typename S>
+    Maia::Core::Pair<F, S> wrap(MaiaCorePair* object, bool take_copy)
+    {
+        return Maia::Core::Pair<F, S> (object, take_copy);
+    }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    template <typename F, typename S>
+    class Value<Maia::Core::Pair<F, S> > : public Glib::Value_Boxed<Maia::Core::Pair<F, S> >
+    {};
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+}

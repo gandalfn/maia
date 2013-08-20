@@ -6,6 +6,7 @@ Fonctionnality:
 - Combobox
 - Popup
 - C++ binding
+- Write a valadoc docket to convert doc to C++ doc
 
 Bugs:
 - ItemResizable rotation

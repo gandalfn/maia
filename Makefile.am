@@ -1,4 +1,4 @@
-SUBDIRS = vapi lib test doc
+SUBDIRS = vapi lib doc cpp test
 
 maiadocdir = ${prefix}/doc/maia
 maiadoc_DATA = \
@@ -13,7 +13,10 @@ BUILD_FILES = \
     build-aux/common.am \
     build-aux/pkgconfig.am \
     build-aux/vapi.am \
-    build-aux/maia.am
+    build-aux/maia.am \
+    build-aux/generate-binding.am \
+    build-aux/compile-binding.am \
+    build-aux/doc-reference.am
 
 TOOLS_FILES = \
     tools/generate-gdk-key-convert \

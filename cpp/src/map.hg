@@ -1,0 +1,83 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * map.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/set.h>
+#include <maiamm/pair.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/set_p.h)
+
+namespace Maia
+{
+    namespace Core
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Core)
+
+        template<typename F, typename S>
+        class Map : public Set<Pair<F, S> >
+        {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+            static GType get_type() G_GNUC_CONST
+            {
+                return maia_core_map_get_type();
+            }
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+
+            Map() :
+                Set<Pair<F, S> > ()
+            {}
+
+            explicit Map(MaiaCoreMap* gobject, bool make_a_copy = true) :
+                Set<Pair<F, S> > (MAIA_CORE_SET (gobject), make_a_copy)
+            {}
+
+            Map(const Map<F, S>& other) :
+                Set<Pair<F, S> > (other)
+            {}
+
+            virtual ~Map<F, S>()
+            {
+            }
+       };
+    }
+}
+
+namespace Glib
+{
+    /** A Glib::wrap() method for this object.
+     *
+     * @param object The C instance.
+     * @param take_copy False if the result should take ownership of the C instance. True if it should take a new copy or ref.
+     * @result A C++ instance that wraps this C instance.
+     *
+     * @relates Maia::Core::Collection
+     */
+    template<typename F, typename S>
+    Maia::Core::Map<F, S> wrap(MaiaCoreMap* object, bool take_copy)
+    {
+        return Maia::Core::Map<F, S> (object, take_copy);
+    }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    template <typename F, typename S>
+    class Value<Maia::Core::Map<F, S> > : public Glib::Value_Boxed<Maia::Core::Map<F, S> >
+    {};
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+}

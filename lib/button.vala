@@ -17,6 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * An item that emits a signal when clicked on
+ *
+ * =Manifest description:=
+ *
+ * {{{
+ *      Button.<id> {
+ *          font_description: 'Liberation Sans 12';
+ *          icon_filename: '/path/filename';
+ *          button_color: '#C0C0C0';
+ *      }
+ * }}}
+ *
+ */
 public class Maia.Button : Group, ItemPackable, ItemMovable
 {
     // properties
@@ -47,6 +61,9 @@ public class Maia.Button : Group, ItemPackable, ItemMovable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
+    /**
+     * The default font description of button label
+     */
     public string font_description {
         get {
             unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
@@ -61,6 +78,9 @@ public class Maia.Button : Group, ItemPackable, ItemMovable
         }
     }
 
+    /**
+     * The label of button
+     */
     public string label {
         get {
             unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
@@ -75,11 +95,25 @@ public class Maia.Button : Group, ItemPackable, ItemMovable
         }
     }
 
+    /**
+     * The border around label and icon
+     */
     public double border { get; set; default = 5; }
+
+    /**
+     * The icon filename no icon if ``null``
+     */
     public string icon_filename { get; set; default = null; }
+
+    /**
+     * The background color of button if not set the button does not draw any background
+     */
     public Graphic.Color button_color { get; set; default = null; }
 
     // signals
+    /**
+     * Signal received when button was clicked
+     */
     public signal void clicked ();
 
     // methods
@@ -108,12 +142,18 @@ public class Maia.Button : Group, ItemPackable, ItemMovable
         label_item.button_press_event.connect (on_button_press_event);
     }
 
+    /**
+     * Create a new button
+     *
+     * @param inId id of item
+     * @param inLabel the label of button ``null`` if none
+     */
     public Button (string inId, string? inLabel = null)
     {
         GLib.Object (id: GLib.Quark.from_string (inId), label: inLabel);
     }
 
-    protected override bool
+    internal override bool
     on_button_press_event (uint inButton, Graphic.Point inPoint)
     {
         Graphic.Point pos = Graphic.Point ((geometry.extents.size.width - size_requested.width) / 2,
@@ -133,7 +173,7 @@ public class Maia.Button : Group, ItemPackable, ItemMovable
         return ret;
     }
 
-    protected override bool
+    internal override bool
     on_button_release_event (uint inButton, Graphic.Point inPoint)
     {
         Graphic.Point pos = Graphic.Point ((geometry.extents.size.width - size_requested.width) / 2,

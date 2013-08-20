@@ -1,0 +1,120 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * object.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+
+#include "maiamm/any.h"
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/any_p.h)
+
+namespace Maia
+{
+    namespace Core
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Core)
+
+        class ObjectIterator;
+
+        class Object : public Any
+        {
+            typedef ObjectIterator iterator;
+
+            _CLASS_GOBJECT(Object, MaiaCoreObject, MAIA_CORE_OBJECT, Any, MaiaCoreAny)
+
+            protected:
+                _WRAP_VFUNC(Glib::RefPtr<Object> get_parent (), get_parent)
+                _WRAP_VFUNC(void set_parent (const Glib::RefPtr<Object>& inObject), set_parent)
+                _WRAP_VFUNC(void insert_child (const Glib::RefPtr<Object>& inObject), insert_child)
+                _WRAP_VFUNC(void remove_child (const Glib::RefPtr<Object>& inObject), remove_child)
+                _WRAP_VFUNC(bool can_append_child (const Glib::RefPtr<Object>& inObject), can_append_child)
+                _WRAP_VFUNC(int compare (const Glib::RefPtr<Object>& inObject), compare)
+                _WRAP_VFUNC(Glib::ustring to_string (), to_string)
+
+                _IGNORE(maia_core_objet_remove_child)
+                _IGNORE(maia_core_objet_insert_child)
+
+            public:
+                _WRAP_METHOD(Glib::QueryQuark get_id () const, maia_core_object_get_id)
+                _WRAP_METHOD(void set_id (Glib::QueryQuark inId), maia_core_object_set_id)
+
+                _WRAP_METHOD(Glib::RefPtr<Object> get_parent () const, maia_core_object_get_parent)
+                _WRAP_METHOD(void set_parent (const Glib::RefPtr<Object>& inParent), maia_core_object_set_parent)
+
+                _WRAP_METHOD(bool can_append_child (const Glib::RefPtr<Object>& inObject), maia_core_object_can_append_child)
+                _WRAP_METHOD(void add (const Glib::RefPtr<Object>& inObject), maia_core_object_add)
+                _WRAP_METHOD(Glib::RefPtr<Object> find (Glib::QueryQuark inId, bool inRecurse = true), maia_core_object_find)
+                _WRAP_METHOD(bool contains (const Glib::RefPtr<Object>& inObject), maia_core_object_contains)
+
+                _WRAP_METHOD (Object::iterator begin (), maia_core_object_iterator)
+                _WRAP_METHOD (Object::iterator end (), maia_core_object_iterator_end)
+
+                _WRAP_METHOD(Glib::RefPtr<Object> next (), maia_core_object_next)
+                _WRAP_METHOD(Glib::RefPtr<Object> prev (), maia_core_object_prev)
+                _WRAP_METHOD(Glib::RefPtr<Object> first (), maia_core_object_first)
+                _WRAP_METHOD(Glib::RefPtr<Object> last (), maia_core_object_last)
+
+                _WRAP_METHOD(void reorder (), maia_core_object_reorder)
+                _WRAP_METHOD(Glib::ustring to_string () const, maia_core_object_to_string)
+
+                _IGNORE(maia_core_objet_compare)
+                _WRAP_COMPARE(maia_core_object_compare, unconst)
+
+                _WRAP_PROPERTY("id", Glib::QueryQuark)
+                _WRAP_PROPERTY("parent", Glib::RefPtr<Object>)
+        };
+
+        class ObjectIterator
+        {
+            _CLASS_BOXEDTYPE(ObjectIterator, MaiaCoreObjectIterator, NONE, (MaiaCoreObjectIterator*)maia_core_object_iterator_ref, maia_core_object_iterator_unref)
+
+            public:
+                inline ObjectIterator& operator++()
+                {
+                    next_value ();
+                    return *this;
+                }
+
+                inline const ObjectIterator operator++(int inCount)
+                {
+                    for (int cpt = 0; cpt < inCount && next_value (); ++cpt);
+                    return *this;
+                }
+
+                inline Glib::RefPtr<Object> operator*()
+                {
+                    return get ();
+                }
+
+                inline bool operator== (const ObjectIterator& rhs)
+                {
+                    return get () == rhs.get ();
+                }
+
+                inline bool operator!= (const ObjectIterator& rhs)
+                {
+                    return get () != rhs.get ();
+                }
+
+                _WRAP_METHOD(Glib::RefPtr<Object> next_value (), maia_core_object_iterator_next_value)
+                _WRAP_METHOD(bool is_end (), maia_core_object_iterator_is_end)
+                _WRAP_METHOD(Glib::RefPtr<Object> get () const, maia_core_object_iterator_get)
+        };
+    }
+}

@@ -1,6 +1,6 @@
-/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * init.vala
+ * any.hg
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,22 +17,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Maia.Rsvg
+#include <maia.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(glibmm/private/object_p.h)
+
+namespace Maia
 {
-    static bool s_Initialized = false;
-
-    public static void
-    init ()
+    namespace Core
     {
-        if (!s_Initialized)
+        _GMMPROC_EXTRA_NAMESPACE(Core)
+
+        class Any : public Glib::Object
         {
-#if LIBRSVG_2_36_1
-            global::Rsvg.init ();
-#endif
+            _CLASS_GOBJECT(Any, MaiaCoreAny, MAIA_CORE_ANY, Glib::Object, GObject)
 
-            Core.Any.delegate (typeof (Graphic.ImageSvg),  typeof (ImageSvg));
+            public:
+                _IGNORE (maia_core_any_delegate_construct)
+                _IGNORE (maia_core_any_delegate)
+                _IGNORE (maia_core_any_undelegate)
+        };
 
-            s_Initialized = true;
-        }
     }
 }

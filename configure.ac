@@ -47,16 +47,18 @@ VALA_REQUIRED=0.20.0
 PIXMAN_REQUIRED=0.16.4
 CAIRO_REQUIRED=1.10.2
 PANGO_REQUIRED=1.30.0
-RSVG_REQUIRES=2.32.1
+RSVG_REQUIRES=2.36.1
 GDK_PIXBUF_REQUIRED=2.26.0
 GTK_REQUIRED=2.24.0
 
 dnl ****************************************************************************
 dnl Check for build
 dnl ****************************************************************************
-AC_LANG([C])
-AM_PROG_CC_C_O
 AC_SEARCH_LIBS([strerror],[cposix])
+AC_PROG_CC
+AC_PROG_CXX
+AC_LANG([C])
+AC_LANG([C++])
 
 dnl ****************************************************************************
 dnl Check for libtool
@@ -68,11 +70,17 @@ dnl ****************************************************************************
 dnl Check for packages
 dnl ****************************************************************************
 PKG_CHECK_MODULES(MAIA, [glib-2.0 >= $GLIB_REQUIRED
+                         gio-2.0 >= $GLIB_REQUIRED
                          gobject-2.0 >= $GLIB_REQUIRED
                          gmodule-2.0 >= $GLIB_REQUIRED
                          xproto])
 AC_SUBST(MAIA_CFLAGS)
 AC_SUBST(MAIA_LIBS)
+
+AC_SUBST([MAIAMM_MODULES], ['glibmm-2.4'])
+PKG_CHECK_MODULES([MAIAMM], [$MAIAMM_MODULES])
+AC_SUBST(MAIAMM_CFLAGS)
+AC_SUBST(MAIAMM_LIBS)
 
 dnl ****************************************************************************
 dnl Check for cairo packages
@@ -82,6 +90,11 @@ PKG_CHECK_MODULES(MAIA_CAIRO, [cairo >= $CAIRO_REQUIRED
 AC_SUBST(MAIA_CAIRO_CFLAGS)
 AC_SUBST(MAIA_CAIRO_LIBS)
 
+AC_SUBST([MAIA_CAIROMM_MODULES], ['cairomm-1.0 pangomm-1.4'])
+PKG_CHECK_MODULES([MAIA_CAIROMM], [$MAIA_CAIROMM_MODULES])
+AC_SUBST(MAIA_CAIROMM_CFLAGS)
+AC_SUBST(MAIA_CAIROMM_LIBS)
+
 dnl ****************************************************************************
 dnl Check for rsvg packages
 dnl ****************************************************************************
@@ -89,8 +102,13 @@ PKG_CHECK_MODULES(MAIA_RSVG, [cairo >= $CAIRO_REQUIRED
                               librsvg-2.0 >= $RSVG_REQUIRES])
 AC_SUBST(MAIA_RSVG_CFLAGS)
 AC_SUBST(MAIA_RSVG_LIBS)
-MAIA_RSVG_VERSION=$(pkg-config --modversion librsvg-2.0  | awk -F "." '{print "LIBRSVG_"$1"_"$2;}')
+MAIA_RSVG_VERSION=$(pkg-config --modversion librsvg-2.0  | awk -F "." '{print "LIBRSVG_"$1"_"$2"_"$3;}')
 AC_SUBST(MAIA_RSVG_VERSION)
+
+AC_SUBST([MAIA_RSVGMM_MODULES], ['cairomm-1.0 librsvg-2.0'])
+PKG_CHECK_MODULES([MAIA_RSVGMM], [$MAIA_RSVGMM_MODULES])
+AC_SUBST(MAIA_RSVGMM_CFLAGS)
+AC_SUBST(MAIA_RSVGMM_LIBS)
 
 dnl ****************************************************************************
 dnl Check for gdk-pixbuf packages
@@ -99,12 +117,22 @@ PKG_CHECK_MODULES(MAIA_GDK_PIXBUF, [gdk-pixbuf-2.0 >= $GDK_PIXBUF_REQUIRED])
 AC_SUBST(MAIA_GDK_PIXBUF_CFLAGS)
 AC_SUBST(MAIA_GDK_PIXBUF_LIBS)
 
+AC_SUBST([MAIA_GDK_PIXBUFMM_MODULES], ['gdkmm-2.4'])
+PKG_CHECK_MODULES([MAIA_GDK_PIXBUFMM], [$MAIA_GDK_PIXBUFMM_MODULES])
+AC_SUBST(MAIA_GDK_PIXBUFMM_CFLAGS)
+AC_SUBST(MAIA_GDK_PIXBUFMM_LIBS)
+
 dnl ****************************************************************************
 dnl Check for gtk packages
 dnl ****************************************************************************
 PKG_CHECK_MODULES(MAIA_GTK, [gtk+-2.0 >= $GTK_REQUIRED])
 AC_SUBST(MAIA_GTK_CFLAGS)
 AC_SUBST(MAIA_GTK_LIBS)
+
+AC_SUBST([MAIA_GTKMM_MODULES], ['gtkmm-2.4'])
+PKG_CHECK_MODULES([MAIA_GTKMM], [$MAIA_GTKMM_MODULES])
+AC_SUBST(MAIA_GTKMM_CFLAGS)
+AC_SUBST(MAIA_GTKMM_LIBS)
 
 dnl ***************************************************************************
 dnl check for valgrind
@@ -180,6 +208,30 @@ fi
 AM_CONDITIONAL(ENABLE_VALADOC, test x$found_valadoc = xyes)
 
 dnl ****************************************************************************
+dnl Check for mm-common
+dnl ****************************************************************************
+MM_PKG_CONFIG_SUBST([GTHREAD_CFLAGS], [--cflags-only-other gthread-2.0])
+MM_PKG_CONFIG_SUBST([GMMPROC_DIR], [--variable=gmmprocdir glibmm-2.4])
+MM_PKG_CONFIG_SUBST([GMMPROC_EXTRA_M4_DIR], [--variable=gmmprocm4dir pangomm-1.4 atkmm-1.6 gtkmm-2.4])
+
+MM_ARG_ENABLE_WARNINGS([MAIAMM_WXXFLAGS],
+                       [-Wall],
+                       [-pedantic -Wall -Wextra],
+                       [G SKELETON])
+
+dnl ****************************************************************************
+dnl Check for build docs
+dnl ****************************************************************************
+if test "x$enabledoc" = "xyes"; then
+    MMDOCTOOLDIR=/usr/share/mm-common/doctool
+    MM_ARG_ENABLE_DOCUMENTATION
+    MM_ARG_WITH_TAGFILE_DOC([libstdc++.tag], [mm-common-libstdc++])
+    MM_ARG_WITH_TAGFILE_DOC([glibmm-2.4.tag], [glibmm-2.4])
+    MM_ARG_WITH_TAGFILE_DOC([cairomm-1.0.tag], [cairomm-1.0])
+    MM_ARG_WITH_TAGFILE_DOC([gtkmm-2.4.tag], [gtkmm-2.4])
+fi
+
+dnl ****************************************************************************
 dnl Generate outputs
 dnl ****************************************************************************
 AC_CONFIG_FILES([
@@ -195,6 +247,10 @@ lib/gdk-pixbuf/Makefile
 lib/gtk/maia-gtk.pc
 lib/gtk/Makefile
 doc/Makefile
+cpp/Makefile
+cpp/codegen/Makefile
+cpp/src/Makefile
+cpp/maiamm/Makefile
 test/Makefile
 vapi/Makefile])
 

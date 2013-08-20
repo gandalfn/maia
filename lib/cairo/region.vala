@@ -189,7 +189,7 @@ internal class Maia.Cairo.Region : Graphic.Region
      * {@inheritDoc}
      */
     public override void
-    xor (Graphic.Region inOther)
+    xor_ (Graphic.Region inOther)
     {
         m_Region.xor (((Region)inOther).m_Region);
     }

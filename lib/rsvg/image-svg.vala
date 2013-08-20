@@ -87,10 +87,10 @@ internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
                 }
                 else
                 {
-#if LIBRSVG_2_36
-                    handle = new global::Rsvg.Handle.from_data ((uint8[])data.to_utf8 ());
-#else
+#if LIBRSVG_2_36_1
                     handle = new global::Rsvg.Handle.from_data ((uint8[])data.to_utf8 (), data.to_utf8 ().length);
+#else
+                    handle = new global::Rsvg.Handle.from_data ((uint8[])data.to_utf8 ());
 #endif
                 }
 

@@ -1,0 +1,4545 @@
+;; From maia.h
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_LOG_LEVEL_ERROR = 0,
+;; 	MAIA_LOG_LEVEL_CRITICAL = 1,
+;; 	MAIA_LOG_LEVEL_WARNING = 2,
+;; 	MAIA_LOG_LEVEL_INFO = 3,
+;; 	MAIA_LOG_LEVEL_AUDIT = 4,
+;; 	MAIA_LOG_LEVEL_DEBUG = 5
+;; } MaiaLogLevel;
+
+(define-enum-extended LogLevel
+  (in-module "Maia")
+  (c-name "MaiaLogLevel")
+  (values
+    '("error" "MAIA_LOG_LEVEL_ERROR" "0")
+    '("critical" "MAIA_LOG_LEVEL_CRITICAL" "1")
+    '("warning" "MAIA_LOG_LEVEL_WARNING" "2")
+    '("info" "MAIA_LOG_LEVEL_INFO" "3")
+    '("audit" "MAIA_LOG_LEVEL_AUDIT" "4")
+    '("debug" "MAIA_LOG_LEVEL_DEBUG" "5")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_LOG_CATEGORY_CORE_OBJECT = 1 << 0,
+;; 	MAIA_LOG_CATEGORY_CORE_COLLECTION = 1 << 1,
+;; 	MAIA_LOG_CATEGORY_CORE_TIMELINE = 1 << 2,
+;; 	MAIA_LOG_CATEGORY_CORE = (MAIA_LOG_CATEGORY_CORE_OBJECT | MAIA_LOG_CATEGORY_CORE_COLLECTION) | MAIA_LOG_CATEGORY_CORE_TIMELINE,
+;; 	MAIA_LOG_CATEGORY_GRAPHIC_PARSING = 1 << 3,
+;; 	MAIA_LOG_CATEGORY_GRAPHIC_DRAW = 1 << 4,
+;; 	MAIA_LOG_CATEGORY_GRAPHIC_GEOMETRY = 1 << 5,
+;; 	MAIA_LOG_CATEGORY_GRAPHIC = (MAIA_LOG_CATEGORY_GRAPHIC_DRAW | MAIA_LOG_CATEGORY_GRAPHIC_GEOMETRY) | MAIA_LOG_CATEGORY_GRAPHIC_PARSING,
+;; 	MAIA_LOG_CATEGORY_MANIFEST_PARSING = 1 << 6,
+;; 	MAIA_LOG_CATEGORY_MANIFEST_ATTRIBUTE = 1 << 7,
+;; 	MAIA_LOG_CATEGORY_MANIFEST = MAIA_LOG_CATEGORY_MANIFEST_PARSING | MAIA_LOG_CATEGORY_MANIFEST_ATTRIBUTE,
+;; 	MAIA_LOG_CATEGORY_XML_PARSING = 1 << 8,
+;; 	MAIA_LOG_CATEGORY_XML = MAIA_LOG_CATEGORY_XML_PARSING,
+;; 	MAIA_LOG_CATEGORY_CANVAS_PARSING = 1 << 9,
+;; 	MAIA_LOG_CATEGORY_CANVAS_DRAW = 1 << 10,
+;; 	MAIA_LOG_CATEGORY_CANVAS_DAMAGE = 1 << 11,
+;; 	MAIA_LOG_CATEGORY_CANVAS_GEOMETRY = 1 << 12,
+;; 	MAIA_LOG_CATEGORY_CANVAS_INPUT = 1 << 13,
+;; 	MAIA_LOG_CATEGORY_CANVAS = (((MAIA_LOG_CATEGORY_CANVAS_DRAW | MAIA_LOG_CATEGORY_CANVAS_DAMAGE) | MAIA_LOG_CATEGORY_CANVAS_GEOMETRY) | MAIA_LOG_CATEGORY_CANVAS_PARSING) | MAIA_LOG_CATEGORY_CANVAS_INPUT,
+;; 	MAIA_LOG_CATEGORY_ALL = (((MAIA_LOG_CATEGORY_CORE | MAIA_LOG_CATEGORY_GRAPHIC) | MAIA_LOG_CATEGORY_MANIFEST) | MAIA_LOG_CATEGORY_XML) | MAIA_LOG_CATEGORY_CANVAS
+;; } MaiaLogCategory;
+
+(define-flags-extended LogCategory
+  (in-module "Maia")
+  (c-name "MaiaLogCategory")
+  (values
+    '("core-object" "MAIA_LOG_CATEGORY_CORE_OBJECT" "1 << 0")
+    '("core-collection" "MAIA_LOG_CATEGORY_CORE_COLLECTION" "1 << 1")
+    '("core-timeline" "MAIA_LOG_CATEGORY_CORE_TIMELINE" "1 << 2")
+    '("core" "MAIA_LOG_CATEGORY_CORE" "0x7")
+    '("graphic-parsing" "MAIA_LOG_CATEGORY_GRAPHIC_PARSING" "1 << 3")
+    '("graphic-draw" "MAIA_LOG_CATEGORY_GRAPHIC_DRAW" "1 << 4")
+    '("graphic-geometry" "MAIA_LOG_CATEGORY_GRAPHIC_GEOMETRY" "1 << 5")
+    '("graphic" "MAIA_LOG_CATEGORY_GRAPHIC" "0x38")
+    '("manifest-parsing" "MAIA_LOG_CATEGORY_MANIFEST_PARSING" "1 << 6")
+    '("manifest-attribute" "MAIA_LOG_CATEGORY_MANIFEST_ATTRIBUTE" "1 << 7")
+    '("manifest" "MAIA_LOG_CATEGORY_MANIFEST" "0xC0")
+    '("xml-parsing" "MAIA_LOG_CATEGORY_XML_PARSING" "1 << 8")
+    '("xml" "MAIA_LOG_CATEGORY_XML" "0x100")
+    '("canvas-parsing" "MAIA_LOG_CATEGORY_CANVAS_PARSING" "1 << 9")
+    '("canvas-draw" "MAIA_LOG_CATEGORY_CANVAS_DRAW" "1 << 10")
+    '("canvas-damage" "MAIA_LOG_CATEGORY_CANVAS_DAMAGE" "1 << 11")
+    '("canvas-geometry" "MAIA_LOG_CATEGORY_CANVAS_GEOMETRY" "1 << 12")
+    '("canvas-input" "MAIA_LOG_CATEGORY_CANVAS_INPUT" "1 << 13")
+    '("canvas" "MAIA_LOG_CATEGORY_CANVAS" "0x3E00")
+    '("all" "MAIA_LOG_CATEGORY_ALL" "0x3FFF")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_CORE_PARSE_ERROR_OPEN,
+;; 	MAIA_CORE_PARSE_ERROR_INVALID,
+;; 	MAIA_CORE_PARSE_ERROR_PARSE,
+;; 	MAIA_CORE_PARSE_ERROR_NOT_SUPPORTED,
+;; 	MAIA_CORE_PARSE_ERROR_INVALID_UTF8,
+;; 	MAIA_CORE_PARSE_ERROR_INVALID_NAME
+;; } MaiaCoreParseError;
+
+(define-enum-extended CoreParseError
+  (in-module "Maia")
+  (c-name "MaiaCoreParseError")
+  (values
+    '("open" "MAIA_CORE_PARSE_ERROR_OPEN" "0")
+    '("invalid" "MAIA_CORE_PARSE_ERROR_INVALID" "1")
+    '("parse" "MAIA_CORE_PARSE_ERROR_PARSE" "2")
+    '("not-supported" "MAIA_CORE_PARSE_ERROR_NOT_SUPPORTED" "3")
+    '("invalid-utf8" "MAIA_CORE_PARSE_ERROR_INVALID_UTF8" "4")
+    '("invalid-name" "MAIA_CORE_PARSE_ERROR_INVALID_NAME" "5")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_CORE_PARSER_TOKEN_NONE,
+;; 	MAIA_CORE_PARSER_TOKEN_START_ELEMENT,
+;; 	MAIA_CORE_PARSER_TOKEN_ATTRIBUTE,
+;; 	MAIA_CORE_PARSER_TOKEN_END_ELEMENT,
+;; 	MAIA_CORE_PARSER_TOKEN_CHARACTERS,
+;; 	MAIA_CORE_PARSER_TOKEN_EOF
+;; } MaiaCoreParserToken;
+
+(define-enum-extended CoreParserToken
+  (in-module "Maia")
+  (c-name "MaiaCoreParserToken")
+  (values
+    '("none" "MAIA_CORE_PARSER_TOKEN_NONE" "0")
+    '("start-element" "MAIA_CORE_PARSER_TOKEN_START_ELEMENT" "1")
+    '("attribute" "MAIA_CORE_PARSER_TOKEN_ATTRIBUTE" "2")
+    '("end-element" "MAIA_CORE_PARSER_TOKEN_END_ELEMENT" "3")
+    '("characters" "MAIA_CORE_PARSER_TOKEN_CHARACTERS" "4")
+    '("eof" "MAIA_CORE_PARSER_TOKEN_EOF" "5")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_CORE_TIMELINE_DIRECTION_FORWARD,
+;; 	MAIA_CORE_TIMELINE_DIRECTION_BACKWARD
+;; } MaiaCoreTimelineDirection;
+
+(define-enum-extended CoreTimelineDirection
+  (in-module "Maia")
+  (c-name "MaiaCoreTimelineDirection")
+  (values
+    '("forward" "MAIA_CORE_TIMELINE_DIRECTION_FORWARD" "0")
+    '("backward" "MAIA_CORE_TIMELINE_DIRECTION_BACKWARD" "1")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_MANIFEST_ERROR_INVALID_TYPE,
+;; 	MAIA_MANIFEST_ERROR_TOO_MANY_ATTRIBUTES,
+;; 	MAIA_MANIFEST_ERROR_MISSING_ATTRIBUTES,
+;; 	MAIA_MANIFEST_ERROR_TOO_MANY_FUNCTION_ARGUMENT,
+;; 	MAIA_MANIFEST_ERROR_MISSING_FUNCTION_ARGUMENT
+;; } MaiaManifestError;
+
+(define-enum-extended ManifestError
+  (in-module "Maia")
+  (c-name "MaiaManifestError")
+  (values
+    '("invalid-type" "MAIA_MANIFEST_ERROR_INVALID_TYPE" "0")
+    '("too-many-attributes" "MAIA_MANIFEST_ERROR_TOO_MANY_ATTRIBUTES" "1")
+    '("missing-attributes" "MAIA_MANIFEST_ERROR_MISSING_ATTRIBUTES" "2")
+    '("too-many-function-argument" "MAIA_MANIFEST_ERROR_TOO_MANY_FUNCTION_ARGUMENT" "3")
+    '("missing-function-argument" "MAIA_MANIFEST_ERROR_MISSING_FUNCTION_ARGUMENT" "4")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_GRAPHIC_ERROR_SUCCESS,
+;; 	MAIA_GRAPHIC_ERROR_NOT_IMPLEMENTED,
+;; 	MAIA_GRAPHIC_ERROR_NO_MEMORY,
+;; 	MAIA_GRAPHIC_ERROR_END_ELEMENT,
+;; 	MAIA_GRAPHIC_ERROR_NO_CURRENT_POINT,
+;; 	MAIA_GRAPHIC_ERROR_INVALID_MATRIX,
+;; 	MAIA_GRAPHIC_ERROR_INVALID_STATUS,
+;; 	MAIA_GRAPHIC_ERROR_NULL_POINTER,
+;; 	MAIA_GRAPHIC_ERROR_INVALID_STRING,
+;; 	MAIA_GRAPHIC_ERROR_INVALID_PATH,
+;; 	MAIA_GRAPHIC_ERROR_SURFACE_FINISHED,
+;; 	MAIA_GRAPHIC_ERROR_SURFACE_TYPE_MISMATCH,
+;; 	MAIA_GRAPHIC_ERROR_PATTERN_TYPE_MISMATCH,
+;; 	MAIA_GRAPHIC_ERROR_UNKNOWN
+;; } MaiaGraphicError;
+
+(define-enum-extended GraphicError
+  (in-module "Maia")
+  (c-name "MaiaGraphicError")
+  (values
+    '("success" "MAIA_GRAPHIC_ERROR_SUCCESS" "0")
+    '("not-implemented" "MAIA_GRAPHIC_ERROR_NOT_IMPLEMENTED" "1")
+    '("no-memory" "MAIA_GRAPHIC_ERROR_NO_MEMORY" "2")
+    '("end-element" "MAIA_GRAPHIC_ERROR_END_ELEMENT" "3")
+    '("no-current-point" "MAIA_GRAPHIC_ERROR_NO_CURRENT_POINT" "4")
+    '("invalid-matrix" "MAIA_GRAPHIC_ERROR_INVALID_MATRIX" "5")
+    '("invalid-status" "MAIA_GRAPHIC_ERROR_INVALID_STATUS" "6")
+    '("null-pointer" "MAIA_GRAPHIC_ERROR_NULL_POINTER" "7")
+    '("invalid-string" "MAIA_GRAPHIC_ERROR_INVALID_STRING" "8")
+    '("invalid-path" "MAIA_GRAPHIC_ERROR_INVALID_PATH" "9")
+    '("surface-finished" "MAIA_GRAPHIC_ERROR_SURFACE_FINISHED" "10")
+    '("surface-type-mismatch" "MAIA_GRAPHIC_ERROR_SURFACE_TYPE_MISMATCH" "11")
+    '("pattern-type-mismatch" "MAIA_GRAPHIC_ERROR_PATTERN_TYPE_MISMATCH" "12")
+    '("unknown" "MAIA_GRAPHIC_ERROR_UNKNOWN" "13")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_GRAPHIC_REGION_OVERLAP_IN,
+;; 	MAIA_GRAPHIC_REGION_OVERLAP_OUT,
+;; 	MAIA_GRAPHIC_REGION_OVERLAP_PART
+;; } MaiaGraphicRegionOverlap;
+
+(define-enum-extended GraphicRegionOverlap
+  (in-module "Maia")
+  (c-name "MaiaGraphicRegionOverlap")
+  (values
+    '("in" "MAIA_GRAPHIC_REGION_OVERLAP_IN" "0")
+    '("out" "MAIA_GRAPHIC_REGION_OVERLAP_OUT" "1")
+    '("part" "MAIA_GRAPHIC_REGION_OVERLAP_PART" "2")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_GRAPHIC_PATH_DATA_TYPE_PATH,
+;; 	MAIA_GRAPHIC_PATH_DATA_TYPE_MOVETO,
+;; 	MAIA_GRAPHIC_PATH_DATA_TYPE_LINETO,
+;; 	MAIA_GRAPHIC_PATH_DATA_TYPE_CURVETO,
+;; 	MAIA_GRAPHIC_PATH_DATA_TYPE_ARC,
+;; 	MAIA_GRAPHIC_PATH_DATA_TYPE_ARC_NEGATIVE,
+;; 	MAIA_GRAPHIC_PATH_DATA_TYPE_RECTANGLE
+;; } MaiaGraphicPathDataType;
+
+(define-enum-extended GraphicPathDataType
+  (in-module "Maia")
+  (c-name "MaiaGraphicPathDataType")
+  (values
+    '("path" "MAIA_GRAPHIC_PATH_DATA_TYPE_PATH" "0")
+    '("moveto" "MAIA_GRAPHIC_PATH_DATA_TYPE_MOVETO" "1")
+    '("lineto" "MAIA_GRAPHIC_PATH_DATA_TYPE_LINETO" "2")
+    '("curveto" "MAIA_GRAPHIC_PATH_DATA_TYPE_CURVETO" "3")
+    '("arc" "MAIA_GRAPHIC_PATH_DATA_TYPE_ARC" "4")
+    '("arc-negative" "MAIA_GRAPHIC_PATH_DATA_TYPE_ARC_NEGATIVE" "5")
+    '("rectangle" "MAIA_GRAPHIC_PATH_DATA_TYPE_RECTANGLE" "6")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_GRAPHIC_OPERATOR_CLEAR,
+;; 	MAIA_GRAPHIC_OPERATOR_SOURCE,
+;; 	MAIA_GRAPHIC_OPERATOR_OVER,
+;; 	MAIA_GRAPHIC_OPERATOR_IN,
+;; 	MAIA_GRAPHIC_OPERATOR_OUT,
+;; 	MAIA_GRAPHIC_OPERATOR_ATOP,
+;; 	MAIA_GRAPHIC_OPERATOR_DEST,
+;; 	MAIA_GRAPHIC_OPERATOR_DEST_OVER,
+;; 	MAIA_GRAPHIC_OPERATOR_DEST_IN,
+;; 	MAIA_GRAPHIC_OPERATOR_DEST_OUT,
+;; 	MAIA_GRAPHIC_OPERATOR_DEST_ATOP,
+;; 	MAIA_GRAPHIC_OPERATOR_XOR,
+;; 	MAIA_GRAPHIC_OPERATOR_ADD,
+;; 	MAIA_GRAPHIC_OPERATOR_SATURATE,
+;; 	MAIA_GRAPHIC_OPERATOR_MULTIPLY,
+;; 	MAIA_GRAPHIC_OPERATOR_SCREEN,
+;; 	MAIA_GRAPHIC_OPERATOR_OVERLAY,
+;; 	MAIA_GRAPHIC_OPERATOR_DARKEN,
+;; 	MAIA_GRAPHIC_OPERATOR_LIGHTEN,
+;; 	MAIA_GRAPHIC_OPERATOR_COLOR_DODGE,
+;; 	MAIA_GRAPHIC_OPERATOR_COLOR_BURN,
+;; 	MAIA_GRAPHIC_OPERATOR_HARD_LIGHT,
+;; 	MAIA_GRAPHIC_OPERATOR_SOFT_LIGHT,
+;; 	MAIA_GRAPHIC_OPERATOR_DIFFERENCE,
+;; 	MAIA_GRAPHIC_OPERATOR_EXCLUSION,
+;; 	MAIA_GRAPHIC_OPERATOR_HSL_HUE,
+;; 	MAIA_GRAPHIC_OPERATOR_HSL_SATURATION,
+;; 	MAIA_GRAPHIC_OPERATOR_HSL_COLOR,
+;; 	MAIA_GRAPHIC_OPERATOR_HSL_LUMINOSITY
+;; } MaiaGraphicOperator;
+
+(define-enum-extended GraphicOperator
+  (in-module "Maia")
+  (c-name "MaiaGraphicOperator")
+  (values
+    '("clear" "MAIA_GRAPHIC_OPERATOR_CLEAR" "0")
+    '("source" "MAIA_GRAPHIC_OPERATOR_SOURCE" "1")
+    '("over" "MAIA_GRAPHIC_OPERATOR_OVER" "2")
+    '("in" "MAIA_GRAPHIC_OPERATOR_IN" "3")
+    '("out" "MAIA_GRAPHIC_OPERATOR_OUT" "4")
+    '("atop" "MAIA_GRAPHIC_OPERATOR_ATOP" "5")
+    '("dest" "MAIA_GRAPHIC_OPERATOR_DEST" "6")
+    '("dest-over" "MAIA_GRAPHIC_OPERATOR_DEST_OVER" "7")
+    '("dest-in" "MAIA_GRAPHIC_OPERATOR_DEST_IN" "8")
+    '("dest-out" "MAIA_GRAPHIC_OPERATOR_DEST_OUT" "9")
+    '("dest-atop" "MAIA_GRAPHIC_OPERATOR_DEST_ATOP" "10")
+    '("xor" "MAIA_GRAPHIC_OPERATOR_XOR" "11")
+    '("add" "MAIA_GRAPHIC_OPERATOR_ADD" "12")
+    '("saturate" "MAIA_GRAPHIC_OPERATOR_SATURATE" "13")
+    '("multiply" "MAIA_GRAPHIC_OPERATOR_MULTIPLY" "14")
+    '("screen" "MAIA_GRAPHIC_OPERATOR_SCREEN" "15")
+    '("overlay" "MAIA_GRAPHIC_OPERATOR_OVERLAY" "16")
+    '("darken" "MAIA_GRAPHIC_OPERATOR_DARKEN" "17")
+    '("lighten" "MAIA_GRAPHIC_OPERATOR_LIGHTEN" "18")
+    '("color-dodge" "MAIA_GRAPHIC_OPERATOR_COLOR_DODGE" "19")
+    '("color-burn" "MAIA_GRAPHIC_OPERATOR_COLOR_BURN" "20")
+    '("hard-light" "MAIA_GRAPHIC_OPERATOR_HARD_LIGHT" "21")
+    '("soft-light" "MAIA_GRAPHIC_OPERATOR_SOFT_LIGHT" "22")
+    '("difference" "MAIA_GRAPHIC_OPERATOR_DIFFERENCE" "23")
+    '("exclusion" "MAIA_GRAPHIC_OPERATOR_EXCLUSION" "24")
+    '("hsl-hue" "MAIA_GRAPHIC_OPERATOR_HSL_HUE" "25")
+    '("hsl-saturation" "MAIA_GRAPHIC_OPERATOR_HSL_SATURATION" "26")
+    '("hsl-color" "MAIA_GRAPHIC_OPERATOR_HSL_COLOR" "27")
+    '("hsl-luminosity" "MAIA_GRAPHIC_OPERATOR_HSL_LUMINOSITY" "28")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_KEY_VoidSymbol,
+;; 	MAIA_KEY_BackSpace,
+;; 	MAIA_KEY_Tab,
+;; 	MAIA_KEY_Linefeed,
+;; 	MAIA_KEY_Clear,
+;; 	MAIA_KEY_Return,
+;; 	MAIA_KEY_Pause,
+;; 	MAIA_KEY_Scroll_Lock,
+;; 	MAIA_KEY_Sys_Req,
+;; 	MAIA_KEY_Escape,
+;; 	MAIA_KEY_Delete,
+;; 	MAIA_KEY_Multi_key,
+;; 	MAIA_KEY_Codeinput,
+;; 	MAIA_KEY_MultipleCandidate,
+;; 	MAIA_KEY_PreviousCandidate,
+;; 	MAIA_KEY_Kanji,
+;; 	MAIA_KEY_Muhenkan,
+;; 	MAIA_KEY_Henkan_Mode,
+;; 	MAIA_KEY_Henkan,
+;; 	MAIA_KEY_Romaji,
+;; 	MAIA_KEY_Hiragana,
+;; 	MAIA_KEY_Katakana,
+;; 	MAIA_KEY_Hiragana_Katakana,
+;; 	MAIA_KEY_Zenkaku,
+;; 	MAIA_KEY_Hankaku,
+;; 	MAIA_KEY_Zenkaku_Hankaku,
+;; 	MAIA_KEY_Touroku,
+;; 	MAIA_KEY_Massyo,
+;; 	MAIA_KEY_Kana_Lock,
+;; 	MAIA_KEY_Kana_Shift,
+;; 	MAIA_KEY_Eisu_Shift,
+;; 	MAIA_KEY_Eisu_toggle,
+;; 	MAIA_KEY_Kanji_Bangou,
+;; 	MAIA_KEY_Zen_Koho,
+;; 	MAIA_KEY_Mae_Koho,
+;; 	MAIA_KEY_Home,
+;; 	MAIA_KEY_Left,
+;; 	MAIA_KEY_Up,
+;; 	MAIA_KEY_Right,
+;; 	MAIA_KEY_Down,
+;; 	MAIA_KEY_Prior,
+;; 	MAIA_KEY_Page_Up,
+;; 	MAIA_KEY_Next,
+;; 	MAIA_KEY_Page_Down,
+;; 	MAIA_KEY_End,
+;; 	MAIA_KEY_Begin,
+;; 	MAIA_KEY_Select,
+;; 	MAIA_KEY_Print,
+;; 	MAIA_KEY_Execute,
+;; 	MAIA_KEY_Insert,
+;; 	MAIA_KEY_Undo,
+;; 	MAIA_KEY_Redo,
+;; 	MAIA_KEY_Menu,
+;; 	MAIA_KEY_Find,
+;; 	MAIA_KEY_Cancel,
+;; 	MAIA_KEY_Help,
+;; 	MAIA_KEY_Break,
+;; 	MAIA_KEY_Mode_switch,
+;; 	MAIA_KEY_script_switch,
+;; 	MAIA_KEY_Num_Lock,
+;; 	MAIA_KEY_KP_Space,
+;; 	MAIA_KEY_KP_Tab,
+;; 	MAIA_KEY_KP_Enter,
+;; 	MAIA_KEY_KP_F1,
+;; 	MAIA_KEY_KP_F2,
+;; 	MAIA_KEY_KP_F3,
+;; 	MAIA_KEY_KP_F4,
+;; 	MAIA_KEY_KP_Home,
+;; 	MAIA_KEY_KP_Left,
+;; 	MAIA_KEY_KP_Up,
+;; 	MAIA_KEY_KP_Right,
+;; 	MAIA_KEY_KP_Down,
+;; 	MAIA_KEY_KP_Prior,
+;; 	MAIA_KEY_KP_Page_Up,
+;; 	MAIA_KEY_KP_Next,
+;; 	MAIA_KEY_KP_Page_Down,
+;; 	MAIA_KEY_KP_End,
+;; 	MAIA_KEY_KP_Begin,
+;; 	MAIA_KEY_KP_Insert,
+;; 	MAIA_KEY_KP_Delete,
+;; 	MAIA_KEY_KP_Equal,
+;; 	MAIA_KEY_KP_Multiply,
+;; 	MAIA_KEY_KP_Add,
+;; 	MAIA_KEY_KP_Separator,
+;; 	MAIA_KEY_KP_Subtract,
+;; 	MAIA_KEY_KP_Decimal,
+;; 	MAIA_KEY_KP_Divide,
+;; 	MAIA_KEY_KP_0,
+;; 	MAIA_KEY_KP_1,
+;; 	MAIA_KEY_KP_2,
+;; 	MAIA_KEY_KP_3,
+;; 	MAIA_KEY_KP_4,
+;; 	MAIA_KEY_KP_5,
+;; 	MAIA_KEY_KP_6,
+;; 	MAIA_KEY_KP_7,
+;; 	MAIA_KEY_KP_8,
+;; 	MAIA_KEY_KP_9,
+;; 	MAIA_KEY_F1,
+;; 	MAIA_KEY_F2,
+;; 	MAIA_KEY_F3,
+;; 	MAIA_KEY_F4,
+;; 	MAIA_KEY_F5,
+;; 	MAIA_KEY_F6,
+;; 	MAIA_KEY_F7,
+;; 	MAIA_KEY_F8,
+;; 	MAIA_KEY_F9,
+;; 	MAIA_KEY_F10,
+;; 	MAIA_KEY_F11,
+;; 	MAIA_KEY_L1,
+;; 	MAIA_KEY_F12,
+;; 	MAIA_KEY_L2,
+;; 	MAIA_KEY_F13,
+;; 	MAIA_KEY_L3,
+;; 	MAIA_KEY_F14,
+;; 	MAIA_KEY_L4,
+;; 	MAIA_KEY_F15,
+;; 	MAIA_KEY_L5,
+;; 	MAIA_KEY_F16,
+;; 	MAIA_KEY_L6,
+;; 	MAIA_KEY_F17,
+;; 	MAIA_KEY_L7,
+;; 	MAIA_KEY_F18,
+;; 	MAIA_KEY_L8,
+;; 	MAIA_KEY_F19,
+;; 	MAIA_KEY_L9,
+;; 	MAIA_KEY_F20,
+;; 	MAIA_KEY_L10,
+;; 	MAIA_KEY_F21,
+;; 	MAIA_KEY_R1,
+;; 	MAIA_KEY_F22,
+;; 	MAIA_KEY_R2,
+;; 	MAIA_KEY_F23,
+;; 	MAIA_KEY_R3,
+;; 	MAIA_KEY_F24,
+;; 	MAIA_KEY_R4,
+;; 	MAIA_KEY_F25,
+;; 	MAIA_KEY_R5,
+;; 	MAIA_KEY_F26,
+;; 	MAIA_KEY_R6,
+;; 	MAIA_KEY_F27,
+;; 	MAIA_KEY_R7,
+;; 	MAIA_KEY_F28,
+;; 	MAIA_KEY_R8,
+;; 	MAIA_KEY_F29,
+;; 	MAIA_KEY_R9,
+;; 	MAIA_KEY_F30,
+;; 	MAIA_KEY_R10,
+;; 	MAIA_KEY_F31,
+;; 	MAIA_KEY_R11,
+;; 	MAIA_KEY_F32,
+;; 	MAIA_KEY_R12,
+;; 	MAIA_KEY_F33,
+;; 	MAIA_KEY_R13,
+;; 	MAIA_KEY_F34,
+;; 	MAIA_KEY_R14,
+;; 	MAIA_KEY_F35,
+;; 	MAIA_KEY_R15,
+;; 	MAIA_KEY_Shift_L,
+;; 	MAIA_KEY_Shift_R,
+;; 	MAIA_KEY_Control_L,
+;; 	MAIA_KEY_Control_R,
+;; 	MAIA_KEY_Caps_Lock,
+;; 	MAIA_KEY_Shift_Lock,
+;; 	MAIA_KEY_Meta_L,
+;; 	MAIA_KEY_Meta_R,
+;; 	MAIA_KEY_Alt_L,
+;; 	MAIA_KEY_Alt_R,
+;; 	MAIA_KEY_Super_L,
+;; 	MAIA_KEY_Super_R,
+;; 	MAIA_KEY_Hyper_L,
+;; 	MAIA_KEY_Hyper_R,
+;; 	MAIA_KEY_ISO_Lock,
+;; 	MAIA_KEY_ISO_Level2_Latch,
+;; 	MAIA_KEY_ISO_Level3_Shift,
+;; 	MAIA_KEY_ISO_Level3_Latch,
+;; 	MAIA_KEY_ISO_Level3_Lock,
+;; 	MAIA_KEY_ISO_Level5_Shift,
+;; 	MAIA_KEY_ISO_Level5_Latch,
+;; 	MAIA_KEY_ISO_Level5_Lock,
+;; 	MAIA_KEY_ISO_Group_Shift,
+;; 	MAIA_KEY_ISO_Group_Latch,
+;; 	MAIA_KEY_ISO_Group_Lock,
+;; 	MAIA_KEY_ISO_Next_Group,
+;; 	MAIA_KEY_ISO_Next_Group_Lock,
+;; 	MAIA_KEY_ISO_Prev_Group,
+;; 	MAIA_KEY_ISO_Prev_Group_Lock,
+;; 	MAIA_KEY_ISO_First_Group,
+;; 	MAIA_KEY_ISO_First_Group_Lock,
+;; 	MAIA_KEY_ISO_Last_Group,
+;; 	MAIA_KEY_ISO_Last_Group_Lock,
+;; 	MAIA_KEY_ISO_Left_Tab,
+;; 	MAIA_KEY_ISO_Move_Line_Up,
+;; 	MAIA_KEY_ISO_Move_Line_Down,
+;; 	MAIA_KEY_ISO_Partial_Line_Up,
+;; 	MAIA_KEY_ISO_Partial_Line_Down,
+;; 	MAIA_KEY_ISO_Partial_Space_Left,
+;; 	MAIA_KEY_ISO_Partial_Space_Right,
+;; 	MAIA_KEY_ISO_Set_Margin_Left,
+;; 	MAIA_KEY_ISO_Set_Margin_Right,
+;; 	MAIA_KEY_ISO_Release_Margin_Left,
+;; 	MAIA_KEY_ISO_Release_Margin_Right,
+;; 	MAIA_KEY_ISO_Release_Both_Margins,
+;; 	MAIA_KEY_ISO_Fast_Cursor_Left,
+;; 	MAIA_KEY_ISO_Fast_Cursor_Right,
+;; 	MAIA_KEY_ISO_Fast_Cursor_Up,
+;; 	MAIA_KEY_ISO_Fast_Cursor_Down,
+;; 	MAIA_KEY_ISO_Continuous_Underline,
+;; 	MAIA_KEY_ISO_Discontinuous_Underline,
+;; 	MAIA_KEY_ISO_Emphasize,
+;; 	MAIA_KEY_ISO_Center_Object,
+;; 	MAIA_KEY_ISO_Enter,
+;; 	MAIA_KEY_dead_grave,
+;; 	MAIA_KEY_dead_acute,
+;; 	MAIA_KEY_dead_circumflex,
+;; 	MAIA_KEY_dead_tilde,
+;; 	MAIA_KEY_dead_perispomeni,
+;; 	MAIA_KEY_dead_macron,
+;; 	MAIA_KEY_dead_breve,
+;; 	MAIA_KEY_dead_abovedot,
+;; 	MAIA_KEY_dead_diaeresis,
+;; 	MAIA_KEY_dead_abovering,
+;; 	MAIA_KEY_dead_doubleacute,
+;; 	MAIA_KEY_dead_caron,
+;; 	MAIA_KEY_dead_cedilla,
+;; 	MAIA_KEY_dead_ogonek,
+;; 	MAIA_KEY_dead_iota,
+;; 	MAIA_KEY_dead_voiced_sound,
+;; 	MAIA_KEY_dead_semivoiced_sound,
+;; 	MAIA_KEY_dead_belowdot,
+;; 	MAIA_KEY_dead_hook,
+;; 	MAIA_KEY_dead_horn,
+;; 	MAIA_KEY_dead_stroke,
+;; 	MAIA_KEY_dead_abovecomma,
+;; 	MAIA_KEY_dead_psili,
+;; 	MAIA_KEY_dead_abovereversedcomma,
+;; 	MAIA_KEY_dead_dasia,
+;; 	MAIA_KEY_dead_doublegrave,
+;; 	MAIA_KEY_dead_belowring,
+;; 	MAIA_KEY_dead_belowmacron,
+;; 	MAIA_KEY_dead_belowcircumflex,
+;; 	MAIA_KEY_dead_belowtilde,
+;; 	MAIA_KEY_dead_belowbreve,
+;; 	MAIA_KEY_dead_belowdiaeresis,
+;; 	MAIA_KEY_dead_invertedbreve,
+;; 	MAIA_KEY_dead_belowcomma,
+;; 	MAIA_KEY_dead_currency,
+;; 	MAIA_KEY_dead_a,
+;; 	MAIA_KEY_dead_A,
+;; 	MAIA_KEY_dead_e,
+;; 	MAIA_KEY_dead_E,
+;; 	MAIA_KEY_dead_i,
+;; 	MAIA_KEY_dead_I,
+;; 	MAIA_KEY_dead_o,
+;; 	MAIA_KEY_dead_O,
+;; 	MAIA_KEY_dead_u,
+;; 	MAIA_KEY_dead_U,
+;; 	MAIA_KEY_dead_small_schwa,
+;; 	MAIA_KEY_dead_capital_schwa,
+;; 	MAIA_KEY_First_Virtual_Screen,
+;; 	MAIA_KEY_Prev_Virtual_Screen,
+;; 	MAIA_KEY_Next_Virtual_Screen,
+;; 	MAIA_KEY_Last_Virtual_Screen,
+;; 	MAIA_KEY_Terminate_Server,
+;; 	MAIA_KEY_AccessX_Enable,
+;; 	MAIA_KEY_AccessX_Feedback_Enable,
+;; 	MAIA_KEY_RepeatKeys_Enable,
+;; 	MAIA_KEY_SlowKeys_Enable,
+;; 	MAIA_KEY_BounceKeys_Enable,
+;; 	MAIA_KEY_StickyKeys_Enable,
+;; 	MAIA_KEY_MouseKeys_Enable,
+;; 	MAIA_KEY_MouseKeys_Accel_Enable,
+;; 	MAIA_KEY_Overlay1_Enable,
+;; 	MAIA_KEY_Overlay2_Enable,
+;; 	MAIA_KEY_AudibleBell_Enable,
+;; 	MAIA_KEY_Pointer_Left,
+;; 	MAIA_KEY_Pointer_Right,
+;; 	MAIA_KEY_Pointer_Up,
+;; 	MAIA_KEY_Pointer_Down,
+;; 	MAIA_KEY_Pointer_UpLeft,
+;; 	MAIA_KEY_Pointer_UpRight,
+;; 	MAIA_KEY_Pointer_DownLeft,
+;; 	MAIA_KEY_Pointer_DownRight,
+;; 	MAIA_KEY_Pointer_Button_Dflt,
+;; 	MAIA_KEY_Pointer_Button1,
+;; 	MAIA_KEY_Pointer_Button2,
+;; 	MAIA_KEY_Pointer_Button3,
+;; 	MAIA_KEY_Pointer_Button4,
+;; 	MAIA_KEY_Pointer_Button5,
+;; 	MAIA_KEY_Pointer_DblClick_Dflt,
+;; 	MAIA_KEY_Pointer_DblClick1,
+;; 	MAIA_KEY_Pointer_DblClick2,
+;; 	MAIA_KEY_Pointer_DblClick3,
+;; 	MAIA_KEY_Pointer_DblClick4,
+;; 	MAIA_KEY_Pointer_DblClick5,
+;; 	MAIA_KEY_Pointer_Drag_Dflt,
+;; 	MAIA_KEY_Pointer_Drag1,
+;; 	MAIA_KEY_Pointer_Drag2,
+;; 	MAIA_KEY_Pointer_Drag3,
+;; 	MAIA_KEY_Pointer_Drag4,
+;; 	MAIA_KEY_Pointer_Drag5,
+;; 	MAIA_KEY_Pointer_EnableKeys,
+;; 	MAIA_KEY_Pointer_Accelerate,
+;; 	MAIA_KEY_Pointer_DfltBtnNext,
+;; 	MAIA_KEY_Pointer_DfltBtnPrev,
+;; 	MAIA_KEY_3270_Duplicate,
+;; 	MAIA_KEY_3270_FieldMark,
+;; 	MAIA_KEY_3270_Right2,
+;; 	MAIA_KEY_3270_Left2,
+;; 	MAIA_KEY_3270_BackTab,
+;; 	MAIA_KEY_3270_EraseEOF,
+;; 	MAIA_KEY_3270_EraseInput,
+;; 	MAIA_KEY_3270_Reset,
+;; 	MAIA_KEY_3270_Quit,
+;; 	MAIA_KEY_3270_PA1,
+;; 	MAIA_KEY_3270_PA2,
+;; 	MAIA_KEY_3270_PA3,
+;; 	MAIA_KEY_3270_Test,
+;; 	MAIA_KEY_3270_Attn,
+;; 	MAIA_KEY_3270_CursorBlink,
+;; 	MAIA_KEY_3270_AltCursor,
+;; 	MAIA_KEY_3270_KeyClick,
+;; 	MAIA_KEY_3270_Jump,
+;; 	MAIA_KEY_3270_Ident,
+;; 	MAIA_KEY_3270_Rule,
+;; 	MAIA_KEY_3270_Copy,
+;; 	MAIA_KEY_3270_Play,
+;; 	MAIA_KEY_3270_Setup,
+;; 	MAIA_KEY_3270_Record,
+;; 	MAIA_KEY_3270_ChangeScreen,
+;; 	MAIA_KEY_3270_DeleteWord,
+;; 	MAIA_KEY_3270_ExSelect,
+;; 	MAIA_KEY_3270_CursorSelect,
+;; 	MAIA_KEY_3270_PrintScreen,
+;; 	MAIA_KEY_3270_Enter,
+;; 	MAIA_KEY_space,
+;; 	MAIA_KEY_exclam,
+;; 	MAIA_KEY_quotedbl,
+;; 	MAIA_KEY_numbersign,
+;; 	MAIA_KEY_dollar,
+;; 	MAIA_KEY_percent,
+;; 	MAIA_KEY_ampersand,
+;; 	MAIA_KEY_apostrophe,
+;; 	MAIA_KEY_quoteright,
+;; 	MAIA_KEY_parenleft,
+;; 	MAIA_KEY_parenright,
+;; 	MAIA_KEY_asterisk,
+;; 	MAIA_KEY_plus,
+;; 	MAIA_KEY_comma,
+;; 	MAIA_KEY_minus,
+;; 	MAIA_KEY_period,
+;; 	MAIA_KEY_slash,
+;; 	MAIA_KEY_0,
+;; 	MAIA_KEY_1,
+;; 	MAIA_KEY_2,
+;; 	MAIA_KEY_3,
+;; 	MAIA_KEY_4,
+;; 	MAIA_KEY_5,
+;; 	MAIA_KEY_6,
+;; 	MAIA_KEY_7,
+;; 	MAIA_KEY_8,
+;; 	MAIA_KEY_9,
+;; 	MAIA_KEY_colon,
+;; 	MAIA_KEY_semicolon,
+;; 	MAIA_KEY_less,
+;; 	MAIA_KEY_equal,
+;; 	MAIA_KEY_greater,
+;; 	MAIA_KEY_question,
+;; 	MAIA_KEY_at,
+;; 	MAIA_KEY_A,
+;; 	MAIA_KEY_B,
+;; 	MAIA_KEY_C,
+;; 	MAIA_KEY_D,
+;; 	MAIA_KEY_E,
+;; 	MAIA_KEY_F,
+;; 	MAIA_KEY_G,
+;; 	MAIA_KEY_H,
+;; 	MAIA_KEY_I,
+;; 	MAIA_KEY_J,
+;; 	MAIA_KEY_K,
+;; 	MAIA_KEY_L,
+;; 	MAIA_KEY_M,
+;; 	MAIA_KEY_N,
+;; 	MAIA_KEY_O,
+;; 	MAIA_KEY_P,
+;; 	MAIA_KEY_Q,
+;; 	MAIA_KEY_R,
+;; 	MAIA_KEY_S,
+;; 	MAIA_KEY_T,
+;; 	MAIA_KEY_U,
+;; 	MAIA_KEY_V,
+;; 	MAIA_KEY_W,
+;; 	MAIA_KEY_X,
+;; 	MAIA_KEY_Y,
+;; 	MAIA_KEY_Z,
+;; 	MAIA_KEY_bracketleft,
+;; 	MAIA_KEY_backslash,
+;; 	MAIA_KEY_bracketright,
+;; 	MAIA_KEY_asciicircum,
+;; 	MAIA_KEY_underscore,
+;; 	MAIA_KEY_grave,
+;; 	MAIA_KEY_quoteleft,
+;; 	MAIA_KEY_a,
+;; 	MAIA_KEY_b,
+;; 	MAIA_KEY_c,
+;; 	MAIA_KEY_d,
+;; 	MAIA_KEY_e,
+;; 	MAIA_KEY_f,
+;; 	MAIA_KEY_g,
+;; 	MAIA_KEY_h,
+;; 	MAIA_KEY_i,
+;; 	MAIA_KEY_j,
+;; 	MAIA_KEY_k,
+;; 	MAIA_KEY_l,
+;; 	MAIA_KEY_m,
+;; 	MAIA_KEY_n,
+;; 	MAIA_KEY_o,
+;; 	MAIA_KEY_p,
+;; 	MAIA_KEY_q,
+;; 	MAIA_KEY_r,
+;; 	MAIA_KEY_s,
+;; 	MAIA_KEY_t,
+;; 	MAIA_KEY_u,
+;; 	MAIA_KEY_v,
+;; 	MAIA_KEY_w,
+;; 	MAIA_KEY_x,
+;; 	MAIA_KEY_y,
+;; 	MAIA_KEY_z,
+;; 	MAIA_KEY_braceleft,
+;; 	MAIA_KEY_bar,
+;; 	MAIA_KEY_braceright,
+;; 	MAIA_KEY_asciitilde,
+;; 	MAIA_KEY_nobreakspace,
+;; 	MAIA_KEY_exclamdown,
+;; 	MAIA_KEY_cent,
+;; 	MAIA_KEY_sterling,
+;; 	MAIA_KEY_currency,
+;; 	MAIA_KEY_yen,
+;; 	MAIA_KEY_brokenbar,
+;; 	MAIA_KEY_section,
+;; 	MAIA_KEY_diaeresis,
+;; 	MAIA_KEY_copyright,
+;; 	MAIA_KEY_ordfeminine,
+;; 	MAIA_KEY_guillemotleft,
+;; 	MAIA_KEY_notsign,
+;; 	MAIA_KEY_hyphen,
+;; 	MAIA_KEY_registered,
+;; 	MAIA_KEY_macron,
+;; 	MAIA_KEY_degree,
+;; 	MAIA_KEY_plusminus,
+;; 	MAIA_KEY_twosuperior,
+;; 	MAIA_KEY_threesuperior,
+;; 	MAIA_KEY_acute,
+;; 	MAIA_KEY_mu,
+;; 	MAIA_KEY_paragraph,
+;; 	MAIA_KEY_periodcentered,
+;; 	MAIA_KEY_cedilla,
+;; 	MAIA_KEY_onesuperior,
+;; 	MAIA_KEY_masculine,
+;; 	MAIA_KEY_guillemotright,
+;; 	MAIA_KEY_onequarter,
+;; 	MAIA_KEY_onehalf,
+;; 	MAIA_KEY_threequarters,
+;; 	MAIA_KEY_questiondown,
+;; 	MAIA_KEY_Agrave,
+;; 	MAIA_KEY_Aacute,
+;; 	MAIA_KEY_Acircumflex,
+;; 	MAIA_KEY_Atilde,
+;; 	MAIA_KEY_Adiaeresis,
+;; 	MAIA_KEY_Aring,
+;; 	MAIA_KEY_AE,
+;; 	MAIA_KEY_Ccedilla,
+;; 	MAIA_KEY_Egrave,
+;; 	MAIA_KEY_Eacute,
+;; 	MAIA_KEY_Ecircumflex,
+;; 	MAIA_KEY_Ediaeresis,
+;; 	MAIA_KEY_Igrave,
+;; 	MAIA_KEY_Iacute,
+;; 	MAIA_KEY_Icircumflex,
+;; 	MAIA_KEY_Idiaeresis,
+;; 	MAIA_KEY_ETH,
+;; 	MAIA_KEY_Eth,
+;; 	MAIA_KEY_Ntilde,
+;; 	MAIA_KEY_Ograve,
+;; 	MAIA_KEY_Oacute,
+;; 	MAIA_KEY_Ocircumflex,
+;; 	MAIA_KEY_Otilde,
+;; 	MAIA_KEY_Odiaeresis,
+;; 	MAIA_KEY_multiply,
+;; 	MAIA_KEY_Oslash,
+;; 	MAIA_KEY_Ooblique,
+;; 	MAIA_KEY_Ugrave,
+;; 	MAIA_KEY_Uacute,
+;; 	MAIA_KEY_Ucircumflex,
+;; 	MAIA_KEY_Udiaeresis,
+;; 	MAIA_KEY_Yacute,
+;; 	MAIA_KEY_THORN,
+;; 	MAIA_KEY_Thorn,
+;; 	MAIA_KEY_ssharp,
+;; 	MAIA_KEY_agrave,
+;; 	MAIA_KEY_aacute,
+;; 	MAIA_KEY_acircumflex,
+;; 	MAIA_KEY_atilde,
+;; 	MAIA_KEY_adiaeresis,
+;; 	MAIA_KEY_aring,
+;; 	MAIA_KEY_ae,
+;; 	MAIA_KEY_ccedilla,
+;; 	MAIA_KEY_egrave,
+;; 	MAIA_KEY_eacute,
+;; 	MAIA_KEY_ecircumflex,
+;; 	MAIA_KEY_ediaeresis,
+;; 	MAIA_KEY_igrave,
+;; 	MAIA_KEY_iacute,
+;; 	MAIA_KEY_icircumflex,
+;; 	MAIA_KEY_idiaeresis,
+;; 	MAIA_KEY_eth,
+;; 	MAIA_KEY_ntilde,
+;; 	MAIA_KEY_ograve,
+;; 	MAIA_KEY_oacute,
+;; 	MAIA_KEY_ocircumflex,
+;; 	MAIA_KEY_otilde,
+;; 	MAIA_KEY_odiaeresis,
+;; 	MAIA_KEY_division,
+;; 	MAIA_KEY_oslash,
+;; 	MAIA_KEY_ooblique,
+;; 	MAIA_KEY_ugrave,
+;; 	MAIA_KEY_uacute,
+;; 	MAIA_KEY_ucircumflex,
+;; 	MAIA_KEY_udiaeresis,
+;; 	MAIA_KEY_yacute,
+;; 	MAIA_KEY_thorn,
+;; 	MAIA_KEY_ydiaeresis,
+;; 	MAIA_KEY_Aogonek,
+;; 	MAIA_KEY_breve,
+;; 	MAIA_KEY_Lstroke,
+;; 	MAIA_KEY_Lcaron,
+;; 	MAIA_KEY_Sacute,
+;; 	MAIA_KEY_Scaron,
+;; 	MAIA_KEY_Scedilla,
+;; 	MAIA_KEY_Tcaron,
+;; 	MAIA_KEY_Zacute,
+;; 	MAIA_KEY_Zcaron,
+;; 	MAIA_KEY_Zabovedot,
+;; 	MAIA_KEY_aogonek,
+;; 	MAIA_KEY_ogonek,
+;; 	MAIA_KEY_lstroke,
+;; 	MAIA_KEY_lcaron,
+;; 	MAIA_KEY_sacute,
+;; 	MAIA_KEY_caron,
+;; 	MAIA_KEY_scaron,
+;; 	MAIA_KEY_scedilla,
+;; 	MAIA_KEY_tcaron,
+;; 	MAIA_KEY_zacute,
+;; 	MAIA_KEY_doubleacute,
+;; 	MAIA_KEY_zcaron,
+;; 	MAIA_KEY_zabovedot,
+;; 	MAIA_KEY_Racute,
+;; 	MAIA_KEY_Abreve,
+;; 	MAIA_KEY_Lacute,
+;; 	MAIA_KEY_Cacute,
+;; 	MAIA_KEY_Ccaron,
+;; 	MAIA_KEY_Eogonek,
+;; 	MAIA_KEY_Ecaron,
+;; 	MAIA_KEY_Dcaron,
+;; 	MAIA_KEY_Dstroke,
+;; 	MAIA_KEY_Nacute,
+;; 	MAIA_KEY_Ncaron,
+;; 	MAIA_KEY_Odoubleacute,
+;; 	MAIA_KEY_Rcaron,
+;; 	MAIA_KEY_Uring,
+;; 	MAIA_KEY_Udoubleacute,
+;; 	MAIA_KEY_Tcedilla,
+;; 	MAIA_KEY_racute,
+;; 	MAIA_KEY_abreve,
+;; 	MAIA_KEY_lacute,
+;; 	MAIA_KEY_cacute,
+;; 	MAIA_KEY_ccaron,
+;; 	MAIA_KEY_eogonek,
+;; 	MAIA_KEY_ecaron,
+;; 	MAIA_KEY_dcaron,
+;; 	MAIA_KEY_dstroke,
+;; 	MAIA_KEY_nacute,
+;; 	MAIA_KEY_ncaron,
+;; 	MAIA_KEY_odoubleacute,
+;; 	MAIA_KEY_rcaron,
+;; 	MAIA_KEY_uring,
+;; 	MAIA_KEY_udoubleacute,
+;; 	MAIA_KEY_tcedilla,
+;; 	MAIA_KEY_abovedot,
+;; 	MAIA_KEY_Hstroke,
+;; 	MAIA_KEY_Hcircumflex,
+;; 	MAIA_KEY_Iabovedot,
+;; 	MAIA_KEY_Gbreve,
+;; 	MAIA_KEY_Jcircumflex,
+;; 	MAIA_KEY_hstroke,
+;; 	MAIA_KEY_hcircumflex,
+;; 	MAIA_KEY_idotless,
+;; 	MAIA_KEY_gbreve,
+;; 	MAIA_KEY_jcircumflex,
+;; 	MAIA_KEY_Cabovedot,
+;; 	MAIA_KEY_Ccircumflex,
+;; 	MAIA_KEY_Gabovedot,
+;; 	MAIA_KEY_Gcircumflex,
+;; 	MAIA_KEY_Ubreve,
+;; 	MAIA_KEY_Scircumflex,
+;; 	MAIA_KEY_cabovedot,
+;; 	MAIA_KEY_ccircumflex,
+;; 	MAIA_KEY_gabovedot,
+;; 	MAIA_KEY_gcircumflex,
+;; 	MAIA_KEY_ubreve,
+;; 	MAIA_KEY_scircumflex,
+;; 	MAIA_KEY_kra,
+;; 	MAIA_KEY_kappa,
+;; 	MAIA_KEY_Rcedilla,
+;; 	MAIA_KEY_Itilde,
+;; 	MAIA_KEY_Lcedilla,
+;; 	MAIA_KEY_Emacron,
+;; 	MAIA_KEY_Gcedilla,
+;; 	MAIA_KEY_Tslash,
+;; 	MAIA_KEY_rcedilla,
+;; 	MAIA_KEY_itilde,
+;; 	MAIA_KEY_lcedilla,
+;; 	MAIA_KEY_emacron,
+;; 	MAIA_KEY_gcedilla,
+;; 	MAIA_KEY_tslash,
+;; 	MAIA_KEY_ENG,
+;; 	MAIA_KEY_eng,
+;; 	MAIA_KEY_Amacron,
+;; 	MAIA_KEY_Iogonek,
+;; 	MAIA_KEY_Eabovedot,
+;; 	MAIA_KEY_Imacron,
+;; 	MAIA_KEY_Ncedilla,
+;; 	MAIA_KEY_Omacron,
+;; 	MAIA_KEY_Kcedilla,
+;; 	MAIA_KEY_Uogonek,
+;; 	MAIA_KEY_Utilde,
+;; 	MAIA_KEY_Umacron,
+;; 	MAIA_KEY_amacron,
+;; 	MAIA_KEY_iogonek,
+;; 	MAIA_KEY_eabovedot,
+;; 	MAIA_KEY_imacron,
+;; 	MAIA_KEY_ncedilla,
+;; 	MAIA_KEY_omacron,
+;; 	MAIA_KEY_kcedilla,
+;; 	MAIA_KEY_uogonek,
+;; 	MAIA_KEY_utilde,
+;; 	MAIA_KEY_umacron,
+;; 	MAIA_KEY_Wcircumflex,
+;; 	MAIA_KEY_wcircumflex,
+;; 	MAIA_KEY_Ycircumflex,
+;; 	MAIA_KEY_ycircumflex,
+;; 	MAIA_KEY_Babovedot,
+;; 	MAIA_KEY_babovedot,
+;; 	MAIA_KEY_Dabovedot,
+;; 	MAIA_KEY_dabovedot,
+;; 	MAIA_KEY_Fabovedot,
+;; 	MAIA_KEY_fabovedot,
+;; 	MAIA_KEY_Mabovedot,
+;; 	MAIA_KEY_mabovedot,
+;; 	MAIA_KEY_Pabovedot,
+;; 	MAIA_KEY_pabovedot,
+;; 	MAIA_KEY_Sabovedot,
+;; 	MAIA_KEY_sabovedot,
+;; 	MAIA_KEY_Tabovedot,
+;; 	MAIA_KEY_tabovedot,
+;; 	MAIA_KEY_Wgrave,
+;; 	MAIA_KEY_wgrave,
+;; 	MAIA_KEY_Wacute,
+;; 	MAIA_KEY_wacute,
+;; 	MAIA_KEY_Wdiaeresis,
+;; 	MAIA_KEY_wdiaeresis,
+;; 	MAIA_KEY_Ygrave,
+;; 	MAIA_KEY_ygrave,
+;; 	MAIA_KEY_OE,
+;; 	MAIA_KEY_oe,
+;; 	MAIA_KEY_Ydiaeresis,
+;; 	MAIA_KEY_overline,
+;; 	MAIA_KEY_kana_fullstop,
+;; 	MAIA_KEY_kana_openingbracket,
+;; 	MAIA_KEY_kana_closingbracket,
+;; 	MAIA_KEY_kana_comma,
+;; 	MAIA_KEY_kana_conjunctive,
+;; 	MAIA_KEY_kana_middledot,
+;; 	MAIA_KEY_kana_WO,
+;; 	MAIA_KEY_kana_a,
+;; 	MAIA_KEY_kana_i,
+;; 	MAIA_KEY_kana_u,
+;; 	MAIA_KEY_kana_e,
+;; 	MAIA_KEY_kana_o,
+;; 	MAIA_KEY_kana_ya,
+;; 	MAIA_KEY_kana_yu,
+;; 	MAIA_KEY_kana_yo,
+;; 	MAIA_KEY_kana_tsu,
+;; 	MAIA_KEY_kana_tu,
+;; 	MAIA_KEY_prolongedsound,
+;; 	MAIA_KEY_kana_A,
+;; 	MAIA_KEY_kana_I,
+;; 	MAIA_KEY_kana_U,
+;; 	MAIA_KEY_kana_E,
+;; 	MAIA_KEY_kana_O,
+;; 	MAIA_KEY_kana_KA,
+;; 	MAIA_KEY_kana_KI,
+;; 	MAIA_KEY_kana_KU,
+;; 	MAIA_KEY_kana_KE,
+;; 	MAIA_KEY_kana_KO,
+;; 	MAIA_KEY_kana_SA,
+;; 	MAIA_KEY_kana_SHI,
+;; 	MAIA_KEY_kana_SU,
+;; 	MAIA_KEY_kana_SE,
+;; 	MAIA_KEY_kana_SO,
+;; 	MAIA_KEY_kana_TA,
+;; 	MAIA_KEY_kana_CHI,
+;; 	MAIA_KEY_kana_TI,
+;; 	MAIA_KEY_kana_TSU,
+;; 	MAIA_KEY_kana_TU,
+;; 	MAIA_KEY_kana_TE,
+;; 	MAIA_KEY_kana_TO,
+;; 	MAIA_KEY_kana_NA,
+;; 	MAIA_KEY_kana_NI,
+;; 	MAIA_KEY_kana_NU,
+;; 	MAIA_KEY_kana_NE,
+;; 	MAIA_KEY_kana_NO,
+;; 	MAIA_KEY_kana_HA,
+;; 	MAIA_KEY_kana_HI,
+;; 	MAIA_KEY_kana_FU,
+;; 	MAIA_KEY_kana_HU,
+;; 	MAIA_KEY_kana_HE,
+;; 	MAIA_KEY_kana_HO,
+;; 	MAIA_KEY_kana_MA,
+;; 	MAIA_KEY_kana_MI,
+;; 	MAIA_KEY_kana_MU,
+;; 	MAIA_KEY_kana_ME,
+;; 	MAIA_KEY_kana_MO,
+;; 	MAIA_KEY_kana_YA,
+;; 	MAIA_KEY_kana_YU,
+;; 	MAIA_KEY_kana_YO,
+;; 	MAIA_KEY_kana_RA,
+;; 	MAIA_KEY_kana_RI,
+;; 	MAIA_KEY_kana_RU,
+;; 	MAIA_KEY_kana_RE,
+;; 	MAIA_KEY_kana_RO,
+;; 	MAIA_KEY_kana_WA,
+;; 	MAIA_KEY_kana_N,
+;; 	MAIA_KEY_voicedsound,
+;; 	MAIA_KEY_semivoicedsound,
+;; 	MAIA_KEY_kana_switch,
+;; 	MAIA_KEY_Farsi_0,
+;; 	MAIA_KEY_Farsi_1,
+;; 	MAIA_KEY_Farsi_2,
+;; 	MAIA_KEY_Farsi_3,
+;; 	MAIA_KEY_Farsi_4,
+;; 	MAIA_KEY_Farsi_5,
+;; 	MAIA_KEY_Farsi_6,
+;; 	MAIA_KEY_Farsi_7,
+;; 	MAIA_KEY_Farsi_8,
+;; 	MAIA_KEY_Farsi_9,
+;; 	MAIA_KEY_Arabic_percent,
+;; 	MAIA_KEY_Arabic_superscript_alef,
+;; 	MAIA_KEY_Arabic_tteh,
+;; 	MAIA_KEY_Arabic_peh,
+;; 	MAIA_KEY_Arabic_tcheh,
+;; 	MAIA_KEY_Arabic_ddal,
+;; 	MAIA_KEY_Arabic_rreh,
+;; 	MAIA_KEY_Arabic_comma,
+;; 	MAIA_KEY_Arabic_fullstop,
+;; 	MAIA_KEY_Arabic_0,
+;; 	MAIA_KEY_Arabic_1,
+;; 	MAIA_KEY_Arabic_2,
+;; 	MAIA_KEY_Arabic_3,
+;; 	MAIA_KEY_Arabic_4,
+;; 	MAIA_KEY_Arabic_5,
+;; 	MAIA_KEY_Arabic_6,
+;; 	MAIA_KEY_Arabic_7,
+;; 	MAIA_KEY_Arabic_8,
+;; 	MAIA_KEY_Arabic_9,
+;; 	MAIA_KEY_Arabic_semicolon,
+;; 	MAIA_KEY_Arabic_question_mark,
+;; 	MAIA_KEY_Arabic_hamza,
+;; 	MAIA_KEY_Arabic_maddaonalef,
+;; 	MAIA_KEY_Arabic_hamzaonalef,
+;; 	MAIA_KEY_Arabic_hamzaonwaw,
+;; 	MAIA_KEY_Arabic_hamzaunderalef,
+;; 	MAIA_KEY_Arabic_hamzaonyeh,
+;; 	MAIA_KEY_Arabic_alef,
+;; 	MAIA_KEY_Arabic_beh,
+;; 	MAIA_KEY_Arabic_tehmarbuta,
+;; 	MAIA_KEY_Arabic_teh,
+;; 	MAIA_KEY_Arabic_theh,
+;; 	MAIA_KEY_Arabic_jeem,
+;; 	MAIA_KEY_Arabic_hah,
+;; 	MAIA_KEY_Arabic_khah,
+;; 	MAIA_KEY_Arabic_dal,
+;; 	MAIA_KEY_Arabic_thal,
+;; 	MAIA_KEY_Arabic_ra,
+;; 	MAIA_KEY_Arabic_zain,
+;; 	MAIA_KEY_Arabic_seen,
+;; 	MAIA_KEY_Arabic_sheen,
+;; 	MAIA_KEY_Arabic_sad,
+;; 	MAIA_KEY_Arabic_dad,
+;; 	MAIA_KEY_Arabic_tah,
+;; 	MAIA_KEY_Arabic_zah,
+;; 	MAIA_KEY_Arabic_ain,
+;; 	MAIA_KEY_Arabic_ghain,
+;; 	MAIA_KEY_Arabic_tatweel,
+;; 	MAIA_KEY_Arabic_feh,
+;; 	MAIA_KEY_Arabic_qaf,
+;; 	MAIA_KEY_Arabic_kaf,
+;; 	MAIA_KEY_Arabic_lam,
+;; 	MAIA_KEY_Arabic_meem,
+;; 	MAIA_KEY_Arabic_noon,
+;; 	MAIA_KEY_Arabic_ha,
+;; 	MAIA_KEY_Arabic_heh,
+;; 	MAIA_KEY_Arabic_waw,
+;; 	MAIA_KEY_Arabic_alefmaksura,
+;; 	MAIA_KEY_Arabic_yeh,
+;; 	MAIA_KEY_Arabic_fathatan,
+;; 	MAIA_KEY_Arabic_dammatan,
+;; 	MAIA_KEY_Arabic_kasratan,
+;; 	MAIA_KEY_Arabic_fatha,
+;; 	MAIA_KEY_Arabic_damma,
+;; 	MAIA_KEY_Arabic_kasra,
+;; 	MAIA_KEY_Arabic_shadda,
+;; 	MAIA_KEY_Arabic_sukun,
+;; 	MAIA_KEY_Arabic_madda_above,
+;; 	MAIA_KEY_Arabic_hamza_above,
+;; 	MAIA_KEY_Arabic_hamza_below,
+;; 	MAIA_KEY_Arabic_jeh,
+;; 	MAIA_KEY_Arabic_veh,
+;; 	MAIA_KEY_Arabic_keheh,
+;; 	MAIA_KEY_Arabic_gaf,
+;; 	MAIA_KEY_Arabic_noon_ghunna,
+;; 	MAIA_KEY_Arabic_heh_doachashmee,
+;; 	MAIA_KEY_Farsi_yeh,
+;; 	MAIA_KEY_Arabic_farsi_yeh,
+;; 	MAIA_KEY_Arabic_yeh_baree,
+;; 	MAIA_KEY_Arabic_heh_goal,
+;; 	MAIA_KEY_Arabic_switch,
+;; 	MAIA_KEY_Cyrillic_GHE_bar,
+;; 	MAIA_KEY_Cyrillic_ghe_bar,
+;; 	MAIA_KEY_Cyrillic_ZHE_descender,
+;; 	MAIA_KEY_Cyrillic_zhe_descender,
+;; 	MAIA_KEY_Cyrillic_KA_descender,
+;; 	MAIA_KEY_Cyrillic_ka_descender,
+;; 	MAIA_KEY_Cyrillic_KA_vertstroke,
+;; 	MAIA_KEY_Cyrillic_ka_vertstroke,
+;; 	MAIA_KEY_Cyrillic_EN_descender,
+;; 	MAIA_KEY_Cyrillic_en_descender,
+;; 	MAIA_KEY_Cyrillic_U_straight,
+;; 	MAIA_KEY_Cyrillic_u_straight,
+;; 	MAIA_KEY_Cyrillic_U_straight_bar,
+;; 	MAIA_KEY_Cyrillic_u_straight_bar,
+;; 	MAIA_KEY_Cyrillic_HA_descender,
+;; 	MAIA_KEY_Cyrillic_ha_descender,
+;; 	MAIA_KEY_Cyrillic_CHE_descender,
+;; 	MAIA_KEY_Cyrillic_che_descender,
+;; 	MAIA_KEY_Cyrillic_CHE_vertstroke,
+;; 	MAIA_KEY_Cyrillic_che_vertstroke,
+;; 	MAIA_KEY_Cyrillic_SHHA,
+;; 	MAIA_KEY_Cyrillic_shha,
+;; 	MAIA_KEY_Cyrillic_SCHWA,
+;; 	MAIA_KEY_Cyrillic_schwa,
+;; 	MAIA_KEY_Cyrillic_I_macron,
+;; 	MAIA_KEY_Cyrillic_i_macron,
+;; 	MAIA_KEY_Cyrillic_O_bar,
+;; 	MAIA_KEY_Cyrillic_o_bar,
+;; 	MAIA_KEY_Cyrillic_U_macron,
+;; 	MAIA_KEY_Cyrillic_u_macron,
+;; 	MAIA_KEY_Serbian_dje,
+;; 	MAIA_KEY_Macedonia_gje,
+;; 	MAIA_KEY_Cyrillic_io,
+;; 	MAIA_KEY_Ukrainian_ie,
+;; 	MAIA_KEY_Ukranian_je,
+;; 	MAIA_KEY_Macedonia_dse,
+;; 	MAIA_KEY_Ukrainian_i,
+;; 	MAIA_KEY_Ukranian_i,
+;; 	MAIA_KEY_Ukrainian_yi,
+;; 	MAIA_KEY_Ukranian_yi,
+;; 	MAIA_KEY_Cyrillic_je,
+;; 	MAIA_KEY_Serbian_je,
+;; 	MAIA_KEY_Cyrillic_lje,
+;; 	MAIA_KEY_Serbian_lje,
+;; 	MAIA_KEY_Cyrillic_nje,
+;; 	MAIA_KEY_Serbian_nje,
+;; 	MAIA_KEY_Serbian_tshe,
+;; 	MAIA_KEY_Macedonia_kje,
+;; 	MAIA_KEY_Ukrainian_ghe_with_upturn,
+;; 	MAIA_KEY_Byelorussian_shortu,
+;; 	MAIA_KEY_Cyrillic_dzhe,
+;; 	MAIA_KEY_Serbian_dze,
+;; 	MAIA_KEY_numerosign,
+;; 	MAIA_KEY_Serbian_DJE,
+;; 	MAIA_KEY_Macedonia_GJE,
+;; 	MAIA_KEY_Cyrillic_IO,
+;; 	MAIA_KEY_Ukrainian_IE,
+;; 	MAIA_KEY_Ukranian_JE,
+;; 	MAIA_KEY_Macedonia_DSE,
+;; 	MAIA_KEY_Ukrainian_I,
+;; 	MAIA_KEY_Ukranian_I,
+;; 	MAIA_KEY_Ukrainian_YI,
+;; 	MAIA_KEY_Ukranian_YI,
+;; 	MAIA_KEY_Cyrillic_JE,
+;; 	MAIA_KEY_Serbian_JE,
+;; 	MAIA_KEY_Cyrillic_LJE,
+;; 	MAIA_KEY_Serbian_LJE,
+;; 	MAIA_KEY_Cyrillic_NJE,
+;; 	MAIA_KEY_Serbian_NJE,
+;; 	MAIA_KEY_Serbian_TSHE,
+;; 	MAIA_KEY_Macedonia_KJE,
+;; 	MAIA_KEY_Ukrainian_GHE_WITH_UPTURN,
+;; 	MAIA_KEY_Byelorussian_SHORTU,
+;; 	MAIA_KEY_Cyrillic_DZHE,
+;; 	MAIA_KEY_Serbian_DZE,
+;; 	MAIA_KEY_Cyrillic_yu,
+;; 	MAIA_KEY_Cyrillic_a,
+;; 	MAIA_KEY_Cyrillic_be,
+;; 	MAIA_KEY_Cyrillic_tse,
+;; 	MAIA_KEY_Cyrillic_de,
+;; 	MAIA_KEY_Cyrillic_ie,
+;; 	MAIA_KEY_Cyrillic_ef,
+;; 	MAIA_KEY_Cyrillic_ghe,
+;; 	MAIA_KEY_Cyrillic_ha,
+;; 	MAIA_KEY_Cyrillic_i,
+;; 	MAIA_KEY_Cyrillic_shorti,
+;; 	MAIA_KEY_Cyrillic_ka,
+;; 	MAIA_KEY_Cyrillic_el,
+;; 	MAIA_KEY_Cyrillic_em,
+;; 	MAIA_KEY_Cyrillic_en,
+;; 	MAIA_KEY_Cyrillic_o,
+;; 	MAIA_KEY_Cyrillic_pe,
+;; 	MAIA_KEY_Cyrillic_ya,
+;; 	MAIA_KEY_Cyrillic_er,
+;; 	MAIA_KEY_Cyrillic_es,
+;; 	MAIA_KEY_Cyrillic_te,
+;; 	MAIA_KEY_Cyrillic_u,
+;; 	MAIA_KEY_Cyrillic_zhe,
+;; 	MAIA_KEY_Cyrillic_ve,
+;; 	MAIA_KEY_Cyrillic_softsign,
+;; 	MAIA_KEY_Cyrillic_yeru,
+;; 	MAIA_KEY_Cyrillic_ze,
+;; 	MAIA_KEY_Cyrillic_sha,
+;; 	MAIA_KEY_Cyrillic_e,
+;; 	MAIA_KEY_Cyrillic_shcha,
+;; 	MAIA_KEY_Cyrillic_che,
+;; 	MAIA_KEY_Cyrillic_hardsign,
+;; 	MAIA_KEY_Cyrillic_YU,
+;; 	MAIA_KEY_Cyrillic_A,
+;; 	MAIA_KEY_Cyrillic_BE,
+;; 	MAIA_KEY_Cyrillic_TSE,
+;; 	MAIA_KEY_Cyrillic_DE,
+;; 	MAIA_KEY_Cyrillic_IE,
+;; 	MAIA_KEY_Cyrillic_EF,
+;; 	MAIA_KEY_Cyrillic_GHE,
+;; 	MAIA_KEY_Cyrillic_HA,
+;; 	MAIA_KEY_Cyrillic_I,
+;; 	MAIA_KEY_Cyrillic_SHORTI,
+;; 	MAIA_KEY_Cyrillic_KA,
+;; 	MAIA_KEY_Cyrillic_EL,
+;; 	MAIA_KEY_Cyrillic_EM,
+;; 	MAIA_KEY_Cyrillic_EN,
+;; 	MAIA_KEY_Cyrillic_O,
+;; 	MAIA_KEY_Cyrillic_PE,
+;; 	MAIA_KEY_Cyrillic_YA,
+;; 	MAIA_KEY_Cyrillic_ER,
+;; 	MAIA_KEY_Cyrillic_ES,
+;; 	MAIA_KEY_Cyrillic_TE,
+;; 	MAIA_KEY_Cyrillic_U,
+;; 	MAIA_KEY_Cyrillic_ZHE,
+;; 	MAIA_KEY_Cyrillic_VE,
+;; 	MAIA_KEY_Cyrillic_SOFTSIGN,
+;; 	MAIA_KEY_Cyrillic_YERU,
+;; 	MAIA_KEY_Cyrillic_ZE,
+;; 	MAIA_KEY_Cyrillic_SHA,
+;; 	MAIA_KEY_Cyrillic_E,
+;; 	MAIA_KEY_Cyrillic_SHCHA,
+;; 	MAIA_KEY_Cyrillic_CHE,
+;; 	MAIA_KEY_Cyrillic_HARDSIGN,
+;; 	MAIA_KEY_Greek_ALPHAaccent,
+;; 	MAIA_KEY_Greek_EPSILONaccent,
+;; 	MAIA_KEY_Greek_ETAaccent,
+;; 	MAIA_KEY_Greek_IOTAaccent,
+;; 	MAIA_KEY_Greek_IOTAdieresis,
+;; 	MAIA_KEY_Greek_IOTAdiaeresis,
+;; 	MAIA_KEY_Greek_OMICRONaccent,
+;; 	MAIA_KEY_Greek_UPSILONaccent,
+;; 	MAIA_KEY_Greek_UPSILONdieresis,
+;; 	MAIA_KEY_Greek_OMEGAaccent,
+;; 	MAIA_KEY_Greek_accentdieresis,
+;; 	MAIA_KEY_Greek_horizbar,
+;; 	MAIA_KEY_Greek_alphaaccent,
+;; 	MAIA_KEY_Greek_epsilonaccent,
+;; 	MAIA_KEY_Greek_etaaccent,
+;; 	MAIA_KEY_Greek_iotaaccent,
+;; 	MAIA_KEY_Greek_iotadieresis,
+;; 	MAIA_KEY_Greek_iotaaccentdieresis,
+;; 	MAIA_KEY_Greek_omicronaccent,
+;; 	MAIA_KEY_Greek_upsilonaccent,
+;; 	MAIA_KEY_Greek_upsilondieresis,
+;; 	MAIA_KEY_Greek_upsilonaccentdieresis,
+;; 	MAIA_KEY_Greek_omegaaccent,
+;; 	MAIA_KEY_Greek_ALPHA,
+;; 	MAIA_KEY_Greek_BETA,
+;; 	MAIA_KEY_Greek_GAMMA,
+;; 	MAIA_KEY_Greek_DELTA,
+;; 	MAIA_KEY_Greek_EPSILON,
+;; 	MAIA_KEY_Greek_ZETA,
+;; 	MAIA_KEY_Greek_ETA,
+;; 	MAIA_KEY_Greek_THETA,
+;; 	MAIA_KEY_Greek_IOTA,
+;; 	MAIA_KEY_Greek_KAPPA,
+;; 	MAIA_KEY_Greek_LAMDA,
+;; 	MAIA_KEY_Greek_LAMBDA,
+;; 	MAIA_KEY_Greek_MU,
+;; 	MAIA_KEY_Greek_NU,
+;; 	MAIA_KEY_Greek_XI,
+;; 	MAIA_KEY_Greek_OMICRON,
+;; 	MAIA_KEY_Greek_PI,
+;; 	MAIA_KEY_Greek_RHO,
+;; 	MAIA_KEY_Greek_SIGMA,
+;; 	MAIA_KEY_Greek_TAU,
+;; 	MAIA_KEY_Greek_UPSILON,
+;; 	MAIA_KEY_Greek_PHI,
+;; 	MAIA_KEY_Greek_CHI,
+;; 	MAIA_KEY_Greek_PSI,
+;; 	MAIA_KEY_Greek_OMEGA,
+;; 	MAIA_KEY_Greek_alpha,
+;; 	MAIA_KEY_Greek_beta,
+;; 	MAIA_KEY_Greek_gamma,
+;; 	MAIA_KEY_Greek_delta,
+;; 	MAIA_KEY_Greek_epsilon,
+;; 	MAIA_KEY_Greek_zeta,
+;; 	MAIA_KEY_Greek_eta,
+;; 	MAIA_KEY_Greek_theta,
+;; 	MAIA_KEY_Greek_iota,
+;; 	MAIA_KEY_Greek_kappa,
+;; 	MAIA_KEY_Greek_lamda,
+;; 	MAIA_KEY_Greek_lambda,
+;; 	MAIA_KEY_Greek_mu,
+;; 	MAIA_KEY_Greek_nu,
+;; 	MAIA_KEY_Greek_xi,
+;; 	MAIA_KEY_Greek_omicron,
+;; 	MAIA_KEY_Greek_pi,
+;; 	MAIA_KEY_Greek_rho,
+;; 	MAIA_KEY_Greek_sigma,
+;; 	MAIA_KEY_Greek_finalsmallsigma,
+;; 	MAIA_KEY_Greek_tau,
+;; 	MAIA_KEY_Greek_upsilon,
+;; 	MAIA_KEY_Greek_phi,
+;; 	MAIA_KEY_Greek_chi,
+;; 	MAIA_KEY_Greek_psi,
+;; 	MAIA_KEY_Greek_omega,
+;; 	MAIA_KEY_Greek_switch,
+;; 	MAIA_KEY_leftradical,
+;; 	MAIA_KEY_topleftradical,
+;; 	MAIA_KEY_horizconnector,
+;; 	MAIA_KEY_topintegral,
+;; 	MAIA_KEY_botintegral,
+;; 	MAIA_KEY_vertconnector,
+;; 	MAIA_KEY_topleftsqbracket,
+;; 	MAIA_KEY_botleftsqbracket,
+;; 	MAIA_KEY_toprightsqbracket,
+;; 	MAIA_KEY_botrightsqbracket,
+;; 	MAIA_KEY_topleftparens,
+;; 	MAIA_KEY_botleftparens,
+;; 	MAIA_KEY_toprightparens,
+;; 	MAIA_KEY_botrightparens,
+;; 	MAIA_KEY_leftmiddlecurlybrace,
+;; 	MAIA_KEY_rightmiddlecurlybrace,
+;; 	MAIA_KEY_topleftsummation,
+;; 	MAIA_KEY_botleftsummation,
+;; 	MAIA_KEY_topvertsummationconnector,
+;; 	MAIA_KEY_botvertsummationconnector,
+;; 	MAIA_KEY_toprightsummation,
+;; 	MAIA_KEY_botrightsummation,
+;; 	MAIA_KEY_rightmiddlesummation,
+;; 	MAIA_KEY_lessthanequal,
+;; 	MAIA_KEY_notequal,
+;; 	MAIA_KEY_greaterthanequal,
+;; 	MAIA_KEY_integral,
+;; 	MAIA_KEY_therefore,
+;; 	MAIA_KEY_variation,
+;; 	MAIA_KEY_infinity,
+;; 	MAIA_KEY_nabla,
+;; 	MAIA_KEY_approximate,
+;; 	MAIA_KEY_similarequal,
+;; 	MAIA_KEY_ifonlyif,
+;; 	MAIA_KEY_implies,
+;; 	MAIA_KEY_identical,
+;; 	MAIA_KEY_radical,
+;; 	MAIA_KEY_includedin,
+;; 	MAIA_KEY_includes,
+;; 	MAIA_KEY_intersection,
+;; 	MAIA_KEY_union,
+;; 	MAIA_KEY_logicaland,
+;; 	MAIA_KEY_logicalor,
+;; 	MAIA_KEY_partialderivative,
+;; 	MAIA_KEY_function,
+;; 	MAIA_KEY_leftarrow,
+;; 	MAIA_KEY_uparrow,
+;; 	MAIA_KEY_rightarrow,
+;; 	MAIA_KEY_downarrow,
+;; 	MAIA_KEY_blank,
+;; 	MAIA_KEY_soliddiamond,
+;; 	MAIA_KEY_checkerboard,
+;; 	MAIA_KEY_ht,
+;; 	MAIA_KEY_ff,
+;; 	MAIA_KEY_cr,
+;; 	MAIA_KEY_lf,
+;; 	MAIA_KEY_nl,
+;; 	MAIA_KEY_vt,
+;; 	MAIA_KEY_lowrightcorner,
+;; 	MAIA_KEY_uprightcorner,
+;; 	MAIA_KEY_upleftcorner,
+;; 	MAIA_KEY_lowleftcorner,
+;; 	MAIA_KEY_crossinglines,
+;; 	MAIA_KEY_horizlinescan1,
+;; 	MAIA_KEY_horizlinescan3,
+;; 	MAIA_KEY_horizlinescan5,
+;; 	MAIA_KEY_horizlinescan7,
+;; 	MAIA_KEY_horizlinescan9,
+;; 	MAIA_KEY_leftt,
+;; 	MAIA_KEY_rightt,
+;; 	MAIA_KEY_bott,
+;; 	MAIA_KEY_topt,
+;; 	MAIA_KEY_vertbar,
+;; 	MAIA_KEY_emspace,
+;; 	MAIA_KEY_enspace,
+;; 	MAIA_KEY_em3space,
+;; 	MAIA_KEY_em4space,
+;; 	MAIA_KEY_digitspace,
+;; 	MAIA_KEY_punctspace,
+;; 	MAIA_KEY_thinspace,
+;; 	MAIA_KEY_hairspace,
+;; 	MAIA_KEY_emdash,
+;; 	MAIA_KEY_endash,
+;; 	MAIA_KEY_signifblank,
+;; 	MAIA_KEY_ellipsis,
+;; 	MAIA_KEY_doubbaselinedot,
+;; 	MAIA_KEY_onethird,
+;; 	MAIA_KEY_twothirds,
+;; 	MAIA_KEY_onefifth,
+;; 	MAIA_KEY_twofifths,
+;; 	MAIA_KEY_threefifths,
+;; 	MAIA_KEY_fourfifths,
+;; 	MAIA_KEY_onesixth,
+;; 	MAIA_KEY_fivesixths,
+;; 	MAIA_KEY_careof,
+;; 	MAIA_KEY_figdash,
+;; 	MAIA_KEY_leftanglebracket,
+;; 	MAIA_KEY_decimalpoint,
+;; 	MAIA_KEY_rightanglebracket,
+;; 	MAIA_KEY_marker,
+;; 	MAIA_KEY_oneeighth,
+;; 	MAIA_KEY_threeeighths,
+;; 	MAIA_KEY_fiveeighths,
+;; 	MAIA_KEY_seveneighths,
+;; 	MAIA_KEY_trademark,
+;; 	MAIA_KEY_signaturemark,
+;; 	MAIA_KEY_trademarkincircle,
+;; 	MAIA_KEY_leftopentriangle,
+;; 	MAIA_KEY_rightopentriangle,
+;; 	MAIA_KEY_emopencircle,
+;; 	MAIA_KEY_emopenrectangle,
+;; 	MAIA_KEY_leftsinglequotemark,
+;; 	MAIA_KEY_rightsinglequotemark,
+;; 	MAIA_KEY_leftdoublequotemark,
+;; 	MAIA_KEY_rightdoublequotemark,
+;; 	MAIA_KEY_prescription,
+;; 	MAIA_KEY_minutes,
+;; 	MAIA_KEY_seconds,
+;; 	MAIA_KEY_latincross,
+;; 	MAIA_KEY_hexagram,
+;; 	MAIA_KEY_filledrectbullet,
+;; 	MAIA_KEY_filledlefttribullet,
+;; 	MAIA_KEY_filledrighttribullet,
+;; 	MAIA_KEY_emfilledcircle,
+;; 	MAIA_KEY_emfilledrect,
+;; 	MAIA_KEY_enopencircbullet,
+;; 	MAIA_KEY_enopensquarebullet,
+;; 	MAIA_KEY_openrectbullet,
+;; 	MAIA_KEY_opentribulletup,
+;; 	MAIA_KEY_opentribulletdown,
+;; 	MAIA_KEY_openstar,
+;; 	MAIA_KEY_enfilledcircbullet,
+;; 	MAIA_KEY_enfilledsqbullet,
+;; 	MAIA_KEY_filledtribulletup,
+;; 	MAIA_KEY_filledtribulletdown,
+;; 	MAIA_KEY_leftpointer,
+;; 	MAIA_KEY_rightpointer,
+;; 	MAIA_KEY_club,
+;; 	MAIA_KEY_diamond,
+;; 	MAIA_KEY_heart,
+;; 	MAIA_KEY_maltesecross,
+;; 	MAIA_KEY_dagger,
+;; 	MAIA_KEY_doubledagger,
+;; 	MAIA_KEY_checkmark,
+;; 	MAIA_KEY_ballotcross,
+;; 	MAIA_KEY_musicalsharp,
+;; 	MAIA_KEY_musicalflat,
+;; 	MAIA_KEY_malesymbol,
+;; 	MAIA_KEY_femalesymbol,
+;; 	MAIA_KEY_telephone,
+;; 	MAIA_KEY_telephonerecorder,
+;; 	MAIA_KEY_phonographcopyright,
+;; 	MAIA_KEY_caret,
+;; 	MAIA_KEY_singlelowquotemark,
+;; 	MAIA_KEY_doublelowquotemark,
+;; 	MAIA_KEY_cursor,
+;; 	MAIA_KEY_leftcaret,
+;; 	MAIA_KEY_rightcaret,
+;; 	MAIA_KEY_downcaret,
+;; 	MAIA_KEY_upcaret,
+;; 	MAIA_KEY_overbar,
+;; 	MAIA_KEY_downtack,
+;; 	MAIA_KEY_upshoe,
+;; 	MAIA_KEY_downstile,
+;; 	MAIA_KEY_underbar,
+;; 	MAIA_KEY_jot,
+;; 	MAIA_KEY_quad,
+;; 	MAIA_KEY_uptack,
+;; 	MAIA_KEY_circle,
+;; 	MAIA_KEY_upstile,
+;; 	MAIA_KEY_downshoe,
+;; 	MAIA_KEY_rightshoe,
+;; 	MAIA_KEY_leftshoe,
+;; 	MAIA_KEY_lefttack,
+;; 	MAIA_KEY_righttack,
+;; 	MAIA_KEY_hebrew_doublelowline,
+;; 	MAIA_KEY_hebrew_aleph,
+;; 	MAIA_KEY_hebrew_bet,
+;; 	MAIA_KEY_hebrew_beth,
+;; 	MAIA_KEY_hebrew_gimel,
+;; 	MAIA_KEY_hebrew_gimmel,
+;; 	MAIA_KEY_hebrew_dalet,
+;; 	MAIA_KEY_hebrew_daleth,
+;; 	MAIA_KEY_hebrew_he,
+;; 	MAIA_KEY_hebrew_waw,
+;; 	MAIA_KEY_hebrew_zain,
+;; 	MAIA_KEY_hebrew_zayin,
+;; 	MAIA_KEY_hebrew_chet,
+;; 	MAIA_KEY_hebrew_het,
+;; 	MAIA_KEY_hebrew_tet,
+;; 	MAIA_KEY_hebrew_teth,
+;; 	MAIA_KEY_hebrew_yod,
+;; 	MAIA_KEY_hebrew_finalkaph,
+;; 	MAIA_KEY_hebrew_kaph,
+;; 	MAIA_KEY_hebrew_lamed,
+;; 	MAIA_KEY_hebrew_finalmem,
+;; 	MAIA_KEY_hebrew_mem,
+;; 	MAIA_KEY_hebrew_finalnun,
+;; 	MAIA_KEY_hebrew_nun,
+;; 	MAIA_KEY_hebrew_samech,
+;; 	MAIA_KEY_hebrew_samekh,
+;; 	MAIA_KEY_hebrew_ayin,
+;; 	MAIA_KEY_hebrew_finalpe,
+;; 	MAIA_KEY_hebrew_pe,
+;; 	MAIA_KEY_hebrew_finalzade,
+;; 	MAIA_KEY_hebrew_finalzadi,
+;; 	MAIA_KEY_hebrew_zade,
+;; 	MAIA_KEY_hebrew_zadi,
+;; 	MAIA_KEY_hebrew_qoph,
+;; 	MAIA_KEY_hebrew_kuf,
+;; 	MAIA_KEY_hebrew_resh,
+;; 	MAIA_KEY_hebrew_shin,
+;; 	MAIA_KEY_hebrew_taw,
+;; 	MAIA_KEY_hebrew_taf,
+;; 	MAIA_KEY_Hebrew_switch,
+;; 	MAIA_KEY_Thai_kokai,
+;; 	MAIA_KEY_Thai_khokhai,
+;; 	MAIA_KEY_Thai_khokhuat,
+;; 	MAIA_KEY_Thai_khokhwai,
+;; 	MAIA_KEY_Thai_khokhon,
+;; 	MAIA_KEY_Thai_khorakhang,
+;; 	MAIA_KEY_Thai_ngongu,
+;; 	MAIA_KEY_Thai_chochan,
+;; 	MAIA_KEY_Thai_choching,
+;; 	MAIA_KEY_Thai_chochang,
+;; 	MAIA_KEY_Thai_soso,
+;; 	MAIA_KEY_Thai_chochoe,
+;; 	MAIA_KEY_Thai_yoying,
+;; 	MAIA_KEY_Thai_dochada,
+;; 	MAIA_KEY_Thai_topatak,
+;; 	MAIA_KEY_Thai_thothan,
+;; 	MAIA_KEY_Thai_thonangmontho,
+;; 	MAIA_KEY_Thai_thophuthao,
+;; 	MAIA_KEY_Thai_nonen,
+;; 	MAIA_KEY_Thai_dodek,
+;; 	MAIA_KEY_Thai_totao,
+;; 	MAIA_KEY_Thai_thothung,
+;; 	MAIA_KEY_Thai_thothahan,
+;; 	MAIA_KEY_Thai_thothong,
+;; 	MAIA_KEY_Thai_nonu,
+;; 	MAIA_KEY_Thai_bobaimai,
+;; 	MAIA_KEY_Thai_popla,
+;; 	MAIA_KEY_Thai_phophung,
+;; 	MAIA_KEY_Thai_fofa,
+;; 	MAIA_KEY_Thai_phophan,
+;; 	MAIA_KEY_Thai_fofan,
+;; 	MAIA_KEY_Thai_phosamphao,
+;; 	MAIA_KEY_Thai_moma,
+;; 	MAIA_KEY_Thai_yoyak,
+;; 	MAIA_KEY_Thai_rorua,
+;; 	MAIA_KEY_Thai_ru,
+;; 	MAIA_KEY_Thai_loling,
+;; 	MAIA_KEY_Thai_lu,
+;; 	MAIA_KEY_Thai_wowaen,
+;; 	MAIA_KEY_Thai_sosala,
+;; 	MAIA_KEY_Thai_sorusi,
+;; 	MAIA_KEY_Thai_sosua,
+;; 	MAIA_KEY_Thai_hohip,
+;; 	MAIA_KEY_Thai_lochula,
+;; 	MAIA_KEY_Thai_oang,
+;; 	MAIA_KEY_Thai_honokhuk,
+;; 	MAIA_KEY_Thai_paiyannoi,
+;; 	MAIA_KEY_Thai_saraa,
+;; 	MAIA_KEY_Thai_maihanakat,
+;; 	MAIA_KEY_Thai_saraaa,
+;; 	MAIA_KEY_Thai_saraam,
+;; 	MAIA_KEY_Thai_sarai,
+;; 	MAIA_KEY_Thai_saraii,
+;; 	MAIA_KEY_Thai_saraue,
+;; 	MAIA_KEY_Thai_sarauee,
+;; 	MAIA_KEY_Thai_sarau,
+;; 	MAIA_KEY_Thai_sarauu,
+;; 	MAIA_KEY_Thai_phinthu,
+;; 	MAIA_KEY_Thai_maihanakat_maitho,
+;; 	MAIA_KEY_Thai_baht,
+;; 	MAIA_KEY_Thai_sarae,
+;; 	MAIA_KEY_Thai_saraae,
+;; 	MAIA_KEY_Thai_sarao,
+;; 	MAIA_KEY_Thai_saraaimaimuan,
+;; 	MAIA_KEY_Thai_saraaimaimalai,
+;; 	MAIA_KEY_Thai_lakkhangyao,
+;; 	MAIA_KEY_Thai_maiyamok,
+;; 	MAIA_KEY_Thai_maitaikhu,
+;; 	MAIA_KEY_Thai_maiek,
+;; 	MAIA_KEY_Thai_maitho,
+;; 	MAIA_KEY_Thai_maitri,
+;; 	MAIA_KEY_Thai_maichattawa,
+;; 	MAIA_KEY_Thai_thanthakhat,
+;; 	MAIA_KEY_Thai_nikhahit,
+;; 	MAIA_KEY_Thai_leksun,
+;; 	MAIA_KEY_Thai_leknung,
+;; 	MAIA_KEY_Thai_leksong,
+;; 	MAIA_KEY_Thai_leksam,
+;; 	MAIA_KEY_Thai_leksi,
+;; 	MAIA_KEY_Thai_lekha,
+;; 	MAIA_KEY_Thai_lekhok,
+;; 	MAIA_KEY_Thai_lekchet,
+;; 	MAIA_KEY_Thai_lekpaet,
+;; 	MAIA_KEY_Thai_lekkao,
+;; 	MAIA_KEY_Hangul,
+;; 	MAIA_KEY_Hangul_Start,
+;; 	MAIA_KEY_Hangul_End,
+;; 	MAIA_KEY_Hangul_Hanja,
+;; 	MAIA_KEY_Hangul_Jamo,
+;; 	MAIA_KEY_Hangul_Romaja,
+;; 	MAIA_KEY_Hangul_Codeinput,
+;; 	MAIA_KEY_Hangul_Jeonja,
+;; 	MAIA_KEY_Hangul_Banja,
+;; 	MAIA_KEY_Hangul_PreHanja,
+;; 	MAIA_KEY_Hangul_PostHanja,
+;; 	MAIA_KEY_Hangul_SingleCandidate,
+;; 	MAIA_KEY_Hangul_MultipleCandidate,
+;; 	MAIA_KEY_Hangul_PreviousCandidate,
+;; 	MAIA_KEY_Hangul_Special,
+;; 	MAIA_KEY_Hangul_switch,
+;; 	MAIA_KEY_Hangul_Kiyeog,
+;; 	MAIA_KEY_Hangul_SsangKiyeog,
+;; 	MAIA_KEY_Hangul_KiyeogSios,
+;; 	MAIA_KEY_Hangul_Nieun,
+;; 	MAIA_KEY_Hangul_NieunJieuj,
+;; 	MAIA_KEY_Hangul_NieunHieuh,
+;; 	MAIA_KEY_Hangul_Dikeud,
+;; 	MAIA_KEY_Hangul_SsangDikeud,
+;; 	MAIA_KEY_Hangul_Rieul,
+;; 	MAIA_KEY_Hangul_RieulKiyeog,
+;; 	MAIA_KEY_Hangul_RieulMieum,
+;; 	MAIA_KEY_Hangul_RieulPieub,
+;; 	MAIA_KEY_Hangul_RieulSios,
+;; 	MAIA_KEY_Hangul_RieulTieut,
+;; 	MAIA_KEY_Hangul_RieulPhieuf,
+;; 	MAIA_KEY_Hangul_RieulHieuh,
+;; 	MAIA_KEY_Hangul_Mieum,
+;; 	MAIA_KEY_Hangul_Pieub,
+;; 	MAIA_KEY_Hangul_SsangPieub,
+;; 	MAIA_KEY_Hangul_PieubSios,
+;; 	MAIA_KEY_Hangul_Sios,
+;; 	MAIA_KEY_Hangul_SsangSios,
+;; 	MAIA_KEY_Hangul_Ieung,
+;; 	MAIA_KEY_Hangul_Jieuj,
+;; 	MAIA_KEY_Hangul_SsangJieuj,
+;; 	MAIA_KEY_Hangul_Cieuc,
+;; 	MAIA_KEY_Hangul_Khieuq,
+;; 	MAIA_KEY_Hangul_Tieut,
+;; 	MAIA_KEY_Hangul_Phieuf,
+;; 	MAIA_KEY_Hangul_Hieuh,
+;; 	MAIA_KEY_Hangul_A,
+;; 	MAIA_KEY_Hangul_AE,
+;; 	MAIA_KEY_Hangul_YA,
+;; 	MAIA_KEY_Hangul_YAE,
+;; 	MAIA_KEY_Hangul_EO,
+;; 	MAIA_KEY_Hangul_E,
+;; 	MAIA_KEY_Hangul_YEO,
+;; 	MAIA_KEY_Hangul_YE,
+;; 	MAIA_KEY_Hangul_O,
+;; 	MAIA_KEY_Hangul_WA,
+;; 	MAIA_KEY_Hangul_WAE,
+;; 	MAIA_KEY_Hangul_OE,
+;; 	MAIA_KEY_Hangul_YO,
+;; 	MAIA_KEY_Hangul_U,
+;; 	MAIA_KEY_Hangul_WEO,
+;; 	MAIA_KEY_Hangul_WE,
+;; 	MAIA_KEY_Hangul_WI,
+;; 	MAIA_KEY_Hangul_YU,
+;; 	MAIA_KEY_Hangul_EU,
+;; 	MAIA_KEY_Hangul_YI,
+;; 	MAIA_KEY_Hangul_I,
+;; 	MAIA_KEY_Hangul_J_Kiyeog,
+;; 	MAIA_KEY_Hangul_J_SsangKiyeog,
+;; 	MAIA_KEY_Hangul_J_KiyeogSios,
+;; 	MAIA_KEY_Hangul_J_Nieun,
+;; 	MAIA_KEY_Hangul_J_NieunJieuj,
+;; 	MAIA_KEY_Hangul_J_NieunHieuh,
+;; 	MAIA_KEY_Hangul_J_Dikeud,
+;; 	MAIA_KEY_Hangul_J_Rieul,
+;; 	MAIA_KEY_Hangul_J_RieulKiyeog,
+;; 	MAIA_KEY_Hangul_J_RieulMieum,
+;; 	MAIA_KEY_Hangul_J_RieulPieub,
+;; 	MAIA_KEY_Hangul_J_RieulSios,
+;; 	MAIA_KEY_Hangul_J_RieulTieut,
+;; 	MAIA_KEY_Hangul_J_RieulPhieuf,
+;; 	MAIA_KEY_Hangul_J_RieulHieuh,
+;; 	MAIA_KEY_Hangul_J_Mieum,
+;; 	MAIA_KEY_Hangul_J_Pieub,
+;; 	MAIA_KEY_Hangul_J_PieubSios,
+;; 	MAIA_KEY_Hangul_J_Sios,
+;; 	MAIA_KEY_Hangul_J_SsangSios,
+;; 	MAIA_KEY_Hangul_J_Ieung,
+;; 	MAIA_KEY_Hangul_J_Jieuj,
+;; 	MAIA_KEY_Hangul_J_Cieuc,
+;; 	MAIA_KEY_Hangul_J_Khieuq,
+;; 	MAIA_KEY_Hangul_J_Tieut,
+;; 	MAIA_KEY_Hangul_J_Phieuf,
+;; 	MAIA_KEY_Hangul_J_Hieuh,
+;; 	MAIA_KEY_Hangul_RieulYeorinHieuh,
+;; 	MAIA_KEY_Hangul_SunkyeongeumMieum,
+;; 	MAIA_KEY_Hangul_SunkyeongeumPieub,
+;; 	MAIA_KEY_Hangul_PanSios,
+;; 	MAIA_KEY_Hangul_KkogjiDalrinIeung,
+;; 	MAIA_KEY_Hangul_SunkyeongeumPhieuf,
+;; 	MAIA_KEY_Hangul_YeorinHieuh,
+;; 	MAIA_KEY_Hangul_AraeA,
+;; 	MAIA_KEY_Hangul_AraeAE,
+;; 	MAIA_KEY_Hangul_J_PanSios,
+;; 	MAIA_KEY_Hangul_J_KkogjiDalrinIeung,
+;; 	MAIA_KEY_Hangul_J_YeorinHieuh,
+;; 	MAIA_KEY_Korean_Won,
+;; 	MAIA_KEY_Armenian_ligature_ew,
+;; 	MAIA_KEY_Armenian_full_stop,
+;; 	MAIA_KEY_Armenian_verjaket,
+;; 	MAIA_KEY_Armenian_separation_mark,
+;; 	MAIA_KEY_Armenian_but,
+;; 	MAIA_KEY_Armenian_hyphen,
+;; 	MAIA_KEY_Armenian_yentamna,
+;; 	MAIA_KEY_Armenian_exclam,
+;; 	MAIA_KEY_Armenian_amanak,
+;; 	MAIA_KEY_Armenian_accent,
+;; 	MAIA_KEY_Armenian_shesht,
+;; 	MAIA_KEY_Armenian_question,
+;; 	MAIA_KEY_Armenian_paruyk,
+;; 	MAIA_KEY_Armenian_AYB,
+;; 	MAIA_KEY_Armenian_ayb,
+;; 	MAIA_KEY_Armenian_BEN,
+;; 	MAIA_KEY_Armenian_ben,
+;; 	MAIA_KEY_Armenian_GIM,
+;; 	MAIA_KEY_Armenian_gim,
+;; 	MAIA_KEY_Armenian_DA,
+;; 	MAIA_KEY_Armenian_da,
+;; 	MAIA_KEY_Armenian_YECH,
+;; 	MAIA_KEY_Armenian_yech,
+;; 	MAIA_KEY_Armenian_ZA,
+;; 	MAIA_KEY_Armenian_za,
+;; 	MAIA_KEY_Armenian_E,
+;; 	MAIA_KEY_Armenian_e,
+;; 	MAIA_KEY_Armenian_AT,
+;; 	MAIA_KEY_Armenian_at,
+;; 	MAIA_KEY_Armenian_TO,
+;; 	MAIA_KEY_Armenian_to,
+;; 	MAIA_KEY_Armenian_ZHE,
+;; 	MAIA_KEY_Armenian_zhe,
+;; 	MAIA_KEY_Armenian_INI,
+;; 	MAIA_KEY_Armenian_ini,
+;; 	MAIA_KEY_Armenian_LYUN,
+;; 	MAIA_KEY_Armenian_lyun,
+;; 	MAIA_KEY_Armenian_KHE,
+;; 	MAIA_KEY_Armenian_khe,
+;; 	MAIA_KEY_Armenian_TSA,
+;; 	MAIA_KEY_Armenian_tsa,
+;; 	MAIA_KEY_Armenian_KEN,
+;; 	MAIA_KEY_Armenian_ken,
+;; 	MAIA_KEY_Armenian_HO,
+;; 	MAIA_KEY_Armenian_ho,
+;; 	MAIA_KEY_Armenian_DZA,
+;; 	MAIA_KEY_Armenian_dza,
+;; 	MAIA_KEY_Armenian_GHAT,
+;; 	MAIA_KEY_Armenian_ghat,
+;; 	MAIA_KEY_Armenian_TCHE,
+;; 	MAIA_KEY_Armenian_tche,
+;; 	MAIA_KEY_Armenian_MEN,
+;; 	MAIA_KEY_Armenian_men,
+;; 	MAIA_KEY_Armenian_HI,
+;; 	MAIA_KEY_Armenian_hi,
+;; 	MAIA_KEY_Armenian_NU,
+;; 	MAIA_KEY_Armenian_nu,
+;; 	MAIA_KEY_Armenian_SHA,
+;; 	MAIA_KEY_Armenian_sha,
+;; 	MAIA_KEY_Armenian_VO,
+;; 	MAIA_KEY_Armenian_vo,
+;; 	MAIA_KEY_Armenian_CHA,
+;; 	MAIA_KEY_Armenian_cha,
+;; 	MAIA_KEY_Armenian_PE,
+;; 	MAIA_KEY_Armenian_pe,
+;; 	MAIA_KEY_Armenian_JE,
+;; 	MAIA_KEY_Armenian_je,
+;; 	MAIA_KEY_Armenian_RA,
+;; 	MAIA_KEY_Armenian_ra,
+;; 	MAIA_KEY_Armenian_SE,
+;; 	MAIA_KEY_Armenian_se,
+;; 	MAIA_KEY_Armenian_VEV,
+;; 	MAIA_KEY_Armenian_vev,
+;; 	MAIA_KEY_Armenian_TYUN,
+;; 	MAIA_KEY_Armenian_tyun,
+;; 	MAIA_KEY_Armenian_RE,
+;; 	MAIA_KEY_Armenian_re,
+;; 	MAIA_KEY_Armenian_TSO,
+;; 	MAIA_KEY_Armenian_tso,
+;; 	MAIA_KEY_Armenian_VYUN,
+;; 	MAIA_KEY_Armenian_vyun,
+;; 	MAIA_KEY_Armenian_PYUR,
+;; 	MAIA_KEY_Armenian_pyur,
+;; 	MAIA_KEY_Armenian_KE,
+;; 	MAIA_KEY_Armenian_ke,
+;; 	MAIA_KEY_Armenian_O,
+;; 	MAIA_KEY_Armenian_o,
+;; 	MAIA_KEY_Armenian_FE,
+;; 	MAIA_KEY_Armenian_fe,
+;; 	MAIA_KEY_Armenian_apostrophe,
+;; 	MAIA_KEY_Georgian_an,
+;; 	MAIA_KEY_Georgian_ban,
+;; 	MAIA_KEY_Georgian_gan,
+;; 	MAIA_KEY_Georgian_don,
+;; 	MAIA_KEY_Georgian_en,
+;; 	MAIA_KEY_Georgian_vin,
+;; 	MAIA_KEY_Georgian_zen,
+;; 	MAIA_KEY_Georgian_tan,
+;; 	MAIA_KEY_Georgian_in,
+;; 	MAIA_KEY_Georgian_kan,
+;; 	MAIA_KEY_Georgian_las,
+;; 	MAIA_KEY_Georgian_man,
+;; 	MAIA_KEY_Georgian_nar,
+;; 	MAIA_KEY_Georgian_on,
+;; 	MAIA_KEY_Georgian_par,
+;; 	MAIA_KEY_Georgian_zhar,
+;; 	MAIA_KEY_Georgian_rae,
+;; 	MAIA_KEY_Georgian_san,
+;; 	MAIA_KEY_Georgian_tar,
+;; 	MAIA_KEY_Georgian_un,
+;; 	MAIA_KEY_Georgian_phar,
+;; 	MAIA_KEY_Georgian_khar,
+;; 	MAIA_KEY_Georgian_ghan,
+;; 	MAIA_KEY_Georgian_qar,
+;; 	MAIA_KEY_Georgian_shin,
+;; 	MAIA_KEY_Georgian_chin,
+;; 	MAIA_KEY_Georgian_can,
+;; 	MAIA_KEY_Georgian_jil,
+;; 	MAIA_KEY_Georgian_cil,
+;; 	MAIA_KEY_Georgian_char,
+;; 	MAIA_KEY_Georgian_xan,
+;; 	MAIA_KEY_Georgian_jhan,
+;; 	MAIA_KEY_Georgian_hae,
+;; 	MAIA_KEY_Georgian_he,
+;; 	MAIA_KEY_Georgian_hie,
+;; 	MAIA_KEY_Georgian_we,
+;; 	MAIA_KEY_Georgian_har,
+;; 	MAIA_KEY_Georgian_hoe,
+;; 	MAIA_KEY_Georgian_fi,
+;; 	MAIA_KEY_Xabovedot,
+;; 	MAIA_KEY_Ibreve,
+;; 	MAIA_KEY_Zstroke,
+;; 	MAIA_KEY_Gcaron,
+;; 	MAIA_KEY_Ocaron,
+;; 	MAIA_KEY_Obarred,
+;; 	MAIA_KEY_xabovedot,
+;; 	MAIA_KEY_ibreve,
+;; 	MAIA_KEY_zstroke,
+;; 	MAIA_KEY_gcaron,
+;; 	MAIA_KEY_ocaron,
+;; 	MAIA_KEY_obarred,
+;; 	MAIA_KEY_SCHWA,
+;; 	MAIA_KEY_schwa,
+;; 	MAIA_KEY_Lbelowdot,
+;; 	MAIA_KEY_lbelowdot,
+;; 	MAIA_KEY_Abelowdot,
+;; 	MAIA_KEY_abelowdot,
+;; 	MAIA_KEY_Ahook,
+;; 	MAIA_KEY_ahook,
+;; 	MAIA_KEY_Acircumflexacute,
+;; 	MAIA_KEY_acircumflexacute,
+;; 	MAIA_KEY_Acircumflexgrave,
+;; 	MAIA_KEY_acircumflexgrave,
+;; 	MAIA_KEY_Acircumflexhook,
+;; 	MAIA_KEY_acircumflexhook,
+;; 	MAIA_KEY_Acircumflextilde,
+;; 	MAIA_KEY_acircumflextilde,
+;; 	MAIA_KEY_Acircumflexbelowdot,
+;; 	MAIA_KEY_acircumflexbelowdot,
+;; 	MAIA_KEY_Abreveacute,
+;; 	MAIA_KEY_abreveacute,
+;; 	MAIA_KEY_Abrevegrave,
+;; 	MAIA_KEY_abrevegrave,
+;; 	MAIA_KEY_Abrevehook,
+;; 	MAIA_KEY_abrevehook,
+;; 	MAIA_KEY_Abrevetilde,
+;; 	MAIA_KEY_abrevetilde,
+;; 	MAIA_KEY_Abrevebelowdot,
+;; 	MAIA_KEY_abrevebelowdot,
+;; 	MAIA_KEY_Ebelowdot,
+;; 	MAIA_KEY_ebelowdot,
+;; 	MAIA_KEY_Ehook,
+;; 	MAIA_KEY_ehook,
+;; 	MAIA_KEY_Etilde,
+;; 	MAIA_KEY_etilde,
+;; 	MAIA_KEY_Ecircumflexacute,
+;; 	MAIA_KEY_ecircumflexacute,
+;; 	MAIA_KEY_Ecircumflexgrave,
+;; 	MAIA_KEY_ecircumflexgrave,
+;; 	MAIA_KEY_Ecircumflexhook,
+;; 	MAIA_KEY_ecircumflexhook,
+;; 	MAIA_KEY_Ecircumflextilde,
+;; 	MAIA_KEY_ecircumflextilde,
+;; 	MAIA_KEY_Ecircumflexbelowdot,
+;; 	MAIA_KEY_ecircumflexbelowdot,
+;; 	MAIA_KEY_Ihook,
+;; 	MAIA_KEY_ihook,
+;; 	MAIA_KEY_Ibelowdot,
+;; 	MAIA_KEY_ibelowdot,
+;; 	MAIA_KEY_Obelowdot,
+;; 	MAIA_KEY_obelowdot,
+;; 	MAIA_KEY_Ohook,
+;; 	MAIA_KEY_ohook,
+;; 	MAIA_KEY_Ocircumflexacute,
+;; 	MAIA_KEY_ocircumflexacute,
+;; 	MAIA_KEY_Ocircumflexgrave,
+;; 	MAIA_KEY_ocircumflexgrave,
+;; 	MAIA_KEY_Ocircumflexhook,
+;; 	MAIA_KEY_ocircumflexhook,
+;; 	MAIA_KEY_Ocircumflextilde,
+;; 	MAIA_KEY_ocircumflextilde,
+;; 	MAIA_KEY_Ocircumflexbelowdot,
+;; 	MAIA_KEY_ocircumflexbelowdot,
+;; 	MAIA_KEY_Ohornacute,
+;; 	MAIA_KEY_ohornacute,
+;; 	MAIA_KEY_Ohorngrave,
+;; 	MAIA_KEY_ohorngrave,
+;; 	MAIA_KEY_Ohornhook,
+;; 	MAIA_KEY_ohornhook,
+;; 	MAIA_KEY_Ohorntilde,
+;; 	MAIA_KEY_ohorntilde,
+;; 	MAIA_KEY_Ohornbelowdot,
+;; 	MAIA_KEY_ohornbelowdot,
+;; 	MAIA_KEY_Ubelowdot,
+;; 	MAIA_KEY_ubelowdot,
+;; 	MAIA_KEY_Uhook,
+;; 	MAIA_KEY_uhook,
+;; 	MAIA_KEY_Uhornacute,
+;; 	MAIA_KEY_uhornacute,
+;; 	MAIA_KEY_Uhorngrave,
+;; 	MAIA_KEY_uhorngrave,
+;; 	MAIA_KEY_Uhornhook,
+;; 	MAIA_KEY_uhornhook,
+;; 	MAIA_KEY_Uhorntilde,
+;; 	MAIA_KEY_uhorntilde,
+;; 	MAIA_KEY_Uhornbelowdot,
+;; 	MAIA_KEY_uhornbelowdot,
+;; 	MAIA_KEY_Ybelowdot,
+;; 	MAIA_KEY_ybelowdot,
+;; 	MAIA_KEY_Yhook,
+;; 	MAIA_KEY_yhook,
+;; 	MAIA_KEY_Ytilde,
+;; 	MAIA_KEY_ytilde,
+;; 	MAIA_KEY_Ohorn,
+;; 	MAIA_KEY_ohorn,
+;; 	MAIA_KEY_Uhorn,
+;; 	MAIA_KEY_uhorn,
+;; 	MAIA_KEY_EcuSign,
+;; 	MAIA_KEY_ColonSign,
+;; 	MAIA_KEY_CruzeiroSign,
+;; 	MAIA_KEY_FFrancSign,
+;; 	MAIA_KEY_LiraSign,
+;; 	MAIA_KEY_MillSign,
+;; 	MAIA_KEY_NairaSign,
+;; 	MAIA_KEY_PesetaSign,
+;; 	MAIA_KEY_RupeeSign,
+;; 	MAIA_KEY_WonSign,
+;; 	MAIA_KEY_NewSheqelSign,
+;; 	MAIA_KEY_DongSign,
+;; 	MAIA_KEY_EuroSign,
+;; 	MAIA_KEY_zerosuperior,
+;; 	MAIA_KEY_foursuperior,
+;; 	MAIA_KEY_fivesuperior,
+;; 	MAIA_KEY_sixsuperior,
+;; 	MAIA_KEY_sevensuperior,
+;; 	MAIA_KEY_eightsuperior,
+;; 	MAIA_KEY_ninesuperior,
+;; 	MAIA_KEY_zerosubscript,
+;; 	MAIA_KEY_onesubscript,
+;; 	MAIA_KEY_twosubscript,
+;; 	MAIA_KEY_threesubscript,
+;; 	MAIA_KEY_foursubscript,
+;; 	MAIA_KEY_fivesubscript,
+;; 	MAIA_KEY_sixsubscript,
+;; 	MAIA_KEY_sevensubscript,
+;; 	MAIA_KEY_eightsubscript,
+;; 	MAIA_KEY_ninesubscript,
+;; 	MAIA_KEY_partdifferential,
+;; 	MAIA_KEY_emptyset,
+;; 	MAIA_KEY_elementof,
+;; 	MAIA_KEY_notelementof,
+;; 	MAIA_KEY_containsas,
+;; 	MAIA_KEY_squareroot,
+;; 	MAIA_KEY_cuberoot,
+;; 	MAIA_KEY_fourthroot,
+;; 	MAIA_KEY_dintegral,
+;; 	MAIA_KEY_tintegral,
+;; 	MAIA_KEY_because,
+;; 	MAIA_KEY_approxeq,
+;; 	MAIA_KEY_notapproxeq,
+;; 	MAIA_KEY_notidentical,
+;; 	MAIA_KEY_stricteq,
+;; 	MAIA_KEY_braille_dot_1,
+;; 	MAIA_KEY_braille_dot_2,
+;; 	MAIA_KEY_braille_dot_3,
+;; 	MAIA_KEY_braille_dot_4,
+;; 	MAIA_KEY_braille_dot_5,
+;; 	MAIA_KEY_braille_dot_6,
+;; 	MAIA_KEY_braille_dot_7,
+;; 	MAIA_KEY_braille_dot_8,
+;; 	MAIA_KEY_braille_dot_9,
+;; 	MAIA_KEY_braille_dot_10,
+;; 	MAIA_KEY_braille_blank,
+;; 	MAIA_KEY_braille_dots_1,
+;; 	MAIA_KEY_braille_dots_2,
+;; 	MAIA_KEY_braille_dots_12,
+;; 	MAIA_KEY_braille_dots_3,
+;; 	MAIA_KEY_braille_dots_13,
+;; 	MAIA_KEY_braille_dots_23,
+;; 	MAIA_KEY_braille_dots_123,
+;; 	MAIA_KEY_braille_dots_4,
+;; 	MAIA_KEY_braille_dots_14,
+;; 	MAIA_KEY_braille_dots_24,
+;; 	MAIA_KEY_braille_dots_124,
+;; 	MAIA_KEY_braille_dots_34,
+;; 	MAIA_KEY_braille_dots_134,
+;; 	MAIA_KEY_braille_dots_234,
+;; 	MAIA_KEY_braille_dots_1234,
+;; 	MAIA_KEY_braille_dots_5,
+;; 	MAIA_KEY_braille_dots_15,
+;; 	MAIA_KEY_braille_dots_25,
+;; 	MAIA_KEY_braille_dots_125,
+;; 	MAIA_KEY_braille_dots_35,
+;; 	MAIA_KEY_braille_dots_135,
+;; 	MAIA_KEY_braille_dots_235,
+;; 	MAIA_KEY_braille_dots_1235,
+;; 	MAIA_KEY_braille_dots_45,
+;; 	MAIA_KEY_braille_dots_145,
+;; 	MAIA_KEY_braille_dots_245,
+;; 	MAIA_KEY_braille_dots_1245,
+;; 	MAIA_KEY_braille_dots_345,
+;; 	MAIA_KEY_braille_dots_1345,
+;; 	MAIA_KEY_braille_dots_2345,
+;; 	MAIA_KEY_braille_dots_12345,
+;; 	MAIA_KEY_braille_dots_6,
+;; 	MAIA_KEY_braille_dots_16,
+;; 	MAIA_KEY_braille_dots_26,
+;; 	MAIA_KEY_braille_dots_126,
+;; 	MAIA_KEY_braille_dots_36,
+;; 	MAIA_KEY_braille_dots_136,
+;; 	MAIA_KEY_braille_dots_236,
+;; 	MAIA_KEY_braille_dots_1236,
+;; 	MAIA_KEY_braille_dots_46,
+;; 	MAIA_KEY_braille_dots_146,
+;; 	MAIA_KEY_braille_dots_246,
+;; 	MAIA_KEY_braille_dots_1246,
+;; 	MAIA_KEY_braille_dots_346,
+;; 	MAIA_KEY_braille_dots_1346,
+;; 	MAIA_KEY_braille_dots_2346,
+;; 	MAIA_KEY_braille_dots_12346,
+;; 	MAIA_KEY_braille_dots_56,
+;; 	MAIA_KEY_braille_dots_156,
+;; 	MAIA_KEY_braille_dots_256,
+;; 	MAIA_KEY_braille_dots_1256,
+;; 	MAIA_KEY_braille_dots_356,
+;; 	MAIA_KEY_braille_dots_1356,
+;; 	MAIA_KEY_braille_dots_2356,
+;; 	MAIA_KEY_braille_dots_12356,
+;; 	MAIA_KEY_braille_dots_456,
+;; 	MAIA_KEY_braille_dots_1456,
+;; 	MAIA_KEY_braille_dots_2456,
+;; 	MAIA_KEY_braille_dots_12456,
+;; 	MAIA_KEY_braille_dots_3456,
+;; 	MAIA_KEY_braille_dots_13456,
+;; 	MAIA_KEY_braille_dots_23456,
+;; 	MAIA_KEY_braille_dots_123456,
+;; 	MAIA_KEY_braille_dots_7,
+;; 	MAIA_KEY_braille_dots_17,
+;; 	MAIA_KEY_braille_dots_27,
+;; 	MAIA_KEY_braille_dots_127,
+;; 	MAIA_KEY_braille_dots_37,
+;; 	MAIA_KEY_braille_dots_137,
+;; 	MAIA_KEY_braille_dots_237,
+;; 	MAIA_KEY_braille_dots_1237,
+;; 	MAIA_KEY_braille_dots_47,
+;; 	MAIA_KEY_braille_dots_147,
+;; 	MAIA_KEY_braille_dots_247,
+;; 	MAIA_KEY_braille_dots_1247,
+;; 	MAIA_KEY_braille_dots_347,
+;; 	MAIA_KEY_braille_dots_1347,
+;; 	MAIA_KEY_braille_dots_2347,
+;; 	MAIA_KEY_braille_dots_12347,
+;; 	MAIA_KEY_braille_dots_57,
+;; 	MAIA_KEY_braille_dots_157,
+;; 	MAIA_KEY_braille_dots_257,
+;; 	MAIA_KEY_braille_dots_1257,
+;; 	MAIA_KEY_braille_dots_357,
+;; 	MAIA_KEY_braille_dots_1357,
+;; 	MAIA_KEY_braille_dots_2357,
+;; 	MAIA_KEY_braille_dots_12357,
+;; 	MAIA_KEY_braille_dots_457,
+;; 	MAIA_KEY_braille_dots_1457,
+;; 	MAIA_KEY_braille_dots_2457,
+;; 	MAIA_KEY_braille_dots_12457,
+;; 	MAIA_KEY_braille_dots_3457,
+;; 	MAIA_KEY_braille_dots_13457,
+;; 	MAIA_KEY_braille_dots_23457,
+;; 	MAIA_KEY_braille_dots_123457,
+;; 	MAIA_KEY_braille_dots_67,
+;; 	MAIA_KEY_braille_dots_167,
+;; 	MAIA_KEY_braille_dots_267,
+;; 	MAIA_KEY_braille_dots_1267,
+;; 	MAIA_KEY_braille_dots_367,
+;; 	MAIA_KEY_braille_dots_1367,
+;; 	MAIA_KEY_braille_dots_2367,
+;; 	MAIA_KEY_braille_dots_12367,
+;; 	MAIA_KEY_braille_dots_467,
+;; 	MAIA_KEY_braille_dots_1467,
+;; 	MAIA_KEY_braille_dots_2467,
+;; 	MAIA_KEY_braille_dots_12467,
+;; 	MAIA_KEY_braille_dots_3467,
+;; 	MAIA_KEY_braille_dots_13467,
+;; 	MAIA_KEY_braille_dots_23467,
+;; 	MAIA_KEY_braille_dots_123467,
+;; 	MAIA_KEY_braille_dots_567,
+;; 	MAIA_KEY_braille_dots_1567,
+;; 	MAIA_KEY_braille_dots_2567,
+;; 	MAIA_KEY_braille_dots_12567,
+;; 	MAIA_KEY_braille_dots_3567,
+;; 	MAIA_KEY_braille_dots_13567,
+;; 	MAIA_KEY_braille_dots_23567,
+;; 	MAIA_KEY_braille_dots_123567,
+;; 	MAIA_KEY_braille_dots_4567,
+;; 	MAIA_KEY_braille_dots_14567,
+;; 	MAIA_KEY_braille_dots_24567,
+;; 	MAIA_KEY_braille_dots_124567,
+;; 	MAIA_KEY_braille_dots_34567,
+;; 	MAIA_KEY_braille_dots_134567,
+;; 	MAIA_KEY_braille_dots_234567,
+;; 	MAIA_KEY_braille_dots_1234567,
+;; 	MAIA_KEY_braille_dots_8,
+;; 	MAIA_KEY_braille_dots_18,
+;; 	MAIA_KEY_braille_dots_28,
+;; 	MAIA_KEY_braille_dots_128,
+;; 	MAIA_KEY_braille_dots_38,
+;; 	MAIA_KEY_braille_dots_138,
+;; 	MAIA_KEY_braille_dots_238,
+;; 	MAIA_KEY_braille_dots_1238,
+;; 	MAIA_KEY_braille_dots_48,
+;; 	MAIA_KEY_braille_dots_148,
+;; 	MAIA_KEY_braille_dots_248,
+;; 	MAIA_KEY_braille_dots_1248,
+;; 	MAIA_KEY_braille_dots_348,
+;; 	MAIA_KEY_braille_dots_1348,
+;; 	MAIA_KEY_braille_dots_2348,
+;; 	MAIA_KEY_braille_dots_12348,
+;; 	MAIA_KEY_braille_dots_58,
+;; 	MAIA_KEY_braille_dots_158,
+;; 	MAIA_KEY_braille_dots_258,
+;; 	MAIA_KEY_braille_dots_1258,
+;; 	MAIA_KEY_braille_dots_358,
+;; 	MAIA_KEY_braille_dots_1358,
+;; 	MAIA_KEY_braille_dots_2358,
+;; 	MAIA_KEY_braille_dots_12358,
+;; 	MAIA_KEY_braille_dots_458,
+;; 	MAIA_KEY_braille_dots_1458,
+;; 	MAIA_KEY_braille_dots_2458,
+;; 	MAIA_KEY_braille_dots_12458,
+;; 	MAIA_KEY_braille_dots_3458,
+;; 	MAIA_KEY_braille_dots_13458,
+;; 	MAIA_KEY_braille_dots_23458,
+;; 	MAIA_KEY_braille_dots_123458,
+;; 	MAIA_KEY_braille_dots_68,
+;; 	MAIA_KEY_braille_dots_168,
+;; 	MAIA_KEY_braille_dots_268,
+;; 	MAIA_KEY_braille_dots_1268,
+;; 	MAIA_KEY_braille_dots_368,
+;; 	MAIA_KEY_braille_dots_1368,
+;; 	MAIA_KEY_braille_dots_2368,
+;; 	MAIA_KEY_braille_dots_12368,
+;; 	MAIA_KEY_braille_dots_468,
+;; 	MAIA_KEY_braille_dots_1468,
+;; 	MAIA_KEY_braille_dots_2468,
+;; 	MAIA_KEY_braille_dots_12468,
+;; 	MAIA_KEY_braille_dots_3468,
+;; 	MAIA_KEY_braille_dots_13468,
+;; 	MAIA_KEY_braille_dots_23468,
+;; 	MAIA_KEY_braille_dots_123468,
+;; 	MAIA_KEY_braille_dots_568,
+;; 	MAIA_KEY_braille_dots_1568,
+;; 	MAIA_KEY_braille_dots_2568,
+;; 	MAIA_KEY_braille_dots_12568,
+;; 	MAIA_KEY_braille_dots_3568,
+;; 	MAIA_KEY_braille_dots_13568,
+;; 	MAIA_KEY_braille_dots_23568,
+;; 	MAIA_KEY_braille_dots_123568,
+;; 	MAIA_KEY_braille_dots_4568,
+;; 	MAIA_KEY_braille_dots_14568,
+;; 	MAIA_KEY_braille_dots_24568,
+;; 	MAIA_KEY_braille_dots_124568,
+;; 	MAIA_KEY_braille_dots_34568,
+;; 	MAIA_KEY_braille_dots_134568,
+;; 	MAIA_KEY_braille_dots_234568,
+;; 	MAIA_KEY_braille_dots_1234568,
+;; 	MAIA_KEY_braille_dots_78,
+;; 	MAIA_KEY_braille_dots_178,
+;; 	MAIA_KEY_braille_dots_278,
+;; 	MAIA_KEY_braille_dots_1278,
+;; 	MAIA_KEY_braille_dots_378,
+;; 	MAIA_KEY_braille_dots_1378,
+;; 	MAIA_KEY_braille_dots_2378,
+;; 	MAIA_KEY_braille_dots_12378,
+;; 	MAIA_KEY_braille_dots_478,
+;; 	MAIA_KEY_braille_dots_1478,
+;; 	MAIA_KEY_braille_dots_2478,
+;; 	MAIA_KEY_braille_dots_12478,
+;; 	MAIA_KEY_braille_dots_3478,
+;; 	MAIA_KEY_braille_dots_13478,
+;; 	MAIA_KEY_braille_dots_23478,
+;; 	MAIA_KEY_braille_dots_123478,
+;; 	MAIA_KEY_braille_dots_578,
+;; 	MAIA_KEY_braille_dots_1578,
+;; 	MAIA_KEY_braille_dots_2578,
+;; 	MAIA_KEY_braille_dots_12578,
+;; 	MAIA_KEY_braille_dots_3578,
+;; 	MAIA_KEY_braille_dots_13578,
+;; 	MAIA_KEY_braille_dots_23578,
+;; 	MAIA_KEY_braille_dots_123578,
+;; 	MAIA_KEY_braille_dots_4578,
+;; 	MAIA_KEY_braille_dots_14578,
+;; 	MAIA_KEY_braille_dots_24578,
+;; 	MAIA_KEY_braille_dots_124578,
+;; 	MAIA_KEY_braille_dots_34578,
+;; 	MAIA_KEY_braille_dots_134578,
+;; 	MAIA_KEY_braille_dots_234578,
+;; 	MAIA_KEY_braille_dots_1234578,
+;; 	MAIA_KEY_braille_dots_678,
+;; 	MAIA_KEY_braille_dots_1678,
+;; 	MAIA_KEY_braille_dots_2678,
+;; 	MAIA_KEY_braille_dots_12678,
+;; 	MAIA_KEY_braille_dots_3678,
+;; 	MAIA_KEY_braille_dots_13678,
+;; 	MAIA_KEY_braille_dots_23678,
+;; 	MAIA_KEY_braille_dots_123678,
+;; 	MAIA_KEY_braille_dots_4678,
+;; 	MAIA_KEY_braille_dots_14678,
+;; 	MAIA_KEY_braille_dots_24678,
+;; 	MAIA_KEY_braille_dots_124678,
+;; 	MAIA_KEY_braille_dots_34678,
+;; 	MAIA_KEY_braille_dots_134678,
+;; 	MAIA_KEY_braille_dots_234678,
+;; 	MAIA_KEY_braille_dots_1234678,
+;; 	MAIA_KEY_braille_dots_5678,
+;; 	MAIA_KEY_braille_dots_15678,
+;; 	MAIA_KEY_braille_dots_25678,
+;; 	MAIA_KEY_braille_dots_125678,
+;; 	MAIA_KEY_braille_dots_35678,
+;; 	MAIA_KEY_braille_dots_135678,
+;; 	MAIA_KEY_braille_dots_235678,
+;; 	MAIA_KEY_braille_dots_1235678,
+;; 	MAIA_KEY_braille_dots_45678,
+;; 	MAIA_KEY_braille_dots_145678,
+;; 	MAIA_KEY_braille_dots_245678,
+;; 	MAIA_KEY_braille_dots_1245678,
+;; 	MAIA_KEY_braille_dots_345678,
+;; 	MAIA_KEY_braille_dots_1345678,
+;; 	MAIA_KEY_braille_dots_2345678,
+;; 	MAIA_KEY_braille_dots_12345678
+;; } MaiaKey;
+
+(define-enum-extended Key
+  (in-module "Maia")
+  (c-name "MaiaKey")
+  (values
+    '("voidsymbol" "MAIA_KEY_VoidSymbol" "0")
+    '("backspace" "MAIA_KEY_BackSpace" "1")
+    '("tab" "MAIA_KEY_Tab" "2")
+    '("linefeed" "MAIA_KEY_Linefeed" "3")
+    '("clear" "MAIA_KEY_Clear" "4")
+    '("return" "MAIA_KEY_Return" "5")
+    '("pause" "MAIA_KEY_Pause" "6")
+    '("scroll-lock" "MAIA_KEY_Scroll_Lock" "7")
+    '("sys-req" "MAIA_KEY_Sys_Req" "8")
+    '("escape" "MAIA_KEY_Escape" "9")
+    '("delete" "MAIA_KEY_Delete" "10")
+    '("multi-key" "MAIA_KEY_Multi_key" "11")
+    '("codeinput" "MAIA_KEY_Codeinput" "12")
+    '("multiplecandidate" "MAIA_KEY_MultipleCandidate" "13")
+    '("previouscandidate" "MAIA_KEY_PreviousCandidate" "14")
+    '("kanji" "MAIA_KEY_Kanji" "15")
+    '("muhenkan" "MAIA_KEY_Muhenkan" "16")
+    '("henkan-mode" "MAIA_KEY_Henkan_Mode" "17")
+    '("henkan" "MAIA_KEY_Henkan" "18")
+    '("romaji" "MAIA_KEY_Romaji" "19")
+    '("hiragana" "MAIA_KEY_Hiragana" "20")
+    '("katakana" "MAIA_KEY_Katakana" "21")
+    '("hiragana-katakana" "MAIA_KEY_Hiragana_Katakana" "22")
+    '("zenkaku" "MAIA_KEY_Zenkaku" "23")
+    '("hankaku" "MAIA_KEY_Hankaku" "24")
+    '("zenkaku-hankaku" "MAIA_KEY_Zenkaku_Hankaku" "25")
+    '("touroku" "MAIA_KEY_Touroku" "26")
+    '("massyo" "MAIA_KEY_Massyo" "27")
+    '("kana-lock" "MAIA_KEY_Kana_Lock" "28")
+    '("kana-shift" "MAIA_KEY_Kana_Shift" "29")
+    '("eisu-shift" "MAIA_KEY_Eisu_Shift" "30")
+    '("eisu-toggle" "MAIA_KEY_Eisu_toggle" "31")
+    '("kanji-bangou" "MAIA_KEY_Kanji_Bangou" "32")
+    '("zen-koho" "MAIA_KEY_Zen_Koho" "33")
+    '("mae-koho" "MAIA_KEY_Mae_Koho" "34")
+    '("home" "MAIA_KEY_Home" "35")
+    '("left" "MAIA_KEY_Left" "36")
+    '("up" "MAIA_KEY_Up" "37")
+    '("right" "MAIA_KEY_Right" "38")
+    '("down" "MAIA_KEY_Down" "39")
+    '("prior" "MAIA_KEY_Prior" "40")
+    '("page-up" "MAIA_KEY_Page_Up" "41")
+    '("next" "MAIA_KEY_Next" "42")
+    '("page-down" "MAIA_KEY_Page_Down" "43")
+    '("end" "MAIA_KEY_End" "44")
+    '("begin" "MAIA_KEY_Begin" "45")
+    '("select" "MAIA_KEY_Select" "46")
+    '("print" "MAIA_KEY_Print" "47")
+    '("execute" "MAIA_KEY_Execute" "48")
+    '("insert" "MAIA_KEY_Insert" "49")
+    '("undo" "MAIA_KEY_Undo" "50")
+    '("redo" "MAIA_KEY_Redo" "51")
+    '("menu" "MAIA_KEY_Menu" "52")
+    '("find" "MAIA_KEY_Find" "53")
+    '("cancel" "MAIA_KEY_Cancel" "54")
+    '("help" "MAIA_KEY_Help" "55")
+    '("break" "MAIA_KEY_Break" "56")
+    '("mode-switch" "MAIA_KEY_Mode_switch" "57")
+    '("script-switch" "MAIA_KEY_script_switch" "58")
+    '("num-lock" "MAIA_KEY_Num_Lock" "59")
+    '("kp-space" "MAIA_KEY_KP_Space" "60")
+    '("kp-tab" "MAIA_KEY_KP_Tab" "61")
+    '("kp-enter" "MAIA_KEY_KP_Enter" "62")
+    '("kp-f1" "MAIA_KEY_KP_F1" "63")
+    '("kp-f2" "MAIA_KEY_KP_F2" "64")
+    '("kp-f3" "MAIA_KEY_KP_F3" "65")
+    '("kp-f4" "MAIA_KEY_KP_F4" "66")
+    '("kp-home" "MAIA_KEY_KP_Home" "67")
+    '("kp-left" "MAIA_KEY_KP_Left" "68")
+    '("kp-up" "MAIA_KEY_KP_Up" "69")
+    '("kp-right" "MAIA_KEY_KP_Right" "70")
+    '("kp-down" "MAIA_KEY_KP_Down" "71")
+    '("kp-prior" "MAIA_KEY_KP_Prior" "72")
+    '("kp-page-up" "MAIA_KEY_KP_Page_Up" "73")
+    '("kp-next" "MAIA_KEY_KP_Next" "74")
+    '("kp-page-down" "MAIA_KEY_KP_Page_Down" "75")
+    '("kp-end" "MAIA_KEY_KP_End" "76")
+    '("kp-begin" "MAIA_KEY_KP_Begin" "77")
+    '("kp-insert" "MAIA_KEY_KP_Insert" "78")
+    '("kp-delete" "MAIA_KEY_KP_Delete" "79")
+    '("kp-equal" "MAIA_KEY_KP_Equal" "80")
+    '("kp-multiply" "MAIA_KEY_KP_Multiply" "81")
+    '("kp-add" "MAIA_KEY_KP_Add" "82")
+    '("kp-separator" "MAIA_KEY_KP_Separator" "83")
+    '("kp-subtract" "MAIA_KEY_KP_Subtract" "84")
+    '("kp-decimal" "MAIA_KEY_KP_Decimal" "85")
+    '("kp-divide" "MAIA_KEY_KP_Divide" "86")
+    '("kp-0" "MAIA_KEY_KP_0" "87")
+    '("kp-1" "MAIA_KEY_KP_1" "88")
+    '("kp-2" "MAIA_KEY_KP_2" "89")
+    '("kp-3" "MAIA_KEY_KP_3" "90")
+    '("kp-4" "MAIA_KEY_KP_4" "91")
+    '("kp-5" "MAIA_KEY_KP_5" "92")
+    '("kp-6" "MAIA_KEY_KP_6" "93")
+    '("kp-7" "MAIA_KEY_KP_7" "94")
+    '("kp-8" "MAIA_KEY_KP_8" "95")
+    '("kp-9" "MAIA_KEY_KP_9" "96")
+    '("f1" "MAIA_KEY_F1" "97")
+    '("f2" "MAIA_KEY_F2" "98")
+    '("f3" "MAIA_KEY_F3" "99")
+    '("f4" "MAIA_KEY_F4" "100")
+    '("f5" "MAIA_KEY_F5" "101")
+    '("f6" "MAIA_KEY_F6" "102")
+    '("f7" "MAIA_KEY_F7" "103")
+    '("f8" "MAIA_KEY_F8" "104")
+    '("f9" "MAIA_KEY_F9" "105")
+    '("f10" "MAIA_KEY_F10" "106")
+    '("f11" "MAIA_KEY_F11" "107")
+    '("l1" "MAIA_KEY_L1" "108")
+    '("f12" "MAIA_KEY_F12" "109")
+    '("l2" "MAIA_KEY_L2" "110")
+    '("f13" "MAIA_KEY_F13" "111")
+    '("l3" "MAIA_KEY_L3" "112")
+    '("f14" "MAIA_KEY_F14" "113")
+    '("l4" "MAIA_KEY_L4" "114")
+    '("f15" "MAIA_KEY_F15" "115")
+    '("l5" "MAIA_KEY_L5" "116")
+    '("f16" "MAIA_KEY_F16" "117")
+    '("l6" "MAIA_KEY_L6" "118")
+    '("f17" "MAIA_KEY_F17" "119")
+    '("l7" "MAIA_KEY_L7" "120")
+    '("f18" "MAIA_KEY_F18" "121")
+    '("l8" "MAIA_KEY_L8" "122")
+    '("f19" "MAIA_KEY_F19" "123")
+    '("l9" "MAIA_KEY_L9" "124")
+    '("f20" "MAIA_KEY_F20" "125")
+    '("l10" "MAIA_KEY_L10" "126")
+    '("f21" "MAIA_KEY_F21" "127")
+    '("r1" "MAIA_KEY_R1" "128")
+    '("f22" "MAIA_KEY_F22" "129")
+    '("r2" "MAIA_KEY_R2" "130")
+    '("f23" "MAIA_KEY_F23" "131")
+    '("r3" "MAIA_KEY_R3" "132")
+    '("f24" "MAIA_KEY_F24" "133")
+    '("r4" "MAIA_KEY_R4" "134")
+    '("f25" "MAIA_KEY_F25" "135")
+    '("r5" "MAIA_KEY_R5" "136")
+    '("f26" "MAIA_KEY_F26" "137")
+    '("r6" "MAIA_KEY_R6" "138")
+    '("f27" "MAIA_KEY_F27" "139")
+    '("r7" "MAIA_KEY_R7" "140")
+    '("f28" "MAIA_KEY_F28" "141")
+    '("r8" "MAIA_KEY_R8" "142")
+    '("f29" "MAIA_KEY_F29" "143")
+    '("r9" "MAIA_KEY_R9" "144")
+    '("f30" "MAIA_KEY_F30" "145")
+    '("r10" "MAIA_KEY_R10" "146")
+    '("f31" "MAIA_KEY_F31" "147")
+    '("r11" "MAIA_KEY_R11" "148")
+    '("f32" "MAIA_KEY_F32" "149")
+    '("r12" "MAIA_KEY_R12" "150")
+    '("f33" "MAIA_KEY_F33" "151")
+    '("r13" "MAIA_KEY_R13" "152")
+    '("f34" "MAIA_KEY_F34" "153")
+    '("r14" "MAIA_KEY_R14" "154")
+    '("f35" "MAIA_KEY_F35" "155")
+    '("r15" "MAIA_KEY_R15" "156")
+    '("shift-l" "MAIA_KEY_Shift_L" "157")
+    '("shift-r" "MAIA_KEY_Shift_R" "158")
+    '("control-l" "MAIA_KEY_Control_L" "159")
+    '("control-r" "MAIA_KEY_Control_R" "160")
+    '("caps-lock" "MAIA_KEY_Caps_Lock" "161")
+    '("shift-lock" "MAIA_KEY_Shift_Lock" "162")
+    '("meta-l" "MAIA_KEY_Meta_L" "163")
+    '("meta-r" "MAIA_KEY_Meta_R" "164")
+    '("alt-l" "MAIA_KEY_Alt_L" "165")
+    '("alt-r" "MAIA_KEY_Alt_R" "166")
+    '("super-l" "MAIA_KEY_Super_L" "167")
+    '("super-r" "MAIA_KEY_Super_R" "168")
+    '("hyper-l" "MAIA_KEY_Hyper_L" "169")
+    '("hyper-r" "MAIA_KEY_Hyper_R" "170")
+    '("iso-lock" "MAIA_KEY_ISO_Lock" "171")
+    '("iso-level2-latch" "MAIA_KEY_ISO_Level2_Latch" "172")
+    '("iso-level3-shift" "MAIA_KEY_ISO_Level3_Shift" "173")
+    '("iso-level3-latch" "MAIA_KEY_ISO_Level3_Latch" "174")
+    '("iso-level3-lock" "MAIA_KEY_ISO_Level3_Lock" "175")
+    '("iso-level5-shift" "MAIA_KEY_ISO_Level5_Shift" "176")
+    '("iso-level5-latch" "MAIA_KEY_ISO_Level5_Latch" "177")
+    '("iso-level5-lock" "MAIA_KEY_ISO_Level5_Lock" "178")
+    '("iso-group-shift" "MAIA_KEY_ISO_Group_Shift" "179")
+    '("iso-group-latch" "MAIA_KEY_ISO_Group_Latch" "180")
+    '("iso-group-lock" "MAIA_KEY_ISO_Group_Lock" "181")
+    '("iso-next-group" "MAIA_KEY_ISO_Next_Group" "182")
+    '("iso-next-group-lock" "MAIA_KEY_ISO_Next_Group_Lock" "183")
+    '("iso-prev-group" "MAIA_KEY_ISO_Prev_Group" "184")
+    '("iso-prev-group-lock" "MAIA_KEY_ISO_Prev_Group_Lock" "185")
+    '("iso-first-group" "MAIA_KEY_ISO_First_Group" "186")
+    '("iso-first-group-lock" "MAIA_KEY_ISO_First_Group_Lock" "187")
+    '("iso-last-group" "MAIA_KEY_ISO_Last_Group" "188")
+    '("iso-last-group-lock" "MAIA_KEY_ISO_Last_Group_Lock" "189")
+    '("iso-left-tab" "MAIA_KEY_ISO_Left_Tab" "190")
+    '("iso-move-line-up" "MAIA_KEY_ISO_Move_Line_Up" "191")
+    '("iso-move-line-down" "MAIA_KEY_ISO_Move_Line_Down" "192")
+    '("iso-partial-line-up" "MAIA_KEY_ISO_Partial_Line_Up" "193")
+    '("iso-partial-line-down" "MAIA_KEY_ISO_Partial_Line_Down" "194")
+    '("iso-partial-space-left" "MAIA_KEY_ISO_Partial_Space_Left" "195")
+    '("iso-partial-space-right" "MAIA_KEY_ISO_Partial_Space_Right" "196")
+    '("iso-set-margin-left" "MAIA_KEY_ISO_Set_Margin_Left" "197")
+    '("iso-set-margin-right" "MAIA_KEY_ISO_Set_Margin_Right" "198")
+    '("iso-release-margin-left" "MAIA_KEY_ISO_Release_Margin_Left" "199")
+    '("iso-release-margin-right" "MAIA_KEY_ISO_Release_Margin_Right" "200")
+    '("iso-release-both-margins" "MAIA_KEY_ISO_Release_Both_Margins" "201")
+    '("iso-fast-cursor-left" "MAIA_KEY_ISO_Fast_Cursor_Left" "202")
+    '("iso-fast-cursor-right" "MAIA_KEY_ISO_Fast_Cursor_Right" "203")
+    '("iso-fast-cursor-up" "MAIA_KEY_ISO_Fast_Cursor_Up" "204")
+    '("iso-fast-cursor-down" "MAIA_KEY_ISO_Fast_Cursor_Down" "205")
+    '("iso-continuous-underline" "MAIA_KEY_ISO_Continuous_Underline" "206")
+    '("iso-discontinuous-underline" "MAIA_KEY_ISO_Discontinuous_Underline" "207")
+    '("iso-emphasize" "MAIA_KEY_ISO_Emphasize" "208")
+    '("iso-center-object" "MAIA_KEY_ISO_Center_Object" "209")
+    '("iso-enter" "MAIA_KEY_ISO_Enter" "210")
+    '("dead-grave" "MAIA_KEY_dead_grave" "211")
+    '("dead-acute" "MAIA_KEY_dead_acute" "212")
+    '("dead-circumflex" "MAIA_KEY_dead_circumflex" "213")
+    '("dead-tilde" "MAIA_KEY_dead_tilde" "214")
+    '("dead-perispomeni" "MAIA_KEY_dead_perispomeni" "215")
+    '("dead-macron" "MAIA_KEY_dead_macron" "216")
+    '("dead-breve" "MAIA_KEY_dead_breve" "217")
+    '("dead-abovedot" "MAIA_KEY_dead_abovedot" "218")
+    '("dead-diaeresis" "MAIA_KEY_dead_diaeresis" "219")
+    '("dead-abovering" "MAIA_KEY_dead_abovering" "220")
+    '("dead-doubleacute" "MAIA_KEY_dead_doubleacute" "221")
+    '("dead-caron" "MAIA_KEY_dead_caron" "222")
+    '("dead-cedilla" "MAIA_KEY_dead_cedilla" "223")
+    '("dead-ogonek" "MAIA_KEY_dead_ogonek" "224")
+    '("dead-iota" "MAIA_KEY_dead_iota" "225")
+    '("dead-voiced-sound" "MAIA_KEY_dead_voiced_sound" "226")
+    '("dead-semivoiced-sound" "MAIA_KEY_dead_semivoiced_sound" "227")
+    '("dead-belowdot" "MAIA_KEY_dead_belowdot" "228")
+    '("dead-hook" "MAIA_KEY_dead_hook" "229")
+    '("dead-horn" "MAIA_KEY_dead_horn" "230")
+    '("dead-stroke" "MAIA_KEY_dead_stroke" "231")
+    '("dead-abovecomma" "MAIA_KEY_dead_abovecomma" "232")
+    '("dead-psili" "MAIA_KEY_dead_psili" "233")
+    '("dead-abovereversedcomma" "MAIA_KEY_dead_abovereversedcomma" "234")
+    '("dead-dasia" "MAIA_KEY_dead_dasia" "235")
+    '("dead-doublegrave" "MAIA_KEY_dead_doublegrave" "236")
+    '("dead-belowring" "MAIA_KEY_dead_belowring" "237")
+    '("dead-belowmacron" "MAIA_KEY_dead_belowmacron" "238")
+    '("dead-belowcircumflex" "MAIA_KEY_dead_belowcircumflex" "239")
+    '("dead-belowtilde" "MAIA_KEY_dead_belowtilde" "240")
+    '("dead-belowbreve" "MAIA_KEY_dead_belowbreve" "241")
+    '("dead-belowdiaeresis" "MAIA_KEY_dead_belowdiaeresis" "242")
+    '("dead-invertedbreve" "MAIA_KEY_dead_invertedbreve" "243")
+    '("dead-belowcomma" "MAIA_KEY_dead_belowcomma" "244")
+    '("dead-currency" "MAIA_KEY_dead_currency" "245")
+    '("dead-a" "MAIA_KEY_dead_a" "246")
+    '("dead-a" "MAIA_KEY_dead_A" "247")
+    '("dead-e" "MAIA_KEY_dead_e" "248")
+    '("dead-e" "MAIA_KEY_dead_E" "249")
+    '("dead-i" "MAIA_KEY_dead_i" "250")
+    '("dead-i" "MAIA_KEY_dead_I" "251")
+    '("dead-o" "MAIA_KEY_dead_o" "252")
+    '("dead-o" "MAIA_KEY_dead_O" "253")
+    '("dead-u" "MAIA_KEY_dead_u" "254")
+    '("dead-u" "MAIA_KEY_dead_U" "255")
+    '("dead-small-schwa" "MAIA_KEY_dead_small_schwa" "256")
+    '("dead-capital-schwa" "MAIA_KEY_dead_capital_schwa" "257")
+    '("first-virtual-screen" "MAIA_KEY_First_Virtual_Screen" "258")
+    '("prev-virtual-screen" "MAIA_KEY_Prev_Virtual_Screen" "259")
+    '("next-virtual-screen" "MAIA_KEY_Next_Virtual_Screen" "260")
+    '("last-virtual-screen" "MAIA_KEY_Last_Virtual_Screen" "261")
+    '("terminate-server" "MAIA_KEY_Terminate_Server" "262")
+    '("accessx-enable" "MAIA_KEY_AccessX_Enable" "263")
+    '("accessx-feedback-enable" "MAIA_KEY_AccessX_Feedback_Enable" "264")
+    '("repeatkeys-enable" "MAIA_KEY_RepeatKeys_Enable" "265")
+    '("slowkeys-enable" "MAIA_KEY_SlowKeys_Enable" "266")
+    '("bouncekeys-enable" "MAIA_KEY_BounceKeys_Enable" "267")
+    '("stickykeys-enable" "MAIA_KEY_StickyKeys_Enable" "268")
+    '("mousekeys-enable" "MAIA_KEY_MouseKeys_Enable" "269")
+    '("mousekeys-accel-enable" "MAIA_KEY_MouseKeys_Accel_Enable" "270")
+    '("overlay1-enable" "MAIA_KEY_Overlay1_Enable" "271")
+    '("overlay2-enable" "MAIA_KEY_Overlay2_Enable" "272")
+    '("audiblebell-enable" "MAIA_KEY_AudibleBell_Enable" "273")
+    '("pointer-left" "MAIA_KEY_Pointer_Left" "274")
+    '("pointer-right" "MAIA_KEY_Pointer_Right" "275")
+    '("pointer-up" "MAIA_KEY_Pointer_Up" "276")
+    '("pointer-down" "MAIA_KEY_Pointer_Down" "277")
+    '("pointer-upleft" "MAIA_KEY_Pointer_UpLeft" "278")
+    '("pointer-upright" "MAIA_KEY_Pointer_UpRight" "279")
+    '("pointer-downleft" "MAIA_KEY_Pointer_DownLeft" "280")
+    '("pointer-downright" "MAIA_KEY_Pointer_DownRight" "281")
+    '("pointer-button-dflt" "MAIA_KEY_Pointer_Button_Dflt" "282")
+    '("pointer-button1" "MAIA_KEY_Pointer_Button1" "283")
+    '("pointer-button2" "MAIA_KEY_Pointer_Button2" "284")
+    '("pointer-button3" "MAIA_KEY_Pointer_Button3" "285")
+    '("pointer-button4" "MAIA_KEY_Pointer_Button4" "286")
+    '("pointer-button5" "MAIA_KEY_Pointer_Button5" "287")
+    '("pointer-dblclick-dflt" "MAIA_KEY_Pointer_DblClick_Dflt" "288")
+    '("pointer-dblclick1" "MAIA_KEY_Pointer_DblClick1" "289")
+    '("pointer-dblclick2" "MAIA_KEY_Pointer_DblClick2" "290")
+    '("pointer-dblclick3" "MAIA_KEY_Pointer_DblClick3" "291")
+    '("pointer-dblclick4" "MAIA_KEY_Pointer_DblClick4" "292")
+    '("pointer-dblclick5" "MAIA_KEY_Pointer_DblClick5" "293")
+    '("pointer-drag-dflt" "MAIA_KEY_Pointer_Drag_Dflt" "294")
+    '("pointer-drag1" "MAIA_KEY_Pointer_Drag1" "295")
+    '("pointer-drag2" "MAIA_KEY_Pointer_Drag2" "296")
+    '("pointer-drag3" "MAIA_KEY_Pointer_Drag3" "297")
+    '("pointer-drag4" "MAIA_KEY_Pointer_Drag4" "298")
+    '("pointer-drag5" "MAIA_KEY_Pointer_Drag5" "299")
+    '("pointer-enablekeys" "MAIA_KEY_Pointer_EnableKeys" "300")
+    '("pointer-accelerate" "MAIA_KEY_Pointer_Accelerate" "301")
+    '("pointer-dfltbtnnext" "MAIA_KEY_Pointer_DfltBtnNext" "302")
+    '("pointer-dfltbtnprev" "MAIA_KEY_Pointer_DfltBtnPrev" "303")
+    '("3270-duplicate" "MAIA_KEY_3270_Duplicate" "304")
+    '("3270-fieldmark" "MAIA_KEY_3270_FieldMark" "305")
+    '("3270-right2" "MAIA_KEY_3270_Right2" "306")
+    '("3270-left2" "MAIA_KEY_3270_Left2" "307")
+    '("3270-backtab" "MAIA_KEY_3270_BackTab" "308")
+    '("3270-eraseeof" "MAIA_KEY_3270_EraseEOF" "309")
+    '("3270-eraseinput" "MAIA_KEY_3270_EraseInput" "310")
+    '("3270-reset" "MAIA_KEY_3270_Reset" "311")
+    '("3270-quit" "MAIA_KEY_3270_Quit" "312")
+    '("3270-pa1" "MAIA_KEY_3270_PA1" "313")
+    '("3270-pa2" "MAIA_KEY_3270_PA2" "314")
+    '("3270-pa3" "MAIA_KEY_3270_PA3" "315")
+    '("3270-test" "MAIA_KEY_3270_Test" "316")
+    '("3270-attn" "MAIA_KEY_3270_Attn" "317")
+    '("3270-cursorblink" "MAIA_KEY_3270_CursorBlink" "318")
+    '("3270-altcursor" "MAIA_KEY_3270_AltCursor" "319")
+    '("3270-keyclick" "MAIA_KEY_3270_KeyClick" "320")
+    '("3270-jump" "MAIA_KEY_3270_Jump" "321")
+    '("3270-ident" "MAIA_KEY_3270_Ident" "322")
+    '("3270-rule" "MAIA_KEY_3270_Rule" "323")
+    '("3270-copy" "MAIA_KEY_3270_Copy" "324")
+    '("3270-play" "MAIA_KEY_3270_Play" "325")
+    '("3270-setup" "MAIA_KEY_3270_Setup" "326")
+    '("3270-record" "MAIA_KEY_3270_Record" "327")
+    '("3270-changescreen" "MAIA_KEY_3270_ChangeScreen" "328")
+    '("3270-deleteword" "MAIA_KEY_3270_DeleteWord" "329")
+    '("3270-exselect" "MAIA_KEY_3270_ExSelect" "330")
+    '("3270-cursorselect" "MAIA_KEY_3270_CursorSelect" "331")
+    '("3270-printscreen" "MAIA_KEY_3270_PrintScreen" "332")
+    '("3270-enter" "MAIA_KEY_3270_Enter" "333")
+    '("space" "MAIA_KEY_space" "334")
+    '("exclam" "MAIA_KEY_exclam" "335")
+    '("quotedbl" "MAIA_KEY_quotedbl" "336")
+    '("numbersign" "MAIA_KEY_numbersign" "337")
+    '("dollar" "MAIA_KEY_dollar" "338")
+    '("percent" "MAIA_KEY_percent" "339")
+    '("ampersand" "MAIA_KEY_ampersand" "340")
+    '("apostrophe" "MAIA_KEY_apostrophe" "341")
+    '("quoteright" "MAIA_KEY_quoteright" "342")
+    '("parenleft" "MAIA_KEY_parenleft" "343")
+    '("parenright" "MAIA_KEY_parenright" "344")
+    '("asterisk" "MAIA_KEY_asterisk" "345")
+    '("plus" "MAIA_KEY_plus" "346")
+    '("comma" "MAIA_KEY_comma" "347")
+    '("minus" "MAIA_KEY_minus" "348")
+    '("period" "MAIA_KEY_period" "349")
+    '("slash" "MAIA_KEY_slash" "350")
+    '("0" "MAIA_KEY_0" "351")
+    '("1" "MAIA_KEY_1" "352")
+    '("2" "MAIA_KEY_2" "353")
+    '("3" "MAIA_KEY_3" "354")
+    '("4" "MAIA_KEY_4" "355")
+    '("5" "MAIA_KEY_5" "356")
+    '("6" "MAIA_KEY_6" "357")
+    '("7" "MAIA_KEY_7" "358")
+    '("8" "MAIA_KEY_8" "359")
+    '("9" "MAIA_KEY_9" "360")
+    '("colon" "MAIA_KEY_colon" "361")
+    '("semicolon" "MAIA_KEY_semicolon" "362")
+    '("less" "MAIA_KEY_less" "363")
+    '("equal" "MAIA_KEY_equal" "364")
+    '("greater" "MAIA_KEY_greater" "365")
+    '("question" "MAIA_KEY_question" "366")
+    '("at" "MAIA_KEY_at" "367")
+    '("a" "MAIA_KEY_A" "368")
+    '("b" "MAIA_KEY_B" "369")
+    '("c" "MAIA_KEY_C" "370")
+    '("d" "MAIA_KEY_D" "371")
+    '("e" "MAIA_KEY_E" "372")
+    '("f" "MAIA_KEY_F" "373")
+    '("g" "MAIA_KEY_G" "374")
+    '("h" "MAIA_KEY_H" "375")
+    '("i" "MAIA_KEY_I" "376")
+    '("j" "MAIA_KEY_J" "377")
+    '("k" "MAIA_KEY_K" "378")
+    '("l" "MAIA_KEY_L" "379")
+    '("m" "MAIA_KEY_M" "380")
+    '("n" "MAIA_KEY_N" "381")
+    '("o" "MAIA_KEY_O" "382")
+    '("p" "MAIA_KEY_P" "383")
+    '("q" "MAIA_KEY_Q" "384")
+    '("r" "MAIA_KEY_R" "385")
+    '("s" "MAIA_KEY_S" "386")
+    '("t" "MAIA_KEY_T" "387")
+    '("u" "MAIA_KEY_U" "388")
+    '("v" "MAIA_KEY_V" "389")
+    '("w" "MAIA_KEY_W" "390")
+    '("x" "MAIA_KEY_X" "391")
+    '("y" "MAIA_KEY_Y" "392")
+    '("z" "MAIA_KEY_Z" "393")
+    '("bracketleft" "MAIA_KEY_bracketleft" "394")
+    '("backslash" "MAIA_KEY_backslash" "395")
+    '("bracketright" "MAIA_KEY_bracketright" "396")
+    '("asciicircum" "MAIA_KEY_asciicircum" "397")
+    '("underscore" "MAIA_KEY_underscore" "398")
+    '("grave" "MAIA_KEY_grave" "399")
+    '("quoteleft" "MAIA_KEY_quoteleft" "400")
+    '("a" "MAIA_KEY_a" "401")
+    '("b" "MAIA_KEY_b" "402")
+    '("c" "MAIA_KEY_c" "403")
+    '("d" "MAIA_KEY_d" "404")
+    '("e" "MAIA_KEY_e" "405")
+    '("f" "MAIA_KEY_f" "406")
+    '("g" "MAIA_KEY_g" "407")
+    '("h" "MAIA_KEY_h" "408")
+    '("i" "MAIA_KEY_i" "409")
+    '("j" "MAIA_KEY_j" "410")
+    '("k" "MAIA_KEY_k" "411")
+    '("l" "MAIA_KEY_l" "412")
+    '("m" "MAIA_KEY_m" "413")
+    '("n" "MAIA_KEY_n" "414")
+    '("o" "MAIA_KEY_o" "415")
+    '("p" "MAIA_KEY_p" "416")
+    '("q" "MAIA_KEY_q" "417")
+    '("r" "MAIA_KEY_r" "418")
+    '("s" "MAIA_KEY_s" "419")
+    '("t" "MAIA_KEY_t" "420")
+    '("u" "MAIA_KEY_u" "421")
+    '("v" "MAIA_KEY_v" "422")
+    '("w" "MAIA_KEY_w" "423")
+    '("x" "MAIA_KEY_x" "424")
+    '("y" "MAIA_KEY_y" "425")
+    '("z" "MAIA_KEY_z" "426")
+    '("braceleft" "MAIA_KEY_braceleft" "427")
+    '("bar" "MAIA_KEY_bar" "428")
+    '("braceright" "MAIA_KEY_braceright" "429")
+    '("asciitilde" "MAIA_KEY_asciitilde" "430")
+    '("nobreakspace" "MAIA_KEY_nobreakspace" "431")
+    '("exclamdown" "MAIA_KEY_exclamdown" "432")
+    '("cent" "MAIA_KEY_cent" "433")
+    '("sterling" "MAIA_KEY_sterling" "434")
+    '("currency" "MAIA_KEY_currency" "435")
+    '("yen" "MAIA_KEY_yen" "436")
+    '("brokenbar" "MAIA_KEY_brokenbar" "437")
+    '("section" "MAIA_KEY_section" "438")
+    '("diaeresis" "MAIA_KEY_diaeresis" "439")
+    '("copyright" "MAIA_KEY_copyright" "440")
+    '("ordfeminine" "MAIA_KEY_ordfeminine" "441")
+    '("guillemotleft" "MAIA_KEY_guillemotleft" "442")
+    '("notsign" "MAIA_KEY_notsign" "443")
+    '("hyphen" "MAIA_KEY_hyphen" "444")
+    '("registered" "MAIA_KEY_registered" "445")
+    '("macron" "MAIA_KEY_macron" "446")
+    '("degree" "MAIA_KEY_degree" "447")
+    '("plusminus" "MAIA_KEY_plusminus" "448")
+    '("twosuperior" "MAIA_KEY_twosuperior" "449")
+    '("threesuperior" "MAIA_KEY_threesuperior" "450")
+    '("acute" "MAIA_KEY_acute" "451")
+    '("mu" "MAIA_KEY_mu" "452")
+    '("paragraph" "MAIA_KEY_paragraph" "453")
+    '("periodcentered" "MAIA_KEY_periodcentered" "454")
+    '("cedilla" "MAIA_KEY_cedilla" "455")
+    '("onesuperior" "MAIA_KEY_onesuperior" "456")
+    '("masculine" "MAIA_KEY_masculine" "457")
+    '("guillemotright" "MAIA_KEY_guillemotright" "458")
+    '("onequarter" "MAIA_KEY_onequarter" "459")
+    '("onehalf" "MAIA_KEY_onehalf" "460")
+    '("threequarters" "MAIA_KEY_threequarters" "461")
+    '("questiondown" "MAIA_KEY_questiondown" "462")
+    '("agrave" "MAIA_KEY_Agrave" "463")
+    '("aacute" "MAIA_KEY_Aacute" "464")
+    '("acircumflex" "MAIA_KEY_Acircumflex" "465")
+    '("atilde" "MAIA_KEY_Atilde" "466")
+    '("adiaeresis" "MAIA_KEY_Adiaeresis" "467")
+    '("aring" "MAIA_KEY_Aring" "468")
+    '("ae" "MAIA_KEY_AE" "469")
+    '("ccedilla" "MAIA_KEY_Ccedilla" "470")
+    '("egrave" "MAIA_KEY_Egrave" "471")
+    '("eacute" "MAIA_KEY_Eacute" "472")
+    '("ecircumflex" "MAIA_KEY_Ecircumflex" "473")
+    '("ediaeresis" "MAIA_KEY_Ediaeresis" "474")
+    '("igrave" "MAIA_KEY_Igrave" "475")
+    '("iacute" "MAIA_KEY_Iacute" "476")
+    '("icircumflex" "MAIA_KEY_Icircumflex" "477")
+    '("idiaeresis" "MAIA_KEY_Idiaeresis" "478")
+    '("eth" "MAIA_KEY_ETH" "479")
+    '("eth" "MAIA_KEY_Eth" "480")
+    '("ntilde" "MAIA_KEY_Ntilde" "481")
+    '("ograve" "MAIA_KEY_Ograve" "482")
+    '("oacute" "MAIA_KEY_Oacute" "483")
+    '("ocircumflex" "MAIA_KEY_Ocircumflex" "484")
+    '("otilde" "MAIA_KEY_Otilde" "485")
+    '("odiaeresis" "MAIA_KEY_Odiaeresis" "486")
+    '("multiply" "MAIA_KEY_multiply" "487")
+    '("oslash" "MAIA_KEY_Oslash" "488")
+    '("ooblique" "MAIA_KEY_Ooblique" "489")
+    '("ugrave" "MAIA_KEY_Ugrave" "490")
+    '("uacute" "MAIA_KEY_Uacute" "491")
+    '("ucircumflex" "MAIA_KEY_Ucircumflex" "492")
+    '("udiaeresis" "MAIA_KEY_Udiaeresis" "493")
+    '("yacute" "MAIA_KEY_Yacute" "494")
+    '("thorn" "MAIA_KEY_THORN" "495")
+    '("thorn" "MAIA_KEY_Thorn" "496")
+    '("ssharp" "MAIA_KEY_ssharp" "497")
+    '("agrave" "MAIA_KEY_agrave" "498")
+    '("aacute" "MAIA_KEY_aacute" "499")
+    '("acircumflex" "MAIA_KEY_acircumflex" "500")
+    '("atilde" "MAIA_KEY_atilde" "501")
+    '("adiaeresis" "MAIA_KEY_adiaeresis" "502")
+    '("aring" "MAIA_KEY_aring" "503")
+    '("ae" "MAIA_KEY_ae" "504")
+    '("ccedilla" "MAIA_KEY_ccedilla" "505")
+    '("egrave" "MAIA_KEY_egrave" "506")
+    '("eacute" "MAIA_KEY_eacute" "507")
+    '("ecircumflex" "MAIA_KEY_ecircumflex" "508")
+    '("ediaeresis" "MAIA_KEY_ediaeresis" "509")
+    '("igrave" "MAIA_KEY_igrave" "510")
+    '("iacute" "MAIA_KEY_iacute" "511")
+    '("icircumflex" "MAIA_KEY_icircumflex" "512")
+    '("idiaeresis" "MAIA_KEY_idiaeresis" "513")
+    '("eth" "MAIA_KEY_eth" "514")
+    '("ntilde" "MAIA_KEY_ntilde" "515")
+    '("ograve" "MAIA_KEY_ograve" "516")
+    '("oacute" "MAIA_KEY_oacute" "517")
+    '("ocircumflex" "MAIA_KEY_ocircumflex" "518")
+    '("otilde" "MAIA_KEY_otilde" "519")
+    '("odiaeresis" "MAIA_KEY_odiaeresis" "520")
+    '("division" "MAIA_KEY_division" "521")
+    '("oslash" "MAIA_KEY_oslash" "522")
+    '("ooblique" "MAIA_KEY_ooblique" "523")
+    '("ugrave" "MAIA_KEY_ugrave" "524")
+    '("uacute" "MAIA_KEY_uacute" "525")
+    '("ucircumflex" "MAIA_KEY_ucircumflex" "526")
+    '("udiaeresis" "MAIA_KEY_udiaeresis" "527")
+    '("yacute" "MAIA_KEY_yacute" "528")
+    '("thorn" "MAIA_KEY_thorn" "529")
+    '("ydiaeresis" "MAIA_KEY_ydiaeresis" "530")
+    '("aogonek" "MAIA_KEY_Aogonek" "531")
+    '("breve" "MAIA_KEY_breve" "532")
+    '("lstroke" "MAIA_KEY_Lstroke" "533")
+    '("lcaron" "MAIA_KEY_Lcaron" "534")
+    '("sacute" "MAIA_KEY_Sacute" "535")
+    '("scaron" "MAIA_KEY_Scaron" "536")
+    '("scedilla" "MAIA_KEY_Scedilla" "537")
+    '("tcaron" "MAIA_KEY_Tcaron" "538")
+    '("zacute" "MAIA_KEY_Zacute" "539")
+    '("zcaron" "MAIA_KEY_Zcaron" "540")
+    '("zabovedot" "MAIA_KEY_Zabovedot" "541")
+    '("aogonek" "MAIA_KEY_aogonek" "542")
+    '("ogonek" "MAIA_KEY_ogonek" "543")
+    '("lstroke" "MAIA_KEY_lstroke" "544")
+    '("lcaron" "MAIA_KEY_lcaron" "545")
+    '("sacute" "MAIA_KEY_sacute" "546")
+    '("caron" "MAIA_KEY_caron" "547")
+    '("scaron" "MAIA_KEY_scaron" "548")
+    '("scedilla" "MAIA_KEY_scedilla" "549")
+    '("tcaron" "MAIA_KEY_tcaron" "550")
+    '("zacute" "MAIA_KEY_zacute" "551")
+    '("doubleacute" "MAIA_KEY_doubleacute" "552")
+    '("zcaron" "MAIA_KEY_zcaron" "553")
+    '("zabovedot" "MAIA_KEY_zabovedot" "554")
+    '("racute" "MAIA_KEY_Racute" "555")
+    '("abreve" "MAIA_KEY_Abreve" "556")
+    '("lacute" "MAIA_KEY_Lacute" "557")
+    '("cacute" "MAIA_KEY_Cacute" "558")
+    '("ccaron" "MAIA_KEY_Ccaron" "559")
+    '("eogonek" "MAIA_KEY_Eogonek" "560")
+    '("ecaron" "MAIA_KEY_Ecaron" "561")
+    '("dcaron" "MAIA_KEY_Dcaron" "562")
+    '("dstroke" "MAIA_KEY_Dstroke" "563")
+    '("nacute" "MAIA_KEY_Nacute" "564")
+    '("ncaron" "MAIA_KEY_Ncaron" "565")
+    '("odoubleacute" "MAIA_KEY_Odoubleacute" "566")
+    '("rcaron" "MAIA_KEY_Rcaron" "567")
+    '("uring" "MAIA_KEY_Uring" "568")
+    '("udoubleacute" "MAIA_KEY_Udoubleacute" "569")
+    '("tcedilla" "MAIA_KEY_Tcedilla" "570")
+    '("racute" "MAIA_KEY_racute" "571")
+    '("abreve" "MAIA_KEY_abreve" "572")
+    '("lacute" "MAIA_KEY_lacute" "573")
+    '("cacute" "MAIA_KEY_cacute" "574")
+    '("ccaron" "MAIA_KEY_ccaron" "575")
+    '("eogonek" "MAIA_KEY_eogonek" "576")
+    '("ecaron" "MAIA_KEY_ecaron" "577")
+    '("dcaron" "MAIA_KEY_dcaron" "578")
+    '("dstroke" "MAIA_KEY_dstroke" "579")
+    '("nacute" "MAIA_KEY_nacute" "580")
+    '("ncaron" "MAIA_KEY_ncaron" "581")
+    '("odoubleacute" "MAIA_KEY_odoubleacute" "582")
+    '("rcaron" "MAIA_KEY_rcaron" "583")
+    '("uring" "MAIA_KEY_uring" "584")
+    '("udoubleacute" "MAIA_KEY_udoubleacute" "585")
+    '("tcedilla" "MAIA_KEY_tcedilla" "586")
+    '("abovedot" "MAIA_KEY_abovedot" "587")
+    '("hstroke" "MAIA_KEY_Hstroke" "588")
+    '("hcircumflex" "MAIA_KEY_Hcircumflex" "589")
+    '("iabovedot" "MAIA_KEY_Iabovedot" "590")
+    '("gbreve" "MAIA_KEY_Gbreve" "591")
+    '("jcircumflex" "MAIA_KEY_Jcircumflex" "592")
+    '("hstroke" "MAIA_KEY_hstroke" "593")
+    '("hcircumflex" "MAIA_KEY_hcircumflex" "594")
+    '("idotless" "MAIA_KEY_idotless" "595")
+    '("gbreve" "MAIA_KEY_gbreve" "596")
+    '("jcircumflex" "MAIA_KEY_jcircumflex" "597")
+    '("cabovedot" "MAIA_KEY_Cabovedot" "598")
+    '("ccircumflex" "MAIA_KEY_Ccircumflex" "599")
+    '("gabovedot" "MAIA_KEY_Gabovedot" "600")
+    '("gcircumflex" "MAIA_KEY_Gcircumflex" "601")
+    '("ubreve" "MAIA_KEY_Ubreve" "602")
+    '("scircumflex" "MAIA_KEY_Scircumflex" "603")
+    '("cabovedot" "MAIA_KEY_cabovedot" "604")
+    '("ccircumflex" "MAIA_KEY_ccircumflex" "605")
+    '("gabovedot" "MAIA_KEY_gabovedot" "606")
+    '("gcircumflex" "MAIA_KEY_gcircumflex" "607")
+    '("ubreve" "MAIA_KEY_ubreve" "608")
+    '("scircumflex" "MAIA_KEY_scircumflex" "609")
+    '("kra" "MAIA_KEY_kra" "610")
+    '("kappa" "MAIA_KEY_kappa" "611")
+    '("rcedilla" "MAIA_KEY_Rcedilla" "612")
+    '("itilde" "MAIA_KEY_Itilde" "613")
+    '("lcedilla" "MAIA_KEY_Lcedilla" "614")
+    '("emacron" "MAIA_KEY_Emacron" "615")
+    '("gcedilla" "MAIA_KEY_Gcedilla" "616")
+    '("tslash" "MAIA_KEY_Tslash" "617")
+    '("rcedilla" "MAIA_KEY_rcedilla" "618")
+    '("itilde" "MAIA_KEY_itilde" "619")
+    '("lcedilla" "MAIA_KEY_lcedilla" "620")
+    '("emacron" "MAIA_KEY_emacron" "621")
+    '("gcedilla" "MAIA_KEY_gcedilla" "622")
+    '("tslash" "MAIA_KEY_tslash" "623")
+    '("eng" "MAIA_KEY_ENG" "624")
+    '("eng" "MAIA_KEY_eng" "625")
+    '("amacron" "MAIA_KEY_Amacron" "626")
+    '("iogonek" "MAIA_KEY_Iogonek" "627")
+    '("eabovedot" "MAIA_KEY_Eabovedot" "628")
+    '("imacron" "MAIA_KEY_Imacron" "629")
+    '("ncedilla" "MAIA_KEY_Ncedilla" "630")
+    '("omacron" "MAIA_KEY_Omacron" "631")
+    '("kcedilla" "MAIA_KEY_Kcedilla" "632")
+    '("uogonek" "MAIA_KEY_Uogonek" "633")
+    '("utilde" "MAIA_KEY_Utilde" "634")
+    '("umacron" "MAIA_KEY_Umacron" "635")
+    '("amacron" "MAIA_KEY_amacron" "636")
+    '("iogonek" "MAIA_KEY_iogonek" "637")
+    '("eabovedot" "MAIA_KEY_eabovedot" "638")
+    '("imacron" "MAIA_KEY_imacron" "639")
+    '("ncedilla" "MAIA_KEY_ncedilla" "640")
+    '("omacron" "MAIA_KEY_omacron" "641")
+    '("kcedilla" "MAIA_KEY_kcedilla" "642")
+    '("uogonek" "MAIA_KEY_uogonek" "643")
+    '("utilde" "MAIA_KEY_utilde" "644")
+    '("umacron" "MAIA_KEY_umacron" "645")
+    '("wcircumflex" "MAIA_KEY_Wcircumflex" "646")
+    '("wcircumflex" "MAIA_KEY_wcircumflex" "647")
+    '("ycircumflex" "MAIA_KEY_Ycircumflex" "648")
+    '("ycircumflex" "MAIA_KEY_ycircumflex" "649")
+    '("babovedot" "MAIA_KEY_Babovedot" "650")
+    '("babovedot" "MAIA_KEY_babovedot" "651")
+    '("dabovedot" "MAIA_KEY_Dabovedot" "652")
+    '("dabovedot" "MAIA_KEY_dabovedot" "653")
+    '("fabovedot" "MAIA_KEY_Fabovedot" "654")
+    '("fabovedot" "MAIA_KEY_fabovedot" "655")
+    '("mabovedot" "MAIA_KEY_Mabovedot" "656")
+    '("mabovedot" "MAIA_KEY_mabovedot" "657")
+    '("pabovedot" "MAIA_KEY_Pabovedot" "658")
+    '("pabovedot" "MAIA_KEY_pabovedot" "659")
+    '("sabovedot" "MAIA_KEY_Sabovedot" "660")
+    '("sabovedot" "MAIA_KEY_sabovedot" "661")
+    '("tabovedot" "MAIA_KEY_Tabovedot" "662")
+    '("tabovedot" "MAIA_KEY_tabovedot" "663")
+    '("wgrave" "MAIA_KEY_Wgrave" "664")
+    '("wgrave" "MAIA_KEY_wgrave" "665")
+    '("wacute" "MAIA_KEY_Wacute" "666")
+    '("wacute" "MAIA_KEY_wacute" "667")
+    '("wdiaeresis" "MAIA_KEY_Wdiaeresis" "668")
+    '("wdiaeresis" "MAIA_KEY_wdiaeresis" "669")
+    '("ygrave" "MAIA_KEY_Ygrave" "670")
+    '("ygrave" "MAIA_KEY_ygrave" "671")
+    '("oe" "MAIA_KEY_OE" "672")
+    '("oe" "MAIA_KEY_oe" "673")
+    '("ydiaeresis" "MAIA_KEY_Ydiaeresis" "674")
+    '("overline" "MAIA_KEY_overline" "675")
+    '("kana-fullstop" "MAIA_KEY_kana_fullstop" "676")
+    '("kana-openingbracket" "MAIA_KEY_kana_openingbracket" "677")
+    '("kana-closingbracket" "MAIA_KEY_kana_closingbracket" "678")
+    '("kana-comma" "MAIA_KEY_kana_comma" "679")
+    '("kana-conjunctive" "MAIA_KEY_kana_conjunctive" "680")
+    '("kana-middledot" "MAIA_KEY_kana_middledot" "681")
+    '("kana-wo" "MAIA_KEY_kana_WO" "682")
+    '("kana-a" "MAIA_KEY_kana_a" "683")
+    '("kana-i" "MAIA_KEY_kana_i" "684")
+    '("kana-u" "MAIA_KEY_kana_u" "685")
+    '("kana-e" "MAIA_KEY_kana_e" "686")
+    '("kana-o" "MAIA_KEY_kana_o" "687")
+    '("kana-ya" "MAIA_KEY_kana_ya" "688")
+    '("kana-yu" "MAIA_KEY_kana_yu" "689")
+    '("kana-yo" "MAIA_KEY_kana_yo" "690")
+    '("kana-tsu" "MAIA_KEY_kana_tsu" "691")
+    '("kana-tu" "MAIA_KEY_kana_tu" "692")
+    '("prolongedsound" "MAIA_KEY_prolongedsound" "693")
+    '("kana-a" "MAIA_KEY_kana_A" "694")
+    '("kana-i" "MAIA_KEY_kana_I" "695")
+    '("kana-u" "MAIA_KEY_kana_U" "696")
+    '("kana-e" "MAIA_KEY_kana_E" "697")
+    '("kana-o" "MAIA_KEY_kana_O" "698")
+    '("kana-ka" "MAIA_KEY_kana_KA" "699")
+    '("kana-ki" "MAIA_KEY_kana_KI" "700")
+    '("kana-ku" "MAIA_KEY_kana_KU" "701")
+    '("kana-ke" "MAIA_KEY_kana_KE" "702")
+    '("kana-ko" "MAIA_KEY_kana_KO" "703")
+    '("kana-sa" "MAIA_KEY_kana_SA" "704")
+    '("kana-shi" "MAIA_KEY_kana_SHI" "705")
+    '("kana-su" "MAIA_KEY_kana_SU" "706")
+    '("kana-se" "MAIA_KEY_kana_SE" "707")
+    '("kana-so" "MAIA_KEY_kana_SO" "708")
+    '("kana-ta" "MAIA_KEY_kana_TA" "709")
+    '("kana-chi" "MAIA_KEY_kana_CHI" "710")
+    '("kana-ti" "MAIA_KEY_kana_TI" "711")
+    '("kana-tsu" "MAIA_KEY_kana_TSU" "712")
+    '("kana-tu" "MAIA_KEY_kana_TU" "713")
+    '("kana-te" "MAIA_KEY_kana_TE" "714")
+    '("kana-to" "MAIA_KEY_kana_TO" "715")
+    '("kana-na" "MAIA_KEY_kana_NA" "716")
+    '("kana-ni" "MAIA_KEY_kana_NI" "717")
+    '("kana-nu" "MAIA_KEY_kana_NU" "718")
+    '("kana-ne" "MAIA_KEY_kana_NE" "719")
+    '("kana-no" "MAIA_KEY_kana_NO" "720")
+    '("kana-ha" "MAIA_KEY_kana_HA" "721")
+    '("kana-hi" "MAIA_KEY_kana_HI" "722")
+    '("kana-fu" "MAIA_KEY_kana_FU" "723")
+    '("kana-hu" "MAIA_KEY_kana_HU" "724")
+    '("kana-he" "MAIA_KEY_kana_HE" "725")
+    '("kana-ho" "MAIA_KEY_kana_HO" "726")
+    '("kana-ma" "MAIA_KEY_kana_MA" "727")
+    '("kana-mi" "MAIA_KEY_kana_MI" "728")
+    '("kana-mu" "MAIA_KEY_kana_MU" "729")
+    '("kana-me" "MAIA_KEY_kana_ME" "730")
+    '("kana-mo" "MAIA_KEY_kana_MO" "731")
+    '("kana-ya" "MAIA_KEY_kana_YA" "732")
+    '("kana-yu" "MAIA_KEY_kana_YU" "733")
+    '("kana-yo" "MAIA_KEY_kana_YO" "734")
+    '("kana-ra" "MAIA_KEY_kana_RA" "735")
+    '("kana-ri" "MAIA_KEY_kana_RI" "736")
+    '("kana-ru" "MAIA_KEY_kana_RU" "737")
+    '("kana-re" "MAIA_KEY_kana_RE" "738")
+    '("kana-ro" "MAIA_KEY_kana_RO" "739")
+    '("kana-wa" "MAIA_KEY_kana_WA" "740")
+    '("kana-n" "MAIA_KEY_kana_N" "741")
+    '("voicedsound" "MAIA_KEY_voicedsound" "742")
+    '("semivoicedsound" "MAIA_KEY_semivoicedsound" "743")
+    '("kana-switch" "MAIA_KEY_kana_switch" "744")
+    '("farsi-0" "MAIA_KEY_Farsi_0" "745")
+    '("farsi-1" "MAIA_KEY_Farsi_1" "746")
+    '("farsi-2" "MAIA_KEY_Farsi_2" "747")
+    '("farsi-3" "MAIA_KEY_Farsi_3" "748")
+    '("farsi-4" "MAIA_KEY_Farsi_4" "749")
+    '("farsi-5" "MAIA_KEY_Farsi_5" "750")
+    '("farsi-6" "MAIA_KEY_Farsi_6" "751")
+    '("farsi-7" "MAIA_KEY_Farsi_7" "752")
+    '("farsi-8" "MAIA_KEY_Farsi_8" "753")
+    '("farsi-9" "MAIA_KEY_Farsi_9" "754")
+    '("arabic-percent" "MAIA_KEY_Arabic_percent" "755")
+    '("arabic-superscript-alef" "MAIA_KEY_Arabic_superscript_alef" "756")
+    '("arabic-tteh" "MAIA_KEY_Arabic_tteh" "757")
+    '("arabic-peh" "MAIA_KEY_Arabic_peh" "758")
+    '("arabic-tcheh" "MAIA_KEY_Arabic_tcheh" "759")
+    '("arabic-ddal" "MAIA_KEY_Arabic_ddal" "760")
+    '("arabic-rreh" "MAIA_KEY_Arabic_rreh" "761")
+    '("arabic-comma" "MAIA_KEY_Arabic_comma" "762")
+    '("arabic-fullstop" "MAIA_KEY_Arabic_fullstop" "763")
+    '("arabic-0" "MAIA_KEY_Arabic_0" "764")
+    '("arabic-1" "MAIA_KEY_Arabic_1" "765")
+    '("arabic-2" "MAIA_KEY_Arabic_2" "766")
+    '("arabic-3" "MAIA_KEY_Arabic_3" "767")
+    '("arabic-4" "MAIA_KEY_Arabic_4" "768")
+    '("arabic-5" "MAIA_KEY_Arabic_5" "769")
+    '("arabic-6" "MAIA_KEY_Arabic_6" "770")
+    '("arabic-7" "MAIA_KEY_Arabic_7" "771")
+    '("arabic-8" "MAIA_KEY_Arabic_8" "772")
+    '("arabic-9" "MAIA_KEY_Arabic_9" "773")
+    '("arabic-semicolon" "MAIA_KEY_Arabic_semicolon" "774")
+    '("arabic-question-mark" "MAIA_KEY_Arabic_question_mark" "775")
+    '("arabic-hamza" "MAIA_KEY_Arabic_hamza" "776")
+    '("arabic-maddaonalef" "MAIA_KEY_Arabic_maddaonalef" "777")
+    '("arabic-hamzaonalef" "MAIA_KEY_Arabic_hamzaonalef" "778")
+    '("arabic-hamzaonwaw" "MAIA_KEY_Arabic_hamzaonwaw" "779")
+    '("arabic-hamzaunderalef" "MAIA_KEY_Arabic_hamzaunderalef" "780")
+    '("arabic-hamzaonyeh" "MAIA_KEY_Arabic_hamzaonyeh" "781")
+    '("arabic-alef" "MAIA_KEY_Arabic_alef" "782")
+    '("arabic-beh" "MAIA_KEY_Arabic_beh" "783")
+    '("arabic-tehmarbuta" "MAIA_KEY_Arabic_tehmarbuta" "784")
+    '("arabic-teh" "MAIA_KEY_Arabic_teh" "785")
+    '("arabic-theh" "MAIA_KEY_Arabic_theh" "786")
+    '("arabic-jeem" "MAIA_KEY_Arabic_jeem" "787")
+    '("arabic-hah" "MAIA_KEY_Arabic_hah" "788")
+    '("arabic-khah" "MAIA_KEY_Arabic_khah" "789")
+    '("arabic-dal" "MAIA_KEY_Arabic_dal" "790")
+    '("arabic-thal" "MAIA_KEY_Arabic_thal" "791")
+    '("arabic-ra" "MAIA_KEY_Arabic_ra" "792")
+    '("arabic-zain" "MAIA_KEY_Arabic_zain" "793")
+    '("arabic-seen" "MAIA_KEY_Arabic_seen" "794")
+    '("arabic-sheen" "MAIA_KEY_Arabic_sheen" "795")
+    '("arabic-sad" "MAIA_KEY_Arabic_sad" "796")
+    '("arabic-dad" "MAIA_KEY_Arabic_dad" "797")
+    '("arabic-tah" "MAIA_KEY_Arabic_tah" "798")
+    '("arabic-zah" "MAIA_KEY_Arabic_zah" "799")
+    '("arabic-ain" "MAIA_KEY_Arabic_ain" "800")
+    '("arabic-ghain" "MAIA_KEY_Arabic_ghain" "801")
+    '("arabic-tatweel" "MAIA_KEY_Arabic_tatweel" "802")
+    '("arabic-feh" "MAIA_KEY_Arabic_feh" "803")
+    '("arabic-qaf" "MAIA_KEY_Arabic_qaf" "804")
+    '("arabic-kaf" "MAIA_KEY_Arabic_kaf" "805")
+    '("arabic-lam" "MAIA_KEY_Arabic_lam" "806")
+    '("arabic-meem" "MAIA_KEY_Arabic_meem" "807")
+    '("arabic-noon" "MAIA_KEY_Arabic_noon" "808")
+    '("arabic-ha" "MAIA_KEY_Arabic_ha" "809")
+    '("arabic-heh" "MAIA_KEY_Arabic_heh" "810")
+    '("arabic-waw" "MAIA_KEY_Arabic_waw" "811")
+    '("arabic-alefmaksura" "MAIA_KEY_Arabic_alefmaksura" "812")
+    '("arabic-yeh" "MAIA_KEY_Arabic_yeh" "813")
+    '("arabic-fathatan" "MAIA_KEY_Arabic_fathatan" "814")
+    '("arabic-dammatan" "MAIA_KEY_Arabic_dammatan" "815")
+    '("arabic-kasratan" "MAIA_KEY_Arabic_kasratan" "816")
+    '("arabic-fatha" "MAIA_KEY_Arabic_fatha" "817")
+    '("arabic-damma" "MAIA_KEY_Arabic_damma" "818")
+    '("arabic-kasra" "MAIA_KEY_Arabic_kasra" "819")
+    '("arabic-shadda" "MAIA_KEY_Arabic_shadda" "820")
+    '("arabic-sukun" "MAIA_KEY_Arabic_sukun" "821")
+    '("arabic-madda-above" "MAIA_KEY_Arabic_madda_above" "822")
+    '("arabic-hamza-above" "MAIA_KEY_Arabic_hamza_above" "823")
+    '("arabic-hamza-below" "MAIA_KEY_Arabic_hamza_below" "824")
+    '("arabic-jeh" "MAIA_KEY_Arabic_jeh" "825")
+    '("arabic-veh" "MAIA_KEY_Arabic_veh" "826")
+    '("arabic-keheh" "MAIA_KEY_Arabic_keheh" "827")
+    '("arabic-gaf" "MAIA_KEY_Arabic_gaf" "828")
+    '("arabic-noon-ghunna" "MAIA_KEY_Arabic_noon_ghunna" "829")
+    '("arabic-heh-doachashmee" "MAIA_KEY_Arabic_heh_doachashmee" "830")
+    '("farsi-yeh" "MAIA_KEY_Farsi_yeh" "831")
+    '("arabic-farsi-yeh" "MAIA_KEY_Arabic_farsi_yeh" "832")
+    '("arabic-yeh-baree" "MAIA_KEY_Arabic_yeh_baree" "833")
+    '("arabic-heh-goal" "MAIA_KEY_Arabic_heh_goal" "834")
+    '("arabic-switch" "MAIA_KEY_Arabic_switch" "835")
+    '("cyrillic-ghe-bar" "MAIA_KEY_Cyrillic_GHE_bar" "836")
+    '("cyrillic-ghe-bar" "MAIA_KEY_Cyrillic_ghe_bar" "837")
+    '("cyrillic-zhe-descender" "MAIA_KEY_Cyrillic_ZHE_descender" "838")
+    '("cyrillic-zhe-descender" "MAIA_KEY_Cyrillic_zhe_descender" "839")
+    '("cyrillic-ka-descender" "MAIA_KEY_Cyrillic_KA_descender" "840")
+    '("cyrillic-ka-descender" "MAIA_KEY_Cyrillic_ka_descender" "841")
+    '("cyrillic-ka-vertstroke" "MAIA_KEY_Cyrillic_KA_vertstroke" "842")
+    '("cyrillic-ka-vertstroke" "MAIA_KEY_Cyrillic_ka_vertstroke" "843")
+    '("cyrillic-en-descender" "MAIA_KEY_Cyrillic_EN_descender" "844")
+    '("cyrillic-en-descender" "MAIA_KEY_Cyrillic_en_descender" "845")
+    '("cyrillic-u-straight" "MAIA_KEY_Cyrillic_U_straight" "846")
+    '("cyrillic-u-straight" "MAIA_KEY_Cyrillic_u_straight" "847")
+    '("cyrillic-u-straight-bar" "MAIA_KEY_Cyrillic_U_straight_bar" "848")
+    '("cyrillic-u-straight-bar" "MAIA_KEY_Cyrillic_u_straight_bar" "849")
+    '("cyrillic-ha-descender" "MAIA_KEY_Cyrillic_HA_descender" "850")
+    '("cyrillic-ha-descender" "MAIA_KEY_Cyrillic_ha_descender" "851")
+    '("cyrillic-che-descender" "MAIA_KEY_Cyrillic_CHE_descender" "852")
+    '("cyrillic-che-descender" "MAIA_KEY_Cyrillic_che_descender" "853")
+    '("cyrillic-che-vertstroke" "MAIA_KEY_Cyrillic_CHE_vertstroke" "854")
+    '("cyrillic-che-vertstroke" "MAIA_KEY_Cyrillic_che_vertstroke" "855")
+    '("cyrillic-shha" "MAIA_KEY_Cyrillic_SHHA" "856")
+    '("cyrillic-shha" "MAIA_KEY_Cyrillic_shha" "857")
+    '("cyrillic-schwa" "MAIA_KEY_Cyrillic_SCHWA" "858")
+    '("cyrillic-schwa" "MAIA_KEY_Cyrillic_schwa" "859")
+    '("cyrillic-i-macron" "MAIA_KEY_Cyrillic_I_macron" "860")
+    '("cyrillic-i-macron" "MAIA_KEY_Cyrillic_i_macron" "861")
+    '("cyrillic-o-bar" "MAIA_KEY_Cyrillic_O_bar" "862")
+    '("cyrillic-o-bar" "MAIA_KEY_Cyrillic_o_bar" "863")
+    '("cyrillic-u-macron" "MAIA_KEY_Cyrillic_U_macron" "864")
+    '("cyrillic-u-macron" "MAIA_KEY_Cyrillic_u_macron" "865")
+    '("serbian-dje" "MAIA_KEY_Serbian_dje" "866")
+    '("macedonia-gje" "MAIA_KEY_Macedonia_gje" "867")
+    '("cyrillic-io" "MAIA_KEY_Cyrillic_io" "868")
+    '("ukrainian-ie" "MAIA_KEY_Ukrainian_ie" "869")
+    '("ukranian-je" "MAIA_KEY_Ukranian_je" "870")
+    '("macedonia-dse" "MAIA_KEY_Macedonia_dse" "871")
+    '("ukrainian-i" "MAIA_KEY_Ukrainian_i" "872")
+    '("ukranian-i" "MAIA_KEY_Ukranian_i" "873")
+    '("ukrainian-yi" "MAIA_KEY_Ukrainian_yi" "874")
+    '("ukranian-yi" "MAIA_KEY_Ukranian_yi" "875")
+    '("cyrillic-je" "MAIA_KEY_Cyrillic_je" "876")
+    '("serbian-je" "MAIA_KEY_Serbian_je" "877")
+    '("cyrillic-lje" "MAIA_KEY_Cyrillic_lje" "878")
+    '("serbian-lje" "MAIA_KEY_Serbian_lje" "879")
+    '("cyrillic-nje" "MAIA_KEY_Cyrillic_nje" "880")
+    '("serbian-nje" "MAIA_KEY_Serbian_nje" "881")
+    '("serbian-tshe" "MAIA_KEY_Serbian_tshe" "882")
+    '("macedonia-kje" "MAIA_KEY_Macedonia_kje" "883")
+    '("ukrainian-ghe-with-upturn" "MAIA_KEY_Ukrainian_ghe_with_upturn" "884")
+    '("byelorussian-shortu" "MAIA_KEY_Byelorussian_shortu" "885")
+    '("cyrillic-dzhe" "MAIA_KEY_Cyrillic_dzhe" "886")
+    '("serbian-dze" "MAIA_KEY_Serbian_dze" "887")
+    '("numerosign" "MAIA_KEY_numerosign" "888")
+    '("serbian-dje" "MAIA_KEY_Serbian_DJE" "889")
+    '("macedonia-gje" "MAIA_KEY_Macedonia_GJE" "890")
+    '("cyrillic-io" "MAIA_KEY_Cyrillic_IO" "891")
+    '("ukrainian-ie" "MAIA_KEY_Ukrainian_IE" "892")
+    '("ukranian-je" "MAIA_KEY_Ukranian_JE" "893")
+    '("macedonia-dse" "MAIA_KEY_Macedonia_DSE" "894")
+    '("ukrainian-i" "MAIA_KEY_Ukrainian_I" "895")
+    '("ukranian-i" "MAIA_KEY_Ukranian_I" "896")
+    '("ukrainian-yi" "MAIA_KEY_Ukrainian_YI" "897")
+    '("ukranian-yi" "MAIA_KEY_Ukranian_YI" "898")
+    '("cyrillic-je" "MAIA_KEY_Cyrillic_JE" "899")
+    '("serbian-je" "MAIA_KEY_Serbian_JE" "900")
+    '("cyrillic-lje" "MAIA_KEY_Cyrillic_LJE" "901")
+    '("serbian-lje" "MAIA_KEY_Serbian_LJE" "902")
+    '("cyrillic-nje" "MAIA_KEY_Cyrillic_NJE" "903")
+    '("serbian-nje" "MAIA_KEY_Serbian_NJE" "904")
+    '("serbian-tshe" "MAIA_KEY_Serbian_TSHE" "905")
+    '("macedonia-kje" "MAIA_KEY_Macedonia_KJE" "906")
+    '("ukrainian-ghe-with-upturn" "MAIA_KEY_Ukrainian_GHE_WITH_UPTURN" "907")
+    '("byelorussian-shortu" "MAIA_KEY_Byelorussian_SHORTU" "908")
+    '("cyrillic-dzhe" "MAIA_KEY_Cyrillic_DZHE" "909")
+    '("serbian-dze" "MAIA_KEY_Serbian_DZE" "910")
+    '("cyrillic-yu" "MAIA_KEY_Cyrillic_yu" "911")
+    '("cyrillic-a" "MAIA_KEY_Cyrillic_a" "912")
+    '("cyrillic-be" "MAIA_KEY_Cyrillic_be" "913")
+    '("cyrillic-tse" "MAIA_KEY_Cyrillic_tse" "914")
+    '("cyrillic-de" "MAIA_KEY_Cyrillic_de" "915")
+    '("cyrillic-ie" "MAIA_KEY_Cyrillic_ie" "916")
+    '("cyrillic-ef" "MAIA_KEY_Cyrillic_ef" "917")
+    '("cyrillic-ghe" "MAIA_KEY_Cyrillic_ghe" "918")
+    '("cyrillic-ha" "MAIA_KEY_Cyrillic_ha" "919")
+    '("cyrillic-i" "MAIA_KEY_Cyrillic_i" "920")
+    '("cyrillic-shorti" "MAIA_KEY_Cyrillic_shorti" "921")
+    '("cyrillic-ka" "MAIA_KEY_Cyrillic_ka" "922")
+    '("cyrillic-el" "MAIA_KEY_Cyrillic_el" "923")
+    '("cyrillic-em" "MAIA_KEY_Cyrillic_em" "924")
+    '("cyrillic-en" "MAIA_KEY_Cyrillic_en" "925")
+    '("cyrillic-o" "MAIA_KEY_Cyrillic_o" "926")
+    '("cyrillic-pe" "MAIA_KEY_Cyrillic_pe" "927")
+    '("cyrillic-ya" "MAIA_KEY_Cyrillic_ya" "928")
+    '("cyrillic-er" "MAIA_KEY_Cyrillic_er" "929")
+    '("cyrillic-es" "MAIA_KEY_Cyrillic_es" "930")
+    '("cyrillic-te" "MAIA_KEY_Cyrillic_te" "931")
+    '("cyrillic-u" "MAIA_KEY_Cyrillic_u" "932")
+    '("cyrillic-zhe" "MAIA_KEY_Cyrillic_zhe" "933")
+    '("cyrillic-ve" "MAIA_KEY_Cyrillic_ve" "934")
+    '("cyrillic-softsign" "MAIA_KEY_Cyrillic_softsign" "935")
+    '("cyrillic-yeru" "MAIA_KEY_Cyrillic_yeru" "936")
+    '("cyrillic-ze" "MAIA_KEY_Cyrillic_ze" "937")
+    '("cyrillic-sha" "MAIA_KEY_Cyrillic_sha" "938")
+    '("cyrillic-e" "MAIA_KEY_Cyrillic_e" "939")
+    '("cyrillic-shcha" "MAIA_KEY_Cyrillic_shcha" "940")
+    '("cyrillic-che" "MAIA_KEY_Cyrillic_che" "941")
+    '("cyrillic-hardsign" "MAIA_KEY_Cyrillic_hardsign" "942")
+    '("cyrillic-yu" "MAIA_KEY_Cyrillic_YU" "943")
+    '("cyrillic-a" "MAIA_KEY_Cyrillic_A" "944")
+    '("cyrillic-be" "MAIA_KEY_Cyrillic_BE" "945")
+    '("cyrillic-tse" "MAIA_KEY_Cyrillic_TSE" "946")
+    '("cyrillic-de" "MAIA_KEY_Cyrillic_DE" "947")
+    '("cyrillic-ie" "MAIA_KEY_Cyrillic_IE" "948")
+    '("cyrillic-ef" "MAIA_KEY_Cyrillic_EF" "949")
+    '("cyrillic-ghe" "MAIA_KEY_Cyrillic_GHE" "950")
+    '("cyrillic-ha" "MAIA_KEY_Cyrillic_HA" "951")
+    '("cyrillic-i" "MAIA_KEY_Cyrillic_I" "952")
+    '("cyrillic-shorti" "MAIA_KEY_Cyrillic_SHORTI" "953")
+    '("cyrillic-ka" "MAIA_KEY_Cyrillic_KA" "954")
+    '("cyrillic-el" "MAIA_KEY_Cyrillic_EL" "955")
+    '("cyrillic-em" "MAIA_KEY_Cyrillic_EM" "956")
+    '("cyrillic-en" "MAIA_KEY_Cyrillic_EN" "957")
+    '("cyrillic-o" "MAIA_KEY_Cyrillic_O" "958")
+    '("cyrillic-pe" "MAIA_KEY_Cyrillic_PE" "959")
+    '("cyrillic-ya" "MAIA_KEY_Cyrillic_YA" "960")
+    '("cyrillic-er" "MAIA_KEY_Cyrillic_ER" "961")
+    '("cyrillic-es" "MAIA_KEY_Cyrillic_ES" "962")
+    '("cyrillic-te" "MAIA_KEY_Cyrillic_TE" "963")
+    '("cyrillic-u" "MAIA_KEY_Cyrillic_U" "964")
+    '("cyrillic-zhe" "MAIA_KEY_Cyrillic_ZHE" "965")
+    '("cyrillic-ve" "MAIA_KEY_Cyrillic_VE" "966")
+    '("cyrillic-softsign" "MAIA_KEY_Cyrillic_SOFTSIGN" "967")
+    '("cyrillic-yeru" "MAIA_KEY_Cyrillic_YERU" "968")
+    '("cyrillic-ze" "MAIA_KEY_Cyrillic_ZE" "969")
+    '("cyrillic-sha" "MAIA_KEY_Cyrillic_SHA" "970")
+    '("cyrillic-e" "MAIA_KEY_Cyrillic_E" "971")
+    '("cyrillic-shcha" "MAIA_KEY_Cyrillic_SHCHA" "972")
+    '("cyrillic-che" "MAIA_KEY_Cyrillic_CHE" "973")
+    '("cyrillic-hardsign" "MAIA_KEY_Cyrillic_HARDSIGN" "974")
+    '("greek-alphaaccent" "MAIA_KEY_Greek_ALPHAaccent" "975")
+    '("greek-epsilonaccent" "MAIA_KEY_Greek_EPSILONaccent" "976")
+    '("greek-etaaccent" "MAIA_KEY_Greek_ETAaccent" "977")
+    '("greek-iotaaccent" "MAIA_KEY_Greek_IOTAaccent" "978")
+    '("greek-iotadieresis" "MAIA_KEY_Greek_IOTAdieresis" "979")
+    '("greek-iotadiaeresis" "MAIA_KEY_Greek_IOTAdiaeresis" "980")
+    '("greek-omicronaccent" "MAIA_KEY_Greek_OMICRONaccent" "981")
+    '("greek-upsilonaccent" "MAIA_KEY_Greek_UPSILONaccent" "982")
+    '("greek-upsilondieresis" "MAIA_KEY_Greek_UPSILONdieresis" "983")
+    '("greek-omegaaccent" "MAIA_KEY_Greek_OMEGAaccent" "984")
+    '("greek-accentdieresis" "MAIA_KEY_Greek_accentdieresis" "985")
+    '("greek-horizbar" "MAIA_KEY_Greek_horizbar" "986")
+    '("greek-alphaaccent" "MAIA_KEY_Greek_alphaaccent" "987")
+    '("greek-epsilonaccent" "MAIA_KEY_Greek_epsilonaccent" "988")
+    '("greek-etaaccent" "MAIA_KEY_Greek_etaaccent" "989")
+    '("greek-iotaaccent" "MAIA_KEY_Greek_iotaaccent" "990")
+    '("greek-iotadieresis" "MAIA_KEY_Greek_iotadieresis" "991")
+    '("greek-iotaaccentdieresis" "MAIA_KEY_Greek_iotaaccentdieresis" "992")
+    '("greek-omicronaccent" "MAIA_KEY_Greek_omicronaccent" "993")
+    '("greek-upsilonaccent" "MAIA_KEY_Greek_upsilonaccent" "994")
+    '("greek-upsilondieresis" "MAIA_KEY_Greek_upsilondieresis" "995")
+    '("greek-upsilonaccentdieresis" "MAIA_KEY_Greek_upsilonaccentdieresis" "996")
+    '("greek-omegaaccent" "MAIA_KEY_Greek_omegaaccent" "997")
+    '("greek-alpha" "MAIA_KEY_Greek_ALPHA" "998")
+    '("greek-beta" "MAIA_KEY_Greek_BETA" "999")
+    '("greek-gamma" "MAIA_KEY_Greek_GAMMA" "1000")
+    '("greek-delta" "MAIA_KEY_Greek_DELTA" "1001")
+    '("greek-epsilon" "MAIA_KEY_Greek_EPSILON" "1002")
+    '("greek-zeta" "MAIA_KEY_Greek_ZETA" "1003")
+    '("greek-eta" "MAIA_KEY_Greek_ETA" "1004")
+    '("greek-theta" "MAIA_KEY_Greek_THETA" "1005")
+    '("greek-iota" "MAIA_KEY_Greek_IOTA" "1006")
+    '("greek-kappa" "MAIA_KEY_Greek_KAPPA" "1007")
+    '("greek-lamda" "MAIA_KEY_Greek_LAMDA" "1008")
+    '("greek-lambda" "MAIA_KEY_Greek_LAMBDA" "1009")
+    '("greek-mu" "MAIA_KEY_Greek_MU" "1010")
+    '("greek-nu" "MAIA_KEY_Greek_NU" "1011")
+    '("greek-xi" "MAIA_KEY_Greek_XI" "1012")
+    '("greek-omicron" "MAIA_KEY_Greek_OMICRON" "1013")
+    '("greek-pi" "MAIA_KEY_Greek_PI" "1014")
+    '("greek-rho" "MAIA_KEY_Greek_RHO" "1015")
+    '("greek-sigma" "MAIA_KEY_Greek_SIGMA" "1016")
+    '("greek-tau" "MAIA_KEY_Greek_TAU" "1017")
+    '("greek-upsilon" "MAIA_KEY_Greek_UPSILON" "1018")
+    '("greek-phi" "MAIA_KEY_Greek_PHI" "1019")
+    '("greek-chi" "MAIA_KEY_Greek_CHI" "1020")
+    '("greek-psi" "MAIA_KEY_Greek_PSI" "1021")
+    '("greek-omega" "MAIA_KEY_Greek_OMEGA" "1022")
+    '("greek-alpha" "MAIA_KEY_Greek_alpha" "1023")
+    '("greek-beta" "MAIA_KEY_Greek_beta" "1024")
+    '("greek-gamma" "MAIA_KEY_Greek_gamma" "1025")
+    '("greek-delta" "MAIA_KEY_Greek_delta" "1026")
+    '("greek-epsilon" "MAIA_KEY_Greek_epsilon" "1027")
+    '("greek-zeta" "MAIA_KEY_Greek_zeta" "1028")
+    '("greek-eta" "MAIA_KEY_Greek_eta" "1029")
+    '("greek-theta" "MAIA_KEY_Greek_theta" "1030")
+    '("greek-iota" "MAIA_KEY_Greek_iota" "1031")
+    '("greek-kappa" "MAIA_KEY_Greek_kappa" "1032")
+    '("greek-lamda" "MAIA_KEY_Greek_lamda" "1033")
+    '("greek-lambda" "MAIA_KEY_Greek_lambda" "1034")
+    '("greek-mu" "MAIA_KEY_Greek_mu" "1035")
+    '("greek-nu" "MAIA_KEY_Greek_nu" "1036")
+    '("greek-xi" "MAIA_KEY_Greek_xi" "1037")
+    '("greek-omicron" "MAIA_KEY_Greek_omicron" "1038")
+    '("greek-pi" "MAIA_KEY_Greek_pi" "1039")
+    '("greek-rho" "MAIA_KEY_Greek_rho" "1040")
+    '("greek-sigma" "MAIA_KEY_Greek_sigma" "1041")
+    '("greek-finalsmallsigma" "MAIA_KEY_Greek_finalsmallsigma" "1042")
+    '("greek-tau" "MAIA_KEY_Greek_tau" "1043")
+    '("greek-upsilon" "MAIA_KEY_Greek_upsilon" "1044")
+    '("greek-phi" "MAIA_KEY_Greek_phi" "1045")
+    '("greek-chi" "MAIA_KEY_Greek_chi" "1046")
+    '("greek-psi" "MAIA_KEY_Greek_psi" "1047")
+    '("greek-omega" "MAIA_KEY_Greek_omega" "1048")
+    '("greek-switch" "MAIA_KEY_Greek_switch" "1049")
+    '("leftradical" "MAIA_KEY_leftradical" "1050")
+    '("topleftradical" "MAIA_KEY_topleftradical" "1051")
+    '("horizconnector" "MAIA_KEY_horizconnector" "1052")
+    '("topintegral" "MAIA_KEY_topintegral" "1053")
+    '("botintegral" "MAIA_KEY_botintegral" "1054")
+    '("vertconnector" "MAIA_KEY_vertconnector" "1055")
+    '("topleftsqbracket" "MAIA_KEY_topleftsqbracket" "1056")
+    '("botleftsqbracket" "MAIA_KEY_botleftsqbracket" "1057")
+    '("toprightsqbracket" "MAIA_KEY_toprightsqbracket" "1058")
+    '("botrightsqbracket" "MAIA_KEY_botrightsqbracket" "1059")
+    '("topleftparens" "MAIA_KEY_topleftparens" "1060")
+    '("botleftparens" "MAIA_KEY_botleftparens" "1061")
+    '("toprightparens" "MAIA_KEY_toprightparens" "1062")
+    '("botrightparens" "MAIA_KEY_botrightparens" "1063")
+    '("leftmiddlecurlybrace" "MAIA_KEY_leftmiddlecurlybrace" "1064")
+    '("rightmiddlecurlybrace" "MAIA_KEY_rightmiddlecurlybrace" "1065")
+    '("topleftsummation" "MAIA_KEY_topleftsummation" "1066")
+    '("botleftsummation" "MAIA_KEY_botleftsummation" "1067")
+    '("topvertsummationconnector" "MAIA_KEY_topvertsummationconnector" "1068")
+    '("botvertsummationconnector" "MAIA_KEY_botvertsummationconnector" "1069")
+    '("toprightsummation" "MAIA_KEY_toprightsummation" "1070")
+    '("botrightsummation" "MAIA_KEY_botrightsummation" "1071")
+    '("rightmiddlesummation" "MAIA_KEY_rightmiddlesummation" "1072")
+    '("lessthanequal" "MAIA_KEY_lessthanequal" "1073")
+    '("notequal" "MAIA_KEY_notequal" "1074")
+    '("greaterthanequal" "MAIA_KEY_greaterthanequal" "1075")
+    '("integral" "MAIA_KEY_integral" "1076")
+    '("therefore" "MAIA_KEY_therefore" "1077")
+    '("variation" "MAIA_KEY_variation" "1078")
+    '("infinity" "MAIA_KEY_infinity" "1079")
+    '("nabla" "MAIA_KEY_nabla" "1080")
+    '("approximate" "MAIA_KEY_approximate" "1081")
+    '("similarequal" "MAIA_KEY_similarequal" "1082")
+    '("ifonlyif" "MAIA_KEY_ifonlyif" "1083")
+    '("implies" "MAIA_KEY_implies" "1084")
+    '("identical" "MAIA_KEY_identical" "1085")
+    '("radical" "MAIA_KEY_radical" "1086")
+    '("includedin" "MAIA_KEY_includedin" "1087")
+    '("includes" "MAIA_KEY_includes" "1088")
+    '("intersection" "MAIA_KEY_intersection" "1089")
+    '("union" "MAIA_KEY_union" "1090")
+    '("logicaland" "MAIA_KEY_logicaland" "1091")
+    '("logicalor" "MAIA_KEY_logicalor" "1092")
+    '("partialderivative" "MAIA_KEY_partialderivative" "1093")
+    '("function" "MAIA_KEY_function" "1094")
+    '("leftarrow" "MAIA_KEY_leftarrow" "1095")
+    '("uparrow" "MAIA_KEY_uparrow" "1096")
+    '("rightarrow" "MAIA_KEY_rightarrow" "1097")
+    '("downarrow" "MAIA_KEY_downarrow" "1098")
+    '("blank" "MAIA_KEY_blank" "1099")
+    '("soliddiamond" "MAIA_KEY_soliddiamond" "1100")
+    '("checkerboard" "MAIA_KEY_checkerboard" "1101")
+    '("ht" "MAIA_KEY_ht" "1102")
+    '("ff" "MAIA_KEY_ff" "1103")
+    '("cr" "MAIA_KEY_cr" "1104")
+    '("lf" "MAIA_KEY_lf" "1105")
+    '("nl" "MAIA_KEY_nl" "1106")
+    '("vt" "MAIA_KEY_vt" "1107")
+    '("lowrightcorner" "MAIA_KEY_lowrightcorner" "1108")
+    '("uprightcorner" "MAIA_KEY_uprightcorner" "1109")
+    '("upleftcorner" "MAIA_KEY_upleftcorner" "1110")
+    '("lowleftcorner" "MAIA_KEY_lowleftcorner" "1111")
+    '("crossinglines" "MAIA_KEY_crossinglines" "1112")
+    '("horizlinescan1" "MAIA_KEY_horizlinescan1" "1113")
+    '("horizlinescan3" "MAIA_KEY_horizlinescan3" "1114")
+    '("horizlinescan5" "MAIA_KEY_horizlinescan5" "1115")
+    '("horizlinescan7" "MAIA_KEY_horizlinescan7" "1116")
+    '("horizlinescan9" "MAIA_KEY_horizlinescan9" "1117")
+    '("leftt" "MAIA_KEY_leftt" "1118")
+    '("rightt" "MAIA_KEY_rightt" "1119")
+    '("bott" "MAIA_KEY_bott" "1120")
+    '("topt" "MAIA_KEY_topt" "1121")
+    '("vertbar" "MAIA_KEY_vertbar" "1122")
+    '("emspace" "MAIA_KEY_emspace" "1123")
+    '("enspace" "MAIA_KEY_enspace" "1124")
+    '("em3space" "MAIA_KEY_em3space" "1125")
+    '("em4space" "MAIA_KEY_em4space" "1126")
+    '("digitspace" "MAIA_KEY_digitspace" "1127")
+    '("punctspace" "MAIA_KEY_punctspace" "1128")
+    '("thinspace" "MAIA_KEY_thinspace" "1129")
+    '("hairspace" "MAIA_KEY_hairspace" "1130")
+    '("emdash" "MAIA_KEY_emdash" "1131")
+    '("endash" "MAIA_KEY_endash" "1132")
+    '("signifblank" "MAIA_KEY_signifblank" "1133")
+    '("ellipsis" "MAIA_KEY_ellipsis" "1134")
+    '("doubbaselinedot" "MAIA_KEY_doubbaselinedot" "1135")
+    '("onethird" "MAIA_KEY_onethird" "1136")
+    '("twothirds" "MAIA_KEY_twothirds" "1137")
+    '("onefifth" "MAIA_KEY_onefifth" "1138")
+    '("twofifths" "MAIA_KEY_twofifths" "1139")
+    '("threefifths" "MAIA_KEY_threefifths" "1140")
+    '("fourfifths" "MAIA_KEY_fourfifths" "1141")
+    '("onesixth" "MAIA_KEY_onesixth" "1142")
+    '("fivesixths" "MAIA_KEY_fivesixths" "1143")
+    '("careof" "MAIA_KEY_careof" "1144")
+    '("figdash" "MAIA_KEY_figdash" "1145")
+    '("leftanglebracket" "MAIA_KEY_leftanglebracket" "1146")
+    '("decimalpoint" "MAIA_KEY_decimalpoint" "1147")
+    '("rightanglebracket" "MAIA_KEY_rightanglebracket" "1148")
+    '("marker" "MAIA_KEY_marker" "1149")
+    '("oneeighth" "MAIA_KEY_oneeighth" "1150")
+    '("threeeighths" "MAIA_KEY_threeeighths" "1151")
+    '("fiveeighths" "MAIA_KEY_fiveeighths" "1152")
+    '("seveneighths" "MAIA_KEY_seveneighths" "1153")
+    '("trademark" "MAIA_KEY_trademark" "1154")
+    '("signaturemark" "MAIA_KEY_signaturemark" "1155")
+    '("trademarkincircle" "MAIA_KEY_trademarkincircle" "1156")
+    '("leftopentriangle" "MAIA_KEY_leftopentriangle" "1157")
+    '("rightopentriangle" "MAIA_KEY_rightopentriangle" "1158")
+    '("emopencircle" "MAIA_KEY_emopencircle" "1159")
+    '("emopenrectangle" "MAIA_KEY_emopenrectangle" "1160")
+    '("leftsinglequotemark" "MAIA_KEY_leftsinglequotemark" "1161")
+    '("rightsinglequotemark" "MAIA_KEY_rightsinglequotemark" "1162")
+    '("leftdoublequotemark" "MAIA_KEY_leftdoublequotemark" "1163")
+    '("rightdoublequotemark" "MAIA_KEY_rightdoublequotemark" "1164")
+    '("prescription" "MAIA_KEY_prescription" "1165")
+    '("minutes" "MAIA_KEY_minutes" "1166")
+    '("seconds" "MAIA_KEY_seconds" "1167")
+    '("latincross" "MAIA_KEY_latincross" "1168")
+    '("hexagram" "MAIA_KEY_hexagram" "1169")
+    '("filledrectbullet" "MAIA_KEY_filledrectbullet" "1170")
+    '("filledlefttribullet" "MAIA_KEY_filledlefttribullet" "1171")
+    '("filledrighttribullet" "MAIA_KEY_filledrighttribullet" "1172")
+    '("emfilledcircle" "MAIA_KEY_emfilledcircle" "1173")
+    '("emfilledrect" "MAIA_KEY_emfilledrect" "1174")
+    '("enopencircbullet" "MAIA_KEY_enopencircbullet" "1175")
+    '("enopensquarebullet" "MAIA_KEY_enopensquarebullet" "1176")
+    '("openrectbullet" "MAIA_KEY_openrectbullet" "1177")
+    '("opentribulletup" "MAIA_KEY_opentribulletup" "1178")
+    '("opentribulletdown" "MAIA_KEY_opentribulletdown" "1179")
+    '("openstar" "MAIA_KEY_openstar" "1180")
+    '("enfilledcircbullet" "MAIA_KEY_enfilledcircbullet" "1181")
+    '("enfilledsqbullet" "MAIA_KEY_enfilledsqbullet" "1182")
+    '("filledtribulletup" "MAIA_KEY_filledtribulletup" "1183")
+    '("filledtribulletdown" "MAIA_KEY_filledtribulletdown" "1184")
+    '("leftpointer" "MAIA_KEY_leftpointer" "1185")
+    '("rightpointer" "MAIA_KEY_rightpointer" "1186")
+    '("club" "MAIA_KEY_club" "1187")
+    '("diamond" "MAIA_KEY_diamond" "1188")
+    '("heart" "MAIA_KEY_heart" "1189")
+    '("maltesecross" "MAIA_KEY_maltesecross" "1190")
+    '("dagger" "MAIA_KEY_dagger" "1191")
+    '("doubledagger" "MAIA_KEY_doubledagger" "1192")
+    '("checkmark" "MAIA_KEY_checkmark" "1193")
+    '("ballotcross" "MAIA_KEY_ballotcross" "1194")
+    '("musicalsharp" "MAIA_KEY_musicalsharp" "1195")
+    '("musicalflat" "MAIA_KEY_musicalflat" "1196")
+    '("malesymbol" "MAIA_KEY_malesymbol" "1197")
+    '("femalesymbol" "MAIA_KEY_femalesymbol" "1198")
+    '("telephone" "MAIA_KEY_telephone" "1199")
+    '("telephonerecorder" "MAIA_KEY_telephonerecorder" "1200")
+    '("phonographcopyright" "MAIA_KEY_phonographcopyright" "1201")
+    '("caret" "MAIA_KEY_caret" "1202")
+    '("singlelowquotemark" "MAIA_KEY_singlelowquotemark" "1203")
+    '("doublelowquotemark" "MAIA_KEY_doublelowquotemark" "1204")
+    '("cursor" "MAIA_KEY_cursor" "1205")
+    '("leftcaret" "MAIA_KEY_leftcaret" "1206")
+    '("rightcaret" "MAIA_KEY_rightcaret" "1207")
+    '("downcaret" "MAIA_KEY_downcaret" "1208")
+    '("upcaret" "MAIA_KEY_upcaret" "1209")
+    '("overbar" "MAIA_KEY_overbar" "1210")
+    '("downtack" "MAIA_KEY_downtack" "1211")
+    '("upshoe" "MAIA_KEY_upshoe" "1212")
+    '("downstile" "MAIA_KEY_downstile" "1213")
+    '("underbar" "MAIA_KEY_underbar" "1214")
+    '("jot" "MAIA_KEY_jot" "1215")
+    '("quad" "MAIA_KEY_quad" "1216")
+    '("uptack" "MAIA_KEY_uptack" "1217")
+    '("circle" "MAIA_KEY_circle" "1218")
+    '("upstile" "MAIA_KEY_upstile" "1219")
+    '("downshoe" "MAIA_KEY_downshoe" "1220")
+    '("rightshoe" "MAIA_KEY_rightshoe" "1221")
+    '("leftshoe" "MAIA_KEY_leftshoe" "1222")
+    '("lefttack" "MAIA_KEY_lefttack" "1223")
+    '("righttack" "MAIA_KEY_righttack" "1224")
+    '("hebrew-doublelowline" "MAIA_KEY_hebrew_doublelowline" "1225")
+    '("hebrew-aleph" "MAIA_KEY_hebrew_aleph" "1226")
+    '("hebrew-bet" "MAIA_KEY_hebrew_bet" "1227")
+    '("hebrew-beth" "MAIA_KEY_hebrew_beth" "1228")
+    '("hebrew-gimel" "MAIA_KEY_hebrew_gimel" "1229")
+    '("hebrew-gimmel" "MAIA_KEY_hebrew_gimmel" "1230")
+    '("hebrew-dalet" "MAIA_KEY_hebrew_dalet" "1231")
+    '("hebrew-daleth" "MAIA_KEY_hebrew_daleth" "1232")
+    '("hebrew-he" "MAIA_KEY_hebrew_he" "1233")
+    '("hebrew-waw" "MAIA_KEY_hebrew_waw" "1234")
+    '("hebrew-zain" "MAIA_KEY_hebrew_zain" "1235")
+    '("hebrew-zayin" "MAIA_KEY_hebrew_zayin" "1236")
+    '("hebrew-chet" "MAIA_KEY_hebrew_chet" "1237")
+    '("hebrew-het" "MAIA_KEY_hebrew_het" "1238")
+    '("hebrew-tet" "MAIA_KEY_hebrew_tet" "1239")
+    '("hebrew-teth" "MAIA_KEY_hebrew_teth" "1240")
+    '("hebrew-yod" "MAIA_KEY_hebrew_yod" "1241")
+    '("hebrew-finalkaph" "MAIA_KEY_hebrew_finalkaph" "1242")
+    '("hebrew-kaph" "MAIA_KEY_hebrew_kaph" "1243")
+    '("hebrew-lamed" "MAIA_KEY_hebrew_lamed" "1244")
+    '("hebrew-finalmem" "MAIA_KEY_hebrew_finalmem" "1245")
+    '("hebrew-mem" "MAIA_KEY_hebrew_mem" "1246")
+    '("hebrew-finalnun" "MAIA_KEY_hebrew_finalnun" "1247")
+    '("hebrew-nun" "MAIA_KEY_hebrew_nun" "1248")
+    '("hebrew-samech" "MAIA_KEY_hebrew_samech" "1249")
+    '("hebrew-samekh" "MAIA_KEY_hebrew_samekh" "1250")
+    '("hebrew-ayin" "MAIA_KEY_hebrew_ayin" "1251")
+    '("hebrew-finalpe" "MAIA_KEY_hebrew_finalpe" "1252")
+    '("hebrew-pe" "MAIA_KEY_hebrew_pe" "1253")
+    '("hebrew-finalzade" "MAIA_KEY_hebrew_finalzade" "1254")
+    '("hebrew-finalzadi" "MAIA_KEY_hebrew_finalzadi" "1255")
+    '("hebrew-zade" "MAIA_KEY_hebrew_zade" "1256")
+    '("hebrew-zadi" "MAIA_KEY_hebrew_zadi" "1257")
+    '("hebrew-qoph" "MAIA_KEY_hebrew_qoph" "1258")
+    '("hebrew-kuf" "MAIA_KEY_hebrew_kuf" "1259")
+    '("hebrew-resh" "MAIA_KEY_hebrew_resh" "1260")
+    '("hebrew-shin" "MAIA_KEY_hebrew_shin" "1261")
+    '("hebrew-taw" "MAIA_KEY_hebrew_taw" "1262")
+    '("hebrew-taf" "MAIA_KEY_hebrew_taf" "1263")
+    '("hebrew-switch" "MAIA_KEY_Hebrew_switch" "1264")
+    '("thai-kokai" "MAIA_KEY_Thai_kokai" "1265")
+    '("thai-khokhai" "MAIA_KEY_Thai_khokhai" "1266")
+    '("thai-khokhuat" "MAIA_KEY_Thai_khokhuat" "1267")
+    '("thai-khokhwai" "MAIA_KEY_Thai_khokhwai" "1268")
+    '("thai-khokhon" "MAIA_KEY_Thai_khokhon" "1269")
+    '("thai-khorakhang" "MAIA_KEY_Thai_khorakhang" "1270")
+    '("thai-ngongu" "MAIA_KEY_Thai_ngongu" "1271")
+    '("thai-chochan" "MAIA_KEY_Thai_chochan" "1272")
+    '("thai-choching" "MAIA_KEY_Thai_choching" "1273")
+    '("thai-chochang" "MAIA_KEY_Thai_chochang" "1274")
+    '("thai-soso" "MAIA_KEY_Thai_soso" "1275")
+    '("thai-chochoe" "MAIA_KEY_Thai_chochoe" "1276")
+    '("thai-yoying" "MAIA_KEY_Thai_yoying" "1277")
+    '("thai-dochada" "MAIA_KEY_Thai_dochada" "1278")
+    '("thai-topatak" "MAIA_KEY_Thai_topatak" "1279")
+    '("thai-thothan" "MAIA_KEY_Thai_thothan" "1280")
+    '("thai-thonangmontho" "MAIA_KEY_Thai_thonangmontho" "1281")
+    '("thai-thophuthao" "MAIA_KEY_Thai_thophuthao" "1282")
+    '("thai-nonen" "MAIA_KEY_Thai_nonen" "1283")
+    '("thai-dodek" "MAIA_KEY_Thai_dodek" "1284")
+    '("thai-totao" "MAIA_KEY_Thai_totao" "1285")
+    '("thai-thothung" "MAIA_KEY_Thai_thothung" "1286")
+    '("thai-thothahan" "MAIA_KEY_Thai_thothahan" "1287")
+    '("thai-thothong" "MAIA_KEY_Thai_thothong" "1288")
+    '("thai-nonu" "MAIA_KEY_Thai_nonu" "1289")
+    '("thai-bobaimai" "MAIA_KEY_Thai_bobaimai" "1290")
+    '("thai-popla" "MAIA_KEY_Thai_popla" "1291")
+    '("thai-phophung" "MAIA_KEY_Thai_phophung" "1292")
+    '("thai-fofa" "MAIA_KEY_Thai_fofa" "1293")
+    '("thai-phophan" "MAIA_KEY_Thai_phophan" "1294")
+    '("thai-fofan" "MAIA_KEY_Thai_fofan" "1295")
+    '("thai-phosamphao" "MAIA_KEY_Thai_phosamphao" "1296")
+    '("thai-moma" "MAIA_KEY_Thai_moma" "1297")
+    '("thai-yoyak" "MAIA_KEY_Thai_yoyak" "1298")
+    '("thai-rorua" "MAIA_KEY_Thai_rorua" "1299")
+    '("thai-ru" "MAIA_KEY_Thai_ru" "1300")
+    '("thai-loling" "MAIA_KEY_Thai_loling" "1301")
+    '("thai-lu" "MAIA_KEY_Thai_lu" "1302")
+    '("thai-wowaen" "MAIA_KEY_Thai_wowaen" "1303")
+    '("thai-sosala" "MAIA_KEY_Thai_sosala" "1304")
+    '("thai-sorusi" "MAIA_KEY_Thai_sorusi" "1305")
+    '("thai-sosua" "MAIA_KEY_Thai_sosua" "1306")
+    '("thai-hohip" "MAIA_KEY_Thai_hohip" "1307")
+    '("thai-lochula" "MAIA_KEY_Thai_lochula" "1308")
+    '("thai-oang" "MAIA_KEY_Thai_oang" "1309")
+    '("thai-honokhuk" "MAIA_KEY_Thai_honokhuk" "1310")
+    '("thai-paiyannoi" "MAIA_KEY_Thai_paiyannoi" "1311")
+    '("thai-saraa" "MAIA_KEY_Thai_saraa" "1312")
+    '("thai-maihanakat" "MAIA_KEY_Thai_maihanakat" "1313")
+    '("thai-saraaa" "MAIA_KEY_Thai_saraaa" "1314")
+    '("thai-saraam" "MAIA_KEY_Thai_saraam" "1315")
+    '("thai-sarai" "MAIA_KEY_Thai_sarai" "1316")
+    '("thai-saraii" "MAIA_KEY_Thai_saraii" "1317")
+    '("thai-saraue" "MAIA_KEY_Thai_saraue" "1318")
+    '("thai-sarauee" "MAIA_KEY_Thai_sarauee" "1319")
+    '("thai-sarau" "MAIA_KEY_Thai_sarau" "1320")
+    '("thai-sarauu" "MAIA_KEY_Thai_sarauu" "1321")
+    '("thai-phinthu" "MAIA_KEY_Thai_phinthu" "1322")
+    '("thai-maihanakat-maitho" "MAIA_KEY_Thai_maihanakat_maitho" "1323")
+    '("thai-baht" "MAIA_KEY_Thai_baht" "1324")
+    '("thai-sarae" "MAIA_KEY_Thai_sarae" "1325")
+    '("thai-saraae" "MAIA_KEY_Thai_saraae" "1326")
+    '("thai-sarao" "MAIA_KEY_Thai_sarao" "1327")
+    '("thai-saraaimaimuan" "MAIA_KEY_Thai_saraaimaimuan" "1328")
+    '("thai-saraaimaimalai" "MAIA_KEY_Thai_saraaimaimalai" "1329")
+    '("thai-lakkhangyao" "MAIA_KEY_Thai_lakkhangyao" "1330")
+    '("thai-maiyamok" "MAIA_KEY_Thai_maiyamok" "1331")
+    '("thai-maitaikhu" "MAIA_KEY_Thai_maitaikhu" "1332")
+    '("thai-maiek" "MAIA_KEY_Thai_maiek" "1333")
+    '("thai-maitho" "MAIA_KEY_Thai_maitho" "1334")
+    '("thai-maitri" "MAIA_KEY_Thai_maitri" "1335")
+    '("thai-maichattawa" "MAIA_KEY_Thai_maichattawa" "1336")
+    '("thai-thanthakhat" "MAIA_KEY_Thai_thanthakhat" "1337")
+    '("thai-nikhahit" "MAIA_KEY_Thai_nikhahit" "1338")
+    '("thai-leksun" "MAIA_KEY_Thai_leksun" "1339")
+    '("thai-leknung" "MAIA_KEY_Thai_leknung" "1340")
+    '("thai-leksong" "MAIA_KEY_Thai_leksong" "1341")
+    '("thai-leksam" "MAIA_KEY_Thai_leksam" "1342")
+    '("thai-leksi" "MAIA_KEY_Thai_leksi" "1343")
+    '("thai-lekha" "MAIA_KEY_Thai_lekha" "1344")
+    '("thai-lekhok" "MAIA_KEY_Thai_lekhok" "1345")
+    '("thai-lekchet" "MAIA_KEY_Thai_lekchet" "1346")
+    '("thai-lekpaet" "MAIA_KEY_Thai_lekpaet" "1347")
+    '("thai-lekkao" "MAIA_KEY_Thai_lekkao" "1348")
+    '("hangul" "MAIA_KEY_Hangul" "1349")
+    '("hangul-start" "MAIA_KEY_Hangul_Start" "1350")
+    '("hangul-end" "MAIA_KEY_Hangul_End" "1351")
+    '("hangul-hanja" "MAIA_KEY_Hangul_Hanja" "1352")
+    '("hangul-jamo" "MAIA_KEY_Hangul_Jamo" "1353")
+    '("hangul-romaja" "MAIA_KEY_Hangul_Romaja" "1354")
+    '("hangul-codeinput" "MAIA_KEY_Hangul_Codeinput" "1355")
+    '("hangul-jeonja" "MAIA_KEY_Hangul_Jeonja" "1356")
+    '("hangul-banja" "MAIA_KEY_Hangul_Banja" "1357")
+    '("hangul-prehanja" "MAIA_KEY_Hangul_PreHanja" "1358")
+    '("hangul-posthanja" "MAIA_KEY_Hangul_PostHanja" "1359")
+    '("hangul-singlecandidate" "MAIA_KEY_Hangul_SingleCandidate" "1360")
+    '("hangul-multiplecandidate" "MAIA_KEY_Hangul_MultipleCandidate" "1361")
+    '("hangul-previouscandidate" "MAIA_KEY_Hangul_PreviousCandidate" "1362")
+    '("hangul-special" "MAIA_KEY_Hangul_Special" "1363")
+    '("hangul-switch" "MAIA_KEY_Hangul_switch" "1364")
+    '("hangul-kiyeog" "MAIA_KEY_Hangul_Kiyeog" "1365")
+    '("hangul-ssangkiyeog" "MAIA_KEY_Hangul_SsangKiyeog" "1366")
+    '("hangul-kiyeogsios" "MAIA_KEY_Hangul_KiyeogSios" "1367")
+    '("hangul-nieun" "MAIA_KEY_Hangul_Nieun" "1368")
+    '("hangul-nieunjieuj" "MAIA_KEY_Hangul_NieunJieuj" "1369")
+    '("hangul-nieunhieuh" "MAIA_KEY_Hangul_NieunHieuh" "1370")
+    '("hangul-dikeud" "MAIA_KEY_Hangul_Dikeud" "1371")
+    '("hangul-ssangdikeud" "MAIA_KEY_Hangul_SsangDikeud" "1372")
+    '("hangul-rieul" "MAIA_KEY_Hangul_Rieul" "1373")
+    '("hangul-rieulkiyeog" "MAIA_KEY_Hangul_RieulKiyeog" "1374")
+    '("hangul-rieulmieum" "MAIA_KEY_Hangul_RieulMieum" "1375")
+    '("hangul-rieulpieub" "MAIA_KEY_Hangul_RieulPieub" "1376")
+    '("hangul-rieulsios" "MAIA_KEY_Hangul_RieulSios" "1377")
+    '("hangul-rieultieut" "MAIA_KEY_Hangul_RieulTieut" "1378")
+    '("hangul-rieulphieuf" "MAIA_KEY_Hangul_RieulPhieuf" "1379")
+    '("hangul-rieulhieuh" "MAIA_KEY_Hangul_RieulHieuh" "1380")
+    '("hangul-mieum" "MAIA_KEY_Hangul_Mieum" "1381")
+    '("hangul-pieub" "MAIA_KEY_Hangul_Pieub" "1382")
+    '("hangul-ssangpieub" "MAIA_KEY_Hangul_SsangPieub" "1383")
+    '("hangul-pieubsios" "MAIA_KEY_Hangul_PieubSios" "1384")
+    '("hangul-sios" "MAIA_KEY_Hangul_Sios" "1385")
+    '("hangul-ssangsios" "MAIA_KEY_Hangul_SsangSios" "1386")
+    '("hangul-ieung" "MAIA_KEY_Hangul_Ieung" "1387")
+    '("hangul-jieuj" "MAIA_KEY_Hangul_Jieuj" "1388")
+    '("hangul-ssangjieuj" "MAIA_KEY_Hangul_SsangJieuj" "1389")
+    '("hangul-cieuc" "MAIA_KEY_Hangul_Cieuc" "1390")
+    '("hangul-khieuq" "MAIA_KEY_Hangul_Khieuq" "1391")
+    '("hangul-tieut" "MAIA_KEY_Hangul_Tieut" "1392")
+    '("hangul-phieuf" "MAIA_KEY_Hangul_Phieuf" "1393")
+    '("hangul-hieuh" "MAIA_KEY_Hangul_Hieuh" "1394")
+    '("hangul-a" "MAIA_KEY_Hangul_A" "1395")
+    '("hangul-ae" "MAIA_KEY_Hangul_AE" "1396")
+    '("hangul-ya" "MAIA_KEY_Hangul_YA" "1397")
+    '("hangul-yae" "MAIA_KEY_Hangul_YAE" "1398")
+    '("hangul-eo" "MAIA_KEY_Hangul_EO" "1399")
+    '("hangul-e" "MAIA_KEY_Hangul_E" "1400")
+    '("hangul-yeo" "MAIA_KEY_Hangul_YEO" "1401")
+    '("hangul-ye" "MAIA_KEY_Hangul_YE" "1402")
+    '("hangul-o" "MAIA_KEY_Hangul_O" "1403")
+    '("hangul-wa" "MAIA_KEY_Hangul_WA" "1404")
+    '("hangul-wae" "MAIA_KEY_Hangul_WAE" "1405")
+    '("hangul-oe" "MAIA_KEY_Hangul_OE" "1406")
+    '("hangul-yo" "MAIA_KEY_Hangul_YO" "1407")
+    '("hangul-u" "MAIA_KEY_Hangul_U" "1408")
+    '("hangul-weo" "MAIA_KEY_Hangul_WEO" "1409")
+    '("hangul-we" "MAIA_KEY_Hangul_WE" "1410")
+    '("hangul-wi" "MAIA_KEY_Hangul_WI" "1411")
+    '("hangul-yu" "MAIA_KEY_Hangul_YU" "1412")
+    '("hangul-eu" "MAIA_KEY_Hangul_EU" "1413")
+    '("hangul-yi" "MAIA_KEY_Hangul_YI" "1414")
+    '("hangul-i" "MAIA_KEY_Hangul_I" "1415")
+    '("hangul-j-kiyeog" "MAIA_KEY_Hangul_J_Kiyeog" "1416")
+    '("hangul-j-ssangkiyeog" "MAIA_KEY_Hangul_J_SsangKiyeog" "1417")
+    '("hangul-j-kiyeogsios" "MAIA_KEY_Hangul_J_KiyeogSios" "1418")
+    '("hangul-j-nieun" "MAIA_KEY_Hangul_J_Nieun" "1419")
+    '("hangul-j-nieunjieuj" "MAIA_KEY_Hangul_J_NieunJieuj" "1420")
+    '("hangul-j-nieunhieuh" "MAIA_KEY_Hangul_J_NieunHieuh" "1421")
+    '("hangul-j-dikeud" "MAIA_KEY_Hangul_J_Dikeud" "1422")
+    '("hangul-j-rieul" "MAIA_KEY_Hangul_J_Rieul" "1423")
+    '("hangul-j-rieulkiyeog" "MAIA_KEY_Hangul_J_RieulKiyeog" "1424")
+    '("hangul-j-rieulmieum" "MAIA_KEY_Hangul_J_RieulMieum" "1425")
+    '("hangul-j-rieulpieub" "MAIA_KEY_Hangul_J_RieulPieub" "1426")
+    '("hangul-j-rieulsios" "MAIA_KEY_Hangul_J_RieulSios" "1427")
+    '("hangul-j-rieultieut" "MAIA_KEY_Hangul_J_RieulTieut" "1428")
+    '("hangul-j-rieulphieuf" "MAIA_KEY_Hangul_J_RieulPhieuf" "1429")
+    '("hangul-j-rieulhieuh" "MAIA_KEY_Hangul_J_RieulHieuh" "1430")
+    '("hangul-j-mieum" "MAIA_KEY_Hangul_J_Mieum" "1431")
+    '("hangul-j-pieub" "MAIA_KEY_Hangul_J_Pieub" "1432")
+    '("hangul-j-pieubsios" "MAIA_KEY_Hangul_J_PieubSios" "1433")
+    '("hangul-j-sios" "MAIA_KEY_Hangul_J_Sios" "1434")
+    '("hangul-j-ssangsios" "MAIA_KEY_Hangul_J_SsangSios" "1435")
+    '("hangul-j-ieung" "MAIA_KEY_Hangul_J_Ieung" "1436")
+    '("hangul-j-jieuj" "MAIA_KEY_Hangul_J_Jieuj" "1437")
+    '("hangul-j-cieuc" "MAIA_KEY_Hangul_J_Cieuc" "1438")
+    '("hangul-j-khieuq" "MAIA_KEY_Hangul_J_Khieuq" "1439")
+    '("hangul-j-tieut" "MAIA_KEY_Hangul_J_Tieut" "1440")
+    '("hangul-j-phieuf" "MAIA_KEY_Hangul_J_Phieuf" "1441")
+    '("hangul-j-hieuh" "MAIA_KEY_Hangul_J_Hieuh" "1442")
+    '("hangul-rieulyeorinhieuh" "MAIA_KEY_Hangul_RieulYeorinHieuh" "1443")
+    '("hangul-sunkyeongeummieum" "MAIA_KEY_Hangul_SunkyeongeumMieum" "1444")
+    '("hangul-sunkyeongeumpieub" "MAIA_KEY_Hangul_SunkyeongeumPieub" "1445")
+    '("hangul-pansios" "MAIA_KEY_Hangul_PanSios" "1446")
+    '("hangul-kkogjidalrinieung" "MAIA_KEY_Hangul_KkogjiDalrinIeung" "1447")
+    '("hangul-sunkyeongeumphieuf" "MAIA_KEY_Hangul_SunkyeongeumPhieuf" "1448")
+    '("hangul-yeorinhieuh" "MAIA_KEY_Hangul_YeorinHieuh" "1449")
+    '("hangul-araea" "MAIA_KEY_Hangul_AraeA" "1450")
+    '("hangul-araeae" "MAIA_KEY_Hangul_AraeAE" "1451")
+    '("hangul-j-pansios" "MAIA_KEY_Hangul_J_PanSios" "1452")
+    '("hangul-j-kkogjidalrinieung" "MAIA_KEY_Hangul_J_KkogjiDalrinIeung" "1453")
+    '("hangul-j-yeorinhieuh" "MAIA_KEY_Hangul_J_YeorinHieuh" "1454")
+    '("korean-won" "MAIA_KEY_Korean_Won" "1455")
+    '("armenian-ligature-ew" "MAIA_KEY_Armenian_ligature_ew" "1456")
+    '("armenian-full-stop" "MAIA_KEY_Armenian_full_stop" "1457")
+    '("armenian-verjaket" "MAIA_KEY_Armenian_verjaket" "1458")
+    '("armenian-separation-mark" "MAIA_KEY_Armenian_separation_mark" "1459")
+    '("armenian-but" "MAIA_KEY_Armenian_but" "1460")
+    '("armenian-hyphen" "MAIA_KEY_Armenian_hyphen" "1461")
+    '("armenian-yentamna" "MAIA_KEY_Armenian_yentamna" "1462")
+    '("armenian-exclam" "MAIA_KEY_Armenian_exclam" "1463")
+    '("armenian-amanak" "MAIA_KEY_Armenian_amanak" "1464")
+    '("armenian-accent" "MAIA_KEY_Armenian_accent" "1465")
+    '("armenian-shesht" "MAIA_KEY_Armenian_shesht" "1466")
+    '("armenian-question" "MAIA_KEY_Armenian_question" "1467")
+    '("armenian-paruyk" "MAIA_KEY_Armenian_paruyk" "1468")
+    '("armenian-ayb" "MAIA_KEY_Armenian_AYB" "1469")
+    '("armenian-ayb" "MAIA_KEY_Armenian_ayb" "1470")
+    '("armenian-ben" "MAIA_KEY_Armenian_BEN" "1471")
+    '("armenian-ben" "MAIA_KEY_Armenian_ben" "1472")
+    '("armenian-gim" "MAIA_KEY_Armenian_GIM" "1473")
+    '("armenian-gim" "MAIA_KEY_Armenian_gim" "1474")
+    '("armenian-da" "MAIA_KEY_Armenian_DA" "1475")
+    '("armenian-da" "MAIA_KEY_Armenian_da" "1476")
+    '("armenian-yech" "MAIA_KEY_Armenian_YECH" "1477")
+    '("armenian-yech" "MAIA_KEY_Armenian_yech" "1478")
+    '("armenian-za" "MAIA_KEY_Armenian_ZA" "1479")
+    '("armenian-za" "MAIA_KEY_Armenian_za" "1480")
+    '("armenian-e" "MAIA_KEY_Armenian_E" "1481")
+    '("armenian-e" "MAIA_KEY_Armenian_e" "1482")
+    '("armenian-at" "MAIA_KEY_Armenian_AT" "1483")
+    '("armenian-at" "MAIA_KEY_Armenian_at" "1484")
+    '("armenian-to" "MAIA_KEY_Armenian_TO" "1485")
+    '("armenian-to" "MAIA_KEY_Armenian_to" "1486")
+    '("armenian-zhe" "MAIA_KEY_Armenian_ZHE" "1487")
+    '("armenian-zhe" "MAIA_KEY_Armenian_zhe" "1488")
+    '("armenian-ini" "MAIA_KEY_Armenian_INI" "1489")
+    '("armenian-ini" "MAIA_KEY_Armenian_ini" "1490")
+    '("armenian-lyun" "MAIA_KEY_Armenian_LYUN" "1491")
+    '("armenian-lyun" "MAIA_KEY_Armenian_lyun" "1492")
+    '("armenian-khe" "MAIA_KEY_Armenian_KHE" "1493")
+    '("armenian-khe" "MAIA_KEY_Armenian_khe" "1494")
+    '("armenian-tsa" "MAIA_KEY_Armenian_TSA" "1495")
+    '("armenian-tsa" "MAIA_KEY_Armenian_tsa" "1496")
+    '("armenian-ken" "MAIA_KEY_Armenian_KEN" "1497")
+    '("armenian-ken" "MAIA_KEY_Armenian_ken" "1498")
+    '("armenian-ho" "MAIA_KEY_Armenian_HO" "1499")
+    '("armenian-ho" "MAIA_KEY_Armenian_ho" "1500")
+    '("armenian-dza" "MAIA_KEY_Armenian_DZA" "1501")
+    '("armenian-dza" "MAIA_KEY_Armenian_dza" "1502")
+    '("armenian-ghat" "MAIA_KEY_Armenian_GHAT" "1503")
+    '("armenian-ghat" "MAIA_KEY_Armenian_ghat" "1504")
+    '("armenian-tche" "MAIA_KEY_Armenian_TCHE" "1505")
+    '("armenian-tche" "MAIA_KEY_Armenian_tche" "1506")
+    '("armenian-men" "MAIA_KEY_Armenian_MEN" "1507")
+    '("armenian-men" "MAIA_KEY_Armenian_men" "1508")
+    '("armenian-hi" "MAIA_KEY_Armenian_HI" "1509")
+    '("armenian-hi" "MAIA_KEY_Armenian_hi" "1510")
+    '("armenian-nu" "MAIA_KEY_Armenian_NU" "1511")
+    '("armenian-nu" "MAIA_KEY_Armenian_nu" "1512")
+    '("armenian-sha" "MAIA_KEY_Armenian_SHA" "1513")
+    '("armenian-sha" "MAIA_KEY_Armenian_sha" "1514")
+    '("armenian-vo" "MAIA_KEY_Armenian_VO" "1515")
+    '("armenian-vo" "MAIA_KEY_Armenian_vo" "1516")
+    '("armenian-cha" "MAIA_KEY_Armenian_CHA" "1517")
+    '("armenian-cha" "MAIA_KEY_Armenian_cha" "1518")
+    '("armenian-pe" "MAIA_KEY_Armenian_PE" "1519")
+    '("armenian-pe" "MAIA_KEY_Armenian_pe" "1520")
+    '("armenian-je" "MAIA_KEY_Armenian_JE" "1521")
+    '("armenian-je" "MAIA_KEY_Armenian_je" "1522")
+    '("armenian-ra" "MAIA_KEY_Armenian_RA" "1523")
+    '("armenian-ra" "MAIA_KEY_Armenian_ra" "1524")
+    '("armenian-se" "MAIA_KEY_Armenian_SE" "1525")
+    '("armenian-se" "MAIA_KEY_Armenian_se" "1526")
+    '("armenian-vev" "MAIA_KEY_Armenian_VEV" "1527")
+    '("armenian-vev" "MAIA_KEY_Armenian_vev" "1528")
+    '("armenian-tyun" "MAIA_KEY_Armenian_TYUN" "1529")
+    '("armenian-tyun" "MAIA_KEY_Armenian_tyun" "1530")
+    '("armenian-re" "MAIA_KEY_Armenian_RE" "1531")
+    '("armenian-re" "MAIA_KEY_Armenian_re" "1532")
+    '("armenian-tso" "MAIA_KEY_Armenian_TSO" "1533")
+    '("armenian-tso" "MAIA_KEY_Armenian_tso" "1534")
+    '("armenian-vyun" "MAIA_KEY_Armenian_VYUN" "1535")
+    '("armenian-vyun" "MAIA_KEY_Armenian_vyun" "1536")
+    '("armenian-pyur" "MAIA_KEY_Armenian_PYUR" "1537")
+    '("armenian-pyur" "MAIA_KEY_Armenian_pyur" "1538")
+    '("armenian-ke" "MAIA_KEY_Armenian_KE" "1539")
+    '("armenian-ke" "MAIA_KEY_Armenian_ke" "1540")
+    '("armenian-o" "MAIA_KEY_Armenian_O" "1541")
+    '("armenian-o" "MAIA_KEY_Armenian_o" "1542")
+    '("armenian-fe" "MAIA_KEY_Armenian_FE" "1543")
+    '("armenian-fe" "MAIA_KEY_Armenian_fe" "1544")
+    '("armenian-apostrophe" "MAIA_KEY_Armenian_apostrophe" "1545")
+    '("georgian-an" "MAIA_KEY_Georgian_an" "1546")
+    '("georgian-ban" "MAIA_KEY_Georgian_ban" "1547")
+    '("georgian-gan" "MAIA_KEY_Georgian_gan" "1548")
+    '("georgian-don" "MAIA_KEY_Georgian_don" "1549")
+    '("georgian-en" "MAIA_KEY_Georgian_en" "1550")
+    '("georgian-vin" "MAIA_KEY_Georgian_vin" "1551")
+    '("georgian-zen" "MAIA_KEY_Georgian_zen" "1552")
+    '("georgian-tan" "MAIA_KEY_Georgian_tan" "1553")
+    '("georgian-in" "MAIA_KEY_Georgian_in" "1554")
+    '("georgian-kan" "MAIA_KEY_Georgian_kan" "1555")
+    '("georgian-las" "MAIA_KEY_Georgian_las" "1556")
+    '("georgian-man" "MAIA_KEY_Georgian_man" "1557")
+    '("georgian-nar" "MAIA_KEY_Georgian_nar" "1558")
+    '("georgian-on" "MAIA_KEY_Georgian_on" "1559")
+    '("georgian-par" "MAIA_KEY_Georgian_par" "1560")
+    '("georgian-zhar" "MAIA_KEY_Georgian_zhar" "1561")
+    '("georgian-rae" "MAIA_KEY_Georgian_rae" "1562")
+    '("georgian-san" "MAIA_KEY_Georgian_san" "1563")
+    '("georgian-tar" "MAIA_KEY_Georgian_tar" "1564")
+    '("georgian-un" "MAIA_KEY_Georgian_un" "1565")
+    '("georgian-phar" "MAIA_KEY_Georgian_phar" "1566")
+    '("georgian-khar" "MAIA_KEY_Georgian_khar" "1567")
+    '("georgian-ghan" "MAIA_KEY_Georgian_ghan" "1568")
+    '("georgian-qar" "MAIA_KEY_Georgian_qar" "1569")
+    '("georgian-shin" "MAIA_KEY_Georgian_shin" "1570")
+    '("georgian-chin" "MAIA_KEY_Georgian_chin" "1571")
+    '("georgian-can" "MAIA_KEY_Georgian_can" "1572")
+    '("georgian-jil" "MAIA_KEY_Georgian_jil" "1573")
+    '("georgian-cil" "MAIA_KEY_Georgian_cil" "1574")
+    '("georgian-char" "MAIA_KEY_Georgian_char" "1575")
+    '("georgian-xan" "MAIA_KEY_Georgian_xan" "1576")
+    '("georgian-jhan" "MAIA_KEY_Georgian_jhan" "1577")
+    '("georgian-hae" "MAIA_KEY_Georgian_hae" "1578")
+    '("georgian-he" "MAIA_KEY_Georgian_he" "1579")
+    '("georgian-hie" "MAIA_KEY_Georgian_hie" "1580")
+    '("georgian-we" "MAIA_KEY_Georgian_we" "1581")
+    '("georgian-har" "MAIA_KEY_Georgian_har" "1582")
+    '("georgian-hoe" "MAIA_KEY_Georgian_hoe" "1583")
+    '("georgian-fi" "MAIA_KEY_Georgian_fi" "1584")
+    '("xabovedot" "MAIA_KEY_Xabovedot" "1585")
+    '("ibreve" "MAIA_KEY_Ibreve" "1586")
+    '("zstroke" "MAIA_KEY_Zstroke" "1587")
+    '("gcaron" "MAIA_KEY_Gcaron" "1588")
+    '("ocaron" "MAIA_KEY_Ocaron" "1589")
+    '("obarred" "MAIA_KEY_Obarred" "1590")
+    '("xabovedot" "MAIA_KEY_xabovedot" "1591")
+    '("ibreve" "MAIA_KEY_ibreve" "1592")
+    '("zstroke" "MAIA_KEY_zstroke" "1593")
+    '("gcaron" "MAIA_KEY_gcaron" "1594")
+    '("ocaron" "MAIA_KEY_ocaron" "1595")
+    '("obarred" "MAIA_KEY_obarred" "1596")
+    '("schwa" "MAIA_KEY_SCHWA" "1597")
+    '("schwa" "MAIA_KEY_schwa" "1598")
+    '("lbelowdot" "MAIA_KEY_Lbelowdot" "1599")
+    '("lbelowdot" "MAIA_KEY_lbelowdot" "1600")
+    '("abelowdot" "MAIA_KEY_Abelowdot" "1601")
+    '("abelowdot" "MAIA_KEY_abelowdot" "1602")
+    '("ahook" "MAIA_KEY_Ahook" "1603")
+    '("ahook" "MAIA_KEY_ahook" "1604")
+    '("acircumflexacute" "MAIA_KEY_Acircumflexacute" "1605")
+    '("acircumflexacute" "MAIA_KEY_acircumflexacute" "1606")
+    '("acircumflexgrave" "MAIA_KEY_Acircumflexgrave" "1607")
+    '("acircumflexgrave" "MAIA_KEY_acircumflexgrave" "1608")
+    '("acircumflexhook" "MAIA_KEY_Acircumflexhook" "1609")
+    '("acircumflexhook" "MAIA_KEY_acircumflexhook" "1610")
+    '("acircumflextilde" "MAIA_KEY_Acircumflextilde" "1611")
+    '("acircumflextilde" "MAIA_KEY_acircumflextilde" "1612")
+    '("acircumflexbelowdot" "MAIA_KEY_Acircumflexbelowdot" "1613")
+    '("acircumflexbelowdot" "MAIA_KEY_acircumflexbelowdot" "1614")
+    '("abreveacute" "MAIA_KEY_Abreveacute" "1615")
+    '("abreveacute" "MAIA_KEY_abreveacute" "1616")
+    '("abrevegrave" "MAIA_KEY_Abrevegrave" "1617")
+    '("abrevegrave" "MAIA_KEY_abrevegrave" "1618")
+    '("abrevehook" "MAIA_KEY_Abrevehook" "1619")
+    '("abrevehook" "MAIA_KEY_abrevehook" "1620")
+    '("abrevetilde" "MAIA_KEY_Abrevetilde" "1621")
+    '("abrevetilde" "MAIA_KEY_abrevetilde" "1622")
+    '("abrevebelowdot" "MAIA_KEY_Abrevebelowdot" "1623")
+    '("abrevebelowdot" "MAIA_KEY_abrevebelowdot" "1624")
+    '("ebelowdot" "MAIA_KEY_Ebelowdot" "1625")
+    '("ebelowdot" "MAIA_KEY_ebelowdot" "1626")
+    '("ehook" "MAIA_KEY_Ehook" "1627")
+    '("ehook" "MAIA_KEY_ehook" "1628")
+    '("etilde" "MAIA_KEY_Etilde" "1629")
+    '("etilde" "MAIA_KEY_etilde" "1630")
+    '("ecircumflexacute" "MAIA_KEY_Ecircumflexacute" "1631")
+    '("ecircumflexacute" "MAIA_KEY_ecircumflexacute" "1632")
+    '("ecircumflexgrave" "MAIA_KEY_Ecircumflexgrave" "1633")
+    '("ecircumflexgrave" "MAIA_KEY_ecircumflexgrave" "1634")
+    '("ecircumflexhook" "MAIA_KEY_Ecircumflexhook" "1635")
+    '("ecircumflexhook" "MAIA_KEY_ecircumflexhook" "1636")
+    '("ecircumflextilde" "MAIA_KEY_Ecircumflextilde" "1637")
+    '("ecircumflextilde" "MAIA_KEY_ecircumflextilde" "1638")
+    '("ecircumflexbelowdot" "MAIA_KEY_Ecircumflexbelowdot" "1639")
+    '("ecircumflexbelowdot" "MAIA_KEY_ecircumflexbelowdot" "1640")
+    '("ihook" "MAIA_KEY_Ihook" "1641")
+    '("ihook" "MAIA_KEY_ihook" "1642")
+    '("ibelowdot" "MAIA_KEY_Ibelowdot" "1643")
+    '("ibelowdot" "MAIA_KEY_ibelowdot" "1644")
+    '("obelowdot" "MAIA_KEY_Obelowdot" "1645")
+    '("obelowdot" "MAIA_KEY_obelowdot" "1646")
+    '("ohook" "MAIA_KEY_Ohook" "1647")
+    '("ohook" "MAIA_KEY_ohook" "1648")
+    '("ocircumflexacute" "MAIA_KEY_Ocircumflexacute" "1649")
+    '("ocircumflexacute" "MAIA_KEY_ocircumflexacute" "1650")
+    '("ocircumflexgrave" "MAIA_KEY_Ocircumflexgrave" "1651")
+    '("ocircumflexgrave" "MAIA_KEY_ocircumflexgrave" "1652")
+    '("ocircumflexhook" "MAIA_KEY_Ocircumflexhook" "1653")
+    '("ocircumflexhook" "MAIA_KEY_ocircumflexhook" "1654")
+    '("ocircumflextilde" "MAIA_KEY_Ocircumflextilde" "1655")
+    '("ocircumflextilde" "MAIA_KEY_ocircumflextilde" "1656")
+    '("ocircumflexbelowdot" "MAIA_KEY_Ocircumflexbelowdot" "1657")
+    '("ocircumflexbelowdot" "MAIA_KEY_ocircumflexbelowdot" "1658")
+    '("ohornacute" "MAIA_KEY_Ohornacute" "1659")
+    '("ohornacute" "MAIA_KEY_ohornacute" "1660")
+    '("ohorngrave" "MAIA_KEY_Ohorngrave" "1661")
+    '("ohorngrave" "MAIA_KEY_ohorngrave" "1662")
+    '("ohornhook" "MAIA_KEY_Ohornhook" "1663")
+    '("ohornhook" "MAIA_KEY_ohornhook" "1664")
+    '("ohorntilde" "MAIA_KEY_Ohorntilde" "1665")
+    '("ohorntilde" "MAIA_KEY_ohorntilde" "1666")
+    '("ohornbelowdot" "MAIA_KEY_Ohornbelowdot" "1667")
+    '("ohornbelowdot" "MAIA_KEY_ohornbelowdot" "1668")
+    '("ubelowdot" "MAIA_KEY_Ubelowdot" "1669")
+    '("ubelowdot" "MAIA_KEY_ubelowdot" "1670")
+    '("uhook" "MAIA_KEY_Uhook" "1671")
+    '("uhook" "MAIA_KEY_uhook" "1672")
+    '("uhornacute" "MAIA_KEY_Uhornacute" "1673")
+    '("uhornacute" "MAIA_KEY_uhornacute" "1674")
+    '("uhorngrave" "MAIA_KEY_Uhorngrave" "1675")
+    '("uhorngrave" "MAIA_KEY_uhorngrave" "1676")
+    '("uhornhook" "MAIA_KEY_Uhornhook" "1677")
+    '("uhornhook" "MAIA_KEY_uhornhook" "1678")
+    '("uhorntilde" "MAIA_KEY_Uhorntilde" "1679")
+    '("uhorntilde" "MAIA_KEY_uhorntilde" "1680")
+    '("uhornbelowdot" "MAIA_KEY_Uhornbelowdot" "1681")
+    '("uhornbelowdot" "MAIA_KEY_uhornbelowdot" "1682")
+    '("ybelowdot" "MAIA_KEY_Ybelowdot" "1683")
+    '("ybelowdot" "MAIA_KEY_ybelowdot" "1684")
+    '("yhook" "MAIA_KEY_Yhook" "1685")
+    '("yhook" "MAIA_KEY_yhook" "1686")
+    '("ytilde" "MAIA_KEY_Ytilde" "1687")
+    '("ytilde" "MAIA_KEY_ytilde" "1688")
+    '("ohorn" "MAIA_KEY_Ohorn" "1689")
+    '("ohorn" "MAIA_KEY_ohorn" "1690")
+    '("uhorn" "MAIA_KEY_Uhorn" "1691")
+    '("uhorn" "MAIA_KEY_uhorn" "1692")
+    '("ecusign" "MAIA_KEY_EcuSign" "1693")
+    '("colonsign" "MAIA_KEY_ColonSign" "1694")
+    '("cruzeirosign" "MAIA_KEY_CruzeiroSign" "1695")
+    '("ffrancsign" "MAIA_KEY_FFrancSign" "1696")
+    '("lirasign" "MAIA_KEY_LiraSign" "1697")
+    '("millsign" "MAIA_KEY_MillSign" "1698")
+    '("nairasign" "MAIA_KEY_NairaSign" "1699")
+    '("pesetasign" "MAIA_KEY_PesetaSign" "1700")
+    '("rupeesign" "MAIA_KEY_RupeeSign" "1701")
+    '("wonsign" "MAIA_KEY_WonSign" "1702")
+    '("newsheqelsign" "MAIA_KEY_NewSheqelSign" "1703")
+    '("dongsign" "MAIA_KEY_DongSign" "1704")
+    '("eurosign" "MAIA_KEY_EuroSign" "1705")
+    '("zerosuperior" "MAIA_KEY_zerosuperior" "1706")
+    '("foursuperior" "MAIA_KEY_foursuperior" "1707")
+    '("fivesuperior" "MAIA_KEY_fivesuperior" "1708")
+    '("sixsuperior" "MAIA_KEY_sixsuperior" "1709")
+    '("sevensuperior" "MAIA_KEY_sevensuperior" "1710")
+    '("eightsuperior" "MAIA_KEY_eightsuperior" "1711")
+    '("ninesuperior" "MAIA_KEY_ninesuperior" "1712")
+    '("zerosubscript" "MAIA_KEY_zerosubscript" "1713")
+    '("onesubscript" "MAIA_KEY_onesubscript" "1714")
+    '("twosubscript" "MAIA_KEY_twosubscript" "1715")
+    '("threesubscript" "MAIA_KEY_threesubscript" "1716")
+    '("foursubscript" "MAIA_KEY_foursubscript" "1717")
+    '("fivesubscript" "MAIA_KEY_fivesubscript" "1718")
+    '("sixsubscript" "MAIA_KEY_sixsubscript" "1719")
+    '("sevensubscript" "MAIA_KEY_sevensubscript" "1720")
+    '("eightsubscript" "MAIA_KEY_eightsubscript" "1721")
+    '("ninesubscript" "MAIA_KEY_ninesubscript" "1722")
+    '("partdifferential" "MAIA_KEY_partdifferential" "1723")
+    '("emptyset" "MAIA_KEY_emptyset" "1724")
+    '("elementof" "MAIA_KEY_elementof" "1725")
+    '("notelementof" "MAIA_KEY_notelementof" "1726")
+    '("containsas" "MAIA_KEY_containsas" "1727")
+    '("squareroot" "MAIA_KEY_squareroot" "1728")
+    '("cuberoot" "MAIA_KEY_cuberoot" "1729")
+    '("fourthroot" "MAIA_KEY_fourthroot" "1730")
+    '("dintegral" "MAIA_KEY_dintegral" "1731")
+    '("tintegral" "MAIA_KEY_tintegral" "1732")
+    '("because" "MAIA_KEY_because" "1733")
+    '("approxeq" "MAIA_KEY_approxeq" "1734")
+    '("notapproxeq" "MAIA_KEY_notapproxeq" "1735")
+    '("notidentical" "MAIA_KEY_notidentical" "1736")
+    '("stricteq" "MAIA_KEY_stricteq" "1737")
+    '("braille-dot-1" "MAIA_KEY_braille_dot_1" "1738")
+    '("braille-dot-2" "MAIA_KEY_braille_dot_2" "1739")
+    '("braille-dot-3" "MAIA_KEY_braille_dot_3" "1740")
+    '("braille-dot-4" "MAIA_KEY_braille_dot_4" "1741")
+    '("braille-dot-5" "MAIA_KEY_braille_dot_5" "1742")
+    '("braille-dot-6" "MAIA_KEY_braille_dot_6" "1743")
+    '("braille-dot-7" "MAIA_KEY_braille_dot_7" "1744")
+    '("braille-dot-8" "MAIA_KEY_braille_dot_8" "1745")
+    '("braille-dot-9" "MAIA_KEY_braille_dot_9" "1746")
+    '("braille-dot-10" "MAIA_KEY_braille_dot_10" "1747")
+    '("braille-blank" "MAIA_KEY_braille_blank" "1748")
+    '("braille-dots-1" "MAIA_KEY_braille_dots_1" "1749")
+    '("braille-dots-2" "MAIA_KEY_braille_dots_2" "1750")
+    '("braille-dots-12" "MAIA_KEY_braille_dots_12" "1751")
+    '("braille-dots-3" "MAIA_KEY_braille_dots_3" "1752")
+    '("braille-dots-13" "MAIA_KEY_braille_dots_13" "1753")
+    '("braille-dots-23" "MAIA_KEY_braille_dots_23" "1754")
+    '("braille-dots-123" "MAIA_KEY_braille_dots_123" "1755")
+    '("braille-dots-4" "MAIA_KEY_braille_dots_4" "1756")
+    '("braille-dots-14" "MAIA_KEY_braille_dots_14" "1757")
+    '("braille-dots-24" "MAIA_KEY_braille_dots_24" "1758")
+    '("braille-dots-124" "MAIA_KEY_braille_dots_124" "1759")
+    '("braille-dots-34" "MAIA_KEY_braille_dots_34" "1760")
+    '("braille-dots-134" "MAIA_KEY_braille_dots_134" "1761")
+    '("braille-dots-234" "MAIA_KEY_braille_dots_234" "1762")
+    '("braille-dots-1234" "MAIA_KEY_braille_dots_1234" "1763")
+    '("braille-dots-5" "MAIA_KEY_braille_dots_5" "1764")
+    '("braille-dots-15" "MAIA_KEY_braille_dots_15" "1765")
+    '("braille-dots-25" "MAIA_KEY_braille_dots_25" "1766")
+    '("braille-dots-125" "MAIA_KEY_braille_dots_125" "1767")
+    '("braille-dots-35" "MAIA_KEY_braille_dots_35" "1768")
+    '("braille-dots-135" "MAIA_KEY_braille_dots_135" "1769")
+    '("braille-dots-235" "MAIA_KEY_braille_dots_235" "1770")
+    '("braille-dots-1235" "MAIA_KEY_braille_dots_1235" "1771")
+    '("braille-dots-45" "MAIA_KEY_braille_dots_45" "1772")
+    '("braille-dots-145" "MAIA_KEY_braille_dots_145" "1773")
+    '("braille-dots-245" "MAIA_KEY_braille_dots_245" "1774")
+    '("braille-dots-1245" "MAIA_KEY_braille_dots_1245" "1775")
+    '("braille-dots-345" "MAIA_KEY_braille_dots_345" "1776")
+    '("braille-dots-1345" "MAIA_KEY_braille_dots_1345" "1777")
+    '("braille-dots-2345" "MAIA_KEY_braille_dots_2345" "1778")
+    '("braille-dots-12345" "MAIA_KEY_braille_dots_12345" "1779")
+    '("braille-dots-6" "MAIA_KEY_braille_dots_6" "1780")
+    '("braille-dots-16" "MAIA_KEY_braille_dots_16" "1781")
+    '("braille-dots-26" "MAIA_KEY_braille_dots_26" "1782")
+    '("braille-dots-126" "MAIA_KEY_braille_dots_126" "1783")
+    '("braille-dots-36" "MAIA_KEY_braille_dots_36" "1784")
+    '("braille-dots-136" "MAIA_KEY_braille_dots_136" "1785")
+    '("braille-dots-236" "MAIA_KEY_braille_dots_236" "1786")
+    '("braille-dots-1236" "MAIA_KEY_braille_dots_1236" "1787")
+    '("braille-dots-46" "MAIA_KEY_braille_dots_46" "1788")
+    '("braille-dots-146" "MAIA_KEY_braille_dots_146" "1789")
+    '("braille-dots-246" "MAIA_KEY_braille_dots_246" "1790")
+    '("braille-dots-1246" "MAIA_KEY_braille_dots_1246" "1791")
+    '("braille-dots-346" "MAIA_KEY_braille_dots_346" "1792")
+    '("braille-dots-1346" "MAIA_KEY_braille_dots_1346" "1793")
+    '("braille-dots-2346" "MAIA_KEY_braille_dots_2346" "1794")
+    '("braille-dots-12346" "MAIA_KEY_braille_dots_12346" "1795")
+    '("braille-dots-56" "MAIA_KEY_braille_dots_56" "1796")
+    '("braille-dots-156" "MAIA_KEY_braille_dots_156" "1797")
+    '("braille-dots-256" "MAIA_KEY_braille_dots_256" "1798")
+    '("braille-dots-1256" "MAIA_KEY_braille_dots_1256" "1799")
+    '("braille-dots-356" "MAIA_KEY_braille_dots_356" "1800")
+    '("braille-dots-1356" "MAIA_KEY_braille_dots_1356" "1801")
+    '("braille-dots-2356" "MAIA_KEY_braille_dots_2356" "1802")
+    '("braille-dots-12356" "MAIA_KEY_braille_dots_12356" "1803")
+    '("braille-dots-456" "MAIA_KEY_braille_dots_456" "1804")
+    '("braille-dots-1456" "MAIA_KEY_braille_dots_1456" "1805")
+    '("braille-dots-2456" "MAIA_KEY_braille_dots_2456" "1806")
+    '("braille-dots-12456" "MAIA_KEY_braille_dots_12456" "1807")
+    '("braille-dots-3456" "MAIA_KEY_braille_dots_3456" "1808")
+    '("braille-dots-13456" "MAIA_KEY_braille_dots_13456" "1809")
+    '("braille-dots-23456" "MAIA_KEY_braille_dots_23456" "1810")
+    '("braille-dots-123456" "MAIA_KEY_braille_dots_123456" "1811")
+    '("braille-dots-7" "MAIA_KEY_braille_dots_7" "1812")
+    '("braille-dots-17" "MAIA_KEY_braille_dots_17" "1813")
+    '("braille-dots-27" "MAIA_KEY_braille_dots_27" "1814")
+    '("braille-dots-127" "MAIA_KEY_braille_dots_127" "1815")
+    '("braille-dots-37" "MAIA_KEY_braille_dots_37" "1816")
+    '("braille-dots-137" "MAIA_KEY_braille_dots_137" "1817")
+    '("braille-dots-237" "MAIA_KEY_braille_dots_237" "1818")
+    '("braille-dots-1237" "MAIA_KEY_braille_dots_1237" "1819")
+    '("braille-dots-47" "MAIA_KEY_braille_dots_47" "1820")
+    '("braille-dots-147" "MAIA_KEY_braille_dots_147" "1821")
+    '("braille-dots-247" "MAIA_KEY_braille_dots_247" "1822")
+    '("braille-dots-1247" "MAIA_KEY_braille_dots_1247" "1823")
+    '("braille-dots-347" "MAIA_KEY_braille_dots_347" "1824")
+    '("braille-dots-1347" "MAIA_KEY_braille_dots_1347" "1825")
+    '("braille-dots-2347" "MAIA_KEY_braille_dots_2347" "1826")
+    '("braille-dots-12347" "MAIA_KEY_braille_dots_12347" "1827")
+    '("braille-dots-57" "MAIA_KEY_braille_dots_57" "1828")
+    '("braille-dots-157" "MAIA_KEY_braille_dots_157" "1829")
+    '("braille-dots-257" "MAIA_KEY_braille_dots_257" "1830")
+    '("braille-dots-1257" "MAIA_KEY_braille_dots_1257" "1831")
+    '("braille-dots-357" "MAIA_KEY_braille_dots_357" "1832")
+    '("braille-dots-1357" "MAIA_KEY_braille_dots_1357" "1833")
+    '("braille-dots-2357" "MAIA_KEY_braille_dots_2357" "1834")
+    '("braille-dots-12357" "MAIA_KEY_braille_dots_12357" "1835")
+    '("braille-dots-457" "MAIA_KEY_braille_dots_457" "1836")
+    '("braille-dots-1457" "MAIA_KEY_braille_dots_1457" "1837")
+    '("braille-dots-2457" "MAIA_KEY_braille_dots_2457" "1838")
+    '("braille-dots-12457" "MAIA_KEY_braille_dots_12457" "1839")
+    '("braille-dots-3457" "MAIA_KEY_braille_dots_3457" "1840")
+    '("braille-dots-13457" "MAIA_KEY_braille_dots_13457" "1841")
+    '("braille-dots-23457" "MAIA_KEY_braille_dots_23457" "1842")
+    '("braille-dots-123457" "MAIA_KEY_braille_dots_123457" "1843")
+    '("braille-dots-67" "MAIA_KEY_braille_dots_67" "1844")
+    '("braille-dots-167" "MAIA_KEY_braille_dots_167" "1845")
+    '("braille-dots-267" "MAIA_KEY_braille_dots_267" "1846")
+    '("braille-dots-1267" "MAIA_KEY_braille_dots_1267" "1847")
+    '("braille-dots-367" "MAIA_KEY_braille_dots_367" "1848")
+    '("braille-dots-1367" "MAIA_KEY_braille_dots_1367" "1849")
+    '("braille-dots-2367" "MAIA_KEY_braille_dots_2367" "1850")
+    '("braille-dots-12367" "MAIA_KEY_braille_dots_12367" "1851")
+    '("braille-dots-467" "MAIA_KEY_braille_dots_467" "1852")
+    '("braille-dots-1467" "MAIA_KEY_braille_dots_1467" "1853")
+    '("braille-dots-2467" "MAIA_KEY_braille_dots_2467" "1854")
+    '("braille-dots-12467" "MAIA_KEY_braille_dots_12467" "1855")
+    '("braille-dots-3467" "MAIA_KEY_braille_dots_3467" "1856")
+    '("braille-dots-13467" "MAIA_KEY_braille_dots_13467" "1857")
+    '("braille-dots-23467" "MAIA_KEY_braille_dots_23467" "1858")
+    '("braille-dots-123467" "MAIA_KEY_braille_dots_123467" "1859")
+    '("braille-dots-567" "MAIA_KEY_braille_dots_567" "1860")
+    '("braille-dots-1567" "MAIA_KEY_braille_dots_1567" "1861")
+    '("braille-dots-2567" "MAIA_KEY_braille_dots_2567" "1862")
+    '("braille-dots-12567" "MAIA_KEY_braille_dots_12567" "1863")
+    '("braille-dots-3567" "MAIA_KEY_braille_dots_3567" "1864")
+    '("braille-dots-13567" "MAIA_KEY_braille_dots_13567" "1865")
+    '("braille-dots-23567" "MAIA_KEY_braille_dots_23567" "1866")
+    '("braille-dots-123567" "MAIA_KEY_braille_dots_123567" "1867")
+    '("braille-dots-4567" "MAIA_KEY_braille_dots_4567" "1868")
+    '("braille-dots-14567" "MAIA_KEY_braille_dots_14567" "1869")
+    '("braille-dots-24567" "MAIA_KEY_braille_dots_24567" "1870")
+    '("braille-dots-124567" "MAIA_KEY_braille_dots_124567" "1871")
+    '("braille-dots-34567" "MAIA_KEY_braille_dots_34567" "1872")
+    '("braille-dots-134567" "MAIA_KEY_braille_dots_134567" "1873")
+    '("braille-dots-234567" "MAIA_KEY_braille_dots_234567" "1874")
+    '("braille-dots-1234567" "MAIA_KEY_braille_dots_1234567" "1875")
+    '("braille-dots-8" "MAIA_KEY_braille_dots_8" "1876")
+    '("braille-dots-18" "MAIA_KEY_braille_dots_18" "1877")
+    '("braille-dots-28" "MAIA_KEY_braille_dots_28" "1878")
+    '("braille-dots-128" "MAIA_KEY_braille_dots_128" "1879")
+    '("braille-dots-38" "MAIA_KEY_braille_dots_38" "1880")
+    '("braille-dots-138" "MAIA_KEY_braille_dots_138" "1881")
+    '("braille-dots-238" "MAIA_KEY_braille_dots_238" "1882")
+    '("braille-dots-1238" "MAIA_KEY_braille_dots_1238" "1883")
+    '("braille-dots-48" "MAIA_KEY_braille_dots_48" "1884")
+    '("braille-dots-148" "MAIA_KEY_braille_dots_148" "1885")
+    '("braille-dots-248" "MAIA_KEY_braille_dots_248" "1886")
+    '("braille-dots-1248" "MAIA_KEY_braille_dots_1248" "1887")
+    '("braille-dots-348" "MAIA_KEY_braille_dots_348" "1888")
+    '("braille-dots-1348" "MAIA_KEY_braille_dots_1348" "1889")
+    '("braille-dots-2348" "MAIA_KEY_braille_dots_2348" "1890")
+    '("braille-dots-12348" "MAIA_KEY_braille_dots_12348" "1891")
+    '("braille-dots-58" "MAIA_KEY_braille_dots_58" "1892")
+    '("braille-dots-158" "MAIA_KEY_braille_dots_158" "1893")
+    '("braille-dots-258" "MAIA_KEY_braille_dots_258" "1894")
+    '("braille-dots-1258" "MAIA_KEY_braille_dots_1258" "1895")
+    '("braille-dots-358" "MAIA_KEY_braille_dots_358" "1896")
+    '("braille-dots-1358" "MAIA_KEY_braille_dots_1358" "1897")
+    '("braille-dots-2358" "MAIA_KEY_braille_dots_2358" "1898")
+    '("braille-dots-12358" "MAIA_KEY_braille_dots_12358" "1899")
+    '("braille-dots-458" "MAIA_KEY_braille_dots_458" "1900")
+    '("braille-dots-1458" "MAIA_KEY_braille_dots_1458" "1901")
+    '("braille-dots-2458" "MAIA_KEY_braille_dots_2458" "1902")
+    '("braille-dots-12458" "MAIA_KEY_braille_dots_12458" "1903")
+    '("braille-dots-3458" "MAIA_KEY_braille_dots_3458" "1904")
+    '("braille-dots-13458" "MAIA_KEY_braille_dots_13458" "1905")
+    '("braille-dots-23458" "MAIA_KEY_braille_dots_23458" "1906")
+    '("braille-dots-123458" "MAIA_KEY_braille_dots_123458" "1907")
+    '("braille-dots-68" "MAIA_KEY_braille_dots_68" "1908")
+    '("braille-dots-168" "MAIA_KEY_braille_dots_168" "1909")
+    '("braille-dots-268" "MAIA_KEY_braille_dots_268" "1910")
+    '("braille-dots-1268" "MAIA_KEY_braille_dots_1268" "1911")
+    '("braille-dots-368" "MAIA_KEY_braille_dots_368" "1912")
+    '("braille-dots-1368" "MAIA_KEY_braille_dots_1368" "1913")
+    '("braille-dots-2368" "MAIA_KEY_braille_dots_2368" "1914")
+    '("braille-dots-12368" "MAIA_KEY_braille_dots_12368" "1915")
+    '("braille-dots-468" "MAIA_KEY_braille_dots_468" "1916")
+    '("braille-dots-1468" "MAIA_KEY_braille_dots_1468" "1917")
+    '("braille-dots-2468" "MAIA_KEY_braille_dots_2468" "1918")
+    '("braille-dots-12468" "MAIA_KEY_braille_dots_12468" "1919")
+    '("braille-dots-3468" "MAIA_KEY_braille_dots_3468" "1920")
+    '("braille-dots-13468" "MAIA_KEY_braille_dots_13468" "1921")
+    '("braille-dots-23468" "MAIA_KEY_braille_dots_23468" "1922")
+    '("braille-dots-123468" "MAIA_KEY_braille_dots_123468" "1923")
+    '("braille-dots-568" "MAIA_KEY_braille_dots_568" "1924")
+    '("braille-dots-1568" "MAIA_KEY_braille_dots_1568" "1925")
+    '("braille-dots-2568" "MAIA_KEY_braille_dots_2568" "1926")
+    '("braille-dots-12568" "MAIA_KEY_braille_dots_12568" "1927")
+    '("braille-dots-3568" "MAIA_KEY_braille_dots_3568" "1928")
+    '("braille-dots-13568" "MAIA_KEY_braille_dots_13568" "1929")
+    '("braille-dots-23568" "MAIA_KEY_braille_dots_23568" "1930")
+    '("braille-dots-123568" "MAIA_KEY_braille_dots_123568" "1931")
+    '("braille-dots-4568" "MAIA_KEY_braille_dots_4568" "1932")
+    '("braille-dots-14568" "MAIA_KEY_braille_dots_14568" "1933")
+    '("braille-dots-24568" "MAIA_KEY_braille_dots_24568" "1934")
+    '("braille-dots-124568" "MAIA_KEY_braille_dots_124568" "1935")
+    '("braille-dots-34568" "MAIA_KEY_braille_dots_34568" "1936")
+    '("braille-dots-134568" "MAIA_KEY_braille_dots_134568" "1937")
+    '("braille-dots-234568" "MAIA_KEY_braille_dots_234568" "1938")
+    '("braille-dots-1234568" "MAIA_KEY_braille_dots_1234568" "1939")
+    '("braille-dots-78" "MAIA_KEY_braille_dots_78" "1940")
+    '("braille-dots-178" "MAIA_KEY_braille_dots_178" "1941")
+    '("braille-dots-278" "MAIA_KEY_braille_dots_278" "1942")
+    '("braille-dots-1278" "MAIA_KEY_braille_dots_1278" "1943")
+    '("braille-dots-378" "MAIA_KEY_braille_dots_378" "1944")
+    '("braille-dots-1378" "MAIA_KEY_braille_dots_1378" "1945")
+    '("braille-dots-2378" "MAIA_KEY_braille_dots_2378" "1946")
+    '("braille-dots-12378" "MAIA_KEY_braille_dots_12378" "1947")
+    '("braille-dots-478" "MAIA_KEY_braille_dots_478" "1948")
+    '("braille-dots-1478" "MAIA_KEY_braille_dots_1478" "1949")
+    '("braille-dots-2478" "MAIA_KEY_braille_dots_2478" "1950")
+    '("braille-dots-12478" "MAIA_KEY_braille_dots_12478" "1951")
+    '("braille-dots-3478" "MAIA_KEY_braille_dots_3478" "1952")
+    '("braille-dots-13478" "MAIA_KEY_braille_dots_13478" "1953")
+    '("braille-dots-23478" "MAIA_KEY_braille_dots_23478" "1954")
+    '("braille-dots-123478" "MAIA_KEY_braille_dots_123478" "1955")
+    '("braille-dots-578" "MAIA_KEY_braille_dots_578" "1956")
+    '("braille-dots-1578" "MAIA_KEY_braille_dots_1578" "1957")
+    '("braille-dots-2578" "MAIA_KEY_braille_dots_2578" "1958")
+    '("braille-dots-12578" "MAIA_KEY_braille_dots_12578" "1959")
+    '("braille-dots-3578" "MAIA_KEY_braille_dots_3578" "1960")
+    '("braille-dots-13578" "MAIA_KEY_braille_dots_13578" "1961")
+    '("braille-dots-23578" "MAIA_KEY_braille_dots_23578" "1962")
+    '("braille-dots-123578" "MAIA_KEY_braille_dots_123578" "1963")
+    '("braille-dots-4578" "MAIA_KEY_braille_dots_4578" "1964")
+    '("braille-dots-14578" "MAIA_KEY_braille_dots_14578" "1965")
+    '("braille-dots-24578" "MAIA_KEY_braille_dots_24578" "1966")
+    '("braille-dots-124578" "MAIA_KEY_braille_dots_124578" "1967")
+    '("braille-dots-34578" "MAIA_KEY_braille_dots_34578" "1968")
+    '("braille-dots-134578" "MAIA_KEY_braille_dots_134578" "1969")
+    '("braille-dots-234578" "MAIA_KEY_braille_dots_234578" "1970")
+    '("braille-dots-1234578" "MAIA_KEY_braille_dots_1234578" "1971")
+    '("braille-dots-678" "MAIA_KEY_braille_dots_678" "1972")
+    '("braille-dots-1678" "MAIA_KEY_braille_dots_1678" "1973")
+    '("braille-dots-2678" "MAIA_KEY_braille_dots_2678" "1974")
+    '("braille-dots-12678" "MAIA_KEY_braille_dots_12678" "1975")
+    '("braille-dots-3678" "MAIA_KEY_braille_dots_3678" "1976")
+    '("braille-dots-13678" "MAIA_KEY_braille_dots_13678" "1977")
+    '("braille-dots-23678" "MAIA_KEY_braille_dots_23678" "1978")
+    '("braille-dots-123678" "MAIA_KEY_braille_dots_123678" "1979")
+    '("braille-dots-4678" "MAIA_KEY_braille_dots_4678" "1980")
+    '("braille-dots-14678" "MAIA_KEY_braille_dots_14678" "1981")
+    '("braille-dots-24678" "MAIA_KEY_braille_dots_24678" "1982")
+    '("braille-dots-124678" "MAIA_KEY_braille_dots_124678" "1983")
+    '("braille-dots-34678" "MAIA_KEY_braille_dots_34678" "1984")
+    '("braille-dots-134678" "MAIA_KEY_braille_dots_134678" "1985")
+    '("braille-dots-234678" "MAIA_KEY_braille_dots_234678" "1986")
+    '("braille-dots-1234678" "MAIA_KEY_braille_dots_1234678" "1987")
+    '("braille-dots-5678" "MAIA_KEY_braille_dots_5678" "1988")
+    '("braille-dots-15678" "MAIA_KEY_braille_dots_15678" "1989")
+    '("braille-dots-25678" "MAIA_KEY_braille_dots_25678" "1990")
+    '("braille-dots-125678" "MAIA_KEY_braille_dots_125678" "1991")
+    '("braille-dots-35678" "MAIA_KEY_braille_dots_35678" "1992")
+    '("braille-dots-135678" "MAIA_KEY_braille_dots_135678" "1993")
+    '("braille-dots-235678" "MAIA_KEY_braille_dots_235678" "1994")
+    '("braille-dots-1235678" "MAIA_KEY_braille_dots_1235678" "1995")
+    '("braille-dots-45678" "MAIA_KEY_braille_dots_45678" "1996")
+    '("braille-dots-145678" "MAIA_KEY_braille_dots_145678" "1997")
+    '("braille-dots-245678" "MAIA_KEY_braille_dots_245678" "1998")
+    '("braille-dots-1245678" "MAIA_KEY_braille_dots_1245678" "1999")
+    '("braille-dots-345678" "MAIA_KEY_braille_dots_345678" "2000")
+    '("braille-dots-1345678" "MAIA_KEY_braille_dots_1345678" "2001")
+    '("braille-dots-2345678" "MAIA_KEY_braille_dots_2345678" "2002")
+    '("braille-dots-12345678" "MAIA_KEY_braille_dots_12345678" "2003")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_CURSOR_BLANK_CURSOR,
+;; 	MAIA_CURSOR_X_CURSOR,
+;; 	MAIA_CURSOR_ARROW,
+;; 	MAIA_CURSOR_BASED_ARROW_DOWN,
+;; 	MAIA_CURSOR_BASED_ARROW_UP,
+;; 	MAIA_CURSOR_BOAT,
+;; 	MAIA_CURSOR_BOGOSITY,
+;; 	MAIA_CURSOR_BOTTOM_LEFT_CORNER,
+;; 	MAIA_CURSOR_BOTTOM_RIGHT_CORNER,
+;; 	MAIA_CURSOR_BOTTOM_SIDE,
+;; 	MAIA_CURSOR_BOTTOM_TEE,
+;; 	MAIA_CURSOR_BOX_SPIRAL,
+;; 	MAIA_CURSOR_CENTER_PTR,
+;; 	MAIA_CURSOR_CIRCLE,
+;; 	MAIA_CURSOR_CLOCK,
+;; 	MAIA_CURSOR_COFFEE_MUG,
+;; 	MAIA_CURSOR_CROSS,
+;; 	MAIA_CURSOR_CROSS_REVERSE,
+;; 	MAIA_CURSOR_CROSSHAIR,
+;; 	MAIA_CURSOR_DIAMOND_CROSS,
+;; 	MAIA_CURSOR_DOT,
+;; 	MAIA_CURSOR_DOTBOX,
+;; 	MAIA_CURSOR_DOUBLE_ARROW,
+;; 	MAIA_CURSOR_DRAFT_LARGE,
+;; 	MAIA_CURSOR_DRAFT_SMALL,
+;; 	MAIA_CURSOR_DRAPED_BOX,
+;; 	MAIA_CURSOR_EXCHANGE,
+;; 	MAIA_CURSOR_FLEUR,
+;; 	MAIA_CURSOR_GOBBLER,
+;; 	MAIA_CURSOR_GUMBY,
+;; 	MAIA_CURSOR_HAND1,
+;; 	MAIA_CURSOR_HAND2,
+;; 	MAIA_CURSOR_HEART,
+;; 	MAIA_CURSOR_ICON,
+;; 	MAIA_CURSOR_IRON_CROSS,
+;; 	MAIA_CURSOR_LEFT_PTR,
+;; 	MAIA_CURSOR_LEFT_SIDE,
+;; 	MAIA_CURSOR_LEFT_TEE,
+;; 	MAIA_CURSOR_LEFTBUTTON,
+;; 	MAIA_CURSOR_LL_ANGLE,
+;; 	MAIA_CURSOR_LR_ANGLE,
+;; 	MAIA_CURSOR_MAN,
+;; 	MAIA_CURSOR_MIDDLEBUTTON,
+;; 	MAIA_CURSOR_MOUSE,
+;; 	MAIA_CURSOR_PENCIL,
+;; 	MAIA_CURSOR_PIRATE,
+;; 	MAIA_CURSOR_PLUS,
+;; 	MAIA_CURSOR_QUESTION_ARROW,
+;; 	MAIA_CURSOR_RIGHT_PTR,
+;; 	MAIA_CURSOR_RIGHT_SIDE,
+;; 	MAIA_CURSOR_RIGHT_TEE,
+;; 	MAIA_CURSOR_RIGHTBUTTON,
+;; 	MAIA_CURSOR_RTL_LOGO,
+;; 	MAIA_CURSOR_SAILBOAT,
+;; 	MAIA_CURSOR_SB_DOWN_ARROW,
+;; 	MAIA_CURSOR_SB_H_DOUBLE_ARROW,
+;; 	MAIA_CURSOR_SB_LEFT_ARROW,
+;; 	MAIA_CURSOR_SB_RIGHT_ARROW,
+;; 	MAIA_CURSOR_SB_UP_ARROW,
+;; 	MAIA_CURSOR_SB_V_DOUBLE_ARROW,
+;; 	MAIA_CURSOR_SHUTTLE,
+;; 	MAIA_CURSOR_SIZING,
+;; 	MAIA_CURSOR_SPIDER,
+;; 	MAIA_CURSOR_SPRAYCAN,
+;; 	MAIA_CURSOR_STAR,
+;; 	MAIA_CURSOR_TARGET,
+;; 	MAIA_CURSOR_TCROSS,
+;; 	MAIA_CURSOR_TOP_LEFT_ARROW,
+;; 	MAIA_CURSOR_TOP_LEFT_CORNER,
+;; 	MAIA_CURSOR_TOP_RIGHT_CORNER,
+;; 	MAIA_CURSOR_TOP_SIDE,
+;; 	MAIA_CURSOR_TOP_TEE,
+;; 	MAIA_CURSOR_TREK,
+;; 	MAIA_CURSOR_UL_ANGLE,
+;; 	MAIA_CURSOR_UMBRELLA,
+;; 	MAIA_CURSOR_UR_ANGLE,
+;; 	MAIA_CURSOR_WATCH,
+;; 	MAIA_CURSOR_XTERM
+;; } MaiaCursor;
+
+(define-enum-extended Cursor
+  (in-module "Maia")
+  (c-name "MaiaCursor")
+  (values
+    '("blank-cursor" "MAIA_CURSOR_BLANK_CURSOR" "0")
+    '("x-cursor" "MAIA_CURSOR_X_CURSOR" "1")
+    '("arrow" "MAIA_CURSOR_ARROW" "2")
+    '("based-arrow-down" "MAIA_CURSOR_BASED_ARROW_DOWN" "3")
+    '("based-arrow-up" "MAIA_CURSOR_BASED_ARROW_UP" "4")
+    '("boat" "MAIA_CURSOR_BOAT" "5")
+    '("bogosity" "MAIA_CURSOR_BOGOSITY" "6")
+    '("bottom-left-corner" "MAIA_CURSOR_BOTTOM_LEFT_CORNER" "7")
+    '("bottom-right-corner" "MAIA_CURSOR_BOTTOM_RIGHT_CORNER" "8")
+    '("bottom-side" "MAIA_CURSOR_BOTTOM_SIDE" "9")
+    '("bottom-tee" "MAIA_CURSOR_BOTTOM_TEE" "10")
+    '("box-spiral" "MAIA_CURSOR_BOX_SPIRAL" "11")
+    '("center-ptr" "MAIA_CURSOR_CENTER_PTR" "12")
+    '("circle" "MAIA_CURSOR_CIRCLE" "13")
+    '("clock" "MAIA_CURSOR_CLOCK" "14")
+    '("coffee-mug" "MAIA_CURSOR_COFFEE_MUG" "15")
+    '("cross" "MAIA_CURSOR_CROSS" "16")
+    '("cross-reverse" "MAIA_CURSOR_CROSS_REVERSE" "17")
+    '("crosshair" "MAIA_CURSOR_CROSSHAIR" "18")
+    '("diamond-cross" "MAIA_CURSOR_DIAMOND_CROSS" "19")
+    '("dot" "MAIA_CURSOR_DOT" "20")
+    '("dotbox" "MAIA_CURSOR_DOTBOX" "21")
+    '("double-arrow" "MAIA_CURSOR_DOUBLE_ARROW" "22")
+    '("draft-large" "MAIA_CURSOR_DRAFT_LARGE" "23")
+    '("draft-small" "MAIA_CURSOR_DRAFT_SMALL" "24")
+    '("draped-box" "MAIA_CURSOR_DRAPED_BOX" "25")
+    '("exchange" "MAIA_CURSOR_EXCHANGE" "26")
+    '("fleur" "MAIA_CURSOR_FLEUR" "27")
+    '("gobbler" "MAIA_CURSOR_GOBBLER" "28")
+    '("gumby" "MAIA_CURSOR_GUMBY" "29")
+    '("hand1" "MAIA_CURSOR_HAND1" "30")
+    '("hand2" "MAIA_CURSOR_HAND2" "31")
+    '("heart" "MAIA_CURSOR_HEART" "32")
+    '("icon" "MAIA_CURSOR_ICON" "33")
+    '("iron-cross" "MAIA_CURSOR_IRON_CROSS" "34")
+    '("left-ptr" "MAIA_CURSOR_LEFT_PTR" "35")
+    '("left-side" "MAIA_CURSOR_LEFT_SIDE" "36")
+    '("left-tee" "MAIA_CURSOR_LEFT_TEE" "37")
+    '("leftbutton" "MAIA_CURSOR_LEFTBUTTON" "38")
+    '("ll-angle" "MAIA_CURSOR_LL_ANGLE" "39")
+    '("lr-angle" "MAIA_CURSOR_LR_ANGLE" "40")
+    '("man" "MAIA_CURSOR_MAN" "41")
+    '("middlebutton" "MAIA_CURSOR_MIDDLEBUTTON" "42")
+    '("mouse" "MAIA_CURSOR_MOUSE" "43")
+    '("pencil" "MAIA_CURSOR_PENCIL" "44")
+    '("pirate" "MAIA_CURSOR_PIRATE" "45")
+    '("plus" "MAIA_CURSOR_PLUS" "46")
+    '("question-arrow" "MAIA_CURSOR_QUESTION_ARROW" "47")
+    '("right-ptr" "MAIA_CURSOR_RIGHT_PTR" "48")
+    '("right-side" "MAIA_CURSOR_RIGHT_SIDE" "49")
+    '("right-tee" "MAIA_CURSOR_RIGHT_TEE" "50")
+    '("rightbutton" "MAIA_CURSOR_RIGHTBUTTON" "51")
+    '("rtl-logo" "MAIA_CURSOR_RTL_LOGO" "52")
+    '("sailboat" "MAIA_CURSOR_SAILBOAT" "53")
+    '("sb-down-arrow" "MAIA_CURSOR_SB_DOWN_ARROW" "54")
+    '("sb-h-double-arrow" "MAIA_CURSOR_SB_H_DOUBLE_ARROW" "55")
+    '("sb-left-arrow" "MAIA_CURSOR_SB_LEFT_ARROW" "56")
+    '("sb-right-arrow" "MAIA_CURSOR_SB_RIGHT_ARROW" "57")
+    '("sb-up-arrow" "MAIA_CURSOR_SB_UP_ARROW" "58")
+    '("sb-v-double-arrow" "MAIA_CURSOR_SB_V_DOUBLE_ARROW" "59")
+    '("shuttle" "MAIA_CURSOR_SHUTTLE" "60")
+    '("sizing" "MAIA_CURSOR_SIZING" "61")
+    '("spider" "MAIA_CURSOR_SPIDER" "62")
+    '("spraycan" "MAIA_CURSOR_SPRAYCAN" "63")
+    '("star" "MAIA_CURSOR_STAR" "64")
+    '("target" "MAIA_CURSOR_TARGET" "65")
+    '("tcross" "MAIA_CURSOR_TCROSS" "66")
+    '("top-left-arrow" "MAIA_CURSOR_TOP_LEFT_ARROW" "67")
+    '("top-left-corner" "MAIA_CURSOR_TOP_LEFT_CORNER" "68")
+    '("top-right-corner" "MAIA_CURSOR_TOP_RIGHT_CORNER" "69")
+    '("top-side" "MAIA_CURSOR_TOP_SIDE" "70")
+    '("top-tee" "MAIA_CURSOR_TOP_TEE" "71")
+    '("trek" "MAIA_CURSOR_TREK" "72")
+    '("ul-angle" "MAIA_CURSOR_UL_ANGLE" "73")
+    '("umbrella" "MAIA_CURSOR_UMBRELLA" "74")
+    '("ur-angle" "MAIA_CURSOR_UR_ANGLE" "75")
+    '("watch" "MAIA_CURSOR_WATCH" "76")
+    '("xterm" "MAIA_CURSOR_XTERM" "77")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_SCROLL_NONE,
+;; 	MAIA_SCROLL_UP,
+;; 	MAIA_SCROLL_DOWN,
+;; 	MAIA_SCROLL_LEFT,
+;; 	MAIA_SCROLL_RIGHT
+;; } MaiaScroll;
+
+(define-enum-extended Scroll
+  (in-module "Maia")
+  (c-name "MaiaScroll")
+  (values
+    '("none" "MAIA_SCROLL_NONE" "0")
+    '("up" "MAIA_SCROLL_UP" "1")
+    '("down" "MAIA_SCROLL_DOWN" "2")
+    '("left" "MAIA_SCROLL_LEFT" "3")
+    '("right" "MAIA_SCROLL_RIGHT" "4")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_ORIENTATION_HORIZONTAL,
+;; 	MAIA_ORIENTATION_VERTICAL
+;; } MaiaOrientation;
+
+(define-enum-extended Orientation
+  (in-module "Maia")
+  (c-name "MaiaOrientation")
+  (values
+    '("horizontal" "MAIA_ORIENTATION_HORIZONTAL" "0")
+    '("vertical" "MAIA_ORIENTATION_VERTICAL" "1")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_PAGE_FORMAT_A4,
+;; 	MAIA_PAGE_FORMAT_LETTER
+;; } MaiaPageFormat;
+
+(define-enum-extended PageFormat
+  (in-module "Maia")
+  (c-name "MaiaPageFormat")
+  (values
+    '("a4" "MAIA_PAGE_FORMAT_A4" "0")
+    '("letter" "MAIA_PAGE_FORMAT_LETTER" "1")
+  )
+)
+

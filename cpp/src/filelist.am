@@ -1,0 +1,17 @@
+files_defs = \
+    maia.defs \
+    maia_methods.defs \
+    maia_enums.defs \
+    maia_signals.defs \
+    maia_vfuncs.defs
+
+files_hg = \
+    any.hg \
+    object.hg \
+    iterator.hg \
+    collection.hg \
+    set.hg \
+    pair.hg \
+    map.hg
+
+files_ccg = $(files_hg:.hg=.ccg)

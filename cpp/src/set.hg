@@ -1,0 +1,82 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * set.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/collection.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/collection_p.h)
+
+namespace Maia
+{
+    namespace Core
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Core)
+
+        template<typename T>
+        class Set : public Collection<T>
+        {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+            static GType get_type() G_GNUC_CONST
+            {
+                return maia_core_set_get_type();
+            }
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+
+            Set() :
+                Collection<T> ()
+            {}
+
+            explicit Set(MaiaCoreSet* gobject, bool make_a_copy = true) :
+                Collection<T> (MAIA_CORE_COLLECTION (gobject), make_a_copy)
+            {}
+
+            Set(const Set<T>& other) :
+                Collection<T> (other)
+            {}
+
+            virtual ~Set<T>()
+            {
+            }
+       };
+    }
+}
+
+namespace Glib
+{
+    /** A Glib::wrap() method for this object.
+     *
+     * @param object The C instance.
+     * @param take_copy False if the result should take ownership of the C instance. True if it should take a new copy or ref.
+     * @result A C++ instance that wraps this C instance.
+     *
+     * @relates Maia::Core::Collection
+     */
+    template<typename T>
+    Maia::Core::Set<T> wrap(MaiaCoreSet* object, bool take_copy)
+    {
+        return Maia::Core::Set<T> (object, take_copy);
+    }
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    template <typename T>
+    class Value<Maia::Core::Set<T> > : public Glib::Value_Boxed<Maia::Core::Set<T> >
+    {};
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+}

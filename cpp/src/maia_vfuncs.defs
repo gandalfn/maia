@@ -1,0 +1,55 @@
+;; -*- scheme -*-
+; virtual function definitions
+; define-vfunc is gtkmm-specific
+
+; From MaiaCoreObject
+
+(define-vfunc get_parent
+  (of-object "MaiaCoreObject")
+  (return-type "MaiaCoreObject*")
+)
+
+(define-vfunc set_parent
+  (of-object "MaiaCoreObject")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreObject*" "inObject")
+  )
+)
+
+(define-vfunc insert_child
+  (of-object "MaiaCoreObject")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreObject*" "inObject")
+  )
+)
+
+(define-vfunc remove_child
+  (of-object "MaiaCoreObject")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreObject*" "inObject")
+  )
+)
+
+(define-vfunc can_append_child
+  (of-object "MaiaCoreObject")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaCoreObject*" "inObject")
+  )
+)
+
+(define-vfunc compare
+  (of-object "MaiaCoreObject")
+  (return-type "gint")
+  (parameters
+    '("MaiaCoreObject*" "inObject")
+  )
+)
+
+(define-vfunc to_string
+  (of-object "MaiaCoreObject")
+  (return-type "char*")
+)

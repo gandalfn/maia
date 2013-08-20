@@ -1,0 +1,2891 @@
+;; From MaiaCoreAny
+
+;; From MaiaCoreObject
+
+(define-property id
+  (of-object "MaiaCoreObject")
+  (prop-type "GParamUInt")
+  (docs "id")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property parent
+  (of-object "MaiaCoreObject")
+  (prop-type "GParamObject")
+  (docs "parent")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaCoreIterator
+
+;; From MaiaCoreCollection
+
+;; From MaiaCoreSet
+
+;; From MaiaCorePair
+
+;; From MaiaCoreMap
+
+;; From MaiaCoreTimeline
+
+(define-signal started
+  (of-object "MaiaCoreTimeline")
+  (return-type "void")
+  (when "last")
+)
+
+(define-signal paused
+  (of-object "MaiaCoreTimeline")
+  (return-type "void")
+  (when "last")
+)
+
+(define-signal new-frame
+  (of-object "MaiaCoreTimeline")
+  (return-type "void")
+  (when "last")
+  (parameters
+    '("gint" "p0")
+  )
+)
+
+(define-signal completed
+  (of-object "MaiaCoreTimeline")
+  (return-type "void")
+  (when "last")
+)
+
+(define-property direction
+  (of-object "MaiaCoreTimeline")
+  (prop-type "GParamEnum")
+  (docs "direction")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property speed
+  (of-object "MaiaCoreTimeline")
+  (prop-type "GParamUInt")
+  (docs "speed")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property n-frames
+  (of-object "MaiaCoreTimeline")
+  (prop-type "GParamUInt")
+  (docs "n-frames")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property duration
+  (of-object "MaiaCoreTimeline")
+  (prop-type "GParamUInt")
+  (docs "duration")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property loop
+  (of-object "MaiaCoreTimeline")
+  (prop-type "GParamBoolean")
+  (docs "loop")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property is-playing
+  (of-object "MaiaCoreTimeline")
+  (prop-type "GParamBoolean")
+  (docs "is-playing")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property current-frame
+  (of-object "MaiaCoreTimeline")
+  (prop-type "GParamUInt")
+  (docs "current-frame")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property progress
+  (of-object "MaiaCoreTimeline")
+  (prop-type "GParamDouble")
+  (docs "progress")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaCoreParser
+
+(define-property element
+  (of-object "MaiaCoreParser")
+  (prop-type "GParamString")
+  (docs "element")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property attributes
+  (of-object "MaiaCoreParser")
+  (prop-type "GParamObject")
+  (docs "attributes")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property attribute
+  (of-object "MaiaCoreParser")
+  (prop-type "GParamString")
+  (docs "attribute")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property val
+  (of-object "MaiaCoreParser")
+  (prop-type "GParamString")
+  (docs "val")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property characters
+  (of-object "MaiaCoreParser")
+  (prop-type "GParamString")
+  (docs "characters")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaGraphicColor
+
+(define-property name
+  (of-object "MaiaGraphicColor")
+  (prop-type "GParamString")
+  (docs "name")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property red
+  (of-object "MaiaGraphicColor")
+  (prop-type "GParamDouble")
+  (docs "red")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property green
+  (of-object "MaiaGraphicColor")
+  (prop-type "GParamDouble")
+  (docs "green")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property blue
+  (of-object "MaiaGraphicColor")
+  (prop-type "GParamDouble")
+  (docs "blue")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property alpha
+  (of-object "MaiaGraphicColor")
+  (prop-type "GParamDouble")
+  (docs "alpha")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property is-set
+  (of-object "MaiaGraphicColor")
+  (prop-type "GParamBoolean")
+  (docs "is-set")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property argb
+  (of-object "MaiaGraphicColor")
+  (prop-type "GParamUInt")
+  (docs "argb")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaGraphicContext
+
+(define-property operator
+  (of-object "MaiaGraphicContext")
+  (prop-type "GParamEnum")
+  (docs "operator")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property surface
+  (of-object "MaiaGraphicContext")
+  (prop-type "GParamObject")
+  (docs "surface")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property pattern
+  (of-object "MaiaGraphicContext")
+  (prop-type "GParamObject")
+  (docs "pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property line-width
+  (of-object "MaiaGraphicContext")
+  (prop-type "GParamDouble")
+  (docs "line-width")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property transform
+  (of-object "MaiaGraphicContext")
+  (prop-type "GParamObject")
+  (docs "transform")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaGraphicGlyph
+
+(define-property font-description
+  (of-object "MaiaGraphicGlyph")
+  (prop-type "GParamString")
+  (docs "font-description")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property text
+  (of-object "MaiaGraphicGlyph")
+  (prop-type "GParamString")
+  (docs "text")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property origin
+  (of-object "MaiaGraphicGlyph")
+  (prop-type "GParamBoxed")
+  (docs "origin")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property size
+  (of-object "MaiaGraphicGlyph")
+  (prop-type "GParamBoxed")
+  (docs "size")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaGraphicGradient
+
+;; From MaiaGraphicImage
+
+(define-property filename
+  (of-object "MaiaGraphicImage")
+  (prop-type "GParamString")
+  (docs "filename")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property size
+  (of-object "MaiaGraphicImage")
+  (prop-type "GParamBoxed")
+  (docs "size")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property surface
+  (of-object "MaiaGraphicImage")
+  (prop-type "GParamObject")
+  (docs "surface")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaGraphicImageGif
+
+;; From MaiaGraphicImageJpg
+
+;; From MaiaGraphicImagePng
+
+;; From MaiaGraphicImageSvg
+
+(define-property data
+  (of-object "MaiaGraphicImageSvg")
+  (prop-type "GParamString")
+  (docs "data")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaGraphicLinearGradient
+
+(define-property start
+  (of-object "MaiaGraphicLinearGradient")
+  (prop-type "GParamBoxed")
+  (docs "start")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property end
+  (of-object "MaiaGraphicLinearGradient")
+  (prop-type "GParamBoxed")
+  (docs "end")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaGraphicMeshGradient
+
+;; From MaiaGraphicPath
+
+(define-property data-type
+  (of-object "MaiaGraphicPath")
+  (prop-type "GParamGType")
+  (docs "data-type")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaGraphicPattern
+
+;; From MaiaGraphicPoint
+
+;; From MaiaGraphicRadialGradient
+
+(define-property start
+  (of-object "MaiaGraphicRadialGradient")
+  (prop-type "GParamBoxed")
+  (docs "start")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property start-radius
+  (of-object "MaiaGraphicRadialGradient")
+  (prop-type "GParamDouble")
+  (docs "start-radius")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property end
+  (of-object "MaiaGraphicRadialGradient")
+  (prop-type "GParamBoxed")
+  (docs "end")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property end-radius
+  (of-object "MaiaGraphicRadialGradient")
+  (prop-type "GParamDouble")
+  (docs "end-radius")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaGraphicRectangle
+
+;; From MaiaGraphicRegion
+
+(define-property extents
+  (of-object "MaiaGraphicRegion")
+  (prop-type "GParamBoxed")
+  (docs "extents")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property length
+  (of-object "MaiaGraphicRegion")
+  (prop-type "GParamInt")
+  (docs "length")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaGraphicSize
+
+;; From MaiaGraphicSurface
+
+(define-property size
+  (of-object "MaiaGraphicSurface")
+  (prop-type "GParamBoxed")
+  (docs "size")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property context
+  (of-object "MaiaGraphicSurface")
+  (prop-type "GParamObject")
+  (docs "context")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaGraphicTransform
+
+(define-signal changed
+  (of-object "MaiaGraphicTransform")
+  (return-type "void")
+  (when "last")
+)
+
+;; From MaiaManifestAttribute
+
+(define-property owner
+  (of-object "MaiaManifestAttribute")
+  (prop-type "GParamObject")
+  (docs "owner")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaManifestAttributeBind
+
+;; From MaiaManifestAttributeScanner
+
+;; From MaiaManifestDocument
+
+(define-signal attribute-bind-added
+  (of-object "MaiaManifestDocument")
+  (return-type "void")
+  (when "last")
+  (parameters
+    '("MaiaManifestAttributeBind*" "p0")
+    '("const-gchar*" "p1")
+  )
+)
+
+(define-property owner
+  (of-object "MaiaManifestDocument")
+  (prop-type "GParamObject")
+  (docs "owner")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property scanner
+  (of-object "MaiaManifestDocument")
+  (prop-type "GParamObject")
+  (docs "scanner")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property element-tag
+  (of-object "MaiaManifestDocument")
+  (prop-type "GParamString")
+  (docs "element-tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property element-id
+  (of-object "MaiaManifestDocument")
+  (prop-type "GParamString")
+  (docs "element-id")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaManifestElement
+
+(define-property characters
+  (of-object "MaiaManifestElement")
+  (prop-type "GParamString")
+  (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property tag
+  (of-object "MaiaManifestElement")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaManifestFunction
+
+;; From MaiaButton
+
+(define-signal clicked
+  (of-object "MaiaButton")
+  (return-type "void")
+  (when "last")
+)
+
+(define-property tag
+  (of-object "MaiaButton")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property row
+  (of-object "MaiaButton")
+  (prop-type "GParamUInt")
+  (docs "row")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property column
+  (of-object "MaiaButton")
+  (prop-type "GParamUInt")
+  (docs "column")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property rows
+  (of-object "MaiaButton")
+  (prop-type "GParamUInt")
+  (docs "rows")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property columns
+  (of-object "MaiaButton")
+  (prop-type "GParamUInt")
+  (docs "columns")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xexpand
+  (of-object "MaiaButton")
+  (prop-type "GParamBoolean")
+  (docs "xexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xfill
+  (of-object "MaiaButton")
+  (prop-type "GParamBoolean")
+  (docs "xfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xalign
+  (of-object "MaiaButton")
+  (prop-type "GParamDouble")
+  (docs "xalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yexpand
+  (of-object "MaiaButton")
+  (prop-type "GParamBoolean")
+  (docs "yexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yfill
+  (of-object "MaiaButton")
+  (prop-type "GParamBoolean")
+  (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yalign
+  (of-object "MaiaButton")
+  (prop-type "GParamDouble")
+  (docs "yalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property top-padding
+  (of-object "MaiaButton")
+  (prop-type "GParamDouble")
+  (docs "top-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property bottom-padding
+  (of-object "MaiaButton")
+  (prop-type "GParamDouble")
+  (docs "bottom-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property left-padding
+  (of-object "MaiaButton")
+  (prop-type "GParamDouble")
+  (docs "left-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property right-padding
+  (of-object "MaiaButton")
+  (prop-type "GParamDouble")
+  (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property font-description
+  (of-object "MaiaButton")
+  (prop-type "GParamString")
+  (docs "font-description")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property label
+  (of-object "MaiaButton")
+  (prop-type "GParamString")
+  (docs "label")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property border
+  (of-object "MaiaButton")
+  (prop-type "GParamDouble")
+  (docs "border")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property icon-filename
+  (of-object "MaiaButton")
+  (prop-type "GParamString")
+  (docs "icon-filename")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property button-color
+  (of-object "MaiaButton")
+  (prop-type "GParamObject")
+  (docs "button-color")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaCanvas
+
+(define-property focus-item
+  (of-object "MaiaCanvas")
+  (prop-type "GParamObject")
+  (docs "focus-item")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property grab-keyboard-item
+  (of-object "MaiaCanvas")
+  (prop-type "GParamObject")
+  (docs "grab-keyboard-item")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property grab-pointer-item
+  (of-object "MaiaCanvas")
+  (prop-type "GParamObject")
+  (docs "grab-pointer-item")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property root
+  (of-object "MaiaCanvas")
+  (prop-type "GParamObject")
+  (docs "root")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property surface
+  (of-object "MaiaCanvas")
+  (prop-type "GParamObject")
+  (docs "surface")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property timeline
+  (of-object "MaiaCanvas")
+  (prop-type "GParamObject")
+  (docs "timeline")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaCheckButton
+
+(define-property tag
+  (of-object "MaiaCheckButton")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property spacing
+  (of-object "MaiaCheckButton")
+  (prop-type "GParamDouble")
+  (docs "spacing")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaCursor
+
+;; From MaiaDocument
+
+(define-property tag
+  (of-object "MaiaDocument")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property characters
+  (of-object "MaiaDocument")
+  (prop-type "GParamString")
+  (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property origin
+  (of-object "MaiaDocument")
+  (prop-type "GParamBoxed")
+  (docs "origin")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property format
+  (of-object "MaiaDocument")
+  (prop-type "GParamEnum")
+  (docs "format")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property top-margin
+  (of-object "MaiaDocument")
+  (prop-type "GParamDouble")
+  (docs "top-margin")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property bottom-margin
+  (of-object "MaiaDocument")
+  (prop-type "GParamDouble")
+  (docs "bottom-margin")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property left-margin
+  (of-object "MaiaDocument")
+  (prop-type "GParamDouble")
+  (docs "left-margin")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property right-margin
+  (of-object "MaiaDocument")
+  (prop-type "GParamDouble")
+  (docs "right-margin")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property resolution
+  (of-object "MaiaDocument")
+  (prop-type "GParamUInt")
+  (docs "resolution")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property border-width
+  (of-object "MaiaDocument")
+  (prop-type "GParamInt")
+  (docs "border-width")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property nb-pages
+  (of-object "MaiaDocument")
+  (prop-type "GParamUInt")
+  (docs "nb-pages")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property header
+  (of-object "MaiaDocument")
+  (prop-type "GParamString")
+  (docs "header")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property footer
+  (of-object "MaiaDocument")
+  (prop-type "GParamString")
+  (docs "footer")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaDrawable
+
+(define-signal damage
+  (of-object "MaiaDrawable")
+  (return-type "void")
+  (when "first")
+  (parameters
+    '("MaiaGraphicRegion*" "p0")
+  )
+)
+
+(define-signal repair
+  (of-object "MaiaDrawable")
+  (return-type "void")
+  (when "first")
+  (parameters
+    '("MaiaGraphicRegion*" "p0")
+  )
+)
+
+(define-property damaged
+  (of-object "MaiaDrawable")
+  (prop-type "GParamObject")
+  (docs "damaged")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property geometry
+  (of-object "MaiaDrawable")
+  (prop-type "GParamObject")
+  (docs "geometry")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property transform
+  (of-object "MaiaDrawable")
+  (prop-type "GParamObject")
+  (docs "transform")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaDrawingArea
+
+(define-property tag
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property row
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamUInt")
+  (docs "row")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property column
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamUInt")
+  (docs "column")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property rows
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamUInt")
+  (docs "rows")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property columns
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamUInt")
+  (docs "columns")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xexpand
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamBoolean")
+  (docs "xexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xfill
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamBoolean")
+  (docs "xfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xalign
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamDouble")
+  (docs "xalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yexpand
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamBoolean")
+  (docs "yexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yfill
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamBoolean")
+  (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yalign
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamDouble")
+  (docs "yalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property top-padding
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamDouble")
+  (docs "top-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property bottom-padding
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamDouble")
+  (docs "bottom-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property left-padding
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamDouble")
+  (docs "left-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property right-padding
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamDouble")
+  (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property selected
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamObject")
+  (docs "selected")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property anchor-size
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamDouble")
+  (docs "anchor-size")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property selected-border
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamDouble")
+  (docs "selected-border")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property selected-border-line-width
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamDouble")
+  (docs "selected-border-line-width")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property selected-border-color
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamObject")
+  (docs "selected-border-color")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaEntry
+
+(define-signal changed
+  (of-object "MaiaEntry")
+  (return-type "void")
+  (when "last")
+)
+
+(define-property tag
+  (of-object "MaiaEntry")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property characters
+  (of-object "MaiaEntry")
+  (prop-type "GParamString")
+  (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property row
+  (of-object "MaiaEntry")
+  (prop-type "GParamUInt")
+  (docs "row")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property column
+  (of-object "MaiaEntry")
+  (prop-type "GParamUInt")
+  (docs "column")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property rows
+  (of-object "MaiaEntry")
+  (prop-type "GParamUInt")
+  (docs "rows")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property columns
+  (of-object "MaiaEntry")
+  (prop-type "GParamUInt")
+  (docs "columns")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xexpand
+  (of-object "MaiaEntry")
+  (prop-type "GParamBoolean")
+  (docs "xexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xfill
+  (of-object "MaiaEntry")
+  (prop-type "GParamBoolean")
+  (docs "xfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xalign
+  (of-object "MaiaEntry")
+  (prop-type "GParamDouble")
+  (docs "xalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yexpand
+  (of-object "MaiaEntry")
+  (prop-type "GParamBoolean")
+  (docs "yexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yfill
+  (of-object "MaiaEntry")
+  (prop-type "GParamBoolean")
+  (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yalign
+  (of-object "MaiaEntry")
+  (prop-type "GParamDouble")
+  (docs "yalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property top-padding
+  (of-object "MaiaEntry")
+  (prop-type "GParamDouble")
+  (docs "top-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property bottom-padding
+  (of-object "MaiaEntry")
+  (prop-type "GParamDouble")
+  (docs "bottom-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property left-padding
+  (of-object "MaiaEntry")
+  (prop-type "GParamDouble")
+  (docs "left-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property right-padding
+  (of-object "MaiaEntry")
+  (prop-type "GParamDouble")
+  (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property font-description
+  (of-object "MaiaEntry")
+  (prop-type "GParamString")
+  (docs "font-description")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property text
+  (of-object "MaiaEntry")
+  (prop-type "GParamString")
+  (docs "text")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property lines
+  (of-object "MaiaEntry")
+  (prop-type "GParamUInt")
+  (docs "lines")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property underline-width
+  (of-object "MaiaEntry")
+  (prop-type "GParamDouble")
+  (docs "underline-width")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaGrid
+
+(define-property tag
+  (of-object "MaiaGrid")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property row
+  (of-object "MaiaGrid")
+  (prop-type "GParamUInt")
+  (docs "row")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property column
+  (of-object "MaiaGrid")
+  (prop-type "GParamUInt")
+  (docs "column")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property rows
+  (of-object "MaiaGrid")
+  (prop-type "GParamUInt")
+  (docs "rows")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property columns
+  (of-object "MaiaGrid")
+  (prop-type "GParamUInt")
+  (docs "columns")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xexpand
+  (of-object "MaiaGrid")
+  (prop-type "GParamBoolean")
+  (docs "xexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xfill
+  (of-object "MaiaGrid")
+  (prop-type "GParamBoolean")
+  (docs "xfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xalign
+  (of-object "MaiaGrid")
+  (prop-type "GParamDouble")
+  (docs "xalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yexpand
+  (of-object "MaiaGrid")
+  (prop-type "GParamBoolean")
+  (docs "yexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yfill
+  (of-object "MaiaGrid")
+  (prop-type "GParamBoolean")
+  (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yalign
+  (of-object "MaiaGrid")
+  (prop-type "GParamDouble")
+  (docs "yalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property top-padding
+  (of-object "MaiaGrid")
+  (prop-type "GParamDouble")
+  (docs "top-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property bottom-padding
+  (of-object "MaiaGrid")
+  (prop-type "GParamDouble")
+  (docs "bottom-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property left-padding
+  (of-object "MaiaGrid")
+  (prop-type "GParamDouble")
+  (docs "left-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property right-padding
+  (of-object "MaiaGrid")
+  (prop-type "GParamDouble")
+  (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property homogeneous
+  (of-object "MaiaGrid")
+  (prop-type "GParamBoolean")
+  (docs "homogeneous")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property row-spacing
+  (of-object "MaiaGrid")
+  (prop-type "GParamDouble")
+  (docs "row-spacing")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property column-spacing
+  (of-object "MaiaGrid")
+  (prop-type "GParamDouble")
+  (docs "column-spacing")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property border-line-width
+  (of-object "MaiaGrid")
+  (prop-type "GParamDouble")
+  (docs "border-line-width")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property grid-line-width
+  (of-object "MaiaGrid")
+  (prop-type "GParamDouble")
+  (docs "grid-line-width")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaGroup
+
+(define-property tag
+  (of-object "MaiaGroup")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property characters
+  (of-object "MaiaGroup")
+  (prop-type "GParamString")
+  (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaHighlight
+
+(define-property tag
+  (of-object "MaiaHighlight")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property border
+  (of-object "MaiaHighlight")
+  (prop-type "GParamDouble")
+  (docs "border")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaImage
+
+(define-property tag
+  (of-object "MaiaImage")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property characters
+  (of-object "MaiaImage")
+  (prop-type "GParamString")
+  (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property row
+  (of-object "MaiaImage")
+  (prop-type "GParamUInt")
+  (docs "row")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property column
+  (of-object "MaiaImage")
+  (prop-type "GParamUInt")
+  (docs "column")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property rows
+  (of-object "MaiaImage")
+  (prop-type "GParamUInt")
+  (docs "rows")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property columns
+  (of-object "MaiaImage")
+  (prop-type "GParamUInt")
+  (docs "columns")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xexpand
+  (of-object "MaiaImage")
+  (prop-type "GParamBoolean")
+  (docs "xexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xfill
+  (of-object "MaiaImage")
+  (prop-type "GParamBoolean")
+  (docs "xfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xalign
+  (of-object "MaiaImage")
+  (prop-type "GParamDouble")
+  (docs "xalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yexpand
+  (of-object "MaiaImage")
+  (prop-type "GParamBoolean")
+  (docs "yexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yfill
+  (of-object "MaiaImage")
+  (prop-type "GParamBoolean")
+  (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yalign
+  (of-object "MaiaImage")
+  (prop-type "GParamDouble")
+  (docs "yalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property top-padding
+  (of-object "MaiaImage")
+  (prop-type "GParamDouble")
+  (docs "top-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property bottom-padding
+  (of-object "MaiaImage")
+  (prop-type "GParamDouble")
+  (docs "bottom-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property left-padding
+  (of-object "MaiaImage")
+  (prop-type "GParamDouble")
+  (docs "left-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property right-padding
+  (of-object "MaiaImage")
+  (prop-type "GParamDouble")
+  (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property filename
+  (of-object "MaiaImage")
+  (prop-type "GParamString")
+  (docs "filename")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaItem
+
+(define-signal grab-pointer
+  (of-object "MaiaItem")
+  (return-type "gboolean")
+  (when "last")
+  (parameters
+    '("MaiaItem*" "p0")
+  )
+)
+
+(define-signal ungrab-pointer
+  (of-object "MaiaItem")
+  (return-type "void")
+  (when "last")
+  (parameters
+    '("MaiaItem*" "p0")
+  )
+)
+
+(define-signal grab-keyboard
+  (of-object "MaiaItem")
+  (return-type "gboolean")
+  (when "last")
+  (parameters
+    '("MaiaItem*" "p0")
+  )
+)
+
+(define-signal ungrab-keyboard
+  (of-object "MaiaItem")
+  (return-type "void")
+  (when "last")
+  (parameters
+    '("MaiaItem*" "p0")
+  )
+)
+
+(define-signal button-press-event
+  (of-object "MaiaItem")
+  (return-type "gboolean")
+  (when "last")
+  (parameters
+    '("guint" "p0")
+    '("MaiaGraphicPoint*" "p1")
+  )
+)
+
+(define-signal button-release-event
+  (of-object "MaiaItem")
+  (return-type "gboolean")
+  (when "last")
+  (parameters
+    '("guint" "p0")
+    '("MaiaGraphicPoint*" "p1")
+  )
+)
+
+(define-signal motion-event
+  (of-object "MaiaItem")
+  (return-type "gboolean")
+  (when "last")
+  (parameters
+    '("MaiaGraphicPoint*" "p0")
+  )
+)
+
+(define-signal scroll-event
+  (of-object "MaiaItem")
+  (return-type "gboolean")
+  (when "last")
+  (parameters
+    '("MaiaScroll" "p0")
+    '("MaiaGraphicPoint*" "p1")
+  )
+)
+
+(define-signal key-press-event
+  (of-object "MaiaItem")
+  (return-type "void")
+  (when "last")
+  (parameters
+    '("MaiaKey" "p0")
+    '("guint" "p1")
+  )
+)
+
+(define-signal key-release-event
+  (of-object "MaiaItem")
+  (return-type "void")
+  (when "last")
+  (parameters
+    '("MaiaKey" "p0")
+    '("guint" "p1")
+  )
+)
+
+(define-signal grab-focus
+  (of-object "MaiaItem")
+  (return-type "void")
+  (when "first")
+  (parameters
+    '("MaiaItem*" "p0")
+  )
+)
+
+(define-signal set-pointer-cursor
+  (of-object "MaiaItem")
+  (return-type "void")
+  (when "first")
+  (parameters
+    '("MaiaCursor" "p0")
+  )
+)
+
+(define-signal move-pointer
+  (of-object "MaiaItem")
+  (return-type "void")
+  (when "first")
+  (parameters
+    '("MaiaGraphicPoint*" "p0")
+  )
+)
+
+(define-property parent
+  (of-object "MaiaItem")
+  (prop-type "GParamObject")
+  (docs "parent")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property name
+  (of-object "MaiaItem")
+  (prop-type "GParamString")
+  (docs "name")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property tag
+  (of-object "MaiaItem")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property characters
+  (of-object "MaiaItem")
+  (prop-type "GParamString")
+  (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property is-packable
+  (of-object "MaiaItem")
+  (prop-type "GParamBoolean")
+  (docs "is-packable")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property is-movable
+  (of-object "MaiaItem")
+  (prop-type "GParamBoolean")
+  (docs "is-movable")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property is-resizable
+  (of-object "MaiaItem")
+  (prop-type "GParamBoolean")
+  (docs "is-resizable")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property have-focus
+  (of-object "MaiaItem")
+  (prop-type "GParamBoolean")
+  (docs "have-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property visible
+  (of-object "MaiaItem")
+  (prop-type "GParamBoolean")
+  (docs "visible")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property origin
+  (of-object "MaiaItem")
+  (prop-type "GParamBoxed")
+  (docs "origin")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property geometry
+  (of-object "MaiaItem")
+  (prop-type "GParamObject")
+  (docs "geometry")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property damaged
+  (of-object "MaiaItem")
+  (prop-type "GParamObject")
+  (docs "damaged")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property transform
+  (of-object "MaiaItem")
+  (prop-type "GParamObject")
+  (docs "transform")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property page
+  (of-object "MaiaItem")
+  (prop-type "GParamUInt")
+  (docs "page")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property position
+  (of-object "MaiaItem")
+  (prop-type "GParamBoxed")
+  (docs "position")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property size
+  (of-object "MaiaItem")
+  (prop-type "GParamBoxed")
+  (docs "size")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property size-requested
+  (of-object "MaiaItem")
+  (prop-type "GParamBoxed")
+  (docs "size-requested")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property layer
+  (of-object "MaiaItem")
+  (prop-type "GParamUInt")
+  (docs "layer")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property fill-color
+  (of-object "MaiaItem")
+  (prop-type "GParamObject")
+  (docs "fill-color")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property stroke-color
+  (of-object "MaiaItem")
+  (prop-type "GParamObject")
+  (docs "stroke-color")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property background
+  (of-object "MaiaItem")
+  (prop-type "GParamObject")
+  (docs "background")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property line-width
+  (of-object "MaiaItem")
+  (prop-type "GParamDouble")
+  (docs "line-width")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaItemMovable
+
+;; From MaiaItemPackable
+
+(define-property bottom-padding
+  (of-object "MaiaItemPackable")
+  (prop-type "GParamDouble")
+  (docs "bottom-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property column
+  (of-object "MaiaItemPackable")
+  (prop-type "GParamUInt")
+  (docs "column")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property columns
+  (of-object "MaiaItemPackable")
+  (prop-type "GParamUInt")
+  (docs "columns")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property left-padding
+  (of-object "MaiaItemPackable")
+  (prop-type "GParamDouble")
+  (docs "left-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property right-padding
+  (of-object "MaiaItemPackable")
+  (prop-type "GParamDouble")
+  (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property row
+  (of-object "MaiaItemPackable")
+  (prop-type "GParamUInt")
+  (docs "row")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property rows
+  (of-object "MaiaItemPackable")
+  (prop-type "GParamUInt")
+  (docs "rows")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property top-padding
+  (of-object "MaiaItemPackable")
+  (prop-type "GParamDouble")
+  (docs "top-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xalign
+  (of-object "MaiaItemPackable")
+  (prop-type "GParamDouble")
+  (docs "xalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xexpand
+  (of-object "MaiaItemPackable")
+  (prop-type "GParamBoolean")
+  (docs "xexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xfill
+  (of-object "MaiaItemPackable")
+  (prop-type "GParamBoolean")
+  (docs "xfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yalign
+  (of-object "MaiaItemPackable")
+  (prop-type "GParamDouble")
+  (docs "yalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yexpand
+  (of-object "MaiaItemPackable")
+  (prop-type "GParamBoolean")
+  (docs "yexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yfill
+  (of-object "MaiaItemPackable")
+  (prop-type "GParamBoolean")
+  (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaItemResizable
+
+;; From MaiaKey
+
+;; From MaiaLabel
+
+(define-property tag
+  (of-object "MaiaLabel")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property characters
+  (of-object "MaiaLabel")
+  (prop-type "GParamString")
+  (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property row
+  (of-object "MaiaLabel")
+  (prop-type "GParamUInt")
+  (docs "row")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property column
+  (of-object "MaiaLabel")
+  (prop-type "GParamUInt")
+  (docs "column")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property rows
+  (of-object "MaiaLabel")
+  (prop-type "GParamUInt")
+  (docs "rows")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property columns
+  (of-object "MaiaLabel")
+  (prop-type "GParamUInt")
+  (docs "columns")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xexpand
+  (of-object "MaiaLabel")
+  (prop-type "GParamBoolean")
+  (docs "xexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xfill
+  (of-object "MaiaLabel")
+  (prop-type "GParamBoolean")
+  (docs "xfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xalign
+  (of-object "MaiaLabel")
+  (prop-type "GParamDouble")
+  (docs "xalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yexpand
+  (of-object "MaiaLabel")
+  (prop-type "GParamBoolean")
+  (docs "yexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yfill
+  (of-object "MaiaLabel")
+  (prop-type "GParamBoolean")
+  (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yalign
+  (of-object "MaiaLabel")
+  (prop-type "GParamDouble")
+  (docs "yalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property top-padding
+  (of-object "MaiaLabel")
+  (prop-type "GParamDouble")
+  (docs "top-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property bottom-padding
+  (of-object "MaiaLabel")
+  (prop-type "GParamDouble")
+  (docs "bottom-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property left-padding
+  (of-object "MaiaLabel")
+  (prop-type "GParamDouble")
+  (docs "left-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property right-padding
+  (of-object "MaiaLabel")
+  (prop-type "GParamDouble")
+  (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property font-description
+  (of-object "MaiaLabel")
+  (prop-type "GParamString")
+  (docs "font-description")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property text
+  (of-object "MaiaLabel")
+  (prop-type "GParamString")
+  (docs "text")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaModel
+
+(define-signal value-changed
+  (of-object "MaiaModel")
+  (return-type "void")
+  (when "last")
+  (parameters
+    '("guint" "p0")
+  )
+)
+
+(define-signal row-added
+  (of-object "MaiaModel")
+  (return-type "void")
+  (when "last")
+  (parameters
+    '("guint" "p0")
+  )
+)
+
+(define-signal row-changed
+  (of-object "MaiaModel")
+  (return-type "void")
+  (when "last")
+  (parameters
+    '("guint" "p0")
+  )
+)
+
+(define-signal row-deleted
+  (of-object "MaiaModel")
+  (return-type "void")
+  (when "last")
+  (parameters
+    '("guint" "p0")
+  )
+)
+
+(define-signal rows-reordered
+  (of-object "MaiaModel")
+  (return-type "void")
+  (when "last")
+  (parameters
+    '("gpointer" "p0")
+    '("gint" "p1")
+  )
+)
+
+(define-property tag
+  (of-object "MaiaModel")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property characters
+  (of-object "MaiaModel")
+  (prop-type "GParamString")
+  (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property name
+  (of-object "MaiaModel")
+  (prop-type "GParamString")
+  (docs "name")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaOrientation
+
+;; From MaiaPageFormat
+
+;; From MaiaPath
+
+(define-property tag
+  (of-object "MaiaPath")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property characters
+  (of-object "MaiaPath")
+  (prop-type "GParamString")
+  (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property row
+  (of-object "MaiaPath")
+  (prop-type "GParamUInt")
+  (docs "row")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property column
+  (of-object "MaiaPath")
+  (prop-type "GParamUInt")
+  (docs "column")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property rows
+  (of-object "MaiaPath")
+  (prop-type "GParamUInt")
+  (docs "rows")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property columns
+  (of-object "MaiaPath")
+  (prop-type "GParamUInt")
+  (docs "columns")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xexpand
+  (of-object "MaiaPath")
+  (prop-type "GParamBoolean")
+  (docs "xexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xfill
+  (of-object "MaiaPath")
+  (prop-type "GParamBoolean")
+  (docs "xfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xalign
+  (of-object "MaiaPath")
+  (prop-type "GParamDouble")
+  (docs "xalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yexpand
+  (of-object "MaiaPath")
+  (prop-type "GParamBoolean")
+  (docs "yexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yfill
+  (of-object "MaiaPath")
+  (prop-type "GParamBoolean")
+  (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yalign
+  (of-object "MaiaPath")
+  (prop-type "GParamDouble")
+  (docs "yalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property top-padding
+  (of-object "MaiaPath")
+  (prop-type "GParamDouble")
+  (docs "top-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property bottom-padding
+  (of-object "MaiaPath")
+  (prop-type "GParamDouble")
+  (docs "bottom-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property left-padding
+  (of-object "MaiaPath")
+  (prop-type "GParamDouble")
+  (docs "left-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property right-padding
+  (of-object "MaiaPath")
+  (prop-type "GParamDouble")
+  (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property path
+  (of-object "MaiaPath")
+  (prop-type "GParamString")
+  (docs "path")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaRectangle
+
+(define-property tag
+  (of-object "MaiaRectangle")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property characters
+  (of-object "MaiaRectangle")
+  (prop-type "GParamString")
+  (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaScroll
+
+;; From MaiaToggleButton
+
+(define-signal toggled
+  (of-object "MaiaToggleButton")
+  (return-type "void")
+  (when "last")
+)
+
+(define-property row
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamUInt")
+  (docs "row")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property column
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamUInt")
+  (docs "column")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property rows
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamUInt")
+  (docs "rows")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property columns
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamUInt")
+  (docs "columns")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xexpand
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamBoolean")
+  (docs "xexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xfill
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamBoolean")
+  (docs "xfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xalign
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamDouble")
+  (docs "xalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yexpand
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamBoolean")
+  (docs "yexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yfill
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamBoolean")
+  (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yalign
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamDouble")
+  (docs "yalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property top-padding
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamDouble")
+  (docs "top-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property bottom-padding
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamDouble")
+  (docs "bottom-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property left-padding
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamDouble")
+  (docs "left-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property right-padding
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamDouble")
+  (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property group
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamString")
+  (docs "group")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property font-description
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamString")
+  (docs "font-description")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property label
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamString")
+  (docs "label")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property active
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamBoolean")
+  (docs "active")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaToggleGroup
+
+(define-property tag
+  (of-object "MaiaToggleGroup")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property characters
+  (of-object "MaiaToggleGroup")
+  (prop-type "GParamString")
+  (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property name
+  (of-object "MaiaToggleGroup")
+  (prop-type "GParamString")
+  (docs "name")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property active
+  (of-object "MaiaToggleGroup")
+  (prop-type "GParamString")
+  (docs "active")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaView
+
+(define-property tag
+  (of-object "MaiaView")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property lines
+  (of-object "MaiaView")
+  (prop-type "GParamUInt")
+  (docs "lines")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property orientation
+  (of-object "MaiaView")
+  (prop-type "GParamEnum")
+  (docs "orientation")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property model
+  (of-object "MaiaView")
+  (prop-type "GParamString")
+  (docs "model")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+

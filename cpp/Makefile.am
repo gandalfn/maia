@@ -1,0 +1,1 @@
+SUBDIRS = codegen src maiamm

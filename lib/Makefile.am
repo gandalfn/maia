@@ -42,8 +42,6 @@ libmaia_la_SOURCES = \
     core/timeout-interval.vala \
     core/timeout-pool.vala \
     core/timeline.vala \
-    xml/xml-parser.vala \
-    xml/xml-node.vala \
     manifest/document.vala \
     manifest/element.vala \
     manifest/attribute-scanner.vala \

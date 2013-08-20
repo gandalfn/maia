@@ -46,6 +46,7 @@ struct _MaiaCoreAny
     GObject         parent_instance;
 };
 
+GType maia_core_any_get_type (void) G_GNUC_CONST;
 MaiaCoreAny* maia_core_any_construct (GType inObjectType);
 
 void maia_core_any_delegate_construct (MaiaCoreAny* inpSelf);

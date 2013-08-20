@@ -4,7 +4,12 @@ Makefile
 *.lo
 *.la
 *.c
+*.cc
 *.h
+*.pyc
+!init.h
+!init.cc
+!wrap-init.h
 *.stamp
 *.pc
 *.deps
@@ -59,3 +64,12 @@ ltmain.sh
 ylwrap
 compile
 stamp-h1
+
+cpp/codegen/extradefs/generate_maia_defs
+doc/devhelp/
+doc/gtkdoc/
+doc/html/
+doc/valadoc-devhelp
+doc/valadoc-gtkdoc
+doc/valadoc-html
+

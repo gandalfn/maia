@@ -1,6 +1,6 @@
-/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * init.vala
+ * init.h
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,22 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-namespace Maia.Rsvg
-{
-    static bool s_Initialized = false;
+#ifndef MAIAMM_INIT_H_INCLUDED
+#define MAIAMM_INIT_H_INCLUDED
 
-    public static void
-    init ()
-    {
-        if (!s_Initialized)
-        {
-#if LIBRSVG_2_36_1
-            global::Rsvg.init ();
-#endif
+namespace Maia { void init(); }
 
-            Core.Any.delegate (typeof (Graphic.ImageSvg),  typeof (ImageSvg));
-
-            s_Initialized = true;
-        }
-    }
-}
+#endif /* !MAIAMM_WRAP_INIT_H_INCLUDED */
