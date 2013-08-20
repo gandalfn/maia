@@ -157,10 +157,6 @@ AM_PROG_VALAC($VALA_REQUIRED)
 VALA_VAPI_PATH=$($PKG_CONFIG --variable=vapidir libvala-0.20)
 AC_SUBST(VALA_VAPI_PATH)
 
-AC_ARG_ENABLE(valadoc,
-  AS_HELP_STRING([--enable-valadoc[=@<:@no/auto/yes@:>@]], [Enable valadoc support]),,
-    [enable_valadoc=auto])
-
 dnl ****************************************************************************
 dnl Check for valadoc
 dnl ****************************************************************************

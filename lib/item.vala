@@ -844,7 +844,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
      * @param inChild a child of item
      * @param inPoint point to convert
      *
-     * @return point in child item coordinate space
+     * @return Graphic.Point in child item coordinate space
      */
     public Graphic.Point
     convert_to_child_item_space (Item inChild, Graphic.Point inPoint)
@@ -873,10 +873,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     /**
      * Convert a point to parent item coordinate space
      *
-     * @param inChild a child of item
      * @param inPoint point to convert
      *
-     * @return point in parent item coordinate space
+     * @return Graphic.Point in parent item coordinate space
      */
     public Graphic.Point
     convert_to_parent_item_space (Graphic.Point inPoint)
@@ -892,9 +891,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     /**
      * Convert a root point to item coordinate space
      *
-     * @param inPoint point to convert
+     * @param inRootPoint point to convert
      *
-     * @return point in item coordinate space
+     * @return Graphic.Point in item coordinate space
      */
     public Graphic.Point
     convert_to_item_space (Graphic.Point inRootPoint)
@@ -910,7 +909,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
      *
      * @param inPoint point to convert
      *
-     * @return point in root coordinate space
+     * @return Graphic.Point in root coordinate space
      */
     public Graphic.Point
     convert_to_root_space (Graphic.Point inPoint)

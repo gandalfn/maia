@@ -276,7 +276,7 @@ public interface Maia.Canvas : Drawable
     /**
      * Load canvas mainfest
      *
-     * @param inManifest manifest file
+     * @param inFilename manifest filename
      * @param inRoot root id in manifest
      *
      * @throws ParseError when somethings goes wrong

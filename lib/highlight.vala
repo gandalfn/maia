@@ -20,7 +20,7 @@
 public class Maia.Highlight : ToggleButton
 {
     // accessors
-    public override string tag {
+    internal override string tag {
         get {
             return "Highlight";
         }

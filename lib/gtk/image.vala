@@ -20,7 +20,7 @@
 public class Maia.Gtk.Image : Maia.Image
 {
     // properties
-    public string m_IconName;
+    private string m_IconName;
 
     // accessors
     public string icon_name {

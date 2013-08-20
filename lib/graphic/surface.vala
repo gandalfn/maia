@@ -55,8 +55,8 @@ public class Maia.Graphic.Surface : Pattern
     /**
      * Performs a blur operation on the internal {@link Maia.Graphic.Surface}.
      *
-     * @param radius the blur radius
-     * @param process_count the number of times to perform the operation
+     * @param inRadius the blur radius
+     * @param inProcessCount the number of times to perform the operation
      */
     public virtual void
     fast_blur (int inRadius, int inProcessCount = 1) throws Graphic.Error
@@ -69,7 +69,7 @@ public class Maia.Graphic.Surface : Pattern
      * exponential blurring algorithm. This method is usually the fastest
      * and produces good-looking results (though not quite as good as gaussian's).
      *
-     * @param radius the blur radius
+     * @param inRadius the blur radius
      */
     public virtual void
     exponential_blur (int inRadius) throws Graphic.Error
@@ -83,7 +83,7 @@ public class Maia.Graphic.Surface : Pattern
      * debatably the best-looking results, and in most cases developers should
      * use the exponential blurring algorithm instead.
      *
-     * @param radius the blur radius
+     * @param inRadius the blur radius
      */
     public virtual void
     gaussian_blur (int inRadius) throws Graphic.Error
