@@ -1,0 +1,77 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * graphic-color.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/graphic-pattern.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/graphic-pattern_p.h)
+
+namespace Maia
+{
+    namespace Graphic
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Graphic)
+
+        class Color : public Pattern
+        {
+            _CLASS_GOBJECT(Color, MaiaGraphicColor, MAIA_GRAPHIC_COLOR, Pattern, MaiaGraphicPattern)
+
+            public:
+                static Glib::RefPtr<Color> create (double inRed, double inGreen, double inBlue, double inAlpha = 1.0)
+                {
+                    MaiaGraphicColor* pColor = maia_graphic_color_new (inRed, inGreen, inBlue, inAlpha);
+                    return Glib::RefPtr<Color> (new Color (pColor));
+                }
+
+                static Glib::RefPtr<Color> create (const Glib::ustring& inValue)
+                {
+                    MaiaGraphicColor* pColor = maia_graphic_color_new_parse (inValue.c_str ());
+                    return Glib::RefPtr<Color> (new Color (pColor));
+                }
+
+                static Glib::RefPtr<Color> create (const Glib::RefPtr<Color> inpColor, double inPercent)
+                {
+                    MaiaGraphicColor* pColor = maia_graphic_color_new_shade (const_cast<MaiaGraphicColor*> (inpColor->gobj ()), inPercent);
+                    return Glib::RefPtr<Color> (new Color (pColor));
+                }
+
+                _IGNORE(maia_graphic_color_new)
+                _IGNORE(maia_graphic_color_new_parse)
+                _IGNORE(maia_graphic_color_new_shade)
+
+                _WRAP_METHOD(Glib::ustring get_name () const, maia_graphic_color_get_name)
+                _WRAP_METHOD(double get_red () const, maia_graphic_color_get_red)
+                _WRAP_METHOD(double get_green () const, maia_graphic_color_get_green)
+                _WRAP_METHOD(double get_blue () const, maia_graphic_color_get_blue)
+                _WRAP_METHOD(double get_alpha () const, maia_graphic_color_get_alpha)
+                _WRAP_METHOD(bool is_set () const, maia_graphic_color_get_is_set)
+                _WRAP_METHOD(guint32 get_argb () const, maia_graphic_color_get_argb)
+
+                _WRAP_PROPERTY ("name", Glib::ustring)
+                _WRAP_PROPERTY ("red", double)
+                _WRAP_PROPERTY ("green", double)
+                _WRAP_PROPERTY ("blue", double)
+                _WRAP_PROPERTY ("alpha", double)
+                _WRAP_PROPERTY ("is-set", bool)
+                _WRAP_PROPERTY ("argb", guint32)
+        };
+
+    }
+}

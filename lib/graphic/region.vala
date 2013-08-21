@@ -27,7 +27,6 @@ public class Maia.Graphic.Region : Core.Any
         PART
     }
 
-    [Compact]
     public class Iterator
     {
         // properties
@@ -39,6 +38,12 @@ public class Maia.Graphic.Region : Core.Any
         {
             m_Region = inRegion;
             m_Index = -1;
+        }
+
+        internal Iterator.end (Region inRegion)
+        {
+            m_Region = inRegion;
+            m_Index = m_Region.length;
         }
 
         public bool
@@ -53,6 +58,12 @@ public class Maia.Graphic.Region : Core.Any
         get ()
         {
             return m_Region[m_Index];
+        }
+
+        public bool
+        compare (Iterator inIter)
+        {
+            return m_Region == inIter.m_Region && m_Index == inIter.m_Index;
         }
     }
 
@@ -184,6 +195,17 @@ public class Maia.Graphic.Region : Core.Any
     iterator ()
     {
         return new Iterator (this);
+    }
+
+    /**
+     * Returns last Iterator of region rectangles.
+     *
+     * @return the last Iterator of region rectangles
+     */
+    public Iterator
+    iterator_end ()
+    {
+        return new Iterator.end (this);
     }
 
     /**

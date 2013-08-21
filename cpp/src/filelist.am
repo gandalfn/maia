@@ -19,6 +19,9 @@ files_hg = \
     graphic-transform.hg \
     graphic-point.hg \
     graphic-size.hg \
-    graphic-rectangle.hg
+    graphic-rectangle.hg \
+    graphic-region.hg \
+    graphic-pattern.hg \
+    graphic-color.hg
 
 files_ccg = $(files_hg:.hg=.ccg)

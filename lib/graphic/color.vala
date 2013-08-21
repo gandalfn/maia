@@ -537,7 +537,7 @@ public class Maia.Graphic.Color : Pattern
      * @param inoutLightness light component in input green component on output
      * @param inoutSaturation sat component in input blue component on output
      */
-    public static void
+    private static void
     hls_to_rgb (ref double inoutHue, ref double inoutLightness, ref double inoutSaturation)
     {
         double hue;

@@ -62,3 +62,132 @@
     '("GError**" "error")
   )
 )
+
+; From MaiaGraphicRegion
+(define-vfunc get_extents
+  (of-object "MaiaGraphicRegion")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRectangle*" "rect")
+  )
+)
+
+(define-vfunc set_extents
+  (of-object "MaiaGraphicRegion")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRectangle*" "rect")
+  )
+)
+
+(define-vfunc get_length
+  (of-object "MaiaGraphicRegion")
+  (return-type "gint")
+)
+
+(define-vfunc is_empty
+  (of-object "MaiaGraphicRegion")
+  (return-type "gboolean")
+)
+
+(define-vfunc translate
+  (of-object "MaiaGraphicRegion")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "inOffset")
+  )
+)
+
+(define-vfunc transform
+  (of-object "MaiaGraphicRegion")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicTransform*" "inTransform")
+  )
+)
+
+(define-vfunc contains
+  (of-object "MaiaGraphicRegion")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaGraphicPoint*" "inPoint")
+  )
+)
+
+(define-vfunc get
+  (of-object "MaiaGraphicRegion")
+  (return-type "none")
+  (parameters
+    '("gint" "inIndex")
+    '("MaiaGraphicRectangle*" "result")
+  )
+)
+
+(define-vfunc copy
+  (of-object "MaiaGraphicRegion")
+  (return-type "MaiaGraphicRegion*")
+)
+
+(define-vfunc equal
+  (of-object "MaiaGraphicRegion")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaGraphicRegion*" "inOther")
+  )
+)
+
+(define-vfunc union_
+  (of-object "MaiaGraphicRegion")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRegion*" "inOther")
+  )
+)
+
+(define-vfunc union_with_rect
+  (of-object "MaiaGraphicRegion")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRectangle*" "inRectangle")
+  )
+)
+
+(define-vfunc intersect
+  (of-object "MaiaGraphicRegion")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRegion*" "inOther")
+  )
+)
+
+(define-vfunc subtract
+  (of-object "MaiaGraphicRegion")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRegion*" "inOther")
+  )
+)
+
+(define-vfunc xor_
+  (of-object "MaiaGraphicRegion")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRegion*" "inOther")
+  )
+)
+
+(define-vfunc contains_rectangle
+  (of-object "MaiaGraphicRegion")
+  (return-type "MaiaGraphicRegionOverlap")
+  (parameters
+    '("MaiaGraphicRectangle*" "inRect")
+  )
+)
+
+(define-vfunc resize
+  (of-object "MaiaGraphicRegion")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "inSize")
+  )
+)

@@ -4920,15 +4920,74 @@
   )
 )
 
-(define-method free
-  (of-object "MaiaGraphicRegionIterator")
-  (c-name "maia_graphic_region_iterator_free")
+(define-function maia_graphic_region_iterator_ref
+  (c-name "maia_graphic_region_iterator_ref")
+  (return-type "gpointer")
+  (parameters
+    '("gpointer" "instance")
+  )
+)
+
+(define-function maia_graphic_region_iterator_unref
+  (c-name "maia_graphic_region_iterator_unref")
   (return-type "none")
+  (parameters
+    '("gpointer" "instance")
+  )
+)
+
+(define-function maia_graphic_region_param_spec_iterator
+  (c-name "maia_graphic_region_param_spec_iterator")
+  (return-type "GParamSpec*")
+  (parameters
+    '("const-gchar*" "name")
+    '("const-gchar*" "nick")
+    '("const-gchar*" "blurb")
+    '("GType" "object_type")
+    '("GParamFlags" "flags")
+  )
+)
+
+(define-function maia_graphic_region_value_set_iterator
+  (c-name "maia_graphic_region_value_set_iterator")
+  (return-type "none")
+  (parameters
+    '("GValue*" "value")
+    '("gpointer" "v_object")
+  )
+)
+
+(define-function maia_graphic_region_value_take_iterator
+  (c-name "maia_graphic_region_value_take_iterator")
+  (return-type "none")
+  (parameters
+    '("GValue*" "value")
+    '("gpointer" "v_object")
+  )
+)
+
+(define-function maia_graphic_region_value_get_iterator
+  (c-name "maia_graphic_region_value_get_iterator")
+  (return-type "gpointer")
+  (parameters
+    '("const-GValue*" "value")
+  )
+)
+
+(define-function maia_graphic_region_iterator_get_type
+  (c-name "maia_graphic_region_iterator_get_type")
+  (return-type "GType")
 )
 
 (define-method iterator
   (of-object "MaiaGraphicRegion")
   (c-name "maia_graphic_region_iterator")
+  (return-type "MaiaGraphicRegionIterator*")
+)
+
+(define-method iterator_end
+  (of-object "MaiaGraphicRegion")
+  (c-name "maia_graphic_region_iterator_end")
   (return-type "MaiaGraphicRegionIterator*")
 )
 
@@ -5049,6 +5108,15 @@
   )
 )
 
+(define-method compare
+  (of-object "MaiaGraphicRegionIterator")
+  (c-name "maia_graphic_region_iterator_compare")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaGraphicRegionIterator*" "inIter")
+  )
+)
+
 (define-function maia_graphic_pattern_get_type
   (c-name "maia_graphic_pattern_get_type")
   (return-type "GType")
@@ -5116,16 +5184,6 @@
     '("GType" "object_type")
     '("MaiaGraphicColor*" "inColor")
     '("gdouble" "inPercent")
-  )
-)
-
-(define-function maia_graphic_color_hls_to_rgb
-  (c-name "maia_graphic_color_hls_to_rgb")
-  (return-type "none")
-  (parameters
-    '("gdouble*" "inoutHue")
-    '("gdouble*" "inoutLightness")
-    '("gdouble*" "inoutSaturation")
   )
 )
 
