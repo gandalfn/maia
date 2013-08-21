@@ -1,6 +1,6 @@
 /* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * pair.hg
+ * core-pair.hg
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -18,7 +18,7 @@
  */
 
 #include <maia.h>
-#include <maiamm/collection.h>
+#include <maiamm/core-collection.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(glibmm/private/object_p.h)

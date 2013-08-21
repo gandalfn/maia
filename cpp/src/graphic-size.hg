@@ -1,0 +1,63 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * graphic-size.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+#include <maia.h>
+#include <maiamm/graphic-transform.h>
+#include <maiamm/graphic-point.h>
+
+_DEFS(maiamm,maia)
+
+namespace Maia
+{
+    namespace Graphic
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Graphic)
+
+        class Size
+        {
+            _CLASS_BOXEDTYPE_STATIC(Size, MaiaGraphicSize)
+
+            public:
+                Size (double inWidth, double inHeight);
+
+                void set (const Size& inOther);
+
+                bool is_empty ();
+
+                void resize (double inDx, double inDy);
+
+                void transform (const Glib::RefPtr<Transform>& inTransform);
+
+                inline bool operator== (const Size& rhs)
+                {
+                    return maia_graphic_size_equal (&gobject_, const_cast <MaiaGraphicSize*> (&rhs.gobject_));
+                }
+
+                bool contains (const Point& inPoint);
+
+                Glib::ustring to_string ();
+
+                _MEMBER_GET(width, width, double, double)
+                _MEMBER_SET(width, width, double, double)
+                _MEMBER_GET(height, height, double, double)
+                _MEMBER_SET(height, height, double, double)
+        };
+    }
+}

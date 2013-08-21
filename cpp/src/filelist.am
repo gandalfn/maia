@@ -6,12 +6,19 @@ files_defs = \
     maia_vfuncs.defs
 
 files_hg = \
-    any.hg \
-    object.hg \
-    iterator.hg \
-    collection.hg \
-    set.hg \
-    pair.hg \
-    map.hg
+    core-any.hg \
+    core-object.hg \
+    core-iterator.hg \
+    core-collection.hg \
+    core-set.hg \
+    core-pair.hg \
+    core-map.hg \
+    core-parser.hg \
+    core-timeline.hg \
+    graphic-matrix.hg \
+    graphic-transform.hg \
+    graphic-point.hg \
+    graphic-size.hg \
+    graphic-rectangle.hg
 
 files_ccg = $(files_hg:.hg=.ccg)

@@ -1,0 +1,136 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * graphic-matrix.ccg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+
+namespace Maia
+{
+    namespace Graphic
+    {
+        Matrix::Matrix ()
+        {
+            maia_graphic_matrix_init_identity (&gobject_);
+        }
+
+        Matrix::Matrix(const MaiaGraphicMatrix* gobject)
+        {
+            if (gobject)
+                gobject_ = *gobject;
+            else
+                GLIBMM_INITIALIZE_STRUCT(gobject_, MaiaGraphicMatrix);
+        }
+
+        Matrix::Matrix (double inXX, double inYX, double inXY, double inYY, double inX0, double inY0)
+        {
+            maia_graphic_matrix_init (&gobject_, inXX, inYX, inXY, inYY, inX0, inY0);
+        }
+
+        void Matrix::invert ()
+        {
+            GError* gerror = 0;
+            maia_graphic_matrix_invert (gobj(), &(gerror));
+            if(gerror)
+                ::Glib::Error::throw_exception(gerror);
+        }
+
+        void Matrix::multiply (const Matrix& inMatrix)
+        {
+            maia_graphic_matrix_multiply (&gobject_, const_cast<MaiaGraphicMatrix*>(&inMatrix.gobject_));
+        }
+
+        Glib::ustring Matrix::to_string ()
+        {
+            Glib::ustring ret (maia_graphic_matrix_to_string (&gobject_));
+            return ret;
+        }
+
+        double Matrix::get_xx() const
+        {
+            return gobj()->xx;
+        }
+
+        void Matrix::set_xx(const double& value)
+        {
+            gobj()->xx = value;
+        }
+
+        double Matrix::get_xy() const
+        {
+            return gobj()->xy;
+        }
+
+        void Matrix::set_xy(const double& value)
+        {
+            gobj()->xy = value;
+        }
+
+        double Matrix::get_yx() const
+        {
+            return gobj()->yx;
+        }
+
+        void Matrix::set_yx(const double& value)
+        {
+            gobj()->yx = value;
+        }
+
+        double Matrix::get_yy() const
+        {
+            return gobj()->yy;
+        }
+
+        void Matrix::set_yy(const double& value)
+        {
+            gobj()->yy = value;
+        }
+
+        double Matrix::get_x0() const
+        {
+            return gobj()->x0;
+        }
+
+        void Matrix::set_x0(const double& value)
+        {
+            gobj()->x0 = value;
+        }
+
+        double Matrix::get_y0() const
+        {
+            return gobj()->y0;
+        }
+
+        void Matrix::set_y0(const double& value)
+        {
+            gobj()->y0 = value;
+        }
+    }
+}
+
+namespace Glib
+{
+    Maia::Graphic::Matrix& wrap(MaiaGraphicMatrix* object)
+    {
+        return *reinterpret_cast<Maia::Graphic::Matrix*>(object);
+    }
+
+    const Maia::Graphic::Matrix& wrap(const MaiaGraphicMatrix* object)
+    {
+        return *reinterpret_cast<const Maia::Graphic::Matrix*>(object);
+    }
+}

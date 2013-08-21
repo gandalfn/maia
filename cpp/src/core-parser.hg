@@ -1,0 +1,107 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * core-parser.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/core-object.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/core-object_p.h)
+
+namespace Maia
+{
+    namespace Core
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Core)
+
+        _WRAP_ENUM(ParserToken, MaiaCoreParserToken, NO_GTYPE)
+        _WRAP_GERROR(ParseError, MaiaCoreParseError, MAIA_CORE_PARSE_ERROR, NO_GTYPE)
+
+        class ParserIterator
+        {
+            _CLASS_BOXEDTYPE(ParserIterator, MaiaCoreParserIterator, NONE, (MaiaCoreParserIterator*)maia_core_parser_iterator_ref, maia_core_parser_iterator_unref)
+
+            public:
+                inline ParserIterator& operator++()
+                {
+                    next ();
+                    return *this;
+                }
+
+                inline const ParserIterator operator++(int inCount)
+                {
+                    for (int cpt = 0; cpt < inCount && next (); ++cpt);
+                    return *this;
+                }
+
+                inline ParserToken operator*()
+                {
+                    return get ();
+                }
+
+                _IGNORE(maia_core_parser_iterator_compare)
+
+                inline bool operator== (const ParserIterator& rhs)
+                {
+                    return maia_core_parser_iterator_compare (gobj (), const_cast<MaiaCoreParserIterator*> (rhs.gobj ()));
+                }
+
+                inline bool operator!= (const ParserIterator& rhs)
+                {
+                    return !maia_core_parser_iterator_compare (gobj (), const_cast<MaiaCoreParserIterator*> (rhs.gobj ()));
+                }
+
+                _WRAP_METHOD(bool next (), maia_core_parser_iterator_next, errthrow)
+                _WRAP_METHOD(bool is_end () const, maia_core_parser_iterator_is_end)
+                _WRAP_METHOD(ParserToken get () const, maia_core_parser_iterator_get)
+        };
+
+        class Parser : public Object
+        {
+            _CLASS_GOBJECT(Parser, MaiaCoreParser, MAIA_CORE_PARSER, Object, MaiaCoreObject)
+
+            protected:
+                _WRAP_METHOD(void next_char (), maia_core_parser_next_char)
+                _WRAP_METHOD(void next_unichar (gunichar inChar), maia_core_parser_next_unichar)
+                _WRAP_METHOD(void skip_space (), maia_core_parser_skip_space)
+
+                _WRAP_VFUNC(ParserToken next_token (), next_token, errthrow)
+                _WRAP_METHOD(ParserToken next_token (), maia_core_parser_next_token, errthrow)
+
+            public:
+                typedef ParserIterator iterator;
+
+                _WRAP_METHOD(Glib::ustring get_element () const, maia_core_parser_get_element)
+                _WRAP_METHOD(Glib::ustring get_attribute () const, maia_core_parser_get_attribute)
+                _WRAP_METHOD(Glib::ustring get_val () const, maia_core_parser_get_val)
+                _WRAP_METHOD(Glib::ustring get_characters () const, maia_core_parser_get_characters)
+
+                _IGNORE (maia_core_parser_get_attributes)
+                std::map<Glib::ustring, Glib::ustring> get_attributes ();
+
+                _WRAP_METHOD(Parser::iterator begin (), maia_core_parser_iterator)
+                _WRAP_METHOD(Parser::iterator end (), maia_core_parser_iterator_end)
+
+                _WRAP_PROPERTY ("element", Glib::ustring)
+                _WRAP_PROPERTY ("characters", Glib::ustring)
+                _WRAP_PROPERTY ("attribute", Glib::ustring)
+                _WRAP_PROPERTY ("val", Glib::ustring)
+        };
+
+    }
+}

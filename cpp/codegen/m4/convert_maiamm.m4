@@ -12,3 +12,12 @@ _CONVERSION(`guint32',`Glib::QueryQuark',`Glib::QueryQuark ((GQuark)$3)')
 
 _CONVERSION(`MaiaCoreObjectIterator*',`Object::iterator',`Glib::wrap($3)')
 
+_CONVERSION(`MaiaCoreParserIterator*',`Parser::iterator',`Glib::wrap($3)')
+
+_CONVERSION(`MaiaGraphicPoint*',`Point',`Glib::wrap(&$3)')
+_CONVERSION(`Point',`MaiaGraphicPoint*',`*$3.gobj ()')
+_CONVERSION(`MaiaGraphicSize*',`Size',`Glib::wrap(&$3)')
+_CONVERSION(`Size',`MaiaGraphicSize*',`*$3.gobj ()')
+
+_CONV_ENUM(MaiaCore,ParserToken)
+_CONV_ENUM(MaiaCore,TimelineDirection)

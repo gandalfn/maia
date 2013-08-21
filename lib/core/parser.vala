@@ -50,6 +50,12 @@ public abstract class Maia.Core.Parser : Object
             m_Parser = inParser;
         }
 
+        internal Iterator.end (Parser inParser)
+        {
+            m_Parser = inParser;
+            m_Current = Parser.Token.EOF;
+        }
+
         public bool
         next () throws ParseError
         {
@@ -65,6 +71,18 @@ public abstract class Maia.Core.Parser : Object
         get ()
         {
             return m_Current;
+        }
+
+        public bool
+        compare (Iterator inIter)
+        {
+            return m_Current == inIter.m_Current && m_Parser == inIter.m_Parser;
+        }
+
+        public bool
+        is_end ()
+        {
+            return m_Current == Parser.Token.EOF;
         }
     }
 
@@ -170,5 +188,11 @@ public abstract class Maia.Core.Parser : Object
     iterator ()
     {
         return new Iterator (this);
+    }
+
+    public new Iterator
+    iterator_end ()
+    {
+        return new Iterator.end (this);
     }
 }

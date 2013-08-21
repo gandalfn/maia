@@ -1,6 +1,6 @@
 /* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * object.ccg
+ * graphic-point.hg
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,11 +17,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 #include <maia.h>
+#include <maiamm/graphic-transform.h>
+
+_DEFS(maiamm,maia)
 
 namespace Maia
 {
-    namespace Core
+    namespace Graphic
     {
+        _GMMPROC_EXTRA_NAMESPACE(Graphic)
+
+        class Point
+        {
+            _CLASS_BOXEDTYPE_STATIC(Point, MaiaGraphicPoint)
+
+            public:
+                Point (double inX, double inY);
+
+                Point invert ();
+
+                void subtract (const Point& inOther);
+
+                void translate (const Point& inOffset);
+
+                void transform (const Glib::RefPtr<Transform>& inTransform);
+
+                Glib::ustring to_string ();
+
+                _MEMBER_GET(x, x, double, double)
+                _MEMBER_SET(x, x, double, double)
+                _MEMBER_GET(y, y, double, double)
+                _MEMBER_SET(y, y, double, double)
+        };
     }
 }

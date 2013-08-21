@@ -1,0 +1,91 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * graphic-matrix.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+#include <maia.h>
+
+_DEFS(maiamm,maia)
+
+namespace Maia
+{
+    namespace Graphic
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Graphic)
+
+        class Matrix
+        {
+            public:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+                typedef Matrix CppObjectType;
+                typedef MaiaGraphicMatrix BaseObjectType;
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+
+            public:
+                Matrix ();
+                Matrix (double inXX, double inYX, double inXY, double inYY, double inX0, double inY0);
+                explicit Matrix(const MaiaGraphicMatrix* gobject);
+
+                void multiply (const Matrix& inMatrix);
+
+                void invert ();
+
+                Glib::ustring to_string ();
+
+                MaiaGraphicMatrix*       gobj()       { return &gobject_; }
+                const MaiaGraphicMatrix* gobj() const { return &gobject_; }
+
+                double get_xx() const;
+                void set_xx(const double& value);
+                double get_xy() const;
+                void set_xy(const double& value);
+                double get_yx() const;
+                void set_yx(const double& value);
+                double get_yy() const;
+                void set_yy(const double& value);
+                double get_x0() const;
+                void set_x0(const double& value);
+                double get_y0() const;
+                void set_y0(const double& value);
+
+            protected:
+                MaiaGraphicMatrix gobject_;
+        };
+    }
+}
+
+namespace Glib
+{
+    /** @relates Maia::Graphic::Matrix
+     * @param object The C instance
+     * @result A C++ instance that wraps this C instance.
+     */
+    Maia::Graphic::Matrix& wrap(MaiaGraphicMatrix* object);
+
+    /** @relates Maia::Graphic::Matrix
+     * @param object The C instance
+     * @result A C++ instance that wraps this C instance.
+     */
+    const Maia::Graphic::Matrix& wrap(const MaiaGraphicMatrix* object);
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+    template <>
+    class Value<Maia::Graphic::Matrix> : public Glib::Value_Boxed<Maia::Graphic::Matrix>
+    {};
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+}

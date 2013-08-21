@@ -53,3 +53,12 @@
   (of-object "MaiaCoreObject")
   (return-type "char*")
 )
+
+; From MaiaCoreParser
+(define-vfunc next_token
+  (of-object "MaiaCoreParser")
+  (return-type "MaiaCoreParserToken")
+  (parameters
+    '("GError**" "error")
+  )
+)

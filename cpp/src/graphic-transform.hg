@@ -1,0 +1,82 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * graphic-transform.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+#include <maia.h>
+#include <maiamm/core-object.h>
+#include <maiamm/graphic-matrix.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/core-object_p.h)
+
+namespace Maia
+{
+    namespace Graphic
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Graphic)
+
+        class Transform : public Core::Object
+        {
+            _CLASS_GOBJECT(Transform, MaiaGraphicTransform, MAIA_GRAPHIC_TRANSFORM, Core::Object, MaiaCoreObject)
+
+            protected:
+                _CTOR_DEFAULT
+
+            public:
+                static Glib::RefPtr<Transform> create ()
+                {
+                    MaiaGraphicTransform* pTransform = maia_graphic_transform_new_identity ();
+                    return Glib::RefPtr<Transform> (new Transform (pTransform));
+                }
+
+                static Glib::RefPtr<Transform> create (const Matrix& inMatrix)
+                {
+                    MaiaGraphicTransform* pTransform = maia_graphic_transform_new_from_matrix (const_cast<MaiaGraphicMatrix*> (inMatrix.gobj ()));
+                    return Glib::RefPtr<Transform> (new Transform (pTransform));
+                }
+
+                static Glib::RefPtr<Transform> create (double inXX, double inYX, double inXY, double inYY, double inX0, double inY0)
+                {
+                    MaiaGraphicTransform* pTransform = maia_graphic_transform_new (inXX, inYX, inXY, inYY, inX0, inY0);
+                    return Glib::RefPtr<Transform> (new Transform (pTransform));
+                }
+
+                _IGNORE(maia_graphic_transform_get_matrix)
+                Matrix get_matrix () const
+                {
+                    MaiaGraphicMatrix matrix;
+                    maia_graphic_transform_get_matrix (MAIA_GRAPHIC_TRANSFORM (gobject_), &matrix);
+
+                    return Matrix (&matrix);
+                }
+
+                _WRAP_METHOD(void translate (double inX, double inY), maia_graphic_transform_translate)
+                _WRAP_METHOD(void scale (double inSx, double inSy), maia_graphic_transform_scale)
+                _WRAP_METHOD(void rotate (double inRadians), maia_graphic_transform_rotate)
+                _WRAP_METHOD(void skew_x (double inRadians), maia_graphic_transform_skew_x)
+                _WRAP_METHOD(void skew_y (double inRadians), maia_graphic_transform_skew_y)
+
+                _WRAP_PROPERTY("matrix", Matrix)
+
+                _IGNORE(maia_graphic_transform_changed)
+
+                _WRAP_SIGNAL(void changed(), "changed", no_default_handler)
+        };
+    }
+}

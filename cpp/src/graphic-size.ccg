@@ -1,0 +1,63 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * graphic-size.ccg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+
+namespace Maia
+{
+    namespace Graphic
+    {
+        Size::Size (double inWidth, double inHeight)
+        {
+            gobject_.width = inWidth;
+            gobject_.height = inHeight;
+        }
+
+        void Size::set (const Size& inOther)
+        {
+            maia_graphic_size_set (&gobject_, const_cast<MaiaGraphicSize*>(&inOther.gobject_));
+        }
+
+        bool Size::is_empty ()
+        {
+            return maia_graphic_size_is_empty (&gobject_);
+        }
+
+        void Size::resize (double inWidth, double inHeight)
+        {
+            maia_graphic_size_resize (&gobject_, inWidth, inHeight);
+        }
+
+        void Size::transform (const Glib::RefPtr<Transform>& inTransform)
+        {
+            maia_graphic_size_transform (&gobject_, const_cast<MaiaGraphicTransform*>(inTransform->gobj ()));
+        }
+
+        bool Size::contains (const Point& inPoint)
+        {
+            return maia_graphic_size_contains (&gobject_, const_cast<MaiaGraphicPoint*>(inPoint.gobj ()));
+        }
+
+        Glib::ustring Size::to_string ()
+        {
+            Glib::ustring ret (maia_graphic_size_to_string (&gobject_));
+            return ret;
+        }
+    }
+}

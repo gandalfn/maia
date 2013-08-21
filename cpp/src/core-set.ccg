@@ -1,6 +1,6 @@
 /* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * any.hg
+ * core-set.ccg
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -19,24 +19,9 @@
 
 #include <maia.h>
 
-_DEFS(maiamm,maia)
-_PINCLUDE(glibmm/private/object_p.h)
-
 namespace Maia
 {
     namespace Core
     {
-        _GMMPROC_EXTRA_NAMESPACE(Core)
-
-        class Any : public Glib::Object
-        {
-            _CLASS_GOBJECT(Any, MaiaCoreAny, MAIA_CORE_ANY, Glib::Object, GObject)
-
-            public:
-                _IGNORE (maia_core_any_delegate_construct)
-                _IGNORE (maia_core_any_delegate)
-                _IGNORE (maia_core_any_undelegate)
-        };
-
     }
 }

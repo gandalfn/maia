@@ -1,0 +1,97 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * core-timeline.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+#include <maia.h>
+#include <maiamm/core-object.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/core-object_p.h)
+
+namespace Maia
+{
+    namespace Core
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Core)
+        _WRAP_ENUM(TimelineDirection, MaiaCoreTimelineDirection, s#DIRECTION_##,  NO_GTYPE)
+
+        class Timeline : public Object
+        {
+            _CLASS_GOBJECT(Timeline, MaiaCoreTimeline, MAIA_CORE_TIMELINE, Object, MaiaCoreObject)
+
+            protected:
+                _CTOR_DEFAULT
+
+            public:
+                static Glib::RefPtr<Timeline> create (unsigned int inNbFrames, unsigned int inFps)
+                {
+                    MaiaCoreTimeline* pTimeline = maia_core_timeline_new (inNbFrames, inFps);
+                    return Glib::RefPtr<Timeline> (new Timeline (pTimeline));
+                }
+
+                static Glib::RefPtr<Timeline> create (unsigned int inDuration)
+                {
+                    MaiaCoreTimeline* pTimeline = maia_core_timeline_new_for_duration (inDuration);
+                    return Glib::RefPtr<Timeline> (new Timeline (pTimeline));
+                }
+
+                _WRAP_METHOD(TimelineDirection get_direction() const, maia_core_timeline_get_direction)
+                _WRAP_METHOD(void set_direction(TimelineDirection direction), maia_core_timeline_set_direction)
+                _WRAP_METHOD(guint get_speed() const, maia_core_timeline_get_speed)
+                _WRAP_METHOD(void set_speed(guint fps), maia_core_timeline_set_speed)
+                _WRAP_METHOD(guint get_n_frames() const, maia_core_timeline_get_n_frames)
+                _WRAP_METHOD(void set_n_frames(guint n_frames), maia_core_timeline_set_n_frames)
+                _WRAP_METHOD(guint get_duration() const, maia_core_timeline_get_duration)
+                _WRAP_METHOD(void set_duration(guint msecs), maia_core_timeline_set_duration)
+                _WRAP_METHOD(bool get_loop() const, maia_core_timeline_get_loop)
+                _WRAP_METHOD(void set_loop(bool loop = true), maia_core_timeline_set_loop)
+
+                _WRAP_METHOD(bool is_playing() const, maia_core_timeline_get_is_playing)
+                _WRAP_METHOD(guint get_current_frame() const, maia_core_timeline_get_current_frame)
+                _WRAP_METHOD(double get_progress() const, maia_core_timeline_get_progress)
+
+                _WRAP_METHOD(void start(), maia_core_timeline_start)
+                _WRAP_METHOD(void pause(), maia_core_timeline_pause)
+                _WRAP_METHOD(void stop(), maia_core_timeline_stop)
+                _WRAP_METHOD(void rewind(), maia_core_timeline_rewind)
+                _WRAP_METHOD(void skip(gint n_frames), maia_core_timeline_skip)
+                _WRAP_METHOD(void advance(guint frame_num), maia_core_timeline_advance)
+
+                _WRAP_PROPERTY("direction", TimelineDirection)
+                _WRAP_PROPERTY("duration", guint)
+                _WRAP_PROPERTY("speed", guint)
+                _WRAP_PROPERTY("loop", bool)
+                _WRAP_PROPERTY("n-frames", guint)
+                _WRAP_PROPERTY("progress", gdouble)
+                _WRAP_PROPERTY("current-frame", guint)
+                _WRAP_PROPERTY("master", bool)
+                _WRAP_PROPERTY("is-playing", bool)
+
+                _IGNORE(maia_core_timeline_started)
+                _IGNORE(maia_core_timeline_completed)
+                _IGNORE(maia_core_timeline_paused)
+                _IGNORE(maia_core_timeline_new_frame)
+
+                _WRAP_SIGNAL(void completed(), "completed")
+                _WRAP_SIGNAL(void new_frame(gint fram_num), "new-frame")
+                _WRAP_SIGNAL(void paused(), "paused")
+                _WRAP_SIGNAL(void started(), "started")
+        };
+    }
+}

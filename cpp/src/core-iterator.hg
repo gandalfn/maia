@@ -1,6 +1,6 @@
 /* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * collection.hg
+ * core-iterator.hg
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -18,7 +18,6 @@
  */
 
 #include <maia.h>
-#include <maiamm/iterator.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(glibmm/private/object_p.h)
@@ -30,111 +29,113 @@ namespace Maia
         _GMMPROC_EXTRA_NAMESPACE(Core)
 
         template<typename T>
-        class Collection
+        class Iterator
         {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-            typedef Collection<T> CppObjectType;
-            typedef MaiaCoreCollection BaseObjectType;
+            typedef Iterator<T> CppObjectType;
+            typedef MaiaCoreIterator BaseObjectType;
 
             static GType get_type() G_GNUC_CONST
             {
-                return maia_core_collection_get_type();
+                return maia_core_iterator_get_type();
             }
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
-            Collection() :
+            Iterator() :
                 gobject_ (0)
             {}
 
-            explicit Collection(MaiaCoreCollection* gobject, bool make_a_copy = true) :
-                gobject_ ((make_a_copy && gobject) ? (MaiaCoreCollection*)maia_core_collection_ref(gobject) : gobject)
+            explicit Iterator(MaiaCoreIterator* gobject, bool make_a_copy = true) :
+                gobject_ ((make_a_copy && gobject) ? (MaiaCoreIterator*)maia_core_iterator_ref(gobject) : gobject)
             {}
 
-            Collection(const Collection<T>& other) :
-                gobject_ ((other.gobject_) ? (MaiaCoreCollection*)maia_core_collection_ref(other.gobject_) : 0)
+            Iterator(const Iterator<T>& other) :
+                gobject_ ((other.gobject_) ? (MaiaCoreIterator*)maia_core_iterator_ref(other.gobject_) : 0)
             {}
 
-            Collection<T>& operator=(const Collection<T>& other)
+            Iterator<T>& operator=(const Iterator<T>& other)
             {
-                Collection<T> temp (other);
+                Iterator<T> temp (other);
                 swap(temp);
                 return *this;
             }
 
-            virtual ~Collection<T>()
+            virtual ~Iterator<T>()
             {
                 if(gobject_)
-                    maia_core_collection_unref(gobject_);
+                    maia_core_iterator_unref(gobject_);
             }
 
-            void swap(Collection<T>& other)
+            void swap(Iterator<T>& other)
             {
-                MaiaCoreCollection *const temp = gobject_;
+                MaiaCoreIterator *const temp = gobject_;
                 gobject_ = other.gobject_;
                 other.gobject_ = temp;
             }
 
-            MaiaCoreCollection* gobj()
+            MaiaCoreIterator* gobj()
             {
                 return gobject_;
             }
 
-            const MaiaCoreCollection* gobj() const
+            const MaiaCoreIterator* gobj() const
             {
                 return gobject_;
             }
 
-            MaiaCoreCollection* gobj_copy() const
+            MaiaCoreIterator* gobj_copy() const
             {
-                return (MaiaCoreCollection*)maia_core_collection_ref(gobject_);
+                return (MaiaCoreIterator*)maia_core_iterator_ref(gobject_);
             }
 
             public:
-                int length () const
+                inline Iterator<T>& operator++()
                 {
-                    return maia_core_collection_get_length (gobject_);
+                    next ();
+                    return *this;
                 }
 
-                bool contains (const T& inValue)
+                inline const Iterator<T> operator++(int inCount)
                 {
-                    return maia_core_collection_contains (gobject_, (gconstpointer)inValue);
+                    for (int cpt = 0; cpt < inCount && next (); ++cpt);
+                    return *this;
                 }
 
-                Iterator<T> insert (const T& inValue)
+                inline T operator*()
                 {
-                    maia_core_collection_insert (gobject_, (gconstpointer)inValue);
+                    return get ();
                 }
 
-                void remove (const T& inValue)
+                inline bool operator== (const Iterator<T>& rhs)
                 {
-                    maia_core_collection_remove (gobject_, (gconstpointer)inValue);
+                    return get () == rhs.get ();
                 }
 
-                void clear ()
+                inline bool operator!= (const Iterator<T>& rhs)
                 {
-                    maia_core_collection_clear (gobject_);
+                    return get () != rhs.get ();
                 }
 
-                Iterator<T> begin ()
+                inline T& get () const
                 {
-                    return Iterator<T> (maia_core_collection_iterator (gobject_), false);
+                    return *(T*)maia_core_iterator_get (gobj ());
                 }
 
-                void erase (const Iterator<T>& inIter)
+                bool next()
                 {
-                    maia_core_collection_erase (gobject_, inIter->gobj ());
+                    return maia_core_iterator_next(gobj());
                 }
 
             protected:
-                MaiaCoreCollection* gobject_;
+                MaiaCoreObjectIterator* gobject_;
        };
 
-        /** @relates Maia::Core::Collection
+        /** @relates Maia::Core::Iterator
          * @param lhs The left-hand side
          * @param rhs The right-hand side
          */
         template<typename T>
-        inline void swap(Collection<T>& lhs, Collection<T>& rhs)
+        inline void swap(Iterator<T>& lhs, Iterator<T>& rhs)
         {
             lhs.swap(rhs);
         }
@@ -149,17 +150,17 @@ namespace Glib
      * @param take_copy False if the result should take ownership of the C instance. True if it should take a new copy or ref.
      * @result A C++ instance that wraps this C instance.
      *
-     * @relates Maia::Core::Collection
+     * @relates Maia::Core::Iterator<T>
      */
     template<typename T>
-    Maia::Core::Collection<T> wrap(MaiaCoreCollection* object, bool take_copy)
+    Maia::Core::Iterator<T> wrap(MaiaCoreIterator* object, bool take_copy)
     {
-        return Maia::Core::Collection<T> (object, take_copy);
+        return Maia::Core::Iterator<T> (object, take_copy);
     }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     template <typename T>
-    class Value<Maia::Core::Collection<T> > : public Glib::Value_Boxed<Maia::Core::Collection<T> >
+    class Value<Maia::Core::Iterator<T> > : public Glib::Value_Boxed<Maia::Core::Iterator<T> >
     {};
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 }

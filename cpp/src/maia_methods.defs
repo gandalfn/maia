@@ -3859,6 +3859,12 @@
   (return-type "MaiaCoreParserIterator*")
 )
 
+(define-method iterator_end
+  (of-object "MaiaCoreParser")
+  (c-name "maia_core_parser_iterator_end")
+  (return-type "MaiaCoreParserIterator*")
+)
+
 (define-method get_element
   (of-object "MaiaCoreParser")
   (c-name "maia_core_parser_get_element")
@@ -3902,6 +3908,21 @@
   (of-object "MaiaCoreParserIterator")
   (c-name "maia_core_parser_iterator_get")
   (return-type "MaiaCoreParserToken")
+)
+
+(define-method compare
+  (of-object "MaiaCoreParserIterator")
+  (c-name "maia_core_parser_iterator_compare")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaCoreParserIterator*" "inIter")
+  )
+)
+
+(define-method is_end
+  (of-object "MaiaCoreParserIterator")
+  (c-name "maia_core_parser_iterator_is_end")
+  (return-type "gboolean")
 )
 
 (define-function maia_core_timeline_direction_get_type

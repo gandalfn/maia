@@ -1,0 +1,65 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * graphic-rectangle.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+#include <maia.h>
+#include <maiamm/graphic-transform.h>
+#include <maiamm/graphic-point.h>
+#include <maiamm/graphic-size.h>
+
+_DEFS(maiamm,maia)
+
+namespace Maia
+{
+    namespace Graphic
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Graphic)
+
+        class Rectangle
+        {
+            _CLASS_BOXEDTYPE_STATIC(Rectangle, MaiaGraphicRectangle)
+
+            public:
+                Rectangle (double inX, double inY, double inWidth, double inHeight);
+
+                Rectangle copy ();
+
+                bool is_empty ();
+
+                void intersect (const Rectangle& inRectangle);
+
+                void union_ (const Rectangle& inRectangle);
+
+                void translate (const Point& inOffset);
+
+                void transform (const Glib::RefPtr<Transform>& inTransform);
+
+                void clamp (const Rectangle& inRectangle);
+
+                bool contains (const Point& inPoint);
+
+                Glib::ustring to_string ();
+
+                _MEMBER_GET(origin, origin, Point, MaiaGraphicPoint*)
+                _MEMBER_SET(origin, origin, Point, MaiaGraphicPoint*)
+                _MEMBER_GET(size, size, Size, MaiaGraphicSize*)
+                _MEMBER_SET(size, size, Size, MaiaGraphicSize*)
+        };
+    }
+}
