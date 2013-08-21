@@ -1,1 +1,1 @@
-SUBDIRS = codegen src maiamm
+SUBDIRS = codegen src maiamm doc

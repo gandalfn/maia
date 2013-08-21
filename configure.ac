@@ -251,6 +251,8 @@ cpp/Makefile
 cpp/codegen/Makefile
 cpp/src/Makefile
 cpp/maiamm/Makefile
+cpp/doc/Makefile
+cpp/doc/reference/Doxyfile
 test/Makefile
 vapi/Makefile])
 
