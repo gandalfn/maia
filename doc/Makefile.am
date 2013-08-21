@@ -5,7 +5,6 @@ VALADOC_SRCS = \
     $(top_srcdir)/lib/core/*.vala \
     $(top_srcdir)/lib/graphic/*.vala \
     $(top_srcdir)/lib/manifest/*.vala \
-    $(top_srcdir)/lib/xml/*.vala \
     $(top_srcdir)/lib/*.vala \
     $(top_srcdir)/lib/cairo/*.vala \
     $(top_srcdir)/lib/gdk-pixbuf/*.vala \
