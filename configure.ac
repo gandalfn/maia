@@ -67,6 +67,12 @@ LT_PREREQ([2.2])
 LT_INIT([disable-static pic-only])
 
 dnl ****************************************************************************
+dnl Check for mm-common
+dnl ****************************************************************************
+MM_PREREQ([0.9])
+MM_INIT_MODULE([maiamm])
+
+dnl ****************************************************************************
 dnl Check for packages
 dnl ****************************************************************************
 PKG_CHECK_MODULES(MAIA, [glib-2.0 >= $GLIB_REQUIRED
@@ -204,6 +210,9 @@ if test "x$enabledoc" = "xyes"; then
           AS_IF([test "x$enable_valadoc" == "xyes"], AC_MSG_ERROR([Unable to find valadoc]))
         ])
       ])
+    PKG_CHECK_MODULES(MAIA_VALADOC, [valadoc-1.0])
+    AC_SUBST(MAIA_VALADOC_CFLAGS)
+    AC_SUBST(MAIA_VALADOC_LIBS)
 fi
 AM_CONDITIONAL(ENABLE_VALADOC, test x$found_valadoc = xyes)
 

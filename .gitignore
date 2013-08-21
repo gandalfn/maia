@@ -67,9 +67,18 @@ stamp-h1
 
 cpp/codegen/extradefs/generate_maia_defs
 doc/devhelp/
-doc/gtkdoc/
+doc/mm/
 doc/html/
 doc/valadoc-devhelp
 doc/valadoc-gtkdoc
 doc/valadoc-html
+doc/valadoc-mm
+doc/cpp/libdoclet.so
+
+cpp/doc/reference/Doxyfile
+cpp/doc/reference/doxygen.log
+cpp/doc/reference/html/
+cpp/doc/reference/maiamm.devhelp2
+cpp/doc/reference/maiamm.tag
+cpp/src/maia_docs.xml
 
