@@ -19,9 +19,6 @@
 
 public struct Maia.Graphic.Point
 {
-    // static properties
-    static bool s_Registered = false;
-
     // accessors
     /**
      * x position
