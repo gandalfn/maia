@@ -22,7 +22,9 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
     private Valadoc.MarkupWriter m_Writer;
     private Valadoc.Settings m_Settings;
     private bool in_function = false;
+    private bool have_parameters = false;
     private bool enable_property = false;
+    private bool enable_signal = false;
 
     public void
     process (Valadoc.Settings inSettings, Valadoc.Api.Tree inTree, Valadoc.ErrorReporter inReporter)
@@ -160,23 +162,26 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
     public override void
     visit_signal (Valadoc.Api.Signal inItem)
     {
-        string[] attributes = {};
-        attributes += "name";
-        attributes += inItem.get_cname ();
-        m_Writer.start_tag ("signal", attributes);
-        Valadoc.Content.Comment? doctree = inItem.documentation;
-        if (doctree != null)
+        if (enable_signal)
         {
-            m_Writer.start_tag ("description");
-            m_Writer.raw_text ("\n");
-            var renderer = new Valadoc.GtkdocRenderer ();
-            renderer.render (doctree);
-            m_Writer.text (Valadoc.MarkupWriter.escape (renderer.content));
-            m_Writer.raw_text ("\n\n");
-            m_Writer.end_tag ("description");
-            m_Writer.raw_text ("\n");
+            Valadoc.Content.Comment? doctree = inItem.documentation;
+            if (doctree != null)
+            {
+                string[] attributes = {};
+                attributes += "name";
+                attributes += inItem.get_cname ();
+                m_Writer.start_tag ("signal", attributes);
+                m_Writer.start_tag ("description");
+                m_Writer.raw_text ("\n");
+                var renderer = new Valadoc.GtkdocRenderer ();
+                renderer.render (doctree);
+                m_Writer.text (Valadoc.MarkupWriter.escape (renderer.content));
+                m_Writer.raw_text ("\n\n");
+                m_Writer.end_tag ("description");
+                m_Writer.raw_text ("\n");
+                m_Writer.end_tag ("signal");
+            }
         }
-        m_Writer.end_tag ("signal");
     }
 
     public override void
@@ -184,13 +189,18 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
     {
         if (in_function)
         {
-            string[] attributes = {};
-            attributes += "name";
-            attributes += inItem.name;
-            m_Writer.start_tag ("parameter", attributes);
             Valadoc.Content.Comment? doctree = inItem.documentation;
             if (doctree != null)
             {
+                if (!have_parameters)
+                {
+                    m_Writer.start_tag ("parameters");
+                    have_parameters = true;
+                }
+                string[] attributes = {};
+                attributes += "name";
+                attributes += inItem.name;
+                m_Writer.start_tag ("parameter", attributes);
                 m_Writer.start_tag ("parameter_description");
                 m_Writer.raw_text ("\n");
                 var renderer = new Valadoc.GtkdocRenderer ();
@@ -199,22 +209,21 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
                 m_Writer.raw_text ("\n\n");
                 m_Writer.end_tag ("parameter_description");
                 m_Writer.raw_text ("\n");
+                m_Writer.end_tag ("parameter");
             }
-            m_Writer.raw_text ("\n");
-            m_Writer.end_tag ("parameter");
         }
     }
 
     public override void
     visit_method (Valadoc.Api.Method inItem)
     {
-        string[] attributes = {};
-        attributes += "name";
-        attributes += inItem.get_cname ();
-        m_Writer.start_tag ("function", attributes);
         Valadoc.Content.Comment? doctree = inItem.documentation;
         if (doctree != null)
         {
+            string[] attributes = {};
+            attributes += "name";
+            attributes += inItem.get_cname ();
+            m_Writer.start_tag ("function", attributes);
             m_Writer.start_tag ("description");
             m_Writer.raw_text ("\n");
             var renderer = new Valadoc.GtkdocRenderer ();
@@ -223,15 +232,18 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
             m_Writer.raw_text ("\n\n");
             m_Writer.end_tag ("description");
             m_Writer.raw_text ("\n");
+            in_function = true;
+            have_parameters = false;
+            inItem.accept_all_children (this);
+            in_function = false;
+            if (have_parameters)
+            {
+                m_Writer.raw_text ("\n");
+                m_Writer.end_tag ("parameters");
+            }
+            m_Writer.raw_text ("\n");
+            m_Writer.end_tag ("function");
         }
-        m_Writer.start_tag ("parameters");
-        in_function = true;
-        inItem.accept_all_children (this);
-        in_function = false;
-        m_Writer.raw_text ("\n");
-        m_Writer.end_tag ("parameters");
-        m_Writer.raw_text ("\n");
-        m_Writer.end_tag ("function");
     }
 }
 
@@ -241,3 +253,4 @@ register_plugin (Valadoc.ModuleLoader module_loader)
 {
     return typeof (Valadoc.Cpp.Doclet);
 }
+

@@ -1,0 +1,77 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * graphic-glyph.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/core-object.h>
+#include <maiamm/graphic-point.h>
+#include <maiamm/graphic-size.h>
+#include <maiamm/graphic-rectangle.h>
+#include <maiamm/graphic-context.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/core-object_p.h)
+
+namespace Maia
+{
+    namespace Graphic
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Graphic)
+
+        class GlyphLine : public Core::Object
+        {
+            _CLASS_GOBJECT(GlyphLine, MaiaGraphicGlyphLine, MAIA_GRAPHIC_GLYPH_LINE, Core::Object, MaiaCoreObject)
+
+            protected:
+                _WRAP_VFUNC(void get_size (Size& outSize), get_size)
+
+            public:
+                _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_glyph_line_get_size)
+
+                _WRAP_PROPERTY("size", Size)
+        };
+
+        class Glyph : public Core::Object
+        {
+            _CLASS_GOBJECT(Glyph, MaiaGraphicGlyph, MAIA_GRAPHIC_GLYPH, Core::Object, MaiaCoreObject)
+
+            protected:
+                _WRAP_VFUNC(void get_size (Size& outSize), get_size)
+                _WRAP_VFUNC(void update (const Glib::RefPtr<Context>& inContext), update)
+                _WRAP_VFUNC(void get_cursor_position (int inIndex, Rectangle& outRectangle), get_cursor_position)
+
+            public:
+                _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_glyph_get_size)
+                _WRAP_METHOD(Glib::ustring get_font_description () const, maia_graphic_glyph_get_font_description)
+                _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc) const, maia_graphic_glyph_set_font_description)
+                _WRAP_METHOD(Glib::ustring get_text () const, maia_graphic_glyph_get_text)
+                _WRAP_METHOD(void set_text (const Glib::ustring& inText) const, maia_graphic_glyph_set_text)
+                _WRAP_METHOD(void get_origin (Point& outPoint) const, maia_graphic_glyph_get_origin)
+                _WRAP_METHOD(void set_origin (const Point& inPoint) const, maia_graphic_glyph_set_origin)
+
+                _WRAP_METHOD(void update (const Glib::RefPtr<Context>& inpContext), maia_graphic_glyph_update)
+                _WRAP_METHOD(void get_cursor_position (int inIndex, Rectangle& outRectangle), maia_graphic_glyph_get_cursor_position)
+
+                _WRAP_PROPERTY("size", Size)
+                _WRAP_PROPERTY("font-description", Glib::ustring)
+                _WRAP_PROPERTY("text", Glib::ustring)
+                _WRAP_PROPERTY("origin", Point)
+        };
+
+    }
+}

@@ -1,0 +1,62 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * graphic-gradient.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/graphic-size.h>
+#include <maiamm/graphic-color.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/graphic-pattern_p.h)
+_PINCLUDE(maiamm/private/core-object_p.h)
+
+namespace Maia
+{
+    namespace Graphic
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Graphic)
+
+        class Gradient : public Pattern
+        {
+            _CLASS_GOBJECT(Gradient, MaiaGraphicGradient, MAIA_GRAPHIC_GRADIENT, Pattern, MaiaGraphicPattern)
+        };
+
+        class GradientColorStop : public Core::Object
+        {
+            _CLASS_GOBJECT(GradientColorStop, MaiaGraphicGradientColorStop, MAIA_GRAPHIC_GRADIENT_COLOR_STOP, Core::Object, MaiaCoreObject)
+
+            public:
+                static Glib::RefPtr<GradientColorStop> create (double inOffset, const Glib::RefPtr<Color>& inColor)
+                {
+                    MaiaGraphicGradientColorStop* pColorStop = maia_graphic_gradient_color_stop_new (inOffset, const_cast<MaiaGraphicColor*> (inColor->gobj ()));
+                    return Glib::RefPtr<GradientColorStop> (new GradientColorStop (pColorStop));
+                }
+
+                _IGNORE(maia_graphic_gradient_color_stop_new)
+
+                _WRAP_METHOD(double get_offset () const, maia_graphic_gradient_color_stop_get_offset)
+                _WRAP_METHOD(void set_offset (double inOffset), maia_graphic_gradient_color_stop_set_offset)
+                _WRAP_METHOD(Glib::RefPtr<Color> get_color () const, maia_graphic_gradient_color_stop_get_color)
+                _WRAP_METHOD(void set_color (const Glib::RefPtr<Color>& inColor), maia_graphic_gradient_color_stop_set_color)
+
+                _WRAP_PROPERTY ("offset", double)
+                _WRAP_PROPERTY ("color", Glib::RefPtr<Color>)
+        };
+
+    }
+}

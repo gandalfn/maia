@@ -2,7 +2,9 @@
 ; virtual function definitions
 ; define-vfunc is gtkmm-specific
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; From MaiaCoreObject
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define-vfunc get_parent
   (of-object "MaiaCoreObject")
@@ -54,7 +56,9 @@
   (return-type "char*")
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; From MaiaCoreParser
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define-vfunc next_token
   (of-object "MaiaCoreParser")
   (return-type "MaiaCoreParserToken")
@@ -63,7 +67,9 @@
   )
 )
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; From MaiaGraphicRegion
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define-vfunc get_extents
   (of-object "MaiaGraphicRegion")
   (return-type "none")
@@ -190,4 +196,300 @@
   (parameters
     '("MaiaGraphicSize*" "inSize")
   )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaGraphicContext
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-vfunc save
+  (of-object "MaiaGraphicContext")
+  (return-type "none")
+  (parameters
+    '("GError**" "error")
+  )
+)
+
+(define-vfunc restore
+  (of-object "MaiaGraphicContext")
+  (return-type "none")
+  (parameters
+    '("GError**" "error")
+  )
+)
+
+(define-vfunc status
+  (of-object "MaiaGraphicContext")
+  (return-type "none")
+  (parameters
+    '("GError**" "error")
+  )
+)
+
+(define-vfunc translate
+  (of-object "MaiaGraphicContext")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "inOffset")
+    '("GError**" "error")
+  )
+)
+
+(define-vfunc clip
+  (of-object "MaiaGraphicContext")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPath*" "inPath")
+    '("GError**" "error")
+  )
+)
+
+(define-vfunc clip_region
+  (of-object "MaiaGraphicContext")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRegion*" "inRegion")
+    '("GError**" "error")
+  )
+)
+
+(define-vfunc paint
+  (of-object "MaiaGraphicContext")
+  (return-type "none")
+  (parameters
+    '("GError**" "error")
+  )
+)
+
+(define-vfunc fill
+  (of-object "MaiaGraphicContext")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPath*" "inPath")
+    '("GError**" "error")
+  )
+)
+
+(define-vfunc stroke
+  (of-object "MaiaGraphicContext")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPath*" "inPath")
+    '("GError**" "error")
+  )
+)
+
+(define-vfunc render
+  (of-object "MaiaGraphicContext")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicGlyph*" "inGlyph")
+    '("GError**" "error")
+  )
+)
+
+(define-vfunc get_path_area
+  (of-object "MaiaGraphicContext")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPath*" "inPath")
+    '("MaiaGraphicRectangle*" "outPath")
+    '("GError**" "error")
+  )
+)
+
+(define-vfunc get_operator
+  (of-object "MaiaGraphicContext")
+  (return-type "MaiaGraphicOperator")
+)
+
+(define-vfunc set_operator
+  (of-object "MaiaGraphicContext")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicOperator" "inOperator")
+  )
+)
+
+(define-vfunc get_surface
+  (of-object "MaiaGraphicContext")
+  (return-type "MaiaGraphicSurface*")
+)
+
+(define-vfunc set_surface
+  (of-object "MaiaGraphicContext")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSurface*" "inSurface")
+  )
+)
+
+(define-vfunc get_pattern
+  (of-object "MaiaGraphicContext")
+  (return-type "MaiaGraphicPattern*")
+)
+
+(define-vfunc set_pattern
+  (of-object "MaiaGraphicContext")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "inPattern")
+  )
+)
+
+(define-vfunc get_transform
+  (of-object "MaiaGraphicContext")
+  (return-type "MaiaGraphicTransform*")
+)
+
+(define-vfunc set_transform
+  (of-object "MaiaGraphicContext")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicTransform*" "inTransform")
+  )
+)
+
+(define-vfunc get_line_width
+  (of-object "MaiaGraphicContext")
+  (return-type "double")
+)
+
+(define-vfunc set_line_width
+  (of-object "MaiaGraphicContext")
+  (return-type "none")
+  (parameters
+    '("double" "inLineWidth")
+  )
+)
+
+(define-vfunc get_dash
+  (of-object "MaiaGraphicContext")
+  (return-type "double*")
+  (parameters
+    '("int*" "outLength")
+  )
+)
+
+(define-vfunc set_dash
+  (of-object "MaiaGraphicContext")
+  (return-type "none")
+  (parameters
+    '("double*" "inDashes")
+    '("int" "inLength")
+  )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaGraphicGlyph
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-vfunc get_size
+  (of-object "MaiaGraphicGlyph")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "outSize")
+  )
+)
+
+(define-vfunc update
+  (of-object "MaiaGraphicGlyph")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicContext*" "inpContext")
+  )
+)
+
+(define-vfunc get_cursor_position
+  (of-object "MaiaGraphicGlyph")
+  (return-type "none")
+  (parameters
+    '("int" "inIndex")
+    '("MaiaGraphicRectangle*" "outResult")
+  )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaGraphicGlyphLine
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-vfunc get_size
+  (of-object "MaiaGraphicGlyphLine")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "outSize")
+  )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaGraphicSurface
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-vfunc clear
+  (of-object "MaiaGraphicSurface")
+  (return-type "none")
+  (parameters
+    '("GError**" "error")
+  )
+)
+
+(define-vfunc fast_blur
+  (of-object "MaiaGraphicSurface")
+  (return-type "none")
+  (parameters
+    '("int" "inRadius")
+    '("int" "inProcessCount")
+    '("GError**" "error")
+  )
+)
+
+(define-vfunc exponential_blur
+  (of-object "MaiaGraphicSurface")
+  (return-type "none")
+  (parameters
+    '("int" "inRadius")
+    '("GError**" "error")
+  )
+)
+
+(define-vfunc gaussian_blur
+  (of-object "MaiaGraphicSurface")
+  (return-type "none")
+  (parameters
+    '("int" "inRadius")
+    '("GError**" "error")
+  )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaGraphicImage
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-vfunc get_filename
+  (of-object "MaiaGraphicImage")
+  (return-type "const-gchar*")
+)
+
+(define-vfunc set_filename
+  (of-object "MaiaGraphicImage")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inFilename")
+  )
+)
+
+(define-vfunc get_size
+  (of-object "MaiaGraphicImage")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "outSize")
+  )
+)
+
+(define-vfunc set_size
+  (of-object "MaiaGraphicImage")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "inSize")
+  )
+)
+
+(define-vfunc get_surface
+  (of-object "MaiaGraphicImage")
+  (return-type "MaiaGraphicSurface*")
 )

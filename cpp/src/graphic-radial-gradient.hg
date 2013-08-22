@@ -1,0 +1,60 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * graphic-radial-gradient.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/graphic-point.h>
+#include <maiamm/graphic-gradient.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/graphic-gradient_p.h)
+
+namespace Maia
+{
+    namespace Graphic
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Graphic)
+
+        class RadialGradient : public Gradient
+        {
+            _CLASS_GOBJECT(RadialGradient, MaiaGraphicRadialGradient, MAIA_GRAPHIC_RADIAL_GRADIENT, Gradient, MaiaGraphicGradient)
+
+            public:
+                static Glib::RefPtr<RadialGradient> create (const Point& inStart, double inStartRadius, const Point& inEnd, double inEndRadius)
+                {
+                    MaiaGraphicRadialGradient* pGradient = maia_graphic_radial_gradient_new (const_cast<MaiaGraphicPoint*> (inStart.gobj ()),
+                                                                                             inStartRadius,
+                                                                                             const_cast<MaiaGraphicPoint*> (inEnd.gobj ()),
+                                                                                             inEndRadius);
+                    return Glib::RefPtr<RadialGradient> (new RadialGradient (pGradient));
+                }
+
+                _IGNORE(maia_graphic_radial_gradient_new)
+
+                _WRAP_METHOD(void get_start (Point& outPoint) const, maia_graphic_radial_gradient_get_start)
+                _WRAP_METHOD(double get_start_radius () const, maia_graphic_radial_gradient_get_start_radius)
+                _WRAP_METHOD(void get_end (Point& outPoint) const, maia_graphic_radial_gradient_get_end)
+                _WRAP_METHOD(double get_end_radius () const, maia_graphic_radial_gradient_get_end_radius)
+
+                _WRAP_PROPERTY ("start", Point)
+                _WRAP_PROPERTY ("start-radius", double)
+                _WRAP_PROPERTY ("end", Point)
+                _WRAP_PROPERTY ("end-radius", double)
+        };
+    }
+}

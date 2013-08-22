@@ -1,0 +1,122 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * graphic-image.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/graphic-size.h>
+#include <maiamm/graphic-surface.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/graphic-pattern_p.h)
+
+namespace Maia
+{
+    namespace Graphic
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Graphic)
+
+        class Image : public Pattern
+        {
+            _CLASS_GOBJECT(Image, MaiaGraphicImage, MAIA_GRAPHIC_IMAGE, Pattern, MaiaGraphicPattern)
+
+            protected:
+                _WRAP_VFUNC(Glib::ustring get_filename () const, get_filename)
+                _WRAP_VFUNC(void set_filename (const Glib::ustring& inFilename), set_filename)
+
+                _WRAP_VFUNC(void get_size (Size& outSize) const, get_size)
+                _WRAP_VFUNC(void set_size (const Size& inSize), set_size)
+
+                _WRAP_VFUNC(Glib::RefPtr<Surface> get_surface () const, get_surface)
+
+            public:
+                static Glib::RefPtr<Image> create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
+                {
+                    MaiaGraphicImage* pImage = maia_graphic_image_create (inFilename.c_str (), const_cast<MaiaGraphicSize*> (inSize.gobj ()));
+                    return Glib::RefPtr<Image> (new Image (pImage));
+                }
+
+                _IGNORE(maia_graphic_image_create)
+
+                _WRAP_METHOD(Glib::ustring get_filename () const, maia_graphic_image_get_filename)
+                _WRAP_METHOD(void set_filename (const Glib::ustring& inFilename), maia_graphic_image_set_filename)
+
+                _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_image_get_size)
+                _WRAP_METHOD(void set_size (const Size& inSize), maia_graphic_image_set_size)
+
+                _WRAP_METHOD(Glib::RefPtr<Surface> get_surface () const, maia_graphic_image_get_surface)
+
+                _WRAP_PROPERTY ("filename", Glib::ustring)
+                _WRAP_PROPERTY ("size", Size)
+                _WRAP_PROPERTY ("surface", Glib::RefPtr<Surface>)
+        };
+
+        class ImageGif : public Image
+        {
+            _CLASS_GOBJECT(ImageGif, MaiaGraphicImageGif, MAIA_GRAPHIC_IMAGE_GIF, Image, MaiaGraphicImage)
+
+            public:
+                static Glib::RefPtr<ImageGif> create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
+                {
+                    MaiaGraphicImageGif* pImage = maia_graphic_image_gif_new (inFilename.c_str (), const_cast<MaiaGraphicSize*> (inSize.gobj ()));
+                    return Glib::RefPtr<ImageGif> (new ImageGif (pImage));
+                }
+        };
+
+        class ImageJpg : public Image
+        {
+            _CLASS_GOBJECT(ImageJpg, MaiaGraphicImageJpg, MAIA_GRAPHIC_IMAGE_JPG, Image, MaiaGraphicImage)
+
+            public:
+                static Glib::RefPtr<ImageJpg> create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
+                {
+                    MaiaGraphicImageJpg* pImage = maia_graphic_image_jpg_new (inFilename.c_str (), const_cast<MaiaGraphicSize*> (inSize.gobj ()));
+                    return Glib::RefPtr<ImageJpg> (new ImageJpg (pImage));
+                }
+        };
+
+        class ImagePng : public Image
+        {
+            _CLASS_GOBJECT(ImagePng, MaiaGraphicImagePng, MAIA_GRAPHIC_IMAGE_PNG, Image, MaiaGraphicImage)
+
+            public:
+                static Glib::RefPtr<ImagePng> create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
+                {
+                    MaiaGraphicImagePng* pImage = maia_graphic_image_png_new (inFilename.c_str (), const_cast<MaiaGraphicSize*> (inSize.gobj ()));
+                    return Glib::RefPtr<ImagePng> (new ImagePng (pImage));
+                }
+        };
+
+        class ImageSvg : public Image
+        {
+            _CLASS_GOBJECT(ImageSvg, MaiaGraphicImageSvg, MAIA_GRAPHIC_IMAGE_SVG, Image, MaiaGraphicImage)
+
+            public:
+                static Glib::RefPtr<ImageSvg> create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
+                {
+                    MaiaGraphicImageSvg* pImage = maia_graphic_image_svg_new (inFilename.c_str (), const_cast<MaiaGraphicSize*> (inSize.gobj ()));
+                    return Glib::RefPtr<ImageSvg> (new ImageSvg (pImage));
+                }
+
+                static Glib::RefPtr<ImageSvg> create_from_data (const Glib::ustring& inData, const Size& inSize = Size (0, 0))
+                {
+                    MaiaGraphicImageSvg* pImage = maia_graphic_image_svg_new_from_data (inData.c_str (), const_cast<MaiaGraphicSize*> (inSize.gobj ()));
+                    return Glib::RefPtr<ImageSvg> (new ImageSvg (pImage));
+                }
+        };
+    }
+}

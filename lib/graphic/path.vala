@@ -35,7 +35,7 @@ public class Maia.Graphic.Path : Core.Object
     private int     m_NbChilds;
 
     // accessors
-    public Type data_type { get; private set; }
+    public DataType data_type { get; private set; }
 
     public Point[] points {
         get {

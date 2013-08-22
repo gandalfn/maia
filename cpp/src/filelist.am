@@ -22,6 +22,15 @@ files_hg = \
     graphic-rectangle.hg \
     graphic-region.hg \
     graphic-pattern.hg \
-    graphic-color.hg
+    graphic-color.hg \
+    graphic-path.hg \
+    graphic-context.hg \
+    graphic-glyph.hg \
+    graphic-surface.hg \
+    graphic-gradient.hg \
+    graphic-linear-gradient.hg \
+    graphic-radial-gradient.hg \
+    graphic-mesh-gradient.hg \
+    graphic-image.hg
 
 files_ccg = $(files_hg:.hg=.ccg)

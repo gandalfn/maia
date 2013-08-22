@@ -1,0 +1,151 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * graphic-context.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/core-object.h>
+#include <maiamm/graphic-point.h>
+#include <maiamm/graphic-size.h>
+#include <maiamm/graphic-region.h>
+#include <maiamm/graphic-path.h>
+#include <maiamm/graphic-pattern.h>
+#include <maiamm/graphic-transform.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/core-object_p.h)
+
+namespace Maia
+{
+    namespace Graphic
+    {
+        class Glyph;
+        class Surface;
+
+        _GMMPROC_EXTRA_NAMESPACE(Graphic)
+
+        _WRAP_ENUM(Operator, MaiaGraphicOperator, NO_GTYPE)
+        _WRAP_GERROR(Error, MaiaGraphicError, MAIA_GRAPHIC_ERROR, NO_GTYPE)
+
+        class Context : public Core::Object
+        {
+            _CLASS_GOBJECT(Context, MaiaGraphicContext, MAIA_GRAPHIC_CONTEXT, Core::Object, MaiaCoreObject)
+
+            protected:
+                _WRAP_VFUNC(Operator get_operator (), get_operator)
+                _WRAP_VFUNC(void set_operator (Operator inOperator), set_operator)
+                _WRAP_VFUNC(Glib::RefPtr<Surface> get_surface (), get_surface)
+                _WRAP_VFUNC(void set_surface (const Glib::RefPtr<Surface>& inSurface), set_surface)
+                _WRAP_VFUNC(Glib::RefPtr<Pattern> get_pattern (), get_pattern)
+                _WRAP_VFUNC(void set_pattern (const Glib::RefPtr<Pattern>& inPattern), set_pattern)
+                _WRAP_VFUNC(double get_line_width (), get_line_width)
+                _WRAP_VFUNC(void set_line_width (gdouble inLineWidth), set_line_width)
+                _WRAP_VFUNC(double* get_dash (int* outLength), get_dash)
+                _WRAP_VFUNC(void set_dash (gdouble* inDashes, int inLength), set_dash)
+                _WRAP_VFUNC(Glib::RefPtr<Transform> get_transform (), get_transform)
+                _WRAP_VFUNC(void set_transform (const Glib::RefPtr<Transform>& inTransform), set_transform)
+
+                _WRAP_VFUNC(void save (), save, errthrow)
+                _WRAP_VFUNC(void restore (), restore, errthrow)
+                _WRAP_VFUNC(void status (), status, errthrow)
+                _WRAP_VFUNC(void translate (const Point& inOffset), translate, errthrow)
+                _WRAP_VFUNC(void clip (const Glib::RefPtr<Path>& inPath), clip, errthrow)
+                _WRAP_VFUNC(void clip_region (const Glib::RefPtr<Region>& inRegion), clip_region, errthrow)
+                _WRAP_VFUNC(void paint (), paint, errthrow)
+                _WRAP_VFUNC(void fill (const Glib::RefPtr<Path>& inPath), fill, errthrow)
+                _WRAP_VFUNC(void stroke (const Glib::RefPtr<Path>&  inPath), stroke, errthrow)
+                _WRAP_VFUNC(void render (const Glib::RefPtr<Glyph>& inGlyph), render, errthrow)
+                _WRAP_VFUNC(void get_path_area (const Glib::RefPtr<Path>& inPath, Rectangle& outResut), get_path_area, errthrow)
+
+            public:
+                _WRAP_METHOD(Operator get_operator () const, maia_graphic_context_get_operator)
+                _WRAP_METHOD(void set_operator (Operator inOperator), maia_graphic_context_set_operator)
+                _WRAP_METHOD(Glib::RefPtr<Surface> get_surface () const, maia_graphic_context_get_surface)
+                _WRAP_METHOD(void set_surface (const Glib::RefPtr<Surface>& inSurface), maia_graphic_context_set_surface)
+                _WRAP_METHOD(Glib::RefPtr<Pattern> get_pattern () const, maia_graphic_context_get_pattern)
+                _WRAP_METHOD(void set_pattern (const Glib::RefPtr<Pattern>& inPattern), maia_graphic_context_set_pattern)
+                _WRAP_METHOD(double get_line_width () const, maia_graphic_context_get_line_width)
+                _WRAP_METHOD(void set_line_width (double inLineWidth), maia_graphic_context_set_line_width)
+                _WRAP_METHOD(Glib::RefPtr<Transform> get_transform () const, maia_graphic_context_get_transform)
+                _WRAP_METHOD(void set_transform (const Glib::RefPtr<Transform>& inTransform), maia_graphic_context_set_transform)
+
+                _IGNORE(maia_graphic_context_get_dash)
+                std::vector<double> get_dash () const
+                {
+                    std::vector<double> ret;
+                    int nb;
+                    double* dashes = maia_graphic_context_get_dash (const_cast<MaiaGraphicContext*> (gobj ()), &nb);
+
+                    if (dashes)
+                    {
+                        for (int cpt = 0; cpt < nb; ++cpt)
+                        {
+                            ret.push_back (dashes[cpt]);
+                        }
+
+                        g_free (dashes);
+                    }
+
+                    return ret;
+                }
+
+                _IGNORE(maia_graphic_context_set_dash)
+                void set_dash (std::vector<double> inDashes)
+                {
+                    if (!inDashes.empty ())
+                    {
+                        double dashes[inDashes.size ()];
+                        int cpt = 0;
+                        for (std::vector<double>::iterator iter = inDashes.begin (); iter != inDashes.end (); ++iter, ++cpt)
+                        {
+                            dashes[cpt] = *iter;
+                        }
+                        maia_graphic_context_set_dash (gobj (), dashes, inDashes.size ());
+                    }
+                    else
+                    {
+                        maia_graphic_context_set_dash (gobj (), 0, 0);
+                    }
+                }
+
+                void unset_dash (std::vector<double> inDashes)
+                {
+                    maia_graphic_context_set_dash (gobj (), 0, 0);
+                }
+
+                _WRAP_METHOD(void save (), maia_graphic_context_save, errthrow)
+                _WRAP_METHOD(void restore (), maia_graphic_context_restore, errthrow)
+                _WRAP_METHOD(void status (), maia_graphic_context_status, errthrow)
+                _WRAP_METHOD(void translate (const Point& inOffset), maia_graphic_context_translate, errthrow)
+                _WRAP_METHOD(void clip (const Glib::RefPtr<Path>& inPath), maia_graphic_context_clip, errthrow)
+                _WRAP_METHOD(void clip_region (const Glib::RefPtr<Region>& inRegion), maia_graphic_context_clip_region, errthrow)
+                _WRAP_METHOD(void paint (), maia_graphic_context_paint, errthrow)
+                _WRAP_METHOD(void fill (const Glib::RefPtr<Path>& inPath), maia_graphic_context_fill, errthrow)
+                _WRAP_METHOD(void stroke (const Glib::RefPtr<Path>&  inPath), maia_graphic_context_stroke, errthrow)
+                _WRAP_METHOD(void render (const Glib::RefPtr<Glyph>& inGlyph), maia_graphic_context_render, errthrow)
+                _WRAP_METHOD(void get_path_area (const Glib::RefPtr<Path>& inPath, Rectangle& outResut), maia_graphic_context_get_path_area, errthrow)
+
+
+                _WRAP_PROPERTY ("operator", Operator)
+                _WRAP_PROPERTY ("line-width", double)
+                _WRAP_PROPERTY ("surface", Glib::RefPtr<Surface>)
+                _WRAP_PROPERTY ("pattern", Glib::RefPtr<Pattern>)
+                _WRAP_PROPERTY ("transform", Glib::RefPtr<Transform>)
+        };
+
+    }
+}

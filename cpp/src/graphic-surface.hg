@@ -1,0 +1,66 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * graphic-surface.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/graphic-size.h>
+#include <maiamm/graphic-context.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/graphic-pattern_p.h)
+
+namespace Maia
+{
+    namespace Graphic
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Graphic)
+
+        class Surface : public Pattern
+        {
+            _CLASS_GOBJECT(Surface, MaiaGraphicSurface, MAIA_GRAPHIC_SURFACE, Pattern, MaiaGraphicPattern)
+
+            protected:
+                _WRAP_VFUNC(void clear (), clear, errthrow)
+                _WRAP_VFUNC(void fast_blur (int inRadius, int inProcessCount), fast_blur, errthrow)
+                _WRAP_VFUNC(void gaussian_blur (int inRadius), gaussian_blur, errthrow)
+                _WRAP_VFUNC(void exponential_blur (int inRadius), exponential_blur, errthrow)
+
+            public:
+                static Glib::RefPtr<Surface> create (unsigned int inWidth, unsigned inHeight)
+                {
+                    MaiaGraphicSurface* pSurface = maia_graphic_surface_new (inWidth, inHeight);
+                    return Glib::RefPtr<Surface> (new Surface (pSurface));
+                }
+
+                _IGNORE(maia_graphic_surface_new)
+
+                _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_surface_get_size)
+                _WRAP_METHOD(void set_size (const Size& inSize) const, maia_graphic_surface_set_size)
+                _WRAP_METHOD(Glib::RefPtr<Context> get_context () const, maia_graphic_surface_get_context)
+
+                _WRAP_METHOD(void clear (), maia_graphic_surface_clear, errthrow)
+                _WRAP_METHOD(void fast_blur (int inRadius, int inProcessCount = 1), maia_graphic_surface_fast_blur, errthrow)
+                _WRAP_METHOD(void gaussian_blur (int inRadius), maia_graphic_surface_gaussian_blur, errthrow)
+                _WRAP_METHOD(void exponential_blur (int inRadius), maia_graphic_surface_exponential_blur, errthrow)
+
+                _WRAP_PROPERTY ("size", Size)
+                _WRAP_PROPERTY ("context", Glib::RefPtr<Context>)
+        };
+
+    }
+}

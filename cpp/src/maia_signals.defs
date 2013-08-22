@@ -402,7 +402,7 @@
 
 (define-property data-type
   (of-object "MaiaGraphicPath")
-  (prop-type "GParamGType")
+  (prop-type "GParamEnum")
   (docs "data-type")
   (readable #t)
   (writable #f)

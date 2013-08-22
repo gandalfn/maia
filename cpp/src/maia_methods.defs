@@ -5873,7 +5873,7 @@
 (define-method get_data_type
   (of-object "MaiaGraphicPath")
   (c-name "maia_graphic_path_get_data_type")
-  (return-type "GType")
+  (return-type "MaiaGraphicPathDataType")
 )
 
 (define-method get_points
