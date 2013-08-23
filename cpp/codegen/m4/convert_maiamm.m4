@@ -39,9 +39,13 @@ _CONVERSION(`const Glib::RefPtr<Transform>&',`MaiaGraphicTransform*',__CONVERT_R
 _CONVERSION(`MaiaGraphicTransform*',`const Glib::RefPtr<Transform>&',`Glib::wrap($3)')
 
 _CONVERSION(`const Glib::RefPtr<Region>&',`MaiaGraphicRegion*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Graphic::Region>&',`MaiaGraphicRegion*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`Glib::RefPtr<Region>',`MaiaGraphicRegion*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`Glib::RefPtr<Graphic::Region>',`MaiaGraphicRegion*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaGraphicRegion*',`const Glib::RefPtr<Region>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicRegion*',`const Glib::RefPtr<Graphic::Region>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaGraphicRegion*',`Glib::RefPtr<Region>',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicRegion*',`Glib::RefPtr<Graphic::Region>',`Glib::wrap($3)')
 
 _CONVERSION(`MaiaGraphicRegionIterator*',`Region::iterator',`Glib::wrap($3)')
 
@@ -51,9 +55,13 @@ _CONVERSION(`MaiaGraphicPath*',`const Glib::RefPtr<Path>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaGraphicPath*',`Glib::RefPtr<Path>',`Glib::wrap($3)')
 
 _CONVERSION(`Glib::RefPtr<Transform>',`MaiaGraphicTransform*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`Glib::RefPtr<Graphic::Transform>',`MaiaGraphicTransform*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Transform>&',`MaiaGraphicTransform*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Graphic::Transform>&',`MaiaGraphicTransform*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaGraphicTransform*',`const Glib::RefPtr<Transform>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicTransform*',`const Glib::RefPtr<Graphic::Transform>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaGraphicTransform*',`Glib::RefPtr<Transform>',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicTransform*',`Glib::RefPtr<Graphic::Transform>',`Glib::wrap($3)')
 
 _CONVERSION(`Glib::RefPtr<Pattern>',`MaiaGraphicPattern*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Pattern>&',`MaiaGraphicPattern*',__CONVERT_REFPTR_TO_P)
@@ -71,9 +79,13 @@ _CONVERSION(`MaiaGraphicGradient*',`const Glib::RefPtr<Gradient>&',`Glib::wrap($
 _CONVERSION(`MaiaGraphicGradient*',`Glib::RefPtr<Gradient>',`Glib::wrap($3)')
 
 _CONVERSION(`Glib::RefPtr<Context>',`MaiaGraphicContext*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`Glib::RefPtr<Graphic::Context>',`MaiaGraphicContext*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Context>&',`MaiaGraphicContext*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Graphic::Context>&',`MaiaGraphicContext*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaGraphicContext*',`const Glib::RefPtr<Context>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicContext*',`const Glib::RefPtr<Graphic::Context>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaGraphicContext*',`Glib::RefPtr<Context>',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicContext*',`Glib::RefPtr<Graphic::Context>',`Glib::wrap($3)')
 
 _CONVERSION(`Glib::RefPtr<Glyph>',`MaiaGraphicGlyph*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Glyph>&',`MaiaGraphicGlyph*',__CONVERT_REFPTR_TO_P)
@@ -89,6 +101,26 @@ _CONVERSION(`Glib::RefPtr<Image>',`MaiaGraphicImage*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Image>&',`MaiaGraphicImage*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaGraphicImage*',`const Glib::RefPtr<Image>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaGraphicImage*',`Glib::RefPtr<Image>',`Glib::wrap($3)')
+
+_CONVERSION(`Glib::RefPtr<AttributeBind>',`MaiaManifestAttributeBind*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<AttributeBind>&',`MaiaManifestAttributeBind*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaManifestAttributeBind*',`const Glib::RefPtr<AttributeBind>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaManifestAttributeBind*',`Glib::RefPtr<AttributeBind>',`Glib::wrap($3)')
+
+_CONVERSION(`Glib::RefPtr<AttributeScanner>',`MaiaManifestAttributeScanner*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<AttributeScanner>&',`MaiaManifestAttributeScanner*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaManifestAttributeScanner*',`const Glib::RefPtr<AttributeScanner>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaManifestAttributeScanner*',`Glib::RefPtr<AttributeScanner>',`Glib::wrap($3)')
+
+_CONVERSION(`Glib::RefPtr<Document>',`MaiaManifestDocument*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Document>&',`MaiaManifestDocument*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaManifestDocument*',`const Glib::RefPtr<Document>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaManifestDocument*',`Glib::RefPtr<Document>',`Glib::wrap($3)')
+
+_CONVERSION(`Glib::RefPtr<Element>',`MaiaManifestElement*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Element>&',`MaiaManifestElement*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaManifestElement*',`const Glib::RefPtr<Element>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaManifestElement*',`Glib::RefPtr<Element>',`Glib::wrap($3)')
 
 _CONVERSION(`Glib::ustring',`const gchar*',`$3.c_str ()')
 

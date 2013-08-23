@@ -493,3 +493,54 @@
   (of-object "MaiaGraphicImage")
   (return-type "MaiaGraphicSurface*")
 )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaDrawable
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-vfunc get_geometry
+  (of-object "MaiaDrawable")
+  (return-type "MaiaGraphicRegion*")
+)
+
+(define-vfunc set_geometry
+  (of-object "MaiaDrawable")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRegion*" "inGeometry")
+  )
+)
+
+(define-vfunc get_damaged
+  (of-object "MaiaDrawable")
+  (return-type "MaiaGraphicRegion*")
+)
+
+(define-vfunc set_damaged
+  (of-object "MaiaDrawable")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRegion*" "inArea")
+  )
+)
+
+(define-vfunc get_transform
+  (of-object "MaiaDrawable")
+  (return-type "MaiaGraphicTransform*")
+)
+
+(define-vfunc set_transform
+  (of-object "MaiaDrawable")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicTransform*" "inTransform")
+  )
+)
+
+(define-vfunc draw
+  (of-object "MaiaDrawable")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicContext*" "inContext")
+    '("GError**" "error")
+  )
+)

@@ -145,6 +145,18 @@ public interface Maia.Manifest.Element : Core.Object
         s_Factory.insert (create);
     }
 
+    public static void
+    register_create_func (string inNodeName, owned CreateFunc inFunc)
+    {
+        if (s_Factory == null)
+        {
+            s_Factory = new Core.Set <Create> ();
+        }
+
+        Create create = new Create (inNodeName, (owned)inFunc);
+        s_Factory.insert (create);
+    }
+
     // methods
     private bool
     get_attribute (string inName, out string outRet)

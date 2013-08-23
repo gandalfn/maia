@@ -1,0 +1,84 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * manifest-element.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+
+#include <maiamm/manifest-document.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(glibmm/private/object_p.h)
+
+namespace Maia
+{
+    namespace Manifest
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Manifest)
+
+        class Element : public Glib::Interface
+        {
+            _CLASS_INTERFACE(Element, MaiaManifestElement, MAIA_MANIFEST_ELEMENT, MaiaManifestElementIface)
+
+            protected:
+                _WRAP_VFUNC(Glib::ustring get_tag (), get_tag)
+                _WRAP_VFUNC(Glib::ustring get_characters (), get_characters)
+                _WRAP_VFUNC(void set_characters (const Glib::ustring& inCharacters), set_characters)
+
+            public:
+                typedef sigc::slot<Glib::RefPtr<Element>, const Glib::ustring& > SlotCreateFunc;
+
+                _IGNORE(maia_manifest_element_create)
+                static Glib::RefPtr<Element> create (const Glib::ustring& inTag, const Glib::ustring& inId)
+                {
+                    MaiaManifestElement* pElement = maia_manifest_element_create (inTag.c_str (), inId.c_str ());
+                    if (pElement)
+                        return Glib::RefPtr<Element> (new Element (pElement));
+
+                    return Glib::RefPtr<Element> (0);
+                }
+
+                _WRAP_METHOD(Glib::ustring get_tag () const, maia_manifest_element_get_tag)
+                _WRAP_METHOD(Glib::ustring get_characters () const, maia_manifest_element_get_characters)
+                _WRAP_METHOD(void set_characters (const Glib::ustring& inCharacters), maia_manifest_element_set_characters)
+
+                _WRAP_METHOD(Glib::RefPtr<Element> get_root () const, maia_manifest_element_get_root)
+
+                _IGNORE(maia_manifest_element_get_not_dumpable_attributes)
+                inline void add_not_dumpable_attribute (const Glib::ustring& inAttribute)
+                {
+                    MaiaCoreSet* pSet = maia_manifest_element_get_not_dumpable_attributes (gobj ());
+                    maia_core_collection_insert (MAIA_CORE_COLLECTION (pSet), inAttribute.c_str ());
+                }
+                inline void remove_not_dumpable_attribute (const Glib::ustring& inAttribute)
+                {
+                    MaiaCoreSet* pSet = maia_manifest_element_get_not_dumpable_attributes (gobj ());
+                    maia_core_collection_remove (MAIA_CORE_COLLECTION (pSet), inAttribute.c_str ());
+                }
+
+                _WRAP_METHOD(void read_manifest (const Glib::RefPtr<Document>& inDocument), maia_manifest_element_read_manifest, errthrow)
+                _WRAP_METHOD(Glib::ustring dump (), maia_manifest_element_dump)
+
+                _IGNORE(maia_manifest_element_register_create_func)
+                static void register_create_func (const Glib::ustring& inTag, SlotCreateFunc inFunc);
+
+                _WRAP_PROPERTY("tag", Glib::ustring)
+                _WRAP_PROPERTY("characters", Glib::ustring)
+                _WRAP_PROPERTY("root", Glib::RefPtr<Element>)
+        };
+    }
+}

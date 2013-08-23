@@ -4245,6 +4245,17 @@
   )
 )
 
+(define-function maia_manifest_element_register_create_func
+  (c-name "maia_manifest_element_register_create_func")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inNodeName")
+    '("MaiaManifestElementCreateFunc" "inFunc")
+    '("void*" "inFunc_target")
+    '("GDestroyNotify" "inFunc_target_destroy_notify")
+  )
+)
+
 (define-method read_manifest
   (of-object "MaiaManifestElement")
   (c-name "maia_manifest_element_read_manifest")
