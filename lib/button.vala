@@ -135,8 +135,8 @@ public class Maia.Button : Group, ItemPackable, ItemMovable
         var label_item = new Label (id_label, label);
         add (label_item);
 
-        notify["stroke-color"].connect (() => {
-            label_item.stroke_color = stroke_color;
+        notify["stroke-pattern"].connect (() => {
+            label_item.stroke_pattern = stroke_pattern;
         });
 
         label_item.button_press_event.connect (on_button_press_event);
@@ -376,21 +376,21 @@ public class Maia.Button : Group, ItemPackable, ItemMovable
 
                     inContext.save ();
                     {
-                        var color = label.stroke_color;
+                        var color = label.stroke_pattern;
 
                         inContext.save ();
                         inContext.translate (Graphic.Point (-1, -1));
-                        label.stroke_color  = new Graphic.Color.shade ((Graphic.Color)color, 0.8);
+                        label.stroke_pattern  = new Graphic.Color.shade ((Graphic.Color)color, 0.8);
                         label.draw (inContext);
                         inContext.restore ();
 
                         inContext.save ();
                         inContext.translate (Graphic.Point (1, 1));
-                        label.stroke_color  = new Graphic.Color.shade ((Graphic.Color)color, 1.2);
+                        label.stroke_pattern  = new Graphic.Color.shade ((Graphic.Color)color, 1.2);
                         label.draw (inContext);
                         inContext.restore ();
 
-                        label.stroke_color = color;
+                        label.stroke_pattern = color;
                         label.draw (inContext);
                     }
                     inContext.restore ();

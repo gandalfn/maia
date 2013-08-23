@@ -1,0 +1,90 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * button.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/graphic-color.h>
+#include <maiamm/item-packable.h>
+#include <maiamm/item-movable.h>
+#include <maiamm/group.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/group_p.h)
+
+namespace Maia
+{
+    class Button : public Group, public ItemPackable, public ItemMovable
+    {
+        _CLASS_GOBJECT(Button, MaiaButton, MAIA_BUTTON, Group, MaiaGroup)
+        _IMPLEMENTS_INTERFACE(ItemPackable)
+        _IMPLEMENTS_INTERFACE(ItemMovable)
+
+        public:
+            static Glib::RefPtr<Button> create (const Glib::ustring& inId)
+            {
+                MaiaButton* pButton = maia_button_new (inId.c_str (), 0);
+
+                return Glib::RefPtr<Button> (new Button (pButton));
+            }
+
+            static Glib::RefPtr<Button> create (const Glib::ustring& inId, const Glib::ustring& inLabel)
+            {
+                MaiaButton* pButton = maia_button_new (inId.c_str (), inLabel.c_str ());
+
+                return Glib::RefPtr<Button> (new Button (pButton));
+            }
+
+            _WRAP_METHOD(Glib::ustring get_font_description () const, maia_button_get_font_description)
+            _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_button_set_font_description)
+            _WRAP_METHOD(Glib::ustring get_label () const, maia_button_get_label)
+            _WRAP_METHOD(void set_label (const Glib::ustring& inLabel), maia_button_set_label)
+            _WRAP_METHOD(double get_border () const, maia_button_get_border)
+            _WRAP_METHOD(void set_border (double inBorder), maia_button_set_border)
+            _WRAP_METHOD(Glib::ustring get_icon_filename () const, maia_button_get_icon_filename)
+            _WRAP_METHOD(void set_icon_filename (const Glib::ustring& inFilename), maia_button_set_icon_filename)
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_button_color () const, maia_button_get_button_color)
+            _WRAP_METHOD(void set_button_color (const Glib::RefPtr<Graphic::Color>& inColor), maia_button_set_button_color)
+
+            _WRAP_SIGNAL(void clicked (), "clicked", no_default_handler)
+
+            _WRAP_PROPERTY("font-description", Glib::ustring)
+            _WRAP_PROPERTY("label", Glib::ustring)
+            _WRAP_PROPERTY("border", double)
+            _WRAP_PROPERTY("icon-filename", Glib::ustring)
+            _WRAP_PROPERTY("button-color", Glib::RefPtr<Graphic::Color>)
+
+            _WRAP_PROPERTY("row", guint)
+            _WRAP_PROPERTY("rows", guint)
+
+            _WRAP_PROPERTY("column", guint)
+            _WRAP_PROPERTY("columns", guint)
+
+            _WRAP_PROPERTY("xexpand", bool)
+            _WRAP_PROPERTY("xfill", bool)
+            _WRAP_PROPERTY("xalign", double)
+
+            _WRAP_PROPERTY("yexpand", bool)
+            _WRAP_PROPERTY("yfill", bool)
+            _WRAP_PROPERTY("yalign", double)
+
+            _WRAP_PROPERTY("top-padding", double)
+            _WRAP_PROPERTY("bottom-padding", double)
+            _WRAP_PROPERTY("left-padding", double)
+            _WRAP_PROPERTY("right-padding", double)
+    };
+}

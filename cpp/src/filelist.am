@@ -38,6 +38,26 @@ files_hg = \
     manifest-attribute-scanner.hg \
     manifest-document.hg \
     manifest-element.hg \
-    drawable.hg
+    drawable.hg \
+    item.hg \
+    item-packable.hg \
+    item-movable.hg \
+    item-resizable.hg \
+    group.hg \
+    button.hg \
+    togglebutton.hg \
+    checkbutton.hg \
+    document.hg \
+    drawing-area.hg \
+    entry.hg \
+    grid.hg \
+    highlight.hg \
+    image.hg \
+    label.hg \
+    path.hg \
+    rectangle.hg \
+    togglegroup.hg \
+    model.hg \
+    view.hg
 
 files_ccg = $(files_hg:.hg=.ccg)

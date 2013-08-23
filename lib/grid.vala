@@ -421,7 +421,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
     SizeAllocation m_Allocation;
 
     // accessors
-    public override string tag {
+    internal override string tag {
         get {
             return "Grid";
         }
@@ -530,10 +530,10 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
     paint (Graphic.Context inContext) throws Graphic.Error
     {
         // paint background
-        if (background != null)
+        if (background_pattern != null)
         {
             inContext.save ();
-            unowned Graphic.Image? image = background as Graphic.Image;
+            unowned Graphic.Image? image = background_pattern as Graphic.Image;
             if (image != null)
             {
                 Graphic.Size image_size = image.size;
@@ -543,12 +543,12 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                 image_size.height *= scale;
                 image.size = image_size;
 
-                inContext.pattern = background;
+                inContext.pattern = background_pattern;
                 inContext.translate (Graphic.Point ((geometry.extents.size.width - image_size.width) / 2, (geometry.extents.size.height - image_size.height) / 2));
             }
             else
             {
-                inContext.pattern = background;
+                inContext.pattern = background_pattern;
             }
             inContext.paint ();
             inContext.restore ();
@@ -588,26 +588,26 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         }
 
         // paint grid
-        if (stroke_color != null)
+        if (stroke_pattern != null)
         {
             if (grid_line_width > 0)
             {
-                inContext.pattern = stroke_color;
+                inContext.pattern = stroke_pattern;
                 inContext.line_width = grid_line_width;
                 inContext.stroke (grid);
             }
-        }
 
-        // paint border
-        if (border_line_width > 0)
-        {
-            var area = geometry.copy ();
-            area.translate (geometry.extents.origin.invert ());
-            Graphic.Path path = new Graphic.Path.from_region (area);
+            // paint border
+            if (border_line_width > 0)
+            {
+                var area = geometry.copy ();
+                area.translate (geometry.extents.origin.invert ());
+                Graphic.Path path = new Graphic.Path.from_region (area);
 
-            inContext.pattern = stroke_color;
-            inContext.line_width = border_line_width;
-            inContext.stroke (path);
+                inContext.pattern = stroke_pattern;
+                inContext.line_width = border_line_width;
+                inContext.stroke (path);
+            }
         }
     }
 }

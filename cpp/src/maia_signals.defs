@@ -2008,15 +2008,6 @@
   (construct-only #f)
 )
 
-(define-property page
-  (of-object "MaiaItem")
-  (prop-type "GParamUInt")
-  (docs "page")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
 (define-property position
   (of-object "MaiaItem")
   (prop-type "GParamBoxed")
@@ -2053,28 +2044,28 @@
   (construct-only #f)
 )
 
-(define-property fill-color
+(define-property fill-pattern
   (of-object "MaiaItem")
   (prop-type "GParamObject")
-  (docs "fill-color")
+  (docs "fill-pattern")
   (readable #t)
   (writable #t)
   (construct-only #f)
 )
 
-(define-property stroke-color
+(define-property stroke-pattern
   (of-object "MaiaItem")
   (prop-type "GParamObject")
-  (docs "stroke-color")
+  (docs "stroke-pattern")
   (readable #t)
   (writable #t)
   (construct-only #f)
 )
 
-(define-property background
+(define-property background-pattern
   (of-object "MaiaItem")
   (prop-type "GParamObject")
-  (docs "background")
+  (docs "background-pattern")
   (readable #t)
   (writable #t)
   (construct-only #f)

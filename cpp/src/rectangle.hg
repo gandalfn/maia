@@ -1,0 +1,44 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * rectangle.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/item-packable.h>
+#include <maiamm/item-movable.h>
+#include <maiamm/item.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/item_p.h)
+
+namespace Maia
+{
+    class Rectangle : public Item, public ItemPackable, public ItemMovable
+    {
+        _CLASS_GOBJECT(Rectangle, MaiaRectangle, MAIA_RECTANGLE, Item, MaiaItem)
+        _IMPLEMENTS_INTERFACE(ItemPackable)
+        _IMPLEMENTS_INTERFACE(ItemMovable)
+
+        public:
+            static Glib::RefPtr<Rectangle> create (const Glib::ustring& inId)
+            {
+                MaiaRectangle* pRectangle = maia_rectangle_new (inId.c_str ());
+
+                return Glib::RefPtr<Rectangle> (new Rectangle (pRectangle));
+            }
+    };
+}

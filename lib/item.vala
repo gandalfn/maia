@@ -130,7 +130,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
     }
 
-    public Graphic.Region geometry {
+    internal Graphic.Region geometry {
         get {
             return m_Geometry;
         }
@@ -155,8 +155,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
     }
 
-    public Graphic.Region damaged      { get; protected set; default = null; }
-    public Graphic.Transform transform {
+    internal Graphic.Region damaged      { get; protected set; default = null; }
+    internal Graphic.Transform transform {
         get {
             return m_Transform;
         }
@@ -175,8 +175,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
         default = new Graphic.Transform.identity ();
     }
-
-    public uint page { get; set; default = 0; }
 
     public Graphic.Point position {
         get {
@@ -208,11 +206,11 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
     }
 
-    public uint            layer        { get; set; default = 0; }
-    public Graphic.Pattern fill_color   { get; set; default = null; }
-    public Graphic.Pattern stroke_color { get; set; default = null; }
-    public Graphic.Pattern background   { get; set; default = null; }
-    public double          line_width   { get; set; default = 1.0; }
+    public uint            layer                { get; set; default = 0; }
+    public Graphic.Pattern fill_pattern         { get; set; default = null; }
+    public Graphic.Pattern stroke_pattern       { get; set; default = null; }
+    public Graphic.Pattern background_pattern   { get; set; default = null; }
+    public double          line_width           { get; set; default = 1.0; }
 
     // signals
     public signal bool grab_pointer (Item inItem);

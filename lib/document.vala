@@ -438,26 +438,26 @@ public class Maia.Document : Item
     paint (Graphic.Context inContext) throws Graphic.Error
     {
         // paint background
-        if (background != null)
+        if (background_pattern != null)
         {
             inContext.save ();
             {
-                unowned Graphic.Image? image = background as Graphic.Image;
+                unowned Graphic.Image? image = background_pattern as Graphic.Image;
                 if (image != null)
                 {
                     Graphic.Size image_size = image.size;
                     double scale = double.max (geometry.extents.size.width / image.size.width, geometry.extents.size.height / image.size.height);
                     image_size.width *= scale;
                     image_size.height *= scale;
-                    (background as Graphic.Image).size = image_size;
+                    (background_pattern as Graphic.Image).size = image_size;
 
-                    inContext.pattern = background;
+                    inContext.pattern = background_pattern;
                     inContext.translate (Graphic.Point ((geometry.extents.size.width - image_size.width) / 2,
                                                         (geometry.extents.size.height - image_size.height) / 2));
                 }
                 else
                 {
-                    inContext.pattern = background;
+                    inContext.pattern = background_pattern;
                 }
 
                 inContext.paint ();

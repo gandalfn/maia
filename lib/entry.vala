@@ -77,9 +77,9 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         });
     }
 
-    public Entry (string inId, string inLabel)
+    public Entry (string inId, string? inText)
     {
-        GLib.Object (id: GLib.Quark.from_string (inId), text: inLabel);
+        GLib.Object (id: GLib.Quark.from_string (inId), text: inText);
     }
 
     private inline uint
@@ -214,15 +214,15 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     internal override void
     paint (Graphic.Context inContext) throws Graphic.Error
     {
-        if (m_Glyph != null && stroke_color != null)
+        if (m_Glyph != null && stroke_pattern != null)
         {
             inContext.save ();
             {
                 // Paint text
-                inContext.pattern = stroke_color;
+                inContext.pattern = stroke_pattern;
                 inContext.render (m_Glyph);
 
-                inContext.pattern = background;
+                inContext.pattern = background_pattern;
                 inContext.line_width = underline_width;
                 inContext.dash = { 1.0, 2.0 };
 

@@ -1,0 +1,78 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * document.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/item.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/item_p.h)
+
+namespace Maia
+{
+    _WRAP_ENUM(PageFormat, MaiaPageFormat, NO_GTYPE)
+
+    class Document : public Item
+    {
+        _CLASS_GOBJECT(Document, MaiaDocument, MAIA_DOCUMENT, Item, MaiaItem)
+
+        public:
+            static Glib::RefPtr<Document> create (const Glib::ustring& inId, PageFormat inFormat)
+            {
+                MaiaDocument* pDocument = maia_document_new (inId.c_str(), (MaiaPageFormat)inFormat);
+                return Glib::RefPtr<Document> (new Document (pDocument));
+            }
+
+            _WRAP_METHOD(PageFormat get_format () const, maia_document_get_format)
+            _WRAP_METHOD(void set_format (PageFormat inFormat), maia_document_set_format)
+
+            _WRAP_METHOD(double get_top_margin () const, maia_document_get_top_margin)
+            _WRAP_METHOD(void set_top_margin (double inAlign), maia_document_set_top_margin)
+            _WRAP_METHOD(double get_bottom_margin () const, maia_document_get_bottom_margin)
+            _WRAP_METHOD(void set_bottom_margin (double inAlign), maia_document_set_bottom_margin)
+            _WRAP_METHOD(double get_left_margin () const, maia_document_get_left_margin)
+            _WRAP_METHOD(void set_left_margin (double inAlign), maia_document_set_left_margin)
+            _WRAP_METHOD(double get_right_margin () const, maia_document_get_right_margin)
+            _WRAP_METHOD(void set_right_margin (double inAlign), maia_document_set_right_margin)
+
+            _WRAP_METHOD(guint get_resolution () const, maia_document_get_resolution)
+            _WRAP_METHOD(void set_resolution (guint inResolution), maia_document_set_resolution)
+
+            _WRAP_METHOD(int get_border_width () const, maia_document_get_border_width)
+            _WRAP_METHOD(void set_border_width (int inBorderWidth), maia_document_set_border_width)
+
+            _WRAP_METHOD(guint get_nb_pages () const, maia_document_get_nb_pages)
+
+            _WRAP_METHOD(Glib::ustring get_header () const, maia_document_get_header)
+            _WRAP_METHOD(void set_header (const Glib::ustring& inName), maia_document_set_header)
+
+            _WRAP_METHOD(Glib::ustring get_footer () const, maia_document_get_footer)
+            _WRAP_METHOD(void set_footer (const Glib::ustring& inName), maia_document_set_footer)
+
+            _WRAP_PROPERTY("format", PageFormat)
+            _WRAP_PROPERTY("top-margin", double)
+            _WRAP_PROPERTY("bottom-margin", double)
+            _WRAP_PROPERTY("left-margin", double)
+            _WRAP_PROPERTY("right-margin", double)
+            _WRAP_PROPERTY("resolution", guint)
+            _WRAP_PROPERTY("border-width", int)
+            _WRAP_PROPERTY("nb-pages", guint)
+            _WRAP_PROPERTY("header", Glib::ustring)
+            _WRAP_PROPERTY("footer", Glib::ustring)
+    };
+}

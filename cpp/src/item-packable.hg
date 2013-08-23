@@ -1,0 +1,120 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * item-packable.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(glibmm/private/object_p.h)
+
+namespace Maia
+{
+    class ItemPackable : public Glib::Interface
+    {
+        _CLASS_INTERFACE(ItemPackable, MaiaItemPackable, MAIA_ITEM_PACKABLE, MaiaItemPackableIface)
+
+        protected:
+            _WRAP_VFUNC(guint get_row (), get_row)
+            _WRAP_VFUNC(void set_row (guint inRow), set_row)
+            _WRAP_VFUNC(guint get_rows (), get_rows)
+            _WRAP_VFUNC(void set_rows (guint inRows), set_rows)
+
+            _WRAP_VFUNC(guint get_column (), get_column)
+            _WRAP_VFUNC(void set_column (guint inColumn), set_column)
+            _WRAP_VFUNC(guint get_columns (), get_columns)
+            _WRAP_VFUNC(void set_columns (guint inColumns), set_columns)
+
+            _WRAP_VFUNC(bool get_xexpand (), get_xexpand)
+            _WRAP_VFUNC(void set_xexpand (bool inExpand), set_xexpand)
+            _WRAP_VFUNC(bool get_xfill (), get_xfill)
+            _WRAP_VFUNC(void set_xfill (bool inFill), set_xfill)
+            _WRAP_VFUNC(double get_xalign (), get_xalign)
+            _WRAP_VFUNC(void set_xalign (double inAlign), set_xalign)
+
+            _WRAP_VFUNC(bool get_yexpand (), get_yexpand)
+            _WRAP_VFUNC(void set_yexpand (bool inExpand), set_yexpand)
+            _WRAP_VFUNC(bool get_yfill (), get_yfill)
+            _WRAP_VFUNC(void set_yfill (bool inFill), set_yfill)
+            _WRAP_VFUNC(double get_yalign (), get_yalign)
+            _WRAP_VFUNC(void set_yalign (double inAlign), set_yalign)
+
+            _WRAP_VFUNC(double get_top_padding (), get_top_padding)
+            _WRAP_VFUNC(void set_top_padding (double inAlign), set_top_padding)
+            _WRAP_VFUNC(double get_bottom_padding (), get_bottom_padding)
+            _WRAP_VFUNC(void set_bottom_padding (double inAlign), set_bottom_padding)
+            _WRAP_VFUNC(double get_left_padding (), get_left_padding)
+            _WRAP_VFUNC(void set_left_padding (double inAlign), set_left_padding)
+            _WRAP_VFUNC(double get_right_padding (), get_right_padding)
+            _WRAP_VFUNC(void set_right_padding (double inAlign), set_right_padding)
+
+
+        public:
+            _WRAP_METHOD(guint get_row () const, maia_item_packable_get_row)
+            _WRAP_METHOD(void set_row (guint inRow), maia_item_packable_set_row)
+            _WRAP_METHOD(guint get_rows () const, maia_item_packable_get_rows)
+            _WRAP_METHOD(void set_rows (guint inRows), maia_item_packable_set_rows)
+
+            _WRAP_METHOD(guint get_column () const, maia_item_packable_get_column)
+            _WRAP_METHOD(void set_column (guint inColumn), maia_item_packable_set_column)
+            _WRAP_METHOD(guint get_columns () const, maia_item_packable_get_columns)
+            _WRAP_METHOD(void set_columns (guint inColumns), maia_item_packable_set_columns)
+
+            _WRAP_METHOD(bool get_xexpand () const, maia_item_packable_get_xexpand)
+            _WRAP_METHOD(void set_xexpand (bool inExpand), maia_item_packable_set_xexpand)
+            _WRAP_METHOD(bool get_xfill () const, maia_item_packable_get_xfill)
+            _WRAP_METHOD(void set_xfill (bool inFill), maia_item_packable_set_xfill)
+            _WRAP_METHOD(double get_xalign () const, maia_item_packable_get_xalign)
+            _WRAP_METHOD(void set_xalign (double inAlign), maia_item_packable_set_xalign)
+
+            _WRAP_METHOD(bool get_yexpand () const, maia_item_packable_get_yexpand)
+            _WRAP_METHOD(void set_yexpand (bool inExpand), maia_item_packable_set_yexpand)
+            _WRAP_METHOD(bool get_yfill () const, maia_item_packable_get_yfill)
+            _WRAP_METHOD(void set_yfill (bool inFill), maia_item_packable_set_yfill)
+            _WRAP_METHOD(double get_yalign () const, maia_item_packable_get_yalign)
+            _WRAP_METHOD(void set_yalign (double inAlign), maia_item_packable_set_yalign)
+
+            _WRAP_METHOD(double get_top_padding () const, maia_item_packable_get_top_padding)
+            _WRAP_METHOD(void set_top_padding (double inAlign), maia_item_packable_set_top_padding)
+            _WRAP_METHOD(double get_bottom_padding () const, maia_item_packable_get_bottom_padding)
+            _WRAP_METHOD(void set_bottom_padding (double inAlign), maia_item_packable_set_bottom_padding)
+            _WRAP_METHOD(double get_left_padding () const, maia_item_packable_get_left_padding)
+            _WRAP_METHOD(void set_left_padding (double inAlign), maia_item_packable_set_left_padding)
+            _WRAP_METHOD(double get_right_padding () const, maia_item_packable_get_right_padding)
+            _WRAP_METHOD(void set_right_padding (double inAlign), maia_item_packable_set_right_padding)
+
+            _WRAP_PROPERTY("row", guint)
+            _WRAP_PROPERTY("rows", guint)
+
+            _WRAP_PROPERTY("column", guint)
+            _WRAP_PROPERTY("columns", guint)
+
+            _WRAP_PROPERTY("xexpand", bool)
+            _WRAP_PROPERTY("xfill", bool)
+            _WRAP_PROPERTY("xalign", double)
+
+            _WRAP_PROPERTY("yexpand", bool)
+            _WRAP_PROPERTY("yfill", bool)
+            _WRAP_PROPERTY("yalign", double)
+
+            _WRAP_PROPERTY("top-padding", double)
+            _WRAP_PROPERTY("bottom-padding", double)
+            _WRAP_PROPERTY("left-padding", double)
+            _WRAP_PROPERTY("right-padding", double)
+
+    };
+}

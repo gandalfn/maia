@@ -72,8 +72,6 @@ namespace Maia
                 _WRAP_METHOD(void skew_x (double inRadians), maia_graphic_transform_skew_x)
                 _WRAP_METHOD(void skew_y (double inRadians), maia_graphic_transform_skew_y)
 
-                _WRAP_PROPERTY("matrix", Matrix)
-
                 _IGNORE(maia_graphic_transform_changed)
 
                 _WRAP_SIGNAL(void changed(), "changed", no_default_handler)

@@ -1,0 +1,90 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * entry.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/graphic-color.h>
+#include <maiamm/item-packable.h>
+#include <maiamm/item-movable.h>
+#include <maiamm/item.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/item_p.h)
+
+namespace Maia
+{
+    class Entry : public Item, public ItemPackable, public ItemMovable
+    {
+        _CLASS_GOBJECT(Entry, MaiaEntry, MAIA_ENTRY, Item, MaiaItem)
+        _IMPLEMENTS_INTERFACE(ItemPackable)
+        _IMPLEMENTS_INTERFACE(ItemMovable)
+
+        public:
+            static Glib::RefPtr<Entry> create (const Glib::ustring& inId)
+            {
+                MaiaEntry* pEntry = maia_entry_new (inId.c_str (), 0);
+
+                return Glib::RefPtr<Entry> (new Entry (pEntry));
+            }
+
+            static Glib::RefPtr<Entry> create (const Glib::ustring& inId, const Glib::ustring& inText)
+            {
+                MaiaEntry* pEntry = maia_entry_new (inId.c_str (), inText.c_str ());
+
+                return Glib::RefPtr<Entry> (new Entry (pEntry));
+            }
+
+            _WRAP_METHOD(Glib::ustring get_font_description () const, maia_entry_get_font_description)
+            _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_entry_set_font_description)
+
+            _WRAP_METHOD(Glib::ustring get_text () const, maia_entry_get_text)
+            _WRAP_METHOD(void set_text (const Glib::ustring& inLabel), maia_entry_set_text)
+
+            _WRAP_METHOD(guint get_lines () const, maia_entry_get_lines)
+            _WRAP_METHOD(void set_lines (guint inLines), maia_entry_set_lines)
+
+            _WRAP_METHOD(double get_underline_width () const, maia_entry_get_underline_width)
+            _WRAP_METHOD(void set_underline_width (double inWidth), maia_entry_set_underline_width)
+
+            _WRAP_SIGNAL(void changed (), "changed", no_default_handler)
+
+            _WRAP_PROPERTY("font-description", Glib::ustring)
+            _WRAP_PROPERTY("text", Glib::ustring)
+            _WRAP_PROPERTY("lines", guint)
+            _WRAP_PROPERTY("underline-width", Glib::ustring)
+
+            _WRAP_PROPERTY("row", guint)
+            _WRAP_PROPERTY("rows", guint)
+
+            _WRAP_PROPERTY("column", guint)
+            _WRAP_PROPERTY("columns", guint)
+
+            _WRAP_PROPERTY("xexpand", bool)
+            _WRAP_PROPERTY("xfill", bool)
+            _WRAP_PROPERTY("xalign", double)
+
+            _WRAP_PROPERTY("yexpand", bool)
+            _WRAP_PROPERTY("yfill", bool)
+            _WRAP_PROPERTY("yalign", double)
+
+            _WRAP_PROPERTY("top-padding", double)
+            _WRAP_PROPERTY("bottom-padding", double)
+            _WRAP_PROPERTY("left-padding", double)
+            _WRAP_PROPERTY("right-padding", double)
+    };
+}

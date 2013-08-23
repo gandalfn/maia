@@ -59,8 +59,19 @@ namespace Maia
 
                 _WRAP_METHOD(bool can_append_child (const Glib::RefPtr<Object>& inObject), maia_core_object_can_append_child)
                 _WRAP_METHOD(void add (const Glib::RefPtr<Object>& inObject), maia_core_object_add)
-                _WRAP_METHOD(Glib::RefPtr<Object> find (Glib::QueryQuark inId, bool inRecurse = true), maia_core_object_find)
                 _WRAP_METHOD(bool contains (const Glib::RefPtr<Object>& inObject), maia_core_object_contains)
+
+                _IGNORE(maia_core_object_find)
+                template <typename T>
+                inline void
+                find (const Glib::ustring& inName, Glib::RefPtr<T>& outChild, bool inRecurse = true)
+                {
+                    MaiaCoreObject* pChild = maia_core_object_find(gobj (), g_quark_from_string (inName.c_str ()), (gboolean)inRecurse);
+                    if (pChild)
+                        outChild = Glib::RefPtr<T>::cast_dynamic (Glib::wrap (G_OBJECT (pChild), true));
+                    else
+                        outChild = Glib::RefPtr<T> (0);
+                }
 
                 _WRAP_METHOD (Object::iterator begin (), maia_core_object_iterator)
                 _WRAP_METHOD (Object::iterator end (), maia_core_object_iterator_end)

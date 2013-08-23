@@ -100,11 +100,11 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     internal override void
     paint (Graphic.Context inContext) throws Graphic.Error
     {
-        if (m_Glyph != null && stroke_color != null)
+        if (m_Glyph != null && stroke_pattern != null)
         {
             inContext.save ();
             {
-                inContext.pattern = stroke_color;
+                inContext.pattern = stroke_pattern;
                 inContext.translate (Graphic.Point (geometry.extents.size.width / 2, geometry.extents.size.height / 2));
                 inContext.translate (Graphic.Point (-m_Glyph.size.width / 2, -m_Glyph.size.height / 2));
                 inContext.render (m_Glyph);

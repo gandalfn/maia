@@ -495,6 +495,27 @@
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaManifestElement
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-vfunc get_tag
+  (of-object "MaiaManifestElement")
+  (return-type "const-gchar*")
+)
+
+(define-vfunc get_characters
+  (of-object "MaiaManifestElement")
+  (return-type "const-gchar*")
+)
+
+(define-vfunc set_characters
+  (of-object "MaiaManifestElement")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inCharacters")
+  )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; From MaiaDrawable
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define-vfunc get_geometry
@@ -542,5 +563,302 @@
   (parameters
     '("MaiaGraphicContext*" "inContext")
     '("GError**" "error")
+  )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaItem
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-vfunc get_tag
+  (of-object "MaiaItem")
+  (return-type "const-gchar*")
+)
+
+(define-vfunc get_characters
+  (of-object "MaiaItem")
+  (return-type "const-gchar*")
+)
+
+(define-vfunc set_characters
+  (of-object "MaiaItem")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inCharacters")
+  )
+)
+
+(define-vfunc get_origin
+  (of-object "MaiaItem")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "outPoint")
+  )
+)
+
+(define-vfunc on_child_damaged
+  (of-object "MaiaItem")
+  (return-type "none")
+  (parameters
+    '("MaiaDrawable*" "inChild")
+    '("MaiaGraphicRegion*" "inArea")
+  )
+)
+
+(define-vfunc on_button_press_event
+  (of-object "MaiaItem")
+  (return-type "gboolean")
+  (parameters
+    '("guint" "inButton")
+    '("MaiaGraphicPoint*" "inPoint")
+  )
+)
+
+(define-vfunc on_button_release_event
+  (of-object "MaiaItem")
+  (return-type "gboolean")
+  (parameters
+    '("guint" "inButton")
+    '("MaiaGraphicPoint*" "inPoint")
+  )
+)
+
+(define-vfunc on_motion_event
+  (of-object "MaiaItem")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaGraphicPoint*" "inPoint")
+  )
+)
+
+(define-vfunc on_scroll_event
+  (of-object "MaiaItem")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaScroll" "inScroll")
+    '("MaiaGraphicPoint*" "inPoint")
+  )
+)
+
+(define-vfunc size_request
+  (of-object "MaiaItem")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "inSize")
+    '("MaiaGraphicSize*" "outSize")
+  )
+)
+
+(define-vfunc paint
+  (of-object "MaiaItem")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicContext*" "inContext")
+    '("GError**" "error")
+  )
+)
+
+(define-vfunc update
+  (of-object "MaiaItem")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicContext*" "inContext")
+    '("MaiaGraphicRegion*" "inAllocation")
+    '("GError**" "error")
+  )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaItemPackable
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-vfunc get_row
+  (of-object "MaiaItemPackable")
+  (return-type "guint")
+)
+
+(define-vfunc set_row
+  (of-object "MaiaItemPackable")
+  (return-type "none")
+  (parameters
+    '("guint" "inRow")
+  )
+)
+
+(define-vfunc get_rows
+  (of-object "MaiaItemPackable")
+  (return-type "guint")
+)
+
+(define-vfunc set_rows
+  (of-object "MaiaItemPackable")
+  (return-type "none")
+  (parameters
+    '("guint" "inRows")
+  )
+)
+
+(define-vfunc get_column
+  (of-object "MaiaItemPackable")
+  (return-type "guint")
+)
+
+(define-vfunc set_column
+  (of-object "MaiaItemPackable")
+  (return-type "none")
+  (parameters
+    '("guint" "inColumn")
+  )
+)
+
+(define-vfunc get_columns
+  (of-object "MaiaItemPackable")
+  (return-type "guint")
+)
+
+(define-vfunc set_columns
+  (of-object "MaiaItemPackable")
+  (return-type "none")
+  (parameters
+    '("guint" "inColumns")
+  )
+)
+
+(define-vfunc get_xexpand
+  (of-object "MaiaItemPackable")
+  (return-type "gboolean")
+)
+
+(define-vfunc set_xexpand
+  (of-object "MaiaItemPackable")
+  (return-type "none")
+  (parameters
+    '("gboolean" "inExpand")
+  )
+)
+
+(define-vfunc get_xfill
+  (of-object "MaiaItemPackable")
+  (return-type "gboolean")
+)
+
+(define-vfunc set_xfill
+  (of-object "MaiaItemPackable")
+  (return-type "none")
+  (parameters
+    '("gboolean" "inFill")
+  )
+)
+
+(define-vfunc get_xalign
+  (of-object "MaiaItemPackable")
+  (return-type "double")
+)
+
+(define-vfunc set_xalign
+  (of-object "MaiaItemPackable")
+  (return-type "none")
+  (parameters
+    '("double" "inAlign")
+  )
+)
+
+(define-vfunc get_yexpand
+  (of-object "MaiaItemPackable")
+  (return-type "gboolean")
+)
+
+(define-vfunc set_yexpand
+  (of-object "MaiaItemPackable")
+  (return-type "none")
+  (parameters
+    '("gboolean" "inExpand")
+  )
+)
+
+(define-vfunc get_yfill
+  (of-object "MaiaItemPackable")
+  (return-type "gboolean")
+)
+
+(define-vfunc set_yfill
+  (of-object "MaiaItemPackable")
+  (return-type "none")
+  (parameters
+    '("gboolean" "inFill")
+  )
+)
+
+(define-vfunc get_yalign
+  (of-object "MaiaItemPackable")
+  (return-type "double")
+)
+
+(define-vfunc set_yalign
+  (of-object "MaiaItemPackable")
+  (return-type "none")
+  (parameters
+    '("double" "inAlign")
+  )
+)
+
+(define-vfunc get_top_padding
+  (of-object "MaiaItemPackable")
+  (return-type "double")
+)
+
+(define-vfunc set_top_padding
+  (of-object "MaiaItemPackable")
+  (return-type "none")
+  (parameters
+    '("double" "inPadding")
+  )
+)
+
+(define-vfunc get_bottom_padding
+  (of-object "MaiaItemPackable")
+  (return-type "double")
+)
+
+(define-vfunc set_bottom_padding
+  (of-object "MaiaItemPackable")
+  (return-type "none")
+  (parameters
+    '("double" "inPadding")
+  )
+)
+
+(define-vfunc get_left_padding
+  (of-object "MaiaItemPackable")
+  (return-type "double")
+)
+
+(define-vfunc set_left_padding
+  (of-object "MaiaItemPackable")
+  (return-type "none")
+  (parameters
+    '("double" "inPadding")
+  )
+)
+
+(define-vfunc get_right_padding
+  (of-object "MaiaItemPackable")
+  (return-type "double")
+)
+
+(define-vfunc set_right_padding
+  (of-object "MaiaItemPackable")
+  (return-type "none")
+  (parameters
+    '("double" "inPadding")
+  )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaGroup
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-vfunc childs_size_request
+  (of-object "MaiaGroup")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "outSize")
   )
 )

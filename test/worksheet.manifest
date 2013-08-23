@@ -37,7 +37,7 @@ Document.worksheet {
     Grid.header {
         row_spacing: 5;
         grid_line_width: 1;
-        stroke_color: #000000;
+        stroke-pattern: #000000;
         Image.institution_logo {
             row: 0;
             column: 0;
@@ -65,7 +65,7 @@ Document.worksheet {
             yexpand: false;
             right_padding: 5;
             left_padding: 5;
-            stroke_color: #000000;
+            stroke-pattern: #000000;
             font_description: "Liberation Sans 17";
             text: "Institution name";
         }
@@ -81,7 +81,7 @@ Document.worksheet {
                 row: 0;
                 right_padding: 5;
                 left_padding: 5;
-                stroke_color: #000000;
+                stroke-pattern: #000000;
                 font_description: "Liberation Sans 12";
                 text: "Mon texte toto() ;  \"escape";
             }
@@ -90,7 +90,7 @@ Document.worksheet {
                 row: 2;
                 right_padding: 5;
                 left_padding: 5;
-                stroke_color: #000000;
+                stroke-pattern: #000000;
                 font_description: "Liberation Sans 12";
                 text: "21/03/2012";
             }
@@ -114,7 +114,7 @@ Document.worksheet {
             column: 1;
             right_padding: 5;
             left_padding: 5;
-            stroke_color: #000000;
+            stroke-pattern: #000000;
             font_description: "Liberation Sans 14";
             text: "Page num";
         }
@@ -133,7 +133,7 @@ Document.worksheet {
         column_spacing: 5;
         page: 1;
         grid_line_width: 1;
-        stroke_color: #000000;
+        stroke-pattern: #000000;
 
         // Left title
         Label.left_title {
@@ -142,7 +142,7 @@ Document.worksheet {
             xexpand: false;
             background: #C0C0C0;
             transform: rotate(pi/2);
-            stroke_color: #000000;
+            stroke-pattern: #000000;
             font_description: "Liberation Sans 17";
             text: "Vascular";
         }
@@ -162,7 +162,7 @@ Document.worksheet {
               top_padding: 5;
               yexpand: false;
               bottom_padding: 5;
-              stroke_color: #000000;
+              stroke-pattern: #000000;
               font_description: "Liberation Sans 12";
               lines: 5;
               text: "Enter your text";
@@ -202,14 +202,14 @@ Document.worksheet {
 
                 Label.label_draw {
                     position: 150, 150;
-                    stroke_color: #000000;
+                    stroke-pattern: #000000;
                     font_description: "Liberation Sans 14";
                     text: "Label drawing";
                 }
 
                 Label.label_draw2 {
                     position: 500, 150;
-                    stroke_color: #000000;
+                    stroke-pattern: #000000;
                     font_description: "Liberation Sans 14";
                     text: "Label drawing 2";
                 }
@@ -223,13 +223,13 @@ Document.worksheet {
                 Rectangle.rectangle_draw {
                     position: 200, 400;
                     size: 100, 100;
-                    fill_color: "#00FF00";
+                    fill-pattern: "#00FF00";
                 }
 
                 Path.path_draw {
                     position: 200, 200;
                     path: 'M 0,0 L 50, 50 L 0, 50 Z';
-                    fill_color: linear-gradient (0, 0, @width, 0,
+                    fill-pattern: linear-gradient (0, 0, @width, 0,
                                                  color-stop (0, rgb (0, 1, 0)),
                                                  color-stop (1, rgb (0, 0, 1)));
                 }
@@ -241,13 +241,13 @@ Document.worksheet {
     Grid.main_2 {
         page: 2;
         border_line_width: 1;
-        stroke_color: #000000;
+        stroke-pattern: #000000;
 
         // Left title
         Label.title_2 {
             row: 0;
             column: 0;
-            stroke_color: #000000;
+            stroke-pattern: #000000;
             font_description: "Liberation Sans 17";
             text: "Page 2";
         }

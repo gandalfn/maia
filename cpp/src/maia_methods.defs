@@ -6856,21 +6856,6 @@
   )
 )
 
-(define-method get_page
-  (of-object "MaiaItem")
-  (c-name "maia_item_get_page")
-  (return-type "guint")
-)
-
-(define-method set_page
-  (of-object "MaiaItem")
-  (c-name "maia_item_set_page")
-  (return-type "none")
-  (parameters
-    '("guint" "value")
-  )
-)
-
 (define-method get_position
   (of-object "MaiaItem")
   (c-name "maia_item_get_position")
@@ -6931,45 +6916,45 @@
   )
 )
 
-(define-method get_fill_color
+(define-method get_fill_pattern
   (of-object "MaiaItem")
-  (c-name "maia_item_get_fill_color")
+  (c-name "maia_item_get_fill_pattern")
   (return-type "MaiaGraphicPattern*")
 )
 
-(define-method set_fill_color
+(define-method set_fill_pattern
   (of-object "MaiaItem")
-  (c-name "maia_item_set_fill_color")
+  (c-name "maia_item_set_fill_pattern")
   (return-type "none")
   (parameters
     '("MaiaGraphicPattern*" "value")
   )
 )
 
-(define-method get_stroke_color
+(define-method get_stroke_pattern
   (of-object "MaiaItem")
-  (c-name "maia_item_get_stroke_color")
+  (c-name "maia_item_get_stroke_pattern")
   (return-type "MaiaGraphicPattern*")
 )
 
-(define-method set_stroke_color
+(define-method set_stroke_pattern
   (of-object "MaiaItem")
-  (c-name "maia_item_set_stroke_color")
+  (c-name "maia_item_set_stroke_pattern")
   (return-type "none")
   (parameters
     '("MaiaGraphicPattern*" "value")
   )
 )
 
-(define-method get_background
+(define-method get_background_pattern
   (of-object "MaiaItem")
-  (c-name "maia_item_get_background")
+  (c-name "maia_item_get_background_pattern")
   (return-type "MaiaGraphicPattern*")
 )
 
-(define-method set_background
+(define-method set_background_pattern
   (of-object "MaiaItem")
-  (c-name "maia_item_set_background")
+  (c-name "maia_item_set_background_pattern")
   (return-type "none")
   (parameters
     '("MaiaGraphicPattern*" "value")
@@ -7435,7 +7420,7 @@
   (return-type "MaiaEntry*")
   (parameters
     '("const-gchar*" "inId")
-    '("const-gchar*" "inLabel")
+    '("const-gchar*" "inText")
   )
 )
 
@@ -7445,7 +7430,7 @@
   (parameters
     '("GType" "object_type")
     '("const-gchar*" "inId")
-    '("const-gchar*" "inLabel")
+    '("const-gchar*" "inText")
   )
 )
 

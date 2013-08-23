@@ -20,7 +20,7 @@
 public class Maia.CheckButton : ToggleButton
 {
     // accessors
-    public override string tag {
+    internal override string tag {
         get {
             return "CheckButton";
         }
@@ -69,7 +69,7 @@ public class Maia.CheckButton : ToggleButton
             base.paint (inContext);
 
             // Paint check box
-            Graphic.Color color = fill_color as Graphic.Color ?? new Graphic.Color (0.7, 0.7, 0.7);
+            Graphic.Color color = fill_pattern as Graphic.Color ?? new Graphic.Color (0.7, 0.7, 0.7);
             Graphic.Color shade = new Graphic.Color.shade (color, 0.6);
 
             var path = new Graphic.Path ();
@@ -89,7 +89,7 @@ public class Maia.CheckButton : ToggleButton
                 path.move_to (0.5 + (size.height * 0.2), (size.height * 0.5));
                 path.line_to (0.5 + (size.height * 0.4), (size.height * 0.7));
                 path.curve_to (0.5 + (size.height * 0.4), (size.height * 0.7), 0.5 + (size.height * 0.5), (size.height * 0.4), 0.5 + (size.height * 0.70), (size.height * 0.25));
-                inContext.pattern = stroke_color;
+                inContext.pattern = stroke_pattern;
                 inContext.stroke (path);
             }
         }

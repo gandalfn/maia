@@ -62,8 +62,6 @@ namespace Maia
                 _IGNORE(maia_graphic_mesh_gradient_patch_new)
 
                 _WRAP_METHOD(Glib::RefPtr<Path> get_path () const, maia_graphic_mesh_gradient_patch_get_path)
-
-                _WRAP_PROPERTY("path", Glib::RefPtr<Path>)
         };
 
         class MeshGradientLinePatch : public MeshGradientPatch
@@ -131,9 +129,6 @@ namespace Maia
 
                 _WRAP_METHOD(guint get_num () const, maia_graphic_mesh_gradient_patch_control_point_get_num)
                 _WRAP_METHOD(void get_point (Point& outPoint) const, maia_graphic_mesh_gradient_patch_control_point_get_point)
-
-                _WRAP_PROPERTY("num", guint)
-                _WRAP_PROPERTY("point", Point)
         };
 
         class MeshGradientPatchCornerColor : public MeshGradientPatchControl
@@ -149,9 +144,6 @@ namespace Maia
 
                 _WRAP_METHOD(guint get_num () const, maia_graphic_mesh_gradient_patch_corner_color_get_num)
                 _WRAP_METHOD(Glib::RefPtr<Color> get_color () const, maia_graphic_mesh_gradient_patch_corner_color_get_color)
-
-                _WRAP_PROPERTY("num", guint)
-                _WRAP_PROPERTY("color", Glib::RefPtr<Color>)
         };
     }
 }

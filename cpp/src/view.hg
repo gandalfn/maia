@@ -1,0 +1,63 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * view.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/grid.h>
+#include <maiamm/item-packable.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/grid_p.h)
+
+namespace Maia
+{
+    _WRAP_ENUM(Orientation, MaiaOrientation, NO_GTYPE)
+
+    class View : public Grid
+    {
+        _CLASS_GOBJECT(View, MaiaView, MAIA_VIEW, Grid, MaiaGrid)
+
+        public:
+            static Glib::RefPtr<View> create (const Glib::ustring& inId)
+            {
+                MaiaView* pView = maia_view_new (inId.c_str());
+                return Glib::RefPtr<View> (new View (pView));
+            }
+
+            _WRAP_METHOD(guint get_lines () const, maia_view_get_lines)
+            _WRAP_METHOD(void set_lines (guint inLines), maia_view_set_lines)
+
+            _WRAP_METHOD(Orientation get_orientation () const, maia_view_get_orientation)
+            _WRAP_METHOD(void set_orientation (Orientation inOrientation), maia_view_set_orientation)
+
+            _WRAP_METHOD(Glib::ustring get_model () const, maia_view_get_model)
+            _WRAP_METHOD(void set_model (const Glib::ustring& inName), maia_view_set_model)
+
+            inline Glib::RefPtr<ItemPackable> operator[] (guint inRow) const
+            {
+                return get_item (inRow);
+            }
+
+            _WRAP_PROPERTY("lines", guint)
+            _WRAP_PROPERTY("orientation", Orientation)
+            _WRAP_PROPERTY("model", Glib::ustring)
+
+        private:
+            _WRAP_METHOD(Glib::RefPtr<ItemPackable> get_item (guint inRow) const, maia_view_get_item)
+    };
+}

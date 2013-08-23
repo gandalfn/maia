@@ -118,13 +118,13 @@ public class Maia.TestModel : Maia.TestCase
                             "       [" +
                             "           Grid.cell {" +
                             "               Label.label {" +
-                            "                   stroke-color: @color;" +
+                            "                   stroke-pattern: @color;" +
                             "                   font-description: 'Liberation Sans 14';" +
                             "                   text: @name;" +
                             "               }" +
                             "               Label.value {" +
                             "                   row: 1;" +
-                            "                   stroke-color: @color;" +
+                            "                   stroke-pattern: @color;" +
                             "                   font-description: 'Liberation Sans 14';" +
                             "                   text: @val;" +
                             "               }" +
@@ -132,7 +132,7 @@ public class Maia.TestModel : Maia.TestCase
                             "       ]" +
                             "   }" +
                             "   Button.button { " +
-                            "       stroke-color: #7997AE;" +
+                            "       stroke-pattern: #7997AE;" +
                             "       button-color: #C0C0C0;" +
                             "       row: 1;" +
                             "       yexpand: false;" +

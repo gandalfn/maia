@@ -80,7 +80,6 @@ namespace Maia
                 _WRAP_PROPERTY("n-frames", guint)
                 _WRAP_PROPERTY("progress", gdouble)
                 _WRAP_PROPERTY("current-frame", guint)
-                _WRAP_PROPERTY("master", bool)
                 _WRAP_PROPERTY("is-playing", bool)
 
                 _IGNORE(maia_core_timeline_started)

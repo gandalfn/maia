@@ -78,7 +78,6 @@ namespace Maia
 
                 _WRAP_PROPERTY("tag", Glib::ustring)
                 _WRAP_PROPERTY("characters", Glib::ustring)
-                _WRAP_PROPERTY("root", Glib::RefPtr<Element>)
         };
     }
 }

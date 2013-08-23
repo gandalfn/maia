@@ -53,9 +53,6 @@ namespace Maia
                 _WRAP_METHOD(void set_offset (double inOffset), maia_graphic_gradient_color_stop_set_offset)
                 _WRAP_METHOD(Glib::RefPtr<Color> get_color () const, maia_graphic_gradient_color_stop_get_color)
                 _WRAP_METHOD(void set_color (const Glib::RefPtr<Color>& inColor), maia_graphic_gradient_color_stop_set_color)
-
-                _WRAP_PROPERTY ("offset", double)
-                _WRAP_PROPERTY ("color", Glib::RefPtr<Color>)
         };
 
     }

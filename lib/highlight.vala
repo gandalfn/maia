@@ -85,16 +85,16 @@ public class Maia.Highlight : ToggleButton
                 var path = new Graphic.Path ();
                 path.rectangle (border / 2, border / 2, size.width - border / 2, size.height - border / 2, 5, 5);
 
-                if (stroke_color != null)
+                if (stroke_pattern != null)
                 {
-                    inContext.pattern = stroke_color;
+                    inContext.pattern = stroke_pattern;
                     inContext.line_width = line_width;
                     inContext.stroke (path);
                 }
 
-                if (fill_color != null)
+                if (fill_pattern != null)
                 {
-                    inContext.pattern = fill_color;
+                    inContext.pattern = fill_pattern;
                     inContext.fill (path);
                 }
             }

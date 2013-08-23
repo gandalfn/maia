@@ -1,0 +1,46 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * checkbutton.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/togglebutton.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/togglebutton_p.h)
+
+namespace Maia
+{
+    class CheckButton : public ToggleButton
+    {
+        _CLASS_GOBJECT(CheckButton, MaiaCheckButton, MAIA_CHECK_BUTTON, ToggleButton, MaiaToggleButton)
+
+        public:
+            static Glib::RefPtr<CheckButton> create (const Glib::ustring& inId, const Glib::ustring& inLabel)
+            {
+                MaiaCheckButton* pButton = maia_check_button_new (inId.c_str(), inLabel.c_str ());
+                return Glib::RefPtr<CheckButton> (new CheckButton (pButton));
+            }
+
+            _WRAP_METHOD(double get_spacing () const, maia_check_button_get_spacing)
+            _WRAP_METHOD(void set_spacing (double inSpacing), maia_check_button_set_spacing)
+
+            _WRAP_PROPERTY("spacing", double)
+
+            _WRAP_PROPERTY("tag", Glib::ustring)
+    };
+}

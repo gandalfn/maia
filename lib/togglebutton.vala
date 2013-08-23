@@ -112,8 +112,8 @@ public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
         var label_item = new Label (id_label, label);
         add (label_item);
 
-        notify["stroke-color"].connect (() => {
-            label_item.stroke_color = stroke_color;
+        notify["stroke-pattern"].connect (() => {
+            label_item.stroke_pattern = stroke_pattern;
         });
 
         label_item.button_press_event.connect (on_button_press);

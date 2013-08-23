@@ -26,17 +26,17 @@ public class Maia.TestCanvas : Maia.TestCase
                             "       layer: 1;" +
                             "       position: 50, 50;" +
                             "       line-width: 4;" +
-                            "       stroke-color: rgb(0, 1, 0);" +
+                            "       stroke-pattern: rgb(0, 1, 0);" +
                             "       path: M 0 0 L 50 0 L 25 50 L 0 0 Z;" +
                             "   }" +
                             "   Rectangle.rectangle {" +
                             "       position: 10, 10;" +
                             "       transform: scale(2, 2);" +
                             "       size: 140, 140;" +
-                            "       fill-color: linear-gradient(0, 0, 0, @height," +
-                            "                                   color-stop(0,   rgb(0.9, 0.1, 0.1))," +
-                            "                                   color-stop(0.5, rgb(0.1, 0.4, 0.1))," +
-                            "                                   color-stop(1,   rgb(0.1, 0.1, 0.1)));" +
+                            "       fill-pattern: linear-gradient(0, 0, 0, @height," +
+                            "                                     color-stop(0,   rgb(0.9, 0.1, 0.1))," +
+                            "                                     color-stop(0.5, rgb(0.1, 0.4, 0.1))," +
+                            "                                     color-stop(1,   rgb(0.1, 0.1, 0.1)));" +
                             "   }" +
                             "   Image.image {" +
                             "       position: 150, 150;" +
@@ -46,7 +46,7 @@ public class Maia.TestCanvas : Maia.TestCase
                             "   }" +
                             "   Label.label {" +
                             "       position: 150, 150;" +
-                            "       stroke-color: #ffffff;" +
+                            "       stroke-pattern: #ffffff;" +
                             "       layer: 1;" +
                             "       font-description: Droid Sans 16;" +
                             "       text: It's Rocks;" +
@@ -60,7 +60,7 @@ public class Maia.TestCanvas : Maia.TestCase
                                  "   left_padding: 5;" +
                                  "   right_padding: 5;" +
                                  "   background: image(/usr/share/icons/gnome/256x256/actions/gnome-run.png);" +
-                                 "   stroke-color: #000000;" +
+                                 "   stroke-pattern: #000000;" +
                                  "   border-width: 5;" +
                                  "   border-line-width: 2.0;" +
                                  "   grid-line-width: 0.5;" +
@@ -83,7 +83,7 @@ public class Maia.TestCanvas : Maia.TestCase
                                  "       row: 0;" +
                                  "       column: 1;" +
                                  "       yexpand: false;" +
-                                 "       stroke-color: #000000;" +
+                                 "       stroke-pattern: #000000;" +
                                  "       font-description: Droid Sans 16;" +
                                  "       text: Title;" +
                                  "   }" +
@@ -92,14 +92,14 @@ public class Maia.TestCanvas : Maia.TestCase
                                  "       column: 0;" +
                                  "       transform: rotate (pi/2);" +
                                  "       xexpand: false;" +
-                                 "       stroke-color: #000000;" +
+                                 "       stroke-pattern: #000000;" +
                                  "       font-description: Droid Sans 16;" +
                                  "       text: Name:;" +
                                  "   }" +
                                  "   Label.name_value {" +
                                  "       row: 1;" +
                                  "       column: 1;" +
-                                 "       stroke-color: #000000;" +
+                                 "       stroke-pattern: #000000;" +
                                  "       font-description: Droid Sans 16;" +
                                  "       text: Toto;" +
                                  "   }" +
@@ -108,9 +108,9 @@ public class Maia.TestCanvas : Maia.TestCase
                                  "       column: 0;" +
                                  "       xfill: false;" +
                                  "       yfill: false;" +
-                                 "       fill_color: #C0C0C0;" +
+                                 "       fill-pattern: #C0C0C0;" +
                                  "       group: toggle_group;" +
-                                 "       stroke-color: #000000;" +
+                                 "       stroke-pattern: #000000;" +
                                  "       font-description: Droid Sans 16;" +
                                  "       label: Test check button;" +
                                  "   }" +
@@ -118,8 +118,8 @@ public class Maia.TestCanvas : Maia.TestCase
                                  "       row: 2;" +
                                  "       column: 1;" +
                                  "       group: toggle_group;" +
-                                 "       fill_color: #C0C0C0;" +
-                                 "       stroke-color: #000000;" +
+                                 "       fill-pattern: #C0C0C0;" +
+                                 "       stroke-pattern: #000000;" +
                                  "       font-description: Droid Sans 16;" +
                                  "       label: Test highlight;" +
                                  "   }" +
