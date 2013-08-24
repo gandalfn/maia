@@ -1,0 +1,4 @@
+(include maia-gtk_methods.defs)
+(include maia-gtk_signals.defs)
+(include maia-gtk_enums.defs)
+(include maia-gtk_vfuncs.defs)

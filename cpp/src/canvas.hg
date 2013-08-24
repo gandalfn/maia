@@ -1,0 +1,101 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * canvas.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/core-timeline.h>
+#include <maiamm/graphic-surface.h>
+#include <maiamm/item.h>
+#include <maiamm/canvas.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(glibmm/private/object_p.h)
+
+namespace Maia
+{
+    class Canvas : public Glib::Interface
+    {
+        _CLASS_INTERFACE(Canvas, MaiaCanvas, MAIA_CANVAS, MaiaCanvasIface)
+
+        _IGNORE(maia_canvas_on_set_pointer_cursor, maia_canvas_on_move_pointer, maia_canvas_on_grab_focus,
+                maia_canvas_on_grab_pointer, maia_canvas_on_ungrab_pointer,
+                maia_canvas_on_grab_keyboard, maia_canvas_on_ungrab_keyboard,
+                maia_canvas_resize)
+
+        protected:
+            _WRAP_VFUNC(Glib::RefPtr<Item> get_root (), get_root)
+            _WRAP_VFUNC(void set_root (const Glib::RefPtr<Item>& inRoot), set_root)
+            _WRAP_VFUNC(Glib::RefPtr<Graphic::Surface> get_surface (), get_surface)
+
+            _WRAP_VFUNC(Glib::RefPtr<Core::Timeline> get_timeline (), get_timeline)
+            _WRAP_VFUNC(void set_timeline (const Glib::RefPtr<Core::Timeline>& inTimeline), set_timeline)
+
+            _WRAP_VFUNC(Glib::RefPtr<Item> get_focus_item (), get_focus_item)
+            _WRAP_VFUNC(void set_focus_item (const Glib::RefPtr<Item>& inItem), set_focus_item)
+            _WRAP_VFUNC(Glib::RefPtr<Item> get_grab_pointer_item (), get_grab_pointer_item)
+            _WRAP_VFUNC(void set_grab_pointer_item (const Glib::RefPtr<Item>& inItem), set_grab_pointer_item)
+            _WRAP_VFUNC(Glib::RefPtr<Item> get_grab_keyboard_item (), get_grab_keyboard_item)
+            _WRAP_VFUNC(void set_grab_keyboard_item (const Glib::RefPtr<Item>& inItem), set_grab_keyboard_item)
+
+            _WRAP_VFUNC(void on_set_pointer_cursor(Cursor inCursor), on_set_pointer_cursor)
+            _WRAP_VFUNC(void on_move_pointer(const Graphic::Point& inPosition), on_move_pointer)
+            _WRAP_VFUNC(void on_grab_focus(const Glib::RefPtr<Item>& inItem), on_grab_focus)
+            _WRAP_VFUNC(bool on_grab_pointer(const Glib::RefPtr<Item>& inItem), on_grab_pointer)
+            _WRAP_VFUNC(void on_ungrab_pointer(const Glib::RefPtr<Item>& inItem), on_ungrab_pointer)
+            _WRAP_VFUNC(bool on_grab_keyboard(const Glib::RefPtr<Item>& inItem), on_grab_keyboard)
+            _WRAP_VFUNC(void on_ungrab_keyboard(const Glib::RefPtr<Item>& inItem), on_ungrab_keyboard)
+
+            _WRAP_VFUNC(void resize(), resize)
+
+            _WRAP_METHOD(void register_iface(), maia_canvas_register)
+
+            _WRAP_METHOD(Glib::RefPtr<Core::Timeline> get_timeline () const, maia_canvas_get_timeline)
+            _WRAP_METHOD(void set_timeline (const Glib::RefPtr<Core::Timeline>& inTimeline), maia_canvas_set_timeline)
+
+            _WRAP_METHOD(void set_focus_item (const Glib::RefPtr<Item>& inItem), maia_canvas_set_focus_item)
+            _WRAP_METHOD(void set_grab_pointer_item (const Glib::RefPtr<Item>& inItem), maia_canvas_set_grab_pointer_item)
+            _WRAP_METHOD(void set_grab_keyboard_item (const Glib::RefPtr<Item>& inItem), maia_canvas_set_grab_keyboard_item)
+
+            _WRAP_PROPERTY("timeline", Glib::RefPtr<Core::Timeline>)
+            _WRAP_PROPERTY("focus-item", Glib::RefPtr<Item>)
+            _WRAP_PROPERTY("grab-pointer-item", Glib::RefPtr<Item>)
+            _WRAP_PROPERTY("grab-keyboard-item", Glib::RefPtr<Item>)
+
+        public:
+            _WRAP_METHOD(Glib::RefPtr<Item> get_root () const, maia_canvas_get_root)
+            _WRAP_METHOD(void set_root (const Glib::RefPtr<Item>& inRoot), maia_canvas_set_root)
+
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Surface> get_surface () const, maia_canvas_get_surface)
+
+            _WRAP_METHOD(guint get_refresh_rate () const, maia_canvas_get_refresh_rate)
+            _WRAP_METHOD(void set_refresh_rate (guint inRefreshRate) const, maia_canvas_set_refresh_rate)
+
+            _WRAP_METHOD(guint get_width () const, maia_canvas_get_width)
+            _WRAP_METHOD(guint get_height () const, maia_canvas_get_height)
+
+            _WRAP_METHOD(Glib::RefPtr<Item> get_focus_item () const, maia_canvas_get_focus_item)
+            _WRAP_METHOD(Glib::RefPtr<Item> get_grab_pointer_item () const, maia_canvas_get_grab_pointer_item)
+            _WRAP_METHOD(Glib::RefPtr<Item> get_grab_keyboard_item () const, maia_canvas_get_grab_keyboard_item)
+
+            _WRAP_METHOD(void load (const Glib::ustring& inManifest, const Glib::ustring& inRoot), maia_canvas_load, errthrow)
+            _WRAP_METHOD(void load_from_file (const Glib::ustring& inFilename, const Glib::ustring& inRoot), maia_canvas_load_from_file, errthrow)
+
+            _WRAP_PROPERTY("root", Glib::RefPtr<Item>)
+            _WRAP_PROPERTY("surface", Glib::RefPtr<Graphic::Surface>)
+    };
+}

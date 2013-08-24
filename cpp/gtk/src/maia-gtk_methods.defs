@@ -1,0 +1,194 @@
+;; -*- scheme -*-
+; object definitions ...
+(define-object MaiaGtkButton
+  (parent "MaiaButton")
+  (c-name "MaiaGtkButton")
+  (gtype-id "MAIA_TYPE_GTK_BUTTON")
+)
+
+(define-object MaiaGtkCanvas
+  (parent "GtkWidget")
+  (c-name "MaiaGtkCanvas")
+  (gtype-id "MAIA_TYPE_GTK_CANVAS")
+)
+
+(define-object MaiaGtkImage
+  (parent "MaiaImage")
+  (c-name "MaiaGtkImage")
+  (gtype-id "MAIA_TYPE_GTK_IMAGE")
+)
+
+(define-object MaiaGtkModel
+  (parent "MaiaModel")
+  (c-name "MaiaGtkModel")
+  (gtype-id "MAIA_TYPE_GTK_MODEL")
+)
+
+(define-object MaiaGtkModelColumn
+  (parent "MaiaModelColumn")
+  (c-name "MaiaGtkModelColumn")
+  (gtype-id "MAIA_TYPE_GTK_MODEL_COLUMN")
+)
+
+;; Enumerations and flags ...
+
+
+;; From maia-gtk.h
+
+(define-function maia_gtk_image_get_type
+  (c-name "maia_gtk_image_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_gtk_image_new
+  (c-name "maia_gtk_image_new")
+  (is-constructor-of "MaiaGtkImage")
+  (return-type "MaiaGtkImage*")
+  (parameters
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inIconName")
+  )
+)
+
+(define-function maia_gtk_image_construct
+  (c-name "maia_gtk_image_construct")
+  (return-type "MaiaGtkImage*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inIconName")
+  )
+)
+
+(define-method get_icon_name
+  (of-object "MaiaGtkImage")
+  (c-name "maia_gtk_image_get_icon_name")
+  (return-type "const-gchar*")
+)
+
+(define-method set_icon_name
+  (of-object "MaiaGtkImage")
+  (c-name "maia_gtk_image_set_icon_name")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-function maia_gtk_button_get_type
+  (c-name "maia_gtk_button_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_gtk_button_new
+  (c-name "maia_gtk_button_new")
+  (is-constructor-of "MaiaGtkButton")
+  (return-type "MaiaGtkButton*")
+  (parameters
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inLabel")
+  )
+)
+
+(define-function maia_gtk_button_construct
+  (c-name "maia_gtk_button_construct")
+  (return-type "MaiaGtkButton*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inLabel")
+  )
+)
+
+(define-method get_icon_name
+  (of-object "MaiaGtkButton")
+  (c-name "maia_gtk_button_get_icon_name")
+  (return-type "const-gchar*")
+)
+
+(define-method set_icon_name
+  (of-object "MaiaGtkButton")
+  (c-name "maia_gtk_button_set_icon_name")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-function maia_gtk_model_get_type
+  (c-name "maia_gtk_model_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_gtk_model_new
+  (c-name "maia_gtk_model_new")
+  (is-constructor-of "MaiaGtkModel")
+  (return-type "MaiaGtkModel*")
+  (parameters
+    '("GtkTreeModel*" "inTreeModel")
+  )
+)
+
+(define-function maia_gtk_model_construct
+  (c-name "maia_gtk_model_construct")
+  (return-type "MaiaGtkModel*")
+  (parameters
+    '("GType" "object_type")
+    '("GtkTreeModel*" "inTreeModel")
+  )
+)
+
+(define-method get_treemodel
+  (of-object "MaiaGtkModel")
+  (c-name "maia_gtk_model_get_treemodel")
+  (return-type "GtkTreeModel*")
+)
+
+(define-method set_treemodel
+  (of-object "MaiaGtkModel")
+  (c-name "maia_gtk_model_set_treemodel")
+  (return-type "none")
+  (parameters
+    '("GtkTreeModel*" "value")
+  )
+)
+
+(define-function maia_gtk_model_column_get_type
+  (c-name "maia_gtk_model_column_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_gtk_model_column_new
+  (c-name "maia_gtk_model_column_new")
+  (is-constructor-of "MaiaGtkModelColumn")
+  (return-type "MaiaGtkModelColumn*")
+)
+
+(define-function maia_gtk_model_column_construct
+  (c-name "maia_gtk_model_column_construct")
+  (return-type "MaiaGtkModelColumn*")
+  (parameters
+    '("GType" "object_type")
+  )
+)
+
+(define-function maia_gtk_canvas_get_type
+  (c-name "maia_gtk_canvas_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_gtk_canvas_new
+  (c-name "maia_gtk_canvas_new")
+  (is-constructor-of "MaiaGtkCanvas")
+  (return-type "MaiaGtkCanvas*")
+)
+
+(define-function maia_gtk_canvas_construct
+  (c-name "maia_gtk_canvas_construct")
+  (return-type "MaiaGtkCanvas*")
+  (parameters
+    '("GType" "object_type")
+  )
+)
+
+

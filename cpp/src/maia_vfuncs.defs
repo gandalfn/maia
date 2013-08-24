@@ -862,3 +862,137 @@
     '("MaiaGraphicSize*" "outSize")
   )
 )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaCanvas
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-vfunc get_root
+  (of-object "MaiaCanvas")
+  (return-type "MaiaItem*")
+)
+
+(define-vfunc set_root
+  (of-object "MaiaCanvas")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inRoot")
+  )
+)
+
+(define-vfunc get_surface
+  (of-object "MaiaCanvas")
+  (return-type "MaiaGraphicSurface*")
+)
+
+(define-vfunc on_set_cursor_pointer
+  (of-object "MaiaCanvas")
+  (return-type "none")
+  (parameters
+    '("MaiaCursor" "inCursor")
+  )
+)
+
+(define-vfunc on_move_pointer
+  (of-object "MaiaCanvas")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "inPosition")
+  )
+)
+
+(define-vfunc on_grab_focus
+  (of-object "MaiaCanvas")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-vfunc on_grab_pointer
+  (of-object "MaiaCanvas")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-vfunc on_ungrab_pointer
+  (of-object "MaiaCanvas")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-vfunc on_grab_keyboard
+  (of-object "MaiaCanvas")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-vfunc on_ungrab_keyboard
+  (of-object "MaiaCanvas")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-vfunc resize
+  (of-object "MaiaCanvas")
+  (return-type "none")
+)
+
+(define-vfunc get_timeline
+  (of-object "MaiaCanvas")
+  (return-type "MaiaCoreTimeline*")
+)
+
+(define-vfunc set_timeline
+  (of-object "MaiaCanvas")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreTimeline*" "inTimeline")
+  )
+)
+
+(define-vfunc get_focus_item
+  (of-object "MaiaCanvas")
+  (return-type "MaiaItem*")
+)
+
+(define-vfunc set_focus_item
+  (of-object "MaiaCanvas")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-vfunc get_grab_pointer_item
+  (of-object "MaiaCanvas")
+  (return-type "MaiaItem*")
+)
+
+(define-vfunc set_grab_pointer_item
+  (of-object "MaiaCanvas")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-vfunc get_grab_keyboard_item
+  (of-object "MaiaCanvas")
+  (return-type "MaiaItem*")
+)
+
+(define-vfunc set_grab_keyboard_item
+  (of-object "MaiaCanvas")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)

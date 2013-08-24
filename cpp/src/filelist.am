@@ -58,6 +58,7 @@ files_hg = \
     rectangle.hg \
     togglegroup.hg \
     model.hg \
-    view.hg
+    view.hg \
+    canvas.hg
 
 files_ccg = $(files_hg:.hg=.ccg)

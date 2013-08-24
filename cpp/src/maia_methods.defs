@@ -8464,6 +8464,66 @@
   )
 )
 
+(define-method get_timeline
+  (of-object "MaiaCanvas")
+  (c-name "maia_canvas_get_timeline")
+  (return-type "MaiaCoreTimeline*")
+)
+
+(define-method set_timeline
+  (of-object "MaiaCanvas")
+  (c-name "maia_canvas_set_timeline")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreTimeline*" "value")
+  )
+)
+
+(define-method get_focus_item
+  (of-object "MaiaCanvas")
+  (c-name "maia_canvas_get_focus_item")
+  (return-type "MaiaItem*")
+)
+
+(define-method set_focus_item
+  (of-object "MaiaCanvas")
+  (c-name "maia_canvas_set_focus_item")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "value")
+  )
+)
+
+(define-method get_grab_pointer_item
+  (of-object "MaiaCanvas")
+  (c-name "maia_canvas_get_grab_pointer_item")
+  (return-type "MaiaItem*")
+)
+
+(define-method set_grab_pointer_item
+  (of-object "MaiaCanvas")
+  (c-name "maia_canvas_set_grab_pointer_item")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "value")
+  )
+)
+
+(define-method get_grab_keyboard_item
+  (of-object "MaiaCanvas")
+  (c-name "maia_canvas_get_grab_keyboard_item")
+  (return-type "MaiaItem*")
+)
+
+(define-method set_grab_keyboard_item
+  (of-object "MaiaCanvas")
+  (c-name "maia_canvas_set_grab_keyboard_item")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "value")
+  )
+)
+
 (define-method get_root
   (of-object "MaiaCanvas")
   (c-name "maia_canvas_get_root")

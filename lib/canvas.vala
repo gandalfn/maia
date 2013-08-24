@@ -23,10 +23,10 @@ public interface Maia.Canvas : Drawable
     static bool s_ElementsRegister = false;
 
     // accessors
-    internal abstract Core.Timeline timeline           { get; set; default = null; }
-    internal abstract unowned Item? focus_item         { get; set; default = null; }
-    internal abstract unowned Item? grab_pointer_item  { get; set; default = null; }
-    internal abstract unowned Item? grab_keyboard_item { get; set; default = null; }
+    protected abstract Core.Timeline timeline           { get; set; default = null; }
+    protected abstract unowned Item? focus_item         { get; set; default = null; }
+    protected abstract unowned Item? grab_pointer_item  { get; set; default = null; }
+    protected abstract unowned Item? grab_keyboard_item { get; set; default = null; }
 
     public abstract Item root { get; set; default = null; }
     public abstract Graphic.Surface surface { get; }

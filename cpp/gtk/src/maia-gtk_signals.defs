@@ -1,0 +1,128 @@
+;; From MaiaGtkCanvas
+
+(define-signal on-set-scroll-adjustments
+  (of-object "MaiaGtkCanvas")
+  (return-type "void")
+  (when "last")
+  (parameters
+    '("GtkAdjustment*" "p0")
+    '("GtkAdjustment*" "p1")
+  )
+)
+
+(define-property timeline
+  (of-object "MaiaGtkCanvas")
+  (prop-type "GParamObject")
+  (docs "timeline")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property geometry
+  (of-object "MaiaGtkCanvas")
+  (prop-type "GParamObject")
+  (docs "geometry")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property damaged
+  (of-object "MaiaGtkCanvas")
+  (prop-type "GParamObject")
+  (docs "damaged")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property transform
+  (of-object "MaiaGtkCanvas")
+  (prop-type "GParamObject")
+  (docs "transform")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property root
+  (of-object "MaiaGtkCanvas")
+  (prop-type "GParamObject")
+  (docs "root")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-item
+  (of-object "MaiaGtkCanvas")
+  (prop-type "GParamObject")
+  (docs "focus-item")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property grab-pointer-item
+  (of-object "MaiaGtkCanvas")
+  (prop-type "GParamObject")
+  (docs "grab-pointer-item")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property grab-keyboard-item
+  (of-object "MaiaGtkCanvas")
+  (prop-type "GParamObject")
+  (docs "grab-keyboard-item")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property surface
+  (of-object "MaiaGtkCanvas")
+  (prop-type "GParamObject")
+  (docs "surface")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaGtkImage
+
+(define-property icon-name
+  (of-object "MaiaGtkImage")
+  (prop-type "GParamString")
+  (docs "icon-name")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaGtkButton
+
+(define-property icon-name
+  (of-object "MaiaGtkButton")
+  (prop-type "GParamString")
+  (docs "icon-name")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaGtkModel
+
+(define-property treemodel
+  (of-object "MaiaGtkModel")
+  (prop-type "GParamObject")
+  (docs "treemodel")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaGtkModelColumn
+

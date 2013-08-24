@@ -7,6 +7,15 @@ _CONVERSION(`const Glib::RefPtr<Object>&',`MaiaCoreObject*',__CONVERT_REFPTR_TO_
 _CONVERSION(`MaiaCoreObject*',`const Glib::RefPtr<Object>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaCoreObject*',`Glib::RefPtr<Object>',`Glib::wrap($3)')
 
+_CONVERSION(`Glib::RefPtr<Timeline>',`MaiaCoreTimeline*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`Glib::RefPtr<Core::Timeline>',`MaiaCoreTimeline*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Timeline>&',`MaiaCoreTimeline*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Core::Timeline>&',`MaiaCoreTimeline*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaCoreTimeline*',`const Glib::RefPtr<Timeline>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaCoreTimeline*',`const Glib::RefPtr<Core::Timeline>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaCoreTimeline*',`Glib::RefPtr<Timeline>',`Glib::wrap($3)')
+_CONVERSION(`MaiaCoreTimeline*',`Glib::RefPtr<Core::Timeline>',`Glib::wrap($3)')
+
 _CONVERSION(`Glib::QueryQuark',`guint32',`(guint32)$3.id ()')
 _CONVERSION(`guint32',`Glib::QueryQuark',`Glib::QueryQuark ((GQuark)$3)')
 
@@ -113,9 +122,13 @@ _CONVERSION(`MaiaGraphicGlyph*',`const Glib::RefPtr<Glyph>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaGraphicGlyph*',`Glib::RefPtr<Glyph>',`Glib::wrap($3)')
 
 _CONVERSION(`Glib::RefPtr<Surface>',`MaiaGraphicSurface*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`Glib::RefPtr<Graphic::Surface>',`MaiaGraphicSurface*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Surface>&',`MaiaGraphicSurface*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Graphic::Surface>&',`MaiaGraphicSurface*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaGraphicSurface*',`const Glib::RefPtr<Surface>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicSurface*',`const Glib::RefPtr<Graphic::Surface>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaGraphicSurface*',`Glib::RefPtr<Surface>',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicSurface*',`Glib::RefPtr<Graphic::Surface>',`Glib::wrap($3)')
 
 _CONVERSION(`Glib::RefPtr<Image>',`MaiaGraphicImage*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Image>&',`MaiaGraphicImage*',__CONVERT_REFPTR_TO_P)

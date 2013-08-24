@@ -1,1 +1,1 @@
-SUBDIRS = codegen src maiamm doc
+SUBDIRS = codegen src maiamm gtk doc

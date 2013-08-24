@@ -1,0 +1,12 @@
+files_defs = \
+    maia-gtk.defs \
+    maia-gtk_methods.defs \
+    maia-gtk_enums.defs \
+    maia-gtk_signals.defs \
+    maia-gtk_vfuncs.defs
+
+files_hg = \
+    canvas.hg \
+    button.hg
+
+files_ccg = $(files_hg:.hg=.ccg)
