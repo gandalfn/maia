@@ -117,3 +117,6 @@ CLEANFILES += \
     $(pkgconfig_DATA) \
     $(top_builddir)/lib/core/maia-any-$(MAIA_ABI).vapi
 
+EXTRA_DIST += \
+    core/maia-any.vapi \
+    core/maia-any.h

@@ -27,6 +27,7 @@ vapi_DATA = \
     $(MAIA_LIB_NAME)-$(MAIA_ABI).deps
 
 EXTRA_DIST += \
+    $(MAIA_LIB_NAME).vapi \
     $(MAIA_EXTRA_VAPIS)
 
 CLEANFILES += \

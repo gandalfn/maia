@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+datarootdir=@datarootdir@
+datadir=@datadir@
+includedir=@includedir@/maiamm-@MAIA_ABI@
+
+Name: maiamm-@MAIA_ABI@
+Description: Maiamm library
+Version: @MAIA_VERSION@
+Requires: maia-@MAIA_ABI@ glibmm-2.4 >= @GLIBMM_REQUIRED@
+Libs: -L${libdir} -lmaiamm
+Cflags: -I${includedir}

@@ -1,5 +1,7 @@
 lib_LTLIBRARIES = libmaia-gtkmm.la
 
+binding_modulename = maia-gtkmm-$(MAIA_ABI)
+
 include $(srcdir)/../src/filelist.am
 include $(srcdir)/filelist.am
 include $(top_srcdir)/build-aux/compile-binding.am

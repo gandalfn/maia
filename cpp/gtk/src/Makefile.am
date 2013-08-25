@@ -11,6 +11,9 @@ maia-gtk_methods.defs: $(top_srcdir)/lib/gtk/maia-gtk.h
 maia-gtk_enums.defs: $(top_srcdir)/lib/gtk/maia-gtk.h
 	$(AM_V_GEN) $(top_builddir)/cpp/codegen/enum.pl $^ > $@
 
+maia-gtk_docs.xml: $(top_srcdir)/doc/mm/maia_docs.xml
+	$(AM_V_GEN) cp $< $@
+
 include $(srcdir)/filelist.am
 include $(top_srcdir)/cpp/codegen/m4/filelist.am
 include $(top_srcdir)/build-aux/generate-binding.am

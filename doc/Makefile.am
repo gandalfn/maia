@@ -33,8 +33,9 @@ VALADOC_FLAGS = \
     --package-version @MAIA_VERSION@
 
 cpp/libdoclet.so: cpp/doclet.vala
-	$(AM_V_GEN) $(VALAC) --pkg=valadoc-1.0 -C cpp/doclet.vala && \
-	$(CC) -shared -fPIC -o cpp/libdoclet.so $(MAIA_VALADOC_CFLAGS) $(MAIA_VALADOC_LIBS) cpp/doclet.c
+	$(AM_V_GEN) mkdir -p $(builddir)/cpp && \
+	$(VALAC) --pkg=valadoc-1.0 -b $(srcdir)/doc/cpp -d $(builddir)/cpp -C $(srcdir)/cpp/doclet.vala && \
+	$(CC) -shared -fPIC -o $(top_builddir)/doc/cpp/libdoclet.so $(MAIA_VALADOC_CFLAGS) $(MAIA_VALADOC_LIBS) $(top_builddir)/doc/cpp/doclet.c
 
 valadoc-html: $(VALADOC_SRCS)
 	$(AM_V_GEN) rm -rf html; \
@@ -49,16 +50,12 @@ valadoc-devhelp: $(VALADOC_SRCS)
 valadoc-mm: $(VALADOC_SRCS)
 	$(AM_V_GEN) rm -rf mm; \
 	$(VALADOC) -o mm --doclet cpp $(VALADOC_FLAGS) $(VALADOC_SRCS) && \
-	cp mm/maia_docs.xml $(top_srcdir)/cpp/src && \
-	cp mm/maia_docs.xml $(top_srcdir)/cpp/gtk/src/maia-gtk_docs.xml && \
 	touch $@
 
 clean-local:
 	rm -rf html devhelp mm; \
 	rm -f valadoc-html valadoc-devhelp valadoc-mm; \
 	rm -f cpp/doclet.c; \
-	rm -f $(top_srcdir)/cpp/src/maia_docs.xml; \
-	rm -f $(top_srcdir)/cpp/src/maia-gtk_docs.xml; \
 	rm -f cpp/libdoclet.so
 
 uninstall-hook:
@@ -70,6 +67,9 @@ install-data-hook: devhelp
 	$(INSTALL_DATA) -t $(DESTDIR)$(datadir)/devhelp/books/Maia/img devhelp/Maia/img/*
 
 all-local: cpp/libdoclet.so valadoc-html valadoc-devhelp valadoc-mm
+
+EXTRA_DIST = \
+	cpp/doclet.vala
 
 .NOTPARALLEL: cpp/libdoclet.so valadoc-html valadoc-devhelp valadoc-mm
 

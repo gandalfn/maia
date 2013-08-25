@@ -50,6 +50,10 @@ PANGO_REQUIRED=1.30.0
 RSVG_REQUIRES=2.36.1
 GDK_PIXBUF_REQUIRED=2.26.0
 GTK_REQUIRED=2.24.0
+GLIBMM_REQUIRED=2.32.0
+GTKMM_REQUIRED=2.24.0
+AC_SUBST(GLIBMM_REQUIRED)
+AC_SUBST(GTKMM_REQUIRED)
 
 dnl ****************************************************************************
 dnl Check for build
@@ -96,11 +100,6 @@ PKG_CHECK_MODULES(MAIA_CAIRO, [cairo >= $CAIRO_REQUIRED
 AC_SUBST(MAIA_CAIRO_CFLAGS)
 AC_SUBST(MAIA_CAIRO_LIBS)
 
-AC_SUBST([MAIA_CAIROMM_MODULES], ['cairomm-1.0 pangomm-1.4'])
-PKG_CHECK_MODULES([MAIA_CAIROMM], [$MAIA_CAIROMM_MODULES])
-AC_SUBST(MAIA_CAIROMM_CFLAGS)
-AC_SUBST(MAIA_CAIROMM_LIBS)
-
 dnl ****************************************************************************
 dnl Check for rsvg packages
 dnl ****************************************************************************
@@ -111,22 +110,12 @@ AC_SUBST(MAIA_RSVG_LIBS)
 MAIA_RSVG_VERSION=$(pkg-config --modversion librsvg-2.0  | awk -F "." '{print "LIBRSVG_"$1"_"$2"_"$3;}')
 AC_SUBST(MAIA_RSVG_VERSION)
 
-AC_SUBST([MAIA_RSVGMM_MODULES], ['cairomm-1.0 librsvg-2.0'])
-PKG_CHECK_MODULES([MAIA_RSVGMM], [$MAIA_RSVGMM_MODULES])
-AC_SUBST(MAIA_RSVGMM_CFLAGS)
-AC_SUBST(MAIA_RSVGMM_LIBS)
-
 dnl ****************************************************************************
 dnl Check for gdk-pixbuf packages
 dnl ****************************************************************************
 PKG_CHECK_MODULES(MAIA_GDK_PIXBUF, [gdk-pixbuf-2.0 >= $GDK_PIXBUF_REQUIRED])
 AC_SUBST(MAIA_GDK_PIXBUF_CFLAGS)
 AC_SUBST(MAIA_GDK_PIXBUF_LIBS)
-
-AC_SUBST([MAIA_GDK_PIXBUFMM_MODULES], ['gdkmm-2.4'])
-PKG_CHECK_MODULES([MAIA_GDK_PIXBUFMM], [$MAIA_GDK_PIXBUFMM_MODULES])
-AC_SUBST(MAIA_GDK_PIXBUFMM_CFLAGS)
-AC_SUBST(MAIA_GDK_PIXBUFMM_LIBS)
 
 dnl ****************************************************************************
 dnl Check for gtk packages
@@ -234,10 +223,6 @@ dnl ****************************************************************************
 if test "x$enabledoc" = "xyes"; then
     MMDOCTOOLDIR=/usr/share/mm-common/doctool
     MM_ARG_ENABLE_DOCUMENTATION
-    MM_ARG_WITH_TAGFILE_DOC([libstdc++.tag], [mm-common-libstdc++])
-    MM_ARG_WITH_TAGFILE_DOC([glibmm-2.4.tag], [glibmm-2.4])
-    MM_ARG_WITH_TAGFILE_DOC([cairomm-1.0.tag], [cairomm-1.0])
-    MM_ARG_WITH_TAGFILE_DOC([gtkmm-2.4.tag], [gtkmm-2.4])
 fi
 
 dnl ****************************************************************************
@@ -256,10 +241,12 @@ lib/gdk-pixbuf/Makefile
 lib/gtk/maia-gtk.pc
 lib/gtk/Makefile
 doc/Makefile
+cpp/maiamm.pc
 cpp/Makefile
 cpp/codegen/Makefile
 cpp/src/Makefile
 cpp/maiamm/Makefile
+cpp/gtk/maia-gtkmm.pc
 cpp/gtk/Makefile
 cpp/gtk/src/Makefile
 cpp/gtk/maia-gtkmm/Makefile

@@ -7,7 +7,8 @@ INCLUDES = \
     -I$(top_srcdir)/build \
     -I$(top_srcdir)/src \
     -I$(top_srcdir)/vapi \
-    $(addprefix -I$(top_builddir)/lib/, $(dir $(MAIA_VAPI_DEPS)))
+    $(addprefix -I$(top_builddir)/lib/, $(dir $(MAIA_VAPI_DEPS))) \
+    $(addprefix -I$(top_srcdir)/lib/, $(dir $(MAIA_VAPI_DEPS)))
 
 VALAFLAGS = \
     --debug \

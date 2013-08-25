@@ -1,5 +1,7 @@
 lib_LTLIBRARIES = libmaiamm.la
 
+binding_modulename = maiamm-$(MAIA_ABI)
+
 include $(srcdir)/../src/filelist.am
 include $(srcdir)/filelist.am
 include $(top_srcdir)/build-aux/compile-binding.am
