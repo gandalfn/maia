@@ -11,6 +11,18 @@
   (gtype-id "MAIA_TYPE_CORE_ANY")
 )
 
+(define-object MaiaCoreArray
+  (parent "MaiaCoreCollection")
+  (c-name "MaiaCoreArray")
+  (gtype-id "MAIA_TYPE_CORE_ARRAY")
+)
+
+(define-object MaiaCoreList
+  (parent "MaiaCoreCollection")
+  (c-name "MaiaCoreList")
+  (gtype-id "MAIA_TYPE_CORE_LIST")
+)
+
 (define-object MaiaCoreObject
   (parent "MaiaCoreAny")
   (c-name "MaiaCoreObject")
@@ -21,6 +33,12 @@
   (parent "MaiaCoreObject")
   (c-name "MaiaCoreParser")
   (gtype-id "MAIA_TYPE_CORE_PARSER")
+)
+
+(define-object MaiaCoreQueue
+  (parent "MaiaCoreArray")
+  (c-name "MaiaCoreQueue")
+  (gtype-id "MAIA_TYPE_CORE_QUEUE")
 )
 
 (define-object MaiaCoreSet
@@ -2993,6 +3011,52 @@
   (varargs #t)
 )
 
+(define-function maia_core_direct_compare
+  (c-name "maia_core_direct_compare")
+  (return-type "gint")
+  (parameters
+    '("void*" "inA")
+    '("void*" "inB")
+  )
+)
+
+(define-function maia_core_uint32_compare
+  (c-name "maia_core_uint32_compare")
+  (return-type "gint")
+  (parameters
+    '("guint32" "inA")
+    '("guint32" "inB")
+  )
+)
+
+(define-function maia_core_get_compare_func_for
+  (c-name "maia_core_get_compare_func_for")
+  (return-type "MaiaCoreCompareFunc")
+  (parameters
+    '("GType" "v_type")
+    '("GBoxedCopyFunc" "v_dup_func")
+    '("GDestroyNotify" "v_destroy_func")
+  )
+)
+
+(define-function maia_core_convert_mm_to_pixel
+  (c-name "maia_core_convert_mm_to_pixel")
+  (return-type "gdouble")
+  (parameters
+    '("gdouble" "inVal")
+    '("gdouble" "inDpi")
+  )
+)
+
+(define-function maia_core_convert_inch_to_pixel
+  (c-name "maia_core_convert_inch_to_pixel")
+  (return-type "gdouble")
+  (parameters
+    '("gdouble" "inVal")
+    '("gdouble" "inDpi")
+  )
+)
+
 (define-function maia_core_iterator_ref
   (c-name "maia_core_iterator_ref")
   (return-type "gpointer")
@@ -3241,6 +3305,256 @@
   (of-object "MaiaCoreCollection")
   (c-name "maia_core_collection_get_length")
   (return-type "gint")
+)
+
+(define-function maia_core_array_get_type
+  (c-name "maia_core_array_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_array_new
+  (c-name "maia_core_array_new")
+  (is-constructor-of "MaiaCoreArray")
+  (return-type "MaiaCoreArray*")
+  (parameters
+    '("GType" "v_type")
+    '("GBoxedCopyFunc" "v_dup_func")
+    '("GDestroyNotify" "v_destroy_func")
+  )
+)
+
+(define-function maia_core_array_construct
+  (c-name "maia_core_array_construct")
+  (return-type "MaiaCoreArray*")
+  (parameters
+    '("GType" "object_type")
+    '("GType" "v_type")
+    '("GBoxedCopyFunc" "v_dup_func")
+    '("GDestroyNotify" "v_destroy_func")
+  )
+)
+
+(define-function maia_core_array_new_sorted
+  (c-name "maia_core_array_new_sorted")
+  (return-type "MaiaCoreArray*")
+  (parameters
+    '("GType" "v_type")
+    '("GBoxedCopyFunc" "v_dup_func")
+    '("GDestroyNotify" "v_destroy_func")
+  )
+)
+
+(define-function maia_core_array_construct_sorted
+  (c-name "maia_core_array_construct_sorted")
+  (return-type "MaiaCoreArray*")
+  (parameters
+    '("GType" "object_type")
+    '("GType" "v_type")
+    '("GBoxedCopyFunc" "v_dup_func")
+    '("GDestroyNotify" "v_destroy_func")
+  )
+)
+
+(define-method reserve
+  (of-object "MaiaCoreArray")
+  (c-name "maia_core_array_reserve")
+  (return-type "none")
+  (parameters
+    '("gint" "inSize")
+  )
+)
+
+(define-method sort
+  (of-object "MaiaCoreArray")
+  (c-name "maia_core_array_sort")
+  (return-type "none")
+  (parameters
+    '("guint" "inPos")
+  )
+)
+
+(define-method remove_at
+  (of-object "MaiaCoreArray")
+  (c-name "maia_core_array_remove_at")
+  (return-type "none")
+  (parameters
+    '("guint" "inPos")
+  )
+)
+
+(define-method get_iter
+  (of-object "MaiaCoreArray")
+  (c-name "maia_core_array_get_iter")
+  (return-type "MaiaCoreIterator*")
+  (parameters
+    '("gconstpointer" "inValue")
+  )
+)
+
+(define-method get
+  (of-object "MaiaCoreArray")
+  (c-name "maia_core_array_get")
+  (return-type "gconstpointer")
+  (parameters
+    '("gint" "inIndex")
+  )
+)
+
+(define-method set
+  (of-object "MaiaCoreArray")
+  (c-name "maia_core_array_set")
+  (return-type "none")
+  (parameters
+    '("gint" "inIndex")
+    '("gconstpointer" "inValue")
+  )
+)
+
+(define-method index_of
+  (of-object "MaiaCoreArray")
+  (c-name "maia_core_array_index_of")
+  (return-type "gint")
+  (parameters
+    '("gconstpointer" "inValue")
+  )
+)
+
+(define-method at
+  (of-object "MaiaCoreArray")
+  (c-name "maia_core_array_at")
+  (return-type "gconstpointer")
+  (parameters
+    '("gint" "inIndex")
+  )
+)
+
+(define-function maia_core_queue_get_type
+  (c-name "maia_core_queue_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_queue_new
+  (c-name "maia_core_queue_new")
+  (is-constructor-of "MaiaCoreQueue")
+  (return-type "MaiaCoreQueue*")
+  (parameters
+    '("GType" "v_type")
+    '("GBoxedCopyFunc" "v_dup_func")
+    '("GDestroyNotify" "v_destroy_func")
+  )
+)
+
+(define-function maia_core_queue_construct
+  (c-name "maia_core_queue_construct")
+  (return-type "MaiaCoreQueue*")
+  (parameters
+    '("GType" "object_type")
+    '("GType" "v_type")
+    '("GBoxedCopyFunc" "v_dup_func")
+    '("GDestroyNotify" "v_destroy_func")
+  )
+)
+
+(define-method peek
+  (of-object "MaiaCoreQueue")
+  (c-name "maia_core_queue_peek")
+  (return-type "gpointer")
+)
+
+(define-method pop
+  (of-object "MaiaCoreQueue")
+  (c-name "maia_core_queue_pop")
+  (return-type "gpointer")
+)
+
+(define-method push
+  (of-object "MaiaCoreQueue")
+  (c-name "maia_core_queue_push")
+  (return-type "none")
+  (parameters
+    '("gconstpointer" "inVal")
+  )
+)
+
+(define-function maia_core_list_get_type
+  (c-name "maia_core_list_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_list_new
+  (c-name "maia_core_list_new")
+  (is-constructor-of "MaiaCoreList")
+  (return-type "MaiaCoreList*")
+  (parameters
+    '("GType" "v_type")
+    '("GBoxedCopyFunc" "v_dup_func")
+    '("GDestroyNotify" "v_destroy_func")
+  )
+)
+
+(define-function maia_core_list_construct
+  (c-name "maia_core_list_construct")
+  (return-type "MaiaCoreList*")
+  (parameters
+    '("GType" "object_type")
+    '("GType" "v_type")
+    '("GBoxedCopyFunc" "v_dup_func")
+    '("GDestroyNotify" "v_destroy_func")
+  )
+)
+
+(define-function maia_core_list_new_sorted
+  (c-name "maia_core_list_new_sorted")
+  (return-type "MaiaCoreList*")
+  (parameters
+    '("GType" "v_type")
+    '("GBoxedCopyFunc" "v_dup_func")
+    '("GDestroyNotify" "v_destroy_func")
+  )
+)
+
+(define-function maia_core_list_construct_sorted
+  (c-name "maia_core_list_construct_sorted")
+  (return-type "MaiaCoreList*")
+  (parameters
+    '("GType" "object_type")
+    '("GType" "v_type")
+    '("GBoxedCopyFunc" "v_dup_func")
+    '("GDestroyNotify" "v_destroy_func")
+  )
+)
+
+(define-method check
+  (of-object "MaiaCoreList")
+  (c-name "maia_core_list_check")
+  (return-type "none")
+)
+
+(define-method get
+  (of-object "MaiaCoreList")
+  (c-name "maia_core_list_get")
+  (return-type "MaiaCoreIterator*")
+  (parameters
+    '("gconstpointer" "inValue")
+  )
+)
+
+(define-method first
+  (of-object "MaiaCoreList")
+  (c-name "maia_core_list_first")
+  (return-type "gconstpointer")
+)
+
+(define-method last
+  (of-object "MaiaCoreList")
+  (c-name "maia_core_list_last")
+  (return-type "gconstpointer")
+)
+
+(define-method end
+  (of-object "MaiaCoreList")
+  (c-name "maia_core_list_end")
+  (return-type "MaiaCoreIterator*")
 )
 
 (define-function maia_core_set_get_type

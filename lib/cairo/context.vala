@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal class Maia.Cairo.Context : Graphic.Context
+public class Maia.Cairo.Context : Graphic.Context
 {
     // properties
     private global::Cairo.Context m_Context = null;
@@ -26,13 +26,13 @@ internal class Maia.Cairo.Context : Graphic.Context
     private uint                  m_SaveCount = 0;
 
     // accessors
-    internal global::Cairo.Context context {
+    public global::Cairo.Context context {
         get {
             return m_Context;
         }
     }
 
-    public override Graphic.Operator operator {
+    internal override Graphic.Operator operator {
         get {
             return m_Context != null ? (Graphic.Operator)m_Context.get_operator () : Graphic.Operator.OVER;
         }
@@ -41,7 +41,7 @@ internal class Maia.Cairo.Context : Graphic.Context
         }
     }
 
-    public override Graphic.Transform transform {
+    internal override Graphic.Transform transform {
         get {
             return m_Transform;
         }
@@ -69,7 +69,7 @@ internal class Maia.Cairo.Context : Graphic.Context
         }
     }
 
-    public override double line_width {
+    internal override double line_width {
         get {
             if (m_Context != null)
             {
@@ -85,7 +85,7 @@ internal class Maia.Cairo.Context : Graphic.Context
         }
     }
 
-    public override double[]? dash {
+    internal override double[]? dash {
         get {
             return m_Dashes;
         }
@@ -98,7 +98,7 @@ internal class Maia.Cairo.Context : Graphic.Context
         }
     }
 
-    public override Graphic.Pattern pattern {
+    internal override Graphic.Pattern pattern {
         get {
             return base.pattern;
         }
@@ -206,7 +206,7 @@ internal class Maia.Cairo.Context : Graphic.Context
     // methods
     public Context (Graphic.Surface inSurface)
     {
-        base (inSurface);
+        GLib.Object (surface: inSurface);
     }
 
     private void
@@ -315,7 +315,7 @@ internal class Maia.Cairo.Context : Graphic.Context
         }
     }
 
-    public override void
+    internal override void
     save () throws Graphic.Error
     {
         m_Context.save ();
@@ -323,7 +323,7 @@ internal class Maia.Cairo.Context : Graphic.Context
         m_SaveCount++;
     }
 
-    public override void
+    internal override void
     restore () throws Graphic.Error
     {
         if (m_SaveCount > 0)
@@ -334,7 +334,7 @@ internal class Maia.Cairo.Context : Graphic.Context
         }
     }
 
-    public override void
+    internal override void
     status () throws Graphic.Error
     {
         global::Cairo.Status status = m_Context.status ();
@@ -376,7 +376,7 @@ internal class Maia.Cairo.Context : Graphic.Context
         }
     }
 
-    public override void
+    internal override void
     clip (Graphic.Path inPath) throws Graphic.Error
     {
         m_Context.new_path ();
@@ -385,7 +385,7 @@ internal class Maia.Cairo.Context : Graphic.Context
         status ();
     }
 
-    public override void
+    internal override void
     clip_region (Graphic.Region inRegion) throws Graphic.Error
     {
         foreach (unowned Graphic.Rectangle rect in inRegion)
@@ -397,21 +397,21 @@ internal class Maia.Cairo.Context : Graphic.Context
         status ();
     }
 
-    public override void
+    internal override void
     translate (Graphic.Point inOffset) throws Graphic.Error
     {
         m_Context.translate (inOffset.x, inOffset.y);
         status ();
     }
 
-    public override void
+    internal override void
     paint () throws Graphic.Error
     {
         m_Context.paint ();
         status ();
     }
 
-    public override void
+    internal override void
     fill (Graphic.Path inPath) throws Graphic.Error
     {
         m_Context.new_path ();
@@ -420,7 +420,7 @@ internal class Maia.Cairo.Context : Graphic.Context
         status ();
     }
 
-    public override void
+    internal override void
     stroke (Graphic.Path inPath) throws Graphic.Error
     {
         m_Context.new_path ();
@@ -429,7 +429,7 @@ internal class Maia.Cairo.Context : Graphic.Context
         status ();
     }
 
-    public override void
+    internal override void
     render (Graphic.Glyph inGlyph) throws Graphic.Error
     {
         m_Context.move_to (inGlyph.origin.x, inGlyph.origin.y);
@@ -439,7 +439,7 @@ internal class Maia.Cairo.Context : Graphic.Context
         status ();
     }
 
-    public override Graphic.Rectangle
+    internal override Graphic.Rectangle
     get_path_area (Graphic.Path inPath) throws Graphic.Error
     {
         double x1, y1, x2, y2;

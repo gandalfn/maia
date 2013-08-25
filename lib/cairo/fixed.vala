@@ -34,12 +34,6 @@ internal struct Maia.Cairo.Fixed : int32
     }
 
     // methods
-    public inline int
-    to_int ()
-    {
-        return (int)(this >> 16);
-    }
-
     public inline double
     to_double ()
     {

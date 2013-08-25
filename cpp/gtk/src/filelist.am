@@ -7,6 +7,8 @@ files_defs = \
 
 files_hg = \
     canvas.hg \
-    button.hg
+    button.hg \
+    image.hg \
+    model.hg
 
 files_ccg = $(files_hg:.hg=.ccg)

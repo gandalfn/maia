@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal class Maia.Core.Array <V> : Collection <V>
+public class Maia.Core.Array <V> : Collection <V>
 {
     // Types
     private struct Node<V>

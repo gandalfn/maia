@@ -23,7 +23,7 @@ public class Maia.Gtk.Model : Maia.Model
     public class Column : Maia.Model.Column
     {
         // methods
-        public override new GLib.Value
+        internal override new GLib.Value
         @get (uint inPath)
         {
             unowned global::Gtk.TreeModel treemodel = ((Model)model).treemodel;

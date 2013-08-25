@@ -1,6 +1,6 @@
 /* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * canvas.hg
+ * image.hg
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,28 +17,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <gtkmm.h>
 
 #include <maia-gtk.h>
-#include <maiamm/canvas.h>
-#include <maiamm/drawable.h>
-#include <maia-gtkmm/canvas.h>
+#include <maiamm/image.h>
+#include <maia-gtkmm/image.h>
 
 _DEFS(maia-gtkmm,maia-gtk)
-_PINCLUDE(gtkmm/private/widget_p.h)
+_PINCLUDE(maiamm/private/image_p.h)
 
 namespace Maia
 {
     namespace Gtk
     {
-        class Canvas : public ::Gtk::Widget, public Maia::Drawable, public Maia::Canvas
+        class Image : public Maia::Image
         {
-            _CLASS_GTKOBJECT(Canvas, MaiaGtkCanvas, MAIA_GTK_CANVAS, ::Gtk::Widget, GtkWidget)
-            _IMPLEMENTS_INTERFACE(Maia::Drawable)
-            _IMPLEMENTS_INTERFACE(Maia::Canvas)
+            _CLASS_GOBJECT(Image, MaiaGtkImage, MAIA_GTK_IMAGE, Maia::Image, MaiaImage)
 
             public:
-                _CTOR_DEFAULT
+                static Glib::RefPtr<Image> create (const Glib::ustring& inId, const Glib::ustring& inIconName)
+                {
+                    MaiaGtkImage* pImage = maia_gtk_image_new (inId.c_str (), inIconName.c_str ());
+
+                    return Glib::RefPtr<Image> (new Image (pImage));
+                }
+
+                _WRAP_METHOD(Glib::ustring get_icon_name () const, maia_gtk_image_get_icon_name)
+                _WRAP_METHOD(void set_icon_name (const Glib::ustring& inIconName), maia_gtk_image_set_icon_name)
+
+                _WRAP_PROPERTY("icon-name", Glib::ustring)
         };
     }
 }

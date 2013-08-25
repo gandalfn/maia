@@ -187,6 +187,11 @@ _CONVERSION(`MaiaModelColumn*',`Glib::RefPtr<ModelColumn>',`Glib::wrap($3)')
 
 _CONVERSION(`Glib::ustring',`const gchar*',`$3.c_str ()')
 
+_CONVERSION(`Glib::RefPtr< ::Gtk::TreeModel>',`GtkTreeModel*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr< ::Gtk::TreeModel>&',`GtkTreeModel*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`GtkTreeModel*',`const Glib::RefPtr< ::Gtk::TreeModel>&',`Glib::wrap($3)')
+_CONVERSION(`GtkTreeModel*',`Glib::RefPtr< ::Gtk::TreeModel>',`Glib::wrap($3)')
+
 _CONV_ENUM(MaiaCore,ParserToken)
 _CONV_ENUM(MaiaCore,TimelineDirection)
 _CONV_ENUM(MaiaGraphic,RegionOverlap)

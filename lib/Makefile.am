@@ -3,7 +3,7 @@ MAIA_LIB_NAME = maia
 MAIA_VAPI_DEPS = \
     core/maia-any
 
-$(top_builddir)/lib/core/maia-any-$(MAIA_ABI).vapi: core/maia-any-internal.vapi
+$(top_builddir)/lib/core/maia-any-$(MAIA_ABI).vapi: core/maia-any.vapi
 	$(AM_V_GEN) cat $^ > $@
 
 keysym.vala:
@@ -18,7 +18,7 @@ SUBDIRS = . cairo rsvg gdk-pixbuf gtk
 include_HEADERS += \
    core/maia-any.h
 
-core/any.c: maia.h
+core/any.c: $(top_builddir)/lib/core/maia-any-$(MAIA_ABI).vapi maia.h
 
 lib_LTLIBRARIES = libmaia.la
 
@@ -110,12 +110,11 @@ VALAFILES = \
 vapi_DATA += \
     $(top_builddir)/lib/core/maia-any-$(MAIA_ABI).vapi
 
-EXTRA_DIST += \
-    core/maia-any-internal.vapi
-
 CLEANFILES += \
     keysym.vala \
     libmaia_la_vala.stamp \
     $(VALAFILES:.vala=.c) \
     $(pkgconfig_DATA) \
     $(top_builddir)/lib/core/maia-any-$(MAIA_ABI).vapi
+
+.NOTPARALLEL: $(top_builddir)/lib/core/maia-any-$(MAIA_ABI).vapi libmaia.la

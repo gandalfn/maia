@@ -18,12 +18,11 @@
  */
 
 
-#define __MAIA_H__
 #include <maia-gtk.h>
 #include <maiamm/button.h>
 #include <maia-gtkmm/button.h>
 
-_DEFS(maia-gtkmm,maia)
+_DEFS(maia-gtkmm,maia-gtk)
 _PINCLUDE(maiamm/private/button_p.h)
 
 namespace Maia

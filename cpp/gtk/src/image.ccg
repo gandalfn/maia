@@ -1,6 +1,6 @@
-/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * maia-queue.vala
+ * image.ccg
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,38 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Core.Queue<V> : Array<V>
+#include <maia-gtk.h>
+
+namespace Maia
 {
-    // methods
-    // TODO: use Array for Queue ? perhaps List is more accurate.
-    public Queue ()
+    namespace Gtk
     {
-        base ();
-    }
-
-    public V?
-    peek ()
-        requires (length > 0)
-    {
-        return at (length - 1);
-    }
-
-    public V?
-    pop ()
-        requires (length > 0)
-    {
-        V? val = at (length - 1);
-        if (val != null)
-        {
-            remove (val);
-        }
-
-        return val;
-    }
-
-    public void
-    push (V inVal)
-    {
-        insert (inVal);
     }
 }

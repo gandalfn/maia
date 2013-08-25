@@ -17,8 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-
-#define __MAIA_H__
 #include <maia-gtk.h>
 
 namespace Maia

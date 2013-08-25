@@ -1,0 +1,57 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * model.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+#include <maia-gtk.h>
+
+#include <gtkmm.h>
+#include <maiamm/model.h>
+#include <maia-gtkmm/model.h>
+
+_DEFS(maia-gtkmm,maia-gtk)
+_PINCLUDE(maiamm/private/model_p.h)
+
+namespace Maia
+{
+    namespace Gtk
+    {
+        class Model : public Maia::Model
+        {
+            _CLASS_GOBJECT(Model, MaiaGtkModel, MAIA_GTK_MODEL, Maia::Model, MaiaModel)
+
+            public:
+                static Glib::RefPtr<Model> create (const Glib::RefPtr< ::Gtk::TreeModel>& inTreeModel)
+                {
+                    MaiaGtkModel* pModel = maia_gtk_model_new (const_cast<GtkTreeModel*> (inTreeModel->gobj ()));
+
+                    return Glib::RefPtr<Model> (new Model (pModel));
+                }
+
+                _WRAP_METHOD(Glib::RefPtr< ::Gtk::TreeModel> get_tree_model () const, maia_gtk_model_get_treemodel)
+                _WRAP_METHOD(void set_tree_model (const Glib::RefPtr< ::Gtk::TreeModel>& inTreeModel), maia_gtk_model_set_treemodel)
+
+                _WRAP_PROPERTY("treemodel", Glib::RefPtr< ::Gtk::TreeModel>)
+        };
+
+        class ModelColumn : public Maia::ModelColumn
+        {
+            _CLASS_GOBJECT(ModelColumn, MaiaGtkModelColumn, MAIA_GTK_MODEL_COLUMN, Maia::ModelColumn, MaiaModelColumn)
+        };
+    }
+}

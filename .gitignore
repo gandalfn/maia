@@ -66,6 +66,7 @@ compile
 stamp-h1
 
 cpp/codegen/extradefs/generate_maia_defs
+cpp/codegen/extradefs/generate_maia_gtk_defs
 doc/devhelp/
 doc/mm/
 doc/html/
@@ -81,4 +82,6 @@ cpp/doc/reference/html/
 cpp/doc/reference/maiamm.devhelp2
 cpp/doc/reference/maiamm.tag
 cpp/src/maia_docs.xml
+cpp/gtk/src/maia-gtk_docs.xml
+cpp/gtk/src/maia_docs.xml
 

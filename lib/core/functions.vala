@@ -30,19 +30,19 @@ namespace Maia.Core
     public delegate bool   ForeachFunc<V>         (V inData);
 
     // static methods
-    internal static inline int
+    public static inline int
     direct_compare (void* inA, void* inB)
     {
         return (int)((ulong)inA - (ulong)inB);
     }
 
-    internal static inline int
+    public static inline int
     uint32_compare (uint32 inA, uint32 inB)
     {
         return (int)(inA - inB);
     }
 
-    internal static inline CompareFunc<V>
+    public static inline CompareFunc<V>
     get_compare_func_for<V> ()
     {
         CompareFunc<V> func = (CompareFunc<V>)direct_compare;
@@ -59,13 +59,13 @@ namespace Maia.Core
         return func;
     }
 
-    internal static inline double
+    public static inline double
     convert_mm_to_pixel (double inVal, double inDpi = 96)
     {
         return convert_inch_to_pixel (inVal / MM_PER_INCH);
     }
 
-    internal static inline double
+    public static inline double
     convert_inch_to_pixel (double inVal, double inDpi = 96)
     {
         return inVal * inDpi;

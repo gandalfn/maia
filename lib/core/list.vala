@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal class Maia.Core.List<V> : Collection<V>
+public class Maia.Core.List<V> : Collection<V>
 {
     // Types
     private class Node<V>

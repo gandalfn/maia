@@ -21,5 +21,5 @@ VALAFLAGS = \
     --pkg=cairo \
     --pkg=gdk-keysym \
     --pkg=gtk+-2.0 \
-    $(addprefix --pkg=, $(addsuffix -internal, $(notdir $(basename $(MAIA_VAPI_DEPS))))) \
+    $(addprefix --pkg=, $(notdir $(basename $(MAIA_VAPI_DEPS)))) \
     $(addprefix --vapidir=$(top_builddir)/lib/, $(dir $(MAIA_VAPI_DEPS)))
