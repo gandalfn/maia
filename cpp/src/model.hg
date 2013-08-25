@@ -66,5 +66,12 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_model_column_get_model)
             _WRAP_METHOD(int get_column () const, maia_model_column_get_column)
             _WRAP_METHOD(void set_column (int inColumn) const, maia_model_column_set_column)
+
+            _IGNORE(maia_model_column_get)
+            template<typename T>
+            inline void get_value(unsigned int inRow, const Glib::Value<T>& inValue) const
+            {
+                maia_model_column_get (gobj (), inRow, inValue.gobj ());
+            }
     };
 }

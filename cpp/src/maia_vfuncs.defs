@@ -884,7 +884,7 @@
   (return-type "MaiaGraphicSurface*")
 )
 
-(define-vfunc on_set_cursor_pointer
+(define-vfunc on_set_pointer_cursor
   (of-object "MaiaCanvas")
   (return-type "none")
   (parameters

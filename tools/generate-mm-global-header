@@ -1,0 +1,45 @@
+#!/bin/sh
+
+export NAME=$1
+export EXTRA=$3
+HEADERS_PATH=$2
+
+ls $HEADERS_PATH/*.h | grep -v "wrap_init" | awk -F '/' '
+BEGIN {
+    name=ENVIRON["NAME"];
+    extra=ENVIRON["EXTRA"];
+    nameupper=toupper(ENVIRON["NAME"]);
+    gsub("-", "_", nameupper);
+    print "/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */";
+    print "/*";
+    print " * "name".h";
+    print " * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>";
+    print " *";
+    print " * maia is free software: you can redistribute it and/or modify it";
+    print " * under the terms of the GNU Lesser General Public License as published";
+    print " * by the Free Software Foundation, either version 3 of the License, or";
+    print " * (at your option) any later version.";
+    print " *";
+    print " * maia is distributed in the hope that it will be useful, but";
+    print " * WITHOUT ANY WARRANTY; without even the implied warranty of";
+    print " * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.";
+    print " * See the GNU Lesser General Public License for more details.";
+    print " *";
+    print " * You should have received a copy of the GNU Lesser General Public License";
+    print " * along with this program.  If not, see <http://www.gnu.org/licenses/>.";
+    print " */";
+    print "";
+    if (extra != "")
+    {
+        printf ("#include <%s.h>\n\n", extra);
+    }
+    printf ("#ifndef _%s_H\n", nameupper);
+    printf ("#define _%s_H\n\n", nameupper);
+}
+{
+    val=$NF
+    printf("#include <%s/%s>\n", name, val);
+}
+END {
+    printf ("\n#endif // _%s_H\n\n", nameupper);
+}'

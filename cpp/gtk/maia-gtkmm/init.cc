@@ -17,6 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <maiamm/init.h>
 #include <maia-gtkmm/init.h>
 #include <glibmm/init.h>
 #include <maia-gtkmm/wrap_init.h>
@@ -29,6 +30,8 @@ namespace Maia
     {
         void init ()
         {
+            Maia::init ();
+
             Glib::init();
             wrap_init();
         }

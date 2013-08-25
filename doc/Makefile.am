@@ -50,7 +50,6 @@ valadoc-mm: $(VALADOC_SRCS)
 	$(AM_V_GEN) rm -rf mm; \
 	$(VALADOC) -o mm --doclet cpp $(VALADOC_FLAGS) $(VALADOC_SRCS) && \
 	cp mm/maia_docs.xml $(top_srcdir)/cpp/src && \
-	cp mm/maia_docs.xml $(top_srcdir)/cpp/gtk/src/maia_docs.xml && \
 	cp mm/maia_docs.xml $(top_srcdir)/cpp/gtk/src/maia-gtk_docs.xml && \
 	touch $@
 
@@ -58,7 +57,6 @@ clean-local:
 	rm -rf html devhelp mm; \
 	rm -f valadoc-html valadoc-devhelp valadoc-mm; \
 	rm -f cpp/doclet.c; \
-	rm -f $(top_srcdir)/cpp/src/maia_docs.xml; \
 	rm -f $(top_srcdir)/cpp/src/maia_docs.xml; \
 	rm -f $(top_srcdir)/cpp/src/maia-gtk_docs.xml; \
 	rm -f cpp/libdoclet.so
