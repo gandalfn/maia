@@ -1,4 +1,4 @@
-SUBDIRS = vapi lib doc cpp test
+SUBDIRS = vapi lib doc cpp tools test
 
 maiadocdir = ${prefix}/doc/maia
 maiadoc_DATA = \

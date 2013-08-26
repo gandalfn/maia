@@ -20,7 +20,7 @@
 public class Maia.TestCanvas : Maia.TestCase
 {
     const string MANIFEST = "Group.root {" +
-                            "   background: #FFFFFF;" +
+                            "   background_pattern: #FFFFFF;" +
                             "   size: 300, 300;" +
                             "   Path.triangle {" +
                             "       layer: 1;" +
@@ -59,7 +59,7 @@ public class Maia.TestCanvas : Maia.TestCase
                                  "   bottom_padding: 5;" +
                                  "   left_padding: 5;" +
                                  "   right_padding: 5;" +
-                                 "   background: image(/usr/share/icons/gnome/256x256/actions/gnome-run.png);" +
+                                 "   background_pattern: image(/usr/share/icons/gnome/256x256/actions/gnome-run.png);" +
                                  "   stroke-pattern: #000000;" +
                                  "   border-width: 5;" +
                                  "   border-line-width: 2.0;" +
@@ -369,7 +369,7 @@ public class Maia.TestCanvas : Maia.TestCase
         {
             canvas.load ("Group.root {" +
                          "   size: 1300, 900;" +
-                         """   background: svg('""" +
+                         """   background_pattern: svg('""" +
                          """<svg width="1300" height="900" xmlns="http://www.w3.org/2000/svg">""" +
                          "<g>" +
                          """<path fill="#FFFFFF" stroke="#000000" stroke-width="3" d="m358.6629,436.63846"/>""" +

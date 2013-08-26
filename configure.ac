@@ -50,6 +50,7 @@ PANGO_REQUIRED=1.30.0
 RSVG_REQUIRES=2.36.1
 GDK_PIXBUF_REQUIRED=2.26.0
 GTK_REQUIRED=2.24.0
+GTKSOURCEVIEW_REQUIRED=2.10.0
 GLIBMM_REQUIRED=2.32.0
 GTKMM_REQUIRED=2.24.0
 AC_SUBST(GLIBMM_REQUIRED)
@@ -128,6 +129,13 @@ AC_SUBST([MAIA_GTKMM_MODULES], ['gtkmm-2.4'])
 PKG_CHECK_MODULES([MAIA_GTKMM], [$MAIA_GTKMM_MODULES])
 AC_SUBST(MAIA_GTKMM_CFLAGS)
 AC_SUBST(MAIA_GTKMM_LIBS)
+
+dnl ****************************************************************************
+dnl Check for canvas-editor packages
+dnl ****************************************************************************
+PKG_CHECK_MODULES(MAIA_CANVAS_EDITOR, [gtksourceview-2.0 >= $GTKSOURCEVIEW_REQUIRED])
+AC_SUBST(MAIA_CANVAS_EDITOR_CFLAGS)
+AC_SUBST(MAIA_CANVAS_EDITOR_LIBS)
 
 dnl ***************************************************************************
 dnl check for valgrind
@@ -252,6 +260,7 @@ cpp/gtk/src/Makefile
 cpp/gtk/maia-gtkmm/Makefile
 cpp/doc/Makefile
 cpp/doc/reference/Doxyfile
+tools/Makefile
 test/Makefile
 vapi/Makefile])
 

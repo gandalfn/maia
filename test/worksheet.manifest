@@ -29,7 +29,7 @@ Document.worksheet {
     // TODO: fix transform on document
     //transform: scale(1.2, 1.2);
     border_width: 5;
-    background: #E0E0E0;
+    background-pattern: #E0E0E0;
     header: 'header';
     footer: 'footer';
 
@@ -140,7 +140,7 @@ Document.worksheet {
             row: 0;
             column: 0;
             xexpand: false;
-            background: #C0C0C0;
+            background-pattern: #C0C0C0;
             transform: rotate(pi/2);
             stroke-pattern: #000000;
             font_description: "Liberation Sans 17";
@@ -171,7 +171,7 @@ Document.worksheet {
             DrawingArea.clinical_draw {
                 row: 1;
                 column: 0;
-                background: svg('
+                background-pattern: svg('
                 <svg width="1300" height="900" xmlns="http://www.w3.org/2000/svg">
                     <g>
                         <path fill="#FFFFFF" stroke="#000000" stroke-width="3" d="m358.6629,436.63846"/>
