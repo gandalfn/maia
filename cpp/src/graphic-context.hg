@@ -72,6 +72,8 @@ namespace Maia
                 _WRAP_VFUNC(void get_path_area (const Glib::RefPtr<Path>& inPath, Rectangle& outResut), get_path_area, errthrow)
 
             public:
+                static Glib::RefPtr<Context> create (const Glib::RefPtr<Surface>& inSurface);
+
                 _WRAP_METHOD(Operator get_operator () const, maia_graphic_context_get_operator)
                 _WRAP_METHOD(void set_operator (Operator inOperator), maia_graphic_context_set_operator)
                 _WRAP_METHOD(Glib::RefPtr<Surface> get_surface () const, maia_graphic_context_get_surface)
@@ -146,6 +148,5 @@ namespace Maia
                 _WRAP_PROPERTY ("pattern", Glib::RefPtr<Pattern>)
                 _WRAP_PROPERTY ("transform", Glib::RefPtr<Transform>)
         };
-
     }
 }

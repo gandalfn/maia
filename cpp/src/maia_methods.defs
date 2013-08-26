@@ -6352,6 +6352,24 @@
   (return-type "GType")
 )
 
+(define-function maia_graphic_context_new
+  (c-name "maia_graphic_context_new")
+  (is-constructor-of "MaiaGraphicContext")
+  (return-type "MaiaGraphicContext*")
+  (parameters
+    '("MaiaGraphicSurface*" "inSurface")
+  )
+)
+
+(define-function maia_graphic_context_construct
+  (c-name "maia_graphic_context_construct")
+  (return-type "MaiaGraphicContext*")
+  (parameters
+    '("GType" "object_type")
+    '("MaiaGraphicSurface*" "inSurface")
+  )
+)
+
 (define-method save
   (of-object "MaiaGraphicContext")
   (c-name "maia_graphic_context_save")

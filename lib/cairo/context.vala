@@ -206,7 +206,7 @@ public class Maia.Cairo.Context : Graphic.Context
     // methods
     public Context (Graphic.Surface inSurface)
     {
-        GLib.Object (surface: inSurface);
+        base (inSurface);
     }
 
     private void

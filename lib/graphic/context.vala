@@ -79,7 +79,7 @@ public class Maia.Graphic.Context : Core.Object
     public virtual Transform         transform  { get; set; }
 
     // methods
-    internal Context (Surface inSurface)
+    public Context (Surface inSurface)
     {
         GLib.Object (surface: inSurface);
     }
