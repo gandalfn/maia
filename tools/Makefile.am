@@ -32,7 +32,9 @@ canvas_editor_VALAFLAGS = \
 canvas_editor_SOURCES = \
     canvas-editor.vala \
     window.vala \
-    sourceview.vala
+    sourceview.vala \
+    engine.vala \
+    provider.vala
 
 canvas_editor_LDADD = \
     $(MAIA_LIBS) \

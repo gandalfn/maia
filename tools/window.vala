@@ -21,11 +21,12 @@ public class CanvasEditor.Window : Gtk.Window
 {
     // properties
     private SourceView m_SourceView;
+    private Gtk.Statusbar m_Bar;
 
     // methods
     public Window ()
     {
-        set_default_size (1024, 768);
+        set_default_size (1024, 600);
 
         var builder = new Gtk.Builder();
 
@@ -43,8 +44,13 @@ public class CanvasEditor.Window : Gtk.Window
             var open = builder.get_object ("open") as Gtk.ToolButton;
             open.clicked.connect (on_open);
 
+            var save = builder.get_object ("save") as Gtk.ToolButton;
+            save.clicked.connect (on_save);
+
             var quit = builder.get_object ("exit") as Gtk.ToolButton;
             quit.clicked.connect (Gtk.main_quit);
+
+            m_Bar = builder.get_object ("statusbar") as Gtk.Statusbar;
         }
         catch (GLib.Error err)
         {
@@ -63,7 +69,22 @@ public class CanvasEditor.Window : Gtk.Window
         if (dialog.run () == Gtk.ResponseType.ACCEPT)
         {
             m_SourceView.load (dialog.get_filename ());
+
+            uint id = m_Bar.get_context_id ("File Operations");
+            m_Bar.push (id, "%s loaded.".printf (m_SourceView.filename));
         }
         dialog.destroy ();
+    }
+
+    private void
+    on_save ()
+    {
+        if (m_SourceView.filename != null)
+        {
+            m_SourceView.save ();
+
+            uint id = m_Bar.get_context_id ("File Operations");
+            m_Bar.push (id, "%s saved.".printf (m_SourceView.filename));
+        }
     }
 }

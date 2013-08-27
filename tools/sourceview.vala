@@ -20,6 +20,15 @@
 public class CanvasEditor.SourceView : Gtk.SourceView
 {
     private string m_Current = null;
+    private Engine m_Engine = null;
+    private uint m_Timeout = 0;
+
+    // accessors
+    public string filename {
+        get {
+            return m_Current;
+        }
+    }
 
     // methods
     public SourceView ()
@@ -38,6 +47,57 @@ public class CanvasEditor.SourceView : Gtk.SourceView
         get_completion ();
         (buffer as Gtk.SourceBuffer).highlight_matching_brackets = true;
         //(buffer as Gtk.SourceBuffer).style_scheme = Gtk.SourceStyleSchemeManager.get_default ().get_scheme ("Oblivion");
+
+        m_Engine = new Engine ();
+
+        // Provider
+        var comp_provider = new Provider (buffer as Gtk.SourceBuffer, m_Engine);
+        try
+        {
+            completion.add_provider (comp_provider);
+        }
+        catch (GLib.Error err)
+        {
+            warning (err.message);
+        }
+    }
+
+    private bool
+    on_timeout_update ()
+    {
+        if (m_Timeout != 0)
+        {
+            string content = buffer.text;
+            new GLib.Thread<void*> ("parser", () => {
+                m_Engine.parse (content);
+
+                return null;
+            });
+
+            m_Timeout = 0;
+        }
+
+        return false;
+    }
+
+    internal override bool
+    key_press_event (Gdk.EventKey inEvent)
+    {
+        bool ret = base.key_press_event (inEvent);
+
+        if (m_Timeout != 0)
+        {
+            GLib.Source.remove (m_Timeout);
+            m_Timeout = 0;
+        }
+        m_Timeout = GLib.Timeout.add_seconds (5, on_timeout_update);
+
+        if (inEvent.str.get_char () in Provider.c_Stoppers)
+        {
+            completion.hide ();
+        }
+
+        return ret;
     }
 
     public void
@@ -45,6 +105,12 @@ public class CanvasEditor.SourceView : Gtk.SourceView
     {
         buffer.text = "";
         m_Current = null;
+
+        if (m_Timeout != 0)
+        {
+            GLib.Source.remove (m_Timeout);
+            m_Timeout = 0;
+        }
 
         try
         {
@@ -62,10 +128,29 @@ public class CanvasEditor.SourceView : Gtk.SourceView
             Gtk.TextIter start;
             (buffer as Gtk.SourceBuffer).get_start_iter (out start);
             (buffer as Gtk.SourceBuffer).place_cursor (start);
+
+            m_Timeout = GLib.Timeout.add_seconds (5, on_timeout_update);
         }
         catch (GLib.Error err)
         {
             critical ("Error on load %s: %s", inFilename, err.message);
+        }
+    }
+
+    public void
+    save ()
+    {
+        if (m_Current != null)
+        {
+            try
+            {
+                string content = buffer.text;
+                GLib.FileUtils.set_contents (m_Current, content);
+            }
+            catch (GLib.Error err)
+            {
+                critical ("Error on save %s: %s", m_Current, err.message);
+            }
         }
     }
 }
