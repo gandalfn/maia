@@ -60,6 +60,12 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
             m_Glyph = null;
             geometry = null;
         });
+
+        // Default color
+        stroke_pattern = new Graphic.Color (0, 0, 0);
+
+        // Default font
+        font_description = "Sans 12";
     }
 
     public Label (string inId, string inLabel)

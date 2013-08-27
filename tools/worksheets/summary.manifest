@@ -1,0 +1,325 @@
+Grid.summary {
+	row_spacing: 12;
+
+	// Exam report
+	Grid.exam_report {
+		yexpand: false;
+		stroke-pattern: '#000000';
+		border-line-width: 1;
+		top-padding: 12;
+
+		Label.exam_report_title {
+			columns: 4;
+			xfill: false;
+			xexpand: false;
+			yexpand: false;
+			top-padding: 5;
+			bottom-padding: 5;
+			left-padding: 5;
+			right-padding: 5;
+			font-description: "Liberation Sans Bold 14";
+			text: "Exam Report";
+		}
+
+		Label.exam_report_patient_title {
+			row: 1;
+			xfill: false;
+			xalign: 0.1;
+			yexpand: false;
+			left-padding: 5;
+			right-padding: 5;
+			font-description: "Liberation Sans 12";
+			text: "Patient:";
+		}
+
+		Label.exam_report_patient {
+			row: 1;
+			column: 1;
+			yexpand: false;
+			left-padding: 5;
+			right-padding: 5;
+			font-description: "Liberation Sans 12";
+			text: "";
+		}
+
+		Label.exam_report_accession_title {
+			row: 1;
+			column: 2
+			xexpand: false;
+			xfill: false;
+			xalign: 0.0;
+			yexpand: false;
+			left-padding: 5;
+			right-padding: 5;
+			font-description: "Liberation Sans 12";
+			text: "Accession #:";
+		}
+
+		Label.exam_report_accession {
+			row: 1;
+			column: 3;
+			yexpand: false;
+			font-description: "Liberation Sans 12";
+			text: "";
+		}
+
+		Label.exam_report_patient_id_title {
+			row: 2;
+			xfill: false;
+			xalign: 0.1;
+			yexpand: false;
+			left-padding: 5;
+			right-padding: 5;
+			font-description: "Liberation Sans 12";
+			text: "Patient ID:";
+		}
+
+		Label.exam_report_patient_id {
+			row: 2;
+			column: 1;
+			yexpand: false;
+			font-description: "Liberation Sans 12";
+			text: "";
+		}
+
+		Label.exam_report_sonographer_title {
+			row: 2;
+			column: 2
+			xexpand: false;
+			xfill: false;
+			xalign: 0.0;
+			yexpand: false;
+			left-padding: 5;
+			right-padding: 5;
+			font-description: "Liberation Sans 12";
+			text: "Sonographer:";
+		}
+
+		Label.exam_report_sonographer {
+			row: 2;
+			column: 3;
+			yexpand: false;
+			font-description: "Liberation Sans 12";
+			text: "";
+		}
+
+		Label.exam_report_dob_title {
+			row: 3;
+			xfill: false;
+			xalign: 0.1;
+			yexpand: false;
+			left-padding: 5;
+			right-padding: 5;
+			font-description: "Liberation Sans 12";
+			text: "DoB:";
+		}
+
+		Label.exam_report_dob {
+			row: 3;
+			column: 1;
+			yexpand: false;
+			font-description: "Liberation Sans 12";
+			text: "";
+		}
+
+		Label.exam_report_refmd_title {
+			row: 3;
+			column: 2
+			xexpand: false;
+			xfill: false;
+			xalign: 0.0;
+			yexpand: false;
+			left-padding: 5;
+			right-padding: 5;
+			font-description: "Liberation Sans 12";
+			text: "Ref MD:";
+		}
+
+		Label.exam_report_refmd {
+			row: 3;
+			column: 3;
+			yexpand: false;
+			font-description: "Liberation Sans 12";
+			text: "";
+		}
+
+		Label.exam_report_gender_title {
+			row: 4;
+			xfill: false;
+			xalign: 0.1;
+			yexpand: false;
+			left-padding: 5;
+			right-padding: 5;
+			bottom-padding: 5;
+			font-description: "Liberation Sans 12";
+			text: "Gender:";
+		}
+
+		Label.exam_report_gender {
+			row: 4;
+			column: 1;
+			yexpand: false;
+			bottom-padding: 5;
+			font-description: "Liberation Sans 12";
+			text: "";
+		}
+
+		Label.exam_report_startdate_title {
+			row: 4;
+			column: 2
+			xexpand: false;
+			xfill: false;
+			xalign: 0.0;
+			yexpand: false;
+			left-padding: 5;
+			right-padding: 5;
+			bottom-padding: 5;
+			font-description: "Liberation Sans 12";
+			text: "Exam start date:";
+		}
+
+		Label.exam_report_startdate {
+			row: 4;
+			column: 3;
+			yexpand: false;
+			bottom-padding: 5;
+			font-description: "Liberation Sans 12";
+			text: "";
+		}
+	}
+
+	// Patient information
+	Grid.patient_information {
+		yexpand: false;
+		row: 1;
+
+		Label.patient_information_title {
+			columns: 4;
+			xfill: false;
+			xexpand: false;
+			yexpand: false;
+			top-padding: 5;
+			bottom-padding: 5;
+			left-padding: 5;
+			right-padding: 5;
+			font-description: "Liberation Sans Bold 14";
+			text: "<u>Patient Information</u>";
+		}
+
+		Label.patient_information_height_title {
+			row: 1;
+			xexpand: false;
+			yexpand: false;
+			left-padding: 12;
+			font-description: "Liberation Sans 12";
+			text: "Height:";
+		}
+
+		Label.patient_information_height {
+			row: 1;
+			column: 2;
+			yexpand: false;
+			font-description: "Liberation Sans 12";
+			text: "";
+		}
+
+		Label.patient_information_weight_title {
+			row: 1;
+			column: 3;
+			xexpand: false;
+			yexpand: false;
+			font-description: "Liberation Sans 12";
+			text: "Weight:";
+		}
+
+		Label.patient_information_weight {
+			row: 1;
+			column: 4;
+			yexpand: false;
+			font-description: "Liberation Sans 12";
+			text: "";
+		}
+	}
+
+	// Clinical history
+	Grid.clinical_history {
+		yexpand: false;
+		row: 2;
+
+		Label.clinical_history_title {
+			xfill: false;
+			xexpand: false;
+			yexpand: false;
+			top-padding: 5;
+			bottom-padding: 5;
+			left-padding: 5;
+			right-padding: 5;
+			font-description: "Liberation Sans Bold 14";
+			text: "<u>Clinical History</u>";
+		}
+
+		Entry.clinical_history_entry {
+			row: 1;
+			yexpand: false;
+			left-padding: 12;
+			font-description: "Liberation Sans 12";
+			lines: 5;
+			underline-width: 0.3;
+		}
+	}
+
+	// Comments
+	Grid.comments {
+		yexpand: false;
+		row: 3;
+
+		Label.comments_title {
+			xfill: false;
+			xexpand: false;
+			yexpand: false;
+			top-padding: 5;
+			bottom-padding: 5;
+			left-padding: 5;
+			right-padding: 5;
+			font-description: "Liberation Sans Bold 14";
+			text: "<u>Comments</u>";
+		}
+
+		Entry.comments_entry {
+			row: 1;
+			yexpand: false;
+			left-padding: 12;
+			font-description: "Liberation Sans 12";
+			lines: 5;
+			underline-width: 0.3;
+		}
+	}
+
+	// Conclusion
+	Grid.breast_conclusion {
+		yexpand: false;
+		row: 4;
+
+		Label.conclusion_title {
+			xfill: false;
+			xexpand: false;
+			yexpand: false;
+			top-padding: 5;
+			bottom-padding: 5;
+			left-padding: 5;
+			right-padding: 5;
+			font-description: "Liberation Sans Bold 14";
+			text: "<u>Conclusion</u>";
+		}
+
+		Entry.conclusion_entry {
+			row: 1;
+			yexpand: false;
+			left-padding: 12;
+			font-description: "Liberation Sans 12";
+			lines: 5;
+			underline-width: 0.3;
+		}
+	}
+}
+}

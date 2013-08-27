@@ -8774,6 +8774,12 @@
   (return-type "none")
 )
 
+(define-method clear
+  (of-object "MaiaCanvas")
+  (c-name "maia_canvas_clear")
+  (return-type "none")
+)
+
 (define-method load
   (of-object "MaiaCanvas")
   (c-name "maia_canvas_load")

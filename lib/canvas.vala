@@ -232,15 +232,10 @@ public interface Maia.Canvas : Drawable
     protected abstract void resize ();
 
     /**
-     * Load canvas mainfest
-     *
-     * @param inManifest manifest content buffer
-     * @param inRoot root id in manifest
-     *
-     * @throws ParseError when somethings goes wrong
+     * Clear canvas
      */
     public void
-    load (string inManifest, string inRoot) throws Core.ParseError
+    clear ()
     {
         // we have already root item disconnect from grab signals
         if (root != null)
@@ -253,6 +248,23 @@ public interface Maia.Canvas : Drawable
             root.grab_keyboard.disconnect (on_grab_keyboard);
             root.ungrab_keyboard.disconnect (on_ungrab_keyboard);
         }
+
+        root = null;
+    }
+
+    /**
+     * Load canvas mainfest
+     *
+     * @param inManifest manifest content buffer
+     * @param inRoot root id in manifest
+     *
+     * @throws ParseError when somethings goes wrong
+     */
+    public void
+    load (string inManifest, string? inRoot = null) throws Core.ParseError
+    {
+        // clear canvas
+        clear ();
 
         // Load manifest
         Manifest.Document manifest = new Manifest.Document.from_buffer (inManifest, inManifest.length);
@@ -282,19 +294,10 @@ public interface Maia.Canvas : Drawable
      * @throws ParseError when somethings goes wrong
      */
     public void
-    load_from_file (string inFilename, string inRoot) throws Core.ParseError
+    load_from_file (string inFilename, string? inRoot = null) throws Core.ParseError
     {
-        // we have already root item disconnect from grab signals
-        if (root != null)
-        {
-            root.set_pointer_cursor.disconnect (on_set_pointer_cursor);
-            root.move_pointer.disconnect (on_move_pointer);
-            root.grab_focus.disconnect (on_grab_focus);
-            root.grab_pointer.disconnect (on_grab_pointer);
-            root.ungrab_pointer.disconnect (on_ungrab_pointer);
-            root.grab_keyboard.disconnect (on_grab_keyboard);
-            root.ungrab_keyboard.disconnect (on_ungrab_keyboard);
-        }
+        // clear canvas
+        clear ();
 
         // Load manifest
         Manifest.Document manifest = new Manifest.Document (inFilename);

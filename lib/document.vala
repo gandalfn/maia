@@ -105,6 +105,12 @@ public class Maia.Document : Item
         GLib.Object (id: GLib.Quark.from_string (inId), format: inFormat);
     }
 
+    ~Document ()
+    {
+        m_Pages.clear ();
+        m_VisiblePages.clear ();
+    }
+
     private void
     on_page_shadow_change ()
     {

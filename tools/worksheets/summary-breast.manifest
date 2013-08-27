@@ -1,0 +1,1054 @@
+Grid.summary_breast {
+	row: 1;
+	row-spacing: 5;
+
+	Label.summary_breast_title {
+		left-padding: 5;
+		xexpand: false;
+		xfill: false;
+		yexpand: false;
+		font-description: 'Liberation Sans 16';
+		text: '<b>Breast</b>';
+	}
+
+	Grid.summary_breast_clinical_indications {
+		row: 1;
+		left-padding: 12;
+		row-spacing: 5;
+		yexpand: false;
+
+		Label.summary_breast_summary_breast_clinical_indications_title {
+			columns: 2;
+			xfill: false;
+			xexpand: false;
+			yexpand: false;
+			font-description: 'Liberation Sans 14';
+			text: '<u><b>Clinical Indications</b></u>';
+		}
+
+		Image.summary_breast_summary_breast_clinical_indications_image_columns {
+			row: 1;
+			xfill: false;
+			[
+				<svg version="1.0" id="Calque_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+					 width="150px" height="150px" viewBox="0 0 150 150" enable-background="new 0 0 150 150" xml:space="preserve">
+					<g>
+						<path fill="none" stroke="#000000" stroke-width="3" d="M9.268,66.685c-4.646,12.518-4.653,29.512,1.229,41.511
+							  c7.533,15.363,23.9,26.007,39.87,30.395c16.419,4.51,35.45,5.664,51.811,0.375c19.941-6.451,34.923-21.615,40.05-42.193
+							  c2.353-9.436,2.488-19.687-1.57-28.675c-2.795-6.188-5.799-12.161-9.973-17.547c-6.147-7.932-11.368-15.026-15.441-24.266
+							  c-2.169-4.923-2.673-17.406,5.406-17.535c5.267-0.084,7.58,6.067,11.705,8.249"/>
+						<g>
+							<ellipse fill="none" stroke="#000000" stroke-width="3" cx="75.045" cy="96.136" rx="5.363" ry="4.519"/>
+						</g>
+					</g>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 98.75 53.998)" font-family="'Arial-BoldMT'" font-size="12">1</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 71.6685 136.166)" font-family="'Arial-BoldMT'" font-size="12">6</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 69.4434 52.499)" font-family="'Arial-BoldMT'" font-size="12">12</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 121.2207 26.665)" font-family="'Arial-BoldMT'" font-size="12">13</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 69.4434 86.666)" font-family="'Arial-BoldMT'" font-size="12">14</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 122 69.5)" font-family="'Arial-BoldMT'" font-size="12">2</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 122 115.25)" font-family="'Arial-BoldMT'" font-size="12">4</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 98.75 131.415)" font-family="'Arial-BoldMT'" font-size="12">5</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 40.9189 131.416)" font-family="'Arial-BoldMT'" font-size="12">7</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 18.2793 115.249)" font-family="'Arial-BoldMT'" font-size="12">8</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 16.0547 69.499)" font-family="'Arial-BoldMT'" font-size="12">10</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 38.9146 53.9985)" font-family="'Arial-BoldMT'" font-size="12">11</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 133.166 95.082)" font-family="'Arial-BoldMT'" font-size="12">3</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 11.1665 95.0811)" font-family="'Arial-BoldMT'" font-size="12">9</text>
+				</svg>
+			]
+		}
+
+		Image.summary_breast_summary_breast_clinical_indications_image_right {
+			row: 1;
+			column: 1;
+			xfill: false;
+			[
+				<svg version="1.0" id="Calque_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+					 width="150px" height="150px" viewBox="0 0 150 150" enable-background="new 0 0 150 150" xml:space="preserve">
+					<g>
+						<path fill="none" stroke="#000000" stroke-width="3" d="M140.53,66.685c4.646,12.518,4.653,29.512-1.229,41.511
+							  c-7.533,15.363-23.9,26.007-39.87,30.395c-16.419,4.51-35.451,5.664-51.811,0.375c-19.941-6.451-34.923-21.615-40.05-42.193
+							  c-2.352-9.436-2.488-19.687,1.571-28.675c2.795-6.188,5.799-12.161,9.973-17.547c6.147-7.932,11.368-15.026,15.441-24.266
+							  c2.169-4.923,2.673-17.406-5.406-17.535c-5.266-0.084-7.58,6.067-11.705,8.249"/>
+						<g>
+							<ellipse fill="none" stroke="#000000" stroke-width="3" cx="74.752" cy="96.136" rx="5.363" ry="4.519"/>
+						</g>
+					</g>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 98.75 53.998)" font-family="'Arial-BoldMT'" font-size="12">1</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 71.6685 136.166)" font-family="'Arial-BoldMT'" font-size="12">6</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 69.4434 52.499)" font-family="'Arial-BoldMT'" font-size="12">12</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 19.2207 26.665)" font-family="'Arial-BoldMT'" font-size="12">13</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 69.4434 86.666)" font-family="'Arial-BoldMT'" font-size="12">14</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 122 69.5)" font-family="'Arial-BoldMT'" font-size="12">2</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 122 115.25)" font-family="'Arial-BoldMT'" font-size="12">4</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 98.75 131.415)" font-family="'Arial-BoldMT'" font-size="12">5</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 40.9189 131.416)" font-family="'Arial-BoldMT'" font-size="12">7</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 18.2793 115.249)" font-family="'Arial-BoldMT'" font-size="12">8</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 16.0547 69.499)" font-family="'Arial-BoldMT'" font-size="12">10</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 38.9146 53.9985)" font-family="'Arial-BoldMT'" font-size="12">11</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 133.166 95.082)" font-family="'Arial-BoldMT'" font-size="12">3</text>
+					<text stroke="#000000" fill="#000000" transform="matrix(1 0 0 1 11.1665 95.0811)" font-family="'Arial-BoldMT'" font-size="12">9</text>
+				</svg>
+
+			]
+		}
+
+		Grid.summary_breast_clinical_indications_left {
+			row: 2;
+			left-padding: 12;
+
+			Label.summary_breast_clinical_indications_left_title {
+				row: 0;
+				columns: 6;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				font-description: 'Liberation Sans 12';
+				text: '';
+			}
+
+			ToggleGroup.summary_breast_clinical_indications_left_area_1 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_left_area_2 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_left_area_3 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_left_area_4 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_left_area_5 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_left_area_6 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_left_area_7 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_left_area_8 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_left_area_9 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_left_area_10 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_left_area_11 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_left_area_12 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_left_area_13 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_left_area_14 {
+			}
+
+			// Area 1
+			Label.summary_breast_clinical_indications_left_area_1_title {
+				row: 1;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 1:';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_1_pain {
+				row: 1;
+				column: 1
+				group: summary_breast_clinical_indications_left_area_1;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_1_palpable_mass {
+				row: 1;
+				column: 2;
+				group: summary_breast_clinical_indications_left_area_1;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 2
+			Label.summary_breast_clinical_indications_left_area_2_title {
+				row: 2;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 2:';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_2_pain {
+				row: 2;
+				column: 1
+				group: summary_breast_clinical_indications_left_area_2;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_2_palpable_mass {
+				row: 2;
+				column: 2;
+				group: summary_breast_clinical_indications_left_area_2;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 3
+			Label.summary_breast_clinical_indications_left_area_3_title {
+				row: 3;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 3:';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_3_pain {
+				row: 3;
+				column: 1
+				group: summary_breast_clinical_indications_left_area_3;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_3_palpable_mass {
+				row: 3;
+				column: 2;
+				group: summary_breast_clinical_indications_left_area_3;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 4
+			Label.summary_breast_clinical_indications_left_area_4_title {
+				row: 4;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 4:';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_4_pain {
+				row: 4;
+				column: 1
+				group: summary_breast_clinical_indications_left_area_4;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_4_palpable_mass {
+				row: 4;
+				column: 2;
+				group: summary_breast_clinical_indications_left_area_4;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 5
+			Label.summary_breast_clinical_indications_left_area_5_title {
+				row: 5;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 5:';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_5_pain {
+				row: 5;
+				column: 1
+				group: summary_breast_clinical_indications_left_area_5;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_5_palpable_mass {
+				row: 5;
+				column: 2;
+				group: summary_breast_clinical_indications_left_area_5;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 6
+			Label.summary_breast_clinical_indications_left_area_6_title {
+				row: 6;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 6:';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_6_pain {
+				row: 6;
+				column: 1
+				group: summary_breast_clinical_indications_left_area_6;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_6_palpable_mass {
+				row: 6;
+				column: 2;
+				group: summary_breast_clinical_indications_left_area_6;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 7
+			Label.summary_breast_clinical_indications_left_area_7_title {
+				row: 7;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 7:';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_7_pain {
+				row: 7;
+				column: 1
+				group: summary_breast_clinical_indications_left_area_7;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_7_palpable_mass {
+				row: 7;
+				column: 2;
+				group: summary_breast_clinical_indications_left_area_7;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 8
+			Label.summary_breast_clinical_indications_left_area_8_title {
+				row: 8;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 8:';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_8_pain {
+				row: 8;
+				column: 1
+				group: summary_breast_clinical_indications_left_area_8;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_8_palpable_mass {
+				row: 8;
+				column: 2;
+				group: summary_breast_clinical_indications_left_area_8;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 9
+			Label.summary_breast_clinical_indications_left_area_9_title {
+				row: 9;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 9:';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_9_pain {
+				row: 9;
+				column: 1
+				group: summary_breast_clinical_indications_left_area_9;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_9_palpable_mass {
+				row: 9;
+				column: 2;
+				group: summary_breast_clinical_indications_left_area_9;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 10
+			Label.summary_breast_clinical_indications_left_area_10_title {
+				row: 10;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 10:';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_10_pain {
+				row: 10;
+				column: 1
+				group: summary_breast_clinical_indications_left_area_10;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_10_palpable_mass {
+				row: 10;
+				column: 2;
+				group: summary_breast_clinical_indications_left_area_10;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 11
+			Label.summary_breast_clinical_indications_left_area_11_title {
+				row: 11;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 11:';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_11_pain {
+				row: 11;
+				column: 1
+				group: summary_breast_clinical_indications_left_area_11;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_11_palpable_mass {
+				row: 11;
+				column: 2;
+				group: summary_breast_clinical_indications_left_area_11;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 12
+			Label.summary_breast_clinical_indications_left_area_12_title {
+				row: 12;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 12:';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_12_pain {
+				row: 12;
+				column: 1
+				group: summary_breast_clinical_indications_left_area_12;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_12_palpable_mass {
+				row: 12;
+				column: 2;
+				group: summary_breast_clinical_indications_left_area_12;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 13
+			Label.summary_breast_clinical_indications_left_area_13_title {
+				row: 13;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 13:';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_13_pain {
+				row: 13;
+				column: 1
+				group: summary_breast_clinical_indications_left_area_13;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_13_palpable_mass {
+				row: 13;
+				column: 2;
+				group: summary_breast_clinical_indications_left_area_13;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 14
+			Label.summary_breast_clinical_indications_left_area_14_title {
+				row: 14;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 14:';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_14_pain {
+				row: 14;
+				column: 1
+				group: summary_breast_clinical_indications_left_area_14;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_left_area_14_palpable_mass {
+				row: 14;
+				column: 2;
+				group: summary_breast_clinical_indications_left_area_14;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+		}
+
+		Grid.summary_breast_clinical_indications_right {
+			row: 2;
+			column: 1;
+			right-padding: 12;
+
+			Label.summary_breast_clinical_indications_right_title {
+				row: 0;
+				columns: 6;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				font-description: 'Liberation Sans 12';
+				text: '';
+			}
+
+			ToggleGroup.summary_breast_clinical_indications_right_area_1 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_right_area_2 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_right_area_3 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_right_area_4 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_right_area_5 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_right_area_6 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_right_area_7 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_right_area_8 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_right_area_9 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_right_area_10 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_right_area_11 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_right_area_12 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_right_area_13 {
+			}
+			ToggleGroup.summary_breast_clinical_indications_right_area_14 {
+			}
+
+			// Area 1
+			Label.summary_breast_clinical_indications_right_area_1_title {
+				row: 1;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				right-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 1:';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_1_pain {
+				row: 1;
+				column: 1
+				group: summary_breast_clinical_indications_right_area_1;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_1_palpable_mass {
+				row: 1;
+				column: 2;
+				group: summary_breast_clinical_indications_right_area_1;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 2
+			Label.summary_breast_clinical_indications_right_area_2_title {
+				row: 2;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				right-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 2:';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_2_pain {
+				row: 2;
+				column: 1
+				group: summary_breast_clinical_indications_right_area_2;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_2_palpable_mass {
+				row: 2;
+				column: 2;
+				group: summary_breast_clinical_indications_right_area_2;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 3
+			Label.summary_breast_clinical_indications_right_area_3_title {
+				row: 3;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				right-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 3:';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_3_pain {
+				row: 3;
+				column: 1
+				group: summary_breast_clinical_indications_right_area_3;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_3_palpable_mass {
+				row: 3;
+				column: 2;
+				group: summary_breast_clinical_indications_right_area_3;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 4
+			Label.summary_breast_clinical_indications_right_area_4_title {
+				row: 4;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				right-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 4:';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_4_pain {
+				row: 4;
+				column: 1
+				group: summary_breast_clinical_indications_right_area_4;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_4_palpable_mass {
+				row: 4;
+				column: 2;
+				group: summary_breast_clinical_indications_right_area_4;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 5
+			Label.summary_breast_clinical_indications_right_area_5_title {
+				row: 5;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				right-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 5:';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_5_pain {
+				row: 5;
+				column: 1
+				group: summary_breast_clinical_indications_right_area_5;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_5_palpable_mass {
+				row: 5;
+				column: 2;
+				group: summary_breast_clinical_indications_right_area_5;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 6
+			Label.summary_breast_clinical_indications_right_area_6_title {
+				row: 6;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				right-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 6:';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_6_pain {
+				row: 6;
+				column: 1
+				group: summary_breast_clinical_indications_right_area_6;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_6_palpable_mass {
+				row: 6;
+				column: 2;
+				group: summary_breast_clinical_indications_right_area_6;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 7
+			Label.summary_breast_clinical_indications_right_area_7_title {
+				row: 7;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				right-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 7:';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_7_pain {
+				row: 7;
+				column: 1
+				group: summary_breast_clinical_indications_right_area_7;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_7_palpable_mass {
+				row: 7;
+				column: 2;
+				group: summary_breast_clinical_indications_right_area_7;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 8
+			Label.summary_breast_clinical_indications_right_area_8_title {
+				row: 8;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				right-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 8:';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_8_pain {
+				row: 8;
+				column: 1
+				group: summary_breast_clinical_indications_right_area_8;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_8_palpable_mass {
+				row: 8;
+				column: 2;
+				group: summary_breast_clinical_indications_right_area_8;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 9
+			Label.summary_breast_clinical_indications_right_area_9_title {
+				row: 9;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				right-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 9:';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_9_pain {
+				row: 9;
+				column: 1
+				group: summary_breast_clinical_indications_right_area_9;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_9_palpable_mass {
+				row: 9;
+				column: 2;
+				group: summary_breast_clinical_indications_right_area_9;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 10
+			Label.summary_breast_clinical_indications_right_area_10_title {
+				row: 10;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				right-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 10:';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_10_pain {
+				row: 10;
+				column: 1
+				group: summary_breast_clinical_indications_right_area_10;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_10_palpable_mass {
+				row: 10;
+				column: 2;
+				group: summary_breast_clinical_indications_right_area_10;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 11
+			Label.summary_breast_clinical_indications_right_area_11_title {
+				row: 11;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				right-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 11:';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_11_pain {
+				row: 11;
+				column: 1
+				group: summary_breast_clinical_indications_right_area_11;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_11_palpable_mass {
+				row: 11;
+				column: 2;
+				group: summary_breast_clinical_indications_right_area_11;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 12
+			Label.summary_breast_clinical_indications_right_area_12_title {
+				row: 12;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				right-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 12:';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_12_pain {
+				row: 12;
+				column: 1
+				group: summary_breast_clinical_indications_right_area_12;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_12_palpable_mass {
+				row: 12;
+				column: 2;
+				group: summary_breast_clinical_indications_right_area_12;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 13
+			Label.summary_breast_clinical_indications_right_area_13_title {
+				row: 13;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				right-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 13:';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_13_pain {
+				row: 13;
+				column: 1
+				group: summary_breast_clinical_indications_right_area_13;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_13_palpable_mass {
+				row: 13;
+				column: 2;
+				group: summary_breast_clinical_indications_right_area_13;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+
+			// Area 14
+			Label.summary_breast_clinical_indications_right_area_14_title {
+				row: 14;
+				xfill: false;
+				xexpand: false;
+				yexpand: false;
+				right-padding: 12;
+				font-description: 'Liberation Sans 12';
+				text: 'Area 14:';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_14_pain {
+				row: 14;
+				column: 1
+				group: summary_breast_clinical_indications_right_area_14;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Pain';
+			}
+
+			Highlight.summary_breast_clinical_indications_right_area_14_palpable_mass {
+				row: 14;
+				column: 2;
+				group: summary_breast_clinical_indications_right_area_14;
+				font-description: 'Liberation Sans 12';
+				stroke-pattern: '#000000';
+				fill-pattern: '#C0C0C0';
+				label: 'Palpable mass';
+			}
+		}
+	}
+}

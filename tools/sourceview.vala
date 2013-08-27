@@ -42,19 +42,28 @@ public class CanvasEditor.SourceView : Gtk.SourceView
         smart_home_end = Gtk.SourceSmartHomeEndType.BEFORE;
         modify_font (Pango.FontDescription.from_string ("Liberation Mono 11"));
         tab_width = 4;
-        insert_spaces_instead_of_tabs = true;
+        insert_spaces_instead_of_tabs = false;
         indent_on_tab = true;
         get_completion ();
         (buffer as Gtk.SourceBuffer).highlight_matching_brackets = true;
         //(buffer as Gtk.SourceBuffer).style_scheme = Gtk.SourceStyleSchemeManager.get_default ().get_scheme ("Oblivion");
 
-        m_Engine = new Engine ();
-
         // Provider
-        var comp_provider = new Provider (buffer as Gtk.SourceBuffer, m_Engine);
+        m_Engine = new Engine ();
+        var comp_provider = new DocumentProvider (buffer as Gtk.SourceBuffer, m_Engine);
         try
         {
             completion.add_provider (comp_provider);
+        }
+        catch (GLib.Error err)
+        {
+            warning (err.message);
+        }
+
+        var manifest_provider = new ManifestProvider (buffer as Gtk.SourceBuffer);
+        try
+        {
+            completion.add_provider (manifest_provider);
         }
         catch (GLib.Error err)
         {
@@ -101,6 +110,14 @@ public class CanvasEditor.SourceView : Gtk.SourceView
     }
 
     public void
+    new_document ()
+    {
+        buffer.text = "";
+        m_Current = null;
+        buffer.set_modified (false);
+    }
+
+    public void
     load (string inFilename)
     {
         buffer.text = "";
@@ -119,7 +136,7 @@ public class CanvasEditor.SourceView : Gtk.SourceView
             m_Current = inFilename;
 
             var manager = Gtk.SourceLanguageManager.get_default ();
-            (buffer as Gtk.SourceBuffer).language = manager.guess_language (m_Current, null);
+            (buffer as Gtk.SourceBuffer).language = manager.get_language ("manifest");
 
             (buffer as Gtk.SourceBuffer).begin_not_undoable_action ();
             (buffer as Gtk.SourceBuffer).text = content;
@@ -130,6 +147,8 @@ public class CanvasEditor.SourceView : Gtk.SourceView
             (buffer as Gtk.SourceBuffer).place_cursor (start);
 
             m_Timeout = GLib.Timeout.add_seconds (5, on_timeout_update);
+
+            buffer.set_modified (false);
         }
         catch (GLib.Error err)
         {
@@ -138,18 +157,20 @@ public class CanvasEditor.SourceView : Gtk.SourceView
     }
 
     public void
-    save ()
+    save (string? inFilename = null)
     {
-        if (m_Current != null)
+        if (((inFilename == null && m_Current != null) || (inFilename != null)) && buffer.get_modified ())
         {
             try
             {
                 string content = buffer.text;
-                GLib.FileUtils.set_contents (m_Current, content);
+                GLib.FileUtils.set_contents (inFilename ?? m_Current, content);
+                buffer.set_modified (false);
+                if (inFilename != null) m_Current = inFilename;
             }
             catch (GLib.Error err)
             {
-                critical ("Error on save %s: %s", m_Current, err.message);
+                critical ("Error on save %s: %s", inFilename ?? m_Current, err.message);
             }
         }
     }

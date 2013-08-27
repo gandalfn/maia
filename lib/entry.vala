@@ -75,6 +75,10 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         notify["have-focus"].connect (() => {
             damage ();
         });
+
+        stroke_pattern = new Graphic.Color (0, 0, 0);
+        background_pattern = new Graphic.Color (0, 0, 0);
+        font_description = "Sans 12";
     }
 
     public Entry (string inId, string? inText)

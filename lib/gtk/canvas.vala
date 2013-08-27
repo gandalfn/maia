@@ -45,6 +45,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
             {
                 m_Root.damage.connect (on_root_damage);
             }
+            resize ();
         }
     }
     internal unowned Item? focus_item         { get; set; default = null; }

@@ -51,6 +51,7 @@ public class Maia.Manifest.Document : Core.Parser
     }
 
     // Properties
+    private Document               m_Include = null;
     private string                 m_Filename = null;
     private MappedFile             m_File;
     private string                 m_LastName;
@@ -59,7 +60,7 @@ public class Maia.Manifest.Document : Core.Parser
     private AttributeScanner       m_Scanner;
 
     // Accessors
-    public Object owner { get; set; default = null; }
+    public unowned Object owner { get; set; default = null; }
 
     public AttributeScanner scanner {
         get {
@@ -227,7 +228,25 @@ public class Maia.Manifest.Document : Core.Parser
 
         skip_space ();
 
-        if (m_pCurrent >= m_pEnd)
+        if (m_Include != null)
+        {
+            token = m_Include.next_token ();
+            if (token == Core.Parser.Token.EOF)
+            {
+                m_Include = null;
+                token = next_token ();
+            }
+            else
+            {
+                m_LastName   = m_Include.m_LastName;
+                m_CurrentTag = m_Include.m_CurrentTag;
+                m_Attribute  = m_Include.m_Attribute;
+                m_Characters = m_Include.m_Characters;
+                m_Attributes = m_Include.m_Attributes;
+                m_Scanner    = m_Include.m_Scanner;
+            }
+        }
+        else if (m_pCurrent >= m_pEnd)
         {
             token = Core.Parser.Token.EOF;
         }
@@ -239,7 +258,34 @@ public class Maia.Manifest.Document : Core.Parser
         else
         {
             m_LastName = read_name ();
-            if (m_pCurrent[0] == '{')
+            if (m_LastName.has_prefix ("@include"))
+            {
+                string filename = m_LastName.substring ("@include".length, -1).replace ("(", "").replace (")", "").strip ();
+
+                // if path is relative take path of parent
+                if (!GLib.Path.is_absolute (filename))
+                {
+                    filename = GLib.Path.get_dirname (m_Filename) + "/" + filename;
+                }
+                next_char ();
+                m_Include = new Document (filename);
+                token = m_Include.next_token ();
+                if (token == Core.Parser.Token.EOF)
+                {
+                    m_Include = null;
+                    token = next_token ();
+                }
+                else
+                {
+                    m_LastName   = m_Include.m_LastName;
+                    m_CurrentTag = m_Include.m_CurrentTag;
+                    m_Attribute  = m_Include.m_Attribute;
+                    m_Characters = m_Include.m_Characters;
+                    m_Attributes = m_Include.m_Attributes;
+                    m_Scanner    = m_Include.m_Scanner;
+                }
+            }
+            else if (m_pCurrent[0] == '{')
             {
                 token = Core.Parser.Token.START_ELEMENT;
                 next_char ();

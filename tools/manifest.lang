@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<language id="manifest" _name="Manifest" version="2.0" _section="Others">
+  <metadata>
+    <property name="mimetypes">text/cache-manifest</property>
+    <property name="globs">*.manifest;*.Manifest</property>
+    <property name="line-comment-start">//</property>
+    <property name="block-comment-start">/*</property>
+    <property name="block-comment-end">*/</property>
+  </metadata>
+
+  <styles>
+    <style id="type" _name="Data Type" map-to="def:type"/>
+    <style id="comment" _name="Comment" map-to="def:comment"/>
+    <style id="error" _name="Error" map-to="def:error"/>
+    <style id="others-2" _name="Others 2"/>
+    <style id="string" _name="String" map-to="def:string"/>
+    <style id="color" _name="Color" map-to="def:base-n-integer"/>
+    <style id="others-3" _name="Others 3"/>
+    <style id="function" _name="Function" map-to="def:function"/>
+    <style id="decimal" _name="Decimal" map-to="def:decimal"/>
+    <style id="dimension" _name="Dimension" map-to="def:floating-point"/>
+    <style id="known-property-values" _name="Known Property Value" map-to="def:type"/>
+    <style id="at-rules" _name="at-rules" map-to="def:keyword"/>
+    <style id="keyword" _name="Keyword" map-to="def:keyword"/>
+  </styles>
+
+  <definitions>
+
+    <context id="comment" style-ref="comment" class="comment" class-disabled="no-spell-check">
+      <start>/\*</start>
+      <end>\*/</end>
+      <include>
+        <context style-ref="error" extend-parent="false">
+          <match>/\*</match>
+        </context>
+        <context ref="def:in-comment"/>
+      </include>
+    </context>
+
+    <context id="close-comment-outside-comment" style-ref="error">
+      <match>\*/(?!\*)</match>
+    </context>
+
+    <context id="unicode-character-reference" style-ref="others-2">
+      <match>\\([a-fA-F0-9]{1,5}[ \t]|[a-fA-F0-9]{6})</match>
+    </context>
+
+    <context id="manifest-function" style-ref="function">
+      <keyword>svg</keyword>
+      <keyword>rgb</keyword>
+      <keyword>rgba</keyword>
+      <keyword>color-stop</keyword>
+      <keyword>linear-gradient</keyword>
+      <keyword>radial-gradient</keyword>
+    </context>
+
+    <context id="at-rules" style-ref="at-rules">
+      <prefix>^[ \t]*@</prefix>
+      <keyword>width</keyword>
+      <keyword>heigth</keyword>
+    </context>
+
+    <context id="hexadecimal-color" style-ref="color">
+      <match>#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})\b</match>
+    </context>
+
+    <context id="named-color" style-ref="color">
+      <keyword>aqua</keyword>
+      <keyword>black</keyword>
+      <keyword>blue</keyword>
+      <keyword>fuchsia</keyword>
+      <keyword>gray</keyword>
+      <keyword>green</keyword>
+      <keyword>lime</keyword>
+      <keyword>maroon</keyword>
+      <keyword>navy</keyword>
+      <keyword>olive</keyword>
+      <keyword>orange</keyword>
+      <keyword>purple</keyword>
+      <keyword>red</keyword>
+      <keyword>silver</keyword>
+      <keyword>teal</keyword>
+      <keyword>white</keyword>
+      <keyword>yellow</keyword>
+    </context>
+
+    <context id="function" style-ref="function">
+      <start>[a-zA-Z][a-z0-9-]+\(</start>
+      <end>\)</end>
+      <include>
+        <context ref="def:escape"/>
+        <context ref="def:line-continue"/>
+      </include>
+    </context>
+
+    <context id="number" style-ref="decimal">
+      <match>\b(0|[\+-]?[1-9][0-9]*)</match>
+    </context>
+
+    <context id="unicode-range" style-ref="others-2">
+      <match>[uU]\+[a-fA-F0-9]{1,6}(-[a-fA-F0-9]{1,6})?</match>
+    </context>
+
+    <context id="property-names" style-ref="keyword">
+        <suffix>(:)</suffix>
+        <keyword>position</keyword>
+        <keyword>size</keyword>
+        <keyword>is-movable</keyword>
+        <keyword>is-resizable</keyword>
+        <keyword>visible</keyword>
+        <keyword>layer</keyword>
+        <keyword>background-pattern</keyword>
+        <keyword>fill-pattern</keyword>
+        <keyword>stroke-pattern</keyword>
+        <keyword>line-width</keyword>
+        <keyword>stroke-pattern</keyword>
+        <keyword>font-description</keyword>
+        <keyword>label</keyword>
+        <keyword>border</keyword>
+        <keyword>icon-filename</keyword>
+        <keyword>button-color</keyword>
+        <keyword>spacing</keyword>
+        <keyword>format</keyword>
+        <keyword>top-margin</keyword>
+        <keyword>bottom-margin</keyword>
+        <keyword>left-margin</keyword>
+        <keyword>right-margin</keyword>
+        <keyword>resolution</keyword>
+        <keyword>header</keyword>
+        <keyword>footer</keyword>
+        <keyword>anchor-size</keyword>
+        <keyword>selected-border</keyword>
+        <keyword>selected-border-line-width</keyword>
+        <keyword>selected-border-color</keyword>
+        <keyword>selected-border-line-width</keyword>
+        <keyword>text</keyword>
+        <keyword>lines</keyword>
+        <keyword>underline-width</keyword>
+        <keyword>homogeneous</keyword>
+        <keyword>row-spacing</keyword>
+        <keyword>border-line-width</keyword>
+        <keyword>grid-line-width</keyword>
+        <keyword>filename</keyword>
+        <keyword>path</keyword>
+        <keyword>group</keyword>
+        <keyword>active</keyword>
+        <keyword>orientation</keyword>
+        <keyword>model</keyword>
+        <keyword>row</keyword>
+        <keyword>rows</keyword>
+        <keyword>column</keyword>
+        <keyword>columns</keyword>
+        <keyword>xexpand</keyword>
+        <keyword>yexpand</keyword>
+        <keyword>xfill</keyword>
+        <keyword>yfill</keyword>
+        <keyword>xalign</keyword>
+        <keyword>yalign</keyword>
+        <keyword>top-padding</keyword>
+        <keyword>bottom-padding</keyword>
+        <keyword>left-padding</keyword>
+        <keyword>right-padding</keyword>
+    </context>
+
+    <context id="classes" style-ref="type">
+        <keyword>Group</keyword>
+        <keyword>Rectangle</keyword>
+        <keyword>Path</keyword>
+        <keyword>Image</keyword>
+        <keyword>Label</keyword>
+        <keyword>Entry</keyword>
+        <keyword>Grid</keyword>
+        <keyword>ToggleGroup</keyword>
+        <keyword>Button</keyword>
+        <keyword>CheckButton</keyword>
+        <keyword>Highlight</keyword>
+        <keyword>Document</keyword>
+        <keyword>Model</keyword>
+        <keyword>Column</keyword>
+        <keyword>View</keyword>
+        <keyword>DrawingArea</keyword>
+    </context>
+
+    <context id="attribute-value-delimiters" style-ref="others-2">
+      <match>(\[|\])</match>
+    </context>
+
+    <context id="manifest" class="no-spell-check">
+      <include>
+        <context ref="def:string"/>
+        <context ref="def:single-quoted-string"/>
+        <context ref="comment"/>
+        <context ref="close-comment-outside-comment"/>
+        <context ref="unicode-character-reference"/>
+        <context ref="manifest-function"/>
+        <context ref="at-rules"/>
+        <context ref="hexadecimal-color"/>
+        <context ref="named-color"/>
+        <context ref="function"/>
+        <context ref="number"/>
+        <context ref="unicode-range"/>
+        <context ref="property-names"/>
+        <context ref="classes"/>
+        <context ref="attribute-value-delimiters"/>
+      </include>
+    </context>
+
+  </definitions>
+</language>

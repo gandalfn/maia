@@ -89,7 +89,7 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
         // set layout properties
         Pango.FontDescription desc = Pango.FontDescription.from_string (font_description);
         m_Layout.set_font_description (desc);
-        m_Layout.set_text (text, -1);
+        m_Layout.set_markup (text, -1);
 
         // update pango layout
         Pango.cairo_update_layout (inContext.context, m_Layout);

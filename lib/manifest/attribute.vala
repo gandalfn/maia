@@ -52,10 +52,10 @@ public class Maia.Manifest.Attribute : Core.Object
 
     // Properties
     private string  m_Value;
-    private Object? m_Owner = null;
+    private unowned Object? m_Owner = null;
 
     // Accessors
-    public Object owner {
+    public unowned Object owner {
         get {
             return m_Owner;
         }

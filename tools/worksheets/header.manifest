@@ -1,0 +1,46 @@
+// header
+Grid.header {
+	row_spacing: 5;
+	grid-line-width: 1;
+	stroke-pattern: #000000;
+	Image.header_institution_logo {
+		xexpand: false;
+		yexpand: false;
+		right-padding: 5;
+		left-padding: 5;
+		size: 160, 64;
+		filename: '/home/nicolas/Projects/git/rubi.git/dev/./runtime_ro/bitmap/logo-aixplorer.png';
+	}
+
+	Label.header_institution_name {
+		column: 1;
+		yexpand: false;
+		right-padding: 5;
+		left-padding: 5;
+		font-description: "Liberation Sans 17";
+		text: "Institution name";
+	}
+
+	Grid.header_exam_info {
+		column: 2;
+		xexpand: false;
+		yexpand: false;
+		homogeneous: true;
+
+		Label.header_patient_name {
+			right-padding: 5;
+			left-padding: 5;
+			font-description: "Liberation Sans 12";
+			text: "Patient name";
+		}
+
+		Label.header_exam_date {
+			row: 2;
+			right-padding: 5;
+			left-padding: 5;
+			stroke-pattern: #000000;
+			font-description: "Liberation Sans 12";
+			text: "21/03/2012";
+		}
+	}
+}
