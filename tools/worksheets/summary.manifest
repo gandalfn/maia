@@ -1,5 +1,5 @@
 Grid.summary {
-	row_spacing: 12;
+	row_spacing: 5;
 
 	// Exam report
 	Grid.exam_report {
@@ -192,6 +192,7 @@ Grid.summary {
 	Grid.patient_information {
 		yexpand: false;
 		row: 1;
+		column-spacing: 5;
 
 		Label.patient_information_title {
 			columns: 4;
@@ -215,29 +216,29 @@ Grid.summary {
 			text: "Height:";
 		}
 
-		Label.patient_information_height {
+		Entry.patient_information_height {
 			row: 1;
-			column: 2;
+			column: 1;
 			yexpand: false;
 			font-description: "Liberation Sans 12";
-			text: "";
+			underline-width: 0.3;
 		}
 
 		Label.patient_information_weight_title {
 			row: 1;
-			column: 3;
+			column: 2;
 			xexpand: false;
 			yexpand: false;
 			font-description: "Liberation Sans 12";
 			text: "Weight:";
 		}
 
-		Label.patient_information_weight {
+		Entry.patient_information_weight {
 			row: 1;
-			column: 4;
+			column: 3;
 			yexpand: false;
 			font-description: "Liberation Sans 12";
-			text: "";
+			underline-width: 0.3;
 		}
 	}
 

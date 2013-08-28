@@ -63,7 +63,7 @@ public class Maia.CheckButton : ToggleButton
         {
             // Translate to align in center
             inContext.translate (Graphic.Point (geometry.extents.size.width / 2, geometry.extents.size.height / 2));
-            inContext.translate (Graphic.Point (-size.width / 2, -size.height / 2));
+            inContext.translate (Graphic.Point (-size_requested.width / 2, -size_requested.height / 2));
 
             // Draw label
             base.paint (inContext);
@@ -73,12 +73,12 @@ public class Maia.CheckButton : ToggleButton
             Graphic.Color shade = new Graphic.Color.shade (color, 0.6);
 
             var path = new Graphic.Path ();
-            path.rectangle (0, 0, size.height, size.height, 5, 5);
+            path.rectangle (0, 0, size_requested.height, size_requested.height, 5, 5);
             inContext.pattern = shade;
             inContext.fill (path);
 
             path = new Graphic.Path ();
-            path.rectangle (1.5, 1.5, size.height - 3, size.height - 3, 5, 5);
+            path.rectangle (1.5, 1.5, size_requested.height - 3, size_requested.height - 3, 5, 5);
             inContext.pattern = color;
             inContext.fill (path);
 
@@ -86,9 +86,11 @@ public class Maia.CheckButton : ToggleButton
             if (active)
             {
                 path = new Graphic.Path ();
-                path.move_to (0.5 + (size.height * 0.2), (size.height * 0.5));
-                path.line_to (0.5 + (size.height * 0.4), (size.height * 0.7));
-                path.curve_to (0.5 + (size.height * 0.4), (size.height * 0.7), 0.5 + (size.height * 0.5), (size.height * 0.4), 0.5 + (size.height * 0.70), (size.height * 0.25));
+                path.move_to (0.5 + (size_requested.height * 0.2), (size_requested.height * 0.5));
+                path.line_to (0.5 + (size_requested.height * 0.4), (size_requested.height * 0.7));
+                path.curve_to (0.5 + (size_requested.height * 0.4), (size_requested.height * 0.7),
+                               0.5 + (size_requested.height * 0.5), (size_requested.height * 0.4),
+                               0.5 + (size_requested.height * 0.70), (size_requested.height * 0.05));
                 inContext.pattern = stroke_pattern;
                 inContext.stroke (path);
             }

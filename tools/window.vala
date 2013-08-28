@@ -29,6 +29,9 @@ public class CanvasEditor.Window : Gtk.Window
     private Gtk.ToolButton m_Hide;
     private Gtk.Statusbar m_Bar;
     private Gtk.Container m_Preview;
+    private Gtk.Entry m_Search;
+    private Gtk.Entry m_Replace;
+    private Gtk.Button m_ReplaceButton;
     private Maia.Gtk.Canvas m_Canvas;
 
     // methods
@@ -88,6 +91,54 @@ public class CanvasEditor.Window : Gtk.Window
                 m_Preview.hide ();
                 m_Hide.sensitive = false;
                 m_Canvas.clear ();
+            });
+
+            var search_replace = builder.get_object("search_replace") as Gtk.Container;
+            m_Search = builder.get_object("search_entry") as Gtk.Entry;
+            m_Search.primary_icon_sensitive = false;
+            m_Search.secondary_icon_sensitive = false;
+            m_Search.changed.connect (() => {
+                m_Search.primary_icon_sensitive = m_Search.text.length > 0;
+                m_Search.secondary_icon_sensitive = m_Search.text.length > 0;
+                m_Replace.sensitive = m_Search.text.length > 0;
+                m_ReplaceButton.sensitive = m_Search.text.length > 0;
+            });
+            m_Search.activate.connect (on_search);
+            m_Search.icon_press.connect ((i, e) => {
+                if (i == Gtk.EntryIconPosition.PRIMARY)
+                {
+                    on_search ();
+                }
+                else if (i == Gtk.EntryIconPosition.SECONDARY)
+                {
+                    m_Search.text = "";
+                }
+            });
+
+            m_ReplaceButton = builder.get_object("replace") as Gtk.Button;
+            m_ReplaceButton.sensitive = false;
+            m_ReplaceButton.clicked.connect (on_replace);
+
+            m_Replace = builder.get_object("replace_entry") as Gtk.Entry;
+            m_Replace.sensitive = false;
+            m_Replace.secondary_icon_sensitive = false;
+            m_Replace.changed.connect (() => {
+                m_Replace.secondary_icon_sensitive = m_Replace.text.length > 0;
+            });
+            m_Replace.activate.connect (on_replace);
+            m_Replace.icon_press.connect ((i, e) => {
+                if (i == Gtk.EntryIconPosition.SECONDARY)
+                {
+                    m_Replace.text = "";
+                }
+            });
+
+            var search = builder.get_object("search") as Gtk.ToolButton;
+            search.clicked.connect (() => {
+                if (search_replace.visible)
+                    search_replace.hide ();
+                else
+                    search_replace.show ();
             });
 
             var quit = builder.get_object ("exit") as Gtk.ToolButton;
@@ -232,6 +283,7 @@ public class CanvasEditor.Window : Gtk.Window
     {
         if (m_SourceView.filename != null)
         {
+            on_save ();
             try
             {
                 m_Canvas.load_from_file (m_SourceView.filename);
@@ -240,10 +292,27 @@ public class CanvasEditor.Window : Gtk.Window
             }
             catch (GLib.Error err)
             {
-                print("%s\n", err.message);
+                Gtk.MessageDialog msg = new Gtk.MessageDialog (this, Gtk.DialogFlags.MODAL,
+                                                               Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
+                                                               "Error on read manifest:\n" + err.message);
+                msg.run();
+                msg.destroy ();
+
                 uint id = m_Bar.get_context_id ("Build");
                 m_Bar.push (id, err.message);
             }
         }
+    }
+
+    private void
+    on_search ()
+    {
+        m_SourceView.search (m_Search.text);
+    }
+
+    private void
+    on_replace ()
+    {
+        m_SourceView.replace (m_Search.text, m_Replace.text);
     }
 }

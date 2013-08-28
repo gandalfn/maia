@@ -148,7 +148,7 @@ public class CanvasEditor.DocumentProvider : Provider
     // methods
     public DocumentProvider (Gtk.SourceBuffer inBuffer, Engine inEngine)
     {
-        base ("Document Word Completion", 10, inBuffer);
+        base ("Document Word Completion", 5, inBuffer);
         m_Engine = inEngine;
     }
 
@@ -193,7 +193,7 @@ public class CanvasEditor.ManifestProvider : Provider
     // methods
     public ManifestProvider (Gtk.SourceBuffer inBuffer)
     {
-        base ("Manifest Word Completion", 5, inBuffer);
+        base ("Manifest Word Completion", 10, inBuffer);
 
         load_keywords ();
         load_properties ();
@@ -284,6 +284,7 @@ public class CanvasEditor.ManifestProvider : Provider
         m_Properties.insert ("bottom-padding");
         m_Properties.insert ("left-padding");
         m_Properties.insert ("right-padding");
+        m_Properties.insert ("border-width");
     }
 
     private GLib.List<string>

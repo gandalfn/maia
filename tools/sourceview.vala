@@ -89,6 +89,23 @@ public class CanvasEditor.SourceView : Gtk.SourceView
         return false;
     }
 
+    private bool
+    search_for_iter (Gtk.TextIter? inStartIter, out Gtk.TextIter? outEndIter, string inSearch)
+    {
+        outEndIter = inStartIter;
+        bool found = inStartIter.forward_search (inSearch, 0, out inStartIter, out outEndIter, null);
+        if (found)
+        {
+            buffer.select_range (inStartIter, outEndIter);
+            scroll_to_iter (inStartIter, 0, false, 0, 0);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     internal override bool
     key_press_event (Gdk.EventKey inEvent)
     {
@@ -172,6 +189,40 @@ public class CanvasEditor.SourceView : Gtk.SourceView
             {
                 critical ("Error on save %s: %s", inFilename ?? m_Current, err.message);
             }
+        }
+    }
+
+    public void
+    search (string inText)
+    {
+        Gtk.TextIter? start_iter, end_iter, end_iter_tmp;
+
+        buffer.get_selection_bounds (out start_iter, out end_iter);
+
+        if (!search_for_iter (end_iter, out end_iter_tmp, inText))
+        {
+            buffer.get_start_iter (out start_iter);
+            search_for_iter (start_iter, out end_iter, inText);
+        }
+    }
+
+    public void
+    replace (string inText, string inNewText)
+    {
+        Gtk.TextIter? start_iter, end_iter, end_iter_tmp;
+
+        if (buffer.get_selection_bounds (out start_iter, out end_iter))
+        {
+            buffer.delete (ref start_iter, ref end_iter);
+            buffer.insert (ref start_iter, inNewText, inNewText.length);
+        }
+
+        buffer.get_selection_bounds (out start_iter, out end_iter);
+
+        if (!search_for_iter (end_iter, out end_iter_tmp, inText))
+        {
+            buffer.get_start_iter (out start_iter);
+            search_for_iter (start_iter, out end_iter, inText);
         }
     }
 }
