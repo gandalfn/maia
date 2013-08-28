@@ -478,8 +478,11 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                         var area = damaged.copy ();
                         area.intersect ((child as Drawable).geometry);
                         area.translate ((child as Drawable).geometry.extents.origin.invert ());
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "damage child %s %s", (child as Item).name, area.extents.to_string ());
-                        (child as Item).damage (area);
+                        if (!area.is_empty () && (child as Item).damaged.contains_rectangle (area.extents) != Graphic.Region.Overlap.IN)
+                        {
+                            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "damage child %s %s", (child as Item).name, area.extents.to_string ());
+                            (child as Item).damage (area);
+                        }
                     }
                     (child as Item).damage.connect (on_child_damaged);
                 }
