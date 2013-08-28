@@ -9,6 +9,7 @@ files_hg = \
     canvas.hg \
     button.hg \
     image.hg \
-    model.hg
+    model.hg \
+    shortcut.hg
 
 files_ccg = $(files_hg:.hg=.ccg)

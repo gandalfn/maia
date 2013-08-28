@@ -110,7 +110,11 @@ internal class Maia.Page : GLib.Object
             // Add header height
             if (m_Document.header != null)
             {
-                position.translate (Graphic.Point (0, header.size_requested.height));
+                double height = header.size_requested.height;
+                if (header.size_requested.height == 0)
+                    height = header.size.height;
+
+                position.translate (Graphic.Point (0, height));
             }
 
             // Get formal page size

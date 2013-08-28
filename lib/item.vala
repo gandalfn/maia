@@ -264,6 +264,17 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
     }
 
+    [Signal (run = "first")]
+    public virtual signal void
+    scroll_to (Item inItem)
+    {
+        if (parent is Item)
+        {
+            Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "scroll to %s", inItem.name);
+            ((Item)parent).scroll_to (inItem);
+        }
+    }
+
     // static methods
     static construct
     {

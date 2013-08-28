@@ -129,8 +129,12 @@ public class CanvasEditor.SourceView : Gtk.SourceView
     public void
     new_document ()
     {
+        var manager = Gtk.SourceLanguageManager.get_default ();
+
+        (buffer as Gtk.SourceBuffer).begin_not_undoable_action ();
         buffer.text = "";
-        m_Current = null;
+        (buffer as Gtk.SourceBuffer).end_not_undoable_action ();
+        (buffer as Gtk.SourceBuffer).language = manager.get_language ("manifest");
         buffer.set_modified (false);
     }
 
@@ -183,6 +187,8 @@ public class CanvasEditor.SourceView : Gtk.SourceView
                 string content = buffer.text;
                 GLib.FileUtils.set_contents (inFilename ?? m_Current, content);
                 buffer.set_modified (false);
+                var manager = Gtk.SourceLanguageManager.get_default ();
+                (buffer as Gtk.SourceBuffer).language = manager.get_language ("manifest");
                 if (inFilename != null) m_Current = inFilename;
             }
             catch (GLib.Error err)

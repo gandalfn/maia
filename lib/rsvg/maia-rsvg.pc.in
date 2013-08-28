@@ -8,6 +8,6 @@ includedir=@includedir@/maia-@MAIA_ABI@
 Name: maia-rsvg-@MAIA_ABI@
 Description: Maia RSVG Graphic Image library
 Version: @MAIA_VERSION@
-Requires: maia-core-@MAIA_ABI@ maia-cairo-graphic-@MAIA_ABI@
+Requires: maia-@MAIA_ABI@ maia-cairo-graphic-@MAIA_ABI@ librsvg-2.0 >= @LIBRSVG_REQUIRED@
 Libs: -L${libdir} -lmaia-rsvg
 Cflags: -I${includedir}

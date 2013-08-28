@@ -86,6 +86,7 @@ public interface Maia.Canvas : Drawable
             Manifest.Element.register ("Column",      typeof (Model.Column));
             Manifest.Element.register ("View",        typeof (View));
             Manifest.Element.register ("DrawingArea", typeof (DrawingArea));
+            Manifest.Element.register ("Shortcut",    typeof (Shortcut));
 
             s_ElementsRegister = true;
         }
@@ -151,6 +152,12 @@ public interface Maia.Canvas : Drawable
     on_move_pointer (Graphic.Point inPosition)
     {
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"move pointer to $inPosition");
+    }
+
+    protected virtual void
+    on_scroll_to (Item inItem)
+    {
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "scroll to %s", inItem.name);
     }
 
     protected virtual void
@@ -247,6 +254,7 @@ public interface Maia.Canvas : Drawable
             root.ungrab_pointer.disconnect (on_ungrab_pointer);
             root.grab_keyboard.disconnect (on_grab_keyboard);
             root.ungrab_keyboard.disconnect (on_ungrab_keyboard);
+            root.scroll_to.disconnect (on_scroll_to);
         }
 
         root = null;
@@ -282,6 +290,7 @@ public interface Maia.Canvas : Drawable
             root.ungrab_pointer.connect (on_ungrab_pointer);
             root.grab_keyboard.connect (on_grab_keyboard);
             root.ungrab_keyboard.connect (on_ungrab_keyboard);
+            root.scroll_to.connect (on_scroll_to);
         }
     }
 
@@ -315,6 +324,7 @@ public interface Maia.Canvas : Drawable
             root.ungrab_pointer.connect (on_ungrab_pointer);
             root.grab_keyboard.connect (on_grab_keyboard);
             root.ungrab_keyboard.connect (on_ungrab_keyboard);
+            root.scroll_to.connect (on_scroll_to);
         }
     }
 }

@@ -269,7 +269,7 @@ public class Maia.Document : Item
         foreach (unowned Core.Object child in this)
         {
             unowned Item? item = child as Item;
-            if (item != null);
+            if (item != null)
             {
                 paginate_item (item, ref current_position);
             }
@@ -303,6 +303,12 @@ public class Maia.Document : Item
                 }
             }
         }
+    }
+
+    internal override bool
+    can_append_child (Core.Object inObject)
+    {
+        return base.can_append_child (inObject) || inObject is Shortcut;
     }
 
     internal override Graphic.Size

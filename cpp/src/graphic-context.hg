@@ -124,7 +124,7 @@ namespace Maia
                     }
                 }
 
-                void unset_dash (std::vector<double> inDashes)
+                void unset_dash ()
                 {
                     maia_graphic_context_set_dash (gobj (), 0, 0);
                 }

@@ -1,0 +1,9 @@
+Shortcut.summary_shortcut {
+	section: 'summary';
+	label: 'Patient Information';
+}
+
+Shortcut.summary_breast_shortcut {
+	section: 'summary_breast';
+	label: 'Clinical Information';
+}

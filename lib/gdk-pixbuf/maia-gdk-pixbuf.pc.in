@@ -8,6 +8,6 @@ includedir=@includedir@/maia-@MAIA_ABI@
 Name: maia-gdk-pixbuf-@MAIA_ABI@
 Description: Maia Gdk Pixbuf Graphic Image library
 Version: @MAIA_VERSION@
-Requires: maia-core-@MAIA_ABI@ maia-cairo-graphic-@MAIA_ABI@
+Requires: maia-@MAIA_ABI@ maia-cairo-graphic-@MAIA_ABI@ gdk-pixbuf-2.0 >= @GDK_PIXBUF_REQUIRED@
 Libs: -L${libdir} -lmaia-gdk-pixbuf
 Cflags: -I${includedir}

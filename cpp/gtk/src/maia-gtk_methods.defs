@@ -30,6 +30,12 @@
   (gtype-id "MAIA_TYPE_GTK_MODEL_COLUMN")
 )
 
+(define-object MaiaGtkShortcut
+  (parent "MaiaShortcut")
+  (c-name "MaiaGtkShortcut")
+  (gtype-id "MAIA_TYPE_GTK_SHORTCUT")
+)
+
 ;; Enumerations and flags ...
 
 
@@ -172,6 +178,46 @@
   )
 )
 
+(define-function maia_gtk_shortcut_get_type
+  (c-name "maia_gtk_shortcut_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_gtk_shortcut_new
+  (c-name "maia_gtk_shortcut_new")
+  (is-constructor-of "MaiaGtkShortcut")
+  (return-type "MaiaGtkShortcut*")
+)
+
+(define-function maia_gtk_shortcut_construct
+  (c-name "maia_gtk_shortcut_construct")
+  (return-type "MaiaGtkShortcut*")
+  (parameters
+    '("GType" "object_type")
+  )
+)
+
+(define-method get_icon_name
+  (of-object "MaiaGtkShortcut")
+  (c-name "maia_gtk_shortcut_get_icon_name")
+  (return-type "const-gchar*")
+)
+
+(define-method set_icon_name
+  (of-object "MaiaGtkShortcut")
+  (c-name "maia_gtk_shortcut_set_icon_name")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_button
+  (of-object "MaiaGtkShortcut")
+  (c-name "maia_gtk_shortcut_get_button")
+  (return-type "GtkButton*")
+)
+
 (define-function maia_gtk_canvas_get_type
   (c-name "maia_gtk_canvas_get_type")
   (return-type "GType")
@@ -189,6 +235,12 @@
   (parameters
     '("GType" "object_type")
   )
+)
+
+(define-method get_shortcut_buttons
+  (of-object "MaiaGtkCanvas")
+  (c-name "maia_gtk_canvas_get_shortcut_buttons")
+  (return-type "GList*")
 )
 
 

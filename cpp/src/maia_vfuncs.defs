@@ -900,6 +900,14 @@
   )
 )
 
+(define-vfunc on_scroll_to
+  (of-object "MaiaCanvas")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
 (define-vfunc on_grab_focus
   (of-object "MaiaCanvas")
   (return-type "none")

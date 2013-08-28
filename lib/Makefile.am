@@ -95,6 +95,7 @@ libmaia_la_SOURCES = \
     model.vala \
     view.vala \
     drawing-area.vala \
+    shortcut.vala \
     canvas.vala
 
 libmaia_la_LDFLAGS = \

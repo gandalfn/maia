@@ -142,7 +142,7 @@ public class CanvasEditor.Window : Gtk.Window
             });
 
             var quit = builder.get_object ("exit") as Gtk.ToolButton;
-            quit.clicked.connect (Gtk.main_quit);
+            quit.clicked.connect (on_quit);
 
             m_Bar = builder.get_object ("statusbar") as Gtk.Statusbar;
 
@@ -166,7 +166,7 @@ public class CanvasEditor.Window : Gtk.Window
             critical ("Error on loading canvas-editor.ui: %s", err.message);
         }
 
-        destroy.connect (Gtk.main_quit);
+        destroy.connect (on_quit);
     }
 
     private void
@@ -292,9 +292,9 @@ public class CanvasEditor.Window : Gtk.Window
             }
             catch (GLib.Error err)
             {
-                Gtk.MessageDialog msg = new Gtk.MessageDialog (this, Gtk.DialogFlags.MODAL,
-                                                               Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
-                                                               "Error on read manifest:\n" + err.message);
+                Gtk.MessageDialog msg = new Gtk.MessageDialog.with_markup (this, Gtk.DialogFlags.MODAL,
+                                                                           Gtk.MessageType.ERROR, Gtk.ButtonsType.OK,
+                                                                           "<span size='x-large'><b>Error on read manifest:</b></span><span size='large'>\n" + err.message + "</span>");
                 msg.run();
                 msg.destroy ();
 
@@ -314,5 +314,24 @@ public class CanvasEditor.Window : Gtk.Window
     on_replace ()
     {
         m_SourceView.replace (m_Search.text, m_Replace.text);
+    }
+
+    private void
+    on_quit ()
+    {
+        if (m_SourceView.buffer.get_modified ())
+        {
+            string message = "<span size='x-large'><b>Manifest %s is not saved.</b>\nDo you want save it before quit?</span>".printf (m_SourceView.filename ?? "New manifest");
+            Gtk.MessageDialog msg = new Gtk.MessageDialog.with_markup (this, Gtk.DialogFlags.MODAL,
+                                                                       Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO,
+                                                                       message);
+            if (msg.run() == Gtk.ResponseType.YES)
+            {
+                on_save ();
+            }
+            msg.destroy ();
+        }
+
+        Gtk.main_quit ();
     }
 }

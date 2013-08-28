@@ -67,6 +67,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         Maia.Rsvg.init ();
 
         // Override base item
+        Core.Any.delegate (typeof (Maia.Shortcut),     typeof (Shortcut));
         Core.Any.delegate (typeof (Maia.Image),        typeof (Image));
         Core.Any.delegate (typeof (Maia.Button),       typeof (Button));
         Core.Any.delegate (typeof (Maia.Model),        typeof (Model));
@@ -251,6 +252,20 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "move %s %i,%i", m_LastPointerPosition.to_string (), xroot + (int)m_LastPointerPosition.x, yroot + (int)m_LastPointerPosition.y);
 
         Gdk.Display.get_default ().warp_pointer (get_screen (), xroot + (int)m_LastPointerPosition.x, yroot + (int)m_LastPointerPosition.y);
+    }
+
+    internal void
+    on_scroll_to (Item inItem)
+    {
+        unowned Document? document = root as Document;
+        if (document != null)
+        {
+            document.position = inItem.convert_to_root_space (Graphic.Point (0, 0));
+
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "scroll to %s", document.position.to_string ());
+
+            damage ();
+        }
     }
 
     internal bool
@@ -550,5 +565,26 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         }
 
         return true;
+    }
+
+    public GLib.List<unowned global::Gtk.Button>
+    get_shortcut_buttons ()
+    {
+        GLib.List<unowned global::Gtk.Button> list = new GLib.List<unowned global::Gtk.Button> ();
+
+        unowned Document? doc = root as Document;
+        if (doc != null)
+        {
+            foreach (unowned Core.Object child in doc)
+            {
+                if (child is Shortcut)
+                {
+                    list.prepend ((child as Shortcut).button);
+                }
+            }
+            list.reverse ();
+        }
+
+        return list;
     }
 }

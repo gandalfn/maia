@@ -273,6 +273,26 @@ namespace Maia.Log
     }
 
     /**
+     * Logger redirected in standard output
+     */
+    public class Stdout : File
+    {
+        // methods
+        /**
+         * Create a new logger redirected in standard output
+         *
+         * @param inLevel default log level
+         * @param inCategory default log category mask
+         * @param inDomain log domain
+         */
+        public Stdout (Level inLevel, Category inCategory, string inDomain)
+        {
+            GLib.Object (domain: inDomain, level: inLevel, category: inCategory, fd: 1, close_on_destroy: false);
+            colorized = true;
+        }
+    }
+
+    /**
      * Logger redirected in standard error
      */
     public class Stderr : File

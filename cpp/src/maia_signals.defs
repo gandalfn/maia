@@ -1891,6 +1891,15 @@
   )
 )
 
+(define-signal scroll-to
+  (of-object "MaiaItem")
+  (return-type "void")
+  (when "first")
+  (parameters
+    '("MaiaItem*" "p0")
+  )
+)
+
 (define-property parent
   (of-object "MaiaItem")
   (prop-type "GParamObject")

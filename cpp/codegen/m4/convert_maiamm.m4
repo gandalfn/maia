@@ -192,6 +192,9 @@ _CONVERSION(`const Glib::RefPtr< ::Gtk::TreeModel>&',`GtkTreeModel*',__CONVERT_R
 _CONVERSION(`GtkTreeModel*',`const Glib::RefPtr< ::Gtk::TreeModel>&',`Glib::wrap($3)')
 _CONVERSION(`GtkTreeModel*',`Glib::RefPtr< ::Gtk::TreeModel>',`Glib::wrap($3)')
 
+_CONVERSION(`GtkButton*', `::Gtk::Button*',__RP2PD)
+_CONVERSION(`GList*',`Glib::ListHandle< ::Gtk::Button* >',__FL2H_SHALLOW)
+
 _CONV_ENUM(MaiaCore,ParserToken)
 _CONV_ENUM(MaiaCore,TimelineDirection)
 _CONV_ENUM(MaiaGraphic,RegionOverlap)

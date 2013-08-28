@@ -8,6 +8,6 @@ includedir=@includedir@/maia-@MAIA_ABI@
 Name: maia-cairo-graphic-@MAIA_ABI@
 Description: Maia Cairo Graphic library
 Version: @MAIA_VERSION@
-Requires: maia-core-@MAIA_ABI@
+Requires: maia-@MAIA_ABI@ cairo >= @CAIRO_REQUIRED@ pangocairo >= @PANGO_REQUIRED@
 Libs: -L${libdir} -lmaia-cairo-graphic
 Cflags: -I${includedir}

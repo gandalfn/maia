@@ -31,6 +31,7 @@ libmaia_gtk_la_SOURCES = \
     image.vala \
     button.vala \
     model.vala \
+    shortcut.vala \
     canvas.vala
 
 libmaia_gtk_la_LDFLAGS = \

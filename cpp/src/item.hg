@@ -108,6 +108,7 @@ namespace Maia
             _WRAP_SIGNAL(void grab_focus (const Glib::RefPtr<Item>& inItem), "grab-focus")
             _WRAP_SIGNAL(void set_pointer_cursor (Cursor inCursor), "set-pointer-cursor")
             _WRAP_SIGNAL(void move_pointer (const Graphic::Point& inPosition), "move-pointer")
+            _WRAP_SIGNAL(void scroll_to (const Glib::RefPtr<Item>& inItem), "scroll-to")
 
             _WRAP_PROPERTY("tag", Glib::ustring)
             _WRAP_PROPERTY("characters", Glib::ustring)
