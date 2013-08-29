@@ -149,7 +149,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                 }
                 if (rows.length > 1)
                 {
-                    size.width += grid.row_spacing * (rows.length - 1);
+                    size.height += grid.row_spacing * (rows.length - 1);
                 }
             }
 
@@ -233,18 +233,17 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                 {
                     natural.height += row.size.height;
                 }
-                natural.height += grid.row_spacing * (rows.length - 1);
+
                 foreach (LineSizeAllocation column in columns)
                 {
                     natural.width += column.size.width;
                 }
-                natural.width += grid.column_spacing * (columns.length - 1);
 
                 Graphic.Rectangle allocation = inAllocation.extents;
 
                 // Calculate the the size of padding
-                double xpadding = double.max (allocation.size.width - natural.width, 0);
-                double ypadding = double.max (allocation.size.height - natural.height, 0);
+                double xpadding = double.max (allocation.size.width - natural.width - (grid.column_spacing * (columns.length - 1)), 0);
+                double ypadding = double.max (allocation.size.height - natural.height - (grid.row_spacing * (rows.length - 1)), 0);
 
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s natural: %s padding: %g,%g", grid.name, natural.to_string (), xpadding, ypadding);
 
@@ -269,24 +268,11 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                             extra.height += ypadding / columns[item.column].nb_expands;
                         }
 
-                        double column_spacing = grid.column_spacing,
-                               row_spacing    = grid.row_spacing;
-
-                        if (rows.length == 1)
-                            row_spacing = 0;
-                        else if (item.row == 0 || item.row == rows.length - 1)
-                            row_spacing /= 2;
-
-                        if (columns.length == 1)
-                            column_spacing = 0;
-                        else if (item.column == 0 || item.column == columns.length - 1)
-                            column_spacing /= 2;
-
                         child_allocations[item.row, item.column].size.width = double.max (child_allocations[item.row, item.column].size.width,
-                                                                                          columns[item.column].size.width + extra.width - column_spacing);
+                                                                                          columns[item.column].size.width + extra.width);
 
                         child_allocations[item.row, item.column].size.height = double.max (child_allocations[item.row, item.column].size.height,
-                                                                                           rows[item.row].size.height + extra.height - row_spacing);
+                                                                                           rows[item.row].size.height + extra.height);
 
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s allocation: %s", grid.name, item.name, child_allocations[item.row, item.column].to_string ());
                     }
@@ -312,7 +298,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         }
 
                         // calculate size of multiple columns
-                        if (item.columns > 0)
+                        if (item.columns > 1)
                         {
                             for (int cpt = 1; cpt < item.columns; ++cpt)
                             {
@@ -324,7 +310,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         }
 
                         // calculate size of multiple rows
-                        if (item.rows > 0)
+                        if (item.rows > 1)
                         {
                             for (int cpt = 1; cpt < item.rows; ++cpt)
                             {
@@ -346,7 +332,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                             child_allocations[item.row, item.column].origin.x = grid.column_spacing + child_allocations[item.row, item.column - 1].origin.x + child_allocations[item.row, item.column - 1].size.width;
                         }
 
-                        if (item.columns > 0)
+                        if (item.columns > 1)
                         {
                             for (int cpt = 1; cpt < item.columns; ++cpt)
                             {
@@ -355,7 +341,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                             }
                         }
 
-                        if (item.rows > 0)
+                        if (item.rows > 1)
                         {
                             for (int cpt = 1; cpt < item.rows; ++cpt)
                             {
@@ -397,7 +383,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         else if (item.xexpand)
                         {
                             allocation.size.width = item_size.width;
-                            allocation.origin.x += (area.size.width - item_size.width) * item.xalign;
+                            allocation.origin.x += item.left_padding + ((area.size.width - item.left_padding - item.right_padding) - item_size.width) * item.xalign;
                         }
                         else
                         {
@@ -413,7 +399,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         else if (item.yexpand)
                         {
                             allocation.size.height = item_size.height;
-                            allocation.origin.y += (area.size.height - item_size.height) * item.yalign;
+                            allocation.origin.y += item.top_padding + ((area.size.height - item.top_padding - item.bottom_padding) - item_size.height) * item.yalign;
                         }
                         else
                         {
