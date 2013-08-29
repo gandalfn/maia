@@ -29,10 +29,12 @@ public class CanvasEditor.Window : Gtk.Window
     private Gtk.ToolButton m_Hide;
     private Gtk.Statusbar m_Bar;
     private Gtk.Container m_Preview;
+    private Gtk.Container m_PreviewBox;
     private Gtk.Entry m_Search;
     private Gtk.Entry m_Replace;
     private Gtk.Button m_ReplaceButton;
     private Maia.Gtk.Canvas m_Canvas;
+    private Gtk.VBox m_Shortcuts;
 
     // methods
     public Window ()
@@ -53,6 +55,8 @@ public class CanvasEditor.Window : Gtk.Window
             m_SourceView =  new SourceView ();
             m_SourceView.show ();
             sv.add (m_SourceView);
+
+            m_PreviewBox = builder.get_object ("preview_box") as Gtk.Container;
 
             m_Preview = builder.get_object ("preview") as Gtk.Container;
             m_Canvas = new Maia.Gtk.Canvas ();
@@ -88,9 +92,13 @@ public class CanvasEditor.Window : Gtk.Window
             m_Hide = builder.get_object ("hide") as Gtk.ToolButton;
             m_Hide.sensitive = false;
             m_Hide.clicked.connect (() => {
-                m_Preview.hide ();
+                m_PreviewBox.hide ();
                 m_Hide.sensitive = false;
+                m_Build.sensitive = true;
                 m_Canvas.clear ();
+                m_Shortcuts.@foreach ((w) => {
+                    m_Shortcuts.remove (w);
+                });
             });
 
             var search_replace = builder.get_object("search_replace") as Gtk.Container;
@@ -145,6 +153,7 @@ public class CanvasEditor.Window : Gtk.Window
             quit.clicked.connect (on_quit);
 
             m_Bar = builder.get_object ("statusbar") as Gtk.Statusbar;
+            m_Shortcuts = builder.get_object ("shortcuts") as Gtk.VBox;
 
             m_SourceView.buffer.changed.connect (() => {
                 title = "%s*".printf (m_SourceView.filename ?? "New manifest*");
@@ -179,7 +188,7 @@ public class CanvasEditor.Window : Gtk.Window
         m_SaveAs.sensitive = false;
         m_Hide.sensitive = false;
         m_Build.sensitive = false;
-        m_Preview.hide ();
+        m_PreviewBox.hide ();
         title = "New manifest*";
     }
 
@@ -198,6 +207,19 @@ public class CanvasEditor.Window : Gtk.Window
 
         if (dialog.run () == Gtk.ResponseType.ACCEPT)
         {
+            if (m_SourceView.buffer.get_modified ())
+            {
+                string message = "<span size='x-large'><b>Manifest %s is not saved.</b>\nDo you want save it before quit?</span>".printf (m_SourceView.filename ?? "New manifest");
+                Gtk.MessageDialog msg = new Gtk.MessageDialog.with_markup (this, Gtk.DialogFlags.MODAL,
+                                                                           Gtk.MessageType.QUESTION, Gtk.ButtonsType.YES_NO,
+                                                                           message);
+                if (msg.run() == Gtk.ResponseType.YES)
+                {
+                    on_save ();
+                }
+                msg.destroy ();
+            }
+
             m_SourceView.load (dialog.get_filename ());
 
             m_Undo.sensitive = false;
@@ -206,7 +228,7 @@ public class CanvasEditor.Window : Gtk.Window
             m_SaveAs.sensitive = true;
             m_Hide.sensitive = false;
             m_Build.sensitive = true;
-            m_Preview.hide ();
+            m_PreviewBox.hide ();
 
             title = "%s".printf (m_SourceView.filename);
 
@@ -281,14 +303,19 @@ public class CanvasEditor.Window : Gtk.Window
     private void
     on_build ()
     {
-        if (m_SourceView.filename != null)
+        if (m_SourceView.filename != null && !m_PreviewBox.visible)
         {
             on_save ();
             try
             {
                 m_Canvas.load_from_file (m_SourceView.filename);
-                m_Preview.show ();
+                foreach (unowned Gtk.Button button in m_Canvas.get_shortcut_buttons ())
+                {
+                    m_Shortcuts.pack_start (button);
+                }
+                m_PreviewBox.show ();
                 m_Hide.sensitive = true;
+                m_Build.sensitive = false;
             }
             catch (GLib.Error err)
             {

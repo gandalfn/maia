@@ -110,39 +110,11 @@ Grid.summary_breast {
 
 			]
 		}
-		
-		CheckButton.summary_breast_summary_breast_clinical_indications_nipple_discharge_left {
-			row: 3;
-			column: 0;
-			top-padding: 5;
-			font-description: 'Liberation Sans 12';
-			stroke-pattern: '#000000';
-			fill-pattern: '#FFFFFF';
-			label: ' ';
-		}
-		
-		Label.summary_breast_clinical_indications_left_pain_title {
-			row: 3;
-			column: 1;
-			top-padding: 5;
-			font-description: 'Liberation Sans 12';
-			text: 'Nipple discharge';
-		}
-
-		CheckButton.summary_breast_summary_breast_clinical_indications_nipple_discharge_right {
-			row: 3;
-			column: 2;
-			top-padding: 5;
-			font-description: 'Liberation Sans 12';
-			stroke-pattern: '#000000';
-			fill-pattern: '#FFFFFF';
-			label: ' ';
-		}
 
 		Grid.summary_breast_clinical_indications_left {
 			row: 2;
-			left-padding: 12;
 			row-spacing: 5;
+			homogeneous: true;
 
 			Label.summary_breast_clinical_indications_left_pain_title {
 				column: 0;
@@ -483,13 +455,13 @@ Grid.summary_breast {
 				label: ' ';
 			}
 		}
-		
+
 		Grid.summary_breast_summary_breast_clinical_indications_area {
 			row: 2;
-			xexpand: false;
 			column: 1;
 			row-spacing: 5;
-			
+			homogeneous: true;
+
 			Label.summary_breast_clinical_indications_area_title {
 				xfill: false;
 				yexpand: false;
@@ -599,8 +571,8 @@ Grid.summary_breast {
 		Grid.summary_breast_clinical_indications_right {
 			row: 2;
 			column: 2;
-			left-padding: 12;
 			row-spacing: 5;
+			homogeneous: true;
 
 			Label.summary_breast_clinical_indications_right_pain_title {
 				column: 0;
@@ -940,6 +912,33 @@ Grid.summary_breast {
 				fill-pattern: '#FFFFFF';
 				label: ' ';
 			}
+		}
+
+		CheckButton.summary_breast_summary_breast_clinical_indications_nipple_discharge_left {
+			row: 3;
+			top-padding: 5;
+			font-description: 'Liberation Sans 12';
+			stroke-pattern: '#000000';
+			fill-pattern: '#FFFFFF';
+			label: ' ';
+		}
+		
+		Label.summary_breast_clinical_indications_left_pain_title {
+			row: 3;
+			column: 1;
+			top-padding: 5;
+			font-description: 'Liberation Sans 12';
+			text: 'Nipple discharge';
+		}
+
+		CheckButton.summary_breast_summary_breast_clinical_indications_nipple_discharge_right {
+			row: 3;
+			column: 2;
+			top-padding: 5;
+			font-description: 'Liberation Sans 12';
+			stroke-pattern: '#000000';
+			fill-pattern: '#FFFFFF';
+			label: ' ';
 		}
 	}
 }

@@ -1,9 +1,11 @@
 Shortcut.summary_shortcut {
 	section: 'summary';
 	label: 'Patient Information';
+	angle: -pi/2;
 }
 
 Shortcut.summary_breast_shortcut {
 	section: 'summary_breast';
 	label: 'Clinical Information';
+	angle: -pi/2;
 }

@@ -590,6 +590,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
 
             // damage item
+            damaged_area.transform (transform);
             damage (damaged_area);
         }
     }

@@ -212,6 +212,21 @@
   )
 )
 
+(define-method get_angle
+  (of-object "MaiaGtkShortcut")
+  (c-name "maia_gtk_shortcut_get_angle")
+  (return-type "gdouble")
+)
+
+(define-method set_angle
+  (of-object "MaiaGtkShortcut")
+  (c-name "maia_gtk_shortcut_set_angle")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
 (define-method get_button
   (of-object "MaiaGtkShortcut")
   (c-name "maia_gtk_shortcut_get_button")

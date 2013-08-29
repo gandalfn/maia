@@ -68,7 +68,8 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         // connect onto text changed
         notify["text"].connect (() => {
             m_Glyph = null;
-            geometry = null;
+            create_glyph ();
+            damage ();
         });
 
         // connect onto have docus to damage
@@ -90,6 +91,36 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     get_nb_lines ()
     {
         return text.split ("\n").length;
+    }
+
+    private void
+    create_glyph ()
+    {
+        if (m_Glyph == null)
+        {
+            m_Glyph = new Graphic.Glyph (font_description);
+
+            // Count lines pad
+            uint lines_pad = 0;
+            if (lines > 1)
+            {
+                uint nb_lines = get_nb_lines ();
+                if (nb_lines < lines)
+                {
+                    lines_pad = lines - nb_lines;
+                }
+            }
+
+            // Set text with line pad
+            if (lines_pad > 0)
+            {
+                m_Glyph.text = text + " " + string.nfill (lines_pad, '\n');
+            }
+            else
+            {
+                m_Glyph.text = text + " ";
+            }
+        }
     }
 
     internal override bool
@@ -177,31 +208,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     internal override Graphic.Size
     size_request (Graphic.Size inSize)
     {
-        if (m_Glyph == null)
-        {
-            m_Glyph = new Graphic.Glyph (font_description);
-
-            // Count lines pad
-            uint lines_pad = 0;
-            if (lines > 1)
-            {
-                uint nb_lines = get_nb_lines ();
-                if (nb_lines < lines)
-                {
-                    lines_pad = lines - nb_lines;
-                }
-            }
-
-            // Set text with line pad
-            if (lines_pad > 0)
-            {
-                m_Glyph.text = text + " " + string.nfill (lines_pad, '\n');
-            }
-            else
-            {
-                m_Glyph.text = text + " ";
-            }
-        }
+        create_glyph ();
 
         if (m_Glyph != null)
         {
@@ -222,6 +229,8 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         {
             inContext.save ();
             {
+                m_Glyph.update (inContext);
+
                 // Paint text
                 inContext.pattern = stroke_pattern;
                 inContext.render (m_Glyph);
@@ -230,6 +239,12 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                 inContext.line_width = underline_width;
                 inContext.dash = { 1.0, 2.0 };
 
+                // Calculate raw cursor index from utf8 string
+                int index = m_Glyph.text.index_of_nth_char (m_Cursor);
+
+                // Get cursor pos
+                Graphic.Rectangle rect = m_Glyph.get_cursor_position (index);
+
                 // foreach lines add underline at end of text
                 double y = 0;
                 var path = new Graphic.Path ();
@@ -237,10 +252,10 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                 {
                     // Add line
                     Graphic.Glyph.Line line = (Graphic.Glyph.Line)child;
-                    path.move_to (line.size.width, y + line.size.height);
-                    path.line_to (geometry.extents.size.width, y + line.size.height);
+                    path.move_to (line.size.width, y + rect.size.height);
+                    path.line_to (geometry.extents.size.width, y + rect.size.height);
 
-                    y += line.size.height;
+                    y += rect.size.height;
                 }
                 inContext.stroke (path);
 
@@ -250,12 +265,6 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                 // If have focus
                 if (have_focus)
                 {
-                    // Calculate raw cursor index from utf8 string
-                    int index = m_Glyph.text.index_of_nth_char (m_Cursor);
-
-                    // Get cursor pos
-                    Graphic.Rectangle rect = m_Glyph.get_cursor_position (index);
-
                     // Draw cursor
                     path = new Graphic.Path ();
                     path.move_to (rect.origin.x, rect.origin.y);

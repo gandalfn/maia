@@ -44,6 +44,8 @@ namespace Maia
 
                 _WRAP_METHOD(Glib::ustring get_icon_name () const, maia_gtk_shortcut_get_icon_name)
                 _WRAP_METHOD(void set_icon_name (const Glib::ustring& inIconName), maia_gtk_shortcut_set_icon_name)
+                _WRAP_METHOD(double get_angle () const, maia_gtk_shortcut_get_angle)
+                _WRAP_METHOD(void set_angle (double inAngle), maia_gtk_shortcut_set_angle)
                 _WRAP_METHOD(::Gtk::Button* get_button () const, maia_gtk_shortcut_get_button)
         };
     }

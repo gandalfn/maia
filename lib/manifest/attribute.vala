@@ -88,8 +88,9 @@ public class Maia.Manifest.Attribute : Core.Object
     {
         string val = inAttribute.get ().down ().strip ();
         string locale = Os.setlocale (Os.LC_NUMERIC, "C");
+        bool negative = val[0] == '-';
 
-        if (val.has_prefix ("pi"))
+        if (val.substring (negative ? 1 : 0).has_prefix ("pi"))
         {
             if ("/" in val)
             {
@@ -100,7 +101,7 @@ public class Maia.Manifest.Attribute : Core.Object
                     double div = double.parse (expr[1].strip ());
                     if (div != 0.0)
                     {
-                        outValue = GLib.Math.PI / div;
+                        outValue = negative ? -GLib.Math.PI / div : GLib.Math.PI / div;
                     }
                     else
                     {
@@ -115,7 +116,7 @@ public class Maia.Manifest.Attribute : Core.Object
                 }
             }
             else
-                outValue = GLib.Math.PI;
+                outValue = negative ? -GLib.Math.PI : GLib.Math.PI;
         }
         else
         {

@@ -244,6 +244,14 @@ public class Maia.Manifest.Document : Core.Parser
                 m_Characters = m_Include.m_Characters;
                 m_Attributes = m_Include.m_Attributes;
                 m_Scanner    = m_Include.m_Scanner;
+                if (token == Core.Parser.Token.START_ELEMENT)
+                {
+                    m_ElementQueue.push (m_CurrentTag);
+                }
+                else if (token == Core.Parser.Token.END_ELEMENT)
+                {
+                    m_CurrentTag = m_ElementQueue.pop ();
+                }
             }
         }
         else if (m_pCurrent >= m_pEnd)
@@ -283,6 +291,14 @@ public class Maia.Manifest.Document : Core.Parser
                     m_Characters = m_Include.m_Characters;
                     m_Attributes = m_Include.m_Attributes;
                     m_Scanner    = m_Include.m_Scanner;
+                    if (token == Core.Parser.Token.START_ELEMENT)
+                    {
+                        m_ElementQueue.push (m_CurrentTag);
+                    }
+                    else if (token == Core.Parser.Token.END_ELEMENT)
+                    {
+                        m_CurrentTag = m_ElementQueue.pop ();
+                    }
                 }
             }
             else if (m_pCurrent[0] == '{')
@@ -311,13 +327,19 @@ public class Maia.Manifest.Document : Core.Parser
             else if (m_pCurrent[0] == '}')
             {
                 token = Core.Parser.Token.END_ELEMENT;
+                if (m_ElementQueue.length == 0)
+                {
+                    throw new Core.ParseError.PARSE ("Unexpected end at %s:%i,%i",
+                                                     GLib.Path.get_basename (m_Filename), m_Line, m_Col);
+                }
                 m_CurrentTag = m_ElementQueue.pop ();
                 next_char ();
             }
             else
             {
                 next_char ();
-                throw new Core.ParseError.PARSE ("Unexpected data for %s at %i,%i", m_Element, m_Line, m_Col);
+                throw new Core.ParseError.PARSE ("Unexpected data for %s at %s:%i,%i", m_Element,
+                                                 GLib.Path.get_basename (m_Filename), m_Line, m_Col);
             }
         }
 

@@ -26,6 +26,7 @@ public class Maia.Gtk.Shortcut : Maia.Shortcut
 
     // accessors
     public string icon_name { get; set; default = null; }
+    public double angle { get; set; default = 0; }
 
     public global::Gtk.Button button {
         get {
@@ -57,6 +58,12 @@ public class Maia.Gtk.Shortcut : Maia.Shortcut
         notify["label"].connect (() => {
             m_Label.set_markup (label ?? "");
         });
+
+        // Connect onto angle change
+        notify["angle"].connect (() => {
+            m_Label.angle = (angle * 180) / GLib.Math.PI;
+        });
+
 
         // Connect onto icon_name change
         notify["icon-name"].connect (() => {

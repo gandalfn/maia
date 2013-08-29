@@ -7,6 +7,10 @@ Document.breast {
 	footer: footer;
 	transform: scale (1.2, 1.2);
 
+	// shortcuts
+	@include(breast-shortcuts.manifest);
+
+	// header/footer
 	@include(header.manifest);
 	@include(footer.manifest);
 
