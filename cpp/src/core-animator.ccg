@@ -1,0 +1,146 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * core-animator.ccg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+#include <maia.h>
+
+namespace Maia
+{
+    namespace Core
+    {
+        Animator::~Animator ()
+        {
+        }
+
+        gboolean
+        Animator::on_transition_callback (double inProgress, void* inpData)
+        {
+            bool ret = false;
+            AnimatorClosure* pClosure = (AnimatorClosure*)inpData;
+
+            if (pClosure->m_pCallback)
+            {
+                ret = (*pClosure->m_pCallback) (inProgress);
+            }
+
+            return ret;
+        }
+
+        void
+        Animator::on_transition_finished (void* inpData)
+        {
+            AnimatorClosure* pClosure = (AnimatorClosure*)inpData;
+
+            if (pClosure->m_pFinished)
+            {
+                (*pClosure->m_pFinished) ();
+            }
+        }
+
+        void
+        Animator::on_destroy_closure (void* inpData)
+        {
+            AnimatorClosure* pClosure = (AnimatorClosure*)inpData;
+            delete pClosure;
+        }
+
+        unsigned int
+        Animator::add_transition (double inFrom, double inTo, AnimatorProgressType inType, SlotTransitionCallback inCallback, SlotTransitionFinished inFinished)
+        {
+            AnimatorClosure* pClosure = new AnimatorClosure (inCallback, inFinished);
+
+            unsigned int id = maia_core_animator_add_transition (gobj (), inFrom, inTo, (MaiaCoreAnimatorProgressType)inType, &on_transition_callback, pClosure, &on_destroy_closure, &on_transition_finished, pClosure, &on_destroy_closure);
+
+            return id;
+        }
+
+        unsigned int
+        Animator::add_transition (double inFrom, double inTo, AnimatorProgressType inType, SlotTransitionCallback inCallback)
+        {
+            AnimatorClosure* pClosure = new AnimatorClosure (inCallback);
+
+            unsigned int id = maia_core_animator_add_transition (gobj (), inFrom, inTo, (MaiaCoreAnimatorProgressType)inType, &on_transition_callback, pClosure, &on_destroy_closure, 0, 0, 0);
+
+            return id;
+        }
+
+        unsigned int
+        Animator::add_transition (double inFrom, double inTo, AnimatorProgressType inType, SlotTransitionFinished inFinished)
+        {
+            AnimatorClosure* pClosure = new AnimatorClosure (inFinished);
+
+            unsigned int id = maia_core_animator_add_transition (gobj (), inFrom, inTo, (MaiaCoreAnimatorProgressType)inType, 0, 0, 0, &on_transition_finished, pClosure, &on_destroy_closure);
+
+            return id;
+        }
+
+        unsigned int
+        Animator::add_transition (double inFrom, double inTo, AnimatorProgressType inType)
+        {
+            unsigned int id = maia_core_animator_add_transition (gobj (), inFrom, inTo, (MaiaCoreAnimatorProgressType)inType, 0, 0, 0, 0, 0, 0);
+
+            return id;
+        }
+
+        void
+        Animator::remove_transition (unsigned int inTransition)
+        {
+            maia_core_animator_remove_transition (gobj (), inTransition);
+        }
+
+        void
+        Animator::add_transition_property (unsigned int inTransition, Glib::Object& inObject, const Glib::ustring& inName, double inFrom, double inTo)
+        {
+            GValue from = {0};
+            GValue to = {0};
+
+            g_value_init (&from, G_TYPE_DOUBLE);
+            g_value_set_double (&from, inFrom);
+            g_value_init (&to, G_TYPE_DOUBLE);
+            g_value_set_double (&to, inTo);
+            maia_core_animator_add_transition_property (gobj (), inTransition, inObject.gobj (), inName.c_str(), &from, &to, 0, 0, 0);
+        }
+
+        void
+        Animator::add_transition_property (unsigned int inTransition, Glib::Object& inObject, const Glib::ustring& inName, float inFrom, float inTo)
+        {
+            GValue from = {0};
+            GValue to = {0};
+
+            g_value_init (&from, G_TYPE_FLOAT);
+            g_value_set_float (&from, inFrom);
+            g_value_init (&to, G_TYPE_FLOAT);
+            g_value_set_float (&to, inTo);
+            maia_core_animator_add_transition_property (gobj (), inTransition, inObject.gobj (), inName.c_str(), &from, &to, 0, 0, 0);
+        }
+
+        void
+        Animator::add_transition_property (unsigned int inTransition, Glib::Object& inObject, const Glib::ustring& inName, int inFrom, int inTo)
+        {
+            GValue from = {0};
+            GValue to = {0};
+
+            g_value_init (&from, G_TYPE_INT);
+            g_value_set_int (&from, inFrom);
+            g_value_init (&to, G_TYPE_INT);
+            g_value_set_int (&to, inTo);
+            maia_core_animator_add_transition_property (gobj (), inTransition, inObject.gobj (), inName.c_str(), &from, &to, 0, 0, 0);
+        }
+    }
+}

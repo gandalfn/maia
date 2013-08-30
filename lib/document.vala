@@ -85,6 +85,7 @@ public class Maia.Document : Item
     {
         // Add not dumpable attributes
         not_dumpable_attributes.insert ("nb-pages");
+        not_dumpable_attributes.insert ("page_size");
 
         // create pages list
         m_Pages = new Core.List<Page> ();
@@ -120,13 +121,16 @@ public class Maia.Document : Item
             {
                 // Create page shadow
                 var page_size = format.to_size (resolution);
-                m_PageShadow = new Graphic.Surface ((uint)(page_size.width + border_width * 2), (uint)(page_size.height + border_width * 2));
+                page_size.resize (border_width * 2, border_width * 2);
+                page_size.transform (transform);
+                m_PageShadow = new Graphic.Surface ((uint)page_size.width, (uint)page_size.height);
                 m_PageShadow.clear ();
 
                 // Draw a black rectangle
                 m_PageShadow.context.pattern = new Graphic.Color (0, 0, 0);
                 var page_geometry = format.to_region (resolution);
                 page_geometry.translate (Graphic.Point (border_width, border_width));
+                page_geometry.transform (transform);
                 var path = new Graphic.Path.from_region (page_geometry);
                 m_PageShadow.context.fill (path);
 
@@ -321,6 +325,7 @@ public class Maia.Document : Item
         var page_size = format.to_size (resolution);
         page_size.resize (border_width * 2.0, border_width * 2.0);
         page_size.height *= m_Pages.length;
+        size = page_size;
         page_size.transform (transform);
 
         return page_size;
@@ -347,7 +352,9 @@ public class Maia.Document : Item
                     else if (inChild == page.footer)
                     {
                         var position = Graphic.Point (page.geometry.extents.origin.x + Core.convert_inch_to_pixel (left_margin),
-                                                      page.geometry.extents.size.height - inChild.geometry.extents.size.height - Core.convert_inch_to_pixel (bottom_margin));
+                                                      page.geometry.extents.origin.y + page.geometry.extents.size.height  -
+                                                      Core.convert_inch_to_pixel (bottom_margin) -
+                                                      page.footer.geometry.extents.size.height);
 
                         inChild.geometry.translate (inChild.geometry.extents.origin.invert ());
                         inChild.geometry.translate (position);
@@ -418,7 +425,7 @@ public class Maia.Document : Item
                 if (first.header != null && first.header.geometry == null)
                 {
                     var item_size = first.header.size;
-                    Graphic.Region header_allocation = new Graphic.Region (Graphic.Rectangle (geometry.extents.origin.x, geometry.extents.origin.y,
+                    Graphic.Region header_allocation = new Graphic.Region (Graphic.Rectangle (first.content_geometry.extents.origin.x, first.content_geometry.extents.origin.y - item_size.height,
                                                                                               first.content_geometry.extents.size.width, item_size.height));
 
                     first.header.update (inContext, header_allocation);
@@ -427,7 +434,8 @@ public class Maia.Document : Item
                 if (first.footer != null && first.footer.geometry == null)
                 {
                     var item_size = first.footer.size;
-                    Graphic.Region footer_allocation = new Graphic.Region (Graphic.Rectangle (geometry.extents.origin.x, geometry.extents.origin.y,
+                    Graphic.Region footer_allocation = new Graphic.Region (Graphic.Rectangle (first.content_geometry.extents.origin.x,
+                                                                                              first.content_geometry.extents.origin.y + first.content_geometry.extents.size.height,
                                                                                               first.content_geometry.extents.size.width, item_size.height));
 
                     first.footer.update (inContext, footer_allocation);
@@ -479,7 +487,6 @@ public class Maia.Document : Item
 
         // paint visible pages
         bool header_damaged = false;
-        bool footer_damaged = false;
         foreach (unowned Page page in m_VisiblePages)
         {
             inContext.save ();
@@ -508,18 +515,6 @@ public class Maia.Document : Item
                     else if (page.header.damaged != null)
                     {
                         header_damaged = true;
-                    }
-                }
-
-                if (page.footer != null)
-                {
-                    if (footer_damaged)
-                    {
-                        page.footer.damage ();
-                    }
-                    else if (page.footer.damaged != null)
-                    {
-                        footer_damaged = true;
                     }
                 }
 

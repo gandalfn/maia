@@ -24,9 +24,9 @@ Grid.summary {
 		Label.exam_report_patient_title {
 			row: 1;
 			xfill: false;
-			xalign: 0.1;
+			xalign: 0.0;
 			yexpand: false;
-			left-padding: 5;
+			left-padding: 12;
 			right-padding: 5;
 			font-description: "Liberation Sans 12";
 			text: "Patient:";
@@ -66,9 +66,9 @@ Grid.summary {
 		Label.exam_report_patient_id_title {
 			row: 2;
 			xfill: false;
-			xalign: 0.1;
+			xalign: 0.0;
 			yexpand: false;
-			left-padding: 5;
+			left-padding: 12;
 			right-padding: 5;
 			font-description: "Liberation Sans 12";
 			text: "Patient ID:";
@@ -106,9 +106,9 @@ Grid.summary {
 		Label.exam_report_dob_title {
 			row: 3;
 			xfill: false;
-			xalign: 0.1;
+			xalign: 0.0;
 			yexpand: false;
-			left-padding: 5;
+			left-padding: 12;
 			right-padding: 5;
 			font-description: "Liberation Sans 12";
 			text: "DoB:";
@@ -146,9 +146,9 @@ Grid.summary {
 		Label.exam_report_gender_title {
 			row: 4;
 			xfill: false;
-			xalign: 0.1;
+			xalign: 0.0;
 			yexpand: false;
-			left-padding: 5;
+			left-padding: 12;
 			right-padding: 5;
 			bottom-padding: 5;
 			font-description: "Liberation Sans 12";
@@ -318,7 +318,7 @@ Grid.summary {
 			yexpand: false;
 			left-padding: 12;
 			font-description: "Liberation Sans 12";
-			lines: 5;
+			lines: 10;
 			underline-width: 0.3;
 		}
 	}

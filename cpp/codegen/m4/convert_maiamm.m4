@@ -197,6 +197,7 @@ _CONVERSION(`GList*',`Glib::ListHandle< ::Gtk::Button* >',__FL2H_SHALLOW)
 
 _CONV_ENUM(MaiaCore,ParserToken)
 _CONV_ENUM(MaiaCore,TimelineDirection)
+_CONV_ENUM(MaiaCore,AnimatorProgressType)
 _CONV_ENUM(MaiaGraphic,RegionOverlap)
 _CONV_ENUM(MaiaGraphic,PathDataType)
 _CONV_ENUM(MaiaGraphic,Operator)

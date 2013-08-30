@@ -14,6 +14,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_CORE_TYPE_PAIR);
     std::cout << get_defs (MAIA_CORE_TYPE_MAP);
     std::cout << get_defs (MAIA_CORE_TYPE_TIMELINE);
+    std::cout << get_defs (MAIA_CORE_TYPE_ANIMATOR);
     std::cout << get_defs (MAIA_CORE_TYPE_PARSER);
 
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_COLOR);

@@ -5,6 +5,12 @@
   (gtype-id "MAIA_TYPE_CANVAS")
 )
 
+(define-object MaiaCoreAnimator
+  (parent "GObject")
+  (c-name "MaiaCoreAnimator")
+  (gtype-id "MAIA_TYPE_CORE_ANIMATOR")
+)
+
 (define-object MaiaCoreAny
   (parent "GObject")
   (c-name "MaiaCoreAny")
@@ -476,6 +482,17 @@
   (values
     '("forward" "MAIA_CORE_TIMELINE_DIRECTION_FORWARD")
     '("backward" "MAIA_CORE_TIMELINE_DIRECTION_BACKWARD")
+  )
+)
+
+(define-enum MaiaCoreAnimatorProgressType
+  (c-name "MaiaCoreAnimatorProgressType")
+  (gtype-id "MAIA_TYPE_CORE_ANIMATOR_PROGRESS_TYPE")
+  (values
+    '("linear" "MAIA_CORE_ANIMATOR_PROGRESS_TYPE_LINEAR")
+    '("sinusoidal" "MAIA_CORE_ANIMATOR_PROGRESS_TYPE_SINUSOIDAL")
+    '("exponential" "MAIA_CORE_ANIMATOR_PROGRESS_TYPE_EXPONENTIAL")
+    '("ease-in-ease-out" "MAIA_CORE_ANIMATOR_PROGRESS_TYPE_EASE_IN_EASE_OUT")
   )
 )
 
@@ -4474,6 +4491,156 @@
   (of-object "MaiaCoreTimeline")
   (c-name "maia_core_timeline_get_progress")
   (return-type "gdouble")
+)
+
+(define-function maia_core_animator_get_type
+  (c-name "maia_core_animator_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_animator_progress_type_get_type
+  (c-name "maia_core_animator_progress_type_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_animator_new
+  (c-name "maia_core_animator_new")
+  (is-constructor-of "MaiaCoreAnimator")
+  (return-type "MaiaCoreAnimator*")
+  (parameters
+    '("guint" "inSpeed")
+    '("guint" "inDuration")
+  )
+)
+
+(define-function maia_core_animator_construct
+  (c-name "maia_core_animator_construct")
+  (return-type "MaiaCoreAnimator*")
+  (parameters
+    '("GType" "object_type")
+    '("guint" "inSpeed")
+    '("guint" "inDuration")
+  )
+)
+
+(define-method add_transition
+  (of-object "MaiaCoreAnimator")
+  (c-name "maia_core_animator_add_transition")
+  (return-type "guint")
+  (parameters
+    '("gdouble" "inFrom")
+    '("gdouble" "inTo")
+    '("MaiaCoreAnimatorProgressType" "inType")
+    '("MaiaCoreAnimatorTransitionCallback" "inCallback")
+    '("void*" "inCallback_target")
+    '("GDestroyNotify" "inCallback_target_destroy_notify")
+    '("MaiaCoreAnimatorTransitionFinished" "inFinished")
+    '("void*" "inFinished_target")
+    '("GDestroyNotify" "inFinished_target_destroy_notify")
+  )
+)
+
+(define-method remove_transition
+  (of-object "MaiaCoreAnimator")
+  (c-name "maia_core_animator_remove_transition")
+  (return-type "none")
+  (parameters
+    '("guint" "inTransition")
+  )
+)
+
+(define-method add_transition_property
+  (of-object "MaiaCoreAnimator")
+  (c-name "maia_core_animator_add_transition_property")
+  (return-type "none")
+  (parameters
+    '("guint" "inTransition")
+    '("GObject*" "inObject")
+    '("const-gchar*" "inName")
+    '("GValue*" "inFrom")
+    '("GValue*" "inTo")
+    '("MaiaCoreAnimatorPropertyCallback" "inCallback")
+    '("void*" "inCallback_target")
+    '("GDestroyNotify" "inCallback_target_destroy_notify")
+  )
+)
+
+(define-method start
+  (of-object "MaiaCoreAnimator")
+  (c-name "maia_core_animator_start")
+  (return-type "none")
+)
+
+(define-method stop
+  (of-object "MaiaCoreAnimator")
+  (c-name "maia_core_animator_stop")
+  (return-type "none")
+)
+
+(define-method get_speed
+  (of-object "MaiaCoreAnimator")
+  (c-name "maia_core_animator_get_speed")
+  (return-type "guint")
+)
+
+(define-method set_speed
+  (of-object "MaiaCoreAnimator")
+  (c-name "maia_core_animator_set_speed")
+  (return-type "none")
+  (parameters
+    '("guint" "value")
+  )
+)
+
+(define-method get_duration
+  (of-object "MaiaCoreAnimator")
+  (c-name "maia_core_animator_get_duration")
+  (return-type "guint")
+)
+
+(define-method set_duration
+  (of-object "MaiaCoreAnimator")
+  (c-name "maia_core_animator_set_duration")
+  (return-type "none")
+  (parameters
+    '("guint" "value")
+  )
+)
+
+(define-method get_direction
+  (of-object "MaiaCoreAnimator")
+  (c-name "maia_core_animator_get_direction")
+  (return-type "MaiaCoreTimelineDirection")
+)
+
+(define-method set_direction
+  (of-object "MaiaCoreAnimator")
+  (c-name "maia_core_animator_set_direction")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreTimelineDirection" "value")
+  )
+)
+
+(define-method get_loop
+  (of-object "MaiaCoreAnimator")
+  (c-name "maia_core_animator_get_loop")
+  (return-type "gboolean")
+)
+
+(define-method set_loop
+  (of-object "MaiaCoreAnimator")
+  (c-name "maia_core_animator_set_loop")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
+(define-method get_is_playing
+  (of-object "MaiaCoreAnimator")
+  (c-name "maia_core_animator_get_is_playing")
+  (return-type "gboolean")
 )
 
 (define-function maia_manifest_error_quark

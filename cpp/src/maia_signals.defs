@@ -131,6 +131,53 @@
   (construct-only #f)
 )
 
+;; From MaiaCoreAnimator
+
+(define-property speed
+  (of-object "MaiaCoreAnimator")
+  (prop-type "GParamUInt")
+  (docs "speed")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property duration
+  (of-object "MaiaCoreAnimator")
+  (prop-type "GParamUInt")
+  (docs "duration")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property direction
+  (of-object "MaiaCoreAnimator")
+  (prop-type "GParamEnum")
+  (docs "direction")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property loop
+  (of-object "MaiaCoreAnimator")
+  (prop-type "GParamBoolean")
+  (docs "loop")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property is-playing
+  (of-object "MaiaCoreAnimator")
+  (prop-type "GParamBoolean")
+  (docs "is-playing")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
 ;; From MaiaCoreParser
 
 (define-property element

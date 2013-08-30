@@ -20,12 +20,32 @@
 public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
 {
     // properties
+    private Core.Animator m_ScrollToAnimator;
+    private uint m_ScrollToTransition;
     private Graphic.Surface m_Buffer;
     private Item m_Root = null;
     private Core.Pair<global::Gtk.Adjustment, global::Gtk.Adjustment> m_Adjust;
     private Graphic.Point m_LastPointerPosition;
 
     // accessors
+    internal double scroll_x {
+        get {
+            return m_Adjust.first != null ? m_Adjust.first.@value : 0;
+        }
+        set {
+            m_Adjust.first.@value = value;
+        }
+    }
+
+    internal double scroll_y {
+        get {
+            return m_Adjust.second != null ? m_Adjust.second.@value : 0;
+        }
+        set {
+            m_Adjust.second.@value = value;
+        }
+    }
+
     internal Core.Timeline timeline { get; set; default = null; }
     internal Graphic.Region geometry { get; protected set; default = null; }
     internal Graphic.Region damaged { get; protected set; default = null; }
@@ -86,6 +106,8 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         has_focus = true;
 
         register ();
+
+        m_ScrollToAnimator = new Core.Animator (30, 400);
     }
 
     public Canvas ()
@@ -125,11 +147,24 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         unowned Document? document = root as Document;
         if (document != null)
         {
-            document.position = Graphic.Point (m_Adjust.first != null ? m_Adjust.first.@value : 0,
-                                               m_Adjust.second != null ? m_Adjust.second.@value : 0);
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "scroll to %s", document.position.to_string ());
+            try
+            {
+                var matrix = document.transform.matrix;
+                matrix.invert ();
+                var transform = new Graphic.Transform.from_matrix (matrix);
+                var position = Graphic.Point (m_Adjust.first != null ? m_Adjust.first.@value : 0,
+                                              m_Adjust.second != null ? m_Adjust.second.@value : 0);
+                position.transform (transform);
+                document.position = position;
 
-            damage ();
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "scroll to %s", document.position.to_string ());
+
+                damage ();
+            }
+            catch (GLib.Error err)
+            {
+                Log.error (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, err.message);
+            }
         }
     }
 
@@ -197,14 +232,16 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
             unowned Document? document = root as Document;
             if (m_Adjust != null && document != null)
             {
+                var document_position = document.position;
+                var document_size = document.size;
                 if (m_Adjust.first != null)
                 {
-                    m_Adjust.first.configure (document.position.x, 0, document.size.width, 1, 1, geometry.extents.size.width);
+                    m_Adjust.first.configure (document_position.x, 0, document_size.width, 1, 1, geometry.extents.size.width);
                 }
 
                 if (m_Adjust.second != null)
                 {
-                    m_Adjust.second.configure (document.position.y, 0, document.size.height, 1, 1, geometry.extents.size.height);
+                    m_Adjust.second.configure (document_position.y, 0, document_size.height, 1, 1, geometry.extents.size.height);
                 }
             }
         }
@@ -260,11 +297,47 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         unowned Document? document = root as Document;
         if (document != null)
         {
-            document.position = inItem.convert_to_root_space (Graphic.Point (0, 0));
+            var pos0 = inItem.convert_to_root_space (Graphic.Point (0, 0));
 
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "scroll to %s", document.position.to_string ());
+            if (m_Adjust.first != null)
+            {
+                if (pos0.x < m_Adjust.first.@value)
+                {
+                    m_Adjust.first.@value = pos0.x;
+                }
+                else if (pos0.x > m_Adjust.first.@value + m_Adjust.first.page_size)
+                {
+                    m_Adjust.first.@value = pos0.x;
+                }
+            }
 
-            damage ();
+            if (m_Adjust.second != null)
+            {
+                bool move = false;
+                if (pos0.y < m_Adjust.second.@value)
+                {
+                    move = true;
+                }
+                else if (pos0.y > m_Adjust.second.@value + m_Adjust.second.page_size)
+                {
+                    move = true;
+                }
+
+                if (move)
+                {
+                    m_ScrollToAnimator.stop ();
+
+                    if (m_ScrollToTransition > 0)
+                    {
+                        m_ScrollToAnimator.remove_transition (m_ScrollToTransition);
+                    }
+                    m_ScrollToTransition = m_ScrollToAnimator.add_transition (0, 1, Core.Animator.ProgressType.EASE_IN_EASE_OUT);
+                    GLib.Value from = (double)m_Adjust.second.@value;
+                    GLib.Value to = (double)pos0.y;
+                    m_ScrollToAnimator.add_transition_property (m_ScrollToTransition, this, "scroll-y", from, to);
+                    m_ScrollToAnimator.start ();
+                }
+            }
         }
     }
 

@@ -15,6 +15,7 @@ files_hg = \
     core-map.hg \
     core-parser.hg \
     core-timeline.hg \
+    core-animator.hg \
     graphic-matrix.hg \
     graphic-transform.hg \
     graphic-point.hg \

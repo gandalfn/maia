@@ -137,6 +137,25 @@
 
 ;; Original typedef:
 ;; typedef enum  {
+;; 	MAIA_CORE_ANIMATOR_PROGRESS_TYPE_LINEAR,
+;; 	MAIA_CORE_ANIMATOR_PROGRESS_TYPE_SINUSOIDAL,
+;; 	MAIA_CORE_ANIMATOR_PROGRESS_TYPE_EXPONENTIAL,
+;; 	MAIA_CORE_ANIMATOR_PROGRESS_TYPE_EASE_IN_EASE_OUT
+;; } MaiaCoreAnimatorProgressType;
+
+(define-enum-extended CoreAnimatorProgressType
+  (in-module "Maia")
+  (c-name "MaiaCoreAnimatorProgressType")
+  (values
+    '("linear" "MAIA_CORE_ANIMATOR_PROGRESS_TYPE_LINEAR" "0")
+    '("sinusoidal" "MAIA_CORE_ANIMATOR_PROGRESS_TYPE_SINUSOIDAL" "1")
+    '("exponential" "MAIA_CORE_ANIMATOR_PROGRESS_TYPE_EXPONENTIAL" "2")
+    '("ease-in-ease-out" "MAIA_CORE_ANIMATOR_PROGRESS_TYPE_EASE_IN_EASE_OUT" "3")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
 ;; 	MAIA_MANIFEST_ERROR_INVALID_TYPE,
 ;; 	MAIA_MANIFEST_ERROR_TOO_MANY_ATTRIBUTES,
 ;; 	MAIA_MANIFEST_ERROR_MISSING_ATTRIBUTES,

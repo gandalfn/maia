@@ -10,6 +10,24 @@
   )
 )
 
+(define-property scroll-x
+  (of-object "MaiaGtkCanvas")
+  (prop-type "GParamDouble")
+  (docs "scroll-x")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property scroll-y
+  (of-object "MaiaGtkCanvas")
+  (prop-type "GParamDouble")
+  (docs "scroll-y")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property timeline
   (of-object "MaiaGtkCanvas")
   (prop-type "GParamObject")
