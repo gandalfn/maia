@@ -29,6 +29,12 @@ public class Maia.CheckButton : ToggleButton
     public double spacing { get; set; default = 5; }
 
     // methods
+    construct
+    {
+        fill_pattern = new Graphic.Color (1, 1, 1);
+        stroke_pattern = new Graphic.Color (0, 0, 0);
+    }
+
     public CheckButton (string inId, string inLabel)
     {
         base (inId, inLabel);

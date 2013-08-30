@@ -5,7 +5,6 @@ Document.breast {
 	background-pattern: #E0E0E0;
 	header: header;
 	footer: footer;
-	transform: scale (1.2, 1.2);
 
 	// shortcuts
 	@include(breast-shortcuts.manifest);

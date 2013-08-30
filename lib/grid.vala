@@ -407,6 +407,8 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                             allocation.origin.y += item.top_padding;
                         }
 
+                        allocation.origin.y += item.page_break_padding;
+
                         // update item
                         Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "update %s: %s", item.name, allocation.to_string ());
                         item.update (inContext, new Graphic.Region (allocation));

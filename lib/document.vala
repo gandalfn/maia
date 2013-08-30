@@ -193,6 +193,69 @@ public class Maia.Document : Item
     }
 
     private void
+    paginate_child_item (Item inRoot, Item inItem, ref Graphic.Point inoutCurrentPosition, ref unowned Page inoutPage)
+    {
+        if (inItem != inoutPage.header && inItem != inoutPage.footer)
+        {
+            // Get item allocated size
+            var item_size = inItem.size;
+
+            if (inItem is ItemPackable)
+            {
+                unowned ItemPackable item = (ItemPackable)inItem;
+
+                var page_content = inoutPage.content_geometry;
+                inoutCurrentPosition.y += item.top_padding;
+                item_size.height += item.bottom_padding;
+
+                // Check if item size + current position does not overlap two page
+                if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
+                {
+                    // Check if item can be added in new
+                    if (item_size.height <= page_content.extents.size.height)
+                    {
+                        print ("break page for %s\n", item.name);
+                        // Item can be added in new page
+                        append_page  ();
+
+                        // Set current page
+                        inoutPage = m_Pages.last ();
+
+                        // Update current position
+                        var old_pos = inoutCurrentPosition;
+                        inoutCurrentPosition = inoutPage.content_geometry.extents.origin;
+
+                        // Add page break size to top_padding of item
+                        item.page_break_padding = inoutCurrentPosition.y - old_pos.y;
+                    }
+                    else if (inItem is Grid)
+                    {
+                        var pos = inoutCurrentPosition;
+
+                        // Check if childs can be split in pages
+                        foreach (unowned Core.Object child in inItem)
+                        {
+                            unowned ItemPackable? child_item = child as ItemPackable;
+                            if (child_item != null)
+                            {
+                                paginate_child_item (inRoot, child_item, ref pos, ref inoutPage);
+                            }
+                        }
+
+                        inoutCurrentPosition.y = pos.y;
+                    }
+                }
+            }
+
+            // Add root item to this page
+            inoutPage.add (inRoot);
+
+            // Add the height of item to current position
+            inoutCurrentPosition.y += item_size.height;
+        }
+    }
+
+    private void
     paginate_item (Item inItem, ref Graphic.Point inoutCurrentPosition)
     {
         // Get last page
@@ -200,6 +263,8 @@ public class Maia.Document : Item
 
         if (inItem != page.header && inItem != page.footer)
         {
+            bool add_item_in_page = true;
+
             // Get item allocated size
             var item_size = inItem.size;
 
@@ -207,40 +272,52 @@ public class Maia.Document : Item
             var page_content = page.content_geometry;
             if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
             {
-                bool page_added = false;
+                print ("Item %s does not fit add page\n", inItem.name);
 
-                // Check if childs can be split in pages
-                foreach (unowned Core.Object child in inItem)
+                // Append a new page
+                append_page  ();
+
+                // Set current page
+                page = m_Pages.last ();
+
+                // Update current position
+                page_content = page.content_geometry;
+                inoutCurrentPosition = page_content.extents.origin;
+
+                // Item continue to not fit in page try to split child
+                if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
                 {
-                    if (child is View)
+                    if (inItem is Grid)
                     {
-                        unowned Item? child_item = child as Item;
-                        if (child_item != null)
+                        add_item_in_page = false;
+
+                        foreach (unowned Core.Object child in inItem)
                         {
-                            paginate_item (child_item, ref inoutCurrentPosition);
-                            page_added = true;
+                            unowned Item child_item = child as Item;
+                            if (child_item != null)
+                            {
+                                paginate_child_item (inItem, child_item, ref inoutCurrentPosition, ref page);
+                            }
+                            else
+                            {
+                                add_item_in_page = true;
+                            }
                         }
                     }
                 }
-
-                if (!page_added)
-                {
-                    // Append a new page
-                    append_page  ();
-
-                    // Set current page
-                    page = m_Pages.last ();
-
-                    // Update current position
-                    inoutCurrentPosition = page.content_geometry.extents.origin;
-                }
             }
 
-            // Add item to this page
-            page.add (inItem);
+            if (add_item_in_page)
+            {
+                print ("Add item %s in page\n", inItem.name);
 
-            // Set item position
-            inItem.position = inoutCurrentPosition;
+                // Add item to this page
+                page.add (inItem);
+
+                // Set item position
+                inItem.position = inoutCurrentPosition;
+            }
+
 
             // Set width has page if item is direct child
             if (inItem.parent == this)

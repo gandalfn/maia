@@ -46,7 +46,7 @@ public class Maia.Group : Item
                 Item item = (Item)child;
                 Graphic.Point item_position = item.position;
                 Graphic.Size item_size = item.size;
-                area.union_with_rect (Graphic.Rectangle (item_position.x, item_position.y, item_size.width, item_size.height));
+                area.union_with_rect (Graphic.Rectangle (0, 0, item_position.x + item_size.width, item_position.y + item_size.height));
             }
         }
 

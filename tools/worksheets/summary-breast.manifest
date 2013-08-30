@@ -67,7 +67,7 @@ Grid.summary_breast {
 				</svg>
 			]
 		}
-		
+
 		Label.summary_breast_summary_breast_clinical_indications_label_empty {
 			row: 1;
 			column: 1;
@@ -111,6 +111,7 @@ Grid.summary_breast {
 			]
 		}
 
+
 		Grid.summary_breast_clinical_indications_left {
 			row: 2;
 			row-spacing: 5;
@@ -120,7 +121,7 @@ Grid.summary_breast {
 				column: 0;
 				xfill: false;
 				yexpand: false;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				text: 'Pain';
 			}
 
@@ -128,7 +129,7 @@ Grid.summary_breast {
 				column: 1;
 				xfill: false;
 				yexpand: false;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				text: 'Palpable mass';
 			}
 
@@ -166,7 +167,7 @@ Grid.summary_breast {
 				row: 1;
 				column: 0;
 				group: summary_breast_clinical_indications_left_area_1;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -176,7 +177,7 @@ Grid.summary_breast {
 				row: 1;
 				column: 1;
 				group: summary_breast_clinical_indications_left_area_1;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -187,7 +188,7 @@ Grid.summary_breast {
 				row: 2;
 				column: 0;
 				group: summary_breast_clinical_indications_left_area_2;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -197,7 +198,7 @@ Grid.summary_breast {
 				row: 2;
 				column: 1;
 				group: summary_breast_clinical_indications_left_area_2;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -208,7 +209,7 @@ Grid.summary_breast {
 				row: 3;
 				column: 0;
 				group: summary_breast_clinical_indications_left_area_3;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -218,7 +219,7 @@ Grid.summary_breast {
 				row: 3;
 				column: 1;
 				group: summary_breast_clinical_indications_left_area_3;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -229,7 +230,7 @@ Grid.summary_breast {
 				row: 4;
 				column: 0;
 				group: summary_breast_clinical_indications_left_area_4;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -239,7 +240,7 @@ Grid.summary_breast {
 				row: 4;
 				column: 1;
 				group: summary_breast_clinical_indications_left_area_4;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -250,7 +251,7 @@ Grid.summary_breast {
 				row: 5;
 				column: 0;
 				group: summary_breast_clinical_indications_left_area_5;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -260,7 +261,7 @@ Grid.summary_breast {
 				row: 5;
 				column: 1;
 				group: summary_breast_clinical_indications_left_area_5;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -271,7 +272,7 @@ Grid.summary_breast {
 				row: 6;
 				column: 0;
 				group: summary_breast_clinical_indications_left_area_6;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -281,7 +282,7 @@ Grid.summary_breast {
 				row: 6;
 				column: 1;
 				group: summary_breast_clinical_indications_left_area_6;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -292,7 +293,7 @@ Grid.summary_breast {
 				row: 7;
 				column: 0;
 				group: summary_breast_clinical_indications_left_area_7;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -302,7 +303,7 @@ Grid.summary_breast {
 				row: 7;
 				column: 1;
 				group: summary_breast_clinical_indications_left_area_7;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -313,7 +314,7 @@ Grid.summary_breast {
 				row: 8;
 				column: 0
 				group: summary_breast_clinical_indications_left_area_8;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -323,7 +324,7 @@ Grid.summary_breast {
 				row: 8;
 				column: 1;
 				group: summary_breast_clinical_indications_left_area_8;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -334,7 +335,7 @@ Grid.summary_breast {
 				row: 9;
 				column: 0
 				group: summary_breast_clinical_indications_left_area_9;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -344,7 +345,7 @@ Grid.summary_breast {
 				row: 9;
 				column: 1;
 				group: summary_breast_clinical_indications_left_area_9;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -355,7 +356,7 @@ Grid.summary_breast {
 				row: 10;
 				column: 0
 				group: summary_breast_clinical_indications_left_area_10;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -365,7 +366,7 @@ Grid.summary_breast {
 				row: 10;
 				column: 1;
 				group: summary_breast_clinical_indications_left_area_10;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -376,7 +377,7 @@ Grid.summary_breast {
 				row: 11;
 				column: 0
 				group: summary_breast_clinical_indications_left_area_11;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -386,7 +387,7 @@ Grid.summary_breast {
 				row: 11;
 				column: 1;
 				group: summary_breast_clinical_indications_left_area_11;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -397,7 +398,7 @@ Grid.summary_breast {
 				row: 12;
 				column: 0
 				group: summary_breast_clinical_indications_left_area_12;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -407,7 +408,7 @@ Grid.summary_breast {
 				row: 12;
 				column: 1;
 				group: summary_breast_clinical_indications_left_area_12;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -418,17 +419,17 @@ Grid.summary_breast {
 				row: 13;
 				column: 0;
 				group: summary_breast_clinical_indications_left_area_13;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
 			}
-			
+
 			CheckButton.summary_breast_clinical_indications_left_area_13_palpable_mass {
 				row: 13;
 				column: 1;
 				group: summary_breast_clinical_indications_left_area_13;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -439,7 +440,7 @@ Grid.summary_breast {
 				row: 14;
 				column: 0;
 				group: summary_breast_clinical_indications_left_area_14;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -449,7 +450,7 @@ Grid.summary_breast {
 				row: 14;
 				column: 1;
 				group: summary_breast_clinical_indications_left_area_14;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -465,105 +466,105 @@ Grid.summary_breast {
 			Label.summary_breast_clinical_indications_area_title {
 				xfill: false;
 				yexpand: false;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				text: 'Area';
 			}
 
 			Label.summary_breast_clinical_indications_area_1 {
 				row: 1;
 				yexpand: false;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				text: '1';
 			}
 
 			Label.summary_breast_clinical_indications_area_2 {
 				row: 2;
 				yexpand: false;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				text: '2';
 			}
 
 			Label.summary_breast_clinical_indications_area_3 {
 				row: 3;
 				yexpand: false;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				text: '3';
 			}
 
 			Label.summary_breast_clinical_indications_area_4 {
 				row: 4;
 				yexpand: false;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				text: '4';
 			}
 
 			Label.summary_breast_clinical_indications_area_5 {
 				row: 5;
 				yexpand: false;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				text: '5';
 			}
 
 			Label.summary_breast_clinical_indications_area_6 {
 				row: 6;
 				yexpand: false;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				text: '6';
 			}
 
 			Label.summary_breast_clinical_indications_area_7 {
 				row: 7;
 				yexpand: false;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				text: '7';
 			}
 
 			Label.summary_breast_clinical_indications_area_8 {
 				row: 8;
 				yexpand: false;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				text: '8';
 			}
 
 			Label.summary_breast_clinical_indications_area_9 {
 				row: 9;
 				yexpand: false;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				text: '9';
 			}
 
 			Label.summary_breast_clinical_indications_area_10 {
 				row: 10;
 				yexpand: false;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				text: '10';
 			}
 
 			Label.summary_breast_clinical_indications_area_11 {
 				row: 11;
 				yexpand: false;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				text: '11';
 			}
 
 			Label.summary_breast_clinical_indications_area_12 {
 				row: 12;
 				yexpand: false;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				text: '12';
 			}
 
 			Label.summary_breast_clinical_indications_area_13 {
 				row: 13;
 				yexpand: false;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				text: '13';
 			}
 
 			Label.summary_breast_clinical_indications_area_14 {
 				row: 14;
 				yexpand: false;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				text: '14';
 			}
 		}
@@ -578,7 +579,7 @@ Grid.summary_breast {
 				column: 0;
 				xfill: false;
 				yexpand: false;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				text: 'Pain';
 			}
 
@@ -586,7 +587,7 @@ Grid.summary_breast {
 				column: 1;
 				xfill: false;
 				yexpand: false;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				text: 'Palpable mass';
 			}
 
@@ -624,7 +625,7 @@ Grid.summary_breast {
 				row: 1;
 				column: 0;
 				group: summary_breast_clinical_indications_right_area_1;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -634,7 +635,7 @@ Grid.summary_breast {
 				row: 1;
 				column: 1;
 				group: summary_breast_clinical_indications_right_area_1;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -645,7 +646,7 @@ Grid.summary_breast {
 				row: 2;
 				column: 0;
 				group: summary_breast_clinical_indications_right_area_2;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -655,7 +656,7 @@ Grid.summary_breast {
 				row: 2;
 				column: 1;
 				group: summary_breast_clinical_indications_right_area_2;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -666,7 +667,7 @@ Grid.summary_breast {
 				row: 3;
 				column: 0;
 				group: summary_breast_clinical_indications_right_area_3;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -676,7 +677,7 @@ Grid.summary_breast {
 				row: 3;
 				column: 1;
 				group: summary_breast_clinical_indications_right_area_3;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -687,7 +688,7 @@ Grid.summary_breast {
 				row: 4;
 				column: 0;
 				group: summary_breast_clinical_indications_right_area_4;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -697,7 +698,7 @@ Grid.summary_breast {
 				row: 4;
 				column: 1;
 				group: summary_breast_clinical_indications_right_area_4;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -708,7 +709,7 @@ Grid.summary_breast {
 				row: 5;
 				column: 0;
 				group: summary_breast_clinical_indications_right_area_5;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -718,7 +719,7 @@ Grid.summary_breast {
 				row: 5;
 				column: 1;
 				group: summary_breast_clinical_indications_right_area_5;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -729,7 +730,7 @@ Grid.summary_breast {
 				row: 6;
 				column: 0;
 				group: summary_breast_clinical_indications_right_area_6;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -739,7 +740,7 @@ Grid.summary_breast {
 				row: 6;
 				column: 1;
 				group: summary_breast_clinical_indications_right_area_6;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -750,7 +751,7 @@ Grid.summary_breast {
 				row: 7;
 				column: 0;
 				group: summary_breast_clinical_indications_right_area_7;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -760,7 +761,7 @@ Grid.summary_breast {
 				row: 7;
 				column: 1;
 				group: summary_breast_clinical_indications_right_area_7;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -771,7 +772,7 @@ Grid.summary_breast {
 				row: 8;
 				column: 0
 				group: summary_breast_clinical_indications_right_area_8;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -781,7 +782,7 @@ Grid.summary_breast {
 				row: 8;
 				column: 1;
 				group: summary_breast_clinical_indications_right_area_8;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -792,7 +793,7 @@ Grid.summary_breast {
 				row: 9;
 				column: 0
 				group: summary_breast_clinical_indications_right_area_9;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -802,7 +803,7 @@ Grid.summary_breast {
 				row: 9;
 				column: 1;
 				group: summary_breast_clinical_indications_right_area_9;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -813,7 +814,7 @@ Grid.summary_breast {
 				row: 10;
 				column: 0
 				group: summary_breast_clinical_indications_right_area_10;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -823,7 +824,7 @@ Grid.summary_breast {
 				row: 10;
 				column: 1;
 				group: summary_breast_clinical_indications_right_area_10;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -834,7 +835,7 @@ Grid.summary_breast {
 				row: 11;
 				column: 0
 				group: summary_breast_clinical_indications_right_area_11;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -844,7 +845,7 @@ Grid.summary_breast {
 				row: 11;
 				column: 1;
 				group: summary_breast_clinical_indications_right_area_11;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -855,7 +856,7 @@ Grid.summary_breast {
 				row: 12;
 				column: 0
 				group: summary_breast_clinical_indications_right_area_12;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -865,7 +866,7 @@ Grid.summary_breast {
 				row: 12;
 				column: 1;
 				group: summary_breast_clinical_indications_right_area_12;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -876,17 +877,17 @@ Grid.summary_breast {
 				row: 13;
 				column: 0;
 				group: summary_breast_clinical_indications_right_area_13;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
 			}
-			
+
 			CheckButton.summary_breast_clinical_indications_right_area_13_palpable_mass {
 				row: 13;
 				column: 1;
 				group: summary_breast_clinical_indications_right_area_13;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -897,7 +898,7 @@ Grid.summary_breast {
 				row: 14;
 				column: 0;
 				group: summary_breast_clinical_indications_right_area_14;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -907,7 +908,7 @@ Grid.summary_breast {
 				row: 14;
 				column: 1;
 				group: summary_breast_clinical_indications_right_area_14;
-				font-description: 'Liberation Sans 12';
+				font-description: 'Liberation Sans 9';
 				stroke-pattern: '#000000';
 				fill-pattern: '#FFFFFF';
 				label: ' ';
@@ -917,17 +918,17 @@ Grid.summary_breast {
 		CheckButton.summary_breast_summary_breast_clinical_indications_nipple_discharge_left {
 			row: 3;
 			top-padding: 5;
-			font-description: 'Liberation Sans 12';
+			font-description: 'Liberation Sans 9';
 			stroke-pattern: '#000000';
 			fill-pattern: '#FFFFFF';
 			label: ' ';
 		}
-		
+
 		Label.summary_breast_clinical_indications_left_pain_title {
 			row: 3;
 			column: 1;
 			top-padding: 5;
-			font-description: 'Liberation Sans 12';
+			font-description: 'Liberation Sans 9';
 			text: 'Nipple discharge';
 		}
 
@@ -935,10 +936,895 @@ Grid.summary_breast {
 			row: 3;
 			column: 2;
 			top-padding: 5;
-			font-description: 'Liberation Sans 12';
+			font-description: 'Liberation Sans 9';
 			stroke-pattern: '#000000';
 			fill-pattern: '#FFFFFF';
 			label: ' ';
+		}
+	}
+
+	Grid.summary_breast_other_studies {
+		row: 2;
+		left-padding: 12;
+		row-spacing: 12;
+		yexpand: false;
+
+		Label.summary_breast_summary_breast_other_studies_title {
+			columns: 4;
+			xfill: false;
+			xexpand: false;
+			yexpand: false;
+			font-description: 'Liberation Sans 14';
+			text: '<u><b>Other studies</b></u>';
+		}
+
+		Grid.summary_breast_summary_other_studies_ultrasound {
+			row: 1;
+			xfill: false;
+			xalign: 0.0;
+			yexpand: false;
+			row-spacing: 5;
+
+			ToggleGroup.summary_breast_summary_other_studies_ultrasound_performed {
+			}
+
+			Label.summary_breast_summary_other_studies_ultrasound_title {
+				columns: 3;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				font-description: 'Liberation Sans 9';
+				text: '<i>Ultrasound</i>';
+			}
+
+			Label.summary_breast_summary_other_studies_ultrasound_performed_title {
+				row: 1;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'Performed:';
+			}
+
+			CheckButton.summary_breast_summary_other_studies_ultrasound_performed_yes {
+				row: 1;
+				column: 1;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_other_studies_ultrasound_performed;
+				font-description: 'Liberation Sans 9';
+				label: 'Yes';
+			}
+
+			CheckButton.summary_breast_summary_other_studies_ultrasound_performed_no {
+				row: 1;
+				column: 2;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_other_studies_ultrasound_performed;
+				font-description: 'Liberation Sans 9';
+				label: 'No';
+			}
+
+			Label.summary_breast_summary_other_studies_ultrasound_date_label {
+				row: 2;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'Date:';
+			}
+
+			Label.summary_breast_summary_other_studies_ultrasound_date {
+				row: 2;
+				column: 1
+				columns: 2;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: '';
+			}
+		}
+
+		Grid.summary_breast_summary_other_studies_mammogram {
+			row: 1;
+			column: 1;
+			yexpand: false;
+			row-spacing: 5;
+
+			ToggleGroup.summary_breast_summary_other_studies_mammogram_performed {
+			}
+
+			Label.summary_breast_summary_other_studies_mammogram_title {
+				columns: 3;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				font-description: 'Liberation Sans 9';
+				text: '<i>Mammogram</i>';
+			}
+
+			Label.summary_breast_summary_other_studies_mammogram_performed_tittle {
+				row: 1;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'Performed:';
+			}
+
+			CheckButton.summary_breast_summary_other_studies_mammogram_performed_yes {
+				row: 1;
+				column: 1;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_other_studies_mammogram_performed;
+				font-description: 'Liberation Sans 9';
+				label: 'Yes';
+			}
+
+			CheckButton.summary_breast_summary_other_studies_mammogram_performed_no {
+				row: 1;
+				column: 2;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_other_studies_mammogram_performed;
+				font-description: 'Liberation Sans 9';
+				label: 'No';
+			}
+
+			Label.summary_breast_summary_other_studies_mammogram_date_label {
+				row: 2;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'Date:';
+			}
+
+			Label.summary_breast_summary_other_studies_mammogram_date {
+				row: 2;
+				column: 1
+				columns: 2;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: '';
+			}
+
+			Label.summary_breast_summary_other_studies_mammogram_acr_label {
+				row: 3;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'ACR:';
+			}
+
+			Label.summary_breast_summary_other_studies_mammogram_acr {
+				row: 3;
+				column: 1
+				columns: 2;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: '';
+			}
+
+			Label.summary_breast_summary_other_studies_mammogram_findings_label {
+				row: 4;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'Findings:';
+			}
+
+			Label.summary_breast_summary_other_studies_mammogram_findings {
+				row: 4;
+				column: 1
+				columns: 2;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: '';
+			}
+
+			Label.summary_breast_summary_other_studies_mammogram_microcalcifications_label {
+				row: 5;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'Microcalc.:';
+			}
+
+			Label.summary_breast_summary_other_studies_mammogram_microcalcifications {
+				row: 5;
+				column: 1
+				columns: 2;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: '';
+			}
+		}
+
+		Grid.summary_breast_summary_other_studies_mri {
+			row: 1;
+			column: 2;
+			xfill: false;
+			xalign: 0.0;
+			yexpand: false;
+			row-spacing: 5;
+
+			ToggleGroup.summary_breast_summary_other_studies_mri_performed {
+			}
+
+
+			Label.summary_breast_summary_other_studies_mri_title {
+				columns: 3;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				font-description: 'Liberation Sans 9';
+				text: '<i>MRI</i>';
+			}
+
+			Label.summary_breast_summary_other_studies_mri_performed_title {
+				row: 1;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'Performed:';
+			}
+
+			CheckButton.summary_breast_summary_other_studies_mri_performed_yes {
+				row: 1;
+				column: 1;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_other_studies_mri_performed;
+				font-description: 'Liberation Sans 9';
+				label: 'Yes';
+			}
+
+			CheckButton.summary_breast_summary_other_studies_mri_performed_no {
+				row: 1;
+				column: 2;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_other_studies_mri_performed;
+				font-description: 'Liberation Sans 9';
+				label: 'No';
+			}
+
+			Label.summary_breast_summary_other_studies_mri_date_label {
+				row: 2;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'Date:';
+			}
+
+			Label.summary_breast_summary_other_studies_mri_date {
+				row: 2;
+				column: 1
+				columns: 2;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: '';
+			}
+		}
+
+		Grid.summary_breast_summary_other_studies_other {
+			row: 1;
+			column: 3;
+			xfill: false;
+			xalign: 0.0;
+			yexpand: false;
+			row-spacing: 5;
+
+			ToggleGroup.summary_breast_summary_other_studies_other_performed {
+			}
+
+
+			Label.summary_breast_summary_other_studies_other_title {
+				columns: 3;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				font-description: 'Liberation Sans 9';
+				text: '<i>Other</i>';
+			}
+
+			Label.summary_breast_summary_other_studies_other_performed_title {
+				row: 1;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'Performed:';
+			}
+
+			CheckButton.summary_breast_summary_other_studies_other_performed_yes {
+				row: 1;
+				column: 1;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_other_studies_other_performed;
+				font-description: 'Liberation Sans 9';
+				label: 'Yes';
+			}
+
+			CheckButton.summary_breast_summary_other_studies_other_performed_no {
+				row: 1;
+				column: 2;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_other_studies_other_performed;
+				font-description: 'Liberation Sans 9';
+				label: 'No';
+			}
+
+			Label.summary_breast_summary_other_studies_other_date_label {
+				row: 2;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'Date:';
+			}
+
+			Label.summary_breast_summary_other_studies_other_date {
+				row: 2;
+				column: 1
+				columns: 2;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: '';
+			}
+
+			Label.summary_breast_summary_other_studies_other_name_label {
+				row: 3;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'Name:';
+			}
+
+			Label.summary_breast_summary_other_studies_other_name {
+				row: 3;
+				column: 1
+				columns: 2;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: '';
+			}
+		}
+	}
+
+	Grid.summary_breast_patient_information {
+		row: 3;
+		left-padding: 12;
+		row-spacing: 12;
+		yexpand: false;
+
+		Label.summary_breast_summary_breast_patient_information_title {
+			columns: 2;
+			xfill: false;
+			xexpand: false;
+			yexpand: false;
+			font-description: 'Liberation Sans 14';
+			text: '<u><b>Patient Information</b></u>';
+		}
+
+		Grid.summary_breast_summary_patient_information_prior_procedure {
+			row: 1;
+			xfill: false;
+			xalign: 0.0;
+			yexpand: false;
+			row-spacing: 5;
+
+			ToggleGroup.summary_breast_summary_patient_information_prior_procedure_breast_surgery {
+			}
+			ToggleGroup.summary_breast_summary_patient_information_prior_procedure_core_biopsy {
+			}
+			ToggleGroup.summary_breast_summary_patient_information_prior_procedure_fine_needle_aspiration {
+			}
+
+			Label.summary_breast_summary_patient_information_prior_procedure_title {
+				columns: 3;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				font-description: 'Liberation Sans 9';
+				text: '<i>Prior procedure</i>';
+			}
+
+			Label.summary_breast_summary_patient_information_prior_procedure_breast_surgery_title {
+				row: 1;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'Breast surgery:';
+			}
+
+			CheckButton.summary_breast_summary_patient_information_prior_procedure_breast_surgery_yes {
+				row: 1;
+				column: 1;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_patient_information_prior_procedure_breast_surgery;
+				font-description: 'Liberation Sans 9';
+				label: 'Yes';
+			}
+
+			CheckButton.summary_breast_summary_patient_information_prior_procedure_breast_surgery_no {
+				row: 1;
+				column: 2;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_patient_information_prior_procedure_breast_surgery;
+				font-description: 'Liberation Sans 9';
+				label: 'No';
+			}
+
+			Label.summary_breast_summary_patient_information_prior_procedure_core_biopsy_title {
+				row: 2;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'Core biopsy:';
+			}
+
+			CheckButton.summary_breast_summary_patient_information_prior_procedure_core_biopsy_yes {
+				row: 2;
+				column: 1;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_patient_information_prior_procedure_core_biopsy;
+				font-description: 'Liberation Sans 9';
+				label: 'Yes';
+			}
+
+			CheckButton.summary_breast_summary_patient_information_prior_procedure_core_biopsy_no {
+				row: 2;
+				column: 2;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_patient_information_prior_procedure_core_biopsy;
+				font-description: 'Liberation Sans 9';
+				label: 'No';
+			}
+
+			Label.summary_breast_summary_patient_information_prior_procedure_fine_needle_aspiration_title {
+				row: 3;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'Fine needle aspiration:';
+			}
+
+			CheckButton.summary_breast_summary_patient_information_prior_procedure_fine_needle_aspiration_yes {
+				row: 3;
+				column: 1;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_patient_information_prior_procedure_fine_needle_aspiration;
+				font-description: 'Liberation Sans 9';
+				label: 'Yes';
+			}
+
+			CheckButton.summary_breast_summary_patient_information_prior_procedure_fine_needle_aspirationy_no {
+				row: 3;
+				column: 2;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_patient_information_prior_procedure_fine_needle_aspiration;
+				font-description: 'Liberation Sans 9';
+				label: 'No';
+			}
+
+			Label.summary_breast_summary_patient_information_prior_procedure_date_last_procedure_label {
+				row: 4;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'Date of last procedure:';
+			}
+
+			Label.summary_breast_summary_patient_information_prior_procedure_date_last_procedure {
+				row: 4;
+				column: 1
+				columns: 2;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: '';
+			}
+		}
+
+		Grid.summary_breast_summary_patient_information_menstrual_status {
+			row: 1;
+			column: 1;
+			xfill: false;
+			xalign: 0.0;
+			yexpand: false;
+			row-spacing: 5;
+
+			ToggleGroup.summary_breast_summary_patient_information_menstrual_status_lactating {
+			}
+			ToggleGroup.summary_breast_summary_patient_information_menstrual_status_prior_pregancy {
+			}
+			ToggleGroup.summary_breast_summary_patient_information_menstrual_status_post_menopausal {
+			}
+			ToggleGroup.summary_breast_summary_patient_information_menstrual_status_hrt {
+			}
+
+			Label.summary_breast_summary_patient_information_menstrual_status_title {
+				columns: 3;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				font-description: 'Liberation Sans 9';
+				text: '<i>Menstrual status</i>';
+			}
+
+			Label.summary_breast_summary_patient_information_menstrual_status_lactating_title {
+				row: 1;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'Lactating:';
+			}
+
+			CheckButton.summary_breast_summary_patient_information_menstrual_status_lactating_yes {
+				row: 1;
+				column: 1;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_patient_information_menstrual_status_lactating;
+				font-description: 'Liberation Sans 9';
+				label: 'Yes';
+			}
+
+			CheckButton.summary_breast_summary_patient_information_menstrual_status_lactating_no {
+				row: 1;
+				column: 2;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_patient_information_menstrual_status_lactating;
+				font-description: 'Liberation Sans 9';
+				label: 'No';
+			}
+
+			Label.summary_breast_summary_patient_information_menstrual_status_prior_pregancy_title {
+				row: 2;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'Prior pregnacy:';
+			}
+
+			CheckButton.summary_breast_summary_patient_information_menstrual_status_prior_pregancy_yes {
+				row: 2;
+				column: 1;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_patient_information_menstrual_status_prior_pregancy;
+				font-description: 'Liberation Sans 9';
+				label: 'Yes';
+			}
+
+			CheckButton.summary_breast_summary_patient_information_menstrual_status_prior_pregancy_no {
+				row: 2;
+				column: 2;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_patient_information_menstrual_status_prior_pregancy;
+				font-description: 'Liberation Sans 9';
+				label: 'No';
+			}
+
+			Label.summary_breast_summary_patient_information_menstrual_status_post_menopausal_title {
+				row: 3;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'Post-menopausal:';
+			}
+
+			CheckButton.summary_breast_summary_patient_information_menstrual_status_post_menopausal_yes {
+				row: 3;
+				column: 1;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_patient_information_menstrual_status_post_menopausal;
+				font-description: 'Liberation Sans 9';
+				label: 'Yes';
+			}
+
+			CheckButton.summary_breast_summary_patient_information_menstrual_status_post_menopausal_no {
+				row: 3;
+				column: 2;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_patient_information_menstrual_status_post_menopausal;
+				font-description: 'Liberation Sans 9';
+				label: 'No';
+			}
+
+			Label.summary_breast_summary_patient_information_menstrual_status_hrt_title {
+				row: 4;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'HRT:';
+			}
+
+			CheckButton.summary_breast_summary_patient_information_menstrual_status_hrt_yes {
+				row: 4;
+				column: 1;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_patient_information_menstrual_status_hrt;
+				font-description: 'Liberation Sans 9';
+				label: 'Yes';
+			}
+
+			CheckButton.summary_breast_summary_patient_information_menstrual_status_hrt_no {
+				row: 4;
+				column: 2;
+				xfill: false;
+				xalign: 0.0;
+				xexpand: false;
+				yexpand: false;
+				left-padding: 5;
+				right-padding: 5;
+				group: summary_breast_summary_patient_information_menstrual_status_hrt;
+				font-description: 'Liberation Sans 9';
+				label: 'No';
+			}
+			
+			Label.summary_breast_summary_patient_information_menstrual_status_pregnant_label {
+				row: 5;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'Pregnant:';
+			}
+
+			Label.summary_breast_summary_patient_information_menstrual_status_pregnant {
+				row: 5;
+				column: 1
+				columns: 2;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: '';
+			}
+
+			Label.summary_breast_summary_patient_information_menstrual_status_lmp_label {
+				row: 6;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: 'LMP:';
+			}
+
+			Label.summary_breast_summary_patient_information_menstrual_status_lmp {
+				row: 6;
+				column: 1
+				columns: 2;
+				xfill: false;
+				xalign: 0.0;
+				yexpand: false;
+				left-padding: 5;
+				font-description: 'Liberation Sans 9';
+				text: '';
+			}
+		}
+	}
+
+	Grid.summary_breast_clinical_history {
+		row: 4;
+		left-padding: 12;
+		row-spacing: 12;
+		yexpand: false;
+
+		Label.summary_breast_clinical_history_title {
+			xfill: false;
+			xexpand: false;
+			yexpand: false;
+			font-description: 'Liberation Sans 14';
+			text: '<u><b>Clinical History</b></u>';
+		}
+
+		Entry.clinical_history_entry {
+			row: 1;
+			yexpand: false;
+			left-padding: 5;
+			font-description: "Liberation Sans 9";
+			lines: 5;
+			underline-width: 0.3;
+		}
+	}
+
+	Grid.summary_breast_comments {
+		row: 5;
+		left-padding: 12;
+		row-spacing: 12;
+		yexpand: false;
+
+		Label.summary_breast_comments_title {
+			xfill: false;
+			xexpand: false;
+			yexpand: false;
+			font-description: 'Liberation Sans 14';
+			text: '<u><b>Comments</b></u>';
+		}
+
+		Entry.comments_entry {
+			row: 1;
+			yexpand: false;
+			left-padding: 5;
+			font-description: "Liberation Sans 9";
+			lines: 5;
+			underline-width: 0.3;
 		}
 	}
 }

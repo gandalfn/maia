@@ -194,6 +194,8 @@ _CONVERSION(`GtkTreeModel*',`Glib::RefPtr< ::Gtk::TreeModel>',`Glib::wrap($3)')
 
 _CONVERSION(`GtkButton*', `::Gtk::Button*',__RP2PD)
 _CONVERSION(`GList*',`Glib::ListHandle< ::Gtk::Button* >',__FL2H_SHALLOW)
+_CONVERSION(`PageFormat',`MaiaPageFormat*',`(MaiaPageFormat)$3')
+_CONVERSION(`MaiaPageFormat*',`PageFormat',`(PageFormat)$3')
 
 _CONV_ENUM(MaiaCore,ParserToken)
 _CONV_ENUM(MaiaCore,TimelineDirection)

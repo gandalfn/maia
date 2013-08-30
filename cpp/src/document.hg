@@ -38,6 +38,9 @@ namespace Maia
                 return Glib::RefPtr<Document> (new Document (pDocument));
             }
 
+            _WRAP_METHOD(static void format_to_size (PageFormat inFormat, double inDpi, Graphic::Size& outSize), maia_page_format_to_size)
+            _WRAP_METHOD(static Glib::RefPtr<Graphic::Region> format_to_region (PageFormat inFormat, double inDpi), maia_page_format_to_region)
+
             _WRAP_METHOD(PageFormat get_format () const, maia_document_get_format)
             _WRAP_METHOD(void set_format (PageFormat inFormat), maia_document_set_format)
 

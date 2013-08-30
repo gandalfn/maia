@@ -203,9 +203,8 @@ public class Maia.Core.List<V> : Collection<V>
      */
     internal override bool
     contains (V inValue)
-        requires (m_Size > 0)
     {
-        return get_node (inValue) != null;
+        return m_Size > 0 && get_node (inValue) != null;
     }
 
     /**

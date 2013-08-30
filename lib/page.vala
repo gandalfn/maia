@@ -151,8 +151,9 @@ internal class Maia.Page : GLib.Object
     public void
     add (Item inItem)
     {
-        if (inItem != header && inItem != footer)
+        if (inItem != header && inItem != footer && !(inItem in m_Childs))
         {
+            print ("Add item %s in %u\n", inItem.name, num);
             // Insert child in list
             m_Childs.insert (inItem);
         }
