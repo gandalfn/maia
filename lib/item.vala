@@ -211,9 +211,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     public Graphic.Pattern stroke_pattern       { get; set; default = null; }
     public Graphic.Pattern background_pattern   { get; set; default = null; }
     public double          line_width           { get; set; default = 1.0; }
-    public bool            can_break_page       { get; set; default = false; }
-
-    internal double        page_break_padding   { get; set; default = 0.0; }
 
     // signals
     public signal bool grab_pointer (Item inItem);
@@ -330,7 +327,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         not_dumpable_attributes.insert ("damaged");
         not_dumpable_attributes.insert ("is-packable");
         not_dumpable_attributes.insert ("size-requested");
-        not_dumpable_attributes.insert ("page-break-padding");
+        not_dumpable_attributes.insert ("page-break-position");
 
         // check if object is packable
         m_IsPackable = this is ItemPackable;

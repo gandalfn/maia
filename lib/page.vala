@@ -153,34 +153,25 @@ internal class Maia.Page : GLib.Object
     {
         if (inItem != header && inItem != footer && !(inItem in m_Childs))
         {
-            print ("Add item %s in %u\n", inItem.name, num);
             // Insert child in list
             m_Childs.insert (inItem);
         }
     }
 
     public void
-    remove (Maia.Item inItem)
-    {
-        if (inItem != header && inItem != footer)
-        {
-            m_Childs.remove (inItem);
-        }
-    }
-
-    public void
     damage (Graphic.Region inArea)
     {
-        inArea.translate (geometry.extents.origin.invert ());
+        var area = inArea.copy ();
+        area.translate (geometry.extents.origin.invert ());
 
         foreach (unowned Item child in m_Childs)
         {
             if (child.geometry != null)
             {
-                var area = inArea.copy ();
-                area.intersect (child.geometry);
-                area.translate (child.geometry.extents.origin.invert ());
-                child.damage (area);
+                var child_area = area.copy ();
+                child_area.intersect (child.geometry);
+                child_area.translate (child.geometry.extents.origin.invert ());
+                child.damage (child_area);
             }
         }
     }
@@ -190,14 +181,17 @@ internal class Maia.Page : GLib.Object
     {
         foreach (unowned Item child in m_Childs)
         {
-            // Get child position and size
-            var item_position = child.position;
-            var item_size     = child.size;
+            if (child.geometry == null)
+            {
+                // Get child position and size
+                var item_position = child.position;
+                var item_size     = child.size;
 
-            // Set child size allocation
-            var child_allocation = new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y, item_size.width, item_size.height));
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Update page %u item %s", num, child.name);
-            child.update (inContext, child_allocation);
+                // Set child size allocation
+                var child_allocation = new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y, item_size.width, item_size.height));
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Update page %u item %s", num, child.name);
+                child.update (inContext, child_allocation);
+            }
         }
     }
 
@@ -206,42 +200,46 @@ internal class Maia.Page : GLib.Object
     {
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, "Draw page %u", num);
 
-        if (header != null)
+        inContext.save ();
         {
-            inContext.save ();
+            if (header != null)
             {
-                var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
-                                              geometry.extents.origin.y + Core.convert_inch_to_pixel (m_Document.top_margin));
+                inContext.save ();
+                {
+                    var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
+                                                  geometry.extents.origin.y + Core.convert_inch_to_pixel (m_Document.top_margin));
 
-                header.geometry.translate (header.geometry.extents.origin.invert ());
-                header.geometry.translate (position);
+                    header.geometry.translate (header.geometry.extents.origin.invert ());
+                    header.geometry.translate (position);
 
-                header.draw (inContext);
+                    header.draw (inContext);
+                }
+                inContext.restore ();
             }
-            inContext.restore ();
-        }
 
-        if (footer != null)
-        {
-            inContext.save ();
+            if (footer != null)
             {
-                var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
-                                              geometry.extents.origin.y + geometry.extents.size.height  -
-                                              Core.convert_inch_to_pixel (m_Document.bottom_margin) -
-                                              footer.geometry.extents.size.height);
+                inContext.save ();
+                {
+                    var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
+                                                  geometry.extents.origin.y + geometry.extents.size.height  -
+                                                  Core.convert_inch_to_pixel (m_Document.bottom_margin) -
+                                                  footer.geometry.extents.size.height);
 
-                footer.geometry.translate (footer.geometry.extents.origin.invert ());
-                footer.geometry.translate (position);
+                    footer.geometry.translate (footer.geometry.extents.origin.invert ());
+                    footer.geometry.translate (position);
 
-                footer.draw (inContext);
+                    footer.draw (inContext);
+                }
+                inContext.restore ();
             }
-            inContext.restore ();
-        }
 
-        foreach (unowned Item item in m_Childs)
-        {
-            item.draw (inContext);
+            foreach (unowned Item item in m_Childs)
+            {
+                item.draw (inContext);
+            }
         }
+        inContext.restore ();
     }
 
     public bool

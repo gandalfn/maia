@@ -7514,21 +7514,6 @@
   )
 )
 
-(define-method get_can_break_page
-  (of-object "MaiaItem")
-  (c-name "maia_item_get_can_break_page")
-  (return-type "gboolean")
-)
-
-(define-method set_can_break_page
-  (of-object "MaiaItem")
-  (c-name "maia_item_set_can_break_page")
-  (return-type "none")
-  (parameters
-    '("gboolean" "value")
-  )
-)
-
 (define-function maia_item_packable_get_type
   (c-name "maia_item_packable_get_type")
   (return-type "GType")

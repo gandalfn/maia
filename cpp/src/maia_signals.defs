@@ -2136,24 +2136,6 @@
   (construct-only #f)
 )
 
-(define-property can-break-page
-  (of-object "MaiaItem")
-  (prop-type "GParamBoolean")
-  (docs "can-break-page")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
-(define-property page-break-padding
-  (of-object "MaiaItem")
-  (prop-type "GParamDouble")
-  (docs "page-break-padding")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
 ;; From MaiaItemMovable
 
 ;; From MaiaItemPackable

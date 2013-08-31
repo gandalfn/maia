@@ -19,10 +19,35 @@
 
 public class Maia.Document : Item
 {
+    // static
+    internal static GLib.Quark s_PageBreakQuark;
+
+    // types
+    internal class PageBreak : GLib.Object
+    {
+        public unowned Document document;
+        public uint num;
+        public unowned Grid grid;
+        public uint row;
+        public double position;
+        public double padding;
+
+        public PageBreak (Document inDocument, uint inNum, Grid inGrid, uint inRow, double inPosition, double inPadding)
+        {
+            document = inDocument;
+            num = inNum;
+            grid = inGrid;
+            row = inRow;
+            position = inPosition;
+            padding = inPadding;
+        }
+    }
+
     // properties
-    private Graphic.Surface         m_PageShadow;
-    private Core.List<Page>         m_Pages;
-    private Core.List<unowned Page> m_VisiblePages;
+    private Graphic.Surface              m_PageShadow;
+    private Core.List<Page>              m_Pages;
+    private Core.List<unowned Page>      m_VisiblePages;
+    private Core.List<unowned PageBreak> m_PageBreaks;
 
     // accessors
     internal override string tag {
@@ -60,6 +85,8 @@ public class Maia.Document : Item
     // static methods
     static construct
     {
+        s_PageBreakQuark = GLib.Quark.from_string ("MaiaDocumentPageBreakQuark");
+
         Manifest.Attribute.register_transform_func (typeof (PageFormat), attribute_to_page_format);
 
         GLib.Value.register_transform_func (typeof (PageFormat), typeof (string), page_format_to_string);
@@ -85,13 +112,15 @@ public class Maia.Document : Item
     {
         // Add not dumpable attributes
         not_dumpable_attributes.insert ("nb-pages");
-        not_dumpable_attributes.insert ("page_size");
 
         // create pages list
         m_Pages = new Core.List<Page> ();
 
         // create visible pages list
         m_VisiblePages = new Core.List<unowned Page> ();
+
+        // create page break list
+        m_PageBreaks = new Core.List<unowned PageBreak> ();
 
         // connect onto border width and format change to create page shadow
         notify["format"].connect (on_page_shadow_change);
@@ -110,6 +139,64 @@ public class Maia.Document : Item
     {
         m_Pages.clear ();
         m_VisiblePages.clear ();
+    }
+
+    private void
+    add_page_break (PageBreak inPageBreak)
+    {
+        // try to get the list of break page in grid
+        unowned Core.List<PageBreak>? list = inPageBreak.grid.get_qdata<unowned Core.List<PageBreak>?> (s_PageBreakQuark);
+
+        // no page break create it
+        if (list == null)
+        {
+            // Create the new list of page break for this grid
+            Core.List<PageBreak>* new_list = new Core.List<PageBreak> ();
+
+            // Set floating property with this list
+            inPageBreak.grid.set_qdata_full (s_PageBreakQuark, new_list, (p) => {
+                // The grid object has been destroyed remove all page break in document
+                unowned Core.List<PageBreak>? l = (Core.List<PageBreak>)p;
+                foreach (unowned PageBreak page_break in l)
+                {
+                    page_break.document.m_PageBreaks.remove (page_break);
+                }
+
+                // And finally delete the list
+                unowned Core.List<PageBreak>* ptr = (Core.List<PageBreak>*)p;
+                delete ptr;
+            });
+
+            // Set list from new list
+            list = (Core.List<PageBreak>?)new_list;
+        }
+
+        // insert page break in grid list
+        list.insert (inPageBreak);
+
+        // insert page in document page break
+        m_PageBreaks.insert (inPageBreak);
+    }
+
+    private void
+    clear_page_breaks ()
+    {
+        Core.Set<unowned Grid> grids = new Core.Set<unowned Grid> ();
+
+        // Parse all page_break and get grid
+        foreach (unowned PageBreak page_break in m_PageBreaks)
+        {
+            grids.insert (page_break.grid);
+        }
+
+        // Remove floating property foreach grid
+        foreach (unowned Grid grid in grids)
+        {
+            grid.set_qdata (s_PageBreakQuark, null);
+        }
+
+        // Finally clear page break list
+        m_PageBreaks.clear ();
     }
 
     private void
@@ -214,7 +301,6 @@ public class Maia.Document : Item
                     // Check if item can be added in new
                     if (item_size.height <= page_content.extents.size.height)
                     {
-                        print ("break page for %s\n", item.name);
                         // Item can be added in new page
                         append_page  ();
 
@@ -225,8 +311,13 @@ public class Maia.Document : Item
                         var old_pos = inoutCurrentPosition;
                         inoutCurrentPosition = inoutPage.content_geometry.extents.origin;
 
-                        // Add page break size to top_padding of item
-                        item.page_break_padding = inoutCurrentPosition.y - old_pos.y;
+                        // Add page break
+                        PageBreak page_break = new PageBreak (this,
+                                                              inoutPage.num,
+                                                              item.parent as Grid, item.row,
+                                                              inoutCurrentPosition.y,
+                                                              inoutCurrentPosition.y - old_pos.y);
+                        add_page_break (page_break);
                     }
                     else if (inItem is Grid)
                     {
@@ -250,6 +341,11 @@ public class Maia.Document : Item
             // Add root item to this page
             inoutPage.add (inRoot);
 
+            if (inRoot.position.x== 0 && inRoot.position.y == 0)
+            {
+                inRoot.position = inoutCurrentPosition;
+            }
+
             // Add the height of item to current position
             inoutCurrentPosition.y += item_size.height;
         }
@@ -272,8 +368,6 @@ public class Maia.Document : Item
             var page_content = page.content_geometry;
             if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
             {
-                print ("Item %s does not fit add page\n", inItem.name);
-
                 // Append a new page
                 append_page  ();
 
@@ -290,6 +384,7 @@ public class Maia.Document : Item
                     if (inItem is Grid)
                     {
                         add_item_in_page = false;
+                        inItem.position = Graphic.Point (0, 0);
 
                         foreach (unowned Core.Object child in inItem)
                         {
@@ -309,8 +404,6 @@ public class Maia.Document : Item
 
             if (add_item_in_page)
             {
-                print ("Add item %s in page\n", inItem.name);
-
                 // Add item to this page
                 page.add (inItem);
 
@@ -339,6 +432,9 @@ public class Maia.Document : Item
 
         // Clear visible page list
         m_VisiblePages.clear ();
+
+        // Clear page breaks
+        clear_page_breaks ();
 
         // Add first page
         append_page ();
@@ -589,14 +685,39 @@ public class Maia.Document : Item
                     {
                         page.header.damage ();
                     }
-                    else if (page.header.damaged != null)
+                    else if (page.header.damaged != null && !page.header.damaged.is_empty ())
                     {
                         header_damaged = true;
                     }
                 }
 
+                foreach (unowned PageBreak page_break in m_PageBreaks)
+                {
+                    if (page_break.num == page.num && (page_break.grid.damaged == null || page_break.grid.damaged.is_empty ()))
+                    {
+                        Graphic.Point start_root, end_root;
+                        start_root = page_break.grid.convert_to_root_space(Graphic.Point (0, 0));
+                        end_root = page_break.grid.convert_to_root_space(Graphic.Point (page_break.grid.geometry.extents.size.width,
+                                                                                        page_break.grid.geometry.extents.size.height));
+                        Graphic.Point offset = convert_to_root_space (Graphic.Point (0, page_break.position));
+
+                        end_root.y -= offset.y - start_root.y;
+                        start_root.y = offset.y;
+
+                        Graphic.Point start = page_break.grid.convert_to_item_space(start_root);
+                        Graphic.Point end = page_break.grid.convert_to_item_space(end_root);
+
+                        var damage_area = new Graphic.Region (Graphic.Rectangle (start.x, start.y, end.x - start.x, end.y - start.x));
+
+                        page_break.grid.damage (damage_area);
+
+                        break;
+                    }
+                }
+
                 var offset = position;
                 inContext.translate (offset.invert ());
+
                 page.draw (inContext);
             }
             inContext.restore ();

@@ -161,6 +161,9 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         {
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s size allocation : %s", grid.name, inAllocation.extents.to_string ());
 
+            // Get page break list
+            unowned Core.List<Document.PageBreak>? page_breaks = grid.get_qdata<Core.List<Document.PageBreak>> (Document.s_PageBreakQuark);
+
             // Get natural size
             Graphic.Size natural = Graphic.Size (0, 0);
 
@@ -213,6 +216,33 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         {
                             allocation.size.height = item_size.height;
                             allocation.origin.y += (child_allocations[item.row, item.column].size.height - item_size.height) * item.yalign;
+                        }
+
+                        if (page_breaks != null)
+                        {
+                            // Parse all page break for this grid in reverse order
+                            var iter = page_breaks.end ();
+                            unowned Document.PageBreak? page_break = null;
+                            while ((page_break = iter.get ()) != null)
+                            {
+                                // the item row is in or after page break row set position
+                                if (item.row >= page_break.row)
+                                {
+                                    Graphic.Point pos = Graphic.Point (0, page_break.position);
+                                    Graphic.Point final = grid.convert_to_item_space (pos);
+
+                                    if (item.row == page_break.row)
+                                    {
+                                        allocation.origin.y = final.y;
+                                    }
+                                    else
+                                    {
+                                        double delta = final.y - child_allocations[page_break.row, item.column].origin.y;
+                                        allocation.origin.y += delta;
+                                    }
+                                }
+                                if (!iter.prev ()) break;
+                            }
                         }
 
                         // suppress padding from item allocation
@@ -375,6 +405,31 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
                         Graphic.Size item_size = item.size_requested;
 
+                        if (page_breaks != null)
+                        {
+                            var iter = page_breaks.end ();
+                            unowned Document.PageBreak? page_break = null;
+                            while ((page_break = iter.get ()) != null)
+                            {
+                                if (item.row >= page_break.row)
+                                {
+                                    Graphic.Point pos = Graphic.Point (0, page_break.position);
+                                    Graphic.Point final = grid.convert_to_item_space (pos);
+
+                                    if (item.row == page_break.row)
+                                    {
+                                        allocation.origin.y = final.y;
+                                    }
+                                    else
+                                    {
+                                        double delta = final.y - child_allocations[page_break.row, item.column].origin.y;
+                                        allocation.origin.y += delta;
+                                    }
+                                }
+                                if (!iter.prev ()) break;
+                            }
+                        }
+
                         if (item.xfill)
                         {
                             allocation.size.width = area.size.width - item.left_padding - item.right_padding;
@@ -406,8 +461,6 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                             allocation.size.height = item_size.height;
                             allocation.origin.y += item.top_padding;
                         }
-
-                        allocation.origin.y += item.page_break_padding;
 
                         // update item
                         Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "update %s: %s", item.name, allocation.to_string ());
@@ -480,7 +533,22 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         {
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, name);
 
-            geometry = inAllocation;
+            unowned Core.List<Document.PageBreak>? page_breaks = get_qdata<unowned Core.List<Document.PageBreak>> (Document.s_PageBreakQuark);
+            if (page_breaks != null)
+            {
+                var s = inAllocation.extents.size;
+                foreach (unowned Document.PageBreak page_break in page_breaks)
+                {
+                    s.resize (0, page_break.padding);
+                }
+                var alloc = inAllocation.copy ();
+                alloc.resize (s);
+                geometry = alloc;
+            }
+            else
+            {
+                geometry = inAllocation;
+            }
 
             if (m_Allocation.grid == null)
             {
