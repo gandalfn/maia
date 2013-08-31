@@ -47,6 +47,10 @@ namespace Maia
                 _WRAP_METHOD(double get_angle () const, maia_gtk_shortcut_get_angle)
                 _WRAP_METHOD(void set_angle (double inAngle), maia_gtk_shortcut_set_angle)
                 _WRAP_METHOD(::Gtk::Button* get_button () const, maia_gtk_shortcut_get_button)
+
+                _WRAP_PROPERTY("icon-name", Glib::ustring)
+                _WRAP_PROPERTY("angle", double)
+                _WRAP_PROPERTY("button", ::Gtk::Button*)
         };
     }
 }

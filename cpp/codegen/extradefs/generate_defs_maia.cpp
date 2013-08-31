@@ -72,6 +72,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_TOGGLE_BUTTON);
     std::cout << get_defs (MAIA_TYPE_TOGGLE_GROUP);
     std::cout << get_defs (MAIA_TYPE_VIEW);
+    std::cout << get_defs (MAIA_TYPE_SHORTCUT);
 
     return 0;
 }

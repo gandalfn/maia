@@ -22,6 +22,7 @@
 #include <maia-gtk.h>
 #include <maiamm/canvas.h>
 #include <maiamm/drawable.h>
+#include <maiamm/graphic-surface.h>
 #include <maia-gtkmm/canvas.h>
 
 _DEFS(maia-gtkmm,maia-gtk)
@@ -41,6 +42,21 @@ namespace Maia
                 _CTOR_DEFAULT
 
                 _WRAP_METHOD(Glib::ListHandle< ::Gtk::Button* > get_shortcut_buttons (), maia_gtk_canvas_get_shortcut_buttons)
+
+            private:
+                _WRAP_SIGNAL(void on_set_scroll_adjustments (::Gtk::Adjustment* inpHAdjust, ::Gtk::Adjustment* inpVAdjust), "on-set-scroll-adjustments")
+
+                _WRAP_PROPERTY("root", Glib::RefPtr<Item>)
+                _WRAP_PROPERTY("surface", Glib::RefPtr<Graphic::Surface>)
+                _WRAP_PROPERTY("scroll_x", double)
+                _WRAP_PROPERTY("scroll_y", double)
+                _WRAP_PROPERTY("timeline", Glib::RefPtr<Core::Timeline>)
+                _WRAP_PROPERTY("damaged", Glib::RefPtr<Graphic::Region>)
+                _WRAP_PROPERTY("geometry", Glib::RefPtr<Graphic::Region>)
+                _WRAP_PROPERTY("transform", Glib::RefPtr<Graphic::Transform>)
+                _WRAP_PROPERTY("focus-item", Glib::RefPtr<Item>)
+                _WRAP_PROPERTY("grab-pointer-item", Glib::RefPtr<Item>)
+                _WRAP_PROPERTY("grab-keyboard-item", Glib::RefPtr<Item>)
         };
     }
 }

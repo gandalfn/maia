@@ -193,6 +193,8 @@ _CONVERSION(`GtkTreeModel*',`const Glib::RefPtr< ::Gtk::TreeModel>&',`Glib::wrap
 _CONVERSION(`GtkTreeModel*',`Glib::RefPtr< ::Gtk::TreeModel>',`Glib::wrap($3)')
 
 _CONVERSION(`GtkButton*', `::Gtk::Button*',__RP2PD)
+_CONVERSION(`::Gtk::Adjustment*', `GtkAdjustment*',$3->gobj ())
+_CONVERSION(`GtkAdjustment*', `::Gtk::Adjustment*',__RP2PD)
 _CONVERSION(`GList*',`Glib::ListHandle< ::Gtk::Button* >',__FL2H_SHALLOW)
 _CONVERSION(`PageFormat',`MaiaPageFormat*',`(MaiaPageFormat)$3')
 _CONVERSION(`MaiaPageFormat*',`PageFormat',`(PageFormat)$3')

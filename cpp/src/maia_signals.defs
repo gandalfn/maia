@@ -2936,3 +2936,41 @@
   (construct-only #f)
 )
 
+;; From MaiaShortcut
+
+(define-property tag
+  (of-object "MaiaShortcut")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property characters
+  (of-object "MaiaShortcut")
+  (prop-type "GParamString")
+  (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property section
+  (of-object "MaiaShortcut")
+  (prop-type "GParamString")
+  (docs "section")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property label
+  (of-object "MaiaShortcut")
+  (prop-type "GParamString")
+  (docs "label")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+

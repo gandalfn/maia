@@ -45,5 +45,10 @@ namespace Maia
             _WRAP_METHOD(void set_label (const Glib::ustring& inLabel), maia_shortcut_set_label)
 
             _WRAP_METHOD(void activate (), maia_shortcut_activate)
+
+            _WRAP_PROPERTY("tag", Glib::ustring)
+            _WRAP_PROPERTY("characters", Glib::ustring)
+            _WRAP_PROPERTY("section", Glib::ustring)
+            _WRAP_PROPERTY("label", Glib::ustring)
     };
 }
