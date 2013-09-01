@@ -32,7 +32,11 @@ namespace Maia
     {
         _CLASS_GOBJECT(View, MaiaView, MAIA_VIEW, Grid, MaiaGrid)
 
+        _IGNORE(maia_view_set_property_func)
+
         public:
+            typedef sigc::slot<bool, Glib::RefPtr<Glib::Object>, Glib::ustring, Glib::ustring, unsigned int> SlotSetProperty;
+
             static Glib::RefPtr<View> create (const Glib::ustring& inId)
             {
                 MaiaView* pView = maia_view_new (inId.c_str());
@@ -52,6 +56,8 @@ namespace Maia
             {
                 return get_item (inRow);
             }
+
+            void set_property_func (SlotSetProperty inSplot);
 
             _WRAP_PROPERTY("lines", guint)
             _WRAP_PROPERTY("orientation", Orientation)

@@ -199,6 +199,11 @@ _CONVERSION(`GList*',`Glib::ListHandle< ::Gtk::Button* >',__FL2H_SHALLOW)
 _CONVERSION(`PageFormat',`MaiaPageFormat*',`(MaiaPageFormat)$3')
 _CONVERSION(`MaiaPageFormat*',`PageFormat',`(PageFormat)$3')
 
+_CONVERSION(`GtkTreePath*',`::Gtk::TreePath', `::Gtk::TreePath($3, false)')
+_CONVERSION(`::Gtk::TreePath',`GtkTreePath*',__FR2P)
+_CONVERSION(`::Gtk::TreeIter&',`GtkTreeIter*',__FR2P)
+_CONVERSION(`const ::Gtk::TreeIter&',`GtkTreeIter*',__FCR2P)
+
 _CONV_ENUM(MaiaCore,ParserToken)
 _CONV_ENUM(MaiaCore,TimelineDirection)
 _CONV_ENUM(MaiaCore,AnimatorProgressType)

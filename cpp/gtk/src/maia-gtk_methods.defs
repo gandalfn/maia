@@ -144,6 +144,44 @@
   )
 )
 
+(define-method convert_row_to_tree_path
+  (of-object "MaiaGtkModel")
+  (c-name "maia_gtk_model_convert_row_to_tree_path")
+  (return-type "GtkTreePath*")
+  (parameters
+    '("guint" "inRow")
+  )
+)
+
+(define-method convert_tree_path_to_row
+  (of-object "MaiaGtkModel")
+  (c-name "maia_gtk_model_convert_tree_path_to_row")
+  (return-type "guint")
+  (parameters
+    '("GtkTreePath*" "inPath")
+  )
+)
+
+(define-method convert_row_to_tree_iter
+  (of-object "MaiaGtkModel")
+  (c-name "maia_gtk_model_convert_row_to_tree_iter")
+  (return-type "gboolean")
+  (parameters
+    '("guint" "inRow")
+    '("GtkTreeIter*" "outIter")
+  )
+)
+
+(define-method convert_tree_iter_to_row
+  (of-object "MaiaGtkModel")
+  (c-name "maia_gtk_model_convert_tree_iter_to_row")
+  (return-type "gboolean")
+  (parameters
+    '("GtkTreeIter*" "inIter")
+    '("guint*" "outRow")
+  )
+)
+
 (define-method get_treemodel
   (of-object "MaiaGtkModel")
   (c-name "maia_gtk_model_get_treemodel")

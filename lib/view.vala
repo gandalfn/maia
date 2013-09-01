@@ -19,8 +19,12 @@
 
 public class Maia.View : Maia.Grid
 {
+    // delegates
+    public delegate bool SetPropertyFunc (GLib.Object inObject, string inProperty, string inColumnName, uint inRow);
+
     // properties
     private unowned Model m_Model = null;
+    private SetPropertyFunc m_SetPropertyFunc = null;
 
     // accessors
     internal override string tag {
@@ -77,17 +81,22 @@ public class Maia.View : Maia.Grid
             else
                 row_num = (item.row * view.lines) + item.column;
 
-            // search the associated column
-            unowned Model.Column? column = model[inAttribute.get ()];
-            if (column != null)
+            string column_name = inAttribute.get ();
+            if (view.m_SetPropertyFunc == null ||
+                !view.m_SetPropertyFunc (inAttribute.owner, inProperty, column_name, row_num))
             {
-                // Set value of property
-                inAttribute.owner.set_property (inProperty, column[row_num]);
-            }
-            else
-            {
-                Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_ATTRIBUTE,
-                              "Error on bind %s invalid %s column name", inProperty, inAttribute.get ());
+                // search the associated column
+                unowned Model.Column? column = model[column_name];
+                if (column != null)
+                {
+                    // Set value of property
+                    inAttribute.owner.set_property (inProperty, column[row_num]);
+                }
+                else
+                {
+                    Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_ATTRIBUTE,
+                                  "Error on bind %s invalid %s column name", inProperty, inAttribute.get ());
+                }
             }
         }
     }
@@ -289,6 +298,12 @@ public class Maia.View : Maia.Grid
         }
 
         geometry = null;
+    }
+
+    public void
+    set_property_func (owned SetPropertyFunc? inFunc)
+    {
+        m_SetPropertyFunc = (owned)inFunc;
     }
 
     public unowned ItemPackable?

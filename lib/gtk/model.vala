@@ -85,8 +85,8 @@ public class Maia.Gtk.Model : Maia.Model
     {
         if (inPath.get_depth () == 1 && inPath.get_indices () != null)
         {
-            uint path = (uint)inPath.get_indices()[0];
-            row_added (path);
+            uint row = convert_tree_path_to_row (inPath);
+            row_added (row);
         }
     }
 
@@ -95,8 +95,8 @@ public class Maia.Gtk.Model : Maia.Model
     {
         if (inPath.get_depth () == 1 && inPath.get_indices () != null)
         {
-            uint path = (uint)inPath.get_indices()[0];
-            row_changed (path);
+            uint row = convert_tree_path_to_row (inPath);
+            row_changed (row);
         }
     }
 
@@ -105,8 +105,8 @@ public class Maia.Gtk.Model : Maia.Model
     {
         if (inPath.get_depth () == 1 && inPath.get_indices () != null)
         {
-            uint path = (uint)inPath.get_indices()[0];
-            row_deleted (path);
+            uint row = convert_tree_path_to_row (inPath);
+            row_deleted (row);
         }
     }
 
@@ -134,5 +134,55 @@ public class Maia.Gtk.Model : Maia.Model
         on_row_inserted (inPath, inIter);
 
         return false;
+    }
+
+    public global::Gtk.TreePath
+    convert_row_to_tree_path (uint inRow)
+    {
+        return new global::Gtk.TreePath.from_string (@"$inRow");
+    }
+
+    public uint
+    convert_tree_path_to_row (global::Gtk.TreePath inPath)
+    {
+        uint row = 0;
+
+        if (inPath.get_depth () == 1 && inPath.get_indices () != null)
+        {
+            row = (uint)inPath.get_indices()[0];
+        }
+
+        return row;
+    }
+
+    public bool
+    convert_row_to_tree_iter (uint inRow, out global::Gtk.TreeIter outIter)
+    {
+        bool ret = false;
+        outIter = global::Gtk.TreeIter ();
+
+        if (m_TreeModel != null)
+        {
+            global::Gtk.TreePath path = convert_row_to_tree_path (inRow);
+            ret = m_TreeModel.get_iter (out outIter, path);
+        }
+
+        return ret;
+    }
+
+    public bool
+    convert_tree_iter_to_row (global::Gtk.TreeIter inIter, out uint outRow)
+    {
+        bool ret = false;
+        outRow = 0;
+
+        if (m_TreeModel != null)
+        {
+            global::Gtk.TreePath? path = m_TreeModel.get_path (inIter);
+            outRow = convert_tree_path_to_row (path);
+            ret = true;
+        }
+
+        return ret;
     }
 }

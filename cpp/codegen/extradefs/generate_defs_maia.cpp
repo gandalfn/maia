@@ -4,7 +4,9 @@
 
 int main (int argc, char** argv)
 {
+#if GLIB_VERSION_CUR_STABLE < GLIB_VERSION_2_36
     g_type_init ();
+#endif
 
     std::cout << get_defs (MAIA_CORE_TYPE_ANY);
     std::cout << get_defs (MAIA_CORE_TYPE_OBJECT);

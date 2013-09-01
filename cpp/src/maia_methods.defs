@@ -8748,6 +8748,17 @@
   )
 )
 
+(define-method set_property_func
+  (of-object "MaiaView")
+  (c-name "maia_view_set_property_func")
+  (return-type "none")
+  (parameters
+    '("MaiaViewSetPropertyFunc" "inFunc")
+    '("void*" "inFunc_target")
+    '("GDestroyNotify" "inFunc_target_destroy_notify")
+  )
+)
+
 (define-method get_item
   (of-object "MaiaView")
   (c-name "maia_view_get_item")
