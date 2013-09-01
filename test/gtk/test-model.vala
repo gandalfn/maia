@@ -24,6 +24,7 @@ public class Maia.TestModel : Maia.TestCase
         base ("model");
 
         add_test ("create", test_model_create);
+        add_test ("convert", test_model_convert);
         add_test ("view", test_model_view);
     }
 
@@ -93,6 +94,79 @@ public class Maia.TestModel : Maia.TestCase
 
                 assert (name_list == name_model);
                 assert (val_list == val_model);
+            } while (list.iter_next(ref iter));
+        }
+    }
+
+    public void
+    test_model_convert ()
+    {
+        string manifest =   "Document.root {" +
+                            "   Model.model {" +
+                            "       Column.name {" +
+                            "           column: 0;" +
+                            "       }" +
+                            "       Column.val {" +
+                            "           column: 1;" +
+                            "       }" +
+                            "   }" +
+                            "}";
+
+        Maia.Gtk.Canvas canvas = new Maia.Gtk.Canvas ();
+        try
+        {
+            canvas.load (manifest, "root");
+        }
+        catch (Core.ParseError err)
+        {
+            Test.message (err.message);
+            assert (false);
+        }
+        assert (canvas.root != null);
+
+        global::Gtk.ListStore list = new global::Gtk.ListStore (2, typeof (string), typeof (int));
+        for (int cpt = 0; cpt < 10; ++cpt)
+        {
+            global::Gtk.TreeIter iter;
+            list.append (out iter);
+
+            list.set (iter, 0, "%i".printf (Test.rand_int_range (0, 200)), 1, Test.rand_int_range (0, 200));
+        }
+
+        unowned Gtk.Model? model = canvas.root.find (GLib.Quark.from_string ("model")) as Gtk.Model;
+        assert (model != null);
+
+        unowned Gtk.Model.Column column_name = canvas.root.find (GLib.Quark.from_string ("name")) as Gtk.Model.Column;
+        assert (column_name != null);
+
+        unowned Gtk.Model.Column column_val = canvas.root.find (GLib.Quark.from_string ("val")) as Gtk.Model.Column;
+        assert (column_val != null);
+
+        model.treemodel = list;
+
+        int cpt = 0;
+        global::Gtk.TreeIter iter;
+        if (list.get_iter_first(out iter))
+        {
+            do
+            {
+                var path = list.get_path (iter);
+                var path_convert = model.convert_row_to_tree_path (cpt);
+                assert (path.compare (path_convert) == 0);
+
+                uint row_convert = model.convert_tree_path_to_row (path);
+                assert (cpt == row_convert);
+
+                global::Gtk.TreeIter iter_convert;
+                assert (model.convert_row_to_tree_iter (cpt, out iter_convert));
+                path_convert = list.get_path (iter_convert);
+                assert (path_convert != null);
+                assert (path.compare (path_convert) == 0);
+
+                assert (model.convert_tree_iter_to_row (iter, out row_convert));
+                assert (cpt == row_convert);
+
+                cpt++;
             } while (list.iter_next(ref iter));
         }
     }
