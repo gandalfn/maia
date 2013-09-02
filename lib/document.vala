@@ -29,17 +29,17 @@ public class Maia.Document : Item
         public uint num;
         public unowned Grid grid;
         public uint row;
-        public double position;
-        public double padding;
+        public double start;
+        public double end;
 
-        public PageBreak (Document inDocument, uint inNum, Grid inGrid, uint inRow, double inPosition, double inPadding)
+        public PageBreak (Document inDocument, uint inNum, Grid inGrid, uint inRow, double inEnd, double inStart)
         {
             document = inDocument;
             num = inNum;
             grid = inGrid;
             row = inRow;
-            position = inPosition;
-            padding = inPadding;
+            start = inStart;
+            end = inEnd;
         }
     }
 
@@ -308,15 +308,18 @@ public class Maia.Document : Item
                         inoutPage = m_Pages.last ();
 
                         // Update current position
-                        var old_pos = inoutCurrentPosition;
+                        var start = convert_to_root_space (inoutCurrentPosition);
                         inoutCurrentPosition = inoutPage.content_geometry.extents.origin;
+
+                        // Convert positions to root space
+                        var end = convert_to_root_space (inoutCurrentPosition);
 
                         // Add page break
                         PageBreak page_break = new PageBreak (this,
                                                               inoutPage.num,
                                                               item.parent as Grid, item.row,
-                                                              inoutCurrentPosition.y,
-                                                              inoutCurrentPosition.y - old_pos.y);
+                                                              end.y,
+                                                              start.y);
                         add_page_break (page_break);
                     }
                     else if (inItem is Grid)
@@ -699,10 +702,10 @@ public class Maia.Document : Item
                         start_root = page_break.grid.convert_to_root_space(Graphic.Point (0, 0));
                         end_root = page_break.grid.convert_to_root_space(Graphic.Point (page_break.grid.geometry.extents.size.width,
                                                                                         page_break.grid.geometry.extents.size.height));
-                        Graphic.Point offset = convert_to_root_space (Graphic.Point (0, page_break.position));
+                        Graphic.Point offset = Graphic.Point (0, page_break.end);
 
-                        end_root.y -= offset.y - start_root.y;
                         start_root.y = offset.y;
+
 
                         Graphic.Point start = page_break.grid.convert_to_item_space(start_root);
                         Graphic.Point end = page_break.grid.convert_to_item_space(end_root);

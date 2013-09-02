@@ -4,9 +4,7 @@
 
 int main (int argc, char** argv)
 {
-#if GLIB_VERSION_CUR_STABLE < GLIB_VERSION_2_36
     g_type_init ();
-#endif
 
     std::cout << get_defs (MAIA_GTK_TYPE_CANVAS);
     std::cout << get_defs (MAIA_GTK_TYPE_IMAGE);

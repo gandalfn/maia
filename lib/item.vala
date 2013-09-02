@@ -172,6 +172,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             {
                 m_Transform.changed.connect (on_transform_changed);
             }
+
+            // Update transform matrix
+            m_TransformToItemSpace = get_transform_to_item_space ();
+            m_TransformToRootSpace = get_transform_to_root_space ();
         }
         default = new Graphic.Transform.identity ();
     }
@@ -185,6 +189,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
         set {
             m_Position = value;
+
+            // Update transform matrix
+            m_TransformToItemSpace = get_transform_to_item_space ();
+            m_TransformToRootSpace = get_transform_to_root_space ();
         }
     }
 
@@ -512,7 +520,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         {
             if (item is Item)
             {
-                list.prepend (item as Item);
+                list.append (item as Item);
             }
         }
 
@@ -520,11 +528,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         Graphic.Transform ret = new Graphic.Transform.identity ();
         foreach (unowned Item item in list)
         {
-            Graphic.Point pos = item.origin.invert ();
-            Graphic.Transform item_translate = new Graphic.Transform.identity ();
-            item_translate.translate (pos.x, pos.y);
-            ret.add (item_translate);
-
             try
             {
                 Graphic.Matrix matrix = item.transform.matrix;
@@ -536,6 +539,11 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             {
                 Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Error on calculate transform to item %s space: %s", name, err.message);
             }
+
+            Graphic.Point pos = item.origin.invert ();
+            Graphic.Transform item_translate = new Graphic.Transform.identity ();
+            item_translate.translate (pos.x, pos.y);
+            ret.add (item_translate);
         }
 
         return ret;
@@ -866,7 +874,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         // Transform point to item coordinate space
         Graphic.Point point = inPoint;
-        point.translate (inChild.origin.invert ());
 
         try
         {
@@ -875,6 +882,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             var child_transform = new Graphic.Transform.from_matrix (matrix);
 
             point.transform (child_transform);
+
+            point.translate (inChild.origin.invert ());
         }
         catch (Graphic.Error err)
         {

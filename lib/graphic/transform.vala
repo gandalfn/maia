@@ -303,7 +303,7 @@ public class Maia.Graphic.Transform : Core.Object
     internal override string
     to_string ()
     {
-        return m_BaseMatrix.to_string ();
+        return m_FinalMatrix.to_string ();
     }
 
     internal override int

@@ -228,7 +228,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                 // the item row is in or after page break row set position
                                 if (item.row >= page_break.row)
                                 {
-                                    Graphic.Point pos = Graphic.Point (0, page_break.position);
+                                    Graphic.Point pos = Graphic.Point (0, page_break.end);
                                     Graphic.Point final = grid.convert_to_item_space (pos);
 
                                     if (item.row == page_break.row)
@@ -413,7 +413,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                             {
                                 if (item.row >= page_break.row)
                                 {
-                                    Graphic.Point pos = Graphic.Point (0, page_break.position);
+                                    Graphic.Point pos = Graphic.Point (0, page_break.end);
                                     Graphic.Point final = grid.convert_to_item_space (pos);
 
                                     if (item.row == page_break.row)
@@ -539,7 +539,10 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                 var s = inAllocation.extents.size;
                 foreach (unowned Document.PageBreak page_break in page_breaks)
                 {
-                    s.resize (0, page_break.padding);
+                    var start = convert_to_item_space (Graphic.Point (0, page_break.start));
+                    var end = convert_to_item_space (Graphic.Point (0, page_break.end));
+
+                    s.resize (0, end.y - start.y);
                 }
                 var alloc = inAllocation.copy ();
                 alloc.resize (s);
