@@ -138,6 +138,7 @@ public class Maia.TestCanvas : Maia.TestCase
         add_test ("worksheet", test_canvas_worksheet);
         add_test ("image-data-svg", test_canvas_image_data_svg);
         add_test ("image-background-svg", test_canvas_group_background_svg);
+        add_test ("combo", test_canvas_combo);
     }
 
     public override void
@@ -358,8 +359,6 @@ public class Maia.TestCanvas : Maia.TestCase
         global::Gtk.main ();
     }
 
-
-
     public void
     test_canvas_group_background_svg ()
     {
@@ -403,6 +402,60 @@ public class Maia.TestCanvas : Maia.TestCase
             Test.message (err.message);
             assert (false);
         }
+
+        window.add (canvas);
+
+        global::Gtk.main ();
+    }
+
+    public void
+    test_canvas_combo ()
+    {
+        Maia.Gtk.Canvas canvas = new Maia.Gtk.Canvas ();
+        canvas.show ();
+        try
+        {
+            canvas.load ("Group.root {" +
+                         "  Model.model {" +
+                         "      Column.val {" +
+                         "          column: 0;" +
+                         "      }" +
+                         "  }" +
+                         "  Combo.combo {" +
+                         "      font-description: 'Liberation Sans 14';" +
+                         "      View.view {"+
+                         "          model: model;" +
+                         "          [" +
+                         "              Label.label {" +
+                         "                  xfill: false;" +
+                         "                  xalign: 0.0;" +
+                         "                  yexpand: false;" +
+                         "                  text: @val;" +
+                         "              }" +
+                         "          ]" +
+                         "      }" +
+                         "  }" +
+                         "}", "root");
+        }
+        catch (Core.ParseError err)
+        {
+            Test.message (err.message);
+            assert (false);
+        }
+
+        global::Gtk.ListStore list = new global::Gtk.ListStore (1, typeof (string));
+        for (int cpt = 0; cpt < 10; ++cpt)
+        {
+            global::Gtk.TreeIter iter;
+            list.append (out iter);
+
+            list.set (iter, 0, "Test %i".printf (Test.rand_int_range (0, 200)));
+        }
+
+        unowned Gtk.Model? model = canvas.root.find (GLib.Quark.from_string ("model")) as Gtk.Model;
+        assert (model != null);
+
+        model.treemodel = list;
 
         window.add (canvas);
 

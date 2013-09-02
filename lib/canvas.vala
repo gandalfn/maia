@@ -87,6 +87,7 @@ public interface Maia.Canvas : Drawable
             Manifest.Element.register ("View",        typeof (View));
             Manifest.Element.register ("DrawingArea", typeof (DrawingArea));
             Manifest.Element.register ("Shortcut",    typeof (Shortcut));
+            Manifest.Element.register ("Combo",       typeof (Combo));
 
             s_ElementsRegister = true;
         }

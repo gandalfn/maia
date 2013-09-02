@@ -244,6 +244,12 @@
   (gtype-id "MAIA_TYPE_BUTTON")
 )
 
+(define-object MaiaCombo
+  (parent "MaiaGroup")
+  (c-name "MaiaCombo")
+  (gtype-id "MAIA_TYPE_COMBO")
+)
+
 (define-object MaiaDrawingArea
   (parent "MaiaGroup")
   (c-name "MaiaDrawingArea")
@@ -8960,6 +8966,44 @@
 (define-method set_label
   (of-object "MaiaShortcut")
   (c-name "maia_shortcut_set_label")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-function maia_combo_get_type
+  (c-name "maia_combo_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_combo_new
+  (c-name "maia_combo_new")
+  (is-constructor-of "MaiaCombo")
+  (return-type "MaiaCombo*")
+  (parameters
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-function maia_combo_construct
+  (c-name "maia_combo_construct")
+  (return-type "MaiaCombo*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-method get_font_description
+  (of-object "MaiaCombo")
+  (c-name "maia_combo_get_font_description")
+  (return-type "const-gchar*")
+)
+
+(define-method set_font_description
+  (of-object "MaiaCombo")
+  (c-name "maia_combo_set_font_description")
   (return-type "none")
   (parameters
     '("const-gchar*" "value")
