@@ -20,11 +20,11 @@
 public class Maia.Combo : Group, ItemPackable, ItemMovable
 {
     // properties
-    private bool m_PopupVisible = false;
+    private bool          m_PopupVisible    = false;
     private Core.Animator m_PopupAnimator;
-    private uint m_PopupTransition = 0;
-    private double m_PopupProgress = 1.0;
-    private int m_ActiveRow = -1;
+    private uint          m_PopupTransition = 0;
+    private double        m_PopupProgress   = 1.0;
+    private int           m_ActiveRow       = -1;
 
     // accessors
     internal override string tag {

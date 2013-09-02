@@ -86,7 +86,7 @@ public class Maia.Group : Item
 
                     // Get child position and size
                     var item_position = item.position;
-                    var item_size     = item.size;
+                    var item_size     = item.size_requested;
 
                     // Set child size allocation
                     var child_allocation = new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y, item_size.width, item_size.height));
