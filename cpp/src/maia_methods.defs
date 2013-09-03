@@ -9158,6 +9158,15 @@
   (return-type "gint")
 )
 
+(define-method set_active_row
+  (of-object "MaiaCombo")
+  (c-name "maia_combo_set_active_row")
+  (return-type "none")
+  (parameters
+    '("gint" "value")
+  )
+)
+
 (define-function maia_canvas_get_type
   (c-name "maia_canvas_get_type")
   (return-type "GType")

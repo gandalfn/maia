@@ -3214,7 +3214,7 @@
   (prop-type "GParamInt")
   (docs "active-row")
   (readable #t)
-  (writable #f)
+  (writable #t)
   (construct-only #f)
 )
 

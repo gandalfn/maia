@@ -65,6 +65,18 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
 
             return -1;
         }
+        set {
+            if (m_View != null && value >= 0)
+            {
+                m_Active = m_View.get_item (value);
+            }
+            else
+            {
+                m_Active = null;
+            }
+
+            damage ();
+        }
     }
     // signals
     public signal void changed ();
@@ -118,6 +130,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         {
             m_Active = m_View.get_item (inRow);
             m_Popup.hide ();
+            changed ();
         }
     }
 

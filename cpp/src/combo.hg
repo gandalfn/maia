@@ -45,6 +45,7 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_highlight_color () const, maia_combo_get_highlight_color)
             _WRAP_METHOD(void set_highlight_color (const Glib::RefPtr<Graphic::Color>& inColor), maia_combo_set_highlight_color)
             _WRAP_METHOD(gint get_active_row () const, maia_combo_get_active_row)
+            _WRAP_METHOD(void set_active_row (int inRow), maia_combo_set_active_row)
 
             _WRAP_SIGNAL(void changed(), "changed", no_default_handler)
 
