@@ -25,6 +25,10 @@ public class Maia.View : Maia.Grid
     // properties
     private unowned Model m_Model = null;
     private SetPropertyFunc m_SetPropertyFunc = null;
+    private int m_RowHightlighted = -1;
+
+    // signals
+    public signal void row_clicked (uint inRow);
 
     // accessors
     internal override string tag {
@@ -102,9 +106,52 @@ public class Maia.View : Maia.Grid
     }
 
     // methods
+    construct
+    {
+        notify["item-over-pointer"].connect (on_pointer_over_changed);
+    }
+
     public View (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
+    }
+
+    private void
+    on_pointer_over_changed ()
+    {
+        if (fill_pattern != null)
+        {
+            if (m_RowHightlighted >= 0)
+            {
+                Graphic.Rectangle area;
+
+                if (get_row_area (m_RowHightlighted, out area))
+                {
+                    area.size.width = geometry.extents.size.width;
+                    damage (new Graphic.Region (area));
+                }
+                m_RowHightlighted = -1;
+            }
+
+            if (item_over_pointer != null && item_over_pointer is ItemPackable)
+            {
+                unowned ItemPackable item = item_over_pointer as ItemPackable;
+                uint row;
+                if (get_item_row (item, out row))
+                {
+                    if (m_RowHightlighted != row)
+                    {
+                        m_RowHightlighted = (int)row;
+                        Graphic.Rectangle area;
+                        if (get_row_area (m_RowHightlighted, out area))
+                        {
+                            area.size.width = geometry.extents.size.width;
+                            damage (new Graphic.Region (area));
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void
@@ -119,6 +166,22 @@ public class Maia.View : Maia.Grid
                 inAttribute.bind (m_Model, signal_name, inProperty, on_bind_value_changed);
             }
         }
+    }
+
+    private bool
+    on_item_button_press (Item inItem, uint inButton, Graphic.Point inPoint)
+    {
+        if (inButton == 1)
+        {
+            unowned ItemPackable item = (ItemPackable)inItem;
+            uint row;
+            if (get_item_row (item, out row))
+            {
+                row_clicked (row);
+            }
+        }
+
+        return true;
     }
 
     private ItemPackable?
@@ -239,6 +302,9 @@ public class Maia.View : Maia.Grid
                 item.column = inRow % lines;
             }
             add (item);
+
+            // connect onto cell button press
+            item.button_press_event.connect (on_item_button_press);
         }
         else
         {
@@ -255,6 +321,9 @@ public class Maia.View : Maia.Grid
 
         if (item != null)
         {
+            // disconnect from cell button press
+            item.button_press_event.disconnect (on_item_button_press);
+
             // dettach item
             item.parent = null;
 
@@ -298,6 +367,25 @@ public class Maia.View : Maia.Grid
         }
 
         geometry = null;
+    }
+
+    internal override void
+    paint (Graphic.Context inContext) throws Graphic.Error
+    {
+        if (m_RowHightlighted >= 0 && fill_pattern != null)
+        {
+            Graphic.Rectangle area;
+
+            if (get_row_area (m_RowHightlighted, out area))
+            {
+                area.size.width = geometry.extents.size.width;
+                var path = new Graphic.Path.from_region (new Graphic.Region (area));
+                inContext.pattern = fill_pattern;
+                inContext.fill (path);
+            }
+        }
+
+        base.paint (inContext);
     }
 
     public void

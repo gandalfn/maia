@@ -127,8 +127,8 @@ public class Maia.Popup : Group
 
         Graphic.Size ret = base.size_request (inSize);
 
-        ret.width = double.max (inSize.width, ret.width + (border * 2));
-        ret.height = double.max (inSize.height, ret.height + (border * 2));
+        ret.width = double.max (inSize.width, ret.width + border);
+        ret.height = double.max (inSize.height, ret.height + border);
 
         if (m_Content != null)
         {
@@ -153,6 +153,28 @@ public class Maia.Popup : Group
         }
 
         return ret;
+    }
+
+    internal override void
+    update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
+    {
+        if (geometry == null)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "");
+
+            geometry = inAllocation;
+
+            // Get child position and size
+            var item_position = m_Content.position;
+            var item_size     = inAllocation.extents.size;
+            item_size.resize(-border, 0);
+
+            // Set child size allocation
+            var child_allocation = new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y, item_size.width, item_size.height));
+            m_Content.update (inContext, child_allocation);
+
+            damage ();
+        }
     }
 
     internal override void

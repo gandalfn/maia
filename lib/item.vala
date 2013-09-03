@@ -104,14 +104,16 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         set {
             if (m_Visible != value)
             {
-                if (m_Visible)
+                if (!m_Visible)
                 {
                     m_Visible = value;
+                    geometry = null;
                     repair ();
                 }
                 else
                 {
                     m_Visible = value;
+                    geometry = null;
                     damage ();
                 }
             }

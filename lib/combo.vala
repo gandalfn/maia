@@ -20,9 +20,9 @@
 public class Maia.Combo : Group, ItemPackable, ItemMovable
 {
     // properties
-    private Popup        m_Popup     = null;
-    private unowned View m_View      = null;
-    private int          m_ActiveRow = -1;
+    private Popup                 m_Popup  = null;
+    private unowned View?         m_View   = null;
+    private unowned ItemPackable? m_Active = null;
 
     // accessors
     internal override string tag {
@@ -68,24 +68,15 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         update_arrow_size (arrow_item);
         add (arrow_item);
 
-        string id_label = "%s-label".printf (name);
-        var label_item = new Label (id_label, "");
-        add (label_item);
-
-        label_item.text = "TEST 100";
-
         notify["stroke-pattern"].connect (() => {
             arrow_item.fill_pattern = stroke_pattern;
-            label_item.stroke_pattern = stroke_pattern;
         });
 
         notify["font-description"].connect (() => {
             update_arrow_size (arrow_item);
-            label_item.font_description = font_description;
         });
 
         arrow_item.button_press_event.connect (on_button_press);
-        label_item.button_press_event.connect (on_button_press);
 
         // Connect onto button press
         button_press_event.connect (on_button_press);
@@ -126,23 +117,12 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     }
 
     private void
-    on_view_pointer_over_changed ()
+    on_row_clicked (uint inRow)
     {
-        if (m_ActiveRow >= 0)
+        if (m_View != null)
         {
-            unowned ItemPackable item = m_View.get_item (m_ActiveRow);
-            item.background_pattern = null;
-            item.damage ();
-        }
-
-        if (m_View.item_over_pointer != null && m_View.item_over_pointer is ItemPackable)
-        {
-            uint row;
-            if (m_View.get_item_row (m_View.item_over_pointer as ItemPackable, out row))
-            {
-                m_ActiveRow = (int)row;
-                m_View.item_over_pointer.background_pattern = highlight_color;
-            }
+            m_Active = m_View.get_item (inRow);
+            m_Popup.hide ();
         }
     }
 
@@ -160,7 +140,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             m_Popup = new Popup ("%s-popup".printf (name));
             m_Popup.add (inObject);
             m_Popup.layer = 100;
-            //m_Popup.visible = false;
+            m_Popup.visible = false;
             m_Popup.placement = PopupPlacement.BOTTOM;
             m_Popup.background_pattern = fill_pattern;
             m_Popup.notify["visible"].connect (() => {
@@ -169,7 +149,8 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             root.add (m_Popup);
 
             m_View = inObject as View;
-            m_View.notify["item-over-pointer"].connect (on_view_pointer_over_changed);
+            m_View.fill_pattern = highlight_color;
+            m_View.row_clicked.connect (on_row_clicked);
         }
         else
         {
@@ -182,6 +163,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     {
         if (inObject == m_View)
         {
+            m_View.row_clicked.disconnect (on_row_clicked);
             m_View.parent = null;
             m_View = null;
         }
@@ -201,16 +183,6 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         if (m_View != null)
         {
             view_size = m_View.size;
-        }
-
-        // Get label size
-        string id_label = "%s-label".printf (name);
-        Label label_item = find (GLib.Quark.from_string (id_label), false) as Label;
-        if (label_item != null)
-        {
-            var label_size = label_item.size;
-            view_size.width = double.max (view_size.width, label_size.width);
-            view_size.height = double.max (view_size.height, label_size.height);
         }
 
         // Get size of arrow
@@ -266,18 +238,6 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
 
                 arrow_item.update (inContext, new Graphic.Region (arrow_area));
 
-                // Update label position
-                string id_label = "%s-label".printf (name);
-                Label label_item = find (GLib.Quark.from_string (id_label), false) as Label;
-                if (label_item != null)
-                {
-                    var label_area = Graphic.Rectangle (arrow_size.width / 2, arrow_size.height / 2,
-                                                        inAllocation.extents.size.width - (arrow_size.width * 2),
-                                                        label_item.size_requested.height);
-
-                    label_item.update (inContext, new Graphic.Region (label_area));
-                }
-
                 if (m_Popup != null)
                 {
                     var start = convert_to_root_space (Graphic.Point (arrow_size.width / 2, arrow_size.height + arrow_size.height / 2));
@@ -330,11 +290,44 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         var area = new Graphic.Region ();
         foreach (unowned Core.Object child in this)
         {
-            if (child is Label || child is Path)
+            if (child is Path)
             {
                 area.union_ (((Drawable)child).geometry);
                 ((Drawable)child).draw (inContext);
             }
+        }
+
+        if (m_Active != null)
+        {
+            inContext.save ();
+            {
+                var active_area = m_Active.geometry.copy ();
+                active_area.translate (area.extents.origin.invert ());
+
+                area.union_ (active_area);
+                var active_damaged = m_Active.damaged != null ? m_Active.damaged.copy () : null;
+                var active_origin = m_Active.geometry.extents.origin;
+
+                if (active_damaged == null)
+                {
+                    m_Active.damaged = area;
+                }
+
+                m_Active.geometry.translate (active_origin.invert ());
+
+                string id_arrow = "%s-arrow".printf (name);
+                Path arrow_item = find (GLib.Quark.from_string (id_arrow), false) as Path;
+                if (arrow_item != null)
+                {
+                    var arrow_size = arrow_item.size_requested;
+                    inContext.translate (Graphic.Point (arrow_size.width / 2, arrow_size.height / 2));
+                }
+                m_Active.draw (inContext);
+
+                m_Active.geometry.translate (active_origin);
+                m_Active.damaged = active_damaged;
+            }
+            inContext.restore ();
         }
 
         if (m_Popup.visible)
