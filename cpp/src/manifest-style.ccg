@@ -1,6 +1,6 @@
 /* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * manifest-document.ccg
+ * manifest-style.ccg
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -19,20 +19,9 @@
 
 #include <maia.h>
 
-#include <maiamm/manifest-attribute-bind.h>
-#include <maiamm/manifest-element.h>
-#include <maiamm/manifest-style.h>
-
 namespace Maia
 {
     namespace Manifest
     {
-        Glib::RefPtr<Element> Document::get () const
-        {
-            GError* gerror = 0;
-            Glib::RefPtr<Element> pElement = Glib::wrap (maia_manifest_document_get (const_cast<MaiaManifestDocument*> (gobj ()), 0, &gerror));
-            if (gerror) ::Glib::Error::throw_exception(gerror);
-            return pElement;
-        }
     }
 }

@@ -354,6 +354,18 @@
   (gtype-id "MAIA_TYPE_MANIFEST_FUNCTION")
 )
 
+(define-object MaiaManifestStyle
+  (parent "MaiaCoreObject")
+  (c-name "MaiaManifestStyle")
+  (gtype-id "MAIA_TYPE_MANIFEST_STYLE")
+)
+
+(define-object MaiaManifestStyleProperty
+  (parent "MaiaCoreObject")
+  (c-name "MaiaManifestStyleProperty")
+  (gtype-id "MAIA_TYPE_MANIFEST_STYLE_PROPERTY")
+)
+
 (define-object MaiaModel
   (parent "MaiaCoreObject")
   (c-name "MaiaModel")
@@ -4732,6 +4744,29 @@
   )
 )
 
+(define-function maia_manifest_style_get_type
+  (c-name "maia_manifest_style_get_type")
+  (return-type "GType")
+)
+
+(define-method add_style
+  (of-object "MaiaManifestDocument")
+  (c-name "maia_manifest_document_add_style")
+  (return-type "none")
+  (parameters
+    '("MaiaManifestStyle*" "inStyle")
+  )
+)
+
+(define-method get_style
+  (of-object "MaiaManifestDocument")
+  (c-name "maia_manifest_document_get_style")
+  (return-type "MaiaManifestStyle*")
+  (parameters
+    '("const-gchar*" "inName")
+  )
+)
+
 (define-method get_owner
   (of-object "MaiaManifestDocument")
   (c-name "maia_manifest_document_get_owner")
@@ -4846,6 +4881,82 @@
   (of-object "MaiaManifestElement")
   (c-name "maia_manifest_element_get_not_dumpable_attributes")
   (return-type "MaiaCoreSet*")
+)
+
+(define-function maia_manifest_style_new
+  (c-name "maia_manifest_style_new")
+  (is-constructor-of "MaiaManifestStyle")
+  (return-type "MaiaManifestStyle*")
+  (parameters
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-function maia_manifest_style_construct
+  (c-name "maia_manifest_style_construct")
+  (return-type "MaiaManifestStyle*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-method get_name
+  (of-object "MaiaManifestStyle")
+  (c-name "maia_manifest_style_get_name")
+  (return-type "const-gchar*")
+)
+
+(define-function maia_manifest_style_property_get_type
+  (c-name "maia_manifest_style_property_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_manifest_style_property_new
+  (c-name "maia_manifest_style_property_new")
+  (is-constructor-of "MaiaManifestStyleProperty")
+  (return-type "MaiaManifestStyleProperty*")
+  (parameters
+    '("const-gchar*" "inName")
+    '("MaiaManifestAttributeScanner*" "inScanner")
+  )
+)
+
+(define-function maia_manifest_style_property_construct
+  (c-name "maia_manifest_style_property_construct")
+  (return-type "MaiaManifestStyleProperty*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+    '("MaiaManifestAttributeScanner*" "inScanner")
+  )
+)
+
+(define-method copy
+  (of-object "MaiaManifestStyleProperty")
+  (c-name "maia_manifest_style_property_copy")
+  (return-type "MaiaManifestStyleProperty*")
+)
+
+(define-method get_name
+  (of-object "MaiaManifestStyleProperty")
+  (c-name "maia_manifest_style_property_get_name")
+  (return-type "const-gchar*")
+)
+
+(define-method get_scanner
+  (of-object "MaiaManifestStyleProperty")
+  (c-name "maia_manifest_style_property_get_scanner")
+  (return-type "MaiaManifestAttributeScanner*")
+)
+
+(define-method set_scanner
+  (of-object "MaiaManifestStyleProperty")
+  (c-name "maia_manifest_style_property_set_scanner")
+  (return-type "none")
+  (parameters
+    '("MaiaManifestAttributeScanner*" "value")
+  )
 )
 
 (define-function maia_manifest_attribute_scanner_register_transform_func

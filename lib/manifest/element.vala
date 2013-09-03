@@ -228,6 +228,9 @@ public interface Maia.Manifest.Element : Core.Object
     public virtual void
     read_manifest (Document inManifest) throws Core.ParseError
     {
+        unowned Style? style = null;
+        Core.Set<string> attributes_set = new Core.Set<string> ();
+
         inManifest.owner = this;
         foreach (Core.Parser.Token token in inManifest)
         {
@@ -236,7 +239,13 @@ public interface Maia.Manifest.Element : Core.Object
                 // found a new child widget create it
                 case Core.Parser.Token.START_ELEMENT:
                     Element element = create (inManifest.element_tag, inManifest.element_id);
-                    if (element != null)
+                    if (element is Style)
+                    {
+                        inManifest.add_style (element as Style);
+                        element.read_manifest (inManifest);
+                        inManifest.owner = this;
+                    }
+                    else if (element != null)
                     {
                         add (element);
                         element.read_manifest (inManifest);
@@ -250,7 +259,16 @@ public interface Maia.Manifest.Element : Core.Object
                     {
                         try
                         {
-                            set_attribute (inManifest.attribute, inManifest.scanner);
+                            if (inManifest.attribute.down () == "style")
+                            {
+                                string style_name = (string)inManifest.scanner.transform (typeof (string));
+                                style = inManifest.get_style (style_name);
+                            }
+                            else
+                            {
+                                attributes_set.insert (inManifest.attribute);
+                                set_attribute (inManifest.attribute, inManifest.scanner);
+                            }
                         }
                         catch (Error err)
                         {
@@ -271,6 +289,24 @@ public interface Maia.Manifest.Element : Core.Object
                 case Core.Parser.Token.END_ELEMENT:
                     if (inManifest.element_tag == tag)
                     {
+                        if (style != null)
+                        {
+                            foreach (unowned Core.Object child in style)
+                            {
+                                unowned Style.Property? property = child as Style.Property;
+                                if (property != null && !(property.name in attributes_set))
+                                {
+                                    try
+                                    {
+                                        set_attribute (property.name, property.scanner);
+                                    }
+                                    catch (Error err)
+                                    {
+                                        throw new Core.ParseError.PARSE ("Error on parse object %s attribute %s: %s", tag, property.name, err.message);
+                                    }
+                                }
+                            }
+                        }
                         return;
                     }
                     break;

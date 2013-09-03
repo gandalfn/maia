@@ -45,6 +45,7 @@ libmaia_la_SOURCES = \
     core/animator.vala \
     manifest/document.vala \
     manifest/element.vala \
+    manifest/style.vala \
     manifest/attribute-scanner.vala \
     manifest/attribute.vala \
     manifest/attribute-bind.vala \

@@ -30,6 +30,7 @@ namespace Maia
     namespace Manifest
     {
         class Element;
+        class Style;
 
         _GMMPROC_EXTRA_NAMESPACE(Manifest)
 
@@ -65,6 +66,9 @@ namespace Maia
 
                 _WRAP_METHOD(Glib::RefPtr<Element> get (const Glib::ustring& inId) const, maia_manifest_document_get, errthrow)
                 Glib::RefPtr<Element> get () const;
+
+                _WRAP_METHOD(void add_style (const Glib::RefPtr<Style>& inStyle), maia_manifest_document_add_style)
+                _WRAP_METHOD(Glib::RefPtr<Style> get_style (const Glib::ustring& inName) const, maia_manifest_document_get_style)
 
                 _WRAP_SIGNAL(void attribute_bind_added (const Glib::RefPtr<AttributeBind>& inpAttribute, const Glib::ustring& inProperty), "attribute-bind-added", no_default_handler)
 

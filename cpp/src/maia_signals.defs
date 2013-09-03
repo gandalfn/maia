@@ -635,6 +635,55 @@
 
 ;; From MaiaManifestFunction
 
+;; From MaiaManifestStyle
+
+(define-property tag
+  (of-object "MaiaManifestStyle")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property characters
+  (of-object "MaiaManifestStyle")
+  (prop-type "GParamString")
+  (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property name
+  (of-object "MaiaManifestStyle")
+  (prop-type "GParamString")
+  (docs "name")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaManifestStyleProperty
+
+(define-property name
+  (of-object "MaiaManifestStyleProperty")
+  (prop-type "GParamString")
+  (docs "name")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property scanner
+  (of-object "MaiaManifestStyleProperty")
+  (prop-type "GParamObject")
+  (docs "scanner")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaButton
 
 (define-signal clicked

@@ -44,6 +44,8 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_MANIFEST_TYPE_DOCUMENT);
     std::cout << get_defs (MAIA_MANIFEST_TYPE_ELEMENT);
     std::cout << get_defs (MAIA_MANIFEST_TYPE_FUNCTION);
+    std::cout << get_defs (MAIA_MANIFEST_TYPE_STYLE);
+    std::cout << get_defs (MAIA_MANIFEST_STYLE_TYPE_PROPERTY);
 
     std::cout << get_defs (MAIA_TYPE_BUTTON);
     std::cout << get_defs (MAIA_TYPE_CANVAS);

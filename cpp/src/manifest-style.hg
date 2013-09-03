@@ -1,0 +1,73 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * manifest-style.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/core-object.h>
+#include <maiamm/manifest-element.h>
+#include <maiamm/manifest-attribute-scanner.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/core-object_p.h)
+
+namespace Maia
+{
+    namespace Manifest
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Manifest)
+
+        class Style : public Core::Object, public Manifest::Element
+        {
+            _CLASS_GOBJECT(Style, MaiaManifestStyle, MAIA_MANIFEST_STYLE, Core::Object, MaiaCoreObject)
+            _IMPLEMENTS_INTERFACE(Manifest::Element)
+
+            public:
+                static Glib::RefPtr<Style> create (const Glib::ustring& inName)
+                {
+                    MaiaManifestStyle* pStyle = maia_manifest_style_new (inName.c_str ());
+                    return Glib::RefPtr<Style> (new Style (pStyle));
+                }
+
+                _WRAP_METHOD(Glib::ustring get_name () const, maia_manifest_style_get_name)
+
+                _WRAP_PROPERTY("name", Glib::ustring)
+                _WRAP_PROPERTY("tag", Glib::ustring)
+                _WRAP_PROPERTY("characters", Glib::ustring)
+        };
+
+        class StyleProperty : public Core::Object
+        {
+            _CLASS_GOBJECT(StyleProperty, MaiaManifestStyleProperty, MAIA_MANIFEST_STYLE_PROPERTY, Core::Object, MaiaCoreObject)
+
+            public:
+                static Glib::RefPtr<StyleProperty> create (const Glib::ustring& inName, const Glib::RefPtr<AttributeScanner>& inScanner)
+                {
+                    MaiaManifestStyleProperty* pProperty = maia_manifest_style_property_new (inName.c_str (), const_cast<MaiaManifestAttributeScanner*> (inScanner->gobj ()));
+                    return Glib::RefPtr<StyleProperty> (new StyleProperty (pProperty));
+                }
+
+                _WRAP_METHOD(Glib::RefPtr<StyleProperty> copy (), maia_manifest_style_property_copy)
+                _WRAP_METHOD(Glib::ustring get_name () const, maia_manifest_style_property_get_name)
+                _WRAP_METHOD(Glib::RefPtr<AttributeScanner> get_scanner () const, maia_manifest_style_property_get_scanner)
+                _WRAP_METHOD(void set_scanner (const Glib::RefPtr<AttributeScanner>& inScanner), maia_manifest_style_property_set_scanner)
+
+                _WRAP_PROPERTY("name", Glib::ustring)
+                _WRAP_PROPERTY("scanner", Glib::RefPtr<AttributeScanner>)
+        };
+    }
+}

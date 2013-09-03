@@ -51,13 +51,14 @@ public class Maia.Manifest.Document : Core.Parser
     }
 
     // Properties
-    private Document               m_Include = null;
-    private string                 m_Filename = null;
-    private MappedFile             m_File;
-    private string                 m_LastName;
-    private ElementTag             m_CurrentTag = null;
-    private Core.Queue<ElementTag> m_ElementQueue;
-    private AttributeScanner       m_Scanner;
+    private Document                m_Include = null;
+    private string                  m_Filename = null;
+    private MappedFile              m_File;
+    private string                  m_LastName;
+    private ElementTag              m_CurrentTag = null;
+    private Core.Queue<ElementTag>  m_ElementQueue;
+    private AttributeScanner        m_Scanner;
+    private Core.Set<Style>         m_Styles;
 
     // Accessors
     public unowned Object owner { get; set; default = null; }
@@ -83,10 +84,17 @@ public class Maia.Manifest.Document : Core.Parser
     // Signals
     public signal void attribute_bind_added (AttributeBind inAttribute, string inProperty);
 
+    // Static methods
+    static construct
+    {
+        Element.register ("Style", typeof (Style));
+    }
+
     // Methods
     construct
     {
         m_ElementQueue = new Core.Queue<ElementTag> ();
+        m_Styles = new Core.Set<Style> ();
     }
 
     /**
@@ -387,5 +395,33 @@ public class Maia.Manifest.Document : Core.Parser
         }
 
         return null;
+    }
+
+    /**
+     * Add a style to manifest document
+     *
+     * @param inStyle style to add
+     */
+    public void
+    add_style (Style inStyle)
+    {
+        m_Styles.insert (inStyle);
+    }
+
+    /**
+     * Get the corresponding style to inName
+     *
+     * @param inName the style id
+     *
+     * @return Style if found ``null`` otherwise
+     */
+    public unowned Style?
+    get_style (string inName)
+    {
+        unowned Style? ret = m_Styles.search<GLib.Quark> (GLib.Quark.from_string (inName), (s, i) => {
+            return (int)(s.id - i);
+        });
+
+        return ret;
     }
 }

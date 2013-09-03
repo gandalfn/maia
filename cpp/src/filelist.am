@@ -39,6 +39,7 @@ files_hg = \
     manifest-attribute-scanner.hg \
     manifest-document.hg \
     manifest-element.hg \
+    manifest-style.hg \
     drawable.hg \
     item.hg \
     item-packable.hg \

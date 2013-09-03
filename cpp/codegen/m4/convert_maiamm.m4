@@ -155,6 +155,16 @@ _CONVERSION(`const Glib::RefPtr<Element>&',`MaiaManifestElement*',__CONVERT_REFP
 _CONVERSION(`MaiaManifestElement*',`const Glib::RefPtr<Element>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaManifestElement*',`Glib::RefPtr<Element>',`Glib::wrap($3)')
 
+_CONVERSION(`Glib::RefPtr<Style>',`MaiaManifestStyle*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Style>&',`MaiaManifestStyle*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaManifestStyle*',`const Glib::RefPtr<Style>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaManifestStyle*',`Glib::RefPtr<Style>',`Glib::wrap($3)')
+
+_CONVERSION(`Glib::RefPtr<StyleProperty>',`MaiaManifestStyleProperty*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<StyleProperty>&',`MaiaManifestStyleProperty*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaManifestStyleProperty*',`const Glib::RefPtr<StyleProperty>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaManifestStyleProperty*',`Glib::RefPtr<StyleProperty>',`Glib::wrap($3)')
+
 _CONVERSION(`Glib::RefPtr<Drawable>',`MaiaDrawable*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Drawable>&',`MaiaDrawable*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaDrawable*',`const Glib::RefPtr<Drawable>&',`Glib::wrap($3)')
