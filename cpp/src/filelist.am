@@ -61,6 +61,8 @@ files_hg = \
     model.hg \
     view.hg \
     shortcut.hg \
+    popup.hg \
+    combo.hg \
     canvas.hg
 
 files_ccg = $(files_hg:.hg=.ccg)

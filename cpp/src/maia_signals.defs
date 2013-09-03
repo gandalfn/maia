@@ -2927,6 +2927,15 @@
 
 ;; From MaiaView
 
+(define-signal row-clicked
+  (of-object "MaiaView")
+  (return-type "void")
+  (when "last")
+  (parameters
+    '("guint" "p0")
+  )
+)
+
 (define-property tag
   (of-object "MaiaView")
   (prop-type "GParamString")
@@ -2998,6 +3007,214 @@
   (docs "label")
   (readable #t)
   (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaPopup
+
+(define-property tag
+  (of-object "MaiaPopup")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property x
+  (of-object "MaiaPopup")
+  (prop-type "GParamDouble")
+  (docs "x")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property y
+  (of-object "MaiaPopup")
+  (prop-type "GParamDouble")
+  (docs "y")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property border
+  (of-object "MaiaPopup")
+  (prop-type "GParamDouble")
+  (docs "border")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property placement
+  (of-object "MaiaPopup")
+  (prop-type "GParamEnum")
+  (docs "placement")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaCombo
+
+(define-signal changed
+  (of-object "MaiaCombo")
+  (return-type "void")
+  (when "last")
+)
+
+(define-property tag
+  (of-object "MaiaCombo")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property row
+  (of-object "MaiaCombo")
+  (prop-type "GParamUInt")
+  (docs "row")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property column
+  (of-object "MaiaCombo")
+  (prop-type "GParamUInt")
+  (docs "column")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property rows
+  (of-object "MaiaCombo")
+  (prop-type "GParamUInt")
+  (docs "rows")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property columns
+  (of-object "MaiaCombo")
+  (prop-type "GParamUInt")
+  (docs "columns")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xexpand
+  (of-object "MaiaCombo")
+  (prop-type "GParamBoolean")
+  (docs "xexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xfill
+  (of-object "MaiaCombo")
+  (prop-type "GParamBoolean")
+  (docs "xfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xalign
+  (of-object "MaiaCombo")
+  (prop-type "GParamDouble")
+  (docs "xalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yexpand
+  (of-object "MaiaCombo")
+  (prop-type "GParamBoolean")
+  (docs "yexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yfill
+  (of-object "MaiaCombo")
+  (prop-type "GParamBoolean")
+  (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yalign
+  (of-object "MaiaCombo")
+  (prop-type "GParamDouble")
+  (docs "yalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property top-padding
+  (of-object "MaiaCombo")
+  (prop-type "GParamDouble")
+  (docs "top-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property bottom-padding
+  (of-object "MaiaCombo")
+  (prop-type "GParamDouble")
+  (docs "bottom-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property left-padding
+  (of-object "MaiaCombo")
+  (prop-type "GParamDouble")
+  (docs "left-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property right-padding
+  (of-object "MaiaCombo")
+  (prop-type "GParamDouble")
+  (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property highlight-color
+  (of-object "MaiaCombo")
+  (prop-type "GParamObject")
+  (docs "highlight-color")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property active-row
+  (of-object "MaiaCombo")
+  (prop-type "GParamInt")
+  (docs "active-row")
+  (readable #t)
+  (writable #f)
   (construct-only #f)
 )
 

@@ -505,6 +505,25 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
             }
             return ret;
         }
+
+        public bool
+        get_row_size (uint inRow, out Graphic.Size outSize)
+        {
+            bool ret = false;
+
+            outSize = Graphic.Size (0, 0);
+            if (inRow < rows.length)
+            {
+                outSize.height = double.max (outSize.height, rows[inRow].size.height);
+                for (int cpt = 0; cpt < columns.length; ++cpt)
+                {
+                    outSize.width += columns[cpt].size.width;
+                }
+
+                ret = true;
+            }
+            return ret;
+        }
     }
 
     // properties
@@ -696,5 +715,11 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
     get_row_area (uint inRow, out Graphic.Rectangle outArea)
     {
         return m_Allocation.get_row_area (inRow, out outArea);
+    }
+
+    internal bool
+    get_row_size (uint inRow, out Graphic.Size outSize)
+    {
+        return m_Allocation.get_row_size (inRow, out outSize);
     }
 }

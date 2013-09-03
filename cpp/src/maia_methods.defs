@@ -9137,21 +9137,6 @@
   )
 )
 
-(define-method get_font_description
-  (of-object "MaiaCombo")
-  (c-name "maia_combo_get_font_description")
-  (return-type "const-gchar*")
-)
-
-(define-method set_font_description
-  (of-object "MaiaCombo")
-  (c-name "maia_combo_set_font_description")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "value")
-  )
-)
-
 (define-method get_highlight_color
   (of-object "MaiaCombo")
   (c-name "maia_combo_get_highlight_color")
@@ -9165,6 +9150,12 @@
   (parameters
     '("MaiaGraphicColor*" "value")
   )
+)
+
+(define-method get_active_row
+  (of-object "MaiaCombo")
+  (c-name "maia_combo_get_active_row")
+  (return-type "gint")
 )
 
 (define-function maia_canvas_get_type

@@ -49,10 +49,23 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
-    public string   font_description { get; set; default = ""; }
-
     public Graphic.Color highlight_color { get; set; default = new Graphic.Color (0.2, 0.2, 0.2); }
 
+    public int active_row {
+        get {
+            if (m_View != null && m_Active != null)
+            {
+                uint row;
+
+                if (m_View.get_item_row (m_Active, out row))
+                {
+                    return (int)row;
+                }
+            }
+
+            return -1;
+        }
+    }
     // signals
     public signal void changed ();
 
@@ -64,16 +77,11 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
 
         // Create arrow
         string id_arrow = "%s-arrow".printf (name);
-        var arrow_item = new Path (id_arrow, "M 0,0 L 50, 0, L 25, 50 Z");
-        update_arrow_size (arrow_item);
+        var arrow_item = new Path (id_arrow, "");
         add (arrow_item);
 
         notify["stroke-pattern"].connect (() => {
             arrow_item.fill_pattern = stroke_pattern;
-        });
-
-        notify["font-description"].connect (() => {
-            update_arrow_size (arrow_item);
         });
 
         arrow_item.button_press_event.connect (on_button_press);
@@ -87,19 +95,6 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     public Combo (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
-    }
-
-    private void
-    update_arrow_size (Path inPath)
-    {
-        var glyph = new Graphic.Glyph (font_description);
-        glyph.text = "00";
-
-        // Create a fake surface to calculate the size of path
-        var fake_surface = new Graphic.Surface (1, 1);
-        glyph.update (fake_surface.context);
-        inPath.path = "M 3,3 L %g,3 L %g,%g Z".printf (glyph.size.width - 3, 3 + (glyph.size.width - 6) / 2.0, glyph.size.height - 3);
-        inPath.size = glyph.size;
     }
 
     private bool
@@ -190,6 +185,18 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         Path arrow_item = find (GLib.Quark.from_string (id_arrow), false) as Path;
         if (arrow_item != null)
         {
+            if (m_View != null)
+            {
+                Graphic.Size row_size;
+                if (m_View.get_row_size (0, out row_size))
+                {
+                    arrow_item.path = "M 3,3 L %g,3 L %g,%g Z".printf (row_size.height - 3,
+                                                                       3 + (row_size.height - 6) / 2.0,
+                                                                       row_size.height - 3);
+                    arrow_item.size = Graphic.Size (row_size.height, row_size.height);
+                }
+            }
+
             var arrow_size = arrow_item.size;
             if (view_size.width > 0)
             {

@@ -225,7 +225,7 @@ public interface Maia.Manifest.Element : Core.Object
      *
      * @throws ParseError when somethings goes wrong
      */
-    public void
+    public virtual void
     read_manifest (Document inManifest) throws Core.ParseError
     {
         inManifest.owner = this;

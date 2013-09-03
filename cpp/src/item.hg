@@ -80,13 +80,15 @@ namespace Maia
             _WRAP_METHOD(guint get_layer () const, maia_item_get_layer)
             _WRAP_METHOD(void set_layer (guint inLayer) const, maia_item_set_layer)
             _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_fill_pattern () const, maia_item_get_fill_pattern)
-            _WRAP_METHOD(void set_fill_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern) const, maia_item_set_fill_pattern)
+            _WRAP_METHOD(void set_fill_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_item_set_fill_pattern)
             _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_stroke_pattern () const, maia_item_get_stroke_pattern)
-            _WRAP_METHOD(void set_stroke_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern) const, maia_item_set_stroke_pattern)
+            _WRAP_METHOD(void set_stroke_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_item_set_stroke_pattern)
             _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_background_pattern () const, maia_item_get_background_pattern)
-            _WRAP_METHOD(void set_background_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern) const, maia_item_set_background_pattern)
+            _WRAP_METHOD(void set_background_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_item_set_background_pattern)
             _WRAP_METHOD(double get_line_width () const, maia_item_get_line_width)
-            _WRAP_METHOD(void set_line_width (double inLineWidth) const, maia_item_set_line_width)
+            _WRAP_METHOD(void set_line_width (double inLineWidth), maia_item_set_line_width)
+            _WRAP_METHOD(bool get_pointer_over () const, maia_item_get_pointer_over)
+            _WRAP_METHOD(void set_pointer_over (bool inOver = true), maia_item_set_pointer_over)
 
             _WRAP_METHOD(void update (const Glib::RefPtr<Graphic::Context>& inContext, const Glib::RefPtr<Graphic::Region>& inAllocation), maia_item_update, errthrow)
             _WRAP_METHOD(void convert_to_child_item_space (const Glib::RefPtr<Item>& inChild, const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_child_item_space)
@@ -131,5 +133,7 @@ namespace Maia
             _WRAP_PROPERTY("stroke-pattern", Glib::RefPtr<Graphic::Pattern>)
             _WRAP_PROPERTY("background-pattern", Glib::RefPtr<Graphic::Pattern>)
             _WRAP_PROPERTY("line-width", double)
+
+            _WRAP_PROPERTY("pointer-over", bool)
     };
 }

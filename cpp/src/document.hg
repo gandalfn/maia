@@ -67,6 +67,9 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_footer () const, maia_document_get_footer)
             _WRAP_METHOD(void set_footer (const Glib::ustring& inName), maia_document_set_footer)
 
+            _WRAP_METHOD(Glib::RefPtr<Item> get_item_over_pointer () const, maia_document_get_item_over_pointer)
+            _WRAP_METHOD(void set_pointer_over_pointer (const Glib::RefPtr<Item>& inItem), maia_document_set_item_over_pointer)
+
             _WRAP_PROPERTY("format", PageFormat)
             _WRAP_PROPERTY("top-margin", double)
             _WRAP_PROPERTY("bottom-margin", double)
@@ -77,5 +80,6 @@ namespace Maia
             _WRAP_PROPERTY("nb-pages", guint)
             _WRAP_PROPERTY("header", Glib::ustring)
             _WRAP_PROPERTY("footer", Glib::ustring)
+            _WRAP_PROPERTY("item-over-pointer", Glib::RefPtr<Item>)
     };
 }
