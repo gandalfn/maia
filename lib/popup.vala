@@ -122,7 +122,7 @@ public class Maia.Popup : Group
     {
         if (m_Content != null)
         {
-            m_Content.position = Graphic.Point (border, border);
+            m_Content.position = Graphic.Point (border / 2, border / 2);
         }
 
         Graphic.Size ret = base.size_request (inSize);
@@ -156,23 +156,17 @@ public class Maia.Popup : Group
     }
 
     internal override void
-    update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
-    {
-        base.update (inContext, inAllocation);
-
-        m_CurrentPosition = geometry.extents.origin;
-    }
-
-    internal override void
     paint (Graphic.Context inContext) throws Graphic.Error
     {
         inContext.save ();
         {
             var popup_area = geometry.copy ();
+            popup_area.translate (geometry.extents.origin.invert ());
             var path_clip  = new Graphic.Path.from_region (popup_area);
             inContext.clip (path_clip);
 
             inContext.translate (Graphic.Point (x, y));
+            inContext.clip (path_clip);
 
             base.paint (inContext);
         }
@@ -200,34 +194,34 @@ public class Maia.Popup : Group
         switch (placement)
         {
             case PopupPlacement.TOP:
-                from = (double)(geometry.extents.origin.y + geometry.extents.size.height);
-                to = (double)geometry.extents.origin.y;
-                m_CurrentPosition.x = geometry.extents.origin.x;
-                m_CurrentPosition.y = geometry.extents.origin.y + geometry.extents.size.height;
+                from = (double)geometry.extents.size.height;
+                to = (double)0.0;
+                m_CurrentPosition.x = 0;
+                m_CurrentPosition.y = geometry.extents.size.height;
                 m_Animator.add_transition_property (m_Transition, this, "y", from, to);
                 break;
 
             case PopupPlacement.BOTTOM:
-                from = (double)(geometry.extents.origin.y - geometry.extents.size.height);
-                to = (double)geometry.extents.origin.y;
-                m_CurrentPosition.x = geometry.extents.origin.x;
-                m_CurrentPosition.y = geometry.extents.origin.y - geometry.extents.size.height;
+                from = (double)(-geometry.extents.size.height);
+                to = (double)0.0;
+                m_CurrentPosition.x = 0.0;
+                m_CurrentPosition.y = - geometry.extents.size.height;
                 m_Animator.add_transition_property (m_Transition, this, "y", from, to);
                 break;
 
             case PopupPlacement.LEFT:
-                from = (double)(geometry.extents.origin.x + geometry.extents.size.width);
-                to = (double)geometry.extents.origin.x;
-                m_CurrentPosition.x = geometry.extents.origin.x + geometry.extents.size.width;
-                m_CurrentPosition.y = geometry.extents.origin.y;
+                from = (double)geometry.extents.size.width;
+                to = (double)0.0;
+                m_CurrentPosition.x = geometry.extents.size.width;
+                m_CurrentPosition.y = 0.0;
                 m_Animator.add_transition_property (m_Transition, this, "x", from, to);
                 break;
 
             case PopupPlacement.RIGHT:
-                from = (double)(geometry.extents.origin.x - geometry.extents.size.width);
-                to = (double)geometry.extents.origin.x;
-                m_CurrentPosition.x = geometry.extents.origin.x - geometry.extents.size.width;
-                m_CurrentPosition.y = geometry.extents.origin.y;
+                from = (double)(-geometry.extents.size.width);
+                to = (double)0.0;
+                m_CurrentPosition.x = geometry.extents.size.width;
+                m_CurrentPosition.y = 0.0;
                 m_Animator.add_transition_property (m_Transition, this, "x", from, to);
                 break;
         }
@@ -260,34 +254,34 @@ public class Maia.Popup : Group
         switch (placement)
         {
             case PopupPlacement.TOP:
-                to = (double)(geometry.extents.origin.y + geometry.extents.size.height);
-                from = (double)geometry.extents.origin.y;
-                m_CurrentPosition.x = geometry.extents.origin.x;
-                m_CurrentPosition.y = geometry.extents.origin.y + geometry.extents.size.height;
+                to = (double)geometry.extents.size.height;
+                from = (double)0.0;
+                m_CurrentPosition.x = 0.0;
+                m_CurrentPosition.y = geometry.extents.size.height;
                 m_Animator.add_transition_property (m_Transition, this, "y", from, to);
                 break;
 
             case PopupPlacement.BOTTOM:
-                to = (double)(geometry.extents.origin.y - geometry.extents.size.height);
-                from = (double)geometry.extents.origin.y;
-                m_CurrentPosition.x = geometry.extents.origin.x;
-                m_CurrentPosition.y = geometry.extents.origin.y - geometry.extents.size.height;
+                to = (double)(-geometry.extents.size.height);
+                from = (double)0.0;
+                m_CurrentPosition.x = 0.0;
+                m_CurrentPosition.y = - geometry.extents.size.height;
                 m_Animator.add_transition_property (m_Transition, this, "y", from, to);
                 break;
 
             case PopupPlacement.LEFT:
-                to = (double)(geometry.extents.origin.x + geometry.extents.size.width);
-                from = (double)geometry.extents.origin.x;
-                m_CurrentPosition.x = geometry.extents.origin.x + geometry.extents.size.width;
-                m_CurrentPosition.y = geometry.extents.origin.y;
+                to = (double)geometry.extents.size.width;
+                from = (double)0.0;
+                m_CurrentPosition.x = geometry.extents.size.width;
+                m_CurrentPosition.y = 0.0;
                 m_Animator.add_transition_property (m_Transition, this, "x", from, to);
                 break;
 
             case PopupPlacement.RIGHT:
-                to = (double)(geometry.extents.origin.x - geometry.extents.size.width);
-                from = (double)geometry.extents.origin.x;
-                m_CurrentPosition.x = geometry.extents.origin.x - geometry.extents.size.width;
-                m_CurrentPosition.y = geometry.extents.origin.y;
+                to = (double)(-geometry.extents.size.width);
+                from = (double)0.0;
+                m_CurrentPosition.x = - geometry.extents.size.width;
+                m_CurrentPosition.y = 0.0;
                 m_Animator.add_transition_property (m_Transition, this, "x", from, to);
                 break;
         }

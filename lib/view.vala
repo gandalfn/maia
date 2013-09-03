@@ -329,4 +329,30 @@ public class Maia.View : Maia.Grid
 
         return null;
     }
+
+    public bool
+    get_item_row (ItemPackable inItem, out uint outRow)
+    {
+        bool ret = false;
+
+        outRow = 0;
+
+        foreach (unowned Core.Object child in this)
+        {
+            if (child == inItem)
+            {
+                if (orientation == Orientation.VERTICAL)
+                {
+                    outRow = inItem.column + inItem.row * lines;
+                }
+                else
+                {
+                    outRow = inItem.row + inItem.column * lines;
+                }
+                ret = true;
+            }
+        }
+
+        return ret;
+    }
 }

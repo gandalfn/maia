@@ -4562,3 +4562,22 @@
   )
 )
 
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_POPUP_PLACEMENT_TOP,
+;; 	MAIA_POPUP_PLACEMENT_BOTTOM,
+;; 	MAIA_POPUP_PLACEMENT_LEFT,
+;; 	MAIA_POPUP_PLACEMENT_RIGHT
+;; } MaiaPopupPlacement;
+
+(define-enum-extended PopupPlacement
+  (in-module "Maia")
+  (c-name "MaiaPopupPlacement")
+  (values
+    '("top" "MAIA_POPUP_PLACEMENT_TOP" "0")
+    '("bottom" "MAIA_POPUP_PLACEMENT_BOTTOM" "1")
+    '("left" "MAIA_POPUP_PLACEMENT_LEFT" "2")
+    '("right" "MAIA_POPUP_PLACEMENT_RIGHT" "3")
+  )
+)
+

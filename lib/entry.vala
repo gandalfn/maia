@@ -22,7 +22,6 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     // properties
     private Graphic.Glyph m_Glyph;
     private int           m_Cursor = 1;
-    private bool          m_MouseOver = false;
 
     // accessors
     internal override string tag {
@@ -80,6 +79,8 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         stroke_pattern = new Graphic.Color (0, 0, 0);
         background_pattern = new Graphic.Color (0, 0, 0);
         font_description = "Sans 12";
+
+        notify["pointer-over"].connect (on_pointer_over_changed);
     }
 
     public Entry (string inId, string? inText)
@@ -123,23 +124,17 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         }
     }
 
-    internal override bool
-    on_motion_event (Graphic.Point inPoint)
+    private void
+    on_pointer_over_changed ()
     {
-        bool ret = base.on_motion_event (inPoint);
-
-        if (ret && !m_MouseOver)
+        if (pointer_over)
         {
-            m_MouseOver = true;
             set_pointer_cursor (Cursor.XTERM);
         }
-        else if (!ret && m_MouseOver)
+        else
         {
-            m_MouseOver = false;
             set_pointer_cursor (Cursor.TOP_LEFT_ARROW);
         }
-
-        return ret;
     }
 
     private void

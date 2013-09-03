@@ -27,8 +27,15 @@ public class Maia.Group : Item
     }
 
     internal override string characters { get; set; default = null; }
+    public unowned Item? item_over_pointer { get; set; default = null; }
 
     // methods
+    construct
+    {
+        // Add not dumpable attributes
+        not_dumpable_attributes.insert ("item-over-pointer");
+    }
+
     public Group (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
@@ -229,6 +236,14 @@ public class Maia.Group : Item
                     // point under child
                     if (item.motion_event (point))
                     {
+                        // if item over pointer change unset pointer over for old item
+                        if (item_over_pointer !=  null && item != item_over_pointer && item_over_pointer.pointer_over)
+                        {
+                            item_over_pointer.pointer_over = false;
+                        }
+
+                        item_over_pointer = item;
+
                         // event occurate under child stop signal
                         ret = false;
                         GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
@@ -241,6 +256,12 @@ public class Maia.Group : Item
 
             ret = true;
         }
+        // if item over pointer set unset it
+        else if (item_over_pointer !=  null && item_over_pointer.pointer_over)
+        {
+            item_over_pointer.pointer_over = false;
+            item_over_pointer = null;
+        }
 
         return ret;
     }
@@ -250,7 +271,7 @@ public class Maia.Group : Item
     {
         bool ret = false;
 
-        if (geometry != null && inPoint in geometry)
+        if (visible && geometry != null && inPoint in geometry)
         {
             // parse child from last to first since item has sorted by layer
             unowned Core.Object? child = last ();

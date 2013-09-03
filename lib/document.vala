@@ -82,6 +82,8 @@ public class Maia.Document : Item
     public string header { get; set; default = null; }
     public string footer { get; set; default = null; }
 
+    public unowned Item? item_over_pointer { get; set; default = null; }
+
     // static methods
     static construct
     {
@@ -112,6 +114,7 @@ public class Maia.Document : Item
     {
         // Add not dumpable attributes
         not_dumpable_attributes.insert ("nb-pages");
+        not_dumpable_attributes.insert ("item-over-pointer");
 
         // create pages list
         m_Pages = new Core.List<Page> ();
@@ -829,8 +832,16 @@ public class Maia.Document : Item
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $point");
 
                     // point under child
-                    if (page.motion_event (point))
+                    unowned Item? item = page.motion_event (point);
+                    if (item != null)
                     {
+                        // if item over pointer change unset pointer over for old item
+                        if (item_over_pointer !=  null && item != item_over_pointer && item_over_pointer.pointer_over)
+                        {
+                            item_over_pointer.pointer_over = false;
+                            item_over_pointer = item;
+                        }
+
                         // event occurate under child stop signal
                         ret = false;
                         GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
@@ -842,6 +853,12 @@ public class Maia.Document : Item
             {
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "error on convert point to page coordinates: %s", err.message);
             }
+        }
+        // if item over pointer set unset it
+        else if (item_over_pointer !=  null && item_over_pointer.pointer_over)
+        {
+            item_over_pointer.pointer_over = false;
+            item_over_pointer = null;
         }
 
         return ret;

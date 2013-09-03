@@ -255,6 +255,14 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "update %s: %s", item.name, allocation.to_string ());
                         item.update (inContext, new Graphic.Region (allocation));
                     }
+                    else if (child is Item)
+                    {
+                        unowned Item item = (Item)child;
+                        var item_position = item.position;
+                        var item_size = item.size;
+                        item.update (inContext, new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y,
+                                                                                       item_size.width, item_size.height)));
+                    }
                 }
             }
             else
@@ -466,6 +474,14 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "update %s: %s", item.name, allocation.to_string ());
                         item.update (inContext, new Graphic.Region (allocation));
                     }
+                    else if (child is Item)
+                    {
+                        unowned Item item = (Item)child;
+                        var item_position = item.position;
+                        var item_size = item.size;
+                        item.update (inContext, new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y,
+                                                                                       item_size.width, item_size.height)));
+                    }
                 }
             }
         }
@@ -515,7 +531,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
     internal override bool
     can_append_child (Core.Object inObject)
     {
-        return inObject is ItemPackable || inObject is ToggleGroup || inObject is Model;
+        return inObject is ItemPackable || inObject is ToggleGroup || inObject is Model || inObject is Popup;
     }
 
     internal override Graphic.Size
@@ -624,6 +640,11 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
                 grid.rectangle (area.extents.origin.x, area.extents.origin.y,
                                 area.extents.size.width, area.extents.size.height);
+            }
+            else if (child is Item)
+            {
+                Item item = (Item)child;
+                item.draw (inContext);
             }
         }
 

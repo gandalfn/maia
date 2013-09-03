@@ -20,11 +20,9 @@
 public class Maia.Combo : Group, ItemPackable, ItemMovable
 {
     // properties
-    private bool          m_PopupVisible    = false;
-    private Core.Animator m_PopupAnimator;
-    private uint          m_PopupTransition = 0;
-    private double        m_PopupProgress   = 1.0;
-    private int           m_ActiveRow       = -1;
+    private Popup        m_Popup     = null;
+    private unowned View m_View      = null;
+    private int          m_ActiveRow = -1;
 
     // accessors
     internal override string tag {
@@ -52,6 +50,8 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     internal double right_padding  { get; set; default = 0; }
 
     public string   font_description { get; set; default = ""; }
+
+    public Graphic.Color highlight_color { get; set; default = new Graphic.Color (0.2, 0.2, 0.2); }
 
     // signals
     public signal void changed ();
@@ -91,9 +91,6 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         button_press_event.connect (on_button_press);
 
         stroke_pattern = new Graphic.Color (0, 0, 0);
-
-        // Create popup animator
-        m_PopupAnimator = new Core.Animator (30, 200);
     }
 
     public Combo (string inId)
@@ -110,36 +107,88 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         // Create a fake surface to calculate the size of path
         var fake_surface = new Graphic.Surface (1, 1);
         glyph.update (fake_surface.context);
-        inPath.path = "M 0,0 L %g,0 L %g,%g Z".printf (glyph.size.width, glyph.size.width / 2, glyph.size.height);
+        inPath.path = "M 3,3 L %g,3 L %g,%g Z".printf (glyph.size.width - 3, 3 + (glyph.size.width - 6) / 2.0, glyph.size.height - 3);
+        inPath.size = glyph.size;
     }
 
     private bool
     on_button_press (uint inButton, Graphic.Point inPoint)
     {
         grab_focus (this);
-        m_PopupVisible = !m_PopupVisible;
 
-        m_PopupAnimator.stop ();
-        if (m_PopupTransition > 0)
-        {
-            m_PopupAnimator.remove_transition (m_PopupTransition);
-        }
-        m_PopupTransition = m_PopupAnimator.add_transition (0, 1, Core.Animator.ProgressType.EXPONENTIAL, (p) => {
-            m_PopupProgress = m_PopupVisible ? 1 - p : p;
-            damage ();
-
-            return true;
-        });
-        m_PopupAnimator.start ();
+        if (m_Popup.visible)
+            m_Popup.hide ();
+        else
+            m_Popup.show ();
 
         damage ();
         return true;
     }
 
+    private void
+    on_view_pointer_over_changed ()
+    {
+        if (m_ActiveRow >= 0)
+        {
+            unowned ItemPackable item = m_View.get_item (m_ActiveRow);
+            item.background_pattern = null;
+            item.damage ();
+        }
+
+        if (m_View.item_over_pointer != null && m_View.item_over_pointer is ItemPackable)
+        {
+            uint row;
+            if (m_View.get_item_row (m_View.item_over_pointer as ItemPackable, out row))
+            {
+                m_ActiveRow = (int)row;
+                m_View.item_over_pointer.background_pattern = highlight_color;
+            }
+        }
+    }
+
     internal override bool
     can_append_child (Core.Object inObject)
     {
-        return inObject is View || inObject is Label || inObject is Path;
+        return inObject is Label || inObject is Path;
+    }
+
+    internal override void
+    insert_child (Core.Object inObject)
+    {
+        if (inObject is View && m_Popup == null)
+        {
+            m_Popup = new Popup ("%s-popup".printf (name));
+            m_Popup.add (inObject);
+            m_Popup.layer = 100;
+            //m_Popup.visible = false;
+            m_Popup.placement = PopupPlacement.BOTTOM;
+            m_Popup.background_pattern = fill_pattern;
+            m_Popup.notify["visible"].connect (() => {
+                damage ();
+            });
+            root.add (m_Popup);
+
+            m_View = inObject as View;
+            m_View.notify["item-over-pointer"].connect (on_view_pointer_over_changed);
+        }
+        else
+        {
+            base.insert_child (inObject);
+        }
+    }
+
+    internal override void
+    remove_child (Core.Object inObject)
+    {
+        if (inObject == m_View)
+        {
+            m_View.parent = null;
+            m_View = null;
+        }
+        else
+        {
+            base.remove_child (inObject);
+        }
     }
 
     internal override Graphic.Size
@@ -149,13 +198,9 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         Graphic.Size view_size = Graphic.Size (0, 0);
 
         // Get size of first view child
-        foreach (unowned Core.Object child in this)
+        if (m_View != null)
         {
-            if (child is View)
-            {
-                view_size = (child as View).size;
-                break;
-            }
+            view_size = m_View.size;
         }
 
         // Get label size
@@ -191,8 +236,12 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             {
                 childs_size.height = arrow_size.height * 2;
             }
-        }
 
+            if (m_Popup != null)
+            {
+                m_Popup.border = arrow_size.width / 2;
+            }
+        }
         return childs_size;
     }
 
@@ -229,25 +278,18 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
                     label_item.update (inContext, new Graphic.Region (label_area));
                 }
 
-                // Get size of first view child
-                foreach (unowned Core.Object child in this)
+                if (m_Popup != null)
                 {
-                    if (child is View)
-                    {
-                        unowned View view = (View)child;
-                        var view_position = Graphic.Point (arrow_size.width / 2, (arrow_size.height / 2) + label_item.size_requested.height);
-                        var view_size = view.size;
-                        view.update (inContext, new Graphic.Region (Graphic.Rectangle (view_position.x, view_position.y,
-                                                                                       size_requested.width - arrow_size.width, view_size.height)));
+                    var start = convert_to_root_space (Graphic.Point (arrow_size.width / 2, arrow_size.height + arrow_size.height / 2));
+                    var end = convert_to_root_space (Graphic.Point (inAllocation.extents.size.width - arrow_size.width / 2,
+                                                                    inAllocation.extents.size.height));
 
-                        var root_start = convert_to_root_space (view_position);
-                        var view_end = Graphic.Point (view_position.x + view_size.width,
-                                                      view_position.y + view_size.height);
-                        var root_end = convert_to_root_space (view_end);
-                        var root_area = Graphic.Rectangle (root_start.x, root_start.y,
-                                                           root_start.x + root_end.x, root_start.y + root_end.y);
-                        ((Drawable)root).damage (new Graphic.Region (root_area));
-                        break;
+                    var popup_size = Graphic.Size (end.x - start.x, m_Popup.size_requested.height);
+
+                    if (!m_Popup.size_requested.equal (popup_size))
+                    {
+                        m_Popup.position = start;
+                        m_Popup.size = popup_size;
                     }
                 }
             }
@@ -293,31 +335,9 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
                 area.union_ (((Drawable)child).geometry);
                 ((Drawable)child).draw (inContext);
             }
-            else if (child is View && (m_PopupVisible || m_PopupAnimator.is_playing))
-            {
-                inContext.save ();
-                {
-                    var popup_area = ((Drawable)child).geometry.copy ();
-                    var path_clip  = new Graphic.Path.from_region (popup_area);
-                    inContext.clip (path_clip);
-
-                    inContext.translate (Graphic.Point (0.0, -(m_PopupProgress * popup_area.extents.size.height)));
-                    var path = new Graphic.Path.from_region (popup_area);
-                    inContext.pattern = new Graphic.Color.parse ("#C0C0C0");
-                    inContext.fill (path);
-
-                    ((Drawable)child).draw (inContext);
-
-                    inContext.pattern = stroke_pattern;
-                    inContext.dash = null;
-                    inContext.line_width = 1;
-                    inContext.stroke (path);
-                }
-                inContext.restore ();
-            }
         }
 
-        if (m_PopupVisible)
+        if (m_Popup.visible)
         {
             var path = new Graphic.Path.from_region (area);
             inContext.pattern = stroke_pattern;

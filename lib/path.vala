@@ -69,7 +69,9 @@ public class Maia.Path : Item, ItemPackable, ItemMovable
             var fake_surface = new Graphic.Surface (1, 1);
 
             var path = new Graphic.Path.from_data (this.path);
-            size = fake_surface.context.get_path_area (path).size;
+            var path_size = fake_surface.context.get_path_area (path).size;
+            path_size.width = double.max (inSize.width, path_size.width);
+            path_size.height = double.max (inSize.height, path_size.height);
         }
         catch (Graphic.Error err)
         {

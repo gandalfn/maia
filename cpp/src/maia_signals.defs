@@ -1020,6 +1020,15 @@
   (construct-only #f)
 )
 
+(define-property item-over-pointer
+  (of-object "MaiaDocument")
+  (prop-type "GParamObject")
+  (docs "item-over-pointer")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaDrawable
 
 (define-signal damage
@@ -1639,6 +1648,15 @@
   (construct-only #f)
 )
 
+(define-property item-over-pointer
+  (of-object "MaiaGroup")
+  (prop-type "GParamObject")
+  (docs "item-over-pointer")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaHighlight
 
 (define-property tag
@@ -2131,6 +2149,15 @@
   (of-object "MaiaItem")
   (prop-type "GParamDouble")
   (docs "line-width")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property pointer-over
+  (of-object "MaiaItem")
+  (prop-type "GParamBoolean")
+  (docs "pointer-over")
   (readable #t)
   (writable #t)
   (construct-only #f)

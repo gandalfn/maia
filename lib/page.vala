@@ -372,7 +372,7 @@ internal class Maia.Page : GLib.Object
         return false;
     }
 
-    public bool
+    public unowned Item?
     motion_event (Graphic.Point inPoint)
     {
         // parse child from last to first since item has sorted by layer
@@ -388,7 +388,7 @@ internal class Maia.Page : GLib.Object
                 if (iter.get ().motion_event (point))
                 {
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "motion event in %s page %u", iter.get ().name, num);
-                    return true;
+                    return iter.get ();
                 }
             } while (iter.prev ());
         }
@@ -408,7 +408,7 @@ internal class Maia.Page : GLib.Object
             if (header.motion_event (point))
             {
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "motion event in header %s page %u", header.name, num);
-                return true;
+                return header;
             }
         }
 
@@ -430,11 +430,11 @@ internal class Maia.Page : GLib.Object
             if (footer.motion_event (point))
             {
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "motion event in footer %s page %u", footer.name, num);
-                return true;
+                return footer;
             }
         }
 
-        return false;
+        return null;
     }
 
     public bool

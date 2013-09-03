@@ -220,6 +220,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     public Graphic.Pattern background_pattern   { get; set; default = null; }
     public double          line_width           { get; set; default = 1.0; }
 
+    public bool            pointer_over         { get; set; default = false; }
+
     // signals
     public signal bool grab_pointer (Item inItem);
     public signal void ungrab_pointer (Item inItem);
@@ -336,6 +338,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         not_dumpable_attributes.insert ("is-packable");
         not_dumpable_attributes.insert ("size-requested");
         not_dumpable_attributes.insert ("page-break-position");
+        not_dumpable_attributes.insert ("pointer-over");
 
         // check if object is packable
         m_IsPackable = this is ItemPackable;
@@ -722,6 +725,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
         if (inOther is Item)
         {
+            if (inOther is Popup)
+                return -1;
+            if (this is Popup)
+                return 1;
             // Always item non packable first
             if (!((Item)this).is_packable && ((Item)inOther).is_packable)
                 return -1;
@@ -772,7 +779,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     on_button_press_event (uint inButton, Graphic.Point inPoint)
     {
         bool ret = false;
-        if (geometry != null)
+        if (visible && geometry != null)
         {
             ret = inPoint in geometry.extents.size;
         }
@@ -789,7 +796,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     on_button_release_event (uint inButton, Graphic.Point inPoint)
     {
         bool ret = false;
-        if (geometry != null)
+        if (visible && geometry != null)
         {
             ret = inPoint in geometry.extents.size;
         }
@@ -806,7 +813,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     on_motion_event (Graphic.Point inPoint)
     {
         bool ret = false;
-        if (geometry != null)
+        if (visible && geometry != null)
         {
             ret = inPoint in geometry.extents.size;
         }
@@ -814,6 +821,11 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         if (!ret)
         {
             GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
+        }
+
+        if (pointer_over != ret)
+        {
+            pointer_over = ret;
         }
 
         return ret;

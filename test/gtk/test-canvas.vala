@@ -423,6 +423,9 @@ public class Maia.TestCanvas : Maia.TestCase
                          "  }" +
                          "  Combo.combo {" +
                          "      font-description: 'Liberation Sans 14';" +
+                         "      yexpand: false;" +
+                         "      fill-pattern: rgba (0.8, 0.8, 0.8, 0.8);" +
+                         "      highligh-color: rgba (0.2, 0.2, 0.2, 0.8);" +
                          "      View.view {"+
                          "          model: model;" +
                          "          [" +

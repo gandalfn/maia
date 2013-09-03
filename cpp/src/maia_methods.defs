@@ -372,6 +372,12 @@
   (gtype-id "MAIA_TYPE_PATH")
 )
 
+(define-object MaiaPopup
+  (parent "MaiaGroup")
+  (c-name "MaiaPopup")
+  (gtype-id "MAIA_TYPE_POPUP")
+)
+
 (define-object MaiaRectangle
   (parent "MaiaItem")
   (c-name "MaiaRectangle")
@@ -2718,6 +2724,17 @@
   (values
     '("a4" "MAIA_PAGE_FORMAT_A4")
     '("letter" "MAIA_PAGE_FORMAT_LETTER")
+  )
+)
+
+(define-enum MaiaPopupPlacement
+  (c-name "MaiaPopupPlacement")
+  (gtype-id "MAIA_TYPE_POPUP_PLACEMENT")
+  (values
+    '("top" "MAIA_POPUP_PLACEMENT_TOP")
+    '("bottom" "MAIA_POPUP_PLACEMENT_BOTTOM")
+    '("left" "MAIA_POPUP_PLACEMENT_LEFT")
+    '("right" "MAIA_POPUP_PLACEMENT_RIGHT")
   )
 )
 
@@ -7520,6 +7537,21 @@
   )
 )
 
+(define-method get_pointer_over
+  (of-object "MaiaItem")
+  (c-name "maia_item_get_pointer_over")
+  (return-type "gboolean")
+)
+
+(define-method set_pointer_over
+  (of-object "MaiaItem")
+  (c-name "maia_item_set_pointer_over")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
 (define-function maia_item_packable_get_type
   (c-name "maia_item_packable_get_type")
   (return-type "GType")
@@ -7792,6 +7824,21 @@
   (return-type "none")
   (parameters
     '("MaiaGraphicSize*" "result")
+  )
+)
+
+(define-method get_item_over_pointer
+  (of-object "MaiaGroup")
+  (c-name "maia_group_get_item_over_pointer")
+  (return-type "MaiaItem*")
+)
+
+(define-method set_item_over_pointer
+  (of-object "MaiaGroup")
+  (c-name "maia_group_set_item_over_pointer")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "value")
   )
 )
 
@@ -8653,6 +8700,21 @@
   )
 )
 
+(define-method get_item_over_pointer
+  (of-object "MaiaDocument")
+  (c-name "maia_document_get_item_over_pointer")
+  (return-type "MaiaItem*")
+)
+
+(define-method set_item_over_pointer
+  (of-object "MaiaDocument")
+  (c-name "maia_document_set_item_over_pointer")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "value")
+  )
+)
+
 (define-function maia_model_get_type
   (c-name "maia_model_get_type")
   (return-type "GType")
@@ -8771,6 +8833,16 @@
   (return-type "MaiaItemPackable*")
   (parameters
     '("guint" "inRow")
+  )
+)
+
+(define-method get_item_row
+  (of-object "MaiaView")
+  (c-name "maia_view_get_item_row")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaItemPackable*" "inItem")
+    '("guint*" "outRow")
   )
 )
 
@@ -8972,6 +9044,76 @@
   )
 )
 
+(define-function maia_popup_placement_get_type
+  (c-name "maia_popup_placement_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_popup_get_type
+  (c-name "maia_popup_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_popup_new
+  (c-name "maia_popup_new")
+  (is-constructor-of "MaiaPopup")
+  (return-type "MaiaPopup*")
+  (parameters
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-function maia_popup_construct
+  (c-name "maia_popup_construct")
+  (return-type "MaiaPopup*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-method show
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_show")
+  (return-type "none")
+)
+
+(define-method hide
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_hide")
+  (return-type "none")
+)
+
+(define-method get_border
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_get_border")
+  (return-type "gdouble")
+)
+
+(define-method set_border
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_set_border")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_placement
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_get_placement")
+  (return-type "MaiaPopupPlacement")
+)
+
+(define-method set_placement
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_set_placement")
+  (return-type "none")
+  (parameters
+    '("MaiaPopupPlacement" "value")
+  )
+)
+
 (define-function maia_combo_get_type
   (c-name "maia_combo_get_type")
   (return-type "GType")
@@ -9007,6 +9149,21 @@
   (return-type "none")
   (parameters
     '("const-gchar*" "value")
+  )
+)
+
+(define-method get_highlight_color
+  (of-object "MaiaCombo")
+  (c-name "maia_combo_get_highlight_color")
+  (return-type "MaiaGraphicColor*")
+)
+
+(define-method set_highlight_color
+  (of-object "MaiaCombo")
+  (c-name "maia_combo_set_highlight_color")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicColor*" "value")
   )
 )
 
