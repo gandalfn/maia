@@ -27,15 +27,12 @@
 
   <definitions>
 
-    <context id="comment" style-ref="comment" class="comment" class-disabled="no-spell-check">
-      <start>/\*</start>
-      <end>\*/</end>
-      <include>
-        <context style-ref="error" extend-parent="false">
-          <match>/\*</match>
-        </context>
-        <context ref="def:in-comment"/>
-      </include>
+    <context id="comment" style-ref="comment" end-at-line-end="true" class="comment" class-disabled="no-spell-check">
+        <start>//</start>
+
+        <include>
+          <context ref="def:in-line-comment"/>
+        </include>
     </context>
 
     <context id="close-comment-outside-comment" style-ref="error">
@@ -53,6 +50,7 @@
       <keyword>color-stop</keyword>
       <keyword>linear-gradient</keyword>
       <keyword>radial-gradient</keyword>
+      <keyword>pi</keyword>
     </context>
 
     <context id="at-rules" style-ref="at-rules">
@@ -161,6 +159,9 @@
         <keyword>bottom-padding</keyword>
         <keyword>left-padding</keyword>
         <keyword>right-padding</keyword>
+        <keyword>style</keyword>
+        <keyword>section</keyword>
+        <keyword>angle</keyword>
     </context>
 
     <context id="classes" style-ref="type">
@@ -180,6 +181,10 @@
         <keyword>Column</keyword>
         <keyword>View</keyword>
         <keyword>DrawingArea</keyword>
+        <keyword>Shortcut</keyword>
+        <keyword>Combo</keyword>
+        <keyword>Popup</keyword>
+        <keyword>Style</keyword>
     </context>
 
     <context id="attribute-value-delimiters" style-ref="others-2">
