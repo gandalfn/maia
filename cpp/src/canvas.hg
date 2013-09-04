@@ -38,7 +38,7 @@ namespace Maia
                 maia_canvas_resize, maia_canvas_on_scroll_to)
 
         protected:
-            _WRAP_VFUNC(Glib::RefPtr<Item> get_root (), get_root)
+            _WRAP_VFUNC(Glib::RefPtr<Item> get_root (), get_root, refreturn)
             _WRAP_VFUNC(void set_root (const Glib::RefPtr<Item>& inRoot), set_root)
             _WRAP_VFUNC(Glib::RefPtr<Graphic::Surface> get_surface (), get_surface)
 

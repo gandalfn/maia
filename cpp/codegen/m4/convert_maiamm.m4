@@ -173,7 +173,7 @@ _CONVERSION(`MaiaDrawable*',`Glib::RefPtr<Drawable>',`Glib::wrap($3)')
 _CONVERSION(`Glib::RefPtr<Item>',`MaiaItem*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Item>&',`MaiaItem*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaItem*',`const Glib::RefPtr<Item>&',`Glib::wrap($3)')
-_CONVERSION(`MaiaItem*',`Glib::RefPtr<Item>',`Glib::wrap($3)')
+_CONVERSION(`MaiaItem*',`Glib::RefPtr<Item>',`Glib::wrap($3, true)')
 
 _CONVERSION(`Glib::RefPtr<ItemPackable>',`MaiaItemPackable*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<ItemPackable>&',`MaiaItemPackable*',__CONVERT_REFPTR_TO_P)

@@ -31,6 +31,29 @@ namespace Maia
         _GMMPROC_EXTRA_NAMESPACE(Core)
 
         class ObjectIterator;
+        class Object;
+
+        class ObjectProxy
+        {
+            public:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+                inline ObjectProxy(const Glib::RefPtr<Object>& inpObject) :
+                    m_pObject (inpObject)
+                {
+                }
+#endif
+                template <typename T>
+                inline ObjectProxy& operator=(const Glib::RefPtr<T>& inpObject);
+
+                template <typename T>
+                inline operator Glib::RefPtr<T>() const;
+
+            private:
+                Glib::RefPtr<Object> m_pObject;
+
+                // no copy assignment
+                ObjectProxy& operator=(const ObjectProxy&) { return *this; }
+        };
 
         class Object : public Any
         {
@@ -62,16 +85,18 @@ namespace Maia
                 _WRAP_METHOD(bool contains (const Glib::RefPtr<Object>& inObject), maia_core_object_contains)
 
                 _IGNORE(maia_core_object_find)
-                template <typename T>
-                inline void
-                find (const Glib::ustring& inName, Glib::RefPtr<T>& outChild, bool inRecurse = true)
+                inline ObjectProxy find (const Glib::ustring& inName, bool inRecurse = true)
                 {
-                    MaiaCoreObject* pChild = maia_core_object_find(gobj (), g_quark_from_string (inName.c_str ()), (gboolean)inRecurse);
-                    if (pChild)
-                        outChild = Glib::RefPtr<T>::cast_dynamic (Glib::wrap (G_OBJECT (pChild), true));
-                    else
-                        outChild = Glib::RefPtr<T> (0);
+                    Glib::RefPtr<Object> pObject;
+                    find (inName, pObject, inRecurse);
+                    return ObjectProxy (pObject);
                 }
+
+                template <typename T>
+                inline void find (const Glib::ustring& inName, Glib::RefPtr<T>& outChild, bool inRecurse = true);
+
+                template <typename T>
+                inline void find (std::vector<Glib::RefPtr<T> >& inChilds);
 
                 _WRAP_METHOD (Object::iterator begin (), maia_core_object_iterator)
                 _WRAP_METHOD (Object::iterator end (), maia_core_object_iterator_end)
@@ -89,6 +114,10 @@ namespace Maia
 
                 _WRAP_PROPERTY("id", Glib::QueryQuark)
                 _WRAP_PROPERTY("parent", Glib::RefPtr<Object>)
+
+            private:
+                template <class T>
+                inline void find (const Glib::RefPtr<Object>& inpObject, std::vector<Glib::RefPtr<T> >& inoutList);
         };
 
         class ObjectIterator
@@ -127,5 +156,63 @@ namespace Maia
                 _WRAP_METHOD(bool is_end (), maia_core_object_iterator_is_end)
                 _WRAP_METHOD(Glib::RefPtr<Object> get () const, maia_core_object_iterator_get)
         };
+
+        template <typename T>
+        inline void
+        Object::find (const Glib::ustring& inName, Glib::RefPtr<T>& outChild, bool inRecurse)
+        {
+            MaiaCoreObject* pChild = maia_core_object_find(gobj (), g_quark_from_string (inName.c_str ()), (gboolean)inRecurse);
+            if (pChild)
+                outChild = Glib::RefPtr<T>::cast_dynamic (Glib::wrap (G_OBJECT (pChild), true));
+            else
+                outChild = Glib::RefPtr<T> (0);
+        }
+
+        template <typename T>
+        inline void
+        Object::find (std::vector<Glib::RefPtr<T> >& inChilds)
+        {
+            for (iterator iter = begin (); iter != end (); ++iter)
+            {
+                Glib::RefPtr<Object> pObject = *iter;
+                Glib::RefPtr<T> pChild = Glib::RefPtr<T>::cast_dynamic (pObject);
+
+                if (pChild)
+                {
+                    inChilds.push_back (pChild);
+                }
+                find (pObject, inChilds);
+            }
+        }
+
+        template <typename T>
+        inline void
+        Object::find (const Glib::RefPtr<Object>& inpObject, std::vector<Glib::RefPtr<T> >& inoutList)
+        {
+            for (iterator iter = inpObject->begin (); iter != inpObject->end (); ++iter)
+            {
+                Glib::RefPtr<Object> pObject = *iter;
+                Glib::RefPtr<T> pChild = Glib::RefPtr<T>::cast_dynamic (pObject);
+
+                if (pChild)
+                {
+                    inoutList.push_back (pChild);
+                }
+                find (pObject, inoutList);
+            }
+        }
+
+        template <typename T>
+        inline ObjectProxy& ObjectProxy::operator=(const Glib::RefPtr<T>& inpObject)
+        {
+            m_pObject = Glib::RefPtr<Object>::cast_dynamic (inpObject);
+            return *this;
+        }
+
+        template <typename T>
+        inline ObjectProxy::operator Glib::RefPtr<T>() const
+        {
+            return Glib::RefPtr<T>::cast_dynamic (m_pObject);
+        }
     }
 }
