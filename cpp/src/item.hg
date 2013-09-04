@@ -60,6 +60,8 @@ namespace Maia
             _WRAP_VFUNC(void paint (const Glib::RefPtr<Graphic::Context>& inContext), paint, errthrow)
             _WRAP_VFUNC(void update (const Glib::RefPtr<Graphic::Context>& inContext, const Glib::RefPtr<Graphic::Region>& inAllocation), update, errthrow)
 
+            _WRAP_METHOD(void paint_background (const Glib::RefPtr<Graphic::Context>& inContext), maia_item_paint_background, errthrow);
+
         public:
             _WRAP_METHOD(Glib::ustring get_name () const, maia_item_get_name)
             _WRAP_METHOD(bool is_packable () const, maia_item_get_is_packable)

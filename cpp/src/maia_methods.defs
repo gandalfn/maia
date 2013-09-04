@@ -7356,6 +7356,16 @@
   )
 )
 
+(define-method paint_background
+  (of-object "MaiaItem")
+  (c-name "maia_item_paint_background")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicContext*" "inContext")
+    '("GError**" "error")
+  )
+)
+
 (define-method paint
   (of-object "MaiaItem")
   (c-name "maia_item_paint")

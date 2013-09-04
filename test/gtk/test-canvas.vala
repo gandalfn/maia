@@ -221,24 +221,24 @@ public class Maia.TestCanvas : Maia.TestCase
             return true;
         });
 
-//~         double progress = 0;
-//~         GLib.Timeout.add (100, () => {
-//~             progress += (GLib.Math.PI * 2.0) / 360;
-//~             var t = new Graphic.Transform.identity ();
-//~             t.rotate (progress);
-//~             label.transform = t;
-//~             Test.message ("label progress: %g", progress);
-//~             return true;
-//~         });
+        double progress = 0;
+        GLib.Timeout.add (100, () => {
+            progress += (GLib.Math.PI * 2.0) / 360;
+            var t = new Graphic.Transform.identity ();
+            t.rotate (progress);
+            label.transform = t;
+            Test.message ("label progress: %g", progress);
+            return true;
+        });
 
 
         window.add (canvas);
 
-//~         GLib.Timeout.add (100, () => {
-//~             image.position = Graphic.Point (Test.rand_int_range (0, 200), Test.rand_int_range (0, 200));
-//~             Test.message ("image position: %s", image.position.to_string ());
-//~             return true;
-//~         });
+        GLib.Timeout.add (100, () => {
+            image.position = Graphic.Point (Test.rand_int_range (0, 200), Test.rand_int_range (0, 200));
+            Test.message ("image position: %s", image.position.to_string ());
+            return true;
+        });
 
         global::Gtk.main ();
     }

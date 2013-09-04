@@ -196,7 +196,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         allocation = Graphic.Rectangle (child_allocations[item.row, item.column].origin.x,
                                                         child_allocations[item.row, item.column].origin.y, 0, 0);
 
-                        Graphic.Size item_size = item.size_requested;
+                        Graphic.Size item_size = item.size;
 
                         if (item.xfill)
                         {
@@ -411,7 +411,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         // calculate allocation of item
                         allocation = Graphic.Rectangle (area.origin.x, area.origin.y, 0, 0);
 
-                        Graphic.Size item_size = item.size_requested;
+                        Graphic.Size item_size = item.size;
 
                         if (page_breaks != null)
                         {
@@ -625,29 +625,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
     paint (Graphic.Context inContext) throws Graphic.Error
     {
         // paint background
-        if (background_pattern != null)
-        {
-            inContext.save ();
-            unowned Graphic.Image? image = background_pattern as Graphic.Image;
-            if (image != null)
-            {
-                Graphic.Size image_size = image.size;
-                double scale = double.max (geometry.extents.size.width / image_size.width,
-                                           geometry.extents.size.height / image_size.height);
-                image_size.width *= scale;
-                image_size.height *= scale;
-                image.size = image_size;
-
-                inContext.pattern = background_pattern;
-                inContext.translate (Graphic.Point ((geometry.extents.size.width - image_size.width) / 2, (geometry.extents.size.height - image_size.height) / 2));
-            }
-            else
-            {
-                inContext.pattern = background_pattern;
-            }
-            inContext.paint ();
-            inContext.restore ();
-        }
+        paint_background (inContext);
 
         // paint childs
         Graphic.Path grid = new Graphic.Path ();
