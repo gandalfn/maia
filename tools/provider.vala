@@ -220,6 +220,10 @@ public class CanvasEditor.ManifestProvider : Provider
         m_Keywords.insert ("Column");
         m_Keywords.insert ("View");
         m_Keywords.insert ("DrawingArea");
+        m_Keywords.insert ("Style");
+        m_Keywords.insert ("Combo");
+        m_Keywords.insert ("Popup");
+        m_Keywords.insert ("Shortcut");
     }
 
     private void
@@ -285,6 +289,9 @@ public class CanvasEditor.ManifestProvider : Provider
         m_Properties.insert ("left-padding");
         m_Properties.insert ("right-padding");
         m_Properties.insert ("border-width");
+        m_Properties.insert ("style");
+        m_Properties.insert ("section");
+        m_Properties.insert ("angle");
     }
 
     private GLib.List<string>
