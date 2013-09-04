@@ -43,9 +43,6 @@ namespace Maia
 
                 _WRAP_METHOD(Glib::ListHandle< ::Gtk::Button* > get_shortcut_buttons (), maia_gtk_canvas_get_shortcut_buttons)
 
-            private:
-                _WRAP_SIGNAL(void on_set_scroll_adjustments (::Gtk::Adjustment* inpHAdjust, ::Gtk::Adjustment* inpVAdjust), "on-set-scroll-adjustments")
-
                 _WRAP_PROPERTY("root", Glib::RefPtr<Item>)
                 _WRAP_PROPERTY("surface", Glib::RefPtr<Graphic::Surface>)
                 _WRAP_PROPERTY("scroll_x", double)
@@ -57,6 +54,9 @@ namespace Maia
                 _WRAP_PROPERTY("focus-item", Glib::RefPtr<Item>)
                 _WRAP_PROPERTY("grab-pointer-item", Glib::RefPtr<Item>)
                 _WRAP_PROPERTY("grab-keyboard-item", Glib::RefPtr<Item>)
+
+            private:
+                _WRAP_SIGNAL(void on_set_scroll_adjustments (::Gtk::Adjustment* inpHAdjust, ::Gtk::Adjustment* inpVAdjust), "on-set-scroll-adjustments", no_default_handler)
         };
     }
 }
