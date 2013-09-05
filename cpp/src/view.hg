@@ -35,6 +35,8 @@ namespace Maia
 
         _IGNORE(maia_view_set_property_func)
 
+        _CTOR_DEFAULT()
+
         public:
             typedef sigc::slot<bool, Glib::RefPtr<Glib::Object>, Glib::ustring, Glib::ustring, unsigned int> SlotSetProperty;
 
@@ -70,5 +72,8 @@ namespace Maia
 
         private:
             _WRAP_METHOD(Glib::RefPtr<ItemPackable> get_item (guint inRow) const, maia_view_get_item)
+
+            static gboolean set_property_func_callback (GObject* inpObject, const char* inProperty, const char* inColumn, guint inRow, void* inpData);
+            static void set_property_func_destroy (void* inpData);
     };
 }

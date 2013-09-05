@@ -42,7 +42,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
     // accessors
     [CCode (notify = false)]
-    public override Core.Object? parent {
+    public override unowned Core.Object? parent {
         get {
             return base.parent;
         }

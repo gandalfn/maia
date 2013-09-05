@@ -314,6 +314,7 @@ namespace Maia.Log
 
     // static properties
     private static Logger s_Logger = null;
+    private static bool   s_WrapGLog = false;
 
     // static methods
     private static inline string
@@ -369,10 +370,26 @@ namespace Maia.Log
         if (s_Logger == null)
         {
             s_Logger = new Stderr (Level.WARNING, Log.Category.ALL, "");
-            GLib.Log.set_default_handler (glib_log_handler);
+            if (s_WrapGLog)
+            {
+                GLib.Log.set_default_handler (glib_log_handler);
+            }
         }
 
         return s_Logger;
+    }
+
+    /**
+     * Set if logger intercept glog
+     */
+    public static inline void
+    set_wrap_glog (bool inSetWrapGLog)
+    {
+        s_WrapGLog = inSetWrapGLog;
+        if (s_WrapGLog)
+        {
+            GLib.Log.set_default_handler (glib_log_handler);
+        }
     }
 
     /**
@@ -382,7 +399,10 @@ namespace Maia.Log
     set_default_logger (Logger inLogger)
     {
         s_Logger = inLogger;
-        GLib.Log.set_default_handler (glib_log_handler);
+        if (s_WrapGLog)
+        {
+            GLib.Log.set_default_handler (glib_log_handler);
+        }
     }
 
     /**

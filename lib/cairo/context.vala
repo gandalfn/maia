@@ -113,6 +113,7 @@ public class Maia.Cairo.Context : Graphic.Context
             {
                 unowned Graphic.Image image = (Graphic.Image)value;
                 global::Cairo.Pattern pattern = new global::Cairo.Pattern.for_surface (((Surface)image.surface).surface);
+                pattern.set_filter (global::Cairo.Filter.GOOD);
                 m_Context.set_source (pattern);
             }
             else if (value is Graphic.Color)

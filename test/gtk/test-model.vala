@@ -196,11 +196,10 @@ public class Maia.TestModel : Maia.TestCase
                             "                   font-description: 'Liberation Sans 14';" +
                             "                   text: @name;" +
                             "               }" +
-                            "               Label.value {" +
+                            "               Image.value {" +
                             "                   row: 1;" +
-                            "                   stroke-pattern: @color;" +
                             "                   font-description: 'Liberation Sans 14';" +
-                            "                   text: @val;" +
+                            "                   filename: @val;" +
                             "               }" +
                             "           }"+
                             "       ]" +
@@ -230,14 +229,44 @@ public class Maia.TestModel : Maia.TestCase
         }
         assert (canvas.root != null);
 
-        global::Gtk.ListStore list = new global::Gtk.ListStore (3, typeof (string), typeof (int), typeof (string));
+        string[] files = {};
+        files += "/usr/share/pixmaps/iceweasel.png";
+        files += "/usr/share/pixmaps/icon_epdfview-48.png";
+        files += "/usr/share/pixmaps/mlterm-icon-24colors-1.png";
+        files += "/usr/share/pixmaps/mlterm-icon-24colors-2.png";
+        files += "/usr/share/pixmaps/mlterm-icon-fvwm.png";
+        files += "/usr/share/pixmaps/mlterm-icon-gnome2.png";
+        files += "/usr/share/pixmaps/mlterm-icon-gnome.png";
+        files += "/usr/share/pixmaps/mlterm-icon-kde.png";
+        files += "/usr/share/pixmaps/mlterm-icon-twm.png";
+        files += "/usr/share/pixmaps/mlterm-icon-wmaker.png";
+        files += "/usr/share/pixmaps/monitor.png";
+        files += "/usr/share/pixmaps/mono-runtime.png";
+        files += "/usr/share/pixmaps/mousepad.png";
+        files += "/usr/share/pixmaps/nvidia-settings.png";
+        files += "/usr/share/pixmaps/show-desktop.png";
+        files += "/usr/share/pixmaps/synaptic.png";
+        files += "/usr/share/pixmaps/sysprof-icon-16.png";
+        files += "/usr/share/pixmaps/sysprof-icon-24.png";
+        files += "/usr/share/pixmaps/sysprof-icon-32.png";
+        files += "/usr/share/pixmaps/sysprof-icon-48.png";
+        files += "/usr/share/pixmaps/transmission.png";
+        files += "/usr/share/pixmaps/workspace-overview.png";
+        files += "/usr/share/pixmaps/xchat.png";
+        files += "/usr/share/pixmaps/xfce4_xicon1.png";
+        files += "/usr/share/pixmaps/xfce4_xicon2.png";
+        files += "/usr/share/pixmaps/xfce4_xicon3.png";
+        files += "/usr/share/pixmaps/xfce4_xicon4.png";
+        files += "/usr/share/pixmaps/xfce4_xicon.png";
+
+        global::Gtk.ListStore list = new global::Gtk.ListStore (3, typeof (string), typeof (string), typeof (string));
         for (int cpt = 0; cpt < 10; ++cpt)
         {
             global::Gtk.TreeIter iter;
             list.append (out iter);
             string color = "#%02i%02i%02i".printf (Test.rand_int_range (0, 255), Test.rand_int_range (0, 255), Test.rand_int_range (0, 255));
             list.set (iter, 0, "%i".printf (Test.rand_int_range (0, 200)),
-                            1, Test.rand_int_range (0, 200),
+                            1, files[Test.rand_int_range (0, files.length -1)],
                             2, color);
         }
 
@@ -276,7 +305,7 @@ public class Maia.TestModel : Maia.TestCase
                     if (cpt == r)
                     {
                         string name = "%i".printf (Test.rand_int_range (0, 200));
-                        int val = Test.rand_int_range (0, 200);
+                        string val = files[Test.rand_int_range (0, files.length -1)];
                         string color = "#%02i%02i%02i".printf (Test.rand_int_range (0, 255), Test.rand_int_range (0, 255), Test.rand_int_range (0, 255));
                         Test.message (@"set $r $name $val $color");
                         list.set (iter, 0, name, 1, val, 2, color);
@@ -285,6 +314,25 @@ public class Maia.TestModel : Maia.TestCase
                     cpt++;
                 } while (list.iter_next(ref iter));
             }
+            r = Test.rand_int_range (0, list.iter_n_children(null));
+            if (list.get_iter_first(out iter))
+            {
+                do
+                {
+                    if (cpt == r)
+                    {
+                        list.remove (iter);
+                        break;
+                    }
+                    cpt++;
+                } while (list.iter_next(ref iter));
+            }
+
+            list.append (out iter);
+            string color = "#%02i%02i%02i".printf (Test.rand_int_range (0, 255), Test.rand_int_range (0, 255), Test.rand_int_range (0, 255));
+            list.set (iter, 0, "%i".printf (Test.rand_int_range (0, 200)),
+                            1, files[Test.rand_int_range (0, files.length -1)],
+                            2, color);
 
             return true;
         });

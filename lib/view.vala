@@ -26,6 +26,7 @@ public class Maia.View : Maia.Grid
     private unowned Model m_Model = null;
     private SetPropertyFunc m_SetPropertyFunc = null;
     private int m_RowHightlighted = -1;
+    private Manifest.Document m_Document = null;
 
     // signals
     public signal void row_clicked (uint inRow);
@@ -190,17 +191,23 @@ public class Maia.View : Maia.Grid
         // parse template
         try
         {
-            var document = new Manifest.Document.from_buffer (characters, characters.length);
-            document.attribute_bind_added.connect (on_template_attribute_bind);
-
-            ItemPackable? item = document.get (null) as ItemPackable;
-
-            if (item != null)
+            if (m_Document == null && characters != null && characters.length > 0)
             {
-                item.id = GLib.Quark.from_string ("%s-%u".printf (item.name, inRow));
+                m_Document = new Manifest.Document.from_buffer (characters, characters.length);
+                m_Document.attribute_bind_added.connect (on_template_attribute_bind);
             }
 
-            return item;
+            if (m_Document != null)
+            {
+                ItemPackable? item = m_Document.get (null) as ItemPackable;
+
+                if (item != null)
+                {
+                    item.id = GLib.Quark.from_string ("%s-%u".printf (item.name, inRow));
+                }
+
+                return item;
+            }
         }
         catch (Core.ParseError err)
         {
@@ -362,6 +369,8 @@ public class Maia.View : Maia.Grid
                         item.row = inNewOrder[pos] / lines;
                         item.column = inNewOrder[pos] % lines;
                     }
+
+                    item.reorder ();
                 }
             }
         }

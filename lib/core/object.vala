@@ -75,7 +75,7 @@ public abstract class Maia.Core.Object : Any
      * Object parent
      */
     [CCode (notify = false)]
-    public virtual Object? parent {
+    public virtual unowned Object? parent {
         get {
             return m_Parent;
         }

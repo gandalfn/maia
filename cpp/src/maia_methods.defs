@@ -2956,6 +2956,14 @@
   )
 )
 
+(define-function maia_log_set_wrap_glog
+  (c-name "maia_log_set_wrap_glog")
+  (return-type "none")
+  (parameters
+    '("gboolean" "inSetWrapGLog")
+  )
+)
+
 (define-function maia_log_set_default_logger
   (c-name "maia_log_set_default_logger")
   (return-type "none")

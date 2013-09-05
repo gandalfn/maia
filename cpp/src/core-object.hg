@@ -117,7 +117,6 @@ namespace Maia
                 inline ObjectDerivedProxy find_derived (const Glib::ustring& inName, bool inRecurse = true)
                 {
                     MaiaCoreObject* pObject = maia_core_object_find(gobj (), g_quark_from_string (inName.c_str ()), (gboolean)inRecurse);
-
                     return ObjectDerivedProxy (pObject);
                 }
 
@@ -254,21 +253,9 @@ namespace Maia
         template <typename T>
         inline ObjectDerivedProxy::operator Glib::RefPtr<T>() const
         {
-            Glib::ObjectBase* pObjectBase = Glib::ObjectBase::_get_current_wrapper((GObject*)m_pObject);
-            Glib::RefPtr<T> pItem;
-
-            if(pObjectBase)
-            {
-                pItem = Glib::RefPtr<T>::cast_dynamic (Glib::wrap(G_OBJECT (m_pObject), true));
-                if(!pItem)
-                    g_critical("Maia::Core::Object::find_derived(): dynamic_cast<> failed. An existing C++ instance, of a different type, seems to exist.");
-            }
-            else
-            {
-                pItem = Glib::RefPtr<T> (new T(m_pObject));
-            }
-
-            return pItem;
+            Glib::RefPtr<T> pObject = Glib::RefPtr<T> (new T(m_pObject));
+            pObject->reference ();
+            return pObject;
         }
     }
 }

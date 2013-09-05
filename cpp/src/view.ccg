@@ -21,19 +21,19 @@
 
 namespace Maia
 {
-    static gboolean
-    set_property_func_callback (GObject* inpObject, const char* inProperty, const char* inColumn, guint inRow, void* inpData)
+    gboolean
+    View::set_property_func_callback (GObject* inpObject, const char* inProperty, const char* inColumn, guint inRow, void* inpData)
     {
         View::SlotSetProperty* pSlot = (View::SlotSetProperty*)inpData;
 
-        Glib::RefPtr<Glib::Object> pObject = Glib::wrap (inpObject);
+        Glib::RefPtr<Glib::Object> pObject = Glib::wrap (inpObject, true);
         Glib::ustring property (inProperty);
         Glib::ustring column (inColumn);
         return (*pSlot) (pObject, property, column, inRow);
     }
 
-    static void
-    set_property_func_destroy (void* inpData)
+    void
+    View::set_property_func_destroy (void* inpData)
     {
         View::SlotSetProperty* pSlot = (View::SlotSetProperty*)inpData;
         delete pSlot;
@@ -43,6 +43,6 @@ namespace Maia
     {
         SlotSetProperty* pSlot = new SlotSetProperty (inSlot);
 
-        maia_view_set_property_func (gobj (), set_property_func_callback, pSlot, set_property_func_destroy);
+        maia_view_set_property_func (gobj (), &set_property_func_callback, pSlot, &set_property_func_destroy);
     }
 }

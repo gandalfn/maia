@@ -289,9 +289,9 @@ public class Maia.Graphic.Color : Pattern
      *
      * @param inValue string color to parse
      */
-    public Color.parse (string inValue)
+    public Color.parse (string? inValue)
     {
-        if (inValue == "none")
+        if (inValue == null || inValue == "none")
         {
             name = inValue;
             m_Red = 0.0;
