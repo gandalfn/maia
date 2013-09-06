@@ -1,0 +1,37 @@
+Model.images {
+	Column.image_filename {
+		column: 0;
+	}
+
+	Column.image_comment {
+		column: 1;
+	}
+}
+
+Model.birads_images {
+	Column.image_filename {
+		column: 0;
+	}
+
+	Column.image_comment {
+		column: 1;
+	}
+}
+
+Model.thyrads_images {
+	Column.image_filename {
+		column: 0;
+	}
+
+	Column.image_comment {
+		column: 1;
+	}
+}
+
+Model.measures {
+	Column.measure_name {
+
+	}
+	Column.measure_value {
+	}
+}

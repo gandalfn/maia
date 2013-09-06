@@ -1,0 +1,55 @@
+///////////////////////////////////////////////////////////
+/// STYLE FOR LABELS
+///////////////////////////////////////////////////////////
+Style.label_9 {
+	yexpand: false;
+	xexpand: false;
+	xfill: false;
+	font-description: "Liberation Sans 9";
+	text: '';
+}
+
+Style.label_12 {
+	yexpand: false;
+	xexpand: false;
+	xfill: false;
+	font-description: "Liberation Sans 12";
+	text: '';
+}
+
+Style.label_14 {
+	yexpand: false;
+	xexpand: false;
+	xfill: false;
+	font-description: "Liberation Sans 14";
+	text: '';
+}
+
+Style.label_16 {
+	yexpand: false;
+	xexpand: false;
+	xfill: false;
+	font-description: "Liberation Sans 16";
+	text: '';
+}
+
+///////////////////////////////////////////////////////////
+/// STYLE FOR CHECKBUTTONS
+///////////////////////////////////////////////////////////
+Style.checkbutton_9 {
+	font-description: 'Liberation Sans 9';
+	stroke-pattern: '#000000';
+	fill-pattern: '#FFFFFF';
+	yexpand: false;
+	label: ' ';
+}
+
+///////////////////////////////////////////////////////////
+/// STYLE FOR ENTRIES
+///////////////////////////////////////////////////////////
+Style.entry_9 {
+	yexpand: false;
+	font-description: "Liberation Sans 9";
+	lines: 12;
+	underline-width: 0.3;
+}

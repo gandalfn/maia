@@ -1,0 +1,72 @@
+Grid.target_images {
+	row: 2;
+
+	Label.target_images_title {
+		style: label_16;
+		text: '<b><u>Images</u></b>';
+		bottom-padding: 12;
+	}
+
+	View.target_images_view {
+		row: 1;
+		xexpand: false;
+		xfill: false;
+		yexpand: false;
+		left-padding: 12;
+		row-spacing: 12;
+		model: images;
+
+		[
+			Grid.cell_image {
+				yfill: false;
+				yexpand: false;
+
+				Style.label_title_cell_image {
+					style: label_12;
+					xalign: 0.0;
+				}
+
+				Style.label_cell_image {
+					style: label_12;
+					left-padding: 5;
+					xalign: 0.0;
+				}
+
+				Image.cell_image_thumbnail {
+					row: 0;
+					column: 0;
+					rows: 2;
+					yexpand: false;
+					size: 400, 300;
+					filename: @image_filename;
+				}
+
+				Label.cell_image_measure {
+					row: 0;
+					column: 1;
+					style: label_cell_image;
+					text: '<u><b>Measures</b></u>';
+				}
+
+				Grid.cell_image_comment_content {
+					row: 1;
+					column: 1;
+					xfill: false;
+					xalign: 0.0;
+
+					Label.cell_image_comment_title {
+						row: 0;
+						style: label_title_cell_image;
+						text: '<u><b>Comment:</b></u>';
+					}
+
+					Label.cell_image_comment {
+						row: 1;
+						style: label_cell_image;
+						text: @image_comment;
+					}
+				}
+			}
+		]
+	}
+}
