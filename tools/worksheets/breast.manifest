@@ -5,6 +5,13 @@ Document.breast {
 	background-pattern: #E0E0E0;
 	header: header;
 	footer: footer;
+	//transform: scale (2, 2);
+
+	// style
+	@include(ssi-standard-style.manifest);
+
+	// models
+	@include(models.manifest);
 
 	// shortcuts
 	@include(breast-shortcuts.manifest);
@@ -16,4 +23,7 @@ Document.breast {
 	// Worksheet breast_content
 	@include(summary.manifest);
 	@include(summary-breast.manifest);
+
+	// Target image list
+	@include(targets-images.manifest);
 }

@@ -28,22 +28,25 @@ public class Maia.Core.Queue<V> : Array<V>
 
     public V?
     peek ()
-        requires (length > 0)
     {
-        return at (length - 1);
+        return length > 0 ? at (length - 1) : null;
     }
 
     public V?
     pop ()
-        requires (length > 0)
     {
-        V? val = at (length - 1);
-        if (val != null)
+        if (length > 0)
         {
-            remove (val);
+            V? val = at (length - 1);
+            if (val != null)
+            {
+                remove (val);
+            }
+
+            return val;
         }
 
-        return val;
+        return null;
     }
 
     public void

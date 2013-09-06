@@ -221,9 +221,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         if (page_breaks != null)
                         {
                             // Parse all page break for this grid in reverse order
-                            var iter = page_breaks.end ();
-                            unowned Document.PageBreak? page_break = null;
-                            while ((page_break = iter.get ()) != null)
+                            foreach (unowned Document.PageBreak? page_break in page_breaks)
                             {
                                 // the item row is in or after page break row set position
                                 if (item.row >= page_break.row)
@@ -241,7 +239,6 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                         allocation.origin.y += delta;
                                     }
                                 }
-                                if (!iter.prev ()) break;
                             }
                         }
 
@@ -415,9 +412,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
                         if (page_breaks != null)
                         {
-                            var iter = page_breaks.end ();
-                            unowned Document.PageBreak? page_break = null;
-                            while ((page_break = iter.get ()) != null)
+                            foreach (unowned Document.PageBreak? page_break in page_breaks)
                             {
                                 if (item.row >= page_break.row)
                                 {
@@ -434,7 +429,6 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                         allocation.origin.y += delta;
                                     }
                                 }
-                                if (!iter.prev ()) break;
                             }
                         }
 

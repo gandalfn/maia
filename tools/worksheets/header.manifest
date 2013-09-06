@@ -8,8 +8,8 @@ Grid.header {
 		yexpand: false;
 		right-padding: 5;
 		left-padding: 5;
-		size: 160, 64;
-		filename: '/home/nicolas/Projects/git/rubi.git/dev/./runtime_ro/bitmap/logo-aixplorer.png';
+		// TODO: Ask jessica to have smaller logo
+		size: 165, 64;
 	}
 
 	Label.header_institution_name {
@@ -18,7 +18,6 @@ Grid.header {
 		right-padding: 5;
 		left-padding: 5;
 		font-description: "Liberation Sans 17";
-		text: "Institution name";
 	}
 
 	Grid.header_exam_info {

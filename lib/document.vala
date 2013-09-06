@@ -407,10 +407,6 @@ public class Maia.Document : Item
                     }
                 }
             }
-            else
-            {
-                add_item_in_page = false;
-            }
 
             if (add_item_in_page)
             {

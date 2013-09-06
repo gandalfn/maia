@@ -35,7 +35,7 @@ internal interface Maia.GdkPixbuf.Image : Graphic.Image
         uchar* pixbuf_pixels = inPixbuf.pixels;
 
         // Set size to pixbuf size
-        Graphic.Size size = Graphic.Size (width, height);
+        size = Graphic.Size (width, height);
 
         // Convert pixbuf data to cairo data
         for (int j = height; j > 0; j--)

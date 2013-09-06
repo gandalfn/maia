@@ -139,6 +139,7 @@ public class Maia.TestCanvas : Maia.TestCase
         add_test ("image-data-svg", test_canvas_image_data_svg);
         add_test ("image-background-svg", test_canvas_group_background_svg);
         add_test ("combo", test_canvas_combo);
+        add_test ("worksheet-model", test_canvas_worksheet_model);
     }
 
     public override void
@@ -461,6 +462,73 @@ public class Maia.TestCanvas : Maia.TestCase
         model.treemodel = list;
 
         window.add (canvas);
+
+        global::Gtk.main ();
+    }
+
+    public void
+    test_canvas_worksheet_model ()
+    {
+        Maia.Gtk.Canvas canvas = new Maia.Gtk.Canvas ();
+        canvas.show ();
+        try
+        {
+            canvas.load_from_file ("../tools/worksheets/breast.manifest", "breast");
+        }
+        catch (Core.ParseError err)
+        {
+            Test.message (err.message);
+            assert (false);
+        }
+
+        var scrolled_window = new global::Gtk.ScrolledWindow (null, null);
+        scrolled_window.hscrollbar_policy = global::Gtk.PolicyType.AUTOMATIC;
+        scrolled_window.vscrollbar_policy = global::Gtk.PolicyType.AUTOMATIC;
+        scrolled_window.show ();
+        scrolled_window.add (canvas);
+
+        Maia.Gtk.Model model = canvas.root.find (GLib.Quark.from_string ("images")) as Maia.Gtk.Model;
+        assert (model != null);
+
+        global::Gtk.ListStore list = new global::Gtk.ListStore (2, typeof (string), typeof (string));
+        model.treemodel = list;
+        try
+        {
+            var directory = GLib.File.new_for_path ("/home/gandalfn/Images");
+
+            var enumerator = directory.enumerate_children (GLib.FileAttribute.STANDARD_NAME, 0);
+
+            GLib.FileInfo file_info;
+            while ((file_info = enumerator.next_file ()) != null)
+            {
+                string filename = file_info.get_name ();
+                if (filename.has_suffix (".png"))
+                {
+                    global::Gtk.TreeIter iter;
+                    list.append (out iter);
+
+                    list.set (iter, 0, "/home/gandalfn/Images/" + filename, 1, filename);
+                }
+            }
+        }
+        catch (GLib.Error err)
+        {
+            assert (false);
+        }
+
+        string dump = canvas.root.to_string ();
+        try
+        {
+            GLib.FileUtils.set_contents("breast.dump", dump);
+        }
+        catch (GLib.FileError err)
+        {
+            Test.message (err.message);
+            assert (false);
+        }
+
+        window.add (scrolled_window);
+        window.set_size_request (700, 700);
 
         global::Gtk.main ();
     }

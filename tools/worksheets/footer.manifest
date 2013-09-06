@@ -1,29 +1,23 @@
 // Footer
 Grid.footer {
 	row_spacing: 5;
+	
 	Label.footer_revision {
+		style:label_12;
 		right-padding: 5;
 		left-padding: 5;
-		yexpand: false;
-		xexpand: false;
-		font-description: "Liberation Sans 12";
-		text: "Revision 1";
 	}
 	Label.footer_page_num {
+		style:label_12;
 		column: 1;
 		right-padding: 5;
 		left-padding: 5;
-		yexpand: false;
-		font-description: "Liberation Sans 12";
 		text: "Page 1/1";
 	}
 	Label.footer_date {
+		style:label_12;
 		column: 2;
 		right-padding: 5;
 		left-padding: 5;
-		yexpand: false;
-		xexpand: false;
-		font-description: "Liberation Sans 12";
-		text: "01/08/2013";
 	}
 }

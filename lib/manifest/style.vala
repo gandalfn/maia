@@ -95,12 +95,15 @@ public class Maia.Manifest.Style : Core.Object, Element
                                 // Add all style property in this style
                                 string style_name = (string)inManifest.scanner.transform (typeof (string));
                                 unowned Style? style = inManifest.get_style (style_name);
-                                foreach (unowned Core.Object child in style)
+                                if (style != null)
                                 {
-                                    Property property = child as Property;
-                                    if (property != null)
+                                    foreach (unowned Core.Object child in style)
                                     {
-                                        add (property.copy ());
+                                        Property property = child as Property;
+                                        if (property != null)
+                                        {
+                                            add (property.copy ());
+                                        }
                                     }
                                 }
                             }

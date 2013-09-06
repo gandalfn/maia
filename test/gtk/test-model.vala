@@ -329,6 +329,7 @@ public class Maia.TestModel : Maia.TestCase
             }
 
             list.append (out iter);
+
             string color = "#%02i%02i%02i".printf (Test.rand_int_range (0, 255), Test.rand_int_range (0, 255), Test.rand_int_range (0, 255));
             list.set (iter, 0, "%i".printf (Test.rand_int_range (0, 200)),
                             1, files[Test.rand_int_range (0, files.length -1)],

@@ -47,6 +47,7 @@ public abstract class Maia.Graphic.Image : Graphic.Pattern
                     break;
 
                 case "image/jpg":
+                case "image/jpeg":
                     ret = GLib.Object.new (typeof (ImageJpg), filename: inFilename, size: inSize) as Image;
                     break;
 
