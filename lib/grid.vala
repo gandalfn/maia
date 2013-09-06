@@ -61,8 +61,8 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                     if (item.rows > 1) nb_rows = uint.max (nb_rows, item.row + item.rows);
                     if (item.columns > 1) nb_columns = uint.max (nb_columns, item.column + item.columns);
 
-                    if (rows.length < nb_rows + 1) rows.resize ((int)nb_rows);
-                    if (columns.length < nb_columns + 1) columns.resize ((int)nb_columns);
+                    if (rows.length < nb_rows) rows.resize ((int)nb_rows);
+                    if (columns.length < nb_columns) columns.resize ((int)nb_columns);
 
                     // cumulate the width of all rows
                     rows[item.row].size.width += (item_size.width / item.columns) + item.left_padding + item.right_padding;
@@ -277,8 +277,12 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                 Graphic.Rectangle allocation = inAllocation.extents;
 
                 // Calculate the the size of padding
-                double xpadding = double.max (allocation.size.width - natural.width - (grid.column_spacing * (columns.length - 1)), 0);
-                double ypadding = double.max (allocation.size.height - natural.height - (grid.row_spacing * (rows.length - 1)), 0);
+                double xpadding = double.max (allocation.size.width - natural.width, 0);
+                if (columns.length > 1)
+                    xpadding -= grid.column_spacing * (columns.length - 1);
+                double ypadding = double.max (allocation.size.height - natural.height, 0);
+                if (rows.length > 1)
+                    ypadding -= grid.row_spacing * (rows.length - 1);
 
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s natural: %s padding: %g,%g", grid.name, natural.to_string (), xpadding, ypadding);
 

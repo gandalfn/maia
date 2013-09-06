@@ -234,10 +234,8 @@ MM_ARG_ENABLE_WARNINGS([MAIAMM_WXXFLAGS],
 dnl ****************************************************************************
 dnl Check for build docs
 dnl ****************************************************************************
-if test "x$enabledoc" = "xyes"; then
-    MMDOCTOOLDIR=/usr/share/mm-common/doctool
-    MM_ARG_ENABLE_DOCUMENTATION
-fi
+MMDOCTOOLDIR=/usr/share/mm-common/doctool
+MM_ARG_ENABLE_DOCUMENTATION
 
 dnl ****************************************************************************
 dnl Generate outputs

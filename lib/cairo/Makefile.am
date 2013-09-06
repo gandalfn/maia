@@ -33,7 +33,8 @@ libmaia_cairo_graphic_la_LDFLAGS = \
 
 libmaia_cairo_graphic_la_LIBADD = \
     $(MAIA_LIBS) \
-    $(MAIA_CAIRO_LIBS)
+    $(MAIA_CAIRO_LIBS) \
+    $(top_builddir)/lib/libmaia.la
 
 VALAFILES = \
     $(filter %.vala,$(libmaia_cairo_graphic_la_SOURCES))

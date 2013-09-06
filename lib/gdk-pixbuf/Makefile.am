@@ -34,7 +34,9 @@ libmaia_gdk_pixbuf_la_LDFLAGS = \
 libmaia_gdk_pixbuf_la_LIBADD = \
     $(MAIA_LIBS) \
     $(MAIA_CAIRO_LIBS) \
-    $(MAIA_GDK_PIXBUF_LIBS)
+    $(MAIA_GDK_PIXBUF_LIBS) \
+    $(top_builddir)/lib/libmaia.la \
+    $(top_builddir)/lib/cairo/libmaia-cairo-graphic.la
 
 VALAFILES = \
     $(filter %.vala,$(libmaia_gdk_pixbuf_la_SOURCES))

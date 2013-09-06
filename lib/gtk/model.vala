@@ -28,7 +28,7 @@ public class Maia.Gtk.Model : Maia.Model
         {
             unowned global::Gtk.TreeModel treemodel = ((Model)model).treemodel;
 
-            if (column >= 0 && treemodel != null && column < treemodel.iter_n_children(null))
+            if (column >= 0 && treemodel != null && inPath < treemodel.iter_n_children(null))
             {
                 global::Gtk.TreeIter iter;
                 if (treemodel.get_iter_from_string (out iter, "%u".printf (inPath)))

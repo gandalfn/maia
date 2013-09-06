@@ -22,6 +22,7 @@ extradefs_generate_maia_gtk_defs_SOURCES = \
 
 extradefs_generate_maia_gtk_defs_LDADD   = \
     $(MAIA_LIBS) \
+    $(MAIAMM_LIBS) \
     $(MAIA_GTKMM_LIBS) \
     ${top_builddir}/lib/libmaia.la \
     ${top_builddir}/lib/cairo/libmaia-cairo-graphic.la \

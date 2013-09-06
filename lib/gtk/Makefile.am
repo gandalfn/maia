@@ -41,7 +41,11 @@ libmaia_gtk_la_LDFLAGS = \
 libmaia_gtk_la_LIBADD = \
     $(MAIA_LIBS) \
     $(MAIA_GDK_PIXBUF_LIBS) \
-    $(MAIA_CAIRO_LIBS)
+    $(MAIA_CAIRO_LIBS) \
+    $(top_builddir)/lib/libmaia.la \
+    $(top_builddir)/lib/cairo/libmaia-cairo-graphic.la \
+    $(top_builddir)/lib/gdk-pixbuf/libmaia-gdk-pixbuf.la \
+    $(top_builddir)/lib/rsvg/libmaia-rsvg.la
 
 VALAFILES = \
     $(filter %.vala,$(libmaia_gtk_la_SOURCES))

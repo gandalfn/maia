@@ -248,6 +248,8 @@ public class Maia.View : Maia.Grid
                         item.row = (pos + 1) / lines;
                         item.column = (pos + 1) % lines;
                     }
+
+                    item.reorder ();
                 }
             }
         }
@@ -283,6 +285,8 @@ public class Maia.View : Maia.Grid
                         item.row = (pos - 1) / lines;
                         item.column = (pos - 1) % lines;
                     }
+
+                    item.reorder ();
                 }
             }
         }

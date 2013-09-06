@@ -34,7 +34,14 @@ VALADOC_FLAGS = \
 
 cpp/libdoclet.so: cpp/doclet.vala
 	$(AM_V_GEN) mkdir -p $(builddir)/cpp && \
-	$(VALAC) --pkg=valadoc-1.0 -b $(srcdir)/doc/cpp -d $(builddir)/cpp -C $(srcdir)/cpp/doclet.vala && \
+	$(VALAC) \
+	    --pkg posix \
+	    --pkg glib-2.0 \
+	    --pkg gio-2.0 \
+	    --pkg gio-unix-2.0 \
+	    --pkg gtk+-2.0 \
+	    --pkg librsvg-2.0 \
+	    --pkg=valadoc-1.0 -b $(srcdir)/doc/cpp -d $(builddir)/cpp -C $(srcdir)/cpp/doclet.vala && \
 	$(CC) -shared -fPIC -o $(top_builddir)/doc/cpp/libdoclet.so $(MAIA_VALADOC_CFLAGS) $(MAIA_VALADOC_LIBS) $(top_builddir)/doc/cpp/doclet.c
 
 valadoc-html: $(VALADOC_SRCS)

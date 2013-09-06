@@ -31,7 +31,9 @@ libmaia_rsvg_la_LDFLAGS = \
 libmaia_rsvg_la_LIBADD = \
     $(MAIA_LIBS) \
     $(MAIA_CAIRO_LIBS) \
-    $(MAIA_RSVG_LIBS)
+    $(MAIA_RSVG_LIBS) \
+    $(top_builddir)/lib/libmaia.la \
+    $(top_builddir)/lib/cairo/libmaia-cairo-graphic.la
 
 VALAFILES = \
     $(filter %.vala,$(libmaia_rsvg_la_SOURCES))
