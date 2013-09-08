@@ -8059,6 +8059,15 @@
   )
 )
 
+(define-method create_image
+  (of-object "MaiaImage")
+  (c-name "maia_image_create_image")
+  (return-type "MaiaGraphicImage*")
+  (parameters
+    '("MaiaGraphicSize*" "inSize")
+  )
+)
+
 (define-method get_filename
   (of-object "MaiaImage")
   (c-name "maia_image_get_filename")

@@ -57,6 +57,21 @@ public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
         GLib.Object (id: GLib.Quark.from_string (inId), filename: inFilename);
     }
 
+    protected virtual Graphic.Image?
+    create_image (Graphic.Size inSize)
+    {
+        if (filename != null)
+        {
+            return Graphic.Image.create (filename, inSize);
+        }
+        else if (characters != null)
+        {
+            return new Graphic.ImageSvg.from_data (characters, inSize);
+        }
+
+        return null;
+    }
+
     internal override bool
     can_append_child (Core.Object inObject)
     {
@@ -66,29 +81,14 @@ public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
     internal override Graphic.Size
     size_request (Graphic.Size inSize)
     {
-        if (filename != null)
+        if (m_Image == null || m_Image.size != inSize)
         {
-            if (m_Image == null || m_Image.size != inSize)
-            {
-                m_Image = Graphic.Image.create (filename, inSize);
-            }
-
-            if (m_Image != null)
-            {
-                size = m_Image.size;
-            }
+            m_Image = create_image (inSize);
         }
-        else if (characters != null)
-        {
-            if (m_Image == null || m_Image.size != inSize)
-            {
-                m_Image = new Graphic.ImageSvg.from_data (characters, inSize);
-            }
 
-            if (m_Image != null)
-            {
-                size = m_Image.size;
-            }
+        if (m_Image != null)
+        {
+            size = m_Image.size;
         }
 
         return base.size_request (inSize);

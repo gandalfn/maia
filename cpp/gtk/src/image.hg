@@ -19,6 +19,7 @@
 
 
 #include <maia-gtk.h>
+#include <gtkmm.h>
 #include <maiamm/image.h>
 #include <maia-gtkmm/image.h>
 
@@ -43,8 +44,11 @@ namespace Maia
 
                 _WRAP_METHOD(Glib::ustring get_icon_name () const, maia_gtk_image_get_icon_name)
                 _WRAP_METHOD(void set_icon_name (const Glib::ustring& inIconName), maia_gtk_image_set_icon_name)
+                _WRAP_METHOD(Glib::RefPtr<Gdk::Pixbuf> get_pixbuf () const, maia_gtk_image_get_pixbuf)
+                _WRAP_METHOD(void set_pixbuf (const Glib::RefPtr<Gdk::Pixbuf>& inPixbuf), maia_gtk_image_set_pixbuf)
 
                 _WRAP_PROPERTY("icon-name", Glib::ustring)
+                _WRAP_PROPERTY("pixbuf", Glib::RefPtr<Gdk::Pixbuf>)
         };
     }
 }

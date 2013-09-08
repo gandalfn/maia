@@ -17,10 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal interface Maia.GdkPixbuf.Image : Graphic.Image
+public interface Maia.GdkPixbuf.Image : Graphic.Image
 {
     // methods
-    public Graphic.Surface
+    internal Graphic.Surface
     create_surface (Gdk.Pixbuf inPixbuf)
     {
         // Get pixbuf data
@@ -85,14 +85,14 @@ internal interface Maia.GdkPixbuf.Image : Graphic.Image
         return  GLib.Object.new (typeof (Maia.Cairo.Surface), surface: image_surface, size: size) as Graphic.Surface;
     }
 
-    public void
+    internal void
     destroy_surface (Graphic.Surface inSurface)
     {
         uchar* data = ((global::Cairo.ImageSurface)((Cairo.Surface)inSurface).surface).get_data ();
         GLib.free (data);
     }
 
-    public Graphic.Surface
+    internal Graphic.Surface
     resize (Graphic.Surface inSurface, Graphic.Size inSize)
     {
         Graphic.Surface ret = null;

@@ -25,6 +25,7 @@ libmaia_gdk_pixbuf_la_SOURCES = \
     image-jpg.vala \
     image-svg.vala \
     image-gif.vala \
+    image-pixbuf.vala \
     init.vala
 
 libmaia_gdk_pixbuf_la_LDFLAGS = \

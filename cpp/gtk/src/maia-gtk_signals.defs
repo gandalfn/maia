@@ -120,6 +120,15 @@
   (construct-only #f)
 )
 
+(define-property pixbuf
+  (of-object "MaiaGtkImage")
+  (prop-type "GParamObject")
+  (docs "pixbuf")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaGtkButton
 
 (define-property icon-name

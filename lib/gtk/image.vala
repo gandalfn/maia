@@ -20,7 +20,8 @@
 public class Maia.Gtk.Image : Maia.Image
 {
     // properties
-    private string m_IconName;
+    private string     m_IconName;
+    private Gdk.Pixbuf m_Pixbuf;
 
     // accessors
     public string icon_name {
@@ -28,28 +29,71 @@ public class Maia.Gtk.Image : Maia.Image
             return m_IconName;
         }
         set {
-            m_IconName = value;
-            var icon_theme = global::Gtk.IconTheme.get_default ();
-            var info = icon_theme.lookup_icon (m_IconName, -1, global::Gtk.IconLookupFlags.FORCE_SVG);
-            filename = info.get_filename ();
+            if (m_IconName != value)
+            {
+                m_IconName = value;
+                var icon_theme = global::Gtk.IconTheme.get_default ();
+                var info = icon_theme.lookup_icon (m_IconName, -1, global::Gtk.IconLookupFlags.FORCE_SVG);
+                filename = info.get_filename ();
 
-            if (m_IconName != null)
-            {
-                not_dumpable_attributes.insert ("filename");
-            }
-            else
-            {
-                not_dumpable_attributes.remove ("filename");
+                if (m_IconName != null)
+                {
+                    not_dumpable_attributes.insert ("filename");
+                }
+                else
+                {
+                    not_dumpable_attributes.remove ("filename");
+                }
+                damage ();
             }
         }
         default = null;
     }
 
+    public Gdk.Pixbuf pixbuf {
+        get {
+            return m_Pixbuf;
+        }
+        set {
+            if (m_Pixbuf != value)
+            {
+                m_Pixbuf = value;
+                if (m_Pixbuf != null)
+                {
+                    not_dumpable_attributes.insert ("filename");
+                    not_dumpable_attributes.insert ("icon-name");
+                }
+                else
+                {
+                    not_dumpable_attributes.remove ("filename");
+                    not_dumpable_attributes.remove ("icon-name");
+                }
+                damage ();
+            }
+        }
+    }
+
     // methods
+    construct
+    {
+        not_dumpable_attributes.insert ("pixbuf");
+    }
+
     public Image (string inId, string inIconName)
     {
         var icon_theme = global::Gtk.IconTheme.get_default ();
         var info = icon_theme.lookup_icon (m_IconName, -1, global::Gtk.IconLookupFlags.FORCE_SVG);
         base (inId, info.get_filename ());
+    }
+
+    internal override Graphic.Image?
+    create_image (Graphic.Size inSize)
+    {
+        if (m_Pixbuf != null)
+        {
+            return new GdkPixbuf.ImagePixbuf (m_Pixbuf, inSize);
+        }
+
+        return base.create_image (inSize);
     }
 }
