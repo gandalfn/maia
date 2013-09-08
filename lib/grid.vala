@@ -220,10 +220,10 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
                         if (page_breaks != null)
                         {
-                            // Parse all page break for this grid in reverse order
+                            double y = allocation.origin.y;
+
                             foreach (unowned Document.PageBreak? page_break in page_breaks)
                             {
-                                // the item row is in or after page break row set position
                                 if (item.row >= page_break.row)
                                 {
                                     Graphic.Point pos = Graphic.Point (0, page_break.end);
@@ -231,15 +231,18 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
                                     if (item.row == page_break.row)
                                     {
-                                        allocation.origin.y = final.y;
+                                        y = final.y;
                                     }
                                     else
                                     {
-                                        double delta = final.y - child_allocations[page_break.row, item.column].origin.y;
-                                        allocation.origin.y += delta;
+                                        y = allocation.origin.y;
+                                        y += final.y - child_allocations[page_break.row, item.column].origin.y;
                                     }
                                 }
                             }
+
+                            if (y != allocation.origin.y)
+                                allocation.origin.y = y;
                         }
 
                         // suppress padding from item allocation
@@ -416,6 +419,8 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
                         if (page_breaks != null)
                         {
+                            double y = allocation.origin.y;
+
                             foreach (unowned Document.PageBreak? page_break in page_breaks)
                             {
                                 if (item.row >= page_break.row)
@@ -425,15 +430,18 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
                                     if (item.row == page_break.row)
                                     {
-                                        allocation.origin.y = final.y;
+                                        y = final.y;
                                     }
                                     else
                                     {
-                                        double delta = final.y - child_allocations[page_break.row, item.column].origin.y;
-                                        allocation.origin.y += delta;
+                                        y = allocation.origin.y;
+                                        y += final.y - child_allocations[page_break.row, item.column].origin.y;
                                     }
                                 }
                             }
+
+                            if (y != allocation.origin.y)
+                                allocation.origin.y = y;
                         }
 
                         if (item.xfill)
