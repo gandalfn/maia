@@ -21,31 +21,15 @@ public class Maia.GdkPixbuf.ImagePixbuf : Graphic.Image, Image
 {
     // properties
     private Graphic.Size m_Size = Graphic.Size (0, 0);
-    private string m_Filename = null;
     private Graphic.Surface m_Surface = null;
     private global::Gdk.Pixbuf m_Pixbuf = null;
 
     // accessors
     public override string? filename {
         get {
-            return m_Filename;
+            return "";
         }
         construct set {
-            m_Filename = value;
-            if (m_Surface != null)
-            {
-                destroy_surface (m_Surface);
-                m_Surface = null;
-            }
-
-            try
-            {
-                m_Pixbuf = new Gdk.Pixbuf.from_file (value);
-            }
-            catch (GLib.Error err)
-            {
-                Log.critical (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "Error on load %s: %s", m_Filename, err.message);
-            }
         }
     }
 
@@ -91,7 +75,7 @@ public class Maia.GdkPixbuf.ImagePixbuf : Graphic.Image, Image
         get {
             return m_Pixbuf;
         }
-        construct set {
+        set {
             if (m_Surface != null)
             {
                 destroy_surface (m_Surface);
@@ -108,7 +92,7 @@ public class Maia.GdkPixbuf.ImagePixbuf : Graphic.Image, Image
         GLib.Object (pixbuf: inPixbuf, size: inSize);
     }
 
-    ~ImagePng ()
+    ~ImagePixbuf ()
     {
         if (m_Surface != null)
         {
