@@ -35,4 +35,53 @@ namespace Maia.Cairo
             s_Initialized = true;
         }
     }
+
+    public static async void
+    save_document (string inPdfFilename, double inDpi, Document inDocument, GLib.Cancellable? inCancellable = null) throws Graphic.Error
+    {
+        // Get document page format
+        Graphic.Size size = inDocument.format.to_size ();
+
+        // Create pdf surface
+        global::Cairo.PdfSurface pdf_surface = new global::Cairo.PdfSurface (inPdfFilename, size.width, size.height);
+        pdf_surface.set_fallback_resolution (inDpi, inDpi);
+
+        // Create Surface
+        Surface surface = new Surface (pdf_surface, (int)size.width, (int)size.height);
+
+        // Create context
+        Context ctx = new Context (surface);
+
+        // Draw document pages
+        for (int cpt = 0; cpt < inDocument.nb_pages; ++cpt)
+        {
+            if (inCancellable != null && inCancellable.is_cancelled())
+            {
+                return;
+            }
+            inDocument.draw_page (ctx, cpt + 1);
+            pdf_surface.show_page ();
+            GLib.Idle.add (save_document.callback);
+            yield;
+        }
+    }
+
+    public static void
+    document_page_to_png (string inPngFilename, Document inDocument, uint inNumPage) throws Graphic.Error
+    {
+        // Get document page format
+        Graphic.Size size = inDocument.format.to_size ();
+
+        // Create Surface
+        Graphic.Surface surface = new Graphic.Surface ((int)size.width, (int)size.height);
+
+        // Create context
+        Context ctx = new Context (surface);
+
+        // Draw document page
+        inDocument.draw_page (ctx, inNumPage);
+
+        // Save surface onto png
+        (surface as Surface).surface.write_to_png (inPngFilename);
+    }
 }

@@ -1,0 +1,3 @@
+(include maia-cairo-graphic_methods.defs)
+(include maia-cairo-graphic_signals.defs)
+(include maia-cairo-graphic_enums.defs)

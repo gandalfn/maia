@@ -8697,6 +8697,17 @@
   )
 )
 
+(define-method draw_page
+  (of-object "MaiaDocument")
+  (c-name "maia_document_draw_page")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicContext*" "inContext")
+    '("guint" "inPageNum")
+    '("GError**" "error")
+  )
+)
+
 (define-method get_format
   (of-object "MaiaDocument")
   (c-name "maia_document_get_format")

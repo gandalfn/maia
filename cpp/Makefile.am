@@ -1,4 +1,4 @@
-SUBDIRS = codegen src maiamm gtk . doc
+SUBDIRS = codegen src maiamm cairo gtk . doc
 
 MAIA_LIB_NAME = maiamm
 

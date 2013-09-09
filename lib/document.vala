@@ -879,4 +879,26 @@ public class Maia.Document : Item
 
         return ret;
     }
+
+    public void
+    draw_page (Graphic.Context inContext, uint inPageNum) throws Graphic.Error
+    {
+        inContext.save ();
+        {
+            foreach (unowned Page? page in m_Pages)
+            {
+                if (page.num == inPageNum)
+                {
+                    var page_position = Graphic.Point (0, ((format.to_size ().height + (border_width* 2.0)) * (page.num - 1)));
+                    inContext.translate (page_position.invert ());
+                    if (page.header != null) page.header.damage ();
+                    if (page.footer != null) page.footer.damage ();
+                    page.damage (page.geometry);
+                    page.draw (inContext);
+                    break;
+                }
+            }
+        }
+        inContext.restore ();
+    }
 }

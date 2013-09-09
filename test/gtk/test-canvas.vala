@@ -306,6 +306,14 @@ public class Maia.TestCanvas : Maia.TestCase
         window.add (scrolled_window);
         window.set_size_request (700, 700);
 
+        GLib.Timeout.add_seconds (3, () => {
+            Cairo.save_document.begin ("test.pdf", 300, canvas.root as Document, null, (obj, res) => {
+                Cairo.save_document.end (res);
+                print ("test.pdf generated\n");
+            });
+            return false;
+        });
+
         global::Gtk.main ();
     }
 

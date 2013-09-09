@@ -214,6 +214,13 @@ _CONVERSION(`::Gtk::TreePath',`GtkTreePath*',__FR2P)
 _CONVERSION(`::Gtk::TreeIter&',`GtkTreeIter*',__FR2P)
 _CONVERSION(`const ::Gtk::TreeIter&',`GtkTreeIter*',__FCR2P)
 
+_CONVERSION(`::Cairo::RefPtr< ::Cairo::Context>',`cairo_t*',`($3)->cobj()')
+_CONVERSION(`cairo_t*',`::Cairo::RefPtr< ::Cairo::Context>',`::Cairo::RefPtr< ::Cairo::Context>(new ::Cairo::Context($3))')
+
+_CONVERSION(`::Cairo::RefPtr< ::Cairo::Surface>',`cairo_surface_t*',`($3)->cobj()')
+_CONVERSION(`const ::Cairo::RefPtr< ::Cairo::Surface>&',`cairo_surface_t*',`($3)->cobj()')
+_CONVERSION(`cairo_surface_t*',`::Cairo::RefPtr< ::Cairo::Surface>',`::Cairo::RefPtr< ::Cairo::Surface>(new ::Cairo::Surface($3))')
+
 _CONV_ENUM(MaiaCore,ParserToken)
 _CONV_ENUM(MaiaCore,TimelineDirection)
 _CONV_ENUM(MaiaCore,AnimatorProgressType)

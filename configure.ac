@@ -107,6 +107,11 @@ PKG_CHECK_MODULES(MAIA_CAIRO, [cairo >= $CAIRO_REQUIRED
 AC_SUBST(MAIA_CAIRO_CFLAGS)
 AC_SUBST(MAIA_CAIRO_LIBS)
 
+AC_SUBST([MAIA_CAIROMM_MODULES], ['giomm-2.4 cairomm-1.0'])
+PKG_CHECK_MODULES([MAIA_CAIROMM], [$MAIA_CAIROMM_MODULES])
+AC_SUBST(MAIA_CAIROMM_CFLAGS)
+AC_SUBST(MAIA_CAIROMM_LIBS)
+
 dnl ****************************************************************************
 dnl Check for rsvg packages
 dnl ****************************************************************************
@@ -262,6 +267,10 @@ cpp/gtk/maia-gtkmm.pc
 cpp/gtk/Makefile
 cpp/gtk/src/Makefile
 cpp/gtk/maia-gtkmm/Makefile
+cpp/cairo/maia-cairo-graphicmm.pc
+cpp/cairo/Makefile
+cpp/cairo/src/Makefile
+cpp/cairo/maia-cairo-graphicmm/Makefile
 cpp/doc/Makefile
 cpp/doc/reference/Doxyfile
 tools/Makefile

@@ -3,11 +3,11 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 datarootdir=@datarootdir@
 datadir=@datadir@
-includedir=@includedir@/maia-gtkmm-@MAIA_ABI@
+includedir=@includedir@/maia-cairo-graphicmm-@MAIA_ABI@
 
 Name: maia-gtkmm-@MAIA_ABI@
 Description: Maia Gtkmm library
 Version: @MAIA_VERSION@
-Requires: maiamm-@MAIA_ABI@ maia-cairo-graphicmm-@MAIA_ABI@ gtkmm-2.4 >= @GTKMM_REQUIRED@
-Libs: -L${libdir} -lmaia-gtkmm
+Requires: maiamm-@MAIA_ABI@ cairomm-1.0 >= @CAIROMM_REQUIRED@
+Libs: -L${libdir} -lmaia-cairo-graphicmm
 Cflags: -I${includedir}

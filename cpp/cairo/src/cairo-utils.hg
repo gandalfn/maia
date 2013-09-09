@@ -1,0 +1,43 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * cairo-utils.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <glibmm.h>
+#include <giomm.h>
+#include <cairomm/cairomm.h>
+#include <maia-cairo-graphic.h>
+#include <maiamm/document.h>
+
+_DEFS(maia-cairo-graphicmm,maia-cairo-graphic)
+
+namespace Maia
+{
+    namespace Cairo
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Cairo)
+
+        typedef sigc::slot<void, Glib::RefPtr<Gio::AsyncResult> > SlotSaveDocumentFinished;
+
+        void save_document (const Glib::ustring& inPDFFilename, double inDpi, const Glib::RefPtr<Maia::Document>& inDocument);
+        void save_document (const Glib::ustring& inPDFFilename, double inDpi, const Glib::RefPtr<Maia::Document>& inDocument, SlotSaveDocumentFinished inFunc);
+        void save_document (const Glib::ustring& inPDFFilename, double inDpi, const Glib::RefPtr<Maia::Document>& inDocument, const Glib::RefPtr<Gio::Cancellable>& inCancellable, SlotSaveDocumentFinished inFunc);
+
+        void save_document_finish (const Glib::RefPtr<Gio::AsyncResult>& inResult);
+        void document_page_to_png (const Glib::ustring& inPngFilename, const Glib::RefPtr<Maia::Document>& inDocument, unsigned int inNumPage);
+    }
+}

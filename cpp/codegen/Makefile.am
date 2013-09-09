@@ -6,6 +6,7 @@ dist_noinst_DATA = $(addprefix m4/,$(files_codegen_m4))
 
 noinst_PROGRAMS  = \
     extradefs/generate_maia_defs \
+    extradefs/generate_maia_cairo_defs \
     extradefs/generate_maia_gtk_defs
 
 extradefs_generate_maia_defs_SOURCES = \
@@ -15,6 +16,17 @@ extradefs_generate_maia_defs_LDADD   = \
     $(MAIA_LIBS) \
     $(MAIAMM_LIBS) \
     ${top_builddir}/lib/libmaia.la \
+    -lglibmm_generate_extra_defs-2.4
+
+extradefs_generate_maia_cairo_defs_SOURCES = \
+    extradefs/generate_defs_maia_cairo.cpp
+
+extradefs_generate_maia_cairo_defs_LDADD   = \
+    $(MAIA_LIBS) \
+    $(MAIAMM_LIBS) \
+    $(MAIA_CAIROMM_LIBS) \
+    ${top_builddir}/lib/libmaia.la \
+    ${top_builddir}/lib/cairo/libmaia-cairo-graphic.la \
     -lglibmm_generate_extra_defs-2.4
 
 extradefs_generate_maia_gtk_defs_SOURCES = \
@@ -35,6 +47,7 @@ AM_CPPFLAGS = \
     -I$(top_builddir) \
     -I${top_srcdir}/lib \
     -I${top_srcdir}/lib/core \
+    -I${top_srcdir}/lib/cairo \
     -I${top_srcdir}/lib/gtk \
     $(GTHREAD_CFLAGS) \
     $(MAIA_CFLAGS) \
