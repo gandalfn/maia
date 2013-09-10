@@ -21,6 +21,7 @@ public class Maia.Document : Item
 {
     // static
     internal static GLib.Quark s_PageBreakQuark;
+    internal static GLib.Quark s_PageNumQuark;
 
     // types
     internal class PageBreak : GLib.Object
@@ -48,6 +49,7 @@ public class Maia.Document : Item
     private Core.List<Page>              m_Pages;
     private Core.List<unowned Page>      m_VisiblePages;
     private Core.List<unowned PageBreak> m_PageBreaks;
+    private uint                         m_CurrentPage = 0;
 
     // accessors
     internal override string tag {
@@ -78,6 +80,11 @@ public class Maia.Document : Item
             return m_Pages.length;
         }
     }
+    internal uint current_page {
+        get {
+            return m_CurrentPage;
+        }
+    }
 
     public string header { get; set; default = null; }
     public string footer { get; set; default = null; }
@@ -88,6 +95,7 @@ public class Maia.Document : Item
     static construct
     {
         s_PageBreakQuark = GLib.Quark.from_string ("MaiaDocumentPageBreakQuark");
+        s_PageNumQuark = GLib.Quark.from_string ("MaiaDocumentPageNumQuark");
 
         Manifest.Attribute.register_transform_func (typeof (PageFormat), attribute_to_page_format);
 
@@ -433,6 +441,8 @@ public class Maia.Document : Item
     private void
     paginate ()
     {
+        uint old_nb_pages = nb_pages;
+
         // Clear page list
         m_Pages.clear ();
 
@@ -456,6 +466,11 @@ public class Maia.Document : Item
             {
                 paginate_item (item, ref current_position);
             }
+        }
+
+        if (old_nb_pages != nb_pages)
+        {
+            GLib.Signal.emit_by_name (this, "notify::nb_pages");
         }
     }
 
@@ -488,10 +503,45 @@ public class Maia.Document : Item
         }
     }
 
+    private static void
+    on_bind_value_changed (Manifest.AttributeBind inAttribute, Object inSrc, string inProperty)
+    {
+        if (inAttribute.get () == "nb_pages" || inAttribute.get () == "page_num")
+        {
+            inAttribute.owner.set_property (inProperty, (inSrc as Document).nb_pages);
+        }
+    }
+
+    private void
+    on_attribute_bind_added (Manifest.AttributeBind inAttribute, string inProperty)
+    {
+        string name = inAttribute.get ();
+        if (name == "page_num" || name == "nb_pages")
+        {
+            string signal_name = "notify::nb_pages";
+
+            if (!inAttribute.is_bind (signal_name, inProperty))
+            {
+                inAttribute.bind (this, signal_name, inProperty, on_bind_value_changed);
+            }
+
+            if (name == "page_num")
+            {
+                inAttribute.owner.set_qdata<unowned Document> (s_PageNumQuark, this);
+            }
+        }
+    }
+
     internal override bool
     can_append_child (Core.Object inObject)
     {
         return base.can_append_child (inObject) || inObject is Shortcut;
+    }
+
+    internal override void
+    on_read_manifest (Manifest.Document inDocument) throws Core.ParseError
+    {
+        inDocument.attribute_bind_added.connect (on_attribute_bind_added);
     }
 
     internal override Graphic.Size
@@ -643,6 +693,8 @@ public class Maia.Document : Item
         bool header_damaged = false;
         foreach (unowned Page page in m_VisiblePages)
         {
+            m_CurrentPage = page.num;
+
             inContext.save ();
             {
                 var page_position = Graphic.Point (0, ((format.to_size ().height + (border_width* 2.0)) * (page.num - 1)));

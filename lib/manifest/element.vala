@@ -218,6 +218,11 @@ public interface Maia.Manifest.Element : Core.Object
         }
     }
 
+    internal virtual void
+    on_read_manifest (Document inManifest) throws Core.ParseError
+    {
+    }
+
     /**
      * Load manifest for this object
      *
@@ -228,6 +233,8 @@ public interface Maia.Manifest.Element : Core.Object
     public virtual void
     read_manifest (Document inManifest) throws Core.ParseError
     {
+        on_read_manifest (inManifest);
+
         unowned Style? style = null;
         Core.Set<string> attributes_set = new Core.Set<string> ();
 

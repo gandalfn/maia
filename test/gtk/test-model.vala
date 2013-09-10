@@ -204,6 +204,25 @@ public class Maia.TestModel : Maia.TestCase
                             "           }"+
                             "       ]" +
                             "   }" +
+                            "   View.view2 { " +
+                            "       column: 1;" +
+                            "       model: model;" +
+                            "       lines: 2;" +
+                            "       [" +
+                            "           Grid.cell {" +
+                            "               Label.label {" +
+                            "                   stroke-pattern: @color;" +
+                            "                   font-description: 'Liberation Sans 14';" +
+                            "                   text: @name;" +
+                            "               }" +
+                            "               Image.value {" +
+                            "                   row: 1;" +
+                            "                   font-description: 'Liberation Sans 14';" +
+                            "                   filename: @val;" +
+                            "               }" +
+                            "           }"+
+                            "       ]" +
+                            "   }" +
                             "   Button.button { " +
                             "       stroke-pattern: #7997AE;" +
                             "       button-color: #C0C0C0;" +

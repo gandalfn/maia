@@ -782,6 +782,11 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         return dump ();
     }
 
+    internal virtual void
+    on_read_manifest (Manifest.Document inDocument) throws Core.ParseError
+    {
+    }
+
     protected virtual bool
     on_button_press_event (uint inButton, Graphic.Point inPoint)
     {

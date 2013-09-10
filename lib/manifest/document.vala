@@ -285,6 +285,10 @@ public class Maia.Manifest.Document : Core.Parser
                 }
                 next_char ();
                 m_Include = new Document (filename);
+                m_Include.bind_property ("owner", this, "owner", GLib.BindingFlags.BIDIRECTIONAL | GLib.BindingFlags.SYNC_CREATE);
+                m_Include.attribute_bind_added.connect ((a, p) => {
+                    attribute_bind_added (a, p);
+                });
                 token = m_Include.next_token ();
                 if (token == Core.Parser.Token.EOF)
                 {

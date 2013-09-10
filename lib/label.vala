@@ -112,6 +112,12 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
         // paint text
         if (m_Glyph != null && stroke_pattern != null)
         {
+            unowned Document? doc = get_qdata<unowned Document> (Document.s_PageNumQuark);
+            if (doc != null)
+            {
+                m_Glyph.text = "%u".printf (doc.current_page);
+            }
+
             inContext.save ();
             {
                 inContext.pattern = stroke_pattern;
