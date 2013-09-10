@@ -44,6 +44,29 @@
   )
 )
 
+(define-function maia_cairo_generate_report
+  (c-name "maia_cairo_generate_report")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inPdfFilename")
+    '("gdouble" "inDpi")
+    '("MaiaDocument**" "inDocuments")
+    '("int" "inDocuments_length1")
+    '("GCancellable*" "inCancellable")
+    '("GAsyncReadyCallback" "_callback_")
+    '("gpointer" "_user_data_")
+  )
+)
+
+(define-function maia_cairo_generate_report_finish
+  (c-name "maia_cairo_generate_report_finish")
+  (return-type "none")
+  (parameters
+    '("GAsyncResult*" "_res_")
+    '("GError**" "error")
+  )
+)
+
 (define-function maia_cairo_document_page_to_png
   (c-name "maia_cairo_document_page_to_png")
   (return-type "none")

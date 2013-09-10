@@ -30,12 +30,19 @@ namespace Maia
     namespace Cairo
     {
         typedef sigc::slot<void, Glib::RefPtr<Gio::AsyncResult> > SlotSaveDocumentFinished;
+        typedef sigc::slot<void, Glib::RefPtr<Gio::AsyncResult> > SlotGenerateReportFinished;
 
         void save_document (const Glib::ustring& inPDFFilename, double inDpi, const Glib::RefPtr<Maia::Document>& inDocument);
         void save_document (const Glib::ustring& inPDFFilename, double inDpi, const Glib::RefPtr<Maia::Document>& inDocument, SlotSaveDocumentFinished inFunc);
         void save_document (const Glib::ustring& inPDFFilename, double inDpi, const Glib::RefPtr<Maia::Document>& inDocument, const Glib::RefPtr<Gio::Cancellable>& inCancellable, SlotSaveDocumentFinished inFunc);
 
+        void generate_report (const Glib::ustring& inPDFFilename, double inDpi, const std::vector<Glib::RefPtr<Maia::Document> >& inDocuments);
+        void generate_report (const Glib::ustring& inPDFFilename, double inDpi, const std::vector<Glib::RefPtr<Maia::Document> >& inDocuments, SlotGenerateReportFinished inFunc);
+        void generate_report (const Glib::ustring& inPDFFilename, double inDpi, const std::vector<Glib::RefPtr<Maia::Document> >& inDocuments, const Glib::RefPtr<Gio::Cancellable>& inCancellable, SlotGenerateReportFinished inFunc);
+
         void save_document_finish (const Glib::RefPtr<Gio::AsyncResult>& inResult);
+        void generate_report_finish (const Glib::RefPtr<Gio::AsyncResult>& inResult);
+
         void document_page_to_png (const Glib::ustring& inPngFilename, const Glib::RefPtr<Maia::Document>& inDocument, unsigned int inNumPage);
     }
 }

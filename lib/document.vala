@@ -941,6 +941,32 @@ public class Maia.Document : Item
             {
                 if (page.num == inPageNum)
                 {
+                    m_CurrentPage = page.num;
+
+                    foreach (unowned PageBreak page_break in m_PageBreaks)
+                    {
+                        if (page_break.num == page.num && (page_break.grid.damaged == null || page_break.grid.damaged.is_empty ()))
+                        {
+                            Graphic.Point start_root, end_root;
+                            start_root = page_break.grid.convert_to_root_space(Graphic.Point (0, 0));
+                            end_root = page_break.grid.convert_to_root_space(Graphic.Point (page_break.grid.geometry.extents.size.width,
+                                                                                            page_break.grid.geometry.extents.size.height));
+                            Graphic.Point offset = Graphic.Point (0, page_break.end);
+
+                            start_root.y = offset.y;
+
+
+                            Graphic.Point start = page_break.grid.convert_to_item_space(start_root);
+                            Graphic.Point end = page_break.grid.convert_to_item_space(end_root);
+
+                            var damage_area = new Graphic.Region (Graphic.Rectangle (start.x, start.y, end.x - start.x, end.y - start.x));
+
+                            page_break.grid.damage (damage_area);
+
+                            break;
+                        }
+                    }
+
                     var page_position = Graphic.Point (0, ((format.to_size ().height + (border_width* 2.0)) * (page.num - 1)));
                     inContext.translate (page_position.invert ());
                     if (page.header != null) page.header.damage ();

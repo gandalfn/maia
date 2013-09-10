@@ -42,7 +42,7 @@ public class Maia.Cairo.Surface : Graphic.Surface
     }
 
     // methods
-    public Surface (global::Cairo.Surface inSurface, uint inWidth, uint inHeight)
+    public Surface (global::Cairo.Surface? inSurface, uint inWidth, uint inHeight)
     {
         Graphic.Size size = Graphic.Size ((double)inWidth, (double)inHeight);
         GLib.Object (surface: inSurface, size: size);

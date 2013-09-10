@@ -34,6 +34,7 @@ namespace Maia
 
             public:
                 static Glib::RefPtr<Surface> create (const ::Cairo::RefPtr< ::Cairo::Surface>& inSurface, unsigned int inWidth, unsigned int inHeight);
+                static Glib::RefPtr<Surface> create (unsigned int inWidth, unsigned int inHeight);
 
                 _WRAP_METHOD(::Cairo::RefPtr< ::Cairo::Surface> get_surface () const, maia_cairo_surface_get_surface)
                 _WRAP_METHOD(void set_surface (const ::Cairo::RefPtr< ::Cairo::Surface>& inSurface), maia_cairo_surface_set_surface)

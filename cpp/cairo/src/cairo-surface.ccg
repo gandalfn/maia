@@ -24,5 +24,16 @@ namespace Maia
 {
     namespace Cairo
     {
+        Glib::RefPtr<Surface> Surface::create (const ::Cairo::RefPtr< ::Cairo::Surface>& inSurface, unsigned int inWidth, unsigned int inHeight)
+        {
+            MaiaCairoSurface* pSurface = maia_cairo_surface_new (const_cast<cairo_surface_t*> (inSurface->cobj ()), inWidth, inHeight);
+            return Glib::RefPtr<Surface> (new Surface (pSurface));
+        }
+
+        Glib::RefPtr<Surface> Surface::create (unsigned int inWidth, unsigned int inHeight)
+        {
+            MaiaCairoSurface* pSurface = maia_cairo_surface_new (0, inWidth, inHeight);
+            return Glib::RefPtr<Surface> (new Surface (pSurface));
+        }
     }
 }

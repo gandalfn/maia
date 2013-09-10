@@ -307,8 +307,11 @@ public class Maia.TestCanvas : Maia.TestCase
         window.set_size_request (700, 700);
 
         //GLib.Timeout.add_seconds (3, () => {
-            Cairo.save_document.begin ("test.pdf", 300, canvas.root as Document, null, (obj, res) => {
-                Cairo.save_document.end (res);
+        Maia.Document[] documents = {};
+        documents += canvas.root as Document;
+        documents += canvas.root as Document;
+            Cairo.generate_report.begin ("test.pdf", 300, documents, null, (obj, res) => {
+                Cairo.generate_report.end (res);
                 print ("test.pdf generated\n");
                 window.show ();
             });

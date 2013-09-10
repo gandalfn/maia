@@ -74,6 +74,48 @@ namespace Maia.Cairo
         inDocument.geometry = null;
     }
 
+    public static async void
+    generate_report (string inPdfFilename, double inDpi, Document[] inDocuments, GLib.Cancellable? inCancellable = null) throws Graphic.Error
+        requires (inDocuments.length > 0)
+    {
+        // Get document page format
+        Graphic.Size size = inDocuments[0].format.to_size ();
+
+        // Create pdf surface
+        global::Cairo.PdfSurface pdf_surface = new global::Cairo.PdfSurface (inPdfFilename, size.width, size.height);
+        pdf_surface.set_fallback_resolution (inDpi, inDpi);
+
+        // Create Surface
+        Surface surface = new Surface (pdf_surface, (int)size.width, (int)size.height);
+
+        // Create context
+        Context ctx = new Context (surface);
+
+        foreach (unowned Document document in inDocuments)
+        {
+            // Repaginate document
+            document.position = Graphic.Point (0, 0);
+            var doc_size = document.size;
+            document.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, doc_size.width, doc_size.height)));
+
+            // Draw document pages
+            for (int cpt = 0; cpt < document.nb_pages; ++cpt)
+            {
+                if (inCancellable != null && inCancellable.is_cancelled())
+                {
+                    return;
+                }
+                document.draw_page (ctx, cpt + 1);
+                pdf_surface.show_page ();
+                GLib.Idle.add (generate_report.callback);
+                yield;
+            }
+
+            // Invalidate document geometry for display refresh
+            document.geometry = null;
+        }
+    }
+
     public static void
     document_page_to_png (string inPngFilename, Document inDocument, uint inNumPage) throws Graphic.Error
     {

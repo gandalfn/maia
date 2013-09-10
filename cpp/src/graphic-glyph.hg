@@ -54,6 +54,12 @@ namespace Maia
                 _WRAP_VFUNC(void get_cursor_position (int inIndex, Rectangle& outRectangle), get_cursor_position)
 
             public:
+                static Glib::RefPtr<Glyph> create (const Glib::ustring& inFontDesc)
+                {
+                    MaiaGraphicGlyph* pGlyph = maia_graphic_glyph_new (inFontDesc.c_str ());
+                    return Glib::RefPtr<Glyph> (new Glyph (pGlyph));
+                }
+
                 _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_glyph_get_size)
                 _WRAP_METHOD(Glib::ustring get_font_description () const, maia_graphic_glyph_get_font_description)
                 _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_graphic_glyph_set_font_description)
