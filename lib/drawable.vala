@@ -20,8 +20,8 @@
 public interface Maia.Drawable : GLib.Object
 {
     // accessors
-    public abstract Graphic.Region    geometry  { get; protected set; default = null; }
-    public abstract Graphic.Region    damaged   { get; protected set; default = null; }
+    public abstract Graphic.Region    geometry  { get; set; default = null; }
+    public abstract Graphic.Region    damaged   { get; set; default = null; }
     public abstract Graphic.Transform transform { get; set; default = new Graphic.Transform.identity (); }
 
     // signals

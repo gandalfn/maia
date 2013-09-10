@@ -47,8 +47,8 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     }
 
     internal Core.Timeline timeline { get; set; default = null; }
-    internal Graphic.Region geometry { get; protected set; default = null; }
-    internal Graphic.Region damaged { get; protected set; default = null; }
+    internal Graphic.Region geometry { get; set; default = null; }
+    internal Graphic.Region damaged { get; set; default = null; }
     internal Graphic.Transform transform { get; set; default = new Graphic.Transform.identity (); }
 
     internal Item root {
@@ -171,24 +171,27 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     private void
     on_root_damage (Graphic.Region? inArea)
     {
-        try
+        if (m_Buffer != null)
         {
-            m_Buffer.context.save ();
-            m_Buffer.context.pattern = new Graphic.Color (1, 1, 1, 1);
-            if (inArea != null)
+            try
             {
-                var path = new Graphic.Path.from_region (inArea);
-                m_Buffer.context.fill (path);
+                m_Buffer.context.save ();
+                m_Buffer.context.pattern = new Graphic.Color (1, 1, 1, 1);
+                if (inArea != null)
+                {
+                    var path = new Graphic.Path.from_region (inArea);
+                    m_Buffer.context.fill (path);
+                }
+                else
+                {
+                    m_Buffer.context.paint ();
+                }
+                m_Buffer.context.restore ();
             }
-            else
+            catch (Graphic.Error err)
             {
-                m_Buffer.context.paint ();
+                Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, err.message);
             }
-            m_Buffer.context.restore ();
-        }
-        catch (Graphic.Error err)
-        {
-            Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, err.message);
         }
     }
 

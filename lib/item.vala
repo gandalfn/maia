@@ -136,7 +136,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         get {
             return m_Geometry;
         }
-        protected set {
+        set {
             m_Geometry = value;
             if (m_Geometry == null)
             {
@@ -157,7 +157,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
     }
 
-    internal Graphic.Region damaged      { get; protected set; default = null; }
+    internal Graphic.Region damaged      { get; set; default = null; }
     internal Graphic.Transform transform {
         get {
             return m_Transform;

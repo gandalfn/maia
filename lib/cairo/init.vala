@@ -52,6 +52,11 @@ namespace Maia.Cairo
         // Create context
         Context ctx = new Context (surface);
 
+        // Repaginate document
+        inDocument.geometry = null;
+        var doc_size = inDocument.size;
+        inDocument.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, doc_size.width, doc_size.height)));
+
         // Draw document pages
         for (int cpt = 0; cpt < inDocument.nb_pages; ++cpt)
         {
@@ -64,6 +69,9 @@ namespace Maia.Cairo
             GLib.Idle.add (save_document.callback);
             yield;
         }
+
+        // Invalidate document geometry for display refresh
+        inDocument.geometry = null;
     }
 
     public static void
@@ -78,10 +86,18 @@ namespace Maia.Cairo
         // Create context
         Context ctx = new Context (surface);
 
+        // Repaginate document
+        inDocument.geometry = null;
+        var doc_size = inDocument.size;
+        inDocument.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, doc_size.width, doc_size.height)));
+
         // Draw document page
         inDocument.draw_page (ctx, inNumPage);
 
         // Save surface onto png
         (surface as Surface).surface.write_to_png (inPngFilename);
+
+        // Invalidate document geometry for display refresh
+        inDocument.geometry = null;
     }
 }

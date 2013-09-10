@@ -945,7 +945,6 @@ public class Maia.Document : Item
                     inContext.translate (page_position.invert ());
                     if (page.header != null) page.header.damage ();
                     if (page.footer != null) page.footer.damage ();
-                    page.damage (page.geometry);
                     page.draw (inContext);
                     break;
                 }
