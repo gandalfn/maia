@@ -28,8 +28,6 @@ namespace Maia
 {
     namespace Cairo
     {
-        _GMMPROC_EXTRA_NAMESPACE(Cairo)
-
         class Surface : public Maia::Graphic::Surface
         {
             _CLASS_GOBJECT(Surface, MaiaCairoSurface, MAIA_CAIRO_SURFACE, Maia::Graphic::Surface, MaiaGraphicSurface)

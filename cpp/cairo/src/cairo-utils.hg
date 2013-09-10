@@ -29,8 +29,6 @@ namespace Maia
 {
     namespace Cairo
     {
-        _GMMPROC_EXTRA_NAMESPACE(Cairo)
-
         typedef sigc::slot<void, Glib::RefPtr<Gio::AsyncResult> > SlotSaveDocumentFinished;
 
         void save_document (const Glib::ustring& inPDFFilename, double inDpi, const Glib::RefPtr<Maia::Document>& inDocument);

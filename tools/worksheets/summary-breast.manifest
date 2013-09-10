@@ -1192,6 +1192,7 @@ Grid.summary_breast {
 			CheckButton.CBoxPatientBreast_GtkCheckButton_Prior_Hormone_Therapy_Yes {
 				row: 4;
 				column: 1;
+				group: summary_breast_summary_patient_information_menstrual_status_hrt;
 				style: patient_info_checkbutton_9;
 				label: 'Yes';
 			}

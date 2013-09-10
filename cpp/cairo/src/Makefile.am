@@ -1,5 +1,5 @@
 binding_name    = maia-cairo-graphicmm
-wrap_init_flags = --namespace=Maia --parent_dir=maia-cairo-graphicmm
+wrap_init_flags = --namespace=Maia --namespace=Cairo --parent_dir=maia-cairo-graphicmm
 codegen_srcdir  = $(top_builddir)/cpp/codegen
 
 maia-cairo-graphic_signals.defs: $(top_srcdir)/lib/cairo/maia-cairo-graphic.h

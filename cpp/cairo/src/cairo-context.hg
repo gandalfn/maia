@@ -29,8 +29,6 @@ namespace Maia
 {
     namespace Cairo
     {
-        _GMMPROC_EXTRA_NAMESPACE(Cairo)
-
         class Context : public Maia::Graphic::Context
         {
             _CLASS_GOBJECT(Context, MaiaCairoContext, MAIA_CAIRO_CONTEXT, Maia::Graphic::Context, MaiaGraphicContext)
