@@ -477,6 +477,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         }
 
                         // update item
+                        print ("update %s: %s\n", item.name, allocation.to_string ());
                         Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "update %s: %s", item.name, allocation.to_string ());
                         item.update (inContext, new Graphic.Region (allocation));
                     }
@@ -621,7 +622,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
             }
 
             // Allocate each childs
-            m_Allocation.size_allocate (inContext, inAllocation);
+            m_Allocation.size_allocate (inContext, geometry);
 
             damage ();
         }

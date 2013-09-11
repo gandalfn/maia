@@ -299,6 +299,8 @@ public class Maia.Document : Item
     {
         if (inItem != inoutPage.header && inItem != inoutPage.footer && inItem.visible)
         {
+            bool add_height = true;
+
             // Get item allocated size
             var item_size = inItem.size;
 
@@ -313,9 +315,12 @@ public class Maia.Document : Item
                 // Check if item size + current position does not overlap two page
                 if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
                 {
+                    print ("child item %s %g > %g\n", item.name, inoutCurrentPosition.y + item_size.height, page_content.extents.origin.y + page_content.extents.size.height);
                     // Check if item can be added in new
                     if (item_size.height <= page_content.extents.size.height)
                     {
+                        print ("child item %s %g <= %g\n", item.name, item_size.height, page_content.extents.size.height);
+
                         // Item can be added in new page
                         append_page  ();
 
@@ -339,33 +344,48 @@ public class Maia.Document : Item
                     }
                     else if (inItem is Grid)
                     {
+
                         var pos = inoutCurrentPosition;
 
                         // Check if childs can be split in pages
+                        uint last_row = 0;
                         foreach (unowned Core.Object child in inItem)
                         {
                             unowned ItemPackable? child_item = child as ItemPackable;
                             if (child_item != null)
                             {
                                 paginate_child_item (inRoot, child_item, ref pos, ref inoutPage);
+                                if (child_item.row > last_row)
+                                {
+                                    pos.y += (child_item.row - last_row) * (inItem as Grid).row_spacing;
+                                    last_row = child_item.row;
+                                }
                             }
                         }
 
                         inoutCurrentPosition.y = pos.y;
+                        add_height = false;
                     }
+                }
+                else
+                {
+                    print ("child item %s %g < %g\n", item.name, inoutCurrentPosition.y + item_size.height, page_content.extents.origin.y + page_content.extents.size.height);
                 }
             }
 
             // Add root item to this page
             inoutPage.add (inRoot);
 
-            if (inRoot.position.x== 0 && inRoot.position.y == 0)
+            if (inRoot.position.x == 0 && inRoot.position.y == 0)
             {
                 inRoot.position = inoutCurrentPosition;
             }
 
             // Add the height of item to current position
-            inoutCurrentPosition.y += item_size.height;
+            if (add_height)
+            {
+                inoutCurrentPosition.y += item_size.height;
+            }
         }
     }
 
@@ -374,6 +394,8 @@ public class Maia.Document : Item
     {
         // Get last page
         unowned Page? page = m_Pages.last ();
+
+        print ("%u position %g\n", page.num, inoutCurrentPosition.y);
 
         if (inItem != page.header && inItem != page.footer && inItem.visible)
         {
@@ -386,6 +408,8 @@ public class Maia.Document : Item
             var page_content = page.content_geometry;
             if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
             {
+                print ("item %s %g > %g\n", inItem.name, inoutCurrentPosition.y + item_size.height, page_content.extents.origin.y + page_content.extents.size.height);
+
                 // Append a new page
                 append_page  ();
 
@@ -402,22 +426,35 @@ public class Maia.Document : Item
                     if (inItem is Grid)
                     {
                         add_item_in_page = false;
+
                         inItem.position = Graphic.Point (0, 0);
+
+                        print ("%u position %g\n", page.num, inoutCurrentPosition.y);
+                        var pos = inoutCurrentPosition;
+                        uint last_row = 0;
 
                         foreach (unowned Core.Object child in inItem)
                         {
-                            unowned Item child_item = child as Item;
+                            unowned ItemPackable child_item = child as ItemPackable;
                             if (child_item != null)
                             {
-                                paginate_child_item (inItem, child_item, ref inoutCurrentPosition, ref page);
-                            }
-                            else
-                            {
-                                add_item_in_page = true;
+                                paginate_child_item (inItem, child_item, ref pos, ref page);
+                                if (child_item.row > last_row)
+                                {
+                                    pos.y += (child_item.row - last_row) * (inItem as Grid).row_spacing;
+                                    last_row = child_item.row;
+                                }
                             }
                         }
+
+                        inoutCurrentPosition.y = pos.y;
+                        print ("%u position %g\n", page.num, inoutCurrentPosition.y);
                     }
                 }
+            }
+            else
+            {
+                print ("item %s %g < %g\n", inItem.name, inoutCurrentPosition.y + item_size.height, page_content.extents.origin.y + page_content.extents.size.height);
             }
 
             if (add_item_in_page)
@@ -427,6 +464,9 @@ public class Maia.Document : Item
 
                 // Set item position
                 inItem.position = inoutCurrentPosition;
+
+                // Add item height to current position
+                inoutCurrentPosition.y += item_size.height;
             }
 
 
@@ -437,8 +477,7 @@ public class Maia.Document : Item
                 inItem.size = item_size;
             }
 
-            // Add item height to current position
-            inoutCurrentPosition.y += item_size.height;
+            print ("%u position %g\n", page.num, inoutCurrentPosition.y);
         }
     }
 
@@ -753,12 +792,12 @@ public class Maia.Document : Item
 
                         start_root.y = offset.y;
 
-
                         Graphic.Point start = page_break.grid.convert_to_item_space(start_root);
                         Graphic.Point end = page_break.grid.convert_to_item_space(end_root);
 
-                        var damage_area = new Graphic.Region (Graphic.Rectangle (start.x, start.y, end.x - start.x, end.y - start.x));
+                        var damage_area = new Graphic.Region (Graphic.Rectangle (start.x, start.y, end.x - start.x, end.y - start.y));
 
+                        print ("Damage %s %s\n", page_break.grid.geometry.extents.to_string (), damage_area.extents.to_string ());
                         page_break.grid.damage (damage_area);
 
                         break;

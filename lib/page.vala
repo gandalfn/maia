@@ -111,7 +111,7 @@ internal class Maia.Page : GLib.Object
             if (m_Document.header != null)
             {
                 double height = header.size_requested.height;
-                if (header.size_requested.height == 0)
+                if (height == 0)
                     height = header.size.height;
 
                 position.translate (Graphic.Point (0, height));
@@ -127,13 +127,19 @@ internal class Maia.Page : GLib.Object
             // Suppress header height
             if (m_Document.header != null)
             {
-                size.resize (0, -header.size_requested.height);
+                double height = header.size_requested.height;
+                if (height == 0)
+                    height = header.size.height;
+                size.resize (0, -height);
             }
 
             // Suppress footer height
             if (m_Document.footer != null)
             {
-                size.resize (0, -footer.size_requested.height);
+                double height = footer.size_requested.height;
+                if (height == 0)
+                    height = footer.size.height;
+                size.resize (0, -height);
             }
 
             return new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
