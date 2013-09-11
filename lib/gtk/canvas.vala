@@ -59,11 +59,13 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
             if (m_Root != null)
             {
                 m_Root.damage.disconnect (on_root_damage);
+                m_Root.notify["geometry"].disconnect (on_root_geometry_change);
             }
             m_Root = value;
             if (m_Root != null)
             {
                 m_Root.damage.connect (on_root_damage);
+                m_Root.notify["geometry"].connect (on_root_geometry_change);
             }
             queue_resize ();
         }
@@ -169,6 +171,15 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     }
 
     private void
+    on_root_geometry_change ()
+    {
+        if (root != null && root.geometry == null)
+        {
+            queue_resize ();
+        }
+    }
+
+    private void
     on_root_damage (Graphic.Region? inArea)
     {
         if (m_Buffer != null)
@@ -230,7 +241,9 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
                 Log.error (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, err.message);
             }
 
+            root.notify["geometry"].disconnect (on_root_geometry_change);
             root.geometry = null;
+            root.notify["geometry"].connect (on_root_geometry_change);
 
             unowned Document? document = root as Document;
             if (m_Adjust != null && document != null)

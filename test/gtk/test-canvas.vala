@@ -306,17 +306,21 @@ public class Maia.TestCanvas : Maia.TestCase
         window.add (scrolled_window);
         window.set_size_request (700, 700);
 
-        //GLib.Timeout.add_seconds (3, () => {
+        GLib.Timeout.add_seconds (3, () => {
+            unowned Item item = canvas.root.find (GLib.Quark.from_string ("main_2")) as Item;
+            print ("item visible\n");
+            item.visible = !item.visible;
+            return true;
+        });
         Maia.Document[] documents = {};
         documents += canvas.root as Document;
         documents += canvas.root as Document;
-            Cairo.generate_report.begin ("test.pdf", 300, documents, null, (obj, res) => {
-                Cairo.generate_report.end (res);
-                print ("test.pdf generated\n");
-                window.show ();
-            });
-//~             return false;
-//~         });
+
+        Cairo.generate_report.begin ("test.pdf", 300, documents, null, (obj, res) => {
+            Cairo.generate_report.end (res);
+            print ("test.pdf generated\n");
+            window.show ();
+        });
 
         window.hide ();
 

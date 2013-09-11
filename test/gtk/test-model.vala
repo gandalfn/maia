@@ -313,7 +313,7 @@ public class Maia.TestModel : Maia.TestCase
         canvas.show ();
         window.add (canvas);
 
-         GLib.Timeout.add_seconds (3, () => {
+        GLib.Timeout.add_seconds (3, () => {
             int cpt = 0;
             int r = Test.rand_int_range (0, list.iter_n_children(null));
             global::Gtk.TreeIter iter;
