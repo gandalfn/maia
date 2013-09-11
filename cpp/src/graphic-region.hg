@@ -96,6 +96,16 @@ namespace Maia
             public:
                 typedef RegionIterator iterator;
 
+
+                static Glib::RefPtr<Region> create (double inX, double inY, double inWidth, double inHeight)
+                {
+                    MaiaGraphicRectangle ext;
+                    maia_graphic_rectangle_init (&ext, inX, inY, inWidth, inHeight);
+                    MaiaGraphicRegion* pRegion = maia_graphic_region_new (&ext);
+
+                    return Glib::RefPtr<Region> (new Region (pRegion));
+                }
+
                 _WRAP_METHOD(Glib::RefPtr<Region> copy (), maia_graphic_region_copy)
 
                 _WRAP_METHOD(void get_extents(Rectangle& outRect), maia_graphic_region_get_extents)

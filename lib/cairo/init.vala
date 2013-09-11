@@ -91,12 +91,30 @@ namespace Maia.Cairo
         // Create context
         Context ctx = new Context (surface);
 
+        // Calculate the number of pages
+        uint nb_pages = 0;
+        Graphic.Size doc_size = Graphic.Size (0, 0);
         foreach (unowned Document document in inDocuments)
         {
             // Repaginate document
             document.position = Graphic.Point (0, 0);
-            var doc_size = document.size;
+            doc_size = document.size;
+
+            nb_pages += document.nb_pages;
+        }
+
+        uint start = 0;
+        foreach (unowned Document document in inDocuments)
+        {
+            // Set delta and nb pages
+            document.set_qdata<uint> (Document.s_PageBeginQuark, start);
+            document.set_qdata<uint> (Document.s_PageTotalQuark, nb_pages);
+
+            // Repaginate document
+            document.position = Graphic.Point (0, 0);
+            doc_size = document.size;
             document.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, doc_size.width, doc_size.height)));
+            start += document.nb_pages;
 
             // Draw document pages
             for (int cpt = 0; cpt < document.nb_pages; ++cpt)
@@ -111,35 +129,12 @@ namespace Maia.Cairo
                 yield;
             }
 
+            // unset delta and nb pages
+            document.set_qdata<uint> (Document.s_PageBeginQuark, 0);
+            document.set_qdata<uint> (Document.s_PageTotalQuark, 0);
+
             // Invalidate document geometry for display refresh
             document.geometry = null;
         }
-    }
-
-    public static void
-    document_page_to_png (string inPngFilename, Document inDocument, uint inNumPage) throws Graphic.Error
-    {
-        // Get document page format
-        Graphic.Size size = inDocument.format.to_size ();
-
-        // Create Surface
-        Graphic.Surface surface = new Graphic.Surface ((int)size.width, (int)size.height);
-
-        // Create context
-        Context ctx = new Context (surface);
-
-        // Repaginate document
-        inDocument.geometry = null;
-        var doc_size = inDocument.size;
-        inDocument.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, doc_size.width, doc_size.height)));
-
-        // Draw document page
-        inDocument.draw_page (ctx, inNumPage);
-
-        // Save surface onto png
-        (surface as Surface).surface.write_to_png (inPngFilename);
-
-        // Invalidate document geometry for display refresh
-        inDocument.geometry = null;
     }
 }

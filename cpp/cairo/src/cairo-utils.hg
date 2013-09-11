@@ -42,7 +42,5 @@ namespace Maia
 
         void save_document_finish (const Glib::RefPtr<Gio::AsyncResult>& inResult);
         void generate_report_finish (const Glib::RefPtr<Gio::AsyncResult>& inResult);
-
-        void document_page_to_png (const Glib::ustring& inPngFilename, const Glib::RefPtr<Maia::Document>& inDocument, unsigned int inNumPage);
     }
 }

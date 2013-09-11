@@ -1051,6 +1051,15 @@
   (construct-only #f)
 )
 
+(define-property current-page
+  (of-object "MaiaDocument")
+  (prop-type "GParamUInt")
+  (docs "current-page")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
 (define-property header
   (of-object "MaiaDocument")
   (prop-type "GParamString")

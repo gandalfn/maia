@@ -67,17 +67,6 @@
   )
 )
 
-(define-function maia_cairo_document_page_to_png
-  (c-name "maia_cairo_document_page_to_png")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "inPngFilename")
-    '("MaiaDocument*" "inDocument")
-    '("guint" "inNumPage")
-    '("GError**" "error")
-  )
-)
-
 (define-function maia_cairo_surface_get_type
   (c-name "maia_cairo_surface_get_type")
   (return-type "GType")

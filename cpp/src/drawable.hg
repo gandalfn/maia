@@ -45,6 +45,13 @@ namespace Maia
 
         public:
             _WRAP_METHOD(Glib::RefPtr<Graphic::Region> get_geometry () const, maia_drawable_get_geometry)
+            _WRAP_METHOD(void get_geometry (const Glib::RefPtr<Graphic::Region>& inGeometry), maia_drawable_set_geometry)
+
+            inline void unset_geometry ()
+            {
+                maia_drawable_set_geometry (gobj(), 0);
+            }
+
             _WRAP_METHOD(Glib::RefPtr<Graphic::Region> get_damaged () const, maia_drawable_get_damaged)
             _WRAP_METHOD(Glib::RefPtr<Graphic::Transform> get_transform () const, maia_drawable_get_transform)
             _WRAP_METHOD(void set_transform (const Glib::RefPtr<Graphic::Transform>& inTransform), maia_drawable_set_transform)

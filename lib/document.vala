@@ -22,6 +22,8 @@ public class Maia.Document : Item
     // static
     internal static GLib.Quark s_PageBreakQuark;
     internal static GLib.Quark s_PageNumQuark;
+    public static GLib.Quark s_PageBeginQuark;
+    public static GLib.Quark s_PageTotalQuark;
 
     // types
     internal class PageBreak : GLib.Object
@@ -96,6 +98,8 @@ public class Maia.Document : Item
     {
         s_PageBreakQuark = GLib.Quark.from_string ("MaiaDocumentPageBreakQuark");
         s_PageNumQuark = GLib.Quark.from_string ("MaiaDocumentPageNumQuark");
+        s_PageBeginQuark = GLib.Quark.from_string ("MaiaDocumentPageBeginQuark");
+        s_PageTotalQuark = GLib.Quark.from_string ("MaiaDocumentPageTotalQuark");
 
         Manifest.Attribute.register_transform_func (typeof (PageFormat), attribute_to_page_format);
 
@@ -293,7 +297,7 @@ public class Maia.Document : Item
     private void
     paginate_child_item (Item inRoot, Item inItem, ref Graphic.Point inoutCurrentPosition, ref unowned Page inoutPage)
     {
-        if (inItem != inoutPage.header && inItem != inoutPage.footer)
+        if (inItem != inoutPage.header && inItem != inoutPage.footer && inItem.visible)
         {
             // Get item allocated size
             var item_size = inItem.size;
@@ -371,7 +375,7 @@ public class Maia.Document : Item
         // Get last page
         unowned Page? page = m_Pages.last ();
 
-        if (inItem != page.header && inItem != page.footer)
+        if (inItem != page.header && inItem != page.footer && inItem.visible)
         {
             bool add_item_in_page = true;
 
@@ -462,13 +466,20 @@ public class Maia.Document : Item
         foreach (unowned Core.Object child in this)
         {
             unowned Item? item = child as Item;
-            if (item != null)
+            if (item != null && item.visible)
             {
                 paginate_item (item, ref current_position);
             }
         }
 
-        if (old_nb_pages != nb_pages)
+        // Try to get report nb pages
+        uint nb = get_qdata<uint> (s_PageTotalQuark);
+        if (nb == 0)
+        {
+            nb = nb_pages;
+        }
+        // Check if nb pages change if change emit signal for bind
+        if (old_nb_pages != nb)
         {
             GLib.Signal.emit_by_name (this, "notify::nb_pages");
         }
@@ -508,7 +519,12 @@ public class Maia.Document : Item
     {
         if (inAttribute.get () == "nb_pages" || inAttribute.get () == "page_num")
         {
-            inAttribute.owner.set_property (inProperty, (inSrc as Document).nb_pages);
+            uint nb = inSrc.get_qdata<uint> (s_PageTotalQuark);
+            if (nb == 0)
+            {
+                nb = (inSrc as Document).nb_pages;
+            }
+            inAttribute.owner.set_property (inProperty, nb);
         }
     }
 
@@ -693,7 +709,8 @@ public class Maia.Document : Item
         bool header_damaged = false;
         foreach (unowned Page page in m_VisiblePages)
         {
-            m_CurrentPage = page.num;
+            uint delta = get_qdata<uint> (s_PageBeginQuark);
+            m_CurrentPage = page.num + delta;
 
             inContext.save ();
             {
@@ -941,7 +958,8 @@ public class Maia.Document : Item
             {
                 if (page.num == inPageNum)
                 {
-                    m_CurrentPage = page.num;
+                    uint delta = get_qdata<uint> (s_PageBeginQuark);
+                    m_CurrentPage = page.num + delta;
 
                     foreach (unowned PageBreak page_break in m_PageBreaks)
                     {

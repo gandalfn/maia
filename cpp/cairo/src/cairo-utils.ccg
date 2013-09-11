@@ -46,7 +46,7 @@ namespace Maia
 
         static void on_generate_report_finished (GObject* inpObject, GAsyncResult* inpResult, gpointer inpData)
         {
-            SlotSaveDocumentFinished* pSlot = (SlotSaveDocumentFinished*)inpData;
+            SlotGenerateReportFinished* pSlot = (SlotGenerateReportFinished*)inpData;
             if (!pSlot)
             {
                 GError* gerror = 0;
@@ -130,13 +130,6 @@ namespace Maia
         {
             GError* gerror = 0;
             maia_cairo_generate_report_finish (const_cast<GAsyncResult*> (inResult->gobj ()), &gerror);
-            if (gerror) ::Glib::Error::throw_exception(gerror);
-        }
-
-        void document_page_to_png (const Glib::ustring& inPngFilename, const Glib::RefPtr<Maia::Document>& inDocument, unsigned int inNumPage)
-        {
-            GError* gerror = 0;
-            maia_cairo_document_page_to_png (inPngFilename.c_str (), const_cast<MaiaDocument*> (inDocument->gobj ()), inNumPage, &gerror);
             if (gerror) ::Glib::Error::throw_exception(gerror);
         }
     }

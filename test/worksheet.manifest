@@ -116,7 +116,7 @@ Document.worksheet {
             left_padding: 5;
             stroke-pattern: #000000;
             font_description: "Liberation Sans 14";
-            text: "Page num";
+            text: @nb_pages;
         }
 
         Label.footer_right {

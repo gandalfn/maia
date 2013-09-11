@@ -77,6 +77,23 @@ public class Maia.Gtk.Shortcut : Maia.Shortcut
             }
         });
 
+        // Connect onto section change
+        notify["section"].connect (() => {
+            if (section != null)
+            {
+                var item = root.find (GLib.Quark.from_string (section)) as Item;
+                if (item != null)
+                {
+                    item.notify["visible"].connect (() => {
+                        if (item.visible)
+                            m_Button.hide ();
+                        else
+                            m_Button.show ();
+                    });
+                }
+            }
+        });
+
         // connect onto clicked
         m_Button.clicked.connect (activate);
     }
