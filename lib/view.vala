@@ -57,7 +57,18 @@ public class Maia.View : Maia.Grid
 
     public string model {
         owned get {
-            return m_ModelName;
+            if (m_ModelName != null && m_Model == null)
+            {
+                m_Model = root.find (GLib.Quark.from_string (m_ModelName)) as Model;
+
+                if (m_Model != null)
+                {
+                    m_Model.row_added.connect (on_row_added);
+                    m_Model.row_deleted.connect (on_row_deleted);
+                    m_Model.rows_reordered.connect (on_rows_reordered);
+                }
+            }
+            return m_Model == null ? m_ModelName : m_Model.name;
         }
         set {
             if (m_Model != null)
