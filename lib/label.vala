@@ -38,7 +38,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
 
     internal bool   xexpand { get; set; default = true; }
     internal bool   xfill   { get; set; default = true; }
-    internal bool   xshrink { get; set; default = true; }
+    internal bool   xshrink { get; set; default = false; }
     internal double xalign  { get; set; default = 0.5; }
 
     internal bool   yexpand { get; set; default = true; }
@@ -172,30 +172,21 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
         var allocation = inAllocation.extents;
-        if (m_Glyph != null && (inAllocation.extents.size.width < m_Glyph.size.width ||
-                                inAllocation.extents.size.height < m_Glyph.size.height))
+        if (m_Glyph != null && ((xshrink && inAllocation.extents.size.width < m_Glyph.size.width) ||
+                                (yshrink && inAllocation.extents.size.height < m_Glyph.size.height)))
         {
             var glyph_size = m_Glyph.size;
-            if (allocation.size.width < size_requested.width)
+            if (xshrink && allocation.size.width < size_requested.width)
             {
-                var old_width = glyph_size.width;
                 glyph_size.width = allocation.size.width;
-                if (!xfill && xexpand)
-                {
-                    allocation.origin.x += (old_width - glyph_size.width) * xalign;
-                }
             }
-            if (allocation.size.height < size_requested.height)
+            if (yshrink && allocation.size.height < size_requested.height)
             {
-                var old_height = glyph_size.height;
                 glyph_size.height = allocation.size.height;
-                if (!yfill && yexpand)
-                {
-                    allocation.origin.y += (old_height - glyph_size.height) * yalign;
-                }
             }
             m_Glyph.size = glyph_size;
             glyph_size = m_Glyph.size;
+
             glyph_size.transform (transform);
             allocation.size.width = double.max (glyph_size.width, allocation.size.width);
             allocation.size.height = double.max (glyph_size.height, allocation.size.height);

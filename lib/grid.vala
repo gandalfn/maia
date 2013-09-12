@@ -466,12 +466,19 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         }
                         else if (item.xexpand)
                         {
-                            allocation.size.width = double.min (item_size.width, area.size.width - item.left_padding - item.right_padding);
-                            allocation.origin.x += item.left_padding + (allocation.size.width - item_size.width) * item.xalign;
+                            if (item.xshrink)
+                                allocation.size.width = double.min (item_size.width, area.size.width - item.left_padding - item.right_padding);
+                            else
+                                allocation.size.width = item_size.width;
+
+                            allocation.origin.x += item.left_padding + ((area.size.width - item.left_padding - item.right_padding) - allocation.size.width) * item.xalign;
                         }
                         else
                         {
-                            allocation.size.width = double.min (item_size.width, area.size.width - item.left_padding - item.right_padding);
+                            if (item.xshrink)
+                                allocation.size.width = double.min (item_size.width, area.size.width - item.left_padding - item.right_padding);
+                            else
+                                allocation.size.width = item_size.width;
                             allocation.origin.x += item.left_padding;
                         }
 
@@ -482,12 +489,19 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         }
                         else if (item.yexpand)
                         {
-                            allocation.size.height = double.min (item_size.height, area.size.height - item.top_padding - item.bottom_padding);
-                            allocation.origin.y += item.top_padding + (allocation.size.height - item_size.height) * item.yalign;
+                            if (item.yshrink)
+                                allocation.size.height = double.min (item_size.height, area.size.height - item.top_padding - item.bottom_padding);
+                            else
+                                allocation.size.height = item_size.height;
+
+                            allocation.origin.y += item.top_padding + ((area.size.height - item.top_padding - item.bottom_padding) - allocation.size.height) * item.yalign;
                         }
                         else
                         {
-                            allocation.size.height = double.min (item_size.height, area.size.height - item.top_padding - item.bottom_padding);
+                            if (item.yshrink)
+                                allocation.size.height = double.min (item_size.height, area.size.height - item.top_padding - item.bottom_padding);
+                            else
+                                allocation.size.height = item_size.height;
                             allocation.origin.y += item.top_padding;
                         }
 
