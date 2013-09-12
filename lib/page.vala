@@ -194,7 +194,8 @@ internal class Maia.Page : GLib.Object
                 var item_size     = child.size;
 
                 // Set child size allocation
-                var child_allocation = new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y, item_size.width, item_size.height));
+                var child_allocation = new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y,
+                                                                              double.min (item_size.width, content_geometry.extents.size.width), item_size.height));
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Update page %u item %s", num, child.name);
                 child.update (inContext, child_allocation);
             }

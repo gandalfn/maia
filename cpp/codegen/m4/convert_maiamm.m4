@@ -221,12 +221,24 @@ _CONVERSION(`::Cairo::RefPtr< ::Cairo::Surface>',`cairo_surface_t*',`($3)->cobj(
 _CONVERSION(`const ::Cairo::RefPtr< ::Cairo::Surface>&',`cairo_surface_t*',`($3)->cobj()')
 _CONVERSION(`cairo_surface_t*',`::Cairo::RefPtr< ::Cairo::Surface>',`::Cairo::RefPtr< ::Cairo::Surface>(new ::Cairo::Surface($3))')
 
+_CONVERSION(`Graphic::GlyphAlignment',`MaiaGraphicGlyphAlignment',`(MaiaGraphicGlyphAlignment)$3')
+_CONVERSION(`MaiaGraphicGlyphAlignment',`Graphic::GlyphAlignment',`(Graphic::GlyphAlignment)$3')
+
+_CONVERSION(`Graphic::GlyphWrapMode',`MaiaGraphicGlyphWrapMode',`(MaiaGraphicGlyphWrapMode)$3')
+_CONVERSION(`MaiaGraphicGlyphWrapMode',`Graphic::GlyphWrapMode',`(Graphic::GlyphWrapMode)$3')
+
+_CONVERSION(`Graphic::GlyphEllipsizeMode',`MaiaGraphicGlyphEllipsizeMode',`(MaiaGraphicGlyphEllipsizeMode)$3')
+_CONVERSION(`MaiaGraphicGlyphEllipsizeMode',`Graphic::GlyphEllipsizeMode',`(Graphic::GlyphEllipsizeMode)$3')
+
 _CONV_ENUM(MaiaCore,ParserToken)
 _CONV_ENUM(MaiaCore,TimelineDirection)
 _CONV_ENUM(MaiaCore,AnimatorProgressType)
 _CONV_ENUM(MaiaGraphic,RegionOverlap)
 _CONV_ENUM(MaiaGraphic,PathDataType)
 _CONV_ENUM(MaiaGraphic,Operator)
+_CONV_ENUM(MaiaGraphic,GlyphAlignment)
+_CONV_ENUM(MaiaGraphic,GlyphWrapMode)
+_CONV_ENUM(MaiaGraphic,GlyphEllipsizeMode)
 _CONV_ENUM(Maia,Scroll)
 _CONV_ENUM(Maia,Key)
 _CONV_ENUM(Maia,Cursor)

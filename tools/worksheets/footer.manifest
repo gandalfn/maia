@@ -12,7 +12,7 @@ Grid.footer {
 		column: 1;
 		right-padding: 5;
 		left-padding: 5;
-		text: "Page 1/1";
+		text: "Page 1/   1";
 	}
 	Label.footer_date {
 		style:label_12;

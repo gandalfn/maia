@@ -38,10 +38,12 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
 
     internal bool   xexpand { get; set; default = true; }
     internal bool   xfill   { get; set; default = true; }
+    internal bool   xshrink { get; set; default = true; }
     internal double xalign  { get; set; default = 0.5; }
 
     internal bool   yexpand { get; set; default = true; }
     internal bool   yfill   { get; set; default = true; }
+    internal bool   yshrink { get; set; default = false; }
     internal double yalign  { get; set; default = 0.5; }
 
     internal double top_padding    { get; set; default = 0; }
@@ -49,8 +51,68 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
-    public string   font_description { get; set; default = ""; }
-    public string   text             { get; set; default = null; }
+    public string                      font_description { get; set; default = ""; }
+    public Graphic.Glyph.Alignment     alignment        { get; set; default = Graphic.Glyph.Alignment.CENTER; }
+    public Graphic.Glyph.WrapMode      wrap_mode        { get; set; default = Graphic.Glyph.WrapMode.WORD; }
+    public Graphic.Glyph.EllipsizeMode ellipsize_mode   { get; set; default = Graphic.Glyph.EllipsizeMode.NONE; }
+    public string                      text             { get; set; default = null; }
+
+    // static methods
+    static construct
+    {
+        Manifest.Attribute.register_transform_func (typeof (Graphic.Glyph.Alignment), attribute_to_alignment);
+        Manifest.Attribute.register_transform_func (typeof (Graphic.Glyph.WrapMode), attribute_to_wrap_mode);
+        Manifest.Attribute.register_transform_func (typeof (Graphic.Glyph.EllipsizeMode), attribute_to_ellipsize_mode);
+
+        GLib.Value.register_transform_func (typeof (Graphic.Glyph.Alignment), typeof (string), alignment_to_string);
+        GLib.Value.register_transform_func (typeof (Graphic.Glyph.WrapMode), typeof (string), wrap_mode_to_string);
+        GLib.Value.register_transform_func (typeof (Graphic.Glyph.EllipsizeMode), typeof (string), ellipsize_mode_to_string);
+    }
+
+    static void
+    attribute_to_alignment (Manifest.Attribute inAttribute, ref GLib.Value outValue)
+    {
+        outValue = Graphic.Glyph.Alignment.from_string (inAttribute.get ());
+    }
+
+    static void
+    alignment_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (Graphic.Glyph.Alignment)))
+    {
+        Graphic.Glyph.Alignment val = (Graphic.Glyph.Alignment)inSrc;
+
+        outDest = val.to_string ();
+    }
+
+    static void
+    attribute_to_wrap_mode (Manifest.Attribute inAttribute, ref GLib.Value outValue)
+    {
+        outValue = Graphic.Glyph.WrapMode.from_string (inAttribute.get ());
+    }
+
+    static void
+    wrap_mode_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (Graphic.Glyph.WrapMode)))
+    {
+        Graphic.Glyph.WrapMode val = (Graphic.Glyph.WrapMode)inSrc;
+
+        outDest = val.to_string ();
+    }
+
+    static void
+    attribute_to_ellipsize_mode (Manifest.Attribute inAttribute, ref GLib.Value outValue)
+    {
+        outValue = Graphic.Glyph.EllipsizeMode.from_string (inAttribute.get ());
+    }
+
+    static void
+    ellipsize_mode_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (Graphic.Glyph.EllipsizeMode)))
+    {
+        Graphic.Glyph.EllipsizeMode val = (Graphic.Glyph.EllipsizeMode)inSrc;
+
+        outDest = val.to_string ();
+    }
 
     // methods
     construct
@@ -87,6 +149,9 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
             if (m_Glyph == null)
             {
                 m_Glyph = new Graphic.Glyph (font_description);
+                m_Glyph.alignment = alignment;
+                m_Glyph.wrap = wrap_mode;
+                m_Glyph.ellipsize = ellipsize_mode;
                 m_Glyph.text = text;
             }
 
@@ -94,13 +159,34 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
             {
                 // Create a fake surface to calculate the size of path
                 var fake_surface = new Graphic.Surface (1, 1);
-
+                m_Glyph.size = inSize;
                 m_Glyph.update (fake_surface.context);
                 size = m_Glyph.size;
             }
         }
 
         return base.size_request (inSize);
+    }
+
+    internal override void
+    update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
+    {
+        if (m_Glyph != null && (inAllocation.extents.size.width < m_Glyph.size.width ||
+                                inAllocation.extents.size.height < m_Glyph.size.height))
+        {
+            var glyph_size = m_Glyph.size;
+            if (inAllocation.extents.size.width < m_Glyph.size.width)
+            {
+                glyph_size.width = inAllocation.extents.size.width;
+            }
+            if (inAllocation.extents.size.height < m_Glyph.size.height)
+            {
+                glyph_size.height = inAllocation.extents.size.height;
+            }
+            m_Glyph.size = glyph_size;
+        }
+
+        base.update (inContext, inAllocation);
     }
 
     internal override void
@@ -121,8 +207,8 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
             inContext.save ();
             {
                 inContext.pattern = stroke_pattern;
-                inContext.translate (Graphic.Point (geometry.extents.size.width / 2, geometry.extents.size.height / 2));
-                inContext.translate (Graphic.Point (-m_Glyph.size.width / 2, -m_Glyph.size.height / 2));
+                //inContext.translate (Graphic.Point (geometry.extents.size.width / 2, geometry.extents.size.height / 2));
+                //inContext.translate (Graphic.Point (-m_Glyph.size.width / 2, -m_Glyph.size.height / 2));
                 inContext.render (m_Glyph);
             }
             inContext.restore ();

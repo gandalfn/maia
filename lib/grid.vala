@@ -24,6 +24,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
     {
         public Graphic.Size size;
         public uint nb_expands;
+        public uint nb_shrinks;
     }
 
     private struct SizeAllocation
@@ -76,8 +77,12 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
                     // count the number of xexpand in row
                     rows[item.row].nb_expands += item.xexpand ? 1 : 0;
+                    // count the number of shrink in row
+                    rows[item.row].nb_shrinks += item.xshrink ? 1 : 0;
                     // count the number of yexpand in column
                     columns[item.column].nb_expands += item.yexpand ? 1 : 0;
+                    // count the number of yexpand in column
+                    columns[item.column].nb_shrinks += item.yshrink ? 1 : 0;
 
                     if (item.columns > 1)
                     {
@@ -204,7 +209,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         }
                         else
                         {
-                            allocation.size.width = item_size.width;
+                            allocation.size.width = double.min (item_size.width, child_allocations[item.row, item.column].size.width);
                             allocation.origin.x += (child_allocations[item.row, item.column].size.width - item_size.width) * item.xalign;
                         }
 
@@ -214,7 +219,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         }
                         else
                         {
-                            allocation.size.height = item_size.height;
+                            allocation.size.height = double.min (item_size.height, child_allocations[item.row, item.column].size.height);
                             allocation.origin.y += (child_allocations[item.row, item.column].size.height - item_size.height) * item.yalign;
                         }
 
@@ -279,6 +284,10 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
                 Graphic.Rectangle allocation = inAllocation.extents;
 
+                // Calculate the the size of shrink
+                double xshrink = double.max (natural.width - allocation.size.width, 0);
+                double yshrink = double.max (natural.height - allocation.size.height, 0);
+
                 // Calculate the the size of padding
                 double xpadding = double.max (allocation.size.width - natural.width, 0);
                 if (columns.length > 1)
@@ -308,6 +317,17 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         if (item.yexpand)
                         {
                             extra.height += ypadding / columns[item.column].nb_expands;
+                        }
+
+                        // remove the shrink space
+                        if (item.xshrink)
+                        {
+                            extra.width -= xshrink / rows[item.row].nb_shrinks;
+                        }
+
+                        if (item.yshrink)
+                        {
+                            extra.height -= yshrink / columns[item.column].nb_shrinks;
                         }
 
                         child_allocations[item.row, item.column].size.width = double.max (child_allocations[item.row, item.column].size.width,
@@ -451,12 +471,12 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         }
                         else if (item.xexpand)
                         {
-                            allocation.size.width = item_size.width;
+                            allocation.size.width = double.min (item_size.width, area.size.width - item.left_padding - item.right_padding);
                             allocation.origin.x += item.left_padding + ((area.size.width - item.left_padding - item.right_padding) - item_size.width) * item.xalign;
                         }
                         else
                         {
-                            allocation.size.width = item_size.width;
+                            allocation.size.width = double.min (item_size.width, area.size.width - item.left_padding - item.right_padding);
                             allocation.origin.x += item.left_padding;
                         }
 
@@ -467,17 +487,16 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         }
                         else if (item.yexpand)
                         {
-                            allocation.size.height = item_size.height;
+                            allocation.size.height = double.min (item_size.height, area.size.height - item.top_padding - item.bottom_padding);
                             allocation.origin.y += item.top_padding + ((area.size.height - item.top_padding - item.bottom_padding) - item_size.height) * item.yalign;
                         }
                         else
                         {
-                            allocation.size.height = item_size.height;
+                            allocation.size.height = double.min (item_size.height, area.size.height - item.top_padding - item.bottom_padding);
                             allocation.origin.y += item.top_padding;
                         }
 
                         // update item
-                        print ("update %s: %s\n", item.name, allocation.to_string ());
                         Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "update %s: %s", item.name, allocation.to_string ());
                         item.update (inContext, new Graphic.Region (allocation));
                     }
@@ -550,10 +569,12 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
     internal bool   xexpand { get; set; default = true; }
     internal bool   xfill   { get; set; default = true; }
+    internal bool   xshrink { get; set; default = true; }
     internal double xalign  { get; set; default = 0.5; }
 
     internal bool   yexpand { get; set; default = true; }
     internal bool   yfill   { get; set; default = true; }
+    internal bool   yshrink { get; set; default = true; }
     internal double yalign  { get; set; default = 0.5; }
 
     internal double top_padding    { get; set; default = 0; }
@@ -588,6 +609,35 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         return m_Allocation.size;
     }
 
+    private double
+    get_page_break_delta ()
+    {
+        double ret = 0;
+
+        unowned Core.List<Document.PageBreak>? page_breaks = get_qdata<unowned Core.List<Document.PageBreak>> (Document.s_PageBreakQuark);
+        if (page_breaks != null)
+        {
+            foreach (unowned Document.PageBreak page_break in page_breaks)
+            {
+                var start = convert_to_item_space (Graphic.Point (0, page_break.start));
+                var end = convert_to_item_space (Graphic.Point (0, page_break.end));
+
+                ret = end.y - start.y;
+            }
+        }
+
+        foreach (unowned Core.Object child in this)
+        {
+            unowned Grid? grid = child as Grid;
+            if (grid != null)
+            {
+                ret += grid.get_page_break_delta ();
+            }
+        }
+
+        return ret;
+    }
+
     internal override void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
@@ -595,17 +645,11 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         {
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, name);
 
-            unowned Core.List<Document.PageBreak>? page_breaks = get_qdata<unowned Core.List<Document.PageBreak>> (Document.s_PageBreakQuark);
-            if (page_breaks != null)
+            double delta = get_page_break_delta ();
+            if (delta > 0)
             {
                 var s = inAllocation.extents.size;
-                foreach (unowned Document.PageBreak page_break in page_breaks)
-                {
-                    var start = convert_to_item_space (Graphic.Point (0, page_break.start));
-                    var end = convert_to_item_space (Graphic.Point (0, page_break.end));
-
-                    s.resize (0, end.y - start.y);
-                }
+                s.resize (0, delta);
                 var alloc = inAllocation.copy ();
                 alloc.resize (s);
                 geometry = alloc;

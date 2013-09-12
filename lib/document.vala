@@ -315,12 +315,9 @@ public class Maia.Document : Item
                 // Check if item size + current position does not overlap two page
                 if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
                 {
-                    print ("child item %s %g > %g\n", item.name, inoutCurrentPosition.y + item_size.height, page_content.extents.origin.y + page_content.extents.size.height);
                     // Check if item can be added in new
                     if (item_size.height <= page_content.extents.size.height)
                     {
-                        print ("child item %s %g <= %g\n", item.name, item_size.height, page_content.extents.size.height);
-
                         // Item can be added in new page
                         append_page  ();
 
@@ -367,10 +364,6 @@ public class Maia.Document : Item
                         add_height = false;
                     }
                 }
-                else
-                {
-                    print ("child item %s %g < %g\n", item.name, inoutCurrentPosition.y + item_size.height, page_content.extents.origin.y + page_content.extents.size.height);
-                }
             }
 
             // Add root item to this page
@@ -395,8 +388,6 @@ public class Maia.Document : Item
         // Get last page
         unowned Page? page = m_Pages.last ();
 
-        print ("%u position %g\n", page.num, inoutCurrentPosition.y);
-
         if (inItem != page.header && inItem != page.footer && inItem.visible)
         {
             bool add_item_in_page = true;
@@ -408,8 +399,6 @@ public class Maia.Document : Item
             var page_content = page.content_geometry;
             if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
             {
-                print ("item %s %g > %g\n", inItem.name, inoutCurrentPosition.y + item_size.height, page_content.extents.origin.y + page_content.extents.size.height);
-
                 // Append a new page
                 append_page  ();
 
@@ -429,7 +418,6 @@ public class Maia.Document : Item
 
                         inItem.position = Graphic.Point (0, 0);
 
-                        print ("%u position %g\n", page.num, inoutCurrentPosition.y);
                         var pos = inoutCurrentPosition;
                         uint last_row = 0;
 
@@ -448,13 +436,8 @@ public class Maia.Document : Item
                         }
 
                         inoutCurrentPosition.y = pos.y;
-                        print ("%u position %g\n", page.num, inoutCurrentPosition.y);
                     }
                 }
-            }
-            else
-            {
-                print ("item %s %g < %g\n", inItem.name, inoutCurrentPosition.y + item_size.height, page_content.extents.origin.y + page_content.extents.size.height);
             }
 
             if (add_item_in_page)
@@ -476,8 +459,6 @@ public class Maia.Document : Item
                 item_size.width = page.content_geometry.extents.size.width;
                 inItem.size = item_size;
             }
-
-            print ("%u position %g\n", page.num, inoutCurrentPosition.y);
         }
     }
 
@@ -797,7 +778,6 @@ public class Maia.Document : Item
 
                         var damage_area = new Graphic.Region (Graphic.Rectangle (start.x, start.y, end.x - start.x, end.y - start.y));
 
-                        print ("Damage %s %s\n", page_break.grid.geometry.extents.to_string (), damage_area.extents.to_string ());
                         page_break.grid.damage (damage_area);
 
                         break;

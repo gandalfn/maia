@@ -282,6 +282,8 @@ public class CanvasEditor.ManifestProvider : Provider
         m_Properties.insert ("yexpand");
         m_Properties.insert ("xfill");
         m_Properties.insert ("yfill");
+        m_Properties.insert ("xshrink");
+        m_Properties.insert ("yshrink");
         m_Properties.insert ("xalign");
         m_Properties.insert ("yalign");
         m_Properties.insert ("top-padding");

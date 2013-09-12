@@ -42,6 +42,12 @@ namespace Maia.Core
         return (int)(inA - inB);
     }
 
+    public static inline int
+    double_compare (double inA, double inB)
+    {
+        return (int)((int)(inA * 65535) - (int)(inB * 65535));
+    }
+
     public static inline CompareFunc<V>
     get_compare_func_for<V> ()
     {
@@ -55,6 +61,8 @@ namespace Maia.Core
             func = (CompareFunc<V>)Object.compare;
         else if (typeof (V) == typeof (uint32))
             func = (CompareFunc<V>)uint32_compare;
+        else if (typeof (V) == typeof (double))
+            func = (CompareFunc<V>)double_compare;
 
         return func;
     }

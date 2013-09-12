@@ -258,6 +258,57 @@
 
 ;; Original typedef:
 ;; typedef enum  {
+;; 	MAIA_GRAPHIC_GLYPH_ALIGNMENT_LEFT,
+;; 	MAIA_GRAPHIC_GLYPH_ALIGNMENT_CENTER,
+;; 	MAIA_GRAPHIC_GLYPH_ALIGNMENT_RIGHT
+;; } MaiaGraphicGlyphAlignment;
+
+(define-enum-extended GraphicGlyphAlignment
+  (in-module "Maia")
+  (c-name "MaiaGraphicGlyphAlignment")
+  (values
+    '("left" "MAIA_GRAPHIC_GLYPH_ALIGNMENT_LEFT" "0")
+    '("center" "MAIA_GRAPHIC_GLYPH_ALIGNMENT_CENTER" "1")
+    '("right" "MAIA_GRAPHIC_GLYPH_ALIGNMENT_RIGHT" "2")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_GRAPHIC_GLYPH_WRAP_MODE_CHAR,
+;; 	MAIA_GRAPHIC_GLYPH_WRAP_MODE_WORD
+;; } MaiaGraphicGlyphWrapMode;
+
+(define-enum-extended GraphicGlyphWrapMode
+  (in-module "Maia")
+  (c-name "MaiaGraphicGlyphWrapMode")
+  (values
+    '("char" "MAIA_GRAPHIC_GLYPH_WRAP_MODE_CHAR" "0")
+    '("word" "MAIA_GRAPHIC_GLYPH_WRAP_MODE_WORD" "1")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_GRAPHIC_GLYPH_ELLIPSIZE_MODE_NONE,
+;; 	MAIA_GRAPHIC_GLYPH_ELLIPSIZE_MODE_START,
+;; 	MAIA_GRAPHIC_GLYPH_ELLIPSIZE_MODE_MIDDLE,
+;; 	MAIA_GRAPHIC_GLYPH_ELLIPSIZE_MODE_END
+;; } MaiaGraphicGlyphEllipsizeMode;
+
+(define-enum-extended GraphicGlyphEllipsizeMode
+  (in-module "Maia")
+  (c-name "MaiaGraphicGlyphEllipsizeMode")
+  (values
+    '("none" "MAIA_GRAPHIC_GLYPH_ELLIPSIZE_MODE_NONE" "0")
+    '("start" "MAIA_GRAPHIC_GLYPH_ELLIPSIZE_MODE_START" "1")
+    '("middle" "MAIA_GRAPHIC_GLYPH_ELLIPSIZE_MODE_MIDDLE" "2")
+    '("end" "MAIA_GRAPHIC_GLYPH_ELLIPSIZE_MODE_END" "3")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
 ;; 	MAIA_GRAPHIC_OPERATOR_CLEAR,
 ;; 	MAIA_GRAPHIC_OPERATOR_SOURCE,
 ;; 	MAIA_GRAPHIC_OPERATOR_OVER,

@@ -20,6 +20,135 @@
 public class Maia.Graphic.Glyph : Core.Object
 {
     // types
+    public enum Alignment
+    {
+        LEFT,
+        CENTER,
+        RIGHT;
+
+        public string
+        to_string ()
+        {
+            switch (this)
+            {
+                case LEFT:
+                    return "left";
+
+                case CENTER:
+                    return "center";
+
+                case RIGHT:
+                    return "right";
+            }
+
+            return "center";
+        }
+
+        public static Alignment
+        from_string (string inValue)
+        {
+            switch (inValue)
+            {
+                case "left":
+                    return LEFT;
+
+                case "center":
+                    return CENTER;
+
+                case "right":
+                    return RIGHT;
+            }
+
+            return CENTER;
+        }
+    }
+
+    public enum WrapMode
+    {
+        CHAR,
+        WORD;
+
+        public string
+        to_string ()
+        {
+            switch (this)
+            {
+                case CHAR:
+                    return "char";
+
+                case WORD:
+                    return "word";
+            }
+
+            return "word";
+        }
+
+        public static WrapMode
+        from_string (string inValue)
+        {
+            switch (inValue)
+            {
+                case "char":
+                    return CHAR;
+
+                case "word":
+                    return WORD;
+            }
+
+            return WORD;
+        }
+    }
+
+    public enum EllipsizeMode
+    {
+        NONE,
+        START,
+        MIDDLE,
+        END;
+
+        public string
+        to_string ()
+        {
+            switch (this)
+            {
+                case NONE:
+                    return "none";
+
+                case START:
+                    return "start";
+
+                case MIDDLE:
+                    return "middle";
+
+                case END:
+                    return "end";
+            }
+
+            return "none";
+        }
+
+        public static EllipsizeMode
+        from_string (string inValue)
+        {
+            switch (inValue)
+            {
+                case "none":
+                    return NONE;
+
+                case "start":
+                    return START;
+
+                case "middle":
+                    return MIDDLE;
+
+                case "end":
+                    return END;
+            }
+
+            return NONE;
+        }
+    }
+
     public class Line : Core.Object
     {
         // accessors
@@ -31,13 +160,18 @@ public class Maia.Graphic.Glyph : Core.Object
     }
 
     // accessors
-    public string font_description { get; construct set; }
-    public string text             { get; set; }
-    public Point  origin           { get; set; }
+    public string        font_description { get; construct set; }
+    public Alignment     alignment        { get; set; default = Alignment.CENTER; }
+    public WrapMode      wrap             { get; set; default = WrapMode.WORD; }
+    public EllipsizeMode ellipsize        { get; set; default = EllipsizeMode.NONE; }
+    public string        text             { get; set; }
+    public Point         origin           { get; set; }
 
     public virtual Size size {
         get {
             return Size (0, 0);
+        }
+        set {
         }
     }
 

@@ -348,6 +348,33 @@
   (construct-only #f)
 )
 
+(define-property alignment
+  (of-object "MaiaGraphicGlyph")
+  (prop-type "GParamEnum")
+  (docs "alignment")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property wrap
+  (of-object "MaiaGraphicGlyph")
+  (prop-type "GParamEnum")
+  (docs "wrap")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property ellipsize
+  (of-object "MaiaGraphicGlyph")
+  (prop-type "GParamEnum")
+  (docs "ellipsize")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property text
   (of-object "MaiaGraphicGlyph")
   (prop-type "GParamString")
@@ -371,7 +398,7 @@
   (prop-type "GParamBoxed")
   (docs "size")
   (readable #t)
-  (writable #f)
+  (writable #t)
   (construct-only #f)
 )
 
@@ -755,6 +782,15 @@
   (construct-only #f)
 )
 
+(define-property xshrink
+  (of-object "MaiaButton")
+  (prop-type "GParamBoolean")
+  (docs "xshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property xalign
   (of-object "MaiaButton")
   (prop-type "GParamDouble")
@@ -777,6 +813,15 @@
   (of-object "MaiaButton")
   (prop-type "GParamBoolean")
   (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yshrink
+  (of-object "MaiaButton")
+  (prop-type "GParamBoolean")
+  (docs "yshrink")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -1199,6 +1244,15 @@
   (construct-only #f)
 )
 
+(define-property xshrink
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamBoolean")
+  (docs "xshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property xalign
   (of-object "MaiaDrawingArea")
   (prop-type "GParamDouble")
@@ -1221,6 +1275,15 @@
   (of-object "MaiaDrawingArea")
   (prop-type "GParamBoolean")
   (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yshrink
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamBoolean")
+  (docs "yshrink")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -1396,6 +1459,15 @@
   (construct-only #f)
 )
 
+(define-property xshrink
+  (of-object "MaiaEntry")
+  (prop-type "GParamBoolean")
+  (docs "xshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property xalign
   (of-object "MaiaEntry")
   (prop-type "GParamDouble")
@@ -1418,6 +1490,15 @@
   (of-object "MaiaEntry")
   (prop-type "GParamBoolean")
   (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yshrink
+  (of-object "MaiaEntry")
+  (prop-type "GParamBoolean")
+  (docs "yshrink")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -1569,6 +1650,15 @@
   (construct-only #f)
 )
 
+(define-property xshrink
+  (of-object "MaiaGrid")
+  (prop-type "GParamBoolean")
+  (docs "xshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property xalign
   (of-object "MaiaGrid")
   (prop-type "GParamDouble")
@@ -1591,6 +1681,15 @@
   (of-object "MaiaGrid")
   (prop-type "GParamBoolean")
   (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yshrink
+  (of-object "MaiaGrid")
+  (prop-type "GParamBoolean")
+  (docs "yshrink")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -1809,6 +1908,15 @@
   (construct-only #f)
 )
 
+(define-property xshrink
+  (of-object "MaiaImage")
+  (prop-type "GParamBoolean")
+  (docs "xshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property xalign
   (of-object "MaiaImage")
   (prop-type "GParamDouble")
@@ -1831,6 +1939,15 @@
   (of-object "MaiaImage")
   (prop-type "GParamBoolean")
   (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yshrink
+  (of-object "MaiaImage")
+  (prop-type "GParamBoolean")
+  (docs "yshrink")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -2324,6 +2441,15 @@
   (construct-only #f)
 )
 
+(define-property xshrink
+  (of-object "MaiaItemPackable")
+  (prop-type "GParamBoolean")
+  (docs "xshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property yalign
   (of-object "MaiaItemPackable")
   (prop-type "GParamDouble")
@@ -2346,6 +2472,15 @@
   (of-object "MaiaItemPackable")
   (prop-type "GParamBoolean")
   (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yshrink
+  (of-object "MaiaItemPackable")
+  (prop-type "GParamBoolean")
+  (docs "yshrink")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -2429,6 +2564,15 @@
   (construct-only #f)
 )
 
+(define-property xshrink
+  (of-object "MaiaLabel")
+  (prop-type "GParamBoolean")
+  (docs "xshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property xalign
   (of-object "MaiaLabel")
   (prop-type "GParamDouble")
@@ -2451,6 +2595,15 @@
   (of-object "MaiaLabel")
   (prop-type "GParamBoolean")
   (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yshrink
+  (of-object "MaiaLabel")
+  (prop-type "GParamBoolean")
+  (docs "yshrink")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -2505,6 +2658,33 @@
   (of-object "MaiaLabel")
   (prop-type "GParamString")
   (docs "font-description")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property alignment
+  (of-object "MaiaLabel")
+  (prop-type "GParamEnum")
+  (docs "alignment")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property wrap-mode
+  (of-object "MaiaLabel")
+  (prop-type "GParamEnum")
+  (docs "wrap-mode")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property ellipsize-mode
+  (of-object "MaiaLabel")
+  (prop-type "GParamEnum")
+  (docs "ellipsize-mode")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -2672,6 +2852,15 @@
   (construct-only #f)
 )
 
+(define-property xshrink
+  (of-object "MaiaPath")
+  (prop-type "GParamBoolean")
+  (docs "xshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property xalign
   (of-object "MaiaPath")
   (prop-type "GParamDouble")
@@ -2694,6 +2883,15 @@
   (of-object "MaiaPath")
   (prop-type "GParamBoolean")
   (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yshrink
+  (of-object "MaiaPath")
+  (prop-type "GParamBoolean")
+  (docs "yshrink")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -2837,6 +3035,15 @@
   (construct-only #f)
 )
 
+(define-property xshrink
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamBoolean")
+  (docs "xshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property xalign
   (of-object "MaiaToggleButton")
   (prop-type "GParamDouble")
@@ -2859,6 +3066,15 @@
   (of-object "MaiaToggleButton")
   (prop-type "GParamBoolean")
   (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yshrink
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamBoolean")
+  (docs "yshrink")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -3186,6 +3402,15 @@
   (construct-only #f)
 )
 
+(define-property xshrink
+  (of-object "MaiaCombo")
+  (prop-type "GParamBoolean")
+  (docs "xshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property xalign
   (of-object "MaiaCombo")
   (prop-type "GParamDouble")
@@ -3208,6 +3433,15 @@
   (of-object "MaiaCombo")
   (prop-type "GParamBoolean")
   (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yshrink
+  (of-object "MaiaCombo")
+  (prop-type "GParamBoolean")
+  (docs "yshrink")
   (readable #t)
   (writable #t)
   (construct-only #f)

@@ -748,6 +748,19 @@
   )
 )
 
+(define-vfunc get_xshrink
+  (of-object "MaiaItemPackable")
+  (return-type "gboolean")
+)
+
+(define-vfunc set_xshrink
+  (of-object "MaiaItemPackable")
+  (return-type "none")
+  (parameters
+    '("gboolean" "inShrink")
+  )
+)
+
 (define-vfunc get_xalign
   (of-object "MaiaItemPackable")
   (return-type "double")
@@ -784,6 +797,19 @@
   (return-type "none")
   (parameters
     '("gboolean" "inFill")
+  )
+)
+
+(define-vfunc get_yshrink
+  (of-object "MaiaItemPackable")
+  (return-type "gboolean")
+)
+
+(define-vfunc set_yshrink
+  (of-object "MaiaItemPackable")
+  (return-type "none")
+  (parameters
+    '("gboolean" "inShrink")
   )
 )
 

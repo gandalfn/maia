@@ -47,13 +47,58 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
     }
 
     // properties
-    private Pango.Layout  m_Layout;
+    private Pango.Layout m_Layout;
+    private Graphic.Size m_Size = Graphic.Size (0, 0);
 
     // accessors
     public Pango.Layout layout {
         get {
             return m_Layout;
         }
+    }
+
+    inline static Pango.Alignment
+    pango_alignment (Graphic.Glyph.Alignment inAlign)
+    {
+        if (inAlign == Graphic.Glyph.Alignment.LEFT)
+        {
+            return Pango.Alignment.LEFT;
+        }
+        else if (inAlign == Graphic.Glyph.Alignment.RIGHT)
+        {
+            return Pango.Alignment.RIGHT;
+        }
+
+        return Pango.Alignment.CENTER;
+    }
+
+    inline static Pango.WrapMode
+    pango_wrap_mode (Graphic.Glyph.WrapMode inType)
+    {
+        if (inType == Graphic.Glyph.WrapMode.CHAR)
+        {
+            return Pango.WrapMode.CHAR;
+        }
+
+        return Pango.WrapMode.WORD;
+    }
+
+    inline static Pango.EllipsizeMode
+    pango_ellipsize_mode (Graphic.Glyph.EllipsizeMode inMode)
+    {
+        switch (inMode)
+        {
+            case Graphic.Glyph.EllipsizeMode.START:
+                return Pango.EllipsizeMode.START;
+
+            case Graphic.Glyph.EllipsizeMode.MIDDLE:
+                return Pango.EllipsizeMode.MIDDLE;
+
+            case Graphic.Glyph.EllipsizeMode.END:
+                return Pango.EllipsizeMode.END;
+        }
+
+        return Pango.EllipsizeMode.NONE;
     }
 
     public override Graphic.Size size {
@@ -64,7 +109,17 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
                 m_Layout.get_pixel_size (out width, out height);
                 return Graphic.Size (width, height);
             }
-            return Graphic.Size (0, 0);
+            return m_Size;
+        }
+
+        set {
+            m_Size = value;
+
+            if (m_Layout != null)
+            {
+                m_Layout.set_width ((int)(m_Size.width > 0 ? m_Size.width * Pango.SCALE : -1));
+                m_Layout.set_height ((int)(m_Size.height > 0 ? m_Size.height * Pango.SCALE : -1));
+            }
         }
     }
 
@@ -90,6 +145,11 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
         Pango.FontDescription desc = Pango.FontDescription.from_string (font_description);
         m_Layout.set_font_description (desc);
         m_Layout.set_markup (text, -1);
+        m_Layout.set_width ((int)(m_Size.width > 0 ? m_Size.width * Pango.SCALE : -1));
+        m_Layout.set_height ((int)(m_Size.height > 0 ? m_Size.height * Pango.SCALE : -1));
+        m_Layout.set_alignment (pango_alignment (alignment));
+        m_Layout.set_wrap (pango_wrap_mode (wrap));
+        m_Layout.set_ellipsize (pango_ellipsize_mode (ellipsize));
 
         // update pango layout
         Pango.cairo_update_layout (inContext.context, m_Layout);

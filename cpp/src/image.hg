@@ -56,10 +56,12 @@ namespace Maia
 
             _WRAP_PROPERTY("xexpand", bool)
             _WRAP_PROPERTY("xfill", bool)
+            _WRAP_PROPERTY("xshrink", bool)
             _WRAP_PROPERTY("xalign", double)
 
             _WRAP_PROPERTY("yexpand", bool)
             _WRAP_PROPERTY("yfill", bool)
+            _WRAP_PROPERTY("yshrink", bool)
             _WRAP_PROPERTY("yalign", double)
 
             _WRAP_PROPERTY("top-padding", double)
