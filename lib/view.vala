@@ -67,12 +67,11 @@ public class Maia.View : Maia.Grid
                 m_Model.rows_reordered.disconnect (on_rows_reordered);
             }
 
-            m_ModelName = null;
+            m_ModelName = value;
             m_Model = root.find (GLib.Quark.from_string (value)) as Model;
 
             if (m_Model != null)
             {
-                m_ModelName = m_Model.name;
                 m_Model.row_added.connect (on_row_added);
                 m_Model.row_deleted.connect (on_row_deleted);
                 m_Model.rows_reordered.connect (on_rows_reordered);
