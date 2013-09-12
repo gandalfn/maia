@@ -23,6 +23,7 @@ public class Maia.View : Maia.Grid
     public delegate bool SetPropertyFunc (GLib.Object inObject, string inProperty, string inColumnName, uint inRow);
 
     // properties
+    private string m_ModelName = null;
     private unowned Model m_Model = null;
     private SetPropertyFunc m_SetPropertyFunc = null;
     private int m_RowHightlighted = -1;
@@ -38,12 +39,25 @@ public class Maia.View : Maia.Grid
         }
     }
 
+    [CCode (notify = false)]
+    public override unowned Core.Object? parent {
+        get {
+            return base.parent;
+        }
+        construct set {
+            base.parent = value;
+
+            // reset model name
+            model = m_ModelName;
+        }
+    }
+
     public uint lines { get; set; default = 1; }
     public Orientation orientation { get; set; default = Orientation.VERTICAL; }
 
     public string model {
         owned get {
-            return m_Model != null ? m_Model.name : null;
+            return m_ModelName;
         }
         set {
             if (m_Model != null)
@@ -53,10 +67,12 @@ public class Maia.View : Maia.Grid
                 m_Model.rows_reordered.disconnect (on_rows_reordered);
             }
 
+            m_ModelName = null;
             m_Model = root.find (GLib.Quark.from_string (value)) as Model;
 
             if (m_Model != null)
             {
+                m_ModelName = m_Model.name;
                 m_Model.row_added.connect (on_row_added);
                 m_Model.row_deleted.connect (on_row_deleted);
                 m_Model.rows_reordered.connect (on_rows_reordered);
