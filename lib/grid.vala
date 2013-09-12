@@ -88,8 +88,9 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                     {
                         for (int cpt = 1; cpt < item.columns; ++cpt)
                         {
-                            rows[item.row].size.width += (item_size.width / item.columns) + item.left_padding + item.right_padding;
+                            rows[item.row].size.width += (item_size.width / item.columns);
                             rows[item.row].nb_expands += item.xexpand ? 1 : 0;
+
                             columns[item.column + cpt].size.width = double.max (columns[item.column + cpt].size.width,
                                                                                 columns[item.column].size.width + item.left_padding + item.right_padding);
                             columns[item.column + cpt].size.height += (item_size.height / item.rows) + item.top_padding + item.bottom_padding;
@@ -105,7 +106,8 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                             rows[item.row + cpt].size.height = double.max (rows[item.row + cpt].size.height,
                                                                            columns[item.column].size.height + item.top_padding + item.bottom_padding);
                             rows[item.row + cpt].nb_expands += item.xexpand ? 1 : 0;
-                            columns[item.column].size.height += (item_size.height / item.rows) + item.top_padding + item.bottom_padding;
+
+                            columns[item.column].size.height += (item_size.height / item.rows);
                             columns[item.column].nb_expands += item.yexpand ? 1 : 0;
                         }
                     }
@@ -336,10 +338,10 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         }
 
                         child_allocations[item.row, item.column].size.width = double.max (child_allocations[item.row, item.column].size.width,
-                                                                                          columns[item.column].size.width + extra.width);
+                                                                                          (columns[item.column].size.width / item.columns) + extra.width);
 
                         child_allocations[item.row, item.column].size.height = double.max (child_allocations[item.row, item.column].size.height,
-                                                                                           rows[item.row].size.height + extra.height);
+                                                                                           (rows[item.row].size.height / item.rows) + extra.height);
 
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s allocation: %s", grid.name, item.name, child_allocations[item.row, item.column].to_string ());
                     }
@@ -352,36 +354,13 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                     {
                         unowned ItemPackable item = (ItemPackable)child;
 
-                        Graphic.Size extra = Graphic.Size (0, 0);
-
-                        // calculate the extra space
-                        if (item.xexpand)
-                        {
-                            extra.width += xpadding / rows[item.row].nb_expands;
-                        }
-                        if (item.yexpand)
-                        {
-                            extra.height += ypadding / columns[item.column].nb_expands;
-                        }
-
-                        // remove the shrink space
-                        if (item.xshrink)
-                        {
-                            extra.width -= xshrink / rows[item.row].nb_shrinks;
-                        }
-
-                        if (item.yshrink)
-                        {
-                            extra.height -= yshrink / columns[item.column].nb_shrinks;
-                        }
-
                         // calculate size of multiple columns
                         if (item.columns > 1)
                         {
                             for (int cpt = 1; cpt < item.columns; ++cpt)
                             {
                                 child_allocations[item.row, item.column + cpt].size.width = double.max (child_allocations[item.row, item.column + cpt].size.width,
-                                                                                                        columns[item.column + cpt].size.width + extra.width);
+                                                                                                        child_allocations[item.row, item.column].size.width);
                                 child_allocations[item.row, item.column + cpt].size.height = double.max (child_allocations[item.row, item.column + cpt].size.height,
                                                                                                          child_allocations[item.row, item.column].size.height);
                             }
@@ -395,7 +374,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                 child_allocations[item.row + cpt, item.column].size.width = double.max (child_allocations[item.row + cpt, item.column].size.width,
                                                                                                         child_allocations[item.row, item.column].size.width);
                                 child_allocations[item.row + cpt, item.column].size.height = double.max (child_allocations[item.row + cpt, item.column].size.height,
-                                                                                                         rows[item.row + cpt].size.height + extra.height);
+                                                                                                         child_allocations[item.row, item.column].size.height);
                             }
                         }
 
