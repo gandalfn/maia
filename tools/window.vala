@@ -144,9 +144,14 @@ public class CanvasEditor.Window : Gtk.Window
             var search = builder.get_object("search") as Gtk.ToolButton;
             search.clicked.connect (() => {
                 if (search_replace.visible)
+                {
                     search_replace.hide ();
+                }
                 else
+                {
                     search_replace.show ();
+                    m_Search.grab_focus ();
+                }
             });
 
             var quit = builder.get_object ("exit") as Gtk.ToolButton;
@@ -205,6 +210,16 @@ public class CanvasEditor.Window : Gtk.Window
         filter.add_pattern ("*.manifest");
         dialog.add_filter (filter);
 
+        if (m_SourceView.filename != null)
+        {
+            string dir = GLib.Path.get_dirname (m_SourceView.filename);
+            dialog.set_current_folder (dir);
+        }
+        else
+        {
+            dialog.set_current_folder (GLib.Environment.get_current_dir ());
+        }
+
         if (dialog.run () == Gtk.ResponseType.ACCEPT)
         {
             if (m_SourceView.buffer.get_modified ())
@@ -219,7 +234,6 @@ public class CanvasEditor.Window : Gtk.Window
                 }
                 msg.destroy ();
             }
-
             m_SourceView.load (dialog.get_filename ());
 
             m_Undo.sensitive = false;

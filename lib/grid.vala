@@ -285,8 +285,13 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                 Graphic.Rectangle allocation = inAllocation.extents;
 
                 // Calculate the the size of shrink
-                double xshrink = double.max (natural.width - allocation.size.width, 0);
-                double yshrink = double.max (natural.height - allocation.size.height, 0);
+                double xshrink = 0;
+                if (grid.xshrink)
+                    xshrink = double.max (natural.width - allocation.size.width, 0);
+
+                double yshrink = 0;
+                if (grid.yshrink)
+                    yshrink = double.max (natural.height - allocation.size.height, 0);
 
                 // Calculate the the size of padding
                 double xpadding = double.max (allocation.size.width - natural.width, 0);
@@ -357,6 +362,17 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         if (item.yexpand)
                         {
                             extra.height += ypadding / columns[item.column].nb_expands;
+                        }
+
+                        // remove the shrink space
+                        if (item.xshrink)
+                        {
+                            extra.width -= xshrink / rows[item.row].nb_shrinks;
+                        }
+
+                        if (item.yshrink)
+                        {
+                            extra.height -= yshrink / columns[item.column].nb_shrinks;
                         }
 
                         // calculate size of multiple columns
@@ -472,7 +488,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         else if (item.xexpand)
                         {
                             allocation.size.width = double.min (item_size.width, area.size.width - item.left_padding - item.right_padding);
-                            allocation.origin.x += item.left_padding + ((area.size.width - item.left_padding - item.right_padding) - item_size.width) * item.xalign;
+                            allocation.origin.x += item.left_padding + (allocation.size.width - item_size.width) * item.xalign;
                         }
                         else
                         {
@@ -488,7 +504,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         else if (item.yexpand)
                         {
                             allocation.size.height = double.min (item_size.height, area.size.height - item.top_padding - item.bottom_padding);
-                            allocation.origin.y += item.top_padding + ((area.size.height - item.top_padding - item.bottom_padding) - item_size.height) * item.yalign;
+                            allocation.origin.y += item.top_padding + (allocation.size.height - item_size.height) * item.yalign;
                         }
                         else
                         {

@@ -294,6 +294,9 @@ public class CanvasEditor.ManifestProvider : Provider
         m_Properties.insert ("style");
         m_Properties.insert ("section");
         m_Properties.insert ("angle");
+        m_Properties.insert ("alignment");
+        m_Properties.insert ("wrap-mode");
+        m_Properties.insert ("ellipsize-mode");
     }
 
     private GLib.List<string>

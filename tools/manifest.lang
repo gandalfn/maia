@@ -51,6 +51,8 @@
       <keyword>linear-gradient</keyword>
       <keyword>radial-gradient</keyword>
       <keyword>pi</keyword>
+      <keyword>true</keyword>
+      <keyword>false</keyword>
     </context>
 
     <context id="at-rules" style-ref="at-rules">
@@ -138,6 +140,7 @@
         <keyword>homogeneous</keyword>
         <keyword>row-spacing</keyword>
         <keyword>border-line-width</keyword>
+        <keyword>border-width</keyword>
         <keyword>grid-line-width</keyword>
         <keyword>filename</keyword>
         <keyword>path</keyword>
@@ -162,6 +165,11 @@
         <keyword>style</keyword>
         <keyword>section</keyword>
         <keyword>angle</keyword>
+        <keyword>alignment</keyword>
+        <keyword>wrap-mode</keyword>
+        <keyword>ellipsize-mode</keyword>
+        <keyword>xshrink</keyword>
+        <keyword>yshrink</keyword>
     </context>
 
     <context id="classes" style-ref="type">

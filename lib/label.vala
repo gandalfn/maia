@@ -171,22 +171,37 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     internal override void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
+        var allocation = inAllocation.extents;
         if (m_Glyph != null && (inAllocation.extents.size.width < m_Glyph.size.width ||
                                 inAllocation.extents.size.height < m_Glyph.size.height))
         {
             var glyph_size = m_Glyph.size;
-            if (inAllocation.extents.size.width < m_Glyph.size.width)
+            if (allocation.size.width < size_requested.width)
             {
-                glyph_size.width = inAllocation.extents.size.width;
+                var old_width = glyph_size.width;
+                glyph_size.width = allocation.size.width;
+                if (!xfill && xexpand)
+                {
+                    allocation.origin.x += (old_width - glyph_size.width) * xalign;
+                }
             }
-            if (inAllocation.extents.size.height < m_Glyph.size.height)
+            if (allocation.size.height < size_requested.height)
             {
-                glyph_size.height = inAllocation.extents.size.height;
+                var old_height = glyph_size.height;
+                glyph_size.height = allocation.size.height;
+                if (!yfill && yexpand)
+                {
+                    allocation.origin.y += (old_height - glyph_size.height) * yalign;
+                }
             }
             m_Glyph.size = glyph_size;
+            glyph_size = m_Glyph.size;
+            glyph_size.transform (transform);
+            allocation.size.width = double.max (glyph_size.width, allocation.size.width);
+            allocation.size.height = double.max (glyph_size.height, allocation.size.height);
         }
 
-        base.update (inContext, inAllocation);
+        base.update (inContext, new Graphic.Region (allocation));
     }
 
     internal override void
@@ -207,8 +222,8 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
             inContext.save ();
             {
                 inContext.pattern = stroke_pattern;
-                //inContext.translate (Graphic.Point (geometry.extents.size.width / 2, geometry.extents.size.height / 2));
-                //inContext.translate (Graphic.Point (-m_Glyph.size.width / 2, -m_Glyph.size.height / 2));
+                inContext.translate (Graphic.Point (geometry.extents.size.width / 2, geometry.extents.size.height / 2));
+                inContext.translate (Graphic.Point (-m_Glyph.size.width / 2, -m_Glyph.size.height / 2));
                 inContext.render (m_Glyph);
             }
             inContext.restore ();

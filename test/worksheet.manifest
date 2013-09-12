@@ -140,6 +140,8 @@ Document.worksheet {
             row: 0;
             column: 0;
             xexpand: false;
+            xshrink: false;
+            yshrink: false;
             background-pattern: #C0C0C0;
             transform: rotate(pi/2);
             stroke-pattern: #000000;
@@ -172,8 +174,8 @@ Document.worksheet {
                 row: 1;
                 column: 0;
                 background-pattern: svg('
-                <svg width="1300" height="900" xmlns="http://www.w3.org/2000/svg">
-                    <g>
+                <svg height="900" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="translate(-150, 0)">
                         <path fill="#FFFFFF" stroke="#000000" stroke-width="3" d="m358.6629,436.63846"/>
                         <path fill="none" stroke="#000000" stroke-width="3" d="m347.6629,13.63845v233.99999c59,55.00002 55,97.00002 55,97.00002c17.42398,-31.849 32.20801,-65.62802 33.13599,-102.47701c0.57703,-22.89299 -0.13599,-45.92299 -0.16995,-68.82898c-0.01004,-6.89801 0.11398,-13.79701 0.03299,-20.69402"/>
                         <path fill="none" stroke="#000000" stroke-width="3" d="m421.11191,671.79248l0.55099,-227.15302c-3,-22 7,-63 7,-63c17.37997,-24.33002 26.92001,-54.64001 34.61005,-83.24002c0.94,-3.50998 1.72998,-12.06 2.36993,-22.75998"/>
