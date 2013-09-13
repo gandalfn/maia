@@ -159,7 +159,6 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
             {
                 // Create a fake surface to calculate the size of path
                 var fake_surface = new Graphic.Surface (1, 1);
-                m_Glyph.size = inSize;
                 m_Glyph.update (fake_surface.context);
                 size = m_Glyph.size;
             }
