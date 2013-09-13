@@ -569,7 +569,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
     internal bool   yexpand { get; set; default = true; }
     internal bool   yfill   { get; set; default = true; }
-    internal bool   yshrink { get; set; default = true; }
+    internal bool   yshrink { get; set; default = false; }
     internal double yalign  { get; set; default = 0.5; }
 
     internal double top_padding    { get; set; default = 0; }
