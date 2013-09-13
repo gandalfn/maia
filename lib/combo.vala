@@ -197,7 +197,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
 
         // Get size of arrow
         string id_arrow = "%s-arrow".printf (name);
-        Path arrow_item = find (GLib.Quark.from_string (id_arrow), false) as Path;
+        unowned Path arrow_item = find (GLib.Quark.from_string (id_arrow), false) as Path;
         if (arrow_item != null)
         {
             if (m_View != null)
@@ -250,7 +250,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
 
             // Update arrow position
             string id_arrow = "%s-arrow".printf (name);
-            Path arrow_item = find (GLib.Quark.from_string (id_arrow), false) as Path;
+            unowned Path arrow_item = find (GLib.Quark.from_string (id_arrow), false) as Path;
             if (arrow_item != null)
             {
                 var arrow_size = arrow_item.size_requested;
@@ -316,7 +316,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
                 m_Active.geometry.translate (active_origin.invert ());
 
                 string id_arrow = "%s-arrow".printf (name);
-                Path arrow_item = find (GLib.Quark.from_string (id_arrow), false) as Path;
+                unowned Path arrow_item = find (GLib.Quark.from_string (id_arrow), false) as Path;
                 if (arrow_item != null)
                 {
                     var arrow_size = arrow_item.size_requested;

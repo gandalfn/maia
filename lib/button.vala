@@ -284,7 +284,7 @@ public class Maia.Button : Group, ItemPackable, ItemMovable
 
         // Get icon item
         string id_icon = "%s-icon".printf (name);
-        Image icon_item = find (GLib.Quark.from_string (id_icon), false) as Image;
+        unowned Image icon_item = find (GLib.Quark.from_string (id_icon), false) as Image;
         if (icon_item != null)
         {
             // get position of icon
@@ -311,7 +311,7 @@ public class Maia.Button : Group, ItemPackable, ItemMovable
 
         // Get label item
         string id_label = "%s-label".printf (name);
-        Label label_item = find (GLib.Quark.from_string (id_label), false) as Label;
+        unowned Label label_item = find (GLib.Quark.from_string (id_label), false) as Label;
         if (label_item != null)
         {
             // get position of label

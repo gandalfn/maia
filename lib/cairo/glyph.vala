@@ -129,6 +129,100 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
         base (inFontDescription);
     }
 
+    private int
+    skip_pango_markup (string inText, int inPos)
+    {
+        string tag = inText.substring (inPos, -1);
+
+        if (tag.has_prefix ("<b>") ||
+            tag.has_prefix ("<i>") ||
+            tag.has_prefix ("<s>") ||
+            tag.has_prefix ("<u>"))
+            return 3;
+
+        if (tag.has_prefix ("</b>") ||
+            tag.has_prefix ("</i>") ||
+            tag.has_prefix ("</s>") ||
+            tag.has_prefix ("</u>") ||
+            tag.has_prefix ("<tt>"))
+            return 4;
+
+        if (tag.has_prefix ("<big>") ||
+            tag.has_prefix ("<sub>") ||
+            tag.has_prefix ("<sup>") ||
+            tag.has_prefix ("</tt>"))
+            return 5;
+
+        if (tag.has_prefix ("<span>"))
+            return 6;
+
+        if (tag.has_prefix ("<small>") ||
+            tag.has_prefix ("</span>"))
+            return 7;
+
+        if (tag.has_prefix ("</small>"))
+            return 8;
+
+        if (tag.has_prefix ("<span"))
+        {
+            int ret = 1;
+            for (int cpt = inPos; cpt < inText.length; ++cpt, ++ret)
+            {
+                if (inText[cpt] == '>') break;
+            }
+            return ret;
+        }
+
+        return 0;
+    }
+
+    // TODO: Very very slow runtime
+    private string
+    escape_text (string inText)
+    {
+        GLib.StringBuilder ret = new GLib.StringBuilder ();
+        int index = 0;
+        unichar c;
+        while (inText.get_next_char (ref index, out c))
+        {
+            int nb = skip_pango_markup (inText, index - 1);
+            if (nb > 0)
+            {
+                ret.append (inText.substring (index - 1, nb));
+                index += nb - 1;
+            }
+            else if (index < inText.length)
+            {
+                if (c == '&')
+                {
+                    ret.append ("&amp;");
+                }
+                else if (c == '"')
+                {
+                    ret.append ("&quot;");
+                }
+                else if (c == '\'')
+                {
+                    ret.append ("&apos;");
+                }
+                else if (c == '<')
+                {
+                    ret.append ("&lt;");
+                }
+                else if (c == '>')
+                {
+                    ret.append ("&gt;");
+                }
+                else
+                {
+                    ret.append_unichar (c);
+                }
+            }
+        }
+
+        return ret.str;
+    }
+
     private void
     update_layout (Context inContext)
     {
@@ -144,7 +238,10 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
         // set layout properties
         Pango.FontDescription desc = Pango.FontDescription.from_string (font_description);
         m_Layout.set_font_description (desc);
-        m_Layout.set_markup (text, -1);
+        if (use_markup)
+            m_Layout.set_markup (escape_text (text ?? ""), -1);
+        else
+            m_Layout.set_text (text ?? "", -1);
         m_Layout.set_width ((int)(m_Size.width > 0 ? m_Size.width * Pango.SCALE : -1));
         m_Layout.set_height ((int)(m_Size.height > 0 ? m_Size.height * Pango.SCALE : -1));
         m_Layout.set_alignment (pango_alignment (alignment));
@@ -167,7 +264,7 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
     {
         Graphic.Rectangle rect = Graphic.Rectangle (0, 0, 0, 0);
 
-        if (m_Layout != null)
+        if (m_Layout != null && text != null)
         {
             Pango.Rectangle strong_pos, weak_pos;
             m_Layout.get_cursor_pos (inIndex, out strong_pos, out weak_pos);

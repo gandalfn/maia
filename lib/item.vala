@@ -315,7 +315,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         if (inAttributeBind.owner is Item)
         {
-            Item item = (Item)inAttributeBind.owner;
+            unowned Item item = (Item)inAttributeBind.owner;
             outValue = item.geometry != null ? item.geometry.extents.size.width : item.size.width;
         }
     }
@@ -328,7 +328,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
         if (inAttributeBind.owner is Item)
         {
-            Item item = (Item)inAttributeBind.owner;
+            unowned Item item = (Item)inAttributeBind.owner;
             double val = item.geometry != null ? item.geometry.extents.size.height : item.size.height;
             outValue = val;
         }

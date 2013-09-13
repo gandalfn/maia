@@ -375,6 +375,15 @@
   (construct-only #f)
 )
 
+(define-property use-markup
+  (of-object "MaiaGraphicGlyph")
+  (prop-type "GParamBoolean")
+  (docs "use-markup")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property text
   (of-object "MaiaGraphicGlyph")
   (prop-type "GParamString")
@@ -3216,6 +3225,15 @@
   (docs "tag")
   (readable #t)
   (writable #f)
+  (construct-only #f)
+)
+
+(define-property parent
+  (of-object "MaiaView")
+  (prop-type "GParamObject")
+  (docs "parent")
+  (readable #t)
+  (writable #t)
   (construct-only #f)
 )
 

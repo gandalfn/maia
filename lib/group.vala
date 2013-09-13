@@ -50,7 +50,7 @@ public class Maia.Group : Item
         {
             if (child is Item)
             {
-                Item item = (Item)child;
+                unowned Item item = (Item)child;
                 Graphic.Point item_position = item.position;
                 Graphic.Size item_size = item.size;
                 area.union_with_rect (Graphic.Rectangle (0, 0, item_position.x + item_size.width, item_position.y + item_size.height));
@@ -89,7 +89,7 @@ public class Maia.Group : Item
             {
                 if (child is Item)
                 {
-                    Item item = (Item)child;
+                    unowned Item item = (Item)child;
 
                     // Get child position and size
                     var item_position = item.position;
@@ -134,7 +134,7 @@ public class Maia.Group : Item
             {
                 if (child is Item)
                 {
-                    Item item = (Item)child;
+                    unowned Item item = (Item)child;
 
                     // Transform point to item coordinate space
                     Graphic.Point point = convert_to_child_item_space (item, inPoint);
@@ -169,7 +169,7 @@ public class Maia.Group : Item
             {
                 if (child is Item)
                 {
-                    Item item = (Item)child;
+                    unowned Item item = (Item)child;
 
                     // Transform point to item coordinate space
                     Graphic.Point point = convert_to_child_item_space (item, inPoint);
@@ -206,7 +206,7 @@ public class Maia.Group : Item
             {
                 if (child is Item)
                 {
-                    Item item = (Item)child;
+                    unowned Item item = (Item)child;
 
                     // Transform point to item coordinate space
                     Graphic.Point point = convert_to_child_item_space (item, inPoint);
@@ -257,7 +257,7 @@ public class Maia.Group : Item
             {
                 if (child is Item)
                 {
-                    Item item = (Item)child;
+                    unowned Item item = (Item)child;
 
                     // Transform point to item coordinate space
                     Graphic.Point point = convert_to_child_item_space (item, inPoint);

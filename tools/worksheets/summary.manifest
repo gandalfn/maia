@@ -39,7 +39,7 @@ Grid.summary {
 			left-padding: 5;
 			right-padding: 5;
 			font-description: "Liberation Sans 12";
-			text: "";
+			text: "<b><<<<</b>";
 		}
 
 		Label.exam_report_accession_title {
@@ -60,7 +60,6 @@ Grid.summary {
 			column: 3;
 			yexpand: false;
 			font-description: "Liberation Sans 12";
-			text: "";
 		}
 
 		Label.exam_report_patient_id_title {
@@ -79,7 +78,6 @@ Grid.summary {
 			column: 1;
 			yexpand: false;
 			font-description: "Liberation Sans 12";
-			text: "";
 		}
 
 		Label.exam_report_sonographer_title {
@@ -100,7 +98,6 @@ Grid.summary {
 			column: 3;
 			yexpand: false;
 			font-description: "Liberation Sans 12";
-			text: "";
 		}
 
 		Label.exam_report_dob_title {
@@ -119,7 +116,6 @@ Grid.summary {
 			column: 1;
 			yexpand: false;
 			font-description: "Liberation Sans 12";
-			text: "";
 		}
 
 		Label.exam_report_refmd_title {
@@ -140,7 +136,6 @@ Grid.summary {
 			column: 3;
 			yexpand: false;
 			font-description: "Liberation Sans 12";
-			text: "";
 		}
 
 		Label.exam_report_gender_title {
@@ -161,7 +156,6 @@ Grid.summary {
 			yexpand: false;
 			bottom-padding: 5;
 			font-description: "Liberation Sans 12";
-			text: "";
 		}
 
 		Label.exam_report_startdate_title {
@@ -184,7 +178,6 @@ Grid.summary {
 			yexpand: false;
 			bottom-padding: 5;
 			font-description: "Liberation Sans 12";
-			text: "";
 		}
 	}
 
@@ -222,6 +215,7 @@ Grid.summary {
 			yexpand: false;
 			font-description: "Liberation Sans 12";
 			underline-width: 0.3;
+			text: "";
 		}
 
 		Label.patient_information_weight_title {
@@ -239,6 +233,7 @@ Grid.summary {
 			yexpand: false;
 			font-description: "Liberation Sans 12";
 			underline-width: 0.3;
+			text: "";
 		}
 	}
 
@@ -266,6 +261,7 @@ Grid.summary {
 			font-description: "Liberation Sans 12";
 			lines: 5;
 			underline-width: 0.3;
+			text: "";
 		}
 	}
 
@@ -293,6 +289,7 @@ Grid.summary {
 			font-description: "Liberation Sans 12";
 			lines: 5;
 			underline-width: 0.3;
+			text: "";
 		}
 	}
 
@@ -320,6 +317,7 @@ Grid.summary {
 			font-description: "Liberation Sans 12";
 			lines: 10;
 			underline-width: 0.3;
+			text: "";
 		}
 	}
 }

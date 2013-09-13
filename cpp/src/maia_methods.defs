@@ -6761,6 +6761,21 @@
   )
 )
 
+(define-method get_use_markup
+  (of-object "MaiaGraphicGlyph")
+  (c-name "maia_graphic_glyph_get_use_markup")
+  (return-type "gboolean")
+)
+
+(define-method set_use_markup
+  (of-object "MaiaGraphicGlyph")
+  (c-name "maia_graphic_glyph_set_use_markup")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
 (define-method get_text
   (of-object "MaiaGraphicGlyph")
   (c-name "maia_graphic_glyph_get_text")

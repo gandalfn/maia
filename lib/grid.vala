@@ -49,7 +49,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
             {
                 if (child is ItemPackable)
                 {
-                    ItemPackable item = (ItemPackable)child;
+                    unowned ItemPackable item = (ItemPackable)child;
                     Graphic.Size item_size = item.size;
 
                     // count the number of rows
@@ -693,7 +693,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         {
             if (child is ItemPackable)
             {
-                ItemPackable item = (ItemPackable)child;
+                unowned ItemPackable item = (ItemPackable)child;
 
                 item.draw (inContext);
 
@@ -720,7 +720,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
             }
             else if (child is Item)
             {
-                Item item = (Item)child;
+                unowned Item item = (Item)child;
                 item.draw (inContext);
             }
         }

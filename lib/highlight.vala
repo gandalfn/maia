@@ -45,7 +45,7 @@ public class Maia.Highlight : ToggleButton
     {
         // Get label item
         string id_label = "%s-label".printf (name);
-        Label label_item = find (GLib.Quark.from_string (id_label), false) as Label;
+        unowned Label label_item = find (GLib.Quark.from_string (id_label), false) as Label;
         if (label_item != null)
         {
             // get position of label

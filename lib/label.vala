@@ -212,8 +212,9 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
             inContext.save ();
             {
                 inContext.pattern = stroke_pattern;
-                inContext.translate (Graphic.Point (geometry.extents.size.width / 2, geometry.extents.size.height / 2));
-                inContext.translate (Graphic.Point (-m_Glyph.size.width / 2, -m_Glyph.size.height / 2));
+                var geo_size = geometry.extents.size;
+                var glyph_size = m_Glyph.size;
+                m_Glyph.origin = Graphic.Point ((geo_size.width - glyph_size.width) / 2, (geo_size.height - glyph_size.height) / 2);
                 inContext.render (m_Glyph);
             }
             inContext.restore ();

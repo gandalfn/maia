@@ -52,7 +52,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
-    public string   font_description { get; set; default = ""; }
+    public string   font_description { get; set; default = "Sans 12"; }
     public string   text             { get; set; default = ""; }
     public uint     lines            { get; set; default = 1; }
     public double   underline_width  { get; set; default = 0.2; }
@@ -63,6 +63,9 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     // methods
     construct
     {
+        stroke_pattern = new Graphic.Color (0, 0, 0);
+        background_pattern = new Graphic.Color (0, 0, 0);
+
         // connect under key press event
         key_press_event.connect (on_key_press_event);
 
@@ -73,14 +76,16 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             damage ();
         });
 
+        notify["font-description"].connect (() => {
+            m_Glyph = null;
+            create_glyph ();
+            damage ();
+        });
+
         // connect onto have docus to damage
         notify["have-focus"].connect (() => {
             damage ();
         });
-
-        stroke_pattern = new Graphic.Color (0, 0, 0);
-        background_pattern = new Graphic.Color (0, 0, 0);
-        font_description = "Sans 12";
 
         notify["pointer-over"].connect (on_pointer_over_changed);
     }
@@ -93,7 +98,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     private inline uint
     get_nb_lines ()
     {
-        return text.split ("\n").length;
+        return (text ?? "").split ("\n").length;
     }
 
     private void
@@ -102,6 +107,8 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         if (m_Glyph == null)
         {
             m_Glyph = new Graphic.Glyph (font_description);
+            m_Glyph.alignment = Graphic.Glyph.Alignment.LEFT;
+            m_Glyph.use_markup = false;
 
             // Count lines pad
             uint lines_pad = 0;
@@ -117,11 +124,11 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             // Set text with line pad
             if (lines_pad > 0)
             {
-                m_Glyph.text = text + " " + string.nfill (lines_pad, '\n');
+                m_Glyph.text = (text ?? "") + " " + string.nfill (lines_pad, '\n');
             }
             else
             {
-                m_Glyph.text = text + " ";
+                m_Glyph.text = (text ?? "") + " ";
             }
         }
     }
@@ -149,7 +156,9 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             // Backspace pressed suppress last characters
             if (inKey == Key.BackSpace && m_Cursor > 0)
             {
-                new_text.erase (m_Cursor - 1, 1);
+                int begin = (text ?? "").index_of_nth_char (m_Cursor - 1);
+                int end = (text ?? "").index_of_nth_char (m_Cursor);
+                new_text.erase (begin, end - begin);
                 text = new_text.str;
                 m_Cursor--;
             }
@@ -158,7 +167,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             {
                 if (get_nb_lines () < lines)
                 {
-                    new_text.insert (m_Cursor, "\n");
+                    new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), "\n");
                     text = new_text.str;
                     m_Cursor++;
                 }
@@ -166,7 +175,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             // Space is pressed
             else if (inKey == Key.space || inKey == Key.KP_Space)
             {
-                new_text.insert (m_Cursor, " ");
+                new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), " ");
                 text = new_text.str;
                 m_Cursor++;
             }
@@ -181,15 +190,15 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             else if (inKey == Key.Right || inKey == Key.Right)
             {
                 m_Cursor++;
-                m_Cursor = int.min ((int)text.length, m_Cursor);
+                m_Cursor = int.min ((int)(text ?? "").length, m_Cursor);
                 damage ();
             }
             // Other key is pressed check if character is printable (filter sepcial key)
             else if (inCar.isprint ())
             {
-                new_text.insert_unichar (m_Cursor, inCar);
+                new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), inCar.to_string ());
                 text = new_text.str;
-                m_Cursor++;
+                m_Cursor ++;
             }
 
             changed ();
@@ -222,7 +231,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     internal override void
     paint (Graphic.Context inContext) throws Graphic.Error
     {
-        if (m_Glyph != null && stroke_pattern != null)
+        if (m_Glyph != null && m_Glyph.text != null && stroke_pattern != null)
         {
             inContext.save ();
             {
@@ -280,7 +289,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
 
         if  (ret)
         {
-            m_Cursor = (int)text.length;
+            m_Cursor = (int)(text ?? "").length;
             grab_focus (this);
         }
 

@@ -76,7 +76,7 @@ internal class Maia.Page : GLib.Object
 {
     // properties
     private unowned Document        m_Document;
-    private Core.List<Item> m_Childs;
+    private Core.List<unowned Item> m_Childs;
 
     // accessors
     public uint num { get; set; default = 1; }
@@ -150,7 +150,7 @@ internal class Maia.Page : GLib.Object
     public Page (Document inDocument, uint inPageNum)
     {
         m_Document = inDocument;
-        m_Childs = new Core.List<Item> ();
+        m_Childs = new Core.List<unowned Item> ();
         num = inPageNum;
     }
 

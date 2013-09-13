@@ -164,6 +164,7 @@ public class Maia.Graphic.Glyph : Core.Object
     public Alignment     alignment        { get; set; default = Alignment.CENTER; }
     public WrapMode      wrap             { get; set; default = WrapMode.WORD; }
     public EllipsizeMode ellipsize        { get; set; default = EllipsizeMode.NONE; }
+    public bool          use_markup       { get; set; default = true; }
     public string        text             { get; set; }
     public Point         origin           { get; set; }
 

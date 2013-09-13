@@ -81,7 +81,7 @@ public class Maia.Gtk.Shortcut : Maia.Shortcut
         notify["section"].connect (() => {
             if (section != null)
             {
-                var item = root.find (GLib.Quark.from_string (section)) as Item;
+                unowned Item item = root.find (GLib.Quark.from_string (section)) as Item;
                 if (item != null)
                 {
                     item.notify["visible"].connect (() => {
