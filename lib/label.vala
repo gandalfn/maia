@@ -157,6 +157,9 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
 
             if (m_Glyph != null)
             {
+                // Reset wrap if any
+                m_Glyph.size = Graphic.Size (0, 0);
+
                 // Create a fake surface to calculate the size of path
                 var fake_surface = new Graphic.Surface (1, 1);
                 m_Glyph.update (fake_surface.context);
@@ -212,9 +215,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
             inContext.save ();
             {
                 inContext.pattern = stroke_pattern;
-                var geo_size = geometry.extents.size;
-                var glyph_size = m_Glyph.size;
-                m_Glyph.origin = Graphic.Point ((geo_size.width - glyph_size.width) / 2, (geo_size.height - glyph_size.height) / 2);
+                m_Glyph.origin = Graphic.Point ((geometry.extents.size.width - m_Glyph.size.width) / 2.0, (geometry.extents.size.height - m_Glyph.size.height) / 2.0);
                 inContext.render (m_Glyph);
             }
             inContext.restore ();

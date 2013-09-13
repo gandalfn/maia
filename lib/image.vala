@@ -99,9 +99,9 @@ public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
     internal override void
     paint (Graphic.Context inContext) throws Graphic.Error
     {
-        if (m_Image != null && m_Image.surface != null)
+        if (m_Image != null)
         {
-            inContext.pattern = m_Image.surface;
+            inContext.pattern = m_Image;
             inContext.paint ();
         }
     }
