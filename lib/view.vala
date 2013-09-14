@@ -59,7 +59,7 @@ public class Maia.View : Maia.Grid
         owned get {
             if (m_ModelName != null && m_Model == null)
             {
-                m_Model = root.find (GLib.Quark.from_string (m_ModelName)) as Model;
+                m_Model = find_model (m_ModelName);
 
                 if (m_Model != null)
                 {
@@ -79,7 +79,7 @@ public class Maia.View : Maia.Grid
             }
 
             m_ModelName = value;
-            m_Model = root.find (GLib.Quark.from_string (value)) as Model;
+            m_Model = find_model (value);
 
             if (m_Model != null)
             {
@@ -141,6 +141,34 @@ public class Maia.View : Maia.Grid
     public View (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
+    }
+
+    private inline unowned Model?
+    find_model (string? inName)
+    {
+        unowned Model? model = null;
+
+        if (inName != null)
+        {
+            for (unowned Core.Object item = parent; item != null; item = item.parent)
+            {
+                unowned View? view = item.parent as View;
+
+                // If view is in view search model in view first
+                if (view != null)
+                {
+                    model = view.find (GLib.Quark.from_string (inName)) as Model;
+                    if (model != null) break;
+                }
+                // We not found model in view parents search in root
+                else if (item.parent == null)
+                {
+                    model = item.find (GLib.Quark.from_string (inName)) as Model;
+                }
+            }
+        }
+
+        return model;
     }
 
     private void
