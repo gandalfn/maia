@@ -369,9 +369,8 @@ public class Maia.Core.List<V> : Collection<V>
      */
     public unowned V?
     first ()
-        requires (m_Size > 0)
     {
-        return m_Head.m_Value;
+        return m_Size > 0 ? m_Head.m_Value : null;
     }
 
     /**
@@ -381,9 +380,8 @@ public class Maia.Core.List<V> : Collection<V>
      */
     public unowned V?
     last ()
-        requires (m_Size > 0)
     {
-        return m_Tail.m_Value;
+        return m_Size > 0 ? m_Tail.m_Value : null;
     }
 
     /**

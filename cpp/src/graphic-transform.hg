@@ -39,6 +39,7 @@ namespace Maia
                 _CTOR_DEFAULT
 
             public:
+                _IGNORE(maia_graphic_transform_init)
                 static Glib::RefPtr<Transform> create ()
                 {
                     MaiaGraphicTransform* pTransform = maia_graphic_transform_new_identity ();

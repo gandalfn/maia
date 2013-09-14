@@ -21,6 +21,7 @@ public class Maia.Cairo.Context : Graphic.Context
 {
     // properties
     private global::Cairo.Context m_Context = null;
+    private Pango.Context         m_PangoContext = null;
     private Graphic.Transform     m_Transform = new Graphic.Transform.identity ();
     private double[]?             m_Dashes = null;
     private uint                  m_SaveCount = 0;
@@ -29,6 +30,16 @@ public class Maia.Cairo.Context : Graphic.Context
     public global::Cairo.Context context {
         get {
             return m_Context;
+        }
+    }
+
+    public Pango.Context? pango_context {
+        get {
+            if (m_Context != null && m_PangoContext == null)
+            {
+                m_PangoContext = Pango.cairo_create_context (m_Context);
+            }
+            return m_PangoContext;
         }
     }
 
@@ -114,7 +125,11 @@ public class Maia.Cairo.Context : Graphic.Context
             {
                 unowned Graphic.Image image = (Graphic.Image)value;
                 global::Cairo.Pattern pattern = new global::Cairo.Pattern.for_surface (((Surface)image.surface).surface);
+                global::Cairo.Matrix matrix = global::Cairo.Matrix (image.transform.matrix.xx, image.transform.matrix.yx,
+                                                                    image.transform.matrix.xy, image.transform.matrix.yy,
+                                                                    image.transform.matrix.x0, image.transform.matrix.y0);
                 pattern.set_filter (global::Cairo.Filter.BEST);
+                pattern.set_matrix (matrix);
                 m_Context.set_source (pattern);
             }
             else if (value is Graphic.Color)

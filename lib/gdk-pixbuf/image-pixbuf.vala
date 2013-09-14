@@ -20,51 +20,72 @@
 public class Maia.GdkPixbuf.ImagePixbuf : Graphic.Image, Image
 {
     // properties
-    private Graphic.Size m_Size = Graphic.Size (0, 0);
-    private Graphic.Surface m_Surface = null;
-    private global::Gdk.Pixbuf m_Pixbuf = null;
+    private Graphic.Size       m_Size      = Graphic.Size (0, 0);
+    private Graphic.Surface    m_Surface   = null;
+    private Graphic.Transform  m_Transform = new Graphic.Transform.identity ();
+    private global::Gdk.Pixbuf m_Pixbuf    = null;
 
     // accessors
-    public override string? filename {
-        get {
-            return "";
-        }
-        construct set {
-        }
-    }
-
     public override Graphic.Size size {
         get {
+            if (m_Size.is_empty ())
+            {
+                return surface != null ? surface.size : Graphic.Size (0, 0);
+            }
             return m_Size;
         }
-        construct set {
-            if (m_Surface != null && !m_Size.is_empty () && !value.is_empty ())
+        set {
+            // Reset transform
+            m_Transform.init ();
+
+            // Set size
+            m_Size = value;
+
+            // Destroy surface
+            if (m_Surface != null)
             {
-                // reset surface
+                destroy_surface (m_Surface);
                 m_Surface = null;
             }
-
-            m_Size = value;
         }
     }
 
-    internal override Graphic.Surface? surface {
+    public override Graphic.Transform transform {
+        get {
+            return m_Transform;
+        }
+        set {
+            // Remove old user transform
+            unowned Graphic.Transform? user_transform = m_Transform.first () as Graphic.Transform;
+            if (user_transform != null)
+            {
+                user_transform.parent = null;
+            }
+            // add new one
+            m_Transform.add (value);
+
+            // Destroy surface
+            if (m_Surface != null)
+            {
+                destroy_surface (m_Surface);
+                m_Surface = null;
+            }
+        }
+    }
+
+    public override Graphic.Surface? surface {
         get {
             if (m_Surface == null && m_Pixbuf != null)
             {
-                // Get the current size
-                Graphic.Size current_size = size;
-                m_Size = Graphic.Size (0, 0);
+                // Size is set
+                if (!m_Size.is_empty ())
+                {
+                    // Calculate the transform
+                    m_Transform.scale (m_Size.width / (double)m_Pixbuf.width, m_Size.height / (double)m_Pixbuf.height);
+                }
 
                 // Create new surface
                 m_Surface = create_surface (m_Pixbuf);
-
-                // Restore size if not empty
-                if (!current_size.is_empty ())
-                {
-                    m_Surface = resize (m_Surface, current_size);
-                    m_Size = current_size;
-                }
             }
 
             return m_Surface;

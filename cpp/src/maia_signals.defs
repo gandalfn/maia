@@ -433,6 +433,15 @@
   (construct-only #f)
 )
 
+(define-property transform
+  (of-object "MaiaGraphicImage")
+  (prop-type "GParamObject")
+  (docs "transform")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property surface
   (of-object "MaiaGraphicImage")
   (prop-type "GParamObject")

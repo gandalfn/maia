@@ -873,11 +873,13 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             if (image != null)
             {
                 Graphic.Size image_size = image.size;
-                double scale = double.min (geometry.extents.size.width / image.size.width, geometry.extents.size.height / image.size.height);
+                double scale = double.max (image_size.width / geometry.extents.size.width,
+                                           image_size.height / geometry.extents.size.height);
                 var transform = new Graphic.Transform.identity ();
                 transform.scale (scale, scale);
-                inContext.translate (Graphic.Point ((geometry.extents.size.width - (image_size.width * scale)) / 2, (geometry.extents.size.height - (image_size.height * scale)) / 2));
-                inContext.transform = transform;
+                inContext.translate (Graphic.Point ((geometry.extents.size.width - (image_size.width / scale)) / 2,
+                                                    (geometry.extents.size.height - (image_size.height / scale)) / 2));
+                image.transform = transform;
                 inContext.pattern = background_pattern;
             }
             else

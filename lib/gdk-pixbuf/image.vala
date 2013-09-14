@@ -34,9 +34,6 @@ public interface Maia.GdkPixbuf.Image : Graphic.Image
         var image_surface = new global::Cairo.ImageSurface.for_data ((uchar[])pixels, format, width, height, rowstride);
         uchar* pixbuf_pixels = inPixbuf.pixels;
 
-        // Set size to pixbuf size
-        size = Graphic.Size (width, height);
-
         // Convert pixbuf data to cairo data
         for (int j = height; j > 0; j--)
         {
@@ -90,32 +87,5 @@ public interface Maia.GdkPixbuf.Image : Graphic.Image
     {
         uchar* data = ((global::Cairo.ImageSurface)((Cairo.Surface)inSurface).surface).get_data ();
         GLib.free (data);
-    }
-
-    internal Graphic.Surface
-    resize (Graphic.Surface inSurface, Graphic.Size inSize)
-    {
-        Graphic.Surface ret = null;
-
-        if (inSurface != null && !size.equal (inSize))
-        {
-            try
-            {
-                var buffer = new Graphic.Surface ((uint)inSize.width, (uint)inSize.height);
-                buffer.context.operator = Graphic.Operator.SOURCE;
-                var transform = new Graphic.Transform.identity ();
-                transform.scale (inSize.width / size.width, inSize.height / size.height);
-                buffer.context.transform = transform;
-                buffer.context.pattern = inSurface;
-                buffer.context.paint ();
-                ret = buffer;
-            }
-            catch (Graphic.Error err)
-            {
-                Log.critical (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "Error on resize %s: %s", filename, err.message);
-            }
-        }
-
-        return ret;
     }
 }

@@ -20,7 +20,7 @@
 public class Maia.Graphic.ImageSvg : Graphic.Image
 {
     // accessors
-    public virtual string? data { get; construct set; }
+    public virtual string? data { get; set; default = null; }
 
     // methods
     public ImageSvg (string inFilename, Graphic.Size inSize = Graphic.Size (0, 0))

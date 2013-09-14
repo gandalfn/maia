@@ -18,6 +18,7 @@
  */
 
 #include <cairomm/cairomm.h>
+#include <pangomm.h>
 #include <maia-cairo-graphic.h>
 #include <maiamm/graphic-surface.h>
 #include <maiamm/graphic-context.h>
@@ -37,8 +38,10 @@ namespace Maia
                 static Glib::RefPtr<Context> create (const Glib::RefPtr<Maia::Graphic::Surface>& inSurface);
 
                 _WRAP_METHOD(::Cairo::RefPtr< ::Cairo::Context> get_context () const, maia_cairo_context_get_context)
+                _WRAP_METHOD(Glib::RefPtr< ::Pango::Context> get_pango_context () const, maia_cairo_context_get_pango_context)
 
                 _WRAP_PROPERTY ("context", ::Cairo::RefPtr< ::Cairo::Context>)
+                _WRAP_PROPERTY ("pango-context", Glib::RefPtr< ::Pango::Context>)
                 _WRAP_PROPERTY ("operator", Graphic::Operator)
                 _WRAP_PROPERTY ("line-width", double)
                 _WRAP_PROPERTY ("surface", Glib::RefPtr<Graphic::Surface>)

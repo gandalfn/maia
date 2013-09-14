@@ -314,6 +314,22 @@ public class Maia.Graphic.Transform : Core.Object
     }
 
     /**
+     * Reset transform to identity matrix
+     */
+    public void
+    init ()
+    {
+        // init base matrix
+        m_BaseMatrix = Matrix.identity ();
+
+        // recalculate final matrix
+        recalculate_final_matrix ();
+
+        // send changed signal
+        changed ();
+    }
+
+    /**
      * Applies a translation by tx, ty to the transformation.
      *
      * @param inTx amount to translate in the X direction

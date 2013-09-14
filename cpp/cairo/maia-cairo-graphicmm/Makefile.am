@@ -11,7 +11,9 @@ local_cppflags = $(binding_includes) $(binding_cppflags) -DSKELETONMM_BUILD=1
 AM_CPPFLAGS = \
 	$(local_cppflags) \
 	$(GTHREAD_CFLAGS) \
-	$(MAIAMM_CFLAGS) \
+	$(MAIA_CFLAGS) \
+    $(MAIA_CAIRO_CFLAGS) \
+    $(MAIAMM_CFLAGS) \
 	$(MAIA_CAIROMM_CFLAGS) \
 	-I${top_srcdir}/lib \
 	-I${top_srcdir}/lib/core \

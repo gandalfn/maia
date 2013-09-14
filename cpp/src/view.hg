@@ -18,6 +18,7 @@
  */
 
 #include <maia.h>
+#include <maiamm/core-object.h>
 #include <maiamm/grid.h>
 #include <maiamm/item.h>
 #include <maiamm/item-packable.h>
@@ -69,6 +70,7 @@ namespace Maia
             _WRAP_PROPERTY("lines", guint)
             _WRAP_PROPERTY("orientation", Orientation)
             _WRAP_PROPERTY("model", Glib::ustring)
+            _WRAP_PROPERTY("parent", Glib::RefPtr<Core::Object>)
 
         private:
             _WRAP_METHOD(Glib::RefPtr<ItemPackable> get_item (guint inRow) const, maia_view_get_item)

@@ -9,6 +9,15 @@
   (construct-only #f)
 )
 
+(define-property pango-context
+  (of-object "MaiaCairoContext")
+  (prop-type "GParamObject")
+  (docs "pango-context")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
 (define-property operator
   (of-object "MaiaCairoContext")
   (prop-type "GParamEnum")

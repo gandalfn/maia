@@ -138,4 +138,10 @@
   (return-type "cairo_t*")
 )
 
+(define-method get_pango_context
+  (of-object "MaiaCairoContext")
+  (c-name "maia_cairo_context_get_pango_context")
+  (return-type "PangoContext*")
+)
+
 

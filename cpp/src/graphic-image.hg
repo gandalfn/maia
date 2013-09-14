@@ -19,6 +19,7 @@
 
 #include <maia.h>
 #include <maiamm/graphic-size.h>
+#include <maiamm/graphic-transform.h>
 #include <maiamm/graphic-surface.h>
 
 _DEFS(maiamm,maia)
@@ -58,10 +59,14 @@ namespace Maia
                 _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_image_get_size)
                 _WRAP_METHOD(void set_size (const Size& inSize), maia_graphic_image_set_size)
 
+                _WRAP_METHOD(Glib::RefPtr<Transform> get_transform () const, maia_graphic_image_get_transform)
+                _WRAP_METHOD(void set_transform (const Glib::RefPtr<Transform>& inTransform) const, maia_graphic_image_set_transform)
+
                 _WRAP_METHOD(Glib::RefPtr<Surface> get_surface () const, maia_graphic_image_get_surface)
 
                 _WRAP_PROPERTY ("filename", Glib::ustring)
                 _WRAP_PROPERTY ("size", Size)
+                _WRAP_PROPERTY ("transform", Glib::RefPtr<Transform>)
                 _WRAP_PROPERTY ("surface", Glib::RefPtr<Surface>)
         };
 

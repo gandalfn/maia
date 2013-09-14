@@ -20,35 +20,75 @@
 internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
 {
     // properties
-    private Graphic.Size    m_Size = Graphic.Size (0, 0);
-    private Graphic.Surface m_Surface = null;
+    private string            m_Filename  = null;
+    private string            m_Data      = null;
+    private Graphic.Size      m_Size      = Graphic.Size (0, 0);
+    private Graphic.Surface   m_Surface   = null;
+    private Graphic.Transform m_Transform = new Graphic.Transform.identity ();
 
     // accessors
-    public override string? filename { get; construct set; }
-    public override string? data     { get; construct set; }
+    public override string? filename {
+        get {
+            return m_Filename;
+        }
+        set {
+            // Set filename
+            m_Filename = value;
+
+            // Initialize surface
+            m_Surface = null;
+        }
+    }
+
+    public override string? data {
+        get {
+            return m_Data;
+        }
+        set {
+            // Set data
+            m_Data = value;
+
+            // Initialize surface
+            m_Surface = null;
+        }
+    }
 
     public override Graphic.Size size {
         get {
             if (m_Size.is_empty ())
             {
-                load_surface ();
+                return surface != null ? surface.size : Graphic.Size (0, 0);
             }
             return m_Size;
         }
-        construct set {
-            if (m_Surface != null && !m_Size.is_empty () && !value.is_empty ())
-            {
-                // reset size
-                m_Size = Graphic.Size (0, 0);
+        set {
+            // Reset transform
+            m_Transform.init ();
 
-                if (filename != null)
-                {
-                    // reset surface
-                    m_Surface = null;
-                }
-            }
-
+            // Set size
             m_Size = value;
+
+            // Initialize surface
+            m_Surface = null;
+        }
+    }
+
+    public override Graphic.Transform transform {
+        get {
+            return m_Transform;
+        }
+        set {
+            // Remove old user transform
+            unowned Graphic.Transform? user_transform = m_Transform.first () as Graphic.Transform;
+            if (user_transform != null)
+            {
+                user_transform.parent = null;
+            }
+            // add new one
+            m_Transform.add (value);
+
+            // Initialize surface
+            m_Surface = null;
         }
     }
 
@@ -102,15 +142,11 @@ internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
                     var ctx = ((Cairo.Context)m_Surface.context).context;
                     if (handle.render_cairo (ctx))
                     {
-                        Graphic.Size current_size = m_Size;
-                        m_Size = Graphic.Size (0, 0);
-
-                        size = Graphic.Size (handle.width, handle.height);
-
-                        if (!current_size.is_empty ())
+                        // Size is set
+                        if (!m_Size.is_empty ())
                         {
-                            m_Surface = resize (m_Surface, current_size);
-                            m_Size = current_size;
+                            // Calculate the transform
+                            m_Transform.scale (handle.width / m_Size.width, handle.height / m_Size.height);
                         }
                     }
                     else
@@ -135,33 +171,5 @@ internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
                               filename ?? data, err.message);
             }
         }
-    }
-
-    private Graphic.Surface
-    resize (Graphic.Surface inSurface, Graphic.Size inSize)
-    {
-        Graphic.Surface ret = null;
-
-        if (inSurface != null && !size.equal (inSize))
-        {
-            try
-            {
-                var buffer = new Graphic.Surface ((uint)inSize.width, (uint)inSize.height);
-                buffer.context.operator = Graphic.Operator.SOURCE;
-                var transform = new Graphic.Transform.identity ();
-                transform.scale (inSize.width / size.width, inSize.height / size.height);
-                buffer.context.transform = transform;
-                buffer.context.pattern = inSurface;
-                buffer.context.paint ();
-
-                ret = buffer;
-            }
-            catch (Graphic.Error err)
-            {
-                Log.critical (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "Error on resize %s: %s", filename, err.message);
-            }
-        }
-
-        return ret;
     }
 }

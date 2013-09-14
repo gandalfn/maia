@@ -217,6 +217,9 @@ _CONVERSION(`const ::Gtk::TreeIter&',`GtkTreeIter*',__FCR2P)
 _CONVERSION(`::Cairo::RefPtr< ::Cairo::Context>',`cairo_t*',`($3)->cobj()')
 _CONVERSION(`cairo_t*',`::Cairo::RefPtr< ::Cairo::Context>',`::Cairo::RefPtr< ::Cairo::Context>(new ::Cairo::Context($3))')
 
+_CONVERSION(`Glib::RefPtr< ::Pango::Context>',`PangoContext*',`__CONVERT_REFPTR_TO_P')
+_CONVERSION(`PangoContext*',`Glib::RefPtr< ::Pango::Context>',`Glib::wrap($3, true)')
+
 _CONVERSION(`::Cairo::RefPtr< ::Cairo::Surface>',`cairo_surface_t*',`($3)->cobj()')
 _CONVERSION(`const ::Cairo::RefPtr< ::Cairo::Surface>&',`cairo_surface_t*',`($3)->cobj()')
 _CONVERSION(`cairo_surface_t*',`::Cairo::RefPtr< ::Cairo::Surface>',`::Cairo::RefPtr< ::Cairo::Surface>(new ::Cairo::Surface($3))')

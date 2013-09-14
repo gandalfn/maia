@@ -46,6 +46,8 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_filename () const, maia_image_get_filename)
             _WRAP_METHOD(void set_filename (const Glib::ustring& inFilename), maia_image_set_filename)
 
+            _IGNORE(maia_image_create_image)
+
             _WRAP_PROPERTY("filename", Glib::ustring)
 
             _WRAP_PROPERTY("row", guint)

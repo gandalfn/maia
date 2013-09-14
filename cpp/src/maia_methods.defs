@@ -5247,6 +5247,12 @@
   )
 )
 
+(define-method init
+  (of-object "MaiaGraphicTransform")
+  (c-name "maia_graphic_transform_init")
+  (return-type "none")
+)
+
 (define-method translate
   (of-object "MaiaGraphicTransform")
   (c-name "maia_graphic_transform_translate")
@@ -7228,6 +7234,21 @@
   (return-type "none")
   (parameters
     '("MaiaGraphicSize*" "value")
+  )
+)
+
+(define-method get_transform
+  (of-object "MaiaGraphicImage")
+  (c-name "maia_graphic_image_get_transform")
+  (return-type "MaiaGraphicTransform*")
+)
+
+(define-method set_transform
+  (of-object "MaiaGraphicImage")
+  (c-name "maia_graphic_image_set_transform")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicTransform*" "value")
   )
 )
 

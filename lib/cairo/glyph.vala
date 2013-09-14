@@ -233,7 +233,7 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
         }
 
         // create layout
-        m_Layout = Pango.cairo_create_layout (inContext.context);
+        m_Layout = new Pango.Layout (inContext.pango_context);
 
         // set layout properties
         Pango.FontDescription desc = Pango.FontDescription.from_string (font_description);

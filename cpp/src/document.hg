@@ -83,5 +83,6 @@ namespace Maia
             _WRAP_PROPERTY("header", Glib::ustring)
             _WRAP_PROPERTY("footer", Glib::ustring)
             _WRAP_PROPERTY("item-over-pointer", Glib::RefPtr<Item>)
+            _WRAP_PROPERTY("current-page", guint)
     };
 }

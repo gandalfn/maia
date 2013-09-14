@@ -101,8 +101,12 @@ public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
     {
         if (m_Image != null)
         {
-            inContext.pattern = m_Image;
-            inContext.paint ();
+            inContext.save ();
+            {
+                inContext.pattern = m_Image;
+                inContext.paint ();
+            }
+            inContext.restore ();
         }
     }
 }
