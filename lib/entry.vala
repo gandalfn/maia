@@ -76,6 +76,12 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             damage ();
         });
 
+        notify["lines"].connect (() => {
+            m_Glyph = null;
+            create_glyph ();
+            damage ();
+        });
+
         notify["font-description"].connect (() => {
             m_Glyph = null;
             create_glyph ();
@@ -98,7 +104,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     private inline uint
     get_nb_lines ()
     {
-        return (text ?? "").split ("\n").length;
+        return (text ?? " ").split ("\n").length;
     }
 
     private void
