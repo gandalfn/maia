@@ -102,6 +102,7 @@ libmaia_la_SOURCES = \
     combo.vala \
     tool.vala \
     toolbox.vala \
+    arrow.vala \
     canvas.vala
 
 libmaia_la_LDFLAGS = \

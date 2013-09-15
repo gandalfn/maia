@@ -53,6 +53,16 @@
       <keyword>pi</keyword>
       <keyword>true</keyword>
       <keyword>false</keyword>
+      <keyword>top</keyword>
+      <keyword>bottom</keyword>
+      <keyword>left</keyword>
+      <keyword>right</keyword>
+      <keyword>add</keyword>
+      <keyword>remove</keyword>
+      <keyword>a4</keyword>
+      <keyword>letter</keyword>
+      <keyword>svg</keyword>
+      <keyword>image</keyword>
     </context>
 
     <context id="at-rules" style-ref="at-rules">
@@ -170,6 +180,15 @@
         <keyword>ellipsize-mode</keyword>
         <keyword>xshrink</keyword>
         <keyword>yshrink</keyword>
+        <keyword>start</keyword>
+        <keyword>end</keyword>
+        <keyword>arrow-width</keyword>
+        <keyword>arrow-angle</keyword>
+        <keyword>linked-item</keyword>
+        <keyword>action</keyword>
+        <keyword>visible-with</keyword>
+        <keyword>icon-name</keyword>
+        <keyword>transform</keyword>
     </context>
 
     <context id="classes" style-ref="type">
@@ -193,6 +212,9 @@
         <keyword>Combo</keyword>
         <keyword>Popup</keyword>
         <keyword>Style</keyword>
+        <keyword>Tool</keyword>
+        <keyword>Toolbox</keyword>
+        <keyword>Arrow</keyword>
     </context>
 
     <context id="attribute-value-delimiters" style-ref="others-2">

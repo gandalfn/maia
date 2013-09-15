@@ -433,7 +433,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             }
             else
             {
-                geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
+                var item_size = size;
+                geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, item_size.width, item_size.height));
             }
 
             // damage parent

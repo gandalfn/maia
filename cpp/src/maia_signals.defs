@@ -3556,3 +3556,68 @@
   (construct-only #f)
 )
 
+;; From MaiaArrow
+
+(define-property tag
+  (of-object "MaiaArrow")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property characters
+  (of-object "MaiaArrow")
+  (prop-type "GParamString")
+  (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property start
+  (of-object "MaiaArrow")
+  (prop-type "GParamBoxed")
+  (docs "start")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property end
+  (of-object "MaiaArrow")
+  (prop-type "GParamBoxed")
+  (docs "end")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property linked-item
+  (of-object "MaiaArrow")
+  (prop-type "GParamString")
+  (docs "linked-item")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property arrow-width
+  (of-object "MaiaArrow")
+  (prop-type "GParamDouble")
+  (docs "arrow-width")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property arrow-angle
+  (of-object "MaiaArrow")
+  (prop-type "GParamDouble")
+  (docs "arrow-angle")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+

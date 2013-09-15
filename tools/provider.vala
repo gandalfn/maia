@@ -224,6 +224,9 @@ public class CanvasEditor.ManifestProvider : Provider
         m_Keywords.insert ("Combo");
         m_Keywords.insert ("Popup");
         m_Keywords.insert ("Shortcut");
+        m_Keywords.insert ("Toolbox");
+        m_Keywords.insert ("Tool");
+        m_Keywords.insert ("Arrow");
     }
 
     private void
@@ -297,6 +300,13 @@ public class CanvasEditor.ManifestProvider : Provider
         m_Properties.insert ("alignment");
         m_Properties.insert ("wrap-mode");
         m_Properties.insert ("ellipsize-mode");
+        m_Properties.insert ("start");
+        m_Properties.insert ("end");
+        m_Properties.insert ("arrow-width");
+        m_Properties.insert ("arrow-angle");
+        m_Properties.insert ("linked-item");
+        m_Properties.insert ("action");
+        m_Properties.insert ("visible-with");
     }
 
     private GLib.List<string>

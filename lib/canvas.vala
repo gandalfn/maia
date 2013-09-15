@@ -90,6 +90,7 @@ public interface Maia.Canvas : Drawable
             Manifest.Element.register ("Combo",       typeof (Combo));
             Manifest.Element.register ("Tool",        typeof (Tool));
             Manifest.Element.register ("Toolbox",     typeof (Toolbox));
+            Manifest.Element.register ("Arrow",       typeof (Arrow));
 
             s_ElementsRegister = true;
         }

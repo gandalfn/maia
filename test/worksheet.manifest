@@ -13,7 +13,7 @@ Document.worksheet {
 //~         model: model_example;
 //~         [
 //~           Grid.cell_1_grid {
-//~             column_spacing: 5;
+//~             column-spacing: 5;
 //~             Image.cell_1_image {
 //~               icon: @icon_col;
 //~             }
@@ -27,24 +27,24 @@ Document.worksheet {
     // Default page format
     format: a4;
     // TODO: fix transform on document
-    //transform: scale(1.2, 1.2);
-    border_width: 5;
+    transform: scale(1.2, 1.2);
+    border-width: 5;
     background-pattern: #E0E0E0;
     header: 'header';
     footer: 'footer';
 
     // Header
     Grid.header {
-        row_spacing: 5;
-        grid_line_width: 1;
+        row-spacing: 5;
+        grid-line-width: 1;
         stroke-pattern: #000000;
         Image.institution_logo {
             row: 0;
             column: 0;
             xexpand: false;
             yexpand: false;
-            right_padding: 5;
-            left_padding: 5;
+            right-padding: 5;
+            left-padding: 5;
             size: 64, 64;
             //filename: "/home/nicolas/Bureau/logo-ssi.png";
             //icon-name: "gnome-run";
@@ -63,10 +63,10 @@ Document.worksheet {
             row: 0;
             column: 1;
             yexpand: false;
-            right_padding: 5;
-            left_padding: 5;
+            right-padding: 5;
+            left-padding: 5;
             stroke-pattern: #000000;
-            font_description: "Liberation Sans 17";
+            font-description: "Liberation Sans 17";
             text: "Institution name";
         }
 
@@ -79,19 +79,19 @@ Document.worksheet {
 
             Label.exam_num {
                 row: 0;
-                right_padding: 5;
-                left_padding: 5;
+                right-padding: 5;
+                left-padding: 5;
                 stroke-pattern: #000000;
-                font_description: "Liberation Sans 12";
+                font-description: "Liberation Sans 12";
                 text: "Mon texte toto() ;  \"escape";
             }
 
             Label.date {
                 row: 2;
-                right_padding: 5;
-                left_padding: 5;
+                right-padding: 5;
+                left-padding: 5;
                 stroke-pattern: #000000;
-                font_description: "Liberation Sans 12";
+                font-description: "Liberation Sans 12";
                 text: "21/03/2012";
             }
         }
@@ -99,23 +99,23 @@ Document.worksheet {
 
     // Footer
     Grid.footer {
-        row_spacing: 5;
+        row-spacing: 5;
 
         Label.footer_right {
             row: 0;
             column: 0;
             xexpand: false;
-            right_padding: 5;
-            left_padding: 5;
+            right-padding: 5;
+            left-padding: 5;
         }
 
         Label.footer_page_num {
             row: 0;
             column: 1;
-            right_padding: 5;
-            left_padding: 5;
+            right-padding: 5;
+            left-padding: 5;
             stroke-pattern: #000000;
-            font_description: "Liberation Sans 14";
+            font-description: "Liberation Sans 14";
             text: @nb_pages;
         }
 
@@ -123,16 +123,15 @@ Document.worksheet {
             row: 2;
             column: 0;
             xexpand: false;
-            right_padding: 5;
-            left_padding: 5;
+            right-padding: 5;
+            left-padding: 5;
         }
     }
 
     // Main content of worksheet
     Grid.main {
-        column_spacing: 5;
-        page: 1;
-        grid_line_width: 1;
+        column-spacing: 5;
+        grid-line-width: 1;
         stroke-pattern: #000000;
 
         // Left title
@@ -145,7 +144,7 @@ Document.worksheet {
             background-pattern: #C0C0C0;
             transform: rotate(pi/2);
             stroke-pattern: #000000;
-            font_description: "Liberation Sans 17";
+            font-description: "Liberation Sans 17";
             text: "Vascular";
         }
 
@@ -159,14 +158,14 @@ Document.worksheet {
               row: 0;
               column: 0;
 
-              right_padding: 5;
-              left_padding: 5;
-              top_padding: 5;
+              right-padding: 5;
+              left-padding: 5;
+              top-padding: 5;
               yexpand: false;
-              bottom_padding: 5;
+              bottom-padding: 5;
               stroke-pattern: #000000;
-              font_description: "Liberation Sans 12";
-              lines: 5;
+              font-description: "Liberation Sans 12";
+              lines: 3;
               text: "Enter your text";
             }
 
@@ -205,22 +204,34 @@ Document.worksheet {
                 Label.label_draw {
                     position: 150, 150;
                     stroke-pattern: #000000;
-                    font_description: "Liberation Sans 14";
+                    font-description: "Liberation Sans 14";
                     text: "Label drawing";
                 }
 
                 Label.label_draw2 {
                     position: 500, 150;
                     stroke-pattern: #000000;
-                    font_description: "Liberation Sans 14";
+                    font-description: "Liberation Sans 14";
                     text: "Label drawing 2";
                 }
-
-                Image.image_draw {
-                    position: 300, 200;
-                    size: 150, 200;
-                    filename: '/usr/share/icons/SSIIcons/scalable/worksheet/meuh.svg';
+                
+                Arrow.arrow_2 {
+                	stroke-pattern: #000000;
+                	linked-item: label_draw;
+                	start: 10, 10;
                 }
+                
+                Arrow.arrow_3 {
+                	stroke-pattern: #000000;
+                	linked-item: label_draw2;
+                	start: 100, 100;
+                }
+
+                //Image.image_draw {
+                //    position: 300, 200;
+                //    size: 150, 200;
+                //    filename: '/usr/share/icons/SSIIcons/scalable/worksheet/meuh.svg';
+                //}
 
                 Rectangle.rectangle_draw {
                     position: 200, 400;
@@ -241,8 +252,8 @@ Document.worksheet {
 
     // Main content of worksheet
     Grid.main_2 {
-        page: 2;
-        border_line_width: 1;
+        row: 1;
+        border-line-width: 1;
         stroke-pattern: #000000;
 
         // Left title
@@ -250,7 +261,7 @@ Document.worksheet {
             row: 0;
             column: 0;
             stroke-pattern: #000000;
-            font_description: "Liberation Sans 17";
+            font-description: "Liberation Sans 17";
             text: "Page 2";
         }
     }

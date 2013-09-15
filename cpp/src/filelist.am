@@ -67,6 +67,7 @@ files_hg = \
     combo.hg \
     tool.hg \
     toolbox.hg \
+    arrow.hg \
     canvas.hg
 
 files_ccg = $(files_hg:.hg=.ccg)

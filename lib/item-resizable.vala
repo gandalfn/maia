@@ -20,7 +20,7 @@
 public interface Maia.ItemResizable : Item
 {
     // methods
-    public void
+    public virtual void
     resize (Graphic.Point inDelta)
     {
         if (parent != null && parent is DrawingArea)
@@ -30,7 +30,7 @@ public interface Maia.ItemResizable : Item
             if (drawing_area.geometry != null)
             {
                 // translate the current position
-                var new_size = size;
+                var new_size = size_requested;
                 new_size.resize (inDelta.x, inDelta.y);
 
                 var area = Graphic.Rectangle (position.x, position.y, new_size.width, new_size.height);

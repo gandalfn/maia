@@ -274,6 +274,12 @@
   (gtype-id "MAIA_TYPE_DOCUMENT")
 )
 
+(define-object MaiaArrow
+  (parent "MaiaItem")
+  (c-name "MaiaArrow")
+  (gtype-id "MAIA_TYPE_ARROW")
+)
+
 (define-object MaiaItemMovable
   (c-name "MaiaItemMovable")
   (gtype-id "MAIA_TYPE_ITEM_MOVABLE")
@@ -9761,6 +9767,101 @@
   (parameters
     '("GType" "object_type")
     '("const-gchar*" "inId")
+  )
+)
+
+(define-function maia_arrow_get_type
+  (c-name "maia_arrow_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_arrow_new
+  (c-name "maia_arrow_new")
+  (is-constructor-of "MaiaArrow")
+  (return-type "MaiaArrow*")
+  (parameters
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-function maia_arrow_construct
+  (c-name "maia_arrow_construct")
+  (return-type "MaiaArrow*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-method get_start
+  (of-object "MaiaArrow")
+  (c-name "maia_arrow_get_start")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "result")
+  )
+)
+
+(define-method set_start
+  (of-object "MaiaArrow")
+  (c-name "maia_arrow_set_start")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "value")
+  )
+)
+
+(define-method get_end
+  (of-object "MaiaArrow")
+  (c-name "maia_arrow_get_end")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "result")
+  )
+)
+
+(define-method get_linked_item
+  (of-object "MaiaArrow")
+  (c-name "maia_arrow_get_linked_item")
+  (return-type "const-gchar*")
+)
+
+(define-method set_linked_item
+  (of-object "MaiaArrow")
+  (c-name "maia_arrow_set_linked_item")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_arrow_width
+  (of-object "MaiaArrow")
+  (c-name "maia_arrow_get_arrow_width")
+  (return-type "gdouble")
+)
+
+(define-method set_arrow_width
+  (of-object "MaiaArrow")
+  (c-name "maia_arrow_set_arrow_width")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_arrow_angle
+  (of-object "MaiaArrow")
+  (c-name "maia_arrow_get_arrow_angle")
+  (return-type "gdouble")
+)
+
+(define-method set_arrow_angle
+  (of-object "MaiaArrow")
+  (c-name "maia_arrow_set_arrow_angle")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
   )
 )
 

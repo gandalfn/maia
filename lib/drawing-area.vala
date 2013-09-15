@@ -90,7 +90,25 @@ public class Maia.DrawingArea : Group, ItemPackable
                     m_SelectedOldLayer = m_SelectedItem.layer;
                     m_SelectedItem.layer = ((Item)last ()).layer + 1;
                     m_SelectedItemState = SelectedItemState.SELECTED;
-                    m_SelectedItem.damage ();
+
+                    if (m_SelectedItem is Arrow)
+                    {
+                        unowned Arrow arrow = (Arrow)m_SelectedItem;
+                        if (arrow.linked_item != null)
+                        {
+                            // Search linked item
+                            unowned Item? item = find (GLib.Quark.from_string (arrow.linked_item)) as Item;
+                            if (item != null)
+                            {
+                                item.damage ();
+                                arrow.damage ();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        m_SelectedItem.damage ();
+                    }
                 }
             }
             // selected has not changed update selected item state
@@ -405,7 +423,66 @@ public class Maia.DrawingArea : Group, ItemPackable
         // paint childs
         foreach (unowned Core.Object child in this)
         {
-            if (child is Item)
+            if (child is Arrow)
+            {
+                unowned Arrow arrow = (Arrow)child;
+
+                arrow.draw (inContext);
+
+                if (arrow == selected && arrow.linked_item != null)
+                {
+                    // Search linked item
+                    unowned Item? item = find (GLib.Quark.from_string (arrow.linked_item)) as Item;
+                    if (item != null)
+                    {
+                        // Clip area whithout linked item area
+                        var area = arrow.geometry.copy ();
+                        area.subtract (item.geometry);
+                        var clip = new Graphic.Path.from_region (area);
+
+                        var path = new Graphic.Path ();
+                        var start_arrow = arrow.start;
+                        var end_arrow = arrow.end;
+
+                        double width = start_arrow.x - end_arrow.x;
+                        double height = start_arrow.y - end_arrow.y;
+
+                        double angle = GLib.Math.atan2 (height, width);
+
+                        var arrow_transform = new Graphic.Transform.identity ();
+                        arrow_transform.translate (start_arrow.x, start_arrow.y);
+                        arrow_transform.rotate (angle);
+                        arrow_transform.translate (-start_arrow.x, -start_arrow.y);
+                        path.rectangle (start_arrow.x - GLib.Math.sqrt (GLib.Math.pow (width, 2) + GLib.Math.pow (height, 2)) - selected_border,
+                                        start_arrow.y - selected_border, GLib.Math.sqrt (GLib.Math.pow (width, 2) + GLib.Math.pow (height, 2)) + selected_border * 2.0,
+                                        selected_border * 2, selected_border * 2);
+
+                        inContext.save ();
+                        {
+                            inContext.clip (clip);
+                            inContext.transform = arrow_transform;
+                            inContext.dash = { 2, 2 };
+                            inContext.line_width = selected_border_line_width;
+                            inContext.pattern = selected_border_color;
+                            inContext.stroke (path);
+                        }
+                        inContext.restore ();
+
+                        path = new Graphic.Path ();
+                        path.rectangle (item.geometry.extents.origin.x - selected_border / 2.0,
+                                        item.geometry.extents.origin.y - selected_border / 2.0,
+                                        item.geometry.extents.size.width + selected_border,
+                                        item.geometry.extents.size.height + selected_border,
+                                        selected_border, selected_border);
+
+                        inContext.dash = { 2, 2 };
+                        inContext.line_width = selected_border_line_width;
+                        inContext.pattern = selected_border_color;
+                        inContext.stroke (path);
+                    }
+                }
+            }
+            else if (child is Item)
             {
                 unowned Item item = (Item)child;
 
