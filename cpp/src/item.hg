@@ -50,6 +50,9 @@ namespace Maia
             _WRAP_VFUNC(void set_characters (const Glib::ustring& inCharacters), set_characters)
             _WRAP_VFUNC(void get_origin (Graphic::Point& outPoint), get_origin)
 
+            _WRAP_VFUNC(bool can_focus () const, get_can_focus)
+            _WRAP_VFUNC(void set_can_focus (bool inCanFocus = true), set_can_focus)
+
             _WRAP_VFUNC(void on_child_damaged (const Glib::RefPtr<Drawable>& inChild, const Glib::RefPtr<Graphic::Region>& inArea), on_child_damaged)
             _WRAP_VFUNC(bool on_button_press_event (guint inButton, const Graphic::Point& inPoint), on_button_press_event)
             _WRAP_VFUNC(bool on_button_release_event (guint inButton, const Graphic::Point& inPoint), on_button_release_event)
@@ -69,6 +72,8 @@ namespace Maia
             _WRAP_METHOD(void set_movable (bool inMovable = true), maia_item_set_is_movable)
             _WRAP_METHOD(bool is_resizable () const, maia_item_get_is_resizable)
             _WRAP_METHOD(void set_resizable (bool inResizable = true), maia_item_set_is_resizable)
+            _WRAP_METHOD(bool can_focus () const, maia_item_get_can_focus)
+            _WRAP_METHOD(void set_can_focus (bool inCanFocus = true), maia_item_set_can_focus)
             _WRAP_METHOD(bool have_focus () const, maia_item_get_have_focus)
             _WRAP_METHOD(void set_have_focus (bool inFocus = true), maia_item_set_have_focus)
             _WRAP_METHOD(bool visible () const, maia_item_get_visible)
@@ -124,6 +129,7 @@ namespace Maia
             _WRAP_PROPERTY("is-packable", bool)
             _WRAP_PROPERTY("is-movable", bool)
             _WRAP_PROPERTY("is-resizable", bool)
+            _WRAP_PROPERTY("can-focus", bool)
             _WRAP_PROPERTY("have-focus", bool)
             _WRAP_PROPERTY("visible", bool)
             _WRAP_PROPERTY("origin", Graphic::Point)

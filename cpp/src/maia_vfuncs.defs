@@ -587,6 +587,19 @@
   )
 )
 
+(define-vfunc get_can_focus
+  (of-object "MaiaItem")
+  (return-type "gboolean")
+)
+
+(define-vfunc set_can_focus
+  (of-object "MaiaItem")
+  (return-type "none")
+  (parameters
+    '("gboolean" "inCanFocus")
+  )
+)
+
 (define-vfunc get_origin
   (of-object "MaiaItem")
   (return-type "none")

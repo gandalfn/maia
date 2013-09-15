@@ -95,7 +95,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
     }
 
-    public bool have_focus { get; set; default = false; }
+    public virtual bool can_focus  { get; set; default = true; }
+    public bool         have_focus { get; set; default = false; }
 
     public bool visible {
         get {
@@ -346,6 +347,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         not_dumpable_attributes.insert ("size-requested");
         not_dumpable_attributes.insert ("page-break-position");
         not_dumpable_attributes.insert ("pointer-over");
+        not_dumpable_attributes.insert ("can-focus");
+        not_dumpable_attributes.insert ("have-focus");
 
         // check if object is packable
         m_IsPackable = this is ItemPackable;
@@ -799,6 +802,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         if (!ret)
         {
             GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
+        }
+        else if (can_focus)
+        {
+            grab_focus (this);
         }
 
         return ret;

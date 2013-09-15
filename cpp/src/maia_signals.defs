@@ -2221,6 +2221,15 @@
   (construct-only #f)
 )
 
+(define-property can-focus
+  (of-object "MaiaItem")
+  (prop-type "GParamBoolean")
+  (docs "can-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property have-focus
   (of-object "MaiaItem")
   (prop-type "GParamBoolean")
@@ -2667,6 +2676,15 @@
   (of-object "MaiaLabel")
   (prop-type "GParamDouble")
   (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property can-focus
+  (of-object "MaiaLabel")
+  (prop-type "GParamBoolean")
+  (docs "can-focus")
   (readable #t)
   (writable #t)
   (construct-only #f)

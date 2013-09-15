@@ -48,6 +48,16 @@ public class Maia.Path : Item, ItemPackable, ItemMovable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
+    internal override bool can_focus  {
+        get {
+            return parent is DrawingArea;
+        }
+        set {
+            base.can_focus = value;
+        }
+        default = true;
+    }
+
     public string path { get; set; default = ""; }
 
     // methods

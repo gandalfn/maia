@@ -114,8 +114,6 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     private bool
     on_button_press (uint inButton, Graphic.Point inPoint)
     {
-        grab_focus (this);
-
         if (m_Popup.visible)
             m_Popup.hide ();
         else

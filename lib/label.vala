@@ -51,6 +51,16 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
+    internal override bool can_focus  {
+        get {
+            return parent is DrawingArea;
+        }
+        set {
+            base.can_focus = value;
+        }
+        default = true;
+    }
+
     public string                      font_description { get; set; default = ""; }
     public Graphic.Glyph.Alignment     alignment        { get; set; default = Graphic.Glyph.Alignment.CENTER; }
     public Graphic.Glyph.WrapMode      wrap_mode        { get; set; default = Graphic.Glyph.WrapMode.WORD; }

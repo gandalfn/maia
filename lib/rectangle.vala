@@ -28,6 +28,16 @@ public class Maia.Rectangle : Item, ItemMovable, ItemResizable
 
     internal override string characters { get; set; default = null; }
 
+    internal override bool can_focus  {
+        get {
+            return parent is DrawingArea;
+        }
+        set {
+            base.can_focus = value;
+        }
+        default = true;
+    }
+
     // methods
     public Rectangle (string inId)
     {
