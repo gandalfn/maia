@@ -275,7 +275,7 @@ public class Maia.DrawingArea : Group, ItemPackable
             {
                 if (child is Item)
                 {
-                    Item item = (Item)child;
+                    unowned Item item = (Item)child;
 
                     // Transform point to item coordinate space
                     Graphic.Point point = convert_to_child_item_space (item, inPoint);
@@ -288,7 +288,10 @@ public class Maia.DrawingArea : Group, ItemPackable
                         GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
 
                         // Set the selected item;
-                        selected = item;
+                        if (item.is_movable || item.is_resizable)
+                        {
+                            selected = item;
+                        }
 
                         break;
                     }
@@ -404,7 +407,7 @@ public class Maia.DrawingArea : Group, ItemPackable
         {
             if (child is Item)
             {
-                Item item = (Item)child;
+                unowned Item item = (Item)child;
 
                 item.draw (inContext);
 

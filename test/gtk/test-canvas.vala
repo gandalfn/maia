@@ -512,7 +512,7 @@ public class Maia.TestCanvas : Maia.TestCase
         model.treemodel = list;
         try
         {
-            var directory = GLib.File.new_for_path ("/home/nicolas/Bureau");
+            var directory = GLib.File.new_for_path ("/home/gandalfn/Images");
 
             var enumerator = directory.enumerate_children (GLib.FileAttribute.STANDARD_NAME, 0);
 
@@ -525,7 +525,7 @@ public class Maia.TestCanvas : Maia.TestCase
                     global::Gtk.TreeIter iter;
                     list.append (out iter);
 
-                    list.set (iter, 0, "/home/nicolas/Bureau/" + filename, 1, filename);
+                    list.set (iter, 0, "/home/gandalfn/Images/" + filename, 1, filename);
                 }
             }
         }
