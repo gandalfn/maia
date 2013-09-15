@@ -2,7 +2,8 @@ files_defs = \
     maia-cairo-graphic.defs \
     maia-cairo-graphic_methods.defs \
     maia-cairo-graphic_enums.defs \
-    maia-cairo-graphic_signals.defs
+    maia-cairo-graphic_signals.defs \
+    maia-cairo-graphic_docs.xml
 
 files_hg = \
     cairo-context.hg \

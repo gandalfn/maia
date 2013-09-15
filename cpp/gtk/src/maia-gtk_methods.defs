@@ -36,6 +36,12 @@
   (gtype-id "MAIA_TYPE_GTK_SHORTCUT")
 )
 
+(define-object MaiaGtkTool
+  (parent "MaiaTool")
+  (c-name "MaiaGtkTool")
+  (gtype-id "MAIA_TYPE_GTK_TOOL")
+)
+
 ;; Enumerations and flags ...
 
 
@@ -130,6 +136,46 @@
 (define-method set_icon_name
   (of-object "MaiaGtkButton")
   (c-name "maia_gtk_button_set_icon_name")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-function maia_gtk_tool_get_type
+  (c-name "maia_gtk_tool_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_gtk_tool_new
+  (c-name "maia_gtk_tool_new")
+  (is-constructor-of "MaiaGtkTool")
+  (return-type "MaiaGtkTool*")
+  (parameters
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inLabel")
+  )
+)
+
+(define-function maia_gtk_tool_construct
+  (c-name "maia_gtk_tool_construct")
+  (return-type "MaiaGtkTool*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inLabel")
+  )
+)
+
+(define-method get_icon_name
+  (of-object "MaiaGtkTool")
+  (c-name "maia_gtk_tool_get_icon_name")
+  (return-type "const-gchar*")
+)
+
+(define-method set_icon_name
+  (of-object "MaiaGtkTool")
+  (c-name "maia_gtk_tool_set_icon_name")
   (return-type "none")
   (parameters
     '("const-gchar*" "value")

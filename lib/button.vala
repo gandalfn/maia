@@ -43,6 +43,8 @@ public class Maia.Button : Grid
         }
     }
 
+    internal override bool can_focus  { get; set; default = false; }
+
     /**
      * The default font description of button label
      */

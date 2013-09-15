@@ -4632,3 +4632,20 @@
   )
 )
 
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_TOOL_ACTION_NONE,
+;; 	MAIA_TOOL_ACTION_ADD,
+;; 	MAIA_TOOL_ACTION_REMOVE
+;; } MaiaToolAction;
+
+(define-enum-extended ToolAction
+  (in-module "Maia")
+  (c-name "MaiaToolAction")
+  (values
+    '("none" "MAIA_TOOL_ACTION_NONE" "0")
+    '("add" "MAIA_TOOL_ACTION_ADD" "1")
+    '("remove" "MAIA_TOOL_ACTION_REMOVE" "2")
+  )
+)
+

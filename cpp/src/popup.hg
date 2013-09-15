@@ -36,12 +36,15 @@ namespace Maia
             _WRAP_METHOD(void set_border (double inBorder), maia_popup_set_border)
             _WRAP_METHOD(PopupPlacement get_placement () const, maia_popup_get_placement)
             _WRAP_METHOD(void set_placement (PopupPlacement inPlacement), maia_popup_set_placement)
+            _WRAP_METHOD(Glib::RefPtr<Item> get_content () const, maia_popup_get_content)
 
             _WRAP_METHOD(void show (), maia_popup_show)
             _WRAP_METHOD(void hide (), maia_popup_hide)
 
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("placement", PopupPlacement)
+            _WRAP_PROPERTY("content", Glib::RefPtr<Item>)
+            _WRAP_PROPERTY("can-focus", bool)
 
         private:
             _WRAP_PROPERTY("x", double)

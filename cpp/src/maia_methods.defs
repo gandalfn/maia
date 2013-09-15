@@ -426,6 +426,18 @@
   (gtype-id "MAIA_TYPE_TOGGLE_GROUP")
 )
 
+(define-object MaiaTool
+  (parent "MaiaButton")
+  (c-name "MaiaTool")
+  (gtype-id "MAIA_TYPE_TOOL")
+)
+
+(define-object MaiaToolbox
+  (parent "MaiaPopup")
+  (c-name "MaiaToolbox")
+  (gtype-id "MAIA_TYPE_TOOLBOX")
+)
+
 (define-object MaiaView
   (parent "MaiaGrid")
   (c-name "MaiaView")
@@ -2780,6 +2792,16 @@
   )
 )
 
+(define-enum MaiaToolAction
+  (c-name "MaiaToolAction")
+  (gtype-id "MAIA_TYPE_TOOL_ACTION")
+  (values
+    '("none" "MAIA_TOOL_ACTION_NONE")
+    '("add" "MAIA_TOOL_ACTION_ADD")
+    '("remove" "MAIA_TOOL_ACTION_REMOVE")
+  )
+)
+
 
 ;; From maia.h
 
@@ -4130,6 +4152,18 @@
   (return-type "MaiaCoreObject*")
   (parameters
     '("guint32" "inId")
+    '("gboolean" "inRecursive")
+  )
+)
+
+(define-method find_by_type
+  (of-object "MaiaCoreObject")
+  (c-name "maia_core_object_find_by_type")
+  (return-type "gconstpointer")
+  (parameters
+    '("GType" "t_type")
+    '("GBoxedCopyFunc" "t_dup_func")
+    '("GDestroyNotify" "t_destroy_func")
     '("gboolean" "inRecursive")
   )
 )
@@ -9489,6 +9523,20 @@
   (return-type "GType")
 )
 
+(define-method to_string
+  (of-object "MaiaPopupPlacement")
+  (c-name "maia_popup_placement_to_string")
+  (return-type "gchar*")
+)
+
+(define-function maia_popup_placement_from_string
+  (c-name "maia_popup_placement_from_string")
+  (return-type "MaiaPopupPlacement")
+  (parameters
+    '("const-gchar*" "inValue")
+  )
+)
+
 (define-function maia_popup_get_type
   (c-name "maia_popup_get_type")
   (return-type "GType")
@@ -9522,6 +9570,12 @@
   (of-object "MaiaPopup")
   (c-name "maia_popup_hide")
   (return-type "none")
+)
+
+(define-method get_content
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_get_content")
+  (return-type "MaiaItem*")
 )
 
 (define-method get_border
@@ -9607,6 +9661,109 @@
   )
 )
 
+(define-function maia_tool_action_get_type
+  (c-name "maia_tool_action_get_type")
+  (return-type "GType")
+)
+
+(define-method to_string
+  (of-object "MaiaToolAction")
+  (c-name "maia_tool_action_to_string")
+  (return-type "gchar*")
+)
+
+(define-function maia_tool_action_from_string
+  (c-name "maia_tool_action_from_string")
+  (return-type "MaiaToolAction")
+  (parameters
+    '("const-gchar*" "inValue")
+  )
+)
+
+(define-function maia_tool_get_type
+  (c-name "maia_tool_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_tool_new
+  (c-name "maia_tool_new")
+  (is-constructor-of "MaiaTool")
+  (return-type "MaiaTool*")
+  (parameters
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inLabel")
+  )
+)
+
+(define-function maia_tool_construct
+  (c-name "maia_tool_construct")
+  (return-type "MaiaTool*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inLabel")
+  )
+)
+
+(define-function maia_toolbox_get_type
+  (c-name "maia_toolbox_get_type")
+  (return-type "GType")
+)
+
+(define-method get_toolbox
+  (of-object "MaiaTool")
+  (c-name "maia_tool_get_toolbox")
+  (return-type "MaiaToolbox*")
+)
+
+(define-method get_action
+  (of-object "MaiaTool")
+  (c-name "maia_tool_get_action")
+  (return-type "MaiaToolAction")
+)
+
+(define-method set_action
+  (of-object "MaiaTool")
+  (c-name "maia_tool_set_action")
+  (return-type "none")
+  (parameters
+    '("MaiaToolAction" "value")
+  )
+)
+
+(define-method get_visible_with
+  (of-object "MaiaTool")
+  (c-name "maia_tool_get_visible_with")
+  (return-type "const-gchar*")
+)
+
+(define-method set_visible_with
+  (of-object "MaiaTool")
+  (c-name "maia_tool_set_visible_with")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-function maia_toolbox_new
+  (c-name "maia_toolbox_new")
+  (is-constructor-of "MaiaToolbox")
+  (return-type "MaiaToolbox*")
+  (parameters
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-function maia_toolbox_construct
+  (c-name "maia_toolbox_construct")
+  (return-type "MaiaToolbox*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+  )
+)
+
 (define-function maia_canvas_get_type
   (c-name "maia_canvas_get_type")
   (return-type "GType")
@@ -9688,6 +9845,21 @@
   (parameters
     '("MaiaItem*" "inItem")
   )
+)
+
+(define-method on_toolbox_add
+  (of-object "MaiaCanvas")
+  (c-name "maia_canvas_on_toolbox_add")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-method on_toolbox_remove
+  (of-object "MaiaCanvas")
+  (c-name "maia_canvas_on_toolbox_remove")
+  (return-type "none")
 )
 
 (define-method resize

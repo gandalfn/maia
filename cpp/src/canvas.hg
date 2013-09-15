@@ -35,7 +35,8 @@ namespace Maia
         _IGNORE(maia_canvas_on_set_pointer_cursor, maia_canvas_on_move_pointer, maia_canvas_on_grab_focus,
                 maia_canvas_on_grab_pointer, maia_canvas_on_ungrab_pointer,
                 maia_canvas_on_grab_keyboard, maia_canvas_on_ungrab_keyboard,
-                maia_canvas_resize, maia_canvas_on_scroll_to)
+                maia_canvas_resize, maia_canvas_on_scroll_to,
+                maia_canvas_on_toolbox_add, maia_canvas_on_toolbox_remove)
 
         protected:
             _WRAP_VFUNC(Glib::RefPtr<Item> get_root (), get_root, refreturn)
@@ -60,6 +61,9 @@ namespace Maia
             _WRAP_VFUNC(void on_ungrab_pointer(const Glib::RefPtr<Item>& inItem), on_ungrab_pointer)
             _WRAP_VFUNC(bool on_grab_keyboard(const Glib::RefPtr<Item>& inItem), on_grab_keyboard)
             _WRAP_VFUNC(void on_ungrab_keyboard(const Glib::RefPtr<Item>& inItem), on_ungrab_keyboard)
+
+            _WRAP_VFUNC(void on_toolbox_add(const Glib::RefPtr<Item>& inItem), on_toolbox_add)
+            _WRAP_VFUNC(void on_toolbox_remove(), on_toolbox_remove)
 
             _WRAP_VFUNC(void resize(), resize)
 

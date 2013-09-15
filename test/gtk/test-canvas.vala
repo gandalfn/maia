@@ -317,9 +317,16 @@ public class Maia.TestCanvas : Maia.TestCase
         documents += canvas.root as Document;
 
         Cairo.generate_report.begin ("test.pdf", 300, documents, null, (obj, res) => {
-            Cairo.generate_report.end (res);
-            print ("test.pdf generated\n");
-            window.show ();
+            try
+            {
+                Cairo.generate_report.end (res);
+                print ("test.pdf generated\n");
+                window.show ();
+            }
+            catch (GLib.Error err)
+            {
+                assert (false);
+            }
         });
 
         window.hide ();

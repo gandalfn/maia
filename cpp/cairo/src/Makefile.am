@@ -17,3 +17,6 @@ maia-cairo-graphic_docs.xml: $(top_srcdir)/doc/mm/maia_docs.xml
 include $(srcdir)/filelist.am
 include $(top_srcdir)/cpp/codegen/m4/filelist.am
 include $(top_srcdir)/build-aux/generate-binding.am
+
+MAINTAINERCLEANFILES += \
+	maia-cairo-graphic_docs.xml

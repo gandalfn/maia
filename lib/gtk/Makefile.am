@@ -30,6 +30,7 @@ libmaia_gtk_la_SOURCES = \
     surface.vala \
     image.vala \
     button.vala \
+    tool.vala \
     model.vala \
     shortcut.vala \
     canvas.vala

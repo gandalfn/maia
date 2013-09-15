@@ -1,0 +1,45 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * toolbox.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/item.h>
+#include <maiamm/popup.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/popup_p.h)
+
+namespace Maia
+{
+    class Toolbox : public Popup
+    {
+        _CLASS_GOBJECT(Toolbox, MaiaToolbox, MAIA_TOOLBOX, Popup, MaiaPopup)
+
+        public:
+            static Glib::RefPtr<Toolbox> create (const Glib::ustring& inId)
+            {
+                MaiaToolbox* pToolbox = maia_toolbox_new (inId.c_str ());
+
+                return Glib::RefPtr<Toolbox> (new Toolbox (pToolbox));
+            }
+
+            _WRAP_SIGNAL(void add_item (const Glib::RefPtr<Item>& inItem), "add-item", no_default_handler)
+            _WRAP_SIGNAL(void remove_item (), "remove-item", no_default_handler)
+            _WRAP_SIGNAL(void current_item_changed (const Glib::RefPtr<Item>& inItem), "current-item-changed", no_default_handler)
+    };
+}

@@ -92,6 +92,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         Core.Any.delegate (typeof (Maia.Shortcut),     typeof (Shortcut));
         Core.Any.delegate (typeof (Maia.Image),        typeof (Image));
         Core.Any.delegate (typeof (Maia.Button),       typeof (Button));
+        Core.Any.delegate (typeof (Maia.Tool),         typeof (Tool));
         Core.Any.delegate (typeof (Maia.Model),        typeof (Model));
         Core.Any.delegate (typeof (Maia.Model.Column), typeof (Model.Column));
 

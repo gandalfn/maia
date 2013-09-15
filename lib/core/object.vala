@@ -421,4 +421,27 @@ public abstract class Maia.Core.Object : Any
 
         return null;
     }
+
+    /**
+     * Find object by type
+     *
+     * @param inRecursive search also in childs
+     *
+     * @return the corresponding object to inId else `null`
+     */
+    public unowned T?
+    find_by_type<T> (bool inRecursive = true)
+    {
+        foreach (unowned Object? child in this)
+        {
+            if (child.get_type () == typeof (T))
+                return child;
+
+            unowned T? ret = child.find_by_type<T> (inRecursive);
+            if (ret != null)
+                return ret;
+        }
+
+        return null;
+    }
 }

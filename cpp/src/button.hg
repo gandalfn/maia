@@ -65,5 +65,6 @@ namespace Maia
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("icon-filename", Glib::ustring)
             _WRAP_PROPERTY("button-color", Glib::RefPtr<Graphic::Color>)
+            _WRAP_PROPERTY("can-focus", bool)
     };
 }

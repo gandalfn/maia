@@ -100,6 +100,8 @@ libmaia_la_SOURCES = \
     shortcut.vala \
     popup.vala \
     combo.vala \
+    tool.vala \
+    toolbox.vala \
     canvas.vala
 
 libmaia_la_LDFLAGS = \

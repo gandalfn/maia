@@ -3,7 +3,8 @@ files_defs = \
     maia_methods.defs \
     maia_enums.defs \
     maia_signals.defs \
-    maia_vfuncs.defs
+    maia_vfuncs.defs \
+    maia_docs.xml
 
 files_hg = \
     core-any.hg \
@@ -64,6 +65,8 @@ files_hg = \
     shortcut.hg \
     popup.hg \
     combo.hg \
+    tool.hg \
+    toolbox.hg \
     canvas.hg
 
 files_ccg = $(files_hg:.hg=.ccg)

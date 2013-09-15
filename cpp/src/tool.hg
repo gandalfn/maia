@@ -1,0 +1,64 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * tool.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/toolbox.h>
+#include <maiamm/button.h>
+#include <maiamm/core-object.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/button_p.h)
+
+namespace Maia
+{
+    _WRAP_ENUM(ToolAction, MaiaToolAction, NO_GTYPE)
+
+    class Tool : public Button
+    {
+        _CLASS_GOBJECT(Tool, MaiaTool, MAIA_TOOL, Button, MaiaButton)
+
+        public:
+            static Glib::RefPtr<Tool> create (const Glib::ustring& inId)
+            {
+                MaiaTool* pTool = maia_tool_new (inId.c_str (), 0);
+
+                return Glib::RefPtr<Tool> (new Tool (pTool));
+            }
+
+            static Glib::RefPtr<Tool> create (const Glib::ustring& inId, const Glib::ustring& inLabel)
+            {
+                MaiaTool* pTool = maia_tool_new (inId.c_str (), inLabel.c_str ());
+
+                return Glib::RefPtr<Tool> (new Tool (pTool));
+            }
+
+            _WRAP_METHOD(Glib::RefPtr<Toolbox> get_toolbox () const, maia_tool_get_toolbox)
+
+            _WRAP_METHOD(ToolAction get_action () const, maia_tool_get_action)
+            _WRAP_METHOD(void set_action (ToolAction inAction), maia_tool_set_action)
+
+            _WRAP_METHOD(Glib::ustring get_visible_with () const, maia_tool_get_visible_with)
+            _WRAP_METHOD(void set_visible_with (const Glib::ustring& inCriteria), maia_tool_set_visible_with)
+
+            _WRAP_PROPERTY("toolbox", Glib::RefPtr<Toolbox>)
+            _WRAP_PROPERTY("action", ToolAction)
+            _WRAP_PROPERTY("visible-with", Glib::ustring)
+            _WRAP_PROPERTY("parent", Glib::RefPtr<Core::Object>)
+    };
+}

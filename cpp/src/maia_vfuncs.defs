@@ -987,6 +987,19 @@
   )
 )
 
+(define-vfunc on_toolbox_add
+  (of-object "MaiaCanvas")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-vfunc on_toolbox_remove
+  (of-object "MaiaCanvas")
+  (return-type "none")
+)
+
 (define-vfunc resize
   (of-object "MaiaCanvas")
   (return-type "none")

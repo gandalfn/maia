@@ -140,6 +140,17 @@
   (construct-only #f)
 )
 
+;; From MaiaGtkTool
+
+(define-property icon-name
+  (of-object "MaiaGtkTool")
+  (prop-type "GParamString")
+  (docs "icon-name")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaGtkModel
 
 (define-property treemodel

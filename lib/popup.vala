@@ -22,7 +22,49 @@ public enum Maia.PopupPlacement
     TOP,
     BOTTOM,
     LEFT,
-    RIGHT
+    RIGHT;
+
+    public string
+    to_string ()
+    {
+        switch (this)
+        {
+            case TOP:
+                return "top";
+
+            case BOTTOM:
+                return "bottom";
+
+            case LEFT:
+                return "left";
+
+            case RIGHT:
+                return "right";
+        }
+
+        return "";
+    }
+
+    public static PopupPlacement
+    from_string (string inValue)
+    {
+        switch (inValue)
+        {
+            case "top":
+                return PopupPlacement.TOP;
+
+            case "bottom":
+                return PopupPlacement.BOTTOM;
+
+            case "left":
+                return PopupPlacement.LEFT;
+
+            case "right":
+                return PopupPlacement.RIGHT;
+        }
+
+        return PopupPlacement.TOP;
+    }
 }
 
 public class Maia.Popup : Group
@@ -40,6 +82,8 @@ public class Maia.Popup : Group
             return "Popup";
         }
     }
+
+    internal override bool can_focus  { get; set; default = false; }
 
     internal double x {
         get {
@@ -61,22 +105,56 @@ public class Maia.Popup : Group
         }
     }
 
+    public unowned Item? content {
+        get {
+            return m_Content;
+        }
+    }
+
     public double         border    { get; set; default = 0.0; }
     public PopupPlacement placement { get; set; default = PopupPlacement.TOP; }
+
+    // static methods
+    static construct
+    {
+        Manifest.Attribute.register_transform_func (typeof (PopupPlacement), attribute_to_popup_placement);
+
+        GLib.Value.register_transform_func (typeof (PopupPlacement), typeof (string), popup_placement_to_string);
+    }
+
+    static void
+    attribute_to_popup_placement (Manifest.Attribute inAttribute, ref GLib.Value outValue)
+    {
+        outValue = PopupPlacement.from_string (inAttribute.get ());
+    }
+
+    static void
+    popup_placement_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (PopupPlacement)))
+    {
+        PopupPlacement val = (PopupPlacement)inSrc;
+
+        outDest = val.to_string ();
+    }
 
     // methods
     construct
     {
+        // Add not dumpable attributes
+        not_dumpable_attributes.insert ("content");
+
+        // Create animator
         m_Animator = new Core.Animator (30, 200);
+
+        // Connect onto positon change
+        notify["position"].connect (() => {
+            m_InitialPosition = position;
+        });
     }
 
     public Popup (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
-
-        notify["position"].connect (() => {
-            m_InitialPosition = position;
-        });
     }
 
     internal override bool
@@ -127,8 +205,8 @@ public class Maia.Popup : Group
 
         Graphic.Size ret = base.size_request (inSize);
 
-        ret.width = double.max (inSize.width, ret.width + border);
-        ret.height = double.max (inSize.height, ret.height + border);
+        ret.width = double.max (inSize.width + border, ret.width + border);
+        ret.height = double.max (inSize.height + border, ret.height + border);
 
         if (m_Content != null)
         {
@@ -167,7 +245,7 @@ public class Maia.Popup : Group
             // Get child position and size
             var item_position = m_Content.position;
             var item_size     = inAllocation.extents.size;
-            item_size.resize(-border, 0);
+            item_size.resize (-border, -border);
 
             // Set child size allocation
             var child_allocation = new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y, item_size.width, item_size.height));

@@ -88,6 +88,8 @@ public interface Maia.Canvas : Drawable
             Manifest.Element.register ("DrawingArea", typeof (DrawingArea));
             Manifest.Element.register ("Shortcut",    typeof (Shortcut));
             Manifest.Element.register ("Combo",       typeof (Combo));
+            Manifest.Element.register ("Tool",        typeof (Tool));
+            Manifest.Element.register ("Toolbox",     typeof (Toolbox));
 
             s_ElementsRegister = true;
         }
@@ -134,6 +136,14 @@ public interface Maia.Canvas : Drawable
             root.grab_keyboard.connect (on_grab_keyboard);
             root.ungrab_keyboard.connect (on_ungrab_keyboard);
             root.scroll_to.connect (on_scroll_to);
+
+            // Search toolbox
+            unowned Toolbox toolbox = root.find_by_type<Toolbox> (false);
+            if (toolbox != null)
+            {
+                toolbox.add_item.connect (on_toolbox_add);
+                toolbox.remove_item.connect (on_toolbox_remove);
+            }
         }
     }
 
@@ -203,6 +213,13 @@ public interface Maia.Canvas : Drawable
         {
             focus_item.have_focus = true;
         }
+
+        // Set current item to toolbox
+        unowned Toolbox? toolbox = root.find_by_type<Toolbox> (false);
+        if (toolbox != null)
+        {
+            toolbox.current_item_changed (focus_item);
+        }
     }
 
     protected virtual bool
@@ -257,6 +274,18 @@ public interface Maia.Canvas : Drawable
         }
     }
 
+    protected virtual void
+    on_toolbox_add (Item inItem)
+    {
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "Add item %s", inItem.name);
+    }
+
+    protected virtual void
+    on_toolbox_remove ()
+    {
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "Remove item");
+    }
+
     protected abstract void resize ();
 
     /**
@@ -276,6 +305,14 @@ public interface Maia.Canvas : Drawable
             root.grab_keyboard.disconnect (on_grab_keyboard);
             root.ungrab_keyboard.disconnect (on_ungrab_keyboard);
             root.scroll_to.disconnect (on_scroll_to);
+
+            // Search toolbox
+            unowned Toolbox? toolbox = root.find_by_type<Toolbox> (false);
+            if (toolbox != null)
+            {
+                toolbox.add_item.disconnect (on_toolbox_add);
+                toolbox.remove_item.disconnect (on_toolbox_remove);
+            }
         }
 
         root = null;

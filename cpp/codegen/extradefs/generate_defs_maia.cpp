@@ -77,6 +77,8 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_SHORTCUT);
     std::cout << get_defs (MAIA_TYPE_POPUP);
     std::cout << get_defs (MAIA_TYPE_COMBO);
+    std::cout << get_defs (MAIA_TYPE_TOOLBOX);
+    std::cout << get_defs (MAIA_TYPE_TOOL);
 
     return 0;
 }

@@ -9,6 +9,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_GTK_TYPE_CANVAS);
     std::cout << get_defs (MAIA_GTK_TYPE_IMAGE);
     std::cout << get_defs (MAIA_GTK_TYPE_BUTTON);
+    std::cout << get_defs (MAIA_GTK_TYPE_TOOL);
     std::cout << get_defs (MAIA_GTK_TYPE_MODEL);
     std::cout << get_defs (MAIA_GTK_MODEL_TYPE_COLUMN);
     std::cout << get_defs (MAIA_GTK_TYPE_SHORTCUT);

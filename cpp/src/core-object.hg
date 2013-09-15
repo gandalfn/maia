@@ -120,6 +120,7 @@ namespace Maia
                     return ObjectDerivedProxy (pObject);
                 }
 
+                _IGNORE(maia_core_object_find_by_type)
                 template <typename T>
                 inline void find (const Glib::ustring& inName, Glib::RefPtr<T>& outChild, bool inRecurse = true);
 

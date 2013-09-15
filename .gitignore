@@ -84,7 +84,7 @@ cpp/doc/reference/maiamm.devhelp2
 cpp/doc/reference/maiamm.tag
 cpp/src/maia_docs.xml
 cpp/gtk/src/maia-gtk_docs.xml
-cpp/gtk/src/maia_docs.xml
+cpp/cairo/src/maia-cairo-graphic_docs.xml
 
 tools/canvas-editor
 

@@ -195,6 +195,11 @@ _CONVERSION(`const Glib::RefPtr<ModelColumn>&',`MaiaModelColumn*',__CONVERT_REFP
 _CONVERSION(`MaiaModelColumn*',`const Glib::RefPtr<ModelColumn>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaModelColumn*',`Glib::RefPtr<ModelColumn>',`Glib::wrap($3, true)')
 
+_CONVERSION(`Glib::RefPtr<Toolbox>',`MaiaToolbox*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Toolbox>&',`MaiaToolbox*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaToolbox*',`const Glib::RefPtr<Toolbox>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaToolbox*',`Glib::RefPtr<Toolbox>',`Glib::wrap($3, true)')
+
 _CONVERSION(`Glib::ustring',`const gchar*',`$3.c_str ()')
 
 _CONVERSION(`Glib::RefPtr< ::Gtk::TreeModel>',`GtkTreeModel*',__CONVERT_REFPTR_TO_P)
@@ -248,3 +253,4 @@ _CONV_ENUM(Maia,Cursor)
 _CONV_ENUM(Maia,PageFormat)
 _CONV_ENUM(Maia,Orientation)
 _CONV_ENUM(Maia,PopupPlacement)
+_CONV_ENUM(Maia,ToolAction)

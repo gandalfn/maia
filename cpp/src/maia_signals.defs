@@ -746,6 +746,15 @@
   (construct-only #f)
 )
 
+(define-property can-focus
+  (of-object "MaiaButton")
+  (prop-type "GParamBoolean")
+  (docs "can-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property font-description
   (of-object "MaiaButton")
   (prop-type "GParamString")
@@ -3232,6 +3241,15 @@
   (construct-only #f)
 )
 
+(define-property can-focus
+  (of-object "MaiaPopup")
+  (prop-type "GParamBoolean")
+  (docs "can-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property x
   (of-object "MaiaPopup")
   (prop-type "GParamDouble")
@@ -3247,6 +3265,15 @@
   (docs "y")
   (readable #t)
   (writable #t)
+  (construct-only #f)
+)
+
+(define-property content
+  (of-object "MaiaPopup")
+  (prop-type "GParamObject")
+  (docs "content")
+  (readable #t)
+  (writable #f)
   (construct-only #f)
 )
 
@@ -3442,6 +3469,88 @@
   (of-object "MaiaCombo")
   (prop-type "GParamInt")
   (docs "active-row")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaToolbox
+
+(define-signal add-item
+  (of-object "MaiaToolbox")
+  (return-type "void")
+  (when "last")
+  (parameters
+    '("MaiaItem*" "p0")
+  )
+)
+
+(define-signal remove-item
+  (of-object "MaiaToolbox")
+  (return-type "void")
+  (when "last")
+)
+
+(define-signal current-item-changed
+  (of-object "MaiaToolbox")
+  (return-type "void")
+  (when "last")
+  (parameters
+    '("MaiaItem*" "p0")
+  )
+)
+
+(define-property tag
+  (of-object "MaiaToolbox")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaTool
+
+(define-property tag
+  (of-object "MaiaTool")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property parent
+  (of-object "MaiaTool")
+  (prop-type "GParamObject")
+  (docs "parent")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property toolbox
+  (of-object "MaiaTool")
+  (prop-type "GParamObject")
+  (docs "toolbox")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property action
+  (of-object "MaiaTool")
+  (prop-type "GParamEnum")
+  (docs "action")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property visible-with
+  (of-object "MaiaTool")
+  (prop-type "GParamString")
+  (docs "visible-with")
   (readable #t)
   (writable #t)
   (construct-only #f)

@@ -3,11 +3,13 @@ files_defs = \
     maia-gtk_methods.defs \
     maia-gtk_enums.defs \
     maia-gtk_signals.defs \
-    maia-gtk_vfuncs.defs
+    maia-gtk_vfuncs.defs \
+    maia-gtk_docs.xml
 
 files_hg = \
     canvas.hg \
     button.hg \
+    tool.hg \
     image.hg \
     model.hg \
     shortcut.hg
