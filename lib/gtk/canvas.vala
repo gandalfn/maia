@@ -554,7 +554,14 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         // else send event to root
         else if (root != null)
         {
-            root.button_press_event (inEvent.button, point);
+            if (root is Document)
+            {
+                root.button_press_event (inEvent.button, point);
+            }
+            else
+            {
+                root.button_press_event (inEvent.button, root.convert_to_item_space (point));
+            }
         }
 
         return true;
@@ -573,7 +580,14 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         // else send event to root
         else if (root != null)
         {
-            root.button_release_event (inEvent.button, point);
+            if (root is Document)
+            {
+                root.button_release_event (inEvent.button, point);
+            }
+            else
+            {
+                root.button_release_event (inEvent.button, root.convert_to_item_space (point));
+            }
         }
 
         return true;
@@ -598,7 +612,14 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
                 // else send event to root
                 else if (root != null)
                 {
-                    root.motion_event (point);
+                    if (root is Document)
+                    {
+                        root.motion_event (point);
+                    }
+                    else
+                    {
+                        root.motion_event (root.convert_to_item_space (point));
+                    }
                 }
             }
 
@@ -629,7 +650,14 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         // else send event to root
         else if (root != null)
         {
-            ret = root.scroll_event (convert_gdk_scrolldirection_to_scroll (inEvent.direction), point);
+            if (root is Document)
+            {
+                ret = root.scroll_event (convert_gdk_scrolldirection_to_scroll (inEvent.direction), point);
+            }
+            else
+            {
+                ret = root.scroll_event (convert_gdk_scrolldirection_to_scroll (inEvent.direction), root.convert_to_item_space (point));
+            }
         }
 
         return ret;

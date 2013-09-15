@@ -238,12 +238,6 @@
   (gtype-id "MAIA_TYPE_GROUP")
 )
 
-(define-object MaiaButton
-  (parent "MaiaGroup")
-  (c-name "MaiaButton")
-  (gtype-id "MAIA_TYPE_BUTTON")
-)
-
 (define-object MaiaCombo
   (parent "MaiaGroup")
   (c-name "MaiaCombo")
@@ -260,6 +254,12 @@
   (parent "MaiaGroup")
   (c-name "MaiaGrid")
   (gtype-id "MAIA_TYPE_GRID")
+)
+
+(define-object MaiaButton
+  (parent "MaiaGrid")
+  (c-name "MaiaButton")
+  (gtype-id "MAIA_TYPE_BUTTON")
 )
 
 (define-object MaiaEntry
@@ -8411,6 +8411,21 @@
   (return-type "none")
   (parameters
     '("const-gchar*" "value")
+  )
+)
+
+(define-method get_shade_color
+  (of-object "MaiaLabel")
+  (c-name "maia_label_get_shade_color")
+  (return-type "MaiaGraphicColor*")
+)
+
+(define-method set_shade_color
+  (of-object "MaiaLabel")
+  (c-name "maia_label_set_shade_color")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicColor*" "value")
   )
 )
 

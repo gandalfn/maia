@@ -224,9 +224,11 @@ public class Maia.TestModel : Maia.TestCase
                             "       ]" +
                             "   }" +
                             "   Button.button { " +
+                            "       columns: 2;" +
                             "       stroke-pattern: #7997AE;" +
                             "       button-color: #C0C0C0;" +
                             "       row: 1;" +
+                            "       xfill: false;" +
                             "       yexpand: false;" +
                             "       top_padding: 5;" +
                             "       bottom_padding: 5;" +

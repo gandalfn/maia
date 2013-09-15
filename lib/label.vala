@@ -66,6 +66,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     public Graphic.Glyph.WrapMode      wrap_mode        { get; set; default = Graphic.Glyph.WrapMode.WORD; }
     public Graphic.Glyph.EllipsizeMode ellipsize_mode   { get; set; default = Graphic.Glyph.EllipsizeMode.NONE; }
     public string                      text             { get; set; default = null; }
+    public Graphic.Color               shade_color      { get; set; default = null; }
 
     // static methods
     static construct
@@ -224,8 +225,23 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
 
             inContext.save ();
             {
+                var pos = Graphic.Point ((geometry.extents.size.width - m_Glyph.size.width) / 2.0, (geometry.extents.size.height - m_Glyph.size.height) / 2.0);
+                if (shade_color != null)
+                {
+                    inContext.pattern = new Graphic.Color.shade (shade_color, 0.8);
+                    pos.translate (Graphic.Point (-1, -1));
+                    m_Glyph.origin = pos;
+                    inContext.render (m_Glyph);
+
+                    inContext.pattern = new Graphic.Color.shade (shade_color, 1.2);
+                    pos.translate (Graphic.Point (2, 2));
+                    m_Glyph.origin = pos;
+                    inContext.render (m_Glyph);
+
+                    pos.translate (Graphic.Point (-1, -1));
+                }
+                m_Glyph.origin = pos;
                 inContext.pattern = stroke_pattern;
-                m_Glyph.origin = Graphic.Point ((geometry.extents.size.width - m_Glyph.size.width) / 2.0, (geometry.extents.size.height - m_Glyph.size.height) / 2.0);
                 inContext.render (m_Glyph);
             }
             inContext.restore ();

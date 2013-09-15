@@ -2,19 +2,21 @@ Fonctionnality:
 - Pagination of document items                                          [ DONE ]
 - Add page break                                                        [ DONE ]
 - Arrow item
+- Graph item
+- Toolbox
 - Animations                                                            [ DONE ]
 - Combobox                                                              [ DONE ]
 - Popup                                                                 [ DONE ]
 - C++ binding                                                           [ DONE ]
 - Write a valadoc docket to convert doc to C++ doc                      [ DONE ]
 - Add style                                                             [ DONE ]
-- Save under pdf
+- Save under pdf                                                        [ DONE ]
 - Create a graphical editor of canvas
 
 Bugs:
 - ItemResizable rotation
 - Incorrect position calculation on move pointer                        [ DONE ]
-- When icon is smaller than label in button the icon is not aligned
+- When icon is smaller than label in button the icon is not aligned     [ DONE ]
 - Toggle button must be derive from Button
 - Fix transform on document                                             [ DONE ]
 - Fix resize in document                                                [ DONE ]

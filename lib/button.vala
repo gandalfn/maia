@@ -31,7 +31,7 @@
  * }}}
  *
  */
-public class Maia.Button : Group, ItemPackable, ItemMovable
+public class Maia.Button : Grid
 {
     // properties
     private bool m_Clicked = false;
@@ -42,26 +42,6 @@ public class Maia.Button : Group, ItemPackable, ItemMovable
             return "Button";
         }
     }
-
-    internal uint   row     { get; set; default = 0; }
-    internal uint   column  { get; set; default = 0; }
-    internal uint   rows    { get; set; default = 1; }
-    internal uint   columns { get; set; default = 1; }
-
-    internal bool   xexpand { get; set; default = true; }
-    internal bool   xfill   { get; set; default = true; }
-    internal bool   xshrink { get; set; default = false; }
-    internal double xalign  { get; set; default = 0.5; }
-
-    internal bool   yexpand { get; set; default = true; }
-    internal bool   yfill   { get; set; default = true; }
-    internal bool   yshrink { get; set; default = false; }
-    internal double yalign  { get; set; default = 0.5; }
-
-    internal double top_padding    { get; set; default = 0; }
-    internal double bottom_padding { get; set; default = 0; }
-    internal double left_padding   { get; set; default = 0; }
-    internal double right_padding  { get; set; default = 0; }
 
     /**
      * The default font description of button label
@@ -121,10 +101,20 @@ public class Maia.Button : Group, ItemPackable, ItemMovable
     // methods
     construct
     {
+        stroke_pattern = new Graphic.Color (0, 0, 0);
+
+        column_spacing = border;
+
         // Create icon item
         string id_icon = "%s-icon".printf (name);
 
         var icon_item = new Image (id_icon, icon_filename);
+        icon_item.xfill = false;
+        icon_item.xexpand = false;
+        icon_item.yfill = false;
+        icon_item.top_padding = border;
+        icon_item.left_padding = border;
+        icon_item.bottom_padding = border;
         add (icon_item);
 
         notify ["icon-filename"].connect (() => {
@@ -135,10 +125,25 @@ public class Maia.Button : Group, ItemPackable, ItemMovable
         string id_label = "%s-label".printf (name);
 
         var label_item = new Label (id_label, label);
+        label_item.column = 1;
+        label_item.xfill = false;
+        label_item.top_padding = border;
+        label_item.right_padding = border;
+        label_item.bottom_padding = border;
         add (label_item);
 
         notify["stroke-pattern"].connect (() => {
             label_item.stroke_pattern = stroke_pattern;
+        });
+
+        notify["border"].connect (() => {
+            column_spacing = border;
+            icon_item.top_padding = border;
+            icon_item.left_padding = border;
+            icon_item.bottom_padding = border;
+            label_item.top_padding = border;
+            label_item.right_padding = border;
+            label_item.bottom_padding = border;
         });
 
         label_item.button_press_event.connect (on_button_press_event);
@@ -158,18 +163,22 @@ public class Maia.Button : Group, ItemPackable, ItemMovable
     internal override bool
     on_button_press_event (uint inButton, Graphic.Point inPoint)
     {
-        Graphic.Point pos = Graphic.Point ((geometry.extents.size.width - size_requested.width) / 2,
-                                           (geometry.extents.size.height - size_requested.height) / 2);
-        Graphic.Rectangle area = Graphic.Rectangle (pos.x, pos.y, size_requested.width, size_requested.height);
-        bool ret = inPoint in area;
+        bool ret = false;
 
-        if (ret && inButton == 1)
+        if (geometry != null)
         {
-            m_Clicked = true;
+            var area = geometry.copy ();
+            area.translate (geometry.extents.origin.invert ());
+            ret = inPoint in area;
 
-            grab_pointer (this);
+            if (ret && inButton == 1)
+            {
+                m_Clicked = true;
 
-            damage ();
+                grab_pointer (this);
+
+                damage ();
+            }
         }
 
         return ret;
@@ -178,22 +187,26 @@ public class Maia.Button : Group, ItemPackable, ItemMovable
     internal override bool
     on_button_release_event (uint inButton, Graphic.Point inPoint)
     {
-        Graphic.Point pos = Graphic.Point ((geometry.extents.size.width - size_requested.width) / 2,
-                                           (geometry.extents.size.height - size_requested.height) / 2);
-        Graphic.Rectangle area = Graphic.Rectangle (pos.x, pos.y, size_requested.width, size_requested.height);
-        bool ret = inPoint in area;
+        bool ret = false;
 
-        if (inButton == 1 && m_Clicked)
+        if (geometry != null)
         {
-            m_Clicked = false;
+            var area = geometry.copy ();
+            area.translate (geometry.extents.origin.invert ());
+            ret = inPoint in area;
 
-            ungrab_pointer (this);
-
-            damage ();
-
-            if (ret)
+            if (inButton == 1 && m_Clicked)
             {
-                clicked ();
+                m_Clicked = false;
+
+                ungrab_pointer (this);
+
+                damage ();
+
+                if (ret)
+                {
+                    clicked ();
+                }
             }
         }
 
@@ -204,8 +217,8 @@ public class Maia.Button : Group, ItemPackable, ItemMovable
     draw_button (Graphic.Context inContext) throws Graphic.Error
     {
         // Paint Background
-        var button_size = size_requested;
-        button_size.resize (-border * 2, -border * 2);
+        var button_size = geometry.extents.size;
+        button_size.resize (-border * 2, -border * 2.3);
         var pattern = new Graphic.MeshGradient ();
 
         double vb = 1, ve = 1.1, vd = 0.8, vd2 = 0.7;
@@ -219,6 +232,12 @@ public class Maia.Button : Group, ItemPackable, ItemMovable
         }
         var beginColor = new Graphic.Color.shade (button_color, vb);
         var endColor = new Graphic.Color.shade (button_color, ve);
+
+        unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
+        if (label_item != null)
+        {
+            label_item.shade_color = beginColor;
+        }
 
         var topleft = new Graphic.MeshGradient.ArcPatch (Graphic.Point (border, border),
                                                          -GLib.Math.PI, -GLib.Math.PI / 2, border,
@@ -276,133 +295,38 @@ public class Maia.Button : Group, ItemPackable, ItemMovable
         inContext.paint ();
     }
 
-    internal override Graphic.Size
-    childs_size_request ()
-    {
-        double max_height = 0;
-        Graphic.Point offset = Graphic.Point (border, border);
-
-        // Get icon item
-        string id_icon = "%s-icon".printf (name);
-        unowned Image icon_item = find (GLib.Quark.from_string (id_icon), false) as Image;
-        if (icon_item != null)
-        {
-            // get position of icon
-            Graphic.Point position_icon = icon_item.position;
-            Graphic.Size size_icon = icon_item.size;
-
-            if (!size_icon.is_empty ())
-            {
-                // set position of icon
-                if (position_icon.x != offset.x || position_icon.y != offset.y)
-                {
-                    icon_item.position = offset;
-
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "icon item position : %s", icon_item.position.to_string ());
-                }
-
-                // set the current offset
-                offset.x += icon_item.size.width + border;
-
-                // set the height of icon
-                max_height = size_icon.height;
-            }
-        }
-
-        // Get label item
-        string id_label = "%s-label".printf (name);
-        unowned Label label_item = find (GLib.Quark.from_string (id_label), false) as Label;
-        if (label_item != null)
-        {
-            // get position of label
-            Graphic.Point position_label = label_item.position;
-            Graphic.Size size_label = label_item.size;
-
-            // if label haight is lesser tahn icon and offset to center label
-            if (size_label.height < max_height)
-            {
-                offset.y += (max_height - size_label.height) / 2;
-            }
-            else if (icon_item != null)
-            {
-                Graphic.Point position_icon = icon_item.position;
-                Graphic.Size size_icon = icon_item.size;
-
-                if (!size_icon.is_empty ())
-                {
-                    position_icon.y = (size_label.height - size_icon.height) / 2;
-                    icon_item.position = position_icon;
-                }
-            }
-
-            // set position of label
-            if (position_label.x != offset.x || position_label.y != offset.y)
-            {
-                label_item.position = offset;
-
-                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "label item position : %s", label_item.position.to_string ());
-            }
-        }
-
-
-        Graphic.Size ret = base.childs_size_request ();
-        ret.width += border * 2;
-        ret.height += border * 2;
-
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "%s size: %s", name, ret.to_string ());
-
-        return ret;
-    }
-
     internal override void
     paint (Graphic.Context inContext) throws Graphic.Error
     {
         inContext.save ();
         {
-            // Translate to align in center
-            inContext.translate (Graphic.Point (geometry.extents.size.width / 2, geometry.extents.size.height / 2));
-            inContext.translate (Graphic.Point (-size_requested.width / 2, -size_requested.height / 2));
-
             // Paint button background
             if (button_color != null)
             {
                 draw_button (inContext);
             }
 
-            // paint childs
-            foreach (unowned Core.Object child in this)
-            {
-                if (child is Label)
-                {
-                    Label label = (Label)child;
-
-                    inContext.save ();
-                    {
-                        var color = label.stroke_pattern;
-
-                        inContext.save ();
-                        inContext.translate (Graphic.Point (-1, -1));
-                        label.stroke_pattern  = new Graphic.Color.shade ((Graphic.Color)color, 0.8);
-                        label.draw (inContext);
-                        inContext.restore ();
-
-                        inContext.save ();
-                        inContext.translate (Graphic.Point (1, 1));
-                        label.stroke_pattern  = new Graphic.Color.shade ((Graphic.Color)color, 1.2);
-                        label.draw (inContext);
-                        inContext.restore ();
-
-                        label.stroke_pattern = color;
-                        label.draw (inContext);
-                    }
-                    inContext.restore ();
-                }
-                else if (child is Drawable)
-                {
-                    ((Drawable)child).draw (inContext);
-                }
-            }
+            base.paint (inContext);
         }
         inContext.restore ();
+    }
+
+    internal override string
+    to_string ()
+    {
+        string ret = dump_declaration ();
+
+        if (ret != "")
+        {
+            ret += " {\n";
+
+            ret += dump_attributes ();
+
+            ret += dump_characters ();
+
+            ret += "}\n";
+        }
+
+        return ret;
     }
 }
