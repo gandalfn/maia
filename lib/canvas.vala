@@ -29,6 +29,13 @@ public interface Maia.Canvas : Drawable
     protected abstract unowned Item? grab_keyboard_item { get; set; default = null; }
 
     public abstract Item root { get; set; default = null; }
+
+    public unowned Toolbox? toolbox {
+        get {
+            return root != null ? root.find_by_type<Toolbox> (false) : null;
+        }
+    }
+
     public abstract Graphic.Surface surface { get; }
 
     [CCode (notify = false)]

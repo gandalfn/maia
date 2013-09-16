@@ -791,6 +791,15 @@
   (construct-only #f)
 )
 
+(define-property icon-size
+  (of-object "MaiaButton")
+  (prop-type "GParamBoxed")
+  (docs "icon-size")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property button-color
   (of-object "MaiaButton")
   (prop-type "GParamObject")

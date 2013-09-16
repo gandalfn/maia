@@ -8737,6 +8737,24 @@
   )
 )
 
+(define-method get_icon_size
+  (of-object "MaiaButton")
+  (c-name "maia_button_get_icon_size")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "result")
+  )
+)
+
+(define-method set_icon_size
+  (of-object "MaiaButton")
+  (c-name "maia_button_set_icon_size")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "value")
+  )
+)
+
 (define-method get_button_color
   (of-object "MaiaButton")
   (c-name "maia_button_get_button_color")
@@ -10070,6 +10088,12 @@
   (parameters
     '("MaiaItem*" "value")
   )
+)
+
+(define-method get_toolbox
+  (of-object "MaiaCanvas")
+  (c-name "maia_canvas_get_toolbox")
+  (return-type "MaiaToolbox*")
 )
 
 (define-method get_surface

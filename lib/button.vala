@@ -90,6 +90,11 @@ public class Maia.Button : Grid
     public string icon_filename { get; set; default = null; }
 
     /**
+     * The icon size
+     */
+    public Graphic.Size icon_size { get; set; default = Graphic.Size (0, 0); }
+
+    /**
      * The background color of button if not set the button does not draw any background
      */
     public Graphic.Color button_color { get; set; default = null; }
@@ -121,6 +126,10 @@ public class Maia.Button : Grid
 
         notify ["icon-filename"].connect (() => {
             icon_item.filename = icon_filename;
+        });
+
+        notify ["icon-size"].connect (() => {
+            icon_item.size = icon_size;
         });
 
         // Create label item

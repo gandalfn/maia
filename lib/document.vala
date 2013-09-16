@@ -388,7 +388,7 @@ public class Maia.Document : Item
         // Get last page
         unowned Page? page = m_Pages.last ();
 
-        if (inItem != page.header && inItem != page.footer && inItem.visible)
+        if (inItem != page.header && inItem != page.footer &&  !(inItem is Popup) && inItem.visible)
         {
             bool add_item_in_page = true;
 
@@ -602,7 +602,7 @@ public class Maia.Document : Item
         if (inChild.geometry != null)
         {
             unowned Page first = m_Pages.first ();
-            if (first != null && (first.header == inChild || first.footer == inChild))
+            if (!(inChild is Popup) && first != null && (first.header == inChild || first.footer == inChild))
             {
                 foreach (unowned Page page in m_VisiblePages)
                 {
@@ -666,7 +666,10 @@ public class Maia.Document : Item
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
 
                 // Remove the offset of scrolling
-                damaged_area.translate (position.invert ());
+                if (!(inChild is Popup))
+                {
+                    damaged_area.translate (position.invert ());
+                }
                 damaged_area.transform (transform);
 
                 // damage item
@@ -713,6 +716,18 @@ public class Maia.Document : Item
             foreach (unowned Page page in m_Pages)
             {
                 page.update (inContext);
+            }
+
+            foreach (unowned Core.Object child in this)
+            {
+                unowned Popup? popup = child as Popup;
+                if (popup != null)
+                {
+                    var popup_position = popup.position;
+                    var popup_size = popup.size;
+
+                    popup.update (inContext, new Graphic.Region (Graphic.Rectangle (popup_position.x, popup_position.y, popup_size.width, popup_size.height)));
+                }
             }
 
             damage ();
@@ -791,6 +806,19 @@ public class Maia.Document : Item
             }
             inContext.restore ();
         }
+
+        inContext.save ();
+        {
+            foreach (unowned Core.Object child in this)
+            {
+                unowned Popup? popup = child as Popup;
+                if (popup != null)
+                {
+                    popup.draw (inContext);
+                }
+            }
+        }
+        inContext.restore ();
     }
 
     internal override bool
@@ -802,6 +830,30 @@ public class Maia.Document : Item
         {
             try
             {
+                // Check if event occur under popup
+                foreach (unowned Core.Object child in this)
+                {
+                    unowned Popup? popup = child as Popup;
+                    if (popup != null)
+                    {
+                        // Transform point to popup coordinate space
+                        Graphic.Point point = inPoint;
+                        Graphic.Matrix matrix = transform.matrix;
+                        matrix.invert ();
+                        Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
+                        point.transform (item_transform);
+                        point.translate (popup.position.invert ());
+
+                        // point under popup
+                        if (popup.button_press_event (inButton, point))
+                        {
+                            // event occurate under child stop signal
+                            GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
+                            return false;
+                        }
+                    }
+                }
+
                 // Translate point onto offset of visible area
                 Graphic.Point point = inPoint;
                 Graphic.Matrix matrix = transform.matrix;
@@ -842,6 +894,30 @@ public class Maia.Document : Item
         {
             try
             {
+                // Check if event occur under popup
+                foreach (unowned Core.Object child in this)
+                {
+                    unowned Popup? popup = child as Popup;
+                    if (popup != null)
+                    {
+                        // Transform point to popup coordinate space
+                        Graphic.Point point = inPoint;
+                        Graphic.Matrix matrix = transform.matrix;
+                        matrix.invert ();
+                        Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
+                        point.transform (item_transform);
+                        point.translate (popup.position.invert ());
+
+                        // point under popup
+                        if (popup.button_release_event (inButton, point))
+                        {
+                            // event occurate under child stop signal
+                            GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
+                            return false;
+                        }
+                    }
+                }
+
                 // Translate point onto offset of visible area
                 Graphic.Point point = inPoint;
                 Graphic.Matrix matrix = transform.matrix;
@@ -882,6 +958,30 @@ public class Maia.Document : Item
         {
             try
             {
+                // Check if event occur under popup
+                foreach (unowned Core.Object child in this)
+                {
+                    unowned Popup? popup = child as Popup;
+                    if (popup != null)
+                    {
+                        // Transform point to popup coordinate space
+                        Graphic.Point point = inPoint;
+                        Graphic.Matrix matrix = transform.matrix;
+                        matrix.invert ();
+                        Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
+                        point.transform (item_transform);
+                        point.translate (popup.position.invert ());
+
+                        // point under popup
+                        if (popup.motion_event (point))
+                        {
+                            // event occurate under child stop signal
+                            GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
+                            return false;
+                        }
+                    }
+                }
+
                 // Translate point onto offset of visible area
                 Graphic.Point point = inPoint;
                 Graphic.Matrix matrix = transform.matrix;
@@ -936,6 +1036,28 @@ public class Maia.Document : Item
         {
             try
             {
+                // Check if event occur under popup
+                foreach (unowned Core.Object child in this)
+                {
+                    unowned Popup? popup = child as Popup;
+                    if (popup != null)
+                    {
+                        // Transform point to popup coordinate space
+                        Graphic.Point point = inPoint;
+                        Graphic.Matrix matrix = transform.matrix;
+                        matrix.invert ();
+                        Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
+                        point.transform (item_transform);
+                        point.translate (popup.position.invert ());
+
+                        // point under popup
+                        if (popup.scroll_event (inScroll, point))
+                        {
+                            return true;
+                        }
+                    }
+                }
+
                 // Translate point onto offset of visible area
                 Graphic.Point point = inPoint;
                 Graphic.Matrix matrix = transform.matrix;

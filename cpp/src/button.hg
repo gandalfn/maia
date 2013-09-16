@@ -19,6 +19,7 @@
 
 #include <maia.h>
 #include <maiamm/graphic-color.h>
+#include <maiamm/graphic-size.h>
 #include <maiamm/item-packable.h>
 #include <maiamm/item-movable.h>
 #include <maiamm/grid.h>
@@ -49,6 +50,8 @@ namespace Maia
 
             _WRAP_METHOD(Glib::ustring get_font_description () const, maia_button_get_font_description)
             _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_button_set_font_description)
+            _WRAP_METHOD(void get_icon_size (Graphic::Size& outSize) const, maia_button_get_icon_size)
+            _WRAP_METHOD(void set_icon_size (const Graphic::Size& inSize), maia_button_set_icon_size)
             _WRAP_METHOD(Glib::ustring get_label () const, maia_button_get_label)
             _WRAP_METHOD(void set_label (const Glib::ustring& inLabel), maia_button_set_label)
             _WRAP_METHOD(double get_border () const, maia_button_get_border)
@@ -64,6 +67,7 @@ namespace Maia
             _WRAP_PROPERTY("label", Glib::ustring)
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("icon-filename", Glib::ustring)
+            _WRAP_PROPERTY("icon-size", Graphic::Size)
             _WRAP_PROPERTY("button-color", Glib::RefPtr<Graphic::Color>)
             _WRAP_PROPERTY("can-focus", bool)
     };
