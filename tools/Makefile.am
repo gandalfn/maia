@@ -12,7 +12,7 @@ if USE_VALGRIND
 INCLUDES += $(MAIA_VALGRIND_CFLAGS)
 endif
 
-noinst_PROGRAMS = \
+bin_PROGRAMS = \
     canvas-editor
 
 INCLUDES += \
@@ -22,7 +22,14 @@ INCLUDES += \
     $(MAIA_GTK_CFLAGS) \
     $(MAIA_CANVAS_EDITOR_CFLAGS)
 
+ui_DATA = \
+    canvas-editor.ui
+
+sourceview_DATA = \
+    manifest.lang
+
 canvas_editor_VALAFLAGS = \
+    --pkg=config \
     --pkg=gtk+-2.0 \
     --pkg=gtksourceview-2.0 \
     --pkg=cairo \
@@ -55,3 +62,7 @@ VALAFILES = \
 CLEANFILES += \
     canvas_editor_vala.stamp \
     $(VALAFILES:.vala=.c)
+
+EXTRA_DIST += \
+    $(ui_DATA) \
+    $(sourceview_DATA)

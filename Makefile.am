@@ -16,7 +16,8 @@ BUILD_FILES = \
     build-aux/maia.am \
     build-aux/generate-binding.am \
     build-aux/compile-binding.am \
-    build-aux/doc-reference.am
+    build-aux/doc-reference.am \
+    build-aux/ac-define-dir.m4
 
 TOOLS_FILES = \
     tools/generate-gdk-key-convert \
@@ -33,6 +34,8 @@ DISTCLEANFILES = \
     intltool-merge \
     intltool-update \
     po/.intltool-merge-cache
+
+ACLOCAL_AMFLAGS = -I build-aux
 
 uninstall-local:
 	-rm -r $(maiadocdir)

@@ -1,6 +1,6 @@
 m4_define(maia_version_major, 0)
 m4_define(maia_version_minor, 1)
-m4_define(maia_version_micro, 0)
+m4_define(maia_version_micro, 1)
 AC_INIT([maia],[maia_version_major.maia_version_minor.maia_version_micro])
 AC_PREREQ(2.63)
 
@@ -26,7 +26,7 @@ dnl ****************************************************************************
 MAIA_MAJOR_VERSION=maia_version_major
 MAIA_MINOR_VERSION=maia_version_minor
 MAIA_MICRO_VERSION=maia_version_micro
-MAIA_SO_VERSION="maia_version_major:maia_version_minor:maia_version_micro"
+MAIA_SO_VERSION="`expr maia_version_major + maia_version_micro`:maia_version_minor:maia_version_micro"
 MAIA_ABI=$MAIA_MAJOR_VERSION.$MAIA_MINOR_VERSION
 MAIA_VERSION=$MAIA_MAJOR_VERSION.$MAIA_MINOR_VERSION.$MAIA_MICRO_VERSION
 
@@ -224,6 +224,18 @@ if test "x$enabledoc" = "xyes"; then
     AC_SUBST(MAIA_VALADOC_LIBS)
 fi
 AM_CONDITIONAL(ENABLE_VALADOC, test x$found_valadoc = xyes)
+
+dnl ****************************************************************************
+dnl Define path
+dnl ****************************************************************************
+vapidir=${datadir}/vala/vapi
+uidir=${datadir}/maia/ui
+sourceviewdir=${datadir}/gtksourceview-2.0/language-specs
+AC_DEFINE_DIR([MAIA_UI_PATH], [uidir], [ui path])
+AC_SUBST(vapidir)
+AC_SUBST(uidir)
+AC_SUBST(sourceviewdir)
+
 
 dnl ****************************************************************************
 dnl Check for mm-common
