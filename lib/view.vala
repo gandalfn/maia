@@ -48,27 +48,16 @@ public class Maia.View : Maia.Grid
             base.parent = value;
 
             // reset model name
-            model = m_ModelName;
+            model_name = m_ModelName;
         }
     }
 
     public uint lines { get; set; default = 1; }
     public Orientation orientation { get; set; default = Orientation.VERTICAL; }
 
-    public string model {
-        owned get {
-            if (m_ModelName != null && m_Model == null)
-            {
-                m_Model = find_model (m_ModelName);
-
-                if (m_Model != null)
-                {
-                    m_Model.row_added.connect (on_row_added);
-                    m_Model.row_deleted.connect (on_row_deleted);
-                    m_Model.rows_reordered.connect (on_rows_reordered);
-                }
-            }
-            return m_Model == null ? m_ModelName : m_Model.name;
+    public string model_name {
+        get {
+            return m_ModelName;
         }
         set {
             if (m_Model != null)
@@ -89,6 +78,23 @@ public class Maia.View : Maia.Grid
             }
         }
         default = null;
+    }
+
+    public unowned Model model {
+        owned get {
+            if (m_ModelName != null && m_Model == null)
+            {
+                m_Model = find_model (m_ModelName);
+
+                if (m_Model != null)
+                {
+                    m_Model.row_added.connect (on_row_added);
+                    m_Model.row_deleted.connect (on_row_deleted);
+                    m_Model.rows_reordered.connect (on_rows_reordered);
+                }
+            }
+            return m_Model;
+        }
     }
 
     // static methods
@@ -135,6 +141,9 @@ public class Maia.View : Maia.Grid
     // methods
     construct
     {
+        // Add not dumpable attributes
+        not_dumpable_attributes.insert ("model");
+
         notify["item-over-pointer"].connect (on_pointer_over_changed);
     }
 

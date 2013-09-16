@@ -269,6 +269,7 @@ public class CanvasEditor.ManifestProvider : Provider
         m_Properties.insert ("underline-width");
         m_Properties.insert ("homogeneous");
         m_Properties.insert ("row-spacing");
+        m_Properties.insert ("column-spacing");
         m_Properties.insert ("border-line-width");
         m_Properties.insert ("grid-line-width");
         m_Properties.insert ("filename");
@@ -276,7 +277,7 @@ public class CanvasEditor.ManifestProvider : Provider
         m_Properties.insert ("group");
         m_Properties.insert ("active");
         m_Properties.insert ("orientation");
-        m_Properties.insert ("model");
+        m_Properties.insert ("model-name");
         m_Properties.insert ("row");
         m_Properties.insert ("rows");
         m_Properties.insert ("column");

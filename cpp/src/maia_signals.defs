@@ -3192,12 +3192,21 @@
   (construct-only #f)
 )
 
-(define-property model
+(define-property model-name
   (of-object "MaiaView")
   (prop-type "GParamString")
-  (docs "model")
+  (docs "model-name")
   (readable #t)
   (writable #t)
+  (construct-only #f)
+)
+
+(define-property model
+  (of-object "MaiaView")
+  (prop-type "GParamObject")
+  (docs "model")
+  (readable #t)
+  (writable #f)
   (construct-only #f)
 )
 

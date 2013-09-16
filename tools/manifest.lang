@@ -149,6 +149,7 @@
         <keyword>underline-width</keyword>
         <keyword>homogeneous</keyword>
         <keyword>row-spacing</keyword>
+        <keyword>column-spacing</keyword>
         <keyword>border-line-width</keyword>
         <keyword>border-width</keyword>
         <keyword>grid-line-width</keyword>
@@ -157,7 +158,7 @@
         <keyword>group</keyword>
         <keyword>active</keyword>
         <keyword>orientation</keyword>
-        <keyword>model</keyword>
+        <keyword>model-name</keyword>
         <keyword>row</keyword>
         <keyword>rows</keyword>
         <keyword>column</keyword>

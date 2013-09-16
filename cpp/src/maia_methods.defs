@@ -9374,19 +9374,25 @@
   )
 )
 
-(define-method get_model
+(define-method get_model_name
   (of-object "MaiaView")
-  (c-name "maia_view_get_model")
-  (return-type "gchar*")
+  (c-name "maia_view_get_model_name")
+  (return-type "const-gchar*")
 )
 
-(define-method set_model
+(define-method set_model_name
   (of-object "MaiaView")
-  (c-name "maia_view_set_model")
+  (c-name "maia_view_set_model_name")
   (return-type "none")
   (parameters
     '("const-gchar*" "value")
   )
+)
+
+(define-method get_model
+  (of-object "MaiaView")
+  (c-name "maia_view_get_model")
+  (return-type "MaiaModel*")
 )
 
 (define-function maia_drawing_area_get_type
