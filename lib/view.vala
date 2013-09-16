@@ -154,10 +154,10 @@ public class Maia.View : Maia.Grid
             {
                 unowned View? view = item.parent as View;
 
-                // If view is in view search model in view first
+                // If view is in view search model in cell first
                 if (view != null)
                 {
-                    model = view.find (GLib.Quark.from_string (inName)) as Model;
+                    model = item.find (GLib.Quark.from_string (inName)) as Model;
                     if (model != null) break;
                 }
                 // We not found model in view parents search in root
