@@ -157,7 +157,7 @@ public class Maia.View : Maia.Grid
                 // If view is in view search model in cell first
                 if (view != null)
                 {
-                    model = item.find (GLib.Quark.from_string (inName)) as Model;
+                    model = item.find (GLib.Quark.from_string (inName), false) as Model;
                     if (model != null) break;
                 }
                 // We not found model in view parents search in root
