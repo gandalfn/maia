@@ -153,6 +153,15 @@
 
 ;; From MaiaGtkModel
 
+(define-property nb-rows
+  (of-object "MaiaGtkModel")
+  (prop-type "GParamUInt")
+  (docs "nb-rows")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
 (define-property treemodel
   (of-object "MaiaGtkModel")
   (prop-type "GParamObject")

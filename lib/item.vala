@@ -47,7 +47,18 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             return base.parent;
         }
         construct set {
+            if (base.parent != null)
+            {
+                base.parent.notify["root"].disconnect(on_parent_root_changed);
+            }
+
             base.parent = value;
+
+            // connect onto root change on parent
+            if (base.parent != null)
+            {
+                base.parent.notify["root"].connect(on_parent_root_changed);
+            }
 
             // Update transform matrix
             m_TransformToItemSpace = get_transform_to_item_space ();
@@ -58,6 +69,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 notify["position"].disconnect (on_move_resize);
             else
                 notify["position"].connect (on_move_resize);
+
+
+            // Send root change notification
+            GLib.Signal.emit_by_name (this, "notify::root");
         }
     }
 
@@ -69,7 +84,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
     public abstract string tag { get; }
 
-    public abstract string characters { get; set; default = null; }
+    public string characters { get; set; default = null; }
 
     public bool is_packable {
         get {
@@ -396,6 +411,12 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     }
 
     private void
+    on_parent_root_changed ()
+    {
+        GLib.Signal.emit_by_name (this, "notify::root");
+    }
+
+    private void
     get_transformed_position_and_size (out Graphic.Point outPosition, out Graphic.Size outSize)
     {
         Graphic.Rectangle rect = Graphic.Rectangle (0, 0, m_Size.width, m_Size.height);
@@ -427,7 +448,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             // keep old geometry
             Graphic.Region old_geometry = geometry.copy ();
             // reset item geometry
-            if (!m_IsMovable && !m_IsResizable)
+            if (!m_IsMovable && !m_IsResizable && !(this is Popup))
             {
                 geometry = null;
             }

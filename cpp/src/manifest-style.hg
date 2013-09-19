@@ -36,6 +36,9 @@ namespace Maia
             _CLASS_GOBJECT(Style, MaiaManifestStyle, MAIA_MANIFEST_STYLE, Core::Object, MaiaCoreObject)
             _IMPLEMENTS_INTERFACE(Manifest::Element)
 
+            protected:
+                _CTOR_DEFAULT()
+
             public:
                 static Glib::RefPtr<Style> create (const Glib::ustring& inName)
                 {

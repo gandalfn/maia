@@ -12,5 +12,5 @@ AM_CPPFLAGS = $(local_cppflags) $(GTHREAD_CFLAGS) $(MAIAMM_CFLAGS) -I${top_srcdi
 AM_CXXFLAGS = $(MAIAMM_WXXFLAGS)
 
 libmaiamm_la_SOURCES = $(binding_sources)
-libmaiamm_la_LDFLAGS = -no-undefined -version-info @MAIA_SO_VERSION@
+libmaiamm_la_LDFLAGS = -no-undefined -version-number @MAIA_SO_VERSION@
 libmaiamm_la_LIBADD  = $(MAIAMM_LIBS) ${top_builddir}/lib/libmaia.la

@@ -226,7 +226,7 @@ public class Maia.Manifest.Document : Core.Parser
         if (m_pCurrent == begin)
             return "";
 
-        return ((string) begin).substring (1, (int) (m_pCurrent - begin) - (nb_brackets == 0 ? 2 : 0)).strip ();;
+        return ((string) begin).substring (1, (int) (m_pCurrent - begin) - (nb_brackets == 0 ? 2 : 1)).strip ();;
     }
 
     internal override Core.Parser.Token

@@ -33,6 +33,9 @@ namespace Maia
         {
             _CLASS_GOBJECT(Color, MaiaGraphicColor, MAIA_GRAPHIC_COLOR, Pattern, MaiaGraphicPattern)
 
+            protected:
+                _CTOR_DEFAULT()
+
             public:
                 static Glib::RefPtr<Color> create (double inRed, double inGreen, double inBlue, double inAlpha = 1.0)
                 {

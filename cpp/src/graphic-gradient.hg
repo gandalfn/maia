@@ -40,6 +40,9 @@ namespace Maia
         {
             _CLASS_GOBJECT(GradientColorStop, MaiaGraphicGradientColorStop, MAIA_GRAPHIC_GRADIENT_COLOR_STOP, Core::Object, MaiaCoreObject)
 
+            protected:
+                _CTOR_DEFAULT()
+
             public:
                 static Glib::RefPtr<GradientColorStop> create (double inOffset, const Glib::RefPtr<Color>& inColor)
                 {

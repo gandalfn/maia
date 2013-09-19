@@ -437,9 +437,12 @@ public abstract class Maia.Core.Object : Any
             if (child.get_type () == typeof (T))
                 return child;
 
-            unowned T? ret = child.find_by_type<T> (inRecursive);
-            if (ret != null)
-                return ret;
+            if (inRecursive)
+            {
+                unowned T? ret = child.find_by_type<T> (inRecursive);
+                if (ret != null)
+                    return ret;
+            }
         }
 
         return null;

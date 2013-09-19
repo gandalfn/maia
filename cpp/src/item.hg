@@ -45,9 +45,9 @@ namespace Maia
                 maia_item_get_characters, maia_item_size_request, maia_item_paint)
 
         protected:
+            _CTOR_DEFAULT()
+
             _WRAP_VFUNC(Glib::ustring get_tag (), get_tag)
-            _WRAP_VFUNC(Glib::ustring get_characters (), get_characters)
-            _WRAP_VFUNC(void set_characters (const Glib::ustring& inCharacters), set_characters)
             _WRAP_VFUNC(void get_origin (Graphic::Point& outPoint), get_origin)
 
             _WRAP_VFUNC(bool can_focus () const, get_can_focus)

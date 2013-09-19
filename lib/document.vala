@@ -60,8 +60,6 @@ public class Maia.Document : Item
         }
     }
 
-    internal override string characters { get; set; default = null; }
-
     internal override Graphic.Point origin {
         get {
             return position.invert ();
@@ -454,7 +452,7 @@ public class Maia.Document : Item
 
 
             // Set width has page if item is direct child
-            if (inItem.parent == this)
+            if (inItem.parent == this && item_size.width != page.content_geometry.extents.size.width)
             {
                 item_size.width = page.content_geometry.extents.size.width;
                 inItem.size = item_size;
@@ -478,6 +476,34 @@ public class Maia.Document : Item
 
         // Add first page
         append_page ();
+
+        // Set size of header
+        unowned Page? page = m_Pages.last ();
+
+        if (page.header != null)
+        {
+            var item_size = page.header.size;
+
+            // Set width has page
+            if (item_size.width != page.content_geometry.extents.size.width)
+            {
+                item_size.width = page.content_geometry.extents.size.width;
+                page.header.size = item_size;
+            }
+        }
+
+        // Set size of footer
+        if (page.footer != null)
+        {
+            var item_size = page.footer.size;
+
+            // Set width has page
+            if (item_size.width != page.content_geometry.extents.size.width)
+            {
+                item_size.width = page.content_geometry.extents.size.width;
+                page.footer.size = item_size;
+            }
+        }
 
         // Set current position
         Graphic.Point current_position = m_Pages.last ().content_geometry.extents.origin;

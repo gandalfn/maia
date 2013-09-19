@@ -44,6 +44,9 @@ namespace Maia
 
                 _WRAP_VFUNC(Glib::RefPtr<Surface> get_surface () const, get_surface)
 
+            protected:
+                _CTOR_DEFAULT()
+
             public:
                 static Glib::RefPtr<Image> create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
                 {
@@ -75,6 +78,8 @@ namespace Maia
             _CLASS_GOBJECT(ImageGif, MaiaGraphicImageGif, MAIA_GRAPHIC_IMAGE_GIF, Image, MaiaGraphicImage)
 
             public:
+                _CTOR_DEFAULT()
+
                 static Glib::RefPtr<ImageGif> create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
                 {
                     MaiaGraphicImageGif* pImage = maia_graphic_image_gif_new (inFilename.c_str (), const_cast<MaiaGraphicSize*> (inSize.gobj ()));
@@ -87,6 +92,8 @@ namespace Maia
             _CLASS_GOBJECT(ImageJpg, MaiaGraphicImageJpg, MAIA_GRAPHIC_IMAGE_JPG, Image, MaiaGraphicImage)
 
             public:
+                _CTOR_DEFAULT()
+
                 static Glib::RefPtr<ImageJpg> create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
                 {
                     MaiaGraphicImageJpg* pImage = maia_graphic_image_jpg_new (inFilename.c_str (), const_cast<MaiaGraphicSize*> (inSize.gobj ()));
@@ -99,6 +106,8 @@ namespace Maia
             _CLASS_GOBJECT(ImagePng, MaiaGraphicImagePng, MAIA_GRAPHIC_IMAGE_PNG, Image, MaiaGraphicImage)
 
             public:
+                _CTOR_DEFAULT()
+
                 static Glib::RefPtr<ImagePng> create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
                 {
                     MaiaGraphicImagePng* pImage = maia_graphic_image_png_new (inFilename.c_str (), const_cast<MaiaGraphicSize*> (inSize.gobj ()));
@@ -111,6 +120,8 @@ namespace Maia
             _CLASS_GOBJECT(ImageSvg, MaiaGraphicImageSvg, MAIA_GRAPHIC_IMAGE_SVG, Image, MaiaGraphicImage)
 
             public:
+                _CTOR_DEFAULT()
+
                 static Glib::RefPtr<ImageSvg> create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
                 {
                     MaiaGraphicImageSvg* pImage = maia_graphic_image_svg_new (inFilename.c_str (), const_cast<MaiaGraphicSize*> (inSize.gobj ()));

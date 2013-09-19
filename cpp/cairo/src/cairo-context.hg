@@ -34,6 +34,9 @@ namespace Maia
         {
             _CLASS_GOBJECT(Context, MaiaCairoContext, MAIA_CAIRO_CONTEXT, Maia::Graphic::Context, MaiaGraphicContext)
 
+            protected:
+                _CTOR_DEFAULT()
+
             public:
                 static Glib::RefPtr<Context> create (const Glib::RefPtr<Maia::Graphic::Surface>& inSurface);
 

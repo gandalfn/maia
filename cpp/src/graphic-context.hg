@@ -46,6 +46,8 @@ namespace Maia
             _CLASS_GOBJECT(Context, MaiaGraphicContext, MAIA_GRAPHIC_CONTEXT, Core::Object, MaiaCoreObject)
 
             protected:
+                _CTOR_DEFAULT()
+
                 _WRAP_VFUNC(Operator get_operator (), get_operator)
                 _WRAP_VFUNC(void set_operator (Operator inOperator), set_operator)
                 _WRAP_VFUNC(Glib::RefPtr<Surface> get_surface (), get_surface)

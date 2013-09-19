@@ -26,8 +26,6 @@ public class Maia.Path : Item, ItemPackable, ItemMovable
         }
     }
 
-    internal override string characters { get; set; default = null; }
-
     internal uint   row     { get; set; default = 0; }
     internal uint   column  { get; set; default = 0; }
     internal uint   rows    { get; set; default = 1; }

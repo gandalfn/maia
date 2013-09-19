@@ -98,6 +98,13 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             arrow_item.fill_pattern = stroke_pattern;
         });
 
+        notify["root"].connect (() => {
+            if (m_Popup != null)
+            {
+                m_Popup.parent = root;
+            }
+        });
+
         arrow_item.button_press_event.connect (on_button_press);
 
         // Connect onto button press
@@ -154,7 +161,11 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             m_Popup.notify["visible"].connect (() => {
                 damage ();
             });
-            root.add (m_Popup);
+
+            if (root.can_append_child(m_Popup))
+            {
+                root.add (m_Popup);
+            }
 
             m_View = inObject as View;
             m_View.fill_pattern = highlight_color;
@@ -174,6 +185,8 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             m_View.row_clicked.disconnect (on_row_clicked);
             m_View.parent = null;
             m_View = null;
+            m_Popup.parent = null;
+            m_Popup = null;
         }
         else
         {
@@ -186,6 +199,11 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     {
         Graphic.Size childs_size = Graphic.Size (0, 0);
         Graphic.Size view_size = Graphic.Size (0, 0);
+
+        if (m_Popup != null && m_Popup.parent != null && m_Popup.parent != root)
+        {
+            m_Popup.parent = root;
+        }
 
         // Get size of first view child
         if (m_View != null)
@@ -261,14 +279,18 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
                 if (m_Popup != null)
                 {
                     var start = convert_to_root_space (Graphic.Point (arrow_size.width / 2, arrow_size.height + arrow_size.height / 2));
-                    var end = convert_to_root_space (Graphic.Point (inAllocation.extents.size.width - arrow_size.width / 2,
+                    var end = convert_to_root_space (Graphic.Point (inAllocation.extents.size.width - arrow_size.width,
                                                                     inAllocation.extents.size.height));
 
                     var popup_size = Graphic.Size (end.x - start.x, m_Popup.size_requested.height);
 
-                    if (!m_Popup.size_requested.equal (popup_size))
+                    if (m_Popup.position.x != start.x || m_Popup.position.y != start.y)
                     {
                         m_Popup.position = start;
+                    }
+
+                    if (GLib.Math.floor (m_Popup.size_requested.width) != GLib.Math.floor (popup_size.width))
+                    {
                         m_Popup.size = popup_size;
                     }
                 }

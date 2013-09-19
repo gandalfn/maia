@@ -78,6 +78,8 @@ public abstract class Maia.Model : Core.Object, Manifest.Element
         }
     }
 
+    public abstract uint nb_rows { get; }
+
     // signals
     [Signal (detailed = true)]
     public signal void value_changed (uint inRow);

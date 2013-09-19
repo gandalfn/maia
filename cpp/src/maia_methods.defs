@@ -7682,21 +7682,6 @@
   (return-type "const-gchar*")
 )
 
-(define-method get_characters
-  (of-object "MaiaItem")
-  (c-name "maia_item_get_characters")
-  (return-type "const-gchar*")
-)
-
-(define-method set_characters
-  (of-object "MaiaItem")
-  (c-name "maia_item_set_characters")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "value")
-  )
-)
-
 (define-method get_is_packable
   (of-object "MaiaItem")
   (c-name "maia_item_get_is_packable")
@@ -8539,6 +8524,21 @@
   )
 )
 
+(define-method get_width_in_chars
+  (of-object "MaiaEntry")
+  (c-name "maia_entry_get_width_in_chars")
+  (return-type "guint")
+)
+
+(define-method set_width_in_chars
+  (of-object "MaiaEntry")
+  (c-name "maia_entry_set_width_in_chars")
+  (return-type "none")
+  (parameters
+    '("guint" "value")
+  )
+)
+
 (define-method get_underline_width
   (of-object "MaiaEntry")
   (c-name "maia_entry_get_underline_width")
@@ -9246,6 +9246,12 @@
   (return-type "gchar*")
 )
 
+(define-method get_nb_rows
+  (of-object "MaiaModel")
+  (c-name "maia_model_get_nb_rows")
+  (return-type "guint")
+)
+
 (define-method get
   (of-object "MaiaModelColumn")
   (c-name "maia_model_column_get")
@@ -9393,6 +9399,15 @@
   (of-object "MaiaView")
   (c-name "maia_view_get_model")
   (return-type "MaiaModel*")
+)
+
+(define-method set_model
+  (of-object "MaiaView")
+  (c-name "maia_view_set_model")
+  (return-type "none")
+  (parameters
+    '("MaiaModel*" "value")
+  )
 )
 
 (define-function maia_drawing_area_get_type

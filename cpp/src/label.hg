@@ -35,6 +35,9 @@ namespace Maia
         _IMPLEMENTS_INTERFACE(ItemPackable)
         _IMPLEMENTS_INTERFACE(ItemMovable)
 
+        protected:
+            _CTOR_DEFAULT()
+
         public:
             static Glib::RefPtr<Label> create (const Glib::ustring& inId, const Glib::ustring& inText)
             {

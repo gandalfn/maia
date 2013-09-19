@@ -267,6 +267,9 @@
   (c-name "maia_gtk_model_column_new")
   (is-constructor-of "MaiaGtkModelColumn")
   (return-type "MaiaGtkModelColumn*")
+  (parameters
+    '("const-gchar*" "inId")
+  )
 )
 
 (define-function maia_gtk_model_column_construct
@@ -274,6 +277,7 @@
   (return-type "MaiaGtkModelColumn*")
   (parameters
     '("GType" "object_type")
+    '("const-gchar*" "inId")
   )
 )
 

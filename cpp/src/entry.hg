@@ -34,6 +34,9 @@ namespace Maia
         _IMPLEMENTS_INTERFACE(ItemPackable)
         _IMPLEMENTS_INTERFACE(ItemMovable)
 
+        protected:
+            _CTOR_DEFAULT()
+
         public:
             static Glib::RefPtr<Entry> create (const Glib::ustring& inId)
             {
@@ -58,6 +61,9 @@ namespace Maia
             _WRAP_METHOD(guint get_lines () const, maia_entry_get_lines)
             _WRAP_METHOD(void set_lines (guint inLines), maia_entry_set_lines)
 
+            _WRAP_METHOD(guint get_width_in_chars () const, maia_entry_get_width_in_chars)
+            _WRAP_METHOD(void set_width_in_chars (guint inChars), maia_entry_set_width_in_chars)
+
             _WRAP_METHOD(double get_underline_width () const, maia_entry_get_underline_width)
             _WRAP_METHOD(void set_underline_width (double inWidth), maia_entry_set_underline_width)
 
@@ -66,6 +72,7 @@ namespace Maia
             _WRAP_PROPERTY("font-description", Glib::ustring)
             _WRAP_PROPERTY("text", Glib::ustring)
             _WRAP_PROPERTY("lines", guint)
+            _WRAP_PROPERTY("width-in-chars", guint)
             _WRAP_PROPERTY("underline-width", Glib::ustring)
 
             _WRAP_PROPERTY("row", guint)

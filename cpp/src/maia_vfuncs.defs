@@ -574,19 +574,6 @@
   (return-type "const-gchar*")
 )
 
-(define-vfunc get_characters
-  (of-object "MaiaItem")
-  (return-type "const-gchar*")
-)
-
-(define-vfunc set_characters
-  (of-object "MaiaItem")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "inCharacters")
-  )
-)
-
 (define-vfunc get_can_focus
   (of-object "MaiaItem")
   (return-type "gboolean")

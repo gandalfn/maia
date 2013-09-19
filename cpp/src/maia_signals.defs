@@ -898,15 +898,6 @@
   (construct-only #f)
 )
 
-(define-property characters
-  (of-object "MaiaDocument")
-  (prop-type "GParamString")
-  (docs "characters")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
 (define-property origin
   (of-object "MaiaDocument")
   (prop-type "GParamBoxed")
@@ -1288,15 +1279,6 @@
   (construct-only #f)
 )
 
-(define-property characters
-  (of-object "MaiaEntry")
-  (prop-type "GParamString")
-  (docs "characters")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
 (define-property row
   (of-object "MaiaEntry")
   (prop-type "GParamUInt")
@@ -1463,6 +1445,15 @@
   (of-object "MaiaEntry")
   (prop-type "GParamUInt")
   (docs "lines")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property width-in-chars
+  (of-object "MaiaEntry")
+  (prop-type "GParamUInt")
+  (docs "width-in-chars")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -1688,15 +1679,6 @@
   (construct-only #f)
 )
 
-(define-property characters
-  (of-object "MaiaGroup")
-  (prop-type "GParamString")
-  (docs "characters")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
 (define-property item-over-pointer
   (of-object "MaiaGroup")
   (prop-type "GParamObject")
@@ -1734,15 +1716,6 @@
   (docs "tag")
   (readable #t)
   (writable #f)
-  (construct-only #f)
-)
-
-(define-property characters
-  (of-object "MaiaImage")
-  (prop-type "GParamString")
-  (docs "characters")
-  (readable #t)
-  (writable #t)
   (construct-only #f)
 )
 
@@ -2411,15 +2384,6 @@
   (construct-only #f)
 )
 
-(define-property characters
-  (of-object "MaiaLabel")
-  (prop-type "GParamString")
-  (docs "characters")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
 (define-property row
   (of-object "MaiaLabel")
   (prop-type "GParamUInt")
@@ -2702,6 +2666,15 @@
   (construct-only #f)
 )
 
+(define-property nb-rows
+  (of-object "MaiaModel")
+  (prop-type "GParamUInt")
+  (docs "nb-rows")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
 ;; From MaiaOrientation
 
 ;; From MaiaPageFormat
@@ -2714,15 +2687,6 @@
   (docs "tag")
   (readable #t)
   (writable #f)
-  (construct-only #f)
-)
-
-(define-property characters
-  (of-object "MaiaPath")
-  (prop-type "GParamString")
-  (docs "characters")
-  (readable #t)
-  (writable #t)
   (construct-only #f)
 )
 
@@ -2896,15 +2860,6 @@
   (docs "tag")
   (readable #t)
   (writable #f)
-  (construct-only #f)
-)
-
-(define-property characters
-  (of-object "MaiaRectangle")
-  (prop-type "GParamString")
-  (docs "characters")
-  (readable #t)
-  (writable #t)
   (construct-only #f)
 )
 
@@ -3165,15 +3120,6 @@
   (construct-only #f)
 )
 
-(define-property parent
-  (of-object "MaiaView")
-  (prop-type "GParamObject")
-  (docs "parent")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
 (define-property lines
   (of-object "MaiaView")
   (prop-type "GParamUInt")
@@ -3206,7 +3152,7 @@
   (prop-type "GParamObject")
   (docs "model")
   (readable #t)
-  (writable #f)
+  (writable #t)
   (construct-only #f)
 )
 
@@ -3582,15 +3528,6 @@
   (docs "tag")
   (readable #t)
   (writable #f)
-  (construct-only #f)
-)
-
-(define-property characters
-  (of-object "MaiaArrow")
-  (prop-type "GParamString")
-  (docs "characters")
-  (readable #t)
-  (writable #t)
   (construct-only #f)
 )
 

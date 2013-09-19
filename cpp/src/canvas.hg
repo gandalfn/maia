@@ -105,7 +105,6 @@ namespace Maia
             _WRAP_METHOD(void load_from_file (const Glib::ustring& inFilename, const Glib::ustring& inRoot), maia_canvas_load_from_file, errthrow)
 
             _WRAP_PROPERTY("root", Glib::RefPtr<Item>)
-            _WRAP_PROPERTY("toolbox", Glib::RefPtr<Toolbox>)
             _WRAP_PROPERTY("surface", Glib::RefPtr<Graphic::Surface>)
     };
 }

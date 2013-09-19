@@ -613,14 +613,6 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         return inObject is ItemPackable || inObject is ToggleGroup || inObject is Model || inObject is Popup;
     }
 
-    internal override Graphic.Size
-    childs_size_request ()
-    {
-        m_Allocation = SizeAllocation (this);
-
-        return m_Allocation.size;
-    }
-
     private double
     get_page_break_delta ()
     {
@@ -682,6 +674,17 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
             damage ();
         }
+    }
+
+    internal override Graphic.Size
+    size_request (Graphic.Size inSize)
+    {
+        m_Allocation = SizeAllocation (this);
+
+        Graphic.Size ret = Graphic.Size (double.max (m_Allocation.size.width, inSize.width),
+                                         double.max (m_Allocation.size.height, inSize.height));
+
+        return ret;
     }
 
     internal override void

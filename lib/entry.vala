@@ -30,8 +30,6 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         }
     }
 
-    internal override string characters { get; set; default = null; }
-
     internal uint   row     { get; set; default = 0; }
     internal uint   column  { get; set; default = 0; }
     internal uint   rows    { get; set; default = 1; }
@@ -55,6 +53,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     public string   font_description { get; set; default = "Sans 12"; }
     public string   text             { get; set; default = ""; }
     public uint     lines            { get; set; default = 1; }
+    public uint     width_in_chars   { get; set; default = 0; }
     public double   underline_width  { get; set; default = 0.2; }
 
     // signals

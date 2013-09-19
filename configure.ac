@@ -1,6 +1,6 @@
 m4_define(maia_version_major, 0)
 m4_define(maia_version_minor, 1)
-m4_define(maia_version_micro, 1)
+m4_define(maia_version_micro, 2)
 AC_INIT([maia],[maia_version_major.maia_version_minor.maia_version_micro])
 AC_PREREQ(2.63)
 
@@ -26,7 +26,7 @@ dnl ****************************************************************************
 MAIA_MAJOR_VERSION=maia_version_major
 MAIA_MINOR_VERSION=maia_version_minor
 MAIA_MICRO_VERSION=maia_version_micro
-MAIA_SO_VERSION="`expr maia_version_major + maia_version_micro`:maia_version_minor:maia_version_micro"
+MAIA_SO_VERSION="maia_version_major:maia_version_minor:maia_version_micro"
 MAIA_ABI=$MAIA_MAJOR_VERSION.$MAIA_MINOR_VERSION
 MAIA_VERSION=$MAIA_MAJOR_VERSION.$MAIA_MINOR_VERSION.$MAIA_MICRO_VERSION
 

@@ -40,6 +40,9 @@ namespace Maia
         {
             _CLASS_GOBJECT(Document, MaiaManifestDocument, MAIA_MANIFEST_DOCUMENT, Core::Parser, MaiaCoreParser)
 
+            protected:
+                _CTOR_DEFAULT()
+
             public:
                 static Glib::RefPtr<Document> create (const Glib::ustring& inFilename)
                 {

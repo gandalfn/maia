@@ -8,6 +8,6 @@ includedir=@includedir@/maia-cairo-graphicmm-@MAIA_ABI@
 Name: maia-gtkmm-@MAIA_ABI@
 Description: Maia Gtkmm library
 Version: @MAIA_VERSION@
-Requires: maiamm-@MAIA_ABI@ cairomm-1.0 >= @CAIROMM_REQUIRED@
+Requires: maiamm-@MAIA_ABI@ maia-cairo-graphic-@MAIA_ABI@ cairomm-1.0 >= @CAIROMM_REQUIRED@
 Libs: -L${libdir} -lmaia-cairo-graphicmm
 Cflags: -I${includedir}

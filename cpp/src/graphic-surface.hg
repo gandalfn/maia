@@ -35,6 +35,8 @@ namespace Maia
             _CLASS_GOBJECT(Surface, MaiaGraphicSurface, MAIA_GRAPHIC_SURFACE, Pattern, MaiaGraphicPattern)
 
             protected:
+                _CTOR_DEFAULT()
+
                 _WRAP_VFUNC(void clear (), clear, errthrow)
                 _WRAP_VFUNC(void fast_blur (int inRadius, int inProcessCount), fast_blur, errthrow)
                 _WRAP_VFUNC(void gaussian_blur (int inRadius), gaussian_blur, errthrow)

@@ -32,9 +32,10 @@ namespace Maia
         _CLASS_GOBJECT(ToggleGroup, MaiaToggleGroup, MAIA_TOGGLE_GROUP, Core::Object, MaiaCoreObject)
         _IMPLEMENTS_INTERFACE(Manifest::Element)
 
-        public:
-            _CTOR_DEFAULT
+        protected:
+            _CTOR_DEFAULT()
 
+        public:
             static Glib::RefPtr<ToggleGroup> create ()
             {
                 return Glib::RefPtr<ToggleGroup> (new ToggleGroup ());

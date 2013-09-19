@@ -441,7 +441,7 @@ public class Maia.TestCanvas : Maia.TestCase
         canvas.show ();
         try
         {
-            canvas.load ("Group.root {" +
+            canvas.load ("Document.root {" +
                          "  Model.model {" +
                          "      Column.val {" +
                          "          column: 0;" +
@@ -449,11 +449,13 @@ public class Maia.TestCanvas : Maia.TestCase
                          "  }" +
                          "  Combo.combo {" +
                          "      font-description: 'Liberation Sans 14';" +
+                         "      xfill: false;" +
+                         "      xexpand: false;" +
                          "      yexpand: false;" +
                          "      fill-pattern: rgba (0.8, 0.8, 0.8, 0.8);" +
                          "      highligh-color: rgba (0.2, 0.2, 0.2, 0.8);" +
                          "      View.view {"+
-                         "          model: model;" +
+                         "          model-name: model;" +
                          "          [" +
                          "              Label.label {" +
                          "                  xfill: false;" +

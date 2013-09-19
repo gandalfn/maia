@@ -187,7 +187,7 @@ public class Maia.TestModel : Maia.TestCase
                             "       }" +
                             "   }" +
                             "   View.view { " +
-                            "       model: model;" +
+                            "       model-name: model;" +
                             "       lines: 2;" +
                             "       [" +
                             "           Grid.cell {" +
@@ -206,7 +206,7 @@ public class Maia.TestModel : Maia.TestCase
                             "   }" +
                             "   View.view2 { " +
                             "       column: 1;" +
-                            "       model: model;" +
+                            "       model-name: model;" +
                             "       lines: 2;" +
                             "       [" +
                             "           Grid.cell {" +

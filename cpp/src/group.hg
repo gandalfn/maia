@@ -32,6 +32,8 @@ namespace Maia
         _IGNORE(maia_group_childs_size_request)
 
         protected:
+            _CTOR_DEFAULT()
+
             _WRAP_VFUNC(void childs_size_request (Graphic::Size& outSize), childs_size_request)
 
         public:

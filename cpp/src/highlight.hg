@@ -29,6 +29,9 @@ namespace Maia
     {
         _CLASS_GOBJECT(Highlight, MaiaHighlight, MAIA_HIGHLIGHT, ToggleButton, MaiaToggleButton)
 
+        protected:
+            _CTOR_DEFAULT()
+
         public:
             static Glib::RefPtr<Highlight> create (const Glib::ustring& inId, const Glib::ustring& inLabel)
             {

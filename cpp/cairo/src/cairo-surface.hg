@@ -32,6 +32,9 @@ namespace Maia
         {
             _CLASS_GOBJECT(Surface, MaiaCairoSurface, MAIA_CAIRO_SURFACE, Maia::Graphic::Surface, MaiaGraphicSurface)
 
+            protected:
+                _CTOR_DEFAULT()
+
             public:
                 static Glib::RefPtr<Surface> create (const ::Cairo::RefPtr< ::Cairo::Surface>& inSurface, unsigned int inWidth, unsigned int inHeight);
                 static Glib::RefPtr<Surface> create (unsigned int inWidth, unsigned int inHeight);

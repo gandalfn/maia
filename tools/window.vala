@@ -47,7 +47,8 @@ public class CanvasEditor.Window : Gtk.Window
         {
             title = "New manifest*";
 
-            builder.add_from_file (Config.MAIA_UI_PATH + "/canvas-editor.ui");
+            //builder.add_from_file (Config.MAIA_UI_PATH + "/canvas-editor.ui");
+            builder.add_from_file ("canvas-editor.ui");
             var content = builder.get_object ("content") as Gtk.Widget;
             add (content);
 

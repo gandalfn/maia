@@ -218,7 +218,7 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
                 next_unichar (u);
             }
             else
-                throw new Core.ParseError.INVALID_UTF8 ("Invalid UTF-8 character at %i,%i", m_Line, m_Col);
+                throw new Core.ParseError.INVALID_UTF8 ("Attribute Invalid UTF-8 character at %i,%i", m_Line, m_Col);
 
 
             first = false;

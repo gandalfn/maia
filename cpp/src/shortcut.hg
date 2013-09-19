@@ -31,6 +31,9 @@ namespace Maia
         _CLASS_GOBJECT(Shortcut, MaiaShortcut, MAIA_SHORTCUT, Core::Object, MaiaCoreObject)
         _IMPLEMENTS_INTERFACE(Manifest::Element)
 
+        protected:
+            _CTOR_DEFAULT()
+
         public:
             static Glib::RefPtr<Shortcut> create ()
             {

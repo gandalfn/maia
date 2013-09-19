@@ -75,6 +75,8 @@ namespace Maia
             _CLASS_GOBJECT(Region, MaiaGraphicRegion, MAIA_GRAPHIC_REGION, Core::Object, MaiaCoreObject)
 
             protected:
+                _CTOR_DEFAULT()
+
                 _WRAP_VFUNC(void get_extents(Rectangle& outRect), get_extents)
                 _WRAP_VFUNC(void set_extents(Rectangle inRect), set_extents)
                 _WRAP_VFUNC(int get_length (), get_length)
@@ -95,7 +97,6 @@ namespace Maia
 
             public:
                 typedef RegionIterator iterator;
-
 
                 static Glib::RefPtr<Region> create (double inX, double inY, double inWidth, double inHeight)
                 {

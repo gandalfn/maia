@@ -37,6 +37,9 @@ namespace Maia
         {
             _CLASS_GOBJECT(Path, MaiaGraphicPath, MAIA_GRAPHIC_PATH, Core::Object, MaiaCoreObject)
 
+            protected:
+                _CTOR_DEFAULT()
+
             public:
                 static Glib::RefPtr<Path> create ()
                 {

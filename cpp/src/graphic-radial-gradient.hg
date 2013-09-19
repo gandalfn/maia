@@ -34,6 +34,9 @@ namespace Maia
         {
             _CLASS_GOBJECT(RadialGradient, MaiaGraphicRadialGradient, MAIA_GRAPHIC_RADIAL_GRADIENT, Gradient, MaiaGraphicGradient)
 
+            protected:
+                _CTOR_DEFAULT()
+
             public:
                 static Glib::RefPtr<RadialGradient> create (const Point& inStart, double inStartRadius, const Point& inEnd, double inEndRadius)
                 {

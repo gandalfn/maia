@@ -39,19 +39,6 @@ public class Maia.View : Maia.Grid
         }
     }
 
-    [CCode (notify = false)]
-    public override unowned Core.Object? parent {
-        get {
-            return base.parent;
-        }
-        construct set {
-            base.parent = value;
-
-            // reset model name
-            model_name = m_ModelName;
-        }
-    }
-
     public uint lines { get; set; default = 1; }
     public Orientation orientation { get; set; default = Orientation.VERTICAL; }
 
@@ -60,22 +47,8 @@ public class Maia.View : Maia.Grid
             return m_ModelName;
         }
         set {
-            if (m_Model != null)
-            {
-                m_Model.row_added.disconnect (on_row_added);
-                m_Model.row_deleted.disconnect (on_row_deleted);
-                m_Model.rows_reordered.disconnect (on_rows_reordered);
-            }
-
             m_ModelName = value;
-            m_Model = find_model (value);
-
-            if (m_Model != null)
-            {
-                m_Model.row_added.connect (on_row_added);
-                m_Model.row_deleted.connect (on_row_deleted);
-                m_Model.rows_reordered.connect (on_rows_reordered);
-            }
+            model = find_model (value);
         }
         default = null;
     }
@@ -91,9 +64,44 @@ public class Maia.View : Maia.Grid
                     m_Model.row_added.connect (on_row_added);
                     m_Model.row_deleted.connect (on_row_deleted);
                     m_Model.rows_reordered.connect (on_rows_reordered);
+
+                    // Add all row already inserted
+                    for (uint cpt = 0; cpt < m_Model.nb_rows; ++cpt)
+                    {
+                        m_Model.row_added (cpt);
+                    }
                 }
             }
             return m_Model;
+        }
+        set {
+            if (m_Model != null)
+            {
+                m_Model.row_added.disconnect (on_row_added);
+                m_Model.row_deleted.disconnect (on_row_deleted);
+                m_Model.rows_reordered.disconnect (on_rows_reordered);
+
+                // Remove all rows
+                for (uint cpt = 0; cpt < m_Model.nb_rows; ++cpt)
+                {
+                    m_Model.row_deleted (cpt);
+                }
+            }
+
+            m_Model = value;
+
+            if (m_Model != null)
+            {
+                m_Model.row_added.connect (on_row_added);
+                m_Model.row_deleted.connect (on_row_deleted);
+                m_Model.rows_reordered.connect (on_rows_reordered);
+
+                // Add all row already inserted
+                for (uint cpt = 0; cpt < m_Model.nb_rows; ++cpt)
+                {
+                    m_Model.row_added (cpt);
+                }
+            }
         }
     }
 
@@ -145,11 +153,21 @@ public class Maia.View : Maia.Grid
         not_dumpable_attributes.insert ("model");
 
         notify["item-over-pointer"].connect (on_pointer_over_changed);
+        notify["root"].connect (on_root_change);
     }
 
     public View (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
+    }
+
+    private void
+    on_root_change ()
+    {
+        if (m_ModelName != null && m_Model == null)
+        {
+            model_name = m_ModelName;
+        }
     }
 
     private inline unowned Model?

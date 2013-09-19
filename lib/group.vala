@@ -26,7 +26,6 @@ public class Maia.Group : Item
         }
     }
 
-    internal override string characters { get; set; default = null; }
     public unowned Item? item_over_pointer { get; set; default = null; }
 
     // methods

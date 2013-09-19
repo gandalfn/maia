@@ -31,7 +31,10 @@ namespace Maia
             {
                 Glib::RefPtr<Element> pElement = (*pSlot) (inId);
                 if (pElement)
+                {
+                    pElement->reference();
                     return pElement->gobj ();
+                }
             }
 
             return 0;
@@ -45,7 +48,7 @@ namespace Maia
         }
 
         void
-        register_create_func (const Glib::ustring& inTag, Element::SlotCreateFunc inFunc)
+        Element::register_create_func (const Glib::ustring& inTag, Element::SlotCreateFunc inFunc)
         {
             Element::SlotCreateFunc* pSlot = new Element::SlotCreateFunc (inFunc);
             maia_manifest_element_register_create_func (inTag.c_str (), register_create_func_callback, pSlot, register_create_func_destroy);

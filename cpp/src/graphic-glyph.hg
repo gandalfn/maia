@@ -53,6 +53,8 @@ namespace Maia
             _CLASS_GOBJECT(Glyph, MaiaGraphicGlyph, MAIA_GRAPHIC_GLYPH, Core::Object, MaiaCoreObject)
 
             protected:
+                _CTOR_DEFAULT()
+
                 _WRAP_VFUNC(void get_size (Size& outSize), get_size)
                 _WRAP_VFUNC(void update (const Glib::RefPtr<Context>& inContext), update)
                 _WRAP_VFUNC(void get_cursor_position (int inIndex, Rectangle& outRectangle), get_cursor_position)

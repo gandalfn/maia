@@ -29,8 +29,6 @@ public class Maia.Arrow : Item, ItemMovable
         }
     }
 
-    internal override string characters { get; set; default = null; }
-
     public Graphic.Point start { get; set; default = Graphic.Point (0, 0); }
     public Graphic.Point end {
         get {

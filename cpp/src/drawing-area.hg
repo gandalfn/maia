@@ -34,6 +34,9 @@ namespace Maia
         _CLASS_GOBJECT(DrawingArea, MaiaDrawingArea, MAIA_DRAWING_AREA, Group, MaiaGroup)
         _IMPLEMENTS_INTERFACE(ItemPackable)
 
+        protected:
+            _CTOR_DEFAULT()
+
         public:
             static Glib::RefPtr<DrawingArea> create (const Glib::ustring& inId)
             {

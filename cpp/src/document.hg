@@ -31,6 +31,9 @@ namespace Maia
     {
         _CLASS_GOBJECT(Document, MaiaDocument, MAIA_DOCUMENT, Item, MaiaItem)
 
+        protected:
+            _CTOR_DEFAULT()
+
         public:
             static Glib::RefPtr<Document> create (const Glib::ustring& inId, PageFormat inFormat)
             {

@@ -198,7 +198,7 @@ public class Maia.Popup : Group
     internal override Graphic.Size
     size_request (Graphic.Size inSize)
     {
-        if (m_Content != null)
+        if (m_Content != null && (m_Content.position.x != border / 2 || m_Content.position.y != border / 2))
         {
             m_Content.position = Graphic.Point (border / 2, border / 2);
         }

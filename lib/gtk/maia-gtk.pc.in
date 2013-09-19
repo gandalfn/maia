@@ -9,5 +9,5 @@ Name: maia-gtk-@MAIA_ABI@
 Description: Maia GTK engine library
 Version: @MAIA_VERSION@
 Requires: maia-@MAIA_ABI@ maia-cairo-graphic-@MAIA_ABI@ maia-rsvg-@MAIA_ABI@ maia-gdk-pixbuf-@MAIA_ABI@ gtk+-2.0 >= @GTK_REQUIRED@
-Libs: -L${libdir} -lmaia-cairo-graphic
+Libs: -L${libdir} -lmaia-gtk
 Cflags: -I${includedir}

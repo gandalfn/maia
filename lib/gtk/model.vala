@@ -41,12 +41,23 @@ public class Maia.Gtk.Model : Maia.Model
 
             return GLib.Value (GLib.Type.INVALID);
         }
+
+        public Column (string inId)
+        {
+            GLib.Object (id: GLib.Quark.from_string (inId));
+        }
     }
 
     // properties
     private global::Gtk.TreeModel m_TreeModel;
 
     // accessors
+    internal override uint nb_rows {
+        get {
+            return m_TreeModel != null ? (uint)m_TreeModel.iter_n_children (null) : 0;
+        }
+    }
+
     public global::Gtk.TreeModel treemodel {
         get {
             return m_TreeModel;

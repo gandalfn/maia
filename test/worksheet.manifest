@@ -10,7 +10,7 @@ Document.worksheet {
 //~     }
 //~
 //~     View.view_example {
-//~         model: model_example;
+//~         model-name: model_example;
 //~         [
 //~           Grid.cell_1_grid {
 //~             column-spacing: 5;
@@ -214,13 +214,13 @@ Document.worksheet {
                     font-description: "Liberation Sans 14";
                     text: "Label drawing 2";
                 }
-                
+
                 Arrow.arrow_2 {
                 	stroke-pattern: #000000;
                 	linked-item: label_draw;
                 	start: 10, 10;
                 }
-                
+
                 Arrow.arrow_3 {
                 	stroke-pattern: #000000;
                 	linked-item: label_draw2;

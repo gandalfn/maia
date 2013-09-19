@@ -35,6 +35,9 @@ namespace Maia
         {
             _CLASS_GOBJECT(Model, MaiaGtkModel, MAIA_GTK_MODEL, Maia::Model, MaiaModel)
 
+            protected:
+                _CTOR_DEFAULT()
+
             public:
                 static Glib::RefPtr<Model> create (const Glib::RefPtr< ::Gtk::TreeModel>& inTreeModel)
                 {
@@ -51,12 +54,23 @@ namespace Maia
 
                 _IGNORE(maia_gtk_model_convert_row_to_tree_iter, maia_gtk_model_convert_tree_iter_to_row)
 
+                _WRAP_PROPERTY("nb-rows", guint)
                 _WRAP_PROPERTY("treemodel", Glib::RefPtr< ::Gtk::TreeModel>)
         };
 
         class ModelColumn : public Maia::ModelColumn
         {
             _CLASS_GOBJECT(ModelColumn, MaiaGtkModelColumn, MAIA_GTK_MODEL_COLUMN, Maia::ModelColumn, MaiaModelColumn)
+
+            protected:
+                _CTOR_DEFAULT()
+
+            public:
+                static Glib::RefPtr<ModelColumn> create (const Glib::ustring& inId)
+                {
+                    MaiaGtkModelColumn* pColumn = maia_gtk_model_column_new (inId.c_str ());
+                    return Glib::RefPtr<ModelColumn> (new ModelColumn (pColumn));
+                }
         };
     }
 }
