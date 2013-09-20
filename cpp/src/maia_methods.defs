@@ -4816,6 +4816,11 @@
   )
 )
 
+(define-function maia_manifest_style_get_type
+  (c-name "maia_manifest_style_get_type")
+  (return-type "GType")
+)
+
 (define-function maia_manifest_element_get_type
   (c-name "maia_manifest_element_get_type")
   (return-type "GType")
@@ -4829,11 +4834,6 @@
     '("const-gchar*" "inId")
     '("GError**" "error")
   )
-)
-
-(define-function maia_manifest_style_get_type
-  (c-name "maia_manifest_style_get_type")
-  (return-type "GType")
 )
 
 (define-method add_style
@@ -4890,6 +4890,36 @@
   (of-object "MaiaManifestDocument")
   (c-name "maia_manifest_document_get_element_id")
   (return-type "const-gchar*")
+)
+
+(define-method get_path
+  (of-object "MaiaManifestDocument")
+  (c-name "maia_manifest_document_get_path")
+  (return-type "const-gchar*")
+)
+
+(define-method set_path
+  (of-object "MaiaManifestDocument")
+  (c-name "maia_manifest_document_set_path")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_styles
+  (of-object "MaiaManifestDocument")
+  (c-name "maia_manifest_document_get_styles")
+  (return-type "MaiaCoreSet*")
+)
+
+(define-method set_styles
+  (of-object "MaiaManifestDocument")
+  (c-name "maia_manifest_document_set_styles")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreSet*" "value")
+  )
 )
 
 (define-function maia_manifest_element_create
@@ -4955,6 +4985,36 @@
   (return-type "none")
   (parameters
     '("const-gchar*" "value")
+  )
+)
+
+(define-method get_manifest_path
+  (of-object "MaiaManifestElement")
+  (c-name "maia_manifest_element_get_manifest_path")
+  (return-type "const-gchar*")
+)
+
+(define-method set_manifest_path
+  (of-object "MaiaManifestElement")
+  (c-name "maia_manifest_element_set_manifest_path")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_manifest_styles
+  (of-object "MaiaManifestElement")
+  (c-name "maia_manifest_element_get_manifest_styles")
+  (return-type "MaiaCoreSet*")
+)
+
+(define-method set_manifest_styles
+  (of-object "MaiaManifestElement")
+  (c-name "maia_manifest_element_set_manifest_styles")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreSet*" "value")
   )
 )
 

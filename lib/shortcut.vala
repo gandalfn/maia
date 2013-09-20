@@ -27,6 +27,9 @@ public class Maia.Shortcut : Core.Object, Manifest.Element
     }
 
     internal string characters { get; set; default = null; }
+    internal string manifest_path { get; set; default = null; }
+    internal Core.Set<Manifest.Style> manifest_styles { get; set; default = null; }
+
 
     public string section { get; set; default = null; }
     public string label { get; set; default = null; }

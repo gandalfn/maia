@@ -53,6 +53,8 @@ public class Maia.Manifest.Style : Core.Object, Element
     }
 
     internal string characters { get; set; default = null; }
+    internal string manifest_path { get; set; default = null; }
+    internal Core.Set<Manifest.Style> manifest_styles { get; set; default = null; }
 
     public string name {
         get {

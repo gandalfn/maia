@@ -216,9 +216,10 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         unowned Path arrow_item = find (GLib.Quark.from_string (id_arrow), false) as Path;
         if (arrow_item != null)
         {
+            Graphic.Size row_size = Graphic.Size (0, 0);
+
             if (m_View != null)
             {
-                Graphic.Size row_size;
                 if (m_View.get_row_size (0, out row_size))
                 {
                     arrow_item.path = "M 3,3 L %g,3 L %g,%g Z".printf (row_size.height - 3,
@@ -229,18 +230,18 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             }
 
             var arrow_size = arrow_item.size;
-            if (view_size.width > 0)
+            if (row_size.width > 0)
             {
-                childs_size.width = view_size.width + arrow_size.width + ((3 * arrow_size.width) / 2);
+                childs_size.width = row_size.width + arrow_size.width + ((3 * arrow_size.width) / 2);
             }
             else
             {
                 childs_size.width = arrow_size.width * 2;
             }
 
-            if (view_size.height > 0)
+            if (row_size.height > 0)
             {
-                childs_size.height = view_size.height + arrow_size.height;
+                childs_size.height = row_size.height + arrow_size.height;
             }
             else
             {
@@ -252,6 +253,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
                 m_Popup.border = arrow_size.width / 2;
             }
         }
+
         return childs_size;
     }
 
@@ -282,6 +284,8 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
                     var end = convert_to_root_space (Graphic.Point (inAllocation.extents.size.width - arrow_size.width,
                                                                     inAllocation.extents.size.height));
 
+                    start = (root as Item).convert_to_item_space (start);
+                    end = (root as Item).convert_to_item_space (end);
                     var popup_size = Graphic.Size (end.x - start.x, m_Popup.size_requested.height);
 
                     if (m_Popup.position.x != start.x || m_Popup.position.y != start.y)

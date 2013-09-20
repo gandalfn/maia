@@ -658,12 +658,48 @@
   (construct-only #f)
 )
 
+(define-property path
+  (of-object "MaiaManifestDocument")
+  (prop-type "GParamString")
+  (docs "path")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property styles
+  (of-object "MaiaManifestDocument")
+  (prop-type "GParamObject")
+  (docs "styles")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaManifestElement
 
 (define-property characters
   (of-object "MaiaManifestElement")
   (prop-type "GParamString")
   (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property manifest-path
+  (of-object "MaiaManifestElement")
+  (prop-type "GParamString")
+  (docs "manifest-path")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property manifest-styles
+  (of-object "MaiaManifestElement")
+  (prop-type "GParamObject")
+  (docs "manifest-styles")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -695,6 +731,24 @@
   (of-object "MaiaManifestStyle")
   (prop-type "GParamString")
   (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property manifest-path
+  (of-object "MaiaManifestStyle")
+  (prop-type "GParamString")
+  (docs "manifest-path")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property manifest-styles
+  (of-object "MaiaManifestStyle")
+  (prop-type "GParamObject")
+  (docs "manifest-styles")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -2050,6 +2104,24 @@
   (construct-only #f)
 )
 
+(define-property manifest-path
+  (of-object "MaiaItem")
+  (prop-type "GParamString")
+  (docs "manifest-path")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property manifest-styles
+  (of-object "MaiaItem")
+  (prop-type "GParamObject")
+  (docs "manifest-styles")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property is-packable
   (of-object "MaiaItem")
   (prop-type "GParamBoolean")
@@ -2657,6 +2729,24 @@
   (construct-only #f)
 )
 
+(define-property manifest-path
+  (of-object "MaiaModel")
+  (prop-type "GParamString")
+  (docs "manifest-path")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property manifest-styles
+  (of-object "MaiaModel")
+  (prop-type "GParamObject")
+  (docs "manifest-styles")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property name
   (of-object "MaiaModel")
   (prop-type "GParamString")
@@ -3082,6 +3172,24 @@
   (construct-only #f)
 )
 
+(define-property manifest-path
+  (of-object "MaiaToggleGroup")
+  (prop-type "GParamString")
+  (docs "manifest-path")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property manifest-styles
+  (of-object "MaiaToggleGroup")
+  (prop-type "GParamObject")
+  (docs "manifest-styles")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property name
   (of-object "MaiaToggleGroup")
   (prop-type "GParamString")
@@ -3171,6 +3279,24 @@
   (of-object "MaiaShortcut")
   (prop-type "GParamString")
   (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property manifest-path
+  (of-object "MaiaShortcut")
+  (prop-type "GParamString")
+  (docs "manifest-path")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property manifest-styles
+  (of-object "MaiaShortcut")
+  (prop-type "GParamObject")
+  (docs "manifest-styles")
   (readable #t)
   (writable #t)
   (construct-only #f)

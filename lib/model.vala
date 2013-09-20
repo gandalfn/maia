@@ -30,6 +30,8 @@ public abstract class Maia.Model : Core.Object, Manifest.Element
         }
 
         internal string characters { get; set; default = null; }
+        internal string manifest_path { get; set; default = null; }
+        internal Core.Set<Manifest.Style> manifest_styles { get; set; default = null; }
 
         public string name {
             owned get {
@@ -71,6 +73,8 @@ public abstract class Maia.Model : Core.Object, Manifest.Element
     }
 
     internal string characters { get; set; default = null; }
+    internal string manifest_path { get; set; default = null; }
+    internal Core.Set<Manifest.Style> manifest_styles { get; set; default = null; }
 
     public string name {
         owned get {

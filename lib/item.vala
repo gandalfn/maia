@@ -85,7 +85,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
     public abstract string tag { get; }
 
-    public string characters { get; set; default = null; }
+    internal string characters { get; set; default = null; }
+    internal string manifest_path { get; set; default = null; }
+    internal Core.Set<Manifest.Style> manifest_styles { get; set; default = null; }
 
     public bool is_packable {
         get {
@@ -459,7 +461,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             // damage parent
             (parent as Item).damage (old_geometry);
         }
-        else
+        else if (geometry != null)
         {
             geometry = null;
         }

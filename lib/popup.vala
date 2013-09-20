@@ -196,24 +196,23 @@ public class Maia.Popup : Group
     }
 
     internal override Graphic.Size
-    size_request (Graphic.Size inSize)
+    childs_size_request ()
     {
         if (m_Content != null && (m_Content.position.x != border / 2 || m_Content.position.y != border / 2))
         {
             m_Content.position = Graphic.Point (border / 2, border / 2);
         }
 
-        Graphic.Size ret = base.size_request (inSize);
+        Graphic.Size content_size = m_Content.size;
 
-        ret.width = double.max (inSize.width + border, ret.width + border);
-        ret.height = double.max (inSize.height + border, ret.height + border);
+        content_size.resize (border, border);
 
         if (m_Content != null)
         {
             switch (placement)
             {
                 case PopupPlacement.TOP:
-                    position.translate (Graphic.Point (0, -ret.height));
+                    position.translate (Graphic.Point (0, -content_size.height));
                     break;
 
                 case PopupPlacement.BOTTOM:
@@ -225,12 +224,12 @@ public class Maia.Popup : Group
                     break;
 
                 case PopupPlacement.LEFT:
-                    position.translate (Graphic.Point (-ret.width, 0));
+                    position.translate (Graphic.Point (-content_size.width, 0));
                     break;
             }
         }
 
-        return ret;
+        return content_size;
     }
 
     internal override void

@@ -81,6 +81,17 @@ public class Maia.Manifest.Document : Core.Parser
         }
     }
 
+    public string path { get; set; default = null; }
+
+    public Core.Set<Style> styles {
+        get {
+            return m_Styles;
+        }
+        set {
+            m_Styles = value;
+        }
+    }
+
     // Signals
     public signal void attribute_bind_added (AttributeBind inAttribute, string inProperty);
 
@@ -111,6 +122,8 @@ public class Maia.Manifest.Document : Core.Parser
 
             m_Filename = inFilename;
             m_File = (owned)file;
+
+            path = GLib.Path.get_dirname (m_Filename);
         }
         catch (FileError error)
         {
@@ -281,7 +294,7 @@ public class Maia.Manifest.Document : Core.Parser
                 // if path is relative take path of parent
                 if (!GLib.Path.is_absolute (filename))
                 {
-                    filename = GLib.Path.get_dirname (m_Filename) + "/" + filename;
+                    filename = path + "/" + filename;
                 }
                 next_char ();
                 m_Include = new Document (filename);

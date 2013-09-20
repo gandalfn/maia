@@ -53,6 +53,8 @@ public interface Maia.Manifest.Element : Core.Object
     // accessors
     public abstract string tag { get; }
     public abstract string characters { get; set; default = null; }
+    public abstract string manifest_path { get; set; default = null; }
+    public abstract Core.Set<Style> manifest_styles { get; set; default = null; }
 
     public unowned Element? root {
         get {
@@ -254,6 +256,8 @@ public interface Maia.Manifest.Element : Core.Object
                     }
                     else if (element != null)
                     {
+                        element.manifest_path = inManifest.path;
+                        element.manifest_styles = inManifest.styles;
                         add (element);
                         element.read_manifest (inManifest);
                         inManifest.owner = this;
