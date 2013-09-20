@@ -58,6 +58,7 @@ public class Maia.Arrow : Item, ItemMovable
                 unowned Item? item = parent.find (GLib.Quark.from_string (m_LinkedItem)) as Item;
                 if (item != null)
                 {
+                    item.notify["visible"].disconnect (on_linked_item_visible_changed);
                     item.notify["size"].disconnect (on_linked_item_geometry_changed);
                     item.notify["position"].disconnect (on_linked_item_geometry_changed);
                 }
@@ -70,8 +71,11 @@ public class Maia.Arrow : Item, ItemMovable
                 unowned Item? item = parent.find (GLib.Quark.from_string (m_LinkedItem)) as Item;
                 if (item != null)
                 {
+                    item.notify["visible"].connect (on_linked_item_visible_changed);
                     item.notify["size"].connect (on_linked_item_geometry_changed);
                     item.notify["position"].connect (on_linked_item_geometry_changed);
+
+                    visible = item.visible;
                 }
             }
         }
@@ -98,6 +102,17 @@ public class Maia.Arrow : Item, ItemMovable
     public Arrow (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
+    }
+
+    private void
+    on_linked_item_visible_changed ()
+    {
+        // Search linked item
+        unowned Item? item = parent.find (GLib.Quark.from_string (linked_item)) as Item;
+        if (item != null)
+        {
+            visible = item.visible;
+        }
     }
 
     private void

@@ -36,6 +36,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     private Graphic.Region    m_Geometry = null;
     private Graphic.Point     m_Position = Graphic.Point (0, 0);
     private Graphic.Size      m_Size = Graphic.Size (0, 0);
+    private Graphic.Size      m_SizeRequested = Graphic.Size (0, 0);
     private Graphic.Transform m_Transform = new Graphic.Transform.identity ();
     private Graphic.Transform m_TransformToItemSpace = null;
     private Graphic.Transform m_TransformToRootSpace = null;
@@ -219,9 +220,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     public Graphic.Size size {
         get {
             notify["size"].disconnect (on_move_resize);
-            Graphic.Size ret = size_request (m_Size);
+            m_SizeRequested = size_request (m_Size);
             notify["size"].connect (on_move_resize);
-            return ret;
+            return m_SizeRequested;
         }
         set {
             m_Size = value;
@@ -230,10 +231,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
     public Graphic.Size size_requested {
         get {
-            Graphic.Point transformed_position;
-            Graphic.Size transformed_size;
-            get_transformed_position_and_size (out transformed_position, out transformed_size);
-            return transformed_size;
+            return m_SizeRequested;
         }
     }
 

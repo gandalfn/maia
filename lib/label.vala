@@ -126,22 +126,39 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     // methods
     construct
     {
-        // connect onto text changed
-        notify["text"].connect (() => {
-            m_Glyph = null;
-            geometry = null;
-        });
-
         // Default color
         stroke_pattern = new Graphic.Color (0, 0, 0);
 
         // Default font
         font_description = "Sans 12";
+
+        // connect onto layout properties changed
+        notify["text"].connect (on_layout_property_changed);
+        notify["alignment"].connect (on_layout_property_changed);
+        notify["wrap-mode"].connect (on_layout_property_changed);
+        notify["font-description"].connect (on_layout_property_changed);
+
+        // connect onto draw properties changed
+        notify["stroke-pattern"].connect (on_draw_property_changed);
+        notify["shade-color"].connect (on_draw_property_changed);
     }
 
     public Label (string inId, string inLabel)
     {
         GLib.Object (id: GLib.Quark.from_string (inId), text: inLabel);
+    }
+
+    private void
+    on_layout_property_changed ()
+    {
+        m_Glyph = null;
+        geometry = null;
+    }
+
+    private void
+    on_draw_property_changed ()
+    {
+        damage ();
     }
 
     internal override bool

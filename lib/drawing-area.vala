@@ -427,48 +427,88 @@ public class Maia.DrawingArea : Group, ItemPackable
             {
                 unowned Arrow arrow = (Arrow)child;
 
-                arrow.draw (inContext);
-
-                if (arrow == selected && arrow.linked_item != null)
+                if (arrow.visible)
                 {
-                    // Search linked item
-                    unowned Item? item = find (GLib.Quark.from_string (arrow.linked_item)) as Item;
-                    if (item != null)
+                    arrow.draw (inContext);
+
+                    if (arrow == selected && arrow.linked_item != null)
                     {
-                        // Clip area whithout linked item area
-                        var area = arrow.geometry.copy ();
-                        area.subtract (item.geometry);
-                        var clip = new Graphic.Path.from_region (area);
-
-                        var path = new Graphic.Path ();
-                        var start_arrow = arrow.start;
-                        var end_arrow = arrow.end;
-
-                        double width = start_arrow.x - end_arrow.x;
-                        double height = start_arrow.y - end_arrow.y;
-
-                        double angle = GLib.Math.atan2 (height, width);
-
-                        var arrow_transform = new Graphic.Transform.identity ();
-                        arrow_transform.translate (start_arrow.x, start_arrow.y);
-                        arrow_transform.rotate (angle);
-                        arrow_transform.translate (-start_arrow.x, -start_arrow.y);
-                        path.rectangle (start_arrow.x - GLib.Math.sqrt (GLib.Math.pow (width, 2) + GLib.Math.pow (height, 2)) - selected_border,
-                                        start_arrow.y - selected_border, GLib.Math.sqrt (GLib.Math.pow (width, 2) + GLib.Math.pow (height, 2)) + selected_border * 2.0,
-                                        selected_border * 2, selected_border * 2);
-
-                        inContext.save ();
+                        // Search linked item
+                        unowned Item? item = find (GLib.Quark.from_string (arrow.linked_item)) as Item;
+                        if (item != null)
                         {
-                            inContext.clip (clip);
-                            inContext.transform = arrow_transform;
+                            // Clip area whithout linked item area
+                            var area = arrow.geometry.copy ();
+                            area.subtract (item.geometry);
+                            var clip = new Graphic.Path.from_region (area);
+
+                            var path = new Graphic.Path ();
+                            var start_arrow = arrow.start;
+                            var end_arrow = arrow.end;
+
+                            double width = start_arrow.x - end_arrow.x;
+                            double height = start_arrow.y - end_arrow.y;
+
+                            double angle = GLib.Math.atan2 (height, width);
+
+                            var arrow_transform = new Graphic.Transform.identity ();
+                            arrow_transform.translate (start_arrow.x, start_arrow.y);
+                            arrow_transform.rotate (angle);
+                            arrow_transform.translate (-start_arrow.x, -start_arrow.y);
+                            path.rectangle (start_arrow.x - GLib.Math.sqrt (GLib.Math.pow (width, 2) + GLib.Math.pow (height, 2)) - selected_border,
+                                            start_arrow.y - selected_border, GLib.Math.sqrt (GLib.Math.pow (width, 2) + GLib.Math.pow (height, 2)) + selected_border * 2.0,
+                                            selected_border * 2, selected_border * 2);
+
+                            inContext.save ();
+                            {
+                                inContext.clip (clip);
+                                inContext.transform = arrow_transform;
+                                inContext.dash = { 2, 2 };
+                                inContext.line_width = selected_border_line_width;
+                                inContext.pattern = selected_border_color;
+                                inContext.stroke (path);
+                            }
+                            inContext.restore ();
+
+                            path = new Graphic.Path ();
+                            path.rectangle (item.geometry.extents.origin.x - selected_border / 2.0,
+                                            item.geometry.extents.origin.y - selected_border / 2.0,
+                                            item.geometry.extents.size.width + selected_border,
+                                            item.geometry.extents.size.height + selected_border,
+                                            selected_border, selected_border);
+
                             inContext.dash = { 2, 2 };
                             inContext.line_width = selected_border_line_width;
                             inContext.pattern = selected_border_color;
                             inContext.stroke (path);
                         }
-                        inContext.restore ();
+                    }
+                }
+            }
+            else if (child is Item)
+            {
+                unowned Item item = (Item)child;
 
-                        path = new Graphic.Path ();
+                if (item.visible)
+                {
+                    item.draw (inContext);
+
+                    if (item == selected)
+                    {
+                        if (m_SelectedItemState > SelectedItemState.SELECTED)
+                        {
+                            inContext.save ();
+                            {
+                                inContext.translate (item.geometry.extents.origin);
+                                inContext.translate (Graphic.Point (selected_border + anchor_size, selected_border + anchor_size).invert ());
+                                if (m_AnchorPath == null) create_anchor_path ();
+                                inContext.pattern = selected_border_color;
+                                inContext.stroke (m_AnchorPath);
+                            }
+                            inContext.restore ();
+                        }
+
+                        var path = new Graphic.Path ();
                         path.rectangle (item.geometry.extents.origin.x - selected_border / 2.0,
                                         item.geometry.extents.origin.y - selected_border / 2.0,
                                         item.geometry.extents.size.width + selected_border,
@@ -480,40 +520,6 @@ public class Maia.DrawingArea : Group, ItemPackable
                         inContext.pattern = selected_border_color;
                         inContext.stroke (path);
                     }
-                }
-            }
-            else if (child is Item)
-            {
-                unowned Item item = (Item)child;
-
-                item.draw (inContext);
-
-                if (item == selected)
-                {
-                    if (m_SelectedItemState > SelectedItemState.SELECTED)
-                    {
-                        inContext.save ();
-                        {
-                            inContext.translate (item.geometry.extents.origin);
-                            inContext.translate (Graphic.Point (selected_border + anchor_size, selected_border + anchor_size).invert ());
-                            if (m_AnchorPath == null) create_anchor_path ();
-                            inContext.pattern = selected_border_color;
-                            inContext.stroke (m_AnchorPath);
-                        }
-                        inContext.restore ();
-                    }
-
-                    var path = new Graphic.Path ();
-                    path.rectangle (item.geometry.extents.origin.x - selected_border / 2.0,
-                                    item.geometry.extents.origin.y - selected_border / 2.0,
-                                    item.geometry.extents.size.width + selected_border,
-                                    item.geometry.extents.size.height + selected_border,
-                                    selected_border, selected_border);
-
-                    inContext.dash = { 2, 2 };
-                    inContext.line_width = selected_border_line_width;
-                    inContext.pattern = selected_border_color;
-                    inContext.stroke (path);
                 }
             }
         }

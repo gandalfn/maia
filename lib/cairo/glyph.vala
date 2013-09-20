@@ -32,7 +32,7 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
                 {
                     Pango.Rectangle ink, logical;
                     m_Layout.get_pixel_extents (out ink, out logical);
-                    return Graphic.Size (logical.x + logical.width, logical.y + logical.height);
+                    return Graphic.Size (GLib.Math.ceil (logical.x + logical.width), GLib.Math.ceil (logical.y + logical.height));
                 }
                 return Graphic.Size (0, 0);
             }
@@ -107,7 +107,7 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
             {
                 Pango.Rectangle ink, logical;
                 m_Layout.get_pixel_extents (out ink, out logical);
-                return Graphic.Size (logical.x + logical.width, logical.y + logical.height);
+                return Graphic.Size (GLib.Math.ceil (logical.x + logical.width), GLib.Math.ceil (logical.y + logical.height));
             }
             return m_Size;
         }
