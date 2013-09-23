@@ -138,9 +138,6 @@ public class Maia.Document : Item
         // connect onto border width and format change to create page shadow
         notify["format"].connect (on_page_shadow_change);
         notify["border-width"].connect (on_page_shadow_change);
-
-        // connect onto position changed
-        notify["position"].connect (on_position_changed);
     }
 
     public Document (string inId, PageFormat inFormat)
@@ -531,35 +528,6 @@ public class Maia.Document : Item
         }
     }
 
-    private void
-    on_position_changed ()
-    {
-        if (geometry != null)
-        {
-            // Clear visible page list
-            m_VisiblePages.clear ();
-
-            // Get visible area
-            var visible_area = geometry.copy ();
-            visible_area.translate (position);
-
-            // Update each page
-            foreach (unowned Page page in m_Pages)
-            {
-                // If page is in document geometry add it to visible pages
-                if (visible_area.contains_rectangle (page.geometry.extents) != Graphic.Region.Overlap.OUT)
-                {
-                    m_VisiblePages.insert (page);
-                    page.damage (visible_area);
-                }
-                else if (m_VisiblePages.length > 0)
-                {
-                    break;
-                }
-            }
-        }
-    }
-
     private static void
     on_bind_value_changed (Manifest.AttributeBind inAttribute, Object inSrc, string inProperty)
     {
@@ -606,6 +574,44 @@ public class Maia.Document : Item
         inDocument.attribute_bind_added.connect (on_attribute_bind_added);
     }
 
+    internal override void
+    on_move ()
+    {
+        if (geometry != null)
+        {
+            // Clear visible page list
+            m_VisiblePages.clear ();
+
+            // Get visible area
+            var visible_area = geometry.copy ();
+            visible_area.translate (position);
+
+            // Update each page
+            foreach (unowned Page page in m_Pages)
+            {
+                // If page is in document geometry add it to visible pages
+                if (visible_area.contains_rectangle (page.geometry.extents) != Graphic.Region.Overlap.OUT)
+                {
+                    m_VisiblePages.insert (page);
+                    page.damage (visible_area);
+                }
+                else if (m_VisiblePages.length > 0)
+                {
+                    break;
+                }
+            }
+
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "Damage document %s", visible_area.extents.to_string ());
+            damage (geometry);
+        }
+    }
+
+    internal override void
+    on_resize ()
+    {
+        damage ();
+    }
+
     internal override Graphic.Size
     size_request (Graphic.Size inSize)
     {
@@ -625,10 +631,14 @@ public class Maia.Document : Item
     internal override void
     on_child_damaged (Drawable inChild, Graphic.Region? inArea)
     {
-        if (inChild.geometry != null)
+        if (inChild is Popup)
+        {
+            base.on_child_damaged (inChild,  inArea);
+        }
+        else if (inChild.geometry != null)
         {
             unowned Page first = m_Pages.first ();
-            if (!(inChild is Popup) && first != null && (first.header == inChild || first.footer == inChild))
+            if (first != null && (first.header == inChild || first.footer == inChild))
             {
                 foreach (unowned Page page in m_VisiblePages)
                 {
@@ -692,10 +702,7 @@ public class Maia.Document : Item
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
 
                 // Remove the offset of scrolling
-                if (!(inChild is Popup))
-                {
-                    damaged_area.translate (position.invert ());
-                }
+                damaged_area.translate (position.invert ());
                 damaged_area.transform (transform);
 
                 // damage item
@@ -736,7 +743,7 @@ public class Maia.Document : Item
                 }
             }
 
-            on_position_changed ();
+            on_move ();
 
             // Update each page
             foreach (unowned Page page in m_Pages)
@@ -755,8 +762,6 @@ public class Maia.Document : Item
                     popup.update (inContext, new Graphic.Region (Graphic.Rectangle (popup_position.x, popup_position.y, popup_size.width, popup_size.height)));
                 }
             }
-
-            damage ();
         }
     }
 
@@ -850,62 +855,75 @@ public class Maia.Document : Item
     internal override bool
     on_button_press_event (uint inButton, Graphic.Point inPoint)
     {
-        bool ret = base.on_button_press_event (inButton, inPoint);
+        bool ret = false;
 
-        if (ret)
+        try
         {
-            try
+            // Check if event occur under popup
+            foreach (unowned Core.Object child in this)
             {
-                // Check if event occur under popup
-                foreach (unowned Core.Object child in this)
+                unowned Popup? popup = child as Popup;
+                if (popup != null)
                 {
-                    unowned Popup? popup = child as Popup;
-                    if (popup != null)
-                    {
-                        // Transform point to popup coordinate space
-                        Graphic.Point point = inPoint;
-                        Graphic.Matrix matrix = transform.matrix;
-                        matrix.invert ();
-                        Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
-                        point.transform (item_transform);
-                        point.translate (popup.position.invert ());
+                    var point = convert_to_root_space (inPoint);
 
-                        // point under popup
-                        if (popup.button_press_event (inButton, point))
-                        {
-                            // event occurate under child stop signal
-                            GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
-                            return false;
-                        }
-                    }
-                }
+                    var offset = popup.position.invert ();
+                    var point_transform = new Graphic.Transform.identity ();
+                    point_transform.translate (offset.x, offset.y);
 
-                // Translate point onto offset of visible area
-                Graphic.Point point = inPoint;
-                Graphic.Matrix matrix = transform.matrix;
-                matrix.invert ();
-                Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
-                point.transform (item_transform);
-                point.translate (position);
+                    var matrix = transform.matrix;
+                    matrix.invert ();
+                    var transform_invert = new Graphic.Transform.from_matrix (matrix);
+                    point_transform.add (transform_invert);
 
-                foreach (unowned Page page in m_VisiblePages)
-                {
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $point");
+                    point.transform (point_transform);
 
-                    // point under child
-                    if (page.button_press_event (inButton, point))
+                    // point under popup
+                    if (popup.button_press_event (inButton, point))
                     {
                         // event occurate under child stop signal
-                        ret = false;
                         GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
-                        break;
+                        return false;
                     }
                 }
             }
-            catch (Graphic.Error err)
+
+            foreach (unowned Page page in m_VisiblePages)
             {
-                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "error on convert point to page coordinates: %s", err.message);
+                var point = convert_to_root_space (inPoint);
+                var offset = origin.invert ();
+                var point_transform = new Graphic.Transform.identity ();
+                point_transform.translate (offset.x, offset.y);
+
+                var matrix = transform.matrix;
+                matrix.invert ();
+                var transform_invert = new Graphic.Transform.from_matrix (matrix);
+                point_transform.add (transform_invert);
+
+                point.transform (point_transform);
+
+                // point under child
+                if (page.button_press_event (inButton, point))
+                {
+                    ret = true;
+                    // event occurate under child stop signal
+                    GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
+                    break;
+                }
             }
+        }
+        catch (Graphic.Error err)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "error on convert point to page coordinates: %s", err.message);
+        }
+
+        if (!ret || !can_focus)
+        {
+            GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
+        }
+        else if (can_focus)
+        {
+            grab_focus (this);
         }
 
         return ret;
@@ -914,62 +932,71 @@ public class Maia.Document : Item
     internal override bool
     on_button_release_event (uint inButton, Graphic.Point inPoint)
     {
-        bool ret = base.on_button_release_event (inButton, inPoint);
+        bool ret = false;
 
-        if (ret)
+        try
         {
-            try
+            // Check if event occur under popup
+            foreach (unowned Core.Object child in this)
             {
-                // Check if event occur under popup
-                foreach (unowned Core.Object child in this)
+                unowned Popup? popup = child as Popup;
+                if (popup != null)
                 {
-                    unowned Popup? popup = child as Popup;
-                    if (popup != null)
-                    {
-                        // Transform point to popup coordinate space
-                        Graphic.Point point = inPoint;
-                        Graphic.Matrix matrix = transform.matrix;
-                        matrix.invert ();
-                        Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
-                        point.transform (item_transform);
-                        point.translate (popup.position.invert ());
+                    var point = convert_to_root_space (inPoint);
 
-                        // point under popup
-                        if (popup.button_release_event (inButton, point))
-                        {
-                            // event occurate under child stop signal
-                            GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
-                            return false;
-                        }
-                    }
-                }
+                    var offset = popup.position.invert ();
+                    var point_transform = new Graphic.Transform.identity ();
+                    point_transform.translate (offset.x, offset.y);
 
-                // Translate point onto offset of visible area
-                Graphic.Point point = inPoint;
-                Graphic.Matrix matrix = transform.matrix;
-                matrix.invert ();
-                Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
-                point.transform (item_transform);
-                point.translate (position);
+                    var matrix = transform.matrix;
+                    matrix.invert ();
+                    var transform_invert = new Graphic.Transform.from_matrix (matrix);
+                    point_transform.add (transform_invert);
 
-                foreach (unowned Page page in m_VisiblePages)
-                {
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $point");
+                    point.transform (point_transform);
 
-                    // point under child
-                    if (page.button_release_event (inButton, point))
+                    // point under popup
+                    if (popup.button_release_event (inButton, point))
                     {
                         // event occurate under child stop signal
-                        ret = false;
                         GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
-                        break;
+                        return false;
                     }
                 }
             }
-            catch (Graphic.Error err)
+
+            foreach (unowned Page page in m_VisiblePages)
             {
-                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "error on convert point to page coordinates: %s", err.message);
+                var point = convert_to_root_space (inPoint);
+                var offset = origin.invert ();
+                var point_transform = new Graphic.Transform.identity ();
+                point_transform.translate (offset.x, offset.y);
+
+                var matrix = transform.matrix;
+                matrix.invert ();
+                var transform_invert = new Graphic.Transform.from_matrix (matrix);
+                point_transform.add (transform_invert);
+
+                point.transform (point_transform);
+
+                // point under child
+                if (page.button_release_event (inButton, point))
+                {
+                    ret = true;
+                    // event occurate under child stop signal
+                    GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
+                    break;
+                }
             }
+        }
+        catch (Graphic.Error err)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "error on convert point to page coordinates: %s", err.message);
+        }
+
+        if (!ret)
+        {
+            GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
         }
 
         return ret;
@@ -978,76 +1005,86 @@ public class Maia.Document : Item
     internal override bool
     on_motion_event (Graphic.Point inPoint)
     {
-        bool ret = base.on_motion_event (inPoint);
+        bool ret = false;
 
-        if (ret)
+        try
         {
-            try
+            // Check if event occur under popup
+            foreach (unowned Core.Object child in this)
             {
-                // Check if event occur under popup
-                foreach (unowned Core.Object child in this)
+                unowned Popup? popup = child as Popup;
+                if (popup != null)
                 {
-                    unowned Popup? popup = child as Popup;
-                    if (popup != null)
+                    var point = convert_to_root_space (inPoint);
+
+                    var offset = popup.position.invert ();
+                    var point_transform = new Graphic.Transform.identity ();
+                    point_transform.translate (offset.x, offset.y);
+
+                    var matrix = transform.matrix;
+                    matrix.invert ();
+                    var transform_invert = new Graphic.Transform.from_matrix (matrix);
+                    point_transform.add (transform_invert);
+
+                    point.transform (point_transform);
+
+                    // point under popup
+                    if (popup.motion_event (point))
                     {
-                        // Transform point to popup coordinate space
-                        Graphic.Point point = inPoint;
-                        Graphic.Matrix matrix = transform.matrix;
-                        matrix.invert ();
-                        Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
-                        point.transform (item_transform);
-                        point.translate (popup.position.invert ());
-
-                        // point under popup
-                        if (popup.motion_event (point))
-                        {
-                            // event occurate under child stop signal
-                            GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
-                            return false;
-                        }
-                    }
-                }
-
-                // Translate point onto offset of visible area
-                Graphic.Point point = inPoint;
-                Graphic.Matrix matrix = transform.matrix;
-                matrix.invert ();
-                Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
-                point.transform (item_transform);
-                point.translate (position);
-
-                foreach (unowned Page page in m_VisiblePages)
-                {
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $point");
-
-                    // point under child
-                    unowned Item? item = page.motion_event (point);
-                    if (item != null)
-                    {
-                        // if item over pointer change unset pointer over for old item
-                        if (item_over_pointer !=  null && item != item_over_pointer && item_over_pointer.pointer_over)
-                        {
-                            item_over_pointer.pointer_over = false;
-                            item_over_pointer = item;
-                        }
-
                         // event occurate under child stop signal
-                        ret = false;
                         GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
-                        break;
+                        return false;
                     }
                 }
             }
-            catch (Graphic.Error err)
+
+            foreach (unowned Page page in m_VisiblePages)
             {
-                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "error on convert point to page coordinates: %s", err.message);
+                var point = convert_to_root_space (inPoint);
+                var offset = origin.invert ();
+                var point_transform = new Graphic.Transform.identity ();
+                point_transform.translate (offset.x, offset.y);
+
+                var matrix = transform.matrix;
+                matrix.invert ();
+                var transform_invert = new Graphic.Transform.from_matrix (matrix);
+                point_transform.add (transform_invert);
+
+                point.transform (point_transform);
+
+                // point under child
+                unowned Item? item = page.motion_event (point);
+                if (item != null)
+                {
+                    // if item over pointer change unset pointer over for old item
+                    if (item_over_pointer !=  null && item != item_over_pointer && item_over_pointer.pointer_over)
+                    {
+                        item_over_pointer.pointer_over = false;
+                        item_over_pointer = item;
+                    }
+
+                    // event occurate under child stop signal
+                    ret = true;
+                    GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
+                    break;
+                }
             }
         }
-        // if item over pointer set unset it
-        else if (item_over_pointer !=  null && item_over_pointer.pointer_over)
+        catch (Graphic.Error err)
         {
-            item_over_pointer.pointer_over = false;
-            item_over_pointer = null;
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "error on convert point to page coordinates: %s", err.message);
+        }
+
+        // if item over pointer set unset it
+        if (!ret)
+        {
+            GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
+
+            if (item_over_pointer !=  null && item_over_pointer.pointer_over)
+            {
+                item_over_pointer.pointer_over = false;
+                item_over_pointer = null;
+            }
         }
 
         return ret;
@@ -1068,13 +1105,18 @@ public class Maia.Document : Item
                     unowned Popup? popup = child as Popup;
                     if (popup != null)
                     {
-                        // Transform point to popup coordinate space
-                        Graphic.Point point = inPoint;
-                        Graphic.Matrix matrix = transform.matrix;
+                        var point = convert_to_root_space (inPoint);
+
+                        var offset = popup.position.invert ();
+                        var point_transform = new Graphic.Transform.identity ();
+                        point_transform.translate (offset.x, offset.y);
+
+                        var matrix = transform.matrix;
                         matrix.invert ();
-                        Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
-                        point.transform (item_transform);
-                        point.translate (popup.position.invert ());
+                        var transform_invert = new Graphic.Transform.from_matrix (matrix);
+                        point_transform.add (transform_invert);
+
+                        point.transform (point_transform);
 
                         // point under popup
                         if (popup.scroll_event (inScroll, point))
@@ -1084,17 +1126,19 @@ public class Maia.Document : Item
                     }
                 }
 
-                // Translate point onto offset of visible area
-                Graphic.Point point = inPoint;
-                Graphic.Matrix matrix = transform.matrix;
-                matrix.invert ();
-                Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
-                point.transform (item_transform);
-                point.translate (position);
-
                 foreach (unowned Page page in m_VisiblePages)
                 {
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"inPoint: $inPoint point: $point");
+                    var point = convert_to_root_space (inPoint);
+                    var offset = origin.invert ();
+                    var point_transform = new Graphic.Transform.identity ();
+                    point_transform.translate (offset.x, offset.y);
+
+                    var matrix = transform.matrix;
+                    matrix.invert ();
+                    var transform_invert = new Graphic.Transform.from_matrix (matrix);
+                    point_transform.add (transform_invert);
+
+                    point.transform (point_transform);
 
                     // point under child
                     if (page.scroll_event (inScroll, point))

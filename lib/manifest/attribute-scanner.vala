@@ -254,6 +254,7 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
         else
         {
             m_LastName = read_name ();
+
             if (m_pCurrent[0] == '(')
             {
                 token = Core.Parser.Token.START_ELEMENT;

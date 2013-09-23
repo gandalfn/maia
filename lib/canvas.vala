@@ -202,6 +202,9 @@ public interface Maia.Canvas : Drawable
     protected virtual void
     on_grab_focus (Item? inItem)
     {
+        if (inItem is Button)
+            return;
+
         if (inItem == null)
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab focus");
         else
@@ -286,12 +289,22 @@ public interface Maia.Canvas : Drawable
     on_toolbox_add (Item inItem)
     {
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "Add item %s", inItem.name);
+
+        if (inItem != null && focus_item != null)
+        {
+            focus_item.add (inItem);
+        }
     }
 
     protected virtual void
     on_toolbox_remove ()
     {
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "Remove item");
+
+        if (focus_item != null)
+        {
+            focus_item.parent = null;
+        }
     }
 
     protected abstract void resize ();

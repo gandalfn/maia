@@ -142,7 +142,6 @@ public class Maia.Group : Item
                     if (item.button_press_event (inButton, point))
                     {
                         // event occurate under child stop signal
-                        ret = false;
                         GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
                         break;
                     }
@@ -177,7 +176,6 @@ public class Maia.Group : Item
                     if (item.button_release_event (inButton, point))
                     {
                         // event occurate under child stop signal
-                        ret = false;
                         GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
                         break;
                     }
@@ -222,7 +220,6 @@ public class Maia.Group : Item
                         item_over_pointer = item;
 
                         // event occurate under child stop signal
-                        ret = false;
                         GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
                         break;
                     }

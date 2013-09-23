@@ -2,6 +2,16 @@ _CONVERSION(`const char*',`const Glib::ustring&',`$3')
 _CONVERSION(`unsigned int',`guint',`$3')
 _CONVERSION(`guint',`unsigned int',`$3')
 
+_CONVERSION(`Core::Set<Style>',`MaiaCoreSet*', MAIA_CORE_SET($3.gobj()))
+_CONVERSION(`const Core::Set<Style>&',`MaiaCoreSet*',const_cast<MaiaCoreSet*> (MAIA_CORE_SET ($3.gobj())))
+_CONVERSION(`MaiaCoreSet*',`const Core::Set<Style>&',`Maia::Core::Set<Style> (MAIA_CORE_SET ($3), true)')
+_CONVERSION(`MaiaCoreSet*',`Core::Set<Style>',`Maia::Core::Set<Style> (MAIA_CORE_SET ($3), true)')
+
+_CONVERSION(`Core::Set<Manifest::Style>',`MaiaCoreSet*', MAIA_CORE_SET($3.gobj()))
+_CONVERSION(`const Core::Set<Manifest::Style>&',`MaiaCoreSet*',const_cast<MaiaCoreSet*> (MAIA_CORE_SET ($3.gobj())))
+_CONVERSION(`MaiaCoreSet*',`const Core::Set<Manifest::Style>&',`Maia::Core::Set<Manifest::Style> (MAIA_CORE_SET ($3), true)')
+_CONVERSION(`MaiaCoreSet*',`Core::Set<Manifest::Style>',`Maia::Core::Set<Manifest::Style> (MAIA_CORE_SET ($3), true)')
+
 _CONVERSION(`Glib::RefPtr<Object>',`MaiaCoreObject*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Object>&',`MaiaCoreObject*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaCoreObject*',`const Glib::RefPtr<Object>&',`Glib::wrap($3, true)')

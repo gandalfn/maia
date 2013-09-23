@@ -121,6 +121,12 @@ public class Maia.Graphic.Context : Core.Object
     }
 
     public virtual void
+    mask (Pattern inPattern) throws Error
+    {
+        throw new Error.NOT_IMPLEMENTED ("Context paint not implemented");
+    }
+
+    public virtual void
     paint () throws Error
     {
         throw new Error.NOT_IMPLEMENTED ("Context paint not implemented");

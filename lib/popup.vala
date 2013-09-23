@@ -83,8 +83,6 @@ public class Maia.Popup : Group
         }
     }
 
-    internal override bool can_focus  { get; set; default = false; }
-
     internal double x {
         get {
             return m_CurrentPosition.x;
@@ -230,6 +228,18 @@ public class Maia.Popup : Group
         }
 
         return content_size;
+    }
+
+    internal override void
+    on_hide ()
+    {
+        repair ();
+    }
+
+    internal override void
+    on_show ()
+    {
+        damage ();
     }
 
     internal override void

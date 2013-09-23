@@ -252,6 +252,15 @@
   )
 )
 
+(define-vfunc mask
+  (of-object "MaiaGraphicContext")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "inPattern")
+    '("GError**" "error")
+  )
+)
+
 (define-vfunc paint
   (of-object "MaiaGraphicContext")
   (return-type "none")
@@ -602,6 +611,26 @@
     '("MaiaDrawable*" "inChild")
     '("MaiaGraphicRegion*" "inArea")
   )
+)
+
+(define-vfunc on_show
+  (of-object "MaiaItem")
+  (return-type "none")
+)
+
+(define-vfunc on_hide
+  (of-object "MaiaItem")
+  (return-type "none")
+)
+
+(define-vfunc on_move
+  (of-object "MaiaItem")
+  (return-type "none")
+)
+
+(define-vfunc on_resize
+  (of-object "MaiaItem")
+  (return-type "none")
 )
 
 (define-vfunc on_button_press_event

@@ -56,7 +56,6 @@ public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
         set {
             base.can_focus = value;
         }
-        default = true;
     }
 
     public string? filename { get; set; default = null; }

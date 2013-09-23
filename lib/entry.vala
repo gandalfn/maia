@@ -21,7 +21,8 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
 {
     // properties
     private Graphic.Glyph m_Glyph;
-    private int           m_Cursor = 1;
+    private int           m_Cursor = 0;
+    private uint          m_LinePads = 0;
 
     // accessors
     internal override string tag {
@@ -29,6 +30,8 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             return "Entry";
         }
     }
+
+    internal override bool can_focus { get; set; default = true; }
 
     internal uint   row     { get; set; default = 0; }
     internal uint   column  { get; set; default = 0; }
@@ -69,11 +72,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         key_press_event.connect (on_key_press_event);
 
         // connect onto text changed
-        notify["text"].connect (() => {
-            m_Glyph = null;
-            create_glyph ();
-            damage ();
-        });
+        notify["text"].connect (on_text_changed);
 
         notify["lines"].connect (() => {
             m_Glyph = null;
@@ -100,10 +99,165 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         GLib.Object (id: GLib.Quark.from_string (inId), text: inText);
     }
 
-    private inline uint
-    get_nb_lines ()
+    private void
+    update_layout ()
     {
-        return (text ?? " ").split ("\n").length;
+        if (m_Glyph != null)
+        {
+            // Geometry is set update layout width
+            m_Glyph.size = Graphic.Size (geometry != null ? geometry.extents.size.width : 0, 0);
+
+            // Set text
+            m_Glyph.text = text;
+
+            // Create a fake surface to calculate the size of glyph
+            var fake_surface = new Graphic.Surface (1, 1);
+
+            // Get stack of items
+            GLib.SList<unowned Item> list = new GLib.SList<unowned Item?> ();
+            for (unowned Core.Object? item = this; item != null; item = item.parent)
+            {
+                if (item is Item)
+                {
+                    list.append (item as Item);
+                }
+            }
+
+            // Apply transform of all parents to fake surface
+            foreach (unowned Item item in list)
+            {
+                fake_surface.context.transform = item.transform;
+            }
+
+            // Calculate the size of glyph without line pads
+            m_Glyph.update (fake_surface.context);
+
+            // Count lines pad
+            m_LinePads = 0;
+            if (lines > 1)
+            {
+                uint nb_lines = m_Glyph.line_count;
+                if (nb_lines < lines)
+                {
+                    m_LinePads = lines - nb_lines;
+                }
+            }
+
+            // Set text with line pad
+            if (m_LinePads > 0)
+            {
+                m_Glyph.text = (text ?? "") + " " + string.nfill (m_LinePads, '\n');
+            }
+            else
+            {
+                m_Glyph.text = (text ?? "") + " ";
+            }
+
+            // Calculate glyph size
+            m_Glyph.update (fake_surface.context);
+        }
+    }
+
+    private void
+    remove_char_at_cursor ()
+    {
+        GLib.StringBuilder new_text = new GLib.StringBuilder (text);
+        int begin = (text ?? "").index_of_nth_char (m_Cursor - 1);
+        int end = (text ?? "").index_of_nth_char (m_Cursor);
+        new_text.erase (begin, end - begin);
+        text = new_text.str;
+        m_Cursor--;
+    }
+
+    private void
+    check_line_size ()
+    {
+        if (m_Glyph != null && geometry != null)
+        {
+            int line;
+
+            if (width_in_chars > 0 && text.length > width_in_chars)
+            {
+                remove_char_at_cursor ();
+            }
+
+            // cursor is not set, move on end of text
+            if (m_Cursor == 0)
+            {
+                m_Cursor = (int)(text ?? "").length;
+            }
+
+            // get current line at cusor position
+            m_Glyph.get_line_position (m_Cursor, true, out line);
+
+
+            if (line >= lines)
+            {
+                remove_char_at_cursor ();
+            }
+
+            // check line size
+            int cpt = 0;
+            foreach (unowned Core.Object child in m_Glyph)
+            {
+                // We found line check its size
+                if (cpt == line)
+                {
+                    unowned Graphic.Glyph.Line glyph_line = (Graphic.Glyph.Line)child;
+
+                    // line is too long remove last characters inserted
+                    if (glyph_line.size.width > geometry.extents.size.width)
+                    {
+                        remove_char_at_cursor ();
+                    }
+
+                    break;
+                }
+                cpt++;
+            }
+        }
+    }
+
+    private Graphic.Size
+    width_in_chars_to_size ()
+    {
+        Graphic.Size ret = Graphic.Size (0, 0);
+
+        if (width_in_chars > 0)
+        {
+            // Create fake glyph
+            var glyph = new Graphic.Glyph (font_description);
+            glyph.alignment = Graphic.Glyph.Alignment.LEFT;
+            glyph.use_markup = false;
+            glyph.wrap = Graphic.Glyph.WrapMode.WORD;
+            glyph.text = string.nfill (width_in_chars, 'Z');
+
+            // Create a fake surface to calculate the size of glyph
+            var fake_surface = new Graphic.Surface (1, 1);
+
+            // Get stack of items
+            GLib.SList<unowned Item> list = new GLib.SList<unowned Item?> ();
+            for (unowned Core.Object? item = this; item != null; item = item.parent)
+            {
+                if (item is Item)
+                {
+                    list.append (item as Item);
+                }
+            }
+
+            // Apply transform of all parents to fake surface
+            foreach (unowned Item item in list)
+            {
+                fake_surface.context.transform = item.transform;
+            }
+
+            // Calculate the size of glyph
+            glyph.update (fake_surface.context);
+
+            ret = glyph.size;
+        }
+
+        return ret;
     }
 
     private void
@@ -111,31 +265,26 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     {
         if (m_Glyph == null)
         {
+            // Create glyph
             m_Glyph = new Graphic.Glyph (font_description);
             m_Glyph.alignment = Graphic.Glyph.Alignment.LEFT;
             m_Glyph.use_markup = false;
+            m_Glyph.wrap = Graphic.Glyph.WrapMode.WORD;
+            m_Glyph.text = text ?? "";
 
-            // Count lines pad
-            uint lines_pad = 0;
-            if (lines > 1)
-            {
-                uint nb_lines = get_nb_lines ();
-                if (nb_lines < lines)
-                {
-                    lines_pad = lines - nb_lines;
-                }
-            }
-
-            // Set text with line pad
-            if (lines_pad > 0)
-            {
-                m_Glyph.text = (text ?? "") + " " + string.nfill (lines_pad, '\n');
-            }
-            else
-            {
-                m_Glyph.text = (text ?? "") + " ";
-            }
+            // Update the layout with line pad
+            update_layout ();
         }
+    }
+
+    private void
+    on_text_changed ()
+    {
+        // Update layout
+        update_layout ();
+
+        // Damage area
+        damage ();
     }
 
     private void
@@ -170,7 +319,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             // Enter is pressed and new line
             else if (inKey == Key.Return || inKey == Key.ISO_Enter || inKey == Key.KP_Enter)
             {
-                if (get_nb_lines () < lines)
+                if (m_Glyph.line_count - m_LinePads < lines)
                 {
                     new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), "\n");
                     text = new_text.str;
@@ -183,6 +332,8 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                 new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), " ");
                 text = new_text.str;
                 m_Cursor++;
+
+                check_line_size ();
             }
             // Left arrow is pressed move cursor on left
             else if (inKey == Key.Left || inKey == Key.KP_Left)
@@ -204,6 +355,8 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                 new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), inCar.to_string ());
                 text = new_text.str;
                 m_Cursor ++;
+
+                check_line_size ();
             }
 
             changed ();
@@ -223,11 +376,18 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
 
         if (m_Glyph != null)
         {
-            // Create a fake surface to calculate the size of path
-            var fake_surface = new Graphic.Surface (1, 1);
+            // Update layout
+            update_layout ();
 
-            m_Glyph.update (fake_surface.context);
-            size = m_Glyph.size;
+            if (width_in_chars > 0)
+            {
+                size = width_in_chars_to_size ();
+            }
+            else
+            {
+                // Set the new glyph size
+                size = m_Glyph.size;
+            }
         }
 
         return base.size_request (inSize);
@@ -259,12 +419,13 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                 // foreach lines add underline at end of text
                 double y = 0;
                 var path = new Graphic.Path ();
+                var glyph_line_width = width_in_chars > 0 ? width_in_chars_to_size ().width : geometry.extents.size.width;
                 foreach (unowned Core.Object child in m_Glyph)
                 {
                     // Add line
                     Graphic.Glyph.Line line = (Graphic.Glyph.Line)child;
                     path.move_to (line.size.width, y + rect.size.height);
-                    path.line_to (geometry.extents.size.width, y + rect.size.height);
+                    path.line_to (glyph_line_width, y + rect.size.height);
 
                     y += rect.size.height;
                 }

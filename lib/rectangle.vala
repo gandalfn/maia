@@ -33,7 +33,6 @@ public class Maia.Rectangle : Item, ItemMovable, ItemResizable
         set {
             base.can_focus = value;
         }
-        default = true;
     }
 
     // methods

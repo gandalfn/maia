@@ -115,106 +115,10 @@ public class Maia.Cairo.Context : Graphic.Context
         }
         set {
             base.pattern = value;
-            if (value is Graphic.Surface)
+
+            global::Cairo.Pattern? pattern = pattern_to_cairo (value);
+            if (pattern != null)
             {
-                global::Cairo.Pattern pattern = new global::Cairo.Pattern.for_surface (((Surface)value).surface);
-                pattern.set_filter (global::Cairo.Filter.BEST);
-                m_Context.set_source (pattern);
-            }
-            else if (value is Graphic.Image)
-            {
-                unowned Graphic.Image image = (Graphic.Image)value;
-                global::Cairo.Pattern pattern = new global::Cairo.Pattern.for_surface (((Surface)image.surface).surface);
-                global::Cairo.Matrix matrix = global::Cairo.Matrix (image.transform.matrix.xx, image.transform.matrix.yx,
-                                                                    image.transform.matrix.xy, image.transform.matrix.yy,
-                                                                    image.transform.matrix.x0, image.transform.matrix.y0);
-                pattern.set_filter (global::Cairo.Filter.BEST);
-                pattern.set_matrix (matrix);
-                m_Context.set_source (pattern);
-            }
-            else if (value is Graphic.Color)
-            {
-                m_Context.set_source_rgba (((Graphic.Color)value).red,
-                                           ((Graphic.Color)value).green,
-                                           ((Graphic.Color)value).blue,
-                                           ((Graphic.Color)value).alpha);
-            }
-            else if (value is Graphic.LinearGradient)
-            {
-                unowned Graphic.LinearGradient? gradient = (Graphic.LinearGradient?)value;
-
-                global::Cairo.Pattern pattern = new global::Cairo.Pattern.linear (gradient.start.x, gradient.start.y,
-                                                                                  gradient.end.x,   gradient.end.y);
-                foreach (unowned Object child in gradient)
-                {
-                    if (child is Graphic.Gradient.ColorStop)
-                    {
-                        unowned Graphic.Gradient.ColorStop? color_stop = (Graphic.Gradient.ColorStop?)child;
-                        pattern.add_color_stop_rgba (color_stop.offset,
-                                                     color_stop.color.red,
-                                                     color_stop.color.green,
-                                                     color_stop.color.blue,
-                                                     color_stop.color.alpha);
-                    }
-                }
-
-                m_Context.set_source (pattern);
-            }
-            else if (value is Graphic.RadialGradient)
-            {
-                unowned Graphic.RadialGradient? gradient = (Graphic.RadialGradient?)value;
-
-                global::Cairo.Pattern pattern = new global::Cairo.Pattern.radial (gradient.start.x, gradient.start.y, gradient.start_radius,
-                                                                                  gradient.end.x,   gradient.end.y, gradient.end_radius);
-                foreach (unowned Object child in gradient)
-                {
-                    if (child is Graphic.Gradient.ColorStop)
-                    {
-                        unowned Graphic.Gradient.ColorStop? color_stop = (Graphic.Gradient.ColorStop?)child;
-                        pattern.add_color_stop_rgba (color_stop.offset,
-                                                     color_stop.color.red,
-                                                     color_stop.color.green,
-                                                     color_stop.color.blue,
-                                                     color_stop.color.alpha);
-                    }
-                }
-
-                m_Context.set_source (pattern);
-            }
-            else if (value is Graphic.MeshGradient)
-            {
-                unowned Graphic.MeshGradient? gradient = (Graphic.MeshGradient?)value;
-
-                global::Cairo.MeshPattern pattern = new global::Cairo.MeshPattern ();
-                foreach (unowned Object child in gradient)
-                {
-                    // Add mesh patch
-                    if (child is Graphic.MeshGradient.Patch)
-                    {
-                        var patch = child as Graphic.MeshGradient.Patch;
-                        pattern.begin_patch ();
-                        set_pattern_path (pattern, patch.path);
-
-                        // parse patch control
-                        foreach (unowned Object child_patch in patch)
-                        {
-                            if (child_patch is Graphic.MeshGradient.Patch.CornerColor)
-                            {
-                                var corner_color = (Graphic.MeshGradient.Patch.CornerColor)child_patch;
-                                Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "%u %s\n", corner_color.num, corner_color.color.to_string ());
-                                pattern.set_corner_color_rgba (corner_color.num, corner_color.color.red, corner_color.color.green,
-                                                               corner_color.color.blue, corner_color.color.alpha);
-                            }
-                            else if (child_patch is Graphic.MeshGradient.Patch.ControlPoint)
-                            {
-                                var control_point = (Graphic.MeshGradient.Patch.ControlPoint)child_patch;
-                                pattern.set_control_point (control_point.num, control_point.point.x, control_point.point.y);
-                            }
-                        }
-                        pattern.end_patch ();
-                    }
-                }
-
                 m_Context.set_source (pattern);
             }
         }
@@ -224,6 +128,111 @@ public class Maia.Cairo.Context : Graphic.Context
     public Context (Graphic.Surface inSurface)
     {
         base (inSurface);
+    }
+
+    private global::Cairo.Pattern?
+    pattern_to_cairo (Graphic.Pattern inPattern)
+    {
+        global::Cairo.Pattern? pattern = null;
+
+        if (inPattern is Graphic.Surface)
+        {
+            pattern = new global::Cairo.Pattern.for_surface (((Surface)inPattern).surface);
+            pattern.set_filter (global::Cairo.Filter.BEST);
+        }
+        else if (inPattern is Graphic.Image)
+        {
+            unowned Graphic.Image image = (Graphic.Image)inPattern;
+            pattern = new global::Cairo.Pattern.for_surface (((Surface)image.surface).surface);
+            global::Cairo.Matrix matrix = global::Cairo.Matrix (image.transform.matrix.xx, image.transform.matrix.yx,
+                                                                image.transform.matrix.xy, image.transform.matrix.yy,
+                                                                image.transform.matrix.x0, image.transform.matrix.y0);
+            pattern.set_filter (global::Cairo.Filter.BEST);
+            pattern.set_matrix (matrix);
+            m_Context.set_source (pattern);
+        }
+        else if (inPattern is Graphic.Color)
+        {
+            pattern = new global::Cairo.Pattern.rgba (((Graphic.Color)inPattern).red,
+                                                      ((Graphic.Color)inPattern).green,
+                                                      ((Graphic.Color)inPattern).blue,
+                                                      ((Graphic.Color)inPattern).alpha);
+        }
+        else if (inPattern is Graphic.LinearGradient)
+        {
+            unowned Graphic.LinearGradient? gradient = (Graphic.LinearGradient?)inPattern;
+
+            pattern = new global::Cairo.Pattern.linear (gradient.start.x, gradient.start.y,
+                                                        gradient.end.x,   gradient.end.y);
+            foreach (unowned Object child in gradient)
+            {
+                if (child is Graphic.Gradient.ColorStop)
+                {
+                    unowned Graphic.Gradient.ColorStop? color_stop = (Graphic.Gradient.ColorStop?)child;
+                    pattern.add_color_stop_rgba (color_stop.offset,
+                                                 color_stop.color.red,
+                                                 color_stop.color.green,
+                                                 color_stop.color.blue,
+                                                 color_stop.color.alpha);
+                }
+            }
+        }
+        else if (inPattern is Graphic.RadialGradient)
+        {
+            unowned Graphic.RadialGradient? gradient = (Graphic.RadialGradient?)inPattern;
+
+            pattern = new global::Cairo.Pattern.radial (gradient.start.x, gradient.start.y, gradient.start_radius,
+                                                        gradient.end.x,   gradient.end.y, gradient.end_radius);
+            foreach (unowned Object child in gradient)
+            {
+                if (child is Graphic.Gradient.ColorStop)
+                {
+                    unowned Graphic.Gradient.ColorStop? color_stop = (Graphic.Gradient.ColorStop?)child;
+                    pattern.add_color_stop_rgba (color_stop.offset,
+                                                 color_stop.color.red,
+                                                 color_stop.color.green,
+                                                 color_stop.color.blue,
+                                                 color_stop.color.alpha);
+                }
+            }
+        }
+        else if (inPattern is Graphic.MeshGradient)
+        {
+            unowned Graphic.MeshGradient? gradient = (Graphic.MeshGradient?)inPattern;
+
+            global::Cairo.MeshPattern mesh_pattern = new global::Cairo.MeshPattern ();
+            foreach (unowned Object child in gradient)
+            {
+                // Add mesh patch
+                if (child is Graphic.MeshGradient.Patch)
+                {
+                    var patch = child as Graphic.MeshGradient.Patch;
+                    mesh_pattern.begin_patch ();
+                    set_pattern_path (mesh_pattern, patch.path);
+
+                    // parse patch control
+                    foreach (unowned Object child_patch in patch)
+                    {
+                        if (child_patch is Graphic.MeshGradient.Patch.CornerColor)
+                        {
+                            var corner_color = (Graphic.MeshGradient.Patch.CornerColor)child_patch;
+                            Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "%u %s\n", corner_color.num, corner_color.color.to_string ());
+                            mesh_pattern.set_corner_color_rgba (corner_color.num, corner_color.color.red, corner_color.color.green,
+                                                                corner_color.color.blue, corner_color.color.alpha);
+                        }
+                        else if (child_patch is Graphic.MeshGradient.Patch.ControlPoint)
+                        {
+                            var control_point = (Graphic.MeshGradient.Patch.ControlPoint)child_patch;
+                            mesh_pattern.set_control_point (control_point.num, control_point.point.x, control_point.point.y);
+                        }
+                    }
+                    mesh_pattern.end_patch ();
+                }
+            }
+            pattern = mesh_pattern;
+        }
+
+        return pattern;
     }
 
     private void
@@ -419,6 +428,18 @@ public class Maia.Cairo.Context : Graphic.Context
     {
         m_Context.translate (inOffset.x, inOffset.y);
         status ();
+    }
+
+    internal override void
+    mask (Graphic.Pattern inPattern) throws Graphic.Error
+    {
+        global::Cairo.Pattern? pattern = pattern_to_cairo (inPattern);
+        status ();
+        if (pattern != null)
+        {
+            m_Context.mask (pattern);
+            status ();
+        }
     }
 
     internal override void

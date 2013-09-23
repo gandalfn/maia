@@ -32,6 +32,62 @@ Document.worksheet {
     background-pattern: #E0E0E0;
     header: 'header';
     footer: 'footer';
+    
+    Shortcut.shortcuts {
+    	section: 'content';
+		label: 'Images';
+		angle: -pi/2;
+    }
+    
+    Toolbox.toolbox {
+    	position: 0, 200;
+    	placement: right;
+    	border: 12;
+    	background-pattern: rgba(0.8, 0.8, 0.8, 0.8);
+    	
+    	Label.label {
+    		xfill: false;
+    		xexpand: false;
+    		alignment: left;
+    		text: 'Shape';
+    	}
+    	
+    	Grid.shapes {
+    		row: 1;
+    		column-spacing: 5;
+    		
+			Tool.button {
+				button-color: rgb(0.6, 0.6, 0.6);
+				label: 'test';
+				action: remove;
+				visible-with: 'type:Label';
+			}
+			
+			Tool.button {
+				column: 1;
+				button-color: rgb(0.6, 0.6, 0.6);
+				label: 'test';
+				action: remove;
+				visible-with: 'type:Label';
+			}
+			
+			Tool.button {
+				column: 2;
+				button-color: rgb(0.6, 0.6, 0.6);
+				label: 'test';
+				action: add;
+				visible-with: 'type:DrawingArea';
+				[
+					Label.label_draw {
+		                position: 20, 20;
+		                stroke-pattern: #000000;
+		                font-description: "Liberation Sans 14";
+		                text: "Added";
+               		}
+				]
+			}
+		}
+    }
 
     // Header
     Grid.header {
@@ -150,9 +206,10 @@ Document.worksheet {
 
         // Content
         Grid.content {
+        	//visible: false;
             row: 0;
             column: 1;
-            size: 700, 980;
+            size: 700, 900;
 
             Entry.patient_info {
               row: 0;

@@ -176,6 +176,12 @@ public class Maia.Graphic.Glyph : Core.Object
         }
     }
 
+    public virtual int line_count {
+        get {
+            return 0;
+        }
+    }
+
     // methods
     public Glyph (string inFontDescription)
     {
@@ -197,5 +203,11 @@ public class Maia.Graphic.Glyph : Core.Object
     get_cursor_position (int inIndex)
     {
         return Rectangle (0, 0, 0, 0);
+    }
+
+    public virtual void
+    get_line_position (int inIndex, bool inTrailing, out int outLine)
+    {
+        outLine = 0;
     }
 }

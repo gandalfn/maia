@@ -19,7 +19,9 @@
 
 #include <maia.h>
 #include <maiamm/core-object.h>
+#include <maiamm/core-set.h>
 #include <maiamm/manifest-element.h>
+#include <maiamm/manifest-style.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/core-object_p.h)
@@ -51,6 +53,9 @@ namespace Maia
 
             _WRAP_PROPERTY("tag", Glib::ustring)
             _WRAP_PROPERTY("characters", Glib::ustring)
+            _WRAP_PROPERTY("manifest-path", Glib::ustring)
+            _WRAP_PROPERTY("manifest-styles", Core::Set<Manifest::Style>)
+
             _WRAP_PROPERTY("section", Glib::ustring)
             _WRAP_PROPERTY("label", Glib::ustring)
     };

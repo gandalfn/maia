@@ -411,6 +411,15 @@
   (construct-only #f)
 )
 
+(define-property line-count
+  (of-object "MaiaGraphicGlyph")
+  (prop-type "GParamInt")
+  (docs "line-count")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
 ;; From MaiaGraphicGradient
 
 ;; From MaiaGraphicImage
@@ -1127,6 +1136,15 @@
   (construct-only #f)
 )
 
+(define-property can-focus
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamBoolean")
+  (docs "can-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property row
   (of-object "MaiaDrawingArea")
   (prop-type "GParamUInt")
@@ -1330,6 +1348,15 @@
   (docs "tag")
   (readable #t)
   (writable #f)
+  (construct-only #f)
+)
+
+(define-property can-focus
+  (of-object "MaiaEntry")
+  (prop-type "GParamBoolean")
+  (docs "can-focus")
+  (readable #t)
+  (writable #t)
   (construct-only #f)
 )
 
@@ -3328,15 +3355,6 @@
   (docs "tag")
   (readable #t)
   (writable #f)
-  (construct-only #f)
-)
-
-(define-property can-focus
-  (of-object "MaiaPopup")
-  (prop-type "GParamBoolean")
-  (docs "can-focus")
-  (readable #t)
-  (writable #t)
   (construct-only #f)
 )
 

@@ -40,7 +40,6 @@ public class Maia.Gtk.Shortcut : Maia.Shortcut
     {
         // Create button
         m_Button = new global::Gtk.Button ();
-        m_Button.show ();
 
         var box = new global::Gtk.VBox (false, 5);
         box.show ();
@@ -78,23 +77,35 @@ public class Maia.Gtk.Shortcut : Maia.Shortcut
         });
 
         // Connect onto section change
-        notify["section"].connect (() => {
-            if (section != null)
-            {
-                unowned Item item = root.find (GLib.Quark.from_string (section)) as Item;
-                if (item != null)
-                {
-                    item.notify["visible"].connect (() => {
-                        if (item.visible)
-                            m_Button.hide ();
-                        else
-                            m_Button.show ();
-                    });
-                }
-            }
-        });
+        notify["section"].connect (on_section_changed);
+
+        // Connect onto button reparent
+        m_Button.notify["parent"].connect (on_section_changed);
 
         // connect onto clicked
         m_Button.clicked.connect (activate);
+    }
+
+    private void
+    on_section_changed ()
+    {
+        if (section != null)
+        {
+            unowned Item item = root.find (GLib.Quark.from_string (section)) as Item;
+            if (item != null)
+            {
+                item.notify["visible"].connect (() => {
+                    if (!item.visible)
+                        m_Button.hide ();
+                    else
+                        m_Button.show ();
+                });
+
+                if (!item.visible)
+                    m_Button.hide ();
+                else
+                    m_Button.show ();
+            }
+        }
     }
 }

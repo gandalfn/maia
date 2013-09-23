@@ -53,7 +53,6 @@ public class Maia.Path : Item, ItemPackable, ItemMovable
         set {
             base.can_focus = value;
         }
-        default = true;
     }
 
     public string path { get; set; default = ""; }

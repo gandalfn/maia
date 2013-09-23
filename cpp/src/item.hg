@@ -19,11 +19,13 @@
 
 #include <maia.h>
 #include <maiamm/core-object.h>
+#include <maiamm/core-set.h>
 #include <maiamm/graphic-point.h>
 #include <maiamm/graphic-size.h>
 #include <maiamm/graphic-region.h>
 #include <maiamm/graphic-pattern.h>
 #include <maiamm/manifest-element.h>
+#include <maiamm/manifest-style.h>
 #include <maiamm/drawable.h>
 
 _DEFS(maiamm,maia)
@@ -42,7 +44,8 @@ namespace Maia
         _IMPLEMENTS_INTERFACE(Manifest::Element)
         _IGNORE(maia_item_on_button_press_event, maia_item_on_button_release_event, maia_item_on_child_damaged,
                 maia_item_on_motion_event, maia_item_on_scroll_event, maia_item_get_tag, maia_item_set_characters,
-                maia_item_get_characters, maia_item_size_request, maia_item_paint)
+                maia_item_get_characters, maia_item_size_request, maia_item_paint,
+                maia_item_on_show, maia_item_on_hide, maia_item_on_move, maia_item_on_resize)
 
         protected:
             _CTOR_DEFAULT()
@@ -54,6 +57,10 @@ namespace Maia
             _WRAP_VFUNC(void set_can_focus (bool inCanFocus = true), set_can_focus)
 
             _WRAP_VFUNC(void on_child_damaged (const Glib::RefPtr<Drawable>& inChild, const Glib::RefPtr<Graphic::Region>& inArea), on_child_damaged)
+            _WRAP_VFUNC(void on_show (), on_show)
+            _WRAP_VFUNC(void on_hide (), on_hide)
+            _WRAP_VFUNC(void on_move (), on_move)
+            _WRAP_VFUNC(void on_resize (), on_resize)
             _WRAP_VFUNC(bool on_button_press_event (guint inButton, const Graphic::Point& inPoint), on_button_press_event)
             _WRAP_VFUNC(bool on_button_release_event (guint inButton, const Graphic::Point& inPoint), on_button_release_event)
             _WRAP_VFUNC(bool on_motion_event (const Graphic::Point& inPoint), on_motion_event)
@@ -121,6 +128,9 @@ namespace Maia
 
             _WRAP_PROPERTY("tag", Glib::ustring)
             _WRAP_PROPERTY("characters", Glib::ustring)
+            _WRAP_PROPERTY("manifest-path", Glib::ustring)
+            _WRAP_PROPERTY("manifest-styles", Core::Set<Manifest::Style>)
+
             _WRAP_PROPERTY("geometry", Glib::RefPtr<Graphic::Region>)
             _WRAP_PROPERTY("damaged", Glib::RefPtr<Graphic::Region>)
             _WRAP_PROPERTY("transform", Glib::RefPtr<Graphic::Transform>)

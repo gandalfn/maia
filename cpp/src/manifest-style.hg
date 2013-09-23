@@ -51,6 +51,8 @@ namespace Maia
                 _WRAP_PROPERTY("name", Glib::ustring)
                 _WRAP_PROPERTY("tag", Glib::ustring)
                 _WRAP_PROPERTY("characters", Glib::ustring)
+                _WRAP_PROPERTY("manifest-path", Glib::ustring)
+                _WRAP_PROPERTY("manifest-styles", Core::Set<Style>)
         };
 
         class StyleProperty : public Core::Object

@@ -43,6 +43,8 @@ public class Maia.DrawingArea : Group, ItemPackable
         }
     }
 
+    internal override bool can_focus  { get; set; default = true; }
+
     internal uint   row     { get; set; default = 0; }
     internal uint   column  { get; set; default = 0; }
     internal uint   rows    { get; set; default = 1; }
@@ -321,6 +323,7 @@ public class Maia.DrawingArea : Group, ItemPackable
             if (ret)
             {
                 selected = null;
+                grab_focus (this);
             }
         }
 
@@ -439,9 +442,15 @@ public class Maia.DrawingArea : Group, ItemPackable
                         {
                             // Clip area whithout linked item area
                             var area = arrow.geometry.copy ();
-                            area.subtract (item.geometry);
+                            var item_geometry = item.geometry.copy ();
+                            item_geometry.translate (Graphic.Point (-selected_border / 2.0, -selected_border / 2.0));
+                            var item_size = item_geometry.extents.size;
+                            item_size.resize (selected_border, selected_border);
+                            item_geometry.resize (item_size);
+                            area.subtract (item_geometry);
                             var clip = new Graphic.Path.from_region (area);
 
+                            // Draw arrow selected rectangle
                             var path = new Graphic.Path ();
                             var start_arrow = arrow.start;
                             var end_arrow = arrow.end;
@@ -470,17 +479,29 @@ public class Maia.DrawingArea : Group, ItemPackable
                             }
                             inContext.restore ();
 
-                            path = new Graphic.Path ();
-                            path.rectangle (item.geometry.extents.origin.x - selected_border / 2.0,
-                                            item.geometry.extents.origin.y - selected_border / 2.0,
-                                            item.geometry.extents.size.width + selected_border,
-                                            item.geometry.extents.size.height + selected_border,
-                                            selected_border, selected_border);
+                            // Create mask for item selected area
+                            var mask = new Graphic.Surface ((int)geometry.extents.size.width, (int)geometry.extents.size.height);
+                            mask.clear ();
+                            mask.context.operator = Graphic.Operator.SOURCE;
+                            var path_item = new Graphic.Path ();
 
-                            inContext.dash = { 2, 2 };
-                            inContext.line_width = selected_border_line_width;
+                            path_item.rectangle (item.geometry.extents.origin.x - selected_border / 2.0,
+                                                 item.geometry.extents.origin.y - selected_border / 2.0,
+                                                 item.geometry.extents.size.width + selected_border,
+                                                 item.geometry.extents.size.height + selected_border,
+                                                 selected_border, selected_border);
+
+                            mask.context.dash = { 2, 2 };
+                            mask.context.line_width = selected_border_line_width;
+                            mask.context.pattern = new Graphic.Color (0, 0, 0, 1);
+                            mask.context.stroke (path_item);
+
+                            mask.context.transform = arrow_transform;
+                            mask.context.pattern = new Graphic.Color (0, 0, 0, 0);
+                            mask.context.fill (path);
+
                             inContext.pattern = selected_border_color;
-                            inContext.stroke (path);
+                            inContext.mask (mask);
                         }
                     }
                 }

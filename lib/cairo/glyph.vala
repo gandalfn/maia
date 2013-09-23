@@ -26,7 +26,7 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
         private unowned Pango.LayoutLine m_Layout;
 
         // accessors
-        public override Graphic.Size size {
+        internal override Graphic.Size size {
             get {
                 if (m_Layout != null)
                 {
@@ -101,7 +101,7 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
         return Pango.EllipsizeMode.NONE;
     }
 
-    public override Graphic.Size size {
+    internal override Graphic.Size size {
         get {
             if (m_Layout != null)
             {
@@ -120,6 +120,17 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
                 m_Layout.set_width ((int)(m_Size.width > 0 ? m_Size.width * Pango.SCALE : -1));
                 m_Layout.set_height ((int)(m_Size.height > 0 ? m_Size.height * Pango.SCALE : -1));
             }
+        }
+    }
+
+    internal override int line_count {
+        get {
+            if (m_Layout != null)
+            {
+                return m_Layout.get_line_count ();
+            }
+
+            return 0;
         }
     }
 
@@ -273,6 +284,18 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
         }
 
         return rect;
+    }
+
+    public override void
+    get_line_position (int inIndex, bool inTrailing, out int outLine)
+    {
+        outLine = 0;
+
+        if (m_Layout != null && text != null)
+        {
+            int x;
+            m_Layout.index_to_line_x (inIndex, inTrailing, out outLine, out x);
+        }
     }
 
     public override void

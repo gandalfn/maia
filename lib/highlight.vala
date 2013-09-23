@@ -77,13 +77,13 @@ public class Maia.Highlight : ToggleButton
         {
             // Translate to align in center
             inContext.translate (Graphic.Point (geometry.extents.size.width / 2, geometry.extents.size.height / 2));
-            inContext.translate (Graphic.Point (-size.width / 2, -size.height / 2));
+            inContext.translate (Graphic.Point (-size_requested.width / 2, -size_requested.height / 2));
 
             // Paint hightlight if active
             if (active)
             {
                 var path = new Graphic.Path ();
-                path.rectangle (border / 2, border / 2, size.width - border / 2, size.height - border / 2, 5, 5);
+                path.rectangle (border / 2, border / 2, size_requested.width - border, size_requested.height - border, 5, 5);
 
                 if (stroke_pattern != null)
                 {

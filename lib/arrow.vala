@@ -61,6 +61,7 @@ public class Maia.Arrow : Item, ItemMovable
                     item.notify["visible"].disconnect (on_linked_item_visible_changed);
                     item.notify["size"].disconnect (on_linked_item_geometry_changed);
                     item.notify["position"].disconnect (on_linked_item_geometry_changed);
+                    item.notify["layer"].disconnect (on_linked_item_layer_changed);
                 }
             }
 
@@ -74,8 +75,10 @@ public class Maia.Arrow : Item, ItemMovable
                     item.notify["visible"].connect (on_linked_item_visible_changed);
                     item.notify["size"].connect (on_linked_item_geometry_changed);
                     item.notify["position"].connect (on_linked_item_geometry_changed);
+                    item.notify["layer"].disconnect (on_linked_item_layer_changed);
 
                     visible = item.visible;
+                    layer = item.layer + 1;
                 }
             }
         }
@@ -112,6 +115,17 @@ public class Maia.Arrow : Item, ItemMovable
         if (item != null)
         {
             visible = item.visible;
+        }
+    }
+
+    private void
+    on_linked_item_layer_changed ()
+    {
+        // Search linked item
+        unowned Item? item = parent.find (GLib.Quark.from_string (linked_item)) as Item;
+        if (item != null)
+        {
+            layer = item.layer + 1;
         }
     }
 
@@ -183,7 +197,7 @@ public class Maia.Arrow : Item, ItemMovable
                 // Clip area whithout linked item area
                 var area = geometry.copy ();
                 area.subtract (item.geometry);
-                area.translate (area.extents.origin.invert ());
+                area.translate (geometry.extents.origin.invert ());
                 var clip = new Graphic.Path.from_region (area);
                 inContext.clip (clip);
 
@@ -249,7 +263,11 @@ public class Maia.Arrow : Item, ItemMovable
                 new_position.y = double.max (new_position.y, drawing_area_geometry.extents.origin.y);
                 new_position.y = double.min (new_position.y, drawing_area_geometry.extents.size.height);
 
-                start = new_position;
+                unowned Item? item = parent.find (GLib.Quark.from_string (linked_item)) as Item;
+                if (item == null || item.geometry == null || !(new_position in item.geometry))
+                {
+                    start = new_position;
+                }
             }
         }
     }

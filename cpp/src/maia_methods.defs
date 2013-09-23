@@ -6807,6 +6807,17 @@
   )
 )
 
+(define-method get_line_position
+  (of-object "MaiaGraphicGlyph")
+  (c-name "maia_graphic_glyph_get_line_position")
+  (return-type "none")
+  (parameters
+    '("gint" "inIndex")
+    '("gboolean" "inTrailing")
+    '("gint*" "outLine")
+  )
+)
+
 (define-method get_font_description
   (of-object "MaiaGraphicGlyph")
   (c-name "maia_graphic_glyph_get_font_description")
@@ -6933,6 +6944,12 @@
   )
 )
 
+(define-method get_line_count
+  (of-object "MaiaGraphicGlyph")
+  (c-name "maia_graphic_glyph_get_line_count")
+  (return-type "gint")
+)
+
 (define-function maia_graphic_glyph_line_get_type
   (c-name "maia_graphic_glyph_line_get_type")
   (return-type "GType")
@@ -7042,6 +7059,16 @@
   (return-type "none")
   (parameters
     '("MaiaGraphicRegion*" "inRegion")
+    '("GError**" "error")
+  )
+)
+
+(define-method mask
+  (of-object "MaiaGraphicContext")
+  (c-name "maia_graphic_context_mask")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "inPattern")
     '("GError**" "error")
   )
 )
@@ -7599,6 +7626,30 @@
     '("MaiaDrawable*" "inChild")
     '("MaiaGraphicRegion*" "inArea")
   )
+)
+
+(define-method on_show
+  (of-object "MaiaItem")
+  (c-name "maia_item_on_show")
+  (return-type "none")
+)
+
+(define-method on_hide
+  (of-object "MaiaItem")
+  (c-name "maia_item_on_hide")
+  (return-type "none")
+)
+
+(define-method on_move
+  (of-object "MaiaItem")
+  (c-name "maia_item_on_move")
+  (return-type "none")
+)
+
+(define-method on_resize
+  (of-object "MaiaItem")
+  (c-name "maia_item_on_resize")
+  (return-type "none")
 )
 
 (define-method on_button_press_event

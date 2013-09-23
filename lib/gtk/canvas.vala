@@ -161,8 +161,6 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
                 document.position = position;
 
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "scroll to %s", document.position.to_string ());
-
-                damage ();
             }
             catch (GLib.Error err)
             {
@@ -555,14 +553,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         // else send event to root
         else if (root != null)
         {
-            if (root is Document)
-            {
-                root.button_press_event (inEvent.button, point);
-            }
-            else
-            {
-                root.button_press_event (inEvent.button, root.convert_to_item_space (point));
-            }
+            root.button_press_event (inEvent.button, root.convert_to_item_space (point));
         }
 
         return true;
@@ -581,14 +572,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         // else send event to root
         else if (root != null)
         {
-            if (root is Document)
-            {
-                root.button_release_event (inEvent.button, point);
-            }
-            else
-            {
-                root.button_release_event (inEvent.button, root.convert_to_item_space (point));
-            }
+            root.button_release_event (inEvent.button, root.convert_to_item_space (point));
         }
 
         return true;
@@ -613,14 +597,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
                 // else send event to root
                 else if (root != null)
                 {
-                    if (root is Document)
-                    {
-                        root.motion_event (point);
-                    }
-                    else
-                    {
-                        root.motion_event (root.convert_to_item_space (point));
-                    }
+                    root.motion_event (root.convert_to_item_space (point));
                 }
             }
 
@@ -651,14 +628,8 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         // else send event to root
         else if (root != null)
         {
-            if (root is Document)
-            {
-                ret = root.scroll_event (convert_gdk_scrolldirection_to_scroll (inEvent.direction), point);
-            }
-            else
-            {
-                ret = root.scroll_event (convert_gdk_scrolldirection_to_scroll (inEvent.direction), root.convert_to_item_space (point));
-            }
+            ret = root.scroll_event (convert_gdk_scrolldirection_to_scroll (inEvent.direction),
+                                     root.convert_to_item_space (point));
         }
 
         return ret;

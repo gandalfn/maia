@@ -67,9 +67,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             // If item is root do not connect on position change
             if (value == null)
-                notify["position"].disconnect (on_move_resize);
+                notify["position"].disconnect (on_move);
             else
-                notify["position"].connect (on_move_resize);
+                notify["position"].connect (on_move);
 
 
             // Send root change notification
@@ -113,7 +113,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
     }
 
-    public virtual bool can_focus  { get; set; default = true; }
+    public virtual bool can_focus  { get; set; default = false; }
     public bool         have_focus { get; set; default = false; }
 
     public bool visible {
@@ -123,17 +123,15 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         set {
             if (m_Visible != value)
             {
+                m_Visible = value;
+
                 if (!m_Visible)
                 {
-                    m_Visible = value;
-                    geometry = null;
-                    repair ();
+                    on_hide ();
                 }
                 else
                 {
-                    m_Visible = value;
-                    geometry = null;
-                    damage ();
+                    on_show ();
                 }
             }
         }
@@ -221,9 +219,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
     public Graphic.Size size {
         get {
-            notify["size"].disconnect (on_move_resize);
+            notify["size"].disconnect (on_resize);
             m_SizeRequested = size_request (m_Size);
-            notify["size"].connect (on_move_resize);
+            notify["size"].connect (on_resize);
             return m_SizeRequested;
         }
         set {
@@ -398,7 +396,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
 
         // connect on move and resize
-        notify["size"].connect (on_move_resize);
+        notify["position"].connect (on_move);
+        notify["size"].connect (on_resize);
     }
 
     ~Item ()
@@ -414,6 +413,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     on_parent_root_changed ()
     {
         GLib.Signal.emit_by_name (this, "notify::root");
+
+        m_TransformToItemSpace = get_transform_to_item_space ();
+        m_TransformToRootSpace = get_transform_to_root_space ();
     }
 
     private void
@@ -508,8 +510,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 paint (inContext);
             }
             inContext.restore ();
-            repair ();
         }
+        repair ();
     }
 
     private void
@@ -523,22 +525,14 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 if (child is Item && (child as Item).visible && (child as Drawable).geometry != null)
                 {
                     (child as Item).damage.disconnect (on_child_damaged);
-                    if (inArea == null)
+                    var area = damaged.copy ();
+                    area.intersect ((child as Drawable).geometry);
+                    area.translate ((child as Drawable).geometry.extents.origin.invert ());
+                    if (!area.is_empty () && ((child as Item).damaged == null ||
+                        (child as Item).damaged.contains_rectangle (area.extents) != Graphic.Region.Overlap.IN))
                     {
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "damage child %s", (child as Item).name);
-                        (child as Item).damage (null);
-                    }
-                    else
-                    {
-                        var area = damaged.copy ();
-                        area.intersect ((child as Drawable).geometry);
-                        area.translate ((child as Drawable).geometry.extents.origin.invert ());
-                        if (!area.is_empty () && ((child as Item).damaged == null ||
-                            (child as Item).damaged.contains_rectangle (area.extents) != Graphic.Region.Overlap.IN))
-                        {
-                            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "damage child %s %s", (child as Item).name, area.extents.to_string ());
-                            (child as Item).damage (area);
-                        }
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "damage child %s %s", (child as Item).name, area.extents.to_string ());
+                        (child as Item).damage (area);
                     }
                     (child as Item).damage.connect (on_child_damaged);
                 }
@@ -810,6 +804,32 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     internal virtual void
     on_read_manifest (Manifest.Document inDocument) throws Core.ParseError
     {
+    }
+
+    protected virtual void
+    on_show ()
+    {
+        geometry = null;
+        damage ();
+    }
+
+    protected virtual void
+    on_hide ()
+    {
+        geometry = null;
+        repair ();
+    }
+
+    protected virtual void
+    on_move ()
+    {
+        on_move_resize ();
+    }
+
+    protected virtual void
+    on_resize ()
+    {
+        on_move_resize ();
     }
 
     protected virtual bool

@@ -19,6 +19,7 @@
 
 #include <maia.h>
 #include <maiamm/core-object.h>
+#include <maiamm/manifest-style.h>
 #include <maiamm/manifest-element.h>
 
 _DEFS(maiamm,maia)
@@ -58,6 +59,8 @@ namespace Maia
 
             _WRAP_PROPERTY("tag", Glib::ustring)
             _WRAP_PROPERTY("characters", Glib::ustring)
+            _WRAP_PROPERTY("manifest-path", Glib::ustring)
+            _WRAP_PROPERTY("manifest-styles", Core::Set<Manifest::Style>)
 
         private:
             _WRAP_METHOD(Glib::RefPtr<ModelColumn> get (const Glib::ustring& inColumnName) const, maia_model_get)

@@ -66,6 +66,8 @@ namespace Maia
             _WRAP_PROPERTY("selected-border-line-width", double)
             _WRAP_PROPERTY("selected-border-color", Glib::RefPtr<Graphic::Color>)
 
+            _WRAP_PROPERTY("can-focus", bool)
+
             _WRAP_PROPERTY("row", guint)
             _WRAP_PROPERTY("rows", guint)
 

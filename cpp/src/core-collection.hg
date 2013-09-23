@@ -32,6 +32,7 @@ namespace Maia
         template<typename T>
         class Collection
         {
+            public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
             typedef Collection<T> CppObjectType;
             typedef MaiaCoreCollection BaseObjectType;
@@ -42,54 +43,54 @@ namespace Maia
             }
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
-            Collection() :
-                gobject_ (0)
-            {}
-
-            explicit Collection(MaiaCoreCollection* gobject, bool make_a_copy = true) :
-                gobject_ ((make_a_copy && gobject) ? (MaiaCoreCollection*)maia_core_collection_ref(gobject) : gobject)
-            {}
-
-            Collection(const Collection<T>& other) :
-                gobject_ ((other.gobject_) ? (MaiaCoreCollection*)maia_core_collection_ref(other.gobject_) : 0)
-            {}
-
-            Collection<T>& operator=(const Collection<T>& other)
-            {
-                Collection<T> temp (other);
-                swap(temp);
-                return *this;
-            }
-
-            virtual ~Collection<T>()
-            {
-                if(gobject_)
-                    maia_core_collection_unref(gobject_);
-            }
-
-            void swap(Collection<T>& other)
-            {
-                MaiaCoreCollection *const temp = gobject_;
-                gobject_ = other.gobject_;
-                other.gobject_ = temp;
-            }
-
-            MaiaCoreCollection* gobj()
-            {
-                return gobject_;
-            }
-
-            const MaiaCoreCollection* gobj() const
-            {
-                return gobject_;
-            }
-
-            MaiaCoreCollection* gobj_copy() const
-            {
-                return (MaiaCoreCollection*)maia_core_collection_ref(gobject_);
-            }
-
             public:
+                Collection() :
+                    gobject_ (0)
+                {}
+
+                explicit Collection(MaiaCoreCollection* gobject, bool make_a_copy = true) :
+                    gobject_ ((make_a_copy && gobject) ? (MaiaCoreCollection*)maia_core_collection_ref(gobject) : gobject)
+                {}
+
+                Collection(const Collection<T>& other) :
+                    gobject_ ((other.gobject_) ? (MaiaCoreCollection*)maia_core_collection_ref(other.gobject_) : 0)
+                {}
+
+                Collection<T>& operator=(const Collection<T>& other)
+                {
+                    Collection<T> temp (other);
+                    swap(temp);
+                    return *this;
+                }
+
+                virtual ~Collection<T>()
+                {
+                    if(gobject_)
+                        maia_core_collection_unref(gobject_);
+                }
+
+                void swap(Collection<T>& other)
+                {
+                    MaiaCoreCollection *const temp = gobject_;
+                    gobject_ = other.gobject_;
+                    other.gobject_ = temp;
+                }
+
+                MaiaCoreCollection* gobj()
+                {
+                    return gobject_;
+                }
+
+                const MaiaCoreCollection* gobj() const
+                {
+                    return gobject_;
+                }
+
+                MaiaCoreCollection* gobj_copy() const
+                {
+                    return (MaiaCoreCollection*)maia_core_collection_ref(gobject_);
+                }
+
                 int length () const
                 {
                     return maia_core_collection_get_length (gobject_);

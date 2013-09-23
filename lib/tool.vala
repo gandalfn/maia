@@ -184,10 +184,14 @@ public class Maia.Tool : Button
     {
         if (visible_with != null)
         {
+            visible = false;
+
             if (inItem != null)
             {
+                bool found = false;
                 string item_name = inItem.name;
                 string[] split = visible_with.split (",");
+
                 foreach (unowned string criteria in split)
                 {
                     string[] split_criteria = criteria.split (":");
@@ -196,21 +200,19 @@ public class Maia.Tool : Button
                         switch (split_criteria[0].strip ().down ())
                         {
                             case "name":
-                                if (GLib.PatternSpec.match_simple (split_criteria[1].strip ().down (), item_name))
-                                {
-                                    visible = true;
-                                    return;
-                                }
+                                found = GLib.PatternSpec.match_simple (split_criteria[1].strip ().down (), item_name);
                                 break;
 
                             case "type":
                                 GLib.Type type = GLib.Type.from_name ("Maia" + split_criteria[1].strip ());
 
-                                if (type != 0 && inItem.get_type ().is_a (type))
-                                {
-                                    visible = true;
-                                    return;
-                                }
+                                found = type != 0 && inItem.get_type ().is_a (type);
+                                break;
+
+                            case "parent-type":
+                                GLib.Type type = GLib.Type.from_name ("Maia" + split_criteria[1].strip ());
+
+                                found = inItem.parent != null && type != 0 && inItem.parent.get_type ().is_a (type);
                                 break;
 
                             default:
@@ -226,7 +228,7 @@ public class Maia.Tool : Button
                     }
                 }
 
-                visible = false;
+                visible = found;
             }
             else
             {
@@ -266,5 +268,17 @@ public class Maia.Tool : Button
                     break;
             }
         }
+    }
+
+    internal override void
+    on_show ()
+    {
+        damage ();
+    }
+
+    internal override void
+    on_hide ()
+    {
+        damage ();
     }
 }

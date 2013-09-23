@@ -27,6 +27,7 @@ public class CanvasEditor.Window : Gtk.Window
     private Gtk.ToolButton m_Redo;
     private Gtk.ToolButton m_Build;
     private Gtk.ToolButton m_Hide;
+    private Gtk.ToolButton m_Toolbox;
     private Gtk.Statusbar m_Bar;
     private Gtk.Container m_Preview;
     private Gtk.Container m_PreviewBox;
@@ -96,10 +97,23 @@ public class CanvasEditor.Window : Gtk.Window
                 m_PreviewBox.hide ();
                 m_Hide.sensitive = false;
                 m_Build.sensitive = true;
+                m_Toolbox.sensitive = false;
                 m_Canvas.clear ();
                 m_Shortcuts.@foreach ((w) => {
                     m_Shortcuts.remove (w);
                 });
+            });
+
+            m_Toolbox = builder.get_object ("toolbox") as Gtk.ToolButton;
+            m_Toolbox.sensitive = false;
+            m_Toolbox.clicked.connect (() => {
+                if (m_Canvas.toolbox != null)
+                {
+                    if (m_Canvas.toolbox.visible)
+                        m_Canvas.toolbox.hide ();
+                    else
+                        m_Canvas.toolbox.show ();
+                }
             });
 
             var search_replace = builder.get_object("search_replace") as Gtk.Container;
@@ -193,6 +207,7 @@ public class CanvasEditor.Window : Gtk.Window
         m_Save.sensitive = false;
         m_SaveAs.sensitive = false;
         m_Hide.sensitive = false;
+        m_Toolbox.sensitive = false;
         m_Build.sensitive = false;
         m_PreviewBox.hide ();
         title = "New manifest*";
@@ -242,6 +257,7 @@ public class CanvasEditor.Window : Gtk.Window
             m_Save.sensitive = m_SourceView.buffer.get_modified ();
             m_SaveAs.sensitive = true;
             m_Hide.sensitive = false;
+            m_Toolbox.sensitive = false;
             m_Build.sensitive = true;
             m_PreviewBox.hide ();
 
@@ -330,6 +346,7 @@ public class CanvasEditor.Window : Gtk.Window
                 }
                 m_PreviewBox.show ();
                 m_Hide.sensitive = true;
+                m_Toolbox.sensitive = m_Canvas.toolbox != null;
                 m_Build.sensitive = false;
             }
             catch (GLib.Error err)

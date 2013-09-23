@@ -58,7 +58,6 @@ public class Maia.Manifest.Document : Core.Parser
     private ElementTag              m_CurrentTag = null;
     private Core.Queue<ElementTag>  m_ElementQueue;
     private AttributeScanner        m_Scanner;
-    private Core.Set<Style>         m_Styles;
 
     // Accessors
     public unowned Object owner { get; set; default = null; }
@@ -82,15 +81,7 @@ public class Maia.Manifest.Document : Core.Parser
     }
 
     public string path { get; set; default = null; }
-
-    public Core.Set<Style> styles {
-        get {
-            return m_Styles;
-        }
-        set {
-            m_Styles = value;
-        }
-    }
+    public Core.Set<Style> styles { get; set; default = new Core.Set<Style> (); }
 
     // Signals
     public signal void attribute_bind_added (AttributeBind inAttribute, string inProperty);
@@ -105,7 +96,6 @@ public class Maia.Manifest.Document : Core.Parser
     construct
     {
         m_ElementQueue = new Core.Queue<ElementTag> ();
-        m_Styles = new Core.Set<Style> ();
     }
 
     /**
@@ -422,7 +412,7 @@ public class Maia.Manifest.Document : Core.Parser
     public void
     add_style (Style inStyle)
     {
-        m_Styles.insert (inStyle);
+        styles.insert (inStyle);
     }
 
     /**
@@ -435,7 +425,7 @@ public class Maia.Manifest.Document : Core.Parser
     public unowned Style?
     get_style (string inName)
     {
-        unowned Style? ret = m_Styles.search<GLib.Quark> (GLib.Quark.from_string (inName), (s, i) => {
+        unowned Style? ret = styles.search<GLib.Quark> (GLib.Quark.from_string (inName), (s, i) => {
             return (int)(s.id - i);
         });
 

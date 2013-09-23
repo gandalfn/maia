@@ -56,6 +56,13 @@ namespace Maia
                 _WRAP_METHOD(Glib::ustring get_characters () const, maia_manifest_element_get_characters)
                 _WRAP_METHOD(void set_characters (const Glib::ustring& inCharacters), maia_manifest_element_set_characters)
 
+                _WRAP_METHOD(Glib::ustring get_manifest_path () const, maia_manifest_element_get_manifest_path)
+                _WRAP_METHOD(void set_manifest_path (const Glib::ustring& inPath) const, maia_manifest_element_set_manifest_path)
+
+                _WRAP_METHOD(Core::Set<Style> get_manifest_styles () const, maia_manifest_element_get_manifest_styles)
+                _WRAP_METHOD(void set_manifest_styles (const Core::Set<Style>& inStyles), maia_manifest_element_set_manifest_styles)
+
+
                 _WRAP_METHOD(Glib::RefPtr<Element> get_root () const, maia_manifest_element_get_root)
 
                 _IGNORE(maia_manifest_element_get_not_dumpable_attributes)
@@ -78,6 +85,8 @@ namespace Maia
 
                 _WRAP_PROPERTY("tag", Glib::ustring)
                 _WRAP_PROPERTY("characters", Glib::ustring)
+                _WRAP_PROPERTY("manifest-path", Glib::ustring)
+                _WRAP_PROPERTY("manifest-styles", Core::Set<Style>)
         };
     }
 }

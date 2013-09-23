@@ -82,6 +82,8 @@ namespace Maia
                 _WRAP_METHOD(void set_text (const Glib::ustring& inText), maia_graphic_glyph_set_text)
                 _WRAP_METHOD(void get_origin (Point& outPoint) const, maia_graphic_glyph_get_origin)
                 _WRAP_METHOD(void set_origin (const Point& inPoint), maia_graphic_glyph_set_origin)
+                _WRAP_METHOD(int get_line_count () const, maia_graphic_glyph_get_line_count)
+                _WRAP_METHOD(void get_line_position (int inIndex, bool inTrailing, int& outLine), maia_graphic_glyph_get_line_position)
 
                 _WRAP_METHOD(void update (const Glib::RefPtr<Context>& inpContext), maia_graphic_glyph_update)
                 _WRAP_METHOD(void get_cursor_position (int inIndex, Rectangle& outRectangle), maia_graphic_glyph_get_cursor_position)
@@ -94,6 +96,7 @@ namespace Maia
                 _WRAP_PROPERTY("ellipsize", GlyphEllipsizeMode)
                 _WRAP_PROPERTY("text", Glib::ustring)
                 _WRAP_PROPERTY("origin", Point)
+                _WRAP_PROPERTY("line-count", int)
         };
 
     }

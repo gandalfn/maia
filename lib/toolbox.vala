@@ -36,7 +36,6 @@ public class Maia.Toolbox : Popup
     {
         // Create grid content
         Grid grid = new Grid ("%s-content".printf (((GLib.Quark)id).to_string ()));
-        grid.can_focus = false;
         add (grid);
     }
 

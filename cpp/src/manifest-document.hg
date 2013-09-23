@@ -18,6 +18,7 @@
  */
 
 #include <maia.h>
+#include <maiamm/core-set.h>
 #include <maiamm/core-parser.h>
 #include <maiamm/manifest-attribute-scanner.h>
 #include <maiamm/manifest-attribute-bind.h>
@@ -63,6 +64,12 @@ namespace Maia
                 _WRAP_METHOD(Glib::RefPtr<Glib::Object> get_owner () const, maia_manifest_document_get_owner)
                 _WRAP_METHOD(void set_owner (const Glib::RefPtr<Glib::Object>& inOwner), maia_manifest_document_set_owner)
 
+                _WRAP_METHOD(Glib::ustring get_path () const, maia_manifest_document_get_path)
+                _WRAP_METHOD(void set_path (const Glib::ustring& inPath) const, maia_manifest_document_set_path)
+
+                _WRAP_METHOD(Core::Set<Style> get_styles () const, maia_manifest_document_get_styles)
+                _WRAP_METHOD(void set_styles (const Core::Set<Style>& inStyles), maia_manifest_document_set_styles)
+
                 _WRAP_METHOD(Glib::RefPtr<AttributeScanner> get_scanner () const, maia_manifest_document_get_scanner)
                 _WRAP_METHOD(Glib::ustring get_element_tag () const, maia_manifest_document_get_element_tag)
                 _WRAP_METHOD(Glib::ustring get_element_id () const, maia_manifest_document_get_element_id)
@@ -73,12 +80,15 @@ namespace Maia
                 _WRAP_METHOD(void add_style (const Glib::RefPtr<Style>& inStyle), maia_manifest_document_add_style)
                 _WRAP_METHOD(Glib::RefPtr<Style> get_style (const Glib::ustring& inName) const, maia_manifest_document_get_style)
 
+
                 _WRAP_SIGNAL(void attribute_bind_added (const Glib::RefPtr<AttributeBind>& inpAttribute, const Glib::ustring& inProperty), "attribute-bind-added", no_default_handler)
 
                 _WRAP_PROPERTY("owner", Glib::RefPtr<Glib::Object>)
                 _WRAP_PROPERTY("scanner", Glib::RefPtr<AttributeScanner>)
                 _WRAP_PROPERTY("element-tag", Glib::ustring)
                 _WRAP_PROPERTY("element-id", Glib::ustring)
+                _WRAP_PROPERTY("path", Glib::ustring)
+                _WRAP_PROPERTY("styles", Core::Set<Style>)
         };
     }
 }

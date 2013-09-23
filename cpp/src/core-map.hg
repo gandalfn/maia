@@ -39,42 +39,28 @@ namespace Maia
                 return maia_core_map_get_type();
             }
 #endif /* DOXYGEN_SHOULD_SKIP_THIS */
+            public:
+                Map() :
+                    Set<Pair<F, S> > ()
+                {}
 
-            Map() :
-                Set<Pair<F, S> > ()
-            {}
+                explicit Map(MaiaCoreMap* gobject, bool make_a_copy = true) :
+                    Set<Pair<F, S> > (MAIA_CORE_SET (gobject), make_a_copy)
+                {}
 
-            explicit Map(MaiaCoreMap* gobject, bool make_a_copy = true) :
-                Set<Pair<F, S> > (MAIA_CORE_SET (gobject), make_a_copy)
-            {}
+                Map(const Map<F, S>& other) :
+                    Set<Pair<F, S> > (other)
+                {}
 
-            Map(const Map<F, S>& other) :
-                Set<Pair<F, S> > (other)
-            {}
-
-            virtual ~Map<F, S>()
-            {
-            }
+                virtual ~Map<F, S>()
+                {
+                }
        };
     }
 }
 
 namespace Glib
 {
-    /** A Glib::wrap() method for this object.
-     *
-     * @param object The C instance.
-     * @param take_copy False if the result should take ownership of the C instance. True if it should take a new copy or ref.
-     * @result A C++ instance that wraps this C instance.
-     *
-     * @relates Maia::Core::Collection
-     */
-    template<typename F, typename S>
-    Maia::Core::Map<F, S> wrap(MaiaCoreMap* object, bool take_copy)
-    {
-        return Maia::Core::Map<F, S> (object, take_copy);
-    }
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
     template <typename F, typename S>
     class Value<Maia::Core::Map<F, S> > : public Glib::Value_Boxed<Maia::Core::Map<F, S> >

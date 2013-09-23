@@ -168,16 +168,46 @@ internal class Maia.Page : GLib.Object
     damage (Graphic.Region inArea)
     {
         var area = inArea.copy ();
-        area.translate (geometry.extents.origin.invert ());
+
+        if (header != null && header.geometry != null && header.visible)
+        {
+            var child_area = area.copy ();
+            child_area.intersect (header.geometry);
+            child_area.translate (header.geometry.extents.origin.invert ());
+            if (!child_area.is_empty () && (header.damaged == null ||
+                header.damaged.contains_rectangle (child_area.extents) != Graphic.Region.Overlap.IN))
+            {
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "Damage page %u item %s : %s", num, header.name, child_area.extents.to_string ());
+                header.damage (child_area);
+            }
+        }
+
+        if (footer != null && footer.geometry != null && footer.visible)
+        {
+            var child_area = area.copy ();
+            child_area.intersect (footer.geometry);
+            child_area.translate (footer.geometry.extents.origin.invert ());
+            if (!child_area.is_empty () && (footer.damaged == null ||
+                footer.damaged.contains_rectangle (child_area.extents) != Graphic.Region.Overlap.IN))
+            {
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "Damage page %u item %s : %s", num, footer.name, child_area.extents.to_string ());
+                footer.damage (child_area);
+            }
+        }
 
         foreach (unowned Item child in m_Childs)
         {
-            if (child.geometry != null)
+            if (child.geometry != null && child.visible)
             {
                 var child_area = area.copy ();
                 child_area.intersect (child.geometry);
                 child_area.translate (child.geometry.extents.origin.invert ());
-                child.damage (child_area);
+                if (!child_area.is_empty () && (child.damaged == null ||
+                    child.damaged.contains_rectangle (child_area.extents) != Graphic.Region.Overlap.IN))
+                {
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "Damage page %u item %s : %s", num, child.name, child_area.extents.to_string ());
+                    child.damage (child_area);
+                }
             }
         }
     }
@@ -271,7 +301,7 @@ internal class Maia.Page : GLib.Object
         }
 
         // Check if event is under header
-        if (header != null)
+        if (header != null && header.geometry != null)
         {
             var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
                                           geometry.extents.origin.y + Core.convert_inch_to_pixel (m_Document.top_margin));
@@ -291,7 +321,7 @@ internal class Maia.Page : GLib.Object
 
 
         // Check if event is under footer
-        if (footer != null)
+        if (footer != null && footer.geometry != null)
         {
             var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
                                           geometry.extents.origin.y + geometry.extents.size.height  -
