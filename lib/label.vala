@@ -256,7 +256,9 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
 
             inContext.save ();
             {
-                var pos = Graphic.Point ((geometry.extents.size.width - m_Glyph.size.width) / 2.0, (geometry.extents.size.height - m_Glyph.size.height) / 2.0);
+                var pos = Graphic.Point (0, 0);
+                var glyph_size = m_Glyph.size;
+                m_Glyph.size = geometry.extents.size;
                 if (shade_color != null)
                 {
                     inContext.pattern = new Graphic.Color.shade (shade_color, 0.8);
@@ -274,6 +276,8 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
                 m_Glyph.origin = pos;
                 inContext.pattern = stroke_pattern;
                 inContext.render (m_Glyph);
+
+                m_Glyph.size = glyph_size;
             }
             inContext.restore ();
         }

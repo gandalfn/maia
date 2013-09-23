@@ -203,6 +203,10 @@ public class Maia.Tool : Button
                                 found = GLib.PatternSpec.match_simple (split_criteria[1].strip ().down (), item_name);
                                 break;
 
+                            case "parent-name":
+                                found = parent != null && parent is Item && GLib.PatternSpec.match_simple (split_criteria[1].strip ().down (), (parent as Item).name);
+                                break;
+
                             case "type":
                                 GLib.Type type = GLib.Type.from_name ("Maia" + split_criteria[1].strip ());
 

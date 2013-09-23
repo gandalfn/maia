@@ -27,7 +27,7 @@ Document.worksheet {
     // Default page format
     format: a4;
     // TODO: fix transform on document
-    transform: scale(1.2, 1.2);
+    //transform: scale(1.2, 1.2);
     border-width: 5;
     background-pattern: #E0E0E0;
     header: 'header';
@@ -49,7 +49,7 @@ Document.worksheet {
     		xfill: false;
     		xexpand: false;
     		alignment: left;
-    		text: 'Shape';
+    		text: '<b>Shape:</b>';
     	}
     	
     	Grid.shapes {
@@ -60,7 +60,8 @@ Document.worksheet {
 				button-color: rgb(0.6, 0.6, 0.6);
 				label: 'test';
 				action: remove;
-				visible-with: 'type:Label';
+				icon-name: 'edit';
+				visible-with: 'type:Label,parent-type:DrawingArea';
 			}
 			
 			Tool.button {
