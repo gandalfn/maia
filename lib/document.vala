@@ -283,157 +283,171 @@ public class Maia.Document : Item
         m_Pages.insert (page);
     }
 
-    private bool
-    paginate_child_item (Item inRoot, ItemPackable inItem, ref Graphic.Point inoutCurrentPosition, ref unowned Page inoutPage)
+    private void
+    paginate_child_item (Item inRoot, Item inItem, ref Graphic.Point inoutCurrentPosition, ref unowned Page inoutPage)
     {
-        bool ret = false;
-
         if (inItem != inoutPage.header && inItem != inoutPage.footer && inItem.visible)
         {
+            bool add_height = true;
+
             // Get item allocated size
             var item_size = inItem.size_requested;
 
-            var page_content = inoutPage.content_geometry;
-            inoutCurrentPosition.y += inItem.top_padding;
-            item_size.height += inItem.bottom_padding;
-
-            // Check if item size + current position does not overlap two page
-            if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
+            if (inItem is ItemPackable)
             {
-                // Check if item can be added to next page
-                if (item_size.height <= page_content.extents.size.height)
+                unowned ItemPackable item = (ItemPackable)inItem;
+
+                var page_content = inoutPage.content_geometry;
+                inoutCurrentPosition.y += item.top_padding;
+                item_size.height += item.bottom_padding;
+
+                // Check if item size + current position does not overlap two page
+                if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
                 {
-                    // add new page
-                    append_page  ();
-
-                    // Update current position
-                    var start = convert_to_root_space (inoutCurrentPosition);
-
-                    // Set current page
-                    inoutPage = m_Pages.last ();
-                    inoutCurrentPosition = inoutPage.content_geometry.extents.origin;
-
-                    // Convert positions to root space
-                    var end = convert_to_root_space (inoutCurrentPosition);
-
-                    // Add page break
-                    PageBreak page_break = new PageBreak (this, inoutPage.num,
-                                                          inItem.parent as Grid, inItem.row,
-                                                          end.y, start.y);
-                    add_page_break (page_break);
-
-                    // add root in page
-                    inoutPage.add (inRoot);
-
-                    inoutCurrentPosition.y += item_size.height;
-
-                    ret = true;
-                }
-                else if (inItem is Grid)
-                {
-                    // Check if childs can be split in pages
-                    Graphic.Point pos = inoutCurrentPosition;
-
-                    uint last_row = 0;
-                    foreach (unowned Core.Object child in inItem)
+                    // Check if item can be added in new
+                    if (item_size.height <= page_content.extents.size.height)
                     {
-                        unowned ItemPackable? child_item = child as ItemPackable;
-                        if (child_item != null)
+                        // Item can be added in new page
+                        append_page  ();
+
+                        // Set current page
+                        inoutPage = m_Pages.last ();
+
+                        // Update current position
+                        var start = convert_to_root_space (inoutCurrentPosition);
+                        inoutCurrentPosition = inoutPage.content_geometry.extents.origin;
+
+                        // Convert positions to root space
+                        var end = convert_to_root_space (inoutCurrentPosition);
+
+                        // Add page break
+                        PageBreak page_break = new PageBreak (this,
+                                                              inoutPage.num,
+                                                              item.parent as Grid, item.row,
+                                                              end.y,
+                                                              start.y);
+                        add_page_break (page_break);
+                    }
+                    else if (inItem is Grid)
+                    {
+
+                        var pos = inoutCurrentPosition;
+
+                        // Check if childs can be split in pages
+                        uint last_row = 0;
+                        foreach (unowned Core.Object child in inItem)
                         {
-                            bool paginated = paginate_child_item (inRoot, child_item, ref pos, ref inoutPage);
-
-                            if (child_item.row > last_row)
+                            unowned ItemPackable? child_item = child as ItemPackable;
+                            if (child_item != null)
                             {
-                                pos.y += (child_item.row - last_row) * (inItem as Grid).row_spacing;
-                                last_row = child_item.row;
-                            }
-
-                            if (!paginated)
-                            {
-                                // add new page
-                                append_page  ();
-
-                                // Update current position
-                                var start = convert_to_root_space (pos);
-
-                                // Set current page
-                                inoutPage = m_Pages.last ();
-                                pos = inoutPage.content_geometry.extents.origin;
-
-                                // Convert positions to root space
-                                var end = convert_to_root_space (pos);
-
-                                // Add page break
-                                PageBreak page_break = new PageBreak (this, inoutPage.num,
-                                                                      inItem as Grid, child_item.row,
-                                                                      end.y, start.y);
-                                add_page_break (page_break);
-
-                                // add root in page
-                                inoutPage.add (inRoot);
-
-                                ret = true;
+                                paginate_child_item (inRoot, child_item, ref pos, ref inoutPage);
+                                if (child_item.row > last_row)
+                                {
+                                    pos.y += (child_item.row - last_row) * (inItem as Grid).row_spacing;
+                                    last_row = child_item.row;
+                                }
                             }
                         }
-                    }
 
-                    if (ret)
-                    {
-                        inoutCurrentPosition.y += item_size.height;
-                    }
-                    else
-                    {
-                        inoutCurrentPosition = pos;
+                        inoutCurrentPosition.y = pos.y;
+                        add_height = false;
                     }
                 }
             }
-            else
+
+            // Add root item to this page
+            inoutPage.add (inRoot);
+
+            if (inRoot.position.x == 0 && inRoot.position.y == 0)
+            {
+                inRoot.position = inoutCurrentPosition;
+            }
+
+            // Add the height of item to current position
+            if (add_height)
             {
                 inoutCurrentPosition.y += item_size.height;
-                ret = true;
             }
         }
-
-        return ret;
     }
 
     private void
-    paginate_item (Item inItem, ref Graphic.Point inCurrentPosition)
+    paginate_item (Item inItem, ref Graphic.Point inoutCurrentPosition)
     {
         // Get last page
         unowned Page? page = m_Pages.last ();
 
-        // Get item allocated size
-        var item_size = inItem.size;
-
-        // Check if item size + current position does not overlap two page
-        var page_content = page.content_geometry;
-        if (inCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height && inItem is Grid)
+        if (inItem != page.header && inItem != page.footer &&  !(inItem is Popup) && inItem.visible)
         {
-            var pos = inCurrentPosition;
-            uint last_row = 0;
+            bool add_item_in_page = true;
 
-            foreach (unowned Core.Object child in inItem)
+            // Get item allocated size
+            var item_size = inItem.size;
+
+            // Check if item size + current position does not overlap two page
+            var page_content = page.content_geometry;
+            if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
             {
-                unowned ItemPackable child_item = child as ItemPackable;
-                if (child_item != null )
+                // Append a new page
+                append_page  ();
+
+                // Set current page
+                page = m_Pages.last ();
+
+                // Update current position
+                page_content = page.content_geometry;
+                inoutCurrentPosition = page_content.extents.origin;
+
+                // Item continue to not fit in page try to split child
+                if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
                 {
-                    paginate_child_item (inItem, child_item, ref pos, ref page);
-                    if (child_item.row > last_row)
+                    if (inItem is Grid)
                     {
-                        pos.y += (child_item.row - last_row) * (inItem as Grid).row_spacing;
-                        last_row = child_item.row;
+                        add_item_in_page = false;
+
+                        inItem.position = Graphic.Point (0, 0);
+
+                        var pos = inoutCurrentPosition;
+                        uint last_row = 0;
+
+                        foreach (unowned Core.Object child in inItem)
+                        {
+                            unowned ItemPackable child_item = child as ItemPackable;
+                            if (child_item != null)
+                            {
+                                paginate_child_item (inItem, child_item, ref pos, ref page);
+                                if (child_item.row > last_row)
+                                {
+                                    pos.y += (child_item.row - last_row) * (inItem as Grid).row_spacing;
+                                    last_row = child_item.row;
+                                }
+                            }
+                        }
+
+                        inoutCurrentPosition.y = pos.y;
                     }
                 }
             }
-        }
+
+            if (add_item_in_page)
+            {
+                // Add item to this page
+                page.add (inItem);
+
+                // Set item position
+                inItem.position = inoutCurrentPosition;
+
+                // Add item height to current position
+                inoutCurrentPosition.y += item_size.height;
+            }
 
 
-        // Set width has page if item is direct child
-        if (inItem.parent == this && item_size.width != page.content_geometry.extents.size.width)
-        {
-            item_size.width = page.content_geometry.extents.size.width;
-            inItem.size = item_size;
+            // Set width has page if item is direct child
+            if (inItem.parent == this && item_size.width != page.content_geometry.extents.size.width)
+            {
+                item_size.width = page.content_geometry.extents.size.width;
+                inItem.size = item_size;
+            }
         }
     }
 
@@ -483,34 +497,15 @@ public class Maia.Document : Item
         }
 
         // Set current position
-        Graphic.Point current_position;
+        Graphic.Point current_position = m_Pages.last ().content_geometry.extents.origin;
 
         // Parse all childs
-        bool first = true;
         foreach (unowned Core.Object child in this)
         {
             unowned Item? item = child as Item;
-            if (item != null && item != page.header && item != page.footer &&  !(item is Popup) && item.visible)
+            if (item != null && item.visible)
             {
-                if (!first)
-                {
-                    // Append a new page
-                    append_page ();
-                }
-
-                // Get  last page
-                page = m_Pages.last ();
-
-                // Add item to this page
-                page.add (item);
-
-                // Set item position
-                item.position = current_position = page.content_geometry.extents.origin;
-
-                // Paginate item
                 paginate_item (item, ref current_position);
-
-                first = false;
             }
         }
 
