@@ -25,5 +25,5 @@ Document.breast {
 	@include(summary-breast.manifest);
 
 	// Target image list
-	@include(targets-images.manifest);
+	//@include(targets-images.manifest);
 }

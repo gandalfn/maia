@@ -156,7 +156,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             m_Popup.add (inObject);
             m_Popup.layer = 100;
             m_Popup.visible = false;
-            m_Popup.placement = PopupPlacement.BOTTOM;
+            m_Popup.placement = PopupPlacement.TOP;
             m_Popup.background_pattern = fill_pattern;
             m_Popup.notify["visible"].connect (() => {
                 damage ();
@@ -281,21 +281,12 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
                 if (m_Popup != null)
                 {
                     var start = convert_to_root_space (Graphic.Point (arrow_size.width / 2, arrow_size.height + arrow_size.height / 2));
-                    var end = convert_to_root_space (Graphic.Point (inAllocation.extents.size.width - arrow_size.width,
-                                                                    inAllocation.extents.size.height));
 
                     start = (root as Item).convert_to_item_space (start);
-                    end = (root as Item).convert_to_item_space (end);
-                    var popup_size = Graphic.Size (end.x - start.x, m_Popup.size_requested.height);
 
                     if (m_Popup.position.x != start.x || m_Popup.position.y != start.y)
                     {
                         m_Popup.position = start;
-                    }
-
-                    if (GLib.Math.floor (m_Popup.size_requested.width) != GLib.Math.floor (popup_size.width))
-                    {
-                        m_Popup.size = popup_size;
                     }
                 }
             }

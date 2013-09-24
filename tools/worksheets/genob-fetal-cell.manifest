@@ -1,0 +1,4175 @@
+Grid.genob_fetus_cell {
+	yexpand: false;
+
+    ///////////////////////////////////////////////////////////////////
+    /// FETAL INFORMATION
+    ///////////////////////////////////////////////////////////////////
+    Grid.summary_obgen_fetal_information {
+        row: 0;
+        left-padding: 12;
+        row-spacing: 12;
+        yexpand:false;
+
+        // TITLE
+        Label.summary_obgen_fetal_information_title {
+            columns: 3;
+            style: label_14;
+            text: '<u><b>Fetal Information</b></u>';
+        }
+
+        // FETUSES
+        Grid.summary_obgen_fetal_information_fetuses_grid {
+            row-spacing: 5;
+            row: 1;
+            column: 0;
+            yexpand: false;
+            column-spacing: 5;
+
+            // Fetuses
+            Label.summary_obgen_fetal_information_fetus_label {
+                style: label_9;
+                text: '<b>Fetuses:</b>';
+            }
+            Combo.summary_obgen_fetal_information_fetus_combo {
+                column: 1;
+                style: label_9;
+                active_row:0;
+                text:'combobox';
+                //todo
+
+            }
+            Label.summary_obgen_fetal_information_fetus_selection {
+                row: 1;
+                columns: 2;
+                style: label_9;
+                // todo
+                xshrink: false;
+                text: 'Label selection';
+            }
+        }// FETUSES
+
+        // GA
+        Grid.summary_obearly_fetal_information_ga_grid {
+            row-spacing: 5;
+            row: 1;
+            column: 1;
+            column-spacing:12;
+            yexpand: false;
+
+
+            Label.summary_obearly_fetal_information_GAbyLMP {
+                style: label_9;
+                columns: 2;
+                text: '<b>Gestational age:</b>';
+                }
+
+            Grid.summary_obearly_fetal_information_entry_grid {
+                row-spacing: 5;
+                row: 1;
+                column: 0;
+
+                // LMP
+                Label.summary_obearly_fetal_information_LMP {
+                    row: 0;
+                    style: label_9;
+                    text: 'LMP:';
+                }
+                Result.summary_obearly_fetal_information_LMP_value {
+                    row: 0;
+                    column: 1;
+                    //xshrink: false;
+                    //todo
+                    text:'NA';
+
+                }
+                // DOC
+                Label.summary_obearly_fetal_information_DOC {
+                    row: 1;
+                    style: label_9;
+                    text: 'DOC:';
+                }
+                Label.CBoxPatientObGyn_SSIEntryDate_Obstetrics_DOC_Date {
+                    row: 1;
+                    column: 1;
+                    style: label_9;
+                    // todo
+                    text: 'NA';
+                }
+                // EDD
+                Label.summary_obearly_fetal_information_EDD {
+                    row: 2;
+                    style: label_9;
+                    text: 'EDD:';
+                }
+                Label.CBoxPatientObGyn_SSIEntryDate_Obstetrics_EDD_Date {
+                    row: 2;
+                    column: 1;
+                    style: label_9;
+                    // todo
+                    text: 'NA';
+                }
+                // Ovulation date
+                Label.summary_obearly_fetal_information_ovulation_date {
+                    row: 3;
+                    xshrink: false;
+                    style: label_9;
+                    text: 'Ovulation date:';
+                }
+                Label.CBoxPatientObGyn_SSIEntryDate_Obstetrics_Ovulation_Date {
+                    row: 3;
+                    column: 1;
+                    style: label_9;
+                    // todo
+                    text: 'NA';
+                }
+            }
+
+            Grid.summary_obearly_fetal_information_automatic_set_grid {
+                yexpand: false;
+                row-spacing: 5;
+                row: 1;
+                column: 1;
+                column-spacing:12;
+            // GA by LMP
+                Label.summary_obearly_fetal_information_edd_from_lmp_date {
+                    row: 0;
+                    style: label_9;
+                    text: 'GA byLMP:';
+                }
+                Label.CBoxPatientObGyn_SSIEntryDate_Obstetrics_EDDfromLMP_Date {
+                    row: 0;
+                    column: 1;
+                    style: label_9;
+                    // todo
+                    text: 'NA';
+                }
+                // EDD from LMP
+                Label.summary_obearly_fetal_information_edd_from_ovulation_date {
+                    row: 1;
+                    style: label_9;
+                    text: 'EDD from LMP:';
+                }
+                Label.CBoxPatientObGyn_SSIEntryDate_Obstetrics_EDDfromOvulation_Date {
+                    row: 1;
+                    column: 1;
+                    style: label_9;
+                    // todo
+                    text: 'NA';
+                }
+                // EDD from ovulation
+                Label.summary_obearly_fetal_information_edd_from_ovulation_date {
+                    row: 2;
+                    style: label_9;
+                    text: 'EDD from Ovulation:';
+                }
+                Label.CBoxPatientObGyn_SSIEntryDate_Obstetrics_EDDfromOvulation_Date {
+                    row: 2;
+                    column: 1;
+                    style: label_9;
+                    // todo
+                    text: 'NA';
+                }
+                // empty grid
+                Label.summary_obearly_fetal_information_edd_from_ovulation_date_empty {
+                    row: 3;
+                    style: label_9;
+                    text: ' ';
+                }
+                Label.CBoxPatientObGyn_SSIEntryDate_Obstetrics_EDDfromOvulation_Date_empty {
+                    row: 3;
+                    column: 1;
+                    style: label_9;
+                    // todo
+                    text: ' ';
+                }
+            }
+        }
+
+
+        // AGA
+        Grid.summary_obgen_fetal_information_aga_grid {
+            row-spacing: 5;
+            row: 1;
+            column: 2;
+            column-spacing:12;
+            yexpand: false;
+
+
+            // AGA
+            Label.summary_obgen_fetal_information_aga {
+                style: label_9;
+                xshrink:false;
+                xexpand:false;
+                text: '<b>Average Gestational Age:</b>';
+            }
+            Label.CBoxPatientObGyn_GtkEntry_Obstetrics_AGA {
+                column: 1;
+                style: label_9;
+            }
+
+        }// AGA
+
+        // Cardiac Activity
+        Grid.summary_obgen_fetal_information_cardiac_activity_grid {
+            row-spacing: 5;
+            column-spacing:5;
+            row: 2;
+            column:0;
+            yexpand:false;
+
+            // Cardiac Activity
+            Label.summary_obgen_fetal_information_cardiac_activity_title {
+                style: label_9;
+                xexpand:false;
+                text: '<b>Cardiac Activity</b>:';
+            }
+            Label.CBoxPatientObGyn_GtkEntry_Obstetrics_CardiacActivity {
+                column: 1;
+                style: label_9;
+                // todo
+                text: 'NA';
+            }
+        } // Cardiac Activity
+
+
+        // Placenta
+        Grid.summary_obgen_fetal_information_placenta_grid {
+            row-spacing: 5;
+            row: 2;
+            column:1;
+            columns:1;
+            xexpand: true;
+            yexpand:false;
+
+            // Placenta
+            Label.summary_obgen_fetal_information_placenta {
+                row: 0;
+                columns: 5;
+                style: label_9;
+                text: '<b>Placenta:</b>';
+            }
+            Label.summary_obgen_fetal_information_placenta_location {
+                row: 1;
+                column: 0;
+                style: label_9;
+                text: 'Location:';
+            }
+            Entry.summary_obgen_fetal_information_placenta_location_value {
+                row: 1;
+                column: 1;
+                columns: 4;
+                style: entry_9;
+                xexpand: true;
+                lines: 1;
+            }
+
+
+            // Grade
+            Label.summary_obgen_fetal_information_placenta_grade {
+                row: 2;
+                column: 0;
+                style: label_9;
+                text: 'Grade:';
+            }
+
+            ToggleGroup.summary_obgen_fetal_information_placenta_grade_group {
+            }
+
+            CheckButton.summary_obgen_fetal_information_placenta_grade_0 {
+                row: 2;
+                column: 1;
+                group: summary_obgen_fetal_information_placenta_grade_group;
+                style: checkbutton_9;
+                // todo
+                label: '0';
+            }
+
+            CheckButton.summary_obgen_fetal_information_placenta_grade_1 {
+                row: 2;
+                column: 2;
+                group: summary_obgen_fetal_information_placenta_grade_group;
+                style: checkbutton_9;
+                // todo
+                label: '1';
+            }
+
+            CheckButton.summary_obgen_fetal_information_placenta_grade_2 {
+                row: 2;
+                column: 3;
+                group: summary_obgen_fetal_information_placenta_grade_group;
+                style: checkbutton_9;
+                // todo
+                label: '2';
+            }
+
+            CheckButton.summary_obgen_fetal_information_placenta_grade_3 {
+                row: 2;
+                column: 4;
+                group: summary_obgen_fetal_information_placenta_grade_group;
+                style: checkbutton_9;
+                // todo
+                label: '3';
+            }
+        }//PLACENTA
+
+        // os
+        Grid.summary_obgen_fetal_information_placenta_grid {
+            row-spacing: 5;
+            column-spacing: 5;
+            row: 2;
+            column:2;
+            xexpand: true;
+            yexpand:false;
+
+            // Placenta
+            Label.summary_obgen_fetal_information_placenta_os {
+                row: 0;
+                style: label_9;
+                //text:'tttttttt';
+                xexpand:false;
+                text: '<b>Placenta to os:</b>';
+            }
+            Entry.summary_obgen_fetal_information_placenta_os_entry {
+                row: 0;
+                column: 1;
+                style: entry_9;
+                xexpand: false;
+                lines: 1;
+            }
+
+            Label.CBoxPatientObGyn_GtkEntry_Placenta_OS {
+                row: 1;
+                column: 0;
+                xexpand:false;
+                style: label_9;
+                text: 'Cervix L: ';
+            }
+             Label.fetal_information_Cervix_length_value {
+                row: 1;
+                column: 1;
+                xexpand:false;
+                style: label_9;
+                text: 'NA ';
+            }
+
+            Grid.fetus_information_previa_checkbox_grid {
+                row: 2;
+                columns:2;
+                style: label_9;
+                xexpand:true;
+                yexpand:false;
+                row-spacing: 5;
+                column-spacing: 5;
+
+                // Previa (placenta)
+                Label.summary_obgen_fetal_information_placenta_previa {
+                    row: 0;
+                    column: 0;
+                    style: label_9;
+                    text: 'Previa:';
+                }
+                ToggleGroup.summary_obgen_fetal_information_placenta_previa_group {
+                }
+                CheckButton.summary_obgen_fetal_information_placenta_previa_yes {
+                    row: 0;
+                    column: 1;
+                    group: summary_obgen_fetal_information_placenta_previa_group;
+                    style: checkbutton_9;
+                    // todo
+                    label: 'Yes';
+                }
+                CheckButton.summary_obgen_fetal_information_placenta_previa_no {
+                    row: 0;
+                    column: 2;
+                    group: summary_obgen_fetal_information_placenta_previa_group;
+                    style: checkbutton_9;
+                    // todo
+                    label: 'No';
+                }
+            }
+
+
+        }//os
+
+
+        // Presentation
+        Grid.summary_obgen_fetal_information_presentation_grid {
+            row-spacing: 5;
+            column-spacing:12;
+            row: 3;
+            column:0;
+            yexpand:false;
+
+            Label.summary_obgen_fetal_information_presentation_title {
+                style: label_9;
+                text: '<b>Presentation</b>';
+            }
+
+            ToggleGroup.summary_obgen_fetal_information_presentation_group {
+            }
+            CheckButton.summary_obgen_presentation_vertex_checkbox {
+                row: 1;
+                column: 0;
+                xfill:false;
+                xexpand:true;
+                group: summary_obgen_fetal_information_presentation_group;
+                style: checkbutton_9;
+                // todo
+                label: 'Vertex';
+            }
+            CheckButton.summary_obgen_presentation_breech_checkbox {
+                row: 2;
+                column: 0;
+                xfill:false;
+                xexpand:true;
+                group: summary_obgen_fetal_information_presentation_group;
+                style: checkbutton_9;
+                // todo
+                label: 'Breech';
+            }
+            CheckButton.summary_obgen_presentation_transverse_checkbox {
+                row: 3;
+                column: 0;
+                xfill:false;
+                xexpand:true;
+                group: summary_obgen_fetal_information_presentation_group;
+                style: checkbutton_9;
+                // todo
+                label: 'Transverse';
+            }
+            CheckButton.summary_obgen_presentation_shoulder_checkbox {
+                row: 4;
+                column: 0;
+                xfill:false;
+                xexpand:true;
+                group: summary_obgen_fetal_information_presentation_group;
+                style: checkbutton_9;
+                // todo
+                label: 'Shoulder';
+            }
+
+        } // Presentation
+
+//TODO image !
+            //Image.summary_obgen_fetal_information_bodymarker_icon {
+            //  icon-name: 'face-monkey';
+            //  xfill:false;
+            //  xexpand:true;
+            //  xalign:0.5;
+            //  size: 150, 150;
+            //    row: 1;
+            //}
+
+        // Amniotic Fluid
+        Grid.summary_obgen_fetal_information_amniotic_fluid_grid {
+            row-spacing: 5;
+            column-spacing: 5;
+            row: 3;
+            column: 1;
+            yexpand:false;
+
+            Label.summary_obgen_fetal_information_amniotic_fluid_title {
+                style: label_9;
+                text: '<b>Amniotic Fluid:</b>  AFI ';
+            }
+
+            Label.CBoxPatientObGyn_GtkEntry_Obstetrics_amniotic_fluid_AFI {
+                column: 1;
+                style: label_9;
+                // todo
+                text: 'NA';
+            }
+
+            Grid.summary_obgen_fetal_information_amniotic_fluid_Q_grid {
+                yexpand: false;
+                row-spacing: 5;
+                row: 1;
+                column: 0;
+                columns: 2;
+
+                Label.summary_obgen_fetal_information_amniotic_fluid_Q1 {
+                    style: label_9;
+                    text: 'Q1';
+                }
+
+                Label.CBoxPatientObGyn_GtkEntry_Obstetrics_amniotic_fluid_Q1 {
+                    column: 1;
+                    style: label_9;
+                    // todo
+                    text: 'NA';
+                }
+
+                Label.summary_obgen_fetal_information_amniotic_fluid_Q2 {
+                    style: label_9;
+                    column: 2;
+                    text: '+Q2';
+                }
+
+                Label.CBoxPatientObGyn_GtkEntry_Obstetrics_amniotic_fluid_Q2 {
+                    column: 3;
+                    style: label_9;
+                    // todo
+                    text: 'NA';
+                }
+
+                Label.summary_obgen_fetal_information_amniotic_fluid_Q3 {
+                    style: label_9;
+                    column: 4;
+                    text: '+Q3';
+                }
+
+                Label.CBoxPatientObGyn_GtkEntry_Obstetrics_amniotic_fluid_Q3 {
+                    column: 5;
+                    style: label_9;
+                    // todo
+                    text: 'NA';
+                }
+
+                Label.summary_obgen_fetal_information_amniotic_fluid_Q4 {
+                    style: label_9;
+                    column: 6;
+                    text: '+Q4';
+                }
+
+                Label.CBoxPatientObGyn_GtkEntry_Obstetrics_amniotic_fluid_Q4 {
+                    column: 7;
+                    style: label_9;
+                    // todo
+                    text: 'NA';
+                }
+            } // Q1+Q2+Q3+Q4
+
+            Label.summary_obgen_fetal_information_amniotic_fluid_deepest_pocket {
+                style: label_9;
+                row: 2;
+                xexpand:false;
+                text: 'Deepest pocket ';
+            }
+
+            Entry.CBoxPatientObGyn_GtkEntry_Obstetrics_amniotic_fluid_deepest_pocket {
+                column: 1;
+                row: 2;
+                style: entry_9;
+                lines:1;
+                xexpand:false;
+            }
+        }
+
+        // Biophysical Profile
+        Grid.summary_obgen_fetal_information_biophysical_profile_grid {
+            row-spacing: 5;
+            column-spacing:5;
+            row: 3;
+            column: 2;
+            yexpand:false;
+
+            Label.summary_obgen_fetal_information_biophysical_profile_title {
+                style: label_9;
+                xexpand:true;
+                columns:1;
+                text: '<b>Biophysical Profile:</b>';
+            }
+            Entry.summary_obgen_fetal_information_biophysical_profile_value {
+                column: 1;
+                style: entry_9;
+                xexpand: true;
+                lines: 1;
+            }
+
+            Label.summary_obgen_fetal_information_biophysical_profile_max {
+                column: 2;
+                style: label_9;
+                text: '<b>/8</b>';
+            }
+
+            Entry.summary_obgen_fetal_information_biophysical_profile_value2 {
+                column: 3;
+                style: entry_9;
+                xexpand: true;
+                lines: 1;
+            }
+
+            Label.summary_obgen_fetal_information_biophysical_profile_max {
+                column: 4;
+                style: label_9;
+                text: '<b>/10</b>';
+
+            }
+
+
+            // Fetal movements
+            Label.summary_obgen_fetal_information_biophysical_profile_fetal_movements {
+                style: label_9;
+                row: 1;
+                text: 'Fetal movements';
+            }
+
+            Entry.summary_obgen_fetal_information_biophysical_profile_fetal_movements_value {
+                column: 1;
+                row: 1;
+                style: entry_9;
+                xexpand: true;
+                lines: 1;
+            }
+
+            Label.summary_obgen_fetal_information_biophysical_profile_fetal_movements_max {
+                column: 2;
+                style: label_9;
+                row: 1;
+                columns:3;
+                text: '/2';
+            }
+
+            // Fetal breathing movements
+            Label.summary_obgen_fetal_information_biophysical_profile_fetal_breathing_movements {
+                style: label_9;
+                row: 2;
+                text: 'Fetal breathing movements';
+            }
+
+            Entry.summary_obgen_fetal_information_biophysical_profile_fetal_breathing_movements_value {
+                column: 1;
+                style: entry_9;
+                row: 2;
+                lines:1;
+                xexpand:true;
+            }
+
+            Label.summary_obgen_fetal_information_biophysical_profile_fetal_breathing_movements_max {
+                column: 2;
+                style: label_9;
+                row: 2;
+                columns:3;
+                text: '/2';
+            }
+
+            // Fetal tone
+            Label.summary_obgen_fetal_information_biophysical_profile_fetal_tone {
+                style: label_9;
+                row: 3;
+                text: 'Fetal tone';
+            }
+
+            Entry.summary_obgen_fetal_information_biophysical_profile_fetal_tone_value {
+                column: 1;
+                style: entry_9;
+                row: 3;
+                lines:1;
+                xexpand:true;
+            }
+
+            Label.summary_obgen_fetal_information_biophysical_profile_fetal_tone_max {
+                column: 2;
+                style: label_9;
+                row: 3;
+                columns:3;
+                text: '/2';
+            }
+
+            // Amniotic Fluid Volume
+            Label.summary_obgen_fetal_information_biophysical_profile_amniotic_fluid_volume {
+                style: label_9;
+                row: 4;
+                text: 'Amniotic Fluid Volume';
+            }
+
+            Entry.summary_obgen_fetal_information_biophysical_profile_amniotic_fluid_volume_value {
+                column: 1;
+                style: entry_9;
+                row: 4;
+                lines:1;
+                xexpand:true;
+            }
+
+            Label.summary_obgen_fetal_information_biophysical_profile_amniotic_fluid_volume_max {
+                column: 2;
+                style: label_9;
+                row: 4;
+                columns:3;
+                text: '/2';
+            }
+
+            // Non-Stress Test
+            Label.summary_obgen_fetal_information_biophysical_profile_non_stress_test {
+                style: label_9;
+                row: 5;
+                text: 'Non-Stress Test';
+            }
+
+            Entry.summary_obgen_fetal_information_biophysical_profile_non_stress_test_value {
+                column: 1;
+                style: entry_9;
+                row: 5;
+                lines:1;
+                xexpand:true;
+            }
+
+            Label.summary_obgen_fetal_information_biophysical_profile_non_stress_test_max {
+                column: 2;
+                style: label_9;
+                row: 5;
+                columns:3;
+                text: '/2';
+            }
+
+        }
+         Grid.summary_obgen_fetal_information_EFW_grid {
+            row-spacing: 5;
+            column-spacing:12;
+            row: 4;
+            column: 0;
+            columns:3;
+            yexpand:false;
+
+            Label.summary_obgen_fetal_information_EFW_title {
+                row:0;
+                column:0;
+                style: label_9;
+                xexpand:true;
+                text: '<b>Estimated Fetal Weight</b>';
+            }
+            Grid.summary_obgen_fetal_information_EFW_value_grid {
+                row-spacing: 5;
+                column-spacing: 12;
+                row: 1;
+                column: 0;
+
+                Label.summary_obgen_fetal_information_EFW_title {
+                    style: label_9;
+                    xexpand:true;
+                    row:0;
+                    text: 'EFW:';
+                    xexpand:false;
+                }
+                Label.summary_obgen_fetal_information_EFW_value {
+                    row: 0;
+                    column: 1;
+                    style: label_9;
+                    text: 'NA';  //todo
+                    xexpand:false;
+                }
+            }
+       }
+       Grid.summary_obgen_biometry_empty_grid {
+            row-spacing: 5;
+            row: 5;
+            column:0;
+            columns:3;
+            yexpand: false;
+            column-spacing:12;
+            xexpand:false;
+
+            Label.summary_obgen_biometry_ratios_title {
+                style: label_9;
+                row:0;
+                text: '  ';
+            }
+            Label.summary_obgen_biometry_ratios_title {
+                style: label_9;
+                row:1;
+                text: '  ';
+            }
+            Label.summary_obgen_biometry_ratios_title {
+                style: label_9;
+                row:2;
+                text: '  ';
+            }
+        }
+    } // FETAL INFORMATION
+
+    ///////////////////////////////////////////////////////////////////
+    /// BIOMETRY
+    ///////////////////////////////////////////////////////////////////
+    Grid.summary_obgen_biometry {
+        row: 1;
+        left-padding: 12;
+        row-spacing: 5;
+        //yexpand: false;
+        column-spacing:12;
+        yexpand:false;
+        // TITLE
+        Label.summary_obgen_biometry_title {
+                columns: 2;
+                style: label_14;
+                text: '<u><b>Biometry</b></u>';
+            }
+
+        Grid.summary_obgen_biometry {
+            row:1;
+            yexpand: false;
+            row-spacing: 5;
+            column-spacing:12;
+            xexpand:false;
+
+            Label.summary_obgen_biometry_basic_measurements_title {
+                style: label_9;
+                row:0;
+                columns: 4;
+                text: '<b>Gestational Age measurements </b>';
+            }
+            // Biparietal diameter
+            Label.summary_obgen_biometry_bpd {
+                row: 1;
+                style: label_9;
+                xexpand:false;
+                text: 'Biparietal diameter BPD:';
+            }
+            Result.summary_obgen_biometry_biparietal_diameter_value {
+                row: 1;
+                column: 1;
+                //xexpand:false;
+                manager-fetus: @fetus-id;
+                manager-id: "BiparietalD";
+                manager-qualifications: "dist";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+            Label.summary_obgen_biometry_biparietal_diameter_ga {
+                row: 1;
+                column: 2;
+                xexpand:false;
+                style: label_9;
+                text: 'GA:';
+            }
+            Result.summary_obgen_biometry_biparietal_diameter_ga_value {
+                row: 1;
+                column: 3;
+                //xexpand:false;
+                manager-fetus: @fetus-id;
+                manager-id: "BiparietalD";
+                manager-qualifications: "ga";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+
+            // Head circumference
+            Label.summary_obgen_biometry_head_circumference {
+                row: 2;
+                style: label_9;
+                xexpand:false;
+                text: 'Head circumference HC:';
+            }
+            Result.summary_obgen_biometry_head_circumference_value {
+                row: 2;
+                column: 1;
+                xexpand:false;
+                //xexpand:false;
+                manager-fetus: @fetus-id;
+                manager-id: "HeadC";
+                manager-qualifications: "dist";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+            Label.summary_obgen_biometry_head_circumference_ga {
+                row: 2;
+                column: 2;
+                xexpand:false;
+                style: label_9;
+                text: 'GA:';
+            }
+            Result.summary_obgen_biometry_head_circumference_ga_value {
+                row: 2;
+                column: 3;
+                xexpand:false;
+                manager-fetus: @fetus-id;
+                manager-id: "HeadC";
+                manager-qualifications: "ga";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+
+            // ominal circumference
+            Label.summary_obgen_biometry_abdominal_circumference {
+                row: 3;
+                xexpand:false;
+                style: label_9;
+                text: 'Abdominal circumference AC:';
+            }
+            Result.summary_obgen_biometry_abdominal_circumference_value {
+                row: 3;
+                column: 1;
+                xexpand:false;
+                manager-fetus: @fetus-id;
+                manager-id: "AbdominalC";
+                manager-qualifications: "circumference";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+            Label.summary_obgen_biometry_abdominal_circumference_ga {
+                row: 3;
+                column: 2;
+                xexpand:false;
+                style: label_9;
+                text: 'GA:';
+            }
+            Result.summary_obgen_biometry_abdominal_circumference_ga_value {
+                row: 3;
+                column: 3;
+                xexpand:false;
+                manager-fetus: @fetus-id;
+                manager-id: "AbdominalC";
+                manager-qualifications: "ga";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+
+            // Femur length
+            Label.summary_obgen_biometry_femur_length {
+                row: 4;
+                style: label_9;
+                xexpand:false;
+                text: 'Femur length FL:';
+            }
+            Result.summary_obgen_biometry_femur_length_value {
+                row: 4;
+                column: 1;
+                //xexpand:false;
+                manager-fetus: @fetus-id;
+                manager-id: "FemurL";
+                manager-qualifications: "dist";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+            Label.summary_obgen_biometry_femur_length_ga {
+                row: 4;
+                column: 2;
+                xexpand:false;
+                style: label_9;
+                text: 'GA:';
+            }
+            Result.summary_obgen_biometry_femur_length_ga_value {
+                row: 4;
+                column: 3;
+                //xexpand:false;
+                manager-fetus: @fetus-id;
+                manager-id: "FemurL";
+                manager-qualifications: "ga";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+            //OFD
+            Label.summary_obgen_biometry_other1_title {
+                style: label_9;
+                row: 5;
+                xexpand:false;
+                text: 'Occipital Frontal Diameter (OFD):';
+            }
+            Result.occipital_frontal_diameter_value {
+                row:5;
+                column:1;
+                //xexpand:false;
+                manager-fetus: @fetus-id;
+                manager-id: "OccipitalFrontalD";
+                manager-qualifications: "dist";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+            Label.occipital_frontal_diameter_ga {
+                row:5;
+                style: label_9;
+                column:2;
+                xexpand:false;
+                text: 'GA:';
+            }
+            Result.occipital_frontal_diameter_ga_resolution{
+                row:5;
+                column:3;
+                //xexpand:false;
+                manager-fetus: @fetus-id;
+                manager-id: "OccipitalFrontalD";
+                manager-qualifications: "ga";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+
+            //TAD
+            Label.summary_obgen_biometry_tad_title {
+                style: label_9;
+                row: 6;
+                xexpand:false;
+                text: 'Trans Abdominal Diameter (TAD):';
+            }
+            Result.tad_value {
+                row:6;
+                column:1;
+                //xexpand:false;
+                manager-fetus: @fetus-id;
+                manager-id: "TransAbdominalD";
+                manager-qualifications: "dist";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+            Label.tad_ga {
+                row:6;
+                style: label_9;
+                column:2;
+                xexpand:false;
+                text: 'GA:';
+            }
+            Result.tad_ga_resolution{
+                row:6;
+                column:3;
+                //xexpand:false;
+                manager-fetus: @fetus-id;
+                manager-id: "TransAbdominalD";
+                manager-qualifications: "ga";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+            //Humerus length
+            Label.summary_obgen_biometry_hl_title {
+                style: label_9;
+                row: 7;
+                xexpand:false;
+                text: 'Humerus Length (HL):';
+            }
+            Result.hl_value {
+                row:7;
+                column:1;
+                //xexpand:false;
+                manager-fetus: @fetus-id;
+                manager-id: "HumerusL";
+                manager-qualifications: "dist";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+            Label.hl_ga {
+                row:7;
+                style: label_9;
+                column:2;
+                xexpand:false;
+                text: 'GA:';
+            }
+            Result.hl_ga_resolution{
+                row:7;
+                column:3;
+                //xexpand:false;
+                manager-fetus: @fetus-id;
+                manager-id: "HumerusL";
+                manager-qualifications: "ga";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+            //Ulna left-margin
+            Label.summary_obgen_biometry_ul_title {
+                style: label_9;
+                row: 8;
+                xexpand:false;
+                text: 'Ulna Length (HL):';
+            }
+            Result.ul_value {
+                row:8;
+                column:1;
+                //xexpand:false;
+                manager-fetus: @fetus-id;
+                manager-id: "UlnaL";
+                manager-qualifications: "dist";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+            Label.ul_ga {
+                row:8;
+                style: label_9;
+                column:2;
+                xexpand:false;
+                text: 'GA:';
+            }
+            Result.ul_ga_resolution{
+                row:8;
+                column:3;
+                //xexpand:false;
+                manager-fetus: @fetus-id;
+                manager-id: "UlnaL";
+                manager-qualifications: "ga";
+            }
+            //tibia left-margin
+            Label.summary_obgen_biometry_tl_title {
+                style: label_9;
+                row: 9;
+                xexpand:false;
+                text: 'Tibia Length (HL):';
+            }
+            Result.tl_value {
+                row: 9;
+                column:1;
+                //xexpand:false;
+                manager-fetus: @fetus-id;
+                manager-id: "TibiaL";
+                manager-qualifications: "dist";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+            Label.tl_ga {
+                row: 9;
+                style: label_9;
+                column:2;
+                xexpand:false;
+                text: 'GA:';
+            }
+            Result.tl_ga_resolution{
+                row: 9;
+                column:3;
+                //xexpand:false;
+                manager-fetus: @fetus-id;
+                manager-id: "TibiaL";
+                manager-qualifications: "ga";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+
+
+            //
+        } // measures
+
+        // Ratios
+        Grid.summary_obgen_biometry_ratios {
+            row-spacing: 5;
+            row: 1;
+            column:1;
+            yexpand: false;
+            column-spacing:12;
+            xexpand:false;
+
+            Label.summary_obgen_biometry_ratios_title {
+                style: label_9;
+                row:0;
+                columns: 2;
+                text: '<b>Ratios</b>';
+            }
+
+            // CI
+            Label.summary_obgen_biometry_ratios_ci {
+                row: 1;
+                text:'CI (BPD/OFD):';
+                xexpand:false;
+            }
+
+            Result.summary_obgen_biometry_ratios_ci_value {
+                row: 1;
+                column: 1;
+                manager-fetus: @fetus-id;
+                manager-id: "CephalicIndex";
+                manager-qualifications: "ratio";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+
+            // HC/AC
+            Label.summary_obgen_biometry_ratios_hc_ac {
+                style: label_9;
+                row: 2;
+                //xexpand:false;
+                text: 'HC/AC:';
+            }
+
+            Result.summary_obgen_biometry_ratios_hc_ac_value {
+                row: 2;
+                column: 1;
+                manager-fetus: @fetus-id;
+                manager-id: "HC_AC";
+                manager-qualifications: "ratio";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+
+            // FL/BPD
+            Label.summary_obgen_biometry_ratios_fl_bpd {
+                style: label_9;
+                row: 3;
+                xexpand:false;
+                text: 'FL/BPD:';
+            }
+
+            Result.summary_obgen_biometry_ratios_fl_bpd_value {
+                row: 3;
+                column: 1;
+                manager-fetus: @fetus-id;
+                manager-id: "HC_AC";
+                manager-qualifications: "ratio";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+
+            // FL/AC
+            Label.summary_obgen_biometry_ratios_fl_ac {
+                style: label_9;
+                row: 4;
+                xexpand:false;
+                text: 'FL/AC:';
+            }
+
+            Result.summary_obgen_biometry_ratios_fl_ac_value {
+                row: 4;
+                column: 1;
+                manager-fetus: @fetus-id;
+                manager-id: "FL_AC";
+                manager-qualifications: "ratio";
+                display-short-name: false;
+                one-line: true;
+                [
+                    Grid.cell {
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                        Label.result {
+                            row: 1;
+                            text: @result_text;
+                            style: label_9;
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                        }
+                    }
+                ]
+            }
+        } //RATIOS
+
+        Grid.summary_obgen_biometry_ratios {
+            row-spacing: 5;
+            row: 2;
+            columns: 2;
+            yexpand: false;
+            column-spacing: 12;
+            xexpand:false;
+            is-visible:false;
+
+            Label.summary_obgen_other_title {
+                style: label_9;
+                row:0;
+                columns: 1;
+                text: '<b>Other measurements </b>';
+            }
+            Grid.lateral_ventrical_width_grid {
+                row-spacing: 5;
+                row: 1;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other2_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Lateral Ventrical Width (Lat Vent W):';
+                }
+                Result.lateral_ventrical_width_value {
+                    style: label_9;
+                    column:1;
+                    //xexpand:false;
+                    //xalign:0;
+                    manager-fetus: @fetus-id;
+                    manager-id: "LatVentricalW";
+                    manager-qualifications: "dist";
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.biparietal_diameter_area_corrected_grid {
+                row-spacing: 5;
+                row: 2;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+
+                Label.summary_obgen_biometry_other3_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Biparietal Diameter area corrected (BPDac):';
+                }
+                Result.biparietal_diameter_area_corrected_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "BPDac";
+                    manager-qualifications: "bpdac";
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.cisterna_magna_length_grid {
+                row-spacing: 5;
+                row: 3;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other4_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Cisterna Magna Length (CML):';
+                }
+                Result.cisterna_magna_length_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "CisternaMagnaL";
+                    manager-qualifications: "dist";
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.cerebellum_diameter_grid {
+                row-spacing: 5;
+                row: 4;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other5_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Cerebellum Diameter (Cer D):';
+                }
+                Result.cerebellum_diameter_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "CerebellumD";
+                    manager-qualifications: "dist";
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.anterior_horn_lateral_ventricular_width_grid {
+                row-spacing: 5;
+                row: 5;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other6_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Anterior Horn Lateral Ventricular Width (Ant Horn Lat Vent W):';
+                }
+                Result.anterior_horn_lateral_ventricular_width_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "AntHornLatVentricularW";
+                    manager-qualifications: "dist";
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.posterior_horn_lateral_ventricular_width_grid {
+                row-spacing: 5;
+                row: 6;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other7_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Posterior Horn Lateral Ventricular Width (Post Horn Lat Vent W):';
+                }
+                Result.posterior_horn_lateral_ventricular_width_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "PostHornLatVentricularW";
+                    manager-qualifications: "dist";
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.hemisphere_width_grid {
+                row-spacing: 5;
+                row: 7;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other8_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Hemisphere Width (Hemi W):';
+                }
+                Result.hemisphere_width_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "HemisphereW";
+                    manager-qualifications: "dist";
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.nuchal_hold_thickness_grid {
+                row-spacing: 5;
+                row: 8;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other9_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Nuchal Fold Thickness (NF Th):';
+                }
+                Result.nuchal_hold_thickness_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "NuchalFoldTh";
+                    manager-qualifications: "dist";
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.inner_orbital_diameter_grid {
+                row-spacing: 5;
+                row: 9;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other10_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Inner Orbital Diameter (IOD):';
+                }
+                Result.inner_orbital_diameter_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "InnerOrbitalD";
+                    manager-qualifications: "dist";
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.outer_orbital_diameter_grid {
+                row-spacing: 5;
+                row: 10;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other11_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Outer Orbital Diameter (OOD):';
+                }
+                Result.outer_orbital_diameter_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "OuterOrbitalD";
+                    manager-qualifications: "dist";
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.thoracic_circumference_grid {
+                row-spacing: 5;
+                row: 11;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other12_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Thoracic Circumference (ThC):';
+                }
+                Result.thoracic_circumference_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "ThoracicC";
+                    manager-qualifications: "circumference";
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.trans_thoracic_diameter_grid {
+                row-spacing: 5;
+                row: 12;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other13_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Trans Thoracic Diameter (TThD):';
+                }
+                Result.trans_thoracic_diameter_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "TransThoracicD";
+                    manager-qualifications: "dist";
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.anterior_posterior_trunk_diameter_grid {
+                row-spacing: 5;
+                row: 13;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other13_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Anterior Posterior Trunk Diameter (APTD):';
+                }
+                Result.anterior_posterior_trunk_diameter_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "APTrunkD";
+                    manager-qualifications: "dist";
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.thoracic_area_grid {
+                row-spacing: 5;
+                row: 14;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other13_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Thoracic Area(ThA):';
+                }
+                Result.thoracic_area_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "ThoracicA";
+                    manager-qualifications: "area";
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.anterior_posterior_abdominal_diameter_grid {
+                row-spacing: 5;
+                row: 15;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other13_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Anterior Posterior Abdominal Diameter (APAD):';
+                }
+                Result.anterior_posterior_abdominal_diameter_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "APAbdominalD";
+                    manager-qualifications: "dist";
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.fetal_aorta_grid {
+                row-spacing: 5;
+                row: 16;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other13_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Fetal Aorta (FA):';
+                }
+                Result.fetal_aorta_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "FetalAorta";
+                    manager-qualifications: "PSV";//todo
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.fetus_kidney_height_grid {
+                row-spacing: 5;
+                row: 17;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other13_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Fetus Kidney Height (Fetus Kid H):';
+                }
+                Result.fetus_kidney_height_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "FetusKidneyH";
+                    manager-qualifications: "FetusKidneyHeight";//todo
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.fetus_kidney_lenght_grid {
+                row-spacing: 5;
+                row: 18;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other13_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Fetus Kidney Length (Fetus Kid L):';
+                }
+                Result.fetus_kidney_lenght_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "FetusKidneyL";
+                    manager-qualifications: "FetusKidneyLength";//todo
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.fetus_kidney_width_grid {
+                row-spacing: 5;
+                row: 19;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other13_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Fetus Kidney Width (Fetus Kid W):';
+                }
+                Result.fetus_kidney_width_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "FetusKidneyW";
+                    manager-qualifications: "FetusKidneyWidth";//todo
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.apad_tad_grid {
+                row-spacing: 5;
+                row: 20;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other13_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'APAD X TAD:';
+                }
+                Result.apad_tad_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "FetusKidneyW";
+                    manager-qualifications: "FetusKidneyWidth";//todo
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.fetus_kidney_volume_grid {
+                row-spacing: 5;
+                row: 21;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other13_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Fetus Kidney Volume (Fetus Kid Vol):';
+                }
+                Result.fetus_kidney_volume_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "FetusKidneyVol";
+                    manager-qualifications: "vol";//todo
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+
+            Grid.radius_length_grid {
+                row-spacing: 5;
+                row: 22;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other13_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Radius Length:';
+                }
+                Result.radius_length_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "RadiusL";
+                    manager-qualifications: "dist";//todo
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.fibula_length_grid {
+                row-spacing: 5;
+                row: 23;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other13_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Fibula Length:';
+                }
+                Result.fibula_length_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "FibulaL";
+                    manager-qualifications: "dist";//todo
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+            Grid.foot_length_grid {
+                row-spacing: 5;
+                row: 24;
+                column: 0;
+                yexpand: false;
+                column-spacing:12;
+
+                Label.summary_obgen_biometry_other13_title {
+                    style: label_9;
+                    row: 0;
+                    xexpand:true;
+                    text: 'Foot Length:';
+                }
+                Result.foot_length_value {
+                    column:1;
+                    //xexpand:false;
+                    manager-fetus: @fetus-id;
+                    manager-id: "FootL";
+                    manager-qualifications: "dist";//todo
+                    display-short-name: false;
+                    one-line: true;
+                    [
+                        Grid.cell {
+                            xfill:false;
+                            xexpand:false;
+                            yfill:false;
+                            yexpand:false;
+                            Label.result {
+                                row: 1;
+                                text: @result_text;
+                                style: label_9;
+                                xfill:false;
+                                xexpand:false;
+                                yfill:false;
+                                yexpand:false;
+                            }
+                        }
+                    ]
+                }
+            }
+
+
+    } // BIOMETRY
+    }
+
+    ///////////////////////////////////////////////////////////////////
+    /// ANATOMY
+    ///////////////////////////////////////////////////////////////////
+    Grid.summary_obgen_anatomy {
+        row: 2;
+        left-padding: 12;
+        row-spacing: 12;
+        column-spacing:12;
+        yexpand: false;
+
+        // TITLE
+        Label.summary_obgen_anatomy_title {
+            columns: 2;
+            style: label_14;
+            text: '<u><b>Anatomy</b></u>';
+        }
+
+        // Fetal Cranium
+        Grid.summary_obgen_anatomy_fetal_cranium_grid {
+            row: 1;
+            yexpand: false;
+            row-spacing: 5;
+
+            Label.summary_obgen_anatomy_fetal_cranium_label {
+                row: 0;
+                column: 0;
+                style: label_9;
+                text: '<b>Fetal Cranium:</b>';
+            }
+
+            // SEEN NOT SEEN line
+            Label.summary_obgen_anatomy_fetal_cranium_seen {
+                row: 0;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                style: label_9;
+                text: 'seen';
+            }
+            Label.summary_obgen_anatomy_fetal_cranium_not_seen {
+                row: 0;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                style: label_9;
+                text: 'not seen / not imaged';
+            }
+
+            // CAVUM
+            Label.summary_obgen_anatomy_fetal_cranium_cavum {
+                row: 1;
+                column: 0;
+                style: label_9;
+                text: 'Cavum septi pellucidi';
+            }
+
+            ToggleGroup.summary_obgen_anatomy_fetal_cranium_cavum_group {
+            }
+
+            CheckButton.summary_obgen_anatomy_fetal_cranium_cavum_seen {
+                row: 1;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_cranium_cavum_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_cranium_cavum_not_seen {
+                row: 1;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_cranium_cavum_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Midline falx
+            Label.summary_obgen_anatomy_fetal_cranium_midline {
+                row: 2;
+                column: 0;
+                style: label_9;
+                text: 'Midline falx';
+            }
+
+                        ToggleGroup.summary_obgen_anatomy_fetal_cranium_midline_group {
+            }
+
+            CheckButton.summary_obgen_anatomy_fetal_cranium_midline_seen {
+                row: 2;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_cranium_midline_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            CheckButton.summary_obgen_anatomy_fetal_cranium_midline_not_seen {
+                row: 2;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_cranium_midline_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Thalami
+            Label.summary_obgen_anatomy_fetal_cranium_thalami {
+                row: 3;
+                column: 0;
+                style: label_9;
+                text: 'Thalami';
+            }
+            ToggleGroup.summary_obgen_anatomy_fetal_cranium_thalami_group {
+            }
+            CheckButton.summary_obgen_anatomy_fetal_cranium_thalami_seen {
+                row: 3;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_cranium_thalami_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_cranium_thalami_not_seen {
+                row: 3;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_cranium_thalami_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Lateral ventricle
+            Label.summary_obgen_anatomy_fetal_cranium_lateral_ventricle {
+                row: 4;
+                column: 0;
+                style: label_9;
+                text: 'Lateral Ventricle';
+            }
+            ToggleGroup.summary_obgen_anatomy_fetal_cranium_lateral_ventricle_group {
+            }
+            CheckButton.summary_obgen_anatomy_fetal_cranium_lateral_ventricle_seen {
+                row: 4;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_cranium_lateral_ventricle_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_cranium_lateral_ventricle_not_seen {
+                row: 4;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_cranium_lateral_ventricle_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Cerebellum
+            Label.summary_obgen_anatomy_fetal_cranium_cerebellum {
+                row: 5;
+                column: 0;
+                style: label_9;
+                text: 'Cerebellum';
+            }
+            ToggleGroup.summary_obgen_anatomy_fetal_cranium_cerebellum_group {
+            }
+            CheckButton.summary_obgen_anatomy_fetal_cranium_cerebellum_seen {
+                row: 5;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_cranium_cerebellum_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_cranium_cerebellum_not_seen {
+                row: 5;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_cranium_cerebellum_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            // Cisterna magna
+            Label.summary_obgen_anatomy_fetal_cranium_cisterna_magna {
+                row: 6;
+                column: 0;
+                style: label_9;
+                xshrink:true;
+                text: 'Cisterna magna';
+            }
+            ToggleGroup.summary_obgen_anatomy_fetal_cranium_cisterna_magna_group {
+            }
+            CheckButton.summary_obgen_anatomy_fetal_cranium_cisterna_magna_seen {
+                row: 6;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_cranium_cisterna_magna_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_cranium_cisterna_magna_not_seen {
+                row: 6;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_cranium_cisterna_magna_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            // Choroid plexus
+            Label.summary_obgen_anatomy_fetal_cranium_choroid_plexus {
+                row: 7;
+                column: 0;
+                style: label_9;
+                text: 'Choroid plexus';
+            }
+            ToggleGroup.summary_obgen_anatomy_fetal_cranium_choroid_plexus_group {
+            }
+            CheckButton.summary_obgen_anatomy_fetal_cranium_choroid_plexus_seen {
+                row: 7;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_cranium_choroid_plexus_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_cranium_choroid_plexus_not_seen {
+                row: 7;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_cranium_choroid_plexus_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+        } // Fetal Cranium
+
+        // Fetal Face
+        Grid.summary_obgen_anatomy_fetal_face_grid {
+            row: 1;
+            column: 1;
+            yexpand: false;
+            row-spacing: 5;
+
+            Label.summary_obgen_anatomy_fetal_face_label {
+                row: 0;
+                column: 0;
+                style: label_9;
+                text: '<b>Fetal Face:</b>';
+            }
+
+            // SEEN NOT SEEN line
+            Label.summary_obgen_anatomy_fetal_face_seen {
+                row: 0;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                style: label_9;
+                text: 'seen';
+            }
+            Label.summary_obgen_anatomy_fetal_face_not_seen {
+                row: 0;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                style: label_9;
+                text: 'not seen / not imaged';
+            }
+
+            // Upper Lip
+            Label.summary_obgen_anatomy_fetal_face_upper_lip {
+                row: 1;
+                column: 0;
+                style: label_9;
+                text: 'Upper Lip';
+            }
+            ToggleGroup.summary_obgen_anatomy_fetal_face_upper_lip_group {
+            }
+            CheckButton.summary_obgen_anatomy_fetal_face_upper_lip_seen {
+                row: 1;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_face_upper_lip_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_face_upper_lip_not_seen {
+                row: 1;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_face_upper_lip_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Orbits
+            Label.summary_obgen_anatomy_fetal_orbits {
+                row: 2;
+                column: 0;
+                style: label_9;
+                text: 'Orbits';
+            }
+            ToggleGroup.summary_obgen_anatomy_fetal_face_orbits_group {
+            }
+            CheckButton.summary_obgen_anatomy_fetal_face_orbits_seen {
+                row: 2;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_face_orbits_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_face_orbits_not_seen {
+                row: 2;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_face_orbits_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Nose
+            Label.summary_obgen_anatomy_fetal_face_nose {
+                row: 3;
+                column: 0;
+                style: label_9;
+                text: 'Nose';
+            }
+            ToggleGroup.summary_obgen_anatomy_fetal_face_nose_group {
+            }
+            CheckButton.summary_obgen_anatomy_fetal_face_nose_seen {
+                row: 3;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_face_nose_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_face_nose_not_seen {
+                row: 3;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_face_nose_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Nostrils
+            Label.summary_obgen_anatomy_fetal_face_lateral_ventricle {
+                row: 4;
+                column: 0;
+                style: label_9;
+                text: 'Nostrils';
+            }
+            ToggleGroup.summary_obgen_anatomy_fetal_face_lateral_ventricle_group {
+            }
+            CheckButton.summary_obgen_anatomy_fetal_face_lateral_ventricle_seen {
+                row: 4;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_face_lateral_ventricle_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_face_lateral_ventricle_not_seen {
+                row: 4;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_face_lateral_ventricle_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Median profile
+            Label.summary_obgen_anatomy_fetal_face_median_profile {
+                row: 5;
+                column: 0;
+                style: label_9;
+                text: 'Median profile';
+            }
+            ToggleGroup.summary_obgen_anatomy_fetal_face_median_profile_group {
+            }
+            CheckButton.summary_obgen_anatomy_fetal_face_median_profile_seen {
+                row: 5;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_face_median_profile_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_face_median_profile_not_seen {
+                row: 5;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_face_median_profile_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+        } // Fetal Face
+
+        // Abdomen
+        Grid.summary_obgen_anatomy_abdomen_grid {
+            row: 3;
+            column: 0;
+            yexpand: false;
+            row-spacing: 5;
+
+            Label.summary_obgen_anatomy_abdomen_label {
+                row: 0;
+                column: 0;
+                style: label_9;
+                text: '<b>Abdomen:</b>';
+            }
+            // SEEN NOT SEEN line
+            Label.summary_obgen_anatomy_abdomen_seen {
+                row: 0;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                style: label_9;
+                text: 'seen';
+            }
+            Label.summary_obgen_anatomy_abdomen_not_seen {
+                row: 0;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                style: label_9;
+                text: 'not seen / not imaged';
+            }
+
+            // Stomach
+            Label.summary_obgen_anatomy_abdomen_stomach {
+                row: 1;
+                column: 0;
+                style: label_9;
+                text: 'Stomach';
+            }
+            ToggleGroup.summary_obgen_anatomy_abdomen_stomach_group {
+            }
+            CheckButton.summary_obgen_anatomy_abdomen_stomach_seen {
+                row: 1;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_abdomen_stomach_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_abdomen_stomach_not_seen {
+                row: 1;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_abdomen_stomach_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Bowel
+            Label.summary_obgen_anatomy_abdomen_bowel {
+                row: 2;
+                column: 0;
+                style: label_9;
+                text: 'Bowel';
+            }
+            ToggleGroup.summary_obgen_anatomy_abdomen_bowel_group {
+            }
+            CheckButton.summary_obgen_anatomy_abdomen_bowel_seen {
+                row: 2;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_abdomen_bowel_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_abdomen_bowel_not_seen {
+                row: 2;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_abdomen_bowel_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Kidneys
+            Label.summary_obgen_anatomy_abdomen_kidneys {
+                row: 3;
+                column: 0;
+                style: label_9;
+                text: 'Kidneys';
+            }
+            ToggleGroup.summary_obgen_anatomy_abdomen_kidneys_group {
+            }
+            CheckButton.summary_obgen_anatomy_abdomen_kidneys_seen {
+                row: 3;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_abdomen_kidneys_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_abdomen_kidneys_not_seen {
+                row: 3;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_abdomen_kidneys_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Urinary Bladder
+            Label.summary_obgen_anatomy_abdomen_urinary_bladder {
+                row: 4;
+                column: 0;
+                style: label_9;
+                text: 'Urinary bladder';
+            }
+            ToggleGroup.summary_obgen_anatomy_abdomen_urinary_bladder_group {
+            }
+            CheckButton.summary_obgen_anatomy_abdomen_urinary_bladder_seen {
+                row: 4;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_abdomen_urinary_bladder_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_abdomen_urinary_bladder_not_seen {
+                row: 4;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_abdomen_urinary_bladder_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Abdominal cord insertion
+            Label.summary_obgen_anatomy_abdomen_abdominal_cord_insertion {
+                row: 5;
+                column: 0;
+                style: label_9;
+                text: 'Abdominal cord insertion';
+            }
+            ToggleGroup.summary_obgen_anatomy_abdomen_abdominal_cord_insertion_group {
+            }
+            CheckButton.summary_obgen_anatomy_abdomen_abdominal_cord_insertion_seen {
+                row: 5;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_abdomen_abdominal_cord_insertion_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_abdomen_abdominal_cord_insertion_not_seen {
+                row: 5;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_abdomen_abdominal_cord_insertion_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // 3 Vessel Cord
+            Label.summary_obgen_anatomy_abdomen_abdominal_cord_insertion {
+                row: 6;
+                column: 0;
+                style: label_9;
+                text: '3 Vessel Cord';
+            }
+            ToggleGroup.summary_obgen_anatomy_abdomen_3_vessel_cord_group {
+            }
+            CheckButton.summary_obgen_anatomy_abdomen_3_vessel_cord_seen {
+                row: 6;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_abdomen_3_vessel_cord_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_abdomen_3_vessel_cord_not_seen {
+                row: 6;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_abdomen_3_vessel_cord_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+        } // abdomen
+
+        // Neck
+        Grid.summary_obgen_anatomy_neck_grid {
+            row: 2;
+            column: 0;
+            yexpand: false;
+            row-spacing: 5;
+
+            Label.summary_obgen_anatomy_neck_label {
+                row: 0;
+                column: 0;
+                style: label_9;
+                text: '<b>Neck:</b>';
+            }
+
+            Entry.summary_obgen_anatomy_neck_comment {
+                row: 1;
+                style: entry_9;
+                lines:2;
+            }
+        } // Neck
+
+        // Thorax
+        Grid.summary_obgen_anatomy_thorax_grid {
+            row: 2;
+            column: 1;
+            yexpand: false;
+            yfill:false;
+            row-spacing: 5;
+
+            Label.summary_obgen_anatomy_thorax_label {
+                row: 0;
+                column: 0;
+                style: label_9;
+                text: '<b>Thorax:</b>';
+            }
+            // SEEN NOT SEEN line
+            Label.summary_obgen_anatomy_thorax_seen {
+                row: 0;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                style: label_9;
+                text: 'seen';
+            }
+            Label.summary_obgen_anatomy_thorax_not_seen {
+                row: 0;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                style: label_9;
+                text: 'not seen / not imaged';
+            }
+
+            // Diaphragm
+            Label.summary_obgen_anatomy_thorax_diaphragm {
+                row: 1;
+                column: 0;
+                style: label_9;
+                text: 'Diaphragm';
+            }
+            ToggleGroup.summary_obgen_anatomy_thorax_diaphragm_group {
+            }
+            CheckButton.summary_obgen_anatomy_thorax_diaphragm_seen {
+                row: 1;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_thorax_diaphragm_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_thorax_diaphragm_not_seen {
+                row: 1;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_thorax_diaphragm_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+        } // thorax
+
+        // Spine
+        Grid.summary_obgen_anatomy_spine_grid {
+            row: 3;
+            column: 1;
+            yexpand: false;
+            row-spacing: 5;
+
+            Label.summary_obgen_anatomy_spine_label {
+                row: 0;
+                column: 0;
+                style: label_9;
+                text: '<b>Spine:</b>';
+            }
+            // SEEN NOT SEEN line
+            Label.summary_obgen_anatomy_spine_seen {
+                row: 0;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                style: label_9;
+                text: 'seen';
+            }
+            Label.summary_obgen_anatomy_spine_not_seen {
+                row: 0;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                style: label_9;
+                text: 'not seen / not imaged';
+            }
+
+            // Cervical
+            Label.summary_obgen_anatomy_spine_cervical {
+                row: 1;
+                column: 0;
+                style: label_9;
+                text: 'Cervical';
+            }
+            ToggleGroup.summary_obgen_anatomy_spine_cervical_group {
+            }
+            CheckButton.summary_obgen_anatomy_spine_cervical_seen {
+                row: 1;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_spine_cervical_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_spine_cervical_not_seen {
+                row: 1;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_spine_cervical_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Thoracic
+            Label.summary_obgen_anatomy_spine_thoracic {
+                row: 2;
+                column: 0;
+                style: label_9;
+                text: 'Thoracic';
+            }
+            ToggleGroup.summary_obgen_anatomy_spine_thoracic_group {
+            }
+            CheckButton.summary_obgen_anatomy_spine_thoracic_seen {
+                row: 2;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_spine_thoracic_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_spine_thoracic_not_seen {
+                row: 2;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_spine_thoracic_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Lumbar
+            Label.summary_obgen_anatomy_spine_lumbar {
+                row: 3;
+                column: 0;
+                style: label_9;
+                text: 'Lumbar';
+            }
+            ToggleGroup.summary_obgen_anatomy_spine_lumbar_group {
+            }
+            CheckButton.summary_obgen_anatomy_spine_lumbar_seen {
+                row: 3;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_spine_lumbar_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_spine_lumbar_not_seen {
+                row: 3;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_spine_lumbar_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Sacral
+            Label.summary_obgen_anatomy_spine_sacral {
+                row: 4;
+                column: 0;
+                style: label_9;
+                text: 'Sacral';
+            }
+            ToggleGroup.summary_obgen_anatomy_spine_sacral_group {
+            }
+            CheckButton.summary_obgen_anatomy_spine_sacral_seen {
+                row: 4;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_spine_sacral_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_spine_sacral_not_seen {
+                row: 4;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_spine_sacral_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+        } // Spine
+
+        // Fetal Heart
+        Grid.summary_obgen_anatomy_fetal_heart_grid {
+            row: 4;
+            column: 0;
+            yexpand: false;
+            row-spacing: 5;
+
+            Label.summary_obgen_anatomy_fetal_heart_label {
+                row: 0;
+                column: 0;
+                style: label_9;
+                text: '<b>Fetal Heart:</b>';
+            }
+            // SEEN NOT SEEN line
+            Label.summary_obgen_anatomy_fetal_heart_seen {
+                row: 0;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                style: label_9;
+                text: 'seen';
+            }
+            Label.summary_obgen_anatomy_fetal_heart_not_seen {
+                row: 0;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                style: label_9;
+                text: 'not seen / not imaged';
+            }
+
+            // Heart activity
+            Label.summary_obgen_anatomy_fetal_heart_heart_activity {
+                row: 1;
+                column: 0;
+                style: label_9;
+                text: 'Heart activity';
+            }
+            ToggleGroup.summary_obgen_anatomy_fetal_heart_heart_activity_group {
+            }
+            CheckButton.summary_obgen_anatomy_fetal_heart_heart_activity_seen {
+                row: 1;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_heart_heart_activity_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_heart_heart_activity_not_seen {
+                row: 1;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_heart_heart_activity_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Cardiac axis
+            Label.summary_obgen_anatomy_fetal_heart_cardiac_axis {
+                row: 2;
+                column: 0;
+                style: label_9;
+                text: 'Cardiac axis';
+            }
+            ToggleGroup.summary_obgen_anatomy_fetal_heart_cardiac_axis_group {
+            }
+            CheckButton.summary_obgen_anatomy_fetal_heart_cardiac_axis_seen {
+                row: 2;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_heart_cardiac_axis_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_heart_cardiac_axis_not_seen {
+                row: 2;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_heart_cardiac_axis_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Four-chamber view
+            Label.summary_obgen_anatomy_fetal_heart_four_chamber_view {
+                row: 3;
+                column: 0;
+                style: label_9;
+                text: 'Four-chamber view';
+            }
+            ToggleGroup.summary_obgen_anatomy_fetal_heart_four_chamber_view_group {
+            }
+            CheckButton.summary_obgen_anatomy_fetal_heart_four_chamber_view_seen {
+                row: 3;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_heart_four_chamber_view_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_heart_four_chamber_view_not_seen {
+                row: 3;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_heart_four_chamber_view_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // LVOT
+            Label.summary_obgen_anatomy_fetal_heart_lvot {
+                row: 4;
+                column: 0;
+                style: label_9;
+                text: 'LVOT';
+            }
+            ToggleGroup.summary_obgen_anatomy_fetal_heart_lvot_group {
+            }
+            CheckButton.summary_obgen_anatomy_fetal_heart_lvot_seen {
+                row: 4;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_heart_lvot_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_heart_lvot_not_seen {
+                row: 4;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_heart_lvot_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // RVOT
+            Label.summary_obgen_anatomy_fetal_heart_rvot {
+                row: 5;
+                column: 0;
+                style: label_9;
+                text: 'RVOT';
+            }
+            ToggleGroup.summary_obgen_anatomy_fetal_heart_rvot_group {
+            }
+            CheckButton.summary_obgen_anatomy_fetal_heart_rvot_seen {
+                row: 5;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_heart_rvot_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_heart_rvot_not_seen {
+                row: 5;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_heart_rvot_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+        } // Fetal Heart
+
+        // Fetal limbs
+        Grid.summary_obgen_anatomy_fetal_limbs_grid {
+            row: 4;
+            column: 1;
+            yexpand: false;
+            row-spacing: 5;
+
+            Label.summary_obgen_anatomy_fetal_limbs_label {
+                row: 0;
+                column: 0;
+                style: label_9;
+                text: '<b>Fetal Limbs:</b>';
+            }
+            // SEEN NOT SEEN line
+            Label.summary_obgen_anatomy_fetal_limbs_seen {
+                row: 0;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                style: label_9;
+                text: 'seen';
+            }
+            Label.summary_obgen_anatomy_fetal_limbs_not_seen {
+                row: 0;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                style: label_9;
+                text: 'not seen / not imaged';
+            }
+
+            // Rt arm (incl. hand)
+            Label.summary_obgen_anatomy_fetal_limbs_rt_arm {
+                row: 1;
+                column: 0;
+                style: label_9;
+                text: 'Rt arm (incl. hand)';
+            }
+            ToggleGroup.summary_obgen_anatomy_fetal_limbs_rt_arm_group {
+            }
+            CheckButton.summary_obgen_anatomy_fetal_limbs_rt_arm_seen {
+                row: 1;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_limbs_rt_arm_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_limbs_rt_arm_not_seen {
+                row: 1;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_limbs_rt_arm_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Rt leg (incl. foot)
+            Label.summary_obgen_anatomy_fetal_limbs_rt_leg {
+                row: 2;
+                column: 0;
+                style: label_9;
+                text: 'Rt leg (incl. foot)';
+            }
+            ToggleGroup.summary_obgen_anatomy_fetal_limbs_rt_leg_group {
+            }
+            CheckButton.summary_obgen_anatomy_fetal_limbs_rt_leg_seen {
+                row: 2;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_limbs_rt_leg_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_limbs_rt_leg_not_seen {
+                row: 2;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_limbs_rt_leg_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Lt arm (incl. hand)
+            Label.summary_obgen_anatomy_fetal_limbs_lt_arm {
+                row: 3;
+                column: 0;
+                style: label_9;
+                text: 'Lt arm (incl. hand)';
+            }
+            ToggleGroup.summary_obgen_anatomy_fetal_limbs_lt_arm_group {
+            }
+            CheckButton.summary_obgen_anatomy_fetal_limbs_lt_arm_seen {
+                row: 3;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_limbs_lt_arm_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_limbs_lt_arm_not_seen {
+                row: 3;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_limbs_lt_arm_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+
+            // Lt leg (incl. foot)
+            Label.summary_obgen_anatomy_fetal_limbs_lt_leg {
+                row: 4;
+                column: 0;
+                style: label_9;
+                text: 'Lt leg (incl. foot)';
+            }
+            ToggleGroup.summary_obgen_anatomy_fetal_limbs_lt_leg_group {
+            }
+            CheckButton.summary_obgen_anatomy_fetal_limbs_lt_leg_seen {
+                row: 4;
+                column: 1;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_limbs_lt_leg_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+            CheckButton.summary_obgen_anatomy_fetal_limbs_lt_leg_not_seen {
+                row: 4;
+                column: 2;
+                xfill: true;
+                xexpand: true;
+                group: summary_obgen_anatomy_fetal_limbs_lt_leg_group;
+                style: checkbutton_9;
+                // todo
+                label: ' ';
+            }
+        } // Fetal limbs
+    } //ANATOMY
+
+
+    ///////////////////////////////////////////////////////////////////
+    /// Fetal Doppler
+    ///////////////////////////////////////////////////////////////////
+    Grid.summary_obgen_fetal_doppler {
+        row: 3;
+        left-padding: 12;
+        row-spacing: 5;
+        column-spacing: 12;
+        yexpand: false;
+        xexpand:false;
+
+        // TITLE
+        Label.summary_obgen_anatomy_fetal_doppler_title {
+            columns: 6;
+            style: label_14;
+            text: '<u><b>Fetal Doppler</b></u>';
+        }
+
+        // Umbilical Artery RI
+        Label.summary_obgen_anatomy_fetal_doppler_umbilical_artery_ri_title {
+            style: label_9;
+            row: 1;
+            text: 'Umbilical Artery RI';
+        }
+        Result.summary_obgen_anatomy_fetal_doppler_umbilical_artery_ri_value {
+            row: 1;
+            column: 1;
+            manager-fetus: @fetus-id;
+            manager-id: "UmbilicalA";
+            manager-qualifications: "RI";
+            display-short-name: false;
+            one-line: true;
+            [
+                Grid.cell {
+                    xfill:false;
+                    xexpand:false;
+                    yfill:false;
+                    yexpand:false;
+                    Label.result {
+                        row: 1;
+                        text: @result_text;
+                        style: label_9;
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                    }
+                }
+            ]
+        }
+        // Umbilical Artery PI
+        Label.summary_obgen_anatomy_fetal_doppler_umbilical_artery_pi_title {
+            style: label_9;
+            row: 2;
+            text: 'Umbilical Artery PI';
+        }
+        Result.summary_obgen_anatomy_fetal_doppler_umbilical_artery_pi_value {
+            row: 2;
+            column: 1;
+            manager-fetus: @fetus-id;
+            manager-id: "UmbilicalA";
+            manager-qualifications: "PI";//todo PG?
+            display-short-name: false;
+            one-line: true;
+            [
+                Grid.cell {
+                    xfill:false;
+                    xexpand:false;
+                    yfill:false;
+                    yexpand:false;
+                    Label.result {
+                        row: 1;
+                        text: @result_text;
+                        style: label_9;
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                    }
+                }
+            ]
+        }
+        // Fetal Aorta RI
+        Label.summary_obgen_anatomy_fetal_doppler_fetal_aorta_ri_title {
+            style: label_9;
+            row: 1;
+            column: 2;
+            text: 'Fetal Aorta RI';
+        }
+        Result.summary_obgen_anatomy_fetal_doppler_fetal_aorta_ri_value {
+            row: 1;
+            column: 3;
+            manager-fetus: @fetus-id;
+            manager-id: "FetalAorta";
+            manager-qualifications: "RI";
+            display-short-name: false;
+            one-line: true;
+            [
+                Grid.cell {
+                    xfill:false;
+                    xexpand:false;
+                    yfill:false;
+                    yexpand:false;
+                    Label.result {
+                        row: 1;
+                        text: @result_text;
+                        style: label_9;
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                    }
+                }
+            ]
+        }
+        // Fetal Aorta PI
+        Label.summary_obgen_anatomy_fetal_doppler_fetal_aorta_pi_title {
+            style: label_9;
+            row: 2;
+            column: 2;
+            text: 'Fetal Aorta PI';
+        }
+        Result.summary_obgen_anatomy_fetal_doppler_fetal_aorta_pi_value {
+            row: 2;
+            column: 3;
+            manager-fetus: @fetus-id;
+            manager-id: "FetalAorta";
+            manager-qualifications: "PI";//todo PG?
+            display-short-name: false;
+            one-line: true;
+            [
+                Grid.cell {
+                    xfill:false;
+                    xexpand:false;
+                    yfill:false;
+                    yexpand:false;
+                    Label.result {
+                        row: 1;
+                        text: @result_text;
+                        style: label_9;
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                    }
+                }
+            ]
+        }
+
+        // Middle Cerebral RI
+        Label.summary_obgen_anatomy_fetal_doppler_middle_cerebral_ri_title {
+            style: label_9;
+            row: 1;
+            column: 4;
+            text: 'Middle Cerebral RI';
+        }
+        Result.summary_obgen_anatomy_fetal_doppler_middle_cerebral_ri_value {
+            row: 1;
+            column: 5;
+            manager-fetus: @fetus-id;
+            manager-id: "MiddleCerebralA";
+            manager-qualifications: "RI";
+            display-short-name: false;
+            one-line: true;
+            [
+                Grid.cell {
+                    xfill:false;
+                    xexpand:false;
+                    yfill:false;
+                    yexpand:false;
+                    Label.result {
+                        row: 1;
+                        text: @result_text;
+                        style: label_9;
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                    }
+                }
+            ]
+        }
+        // Middle Cerebral PI
+        Label.summary_obgen_anatomy_fetal_doppler_middle_cerebral_pi_title {
+            style: label_9;
+            row: 2;
+            column: 4;
+            text: 'Middle Cerebral PI';
+        }
+        Result.summary_obgen_anatomy_fetal_doppler_middle_cerebral_pi_value {
+            row: 2;
+            column: 5;
+            manager-fetus: @fetus-id;
+            manager-id: "MiddleCerebralA";
+            manager-qualifications: "PI";//todo PG?
+            display-short-name: false;
+            one-line: true;
+            [
+                Grid.cell {
+                    xfill:false;
+                    xexpand:false;
+                    yfill:false;
+                    yexpand:false;
+                    Label.result {
+                        row: 1;
+                        text: @result_text;
+                        style: label_9;
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                    }
+                }
+            ]
+        }
+
+        // Placental Artery RI
+        Label.summary_obgen_anatomy_fetal_doppler_placental_artery_ri_title {
+            style: label_9;
+            row: 3;
+            column: 0;
+            text: 'Placental Artery RI';
+        }
+        Result.summary_obgen_anatomy_fetal_doppler_placental_artery_ri_value {
+            row: 3;
+            column: 1;
+            manager-fetus: @fetus-id;
+            manager-id: "VitellineArteryofPlacenta";
+            manager-qualifications: "RI";
+            display-short-name: false;
+            one-line: true;
+            [
+                Grid.cell {
+                    xfill:false;
+                    xexpand:false;
+                    yfill:false;
+                    yexpand:false;
+                    Label.result {
+                        row: 1;
+                        text: @result_text;
+                        style: label_9;
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                    }
+                }
+            ]
+        }
+        // Middle Cerebral PI
+        Label.summary_obgen_anatomy_fetal_doppler_placental_artery_pi_title {
+            style: label_9;
+            row: 4;
+            column: 0;
+            text: 'Placental Artery PI';
+        }
+        Result.summary_obgen_anatomy_fetal_doppler_placental_artery_pi_value {
+            row: 4;
+            column: 1;
+            columns:5;
+            manager-fetus: @fetus-id;
+            manager-id: "VitellineArteryofPlacenta";
+            manager-qualifications: "PI"; //todo PG?
+            display-short-name: false;
+            one-line: true;
+            [
+                Grid.cell {
+                    xfill:false;
+                    xexpand:false;
+                    yfill:false;
+                    yexpand:false;
+                    Label.result {
+                        row: 1;
+                        text: @result_text;
+                        style: label_9;
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                    }
+                }
+            ]
+        }
+        // Umbilical Veins vel
+        Label.summary_obgen_anatomy_fetal_doppler_umbilical_veins_vel_title {
+            style: label_9;
+            row: 3;
+            column: 2;
+            text: 'Umbilical Veins vel';
+        }
+        Result.summary_obgen_anatomy_fetal_doppler_umbilical_veins_vel_value {
+            row: 3;
+            column: 3;
+            columns:3;
+            manager-fetus: @fetus-id;
+            manager-id: "UmbilicalV";
+            manager-qualifications: "Vel";
+            display-short-name: false;
+            one-line: true;
+            [
+                Grid.cell {
+                    xfill:false;
+                    xexpand:false;
+                    yfill:false;
+                    yexpand:false;
+                    Label.result {
+                        row: 1;
+                        text: @result_text;
+                        style: label_9;
+                        xfill:false;
+                        xexpand:false;
+                        yfill:false;
+                        yexpand:false;
+                    }
+                }
+            ]
+
+        }
+    } /// Fetal Doppler
+
+
+    ///////////////////////////////////////////////////////////////////
+    /// Gender
+    ///////////////////////////////////////////////////////////////////
+    Grid.summary_obgen_gender {
+        row: 4;
+        left-padding: 12;
+        row-spacing: 5;
+        column-spacing: 12;
+        yexpand: true;
+        xexpand:false;
+
+        // TITLE
+        Label.summary_obgen_anatomy_gender_title {
+            style: label_14;
+            columns:3;
+            text: '<u><b>Gender</b></u>';
+        }
+
+        ToggleGroup.summary_obgen_anatomy_gender_group {
+        }
+        CheckButton.summary_obgen_anatomy_gender_M {
+            row: 1;
+            column: 0;
+            group: summary_obgen_anatomy_gender_group;
+            style: checkbutton_9;
+            // todo
+            label: 'M';
+            xexpand:false;
+        }
+        CheckButton.summary_obgen_anatomy_gender_F {
+            row: 1;
+            column: 1;
+            group: summary_obgen_anatomy_gender_group;
+            style: checkbutton_9;
+            xexpand:false;
+            // todo
+            label: 'F';
+        }
+        CheckButton.summary_obgen_anatomy_gender_U {
+            row: 1;
+            column: 2;
+            group: summary_obgen_anatomy_gender_group;
+            style: checkbutton_9;
+            // todo
+            label: 'U';
+            xexpand:false;
+        }
+
+    } // Gender
+
+    ///////////////////////////////////////////////////////////////////
+    /// Chart
+    ///////////////////////////////////////////////////////////////////
+    Grid.summary_obgen_graph_section {
+        row: 5;
+        left-padding: 12;
+        row-spacing: 5;
+        column-spacing: 12;
+        yexpand: false;
+
+        // TITLE
+        Label.summary_obgen_graph_title {
+            style: label_14;
+            text: '<u><b>Graph</b></u>';
+        }
+
+        Chart.summary_obgen_graph {
+        	row: 1;
+        	fetus: @fetus-id;
+        }
+    } // Gender
+}

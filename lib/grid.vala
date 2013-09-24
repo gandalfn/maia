@@ -192,6 +192,8 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         }
                     }
 
+                    uint prev_row = 0;
+                    double delta = 0.0;
                     foreach (unowned Core.Object child in grid)
                     {
                         if (child is ItemPackable)
@@ -251,6 +253,11 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                     allocation.origin.y = y;
                             }
 
+                            if (item.row > prev_row)
+                            {
+                                allocation.origin.y += delta;
+                            }
+
                             // suppress padding from item allocation
                             allocation.origin.x += item.left_padding;
                             allocation.origin.y += item.top_padding;
@@ -260,6 +267,15 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                             // update item
                             Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "update %s: %s", item.name, allocation.to_string ());
                             item.update (inContext, new Graphic.Region (allocation));
+
+                            prev_row = item.row;
+
+                            // item is a grid take its delta
+                            unowned Grid? item_grid = item as Grid;
+                            if (item_grid != null)
+                            {
+                                delta += item_grid.get_page_break_delta ();
+                            }
                         }
                         else if (child is Item)
                         {
@@ -276,14 +292,17 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                     // Get natural size
                     Graphic.Size natural = Graphic.Size (0, 0);
 
+                    uint nb_rows = 0, nb_columns = 0;
                     foreach (LineSizeAllocation row in rows)
                     {
                         natural.height += row.size.height;
+                        if (row.size.height > 0) nb_columns++;
                     }
 
                     foreach (LineSizeAllocation column in columns)
                     {
                         natural.width += column.size.width;
+                        if (column.size.width > 0) nb_rows++;
                     }
 
                     Graphic.Rectangle allocation = inAllocation.extents;
@@ -299,11 +318,13 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
                     // Calculate the the size of padding
                     double xpadding = double.max (allocation.size.width - natural.width, 0);
-                    if (columns.length > 1)
-                        xpadding -= grid.column_spacing * (columns.length - 1);
+                    double spacing_column = double.max (grid.column_spacing * (nb_columns - 1), 0);
+                    double spacing_row = double.max (grid.column_spacing * (nb_columns - 1), 0);
+                    if (nb_columns > 1 && xpadding > spacing_column)
+                        xpadding -= spacing_column;
                     double ypadding = double.max (allocation.size.height - natural.height, 0);
-                    if (rows.length > 1)
-                        ypadding -= grid.row_spacing * (rows.length - 1);
+                    if (nb_rows > 1 && ypadding > spacing_row)
+                        ypadding -= spacing_row;
 
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s natural: %s padding: %g,%g", grid.name, natural.to_string (), xpadding, ypadding);
 
@@ -345,11 +366,15 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                             child_allocations[item.row, item.column].size.height = double.max (child_allocations[item.row, item.column].size.height,
                                                                                                (rows[item.row].size.height / item.rows) + extra.height);
 
-                            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s allocation: %s", grid.name, item.name, child_allocations[item.row, item.column].to_string ());
+                            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s extra: %s", grid.name, item.name, extra.to_string ());
+                            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s row: %g, column: %g", grid.name, item.name, columns[item.column].size.width, rows[item.row].size.height);
+                            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s rows %u columns %u allocation: %s", grid.name, item.name, item.rows, item.columns, child_allocations[item.row, item.column].to_string ());
                         }
                     }
 
                     // Update childs
+                    uint prev_row = 0;
+                    double delta = 0.0;
                     foreach (unowned Core.Object child in grid)
                     {
                         if (child is ItemPackable)
@@ -432,7 +457,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                             // calculate allocation of item
                             allocation = Graphic.Rectangle (area.origin.x, area.origin.y, 0, 0);
 
-                            Graphic.Size item_size = item.size;
+                            Graphic.Size item_size = item.size_requested;
 
                             if (page_breaks != null)
                             {
@@ -459,6 +484,11 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
                                 if (y != allocation.origin.y)
                                     allocation.origin.y = y;
+                            }
+
+                            if (item.row > prev_row)
+                            {
+                                allocation.origin.y += delta;
                             }
 
                             if (item.xfill)
@@ -510,6 +540,15 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                             // update item
                             Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "update %s: %s", item.name, allocation.to_string ());
                             item.update (inContext, new Graphic.Region (allocation));
+
+                            prev_row = item.row;
+
+                            // item is a grid take its delta
+                            unowned Grid? item_grid = item as Grid;
+                            if (item_grid != null)
+                            {
+                                delta += item_grid.get_page_break_delta ();
+                            }
                         }
                         else if (child is Item)
                         {
@@ -581,7 +620,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
     internal bool   xexpand { get; set; default = true; }
     internal bool   xfill   { get; set; default = true; }
-    internal bool   xshrink { get; set; default = true; }
+    internal bool   xshrink { get; set; default = false; }
     internal double xalign  { get; set; default = 0.5; }
 
     internal bool   yexpand { get; set; default = true; }
@@ -647,7 +686,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
     {
         if (geometry == null)
         {
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, name);
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "%s allocation: %s", name, inAllocation.extents.to_string ());
 
             double delta = get_page_break_delta ();
             if (delta > 0)

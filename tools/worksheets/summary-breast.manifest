@@ -609,7 +609,7 @@ Grid.summary_breast {
 				style: checkbutton_9;
 			}
 		} // LEFT BREAST SECTION
-		
+
 		// NIPPLE DISCHARGE
 		CheckButton.CBoxPatientBreast_GtkCheckButton_Nipple_Discharge_Right {
 			row: 3;
@@ -649,7 +649,7 @@ Grid.summary_breast {
 			left-padding: 5;
 			right-padding: 5;
 		}
-		
+
 		Style.other_studies_checkbutton_9 {
 			style: checkbutton_9;
 			left-padding: 5;
@@ -774,7 +774,7 @@ Grid.summary_breast {
 				columns: 2;
 				style: other_studies_label_9;
 			}
-			
+
 			// MAMMOGRAM
 			Label.summary_breast_summary_other_studies_mammogram_acr_label {
 				row: 3;
@@ -815,7 +815,7 @@ Grid.summary_breast {
 				columns: 2;
 				style: other_studies_label_9;
 			}
-			
+
 
 
 		}//ULTRASOUND
@@ -968,13 +968,13 @@ Grid.summary_breast {
 			left-padding: 5;
 			right-padding: 5;
 		}
-		
+
 		Style.patient_info_checkbutton_9 {
 			style: checkbutton_9;
 			left-padding: 5;
 			right-padding: 5;
 		}
-		
+
 		// Title
 		Label.summary_breast_summary_breast_patient_information_title {
 			columns: 2;
@@ -1204,7 +1204,7 @@ Grid.summary_breast {
 				style: patient_info_checkbutton_9;
 				label: 'No';
 			}
-			
+
 			Label.summary_breast_summary_patient_information_menstrual_status_pregnant_label {
 				row: 5;
 				style: patient_info_label_9;
@@ -1239,7 +1239,7 @@ Grid.summary_breast {
 	/// CLINICAL HISTORY
 	///////////////////////////////////////////////////////////////////
 	Grid.summary_breast_clinical_history {
-		row: 4;
+		row: 5;
 		left-padding: 12;
 		row-spacing: 12;
 		yexpand: false;
@@ -1252,15 +1252,21 @@ Grid.summary_breast {
 		Entry.CBoxPatientBreast_GtkTextView_Family_History {
 			row: 1;
 			style: entry_9;
-			
+
 		}
+	}
+
+	Grid.test {
+		row: 4;
+    yexpand: false;
+		@include(earlyob-fetal-cell.manifest);
 	}
 
 	///////////////////////////////////////////////////////////////////
 	/// COMMENTS
 	///////////////////////////////////////////////////////////////////
 	Grid.summary_breast_comments {
-		row: 5;
+		row: 6;
 		left-padding: 12;
 		row-spacing: 12;
 		yexpand: false;
@@ -1275,4 +1281,6 @@ Grid.summary_breast {
 			style: entry_9;
 		}
 	}
+
+
 }

@@ -442,13 +442,16 @@ public class Maia.TestCanvas : Maia.TestCase
         try
         {
             canvas.load ("Document.root {" +
-                         "  transform: scale(2, 2);" +
                          "  Model.model {" +
                          "      Column.val {" +
                          "          column: 0;" +
                          "      }" +
                          "  }" +
+                         "  Label.label {" +
+                         "      text: 'test';" +
+                         "  }" +
                          "  Combo.combo {" +
+                         "      row: 1;" +
                          "      font-description: 'Liberation Sans 14';" +
                          "      xfill: false;" +
                          "      xexpand: false;" +
@@ -466,6 +469,10 @@ public class Maia.TestCanvas : Maia.TestCase
                          "              }" +
                          "          ]" +
                          "      }" +
+                         "  }" +
+                         "  Label.label {" +
+                         "      row: 2;" +
+                         "      text: 'test';" +
                          "  }" +
                          "}", "root");
         }

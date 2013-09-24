@@ -3,35 +3,46 @@
 ///////////////////////////////////////////////////////////
 Style.label_9 {
 	yexpand: false;
-	xexpand: false;
-	xfill: false;
+	alignment: left;
 	font-description: "Liberation Sans 9";
 	text: '';
 }
 
 Style.label_12 {
 	yexpand: false;
-	xexpand: false;
-	xfill: false;
+	alignment: left;
 	font-description: "Liberation Sans 12";
 	text: '';
 }
 
 Style.label_14 {
 	yexpand: false;
-	xexpand: false;
-	xfill: false;
+	alignment: left;
 	font-description: "Liberation Sans 14";
 	text: '';
 }
 
 Style.label_16 {
 	yexpand: false;
-	xexpand: false;
-	xfill: false;
+	alignment: left;
 	font-description: "Liberation Sans 16";
 	text: '';
 }
+
+Style.label_17 {
+	yexpand: false;
+	alignment: left;
+	font-description: "Liberation Sans 17";
+	text: '';
+}
+
+Style.label_bold_20 {
+	yexpand: false;
+	alignment: left;
+	font-description: "Liberation Sans Bold 20";
+	text: '';
+}
+
 
 ///////////////////////////////////////////////////////////
 /// STYLE FOR CHECKBUTTONS
@@ -41,6 +52,8 @@ Style.checkbutton_9 {
 	stroke-pattern: '#000000';
 	fill-pattern: '#FFFFFF';
 	yexpand: false;
+	xfill: false;
+	xalign: 0.0;
 	label: ' ';
 }
 

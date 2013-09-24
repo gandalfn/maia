@@ -209,19 +209,19 @@ public class Maia.Popup : Group
         {
             switch (placement)
             {
-                case PopupPlacement.TOP:
+                case PopupPlacement.BOTTOM:
                     position.translate (Graphic.Point (0, -content_size.height));
                     break;
 
-                case PopupPlacement.BOTTOM:
-                    position.translate (Graphic.Point (0, 0));
-                    break;
-
-                case PopupPlacement.RIGHT:
+                case PopupPlacement.TOP:
                     position.translate (Graphic.Point (0, 0));
                     break;
 
                 case PopupPlacement.LEFT:
+                    position.translate (Graphic.Point (0, 0));
+                    break;
+
+                case PopupPlacement.RIGHT:
                     position.translate (Graphic.Point (-content_size.width, 0));
                     break;
             }
@@ -299,37 +299,40 @@ public class Maia.Popup : Group
         // Create transition
         m_Transition = m_Animator.add_transition (0.0, 1.0, Core.Animator.ProgressType.SINUSOIDAL, null, on_show_animation_finished);
 
+        // Get popup size
+        var popup_size = size_requested.is_empty () ? size : size_requested;
+
         // Set animation property change
         switch (placement)
         {
-            case PopupPlacement.TOP:
-                from = (double)geometry.extents.size.height;
+            case PopupPlacement.BOTTOM:
+                from = (double)popup_size.height;
                 to = (double)0.0;
                 m_CurrentPosition.x = 0;
-                m_CurrentPosition.y = geometry.extents.size.height;
+                m_CurrentPosition.y = popup_size.height;
                 m_Animator.add_transition_property (m_Transition, this, "y", from, to);
                 break;
 
-            case PopupPlacement.BOTTOM:
-                from = (double)(-geometry.extents.size.height);
+            case PopupPlacement.TOP:
+                from = (double)(-popup_size.height);
                 to = (double)0.0;
                 m_CurrentPosition.x = 0.0;
-                m_CurrentPosition.y = - geometry.extents.size.height;
+                m_CurrentPosition.y = - popup_size.height;
                 m_Animator.add_transition_property (m_Transition, this, "y", from, to);
                 break;
 
-            case PopupPlacement.LEFT:
-                from = (double)geometry.extents.size.width;
+            case PopupPlacement.RIGHT:
+                from = (double)popup_size.width;
                 to = (double)0.0;
-                m_CurrentPosition.x = geometry.extents.size.width;
+                m_CurrentPosition.x = popup_size.width;
                 m_CurrentPosition.y = 0.0;
                 m_Animator.add_transition_property (m_Transition, this, "x", from, to);
                 break;
 
-            case PopupPlacement.RIGHT:
-                from = (double)(-geometry.extents.size.width);
+            case PopupPlacement.LEFT:
+                from = (double)(-popup_size.width);
                 to = (double)0.0;
-                m_CurrentPosition.x = geometry.extents.size.width;
+                m_CurrentPosition.x = popup_size.width;
                 m_CurrentPosition.y = 0.0;
                 m_Animator.add_transition_property (m_Transition, this, "x", from, to);
                 break;
@@ -359,37 +362,40 @@ public class Maia.Popup : Group
         // Create transition
         m_Transition = m_Animator.add_transition (0.0, 1.0, Core.Animator.ProgressType.SINUSOIDAL, null, on_hide_animation_finished);
 
+        // Get popup size
+        var popup_size = size_requested.is_empty () ? size : size_requested;
+
         // Set animation property change
         switch (placement)
         {
-            case PopupPlacement.TOP:
-                to = (double)geometry.extents.size.height;
-                from = (double)0.0;
-                m_CurrentPosition.x = 0.0;
-                m_CurrentPosition.y = geometry.extents.size.height;
-                m_Animator.add_transition_property (m_Transition, this, "y", from, to);
-                break;
-
             case PopupPlacement.BOTTOM:
-                to = (double)(-geometry.extents.size.height);
+                to = (double)popup_size.height;
                 from = (double)0.0;
                 m_CurrentPosition.x = 0.0;
-                m_CurrentPosition.y = - geometry.extents.size.height;
+                m_CurrentPosition.y = popup_size.height;
                 m_Animator.add_transition_property (m_Transition, this, "y", from, to);
                 break;
 
-            case PopupPlacement.LEFT:
-                to = (double)geometry.extents.size.width;
+            case PopupPlacement.TOP:
+                to = (double)(-popup_size.height);
                 from = (double)0.0;
-                m_CurrentPosition.x = geometry.extents.size.width;
+                m_CurrentPosition.x = 0.0;
+                m_CurrentPosition.y = - popup_size.height;
+                m_Animator.add_transition_property (m_Transition, this, "y", from, to);
+                break;
+
+            case PopupPlacement.RIGHT:
+                to = (double)popup_size.width;
+                from = (double)0.0;
+                m_CurrentPosition.x = popup_size.width;
                 m_CurrentPosition.y = 0.0;
                 m_Animator.add_transition_property (m_Transition, this, "x", from, to);
                 break;
 
-            case PopupPlacement.RIGHT:
-                to = (double)(-geometry.extents.size.width);
+            case PopupPlacement.LEFT:
+                to = (double)(-popup_size.width);
                 from = (double)0.0;
-                m_CurrentPosition.x = - geometry.extents.size.width;
+                m_CurrentPosition.x = - popup_size.width;
                 m_CurrentPosition.y = 0.0;
                 m_Animator.add_transition_property (m_Transition, this, "x", from, to);
                 break;

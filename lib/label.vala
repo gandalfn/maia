@@ -132,6 +132,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
         font_description = "Sans 12";
 
         // connect onto layout properties changed
+        notify["root"].connect (on_layout_property_changed);
         notify["text"].connect (on_layout_property_changed);
         notify["alignment"].connect (on_layout_property_changed);
         notify["wrap-mode"].connect (on_layout_property_changed);

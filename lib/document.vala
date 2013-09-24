@@ -60,12 +60,6 @@ public class Maia.Document : Item
         }
     }
 
-    internal override Graphic.Point origin {
-        get {
-            return position.invert ();
-        }
-    }
-
     public PageFormat format    { get; construct set; default = PageFormat.A4; }
     public double top_margin    { get; construct set; default = 0.25; }
     public double bottom_margin { get; construct set; default = 0.25; }
@@ -289,171 +283,157 @@ public class Maia.Document : Item
         m_Pages.insert (page);
     }
 
-    private void
-    paginate_child_item (Item inRoot, Item inItem, ref Graphic.Point inoutCurrentPosition, ref unowned Page inoutPage)
+    private bool
+    paginate_child_item (Item inRoot, ItemPackable inItem, ref Graphic.Point inoutCurrentPosition, ref unowned Page inoutPage)
     {
+        bool ret = false;
+
         if (inItem != inoutPage.header && inItem != inoutPage.footer && inItem.visible)
         {
-            bool add_height = true;
-
             // Get item allocated size
-            var item_size = inItem.size;
+            var item_size = inItem.size_requested;
 
-            if (inItem is ItemPackable)
+            var page_content = inoutPage.content_geometry;
+            inoutCurrentPosition.y += inItem.top_padding;
+            item_size.height += inItem.bottom_padding;
+
+            // Check if item size + current position does not overlap two page
+            if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
             {
-                unowned ItemPackable item = (ItemPackable)inItem;
-
-                var page_content = inoutPage.content_geometry;
-                inoutCurrentPosition.y += item.top_padding;
-                item_size.height += item.bottom_padding;
-
-                // Check if item size + current position does not overlap two page
-                if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
+                // Check if item can be added to next page
+                if (item_size.height <= page_content.extents.size.height)
                 {
-                    // Check if item can be added in new
-                    if (item_size.height <= page_content.extents.size.height)
+                    // add new page
+                    append_page  ();
+
+                    // Update current position
+                    var start = convert_to_root_space (inoutCurrentPosition);
+
+                    // Set current page
+                    inoutPage = m_Pages.last ();
+                    inoutCurrentPosition = inoutPage.content_geometry.extents.origin;
+
+                    // Convert positions to root space
+                    var end = convert_to_root_space (inoutCurrentPosition);
+
+                    // Add page break
+                    PageBreak page_break = new PageBreak (this, inoutPage.num,
+                                                          inItem.parent as Grid, inItem.row,
+                                                          end.y, start.y);
+                    add_page_break (page_break);
+
+                    // add root in page
+                    inoutPage.add (inRoot);
+
+                    inoutCurrentPosition.y += item_size.height;
+
+                    ret = true;
+                }
+                else if (inItem is Grid)
+                {
+                    // Check if childs can be split in pages
+                    Graphic.Point pos = inoutCurrentPosition;
+
+                    uint last_row = 0;
+                    foreach (unowned Core.Object child in inItem)
                     {
-                        // Item can be added in new page
-                        append_page  ();
-
-                        // Set current page
-                        inoutPage = m_Pages.last ();
-
-                        // Update current position
-                        var start = convert_to_root_space (inoutCurrentPosition);
-                        inoutCurrentPosition = inoutPage.content_geometry.extents.origin;
-
-                        // Convert positions to root space
-                        var end = convert_to_root_space (inoutCurrentPosition);
-
-                        // Add page break
-                        PageBreak page_break = new PageBreak (this,
-                                                              inoutPage.num,
-                                                              item.parent as Grid, item.row,
-                                                              end.y,
-                                                              start.y);
-                        add_page_break (page_break);
-                    }
-                    else if (inItem is Grid)
-                    {
-
-                        var pos = inoutCurrentPosition;
-
-                        // Check if childs can be split in pages
-                        uint last_row = 0;
-                        foreach (unowned Core.Object child in inItem)
+                        unowned ItemPackable? child_item = child as ItemPackable;
+                        if (child_item != null)
                         {
-                            unowned ItemPackable? child_item = child as ItemPackable;
-                            if (child_item != null)
+                            bool paginated = paginate_child_item (inRoot, child_item, ref pos, ref inoutPage);
+
+                            if (child_item.row > last_row)
                             {
-                                paginate_child_item (inRoot, child_item, ref pos, ref inoutPage);
-                                if (child_item.row > last_row)
-                                {
-                                    pos.y += (child_item.row - last_row) * (inItem as Grid).row_spacing;
-                                    last_row = child_item.row;
-                                }
+                                pos.y += (child_item.row - last_row) * (inItem as Grid).row_spacing;
+                                last_row = child_item.row;
+                            }
+
+                            if (!paginated)
+                            {
+                                // add new page
+                                append_page  ();
+
+                                // Update current position
+                                var start = convert_to_root_space (pos);
+
+                                // Set current page
+                                inoutPage = m_Pages.last ();
+                                pos = inoutPage.content_geometry.extents.origin;
+
+                                // Convert positions to root space
+                                var end = convert_to_root_space (pos);
+
+                                // Add page break
+                                PageBreak page_break = new PageBreak (this, inoutPage.num,
+                                                                      inItem as Grid, child_item.row,
+                                                                      end.y, start.y);
+                                add_page_break (page_break);
+
+                                // add root in page
+                                inoutPage.add (inRoot);
+
+                                ret = true;
                             }
                         }
+                    }
 
-                        inoutCurrentPosition.y = pos.y;
-                        add_height = false;
+                    if (ret)
+                    {
+                        inoutCurrentPosition.y += item_size.height;
+                    }
+                    else
+                    {
+                        inoutCurrentPosition = pos;
                     }
                 }
             }
-
-            // Add root item to this page
-            inoutPage.add (inRoot);
-
-            if (inRoot.position.x == 0 && inRoot.position.y == 0)
-            {
-                inRoot.position = inoutCurrentPosition;
-            }
-
-            // Add the height of item to current position
-            if (add_height)
+            else
             {
                 inoutCurrentPosition.y += item_size.height;
+                ret = true;
             }
         }
+
+        return ret;
     }
 
     private void
-    paginate_item (Item inItem, ref Graphic.Point inoutCurrentPosition)
+    paginate_item (Item inItem, ref Graphic.Point inCurrentPosition)
     {
         // Get last page
         unowned Page? page = m_Pages.last ();
 
-        if (inItem != page.header && inItem != page.footer &&  !(inItem is Popup) && inItem.visible)
+        // Get item allocated size
+        var item_size = inItem.size;
+
+        // Check if item size + current position does not overlap two page
+        var page_content = page.content_geometry;
+        if (inCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height && inItem is Grid)
         {
-            bool add_item_in_page = true;
+            var pos = inCurrentPosition;
+            uint last_row = 0;
 
-            // Get item allocated size
-            var item_size = inItem.size;
-
-            // Check if item size + current position does not overlap two page
-            var page_content = page.content_geometry;
-            if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
+            foreach (unowned Core.Object child in inItem)
             {
-                // Append a new page
-                append_page  ();
-
-                // Set current page
-                page = m_Pages.last ();
-
-                // Update current position
-                page_content = page.content_geometry;
-                inoutCurrentPosition = page_content.extents.origin;
-
-                // Item continue to not fit in page try to split child
-                if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
+                unowned ItemPackable child_item = child as ItemPackable;
+                if (child_item != null )
                 {
-                    if (inItem is Grid)
+                    paginate_child_item (inItem, child_item, ref pos, ref page);
+                    if (child_item.row > last_row)
                     {
-                        add_item_in_page = false;
-
-                        inItem.position = Graphic.Point (0, 0);
-
-                        var pos = inoutCurrentPosition;
-                        uint last_row = 0;
-
-                        foreach (unowned Core.Object child in inItem)
-                        {
-                            unowned ItemPackable child_item = child as ItemPackable;
-                            if (child_item != null)
-                            {
-                                paginate_child_item (inItem, child_item, ref pos, ref page);
-                                if (child_item.row > last_row)
-                                {
-                                    pos.y += (child_item.row - last_row) * (inItem as Grid).row_spacing;
-                                    last_row = child_item.row;
-                                }
-                            }
-                        }
-
-                        inoutCurrentPosition.y = pos.y;
+                        pos.y += (child_item.row - last_row) * (inItem as Grid).row_spacing;
+                        last_row = child_item.row;
                     }
                 }
             }
-
-            if (add_item_in_page)
-            {
-                // Add item to this page
-                page.add (inItem);
-
-                // Set item position
-                inItem.position = inoutCurrentPosition;
-
-                // Add item height to current position
-                inoutCurrentPosition.y += item_size.height;
-            }
+        }
 
 
-            // Set width has page if item is direct child
-            if (inItem.parent == this && item_size.width != page.content_geometry.extents.size.width)
-            {
-                item_size.width = page.content_geometry.extents.size.width;
-                inItem.size = item_size;
-            }
+        // Set width has page if item is direct child
+        if (inItem.parent == this && item_size.width != page.content_geometry.extents.size.width)
+        {
+            item_size.width = page.content_geometry.extents.size.width;
+            inItem.size = item_size;
         }
     }
 
@@ -503,15 +483,34 @@ public class Maia.Document : Item
         }
 
         // Set current position
-        Graphic.Point current_position = m_Pages.last ().content_geometry.extents.origin;
+        Graphic.Point current_position;
 
         // Parse all childs
+        bool first = true;
         foreach (unowned Core.Object child in this)
         {
             unowned Item? item = child as Item;
-            if (item != null && item.visible)
+            if (item != null && item != page.header && item != page.footer &&  !(item is Popup) && item.visible)
             {
+                if (!first)
+                {
+                    // Append a new page
+                    append_page ();
+                }
+
+                // Get  last page
+                page = m_Pages.last ();
+
+                // Add item to this page
+                page.add (item);
+
+                // Set item position
+                item.position = current_position = page.content_geometry.extents.origin;
+
+                // Paginate item
                 paginate_item (item, ref current_position);
+
+                first = false;
             }
         }
 
@@ -562,6 +561,24 @@ public class Maia.Document : Item
         }
     }
 
+    private Graphic.Point
+    convert_to_document_space (Graphic.Point inPoint) throws Graphic.Error
+    {
+        var point = inPoint;
+        var offset = position;
+        var point_transform = new Graphic.Transform.identity ();
+        point_transform.translate (offset.x, offset.y);
+
+        var matrix = transform.matrix;
+        matrix.invert ();
+        var transform_invert = new Graphic.Transform.from_matrix (matrix);
+        point_transform.add (transform_invert);
+
+        point.transform (point_transform);
+
+        return point;
+    }
+
     internal override bool
     can_append_child (Core.Object inObject)
     {
@@ -601,6 +618,16 @@ public class Maia.Document : Item
                 }
             }
 
+            // Update each popup
+            foreach (unowned Core.Object child in this)
+            {
+                unowned Popup? popup = child as Popup;
+                if (popup != null && popup.visible)
+                {
+                    popup.damage ();
+                }
+            }
+
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "Damage document %s", visible_area.extents.to_string ());
             damage (geometry);
         }
@@ -631,14 +658,10 @@ public class Maia.Document : Item
     internal override void
     on_child_damaged (Drawable inChild, Graphic.Region? inArea)
     {
-        if (inChild is Popup)
-        {
-            base.on_child_damaged (inChild,  inArea);
-        }
-        else if (inChild.geometry != null)
+        if (inChild.geometry != null)
         {
             unowned Page first = m_Pages.first ();
-            if (first != null && (first.header == inChild || first.footer == inChild))
+            if (!(inChild is Popup) && first != null && (first.header == inChild || first.footer == inChild))
             {
                 foreach (unowned Page page in m_VisiblePages)
                 {
@@ -702,11 +725,27 @@ public class Maia.Document : Item
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
 
                 // Remove the offset of scrolling
-                damaged_area.translate (position.invert ());
-                damaged_area.transform (transform);
+                if (!(inChild is Toolbox))
+                {
+                    damaged_area.translate (position.invert ());
+                    damaged_area.transform (transform);
+                    damage (damaged_area);
 
-                // damage item
-                damage (damaged_area);
+                    foreach (unowned Page page in m_VisiblePages)
+                    {
+                        page.damage (damaged_area);
+                    }
+                }
+                else
+                {
+                    damaged_area.transform (transform);
+                    damage (damaged_area);
+
+                    foreach (unowned Page page in m_VisiblePages)
+                    {
+                        page.damage (damaged_area);
+                    }
+                }
             }
         }
     }
@@ -753,10 +792,22 @@ public class Maia.Document : Item
 
             foreach (unowned Core.Object child in this)
             {
-                unowned Popup? popup = child as Popup;
-                if (popup != null)
+                if (child is Toolbox)
                 {
+                    unowned Toolbox? toolbox = (Toolbox)child;
+
+                    var toolbox_position = toolbox.position;
+                    toolbox_position.translate (position);
+                    var toolbox_size = toolbox.size;
+
+                    toolbox.update (inContext, new Graphic.Region (Graphic.Rectangle (toolbox_position.x, toolbox_position.y, toolbox_size.width, toolbox_size.height)));
+                }
+                else if (child is Popup)
+                {
+                    unowned Popup? popup = (Popup)child;
+
                     var popup_position = popup.position;
+                    popup_position.translate (position.invert ());
                     var popup_size = popup.size;
 
                     popup.update (inContext, new Graphic.Region (Graphic.Rectangle (popup_position.x, popup_position.y, popup_size.width, popup_size.height)));
@@ -838,18 +889,28 @@ public class Maia.Document : Item
             inContext.restore ();
         }
 
-        inContext.save ();
+        foreach (unowned Core.Object child in this)
         {
-            foreach (unowned Core.Object child in this)
+            if (child is Toolbox)
             {
-                unowned Popup? popup = child as Popup;
-                if (popup != null)
+                unowned Toolbox? toolbox = (Toolbox)child;
+                inContext.save ();
                 {
+                    toolbox.draw (inContext);
+                }
+                inContext.restore ();
+            }
+            else if (child is Popup)
+            {
+                unowned Popup? popup = (Popup)child;
+                inContext.save ();
+                {
+                    inContext.translate (position.invert ());
                     popup.draw (inContext);
                 }
+                inContext.restore ();
             }
         }
-        inContext.restore ();
     }
 
     internal override bool
@@ -859,27 +920,41 @@ public class Maia.Document : Item
 
         try
         {
+            var point = convert_to_root_space (inPoint);
+
             // Check if event occur under popup
             foreach (unowned Core.Object child in this)
             {
-                unowned Popup? popup = child as Popup;
-                if (popup != null)
+                if (child is Toolbox)
                 {
-                    var point = convert_to_root_space (inPoint);
+                    unowned Toolbox? toolbox = (Toolbox)child;
 
-                    var offset = popup.position.invert ();
-                    var point_transform = new Graphic.Transform.identity ();
-                    point_transform.translate (offset.x, offset.y);
-
+                    // convert point to toolbox space
+                    var toolbox_point = point;
                     var matrix = transform.matrix;
                     matrix.invert ();
                     var transform_invert = new Graphic.Transform.from_matrix (matrix);
-                    point_transform.add (transform_invert);
+                    toolbox_point.transform (transform_invert);
+                    toolbox_point.translate (toolbox.position.invert ());
 
-                    point.transform (point_transform);
+                    // point under toolbox
+                    if (toolbox.button_press_event (inButton, toolbox_point))
+                    {
+                        // event occurate under child stop signal
+                        GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
+                        return false;
+                    }
+                }
+                else if (child is Popup)
+                {
+                    unowned Popup? popup = (Popup)child;
+
+                    // convert point to popup space
+                    var popup_point = convert_to_document_space (point);
+                    popup_point.translate (popup.position.invert ());
 
                     // point under popup
-                    if (popup.button_press_event (inButton, point))
+                    if (popup.button_press_event (inButton, popup_point))
                     {
                         // event occurate under child stop signal
                         GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
@@ -890,20 +965,8 @@ public class Maia.Document : Item
 
             foreach (unowned Page page in m_VisiblePages)
             {
-                var point = convert_to_root_space (inPoint);
-                var offset = origin.invert ();
-                var point_transform = new Graphic.Transform.identity ();
-                point_transform.translate (offset.x, offset.y);
-
-                var matrix = transform.matrix;
-                matrix.invert ();
-                var transform_invert = new Graphic.Transform.from_matrix (matrix);
-                point_transform.add (transform_invert);
-
-                point.transform (point_transform);
-
                 // point under child
-                if (page.button_press_event (inButton, point))
+                if (page.button_press_event (inButton, convert_to_document_space (point)))
                 {
                     ret = true;
                     // event occurate under child stop signal
@@ -936,27 +999,41 @@ public class Maia.Document : Item
 
         try
         {
+            var point = convert_to_root_space (inPoint);
+
             // Check if event occur under popup
             foreach (unowned Core.Object child in this)
             {
-                unowned Popup? popup = child as Popup;
-                if (popup != null)
+                if (child is Toolbox)
                 {
-                    var point = convert_to_root_space (inPoint);
+                    unowned Toolbox? toolbox = (Toolbox)child;
 
-                    var offset = popup.position.invert ();
-                    var point_transform = new Graphic.Transform.identity ();
-                    point_transform.translate (offset.x, offset.y);
-
+                    // convert point to toolbox space
+                    var toolbox_point = point;
                     var matrix = transform.matrix;
                     matrix.invert ();
                     var transform_invert = new Graphic.Transform.from_matrix (matrix);
-                    point_transform.add (transform_invert);
+                    toolbox_point.transform (transform_invert);
+                    toolbox_point.translate (toolbox.position.invert ());
 
-                    point.transform (point_transform);
+                    // point under toolbox
+                    if (toolbox.button_release_event (inButton, toolbox_point))
+                    {
+                        // event occurate under child stop signal
+                        GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
+                        return false;
+                    }
+                }
+                else if (child is Popup)
+                {
+                    unowned Popup? popup = (Popup)child;
+
+                    // convert point to popup space
+                    var popup_point = convert_to_document_space (point);
+                    popup_point.translate (popup.position.invert ());
 
                     // point under popup
-                    if (popup.button_release_event (inButton, point))
+                    if (popup.button_release_event (inButton, popup_point))
                     {
                         // event occurate under child stop signal
                         GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
@@ -967,20 +1044,8 @@ public class Maia.Document : Item
 
             foreach (unowned Page page in m_VisiblePages)
             {
-                var point = convert_to_root_space (inPoint);
-                var offset = origin.invert ();
-                var point_transform = new Graphic.Transform.identity ();
-                point_transform.translate (offset.x, offset.y);
-
-                var matrix = transform.matrix;
-                matrix.invert ();
-                var transform_invert = new Graphic.Transform.from_matrix (matrix);
-                point_transform.add (transform_invert);
-
-                point.transform (point_transform);
-
                 // point under child
-                if (page.button_release_event (inButton, point))
+                if (page.button_release_event (inButton, convert_to_document_space (point)))
                 {
                     ret = true;
                     // event occurate under child stop signal
@@ -1009,27 +1074,41 @@ public class Maia.Document : Item
 
         try
         {
+            var point = convert_to_root_space (inPoint);
+
             // Check if event occur under popup
             foreach (unowned Core.Object child in this)
             {
-                unowned Popup? popup = child as Popup;
-                if (popup != null)
+                if (child is Toolbox)
                 {
-                    var point = convert_to_root_space (inPoint);
+                    unowned Toolbox? toolbox = (Toolbox)child;
 
-                    var offset = popup.position.invert ();
-                    var point_transform = new Graphic.Transform.identity ();
-                    point_transform.translate (offset.x, offset.y);
-
+                    // convert point to toolbox space
+                    var toolbox_point = point;
                     var matrix = transform.matrix;
                     matrix.invert ();
                     var transform_invert = new Graphic.Transform.from_matrix (matrix);
-                    point_transform.add (transform_invert);
+                    toolbox_point.transform (transform_invert);
+                    toolbox_point.translate (toolbox.position.invert ());
 
-                    point.transform (point_transform);
+                    // point under toolbox
+                    if (toolbox.motion_event (toolbox_point))
+                    {
+                        // event occurate under child stop signal
+                        GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
+                        return false;
+                    }
+                }
+                else if (child is Popup)
+                {
+                    unowned Popup? popup = (Popup)child;
+
+                    // convert point to popup space
+                    var popup_point = convert_to_document_space (point);
+                    popup_point.translate (popup.position.invert ());
 
                     // point under popup
-                    if (popup.motion_event (point))
+                    if (popup.motion_event (popup_point))
                     {
                         // event occurate under child stop signal
                         GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
@@ -1040,20 +1119,8 @@ public class Maia.Document : Item
 
             foreach (unowned Page page in m_VisiblePages)
             {
-                var point = convert_to_root_space (inPoint);
-                var offset = origin.invert ();
-                var point_transform = new Graphic.Transform.identity ();
-                point_transform.translate (offset.x, offset.y);
-
-                var matrix = transform.matrix;
-                matrix.invert ();
-                var transform_invert = new Graphic.Transform.from_matrix (matrix);
-                point_transform.add (transform_invert);
-
-                point.transform (point_transform);
-
                 // point under child
-                unowned Item? item = page.motion_event (point);
+                unowned Item? item = page.motion_event (convert_to_document_space (point));
                 if (item != null)
                 {
                     // if item over pointer change unset pointer over for old item
@@ -1097,29 +1164,41 @@ public class Maia.Document : Item
 
         if (geometry != null && inPoint in geometry)
         {
+            var point = convert_to_root_space (inPoint);
+
             try
             {
                 // Check if event occur under popup
                 foreach (unowned Core.Object child in this)
                 {
-                    unowned Popup? popup = child as Popup;
-                    if (popup != null)
+                    if (child is Toolbox)
                     {
-                        var point = convert_to_root_space (inPoint);
+                        unowned Toolbox? toolbox = (Toolbox)child;
 
-                        var offset = popup.position.invert ();
-                        var point_transform = new Graphic.Transform.identity ();
-                        point_transform.translate (offset.x, offset.y);
-
+                        // convert point to toolbox space
+                        var toolbox_point = point;
                         var matrix = transform.matrix;
                         matrix.invert ();
                         var transform_invert = new Graphic.Transform.from_matrix (matrix);
-                        point_transform.add (transform_invert);
+                        toolbox_point.transform (transform_invert);
+                        toolbox_point.translate (toolbox.position.invert ());
 
-                        point.transform (point_transform);
+                        // point under toolbox
+                        if (toolbox.scroll_event (inScroll, toolbox_point))
+                        {
+                            return true;
+                        }
+                    }
+                    else if (child is Popup)
+                    {
+                        unowned Popup? popup = (Popup)child;
+
+                        // convert point to popup space
+                        var popup_point = convert_to_document_space (point);
+                        popup_point.translate (popup.position.invert ());
 
                         // point under popup
-                        if (popup.scroll_event (inScroll, point))
+                        if (popup.scroll_event (inScroll, popup_point))
                         {
                             return true;
                         }
@@ -1128,20 +1207,8 @@ public class Maia.Document : Item
 
                 foreach (unowned Page page in m_VisiblePages)
                 {
-                    var point = convert_to_root_space (inPoint);
-                    var offset = origin.invert ();
-                    var point_transform = new Graphic.Transform.identity ();
-                    point_transform.translate (offset.x, offset.y);
-
-                    var matrix = transform.matrix;
-                    matrix.invert ();
-                    var transform_invert = new Graphic.Transform.from_matrix (matrix);
-                    point_transform.add (transform_invert);
-
-                    point.transform (point_transform);
-
                     // point under child
-                    if (page.scroll_event (inScroll, point))
+                    if (page.scroll_event (inScroll, convert_to_document_space (point)))
                     {
                         // event occurate under child stop signal
                         ret = true;

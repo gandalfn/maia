@@ -59,11 +59,16 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             if (base.parent != null)
             {
                 base.parent.notify["root"].connect(on_parent_root_changed);
-            }
 
-            // Update transform matrix
-            m_TransformToItemSpace = get_transform_to_item_space ();
-            m_TransformToRootSpace = get_transform_to_root_space ();
+                // Update transform matrix
+                m_TransformToItemSpace = get_transform_to_item_space ();
+                m_TransformToRootSpace = get_transform_to_root_space ();
+            }
+            else
+            {
+                m_TransformToItemSpace = null;
+                m_TransformToRootSpace = null;
+            }
 
             // If item is root do not connect on position change
             if (value == null)
@@ -168,8 +173,16 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             }
             else
             {
-                m_TransformToItemSpace = get_transform_to_item_space ();
-                m_TransformToRootSpace = get_transform_to_root_space ();
+                if (parent != null)
+                {
+                    m_TransformToItemSpace = get_transform_to_item_space ();
+                    m_TransformToRootSpace = get_transform_to_root_space ();
+                }
+                else
+                {
+                    m_TransformToItemSpace = null;
+                    m_TransformToRootSpace = null;
+                }
             }
         }
     }
@@ -195,8 +208,16 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             }
 
             // Update transform matrix
-            m_TransformToItemSpace = get_transform_to_item_space ();
-            m_TransformToRootSpace = get_transform_to_root_space ();
+            if (parent != null)
+            {
+                m_TransformToItemSpace = get_transform_to_item_space ();
+                m_TransformToRootSpace = get_transform_to_root_space ();
+            }
+            else
+            {
+                m_TransformToItemSpace = null;
+                m_TransformToRootSpace = null;
+            }
         }
         default = new Graphic.Transform.identity ();
     }
@@ -212,8 +233,16 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             m_Position = value;
 
             // Update transform matrix
-            m_TransformToItemSpace = get_transform_to_item_space ();
-            m_TransformToRootSpace = get_transform_to_root_space ();
+            if (parent != null)
+            {
+                m_TransformToItemSpace = get_transform_to_item_space ();
+                m_TransformToRootSpace = get_transform_to_root_space ();
+            }
+            else
+            {
+                m_TransformToItemSpace = null;
+                m_TransformToRootSpace = null;
+            }
         }
     }
 
@@ -414,8 +443,16 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         GLib.Signal.emit_by_name (this, "notify::root");
 
-        m_TransformToItemSpace = get_transform_to_item_space ();
-        m_TransformToRootSpace = get_transform_to_root_space ();
+        if (parent != null)
+        {
+            m_TransformToItemSpace = get_transform_to_item_space ();
+            m_TransformToRootSpace = get_transform_to_root_space ();
+        }
+        else
+        {
+            m_TransformToItemSpace = null;
+            m_TransformToRootSpace = null;
+        }
     }
 
     private void
@@ -1026,7 +1063,11 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     convert_to_item_space (Graphic.Point inRootPoint)
     {
         var point = inRootPoint;
-        point.transform (m_TransformToItemSpace);
+
+        if (m_TransformToItemSpace != null)
+        {
+            point.transform (m_TransformToItemSpace);
+        }
 
         return point;
     }
@@ -1042,7 +1083,11 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     convert_to_root_space (Graphic.Point inPoint)
     {
         var point = inPoint;
-        point.transform (m_TransformToRootSpace);
+
+        if (m_TransformToRootSpace != null)
+        {
+            point.transform (m_TransformToRootSpace);
+        }
 
         return point;
     }

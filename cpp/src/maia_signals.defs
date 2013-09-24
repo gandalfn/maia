@@ -961,15 +961,6 @@
   (construct-only #f)
 )
 
-(define-property origin
-  (of-object "MaiaDocument")
-  (prop-type "GParamBoxed")
-  (docs "origin")
-  (readable #t)
-  (writable #f)
-  (construct-only #f)
-)
-
 (define-property format
   (of-object "MaiaDocument")
   (prop-type "GParamEnum")
