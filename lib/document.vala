@@ -47,6 +47,8 @@ public class Maia.Document : Item
     }
 
     // properties
+    private Core.List<unowned Item>      m_Items;
+    private Core.List<unowned Popup>     m_Popups;
     private Graphic.Surface              m_PageShadow;
     private Core.List<Page>              m_Pages;
     private Core.List<unowned Page>      m_VisiblePages;
@@ -122,6 +124,12 @@ public class Maia.Document : Item
 
         // create pages list
         m_Pages = new Core.List<Page> ();
+
+        // create items list
+        m_Items = new Core.List<unowned Item> ();
+
+        // create popups list
+        m_Popups = new Core.List<unowned Popup> ();
 
         // create visible pages list
         m_VisiblePages = new Core.List<unowned Page> ();
@@ -304,7 +312,7 @@ public class Maia.Document : Item
                 // Check if item size + current position does not overlap two page
                 if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
                 {
-                    // Check if item can be added in new
+                    // Check if item can be added in new page
                     if (item_size.height <= page_content.extents.size.height)
                     {
                         // Item can be added in new page
@@ -330,7 +338,6 @@ public class Maia.Document : Item
                     }
                     else if (inItem is Grid)
                     {
-
                         var pos = inoutCurrentPosition;
 
                         // Check if childs can be split in pages
@@ -338,7 +345,7 @@ public class Maia.Document : Item
                         foreach (unowned Core.Object child in inItem)
                         {
                             unowned ItemPackable? child_item = child as ItemPackable;
-                            if (child_item != null)
+                            if (child_item != null && child_item.visible)
                             {
                                 paginate_child_item (inRoot, child_item, ref pos, ref inoutPage);
                                 if (child_item.row > last_row)
@@ -349,8 +356,11 @@ public class Maia.Document : Item
                             }
                         }
 
-                        inoutCurrentPosition.y = pos.y;
-                        add_height = false;
+                        if (inoutCurrentPosition.y != pos.y)
+                        {
+                            inoutCurrentPosition.y = pos.y;
+                            add_height = false;
+                        }
                     }
                 }
             }
@@ -440,14 +450,6 @@ public class Maia.Document : Item
                 // Add item height to current position
                 inoutCurrentPosition.y += item_size.height;
             }
-
-
-            // Set width has page if item is direct child
-            if (inItem.parent == this && item_size.width != page.content_geometry.extents.size.width)
-            {
-                item_size.width = page.content_geometry.extents.size.width;
-                inItem.size = item_size;
-            }
         }
     }
 
@@ -500,9 +502,8 @@ public class Maia.Document : Item
         Graphic.Point current_position = m_Pages.last ().content_geometry.extents.origin;
 
         // Parse all childs
-        foreach (unowned Core.Object child in this)
+        foreach (unowned Item item in m_Items)
         {
-            unowned Item? item = child as Item;
             if (item != null && item.visible)
             {
                 paginate_item (item, ref current_position);
@@ -574,6 +575,39 @@ public class Maia.Document : Item
         return point;
     }
 
+    internal override void
+    insert_child (Core.Object inObject)
+    {
+        base.insert_child (inObject);
+
+        if (can_append_child (inObject))
+        {
+            if (inObject is Popup)
+            {
+                m_Popups.insert (inObject as Popup);
+            }
+            else if (inObject is Item)
+            {
+                m_Items.insert (inObject as Item);
+            }
+        }
+    }
+
+    internal override void
+    remove_child (Core.Object inObject)
+    {
+        if (inObject is Popup)
+        {
+            m_Popups.remove (inObject as Popup);
+        }
+        else if (inObject is Item)
+        {
+            m_Items.remove (inObject as Item);
+        }
+
+        base.remove_child (inObject);
+    }
+
     internal override bool
     can_append_child (Core.Object inObject)
     {
@@ -614,9 +648,8 @@ public class Maia.Document : Item
             }
 
             // Update each popup
-            foreach (unowned Core.Object child in this)
+            foreach (unowned Popup popup in m_Popups)
             {
-                unowned Popup? popup = child as Popup;
                 if (popup != null && popup.visible)
                 {
                     popup.damage ();
@@ -660,13 +693,16 @@ public class Maia.Document : Item
             {
                 foreach (unowned Page page in m_VisiblePages)
                 {
+                    Graphic.Region damaged_area;
+
                     if (inChild == page.header)
                     {
                         var position = Graphic.Point (page.geometry.extents.origin.x + Core.convert_inch_to_pixel (left_margin),
                                                       page.geometry.extents.origin.y + Core.convert_inch_to_pixel (top_margin));
 
-                        inChild.geometry.translate (inChild.geometry.extents.origin.invert ());
-                        inChild.geometry.translate (position);
+                        damaged_area = inChild.geometry.copy ();
+                        damaged_area.translate (inChild.geometry.extents.origin.invert ());
+                        damaged_area.translate (position);
                     }
                     else if (inChild == page.footer)
                     {
@@ -675,21 +711,22 @@ public class Maia.Document : Item
                                                       Core.convert_inch_to_pixel (bottom_margin) -
                                                       page.footer.geometry.extents.size.height);
 
-                        inChild.geometry.translate (inChild.geometry.extents.origin.invert ());
-                        inChild.geometry.translate (position);
-                    }
-
-                    Graphic.Region damaged_area;
-
-                    if (inArea == null)
-                    {
                         damaged_area = inChild.geometry.copy ();
+                        damaged_area.translate (inChild.geometry.extents.origin.invert ());
+                        damaged_area.translate (position);
                     }
                     else
                     {
-                        damaged_area = inArea.copy ();
-                        damaged_area.transform (inChild.transform);
-                        damaged_area.translate (inChild.geometry.extents.origin);
+                        if (inArea == null)
+                        {
+                            damaged_area = inChild.geometry.copy ();
+                        }
+                        else
+                        {
+                            damaged_area = inArea.copy ();
+                            damaged_area.transform (inChild.transform);
+                            damaged_area.translate (inChild.geometry.extents.origin);
+                        }
                     }
 
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
@@ -785,11 +822,11 @@ public class Maia.Document : Item
                 page.update (inContext);
             }
 
-            foreach (unowned Core.Object child in this)
+            foreach (unowned Popup popup in m_Popups)
             {
-                if (child is Toolbox)
+                if (popup is Toolbox)
                 {
-                    unowned Toolbox? toolbox = (Toolbox)child;
+                    unowned Toolbox? toolbox = (Toolbox)popup;
 
                     var toolbox_position = toolbox.position;
                     toolbox_position.translate (position);
@@ -797,10 +834,8 @@ public class Maia.Document : Item
 
                     toolbox.update (inContext, new Graphic.Region (Graphic.Rectangle (toolbox_position.x, toolbox_position.y, toolbox_size.width, toolbox_size.height)));
                 }
-                else if (child is Popup)
+                else
                 {
-                    unowned Popup? popup = (Popup)child;
-
                     var popup_position = popup.position;
                     popup_position.translate (position.invert ());
                     var popup_size = popup.size;
@@ -884,20 +919,15 @@ public class Maia.Document : Item
             inContext.restore ();
         }
 
-        foreach (unowned Core.Object child in this)
+        foreach (unowned Popup popup in m_Popups)
         {
-            if (child is Toolbox)
+            if (popup is Toolbox)
             {
-                unowned Toolbox? toolbox = (Toolbox)child;
-                inContext.save ();
-                {
-                    toolbox.draw (inContext);
-                }
-                inContext.restore ();
+                unowned Toolbox? toolbox = (Toolbox)popup;
+                toolbox.draw (inContext);
             }
-            else if (child is Popup)
+            else
             {
-                unowned Popup? popup = (Popup)child;
                 inContext.save ();
                 {
                     inContext.translate (position.invert ());
@@ -918,11 +948,11 @@ public class Maia.Document : Item
             var point = convert_to_root_space (inPoint);
 
             // Check if event occur under popup
-            foreach (unowned Core.Object child in this)
+            foreach (unowned Popup popup in m_Popups)
             {
-                if (child is Toolbox)
+                if (popup is Toolbox)
                 {
-                    unowned Toolbox? toolbox = (Toolbox)child;
+                    unowned Toolbox? toolbox = (Toolbox)popup;
 
                     // convert point to toolbox space
                     var toolbox_point = point;
@@ -940,10 +970,8 @@ public class Maia.Document : Item
                         return false;
                     }
                 }
-                else if (child is Popup)
+                else
                 {
-                    unowned Popup? popup = (Popup)child;
-
                     // convert point to popup space
                     var popup_point = convert_to_document_space (point);
                     popup_point.translate (popup.position.invert ());
@@ -997,11 +1025,11 @@ public class Maia.Document : Item
             var point = convert_to_root_space (inPoint);
 
             // Check if event occur under popup
-            foreach (unowned Core.Object child in this)
+            foreach (unowned Popup popup in m_Popups)
             {
-                if (child is Toolbox)
+                if (popup is Toolbox)
                 {
-                    unowned Toolbox? toolbox = (Toolbox)child;
+                    unowned Toolbox? toolbox = (Toolbox)popup;
 
                     // convert point to toolbox space
                     var toolbox_point = point;
@@ -1019,10 +1047,8 @@ public class Maia.Document : Item
                         return false;
                     }
                 }
-                else if (child is Popup)
+                else
                 {
-                    unowned Popup? popup = (Popup)child;
-
                     // convert point to popup space
                     var popup_point = convert_to_document_space (point);
                     popup_point.translate (popup.position.invert ());
@@ -1072,11 +1098,11 @@ public class Maia.Document : Item
             var point = convert_to_root_space (inPoint);
 
             // Check if event occur under popup
-            foreach (unowned Core.Object child in this)
+            foreach (unowned Popup popup in m_Popups)
             {
-                if (child is Toolbox)
+                if (popup is Toolbox)
                 {
-                    unowned Toolbox? toolbox = (Toolbox)child;
+                    unowned Toolbox? toolbox = (Toolbox)popup;
 
                     // convert point to toolbox space
                     var toolbox_point = point;
@@ -1094,10 +1120,8 @@ public class Maia.Document : Item
                         return false;
                     }
                 }
-                else if (child is Popup)
+                else
                 {
-                    unowned Popup? popup = (Popup)child;
-
                     // convert point to popup space
                     var popup_point = convert_to_document_space (point);
                     popup_point.translate (popup.position.invert ());
@@ -1164,11 +1188,11 @@ public class Maia.Document : Item
             try
             {
                 // Check if event occur under popup
-                foreach (unowned Core.Object child in this)
+                foreach (unowned Popup popup in m_Popups)
                 {
-                    if (child is Toolbox)
+                    if (popup is Toolbox)
                     {
-                        unowned Toolbox? toolbox = (Toolbox)child;
+                        unowned Toolbox? toolbox = (Toolbox)popup;
 
                         // convert point to toolbox space
                         var toolbox_point = point;
@@ -1184,10 +1208,8 @@ public class Maia.Document : Item
                             return true;
                         }
                     }
-                    else if (child is Popup)
+                    else
                     {
-                        unowned Popup? popup = (Popup)child;
-
                         // convert point to popup space
                         var popup_point = convert_to_document_space (point);
                         popup_point.translate (popup.position.invert ());

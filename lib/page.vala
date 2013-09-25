@@ -221,11 +221,10 @@ internal class Maia.Page : GLib.Object
             {
                 // Get child position and size
                 var item_position = child.position;
-                var item_size     = child.size;
+                var item_size     = child.size_requested;
 
                 // Set child size allocation
-                var child_allocation = new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y,
-                                                                              double.min (item_size.width, content_geometry.extents.size.width), item_size.height));
+                var child_allocation = new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y, content_geometry.extents.size.width, item_size.height));
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Update page %u item %s", num, child.name);
                 child.update (inContext, child_allocation);
             }
@@ -246,9 +245,11 @@ internal class Maia.Page : GLib.Object
                     var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
                                                   geometry.extents.origin.y + Core.convert_inch_to_pixel (m_Document.top_margin));
 
-                    header.geometry.translate (header.geometry.extents.origin.invert ());
-                    header.geometry.translate (position);
+                    var header_geometry = header.geometry.copy ();
+                    header_geometry.translate (header.geometry.extents.origin.invert ());
+                    header_geometry.translate (position);
 
+                    header.update (inContext, header_geometry);
                     header.draw (inContext);
                 }
                 inContext.restore ();
@@ -263,9 +264,11 @@ internal class Maia.Page : GLib.Object
                                                   Core.convert_inch_to_pixel (m_Document.bottom_margin) -
                                                   footer.geometry.extents.size.height);
 
-                    footer.geometry.translate (footer.geometry.extents.origin.invert ());
-                    footer.geometry.translate (position);
+                    var footer_geometry = footer.geometry.copy ();
+                    footer_geometry.translate (footer.geometry.extents.origin.invert ());
+                    footer_geometry.translate (position);
 
+                    footer.update (inContext, footer_geometry);
                     footer.draw (inContext);
                 }
                 inContext.restore ();

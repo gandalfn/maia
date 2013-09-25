@@ -104,7 +104,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         {
                             rows[item.row + cpt].size.width += (item_size.width / item.columns) + item.left_padding + item.right_padding;
                             rows[item.row + cpt].size.height = double.max (rows[item.row + cpt].size.height,
-                                                                           columns[item.column].size.height + item.top_padding + item.bottom_padding);
+                                                                           rows[item.row].size.height + item.top_padding + item.bottom_padding);
                             rows[item.row + cpt].nb_expands += item.xexpand ? 1 : 0;
 
                             columns[item.column].size.height += (item_size.height / item.rows);
@@ -234,17 +234,18 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                 {
                                     if (item.row >= page_break.row)
                                     {
-                                        Graphic.Point pos = Graphic.Point (0, page_break.end);
-                                        Graphic.Point final = grid.convert_to_item_space (pos);
+                                        Graphic.Point origin = grid.convert_to_item_space (Graphic.Point (0, page_break.start));
+                                        Graphic.Point final = grid.convert_to_item_space (Graphic.Point (0, page_break.end));
 
                                         if (item.row == page_break.row)
                                         {
                                             y = final.y;
+                                            page_break.start = grid.convert_to_root_space (allocation.origin).y;
                                         }
                                         else
                                         {
                                             y = allocation.origin.y;
-                                            y += final.y - child_allocations[page_break.row, item.column].origin.y;
+                                            y += final.y - origin.y;
                                         }
                                     }
                                 }
@@ -361,10 +362,10 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                             }
 
                             child_allocations[item.row, item.column].size.width = double.max (child_allocations[item.row, item.column].size.width,
-                                                                                              (columns[item.column].size.width / item.columns) + extra.width);
+                                                                                              columns[item.column].size.width + extra.width);
 
                             child_allocations[item.row, item.column].size.height = double.max (child_allocations[item.row, item.column].size.height,
-                                                                                               (rows[item.row].size.height / item.rows) + extra.height);
+                                                                                               rows[item.row].size.height + extra.height);
 
                             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s extra: %s", grid.name, item.name, extra.to_string ());
                             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s row: %g, column: %g", grid.name, item.name, columns[item.column].size.width, rows[item.row].size.height);
@@ -467,17 +468,18 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                 {
                                     if (item.row >= page_break.row)
                                     {
-                                        Graphic.Point pos = Graphic.Point (0, page_break.end);
-                                        Graphic.Point final = grid.convert_to_item_space (pos);
+                                        Graphic.Point origin = grid.convert_to_item_space (Graphic.Point (0, page_break.start));
+                                        Graphic.Point final = grid.convert_to_item_space (Graphic.Point (0, page_break.end));
 
                                         if (item.row == page_break.row)
                                         {
                                             y = final.y;
+                                            page_break.start = grid.convert_to_root_space (allocation.origin).y;
                                         }
                                         else
                                         {
                                             y = allocation.origin.y;
-                                            y += final.y - child_allocations[page_break.row, item.column].origin.y;
+                                            y += final.y - origin.y;
                                         }
                                     }
                                 }
@@ -688,28 +690,20 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         {
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "%s allocation: %s", name, inAllocation.extents.to_string ());
 
+            // Set geometry
+            geometry = inAllocation;
+
+            // Allocate each childs
+            m_Allocation.size_allocate (inContext, inAllocation);
+
+            // Some child delta exist add it to geometry
             double delta = get_page_break_delta ();
             if (delta > 0)
             {
                 var s = inAllocation.extents.size;
                 s.resize (0, delta);
-                var alloc = inAllocation.copy ();
-                alloc.resize (s);
-                geometry = alloc;
+                geometry.resize (s);
             }
-            else
-            {
-                geometry = inAllocation;
-            }
-
-            if (m_Allocation.grid == null)
-            {
-                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, name);
-                m_Allocation = SizeAllocation (this);
-            }
-
-            // Allocate each childs
-            m_Allocation.size_allocate (inContext, geometry);
 
             damage ();
         }
