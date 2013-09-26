@@ -396,46 +396,34 @@ public class Maia.Document : Item
 
             // Check if item size + current position does not overlap two page
             var page_content = page.content_geometry;
+
+            // Item continue to not fit in page try to split child
             if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
             {
-                // Append a new page
-                append_page  ();
-
-                // Set current page
-                page = m_Pages.last ();
-
-                // Update current position
-                page_content = page.content_geometry;
-                inoutCurrentPosition = page_content.extents.origin;
-
-                // Item continue to not fit in page try to split child
-                if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
+                if (inItem is Grid)
                 {
-                    if (inItem is Grid)
+                    add_item_in_page = false;
+
+                    inItem.position = Graphic.Point (0, 0);
+
+                    var pos = inoutCurrentPosition;
+                    uint last_row = 0;
+
+                    foreach (unowned Core.Object child in inItem)
                     {
-                        add_item_in_page = false;
-
-                        inItem.position = Graphic.Point (0, 0);
-
-                        var pos = inoutCurrentPosition;
-                        uint last_row = 0;
-
-                        foreach (unowned Core.Object child in inItem)
+                        unowned ItemPackable child_item = child as ItemPackable;
+                        if (child_item != null)
                         {
-                            unowned ItemPackable child_item = child as ItemPackable;
-                            if (child_item != null)
+                            paginate_child_item (inItem, child_item, ref pos, ref page);
+                            if (child_item.row > last_row)
                             {
-                                paginate_child_item (inItem, child_item, ref pos, ref page);
-                                if (child_item.row > last_row)
-                                {
-                                    pos.y += (child_item.row - last_row) * (inItem as Grid).row_spacing;
-                                    last_row = child_item.row;
-                                }
+                                pos.y += (child_item.row - last_row) * (inItem as Grid).row_spacing;
+                                last_row = child_item.row;
                             }
                         }
-
-                        inoutCurrentPosition.y = pos.y;
                     }
+
+                    inoutCurrentPosition.y = pos.y;
                 }
             }
 
@@ -756,27 +744,16 @@ public class Maia.Document : Item
 
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
 
-                // Remove the offset of scrolling
                 if (!(inChild is Toolbox))
                 {
                     damaged_area.translate (position.invert ());
-                    damaged_area.transform (transform);
-                    damage (damaged_area);
-
-                    foreach (unowned Page page in m_VisiblePages)
-                    {
-                        page.damage (damaged_area);
-                    }
                 }
-                else
-                {
-                    damaged_area.transform (transform);
-                    damage (damaged_area);
+                damaged_area.transform (transform);
+                damage (damaged_area);
 
-                    foreach (unowned Page page in m_VisiblePages)
-                    {
-                        page.damage (damaged_area);
-                    }
+                foreach (unowned Page page in m_VisiblePages)
+                {
+                    page.damage (damaged_area);
                 }
             }
         }
@@ -790,29 +767,6 @@ public class Maia.Document : Item
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "");
 
             geometry = inAllocation;
-
-            if (m_Pages.first () != null)
-            {
-                unowned Page first = m_Pages.first ();
-                if (first.header != null && first.header.geometry == null)
-                {
-                    var item_size = first.header.size;
-                    Graphic.Region header_allocation = new Graphic.Region (Graphic.Rectangle (first.content_geometry.extents.origin.x, first.content_geometry.extents.origin.y - item_size.height,
-                                                                                              first.content_geometry.extents.size.width, item_size.height));
-
-                    first.header.update (inContext, header_allocation);
-                }
-
-                if (first.footer != null && first.footer.geometry == null)
-                {
-                    var item_size = first.footer.size;
-                    Graphic.Region footer_allocation = new Graphic.Region (Graphic.Rectangle (first.content_geometry.extents.origin.x,
-                                                                                              first.content_geometry.extents.origin.y + first.content_geometry.extents.size.height,
-                                                                                              first.content_geometry.extents.size.width, item_size.height));
-
-                    first.footer.update (inContext, footer_allocation);
-                }
-            }
 
             on_move ();
 

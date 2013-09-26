@@ -1540,6 +1540,15 @@
   (construct-only #f)
 )
 
+(define-property only-numeric
+  (of-object "MaiaEntry")
+  (prop-type "GParamBoolean")
+  (docs "only-numeric")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaGrid
 
 (define-property tag

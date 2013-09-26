@@ -27,7 +27,7 @@ Document.worksheet {
     // Default page format
     format: a4;
     // TODO: fix transform on document
-    transform: scale(1.2, 1.2);
+    transform: scale(2, 2);
     border-width: 5;
     background-pattern: #E0E0E0;
     header: 'header';
@@ -224,7 +224,8 @@ Document.worksheet {
               stroke-pattern: #000000;
               font-description: "Liberation Sans 12";
               lines: 3;
-              text: "Enter your text";
+              text: "";
+              only-numeric: true;
             }
 
             DrawingArea.clinical_draw {

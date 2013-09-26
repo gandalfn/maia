@@ -58,6 +58,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     public uint     lines            { get; set; default = 1; }
     public uint     width_in_chars   { get; set; default = 0; }
     public double   underline_width  { get; set; default = 0.2; }
+    public bool     only_numeric     { get; set; default = false; }
 
     // signals
     public signal void changed ();
@@ -352,11 +353,14 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             // Other key is pressed check if character is printable (filter sepcial key)
             else if (inCar.isprint ())
             {
-                new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), inCar.to_string ());
-                text = new_text.str;
-                m_Cursor ++;
+                if (!only_numeric || inCar.isdigit ())
+                {
+                    new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), inCar.to_string ());
+                    text = new_text.str;
+                    m_Cursor ++;
 
-                check_line_size ();
+                    check_line_size ();
+                }
             }
 
             changed ();

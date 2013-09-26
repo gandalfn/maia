@@ -8665,6 +8665,21 @@
   )
 )
 
+(define-method get_only_numeric
+  (of-object "MaiaEntry")
+  (c-name "maia_entry_get_only_numeric")
+  (return-type "gboolean")
+)
+
+(define-method set_only_numeric
+  (of-object "MaiaEntry")
+  (c-name "maia_entry_set_only_numeric")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
 (define-function maia_grid_get_type
   (c-name "maia_grid_get_type")
   (return-type "GType")

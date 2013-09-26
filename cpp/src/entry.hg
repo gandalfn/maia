@@ -67,6 +67,9 @@ namespace Maia
             _WRAP_METHOD(double get_underline_width () const, maia_entry_get_underline_width)
             _WRAP_METHOD(void set_underline_width (double inWidth), maia_entry_set_underline_width)
 
+            _WRAP_METHOD(bool get_only_numeric () const, maia_entry_get_only_numeric)
+            _WRAP_METHOD(void set_only_numeric (bool inOnlyNumeric = true), maia_entry_set_only_numeric)
+
             _WRAP_SIGNAL(void changed (), "changed", no_default_handler)
 
             _WRAP_PROPERTY("font-description", Glib::ustring)
@@ -74,6 +77,7 @@ namespace Maia
             _WRAP_PROPERTY("lines", guint)
             _WRAP_PROPERTY("width-in-chars", guint)
             _WRAP_PROPERTY("underline-width", Glib::ustring)
+            _WRAP_PROPERTY("only-numeric", bool)
 
             _WRAP_PROPERTY("row", guint)
             _WRAP_PROPERTY("rows", guint)

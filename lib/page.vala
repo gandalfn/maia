@@ -171,6 +171,12 @@ internal class Maia.Page : GLib.Object
 
         if (header != null && header.geometry != null && header.visible)
         {
+            var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
+                                          geometry.extents.origin.y + Core.convert_inch_to_pixel (m_Document.top_margin));
+
+            header.geometry.translate (header.geometry.extents.origin.invert ());
+            header.geometry.translate (position);
+
             var child_area = area.copy ();
             child_area.intersect (header.geometry);
             child_area.translate (header.geometry.extents.origin.invert ());
@@ -184,6 +190,15 @@ internal class Maia.Page : GLib.Object
 
         if (footer != null && footer.geometry != null && footer.visible)
         {
+            var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
+                                          geometry.extents.origin.y + geometry.extents.size.height  -
+                                          Core.convert_inch_to_pixel (m_Document.bottom_margin) -
+                                          footer.geometry.extents.size.height);
+
+
+            footer.geometry.translate (footer.geometry.extents.origin.invert ());
+            footer.geometry.translate (position);
+
             var child_area = area.copy ();
             child_area.intersect (footer.geometry);
             child_area.translate (footer.geometry.extents.origin.invert ());
@@ -215,6 +230,44 @@ internal class Maia.Page : GLib.Object
     public void
     update (Graphic.Context inContext) throws Graphic.Error
     {
+        if (header != null)
+        {
+            inContext.save ();
+            {
+                var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
+                                              geometry.extents.origin.y + Core.convert_inch_to_pixel (m_Document.top_margin));
+
+                var size = Graphic.Size (content_geometry.extents.size.width, header.size_requested.height);
+
+                var header_geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
+
+                header.update (inContext, header_geometry);
+
+                header.damage ();
+            }
+            inContext.restore ();
+        }
+
+        if (footer != null)
+        {
+            inContext.save ();
+            {
+                var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
+                                              geometry.extents.origin.y + geometry.extents.size.height  -
+                                              Core.convert_inch_to_pixel (m_Document.bottom_margin) -
+                                              footer.size_requested.height);
+
+                var size = Graphic.Size (content_geometry.extents.size.width, footer.size_requested.height);
+
+                var footer_geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
+
+                footer.update (inContext, footer_geometry);
+
+                footer.damage ();
+            }
+            inContext.restore ();
+        }
+
         foreach (unowned Item child in m_Childs)
         {
             if (child.geometry == null)
@@ -238,24 +291,22 @@ internal class Maia.Page : GLib.Object
 
         inContext.save ();
         {
-            if (header != null)
+            if (header != null && header.geometry != null)
             {
                 inContext.save ();
                 {
                     var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
                                                   geometry.extents.origin.y + Core.convert_inch_to_pixel (m_Document.top_margin));
 
-                    var header_geometry = header.geometry.copy ();
-                    header_geometry.translate (header.geometry.extents.origin.invert ());
-                    header_geometry.translate (position);
+                    header.geometry.translate (header.geometry.extents.origin.invert ());
+                    header.geometry.translate (position);
 
-                    header.update (inContext, header_geometry);
                     header.draw (inContext);
                 }
                 inContext.restore ();
             }
 
-            if (footer != null)
+            if (footer != null && footer.geometry != null)
             {
                 inContext.save ();
                 {
@@ -264,11 +315,10 @@ internal class Maia.Page : GLib.Object
                                                   Core.convert_inch_to_pixel (m_Document.bottom_margin) -
                                                   footer.geometry.extents.size.height);
 
-                    var footer_geometry = footer.geometry.copy ();
-                    footer_geometry.translate (footer.geometry.extents.origin.invert ());
-                    footer_geometry.translate (position);
 
-                    footer.update (inContext, footer_geometry);
+                    footer.geometry.translate (footer.geometry.extents.origin.invert ());
+                    footer.geometry.translate (position);
+
                     footer.draw (inContext);
                 }
                 inContext.restore ();
@@ -276,7 +326,18 @@ internal class Maia.Page : GLib.Object
 
             foreach (unowned Item item in m_Childs)
             {
+                var damaged_area = item.damaged.copy ();
+
+                damaged_area.translate (item.geometry.extents.origin);
+                damaged_area.subtract (geometry);
+
                 item.draw (inContext);
+
+                if (!damaged_area.is_empty ())
+                {
+                    damaged_area.translate (item.geometry.extents.origin.invert ());
+                    item.damaged = damaged_area;
+                }
             }
         }
         inContext.restore ();
@@ -369,7 +430,7 @@ internal class Maia.Page : GLib.Object
         }
 
         // Check if event is under header
-        if (header != null)
+        if (header != null && header.geometry != null)
         {
             var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
                                           geometry.extents.origin.y + Core.convert_inch_to_pixel (m_Document.top_margin));
@@ -389,7 +450,7 @@ internal class Maia.Page : GLib.Object
 
 
         // Check if event is under footer
-        if (footer != null)
+        if (footer != null && footer.geometry != null)
         {
             var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
                                           geometry.extents.origin.y + geometry.extents.size.height  -
@@ -434,7 +495,7 @@ internal class Maia.Page : GLib.Object
         }
 
         // Check if event is under header
-        if (header != null)
+        if (header != null && header.geometry != null)
         {
             var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
                                           geometry.extents.origin.y + Core.convert_inch_to_pixel (m_Document.top_margin));
@@ -454,7 +515,7 @@ internal class Maia.Page : GLib.Object
 
 
         // Check if event is under footer
-        if (footer != null)
+        if (footer != null && footer.geometry != null)
         {
             var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
                                           geometry.extents.origin.y + geometry.extents.size.height  -
@@ -499,7 +560,7 @@ internal class Maia.Page : GLib.Object
         }
 
         // Check if event is under header
-        if (header != null)
+        if (header != null && header.geometry != null)
         {
             var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
                                           geometry.extents.origin.y + Core.convert_inch_to_pixel (m_Document.top_margin));
@@ -519,7 +580,7 @@ internal class Maia.Page : GLib.Object
 
 
         // Check if event is under footer
-        if (footer != null)
+        if (footer != null && footer.geometry != null)
         {
             var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
                                           geometry.extents.origin.y + geometry.extents.size.height  -
