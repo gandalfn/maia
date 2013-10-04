@@ -319,8 +319,6 @@ public class Maia.View : Maia.Grid
 
                 if (pos >= inRow)
                 {
-                    item.id = GLib.Quark.from_string ("%s-%u".printf (item.name, inRow));
-
                     if (orientation == Orientation.HORIZONTAL)
                     {
                         item.row = (pos + 1) % lines;
@@ -356,8 +354,6 @@ public class Maia.View : Maia.Grid
 
                 if (pos > inRow)
                 {
-                    item.id = GLib.Quark.from_string ("%s-%u".printf (item.name, inRow));
-
                     if (orientation == Orientation.HORIZONTAL)
                     {
                         item.row = (pos - 1) % lines;

@@ -119,6 +119,7 @@ namespace Maia
             _WRAP_METHOD(void convert_to_item_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_item_space)
             _WRAP_METHOD(void convert_to_root_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_root_space)
 
+#m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3, true)')
             _WRAP_SIGNAL(bool grab_pointer (const Glib::RefPtr<Item>& inItem), "grab-pointer", no_default_handler)
             _WRAP_SIGNAL(void ungrab_pointer (const Glib::RefPtr<Item>& inItem), "ungrab-pointer", no_default_handler)
             _WRAP_SIGNAL(bool grab_keyboard (const Glib::RefPtr<Item>& inItem), "grab-keyboard", no_default_handler)
@@ -134,6 +135,7 @@ namespace Maia
             _WRAP_SIGNAL(void set_pointer_cursor (Cursor inCursor), "set-pointer-cursor")
             _WRAP_SIGNAL(void move_pointer (const Graphic::Point& inPosition), "move-pointer")
             _WRAP_SIGNAL(void scroll_to (const Glib::RefPtr<Item>& inItem), "scroll-to")
+#m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3)')
 
             _WRAP_PROPERTY("tag", Glib::ustring)
             _WRAP_PROPERTY("characters", Glib::ustring)
