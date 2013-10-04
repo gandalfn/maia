@@ -307,7 +307,7 @@ public class Maia.Button : Grid
     }
 
     internal override void
-    paint (Graphic.Context inContext) throws Graphic.Error
+    paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
         inContext.save ();
         {
@@ -317,7 +317,7 @@ public class Maia.Button : Grid
                 draw_button (inContext);
             }
 
-            base.paint (inContext);
+            base.paint (inContext, inArea);
         }
         inContext.restore ();
     }

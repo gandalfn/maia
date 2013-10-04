@@ -7,6 +7,7 @@ files_defs = \
     maia_docs.xml
 
 files_hg = \
+    logger.hg \
     core-any.hg \
     core-object.hg \
     core-iterator.hg \

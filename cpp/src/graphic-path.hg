@@ -84,7 +84,7 @@ namespace Maia
                     return ret;
                 }
 
-                _WRAP_METHOD(Glib::RefPtr<Path> copy (), maia_graphic_path_copy)
+                _WRAP_METHOD(Glib::RefPtr<Path> copy (), maia_graphic_path_copy, refreturn)
 
                 _WRAP_METHOD(void parse (const Glib::ustring& inData), maia_graphic_path_parse)
                 _WRAP_METHOD(void move_to (double inX, double inY), maia_graphic_path_move_to)

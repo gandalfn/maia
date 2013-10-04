@@ -5,7 +5,7 @@ MAIA_LIB_NAME = maia-gtkmm
 includedir = $(prefix)/include/maia-gtkmm-$(MAIA_ABI)
 
 maia-gtkmm.h:
-	$(AM_V_GEN) $(top_srcdir)/tools/generate-mm-global-header maia-gtkmm $(srcdir)/maia-gtkmm maiamm > $@
+	$(AM_V_GEN) $(top_srcdir)/tools/generate-mm-global-header maia-gtkmm $(srcdir)/maia-gtkmm gtkmm,maiamm > $@
 
 include_HEADERS = \
 	maia-gtkmm.h

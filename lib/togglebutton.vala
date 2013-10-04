@@ -114,9 +114,7 @@ public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
         var label_item = new Label (id_label, label);
         add (label_item);
 
-        notify["stroke-pattern"].connect (() => {
-            label_item.stroke_pattern = stroke_pattern;
-        });
+        notify["stroke-pattern"].connect (on_stroke_pattern_changed);
 
         label_item.button_press_event.connect (on_button_press);
 
@@ -137,6 +135,16 @@ public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
             {
                 toggle_group.remove_button (this);
             }
+        }
+    }
+
+    private void
+    on_stroke_pattern_changed ()
+    {
+        unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
+        if (label_item != null)
+        {
+            label_item.stroke_pattern = stroke_pattern;
         }
     }
 

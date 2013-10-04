@@ -51,6 +51,12 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
+    public unowned View view {
+        get {
+            return m_View;
+        }
+    }
+
     public Graphic.Color highlight_color { get; set; default = new Graphic.Color (0.2, 0.2, 0.2); }
 
     public int active_row {
@@ -88,6 +94,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     {
         // Add not dumpable attributes
         not_dumpable_attributes.insert ("popup-progress");
+        not_dumpable_attributes.insert ("view");
 
         // Create arrow
         string id_arrow = "%s-arrow".printf (name);
@@ -296,7 +303,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     }
 
     internal override void
-    paint (Graphic.Context inContext) throws Graphic.Error
+    paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
         // paint background
         paint_background (inContext);
@@ -307,8 +314,9 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         {
             if (child is Path)
             {
-                area.union_ (((Drawable)child).geometry);
-                ((Drawable)child).draw (inContext);
+                unowned Path path = (Path)child;
+                area.union_ (path.geometry);
+                path.draw (inContext, area_to_child_item_space (path, inArea));
             }
         }
 
@@ -316,38 +324,42 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         {
             inContext.save ();
             {
-                var active_area = m_Active.geometry.copy ();
-                active_area.translate (area.extents.origin.invert ());
-
-                area.union_ (active_area);
-                var active_damaged = m_Active.damaged != null ? m_Active.damaged.copy () : null;
-                var active_origin = m_Active.geometry.extents.origin;
-
-                if (active_damaged == null)
-                {
-                    m_Active.damaged = area;
-                }
-
-                m_Active.geometry.translate (active_origin.invert ());
+                Graphic.Point active_pos = Graphic.Point (0, 0);
 
                 string id_arrow = "%s-arrow".printf (name);
                 unowned Path arrow_item = find (GLib.Quark.from_string (id_arrow), false) as Path;
                 if (arrow_item != null)
                 {
                     var arrow_size = arrow_item.size_requested;
-                    inContext.translate (Graphic.Point (arrow_size.width / 2, arrow_size.height / 2));
+                    active_pos = Graphic.Point (arrow_size.width / 2, arrow_size.height / 2);
                 }
-                m_Active.draw (inContext);
 
-                m_Active.geometry.translate (active_origin);
+                var active_origin = m_Active.geometry.extents.origin;
+                m_Active.geometry.translate (active_origin.invert ());
+                var active_area = m_Active.geometry.copy ();
+                m_Active.geometry.translate (active_pos);
+
+                area.union_ (m_Active.geometry);
+                var active_damaged = m_Active.damaged != null ? m_Active.damaged.copy () : null;
+
+                if (active_damaged == null)
+                {
+                    m_Active.damaged = active_area;
+                }
+
+                m_Active.draw (inContext, area_to_child_item_space (m_Active, inArea));
+
                 m_Active.damaged = active_damaged;
+                m_Active.geometry.translate (active_pos.invert ());
+                m_Active.geometry.translate (active_origin);
             }
             inContext.restore ();
         }
 
         if (m_Popup.visible)
         {
-            var path = new Graphic.Path.from_region (area);
+            var path = new Graphic.Path ();
+            path.rectangle (area.extents.origin.x, area.extents.origin.y, area.extents.size.width, area.extents.size.height);
             inContext.pattern = stroke_pattern;
             inContext.dash = { 1, 1 };
             inContext.line_width = 0.5;

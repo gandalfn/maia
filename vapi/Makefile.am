@@ -10,7 +10,8 @@ noinst_DATA = \
     valgrind.vapi \
     gdk-keysym.vapi \
     gtk+-2.0.vapi \
-    gtk+-2.0.deps
+    gtk+-2.0.deps \
+    libintl.vapi
 
 EXTRA_DIST += \
     $(noinst_DATA)

@@ -49,7 +49,7 @@ namespace Maia
                     return cppValue.get ();
                 }
 
-                _WRAP_METHOD(Glib::RefPtr<Glib::Object> get_owner () const, maia_manifest_attribute_get_owner)
+                _WRAP_METHOD(Glib::RefPtr<Glib::Object> get_owner () const, maia_manifest_attribute_get_owner, refreturn)
 
                 _WRAP_METHOD(Glib::ustring get () const, maia_manifest_attribute_get)
 

@@ -63,12 +63,12 @@ namespace Maia
             _WRAP_PROPERTY("manifest-styles", Core::Set<Manifest::Style>)
 
         private:
-            _WRAP_METHOD(Glib::RefPtr<ModelColumn> get (const Glib::ustring& inColumnName) const, maia_model_get)
+            _WRAP_METHOD(Glib::RefPtr<ModelColumn> get (const Glib::ustring& inColumnName) const, maia_model_get, refreturn)
     };
 
     class ModelColumn : public Core::Object, public Manifest::Element
     {
-        _CLASS_GOBJECT(ModelColumn, MaiaModelColumn, MAIA_MODEL, Core::Object, MaiaCoreObject)
+        _CLASS_GOBJECT(ModelColumn, MaiaModelColumn, MAIA_MODEL_COLUMN, Core::Object, MaiaCoreObject)
         _IMPLEMENTS_INTERFACE(Manifest::Element)
 
         protected:
@@ -76,7 +76,7 @@ namespace Maia
 
         public:
             _WRAP_METHOD(Glib::ustring get_name () const, maia_model_column_get_name)
-            _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_model_column_get_model)
+            _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_model_column_get_model, refreturn)
             _WRAP_METHOD(int get_column () const, maia_model_column_get_column)
             _WRAP_METHOD(void set_column (int inColumn) const, maia_model_column_set_column)
 

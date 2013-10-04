@@ -63,10 +63,10 @@ public class Maia.Document : Item
     }
 
     public PageFormat format    { get; construct set; default = PageFormat.A4; }
-    public double top_margin    { get; construct set; default = 0.25; }
-    public double bottom_margin { get; construct set; default = 0.25; }
-    public double left_margin   { get; construct set; default = 0.25; }
-    public double right_margin  { get; construct set; default = 0.25; }
+    public double top_margin    { get; construct set; default = 0.12; }
+    public double bottom_margin { get; construct set; default = 0.12; }
+    public double left_margin   { get; construct set; default = 0.12; }
+    public double right_margin  { get; construct set; default = 0.12; }
 
     public uint resolution { get; set; default = 96; }
 
@@ -350,7 +350,7 @@ public class Maia.Document : Item
                                 paginate_child_item (inRoot, child_item, ref pos, ref inoutPage);
                                 if (child_item.row > last_row)
                                 {
-                                    pos.y += (child_item.row - last_row) * (inItem as Grid).row_spacing;
+                                    pos.y += (inItem as Grid).row_spacing;
                                     last_row = child_item.row;
                                 }
                             }
@@ -397,7 +397,20 @@ public class Maia.Document : Item
             // Check if item size + current position does not overlap two page
             var page_content = page.content_geometry;
 
-            // Item continue to not fit in page try to split child
+            // If does not are on first page and item does not fit in end of page add a page
+            if (page.num > 1 && inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
+            {
+                // Item can be added in new page
+                append_page  ();
+
+                // Set current page
+                page = m_Pages.last ();
+
+                // Update current position
+                inoutCurrentPosition = page.content_geometry.extents.origin;
+            }
+
+            // Item do not fit in page try to split child
             if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
             {
                 if (inItem is Grid)
@@ -412,12 +425,12 @@ public class Maia.Document : Item
                     foreach (unowned Core.Object child in inItem)
                     {
                         unowned ItemPackable child_item = child as ItemPackable;
-                        if (child_item != null)
+                        if (child_item != null && child_item.visible)
                         {
                             paginate_child_item (inItem, child_item, ref pos, ref page);
                             if (child_item.row > last_row)
                             {
-                                pos.y += (child_item.row - last_row) * (inItem as Grid).row_spacing;
+                                pos.y += (inItem as Grid).row_spacing;
                                 last_row = child_item.row;
                             }
                         }
@@ -584,11 +597,11 @@ public class Maia.Document : Item
     internal override void
     remove_child (Core.Object inObject)
     {
-        if (inObject is Popup)
+        if (inObject is Popup && m_Popups != null)
         {
             m_Popups.remove (inObject as Popup);
         }
-        else if (inObject is Item)
+        else if (inObject is Item && m_Items != null)
         {
             m_Items.remove (inObject as Item);
         }
@@ -606,6 +619,23 @@ public class Maia.Document : Item
     on_read_manifest (Manifest.Document inDocument) throws Core.ParseError
     {
         inDocument.attribute_bind_added.connect (on_attribute_bind_added);
+    }
+
+    internal override void
+    on_damage (Graphic.Region? inArea = null)
+    {
+        Graphic.Region area;
+        if (inArea == null)
+        {
+            area = geometry.copy ();
+        }
+        else
+        {
+            area = inArea.copy ();
+        }
+        area.translate (position);
+
+        base.on_damage (area);
     }
 
     internal override void
@@ -645,7 +675,7 @@ public class Maia.Document : Item
             }
 
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "Damage document %s", visible_area.extents.to_string ());
-            damage (geometry);
+            damage ();
         }
     }
 
@@ -676,12 +706,20 @@ public class Maia.Document : Item
     {
         if (inChild.geometry != null)
         {
-            unowned Page first = m_Pages.first ();
-            if (!(inChild is Popup) && first != null && (first.header == inChild || first.footer == inChild))
+            if (!(inChild is Popup))
             {
                 foreach (unowned Page page in m_VisiblePages)
                 {
                     Graphic.Region damaged_area;
+
+                    if (inArea == null)
+                    {
+                        damaged_area = inChild.geometry.copy ();
+                    }
+                    else
+                    {
+                        damaged_area = inChild.area_to_parent_item_space (inArea);
+                    }
 
                     if (inChild == page.header)
                     {
@@ -703,25 +741,11 @@ public class Maia.Document : Item
                         damaged_area.translate (inChild.geometry.extents.origin.invert ());
                         damaged_area.translate (position);
                     }
-                    else
-                    {
-                        if (inArea == null)
-                        {
-                            damaged_area = inChild.geometry.copy ();
-                        }
-                        else
-                        {
-                            damaged_area = inArea.copy ();
-                            damaged_area.transform (inChild.transform);
-                            damaged_area.translate (inChild.geometry.extents.origin);
-                        }
-                    }
 
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
 
                     // Remove the offset of scrolling
                     damaged_area.translate (position.invert ());
-                    damaged_area.transform (transform);
 
                     // damage item
                     damage (damaged_area);
@@ -737,18 +761,15 @@ public class Maia.Document : Item
                 }
                 else
                 {
-                    damaged_area = inArea.copy ();
-                    damaged_area.transform (inChild.transform);
-                    damaged_area.translate (inChild.geometry.extents.origin);
+                    damaged_area = inChild.area_to_parent_item_space (inArea);
                 }
 
-                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child item %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
 
                 if (!(inChild is Toolbox))
                 {
                     damaged_area.translate (position.invert ());
                 }
-                damaged_area.transform (transform);
                 damage (damaged_area);
 
                 foreach (unowned Page page in m_VisiblePages)
@@ -791,7 +812,6 @@ public class Maia.Document : Item
                 else
                 {
                     var popup_position = popup.position;
-                    popup_position.translate (position.invert ());
                     var popup_size = popup.size;
 
                     popup.update (inContext, new Graphic.Region (Graphic.Rectangle (popup_position.x, popup_position.y, popup_size.width, popup_size.height)));
@@ -801,13 +821,12 @@ public class Maia.Document : Item
     }
 
     internal override void
-    paint (Graphic.Context inContext) throws Graphic.Error
+    paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
         // paint background
         paint_background (inContext);
 
         // paint visible pages
-        bool header_damaged = false;
         foreach (unowned Page page in m_VisiblePages)
         {
             uint delta = get_qdata<uint> (s_PageBeginQuark);
@@ -830,65 +849,26 @@ public class Maia.Document : Item
 
             inContext.save ();
             {
-                if (page.header != null)
-                {
-                    if (header_damaged)
-                    {
-                        page.header.damage ();
-                    }
-                    else if (page.header.damaged != null && !page.header.damaged.is_empty ())
-                    {
-                        header_damaged = true;
-                    }
-                }
+                inContext.translate (position.invert ());
 
-                foreach (unowned PageBreak page_break in m_PageBreaks)
-                {
-                    if (page_break.num == page.num && (page_break.grid.damaged == null || page_break.grid.damaged.is_empty ()))
-                    {
-                        Graphic.Point start_root, end_root;
-                        start_root = page_break.grid.convert_to_root_space(Graphic.Point (0, 0));
-                        end_root = page_break.grid.convert_to_root_space(Graphic.Point (page_break.grid.geometry.extents.size.width,
-                                                                                        page_break.grid.geometry.extents.size.height));
-                        Graphic.Point offset = Graphic.Point (0, page_break.end);
-
-                        start_root.y = offset.y;
-
-                        Graphic.Point start = page_break.grid.convert_to_item_space(start_root);
-                        Graphic.Point end = page_break.grid.convert_to_item_space(end_root);
-
-                        var damage_area = new Graphic.Region (Graphic.Rectangle (start.x, start.y, end.x - start.x, end.y - start.y));
-
-                        page_break.grid.damage (damage_area);
-
-                        break;
-                    }
-                }
-
-                var offset = position;
-                inContext.translate (offset.invert ());
-
-                page.draw (inContext);
+                page.draw (inContext, inArea);
             }
             inContext.restore ();
         }
 
         foreach (unowned Popup popup in m_Popups)
         {
-            if (popup is Toolbox)
+            inContext.save ();
             {
-                unowned Toolbox? toolbox = (Toolbox)popup;
-                toolbox.draw (inContext);
-            }
-            else
-            {
-                inContext.save ();
+                var area = inArea.copy ();
+                if (!(popup is Toolbox))
                 {
                     inContext.translate (position.invert ());
-                    popup.draw (inContext);
+                    area.translate (position);
                 }
-                inContext.restore ();
+                popup.draw (inContext, area_to_child_item_space (popup, area));
             }
+            inContext.restore ();
         }
     }
 
@@ -1210,35 +1190,13 @@ public class Maia.Document : Item
                     uint delta = get_qdata<uint> (s_PageBeginQuark);
                     m_CurrentPage = page.num + delta;
 
-                    foreach (unowned PageBreak page_break in m_PageBreaks)
-                    {
-                        if (page_break.num == page.num && (page_break.grid.damaged == null || page_break.grid.damaged.is_empty ()))
-                        {
-                            Graphic.Point start_root, end_root;
-                            start_root = page_break.grid.convert_to_root_space(Graphic.Point (0, 0));
-                            end_root = page_break.grid.convert_to_root_space(Graphic.Point (page_break.grid.geometry.extents.size.width,
-                                                                                            page_break.grid.geometry.extents.size.height));
-                            Graphic.Point offset = Graphic.Point (0, page_break.end);
-
-                            start_root.y = offset.y;
-
-
-                            Graphic.Point start = page_break.grid.convert_to_item_space(start_root);
-                            Graphic.Point end = page_break.grid.convert_to_item_space(end_root);
-
-                            var damage_area = new Graphic.Region (Graphic.Rectangle (start.x, start.y, end.x - start.x, end.y - start.x));
-
-                            page_break.grid.damage (damage_area);
-
-                            break;
-                        }
-                    }
-
                     var page_position = Graphic.Point (0, ((format.to_size ().height + (border_width* 2.0)) * (page.num - 1)));
                     inContext.translate (page_position.invert ());
+
                     if (page.header != null) page.header.damage ();
                     if (page.footer != null) page.footer.damage ();
-                    page.draw (inContext);
+
+                    page.draw (inContext, page.geometry);
                     break;
                 }
             }

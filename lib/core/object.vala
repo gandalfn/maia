@@ -103,7 +103,13 @@ public abstract class Maia.Core.Object : Any
 
         while (m_Head != null)
         {
-            m_Head.parent = null;
+            unowned Object? object = m_Head;
+
+            m_Head = object.m_Next;
+
+            object.m_Prev = null;
+            object.m_Next = null;
+            object.m_Parent = null;
         }
     }
 

@@ -58,6 +58,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
         }
     }
 
+    public bool                        translatable     { get; set; default = true; }
     public string                      font_description { get; set; default = ""; }
     public Graphic.Glyph.Alignment     alignment        { get; set; default = Graphic.Glyph.Alignment.CENTER; }
     public Graphic.Glyph.WrapMode      wrap_mode        { get; set; default = Graphic.Glyph.WrapMode.WORD; }
@@ -152,13 +153,78 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     on_layout_property_changed ()
     {
         m_Glyph = null;
-        geometry = null;
+        if (geometry != null)
+        {
+            var item_size = size;
+            if (geometry.extents.size.width < item_size.width || geometry.extents.size.height < item_size.height)
+            {
+                var glyph_size = m_Glyph.size;
+                if (xshrink && geometry.extents.size.width < item_size.width)
+                {
+                    glyph_size.width = geometry.extents.size.width;
+                }
+                if (yshrink && geometry.extents.size.height < item_size.height)
+                {
+                    glyph_size.height = geometry.extents.size.height;
+                }
+                m_Glyph.size = glyph_size;
+                update_layout ();
+
+                if (geometry.extents.size.width < m_Glyph.size.width || geometry.extents.size.height < m_Glyph.size.height)
+                {
+                    geometry = null;
+                }
+                else
+                {
+                    damage();
+                }
+            }
+            else
+            {
+                damage();
+            }
+        }
     }
 
     private void
     on_draw_property_changed ()
     {
         damage ();
+    }
+
+    private inline unowned string?
+    translate (string? inString)
+    {
+        string package = LibIntl.textdomain (null);
+        return inString != null ? inString.length > 0 ? LibIntl.dgettext (package, inString) : "" : null;
+    }
+
+    private void
+    update_layout ()
+    {
+        if (m_Glyph != null)
+        {
+            // Create a fake surface to calculate the size of path
+            var fake_surface = new Graphic.Surface (1, 1);
+
+            // Get stack of items
+            GLib.SList<unowned Item> list = new GLib.SList<unowned Item?> ();
+            for (unowned Core.Object? item = this; item != null; item = item.parent)
+            {
+                if (item is Item)
+                {
+                    list.append (item as Item);
+                }
+            }
+
+            // Apply transform of all parents to fake surface
+            foreach (unowned Item item in list)
+            {
+                fake_surface.context.transform = item.transform;
+            }
+
+            m_Glyph.update (fake_surface.context);
+        }
     }
 
     internal override bool
@@ -178,7 +244,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
                 m_Glyph.alignment = alignment;
                 m_Glyph.wrap = wrap_mode;
                 m_Glyph.ellipsize = ellipsize_mode;
-                m_Glyph.text = text;
+                m_Glyph.text = translatable ? translate (text) : text;
             }
 
             if (m_Glyph != null)
@@ -186,26 +252,10 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
                 // Reset wrap if any
                 m_Glyph.size = Graphic.Size (0, 0);
 
-                // Create a fake surface to calculate the size of path
-                var fake_surface = new Graphic.Surface (1, 1);
+                // update layout
+                update_layout ();
 
-                // Get stack of items
-                GLib.SList<unowned Item> list = new GLib.SList<unowned Item?> ();
-                for (unowned Core.Object? item = this; item != null; item = item.parent)
-                {
-                    if (item is Item)
-                    {
-                        list.append (item as Item);
-                    }
-                }
-
-                // Apply transform of all parents to fake surface
-                foreach (unowned Item item in list)
-                {
-                    fake_surface.context.transform = item.transform;
-                }
-
-                m_Glyph.update (fake_surface.context);
+                // set new size
                 size = m_Glyph.size;
             }
         }
@@ -241,7 +291,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     }
 
     internal override void
-    paint (Graphic.Context inContext) throws Graphic.Error
+    paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
         // paint background
         paint_background (inContext);

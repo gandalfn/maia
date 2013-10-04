@@ -45,7 +45,7 @@ namespace Maia
                 return Glib::RefPtr<DrawingArea> (new DrawingArea (pDrawingArea));
             }
 
-            _WRAP_METHOD(Glib::RefPtr<Item> get_selected () const, maia_drawing_area_get_selected)
+            _WRAP_METHOD(Glib::RefPtr<Item> get_selected () const, maia_drawing_area_get_selected, refreturn)
             _WRAP_METHOD(void set_selected (const Glib::RefPtr<Item>& inSelected), maia_drawing_area_set_selected)
 
             _WRAP_METHOD(double get_anchor_size () const, maia_drawing_area_get_anchor_size)
@@ -57,7 +57,7 @@ namespace Maia
             _WRAP_METHOD(double get_selected_border_line_width () const, maia_drawing_area_get_selected_border_line_width)
             _WRAP_METHOD(void set_selected_border_line_width (double inLineWidth), maia_drawing_area_set_selected_border_line_width)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_selected_border_color () const, maia_drawing_area_get_selected_border_color)
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_selected_border_color () const, maia_drawing_area_get_selected_border_color, refreturn)
             _WRAP_METHOD(void set_selected_border_color (const Glib::RefPtr<Graphic::Color>& inColor), maia_drawing_area_set_selected_border_color)
 
             _WRAP_PROPERTY("selected", Glib::RefPtr<Item>)

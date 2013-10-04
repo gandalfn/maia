@@ -131,7 +131,7 @@ namespace Maia.Log
             get {
                 return m_Domain;
             }
-            construct {
+            construct set {
                 m_Domain = value;
             }
         }

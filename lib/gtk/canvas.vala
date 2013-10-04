@@ -58,13 +58,11 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         set {
             if (m_Root != null)
             {
-                m_Root.damage.disconnect (on_root_damage);
                 m_Root.notify["geometry"].disconnect (on_root_geometry_change);
             }
             m_Root = value;
             if (m_Root != null)
             {
-                m_Root.damage.connect (on_root_damage);
                 m_Root.notify["geometry"].connect (on_root_geometry_change);
             }
             queue_resize ();
@@ -179,33 +177,6 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     }
 
     private void
-    on_root_damage (Graphic.Region? inArea)
-    {
-        if (m_Buffer != null)
-        {
-            try
-            {
-                m_Buffer.context.save ();
-                m_Buffer.context.pattern = new Graphic.Color (1, 1, 1, 1);
-                if (inArea != null)
-                {
-                    var path = new Graphic.Path.from_region (inArea);
-                    m_Buffer.context.fill (path);
-                }
-                else
-                {
-                    m_Buffer.context.paint ();
-                }
-                m_Buffer.context.restore ();
-            }
-            catch (Graphic.Error err)
-            {
-                Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, err.message);
-            }
-        }
-    }
-
-    private void
     send_configure ()
     {
         Gdk.Event evt = new Gdk.Event (Gdk.EventType.CONFIGURE);
@@ -267,13 +238,13 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     }
 
     internal void
-    draw (Graphic.Context inContext) throws Graphic.Error
+    draw (Graphic.Context inContext, Graphic.Region? inArea) throws Graphic.Error
     {
         if (root != null)
         {
             root.update (surface.context, geometry);
 
-            root.draw (surface.context);
+            root.draw (surface.context, inArea);
         }
 
         if (window != null)
@@ -643,7 +614,6 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
             try
             {
                 var widget_surface = new Surface (this);
-                widget_surface.context.operator = Graphic.Operator.SOURCE;
                 widget_surface.context.pattern = surface;
                 widget_surface.context.paint ();
             }

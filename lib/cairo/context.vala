@@ -77,6 +77,7 @@ public class Maia.Cairo.Context : Graphic.Context
         construct set {
             base.surface = value;
             m_Context = new global::Cairo.Context ((value as Surface).surface);
+            m_Context.set_fill_rule (global::Cairo.FillRule.EVEN_ODD);
         }
     }
 

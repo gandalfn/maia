@@ -55,9 +55,11 @@ namespace Maia
             protected:
                 _CTOR_DEFAULT()
 
+#m4 _CONVERSION(`MaiaGraphicContext*', `const Glib::RefPtr<Graphic::Context>&', `Glib::wrap($3, true)')
                 _WRAP_VFUNC(void get_size (Size& outSize), get_size)
                 _WRAP_VFUNC(void update (const Glib::RefPtr<Context>& inContext), update)
                 _WRAP_VFUNC(void get_cursor_position (int inIndex, Rectangle& outRectangle), get_cursor_position)
+#m4 _CONVERSION(`MaiaGraphicContext*', `const Glib::RefPtr<Graphic::Context>&', `Glib::wrap($3)')
 
             public:
                 static Glib::RefPtr<Glyph> create (const Glib::ustring& inFontDesc)

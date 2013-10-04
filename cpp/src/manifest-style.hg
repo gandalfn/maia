@@ -66,9 +66,9 @@ namespace Maia
                     return Glib::RefPtr<StyleProperty> (new StyleProperty (pProperty));
                 }
 
-                _WRAP_METHOD(Glib::RefPtr<StyleProperty> copy (), maia_manifest_style_property_copy)
+                _WRAP_METHOD(Glib::RefPtr<StyleProperty> copy (), maia_manifest_style_property_copy, refreturn)
                 _WRAP_METHOD(Glib::ustring get_name () const, maia_manifest_style_property_get_name)
-                _WRAP_METHOD(Glib::RefPtr<AttributeScanner> get_scanner () const, maia_manifest_style_property_get_scanner)
+                _WRAP_METHOD(Glib::RefPtr<AttributeScanner> get_scanner () const, maia_manifest_style_property_get_scanner, refreturn)
                 _WRAP_METHOD(void set_scanner (const Glib::RefPtr<AttributeScanner>& inScanner), maia_manifest_style_property_set_scanner)
 
                 _WRAP_PROPERTY("name", Glib::ustring)

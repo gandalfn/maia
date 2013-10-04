@@ -105,7 +105,7 @@ public class Maia.Group : Item
     }
 
     internal override void
-    paint (Graphic.Context inContext) throws Graphic.Error
+    paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
         // paint background
         paint_background (inContext);
@@ -115,7 +115,10 @@ public class Maia.Group : Item
         {
             if (child is Drawable)
             {
-                ((Drawable)child).draw (inContext);
+                unowned Drawable drawable = (Drawable)child;
+
+                var area = area_to_child_item_space (drawable, inArea);
+                drawable.draw (inContext, area);
             }
         }
     }

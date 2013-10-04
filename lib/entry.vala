@@ -398,7 +398,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     }
 
     internal override void
-    paint (Graphic.Context inContext) throws Graphic.Error
+    paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
         if (m_Glyph != null && m_Glyph.text != null && stroke_pattern != null)
         {

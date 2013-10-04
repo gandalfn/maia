@@ -92,7 +92,7 @@ internal class Maia.Cairo.Region : Graphic.Region
     public override bool
     is_empty ()
     {
-        return m_Region.is_empty ();
+        return m_Region.is_empty () || extents.is_empty ();
     }
 
     /**

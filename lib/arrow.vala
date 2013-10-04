@@ -186,7 +186,7 @@ public class Maia.Arrow : Item, ItemMovable
     }
 
     internal override void
-    paint (Graphic.Context inContext) throws Graphic.Error
+    paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
         // Search linked item
         unowned Item? item = parent.find (GLib.Quark.from_string (linked_item)) as Item;

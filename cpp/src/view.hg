@@ -55,7 +55,7 @@ namespace Maia
             _WRAP_METHOD(Orientation get_orientation () const, maia_view_get_orientation)
             _WRAP_METHOD(void set_orientation (Orientation inOrientation), maia_view_set_orientation)
 
-            _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_view_get_model)
+            _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_view_get_model, refreturn)
             _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_view_set_model)
 
             _WRAP_METHOD(Glib::ustring get_model_name () const, maia_view_get_model_name)
@@ -78,7 +78,7 @@ namespace Maia
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
 
         private:
-            _WRAP_METHOD(Glib::RefPtr<ItemPackable> get_item (guint inRow) const, maia_view_get_item)
+            _WRAP_METHOD(Glib::RefPtr<ItemPackable> get_item (guint inRow) const, maia_view_get_item, refreturn)
 
             static gboolean set_property_func_callback (GObject* inpObject, const char* inProperty, const char* inColumn, guint inRow, void* inpData);
             static void set_property_func_destroy (void* inpData);

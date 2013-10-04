@@ -36,7 +36,7 @@ namespace Maia
             _WRAP_METHOD(void set_border (double inBorder), maia_popup_set_border)
             _WRAP_METHOD(PopupPlacement get_placement () const, maia_popup_get_placement)
             _WRAP_METHOD(void set_placement (PopupPlacement inPlacement), maia_popup_set_placement)
-            _WRAP_METHOD(Glib::RefPtr<Item> get_content () const, maia_popup_get_content)
+            _WRAP_METHOD(Glib::RefPtr<Item> get_content () const, maia_popup_get_content, refreturn)
 
             _WRAP_METHOD(void show (), maia_popup_show)
             _WRAP_METHOD(void hide (), maia_popup_hide)

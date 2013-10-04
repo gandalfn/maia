@@ -265,7 +265,7 @@ public class Maia.Popup : Group
     }
 
     internal override void
-    paint (Graphic.Context inContext) throws Graphic.Error
+    paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
         inContext.save ();
         {
@@ -277,7 +277,7 @@ public class Maia.Popup : Group
             inContext.translate (Graphic.Point (x, y));
             inContext.clip (path_clip);
 
-            base.paint (inContext);
+            base.paint (inContext, inArea);
         }
         inContext.restore ();
     }

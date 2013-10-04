@@ -60,7 +60,7 @@ public class Maia.Manifest.Document : Core.Parser
     private AttributeScanner        m_Scanner;
 
     // Accessors
-    public unowned Object owner { get; set; default = null; }
+    public unowned Object? owner { get; set; default = null; }
 
     public AttributeScanner scanner {
         get {

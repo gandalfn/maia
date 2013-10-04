@@ -2886,6 +2886,15 @@
   (return-type "const-gchar*")
 )
 
+(define-method set_domain
+  (of-object "MaiaLogLogger")
+  (c-name "maia_log_logger_set_domain")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
 (define-method get_colorized
   (of-object "MaiaLogLogger")
   (c-name "maia_log_logger_get_colorized")
@@ -7558,12 +7567,53 @@
   (return-type "GType")
 )
 
+(define-method convert_to_child_item_space
+  (of-object "MaiaDrawable")
+  (c-name "maia_drawable_convert_to_child_item_space")
+  (return-type "none")
+  (parameters
+    '("MaiaDrawable*" "inChild")
+    '("MaiaGraphicPoint*" "inPoint")
+    '("MaiaGraphicPoint*" "result")
+  )
+)
+
+(define-method area_to_child_item_space
+  (of-object "MaiaDrawable")
+  (c-name "maia_drawable_area_to_child_item_space")
+  (return-type "MaiaGraphicRegion*")
+  (parameters
+    '("MaiaDrawable*" "inChild")
+    '("MaiaGraphicRegion*" "inArea")
+  )
+)
+
+(define-method convert_to_parent_item_space
+  (of-object "MaiaDrawable")
+  (c-name "maia_drawable_convert_to_parent_item_space")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "inPoint")
+    '("MaiaGraphicPoint*" "result")
+  )
+)
+
+(define-method area_to_parent_item_space
+  (of-object "MaiaDrawable")
+  (c-name "maia_drawable_area_to_parent_item_space")
+  (return-type "MaiaGraphicRegion*")
+  (parameters
+    '("MaiaGraphicRegion*" "inArea")
+  )
+)
+
 (define-method draw
   (of-object "MaiaDrawable")
   (c-name "maia_drawable_draw")
   (return-type "none")
   (parameters
     '("MaiaGraphicContext*" "inContext")
+    '("MaiaGraphicRegion*" "inArea")
     '("GError**" "error")
   )
 )
@@ -7616,6 +7666,24 @@
 (define-function maia_item_get_type
   (c-name "maia_item_get_type")
   (return-type "GType")
+)
+
+(define-method on_child_resized
+  (of-object "MaiaItem")
+  (c-name "maia_item_on_child_resized")
+  (return-type "none")
+  (parameters
+    '("MaiaDrawable*" "inChild")
+  )
+)
+
+(define-method on_damage
+  (of-object "MaiaItem")
+  (c-name "maia_item_on_damage")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRegion*" "inArea")
+  )
 )
 
 (define-method on_child_damaged
@@ -7691,6 +7759,12 @@
   )
 )
 
+(define-method request_child_resize
+  (of-object "MaiaItem")
+  (c-name "maia_item_request_child_resize")
+  (return-type "none")
+)
+
 (define-method size_request
   (of-object "MaiaItem")
   (c-name "maia_item_size_request")
@@ -7717,6 +7791,7 @@
   (return-type "none")
   (parameters
     '("MaiaGraphicContext*" "inContext")
+    '("MaiaGraphicRegion*" "inArea")
     '("GError**" "error")
   )
 )
@@ -7729,27 +7804,6 @@
     '("MaiaGraphicContext*" "inContext")
     '("MaiaGraphicRegion*" "inAllocation")
     '("GError**" "error")
-  )
-)
-
-(define-method convert_to_child_item_space
-  (of-object "MaiaItem")
-  (c-name "maia_item_convert_to_child_item_space")
-  (return-type "none")
-  (parameters
-    '("MaiaItem*" "inChild")
-    '("MaiaGraphicPoint*" "inPoint")
-    '("MaiaGraphicPoint*" "result")
-  )
-)
-
-(define-method convert_to_parent_item_space
-  (of-object "MaiaItem")
-  (c-name "maia_item_convert_to_parent_item_space")
-  (return-type "none")
-  (parameters
-    '("MaiaGraphicPoint*" "inPoint")
-    '("MaiaGraphicPoint*" "result")
   )
 )
 
@@ -7874,15 +7928,6 @@
   )
 )
 
-(define-method get_origin
-  (of-object "MaiaItem")
-  (c-name "maia_item_get_origin")
-  (return-type "none")
-  (parameters
-    '("MaiaGraphicPoint*" "result")
-  )
-)
-
 (define-method get_position
   (of-object "MaiaItem")
   (c-name "maia_item_get_position")
@@ -8000,6 +8045,21 @@
   (return-type "none")
   (parameters
     '("gdouble" "value")
+  )
+)
+
+(define-method get_chain_visible
+  (of-object "MaiaItem")
+  (c-name "maia_item_get_chain_visible")
+  (return-type "const-gchar*")
+)
+
+(define-method set_chain_visible
+  (of-object "MaiaItem")
+  (c-name "maia_item_set_chain_visible")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
   )
 )
 
@@ -8472,6 +8532,21 @@
     '("GType" "object_type")
     '("const-gchar*" "inId")
     '("const-gchar*" "inLabel")
+  )
+)
+
+(define-method get_translatable
+  (of-object "MaiaLabel")
+  (c-name "maia_label_get_translatable")
+  (return-type "gboolean")
+)
+
+(define-method set_translatable
+  (of-object "MaiaLabel")
+  (c-name "maia_label_set_translatable")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
   )
 )
 
@@ -9800,6 +9875,12 @@
     '("GType" "object_type")
     '("const-gchar*" "inId")
   )
+)
+
+(define-method get_view
+  (of-object "MaiaCombo")
+  (c-name "maia_combo_get_view")
+  (return-type "MaiaView*")
 )
 
 (define-method get_highlight_color

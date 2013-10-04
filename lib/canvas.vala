@@ -32,7 +32,7 @@ public interface Maia.Canvas : Drawable
 
     public unowned Toolbox? toolbox {
         get {
-            return root != null ? root.find_by_type<Toolbox> (false) : null;
+            return root != null ? root.find_by_type<Toolbox> () : null;
         }
     }
 

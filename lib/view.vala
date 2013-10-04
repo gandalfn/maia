@@ -466,7 +466,7 @@ public class Maia.View : Maia.Grid
     }
 
     internal override void
-    paint (Graphic.Context inContext) throws Graphic.Error
+    paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
         if (m_RowHightlighted >= 0 && fill_pattern != null)
         {
@@ -481,7 +481,7 @@ public class Maia.View : Maia.Grid
             }
         }
 
-        base.paint (inContext);
+        base.paint (inContext, inArea);
     }
 
     public void

@@ -1,11 +1,11 @@
-SUBDIRS = codegen src maiamm cairo gtk . doc
+SUBDIRS = codegen src maiamm cairo gtk . doc test
 
 MAIA_LIB_NAME = maiamm
 
 includedir = $(prefix)/include/maiamm-$(MAIA_ABI)
 
 maiamm.h:
-	$(AM_V_GEN) $(top_srcdir)/tools/generate-mm-global-header maiamm $(srcdir)/maiamm > $@
+	$(AM_V_GEN) $(top_srcdir)/tools/generate-mm-global-header maiamm $(srcdir)/maiamm glibmm > $@
 
 include_HEADERS = \
 	maiamm.h

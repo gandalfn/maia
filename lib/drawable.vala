@@ -99,6 +99,8 @@ public interface Maia.Drawable : GLib.Object
                 area.translate (geometry.extents.origin.invert ());
                 damaged.subtract (area);
             }
+
+            if (damaged.is_empty ()) damaged = null;
         }
         else
         {
@@ -108,11 +110,140 @@ public interface Maia.Drawable : GLib.Object
 
     // methods
     /**
+     * Convert a point in a child of drawable coordinate space
+     *
+     * @param inChild a child of drawable
+     * @param inPoint point to convert
+     *
+     * @return Graphic.Point in child drawable coordinate space
+     */
+    public Graphic.Point
+    convert_to_child_item_space (Drawable inChild, Graphic.Point inPoint)
+    {
+        // Transform point to item coordinate space
+        Graphic.Point point = inPoint;
+
+        try
+        {
+            var matrix = inChild.transform.matrix;
+            matrix.invert ();
+            var child_transform = new Graphic.Transform.from_matrix (matrix);
+
+            point.transform (child_transform);
+
+            if (inChild.geometry != null)
+            {
+                point.translate (inChild.geometry.extents.origin.invert ());
+            }
+        }
+        catch (Graphic.Error err)
+        {
+            Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Error on convert %s to child item space: %s",
+                          inPoint.to_string (), err.message);
+        }
+
+        return point;
+    }
+
+    /**
+     * Convert a area in a child of drawable coordinate space
+     *
+     * @param inChild a child of item
+     * @param inArea area to convert
+     *
+     * @return Graphic.Region in child drawable coordinate space
+     */
+    public Graphic.Region
+    area_to_child_item_space (Drawable inChild, Graphic.Region? inArea = null)
+    {
+        Graphic.Region area = new Graphic.Region ();
+
+        if (geometry != null && inChild.geometry != null)
+        {
+            // Transform area to item coordinate space
+            if (inArea == null)
+            {
+                area = geometry.copy ();
+                area.translate (geometry.extents.origin.invert ());
+            }
+            else
+            {
+                area = inArea.copy ();
+            }
+            area.intersect (inChild.geometry);
+
+            try
+            {
+                var matrix = inChild.transform.matrix;
+                matrix.invert ();
+                var child_transform = new Graphic.Transform.from_matrix (matrix);
+
+                area.transform (child_transform);
+
+                if (inChild.geometry != null)
+                {
+                    area.translate (inChild.geometry.extents.origin.invert ());
+                }
+            }
+            catch (Graphic.Error err)
+            {
+                Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Error on convert area %s to child item space: %s",
+                              inArea.extents.to_string (), err.message);
+            }
+        }
+
+        return area;
+    }
+
+    /**
+     * Convert a point to parent drawable coordinate space
+     *
+     * @param inPoint point to convert
+     *
+     * @return Graphic.Point in parent drawable coordinate space
+     */
+    public Graphic.Point
+    convert_to_parent_item_space (Graphic.Point inPoint)
+    {
+        // Transform point to item coordinate space
+        Graphic.Point point = inPoint;
+        point.transform (transform);
+        if (geometry != null)
+        {
+            point.translate (geometry.extents.origin);
+        }
+
+        return point;
+    }
+
+    /**
+     * Convert an area to parent drawable coordinate space
+     *
+     * @param inArea area to convert
+     *
+     * @return Graphic.Region in parent item coordinate space
+     */
+    public Graphic.Region
+    area_to_parent_item_space (Graphic.Region inArea)
+    {
+        // Transform point to item coordinate space
+        Graphic.Region area = inArea.copy ();
+        area.transform (transform);
+        if (geometry != null)
+        {
+            area.translate (geometry.extents.origin);
+        }
+
+        return area;
+    }
+
+    /**
      * Draw drawable
      *
      * @param inContext to draw drawable
+     * @param inArea area to draw
      *
      * @throws Graphic.Error when something goes wrong
      */
-    public abstract void draw (Graphic.Context inContext) throws Graphic.Error;
+    public abstract void draw (Graphic.Context inContext, Graphic.Region? inArea = null) throws Graphic.Error;
 }

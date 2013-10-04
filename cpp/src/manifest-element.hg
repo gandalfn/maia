@@ -63,7 +63,7 @@ namespace Maia
                 _WRAP_METHOD(void set_manifest_styles (const Core::Set<Style>& inStyles), maia_manifest_element_set_manifest_styles)
 
 
-                _WRAP_METHOD(Glib::RefPtr<Element> get_root () const, maia_manifest_element_get_root)
+                _WRAP_METHOD(Glib::RefPtr<Element> get_root () const, maia_manifest_element_get_root, refreturn)
 
                 _IGNORE(maia_manifest_element_get_not_dumpable_attributes)
                 inline void add_not_dumpable_attribute (const Glib::ustring& inAttribute)

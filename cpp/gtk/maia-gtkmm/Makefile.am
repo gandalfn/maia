@@ -16,7 +16,7 @@ AM_CPPFLAGS = \
 	-I${top_srcdir}/lib/core \
 	-I${top_srcdir}/lib/gtk \
 	-I${top_srcdir}/cpp \
-	-I${top_srcdir}/cpp/maia-gtkmm
+	-I${top_srcdir}/cpp/gtk
 
 AM_CXXFLAGS = $(MAIAMM_WXXFLAGS)
 

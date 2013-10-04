@@ -57,7 +57,7 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
     private char                   m_EndChar;
     private string                 m_LastName;
     private Core.Queue<string>     m_FunctionQueue;
-    private Object                 m_Owner;
+    private unowned Object         m_Owner;
     private AttributeBindCallback  m_BindCallback;
 
     // Static methods

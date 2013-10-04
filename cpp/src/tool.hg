@@ -51,7 +51,7 @@ namespace Maia
                 return Glib::RefPtr<Tool> (new Tool (pTool));
             }
 
-            _WRAP_METHOD(Glib::RefPtr<Toolbox> get_toolbox () const, maia_tool_get_toolbox)
+            _WRAP_METHOD(Glib::RefPtr<Toolbox> get_toolbox () const, maia_tool_get_toolbox, refreturn)
 
             _WRAP_METHOD(ToolAction get_action () const, maia_tool_get_action)
             _WRAP_METHOD(void set_action (ToolAction inAction), maia_tool_set_action)

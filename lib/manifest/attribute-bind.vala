@@ -27,6 +27,7 @@ public class Maia.Manifest.AttributeBind : Attribute
     private class BindClosure
     {
         AttributeBind  attribute;
+        string         quark;
         string         property;
         unowned Object src;
         ulong          id;
@@ -39,6 +40,9 @@ public class Maia.Manifest.AttributeBind : Attribute
             func = inFunc;
             property = inProperty;
             id = GLib.Signal.connect_swapped (inSrc, inSignalName, (GLib.Callback)on_bind, this);
+
+            quark = "MaiaAttributeBind%s%s%s".printf (inSrc.get_type ().name (), inProperty, inSignalName);
+            inSrc.set_data_full (quark, this, (GLib.DestroyNotify)on_source_destroy);
         }
 
         private void
@@ -47,10 +51,26 @@ public class Maia.Manifest.AttributeBind : Attribute
             func (attribute, src, property);
         }
 
+        private static void
+        on_source_destroy (BindClosure inThis)
+        {
+            if (inThis.id != 0)
+            {
+                GLib.SignalHandler.disconnect (inThis.src, inThis.id);
+                inThis.id = 0;
+                inThis.src.steal_data<ulong> (inThis.quark);
+            }
+        }
+
         public void
         disconnect ()
         {
-            GLib.SignalHandler.disconnect (src, id);
+            if (id != 0)
+            {
+                GLib.SignalHandler.disconnect (src, id);
+                id = 0;
+                src.steal_data<ulong> (quark);
+            }
         }
     }
 

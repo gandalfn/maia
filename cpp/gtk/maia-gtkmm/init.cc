@@ -30,9 +30,10 @@ namespace Maia
     {
         void init ()
         {
+            Glib::init();
+
             Maia::init ();
 
-            Glib::init();
             wrap_init();
         }
     }

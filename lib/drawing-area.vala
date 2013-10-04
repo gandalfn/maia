@@ -418,7 +418,7 @@ public class Maia.DrawingArea : Group, ItemPackable
     }
 
     internal override void
-    paint (Graphic.Context inContext) throws Graphic.Error
+    paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
         // paint background
         paint_background (inContext);
@@ -432,7 +432,7 @@ public class Maia.DrawingArea : Group, ItemPackable
 
                 if (arrow.visible)
                 {
-                    arrow.draw (inContext);
+                    arrow.draw (inContext, area_to_child_item_space (arrow, inArea));
 
                     if (arrow == selected && arrow.linked_item != null)
                     {
@@ -512,7 +512,7 @@ public class Maia.DrawingArea : Group, ItemPackable
 
                 if (item.visible)
                 {
-                    item.draw (inContext);
+                    item.draw (inContext, area_to_child_item_space (item, inArea));
 
                     if (item == selected)
                     {

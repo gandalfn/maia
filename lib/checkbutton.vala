@@ -63,7 +63,7 @@ public class Maia.CheckButton : ToggleButton
     }
 
     internal override void
-    paint (Graphic.Context inContext) throws Graphic.Error
+    paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
         inContext.save ();
         {
@@ -72,7 +72,7 @@ public class Maia.CheckButton : ToggleButton
             inContext.translate (Graphic.Point (-size_requested.width / 2, -size_requested.height / 2));
 
             // Draw label
-            base.paint (inContext);
+            base.paint (inContext, inArea);
 
             // Paint check box
             Graphic.Color color = fill_pattern as Graphic.Color ?? new Graphic.Color (0.7, 0.7, 0.7);

@@ -442,6 +442,7 @@ public class Maia.TestCanvas : Maia.TestCase
         try
         {
             canvas.load ("Document.root {" +
+                         "  border-width: 12;" +
                          "  Model.model {" +
                          "      Column.val {" +
                          "          column: 0;" +

@@ -64,7 +64,7 @@ public struct Maia.Graphic.Rectangle
     public bool
     is_empty ()
     {
-        return size.is_empty ();
+        return size.is_empty () || origin.x + size.width <= 0 || origin.y + size.height <= 0;
     }
 
     /**

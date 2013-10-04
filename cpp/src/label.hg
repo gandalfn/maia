@@ -58,8 +58,11 @@ namespace Maia
             _WRAP_METHOD(Graphic::GlyphEllipsizeMode get_ellipsize_mode () const, maia_label_get_ellipsize_mode)
             _WRAP_METHOD(void set_ellipsize_mode (Graphic::GlyphEllipsizeMode inMode), maia_label_set_ellipsize_mode)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_shade_color () const, maia_label_get_shade_color)
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_shade_color () const, maia_label_get_shade_color, refreturn)
             _WRAP_METHOD(void set_shade_color (const Glib::RefPtr<Graphic::Color>& inColor), maia_label_set_shade_color)
+
+            _WRAP_METHOD(bool get_translatable () const, maia_label_get_translatable)
+            _WRAP_METHOD(void set_translatable (bool inTranslatable = true), maia_label_set_translatable)
 
             _WRAP_METHOD(Glib::ustring get_text () const, maia_label_get_text)
             _WRAP_METHOD(void set_text (const Glib::ustring& inLabel), maia_label_set_text)
@@ -69,6 +72,7 @@ namespace Maia
             _WRAP_PROPERTY("wrap-mode", Graphic::GlyphWrapMode)
             _WRAP_PROPERTY("ellipsize-mode", Graphic::GlyphEllipsizeMode)
             _WRAP_PROPERTY("shade-color", Glib::RefPtr<Graphic::Color>)
+            _WRAP_PROPERTY("translatable", bool)
             _WRAP_PROPERTY("text", Glib::ustring)
 
             _WRAP_PROPERTY("row", guint)

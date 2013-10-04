@@ -46,7 +46,7 @@ namespace Maia
                     return Glib::RefPtr<Model> (new Model (pModel));
                 }
 
-                _WRAP_METHOD(Glib::RefPtr< ::Gtk::TreeModel> get_tree_model () const, maia_gtk_model_get_treemodel)
+                _WRAP_METHOD(Glib::RefPtr< ::Gtk::TreeModel> get_tree_model () const, maia_gtk_model_get_treemodel, refreturn)
                 _WRAP_METHOD(void set_tree_model (const Glib::RefPtr< ::Gtk::TreeModel>& inTreeModel), maia_gtk_model_set_treemodel)
 
                 _WRAP_METHOD(::Gtk::TreePath convert_row_to_tree_path (guint inRow), maia_gtk_model_convert_row_to_tree_path)

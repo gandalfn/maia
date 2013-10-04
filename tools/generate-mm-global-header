@@ -31,7 +31,11 @@ BEGIN {
     print "";
     if (extra != "")
     {
-        printf ("#include <%s.h>\n\n", extra);
+        for (i = 1; i <= split(extra, headers, ","); i++)
+        {
+            printf ("#include <%s.h>\n", headers[i]);
+        }
+        printf("\n");
     }
     printf ("#ifndef _%s_H\n", nameupper);
     printf ("#define _%s_H\n\n", nameupper);

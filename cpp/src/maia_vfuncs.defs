@@ -3,6 +3,20 @@
 ; define-vfunc is gtkmm-specific
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaLogLogger
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-vfunc write
+  (of-object "MaiaLogLogger")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inDomain")
+    '("MaiaLogLevel" "inLevel")
+    '("const-gchar*" "inMessage")
+  )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; From MaiaCoreObject
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -571,6 +585,7 @@
   (return-type "none")
   (parameters
     '("MaiaGraphicContext*" "inContext")
+    '("MaiaGraphicRegion*" "inArea")
     '("GError**" "error")
   )
 )
@@ -596,11 +611,11 @@
   )
 )
 
-(define-vfunc get_origin
+(define-vfunc on_damage
   (of-object "MaiaItem")
   (return-type "none")
   (parameters
-    '("MaiaGraphicPoint*" "outPoint")
+    '("MaiaGraphicRegion*" "inArea")
   )
 )
 
@@ -610,6 +625,14 @@
   (parameters
     '("MaiaDrawable*" "inChild")
     '("MaiaGraphicRegion*" "inArea")
+  )
+)
+
+(define-vfunc on_child_resized
+  (of-object "MaiaItem")
+  (return-type "none")
+  (parameters
+    '("MaiaDrawable*" "inChild")
   )
 )
 
@@ -668,6 +691,11 @@
   )
 )
 
+(define-vfunc request_child_resize
+  (of-object "MaiaItem")
+  (return-type "none")
+)
+
 (define-vfunc size_request
   (of-object "MaiaItem")
   (return-type "none")
@@ -682,6 +710,7 @@
   (return-type "none")
   (parameters
     '("MaiaGraphicContext*" "inContext")
+    '("MaiaGraphicRegion*" "inArea")
     '("GError**" "error")
   )
 )

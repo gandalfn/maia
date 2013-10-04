@@ -45,18 +45,23 @@ namespace Maia
         _IGNORE(maia_item_on_button_press_event, maia_item_on_button_release_event, maia_item_on_child_damaged,
                 maia_item_on_motion_event, maia_item_on_scroll_event, maia_item_get_tag, maia_item_set_characters,
                 maia_item_get_characters, maia_item_size_request, maia_item_paint,
-                maia_item_on_show, maia_item_on_hide, maia_item_on_move, maia_item_on_resize)
+                maia_item_on_show, maia_item_on_hide, maia_item_on_move, maia_item_on_resize, maia_item_on_damage,
+                maia_item_on_child_resized)
 
         protected:
             _CTOR_DEFAULT()
 
             _WRAP_VFUNC(Glib::ustring get_tag (), get_tag)
-            _WRAP_VFUNC(void get_origin (Graphic::Point& outPoint), get_origin)
 
+#m4 _CONVERSION(`MaiaGraphicContext*', `const Glib::RefPtr<Graphic::Context>&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaGraphicRegion*', `const Glib::RefPtr<Graphic::Region>&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaDrawable*', `const Glib::RefPtr<Drawable>&', `Glib::wrap($3, true)')
             _WRAP_VFUNC(bool can_focus () const, get_can_focus)
             _WRAP_VFUNC(void set_can_focus (bool inCanFocus = true), set_can_focus)
 
+            _WRAP_VFUNC(void on_damage (const Glib::RefPtr<Graphic::Region>& inArea), on_damage)
             _WRAP_VFUNC(void on_child_damaged (const Glib::RefPtr<Drawable>& inChild, const Glib::RefPtr<Graphic::Region>& inArea), on_child_damaged)
+            _WRAP_VFUNC(void on_child_resized (const Glib::RefPtr<Drawable>& inChild), on_child_resized)
             _WRAP_VFUNC(void on_show (), on_show)
             _WRAP_VFUNC(void on_hide (), on_hide)
             _WRAP_VFUNC(void on_move (), on_move)
@@ -66,10 +71,15 @@ namespace Maia
             _WRAP_VFUNC(bool on_motion_event (const Graphic::Point& inPoint), on_motion_event)
             _WRAP_VFUNC(bool on_scroll_event (Scroll inScroll, const Graphic::Point& inPoint), on_scroll_event)
 
+            _WRAP_VFUNC(void request_child_resize (), request_child_resize)
             _WRAP_VFUNC(void size_request (const Graphic::Size& inSize, Graphic::Size& outSize), size_request)
-            _WRAP_VFUNC(void paint (const Glib::RefPtr<Graphic::Context>& inContext), paint, errthrow)
+            _WRAP_VFUNC(void paint (const Glib::RefPtr<Graphic::Context>& inContext, const Glib::RefPtr<Graphic::Region>& inArea), paint, errthrow)
             _WRAP_VFUNC(void update (const Glib::RefPtr<Graphic::Context>& inContext, const Glib::RefPtr<Graphic::Region>& inAllocation), update, errthrow)
+#m4 _CONVERSION(`MaiaGraphicContext*', `const Glib::RefPtr<Graphic::Context>&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaGraphicRegion*', `const Glib::RefPtr<Graphic::Region>&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaDrawable*', `const Glib::RefPtr<Drawable>&', `Glib::wrap($3)')
 
+            _WRAP_METHOD(void request_child_resize (), maia_item_request_child_resize)
             _WRAP_METHOD(void paint_background (const Glib::RefPtr<Graphic::Context>& inContext), maia_item_paint_background, errthrow);
 
         public:
@@ -85,7 +95,6 @@ namespace Maia
             _WRAP_METHOD(void set_have_focus (bool inFocus = true), maia_item_set_have_focus)
             _WRAP_METHOD(bool visible () const, maia_item_get_visible)
             _WRAP_METHOD(void set_visible (bool inVisible = true), maia_item_set_visible)
-            _WRAP_METHOD(void get_origin (Graphic::Point& outPoint) const, maia_item_get_origin)
             _WRAP_METHOD(void get_position (Graphic::Point& outPoint) const, maia_item_get_position)
             _WRAP_METHOD(void set_position (const Graphic::Point& inPosition), maia_item_set_position)
             _WRAP_METHOD(void get_size (Graphic::Size& outSize) const, maia_item_get_size)
@@ -93,20 +102,20 @@ namespace Maia
             _WRAP_METHOD(void get_size_requested (Graphic::Size& outSize) const, maia_item_get_size_requested)
             _WRAP_METHOD(guint get_layer () const, maia_item_get_layer)
             _WRAP_METHOD(void set_layer (guint inLayer) const, maia_item_set_layer)
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_fill_pattern () const, maia_item_get_fill_pattern)
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_fill_pattern () const, maia_item_get_fill_pattern, refreturn)
             _WRAP_METHOD(void set_fill_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_item_set_fill_pattern)
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_stroke_pattern () const, maia_item_get_stroke_pattern)
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_stroke_pattern () const, maia_item_get_stroke_pattern, refreturn)
             _WRAP_METHOD(void set_stroke_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_item_set_stroke_pattern)
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_background_pattern () const, maia_item_get_background_pattern)
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_background_pattern () const, maia_item_get_background_pattern, refreturn)
             _WRAP_METHOD(void set_background_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_item_set_background_pattern)
             _WRAP_METHOD(double get_line_width () const, maia_item_get_line_width)
             _WRAP_METHOD(void set_line_width (double inLineWidth), maia_item_set_line_width)
+            _WRAP_METHOD(Glib::ustring get_chain_visible () const, maia_item_get_chain_visible)
+            _WRAP_METHOD(void set_chain_visible (const Glib::ustring& inItemNames) const, maia_item_set_chain_visible)
             _WRAP_METHOD(bool get_pointer_over () const, maia_item_get_pointer_over)
             _WRAP_METHOD(void set_pointer_over (bool inOver = true), maia_item_set_pointer_over)
 
             _WRAP_METHOD(void update (const Glib::RefPtr<Graphic::Context>& inContext, const Glib::RefPtr<Graphic::Region>& inAllocation), maia_item_update, errthrow)
-            _WRAP_METHOD(void convert_to_child_item_space (const Glib::RefPtr<Item>& inChild, const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_child_item_space)
-            _WRAP_METHOD(void convert_to_parent_item_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_parent_item_space)
             _WRAP_METHOD(void convert_to_item_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_item_space)
             _WRAP_METHOD(void convert_to_root_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_root_space)
 
@@ -142,7 +151,6 @@ namespace Maia
             _WRAP_PROPERTY("can-focus", bool)
             _WRAP_PROPERTY("have-focus", bool)
             _WRAP_PROPERTY("visible", bool)
-            _WRAP_PROPERTY("origin", Graphic::Point)
             _WRAP_PROPERTY("position", Graphic::Point)
             _WRAP_PROPERTY("size", Graphic::Size)
             _WRAP_PROPERTY("size_requested", Graphic::Size)
@@ -151,6 +159,7 @@ namespace Maia
             _WRAP_PROPERTY("stroke-pattern", Glib::RefPtr<Graphic::Pattern>)
             _WRAP_PROPERTY("background-pattern", Glib::RefPtr<Graphic::Pattern>)
             _WRAP_PROPERTY("line-width", double)
+            _WRAP_PROPERTY("chain-visible", Glib::ustring)
 
             _WRAP_PROPERTY("pointer-over", bool)
     };

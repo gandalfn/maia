@@ -71,7 +71,7 @@ public class Maia.Highlight : ToggleButton
     }
 
     internal override void
-    paint (Graphic.Context inContext) throws Graphic.Error
+    paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
         inContext.save ();
         {
@@ -104,7 +104,8 @@ public class Maia.Highlight : ToggleButton
             {
                 if (child is Drawable)
                 {
-                    ((Drawable)child).draw (inContext);
+                    unowned Drawable drawable = (Drawable)child;
+                    drawable.draw (inContext, area_to_child_item_space (drawable, inArea));
                 }
             }
         }

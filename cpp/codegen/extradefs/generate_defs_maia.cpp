@@ -6,6 +6,8 @@ int main (int argc, char** argv)
 {
     g_type_init ();
 
+    std::cout << get_defs (MAIA_LOG_TYPE_LOGGER);
+
     std::cout << get_defs (MAIA_CORE_TYPE_ANY);
     std::cout << get_defs (MAIA_CORE_TYPE_OBJECT);
     std::cout << get_defs (MAIA_CORE_TYPE_ITERATOR);

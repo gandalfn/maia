@@ -1,3 +1,41 @@
+;; From MaiaLogLogger
+
+(define-property level
+  (of-object "MaiaLogLogger")
+  (prop-type "GParamEnum")
+  (docs "level")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property category
+  (of-object "MaiaLogLogger")
+  (prop-type "GParamFlags")
+  (docs "category")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property domain
+  (of-object "MaiaLogLogger")
+  (prop-type "GParamString")
+  (docs "domain")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property colorized
+  (of-object "MaiaLogLogger")
+  (prop-type "GParamBoolean")
+  (docs "colorized")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaCoreAny
 
 ;; From MaiaCoreObject
@@ -2203,15 +2241,6 @@
   (construct-only #f)
 )
 
-(define-property origin
-  (of-object "MaiaItem")
-  (prop-type "GParamBoxed")
-  (docs "origin")
-  (readable #t)
-  (writable #f)
-  (construct-only #f)
-)
-
 (define-property geometry
   (of-object "MaiaItem")
   (prop-type "GParamObject")
@@ -2306,6 +2335,15 @@
   (of-object "MaiaItem")
   (prop-type "GParamDouble")
   (docs "line-width")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property chain-visible
+  (of-object "MaiaItem")
+  (prop-type "GParamString")
+  (docs "chain-visible")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -2631,6 +2669,15 @@
   (of-object "MaiaLabel")
   (prop-type "GParamBoolean")
   (docs "can-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property translatable
+  (of-object "MaiaLabel")
+  (prop-type "GParamBoolean")
+  (docs "translatable")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -3561,6 +3608,15 @@
   (docs "right-padding")
   (readable #t)
   (writable #t)
+  (construct-only #f)
+)
+
+(define-property view
+  (of-object "MaiaCombo")
+  (prop-type "GParamObject")
+  (docs "view")
+  (readable #t)
+  (writable #f)
   (construct-only #f)
 )
 

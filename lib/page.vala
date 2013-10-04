@@ -168,6 +168,7 @@ internal class Maia.Page : GLib.Object
     damage (Graphic.Region inArea)
     {
         var area = inArea.copy ();
+        area.translate (m_Document.position);
 
         if (header != null && header.geometry != null && header.visible)
         {
@@ -214,9 +215,7 @@ internal class Maia.Page : GLib.Object
         {
             if (child.geometry != null && child.visible)
             {
-                var child_area = area.copy ();
-                child_area.intersect (child.geometry);
-                child_area.translate (child.geometry.extents.origin.invert ());
+                var child_area = m_Document.area_to_child_item_space (child, area);
                 if (!child_area.is_empty () && (child.damaged == null ||
                     child.damaged.contains_rectangle (child_area.extents) != Graphic.Region.Overlap.IN))
                 {
@@ -285,7 +284,7 @@ internal class Maia.Page : GLib.Object
     }
 
     public void
-    draw (Graphic.Context inContext) throws Graphic.Error
+    draw (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, "Draw page %u", num);
 
@@ -301,7 +300,10 @@ internal class Maia.Page : GLib.Object
                     header.geometry.translate (header.geometry.extents.origin.invert ());
                     header.geometry.translate (position);
 
-                    header.draw (inContext);
+                    var area = inArea.copy ();
+                    area.translate (m_Document.position);
+
+                    header.draw (inContext, m_Document.area_to_child_item_space (header, area));
                 }
                 inContext.restore ();
             }
@@ -319,24 +321,25 @@ internal class Maia.Page : GLib.Object
                     footer.geometry.translate (footer.geometry.extents.origin.invert ());
                     footer.geometry.translate (position);
 
-                    footer.draw (inContext);
+                    var area = inArea.copy ();
+                    area.translate (m_Document.position);
+
+                    footer.draw (inContext, m_Document.area_to_child_item_space (footer, area));
                 }
                 inContext.restore ();
             }
 
+
             foreach (unowned Item item in m_Childs)
             {
-                var damaged_area = item.damaged.copy ();
-
-                damaged_area.translate (item.geometry.extents.origin);
-                damaged_area.subtract (geometry);
-
-                item.draw (inContext);
+                var area = inArea.copy ();
+                area.translate (m_Document.position);
+                area.intersect (geometry);
+                var damaged_area = m_Document.area_to_child_item_space (item, area);
 
                 if (!damaged_area.is_empty ())
                 {
-                    damaged_area.translate (item.geometry.extents.origin.invert ());
-                    item.damaged = damaged_area;
+                    item.draw (inContext, damaged_area);
                 }
             }
         }

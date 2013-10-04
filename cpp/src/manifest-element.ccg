@@ -32,8 +32,7 @@ namespace Maia
                 Glib::RefPtr<Element> pElement = (*pSlot) (inId);
                 if (pElement)
                 {
-                    pElement->reference();
-                    return pElement->gobj ();
+                    return (MaiaManifestElement*)g_object_ref (pElement->gobj ());
                 }
             }
 

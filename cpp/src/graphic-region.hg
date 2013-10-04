@@ -77,6 +77,8 @@ namespace Maia
             protected:
                 _CTOR_DEFAULT()
 
+#m4 _CONVERSION(`MaiaGraphicRegion*', `const Glib::RefPtr<Region>&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaGraphicTransform*', `const Glib::RefPtr<Transform>&', `Glib::wrap($3, true)')
                 _WRAP_VFUNC(void get_extents(Rectangle& outRect), get_extents)
                 _WRAP_VFUNC(void set_extents(Rectangle inRect), set_extents)
                 _WRAP_VFUNC(int get_length (), get_length)
@@ -85,7 +87,7 @@ namespace Maia
                 _WRAP_VFUNC(void transform (const Glib::RefPtr<Transform>& inTransform), transform)
                 _WRAP_VFUNC(bool contains (const Point& inPoint), contains)
                 _WRAP_VFUNC(void get (int inIndex, Rectangle& outRectangle), get)
-                _WRAP_VFUNC(Glib::RefPtr<Region> copy (), copy)
+                _WRAP_VFUNC(Glib::RefPtr<Region> copy (), copy, refreturn_ctype)
                 _WRAP_VFUNC(bool equal (const Glib::RefPtr<Region>& inOther), equal)
                 _WRAP_VFUNC(void union_ (const Glib::RefPtr<Region>& inOther), union_)
                 _WRAP_VFUNC(void union_with_rect (const Rectangle& inRectangle), union_with_rect)
@@ -94,6 +96,8 @@ namespace Maia
                 _WRAP_VFUNC(void xor_ (const Glib::RefPtr<Region>& inOther), xor_)
                 _WRAP_VFUNC(RegionOverlap contains_rectangle (const Rectangle& inRectangle), contains_rectangle)
                 _WRAP_VFUNC(void resize (const Size& inSize), resize)
+#m4 _CONVERSION(`MaiaGraphicTransform*', `const Glib::RefPtr<Transform>&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaGraphicRegion*', `const Glib::RefPtr<Graphic::Region>&', `Glib::wrap($3)')
 
             public:
                 typedef RegionIterator iterator;
@@ -107,7 +111,7 @@ namespace Maia
                     return Glib::RefPtr<Region> (new Region (pRegion));
                 }
 
-                _WRAP_METHOD(Glib::RefPtr<Region> copy (), maia_graphic_region_copy)
+                _WRAP_METHOD(Glib::RefPtr<Region> copy (), maia_graphic_region_copy, refreturn)
 
                 _WRAP_METHOD(void get_extents(Rectangle& outRect), maia_graphic_region_get_extents)
                 _WRAP_METHOD(void set_extents(Rectangle inRect), maia_graphic_region_set_extents)

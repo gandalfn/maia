@@ -91,7 +91,7 @@ public class Maia.Path : Item, ItemPackable, ItemMovable
     }
 
     internal override void
-    paint (Graphic.Context inContext) throws Graphic.Error
+    paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
         var path = new Graphic.Path.from_data (this.path);
 
