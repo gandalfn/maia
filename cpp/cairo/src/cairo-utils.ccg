@@ -64,21 +64,25 @@ namespace Maia
 
         void save_document (const Glib::ustring& inPDFFilename, double inDpi, const Glib::RefPtr<Maia::Document>& inDocument)
         {
-            maia_cairo_save_document (inPDFFilename.c_str (), inDpi, const_cast<MaiaDocument*> (inDocument->gobj ()), 0, on_save_document_finished, 0);
+            MaiaDocument* document = const_cast<MaiaDocument*> (inDocument->gobj ());
+
+            maia_cairo_save_document (inPDFFilename.c_str (), inDpi, (MaiaDocument*)g_object_ref (document), 0, on_save_document_finished, 0);
         }
 
         void save_document (const Glib::ustring& inPDFFilename, double inDpi, const Glib::RefPtr<Maia::Document>& inDocument, SlotSaveDocumentFinished inFunc)
         {
             SlotSaveDocumentFinished* pSlot = new SlotSaveDocumentFinished (inFunc);
+            MaiaDocument* document = const_cast<MaiaDocument*> (inDocument->gobj ());
 
-            maia_cairo_save_document (inPDFFilename.c_str (), inDpi, const_cast<MaiaDocument*> (inDocument->gobj ()), 0, on_save_document_finished, pSlot);
+            maia_cairo_save_document (inPDFFilename.c_str (), inDpi, (MaiaDocument*)g_object_ref (document), 0, on_save_document_finished, pSlot);
         }
 
         void save_document (const Glib::ustring& inPDFFilename, double inDpi, const Glib::RefPtr<Maia::Document>& inDocument, const Glib::RefPtr<Gio::Cancellable>& inCancellable, SlotSaveDocumentFinished inFunc)
         {
             SlotSaveDocumentFinished* pSlot = new SlotSaveDocumentFinished (inFunc);
+            MaiaDocument* document = const_cast<MaiaDocument*> (inDocument->gobj ());
 
-            maia_cairo_save_document (inPDFFilename.c_str (), inDpi, const_cast<MaiaDocument*> (inDocument->gobj ()), const_cast<GCancellable*> (inCancellable->gobj ()), on_save_document_finished, pSlot);
+            maia_cairo_save_document (inPDFFilename.c_str (), inDpi, (MaiaDocument*)g_object_ref (document), const_cast<GCancellable*> (inCancellable->gobj ()), on_save_document_finished, pSlot);
         }
 
         void save_document_finish (const Glib::RefPtr<Gio::AsyncResult>& inResult)
@@ -90,40 +94,37 @@ namespace Maia
 
         void generate_report (const Glib::ustring& inPDFFilename, double inDpi, const std::vector<Glib::RefPtr<Maia::Document> >& inDocuments)
         {
-            MaiaDocument** documents = new MaiaDocument*[inDocuments.size ()];
+            MaiaDocument** documents = g_new(MaiaDocument*, inDocuments.size ());
             int cpt = 0;
             for (std::vector<Glib::RefPtr<Maia::Document> >::const_iterator iter = inDocuments.begin (); iter != inDocuments.end (); ++iter, ++cpt)
             {
-                documents[cpt] = (*iter)->gobj ();
+                documents[cpt] = (MaiaDocument*)g_object_ref ((*iter)->gobj ());
             }
             maia_cairo_generate_report (inPDFFilename.c_str (), inDpi, documents, inDocuments.size (), 0, on_generate_report_finished, 0);
-            delete[] documents;
         }
 
         void generate_report (const Glib::ustring& inPDFFilename, double inDpi, const std::vector<Glib::RefPtr<Maia::Document> >& inDocuments, SlotGenerateReportFinished inFunc)
         {
             SlotGenerateReportFinished* pSlot = new SlotGenerateReportFinished (inFunc);
-            MaiaDocument** documents = new MaiaDocument*[inDocuments.size ()];
+            MaiaDocument** documents = g_new(MaiaDocument*, inDocuments.size ());
             int cpt = 0;
             for (std::vector<Glib::RefPtr<Maia::Document> >::const_iterator iter = inDocuments.begin (); iter != inDocuments.end (); ++iter, ++cpt)
             {
-                documents[cpt] = (*iter)->gobj ();
+                documents[cpt] = (MaiaDocument*)g_object_ref ((*iter)->gobj ());
             }
             maia_cairo_generate_report (inPDFFilename.c_str (), inDpi, documents, inDocuments.size (), 0, on_generate_report_finished, pSlot);
-            delete[] documents;
         }
 
         void generate_report (const Glib::ustring& inPDFFilename, double inDpi, const std::vector<Glib::RefPtr<Maia::Document> >& inDocuments, const Glib::RefPtr<Gio::Cancellable>& inCancellable, SlotGenerateReportFinished inFunc)
         {
             SlotGenerateReportFinished* pSlot = new SlotGenerateReportFinished (inFunc);
-            MaiaDocument** documents = new MaiaDocument*[inDocuments.size ()];
+            MaiaDocument** documents = g_new(MaiaDocument*, inDocuments.size ());
             int cpt = 0;
             for (std::vector<Glib::RefPtr<Maia::Document> >::const_iterator iter = inDocuments.begin (); iter != inDocuments.end (); ++iter, ++cpt)
             {
-                documents[cpt] = (*iter)->gobj ();
+                documents[cpt] = (MaiaDocument*)g_object_ref ((*iter)->gobj ());
             }
             maia_cairo_generate_report (inPDFFilename.c_str (), inDpi, documents, inDocuments.size (), const_cast<GCancellable*> (inCancellable->gobj ()), on_generate_report_finished, pSlot);
-            delete[] documents;
         }
 
         void generate_report_finish (const Glib::RefPtr<Gio::AsyncResult>& inResult)

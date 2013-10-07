@@ -37,7 +37,7 @@ namespace Maia.Cairo
     }
 
     public static async void
-    save_document (string inPdfFilename, double inDpi, Document inDocument, GLib.Cancellable? inCancellable = null) throws Graphic.Error
+    save_document (string inPdfFilename, double inDpi, owned Document inDocument, GLib.Cancellable? inCancellable = null) throws Graphic.Error
     {
         // Get document page format
         Graphic.Size size = inDocument.format.to_size ();
@@ -75,7 +75,7 @@ namespace Maia.Cairo
     }
 
     public static async void
-    generate_report (string inPdfFilename, double inDpi, Document[] inDocuments, GLib.Cancellable? inCancellable = null) throws Graphic.Error
+    generate_report (string inPdfFilename, double inDpi, owned Document[] inDocuments, GLib.Cancellable? inCancellable = null) throws Graphic.Error
         requires (inDocuments.length > 0)
     {
         // Get document page format
