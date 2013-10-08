@@ -38,6 +38,8 @@ namespace Maia
             _CTOR_DEFAULT()
 
         public:
+            typedef sigc::slot<void, guint> SlotValueChanged;
+
             _WRAP_METHOD(Glib::ustring get_name () const, maia_model_get_name)
 
             inline Glib::RefPtr<ModelColumn> operator[] (const Glib::ustring& inColumnName) const
@@ -52,6 +54,8 @@ namespace Maia
             _WRAP_SIGNAL(void row_changed (guint inRow), "row-changed")
             _WRAP_SIGNAL(void row_deleted (guint inRow), "row-deleted", no_default_handler)
             _WRAP_SIGNAL(void rows_reordered (gpointer inNewOrder, int inLength), "rows-reordered", no_default_handler)
+
+            sigc::connection connect_value_changed (const Glib::ustring& inColumnName, SlotValueChanged inSlot);
 
             _WRAP_PROPERTY("nb-rows", guint)
 

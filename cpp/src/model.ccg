@@ -21,4 +21,33 @@
 
 namespace Maia
 {
+    static void
+    value_changed_callback (GObject*, guint inRow, void* inpData)
+    {
+        if (inpData)
+        {
+            Model::SlotValueChanged* pSlot = (Model::SlotValueChanged*)inpData;
+
+            (*pSlot) (inRow);
+        }
+    }
+
+    static void
+    value_changed_destroy_notify_handler (void* inpData, GClosure*)
+    {
+        Model::SlotValueChanged* pSlot = (Model::SlotValueChanged*)inpData;
+        delete pSlot;
+    }
+
+    sigc::connection
+    Model::connect_value_changed (const Glib::ustring& inColumnName, SlotValueChanged inSlot)
+    {
+        SlotValueChanged* pSlot = new SlotValueChanged (inSlot);
+        const Glib::ustring notify_signal_name = "value-changed::" + inColumnName;
+
+        g_signal_connect_data (gobj(), notify_signal_name.c_str(), (GCallback)(&value_changed_callback),
+                               pSlot,  &value_changed_destroy_notify_handler, G_CONNECT_AFTER);
+
+        return sigc::connection(*pSlot);
+    }
 }
