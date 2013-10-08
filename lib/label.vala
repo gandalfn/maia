@@ -65,6 +65,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     public Graphic.Glyph.EllipsizeMode ellipsize_mode   { get; set; default = Graphic.Glyph.EllipsizeMode.NONE; }
     public string                      text             { get; set; default = null; }
     public Graphic.Color               shade_color      { get; set; default = null; }
+    public bool                        hide_if_empty    { get; set; default = false; }
 
     // static methods
     static construct
@@ -142,6 +143,9 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
         // connect onto draw properties changed
         notify["stroke-pattern"].connect (on_draw_property_changed);
         notify["shade-color"].connect (on_draw_property_changed);
+
+        // connect onto hide_if_empty
+        notify["hide-if-empty"].connect (on_hide_if_empty_changed);
     }
 
     public Label (string inId, string inLabel)
@@ -150,10 +154,32 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     }
 
     private void
+    on_hide_if_empty_changed ()
+    {
+        if (hide_if_empty && (text == null || text.length == 0))
+        {
+            visible = false;
+        }
+        else if (!hide_if_empty)
+        {
+            visible = true;
+        }
+    }
+
+    private void
     on_layout_property_changed ()
     {
         m_Glyph = null;
-        if (geometry != null)
+        if ((text == null || text.length == 0) && hide_if_empty)
+        {
+            visible = false;
+            geometry = null;
+        }
+        else if (!visible)
+        {
+            visible = true;
+        }
+        else if (geometry != null && visible)
         {
             var item_size = size;
             if (geometry.extents.size.width < item_size.width || geometry.extents.size.height < item_size.height)

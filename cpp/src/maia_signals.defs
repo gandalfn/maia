@@ -2737,6 +2737,15 @@
   (construct-only #f)
 )
 
+(define-property hide-if-empty
+  (of-object "MaiaLabel")
+  (prop-type "GParamBoolean")
+  (docs "hide-if-empty")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaModel
 
 (define-signal value-changed

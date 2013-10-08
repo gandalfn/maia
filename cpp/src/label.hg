@@ -64,6 +64,9 @@ namespace Maia
             _WRAP_METHOD(bool get_translatable () const, maia_label_get_translatable)
             _WRAP_METHOD(void set_translatable (bool inTranslatable = true), maia_label_set_translatable)
 
+            _WRAP_METHOD(bool get_hide_if_empty () const, maia_label_get_hide_if_empty)
+            _WRAP_METHOD(void set_hide_if_empty (bool inHideIfEmpty = true), maia_label_set_hide_if_empty)
+
             _WRAP_METHOD(Glib::ustring get_text () const, maia_label_get_text)
             _WRAP_METHOD(void set_text (const Glib::ustring& inLabel), maia_label_set_text)
 
@@ -74,6 +77,7 @@ namespace Maia
             _WRAP_PROPERTY("shade-color", Glib::RefPtr<Graphic::Color>)
             _WRAP_PROPERTY("translatable", bool)
             _WRAP_PROPERTY("text", Glib::ustring)
+            _WRAP_PROPERTY("hide-if-empty", bool)
 
             _WRAP_PROPERTY("row", guint)
             _WRAP_PROPERTY("rows", guint)

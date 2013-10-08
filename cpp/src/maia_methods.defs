@@ -8640,6 +8640,21 @@
   )
 )
 
+(define-method get_hide_if_empty
+  (of-object "MaiaLabel")
+  (c-name "maia_label_get_hide_if_empty")
+  (return-type "gboolean")
+)
+
+(define-method set_hide_if_empty
+  (of-object "MaiaLabel")
+  (c-name "maia_label_set_hide_if_empty")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
 (define-function maia_entry_get_type
   (c-name "maia_entry_get_type")
   (return-type "GType")

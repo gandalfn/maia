@@ -415,8 +415,6 @@ public class Maia.Document : Item
             {
                 if (inItem is Grid)
                 {
-                    add_item_in_page = false;
-
                     inItem.position = Graphic.Point (0, 0);
 
                     var pos = inoutCurrentPosition;
@@ -436,7 +434,11 @@ public class Maia.Document : Item
                         }
                     }
 
-                    inoutCurrentPosition.y = pos.y;
+                    if (inoutCurrentPosition.y != pos.y)
+                    {
+                        inoutCurrentPosition.y = pos.y;
+                        add_item_in_page = false;
+                    }
                 }
             }
 
