@@ -21,6 +21,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 {
     // static properties
     static GLib.Quark s_ChainVisibleCount;
+    internal static GLib.Quark s_CountHide;
 
     // class properties
     internal class uint mc_IdButtonPressEvent;
@@ -207,7 +208,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     public Graphic.Size size {
         get {
             notify["size"].disconnect (on_resize);
-            m_SizeRequested = size_request (m_Size);
+            m_SizeRequested = ((this is Popup) || visible) ? size_request (m_Size) : Graphic.Size (0, 0);
             notify["size"].connect (on_resize);
             return m_SizeRequested;
         }
@@ -218,7 +219,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
     public Graphic.Size size_requested {
         get {
-            return m_SizeRequested;
+            return ((this is Popup) || visible) ? m_SizeRequested : Graphic.Size (0, 0);
         }
     }
 
@@ -300,6 +301,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         // create quarks
         s_ChainVisibleCount = GLib.Quark.from_string ("MaiaChainVisibleShowCount");
+        s_CountHide = GLib.Quark.from_string ("MaiaCountHide");
 
         // register attribute bind
         Manifest.AttributeBind.register_transform_func (typeof (Item), "width", attribute_bind_width);
@@ -448,10 +450,21 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 {
                     // Get show count
                     int count = item.get_qdata<int> (s_ChainVisibleCount);
+                    int count_hide = item.get_qdata<int> (s_CountHide);
 
                     if (visible)
                     {
-                        item.visible = true;
+                        if (!item.visible)
+                        {
+                            count_hide--;
+                            if (count_hide < 0) count_hide = 0;
+                            if (count_hide == 0)
+                            {
+                                item.visible = true;
+                            }
+                            item.set_qdata<int> (Item.s_CountHide, count_hide);
+                        }
+
                         count++;
                         item.set_qdata(s_ChainVisibleCount, count.to_pointer());
                     }
@@ -462,7 +475,12 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                         item.set_qdata(s_ChainVisibleCount, count.to_pointer());
                         if (count == 0)
                         {
-                            item.visible = false;
+                            if (item.visible)
+                            {
+                                item.visible = false;
+                                count_hide++;
+                                item.set_qdata<int> (Item.s_CountHide, count_hide);
+                            }
                         }
                     }
                 }

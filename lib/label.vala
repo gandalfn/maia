@@ -36,7 +36,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
 
     internal bool   xexpand { get; set; default = true; }
     internal bool   xfill   { get; set; default = true; }
-    internal bool   xshrink { get; set; default = false; }
+    internal bool   xshrink { get; set; default = true; }
     internal double xalign  { get; set; default = 0.5; }
 
     internal bool   yexpand { get; set; default = true; }
@@ -156,13 +156,22 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     private void
     on_hide_if_empty_changed ()
     {
-        if (hide_if_empty && (text == null || text.length == 0))
+        if (hide_if_empty && visible && (text == null || text.length == 0))
         {
             visible = false;
+            int count = get_qdata<int> (Item.s_CountHide);
+            count++;
+            set_qdata<int> (Item.s_CountHide, count);
         }
-        else if (!hide_if_empty)
+        else if (!hide_if_empty && !visible)
         {
-            visible = true;
+            int count = get_qdata<int> (Item.s_CountHide);
+            count = int.max (count - 1, 0);
+            if (count == 0)
+            {
+                visible = true;
+            }
+            set_qdata<int> (Item.s_CountHide, count);
         }
     }
 
@@ -170,16 +179,26 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     on_layout_property_changed ()
     {
         m_Glyph = null;
-        if ((text == null || text.length == 0) && hide_if_empty)
+
+        if (hide_if_empty && visible && (text == null || text.length == 0))
         {
             visible = false;
-            geometry = null;
+            int count = get_qdata<int> (Item.s_CountHide);
+            count++;
+            set_qdata<int> (Item.s_CountHide, count);
         }
-        else if (!visible)
+        else if (hide_if_empty && !visible && text != null && text.length > 0)
         {
-            visible = true;
+            int count = get_qdata<int> (Item.s_CountHide);
+            count = int.max (count - 1, 0);
+
+            if (count == 0)
+            {
+                visible = true;
+            }
+            set_qdata<int> (Item.s_CountHide, count);
         }
-        else if (geometry != null && visible)
+        else if (geometry != null)
         {
             var item_size = size;
             if (geometry.extents.size.width < item_size.width || geometry.extents.size.height < item_size.height)

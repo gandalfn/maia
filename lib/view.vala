@@ -334,6 +334,9 @@ public class Maia.View : Maia.Grid
                 }
             }
         }
+
+        var item_size = size;
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "shift item size: %s", item_size.to_string ());
     }
 
     private void
@@ -369,6 +372,9 @@ public class Maia.View : Maia.Grid
                 }
             }
         }
+
+        var item_size = size;
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "unshift item size: %s", item_size.to_string ());
     }
 
     private void
@@ -457,6 +463,9 @@ public class Maia.View : Maia.Grid
                 }
             }
         }
+
+        var item_size = size;
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "unshift item size: %s", item_size.to_string ());
 
         geometry = null;
     }

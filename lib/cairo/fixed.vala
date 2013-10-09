@@ -15,22 +15,35 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * See: http://stereopsis.com/FPU.html
  */
 
 [SimpleType, IntegerType (rank = 6), CCode (has_type_id = false)]
 internal struct Maia.Cairo.Fixed : int32
 {
+    const int32 s_Frac = 16;
+    const double s_Magic = 103079215104.0;
+#if BIG_INDIAN
+    const int s_Mantisse = 1;
+#else
+    const int s_Mantisse = 0;
+#endif
+
     // static methods
     public static inline Fixed
     from_int (int inVal)
     {
-        return (Fixed)(inVal << 16);
+        return (Fixed)(inVal << s_Frac);
     }
 
     public static inline Fixed
     from_double (double inVal)
     {
-        return (Fixed)inVal * from_int (1);
+        double val = inVal + s_Magic;
+        void* ptr = &val;
+        Fixed* tab = (Fixed*)ptr;
+        return tab[s_Mantisse];
     }
 
     // methods
