@@ -132,6 +132,9 @@ public class Maia.DrawingArea : Group, ItemPackable
     {
         // Add not dumpable attributes
         not_dumpable_attributes.insert ("selected");
+
+        // Do not allocate on child add remove
+        allocate_on_child_add_remove = false;
     }
 
     public DrawingArea (string inId)
@@ -221,6 +224,19 @@ public class Maia.DrawingArea : Group, ItemPackable
 
         // Damage item
         m_SelectedItem.damage ();
+    }
+
+    internal override void
+    remove_child (Core.Object inObject)
+    {
+        base.remove_child (inObject);
+
+        if (inObject == m_SelectedItem)
+        {
+            m_SelectedItemState = SelectedItemState.NONE;
+            m_SelectedItem = null;
+            grab_focus (null);
+        }
     }
 
     internal override void

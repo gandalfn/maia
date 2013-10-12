@@ -740,26 +740,6 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         return inObject is ItemPackable || inObject is ToggleGroup || inObject is Model || inObject is Popup;
     }
 
-    internal override void
-    insert_child (Core.Object inObject)
-    {
-        base.insert_child (inObject);
-
-        // Get size after insert
-        var grid_size = size;
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "%s insert child grid_size: %s", name, grid_size.to_string ());
-    }
-
-    internal override void
-    remove_child (Core.Object inObject)
-    {
-        base.remove_child (inObject);
-
-        // Get size after remove
-        var grid_size = size;
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "%s remove child grid_size: %s", name, grid_size.to_string ());
-    }
-
     private double
     get_page_break_delta ()
     {

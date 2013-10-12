@@ -127,8 +127,7 @@ public class Maia.View : Maia.Grid
                 row_num = (item.row * view.lines) + item.column;
 
             string column_name = inAttribute.get ();
-            if (view.m_SetPropertyFunc == null ||
-                !view.m_SetPropertyFunc (inAttribute.owner, inProperty, column_name, row_num))
+            if (view.m_SetPropertyFunc == null || !view.m_SetPropertyFunc (inAttribute.owner, inProperty, column_name, row_num))
             {
                 // search the associated column
                 unowned Model.Column? column = model[column_name];
@@ -334,9 +333,6 @@ public class Maia.View : Maia.Grid
                 }
             }
         }
-
-        var item_size = size;
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "shift item size: %s", item_size.to_string ());
     }
 
     private void
@@ -372,9 +368,6 @@ public class Maia.View : Maia.Grid
                 }
             }
         }
-
-        var item_size = size;
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "unshift item size: %s", item_size.to_string ());
     }
 
     private void

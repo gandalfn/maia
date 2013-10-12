@@ -105,8 +105,8 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     {
         if (m_Glyph != null)
         {
-            // Geometry is set update layout width
-            m_Glyph.size = Graphic.Size (geometry != null ? geometry.extents.size.width : 0, 0);
+            // Geometry is set and entry is not in drawing area update layout width
+            m_Glyph.size = Graphic.Size (geometry != null && !(parent is DrawingArea) ? geometry.extents.size.width : 0, 0);
 
             // Set text
             m_Glyph.text = text;
@@ -188,33 +188,41 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                 m_Cursor = (int)(text ?? "").length;
             }
 
-            // get current line at cusor position
-            m_Glyph.get_line_position (m_Cursor, true, out line);
-
-
-            if (line >= lines)
+            if (!(parent is DrawingArea))
             {
-                remove_char_at_cursor ();
-            }
+                // get current line at cusor position
+                m_Glyph.get_line_position (m_Cursor, true, out line);
 
-            // check line size
-            int cpt = 0;
-            foreach (unowned Core.Object child in m_Glyph)
-            {
-                // We found line check its size
-                if (cpt == line)
+                if (line >= lines)
                 {
-                    unowned Graphic.Glyph.Line glyph_line = (Graphic.Glyph.Line)child;
-
-                    // line is too long remove last characters inserted
-                    if (glyph_line.size.width > geometry.extents.size.width)
-                    {
-                        remove_char_at_cursor ();
-                    }
-
-                    break;
+                    remove_char_at_cursor ();
                 }
-                cpt++;
+
+                // check line size
+                int cpt = 0;
+                foreach (unowned Core.Object child in m_Glyph)
+                {
+                    // We found line check its size
+                    if (cpt == line)
+                    {
+                        unowned Graphic.Glyph.Line glyph_line = (Graphic.Glyph.Line)child;
+
+                        // line is too long remove last characters inserted
+                        if (glyph_line.size.width > geometry.extents.size.width)
+                        {
+                            remove_char_at_cursor ();
+                        }
+
+                        break;
+                    }
+                    cpt++;
+                }
+            }
+            else
+            {
+                damage ();
+                size = m_Glyph.size;
+                damage ();
             }
         }
     }
@@ -320,7 +328,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             // Enter is pressed and new line
             else if (inKey == Key.Return || inKey == Key.ISO_Enter || inKey == Key.KP_Enter)
             {
-                if (m_Glyph.line_count - m_LinePads < lines)
+                if (parent is DrawingArea || m_Glyph.line_count - m_LinePads < lines)
                 {
                     new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), "\n");
                     text = new_text.str;
@@ -404,8 +412,6 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         {
             inContext.save ();
             {
-                m_Glyph.update (inContext);
-
                 // Paint text
                 inContext.pattern = stroke_pattern;
                 inContext.render (m_Glyph);
@@ -420,20 +426,23 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                 // Get cursor pos
                 Graphic.Rectangle rect = m_Glyph.get_cursor_position (index);
 
-                // foreach lines add underline at end of text
-                double y = 0;
                 var path = new Graphic.Path ();
-                var glyph_line_width = width_in_chars > 0 ? width_in_chars_to_size ().width : geometry.extents.size.width;
-                foreach (unowned Core.Object child in m_Glyph)
+                if (!(parent is DrawingArea))
                 {
-                    // Add line
-                    Graphic.Glyph.Line line = (Graphic.Glyph.Line)child;
-                    path.move_to (line.size.width, y + rect.size.height);
-                    path.line_to (glyph_line_width, y + rect.size.height);
+                    // foreach lines add underline at end of text
+                    double y = 0;
+                    var glyph_line_width = width_in_chars > 0 ? width_in_chars_to_size ().width : geometry.extents.size.width;
+                    foreach (unowned Core.Object child in m_Glyph)
+                    {
+                        // Add line
+                        Graphic.Glyph.Line line = (Graphic.Glyph.Line)child;
+                        path.move_to (line.size.width, y + rect.size.height);
+                        path.line_to (glyph_line_width, y + rect.size.height);
 
-                    y += rect.size.height;
+                        y += rect.size.height;
+                    }
+                    inContext.stroke (path);
                 }
-                inContext.stroke (path);
 
                 inContext.line_width = line_width;
                 inContext.dash = null;

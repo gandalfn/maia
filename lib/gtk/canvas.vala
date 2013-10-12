@@ -634,12 +634,9 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         unowned Document? doc = root as Document;
         if (doc != null)
         {
-            foreach (unowned Core.Object child in doc)
+            foreach (unowned Maia.Shortcut child in doc.shortcuts)
             {
-                if (child is Shortcut)
-                {
-                    list.prepend ((child as Shortcut).button);
-                }
+                list.prepend ((child as Shortcut).button);
             }
             list.reverse ();
         }

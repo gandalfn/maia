@@ -66,7 +66,7 @@ namespace Maia
             _WRAP_VFUNC(bool on_grab_keyboard(const Glib::RefPtr<Item>& inItem), on_grab_keyboard)
             _WRAP_VFUNC(void on_ungrab_keyboard(const Glib::RefPtr<Item>& inItem), on_ungrab_keyboard)
 
-            _WRAP_VFUNC(void on_toolbox_add(const Glib::RefPtr<Item>& inItem), on_toolbox_add)
+            _WRAP_VFUNC(void on_toolbox_add(const Glib::RefPtr<Item>& inItem, bool inParent), on_toolbox_add)
             _WRAP_VFUNC(void on_toolbox_remove(), on_toolbox_remove)
 
             _WRAP_VFUNC(void resize(), resize)

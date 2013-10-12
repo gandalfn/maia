@@ -269,8 +269,7 @@ public class Maia.Popup : Group
     {
         inContext.save ();
         {
-            var popup_area = geometry.copy ();
-            popup_area.translate (geometry.extents.origin.invert ());
+            var popup_area = area.copy ();
             var path_clip  = new Graphic.Path.from_region (popup_area);
             inContext.clip (path_clip);
 

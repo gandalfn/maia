@@ -2804,6 +2804,7 @@
   (values
     '("none" "MAIA_TOOL_ACTION_NONE")
     '("add" "MAIA_TOOL_ACTION_ADD")
+    '("add-parent" "MAIA_TOOL_ACTION_ADD_PARENT")
     '("remove" "MAIA_TOOL_ACTION_REMOVE")
   )
 )
@@ -4164,6 +4165,16 @@
 (define-method find
   (of-object "MaiaCoreObject")
   (c-name "maia_core_object_find")
+  (return-type "MaiaCoreObject*")
+  (parameters
+    '("guint32" "inId")
+    '("gboolean" "inRecursive")
+  )
+)
+
+(define-method find_in_parents
+  (of-object "MaiaCoreObject")
+  (c-name "maia_core_object_find_in_parents")
   (return-type "MaiaCoreObject*")
   (parameters
     '("guint32" "inId")
@@ -7663,6 +7674,12 @@
   )
 )
 
+(define-method get_area
+  (of-object "MaiaDrawable")
+  (c-name "maia_drawable_get_area")
+  (return-type "MaiaGraphicRegion*")
+)
+
 (define-function maia_item_get_type
   (c-name "maia_item_get_type")
   (return-type "GType")
@@ -7922,6 +7939,21 @@
 (define-method set_visible
   (of-object "MaiaItem")
   (c-name "maia_item_set_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
+(define-method get_allocate_on_child_add_remove
+  (of-object "MaiaItem")
+  (c-name "maia_item_get_allocate_on_child_add_remove")
+  (return-type "gboolean")
+)
+
+(define-method set_allocate_on_child_add_remove
+  (of-object "MaiaItem")
+  (c-name "maia_item_set_allocate_on_child_add_remove")
   (return-type "none")
   (parameters
     '("gboolean" "value")
@@ -8938,6 +8970,21 @@
   )
 )
 
+(define-method get_sensitive
+  (of-object "MaiaButton")
+  (c-name "maia_button_get_sensitive")
+  (return-type "gboolean")
+)
+
+(define-method set_sensitive
+  (of-object "MaiaButton")
+  (c-name "maia_button_set_sensitive")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
 (define-method get_icon_filename
   (of-object "MaiaButton")
   (c-name "maia_button_get_icon_filename")
@@ -8980,6 +9027,21 @@
 (define-method set_button_color
   (of-object "MaiaButton")
   (c-name "maia_button_set_button_color")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicColor*" "value")
+  )
+)
+
+(define-method get_button_inactive_color
+  (of-object "MaiaButton")
+  (c-name "maia_button_get_button_inactive_color")
+  (return-type "MaiaGraphicColor*")
+)
+
+(define-method set_button_inactive_color
+  (of-object "MaiaButton")
+  (c-name "maia_button_set_button_inactive_color")
   (return-type "none")
   (parameters
     '("MaiaGraphicColor*" "value")
@@ -9429,6 +9491,17 @@
   )
 )
 
+(define-function maia_shortcut_get_type
+  (c-name "maia_shortcut_get_type")
+  (return-type "GType")
+)
+
+(define-method get_shortcuts
+  (of-object "MaiaDocument")
+  (c-name "maia_document_get_shortcuts")
+  (return-type "MaiaCoreList*")
+)
+
 (define-function maia_model_get_type
   (c-name "maia_model_get_type")
   (return-type "GType")
@@ -9724,11 +9797,6 @@
   )
 )
 
-(define-function maia_shortcut_get_type
-  (c-name "maia_shortcut_get_type")
-  (return-type "GType")
-)
-
 (define-method activate
   (of-object "MaiaShortcut")
   (c-name "maia_shortcut_activate")
@@ -9998,15 +10066,15 @@
   )
 )
 
-(define-method get_visible_with
+(define-method get_sensitive_with
   (of-object "MaiaTool")
-  (c-name "maia_tool_get_visible_with")
+  (c-name "maia_tool_get_sensitive_with")
   (return-type "const-gchar*")
 )
 
-(define-method set_visible_with
+(define-method set_sensitive_with
   (of-object "MaiaTool")
-  (c-name "maia_tool_set_visible_with")
+  (c-name "maia_tool_set_sensitive_with")
   (return-type "none")
   (parameters
     '("const-gchar*" "value")
@@ -10215,6 +10283,7 @@
   (return-type "none")
   (parameters
     '("MaiaItem*" "inItem")
+    '("gboolean" "inParent")
   )
 )
 

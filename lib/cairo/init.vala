@@ -72,6 +72,9 @@ namespace Maia.Cairo
 
         // Invalidate document geometry for display refresh
         inDocument.geometry = null;
+
+        pdf_surface.flush ();
+        pdf_surface.finish ();
     }
 
     public static async void
@@ -136,5 +139,7 @@ namespace Maia.Cairo
             // Invalidate document geometry for display refresh
             document.geometry = null;
         }
+        pdf_surface.flush ();
+        pdf_surface.finish ();
     }
 }

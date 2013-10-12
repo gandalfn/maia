@@ -101,16 +101,9 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         var arrow_item = new Path (id_arrow, "");
         add (arrow_item);
 
-        notify["stroke-pattern"].connect (() => {
-            arrow_item.fill_pattern = stroke_pattern;
-        });
+        notify["stroke-pattern"].connect (on_stroke_pattern_changed);
 
-        notify["root"].connect (() => {
-            if (m_Popup != null)
-            {
-                m_Popup.parent = root;
-            }
-        });
+        notify["root"].connect (on_root_changed);
 
         arrow_item.button_press_event.connect (on_button_press);
 
@@ -123,6 +116,26 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     public Combo (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
+    }
+
+    private void
+    on_stroke_pattern_changed ()
+    {
+        string id_arrow = "%s-arrow".printf (name);
+        unowned Path arrow_item = find (GLib.Quark.from_string (id_arrow), false) as Path;
+        if (arrow_item != null)
+        {
+            arrow_item.fill_pattern = stroke_pattern;
+        }
+    }
+
+    private void
+    on_root_changed ()
+    {
+        if (m_Popup != null)
+        {
+            m_Popup.parent = root;
+        }
     }
 
     private bool

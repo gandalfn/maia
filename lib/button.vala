@@ -85,6 +85,11 @@ public class Maia.Button : Grid
     public double border { get; set; default = 5; }
 
     /**
+     * Indicate if the button is sensitive
+     */
+    public bool sensitive { get; set; default = true; }
+
+    /**
      * The icon filename no icon if ``null``
      */
     public string icon_filename { get; set; default = null; }
@@ -98,6 +103,11 @@ public class Maia.Button : Grid
      * The background color of button if not set the button does not draw any background
      */
     public Graphic.Color button_color { get; set; default = null; }
+
+    /**
+     * The insensitive background color of button if not set the button does not draw any background
+     */
+    public Graphic.Color button_inactive_color { get; set; default = null; }
 
     // signals
     /**
@@ -176,10 +186,8 @@ public class Maia.Button : Grid
     {
         bool ret = false;
 
-        if (geometry != null)
+        if (sensitive && geometry != null)
         {
-            var area = geometry.copy ();
-            area.translate (geometry.extents.origin.invert ());
             ret = inPoint in area;
 
             if (ret && inButton == 1)
@@ -202,8 +210,6 @@ public class Maia.Button : Grid
 
         if (geometry != null)
         {
-            var area = geometry.copy ();
-            area.translate (geometry.extents.origin.invert ());
             ret = inPoint in area;
 
             if (inButton == 1 && m_Clicked)
@@ -229,20 +235,20 @@ public class Maia.Button : Grid
     {
         // Paint Background
         var button_size = geometry.extents.size;
-        button_size.resize (-border * 2, -border * 2.3);
+        button_size.resize (-border * 2, -border * 2);
         var pattern = new Graphic.MeshGradient ();
 
         double vb = 1, ve = 1.1, vd = 0.8, vd2 = 0.7;
 
-        if (m_Clicked)
+        if (m_Clicked && sensitive)
         {
             vb = 1.1;
             ve = 1;
             vd = 1.05;
             vd2 = 1.15;
         }
-        var beginColor = new Graphic.Color.shade (button_color, vb);
-        var endColor = new Graphic.Color.shade (button_color, ve);
+        var beginColor = new Graphic.Color.shade (sensitive ? button_color : button_inactive_color ?? button_color, vb);
+        var endColor = new Graphic.Color.shade (sensitive ? button_color : button_inactive_color ?? button_color, ve);
 
         unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
         if (label_item != null)

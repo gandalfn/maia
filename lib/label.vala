@@ -294,6 +294,13 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
 
             if (m_Glyph != null)
             {
+                unowned Document? doc = get_qdata<unowned Document> (Document.s_PageNumQuark);
+                if (doc != null)
+                {
+                    m_Glyph.text = "%u".printf (doc.current_page);
+                    update_layout ();
+                }
+
                 // Reset wrap if any
                 m_Glyph.size = Graphic.Size (0, 0);
 
@@ -311,6 +318,13 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     internal override void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
+        unowned Document? doc = get_qdata<unowned Document> (Document.s_PageNumQuark);
+        if (doc != null)
+        {
+            m_Glyph.text = "%u".printf (doc.current_page);
+            update_layout ();
+        }
+
         var allocation = inAllocation.extents;
         if (m_Glyph != null && ((xshrink && inAllocation.extents.size.width < m_Glyph.size.width) ||
                                 (yshrink && inAllocation.extents.size.height < m_Glyph.size.height)))
@@ -348,6 +362,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
             if (doc != null)
             {
                 m_Glyph.text = "%u".printf (doc.current_page);
+                update_layout ();
             }
 
             inContext.save ();

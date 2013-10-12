@@ -178,11 +178,8 @@ internal class Maia.Page : GLib.Object
             header.geometry.translate (header.geometry.extents.origin.invert ());
             header.geometry.translate (position);
 
-            var child_area = area.copy ();
-            child_area.intersect (header.geometry);
-            child_area.translate (header.geometry.extents.origin.invert ());
-            if (!child_area.is_empty () && (header.damaged == null ||
-                header.damaged.contains_rectangle (child_area.extents) != Graphic.Region.Overlap.IN))
+            var child_area = m_Document.area_to_child_item_space (header, area);
+            if (!child_area.is_empty () && (header.damaged == null || header.damaged.contains_rectangle (child_area.extents) != Graphic.Region.Overlap.IN))
             {
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "Damage page %u item %s : %s", num, header.name, child_area.extents.to_string ());
                 header.damage (child_area);
@@ -200,11 +197,8 @@ internal class Maia.Page : GLib.Object
             footer.geometry.translate (footer.geometry.extents.origin.invert ());
             footer.geometry.translate (position);
 
-            var child_area = area.copy ();
-            child_area.intersect (footer.geometry);
-            child_area.translate (footer.geometry.extents.origin.invert ());
-            if (!child_area.is_empty () && (footer.damaged == null ||
-                footer.damaged.contains_rectangle (child_area.extents) != Graphic.Region.Overlap.IN))
+            var child_area = m_Document.area_to_child_item_space (footer, area);
+            if (!child_area.is_empty () && (footer.damaged == null || footer.damaged.contains_rectangle (child_area.extents) != Graphic.Region.Overlap.IN))
             {
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "Damage page %u item %s : %s", num, footer.name, child_area.extents.to_string ());
                 footer.damage (child_area);
@@ -216,8 +210,7 @@ internal class Maia.Page : GLib.Object
             if (child.geometry != null && child.visible)
             {
                 var child_area = m_Document.area_to_child_item_space (child, area);
-                if (!child_area.is_empty () && (child.damaged == null ||
-                    child.damaged.contains_rectangle (child_area.extents) != Graphic.Region.Overlap.IN))
+                if (!child_area.is_empty () && (child.damaged == null || child.damaged.contains_rectangle (child_area.extents) != Graphic.Region.Overlap.IN))
                 {
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "Damage page %u item %s : %s", num, child.name, child_area.extents.to_string ());
                     child.damage (child_area);
@@ -241,8 +234,6 @@ internal class Maia.Page : GLib.Object
                 var header_geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
 
                 header.update (inContext, header_geometry);
-
-                header.damage ();
             }
             inContext.restore ();
         }
@@ -261,8 +252,6 @@ internal class Maia.Page : GLib.Object
                 var footer_geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
 
                 footer.update (inContext, footer_geometry);
-
-                footer.damage ();
             }
             inContext.restore ();
         }
@@ -302,8 +291,15 @@ internal class Maia.Page : GLib.Object
 
                     var area = inArea.copy ();
                     area.translate (m_Document.position);
+                    area.intersect (geometry);
 
-                    header.draw (inContext, m_Document.area_to_child_item_space (header, area));
+                    var damaged_area = m_Document.area_to_child_item_space (header, area);
+
+                    if (!damaged_area.is_empty ())
+                    {
+                        header.damaged = damaged_area;
+                        header.draw (inContext, damaged_area);
+                    }
                 }
                 inContext.restore ();
             }
@@ -323,8 +319,15 @@ internal class Maia.Page : GLib.Object
 
                     var area = inArea.copy ();
                     area.translate (m_Document.position);
+                    area.intersect (geometry);
 
-                    footer.draw (inContext, m_Document.area_to_child_item_space (footer, area));
+                    var damaged_area = m_Document.area_to_child_item_space (footer, area);
+
+                    if (!damaged_area.is_empty ())
+                    {
+                        footer.damaged = damaged_area;
+                        footer.draw (inContext, damaged_area);
+                    }
                 }
                 inContext.restore ();
             }

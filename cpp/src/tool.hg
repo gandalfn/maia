@@ -56,12 +56,12 @@ namespace Maia
             _WRAP_METHOD(ToolAction get_action () const, maia_tool_get_action)
             _WRAP_METHOD(void set_action (ToolAction inAction), maia_tool_set_action)
 
-            _WRAP_METHOD(Glib::ustring get_visible_with () const, maia_tool_get_visible_with)
-            _WRAP_METHOD(void set_visible_with (const Glib::ustring& inCriteria), maia_tool_set_visible_with)
+            _WRAP_METHOD(Glib::ustring get_sensitive_with () const, maia_tool_get_sensitive_with)
+            _WRAP_METHOD(void set_sensitive_with (const Glib::ustring& inCriteria), maia_tool_set_sensitive_with)
 
             _WRAP_PROPERTY("toolbox", Glib::RefPtr<Toolbox>)
             _WRAP_PROPERTY("action", ToolAction)
-            _WRAP_PROPERTY("visible-with", Glib::ustring)
+            _WRAP_PROPERTY("sensitive-with", Glib::ustring)
             _WRAP_PROPERTY("parent", Glib::RefPtr<Core::Object>)
     };
 }

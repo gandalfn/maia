@@ -1037,6 +1037,7 @@
   (return-type "none")
   (parameters
     '("MaiaItem*" "inItem")
+    '("gboolean" "inParent")
   )
 )
 

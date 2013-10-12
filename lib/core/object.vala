@@ -429,6 +429,27 @@ public abstract class Maia.Core.Object : Any
     }
 
     /**
+     * Find object by id from this and in this parent
+     *
+     * @param inId the id of the object to found in child
+     * @param inRecursive search also in parent childs
+     *
+     * @return the corresponding object to inId else `null`
+     */
+    public unowned Object?
+    find_in_parents (uint32 inId, bool inRecursive = true)
+    {
+        for (unowned Object? p = parent; p != null; p = p.parent)
+        {
+            unowned Object? found = p.find (inId, inRecursive);
+            if (found != null)
+                return found;
+        }
+
+        return null;
+    }
+
+    /**
      * Find object by type
      *
      * @param inRecursive search also in childs

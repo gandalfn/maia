@@ -141,6 +141,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         default = true;
     }
 
+    public bool allocate_on_child_add_remove { get; construct set; default = true; }
+
     internal Graphic.Region geometry {
         get {
             return m_Geometry;
@@ -444,7 +446,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             foreach (unowned string item_name in item_names)
             {
-                unowned Item? item = root.find (GLib.Quark.from_string (item_name.strip ())) as Item;
+                unowned Item? item = find_in_parents (GLib.Quark.from_string (item_name.strip ())) as Item;
 
                 if (item != null)
                 {
@@ -544,7 +546,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             if (!area.is_empty ())
             {
                 inContext.operator = Graphic.Operator.OVER;
-                Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, "item %s damaged draw", name);
+                Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, "item %s damaged draw %s %s", name, damaged.extents.to_string (), area.extents.to_string ());
                 inContext.operator = Graphic.Operator.OVER;
                 inContext.save ();
                 {
@@ -713,7 +715,17 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 ((Item)inObject).ungrab_keyboard.connect (on_child_ungrab_keyboard);
             }
 
-            geometry = null;
+            if (inObject is Item && !allocate_on_child_add_remove)
+            {
+                var item_size = ((Item)inObject).size;
+                var item_position = ((Item)inObject).position;
+                ((Item)inObject).geometry = new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y, item_size.width, item_size.height));
+                ((Item)inObject).damage ();
+            }
+            else
+            {
+                geometry = null;
+            }
         }
     }
 
@@ -744,7 +756,14 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             base.remove_child (inObject);
 
-            geometry = null;
+            if (!allocate_on_child_add_remove)
+            {
+                damage ();
+            }
+            else
+            {
+                geometry = null;
+            }
         }
         else
         {
@@ -906,9 +925,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     on_button_press_event (uint inButton, Graphic.Point inPoint)
     {
         bool ret = false;
-        if (visible && geometry != null)
+        if (visible && area != null)
         {
-            ret = inPoint in geometry.extents.size;
+            ret = inPoint in area;
         }
 
         if (!ret)
@@ -927,9 +946,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     on_button_release_event (uint inButton, Graphic.Point inPoint)
     {
         bool ret = false;
-        if (visible && geometry != null)
+        if (visible && area != null)
         {
-            ret = inPoint in geometry.extents.size;
+            ret = inPoint in area;
         }
 
         if (!ret)
@@ -944,9 +963,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     on_motion_event (Graphic.Point inPoint)
     {
         bool ret = false;
-        if (visible && geometry != null)
+        if (visible && area != null)
         {
-            ret = inPoint in geometry.extents.size;
+            ret = inPoint in area;
         }
 
         if (!ret)

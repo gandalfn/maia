@@ -883,6 +883,15 @@
   (construct-only #f)
 )
 
+(define-property sensitive
+  (of-object "MaiaButton")
+  (prop-type "GParamBoolean")
+  (docs "sensitive")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property icon-filename
   (of-object "MaiaButton")
   (prop-type "GParamString")
@@ -905,6 +914,15 @@
   (of-object "MaiaButton")
   (prop-type "GParamObject")
   (docs "button-color")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property button-inactive-color
+  (of-object "MaiaButton")
+  (prop-type "GParamObject")
+  (docs "button-inactive-color")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -1104,6 +1122,15 @@
   (docs "item-over-pointer")
   (readable #t)
   (writable #t)
+  (construct-only #f)
+)
+
+(define-property shortcuts
+  (of-object "MaiaDocument")
+  (prop-type "GParamObject")
+  (docs "shortcuts")
+  (readable #t)
+  (writable #f)
   (construct-only #f)
 )
 
@@ -2236,6 +2263,15 @@
   (of-object "MaiaItem")
   (prop-type "GParamBoolean")
   (docs "visible")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property allocate-on-child-add-remove
+  (of-object "MaiaItem")
+  (prop-type "GParamBoolean")
+  (docs "allocate-on-child-add-remove")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -3655,6 +3691,7 @@
   (when "last")
   (parameters
     '("MaiaItem*" "p0")
+    '("gboolean" "p1")
   )
 )
 
@@ -3693,15 +3730,6 @@
   (construct-only #f)
 )
 
-(define-property parent
-  (of-object "MaiaTool")
-  (prop-type "GParamObject")
-  (docs "parent")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
 (define-property toolbox
   (of-object "MaiaTool")
   (prop-type "GParamObject")
@@ -3720,10 +3748,10 @@
   (construct-only #f)
 )
 
-(define-property visible-with
+(define-property sensitive-with
   (of-object "MaiaTool")
   (prop-type "GParamString")
-  (docs "visible-with")
+  (docs "sensitive-with")
   (readable #t)
   (writable #t)
   (construct-only #f)

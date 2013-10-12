@@ -41,7 +41,7 @@ namespace Maia
                 return Glib::RefPtr<Toolbox> (new Toolbox (pToolbox));
             }
 
-            _WRAP_SIGNAL(void add_item (const Glib::RefPtr<Item>& inItem), "add-item", no_default_handler)
+            _WRAP_SIGNAL(void add_item (const Glib::RefPtr<Item>& inItem, bool inParent), "add-item", no_default_handler)
             _WRAP_SIGNAL(void remove_item (), "remove-item", no_default_handler)
             _WRAP_SIGNAL(void current_item_changed (const Glib::RefPtr<Item>& inItem), "current-item-changed", no_default_handler)
     };

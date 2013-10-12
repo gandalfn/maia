@@ -54,36 +54,60 @@ public class Maia.Gtk.Shortcut : Maia.Shortcut
         box.pack_start (m_Label, true, true, 0);
 
         // Connect onto label change
-        notify["label"].connect (() => {
-            m_Label.set_markup (label ?? "");
-        });
+        notify["label"].connect (on_label_changed);
 
         // Connect onto angle change
-        notify["angle"].connect (() => {
-            m_Label.angle = (angle * 180) / GLib.Math.PI;
-        });
-
+        notify["angle"].connect (on_angle_changed);
 
         // Connect onto icon_name change
-        notify["icon-name"].connect (() => {
-            if (icon_name != null)
-            {
-                m_Image.set_from_icon_name (icon_name, global::Gtk.IconSize.DIALOG);
-            }
-            else
-            {
-                m_Image.clear ();
-            }
-        });
+        notify["icon-name"].connect (on_icon_name_changed);
 
         // Connect onto section change
         notify["section"].connect (on_section_changed);
 
-        // Connect onto button reparent
+        // Connect onto root change
+        notify["root"].connect (on_section_changed);
+
+        // Connect onto button parent changed
         m_Button.notify["parent"].connect (on_section_changed);
 
         // connect onto clicked
         m_Button.clicked.connect (activate);
+    }
+
+    private void
+    on_label_changed ()
+    {
+        m_Label.set_markup (label ?? "");
+    }
+
+    private void
+    on_angle_changed ()
+    {
+        m_Label.angle = (angle * 180) / GLib.Math.PI;
+    }
+
+    private void
+    on_icon_name_changed ()
+    {
+        if (icon_name != null)
+        {
+            m_Image.set_from_icon_name (icon_name, global::Gtk.IconSize.DIALOG);
+        }
+        else
+        {
+            m_Image.clear ();
+        }
+    }
+
+    private void
+    on_section_visibility_changed (GLib.Object inObject, GLib.ParamSpec inParam)
+    {
+        print ("visible %s\n", (inObject as Item).visible.to_string ());
+        if (!(inObject as Item).visible)
+            m_Button.hide ();
+        else
+            m_Button.show ();
     }
 
     private void
@@ -94,12 +118,7 @@ public class Maia.Gtk.Shortcut : Maia.Shortcut
             unowned Item item = root.find (GLib.Quark.from_string (section)) as Item;
             if (item != null)
             {
-                item.notify["visible"].connect (() => {
-                    if (!item.visible)
-                        m_Button.hide ();
-                    else
-                        m_Button.show ();
-                });
+                item.notify["visible"].connect (on_section_visibility_changed);
 
                 if (!item.visible)
                     m_Button.hide ();

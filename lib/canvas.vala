@@ -286,11 +286,18 @@ public interface Maia.Canvas : Drawable
     }
 
     protected virtual void
-    on_toolbox_add (Item inItem)
+    on_toolbox_add (Item inItem, bool inParent)
     {
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "Add item %s", inItem.name);
 
-        if (inItem != null && focus_item != null)
+        if (inParent)
+        {
+            if (inItem != null && focus_item != null && focus_item.parent != null)
+            {
+                focus_item.parent.add (inItem);
+            }
+        }
+        else if (inItem != null && focus_item != null)
         {
             focus_item.add (inItem);
         }

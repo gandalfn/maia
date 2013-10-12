@@ -21,6 +21,7 @@ public enum Maia.ToolAction
 {
     NONE,
     ADD,
+    ADD_PARENT,
     REMOVE;
 
     public string
@@ -30,6 +31,8 @@ public enum Maia.ToolAction
         {
             case ADD:
                 return "add";
+            case ADD_PARENT:
+                return "add-parent";
             case REMOVE:
                 return "remove";
         }
@@ -45,6 +48,9 @@ public enum Maia.ToolAction
             case "add":
                 return ADD;
 
+            case "add-parent":
+                return ADD_PARENT;
+
             case "remove":
                 return REMOVE;
         }
@@ -56,11 +62,12 @@ public enum Maia.ToolAction
 public class Maia.Tool : Button
 {
     // static properties
-    static GLib.Quark s_CurrentItemChangedQuark;
+    private static unowned Item? s_CurrentItem = null;
 
     // properties
     private Manifest.Document m_Document = null;
     private uint m_ItemCounter = 0;
+    private unowned Toolbox? m_Toolbox = null;
 
     // accessors
     internal override string tag {
@@ -69,51 +76,24 @@ public class Maia.Tool : Button
         }
     }
 
-    [CCode (notify = false)]
-    public override unowned Core.Object? parent {
-        get {
-            return base.parent;
-        }
-        construct set {
-            ulong id_changed = get_qdata<ulong> (s_CurrentItemChangedQuark);
-            if (id_changed != 0 && toolbox != null)
-            {
-                GLib.SignalHandler.disconnect (toolbox, id_changed);
-            }
-
-            base.parent = value;
-
-            if (toolbox != null)
-            {
-                id_changed = toolbox.current_item_changed.connect (on_current_item_changed);
-                set_qdata<ulong> (s_CurrentItemChangedQuark, id_changed);
-            }
-        }
-    }
-
     public unowned Toolbox? toolbox {
         get {
-            for (unowned Core.Object? item = parent; item != null; item = item.parent)
-            {
-                if (item is Toolbox)
-                    return item as Toolbox;
-            }
-
-            return null;
+            return m_Toolbox;
         }
     }
 
     public ToolAction action { get; set; default = ToolAction.NONE; }
-    public string visible_with { get; set; default = null; }
+    public string sensitive_with { get; set; default = null; }
 
     // static methods
     static construct
     {
-        s_CurrentItemChangedQuark = GLib.Quark.from_string ("MaiaToolCurrentItemChanged");
-
         Manifest.Attribute.register_transform_func (typeof (ToolAction), attribute_to_tool_action);
 
         GLib.Value.register_transform_func (typeof (ToolAction), typeof (string), tool_action_to_string);
+
+        // register attribute bind
+        Manifest.AttributeBind.register_transform_func (typeof (Item), "selected-item-name", attribute_bind_selected_item_name);
     }
 
     static void
@@ -131,6 +111,16 @@ public class Maia.Tool : Button
         outDest = val.to_string ();
     }
 
+    static void
+    attribute_bind_selected_item_name (Manifest.AttributeBind inAttributeBind, ref GLib.Value outValue)
+        requires (outValue.holds (typeof (string)))
+    {
+        if (s_CurrentItem != null)
+        {
+            outValue = s_CurrentItem.name;
+        }
+    }
+
     // methods
     construct
     {
@@ -139,11 +129,37 @@ public class Maia.Tool : Button
 
         // Connect onto clicked signal
         clicked.connect (on_clicked);
+
+        // Connect onto root changed
+        notify["root"].connect (on_root_changed);
     }
 
     public Tool (string inId, string? inLabel = null)
     {
         base (inId, inLabel);
+    }
+
+    private void
+    on_root_changed ()
+    {
+        // Disconnect from item changed of old toolbox
+        if (m_Toolbox != null)
+        {
+            m_Toolbox.current_item_changed.disconnect (on_current_item_changed);
+        }
+
+        // Search parent toolbox
+        m_Toolbox = null;
+        for (unowned Core.Object? item = parent; m_Toolbox == null && item != null; item = item.parent)
+        {
+            m_Toolbox = item as Toolbox;
+        }
+
+        // Found toolbox connect onto item changed
+        if (m_Toolbox != null)
+        {
+            m_Toolbox.current_item_changed.connect (on_current_item_changed);
+        }
     }
 
     private Item?
@@ -182,15 +198,15 @@ public class Maia.Tool : Button
     private void
     on_current_item_changed (Item? inItem)
     {
-        if (visible_with != null)
-        {
-            visible = false;
+        s_CurrentItem = inItem;
 
+        if (sensitive_with != null)
+        {
             if (inItem != null)
             {
                 bool found = false;
                 string item_name = inItem.name;
-                string[] split = visible_with.split (",");
+                string[] split = sensitive_with.split (",");
 
                 foreach (unowned string criteria in split)
                 {
@@ -232,27 +248,26 @@ public class Maia.Tool : Button
                     }
                 }
 
-                visible = found;
+                sensitive = found;
             }
             else
             {
-                visible = false;
+                sensitive = false;
             }
         }
         else
         {
-            visible = true;
+            sensitive = true;
         }
+
+        damage ();
     }
 
     private void
     on_clicked ()
     {
-        // Search parent toolbox
-        unowned Toolbox? tb = toolbox;
-
         // parent toolbox was found
-        if (tb != null)
+        if (toolbox != null)
         {
             switch (action)
             {
@@ -262,13 +277,26 @@ public class Maia.Tool : Button
                     if (item != null)
                     {
                         // Launch toolbox add signal
-                        tb.add_item (item);
+                        toolbox.add_item (item, false);
+                        toolbox.hide ();
+                    }
+                    break;
+
+                case ToolAction.ADD_PARENT:
+                    // Create item from template
+                    Item? item = create_template ();
+                    if (item != null)
+                    {
+                        // Launch toolbox add signal
+                        toolbox.add_item (item, true);
+                        toolbox.hide ();
                     }
                     break;
 
                 case ToolAction.REMOVE:
                     // Launch toolbox remove signal
-                    tb.remove_item ();
+                    toolbox.remove_item ();
+                    toolbox.hide ();
                     break;
             }
         }

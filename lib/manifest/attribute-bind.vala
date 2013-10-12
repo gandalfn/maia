@@ -59,13 +59,14 @@ public class Maia.Manifest.AttributeBind : Attribute
                 GLib.SignalHandler.disconnect (inThis.src, inThis.id);
                 inThis.id = 0;
                 inThis.src.steal_data<ulong> (inThis.quark);
+                inThis.src = null;
             }
         }
 
         public void
         disconnect ()
         {
-            if (id != 0)
+            if (id != 0 && src != null && src is Object)
             {
                 GLib.SignalHandler.disconnect (src, id);
                 id = 0;

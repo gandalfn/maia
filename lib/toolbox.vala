@@ -27,7 +27,7 @@ public class Maia.Toolbox : Popup
     }
 
     // signals
-    public signal void add_item (Item inItem);
+    public signal void add_item (Item inItem, bool inParent);
     public signal void remove_item ();
     public signal void current_item_changed (Item? inItem);
 

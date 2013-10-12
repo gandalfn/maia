@@ -473,7 +473,6 @@ public class Maia.Cairo.Context : Graphic.Context
     {
         m_Context.move_to (inGlyph.origin.x, inGlyph.origin.y);
         status ();
-        (inGlyph as Glyph).update (this);
         Pango.cairo_show_layout (m_Context, (inGlyph as Glyph).layout);
         status ();
     }

@@ -4636,6 +4636,7 @@
 ;; typedef enum  {
 ;; 	MAIA_TOOL_ACTION_NONE,
 ;; 	MAIA_TOOL_ACTION_ADD,
+;; 	MAIA_TOOL_ACTION_ADD_PARENT,
 ;; 	MAIA_TOOL_ACTION_REMOVE
 ;; } MaiaToolAction;
 
@@ -4645,7 +4646,8 @@
   (values
     '("none" "MAIA_TOOL_ACTION_NONE" "0")
     '("add" "MAIA_TOOL_ACTION_ADD" "1")
-    '("remove" "MAIA_TOOL_ACTION_REMOVE" "2")
+    '("add-parent" "MAIA_TOOL_ACTION_ADD_PARENT" "2")
+    '("remove" "MAIA_TOOL_ACTION_REMOVE" "3")
   )
 )
 

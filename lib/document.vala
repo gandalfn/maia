@@ -49,6 +49,7 @@ public class Maia.Document : Item
     // properties
     private Core.List<unowned Item>      m_Items;
     private Core.List<unowned Popup>     m_Popups;
+    private Core.List<unowned Shortcut>  m_Shortcuts;
     private Graphic.Surface              m_PageShadow;
     private Core.List<Page>              m_Pages;
     private Core.List<unowned Page>      m_VisiblePages;
@@ -86,6 +87,12 @@ public class Maia.Document : Item
     public string footer { get; set; default = null; }
 
     public unowned Item? item_over_pointer { get; set; default = null; }
+
+    public Core.List<unowned Shortcut>? shortcuts {
+        get {
+            return m_Shortcuts;
+        }
+    }
 
     // static methods
     static construct
@@ -130,6 +137,9 @@ public class Maia.Document : Item
 
         // create popups list
         m_Popups = new Core.List<unowned Popup> ();
+
+        // create shortcuts list
+        m_Shortcuts = new Core.List<unowned Shortcut> ();
 
         // create visible pages list
         m_VisiblePages = new Core.List<unowned Page> ();
@@ -249,6 +259,9 @@ public class Maia.Document : Item
         {
             m_PageShadow = null;
         }
+
+        // unset geometry to repaginate
+        geometry = null;
     }
 
     private void
@@ -589,6 +602,10 @@ public class Maia.Document : Item
             {
                 m_Popups.insert (inObject as Popup);
             }
+            else if (inObject is Shortcut)
+            {
+                m_Shortcuts.insert (inObject as Shortcut);
+            }
             else if (inObject is Item)
             {
                 m_Items.insert (inObject as Item);
@@ -602,6 +619,10 @@ public class Maia.Document : Item
         if (inObject is Popup && m_Popups != null)
         {
             m_Popups.remove (inObject as Popup);
+        }
+        else if (inObject is Shortcut && m_Shortcuts != null)
+        {
+            m_Shortcuts.remove (inObject as Shortcut);
         }
         else if (inObject is Item && m_Items != null)
         {
@@ -626,18 +647,18 @@ public class Maia.Document : Item
     internal override void
     on_damage (Graphic.Region? inArea = null)
     {
-        Graphic.Region area;
+        Graphic.Region damaged_area;
         if (inArea == null)
         {
-            area = geometry.copy ();
+            damaged_area = area.copy ();
         }
         else
         {
-            area = inArea.copy ();
+            damaged_area = inArea.copy ();
         }
-        area.translate (position);
+        damaged_area.translate (position);
 
-        base.on_damage (area);
+        base.on_damage (damaged_area);
     }
 
     internal override void
@@ -670,12 +691,19 @@ public class Maia.Document : Item
             // Update each popup
             foreach (unowned Popup popup in m_Popups)
             {
+                // Toolbox popup move with document
+                if (popup is Toolbox && popup.geometry != null)
+                {
+                    popup.geometry.translate (popup.geometry.extents.origin.invert ());
+                    popup.geometry.translate (popup.position);
+                    popup.geometry.translate (position);
+                }
+
                 if (popup != null && popup.visible)
                 {
                     popup.damage ();
                 }
             }
-
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "Damage document %s", visible_area.extents.to_string ());
             damage ();
         }
@@ -768,16 +796,11 @@ public class Maia.Document : Item
 
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child item %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
 
-                if (!(inChild is Toolbox))
-                {
-                    damaged_area.translate (position.invert ());
-                }
-                damage (damaged_area);
+                // Remove the offset of scrolling
+                damaged_area.translate (position.invert ());
 
-                foreach (unowned Page page in m_VisiblePages)
-                {
-                    page.damage (damaged_area);
-                }
+                // damage item
+                damage (damaged_area);
             }
         }
     }
@@ -796,28 +819,22 @@ public class Maia.Document : Item
             // Update each page
             foreach (unowned Page page in m_Pages)
             {
+                uint delta = get_qdata<uint> (s_PageBeginQuark);
+                m_CurrentPage = page.num + delta;
+
                 page.update (inContext);
             }
 
             foreach (unowned Popup popup in m_Popups)
             {
+                var popup_position = popup.position;
                 if (popup is Toolbox)
                 {
-                    unowned Toolbox? toolbox = (Toolbox)popup;
-
-                    var toolbox_position = toolbox.position;
-                    toolbox_position.translate (position);
-                    var toolbox_size = toolbox.size;
-
-                    toolbox.update (inContext, new Graphic.Region (Graphic.Rectangle (toolbox_position.x, toolbox_position.y, toolbox_size.width, toolbox_size.height)));
+                    popup_position.translate (position);
                 }
-                else
-                {
-                    var popup_position = popup.position;
-                    var popup_size = popup.size;
+                var popup_size = popup.size;
 
-                    popup.update (inContext, new Graphic.Region (Graphic.Rectangle (popup_position.x, popup_position.y, popup_size.width, popup_size.height)));
-                }
+                popup.update (inContext, new Graphic.Region (Graphic.Rectangle (popup_position.x, popup_position.y, popup_size.width, popup_size.height)));
             }
         }
     }
@@ -863,11 +880,8 @@ public class Maia.Document : Item
             inContext.save ();
             {
                 var area = inArea.copy ();
-                if (!(popup is Toolbox))
-                {
-                    inContext.translate (position.invert ());
-                    area.translate (position);
-                }
+                inContext.translate (position.invert ());
+                area.translate (position);
                 popup.draw (inContext, area_to_child_item_space (popup, area));
             }
             inContext.restore ();
@@ -1153,7 +1167,7 @@ public class Maia.Document : Item
                         // point under popup
                         if (popup.scroll_event (inScroll, popup_point))
                         {
-                            return true;
+                          return true;
                         }
                     }
                 }

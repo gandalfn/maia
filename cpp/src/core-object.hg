@@ -116,6 +116,14 @@ namespace Maia
                     return ObjectProxy (pObject);
                 }
 
+                _IGNORE(maia_core_object_find_in_parents)
+                inline ObjectProxy find_in_parents (const Glib::ustring& inName, bool inRecurse = true)
+                {
+                    Glib::RefPtr<Object> pObject;
+                    find_in_parents (inName, pObject, inRecurse);
+                    return ObjectProxy (pObject);
+                }
+
                 inline ObjectDerivedProxy find_derived (const Glib::ustring& inName, bool inRecurse = true)
                 {
                     MaiaCoreObject* pObject = maia_core_object_find(gobj (), g_quark_from_string (inName.c_str ()), (gboolean)inRecurse);
@@ -125,6 +133,9 @@ namespace Maia
                 _IGNORE(maia_core_object_find_by_type)
                 template <typename T>
                 inline void find (const Glib::ustring& inName, Glib::RefPtr<T>& outChild, bool inRecurse = true);
+
+                template <typename T>
+                inline void find_in_parents (const Glib::ustring& inName, Glib::RefPtr<T>& outChild, bool inRecurse = true);
 
                 template <typename T>
                 inline void find (std::vector<Glib::RefPtr<T> >& inChilds);
@@ -193,6 +204,17 @@ namespace Maia
         Object::find (const Glib::ustring& inName, Glib::RefPtr<T>& outChild, bool inRecurse)
         {
             MaiaCoreObject* pChild = maia_core_object_find(gobj (), g_quark_from_string (inName.c_str ()), (gboolean)inRecurse);
+            if (pChild)
+                outChild = Glib::RefPtr<T>::cast_dynamic (Glib::wrap (G_OBJECT (pChild), true));
+            else
+                outChild = Glib::RefPtr<T> (0);
+        }
+
+        template <typename T>
+        inline void
+        Object::find_in_parents (const Glib::ustring& inName, Glib::RefPtr<T>& outChild, bool inRecurse)
+        {
+            MaiaCoreObject* pChild = maia_core_object_find_in_parents(gobj (), g_quark_from_string (inName.c_str ()), (gboolean)inRecurse);
             if (pChild)
                 outChild = Glib::RefPtr<T>::cast_dynamic (Glib::wrap (G_OBJECT (pChild), true));
             else
