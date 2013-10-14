@@ -34,41 +34,49 @@ public abstract class Maia.Graphic.Image : Graphic.Pattern
     create (string inFilename, Graphic.Size inSize = Graphic.Size (0, 0))
     {
         Image? ret = null;
-        var file = GLib.File.new_for_path (inFilename);
 
-        try
+        if (GLib.FileUtils.test (inFilename, GLib.FileTest.EXISTS) && !GLib.FileUtils.test (inFilename, GLib.FileTest.IS_DIR))
         {
-            var info = file.query_info (GLib.FileAttribute.STANDARD_CONTENT_TYPE, 0);
-            string content = info.get_content_type ();
-            Log.debug (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "filename: %s content: %s", inFilename, content);
-            switch (content)
+            var file = GLib.File.new_for_path (inFilename);
+
+            try
             {
-                case "image/png":
-                    ret = GLib.Object.new (typeof (ImagePng), filename: inFilename, size: inSize) as Image;
-                    break;
+                var info = file.query_info (GLib.FileAttribute.STANDARD_CONTENT_TYPE, 0);
+                string content = info.get_content_type ();
+                Log.debug (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "filename: %s content: %s", inFilename, content);
+                switch (content)
+                {
+                    case "image/png":
+                        ret = GLib.Object.new (typeof (ImagePng), filename: inFilename, size: inSize) as Image;
+                        break;
 
-                case "image/jpg":
-                case "image/jpeg":
-                    ret = GLib.Object.new (typeof (ImageJpg), filename: inFilename, size: inSize) as Image;
-                    break;
+                    case "image/jpg":
+                    case "image/jpeg":
+                        ret = GLib.Object.new (typeof (ImageJpg), filename: inFilename, size: inSize) as Image;
+                        break;
 
-                case "image/svg":
-                case "image/svg+xml":
-                    ret = GLib.Object.new (typeof (ImageSvg), filename: inFilename, size: inSize) as Image;
-                    break;
+                    case "image/svg":
+                    case "image/svg+xml":
+                        ret = GLib.Object.new (typeof (ImageSvg), filename: inFilename, size: inSize) as Image;
+                        break;
 
-                case "image/gif":
-                    ret = GLib.Object.new (typeof (ImageGif), filename: inFilename, size: inSize) as Image;
-                    break;
+                    case "image/gif":
+                        ret = GLib.Object.new (typeof (ImageGif), filename: inFilename, size: inSize) as Image;
+                        break;
 
-                default:
-                    Log.error (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "%s unknown image type %s", inFilename, content);
-                    break;
+                    default:
+                        Log.error (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "%s unknown image type %s", inFilename, content);
+                        break;
+                }
+            }
+            catch (GLib.Error err)
+            {
+                Log.critical (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "Error on load filename %s: %s", inFilename, err.message);
             }
         }
-        catch (GLib.Error err)
+        else
         {
-            Log.critical (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "Error on load filename %s: %s", inFilename, err.message);
+            Log.debug (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "Invalid filename %s", inFilename);
         }
 
         return ret;

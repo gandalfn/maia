@@ -223,7 +223,7 @@ public class Maia.TestCanvas : Maia.TestCase
         });
 
         double progress = 0;
-        GLib.Timeout.add (100, () => {
+        GLib.Timeout.add_seconds (1, () => {
             progress += (GLib.Math.PI * 2.0) / 360;
             var t = new Graphic.Transform.identity ();
             t.rotate (progress);
@@ -235,7 +235,7 @@ public class Maia.TestCanvas : Maia.TestCase
 
         window.add (canvas);
 
-        GLib.Timeout.add (100, () => {
+        GLib.Timeout.add_seconds (2, () => {
             image.position = Graphic.Point (Test.rand_int_range (0, 200), Test.rand_int_range (0, 200));
             Test.message ("image position: %s", image.position.to_string ());
             return true;

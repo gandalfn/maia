@@ -5367,10 +5367,74 @@
   )
 )
 
+(define-function maia_graphic_transform_new_init_translate
+  (c-name "maia_graphic_transform_new_init_translate")
+  (return-type "MaiaGraphicTransform*")
+  (parameters
+    '("gdouble" "inTx")
+    '("gdouble" "inTy")
+  )
+)
+
+(define-function maia_graphic_transform_construct_init_translate
+  (c-name "maia_graphic_transform_construct_init_translate")
+  (return-type "MaiaGraphicTransform*")
+  (parameters
+    '("GType" "object_type")
+    '("gdouble" "inTx")
+    '("gdouble" "inTy")
+  )
+)
+
+(define-function maia_graphic_transform_new_init_scale
+  (c-name "maia_graphic_transform_new_init_scale")
+  (return-type "MaiaGraphicTransform*")
+  (parameters
+    '("gdouble" "inSx")
+    '("gdouble" "inSy")
+  )
+)
+
+(define-function maia_graphic_transform_construct_init_scale
+  (c-name "maia_graphic_transform_construct_init_scale")
+  (return-type "MaiaGraphicTransform*")
+  (parameters
+    '("GType" "object_type")
+    '("gdouble" "inSx")
+    '("gdouble" "inSy")
+  )
+)
+
+(define-function maia_graphic_transform_new_init_rotate
+  (c-name "maia_graphic_transform_new_init_rotate")
+  (return-type "MaiaGraphicTransform*")
+  (parameters
+    '("gdouble" "inRadians")
+  )
+)
+
+(define-function maia_graphic_transform_construct_init_rotate
+  (c-name "maia_graphic_transform_construct_init_rotate")
+  (return-type "MaiaGraphicTransform*")
+  (parameters
+    '("GType" "object_type")
+    '("gdouble" "inRadians")
+  )
+)
+
 (define-method init
   (of-object "MaiaGraphicTransform")
   (c-name "maia_graphic_transform_init")
   (return-type "none")
+)
+
+(define-method multiply
+  (of-object "MaiaGraphicTransform")
+  (c-name "maia_graphic_transform_multiply")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicMatrix*" "inMatrix")
+  )
 )
 
 (define-method translate

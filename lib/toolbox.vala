@@ -27,8 +27,25 @@ public class Maia.Toolbox : Popup
     }
 
     // signals
+    /**
+     * Signal emitted when a tool button with add or add-parent action
+     * is pressed
+     *
+     * @param inItem the item to add
+     * @param inParent if ``true`` add inItem to parent of focus item
+     */
     public signal void add_item (Item inItem, bool inParent);
+
+    /**
+     * Signal emitted when a tool button with remove action is pressed
+     */
     public signal void remove_item ();
+
+    /**
+     * Signal emitted when the current focus item has changed
+     *
+     * @param inItem the current focus item ``null`` if no item selected
+     */
     public signal void current_item_changed (Item? inItem);
 
     // methods

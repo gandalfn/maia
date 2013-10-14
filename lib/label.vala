@@ -58,13 +58,44 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
         }
     }
 
+    /**
+     * Indicate if label text is translated
+     */
     public bool                        translatable     { get; set; default = true; }
+
+    /**
+     * The font description of label
+     */
     public string                      font_description { get; set; default = ""; }
+
+    /**
+     * Alignment of label ``left``, ``center`` or ``right``, default was ``center``
+     */
     public Graphic.Glyph.Alignment     alignment        { get; set; default = Graphic.Glyph.Alignment.CENTER; }
+
+    /**
+     * Wrap mode of label can be ``char`` or ``word``, default was ``word``
+     */
     public Graphic.Glyph.WrapMode      wrap_mode        { get; set; default = Graphic.Glyph.WrapMode.WORD; }
+
+    /**
+     * Ellipsize mode of label can be ``none``, ``start``, ``middle`` or ``end``, default was ``none``
+     */
     public Graphic.Glyph.EllipsizeMode ellipsize_mode   { get; set; default = Graphic.Glyph.EllipsizeMode.NONE; }
+
+    /**
+     * Text of label
+     */
     public string                      text             { get; set; default = null; }
+
+    /**
+     * Shade color of label
+     */
     public Graphic.Color               shade_color      { get; set; default = null; }
+
+    /**
+     * If true hide label if text is empty
+     */
     public bool                        hide_if_empty    { get; set; default = false; }
 
     // static methods
@@ -148,6 +179,12 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
         notify["hide-if-empty"].connect (on_hide_if_empty_changed);
     }
 
+    /**
+     * Create a new Label
+     *
+     * @param inId id of label item
+     * @param inLabel the initial text of label
+     */
     public Label (string inId, string inLabel)
     {
         GLib.Object (id: GLib.Quark.from_string (inId), text: inLabel);
@@ -198,24 +235,24 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
             }
             set_qdata<int> (Item.s_CountHide, count);
         }
-        else if (geometry != null)
+        else if (area != null)
         {
             var item_size = size;
-            if (geometry.extents.size.width < item_size.width || geometry.extents.size.height < item_size.height)
+            if (area.extents.size.width < item_size.width || area.extents.size.height < item_size.height)
             {
                 var glyph_size = m_Glyph.size;
-                if (xshrink && geometry.extents.size.width < item_size.width)
+                if (xshrink && area.extents.size.width < item_size.width)
                 {
-                    glyph_size.width = geometry.extents.size.width;
+                    glyph_size.width = area.extents.size.width;
                 }
-                if (yshrink && geometry.extents.size.height < item_size.height)
+                if (yshrink && area.extents.size.height < item_size.height)
                 {
-                    glyph_size.height = geometry.extents.size.height;
+                    glyph_size.height = area.extents.size.height;
                 }
                 m_Glyph.size = glyph_size;
                 update_layout ();
 
-                if (geometry.extents.size.width < m_Glyph.size.width || geometry.extents.size.height < m_Glyph.size.height)
+                if (area.extents.size.width < m_Glyph.size.width || area.extents.size.height < m_Glyph.size.height)
                 {
                     geometry = null;
                 }
@@ -369,7 +406,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
             {
                 var pos = Graphic.Point (0, 0);
                 var glyph_size = m_Glyph.size;
-                m_Glyph.size = geometry.extents.size;
+                m_Glyph.size = area.extents.size;
                 if (shade_color != null)
                 {
                     inContext.pattern = new Graphic.Color.shade (shade_color, 0.8);

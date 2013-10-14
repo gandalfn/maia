@@ -50,7 +50,6 @@ public class Maia.Rectangle : Item, ItemMovable, ItemResizable
     internal override void
     paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
-        var area = new Graphic.Region (Graphic.Rectangle (0, 0, size.width, size.height));
         var path = new Graphic.Path.from_region (area);
 
         inContext.line_width = line_width;

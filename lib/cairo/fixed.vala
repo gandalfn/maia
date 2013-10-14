@@ -22,8 +22,8 @@
 [SimpleType, IntegerType (rank = 6), CCode (has_type_id = false)]
 internal struct Maia.Cairo.Fixed : int32
 {
-    const int32 s_Frac = 16;
-    const double s_Magic = 103079215104.0;
+    const int32 s_Frac = 8;
+    const double s_Magic = ((1LL << (52 - s_Frac)) * 1.5);
 #if BIG_INDIAN
     const int s_Mantisse = 1;
 #else

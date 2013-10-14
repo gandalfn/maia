@@ -26,15 +26,24 @@ public class Maia.Shortcut : Core.Object, Manifest.Element
         }
     }
 
-    internal string characters { get; set; default = null; }
-    internal string manifest_path { get; set; default = null; }
+    internal string                   characters      { get; set; default = null; }
+    internal string                   manifest_path   { get; set; default = null; }
     internal Core.Set<Manifest.Style> manifest_styles { get; set; default = null; }
 
-
+    /**
+     * The section to scroll to on shortcut activation
+     */
     public string section { get; set; default = null; }
-    public string label { get; set; default = null; }
+
+    /**
+     * The shortcut label
+     */
+    public string label   { get; set; default = null; }
 
     // methods
+    /**
+     * Activate shortcut
+     */
     public void
     activate ()
     {

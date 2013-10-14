@@ -239,6 +239,8 @@ public class Maia.Graphic.Transform : Core.Object
 
     /**
      * Create a new transform stack
+     *
+     * @param inMatrix initial matrix of transform
      */
     public Transform.from_matrix (Matrix inMatrix)
     {
@@ -252,6 +254,43 @@ public class Maia.Graphic.Transform : Core.Object
     public Transform.identity ()
     {
         m_BaseMatrix = Matrix.identity ();
+        m_FinalMatrix = m_BaseMatrix;
+    }
+
+    /**
+     * Create a new transform stack
+     *
+     * @param inTx amount to translate in the X direction
+     * @param inTy amount to translate in the Y direction
+     */
+    public Transform.init_translate (double inTx, double inTy)
+    {
+        m_BaseMatrix = Matrix (1, 0, 0, 1, inTx, inTy);
+        m_FinalMatrix = m_BaseMatrix;
+    }
+
+    /**
+     * Create a new transform stack
+     *
+     * @param inSx scale factor in the X direction
+     * @param inSy scale factor in the Y direction
+     */
+    public Transform.init_scale (double inSx, double inSy)
+    {
+        m_BaseMatrix = Matrix (inSx, 0, 0, inSy, 0, 0);
+        m_FinalMatrix = m_BaseMatrix;
+    }
+
+    /**
+     * Create a new transform stack
+     *
+     * @param inRadians angle of rotations, in radians;
+     */
+    public Transform.init_rotate (double inRadians)
+    {
+        double s = GLib.Math.sin (inRadians);
+        double c = GLib.Math.cos (inRadians);
+        m_BaseMatrix = Matrix (c, s, -s, c, 0, 0);
         m_FinalMatrix = m_BaseMatrix;
     }
 
@@ -321,6 +360,24 @@ public class Maia.Graphic.Transform : Core.Object
     {
         // init base matrix
         m_BaseMatrix = Matrix.identity ();
+
+        // recalculate final matrix
+        recalculate_final_matrix ();
+
+        // send changed signal
+        changed ();
+    }
+
+    /**
+     * Multiply a matrix to the transformation.
+     *
+     * @param inMatrix matrix to multiply with transformation
+     */
+    public void
+    multiply (Matrix inMatrix)
+    {
+        // multiply base matrix
+        m_BaseMatrix.multiply (inMatrix);
 
         // recalculate final matrix
         recalculate_final_matrix ();

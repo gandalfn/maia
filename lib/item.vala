@@ -303,17 +303,17 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         // create quarks
         s_ChainVisibleCount = GLib.Quark.from_string ("MaiaChainVisibleShowCount");
-        s_CountHide = GLib.Quark.from_string ("MaiaCountHide");
+        s_CountHide         = GLib.Quark.from_string ("MaiaCountHide");
 
         // register attribute bind
         Manifest.AttributeBind.register_transform_func (typeof (Item), "width", attribute_bind_width);
         Manifest.AttributeBind.register_transform_func (typeof (Item), "height", attribute_bind_height);
 
         // get mouse event id
-        mc_IdButtonPressEvent = GLib.Signal.lookup ("button-press-event", typeof (Item));
+        mc_IdButtonPressEvent   = GLib.Signal.lookup ("button-press-event", typeof (Item));
         mc_IdButtonReleaseEvent = GLib.Signal.lookup ("button-release-event", typeof (Item));
-        mc_IdMotionEvent = GLib.Signal.lookup ("motion-event", typeof (Item));
-        mc_IdScrollEvent = GLib.Signal.lookup ("scroll-event", typeof (Item));
+        mc_IdMotionEvent        = GLib.Signal.lookup ("motion-event", typeof (Item));
+        mc_IdScrollEvent        = GLib.Signal.lookup ("scroll-event", typeof (Item));
     }
 
     static void
@@ -537,15 +537,14 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         if (visible && geometry != null && damaged != null && !damaged.is_empty ())
         {
-            var area = damaged.copy ();
+            var damaged_area = damaged.copy ();
             if (inArea != null)
             {
-                area.intersect (inArea);
+                damaged_area.intersect (inArea);
             }
 
-            if (!area.is_empty ())
+            if (!damaged_area.is_empty ())
             {
-                inContext.operator = Graphic.Operator.OVER;
                 Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, "item %s damaged draw %s %s", name, damaged.extents.to_string (), area.extents.to_string ());
                 inContext.operator = Graphic.Operator.OVER;
                 inContext.save ();
@@ -564,12 +563,17 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                     else
                         inContext.transform = transform;
 
-                    inContext.clip_region (area);
-                    paint (inContext, area);
+                    inContext.clip_region (damaged_area);
+
+                    paint (inContext, damaged_area);
+
+                    //inContext.pattern = new Graphic.Color (1, 0, 0, 0.6);
+                    //var path = new Graphic.Path.from_region (damaged_area);
+                    //inContext.stroke (path);
                 }
                 inContext.restore ();
 
-                repair (area);
+                repair (damaged_area);
             }
         }
     }
