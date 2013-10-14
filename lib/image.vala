@@ -61,9 +61,20 @@ public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
     public string? filename { get; set; default = null; }
 
     // methods
+    construct
+    {
+        notify["filename"].connect  (on_filename_changed);
+    }
+
     public Image (string inId, string? inFilename)
     {
         GLib.Object (id: GLib.Quark.from_string (inId), filename: inFilename);
+    }
+
+    private void
+    on_filename_changed ()
+    {
+        m_Image = null;
     }
 
     protected virtual Graphic.Image?
