@@ -284,7 +284,10 @@ public class Maia.Popup : Group
     public void
     show ()
     {
+        repair ();
+
         m_Animator.stop ();
+
 
         if (m_Transition > 0)
         {
