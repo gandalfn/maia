@@ -215,7 +215,7 @@ public class Maia.Group : Item
                     if (item.motion_event (point))
                     {
                         // if item over pointer change unset pointer over for old item
-                        if (item_over_pointer !=  null && item != item_over_pointer && item_over_pointer.pointer_over)
+                        if (item_over_pointer is Item && item != item_over_pointer && item_over_pointer.pointer_over)
                         {
                             item_over_pointer.pointer_over = false;
                         }
