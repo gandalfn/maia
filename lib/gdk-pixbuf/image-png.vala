@@ -109,7 +109,8 @@ internal class Maia.GdkPixbuf.ImagePng : Graphic.ImagePng, Image
                 if (!m_Size.is_empty ())
                 {
                     // Calculate the transform
-                    m_Transform.scale (m_Size.width / (double)m_Pixbuf.width, m_Size.height / (double)m_Pixbuf.height);
+                    double scale = double.min ((double)m_Pixbuf.width / m_Size.width, (double)m_Pixbuf.height / m_Size.height);
+                    m_Transform.scale (scale, scale);
                 }
 
                 // Create new surface
