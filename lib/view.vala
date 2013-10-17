@@ -120,26 +120,25 @@ public class Maia.View : Maia.Grid
         if (item != null && view != null && model != null)
         {
             // Get row num of child
-            uint row_num = 0;
-            if (view.orientation == Orientation.HORIZONTAL)
-                row_num = (item.column * view.lines) + item.row;
-            else
-                row_num = (item.row * view.lines) + item.column;
+            uint row_num;
 
-            string column_name = inAttribute.get ();
-            if (view.m_SetPropertyFunc == null || !view.m_SetPropertyFunc (inAttribute.owner, inProperty, column_name, row_num))
+            if (view.get_item_row (item, out row_num))
             {
-                // search the associated column
-                unowned Model.Column? column = model[column_name];
-                if (column != null)
+                string column_name = inAttribute.get ();
+                if (view.m_SetPropertyFunc == null || !view.m_SetPropertyFunc (inAttribute.owner, inProperty, column_name, row_num))
                 {
-                    // Set value of property
-                    inAttribute.owner.set_property (inProperty, column[row_num]);
-                }
-                else
-                {
-                    Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_ATTRIBUTE,
-                                  "Error on bind %s invalid %s column name", inProperty, inAttribute.get ());
+                    // search the associated column
+                    unowned Model.Column? column = model[column_name];
+                    if (column != null)
+                    {
+                        // Set value of property
+                        inAttribute.owner.set_property (inProperty, column[row_num]);
+                    }
+                    else
+                    {
+                        Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_ATTRIBUTE,
+                                      "Error on bind %s invalid %s column name", inProperty, inAttribute.get ());
+                    }
                 }
             }
         }
@@ -532,6 +531,7 @@ public class Maia.View : Maia.Grid
                     outRow = inItem.row + inItem.column * lines;
                 }
                 ret = true;
+                break;
             }
         }
 

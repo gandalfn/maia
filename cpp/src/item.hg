@@ -83,6 +83,8 @@ namespace Maia
             _WRAP_METHOD(void paint_background (const Glib::RefPtr<Graphic::Context>& inContext), maia_item_paint_background, errthrow);
 
         public:
+            typedef sigc::slot<void> SlotRootChanged;
+
             _WRAP_METHOD(Glib::ustring get_name () const, maia_item_get_name)
             _WRAP_METHOD(bool is_packable () const, maia_item_get_is_packable)
             _WRAP_METHOD(bool is_movable () const, maia_item_get_is_movable)
@@ -120,6 +122,8 @@ namespace Maia
             _WRAP_METHOD(void update (const Glib::RefPtr<Graphic::Context>& inContext, const Glib::RefPtr<Graphic::Region>& inAllocation), maia_item_update, errthrow)
             _WRAP_METHOD(void convert_to_item_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_item_space)
             _WRAP_METHOD(void convert_to_root_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_root_space)
+
+            sigc::connection connect_root_changed (SlotRootChanged inSlot);
 
             _WRAP_SIGNAL(bool grab_pointer (const Glib::RefPtr<Item>& inItem), "grab-pointer", no_default_handler)
             _WRAP_SIGNAL(void ungrab_pointer (const Glib::RefPtr<Item>& inItem), "ungrab-pointer", no_default_handler)

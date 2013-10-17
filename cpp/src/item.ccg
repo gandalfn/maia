@@ -21,4 +21,33 @@
 
 namespace Maia
 {
+    static void
+    root_changed_callback (GObject*, GParamSpec*, void* inpData)
+    {
+        if (inpData)
+        {
+            Item::SlotRootChanged* pSlot = (Item::SlotRootChanged*)inpData;
+
+            (*pSlot) ();
+        }
+    }
+
+    static void
+    root_changed_destroy_notify_handler (void* inpData, GClosure*)
+    {
+        Item::SlotRootChanged* pSlot = (Item::SlotRootChanged*)inpData;
+        delete pSlot;
+    }
+
+    sigc::connection
+    Item::connect_root_changed (SlotRootChanged inSlot)
+    {
+        SlotRootChanged* pSlot = new SlotRootChanged (inSlot);
+        const Glib::ustring notify_signal_name = "notify::root";
+
+        g_signal_connect_data (gobj(), notify_signal_name.c_str(), (GCallback)(&root_changed_callback),
+                               pSlot,  &root_changed_destroy_notify_handler, G_CONNECT_AFTER);
+
+        return sigc::connection(*pSlot);
+    }
 }
