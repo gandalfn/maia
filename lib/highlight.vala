@@ -76,7 +76,7 @@ public class Maia.Highlight : ToggleButton
         inContext.save ();
         {
             // Translate to align in center
-            inContext.translate (Graphic.Point (geometry.extents.size.width / 2, geometry.extents.size.height / 2));
+            inContext.translate (Graphic.Point (area.extents.size.width / 2, area.extents.size.height / 2));
             inContext.translate (Graphic.Point (-size_requested.width / 2, -size_requested.height / 2));
 
             // Paint hightlight if active
