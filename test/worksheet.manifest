@@ -103,7 +103,7 @@ Document.worksheet {
             yexpand: false;
             right-padding: 5;
             left-padding: 5;
-            size: 64, 64;
+            size: 128, 64;
             //filename: "/home/nicolas/Bureau/logo-ssi.png";
             //icon-name: "gnome-run";
             [

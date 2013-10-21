@@ -105,6 +105,7 @@ internal class Maia.Cairo.ImagePng : Graphic.ImagePng
             {
                 // Calculate the transform
                 double scale = double.max ((double)image_surface.get_width () / m_Size.width, (double)image_surface.get_height () / m_Size.height);
+                m_Transform.translate (((image_surface.get_width () / scale) - m_Size.width) / 2, ((image_surface.get_height () / scale) - m_Size.height) / 2);
                 m_Transform.scale (scale, scale);
             }
 

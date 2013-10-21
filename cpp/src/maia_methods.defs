@@ -9399,6 +9399,15 @@
   )
 )
 
+(define-method get_item_visible_area
+  (of-object "MaiaDocument")
+  (c-name "maia_document_get_item_visible_area")
+  (return-type "MaiaGraphicRegion*")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
 (define-method get_format
   (of-object "MaiaDocument")
   (c-name "maia_document_get_format")
@@ -9553,6 +9562,12 @@
   (parameters
     '("MaiaItem*" "value")
   )
+)
+
+(define-method get_visible_area
+  (of-object "MaiaDocument")
+  (c-name "maia_document_get_visible_area")
+  (return-type "MaiaGraphicRegion*")
 )
 
 (define-function maia_shortcut_get_type

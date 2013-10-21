@@ -128,6 +128,7 @@ namespace Maia.Cairo
                 }
                 document.draw_page (ctx, cpt + 1);
                 pdf_surface.show_page ();
+                pdf_surface.flush ();
                 GLib.Idle.add (generate_report.callback);
                 yield;
             }
@@ -141,5 +142,8 @@ namespace Maia.Cairo
         }
         pdf_surface.flush ();
         pdf_surface.finish ();
+
+        GLib.Idle.add (generate_report.callback);
+        yield;
     }
 }

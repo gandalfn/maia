@@ -88,6 +88,19 @@ public class Maia.Document : Item
 
     public unowned Item? item_over_pointer { get; set; default = null; }
 
+    public Graphic.Region? visible_area {
+        owned get {
+            Graphic.Region? ret = area.copy ();
+
+            if (ret != null)
+            {
+                ret.translate (position);
+            }
+
+            return ret;
+        }
+    }
+
     public Core.List<unowned Shortcut>? shortcuts {
         get {
             return m_Shortcuts;
@@ -669,10 +682,6 @@ public class Maia.Document : Item
             // Clear visible page list
             m_VisiblePages.clear ();
 
-            // Get visible area
-            var visible_area = geometry.copy ();
-            visible_area.translate (position);
-
             // Update each page
             foreach (unowned Page page in m_Pages)
             {
@@ -1218,5 +1227,30 @@ public class Maia.Document : Item
             }
         }
         inContext.restore ();
+    }
+
+    public Graphic.Region
+    get_item_visible_area (Item inItem)
+    {
+        Graphic.Region ret = new Graphic.Region ();
+
+        if (inItem.visible && inItem.area != null)
+        {
+            Graphic.Point start = convert_to_item_space (inItem.convert_to_root_space (Graphic.Point (0, 0)));
+            Graphic.Point end = convert_to_item_space (inItem.convert_to_root_space (Graphic.Point (inItem.area.extents.size.width, inItem.area.extents.size.height)));
+            Graphic.Rectangle item_area = Graphic.Rectangle (start.x, start.y, start.x + end.x, start.y + end.y);
+
+            ret = new Graphic.Region (item_area);
+            ret.intersect (visible_area);
+
+            if (!ret.is_empty ())
+            {
+                start = inItem.convert_to_item_space (convert_to_root_space (Graphic.Point (ret.extents.origin.x, ret.extents.origin.y)));
+                end = inItem.convert_to_item_space (convert_to_root_space (Graphic.Point (ret.extents.origin.x + ret.extents.size.width, ret.extents.origin.y + ret.extents.size.height)));
+                ret = new Graphic.Region (Graphic.Rectangle (start.x, start.y, start.x + end.x, start.y + end.y));
+            }
+        }
+
+        return ret;
     }
 }

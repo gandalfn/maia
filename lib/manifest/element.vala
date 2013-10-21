@@ -125,6 +125,8 @@ public interface Maia.Manifest.Element : Core.Object
                 // Add tag and characters in not dumpable attributes
                 node.not_dumpable_attributes.insert ("tag");
                 node.not_dumpable_attributes.insert ("characters");
+                node.not_dumpable_attributes.insert ("manifest-path");
+                node.not_dumpable_attributes.insert ("manifest-styles");
             }
         }
 

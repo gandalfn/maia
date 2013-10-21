@@ -147,6 +147,7 @@ internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
                         {
                             // Calculate the transform
                             double scale = double.max ((double)handle.width / m_Size.width, (double)handle.height / m_Size.height);
+                            m_Transform.translate (((handle.width / scale) - m_Size.width) / 2, ((handle.height / scale) - m_Size.height) / 2);
                             m_Transform.scale (scale, scale);
                         }
                     }

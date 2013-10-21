@@ -290,16 +290,55 @@ public interface Maia.Canvas : Drawable
     {
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "Add item %s", inItem.name);
 
+        unowned DrawingArea drawingArea = null;
         if (inParent)
         {
             if (inItem != null && focus_item != null && focus_item.parent != null)
             {
                 focus_item.parent.add (inItem);
+
+                drawingArea = focus_item.parent as DrawingArea;
+                if (drawingArea != null && inItem.can_focus)
+                {
+                    inItem.grab_focus (inItem);
+                }
             }
         }
         else if (inItem != null && focus_item != null)
         {
             focus_item.add (inItem);
+
+            drawingArea = focus_item as DrawingArea;
+
+            if (drawingArea != null && inItem.can_focus)
+            {
+                inItem.grab_focus (inItem);
+            }
+        }
+
+        unowned Document? doc = root as Document;
+        if (drawingArea != null && doc != null)
+        {
+            Graphic.Region area = doc.get_item_visible_area (drawingArea);
+            Graphic.Point position = Graphic.Point (area.extents.size.width / 2, area.extents.size.height / 2);
+
+            if (area.is_empty ())
+            {
+                var visibleArea = doc.visible_area;
+                doc.scroll_to (drawingArea);
+                var startDrawingArea = drawingArea.convert_to_root_space (Graphic.Point (0, 0));
+                position = inItem.convert_to_item_space (Graphic.Point (startDrawingArea.x + (visibleArea.extents.size.width / 2),
+                                                                        startDrawingArea.y + (visibleArea.extents.size.height / 2)));
+            }
+
+            if (inItem is Arrow)
+            {
+                ((Arrow)inItem).start = position;
+            }
+            else
+            {
+                inItem.position = position;
+            }
         }
     }
 

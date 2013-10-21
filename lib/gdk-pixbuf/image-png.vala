@@ -110,6 +110,7 @@ internal class Maia.GdkPixbuf.ImagePng : Graphic.ImagePng, Image
                 {
                     // Calculate the transform
                     double scale = double.max ((double)m_Pixbuf.width / m_Size.width, (double)m_Pixbuf.height / m_Size.height);
+                    m_Transform.translate (((m_Pixbuf.width / scale) - m_Size.width) / 2, ((m_Pixbuf.height / scale) - m_Size.height) / 2);
                     m_Transform.scale (scale, scale);
                 }
 

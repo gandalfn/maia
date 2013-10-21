@@ -346,7 +346,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         // Add not dumpable attributes
         not_dumpable_attributes.insert ("name");
-        not_dumpable_attributes.insert ("origin");
         not_dumpable_attributes.insert ("geometry");
         not_dumpable_attributes.insert ("damaged");
         not_dumpable_attributes.insert ("is-packable");

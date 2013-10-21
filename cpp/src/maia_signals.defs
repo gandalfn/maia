@@ -1125,6 +1125,15 @@
   (construct-only #f)
 )
 
+(define-property visible-area
+  (of-object "MaiaDocument")
+  (prop-type "GParamObject")
+  (docs "visible-area")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
 (define-property shortcuts
   (of-object "MaiaDocument")
   (prop-type "GParamObject")
