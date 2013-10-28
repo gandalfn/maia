@@ -4985,6 +4985,9 @@
   (of-object "MaiaManifestElement")
   (c-name "maia_manifest_element_dump")
   (return-type "gchar*")
+  (parameters
+    '("const-gchar*" "inPrefix")
+  )
 )
 
 (define-method get_tag
@@ -5273,6 +5276,12 @@
   (of-object "MaiaGraphicMatrix")
   (c-name "maia_graphic_matrix_init_identity")
   (return-type "none")
+)
+
+(define-method is_identity
+  (of-object "MaiaGraphicMatrix")
+  (c-name "maia_graphic_matrix_is_identity")
+  (return-type "gboolean")
 )
 
 (define-function maia_graphic_error_quark
@@ -8284,6 +8293,21 @@
   )
 )
 
+(define-method get_xlimp
+  (of-object "MaiaItemPackable")
+  (c-name "maia_item_packable_get_xlimp")
+  (return-type "gboolean")
+)
+
+(define-method set_xlimp
+  (of-object "MaiaItemPackable")
+  (c-name "maia_item_packable_set_xlimp")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
 (define-method get_xalign
   (of-object "MaiaItemPackable")
   (c-name "maia_item_packable_get_xalign")
@@ -8338,6 +8362,21 @@
 (define-method set_yshrink
   (of-object "MaiaItemPackable")
   (c-name "maia_item_packable_set_yshrink")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
+(define-method get_ylimp
+  (of-object "MaiaItemPackable")
+  (c-name "maia_item_packable_get_ylimp")
+  (return-type "gboolean")
+)
+
+(define-method set_ylimp
+  (of-object "MaiaItemPackable")
+  (c-name "maia_item_packable_set_ylimp")
   (return-type "none")
   (parameters
     '("gboolean" "value")

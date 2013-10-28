@@ -329,21 +329,8 @@ public class Maia.Button : Grid
     }
 
     internal override string
-    to_string ()
+    dump_childs (string inPrefix)
     {
-        string ret = dump_declaration ();
-
-        if (ret != "")
-        {
-            ret += " {\n";
-
-            ret += dump_attributes ();
-
-            ret += dump_characters ();
-
-            ret += "}\n";
-        }
-
-        return ret;
+        return "";
     }
 }

@@ -61,6 +61,11 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             if (value != null)
             {
                 parent.notify["root"].connect(on_parent_root_changed);
+
+                if (parent is DrawingArea && !(this is Arrow) && !(this is Toolbox))
+                {
+                    not_dumpable_attributes.remove ("position");
+                }
             }
 
             // Update transform matrix
@@ -105,6 +110,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         set {
             m_IsMovable = value;
         }
+        default = false;
     }
 
     public bool is_resizable {
@@ -114,6 +120,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         set {
             m_IsResizable = value;
         }
+        default = false;
     }
 
     public virtual bool can_focus  { get; set; default = false; }
@@ -136,6 +143,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 {
                     on_show ();
                 }
+
+                on_visible_changed ();
             }
         }
         default = true;
@@ -216,6 +225,14 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
         set {
             m_Size = value;
+            if (!m_Size.is_empty ())
+            {
+                not_dumpable_attributes.remove ("size");
+            }
+            else
+            {
+                not_dumpable_attributes.insert ("size");
+            }
         }
     }
 
@@ -345,8 +362,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     construct
     {
         // Add not dumpable attributes
+        not_dumpable_attributes.insert ("tag");
         not_dumpable_attributes.insert ("name");
         not_dumpable_attributes.insert ("geometry");
+        not_dumpable_attributes.insert ("allocate-on-child-add-remove");
         not_dumpable_attributes.insert ("damaged");
         not_dumpable_attributes.insert ("is-packable");
         not_dumpable_attributes.insert ("size-requested");
@@ -354,6 +373,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         not_dumpable_attributes.insert ("pointer-over");
         not_dumpable_attributes.insert ("can-focus");
         not_dumpable_attributes.insert ("have-focus");
+        not_dumpable_attributes.insert ("position");
+        not_dumpable_attributes.insert ("size");
+        not_dumpable_attributes.insert ("transform");
 
         // check if object is packable
         m_IsPackable = this is ItemPackable;
@@ -390,9 +412,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         // connect on move and resize
         notify["position"].connect (on_move);
         notify["size"].connect (on_resize);
-
-        // connect on visible changed
-        notify["visible"].connect (on_visible_changed);
     }
 
     ~Item ()
@@ -528,6 +547,16 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         else
         {
             geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
+        }
+
+        // Do not dump transform if is identity
+        if (!transform.matrix.is_identity ())
+        {
+            not_dumpable_attributes.remove ("transform");
+        }
+        else
+        {
+            not_dumpable_attributes.insert ("transform");
         }
     }
 
@@ -825,10 +854,52 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         return ret;
     }
 
+    internal virtual string
+    dump_childs (string inPrefix)
+    {
+        string ret = "";
+
+        // dump styles
+        if (parent == null)
+        {
+            foreach (unowned Manifest.Style style in manifest_styles)
+            {
+                ret += style.dump (inPrefix);
+            }
+        }
+
+        // dump childs
+        foreach (unowned Core.Object child in this)
+        {
+            if (child is Manifest.Element)
+            {
+                ret += inPrefix + (child as Manifest.Element).dump (inPrefix) + "\n";
+            }
+        }
+
+        return ret;
+    }
+
+    internal virtual string
+    dump_characters (string inPrefix)
+    {
+        string ret = "";
+
+        // dump characters
+        if (characters != null)
+        {
+            ret += inPrefix + "[\n";
+            ret += inPrefix + "\t" + characters + "\n";
+            ret += inPrefix + "]\n";
+        }
+
+        return ret;
+    }
+
     internal override string
     to_string ()
     {
-        return dump ();
+        return dump ("");
     }
 
     internal virtual void

@@ -69,8 +69,20 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
             register_transform_func (typeof (Graphic.Point), attributes_to_point);
             register_transform_func (typeof (Graphic.Size),  attributes_to_size);
 
+            GLib.Value.register_transform_func (typeof (Graphic.Point), typeof (string), point_to_string);
+            GLib.Value.register_transform_func (typeof (Graphic.Size), typeof (string), size_to_string);
+
             s_SimpleTypeRegistered = true;
         }
+    }
+
+    private static void
+    point_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (Graphic.Point)))
+    {
+        Graphic.Point val = (Graphic.Point)inSrc;
+
+        outDest = val.to_string ();
     }
 
     private static void
@@ -97,6 +109,15 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
         Log.debug (GLib.Log.METHOD, Log.Category.MANIFEST_ATTRIBUTE, "transform to %s", point.to_string ());
 
         outValue = point;
+    }
+
+    static void
+    size_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (Graphic.Size)))
+    {
+        Graphic.Size val = (Graphic.Size)inSrc;
+
+        outDest = val.to_string ();
     }
 
     private static void

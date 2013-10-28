@@ -96,6 +96,12 @@ public struct Maia.Graphic.Matrix
         y0 *= inScalar;
     }
 
+    public bool
+    is_identity ()
+    {
+        return xx == 1 && yx == 0 && yy == 1 && xy == 0 && x0 == 0 && y0 == 0;
+    }
+
     public void
     invert () throws Graphic.Error
     {

@@ -32,4 +32,10 @@ public class Maia.Graphic.ImageSvg : Graphic.Image
     {
         GLib.Object (data: inData, size: inSize);
     }
+
+    internal override string
+    to_string ()
+    {
+        return data != null ? "svg ('" + data + "')" : base.to_string ();
+    }
 }

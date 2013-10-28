@@ -313,4 +313,38 @@ public class Maia.Tool : Button
     {
         damage ();
     }
+
+    internal override string
+    dump_characters (string inPrefix)
+    {
+        string ret = "";
+
+        // parse template
+        try
+        {
+            if (m_Document == null && characters != null && characters.length > 0)
+            {
+                m_Document = new Manifest.Document.from_buffer (characters, characters.length);
+            }
+
+            if (m_Document != null)
+            {
+                Item? item = m_Document.get (null) as Item;
+
+                if (item != null)
+                {
+                    ret += inPrefix + "[\n";
+                    ret += inPrefix + "\t" + item.dump (inPrefix + "\t");
+                    ret += inPrefix + "]\n";
+                }
+            }
+        }
+        catch (Core.ParseError err)
+        {
+            Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING,
+                          "Error on parsing cell %s: %s", name, err.message);
+        }
+
+        return ret;
+    }
 }

@@ -78,7 +78,7 @@ namespace Maia
                 }
 
                 _WRAP_METHOD(void read_manifest (const Glib::RefPtr<Document>& inDocument), maia_manifest_element_read_manifest, errthrow)
-                _WRAP_METHOD(Glib::ustring dump (), maia_manifest_element_dump)
+                _WRAP_METHOD(Glib::ustring dump (const Glib::ustring& inPrefix), maia_manifest_element_dump)
 
                 _IGNORE(maia_manifest_element_register_create_func)
                 static void register_create_func (const Glib::ustring& inTag, SlotCreateFunc inFunc);

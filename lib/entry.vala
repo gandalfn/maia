@@ -41,11 +41,13 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     internal bool   xexpand { get; set; default = true; }
     internal bool   xfill   { get; set; default = true; }
     internal bool   xshrink { get; set; default = false; }
+    internal bool   xlimp   { get; set; default = false; }
     internal double xalign  { get; set; default = 0.5; }
 
     internal bool   yexpand { get; set; default = true; }
     internal bool   yfill   { get; set; default = true; }
     internal bool   yshrink { get; set; default = false; }
+    internal bool   ylimp   { get; set; default = false; }
     internal double yalign  { get; set; default = 0.5; }
 
     internal double top_padding    { get; set; default = 0; }
@@ -66,6 +68,8 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     // methods
     construct
     {
+        not_dumpable_attributes.insert ("size");
+
         stroke_pattern = new Graphic.Color (0, 0, 0);
         background_pattern = new Graphic.Color (0, 0, 0);
 

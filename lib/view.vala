@@ -481,6 +481,48 @@ public class Maia.View : Maia.Grid
         base.paint (inContext, inArea);
     }
 
+    internal override string
+    dump_characters (string inPrefix)
+    {
+        string ret = "";
+
+        // parse template
+        try
+        {
+            if (m_Document == null && characters != null && characters.length > 0)
+            {
+                m_Document = new Manifest.Document.from_buffer (characters, characters.length);
+                m_Document.path = manifest_path;
+                m_Document.styles = manifest_styles;
+            }
+
+            if (m_Document != null)
+            {
+                ItemPackable? item = m_Document.get (null) as ItemPackable;
+
+                if (item != null)
+                {
+                    ret += inPrefix + "[\n";
+                    ret += inPrefix + "\t" + item.dump (inPrefix + "\t");
+                    ret += inPrefix + "]\n";
+                }
+            }
+        }
+        catch (Core.ParseError err)
+        {
+            Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING,
+                          "Error on parsing cell %s: %s", name, err.message);
+        }
+
+        return ret;
+    }
+
+    internal override string
+    dump_childs (string inPrefix)
+    {
+        return "";
+    }
+
     public void
     set_property_func (owned SetPropertyFunc? inFunc)
     {

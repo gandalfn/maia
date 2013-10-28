@@ -69,7 +69,7 @@ public interface Maia.Manifest.Element : Core.Object
         get {
             if (s_QuarkNotDumpableAttributes == 0)
             {
-                s_QuarkNotDumpableAttributes = GLib.Quark.from_string ("MaiaManifestElementNotDumpableAttributes");
+                s_QuarkNotDumpableAttributes = GLib.Quark.from_string ("%sNotDumpableAttributes".printf (get_type ().name ()));
             }
 
             unowned Core.Set<string>? ret = get_qdata<Core.Set<string>> (s_QuarkNotDumpableAttributes);
@@ -181,22 +181,37 @@ public interface Maia.Manifest.Element : Core.Object
             if (param != null)
             {
                 GLib.Value val = GLib.Value (param.value_type);
-                get_property (name, ref val);
 
-                if (!param.value_defaults (val))
+                string? bind_property = get_data<string> ("MaiaElementDumpPropertyBind");
+                if (bind_property != null)
                 {
-                    if (val.type () != typeof (string))
+                    string[] split = bind_property.split ("@");
+                    if (split.length > 1 && split[0] == inName)
                     {
-                        GLib.Value o = GLib.Value (typeof (string));
-                        val.transform (ref o);
-                        outRet = (string)o;
+                        outRet = "@" + split[1];
+                        ret = true;
                     }
-                    else
-                    {
-                        outRet = "'%s'".printf (((string)val).replace ("'", "\\'"));
-                    }
+                }
 
-                    ret = true;
+                if (!ret)
+                {
+                    get_property (name, ref val);
+
+                    if (!param.value_defaults (val))
+                    {
+                        if (val.type () != typeof (string))
+                        {
+                            GLib.Value o = GLib.Value (typeof (string));
+                            val.transform (ref o);
+                            outRet = (string)o;
+                        }
+                        else
+                        {
+                            outRet = "'%s'".printf (((string)val).replace ("'", "\\'"));
+                        }
+
+                        ret = true;
+                    }
                 }
             }
         }
@@ -331,8 +346,8 @@ public interface Maia.Manifest.Element : Core.Object
         }
     }
 
-    internal string
-    dump_declaration ()
+    internal virtual string
+    dump_declaration (string inPrefix)
     {
         string ret = "";
         string attr;
@@ -345,8 +360,8 @@ public interface Maia.Manifest.Element : Core.Object
         return ret;
     }
 
-    internal string
-    dump_attributes ()
+    internal virtual string
+    dump_attributes (string inPrefix)
     {
         string ret = "";
 
@@ -359,7 +374,7 @@ public interface Maia.Manifest.Element : Core.Object
                 string attr;
                 if (get_attribute (param_name, out attr) && attr != null)
                 {
-                    ret += "\t%s: %s;\n".printf (param_name, attr);
+                    ret += inPrefix + "%s: %s;\n".printf (param_name, attr);
                 }
             }
         }
@@ -367,8 +382,8 @@ public interface Maia.Manifest.Element : Core.Object
         return ret;
     }
 
-    internal string
-    dump_childs ()
+    internal virtual string
+    dump_childs (string inPrefix)
     {
         string ret = "";
 
@@ -377,56 +392,45 @@ public interface Maia.Manifest.Element : Core.Object
         {
             if (child is Element)
             {
-                string[] child_dump = (child as Element).dump ().split ("\n");
-                foreach (unowned string line in child_dump)
-                {
-                    if (line != "")
-                    {
-                        ret += "\t" + line + "\n";
-                    }
-                }
+                ret += inPrefix + (child as Element).dump (inPrefix) + "\n";
             }
         }
 
         return ret;
     }
 
-    internal string
-    dump_characters ()
+    internal virtual string
+    dump_characters (string inPrefix)
     {
         string ret = "";
 
         // dump characters
         if (characters != null)
         {
-            string[] lines = characters.split ("\n");
-            ret += "\t[\n";
-            foreach (unowned string line in lines)
-            {
-                ret += "\t\t" + line.strip () + "\n";
-            }
-            ret +="\n\t]\n";
+            ret += inPrefix + "[\n";
+            ret += inPrefix + "\t" + characters + "\n";
+            ret += inPrefix + "]\n";
         }
 
         return ret;
     }
 
     public string
-    dump ()
+    dump (string inPrefix)
     {
-        string ret = dump_declaration ();
+        string ret = dump_declaration (inPrefix);
 
         if (ret != "")
         {
             ret += " {\n";
 
-            ret += dump_attributes ();
+            ret += dump_attributes (inPrefix + "\t");
 
-            ret += dump_childs ();
+            ret += dump_childs (inPrefix + "\t");
 
-            ret += dump_characters ();
+            ret += dump_characters (inPrefix + "\t");
 
-            ret += "}\n";
+            ret += inPrefix + "}\n";
         }
 
         return ret;

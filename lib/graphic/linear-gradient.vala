@@ -79,4 +79,24 @@ public class Maia.Graphic.LinearGradient : Gradient
             throw new Manifest.Error.MISSING_FUNCTION_ARGUMENT ("Missing argument in %s function", inFunction.to_string ());
         }
     }
+
+    internal override string
+    to_string ()
+    {
+        string ret = "linear-gradient (";
+
+        ret += "%s, %s".printf (m_Start.to_string (), m_End.to_string ());
+
+        foreach (unowned Core.Object child in this)
+        {
+            unowned Gradient.ColorStop? color = child as Gradient.ColorStop;
+            if (color != null)
+            {
+                ret += ", %s".printf (color.to_string ());
+            }
+        }
+        ret += ")";
+
+        return ret;
+    }
 }

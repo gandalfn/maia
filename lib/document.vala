@@ -139,8 +139,10 @@ public class Maia.Document : Item
     construct
     {
         // Add not dumpable attributes
+        not_dumpable_attributes.insert ("current-page");
         not_dumpable_attributes.insert ("nb-pages");
         not_dumpable_attributes.insert ("item-over-pointer");
+        not_dumpable_attributes.insert ("size");
 
         // create pages list
         m_Pages = new Core.List<Page> ();
@@ -570,7 +572,7 @@ public class Maia.Document : Item
     on_attribute_bind_added (Manifest.AttributeBind inAttribute, string inProperty)
     {
         string name = inAttribute.get ();
-        if (name == "page_num" || name == "nb_pages")
+        if (name == "nb_pages")
         {
             string signal_name = "notify::nb_pages";
 
@@ -578,11 +580,11 @@ public class Maia.Document : Item
             {
                 inAttribute.bind (this, signal_name, inProperty, on_bind_value_changed);
             }
+        }
 
-            if (name == "page_num")
-            {
-                inAttribute.owner.set_qdata<unowned Document> (s_PageNumQuark, this);
-            }
+        if (name == "page_num")
+        {
+            inAttribute.owner.set_qdata<unowned Document> (s_PageNumQuark, this);
         }
     }
 
@@ -1199,6 +1201,44 @@ public class Maia.Document : Item
         }
 
         GLib.Signal.stop_emission (this, mc_IdScrollEvent, 0);
+
+        return ret;
+    }
+
+    internal override string
+    dump_childs (string inPrefix)
+    {
+        string ret = "";
+
+        // dump shortcuts
+        foreach (unowned Shortcut shortcut in m_Shortcuts)
+        {
+            ret += inPrefix + shortcut.dump (inPrefix) + "\n";
+        }
+
+        // dump popup
+        foreach (unowned Popup popup in m_Popups)
+        {
+            if (popup is Toolbox)
+            {
+                ret += inPrefix + popup.dump (inPrefix) + "\n";
+            }
+        }
+
+        // dump all others childs
+        foreach (unowned Core.Object child in this)
+        {
+            if (child is Manifest.Element && !(child is Shortcut) && !(child is Popup) && !(child is Item))
+            {
+                ret += inPrefix + (child as Manifest.Element).dump (inPrefix) + "\n";
+            }
+        }
+
+        // dump item
+        foreach (unowned Item item in m_Items)
+        {
+            ret += inPrefix + item.dump (inPrefix) + "\n";
+        }
 
         return ret;
     }

@@ -32,11 +32,13 @@ public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
     internal bool   xexpand { get; set; default = true; }
     internal bool   xfill   { get; set; default = true; }
     internal bool   xshrink { get; set; default = false; }
+    internal bool   xlimp   { get; set; default = false; }
     internal double xalign  { get; set; default = 0.5; }
 
     internal bool   yexpand { get; set; default = true; }
     internal bool   yfill   { get; set; default = true; }
     internal bool   yshrink { get; set; default = false; }
+    internal bool   ylimp   { get; set; default = false; }
     internal double yalign  { get; set; default = 0.5; }
 
     internal double top_padding    { get; set; default = 0; }
@@ -109,6 +111,8 @@ public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
     // methods
     construct
     {
+        not_dumpable_attributes.insert ("size");
+
         string id_label = "%s-label".printf (name);
 
         var label_item = new Label (id_label, label);
@@ -156,5 +160,11 @@ public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
         toggled ();
 
         return true;
+    }
+
+    internal override string
+    dump_childs (string inPrefix)
+    {
+        return "";
     }
 }

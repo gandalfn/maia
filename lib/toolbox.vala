@@ -94,24 +94,13 @@ public class Maia.Toolbox : Popup
     }
 
     internal override string
-    to_string ()
+    dump_childs (string inPrefix)
     {
-        string ret = dump_declaration ();
+        string ret = "";
 
-        if (ret != "")
+        if (content != null)
         {
-            ret += " {\n";
-
-            ret += dump_attributes ();
-
-            if (content != null)
-            {
-                ret += (content as Item).dump_childs ();
-            }
-
-            ret += dump_characters ();
-
-            ret += "}\n";
+            ret += (content as Item).dump_childs (inPrefix);
         }
 
         return ret;

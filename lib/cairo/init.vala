@@ -55,7 +55,6 @@ namespace Maia.Cairo
         // Repaginate document
         inDocument.geometry = null;
         var doc_size = inDocument.size;
-        inDocument.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, doc_size.width, doc_size.height)));
 
         // Draw document pages
         for (int cpt = 0; cpt < inDocument.nb_pages; ++cpt)
@@ -64,6 +63,7 @@ namespace Maia.Cairo
             {
                 return;
             }
+            inDocument.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, doc_size.width, doc_size.height)));
             inDocument.draw_page (ctx, cpt + 1);
             pdf_surface.show_page ();
             GLib.Idle.add (save_document.callback);
@@ -116,7 +116,6 @@ namespace Maia.Cairo
             // Repaginate document
             document.position = Graphic.Point (0, 0);
             doc_size = document.size;
-            document.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, doc_size.width, doc_size.height)));
             start += document.nb_pages;
 
             // Draw document pages
@@ -126,6 +125,7 @@ namespace Maia.Cairo
                 {
                     return;
                 }
+                document.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, doc_size.width, doc_size.height)));
                 document.draw_page (ctx, cpt + 1);
                 pdf_surface.show_page ();
                 pdf_surface.flush ();

@@ -45,6 +45,8 @@ namespace Maia
             _WRAP_VFUNC(void set_xfill (bool inFill), set_xfill)
             _WRAP_VFUNC(bool get_xshrink (), get_xshrink)
             _WRAP_VFUNC(void set_xshrink (bool inShrink), set_xshrink)
+            _WRAP_VFUNC(bool get_xlimp (), get_xlimp)
+            _WRAP_VFUNC(void set_xlimp (bool inLimp), set_xlimp)
             _WRAP_VFUNC(double get_xalign (), get_xalign)
             _WRAP_VFUNC(void set_xalign (double inAlign), set_xalign)
 
@@ -54,6 +56,8 @@ namespace Maia
             _WRAP_VFUNC(void set_yfill (bool inFill), set_yfill)
             _WRAP_VFUNC(bool get_yshrink (), get_yshrink)
             _WRAP_VFUNC(void set_yshrink (bool inShrink), set_yshrink)
+            _WRAP_VFUNC(bool get_ylimp (), get_ylimp)
+            _WRAP_VFUNC(void set_ylimp (bool inLimp), set_ylimp)
             _WRAP_VFUNC(double get_yalign (), get_yalign)
             _WRAP_VFUNC(void set_yalign (double inAlign), set_yalign)
 
@@ -83,7 +87,9 @@ namespace Maia
             _WRAP_METHOD(bool get_xfill () const, maia_item_packable_get_xfill)
             _WRAP_METHOD(void set_xfill (bool inFill), maia_item_packable_set_xfill)
             _WRAP_METHOD(bool get_xshrink () const, maia_item_packable_get_xshrink)
-            _WRAP_METHOD(void set_xshrink (bool inFill), maia_item_packable_set_xshrink)
+            _WRAP_METHOD(void set_xshrink (bool inShrink), maia_item_packable_set_xshrink)
+            _WRAP_METHOD(bool get_xlimp () const, maia_item_packable_get_xlimp)
+            _WRAP_METHOD(void set_xlimp (bool inLimp), maia_item_packable_set_xlimp)
             _WRAP_METHOD(double get_xalign () const, maia_item_packable_get_xalign)
             _WRAP_METHOD(void set_xalign (double inAlign), maia_item_packable_set_xalign)
 
@@ -92,7 +98,9 @@ namespace Maia
             _WRAP_METHOD(bool get_yfill () const, maia_item_packable_get_yfill)
             _WRAP_METHOD(void set_yfill (bool inFill), maia_item_packable_set_yfill)
             _WRAP_METHOD(bool get_yshrink () const, maia_item_packable_get_yshrink)
-            _WRAP_METHOD(void set_yshrink (bool inFill), maia_item_packable_set_yshrink)
+            _WRAP_METHOD(void set_yshrink (bool inShrink), maia_item_packable_set_yshrink)
+            _WRAP_METHOD(bool get_ylimp () const, maia_item_packable_get_ylimp)
+            _WRAP_METHOD(void set_ylimp (bool inLimp), maia_item_packable_set_ylimp)
             _WRAP_METHOD(double get_yalign () const, maia_item_packable_get_yalign)
             _WRAP_METHOD(void set_yalign (double inAlign), maia_item_packable_set_yalign)
 
@@ -114,11 +122,13 @@ namespace Maia
             _WRAP_PROPERTY("xexpand", bool)
             _WRAP_PROPERTY("xfill", bool)
             _WRAP_PROPERTY("xshrink", bool)
+            _WRAP_PROPERTY("xlimp", bool)
             _WRAP_PROPERTY("xalign", double)
 
             _WRAP_PROPERTY("yexpand", bool)
             _WRAP_PROPERTY("yfill", bool)
             _WRAP_PROPERTY("yshrink", bool)
+            _WRAP_PROPERTY("ylimp", bool)
             _WRAP_PROPERTY("yalign", double)
 
             _WRAP_PROPERTY("top-padding", double)

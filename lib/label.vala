@@ -37,11 +37,13 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     internal bool   xexpand { get; set; default = true; }
     internal bool   xfill   { get; set; default = true; }
     internal bool   xshrink { get; set; default = true; }
+    internal bool   xlimp   { get; set; default = false; }
     internal double xalign  { get; set; default = 0.5; }
 
     internal bool   yexpand { get; set; default = true; }
     internal bool   yfill   { get; set; default = true; }
     internal bool   yshrink { get; set; default = false; }
+    internal bool   ylimp   { get; set; default = false; }
     internal double yalign  { get; set; default = 0.5; }
 
     internal double top_padding    { get; set; default = 0; }
@@ -158,6 +160,8 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     // methods
     construct
     {
+        not_dumpable_attributes.insert ("size");
+
         // Default color
         stroke_pattern = new Graphic.Color (0, 0, 0);
 
@@ -217,6 +221,8 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     {
         m_Glyph = null;
 
+        var item_size = size;
+
         if (hide_if_empty && visible && (text == null || text.length == 0))
         {
             visible = false;
@@ -237,7 +243,6 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
         }
         else if (area != null)
         {
-            var item_size = size;
             if (area.extents.size.width < item_size.width || area.extents.size.height < item_size.height)
             {
                 var glyph_size = m_Glyph.size;
@@ -254,6 +259,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
 
                 if (area.extents.size.width < m_Glyph.size.width || area.extents.size.height < m_Glyph.size.height)
                 {
+                    m_Glyph = null;
                     geometry = null;
                 }
                 else
@@ -335,7 +341,6 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
                 if (doc != null)
                 {
                     m_Glyph.text = "%u".printf (doc.current_page);
-                    update_layout ();
                 }
 
                 // Reset wrap if any

@@ -62,6 +62,12 @@ public abstract class Maia.Graphic.Gradient : Pattern
         {
             return (int)(offset - (inOther as ColorStop).offset);
         }
+
+        internal override string
+        to_string ()
+        {
+            return "color-stop (%g, %s)".printf (offset, color.to_string ());
+        }
     }
 
     // methods

@@ -103,7 +103,6 @@ public class Maia.Gtk.Shortcut : Maia.Shortcut
     private void
     on_section_visibility_changed (GLib.Object inObject, GLib.ParamSpec inParam)
     {
-        print ("visible %s\n", (inObject as Item).visible.to_string ());
         if (!(inObject as Item).visible)
             m_Button.hide ();
         else

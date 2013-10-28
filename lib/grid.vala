@@ -67,25 +67,43 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                     if (columns.length < nb_columns) columns.resize ((int)nb_columns);
 
                     // cumulate the width of all rows
-                    rows[item.row].size.width += (item_size.width / item.columns) + item.left_padding + item.right_padding;
+                    if (item.visible || !item.xlimp)
+                    {
+                        rows[item.row].size.width += (item_size.width / item.columns) + item.left_padding + item.right_padding;
+                    }
                     // keep the max height of row
-                    rows[item.row].size.height = double.max (rows[item.row].size.height, (item_size.height / item.rows) + item.top_padding + item.bottom_padding);
+                    if (item.visible || !item.ylimp)
+                    {
+                        rows[item.row].size.height = double.max (rows[item.row].size.height, (item_size.height / item.rows) + item.top_padding + item.bottom_padding);
+                    }
 
                     // keep the max width of columns
-                    columns[item.column].size.width = double.max (columns[item.column].size.width, (item_size.width / item.columns) + item.left_padding + item.right_padding);
+                    if (item.visible || !item.xlimp)
+                    {
+                        columns[item.column].size.width = double.max (columns[item.column].size.width, (item_size.width / item.columns) + item.left_padding + item.right_padding);
+                    }
                     // cumulate the height of all columns
-                    columns[item.column].size.height += (item_size.height / item.rows) + item.top_padding + item.bottom_padding;
+                    if (item.visible || !item.ylimp)
+                    {
+                        columns[item.column].size.height += (item_size.height / item.rows) + item.top_padding + item.bottom_padding;
+                    }
 
-                    // count the number of xexpand in row
-                    rows[item.row].nb_expands += item.xexpand ? 1 : 0;
-                    // count the number of shrink in row
-                    rows[item.row].nb_shrinks += item.xshrink ? 1 : 0;
-                    // count the number of yexpand in column
-                    columns[item.column].nb_expands += item.yexpand ? 1 : 0;
-                    // count the number of yexpand in column
-                    columns[item.column].nb_shrinks += item.yshrink ? 1 : 0;
+                    if (item.visible || !item.xlimp)
+                    {
+                        // count the number of xexpand in row
+                        rows[item.row].nb_expands += item.xexpand ? 1 : 0;
+                        // count the number of shrink in row
+                        rows[item.row].nb_shrinks += item.xshrink ? 1 : 0;
+                    }
+                    if (item.visible || !item.ylimp)
+                    {
+                        // count the number of yexpand in column
+                        columns[item.column].nb_expands += item.yexpand ? 1 : 0;
+                        // count the number of yexpand in column
+                        columns[item.column].nb_shrinks += item.yshrink ? 1 : 0;
+                    }
 
-                    if (item.columns > 1)
+                    if (item.columns > 1 && (item.visible || !item.xlimp))
                     {
                         for (int cpt = 1; cpt < item.columns; ++cpt)
                         {
@@ -99,7 +117,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         }
                     }
 
-                    if (item.rows > 1)
+                    if (item.rows > 1 && (item.visible || !item.ylimp))
                     {
                         for (int cpt = 1; cpt < item.rows; ++cpt)
                         {
@@ -387,11 +405,17 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                     extra.width += spacing;
                                 }
 
-                                child_allocations[item.row, item.column].size.width = double.max (child_allocations[item.row, item.column].size.width,
-                                                                                                  columns[item.column].size.width + extra.width);
+                                if (item.visible || !item.xlimp)
+                                {
+                                    child_allocations[item.row, item.column].size.width = double.max (child_allocations[item.row, item.column].size.width,
+                                                                                                      columns[item.column].size.width + extra.width);
+                                }
 
-                                child_allocations[item.row, item.column].size.height = double.max (child_allocations[item.row, item.column].size.height,
-                                                                                                   rows[item.row].size.height + extra.height);
+                                if (item.visible || !item.ylimp)
+                                {
+                                    child_allocations[item.row, item.column].size.height = double.max (child_allocations[item.row, item.column].size.height,
+                                                                                                       rows[item.row].size.height + extra.height);
+                                }
 
                                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s extra: %s", grid.name, item.name, extra.to_string ());
                                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s row: %g, column: %g", grid.name, item.name, columns[item.column].size.width, rows[item.row].size.height);
@@ -718,11 +742,13 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
     internal bool   xexpand { get; set; default = true; }
     internal bool   xfill   { get; set; default = true; }
     internal bool   xshrink { get; set; default = true; }
+    internal bool   xlimp   { get; set; default = false; }
     internal double xalign  { get; set; default = 0.5; }
 
     internal bool   yexpand { get; set; default = true; }
     internal bool   yfill   { get; set; default = true; }
     internal bool   yshrink { get; set; default = false; }
+    internal bool   ylimp   { get; set; default = false; }
     internal double yalign  { get; set; default = 0.5; }
 
     internal double top_padding    { get; set; default = 0; }
@@ -738,6 +764,11 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
     public double grid_line_width   { get; set; default = 0; }
 
     // methods
+    construct
+    {
+        not_dumpable_attributes.insert ("size");
+    }
+
     public Grid (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));

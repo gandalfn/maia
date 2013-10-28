@@ -28,11 +28,13 @@ public interface Maia.ItemPackable : Item
     public abstract bool   xexpand { get; set; default = true; }
     public abstract bool   xfill   { get; set; default = true; }
     public abstract bool   xshrink { get; set; default = false; }
+    public abstract bool   xlimp   { get; set; default = false; }
     public abstract double xalign  { get; set; default = 0.5; }
 
     public abstract bool   yexpand { get; set; default = true; }
     public abstract bool   yfill   { get; set; default = true; }
     public abstract bool   yshrink { get; set; default = false; }
+    public abstract bool   ylimp   { get; set; default = false; }
     public abstract double yalign  { get; set; default = 0.5; }
 
     public abstract double top_padding    { get; set; default = 0; }

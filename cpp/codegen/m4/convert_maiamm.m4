@@ -59,6 +59,8 @@ _CONVERSION(`Graphic::Size&',`MaiaGraphicSize*',`$3.gobj ()')
 _CONVERSION(`MaiaGraphicSize*',`Size&',`Glib::wrap($3)')
 _CONVERSION(`MaiaGraphicSize*',`Graphic::Size&',`Glib::wrap($3)')
 
+_CONVERSION(`const Matrix&',`MaiaGraphicMatrix*',`const_cast <MaiaGraphicMatrix*> ($3.gobj ())')
+
 _CONVERSION(`const Rectangle&',`MaiaGraphicRectangle*',`const_cast <MaiaGraphicRectangle*> ($3.gobj ())')
 _CONVERSION(`Rectangle&',`MaiaGraphicRectangle*',`$3.gobj ()')
 _CONVERSION(`Rectangle',`MaiaGraphicRectangle*',`$3.gobj ()')

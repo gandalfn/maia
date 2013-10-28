@@ -408,19 +408,19 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     }
 
     internal override void
-    show ()
+    map ()
     {
-        base.show ();
+        base.map ();
         timeline.start ();
 
         grab_focus ();
     }
 
     internal override void
-    hide ()
+    unmap ()
     {
         timeline.stop ();
-        base.hide ();
+        base.unmap ();
     }
 
     internal override void

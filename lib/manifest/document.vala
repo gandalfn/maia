@@ -183,6 +183,7 @@ public class Maia.Manifest.Document : Core.Parser
     {
         string property = m_Attribute;
         m_Scanner = new AttributeScanner (owner, ref m_pCurrent, m_pEnd, ';', (a) => {
+            a.owner.set_data<string> ("MaiaElementDumpPropertyBind", property + "@" + a.get ());
             attribute_bind_added (a, property);
         });
 

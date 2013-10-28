@@ -36,6 +36,7 @@ public class Maia.Graphic.Transform : Core.Object
     // static methods
     static construct
     {
+        Manifest.AttributeScanner.register_transform_func (typeof (Transform), attribute_to_transform);
         Manifest.Function.register_transform_func (typeof (Transform), "matrix",    attributes_to_transform);
         Manifest.Function.register_transform_func (typeof (Transform), "translate", attribute_to_translate_transform);
         Manifest.Function.register_transform_func (typeof (Transform), "scale",     attribute_to_scale_transform);
@@ -52,6 +53,54 @@ public class Maia.Graphic.Transform : Core.Object
         Transform val = (Transform)inSrc;
 
         outDest = val.to_string ();
+    }
+
+    static void
+    attribute_to_transform (Manifest.AttributeScanner inScanner, ref GLib.Value outDest) throws Manifest.Error
+    {
+        double xx = 1, yx = 0, xy = 0, yy = 1, x0 = 0, y0 = 0;
+
+        int cpt = 0;
+        foreach (unowned Core.Object child in ((Core.Object)inScanner))
+        {
+            switch (cpt)
+            {
+                case 0:
+                    xx = (double)(child as Manifest.Attribute).transform (typeof (double));
+                    break;
+
+                case 1:
+                    yx = (double)(child as Manifest.Attribute).transform (typeof (double));
+                    break;
+
+                case 2:
+                    xy = (double)(child as Manifest.Attribute).transform (typeof (double));
+                    break;
+
+                case 3:
+                    yy = (double)(child as Manifest.Attribute).transform (typeof (double));
+                    break;
+
+                case 4:
+                    x0 = (double)(child as Manifest.Attribute).transform (typeof (double));
+                    break;
+
+                case 5:
+                    y0 = (double)(child as Manifest.Attribute).transform (typeof (double));
+                    break;
+
+                default:
+                    throw new Manifest.Error.TOO_MANY_FUNCTION_ARGUMENT ("Too many arguments in %s attribute", inScanner.to_string ());
+            }
+            cpt++;
+        }
+
+        if (cpt <= 5)
+        {
+            throw new Manifest.Error.MISSING_FUNCTION_ARGUMENT ("Missing argument in %s attribute", inScanner.to_string ());
+        }
+
+        outDest = new Transform (xx, yx, xy, yy, x0, y0);
     }
 
     static void

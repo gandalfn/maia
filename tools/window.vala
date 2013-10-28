@@ -28,6 +28,7 @@ public class CanvasEditor.Window : Gtk.Window
     private Gtk.ToolButton m_Build;
     private Gtk.ToolButton m_Hide;
     private Gtk.ToolButton m_Toolbox;
+    private Gtk.ToolButton m_Dump;
     private Gtk.Statusbar m_Bar;
     private Gtk.Container m_Preview;
     private Gtk.Container m_PreviewBox;
@@ -98,6 +99,7 @@ public class CanvasEditor.Window : Gtk.Window
                 m_Hide.sensitive = false;
                 m_Build.sensitive = true;
                 m_Toolbox.sensitive = false;
+                m_Dump.sensitive = false;
                 m_Canvas.clear ();
                 m_Shortcuts.@foreach ((w) => {
                     m_Shortcuts.remove (w);
@@ -115,6 +117,11 @@ public class CanvasEditor.Window : Gtk.Window
                         m_Canvas.toolbox.show ();
                 }
             });
+
+            m_Dump = builder.get_object ("dump") as Gtk.ToolButton;
+            m_Dump.sensitive = false;
+            m_Dump.clicked.connect (on_dump);
+
 
             var search_replace = builder.get_object("search_replace") as Gtk.Container;
             m_Search = builder.get_object("search_entry") as Gtk.Entry;
@@ -208,11 +215,24 @@ public class CanvasEditor.Window : Gtk.Window
         m_SaveAs.sensitive = false;
         m_Hide.sensitive = false;
         m_Toolbox.sensitive = false;
+        m_Dump.sensitive = false;
         m_Build.sensitive = false;
         m_PreviewBox.hide ();
         title = "New manifest*";
     }
 
+    private void
+    on_dump ()
+    {
+        if (m_Canvas.root != null)
+        {
+            string dump = m_Canvas.root.to_string ();
+            if (dump != "")
+            {
+                print (@"$dump\n");
+            }
+        }
+    }
 
     private void
     on_open ()
@@ -258,6 +278,7 @@ public class CanvasEditor.Window : Gtk.Window
             m_SaveAs.sensitive = true;
             m_Hide.sensitive = false;
             m_Toolbox.sensitive = false;
+            m_Dump.sensitive = false;
             m_Build.sensitive = true;
             m_PreviewBox.hide ();
 
@@ -347,6 +368,7 @@ public class CanvasEditor.Window : Gtk.Window
                 m_PreviewBox.show ();
                 m_Hide.sensitive = true;
                 m_Toolbox.sensitive = m_Canvas.toolbox != null;
+                m_Dump.sensitive = true;
                 m_Build.sensitive = false;
             }
             catch (GLib.Error err)

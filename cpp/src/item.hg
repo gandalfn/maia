@@ -52,6 +52,8 @@ namespace Maia
             _CTOR_DEFAULT()
 
             _WRAP_VFUNC(Glib::ustring get_tag (), get_tag)
+            _WRAP_VFUNC(Glib::ustring dump_childs (const Glib::ustring& inPrefix), dump_childs)
+            _WRAP_VFUNC(Glib::ustring dump_characters (const Glib::ustring& inPrefix), dump_characters)
 
 #m4 _CONVERSION(`MaiaGraphicContext*', `const Glib::RefPtr<Graphic::Context>&', `Glib::wrap($3, true)')
 #m4 _CONVERSION(`MaiaGraphicRegion*', `const Glib::RefPtr<Graphic::Region>&', `Glib::wrap($3, true)')
