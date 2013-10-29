@@ -590,6 +590,8 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
 
         Graphic.Point point = Graphic.Point (inEvent.x, inEvent.y);
 
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "scroll %s", point.to_string ());
+
         // we have grab pointer item send event
         if (grab_pointer_item != null)
         {

@@ -61,8 +61,16 @@ public class Maia.Graphic.Transform : Core.Object
         double xx = 1, yx = 0, xy = 0, yy = 1, x0 = 0, y0 = 0;
 
         int cpt = 0;
+        bool first = true;
         foreach (unowned Core.Object child in ((Core.Object)inScanner))
         {
+            if (first && child is Manifest.Function)
+            {
+                outDest = (child as Manifest.Function).transform (typeof (Transform));
+                return;
+            }
+            first = false;
+
             switch (cpt)
             {
                 case 0:

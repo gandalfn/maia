@@ -27,7 +27,7 @@ Document.worksheet {
     // Default page format
     format: a4;
     // TODO: fix transform on document
-    //transform: scale(2, 2);
+    transform: scale(2, 2);
     border-width: 5;
     background-pattern: #E0E0E0;
     header: 'header';

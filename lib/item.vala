@@ -1060,7 +1060,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         GLib.Signal.stop_emission (this, mc_IdScrollEvent, 0);
 
-        return false;
+        return this is ItemResizable;
     }
 
     protected virtual void

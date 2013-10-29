@@ -288,9 +288,9 @@ public class Maia.DrawingArea : Group, ItemPackable
     on_button_press_event (uint inButton, Graphic.Point inPoint)
     {
         bool ret = false;
-        if (geometry != null)
+        if (area != null)
         {
-            ret = inPoint in geometry.extents.size;
+            ret = inPoint in area;
         }
 
         if (m_SelectedItemState > SelectedItemState.SELECTED && inButton == 1)
@@ -400,8 +400,7 @@ public class Maia.DrawingArea : Group, ItemPackable
     {
         bool ret = false;
 
-        if (m_SelectedItem != null && m_SelectedItemState == SelectedItemState.RESIZING &&
-            geometry != null && inPoint in geometry)
+        if (m_SelectedItem != null && m_SelectedItemState == SelectedItemState.RESIZING)
         {
             // Transform point to item coordinate space
             Graphic.Point point = m_SelectedItem.convert_to_child_item_space (m_SelectedItem, inPoint);
