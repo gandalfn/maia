@@ -3536,6 +3536,15 @@
   (construct-only #f)
 )
 
+(define-property highlighted-row
+  (of-object "MaiaView")
+  (prop-type "GParamInt")
+  (docs "highlighted-row")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaShortcut
 
 (define-property tag

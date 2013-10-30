@@ -105,6 +105,19 @@ public class Maia.View : Maia.Grid
         }
     }
 
+    public int highlighted_row {
+        get {
+            return m_RowHightlighted;
+        }
+        set {
+            if (m_RowHightlighted != value)
+            {
+                m_RowHightlighted = value;
+                damage ();
+            }
+        }
+    }
+
     // static methods
     private static void
     on_bind_value_changed (Manifest.AttributeBind inAttribute, Object inSrc, string inProperty)

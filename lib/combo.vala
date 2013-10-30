@@ -145,9 +145,22 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     on_button_press (uint inButton, Graphic.Point inPoint)
     {
         if (m_Popup.visible)
+        {
             m_Popup.hide ();
+        }
         else
+        {
             m_Popup.show ();
+            uint row = 0;
+            if (m_Active != null && m_View.get_item_row (m_Active, out row))
+            {
+                m_View.highlighted_row = (int)row;
+            }
+            else
+            {
+                m_View.highlighted_row = -1;
+            }
+        }
 
         damage ();
         return true;

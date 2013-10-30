@@ -52,6 +52,9 @@ namespace Maia
             _WRAP_METHOD(guint get_lines () const, maia_view_get_lines)
             _WRAP_METHOD(void set_lines (guint inLines), maia_view_set_lines)
 
+            _WRAP_METHOD(gint get_highlighted_row () const, maia_view_get_highlighted_row)
+            _WRAP_METHOD(void set_highlighted_row (gint inRow), maia_view_set_highlighted_row)
+
             _WRAP_METHOD(Orientation get_orientation () const, maia_view_get_orientation)
             _WRAP_METHOD(void set_orientation (Orientation inOrientation), maia_view_set_orientation)
 
@@ -73,6 +76,7 @@ namespace Maia
             _WRAP_SIGNAL(void row_clicked (guint inRow), "row-clicked", no_default_handler)
 
             _WRAP_PROPERTY("lines", guint)
+            _WRAP_PROPERTY("highlighted-row", gint)
             _WRAP_PROPERTY("orientation", Orientation)
             _WRAP_PROPERTY("model-name", Glib::ustring)
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)

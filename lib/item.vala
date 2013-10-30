@@ -396,6 +396,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         damage.connect (on_damage);
 
         // connect to trasnform events
+        m_Transform.changed.connect (on_transform_changed);
         notify["transform"].connect (on_transform_changed);
 
         // reorder object on layer change
@@ -439,7 +440,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         if (transform.matrix.xy != 0 || transform.matrix.yx != 0)
         {
             var center = Graphic.Point(m_Size.width / 2.0, m_Size.height / 2.0);
-
             rect.translate (center.invert ());
             rect.transform (transform);
             rect.translate (center);
@@ -546,7 +546,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
         else
         {
-            geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
+            var item_size = size;
+            geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, item_size.width, item_size.height));
         }
 
         // Do not dump transform if is identity
@@ -1060,7 +1061,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         GLib.Signal.stop_emission (this, mc_IdScrollEvent, 0);
 
-        return this is ItemResizable;
+        return this is ItemResizable && parent is DrawingArea;
     }
 
     protected virtual void
