@@ -293,14 +293,7 @@ public class Maia.View : Maia.Grid
 
             if (m_Document != null)
             {
-                ItemPackable? item = m_Document.get (null) as ItemPackable;
-
-                if (item != null)
-                {
-                    item.id = GLib.Quark.from_string ("%s-%u".printf (item.name, inRow));
-                }
-
-                return item;
+                return m_Document.get (null) as ItemPackable;
             }
         }
         catch (Core.ParseError err)
@@ -315,33 +308,36 @@ public class Maia.View : Maia.Grid
     private void
     shift (uint inRow)
     {
+        Core.List<unowned ItemPackable> list = new Core.List<unowned ItemPackable> ();
         foreach (unowned Core.Object child in this)
         {
             if (child is ItemPackable)
             {
                 unowned ItemPackable item = (ItemPackable)child;
+                list.insert (item);
+            }
+        }
 
-                uint pos = 0;
+        foreach (unowned ItemPackable item in list)
+        {
+            uint pos = 0;
 
+            if (orientation == Orientation.HORIZONTAL)
+                pos = (item.column * lines) + item.row;
+            else
+                pos = (item.row * lines) + item.column;
+
+            if (pos >= inRow)
+            {
                 if (orientation == Orientation.HORIZONTAL)
-                    pos = (item.column * lines) + item.row;
-                else
-                    pos = (item.row * lines) + item.column;
-
-                if (pos >= inRow)
                 {
-                    if (orientation == Orientation.HORIZONTAL)
-                    {
-                        item.row = (pos + 1) % lines;
-                        item.column = (pos + 1) / lines;
-                    }
-                    else
-                    {
-                        item.row = (pos + 1) / lines;
-                        item.column = (pos + 1) % lines;
-                    }
-
-                    item.reorder ();
+                    item.row = (pos + 1) % lines;
+                    item.column = (pos + 1) / lines;
+                }
+                else
+                {
+                    item.row = (pos + 1) / lines;
+                    item.column = (pos + 1) % lines;
                 }
             }
         }
@@ -350,33 +346,36 @@ public class Maia.View : Maia.Grid
     private void
     unshift (uint inRow)
     {
+        Core.List<unowned ItemPackable> list = new Core.List<unowned ItemPackable> ();
         foreach (unowned Core.Object child in this)
         {
             if (child is ItemPackable)
             {
                 unowned ItemPackable item = (ItemPackable)child;
+                list.insert (item);
+            }
+        }
 
-                uint pos = 0;
+        foreach (unowned ItemPackable item in list)
+        {
+            uint pos = 0;
 
+            if (orientation == Orientation.HORIZONTAL)
+                pos = (item.column * lines) + item.row;
+            else
+                pos = (item.row * lines) + item.column;
+
+            if (pos > inRow)
+            {
                 if (orientation == Orientation.HORIZONTAL)
-                    pos = (item.column * lines) + item.row;
-                else
-                    pos = (item.row * lines) + item.column;
-
-                if (pos > inRow)
                 {
-                    if (orientation == Orientation.HORIZONTAL)
-                    {
-                        item.row = (pos - 1) % lines;
-                        item.column = (pos - 1) / lines;
-                    }
-                    else
-                    {
-                        item.row = (pos - 1) / lines;
-                        item.column = (pos - 1) % lines;
-                    }
-
-                    item.reorder ();
+                    item.row = (pos - 1) % lines;
+                    item.column = (pos - 1) / lines;
+                }
+                else
+                {
+                    item.row = (pos - 1) / lines;
+                    item.column = (pos - 1) % lines;
                 }
             }
         }
@@ -451,8 +450,6 @@ public class Maia.View : Maia.Grid
 
                 if (pos < inNewOrder.length)
                 {
-                    item.id = GLib.Quark.from_string ("%s-%u".printf (item.name, pos));
-
                     if (orientation == Orientation.HORIZONTAL)
                     {
                         item.row = inNewOrder[pos] % lines;
@@ -463,8 +460,6 @@ public class Maia.View : Maia.Grid
                         item.row = inNewOrder[pos] / lines;
                         item.column = inNewOrder[pos] % lines;
                     }
-
-                    item.reorder ();
                 }
             }
         }

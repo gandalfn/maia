@@ -237,19 +237,29 @@ public class Maia.TestObject : Maia.TestCase
         TestFoo parent = new TestFoo (1);
         unowned TestFoo child_to_reorder = null;
 
-        int pos = Test.rand_int_range (0, NB_OBJECTS);
         for (int cpt = 0; cpt < NB_OBJECTS; ++cpt)
         {
-            TestFoo foo = new TestFoo (Test.rand_int_range (0, NB_OBJECTS));
+            TestFoo foo = new TestFoo (Test.rand_int_range (0, NB_OBJECTS / 100));
             parent.add (foo);
-            if (pos == cpt)
-            {
-                child_to_reorder = foo;
-            }
         }
 
-        child_to_reorder.id = Test.rand_int_range (0, NB_OBJECTS);
-        child_to_reorder.reorder ();
+        for (int cpt = 0; cpt < NB_OBJECTS; ++cpt)
+        {
+            int pos = Test.rand_int_range (0, NB_OBJECTS);
+            int nb = 0;
+            foreach (unowned Core.Object child in parent)
+            {
+                if (nb == pos)
+                {
+                    child_to_reorder = child as TestFoo;
+                    break;
+                }
+                nb++;
+            }
+
+            child_to_reorder.id = Test.rand_int_range (0, NB_OBJECTS / 100);
+            child_to_reorder.reorder ();
+        }
 
         unowned Core.Object prev = null;
         foreach (unowned Core.Object child in parent)
