@@ -322,14 +322,10 @@ public class Maia.Tool : Button
         // parse template
         try
         {
-            if (m_Document == null && characters != null && characters.length > 0)
+            if (characters != null && characters.length > 0)
             {
-                m_Document = new Manifest.Document.from_buffer (characters, characters.length);
-            }
-
-            if (m_Document != null)
-            {
-                Item? item = m_Document.get (null) as Item;
+                var document = new Manifest.Document.from_buffer (characters, characters.length);
+                Item? item = document.get (null) as Item;
 
                 if (item != null)
                 {

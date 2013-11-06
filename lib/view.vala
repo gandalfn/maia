@@ -497,16 +497,13 @@ public class Maia.View : Maia.Grid
         // parse template
         try
         {
-            if (m_Document == null && characters != null && characters.length > 0)
+            if (characters != null && characters.length > 0)
             {
-                m_Document = new Manifest.Document.from_buffer (characters, characters.length);
-                m_Document.path = manifest_path;
-                m_Document.styles = manifest_styles;
-            }
+                var document = new Manifest.Document.from_buffer (characters, characters.length);
+                document.path = manifest_path;
+                document.styles = manifest_styles;
 
-            if (m_Document != null)
-            {
-                ItemPackable? item = m_Document.get (null) as ItemPackable;
+                ItemPackable? item = document.get (null) as ItemPackable;
 
                 if (item != null)
                 {
