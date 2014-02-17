@@ -19,23 +19,6 @@
 
 namespace Maia.Cairo
 {
-    static bool s_Initialized = false;
-
-    public static void
-    init ()
-    {
-        if (!s_Initialized)
-        {
-            Core.Any.delegate (typeof (Graphic.Region),   typeof (Region));
-            Core.Any.delegate (typeof (Graphic.Glyph),    typeof (Glyph));
-            Core.Any.delegate (typeof (Graphic.Surface),  typeof (Surface));
-            Core.Any.delegate (typeof (Graphic.Context),  typeof (Context));
-            Core.Any.delegate (typeof (Graphic.ImagePng), typeof (ImagePng));
-
-            s_Initialized = true;
-        }
-    }
-
     public static async void
     save_document (string inPdfFilename, double inDpi, owned Document inDocument, GLib.Cancellable? inCancellable = null) throws Graphic.Error
     {
@@ -145,5 +128,29 @@ namespace Maia.Cairo
 
         GLib.Idle.add (generate_report.callback);
         yield;
+    }
+
+    [CCode (cname = "backend_load")]
+    public void backend_load ()
+    {
+        Log.info (GLib.Log.METHOD, Log.Category.CORE_EXTENSION, "Loading Cairo backend");
+
+        Maia.Core.Any.delegate (typeof (Maia.Graphic.Region),   typeof (Maia.Cairo.Region));
+        Maia.Core.Any.delegate (typeof (Maia.Graphic.Glyph),    typeof (Maia.Cairo.Glyph));
+        Maia.Core.Any.delegate (typeof (Maia.Graphic.Surface),  typeof (Maia.Cairo.Surface));
+        Maia.Core.Any.delegate (typeof (Maia.Graphic.Context),  typeof (Maia.Cairo.Context));
+        Maia.Core.Any.delegate (typeof (Maia.Graphic.ImagePng), typeof (Maia.Cairo.ImagePng));
+    }
+
+    [CCode (cname = "backend_unload")]
+    public void backend_unload ()
+    {
+        Log.info (GLib.Log.METHOD, Log.Category.CORE_EXTENSION, "Unloading Cairo backend");
+
+        Maia.Core.Any.undelegate (typeof (Maia.Graphic.Region));
+        Maia.Core.Any.undelegate (typeof (Maia.Graphic.Glyph));
+        Maia.Core.Any.undelegate (typeof (Maia.Graphic.Surface));
+        Maia.Core.Any.undelegate (typeof (Maia.Graphic.Context));
+        Maia.Core.Any.undelegate (typeof (Maia.Graphic.ImagePng));
     }
 }

@@ -79,7 +79,7 @@ public interface Maia.GdkPixbuf.Image : Graphic.Image
         }
 
         // Create new surface
-        return  GLib.Object.new (typeof (Maia.Cairo.Surface), surface: image_surface, size: size) as Graphic.Surface;
+        return  GLib.Object.new (typeof (Maia.Cairo.Surface), surface: image_surface, size: Graphic.Size(width, height)) as Graphic.Surface;
     }
 
     internal void

@@ -1,0 +1,8 @@
+[Extension]
+Name=cairo
+Description=Cairo Graphic Backend
+Module=libmaia-cairo-graphic.so
+
+[Backend]
+Require=
+Provide=graphic,png,

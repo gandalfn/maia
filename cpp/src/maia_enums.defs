@@ -28,23 +28,28 @@
 ;; 	MAIA_LOG_CATEGORY_CORE_OBJECT = 1 << 0,
 ;; 	MAIA_LOG_CATEGORY_CORE_COLLECTION = 1 << 1,
 ;; 	MAIA_LOG_CATEGORY_CORE_TIMELINE = 1 << 2,
-;; 	MAIA_LOG_CATEGORY_CORE = (MAIA_LOG_CATEGORY_CORE_OBJECT | MAIA_LOG_CATEGORY_CORE_COLLECTION) | MAIA_LOG_CATEGORY_CORE_TIMELINE,
-;; 	MAIA_LOG_CATEGORY_GRAPHIC_PARSING = 1 << 3,
-;; 	MAIA_LOG_CATEGORY_GRAPHIC_DRAW = 1 << 4,
-;; 	MAIA_LOG_CATEGORY_GRAPHIC_GEOMETRY = 1 << 5,
+;; 	MAIA_LOG_CATEGORY_CORE_CONFIG = 1 << 3,
+;; 	MAIA_LOG_CATEGORY_CORE_EXTENSION = 1 << 4,
+;; 	MAIA_LOG_CATEGORY_CORE = (((MAIA_LOG_CATEGORY_CORE_OBJECT | MAIA_LOG_CATEGORY_CORE_COLLECTION) | MAIA_LOG_CATEGORY_CORE_TIMELINE) | MAIA_LOG_CATEGORY_CORE_CONFIG) | MAIA_LOG_CATEGORY_CORE_EXTENSION,
+;; 	MAIA_LOG_CATEGORY_GRAPHIC_PARSING = 1 << 5,
+;; 	MAIA_LOG_CATEGORY_GRAPHIC_DRAW = 1 << 6,
+;; 	MAIA_LOG_CATEGORY_GRAPHIC_GEOMETRY = 1 << 7,
 ;; 	MAIA_LOG_CATEGORY_GRAPHIC = (MAIA_LOG_CATEGORY_GRAPHIC_DRAW | MAIA_LOG_CATEGORY_GRAPHIC_GEOMETRY) | MAIA_LOG_CATEGORY_GRAPHIC_PARSING,
-;; 	MAIA_LOG_CATEGORY_MANIFEST_PARSING = 1 << 6,
-;; 	MAIA_LOG_CATEGORY_MANIFEST_ATTRIBUTE = 1 << 7,
+;; 	MAIA_LOG_CATEGORY_MANIFEST_PARSING = 1 << 8,
+;; 	MAIA_LOG_CATEGORY_MANIFEST_ATTRIBUTE = 1 << 9,
 ;; 	MAIA_LOG_CATEGORY_MANIFEST = MAIA_LOG_CATEGORY_MANIFEST_PARSING | MAIA_LOG_CATEGORY_MANIFEST_ATTRIBUTE,
-;; 	MAIA_LOG_CATEGORY_XML_PARSING = 1 << 8,
+;; 	MAIA_LOG_CATEGORY_XML_PARSING = 1 << 10,
 ;; 	MAIA_LOG_CATEGORY_XML = MAIA_LOG_CATEGORY_XML_PARSING,
-;; 	MAIA_LOG_CATEGORY_CANVAS_PARSING = 1 << 9,
-;; 	MAIA_LOG_CATEGORY_CANVAS_DRAW = 1 << 10,
-;; 	MAIA_LOG_CATEGORY_CANVAS_DAMAGE = 1 << 11,
-;; 	MAIA_LOG_CATEGORY_CANVAS_GEOMETRY = 1 << 12,
-;; 	MAIA_LOG_CATEGORY_CANVAS_INPUT = 1 << 13,
+;; 	MAIA_LOG_CATEGORY_CANVAS_PARSING = 1 << 11,
+;; 	MAIA_LOG_CATEGORY_CANVAS_DRAW = 1 << 12,
+;; 	MAIA_LOG_CATEGORY_CANVAS_DAMAGE = 1 << 13,
+;; 	MAIA_LOG_CATEGORY_CANVAS_GEOMETRY = 1 << 14,
+;; 	MAIA_LOG_CATEGORY_CANVAS_INPUT = 1 << 15,
 ;; 	MAIA_LOG_CATEGORY_CANVAS = (((MAIA_LOG_CATEGORY_CANVAS_DRAW | MAIA_LOG_CATEGORY_CANVAS_DAMAGE) | MAIA_LOG_CATEGORY_CANVAS_GEOMETRY) | MAIA_LOG_CATEGORY_CANVAS_PARSING) | MAIA_LOG_CATEGORY_CANVAS_INPUT,
-;; 	MAIA_LOG_CATEGORY_ALL = (((MAIA_LOG_CATEGORY_CORE | MAIA_LOG_CATEGORY_GRAPHIC) | MAIA_LOG_CATEGORY_MANIFEST) | MAIA_LOG_CATEGORY_XML) | MAIA_LOG_CATEGORY_CANVAS
+;; 	MAIA_LOG_CATEGORY_MAIN_BUS = 1 << 16,
+;; 	MAIA_LOG_CATEGORY_MAIN_EVENT = 1 << 17,
+;; 	MAIA_LOG_CATEGORY_MAIN = MAIA_LOG_CATEGORY_MAIN_BUS | MAIA_LOG_CATEGORY_MAIN_EVENT,
+;; 	MAIA_LOG_CATEGORY_ALL = ((((MAIA_LOG_CATEGORY_CORE | MAIA_LOG_CATEGORY_GRAPHIC) | MAIA_LOG_CATEGORY_MANIFEST) | MAIA_LOG_CATEGORY_XML) | MAIA_LOG_CATEGORY_CANVAS) | MAIA_LOG_CATEGORY_MAIN
 ;; } MaiaLogCategory;
 
 (define-flags-extended LogCategory
@@ -54,23 +59,28 @@
     '("core-object" "MAIA_LOG_CATEGORY_CORE_OBJECT" "1 << 0")
     '("core-collection" "MAIA_LOG_CATEGORY_CORE_COLLECTION" "1 << 1")
     '("core-timeline" "MAIA_LOG_CATEGORY_CORE_TIMELINE" "1 << 2")
-    '("core" "MAIA_LOG_CATEGORY_CORE" "0x7")
-    '("graphic-parsing" "MAIA_LOG_CATEGORY_GRAPHIC_PARSING" "1 << 3")
-    '("graphic-draw" "MAIA_LOG_CATEGORY_GRAPHIC_DRAW" "1 << 4")
-    '("graphic-geometry" "MAIA_LOG_CATEGORY_GRAPHIC_GEOMETRY" "1 << 5")
-    '("graphic" "MAIA_LOG_CATEGORY_GRAPHIC" "0x38")
-    '("manifest-parsing" "MAIA_LOG_CATEGORY_MANIFEST_PARSING" "1 << 6")
-    '("manifest-attribute" "MAIA_LOG_CATEGORY_MANIFEST_ATTRIBUTE" "1 << 7")
-    '("manifest" "MAIA_LOG_CATEGORY_MANIFEST" "0xC0")
-    '("xml-parsing" "MAIA_LOG_CATEGORY_XML_PARSING" "1 << 8")
-    '("xml" "MAIA_LOG_CATEGORY_XML" "0x100")
-    '("canvas-parsing" "MAIA_LOG_CATEGORY_CANVAS_PARSING" "1 << 9")
-    '("canvas-draw" "MAIA_LOG_CATEGORY_CANVAS_DRAW" "1 << 10")
-    '("canvas-damage" "MAIA_LOG_CATEGORY_CANVAS_DAMAGE" "1 << 11")
-    '("canvas-geometry" "MAIA_LOG_CATEGORY_CANVAS_GEOMETRY" "1 << 12")
-    '("canvas-input" "MAIA_LOG_CATEGORY_CANVAS_INPUT" "1 << 13")
-    '("canvas" "MAIA_LOG_CATEGORY_CANVAS" "0x3E00")
-    '("all" "MAIA_LOG_CATEGORY_ALL" "0x3FFF")
+    '("core-config" "MAIA_LOG_CATEGORY_CORE_CONFIG" "1 << 3")
+    '("core-extension" "MAIA_LOG_CATEGORY_CORE_EXTENSION" "1 << 4")
+    '("core" "MAIA_LOG_CATEGORY_CORE" "0x1F")
+    '("graphic-parsing" "MAIA_LOG_CATEGORY_GRAPHIC_PARSING" "1 << 5")
+    '("graphic-draw" "MAIA_LOG_CATEGORY_GRAPHIC_DRAW" "1 << 6")
+    '("graphic-geometry" "MAIA_LOG_CATEGORY_GRAPHIC_GEOMETRY" "1 << 7")
+    '("graphic" "MAIA_LOG_CATEGORY_GRAPHIC" "0xE0")
+    '("manifest-parsing" "MAIA_LOG_CATEGORY_MANIFEST_PARSING" "1 << 8")
+    '("manifest-attribute" "MAIA_LOG_CATEGORY_MANIFEST_ATTRIBUTE" "1 << 9")
+    '("manifest" "MAIA_LOG_CATEGORY_MANIFEST" "0x300")
+    '("xml-parsing" "MAIA_LOG_CATEGORY_XML_PARSING" "1 << 10")
+    '("xml" "MAIA_LOG_CATEGORY_XML" "0x400")
+    '("canvas-parsing" "MAIA_LOG_CATEGORY_CANVAS_PARSING" "1 << 11")
+    '("canvas-draw" "MAIA_LOG_CATEGORY_CANVAS_DRAW" "1 << 12")
+    '("canvas-damage" "MAIA_LOG_CATEGORY_CANVAS_DAMAGE" "1 << 13")
+    '("canvas-geometry" "MAIA_LOG_CATEGORY_CANVAS_GEOMETRY" "1 << 14")
+    '("canvas-input" "MAIA_LOG_CATEGORY_CANVAS_INPUT" "1 << 15")
+    '("canvas" "MAIA_LOG_CATEGORY_CANVAS" "0xF800")
+    '("main-bus" "MAIA_LOG_CATEGORY_MAIN_BUS" "1 << 16")
+    '("main-event" "MAIA_LOG_CATEGORY_MAIN_EVENT" "1 << 17")
+    '("main" "MAIA_LOG_CATEGORY_MAIN" "0x30000")
+    '("all" "MAIA_LOG_CATEGORY_ALL" "0x3FFFF")
   )
 )
 
@@ -151,6 +161,143 @@
     '("sinusoidal" "MAIA_CORE_ANIMATOR_PROGRESS_TYPE_SINUSOIDAL" "1")
     '("exponential" "MAIA_CORE_ANIMATOR_PROGRESS_TYPE_EXPONENTIAL" "2")
     '("ease-in-ease-out" "MAIA_CORE_ANIMATOR_PROGRESS_TYPE_EASE_IN_EASE_OUT" "3")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_CORE_CONFIG_ERROR_SCHEMA,
+;; 	MAIA_CORE_CONFIG_ERROR_OPEN,
+;; 	MAIA_CORE_CONFIG_ERROR_LOADING,
+;; 	MAIA_CORE_CONFIG_ERROR_GET_VALUE,
+;; 	MAIA_CORE_CONFIG_ERROR_SET_VALUE,
+;; 	MAIA_CORE_CONFIG_ERROR_SAVE,
+;; 	MAIA_CORE_CONFIG_ERROR_REMOVE
+;; } MaiaCoreConfigError;
+
+(define-enum-extended CoreConfigError
+  (in-module "Maia")
+  (c-name "MaiaCoreConfigError")
+  (values
+    '("schema" "MAIA_CORE_CONFIG_ERROR_SCHEMA" "0")
+    '("open" "MAIA_CORE_CONFIG_ERROR_OPEN" "1")
+    '("loading" "MAIA_CORE_CONFIG_ERROR_LOADING" "2")
+    '("get-value" "MAIA_CORE_CONFIG_ERROR_GET_VALUE" "3")
+    '("set-value" "MAIA_CORE_CONFIG_ERROR_SET_VALUE" "4")
+    '("save" "MAIA_CORE_CONFIG_ERROR_SAVE" "5")
+    '("remove" "MAIA_CORE_CONFIG_ERROR_REMOVE" "6")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_CORE_EXTENSION_ERROR_CREATE,
+;; 	MAIA_CORE_EXTENSION_ERROR_LOADING,
+;; 	MAIA_CORE_EXTENSION_ERROR_NOT_LOADED,
+;; 	MAIA_CORE_EXTENSION_ERROR_CREATE_PLUGIN
+;; } MaiaCoreExtensionError;
+
+(define-enum-extended CoreExtensionError
+  (in-module "Maia")
+  (c-name "MaiaCoreExtensionError")
+  (values
+    '("create" "MAIA_CORE_EXTENSION_ERROR_CREATE" "0")
+    '("loading" "MAIA_CORE_EXTENSION_ERROR_LOADING" "1")
+    '("not-loaded" "MAIA_CORE_EXTENSION_ERROR_NOT_LOADED" "2")
+    '("create-plugin" "MAIA_CORE_EXTENSION_ERROR_CREATE_PLUGIN" "3")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_CORE_BUS_ERROR_OK,
+;; 	MAIA_CORE_BUS_ERROR_CONNECT,
+;; 	MAIA_CORE_BUS_ERROR_READ,
+;; 	MAIA_CORE_BUS_ERROR_WRITE,
+;; 	MAIA_CORE_BUS_ERROR_CANCELLED
+;; } MaiaCoreBusError;
+
+(define-enum-extended CoreBusError
+  (in-module "Maia")
+  (c-name "MaiaCoreBusError")
+  (values
+    '("ok" "MAIA_CORE_BUS_ERROR_OK" "0")
+    '("connect" "MAIA_CORE_BUS_ERROR_CONNECT" "1")
+    '("read" "MAIA_CORE_BUS_ERROR_READ" "2")
+    '("write" "MAIA_CORE_BUS_ERROR_WRITE" "3")
+    '("cancelled" "MAIA_CORE_BUS_ERROR_CANCELLED" "4")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_CORE_BUS_MESSAGE_TYPE_NONE,
+;; 	MAIA_CORE_BUS_MESSAGE_TYPE_AUTH,
+;; 	MAIA_CORE_BUS_MESSAGE_TYPE_DATA,
+;; 	MAIA_CORE_BUS_MESSAGE_TYPE_STATUS
+;; } MaiaCoreBusMessageType;
+
+(define-enum-extended CoreBusMessageType
+  (in-module "Maia")
+  (c-name "MaiaCoreBusMessageType")
+  (values
+    '("none" "MAIA_CORE_BUS_MESSAGE_TYPE_NONE" "0")
+    '("auth" "MAIA_CORE_BUS_MESSAGE_TYPE_AUTH" "1")
+    '("data" "MAIA_CORE_BUS_MESSAGE_TYPE_DATA" "2")
+    '("status" "MAIA_CORE_BUS_MESSAGE_TYPE_STATUS" "3")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_CORE_BUS_STATUS_OK,
+;; 	MAIA_CORE_BUS_STATUS_ERROR
+;; } MaiaCoreBusStatus;
+
+(define-enum-extended CoreBusStatus
+  (in-module "Maia")
+  (c-name "MaiaCoreBusStatus")
+  (values
+    '("ok" "MAIA_CORE_BUS_STATUS_OK" "0")
+    '("error" "MAIA_CORE_BUS_STATUS_ERROR" "1")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_CORE_BUS_AUTH_TYPE_NONE
+;; } MaiaCoreBusAuthType;
+
+(define-enum-extended CoreBusAuthType
+  (in-module "Maia")
+  (c-name "MaiaCoreBusAuthType")
+  (values
+    '("none" "MAIA_CORE_BUS_AUTH_TYPE_NONE" "0")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_INVALID = 10,
+;; 	MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_EVENT_ADVERTISE,
+;; 	MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_EVENT,
+;; 	MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_EVENT_REPLY,
+;; 	MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_EVENT_DESTROY,
+;; 	MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_SUBSCRIBE,
+;; 	MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_UNSUBSCRIBE
+;; } MaiaCoreEventBusMessageType;
+
+(define-enum-extended CoreEventBusMessageType
+  (in-module "Maia")
+  (c-name "MaiaCoreEventBusMessageType")
+  (values
+    '("invalid" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_INVALID" "10")
+    '("event-advertise" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_EVENT_ADVERTISE" "11")
+    '("event" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_EVENT" "12")
+    '("event-reply" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_EVENT_REPLY" "13")
+    '("event-destroy" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_EVENT_DESTROY" "14")
+    '("subscribe" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_SUBSCRIBE" "15")
+    '("unsubscribe" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_UNSUBSCRIBE" "16")
   )
 )
 

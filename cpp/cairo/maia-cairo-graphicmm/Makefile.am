@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libmaia-cairo-graphicmm.la
+binding_LTLIBRARIES = libmaia-cairo-graphicmm.la
 
 binding_modulename = maia-cairo-graphicmm-$(MAIA_ABI)
 
@@ -24,7 +24,12 @@ AM_CPPFLAGS = \
 AM_CXXFLAGS = $(MAIAMM_WXXFLAGS)
 
 libmaia_cairo_graphicmm_la_SOURCES = $(binding_sources)
-libmaia_cairo_graphicmm_la_LDFLAGS = -no-undefined -version-number @MAIA_SO_VERSION@
+libmaia_cairo_graphicmm_la_LDFLAGS =  \
+    -Wl,--as-needed \
+    -Wl,--no-add-needed \
+    -avoid-version \
+    -no-undefined
+
 libmaia_cairo_graphicmm_la_LIBADD  = \
 	$(MAIA_LIBS) \
     $(MAIA_CAIRO_LIBS) \

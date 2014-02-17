@@ -81,19 +81,6 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     // static methods
     static construct
     {
-        // Initialize backends
-        Maia.GdkPixbuf.init ();
-        Maia.Cairo.init ();
-        Maia.Rsvg.init ();
-
-        // Override base item
-        Core.Any.delegate (typeof (Maia.Shortcut),     typeof (Shortcut));
-        Core.Any.delegate (typeof (Maia.Image),        typeof (Image));
-        Core.Any.delegate (typeof (Maia.Button),       typeof (Button));
-        Core.Any.delegate (typeof (Maia.Tool),         typeof (Tool));
-        Core.Any.delegate (typeof (Maia.Model),        typeof (Model));
-        Core.Any.delegate (typeof (Maia.Model.Column), typeof (Model.Column));
-
         // Set scroll adjustments signal id
         set_scroll_adjustments_signal = GLib.Signal.lookup ("on_set_scroll_adjustments", typeof (Canvas));
     }
@@ -477,13 +464,13 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         if (grab_keyboard_item != null)
         {
             unichar car = Gdk.keyval_to_unicode (inEvent.keyval);
-            grab_keyboard_item.key_press_event (convert_gdk_key_to_key ((Gdk.Key)inEvent.keyval), car);
+            grab_keyboard_item.key_press_event (convert_gdk_key_to_key ((Gdk.KeySym)inEvent.keyval), car);
         }
         // we have focus item send event
         else if (focus_item != null)
         {
             unichar car = Gdk.keyval_to_unicode (inEvent.keyval);
-            focus_item.key_press_event (convert_gdk_key_to_key ((Gdk.Key)inEvent.keyval), car);
+            focus_item.key_press_event (convert_gdk_key_to_key ((Gdk.KeySym)inEvent.keyval), car);
         }
 
         return true;
@@ -496,13 +483,13 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         if (grab_keyboard_item != null)
         {
             unichar car = Gdk.keyval_to_unicode (inEvent.keyval);
-            grab_keyboard_item.key_release_event (convert_gdk_key_to_key ((Gdk.Key)inEvent.keyval), car);
+            grab_keyboard_item.key_release_event (convert_gdk_key_to_key ((Gdk.KeySym)inEvent.keyval), car);
         }
         // we have focus item send event
         else if (focus_item != null)
         {
             unichar car = Gdk.keyval_to_unicode (inEvent.keyval);
-            focus_item.key_release_event (convert_gdk_key_to_key ((Gdk.Key)inEvent.keyval), car);
+            focus_item.key_release_event (convert_gdk_key_to_key ((Gdk.KeySym)inEvent.keyval), car);
         }
 
         return true;

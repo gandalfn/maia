@@ -1,6 +1,6 @@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
-libdir=@libdir@
+libdir=@bindingdir@
 datarootdir=@datarootdir@
 datadir=@datadir@
 includedir=@includedir@/maia-gtkmm-@MAIA_ABI@

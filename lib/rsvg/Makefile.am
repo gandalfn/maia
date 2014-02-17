@@ -6,10 +6,11 @@ MAIA_VAPI_DEPS =  \
     maia
 
 include $(top_srcdir)/build-aux/maia.am
+include $(top_srcdir)/build-aux/backend.am
 include $(top_srcdir)/build-aux/pkgconfig.am
 include $(top_srcdir)/build-aux/vapi.am
 
-lib_LTLIBRARIES = libmaia-rsvg.la
+backend_LTLIBRARIES = libmaia-rsvg.la
 
 libmaia_rsvg_la_CFLAGS = \
     $(MAIA_CAIRO_CFLAGS) \
@@ -24,16 +25,8 @@ libmaia_rsvg_la_SOURCES = \
     image-svg.vala \
     init.vala
 
-libmaia_rsvg_la_LDFLAGS = \
-    -version-number @MAIA_SO_VERSION@ \
-    -no-undefined
-
 libmaia_rsvg_la_LIBADD = \
-    $(MAIA_LIBS) \
-    $(MAIA_CAIRO_LIBS) \
-    $(MAIA_RSVG_LIBS) \
-    $(top_builddir)/lib/libmaia.la \
-    $(top_builddir)/lib/cairo/libmaia-cairo-graphic.la
+    $(MAIA_RSVG_LIBS)
 
 VALAFILES = \
     $(filter %.vala,$(libmaia_rsvg_la_SOURCES))

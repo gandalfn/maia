@@ -1,0 +1,8 @@
+[Extension]
+Name=gdk-pixbuf
+Description=Gdk Pixbuf Backend
+Module=libmaia-gdk-pixbuf.so
+
+[Backend]
+Require=cairo,
+Provide=gif,jpg,png,svg,

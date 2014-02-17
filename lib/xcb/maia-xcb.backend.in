@@ -1,0 +1,8 @@
+[Extension]
+Name=xcb
+Description=XCB Backend
+Module=libmaia-xcb.so
+
+[Backend]
+Require=cairo,
+Provide=window,

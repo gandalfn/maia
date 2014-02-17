@@ -19,19 +19,25 @@
 
 namespace Maia.GdkPixbuf
 {
-    static bool s_Initialized = false;
-
-    public static void
-    init ()
+    [CCode (cname = "backend_load")]
+    public void backend_load ()
     {
-        if (!s_Initialized)
-        {
-            Core.Any.delegate (typeof (Graphic.ImagePng),  typeof (ImagePng));
-            Core.Any.delegate (typeof (Graphic.ImageJpg),  typeof (ImageJpg));
-            Core.Any.delegate (typeof (Graphic.ImageSvg),  typeof (ImageSvg));
-            Core.Any.delegate (typeof (Graphic.ImageGif),  typeof (ImageGif));
+        Log.info (GLib.Log.METHOD, Log.Category.CORE_EXTENSION, "Loading Gdk-Pixbuf backend");
 
-            s_Initialized = true;
-        }
+        Core.Any.delegate (typeof (Maia.Graphic.ImagePng), typeof (ImagePng));
+        Core.Any.delegate (typeof (Maia.Graphic.ImageJpg), typeof (ImageJpg));
+        Core.Any.delegate (typeof (Maia.Graphic.ImageSvg), typeof (ImageSvg));
+        Core.Any.delegate (typeof (Maia.Graphic.ImageGif), typeof (ImageGif));
+    }
+
+    [CCode (cname = "backend_unload")]
+    public void backend_unload ()
+    {
+        Log.info (GLib.Log.METHOD, Log.Category.CORE_EXTENSION, "Unloading Gdk-Pixbuf backend");
+
+        Core.Any.undelegate (typeof (Maia.Graphic.ImagePng));
+        Core.Any.undelegate (typeof (Maia.Graphic.ImageJpg));
+        Core.Any.undelegate (typeof (Maia.Graphic.ImageSvg));
+        Core.Any.undelegate (typeof (Maia.Graphic.ImageGif));
     }
 }

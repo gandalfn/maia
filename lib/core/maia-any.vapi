@@ -22,6 +22,7 @@ namespace Maia.Core
     [CCode (cheader_filename = "maia-any.h")]
     public abstract class Any : GLib.Object
     {
+
         public Any ();
 
         protected virtual void delegate_construct ();

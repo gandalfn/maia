@@ -6,12 +6,18 @@ gdk-keysym.vapi:
 noinst_DATA = \
     config.vapi \
     os.vapi \
+    xcb-base.deps \
+    xcb-base.vapi \
+    xcb.deps \
+    xcb.vapi \
     cairo.vapi \
+    cairo-xcb.vapi \
     valgrind.vapi \
     gdk-keysym.vapi \
     gtk+-2.0.vapi \
     gtk+-2.0.deps \
-    libintl.vapi
+    libintl.vapi \
+    uuid.vapi
 
 EXTRA_DIST += \
     $(noinst_DATA)

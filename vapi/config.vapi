@@ -11,4 +11,5 @@ namespace Config
     public const string VERSION;
     public const string G_LOG_DOMAIN;
     public const string MAIA_UI_PATH;
+    public const string MAIA_BACKEND_PATH;
 }

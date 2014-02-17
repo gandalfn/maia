@@ -13,7 +13,7 @@ include $(top_srcdir)/build-aux/maia.am
 include $(top_srcdir)/build-aux/pkgconfig.am
 include $(top_srcdir)/build-aux/vapi.am
 
-SUBDIRS = . cairo rsvg gdk-pixbuf gtk
+SUBDIRS = . cairo xcb rsvg gdk-pixbuf gtk
 
 include_HEADERS += \
    core/maia-any.h
@@ -31,6 +31,8 @@ libmaia_la_SOURCES = \
     core/collection.vala \
     core/array.vala \
     core/queue.vala \
+    core/stack.vala \
+    core/async-stack.vala \
     core/list.vala \
     core/set.vala \
     core/pair.vala \
@@ -38,11 +40,26 @@ libmaia_la_SOURCES = \
     core/object.vala \
     core/parser.vala \
     core/source.vala \
+    core/watch.vala \
     core/timeout.vala \
     core/timeout-interval.vala \
     core/timeout-pool.vala \
     core/timeline.vala \
     core/animator.vala \
+    core/config.vala \
+    core/extension.vala \
+    core/extension-loader.vala \
+    core/message.vala \
+    core/bus.vala \
+    core/bus-connection.vala \
+    core/bus-service.vala \
+    core/socket-watch.vala \
+    core/socket-bus-connection.vala \
+    core/socket-bus-service.vala \
+    core/event.vala \
+    core/event-args.vala \
+    core/event-listener.vala \
+    core/event-bus.vala \
     manifest/document.vala \
     manifest/element.vala \
     manifest/style.vala \
@@ -71,6 +88,8 @@ libmaia_la_SOURCES = \
     graphic/image-jpg.vala \
     graphic/image-svg.vala \
     graphic/image-gif.vala \
+    backend.vala \
+    main.vala \
     keysym.vala \
     cursor.vala \
     scroll.vala \
@@ -80,6 +99,7 @@ libmaia_la_SOURCES = \
     item-packable.vala \
     item-movable.vala \
     item-resizable.vala \
+    window.vala \
     group.vala \
     rectangle.vala \
     path.vala \
@@ -106,11 +126,12 @@ libmaia_la_SOURCES = \
     canvas.vala
 
 libmaia_la_LDFLAGS = \
+    -Wl,--as-needed \
     -version-number @MAIA_SO_VERSION@ \
     -no-undefined
 
 libmaia_la_LIBADD = \
-    $(MAIA_LIBS)
+    $(MAIA_LIBS) -lm
 
 VALAFILES = \
     $(filter %.vala,$(libmaia_la_SOURCES))

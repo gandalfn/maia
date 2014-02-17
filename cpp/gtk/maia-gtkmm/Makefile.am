@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libmaia-gtkmm.la
+binding_LTLIBRARIES = libmaia-gtkmm.la
 
 binding_modulename = maia-gtkmm-$(MAIA_ABI)
 
@@ -21,7 +21,12 @@ AM_CPPFLAGS = \
 AM_CXXFLAGS = $(MAIAMM_WXXFLAGS)
 
 libmaia_gtkmm_la_SOURCES = $(binding_sources)
-libmaia_gtkmm_la_LDFLAGS = -no-undefined -version-number @MAIA_SO_VERSION@
+libmaia_gtkmm_la_LDFLAGS =  \
+    -Wl,--as-needed \
+    -Wl,--no-add-needed \
+    -avoid-version \
+    -no-undefined
+
 libmaia_gtkmm_la_LIBADD  = \
 	$(MAIA_LIBS) \
     $(MAIA_CAIRO_LIBS) \

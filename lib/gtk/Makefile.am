@@ -8,13 +8,14 @@ MAIA_VAPI_DEPS =  \
     maia
 
 include $(top_srcdir)/build-aux/maia.am
+include $(top_srcdir)/build-aux/backend.am
 include $(top_srcdir)/build-aux/pkgconfig.am
 include $(top_srcdir)/build-aux/vapi.am
 
 keysym.vala:
 	$(AM_V_GEN) $(top_srcdir)/tools/generate-gdk-key-convert > $@
 
-lib_LTLIBRARIES = libmaia-gtk.la
+backend_LTLIBRARIES = libmaia-gtk.la
 
 libmaia_gtk_la_CFLAGS = \
     $(MAIA_GTK_CFLAGS)
@@ -24,6 +25,7 @@ libmaia_gtk_la_VALAFLAGS = \
     --pkg=gtk+-2.0
 
 libmaia_gtk_la_SOURCES = \
+    init.vala \
     keysym.vala \
     cursor.vala \
     scroll.vala \
@@ -35,18 +37,8 @@ libmaia_gtk_la_SOURCES = \
     shortcut.vala \
     canvas.vala
 
-libmaia_gtk_la_LDFLAGS = \
-    -version-number @MAIA_SO_VERSION@ \
-    -no-undefined
-
 libmaia_gtk_la_LIBADD = \
-    $(MAIA_LIBS) \
-    $(MAIA_GDK_PIXBUF_LIBS) \
-    $(MAIA_CAIRO_LIBS) \
-    $(top_builddir)/lib/libmaia.la \
-    $(top_builddir)/lib/cairo/libmaia-cairo-graphic.la \
-    $(top_builddir)/lib/gdk-pixbuf/libmaia-gdk-pixbuf.la \
-    $(top_builddir)/lib/rsvg/libmaia-rsvg.la
+    $(MAIA_GTK_LIBS)
 
 VALAFILES = \
     $(filter %.vala,$(libmaia_gtk_la_SOURCES))

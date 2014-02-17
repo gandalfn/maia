@@ -12,6 +12,7 @@ Makefile
 !wrap-init.h
 *.stamp
 *.pc
+*.backend
 *.deps
 *.vapi
 !vapi/*.vapi

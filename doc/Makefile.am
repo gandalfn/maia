@@ -19,11 +19,13 @@ VALADOC_FLAGS = \
     -b $(top_srcdir)/lib/core \
     --vapidir $(top_srcdir)/vapi \
     --vapidir $(top_builddir)/lib/core \
+    --pkg config \
     --pkg posix \
     --pkg os \
     --pkg libintl \
     --pkg glib-2.0 \
     --pkg gio-2.0 \
+    --pkg gmodule-2.0 \
     --pkg gio-unix-2.0 \
     --pkg cairo \
     --pkg pangocairo \

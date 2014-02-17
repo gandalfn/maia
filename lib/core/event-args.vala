@@ -1,0 +1,46 @@
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * event-args.vala
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+public abstract class Maia.Core.EventArgs : GLib.Object
+{
+    // class properties
+    private static int s_Sequence = 1;
+
+    // accessors
+    public int sequence { get; construct; }
+    public abstract GLib.Variant serialize { owned get; set; }
+
+    // methods
+    public EventArgs ()
+    {
+        GLib.Object (sequence: GLib.AtomicInt.add (ref s_Sequence, 1));
+    }
+
+    public virtual void
+    accumulate (EventArgs inArgs)
+        requires (inArgs.get_type ().is_a (get_type ()))
+    {
+    }
+
+    public EventArgs
+    copy ()
+    {
+        return GLib.Object.new (get_type (), sequence: sequence, serialize: serialize) as EventArgs;
+    }
+}

@@ -29,10 +29,25 @@ namespace Maia.Rsvg
 #if LIBRSVG_2_36_1
             global::Rsvg.init ();
 #endif
-
-            Core.Any.delegate (typeof (Graphic.ImageSvg),  typeof (ImageSvg));
-
             s_Initialized = true;
         }
+    }
+
+    [CCode (cname = "backend_load")]
+    public void backend_load ()
+    {
+        Log.info (GLib.Log.METHOD, Log.Category.CORE_EXTENSION, "Loading RSVG backend");
+
+        init ();
+
+        Core.Any.delegate (typeof (Maia.Graphic.ImageSvg), typeof (ImageSvg));
+    }
+
+    [CCode (cname = "backend_unload")]
+    public void backend_unload ()
+    {
+        Log.info (GLib.Log.METHOD, Log.Category.CORE_EXTENSION, "Unloading RSVG backend");
+
+        Core.Any.undelegate (typeof (Maia.Graphic.ImageSvg));
     }
 }

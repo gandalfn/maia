@@ -26,7 +26,7 @@ BEGIN {
     print ""
     printf "namespace Maia.Gtk\n{\n"
     printf "    internal static Maia.Key\n"
-    printf "    convert_gdk_key_to_key (global::Gdk.Key inKey)\n"
+    printf "    convert_gdk_key_to_key (global::Gdk.KeySym inKey)\n"
     printf "    {\n"
 }
 {
@@ -86,9 +86,9 @@ BEGIN {
             val="@9";
         }
         if (start == 1)
-            printf ("        if (inKey == global::Gdk.Key.%s)\n", val);
+            printf ("        if (inKey == global::Gdk.KeySym.%s)\n", val);
         else
-            printf ("        else if (inKey == global::Gdk.Key.%s)\n", val);
+            printf ("        else if (inKey == global::Gdk.KeySym.%s)\n", val);
         printf("            return Maia.Key.%s;\n", val);
         start=0;
     }

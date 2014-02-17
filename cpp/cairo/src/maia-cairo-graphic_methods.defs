@@ -17,11 +17,6 @@
 
 ;; From maia-cairo-graphic.h
 
-(define-function maia_cairo_init
-  (c-name "maia_cairo_init")
-  (return-type "none")
-)
-
 (define-function maia_cairo_save_document
   (c-name "maia_cairo_save_document")
   (return-type "none")
@@ -65,6 +60,16 @@
     '("GAsyncResult*" "_res_")
     '("GError**" "error")
   )
+)
+
+(define-function backend_load
+  (c-name "backend_load")
+  (return-type "none")
+)
+
+(define-function backend_unload
+  (c-name "backend_unload")
+  (return-type "none")
 )
 
 (define-function maia_cairo_surface_get_type

@@ -23,16 +23,118 @@
   (gtype-id "MAIA_TYPE_CORE_ARRAY")
 )
 
+(define-object MaiaCoreConfig
+  (parent "GObject")
+  (c-name "MaiaCoreConfig")
+  (gtype-id "MAIA_TYPE_CORE_CONFIG")
+)
+
+(define-object MaiaCoreEventArgs
+  (parent "GObject")
+  (c-name "MaiaCoreEventArgs")
+  (gtype-id "MAIA_TYPE_CORE_EVENT_ARGS")
+)
+
 (define-object MaiaCoreList
   (parent "MaiaCoreCollection")
   (c-name "MaiaCoreList")
   (gtype-id "MAIA_TYPE_CORE_LIST")
 )
 
+(define-object MaiaCoreMessage
+  (parent "GObject")
+  (c-name "MaiaCoreMessage")
+  (gtype-id "MAIA_TYPE_CORE_MESSAGE")
+)
+
+(define-object MaiaCoreBusMessage
+  (parent "MaiaCoreMessage")
+  (c-name "MaiaCoreBusMessage")
+  (gtype-id "MAIA_TYPE_CORE_BUS_MESSAGE")
+)
+
+(define-object MaiaCoreBusMessageStatus
+  (parent "MaiaCoreBusMessage")
+  (c-name "MaiaCoreBusMessageStatus")
+  (gtype-id "MAIA_TYPE_CORE_BUS_MESSAGE_STATUS")
+)
+
+(define-object MaiaCoreBusMessageData
+  (parent "MaiaCoreBusMessage")
+  (c-name "MaiaCoreBusMessageData")
+  (gtype-id "MAIA_TYPE_CORE_BUS_MESSAGE_DATA")
+)
+
+(define-object MaiaCoreBusMessageAuth
+  (parent "MaiaCoreBusMessage")
+  (c-name "MaiaCoreBusMessageAuth")
+  (gtype-id "MAIA_TYPE_CORE_BUS_MESSAGE_AUTH")
+)
+
 (define-object MaiaCoreObject
   (parent "MaiaCoreAny")
   (c-name "MaiaCoreObject")
   (gtype-id "MAIA_TYPE_CORE_OBJECT")
+)
+
+(define-object MaiaCoreExtensionLoader
+  (parent "MaiaCoreObject")
+  (c-name "MaiaCoreExtensionLoader")
+  (gtype-id "MAIA_TYPE_CORE_EXTENSION_LOADER")
+)
+
+(define-object MaiaBackends
+  (parent "MaiaCoreExtensionLoader")
+  (c-name "MaiaBackends")
+  (gtype-id "MAIA_TYPE_BACKENDS")
+)
+
+(define-object MaiaCoreExtension
+  (parent "MaiaCoreObject")
+  (c-name "MaiaCoreExtension")
+  (gtype-id "MAIA_TYPE_CORE_EXTENSION")
+)
+
+(define-object MaiaBackend
+  (parent "MaiaCoreExtension")
+  (c-name "MaiaBackend")
+  (gtype-id "MAIA_TYPE_BACKEND")
+)
+
+(define-object MaiaCoreEventListener
+  (parent "MaiaCoreObject")
+  (c-name "MaiaCoreEventListener")
+  (gtype-id "MAIA_TYPE_CORE_EVENT_LISTENER")
+)
+
+(define-object MaiaCoreEventBus
+  (parent "MaiaCoreObject")
+  (c-name "MaiaCoreEventBus")
+  (gtype-id "MAIA_TYPE_CORE_EVENT_BUS")
+)
+
+(define-object MaiaCoreEvent
+  (parent "MaiaCoreObject")
+  (c-name "MaiaCoreEvent")
+  (gtype-id "MAIA_TYPE_CORE_EVENT")
+)
+
+(define-object MaiaCoreBus
+  (parent "MaiaCoreObject")
+  (c-name "MaiaCoreBus")
+  (gtype-id "MAIA_TYPE_CORE_BUS")
+)
+
+(define-object MaiaCoreBusService
+  (parent "MaiaCoreBus")
+  (c-name "MaiaCoreBusService")
+  (gtype-id "MAIA_TYPE_CORE_BUS_SERVICE")
+)
+
+(define-object MaiaCoreBusConnection
+  (parent "MaiaCoreBus")
+  (c-name "MaiaCoreBusConnection")
+  (gtype-id "MAIA_TYPE_CORE_BUS_CONNECTION")
 )
 
 (define-object MaiaCoreParser
@@ -59,10 +161,46 @@
   (gtype-id "MAIA_TYPE_CORE_MAP")
 )
 
+(define-object MaiaCoreSocketBusConnection
+  (parent "MaiaCoreBusConnection")
+  (c-name "MaiaCoreSocketBusConnection")
+  (gtype-id "MAIA_TYPE_CORE_SOCKET_BUS_CONNECTION")
+)
+
+(define-object MaiaCoreSocketBusService
+  (parent "MaiaCoreBusService")
+  (c-name "MaiaCoreSocketBusService")
+  (gtype-id "MAIA_TYPE_CORE_SOCKET_BUS_SERVICE")
+)
+
+(define-object MaiaCoreStack
+  (parent "MaiaCoreArray")
+  (c-name "MaiaCoreStack")
+  (gtype-id "MAIA_TYPE_CORE_STACK")
+)
+
+(define-object MaiaCoreAsyncStack
+  (parent "MaiaCoreStack")
+  (c-name "MaiaCoreAsyncStack")
+  (gtype-id "MAIA_TYPE_CORE_ASYNC_STACK")
+)
+
 (define-object MaiaCoreTimeline
   (parent "MaiaCoreObject")
   (c-name "MaiaCoreTimeline")
   (gtype-id "MAIA_TYPE_CORE_TIMELINE")
+)
+
+(define-object MaiaCoreWatch
+  (parent "MaiaCoreObject")
+  (c-name "MaiaCoreWatch")
+  (gtype-id "MAIA_TYPE_CORE_WATCH")
+)
+
+(define-object MaiaCoreSocketWatch
+  (parent "MaiaCoreWatch")
+  (c-name "MaiaCoreSocketWatch")
+  (gtype-id "MAIA_TYPE_CORE_SOCKET_WATCH")
 )
 
 (define-object MaiaDrawable
@@ -325,6 +463,12 @@
   (gtype-id "MAIA_TYPE_LOG_STDOUT")
 )
 
+(define-object MaiaMain
+  (parent "MaiaCoreObject")
+  (c-name "MaiaMain")
+  (gtype-id "MAIA_TYPE_MAIN")
+)
+
 (define-object MaiaManifestAttribute
   (parent "MaiaCoreObject")
   (c-name "MaiaManifestAttribute")
@@ -450,6 +594,12 @@
   (gtype-id "MAIA_TYPE_VIEW")
 )
 
+(define-object MaiaWindow
+  (parent "MaiaGroup")
+  (c-name "MaiaWindow")
+  (gtype-id "MAIA_TYPE_WINDOW")
+)
+
 ;; Enumerations and flags ...
 
 (define-enum MaiaLogLevel
@@ -472,6 +622,8 @@
     '("core-object" "MAIA_LOG_CATEGORY_CORE_OBJECT")
     '("core-collection" "MAIA_LOG_CATEGORY_CORE_COLLECTION")
     '("core-timeline" "MAIA_LOG_CATEGORY_CORE_TIMELINE")
+    '("core-config" "MAIA_LOG_CATEGORY_CORE_CONFIG")
+    '("core-extension" "MAIA_LOG_CATEGORY_CORE_EXTENSION")
     '("core" "MAIA_LOG_CATEGORY_CORE")
     '("graphic-parsing" "MAIA_LOG_CATEGORY_GRAPHIC_PARSING")
     '("graphic-draw" "MAIA_LOG_CATEGORY_GRAPHIC_DRAW")
@@ -488,6 +640,9 @@
     '("canvas-geometry" "MAIA_LOG_CATEGORY_CANVAS_GEOMETRY")
     '("canvas-input" "MAIA_LOG_CATEGORY_CANVAS_INPUT")
     '("canvas" "MAIA_LOG_CATEGORY_CANVAS")
+    '("main-bus" "MAIA_LOG_CATEGORY_MAIN_BUS")
+    '("main-event" "MAIA_LOG_CATEGORY_MAIN_EVENT")
+    '("main" "MAIA_LOG_CATEGORY_MAIN")
     '("all" "MAIA_LOG_CATEGORY_ALL")
   )
 )
@@ -535,6 +690,85 @@
     '("sinusoidal" "MAIA_CORE_ANIMATOR_PROGRESS_TYPE_SINUSOIDAL")
     '("exponential" "MAIA_CORE_ANIMATOR_PROGRESS_TYPE_EXPONENTIAL")
     '("ease-in-ease-out" "MAIA_CORE_ANIMATOR_PROGRESS_TYPE_EASE_IN_EASE_OUT")
+  )
+)
+
+(define-enum MaiaCoreConfigError
+  (c-name "MaiaCoreConfigError")
+  (gtype-id "MAIA_TYPE_CORE_CONFIG_ERROR")
+  (values
+    '("schema" "MAIA_CORE_CONFIG_ERROR_SCHEMA")
+    '("open" "MAIA_CORE_CONFIG_ERROR_OPEN")
+    '("loading" "MAIA_CORE_CONFIG_ERROR_LOADING")
+    '("get-value" "MAIA_CORE_CONFIG_ERROR_GET_VALUE")
+    '("set-value" "MAIA_CORE_CONFIG_ERROR_SET_VALUE")
+    '("save" "MAIA_CORE_CONFIG_ERROR_SAVE")
+    '("remove" "MAIA_CORE_CONFIG_ERROR_REMOVE")
+  )
+)
+
+(define-enum MaiaCoreExtensionError
+  (c-name "MaiaCoreExtensionError")
+  (gtype-id "MAIA_TYPE_CORE_EXTENSION_ERROR")
+  (values
+    '("create" "MAIA_CORE_EXTENSION_ERROR_CREATE")
+    '("loading" "MAIA_CORE_EXTENSION_ERROR_LOADING")
+    '("not-loaded" "MAIA_CORE_EXTENSION_ERROR_NOT_LOADED")
+    '("create-plugin" "MAIA_CORE_EXTENSION_ERROR_CREATE_PLUGIN")
+  )
+)
+
+(define-enum MaiaCoreBusError
+  (c-name "MaiaCoreBusError")
+  (gtype-id "MAIA_TYPE_CORE_BUS_ERROR")
+  (values
+    '("ok" "MAIA_CORE_BUS_ERROR_OK")
+    '("connect" "MAIA_CORE_BUS_ERROR_CONNECT")
+    '("read" "MAIA_CORE_BUS_ERROR_READ")
+    '("write" "MAIA_CORE_BUS_ERROR_WRITE")
+    '("cancelled" "MAIA_CORE_BUS_ERROR_CANCELLED")
+  )
+)
+
+(define-enum MaiaCoreBusMessageType
+  (c-name "MaiaCoreBusMessageType")
+  (gtype-id "MAIA_TYPE_CORE_BUS_MESSAGE_TYPE")
+  (values
+    '("none" "MAIA_CORE_BUS_MESSAGE_TYPE_NONE")
+    '("auth" "MAIA_CORE_BUS_MESSAGE_TYPE_AUTH")
+    '("data" "MAIA_CORE_BUS_MESSAGE_TYPE_DATA")
+    '("status" "MAIA_CORE_BUS_MESSAGE_TYPE_STATUS")
+  )
+)
+
+(define-enum MaiaCoreBusStatus
+  (c-name "MaiaCoreBusStatus")
+  (gtype-id "MAIA_TYPE_CORE_BUS_STATUS")
+  (values
+    '("ok" "MAIA_CORE_BUS_STATUS_OK")
+    '("error" "MAIA_CORE_BUS_STATUS_ERROR")
+  )
+)
+
+(define-enum MaiaCoreBusAuthType
+  (c-name "MaiaCoreBusAuthType")
+  (gtype-id "MAIA_TYPE_CORE_BUS_AUTH_TYPE")
+  (values
+    '("e" "MAIA_CORE_BUS_AUTH_TYPE_NONE")
+  )
+)
+
+(define-enum MaiaCoreEventBusMessageType
+  (c-name "MaiaCoreEventBusMessageType")
+  (gtype-id "MAIA_TYPE_CORE_EVENT_BUS_MESSAGE_TYPE")
+  (values
+    '("invalid" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_INVALID")
+    '("event-advertise" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_EVENT_ADVERTISE")
+    '("event" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_EVENT")
+    '("event-reply" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_EVENT_REPLY")
+    '("event-destroy" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_EVENT_DESTROY")
+    '("subscribe" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_SUBSCRIBE")
+    '("unsubscribe" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_UNSUBSCRIBE")
   )
 )
 
@@ -3652,6 +3886,99 @@
   )
 )
 
+(define-function maia_core_stack_get_type
+  (c-name "maia_core_stack_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_stack_new
+  (c-name "maia_core_stack_new")
+  (is-constructor-of "MaiaCoreStack")
+  (return-type "MaiaCoreStack*")
+  (parameters
+    '("GType" "v_type")
+    '("GBoxedCopyFunc" "v_dup_func")
+    '("GDestroyNotify" "v_destroy_func")
+  )
+)
+
+(define-function maia_core_stack_construct
+  (c-name "maia_core_stack_construct")
+  (return-type "MaiaCoreStack*")
+  (parameters
+    '("GType" "object_type")
+    '("GType" "v_type")
+    '("GBoxedCopyFunc" "v_dup_func")
+    '("GDestroyNotify" "v_destroy_func")
+  )
+)
+
+(define-method peek
+  (of-object "MaiaCoreStack")
+  (c-name "maia_core_stack_peek")
+  (return-type "gpointer")
+)
+
+(define-method pop
+  (of-object "MaiaCoreStack")
+  (c-name "maia_core_stack_pop")
+  (return-type "gpointer")
+)
+
+(define-method push
+  (of-object "MaiaCoreStack")
+  (c-name "maia_core_stack_push")
+  (return-type "none")
+  (parameters
+    '("gconstpointer" "inVal")
+  )
+)
+
+(define-function maia_core_async_stack_get_type
+  (c-name "maia_core_async_stack_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_async_stack_new
+  (c-name "maia_core_async_stack_new")
+  (is-constructor-of "MaiaCoreAsyncStack")
+  (return-type "MaiaCoreAsyncStack*")
+  (parameters
+    '("GType" "v_type")
+    '("GBoxedCopyFunc" "v_dup_func")
+    '("GDestroyNotify" "v_destroy_func")
+  )
+)
+
+(define-function maia_core_async_stack_construct
+  (c-name "maia_core_async_stack_construct")
+  (return-type "MaiaCoreAsyncStack*")
+  (parameters
+    '("GType" "object_type")
+    '("GType" "v_type")
+    '("GBoxedCopyFunc" "v_dup_func")
+    '("GDestroyNotify" "v_destroy_func")
+  )
+)
+
+(define-method peek_timed
+  (of-object "MaiaCoreAsyncStack")
+  (c-name "maia_core_async_stack_peek_timed")
+  (return-type "gpointer")
+  (parameters
+    '("guint" "inWait")
+  )
+)
+
+(define-method pop_timed
+  (of-object "MaiaCoreAsyncStack")
+  (c-name "maia_core_async_stack_pop_timed")
+  (return-type "gpointer")
+  (parameters
+    '("guint" "inWait")
+  )
+)
+
 (define-function maia_core_list_get_type
   (c-name "maia_core_list_get_type")
   (return-type "GType")
@@ -4437,6 +4764,67 @@
   (return-type "gboolean")
 )
 
+(define-function maia_core_watch_get_type
+  (c-name "maia_core_watch_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_watch_construct
+  (c-name "maia_core_watch_construct")
+  (return-type "MaiaCoreWatch*")
+  (parameters
+    '("GType" "object_type")
+    '("gint" "inFd")
+    '("GMainContext*" "inContext")
+    '("gint" "inPriority")
+  )
+)
+
+(define-method on_prepare
+  (of-object "MaiaCoreWatch")
+  (c-name "maia_core_watch_on_prepare")
+  (return-type "gboolean")
+  (parameters
+    '("gint*" "outTimeout")
+  )
+)
+
+(define-method on_check
+  (of-object "MaiaCoreWatch")
+  (c-name "maia_core_watch_on_check")
+  (return-type "gboolean")
+)
+
+(define-method on_error
+  (of-object "MaiaCoreWatch")
+  (c-name "maia_core_watch_on_error")
+  (return-type "none")
+)
+
+(define-method on_process
+  (of-object "MaiaCoreWatch")
+  (c-name "maia_core_watch_on_process")
+  (return-type "gboolean")
+)
+
+(define-method start
+  (of-object "MaiaCoreWatch")
+  (c-name "maia_core_watch_start")
+  (return-type "none")
+)
+
+(define-method stop
+  (of-object "MaiaCoreWatch")
+  (c-name "maia_core_watch_stop")
+  (return-type "none")
+)
+
+(define-method get_fd
+  (of-object "MaiaCoreWatch")
+  (c-name "maia_core_watch_get_fd")
+  (return-type "gint")
+)
+
 (define-function maia_core_timeline_direction_get_type
   (c-name "maia_core_timeline_direction_get_type")
   (return-type "GType")
@@ -4783,6 +5171,1611 @@
   (of-object "MaiaCoreAnimator")
   (c-name "maia_core_animator_get_is_playing")
   (return-type "gboolean")
+)
+
+(define-function maia_core_config_error_quark
+  (c-name "maia_core_config_error_quark")
+  (return-type "GQuark")
+)
+
+(define-function maia_core_config_get_type
+  (c-name "maia_core_config_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_config_new
+  (c-name "maia_core_config_new")
+  (is-constructor-of "MaiaCoreConfig")
+  (return-type "MaiaCoreConfig*")
+)
+
+(define-function maia_core_config_construct
+  (c-name "maia_core_config_construct")
+  (return-type "MaiaCoreConfig*")
+  (parameters
+    '("GType" "object_type")
+  )
+)
+
+(define-function maia_core_config_new_load
+  (c-name "maia_core_config_new_load")
+  (return-type "MaiaCoreConfig*")
+  (parameters
+    '("const-gchar*" "inFilename")
+    '("GError**" "error")
+  )
+)
+
+(define-function maia_core_config_construct_load
+  (c-name "maia_core_config_construct_load")
+  (return-type "MaiaCoreConfig*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inFilename")
+    '("GError**" "error")
+  )
+)
+
+(define-method save
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_save")
+  (return-type "none")
+  (parameters
+    '("GError**" "error")
+  )
+)
+
+(define-method get_boolean
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_get_boolean")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("GError**" "error")
+  )
+)
+
+(define-method get_boolean_with_default
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_get_boolean_with_default")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("gboolean" "inDefaultValue")
+  )
+)
+
+(define-method set_boolean
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_set_boolean")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("gboolean" "inValue")
+  )
+)
+
+(define-method get_boolean_list
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_get_boolean_list")
+  (return-type "gboolean*")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("int*" "result_length1")
+    '("GError**" "error")
+  )
+)
+
+(define-method get_boolean_list_with_default
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_get_boolean_list_with_default")
+  (return-type "gboolean*")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("gboolean*" "inDefaultValue")
+    '("int" "inDefaultValue_length1")
+    '("int*" "result_length1")
+  )
+)
+
+(define-method set_boolean_list
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_set_boolean_list")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("gboolean*" "inValue")
+    '("int" "inValue_length1")
+  )
+)
+
+(define-method get_integer
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_get_integer")
+  (return-type "gint")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("GError**" "error")
+  )
+)
+
+(define-method get_integer_with_default
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_get_integer_with_default")
+  (return-type "gint")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("gint" "inDefaultValue")
+  )
+)
+
+(define-method get_integer_hex
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_get_integer_hex")
+  (return-type "gint")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("GError**" "error")
+  )
+)
+
+(define-method set_integer
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_set_integer")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("gint" "inValue")
+  )
+)
+
+(define-method get_integer_list
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_get_integer_list")
+  (return-type "gint*")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("int*" "result_length1")
+    '("GError**" "error")
+  )
+)
+
+(define-method get_integer_list_with_default
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_get_integer_list_with_default")
+  (return-type "gint*")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("gint*" "inDefaultValue")
+    '("int" "inDefaultValue_length1")
+    '("int*" "result_length1")
+  )
+)
+
+(define-method get_integer_hex_list
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_get_integer_hex_list")
+  (return-type "gint*")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("int*" "result_length1")
+    '("GError**" "error")
+  )
+)
+
+(define-method set_integer_list
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_set_integer_list")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("gint*" "inValue")
+    '("int" "inValue_length1")
+  )
+)
+
+(define-method get_double
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_get_double")
+  (return-type "gdouble")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("GError**" "error")
+  )
+)
+
+(define-method get_double_with_default
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_get_double_with_default")
+  (return-type "gdouble")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("gdouble" "inDefaultValue")
+  )
+)
+
+(define-method set_double
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_set_double")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("gdouble" "inValue")
+  )
+)
+
+(define-method get_double_list
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_get_double_list")
+  (return-type "gdouble*")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("int*" "result_length1")
+    '("GError**" "error")
+  )
+)
+
+(define-method get_double_list_with_default
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_get_double_list_with_default")
+  (return-type "gdouble*")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("gdouble*" "inDefaultValue")
+    '("int" "inDefaultValue_length1")
+    '("int*" "result_length1")
+  )
+)
+
+(define-method set_double_list
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_set_double_list")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("gdouble*" "inValue")
+    '("int" "inValue_length1")
+  )
+)
+
+(define-method get_string
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_get_string")
+  (return-type "gchar*")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("GError**" "error")
+  )
+)
+
+(define-method get_string_with_default
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_get_string_with_default")
+  (return-type "gchar*")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("const-gchar*" "inDefaultValue")
+  )
+)
+
+(define-method set_string
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_set_string")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("const-gchar*" "inValue")
+  )
+)
+
+(define-method get_string_list
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_get_string_list")
+  (return-type "gchar**")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("int*" "result_length1")
+    '("GError**" "error")
+  )
+)
+
+(define-method get_string_list_with_default
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_get_string_list_with_default")
+  (return-type "gchar**")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("gchar**" "inDefaultValue")
+    '("int" "inDefaultValue_length1")
+    '("int*" "result_length1")
+  )
+)
+
+(define-method set_string_list
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_set_string_list")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("gchar**" "inValue")
+    '("int" "inValue_length1")
+  )
+)
+
+(define-method remove
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_remove")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("const-gchar*" "inKey")
+    '("GError**" "error")
+  )
+)
+
+(define-method remove_section
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_remove_section")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inSection")
+    '("GError**" "error")
+  )
+)
+
+(define-method get_filename
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_get_filename")
+  (return-type "const-gchar*")
+)
+
+(define-method set_filename
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_set_filename")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-function maia_core_extension_error_quark
+  (c-name "maia_core_extension_error_quark")
+  (return-type "GQuark")
+)
+
+(define-function maia_core_extension_get_type
+  (c-name "maia_core_extension_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_extension_new
+  (c-name "maia_core_extension_new")
+  (is-constructor-of "MaiaCoreExtension")
+  (return-type "MaiaCoreExtension*")
+  (parameters
+    '("const-gchar*" "inFilename")
+  )
+)
+
+(define-function maia_core_extension_construct
+  (c-name "maia_core_extension_construct")
+  (return-type "MaiaCoreExtension*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inFilename")
+  )
+)
+
+(define-method open
+  (of-object "MaiaCoreExtension")
+  (c-name "maia_core_extension_open")
+  (return-type "none")
+  (parameters
+    '("GError**" "error")
+  )
+)
+
+(define-method close
+  (of-object "MaiaCoreExtension")
+  (c-name "maia_core_extension_close")
+  (return-type "none")
+)
+
+(define-method get
+  (of-object "MaiaCoreExtension")
+  (c-name "maia_core_extension_get")
+  (return-type "void*")
+  (parameters
+    '("const-gchar*" "inFunction")
+    '("GError**" "error")
+  )
+)
+
+(define-method get_configuration_filename
+  (of-object "MaiaCoreExtension")
+  (c-name "maia_core_extension_get_configuration_filename")
+  (return-type "const-gchar*")
+)
+
+(define-method set_configuration_filename
+  (of-object "MaiaCoreExtension")
+  (c-name "maia_core_extension_set_configuration_filename")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_name
+  (of-object "MaiaCoreExtension")
+  (c-name "maia_core_extension_get_name")
+  (return-type "const-gchar*")
+)
+
+(define-method get_description
+  (of-object "MaiaCoreExtension")
+  (c-name "maia_core_extension_get_description")
+  (return-type "const-gchar*")
+)
+
+(define-method get_module_filename
+  (of-object "MaiaCoreExtension")
+  (c-name "maia_core_extension_get_module_filename")
+  (return-type "const-gchar*")
+)
+
+(define-function maia_core_extension_loader_get_type
+  (c-name "maia_core_extension_loader_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_extension_loader_new
+  (c-name "maia_core_extension_loader_new")
+  (is-constructor-of "MaiaCoreExtensionLoader")
+  (return-type "MaiaCoreExtensionLoader*")
+  (parameters
+    '("GType" "t_type")
+    '("GBoxedCopyFunc" "t_dup_func")
+    '("GDestroyNotify" "t_destroy_func")
+    '("const-gchar*" "inSuffix")
+    '("gchar**" "inSearchPaths")
+    '("int" "inSearchPaths_length1")
+  )
+)
+
+(define-function maia_core_extension_loader_construct
+  (c-name "maia_core_extension_loader_construct")
+  (return-type "MaiaCoreExtensionLoader*")
+  (parameters
+    '("GType" "object_type")
+    '("GType" "t_type")
+    '("GBoxedCopyFunc" "t_dup_func")
+    '("GDestroyNotify" "t_destroy_func")
+    '("const-gchar*" "inSuffix")
+    '("gchar**" "inSearchPaths")
+    '("int" "inSearchPaths_length1")
+  )
+)
+
+(define-function maia_core_message_get_type
+  (c-name "maia_core_message_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_message_new
+  (c-name "maia_core_message_new")
+  (is-constructor-of "MaiaCoreMessage")
+  (return-type "MaiaCoreMessage*")
+  (parameters
+    '("guint" "inLength")
+  )
+)
+
+(define-function maia_core_message_construct
+  (c-name "maia_core_message_construct")
+  (return-type "MaiaCoreMessage*")
+  (parameters
+    '("GType" "object_type")
+    '("guint" "inLength")
+  )
+)
+
+(define-function maia_core_message_new_from_data
+  (c-name "maia_core_message_new_from_data")
+  (return-type "MaiaCoreMessage*")
+  (parameters
+    '("guint8*" "inBuffer")
+    '("int" "inBuffer_length1")
+    '("guint" "inOffset")
+    '("guint" "inLength")
+  )
+)
+
+(define-function maia_core_message_construct_from_data
+  (c-name "maia_core_message_construct_from_data")
+  (return-type "MaiaCoreMessage*")
+  (parameters
+    '("GType" "object_type")
+    '("guint8*" "inBuffer")
+    '("int" "inBuffer_length1")
+    '("guint" "inOffset")
+    '("guint" "inLength")
+  )
+)
+
+(define-method resize
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_resize")
+  (return-type "none")
+  (parameters
+    '("guint" "inLength")
+  )
+)
+
+(define-method to_string
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_to_string")
+  (return-type "gchar*")
+  (parameters
+    '("guint" "inOffset")
+    '("guint" "inNumBytes")
+  )
+)
+
+(define-method to_raw_string
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_to_raw_string")
+  (return-type "gchar*")
+  (parameters
+    '("guint" "inOffset")
+    '("guint" "inNumBytes")
+  )
+)
+
+(define-method get
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_get")
+  (return-type "guint8")
+  (parameters
+    '("guint" "inIndex")
+  )
+)
+
+(define-method set
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_set")
+  (return-type "none")
+  (parameters
+    '("guint" "inIndex")
+    '("guint8" "inValue")
+  )
+)
+
+(define-method push_back
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_push_back")
+  (return-type "guint")
+  (parameters
+    '("guint8" "inValue")
+  )
+)
+
+(define-method get_uint16
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_get_uint16")
+  (return-type "guint16")
+  (parameters
+    '("guint" "inIndex")
+  )
+)
+
+(define-method set_uint16
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_set_uint16")
+  (return-type "none")
+  (parameters
+    '("guint" "inIndex")
+    '("guint16" "inValue")
+  )
+)
+
+(define-method push_back_uint16
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_push_back_uint16")
+  (return-type "guint")
+  (parameters
+    '("guint16" "inValue")
+  )
+)
+
+(define-method get_uint32
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_get_uint32")
+  (return-type "guint32")
+  (parameters
+    '("guint" "inIndex")
+  )
+)
+
+(define-method set_uint32
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_set_uint32")
+  (return-type "none")
+  (parameters
+    '("guint" "inIndex")
+    '("guint32" "inValue")
+  )
+)
+
+(define-method push_back_uint32
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_push_back_uint32")
+  (return-type "guint")
+  (parameters
+    '("guint32" "inValue")
+  )
+)
+
+(define-method get_uint64
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_get_uint64")
+  (return-type "guint64")
+  (parameters
+    '("guint" "inIndex")
+  )
+)
+
+(define-method set_uint64
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_set_uint64")
+  (return-type "none")
+  (parameters
+    '("guint" "inIndex")
+    '("guint64" "inValue")
+  )
+)
+
+(define-method push_back_uint64
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_push_back_uint64")
+  (return-type "guint")
+  (parameters
+    '("guint64" "inValue")
+  )
+)
+
+(define-method get_double
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_get_double")
+  (return-type "gdouble")
+  (parameters
+    '("guint" "inIndex")
+  )
+)
+
+(define-method set_double
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_set_double")
+  (return-type "none")
+  (parameters
+    '("guint" "inIndex")
+    '("gdouble" "inValue")
+  )
+)
+
+(define-method push_back_double
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_push_back_double")
+  (return-type "guint")
+  (parameters
+    '("gdouble" "inValue")
+  )
+)
+
+(define-method get_string
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_get_string")
+  (return-type "gchar*")
+  (parameters
+    '("guint" "inIndex")
+    '("guint" "inLength")
+  )
+)
+
+(define-method set_string
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_set_string")
+  (return-type "none")
+  (parameters
+    '("guint" "inIndex")
+    '("const-gchar*" "inValue")
+  )
+)
+
+(define-method push_back_string
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_push_back_string")
+  (return-type "guint")
+  (parameters
+    '("const-gchar*" "inValue")
+  )
+)
+
+(define-method get_variant
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_get_variant")
+  (return-type "GVariant*")
+  (parameters
+    '("guint" "inIndex")
+    '("const-gchar*" "inFormat")
+  )
+)
+
+(define-method set_variant
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_set_variant")
+  (return-type "none")
+  (parameters
+    '("guint" "inIndex")
+    '("GVariant*" "inValue")
+  )
+)
+
+(define-method push_back_variant
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_push_back_variant")
+  (return-type "guint")
+  (parameters
+    '("GVariant*" "inValue")
+  )
+)
+
+(define-method set_array
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_set_array")
+  (return-type "none")
+  (parameters
+    '("guint" "inIndex")
+    '("guint8*" "inArray")
+    '("int" "inArray_length1")
+    '("guint" "inNumBytes")
+  )
+)
+
+(define-method push_back_array
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_push_back_array")
+  (return-type "guint")
+  (parameters
+    '("guint8*" "inArray")
+    '("int" "inArray_length1")
+    '("guint" "inNumBytes")
+  )
+)
+
+(define-method copy
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_copy")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreMessage*" "inMessage")
+  )
+)
+
+(define-method get_raw
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_get_raw")
+  (return-type "guint8*")
+  (parameters
+    '("int*" "result_length1")
+  )
+)
+
+(define-method get_length
+  (of-object "MaiaCoreMessage")
+  (c-name "maia_core_message_get_length")
+  (return-type "guint")
+)
+
+(define-function maia_core_bus_error_quark
+  (c-name "maia_core_bus_error_quark")
+  (return-type "GQuark")
+)
+
+(define-function maia_core_bus_get_type
+  (c-name "maia_core_bus_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_bus_message_type_get_type
+  (c-name "maia_core_bus_message_type_get_type")
+  (return-type "GType")
+)
+
+(define-method to_string
+  (of-object "MaiaCoreBusMessageType")
+  (c-name "maia_core_bus_message_type_to_string")
+  (return-type "gchar*")
+)
+
+(define-function maia_core_bus_status_get_type
+  (c-name "maia_core_bus_status_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_bus_auth_type_get_type
+  (c-name "maia_core_bus_auth_type_get_type")
+  (return-type "GType")
+)
+
+(define-method read
+  (of-object "MaiaCoreBus")
+  (c-name "maia_core_bus_read")
+  (return-type "gsize")
+  (parameters
+    '("guint8*" "inData")
+    '("int" "inData_length1")
+    '("guint" "inTimeout")
+    '("GError**" "error")
+  )
+)
+
+(define-method write
+  (of-object "MaiaCoreBus")
+  (c-name "maia_core_bus_write")
+  (return-type "gsize")
+  (parameters
+    '("guint8*" "inData")
+    '("int" "inData_length1")
+    '("guint" "inTimeout")
+    '("GError**" "error")
+  )
+)
+
+(define-method recv
+  (of-object "MaiaCoreBus")
+  (c-name "maia_core_bus_recv")
+  (return-type "none")
+  (parameters
+    '("GCancellable*" "inCancellable")
+    '("GAsyncReadyCallback" "_callback_")
+    '("gpointer" "_user_data_")
+  )
+)
+
+(define-function maia_core_bus_message_get_type
+  (c-name "maia_core_bus_message_get_type")
+  (return-type "GType")
+)
+
+(define-method recv_finish
+  (of-object "MaiaCoreBus")
+  (c-name "maia_core_bus_recv_finish")
+  (return-type "MaiaCoreBusMessage*")
+  (parameters
+    '("GAsyncResult*" "_res_")
+    '("GError**" "error")
+  )
+)
+
+(define-method send
+  (of-object "MaiaCoreBus")
+  (c-name "maia_core_bus_send")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreBusMessage*" "inMessage")
+    '("GCancellable*" "inCancellable")
+    '("GAsyncReadyCallback" "_callback_")
+    '("gpointer" "_user_data_")
+  )
+)
+
+(define-method send_finish
+  (of-object "MaiaCoreBus")
+  (c-name "maia_core_bus_send_finish")
+  (return-type "none")
+  (parameters
+    '("GAsyncResult*" "_res_")
+    '("GError**" "error")
+  )
+)
+
+(define-function maia_core_bus_construct
+  (c-name "maia_core_bus_construct")
+  (return-type "MaiaCoreBus*")
+  (parameters
+    '("GType" "object_type")
+  )
+)
+
+(define-method get_uuid
+  (of-object "MaiaCoreBus")
+  (c-name "maia_core_bus_get_uuid")
+  (return-type "const-gchar*")
+)
+
+(define-method get_timeout
+  (of-object "MaiaCoreBus")
+  (c-name "maia_core_bus_get_timeout")
+  (return-type "guint")
+)
+
+(define-method set_timeout
+  (of-object "MaiaCoreBus")
+  (c-name "maia_core_bus_set_timeout")
+  (return-type "none")
+  (parameters
+    '("guint" "value")
+  )
+)
+
+(define-function maia_core_bus_message_register
+  (c-name "maia_core_bus_message_register")
+  (return-type "none")
+  (parameters
+    '("gint" "inMessageType")
+    '("GType" "inType")
+  )
+)
+
+(define-function maia_core_bus_message_new
+  (c-name "maia_core_bus_message_new")
+  (is-constructor-of "MaiaCoreBusMessage")
+  (return-type "MaiaCoreBusMessage*")
+)
+
+(define-function maia_core_bus_message_construct
+  (c-name "maia_core_bus_message_construct")
+  (return-type "MaiaCoreBusMessage*")
+  (parameters
+    '("GType" "object_type")
+  )
+)
+
+(define-method get_message_type
+  (of-object "MaiaCoreBusMessage")
+  (c-name "maia_core_bus_message_get_message_type")
+  (return-type "gint")
+)
+
+(define-method get_message_size
+  (of-object "MaiaCoreBusMessage")
+  (c-name "maia_core_bus_message_get_message_size")
+  (return-type "guint32")
+)
+
+(define-method get_sender
+  (of-object "MaiaCoreBusMessage")
+  (c-name "maia_core_bus_message_get_sender")
+  (return-type "guint32")
+)
+
+(define-method set_sender
+  (of-object "MaiaCoreBusMessage")
+  (c-name "maia_core_bus_message_set_sender")
+  (return-type "none")
+  (parameters
+    '("guint32" "value")
+  )
+)
+
+(define-method get_destination
+  (of-object "MaiaCoreBusMessage")
+  (c-name "maia_core_bus_message_get_destination")
+  (return-type "guint32")
+)
+
+(define-method set_destination
+  (of-object "MaiaCoreBusMessage")
+  (c-name "maia_core_bus_message_set_destination")
+  (return-type "none")
+  (parameters
+    '("guint32" "value")
+  )
+)
+
+(define-function maia_core_bus_message_auth_get_type
+  (c-name "maia_core_bus_message_auth_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_bus_message_auth_new
+  (c-name "maia_core_bus_message_auth_new")
+  (is-constructor-of "MaiaCoreBusMessageAuth")
+  (return-type "MaiaCoreBusMessageAuth*")
+  (parameters
+    '("MaiaCoreBusAuthType" "inType")
+  )
+)
+
+(define-function maia_core_bus_message_auth_construct
+  (c-name "maia_core_bus_message_auth_construct")
+  (return-type "MaiaCoreBusMessageAuth*")
+  (parameters
+    '("GType" "object_type")
+    '("MaiaCoreBusAuthType" "inType")
+  )
+)
+
+(define-method get_auth_type
+  (of-object "MaiaCoreBusMessageAuth")
+  (c-name "maia_core_bus_message_auth_get_auth_type")
+  (return-type "guint8")
+)
+
+(define-function maia_core_bus_message_data_get_type
+  (c-name "maia_core_bus_message_data_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_bus_message_data_new
+  (c-name "maia_core_bus_message_data_new")
+  (is-constructor-of "MaiaCoreBusMessageData")
+  (return-type "MaiaCoreBusMessageData*")
+  (parameters
+    '("GVariant*" "inData")
+  )
+)
+
+(define-function maia_core_bus_message_data_construct
+  (c-name "maia_core_bus_message_data_construct")
+  (return-type "MaiaCoreBusMessageData*")
+  (parameters
+    '("GType" "object_type")
+    '("GVariant*" "inData")
+  )
+)
+
+(define-method get_data
+  (of-object "MaiaCoreBusMessageData")
+  (c-name "maia_core_bus_message_data_get_data")
+  (return-type "GVariant*")
+  (parameters
+    '("const-gchar*" "inFormat")
+  )
+)
+
+(define-function maia_core_bus_message_status_get_type
+  (c-name "maia_core_bus_message_status_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_bus_message_status_new
+  (c-name "maia_core_bus_message_status_new")
+  (is-constructor-of "MaiaCoreBusMessageStatus")
+  (return-type "MaiaCoreBusMessageStatus*")
+  (parameters
+    '("MaiaCoreBusStatus" "inStatus")
+  )
+)
+
+(define-function maia_core_bus_message_status_construct
+  (c-name "maia_core_bus_message_status_construct")
+  (return-type "MaiaCoreBusMessageStatus*")
+  (parameters
+    '("GType" "object_type")
+    '("MaiaCoreBusStatus" "inStatus")
+  )
+)
+
+(define-method get_status
+  (of-object "MaiaCoreBusMessageStatus")
+  (c-name "maia_core_bus_message_status_get_status")
+  (return-type "guint8")
+)
+
+(define-function maia_core_bus_connection_get_type
+  (c-name "maia_core_bus_connection_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_bus_connection_construct
+  (c-name "maia_core_bus_connection_construct")
+  (return-type "MaiaCoreBusConnection*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inUUID")
+  )
+)
+
+(define-method connect_to_service
+  (of-object "MaiaCoreBusConnection")
+  (c-name "maia_core_bus_connection_connect_to_service")
+  (return-type "none")
+  (parameters
+    '("GAsyncReadyCallback" "_callback_")
+    '("gpointer" "_user_data_")
+  )
+)
+
+(define-method connect_to_service_finish
+  (of-object "MaiaCoreBusConnection")
+  (c-name "maia_core_bus_connection_connect_to_service_finish")
+  (return-type "gboolean")
+  (parameters
+    '("GAsyncResult*" "_res_")
+  )
+)
+
+(define-function maia_core_bus_service_get_type
+  (c-name "maia_core_bus_service_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_bus_service_construct
+  (c-name "maia_core_bus_service_construct")
+  (return-type "MaiaCoreBusService*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inUUID")
+  )
+)
+
+(define-method authorize
+  (of-object "MaiaCoreBusService")
+  (c-name "maia_core_bus_service_authorize")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreBusConnection*" "inClient")
+    '("GAsyncReadyCallback" "_callback_")
+    '("gpointer" "_user_data_")
+  )
+)
+
+(define-method authorize_finish
+  (of-object "MaiaCoreBusService")
+  (c-name "maia_core_bus_service_authorize_finish")
+  (return-type "gboolean")
+  (parameters
+    '("GAsyncResult*" "_res_")
+  )
+)
+
+(define-method set_dispatch_func
+  (of-object "MaiaCoreBusService")
+  (c-name "maia_core_bus_service_set_dispatch_func")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreBusServiceDispatchFunc" "inDispatchFunc")
+    '("void*" "inDispatchFunc_target")
+  )
+)
+
+(define-function maia_core_socket_watch_get_type
+  (c-name "maia_core_socket_watch_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_socket_watch_new
+  (c-name "maia_core_socket_watch_new")
+  (is-constructor-of "MaiaCoreSocketWatch")
+  (return-type "MaiaCoreSocketWatch*")
+  (parameters
+    '("GSocket*" "inSocket")
+    '("GMainContext*" "inContext")
+    '("gint" "inPriority")
+  )
+)
+
+(define-function maia_core_socket_watch_construct
+  (c-name "maia_core_socket_watch_construct")
+  (return-type "MaiaCoreSocketWatch*")
+  (parameters
+    '("GType" "object_type")
+    '("GSocket*" "inSocket")
+    '("GMainContext*" "inContext")
+    '("gint" "inPriority")
+  )
+)
+
+(define-function maia_core_socket_bus_connection_get_type
+  (c-name "maia_core_socket_bus_connection_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_socket_bus_connection_new
+  (c-name "maia_core_socket_bus_connection_new")
+  (is-constructor-of "MaiaCoreSocketBusConnection")
+  (return-type "MaiaCoreSocketBusConnection*")
+  (parameters
+    '("const-gchar*" "inName")
+    '("guint32" "inService")
+    '("GError**" "error")
+  )
+)
+
+(define-function maia_core_socket_bus_connection_construct
+  (c-name "maia_core_socket_bus_connection_construct")
+  (return-type "MaiaCoreSocketBusConnection*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+    '("guint32" "inService")
+    '("GError**" "error")
+  )
+)
+
+(define-function maia_core_socket_bus_connection_new_tcp
+  (c-name "maia_core_socket_bus_connection_new_tcp")
+  (return-type "MaiaCoreSocketBusConnection*")
+  (parameters
+    '("const-gchar*" "inName")
+    '("const-gchar*" "inHost")
+    '("guint16" "inPort")
+    '("GError**" "error")
+  )
+)
+
+(define-function maia_core_socket_bus_connection_construct_tcp
+  (c-name "maia_core_socket_bus_connection_construct_tcp")
+  (return-type "MaiaCoreSocketBusConnection*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+    '("const-gchar*" "inHost")
+    '("guint16" "inPort")
+    '("GError**" "error")
+  )
+)
+
+(define-function maia_core_socket_bus_service_get_type
+  (c-name "maia_core_socket_bus_service_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_socket_bus_service_new
+  (c-name "maia_core_socket_bus_service_new")
+  (is-constructor-of "MaiaCoreSocketBusService")
+  (return-type "MaiaCoreSocketBusService*")
+  (parameters
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-function maia_core_socket_bus_service_construct
+  (c-name "maia_core_socket_bus_service_construct")
+  (return-type "MaiaCoreSocketBusService*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-function maia_core_socket_bus_service_new_tcp
+  (c-name "maia_core_socket_bus_service_new_tcp")
+  (return-type "MaiaCoreSocketBusService*")
+  (parameters
+    '("const-gchar*" "inName")
+    '("guint" "inPort")
+  )
+)
+
+(define-function maia_core_socket_bus_service_construct_tcp
+  (c-name "maia_core_socket_bus_service_construct_tcp")
+  (return-type "MaiaCoreSocketBusService*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+    '("guint" "inPort")
+  )
+)
+
+(define-method get_port
+  (of-object "MaiaCoreSocketBusService")
+  (c-name "maia_core_socket_bus_service_get_port")
+  (return-type "guint")
+)
+
+(define-function maia_core_event_get_type
+  (c-name "maia_core_event_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_event_bus_get_type
+  (c-name "maia_core_event_bus_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_event_new
+  (c-name "maia_core_event_new")
+  (is-constructor-of "MaiaCoreEvent")
+  (return-type "MaiaCoreEvent*")
+  (parameters
+    '("const-gchar*" "inName")
+    '("void*" "inOwner")
+    '("MaiaCoreEventBus*" "inBus")
+  )
+)
+
+(define-function maia_core_event_construct
+  (c-name "maia_core_event_construct")
+  (return-type "MaiaCoreEvent*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+    '("void*" "inOwner")
+    '("MaiaCoreEventBus*" "inBus")
+  )
+)
+
+(define-function maia_core_event_args_get_type
+  (c-name "maia_core_event_args_get_type")
+  (return-type "GType")
+)
+
+(define-method publish
+  (of-object "MaiaCoreEvent")
+  (c-name "maia_core_event_publish")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEventArgs*" "inArgs")
+  )
+)
+
+(define-method publish_with_reply
+  (of-object "MaiaCoreEvent")
+  (c-name "maia_core_event_publish_with_reply")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEventArgs*" "inArgs")
+    '("MaiaCoreEventHandler" "inHandler")
+    '("void*" "inHandler_target")
+  )
+)
+
+(define-function maia_core_event_listener_get_type
+  (c-name "maia_core_event_listener_get_type")
+  (return-type "GType")
+)
+
+(define-method subscribe
+  (of-object "MaiaCoreEvent")
+  (c-name "maia_core_event_subscribe")
+  (return-type "MaiaCoreEventListener*")
+  (parameters
+    '("MaiaCoreEventHandler" "inHandler")
+    '("void*" "inHandler_target")
+    '("GDestroyNotify" "inHandler_target_destroy_notify")
+  )
+)
+
+(define-method get_name
+  (of-object "MaiaCoreEvent")
+  (c-name "maia_core_event_get_name")
+  (return-type "const-gchar*")
+)
+
+(define-method get_owner
+  (of-object "MaiaCoreEvent")
+  (c-name "maia_core_event_get_owner")
+  (return-type "void*")
+)
+
+(define-function maia_core_event_args_construct
+  (c-name "maia_core_event_args_construct")
+  (return-type "MaiaCoreEventArgs*")
+  (parameters
+    '("GType" "object_type")
+  )
+)
+
+(define-method accumulate
+  (of-object "MaiaCoreEventArgs")
+  (c-name "maia_core_event_args_accumulate")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEventArgs*" "inArgs")
+  )
+)
+
+(define-method copy
+  (of-object "MaiaCoreEventArgs")
+  (c-name "maia_core_event_args_copy")
+  (return-type "MaiaCoreEventArgs*")
+)
+
+(define-method get_sequence
+  (of-object "MaiaCoreEventArgs")
+  (c-name "maia_core_event_args_get_sequence")
+  (return-type "gint")
+)
+
+(define-method get_serialize
+  (of-object "MaiaCoreEventArgs")
+  (c-name "maia_core_event_args_get_serialize")
+  (return-type "GVariant*")
+)
+
+(define-method set_serialize
+  (of-object "MaiaCoreEventArgs")
+  (c-name "maia_core_event_args_set_serialize")
+  (return-type "none")
+  (parameters
+    '("GVariant*" "value")
+  )
+)
+
+(define-function maia_core_event_listener_new
+  (c-name "maia_core_event_listener_new")
+  (is-constructor-of "MaiaCoreEventListener")
+  (return-type "MaiaCoreEventListener*")
+  (parameters
+    '("MaiaCoreEventHandler" "inHandler")
+    '("void*" "inHandler_target")
+    '("GDestroyNotify" "inHandler_target_destroy_notify")
+  )
+)
+
+(define-function maia_core_event_listener_construct
+  (c-name "maia_core_event_listener_construct")
+  (return-type "MaiaCoreEventListener*")
+  (parameters
+    '("GType" "object_type")
+    '("MaiaCoreEventHandler" "inHandler")
+    '("void*" "inHandler_target")
+    '("GDestroyNotify" "inHandler_target_destroy_notify")
+  )
+)
+
+(define-method destroy
+  (of-object "MaiaCoreEventListener")
+  (c-name "maia_core_event_listener_destroy")
+  (return-type "none")
+)
+
+(define-method get_block
+  (of-object "MaiaCoreEventListener")
+  (c-name "maia_core_event_listener_get_block")
+  (return-type "gboolean")
+)
+
+(define-method set_block
+  (of-object "MaiaCoreEventListener")
+  (c-name "maia_core_event_listener_set_block")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
+(define-function maia_core_event_bus_message_type_get_type
+  (c-name "maia_core_event_bus_message_type_get_type")
+  (return-type "GType")
+)
+
+(define-method to_string
+  (of-object "MaiaCoreEventBusMessageType")
+  (c-name "maia_core_event_bus_message_type_to_string")
+  (return-type "gchar*")
+)
+
+(define-function maia_core_event_bus_new
+  (c-name "maia_core_event_bus_new")
+  (is-constructor-of "MaiaCoreEventBus")
+  (return-type "MaiaCoreEventBus*")
+  (parameters
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-function maia_core_event_bus_construct
+  (c-name "maia_core_event_bus_construct")
+  (return-type "MaiaCoreEventBus*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-method advertise
+  (of-object "MaiaCoreEventBus")
+  (c-name "maia_core_event_bus_advertise")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEvent*" "inEvent")
+  )
+)
+
+(define-method destroy
+  (of-object "MaiaCoreEventBus")
+  (c-name "maia_core_event_bus_destroy")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEvent*" "inEvent")
+  )
+)
+
+(define-method publish
+  (of-object "MaiaCoreEventBus")
+  (c-name "maia_core_event_bus_publish")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inName")
+    '("void*" "inOwner")
+    '("MaiaCoreEventArgs*" "inArgs")
+  )
+)
+
+(define-method publish_event
+  (of-object "MaiaCoreEventBus")
+  (c-name "maia_core_event_bus_publish_event")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEvent*" "inEvent")
+    '("MaiaCoreEventArgs*" "inArgs")
+  )
+)
+
+(define-method publish_with_reply
+  (of-object "MaiaCoreEventBus")
+  (c-name "maia_core_event_bus_publish_with_reply")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inName")
+    '("void*" "inOwner")
+    '("MaiaCoreEventArgs*" "inArgs")
+    '("MaiaCoreEventHandler" "inReply")
+    '("void*" "inReply_target")
+  )
+)
+
+(define-method publish_event_with_reply
+  (of-object "MaiaCoreEventBus")
+  (c-name "maia_core_event_bus_publish_event_with_reply")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEvent*" "inEvent")
+    '("MaiaCoreEventArgs*" "inArgs")
+    '("MaiaCoreEventHandler" "inReply")
+    '("void*" "inReply_target")
+  )
+)
+
+(define-method subscribe
+  (of-object "MaiaCoreEventBus")
+  (c-name "maia_core_event_bus_subscribe")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEvent*" "inEvent")
+    '("MaiaCoreEventListener*" "inListener")
+  )
+)
+
+(define-function maia_core_event_bus_get_default
+  (c-name "maia_core_event_bus_get_default")
+  (return-type "MaiaCoreEventBus*")
+)
+
+(define-method set_default
+  (of-object "MaiaCoreEventBus")
+  (c-name "maia_core_event_bus_set_default")
+  (return-type "none")
 )
 
 (define-function maia_manifest_error_quark
@@ -7612,6 +9605,156 @@
   )
 )
 
+(define-function maia_backend_get_type
+  (c-name "maia_backend_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_backend_new
+  (c-name "maia_backend_new")
+  (is-constructor-of "MaiaBackend")
+  (return-type "MaiaBackend*")
+  (parameters
+    '("const-gchar*" "inFilename")
+  )
+)
+
+(define-function maia_backend_construct
+  (c-name "maia_backend_construct")
+  (return-type "MaiaBackend*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inFilename")
+  )
+)
+
+(define-method load
+  (of-object "MaiaBackend")
+  (c-name "maia_backend_load")
+  (return-type "none")
+  (parameters
+    '("GError**" "error")
+  )
+)
+
+(define-method unload
+  (of-object "MaiaBackend")
+  (c-name "maia_backend_unload")
+  (return-type "none")
+  (parameters
+    '("GError**" "error")
+  )
+)
+
+(define-method get_loaded
+  (of-object "MaiaBackend")
+  (c-name "maia_backend_get_loaded")
+  (return-type "gboolean")
+)
+
+(define-method get_require
+  (of-object "MaiaBackend")
+  (c-name "maia_backend_get_require")
+  (return-type "gchar**")
+  (parameters
+    '("int*" "result_length1")
+  )
+)
+
+(define-method get_provide
+  (of-object "MaiaBackend")
+  (c-name "maia_backend_get_provide")
+  (return-type "gchar**")
+  (parameters
+    '("int*" "result_length1")
+  )
+)
+
+(define-function maia_backends_get_type
+  (c-name "maia_backends_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_backends_new
+  (c-name "maia_backends_new")
+  (is-constructor-of "MaiaBackends")
+  (return-type "MaiaBackends*")
+)
+
+(define-function maia_backends_construct
+  (c-name "maia_backends_construct")
+  (return-type "MaiaBackends*")
+  (parameters
+    '("GType" "object_type")
+  )
+)
+
+(define-method load
+  (of-object "MaiaBackends")
+  (c-name "maia_backends_load")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inBackend")
+    '("GError**" "error")
+  )
+)
+
+(define-method unload
+  (of-object "MaiaBackends")
+  (c-name "maia_backends_unload")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inBackend")
+    '("GError**" "error")
+  )
+)
+
+(define-function maia_main_get_type
+  (c-name "maia_main_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_main_new
+  (c-name "maia_main_new")
+  (is-constructor-of "MaiaMain")
+  (return-type "MaiaMain*")
+  (parameters
+    '("gint" "inFps")
+    '("gchar**" "inBackends")
+    '("int" "inBackends_length1")
+  )
+)
+
+(define-function maia_main_construct
+  (c-name "maia_main_construct")
+  (return-type "MaiaMain*")
+  (parameters
+    '("GType" "object_type")
+    '("gint" "inFps")
+    '("gchar**" "inBackends")
+    '("int" "inBackends_length1")
+  )
+)
+
+(define-function maia_main_new_from_args
+  (c-name "maia_main_new_from_args")
+  (return-type "MaiaMain*")
+  (parameters
+    '("gchar***" "inArgs")
+    '("int*" "inArgs_length1")
+  )
+)
+
+(define-function maia_main_construct_from_args
+  (c-name "maia_main_construct_from_args")
+  (return-type "MaiaMain*")
+  (parameters
+    '("GType" "object_type")
+    '("gchar***" "inArgs")
+    '("int*" "inArgs_length1")
+  )
+)
+
 (define-function maia_key_get_type
   (c-name "maia_key_get_type")
   (return-type "GType")
@@ -8489,6 +10632,51 @@
 (define-function maia_group_get_type
   (c-name "maia_group_get_type")
   (return-type "GType")
+)
+
+(define-function maia_window_get_type
+  (c-name "maia_window_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_window_new
+  (c-name "maia_window_new")
+  (is-constructor-of "MaiaWindow")
+  (return-type "MaiaWindow*")
+  (parameters
+    '("const-gchar*" "inName")
+    '("gint" "inWidth")
+    '("gint" "inHeight")
+  )
+)
+
+(define-function maia_window_construct
+  (c-name "maia_window_construct")
+  (return-type "MaiaWindow*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+    '("gint" "inWidth")
+    '("gint" "inHeight")
+  )
+)
+
+(define-method get_surface
+  (of-object "MaiaWindow")
+  (c-name "maia_window_get_surface")
+  (return-type "MaiaGraphicSurface*")
+)
+
+(define-method get_mouse_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_get_mouse_event")
+  (return-type "MaiaCoreEvent*")
+)
+
+(define-method get_keyboard_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_get_keyboard_event")
+  (return-type "MaiaCoreEvent*")
 )
 
 (define-function maia_group_new

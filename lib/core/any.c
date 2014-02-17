@@ -84,7 +84,7 @@ G_DEFINE_ABSTRACT_TYPE (MaiaCoreAny, maia_core_any, G_TYPE_OBJECT)
 
 static GObject*
 maia_core_any_constructor (GType inType, guint inNConstructProperties,
-                      GObjectConstructParam* inConstructProperties)
+                           GObjectConstructParam* inConstructProperties)
 {
     GObject* object;
     GObjectClass* parent_class = G_OBJECT_CLASS (maia_core_any_parent_class);

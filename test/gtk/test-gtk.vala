@@ -23,6 +23,8 @@ public class Maia.TestGtk : Maia.TestCase
     {
         base ("gtk");
 
+        var backends = new Backends();
+        backends.load ("gtk");
         suite.add_suite (new TestModel ().suite);
         suite.add_suite (new TestCanvas ().suite);
     }

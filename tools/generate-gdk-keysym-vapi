@@ -27,7 +27,7 @@ BEGIN {
     printf "[CCode (cheader_filename = \"gdk/gdkkeysyms.h\")]\n"
     printf "namespace Gdk\n{\n"
     printf "    [CCode (cname = \"int\", cprefix = \"GDK_KEY_\")]\n"
-    printf "    public enum Key\n    {"
+    printf "    public enum KeySym\n    {"
 }
 {
     val=$2

@@ -1,0 +1,8 @@
+[Extension]
+Name=rsvg
+Description=RSVG Backend
+Module=libmaia-rsvg.so
+
+[Backend]
+Require=cairo,
+Provide=svg,

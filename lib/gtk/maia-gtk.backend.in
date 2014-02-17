@@ -1,0 +1,8 @@
+[Extension]
+Name=gtk
+Description=Gtk Backend
+Module=libmaia-gtk.so
+
+[Backend]
+Require=cairo,gdk-pixbuf,rsvg,
+Provide=canvas,

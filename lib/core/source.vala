@@ -25,15 +25,15 @@ internal class Maia.Core.Source : GLib.Source
     public delegate bool DispatchFunc (GLib.SourceFunc inCallback);
 
     // properties
-    protected PrepareFunc  m_PrepareFunc;
-    protected CheckFunc    m_CheckFunc;
-    protected DispatchFunc m_DispatchFunc;
+    protected unowned PrepareFunc  m_PrepareFunc;
+    protected unowned CheckFunc    m_CheckFunc;
+    protected unowned DispatchFunc m_DispatchFunc;
 
-    public Source (owned PrepareFunc inPrepareFunc, owned CheckFunc inCheckFunc, owned DispatchFunc inDispatchFunc)
+    public Source (PrepareFunc inPrepareFunc, CheckFunc inCheckFunc, DispatchFunc inDispatchFunc)
     {
-        m_PrepareFunc = (owned)inPrepareFunc;
-        m_CheckFunc = (owned)inCheckFunc;
-        m_DispatchFunc = (owned)inDispatchFunc;
+        m_PrepareFunc = inPrepareFunc;
+        m_CheckFunc = inCheckFunc;
+        m_DispatchFunc = inDispatchFunc;
     }
 
     protected override bool

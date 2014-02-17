@@ -38,6 +38,7 @@ test_SOURCES = \
     core/test-set.vala \
     core/test-map.vala \
     core/test-timeline.vala \
+    core/test-bus.vala \
     graphic/test-graphic.vala \
     graphic/test-transform.vala \
     manifest/test-manifest.vala \

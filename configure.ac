@@ -1,6 +1,6 @@
 m4_define(maia_version_major, 0)
-m4_define(maia_version_minor, 1)
-m4_define(maia_version_micro, 32)
+m4_define(maia_version_minor, 2)
+m4_define(maia_version_micro, 0)
 AC_INIT([maia],[maia_version_major.maia_version_minor.maia_version_micro])
 AC_PREREQ(2.63)
 
@@ -53,12 +53,14 @@ GTK_REQUIRED=2.24.0
 GTKSOURCEVIEW_REQUIRED=2.10.0
 GLIBMM_REQUIRED=2.32.0
 GTKMM_REQUIRED=2.24.0
+XCB_REQUIRED=1.9.0
 AC_SUBST(GLIB_REQUIRED)
 AC_SUBST(CAIRO_REQUIRED)
 AC_SUBST(PANGO_REQUIRED)
 AC_SUBST(GDK_PIXBUF_REQUIRED)
 AC_SUBST(GTK_REQUIRED)
 AC_SUBST(RSVG_REQUIRED)
+AC_SUBST(XCB_REQUIRED)
 AC_SUBST(GLIBMM_REQUIRED)
 AC_SUBST(GTKMM_REQUIRED)
 
@@ -88,6 +90,7 @@ dnl Check for packages
 dnl ****************************************************************************
 PKG_CHECK_MODULES(MAIA, [glib-2.0 >= $GLIB_REQUIRED
                          gio-2.0 >= $GLIB_REQUIRED
+                         gio-unix-2.0 >= $GLIB_REQUIRED
                          gobject-2.0 >= $GLIB_REQUIRED
                          gmodule-2.0 >= $GLIB_REQUIRED
                          xproto])
@@ -112,6 +115,15 @@ AC_SUBST([MAIA_CAIROMM_MODULES], ['giomm-2.4 pangomm-1.4 cairomm-1.0'])
 PKG_CHECK_MODULES([MAIA_CAIROMM], [$MAIA_CAIROMM_MODULES])
 AC_SUBST(MAIA_CAIROMM_CFLAGS)
 AC_SUBST(MAIA_CAIROMM_LIBS)
+
+dnl ****************************************************************************
+dnl Check for xcb packages
+dnl ****************************************************************************
+PKG_CHECK_MODULES(MAIA_XCB, [xcb >= $XCB_REQUIRED
+                             cairo-xcb >= $CAIRO_REQUIRED])
+AC_SUBST(MAIA_XCB_CFLAGS)
+AC_SUBST(MAIA_XCB_LIBS)
+
 
 dnl ****************************************************************************
 dnl Check for rsvg packages
@@ -231,11 +243,16 @@ dnl ****************************************************************************
 vapidir=${datadir}/vala/vapi
 uidir=${datadir}/maia/ui
 sourceviewdir=${datadir}/gtksourceview-2.0/language-specs
+backenddir=${libdir}/maia/$MAIA_ABI/backends
+bindingdir=${libdir}/maia/$MAIA_ABI/bindings
 AC_DEFINE_DIR([MAIA_UI_PATH], [uidir], [ui path])
+AC_DEFINE_DIR([MAIA_BACKEND_PATH], [backenddir], [backends path])
+AC_DEFINE_DIR([MAIA_BINDING_PATH], [bindingdir], [bindings path])
 AC_SUBST(vapidir)
 AC_SUBST(uidir)
 AC_SUBST(sourceviewdir)
-
+AC_SUBST(backenddir)
+AC_SUBST(bindingdir)
 
 dnl ****************************************************************************
 dnl Check for mm-common
@@ -263,12 +280,19 @@ Makefile
 lib/maia.pc
 lib/Makefile
 lib/cairo/maia-cairo-graphic.pc
+lib/cairo/maia-cairo-graphic.backend
 lib/cairo/Makefile
+lib/xcb/Makefile
+lib/xcb/maia-xcb.pc
+lib/xcb/maia-xcb.backend
 lib/rsvg/maia-rsvg.pc
+lib/rsvg/maia-rsvg.backend
 lib/rsvg/Makefile
 lib/gdk-pixbuf/maia-gdk-pixbuf.pc
+lib/gdk-pixbuf/maia-gdk-pixbuf.backend
 lib/gdk-pixbuf/Makefile
 lib/gtk/maia-gtk.pc
+lib/gtk/maia-gtk.backend
 lib/gtk/Makefile
 doc/Makefile
 cpp/maiamm.pc

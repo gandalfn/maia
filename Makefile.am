@@ -11,6 +11,7 @@ maiadoc_DATA = \
 
 BUILD_FILES = \
     build-aux/common.am \
+    build-aux/backend.am \
     build-aux/pkgconfig.am \
     build-aux/vapi.am \
     build-aux/maia.am \
