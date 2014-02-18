@@ -35,13 +35,11 @@ public class Maia.Core.Queue<V> : Array<V>
     public V?
     pop ()
     {
-        if (length > 0)
+        int l = length;
+        if (l > 0)
         {
-            V? val = at (length - 1);
-            if (val != null)
-            {
-                remove (val);
-            }
+            V? val = at (l - 1);
+            remove_at (l - 1);
 
             return val;
         }

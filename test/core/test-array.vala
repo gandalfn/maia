@@ -89,16 +89,20 @@ public class Maia.TestArray : Maia.TestCase
     {
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
-            m_Array.insert (m_Keys[cpt]);
+            m_ArrayNoSorted.insert (m_Keys[cpt]);
         }
 
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
-            int nb_items = m_Array.length;
-            m_Array.remove (m_Keys[cpt]);
-            assert (m_Array.length == nb_items - 1);
+            int nb_items = m_ArrayNoSorted.length;
+            m_ArrayNoSorted.remove (m_Keys[cpt]);
+            for (int i = cpt + 1; i < NB_KEYS; ++i)
+            {
+                assert (m_ArrayNoSorted.at (i - cpt - 1) == m_Keys[i]);
+            }
+            assert (m_ArrayNoSorted.length == nb_items - 1);
         }
-        assert (m_Array.length == 0);
+        assert (m_ArrayNoSorted.length == 0);
     }
 
     public void

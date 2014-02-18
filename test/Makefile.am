@@ -37,6 +37,7 @@ test_SOURCES = \
     core/test-list.vala \
     core/test-set.vala \
     core/test-map.vala \
+    core/test-queue.vala \
     core/test-timeline.vala \
     core/test-bus.vala \
     graphic/test-graphic.vala \

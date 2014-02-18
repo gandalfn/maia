@@ -122,7 +122,7 @@ public class Maia.Core.Array <V> : Collection <V>
     //       I must check much more this class.
     public Array ()
     {
-        m_pContent = GLib.Slice.alloc0 (m_ReservedSize * sizeof (Node<V>));
+        m_pContent = GLib.Slice.alloc (m_ReservedSize * sizeof (Node<V>));
     }
 
     public Array.sorted ()
@@ -186,7 +186,7 @@ public class Maia.Core.Array <V> : Collection <V>
             int oldReservedSize = m_ReservedSize;
             m_ReservedSize = 2 * m_ReservedSize;
             void* o = (void*)m_pContent;
-            m_pContent = GLib.Slice.alloc0 (m_ReservedSize * sizeof (Node<V>));
+            m_pContent = GLib.Slice.alloc (m_ReservedSize * sizeof (Node<V>));
             GLib.Memory.copy (m_pContent, o, oldReservedSize * sizeof (Node<V>));
             GLib.Slice.free (oldReservedSize * sizeof (Node<V>), o);
         }
@@ -265,7 +265,7 @@ public class Maia.Core.Array <V> : Collection <V>
             int oldReservedSize = m_ReservedSize;
             m_ReservedSize = inSize;
             void* o = (void*)m_pContent;
-            m_pContent = GLib.Slice.alloc0 (m_ReservedSize * sizeof (Node<V>));
+            m_pContent = GLib.Slice.alloc (m_ReservedSize * sizeof (Node<V>));
             GLib.Memory.copy (m_pContent, o, oldReservedSize * sizeof (Node<V>));
             GLib.Slice.free (oldReservedSize * sizeof (Node<V>), o);
         }
@@ -297,7 +297,6 @@ public class Maia.Core.Array <V> : Collection <V>
             {
                 GLib.Memory.move (&m_pContent[pos + 1], &m_pContent[pos],
                                   (m_Size - pos - 1) * sizeof (Node<V>));
-                GLib.Memory.set (&m_pContent[pos], 0, sizeof (Node<V>));
             }
 
             GLib.Memory.copy (&m_pContent[pos].val, &val, sizeof (V*));
@@ -378,7 +377,6 @@ public class Maia.Core.Array <V> : Collection <V>
             {
                 GLib.Memory.move (&m_pContent[pos + 1], &m_pContent[pos],
                                   (m_Size - pos - 1) * sizeof (Node<V>));
-                GLib.Memory.set (&m_pContent[pos], 0, sizeof (Node<V>));
             }
 
             m_pContent[pos].val = inValue;
@@ -433,7 +431,6 @@ public class Maia.Core.Array <V> : Collection <V>
             GLib.Memory.move (&m_pContent[inPos], &m_pContent[inPos + 1],
                               (m_Size - inPos) * sizeof (Node<V>));
 
-        GLib.Memory.set (&m_pContent[m_Size], 0, sizeof (Node<V>));
         reduce ();
 
         stamp++;
@@ -455,7 +452,7 @@ public class Maia.Core.Array <V> : Collection <V>
             GLib.Slice.free (m_ReservedSize * sizeof (Node<V>), m_pContent);
             m_ReservedSize = 4;
             m_Size = 0;
-            m_pContent = GLib.Slice.alloc0 (m_ReservedSize * sizeof (Node<V>));
+            m_pContent = GLib.Slice.alloc (m_ReservedSize * sizeof (Node<V>));
             stamp++;
         }
     }

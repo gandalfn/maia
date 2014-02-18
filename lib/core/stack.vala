@@ -38,10 +38,7 @@ public class Maia.Core.Stack<V> : Array<V>
         if (length > 0)
         {
             V? val = at (0);
-            if (val != null)
-            {
-                remove (val);
-            }
+            remove_at (0);
 
             return val;
         }
