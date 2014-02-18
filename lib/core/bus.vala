@@ -310,19 +310,19 @@ public abstract class Maia.Core.Bus : Object
     {
         private unowned Bus         m_Bus;
         private GLib.Thread<void*>? m_Id = null;
-        private AsyncStack<Request> m_RequestStack;
-        private AsyncStack<Request> m_RecvStack;
-        private AsyncStack<Request> m_SendStack;
+        private AsyncQueue<Request> m_RequestQueue;
+        private AsyncQueue<Request> m_RecvQueue;
+        private AsyncQueue<Request> m_SendQueue;
 
         public Engine (Bus inBus)
         {
-            // Create request stack
-            m_RequestStack = new AsyncStack<Request> ();
-            m_RequestStack.is_sorted = true;
+            // Create request Queue
+            m_RequestQueue = new AsyncQueue<Request> ();
+            m_RequestQueue.is_sorted = true;
 
-            // Create recv/send stack
-            m_RecvStack = new AsyncStack<Request> ();
-            m_SendStack = new AsyncStack<Request> ();
+            // Create recv/send Queue
+            m_RecvQueue = new AsyncQueue<Request> ();
+            m_SendQueue = new AsyncQueue<Request> ();
 
             // Get bus
             m_Bus = inBus;
@@ -333,7 +333,7 @@ public abstract class Maia.Core.Bus : Object
         {
             while (true)
             {
-                Request request = m_RequestStack.pop ();
+                Request request = m_RequestQueue.pop ();
                 if (request != null)
                 {
                     switch (request.m_Type)
@@ -357,7 +357,7 @@ public abstract class Maia.Core.Bus : Object
                                 request.m_Status = new BusError.CANCELLED ("Read request cancelled");
                             }
 
-                            m_RecvStack.push (request);
+                            m_RecvQueue.push (request);
 
                             request.complete ();
 
@@ -384,7 +384,7 @@ public abstract class Maia.Core.Bus : Object
                                     request.m_Status = new BusError.CANCELLED ("Write request cancelled");
                                 }
 
-                                m_SendStack.push (request);
+                                m_SendQueue.push (request);
 
                                 request.complete ();
                             }
@@ -402,7 +402,7 @@ public abstract class Maia.Core.Bus : Object
         stop ()
         {
             // Send end engine request
-            m_RequestStack.push (new Request.end ());
+            m_RequestQueue.push (new Request.end ());
 
             // Wait end of engine
             m_Id.join ();
@@ -416,19 +416,19 @@ public abstract class Maia.Core.Bus : Object
                 m_Id = new GLib.Thread<void*> (m_Bus.uuid, run);
             }
 
-            m_RequestStack.push (inRequest);
+            m_RequestQueue.push (inRequest);
         }
 
         public Request?
         pop_recv ()
         {
-            return m_RecvStack.pop ();
+            return m_RecvQueue.pop ();
         }
 
         public Request?
         pop_send ()
         {
-            return m_SendStack.pop ();
+            return m_SendQueue.pop ();
         }
     }
 

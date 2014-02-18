@@ -26,20 +26,19 @@ public class Maia.Core.Queue<V> : Array<V>
         base ();
     }
 
-    public V?
+    public virtual V?
     peek ()
     {
-        return length > 0 ? at (length - 1) : null;
+        return length > 0 ? at (0) : null;
     }
 
-    public V?
+    public virtual V?
     pop ()
     {
-        int l = length;
-        if (l > 0)
+        if (length > 0)
         {
-            V? val = at (l - 1);
-            remove_at (l - 1);
+            V? val = at (0);
+            remove_at (0);
 
             return val;
         }
@@ -47,7 +46,7 @@ public class Maia.Core.Queue<V> : Array<V>
         return null;
     }
 
-    public void
+    public virtual void
     push (V inVal)
     {
         insert (inVal);

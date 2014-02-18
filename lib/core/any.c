@@ -149,6 +149,7 @@ maia_core_any_delegate (GType inObjectType, GType inType)
     }
     MaiaCoreAnyDelegation* delegation = maia_core_any_delegation_new (inObjectType, inType);
     maia_core_collection_insert (MAIA_CORE_COLLECTION (g_ObjectDelegations), delegation);
+    maia_log_debug ("maia_core_any_delegate", MAIA_LOG_CATEGORY_CORE_OBJECT, "type %s -> %s", g_type_name (inObjectType), g_type_name (inType));
 }
 
 void
@@ -166,6 +167,7 @@ maia_core_any_undelegate (GType inObjectType)
         if (pDelegation != NULL)
         {
             maia_core_collection_remove (MAIA_CORE_COLLECTION (g_ObjectDelegations), pDelegation);
+            maia_log_debug ("maia_core_any_undelegate", MAIA_LOG_CATEGORY_CORE_OBJECT, "type %s", g_type_name (inObjectType));
         }
     }
 }

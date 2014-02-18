@@ -26,19 +26,20 @@ public class Maia.Core.Stack<V> : Array<V>
         base ();
     }
 
-    public virtual V?
+    public V?
     peek ()
     {
-        return length > 0 ? at (0) : null;
+        return length > 0 ? at (length - 1) : null;
     }
 
-    public virtual V?
+    public V?
     pop ()
     {
-        if (length > 0)
+        int l = length;
+        if (l > 0)
         {
-            V? val = at (0);
-            remove_at (0);
+            V? val = at (l - 1);
+            remove_at (l - 1);
 
             return val;
         }
@@ -46,7 +47,7 @@ public class Maia.Core.Stack<V> : Array<V>
         return null;
     }
 
-    public virtual void
+    public void
     push (V inVal)
     {
         insert (inVal);

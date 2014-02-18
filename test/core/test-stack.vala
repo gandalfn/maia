@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * test-queue.vala
+ * test-stack.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,31 +17,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.TestQueue : Maia.TestCase
+public class Maia.TestStack : Maia.TestCase
 {
     const int NB_KEYS = 1000;
 
-    private Core.Queue<int> m_Queue;
+    private Core.Stack<int> m_Stack;
 
     private int[] m_Keys;
 
-    public TestQueue ()
+    public TestStack ()
     {
-        base ("queue");
+        base ("stack");
 
-        add_test ("push-pop", test_queue_push_pop);
-        add_test ("push-peek", test_queue_push_peek);
+        add_test ("push-pop", test_stack_push_pop);
+        add_test ("push-peek", test_stack_push_peek);
         if (Test.perf())
         {
-            add_test ("benchmark-push", test_queue_benchmark_push);
-            add_test ("benchmark-pop", test_queue_benchmark_pop);
+            add_test ("benchmark-push", test_stack_benchmark_push);
+            add_test ("benchmark-pop", test_stack_benchmark_pop);
         }
     }
 
     public override void
     set_up ()
     {
-        m_Queue = new Core.Queue<int> ();
+        m_Stack = new Core.Stack<int> ();
 
         m_Keys = new int[NB_KEYS];
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
@@ -53,41 +53,41 @@ public class Maia.TestQueue : Maia.TestCase
     public override void
     tear_down ()
     {
-        m_Queue = null;
+        m_Stack = null;
     }
 
     public void
-    test_queue_push_pop ()
+    test_stack_push_pop ()
     {
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
-            m_Queue.push (m_Keys[cpt]);
+            m_Stack.push (m_Keys[cpt]);
         }
 
-        for (int cpt = 0; cpt < NB_KEYS; ++cpt)
+        for (int cpt = NB_KEYS - 1; cpt >= 0; --cpt)
         {
-            int l = m_Queue.length;
-            assert (m_Queue.pop () == m_Keys[cpt]);
-            assert (l - 1 == m_Queue.length);
+            int l = m_Stack.length;
+            assert (m_Stack.pop () == m_Keys[cpt]);
+            assert (l - 1 == m_Stack.length);
         }
 
-        assert (m_Queue.length == 0);
+        assert (m_Stack.length == 0);
     }
 
     public void
-    test_queue_push_peek ()
+    test_stack_push_peek ()
     {
         for (int cpt = 0; cpt < NB_KEYS; ++cpt)
         {
-            m_Queue.push (m_Keys[cpt]);
+            m_Stack.push (m_Keys[cpt]);
         }
 
-        assert (m_Queue.peek () == m_Keys[0]);
-        assert (m_Queue.length != 0);
+        assert (m_Stack.peek () == m_Keys[NB_KEYS - 1]);
+        assert (m_Stack.length != 0);
     }
 
     public void
-    test_queue_benchmark_push ()
+    test_stack_benchmark_push ()
     {
         double min = double.MAX, max = 0;
         for (int iter = 0; iter < 100; ++iter)
@@ -95,37 +95,37 @@ public class Maia.TestQueue : Maia.TestCase
             Test.timer_start ();
             for (int cpt = 0; cpt < NB_KEYS; ++cpt)
             {
-                m_Queue.push (m_Keys[cpt]);
+                m_Stack.push (m_Keys[cpt]);
             }
             double elapsed = Test.timer_elapsed () * 1000;
             min = double.min (elapsed, min);
             max = double.max (elapsed, max);
         }
-        Test.minimized_result (min, "Queue push min time %f ms", min);
-        Test.maximized_result (min, "Queue push max time %f ms", max);
+        Test.minimized_result (min, "Stack push min time %f ms", min);
+        Test.maximized_result (min, "Stack push max time %f ms", max);
     }
 
     public void
-    test_queue_benchmark_pop ()
+    test_stack_benchmark_pop ()
     {
         double min = double.MAX, max = 0;
         for (int iter = 0; iter < 100; ++iter)
         {
             for (int cpt = 0; cpt < NB_KEYS; ++cpt)
             {
-                m_Queue.push (m_Keys[cpt]);
+                m_Stack.push (m_Keys[cpt]);
             }
 
             Test.timer_start ();
             for (int cpt = 0; cpt < NB_KEYS; ++cpt)
             {
-                m_Queue.pop ();
+                m_Stack.pop ();
             }
             double elapsed = Test.timer_elapsed () * 1000;
             min = double.min (elapsed, min);
             max = double.max (elapsed, max);
         }
-        Test.minimized_result (min, "Queue pop min time %f ms", min);
-        Test.maximized_result (min, "Queue pop max time %f ms", max);
+        Test.minimized_result (min, "Stack pop min time %f ms", min);
+        Test.maximized_result (min, "Stack pop max time %f ms", max);
     }
 }

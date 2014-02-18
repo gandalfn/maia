@@ -17,14 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Core.AsyncStack<V> : Stack<V>
+public class Maia.Core.AsyncQueue<V> : Queue<V>
 {
     // properties
     private GLib.Mutex m_Mutex = GLib.Mutex ();
     private GLib.Cond  m_Cond  = GLib.Cond ();
 
     // methods
-    public AsyncStack ()
+    public AsyncQueue ()
     {
         base ();
     }

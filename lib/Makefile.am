@@ -32,7 +32,7 @@ libmaia_la_SOURCES = \
     core/array.vala \
     core/queue.vala \
     core/stack.vala \
-    core/async-stack.vala \
+    core/async-queue.vala \
     core/list.vala \
     core/set.vala \
     core/pair.vala \

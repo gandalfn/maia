@@ -22,7 +22,7 @@ public class Maia.TestManifest : Maia.TestCase
     public TestManifest ()
     {
         base ("manifest");
-
+        
         suite.add_suite (new TestDocument ().suite);
     }
 }

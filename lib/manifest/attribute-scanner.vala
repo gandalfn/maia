@@ -56,7 +56,7 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
     // Properties
     private char                   m_EndChar;
     private string                 m_LastName;
-    private Core.Queue<string>     m_FunctionQueue;
+    private Core.Stack<string>     m_FunctionStack;
     private unowned Object         m_Owner;
     private AttributeBindCallback  m_BindCallback;
 
@@ -160,7 +160,7 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
     // Methods
     construct
     {
-        m_FunctionQueue = new Core.Queue<string> ();
+        m_FunctionStack = new Core.Stack<string> ();
     }
 
     /**
@@ -280,7 +280,7 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
             {
                 token = Core.Parser.Token.START_ELEMENT;
                 m_Element = m_LastName;
-                m_FunctionQueue.push (m_LastName);
+                m_FunctionStack.push (m_LastName);
                 next_char ();
             }
             else if (m_pCurrent[0] == ')')
@@ -294,7 +294,7 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
                 {
                     token = Core.Parser.Token.END_ELEMENT;
                     m_Attribute = null;
-                    m_Element = m_FunctionQueue.pop ();
+                    m_Element = m_FunctionStack.pop ();
                     next_char ();
                 }
             }

@@ -56,7 +56,7 @@ public class Maia.Manifest.Document : Core.Parser
     private MappedFile              m_File;
     private string                  m_LastName;
     private ElementTag              m_CurrentTag = null;
-    private Core.Queue<ElementTag>  m_ElementQueue;
+    private Core.Stack<ElementTag>  m_ElementStack;
     private AttributeScanner        m_Scanner;
 
     // Accessors
@@ -95,7 +95,7 @@ public class Maia.Manifest.Document : Core.Parser
     // Methods
     construct
     {
-        m_ElementQueue = new Core.Queue<ElementTag> ();
+        m_ElementStack = new Core.Stack<ElementTag> ();
     }
 
     /**
@@ -258,11 +258,11 @@ public class Maia.Manifest.Document : Core.Parser
                 m_Scanner    = m_Include.m_Scanner;
                 if (token == Core.Parser.Token.START_ELEMENT)
                 {
-                    m_ElementQueue.push (m_CurrentTag);
+                    m_ElementStack.push (m_CurrentTag);
                 }
                 else if (token == Core.Parser.Token.END_ELEMENT)
                 {
-                    m_CurrentTag = m_ElementQueue.pop ();
+                    m_CurrentTag = m_ElementStack.pop ();
                 }
             }
         }
@@ -309,11 +309,11 @@ public class Maia.Manifest.Document : Core.Parser
                     m_Scanner    = m_Include.m_Scanner;
                     if (token == Core.Parser.Token.START_ELEMENT)
                     {
-                        m_ElementQueue.push (m_CurrentTag);
+                        m_ElementStack.push (m_CurrentTag);
                     }
                     else if (token == Core.Parser.Token.END_ELEMENT)
                     {
-                        m_CurrentTag = m_ElementQueue.pop ();
+                        m_CurrentTag = m_ElementStack.pop ();
                     }
                 }
             }
@@ -322,7 +322,7 @@ public class Maia.Manifest.Document : Core.Parser
                 token = Core.Parser.Token.START_ELEMENT;
                 next_char ();
                 m_CurrentTag = new ElementTag (m_LastName);
-                m_ElementQueue.push (m_CurrentTag);
+                m_ElementStack.push (m_CurrentTag);
                 m_Attributes = new Core.Map<string, string> ();
             }
             else if (m_pCurrent[0] == '[')
@@ -343,12 +343,12 @@ public class Maia.Manifest.Document : Core.Parser
             else if (m_pCurrent[0] == '}')
             {
                 token = Core.Parser.Token.END_ELEMENT;
-                if (m_ElementQueue.length == 0)
+                if (m_ElementStack.length == 0)
                 {
                     throw new Core.ParseError.PARSE ("Unexpected end at %s:%i,%i",
                                                      GLib.Path.get_basename (m_Filename), m_Line, m_Col);
                 }
-                m_CurrentTag = m_ElementQueue.pop ();
+                m_CurrentTag = m_ElementStack.pop ();
                 next_char ();
             }
             else

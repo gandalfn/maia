@@ -149,6 +149,12 @@
   (gtype-id "MAIA_TYPE_CORE_QUEUE")
 )
 
+(define-object MaiaCoreAsyncQueue
+  (parent "MaiaCoreQueue")
+  (c-name "MaiaCoreAsyncQueue")
+  (gtype-id "MAIA_TYPE_CORE_ASYNC_QUEUE")
+)
+
 (define-object MaiaCoreSet
   (parent "MaiaCoreCollection")
   (c-name "MaiaCoreSet")
@@ -177,12 +183,6 @@
   (parent "MaiaCoreArray")
   (c-name "MaiaCoreStack")
   (gtype-id "MAIA_TYPE_CORE_STACK")
-)
-
-(define-object MaiaCoreAsyncStack
-  (parent "MaiaCoreStack")
-  (c-name "MaiaCoreAsyncStack")
-  (gtype-id "MAIA_TYPE_CORE_ASYNC_STACK")
 )
 
 (define-object MaiaCoreTimeline
@@ -3934,15 +3934,15 @@
   )
 )
 
-(define-function maia_core_async_stack_get_type
-  (c-name "maia_core_async_stack_get_type")
+(define-function maia_core_async_queue_get_type
+  (c-name "maia_core_async_queue_get_type")
   (return-type "GType")
 )
 
-(define-function maia_core_async_stack_new
-  (c-name "maia_core_async_stack_new")
-  (is-constructor-of "MaiaCoreAsyncStack")
-  (return-type "MaiaCoreAsyncStack*")
+(define-function maia_core_async_queue_new
+  (c-name "maia_core_async_queue_new")
+  (is-constructor-of "MaiaCoreAsyncQueue")
+  (return-type "MaiaCoreAsyncQueue*")
   (parameters
     '("GType" "v_type")
     '("GBoxedCopyFunc" "v_dup_func")
@@ -3950,9 +3950,9 @@
   )
 )
 
-(define-function maia_core_async_stack_construct
-  (c-name "maia_core_async_stack_construct")
-  (return-type "MaiaCoreAsyncStack*")
+(define-function maia_core_async_queue_construct
+  (c-name "maia_core_async_queue_construct")
+  (return-type "MaiaCoreAsyncQueue*")
   (parameters
     '("GType" "object_type")
     '("GType" "v_type")
@@ -3962,8 +3962,8 @@
 )
 
 (define-method peek_timed
-  (of-object "MaiaCoreAsyncStack")
-  (c-name "maia_core_async_stack_peek_timed")
+  (of-object "MaiaCoreAsyncQueue")
+  (c-name "maia_core_async_queue_peek_timed")
   (return-type "gpointer")
   (parameters
     '("guint" "inWait")
@@ -3971,8 +3971,8 @@
 )
 
 (define-method pop_timed
-  (of-object "MaiaCoreAsyncStack")
-  (c-name "maia_core_async_stack_pop_timed")
+  (of-object "MaiaCoreAsyncQueue")
+  (c-name "maia_core_async_queue_pop_timed")
   (return-type "gpointer")
   (parameters
     '("guint" "inWait")
