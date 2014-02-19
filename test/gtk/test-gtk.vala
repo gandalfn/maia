@@ -19,13 +19,27 @@
 
 public class Maia.TestGtk : Maia.TestCase
 {
+    public Backends m_Backends = new Backends();
+
     public TestGtk ()
     {
         base ("gtk");
 
-        var backends = new Backends();
-        backends.load ("gtk");
+        add_test ("load-backend", test_gtk_load_backend);
         suite.add_suite (new TestModel ().suite);
         suite.add_suite (new TestCanvas ().suite);
+    }
+
+    public void
+    test_gtk_load_backend ()
+    {
+        try
+        {
+            m_Backends.load ("gtk");
+        }
+        catch (GLib.Error err)
+        {
+            assert (false);
+        }
     }
 }

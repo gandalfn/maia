@@ -39,6 +39,7 @@ test_SOURCES = \
     core/test-map.vala \
     core/test-stack.vala \
     core/test-queue.vala \
+    core/test-async-queue.vala \
     core/test-timeline.vala \
     core/test-bus.vala \
     graphic/test-graphic.vala \

@@ -5,8 +5,8 @@ AM_CPPFLAGS = \
     -DPACKAGE_SRC_DIR=\""$(srcdir)"\" \
     -DPACKAGE_DATA_DIR=\""$(datadir)"\"
 
-#CFLAGS = -O3 -w
-CFLAGS = -w -ggdb
+CFLAGS = -O3 -w
+#CFLAGS = -w -ggdb
 
 EXTRA_DIST =
 

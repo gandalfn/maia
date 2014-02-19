@@ -1,6 +1,6 @@
 prefix=@prefix@
 exec_prefix=@exec_prefix@
-libdir=@backenddir@
+libdir=@libdir@
 datarootdir=@datarootdir@
 datadir=@datadir@
 includedir=@includedir@/maia-@MAIA_ABI@

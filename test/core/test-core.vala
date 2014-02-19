@@ -31,6 +31,7 @@ public class Maia.TestCore : Maia.TestCase
         suite.add_suite (new TestMap ().suite);
         suite.add_suite (new TestStack ().suite);
         suite.add_suite (new TestQueue ().suite);
+        suite.add_suite (new TestAsyncQueue ().suite);
         suite.add_suite (new TestTimeline ().suite);
         suite.add_suite (new TestBus ().suite);
     }
