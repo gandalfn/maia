@@ -48,7 +48,6 @@ canvas_editor_LDADD = \
     $(MAIA_CANVAS_EDITOR_LIBS) \
     ${top_builddir}/lib/libmaia.la \
     ${top_builddir}/lib/gtk/libmaia-gtk.la \
-    ${top_builddir}/lib/cairo/libmaia-cairo-graphic.la \
     ${top_builddir}/lib/gdk-pixbuf/libmaia-gdk-pixbuf.la
 
 VALAFILES = \
