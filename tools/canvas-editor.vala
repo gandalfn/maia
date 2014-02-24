@@ -26,10 +26,9 @@ main (string[] inArgs)
     var window = new CanvasEditor.Window ();
     window.show ();
 
-    var backends = new Maia.Backends ();
-    backends.load ("gtk");
+    var application = new Maia.Application (60, { "gtk" });
 
-    Gtk.main ();
+    application.run ();
 
     return 0;
 }

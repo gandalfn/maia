@@ -17,13 +17,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Xcb.Window : Maia.Window
+public class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 {
     // properties
     private Graphic.Surface m_Surface = null;
 
     // accessors
+    internal string backend {
+        get {
+            return "xcb/window";
+        }
+    }
+
+    public global::Xcb.Connection connection {
+        get {
+            return Maia.Xcb.dispatcher.connection;
+        }
+    }
+
     public int screen_num { get; set; default = 0; }
+
+    public global::Xcb.Visualtype? visual_type {
+        get {
+            unowned global::Xcb.Screen screen = Maia.Xcb.dispatcher.connection.roots[screen_num];
+
+            for (int i = 0; i < screen.allowed_depths_length; ++i)
+            {
+                for (int j = 0; j < screen.allowed_depths[i].visuals_length; ++j)
+                {
+                    if (screen.allowed_depths[i].visuals[j].visual_id == screen.root_visual)
+                    {
+                        return screen.allowed_depths[i].visuals[j];
+                    }
+                }
+            }
+
+            return null;
+        }
+    }
+
     internal override Graphic.Surface? surface {
         get {
             return m_Surface;
@@ -74,7 +106,6 @@ public class Maia.Xcb.Window : Maia.Window
                                                 global::Xcb.ConfigWindow.WIDTH |
                                                 global::Xcb.ConfigWindow.HEIGHT,
                                                 values);
-            ((global::Cairo.XcbSurface)((Maia.Cairo.Surface)m_Surface).surface).set_size ((int)size.width, (int)size.height);
         }
     }
 
@@ -91,23 +122,7 @@ public class Maia.Xcb.Window : Maia.Window
                                              (uint16)size.width, (uint16)size.height, 0,
                                              global::Xcb.WindowClass.INPUT_OUTPUT,
                                              screen.root_visual);
-
-            for (int i = 0; i < screen.allowed_depths_length; ++i)
-            {
-                for (int j = 0; j < screen.allowed_depths[i].visuals_length; ++j)
-                {
-                    if (screen.allowed_depths[i].visuals[j].visual_id == screen.root_visual)
-                    {
-                        global::Xcb.Visualtype visual_type = screen.allowed_depths[i].visuals[j];
-
-                        var cairo_surface = new global::Cairo.XcbSurface (Xcb.dispatcher.connection,
-                                                                          ((global::Xcb.Window)id),
-                                                                          visual_type,
-                                                                          (int)size.width, (int)size.height);
-                        m_Surface = new Cairo.Surface (cairo_surface, (uint)size.width, (uint)size.height);
-                    }
-                }
-            }
+            m_Surface = new Graphic.Surface.from_device (this);
         }
 
         ((global::Xcb.Window)id).map (Maia.Xcb.dispatcher.connection);

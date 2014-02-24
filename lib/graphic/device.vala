@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * surface.vala
+ * device.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,11 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal class Maia.Gtk.Surface : Maia.Cairo.Surface
+public interface Maia.Graphic.Device : Object
 {
     // methods
-    public Surface (global::Gtk.Widget inWidget)
-    {
-        base (Gdk.cairo_create (inWidget.window).get_target (), inWidget.allocation.width, inWidget.allocation.height);
-    }
+    public abstract string backend { get; }
 }

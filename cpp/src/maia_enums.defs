@@ -525,6 +525,27 @@
 
 ;; Original typedef:
 ;; typedef enum  {
+;; 	MAIA_GRAPHIC_SURFACE_FORMAT_INVALID,
+;; 	MAIA_GRAPHIC_SURFACE_FORMAT_A1,
+;; 	MAIA_GRAPHIC_SURFACE_FORMAT_A8,
+;; 	MAIA_GRAPHIC_SURFACE_FORMAT_RGB24,
+;; 	MAIA_GRAPHIC_SURFACE_FORMAT_ARGB32
+;; } MaiaGraphicSurfaceFormat;
+
+(define-enum-extended GraphicSurfaceFormat
+  (in-module "Maia")
+  (c-name "MaiaGraphicSurfaceFormat")
+  (values
+    '("invalid" "MAIA_GRAPHIC_SURFACE_FORMAT_INVALID" "0")
+    '("a1" "MAIA_GRAPHIC_SURFACE_FORMAT_A1" "1")
+    '("a8" "MAIA_GRAPHIC_SURFACE_FORMAT_A8" "2")
+    '("rgb24" "MAIA_GRAPHIC_SURFACE_FORMAT_RGB24" "3")
+    '("argb32" "MAIA_GRAPHIC_SURFACE_FORMAT_ARGB32" "4")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
 ;; 	MAIA_KEY_VoidSymbol,
 ;; 	MAIA_KEY_BackSpace,
 ;; 	MAIA_KEY_Tab,

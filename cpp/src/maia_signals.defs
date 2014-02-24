@@ -616,6 +616,42 @@
 
 ;; From MaiaGraphicSurface
 
+(define-property format
+  (of-object "MaiaGraphicSurface")
+  (prop-type "GParamEnum")
+  (docs "format")
+  (readable #t)
+  (writable #t)
+  (construct-only #t)
+)
+
+(define-property data
+  (of-object "MaiaGraphicSurface")
+  (prop-type "GParamPointer")
+  (docs "data")
+  (readable #t)
+  (writable #t)
+  (construct-only #t)
+)
+
+(define-property native
+  (of-object "MaiaGraphicSurface")
+  (prop-type "GParamPointer")
+  (docs "native")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property device
+  (of-object "MaiaGraphicSurface")
+  (prop-type "GParamObject")
+  (docs "device")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property size
   (of-object "MaiaGraphicSurface")
   (prop-type "GParamBoxed")

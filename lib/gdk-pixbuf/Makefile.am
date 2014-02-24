@@ -2,7 +2,6 @@ MAIA_LIB_NAME = maia-gdk-pixbuf
 
 MAIA_VAPI_DEPS =  \
     core/maia-any \
-    cairo/maia-cairo-graphic \
     maia
 
 include $(top_srcdir)/build-aux/maia.am
@@ -13,12 +12,10 @@ include $(top_srcdir)/build-aux/vapi.am
 backend_LTLIBRARIES = libmaia-gdk-pixbuf.la
 
 libmaia_gdk_pixbuf_la_CFLAGS = \
-    $(MAIA_CAIRO_CFLAGS) \
     $(MAIA_GDK_PIXBUF_CFLAGS)
 
 libmaia_gdk_pixbuf_la_VALAFLAGS = \
-    --pkg=gdk-pixbuf-2.0 \
-    --pkg=cairo
+    --pkg=gdk-pixbuf-2.0
 
 libmaia_gdk_pixbuf_la_SOURCES = \
     image.vala \

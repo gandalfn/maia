@@ -135,11 +135,12 @@ internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
                 }
 
                 m_Surface = new Graphic.Surface (handle.width, handle.height);
-                if (m_Surface is Cairo.Surface)
+                unowned global::Cairo.Context ctx = null;
+                ((GLib.Object)m_Surface.context).get ("context", out ctx);
+                if (ctx != null)
                 {
                     m_Surface.clear ();
 
-                    var ctx = ((Cairo.Context)m_Surface.context).context;
                     if (handle.render_cairo (ctx))
                     {
                         // Size is set

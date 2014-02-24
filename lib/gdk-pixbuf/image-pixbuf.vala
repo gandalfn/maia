@@ -42,11 +42,7 @@ public class Maia.GdkPixbuf.ImagePixbuf : Graphic.Image, Image
             m_Size = value;
 
             // Destroy surface
-            if (m_Surface != null)
-            {
-                destroy_surface (m_Surface);
-                m_Surface = null;
-            }
+            m_Surface = null;
         }
     }
 
@@ -65,11 +61,7 @@ public class Maia.GdkPixbuf.ImagePixbuf : Graphic.Image, Image
             m_Transform.add (value);
 
             // Destroy surface
-            if (m_Surface != null)
-            {
-                destroy_surface (m_Surface);
-                m_Surface = null;
-            }
+            m_Surface = null;
         }
     }
 
@@ -99,11 +91,7 @@ public class Maia.GdkPixbuf.ImagePixbuf : Graphic.Image, Image
             return m_Pixbuf;
         }
         set {
-            if (m_Surface != null)
-            {
-                destroy_surface (m_Surface);
-                m_Surface = null;
-            }
+            m_Surface = null;
 
             m_Pixbuf = value;
         }
@@ -113,14 +101,5 @@ public class Maia.GdkPixbuf.ImagePixbuf : Graphic.Image, Image
     public ImagePixbuf (Gdk.Pixbuf inPixbuf, Graphic.Size inSize)
     {
         GLib.Object (pixbuf: inPixbuf, size: inSize);
-    }
-
-    ~ImagePixbuf ()
-    {
-        if (m_Surface != null)
-        {
-            destroy_surface (m_Surface);
-            m_Surface = null;
-        }
     }
 }

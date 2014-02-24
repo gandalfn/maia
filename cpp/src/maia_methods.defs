@@ -137,6 +137,12 @@
   (gtype-id "MAIA_TYPE_CORE_BUS_CONNECTION")
 )
 
+(define-object MaiaApplication
+  (parent "MaiaCoreObject")
+  (c-name "MaiaApplication")
+  (gtype-id "MAIA_TYPE_APPLICATION")
+)
+
 (define-object MaiaCoreParser
   (parent "MaiaCoreObject")
   (c-name "MaiaCoreParser")
@@ -212,6 +218,11 @@
   (parent "MaiaCoreObject")
   (c-name "MaiaGraphicContext")
   (gtype-id "MAIA_TYPE_GRAPHIC_CONTEXT")
+)
+
+(define-object MaiaGraphicDevice
+  (c-name "MaiaGraphicDevice")
+  (gtype-id "MAIA_TYPE_GRAPHIC_DEVICE")
 )
 
 (define-object MaiaGraphicGlyph
@@ -461,12 +472,6 @@
   (parent "MaiaLogFile")
   (c-name "MaiaLogStdout")
   (gtype-id "MAIA_TYPE_LOG_STDOUT")
-)
-
-(define-object MaiaMain
-  (parent "MaiaCoreObject")
-  (c-name "MaiaMain")
-  (gtype-id "MAIA_TYPE_MAIN")
 )
 
 (define-object MaiaManifestAttribute
@@ -892,6 +897,18 @@
     '("hsl-saturation" "MAIA_GRAPHIC_OPERATOR_HSL_SATURATION")
     '("hsl-color" "MAIA_GRAPHIC_OPERATOR_HSL_COLOR")
     '("hsl-luminosity" "MAIA_GRAPHIC_OPERATOR_HSL_LUMINOSITY")
+  )
+)
+
+(define-enum MaiaGraphicSurfaceFormat
+  (c-name "MaiaGraphicSurfaceFormat")
+  (gtype-id "MAIA_TYPE_GRAPHIC_SURFACE_FORMAT")
+  (values
+    '("invalid" "MAIA_GRAPHIC_SURFACE_FORMAT_INVALID")
+    '("a1" "MAIA_GRAPHIC_SURFACE_FORMAT_A1")
+    '("a8" "MAIA_GRAPHIC_SURFACE_FORMAT_A8")
+    '("rgb24" "MAIA_GRAPHIC_SURFACE_FORMAT_RGB24")
+    '("argb32" "MAIA_GRAPHIC_SURFACE_FORMAT_ARGB32")
   )
 )
 
@@ -9311,6 +9328,37 @@
   )
 )
 
+(define-function maia_graphic_device_get_type
+  (c-name "maia_graphic_device_get_type")
+  (return-type "GType")
+)
+
+(define-method get_backend
+  (of-object "MaiaGraphicDevice")
+  (c-name "maia_graphic_device_get_backend")
+  (return-type "const-gchar*")
+)
+
+(define-function maia_graphic_surface_format_get_type
+  (c-name "maia_graphic_surface_format_get_type")
+  (return-type "GType")
+)
+
+(define-method bits_per_pixel
+  (of-object "MaiaGraphicSurfaceFormat")
+  (c-name "maia_graphic_surface_format_bits_per_pixel")
+  (return-type "gint")
+)
+
+(define-method stride_for_width
+  (of-object "MaiaGraphicSurfaceFormat")
+  (c-name "maia_graphic_surface_format_stride_for_width")
+  (return-type "gint")
+  (parameters
+    '("gint" "inWidth")
+  )
+)
+
 (define-function maia_graphic_surface_new
   (c-name "maia_graphic_surface_new")
   (is-constructor-of "MaiaGraphicSurface")
@@ -9326,6 +9374,67 @@
   (return-type "MaiaGraphicSurface*")
   (parameters
     '("GType" "object_type")
+    '("guint" "inWidth")
+    '("guint" "inHeight")
+  )
+)
+
+(define-function maia_graphic_surface_new_from_device
+  (c-name "maia_graphic_surface_new_from_device")
+  (return-type "MaiaGraphicSurface*")
+  (parameters
+    '("MaiaGraphicDevice*" "inDevice")
+  )
+)
+
+(define-function maia_graphic_surface_construct_from_device
+  (c-name "maia_graphic_surface_construct_from_device")
+  (return-type "MaiaGraphicSurface*")
+  (parameters
+    '("GType" "object_type")
+    '("MaiaGraphicDevice*" "inDevice")
+  )
+)
+
+(define-function maia_graphic_surface_new_from_native
+  (c-name "maia_graphic_surface_new_from_native")
+  (return-type "MaiaGraphicSurface*")
+  (parameters
+    '("void*" "inNativeSurface")
+    '("guint" "inWidth")
+    '("guint" "inHeight")
+  )
+)
+
+(define-function maia_graphic_surface_construct_from_native
+  (c-name "maia_graphic_surface_construct_from_native")
+  (return-type "MaiaGraphicSurface*")
+  (parameters
+    '("GType" "object_type")
+    '("void*" "inNativeSurface")
+    '("guint" "inWidth")
+    '("guint" "inHeight")
+  )
+)
+
+(define-function maia_graphic_surface_new_from_data
+  (c-name "maia_graphic_surface_new_from_data")
+  (return-type "MaiaGraphicSurface*")
+  (parameters
+    '("MaiaGraphicSurfaceFormat" "inFormat")
+    '("guchar*" "inData")
+    '("guint" "inWidth")
+    '("guint" "inHeight")
+  )
+)
+
+(define-function maia_graphic_surface_construct_from_data
+  (c-name "maia_graphic_surface_construct_from_data")
+  (return-type "MaiaGraphicSurface*")
+  (parameters
+    '("GType" "object_type")
+    '("MaiaGraphicSurfaceFormat" "inFormat")
+    '("guchar*" "inData")
     '("guint" "inWidth")
     '("guint" "inHeight")
   )
@@ -9368,6 +9477,48 @@
   (parameters
     '("gint" "inRadius")
     '("GError**" "error")
+  )
+)
+
+(define-method get_format
+  (of-object "MaiaGraphicSurface")
+  (c-name "maia_graphic_surface_get_format")
+  (return-type "MaiaGraphicSurfaceFormat")
+)
+
+(define-method get_data
+  (of-object "MaiaGraphicSurface")
+  (c-name "maia_graphic_surface_get_data")
+  (return-type "guchar*")
+)
+
+(define-method get_native
+  (of-object "MaiaGraphicSurface")
+  (c-name "maia_graphic_surface_get_native")
+  (return-type "void*")
+)
+
+(define-method set_native
+  (of-object "MaiaGraphicSurface")
+  (c-name "maia_graphic_surface_set_native")
+  (return-type "none")
+  (parameters
+    '("void*" "value")
+  )
+)
+
+(define-method get_device
+  (of-object "MaiaGraphicSurface")
+  (c-name "maia_graphic_surface_get_device")
+  (return-type "MaiaGraphicDevice*")
+)
+
+(define-method set_device
+  (of-object "MaiaGraphicSurface")
+  (c-name "maia_graphic_surface_set_device")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicDevice*" "value")
   )
 )
 
@@ -9709,15 +9860,24 @@
   )
 )
 
-(define-function maia_main_get_type
-  (c-name "maia_main_get_type")
+(define-method get
+  (of-object "MaiaBackends")
+  (c-name "maia_backends_get")
+  (return-type "MaiaBackend*")
+  (parameters
+    '("const-gchar*" "inProvide")
+  )
+)
+
+(define-function maia_application_get_type
+  (c-name "maia_application_get_type")
   (return-type "GType")
 )
 
-(define-function maia_main_new
-  (c-name "maia_main_new")
-  (is-constructor-of "MaiaMain")
-  (return-type "MaiaMain*")
+(define-function maia_application_new
+  (c-name "maia_application_new")
+  (is-constructor-of "MaiaApplication")
+  (return-type "MaiaApplication*")
   (parameters
     '("gint" "inFps")
     '("gchar**" "inBackends")
@@ -9725,9 +9885,9 @@
   )
 )
 
-(define-function maia_main_construct
-  (c-name "maia_main_construct")
-  (return-type "MaiaMain*")
+(define-function maia_application_construct
+  (c-name "maia_application_construct")
+  (return-type "MaiaApplication*")
   (parameters
     '("GType" "object_type")
     '("gint" "inFps")
@@ -9736,23 +9896,73 @@
   )
 )
 
-(define-function maia_main_new_from_args
-  (c-name "maia_main_new_from_args")
-  (return-type "MaiaMain*")
+(define-function maia_application_new_from_args
+  (c-name "maia_application_new_from_args")
+  (return-type "MaiaApplication*")
   (parameters
     '("gchar***" "inArgs")
     '("int*" "inArgs_length1")
   )
 )
 
-(define-function maia_main_construct_from_args
-  (c-name "maia_main_construct_from_args")
-  (return-type "MaiaMain*")
+(define-function maia_application_construct_from_args
+  (c-name "maia_application_construct_from_args")
+  (return-type "MaiaApplication*")
   (parameters
     '("GType" "object_type")
     '("gchar***" "inArgs")
     '("int*" "inArgs_length1")
   )
+)
+
+(define-method load_backend
+  (of-object "MaiaApplication")
+  (c-name "maia_application_load_backend")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "inBackend")
+  )
+)
+
+(define-method unload_backend
+  (of-object "MaiaApplication")
+  (c-name "maia_application_unload_backend")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "inBackend")
+  )
+)
+
+(define-method run
+  (of-object "MaiaApplication")
+  (c-name "maia_application_run")
+  (return-type "none")
+)
+
+(define-method quit
+  (of-object "MaiaApplication")
+  (c-name "maia_application_quit")
+  (return-type "none")
+)
+
+(define-method get_backend
+  (of-object "MaiaApplication")
+  (c-name "maia_application_get_backend")
+  (return-type "gchar*")
+  (parameters
+    '("const-gchar*" "inProvide")
+  )
+)
+
+(define-function maia_application_get_default
+  (c-name "maia_application_get_default")
+  (return-type "MaiaApplication*")
+)
+
+(define-method set_default
+  (of-object "MaiaApplication")
+  (c-name "maia_application_set_default")
+  (return-type "none")
 )
 
 (define-function maia_key_get_type

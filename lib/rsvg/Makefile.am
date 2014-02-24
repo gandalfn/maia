@@ -2,7 +2,6 @@ MAIA_LIB_NAME = maia-rsvg
 
 MAIA_VAPI_DEPS =  \
     core/maia-any \
-    cairo/maia-cairo-graphic \
     maia
 
 include $(top_srcdir)/build-aux/maia.am
@@ -13,11 +12,9 @@ include $(top_srcdir)/build-aux/vapi.am
 backend_LTLIBRARIES = libmaia-rsvg.la
 
 libmaia_rsvg_la_CFLAGS = \
-    $(MAIA_CAIRO_CFLAGS) \
     $(MAIA_RSVG_CFLAGS)
 
 libmaia_rsvg_la_VALAFLAGS = \
-    --pkg=cairo \
     --pkg=librsvg-2.0 \
     -D $(MAIA_RSVG_VERSION)
 

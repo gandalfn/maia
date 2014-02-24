@@ -17,8 +17,7 @@ libmaia_xcb_la_CFLAGS = \
     $(MAIA_XCB_CFLAGS)
 
 libmaia_xcb_la_VALAFLAGS = \
-    --pkg=xcb \
-    --pkg=cairo-xcb
+    --pkg=xcb
 
 libmaia_xcb_la_SOURCES = \
     init.vala \

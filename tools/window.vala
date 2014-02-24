@@ -413,6 +413,6 @@ public class CanvasEditor.Window : Gtk.Window
             msg.destroy ();
         }
 
-        Gtk.main_quit ();
+        Maia.Application.default.quit ();
     }
 }

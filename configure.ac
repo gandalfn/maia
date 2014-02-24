@@ -106,24 +106,18 @@ dnl ****************************************************************************
 dnl Check for cairo packages
 dnl ****************************************************************************
 PKG_CHECK_MODULES(MAIA_CAIRO, [cairo >= $CAIRO_REQUIRED
+                               cairo-xcb >= $CAIRO_REQUIRED
                                pango >= $PANGO_REQUIRED
                                pangocairo >= $PANGO_REQUIRED])
 AC_SUBST(MAIA_CAIRO_CFLAGS)
 AC_SUBST(MAIA_CAIRO_LIBS)
 
-AC_SUBST([MAIA_CAIROMM_MODULES], ['giomm-2.4 pangomm-1.4 cairomm-1.0'])
-PKG_CHECK_MODULES([MAIA_CAIROMM], [$MAIA_CAIROMM_MODULES])
-AC_SUBST(MAIA_CAIROMM_CFLAGS)
-AC_SUBST(MAIA_CAIROMM_LIBS)
-
 dnl ****************************************************************************
 dnl Check for xcb packages
 dnl ****************************************************************************
-PKG_CHECK_MODULES(MAIA_XCB, [xcb >= $XCB_REQUIRED
-                             cairo-xcb >= $CAIRO_REQUIRED])
+PKG_CHECK_MODULES(MAIA_XCB, [xcb >= $XCB_REQUIRED])
 AC_SUBST(MAIA_XCB_CFLAGS)
 AC_SUBST(MAIA_XCB_LIBS)
-
 
 dnl ****************************************************************************
 dnl Check for rsvg packages
@@ -304,10 +298,6 @@ cpp/gtk/maia-gtkmm.pc
 cpp/gtk/Makefile
 cpp/gtk/src/Makefile
 cpp/gtk/maia-gtkmm/Makefile
-cpp/cairo/maia-cairo-graphicmm.pc
-cpp/cairo/Makefile
-cpp/cairo/src/Makefile
-cpp/cairo/maia-cairo-graphicmm/Makefile
 cpp/doc/Makefile
 cpp/doc/reference/Doxyfile
 cpp/test/Makefile

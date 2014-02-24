@@ -76,7 +76,7 @@ public class Maia.Cairo.Context : Graphic.Context
         }
         construct set {
             base.surface = value;
-            m_Context = new global::Cairo.Context ((value as Surface).surface);
+            m_Context = new global::Cairo.Context ((global::Cairo.Surface)(value as Surface).native);
             m_Context.set_fill_rule (global::Cairo.FillRule.EVEN_ODD);
         }
     }
@@ -138,13 +138,13 @@ public class Maia.Cairo.Context : Graphic.Context
 
         if (inPattern is Graphic.Surface)
         {
-            pattern = new global::Cairo.Pattern.for_surface (((Surface)inPattern).surface);
+            pattern = new global::Cairo.Pattern.for_surface ((global::Cairo.Surface)((Surface)inPattern).native);
             pattern.set_filter (global::Cairo.Filter.BEST);
         }
         else if (inPattern is Graphic.Image)
         {
             unowned Graphic.Image image = (Graphic.Image)inPattern;
-            pattern = new global::Cairo.Pattern.for_surface (((Surface)image.surface).surface);
+            pattern = new global::Cairo.Pattern.for_surface ((global::Cairo.Surface)((Surface)image.surface).native);
             global::Cairo.Matrix matrix = global::Cairo.Matrix (image.transform.matrix.xx, image.transform.matrix.yx,
                                                                 image.transform.matrix.xy, image.transform.matrix.yy,
                                                                 image.transform.matrix.x0, image.transform.matrix.y0);

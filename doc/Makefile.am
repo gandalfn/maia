@@ -28,6 +28,9 @@ VALADOC_FLAGS = \
     --pkg gmodule-2.0 \
     --pkg gio-unix-2.0 \
     --pkg cairo \
+    --pkg cairo-xcb \
+    --pkg xcb \
+    --pkg xcb-base \
     --pkg pangocairo \
     --pkg gdk-keysym \
     --pkg gtk+-2.0 \

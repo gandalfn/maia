@@ -115,4 +115,22 @@ public class Maia.Backends : Maia.Core.ExtensionLoader<Maia.Backend>
             }
         }
     }
+
+    public new unowned Backend?
+    @get(string inProvide)
+    {
+        unowned Backend? ret = null;
+
+        foreach (unowned Core.Object child in this)
+        {
+            unowned Backend backend = child as Backend;
+
+            if (inProvide in backend.provide)
+            {
+                ret = backend;
+            }
+        }
+
+        return ret;
+    }
 }

@@ -602,7 +602,8 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         {
             try
             {
-                var widget_surface = new Surface (this);
+                var widget_surface = new Graphic.Surface.from_native (Gdk.cairo_create (window).get_target (),
+                                                                      allocation.width, allocation.height);
                 widget_surface.context.pattern = surface;
                 widget_surface.context.paint ();
             }

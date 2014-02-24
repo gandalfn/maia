@@ -16,7 +16,9 @@ libmaia_cairo_graphic_la_CFLAGS = \
 
 libmaia_cairo_graphic_la_VALAFLAGS = \
     --pkg=cairo \
-    --pkg=pangocairo
+    --pkg=cairo-xcb \
+    --pkg=pangocairo \
+    --pkg=xcb
 
 libmaia_cairo_graphic_la_SOURCES = \
     fixed.vala \

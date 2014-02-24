@@ -19,10 +19,59 @@
 
 public class Maia.Graphic.Surface : Pattern
 {
+    // types
+    public enum Format
+    {
+        INVALID,
+        A1,
+        A8,
+        RGB24,
+        ARGB32;
+
+        public int
+        bits_per_pixel ()
+        {
+            switch (this)
+            {
+                case A1:
+                    return 1;
+                case A8:
+                    return 8;
+                case RGB24:
+                case ARGB32:
+                    return 32;
+            }
+
+            return 0;
+        }
+
+        public int
+        stride_for_width (int inWidth)
+        {
+            int bpp = bits_per_pixel ();
+
+            if (bpp <= 0)
+                return -1;
+
+            if ((uint) (inWidth) >= (int32.MAX - 7) / (uint) (bpp))
+                return -1;
+
+            return (int)((((bpp)*(inWidth) + 7) / 8 + sizeof (uint32) - 1) & -sizeof (uint32));
+        }
+    }
+
     // properties
     private Context m_Context;
 
     // accessors
+    public Format format { get; construct; default = Format.INVALID; }
+
+    public uchar* data { get; construct; default = null; }
+
+    public virtual void* native { get; construct set; }
+
+    public virtual Device device { get; construct set; default = null; }
+
     public Graphic.Size size { get; construct set; default = Graphic.Size (0, 0); }
 
     public Context context {
@@ -41,6 +90,25 @@ public class Maia.Graphic.Surface : Pattern
     {
         var size = Graphic.Size ((double)inWidth, (double)inHeight);
         GLib.Object (size: size);
+    }
+
+    public Surface.from_device (Device inDevice)
+    {
+        GLib.Object (device: inDevice);
+    }
+
+    public Surface.from_native (void* inNativeSurface, uint inWidth, uint inHeight)
+        requires (inWidth > 0 && inHeight > 0)
+    {
+        var size = Graphic.Size ((double)inWidth, (double)inHeight);
+        GLib.Object (native: inNativeSurface, size: size);
+    }
+
+    public Surface.from_data (Format inFormat, uchar* inData, uint inWidth, uint inHeight)
+        requires (inWidth > 0 && inHeight > 0)
+    {
+        var size = Graphic.Size ((double)inWidth, (double)inHeight);
+        GLib.Object (format: inFormat, data: inData, size: size);
     }
 
     /**

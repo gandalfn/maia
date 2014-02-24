@@ -36,11 +36,7 @@ internal class Maia.GdkPixbuf.ImageJpg : Graphic.ImageJpg, Image
             m_Filename = value;
 
             // Destroy surface
-            if (m_Surface != null)
-            {
-                destroy_surface (m_Surface);
-                m_Surface = null;
-            }
+            m_Surface = null;
 
             // Load pixbuf
             try
@@ -70,11 +66,7 @@ internal class Maia.GdkPixbuf.ImageJpg : Graphic.ImageJpg, Image
             m_Size = value;
 
             // Destroy surface
-            if (m_Surface != null)
-            {
-                destroy_surface (m_Surface);
-                m_Surface = null;
-            }
+            m_Surface = null;
         }
     }
 
@@ -93,11 +85,7 @@ internal class Maia.GdkPixbuf.ImageJpg : Graphic.ImageJpg, Image
             m_Transform.add (value);
 
             // Destroy surface
-            if (m_Surface != null)
-            {
-                destroy_surface (m_Surface);
-                m_Surface = null;
-            }
+            m_Surface = null;
         }
     }
 
@@ -126,14 +114,5 @@ internal class Maia.GdkPixbuf.ImageJpg : Graphic.ImageJpg, Image
     public ImageJpg (string inFilename)
     {
         GLib.Object (filename: inFilename);
-    }
-
-    ~ImageJpg ()
-    {
-        if (m_Surface != null)
-        {
-            destroy_surface (m_Surface);
-            m_Surface = null;
-        }
     }
 }

@@ -24,28 +24,100 @@ public class Maia.Cairo.Surface : Graphic.Surface
     const int cParamPrecision = 7;
 
     // properties
-    private global::Cairo.Surface m_Surface = null;
+    private global::Cairo.Surface  m_Surface = null;
+    private unowned Graphic.Device m_Device  = null;
 
     // accessors
-    public global::Cairo.Surface surface {
+    public override void* native {
         get {
             if (m_Surface == null && !size.is_empty ())
             {
-                m_Surface = new global::Cairo.ImageSurface (global::Cairo.Format.ARGB32, (int)size.width, (int)size.height);
+                if (format != Graphic.Surface.Format.INVALID && data != null)
+                {
+                    m_Surface = new global::Cairo.ImageSurface.for_data ((uchar[])data, format_to_cairo_format (format),
+                                                                         (int)size.width, (int)size.height,
+                                                                         format.stride_for_width ((int)size.width));
+                }
+                else
+                {
+                    m_Surface = new global::Cairo.ImageSurface (global::Cairo.Format.ARGB32, (int)size.width, (int)size.height);
+                }
             }
 
             return m_Surface;
         }
         construct set {
-            m_Surface = value;
+            m_Surface = (global::Cairo.Surface)value;
         }
     }
+
+    public override Graphic.Device device {
+        get {
+            return m_Device;
+        }
+        construct set {
+            m_Device = value;
+            if (m_Device != null)
+            {
+                switch (m_Device.backend)
+                {
+                    case "xcb/window":
+                        uint32 xid;
+                        Graphic.Size device_size;
+                        Xcb.Visualtype? visual_type;
+                        Xcb.Connection connection;
+
+                        ((GLib.Object)m_Device).get ("id", out xid,
+                                                     "size", out device_size,
+                                                     "visual_type", out visual_type,
+                                                     "connection", out connection);
+
+                        m_Surface = new global::Cairo.XcbSurface (connection,
+                                                                  (Xcb.Drawable)id, visual_type,
+                                                                  (int)device_size.width,
+                                                                  (int)device_size.height);
+
+                        size = device_size;
+
+                        break;
+                }
+            }
+        }
+    }
+
+    // static methods
+    private static global::Cairo.Format
+    format_to_cairo_format (Graphic.Surface.Format inFormat)
+    {
+        switch (inFormat)
+        {
+            case Graphic.Surface.Format.A1:
+                return global::Cairo.Format.A1;
+            case Graphic.Surface.Format.A8:
+                return global::Cairo.Format.A8;
+            case Graphic.Surface.Format.RGB24:
+                return global::Cairo.Format.RGB24;
+            case Graphic.Surface.Format.ARGB32:
+                return global::Cairo.Format.ARGB32;
+        }
+
+        return global::Cairo.Format.ARGB32;
+    }
+
 
     // methods
     public Surface (global::Cairo.Surface? inSurface, uint inWidth, uint inHeight)
     {
         Graphic.Size size = Graphic.Size ((double)inWidth, (double)inHeight);
-        GLib.Object (surface: inSurface, size: size);
+        GLib.Object (native: inSurface, size: size);
+    }
+
+    ~Surface ()
+    {
+        if (data != null)
+        {
+            GLib.free (data);
+        }
     }
 
     private void

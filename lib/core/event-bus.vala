@@ -379,19 +379,6 @@ public class Maia.Core.EventBus : Object
                 hash = inHash;
                 sequence = inSequence;
             }
-
-            public int
-            compare (Hash? inOther)
-            {
-                int ret = hash.compare (inOther.hash);
-
-                if (ret == 0)
-                {
-                    ret = (int)(sequence - inOther.sequence);
-                }
-
-                return ret;
-            }
         }
 
         // properties

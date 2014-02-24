@@ -28,11 +28,11 @@ public interface Maia.GdkPixbuf.Image : Graphic.Image
         int width = inPixbuf.width;
         int height = inPixbuf.height;
         int pixbuf_rowstride = inPixbuf.rowstride;
-        global::Cairo.Format format = n_channels == 3 ? global::Cairo.Format.RGB24 : global::Cairo.Format.ARGB32;
+        Graphic.Surface.Format format = n_channels == 3 ? Graphic.Surface.Format.RGB24 : Graphic.Surface.Format.ARGB32;
         int rowstride = format.stride_for_width (width);
-        uchar* pixels = GLib.malloc (inPixbuf.height * rowstride);
-        var image_surface = new global::Cairo.ImageSurface.for_data ((uchar[])pixels, format, width, height, rowstride);
+        uchar* data = GLib.malloc (height * rowstride);
         uchar* pixbuf_pixels = inPixbuf.pixels;
+        uchar* pixels = data;
 
         // Convert pixbuf data to cairo data
         for (int j = height; j > 0; j--)
@@ -79,13 +79,6 @@ public interface Maia.GdkPixbuf.Image : Graphic.Image
         }
 
         // Create new surface
-        return  GLib.Object.new (typeof (Maia.Cairo.Surface), surface: image_surface, size: Graphic.Size(width, height)) as Graphic.Surface;
-    }
-
-    internal void
-    destroy_surface (Graphic.Surface inSurface)
-    {
-        uchar* data = ((global::Cairo.ImageSurface)((Cairo.Surface)inSurface).surface).get_data ();
-        GLib.free (data);
+        return new Graphic.Surface.from_data (format, data, width, height);
     }
 }

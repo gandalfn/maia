@@ -36,11 +36,7 @@ internal class Maia.GdkPixbuf.ImageSvg : Graphic.ImageSvg, Image
             m_Filename = value;
 
             // Destroy surface
-            if (m_Surface != null)
-            {
-                destroy_surface (m_Surface);
-                m_Surface = null;
-            }
+            m_Surface = null;
 
             // Load pixbuf
             try
@@ -70,11 +66,7 @@ internal class Maia.GdkPixbuf.ImageSvg : Graphic.ImageSvg, Image
             m_Size = value;
 
             // Destroy surface
-            if (m_Surface != null)
-            {
-                destroy_surface (m_Surface);
-                m_Surface = null;
-            }
+            m_Surface = null;
         }
     }
 
@@ -93,11 +85,7 @@ internal class Maia.GdkPixbuf.ImageSvg : Graphic.ImageSvg, Image
             m_Transform.add (value);
 
             // Destroy surface
-            if (m_Surface != null)
-            {
-                destroy_surface (m_Surface);
-                m_Surface = null;
-            }
+            m_Surface = null;
         }
     }
 
@@ -135,14 +123,5 @@ internal class Maia.GdkPixbuf.ImageSvg : Graphic.ImageSvg, Image
     public ImageSvg (string inFilename)
     {
         GLib.Object (filename: inFilename);
-    }
-
-    ~ImageSvg ()
-    {
-        if (m_Surface != null)
-        {
-            destroy_surface (m_Surface);
-            m_Surface = null;
-        }
     }
 }

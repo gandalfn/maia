@@ -29,12 +29,7 @@ libmaia_gtkmm_la_LDFLAGS =  \
 
 libmaia_gtkmm_la_LIBADD  = \
 	$(MAIA_LIBS) \
-    $(MAIA_CAIRO_LIBS) \
-    $(MAIA_GDK_PIXBUF_LIBS) \
     $(MAIA_GTK_LIBS) \
     $(MAIA_VALGRIND_LIBS) \
     ${top_builddir}/lib/libmaia.la \
-    ${top_builddir}/lib/cairo/libmaia-cairo-graphic.la \
-    ${top_builddir}/lib/rsvg/libmaia-rsvg.la \
-    ${top_builddir}/lib/gdk-pixbuf/libmaia-gdk-pixbuf.la \
     ${top_builddir}/lib/gtk/libmaia-gtk.la

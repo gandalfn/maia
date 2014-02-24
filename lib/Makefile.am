@@ -82,6 +82,7 @@ libmaia_la_SOURCES = \
     graphic/glyph.vala \
     graphic/context.vala \
     graphic/pattern.vala \
+    graphic/device.vala \
     graphic/surface.vala \
     graphic/image.vala \
     graphic/image-png.vala \
@@ -89,7 +90,7 @@ libmaia_la_SOURCES = \
     graphic/image-svg.vala \
     graphic/image-gif.vala \
     backend.vala \
-    main.vala \
+    application.vala \
     keysym.vala \
     cursor.vala \
     scroll.vala \
