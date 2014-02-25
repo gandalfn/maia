@@ -29,6 +29,9 @@ main (int argc, char** argv)
 {
     Maia::Gtk::init ();
 
+    std::vector<Glib::ustring> backends;
+    backends.push_back ("gtk");
+    
     // Init test units
     g_test_init (&argc, &argv, 0);
 
@@ -37,6 +40,10 @@ main (int argc, char** argv)
         Glib::ustring domain ("test");
         Maia::Log::set_default_logger (Maia::Log::Stderr::create (Maia::Log::LOG_LEVEL_DEBUG, Maia::Log::LOG_CATEGORY_ALL, domain));
     }
+
+    // Create maia application
+    Glib::RefPtr<Maia::Application> pApp = Maia::Application::create (60, backends);
+    
     // Get root suite
     Maia::TestSuite root;
 

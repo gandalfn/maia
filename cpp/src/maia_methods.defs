@@ -83,22 +83,10 @@
   (gtype-id "MAIA_TYPE_CORE_EXTENSION_LOADER")
 )
 
-(define-object MaiaBackends
-  (parent "MaiaCoreExtensionLoader")
-  (c-name "MaiaBackends")
-  (gtype-id "MAIA_TYPE_BACKENDS")
-)
-
 (define-object MaiaCoreExtension
   (parent "MaiaCoreObject")
   (c-name "MaiaCoreExtension")
   (gtype-id "MAIA_TYPE_CORE_EXTENSION")
-)
-
-(define-object MaiaBackend
-  (parent "MaiaCoreExtension")
-  (c-name "MaiaBackend")
-  (gtype-id "MAIA_TYPE_BACKEND")
 )
 
 (define-object MaiaCoreEventListener
@@ -9753,119 +9741,6 @@
     '("GType" "object_type")
     '("const-gchar*" "inFilename")
     '("MaiaGraphicSize*" "inSize")
-  )
-)
-
-(define-function maia_backend_get_type
-  (c-name "maia_backend_get_type")
-  (return-type "GType")
-)
-
-(define-function maia_backend_new
-  (c-name "maia_backend_new")
-  (is-constructor-of "MaiaBackend")
-  (return-type "MaiaBackend*")
-  (parameters
-    '("const-gchar*" "inFilename")
-  )
-)
-
-(define-function maia_backend_construct
-  (c-name "maia_backend_construct")
-  (return-type "MaiaBackend*")
-  (parameters
-    '("GType" "object_type")
-    '("const-gchar*" "inFilename")
-  )
-)
-
-(define-method load
-  (of-object "MaiaBackend")
-  (c-name "maia_backend_load")
-  (return-type "none")
-  (parameters
-    '("GError**" "error")
-  )
-)
-
-(define-method unload
-  (of-object "MaiaBackend")
-  (c-name "maia_backend_unload")
-  (return-type "none")
-  (parameters
-    '("GError**" "error")
-  )
-)
-
-(define-method get_loaded
-  (of-object "MaiaBackend")
-  (c-name "maia_backend_get_loaded")
-  (return-type "gboolean")
-)
-
-(define-method get_require
-  (of-object "MaiaBackend")
-  (c-name "maia_backend_get_require")
-  (return-type "gchar**")
-  (parameters
-    '("int*" "result_length1")
-  )
-)
-
-(define-method get_provide
-  (of-object "MaiaBackend")
-  (c-name "maia_backend_get_provide")
-  (return-type "gchar**")
-  (parameters
-    '("int*" "result_length1")
-  )
-)
-
-(define-function maia_backends_get_type
-  (c-name "maia_backends_get_type")
-  (return-type "GType")
-)
-
-(define-function maia_backends_new
-  (c-name "maia_backends_new")
-  (is-constructor-of "MaiaBackends")
-  (return-type "MaiaBackends*")
-)
-
-(define-function maia_backends_construct
-  (c-name "maia_backends_construct")
-  (return-type "MaiaBackends*")
-  (parameters
-    '("GType" "object_type")
-  )
-)
-
-(define-method load
-  (of-object "MaiaBackends")
-  (c-name "maia_backends_load")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "inBackend")
-    '("GError**" "error")
-  )
-)
-
-(define-method unload
-  (of-object "MaiaBackends")
-  (c-name "maia_backends_unload")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "inBackend")
-    '("GError**" "error")
-  )
-)
-
-(define-method get
-  (of-object "MaiaBackends")
-  (c-name "maia_backends_get")
-  (return-type "MaiaBackend*")
-  (parameters
-    '("const-gchar*" "inProvide")
   )
 )
 

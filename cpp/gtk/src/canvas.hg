@@ -58,5 +58,8 @@ namespace Maia
             private:
                 _WRAP_SIGNAL(void on_set_scroll_adjustments (::Gtk::Adjustment* inpHAdjust, ::Gtk::Adjustment* inpVAdjust), "on-set-scroll-adjustments", no_default_handler)
         };
+
+        Glib::RefPtr<Graphic::Surface> create_surface (const Glib::RefPtr<Gdk::Drawable>& inpDrawable, unsigned int inWidth, unsigned int inHeight);
+        Glib::RefPtr<Graphic::Surface> create_surface (const ::Gtk::Widget& inWidget);
     }
 }

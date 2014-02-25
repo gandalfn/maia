@@ -21,6 +21,7 @@ int main (int argc, char** argv)
 
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_COLOR);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_CONTEXT);
+    std::cout << get_defs (MAIA_GRAPHIC_TYPE_DEVICE);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_GLYPH);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_GRADIENT);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_IMAGE);
@@ -49,6 +50,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_MANIFEST_TYPE_STYLE);
     std::cout << get_defs (MAIA_MANIFEST_STYLE_TYPE_PROPERTY);
 
+    std::cout << get_defs (MAIA_TYPE_APPLICATION);
     std::cout << get_defs (MAIA_TYPE_BUTTON);
     std::cout << get_defs (MAIA_TYPE_CANVAS);
     std::cout << get_defs (MAIA_TYPE_CHECK_BUTTON);

@@ -1,0 +1,84 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * application.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/core-object.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/core-object_p.h)
+
+namespace Maia
+{
+    class Application : public Core::Object
+    {
+        _CLASS_GOBJECT(Application, MaiaApplication, MAIA_APPLICATION, Core::Object, MaiaCoreObject)
+
+        protected:
+            _CTOR_DEFAULT()
+
+        public:
+            static Glib::RefPtr<Application> create (int inFps = 60)
+            {
+                return Glib::RefPtr<Application> (new Application (maia_application_new (inFps, 0, 0)));
+            }
+            
+            static Glib::RefPtr<Application> create (int inFps, const std::vector<Glib::ustring>& inBackends)
+            {
+                int length = inBackends.size ();
+                char** backends = 0;
+                if (length > 0)
+                {
+                    backends = new char*[length];
+                    int cpt = 0;
+                    for (std::vector<Glib::ustring>::const_iterator iter = inBackends.begin (); iter != inBackends.end (); ++iter)
+                    {
+                        backends[cpt] = (char*)iter->c_str ();
+                    }
+                }
+
+                MaiaApplication* pApplication = maia_application_new (inFps, backends, length);
+
+                if (backends)
+                {
+                    delete backends;
+                }
+
+                return Glib::RefPtr<Application> (new Application (pApplication));
+            }
+
+            _IGNORE(maia_application_new)
+
+            static Glib::RefPtr<Application> create (char*** inpArgv, int* inArgc)
+            {
+                return Glib::RefPtr<Application> (new Application (maia_application_new_from_args (inpArgv, inArgc)));
+            }
+
+            _IGNORE(maia_application_new_from_args)
+
+            _WRAP_METHOD(bool load_backend (const Glib::ustring& inBackend), maia_application_load_backend)
+            _WRAP_METHOD(bool unload_backend (const Glib::ustring& inBackend), maia_application_unload_backend)
+            _WRAP_METHOD(Glib::ustring get_backend (const Glib::ustring& inProvide) const, maia_application_get_backend)
+
+            _WRAP_METHOD(void run (), maia_application_run)
+            _WRAP_METHOD(void quit (), maia_application_quit)
+
+            _WRAP_METHOD(static Glib::RefPtr<Application> get_default (), maia_application_get_default)
+            _WRAP_METHOD(static void set_default (const Glib::RefPtr<Application>& inApplication), maia_application_set_default)
+    };
+}

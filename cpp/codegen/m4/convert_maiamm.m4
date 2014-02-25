@@ -152,6 +152,11 @@ _CONVERSION(`const Glib::RefPtr<Image>&',`MaiaGraphicImage*',__CONVERT_REFPTR_TO
 _CONVERSION(`MaiaGraphicImage*',`const Glib::RefPtr<Image>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaGraphicImage*',`Glib::RefPtr<Image>',`Glib::wrap($3)')
 
+_CONVERSION(`Glib::RefPtr<Device>',`MaiaGraphicDevice*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Device>&',`MaiaGraphicDevice*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaGraphicDevice*',`const Glib::RefPtr<Device>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicDevice*',`Glib::RefPtr<Device>',`Glib::wrap($3)')
+
 _CONVERSION(`Glib::RefPtr<AttributeBind>',`MaiaManifestAttributeBind*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<AttributeBind>&',`MaiaManifestAttributeBind*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaManifestAttributeBind*',`const Glib::RefPtr<AttributeBind>&',`Glib::wrap($3)')
@@ -161,6 +166,11 @@ _CONVERSION(`Glib::RefPtr<AttributeScanner>',`MaiaManifestAttributeScanner*',__C
 _CONVERSION(`const Glib::RefPtr<AttributeScanner>&',`MaiaManifestAttributeScanner*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaManifestAttributeScanner*',`const Glib::RefPtr<AttributeScanner>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaManifestAttributeScanner*',`Glib::RefPtr<AttributeScanner>',`Glib::wrap($3)')
+
+_CONVERSION(`Glib::RefPtr<Application>',`MaiaApplication*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Application>&',`MaiaApplication*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaApplication*',`const Glib::RefPtr<Application>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaApplication*',`Glib::RefPtr<Application>',`Glib::wrap($3)')
 
 _CONVERSION(`Glib::RefPtr<Document>',`MaiaManifestDocument*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Document>&',`MaiaManifestDocument*',__CONVERT_REFPTR_TO_P)
@@ -266,6 +276,7 @@ _CONV_ENUM(MaiaGraphic,Operator)
 _CONV_ENUM(MaiaGraphic,GlyphAlignment)
 _CONV_ENUM(MaiaGraphic,GlyphWrapMode)
 _CONV_ENUM(MaiaGraphic,GlyphEllipsizeMode)
+_CONV_ENUM(MaiaGraphic,SurfaceFormat)
 _CONV_ENUM(Maia,Scroll)
 _CONV_ENUM(Maia,Key)
 _CONV_ENUM(Maia,Cursor)

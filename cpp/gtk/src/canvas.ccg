@@ -23,5 +23,33 @@ namespace Maia
 {
     namespace Gtk
     {
+        Glib::RefPtr<Graphic::Surface>
+        create_surface (const Glib::RefPtr<Gdk::Drawable>& inpDrawable, unsigned int inWidth, unsigned int inHeight)
+        {
+            Glib::RefPtr<Graphic::Surface> pSurface = Glib::RefPtr<Graphic::Surface> (0);
+            
+            cairo_t* ctx = gdk_cairo_create (const_cast<GdkDrawable*> (inpDrawable->gobj ()));
+            cairo_surface_t* surface = cairo_get_target (ctx);
+
+            pSurface = Graphic::Surface::create (surface, inWidth, inHeight);
+
+            cairo_destroy (ctx);
+
+            return pSurface;
+        }
+
+        Glib::RefPtr<Graphic::Surface>
+        create_surface (const ::Gtk::Widget& inWidget)
+        {
+            Glib::RefPtr<Graphic::Surface> pSurface = Glib::RefPtr<Graphic::Surface> (0);
+            Glib::RefPtr<Gdk::Window> pWindow = Glib::RefPtr<Gdk::Window>::cast_const (inWidget.get_window ());
+            
+            if (pWindow && inWidget.get_allocation ().get_width () > 0 && inWidget.get_allocation ().get_height () > 0)
+            {
+                pSurface = create_surface (pWindow, inWidget.get_allocation ().get_width (), inWidget.get_allocation ().get_height ());
+            }
+
+            return pSurface;
+        }
     }
 }

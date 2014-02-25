@@ -375,6 +375,17 @@
   (construct-only #f)
 )
 
+;; From MaiaGraphicDevice
+
+(define-property backend
+  (of-object "MaiaGraphicDevice")
+  (prop-type "GParamString")
+  (docs "backend")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
 ;; From MaiaGraphicGlyph
 
 (define-property font-description
@@ -865,6 +876,8 @@
   (writable #t)
   (construct-only #f)
 )
+
+;; From MaiaApplication
 
 ;; From MaiaButton
 

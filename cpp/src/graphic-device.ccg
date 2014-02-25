@@ -1,6 +1,6 @@
-/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * test-gtk.vala
+ * graphic-device.hg
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,20 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.TestGtk : Maia.TestCase
+#include <maia.h>
+
+namespace Maia
 {
-    public TestGtk ()
+    namespace Graphic
     {
-        base ("gtk");
-
-        add_test ("load-backend", test_gtk_load_backend);
-        suite.add_suite (new TestModel ().suite);
-        suite.add_suite (new TestCanvas ().suite);
-    }
-
-    public void
-    test_gtk_load_backend ()
-    {
-        assert (Application.default.load_backend ("gtk"));
     }
 }

@@ -30,6 +30,7 @@ files_hg = \
     graphic-context.hg \
     graphic-glyph.hg \
     graphic-surface.hg \
+    graphic-device.hg \
     graphic-gradient.hg \
     graphic-linear-gradient.hg \
     graphic-radial-gradient.hg \
@@ -42,6 +43,7 @@ files_hg = \
     manifest-document.hg \
     manifest-element.hg \
     manifest-style.hg \
+    application.hg \
     drawable.hg \
     item.hg \
     item-packable.hg \

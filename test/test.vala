@@ -22,6 +22,8 @@ void main (string[] args)
     Test.init (ref args);
     Gtk.init (ref args);
 
+    var application = new Maia.Application.from_args (ref args);
+
     if (Test.verbose ())
     {
         //Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.ALL, "test"));

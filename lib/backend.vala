@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Backend : Maia.Core.Extension
+internal class Maia.Backend : Maia.Core.Extension
 {
     // types
     private delegate void LoadFunc ();
@@ -76,7 +76,7 @@ public class Maia.Backend : Maia.Core.Extension
     }
 }
 
-public class Maia.Backends : Maia.Core.ExtensionLoader<Maia.Backend>
+internal class Maia.Backends : Maia.Core.ExtensionLoader<Maia.Backend>
 {
     // methods
     public Backends ()

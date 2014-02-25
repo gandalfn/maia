@@ -101,7 +101,11 @@ public class Maia.Application : Maia.Core.Object
             Log.critical (GLib.Log.METHOD, Log.Category.MAIN, "option parsing failed: %s", err.message);
         }
 
-        string[] backends = s_Backends.split (",");
+        string[]? backends = null;
+        if (s_Backends != null)
+        {
+            backends = s_Backends.split (",");
+        }
 
         this (s_Fps, backends);
     }

@@ -23,9 +23,6 @@ public class Maia.TestGraphic : Maia.TestCase
     {
         base ("graphic");
         
-        //var backends = new Backends();
-        //backends.load ("cairo");
-        
         suite.add_suite (new TestTransform ().suite);
     }
 }
