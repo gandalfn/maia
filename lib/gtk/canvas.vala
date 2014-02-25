@@ -46,7 +46,6 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         }
     }
 
-    internal Core.Timeline timeline { get; set; default = null; }
     internal Graphic.Region geometry { get; set; default = null; }
     internal Graphic.Region damaged { get; set; default = null; }
     internal Graphic.Transform transform { get; set; default = new Graphic.Transform.identity (); }
@@ -398,7 +397,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     map ()
     {
         base.map ();
-        timeline.start ();
+        //timeline.start ();
 
         grab_focus ();
     }
@@ -406,7 +405,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     internal override void
     unmap ()
     {
-        timeline.stop ();
+        //timeline.stop ();
         base.unmap ();
     }
 

@@ -879,6 +879,24 @@
 
 ;; From MaiaApplication
 
+(define-signal new-frame
+  (of-object "MaiaApplication")
+  (return-type "void")
+  (when "first")
+  (parameters
+    '("gint" "p0")
+  )
+)
+
+(define-property refresh-rate
+  (of-object "MaiaApplication")
+  (prop-type "GParamUInt")
+  (docs "refresh-rate")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaButton
 
 (define-signal clicked
@@ -1021,15 +1039,6 @@
   (docs "surface")
   (readable #t)
   (writable #f)
-  (construct-only #f)
-)
-
-(define-property timeline
-  (of-object "MaiaCanvas")
-  (prop-type "GParamObject")
-  (docs "timeline")
-  (readable #t)
-  (writable #t)
   (construct-only #f)
 )
 

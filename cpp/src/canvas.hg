@@ -18,7 +18,6 @@
  */
 
 #include <maia.h>
-#include <maiamm/core-timeline.h>
 #include <maiamm/graphic-surface.h>
 #include <maiamm/item.h>
 #include <maiamm/toolbox.h>
@@ -42,13 +41,9 @@ namespace Maia
         protected:
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3, true)')
 #m4 _CONVERSION(`MaiaGraphicSurface*', `const Glib::RefPtr<Graphic::Surface>&', `Glib::wrap($3, true)')
-#m4 _CONVERSION(`MaiaCoreTimeline*', `const Glib::RefPtr<Core::Timeline>&', `Glib::wrap($3, true)')
             _WRAP_VFUNC(Glib::RefPtr<Item> get_root (), get_root, refreturn_ctype)
             _WRAP_VFUNC(void set_root (const Glib::RefPtr<Item>& inRoot), set_root)
             _WRAP_VFUNC(Glib::RefPtr<Graphic::Surface> get_surface (), get_surface, refreturn_ctype)
-
-            _WRAP_VFUNC(Glib::RefPtr<Core::Timeline> get_timeline (), get_timeline, refreturn_ctype)
-            _WRAP_VFUNC(void set_timeline (const Glib::RefPtr<Core::Timeline>& inTimeline), set_timeline)
 
             _WRAP_VFUNC(Glib::RefPtr<Item> get_focus_item (), get_focus_item, refreturn_ctype)
             _WRAP_VFUNC(void set_focus_item (const Glib::RefPtr<Item>& inItem), set_focus_item)
@@ -70,20 +65,15 @@ namespace Maia
             _WRAP_VFUNC(void on_toolbox_remove(), on_toolbox_remove)
 
             _WRAP_VFUNC(void resize(), resize)
-#m4 _CONVERSION(`MaiaCoreTimeline*', `const Glib::RefPtr<Core::Timeline>&', `Glib::wrap($3)')
 #m4 _CONVERSION(`MaiaGraphicSurface*', `const Glib::RefPtr<Graphic::Surface>&', `Glib::wrap($3)')
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3)')
 
             _WRAP_METHOD(void register_iface(), maia_canvas_register)
 
-            _WRAP_METHOD(Glib::RefPtr<Core::Timeline> get_timeline () const, maia_canvas_get_timeline, refreturn)
-            _WRAP_METHOD(void set_timeline (const Glib::RefPtr<Core::Timeline>& inTimeline), maia_canvas_set_timeline)
-
             _WRAP_METHOD(void set_focus_item (const Glib::RefPtr<Item>& inItem), maia_canvas_set_focus_item)
             _WRAP_METHOD(void set_grab_pointer_item (const Glib::RefPtr<Item>& inItem), maia_canvas_set_grab_pointer_item)
             _WRAP_METHOD(void set_grab_keyboard_item (const Glib::RefPtr<Item>& inItem), maia_canvas_set_grab_keyboard_item)
 
-            _WRAP_PROPERTY("timeline", Glib::RefPtr<Core::Timeline>)
             _WRAP_PROPERTY("focus-item", Glib::RefPtr<Item>)
             _WRAP_PROPERTY("grab-pointer-item", Glib::RefPtr<Item>)
             _WRAP_PROPERTY("grab-keyboard-item", Glib::RefPtr<Item>)
@@ -95,9 +85,6 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Toolbox> get_toolbox () const, maia_canvas_get_toolbox, refreturn)
 
             _WRAP_METHOD(Glib::RefPtr<Graphic::Surface> get_surface () const, maia_canvas_get_surface, refreturn)
-
-            _WRAP_METHOD(guint get_refresh_rate () const, maia_canvas_get_refresh_rate)
-            _WRAP_METHOD(void set_refresh_rate (guint inRefreshRate) const, maia_canvas_set_refresh_rate)
 
             _WRAP_METHOD(guint get_width () const, maia_canvas_get_width)
             _WRAP_METHOD(guint get_height () const, maia_canvas_get_height)

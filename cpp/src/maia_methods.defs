@@ -9840,6 +9840,21 @@
   (return-type "none")
 )
 
+(define-method get_refresh_rate
+  (of-object "MaiaApplication")
+  (c-name "maia_application_get_refresh_rate")
+  (return-type "guint")
+)
+
+(define-method set_refresh_rate
+  (of-object "MaiaApplication")
+  (c-name "maia_application_set_refresh_rate")
+  (return-type "none")
+  (parameters
+    '("guint" "value")
+  )
+)
+
 (define-function maia_key_get_type
   (c-name "maia_key_get_type")
   (return-type "GType")
@@ -12733,21 +12748,6 @@
   )
 )
 
-(define-method get_timeline
-  (of-object "MaiaCanvas")
-  (c-name "maia_canvas_get_timeline")
-  (return-type "MaiaCoreTimeline*")
-)
-
-(define-method set_timeline
-  (of-object "MaiaCanvas")
-  (c-name "maia_canvas_set_timeline")
-  (return-type "none")
-  (parameters
-    '("MaiaCoreTimeline*" "value")
-  )
-)
-
 (define-method get_focus_item
   (of-object "MaiaCanvas")
   (c-name "maia_canvas_get_focus_item")
@@ -12818,21 +12818,6 @@
   (of-object "MaiaCanvas")
   (c-name "maia_canvas_get_surface")
   (return-type "MaiaGraphicSurface*")
-)
-
-(define-method get_refresh_rate
-  (of-object "MaiaCanvas")
-  (c-name "maia_canvas_get_refresh_rate")
-  (return-type "guint")
-)
-
-(define-method set_refresh_rate
-  (of-object "MaiaCanvas")
-  (c-name "maia_canvas_set_refresh_rate")
-  (return-type "none")
-  (parameters
-    '("guint" "value")
-  )
 )
 
 (define-method get_width

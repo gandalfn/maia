@@ -23,7 +23,6 @@ public interface Maia.Canvas : Drawable
     static bool s_ElementsRegister = false;
 
     // accessors
-    protected abstract Core.Timeline timeline           { get; set; default = null; }
     protected abstract unowned Item? focus_item         { get; set; default = null; }
     protected abstract unowned Item? grab_pointer_item  { get; set; default = null; }
     protected abstract unowned Item? grab_keyboard_item { get; set; default = null; }
@@ -37,27 +36,6 @@ public interface Maia.Canvas : Drawable
     }
 
     public abstract Graphic.Surface surface { get; }
-
-    [CCode (notify = false)]
-    public uint refresh_rate {
-        get {
-            return timeline.speed;
-        }
-        set {
-            bool restart = false;
-            if (timeline.is_playing)
-            {
-                timeline.stop ();
-            }
-            timeline.speed = value;
-            timeline.n_frames = value;
-            if (restart)
-            {
-                timeline.rewind ();
-                timeline.start ();
-            }
-        }
-    }
 
     public uint width {
         get {
@@ -161,10 +139,8 @@ public interface Maia.Canvas : Drawable
         // Register manifest elements
         register_manifest_elements ();
 
-        // Create refresh timeline
-        timeline = new Core.Timeline (60, 60);
-        timeline.loop = true;
-        timeline.new_frame.connect (on_new_frame);
+        // Connect onto refresh 
+        Application.default.new_frame.connect (on_new_frame);
 
         // Connect on geometry changed to resize canvas
         notify["geometry"].connect (() => {

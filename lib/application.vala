@@ -47,6 +47,55 @@ public class Maia.Application : Maia.Core.Object
     private Core.Timeline m_Timeline;
     private GLib.MainLoop m_Loop;
 
+    // accessors
+    [CCode (notify = false)]
+    public uint refresh_rate {
+        get {
+            return m_Timeline.speed;
+        }
+        set {
+            bool restart = false;
+            if (m_Timeline.is_playing)
+            {
+                m_Timeline.stop ();
+            }
+            m_Timeline.speed = value;
+            m_Timeline.n_frames = value;
+            if (restart)
+            {
+                m_Timeline.rewind ();
+                m_Timeline.start ();
+            }
+        }
+    }
+
+    // signals
+    [Signal (run = "first")]
+    public virtual signal void
+    new_frame (int inNumFrame)
+    {
+        foreach (unowned Core.Object child in this)
+        {
+            unowned Window window = child as Window;
+            if (window != null)
+            {
+                if (window.visible && window.surface != null)
+                {
+                    try
+                    {
+                        Graphic.Context ctx = window.surface.context;
+                        window.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, window.size.width, window.size.height)));
+                        window.draw (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, window.size.width, window.size.height)));
+                    }
+                    catch (GLib.Error err)
+                    {
+                        Log.critical (GLib.Log.METHOD, Log.Category.MAIN, "Error on window refresh: %s", err.message);
+                    }
+                }
+            }
+        }
+    }
+
     // methods
     construct
     {
@@ -121,23 +170,7 @@ public class Maia.Application : Maia.Core.Object
     private void
     on_new_frame (int inFrameNum)
     {
-        foreach (unowned Core.Object child in this)
-        {
-            unowned Window window = child as Window;
-            if (window.visible && window.surface != null)
-            {
-                try
-                {
-                    Graphic.Context ctx = window.surface.context;
-                    window.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, window.size.width, window.size.height)));
-                    window.draw (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, window.size.width, window.size.height)));
-                }
-                catch (GLib.Error err)
-                {
-                    Log.critical (GLib.Log.METHOD, Log.Category.MAIN, "Error on window refresh: %s", err.message);
-                }
-            }
-        }
+        new_frame (inFrameNum);
     }
 
     private void
@@ -158,7 +191,7 @@ public class Maia.Application : Maia.Core.Object
     internal override bool
     can_append_child (Core.Object inObject)
     {
-        return inObject is Window;
+        return inObject is Window || inObject is Canvas;
     }
 
     internal override void
@@ -168,7 +201,7 @@ public class Maia.Application : Maia.Core.Object
         {
             base.insert_child (inObject);
 
-            ((Window)inObject).notify["visible"].connect (on_window_visible_changed);
+            inObject.notify["visible"].connect (on_window_visible_changed);
         }
     }
 

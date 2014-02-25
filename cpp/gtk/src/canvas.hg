@@ -47,7 +47,6 @@ namespace Maia
                 _WRAP_PROPERTY("surface", Glib::RefPtr<Graphic::Surface>)
                 _WRAP_PROPERTY("scroll_x", double)
                 _WRAP_PROPERTY("scroll_y", double)
-                _WRAP_PROPERTY("timeline", Glib::RefPtr<Core::Timeline>)
                 _WRAP_PROPERTY("damaged", Glib::RefPtr<Graphic::Region>)
                 _WRAP_PROPERTY("geometry", Glib::RefPtr<Graphic::Region>)
                 _WRAP_PROPERTY("transform", Glib::RefPtr<Graphic::Transform>)
