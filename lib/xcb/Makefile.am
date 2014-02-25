@@ -22,7 +22,7 @@ libmaia_xcb_la_VALAFLAGS = \
 libmaia_xcb_la_SOURCES = \
     init.vala \
     connection-watch.vala \
-    dispatcher.vala \
+    application.vala \
     window.vala
 
 libmaia_xcb_la_LIBADD = \

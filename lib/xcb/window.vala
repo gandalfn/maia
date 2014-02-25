@@ -31,7 +31,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 
     public global::Xcb.Connection connection {
         get {
-            return Maia.Xcb.dispatcher.connection;
+            return Maia.Xcb.application.connection;
         }
     }
 
@@ -39,7 +39,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 
     public global::Xcb.Visualtype? visual_type {
         get {
-            unowned global::Xcb.Screen screen = Maia.Xcb.dispatcher.connection.roots[screen_num];
+            unowned global::Xcb.Screen screen = Maia.Xcb.application.connection.roots[screen_num];
 
             for (int i = 0; i < screen.allowed_depths_length; ++i)
             {
@@ -65,10 +65,8 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     // methods
     construct
     {
-        screen_num = Maia.Xcb.dispatcher.default_screen;
-        id = global::Xcb.Window (Maia.Xcb.dispatcher.connection);
-
-        Maia.Xcb.dispatcher.add (this);
+        screen_num = Maia.Xcb.application.default_screen;
+        id = global::Xcb.Window (Maia.Xcb.application.connection);
     }
 
     public Window (string inName, int inWidth, int inHeight)
@@ -78,7 +76,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 
     ~Window ()
     {
-        ((global::Xcb.Window)id).destroy (Maia.Xcb.dispatcher.connection);
+        ((global::Xcb.Window)id).destroy (Maia.Xcb.application.connection);
     }
 
     internal override void
@@ -88,7 +86,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         {
             uint32[] values = { (uint32)position.x, (uint32)position.y };
 
-            ((global::Xcb.Window)id).configure (Maia.Xcb.dispatcher.connection,
+            ((global::Xcb.Window)id).configure (Maia.Xcb.application.connection,
                                                 global::Xcb.ConfigWindow.X |
                                                 global::Xcb.ConfigWindow.Y,
                                                 values);
@@ -102,7 +100,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         {
             uint32[] values = { (uint32)size.width, (uint32)size.height };
 
-            ((global::Xcb.Window)id).configure (Maia.Xcb.dispatcher.connection,
+            ((global::Xcb.Window)id).configure (Maia.Xcb.application.connection,
                                                 global::Xcb.ConfigWindow.WIDTH |
                                                 global::Xcb.ConfigWindow.HEIGHT,
                                                 values);
@@ -114,9 +112,9 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     {
         if (m_Surface == null)
         {
-            unowned global::Xcb.Screen screen = Maia.Xcb.dispatcher.connection.roots[screen_num];
+            unowned global::Xcb.Screen screen = Maia.Xcb.application.connection.roots[screen_num];
 
-            ((global::Xcb.Window)id).create (Maia.Xcb.dispatcher.connection,
+            ((global::Xcb.Window)id).create (Maia.Xcb.application.connection,
                                              global::Xcb.COPY_FROM_PARENT, screen.root,
                                              (int16)position.x, (int16)position.y,
                                              (uint16)size.width, (uint16)size.height, 0,
@@ -125,7 +123,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
             m_Surface = new Graphic.Surface.from_device (this);
         }
 
-        ((global::Xcb.Window)id).map (Maia.Xcb.dispatcher.connection);
+        ((global::Xcb.Window)id).map (Maia.Xcb.application.connection);
 
         base.on_show ();
     }
@@ -135,7 +133,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     {
         if (m_Surface != null)
         {
-            ((global::Xcb.Window)id).unmap (Maia.Xcb.dispatcher.connection);
+            ((global::Xcb.Window)id).unmap (Maia.Xcb.application.connection);
         }
 
         base.on_hide ();

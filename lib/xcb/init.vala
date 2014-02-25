@@ -19,7 +19,7 @@
 
 namespace Maia.Xcb
 {
-    internal static Dispatcher dispatcher = null;
+    internal static Application application = null;
 
     [CCode (cname = "backend_load")]
     public void backend_load ()
@@ -28,7 +28,7 @@ namespace Maia.Xcb
 
         Maia.Core.Any.delegate (typeof (Maia.Window), typeof (Maia.Xcb.Window));
 
-        Maia.Xcb.dispatcher = new Maia.Xcb.Dispatcher ();
+        Maia.Xcb.application = new Maia.Xcb.Application ();
     }
 
     [CCode (cname = "backend_unload")]
@@ -38,6 +38,6 @@ namespace Maia.Xcb
 
         Maia.Core.Any.undelegate (typeof (Maia.Window));
 
-        Maia.Xcb.dispatcher = null;
+        Maia.Xcb.application = null;
     }
 }
