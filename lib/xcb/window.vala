@@ -17,13 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
+internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 {
     // properties
     private Graphic.Surface m_Surface = null;
 
     // accessors
-    internal string backend {
+    public string backend {
         get {
             return "xcb/window";
         }
@@ -56,7 +56,7 @@ public class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         }
     }
 
-    internal override Graphic.Surface? surface {
+    public override Graphic.Surface? surface {
         get {
             return m_Surface;
         }

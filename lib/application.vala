@@ -22,8 +22,8 @@ public class Maia.Application : Maia.Core.Object
     // constants
     const GLib.OptionEntry[] cOptionEntries =
     {
-        { "backends", 'b', 0, GLib.OptionArg.NONE, ref s_Backends, "List of backends", null },
-        { "refresh-rate", 'r', 0, GLib.OptionArg.INT, ref s_Fps, "Refresh rate", null },
+        { "backends",     'b', 0, GLib.OptionArg.NONE, ref s_Backends, "List of backends", null },
+        { "refresh-rate", 'r', 0, GLib.OptionArg.INT,  ref s_Fps,      "Refresh rate",     null },
         { null }
     };
 
@@ -61,24 +61,21 @@ public class Maia.Application : Maia.Core.Object
      */
     public Application (int inFps, string[]? inBackends = null)
     {
+        // Load backends
         if (inBackends != null)
         {
             foreach (unowned string backend in inBackends)
             {
-                try
-                {
-                    m_Backends.load (backend);
-                }
-                catch (Core.ExtensionError err)
-                {
-                    Log.critical (GLib.Log.METHOD, Log.Category.MAIN, "Error on loading backend %s: %s", backend, err.message);
-                }
+                load_backend (backend);
             }
         }
 
+        // Create refresh timeline
         m_Timeline = new Core.Timeline(inFps, inFps);
+        m_Timeline.loop = true;
+        m_Timeline.new_frame.connect (on_new_frame);
 
-        //
+        // First application is the default application
         if (s_Default == null)
         {
             s_Default = this;
@@ -115,6 +112,68 @@ public class Maia.Application : Maia.Core.Object
         {
             s_Default = null;
         }
+    }
+
+    private void
+    on_new_frame (int inFrameNum)
+    {
+        foreach (unowned Core.Object child in this)
+        {
+            unowned Window window = child as Window;
+            if (window.visible && window.surface != null)
+            {
+                try
+                {
+                    Graphic.Context ctx = window.surface.context;
+                    window.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, window.size.width, window.size.height)));
+                    window.draw (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, window.size.width, window.size.height)));
+                }
+                catch (GLib.Error err)
+                {
+                    Log.critical (GLib.Log.METHOD, Log.Category.MAIN, "Error on window refresh: %s", err.message);
+                }
+            }
+        }
+    }
+
+    private void
+    on_window_visible_changed ()
+    {
+        m_Timeline.stop ();
+
+        foreach (unowned Core.Object child in this)
+        {
+            if (((Window)child).visible)
+            {
+                m_Timeline.start ();
+                break;
+            }
+        }
+    }
+
+    internal override bool
+    can_append_child (Core.Object inObject)
+    {
+        return inObject is Window;
+    }
+
+    internal override void
+    insert_child (Core.Object inObject)
+    {
+        if (can_append_child (inObject))
+        {
+            base.insert_child (inObject);
+
+            ((Window)inObject).notify["visible"].connect (on_window_visible_changed);
+        }
+    }
+
+    internal override void
+    remove_child (Core.Object inObject)
+    {
+        base.remove_child (inObject);
+
+        ((Window)inObject).notify["visible"].disconnect (on_window_visible_changed);
     }
 
     /**
@@ -166,6 +225,20 @@ public class Maia.Application : Maia.Core.Object
     }
 
     /**
+     * Get backend name which provide inProvide
+     *
+     * @param inProvide backend provide module
+     *
+     * @return backend name which provide inProvide else ``null``
+     */
+    public string?
+    get_backend (string inProvide)
+    {
+        unowned Backend? backend = m_Backends[inProvide];
+        return backend == null ? null : backend.name;
+    }
+
+    /**
      * Run application
      */
     public void
@@ -189,19 +262,5 @@ public class Maia.Application : Maia.Core.Object
         {
             m_Loop.quit ();
         }
-    }
-
-    /**
-     * Get backend name which provide inProvide
-     *
-     * @param inProvide backend provide module
-     *
-     * @return backend name which provide inProvide else ``null``
-     */
-    public string?
-    get_backend (string inProvide)
-    {
-        unowned Backend? backend = m_Backends[inProvide];
-        return backend == null ? null : backend.name;
     }
 }

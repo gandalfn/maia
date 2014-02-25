@@ -9933,6 +9933,15 @@
   )
 )
 
+(define-method get_backend
+  (of-object "MaiaApplication")
+  (c-name "maia_application_get_backend")
+  (return-type "gchar*")
+  (parameters
+    '("const-gchar*" "inProvide")
+  )
+)
+
 (define-method run
   (of-object "MaiaApplication")
   (c-name "maia_application_run")
@@ -9943,15 +9952,6 @@
   (of-object "MaiaApplication")
   (c-name "maia_application_quit")
   (return-type "none")
-)
-
-(define-method get_backend
-  (of-object "MaiaApplication")
-  (c-name "maia_application_get_backend")
-  (return-type "gchar*")
-  (parameters
-    '("const-gchar*" "inProvide")
-  )
 )
 
 (define-function maia_application_get_default
