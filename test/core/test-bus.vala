@@ -188,7 +188,8 @@ public class Maia.TestBus : Maia.TestCase
     test_event_bus ()
     {
         bool event_received = false;
-        Core.EventBus.default = new Core.EventBus ("test-event-bus");
+        var bus = new Core.EventBus ("test-event-bus");
+        Core.EventBus.default = bus;
         Core.Event event = new Core.Event ("test", null);
 
         event.subscribe ((args) => {
@@ -223,7 +224,10 @@ public class Maia.TestBus : Maia.TestCase
     public void
     test_event_bus_multithread ()
     {
-        Core.EventBus.default = new Core.EventBus ("test-event-bus");
+        bool message_main = false;
+        bool message_thread = false;
+        var bus = new Core.EventBus ("test-event-bus");
+        Core.EventBus.default = bus;
         Core.Event event = new Core.Event ("test", null);
 
         event.subscribe ((args) => {
@@ -231,12 +235,14 @@ public class Maia.TestBus : Maia.TestCase
             {
                 unowned TestEventArgs event_args = (TestEventArgs)args;
 
-                print ("TestEventArgs 0x%lx %s %u\n", (ulong)GLib.Thread.self<void*> (), event_args.name, event_args.val);
+                Test.message ("TestEventArgs 0x%lx %s %u", (ulong)GLib.Thread.self<void*> (), event_args.name, event_args.val);
+
+                message_main = true;
             }
         });
 
         new GLib.Thread<void*> (null, () => {
-            Posix.sleep (2);
+            Posix.sleep (1);
             GLib.MainContext ctx = new GLib.MainContext ();
             ctx.push_thread_default ();
             GLib.MainLoop loop_thread = new GLib.MainLoop (ctx);
@@ -246,7 +252,9 @@ public class Maia.TestBus : Maia.TestCase
                 {
                     unowned TestEventArgs event_args = (TestEventArgs)args;
 
-                    print ("TestEventArgs 0x%lx %s %u\n", (ulong)GLib.Thread.self<void*> (), event_args.name, event_args.val);
+                    Test.message ("TestEventArgs 0x%lx %s %u", (ulong)GLib.Thread.self<void*> (), event_args.name, event_args.val);
+
+                    message_thread = true;
                 }
             });
 
@@ -256,21 +264,33 @@ public class Maia.TestBus : Maia.TestCase
         });
 
         new GLib.Thread<void*> (null, () => {
-            while (true)
-            {
-                Posix.sleep (5);
+            Posix.sleep (3);
 
-                event.publish (new TestEventArgs ("test multithread event", GLib.Test.rand_int_range (10, 1000)));
-            }
+            event.publish (new TestEventArgs ("test multithread event", GLib.Test.rand_int_range (10, 1000)));
+
+            return null;
+        });
+
+        GLib.Timeout.add_seconds (4, () => {
+            loop.quit ();
+
+            return false;
         });
 
         loop.run ();
+
+        assert (message_main);
+        assert (message_thread);
     }
 
     public void
     test_event_bus_reply ()
     {
-        Core.EventBus.default = new Core.EventBus ("test-event-bus");
+        bool message_main = false;
+        bool message_thread = false;
+        bool have_reply = false;
+        var bus = new Core.EventBus ("test-event-bus");
+        Core.EventBus.default = bus;
         Core.Event event = new Core.Event ("test", null);
 
         event.subscribe ((args) => {
@@ -281,12 +301,14 @@ public class Maia.TestBus : Maia.TestCase
                 event_args.name = "0x%lx".printf ((ulong)GLib.Thread.self<void*> ());
                 event_args.val++;
 
-                print ("name: %s val: %u\n", event_args.name, event_args.val);
+                Test.message ("name: %s val: %u", event_args.name, event_args.val);
+
+                message_main = true;
             }
         });
 
         new GLib.Thread<void*> (null, () => {
-            Posix.sleep (2);
+            Posix.sleep (1);
             GLib.MainContext ctx = new GLib.MainContext ();
             ctx.push_thread_default ();
             GLib.MainLoop loop_thread = new GLib.MainLoop (ctx);
@@ -299,7 +321,9 @@ public class Maia.TestBus : Maia.TestCase
                     event_args.name = "0x%lx".printf ((ulong)GLib.Thread.self<void*> ());
                     event_args.val++;
 
-                    print ("name: %s val: %u\n", event_args.name, event_args.val);
+                    Test.message ("name: %s val: %u", event_args.name, event_args.val);
+
+                    message_thread = true;
                 }
             });
 
@@ -309,16 +333,25 @@ public class Maia.TestBus : Maia.TestCase
         });
 
         new GLib.Thread<void*> (null, () => {
-            while (true)
-            {
-                Posix.sleep (5);
+            Posix.sleep (2);
 
-                event.publish_with_reply (new TestEventArgs ("test reply event", 0), (arg) => {
-                    print ("Reply event 0x%lx %s %u\n", (ulong)GLib.Thread.self<void*> (), ((TestEventArgs)arg).name, ((TestEventArgs)arg).val);
-                });
-            }
+            event.publish_with_reply (new TestEventArgs ("test reply event", 0), (arg) => {
+                Test.message ("Reply event 0x%lx %s %u", (ulong)GLib.Thread.self<void*> (), ((TestEventArgs)arg).name, ((TestEventArgs)arg).val);
+                have_reply = ((TestEventArgs)arg).val == 2;
+            });
+            return null;
+        });
+
+        GLib.Timeout.add_seconds (5, () => {
+            loop.quit ();
+
+            return false;
         });
 
         loop.run ();
+
+        assert (message_main);
+        assert (message_thread);
+        assert (have_reply);
     }
 }

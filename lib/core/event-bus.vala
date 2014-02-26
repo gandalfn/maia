@@ -757,7 +757,7 @@ public class Maia.Core.EventBus : Object
     }
 
     // static properties
-    private static EventBus s_Default = null;
+    private static unowned EventBus s_Default = null;
 
     // static accessors
     public static EventBus @default {

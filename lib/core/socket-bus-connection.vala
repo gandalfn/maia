@@ -85,13 +85,16 @@ public class Maia.Core.SocketBusConnection : BusConnection
     ~SocketBusConnection ()
     {
         Log.audit ("~SocketBusConnection", Log.Category.MAIN_BUS, "");
-        try
+        if (m_Connection != null)
         {
-            m_Connection.close ();
-        }
-        catch (GLib.Error err)
-        {
-            Log.critical ("~SocketBusConnection", Log.Category.MAIN_BUS, "Error on close client connection: %s", err.message);
+            try
+            {
+                m_Connection.close ();
+            }
+            catch (GLib.Error err)
+            {
+                Log.critical ("~SocketBusConnection", Log.Category.MAIN_BUS, "Error on close client connection: %s", err.message);
+            }
         }
     }
 
