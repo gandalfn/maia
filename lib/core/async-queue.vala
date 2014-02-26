@@ -29,11 +29,11 @@ public class Maia.Core.AsyncQueue<V> : Queue<V>
         base ();
     }
 
-    public V?
+    public unowned V?
     peek_timed (uint inWait = 0)
     {
         int64 until = (inWait > 0) ? GLib.get_monotonic_time () + inWait * 1000 : inWait;
-        V? ret = null;
+        unowned V? ret = null;
 
         m_Mutex.lock ();
         {
@@ -58,7 +58,7 @@ public class Maia.Core.AsyncQueue<V> : Queue<V>
         return ret;
     }
 
-    public override V?
+    public override unowned V?
     peek ()
     {
         return peek_timed (0);

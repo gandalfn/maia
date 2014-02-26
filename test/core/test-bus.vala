@@ -98,22 +98,33 @@ public class Maia.TestBus : Maia.TestCase
     public void
     test_socket_bus ()
     {
+        bool message_client1 = false;
+        bool message_client2 = false;
         var bus = new Core.SocketBusService ("service");
         Core.SocketBusConnection client1 = null,
                                  client2 = null;
 
-        GLib.Timeout.add_seconds (5, () => {
-            client2 = new Core.SocketBusConnection ("client2", bus.id);
+        GLib.Timeout.add_seconds (1, () => {
+            try
+            {
+                client2 = new Core.SocketBusConnection ("client2", bus.id);
+            }
+            catch (GLib.Error err)
+            {
+                Test.message (err.message);
+                assert (false);
+            }
 
             client2.message_received.connect ((msg) => {
                 unowned Core.Bus.MessageData message = msg as Core.Bus.MessageData;
 
                 if (message != null)
                 {
+                    message_client1 = true;
                     GLib.Variant data = message.get_data ("(s)");
                     string str;
                     data.get ("(s)", out str);
-                    print ("client 2 message received from 0x%x : %s\n", message.sender, str);
+                    Test.message ("client 2 message received from 0x%x : %s", message.sender, str);
 
                     data = new GLib.Variant ("(s)", "reply client 2");
                     var reply = new Core.Bus.MessageData (data);
@@ -125,9 +136,16 @@ public class Maia.TestBus : Maia.TestCase
             return false;
         });
 
-        GLib.Timeout.add_seconds (10, () => {
-            client1 = new Core.SocketBusConnection ("client1", bus.id);
-
+        GLib.Timeout.add_seconds (2, () => {
+            try
+            {
+                client1 = new Core.SocketBusConnection ("client1", bus.id);
+            }
+            catch (GLib.Error err)
+            {
+                Test.message (err.message);
+                assert (false);
+            }
             client1.connected.connect (() => {
                 var data = new GLib.Variant ("(s)", "test bus message");
                 client1.send.begin (new Core.Bus.MessageData (data));
@@ -141,11 +159,12 @@ public class Maia.TestBus : Maia.TestCase
                     GLib.Variant data = message.get_data ("(s)");
                     string str;
                     data.get ("(s)", out str);
-                    print ("client 1 message received from 0x%x : %s\n", message.sender, str);
+                    Test.message ("client 1 message received from 0x%x : %s", message.sender, str);
                     if (str == "reply client 2")
                     {
                         client1 = null;
                         client2 = null;
+                        message_client2 = true;
                     }
                 }
             });
@@ -153,12 +172,22 @@ public class Maia.TestBus : Maia.TestCase
             return false;
         });
 
+        GLib.Timeout.add_seconds (3, () => {
+            loop.quit ();
+
+            return false;
+        });
+
         loop.run ();
+
+        assert (message_client1);
+        assert (message_client2);
     }
 
     public void
     test_event_bus ()
     {
+        bool event_received = false;
         Core.EventBus.default = new Core.EventBus ("test-event-bus");
         Core.Event event = new Core.Event ("test", null);
 
@@ -167,17 +196,28 @@ public class Maia.TestBus : Maia.TestCase
             {
                 unowned TestEventArgs event_args = (TestEventArgs)args;
 
-                print ("TestEventArgs %s %u\n", event_args.name, event_args.val);
+                Test.message ("TestEventArgs %s %u recv ", event_args.name, event_args.val);
+                event_received = true;
             }
         });
 
-        GLib.Timeout.add_seconds (5, () => {
-            event.publish (new TestEventArgs ("test event", GLib.Test.rand_int_range (10, 1000)));
+        GLib.Timeout.add_seconds (1, () => {
+            var event_args = new TestEventArgs ("test event", GLib.Test.rand_int_range (10, 1000));
+            Test.message ("TestEventArgs %s %u send", event_args.name, event_args.val);
+            event.publish (event_args);
 
-            return true;
+            return false;
+        });
+
+        GLib.Timeout.add_seconds (2, () => {
+            loop.quit ();
+
+            return false;
         });
 
         loop.run ();
+
+        assert (event_received);
     }
 
     public void

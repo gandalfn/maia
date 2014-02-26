@@ -3873,7 +3873,7 @@
 (define-method peek
   (of-object "MaiaCoreQueue")
   (c-name "maia_core_queue_peek")
-  (return-type "gpointer")
+  (return-type "gconstpointer")
 )
 
 (define-method pop
@@ -3921,7 +3921,7 @@
 (define-method peek
   (of-object "MaiaCoreStack")
   (c-name "maia_core_stack_peek")
-  (return-type "gpointer")
+  (return-type "gconstpointer")
 )
 
 (define-method pop
@@ -3969,7 +3969,7 @@
 (define-method peek_timed
   (of-object "MaiaCoreAsyncQueue")
   (c-name "maia_core_async_queue_peek_timed")
-  (return-type "gpointer")
+  (return-type "gconstpointer")
   (parameters
     '("guint" "inWait")
   )

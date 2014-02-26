@@ -394,6 +394,7 @@ public abstract class Maia.Core.Bus : Object
                             Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "End request %s", m_Bus.uuid);
                             return null;
                     }
+                    request = null;
                 }
             }
         }
@@ -401,11 +402,14 @@ public abstract class Maia.Core.Bus : Object
         public void
         stop ()
         {
-            // Send end engine request
-            m_RequestQueue.push (new Request.end ());
+            if (m_Id != null)
+            {
+                // Send end engine request
+                m_RequestQueue.push (new Request.end ());
 
-            // Wait end of engine
-            m_Id.join ();
+                // Wait end of engine
+                m_Id.join ();
+            }
         }
 
         public void

@@ -26,7 +26,7 @@ public class Maia.Core.Queue<V> : Array<V>
         base ();
     }
 
-    public virtual V?
+    public virtual unowned V?
     peek ()
     {
         return length > 0 ? at (0) : null;

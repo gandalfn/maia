@@ -28,15 +28,6 @@
   (construct-only #f)
 )
 
-(define-property timeline
-  (of-object "MaiaGtkCanvas")
-  (prop-type "GParamObject")
-  (docs "timeline")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
 (define-property geometry
   (of-object "MaiaGtkCanvas")
   (prop-type "GParamObject")

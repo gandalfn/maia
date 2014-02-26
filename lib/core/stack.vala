@@ -26,7 +26,7 @@ public class Maia.Core.Stack<V> : Array<V>
         base ();
     }
 
-    public V?
+    public unowned V?
     peek ()
     {
         return length > 0 ? at (length - 1) : null;
