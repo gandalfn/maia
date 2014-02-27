@@ -122,9 +122,11 @@ public class Maia.TestAsyncQueue : Maia.TestCase
             return ret;
         });
 
+        Posix.usleep (100000);
+
         for (int cpt = 0; cpt < NB_KEYS / 2; ++cpt)
         {
-            m_Queue.push (m_Keys[cpt]);
+            if (m_Keys[cpt] != 0) m_Queue.push (m_Keys[cpt]);
         }
 
         assert (thread.join ());

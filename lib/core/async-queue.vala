@@ -47,10 +47,6 @@ public class Maia.Core.AsyncQueue<V> : Queue<V>
                 {
                     break;
                 }
-                else
-                {
-                    break;
-                }
             }
         }
         m_Mutex.unlock ();
@@ -79,10 +75,6 @@ public class Maia.Core.AsyncQueue<V> : Queue<V>
                     m_Cond.wait (m_Mutex);
                 }
                 else if (!m_Cond.wait_until (m_Mutex, until))
-                {
-                    break;
-                }
-                else
                 {
                     break;
                 }

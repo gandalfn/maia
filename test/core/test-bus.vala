@@ -65,7 +65,7 @@ public class Maia.TestEventArgs : Maia.Core.EventArgs
         m_Name += "|" + ((TestEventArgs)inArgs).m_Name;
         m_Val += ((TestEventArgs)inArgs).m_Val;
 
-        print ("accumulate name: %s val: %u\n", m_Name, m_Val);
+        Test.message ("accumulate name: %s val: %u", m_Name, m_Val);
     }
 }
 
@@ -298,7 +298,7 @@ public class Maia.TestBus : Maia.TestCase
             {
                 unowned TestEventArgs event_args = (TestEventArgs)args;
 
-                event_args.name = "0x%lx".printf ((ulong)GLib.Thread.self<void*> ());
+                event_args.name = "main 0x%lx".printf ((ulong)GLib.Thread.self<void*> ());
                 event_args.val++;
 
                 Test.message ("name: %s val: %u", event_args.name, event_args.val);
@@ -308,7 +308,6 @@ public class Maia.TestBus : Maia.TestCase
         });
 
         new GLib.Thread<void*> (null, () => {
-            Posix.sleep (1);
             GLib.MainContext ctx = new GLib.MainContext ();
             ctx.push_thread_default ();
             GLib.MainLoop loop_thread = new GLib.MainLoop (ctx);
@@ -318,7 +317,7 @@ public class Maia.TestBus : Maia.TestCase
                 {
                     unowned TestEventArgs event_args = (TestEventArgs)args;
 
-                    event_args.name = "0x%lx".printf ((ulong)GLib.Thread.self<void*> ());
+                    event_args.name = "thread 0x%lx".printf ((ulong)GLib.Thread.self<void*> ());
                     event_args.val++;
 
                     Test.message ("name: %s val: %u", event_args.name, event_args.val);
@@ -332,17 +331,12 @@ public class Maia.TestBus : Maia.TestCase
             return null;
         });
 
-        new GLib.Thread<void*> (null, () => {
-            Posix.sleep (2);
-
-            event.publish_with_reply (new TestEventArgs ("test reply event", 0), (arg) => {
-                Test.message ("Reply event 0x%lx %s %u", (ulong)GLib.Thread.self<void*> (), ((TestEventArgs)arg).name, ((TestEventArgs)arg).val);
-                have_reply = ((TestEventArgs)arg).val == 2;
-            });
-            return null;
+        event.publish_with_reply (new TestEventArgs ("test reply event", 0), (arg) => {
+            Test.message ("Reply event 0x%lx %s %u", (ulong)GLib.Thread.self<void*> (), ((TestEventArgs)arg).name, ((TestEventArgs)arg).val);
+            have_reply = ((TestEventArgs)arg).val == 2;
         });
 
-        GLib.Timeout.add_seconds (5, () => {
+        GLib.Timeout.add_seconds (2, () => {
             loop.quit ();
 
             return false;
