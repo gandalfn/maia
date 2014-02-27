@@ -9754,6 +9754,7 @@
   (is-constructor-of "MaiaApplication")
   (return-type "MaiaApplication*")
   (parameters
+    '("const-gchar*" "inName")
     '("gint" "inFps")
     '("gchar**" "inBackends")
     '("int" "inBackends_length1")
@@ -9765,6 +9766,7 @@
   (return-type "MaiaApplication*")
   (parameters
     '("GType" "object_type")
+    '("const-gchar*" "inName")
     '("gint" "inFps")
     '("gchar**" "inBackends")
     '("int" "inBackends_length1")
@@ -9775,6 +9777,7 @@
   (c-name "maia_application_new_from_args")
   (return-type "MaiaApplication*")
   (parameters
+    '("const-gchar*" "inName")
     '("gchar***" "inArgs")
     '("int*" "inArgs_length1")
   )
@@ -9785,6 +9788,7 @@
   (return-type "MaiaApplication*")
   (parameters
     '("GType" "object_type")
+    '("const-gchar*" "inName")
     '("gchar***" "inArgs")
     '("int*" "inArgs_length1")
   )

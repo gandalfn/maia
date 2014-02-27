@@ -33,12 +33,12 @@ namespace Maia
             _CTOR_DEFAULT()
 
         public:
-            static Glib::RefPtr<Application> create (int inFps = 60)
+            static Glib::RefPtr<Application> create (const Glib::ustring& inName, int inFps = 60)
             {
-                return Glib::RefPtr<Application> (new Application (maia_application_new (inFps, 0, 0)));
+                return Glib::RefPtr<Application> (new Application (maia_application_new (inName.c_str(), inFps, 0, 0)));
             }
             
-            static Glib::RefPtr<Application> create (int inFps, const std::vector<Glib::ustring>& inBackends)
+            static Glib::RefPtr<Application> create (const Glib::ustring& inName, int inFps, const std::vector<Glib::ustring>& inBackends)
             {
                 int length = inBackends.size ();
                 char** backends = 0;
@@ -52,7 +52,7 @@ namespace Maia
                     }
                 }
 
-                MaiaApplication* pApplication = maia_application_new (inFps, backends, length);
+                MaiaApplication* pApplication = maia_application_new (inName.c_str(), inFps, backends, length);
 
                 if (backends)
                 {
@@ -64,9 +64,9 @@ namespace Maia
 
             _IGNORE(maia_application_new)
 
-            static Glib::RefPtr<Application> create (char*** inpArgv, int* inArgc)
+            static Glib::RefPtr<Application> create (const Glib::ustring& inName, char*** inpArgv, int* inArgc)
             {
-                return Glib::RefPtr<Application> (new Application (maia_application_new_from_args (inpArgv, inArgc)));
+                return Glib::RefPtr<Application> (new Application (maia_application_new_from_args (inName.c_str(), inpArgv, inArgc)));
             }
 
             _IGNORE(maia_application_new_from_args)

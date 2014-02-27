@@ -26,7 +26,7 @@ main (string[] inArgs)
     var window = new CanvasEditor.Window ();
     window.show ();
 
-    var application = new Maia.Application (60, { "gtk" });
+    var application = new Maia.Application ("canvas-editor", 60, { "gtk" });
 
     application.run ();
 

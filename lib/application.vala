@@ -39,12 +39,17 @@ public class Maia.Application : Maia.Core.Object
         }
         set {
             s_Default = value;
+            if (s_Default != null)
+            {
+                Core.EventBus.default = s_Default.m_EventBus;
+            }
         }
     }
 
     // properties
     private Backends      m_Backends;
     private Core.Timeline m_Timeline;
+    private Core.EventBus m_EventBus;
     private GLib.MainLoop m_Loop;
 
     // accessors
@@ -105,11 +110,14 @@ public class Maia.Application : Maia.Core.Object
     /**
      * Create maia application
      *
+     * @param inName name of application
      * @param inFps refresh rate in frame per seconds
      * @param inBackends list of backends
      */
-    public Application (int inFps, string[]? inBackends = null)
+    public Application (string inName, int inFps, string[]? inBackends = null)
     {
+        GLib.Object (id: GLib.Quark.from_string (inName));
+        
         // Load backends
         if (inBackends != null)
         {
@@ -124,19 +132,24 @@ public class Maia.Application : Maia.Core.Object
         m_Timeline.loop = true;
         m_Timeline.new_frame.connect (on_new_frame);
 
+        // Create event bus
+        m_EventBus = new Core.EventBus (inName);
+
         // First application is the default application
         if (s_Default == null)
         {
             s_Default = this;
+            Core.EventBus.default = m_EventBus;
         }
     }
 
     /**
      * Create maia application
      *
+     * @param inName name of application
      * @param inArgs command line arguments
      */
-    public Application.from_args (ref unowned string[] inArgs)
+    public Application.from_args (string inName, ref unowned string[] inArgs)
     {
         try
         {
@@ -156,13 +169,14 @@ public class Maia.Application : Maia.Core.Object
             backends = s_Backends.split (",");
         }
 
-        this (s_Fps, backends);
+        this (inName, s_Fps, backends);
     }
 
     ~Application ()
     {
         if (this == s_Default)
         {
+            Core.EventBus.default = null;
             s_Default = null;
         }
     }

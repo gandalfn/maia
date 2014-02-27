@@ -42,7 +42,7 @@ main (int argc, char** argv)
     }
 
     // Create maia application
-    Glib::RefPtr<Maia::Application> pApp = Maia::Application::create (60, backends);
+    Glib::RefPtr<Maia::Application> pApp = Maia::Application::create ("test-cpp", 60, backends);
     
     // Get root suite
     Maia::TestSuite root;

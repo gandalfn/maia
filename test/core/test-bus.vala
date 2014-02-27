@@ -172,7 +172,7 @@ public class Maia.TestBus : Maia.TestCase
             return false;
         });
 
-        GLib.Timeout.add_seconds (3, () => {
+        GLib.Timeout.add_seconds (5, () => {
             loop.quit ();
 
             return false;
@@ -210,7 +210,7 @@ public class Maia.TestBus : Maia.TestCase
             return false;
         });
 
-        GLib.Timeout.add_seconds (2, () => {
+        GLib.Timeout.add_seconds (5, () => {
             loop.quit ();
 
             return false;
@@ -271,7 +271,7 @@ public class Maia.TestBus : Maia.TestCase
             return null;
         });
 
-        GLib.Timeout.add_seconds (4, () => {
+        GLib.Timeout.add_seconds (5, () => {
             loop.quit ();
 
             return false;
@@ -336,7 +336,7 @@ public class Maia.TestBus : Maia.TestCase
             have_reply = ((TestEventArgs)arg).val == 2;
         });
 
-        GLib.Timeout.add_seconds (2, () => {
+        GLib.Timeout.add_seconds (5, () => {
             loop.quit ();
 
             return false;
