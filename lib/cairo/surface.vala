@@ -30,7 +30,7 @@ public class Maia.Cairo.Surface : Graphic.Surface
     // accessors
     public override void* native {
         get {
-            if (m_Surface == null && !size.is_empty ())
+            if (m_Device == null && m_Surface == null && !size.is_empty ())
             {
                 if (format != Graphic.Surface.Format.INVALID && data != null)
                 {
@@ -47,7 +47,10 @@ public class Maia.Cairo.Surface : Graphic.Surface
             return m_Surface;
         }
         construct set {
-            m_Surface = (global::Cairo.Surface)value;
+            if (m_Device == null)
+            {
+                m_Surface = (global::Cairo.Surface)value;
+            }
         }
     }
 
@@ -57,27 +60,38 @@ public class Maia.Cairo.Surface : Graphic.Surface
         }
         construct set {
             m_Device = value;
+            m_Surface = null;
+
             if (m_Device != null)
             {
                 switch (m_Device.backend)
                 {
-                    case "xcb/window":
+                    case "xcb/drawable":
                         uint32 xid;
-                        Graphic.Size device_size;
-                        Xcb.Visualtype? visual_type;
-                        Xcb.Connection connection;
+                        int screen_num;
+                        unowned Xcb.Connection connection;
+                        Xcb.Visualtype? visual_type = null;
 
                         ((GLib.Object)m_Device).get ("id", out xid,
-                                                     "size", out device_size,
-                                                     "visual_type", out visual_type,
+                                                     "screen-num", out screen_num,
                                                      "connection", out connection);
 
-                        m_Surface = new global::Cairo.XcbSurface (connection,
-                                                                  (Xcb.Drawable)id, visual_type,
-                                                                  (int)device_size.width,
-                                                                  (int)device_size.height);
+                        unowned Xcb.Screen screen = connection.roots[screen_num];
 
-                        size = device_size;
+                        foreach (unowned Xcb.Depth? depth in screen)
+                        {
+                            for (int j = 0; visual_type == null && j < depth.visuals_length; ++j)
+                            {
+                                if (depth.visuals[j].visual_id == screen.root_visual)
+                                {
+                                    visual_type = depth.visuals[j];
+                                }
+                            }
+                        }
+
+                        m_Surface = new global::Cairo.XcbSurface (connection,
+                                                                  (Xcb.Drawable)xid, visual_type,
+                                                                  (int)size.width, (int)size.height);
 
                         break;
                 }

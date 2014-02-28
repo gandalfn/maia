@@ -91,6 +91,8 @@ libmaia_la_SOURCES = \
     graphic/image-gif.vala \
     backend.vala \
     application.vala \
+    damage-event-args.vala \
+    geometry-event-args.vala \
     keysym.vala \
     cursor.vala \
     scroll.vala \

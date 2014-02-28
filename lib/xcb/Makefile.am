@@ -23,6 +23,7 @@ libmaia_xcb_la_SOURCES = \
     init.vala \
     connection-watch.vala \
     application.vala \
+    pixmap.vala \
     window.vala
 
 libmaia_xcb_la_LIBADD = \

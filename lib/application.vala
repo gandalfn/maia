@@ -89,8 +89,8 @@ public class Maia.Application : Maia.Core.Object
                     try
                     {
                         Graphic.Context ctx = window.surface.context;
-                        window.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, window.size.width, window.size.height)));
-                        window.draw (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, window.size.width, window.size.height)));
+                        window.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, window.size_requested.width, window.size_requested.height)));
+                        window.draw (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, window.size_requested.width, window.size_requested.height)));
                     }
                     catch (GLib.Error err)
                     {
@@ -196,6 +196,7 @@ public class Maia.Application : Maia.Core.Object
         {
             if (((Window)child).visible)
             {
+                Log.debug (GLib.Log.METHOD, Log.Category.MAIN, "Start timeline");
                 m_Timeline.start ();
                 break;
             }

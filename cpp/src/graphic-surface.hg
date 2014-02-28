@@ -54,9 +54,9 @@ namespace Maia
 
                 _IGNORE(maia_graphic_surface_new)
 
-                static Glib::RefPtr<Surface> create (const Glib::RefPtr<Device> inDevice)
+                static Glib::RefPtr<Surface> create (const Glib::RefPtr<Device> inDevice, unsigned int inWidth, unsigned int inHeight)
                 {
-                    MaiaGraphicSurface* pSurface = maia_graphic_surface_new_from_device (const_cast<MaiaGraphicDevice*> (inDevice->gobj ()));
+                    MaiaGraphicSurface* pSurface = maia_graphic_surface_new_from_device (const_cast<MaiaGraphicDevice*> (inDevice->gobj ()), inWidth, inHeight);
                     return Glib::RefPtr<Surface> (new Surface (pSurface));
                 }
 

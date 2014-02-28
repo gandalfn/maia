@@ -197,9 +197,21 @@
   (gtype-id "MAIA_TYPE_CORE_SOCKET_WATCH")
 )
 
+(define-object MaiaDamageEventArgs
+  (parent "MaiaCoreEventArgs")
+  (c-name "MaiaDamageEventArgs")
+  (gtype-id "MAIA_TYPE_DAMAGE_EVENT_ARGS")
+)
+
 (define-object MaiaDrawable
   (c-name "MaiaDrawable")
   (gtype-id "MAIA_TYPE_DRAWABLE")
+)
+
+(define-object MaiaGeometryEventArgs
+  (parent "MaiaCoreEventArgs")
+  (c-name "MaiaGeometryEventArgs")
+  (gtype-id "MAIA_TYPE_GEOMETRY_EVENT_ARGS")
 )
 
 (define-object MaiaGraphicContext
@@ -9372,6 +9384,8 @@
   (return-type "MaiaGraphicSurface*")
   (parameters
     '("MaiaGraphicDevice*" "inDevice")
+    '("guint" "inWidth")
+    '("guint" "inHeight")
   )
 )
 
@@ -9381,6 +9395,8 @@
   (parameters
     '("GType" "object_type")
     '("MaiaGraphicDevice*" "inDevice")
+    '("guint" "inWidth")
+    '("guint" "inHeight")
   )
 )
 
@@ -9468,6 +9484,24 @@
   )
 )
 
+(define-method get_size
+  (of-object "MaiaGraphicSurface")
+  (c-name "maia_graphic_surface_get_size")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "result")
+  )
+)
+
+(define-method set_size
+  (of-object "MaiaGraphicSurface")
+  (c-name "maia_graphic_surface_set_size")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "value")
+  )
+)
+
 (define-method get_format
   (of-object "MaiaGraphicSurface")
   (c-name "maia_graphic_surface_get_format")
@@ -9507,24 +9541,6 @@
   (return-type "none")
   (parameters
     '("MaiaGraphicDevice*" "value")
-  )
-)
-
-(define-method get_size
-  (of-object "MaiaGraphicSurface")
-  (c-name "maia_graphic_surface_get_size")
-  (return-type "none")
-  (parameters
-    '("MaiaGraphicSize*" "result")
-  )
-)
-
-(define-method set_size
-  (of-object "MaiaGraphicSurface")
-  (c-name "maia_graphic_surface_set_size")
-  (return-type "none")
-  (parameters
-    '("MaiaGraphicSize*" "value")
   )
 )
 
@@ -9856,6 +9872,82 @@
   (return-type "none")
   (parameters
     '("guint" "value")
+  )
+)
+
+(define-function maia_damage_event_args_get_type
+  (c-name "maia_damage_event_args_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_damage_event_args_new
+  (c-name "maia_damage_event_args_new")
+  (is-constructor-of "MaiaDamageEventArgs")
+  (return-type "MaiaDamageEventArgs*")
+  (parameters
+    '("gdouble" "inX")
+    '("gdouble" "inY")
+    '("gdouble" "inWidth")
+    '("gdouble" "inHeight")
+  )
+)
+
+(define-function maia_damage_event_args_construct
+  (c-name "maia_damage_event_args_construct")
+  (return-type "MaiaDamageEventArgs*")
+  (parameters
+    '("GType" "object_type")
+    '("gdouble" "inX")
+    '("gdouble" "inY")
+    '("gdouble" "inWidth")
+    '("gdouble" "inHeight")
+  )
+)
+
+(define-method get_area
+  (of-object "MaiaDamageEventArgs")
+  (c-name "maia_damage_event_args_get_area")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRectangle*" "result")
+  )
+)
+
+(define-function maia_geometry_event_args_get_type
+  (c-name "maia_geometry_event_args_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_geometry_event_args_new
+  (c-name "maia_geometry_event_args_new")
+  (is-constructor-of "MaiaGeometryEventArgs")
+  (return-type "MaiaGeometryEventArgs*")
+  (parameters
+    '("gdouble" "inX")
+    '("gdouble" "inY")
+    '("gdouble" "inWidth")
+    '("gdouble" "inHeight")
+  )
+)
+
+(define-function maia_geometry_event_args_construct
+  (c-name "maia_geometry_event_args_construct")
+  (return-type "MaiaGeometryEventArgs*")
+  (parameters
+    '("GType" "object_type")
+    '("gdouble" "inX")
+    '("gdouble" "inY")
+    '("gdouble" "inWidth")
+    '("gdouble" "inHeight")
+  )
+)
+
+(define-method get_area
+  (of-object "MaiaGeometryEventArgs")
+  (c-name "maia_geometry_event_args_get_area")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRectangle*" "result")
   )
 )
 

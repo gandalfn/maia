@@ -20,6 +20,8 @@
 public class Maia.Window : Group
 {
     // properties
+    private Core.Event m_DamageEvent;
+    private Core.Event m_GeometryEvent;
     private Core.Event m_MouseEvent;
     private Core.Event m_KeyboardEvent;
 
@@ -51,8 +53,16 @@ public class Maia.Window : Group
     // methods
     construct
     {
+        m_DamageEvent   = new Core.Event ("damage",   ((int)id).to_pointer ());
+        m_GeometryEvent = new Core.Event ("geometry", ((int)id).to_pointer ());
         m_MouseEvent    = new Core.Event ("mouse",    ((int)id).to_pointer ());
         m_KeyboardEvent = new Core.Event ("keyboard", ((int)id).to_pointer ());
+
+        // Subscribe to damage event
+        m_DamageEvent.subscribe (on_damage_event);
+
+        // Subscribe to geometry event
+        m_GeometryEvent.subscribe (on_geometry_event);
     }
 
     /**
@@ -61,5 +71,32 @@ public class Maia.Window : Group
     public Window (string inName, int inWidth, int inHeight)
     {
         GLib.Object (id: GLib.Quark.from_string (inName), size: Graphic.Size (inWidth, inHeight));
+    }
+
+    private void
+    on_damage_event (Core.EventArgs inArgs)
+    {
+        unowned DamageEventArgs? damage_args = inArgs as DamageEventArgs;
+
+        if (damage_args != null)
+        {
+            var area = new Graphic.Region (damage_args.area);
+            damage (area);
+        }
+    }
+
+    private void
+    on_geometry_event (Core.EventArgs inArgs)
+    {
+        unowned GeometryEventArgs? geometry_args = inArgs as GeometryEventArgs;
+
+        if (geometry_args != null)
+        {
+            if (geometry_args.area.size.width != size_requested.width ||
+                geometry_args.area.size.height != size_requested.height)
+            {
+                size = geometry_args.area.size;
+            }
+        }
     }
 }

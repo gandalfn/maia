@@ -414,6 +414,8 @@ public class Maia.Core.Array <V> : Collection <V>
             GLib.Memory.move (&m_pContent[inPos], &m_pContent[inPos + 1],
                               (m_Size - inPos) * sizeof (Node<V>));
 
+        GLib.Memory.set (&m_pContent[m_Size], 0, sizeof (Node<V>));
+
         reduce ();
 
         stamp++;

@@ -59,6 +59,12 @@ public class Maia.Core.Extension : Object
 
                 // Get plugin module filename
                 module_filename = m_Config.get_string ("Extension", "Module");
+
+                // Module is relative to config file
+                if (GLib.Path.get_dirname (module_filename) == ".")
+                {
+                    module_filename = GLib.Module.build_path (GLib.Path.get_dirname (value), module_filename);
+                }
             }
             catch (ConfigError err)
             {

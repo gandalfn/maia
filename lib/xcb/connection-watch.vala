@@ -46,7 +46,15 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
             int response_type = evt.response_type & ~0x80;
             switch (response_type)
             {
-
+                // Expose event
+                case global::Xcb.EventType.EXPOSE:
+                    unowned global::Xcb.ExposeEvent evt_expose = (global::Xcb.ExposeEvent)evt;
+                    
+                    // send event damage
+                    Core.EventBus.default.publish ("damage", ((int)evt_expose.window).to_pointer (),
+                                                   new DamageEventArgs (evt_expose.x, evt_expose.y,
+                                                                        evt_expose.width, evt_expose.height));
+                    break;
             }
         }
 

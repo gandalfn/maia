@@ -13,7 +13,8 @@ INCLUDES += $(MAIA_VALGRIND_CFLAGS)
 endif
 
 noinst_PROGRAMS = \
-    test
+    test \
+    test-xcb
 
 INCLUDES += \
     $(MAIA_CAIRO_CFLAGS) \
@@ -58,13 +59,22 @@ test_LDADD = \
     $(MAIA_VALGRIND_LIBS) \
     ${top_builddir}/lib/libmaia.la \
     ${top_builddir}/lib/cairo/libmaia-cairo-graphic.la \
-    ${top_builddir}/lib/rsvg/libmaia-rsvg.la \
     ${top_builddir}/lib/gdk-pixbuf/libmaia-gdk-pixbuf.la \
     ${top_builddir}/lib/gtk/libmaia-gtk.la
 
+test_xcb_SOURCES = \
+    test-xcb.vala
+
+test_xcb_LDADD = \
+    $(MAIA_LIBS) \
+    $(MAIA_VALGRIND_LIBS) \
+    ${top_builddir}/lib/libmaia.la
+
 VALAFILES = \
-    $(filter %.vala,$(test_SOURCES))
+    $(filter %.vala,$(test_SOURCES)) \
+    $(filter %.vala,$(test_xcb_SOURCES))
 
 CLEANFILES += \
     test_vala.stamp \
+    test_xcb_vala.stamp \
     $(VALAFILES:.vala=.c)

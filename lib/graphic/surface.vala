@@ -64,6 +64,8 @@ public class Maia.Graphic.Surface : Pattern
     private Context m_Context;
 
     // accessors
+    public Graphic.Size size { get; construct set; default = Graphic.Size (0, 0); }
+
     public Format format { get; construct; default = Format.INVALID; }
 
     public uchar* data { get; construct; default = null; }
@@ -71,8 +73,6 @@ public class Maia.Graphic.Surface : Pattern
     public virtual void* native { get; construct set; }
 
     public virtual Device device { get; construct set; default = null; }
-
-    public Graphic.Size size { get; construct set; default = Graphic.Size (0, 0); }
 
     public Context context {
         get {
@@ -92,23 +92,25 @@ public class Maia.Graphic.Surface : Pattern
         GLib.Object (size: size);
     }
 
-    public Surface.from_device (Device inDevice)
+    public Surface.from_device (Device inDevice, uint inWidth, uint inHeight)
+        requires (inWidth > 0 && inHeight > 0)
     {
-        GLib.Object (device: inDevice);
+        var size = Graphic.Size ((double)inWidth, (double)inHeight);
+        GLib.Object (size: size, device: inDevice);
     }
 
     public Surface.from_native (void* inNativeSurface, uint inWidth, uint inHeight)
         requires (inWidth > 0 && inHeight > 0)
     {
         var size = Graphic.Size ((double)inWidth, (double)inHeight);
-        GLib.Object (native: inNativeSurface, size: size);
+        GLib.Object (size: size, native: inNativeSurface);
     }
 
     public Surface.from_data (Format inFormat, uchar* inData, uint inWidth, uint inHeight)
         requires (inWidth > 0 && inHeight > 0)
     {
         var size = Graphic.Size ((double)inWidth, (double)inHeight);
-        GLib.Object (format: inFormat, data: inData, size: size);
+        GLib.Object (size: size, format: inFormat, data: inData);
     }
 
     /**
