@@ -23,6 +23,7 @@ internal class Maia.Xcb.Application : Core.Object
     private global::Xcb.Connection m_Connection;
     private int                    m_DefaultScreen;
     private ConnectionWatch        m_Watch;
+    private Atoms                  m_Atoms;
 
     // accessors
     public global::Xcb.Connection connection {
@@ -37,12 +38,19 @@ internal class Maia.Xcb.Application : Core.Object
         }
     }
 
+    public Atoms atoms {
+        get {
+            return m_Atoms;
+        }
+    }
+
     // methods
     public Application (string? inDisplay = null)
     {
         GLib.Object (id: inDisplay != null ? GLib.Quark.from_string (inDisplay) : 0);
 
         m_Connection = new global::Xcb.Connection (inDisplay, out m_DefaultScreen);
+        m_Atoms = new Atoms (m_Connection);
         m_Watch = new ConnectionWatch (m_Connection);
     }
 }

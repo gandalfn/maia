@@ -19,9 +19,6 @@
 
 public interface Maia.Canvas : Drawable
 {
-    // static properties
-    static bool s_ElementsRegister = false;
-
     // accessors
     protected abstract unowned Item? focus_item         { get; set; default = null; }
     protected abstract unowned Item? grab_pointer_item  { get; set; default = null; }
@@ -46,38 +43,6 @@ public interface Maia.Canvas : Drawable
     public uint height {
         get {
             return surface != null ? (uint)surface.size.height : 0;
-        }
-    }
-
-    // static methods
-    private static void
-    register_manifest_elements ()
-    {
-        if (!s_ElementsRegister)
-        {
-            Manifest.Element.register ("Group",       typeof (Group));
-            Manifest.Element.register ("Rectangle",   typeof (Rectangle));
-            Manifest.Element.register ("Path",        typeof (Path));
-            Manifest.Element.register ("Image",       typeof (Image));
-            Manifest.Element.register ("Label",       typeof (Label));
-            Manifest.Element.register ("Entry",       typeof (Entry));
-            Manifest.Element.register ("Grid",        typeof (Grid));
-            Manifest.Element.register ("ToggleGroup", typeof (ToggleGroup));
-            Manifest.Element.register ("Button",      typeof (Button));
-            Manifest.Element.register ("CheckButton", typeof (CheckButton));
-            Manifest.Element.register ("Highlight",   typeof (Highlight));
-            Manifest.Element.register ("Document",    typeof (Document));
-            Manifest.Element.register ("Model",       typeof (Model));
-            Manifest.Element.register ("Column",      typeof (Model.Column));
-            Manifest.Element.register ("View",        typeof (View));
-            Manifest.Element.register ("DrawingArea", typeof (DrawingArea));
-            Manifest.Element.register ("Shortcut",    typeof (Shortcut));
-            Manifest.Element.register ("Combo",       typeof (Combo));
-            Manifest.Element.register ("Tool",        typeof (Tool));
-            Manifest.Element.register ("Toolbox",     typeof (Toolbox));
-            Manifest.Element.register ("Arrow",       typeof (Arrow));
-
-            s_ElementsRegister = true;
         }
     }
 
@@ -136,10 +101,7 @@ public interface Maia.Canvas : Drawable
     protected void
     register ()
     {
-        // Register manifest elements
-        register_manifest_elements ();
-
-        // Connect onto refresh 
+        // Connect onto refresh
         Application.default.new_frame.connect (on_new_frame);
 
         // Connect on geometry changed to resize canvas

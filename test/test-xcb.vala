@@ -17,17 +17,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Window.test-xcb {
-//    background_pattern: rgb (1, 1, 1);
-//    visible: true;
-//    size: 640, 480;
-//
-//    Label.label {
-//        text: "Youpi !!!!!\nvive la karioka";
-//        font_description: "Liberation Sans 48";
-//        stroke_pattern: rgb (0, 0, 0);
-//    }
-//}
+const string manifest = "Window.test {" +
+                        "    background_pattern: #CECECE;" +
+                        "    Grid.grid {" +
+                        "       left_padding: 12;" +
+                        "       right_padding: 12;" +
+                        "       row_spacing: 12;" +
+                        "       column_spacing: 12;" +
+                        "       Label.label {" +
+                        "           columns: 2;" +
+                        "           text: 'Youpi !!!!!\nvive la karioka';" +
+                        "           font_description: 'Liberation Sans 48';" +
+                        "           stroke_pattern: rgb (0, 0, 0);" +
+                        "       }" +
+                        "       Button.cancel {" +
+                        "           stroke-pattern: #000000;" +
+                        "           button-color: #B0B0B0;" +
+                        "           row: 1;" +
+                        "           font-description: 'Liberation Bold 14';" +
+                        "           label: 'Cancel';" +
+                        "       }" +
+                        "       Button.ok {" +
+                        "           stroke-pattern: #000000;" +
+                        "           button-color: #B0B0B0;" +
+                        "           row: 1;" +
+                        "           column: 1;" +
+                        "           font-description: 'Liberation Bold 14';" +
+                        "           label: 'OK';" +
+                        "       }" +
+                        "   }" +
+                        "}";
 
 void main (string[] args)
 {
@@ -35,15 +54,22 @@ void main (string[] args)
 
     var application = new Maia.Application ("test-xcb", 60, { "xcb" });
 
-    var window = new Maia.Window ("test-xcb", 640, 480);
-    application.add (window);
-    window.visible = true;
-    window.background_pattern = new Maia.Graphic.Color (1, 1, 1);
+    try
+    {
+        var document = new Maia.Manifest.Document.from_buffer (manifest, manifest.length);
 
-    var label = new Maia.Label ("label", "Youpi !!!!!\nvive la karioka");
-    label.font_description = "Liberation Sans 48";
-    label.stroke_pattern = new Maia.Graphic.Color (0, 0, 0);
-    window.add (label);
+        // Get window item
+        var window = document["test"] as Maia.Window;
+        application.add (window);
+        window.visible = true;
 
-    application.run ();
+        window.destroy_event.subscribe (() => { application.quit (); });
+
+        // Run application
+        application.run ();
+    }
+    catch (GLib.Error err)
+    {
+        Maia.Log.error (GLib.Log.METHOD, Maia.Log.Category.MANIFEST_PARSING, "error on parsing: %s", err.message);
+    }
 }

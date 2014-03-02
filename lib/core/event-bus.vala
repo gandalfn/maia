@@ -592,13 +592,13 @@ public class Maia.Core.EventBus : Object
         }
 
         public void
-        publish (string inName, void* inOwner, EventArgs inArgs)
+        publish (string inName, void* inOwner, EventArgs? inArgs = null)
         {
             m_Connection.send.begin (new MessageEvent (inName, inOwner, inArgs));
         }
 
         public void
-        publish_with_reply (string inName, void* inOwner, EventArgs inArgs, Event.Handler inReply)
+        publish_with_reply (string inName, void* inOwner, EventArgs? inArgs, Event.Handler inReply)
         {
             Event.Hash hash = new Event.Hash.raw (inName, inOwner);
             ReplyHandler reply = new ReplyHandler (inArgs.sequence, hash, inReply);

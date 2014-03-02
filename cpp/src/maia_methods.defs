@@ -203,6 +203,12 @@
   (gtype-id "MAIA_TYPE_DAMAGE_EVENT_ARGS")
 )
 
+(define-object MaiaDeleteEventArgs
+  (parent "MaiaCoreEventArgs")
+  (c-name "MaiaDeleteEventArgs")
+  (gtype-id "MAIA_TYPE_DELETE_EVENT_ARGS")
+)
+
 (define-object MaiaDrawable
   (c-name "MaiaDrawable")
   (gtype-id "MAIA_TYPE_DRAWABLE")
@@ -533,6 +539,12 @@
   (gtype-id "MAIA_TYPE_MODEL_COLUMN")
 )
 
+(define-object MaiaMouseEventArgs
+  (parent "MaiaCoreEventArgs")
+  (c-name "MaiaMouseEventArgs")
+  (gtype-id "MAIA_TYPE_MOUSE_EVENT_ARGS")
+)
+
 (define-object MaiaPath
   (parent "MaiaItem")
   (c-name "MaiaPath")
@@ -599,8 +611,14 @@
   (gtype-id "MAIA_TYPE_VIEW")
 )
 
+(define-object MaiaVisibilityEventArgs
+  (parent "MaiaCoreEventArgs")
+  (c-name "MaiaVisibilityEventArgs")
+  (gtype-id "MAIA_TYPE_VISIBILITY_EVENT_ARGS")
+)
+
 (define-object MaiaWindow
-  (parent "MaiaGroup")
+  (parent "MaiaGrid")
   (c-name "MaiaWindow")
   (gtype-id "MAIA_TYPE_WINDOW")
 )
@@ -909,6 +927,16 @@
     '("a8" "MAIA_GRAPHIC_SURFACE_FORMAT_A8")
     '("rgb24" "MAIA_GRAPHIC_SURFACE_FORMAT_RGB24")
     '("argb32" "MAIA_GRAPHIC_SURFACE_FORMAT_ARGB32")
+  )
+)
+
+(define-flags MaiaMouseEventArgsEventFlags
+  (c-name "MaiaMouseEventArgsEventFlags")
+  (gtype-id "MAIA_TYPE_MOUSE_EVENT_ARGS_EVENT_FLAGS")
+  (values
+    '("button-press" "MAIA_MOUSE_EVENT_ARGS_EVENT_FLAGS_BUTTON_PRESS")
+    '("button-release" "MAIA_MOUSE_EVENT_ARGS_EVENT_FLAGS_BUTTON_RELEASE")
+    '("motion" "MAIA_MOUSE_EVENT_ARGS_EVENT_FLAGS_MOTION")
   )
 )
 
@@ -9951,6 +9979,124 @@
   )
 )
 
+(define-function maia_visibility_event_args_get_type
+  (c-name "maia_visibility_event_args_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_visibility_event_args_new
+  (c-name "maia_visibility_event_args_new")
+  (is-constructor-of "MaiaVisibilityEventArgs")
+  (return-type "MaiaVisibilityEventArgs*")
+  (parameters
+    '("gboolean" "inVisible")
+  )
+)
+
+(define-function maia_visibility_event_args_construct
+  (c-name "maia_visibility_event_args_construct")
+  (return-type "MaiaVisibilityEventArgs*")
+  (parameters
+    '("GType" "object_type")
+    '("gboolean" "inVisible")
+  )
+)
+
+(define-method get_visible
+  (of-object "MaiaVisibilityEventArgs")
+  (c-name "maia_visibility_event_args_get_visible")
+  (return-type "gboolean")
+)
+
+(define-function maia_mouse_event_args_get_type
+  (c-name "maia_mouse_event_args_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_mouse_event_args_event_flags_get_type
+  (c-name "maia_mouse_event_args_event_flags_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_mouse_event_args_new
+  (c-name "maia_mouse_event_args_new")
+  (is-constructor-of "MaiaMouseEventArgs")
+  (return-type "MaiaMouseEventArgs*")
+  (parameters
+    '("guint8" "inEventFlags")
+    '("guint8" "inButton")
+    '("gdouble" "inX")
+    '("gdouble" "inY")
+  )
+)
+
+(define-function maia_mouse_event_args_construct
+  (c-name "maia_mouse_event_args_construct")
+  (return-type "MaiaMouseEventArgs*")
+  (parameters
+    '("GType" "object_type")
+    '("guint8" "inEventFlags")
+    '("guint8" "inButton")
+    '("gdouble" "inX")
+    '("gdouble" "inY")
+  )
+)
+
+(define-method get_flags
+  (of-object "MaiaMouseEventArgs")
+  (c-name "maia_mouse_event_args_get_flags")
+  (return-type "guint8")
+)
+
+(define-method get_button
+  (of-object "MaiaMouseEventArgs")
+  (c-name "maia_mouse_event_args_get_button")
+  (return-type "guint8")
+)
+
+(define-method get_position
+  (of-object "MaiaMouseEventArgs")
+  (c-name "maia_mouse_event_args_get_position")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "result")
+  )
+)
+
+(define-function maia_delete_event_args_get_type
+  (c-name "maia_delete_event_args_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_delete_event_args_new
+  (c-name "maia_delete_event_args_new")
+  (is-constructor-of "MaiaDeleteEventArgs")
+  (return-type "MaiaDeleteEventArgs*")
+)
+
+(define-function maia_delete_event_args_construct
+  (c-name "maia_delete_event_args_construct")
+  (return-type "MaiaDeleteEventArgs*")
+  (parameters
+    '("GType" "object_type")
+  )
+)
+
+(define-method get_cancel
+  (of-object "MaiaDeleteEventArgs")
+  (c-name "maia_delete_event_args_get_cancel")
+  (return-type "gboolean")
+)
+
+(define-method set_cancel
+  (of-object "MaiaDeleteEventArgs")
+  (c-name "maia_delete_event_args_set_cancel")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
 (define-function maia_key_get_type
   (c-name "maia_key_get_type")
   (return-type "GType")
@@ -10830,6 +10976,11 @@
   (return-type "GType")
 )
 
+(define-function maia_grid_get_type
+  (c-name "maia_grid_get_type")
+  (return-type "GType")
+)
+
 (define-function maia_window_get_type
   (c-name "maia_window_get_type")
   (return-type "GType")
@@ -10863,16 +11014,109 @@
   (return-type "MaiaGraphicSurface*")
 )
 
+(define-method get_damage_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_get_damage_event")
+  (return-type "MaiaCoreEvent*")
+)
+
+(define-method set_damage_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_set_damage_event")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEvent*" "value")
+  )
+)
+
+(define-method get_geometry_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_get_geometry_event")
+  (return-type "MaiaCoreEvent*")
+)
+
+(define-method set_geometry_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_set_geometry_event")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEvent*" "value")
+  )
+)
+
+(define-method get_visibility_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_get_visibility_event")
+  (return-type "MaiaCoreEvent*")
+)
+
+(define-method set_visibility_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_set_visibility_event")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEvent*" "value")
+  )
+)
+
+(define-method get_destroy_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_get_destroy_event")
+  (return-type "MaiaCoreEvent*")
+)
+
+(define-method set_destroy_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_set_destroy_event")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEvent*" "value")
+  )
+)
+
+(define-method get_delete_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_get_delete_event")
+  (return-type "MaiaCoreEvent*")
+)
+
+(define-method set_delete_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_set_delete_event")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEvent*" "value")
+  )
+)
+
 (define-method get_mouse_event
   (of-object "MaiaWindow")
   (c-name "maia_window_get_mouse_event")
   (return-type "MaiaCoreEvent*")
 )
 
+(define-method set_mouse_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_set_mouse_event")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEvent*" "value")
+  )
+)
+
 (define-method get_keyboard_event
   (of-object "MaiaWindow")
   (c-name "maia_window_get_keyboard_event")
   (return-type "MaiaCoreEvent*")
+)
+
+(define-method set_keyboard_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_set_keyboard_event")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEvent*" "value")
+  )
 )
 
 (define-function maia_group_new
@@ -11287,11 +11531,6 @@
   (parameters
     '("gboolean" "value")
   )
-)
-
-(define-function maia_grid_get_type
-  (c-name "maia_grid_get_type")
-  (return-type "GType")
 )
 
 (define-function maia_grid_new

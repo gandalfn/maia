@@ -325,11 +325,6 @@ namespace Xcb
 			[CCode (cname = "xcb_list_fonts_names_length")]
 			get;
 		}
-		[CCode (array_length = false)]
-		public unowned Str[] names {
-			[CCode (cname = "xcb_list_fonts_names")]
-			get;
-		}
 	}
 
 	[SimpleType, CCode (cname = "xcb_list_fonts_cookie_t")]
@@ -363,11 +358,6 @@ namespace Xcb
 			[CCode (cname = "xcb_list_fonts_with_info_properties_length")]
 			get;
 		}
-		[CCode (array_length = false)]
-		public unowned Fontprop[] properties {
-			[CCode (cname = "xcb_list_fonts_with_info_properties")]
-			get;
-		}
 		[CCode (cname = "xcb_list_fonts_with_info_name_length")]
 		int _name_length ();
 		[CCode (cname = "xcb_list_fonts_with_info_name", array_length = false)]
@@ -397,11 +387,6 @@ namespace Xcb
 		}
 		public int path_length {
 			[CCode (cname = "xcb_get_font_path_path_length")]
-			get;
-		}
-		[CCode (array_length = false)]
-		public unowned Str[] path {
-			[CCode (cname = "xcb_get_font_path_path")]
 			get;
 		}
 	}
@@ -436,11 +421,6 @@ namespace Xcb
 		}
 		public int names_length {
 			[CCode (cname = "xcb_list_extensions_names_length")]
-			get;
-		}
-		[CCode (array_length = false)]
-		public unowned Str[] names {
-			[CCode (cname = "xcb_list_extensions_names")]
 			get;
 		}
 	}
@@ -534,11 +514,6 @@ namespace Xcb
 		}
 		public int hosts_length {
 			[CCode (cname = "xcb_list_hosts_hosts_length")]
-			get;
-		}
-		[CCode (array_length = false)]
-		public unowned Host[] hosts {
-			[CCode (cname = "xcb_list_hosts_hosts")]
 			get;
 		}
 	}
@@ -1715,11 +1690,6 @@ namespace Xcb
 			[CCode (cname = "xcb_query_tree_children_length")]
 			get;
 		}
-		[CCode (array_length = false)]
-		public unowned Window[] children {
-			[CCode (cname = "xcb_query_tree_children")]
-			get;
-		}
 	}
 
 	[SimpleType, CCode (cname = "xcb_query_tree_cookie_t")]
@@ -1761,11 +1731,6 @@ namespace Xcb
 		}
 		public int atoms_length {
 			[CCode (cname = "xcb_list_properties_atoms_length")]
-			get;
-		}
-		[CCode (array_length = false)]
-		public unowned Atom[] atoms {
-			[CCode (cname = "xcb_list_properties_atoms")]
 			get;
 		}
 	}
@@ -1828,11 +1793,6 @@ namespace Xcb
 			[CCode (cname = "xcb_get_motion_events_events_length")]
 			get;
 		}
-		[CCode (array_length = false)]
-		public unowned Timecoord[] events {
-			[CCode (cname = "xcb_get_motion_events_events")]
-			get;
-		}
 	}
 
 	[SimpleType, CCode (cname = "xcb_get_motion_events_cookie_t")]
@@ -1865,11 +1825,6 @@ namespace Xcb
 		}
 		public int cmaps_length {
 			[CCode (cname = "xcb_list_installed_colormaps_cmaps_length")]
-			get;
-		}
-		[CCode (array_length = false)]
-		public unowned Colormap[] cmaps {
-			[CCode (cname = "xcb_list_installed_colormaps_cmaps")]
 			get;
 		}
 	}
@@ -2471,11 +2426,6 @@ namespace Xcb
 		}
 		public int colors_length {
 			[CCode (cname = "xcb_query_colors_colors_length")]
-			get;
-		}
-		[CCode (array_length = false)]
-		public unowned Rgb[] colors {
-			[CCode (cname = "xcb_query_colors_colors")]
 			get;
 		}
 	}
@@ -3275,14 +3225,10 @@ namespace Xcb
 	public struct Depth {
 		public uint8 depth;
 		public uint16 visuals_len;
-		public int visuals_length {
-			[CCode (cname = "xcb_depth_visuals_length")]
-			get;
-		}
-		[CCode (array_length = false)]
-		public unowned Visualtype[] visuals {
-			[CCode (cname = "xcb_depth_visuals")]
-			get;
+		[CCode (cname = "xcb_depth_visuals_iterator")]
+		_VisualtypeIterator _iterator ();
+		public VisualtypeIterator iterator () {
+			return (VisualtypeIterator) _iterator ();
 		}
 	}
 
@@ -3341,15 +3287,10 @@ namespace Xcb
 		public bool save_unders;
 		public uint8 root_depth;
 		public uint8 allowed_depths_len;
-		public int allowed_depths_length {
-			[CCode (cname = "xcb_screen_allowed_depths_length")]
-			get;
-		}
 		[CCode (cname = "xcb_screen_allowed_depths_iterator")]
-		unowned _DepthIterator _iterator ();
-		public DepthIterator iterator ()
-		{
-			return (DepthIterator)_iterator ();
+		_DepthIterator _iterator ();
+		public DepthIterator iterator () {
+			return (DepthIterator) _iterator ();
 		}
 	}
 
@@ -3387,28 +3328,6 @@ namespace Xcb
 		public uint16 protocol_minor_version;
 		public uint16 authorization_protocol_name_len;
 		public uint16 authorization_protocol_data_len;
-		[CCode (cname = "xcb_setup_request_authorization_protocol_name_length")]
-		int _authorization_protocol_name_length ();
-		[CCode (cname = "xcb_setup_request_authorization_protocol_name", array_length = false)]
-		unowned char[] _authorization_protocol_name ();
-		public string authorization_protocol_name {
-			owned get {
-				GLib.StringBuilder ret = new GLib.StringBuilder ();
-				ret.append_len ((string)_authorization_protocol_name (), _authorization_protocol_name_length ());
-				return ret.str;
-			}
-		}
-		[CCode (cname = "xcb_setup_request_authorization_protocol_data_length")]
-		int _authorization_protocol_data_length ();
-		[CCode (cname = "xcb_setup_request_authorization_protocol_data", array_length = false)]
-		unowned char[] _authorization_protocol_data ();
-		public string authorization_protocol_data {
-			owned get {
-				GLib.StringBuilder ret = new GLib.StringBuilder ();
-				ret.append_len ((string)_authorization_protocol_data (), _authorization_protocol_data_length ());
-				return ret.str;
-			}
-		}
 	}
 
 	[SimpleType, CCode (cname = "xcb_setup_failed_iterator_t")]
@@ -3445,17 +3364,6 @@ namespace Xcb
 		public uint16 protocol_major_version;
 		public uint16 protocol_minor_version;
 		public uint16 length;
-		[CCode (cname = "xcb_setup_failed_reason_length")]
-		int _reason_length ();
-		[CCode (cname = "xcb_setup_failed_reason", array_length = false)]
-		unowned char[] _reason ();
-		public string reason {
-			owned get {
-				GLib.StringBuilder ret = new GLib.StringBuilder ();
-				ret.append_len ((string)_reason (), _reason_length ());
-				return ret.str;
-			}
-		}
 	}
 
 	[SimpleType, CCode (cname = "xcb_setup_authenticate_iterator_t")]
@@ -3489,17 +3397,6 @@ namespace Xcb
 	public struct SetupAuthenticate {
 		public uint8 status;
 		public uint16 length;
-		[CCode (cname = "xcb_setup_authenticate_reason_length")]
-		int _reason_length ();
-		[CCode (cname = "xcb_setup_authenticate_reason", array_length = false)]
-		unowned char[] _reason ();
-		public string reason {
-			owned get {
-				GLib.StringBuilder ret = new GLib.StringBuilder ();
-				ret.append_len ((string)_reason (), _reason_length ());
-				return ret.str;
-			}
-		}
 	}
 
 	[CCode (cname = "xcb_image_order_t", cprefix =  "XCB_IMAGE_ORDER_", has_type_id = false)]
@@ -3528,35 +3425,6 @@ namespace Xcb
 		public uint8 bitmap_format_scanline_pad;
 		public Keycode min_keycode;
 		public Keycode max_keycode;
-		[CCode (cname = "xcb_setup_vendor_length")]
-		int _vendor_length ();
-		[CCode (cname = "xcb_setup_vendor", array_length = false)]
-		unowned char[] _vendor ();
-		public string vendor {
-			owned get {
-				GLib.StringBuilder ret = new GLib.StringBuilder ();
-				ret.append_len ((string)_vendor (), _vendor_length ());
-				return ret.str;
-			}
-		}
-		public int pixmap_formats_length {
-			[CCode (cname = "xcb_setup_pixmap_formats_length")]
-			get;
-		}
-		[CCode (array_length = false)]
-		public unowned Format[] pixmap_formats {
-			[CCode (cname = "xcb_setup_pixmap_formats")]
-			get;
-		}
-		public int roots_length {
-			[CCode (cname = "xcb_setup_roots_length")]
-			get;
-		}
-		[CCode (array_length = false)]
-		public unowned Screen[] roots {
-			[CCode (cname = "xcb_setup_roots")]
-			get;
-		}
 	}
 
 	[Flags, CCode (cname = "xcb_mod_mask_t", cprefix =  "XCB_MOD_MASK_", has_type_id = false)]
@@ -4687,17 +4555,6 @@ namespace Xcb
 	[CCode (cname = "xcb_str_t", has_type_id = false)]
 	public struct Str {
 		public uint8 name_len;
-		[CCode (cname = "xcb_str_name_length")]
-		int _name_length ();
-		[CCode (cname = "xcb_str_name", array_length = false)]
-		unowned char[] _name ();
-		public string name {
-			owned get {
-				GLib.StringBuilder ret = new GLib.StringBuilder ();
-				ret.append_len ((string)_name (), _name_length ());
-				return ret.str;
-			}
-		}
 	}
 
 	[Flags, CCode (cname = "xcb_gc_t", cprefix =  "XCB_GC_", has_type_id = false)]
@@ -5035,15 +4892,6 @@ namespace Xcb
 	public struct Host {
 		public Family family;
 		public uint16 address_len;
-		public int address_length {
-			[CCode (cname = "xcb_host_address_length")]
-			get;
-		}
-		[CCode (array_length = false)]
-		public unowned uint8[] address {
-			[CCode (cname = "xcb_host_address")]
-			get;
-		}
 	}
 
 	[CCode (cname = "xcb_access_control_t", cprefix =  "XCB_ACCESS_CONTROL_", has_type_id = false)]

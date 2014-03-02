@@ -13,7 +13,6 @@ include $(top_srcdir)/build-aux/vapi.am
 backend_LTLIBRARIES = libmaia-xcb.la
 
 libmaia_xcb_la_CFLAGS = \
-    $(MAIA_CAIRO_CFLAGS) \
     $(MAIA_XCB_CFLAGS)
 
 libmaia_xcb_la_VALAFLAGS = \
@@ -22,7 +21,9 @@ libmaia_xcb_la_VALAFLAGS = \
 libmaia_xcb_la_SOURCES = \
     init.vala \
     connection-watch.vala \
+    atoms.vala \
     application.vala \
+    delete-event-args.vala \
     pixmap.vala \
     window.vala
 

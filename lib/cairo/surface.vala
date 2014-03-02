@@ -24,23 +24,45 @@ public class Maia.Cairo.Surface : Graphic.Surface
     const int cParamPrecision = 7;
 
     // properties
+    private Graphic.Size           m_Size    = Graphic.Size (0, 0);
     private global::Cairo.Surface  m_Surface = null;
     private unowned Graphic.Device m_Device  = null;
 
     // accessors
+    public override Graphic.Size size {
+        get {
+            return m_Size;
+        }
+        construct set {
+            if (!m_Size.equal (value))
+            {
+                m_Size = value;
+
+                if (!m_Size.is_empty () && m_Device != null)
+                {
+                    resize_device_surface ();
+                }
+                else
+                {
+                    m_Surface = null;
+                }
+            }
+        }
+    }
+
     public override void* native {
         get {
-            if (m_Device == null && m_Surface == null && !size.is_empty ())
+            if (m_Device == null && m_Surface == null && !m_Size.is_empty ())
             {
                 if (format != Graphic.Surface.Format.INVALID && data != null)
                 {
                     m_Surface = new global::Cairo.ImageSurface.for_data ((uchar[])data, format_to_cairo_format (format),
-                                                                         (int)size.width, (int)size.height,
-                                                                         format.stride_for_width ((int)size.width));
+                                                                         (int)m_Size.width, (int)m_Size.height,
+                                                                         format.stride_for_width ((int)m_Size.width));
                 }
                 else
                 {
-                    m_Surface = new global::Cairo.ImageSurface (global::Cairo.Format.ARGB32, (int)size.width, (int)size.height);
+                    m_Surface = new global::Cairo.ImageSurface (global::Cairo.Format.ARGB32, (int)m_Size.width, (int)m_Size.height);
                 }
             }
 
@@ -62,40 +84,7 @@ public class Maia.Cairo.Surface : Graphic.Surface
             m_Device = value;
             m_Surface = null;
 
-            if (m_Device != null)
-            {
-                switch (m_Device.backend)
-                {
-                    case "xcb/drawable":
-                        uint32 xid;
-                        int screen_num;
-                        unowned Xcb.Connection connection;
-                        Xcb.Visualtype? visual_type = null;
-
-                        ((GLib.Object)m_Device).get ("id", out xid,
-                                                     "screen-num", out screen_num,
-                                                     "connection", out connection);
-
-                        unowned Xcb.Screen screen = connection.roots[screen_num];
-
-                        foreach (unowned Xcb.Depth? depth in screen)
-                        {
-                            for (int j = 0; visual_type == null && j < depth.visuals_length; ++j)
-                            {
-                                if (depth.visuals[j].visual_id == screen.root_visual)
-                                {
-                                    visual_type = depth.visuals[j];
-                                }
-                            }
-                        }
-
-                        m_Surface = new global::Cairo.XcbSurface (connection,
-                                                                  (Xcb.Drawable)xid, visual_type,
-                                                                  (int)size.width, (int)size.height);
-
-                        break;
-                }
-            }
+            create_surface_from_device ();
         }
     }
 
@@ -131,6 +120,66 @@ public class Maia.Cairo.Surface : Graphic.Surface
         if (data != null)
         {
             GLib.free (data);
+        }
+    }
+
+    private void
+    create_surface_from_device ()
+    {
+        if (m_Device != null)
+        {
+            switch (m_Device.backend)
+            {
+                case "xcb/window":
+                case "xcb/pixmap":
+                    uint32 xid;
+                    int screen_num;
+                    unowned Xcb.Connection connection;
+                    Xcb.Visualtype? visual_type = null;
+
+                    ((GLib.Object)m_Device).get ("xid", out xid,
+                                                 "screen-num", out screen_num,
+                                                 "connection", out connection);
+
+                    unowned Xcb.Screen screen = connection.roots[screen_num];
+
+                    foreach (unowned Xcb.Depth? depth in screen)
+                    {
+                        foreach (unowned Xcb.Visualtype? visual in depth)
+                        {
+                            if (visual.visual_id == screen.root_visual)
+                            {
+                                visual_type = visual;
+                                break;
+                            }
+                        }
+                        if (visual_type != null) break;
+                    }
+
+                    m_Surface = new global::Cairo.XcbSurface (connection,
+                                                              (Xcb.Drawable)xid, visual_type,
+                                                              (int)m_Size.width, (int)m_Size.height);
+
+                    break;
+            }
+        }
+    }
+
+    private void
+    resize_device_surface ()
+    {
+        if (m_Device != null)
+        {
+            switch (m_Device.backend)
+            {
+                case "xcb/window":
+                    ((global::Cairo.XcbSurface)m_Surface).set_size ((int)m_Size.width, (int)m_Size.height);
+                    break;
+
+                case "xcb/pixmap":
+                    create_surface_from_device ();
+                    break;
+            }
         }
     }
 
@@ -294,8 +343,8 @@ public class Maia.Cairo.Surface : Graphic.Surface
         if (inRadius < 1 || inProcessCount < 1)
             return;
 
-        int w = (int)size.width;
-        int h = (int)size.height;
+        int w = (int)m_Size.width;
+        int h = (int)m_Size.height;
         int channels = 4;
 
         if (inRadius > w - 1 || inRadius > h - 1)
@@ -433,8 +482,8 @@ public class Maia.Cairo.Surface : Graphic.Surface
             return;
 
         int alpha = (int) ((1 << cAlphaPrecision) * (1.0 - Math.exp (-2.3 / (inRadius + 1.0))));
-        int height = (int)size.height;
-        int width = (int)size.width;
+        int height = (int)m_Size.height;
+        int width = (int)m_Size.width;
 
         var original = new Graphic.Surface ((uint)width, (uint)height);
         var cr = original.context;
@@ -486,8 +535,8 @@ public class Maia.Cairo.Surface : Graphic.Surface
         var gausswidth = inRadius * 2 + 1;
         var kernel = build_gaussian_kernel (gausswidth);
 
-        int width = (int)size.width;
-        int height = (int)size.height;
+        int width = (int)m_Size.width;
+        int height = (int)m_Size.height;
 
         var original = new Graphic.Surface ((uint)width, (uint)height);
         var cr = original.context;

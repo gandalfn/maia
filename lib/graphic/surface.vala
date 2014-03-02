@@ -64,7 +64,7 @@ public class Maia.Graphic.Surface : Pattern
     private Context m_Context;
 
     // accessors
-    public Graphic.Size size { get; construct set; default = Graphic.Size (0, 0); }
+    public virtual Graphic.Size size { get; construct set; default = Graphic.Size (0, 0); }
 
     public Format format { get; construct; default = Format.INVALID; }
 

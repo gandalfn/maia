@@ -49,15 +49,114 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
                 // Expose event
                 case global::Xcb.EventType.EXPOSE:
                     unowned global::Xcb.ExposeEvent evt_expose = (global::Xcb.ExposeEvent)evt;
-                    
+
                     // send event damage
                     Core.EventBus.default.publish ("damage", ((int)evt_expose.window).to_pointer (),
                                                    new DamageEventArgs (evt_expose.x, evt_expose.y,
                                                                         evt_expose.width, evt_expose.height));
                     break;
+
+                // configure notify event
+                case global::Xcb.EventType.CONFIGURE_NOTIFY:
+                    unowned global::Xcb.ConfigureNotifyEvent evt_configure = (global::Xcb.ConfigureNotifyEvent)evt;
+
+                    // send event geometry
+                    Core.EventBus.default.publish ("geometry", ((int)evt_configure.window).to_pointer (),
+                                                   new GeometryEventArgs (evt_configure.x, evt_configure.y,
+                                                                          evt_configure.width, evt_configure.height));
+                    break;
+
+                // map notify event
+                case global::Xcb.EventType.MAP_NOTIFY:
+                    unowned global::Xcb.MapNotifyEvent evt_map_notify = (global::Xcb.MapNotifyEvent)evt;
+
+                    // send event geometry
+                    Core.EventBus.default.publish ("visibility", ((int)evt_map_notify.window).to_pointer (),
+                                                   new VisibilityEventArgs (true));
+                    break;
+
+                // unmap notify event
+                case global::Xcb.EventType.UNMAP_NOTIFY:
+                    unowned global::Xcb.UnmapNotifyEvent evt_unmap_notify = (global::Xcb.UnmapNotifyEvent)evt;
+
+                    // send event geometry
+                    Core.EventBus.default.publish ("visibility", ((int)evt_unmap_notify.window).to_pointer (),
+                                                   new VisibilityEventArgs (false));
+                    break;
+
+                // button press event
+                case global::Xcb.EventType.BUTTON_PRESS:
+                    unowned global::Xcb.ButtonPressEvent evt_button_press = (global::Xcb.ButtonPressEvent)evt;
+
+                    // send event geometry
+                    Core.EventBus.default.publish ("mouse", ((int)evt_button_press.event).to_pointer (),
+                                                   new MouseEventArgs (MouseEventArgs.EventFlags.BUTTON_PRESS,
+                                                                       evt_button_press.detail,
+                                                                       evt_button_press.event_x,
+                                                                       evt_button_press.event_y));
+                    break;
+
+                // button release event
+                case global::Xcb.EventType.BUTTON_RELEASE:
+                    unowned global::Xcb.ButtonReleaseEvent evt_button_release = (global::Xcb.ButtonReleaseEvent)evt;
+
+                    // send event geometry
+                    Core.EventBus.default.publish ("mouse", ((int)evt_button_release.event).to_pointer (),
+                                                   new MouseEventArgs (MouseEventArgs.EventFlags.BUTTON_RELEASE,
+                                                                       evt_button_release.detail,
+                                                                       evt_button_release.event_x,
+                                                                       evt_button_release.event_y));
+                    break;
+
+                // motion notify event
+                case global::Xcb.EventType.MOTION_NOTIFY:
+                    unowned global::Xcb.MotionNotifyEvent evt_motion_notify = (global::Xcb.MotionNotifyEvent)evt;
+
+                    // send event geometry
+                    Core.EventBus.default.publish ("mouse", ((int)evt_motion_notify.event).to_pointer (),
+                                                   new MouseEventArgs (MouseEventArgs.EventFlags.MOTION,
+                                                                       evt_motion_notify.detail,
+                                                                       evt_motion_notify.event_x,
+                                                                       evt_motion_notify.event_y));
+                    break;
+
+                // client message event
+                case global::Xcb.EventType.CLIENT_MESSAGE:
+                    unowned global::Xcb.ClientMessageEvent evt_client_message = (global::Xcb.ClientMessageEvent)evt;
+
+                    // check client message type
+                    if (evt_client_message.type           == Xcb.application.atoms[AtomType.WM_PROTOCOLS] &&
+                        evt_client_message.data.data32[0] == Xcb.application.atoms[AtomType.WM_DELETE_WINDOW])
+                    {
+                        Core.EventBus.default.publish_with_reply ("delete", ((int)evt_client_message.window).to_pointer (),
+                                                                  new DeleteEventArgs (evt_client_message.window),
+                                                                  on_delete_event_reply);
+                    }
+                    break;
+
+                // destroy notify event
+                case global::Xcb.EventType.DESTROY_NOTIFY:
+                    unowned global::Xcb.DestroyNotifyEvent evt_destroy_notify = (global::Xcb.DestroyNotifyEvent)evt;
+
+                    // send event geometry
+                    Core.EventBus.default.publish ("destroy", ((int)evt_destroy_notify.window).to_pointer (), null);
+                    break;
             }
         }
 
         return true;
+    }
+
+    public void
+    on_delete_event_reply (Core.EventArgs? inArgs)
+    {
+        unowned DeleteEventArgs args = inArgs as DeleteEventArgs;
+
+        // delete event is not cancelled destroy window
+        if (args != null && !args.cancel)
+        {
+            args.window.destroy (m_Connection);
+            m_Connection.flush ();
+        }
     }
 }

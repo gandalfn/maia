@@ -84,21 +84,62 @@ public class Maia.Application : Maia.Core.Object
             unowned Window window = child as Window;
             if (window != null)
             {
-                if (window.visible && window.surface != null)
+                if (window.visible)
                 {
-                    try
+                    // set window geometry from its size requested
+                    var geometry = new Graphic.Region (Graphic.Rectangle (window.position.x,
+                                                                          window.position.y,
+                                                                          window.size_requested.width,
+                                                                          window.size_requested.height));
+
+                    if (window.surface != null)
                     {
-                        Graphic.Context ctx = window.surface.context;
-                        window.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, window.size_requested.width, window.size_requested.height)));
-                        window.draw (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, window.size_requested.width, window.size_requested.height)));
-                    }
-                    catch (GLib.Error err)
-                    {
-                        Log.critical (GLib.Log.METHOD, Log.Category.MAIN, "Error on window refresh: %s", err.message);
+                        try
+                        {
+                            // create context for update after size requested to be sure all surfaces are ready
+                            Graphic.Context ctx = window.surface.context;
+
+                            // update geometry of window
+                            window.update (ctx, geometry);
+
+                            // and draw it
+                            window.draw (ctx, geometry);
+                        }
+                        catch (GLib.Error err)
+                        {
+                            Log.critical (GLib.Log.METHOD, Log.Category.MAIN, "Error on window refresh: %s", err.message);
+                        }
                     }
                 }
             }
         }
+    }
+
+    // static methods
+    static construct
+    {
+        Manifest.Element.register ("Group",       typeof (Group));
+        Manifest.Element.register ("Rectangle",   typeof (Rectangle));
+        Manifest.Element.register ("Path",        typeof (Path));
+        Manifest.Element.register ("Image",       typeof (Image));
+        Manifest.Element.register ("Label",       typeof (Label));
+        Manifest.Element.register ("Entry",       typeof (Entry));
+        Manifest.Element.register ("Grid",        typeof (Grid));
+        Manifest.Element.register ("ToggleGroup", typeof (ToggleGroup));
+        Manifest.Element.register ("Button",      typeof (Button));
+        Manifest.Element.register ("CheckButton", typeof (CheckButton));
+        Manifest.Element.register ("Highlight",   typeof (Highlight));
+        Manifest.Element.register ("Document",    typeof (Document));
+        Manifest.Element.register ("Model",       typeof (Model));
+        Manifest.Element.register ("Column",      typeof (Model.Column));
+        Manifest.Element.register ("View",        typeof (View));
+        Manifest.Element.register ("DrawingArea", typeof (DrawingArea));
+        Manifest.Element.register ("Shortcut",    typeof (Shortcut));
+        Manifest.Element.register ("Combo",       typeof (Combo));
+        Manifest.Element.register ("Tool",        typeof (Tool));
+        Manifest.Element.register ("Toolbox",     typeof (Toolbox));
+        Manifest.Element.register ("Arrow",       typeof (Arrow));
+        Manifest.Element.register ("Window",      typeof (Window));
     }
 
     // methods
@@ -117,7 +158,7 @@ public class Maia.Application : Maia.Core.Object
     public Application (string inName, int inFps, string[]? inBackends = null)
     {
         GLib.Object (id: GLib.Quark.from_string (inName));
-        
+
         // Load backends
         if (inBackends != null)
         {

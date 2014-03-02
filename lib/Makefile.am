@@ -93,6 +93,9 @@ libmaia_la_SOURCES = \
     application.vala \
     damage-event-args.vala \
     geometry-event-args.vala \
+    visibility-event-args.vala \
+    mouse-event-args.vala \
+    delete-event-args.vala \
     keysym.vala \
     cursor.vala \
     scroll.vala \

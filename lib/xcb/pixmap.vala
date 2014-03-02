@@ -20,18 +20,25 @@
 internal class Maia.Xcb.Pixmap : Maia.Core.Object, Maia.Graphic.Device
 {
     // properties
-    private Graphic.Surface m_Surface = null;
+    private global::Xcb.Pixmap m_Pixmap;
+    private Graphic.Surface    m_Surface = null;
 
     // accessors
     public string backend {
         get {
-            return "xcb/drawable";
+            return "xcb/pixmap";
         }
     }
 
     public global::Xcb.Connection connection {
         get {
             return Maia.Xcb.application.connection;
+        }
+    }
+
+    public uint32 xid {
+        get {
+            return m_Pixmap;
         }
     }
 
@@ -52,14 +59,14 @@ internal class Maia.Xcb.Pixmap : Maia.Core.Object, Maia.Graphic.Device
     // methods
     public Pixmap (Window inWindow, int inDepth, int inWidth, int inHeight)
     {
-        GLib.Object (id: global::Xcb.Pixmap (inWindow.connection), screen_num: inWindow.screen_num, size: Graphic.Size (inWidth, inHeight));
+        GLib.Object (screen_num: inWindow.screen_num, size: Graphic.Size (inWidth, inHeight));
 
-        ((global::Xcb.Pixmap)id).create_checked (connection, (uint8)inDepth, (global::Xcb.Drawable)inWindow.id, (uint16)inWidth, (uint16)inHeight);
-        
+        m_Pixmap = global::Xcb.Pixmap (connection);
+        m_Pixmap.create_checked (connection, (uint8)inDepth, (global::Xcb.Drawable)inWindow.xid, (uint16)inWidth, (uint16)inHeight);
     }
 
     ~Pixmap ()
     {
-        ((global::Xcb.Pixmap)id).free (Maia.Xcb.application.connection);
+        m_Pixmap.free (Maia.Xcb.application.connection);
     }
 }

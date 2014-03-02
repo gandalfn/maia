@@ -61,7 +61,7 @@ public class Maia.Core.Event : Object
      *
      * @param inArgs EventArgs of notification
      */
-    public delegate void Handler (EventArgs inArgs);
+    public delegate void Handler (EventArgs? inArgs);
 
     // properties
     private unowned EventBus m_EventBus;

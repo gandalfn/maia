@@ -546,6 +546,23 @@
 
 ;; Original typedef:
 ;; typedef enum  {
+;; 	MAIA_MOUSE_EVENT_ARGS_EVENT_FLAGS_BUTTON_PRESS = 1 << 0,
+;; 	MAIA_MOUSE_EVENT_ARGS_EVENT_FLAGS_BUTTON_RELEASE = 1 << 1,
+;; 	MAIA_MOUSE_EVENT_ARGS_EVENT_FLAGS_MOTION = 1 << 2
+;; } MaiaMouseEventArgsEventFlags;
+
+(define-flags-extended MouseEventArgsEventFlags
+  (in-module "Maia")
+  (c-name "MaiaMouseEventArgsEventFlags")
+  (values
+    '("button-press" "MAIA_MOUSE_EVENT_ARGS_EVENT_FLAGS_BUTTON_PRESS" "1 << 0")
+    '("button-release" "MAIA_MOUSE_EVENT_ARGS_EVENT_FLAGS_BUTTON_RELEASE" "1 << 1")
+    '("motion" "MAIA_MOUSE_EVENT_ARGS_EVENT_FLAGS_MOTION" "1 << 2")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
 ;; 	MAIA_KEY_VoidSymbol,
 ;; 	MAIA_KEY_BackSpace,
 ;; 	MAIA_KEY_Tab,
