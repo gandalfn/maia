@@ -43,7 +43,7 @@ dnl ****************************************************************************
 dnl Packages version required
 dnl ****************************************************************************
 GLIB_REQUIRED=2.32.0
-VALA_REQUIRED=0.20.0
+VALA_REQUIRED=0.22.0
 PIXMAN_REQUIRED=0.16.4
 CAIRO_REQUIRED=1.10.2
 PANGO_REQUIRED=1.30.0
@@ -203,7 +203,7 @@ dnl ****************************************************************************
 dnl Check for vala
 dnl ****************************************************************************
 AM_PROG_VALAC($VALA_REQUIRED)
-VALA_VAPI_PATH=$($PKG_CONFIG --variable=vapidir libvala-0.20)
+VALA_VAPI_PATH=$($PKG_CONFIG --variable=vapidir libvala-0.22)
 AC_SUBST(VALA_VAPI_PATH)
 
 dnl ****************************************************************************

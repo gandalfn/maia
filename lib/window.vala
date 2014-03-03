@@ -29,7 +29,11 @@ public class Maia.Window : Grid
     private Core.Event m_KeyboardEvent;
 
     // accessors
-    public override string tag {
+    protected unowned Item? focus_item         { get; set; default = null; }
+    protected unowned Item? grab_pointer_item  { get; set; default = null; }
+    protected unowned Item? grab_keyboard_item { get; set; default = null; }
+
+    internal override string tag {
         get {
             return "Window";
         }
@@ -103,7 +107,7 @@ public class Maia.Window : Grid
             m_KeyboardEvent = value;
         }
     }
-
+    
     // methods
     construct
     {
@@ -124,6 +128,16 @@ public class Maia.Window : Grid
 
         // Subscribe to mouse event
         m_MouseEvent.subscribe (on_mouse_event);
+
+        // Connect onto signals from childs
+        set_pointer_cursor.connect (on_set_pointer_cursor);
+        move_pointer.connect (on_move_pointer);
+        grab_focus.connect (on_grab_focus);
+        grab_pointer.connect (on_grab_pointer);
+        ungrab_pointer.connect (on_ungrab_pointer);
+        grab_keyboard.connect (on_grab_keyboard);
+        ungrab_keyboard.connect (on_ungrab_keyboard);
+        scroll_to.connect (on_scroll_to);
     }
 
     /**
@@ -184,17 +198,44 @@ public class Maia.Window : Grid
         {
             if ((mouse_args.flags & MouseEventArgs.EventFlags.MOTION) == MouseEventArgs.EventFlags.MOTION)
             {
-                motion_event (mouse_args.position);
+                // we have grab pointer item send event
+                if (grab_pointer_item != null)
+                {
+                    grab_pointer_item.motion_event (grab_pointer_item.convert_to_item_space (mouse_args.position));
+                }
+                // else send event to window
+                else
+                {
+                    motion_event (convert_to_item_space (mouse_args.position));
+                }
             }
 
             if ((mouse_args.flags & MouseEventArgs.EventFlags.BUTTON_PRESS) == MouseEventArgs.EventFlags.BUTTON_PRESS)
             {
-                button_press_event (mouse_args.button, mouse_args.position);
+                // we have grab pointer item send event
+                if (grab_pointer_item != null)
+                {
+                    grab_pointer_item.button_press_event (mouse_args.button, grab_pointer_item.convert_to_item_space (mouse_args.position));
+                }
+                // else send event to window
+                else
+                {
+                    button_press_event (mouse_args.button, convert_to_item_space (mouse_args.position));
+                }
             }
 
             if ((mouse_args.flags & MouseEventArgs.EventFlags.BUTTON_RELEASE) == MouseEventArgs.EventFlags.BUTTON_RELEASE)
             {
-                button_release_event (mouse_args.button, mouse_args.position);
+                // we have grab pointer item send event
+                if (grab_pointer_item != null)
+                {
+                    grab_pointer_item.button_release_event (mouse_args.button, grab_pointer_item.convert_to_item_space (mouse_args.position));
+                }
+                // else send event to window
+                else
+                {
+                    button_release_event (mouse_args.button, convert_to_item_space (mouse_args.position));
+                }
             }
         }
     }
@@ -215,6 +256,110 @@ public class Maia.Window : Grid
     {
         // disconnect from application
         parent = null;
+    }
+
+    protected virtual void
+    on_set_pointer_cursor (Cursor inCursor)
+    {
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"set pointer cursor $inCursor");
+    }
+
+    protected virtual void
+    on_move_pointer (Graphic.Point inPosition)
+    {
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"move pointer to $inPosition");
+    }
+
+    protected virtual void
+    on_scroll_to (Item inItem)
+    {
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "scroll to %s", inItem.name);
+    }
+
+    protected virtual void
+    on_grab_focus (Item? inItem)
+    {
+        if (inItem is Button)
+            return;
+
+        if (inItem == null)
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab focus");
+        else
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab focus %s", inItem.name);
+
+        // Unset item have focus
+        if (focus_item != null)
+        {
+            focus_item.have_focus = false;
+        }
+
+        // Set focused item
+        focus_item = inItem;
+
+        // Set item have focus
+        if (inItem != null)
+        {
+            focus_item.have_focus = true;
+        }
+
+        // Set current item to toolbox
+        unowned Toolbox? toolbox = root.find_by_type<Toolbox> (false);
+        if (toolbox != null)
+        {
+            toolbox.current_item_changed (focus_item);
+        }
+    }
+
+    protected virtual bool
+    on_grab_pointer (Item inItem)
+    {
+        bool ret = false;
+
+        // Can grab only nobody have already grab
+        if (grab_pointer_item == null)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab pointer %s", inItem.name);
+            grab_pointer_item = inItem;
+            ret = true;
+        }
+
+        return ret;
+    }
+
+    protected virtual void
+    on_ungrab_pointer (Item inItem)
+    {
+        if (grab_pointer_item == inItem)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab pointer %s", grab_pointer_item.name);
+            grab_pointer_item = null;
+        }
+    }
+
+    protected virtual bool
+    on_grab_keyboard (Item inItem)
+    {
+        bool ret = false;
+
+        // Only focused item can grab keyboard
+        if (grab_keyboard_item != null)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab keyboard %s", inItem.name);
+            grab_keyboard_item = inItem;
+            ret = true;
+        }
+
+        return ret;
+    }
+
+    protected virtual void
+    on_ungrab_keyboard (Item inItem)
+    {
+        if (grab_keyboard_item == inItem)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab keyboard %s", grab_keyboard_item.name);
+            grab_keyboard_item = null;
+        }
     }
 
     internal override void

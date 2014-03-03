@@ -11008,6 +11008,123 @@
   )
 )
 
+(define-method on_set_pointer_cursor
+  (of-object "MaiaWindow")
+  (c-name "maia_window_on_set_pointer_cursor")
+  (return-type "none")
+  (parameters
+    '("MaiaCursor" "inCursor")
+  )
+)
+
+(define-method on_move_pointer
+  (of-object "MaiaWindow")
+  (c-name "maia_window_on_move_pointer")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "inPosition")
+  )
+)
+
+(define-method on_scroll_to
+  (of-object "MaiaWindow")
+  (c-name "maia_window_on_scroll_to")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-method on_grab_focus
+  (of-object "MaiaWindow")
+  (c-name "maia_window_on_grab_focus")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-method on_grab_pointer
+  (of-object "MaiaWindow")
+  (c-name "maia_window_on_grab_pointer")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-method on_ungrab_pointer
+  (of-object "MaiaWindow")
+  (c-name "maia_window_on_ungrab_pointer")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-method on_grab_keyboard
+  (of-object "MaiaWindow")
+  (c-name "maia_window_on_grab_keyboard")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-method on_ungrab_keyboard
+  (of-object "MaiaWindow")
+  (c-name "maia_window_on_ungrab_keyboard")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-method get_focus_item
+  (of-object "MaiaWindow")
+  (c-name "maia_window_get_focus_item")
+  (return-type "MaiaItem*")
+)
+
+(define-method set_focus_item
+  (of-object "MaiaWindow")
+  (c-name "maia_window_set_focus_item")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "value")
+  )
+)
+
+(define-method get_grab_pointer_item
+  (of-object "MaiaWindow")
+  (c-name "maia_window_get_grab_pointer_item")
+  (return-type "MaiaItem*")
+)
+
+(define-method set_grab_pointer_item
+  (of-object "MaiaWindow")
+  (c-name "maia_window_set_grab_pointer_item")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "value")
+  )
+)
+
+(define-method get_grab_keyboard_item
+  (of-object "MaiaWindow")
+  (c-name "maia_window_get_grab_keyboard_item")
+  (return-type "MaiaItem*")
+)
+
+(define-method set_grab_keyboard_item
+  (of-object "MaiaWindow")
+  (c-name "maia_window_set_grab_keyboard_item")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "value")
+  )
+)
+
 (define-method get_surface
   (of-object "MaiaWindow")
   (c-name "maia_window_get_surface")

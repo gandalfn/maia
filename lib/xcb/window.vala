@@ -254,12 +254,52 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         if (m_FrontBuffer != null)
         {
             var ctx = m_FrontBuffer.context;
-            ctx.clip_region(inArea);
-            ctx.pattern = inContext.surface;
-            ctx.paint ();
+            ctx.save ();
+            {
+                ctx.operator = Graphic.Operator.SOURCE;
+                ctx.clip_region(inArea);
+                ctx.pattern = inContext.surface;
+                ctx.paint ();
+            }
+            ctx.restore ();
         }
 
         // Flush all pendings operations
         connection.flush ();
+    }
+
+    internal override bool
+    on_grab_pointer (Item inItem)
+    {
+        bool ret = base.on_grab_pointer (inItem);
+
+        // an item was grabbed grab pointer
+        if (ret && grab_pointer_item != null)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab pointer %s", inItem.name);
+            m_Window.grab_pointer (connection, true,
+                                   global::Xcb.EventMask.EXPOSURE            |
+                                   global::Xcb.EventMask.STRUCTURE_NOTIFY    |
+                                   global::Xcb.EventMask.SUBSTRUCTURE_NOTIFY |
+                                   global::Xcb.EventMask.BUTTON_PRESS        |
+                                   global::Xcb.EventMask.BUTTON_RELEASE      |
+                                   global::Xcb.EventMask.POINTER_MOTION,
+                                   global::Xcb.GrabMode.ASYNC,
+                                   global::Xcb.GrabMode.ASYNC,
+                                   m_Window, global::Xcb.NONE, global::Xcb.CURRENT_TIME);
+        }
+
+        return ret;
+    }
+
+    internal override void
+    on_ungrab_pointer (Item inItem)
+    {
+        base.on_ungrab_pointer (inItem);
+
+        if (grab_pointer_item == null)
+        {
+            connection.ungrab_pointer (global::Xcb.CURRENT_TIME);
+        }
     }
 }
