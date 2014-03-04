@@ -20,19 +20,16 @@
 internal class Maia.Cairo.ImagePng : Graphic.ImagePng
 {
     // properties
-    private string            m_Filename  = null;
-    private Graphic.Size      m_Size      = Graphic.Size (0, 0);
     private Graphic.Surface   m_Surface   = null;
-    private Graphic.Transform m_Transform = new Graphic.Transform.identity ();
 
     // accessors
     public override string? filename {
         get {
-            return m_Filename;
+            return base.filename;
         }
         set {
             // Set filename
-            m_Filename = value;
+            base.filename = value;
 
             // Initialize surface
             m_Surface = null;
@@ -41,18 +38,18 @@ internal class Maia.Cairo.ImagePng : Graphic.ImagePng
 
     public override Graphic.Size size {
         get {
-            if (m_Size.is_empty ())
+            if (base.size.is_empty ())
             {
                 return surface != null ? surface.size : Graphic.Size (0, 0);
             }
-            return m_Size;
+            return base.size;
         }
         set {
             // Reset transform
-            m_Transform.init ();
+            transform.init ();
 
             // Set size
-            m_Size = value;
+            base.size = value;
 
             // Initialize surface
             m_Surface = null;
@@ -61,17 +58,17 @@ internal class Maia.Cairo.ImagePng : Graphic.ImagePng
 
     public override Graphic.Transform transform {
         get {
-            return m_Transform;
+            return base.transform;
         }
         set {
             // Remove old user transform
-            unowned Graphic.Transform? user_transform = m_Transform.first () as Graphic.Transform;
+            unowned Graphic.Transform? user_transform = transform.first () as Graphic.Transform;
             if (user_transform != null)
             {
                 user_transform.parent = null;
             }
             // add new one
-            m_Transform.add (value);
+            transform.add (value);
 
             // Initialize surface
             m_Surface = null;
@@ -99,14 +96,15 @@ internal class Maia.Cairo.ImagePng : Graphic.ImagePng
         {
             // Load png image
             var image_surface = new global::Cairo.ImageSurface.from_png (filename);
+            var size = base.size;
 
             // Size is set
-            if (!m_Size.is_empty ())
+            if (!size.is_empty ())
             {
                 // Calculate the transform
-                double scale = double.max ((double)image_surface.get_width () / m_Size.width, (double)image_surface.get_height () / m_Size.height);
-                m_Transform.translate (((image_surface.get_width () / scale) - m_Size.width) / 2, ((image_surface.get_height () / scale) - m_Size.height) / 2);
-                m_Transform.scale (scale, scale);
+                double scale = double.max ((double)image_surface.get_width () / size.width, (double)image_surface.get_height () / size.height);
+                transform.translate (((image_surface.get_width () / scale) - size.width) / 2, ((image_surface.get_height () / scale) - size.height) / 2);
+                transform.scale (scale, scale);
             }
 
             m_Surface = new Surface  (image_surface, image_surface.get_width (), image_surface.get_height ());

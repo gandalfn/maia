@@ -30,17 +30,22 @@ const string manifest = "Window.test {" +
                         "           font_description: 'Liberation Sans 48';" +
                         "           stroke_pattern: rgb (0, 0, 0);" +
                         "       }" +
+                        "       Image.image {" +
+                        "           row: 1;" +
+                        "           columns: 2;" +
+                        "           filename: /usr/share/pixmaps/gnome-computer.png;" +
+                        "       }" +
                         "       Button.cancel {" +
                         "           stroke-pattern: #000000;" +
                         "           button-color: #B0B0B0;" +
-                        "           row: 1;" +
+                        "           row: 2;" +
                         "           font-description: 'Liberation Bold 14';" +
                         "           label: 'Cancel';" +
                         "       }" +
                         "       Button.ok {" +
                         "           stroke-pattern: #000000;" +
                         "           button-color: #B0B0B0;" +
-                        "           row: 1;" +
+                        "           row: 2;" +
                         "           column: 1;" +
                         "           font-description: 'Liberation Bold 14';" +
                         "           label: 'OK';" +

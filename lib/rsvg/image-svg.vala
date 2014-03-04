@@ -20,20 +20,16 @@
 internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
 {
     // properties
-    private string            m_Filename  = null;
-    private string            m_Data      = null;
-    private Graphic.Size      m_Size      = Graphic.Size (0, 0);
     private Graphic.Surface   m_Surface   = null;
-    private Graphic.Transform m_Transform = new Graphic.Transform.identity ();
 
     // accessors
     public override string? filename {
         get {
-            return m_Filename;
+            return base.filename;
         }
         set {
             // Set filename
-            m_Filename = value;
+            base.filename = value;
 
             // Initialize surface
             m_Surface = null;
@@ -42,11 +38,11 @@ internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
 
     public override string? data {
         get {
-            return m_Data;
+            return base.data;
         }
         set {
             // Set data
-            m_Data = value;
+            base.data = value;
 
             // Initialize surface
             m_Surface = null;
@@ -55,18 +51,18 @@ internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
 
     public override Graphic.Size size {
         get {
-            if (m_Size.is_empty ())
+            if (base.size.is_empty ())
             {
                 return surface != null ? surface.size : Graphic.Size (0, 0);
             }
-            return m_Size;
+            return base.size;
         }
         set {
             // Reset transform
-            m_Transform.init ();
+            transform.init ();
 
             // Set size
-            m_Size = value;
+            base.size = value;
 
             // Initialize surface
             m_Surface = null;
@@ -75,17 +71,17 @@ internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
 
     public override Graphic.Transform transform {
         get {
-            return m_Transform;
+            return base.transform;
         }
         set {
             // Remove old user transform
-            unowned Graphic.Transform? user_transform = m_Transform.first () as Graphic.Transform;
+            unowned Graphic.Transform? user_transform = transform.first () as Graphic.Transform;
             if (user_transform != null)
             {
                 user_transform.parent = null;
             }
             // add new one
-            m_Transform.add (value);
+            transform.add (value);
 
             // Initialize surface
             m_Surface = null;
@@ -118,6 +114,7 @@ internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
         {
             try
             {
+                var size = base.size;
                 global::Rsvg.Handle handle = null;
 
                 // Load image
@@ -144,12 +141,12 @@ internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
                     if (handle.render_cairo (ctx))
                     {
                         // Size is set
-                        if (!m_Size.is_empty ())
+                        if (!size.is_empty ())
                         {
                             // Calculate the transform
-                            double scale = double.max ((double)handle.width / m_Size.width, (double)handle.height / m_Size.height);
-                            m_Transform.translate (((handle.width / scale) - m_Size.width) / 2, ((handle.height / scale) - m_Size.height) / 2);
-                            m_Transform.scale (scale, scale);
+                            double scale = double.max ((double)handle.width / size.width, (double)handle.height / size.height);
+                            transform.translate (((handle.width / scale) - size.width) / 2, ((handle.height / scale) - size.height) / 2);
+                            transform.scale (scale, scale);
                         }
                     }
                     else
