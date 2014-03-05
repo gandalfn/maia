@@ -84,7 +84,7 @@ public class Maia.Application : Maia.Core.Object
             unowned Window window = child as Window;
             if (window != null)
             {
-                if (window.visible)
+                if (window.visible && (window.geometry == null || (window.damaged != null && !window.damaged.is_empty ())))
                 {
                     // set window geometry from its size requested
                     var geometry = new Graphic.Region (Graphic.Rectangle (window.position.x,
