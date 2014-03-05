@@ -22,7 +22,6 @@ public abstract class Maia.Graphic.Image : Graphic.Pattern
     // accessors
     public virtual string?           filename  { get; set; default = null; }
     public virtual Graphic.Size      size      { get; set; default = Graphic.Size (0, 0); }
-    public virtual Graphic.Transform transform { get; set; default = new Graphic.Transform.identity (); }
     public virtual Surface? surface {
         get {
             return null;

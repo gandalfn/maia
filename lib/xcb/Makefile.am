@@ -21,11 +21,14 @@ libmaia_xcb_la_CFLAGS = \
 libmaia_xcb_la_VALAFLAGS = \
     --pkg=xcb \
     --pkg=xcb-keysyms \
-    --pkg=xcb-keysym
+    --pkg=xcb-keysym \
+    --pkg=xcb-cursor \
+    --pkg=xcb-cursorfont
 
 libmaia_xcb_la_SOURCES = \
     init.vala \
     keysym.vala \
+    cursor.vala \
     connection-watch.vala \
     atoms.vala \
     application.vala \

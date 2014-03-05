@@ -115,13 +115,18 @@ public class Maia.Cairo.Context : Graphic.Context
             return base.pattern;
         }
         set {
+            if (base.pattern != null)
+            {
+                base.pattern.transform.changed.disconnect (on_pattern_transform_changed);
+            }
             base.pattern = value;
 
-            global::Cairo.Pattern? pattern = pattern_to_cairo (value);
-            if (pattern != null)
+            if (base.pattern != null)
             {
-                m_Context.set_source (pattern);
+                base.pattern.transform.changed.connect (on_pattern_transform_changed);
             }
+
+            on_pattern_transform_changed ();
         }
     }
 
@@ -129,6 +134,24 @@ public class Maia.Cairo.Context : Graphic.Context
     public Context (Graphic.Surface inSurface)
     {
         base (inSurface);
+    }
+
+    private void
+    on_pattern_transform_changed ()
+    {
+        base.pattern.transform.changed.disconnect (on_pattern_transform_changed);
+        global::Cairo.Pattern? pattern = pattern_to_cairo (base.pattern);
+        if (pattern != null)
+        {
+            global::Cairo.Matrix matrix = global::Cairo.Matrix (base.pattern.transform.matrix.xx, base.pattern.transform.matrix.yx,
+                                                                base.pattern.transform.matrix.xy, base.pattern.transform.matrix.yy,
+                                                                base.pattern.transform.matrix.x0, base.pattern.transform.matrix.y0);
+            pattern.set_filter (global::Cairo.Filter.BEST);
+            pattern.set_matrix (matrix);
+            
+            m_Context.set_source (pattern);
+        }
+        base.pattern.transform.changed.connect (on_pattern_transform_changed);
     }
 
     private global::Cairo.Pattern?
@@ -139,18 +162,11 @@ public class Maia.Cairo.Context : Graphic.Context
         if (inPattern is Graphic.Surface)
         {
             pattern = new global::Cairo.Pattern.for_surface ((global::Cairo.Surface)((Surface)inPattern).native);
-            pattern.set_filter (global::Cairo.Filter.BEST);
         }
         else if (inPattern is Graphic.Image)
         {
             unowned Graphic.Image image = (Graphic.Image)inPattern;
             pattern = new global::Cairo.Pattern.for_surface ((global::Cairo.Surface)image.surface.native);
-            global::Cairo.Matrix matrix = global::Cairo.Matrix (image.transform.matrix.xx, image.transform.matrix.yx,
-                                                                image.transform.matrix.xy, image.transform.matrix.yy,
-                                                                image.transform.matrix.x0, image.transform.matrix.y0);
-            pattern.set_filter (global::Cairo.Filter.BEST);
-            pattern.set_matrix (matrix);
-            m_Context.set_source (pattern);
         }
         else if (inPattern is Graphic.Color)
         {

@@ -226,6 +226,42 @@ public class Maia.Window : Grid
                 {
                     button_press_event (mouse_args.button, convert_to_item_space (mouse_args.position));
                 }
+
+                // scroll buttons
+                if (mouse_args.button >= 4)
+                {
+                    Scroll scroll = Scroll.NONE;
+
+                    switch (mouse_args.button)
+                    {
+                        case 4:
+                            scroll = Scroll.UP;
+                            break;
+
+                        case 5:
+                            scroll = Scroll.DOWN;
+                            break;
+
+                        case 6:
+                            scroll = Scroll.LEFT;
+                            break;
+
+                        case 7:
+                            scroll = Scroll.RIGHT;
+                            break;
+                    }
+
+                    // we have grab pointer item send event
+                    if (grab_pointer_item != null)
+                    {
+                        grab_pointer_item.scroll_event (scroll, grab_pointer_item.convert_to_item_space (mouse_args.position));
+                    }
+                    // else send event to window
+                    else
+                    {
+                        scroll_event (scroll, convert_to_item_space (mouse_args.position));
+                    }
+                }
             }
 
             if ((mouse_args.flags & MouseEventArgs.EventFlags.BUTTON_RELEASE) == MouseEventArgs.EventFlags.BUTTON_RELEASE)

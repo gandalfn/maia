@@ -61,14 +61,7 @@ internal class Maia.Cairo.ImagePng : Graphic.ImagePng
             return base.transform;
         }
         set {
-            // Remove old user transform
-            unowned Graphic.Transform? user_transform = transform.first () as Graphic.Transform;
-            if (user_transform != null)
-            {
-                user_transform.parent = null;
-            }
-            // add new one
-            transform.add (value);
+            base.transform = value;
 
             // Initialize surface
             m_Surface = null;

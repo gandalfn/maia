@@ -20,8 +20,8 @@
 namespace Maia.Xcb
 {
     struct CodePair {
-        ushort keysym;
-        ushort ucs;
+        global::Xcb.Keysym keysym;
+        unichar ucs;
     }
 
     const CodePair[] c_KeysymTab = {

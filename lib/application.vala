@@ -49,6 +49,7 @@ public class Maia.Application : Maia.Core.Object
     // properties
     private Backends      m_Backends;
     private Core.Timeline m_Timeline;
+    private uint32        m_ForceRefresh = 0;
     private Core.EventBus m_EventBus;
     private GLib.MainLoop m_Loop;
 
@@ -71,6 +72,20 @@ public class Maia.Application : Maia.Core.Object
                 m_Timeline.rewind ();
                 m_Timeline.start ();
             }
+        }
+    }
+
+    [CCode (notify = false)]
+    public bool force_refresh {
+        get {
+            return m_ForceRefresh > 0;
+        }
+        set {
+            if (value)
+                m_ForceRefresh++;
+            else if (m_ForceRefresh > 0)
+                m_ForceRefresh--;
+            on_window_visible_changed ();
         }
     }
 
@@ -231,16 +246,24 @@ public class Maia.Application : Maia.Core.Object
     private void
     on_window_visible_changed ()
     {
-        m_Timeline.stop ();
-
-        foreach (unowned Core.Object child in this)
+        if (m_ForceRefresh == 0)
         {
-            if (((Window)child).visible)
+            m_Timeline.stop ();
+
+            foreach (unowned Core.Object child in this)
             {
-                Log.debug (GLib.Log.METHOD, Log.Category.MAIN, "Start timeline");
-                m_Timeline.start ();
-                break;
+                if (((Window)child).visible)
+                {
+                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN, "Start timeline");
+                    m_Timeline.start ();
+                    break;
+                }
             }
+        }
+        else if (!m_Timeline.is_playing)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.MAIN, "Start timeline");
+            m_Timeline.start ();
         }
     }
 

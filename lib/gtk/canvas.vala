@@ -397,7 +397,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     map ()
     {
         base.map ();
-        //timeline.start ();
+        Application.default.force_refresh = true;
 
         grab_focus ();
     }
@@ -405,7 +405,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     internal override void
     unmap ()
     {
-        //timeline.stop ();
+        Application.default.force_refresh = false;
         base.unmap ();
     }
 

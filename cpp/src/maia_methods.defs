@@ -9262,6 +9262,21 @@
   )
 )
 
+(define-method get_transform
+  (of-object "MaiaGraphicPattern")
+  (c-name "maia_graphic_pattern_get_transform")
+  (return-type "MaiaGraphicTransform*")
+)
+
+(define-method set_transform
+  (of-object "MaiaGraphicPattern")
+  (c-name "maia_graphic_pattern_set_transform")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicTransform*" "value")
+  )
+)
+
 (define-function maia_graphic_device_get_type
   (c-name "maia_graphic_device_get_type")
   (return-type "GType")
@@ -9539,21 +9554,6 @@
   )
 )
 
-(define-method get_transform
-  (of-object "MaiaGraphicImage")
-  (c-name "maia_graphic_image_get_transform")
-  (return-type "MaiaGraphicTransform*")
-)
-
-(define-method set_transform
-  (of-object "MaiaGraphicImage")
-  (c-name "maia_graphic_image_set_transform")
-  (return-type "none")
-  (parameters
-    '("MaiaGraphicTransform*" "value")
-  )
-)
-
 (define-method get_surface
   (of-object "MaiaGraphicImage")
   (c-name "maia_graphic_image_get_surface")
@@ -9806,6 +9806,21 @@
   (return-type "none")
   (parameters
     '("guint" "value")
+  )
+)
+
+(define-method get_force_refresh
+  (of-object "MaiaApplication")
+  (c-name "maia_application_get_force_refresh")
+  (return-type "gboolean")
+)
+
+(define-method set_force_refresh
+  (of-object "MaiaApplication")
+  (c-name "maia_application_set_force_refresh")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
   )
 )
 

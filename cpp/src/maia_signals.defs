@@ -491,15 +491,6 @@
   (construct-only #f)
 )
 
-(define-property transform
-  (of-object "MaiaGraphicImage")
-  (prop-type "GParamObject")
-  (docs "transform")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
 (define-property surface
   (of-object "MaiaGraphicImage")
   (prop-type "GParamObject")
@@ -560,6 +551,15 @@
 )
 
 ;; From MaiaGraphicPattern
+
+(define-property transform
+  (of-object "MaiaGraphicPattern")
+  (prop-type "GParamObject")
+  (docs "transform")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
 
 ;; From MaiaGraphicPoint
 
@@ -892,6 +892,15 @@
   (of-object "MaiaApplication")
   (prop-type "GParamUInt")
   (docs "refresh-rate")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property force-refresh
+  (of-object "MaiaApplication")
+  (prop-type "GParamBoolean")
+  (docs "force-refresh")
   (readable #t)
   (writable #t)
   (construct-only #f)

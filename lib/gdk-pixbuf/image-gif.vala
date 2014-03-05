@@ -72,14 +72,7 @@ internal class Maia.GdkPixbuf.ImageGif : Graphic.ImageGif, Image
             return base.transform;
         }
         set {
-            // Remove old user transform
-            unowned Graphic.Transform? user_transform = transform.first () as Graphic.Transform;
-            if (user_transform != null)
-            {
-                user_transform.parent = null;
-            }
-            // add new one
-            transform.add (value);
+            base.transform = value;
 
             // Destroy surface
             m_Surface = null;

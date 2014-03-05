@@ -19,6 +19,9 @@
 
 public abstract class Maia.Graphic.Pattern : Core.Object
 {
+    // property
+    private Graphic.Transform m_Transform = new Graphic.Transform.identity ();
+    
     // methods
     static construct
     {
@@ -148,5 +151,21 @@ public abstract class Maia.Graphic.Pattern : Core.Object
         requires (inSrc.holds (typeof (string)))
     {
         outDest = new Color.parse ((string)inSrc);
+    }
+
+    public virtual Graphic.Transform transform {
+        get {
+            return m_Transform;
+        }
+        set {
+            // Remove old user transform
+            unowned Graphic.Transform? user_transform = m_Transform.first () as Graphic.Transform;
+            if (user_transform != null)
+            {
+                user_transform.parent = null;
+            }
+            // add new one
+            m_Transform.add (value);
+        }
     }
 }

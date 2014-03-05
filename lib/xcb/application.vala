@@ -20,10 +20,11 @@
 internal class Maia.Xcb.Application : Core.Object
 {
     // properties
-    private global::Xcb.Connection m_Connection;
-    private int                    m_DefaultScreen;
-    private ConnectionWatch        m_Watch;
-    private Atoms                  m_Atoms;
+    private global::Xcb.Connection         m_Connection;
+    private int                            m_DefaultScreen;
+    private ConnectionWatch                m_Watch;
+    private Atoms                          m_Atoms;
+    private global::Xcb.Util.CursorContext m_Cursors;
 
     // accessors
     public global::Xcb.Connection connection {
@@ -44,6 +45,12 @@ internal class Maia.Xcb.Application : Core.Object
         }
     }
 
+    public global::Xcb.Util.CursorContext cursors {
+        get {
+            return m_Cursors;
+        }
+    }
+    
     // methods
     public Application (string? inDisplay = null)
     {
@@ -52,5 +59,6 @@ internal class Maia.Xcb.Application : Core.Object
         m_Connection = new global::Xcb.Connection (inDisplay, out m_DefaultScreen);
         m_Atoms = new Atoms (m_Connection);
         m_Watch = new ConnectionWatch (m_Connection);
+        m_Cursors = global::Xcb.Util.CursorContext.create (m_Connection, m_Connection.roots[m_DefaultScreen]);
     }
 }

@@ -25,6 +25,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     private bool               m_Realized = false;
     private Pixmap             m_BackBuffer = null;
     private Graphic.Surface    m_FrontBuffer = null;
+    private double             m_Offset = 0.0;
 
     // accessors
     public string backend {
@@ -127,7 +128,22 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         mouse_event      = new Core.Event ("mouse",      ((int)m_Window).to_pointer ());
         keyboard_event   = new Core.Event ("keyboard",   ((int)m_Window).to_pointer ());
 
+        scroll_event.connect (on_scroll);
+
         visible = false;
+    }
+
+    private bool
+    on_scroll (Scroll inScroll, Graphic.Point inPosition)
+    {
+        if (inScroll == Scroll.UP)
+            m_Offset++;
+        else if (inScroll == Scroll.DOWN)
+            m_Offset--;
+
+        damage ();
+
+        return true;
     }
 
     internal override void
@@ -261,7 +277,9 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
                 ctx.operator = Graphic.Operator.SOURCE;
                 ctx.clip_region(inArea);
                 ctx.pattern = inContext.surface;
+                ctx.pattern.transform.translate (0, m_Offset);
                 ctx.paint ();
+                ctx.pattern.transform.translate (0, -m_Offset);
             }
             ctx.restore ();
         }
@@ -303,5 +321,21 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         {
             connection.ungrab_pointer (global::Xcb.CURRENT_TIME);
         }
+    }
+
+    internal override void
+    on_set_pointer_cursor (Cursor inCursor)
+    {
+        uint32 mask = global::Xcb.Cw.CURSOR;
+        uint32[] values = { create_cursor (connection, inCursor) };
+        m_Window.change_attributes (connection, mask, values);
+    }
+
+    internal override void
+    on_move_pointer (Graphic.Point inPosition)
+    {
+        var item_size = size_requested.is_empty () ? size : size_requested;
+        m_Window.warp_pointer (connection, m_Window, 0, 0, (uint16)item_size.width, (uint16)item_size.height, (int16)inPosition.x, (int16)inPosition.y);
+        connection.flush ();
     }
 }

@@ -742,7 +742,7 @@ namespace Xcb
 		 * @param connection The connection.
 		 */
 		[CCode (cname = "xcb_change_window_attributes", instance_pos = 1.1)]
-		public VoidCookie change_attributes (Xcb.Connection connection, [CCode (array_length = false)]uint32[]? value_list = null);
+		public VoidCookie change_attributes (Xcb.Connection connection, uint32 mask, [CCode (array_length = false)]uint32[]? value_list = null);
 		/**
 		 * change window attributes
 		 * 
@@ -751,7 +751,7 @@ namespace Xcb
 		 * @param connection The connection.
 		 */
 		[CCode (cname = "xcb_change_window_attributes_checked", instance_pos = 1.1)]
-		public VoidCookie change_attributes_checked (Xcb.Connection connection, [CCode (array_length = false)]uint32[]? value_list = null);
+		public VoidCookie change_attributes_checked (Xcb.Connection connection, uint32 mask, [CCode (array_length = false)]uint32[]? value_list = null);
 		/**
 		 * Gets window attributes
 		 * 

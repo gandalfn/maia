@@ -15,6 +15,8 @@ noinst_DATA = \
     xcb.vapi \
     xcb-keysym.vapi \
     xcb-keysyms.vapi \
+    xcb-cursor.vapi \
+    xcb-cursorfont.vapi \
     cairo.vapi \
     cairo-xcb.vapi \
     valgrind.vapi \

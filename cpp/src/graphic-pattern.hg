@@ -18,7 +18,7 @@
  */
 
 #include <maia.h>
-#include <maiamm/graphic-rectangle.h>
+#include <maiamm/graphic-transform.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/core-object_p.h)
@@ -32,6 +32,11 @@ namespace Maia
         class Pattern : public Core::Object
         {
             _CLASS_GOBJECT(Pattern, MaiaGraphicPattern, MAIA_GRAPHIC_PATTERN, Core::Object, MaiaCoreObject)
+
+            _WRAP_METHOD(Glib::RefPtr<Transform> get_transform () const, maia_graphic_pattern_get_transform, refreturn)
+            _WRAP_METHOD(void set_transform (const Glib::RefPtr<Transform>& inTransform) const, maia_graphic_pattern8_set_transform)
+            
+            _WRAP_PROPERTY ("transform", Glib::RefPtr<Transform>)
         };
 
     }

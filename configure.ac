@@ -54,7 +54,8 @@ GTKSOURCEVIEW_REQUIRED=2.10.0
 GLIBMM_REQUIRED=2.32.0
 GTKMM_REQUIRED=2.24.0
 XCB_REQUIRED=1.9
-XCB_UTIL_REQUIRED=0.3.9
+XCB_UTIL_KEYSYMS_REQUIRED=0.3.9
+XCB_UTIL_CURSOR_REQUIRED=0.1.1
 AC_SUBST(GLIB_REQUIRED)
 AC_SUBST(CAIRO_REQUIRED)
 AC_SUBST(PANGO_REQUIRED)
@@ -93,8 +94,7 @@ PKG_CHECK_MODULES(MAIA, [glib-2.0 >= $GLIB_REQUIRED
                          gio-2.0 >= $GLIB_REQUIRED
                          gio-unix-2.0 >= $GLIB_REQUIRED
                          gobject-2.0 >= $GLIB_REQUIRED
-                         gmodule-2.0 >= $GLIB_REQUIRED
-                         xproto])
+                         gmodule-2.0 >= $GLIB_REQUIRED])
 AC_SUBST(MAIA_CFLAGS)
 AC_SUBST(MAIA_LIBS)
 
@@ -117,7 +117,8 @@ dnl ****************************************************************************
 dnl Check for xcb packages
 dnl ****************************************************************************
 PKG_CHECK_MODULES(MAIA_XCB, [xcb >= $XCB_REQUIRED
-                             xcb-keysyms >= $XCB_UTIL_REQUIRED])
+                             xcb-keysyms >= $XCB_UTIL_KEYSYMS_REQUIRED
+                             xcb-cursor >= $XCB_UTIL_CURSOR_REQUIRED])
 AC_SUBST(MAIA_XCB_CFLAGS)
 AC_SUBST(MAIA_XCB_LIBS)
 
