@@ -95,6 +95,7 @@ libmaia_la_SOURCES = \
     geometry-event-args.vala \
     visibility-event-args.vala \
     mouse-event-args.vala \
+    keyboard-event-args.vala \
     delete-event-args.vala \
     keysym.vala \
     cursor.vala \

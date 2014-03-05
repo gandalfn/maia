@@ -23,6 +23,8 @@ BUILD_FILES = \
 TOOLS_FILES = \
     tools/generate-gdk-key-convert \
     tools/generate-gdk-keysym-vapi \
+    tools/generate-xcb-key-convert \
+    tools/generate-xcb-keysym-vapi \
     tools/generate-keysym-enum
 
 EXTRA_DIST = \

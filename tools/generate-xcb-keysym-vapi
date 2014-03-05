@@ -7,7 +7,7 @@ BEGIN {
     first=1;
     print "/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */"
     print "/*"
-    print " * gdk-keysym.vapi"
+    print " * xcb-keysym.vapi"
     print " * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>"
     print " *"
     print " * maia is free software: you can redistribute it and/or modify it"
@@ -24,9 +24,9 @@ BEGIN {
     print " * along with this program.  If not, see <http://www.gnu.org/licenses/>."
     print " */"
     print ""
-    printf "[CCode (cheader_filename = \"gdk/gdkkeysyms.h\")]\n"
-    printf "namespace Gdk\n{\n"
-    printf "    [CCode (cname = \"int\", cprefix = \"GDK_KEY_\", has_type_id=false)]\n"
+    printf "[CCode (cheader_filename = \"X11/keysym.h\")]\n"
+    printf "namespace Xcb\n{\n"
+    printf "    [CCode (cname = \"int\", cprefix = \"XK_\", cheader_filename = \"X11/keysym.h\", has_type_id=false)]\n"
     printf "    public enum KeySym\n    {"
     ignore=0
 }

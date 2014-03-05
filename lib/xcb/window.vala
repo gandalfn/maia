@@ -146,6 +146,8 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
                                 global::Xcb.EventMask.SUBSTRUCTURE_NOTIFY |
                                 global::Xcb.EventMask.BUTTON_PRESS        |
                                 global::Xcb.EventMask.BUTTON_RELEASE      |
+                                global::Xcb.EventMask.KEY_PRESS           |
+                                global::Xcb.EventMask.KEY_RELEASE         |
                                 global::Xcb.EventMask.POINTER_MOTION };
 
             // Create window

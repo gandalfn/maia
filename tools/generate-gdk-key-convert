@@ -2,7 +2,7 @@
 
 XKEYSYM_FILE=/usr/include/X11/keysymdef.h
 
-cat $XKEYSYM_FILE | grep "#define" | grep -v "\\\\#define" | awk '
+cat $XKEYSYM_FILE | awk '
 BEGIN {
     start=1
     print "/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */"
@@ -25,11 +25,22 @@ BEGIN {
     print " */"
     print ""
     printf "namespace Maia.Gtk\n{\n"
+    printf "    private static Maia.Core.Map<global::Gdk.KeySym, Maia.Key> s_Keysyms = null;\n\n"
     printf "    internal static Maia.Key\n"
     printf "    convert_gdk_key_to_key (global::Gdk.KeySym inKey)\n"
     printf "    {\n"
+    printf "        if (s_Keysyms == null)\n"
+    printf "        {\n"
+    printf "            s_Keysyms = new Maia.Core.Map<global::Gdk.KeySym, Maia.Key> ();\n\n"
+    ignore=0
 }
 {
+    if (match ($0, "#ifdef.*XK_3270.*") || match ($0, "#ifdef.*XK_TECHNICAL.*") || match ($0, "#ifdef.*XK_APL.*") ||
+        match ($0, "#ifdef.*XK_SPECIAL.*")) 
+        ignore=1
+    if (match ($0, "#endif.*"))
+        ignore=0
+    
     val=$2
     if (val == "XF86XK_Clear")
     {
@@ -39,7 +50,8 @@ BEGIN {
     {
         val="XF86XK_SelectButton";
     }
-    if (val != "XF86XK_Q" && val != "XF86XK_Calculater" && match (val, "XK_Sinh*") == 0 &&
+    if (match ($0, "^#define XK_.*") && ignore == 0 &&
+        val != "XF86XK_Q" && val != "XF86XK_Calculater" && match (val, "XK_Sinh*") == 0 &&
         val != "XK_dead_greek" && val != "XK_ch" && val != "XK_Ch" && val != "XK_CH" &&
         val != "XK_c_h" && val != "XK_C_h" && val != "XK_C_H" && val != "XK_permille" &&
         val != "XK_EZH" && val != "XK_ezh")
@@ -85,17 +97,12 @@ BEGIN {
         {
             val="@9";
         }
-        if (start == 1)
-            printf ("        if (inKey == global::Gdk.KeySym.%s)\n", val);
-        else
-            printf ("        else if (inKey == global::Gdk.KeySym.%s)\n", val);
-        printf("            return Maia.Key.%s;\n", val);
-        start=0;
+        printf("            s_Keysyms[global::Gdk.KeySym.%s] = Maia.Key.%s;\n", val, val);
     }
 }
 END {
-    printf "        \n"
-    printf "        return Maia.Key.VoidSymbol;\n"
+    printf "        }\n\n"
+    printf "        return (Maia.Key)s_Keysyms[inKey];\n"
     printf "    }\n"
     printf "}\n"
 }'

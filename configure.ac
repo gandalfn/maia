@@ -54,6 +54,7 @@ GTKSOURCEVIEW_REQUIRED=2.10.0
 GLIBMM_REQUIRED=2.32.0
 GTKMM_REQUIRED=2.24.0
 XCB_REQUIRED=1.9
+XCB_UTIL_REQUIRED=0.3.9
 AC_SUBST(GLIB_REQUIRED)
 AC_SUBST(CAIRO_REQUIRED)
 AC_SUBST(PANGO_REQUIRED)
@@ -115,7 +116,8 @@ AC_SUBST(MAIA_CAIRO_LIBS)
 dnl ****************************************************************************
 dnl Check for xcb packages
 dnl ****************************************************************************
-PKG_CHECK_MODULES(MAIA_XCB, [xcb >= $XCB_REQUIRED])
+PKG_CHECK_MODULES(MAIA_XCB, [xcb >= $XCB_REQUIRED
+                             xcb-keysyms >= $XCB_UTIL_REQUIRED])
 AC_SUBST(MAIA_XCB_CFLAGS)
 AC_SUBST(MAIA_XCB_LIBS)
 

@@ -80,9 +80,12 @@ public class Maia.Cairo.Surface : Graphic.Surface
         }
         construct set {
             base.device = value;
-            m_Surface = null;
+            if (base.device != null)
+            {
+                m_Surface = null;
 
-            create_surface_from_device ();
+                create_surface_from_device ();
+            }
         }
     }
 

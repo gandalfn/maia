@@ -107,7 +107,7 @@ internal class Maia.Cairo.ImagePng : Graphic.ImagePng
                 transform.scale (scale, scale);
             }
 
-            m_Surface = new Surface  (image_surface, image_surface.get_width (), image_surface.get_height ());
+            m_Surface = new Graphic.Surface.from_native  (image_surface, image_surface.get_width (), image_surface.get_height ());
         }
     }
 }

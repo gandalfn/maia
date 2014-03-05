@@ -32,8 +32,13 @@ const string manifest = "Window.test {" +
                         "       }" +
                         "       Image.image {" +
                         "           row: 1;" +
-                        "           columns: 2;" +
-                        "           filename: /usr/share/pixmaps/gnome-computer.png;" +
+                        "           size: 128, 128;" +
+                        "           filename: /usr/share/pixmaps/gksu.png;" +
+                        "       }" +
+                        "       Entry.entry {" +
+                        "           row: 1;" +
+                        "           column: 1;" +
+                        "           lines: 6;" +
                         "       }" +
                         "       Button.cancel {" +
                         "           stroke-pattern: #000000;" +

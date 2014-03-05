@@ -21,6 +21,7 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
 {
     // properties
     private unowned global::Xcb.Connection m_Connection;
+    private global::Xcb.Util.KeySymbols    m_Symbols;
 
     // methods
     public ConnectionWatch (global::Xcb.Connection inConnection)
@@ -28,6 +29,9 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
         base (inConnection.file_descriptor);
 
         m_Connection = inConnection;
+
+        // Get keyboard mapping
+        m_Symbols = new global::Xcb.Util.KeySymbols (m_Connection);
     }
 
     internal override void
@@ -88,7 +92,7 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
                 case global::Xcb.EventType.BUTTON_PRESS:
                     unowned global::Xcb.ButtonPressEvent evt_button_press = (global::Xcb.ButtonPressEvent)evt;
 
-                    // send event geometry
+                    // send event mouse
                     Core.EventBus.default.publish ("mouse", ((int)evt_button_press.event).to_pointer (),
                                                    new MouseEventArgs (MouseEventArgs.EventFlags.BUTTON_PRESS,
                                                                        evt_button_press.detail,
@@ -100,7 +104,7 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
                 case global::Xcb.EventType.BUTTON_RELEASE:
                     unowned global::Xcb.ButtonReleaseEvent evt_button_release = (global::Xcb.ButtonReleaseEvent)evt;
 
-                    // send event geometry
+                    // send event mouse
                     Core.EventBus.default.publish ("mouse", ((int)evt_button_release.event).to_pointer (),
                                                    new MouseEventArgs (MouseEventArgs.EventFlags.BUTTON_RELEASE,
                                                                        evt_button_release.detail,
@@ -112,7 +116,7 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
                 case global::Xcb.EventType.MOTION_NOTIFY:
                     unowned global::Xcb.MotionNotifyEvent evt_motion_notify = (global::Xcb.MotionNotifyEvent)evt;
 
-                    // send event geometry
+                    // send event mouse
                     Core.EventBus.default.publish ("mouse", ((int)evt_motion_notify.event).to_pointer (),
                                                    new MouseEventArgs (MouseEventArgs.EventFlags.MOTION,
                                                                        evt_motion_notify.detail,
@@ -141,13 +145,35 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
                     // send event geometry
                     Core.EventBus.default.publish ("destroy", ((int)evt_destroy_notify.window).to_pointer (), null);
                     break;
+
+                // key press event
+                case global::Xcb.EventType.KEY_PRESS:
+                    unowned global::Xcb.KeyPressEvent evt_key_press = (global::Xcb.KeyPressEvent)evt;
+
+                    send_keyboard_event (evt_key_press.event, true, evt_key_press.state, evt_key_press.detail);
+                    break;
+
+                // key press event
+                case global::Xcb.EventType.KEY_RELEASE:
+                    unowned global::Xcb.KeyReleaseEvent evt_key_release = (global::Xcb.KeyReleaseEvent)evt;
+
+                    send_keyboard_event (evt_key_release.event, false, evt_key_release.state, evt_key_release.detail);
+                    break;
+
+                // mapping notify event
+                case global::Xcb.EventType.MAPPING_NOTIFY:
+                    unowned global::Xcb.MappingNotifyEvent evt_mapping_notify = (global::Xcb.MappingNotifyEvent)evt;
+
+                    // refresh keybaord mapping
+                    m_Symbols.refresh_keyboard_mapping (evt_mapping_notify);
+                    break;
             }
         }
 
         return true;
     }
 
-    public void
+    private void
     on_delete_event_reply (Core.EventArgs? inArgs)
     {
         unowned DeleteEventArgs args = inArgs as DeleteEventArgs;
@@ -158,5 +184,66 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
             args.window.destroy (m_Connection);
             m_Connection.flush ();
         }
+    }
+
+    private void
+    send_keyboard_event (global::Xcb.Window inWindow, bool inPress, global::Xcb.KeyButMask inMask, global::Xcb.Keycode inCode)
+    {
+        Maia.Modifier modifier = Maia.Modifier.NONE;
+
+        int col = 0;
+
+        // Shift key
+        if ((inMask & global::Xcb.KeyButMask.SHIFT) == global::Xcb.KeyButMask.SHIFT)
+        {
+            modifier |= Maia.Modifier.SHIFT;
+            col++;
+        }
+
+        // Control key
+        if ((inMask & global::Xcb.KeyButMask.CONTROL) == global::Xcb.KeyButMask.CONTROL)
+        {
+            modifier |= Maia.Modifier.CONTROL;
+        }
+
+        // Super key
+        if ((inMask & global::Xcb.KeyButMask.MOD_1) == global::Xcb.KeyButMask.MOD_1)
+        {
+            modifier |= Maia.Modifier.ALT;
+        }
+
+        // Super key
+        if ((inMask & global::Xcb.KeyButMask.MOD_4) == global::Xcb.KeyButMask.MOD_4)
+        {
+            modifier |= Maia.Modifier.SUPER;
+        }
+
+        // Cap lock
+        if ((inMask & global::Xcb.KeyButMask.LOCK) == global::Xcb.KeyButMask.LOCK)
+        {
+            col += 2;
+        }
+
+        // Altgr
+        if ((inMask & global::Xcb.KeyButMask.MOD_5) == global::Xcb.KeyButMask.MOD_5)
+        {
+            col += 4;
+        }
+        // Verr num
+        if (global::Xcb.Util.is_keypad_key (m_Symbols[inCode, 0]) &&
+            (inMask & global::Xcb.KeyButMask.MOD_2) == global::Xcb.KeyButMask.MOD_2)
+            col++;
+
+        // Get the keysym code with the modifier
+        global::Xcb.Keysym keysym = m_Symbols[inCode, col];
+        // convert keysym to maia key
+        Maia.Key key = convert_xcb_keysym_to_key (keysym);
+        // convert keysym to unichar
+        unichar car = keysym_to_unicode (keysym);
+
+        // send keyboard event
+        Core.EventBus.default.publish ("keyboard", ((int)inWindow).to_pointer (),
+                                                   new KeyboardEventArgs (inPress ? KeyboardEventArgs.State.PRESS : KeyboardEventArgs.State.RELEASE,
+                                                                          modifier, key, car));
     }
 }

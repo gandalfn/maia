@@ -144,7 +144,7 @@ public class Maia.Cairo.Context : Graphic.Context
         else if (inPattern is Graphic.Image)
         {
             unowned Graphic.Image image = (Graphic.Image)inPattern;
-            pattern = new global::Cairo.Pattern.for_surface ((global::Cairo.Surface)((Surface)image.surface).native);
+            pattern = new global::Cairo.Pattern.for_surface ((global::Cairo.Surface)image.surface.native);
             global::Cairo.Matrix matrix = global::Cairo.Matrix (image.transform.matrix.xx, image.transform.matrix.yx,
                                                                 image.transform.matrix.xy, image.transform.matrix.yy,
                                                                 image.transform.matrix.x0, image.transform.matrix.y0);
@@ -217,7 +217,7 @@ public class Maia.Cairo.Context : Graphic.Context
                         if (child_patch is Graphic.MeshGradient.Patch.CornerColor)
                         {
                             var corner_color = (Graphic.MeshGradient.Patch.CornerColor)child_patch;
-                            Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "%u %s\n", corner_color.num, corner_color.color.to_string ());
+                            Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "%u %s", corner_color.num, corner_color.color.to_string ());
                             mesh_pattern.set_corner_color_rgba (corner_color.num, corner_color.color.red, corner_color.color.green,
                                                                 corner_color.color.blue, corner_color.color.alpha);
                         }
@@ -249,19 +249,19 @@ public class Maia.Cairo.Context : Graphic.Context
                 break;
 
             case Graphic.Path.DataType.MOVETO:
-                Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "move to %g,%g\n", inPath.points[0].x, inPath.points[0].y);
+                Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "move to %g,%g", inPath.points[0].x, inPath.points[0].y);
                 inPattern.move_to (inPath.points[0].x, inPath.points[0].y);
                 break;
 
             case Graphic.Path.DataType.LINETO:
-                Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "line to %g,%g\n", inPath.points[0].x, inPath.points[0].y);
+                Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "line to %g,%g", inPath.points[0].x, inPath.points[0].y);
                 inPattern.line_to (inPath.points[0].x, inPath.points[0].y);
                 break;
 
             case Graphic.Path.DataType.CURVETO:
-                Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "curve to %g,%g %g,%g %g,%g\n", inPath.points[0].x, inPath.points[0].y,
-                                                                                                       inPath.points[1].x, inPath.points[1].y,
-                                                                                                       inPath.points[2].x, inPath.points[2].y);
+                Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "curve to %g,%g %g,%g %g,%g", inPath.points[0].x, inPath.points[0].y,
+                                                                                                     inPath.points[1].x, inPath.points[1].y,
+                                                                                                     inPath.points[2].x, inPath.points[2].y);
                 inPattern.curve_to (inPath.points[0].x, inPath.points[0].y,
                                     inPath.points[1].x, inPath.points[1].y,
                                     inPath.points[2].x, inPath.points[2].y);

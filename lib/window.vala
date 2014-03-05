@@ -107,7 +107,7 @@ public class Maia.Window : Grid
             m_KeyboardEvent = value;
         }
     }
-    
+
     // methods
     construct
     {
@@ -128,6 +128,9 @@ public class Maia.Window : Grid
 
         // Subscribe to mouse event
         m_MouseEvent.subscribe (on_mouse_event);
+
+        // Subscribe to keyboard event
+        m_KeyboardEvent.subscribe (on_keyboard_event);
 
         // Connect onto signals from childs
         set_pointer_cursor.connect (on_set_pointer_cursor);
@@ -174,6 +177,7 @@ public class Maia.Window : Grid
                 geometry_args.area.size.height != size_requested.height)
             {
                 size = geometry_args.area.size;
+                geometry = null;
             }
         }
     }
@@ -241,6 +245,44 @@ public class Maia.Window : Grid
     }
 
     private void
+    on_keyboard_event (Core.EventArgs? inArgs)
+    {
+        unowned KeyboardEventArgs? keyboard_args = inArgs as KeyboardEventArgs;
+
+        if (keyboard_args != null)
+        {
+            switch (keyboard_args.state)
+            {
+                case KeyboardEventArgs.State.PRESS:
+                    // we have grab keyboard item send event
+                    if (grab_keyboard_item != null)
+                    {
+                        grab_keyboard_item.key_press_event (keyboard_args.key, keyboard_args.character);
+                    }
+                    // we have focus item send event
+                    else if (focus_item != null)
+                    {
+                        focus_item.key_press_event (keyboard_args.key, keyboard_args.character);
+                    }
+                    break;
+
+                case KeyboardEventArgs.State.RELEASE:
+                    // we have grab keyboard item send event
+                    if (grab_keyboard_item != null)
+                    {
+                        grab_keyboard_item.key_release_event (keyboard_args.key, keyboard_args.character);
+                    }
+                    // we have focus item send event
+                    else if (focus_item != null)
+                    {
+                        focus_item.key_release_event (keyboard_args.key, keyboard_args.character);
+                    }
+                    break;
+            }
+        }
+    }
+
+    private void
     on_delete_event (Core.EventArgs? inArgs)
     {
         unowned DeleteEventArgs? delete_args = inArgs as DeleteEventArgs;
@@ -303,7 +345,7 @@ public class Maia.Window : Grid
         }
 
         // Set current item to toolbox
-        unowned Toolbox? toolbox = root.find_by_type<Toolbox> (false);
+        unowned Toolbox? toolbox = find_by_type<Toolbox> (false);
         if (toolbox != null)
         {
             toolbox.current_item_changed (focus_item);
