@@ -86,6 +86,12 @@ public class Maia.Graphic.Path : Core.Object
         parse (inData);
     }
 
+    public Path.from_rectangle (Rectangle inArea)
+    {
+        data_type = DataType.PATH;
+        rectangle (inArea.origin.x, inArea.origin.y, inArea.size.width, inArea.size.height);
+    }
+
     public Path.from_region (Region inRegion)
     {
         data_type = DataType.PATH;

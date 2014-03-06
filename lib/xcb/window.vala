@@ -21,6 +21,8 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 {
     // properties
     private global::Xcb.Window m_Window;
+    private Graphic.Rectangle  m_WindowGeometry;
+    private Graphic.Region     m_WindowDamaged;
     private uint8              m_Depth = 0;
     private bool               m_Realized = false;
     private Pixmap             m_BackBuffer = null;
@@ -133,15 +135,76 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         visible = false;
     }
 
+    internal override void
+    on_damage (Graphic.Region? inArea = null)
+    {
+        base.on_damage (inArea);
+
+        if (damaged != null)
+        {
+            Graphic.Region area = damaged.copy ();
+            area.translate (Graphic.Point (0, m_Offset));
+
+            if (m_WindowDamaged != null)
+                m_WindowDamaged.union_ (area);
+            else
+                m_WindowDamaged = area.copy ();
+        }
+    }
+
+    internal override void
+    on_damage_event (Core.EventArgs? inArgs)
+    {
+        unowned DamageEventArgs? damage_args = inArgs as DamageEventArgs;
+
+        if (damage_args != null)
+        {
+            Graphic.Region area = new Graphic.Region (damage_args.area);
+            if (m_WindowDamaged != null)
+                m_WindowDamaged.union_ (area);
+            else
+                m_WindowDamaged = area.copy ();
+
+            area.translate (Graphic.Point (0, -m_Offset));
+            damage (area);
+        }
+    }
+
+    internal override void
+    on_geometry_event (Core.EventArgs? inArgs)
+    {
+        base.on_geometry_event (inArgs);
+
+        unowned GeometryEventArgs? geometry_args = inArgs as GeometryEventArgs;
+
+        if (geometry_args != null)
+        {
+            m_WindowGeometry = geometry_args.area;
+        }
+    }
+
+    internal override void
+    on_mouse_event (Core.EventArgs? inArgs)
+    {
+        unowned MouseEventArgs? mouse_args = inArgs as MouseEventArgs;
+
+        if (mouse_args != null)
+        {
+            var pos = mouse_args.position;
+            pos.translate (Graphic.Point (0, -m_Offset));
+            base.on_mouse_event (new MouseEventArgs (mouse_args.flags, mouse_args.button, pos.x, pos.y));
+        }
+    }
+
     private bool
     on_scroll (Scroll inScroll, Graphic.Point inPosition)
     {
         if (inScroll == Scroll.UP)
-            m_Offset++;
+            m_Offset+=4;
         else if (inScroll == Scroll.DOWN)
-            m_Offset--;
+            m_Offset-=4;
 
-        damage ();
+        m_WindowDamaged = new Graphic.Region (Graphic.Rectangle (0, 0, m_WindowGeometry.size.width, m_WindowGeometry.size.height));
 
         return true;
     }
@@ -149,7 +212,8 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     internal override void
     on_show ()
     {
-        Graphic.Size item_size = size;
+        var item_size = size;
+        m_WindowGeometry = Graphic.Rectangle (position.x, position.y, item_size.width, item_size.height);
 
         if (!m_Realized)
         {
@@ -169,8 +233,8 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
             // Create window
             m_Window.create_checked (Maia.Xcb.application.connection,
                                      global::Xcb.COPY_FROM_PARENT, screen.root,
-                                     (int16)position.x, (int16)position.y,
-                                     (uint16)item_size.width, (uint16)item_size.height, 0,
+                                     (int16)m_WindowGeometry.origin.x, (int16)m_WindowGeometry.origin.y,
+                                     (uint16)m_WindowGeometry.size.width, (uint16)m_WindowGeometry.size.height, 0,
                                      global::Xcb.WindowClass.INPUT_OUTPUT,
                                      screen.root_visual, mask, values);
 
@@ -181,6 +245,8 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
                                       Xcb.application.atoms[AtomType.WM_PROTOCOLS], global::Xcb.AtomType.ATOM,
                                       32, (void[]?)properties);
 
+            // set window damaged area
+            m_WindowDamaged = new Graphic.Region (Graphic.Rectangle (0, 0, m_WindowGeometry.size.width, m_WindowGeometry.size.height));
             m_Realized = true;
         }
 
@@ -255,8 +321,8 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         if (m_FrontBuffer == null)
         {
             m_FrontBuffer = new Graphic.Surface.from_device (this,
-                                                             (int)geometry.extents.size.width,
-                                                             (int)geometry.extents.size.height);
+                                                             (int)m_WindowGeometry.size.width,
+                                                             (int)m_WindowGeometry.size.height);
         }
     }
 
@@ -267,25 +333,6 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         paint_background (inContext);
 
         base.paint (inContext, inArea);
-
-        // Swap buffer
-        if (m_FrontBuffer != null)
-        {
-            var ctx = m_FrontBuffer.context;
-            ctx.save ();
-            {
-                ctx.operator = Graphic.Operator.SOURCE;
-                ctx.clip_region(inArea);
-                ctx.pattern = inContext.surface;
-                ctx.pattern.transform.translate (0, m_Offset);
-                ctx.paint ();
-                ctx.pattern.transform.translate (0, -m_Offset);
-            }
-            ctx.restore ();
-        }
-
-        // Flush all pendings operations
-        connection.flush ();
     }
 
     internal override bool
@@ -337,5 +384,39 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         var item_size = size_requested.is_empty () ? size : size_requested;
         m_Window.warp_pointer (connection, m_Window, 0, 0, (uint16)item_size.width, (uint16)item_size.height, (int16)inPosition.x, (int16)inPosition.y);
         connection.flush ();
+    }
+
+    internal override void
+    swap_buffer ()
+    {
+        if (m_WindowDamaged != null)
+        {
+            try
+            {
+                // Swap buffer
+                if (m_FrontBuffer != null && m_BackBuffer != null)
+                {
+                    var ctx = m_FrontBuffer.context;
+                    ctx.save ();
+                    {
+                        ctx.operator = Graphic.Operator.SOURCE;
+                        ctx.clip_region (m_WindowDamaged);
+                        ctx.translate (Graphic.Point (0, m_Offset));
+                        ctx.pattern = m_BackBuffer.surface;
+                        ctx.paint ();
+                    }
+                    ctx.restore ();
+                }
+
+                // Flush all pendings operations
+                connection.flush ();
+            }
+            catch (GLib.Error err)
+            {
+                Log.critical (GLib.Log.METHOD, Log.Category.MAIN, "Error on window swap buffer: %s", err.message);
+            }
+
+            m_WindowDamaged = null;
+        }
     }
 }

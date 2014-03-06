@@ -99,32 +99,38 @@ public class Maia.Application : Maia.Core.Object
             unowned Window window = child as Window;
             if (window != null)
             {
-                if (window.visible && (window.geometry == null || (window.damaged != null && !window.damaged.is_empty ())))
+                if (window.visible)
                 {
-                    // set window geometry from its size requested
-                    var geometry = new Graphic.Region (Graphic.Rectangle (window.position.x,
-                                                                          window.position.y,
-                                                                          window.size_requested.width,
-                                                                          window.size_requested.height));
-
-                    if (window.surface != null)
+                    if (window.geometry == null || (window.damaged != null && !window.damaged.is_empty ()))
                     {
-                        try
-                        {
-                            // create context for update after size requested to be sure all surfaces are ready
-                            Graphic.Context ctx = window.surface.context;
+                        // set window geometry from its size requested
+                        var geometry = new Graphic.Region (Graphic.Rectangle (window.position.x,
+                                                                              window.position.y,
+                                                                              window.size_requested.width,
+                                                                              window.size_requested.height));
 
-                            // update geometry of window
-                            window.update (ctx, geometry);
-
-                            // and draw it
-                            window.draw (ctx, geometry);
-                        }
-                        catch (GLib.Error err)
+                        if (window.surface != null)
                         {
-                            Log.critical (GLib.Log.METHOD, Log.Category.MAIN, "Error on window refresh: %s", err.message);
+                            try
+                            {
+                                // create context for update after size requested to be sure all surfaces are ready
+                                Graphic.Context ctx = window.surface.context;
+
+                                // update geometry of window
+                                window.update (ctx, geometry);
+
+                                // and draw it
+                                window.draw (ctx, geometry);
+                            }
+                            catch (GLib.Error err)
+                            {
+                                Log.critical (GLib.Log.METHOD, Log.Category.MAIN, "Error on window refresh: %s", err.message);
+                            }
                         }
                     }
+
+                    // finally swap buffer
+                    window.swap_buffer ();
                 }
             }
         }

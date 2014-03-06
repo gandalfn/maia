@@ -8493,6 +8493,23 @@
   )
 )
 
+(define-function maia_graphic_path_new_from_rectangle
+  (c-name "maia_graphic_path_new_from_rectangle")
+  (return-type "MaiaGraphicPath*")
+  (parameters
+    '("MaiaGraphicRectangle*" "inArea")
+  )
+)
+
+(define-function maia_graphic_path_construct_from_rectangle
+  (c-name "maia_graphic_path_construct_from_rectangle")
+  (return-type "MaiaGraphicPath*")
+  (parameters
+    '("GType" "object_type")
+    '("MaiaGraphicRectangle*" "inArea")
+  )
+)
+
 (define-function maia_graphic_path_new_from_region
   (c-name "maia_graphic_path_new_from_region")
   (return-type "MaiaGraphicPath*")
@@ -10992,6 +11009,33 @@
   )
 )
 
+(define-method on_damage_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_on_damage_event")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEventArgs*" "inArgs")
+  )
+)
+
+(define-method on_geometry_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_on_geometry_event")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEventArgs*" "inArgs")
+  )
+)
+
+(define-method on_mouse_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_on_mouse_event")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEventArgs*" "inArgs")
+  )
+)
+
 (define-method on_set_pointer_cursor
   (of-object "MaiaWindow")
   (c-name "maia_window_on_set_pointer_cursor")
@@ -11062,6 +11106,12 @@
   (parameters
     '("MaiaItem*" "inItem")
   )
+)
+
+(define-method swap_buffer
+  (of-object "MaiaWindow")
+  (c-name "maia_window_swap_buffer")
+  (return-type "none")
 )
 
 (define-method get_focus_item

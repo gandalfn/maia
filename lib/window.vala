@@ -154,7 +154,7 @@ public class Maia.Window : Grid
         is_resizable = true;
     }
 
-    private void
+    protected virtual void
     on_damage_event (Core.EventArgs? inArgs)
     {
         unowned DamageEventArgs? damage_args = inArgs as DamageEventArgs;
@@ -166,7 +166,7 @@ public class Maia.Window : Grid
         }
     }
 
-    private void
+    protected virtual void
     on_geometry_event (Core.EventArgs? inArgs)
     {
         unowned GeometryEventArgs? geometry_args = inArgs as GeometryEventArgs;
@@ -193,7 +193,7 @@ public class Maia.Window : Grid
         }
     }
 
-    private void
+    protected virtual void
     on_mouse_event (Core.EventArgs? inArgs)
     {
         unowned MouseEventArgs? mouse_args = inArgs as MouseEventArgs;
@@ -449,5 +449,10 @@ public class Maia.Window : Grid
 
         // Call base on resize which reinitialize geometry
         base.on_resize ();
+    }
+
+    public virtual void
+    swap_buffer ()
+    {
     }
 }
