@@ -112,8 +112,6 @@ public abstract class Maia.Core.Watch : Object
     {
         if (m_Source == null)
         {
-            Log.debug (GLib.Log.METHOD, Log.Category.MAIN, "Start watch");
-
             m_Source = new Source (on_prepare, on_check, on_dispatch);
             m_Source.add_poll (ref m_Fd);
             m_Source.set_can_recurse (true);
@@ -131,7 +129,6 @@ public abstract class Maia.Core.Watch : Object
     {
         if (m_Source != null)
         {
-            Log.debug (GLib.Log.METHOD, Log.Category.MAIN, "Stop watch");
             m_Source.destroy ();
             m_Source = null;
         }

@@ -142,6 +142,20 @@ public class Maia.Core.Event : Object
     }
 
     /**
+     * Publish event with reply
+     *
+     * @param inArgs event args
+     * @param inHandler reply handler
+     */
+    public void
+    object_publish_with_reply (EventArgs inArgs, Event.Handler inHandler)
+    {
+        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "publish with reply event %s", name);
+
+        m_EventBus.object_publish_event_with_reply (this, inArgs, inHandler);
+    }
+
+    /**
      * Subscribe to event
      *
      * @param inHandler event handler
@@ -149,9 +163,26 @@ public class Maia.Core.Event : Object
      * @return listener
      */
     public EventListener
-    subscribe (owned Handler inHandler)
+    subscribe (Handler inHandler)
     {
-        EventListener listener = new EventListener ((owned)inHandler);
+        EventListener listener = new EventListener (this, inHandler);
+
+        m_EventBus.subscribe (this, listener);
+
+        return listener;
+    }
+
+    /**
+     * Subscribe to event
+     *
+     * @param inHandler event handler
+     *
+     * @return listener
+     */
+    public EventListener
+    object_subscribe (Handler inHandler)
+    {
+        EventListener listener = new EventListener.object (this, inHandler);
 
         m_EventBus.subscribe (this, listener);
 

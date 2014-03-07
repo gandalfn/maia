@@ -132,9 +132,9 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
                     if (evt_client_message.type           == Xcb.application.atoms[AtomType.WM_PROTOCOLS] &&
                         evt_client_message.data.data32[0] == Xcb.application.atoms[AtomType.WM_DELETE_WINDOW])
                     {
-                        Core.EventBus.default.publish_with_reply ("delete", ((int)evt_client_message.window).to_pointer (),
-                                                                  new DeleteEventArgs (evt_client_message.window),
-                                                                  on_delete_event_reply);
+                        Core.EventBus.default.object_publish_with_reply ("delete", ((int)evt_client_message.window).to_pointer (),
+                                                                         new DeleteEventArgs (evt_client_message.window),
+                                                                         on_delete_event_reply);
                     }
                     break;
 

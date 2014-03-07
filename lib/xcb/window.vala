@@ -27,7 +27,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     private bool               m_Realized = false;
     private Pixmap             m_BackBuffer = null;
     private Graphic.Surface    m_FrontBuffer = null;
-    private double             m_Offset = 0.0;
+    private Graphic.Point      m_Offset = Graphic.Point (0, 0);
 
     // accessors
     public string backend {
@@ -113,6 +113,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 
     ~Window ()
     {
+        Log.debug ("~Window", Log.Category.MAIN, "");
         m_Window.destroy (Maia.Xcb.application.connection);
     }
 
@@ -143,7 +144,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         if (damaged != null)
         {
             Graphic.Region area = damaged.copy ();
-            area.translate (Graphic.Point (0, m_Offset));
+            area.translate (m_Offset.invert ());
 
             if (m_WindowDamaged != null)
                 m_WindowDamaged.union_ (area);
@@ -165,7 +166,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
             else
                 m_WindowDamaged = area.copy ();
 
-            area.translate (Graphic.Point (0, -m_Offset));
+            area.translate (m_Offset);
             damage (area);
         }
     }
@@ -180,6 +181,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         if (geometry_args != null)
         {
             m_WindowGeometry = geometry_args.area;
+            m_WindowDamaged = new Graphic.Region (Graphic.Rectangle (0, 0, m_WindowGeometry.size.width, m_WindowGeometry.size.height));
         }
     }
 
@@ -191,7 +193,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         if (mouse_args != null)
         {
             var pos = mouse_args.position;
-            pos.translate (Graphic.Point (0, -m_Offset));
+            pos.translate (m_Offset);
             base.on_mouse_event (new MouseEventArgs (mouse_args.flags, mouse_args.button, pos.x, pos.y));
         }
     }
@@ -200,9 +202,9 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     on_scroll (Scroll inScroll, Graphic.Point inPosition)
     {
         if (inScroll == Scroll.UP)
-            m_Offset+=4;
+            m_Offset.subtract (Graphic.Point (0, 4));
         else if (inScroll == Scroll.DOWN)
-            m_Offset-=4;
+            m_Offset.translate (Graphic.Point (0, 4));
 
         m_WindowDamaged = new Graphic.Region (Graphic.Rectangle (0, 0, m_WindowGeometry.size.width, m_WindowGeometry.size.height));
 
@@ -400,8 +402,12 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
                     ctx.save ();
                     {
                         ctx.operator = Graphic.Operator.SOURCE;
+
+                        // Clip damaged region
                         ctx.clip_region (m_WindowDamaged);
-                        ctx.translate (Graphic.Point (0, m_Offset));
+
+                        // Swap buffer
+                        ctx.translate (m_Offset.invert ());
                         ctx.pattern = m_BackBuffer.surface;
                         ctx.paint ();
                     }

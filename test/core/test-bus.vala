@@ -187,7 +187,8 @@ public class Maia.TestBus : Maia.TestCase
     public void
     test_event_bus ()
     {
-        bool event_received = false;
+        bool event_received1 = false;
+        bool event_received2 = false;
         var bus = new Core.EventBus ("test-event-bus");
         Core.EventBus.default = bus;
         Core.Event event = new Core.Event ("test", null);
@@ -198,7 +199,17 @@ public class Maia.TestBus : Maia.TestCase
                 unowned TestEventArgs event_args = (TestEventArgs)args;
 
                 Test.message ("TestEventArgs %s %u recv ", event_args.name, event_args.val);
-                event_received = true;
+                event_received1 = true;
+            }
+        });
+
+        event.subscribe ((args) => {
+            if (args is TestEventArgs)
+            {
+                unowned TestEventArgs event_args = (TestEventArgs)args;
+
+                Test.message ("TestEventArgs %s %u recv ", event_args.name, event_args.val);
+                event_received2 = true;
             }
         });
 
@@ -218,7 +229,8 @@ public class Maia.TestBus : Maia.TestCase
 
         loop.run ();
 
-        assert (event_received);
+        assert (event_received1);
+        assert (event_received2);
     }
 
     public void
@@ -307,7 +319,7 @@ public class Maia.TestBus : Maia.TestCase
             }
         });
 
-        new GLib.Thread<void*> (null, () => {
+        var thread = new GLib.Thread<void*> (null, () => {
             GLib.MainContext ctx = new GLib.MainContext ();
             ctx.push_thread_default ();
             GLib.MainLoop loop_thread = new GLib.MainLoop (ctx);
@@ -326,14 +338,24 @@ public class Maia.TestBus : Maia.TestCase
                 }
             });
 
+            GLib.Timeout.add_seconds (5, () => {
+                loop_thread.quit ();
+
+                return false;
+            });
+
+
             loop_thread.run ();
 
             return null;
         });
 
-        event.publish_with_reply (new TestEventArgs ("test reply event", 0), (arg) => {
-            Test.message ("Reply event 0x%lx %s %u", (ulong)GLib.Thread.self<void*> (), ((TestEventArgs)arg).name, ((TestEventArgs)arg).val);
-            have_reply = ((TestEventArgs)arg).val == 2;
+        GLib.Timeout.add_seconds (2, () => {
+            event.publish_with_reply (new TestEventArgs ("test reply event", 0), (arg) => {
+                Test.message ("Reply event 0x%lx %s %u", (ulong)GLib.Thread.self<void*> (), ((TestEventArgs)arg).name, ((TestEventArgs)arg).val);
+                have_reply = ((TestEventArgs)arg).val == 2;
+            });
+            return false;
         });
 
         GLib.Timeout.add_seconds (5, () => {
@@ -343,6 +365,8 @@ public class Maia.TestBus : Maia.TestCase
         });
 
         loop.run ();
+
+        thread.join ();
 
         assert (message_main);
         assert (message_thread);

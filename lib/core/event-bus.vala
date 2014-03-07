@@ -274,7 +274,7 @@ public class Maia.Core.EventBus : Object
         }
     }
 
-    private class MessageSubscribe : Bus.Message
+    internal class MessageSubscribe : Bus.Message
     {
         public Event.Hash hash {
             owned get {
@@ -294,7 +294,7 @@ public class Maia.Core.EventBus : Object
         }
     }
 
-    private class MessageUnsubscribe : Bus.Message
+    internal class MessageUnsubscribe : Bus.Message
     {
         public Event.Hash hash {
             owned get {
@@ -399,29 +399,32 @@ public class Maia.Core.EventBus : Object
             GLib.Object (id: inSequence);
             m_Hash = inHash;
             m_Callback = inCallback;
-            m_Target = ((&m_Callback) + 1) as GLib.Object;
-            if (m_Target != null)
-            {
-                m_Target.add_toggle_ref (on_toggle_ref_target);
-            }
+            m_Target = null;
+        }
+
+        public ReplyHandler.object (uint32 inSequence, Event.Hash inHash, Event.Handler inCallback)
+        {
+            GLib.Object (id: inSequence);
+            m_Hash = inHash;
+            m_Callback = inCallback;
+            m_Target = (GLib.Object?)(*(void**)((&m_Callback) + 1));
+            GLib.return_val_if_fail (m_Target != null, null);
+            m_Target.weak_ref (on_target_destroy);
         }
 
         ~ReplyHandler ()
         {
             if (m_Target != null)
             {
-                m_Target.remove_toggle_ref (on_toggle_ref_target);
+                m_Target.weak_unref (on_target_destroy);
             }
         }
 
         private void
-        on_toggle_ref_target (GLib.Object inTarget, bool inIsLastRef)
+        on_target_destroy ()
         {
-            if (inIsLastRef)
-            {
-                m_Target = null;
-                m_Callback = null;
-            }
+            m_Target = null;
+            m_Callback = null;
         }
 
         internal override int
@@ -497,6 +500,7 @@ public class Maia.Core.EventBus : Object
 
                 foreach (unowned Event.Hash hash in msg.hash)
                 {
+                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "Event advertise %s", hash.name ());
                     unowned EventListenerPool? pool = m_Subscribers.search<Event.Hash> (hash, EventListenerPool.compare_with_event_hash);
                     if (pool == null)
                     {
@@ -513,13 +517,14 @@ public class Maia.Core.EventBus : Object
 
                                 if (listener != null)
                                 {
-                                    listener.destroyed.connect (() => {
-                                        m_Connection.send.begin (new MessageUnsubscribe (hash));
-                                    });
-
-                                    m_Connection.send.begin (new MessageSubscribe (hash));
+                                    listener.attach (m_Connection);
                                 }
                             }
+                        }
+                        else
+                        {
+                            var new_pool = new EventListenerPool (hash);
+                            m_Subscribers.insert (new_pool);
                         }
                     }
                 }
@@ -608,6 +613,16 @@ public class Maia.Core.EventBus : Object
         }
 
         public void
+        object_publish_with_reply (string inName, void* inOwner, EventArgs? inArgs, Event.Handler inReply)
+        {
+            Event.Hash hash = new Event.Hash.raw (inName, inOwner);
+            ReplyHandler reply = new ReplyHandler.object (inArgs.sequence, hash, inReply);
+            m_ReplyHandlers.insert (reply);
+
+            m_Connection.send.begin (new MessageEvent (inName, inOwner, inArgs, true));
+        }
+
+        public void
         subscribe (Event inEvent, EventListener inListener)
         {
             bool send = true;
@@ -616,10 +631,14 @@ public class Maia.Core.EventBus : Object
             unowned EventListenerPool? pool = m_Subscribers.search<Event.Hash> (hash, EventListenerPool.compare_with_event_hash);
             if (pool == null)
             {
-                var new_pool = new EventListenerPool (hash);
-                m_Pendings.insert (new_pool);
-                pool = new_pool;
-                send = false;
+                pool = m_Pendings.search<Event.Hash> (hash, EventListenerPool.compare_with_event_hash);
+                if (pool == null)
+                {
+                    var new_pool = new EventListenerPool (hash);
+                    m_Pendings.insert (new_pool);
+                    pool = new_pool;
+                    send = false;
+                }
             }
 
             if (!(inListener in pool))
@@ -628,11 +647,7 @@ public class Maia.Core.EventBus : Object
 
                 if (send)
                 {
-                    inListener.destroyed.connect (() => {
-                        m_Connection.send.begin (new MessageUnsubscribe (hash));
-                    });
-
-                    m_Connection.send.begin (new MessageSubscribe (hash));
+                    inListener.attach (m_Connection);
                 }
             }
         }
@@ -1009,6 +1024,28 @@ public class Maia.Core.EventBus : Object
         if (client != null)
         {
             client.publish_with_reply (inEvent.name, inEvent.owner, inArgs, inReply);
+        }
+    }
+
+    public void
+    object_publish_with_reply (string inName, void* inOwner, EventArgs inArgs, Event.Handler inReply)
+    {
+        unowned Client? client = get_client ();
+
+        if (client != null)
+        {
+            client.object_publish_with_reply (inName, inOwner, inArgs, inReply);
+        }
+    }
+
+    public void
+    object_publish_event_with_reply (Event inEvent, EventArgs inArgs, Event.Handler inReply)
+    {
+        unowned Client? client = get_client ();
+
+        if (client != null)
+        {
+            client.object_publish_with_reply (inEvent.name, inEvent.owner, inArgs, inReply);
         }
     }
 

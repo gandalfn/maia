@@ -112,25 +112,25 @@ public class Maia.Window : Grid
     construct
     {
         // Subscribe to damage event
-        m_DamageEvent.subscribe (on_damage_event);
+        m_DamageEvent.object_subscribe (on_damage_event);
 
         // Subscribe to geometry event
-        m_GeometryEvent.subscribe (on_geometry_event);
+        m_GeometryEvent.object_subscribe (on_geometry_event);
 
         // Subscribe to visibility event
-        m_VisibilityEvent.subscribe (on_visibility_event);
+        m_VisibilityEvent.object_subscribe (on_visibility_event);
 
         // Subscribe to delete event
-        m_DeleteEvent.subscribe (on_delete_event);
+        m_DeleteEvent.object_subscribe (on_delete_event);
 
         // Subscribe to destroy event
-        m_DestroyEvent.subscribe (on_destroy_event);
+        m_DestroyEvent.object_subscribe (on_destroy_event);
 
         // Subscribe to mouse event
-        m_MouseEvent.subscribe (on_mouse_event);
+        m_MouseEvent.object_subscribe (on_mouse_event);
 
         // Subscribe to keyboard event
-        m_KeyboardEvent.subscribe (on_keyboard_event);
+        m_KeyboardEvent.object_subscribe (on_keyboard_event);
 
         // Connect onto signals from childs
         set_pointer_cursor.connect (on_set_pointer_cursor);

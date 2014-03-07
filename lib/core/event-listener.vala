@@ -61,10 +61,10 @@ internal class Maia.Core.EventListenerPool : Object
 public class Maia.Core.EventListener : Object
 {
     // properties
-    private Event.Handler m_Handler;
-
-    // signals
-    public signal void destroyed ();
+    private Event.Hash            m_EventHash;
+    private unowned Event.Handler m_Handler;
+    private unowned GLib.Object?  m_Target;
+    private unowned BusConnection m_Connection;
 
     // accessors
     /**
@@ -73,16 +73,68 @@ public class Maia.Core.EventListener : Object
     public bool block { get; set; default = false; }
 
     // methods
-    public EventListener (owned Event.Handler inHandler)
+    public EventListener (Event inEvent, Event.Handler inHandler)
     {
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "create eventlistener");
 
-        m_Handler = (owned)inHandler;
+        m_EventHash = new Event.Hash (inEvent);
+        m_Handler = inHandler;
+    }
+
+    public EventListener.object (Event inEvent, Event.Handler inHandler)
+    {
+        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "create eventlistener");
+
+        m_EventHash = new Event.Hash (inEvent);
+        m_Handler = inHandler;
+
+        m_Target = (GLib.Object?)(*(void**)((&m_Handler) + 1));
+        GLib.return_val_if_fail (m_Target != null, null);
+        m_Target.weak_ref (on_target_destroy);
     }
 
     ~EventListener ()
     {
         Log.audit ("~EventListener", Log.Category.MAIN_EVENT,  "");
+        if (m_Target != null)
+        {
+            m_Target.weak_unref (on_target_destroy);
+        }
+        if (m_Connection != null)
+        {
+            m_Connection.send.begin (new EventBus.MessageUnsubscribe (m_EventHash));
+            m_Connection.weak_unref (on_connection_destroy);
+        }
+    }
+
+    private void
+    on_connection_destroy ()
+    {
+        m_Connection = null;
+    }
+
+    private void
+    on_target_destroy ()
+    {
+        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "target unref");
+        m_Target = null;
+        m_Handler = null;
+        unref ();
+    }
+
+    internal override int
+    compare (Core.Object inOther)
+        requires (inOther is EventListener)
+    {
+        return (int)((ulong)m_Handler - (ulong)((EventListener)inOther).m_Handler);
+    }
+
+    internal void
+    attach (BusConnection inConnection)
+    {
+        m_Connection = inConnection;
+        m_Connection.weak_ref (on_connection_destroy);
+        m_Connection.send.begin (new EventBus.MessageSubscribe (m_EventHash));
     }
 
     internal new void
@@ -90,22 +142,9 @@ public class Maia.Core.EventListener : Object
     {
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "");
 
-        if (!block)
+        if (!block && m_Handler != null)
         {
             m_Handler (inEventArgs);
         }
-    }
-
-    /**
-     * Destroy event listener, must be called to stop any event notification
-     */
-    public void
-    destroy ()
-    {
-        Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "");
-        ref ();
-        parent = null;
-        destroyed ();
-        unref ();
     }
 }

@@ -6500,6 +6500,17 @@
   )
 )
 
+(define-method object_publish_with_reply
+  (of-object "MaiaCoreEvent")
+  (c-name "maia_core_event_object_publish_with_reply")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEventArgs*" "inArgs")
+    '("MaiaCoreEventHandler" "inHandler")
+    '("void*" "inHandler_target")
+  )
+)
+
 (define-function maia_core_event_listener_get_type
   (c-name "maia_core_event_listener_get_type")
   (return-type "GType")
@@ -6512,7 +6523,16 @@
   (parameters
     '("MaiaCoreEventHandler" "inHandler")
     '("void*" "inHandler_target")
-    '("GDestroyNotify" "inHandler_target_destroy_notify")
+  )
+)
+
+(define-method object_subscribe
+  (of-object "MaiaCoreEvent")
+  (c-name "maia_core_event_object_subscribe")
+  (return-type "MaiaCoreEventListener*")
+  (parameters
+    '("MaiaCoreEventHandler" "inHandler")
+    '("void*" "inHandler_target")
   )
 )
 
@@ -6572,14 +6592,13 @@
   )
 )
 
-(define-function maia_core_event_listener_new
+(define-method listener_new
+  (of-object "MaiaCoreEvent")
   (c-name "maia_core_event_listener_new")
-  (is-constructor-of "MaiaCoreEventListener")
   (return-type "MaiaCoreEventListener*")
   (parameters
     '("MaiaCoreEventHandler" "inHandler")
     '("void*" "inHandler_target")
-    '("GDestroyNotify" "inHandler_target_destroy_notify")
   )
 )
 
@@ -6588,16 +6607,31 @@
   (return-type "MaiaCoreEventListener*")
   (parameters
     '("GType" "object_type")
+    '("MaiaCoreEvent*" "inEvent")
     '("MaiaCoreEventHandler" "inHandler")
     '("void*" "inHandler_target")
-    '("GDestroyNotify" "inHandler_target_destroy_notify")
   )
 )
 
-(define-method destroy
-  (of-object "MaiaCoreEventListener")
-  (c-name "maia_core_event_listener_destroy")
-  (return-type "none")
+(define-method listener_new_object
+  (of-object "MaiaCoreEvent")
+  (c-name "maia_core_event_listener_new_object")
+  (return-type "MaiaCoreEventListener*")
+  (parameters
+    '("MaiaCoreEventHandler" "inHandler")
+    '("void*" "inHandler_target")
+  )
+)
+
+(define-function maia_core_event_listener_construct_object
+  (c-name "maia_core_event_listener_construct_object")
+  (return-type "MaiaCoreEventListener*")
+  (parameters
+    '("GType" "object_type")
+    '("MaiaCoreEvent*" "inEvent")
+    '("MaiaCoreEventHandler" "inHandler")
+    '("void*" "inHandler_target")
+  )
 )
 
 (define-method get_block
@@ -6699,6 +6733,31 @@
 (define-method publish_event_with_reply
   (of-object "MaiaCoreEventBus")
   (c-name "maia_core_event_bus_publish_event_with_reply")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEvent*" "inEvent")
+    '("MaiaCoreEventArgs*" "inArgs")
+    '("MaiaCoreEventHandler" "inReply")
+    '("void*" "inReply_target")
+  )
+)
+
+(define-method object_publish_with_reply
+  (of-object "MaiaCoreEventBus")
+  (c-name "maia_core_event_bus_object_publish_with_reply")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inName")
+    '("void*" "inOwner")
+    '("MaiaCoreEventArgs*" "inArgs")
+    '("MaiaCoreEventHandler" "inReply")
+    '("void*" "inReply_target")
+  )
+)
+
+(define-method object_publish_event_with_reply
+  (of-object "MaiaCoreEventBus")
+  (c-name "maia_core_event_bus_object_publish_event_with_reply")
   (return-type "none")
   (parameters
     '("MaiaCoreEvent*" "inEvent")
