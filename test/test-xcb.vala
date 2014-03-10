@@ -40,17 +40,39 @@ const string manifest = "Window.test {" +
                         "           column: 1;" +
                         "           lines: 6;" +
                         "       }" +
+                        "       DrawingArea.clinical_draw {" +
+                        "           row: 2;" +
+                        "           columns: 2;" +
+                        "           Label.label_draw {" +
+                        "               position: 10, 10;" +
+                        "               stroke-pattern: #000000;" +
+                        "               font-description: 'Liberation Sans Bold 14';" +
+                        "               text: 'Label drawing';" +
+                        "           }" +
+                        "           Rectangle.rectangle_draw {" +
+                        "               position: 20, 100;" +
+                        "               size: 100, 100;" +
+                        "               fill-pattern: #00FF00;" +
+                        "           }" +
+                        "           Path.path_draw {" +
+                        "               position: 50, 100;" +
+                        "               path: 'M 0,0 L 50,50 L 0,50 Z';" +
+                        "               fill-pattern: linear-gradient (0, 0, @width, 0," +
+                        "                                              color-stop (0, rgb (0, 1, 0))," +
+                        "                                              color-stop (1, rgb (0, 0, 1)));" +
+                        "           }" +
+                        "       }" +
                         "       Button.cancel {" +
                         "           stroke-pattern: #000000;" +
                         "           button-color: #B0B0B0;" +
-                        "           row: 2;" +
+                        "           row: 3;" +
                         "           font-description: 'Liberation Bold 14';" +
                         "           label: 'Cancel';" +
                         "       }" +
                         "       Button.ok {" +
                         "           stroke-pattern: #000000;" +
                         "           button-color: #B0B0B0;" +
-                        "           row: 2;" +
+                        "           row: 3;" +
                         "           column: 1;" +
                         "           font-description: 'Liberation Bold 14';" +
                         "           label: 'OK';" +
@@ -74,6 +96,17 @@ void main (string[] args)
         window.visible = true;
 
         window.destroy_event.subscribe (() => { application.quit (); });
+
+        var cancel = window.find (GLib.Quark.from_string ("cancel")) as Maia.Button;
+        cancel.clicked.connect (() => {
+            application.quit ();
+        });
+
+        var entry = window.find (GLib.Quark.from_string ("entry")) as Maia.Entry;
+        var ok = window.find (GLib.Quark.from_string ("ok")) as Maia.Button;
+        ok.clicked.connect (() => {
+            print ("text: %s\n", entry.text);
+        });
 
         // Run application
         application.run ();
