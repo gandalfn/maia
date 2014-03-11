@@ -18,6 +18,10 @@ files_hg = \
     core-parser.hg \
     core-timeline.hg \
     core-animator.hg \
+    core-eventargs.hg \
+    core-event-bus.hg \
+    core-event.hg \
+    core-event-listener.hg \
     graphic-matrix.hg \
     graphic-transform.hg \
     graphic-point.hg \

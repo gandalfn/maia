@@ -17,6 +17,16 @@ _CONVERSION(`const Glib::RefPtr<Object>&',`MaiaCoreObject*',__CONVERT_REFPTR_TO_
 _CONVERSION(`MaiaCoreObject*',`const Glib::RefPtr<Object>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaCoreObject*',`Glib::RefPtr<Object>',`Glib::wrap($3)')
 
+_CONVERSION(`Glib::RefPtr<EventArgs>',`MaiaCoreEventArgs*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<EventArgs>&',`MaiaCoreEventArgs*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaCoreEventArgs*',`const Glib::RefPtr<EventArgs>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaCoreEventArgs*',`Glib::RefPtr<EventArgs>',`Glib::wrap($3)')
+
+_CONVERSION(`Glib::RefPtr<EventBus>',`MaiaCoreEventBus*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<EventBus>&',`MaiaCoreEventBus*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaCoreEventBus*',`const Glib::RefPtr<EventBus>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaCoreEventBus*',`Glib::RefPtr<EventBus>',`Glib::wrap($3)')
+
 _CONVERSION(`Glib::RefPtr<Timeline>',`MaiaCoreTimeline*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`Glib::RefPtr<Core::Timeline>',`MaiaCoreTimeline*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Timeline>&',`MaiaCoreTimeline*',__CONVERT_REFPTR_TO_P)

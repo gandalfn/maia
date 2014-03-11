@@ -82,6 +82,31 @@
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaCoreEventArgs
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-vfunc get_serialize
+  (of-object "MaiaCoreEventArgs")
+  (return-type "GVariant*")
+)
+
+(define-vfunc set_serialize
+  (of-object "MaiaCoreEventArgs")
+  (return-type "none")
+  (parameters
+    '("GVariant*" "inData")
+  )
+)
+
+(define-vfunc accumulate
+  (of-object "MaiaCoreEventArgs")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEventArgs*" "inOther")
+  )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; From MaiaGraphicDevice
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define-vfunc get_backend

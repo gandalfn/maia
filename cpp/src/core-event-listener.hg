@@ -1,0 +1,90 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * core-event-listener.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+#include <maia.h>
+#include <maiamm/core-object.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/core-object_p.h)
+
+namespace Maia
+{
+    namespace Core
+    {
+        class Event;
+        class EventArgs;
+
+        _GMMPROC_EXTRA_NAMESPACE(Core)
+
+        class EventListenerFunctorBase : Glib::Object
+        {
+            public:
+                EventListenerFunctorBase () :
+                    Glib::ObjectBase ("EventListenerFunctorBase")
+                {
+                }
+                
+                virtual void operator() (const Glib::RefPtr<EventArgs>& inArgs) = 0;
+        };
+        
+        template <class T_obj>
+        class EventListenerFunctor : public EventListenerFunctorBase
+        {
+            typedef void (T_obj::*Handler) (const Glib::RefPtr<EventArgs>& inpArgs);
+
+            public:
+                EventListenerFunctor (T_obj* pObj, Handler pFunc) :
+                    EventListenerFunctorBase (),
+                    m_pObj (pObj),
+                    m_Callback (pFunc)
+                {
+                }
+
+                virtual void operator() (const Glib::RefPtr<EventArgs>& inArgs)
+                {
+                    (m_pObj->*m_Callback) (inArgs);
+                }
+
+            private:
+                T_obj*  m_pObj;
+                Handler m_Callback;
+        };
+
+        class EventListener : public Object
+        {
+            _CLASS_GOBJECT(EventListener, MaiaCoreEventListener, MAIA_CORE_EVENT_LISTENER, EventListener, MaiaCoreEventListener)
+
+            public:
+                template <class T_obj>
+                static Glib::RefPtr<EventListener>
+                create (const Glib::RefPtr<Event>& inpEvent, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs) const)
+                {
+                    EventListenerFunctor<T_obj>* pFunctor = new EventListenerFunctor<T_obj>(pObj, pFunc);
+                    
+                    return create (inpEvent, pFunctor);
+                }
+
+            private:
+                static Glib::RefPtr<EventListener> create (Event* inpEvent, EventListenerFunctorBase* inpFunctor);
+
+                friend Event;
+        };
+    }
+}

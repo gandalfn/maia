@@ -18,6 +18,10 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_CORE_TYPE_TIMELINE);
     std::cout << get_defs (MAIA_CORE_TYPE_ANIMATOR);
     std::cout << get_defs (MAIA_CORE_TYPE_PARSER);
+    std::cout << get_defs (MAIA_CORE_TYPE_EVENT_ARGS);
+    std::cout << get_defs (MAIA_CORE_TYPE_EVENT);
+    std::cout << get_defs (MAIA_CORE_TYPE_EVENT_LISTENER);
+    std::cout << get_defs (MAIA_CORE_TYPE_EVENT_BUS);
 
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_COLOR);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_CONTEXT);
