@@ -67,6 +67,12 @@ public class Maia.Core.EventListener : Object
     private unowned BusConnection m_Connection;
 
     // accessors
+    internal Event.Hash hash {
+        get {
+            return m_EventHash;
+        }
+    }
+    
     /**
      * Block temporarily the event notification
      */

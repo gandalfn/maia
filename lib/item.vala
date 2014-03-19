@@ -427,10 +427,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     private void
     on_parent_root_changed ()
     {
-        GLib.Signal.emit_by_name (this, "notify::root");
-
         m_TransformToItemSpace = get_transform_to_item_space ();
         m_TransformToRootSpace = get_transform_to_root_space ();
+        GLib.Signal.emit_by_name (this, "notify::root");
     }
 
     private void
@@ -861,7 +860,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         string ret = "";
 
         // dump styles
-        if (parent == null)
+        if (parent == null && manifest_styles != null)
         {
             foreach (unowned Manifest.Style style in manifest_styles)
             {

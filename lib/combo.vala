@@ -121,6 +121,15 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         GLib.Object (id: GLib.Quark.from_string (inId));
     }
 
+    ~Combo ()
+    {
+        if (m_Popup != null)
+        {
+            m_Popup.parent = null;
+            m_Popup = null;
+        }
+    }
+    
     private void
     on_stroke_pattern_changed ()
     {
@@ -177,6 +186,12 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         }
     }
 
+    private void
+    on_popup_visible_changed ()
+    {
+        damage ();
+    }
+
     internal override bool
     can_append_child (Core.Object inObject)
     {
@@ -186,26 +201,28 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     internal override void
     insert_child (Core.Object inObject)
     {
-        if (inObject is View && m_Popup == null)
+        if (inObject is View)
         {
-            m_Popup = new Popup ("%s-popup".printf (name));
-            m_Popup.add (inObject);
-            m_Popup.layer = 100;
-            m_Popup.visible = false;
-            m_Popup.placement = PopupPlacement.TOP;
-            m_Popup.background_pattern = fill_pattern;
-            m_Popup.notify["visible"].connect (() => {
-                damage ();
-            });
-
-            if (root.can_append_child(m_Popup))
+            if (m_Popup == null)
             {
-                root.add (m_Popup);
+                m_Popup = new Popup ("%s-popup".printf (name));
+                m_Popup.layer = 100;
+                m_Popup.visible = false;
+                m_Popup.placement = PopupPlacement.TOP;
+                m_Popup.background_pattern = fill_pattern;
+                m_Popup.notify["visible"].connect (on_popup_visible_changed);
+
+                if (root.can_append_child(m_Popup))
+                {
+                    root.add (m_Popup);
+                }
             }
 
+            if (m_View != null) m_View.parent = null;
             m_View = inObject as View;
             m_View.fill_pattern = highlight_color;
             m_View.row_clicked.connect (on_row_clicked);
+            m_Popup.add (m_View);
         }
         else
         {

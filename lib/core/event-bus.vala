@@ -623,18 +623,17 @@ public class Maia.Core.EventBus : Object
         }
 
         public void
-        subscribe (Event inEvent, EventListener inListener)
+        subscribe (EventListener inListener)
         {
             bool send = true;
 
-            Event.Hash hash = new Event.Hash (inEvent);
-            unowned EventListenerPool? pool = m_Subscribers.search<Event.Hash> (hash, EventListenerPool.compare_with_event_hash);
+            unowned EventListenerPool? pool = m_Subscribers.search<Event.Hash> (inListener.hash, EventListenerPool.compare_with_event_hash);
             if (pool == null)
             {
-                pool = m_Pendings.search<Event.Hash> (hash, EventListenerPool.compare_with_event_hash);
+                pool = m_Pendings.search<Event.Hash> (inListener.hash, EventListenerPool.compare_with_event_hash);
                 if (pool == null)
                 {
-                    var new_pool = new EventListenerPool (hash);
+                    var new_pool = new EventListenerPool (inListener.hash);
                     m_Pendings.insert (new_pool);
                     pool = new_pool;
                     send = false;
@@ -1050,13 +1049,13 @@ public class Maia.Core.EventBus : Object
     }
 
     public void
-    subscribe (Event inEvent, EventListener inListener)
+    subscribe (EventListener inListener)
     {
         unowned Client? client = get_client ();
 
         if (client != null)
         {
-            client.subscribe (inEvent, inListener);
+            client.subscribe (inListener);
         }
     }
 }

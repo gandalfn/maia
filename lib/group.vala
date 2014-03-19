@@ -144,6 +144,7 @@ public class Maia.Group : Item
                     // point under child
                     if (item.button_press_event (inButton, point))
                     {
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button press event in %s", item.name);
                         // event occurate under child stop signal
                         GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
                         break;
@@ -178,6 +179,7 @@ public class Maia.Group : Item
                     // point under child
                     if (item.button_release_event (inButton, point))
                     {
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button release event in %s", item.name);
                         // event occurate under child stop signal
                         GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
                         break;
@@ -204,7 +206,7 @@ public class Maia.Group : Item
             unowned Core.Object? child = last ();
             while (child != null)
             {
-                if (child is Item)
+                if ((child is Item) && !(child is Popup))
                 {
                     unowned Item item = (Item)child;
 
@@ -214,6 +216,8 @@ public class Maia.Group : Item
                     // point under child
                     if (item.motion_event (point))
                     {
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "%s motion event in %s", name, item.name);
+
                         // if item over pointer change unset pointer over for old item
                         if (item_over_pointer is Item && item != item_over_pointer && item_over_pointer.pointer_over)
                         {

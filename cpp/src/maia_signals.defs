@@ -263,6 +263,68 @@
   (construct-only #f)
 )
 
+;; From MaiaCoreEventArgs
+
+(define-property sequence
+  (of-object "MaiaCoreEventArgs")
+  (prop-type "GParamInt")
+  (docs "sequence")
+  (readable #t)
+  (writable #t)
+  (construct-only #t)
+)
+
+(define-property serialize
+  (of-object "MaiaCoreEventArgs")
+  (prop-type "GParamVariant")
+  (docs "serialize")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaCoreEvent
+
+(define-property name
+  (of-object "MaiaCoreEvent")
+  (prop-type "GParamString")
+  (docs "name")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property owner
+  (of-object "MaiaCoreEvent")
+  (prop-type "GParamPointer")
+  (docs "owner")
+  (readable #t)
+  (writable #t)
+  (construct-only #t)
+)
+
+;; From MaiaCoreEventListener
+
+(define-property hash
+  (of-object "MaiaCoreEventListener")
+  (prop-type "GParamObject")
+  (docs "hash")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property block
+  (of-object "MaiaCoreEventListener")
+  (prop-type "GParamBoolean")
+  (docs "block")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaCoreEventBus
+
 ;; From MaiaGraphicColor
 
 (define-property name

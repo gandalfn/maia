@@ -33,15 +33,18 @@ namespace Maia
 
         _GMMPROC_EXTRA_NAMESPACE(Core)
 
-        class EventListenerFunctorBase : Glib::Object
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+        class EventListenerFunctorBase : public Glib::Object
         {
             public:
+                virtual void operator() (const Glib::RefPtr<EventArgs>& inArgs) = 0;
+                EventListenerFunctorBase* cpp_obj () { return this; }
+
+            protected:
                 EventListenerFunctorBase () :
                     Glib::ObjectBase ("EventListenerFunctorBase")
                 {
                 }
-                
-                virtual void operator() (const Glib::RefPtr<EventArgs>& inArgs) = 0;
         };
         
         template <class T_obj>
@@ -50,22 +53,60 @@ namespace Maia
             typedef void (T_obj::*Handler) (const Glib::RefPtr<EventArgs>& inpArgs);
 
             public:
+                virtual void operator() (const Glib::RefPtr<EventArgs>& inArgs)
+                {
+                    (m_pObj->*m_Callback) (inArgs);
+                }
+
+                static Glib::RefPtr<EventListenerFunctorBase> create (T_obj* pObj, Handler pFunc)
+                {
+                    return Glib::RefPtr<EventListenerFunctorBase> (new EventListenerFunctor (pObj, pFunc));
+                }
+
+            protected:
                 EventListenerFunctor (T_obj* pObj, Handler pFunc) :
                     EventListenerFunctorBase (),
                     m_pObj (pObj),
                     m_Callback (pFunc)
                 {
                 }
-
-                virtual void operator() (const Glib::RefPtr<EventArgs>& inArgs)
-                {
-                    (m_pObj->*m_Callback) (inArgs);
-                }
+                
 
             private:
                 T_obj*  m_pObj;
                 Handler m_Callback;
         };
+
+        template <class T_obj>
+        class EventListenerGFunctor : public EventListenerFunctorBase
+        {
+            typedef void (T_obj::*Handler) (const Glib::RefPtr<EventArgs>& inpArgs);
+
+            public:
+                virtual void operator() (const Glib::RefPtr<EventArgs>& inArgs)
+                {
+                    (m_pObj->*m_Callback) (inArgs);
+                }
+
+                static Glib::RefPtr<EventListenerFunctorBase> create (const Glib::RefPtr<T_obj>& pObj, Handler pFunc)
+                {
+                    return Glib::RefPtr<EventListenerFunctorBase> (new EventListenerGFunctor (pObj, pFunc));
+                }
+
+            protected:
+                EventListenerGFunctor (const Glib::RefPtr<T_obj>& pObj, Handler pFunc) :
+                    EventListenerFunctorBase (),
+                    m_pObj (pObj),
+                    m_Callback (pFunc)
+                {
+                }
+                
+
+            private:
+                const Glib::RefPtr<T_obj>&  m_pObj;
+                Handler m_Callback;
+        };
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
 
         class EventListener : public Object
         {
@@ -76,13 +117,33 @@ namespace Maia
                 static Glib::RefPtr<EventListener>
                 create (const Glib::RefPtr<Event>& inpEvent, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs) const)
                 {
-                    EventListenerFunctor<T_obj>* pFunctor = new EventListenerFunctor<T_obj>(pObj, pFunc);
+                    Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerFunctor<T_obj>::create (pObj, pFunc);
                     
                     return create (inpEvent, pFunctor);
                 }
 
+                template <class T_obj>
+                static Glib::RefPtr<EventListener>
+                create (const Glib::RefPtr<Event>& inpEvent, const Glib::RefPtr<T_obj>& pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs) const)
+                {
+                    Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerGFunctor<T_obj>::create (pObj, pFunc);
+                    Glib::RefPtr<EventListener> pListener = create (inpEvent, pFunctor);
+
+                    pObj->add_destroy_notify_callback (pListener->gobj (), _on_gobject_child_destroy_notify);
+                    
+                    return  pListener;
+                }
+
             private:
-                static Glib::RefPtr<EventListener> create (Event* inpEvent, EventListenerFunctorBase* inpFunctor);
+                static Glib::RefPtr<EventListener> create (const Glib::RefPtr<Event>& inpEvent, const Glib::RefPtr<EventListenerFunctorBase>& inpFunctor);
+                static Glib::RefPtr<EventListener> create (Event* inpEvent, const Glib::RefPtr<EventListenerFunctorBase>& inpFunctor);
+
+                static void* _on_gobject_child_destroy_notify (gpointer inpData)
+                {
+                    maia_core_object_set_parent (MAIA_CORE_OBJECT (inpData), 0);
+
+                    return 0;
+                }
 
                 friend Event;
         };

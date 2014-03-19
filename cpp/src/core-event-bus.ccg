@@ -19,6 +19,7 @@
 
 
 #include <maia.h>
+#include <maiamm/core-event.h>
 
 namespace Maia
 {

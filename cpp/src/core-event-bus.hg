@@ -20,6 +20,7 @@
 
 #include <maia.h>
 #include <maiamm/core-object.h>
+#include <maiamm/core-event-listener.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/core-object_p.h)
@@ -28,6 +29,8 @@ namespace Maia
 {
     namespace Core
     {
+        class Event;
+        
         _GMMPROC_EXTRA_NAMESPACE(Core)
 
         class EventBus : public Object
@@ -42,10 +45,15 @@ namespace Maia
                     return Glib::RefPtr<EventBus> (new EventBus (pEventBus));
                 }
 
+                _WRAP_METHOD(void subscribe (const Glib::RefPtr<EventListener>& inpListener), maia_core_event_bus_subscribe)
+                _WRAP_METHOD(void publish (const Glib::RefPtr<Event>& inpEvent, const Glib::RefPtr<EventArgs>& inpArgs), maia_core_event_bus_publish_event)
+                _WRAP_METHOD(void publish (const Glib::ustring& inName, void* inpOwner, const Glib::RefPtr<EventArgs>& inpArgs), maia_core_event_bus_publish)
+
 #m4 _CONVERSION(`MaiaCoreEventBus*',`Glib::RefPtr<EventBus>',`Glib::wrap($3, true)')
                 _WRAP_METHOD(static Glib::RefPtr<EventBus> get_default (), maia_core_event_bus_get_default)
 #m4 _CONVERSION(`MaiaCoreEventBus*',`Glib::RefPtr<EventBus>',`Glib::wrap($3)')
                 _WRAP_METHOD(void set_default (const Glib::RefPtr<EventBus>& inBus), maia_core_event_bus_set_default)
+
         };
     }
 }

@@ -29,10 +29,9 @@ namespace Maia
 {
     namespace Core
     {
-        static void* _on_destroy_notify (gpointer inpData)
+        static void* _on_listener_destroy_notify (gpointer inpData)
         {
-            EventListenerFunctorBase* pFunctor = (EventListenerFunctorBase*)inpData;
-            delete pFunctor;
+            g_object_unref (G_OBJECT (inpData));
 
             return 0;
         }
@@ -44,13 +43,29 @@ namespace Maia
 
             (*pFunctor)(pArgs);
         }
+
+        Glib::RefPtr<EventListener>
+        EventListener::create (const Glib::RefPtr<Event>& inpEvent, const Glib::RefPtr<EventListenerFunctorBase>& inpFunctor)
+        {
+            inpFunctor->reference ();
+
+            MaiaCoreEventListener* pListener = maia_core_event_listener_new_object (const_cast<MaiaCoreEvent*>(inpEvent->gobj ()), _on_callback, inpFunctor->cpp_obj ());
+            Glib::RefPtr<EventListener> pCppListener = Glib::RefPtr<EventListener> (new EventListener (pListener));
+
+            pCppListener->add_destroy_notify_callback (inpFunctor->gobj (), _on_listener_destroy_notify);
+
+            return pCppListener;
+        }
         
         Glib::RefPtr<EventListener>
-        EventListener::create (Event* inpEvent, EventListenerFunctorBase* inpFunctor)
+        EventListener::create (Event* inpEvent, const Glib::RefPtr<EventListenerFunctorBase>& inpFunctor)
         {
-            MaiaCoreEventListener* pListener = maia_core_event_listener_new_object (const_cast<MaiaCoreEvent*>(inpEvent->gobj ()), _on_callback, inpFunctor);
+            inpFunctor->reference ();
+
+            MaiaCoreEventListener* pListener = maia_core_event_listener_new_object (const_cast<MaiaCoreEvent*>(inpEvent->gobj ()), _on_callback, inpFunctor->cpp_obj ());
             Glib::RefPtr<EventListener> pCppListener = Glib::RefPtr<EventListener> (new EventListener (pListener));
-            pCppListener->add_destroy_notify_callback (inpFunctor, _on_destroy_notify);
+
+            pCppListener->add_destroy_notify_callback (inpFunctor->gobj (), _on_listener_destroy_notify);
 
             return pCppListener;
         }

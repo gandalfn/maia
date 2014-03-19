@@ -31,7 +31,7 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
-        _WRAP_ENUM(SurfaceFormat, MaiaGraphicSurfaceFormat, NO_GTYPE)
+        _WRAP_ENUM(SurfaceFormat, MaiaGraphicSurfaceFormat, s#GRAPHIC_##,  NO_GTYPE)
 
         class Surface : public Pattern
         {

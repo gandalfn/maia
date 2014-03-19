@@ -33,9 +33,9 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
-        _WRAP_ENUM(GlyphAlignment, MaiaGraphicGlyphAlignment)
-        _WRAP_ENUM(GlyphWrapMode, MaiaGraphicGlyphWrapMode)
-        _WRAP_ENUM(GlyphEllipsizeMode, MaiaGraphicGlyphEllipsizeMode)
+        _WRAP_ENUM(GlyphAlignment, MaiaGraphicGlyphAlignment, s#GRAPHIC_##,  NO_GTYPE)
+        _WRAP_ENUM(GlyphWrapMode, MaiaGraphicGlyphWrapMode, s#GRAPHIC_##,  NO_GTYPE)
+        _WRAP_ENUM(GlyphEllipsizeMode, MaiaGraphicGlyphEllipsizeMode, s#GRAPHIC_##,  NO_GTYPE)
 
         class GlyphLine : public Core::Object
         {

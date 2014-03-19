@@ -6772,7 +6772,6 @@
   (c-name "maia_core_event_bus_subscribe")
   (return-type "none")
   (parameters
-    '("MaiaCoreEvent*" "inEvent")
     '("MaiaCoreEventListener*" "inListener")
   )
 )

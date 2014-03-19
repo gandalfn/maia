@@ -31,7 +31,7 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
-        _WRAP_ENUM(PathDataType, MaiaGraphicPathDataType, NO_GTYPE)
+        _WRAP_ENUM(PathDataType, MaiaGraphicPathDataType, s#GRAPHIC_##,  NO_GTYPE)
 
         class Path : public Core::Object
         {

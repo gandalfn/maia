@@ -167,7 +167,7 @@ public class Maia.Core.Event : Object
     {
         EventListener listener = new EventListener (this, inHandler);
 
-        m_EventBus.subscribe (this, listener);
+        m_EventBus.subscribe (listener);
 
         return listener;
     }
@@ -184,7 +184,7 @@ public class Maia.Core.Event : Object
     {
         EventListener listener = new EventListener.object (this, inHandler);
 
-        m_EventBus.subscribe (this, listener);
+        m_EventBus.subscribe (listener);
 
         return listener;
     }
