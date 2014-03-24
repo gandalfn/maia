@@ -8,7 +8,7 @@ include $(top_srcdir)/build-aux/compile-binding.am
 
 local_cppflags = $(binding_includes) $(binding_cppflags) -DSKELETONMM_BUILD=1
 
-AM_CPPFLAGS = $(local_cppflags) $(GTHREAD_CFLAGS) $(MAIAMM_CFLAGS) -I${top_srcdir}/lib -I${top_srcdir}/lib/core -I${top_srcdir}/cpp/maiamm
+AM_CPPFLAGS = -std=c++11 $(local_cppflags) $(GTHREAD_CFLAGS) $(MAIAMM_CFLAGS) -I${top_srcdir}/lib -I${top_srcdir}/lib/core -I${top_srcdir}/cpp/maiamm
 AM_CXXFLAGS = $(MAIAMM_WXXFLAGS)
 
 libmaiamm_la_SOURCES = $(binding_sources)

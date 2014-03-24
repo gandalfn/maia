@@ -110,7 +110,7 @@ namespace Maia
 
         class EventListener : public Object
         {
-            _CLASS_GOBJECT(EventListener, MaiaCoreEventListener, MAIA_CORE_EVENT_LISTENER, EventListener, MaiaCoreEventListener)
+            _CLASS_GOBJECT(EventListener, MaiaCoreEventListener, MAIA_CORE_EVENT_LISTENER, Object, MaiaCoreObject)
 
             public:
                 template <class T_obj>

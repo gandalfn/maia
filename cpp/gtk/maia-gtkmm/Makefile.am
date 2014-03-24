@@ -9,6 +9,7 @@ include $(top_srcdir)/build-aux/compile-binding.am
 local_cppflags = $(binding_includes) $(binding_cppflags) -DSKELETONMM_BUILD=1
 
 AM_CPPFLAGS = \
+	-std=c++11 \
 	$(local_cppflags) \
 	$(GTHREAD_CFLAGS) \
 	$(MAIA_GTKMM_CFLAGS) \

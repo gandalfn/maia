@@ -32,9 +32,11 @@ namespace Maia
         
         class EventArgs : public Object
         {
-            _CLASS_GOBJECT(EventArgs, MaiaCoreEventArgs, MAIA_CORE_EVENT_ARGS, EventArgs, MaiaCoreEventArgs)
+            _CLASS_GOBJECT(EventArgs, MaiaCoreEventArgs, MAIA_CORE_EVENT_ARGS, Object, MaiaCoreObject)
 
             protected:
+                _CTOR_DEFAULT()
+
 #m4 _CONVERSION(`Glib::VariantBase',`GVariant*',`($3).gobj()')
 #m4 _CONVERSION(`GVariant*',`const Glib::VariantBase&',`Glib::wrap($3, false)')
                 _WRAP_VFUNC(Glib::VariantBase get_serialize (), get_serialize)

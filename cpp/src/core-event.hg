@@ -35,7 +35,7 @@ namespace Maia
 
         class Event : public Object
         {
-            _CLASS_GOBJECT(Event, MaiaCoreEvent, MAIA_CORE_EVENT, Event, MaiaCoreEvent)
+            _CLASS_GOBJECT(Event, MaiaCoreEvent, MAIA_CORE_EVENT, Object, MaiaCoreObject)
 
             public:
                 static Glib::RefPtr<Event>

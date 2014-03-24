@@ -23,6 +23,7 @@ core/any.c: $(top_builddir)/lib/core/maia-any-$(MAIA_ABI).vapi maia.h
 lib_LTLIBRARIES = libmaia.la
 
 libmaia_la_SOURCES = \
+    adjustment.vala \
     core/any.c \
     core/maia-any.h \
     core/logger.vala \

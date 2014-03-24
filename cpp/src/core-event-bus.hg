@@ -35,7 +35,7 @@ namespace Maia
 
         class EventBus : public Object
         {
-            _CLASS_GOBJECT(EventBus, MaiaCoreEventBus, MAIA_CORE_EVENT_BUS, EventBus, MaiaCoreEventBus)
+            _CLASS_GOBJECT(EventBus, MaiaCoreEventBus, MAIA_CORE_EVENT_BUS, Object, MaiaCoreObject)
 
             public:
                 static Glib::RefPtr<EventBus>
@@ -48,11 +48,15 @@ namespace Maia
                 _WRAP_METHOD(void subscribe (const Glib::RefPtr<EventListener>& inpListener), maia_core_event_bus_subscribe)
                 _WRAP_METHOD(void publish (const Glib::RefPtr<Event>& inpEvent, const Glib::RefPtr<EventArgs>& inpArgs), maia_core_event_bus_publish_event)
                 _WRAP_METHOD(void publish (const Glib::ustring& inName, void* inpOwner, const Glib::RefPtr<EventArgs>& inpArgs), maia_core_event_bus_publish)
+                void publish (const Glib::ustring& inName, const Glib::RefPtr<EventArgs>& inpArgs)
+                {
+                    publish (inName, 0, inpArgs);
+                }
 
 #m4 _CONVERSION(`MaiaCoreEventBus*',`Glib::RefPtr<EventBus>',`Glib::wrap($3, true)')
                 _WRAP_METHOD(static Glib::RefPtr<EventBus> get_default (), maia_core_event_bus_get_default)
 #m4 _CONVERSION(`MaiaCoreEventBus*',`Glib::RefPtr<EventBus>',`Glib::wrap($3)')
-                _WRAP_METHOD(void set_default (const Glib::RefPtr<EventBus>& inBus), maia_core_event_bus_set_default)
+                _WRAP_METHOD(static void set_default (const Glib::RefPtr<EventBus>& inBus), maia_core_event_bus_set_default)
 
         };
     }

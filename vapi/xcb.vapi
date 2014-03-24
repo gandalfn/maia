@@ -1,21 +1,28 @@
 /*
- * Copyright (C) 2012  Nicolas Bruguier
+ * Copyright (C) 2012-2014  Nicolas Bruguier
+ * All Rights Reserved.
  *
- * This library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
  *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library.  If not, see <http://www.gnu.org/licenses/>.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
- * Author:
- *  Nicolas Bruguier <gandalfn@club-internet.fr>
+ * Except as contained in this notice, the names of the authors or their
+ * institutions shall not be used in advertising or otherwise to promote the
+ * sale, use or other dealings in this Software without prior written
+ * authorization from the authors.
  */
 
 using Xcb;
@@ -39,6 +46,10 @@ namespace Xcb
 		 * If `only_if_exists` is 1, `XCB_ATOM_NONE` will be returned if the atom does
 		 * not yet exist.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link AllocError}:  TODO: reasons?  
+		 *
 		 * @param only_if_exists Return a valid atom id only if the atom already exists.
 		 * @param name The name of the atom.
 		 *
@@ -98,6 +109,10 @@ namespace Xcb
 		 * earlier than the last-grab time of the most recent active grab for this client
 		 * or if `time` is later than the current X server time.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link ValueError}:  You specified an invalid `mode`.  
+		 *
 		 * @param mode mode
 		 * @param time Timestamp to avoid race conditions when running X over the network.
 		 *             The special value `XCB_CURRENT_TIME` will be replaced with the current server
@@ -113,6 +128,10 @@ namespace Xcb
 		 * earlier than the last-grab time of the most recent active grab for this client
 		 * or if `time` is later than the current X server time.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link ValueError}:  You specified an invalid `mode`.  
+		 *
 		 * @param mode mode
 		 * @param time Timestamp to avoid race conditions when running X over the network.
 		 *             The special value `XCB_CURRENT_TIME` will be replaced with the current server
@@ -232,6 +251,10 @@ namespace Xcb
 		 * 
 		 * Forces a close down of the client that created the specified `resource`.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link ValueError}:  The specified `resource` does not exist.  
+		 *
 		 * @param resource Any resource belonging to the client (for example a Window), used to identify
 		 *                 the client connection.
 		 *                 The special value of `XCB_KILL_ALL_TEMPORARY`, the resources of all clients
@@ -245,6 +268,10 @@ namespace Xcb
 		 * 
 		 * Forces a close down of the client that created the specified `resource`.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link ValueError}:  The specified `resource` does not exist.  
+		 *
 		 * @param resource Any resource belonging to the client (for example a Window), used to identify
 		 *                 the client connection.
 		 *                 The special value of `XCB_KILL_ALL_TEMPORARY`, the resources of all clients
@@ -674,6 +701,10 @@ namespace Xcb
 		 * 
 		 * The created window will initially use the same cursor as its parent.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link ColormapError}:  TODO: reasons?  
+		 *
 		 * @param connection The connection.
 		 * @param depth Specifies the new window's depth (TODO: what unit?).
 		 *              The special value `XCB_COPY_FROM_PARENT` means the depth is taken from the
@@ -713,6 +744,10 @@ namespace Xcb
 		 * 
 		 * The created window will initially use the same cursor as its parent.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link ColormapError}:  TODO: reasons?  
+		 *
 		 * @param connection The connection.
 		 * @param depth Specifies the new window's depth (TODO: what unit?).
 		 *              The special value `XCB_COPY_FROM_PARENT` means the depth is taken from the
@@ -739,24 +774,44 @@ namespace Xcb
 		 * 
 		 * Changes the attributes specified by `value_mask` for the specified `window`.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link AccessError}:  TODO: reasons?  
+		 *
 		 * @param connection The connection.
+		 * @param value_mask value_mask
+		 * @param value_list Values for each of the attributes specified in the bitmask `value_mask`. The
+		 *                   order has to correspond to the order of possible `value_mask` bits. See the
+		 *                   example.
 		 */
 		[CCode (cname = "xcb_change_window_attributes", instance_pos = 1.1)]
-		public VoidCookie change_attributes (Xcb.Connection connection, uint32 mask, [CCode (array_length = false)]uint32[]? value_list = null);
+		public VoidCookie change_attributes (Xcb.Connection connection, uint32 value_mask = 0, [CCode (array_length = false)]uint32[]? value_list = null);
 		/**
 		 * change window attributes
 		 * 
 		 * Changes the attributes specified by `value_mask` for the specified `window`.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link AccessError}:  TODO: reasons?  
+		 *
 		 * @param connection The connection.
+		 * @param value_mask value_mask
+		 * @param value_list Values for each of the attributes specified in the bitmask `value_mask`. The
+		 *                   order has to correspond to the order of possible `value_mask` bits. See the
+		 *                   example.
 		 */
 		[CCode (cname = "xcb_change_window_attributes_checked", instance_pos = 1.1)]
-		public VoidCookie change_attributes_checked (Xcb.Connection connection, uint32 mask, [CCode (array_length = false)]uint32[]? value_list = null);
+		public VoidCookie change_attributes_checked (Xcb.Connection connection, uint32 value_mask = 0, [CCode (array_length = false)]uint32[]? value_list = null);
 		/**
 		 * Gets window attributes
 		 * 
 		 * Gets the current attributes for the specified `window`.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link WindowError}:  The specified `window` does not exist.  
+		 *
 		 * @param connection The connection.
 		 */
 		[CCode (cname = "xcb_get_window_attributes", instance_pos = 1.1)]
@@ -771,6 +826,10 @@ namespace Xcb
 		 * 
 		 * Calling DestroyWindow on the root window will do nothing.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link WindowError}:  The specified window does not exist.  
+		 *
 		 * @param connection The connection.
 		 *
 		 * @see DestroyNotifyEvent
@@ -789,6 +848,10 @@ namespace Xcb
 		 * 
 		 * Calling DestroyWindow on the root window will do nothing.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link WindowError}:  The specified window does not exist.  
+		 *
 		 * @param connection The connection.
 		 *
 		 * @see DestroyNotifyEvent
@@ -809,6 +872,10 @@ namespace Xcb
 		 * This function either adds or removes the specified window to the client's (your
 		 * application's) save set.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link MatchError}:  You created the specified window. This does not make sense, you can only add windows created by other clients to your save set.  
+		 *
 		 * @param connection The connection.
 		 * @param mode Insert to add the specified window to the save set or Delete to delete it from the save set.
 		 *
@@ -824,6 +891,10 @@ namespace Xcb
 		 * This function either adds or removes the specified window to the client's (your
 		 * application's) save set.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link MatchError}:  You created the specified window. This does not make sense, you can only add windows created by other clients to your save set.  
+		 *
 		 * @param connection The connection.
 		 * @param mode Insert to add the specified window to the save set or Delete to delete it from the save set.
 		 *
@@ -841,6 +912,10 @@ namespace Xcb
 		 * 
 		 * After reparenting, a ReparentNotify event is generated.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link MatchError}:  The new parent window is not on the same screen as the old parent window.  The new parent window is the specified window or an inferior of the specified window.  The new parent is InputOnly and the window is not.  The specified window has a ParentRelative background and the new parent window is not the same depth as the specified window.  
+		 *
 		 * @param connection The connection.
 		 * @param parent The new parent of the window.
 		 * @param x The X position of the window within its new parent.
@@ -862,6 +937,10 @@ namespace Xcb
 		 * 
 		 * After reparenting, a ReparentNotify event is generated.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link MatchError}:  The new parent window is not on the same screen as the old parent window.  The new parent window is the specified window or an inferior of the specified window.  The new parent is InputOnly and the window is not.  The specified window has a ParentRelative background and the new parent window is not the same depth as the specified window.  
+		 *
 		 * @param connection The connection.
 		 * @param parent The new parent of the window.
 		 * @param x The X position of the window within its new parent.
@@ -896,6 +975,10 @@ namespace Xcb
 		 * window becomes visible. The normal response to an Expose event should be to
 		 * repaint the window.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link MatchError}:  The specified window does not exist.  
+		 *
 		 * @param connection The connection.
 		 *
 		 * @see MapNotifyEvent
@@ -927,6 +1010,10 @@ namespace Xcb
 		 * window becomes visible. The normal response to an Expose event should be to
 		 * repaint the window.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link MatchError}:  The specified window does not exist.  
+		 *
 		 * @param connection The connection.
 		 *
 		 * @see MapNotifyEvent
@@ -948,6 +1035,10 @@ namespace Xcb
 		 * Unmapping a window leads to the `UnmapNotify` event being generated. Also,
 		 * `Expose` events are generated for formerly obscured windows.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link WindowError}:  The specified window does not exist.  
+		 *
 		 * @param connection The connection.
 		 *
 		 * @see UnmapNotifyEvent
@@ -965,6 +1056,10 @@ namespace Xcb
 		 * Unmapping a window leads to the `UnmapNotify` event being generated. Also,
 		 * `Expose` events are generated for formerly obscured windows.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link WindowError}:  The specified window does not exist.  
+		 *
 		 * @param connection The connection.
 		 *
 		 * @see UnmapNotifyEvent
@@ -982,8 +1077,15 @@ namespace Xcb
 		 * 
 		 * Configures a window's size, position, border width and stacking order.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link MatchError}:  You specified a Sibling without also specifying StackMode or the window is not actually a Sibling.  
+		 *
 		 * @param connection The connection.
 		 * @param value_mask Bitmask of attributes to change.
+		 * @param value_mask Bitmask of attributes to change.
+		 * @param value_list New values, corresponding to the attributes in value_mask. The order has to
+		 *                   correspond to the order of possible `value_mask` bits. See the example.
 		 *
 		 * @see MapNotifyEvent
 		 * @see ExposeEvent
@@ -995,8 +1097,15 @@ namespace Xcb
 		 * 
 		 * Configures a window's size, position, border width and stacking order.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link MatchError}:  You specified a Sibling without also specifying StackMode or the window is not actually a Sibling.  
+		 *
 		 * @param connection The connection.
 		 * @param value_mask Bitmask of attributes to change.
+		 * @param value_mask Bitmask of attributes to change.
+		 * @param value_list New values, corresponding to the attributes in value_mask. The order has to
+		 *                   correspond to the order of possible `value_mask` bits. See the example.
 		 *
 		 * @see MapNotifyEvent
 		 * @see ExposeEvent
@@ -1012,6 +1121,10 @@ namespace Xcb
 		 * If `direction` is `XCB_CIRCULATE_LOWER_HIGHEST`, the highest mapped child will
 		 * be lowered to the bottom of the stack.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link WindowError}:  The specified `window` does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param direction direction
 		 */
@@ -1026,6 +1139,10 @@ namespace Xcb
 		 * If `direction` is `XCB_CIRCULATE_LOWER_HIGHEST`, the highest mapped child will
 		 * be lowered to the bottom of the stack.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link WindowError}:  The specified `window` does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param direction direction
 		 */
@@ -1050,6 +1167,10 @@ namespace Xcb
 		 * Protocols such as EWMH also use properties - for example EWMH defines the
 		 * window title, encoded as UTF-8 string, in the `_NET_WM_NAME` property.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link MatchError}:  TODO: reasons?  
+		 *
 		 * @param connection The connection.
 		 * @param mode mode
 		 * @param property The property you want to change (an atom).
@@ -1070,6 +1191,10 @@ namespace Xcb
 		 * Protocols such as EWMH also use properties - for example EWMH defines the
 		 * window title, encoded as UTF-8 string, in the `_NET_WM_NAME` property.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link MatchError}:  TODO: reasons?  
+		 *
 		 * @param connection The connection.
 		 * @param mode mode
 		 * @param property The property you want to change (an atom).
@@ -1100,6 +1225,10 @@ namespace Xcb
 		 * 
 		 * TODO: talk about the offset/length thing. what's a valid use case?
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link WindowError}:  The specified `window` does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param delete Whether the property should actually be deleted. For deleting a property, the
 		 *               specified `type` has to match the actual property type.
@@ -1123,6 +1252,10 @@ namespace Xcb
 		 * 
 		 * TODO: briefly explain what a selection is.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link AtomError}:  `selection` does not refer to a valid atom.  
+		 *
 		 * @param connection The connection.
 		 * @param selection The selection.
 		 * @param time Timestamp to avoid race conditions when running X over the network.
@@ -1144,6 +1277,10 @@ namespace Xcb
 		 * 
 		 * TODO: briefly explain what a selection is.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link AtomError}:  `selection` does not refer to a valid atom.  
+		 *
 		 * @param connection The connection.
 		 * @param selection The selection.
 		 * @param time Timestamp to avoid race conditions when running X over the network.
@@ -1172,6 +1309,10 @@ namespace Xcb
 		 * contents of `event` are otherwise unaltered and unchecked except for the
 		 * `send_event` field which is forced to 'true'.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link WindowError}:  The specified `destination` window does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param propagate If `propagate` is true and no clients have selected any event on `destination`,
 		 *                  the destination is replaced with the closest ancestor of `destination` for
@@ -1200,6 +1341,10 @@ namespace Xcb
 		 * contents of `event` are otherwise unaltered and unchecked except for the
 		 * `send_event` field which is forced to 'true'.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link WindowError}:  The specified `destination` window does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param propagate If `propagate` is true and no clients have selected any event on `destination`,
 		 *                  the destination is replaced with the closest ancestor of `destination` for
@@ -1223,6 +1368,10 @@ namespace Xcb
 		 * Actively grabs control of the pointer. Further pointer events are reported only to the grabbing client. Overrides any active pointer grab by this client.
 		 * 
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link ValueError}:  TODO: reasons?  
+		 *
 		 * @param connection The connection.
 		 * @param owner_events If 1, the `grab_window` will still get the pointer events. If 0, events are not
 		 *                     reported to the `grab_window`.
@@ -1290,6 +1439,10 @@ namespace Xcb
 		 * for any combination. The request has no effect on an active grab.
 		 * 
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link AccessError}:  Another client has already issued a GrabButton with the same button/key combination on the same window.  
+		 *
 		 * @param connection The connection.
 		 * @param owner_events If 1, the `grab_window` will still get the pointer events. If 0, events are not
 		 *                     reported to the `grab_window`.
@@ -1349,6 +1502,10 @@ namespace Xcb
 		 * for any combination. The request has no effect on an active grab.
 		 * 
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link AccessError}:  Another client has already issued a GrabButton with the same button/key combination on the same window.  
+		 *
 		 * @param connection The connection.
 		 * @param owner_events If 1, the `grab_window` will still get the pointer events. If 0, events are not
 		 *                     reported to the `grab_window`.
@@ -1386,6 +1543,10 @@ namespace Xcb
 		 * current X server time, `GrabInvalidTime` is returned. Otherwise, the
 		 * last-keyboard-grab time is set to the specified time.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link ValueError}:  TODO: reasons?  
+		 *
 		 * @param connection The connection.
 		 * @param owner_events If 1, the `grab_window` will still get the pointer events. If 0, events are not
 		 *                     reported to the `grab_window`.
@@ -1434,6 +1595,10 @@ namespace Xcb
 		 * results (no grabs are established) if there is a conflicting grab for any combination.
 		 * 
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link AccessError}:  Another client has already issued a GrabKey with the same button/key combination on the same window.  
+		 *
 		 * @param connection The connection.
 		 * @param owner_events If 1, the `grab_window` will still get the pointer events. If 0, events are not
 		 *                     reported to the `grab_window`.
@@ -1484,6 +1649,10 @@ namespace Xcb
 		 * results (no grabs are established) if there is a conflicting grab for any combination.
 		 * 
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link AccessError}:  Another client has already issued a GrabKey with the same button/key combination on the same window.  
+		 *
 		 * @param connection The connection.
 		 * @param owner_events If 1, the `grab_window` will still get the pointer events. If 0, events are not
 		 *                     reported to the `grab_window`.
@@ -1505,6 +1674,10 @@ namespace Xcb
 		 * Releases the key combination on `grab_window` if you grabbed it using
 		 * `xcb_grab_key` before.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link WindowError}:  The specified `grab_window` does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param key The keycode of the specified key combination.
 		 *            Using the special value `XCB_GRAB_ANY` means releasing all possible key codes.
@@ -1522,6 +1695,10 @@ namespace Xcb
 		 * Releases the key combination on `grab_window` if you grabbed it using
 		 * `xcb_grab_key` before.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link WindowError}:  The specified `grab_window` does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param key The keycode of the specified key combination.
 		 *            Using the special value `XCB_GRAB_ANY` means releasing all possible key codes.
@@ -1539,6 +1716,10 @@ namespace Xcb
 		 * Gets the root window the pointer is logically on and the pointer coordinates
 		 * relative to the root window's origin.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link WindowError}:  The specified `window` does not exist.  
+		 *
 		 * @param connection The connection.
 		 */
 		[CCode (cname = "xcb_query_pointer", instance_pos = 1.1)]
@@ -1562,6 +1743,10 @@ namespace Xcb
 		 * `XCB_NONE` (TODO), the pointer will be moved by the offsets (`dst_x`, `dst_y`)
 		 * relative to the current position of the pointer.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link WindowError}:  TODO: reasons?  
+		 *
 		 * @param connection The connection.
 		 * @param dst_window If `dst_window` is not `XCB_NONE` (TODO), the pointer will be moved to the
 		 *                   offsets (`dst_x`, `dst_y`) relative to `dst_window`. If `dst_window` is
@@ -1587,6 +1772,10 @@ namespace Xcb
 		 * `XCB_NONE` (TODO), the pointer will be moved by the offsets (`dst_x`, `dst_y`)
 		 * relative to the current position of the pointer.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link WindowError}:  TODO: reasons?  
+		 *
 		 * @param connection The connection.
 		 * @param dst_window If `dst_window` is not `XCB_NONE` (TODO), the pointer will be moved to the
 		 *                   offsets (`dst_x`, `dst_y`) relative to `dst_window`. If `dst_window` is
@@ -1606,6 +1795,10 @@ namespace Xcb
 		 * 
 		 * A FocusIn and FocusOut event is generated when focus is changed.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link WindowError}:  The specified `focus` window does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param revert_to Specifies what happens when the `focus` window becomes unviewable (if `focus`
 		 *                  is neither `XCB_NONE` nor `XCB_POINTER_ROOT`).
@@ -1627,6 +1820,10 @@ namespace Xcb
 		 * 
 		 * A FocusIn and FocusOut event is generated when focus is changed.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link WindowError}:  The specified `focus` window does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param revert_to Specifies what happens when the `focus` window becomes unviewable (if `focus`
 		 *                  is neither `XCB_NONE` nor `XCB_POINTER_ROOT`).
@@ -1878,6 +2075,10 @@ namespace Xcb
 		 * Creates a pixmap. The pixmap can only be used on the same screen as `drawable`
 		 * is on and only with drawables of the same `depth`.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link ValueError}:  TODO: reasons?  
+		 *
 		 * @param connection The connection.
 		 * @param depth TODO
 		 * @param drawable Drawable to get the screen from.
@@ -1893,6 +2094,10 @@ namespace Xcb
 		 * Creates a pixmap. The pixmap can only be used on the same screen as `drawable`
 		 * is on and only with drawables of the same `depth`.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link ValueError}:  TODO: reasons?  
+		 *
 		 * @param connection The connection.
 		 * @param depth TODO
 		 * @param drawable Drawable to get the screen from.
@@ -1908,6 +2113,10 @@ namespace Xcb
 		 * Deletes the association between the pixmap ID and the pixmap. The pixmap
 		 * storage will be freed when there are no more references to it.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link PixmapError}:  The specified pixmap does not exist.  
+		 *
 		 * @param connection The connection.
 		 */
 		[CCode (cname = "xcb_free_pixmap", instance_pos = 1.1)]
@@ -1918,6 +2127,10 @@ namespace Xcb
 		 * Deletes the association between the pixmap ID and the pixmap. The pixmap
 		 * storage will be freed when there are no more references to it.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link PixmapError}:  The specified pixmap does not exist.  
+		 *
 		 * @param connection The connection.
 		 */
 		[CCode (cname = "xcb_free_pixmap_checked", instance_pos = 1.1)]
@@ -1982,6 +2195,10 @@ namespace Xcb
 		 * will use the background color (as specified by `back_red`, `back_green` and
 		 * `back_blue`).
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link AllocError}:  The X server could not allocate the requested resources (no memory?).  
+		 *
 		 * @param connection The connection.
 		 * @param source_font In which font to look for the cursor glyph.
 		 * @param mask_font In which font to look for the mask glyph.
@@ -2011,6 +2228,10 @@ namespace Xcb
 		 * will use the background color (as specified by `back_red`, `back_green` and
 		 * `back_blue`).
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link AllocError}:  The X server could not allocate the requested resources (no memory?).  
+		 *
 		 * @param connection The connection.
 		 * @param source_font In which font to look for the cursor glyph.
 		 * @param mask_font In which font to look for the mask glyph.
@@ -2033,6 +2254,10 @@ namespace Xcb
 		 * Deletes the association between the cursor resource ID and the specified
 		 * cursor. The cursor is freed when no other resource references it.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link CursorError}:  The specified cursor does not exist.  
+		 *
 		 * @param connection The connection.
 		 */
 		[CCode (cname = "xcb_free_cursor", instance_pos = 1.1)]
@@ -2043,6 +2268,10 @@ namespace Xcb
 		 * Deletes the association between the cursor resource ID and the specified
 		 * cursor. The cursor is freed when no other resource references it.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link CursorError}:  The specified cursor does not exist.  
+		 *
 		 * @param connection The connection.
 		 */
 		[CCode (cname = "xcb_free_cursor_checked", instance_pos = 1.1)]
@@ -2098,6 +2327,10 @@ namespace Xcb
 		 * Note that X core fonts are deprecated (but still supported) in favor of
 		 * client-side rendering using Xft.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link NameError}:  No font matches the given `name`.  
+		 *
 		 * @param connection The connection.
 		 * @param name A pattern describing an X core font.
 		 *
@@ -2112,6 +2345,10 @@ namespace Xcb
 		 * Note that X core fonts are deprecated (but still supported) in favor of
 		 * client-side rendering using Xft.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link NameError}:  No font matches the given `name`.  
+		 *
 		 * @param connection The connection.
 		 * @param name A pattern describing an X core font.
 		 *
@@ -2167,6 +2404,10 @@ namespace Xcb
 		 * Creates a graphics context. The graphics context can be used with any drawable
 		 * that has the same root and depth as the specified drawable.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param drawable Drawable to get the root/depth from.
 		 *
@@ -2179,6 +2420,10 @@ namespace Xcb
 		 * Creates a graphics context. The graphics context can be used with any drawable
 		 * that has the same root and depth as the specified drawable.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param drawable Drawable to get the root/depth from.
 		 *
@@ -2190,19 +2435,35 @@ namespace Xcb
 		 * 
 		 * Changes the components specified by `value_mask` for the specified graphics context.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link FontError}:  TODO: reasons?  
+		 *
 		 * @param connection The connection.
+		 * @param value_mask value_mask
+		 * @param value_list Values for each of the components specified in the bitmask `value_mask`. The
+		 *                   order has to correspond to the order of possible `value_mask` bits. See the
+		 *                   example.
 		 */
 		[CCode (cname = "xcb_change_gc", instance_pos = 1.1)]
-		public VoidCookie change_gc (Xcb.Connection connection, [CCode (array_length = false)]uint32[]? value_list = null);
+		public VoidCookie change_gc (Xcb.Connection connection, uint32 value_mask = 0, [CCode (array_length = false)]uint32[]? value_list = null);
 		/**
 		 * change graphics context components
 		 * 
 		 * Changes the components specified by `value_mask` for the specified graphics context.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link FontError}:  TODO: reasons?  
+		 *
 		 * @param connection The connection.
+		 * @param value_mask value_mask
+		 * @param value_list Values for each of the components specified in the bitmask `value_mask`. The
+		 *                   order has to correspond to the order of possible `value_mask` bits. See the
+		 *                   example.
 		 */
 		[CCode (cname = "xcb_change_gc_checked", instance_pos = 1.1)]
-		public VoidCookie change_gc_checked (Xcb.Connection connection, [CCode (array_length = false)]uint32[]? value_list = null);
+		public VoidCookie change_gc_checked (Xcb.Connection connection, uint32 value_mask = 0, [CCode (array_length = false)]uint32[]? value_list = null);
 		[CCode (cname = "xcb_copy_gc", instance_pos = 1.1)]
 		public VoidCookie copy_gc (Xcb.Connection connection, GContext dst_gc, GC value_mask);
 		[CCode (cname = "xcb_copy_gc_checked", instance_pos = 1.1)]
@@ -2220,6 +2481,10 @@ namespace Xcb
 		 * 
 		 * Destroys the specified `gc` and all associated storage.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link GCError}:  The specified graphics context does not exist.  
+		 *
 		 * @param connection The connection.
 		 */
 		[CCode (cname = "xcb_free_gc", instance_pos = 1.1)]
@@ -2229,6 +2494,10 @@ namespace Xcb
 		 * 
 		 * Destroys the specified `gc` and all associated storage.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link GCError}:  The specified graphics context does not exist.  
+		 *
 		 * @param connection The connection.
 		 */
 		[CCode (cname = "xcb_free_gc_checked", instance_pos = 1.1)]
@@ -2301,6 +2570,10 @@ namespace Xcb
 		 * example, on 16-bit color setups (VNC), you can easily get the closest supported
 		 * RGB value to the RGB value you are specifying.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link ColormapError}:  The specified colormap `cmap` does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param red The red value of your color.
 		 * @param green The green value of your color.
@@ -2490,6 +2763,10 @@ namespace Xcb
 		 * 
 		 * TODO: briefly explain what a selection is.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link AtomError}:  `selection` does not refer to a valid atom.  
+		 *
 		 * @param connection The connection.
 		 *
 		 * @see Window.set_selection_owner
@@ -2538,6 +2815,10 @@ namespace Xcb
 		 * 
 		 * Gets the current geometry of the specified drawable (either `Window` or `Pixmap`).
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link DrawableError}:  TODO: reasons?  
+		 *
 		 * @param connection The connection.
 		 *
 		 */
@@ -2548,6 +2829,10 @@ namespace Xcb
 		 * 
 		 * Copies the specified rectangle from `src_drawable` to `dst_drawable`.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param dst_drawable The destination drawable (Window or Pixmap).
 		 * @param gc The graphics context to use.
@@ -2565,6 +2850,10 @@ namespace Xcb
 		 * 
 		 * Copies the specified rectangle from `src_drawable` to `dst_drawable`.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param dst_drawable The destination drawable (Window or Pixmap).
 		 * @param gc The graphics context to use.
@@ -2597,6 +2886,10 @@ namespace Xcb
 		 * intersect, the intersecting pixels are drawn only once, as though the entire
 		 * request were a single, filled shape.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link DrawableError}:  TODO: reasons?  
+		 *
 		 * @param connection The connection.
 		 * @param coordinate_mode coordinate_mode
 		 * @param gc The graphics context to use.
@@ -2616,6 +2909,10 @@ namespace Xcb
 		 * intersect, the intersecting pixels are drawn only once, as though the entire
 		 * request were a single, filled shape.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link DrawableError}:  TODO: reasons?  
+		 *
 		 * @param connection The connection.
 		 * @param coordinate_mode coordinate_mode
 		 * @param gc The graphics context to use.
@@ -2636,6 +2933,10 @@ namespace Xcb
 		 * 
 		 * TODO: an example
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link DrawableError}:  The specified `drawable` does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param gc The graphics context to use.
 		 *           TODO: document which attributes of a gc are used
@@ -2656,6 +2957,10 @@ namespace Xcb
 		 * 
 		 * TODO: an example
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link DrawableError}:  The specified `drawable` does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param gc The graphics context to use.
 		 *           TODO: document which attributes of a gc are used
@@ -2682,6 +2987,10 @@ namespace Xcb
 		 * given rectangle, each pixel is not drawn more than once. If rectangles
 		 * intersect, the intersecting pixels are drawn multiple times.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param gc The graphics context to use.
 		 *           The following graphics context components are used: function, plane-mask,
@@ -2700,6 +3009,10 @@ namespace Xcb
 		 * given rectangle, each pixel is not drawn more than once. If rectangles
 		 * intersect, the intersecting pixels are drawn multiple times.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param gc The graphics context to use.
 		 *           The following graphics context components are used: function, plane-mask,
@@ -2741,6 +3054,10 @@ namespace Xcb
 		 * Note that using X core fonts is deprecated (but still supported) in favor of
 		 * client-side rendering using Xft.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param gc The graphics context to use.
 		 *           The following graphics context components are used: plane-mask, foreground,
@@ -2766,6 +3083,10 @@ namespace Xcb
 		 * Note that using X core fonts is deprecated (but still supported) in favor of
 		 * client-side rendering using Xft.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param gc The graphics context to use.
 		 *           The following graphics context components are used: plane-mask, foreground,
@@ -2791,6 +3112,10 @@ namespace Xcb
 		 * Note that using X core fonts is deprecated (but still supported) in favor of
 		 * client-side rendering using Xft.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param gc The graphics context to use.
 		 *           The following graphics context components are used: plane-mask, foreground,
@@ -2817,6 +3142,10 @@ namespace Xcb
 		 * Note that using X core fonts is deprecated (but still supported) in favor of
 		 * client-side rendering using Xft.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param gc The graphics context to use.
 		 *           The following graphics context components are used: plane-mask, foreground,
@@ -2921,6 +3250,10 @@ namespace Xcb
 		 * Characters with all zero metrics are ignored. If the font has no defined
 		 * default_char, the undefined characters in the string are also ignored.
 		 * 
+		 * = Errors: =
+		 *
+		 *  * {@link GCError}:  The specified graphics context does not exist.  
+		 *
 		 * @param connection The connection.
 		 * @param string The text to get text extents for.
 		 */
@@ -4228,13 +4561,6 @@ namespace Xcb
 		public uint8 count;
 	}
 
-	/**
-	 * generic event (with length)
-	 */
-	[Compact, CCode (cname = "xcb_ge_generic_event_t", has_type_id = false)]
-	public class GeGenericEvent : Xcb.GenericEvent {
-	}
-
 	[Compact, CCode (cname = "xcb_request_error_t", has_type_id = false)]
 	public class RequestError : Xcb.GenericError {
 		public uint32 bad_value;
@@ -4370,6 +4696,11 @@ namespace Xcb
 		INVALID_TIME,
 		NOT_VIEWABLE,
 		FROZEN
+	}
+
+	[CCode (cname = "xcb_cursor_t", cprefix =  "XCB_CURSOR_", has_type_id = false)]
+	public enum CursorType {
+		NONE
 	}
 
 	[CCode (cname = "xcb_button_index_t", cprefix =  "XCB_BUTTON_INDEX_", has_type_id = false)]
@@ -4800,6 +5131,16 @@ namespace Xcb
 		public uint16 blue;
 	}
 
+	[CCode (cname = "xcb_pixmap_t", cprefix =  "XCB_PIXMAP_", has_type_id = false)]
+	public enum PixmapType {
+		NONE
+	}
+
+	[CCode (cname = "xcb_font_t", cprefix =  "XCB_FONT_", has_type_id = false)]
+	public enum FontType {
+		NONE
+	}
+
 	[CCode (cname = "xcb_query_shape_of_t", cprefix =  "XCB_QUERY_SHAPE_OF_", has_type_id = false)]
 	public enum QueryShapeOf {
 		LARGEST_CURSOR,
@@ -4940,6 +5281,111 @@ namespace Xcb
 		FOUR,
 		[CCode (cname = "XCB_MAP_INDEX_5")]
 		FIVE
+	}
+
+	[Compact, CCode (cname = "xcb_window_error_t", has_type_id = false)]
+	public class WindowError : Xcb.GenericError {
+		public uint32 bad_value;
+		public uint8 major_opcode;
+		public uint16 minor_opcode;
+	}
+
+	[Compact, CCode (cname = "xcb_pixmap_error_t", has_type_id = false)]
+	public class PixmapError : Xcb.GenericError {
+		public uint32 bad_value;
+		public uint8 major_opcode;
+		public uint16 minor_opcode;
+	}
+
+	[Compact, CCode (cname = "xcb_atom_error_t", has_type_id = false)]
+	public class AtomError : Xcb.GenericError {
+		public uint32 bad_value;
+		public uint8 major_opcode;
+		public uint16 minor_opcode;
+	}
+
+	[Compact, CCode (cname = "xcb_cursor_error_t", has_type_id = false)]
+	public class CursorError : Xcb.GenericError {
+		public uint32 bad_value;
+		public uint8 major_opcode;
+		public uint16 minor_opcode;
+	}
+
+	[Compact, CCode (cname = "xcb_font_error_t", has_type_id = false)]
+	public class FontError : Xcb.GenericError {
+		public uint32 bad_value;
+		public uint8 major_opcode;
+		public uint16 minor_opcode;
+	}
+
+	[Compact, CCode (cname = "xcb_match_error_t", has_type_id = false)]
+	public class MatchError : Xcb.GenericError {
+		public uint32 bad_value;
+		public uint8 major_opcode;
+		public uint16 minor_opcode;
+	}
+
+	[Compact, CCode (cname = "xcb_drawable_error_t", has_type_id = false)]
+	public class DrawableError : Xcb.GenericError {
+		public uint32 bad_value;
+		public uint8 major_opcode;
+		public uint16 minor_opcode;
+	}
+
+	[Compact, CCode (cname = "xcb_access_error_t", has_type_id = false)]
+	public class AccessError : Xcb.GenericError {
+		public uint32 bad_value;
+		public uint8 major_opcode;
+		public uint16 minor_opcode;
+	}
+
+	[Compact, CCode (cname = "xcb_alloc_error_t", has_type_id = false)]
+	public class AllocError : Xcb.GenericError {
+		public uint32 bad_value;
+		public uint8 major_opcode;
+		public uint16 minor_opcode;
+	}
+
+	[Compact, CCode (cname = "xcb_colormap_error_t", has_type_id = false)]
+	public class ColormapError : Xcb.GenericError {
+		public uint32 bad_value;
+		public uint8 major_opcode;
+		public uint16 minor_opcode;
+	}
+
+	[Compact, CCode (cname = "xcb_g_context_error_t", has_type_id = false)]
+	public class GContextError : Xcb.GenericError {
+		public uint32 bad_value;
+		public uint8 major_opcode;
+		public uint16 minor_opcode;
+	}
+
+	[Compact, CCode (cname = "xcb_id_choice_error_t", has_type_id = false)]
+	public class IdchoiceError : Xcb.GenericError {
+		public uint32 bad_value;
+		public uint8 major_opcode;
+		public uint16 minor_opcode;
+	}
+
+	[Compact, CCode (cname = "xcb_name_error_t", has_type_id = false)]
+	public class NameError : Xcb.GenericError {
+		public uint32 bad_value;
+		public uint8 major_opcode;
+		public uint16 minor_opcode;
+	}
+
+	[Compact, CCode (cname = "xcb_length_error_t", has_type_id = false)]
+	public class LengthError : Xcb.GenericError {
+		public uint32 bad_value;
+		public uint8 major_opcode;
+		public uint16 minor_opcode;
+	}
+
+	[Compact, CCode (cname = "xcb_implementation_error_t", has_type_id = false)]
+	public class ImplementationError : Xcb.GenericError {
+		public uint32 bad_value;
+		public uint8 major_opcode;
+		public uint16 minor_opcode;
 	}
 
 	/**
@@ -5157,91 +5603,6 @@ namespace Xcb
 		SELECTION_NOTIFY,
 		COLORMAP_NOTIFY,
 		CLIENT_MESSAGE,
-		MAPPING_NOTIFY,
-		GE_GENERIC
-	}
-
-	[Compact, CCode (cname = "xcb_pixmap_error_t", has_type_id = false)]
-	public class PixmapError : Xcb.GenericError {
-		public uint32 bad_value;
-		public uint8 major_opcode;
-		public uint16 minor_opcode;
-	}
-
-	[Compact, CCode (cname = "xcb_cursor_error_t", has_type_id = false)]
-	public class CursorError : Xcb.GenericError {
-		public uint32 bad_value;
-		public uint8 major_opcode;
-		public uint16 minor_opcode;
-	}
-
-	[Compact, CCode (cname = "xcb_font_error_t", has_type_id = false)]
-	public class FontError : Xcb.GenericError {
-		public uint32 bad_value;
-		public uint8 major_opcode;
-		public uint16 minor_opcode;
-	}
-
-	[Compact, CCode (cname = "xcb_match_error_t", has_type_id = false)]
-	public class MatchError : Xcb.GenericError {
-		public uint32 bad_value;
-		public uint8 major_opcode;
-		public uint16 minor_opcode;
-	}
-
-	[Compact, CCode (cname = "xcb_drawable_error_t", has_type_id = false)]
-	public class DrawableError : Xcb.GenericError {
-		public uint32 bad_value;
-		public uint8 major_opcode;
-		public uint16 minor_opcode;
-	}
-
-	[Compact, CCode (cname = "xcb_access_error_t", has_type_id = false)]
-	public class AccessError : Xcb.GenericError {
-		public uint32 bad_value;
-		public uint8 major_opcode;
-		public uint16 minor_opcode;
-	}
-
-	[Compact, CCode (cname = "xcb_alloc_error_t", has_type_id = false)]
-	public class AllocError : Xcb.GenericError {
-		public uint32 bad_value;
-		public uint8 major_opcode;
-		public uint16 minor_opcode;
-	}
-
-	[Compact, CCode (cname = "xcb_g_context_error_t", has_type_id = false)]
-	public class GContextError : Xcb.GenericError {
-		public uint32 bad_value;
-		public uint8 major_opcode;
-		public uint16 minor_opcode;
-	}
-
-	[Compact, CCode (cname = "xcb_id_choice_error_t", has_type_id = false)]
-	public class IdchoiceError : Xcb.GenericError {
-		public uint32 bad_value;
-		public uint8 major_opcode;
-		public uint16 minor_opcode;
-	}
-
-	[Compact, CCode (cname = "xcb_name_error_t", has_type_id = false)]
-	public class NameError : Xcb.GenericError {
-		public uint32 bad_value;
-		public uint8 major_opcode;
-		public uint16 minor_opcode;
-	}
-
-	[Compact, CCode (cname = "xcb_length_error_t", has_type_id = false)]
-	public class LengthError : Xcb.GenericError {
-		public uint32 bad_value;
-		public uint8 major_opcode;
-		public uint16 minor_opcode;
-	}
-
-	[Compact, CCode (cname = "xcb_implementation_error_t", has_type_id = false)]
-	public class ImplementationError : Xcb.GenericError {
-		public uint32 bad_value;
-		public uint8 major_opcode;
-		public uint16 minor_opcode;
+		MAPPING_NOTIFY
 	}
 }

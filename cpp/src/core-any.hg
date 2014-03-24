@@ -33,6 +33,8 @@ namespace Maia
             _CLASS_GOBJECT(Any, MaiaCoreAny, MAIA_CORE_ANY, Glib::Object, GObject)
 
             public:
+                _CTOR_DEFAULT()
+                
                 _IGNORE (maia_core_any_delegate_construct)
                 _IGNORE (maia_core_any_delegate)
                 _IGNORE (maia_core_any_undelegate)

@@ -87,6 +87,14 @@ public class Maia.Core.EventListener : Object
         m_Handler = inHandler;
     }
 
+    public EventListener.with_hash (Event.Hash inHash, Event.Handler inHandler)
+    {
+        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "create eventlistener");
+
+        m_EventHash = inHash;
+        m_Handler = inHandler;
+    }
+
     public EventListener.object (Event inEvent, Event.Handler inHandler)
     {
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "create eventlistener");

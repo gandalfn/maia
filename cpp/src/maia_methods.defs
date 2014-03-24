@@ -1,5 +1,11 @@
 ;; -*- scheme -*-
 ; object definitions ...
+(define-object MaiaAdjustment
+  (parent "GObject")
+  (c-name "MaiaAdjustment")
+  (gtype-id "MAIA_TYPE_ADJUSTMENT")
+)
+
 (define-object MaiaCanvas
   (c-name "MaiaCanvas")
   (gtype-id "MAIA_TYPE_CANVAS")
@@ -2996,6 +3002,106 @@
 
 
 ;; From maia.h
+
+(define-function maia_adjustment_get_type
+  (c-name "maia_adjustment_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_adjustment_new
+  (c-name "maia_adjustment_new")
+  (is-constructor-of "MaiaAdjustment")
+  (return-type "MaiaAdjustment*")
+)
+
+(define-function maia_adjustment_construct
+  (c-name "maia_adjustment_construct")
+  (return-type "MaiaAdjustment*")
+  (parameters
+    '("GType" "object_type")
+  )
+)
+
+(define-function maia_adjustment_new_configure
+  (c-name "maia_adjustment_new_configure")
+  (return-type "MaiaAdjustment*")
+  (parameters
+    '("gdouble" "inLower")
+    '("gdouble" "inUpper")
+    '("gdouble" "inPageSize")
+  )
+)
+
+(define-function maia_adjustment_construct_configure
+  (c-name "maia_adjustment_construct_configure")
+  (return-type "MaiaAdjustment*")
+  (parameters
+    '("GType" "object_type")
+    '("gdouble" "inLower")
+    '("gdouble" "inUpper")
+    '("gdouble" "inPageSize")
+  )
+)
+
+(define-method get_value
+  (of-object "MaiaAdjustment")
+  (c-name "maia_adjustment_get_value")
+  (return-type "gdouble")
+)
+
+(define-method set_value
+  (of-object "MaiaAdjustment")
+  (c-name "maia_adjustment_set_value")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_lower
+  (of-object "MaiaAdjustment")
+  (c-name "maia_adjustment_get_lower")
+  (return-type "gdouble")
+)
+
+(define-method set_lower
+  (of-object "MaiaAdjustment")
+  (c-name "maia_adjustment_set_lower")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_upper
+  (of-object "MaiaAdjustment")
+  (c-name "maia_adjustment_get_upper")
+  (return-type "gdouble")
+)
+
+(define-method set_upper
+  (of-object "MaiaAdjustment")
+  (c-name "maia_adjustment_set_upper")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_page_size
+  (of-object "MaiaAdjustment")
+  (c-name "maia_adjustment_get_page_size")
+  (return-type "gdouble")
+)
+
+(define-method set_page_size
+  (of-object "MaiaAdjustment")
+  (c-name "maia_adjustment_set_page_size")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
 
 (define-function maia_log_level_get_type
   (c-name "maia_log_level_get_type")
