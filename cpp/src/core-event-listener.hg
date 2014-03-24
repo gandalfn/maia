@@ -50,7 +50,7 @@ namespace Maia
         template <class T_obj>
         class EventListenerFunctor : public EventListenerFunctorBase
         {
-            typedef void (T_obj::*Handler) (const Glib::RefPtr<EventArgs>& inpArgs);
+            typedef void (T_obj::*Handler) (const Glib::RefPtr<EventArgs>& inpArgs) const;
 
             public:
                 virtual void operator() (const Glib::RefPtr<EventArgs>& inArgs)
@@ -80,7 +80,7 @@ namespace Maia
         template <class T_obj>
         class EventListenerGFunctor : public EventListenerFunctorBase
         {
-            typedef void (T_obj::*Handler) (const Glib::RefPtr<EventArgs>& inpArgs);
+            typedef void (T_obj::*Handler) (const Glib::RefPtr<EventArgs>& inpArgs) const;
 
             public:
                 virtual void operator() (const Glib::RefPtr<EventArgs>& inArgs)
