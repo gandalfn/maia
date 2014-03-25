@@ -38,7 +38,7 @@ namespace Maia
                 _CTOR_DEFAULT()
 
 #m4 _CONVERSION(`Glib::VariantBase',`GVariant*',`($3).gobj()')
-#m4 _CONVERSION(`GVariant*',`const Glib::VariantBase&',`Glib::wrap($3, false)')
+#m4 _CONVERSION(`GVariant*',`const Glib::VariantBase&',`Glib::wrap($3, true)')
                 _WRAP_VFUNC(Glib::VariantBase get_serialize (), get_serialize)
                 _WRAP_VFUNC(void set_serialize (const Glib::VariantBase& inData), set_serialize)
                 _WRAP_VFUNC(void accumulate (const Glib::RefPtr<EventArgs>& inOther), accumulate)
