@@ -23,5 +23,112 @@ namespace Maia
 {
     namespace Core
     {
+        void EventArgs_Class::set_serialize_vfunc_callback(MaiaCoreEventArgs* self, GVariant* inData)
+        {
+            Glib::ObjectBase* obj_base = static_cast<Glib::ObjectBase*>(Glib::ObjectBase::_get_current_wrapper((GObject*)self));
+
+            if (!obj_base)
+            {
+                obj_base = Glib::wrap_auto ((GObject*)self, false);
+            }
+
+            if (obj_base && obj_base->is_derived_())
+            {
+                CppObjectType *const obj = dynamic_cast<CppObjectType* const>(obj_base);
+                if (obj)
+                {
+                    try
+                    {
+                        obj->set_serialize_vfunc(Glib::wrap(inData, true));
+                        return;
+                    }
+                    catch(...)
+                    {
+                        Glib::exception_handlers_invoke();
+                    }
+                }
+            }
+
+            BaseClassType *const base = static_cast<BaseClassType*> (g_type_class_peek_parent(G_OBJECT_GET_CLASS(self)));
+
+            if(base && base->set_serialize)
+            {
+                (*base->set_serialize)(self, inData);
+            }
+        }
+
+        static void _cpp_core_event_args_get_property (GObject * object, guint property_id, GValue * value, GParamSpec * pspec)
+        {
+            switch (property_id)
+            {
+                case 1:
+                    g_value_take_variant (value, maia_core_event_args_get_serialize ((MaiaCoreEventArgs*) object));
+                    break;
+                default:
+                    
+                    break;
+            }
+        }
+
+
+        static void _cpp_core_event_args_set_property (GObject * object, guint property_id, const GValue * value, GParamSpec * pspec)
+        {
+            switch (property_id)
+            {
+                case 1:
+                    maia_core_event_args_set_serialize ((MaiaCoreEventArgs*) object, g_value_get_variant (value));
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        EventArgs::EventArgs (Glib::WrapNewFunction inWrapFunc) :
+            Glib::ObjectBase(0),
+            Glib::Object(Glib::ConstructParams(eventargs_class_.init()))
+        {
+            /**
+             * WARNING!!!! TODO
+             * This implementation imply a first instance of derived event args was created before received it
+             * in bus. It works if all class are in same process, but not if event come from another
+             * machine or process
+             */
+            const gpointer idx = g_type_get_qdata(G_OBJECT_TYPE(gobj ()), Glib::quark_);
+            if (!idx)
+            {
+                g_object_class_install_property (G_OBJECT_GET_CLASS (gobj ()), 1,
+                                                 g_param_spec_variant ("serialize", "serialize", "serialize",
+                                                 G_VARIANT_TYPE_ANY, NULL,
+                                                 (GParamFlags)(G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE)));
+
+                GObjectClass* klass = G_OBJECT_GET_CLASS (gobj ());
+                klass->get_property = _cpp_core_event_args_get_property;
+                klass->set_property = _cpp_core_event_args_set_property;
+
+                Glib::wrap_register (G_OBJECT_TYPE(gobj ()), inWrapFunc);
+            }
+        }
+
+        Glib::VariantBase
+        EventArgs::serialize (const Glib::ustring& inSignature, ...)
+        {
+            va_list var_args;
+
+            va_start (var_args, inSignature);
+            Glib::VariantBase variant (g_variant_new_va (inSignature.c_str (), 0, &var_args), true);
+            va_end (var_args);
+
+            return variant;
+        }
+        
+        void
+        EventArgs::unserialize (const Glib::VariantBase& inData, const Glib::ustring& inSignature, ...)
+        {
+            va_list var_args;
+
+            va_start (var_args, inData);
+            g_variant_get_va (const_cast<GVariant*> (inData.gobj ()), inSignature.c_str (), 0, &var_args);
+            va_end (var_args);
+        }
     }
 }

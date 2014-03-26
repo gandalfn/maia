@@ -20,6 +20,7 @@
 #include <maia-gtkmm.h>
 
 #include "test-case.h"
+#include "test-event.h"
 #include "test-manifest.h"
 #include "test-canvas.h"
 #include "test-derived.h"
@@ -48,10 +49,12 @@ main (int argc, char** argv)
     Maia::TestSuite root;
 
     // Create test suite
+    Maia::TestEvent event;
     Maia::TestManifest manifest;
     Maia::TestCanvas canvas;
     Maia::TestDerived derived;
 
+    root.add_suite (event.get_suite ());
     root.add_suite (manifest.get_suite ());
     root.add_suite (canvas.get_suite ());
     root.add_suite (derived.get_suite ());

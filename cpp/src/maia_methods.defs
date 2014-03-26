@@ -6677,12 +6677,6 @@
   (return-type "MaiaCoreEventArgs*")
 )
 
-(define-method get_sequence
-  (of-object "MaiaCoreEventArgs")
-  (c-name "maia_core_event_args_get_sequence")
-  (return-type "gint")
-)
-
 (define-method get_serialize
   (of-object "MaiaCoreEventArgs")
   (c-name "maia_core_event_args_get_serialize")
@@ -6696,6 +6690,12 @@
   (parameters
     '("GVariant*" "value")
   )
+)
+
+(define-method get_sequence
+  (of-object "MaiaCoreEventArgs")
+  (c-name "maia_core_event_args_get_sequence")
+  (return-type "gint")
 )
 
 (define-method listener_new

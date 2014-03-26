@@ -265,15 +265,6 @@
 
 ;; From MaiaCoreEventArgs
 
-(define-property sequence
-  (of-object "MaiaCoreEventArgs")
-  (prop-type "GParamInt")
-  (docs "sequence")
-  (readable #t)
-  (writable #t)
-  (construct-only #t)
-)
-
 (define-property serialize
   (of-object "MaiaCoreEventArgs")
   (prop-type "GParamVariant")
@@ -281,6 +272,15 @@
   (readable #t)
   (writable #t)
   (construct-only #f)
+)
+
+(define-property sequence
+  (of-object "MaiaCoreEventArgs")
+  (prop-type "GParamInt")
+  (docs "sequence")
+  (readable #t)
+  (writable #t)
+  (construct-only #t)
 )
 
 ;; From MaiaCoreEvent

@@ -44,13 +44,14 @@ namespace Maia
                 EventListenerFunctorBase () :
                     Glib::ObjectBase ("EventListenerFunctorBase")
                 {
+                    g_object_set_data (G_OBJECT (gobj ()), "EventListenerCpp", this);
                 }
         };
         
         template <class T_obj>
         class EventListenerFunctor : public EventListenerFunctorBase
         {
-            typedef void (T_obj::*Handler) (const Glib::RefPtr<EventArgs>& inpArgs) const;
+            typedef void (T_obj::*Handler) (const Glib::RefPtr<EventArgs>& inpArgs);
 
             public:
                 virtual void operator() (const Glib::RefPtr<EventArgs>& inArgs)
@@ -80,7 +81,7 @@ namespace Maia
         template <class T_obj>
         class EventListenerGFunctor : public EventListenerFunctorBase
         {
-            typedef void (T_obj::*Handler) (const Glib::RefPtr<EventArgs>& inpArgs) const;
+            typedef void (T_obj::*Handler) (const Glib::RefPtr<EventArgs>& inpArgs);
 
             public:
                 virtual void operator() (const Glib::RefPtr<EventArgs>& inArgs)
@@ -115,7 +116,7 @@ namespace Maia
             public:
                 template <class T_obj>
                 static Glib::RefPtr<EventListener>
-                create (const Glib::RefPtr<Event>& inpEvent, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs) const)
+                create (const Glib::RefPtr<Event>& inpEvent, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
                 {
                     Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerFunctor<T_obj>::create (pObj, pFunc);
                     
@@ -124,7 +125,7 @@ namespace Maia
 
                 template <class T_obj>
                 static Glib::RefPtr<EventListener>
-                create (const Glib::RefPtr<Event>& inpEvent, const Glib::RefPtr<T_obj>& pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs) const)
+                create (const Glib::RefPtr<Event>& inpEvent, const Glib::RefPtr<T_obj>& pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
                 {
                     Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerGFunctor<T_obj>::create (pObj, pFunc);
                     Glib::RefPtr<EventListener> pListener = create (inpEvent, pFunctor);

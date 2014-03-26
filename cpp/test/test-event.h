@@ -1,6 +1,6 @@
-/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * event-args.vala
+ * test-event.h
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,30 +17,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.Core.EventArgs : GLib.Object
+#include "test-case.h"
+
+#ifndef _MAIA_TEST_EVENT_H
+#define _MAIA_TEST_EVENT_H
+
+namespace Maia
 {
-    // class properties
-    private static int s_Sequence = 1;
-
-    // accessors
-    public abstract GLib.Variant serialize { owned get; set; }
-    public int sequence { get; construct; }
-
-    // methods
-    public EventArgs ()
+    class TestEvent : public TestCase
     {
-        GLib.Object (sequence: GLib.AtomicInt.add (ref s_Sequence, 1));
-    }
+        public:
+            TestEvent ();
+            virtual ~TestEvent ();
 
-    public virtual void
-    accumulate (EventArgs inArgs)
-        requires (inArgs.get_type ().is_a (get_type ()))
-    {
-    }
-
-    public EventArgs
-    copy ()
-    {
-        return GLib.Object.new (get_type (), sequence: sequence, serialize: serialize) as EventArgs;
-    }
+        private:
+            // properties
+            Glib::RefPtr<Core::Event> m_pEvent;
+            unsigned long m_Data;
+            Glib::ustring m_Foo;
+            int m_Count;
+            
+            // methods
+            void test_event_publish ();
+            void on_event (const Glib::RefPtr<Core::EventArgs>& inpArgs);
+            bool on_publish ();
+            bool on_quit ();
+    };
 }
+
+#endif

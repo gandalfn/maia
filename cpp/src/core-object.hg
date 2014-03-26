@@ -84,8 +84,8 @@ namespace Maia
             protected:
                 _CTOR_DEFAULT()
                 
-#m4 _CONVERSION(`MaiaCoreObject*', `const Glib::RefPtr<Object>&', `Glib::wrap($3, true)')
                 _WRAP_VFUNC(Glib::RefPtr<Object> get_parent (), get_parent, refreturn_ctype)
+#m4 _CONVERSION(`MaiaCoreObject*', `const Glib::RefPtr<Object>&', `Glib::wrap($3, true)')
                 _WRAP_VFUNC(void set_parent (const Glib::RefPtr<Object>& inObject), set_parent)
                 _WRAP_VFUNC(void insert_child (const Glib::RefPtr<Object>& inObject), insert_child)
                 _WRAP_VFUNC(void remove_child (const Glib::RefPtr<Object>& inObject), remove_child)

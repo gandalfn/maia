@@ -4,6 +4,7 @@ noinst_PROGRAMS = \
     test
 
 AM_CPPFLAGS = \
+	-std=c++11 \
 	$(MAIAMM_CFLAGS) \
 	$(MAIA_GTKMM_CFLAGS) \
 	-I${top_srcdir}/lib \
@@ -22,7 +23,9 @@ test_SOURCES = \
     test-canvas.cc \
     test-canvas.h \
     test-derived.cc \
-    test-derived.h
+    test-derived.h \
+    test-event.cc \
+    test-event.h
 
 test_LDADD = \
     $(MAIA_LIBS) \

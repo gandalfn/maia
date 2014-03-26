@@ -86,7 +86,7 @@ namespace Maia
 
             _WRAP_SIGNAL(void new_frame (int inNumFrame), "new_frame")
 
-            _WRAP_METHOD(static Glib::RefPtr<Application> get_default (), maia_application_get_default)
+            _WRAP_METHOD(static Glib::RefPtr<Application> get_default (), maia_application_get_default, refreturn)
             _WRAP_METHOD(static void set_default (const Glib::RefPtr<Application>& inApplication), maia_application_set_default)
 
             _WRAP_PROPERTY("refresh_rate", guint)
