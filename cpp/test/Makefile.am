@@ -27,14 +27,19 @@ test_SOURCES = \
     test-event.cc \
     test-event.h
 
+test_LDFLAGS = \
+	-Wl,--as-needed
+
 test_LDADD = \
     $(MAIA_LIBS) \
     $(MAIA_GTK_LIBS) \
     $(MAIA_VALGRIND_LIBS) \
     $(MAIAMM_LIBS) \
     $(MAIA_GTKMM_LIBS) \
-    ${top_builddir}/lib/libmaia.la \
     ${top_builddir}/lib/gdk-pixbuf/libmaia-gdk-pixbuf.la \
+    ${top_builddir}/lib/libmaia.la \
     ${top_builddir}/lib/gtk/libmaia-gtk.la \
     ${top_builddir}/cpp/maiamm/libmaiamm.la \
     ${top_builddir}/cpp/gtk/maia-gtkmm/libmaia-gtkmm.la
+    
+    

@@ -38,8 +38,7 @@ canvas_editor_SOURCES = \
     provider.vala
 
 canvas_editor_LDFLAGS = \
-    -Wl,--as-needed \
-    -Wl,--no-add-needed
+    -Wl,--as-needed
 
 canvas_editor_LDADD = \
     $(MAIA_LIBS) \

@@ -74,7 +74,7 @@ namespace Maia
                 _WRAP_METHOD(Glib::ustring get_element_tag () const, maia_manifest_document_get_element_tag)
                 _WRAP_METHOD(Glib::ustring get_element_id () const, maia_manifest_document_get_element_id)
 
-                _WRAP_METHOD(Glib::RefPtr<Element> get (const Glib::ustring& inId) const, maia_manifest_document_get, errthrow)
+                _WRAP_METHOD(Glib::RefPtr<Element> get (const Glib::ustring& inId) const, maia_manifest_document_get, refreturn, errthrow)
                 Glib::RefPtr<Element> get () const;
 
                 _WRAP_METHOD(void add_style (const Glib::RefPtr<Style>& inStyle), maia_manifest_document_add_style)

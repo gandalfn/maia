@@ -2,7 +2,6 @@ backend_DATA = $(MAIA_LIB_NAME).backend
 
 AM_LDFLAGS = \
     -Wl,--as-needed \
-    -Wl,--no-add-needed \
     -avoid-version \
     -no-undefined
 

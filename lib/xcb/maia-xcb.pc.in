@@ -9,5 +9,5 @@ Name: maia-xcb-@MAIA_ABI@
 Description: Maia XCB library
 Version: @MAIA_VERSION@
 Requires: maia-@MAIA_ABI@ xcb >= @XCB_REQUIRED@
-Libs: -L${libdir}
+Libs: -Wl,-rpath=${libdir} -L${libdir} -lmaia-xcb
 Cflags: -I${includedir}

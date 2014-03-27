@@ -30,7 +30,7 @@ namespace Maia
         Glib::RefPtr<Element> Document::get () const
         {
             GError* gerror = 0;
-            Glib::RefPtr<Element> pElement = Glib::wrap (maia_manifest_document_get (const_cast<MaiaManifestDocument*> (gobj ()), 0, &gerror));
+            Glib::RefPtr<Element> pElement = Glib::wrap (maia_manifest_document_get (const_cast<MaiaManifestDocument*> (gobj ()), 0, &gerror), true);
             if (gerror) ::Glib::Error::throw_exception(gerror);
             return pElement;
         }

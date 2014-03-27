@@ -9,5 +9,5 @@ Name: maia-rsvg-@MAIA_ABI@
 Description: Maia RSVG Graphic Image library
 Version: @MAIA_VERSION@
 Requires: maia-@MAIA_ABI@ maia-cairo-graphic-@MAIA_ABI@ librsvg-2.0 >= @LIBRSVG_REQUIRED@
-Libs: -L${libdir} -lmaia-rsvg
+Libs: -Wl,-rpath=${libdir} -L${libdir} -lmaia-rsvg
 Cflags: -I${includedir}

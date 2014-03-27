@@ -1,4 +1,4 @@
-lib_LTLIBRARIES = libmaiamm.la
+binding_LTLIBRARIES = libmaiamm.la
 
 binding_modulename = maiamm-$(MAIA_ABI)
 
@@ -12,5 +12,12 @@ AM_CPPFLAGS = -std=c++11 $(local_cppflags) $(GTHREAD_CFLAGS) $(MAIAMM_CFLAGS) -I
 AM_CXXFLAGS = $(MAIAMM_WXXFLAGS)
 
 libmaiamm_la_SOURCES = $(binding_sources)
-libmaiamm_la_LDFLAGS = -no-undefined -version-number @MAIA_SO_VERSION@
-libmaiamm_la_LIBADD  = $(MAIAMM_LIBS) ${top_builddir}/lib/libmaia.la
+
+libmaiamm_la_LDFLAGS =  \
+    -Wl,--as-needed \
+    -avoid-version \
+    -no-undefined
+
+libmaiamm_la_LIBADD  = \
+    $(MAIAMM_LIBS) \
+    ${top_builddir}/lib/libmaia.la

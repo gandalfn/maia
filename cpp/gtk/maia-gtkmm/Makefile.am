@@ -24,7 +24,6 @@ AM_CXXFLAGS = $(MAIAMM_WXXFLAGS)
 libmaia_gtkmm_la_SOURCES = $(binding_sources)
 libmaia_gtkmm_la_LDFLAGS =  \
     -Wl,--as-needed \
-    -Wl,--no-add-needed \
     -avoid-version \
     -no-undefined
 
@@ -33,4 +32,5 @@ libmaia_gtkmm_la_LIBADD  = \
     $(MAIA_GTK_LIBS) \
     $(MAIA_VALGRIND_LIBS) \
     ${top_builddir}/lib/libmaia.la \
-    ${top_builddir}/lib/gtk/libmaia-gtk.la
+    ${top_builddir}/lib/gtk/libmaia-gtk.la \
+    ${top_builddir}/lib/gdk-pixbuf/libmaia-gdk-pixbuf.la

@@ -9,5 +9,5 @@ Name: maia-gtkmm-@MAIA_ABI@
 Description: Maia Gtkmm library
 Version: @MAIA_VERSION@
 Requires: maiamm-@MAIA_ABI@ maia-gtk-@MAIA_ABI@ gtkmm-2.4 >= @GTKMM_REQUIRED@
-Libs: -L${libdir} -lmaia-gtkmm
+Libs: -Wl,-rpath=${libdir} -L${libdir} -lmaia-gtkmm
 Cflags: -I${includedir}

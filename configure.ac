@@ -15,7 +15,7 @@ AC_CONFIG_HEADERS(build-aux/config.h)
 dnl ****************************************************************************
 dnl Init automake
 dnl ****************************************************************************
-AM_INIT_AUTOMAKE([1.11 dist-bzip2 silent-rules])
+AM_INIT_AUTOMAKE([1.11  tar-pax silent-rules subdir-objects dist-bzip2])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 AC_ARG_VAR([ACLOCAL_FLAGS], [aclocal flags, e.g. -I <macro dir>])
 AM_MAINTAINER_MODE

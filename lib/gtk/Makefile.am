@@ -2,8 +2,8 @@ MAIA_LIB_NAME = maia-gtk
 
 MAIA_VAPI_DEPS =  \
     core/maia-any \
-    gdk-pixbuf/maia-gdk-pixbuf \
-    maia
+    maia \
+    gdk-pixbuf/maia-gdk-pixbuf
 
 include $(top_srcdir)/build-aux/maia.am
 include $(top_srcdir)/build-aux/backend.am
