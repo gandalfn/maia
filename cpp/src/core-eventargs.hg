@@ -31,12 +31,12 @@ _PINCLUDE(maiamm/private/core-object_p.h)
     } \
     klass () : \
         Glib::ObjectBase ("##klass##"), \
-        Core::EventArgs (& klass ::wrap_new) \
+        Maia::Core::EventArgs (& klass ::wrap_new) \
     { \
     } \
     klass (MaiaCoreEventArgs* inpSelf) : \
         Glib::ObjectBase ("##klass##"), \
-        Core::EventArgs (inpSelf) \
+        Maia::Core::EventArgs (inpSelf) \
     { \
     }
 
