@@ -4,5 +4,5 @@ Description=Gtk Backend
 Module=libmaia-gtk.so
 
 [Backend]
-Require=cairo,gdk-pixbuf,rsvg,
+Require=cairo,gdk-pixbuf,rsvg,xcb,
 Provide=canvas,

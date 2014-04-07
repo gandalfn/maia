@@ -575,6 +575,12 @@
   (gtype-id "MAIA_TYPE_RECTANGLE")
 )
 
+(define-object MaiaScrollView
+  (parent "MaiaItem")
+  (c-name "MaiaScrollView")
+  (gtype-id "MAIA_TYPE_SCROLL_VIEW")
+)
+
 (define-object MaiaShortcut
   (parent "MaiaCoreObject")
   (c-name "MaiaShortcut")
@@ -630,7 +636,7 @@
 )
 
 (define-object MaiaWindow
-  (parent "MaiaGrid")
+  (parent "MaiaGroup")
   (c-name "MaiaWindow")
   (gtype-id "MAIA_TYPE_WINDOW")
 )
@@ -3000,6 +3006,16 @@
   )
 )
 
+(define-flags MaiaScrollViewPolicy
+  (c-name "MaiaScrollViewPolicy")
+  (gtype-id "MAIA_TYPE_SCROLL_VIEW_POLICY")
+  (values
+    '("none" "MAIA_SCROLL_VIEW_POLICY_NONE")
+    '("vertical-scrolling" "MAIA_SCROLL_VIEW_POLICY_VERTICAL_SCROLLING")
+    '("horizontal-scrolling" "MAIA_SCROLL_VIEW_POLICY_HORIZONTAL_SCROLLING")
+  )
+)
+
 
 ;; From maia.h
 
@@ -4569,7 +4585,7 @@
 (define-method find_by_type
   (of-object "MaiaCoreObject")
   (c-name "maia_core_object_find_by_type")
-  (return-type "gconstpointer")
+  (return-type "MaiaCoreList*")
   (parameters
     '("GType" "t_type")
     '("GBoxedCopyFunc" "t_dup_func")
@@ -9574,6 +9590,15 @@
   )
 )
 
+(define-method status
+  (of-object "MaiaGraphicSurface")
+  (c-name "maia_graphic_surface_status")
+  (return-type "none")
+  (parameters
+    '("GError**" "error")
+  )
+)
+
 (define-method clear
   (of-object "MaiaGraphicSurface")
   (c-name "maia_graphic_surface_clear")
@@ -9610,6 +9635,15 @@
   (return-type "none")
   (parameters
     '("gint" "inRadius")
+    '("GError**" "error")
+  )
+)
+
+(define-method flush
+  (of-object "MaiaGraphicSurface")
+  (c-name "maia_graphic_surface_flush")
+  (return-type "none")
+  (parameters
     '("GError**" "error")
   )
 )
@@ -11141,11 +11175,6 @@
   (return-type "GType")
 )
 
-(define-function maia_grid_get_type
-  (c-name "maia_grid_get_type")
-  (return-type "GType")
-)
-
 (define-function maia_window_get_type
   (c-name "maia_window_get_type")
   (return-type "GType")
@@ -11846,6 +11875,11 @@
   (parameters
     '("gboolean" "value")
   )
+)
+
+(define-function maia_grid_get_type
+  (c-name "maia_grid_get_type")
+  (return-type "GType")
 )
 
 (define-function maia_grid_new
@@ -13262,6 +13296,61 @@
   (return-type "none")
   (parameters
     '("gdouble" "value")
+  )
+)
+
+(define-function maia_scroll_view_get_type
+  (c-name "maia_scroll_view_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_scroll_view_policy_get_type
+  (c-name "maia_scroll_view_policy_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_scroll_view_new
+  (c-name "maia_scroll_view_new")
+  (is-constructor-of "MaiaScrollView")
+  (return-type "MaiaScrollView*")
+  (parameters
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-function maia_scroll_view_construct
+  (c-name "maia_scroll_view_construct")
+  (return-type "MaiaScrollView*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-method get_hadjustment
+  (of-object "MaiaScrollView")
+  (c-name "maia_scroll_view_get_hadjustment")
+  (return-type "MaiaAdjustment*")
+)
+
+(define-method get_vadjustment
+  (of-object "MaiaScrollView")
+  (c-name "maia_scroll_view_get_vadjustment")
+  (return-type "MaiaAdjustment*")
+)
+
+(define-method get_policy
+  (of-object "MaiaScrollView")
+  (c-name "maia_scroll_view_get_policy")
+  (return-type "MaiaScrollViewPolicy")
+)
+
+(define-method set_policy
+  (of-object "MaiaScrollView")
+  (c-name "maia_scroll_view_set_policy")
+  (return-type "none")
+  (parameters
+    '("MaiaScrollViewPolicy" "value")
   )
 )
 

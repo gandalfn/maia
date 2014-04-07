@@ -34,6 +34,7 @@ libmaia_xcb_la_SOURCES = \
     application.vala \
     delete-event-args.vala \
     pixmap.vala \
+    request-queue.vala \
     window.vala
 
 libmaia_xcb_la_LIBADD = \

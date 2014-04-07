@@ -20,7 +20,8 @@ libmaia_gtk_la_CFLAGS = \
 
 libmaia_gtk_la_VALAFLAGS = \
     --pkg=gdk-keysym \
-    --pkg=gtk+-2.0
+    --pkg=gtk+-2.0 \
+    --pkg=gdk-x11-2.0
 
 libmaia_gtk_la_SOURCES = \
     init.vala \

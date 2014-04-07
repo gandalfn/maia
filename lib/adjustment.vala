@@ -34,10 +34,11 @@ public class Maia.Adjustment : Object
             return m_Value;
         }
         set {
-            double old = m_Value;
-            m_Value = value;
-            m_Value.clamp (m_Lower, m_Upper);
-            if (old != m_Value) changed ();
+            if (value.clamp (m_Lower, m_Upper - m_PageSize) != m_Value)
+            {
+                m_Value = value.clamp (m_Lower, m_Upper - m_PageSize);
+                changed ();
+            }
         }
         default = 0.0;
     }
@@ -61,7 +62,7 @@ public class Maia.Adjustment : Object
         }
         default = 0.0;
     }
-    
+
     public double page_size {
         get {
             return m_PageSize;

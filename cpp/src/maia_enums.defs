@@ -4630,3 +4630,20 @@
   )
 )
 
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_SCROLL_VIEW_POLICY_NONE = 0,
+;; 	MAIA_SCROLL_VIEW_POLICY_VERTICAL_SCROLLING = 1 << 0,
+;; 	MAIA_SCROLL_VIEW_POLICY_HORIZONTAL_SCROLLING = 1 << 1
+;; } MaiaScrollViewPolicy;
+
+(define-flags-extended ScrollViewPolicy
+  (in-module "Maia")
+  (c-name "MaiaScrollViewPolicy")
+  (values
+    '("none" "MAIA_SCROLL_VIEW_POLICY_NONE" "0x0")
+    '("vertical-scrolling" "MAIA_SCROLL_VIEW_POLICY_VERTICAL_SCROLLING" "1 << 0")
+    '("horizontal-scrolling" "MAIA_SCROLL_VIEW_POLICY_HORIZONTAL_SCROLLING" "1 << 1")
+  )
+)
+

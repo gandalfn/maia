@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Window : Grid
+public class Maia.Window : Group
 {
     // properties
     private Core.Event m_DamageEvent;
@@ -173,8 +173,9 @@ public class Maia.Window : Grid
 
         if (geometry_args != null)
         {
-            if (geometry_args.area.size.width != size_requested.width ||
-                geometry_args.area.size.height != size_requested.height)
+            var item_size = size_requested.is_empty () ? size : size_requested;
+            if ((uint32)geometry_args.area.size.width != (uint32)item_size.width ||
+                (uint32)geometry_args.area.size.height != (uint32)item_size.height)
             {
                 size = geometry_args.area.size;
                 geometry = null;
@@ -381,10 +382,10 @@ public class Maia.Window : Grid
         }
 
         // Set current item to toolbox
-        unowned Toolbox? toolbox = find_by_type<Toolbox> (false);
-        if (toolbox != null)
+        foreach (unowned Toolbox toolbox in root.find_by_type<Toolbox> (false))
         {
             toolbox.current_item_changed (focus_item);
+            break;
         }
     }
 
@@ -441,14 +442,24 @@ public class Maia.Window : Grid
     }
 
     internal override void
+    on_move ()
+    {
+    }
+
+    internal override void
     on_resize ()
     {
         // Force size request on resize
         var item_size = size;
-        geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, item_size.width, item_size.height));
 
-        // Call base on resize which reinitialize geometry
-        base.on_resize ();
+        // keep old geometry
+        Graphic.Region? old_geometry = geometry != null ? geometry.copy () : null;
+
+        // reset item geometry
+        geometry = new Graphic.Region (Graphic.Rectangle (0, 0, item_size.width, item_size.height));
+
+        // damage parent
+        if (old_geometry != null) (parent as Item).damage (old_geometry);
     }
 
     public virtual void

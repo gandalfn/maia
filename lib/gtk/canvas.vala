@@ -77,6 +77,17 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         }
     }
 
+    internal uint32 xid {
+        get {
+            if (window != null)
+            {
+                return (uint32)Gdk.x11_drawable_get_xid (window);
+            }
+
+            return 0;
+        }
+    }
+
     // static methods
     static construct
     {
@@ -391,6 +402,15 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         style = style.attach (window);
 
         send_configure ();
+
+        // Search windows
+        if (xid != 0)
+        {
+            foreach (unowned Window? w in root.find_by_type<Window> ())
+            {
+                w.set ("parent_xid", xid);
+            }
+        }
     }
 
     internal override void
@@ -400,6 +420,15 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         Application.default.force_refresh = true;
 
         grab_focus ();
+
+        // Search windows
+        if (xid != 0)
+        {
+            foreach (unowned Window? w in root.find_by_type<Window> ())
+            {
+                w.set ("parent_xid", xid);
+            }
+        }
     }
 
     internal override void
@@ -594,9 +623,21 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         return ret;
     }
 
+    static bool test = false;
     internal override bool
     expose_event (Gdk.EventExpose inEvent)
     {
+
+        // Search windows
+        if (!test && xid != 0)
+        {
+            foreach (unowned Window? w in root.find_by_type<Window> ())
+            {
+                w.set ("parent_xid", xid);
+            }
+            test = true;
+        }
+
         if (surface != null)
         {
             try
@@ -612,7 +653,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
             }
         }
 
-        return true;
+        return false;
     }
 
     public GLib.List<unowned global::Gtk.Button>

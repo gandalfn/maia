@@ -34,6 +34,7 @@ VALADOC_FLAGS = \
     --pkg pangocairo \
     --pkg gdk-keysym \
     --pkg gtk+-2.0 \
+    --pkg gdk-x11-2.0 \
     --pkg librsvg-2.0 \
     --package-name Maia \
     --package-version @MAIA_VERSION@

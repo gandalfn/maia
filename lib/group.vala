@@ -277,7 +277,7 @@ public class Maia.Group : Item
             }
         }
 
-        GLib.Signal.stop_emission (this, mc_IdScrollEvent, 0);
+        if (ret) GLib.Signal.stop_emission (this, mc_IdScrollEvent, 0);
 
         return ret;
     }

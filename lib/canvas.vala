@@ -28,7 +28,14 @@ public interface Maia.Canvas : Drawable
 
     public unowned Toolbox? toolbox {
         get {
-            return root != null ? root.find_by_type<Toolbox> () : null;
+            if (root != null)
+            {
+                foreach (unowned Toolbox? c in root.find_by_type<Toolbox> ())
+                {
+                    return c;
+                }
+            }
+            return null;
         }
     }
 
@@ -89,11 +96,23 @@ public interface Maia.Canvas : Drawable
             root.scroll_to.connect (on_scroll_to);
 
             // Search toolbox
-            unowned Toolbox toolbox = root.find_by_type<Toolbox> (false);
-            if (toolbox != null)
+            foreach (unowned Toolbox toolbox in root.find_by_type<Toolbox> (false))
             {
                 toolbox.add_item.connect (on_toolbox_add);
                 toolbox.remove_item.connect (on_toolbox_remove);
+                break;
+            }
+
+
+            // Search windows
+            uint32 xid = 0;
+            get ("xid", out xid);
+            if (xid != 0)
+            {
+                foreach (unowned Window window in root.find_by_type<Window> ())
+                {
+                    window.set ("parent_xid", xid);
+                }
             }
         }
     }
@@ -164,10 +183,10 @@ public interface Maia.Canvas : Drawable
         }
 
         // Set current item to toolbox
-        unowned Toolbox? toolbox = root.find_by_type<Toolbox> (false);
-        if (toolbox != null)
+        foreach (unowned Toolbox toolbox in root.find_by_type<Toolbox> (false))
         {
             toolbox.current_item_changed (focus_item);
+            break;
         }
     }
 
@@ -312,11 +331,11 @@ public interface Maia.Canvas : Drawable
             root.scroll_to.disconnect (on_scroll_to);
 
             // Search toolbox
-            unowned Toolbox? toolbox = root.find_by_type<Toolbox> (false);
-            if (toolbox != null)
+            foreach (unowned Toolbox toolbox in root.find_by_type<Toolbox> (false))
             {
                 toolbox.add_item.disconnect (on_toolbox_add);
                 toolbox.remove_item.disconnect (on_toolbox_remove);
+                break;
             }
         }
 

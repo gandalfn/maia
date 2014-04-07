@@ -131,6 +131,7 @@ libmaia_la_SOURCES = \
     tool.vala \
     toolbox.vala \
     arrow.vala \
+    scroll-view.vala \
     canvas.vala
 
 libmaia_la_LDFLAGS = \

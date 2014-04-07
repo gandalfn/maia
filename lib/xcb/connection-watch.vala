@@ -45,7 +45,7 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
     {
         global::Xcb.GenericEvent? evt = null;
 
-        while ((evt = m_Connection.poll_for_event ()) != null)
+        if ((evt = m_Connection.poll_for_event ()) != null)
         {
             int response_type = evt.response_type & ~0x80;
             switch (response_type)

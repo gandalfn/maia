@@ -58,7 +58,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             base.parent = value;
 
             // connect onto root change on parent
-            if (value != null)
+            if (parent != null)
             {
                 parent.notify["root"].connect(on_parent_root_changed);
 
@@ -73,7 +73,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             m_TransformToRootSpace = get_transform_to_root_space ();
 
             // If item is root do not connect on position change
-            if (value == null)
+            if (parent == null)
                 notify["position"].disconnect (on_move);
             else
                 notify["position"].connect (on_move);
@@ -574,6 +574,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             if (!damaged_area.is_empty ())
             {
                 Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, "item %s damaged draw %s %s", name, damaged.extents.to_string (), area.extents.to_string ());
+
                 inContext.operator = Graphic.Operator.OVER;
                 inContext.save ();
                 {

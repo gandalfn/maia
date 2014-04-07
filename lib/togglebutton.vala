@@ -155,9 +155,12 @@ public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
     private bool
     on_button_press (uint inButton, Graphic.Point inPoint)
     {
-        active = !active;
+        if (inButton == 1)
+        {
+            active = !active;
 
-        toggled ();
+            toggled ();
+        }
 
         return true;
     }

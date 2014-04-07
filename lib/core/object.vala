@@ -456,22 +456,27 @@ public abstract class Maia.Core.Object : Any
      *
      * @return the corresponding object to inId else `null`
      */
-    public unowned T?
+    public List<unowned T?>
     find_by_type<T> (bool inRecursive = true)
     {
+        List<unowned T?> list = new List<unowned T?> ();
+
         foreach (unowned Object? child in this)
         {
-            if (child.get_type () == typeof (T))
-                return child;
+            if (child.get_type ().is_a (typeof (T)))
+            {
+                list.insert (child);
+            }
 
             if (inRecursive)
             {
-                unowned T? ret = child.find_by_type<T> (inRecursive);
-                if (ret != null)
-                    return ret;
+                foreach (unowned T? c in child.find_by_type<T> (inRecursive))
+                {
+                    list.insert (c);
+                }
             }
         }
 
-        return null;
+        return list;
     }
 }

@@ -114,6 +114,15 @@ public class Maia.Graphic.Surface : Pattern
     }
 
     /**
+     * Checks whether an error has previously occurred for this surface.
+     */
+    public virtual void
+    status  () throws Graphic.Error
+    {
+        throw new Error.NOT_IMPLEMENTED ("Context status not implemented");
+    }
+
+    /**
      * Clears the internal {@link Maia.Graphic.Surface}, making all pixels fully transparent.
      */
     public virtual void
@@ -159,5 +168,15 @@ public class Maia.Graphic.Surface : Pattern
     gaussian_blur (int inRadius) throws Graphic.Error
     {
         throw new Error.NOT_IMPLEMENTED ("Gaussian blur not implemented");
+    }
+
+    /**
+     * Do any pending drawing for the surface and also restore any temporary modifications
+     * has made to the surface's state.
+     */
+    public virtual void
+    flush () throws Graphic.Error
+    {
+        throw new Error.NOT_IMPLEMENTED ("Flush not implemented");
     }
 }

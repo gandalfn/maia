@@ -160,6 +160,7 @@ public class Maia.Application : Maia.Core.Object
         Manifest.Element.register ("Tool",        typeof (Tool));
         Manifest.Element.register ("Toolbox",     typeof (Toolbox));
         Manifest.Element.register ("Arrow",       typeof (Arrow));
+        Manifest.Element.register ("ScrollView",  typeof (ScrollView));
         Manifest.Element.register ("Window",      typeof (Window));
     }
 
@@ -276,7 +277,7 @@ public class Maia.Application : Maia.Core.Object
     internal override bool
     can_append_child (Core.Object inObject)
     {
-        return inObject is Window || inObject is Canvas;
+        return inObject is Window;
     }
 
     internal override void

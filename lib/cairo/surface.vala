@@ -339,6 +339,40 @@ public class Maia.Cairo.Surface : Graphic.Surface
     }
 
     internal override void
+    status () throws Graphic.Error
+    {
+        global::Cairo.Status status = m_Surface.status ();
+
+        switch (status)
+        {
+            case global::Cairo.Status.SUCCESS:
+                break;
+            case global::Cairo.Status.NO_MEMORY:
+                throw new Graphic.Error.NO_MEMORY ("out of memory");
+            case global::Cairo.Status.INVALID_RESTORE:
+                throw new Graphic.Error.END_ELEMENT ("call end element without matching begin element");
+            case global::Cairo.Status.NO_CURRENT_POINT:
+                throw new Graphic.Error.NO_CURRENT_POINT ("no current point defined");
+            case global::Cairo.Status.INVALID_MATRIX:
+                throw new Graphic.Error.INVALID_MATRIX ("invalid matrix (not invertible)");
+            case global::Cairo.Status.NULL_POINTER:
+                throw new Graphic.Error.NULL_POINTER ("null pointer");
+            case global::Cairo.Status.INVALID_STRING:
+                throw new Graphic.Error.INVALID_STRING ("input string not valid UTF-8");
+            case global::Cairo.Status.INVALID_PATH_DATA:
+                throw new Graphic.Error.INVALID_PATH ("input path not valid");
+            case global::Cairo.Status.SURFACE_FINISHED:
+                throw new Graphic.Error.SURFACE_FINISHED ("the target surface has been finished");
+            case global::Cairo.Status.SURFACE_TYPE_MISMATCH:
+                throw new Graphic.Error.SURFACE_TYPE_MISMATCH ("the surface type is not appropriate for the operation");
+            case global::Cairo.Status.PATTERN_TYPE_MISMATCH:
+                throw new Graphic.Error.PATTERN_TYPE_MISMATCH ("the pattern type is not appropriate for the operation");
+            default:
+                throw new Graphic.Error.UNKNOWN ("a unknown error occured");
+        }
+    }
+
+    internal override void
     fast_blur (int inRadius, int inProcessCount = 1) throws Graphic.Error
     {
         if (inRadius < 1 || inProcessCount < 1)
@@ -625,5 +659,12 @@ public class Maia.Cairo.Surface : Graphic.Surface
         context.pattern  = original;
         context.paint ();
         context.operator = Graphic.Operator.OVER;
+    }
+
+    internal override void
+    flush () throws Graphic.Error
+    {
+        m_Surface.flush ();
+        status ();
     }
 }

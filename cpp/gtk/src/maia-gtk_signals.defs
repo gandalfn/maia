@@ -100,6 +100,15 @@
   (construct-only #f)
 )
 
+(define-property xid
+  (of-object "MaiaGtkCanvas")
+  (prop-type "GParamUInt")
+  (docs "xid")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
 ;; From MaiaGtkImage
 
 (define-property icon-name
