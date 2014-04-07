@@ -33,6 +33,7 @@ public class Maia.ScrollView : Item
     private unowned Item? m_Child = null;
     private Adjustment m_HAdjustment = null;
     private Adjustment m_VAdjustment = null;
+    private Graphic.Point m_PreviousPos = Graphic.Point (0, 0);
 
     // accessors
     internal override string tag {
@@ -75,10 +76,27 @@ public class Maia.ScrollView : Item
     private void
     on_adjustment_changed ()
     {
-        m_Window.position = Graphic.Point (-hadjustment.@value, -vadjustment.@value);
+        // Calculate the previous visible area
+        Graphic.Region old_area = geometry.copy ();
+        old_area.translate (m_PreviousPos);
+        
+        m_Window.position = Graphic.Point (-GLib.Math.round (hadjustment.@value), -GLib.Math.round (vadjustment.@value));
 
+        // if scroll view is currently damaged translate damaged region
+        if (damaged != null)
+        {
+            m_PreviousPos.subtract (Graphic.Point(GLib.Math.round (hadjustment.@value), GLib.Math.round (vadjustment.@value)));
+            damaged.translate (m_PreviousPos);
+        }
+
+        // Calculate the current visible area
         Graphic.Region area = geometry.copy ();
-        area.translate (Graphic.Point(hadjustment.@value, vadjustment.@value));
+        m_PreviousPos = Graphic.Point(GLib.Math.round (hadjustment.@value), GLib.Math.round (vadjustment.@value));
+        area.translate (m_PreviousPos);
+
+        // The damaged area was the difference between previous and current area
+        area.subtract (old_area);
+
         m_Window.damage (area);
     }
 
@@ -230,7 +248,8 @@ public class Maia.ScrollView : Item
 
                 // Set child size allocation
                 var child_allocation = new Graphic.Region (Graphic.Rectangle (0, 0,
-                                                                              item_size.width, item_size.height));
+                                                                              double.max (item_size.width, geometry.extents.size.width),
+                                                                              double.max (item_size.height, geometry.extents.size.height)));
                 hadjustment.page_size = geometry.extents.size.width;
                 vadjustment.page_size = geometry.extents.size.height;
 

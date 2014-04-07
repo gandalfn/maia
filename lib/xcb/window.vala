@@ -224,7 +224,10 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 
         if (damage_args != null)
         {
-            m_WindowDamaged = new Graphic.Region (damage_args.area);
+            if (m_WindowDamaged != null)
+                m_WindowDamaged.union_ (new Graphic.Region (damage_args.area));
+            else
+                m_WindowDamaged = new Graphic.Region (damage_args.area);
         }
     }
 

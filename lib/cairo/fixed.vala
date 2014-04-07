@@ -40,7 +40,7 @@ internal struct Maia.Cairo.Fixed : int32
     public static inline Fixed
     from_double (double inVal)
     {
-        double val = inVal + s_Magic;
+        double val = GLib.Math.round (inVal) + s_Magic;
         void* ptr = &val;
         Fixed* tab = (Fixed*)ptr;
         return tab[s_Mantisse];
