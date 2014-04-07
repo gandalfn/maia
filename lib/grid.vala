@@ -221,6 +221,24 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
                             if (item.row < rows.length && item.column < columns.length)
                             {
+                                // calculate size of multiple columns
+                                if (item.columns > 1)
+                                {
+                                    for (int cpt = 1; cpt < item.columns; ++cpt)
+                                    {
+                                        child_allocations[item.row, item.column].size.width += child_allocations[item.row, item.column + cpt].size.width;
+                                    }
+                                }
+
+                                // calculate size of multiple rows
+                                if (item.rows > 1)
+                                {
+                                    for (int cpt = 1; cpt < item.rows; ++cpt)
+                                    {
+                                        child_allocations[item.row, item.column].size.height += child_allocations[item.row + cpt, item.column].size.height;
+                                    }
+                                }
+
                                 // calculate allocation of item
                                 allocation = Graphic.Rectangle (child_allocations[item.row, item.column].origin.x,
                                                                 child_allocations[item.row, item.column].origin.y, 0, 0);
