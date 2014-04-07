@@ -1177,3 +1177,104 @@
     '("MaiaItem*" "inItem")
   )
 )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaWindow
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-vfunc get_surface
+  (of-object "MaiaWindow")
+  (return-type "MaiaGraphicSurface*")
+)
+
+(define-vfunc on_damage_event
+  (of-object "MaiaWindow")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEventArgs*" "inArgs")
+  )
+)
+
+(define-vfunc on_geometry_event
+  (of-object "MaiaWindow")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEventArgs*" "inArgs")
+  )
+)
+
+(define-vfunc on_mouse_event
+  (of-object "MaiaWindow")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEventArgs*" "inArgs")
+  )
+)
+
+(define-vfunc on_set_pointer_cursor
+  (of-object "MaiaWindow")
+  (return-type "none")
+  (parameters
+    '("MaiaCursor" "inCursor")
+  )
+)
+
+(define-vfunc on_move_pointer
+  (of-object "MaiaWindow")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "inPosition")
+  )
+)
+
+(define-vfunc on_scroll_to
+  (of-object "MaiaWindow")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-vfunc on_grab_focus
+  (of-object "MaiaWindow")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-vfunc on_grab_pointer
+  (of-object "MaiaWindow")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-vfunc on_ungrab_pointer
+  (of-object "MaiaWindow")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-vfunc on_grab_keyboard
+  (of-object "MaiaWindow")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-vfunc on_ungrab_keyboard
+  (of-object "MaiaWindow")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-vfunc swap_buffer
+  (of-object "MaiaWindow")
+  (return-type "none")
+)

@@ -4122,3 +4122,157 @@
   (construct-only #f)
 )
 
+;; From MaiaWindow
+
+(define-property focus-item
+  (of-object "MaiaWindow")
+  (prop-type "GParamObject")
+  (docs "focus-item")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property grab-pointer-item
+  (of-object "MaiaWindow")
+  (prop-type "GParamObject")
+  (docs "grab-pointer-item")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property grab-keyboard-item
+  (of-object "MaiaWindow")
+  (prop-type "GParamObject")
+  (docs "grab-keyboard-item")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property tag
+  (of-object "MaiaWindow")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property surface
+  (of-object "MaiaWindow")
+  (prop-type "GParamObject")
+  (docs "surface")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property damage-event
+  (of-object "MaiaWindow")
+  (prop-type "GParamObject")
+  (docs "damage-event")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property geometry-event
+  (of-object "MaiaWindow")
+  (prop-type "GParamObject")
+  (docs "geometry-event")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property visibility-event
+  (of-object "MaiaWindow")
+  (prop-type "GParamObject")
+  (docs "visibility-event")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property destroy-event
+  (of-object "MaiaWindow")
+  (prop-type "GParamObject")
+  (docs "destroy-event")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property delete-event
+  (of-object "MaiaWindow")
+  (prop-type "GParamObject")
+  (docs "delete-event")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property mouse-event
+  (of-object "MaiaWindow")
+  (prop-type "GParamObject")
+  (docs "mouse-event")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property keyboard-event
+  (of-object "MaiaWindow")
+  (prop-type "GParamObject")
+  (docs "keyboard-event")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaAdjustment
+
+(define-signal changed
+  (of-object "MaiaAdjustment")
+  (return-type "void")
+  (when "last")
+)
+
+(define-property value
+  (of-object "MaiaAdjustment")
+  (prop-type "GParamDouble")
+  (docs "value")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property lower
+  (of-object "MaiaAdjustment")
+  (prop-type "GParamDouble")
+  (docs "lower")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property upper
+  (of-object "MaiaAdjustment")
+  (prop-type "GParamDouble")
+  (docs "upper")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property page-size
+  (of-object "MaiaAdjustment")
+  (prop-type "GParamDouble")
+  (docs "page-size")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+

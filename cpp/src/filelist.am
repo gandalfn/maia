@@ -75,6 +75,9 @@ files_hg = \
     tool.hg \
     toolbox.hg \
     arrow.hg \
-    canvas.hg
+    canvas.hg \
+    window.hg \
+    adjustment.hg \
+    scroll-view.hg
 
 files_ccg = $(files_hg:.hg=.ccg)

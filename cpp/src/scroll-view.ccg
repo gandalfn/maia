@@ -1,6 +1,6 @@
 /* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * graphic-pattern.hg
+ * scroll-view.ccg
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -18,26 +18,7 @@
  */
 
 #include <maia.h>
-#include <maiamm/graphic-transform.h>
-
-_DEFS(maiamm,maia)
-_PINCLUDE(maiamm/private/core-object_p.h)
 
 namespace Maia
 {
-    namespace Graphic
-    {
-        _GMMPROC_EXTRA_NAMESPACE(Graphic)
-
-        class Pattern : public Core::Object
-        {
-            _CLASS_GOBJECT(Pattern, MaiaGraphicPattern, MAIA_GRAPHIC_PATTERN, Core::Object, MaiaCoreObject)
-
-            _WRAP_METHOD(Glib::RefPtr<Transform> get_transform () const, maia_graphic_pattern_get_transform, refreturn)
-            _WRAP_METHOD(void set_transform (const Glib::RefPtr<Transform>& inTransform) const, maia_graphic_pattern_set_transform)
-
-            _WRAP_PROPERTY ("transform", Glib::RefPtr<Transform>)
-        };
-
-    }
 }

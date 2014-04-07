@@ -88,6 +88,8 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_TOOLBOX);
     std::cout << get_defs (MAIA_TYPE_TOOL);
     std::cout << get_defs (MAIA_TYPE_ARROW);
+    std::cout << get_defs (MAIA_TYPE_WINDOW);
+    std::cout << get_defs (MAIA_TYPE_ADJUSTMENT);
 
     return 0;
 }

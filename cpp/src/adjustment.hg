@@ -1,0 +1,63 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * adjustment.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(glibmm/private/object_p.h)
+
+namespace Maia
+{
+    class Adjustment : public Glib::Object
+    {
+        _CLASS_GOBJECT(Adjustment, MaiaAdjustment, MAIA_ADJUSTMENT, Glib::Object, GObject)
+
+        protected:
+            _CTOR_DEFAULT()
+
+        public:
+            static Glib::RefPtr<Adjustment> create ()
+            {
+                MaiaAdjustment* pAdjustment = maia_adjustment_new ();
+                return Glib::RefPtr<Adjustment> (new Adjustment (pAdjustment));
+            }
+
+            static Glib::RefPtr<Adjustment> create (double inLower, double inUpper, double inPageSize)
+            {
+                MaiaAdjustment* pAdjustment = maia_adjustment_new_configure (inLower, inUpper, inPageSize);
+                return Glib::RefPtr<Adjustment> (new Adjustment (pAdjustment));
+            }
+
+            _WRAP_METHOD(void set_value(double inValue), maia_adjustment_set_value)
+            _WRAP_METHOD(double get_value() const, maia_adjustment_get_value)
+            _WRAP_METHOD(void set_lower(double inLower), maia_adjustment_set_lower)
+            _WRAP_METHOD(double get_lower() const, maia_adjustment_get_lower)
+            _WRAP_METHOD(void set_upper(double inUpper), maia_adjustment_set_upper)
+            _WRAP_METHOD(double get_upper() const, maia_adjustment_get_upper)
+            _WRAP_METHOD(void set_page_size(double inPageSize), maia_adjustment_set_page_size)
+            _WRAP_METHOD(double get_page_size() const, maia_adjustment_get_page_size)
+
+            _WRAP_PROPERTY("value", double)
+            _WRAP_PROPERTY("lower", double)
+            _WRAP_PROPERTY("upper", double)
+            _WRAP_PROPERTY("page-size", double)
+
+            _WRAP_SIGNAL(void changed (), "changed", no_default_handler)
+    };
+}

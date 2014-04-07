@@ -22,6 +22,11 @@ _CONVERSION(`const Glib::RefPtr<EventArgs>&',`MaiaCoreEventArgs*',__CONVERT_REFP
 _CONVERSION(`MaiaCoreEventArgs*',`const Glib::RefPtr<EventArgs>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaCoreEventArgs*',`Glib::RefPtr<EventArgs>',`Glib::wrap($3)')
 
+_CONVERSION(`Glib::RefPtr<Core::EventArgs>',`MaiaCoreEventArgs*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Core::EventArgs>&',`MaiaCoreEventArgs*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaCoreEventArgs*',`const Glib::RefPtr<Core::EventArgs>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaCoreEventArgs*',`Glib::RefPtr<Core::EventArgs>',`Glib::wrap($3)')
+
 _CONVERSION(`Glib::RefPtr<EventBus>',`MaiaCoreEventBus*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<EventBus>&',`MaiaCoreEventBus*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaCoreEventBus*',`const Glib::RefPtr<EventBus>&',`Glib::wrap($3)')
@@ -31,6 +36,11 @@ _CONVERSION(`Glib::RefPtr<Event>',`MaiaCoreEvent*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Event>&',`MaiaCoreEvent*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaCoreEvent*',`const Glib::RefPtr<Event>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaCoreEvent*',`Glib::RefPtr<Event>',`Glib::wrap($3)')
+
+_CONVERSION(`Glib::RefPtr<Core::Event>',`MaiaCoreEvent*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Core::Event>&',`MaiaCoreEvent*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaCoreEvent*',`const Glib::RefPtr<Core::Event>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaCoreEvent*',`Glib::RefPtr<Core::Event>',`Glib::wrap($3)')
 
 _CONVERSION(`Glib::RefPtr<EventListener>',`MaiaCoreEventListener*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<EventListener>&',`MaiaCoreEventListener*',__CONVERT_REFPTR_TO_P)
@@ -285,6 +295,14 @@ _CONVERSION(`MaiaGraphicGlyphWrapMode',`Graphic::GlyphWrapMode',`(Graphic::Glyph
 _CONVERSION(`Graphic::GlyphEllipsizeMode',`MaiaGraphicGlyphEllipsizeMode',`(MaiaGraphicGlyphEllipsizeMode)$3')
 _CONVERSION(`MaiaGraphicGlyphEllipsizeMode',`Graphic::GlyphEllipsizeMode',`(Graphic::GlyphEllipsizeMode)$3')
 
+_CONVERSION(`Glib::RefPtr<Adjustment>',`MaiaAdjustment*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Adjustment>&',`MaiaAdjustment*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaAdjustment*',`const Glib::RefPtr<Adjustment>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaAdjustment*',`Glib::RefPtr<Adjustment>',`Glib::wrap($3)')
+
+_CONVERSION(`ScrollViewPolicy',`MaiaScrollViewPolicy',`(MaiaScrollViewPolicy)$3')
+_CONVERSION(`MaiaScrollViewPolicy',`ScrollViewPolicy',`(ScrollViewPolicy)$3')
+
 _CONV_ENUM(MaiaLog,Level)
 _CONV_ENUM(MaiaLog,Category)
 _CONV_ENUM(MaiaCore,ParserToken)
@@ -304,3 +322,4 @@ _CONV_ENUM(Maia,PageFormat)
 _CONV_ENUM(Maia,Orientation)
 _CONV_ENUM(Maia,PopupPlacement)
 _CONV_ENUM(Maia,ToolAction)
+_CONV_ENUM(Maia,ScrollViewPolicy)

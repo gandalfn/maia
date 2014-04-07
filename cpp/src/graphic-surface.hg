@@ -88,6 +88,8 @@ namespace Maia
                 _WRAP_METHOD(void* get_native () const, maia_graphic_surface_get_native)
                 _WRAP_METHOD(void set_native (void* inpNative), maia_graphic_surface_set_native)
 
+                _WRAP_METHOD(void status (), maia_graphic_surface_status, errthrow)
+                _WRAP_METHOD(void flush (), maia_graphic_surface_flush, errthrow)
                 _WRAP_METHOD(void clear (), maia_graphic_surface_clear, errthrow)
                 _WRAP_METHOD(void fast_blur (int inRadius, int inProcessCount = 1), maia_graphic_surface_fast_blur, errthrow)
                 _WRAP_METHOD(void gaussian_blur (int inRadius), maia_graphic_surface_gaussian_blur, errthrow)
