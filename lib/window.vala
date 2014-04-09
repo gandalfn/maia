@@ -171,11 +171,10 @@ public class Maia.Window : Group
     {
         unowned GeometryEventArgs? geometry_args = inArgs as GeometryEventArgs;
 
-        if (geometry_args != null)
+        if (geometry_args != null && geometry != null)
         {
-            var item_size = size_requested.is_empty () ? size : size_requested;
-            if ((uint32)geometry_args.area.size.width != (uint32)item_size.width ||
-                (uint32)geometry_args.area.size.height != (uint32)item_size.height)
+            if ((uint32)geometry_args.area.size.width != (uint32)geometry.extents.size.width ||
+                (uint32)geometry_args.area.size.height != (uint32)geometry.extents.size.height)
             {
                 size = geometry_args.area.size;
                 geometry = null;
@@ -183,7 +182,7 @@ public class Maia.Window : Group
         }
     }
 
-    private void
+    protected virtual void
     on_visibility_event (Core.EventArgs? inArgs)
     {
         unowned VisibilityEventArgs? visibility_args = inArgs as VisibilityEventArgs;
@@ -449,17 +448,14 @@ public class Maia.Window : Group
     internal override void
     on_resize ()
     {
-        // Force size request on resize
-        var item_size = size;
-
         // keep old geometry
         Graphic.Region? old_geometry = geometry != null ? geometry.copy () : null;
 
-        // reset item geometry
-        geometry = new Graphic.Region (Graphic.Rectangle (0, 0, item_size.width, item_size.height));
-
         // damage parent
         if (old_geometry != null) (parent as Item).damage (old_geometry);
+
+        // reset item geometry
+        geometry = null;
     }
 
     public virtual void

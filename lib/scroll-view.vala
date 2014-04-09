@@ -66,6 +66,8 @@ public class Maia.ScrollView : Item
         m_VAdjustment.changed.connect (on_adjustment_changed);
 
         notify["visible"].connect (on_visible_changed);
+        notify["transform"].connect (on_transform_changed);
+        notify["background-pattern"].connect (on_background_pattern_changed);
     }
 
     public ScrollView (string inId)
@@ -98,6 +100,24 @@ public class Maia.ScrollView : Item
         area.subtract (old_area);
 
         m_Window.damage (area);
+    }
+
+    private void
+    on_transform_changed ()
+    {
+        if (m_Window != null)
+        {
+            m_Window.transform = transform;
+        }
+    }
+
+    private void
+    on_background_pattern_changed ()
+    {
+        if (m_Window != null)
+        {
+            m_Window.background_pattern = background_pattern;
+        }
     }
 
     private void
@@ -184,6 +204,8 @@ public class Maia.ScrollView : Item
 
             m_Window = new Window (name + "_window", 1, 1);
             m_Window.scroll_event.connect (on_window_scroll_event);
+            m_Window.background_pattern = background_pattern;
+            m_Window.transform = transform;
             inObject.parent = m_Window;
 
             base.insert_child (m_Window);
@@ -222,7 +244,7 @@ public class Maia.ScrollView : Item
         vadjustment.lower = area.extents.origin.y;
         vadjustment.upper = area.extents.size.height;
 
-        if (m_Window != null)
+        if (m_Window != null && !m_Window.size_requested.equal (area.extents.size))
         {
             m_Window.size = area.extents.size;
         }
@@ -244,16 +266,17 @@ public class Maia.ScrollView : Item
             if (m_Child != null)
             {
                 // Get child position and size
-                var item_size     = m_Window.size_requested;
+                var item_position = m_Window.position;
+                var item_size     = m_Window.size;
 
                 // Set child size allocation
-                var child_allocation = new Graphic.Region (Graphic.Rectangle (0, 0,
+                var child_allocation = new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y,
                                                                               double.max (item_size.width, geometry.extents.size.width),
                                                                               double.max (item_size.height, geometry.extents.size.height)));
                 hadjustment.page_size = geometry.extents.size.width;
                 vadjustment.page_size = geometry.extents.size.height;
 
-                m_Window.update (m_Window.surface.context, child_allocation);
+                m_Window.update (inContext, child_allocation);
             }
 
             damage ();
@@ -271,9 +294,7 @@ public class Maia.ScrollView : Item
             Graphic.Region area = inArea.copy ();
             area.translate (Graphic.Point(hadjustment.@value, vadjustment.@value));
 
-            m_Window.background_pattern = background_pattern;
-
-            m_Window.draw (m_Window.surface.context, area);
+            m_Window.draw (inContext, area);
 
             m_Window.swap_buffer ();
         }

@@ -59,17 +59,22 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 
                 if (m_Parent != global::Xcb.NONE)
                 {
-                    m_Window.reparent (Maia.Xcb.application.connection, m_Parent, (int16)position.x, (int16)position.y);
-                    visibility_event = null;
+                    m_Window.reparent (connection, m_Parent, (int16)position.x, (int16)position.y);
+
+                    uint32 mask = global::Xcb.Cw.EVENT_MASK;
+                    uint32[] values = {  global::Xcb.EventMask.EXPOSURE         |
+                                         global::Xcb.EventMask.STRUCTURE_NOTIFY |
+                                         global::Xcb.EventMask.SUBSTRUCTURE_REDIRECT };
+                    m_Parent.change_attributes (connection, mask, values);
                 }
                 else
                 {
                     unowned global::Xcb.Screen screen = connection.roots[screen_num];
 
-                    m_Window.reparent (Maia.Xcb.application.connection, screen.root, (int16)position.x, (int16)position.y);
+                    m_Window.reparent (connection, screen.root, (int16)position.x, (int16)position.y);
                 }
 
-                Maia.Xcb.application.connection.flush ();
+                connection.flush ();
             }
         }
     }
@@ -206,7 +211,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
             {
                 var item_size = size;
 
-                if ((uint32)(reply.width + (reply.border_width * 2)) != (uint32)item_size.width ||
+                if ((uint32)(reply.width  + (reply.border_width * 2)) != (uint32)item_size.width ||
                     (uint32)(reply.height + (reply.border_width * 2)) != (uint32)item_size.height)
                 {
                     m_RequestQueue.push_resize (item_size);
@@ -220,14 +225,17 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     internal override void
     on_damage_event (Core.EventArgs? inArgs)
     {
-        unowned DamageEventArgs? damage_args = inArgs as DamageEventArgs;
-
-        if (damage_args != null)
+        if (m_Parent == global::Xcb.NONE)
         {
-            if (m_WindowDamaged != null)
-                m_WindowDamaged.union_ (new Graphic.Region (damage_args.area));
-            else
-                m_WindowDamaged = new Graphic.Region (damage_args.area);
+            unowned DamageEventArgs? damage_args = inArgs as DamageEventArgs;
+
+            if (damage_args != null)
+            {
+                if (m_WindowDamaged != null)
+                    m_WindowDamaged.union_ (new Graphic.Region (damage_args.area));
+                else
+                    m_WindowDamaged = new Graphic.Region (damage_args.area);
+            }
         }
     }
 
@@ -345,7 +353,9 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
             if (is_mapped)
             {
                 // Unmap window
-                m_RequestQueue.push_unmap ();
+                m_Window.unmap (connection);
+
+                connection.flush ();
             }
         }
 
@@ -428,14 +438,67 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     }
 
     internal override void
+    update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
+    {
+        if (!inAllocation.extents.is_empty () && (geometry == null || geometry.extents.is_empty ()))
+        {
+            geometry = inAllocation;
+
+            // Size has change
+            if (m_BackBuffer == null ||
+                (uint32)m_WindowGeometry.size.width != (uint32)geometry.extents.size.width ||
+                (uint32)m_WindowGeometry.size.height != (uint32)geometry.extents.size.height)
+            {
+                // Create back buffer
+                m_BackBuffer = new Pixmap (this, depth, (int)geometry.extents.size.width, (int)geometry.extents.size.height);
+
+                // Destroy front buffer
+                m_FrontBuffer = null;
+
+                // Push window resize
+                m_RequestQueue.push_resize (geometry.extents.size);
+
+                // Set window geometry
+                m_WindowGeometry = Graphic.Rectangle (position.x, position.y, geometry.extents.size.width, geometry.extents.size.height);
+            }
+
+            foreach (unowned Core.Object child in this)
+            {
+                if (child is Item)
+                {
+                    unowned Item item = (Item)child;
+
+                    // Get child position and size
+                    var item_position = item.position;
+                    var item_size     = item.size_requested;
+
+                    // Set child size allocation
+                    var child_allocation = new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y, item_size.width, item_size.height));
+                    item.update (inContext, child_allocation);
+                }
+            }
+
+            // damage
+            damage ();
+        }
+    }
+
+    internal override void
     paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
-        base.paint (inContext, inArea);
+        var ctx = surface.context;
+        ctx.save ();
+        {
+            ctx.transform = transform;
 
-        if (m_WindowDamaged != null)
-            m_WindowDamaged.union_ (inArea);
-        else
-            m_WindowDamaged = inArea.copy ();
+            base.paint (ctx, inArea);
+
+            if (m_WindowDamaged != null)
+                m_WindowDamaged.union_ (inArea);
+            else
+                m_WindowDamaged = inArea.copy ();
+        }
+        ctx.restore ();
     }
 
     internal override void
@@ -452,6 +515,8 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
                                                                  (int)m_WindowGeometry.size.width,
                                                                  (int)m_WindowGeometry.size.height);
             }
+
+            m_WindowDamaged.transform (transform);
 
             try
             {

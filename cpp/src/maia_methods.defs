@@ -11220,6 +11220,15 @@
   )
 )
 
+(define-method on_visibility_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_on_visibility_event")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEventArgs*" "inArgs")
+  )
+)
+
 (define-method on_mouse_event
   (of-object "MaiaWindow")
   (c-name "maia_window_on_mouse_event")

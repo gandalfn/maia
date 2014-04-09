@@ -110,6 +110,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
 
     public Canvas ()
     {
+        
     }
 
     internal virtual signal void
@@ -382,15 +383,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         attributes.height = allocation.height;
         attributes.wclass = Gdk.WindowClass.INPUT_OUTPUT;
         attributes.window_type = Gdk.WindowType.CHILD;
-        attributes.event_mask = Gdk.EventMask.EXPOSURE_MASK            |
-                                Gdk.EventMask.POINTER_MOTION_MASK      |
-                                Gdk.EventMask.POINTER_MOTION_HINT_MASK |
-                                Gdk.EventMask.BUTTON_MOTION_MASK       |
-                                Gdk.EventMask.BUTTON_PRESS_MASK        |
-                                Gdk.EventMask.BUTTON_RELEASE_MASK      |
-                                Gdk.EventMask.KEY_PRESS_MASK           |
-                                Gdk.EventMask.KEY_RELEASE_MASK         |
-                                Gdk.EventMask.SCROLL_MASK;
+        attributes.event_mask = Gdk.EventMask.EXPOSURE_MASK;
         int attributes_mask = Gdk.WindowAttributesType.X        |
                               Gdk.WindowAttributesType.Y        |
                               Gdk.WindowAttributesType.COLORMAP |
@@ -427,6 +420,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
             foreach (unowned Window? w in root.find_by_type<Window> ())
             {
                 w.set ("parent_xid", xid);
+                w.visible = true;
             }
         }
     }
@@ -435,6 +429,12 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
     unmap ()
     {
         Application.default.force_refresh = false;
+
+        foreach (unowned Window? w in root.find_by_type<Window> ())
+        {
+            w.visible = false;
+        }
+
         base.unmap ();
     }
 
@@ -623,21 +623,9 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
         return ret;
     }
 
-    static bool test = false;
     internal override bool
     expose_event (Gdk.EventExpose inEvent)
     {
-
-        // Search windows
-        if (!test && xid != 0)
-        {
-            foreach (unowned Window? w in root.find_by_type<Window> ())
-            {
-                w.set ("parent_xid", xid);
-            }
-            test = true;
-        }
-
         if (surface != null)
         {
             try
