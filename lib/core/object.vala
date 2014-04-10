@@ -88,6 +88,8 @@ public abstract class Maia.Core.Object : Any
                 if (m_Parent != null)
                     m_Parent.remove_child (this);
 
+                m_Parent = null;
+
                 if (value != null)
                     value.insert_child (this);
 

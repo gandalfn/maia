@@ -198,7 +198,11 @@ public class Maia.ScrollView : Item
     internal override void
     insert_child (Core.Object inObject)
     {
-        if (can_append_child (inObject) && m_Child == null)
+        if (inObject == m_Window)
+        {
+            base.insert_child (inObject);
+        }
+        else if (can_append_child (inObject) && m_Child == null)
         {
             m_Child = inObject as Item;
 
@@ -207,9 +211,7 @@ public class Maia.ScrollView : Item
             m_Window.background_pattern = background_pattern;
             m_Window.transform = transform;
             inObject.parent = m_Window;
-
-            base.insert_child (m_Window);
-
+            m_Window.parent = this;
             m_Window.visible = true;
         }
     }

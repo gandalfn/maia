@@ -21,7 +21,6 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 {
     // properties
     private global::Xcb.Window m_Window;
-    private global::Xcb.Window m_Parent = global::Xcb.NONE;
     private Graphic.Rectangle  m_WindowGeometry;
     private Graphic.Region     m_WindowDamaged;
     private uint8              m_Depth = 0;
@@ -29,6 +28,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     private Pixmap             m_BackBuffer = null;
     private Graphic.Surface    m_FrontBuffer = null;
     private RequestQueue       m_RequestQueue = null;
+    private Core.Event         m_ParentVisibility = null;
 
     // accessors
     public string backend {
@@ -48,34 +48,6 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     public uint32 xid {
         get {
             return m_Window;
-        }
-    }
-
-    internal uint32 parent_xid {
-        set {
-            if (m_Realized && m_Parent != value)
-            {
-                m_Parent = value;
-
-                if (m_Parent != global::Xcb.NONE)
-                {
-                    m_Window.reparent (connection, m_Parent, (int16)position.x, (int16)position.y);
-
-                    uint32 mask = global::Xcb.Cw.EVENT_MASK;
-                    uint32[] values = {  global::Xcb.EventMask.EXPOSURE         |
-                                         global::Xcb.EventMask.STRUCTURE_NOTIFY |
-                                         global::Xcb.EventMask.SUBSTRUCTURE_REDIRECT };
-                    m_Parent.change_attributes (connection, mask, values);
-                }
-                else
-                {
-                    unowned global::Xcb.Screen screen = connection.roots[screen_num];
-
-                    m_Window.reparent (connection, screen.root, (int16)position.x, (int16)position.y);
-                }
-
-                connection.flush ();
-            }
         }
     }
 
@@ -151,14 +123,73 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         m_Window.destroy (Maia.Xcb.application.connection);
     }
 
+    private void
+    on_main_window_changed ()
+    {
+        // window is created under Xorg
+        if (m_Realized)
+        {
+            uint32 main_window = window;
+            
+            // Reparent window under main window
+            if (main_window != global::Xcb.NONE)
+            {
+                // Reparent window under main_window
+                m_Window.reparent (connection, main_window, (int16)position.x, (int16)position.y);
+
+                uint32 mask = global::Xcb.Cw.EVENT_MASK;
+                uint32[] values = {  global::Xcb.EventMask.EXPOSURE         |
+                                     global::Xcb.EventMask.STRUCTURE_NOTIFY |
+                                     global::Xcb.EventMask.SUBSTRUCTURE_REDIRECT };
+                ((global::Xcb.Window)main_window).change_attributes (connection, mask, values);
+
+                // Create visibility under parent
+                m_ParentVisibility = new Core.Event ("visibility", ((int)main_window).to_pointer ());
+
+                // subscribe to parent visibility event
+                m_ParentVisibility.subscribe (on_parent_visibility_changed);
+            }
+            // No parent window reparent under root
+            else
+            {
+                // Destroy old parent visibility event
+                m_ParentVisibility = null;
+
+                // Reparent window under root
+                unowned global::Xcb.Screen screen = connection.roots[screen_num];
+
+                m_Window.reparent (connection, screen.root, (int16)position.x, (int16)position.y);
+            }
+
+            connection.flush ();
+        }
+    }
+
+    private void
+    on_parent_visibility_changed (Core.EventArgs? inArgs)
+    {
+        unowned VisibilityEventArgs? visibility_args = inArgs as VisibilityEventArgs;
+
+        if (visibility_args != null && visible != visibility_args.visible)
+        {
+            visible = visibility_args.visible;
+        }
+    }
+
+
     internal override void
     delegate_construct ()
     {
+        // Get screen num
         screen_num = Maia.Xcb.application.default_screen;
+
+        // Generate window xid
         m_Window = global::Xcb.Window (Maia.Xcb.application.connection);
 
+        // Create request queue
         m_RequestQueue = new RequestQueue (this);
 
+        // Create event
         damage_event     = new Core.Event ("damage",     ((int)m_Window).to_pointer ());
         geometry_event   = new Core.Event ("geometry",   ((int)m_Window).to_pointer ());
         visibility_event = new Core.Event ("visibility", ((int)m_Window).to_pointer ());
@@ -167,7 +198,11 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         mouse_event      = new Core.Event ("mouse",      ((int)m_Window).to_pointer ());
         keyboard_event   = new Core.Event ("keyboard",   ((int)m_Window).to_pointer ());
 
+        // window is hidden by default
         visible = false;
+
+        // connect onto window changed
+        notify["window"].connect (on_main_window_changed);
     }
 
     internal override void
@@ -225,7 +260,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     internal override void
     on_damage_event (Core.EventArgs? inArgs)
     {
-        if (m_Parent == global::Xcb.NONE)
+        if (window == m_Window)
         {
             unowned DamageEventArgs? damage_args = inArgs as DamageEventArgs;
 
@@ -236,6 +271,15 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
                 else
                     m_WindowDamaged = new Graphic.Region (damage_args.area);
             }
+        }
+    }
+
+    internal override void
+    on_visibility_event (Core.EventArgs? inArgs)
+    {
+        if (window == m_Window)
+        {
+            base.on_visibility_event (inArgs);
         }
     }
 
@@ -308,6 +352,9 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 
                 // set window damaged area
                 m_Realized = true;
+
+                // Call main window changed 
+                on_main_window_changed ();
             }
         }
 

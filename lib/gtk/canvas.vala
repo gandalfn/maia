@@ -396,14 +396,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
 
         send_configure ();
 
-        // Search windows
-        if (xid != 0)
-        {
-            foreach (unowned Window? w in root.find_by_type<Window> ())
-            {
-                w.set ("parent_xid", xid);
-            }
-        }
+        if (root != null) root.window = xid;
     }
 
     internal override void
@@ -414,26 +407,13 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Drawable, Maia.Canvas
 
         grab_focus ();
 
-        // Search windows
-        if (xid != 0)
-        {
-            foreach (unowned Window? w in root.find_by_type<Window> ())
-            {
-                w.set ("parent_xid", xid);
-                w.visible = true;
-            }
-        }
+        if (root != null) root.window = xid;
     }
 
     internal override void
     unmap ()
     {
         Application.default.force_refresh = false;
-
-        foreach (unowned Window? w in root.find_by_type<Window> ())
-        {
-            w.visible = false;
-        }
 
         base.unmap ();
     }

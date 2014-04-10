@@ -563,12 +563,6 @@
   (gtype-id "MAIA_TYPE_PATH")
 )
 
-(define-object MaiaPopup
-  (parent "MaiaGroup")
-  (c-name "MaiaPopup")
-  (gtype-id "MAIA_TYPE_POPUP")
-)
-
 (define-object MaiaRectangle
   (parent "MaiaItem")
   (c-name "MaiaRectangle")
@@ -617,12 +611,6 @@
   (gtype-id "MAIA_TYPE_TOOL")
 )
 
-(define-object MaiaToolbox
-  (parent "MaiaPopup")
-  (c-name "MaiaToolbox")
-  (gtype-id "MAIA_TYPE_TOOLBOX")
-)
-
 (define-object MaiaView
   (parent "MaiaGrid")
   (c-name "MaiaView")
@@ -639,6 +627,18 @@
   (parent "MaiaGroup")
   (c-name "MaiaWindow")
   (gtype-id "MAIA_TYPE_WINDOW")
+)
+
+(define-object MaiaPopup
+  (parent "MaiaWindow")
+  (c-name "MaiaPopup")
+  (gtype-id "MAIA_TYPE_POPUP")
+)
+
+(define-object MaiaToolbox
+  (parent "MaiaPopup")
+  (c-name "MaiaToolbox")
+  (gtype-id "MAIA_TYPE_TOOLBOX")
 )
 
 ;; Enumerations and flags ...
@@ -10864,6 +10864,21 @@
   (return-type "none")
   (parameters
     '("gboolean" "value")
+  )
+)
+
+(define-method get_window
+  (of-object "MaiaItem")
+  (c-name "maia_item_get_window")
+  (return-type "guint32")
+)
+
+(define-method set_window
+  (of-object "MaiaItem")
+  (c-name "maia_item_set_window")
+  (return-type "none")
+  (parameters
+    '("guint32" "value")
   )
 )
 

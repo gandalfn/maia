@@ -141,6 +141,9 @@ public class Maia.Window : Group
         grab_keyboard.connect (on_grab_keyboard);
         ungrab_keyboard.connect (on_ungrab_keyboard);
         scroll_to.connect (on_scroll_to);
+        
+        // Set main window has this window
+        window = id;
     }
 
     /**

@@ -20,7 +20,8 @@
 public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 {
     // static properties
-    static GLib.Quark s_ChainVisibleCount;
+    internal static GLib.Quark s_ChainVisibleCount;
+    internal static GLib.Quark s_MainWindow;
     internal static GLib.Quark s_CountHide;
 
     // class properties
@@ -53,6 +54,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             if (parent != null)
             {
                 parent.notify["root"].disconnect(on_parent_root_changed);
+                parent.notify["window"].disconnect(on_parent_window_changed);
             }
 
             base.parent = value;
@@ -61,6 +63,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             if (parent != null)
             {
                 parent.notify["root"].connect(on_parent_root_changed);
+                parent.notify["window"].connect(on_parent_window_changed);
 
                 if (parent is DrawingArea && !(this is Arrow) && !(this is Toolbox))
                 {
@@ -81,6 +84,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             // Send root change notification
             GLib.Signal.emit_by_name (this, "notify::root");
+            GLib.Signal.emit_by_name (this, "notify::window");
             unref ();
         }
     }
@@ -252,6 +256,27 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
     public bool            pointer_over         { get; set; default = false; }
 
+    [CCode (notify = false)]
+    public uint32 window {
+        get {
+            uint32 ret = 0;
+
+            for (unowned Core.Object? item = parent; ret == 0 && item != null; item = item.parent)
+            {
+                ret = item.get_qdata<uint32> (s_MainWindow);
+            }
+
+            return ret;
+        }
+        set {
+            if (get_qdata<uint32> (s_MainWindow) != value)
+            {
+                set_qdata<uint32> (s_MainWindow, value);
+                GLib.Signal.emit_by_name (this, "notify::window");
+            }
+        }
+    }
+
     // signals
     public signal bool grab_pointer (Item inItem);
     public signal void ungrab_pointer (Item inItem);
@@ -321,6 +346,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         // create quarks
         s_ChainVisibleCount = GLib.Quark.from_string ("MaiaChainVisibleShowCount");
         s_CountHide         = GLib.Quark.from_string ("MaiaCountHide");
+        s_MainWindow        = GLib.Quark.from_string ("MaiaMainWindow");
 
         // register attribute bind
         Manifest.AttributeBind.register_transform_func (typeof (Item), "width", attribute_bind_width);
@@ -430,6 +456,12 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         m_TransformToItemSpace = get_transform_to_item_space ();
         m_TransformToRootSpace = get_transform_to_root_space ();
         GLib.Signal.emit_by_name (this, "notify::root");
+    }
+
+    private void
+    on_parent_window_changed ()
+    {
+        GLib.Signal.emit_by_name (this, "notify::window");
     }
 
     private void

@@ -2604,6 +2604,15 @@
   (construct-only #f)
 )
 
+(define-property window
+  (of-object "MaiaItem")
+  (prop-type "GParamUInt")
+  (docs "window")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaItemMovable
 
 ;; From MaiaItemPackable
