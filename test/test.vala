@@ -22,7 +22,7 @@ void main (string[] args)
     Test.init (ref args);
     Gtk.init (ref args);
 
-    var application = new Maia.Application.from_args ("test", ref args);
+    var application = new Maia.Application ("test", 60, { "gtk" } );
 
     if (Test.verbose ())
     {
@@ -32,6 +32,7 @@ void main (string[] args)
     TestSuite.get_root ().add_suite (new Maia.TestCore ().suite);
     TestSuite.get_root ().add_suite (new Maia.TestGraphic ().suite);
     TestSuite.get_root ().add_suite (new Maia.TestManifest ().suite);
+    TestSuite.get_root ().add_suite (new Maia.TestCassowary ().suite);
     TestSuite.get_root ().add_suite (new Maia.TestGtk ().suite);
 
     Test.run ();

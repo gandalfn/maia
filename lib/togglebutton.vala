@@ -19,6 +19,60 @@
 
 public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
 {
+    /**
+     * Event args provided by togglebuttion on toggled event
+     */
+    public class ToggledEventArgs : Core.EventArgs
+    {
+        // properties
+        private string m_ButtonName;
+        private bool m_Active;
+
+        // accessors
+        internal override GLib.Variant serialize {
+            owned get {
+                return new GLib.Variant ("(sb)", m_ButtonName, m_Active);
+            }
+            set {
+                if (value != null)
+                {
+                    value.get ("(sb)", out m_ButtonName, out m_Active);
+                }
+                else
+                {
+                    m_Active = false;
+                }
+            }
+        }
+
+        /**
+         * Button name where the event appear
+         */
+        public string button_name {
+            get {
+                return m_ButtonName;
+            }
+        }
+        
+        /**
+         * Active state on toggled event
+         */
+        public bool active {
+            get {
+                return m_Active;
+            }
+        }
+
+        // methods
+        internal ToggledEventArgs (string inButtonName, bool inActive)
+        {
+            base ();
+
+            m_ButtonName = inButtonName;
+            m_Active = inActive;
+        }
+    }
+
     // properties
     private string m_Group = null;
     private bool m_Active = false;
@@ -106,12 +160,14 @@ public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
     }
 
     // signals
-    public signal void toggled ();
+    public Core.Event toggled { get; private set; }
 
     // methods
     construct
     {
         not_dumpable_attributes.insert ("size");
+
+        toggled = new Core.Event ("toggled", this);
 
         string id_label = "%s-label".printf (name);
 
@@ -159,7 +215,7 @@ public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
         {
             active = !active;
 
-            toggled ();
+            toggled.publish (new ToggledEventArgs (name, active));
         }
 
         return true;

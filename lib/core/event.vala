@@ -81,6 +81,15 @@ public class Maia.Core.Event : Object
      */
     public void* owner { get; construct; default = null; }
 
+    /**
+     * The bus of event
+     */
+    public unowned EventBus? bus {
+        get {
+            return m_EventBus;
+        }
+    }
+
     // methods
     /**
      * Create a new event

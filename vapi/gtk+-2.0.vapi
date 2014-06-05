@@ -2551,7 +2551,7 @@ namespace Gtk {
 		public void set_column_types ([CCode (array_length_pos = 0.9)] GLib.Type[] types);
 		public void set_valist (Gtk.TreeIter iter, void* var_args);
 		public void set_value (Gtk.TreeIter iter, int column, GLib.Value value);
-		public void set_valuesv (Gtk.TreeIter iter, int columns, GLib.Value[] values);
+		public void set_valuesv (Gtk.TreeIter iter, [CCode (array_length = false)]int[] columns, GLib.Value[] values);
 		public void swap (Gtk.TreeIter a, Gtk.TreeIter b);
 	}
 	[CCode (cheader_filename = "gtk/gtk.h")]
@@ -5139,7 +5139,7 @@ namespace Gtk {
 		public void set_column_types ([CCode (array_length_pos = 0.9)] GLib.Type[] types);
 		public void set_valist (Gtk.TreeIter iter, void* var_args);
 		public void set_value (Gtk.TreeIter iter, int column, GLib.Value value);
-		public void set_valuesv (Gtk.TreeIter iter, int columns, GLib.Value[] values);
+		public void set_valuesv (Gtk.TreeIter iter, [CCode (array_length = false)]int[] columns, GLib.Value[] values);
 		public void swap (Gtk.TreeIter a, Gtk.TreeIter b);
 	}
 	[CCode (cheader_filename = "gtk/gtk.h")]

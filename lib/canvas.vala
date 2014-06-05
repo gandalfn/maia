@@ -17,327 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public interface Maia.Canvas : Drawable
+public interface Maia.Canvas : GLib.Object
 {
     // accessors
-    protected abstract unowned Item? focus_item         { get; set; default = null; }
-    protected abstract unowned Item? grab_pointer_item  { get; set; default = null; }
-    protected abstract unowned Item? grab_keyboard_item { get; set; default = null; }
-
-    public abstract Item root { get; set; default = null; }
-
-    public unowned Toolbox? toolbox {
-        get {
-            if (root != null)
-            {
-                foreach (unowned Toolbox? c in root.find_by_type<Toolbox> ())
-                {
-                    return c;
-                }
-            }
-            return null;
-        }
-    }
-
-    public abstract Graphic.Surface surface { get; }
-
-    public uint width {
-        get {
-            return surface != null ? (uint)surface.size.width : 0;
-        }
-    }
-
-    public uint height {
-        get {
-            return surface != null ? (uint)surface.size.height : 0;
-        }
-    }
+    public abstract Window window { get; }
+    public abstract Item   root   { get; set; default = null; }
 
     // methods
-    private void
-    on_new_frame (int inFrameNum)
-    {
-        if (root != null && surface != null && geometry != null)
-        {
-            try
-            {
-                var area = geometry.copy ();
-
-                root.update (surface.context, area);
-
-                if (root.damaged != null && !root.damaged.is_empty ())
-                {
-                    draw (surface.context);
-                }
-            }
-            catch (Graphic.Error err)
-            {
-                Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, err.message);
-            }
-        }
-    }
-
-    private void
-    load_manifest (Manifest.Document inDocument, string? inRoot = null) throws Core.ParseError
-    {
-        // Get root item
-        root = inDocument[inRoot] as Item;
-
-        // Connect under root grab signals
-        if (root != null)
-        {
-            root.set_pointer_cursor.connect (on_set_pointer_cursor);
-            root.move_pointer.connect (on_move_pointer);
-            root.grab_focus.connect (on_grab_focus);
-            root.grab_pointer.connect (on_grab_pointer);
-            root.ungrab_pointer.connect (on_ungrab_pointer);
-            root.grab_keyboard.connect (on_grab_keyboard);
-            root.ungrab_keyboard.connect (on_ungrab_keyboard);
-            root.scroll_to.connect (on_scroll_to);
-
-            // Search toolbox
-            foreach (unowned Toolbox toolbox in root.find_by_type<Toolbox> (false))
-            {
-                toolbox.add_item.connect (on_toolbox_add);
-                toolbox.remove_item.connect (on_toolbox_remove);
-                break;
-            }
-
-
-            // Search windows
-            uint32 xid = 0;
-            get ("xid", out xid);
-            if (xid != 0)
-            {
-                foreach (unowned Window window in root.find_by_type<Window> ())
-                {
-                    window.set ("parent_xid", xid);
-                }
-            }
-        }
-    }
-
-    protected void
-    register ()
-    {
-        // Connect onto refresh
-        Application.default.new_frame.connect (on_new_frame);
-
-        // Connect on geometry changed to resize canvas
-        notify["geometry"].connect (() => {
-            resize ();
-            damage ();
-        });
-
-        // On damage damage also root item
-        damage.connect ((a) => {
-            if (root != null)
-            {
-                root.damage (a);
-            }
-        });
-    }
-
-    protected virtual void
-    on_set_pointer_cursor (Cursor inCursor)
-    {
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"set pointer cursor $inCursor");
-    }
-
-    protected virtual void
-    on_move_pointer (Graphic.Point inPosition)
-    {
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"move pointer to $inPosition");
-    }
-
-    protected virtual void
-    on_scroll_to (Item inItem)
-    {
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "scroll to %s", inItem.name);
-    }
-
-    protected virtual void
-    on_grab_focus (Item? inItem)
-    {
-        if (inItem is Button)
-            return;
-
-        if (inItem == null)
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab focus");
-        else
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab focus %s", inItem.name);
-
-        // Unset item have focus
-        if (focus_item != null)
-        {
-            focus_item.have_focus = false;
-        }
-
-        // Set focused item
-        focus_item = inItem;
-
-        // Set item have focus
-        if (inItem != null)
-        {
-            focus_item.have_focus = true;
-        }
-
-        // Set current item to toolbox
-        foreach (unowned Toolbox toolbox in root.find_by_type<Toolbox> (false))
-        {
-            toolbox.current_item_changed (focus_item);
-            break;
-        }
-    }
-
-    protected virtual bool
-    on_grab_pointer (Item inItem)
-    {
-        bool ret = false;
-
-        // Can grab only nobody have already grab
-        if (grab_pointer_item == null)
-        {
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab pointer %s", inItem.name);
-            grab_pointer_item = inItem;
-            ret = true;
-        }
-
-        return ret;
-    }
-
-    protected virtual void
-    on_ungrab_pointer (Item inItem)
-    {
-        if (grab_pointer_item == inItem)
-        {
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab pointer %s", grab_pointer_item.name);
-            grab_pointer_item = null;
-        }
-    }
-
-    protected virtual bool
-    on_grab_keyboard (Item inItem)
-    {
-        bool ret = false;
-
-        // Only focused item can grab keyboard
-        if (grab_keyboard_item != null)
-        {
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab keyboard %s", inItem.name);
-            grab_keyboard_item = inItem;
-            ret = true;
-        }
-
-        return ret;
-    }
-
-    protected virtual void
-    on_ungrab_keyboard (Item inItem)
-    {
-        if (grab_keyboard_item == inItem)
-        {
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab keyboard %s", grab_keyboard_item.name);
-            grab_keyboard_item = null;
-        }
-    }
-
-    protected virtual void
-    on_toolbox_add (Item inItem, bool inParent)
-    {
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "Add item %s", inItem.name);
-
-        unowned DrawingArea drawingArea = null;
-        if (inParent)
-        {
-            if (inItem != null && focus_item != null && focus_item.parent != null)
-            {
-                focus_item.parent.add (inItem);
-
-                drawingArea = focus_item.parent as DrawingArea;
-                if (drawingArea != null && inItem.can_focus)
-                {
-                    inItem.grab_focus (inItem);
-                }
-            }
-        }
-        else if (inItem != null && focus_item != null)
-        {
-            focus_item.add (inItem);
-
-            drawingArea = focus_item as DrawingArea;
-
-            if (drawingArea != null && inItem.can_focus)
-            {
-                inItem.grab_focus (inItem);
-            }
-        }
-
-        unowned Document? doc = root as Document;
-        if (drawingArea != null && doc != null)
-        {
-            Graphic.Region area = doc.get_item_visible_area (drawingArea);
-            Graphic.Point position = Graphic.Point (area.extents.size.width / 2, area.extents.size.height / 2);
-
-            if (area.is_empty ())
-            {
-                var visibleArea = doc.visible_area;
-                doc.scroll_to (drawingArea);
-                var startDrawingArea = drawingArea.convert_to_root_space (Graphic.Point (0, 0));
-                position = inItem.convert_to_item_space (Graphic.Point (startDrawingArea.x + (visibleArea.extents.size.width / 2),
-                                                                        startDrawingArea.y + (visibleArea.extents.size.height / 2)));
-            }
-
-            if (inItem is Arrow)
-            {
-                ((Arrow)inItem).start = position;
-            }
-            else
-            {
-                inItem.position = position;
-            }
-        }
-    }
-
-    protected virtual void
-    on_toolbox_remove ()
-    {
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "Remove item");
-
-        if (focus_item != null)
-        {
-            focus_item.parent = null;
-        }
-    }
-
-    protected abstract void resize ();
-
     /**
      * Clear canvas
      */
     public void
     clear ()
     {
-        // we have already root item disconnect from grab signals
-        if (root != null)
-        {
-            root.set_pointer_cursor.disconnect (on_set_pointer_cursor);
-            root.move_pointer.disconnect (on_move_pointer);
-            root.grab_focus.disconnect (on_grab_focus);
-            root.grab_pointer.disconnect (on_grab_pointer);
-            root.ungrab_pointer.disconnect (on_ungrab_pointer);
-            root.grab_keyboard.disconnect (on_grab_keyboard);
-            root.ungrab_keyboard.disconnect (on_ungrab_keyboard);
-            root.scroll_to.disconnect (on_scroll_to);
-
-            // Search toolbox
-            foreach (unowned Toolbox toolbox in root.find_by_type<Toolbox> (false))
-            {
-                toolbox.add_item.disconnect (on_toolbox_add);
-                toolbox.remove_item.disconnect (on_toolbox_remove);
-                break;
-            }
-        }
+        if (root != null) root.parent = null;
 
         root = null;
     }
@@ -360,7 +53,7 @@ public interface Maia.Canvas : Drawable
         Manifest.Document manifest = new Manifest.Document.from_buffer (inManifest, inManifest.length);
 
         // Load manifest content
-        load_manifest (manifest, inRoot);
+        root = manifest[inRoot] as Item;
     }
 
     /**
@@ -381,6 +74,6 @@ public interface Maia.Canvas : Drawable
         Manifest.Document manifest = new Manifest.Document (inFilename);
 
         // Load manifest content
-        load_manifest (manifest, inRoot);
+        root = manifest[inRoot] as Item;
     }
 }

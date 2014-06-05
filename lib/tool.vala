@@ -278,7 +278,7 @@ public class Maia.Tool : Button
                     {
                         // Launch toolbox add signal
                         toolbox.add_item (item, false);
-                        toolbox.hide ();
+                        toolbox.visible = false;
                     }
                     break;
 
@@ -289,14 +289,14 @@ public class Maia.Tool : Button
                     {
                         // Launch toolbox add signal
                         toolbox.add_item (item, true);
-                        toolbox.hide ();
+                        toolbox.visible = false;
                     }
                     break;
 
                 case ToolAction.REMOVE:
                     // Launch toolbox remove signal
                     toolbox.remove_item ();
-                    toolbox.hide ();
+                    toolbox.visible = false;
                     break;
             }
         }

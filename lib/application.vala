@@ -101,31 +101,44 @@ public class Maia.Application : Maia.Core.Object
             {
                 if (window.visible)
                 {
-                    if (window.geometry == null || (window.damaged != null && !window.damaged.is_empty ()))
+                    if (window.geometry == null || window.need_update)
                     {
+                        var window_position = window.position;
+                        var window_size = window.size;
+
+                        var geometry = new Graphic.Region (Graphic.Rectangle (window_position.x,
+                                                                              window_position.y,
+                                                                              window_size.width,
+                                                                              window_size.height));
+
                         // set window geometry from its size requested
-                        var geometry = new Graphic.Region (Graphic.Rectangle (window.position.x,
-                                                                              window.position.y,
-                                                                              window.size_requested.width,
-                                                                              window.size_requested.height));
+                        Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"window set geometry $(geometry.extents)");
 
-                        if (window.surface != null)
+                        try
                         {
-                            try
-                            {
-                                // create context for update after size requested to be sure all surfaces are ready
-                                Graphic.Context ctx = window.surface.context;
+                            // Create fake for window update
+                            var surface = new Graphic.Surface (1, 1);
 
-                                // update geometry of window
-                                window.update (ctx, geometry);
+                            // update geometry of window
+                            window.update (surface.context, geometry);
+                        }
+                        catch (GLib.Error err)
+                        {
+                            Log.critical (GLib.Log.METHOD, Log.Category.MAIN, @"Error on window refresh: $(err.message)");
+                        }
+                    }
 
-                                // and draw it
-                                window.draw (ctx, geometry);
-                            }
-                            catch (GLib.Error err)
-                            {
-                                Log.critical (GLib.Log.METHOD, Log.Category.MAIN, "Error on window refresh: %s", err.message);
-                            }
+                    // window is damaged
+                    if (window.geometry != null && window.surface != null && window.damaged != null && !window.damaged.is_empty ())
+                    {
+                        try
+                        {
+                            // draw window
+                            window.draw (window.surface.context, window.area);
+                        }
+                        catch (GLib.Error err)
+                        {
+                            Log.critical (GLib.Log.METHOD, Log.Category.MAIN, @"Error on window refresh: $(err.message)");
                         }
                     }
 
@@ -162,6 +175,9 @@ public class Maia.Application : Maia.Core.Object
         Manifest.Element.register ("Arrow",       typeof (Arrow));
         Manifest.Element.register ("ScrollView",  typeof (ScrollView));
         Manifest.Element.register ("Window",      typeof (Window));
+        Manifest.Element.register ("Popup",       typeof (Popup));
+        Manifest.Element.register ("ProgressBar", typeof (ProgressBar));
+        Manifest.Element.register ("SeekBar",     typeof (SeekBar));
     }
 
     // methods
@@ -287,6 +303,8 @@ public class Maia.Application : Maia.Core.Object
         {
             base.insert_child (inObject);
 
+            on_window_visible_changed ();
+
             inObject.notify["visible"].connect (on_window_visible_changed);
         }
     }
@@ -295,6 +313,8 @@ public class Maia.Application : Maia.Core.Object
     remove_child (Core.Object inObject)
     {
         base.remove_child (inObject);
+
+        on_window_visible_changed ();
 
         ((Window)inObject).notify["visible"].disconnect (on_window_visible_changed);
     }

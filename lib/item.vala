@@ -22,6 +22,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     // static properties
     internal static GLib.Quark s_ChainVisibleCount;
     internal static GLib.Quark s_MainWindow;
+    internal static GLib.Quark s_CanvasWindow;
+    internal static GLib.Quark s_PopupWindow;
     internal static GLib.Quark s_CountHide;
 
     // class properties
@@ -31,6 +33,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     internal class uint mc_IdScrollEvent;
 
     // properties
+    private bool              m_NeedUpdate = true;
     private bool              m_IsPackable = false;
     private bool              m_IsMovable = false;
     private bool              m_IsResizable = false;
@@ -130,6 +133,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     public virtual bool can_focus  { get; set; default = false; }
     public bool         have_focus { get; set; default = false; }
 
+    [CCode (notify = false)]
     public bool visible {
         get {
             return m_Visible;
@@ -149,13 +153,14 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 }
 
                 on_visible_changed ();
+
+                GLib.Signal.emit_by_name (this, "notify::visible");
             }
         }
         default = true;
     }
 
-    public bool allocate_on_child_add_remove { get; construct set; default = true; }
-
+    [CCode (notify = false)]
     internal Graphic.Region geometry {
         get {
             return m_Geometry;
@@ -163,22 +168,31 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         set {
             if (m_Geometry != value || m_Geometry == null || !m_Geometry.equal (value))
             {
+                bool old_not_empty = (m_Geometry != null);
+
                 m_Geometry = value;
-                if (m_Geometry == null)
+
+                // New geometry
+                if (m_Geometry != null)
                 {
-                    request_child_resize ();
-                }
-                else
-                {
+                    // Calculate transformations
                     m_TransformToItemSpace = get_transform_to_item_space ();
                     m_TransformToRootSpace = get_transform_to_root_space ();
+                }
+
+                // Send notify geometry signal only if geometry has been changed
+                // not when the geometry has been set
+                if (old_not_empty)
+                {
+                    GLib.Signal.emit_by_name (this, "notify::geometry");
                 }
             }
         }
     }
 
+    [CCode (notify = false)]
     internal Graphic.Region damaged      { get; set; default = null; }
-    internal Graphic.Transform transform {
+    internal virtual Graphic.Transform transform {
         get {
             return m_Transform;
         }
@@ -204,6 +218,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         default = new Graphic.Transform.identity ();
     }
 
+    [CCode (notify = false)]
     public Graphic.Point position {
         get {
             Graphic.Point transformed_position;
@@ -212,37 +227,84 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             return transformed_position;
         }
         set {
-            m_Position = value;
+            if (!m_Position.equal (value))
+            {
+                m_Position = value;
 
-            // Update transform matrix
-            m_TransformToItemSpace = get_transform_to_item_space ();
-            m_TransformToRootSpace = get_transform_to_root_space ();
+                // Update transform matrix
+                m_TransformToItemSpace = get_transform_to_item_space ();
+                m_TransformToRootSpace = get_transform_to_root_space ();
+
+                GLib.Signal.emit_by_name (this, "notify::position");
+            }
         }
     }
 
+    [CCode (notify = false)]
     public Graphic.Size size {
         get {
-            notify["size"].disconnect (on_resize);
-            m_SizeRequested = ((this is Popup) || visible) ? size_request (m_Size) : Graphic.Size (0, 0);
-            notify["size"].connect (on_resize);
+            // Item not visible empty size
+            if (!visible)
+            {
+                // Unset need update
+                m_NeedUpdate = false;
+
+                return Graphic.Size (0, 0);
+            }
+            // Item need update check for size_request
+            else if (m_NeedUpdate)
+            {
+                // Launch size request
+                notify["size"].disconnect (on_resize);
+                m_SizeRequested = size_request (m_Size);
+                notify["size"].connect (on_resize);
+
+                // Unset need update
+                m_NeedUpdate = false;
+            }
+            // Otherwise keep the last size calculated
+            else {}
+
             return m_SizeRequested;
         }
         set {
-            m_Size = value;
-            if (!m_Size.is_empty ())
+            if (!m_Size.equal (value))
             {
-                not_dumpable_attributes.remove ("size");
-            }
-            else
-            {
-                not_dumpable_attributes.insert ("size");
+                // Set new size
+                m_Size = value;
+
+                // Mark size needs to be recalculated on next get
+                need_update = true;
+
+                // Hide property in manifest dump if size is empty
+                if (!m_Size.is_empty ())
+                {
+                    not_dumpable_attributes.remove ("size");
+                }
+                else
+                {
+                    not_dumpable_attributes.insert ("size");
+                }
+
+                // Send size notify
+                GLib.Signal.emit_by_name (this, "notify::size");
             }
         }
     }
 
-    public Graphic.Size size_requested {
+    [CCode (notify = false)]
+    public bool need_update {
         get {
-            return ((this is Popup) || visible) ? m_SizeRequested : Graphic.Size (0, 0);
+            return m_NeedUpdate;
+        }
+        set {
+            if (m_NeedUpdate != value)
+            {
+                m_NeedUpdate = value;
+
+                // Only emit need update notify if switch on true
+                if (m_NeedUpdate) GLib.Signal.emit_by_name (this, "notify::need-update");
+            }
         }
     }
 
@@ -257,21 +319,37 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     public bool            pointer_over         { get; set; default = false; }
 
     [CCode (notify = false)]
-    public uint32 window {
+    public Window window {
         get {
-            uint32 ret = 0;
+            unowned Window? ret = null;
 
-            for (unowned Core.Object? item = parent; ret == 0 && item != null; item = item.parent)
+            // Check if item is under popup
+            unowned Core.Object? popup = get_qdata<unowned Core.Object?> (s_PopupWindow);
+
+            for (unowned Core.Object? item = popup ?? parent; ret == null && item != null; item = item.parent)
             {
-                ret = item.get_qdata<uint32> (s_MainWindow);
+                // If item is under popup chain up on it
+                popup = item.get_qdata<unowned Core.Object?> (s_PopupWindow);
+                if (popup != null)
+                {
+                    item = popup;
+                }
+
+                // Get the window id of item
+                ret = item.get_qdata<unowned Window?> (s_MainWindow);
+            }
+
+            if (ret == null)
+            {
+                ret = get_qdata<unowned Window?> (s_CanvasWindow);
             }
 
             return ret;
         }
         set {
-            if (get_qdata<uint32> (s_MainWindow) != value)
+            if (get_qdata<unowned Window?> (s_MainWindow) != value)
             {
-                set_qdata<uint32> (s_MainWindow, value);
+                set_qdata<unowned Window> (s_MainWindow, value);
                 GLib.Signal.emit_by_name (this, "notify::window");
             }
         }
@@ -347,6 +425,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         s_ChainVisibleCount = GLib.Quark.from_string ("MaiaChainVisibleShowCount");
         s_CountHide         = GLib.Quark.from_string ("MaiaCountHide");
         s_MainWindow        = GLib.Quark.from_string ("MaiaMainWindow");
+        s_CanvasWindow      = GLib.Quark.from_string ("MaiaCanvasWindow");
+        s_PopupWindow       = GLib.Quark.from_string ("MaiaPopupWindow");
 
         // register attribute bind
         Manifest.AttributeBind.register_transform_func (typeof (Item), "width", attribute_bind_width);
@@ -402,6 +482,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         not_dumpable_attributes.insert ("position");
         not_dumpable_attributes.insert ("size");
         not_dumpable_attributes.insert ("transform");
+        not_dumpable_attributes.insert ("need-update");
+        not_dumpable_attributes.insert ("window");
 
         // check if object is packable
         m_IsPackable = this is ItemPackable;
@@ -495,7 +577,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             foreach (unowned string item_name in item_names)
             {
-                unowned Item? item = find_in_parents (GLib.Quark.from_string (item_name.strip ())) as Item;
+                unowned Item? item = find (GLib.Quark.from_string (item_name.strip ())) as Item;
 
                 if (item != null)
                 {
@@ -547,10 +629,11 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         {
             // keep old geometry
             Graphic.Region old_geometry = geometry.copy ();
+
             // reset item geometry
-            if (!m_IsMovable && !m_IsResizable && !(this is Popup))
+            if ((!m_IsMovable && !m_IsResizable))
             {
-                geometry = null;
+                need_update = true;
             }
             else
             {
@@ -563,23 +646,14 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
         else if (geometry != null)
         {
-            geometry = null;
+            need_update = true;
         }
     }
 
     private void
     on_transform_changed ()
     {
-        // reset item geometry
-        if (!m_IsMovable && !m_IsResizable)
-        {
-            geometry = null;
-        }
-        else
-        {
-            var item_size = size;
-            geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, item_size.width, item_size.height));
-        }
+        need_update = true;
 
         // Do not dump transform if is identity
         if (!transform.matrix.is_identity ())
@@ -595,48 +669,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     private void
     draw (Graphic.Context inContext, Graphic.Region? inArea) throws Graphic.Error
     {
-        if (visible && geometry != null && damaged != null && !damaged.is_empty ())
-        {
-            var damaged_area = damaged.copy ();
-            if (inArea != null)
-            {
-                damaged_area.intersect (inArea);
-            }
-
-            if (!damaged_area.is_empty ())
-            {
-                Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, "item %s damaged draw %s %s", name, damaged.extents.to_string (), area.extents.to_string ());
-
-                inContext.operator = Graphic.Operator.OVER;
-                inContext.save ();
-                {
-                    inContext.translate (geometry.extents.origin);
-                    inContext.line_width = line_width;
-
-                    if (transform.matrix.xy != 0 || transform.matrix.yx != 0)
-                    {
-                        var center = Graphic.Point(geometry.extents.size.width / 2.0, geometry.extents.size.height / 2.0);
-
-                        inContext.translate (center);
-                        inContext.transform = transform;
-                        inContext.translate (center.invert ());
-                    }
-                    else
-                        inContext.transform = transform;
-
-                    inContext.clip_region (damaged_area);
-
-                    paint (inContext, damaged_area);
-
-                    //inContext.pattern = new Graphic.Color (1, 0, 0, 0.6);
-                    //var path = new Graphic.Path.from_region (damaged_area);
-                    //inContext.stroke (path);
-                }
-                inContext.restore ();
-
-                repair (damaged_area);
-            }
-        }
+        on_draw (inContext, inArea);
     }
 
     private Graphic.Transform
@@ -646,9 +679,16 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         GLib.SList<unowned Item> list = new GLib.SList<unowned Item?> ();
         for (unowned Core.Object? item = this; item != null; item = item.parent)
         {
-            if (item is Item)
+            if (item is Item && !(item is Popup))
             {
                 list.append (item as Item);
+            }
+
+            // If item is under popup chain up on it
+            unowned Core.Object? popup = item.get_qdata<unowned Core.Object?> (s_PopupWindow);
+            if (popup != null)
+            {
+                item = popup;
             }
         }
 
@@ -668,7 +708,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Error on calculate transform to item %s space: %s", name, err.message);
             }
 
-            if (item.geometry != null)
+            // Ignore translation of item without geometry or window managed by application
+            // the position of this last is the position under desktop
+            if (item.geometry != null && (!(item is Window) || !(item.parent is Application)))
             {
                 Graphic.Point pos = item.geometry.extents.origin.invert ();
                 Graphic.Transform item_translate = new Graphic.Transform.identity ();
@@ -685,11 +727,75 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         // Get stack of items
         GLib.SList<unowned Item> list = new GLib.SList<unowned Item?> ();
+
         for (unowned Core.Object? item = this; item != null; item = item.parent)
         {
-            if (item is Item)
+            if (item is Item && !(item is Popup))
             {
                 list.prepend (item as Item);
+            }
+
+            // If item is under popup chain up on it
+            unowned Core.Object? popup = item.get_qdata<unowned Core.Object?> (s_PopupWindow);
+            if (popup != null)
+            {
+                item = popup;
+            }
+        }
+
+        // Apply transform foreach item
+        Graphic.Transform ret = new Graphic.Transform.identity ();
+        foreach (unowned Item item in list)
+        {
+            // Ignore translation of item without geometry or window managed by application
+            // the position of this last is the position under desktop
+            if (item.geometry != null && (!(item is Window) || !(item.parent is Application)))
+            {
+                Graphic.Point pos = item.geometry.extents.origin;
+                Graphic.Transform item_translate = new Graphic.Transform.identity ();
+                item_translate.translate (pos.x, pos.y);
+                ret.add (item_translate);
+            }
+
+            Graphic.Matrix matrix = item.transform.matrix;
+            Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
+            ret.add (item_transform);
+        }
+
+        return ret;
+    }
+
+    protected Graphic.Transform
+    get_transform_to_window_space ()
+    {
+        unowned Window? parent_window = window;
+
+        // Get stack of items
+        GLib.SList<unowned Item> list = new GLib.SList<unowned Item?> ();
+
+        // Check if item is under popup
+        unowned Core.Object? popup = get_qdata<unowned Core.Object?> (s_PopupWindow);
+
+        for (unowned Core.Object? item = popup ?? parent; item != null; item = item.parent)
+        {
+            // If item is under popup chain up on it
+            popup = item.get_qdata<unowned Core.Object?> (s_PopupWindow);
+            if (popup != null)
+            {
+                item = popup;
+            }
+
+            if (item is Item && !(item is Popup))
+            {
+                if ((item as Item).window == parent_window)
+                {
+                    list.prepend (item as Item);
+                }
+                else
+                {
+                    list.prepend (item as Item);
+                    break;
+                }
             }
         }
 
@@ -742,10 +848,270 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     }
 
     private void
-    on_child_geometry_changed (GLib.Object inObject, GLib.ParamSpec inProperty)
+    on_child_geometry_changed (GLib.Object inObject, GLib.ParamSpec? inProperty)
     {
         on_child_resized ((Drawable)inObject);
     }
+
+    private void
+    on_child_need_update (GLib.Object inObject, GLib.ParamSpec? inProperty)
+    {
+        bool child_need_update = ((Item)inObject).need_update;
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"$name: $(((Item)inObject).name) need update $child_need_update");
+        need_update |= child_need_update;
+    }
+
+    protected virtual void
+    on_draw (Graphic.Context inContext, Graphic.Region? inArea) throws Graphic.Error
+    {
+        if (visible && geometry != null && damaged != null && !damaged.is_empty ())
+        {
+            var damaged_area = damaged.copy ();
+            if (inArea != null)
+            {
+                damaged_area.intersect (inArea);
+            }
+
+            if (!damaged_area.is_empty ())
+            {
+                Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, "item %s damaged draw %s %s", name, damaged.extents.to_string (), area.extents.to_string ());
+
+                inContext.operator = Graphic.Operator.OVER;
+                inContext.save ();
+                {
+                    inContext.translate (geometry.extents.origin);
+                    inContext.line_width = line_width;
+
+                    if (transform.matrix.xy != 0 || transform.matrix.yx != 0)
+                    {
+                        var center = Graphic.Point(geometry.extents.size.width / 2.0, geometry.extents.size.height / 2.0);
+
+                        inContext.translate (center);
+                        inContext.transform = transform;
+                        inContext.translate (center.invert ());
+                    }
+                    else
+                        inContext.transform = transform;
+
+                    inContext.clip_region (damaged_area);
+
+                    paint (inContext, damaged_area);
+
+                    //inContext.pattern = new Graphic.Color (1, 0, 0, 0.6);
+                    //var path = new Graphic.Path.from_region (damaged_area);
+                    //inContext.stroke (path);
+                }
+                inContext.restore ();
+
+                repair (damaged_area);
+            }
+        }
+    }
+
+    protected virtual void
+    on_child_resized (Drawable inChild)
+    {
+
+    }
+
+    protected virtual void
+    on_damage (Graphic.Region? inArea = null)
+    {
+        if (visible)
+        {
+            // Damage all childs
+            foreach (unowned Core.Object child in this)
+            {
+                if (child is Item && (child as Item).visible && (child as Drawable).geometry != null)
+                {
+                    unowned Item item = (Item)child;
+
+                    item.damage.disconnect (on_child_damaged);
+
+                    var area = area_to_child_item_space (item, inArea);
+                    if (!area.is_empty () && (item.damaged == null || item.damaged.is_empty () || item.damaged.contains_rectangle (area.extents) != Graphic.Region.Overlap.IN))
+                    {
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "damage child %s %s", (child as Item).name, area.extents.to_string ());
+
+                        item.damage (area);
+                    }
+
+                    item.damage.connect (on_child_damaged);
+                }
+            }
+        }
+    }
+
+    protected virtual void
+    on_child_damaged (Drawable inChild, Graphic.Region? inArea)
+    {
+        if (inChild.geometry != null)
+        {
+            Graphic.Region damaged_area;
+
+            if (inArea == null)
+            {
+                damaged_area = inChild.geometry.copy ();
+            }
+            else
+            {
+                damaged_area = inChild.area_to_parent_item_space (inArea);
+            }
+
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
+
+            // damage item
+            damage (damaged_area);
+        }
+    }
+
+    protected virtual void
+    on_show ()
+    {
+        // Mark has need to check size
+        need_update = true;
+
+        // Damage item for redraw
+        damage ();
+    }
+
+    protected virtual void
+    on_hide ()
+    {
+        // Remove all damaged area
+        repair ();
+
+        geometry = null;
+    }
+
+    protected virtual void
+    on_move ()
+    {
+        on_move_resize ();
+    }
+
+    protected virtual void
+    on_resize ()
+    {
+        on_move_resize ();
+    }
+
+    protected virtual bool
+    on_button_press_event (uint inButton, Graphic.Point inPoint)
+    {
+        bool ret = false;
+        if (visible && area != null)
+        {
+            ret = inPoint in area;
+        }
+
+        if (!ret)
+        {
+            GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
+        }
+        else if (can_focus && inButton == 1)
+        {
+            grab_focus (this);
+        }
+        else
+        {
+            grab_focus (null);
+        }
+
+        return ret;
+    }
+
+    protected virtual bool
+    on_button_release_event (uint inButton, Graphic.Point inPoint)
+    {
+        bool ret = false;
+        if (visible && area != null)
+        {
+            ret = inPoint in area;
+        }
+
+        if (!ret)
+        {
+            GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
+        }
+
+        return ret;
+    }
+
+    protected virtual bool
+    on_motion_event (Graphic.Point inPoint)
+    {
+        bool ret = false;
+        if (visible && area != null)
+        {
+            ret = inPoint in area;
+        }
+
+        if (!ret)
+        {
+            GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
+        }
+
+        if (pointer_over != ret)
+        {
+            pointer_over = ret;
+        }
+
+        return ret;
+    }
+
+    protected virtual bool
+    on_scroll_event (Scroll inScroll, Graphic.Point inPoint)
+    {
+        GLib.Signal.stop_emission (this, mc_IdScrollEvent, 0);
+
+        return this is ItemResizable && parent is DrawingArea;
+    }
+
+    protected virtual Graphic.Size
+    size_request (Graphic.Size inSize)
+    {
+        Graphic.Point transformed_position;
+        Graphic.Size transformed_size;
+        get_transformed_position_and_size (out transformed_position, out transformed_size);
+
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "%s size request: %s", name, transformed_size.to_string ());
+        return transformed_size;
+    }
+
+    protected void
+    paint_background (Graphic.Context inContext) throws Graphic.Error
+    {
+        // paint background
+        if (background_pattern != null)
+        {
+            inContext.save ();
+            unowned Graphic.Image? image = background_pattern as Graphic.Image;
+            if (image != null)
+            {
+                Graphic.Size image_size = image.size;
+                double scale = double.max (image_size.width / area.extents.size.width,
+                                           image_size.height / area.extents.size.height);
+                var transform = new Graphic.Transform.identity ();
+                transform.scale (scale, scale);
+                inContext.translate (Graphic.Point ((area.extents.size.width - (image_size.width / scale)) / 2,
+                                                    (area.extents.size.height - (image_size.height / scale)) / 2));
+                image.transform = transform;
+                inContext.pattern = background_pattern;
+            }
+            else
+            {
+                inContext.pattern = background_pattern;
+            }
+
+            inContext.paint ();
+            inContext.restore ();
+        }
+    }
+
+    protected abstract void paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error;
+
+
 
     internal override bool
     can_append_child (Core.Object inChild)
@@ -771,6 +1137,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             if (inObject is Item)
             {
+                // On child need update
+                ((Item)inObject).notify["need-update"].connect (on_child_need_update);
+
                 // Connect under child  grab/ungrab pointer
                 ((Item)inObject).grab_pointer.connect (on_child_grab_pointer);
                 ((Item)inObject).ungrab_pointer.connect (on_child_ungrab_pointer);
@@ -780,17 +1149,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 ((Item)inObject).ungrab_keyboard.connect (on_child_ungrab_keyboard);
             }
 
-            if (inObject is Item && !allocate_on_child_add_remove)
-            {
-                var item_size = ((Item)inObject).size;
-                var item_position = ((Item)inObject).position;
-                ((Item)inObject).geometry = new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y, item_size.width, item_size.height));
-                ((Item)inObject).damage ();
-            }
-            else
-            {
-                geometry = null;
-            }
+            need_update = true;
         }
     }
 
@@ -810,6 +1169,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             if (inObject is Item)
             {
+                // Disconnect from child need update
+                ((Item)inObject).notify["need-update"].disconnect (on_child_need_update);
+
                 // Disconnect from child  grab/ungrab pointer
                 ((Item)inObject).grab_pointer.disconnect (on_child_grab_pointer);
                 ((Item)inObject).ungrab_pointer.disconnect (on_child_ungrab_pointer);
@@ -821,14 +1183,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             base.remove_child (inObject);
 
-            if (!allocate_on_child_add_remove)
-            {
-                damage ();
-            }
-            else
-            {
-                geometry = null;
-            }
+            need_update = true;
         }
         else
         {
@@ -843,10 +1198,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
         if (inOther is Item)
         {
-            if (inOther is Popup)
-                return -1;
-            if (this is Popup)
-                return 1;
             // Always item non packable first
             if (!((Item)this).is_packable && ((Item)inOther).is_packable)
                 return -1;
@@ -940,220 +1291,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
     }
 
-    protected virtual void
-    on_child_resized (Drawable inChild)
-    {
-        // Child need update request resize
-        if (inChild.geometry == null && geometry != null)
-        {
-            Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "reset size %s", name);
-            geometry = null;
-        }
-    }
-
-    protected virtual void
-    on_damage (Graphic.Region? inArea = null)
-    {
-        if (visible)
-        {
-            // Damage all childs
-            foreach (unowned Core.Object child in this)
-            {
-                if (child is Item && (child as Item).visible && (child as Drawable).geometry != null)
-                {
-                    unowned Item item = (Item)child;
-
-                    item.damage.disconnect (on_child_damaged);
-
-                    var area = area_to_child_item_space (item, inArea);
-                    if (!area.is_empty () && (item.damaged == null || item.damaged.is_empty () || item.damaged.contains_rectangle (area.extents) != Graphic.Region.Overlap.IN))
-                    {
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "damage child %s %s", (child as Item).name, area.extents.to_string ());
-
-                        item.damage (area);
-                    }
-
-                    item.damage.connect (on_child_damaged);
-                }
-            }
-        }
-    }
-
-    protected virtual void
-    on_child_damaged (Drawable inChild, Graphic.Region? inArea)
-    {
-        if (inChild.geometry != null)
-        {
-            Graphic.Region damaged_area;
-
-            if (inArea == null)
-            {
-                damaged_area = inChild.geometry.copy ();
-            }
-            else
-            {
-                damaged_area = inChild.area_to_parent_item_space (inArea);
-            }
-
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
-
-            // damage item
-            damage (damaged_area);
-        }
-    }
-
-    protected virtual void
-    on_show ()
-    {
-        geometry = null;
-        damage ();
-    }
-
-    protected virtual void
-    on_hide ()
-    {
-        repair ();
-        geometry = null;
-    }
-
-    protected virtual void
-    on_move ()
-    {
-        on_move_resize ();
-    }
-
-    protected virtual void
-    on_resize ()
-    {
-        on_move_resize ();
-    }
-
-    protected virtual bool
-    on_button_press_event (uint inButton, Graphic.Point inPoint)
-    {
-        bool ret = false;
-        if (visible && area != null)
-        {
-            ret = inPoint in area;
-        }
-
-        if (!ret)
-        {
-            GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
-        }
-        else if (can_focus)
-        {
-            grab_focus (this);
-        }
-
-        return ret;
-    }
-
-    protected virtual bool
-    on_button_release_event (uint inButton, Graphic.Point inPoint)
-    {
-        bool ret = false;
-        if (visible && area != null)
-        {
-            ret = inPoint in area;
-        }
-
-        if (!ret)
-        {
-            GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
-        }
-
-        return ret;
-    }
-
-    protected virtual bool
-    on_motion_event (Graphic.Point inPoint)
-    {
-        bool ret = false;
-        if (visible && area != null)
-        {
-            ret = inPoint in area;
-        }
-
-        if (!ret)
-        {
-            GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
-        }
-
-        if (pointer_over != ret)
-        {
-            pointer_over = ret;
-        }
-
-        return ret;
-    }
-
-    protected virtual bool
-    on_scroll_event (Scroll inScroll, Graphic.Point inPoint)
-    {
-        GLib.Signal.stop_emission (this, mc_IdScrollEvent, 0);
-
-        return this is ItemResizable && parent is DrawingArea;
-    }
-
-    protected virtual void
-    request_child_resize ()
-    {
-        // notify child to request an update
-        foreach (unowned Core.Object child in this)
-        {
-            if (child is Drawable)
-            {
-                child.notify["geometry"].disconnect (on_child_geometry_changed);
-                ((Drawable)child).geometry = null;
-                child.notify["geometry"].connect (on_child_geometry_changed);
-            }
-        }
-    }
-
-    protected virtual Graphic.Size
-    size_request (Graphic.Size inSize)
-    {
-        Graphic.Point transformed_position;
-        Graphic.Size transformed_size;
-        get_transformed_position_and_size (out transformed_position, out transformed_size);
-
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "%s size request: %s", name, transformed_size.to_string ());
-        return transformed_size;
-    }
-
-    protected void
-    paint_background (Graphic.Context inContext) throws Graphic.Error
-    {
-        // paint background
-        if (background_pattern != null)
-        {
-            inContext.save ();
-            unowned Graphic.Image? image = background_pattern as Graphic.Image;
-            if (image != null)
-            {
-                Graphic.Size image_size = image.size;
-                double scale = double.max (image_size.width / area.extents.size.width,
-                                           image_size.height / area.extents.size.height);
-                var transform = new Graphic.Transform.identity ();
-                transform.scale (scale, scale);
-                inContext.translate (Graphic.Point ((area.extents.size.width - (image_size.width / scale)) / 2,
-                                                    (area.extents.size.height - (image_size.height / scale)) / 2));
-                image.transform = transform;
-                inContext.pattern = background_pattern;
-            }
-            else
-            {
-                inContext.pattern = background_pattern;
-            }
-
-            inContext.paint ();
-            inContext.restore ();
-        }
-    }
-
-    protected abstract void paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error;
-
     /**
      * Update the allocated geometry of item
      *
@@ -1165,7 +1302,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     public virtual void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
-        if (geometry == null)
+        if (visible && (geometry == null || !geometry.equal (inAllocation)))
         {
             Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "update %s: %s", name, inAllocation.extents.to_string ());
 
@@ -1203,6 +1340,23 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         var point = inPoint;
         point.transform (m_TransformToRootSpace);
+
+        return point;
+    }
+
+
+    /**
+     * Convert a point in item coordinate space to item window coordinate space
+     *
+     * @param inPoint point to convert
+     *
+     * @return Graphic.Point in window coordinate space
+     */
+    public Graphic.Point
+    convert_to_window_space (Graphic.Point inPoint)
+    {
+        var point = inPoint;
+        point.transform (get_transform_to_window_space ());
 
         return point;
     }

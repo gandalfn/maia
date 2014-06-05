@@ -24,9 +24,9 @@ extradefs_generate_maia_gtk_defs_LDADD   = \
     $(MAIA_LIBS) \
     $(MAIAMM_LIBS) \
     $(MAIA_GTKMM_LIBS) \
-    ${top_builddir}/lib/libmaia.la \
-    ${top_builddir}/lib/gdk-pixbuf/libmaia-gdk-pixbuf.la \
     ${top_builddir}/lib/gtk/libmaia-gtk.la \
+    ${top_builddir}/lib/gdk-pixbuf/libmaia-gdk-pixbuf.la \
+    ${top_builddir}/lib/libmaia.la \
     -lglibmm_generate_extra_defs-2.4
 
 AM_CPPFLAGS = \

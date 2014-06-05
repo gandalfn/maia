@@ -260,11 +260,15 @@ public class Maia.Core.Array <V> : Collection <V>
      * Check if the element at pos of array is correctly sorted
      *
      * @param inPos pos of element
+     *
+     * @return the new position of element
      */
-    public void
+    public uint
     sort (uint inPos)
         requires (inPos < m_Size)
     {
+        uint pos = inPos;
+
         if (m_Sorted)
         {
             unowned V val = m_pContent[inPos].val;
@@ -274,7 +278,9 @@ public class Maia.Core.Array <V> : Collection <V>
                 GLib.Memory.move (&m_pContent[inPos], &m_pContent[inPos + 1],
                                   (m_Size - inPos) * sizeof (Node<V>));
 
-            int pos = get_nearest_pos (val);
+            GLib.Memory.set (&m_pContent[m_Size], 0, sizeof (Node<V>));
+            
+            pos = get_nearest_pos (val);
 
             m_Size++;
 
@@ -286,6 +292,28 @@ public class Maia.Core.Array <V> : Collection <V>
 
             GLib.Memory.copy (&m_pContent[pos].val, &val, sizeof (V*));
         }
+
+        return pos;
+    }
+
+    /**
+     * Check if the element is correctly sorted
+     *
+     * @param inValue element
+     *
+     * @return the new position of element -1 if element is not in array
+     */
+    public int
+    reorder (V inValue)
+    {
+        int pos = -1;
+        Iterator<V>? iter = get_iterator (inValue);
+        if (iter != null)
+        {
+            pos = (int)sort (iter.index);
+        }
+
+        return pos;
     }
 
     /**
@@ -362,6 +390,7 @@ public class Maia.Core.Array <V> : Collection <V>
             {
                 GLib.Memory.move (&m_pContent[pos + 1], &m_pContent[pos],
                                   (m_Size - pos - 1) * sizeof (Node<V>));
+                GLib.Memory.set (&m_pContent[pos], 0, sizeof (Node<V>));
             }
 
             m_pContent[pos].val = inValue;

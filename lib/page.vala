@@ -110,7 +110,7 @@ internal class Maia.Page : GLib.Object
             // Add header height
             if (m_Document.header != null)
             {
-                double height = header.size_requested.height;
+                double height = header.size.height;
                 if (height == 0)
                     height = header.size.height;
 
@@ -127,7 +127,7 @@ internal class Maia.Page : GLib.Object
             // Suppress header height
             if (m_Document.header != null)
             {
-                double height = header.size_requested.height;
+                double height = header.size.height;
                 if (height == 0)
                     height = header.size.height;
                 size.resize (0, -height);
@@ -136,7 +136,7 @@ internal class Maia.Page : GLib.Object
             // Suppress footer height
             if (m_Document.footer != null)
             {
-                double height = footer.size_requested.height;
+                double height = footer.size.height;
                 if (height == 0)
                     height = footer.size.height;
                 size.resize (0, -height);
@@ -229,7 +229,7 @@ internal class Maia.Page : GLib.Object
                 var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
                                               geometry.extents.origin.y + Core.convert_inch_to_pixel (m_Document.top_margin));
 
-                var size = Graphic.Size (content_geometry.extents.size.width, header.size_requested.height);
+                var size = Graphic.Size (content_geometry.extents.size.width, header.size.height);
 
                 var header_geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
 
@@ -245,9 +245,9 @@ internal class Maia.Page : GLib.Object
                 var position = Graphic.Point (geometry.extents.origin.x + Core.convert_inch_to_pixel (m_Document.left_margin),
                                               geometry.extents.origin.y + geometry.extents.size.height  -
                                               Core.convert_inch_to_pixel (m_Document.bottom_margin) -
-                                              footer.size_requested.height);
+                                              footer.size.height);
 
-                var size = Graphic.Size (content_geometry.extents.size.width, footer.size_requested.height);
+                var size = Graphic.Size (content_geometry.extents.size.width, footer.size.height);
 
                 var footer_geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
 
@@ -262,7 +262,7 @@ internal class Maia.Page : GLib.Object
             {
                 // Get child position and size
                 var item_position = child.position;
-                var item_size     = child.size_requested;
+                var item_size     = child.size;
 
                 // Set child size allocation
                 var child_allocation = new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y, content_geometry.extents.size.width, item_size.height));

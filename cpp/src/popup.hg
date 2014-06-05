@@ -32,14 +32,13 @@ namespace Maia
         _CLASS_GOBJECT(Popup, MaiaPopup, MAIA_POPUP, Group, MaiaGroup)
 
         public:
+            _IGNORE(maia_popup_get_window_transform)
+
             _WRAP_METHOD(double get_border () const, maia_popup_get_border)
             _WRAP_METHOD(void set_border (double inBorder), maia_popup_set_border)
             _WRAP_METHOD(PopupPlacement get_placement () const, maia_popup_get_placement)
             _WRAP_METHOD(void set_placement (PopupPlacement inPlacement), maia_popup_set_placement)
             _WRAP_METHOD(Glib::RefPtr<Item> get_content () const, maia_popup_get_content, refreturn)
-
-            _WRAP_METHOD(void show (), maia_popup_show)
-            _WRAP_METHOD(void hide (), maia_popup_hide)
 
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("placement", PopupPlacement)

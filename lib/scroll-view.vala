@@ -17,6 +17,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * An item which add scrollbar to its children
+ *
+ * =Manifest description:=
+ *
+ * {{{
+ *      ScrollView.<id> {
+ *          Label.<id> {
+ *              text: '....';
+ *          }
+ *      }
+ * }}}
+ *
+ */
+
 public class Maia.ScrollView : Item
 {
     // types
@@ -29,16 +44,30 @@ public class Maia.ScrollView : Item
     }
 
     // properties
-    private Window m_Window = null;
-    private unowned Item? m_Child = null;
-    private Adjustment m_HAdjustment = null;
-    private Adjustment m_VAdjustment = null;
+    private Window        m_Window      = null;
+    private Window        m_Viewport    = null;
+    private unowned Item? m_Child       = null;
+    private SeekBar       m_HSeekBar    = null;
+    private SeekBar       m_VSeekBar    = null;
+    private Adjustment    m_HAdjustment = null;
+    private Adjustment    m_VAdjustment = null;
     private Graphic.Point m_PreviousPos = Graphic.Point (0, 0);
 
     // accessors
     internal override string tag {
         get {
             return "ScrollView";
+        }
+    }
+
+    internal override Graphic.Transform transform {
+        get {
+            // return the base transform
+            return base.transform;
+        }
+        set {
+            // set transform of window and do not set item transform to avoid duplicate transform
+            m_Window.transform = value;
         }
     }
 
@@ -60,13 +89,37 @@ public class Maia.ScrollView : Item
     construct
     {
         m_HAdjustment = new Adjustment ();
-        m_HAdjustment.changed.connect (on_adjustment_changed);
+        m_HAdjustment.notify["value"].connect (on_adjustment_changed);
+        m_HAdjustment.notify["lower"].connect (on_adjustment_settings_changed);
+        m_HAdjustment.notify["upper"].connect (on_adjustment_settings_changed);
 
         m_VAdjustment = new Adjustment ();
-        m_VAdjustment.changed.connect (on_adjustment_changed);
+        m_VAdjustment.notify["value"].connect (on_adjustment_changed);
+        m_VAdjustment.notify["lower"].connect (on_adjustment_settings_changed);
+        m_VAdjustment.notify["upper"].connect (on_adjustment_settings_changed);
+
+        m_HSeekBar = new SeekBar (name + "_hseekbar");
+        m_HSeekBar.orientation = Orientation.HORIZONTAL;
+        m_HSeekBar.adjustment = m_HAdjustment;
+        m_HSeekBar.size = Graphic.Size (10, 10);
+        m_HSeekBar.parent = this;
+
+        m_VSeekBar = new SeekBar (name + "_vseekbar");
+        m_VSeekBar.orientation = Orientation.VERTICAL;
+        m_VSeekBar.adjustment = m_VAdjustment;
+        m_VSeekBar.size = Graphic.Size (10, 10);
+        m_VSeekBar.parent = this;
+
+        m_Viewport = new Window (name + "_viewport", 1, 1);
+        m_Viewport.background_pattern = background_pattern;
+        m_Viewport.parent = this;
+
+        m_Window = new Window (name + "_window", 1, 1);
+        m_Window.scroll_event.connect (on_window_scroll_event);
+        m_Window.background_pattern = background_pattern;
+        m_Window.parent = m_Viewport;
 
         notify["visible"].connect (on_visible_changed);
-        notify["transform"].connect (on_transform_changed);
         notify["background-pattern"].connect (on_background_pattern_changed);
     }
 
@@ -75,49 +128,72 @@ public class Maia.ScrollView : Item
         GLib.Object (id: GLib.Quark.from_string (inId));
     }
 
-    private void
-    on_adjustment_changed ()
+    ~ScrollView ()
     {
-        // Calculate the previous visible area
-        Graphic.Region old_area = geometry.copy ();
-        old_area.translate (m_PreviousPos);
-        
-        m_Window.position = Graphic.Point (-GLib.Math.round (hadjustment.@value), -GLib.Math.round (vadjustment.@value));
-
-        // if scroll view is currently damaged translate damaged region
-        if (damaged != null)
-        {
-            m_PreviousPos.subtract (Graphic.Point(GLib.Math.round (hadjustment.@value), GLib.Math.round (vadjustment.@value)));
-            damaged.translate (m_PreviousPos);
-        }
-
-        // Calculate the current visible area
-        Graphic.Region area = geometry.copy ();
-        m_PreviousPos = Graphic.Point(GLib.Math.round (hadjustment.@value), GLib.Math.round (vadjustment.@value));
-        area.translate (m_PreviousPos);
-
-        // The damaged area was the difference between previous and current area
-        area.subtract (old_area);
-
-        m_Window.damage (area);
+        m_Window.parent = null;
+        m_Window = null;
+        m_Viewport.parent = null;
+        m_Viewport = null;
     }
 
     private void
-    on_transform_changed ()
+    on_adjustment_settings_changed ()
     {
-        if (m_Window != null)
+        m_HSeekBar.need_update = true;
+        m_VSeekBar.need_update = true;
+    }
+
+    private void
+    on_adjustment_changed ()
+    {
+        if (geometry != null)
         {
-            m_Window.transform = transform;
+            // Calculate the move offset
+            var diff = m_PreviousPos;
+            diff.subtract (Graphic.Point(hadjustment.@value, vadjustment.@value));
+
+            // Set new position
+            m_PreviousPos = Graphic.Point(hadjustment.@value, vadjustment.@value);
+
+            // Set the new window position
+            m_Window.position = m_PreviousPos.invert ();
+
+            // translate window geometry
+            m_Window.geometry.translate (diff);
+
+            // if scroll view is currently damaged translate damaged region
+            if (damaged != null)
+            {
+                damaged.translate (diff);
+            }
+
+            // if we have a damaged area of window
+            if (m_Window.damaged != null)
+            {
+                // we have the viewport area to redraw
+                Graphic.Region redraw_area = m_Viewport.area.copy ();
+
+                // Check if window must be redraw in this viewport area
+                redraw_area.translate (m_PreviousPos);
+                redraw_area.intersect (m_Window.damaged);
+
+                if (!redraw_area.is_empty ())
+                {
+                    redraw_area.translate (m_PreviousPos.invert ());
+
+                    // Damage scroll view
+                    damage (redraw_area);
+                }
+            }
         }
     }
 
     private void
     on_background_pattern_changed ()
     {
-        if (m_Window != null)
-        {
-            m_Window.background_pattern = background_pattern;
-        }
+        // set background pattern of window and viewport
+        m_Window.background_pattern = background_pattern;
+        m_Viewport.background_pattern = background_pattern;
     }
 
     private void
@@ -125,6 +201,7 @@ public class Maia.ScrollView : Item
     {
         if (visible != m_Window.visible)
         {
+            m_Viewport.visible = visible;
             m_Window.visible = visible;
         }
     }
@@ -135,70 +212,29 @@ public class Maia.ScrollView : Item
         switch (inScroll)
         {
             case Scroll.UP:
-                vadjustment.@value -= 0.01 * vadjustment.upper;
+                vadjustment.@value -= 0.01 * (vadjustment.upper - vadjustment.lower);
                 break;
 
             case Scroll.DOWN:
-                vadjustment.@value += 0.01 * vadjustment.upper;
+                vadjustment.@value += 0.01 * (vadjustment.upper - vadjustment.lower);
                 break;
 
             case Scroll.LEFT:
-                hadjustment.@value -= 0.01 * hadjustment.upper;
+                hadjustment.@value -= 0.01 * (hadjustment.upper - hadjustment.lower);
                 break;
 
             case Scroll.RIGHT:
-                hadjustment.@value += 0.01 * hadjustment.upper;
+                hadjustment.@value += 0.01 * (hadjustment.upper - hadjustment.lower);
                 break;
         }
 
         return true;
     }
 
-    internal override bool
-    can_append_child (Core.Object inObject)
-    {
-        return inObject is Item;
-    }
-
-    internal override void
-    on_damage (Graphic.Region? inArea = null)
-    {
-        Graphic.Region damaged_area = (inArea ?? geometry).copy ();
-
-        damaged_area.translate (Graphic.Point (hadjustment.@value, vadjustment.@value));
-
-        base.on_damage (damaged_area);
-    }
-
-    internal override void
-    on_child_damaged (Drawable inChild, Graphic.Region? inArea)
-    {
-        if (inChild.geometry != null)
-        {
-            Graphic.Region damaged_area;
-
-            if (inArea == null)
-            {
-                damaged_area = inChild.geometry.copy ();
-            }
-            else
-            {
-                damaged_area = inArea.copy ();
-            }
-
-            damaged_area.translate (Graphic.Point (-hadjustment.@value, -vadjustment.@value));
-
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
-
-            // damage item
-            damage (damaged_area);
-        }
-    }
-
     internal override void
     insert_child (Core.Object inObject)
     {
-        if (inObject == m_Window)
+        if (inObject == m_Window || inObject == m_Viewport || inObject == m_HSeekBar || inObject == m_VSeekBar)
         {
             base.insert_child (inObject);
         }
@@ -206,13 +242,10 @@ public class Maia.ScrollView : Item
         {
             m_Child = inObject as Item;
 
-            m_Window = new Window (name + "_window", 1, 1);
-            m_Window.scroll_event.connect (on_window_scroll_event);
-            m_Window.background_pattern = background_pattern;
-            m_Window.transform = transform;
             inObject.parent = m_Window;
-            m_Window.parent = this;
-            m_Window.visible = true;
+
+            m_Viewport.visible = visible;
+            m_Window.visible = visible;
         }
     }
 
@@ -221,10 +254,15 @@ public class Maia.ScrollView : Item
     {
         if (inObject == m_Child)
         {
-            m_Window.scroll_event.disconnect (on_window_scroll_event);
-            base.remove_child (m_Window);
-            m_Window = null;
             m_Child = null;
+            m_Child.parent = null;
+
+            m_Viewport.visible = false;
+            m_Window.visible = false;
+        }
+        else
+        {
+            base.remove_child (inObject);
         }
     }
 
@@ -246,11 +284,6 @@ public class Maia.ScrollView : Item
         vadjustment.lower = area.extents.origin.y;
         vadjustment.upper = area.extents.size.height;
 
-        if (m_Window != null && !m_Window.size_requested.equal (area.extents.size))
-        {
-            m_Window.size = area.extents.size;
-        }
-
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "scroll-view: %s %s", name, area.extents.size.to_string ());
 
         return base.size_request (inSize);
@@ -259,27 +292,30 @@ public class Maia.ScrollView : Item
     internal override void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
-        if (geometry == null)
+        if (visible && (geometry == null || !geometry.equal (inAllocation)))
         {
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "");
-
             geometry = inAllocation;
 
-            if (m_Child != null)
-            {
-                // Get child position and size
-                var item_position = m_Window.position;
-                var item_size     = m_Window.size;
+            // Set page size
+            hadjustment.page_size = geometry.extents.size.width - m_VSeekBar.size.width;
+            vadjustment.page_size = geometry.extents.size.height - m_HSeekBar.size.height;
 
-                // Set child size allocation
-                var child_allocation = new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y,
-                                                                              double.max (item_size.width, geometry.extents.size.width),
-                                                                              double.max (item_size.height, geometry.extents.size.height)));
-                hadjustment.page_size = geometry.extents.size.width;
-                vadjustment.page_size = geometry.extents.size.height;
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"$(geometry.extents)");
 
-                m_Window.update (inContext, child_allocation);
-            }
+            var viewport_position = m_Viewport.position;
+            var viewport_allocation = new Graphic.Region (Graphic.Rectangle (viewport_position.x, viewport_position.y,
+                                                                             geometry.extents.size.width - m_VSeekBar.size.width,
+                                                                             geometry.extents.size.height - m_HSeekBar.size.height));
+
+            m_Viewport.update (inContext, viewport_allocation);
+
+            // Update seekbar geometry
+            m_HSeekBar.update (inContext, new Graphic.Region (Graphic.Rectangle (0, geometry.extents.size.height - m_HSeekBar.size.height,
+                                                                                 geometry.extents.size.width - m_VSeekBar.size.width,
+                                                                                 m_HSeekBar.size.height)));
+            m_VSeekBar.update (inContext, new Graphic.Region (Graphic.Rectangle (geometry.extents.size.width - m_VSeekBar.size.width, 0,
+                                                                                 m_VSeekBar.size.width,
+                                                                                 geometry.extents.size.height - m_HSeekBar.size.height)));
 
             damage ();
         }
@@ -291,15 +327,162 @@ public class Maia.ScrollView : Item
         // paint background
         paint_background (inContext);
 
-        if (m_Child != null)
+        // draw viewport
+        var viewport_area = area_to_child_item_space (m_Viewport, inArea);
+        m_Viewport.draw (m_Viewport.surface.context, viewport_area);
+        m_Viewport.swap_buffer ();
+
+        // swap buffer of window, drawed under viewport
+        m_Window.swap_buffer ();
+
+        // draw seekbars
+        m_HSeekBar.draw (inContext, area_to_child_item_space (m_HSeekBar, inArea));
+        m_VSeekBar.draw (inContext, area_to_child_item_space (m_VSeekBar, inArea));
+    }
+
+    internal override bool
+    on_button_press_event (uint inButton, Graphic.Point inPoint)
+    {
+        bool ret = base.on_button_press_event (inButton, inPoint);
+
+        if (ret)
         {
-            Graphic.Region area = inArea.copy ();
-            area.translate (Graphic.Point(hadjustment.@value, vadjustment.@value));
+            // parse child from last to first since item has sorted by layer
+            unowned Core.Object? child = last ();
+            while (child != null)
+            {
+                if (child is SeekBar)
+                {
+                    unowned Item item = (Item)child;
 
-            m_Window.draw (inContext, area);
+                    // Transform point to item coordinate space
+                    Graphic.Point point = convert_to_child_item_space (item, inPoint);
 
-            m_Window.swap_buffer ();
+                    // point under child
+                    if (item.button_press_event (inButton, point))
+                    {
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button press event in %s", item.name);
+                        // event occurate under child stop signal
+                        GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
+                        break;
+                    }
+                }
+
+                child = child.prev ();
+            }
         }
+
+        return ret;
+    }
+
+    internal override bool
+    on_button_release_event (uint inButton, Graphic.Point inPoint)
+    {
+        bool ret = base.on_button_release_event (inButton, inPoint);
+
+        if (ret)
+        {
+            // parse child from last to first since item has sorted by layer
+            unowned Core.Object? child = last ();
+            while (child != null)
+            {
+                if (child is SeekBar)
+                {
+                    unowned Item item = (Item)child;
+
+                    // Transform point to item coordinate space
+                    Graphic.Point point = convert_to_child_item_space (item, inPoint);
+
+                    // point under child
+                    if (item.button_release_event (inButton, point))
+                    {
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button release event in %s", item.name);
+                        // event occurate under child stop signal
+                        GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
+                        break;
+                    }
+                }
+
+                child = child.prev ();
+            }
+
+            ret = true;
+        }
+
+        return ret;
+    }
+
+    internal override bool
+    on_motion_event (Graphic.Point inPoint)
+    {
+        bool ret = base.on_motion_event (inPoint);
+
+        if (ret)
+        {
+            // parse child from last to first since item has sorted by layer
+            unowned Core.Object? child = last ();
+            while (child != null)
+            {
+                if ((child is SeekBar))
+                {
+                    unowned Item item = (Item)child;
+
+                    // Transform point to item coordinate space
+                    Graphic.Point point = convert_to_child_item_space (item, inPoint);
+
+                    // point under child
+                    if (item.motion_event (point))
+                    {
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "%s motion event in %s", name, item.name);
+
+                        // event occurate under child stop signal
+                        GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
+                        break;
+                    }
+                }
+
+                child = child.prev ();
+            }
+
+            ret = true;
+        }
+
+        return ret;
+    }
+
+    internal override bool
+    on_scroll_event (Scroll inScroll, Graphic.Point inPoint)
+    {
+        bool ret = false;
+
+        if (visible && geometry != null && inPoint in geometry)
+        {
+            // parse child from last to first since item has sorted by layer
+            unowned Core.Object? child = last ();
+            while (child != null)
+            {
+                if (child is SeekBar)
+                {
+                    unowned Item item = (Item)child;
+
+                    // Transform point to item coordinate space
+                    Graphic.Point point = convert_to_child_item_space (item, inPoint);
+
+                    // point under child
+                    if (item.scroll_event (inScroll, point))
+                    {
+                        ret = true;
+                        break;
+                    }
+                }
+
+                child = child.prev ();
+            }
+        }
+
+        if (ret) GLib.Signal.stop_emission (this, mc_IdScrollEvent, 0);
+
+        return ret;
     }
 
     internal override string

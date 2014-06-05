@@ -50,6 +50,28 @@ internal class Maia.Cairo.Region : Graphic.Region
     }
 
     private inline void
+    remove_small_rects ()
+    {
+        global::Cairo.RectangleInt[] rects = {};
+
+        Fixed one = Fixed.from_int (1);
+        for (int cpt = 0; cpt < m_Region.num_rectangles (); ++cpt)
+        {
+            var rect = m_Region.get_rectangle (cpt);
+
+            if (rect.width <= one || rect.height <= one)
+            {
+                rects += rect;
+            }
+        }
+
+        foreach (var rect in rects)
+        {
+            m_Region.subtract_rectangle (rect);
+        }
+    }
+
+    private inline void
     compress (Region s, Region t, uint dx, bool xdir, bool grow)
     {
         uint shift = 1;
@@ -174,6 +196,7 @@ internal class Maia.Cairo.Region : Graphic.Region
     intersect (Graphic.Region inOther)
     {
         m_Region.intersect (((Region)inOther).m_Region);
+        remove_small_rects ();
     }
 
     /**
@@ -183,6 +206,7 @@ internal class Maia.Cairo.Region : Graphic.Region
     subtract (Graphic.Region inOther)
     {
         m_Region.subtract (((Region)inOther).m_Region);
+        remove_small_rects ();
     }
 
     /**

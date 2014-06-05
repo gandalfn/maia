@@ -17,10 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.Model : Core.Object, Manifest.Element
+public class Maia.Model : Core.Object, Manifest.Element
 {
     // types
-    public abstract class Column : Core.Object, Manifest.Element
+    public class Column : Core.Object, Manifest.Element
     {
         // accessors
         internal string tag {
@@ -46,6 +46,7 @@ public abstract class Maia.Model : Core.Object, Manifest.Element
         }
 
         public int column { get; set; default = -1; }
+        public GLib.Type column_type { get; private set; default = GLib.Type.INVALID; }
 
         // methods
         construct
@@ -53,6 +54,24 @@ public abstract class Maia.Model : Core.Object, Manifest.Element
             // Add not dumpable attributes
             not_dumpable_attributes.insert ("name");
             not_dumpable_attributes.insert ("model");
+            not_dumpable_attributes.insert ("column_type");
+        }
+
+        public Column (string inId)
+        {
+            GLib.Object (id: GLib.Quark.from_string (inId));
+        }
+
+        public Column.with_type (string inId, GLib.Type inType)
+        {
+            GLib.Object (id: GLib.Quark.from_string (inId));
+            column_type = inType;
+        }
+
+        public Column.with_column (string inId, int inColumn)
+        {
+            GLib.Object (id: GLib.Quark.from_string (inId));
+            column = inColumn;
         }
 
         internal override bool
@@ -62,8 +81,20 @@ public abstract class Maia.Model : Core.Object, Manifest.Element
             return false;
         }
 
-        public abstract new GLib.Value @get (uint inPath);
+        public virtual new GLib.Value
+        @get (uint inPath)
+        {
+            return GLib.Value (column_type);
+        }
+
+        public virtual new void
+        @set (uint inPath, GLib.Value inValue)
+        {
+        }
     }
+
+    // delegate
+    public delegate bool FilterFunc (uint inPath);
 
     // accessors
     internal string tag {
@@ -82,7 +113,11 @@ public abstract class Maia.Model : Core.Object, Manifest.Element
         }
     }
 
-    public abstract uint nb_rows { get; }
+    public virtual uint nb_rows {
+        get {
+            return 0;
+        }
+    }
 
     // signals
     [Signal (detailed = true)]
@@ -126,6 +161,112 @@ public abstract class Maia.Model : Core.Object, Manifest.Element
         not_dumpable_attributes.insert ("name");
     }
 
+    [CCode (sentinel = "NULL")]
+    public Model (string inId, ...)
+    {
+        GLib.Object (id: GLib.Quark.from_string (inId));
+
+        va_list list = va_list ();
+        Column[] columns = {};
+        while (true)
+        {
+            // Get column name
+            string? columnName = list.arg ();
+            if (columnName == null)
+            {
+                break;
+            }
+
+            // Get column type
+            GLib.Type type = list.arg ();
+            if (type == GLib.Type.INVALID)
+            {
+                break;
+            }
+
+            // Create column
+            columns += new Column.with_type (columnName, type);
+        }
+        if (columns.length > 0)
+        {
+            construct_model (columns);
+        }
+    }
+
+    public Model.with_columns (string inId, Column[] inColumns)
+    {
+        GLib.Object (id: GLib.Quark.from_string (inId));
+
+        construct_model (inColumns);
+    }
+
+    [CCode (sentinel = "NULL")]
+    public Model.foreign (string inId, ...)
+    {
+        va_list list = va_list ();
+
+        this.foreignv (inId, list);
+    }
+
+    [CCode (sentinel = "NULL")]
+    public Model.foreign_with_columns (string inId, Column[] inColumns, ...)
+    {
+        va_list list = va_list ();
+
+        this.foreign_with_columnsv (inId, inColumns, list);
+    }
+
+
+    public Model.foreignv (string inId, va_list inList)
+    {
+        GLib.Object (id: GLib.Quark.from_string (inId));
+        
+        while (true)
+        {
+            // Get property name
+            unowned string? propertyName = inList.arg ();
+            if (propertyName == null)
+            {
+                break;
+            }
+            
+            // Search property
+            unowned GLib.ParamSpec? param = get_class ().find_property (propertyName);
+            if (param != null)
+            {
+                // Get value
+                GLib.Value val = GLib.Value (param.value_type);
+                string? error = null;
+                GLib.ValueCollect.get (ref val, inList, 0, ref error);
+                if (error == null)
+                {
+                    set_property (propertyName, val);
+                }
+            }
+        }
+    }
+
+    public Model.foreign_with_columnsv (string inId, Column[] inColumns, va_list inList)
+    {
+        this.foreignv (inId, inList);
+
+        foreach (unowned Column column in inColumns)
+        {
+            add (column);
+        }
+    }
+    
+
+    protected virtual void
+    construct_model (Column[] inColumns)
+    {
+    }
+
+    protected virtual void
+    set_valuesv (uint inRow, va_list inList)
+    {
+    }
+
     internal override bool
     can_append_child (Core.Object inObject)
     {
@@ -148,6 +289,26 @@ public abstract class Maia.Model : Core.Object, Manifest.Element
         }
 
         return ret;
+    }
+
+    public virtual bool
+    append_row (out uint outPath)
+    {
+        outPath = 0;
+        return false;
+    }
+
+    public virtual void
+    remove_row (uint inPath)
+    {
+    }
+
+    [CCode (sentinel = "NULL")]
+    public void
+    set_values (uint inRow, ...)
+    {
+        va_list list = va_list ();
+        set_valuesv (inRow, list);
     }
 
     public new unowned Column?

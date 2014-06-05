@@ -303,6 +303,15 @@
   (construct-only #t)
 )
 
+(define-property bus
+  (of-object "MaiaCoreEvent")
+  (prop-type "GParamObject")
+  (docs "bus")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
 ;; From MaiaCoreEventListener
 
 (define-property hash
@@ -1068,33 +1077,6 @@
 
 ;; From MaiaCanvas
 
-(define-property focus-item
-  (of-object "MaiaCanvas")
-  (prop-type "GParamObject")
-  (docs "focus-item")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
-(define-property grab-keyboard-item
-  (of-object "MaiaCanvas")
-  (prop-type "GParamObject")
-  (docs "grab-keyboard-item")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
-(define-property grab-pointer-item
-  (of-object "MaiaCanvas")
-  (prop-type "GParamObject")
-  (docs "grab-pointer-item")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
 (define-property root
   (of-object "MaiaCanvas")
   (prop-type "GParamObject")
@@ -1104,10 +1086,10 @@
   (construct-only #f)
 )
 
-(define-property surface
+(define-property window
   (of-object "MaiaCanvas")
   (prop-type "GParamObject")
-  (docs "surface")
+  (docs "window")
   (readable #t)
   (writable #f)
   (construct-only #f)
@@ -1548,12 +1530,6 @@
 
 ;; From MaiaEntry
 
-(define-signal changed
-  (of-object "MaiaEntry")
-  (return-type "void")
-  (when "last")
-)
-
 (define-property tag
   (of-object "MaiaEntry")
   (prop-type "GParamString")
@@ -1785,6 +1761,24 @@
   (docs "only-numeric")
   (readable #t)
   (writable #t)
+  (construct-only #f)
+)
+
+(define-property changed-mask
+  (of-object "MaiaEntry")
+  (prop-type "GParamFlags")
+  (docs "changed-mask")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property changed
+  (of-object "MaiaEntry")
+  (prop-type "GParamObject")
+  (docs "changed")
+  (readable #t)
+  (writable #f)
   (construct-only #f)
 )
 
@@ -2478,15 +2472,6 @@
   (construct-only #f)
 )
 
-(define-property allocate-on-child-add-remove
-  (of-object "MaiaItem")
-  (prop-type "GParamBoolean")
-  (docs "allocate-on-child-add-remove")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
 (define-property geometry
   (of-object "MaiaItem")
   (prop-type "GParamObject")
@@ -2532,12 +2517,12 @@
   (construct-only #f)
 )
 
-(define-property size-requested
+(define-property need-update
   (of-object "MaiaItem")
-  (prop-type "GParamBoxed")
-  (docs "size-requested")
+  (prop-type "GParamBoolean")
+  (docs "need-update")
   (readable #t)
-  (writable #f)
+  (writable #t)
   (construct-only #f)
 )
 
@@ -2606,7 +2591,7 @@
 
 (define-property window
   (of-object "MaiaItem")
-  (prop-type "GParamUInt")
+  (prop-type "GParamObject")
   (docs "window")
   (readable #t)
   (writable #t)
@@ -3139,6 +3124,80 @@
   (construct-only #f)
 )
 
+;; From MaiaModelColumn
+
+(define-property tag
+  (of-object "MaiaModelColumn")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property characters
+  (of-object "MaiaModelColumn")
+  (prop-type "GParamString")
+  (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property manifest-path
+  (of-object "MaiaModelColumn")
+  (prop-type "GParamString")
+  (docs "manifest-path")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property manifest-styles
+  (of-object "MaiaModelColumn")
+  (prop-type "GParamObject")
+  (docs "manifest-styles")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property name
+  (of-object "MaiaModelColumn")
+  (prop-type "GParamString")
+  (docs "name")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property model
+  (of-object "MaiaModelColumn")
+  (prop-type "GParamObject")
+  (docs "model")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property column
+  (of-object "MaiaModelColumn")
+  (prop-type "GParamInt")
+  (docs "column")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property column-type
+  (of-object "MaiaModelColumn")
+  (prop-type "GParamGType")
+  (docs "column-type")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
 ;; From MaiaOrientation
 
 ;; From MaiaPageFormat
@@ -3358,12 +3417,6 @@
 
 ;; From MaiaToggleButton
 
-(define-signal toggled
-  (of-object "MaiaToggleButton")
-  (return-type "void")
-  (when "last")
-)
-
 (define-property row
   (of-object "MaiaToggleButton")
   (prop-type "GParamUInt")
@@ -3562,6 +3615,44 @@
   (construct-only #f)
 )
 
+(define-property toggled
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamObject")
+  (docs "toggled")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaToggleButtonToggledEventArgs
+
+(define-property serialize
+  (of-object "MaiaToggleButtonToggledEventArgs")
+  (prop-type "GParamVariant")
+  (docs "serialize")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property button-name
+  (of-object "MaiaToggleButtonToggledEventArgs")
+  (prop-type "GParamString")
+  (docs "button-name")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property active
+  (of-object "MaiaToggleButtonToggledEventArgs")
+  (prop-type "GParamBoolean")
+  (docs "active")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
 ;; From MaiaToggleGroup
 
 (define-property tag
@@ -3754,7 +3845,7 @@
   (of-object "MaiaPopup")
   (prop-type "GParamDouble")
   (docs "x")
-  (readable #t)
+  (readable #f)
   (writable #t)
   (construct-only #f)
 )
@@ -3763,7 +3854,7 @@
   (of-object "MaiaPopup")
   (prop-type "GParamDouble")
   (docs "y")
-  (readable #t)
+  (readable #f)
   (writable #t)
   (construct-only #f)
 )
@@ -3797,18 +3888,21 @@
 
 ;; From MaiaCombo
 
-(define-signal changed
-  (of-object "MaiaCombo")
-  (return-type "void")
-  (when "last")
-)
-
 (define-property tag
   (of-object "MaiaCombo")
   (prop-type "GParamString")
   (docs "tag")
   (readable #t)
   (writable #f)
+  (construct-only #f)
+)
+
+(define-property can-focus
+  (of-object "MaiaCombo")
+  (prop-type "GParamBoolean")
+  (docs "can-focus")
+  (readable #t)
+  (writable #t)
   (construct-only #f)
 )
 
@@ -4001,6 +4095,35 @@
   (construct-only #f)
 )
 
+(define-property changed
+  (of-object "MaiaCombo")
+  (prop-type "GParamObject")
+  (docs "changed")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaComboChangedEventArgs
+
+(define-property serialize
+  (of-object "MaiaComboChangedEventArgs")
+  (prop-type "GParamVariant")
+  (docs "serialize")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property active-row
+  (of-object "MaiaComboChangedEventArgs")
+  (prop-type "GParamInt")
+  (docs "active-row")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
 ;; From MaiaToolbox
 
 (define-signal add-item
@@ -4169,12 +4292,57 @@
   (construct-only #f)
 )
 
+(define-property foreign
+  (of-object "MaiaWindow")
+  (prop-type "GParamUInt")
+  (docs "foreign")
+  (readable #t)
+  (writable #t)
+  (construct-only #t)
+)
+
+(define-property border
+  (of-object "MaiaWindow")
+  (prop-type "GParamDouble")
+  (docs "border")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property depth
+  (of-object "MaiaWindow")
+  (prop-type "GParamUChar")
+  (docs "depth")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property surface
   (of-object "MaiaWindow")
   (prop-type "GParamObject")
   (docs "surface")
   (readable #t)
   (writable #f)
+  (construct-only #f)
+)
+
+(define-property popup
+  (of-object "MaiaWindow")
+  (prop-type "GParamObject")
+  (docs "popup")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property device-transform
+  (of-object "MaiaWindow")
+  (prop-type "GParamObject")
+  (docs "device-transform")
+  (readable #t)
+  (writable #t)
   (construct-only #f)
 )
 
@@ -4243,12 +4411,6 @@
 
 ;; From MaiaAdjustment
 
-(define-signal changed
-  (of-object "MaiaAdjustment")
-  (return-type "void")
-  (when "last")
-)
-
 (define-property value
   (of-object "MaiaAdjustment")
   (prop-type "GParamDouble")
@@ -4282,6 +4444,264 @@
   (docs "page-size")
   (readable #t)
   (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaProgressBar
+
+(define-property tag
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property row
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamUInt")
+  (docs "row")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property column
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamUInt")
+  (docs "column")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property rows
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamUInt")
+  (docs "rows")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property columns
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamUInt")
+  (docs "columns")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xexpand
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamBoolean")
+  (docs "xexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xfill
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamBoolean")
+  (docs "xfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xshrink
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamBoolean")
+  (docs "xshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xlimp
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamBoolean")
+  (docs "xlimp")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xalign
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamDouble")
+  (docs "xalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yexpand
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamBoolean")
+  (docs "yexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yfill
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamBoolean")
+  (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yshrink
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamBoolean")
+  (docs "yshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property ylimp
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamBoolean")
+  (docs "ylimp")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yalign
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamDouble")
+  (docs "yalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property top-padding
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamDouble")
+  (docs "top-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property bottom-padding
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamDouble")
+  (docs "bottom-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property left-padding
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamDouble")
+  (docs "left-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property right-padding
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamDouble")
+  (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property adjustment
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamObject")
+  (docs "adjustment")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property slider-area
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamBoxed")
+  (docs "slider-area")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property orientation
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamEnum")
+  (docs "orientation")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property round-border
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamDouble")
+  (docs "round-border")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaSeekBar
+
+(define-property tag
+  (of-object "MaiaSeekBar")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property can-focus
+  (of-object "MaiaSeekBar")
+  (prop-type "GParamBoolean")
+  (docs "can-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property slider-area
+  (of-object "MaiaSeekBar")
+  (prop-type "GParamBoxed")
+  (docs "slider-area")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaEntryChangedEventArgs
+
+(define-property serialize
+  (of-object "MaiaEntryChangedEventArgs")
+  (prop-type "GParamVariant")
+  (docs "serialize")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property text
+  (of-object "MaiaEntryChangedEventArgs")
+  (prop-type "GParamString")
+  (docs "text")
+  (readable #t)
+  (writable #f)
   (construct-only #f)
 )
 

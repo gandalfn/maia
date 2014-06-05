@@ -11,9 +11,9 @@
         <property name="can_focus">False</property>
         <child>
           <object class="GtkToolButton" id="new">
-            <property name="use_action_appearance">False</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="use_action_appearance">False</property>
             <property name="label" translatable="yes">New</property>
             <property name="use_underline">True</property>
             <property name="stock_id">gtk-new</property>
@@ -25,9 +25,9 @@
         </child>
         <child>
           <object class="GtkToolButton" id="open">
-            <property name="use_action_appearance">False</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="use_action_appearance">False</property>
             <property name="label" translatable="yes">Open</property>
             <property name="use_underline">True</property>
             <property name="stock_id">gtk-open</property>
@@ -39,9 +39,9 @@
         </child>
         <child>
           <object class="GtkToolButton" id="save">
-            <property name="use_action_appearance">False</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="use_action_appearance">False</property>
             <property name="label" translatable="yes">Save</property>
             <property name="use_underline">True</property>
             <property name="stock_id">gtk-save</property>
@@ -53,9 +53,9 @@
         </child>
         <child>
           <object class="GtkToolButton" id="saveas">
-            <property name="use_action_appearance">False</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="use_action_appearance">False</property>
             <property name="label" translatable="yes">Save as</property>
             <property name="use_underline">True</property>
             <property name="stock_id">gtk-save-as</property>
@@ -67,9 +67,9 @@
         </child>
         <child>
           <object class="GtkSeparatorToolItem" id="sep1">
-            <property name="use_action_appearance">False</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="use_action_appearance">False</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -78,9 +78,9 @@
         </child>
         <child>
           <object class="GtkToolButton" id="undo">
-            <property name="use_action_appearance">False</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="use_action_appearance">False</property>
             <property name="label" translatable="yes">Undo</property>
             <property name="use_underline">True</property>
             <property name="stock_id">gtk-undo</property>
@@ -92,9 +92,9 @@
         </child>
         <child>
           <object class="GtkToolButton" id="redo">
-            <property name="use_action_appearance">False</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="use_action_appearance">False</property>
             <property name="label" translatable="yes">Redo</property>
             <property name="use_underline">True</property>
             <property name="stock_id">gtk-redo</property>
@@ -106,9 +106,9 @@
         </child>
         <child>
           <object class="GtkSeparatorToolItem" id="sep3">
-            <property name="use_action_appearance">False</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="use_action_appearance">False</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -117,9 +117,9 @@
         </child>
         <child>
           <object class="GtkToolButton" id="search">
-            <property name="use_action_appearance">False</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="use_action_appearance">False</property>
             <property name="label" translatable="yes">Search</property>
             <property name="use_underline">True</property>
             <property name="stock_id">gtk-find</property>
@@ -131,9 +131,9 @@
         </child>
         <child>
           <object class="GtkSeparatorToolItem" id="sep2">
-            <property name="use_action_appearance">False</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="use_action_appearance">False</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -142,9 +142,9 @@
         </child>
         <child>
           <object class="GtkToolButton" id="build">
-            <property name="use_action_appearance">False</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="use_action_appearance">False</property>
             <property name="label" translatable="yes">Build</property>
             <property name="use_underline">True</property>
             <property name="stock_id">gtk-execute</property>
@@ -156,9 +156,9 @@
         </child>
         <child>
           <object class="GtkToolButton" id="hide">
-            <property name="use_action_appearance">False</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="use_action_appearance">False</property>
             <property name="label" translatable="yes">Hide</property>
             <property name="use_underline">True</property>
             <property name="stock_id">gtk-fullscreen</property>
@@ -170,9 +170,9 @@
         </child>
         <child>
           <object class="GtkToolButton" id="toolbox">
-            <property name="use_action_appearance">False</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="use_action_appearance">False</property>
             <property name="label" translatable="yes">Toolbox</property>
             <property name="use_underline">True</property>
             <property name="stock_id">gtk-preferences</property>
@@ -184,9 +184,9 @@
         </child>
         <child>
           <object class="GtkToolButton" id="dump">
-            <property name="use_action_appearance">False</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="use_action_appearance">False</property>
             <property name="label" translatable="yes">dump</property>
             <property name="use_underline">True</property>
             <property name="icon_name">accessories-text-editor</property>
@@ -198,9 +198,9 @@
         </child>
         <child>
           <object class="GtkToolItem" id="separator">
-            <property name="use_action_appearance">False</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="use_action_appearance">False</property>
             <child>
               <placeholder/>
             </child>
@@ -212,9 +212,9 @@
         </child>
         <child>
           <object class="GtkToolButton" id="exit">
-            <property name="use_action_appearance">False</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="use_action_appearance">False</property>
             <property name="label" translatable="yes">Exit</property>
             <property name="use_underline">True</property>
             <property name="stock_id">gtk-quit</property>
@@ -285,10 +285,10 @@
         </child>
         <child>
           <object class="GtkButton" id="replace">
-            <property name="use_action_appearance">False</property>
             <property name="visible">True</property>
             <property name="can_focus">True</property>
             <property name="receives_default">True</property>
+            <property name="use_action_appearance">False</property>
             <property name="relief">none</property>
             <child>
               <object class="GtkImage" id="image1">
@@ -338,11 +338,9 @@
           <object class="GtkHBox" id="preview_box">
             <property name="can_focus">False</property>
             <child>
-              <object class="GtkScrolledWindow" id="preview">
+              <object class="GtkVBox" id="preview">
                 <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="hscrollbar_policy">automatic</property>
-                <property name="vscrollbar_policy">automatic</property>
+                <property name="can_focus">False</property>
                 <child>
                   <placeholder/>
                 </child>
@@ -384,7 +382,7 @@
           </object>
           <packing>
             <property name="resize">False</property>
-            <property name="shrink">True</property>
+            <property name="shrink">False</property>
           </packing>
         </child>
       </object>

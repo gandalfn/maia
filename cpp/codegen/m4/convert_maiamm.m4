@@ -92,11 +92,19 @@ _CONVERSION(`MaiaGraphicSize*',`Graphic::Size&',`Glib::wrap($3)')
 _CONVERSION(`const Matrix&',`MaiaGraphicMatrix*',`const_cast <MaiaGraphicMatrix*> ($3.gobj ())')
 
 _CONVERSION(`const Rectangle&',`MaiaGraphicRectangle*',`const_cast <MaiaGraphicRectangle*> ($3.gobj ())')
+_CONVERSION(`const Graphic::Rectangle&',`MaiaGraphicRectangle*',`const_cast <MaiaGraphicRectangle*> ($3.gobj ())')
 _CONVERSION(`Rectangle&',`MaiaGraphicRectangle*',`$3.gobj ()')
+_CONVERSION(`Graphic::Rectangle&',`MaiaGraphicRectangle*',`$3.gobj ()')
 _CONVERSION(`Rectangle',`MaiaGraphicRectangle*',`$3.gobj ()')
+_CONVERSION(`Graphic::Rectangle',`MaiaGraphicRectangle*',`$3.gobj ()')
+_CONVERSION(`Rectangle',`MaiaGraphicRectangle*',`$3.gobj ()')
+_CONVERSION(`Graphic::Rectangle',`MaiaGraphicRectangle*',`$3.gobj ()')
 _CONVERSION(`MaiaGraphicRectangle*',`const Rectangle&',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicRectangle*',`const Graphic::Rectangle&',`Glib::wrap($3)')
 _CONVERSION(`MaiaGraphicRectangle*',`Rectangle&',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicRectangle*',`Graphic::Rectangle&',`Glib::wrap($3)')
 _CONVERSION(`MaiaGraphicRectangle*',`Rectangle',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicRectangle*',`Graphic::Rectangle',`Glib::wrap($3)')
 
 _CONVERSION(`const Glib::RefPtr<Transform>&',`MaiaGraphicTransform*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaGraphicTransform*',`const Glib::RefPtr<Transform>&',`Glib::wrap($3)')
@@ -242,6 +250,11 @@ _CONVERSION(`const Glib::RefPtr<ToggleButton>&',`MaiaToggleButton*',__CONVERT_RE
 _CONVERSION(`MaiaToggleButton*',`const Glib::RefPtr<ToggleButton>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaToggleButton*',`Glib::RefPtr<ToggleButton>',`Glib::wrap($3)')
 
+_CONVERSION(`Glib::RefPtr<Popup>',`MaiaPopup*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Popup>&',`MaiaPopup*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaPopup*',`const Glib::RefPtr<Popup>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaPopup*',`Glib::RefPtr<Popup>',`Glib::wrap($3)')
+
 _CONVERSION(`Glib::RefPtr<Model>',`MaiaModel*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Model>&',`MaiaModel*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaModel*',`const Glib::RefPtr<Model>&',`Glib::wrap($3)')
@@ -251,6 +264,11 @@ _CONVERSION(`Glib::RefPtr<ModelColumn>',`MaiaModelColumn*',__CONVERT_REFPTR_TO_P
 _CONVERSION(`const Glib::RefPtr<ModelColumn>&',`MaiaModelColumn*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaModelColumn*',`const Glib::RefPtr<ModelColumn>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaModelColumn*',`Glib::RefPtr<ModelColumn>',`Glib::wrap($3)')
+
+_CONVERSION(`Glib::RefPtr<Model::Column>',`MaiaModelColumn*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Model::Column>&',`MaiaModelColumn*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaModelColumn*',`const Glib::RefPtr<Model::Column>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaModelColumn*',`Glib::RefPtr<Model::Column>',`Glib::wrap($3)')
 
 _CONVERSION(`Glib::RefPtr<Toolbox>',`MaiaToolbox*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Toolbox>&',`MaiaToolbox*',__CONVERT_REFPTR_TO_P)
@@ -300,8 +318,16 @@ _CONVERSION(`const Glib::RefPtr<Adjustment>&',`MaiaAdjustment*',__CONVERT_REFPTR
 _CONVERSION(`MaiaAdjustment*',`const Glib::RefPtr<Adjustment>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaAdjustment*',`Glib::RefPtr<Adjustment>',`Glib::wrap($3)')
 
+_CONVERSION(`Glib::RefPtr<Window>',`MaiaWindow*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Window>&',`MaiaWindow*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaWindow*',`const Glib::RefPtr<Window>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaWindow*',`Glib::RefPtr<Window>',`Glib::wrap($3)')
+
 _CONVERSION(`ScrollViewPolicy',`MaiaScrollViewPolicy',`(MaiaScrollViewPolicy)$3')
 _CONVERSION(`MaiaScrollViewPolicy',`ScrollViewPolicy',`(ScrollViewPolicy)$3')
+
+_CONVERSION(`EntryChangedMask',`MaiaEntryChangedMask',`(MaiaEntryChangedMask)$3')
+_CONVERSION(`MaiaEntryChangedMask',`EntryChangedMask',`(EntryChangedMask)$3')
 
 _CONV_ENUM(MaiaLog,Level)
 _CONV_ENUM(MaiaLog,Category)
@@ -323,3 +349,4 @@ _CONV_ENUM(Maia,Orientation)
 _CONV_ENUM(Maia,PopupPlacement)
 _CONV_ENUM(Maia,ToolAction)
 _CONV_ENUM(Maia,ScrollViewPolicy)
+_CONV_ENUM(Maia,EntryChangedMask)

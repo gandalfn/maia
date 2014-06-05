@@ -19,6 +19,8 @@
 
 const string manifest = "Window.test {" +
                         "    background_pattern: #CECECE;" +
+                        "    border: 5;" +
+                        "    transform: scale (1.2, 1.2);" +
                         "    Grid.grid {" +
                         "       left_padding: 12;" +
                         "       right_padding: 12;" +
@@ -27,7 +29,7 @@ const string manifest = "Window.test {" +
                         "       Label.label {" +
                         "           columns: 2;" +
                         "           text: 'Youpi !!!!!\nvive la karioka';" +
-                        "           font_description: 'Liberation Sans 48';" +
+                        "           font_description: 'Liberation Sans 24';" +
                         "           stroke_pattern: rgb (0, 0, 0);" +
                         "       }" +
                         "       Image.image {" +
@@ -40,9 +42,31 @@ const string manifest = "Window.test {" +
                         "           column: 1;" +
                         "           lines: 6;" +
                         "       }" +
-                        "       DrawingArea.clinical_draw {" +
+                        "       SeekBar.progress_bar {" +
                         "           row: 2;" +
                         "           columns: 2;" +
+                        "           background_pattern: #FAFAFA;" +
+                        "           stroke_pattern: #A6A6A6;" +
+                        "           fill_pattern: #DBDBDB;" +
+                        "       }" +
+                        "       Combo.combo {" +
+                        "           row: 3;" +
+                        "           columns: 2;" +
+                        "           fill-pattern: rgba (0.4, 0.4, 0.4, 0.85);" +
+                        "           highlight-color: rgba (0.1, 0.1, 0.1, 0.6);" +
+                        "           View.view_combo {"+
+                        "               [" +
+                        "                   Label.label_combo {" +
+                        "                       alignment: left;" +
+                        "                       text: @label;" +
+                        "                   }" +
+                        "               ]" +
+                        "           }" +
+                        "       }" +
+                        "       DrawingArea.clinical_draw {" +
+                        "           row: 4;" +
+                        "           columns: 2;" +
+                        "           yexpand: false;" +
                         "           Label.label_draw {" +
                         "               position: 10, 10;" +
                         "               stroke-pattern: #000000;" +
@@ -63,16 +87,18 @@ const string manifest = "Window.test {" +
                         "           }" +
                         "       }" +
                         "       Button.cancel {" +
+                        "           yexpand: false;" +
                         "           stroke-pattern: #000000;" +
                         "           button-color: #B0B0B0;" +
-                        "           row: 3;" +
+                        "           row: 5;" +
                         "           font-description: 'Liberation Bold 14';" +
                         "           label: 'Cancel';" +
                         "       }" +
                         "       Button.ok {" +
+                        "           yexpand: false;" +
                         "           stroke-pattern: #000000;" +
                         "           button-color: #B0B0B0;" +
-                        "           row: 3;" +
+                        "           row: 5;" +
                         "           column: 1;" +
                         "           font-description: 'Liberation Bold 14';" +
                         "           label: 'OK';" +
@@ -82,9 +108,9 @@ const string manifest = "Window.test {" +
 
 void main (string[] args)
 {
-    //Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.ALL, "test-xcb"));
+    //Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.CANVAS_GEOMETRY, "test-xcb"));
 
-    var application = new Maia.Application ("test-xcb", 60, { "xcb" });
+    var application = new Maia.Application ("test-xcb", 60, { "gtk" });
 
     try
     {
@@ -107,6 +133,26 @@ void main (string[] args)
         ok.clicked.connect (() => {
             print ("text: %s\n", entry.text);
         });
+
+        var model = new Maia.Model ("model", "label", typeof (string));
+        uint row;
+        model.append_row (out row);
+        model.set_values (row, "label", "test 1");
+        model.append_row (out row);
+        model.set_values (row, "label", "test 2");
+        model.append_row (out row);
+        model.set_values (row, "label", "test 3");
+        model.append_row (out row);
+        model.set_values (row, "label", "test 4");
+        model.append_row (out row);
+        model.set_values (row, "label", "test 5");
+
+        var view = window.find (GLib.Quark.from_string ("view_combo")) as Maia.View;
+        view.model = model;
+
+        var progress_bar = window.find (GLib.Quark.from_string ("progress_bar")) as Maia.ProgressBar;
+        progress_bar.adjustment = new Maia.Adjustment.configure (0, 100, 10);
+        progress_bar.adjustment.@value = 43;
 
         // Run application
         application.run ();

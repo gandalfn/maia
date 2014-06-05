@@ -103,7 +103,7 @@ TestEvent::test_event_publish ()
     m_Data = 0;
     m_Foo = "";
     m_Count = 0;
-    
+
     m_pEvent = Core::Event::create ("test-event");
     Glib::RefPtr<Core::EventListener> pListener = Core::EventListener::create (m_pEvent, this, &TestEvent::on_event);
     Core::EventBus::get_default ()->subscribe (pListener);
@@ -147,10 +147,10 @@ bool
 TestEvent::on_publish ()
 {
     static int cpt = 0;
-    
+
     Glib::RefPtr<TestEventArgs> pArgs = TestEventArgs::create (1245, "toto", ++cpt);
     g_test_message ("Send test-event \"toto\" 1245 %i %u", cpt, G_OBJECT (Core::EventBus::get_default ()->gobj ())->ref_count);
-    
+
     Core::EventBus::get_default ()->publish ("test-event", pArgs);
 
     return cpt < 3;

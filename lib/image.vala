@@ -77,6 +77,7 @@ public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
     on_filename_changed ()
     {
         m_Image = null;
+        need_update = true;
     }
 
     protected virtual Graphic.Image?

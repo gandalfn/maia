@@ -27,6 +27,8 @@ internal enum Maia.Xcb.AtomType
     WM_NAME,
     WM_STATE,
 
+    _MOTIF_WM_HINTS,
+
     _NET_WM_NAME,
     _NET_WM_VISIBLE_NAME,
 

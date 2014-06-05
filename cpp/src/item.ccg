@@ -18,6 +18,7 @@
  */
 
 #include <maia.h>
+#include <maiamm/window.h>
 
 namespace Maia
 {

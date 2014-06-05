@@ -2,7 +2,6 @@ MAIA_LIB_NAME = maia-xcb
 
 MAIA_VAPI_DEPS =  \
     core/maia-any \
-    cairo/maia-cairo-graphic \
     maia
 
 include $(top_srcdir)/build-aux/maia.am
@@ -20,6 +19,8 @@ libmaia_xcb_la_CFLAGS = \
 
 libmaia_xcb_la_VALAFLAGS = \
     --pkg=xcb \
+    --pkg=xcb-composite \
+    --pkg=xcb-render-util \
     --pkg=xcb-keysyms \
     --pkg=xcb-keysym \
     --pkg=xcb-cursor \
@@ -34,7 +35,7 @@ libmaia_xcb_la_SOURCES = \
     application.vala \
     delete-event-args.vala \
     pixmap.vala \
-    request-queue.vala \
+    request.vala \
     window.vala
 
 libmaia_xcb_la_LIBADD = \

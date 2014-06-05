@@ -23,12 +23,25 @@
 #include <maiamm/item-packable.h>
 #include <maiamm/item-movable.h>
 #include <maiamm/item.h>
+#include <maiamm/core-event.h>
+#include <maiamm/core-eventargs.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/item_p.h)
+_PINCLUDE(maiamm/private/core-eventargs_p.h)
 
 namespace Maia
 {
+    class ComboChangedEventArgs : public Core::EventArgs
+    {
+        _CLASS_GOBJECT(ComboChangedEventArgs, MaiaComboChangedEventArgs, MAIA_COMBO_CHANGED_EVENT_ARGS, Core::EventArgs, MaiaCoreEventArgs)
+
+        public:
+            _WRAP_METHOD(int get_active_row () const, maia_combo_changed_event_args_get_active_row)
+
+            _WRAP_PROPERTY("active-row", int)
+    };
+
     class Combo : public Item, public ItemPackable, public ItemMovable
     {
         _CLASS_GOBJECT(Combo, MaiaCombo, MAIA_COMBO, Item, MaiaItem)
@@ -49,11 +62,13 @@ namespace Maia
             _WRAP_METHOD(gint get_active_row () const, maia_combo_get_active_row)
             _WRAP_METHOD(void set_active_row (int inRow), maia_combo_set_active_row)
 
-            _WRAP_SIGNAL(void changed(), "changed", no_default_handler)
+            _WRAP_METHOD(Glib::RefPtr<Core::Event> changed () const, maia_combo_get_changed, refreturn)
 
             _WRAP_PROPERTY("view", Glib::RefPtr<View>)
             _WRAP_PROPERTY("highlight-color", Glib::RefPtr<Graphic::Color>)
             _WRAP_PROPERTY("active-row", gint)
+            
+            _WRAP_PROPERTY("changed", Glib::RefPtr<Core::Event>)
 
             _WRAP_PROPERTY("row", guint)
             _WRAP_PROPERTY("rows", guint)
@@ -77,5 +92,7 @@ namespace Maia
             _WRAP_PROPERTY("bottom-padding", double)
             _WRAP_PROPERTY("left-padding", double)
             _WRAP_PROPERTY("right-padding", double)
+
+            _WRAP_PROPERTY("can-focus", bool)
     };
 }

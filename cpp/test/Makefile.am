@@ -25,7 +25,9 @@ test_SOURCES = \
     test-derived.cc \
     test-derived.h \
     test-event.cc \
-    test-event.h
+    test-event.h \
+    test-model.cc \
+    test-model.h
 
 test_LDFLAGS = \
 	-Wl,--as-needed
@@ -41,5 +43,3 @@ test_LDADD = \
     ${top_builddir}/lib/gtk/libmaia-gtk.la \
     ${top_builddir}/cpp/maiamm/libmaiamm.la \
     ${top_builddir}/cpp/gtk/maia-gtkmm/libmaia-gtkmm.la
-    
-    

@@ -46,7 +46,8 @@ public abstract class Maia.Core.Watch : Object
     {
         m_Fd.fd = inFd;
         m_Fd.events = GLib.IOCondition.IN  | GLib.IOCondition.PRI |
-                      GLib.IOCondition.ERR | GLib.IOCondition.HUP;
+                      GLib.IOCondition.ERR | GLib.IOCondition.HUP | GLib.IOCondition.NVAL;
+        m_Fd.revents = 0;
 
         m_Context = inContext;
         m_Priority = inPriority;

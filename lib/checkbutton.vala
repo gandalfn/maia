@@ -19,6 +19,9 @@
 
 public class Maia.CheckButton : ToggleButton
 {
+    // properties
+    private unowned Label? m_Label;
+
     // accessors
     internal override string tag {
         get {
@@ -33,6 +36,8 @@ public class Maia.CheckButton : ToggleButton
     {
         fill_pattern = new Graphic.Color (1, 1, 1);
         stroke_pattern = new Graphic.Color (0, 0, 0);
+
+        m_Label = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
     }
 
     public CheckButton (string inId, string inLabel)
@@ -44,18 +49,16 @@ public class Maia.CheckButton : ToggleButton
     size_request (Graphic.Size inSize)
     {
         // Get label item
-        string id_label = "%s-label".printf (name);
-        unowned Label label_item = find (GLib.Quark.from_string (id_label), false) as Label;
-        if (label_item != null)
+        if (m_Label != null)
         {
             // get size of label
-            Graphic.Size size_label = label_item.size;
+            Graphic.Size size_label = m_Label.size;
 
             // set position of label
-            if (label_item.position.x != size_label.height + spacing)
+            if (m_Label.position.x != size_label.height + spacing)
             {
-                label_item.position = Graphic.Point (size_label.height + spacing, 0);
-                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "label item position : %s", label_item.position.to_string ());
+                m_Label.position = Graphic.Point (size_label.height + spacing, 0);
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "label item position : %s", m_Label.position.to_string ());
             }
         }
 
@@ -69,7 +72,7 @@ public class Maia.CheckButton : ToggleButton
         {
             // Translate to align in center
             inContext.translate (Graphic.Point (area.extents.size.width / 2, area.extents.size.height / 2));
-            inContext.translate (Graphic.Point (-size_requested.width / 2, -size_requested.height / 2));
+            inContext.translate (Graphic.Point (-size.width / 2, -size.height / 2));
 
             // Draw label
             base.paint (inContext, inArea);
@@ -79,12 +82,12 @@ public class Maia.CheckButton : ToggleButton
             Graphic.Color shade = new Graphic.Color.shade (color, 0.6);
 
             var path = new Graphic.Path ();
-            path.rectangle (0, 0, size_requested.height, size_requested.height, 5, 5);
+            path.rectangle (0, 0, size.height, size.height, 5, 5);
             inContext.pattern = shade;
             inContext.fill (path);
 
             path = new Graphic.Path ();
-            path.rectangle (1.5, 1.5, size_requested.height - 3, size_requested.height - 3, 5, 5);
+            path.rectangle (1.5, 1.5, size.height - 3, size.height - 3, 5, 5);
             inContext.pattern = color;
             inContext.fill (path);
 
@@ -92,11 +95,11 @@ public class Maia.CheckButton : ToggleButton
             if (active)
             {
                 path = new Graphic.Path ();
-                path.move_to (0.5 + (size_requested.height * 0.2), (size_requested.height * 0.5));
-                path.line_to (0.5 + (size_requested.height * 0.4), (size_requested.height * 0.7));
-                path.curve_to (0.5 + (size_requested.height * 0.4), (size_requested.height * 0.7),
-                               0.5 + (size_requested.height * 0.5), (size_requested.height * 0.4),
-                               0.5 + (size_requested.height * 0.70), (size_requested.height * 0.05));
+                path.move_to (0.5 + (size.height * 0.2), (size.height * 0.5));
+                path.line_to (0.5 + (size.height * 0.4), (size.height * 0.7));
+                path.curve_to (0.5 + (size.height * 0.4), (size.height * 0.7),
+                               0.5 + (size.height * 0.5), (size.height * 0.4),
+                               0.5 + (size.height * 0.70), (size.height * 0.05));
                 inContext.pattern = stroke_pattern;
                 inContext.stroke (path);
             }

@@ -61,16 +61,39 @@ namespace Maia
                     return Glib::RefPtr<Event> (new Event (pEvent));
                 }
 
+                _IGNORE(maia_core_event_subscribe, maia_core_event_object_subscribe)
                 template <class T_obj>
                 Glib::RefPtr<EventListener>
-                subscribe (T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs) const)
+                subscribe (T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
                 {
-                    EventListenerFunctor<T_obj>* pFunctor = new EventListenerFunctor<T_obj>(pObj, pFunc);
+                    Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerFunctor<T_obj>::create (pObj, pFunc);
                     
                     Glib::RefPtr<EventListener> pListener = EventListener::create (this, pFunctor);
 
+                    get_bus ()->subscribe (pListener);
+
                     return pListener;
                 }
+
+                Glib::RefPtr<EventListener>
+                subscribe (const sigc::slot<void, Glib::RefPtr<EventArgs>>& inSlot)
+                {
+                    Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerSigcFunctor::create (inSlot);
+
+                    Glib::RefPtr<EventListener> pListener = EventListener::create (this, pFunctor);
+
+                    get_bus ()->subscribe (pListener);
+
+                    return pListener;
+                }
+
+                _IGNORE(maia_core_event_get_owner)
+                _WRAP_METHOD(Glib::ustring get_name () const, maia_core_event_get_name)
+                _WRAP_METHOD(Glib::RefPtr<EventBus> get_bus () const, maia_core_event_get_bus, refreturn)
+
+                _WRAP_PROPERTY("name", Glib::ustring)
+                _WRAP_PROPERTY("owner", void*)
+                _WRAP_PROPERTY("bus", Glib::RefPtr<EventBus>)
         };
     }
 }

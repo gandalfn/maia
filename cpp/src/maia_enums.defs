@@ -45,9 +45,10 @@
 ;; 	MAIA_LOG_CATEGORY_CANVAS_DAMAGE = 1 << 13,
 ;; 	MAIA_LOG_CATEGORY_CANVAS_GEOMETRY = 1 << 14,
 ;; 	MAIA_LOG_CATEGORY_CANVAS_INPUT = 1 << 15,
-;; 	MAIA_LOG_CATEGORY_CANVAS = (((MAIA_LOG_CATEGORY_CANVAS_DRAW | MAIA_LOG_CATEGORY_CANVAS_DAMAGE) | MAIA_LOG_CATEGORY_CANVAS_GEOMETRY) | MAIA_LOG_CATEGORY_CANVAS_PARSING) | MAIA_LOG_CATEGORY_CANVAS_INPUT,
-;; 	MAIA_LOG_CATEGORY_MAIN_BUS = 1 << 16,
-;; 	MAIA_LOG_CATEGORY_MAIN_EVENT = 1 << 17,
+;; 	MAIA_LOG_CATEGORY_CANVAS_LAYOUT = 1 << 16,
+;; 	MAIA_LOG_CATEGORY_CANVAS = ((((MAIA_LOG_CATEGORY_CANVAS_DRAW | MAIA_LOG_CATEGORY_CANVAS_DAMAGE) | MAIA_LOG_CATEGORY_CANVAS_GEOMETRY) | MAIA_LOG_CATEGORY_CANVAS_PARSING) | MAIA_LOG_CATEGORY_CANVAS_INPUT) | MAIA_LOG_CATEGORY_CANVAS_LAYOUT,
+;; 	MAIA_LOG_CATEGORY_MAIN_BUS = 1 << 17,
+;; 	MAIA_LOG_CATEGORY_MAIN_EVENT = 1 << 18,
 ;; 	MAIA_LOG_CATEGORY_MAIN = MAIA_LOG_CATEGORY_MAIN_BUS | MAIA_LOG_CATEGORY_MAIN_EVENT,
 ;; 	MAIA_LOG_CATEGORY_ALL = ((((MAIA_LOG_CATEGORY_CORE | MAIA_LOG_CATEGORY_GRAPHIC) | MAIA_LOG_CATEGORY_MANIFEST) | MAIA_LOG_CATEGORY_XML) | MAIA_LOG_CATEGORY_CANVAS) | MAIA_LOG_CATEGORY_MAIN
 ;; } MaiaLogCategory;
@@ -76,11 +77,12 @@
     '("canvas-damage" "MAIA_LOG_CATEGORY_CANVAS_DAMAGE" "1 << 13")
     '("canvas-geometry" "MAIA_LOG_CATEGORY_CANVAS_GEOMETRY" "1 << 14")
     '("canvas-input" "MAIA_LOG_CATEGORY_CANVAS_INPUT" "1 << 15")
-    '("canvas" "MAIA_LOG_CATEGORY_CANVAS" "0xF800")
-    '("main-bus" "MAIA_LOG_CATEGORY_MAIN_BUS" "1 << 16")
-    '("main-event" "MAIA_LOG_CATEGORY_MAIN_EVENT" "1 << 17")
-    '("main" "MAIA_LOG_CATEGORY_MAIN" "0x30000")
-    '("all" "MAIA_LOG_CATEGORY_ALL" "0x3FFFF")
+    '("canvas-layout" "MAIA_LOG_CATEGORY_CANVAS_LAYOUT" "1 << 16")
+    '("canvas" "MAIA_LOG_CATEGORY_CANVAS" "0x1F800")
+    '("main-bus" "MAIA_LOG_CATEGORY_MAIN_BUS" "1 << 17")
+    '("main-event" "MAIA_LOG_CATEGORY_MAIN_EVENT" "1 << 18")
+    '("main" "MAIA_LOG_CATEGORY_MAIN" "0x60000")
+    '("all" "MAIA_LOG_CATEGORY_ALL" "0x7FFFF")
   )
 )
 
@@ -541,6 +543,61 @@
     '("a8" "MAIA_GRAPHIC_SURFACE_FORMAT_A8" "2")
     '("rgb24" "MAIA_GRAPHIC_SURFACE_FORMAT_RGB24" "3")
     '("argb32" "MAIA_GRAPHIC_SURFACE_FORMAT_ARGB32" "4")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_CASSOWARY_BOX_POSITION_FREE = 1 << 0,
+;; 	MAIA_CASSOWARY_BOX_POSITION_TOP = 1 << 1,
+;; 	MAIA_CASSOWARY_BOX_POSITION_BOTTOM = 1 << 2,
+;; 	MAIA_CASSOWARY_BOX_POSITION_LEFT = 1 << 3,
+;; 	MAIA_CASSOWARY_BOX_POSITION_RIGHT = 1 << 4
+;; } MaiaCassowaryBoxPosition;
+
+(define-flags-extended CassowaryBoxPosition
+  (in-module "Maia")
+  (c-name "MaiaCassowaryBoxPosition")
+  (values
+    '("free" "MAIA_CASSOWARY_BOX_POSITION_FREE" "1 << 0")
+    '("top" "MAIA_CASSOWARY_BOX_POSITION_TOP" "1 << 1")
+    '("bottom" "MAIA_CASSOWARY_BOX_POSITION_BOTTOM" "1 << 2")
+    '("left" "MAIA_CASSOWARY_BOX_POSITION_LEFT" "1 << 3")
+    '("right" "MAIA_CASSOWARY_BOX_POSITION_RIGHT" "1 << 4")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_CASSOWARY_ERROR_INTERNAL,
+;; 	MAIA_CASSOWARY_ERROR_NON_LINEAR_EXPRESSION,
+;; 	MAIA_CASSOWARY_ERROR_REQUIRED_FAILURE,
+;; 	MAIA_CASSOWARY_ERROR_CONSTRAINT_NOT_FOUND
+;; } MaiaCassowaryError;
+
+(define-enum-extended CassowaryError
+  (in-module "Maia")
+  (c-name "MaiaCassowaryError")
+  (values
+    '("internal" "MAIA_CASSOWARY_ERROR_INTERNAL" "0")
+    '("non-linear-expression" "MAIA_CASSOWARY_ERROR_NON_LINEAR_EXPRESSION" "1")
+    '("required-failure" "MAIA_CASSOWARY_ERROR_REQUIRED_FAILURE" "2")
+    '("constraint-not-found" "MAIA_CASSOWARY_ERROR_CONSTRAINT_NOT_FOUND" "3")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_CASSOWARY_OPERATOR_GEQ,
+;; 	MAIA_CASSOWARY_OPERATOR_LEQ
+;; } MaiaCassowaryOperator;
+
+(define-enum-extended CassowaryOperator
+  (in-module "Maia")
+  (c-name "MaiaCassowaryOperator")
+  (values
+    '("geq" "MAIA_CASSOWARY_OPERATOR_GEQ" "0")
+    '("leq" "MAIA_CASSOWARY_OPERATOR_LEQ" "1")
   )
 )
 
@@ -4574,6 +4631,25 @@
   (values
     '("horizontal" "MAIA_ORIENTATION_HORIZONTAL" "0")
     '("vertical" "MAIA_ORIENTATION_VERTICAL" "1")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_ENTRY_CHANGED_MASK_NEVER = 1 << 0,
+;; 	MAIA_ENTRY_CHANGED_MASK_FOCUS_OUT = 1 << 1,
+;; 	MAIA_ENTRY_CHANGED_MASK_RETURN = 1 << 2,
+;; 	MAIA_ENTRY_CHANGED_MASK_EACH_TEXT_UPDATE = 1 << 3
+;; } MaiaEntryChangedMask;
+
+(define-flags-extended EntryChangedMask
+  (in-module "Maia")
+  (c-name "MaiaEntryChangedMask")
+  (values
+    '("never" "MAIA_ENTRY_CHANGED_MASK_NEVER" "1 << 0")
+    '("focus-out" "MAIA_ENTRY_CHANGED_MASK_FOCUS_OUT" "1 << 1")
+    '("return" "MAIA_ENTRY_CHANGED_MASK_RETURN" "1 << 2")
+    '("each-text-update" "MAIA_ENTRY_CHANGED_MASK_EACH_TEXT_UPDATE" "1 << 3")
   )
 )
 

@@ -57,32 +57,6 @@ namespace Maia
             }
         }
 
-        static void _cpp_core_event_args_get_property (GObject * object, guint property_id, GValue * value, GParamSpec * pspec)
-        {
-            switch (property_id)
-            {
-                case 1:
-                    g_value_take_variant (value, maia_core_event_args_get_serialize ((MaiaCoreEventArgs*) object));
-                    break;
-                default:
-                    
-                    break;
-            }
-        }
-
-
-        static void _cpp_core_event_args_set_property (GObject * object, guint property_id, const GValue * value, GParamSpec * pspec)
-        {
-            switch (property_id)
-            {
-                case 1:
-                    maia_core_event_args_set_serialize ((MaiaCoreEventArgs*) object, g_value_get_variant (value));
-                    break;
-                default:
-                    break;
-            }
-        }
-
         EventArgs::EventArgs (Glib::WrapNewFunction inWrapFunc) :
             Glib::ObjectBase(0),
             Glib::Object(Glib::ConstructParams(eventargs_class_.init()))
@@ -96,15 +70,6 @@ namespace Maia
             const gpointer idx = g_type_get_qdata(G_OBJECT_TYPE(gobj ()), Glib::quark_);
             if (!idx)
             {
-                g_object_class_install_property (G_OBJECT_GET_CLASS (gobj ()), 1,
-                                                 g_param_spec_variant ("serialize", "serialize", "serialize",
-                                                 G_VARIANT_TYPE_ANY, NULL,
-                                                 (GParamFlags)(G_PARAM_STATIC_NAME | G_PARAM_STATIC_NICK | G_PARAM_STATIC_BLURB | G_PARAM_READABLE | G_PARAM_WRITABLE)));
-
-                GObjectClass* klass = G_OBJECT_GET_CLASS (gobj ());
-                klass->get_property = _cpp_core_event_args_get_property;
-                klass->set_property = _cpp_core_event_args_set_property;
-
                 Glib::wrap_register (G_OBJECT_TYPE(gobj ()), inWrapFunc);
             }
         }
@@ -120,7 +85,7 @@ namespace Maia
 
             return variant;
         }
-        
+
         void
         EventArgs::unserialize (const Glib::VariantBase& inData, const Glib::ustring& inSignature, ...)
         {

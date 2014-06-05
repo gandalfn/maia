@@ -105,7 +105,7 @@ public struct Maia.Graphic.Size
     public string
     to_string ()
     {
-        return "%f,%f".printf (width, height);
+        return "%g,%g".printf (width, height);
     }
 
     /**

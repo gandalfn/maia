@@ -39,8 +39,8 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         {
             grid = inGrid;
 
-            rows = {};
-            columns = {};
+            rows = new LineSizeAllocation[25];
+            columns = new LineSizeAllocation[25];
 
             uint nb_rows = 0;
             uint nb_columns = 0;
@@ -63,8 +63,8 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                     if (item.rows > 1) nb_rows = uint.max (nb_rows, item.row + item.rows);
                     if (item.columns > 1) nb_columns = uint.max (nb_columns, item.column + item.columns);
 
-                    if (rows.length < nb_rows) rows.resize ((int)nb_rows);
-                    if (columns.length < nb_columns) columns.resize ((int)nb_columns);
+                    if (rows.length < nb_rows) rows.resize ((int)nb_rows * 4);
+                    if (columns.length < nb_columns) columns.resize ((int)nb_columns * 4);
 
                     // cumulate the width of all rows
                     if (item.visible || !item.xlimp)
@@ -133,20 +133,18 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                 }
             }
 
+            rows.length = (int)nb_rows;
+            columns.length = (int)nb_columns;
+
             // Get max size
             Graphic.Size max = Graphic.Size (0, 0);
 
             if (grid.homogeneous)
             {
-                // Search the max height of row
-                foreach (LineSizeAllocation row in rows)
+                for (int cpt = 0; cpt < rows.length || cpt < columns.length; ++cpt)
                 {
-                    max.height = double.max (max.height, row.size.height);
-                }
-                // Search the max width of column
-                foreach (LineSizeAllocation column in columns)
-                {
-                    max.width = double.max (max.width, column.size.width);
+                    if (cpt < rows.length) max.height = double.max (max.height, rows[cpt].size.height);
+                    if (cpt < columns.length) max.width = double.max (max.width, columns[cpt].size.width);
                 }
 
                 // size is the max size of cell * dimension
@@ -158,21 +156,19 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
             {
                 size = Graphic.Size (0, 0);
 
-                // the maximal width size is the max width row
-                foreach (LineSizeAllocation row in rows)
+                for (int cpt = 0; cpt < rows.length || cpt < columns.length; ++cpt)
                 {
-                    size.height += row.size.height;
+                    if (cpt < rows.length) size.height += rows[cpt].size.height;
+                    if (cpt < columns.length) size.width += columns[cpt].size.width;;
                 }
+
+                // the maximal width size is the max width row
                 if (rows.length > 1)
                 {
                     size.height += grid.row_spacing * (rows.length - 1);
                 }
 
                 // the maximal height size is the max height column
-                foreach (LineSizeAllocation column in columns)
-                {
-                    size.width += column.size.width;
-                }
                 if (columns.length > 1)
                 {
                     size.width += grid.column_spacing * (columns.length - 1);
@@ -336,18 +332,14 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                     // Get natural size
                     Graphic.Size natural = Graphic.Size (0, 0);
 
-                    foreach (LineSizeAllocation row in rows)
+                    for (int cpt = 0; cpt < rows.length || cpt < columns.length; ++cpt)
                     {
-                        natural.height += row.size.height;
+                        if (cpt < rows.length) natural.height += rows[cpt].size.height;
+                        if (cpt < columns.length) natural.width += columns[cpt].size.width;
                     }
                     if (rows.length > 1)
                     {
                         natural.height += grid.row_spacing * (rows.length - 1);
-                    }
-
-                    foreach (LineSizeAllocation column in columns)
-                    {
-                        natural.width += column.size.width;
                     }
                     if (columns.length > 1)
                     {
@@ -592,7 +584,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                 // calculate allocation of item
                                 allocation = Graphic.Rectangle (area.origin.x, area.origin.y, 0, 0);
 
-                                Graphic.Size item_size = item.size_requested.is_empty () ? item.size : item.size_requested;
+                                Graphic.Size item_size = item.size;
                                 bool is_page_break = false;
                                 if (page_breaks != null)
                                 {
@@ -703,26 +695,6 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         }
 
         public bool
-        get_row_area (uint inRow, out Graphic.Rectangle outArea)
-        {
-            bool ret = false;
-
-            outArea = Graphic.Rectangle (0, 0, 0, 0);
-            if (inRow < rows.length && child_allocations != null)
-            {
-                outArea.origin = child_allocations[inRow, 0].origin;
-                for (int cpt = 0; cpt < columns.length; ++cpt)
-                {
-                    outArea.size.width += child_allocations[inRow, cpt].size.width;
-                    outArea.size.height = double.max (outArea.size.height, child_allocations[inRow, cpt].size.height);
-                }
-
-                ret = true;
-            }
-            return ret;
-        }
-
-        public bool
         get_row_size (uint inRow, out Graphic.Size outSize)
         {
             bool ret = false;
@@ -830,7 +802,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
     internal override void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
-        if (geometry == null && m_Allocation.grid != null)
+        if (visible && m_Allocation.grid != null && (geometry == null || !geometry.equal (inAllocation)))
         {
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "%s allocation: %s", name, inAllocation.extents.to_string ());
 
@@ -955,14 +927,9 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
     }
 
     internal bool
-    get_row_area (uint inRow, out Graphic.Rectangle outArea)
-    {
-        return m_Allocation.get_row_area (inRow, out outArea);
-    }
-
-    internal bool
     get_row_size (uint inRow, out Graphic.Size outSize)
     {
+        m_Allocation = SizeAllocation (this);
         return m_Allocation.get_row_size (inRow, out outSize);
     }
 }

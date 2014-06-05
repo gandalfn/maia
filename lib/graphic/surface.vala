@@ -179,4 +179,15 @@ public class Maia.Graphic.Surface : Pattern
     {
         throw new Error.NOT_IMPLEMENTED ("Flush not implemented");
     }
+
+    /**
+     * Dump surface content under png
+     *
+     * @param inFilename png filename to dump surface
+     */
+    public virtual void
+    dump (string inFilename) throws Graphic.Error
+    {
+        throw new Error.NOT_IMPLEMENTED ("Flush not implemented");
+    }
 }

@@ -4,6 +4,10 @@ MAIA_VAPI_DEPS =  \
     core/maia-any \
     maia
 
+MAIA_SYSTEM_VAPI_DEPS = \
+    cairo \
+    pangocairo
+
 include $(top_srcdir)/build-aux/maia.am
 include $(top_srcdir)/build-aux/pkgconfig.am
 include $(top_srcdir)/build-aux/backend.am
@@ -15,9 +19,7 @@ libmaia_cairo_graphic_la_CFLAGS = \
     $(MAIA_CAIRO_CFLAGS)
 
 libmaia_cairo_graphic_la_VALAFLAGS = \
-    --pkg=cairo \
     --pkg=cairo-xcb \
-    --pkg=pangocairo \
     --pkg=xcb
 
 libmaia_cairo_graphic_la_SOURCES = \

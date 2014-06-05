@@ -20,7 +20,7 @@
 public class Maia.Arrow : Item, ItemMovable
 {
     // properties
-    private string m_LinkedItem = null;
+    private unowned Item? m_LinkedItem = null;
 
     // accessors
     internal override string tag {
@@ -32,54 +32,49 @@ public class Maia.Arrow : Item, ItemMovable
     public Graphic.Point start { get; set; default = Graphic.Point (0, 0); }
     public Graphic.Point end {
         get {
-            if (linked_item != null && parent is DrawingArea)
+            if (m_LinkedItem != null && parent is DrawingArea)
             {
                 // Search linked item
-                unowned Item? item = parent.find (GLib.Quark.from_string (linked_item)) as Item;
-                if (item != null)
-                {
-                    var item_pos = item.position;
-                    var item_size = item.size_requested;
+                var item_pos = m_LinkedItem.position;
+                var item_size = m_LinkedItem.size;
 
-                    return Graphic.Point (item_pos.x + (item_size.width / 2), item_pos.y + (item_size.height / 2));
-                }
+                return Graphic.Point (item_pos.x + (item_size.width / 2), item_pos.y + (item_size.height / 2));
             }
 
             return Graphic.Point (0, 0);
         }
     }
     public string linked_item {
-        get {
-            return m_LinkedItem;
+        owned get {
+            return m_LinkedItem != null ? m_LinkedItem.name : null;
         }
         set {
             if (m_LinkedItem != null)
             {
-                unowned Item? item = parent.find (GLib.Quark.from_string (m_LinkedItem)) as Item;
-                if (item != null)
-                {
-                    item.notify["visible"].disconnect (on_linked_item_visible_changed);
-                    item.notify["size"].disconnect (on_linked_item_geometry_changed);
-                    item.notify["position"].disconnect (on_linked_item_geometry_changed);
-                    item.notify["layer"].disconnect (on_linked_item_layer_changed);
-                }
+                m_LinkedItem.notify["visible"].disconnect (on_linked_item_visible_changed);
+                m_LinkedItem.notify["size"].disconnect (update_size);
+                m_LinkedItem.notify["position"].disconnect (update_size);
+                m_LinkedItem.notify["layer"].disconnect (on_linked_item_layer_changed);
             }
 
-            m_LinkedItem = value;
+            if (value != null)
+            {
+                m_LinkedItem = parent.find (GLib.Quark.from_string (value), false) as Item;
+            }
+            else
+            {
+                m_LinkedItem = null;
+            }
 
             if (m_LinkedItem != null)
             {
-                unowned Item? item = parent.find (GLib.Quark.from_string (m_LinkedItem)) as Item;
-                if (item != null)
-                {
-                    item.notify["visible"].connect (on_linked_item_visible_changed);
-                    item.notify["size"].connect (on_linked_item_geometry_changed);
-                    item.notify["position"].connect (on_linked_item_geometry_changed);
-                    item.notify["layer"].disconnect (on_linked_item_layer_changed);
+                m_LinkedItem.notify["visible"].connect (on_linked_item_visible_changed);
+                m_LinkedItem.notify["size"].connect (update_size);
+                m_LinkedItem.notify["position"].connect (update_size);
+                m_LinkedItem.notify["layer"].disconnect (on_linked_item_layer_changed);
 
-                    visible = item.visible;
-                    layer = item.layer + 1;
-                }
+                visible = m_LinkedItem.visible;
+                layer = m_LinkedItem.layer + 1;
             }
         }
         default = null;
@@ -99,7 +94,7 @@ public class Maia.Arrow : Item, ItemMovable
         stroke_pattern = new Graphic.Color (0, 0, 0);
 
         // Connect onto start changed
-        notify["start"].connect (on_linked_item_geometry_changed);
+        notify["start"].connect (update_size);
     }
 
     public Arrow (string inId)
@@ -110,63 +105,36 @@ public class Maia.Arrow : Item, ItemMovable
     private void
     on_linked_item_visible_changed ()
     {
-        // Search linked item
-        unowned Item? item = parent.find (GLib.Quark.from_string (linked_item)) as Item;
-        if (item != null)
-        {
-            visible = item.visible;
-        }
+        visible = m_LinkedItem.visible;
     }
 
     private void
     on_linked_item_layer_changed ()
     {
-        // Search linked item
-        unowned Item? item = parent.find (GLib.Quark.from_string (linked_item)) as Item;
-        if (item != null)
-        {
-            layer = item.layer + 1;
-        }
+        layer = m_LinkedItem.layer + 1;
     }
 
     private void
-    on_linked_item_geometry_changed ()
+    update_size ()
     {
-        update_size (true);
-    }
-
-    private void
-    update_size (bool inDamage)
-    {
-        if (linked_item != null && parent is DrawingArea)
+        if (m_LinkedItem != null && parent is DrawingArea)
         {
-            // Search linked item
-            unowned Item? item = parent.find (GLib.Quark.from_string (linked_item)) as Item;
-            if (item != null)
+            var item_pos = m_LinkedItem.position;
+            var item_size = m_LinkedItem.size;
+
+            var start_area = Graphic.Point (double.min (item_pos.x + (item_size.width / 2), start.x),
+                                            double.min (item_pos.y + (item_size.height / 2), start.y));
+
+            var end_area = Graphic.Point (double.max (item_pos.x + (item_size.width / 2), start.x),
+                                          double.max (item_pos.y + (item_size.height / 2), start.y));
+
+            start_area.translate (Graphic.Point (-arrow_width, -arrow_width));
+            end_area.translate (Graphic.Point (arrow_width, arrow_width));
+            var area_size = Graphic.Size (end_area.x - start_area.x, end_area.y - start_area.y);
+            if (!size.equal (area_size))
             {
-                var item_pos = item.position;
-                var item_size = item.size_requested;
-
-                var start_area = Graphic.Point (double.min (item_pos.x + (item_size.width / 2), start.x),
-                                                double.min (item_pos.y + (item_size.height / 2), start.y));
-
-                var end_area = Graphic.Point (double.max (item_pos.x + (item_size.width / 2), start.x),
-                                              double.max (item_pos.y + (item_size.height / 2), start.y));
-
-                start_area.translate (Graphic.Point (-arrow_width, -arrow_width));
-                end_area.translate (Graphic.Point (arrow_width, arrow_width));
-                var area_size = Graphic.Size (end_area.x - start_area.x, end_area.y - start_area.y);
-                if (!size_requested.equal (area_size))
-                {
-                    if (inDamage) damage ();
-                    position = start_area;
-                    size = area_size;
-                    if (inDamage)
-                    {
-                        damage ();
-                        item.damage ();
-                    }
-                }
+                position = start_area;
+                size = area_size;
             }
         }
     }
@@ -180,7 +148,7 @@ public class Maia.Arrow : Item, ItemMovable
     internal override Graphic.Size
     size_request (Graphic.Size inSize)
     {
-        update_size (false);
+        update_size ();
 
         return base.size_request (inSize);
     }
@@ -188,26 +156,24 @@ public class Maia.Arrow : Item, ItemMovable
     internal override void
     paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
-        // Search linked item
-        unowned Item? item = parent.find (GLib.Quark.from_string (linked_item)) as Item;
-        if (item != null)
+        if (m_LinkedItem != null)
         {
             inContext.save ();
             {
                 // Clip area whithout linked item area
-                var area = geometry.copy ();
-                area.subtract (item.geometry);
-                area.translate (geometry.extents.origin.invert ());
-                var clip = new Graphic.Path.from_region (area);
-                inContext.clip (clip);
+                var clip_area = geometry.copy ();
+                clip_area.subtract (m_LinkedItem.geometry);
+                clip_area.translate (geometry.extents.origin.invert ());
+
+                inContext.clip_region (clip_area);
 
                 // Draw line
                 var line = new Graphic.Path ();
 
                 var start_point = start;
 
-                var end_point = Graphic.Point (item.geometry.extents.origin.x + item.geometry.extents.size.width / 2,
-                                               item.geometry.extents.origin.y + item.geometry.extents.size.height / 2);
+                var end_point = Graphic.Point (m_LinkedItem.geometry.extents.origin.x + m_LinkedItem.geometry.extents.size.width / 2,
+                                               m_LinkedItem.geometry.extents.origin.y + m_LinkedItem.geometry.extents.size.height / 2);
 
                 start_point.translate (geometry.extents.origin.invert ());
                 end_point.translate (geometry.extents.origin.invert ());
@@ -263,8 +229,7 @@ public class Maia.Arrow : Item, ItemMovable
                 new_position.y = double.max (new_position.y, drawing_area_geometry.extents.origin.y);
                 new_position.y = double.min (new_position.y, drawing_area_geometry.extents.size.height);
 
-                unowned Item? item = parent.find (GLib.Quark.from_string (linked_item)) as Item;
-                if (item == null || item.geometry == null || !(new_position in item.geometry))
+                if (m_LinkedItem == null || m_LinkedItem.geometry == null || !(new_position in m_LinkedItem.geometry))
                 {
                     start = new_position;
                 }

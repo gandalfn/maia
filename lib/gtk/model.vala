@@ -23,6 +23,11 @@ public class Maia.Gtk.Model : Maia.Model
     public class Column : Maia.Model.Column
     {
         // methods
+        public Column (string inId)
+        {
+            GLib.Object (id: GLib.Quark.from_string (inId));
+        }
+
         internal override new GLib.Value
         @get (uint inPath)
         {
@@ -42,9 +47,48 @@ public class Maia.Gtk.Model : Maia.Model
             return GLib.Value (GLib.Type.INVALID);
         }
 
-        public Column (string inId)
+        internal override void
+        @set (uint inPath, GLib.Value inValue)
         {
-            GLib.Object (id: GLib.Quark.from_string (inId));
+            unowned global::Gtk.TreeModel treemodel = ((Model)model).treemodel;
+
+            if (column >= 0 && treemodel != null && inPath < treemodel.iter_n_children(null))
+            {
+                global::Gtk.TreeIter iter;
+                if (treemodel.get_iter_from_string (out iter, "%u".printf (inPath)))
+                {
+                    bool found = false;
+                    while (!found)
+                    {
+                        if (treemodel is global::Gtk.ListStore)
+                        {
+                            ((global::Gtk.ListStore)treemodel).set_value (iter, column, inValue);
+                            found = true;
+                        }
+                        else if (treemodel is global::Gtk.TreeStore)
+                        {
+                            ((global::Gtk.TreeStore)treemodel).set_value (iter, column, inValue);
+                            found = true;
+                        }
+                        else if (treemodel is global::Gtk.TreeModelFilter)
+                        {
+                            var parentmodel = ((global::Gtk.TreeModelFilter)treemodel).child_model;
+                            ((global::Gtk.TreeModelFilter)treemodel).convert_iter_to_child_iter (out iter, iter);
+                            treemodel = parentmodel;
+                        }
+                        else if (treemodel is global::Gtk.TreeModelSort)
+                        {
+                            var parentmodel = ((global::Gtk.TreeModelSort)treemodel).child_model;
+                            ((global::Gtk.TreeModelSort)treemodel).convert_iter_to_child_iter (out iter, iter);
+                            treemodel = parentmodel;
+                        }
+                        else
+                        {
+                            found = true;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -145,6 +189,191 @@ public class Maia.Gtk.Model : Maia.Model
         on_row_inserted (inPath, inIter);
 
         return false;
+    }
+
+    internal override void
+    construct_model (Column[] inColumns)
+    {
+        int cpt = 0;
+
+        GLib.Type[] columns = {};
+        foreach (Column column in inColumns)
+        {
+            // Add column type
+            columns += column.column_type;
+
+            // Set column num
+            column.column = cpt;
+
+            // Add column to model
+            add (column);
+
+            cpt++;
+        }
+
+        treemodel = new global::Gtk.ListStore.newv (columns);
+    }
+
+    internal override bool
+    append_row (out uint outRow)
+    {
+        unowned global::Gtk.TreeModel? model = m_TreeModel;
+        global::Gtk.TreeIter iter;
+        global::Gtk.TreeIter? parent_iter = null;
+        bool found = false;
+
+        outRow = 0;
+        while (!found)
+        {
+            if (model is global::Gtk.ListStore)
+            {
+                ((global::Gtk.ListStore)model).append (out iter);
+                return convert_tree_iter_to_row (iter, out outRow);
+            }
+            else if (model is global::Gtk.TreeStore)
+            {
+                ((global::Gtk.TreeStore)model).append (out iter, parent_iter);
+                return convert_tree_iter_to_row (iter, out outRow);
+            }
+            else if (model is global::Gtk.TreeModelFilter)
+            {
+                var parentmodel = ((global::Gtk.TreeModelFilter)model).child_model;
+                if (parent_iter == null)
+                {
+                    if (!parentmodel.get_iter (out parent_iter, ((global::Gtk.TreeModelFilter)model).virtual_root))
+                    {
+                        parent_iter = null;
+                    }
+                }
+                else
+                {
+                    ((global::Gtk.TreeModelFilter)model).convert_iter_to_child_iter (out parent_iter, parent_iter);
+                }
+                model = parentmodel;
+                found = true;
+            }
+            else if (treemodel is global::Gtk.TreeModelSort)
+            {
+                var parentmodel = ((global::Gtk.TreeModelSort)treemodel).child_model;
+                treemodel = parentmodel;
+            }
+            else
+            {
+                found = true;
+            }
+        }
+
+        return false;
+    }
+
+    internal override void
+    remove_row (uint inPath)
+    {
+        unowned global::Gtk.TreeModel? model = m_TreeModel;
+        global::Gtk.TreeIter iter;
+        if (model.get_iter_from_string (out iter, "%u".printf (inPath)))
+        {
+            bool found = false;
+            while (!found)
+            {
+                if (model is global::Gtk.ListStore)
+                {
+                    ((global::Gtk.ListStore)model).remove (iter);
+                    found = true;
+                }
+                else if (model is global::Gtk.TreeStore)
+                {
+                    ((global::Gtk.TreeStore)model).remove (ref iter);
+                    found = true;
+                }
+                else if (model is global::Gtk.TreeModelFilter)
+                {
+                    var parentmodel = ((global::Gtk.TreeModelFilter)model).child_model;
+                    ((global::Gtk.TreeModelFilter)model).convert_iter_to_child_iter (out iter, iter);
+                    model = parentmodel;
+                }
+                else if (model is global::Gtk.TreeModelSort)
+                {
+                    var parentmodel = ((global::Gtk.TreeModelSort)model).child_model;
+                    ((global::Gtk.TreeModelSort)model).convert_iter_to_child_iter (out iter, iter);
+                    model = parentmodel;
+                }
+                else
+                {
+                    found = true;
+                }
+            }
+        }
+    }
+
+    internal override void
+    set_valuesv (uint inRow, va_list inList)
+    {
+        global::Gtk.TreeIter iter;
+        if (m_TreeModel.get_iter_from_string (out iter, "%u".printf (inRow)))
+        {
+            int[] columns = {};
+            GLib.Value[] values = {};
+
+            while (true)
+            {
+                // Get column name
+                unowned string? columnName = inList.arg ();
+                if (columnName == null)
+                {
+                    break;
+                }
+                // Get column
+                unowned Column? column = find(GLib.Quark.from_string (columnName), false) as Column;
+                if (column != null)
+                {
+                    // Get value
+                    GLib.Type type_column = m_TreeModel.get_column_type (column.column);
+                    GLib.Value val = GLib.Value (type_column);
+                    string? error = null;
+                    GLib.ValueCollect.get (ref val, inList, 0, ref error);
+                    if (error == null)
+                    {
+                        values += val;
+                        columns += column.column;
+                    }
+                }
+                
+            }
+
+            // set values in tree model
+            unowned global::Gtk.TreeModel? model = m_TreeModel;
+            bool found = false;
+            while (!found)
+            {
+                if (model is global::Gtk.ListStore)
+                {
+                    ((global::Gtk.ListStore)model).set_valuesv (iter, columns, values);
+                    found = true;
+                }
+                else if (model is global::Gtk.TreeStore)
+                {
+                    ((global::Gtk.TreeStore)model).set_valuesv (iter, columns, values);
+                    found = true;
+                }
+                else if (model is global::Gtk.TreeModelFilter)
+                {
+                    var parentmodel = ((global::Gtk.TreeModelFilter)model).child_model;
+                    ((global::Gtk.TreeModelFilter)model).convert_iter_to_child_iter (out iter, iter);
+                    model = parentmodel;
+                }
+                else if (model is global::Gtk.TreeModelSort)
+                {
+                    var parentmodel = ((global::Gtk.TreeModelSort)model).child_model;
+                    ((global::Gtk.TreeModelSort)model).convert_iter_to_child_iter (out iter, iter);
+                    model = parentmodel;
+                }
+                else
+                {
+                    found = true;
+                }
+            }
+        }
     }
 
     public global::Gtk.TreePath

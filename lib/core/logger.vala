@@ -75,9 +75,10 @@ namespace Maia.Log
         CANVAS_DAMAGE      = 1 << 13,
         CANVAS_GEOMETRY    = 1 << 14,
         CANVAS_INPUT       = 1 << 15,
-        CANVAS             = CANVAS_DRAW | CANVAS_DAMAGE | CANVAS_GEOMETRY | CANVAS_PARSING | CANVAS_INPUT,
-        MAIN_BUS           = 1 << 16,
-        MAIN_EVENT         = 1 << 17,
+        CANVAS_LAYOUT      = 1 << 16,
+        CANVAS             = CANVAS_DRAW | CANVAS_DAMAGE | CANVAS_GEOMETRY | CANVAS_PARSING | CANVAS_INPUT | CANVAS_LAYOUT,
+        MAIN_BUS           = 1 << 17,
+        MAIN_EVENT         = 1 << 18,
         MAIN               = MAIN_BUS | MAIN_EVENT,
 
         ALL                = CORE | GRAPHIC | MANIFEST | XML | CANVAS | MAIN

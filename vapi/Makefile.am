@@ -1,8 +1,5 @@
 include $(top_srcdir)/build-aux/maia.am
 
-gdk-keysym.vapi:
-	@$(AM_V_GEN) $(top_srcdir)/tools/generate-gdk-keysym-vapi > $@
-
 xcb-keysym.vapi:
 	@$(AM_V_GEN) $(top_srcdir)/tools/generate-xcb-keysym-vapi > $@
 
@@ -13,6 +10,16 @@ noinst_DATA = \
     xcb-base.vapi \
     xcb.deps \
     xcb.vapi \
+    xcb-composite.deps \
+    xcb-composite.vapi \
+    xcb-render.deps \
+    xcb-render.vapi \
+    xcb-render-util.deps \
+    xcb-render-util.vapi \
+    xcb-shape.deps \
+    xcb-shape.vapi \
+    xcb-xfixes.deps \
+    xcb-xfixes.vapi \
     xcb-keysym.vapi \
     xcb-keysyms.vapi \
     xcb-cursor.vapi \
@@ -20,15 +27,14 @@ noinst_DATA = \
     cairo.vapi \
     cairo-xcb.vapi \
     valgrind.vapi \
-    gdk-keysym.vapi \
     gtk+-2.0.vapi \
     gtk+-2.0.deps \
     libintl.vapi \
-    uuid.vapi
+    uuid.vapi \
+    gvalue-collect.vapi
 
 EXTRA_DIST += \
     $(noinst_DATA)
 
 CLEANFILES += \
-    gdk-keysym.vapi \
     xcb-keysym.vapi

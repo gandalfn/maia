@@ -21,6 +21,146 @@
 
 namespace Maia
 {
+    ModelIterator::ModelIterator (Model* inpModel, unsigned int inRow) :
+        m_pModel (inpModel),
+        m_Row (inRow)
+    {
+    }
+
+    ModelIterator::ModelIterator () :
+        m_pModel (0),
+        m_Row (0)
+    {
+    }
+
+    Model::iterator& ModelIterator::operator++()
+    {
+        if (m_pModel && m_Row < m_pModel->get_nb_rows ())
+            m_Row++;
+
+        return *this;
+    }
+
+    const Model::iterator ModelIterator::operator++(int inCount)
+    {
+        if (m_pModel)
+        {
+            m_Row += inCount;
+            if (m_Row >= m_pModel->get_nb_rows ())
+                m_Row = m_pModel->get_nb_rows ();
+        }
+        return *this;
+    }
+
+    bool ModelIterator::operator== (const Model::iterator& rhs)
+    {
+        return m_pModel == rhs.m_pModel && m_Row == rhs.m_Row;
+    }
+
+    bool ModelIterator::operator!= (const Model::iterator& rhs)
+    {
+        return m_pModel != rhs.m_pModel || m_Row != rhs.m_Row;
+    }
+
+    bool ModelIterator::end () const
+    {
+        return !m_pModel || m_Row >= m_pModel->get_nb_rows ();
+    }
+
+    ModelRows::ModelRows (Model* inpModel) :
+        m_pModel (inpModel)
+    {
+    }
+
+    Model::iterator ModelRows::begin () const
+    {
+        return ModelIterator (m_pModel, 0);
+    }
+
+    Model::iterator ModelRows::end () const
+    {
+        return ModelIterator (m_pModel, m_pModel->get_nb_rows ());
+    }
+
+    Glib::RefPtr<Model> Model::create (const Glib::ustring& inId)
+    {
+        return Glib::RefPtr<Model> (new Model (maia_model_new (inId.c_str (), nullptr)));
+    }
+
+    Glib::RefPtr<Model> Model::create_foreign (const Glib::ustring& inId, ...)
+    {
+        va_list var_args;
+
+        va_start (var_args, inId);
+        Glib::RefPtr<Model> pModel = Glib::RefPtr<Model> (new Model (maia_model_new_foreignv (inId.c_str (), var_args)));
+        va_end (var_args);
+
+        return pModel;
+    }
+
+    Glib::RefPtr<Model> Model::create (const Glib::ustring& inId, const std::vector<Glib::RefPtr<ModelColumn>>& inColumns)
+    {
+        MaiaModelColumn** columns = g_new0 (MaiaModelColumn*, inColumns.size ());
+        int cpt = 0;
+        for (auto column : inColumns)
+        {
+            columns[cpt] = column->gobj ();
+            cpt++;
+        }
+
+        MaiaModel* pModel = maia_model_new_with_columns (inId.c_str (), columns, inColumns.size ());
+        g_free (columns);
+
+        return Glib::RefPtr<Model> (new Model (pModel));
+    }
+
+    Glib::RefPtr<Model> Model::create_foreign (const Glib::ustring& inId, const std::vector<Glib::RefPtr<ModelColumn>>& inColumns, ...)
+    {
+        va_list var_args;
+        MaiaModelColumn** columns = g_new0 (MaiaModelColumn*, inColumns.size ());
+        int cpt = 0;
+        for (auto column : inColumns)
+        {
+            columns[cpt] = column->gobj ();
+            cpt++;
+        }
+
+        va_start (var_args, inColumns);
+        MaiaModel* pModel = maia_model_new_foreign_with_columnsv (inId.c_str (), columns, inColumns.size (), var_args);
+        va_end (var_args);
+
+        g_free (columns);
+
+        return Glib::RefPtr<Model> (new Model (pModel));
+    }
+
+    Model::Rows Model::rows () const
+    {
+        return ModelRows (const_cast<Model*> (this));
+    }
+
+    Model::iterator Model::append_row ()
+    {
+        unsigned int row;
+        if (maia_model_append_row (gobj (), &row))
+            return ModelIterator (this, row);
+
+        return ModelIterator (this, get_nb_rows ());
+    }
+
+    void Model::remove_row (const Model::iterator& inIter)
+    {
+        if (inIter.m_Row < get_nb_rows ())
+        {
+            maia_model_remove_row (gobj (), inIter.m_Row);
+        }
+    }
+
+    Model::iterator Model::get_iter (unsigned int inRow)
+    {
+        return ModelIterator (this, inRow);
+    }
+
     static void
     value_changed_callback (GObject*, guint inRow, void* inpData)
     {

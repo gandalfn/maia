@@ -78,7 +78,7 @@ public class Maia.Group : Item
     internal override void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
-        if (geometry == null)
+        if (visible && (geometry == null || !geometry.equal (inAllocation)))
         {
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "");
 
@@ -92,7 +92,7 @@ public class Maia.Group : Item
 
                     // Get child position and size
                     var item_position = item.position;
-                    var item_size     = item.size_requested;
+                    var item_size     = item.size;
 
                     // Set child size allocation
                     var child_allocation = new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y, item_size.width, item_size.height));
@@ -144,7 +144,8 @@ public class Maia.Group : Item
                     // point under child
                     if (item.button_press_event (inButton, point))
                     {
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button press event in %s", item.name);
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"button press event in $(item.name)");
+
                         // event occurate under child stop signal
                         GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
                         break;
@@ -206,7 +207,7 @@ public class Maia.Group : Item
             unowned Core.Object? child = last ();
             while (child != null)
             {
-                if ((child is Item) && !(child is Popup))
+                if ((child is Item))
                 {
                     unowned Item item = (Item)child;
 

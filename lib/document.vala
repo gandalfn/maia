@@ -276,7 +276,7 @@ public class Maia.Document : Item
         }
 
         // unset geometry to repaginate
-        geometry = null;
+        need_update = true;
     }
 
     private void
@@ -327,7 +327,7 @@ public class Maia.Document : Item
             bool add_height = true;
 
             // Get item allocated size
-            var item_size = inItem.size_requested;
+            var item_size = inItem.size;
 
             if (inItem is ItemPackable)
             {
@@ -819,7 +819,7 @@ public class Maia.Document : Item
     internal override void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
-        if (geometry == null)
+        if (visible && (geometry == null || !geometry.equal (inAllocation)))
         {
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "");
 

@@ -134,9 +134,6 @@ public class Maia.DrawingArea : Group, ItemPackable
     {
         // Add not dumpable attributes
         not_dumpable_attributes.insert ("selected");
-
-        // Do not allocate on child add remove
-        allocate_on_child_add_remove = false;
     }
 
     public DrawingArea (string inId)
@@ -151,7 +148,7 @@ public class Maia.DrawingArea : Group, ItemPackable
         {
             double asize = anchor_size + selected_border / 2;
             double arrow_size = anchor_size / 6;
-            Graphic.Size item_size = selected.size_requested;
+            Graphic.Size item_size = selected.size;
             item_size.resize (anchor_size + selected_border, anchor_size + selected_border);
 
             switch (m_SelectedItemState)
@@ -366,7 +363,6 @@ public class Maia.DrawingArea : Group, ItemPackable
                 case SelectedItemState.MOVED:
                     if (selected.is_movable)
                     {
-
                         var offset = inPoint;
                         offset.subtract (m_LastPointerPosition);
                         m_LastPointerPosition = inPoint;
@@ -454,18 +450,17 @@ public class Maia.DrawingArea : Group, ItemPackable
                     if (arrow == selected && arrow.linked_item != null)
                     {
                         // Search linked item
-                        unowned Item? item = find (GLib.Quark.from_string (arrow.linked_item)) as Item;
+                        unowned Item? item = find (GLib.Quark.from_string (arrow.linked_item), false) as Item;
                         if (item != null)
                         {
                             // Clip area whithout linked item area
-                            var area = arrow.geometry.copy ();
+                            var clip_area = arrow.geometry.copy ();
                             var item_geometry = item.geometry.copy ();
                             item_geometry.translate (Graphic.Point (-selected_border / 2.0, -selected_border / 2.0));
                             var item_size = item_geometry.extents.size;
                             item_size.resize (selected_border, selected_border);
                             item_geometry.resize (item_size);
-                            area.subtract (item_geometry);
-                            var clip = new Graphic.Path.from_region (area);
+                            clip_area.subtract (item_geometry);
 
                             // Draw arrow selected rectangle
                             var path = new Graphic.Path ();
@@ -487,7 +482,7 @@ public class Maia.DrawingArea : Group, ItemPackable
 
                             inContext.save ();
                             {
-                                inContext.clip (clip);
+                                inContext.clip_region (clip_area);
                                 inContext.transform = arrow_transform;
                                 inContext.dash = { 2, 2 };
                                 inContext.line_width = selected_border_line_width;

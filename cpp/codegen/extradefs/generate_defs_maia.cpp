@@ -74,22 +74,29 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_KEY);
     std::cout << get_defs (MAIA_TYPE_LABEL);
     std::cout << get_defs (MAIA_TYPE_MODEL);
+    std::cout << get_defs (MAIA_MODEL_TYPE_COLUMN);
     std::cout << get_defs (MAIA_TYPE_ORIENTATION);
     std::cout << get_defs (MAIA_TYPE_PAGE_FORMAT);
     std::cout << get_defs (MAIA_TYPE_PATH);
     std::cout << get_defs (MAIA_TYPE_RECTANGLE);
     std::cout << get_defs (MAIA_TYPE_SCROLL);
     std::cout << get_defs (MAIA_TYPE_TOGGLE_BUTTON);
+    std::cout << get_defs (MAIA_TOGGLE_BUTTON_TYPE_TOGGLED_EVENT_ARGS);
     std::cout << get_defs (MAIA_TYPE_TOGGLE_GROUP);
     std::cout << get_defs (MAIA_TYPE_VIEW);
     std::cout << get_defs (MAIA_TYPE_SHORTCUT);
     std::cout << get_defs (MAIA_TYPE_POPUP);
     std::cout << get_defs (MAIA_TYPE_COMBO);
+    std::cout << get_defs (MAIA_COMBO_TYPE_CHANGED_EVENT_ARGS);
     std::cout << get_defs (MAIA_TYPE_TOOLBOX);
     std::cout << get_defs (MAIA_TYPE_TOOL);
     std::cout << get_defs (MAIA_TYPE_ARROW);
     std::cout << get_defs (MAIA_TYPE_WINDOW);
     std::cout << get_defs (MAIA_TYPE_ADJUSTMENT);
+    std::cout << get_defs (MAIA_TYPE_PROGRESS_BAR);
+    std::cout << get_defs (MAIA_TYPE_SEEK_BAR);
+    std::cout << get_defs (MAIA_ENTRY_TYPE_CHANGED_EVENT_ARGS);
+    
 
     return 0;
 }

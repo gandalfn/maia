@@ -69,6 +69,7 @@ namespace Maia
                 _WRAP_METHOD(void accumulate (const Glib::RefPtr<EventArgs>& inOther), maia_core_event_args_accumulate)
                 _WRAP_METHOD(Glib::RefPtr<EventArgs> copy () const, maia_core_event_args_copy, refreturn)
 
+                _WRAP_PROPERTY("sequence", int)
                 _WRAP_PROPERTY("serialize", Glib::VariantBase)
         };
     }

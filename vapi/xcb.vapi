@@ -2,7 +2,7 @@
  * Copyright (C) 2012-2014  Nicolas Bruguier
  * All Rights Reserved.
  *
- *Permission is hereby granted, free of charge, to any person obtaining a
+ * Permission is hereby granted, free of charge, to any person obtaining a
  * copy of this software and associated documentation files (the "Software"),
  * to deal in the Software without restriction, including without limitation
  * the rights to use, copy, modify, merge, publish, distribute, sublicense,
@@ -37,18 +37,18 @@ namespace Xcb
 
 		/**
 		 * Get atom identifier by name
-		 * 
+		 *
 		 * Retrieves the identifier (xcb_atom_t TODO) for the atom with the specified
 		 * name. Atoms are used in protocols like EWMH, for example to store window titles
 		 * (`_NET_WM_NAME` atom) as property of a window.
-		 * 
+		 *
 		 * If `only_if_exists` is 0, the atom will be created if it does not already exist.
 		 * If `only_if_exists` is 1, `XCB_ATOM_NONE` will be returned if the atom does
 		 * not yet exist.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link AllocError}:  TODO: reasons?  
+		 *  * {@link AllocError}:  TODO: reasons?
 		 *
 		 * @param only_if_exists Return a valid atom id only if the atom already exists.
 		 * @param name The name of the atom.
@@ -59,13 +59,13 @@ namespace Xcb
 		public InternAtomCookie intern_atom (bool only_if_exists, [CCode (array_length_pos = 1.2)]char[]? name);
 		/**
 		 * release the pointer
-		 * 
+		 *
 		 * Releases the pointer and any queued events if you actively grabbed the pointer
 		 * before using `xcb_grab_pointer`, `xcb_grab_button` or within a normal button
 		 * press.
-		 * 
+		 *
 		 * EnterNotify and LeaveNotify events are generated.
-		 * 
+		 *
 		 * @param time Timestamp to avoid race conditions when running X over the network.
 		 *             The pointer will not be released if `time` is earlier than the
 		 *             last-pointer-grab time or later than the current X server time.
@@ -79,13 +79,13 @@ namespace Xcb
 		public VoidCookie ungrab_pointer (Timestamp time);
 		/**
 		 * release the pointer
-		 * 
+		 *
 		 * Releases the pointer and any queued events if you actively grabbed the pointer
 		 * before using `xcb_grab_pointer`, `xcb_grab_button` or within a normal button
 		 * press.
-		 * 
+		 *
 		 * EnterNotify and LeaveNotify events are generated.
-		 * 
+		 *
 		 * @param time Timestamp to avoid race conditions when running X over the network.
 		 *             The pointer will not be released if `time` is earlier than the
 		 *             last-pointer-grab time or later than the current X server time.
@@ -103,15 +103,15 @@ namespace Xcb
 		public VoidCookie ungrab_keyboard_checked (Timestamp time);
 		/**
 		 * release queued events
-		 * 
+		 *
 		 * Releases queued events if the client has caused a device (pointer/keyboard) to
 		 * freeze due to grabbing it actively. This request has no effect if `time` is
 		 * earlier than the last-grab time of the most recent active grab for this client
 		 * or if `time` is later than the current X server time.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link ValueError}:  You specified an invalid `mode`.  
+		 *  * {@link ValueError}:  You specified an invalid `mode`.
 		 *
 		 * @param mode mode
 		 * @param time Timestamp to avoid race conditions when running X over the network.
@@ -122,15 +122,15 @@ namespace Xcb
 		public VoidCookie allow_events (Allow mode, Timestamp time);
 		/**
 		 * release queued events
-		 * 
+		 *
 		 * Releases queued events if the client has caused a device (pointer/keyboard) to
 		 * freeze due to grabbing it actively. This request has no effect if `time` is
 		 * earlier than the last-grab time of the most recent active grab for this client
 		 * or if `time` is later than the current X server time.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link ValueError}:  You specified an invalid `mode`.  
+		 *  * {@link ValueError}:  You specified an invalid `mode`.
 		 *
 		 * @param mode mode
 		 * @param time Timestamp to avoid race conditions when running X over the network.
@@ -153,9 +153,9 @@ namespace Xcb
 		public QueryKeymapCookie query_keymap ();
 		/**
 		 * get matching font names
-		 * 
+		 *
 		 * Gets a list of available font names which match the given `pattern`.
-		 * 
+		 *
 		 * @param max_names The maximum number of fonts to be returned.
 		 * @param pattern A font pattern, for example "-misc-fixed-*".
 		 *                The asterisk (*) is a wildcard for any number of characters. The question mark
@@ -166,9 +166,9 @@ namespace Xcb
 		public ListFontsCookie list_fonts (uint16 max_names, [CCode (array_length_pos = 1.2)]char[]? pattern);
 		/**
 		 * get matching font names and information
-		 * 
+		 *
 		 * Gets a list of available font names which match the given `pattern`.
-		 * 
+		 *
 		 * @param max_names The maximum number of fonts to be returned.
 		 * @param pattern A font pattern, for example "-misc-fixed-*".
 		 *                The asterisk (*) is a wildcard for any number of characters. The question mark
@@ -185,17 +185,17 @@ namespace Xcb
 		public GetFontPathCookie get_font_path ();
 		/**
 		 * check if extension is present
-		 * 
+		 *
 		 * Determines if the specified extension is present on this X11 server.
-		 * 
+		 *
 		 * Every extension has a unique `major_opcode` to identify requests, the minor
 		 * opcodes and request formats are extension-specific. If the extension provides
 		 * events and errors, the `first_event` and `first_error` fields in the reply are
 		 * set accordingly.
-		 * 
+		 *
 		 * There should rarely be a need to use this request directly, XCB provides the
 		 * `xcb_get_extension_data` function instead.
-		 * 
+		 *
 		 * @param name The name of the extension to query, for example "RANDR". This is case
 		 *             sensitive!
 		 *
@@ -248,12 +248,12 @@ namespace Xcb
 		public VoidCookie set_close_down_mode_checked (CloseDown mode);
 		/**
 		 * kills a client
-		 * 
+		 *
 		 * Forces a close down of the client that created the specified `resource`.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link ValueError}:  The specified `resource` does not exist.  
+		 *  * {@link ValueError}:  The specified `resource` does not exist.
 		 *
 		 * @param resource Any resource belonging to the client (for example a Window), used to identify
 		 *                 the client connection.
@@ -265,12 +265,12 @@ namespace Xcb
 		public VoidCookie kill_client (uint32 resource);
 		/**
 		 * kills a client
-		 * 
+		 *
 		 * Forces a close down of the client that created the specified `resource`.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link ValueError}:  The specified `resource` does not exist.  
+		 *  * {@link ValueError}:  The specified `resource` does not exist.
 		 *
 		 * @param resource Any resource belonging to the client (for example a Window), used to identify
 		 *                 the client connection.
@@ -323,15 +323,7 @@ namespace Xcb
 
 	[Compact, CCode (cname = "xcb_query_keymap_reply_t", free_function = "free")]
 	public class QueryKeymapReply {
-		public int keys_length {
-			[CCode (cname = "xcb_query_keymap_keys_length")]
-			get;
-		}
-		[CCode (array_length = false)]
-		public unowned uint8[] keys {
-			[CCode (cname = "xcb_query_keymap_keys")]
-			get;
-		}
+		public uint8 keys[32];
 	}
 
 	[SimpleType, CCode (cname = "xcb_query_keymap_cookie_t")]
@@ -350,6 +342,11 @@ namespace Xcb
 		}
 		public int names_length {
 			[CCode (cname = "xcb_list_fonts_names_length")]
+			get;
+		}
+		[CCode (array_length = false)]
+		public unowned Str[] names {
+			[CCode (cname = "xcb_list_fonts_names")]
 			get;
 		}
 	}
@@ -385,6 +382,11 @@ namespace Xcb
 			[CCode (cname = "xcb_list_fonts_with_info_properties_length")]
 			get;
 		}
+		[CCode (array_length = false)]
+		public unowned Fontprop[] properties {
+			[CCode (cname = "xcb_list_fonts_with_info_properties")]
+			get;
+		}
 		[CCode (cname = "xcb_list_fonts_with_info_name_length")]
 		int _name_length ();
 		[CCode (cname = "xcb_list_fonts_with_info_name", array_length = false)]
@@ -414,6 +416,11 @@ namespace Xcb
 		}
 		public int path_length {
 			[CCode (cname = "xcb_get_font_path_path_length")]
+			get;
+		}
+		[CCode (array_length = false)]
+		public unowned Str[] path {
+			[CCode (cname = "xcb_get_font_path_path")]
 			get;
 		}
 	}
@@ -448,6 +455,11 @@ namespace Xcb
 		}
 		public int names_length {
 			[CCode (cname = "xcb_list_extensions_names_length")]
+			get;
+		}
+		[CCode (array_length = false)]
+		public unowned Str[] names {
+			[CCode (cname = "xcb_list_extensions_names")]
 			get;
 		}
 	}
@@ -486,15 +498,7 @@ namespace Xcb
 		public uint8 bell_percent;
 		public uint16 bell_pitch;
 		public uint16 bell_duration;
-		public int auto_repeats_length {
-			[CCode (cname = "xcb_get_keyboard_control_auto_repeats_length")]
-			get;
-		}
-		[CCode (array_length = false)]
-		public unowned uint8[] auto_repeats {
-			[CCode (cname = "xcb_get_keyboard_control_auto_repeats")]
-			get;
-		}
+		public uint8 auto_repeats[32];
 	}
 
 	[SimpleType, CCode (cname = "xcb_get_keyboard_control_cookie_t")]
@@ -541,6 +545,11 @@ namespace Xcb
 		}
 		public int hosts_length {
 			[CCode (cname = "xcb_list_hosts_hosts_length")]
+			get;
+		}
+		[CCode (array_length = false)]
+		public unowned Host[] hosts {
+			[CCode (cname = "xcb_list_hosts_hosts")]
 			get;
 		}
 	}
@@ -685,25 +694,25 @@ namespace Xcb
 
 		/**
 		 * Creates a window
-		 * 
+		 *
 		 * Creates an unmapped window as child of the specified `parent` window. A
 		 * CreateNotify event will be generated. The new window is placed on top in the
 		 * stacking order with respect to siblings.
-		 * 
+		 *
 		 * The coordinate system has the X axis horizontal and the Y axis vertical with
 		 * the origin [0, 0] at the upper-left corner. Coordinates are integral, in terms
 		 * of pixels, and coincide with pixel centers. Each window and pixmap has its own
 		 * coordinate system. For a window, the origin is inside the border at the inside,
 		 * upper-left corner.
-		 * 
+		 *
 		 * The created window is not yet displayed (mapped), call `xcb_map_window` to
 		 * display it.
-		 * 
+		 *
 		 * The created window will initially use the same cursor as its parent.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link ColormapError}:  TODO: reasons?  
+		 *  * {@link ColormapError}:  TODO: reasons?
 		 *
 		 * @param connection The connection.
 		 * @param depth Specifies the new window's depth (TODO: what unit?).
@@ -728,25 +737,25 @@ namespace Xcb
 		public VoidCookie create (Xcb.Connection connection, uint8 depth, Window parent, int16 x, int16 y, uint16 width, uint16 height, uint16 border_width, WindowClass class, Visualid visual, uint32 value_mask = 0, [CCode (array_length = false)]uint32[]? value_list = null);
 		/**
 		 * Creates a window
-		 * 
+		 *
 		 * Creates an unmapped window as child of the specified `parent` window. A
 		 * CreateNotify event will be generated. The new window is placed on top in the
 		 * stacking order with respect to siblings.
-		 * 
+		 *
 		 * The coordinate system has the X axis horizontal and the Y axis vertical with
 		 * the origin [0, 0] at the upper-left corner. Coordinates are integral, in terms
 		 * of pixels, and coincide with pixel centers. Each window and pixmap has its own
 		 * coordinate system. For a window, the origin is inside the border at the inside,
 		 * upper-left corner.
-		 * 
+		 *
 		 * The created window is not yet displayed (mapped), call `xcb_map_window` to
 		 * display it.
-		 * 
+		 *
 		 * The created window will initially use the same cursor as its parent.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link ColormapError}:  TODO: reasons?  
+		 *  * {@link ColormapError}:  TODO: reasons?
 		 *
 		 * @param connection The connection.
 		 * @param depth Specifies the new window's depth (TODO: what unit?).
@@ -771,12 +780,12 @@ namespace Xcb
 		public VoidCookie create_checked (Xcb.Connection connection, uint8 depth, Window parent, int16 x, int16 y, uint16 width, uint16 height, uint16 border_width, WindowClass class, Visualid visual, uint32 value_mask = 0, [CCode (array_length = false)]uint32[]? value_list = null);
 		/**
 		 * change window attributes
-		 * 
+		 *
 		 * Changes the attributes specified by `value_mask` for the specified `window`.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link AccessError}:  TODO: reasons?  
+		 *  * {@link AccessError}:  TODO: reasons?
 		 *
 		 * @param connection The connection.
 		 * @param value_mask value_mask
@@ -788,12 +797,12 @@ namespace Xcb
 		public VoidCookie change_attributes (Xcb.Connection connection, uint32 value_mask = 0, [CCode (array_length = false)]uint32[]? value_list = null);
 		/**
 		 * change window attributes
-		 * 
+		 *
 		 * Changes the attributes specified by `value_mask` for the specified `window`.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link AccessError}:  TODO: reasons?  
+		 *  * {@link AccessError}:  TODO: reasons?
 		 *
 		 * @param connection The connection.
 		 * @param value_mask value_mask
@@ -805,12 +814,12 @@ namespace Xcb
 		public VoidCookie change_attributes_checked (Xcb.Connection connection, uint32 value_mask = 0, [CCode (array_length = false)]uint32[]? value_list = null);
 		/**
 		 * Gets window attributes
-		 * 
+		 *
 		 * Gets the current attributes for the specified `window`.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link WindowError}:  The specified `window` does not exist.  
+		 *  * {@link WindowError}:  The specified `window` does not exist.
 		 *
 		 * @param connection The connection.
 		 */
@@ -818,17 +827,17 @@ namespace Xcb
 		public GetWindowAttributesCookie get_attributes (Xcb.Connection connection);
 		/**
 		 * Destroys a window
-		 * 
+		 *
 		 * Destroys the specified window and all of its subwindows. A DestroyNotify event
 		 * is generated for each destroyed window (a DestroyNotify event is first generated
 		 * for any given window's inferiors). If the window was mapped, it will be
 		 * automatically unmapped before destroying.
-		 * 
+		 *
 		 * Calling DestroyWindow on the root window will do nothing.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link WindowError}:  The specified window does not exist.  
+		 *  * {@link WindowError}:  The specified window does not exist.
 		 *
 		 * @param connection The connection.
 		 *
@@ -840,17 +849,17 @@ namespace Xcb
 		public VoidCookie destroy (Xcb.Connection connection);
 		/**
 		 * Destroys a window
-		 * 
+		 *
 		 * Destroys the specified window and all of its subwindows. A DestroyNotify event
 		 * is generated for each destroyed window (a DestroyNotify event is first generated
 		 * for any given window's inferiors). If the window was mapped, it will be
 		 * automatically unmapped before destroying.
-		 * 
+		 *
 		 * Calling DestroyWindow on the root window will do nothing.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link WindowError}:  The specified window does not exist.  
+		 *  * {@link WindowError}:  The specified window does not exist.
 		 *
 		 * @param connection The connection.
 		 *
@@ -866,15 +875,15 @@ namespace Xcb
 		public VoidCookie destroy_subwindows_checked (Xcb.Connection connection);
 		/**
 		 * Changes a client's save set
-		 * 
+		 *
 		 * TODO: explain what the save set is for.
-		 * 
+		 *
 		 * This function either adds or removes the specified window to the client's (your
 		 * application's) save set.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link MatchError}:  You created the specified window. This does not make sense, you can only add windows created by other clients to your save set.  
+		 *  * {@link MatchError}:  You created the specified window. This does not make sense, you can only add windows created by other clients to your save set.
 		 *
 		 * @param connection The connection.
 		 * @param mode Insert to add the specified window to the save set or Delete to delete it from the save set.
@@ -885,15 +894,15 @@ namespace Xcb
 		public VoidCookie change_save_set (Xcb.Connection connection, SetMode mode);
 		/**
 		 * Changes a client's save set
-		 * 
+		 *
 		 * TODO: explain what the save set is for.
-		 * 
+		 *
 		 * This function either adds or removes the specified window to the client's (your
 		 * application's) save set.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link MatchError}:  You created the specified window. This does not make sense, you can only add windows created by other clients to your save set.  
+		 *  * {@link MatchError}:  You created the specified window. This does not make sense, you can only add windows created by other clients to your save set.
 		 *
 		 * @param connection The connection.
 		 * @param mode Insert to add the specified window to the save set or Delete to delete it from the save set.
@@ -904,17 +913,17 @@ namespace Xcb
 		public VoidCookie change_save_set_checked (Xcb.Connection connection, SetMode mode);
 		/**
 		 * Reparents a window
-		 * 
+		 *
 		 * Makes the specified window a child of the specified parent window. If the
 		 * window is mapped, it will automatically be unmapped before reparenting and
 		 * re-mapped after reparenting. The window is placed in the stacking order on top
 		 * with respect to sibling windows.
-		 * 
+		 *
 		 * After reparenting, a ReparentNotify event is generated.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link MatchError}:  The new parent window is not on the same screen as the old parent window.  The new parent window is the specified window or an inferior of the specified window.  The new parent is InputOnly and the window is not.  The specified window has a ParentRelative background and the new parent window is not the same depth as the specified window.  
+		 *  * {@link MatchError}:  The new parent window is not on the same screen as the old parent window.  The new parent window is the specified window or an inferior of the specified window.  The new parent is InputOnly and the window is not.  The specified window has a ParentRelative background and the new parent window is not the same depth as the specified window.
 		 *
 		 * @param connection The connection.
 		 * @param parent The new parent of the window.
@@ -929,17 +938,17 @@ namespace Xcb
 		public VoidCookie reparent (Xcb.Connection connection, Window parent, int16 x, int16 y);
 		/**
 		 * Reparents a window
-		 * 
+		 *
 		 * Makes the specified window a child of the specified parent window. If the
 		 * window is mapped, it will automatically be unmapped before reparenting and
 		 * re-mapped after reparenting. The window is placed in the stacking order on top
 		 * with respect to sibling windows.
-		 * 
+		 *
 		 * After reparenting, a ReparentNotify event is generated.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link MatchError}:  The new parent window is not on the same screen as the old parent window.  The new parent window is the specified window or an inferior of the specified window.  The new parent is InputOnly and the window is not.  The specified window has a ParentRelative background and the new parent window is not the same depth as the specified window.  
+		 *  * {@link MatchError}:  The new parent window is not on the same screen as the old parent window.  The new parent window is the specified window or an inferior of the specified window.  The new parent is InputOnly and the window is not.  The specified window has a ParentRelative background and the new parent window is not the same depth as the specified window.
 		 *
 		 * @param connection The connection.
 		 * @param parent The new parent of the window.
@@ -954,30 +963,30 @@ namespace Xcb
 		public VoidCookie reparent_checked (Xcb.Connection connection, Window parent, int16 x, int16 y);
 		/**
 		 * Makes a window visible
-		 * 
+		 *
 		 * Maps the specified window. This means making the window visible (as long as its
 		 * parent is visible).
-		 * 
+		 *
 		 * This MapWindow request will be translated to a MapRequest request if a window
 		 * manager is running. The window manager then decides to either map the window or
 		 * not. Set the override-redirect window attribute to true if you want to bypass
 		 * this mechanism.
-		 * 
+		 *
 		 * If the window manager decides to map the window (or if no window manager is
 		 * running), a MapNotify event is generated.
-		 * 
+		 *
 		 * If the window becomes viewable and no earlier contents for it are remembered,
 		 * the X server tiles the window with its background. If the window's background
 		 * is undefined, the existing screen contents are not altered, and the X server
 		 * generates zero or more Expose events.
-		 * 
+		 *
 		 * If the window type is InputOutput, an Expose event will be generated when the
 		 * window becomes visible. The normal response to an Expose event should be to
 		 * repaint the window.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link MatchError}:  The specified window does not exist.  
+		 *  * {@link MatchError}:  The specified window does not exist.
 		 *
 		 * @param connection The connection.
 		 *
@@ -989,30 +998,30 @@ namespace Xcb
 		public VoidCookie map (Xcb.Connection connection);
 		/**
 		 * Makes a window visible
-		 * 
+		 *
 		 * Maps the specified window. This means making the window visible (as long as its
 		 * parent is visible).
-		 * 
+		 *
 		 * This MapWindow request will be translated to a MapRequest request if a window
 		 * manager is running. The window manager then decides to either map the window or
 		 * not. Set the override-redirect window attribute to true if you want to bypass
 		 * this mechanism.
-		 * 
+		 *
 		 * If the window manager decides to map the window (or if no window manager is
 		 * running), a MapNotify event is generated.
-		 * 
+		 *
 		 * If the window becomes viewable and no earlier contents for it are remembered,
 		 * the X server tiles the window with its background. If the window's background
 		 * is undefined, the existing screen contents are not altered, and the X server
 		 * generates zero or more Expose events.
-		 * 
+		 *
 		 * If the window type is InputOutput, an Expose event will be generated when the
 		 * window becomes visible. The normal response to an Expose event should be to
 		 * repaint the window.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link MatchError}:  The specified window does not exist.  
+		 *  * {@link MatchError}:  The specified window does not exist.
 		 *
 		 * @param connection The connection.
 		 *
@@ -1028,16 +1037,16 @@ namespace Xcb
 		public VoidCookie map_subwindows_checked (Xcb.Connection connection);
 		/**
 		 * Makes a window invisible
-		 * 
+		 *
 		 * Unmaps the specified window. This means making the window invisible (and all
 		 * its child windows).
-		 * 
+		 *
 		 * Unmapping a window leads to the `UnmapNotify` event being generated. Also,
 		 * `Expose` events are generated for formerly obscured windows.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link WindowError}:  The specified window does not exist.  
+		 *  * {@link WindowError}:  The specified window does not exist.
 		 *
 		 * @param connection The connection.
 		 *
@@ -1049,16 +1058,16 @@ namespace Xcb
 		public VoidCookie unmap (Xcb.Connection connection);
 		/**
 		 * Makes a window invisible
-		 * 
+		 *
 		 * Unmaps the specified window. This means making the window invisible (and all
 		 * its child windows).
-		 * 
+		 *
 		 * Unmapping a window leads to the `UnmapNotify` event being generated. Also,
 		 * `Expose` events are generated for formerly obscured windows.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link WindowError}:  The specified window does not exist.  
+		 *  * {@link WindowError}:  The specified window does not exist.
 		 *
 		 * @param connection The connection.
 		 *
@@ -1074,12 +1083,12 @@ namespace Xcb
 		public VoidCookie unmap_subwindows_checked (Xcb.Connection connection);
 		/**
 		 * Configures window attributes
-		 * 
+		 *
 		 * Configures a window's size, position, border width and stacking order.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link MatchError}:  You specified a Sibling without also specifying StackMode or the window is not actually a Sibling.  
+		 *  * {@link MatchError}:  You specified a Sibling without also specifying StackMode or the window is not actually a Sibling.
 		 *
 		 * @param connection The connection.
 		 * @param value_mask Bitmask of attributes to change.
@@ -1094,12 +1103,12 @@ namespace Xcb
 		public VoidCookie configure (Xcb.Connection connection, uint16 value_mask, [CCode (array_length = false)]uint32[]? value_list = null);
 		/**
 		 * Configures window attributes
-		 * 
+		 *
 		 * Configures a window's size, position, border width and stacking order.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link MatchError}:  You specified a Sibling without also specifying StackMode or the window is not actually a Sibling.  
+		 *  * {@link MatchError}:  You specified a Sibling without also specifying StackMode or the window is not actually a Sibling.
 		 *
 		 * @param connection The connection.
 		 * @param value_mask Bitmask of attributes to change.
@@ -1114,16 +1123,16 @@ namespace Xcb
 		public VoidCookie configure_checked (Xcb.Connection connection, uint16 value_mask, [CCode (array_length = false)]uint32[]? value_list = null);
 		/**
 		 * Change window stacking order
-		 * 
+		 *
 		 * If `direction` is `XCB_CIRCULATE_RAISE_LOWEST`, the lowest mapped child (if
 		 * any) will be raised to the top of the stack.
-		 * 
+		 *
 		 * If `direction` is `XCB_CIRCULATE_LOWER_HIGHEST`, the highest mapped child will
 		 * be lowered to the bottom of the stack.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link WindowError}:  The specified `window` does not exist.  
+		 *  * {@link WindowError}:  The specified `window` does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param direction direction
@@ -1132,16 +1141,16 @@ namespace Xcb
 		public VoidCookie circulate (Xcb.Connection connection, Circulate direction);
 		/**
 		 * Change window stacking order
-		 * 
+		 *
 		 * If `direction` is `XCB_CIRCULATE_RAISE_LOWEST`, the lowest mapped child (if
 		 * any) will be raised to the top of the stack.
-		 * 
+		 *
 		 * If `direction` is `XCB_CIRCULATE_LOWER_HIGHEST`, the highest mapped child will
 		 * be lowered to the bottom of the stack.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link WindowError}:  The specified `window` does not exist.  
+		 *  * {@link WindowError}:  The specified `window` does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param direction direction
@@ -1150,10 +1159,10 @@ namespace Xcb
 		public VoidCookie circulate_checked (Xcb.Connection connection, Circulate direction);
 		/**
 		 * query the window tree
-		 * 
+		 *
 		 * Gets the root window ID, parent window ID and list of children windows for the
 		 * specified `window`. The children are listed in bottom-to-top stacking order.
-		 * 
+		 *
 		 * @param connection The connection.
 		 *
 		 */
@@ -1161,15 +1170,15 @@ namespace Xcb
 		public QueryTreeCookie query_tree (Xcb.Connection connection);
 		/**
 		 * Changes a window property
-		 * 
+		 *
 		 * Sets or updates a property on the specified `window`. Properties are for
 		 * example the window title (`WM_NAME`) or its minimum size (`WM_NORMAL_HINTS`).
 		 * Protocols such as EWMH also use properties - for example EWMH defines the
 		 * window title, encoded as UTF-8 string, in the `_NET_WM_NAME` property.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link MatchError}:  TODO: reasons?  
+		 *  * {@link MatchError}:  TODO: reasons?
 		 *
 		 * @param connection The connection.
 		 * @param mode mode
@@ -1185,15 +1194,15 @@ namespace Xcb
 		public VoidCookie change_property (Xcb.Connection connection, PropMode mode, Atom property, Atom type, uint8 format, [CCode (array_length_pos = 5.6)]void[]? data);
 		/**
 		 * Changes a window property
-		 * 
+		 *
 		 * Sets or updates a property on the specified `window`. Properties are for
 		 * example the window title (`WM_NAME`) or its minimum size (`WM_NORMAL_HINTS`).
 		 * Protocols such as EWMH also use properties - for example EWMH defines the
 		 * window title, encoded as UTF-8 string, in the `_NET_WM_NAME` property.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link MatchError}:  TODO: reasons?  
+		 *  * {@link MatchError}:  TODO: reasons?
 		 *
 		 * @param connection The connection.
 		 * @param mode mode
@@ -1213,21 +1222,21 @@ namespace Xcb
 		public VoidCookie delete_property_checked (Xcb.Connection connection, Atom property);
 		/**
 		 * Gets a window property
-		 * 
+		 *
 		 * Gets the specified `property` from the specified `window`. Properties are for
 		 * example the window title (`WM_NAME`) or its minimum size (`WM_NORMAL_HINTS`).
 		 * Protocols such as EWMH also use properties - for example EWMH defines the
 		 * window title, encoded as UTF-8 string, in the `_NET_WM_NAME` property.
-		 * 
+		 *
 		 * TODO: talk about `type`
-		 * 
+		 *
 		 * TODO: talk about `delete`
-		 * 
+		 *
 		 * TODO: talk about the offset/length thing. what's a valid use case?
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link WindowError}:  The specified `window` does not exist.  
+		 *  * {@link WindowError}:  The specified `window` does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param delete Whether the property should actually be deleted. For deleting a property, the
@@ -1246,15 +1255,15 @@ namespace Xcb
 		public ListPropertiesCookie list_properties (Xcb.Connection connection);
 		/**
 		 * Sets the owner of a selection
-		 * 
+		 *
 		 * Makes `window` the owner of the selection `selection` and updates the
 		 * last-change time of the specified selection.
-		 * 
+		 *
 		 * TODO: briefly explain what a selection is.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link AtomError}:  `selection` does not refer to a valid atom.  
+		 *  * {@link AtomError}:  `selection` does not refer to a valid atom.
 		 *
 		 * @param connection The connection.
 		 * @param selection The selection.
@@ -1271,15 +1280,15 @@ namespace Xcb
 		public VoidCookie set_selection_owner (Xcb.Connection connection, Atom selection, Timestamp time);
 		/**
 		 * Sets the owner of a selection
-		 * 
+		 *
 		 * Makes `window` the owner of the selection `selection` and updates the
 		 * last-change time of the specified selection.
-		 * 
+		 *
 		 * TODO: briefly explain what a selection is.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link AtomError}:  `selection` does not refer to a valid atom.  
+		 *  * {@link AtomError}:  `selection` does not refer to a valid atom.
 		 *
 		 * @param connection The connection.
 		 * @param selection The selection.
@@ -1300,18 +1309,18 @@ namespace Xcb
 		public VoidCookie convert_selection_checked (Xcb.Connection connection, Atom selection, Atom target, Atom property, Timestamp time);
 		/**
 		 * send an event
-		 * 
+		 *
 		 * Identifies the `destination` window, determines which clients should receive
 		 * the specified event and ignores any active grabs.
-		 * 
+		 *
 		 * The `event` must be one of the core events or an event defined by an extension,
 		 * so that the X server can correctly byte-swap the contents as necessary. The
 		 * contents of `event` are otherwise unaltered and unchecked except for the
 		 * `send_event` field which is forced to 'true'.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link WindowError}:  The specified `destination` window does not exist.  
+		 *  * {@link WindowError}:  The specified `destination` window does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param propagate If `propagate` is true and no clients have selected any event on `destination`,
@@ -1332,18 +1341,18 @@ namespace Xcb
 		public VoidCookie send_event (Xcb.Connection connection, bool propagate, EventMask event_mask, [CCode (array_length = false)]char event[32]);
 		/**
 		 * send an event
-		 * 
+		 *
 		 * Identifies the `destination` window, determines which clients should receive
 		 * the specified event and ignores any active grabs.
-		 * 
+		 *
 		 * The `event` must be one of the core events or an event defined by an extension,
 		 * so that the X server can correctly byte-swap the contents as necessary. The
 		 * contents of `event` are otherwise unaltered and unchecked except for the
 		 * `send_event` field which is forced to 'true'.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link WindowError}:  The specified `destination` window does not exist.  
+		 *  * {@link WindowError}:  The specified `destination` window does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param propagate If `propagate` is true and no clients have selected any event on `destination`,
@@ -1364,13 +1373,13 @@ namespace Xcb
 		public VoidCookie send_event_checked (Xcb.Connection connection, bool propagate, EventMask event_mask, [CCode (array_length = false)]char event[32]);
 		/**
 		 * Grab the pointer
-		 * 
+		 *
 		 * Actively grabs control of the pointer. Further pointer events are reported only to the grabbing client. Overrides any active pointer grab by this client.
-		 * 
-		 * 
+		 *
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link ValueError}:  TODO: reasons?  
+		 *  * {@link ValueError}:  TODO: reasons?
 		 *
 		 * @param connection The connection.
 		 * @param owner_events If 1, the `grab_window` will still get the pointer events. If 0, events are not
@@ -1401,23 +1410,23 @@ namespace Xcb
 		public GrabPointerCookie grab_pointer (Xcb.Connection connection, bool owner_events, EventMask event_mask, GrabMode pointer_mode, GrabMode keyboard_mode, Window confine_to, Cursor cursor, Timestamp time);
 		/**
 		 * Grab pointer button(s)
-		 * 
+		 *
 		 * This request establishes a passive grab. The pointer is actively grabbed as
 		 * described in GrabPointer, the last-pointer-grab time is set to the time at
 		 * which the button was pressed (as transmitted in the ButtonPress event), and the
 		 * ButtonPress event is reported if all of the following conditions are true:
-		 * 
+		 *
 		 * The pointer is not grabbed and the specified button is logically pressed when
 		 * the specified modifier keys are logically down, and no other buttons or
 		 * modifier keys are logically down.
-		 * 
+		 *
 		 * The grab-window contains the pointer.
-		 * 
+		 *
 		 * The confine-to window (if any) is viewable.
-		 * 
+		 *
 		 * A passive grab on the same button/key combination does not exist on any
 		 * ancestor of grab-window.
-		 * 
+		 *
 		 * The interpretation of the remaining arguments is the same as for GrabPointer.
 		 * The active grab is terminated automatically when the logical state of the
 		 * pointer has all buttons released, independent of the logical state of modifier
@@ -1431,17 +1440,17 @@ namespace Xcb
 		 * equivalent to issuing the request for all possible buttons. Otherwise, it is
 		 * not required that the button specified currently be assigned to a physical
 		 * button.
-		 * 
+		 *
 		 * An Access error is generated if some other client has already issued a
 		 * GrabButton request with the same button/key combination on the same window.
 		 * When using AnyModifier or AnyButton, the request fails completely (no grabs are
 		 * established), and an Access error is generated if there is a conflicting grab
 		 * for any combination. The request has no effect on an active grab.
-		 * 
-		 * 
+		 *
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link AccessError}:  Another client has already issued a GrabButton with the same button/key combination on the same window.  
+		 *  * {@link AccessError}:  Another client has already issued a GrabButton with the same button/key combination on the same window.
 		 *
 		 * @param connection The connection.
 		 * @param owner_events If 1, the `grab_window` will still get the pointer events. If 0, events are not
@@ -1464,23 +1473,23 @@ namespace Xcb
 		public VoidCookie grab_button (Xcb.Connection connection, bool owner_events, EventMask event_mask, GrabMode pointer_mode, GrabMode keyboard_mode, Window confine_to, Cursor cursor, ButtonIndex button, ModMask modifiers);
 		/**
 		 * Grab pointer button(s)
-		 * 
+		 *
 		 * This request establishes a passive grab. The pointer is actively grabbed as
 		 * described in GrabPointer, the last-pointer-grab time is set to the time at
 		 * which the button was pressed (as transmitted in the ButtonPress event), and the
 		 * ButtonPress event is reported if all of the following conditions are true:
-		 * 
+		 *
 		 * The pointer is not grabbed and the specified button is logically pressed when
 		 * the specified modifier keys are logically down, and no other buttons or
 		 * modifier keys are logically down.
-		 * 
+		 *
 		 * The grab-window contains the pointer.
-		 * 
+		 *
 		 * The confine-to window (if any) is viewable.
-		 * 
+		 *
 		 * A passive grab on the same button/key combination does not exist on any
 		 * ancestor of grab-window.
-		 * 
+		 *
 		 * The interpretation of the remaining arguments is the same as for GrabPointer.
 		 * The active grab is terminated automatically when the logical state of the
 		 * pointer has all buttons released, independent of the logical state of modifier
@@ -1494,17 +1503,17 @@ namespace Xcb
 		 * equivalent to issuing the request for all possible buttons. Otherwise, it is
 		 * not required that the button specified currently be assigned to a physical
 		 * button.
-		 * 
+		 *
 		 * An Access error is generated if some other client has already issued a
 		 * GrabButton request with the same button/key combination on the same window.
 		 * When using AnyModifier or AnyButton, the request fails completely (no grabs are
 		 * established), and an Access error is generated if there is a conflicting grab
 		 * for any combination. The request has no effect on an active grab.
-		 * 
-		 * 
+		 *
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link AccessError}:  Another client has already issued a GrabButton with the same button/key combination on the same window.  
+		 *  * {@link AccessError}:  Another client has already issued a GrabButton with the same button/key combination on the same window.
 		 *
 		 * @param connection The connection.
 		 * @param owner_events If 1, the `grab_window` will still get the pointer events. If 0, events are not
@@ -1531,10 +1540,10 @@ namespace Xcb
 		public VoidCookie ungrab_button_checked (Xcb.Connection connection, ButtonIndex button, ModMask modifiers);
 		/**
 		 * Grab the keyboard
-		 * 
+		 *
 		 * Actively grabs control of the keyboard and generates FocusIn and FocusOut
 		 * events. Further key events are reported only to the grabbing client.
-		 * 
+		 *
 		 * Any active keyboard grab by this client is overridden. If the keyboard is
 		 * actively grabbed by some other client, `AlreadyGrabbed` is returned. If
 		 * `grab_window` is not viewable, `GrabNotViewable` is returned. If the keyboard
@@ -1542,10 +1551,10 @@ namespace Xcb
 		 * specified `time` is earlier than the last-keyboard-grab time or later than the
 		 * current X server time, `GrabInvalidTime` is returned. Otherwise, the
 		 * last-keyboard-grab time is set to the specified time.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link ValueError}:  TODO: reasons?  
+		 *  * {@link ValueError}:  TODO: reasons?
 		 *
 		 * @param connection The connection.
 		 * @param owner_events If 1, the `grab_window` will still get the pointer events. If 0, events are not
@@ -1562,42 +1571,42 @@ namespace Xcb
 		public GrabKeyboardCookie grab_keyboard (Xcb.Connection connection, bool owner_events, Timestamp time, GrabMode pointer_mode, GrabMode keyboard_mode);
 		/**
 		 * Grab keyboard key(s)
-		 * 
+		 *
 		 * Establishes a passive grab on the keyboard. In the future, the keyboard is
 		 * actively grabbed (as for `GrabKeyboard`), the last-keyboard-grab time is set to
 		 * the time at which the key was pressed (as transmitted in the KeyPress event),
 		 * and the KeyPress event is reported if all of the following conditions are true:
-		 * 
+		 *
 		 * The keyboard is not grabbed and the specified key (which can itself be a
 		 * modifier key) is logically pressed when the specified modifier keys are
 		 * logically down, and no other modifier keys are logically down.
-		 * 
+		 *
 		 * Either the grab_window is an ancestor of (or is) the focus window, or the
 		 * grab_window is a descendant of the focus window and contains the pointer.
-		 * 
+		 *
 		 * A passive grab on the same key combination does not exist on any ancestor of
 		 * grab_window.
-		 * 
+		 *
 		 * The interpretation of the remaining arguments is as for XGrabKeyboard.  The active grab is terminated
 		 * automatically when the logical state of the keyboard has the specified key released (independent of the
 		 * logical state of the modifier keys), at which point a KeyRelease event is reported to the grabbing window.
-		 * 
+		 *
 		 * Note that the logical state of a device (as seen by client applications) may lag the physical state if
 		 * device event processing is frozen.
-		 * 
+		 *
 		 * A modifiers argument of AnyModifier is equivalent to issuing the request for all possible modifier combinations (including the combination of no modifiers).  It is not required that all modifiers specified
 		 * have currently assigned KeyCodes.  A keycode argument of AnyKey is equivalent to issuing the request for
 		 * all possible KeyCodes.  Otherwise, the specified keycode must be in the range specified by min_keycode
 		 * and max_keycode in the connection setup, or a BadValue error results.
-		 * 
+		 *
 		 * If some other client has issued a XGrabKey with the same key combination on the same window, a BadAccess
 		 * error results.  When using AnyModifier or AnyKey, the request fails completely, and a BadAccess error
 		 * results (no grabs are established) if there is a conflicting grab for any combination.
-		 * 
-		 * 
+		 *
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link AccessError}:  Another client has already issued a GrabKey with the same button/key combination on the same window.  
+		 *  * {@link AccessError}:  Another client has already issued a GrabKey with the same button/key combination on the same window.
 		 *
 		 * @param connection The connection.
 		 * @param owner_events If 1, the `grab_window` will still get the pointer events. If 0, events are not
@@ -1616,42 +1625,42 @@ namespace Xcb
 		public VoidCookie grab_key (Xcb.Connection connection, bool owner_events, ModMask modifiers, Keycode key, GrabMode pointer_mode, GrabMode keyboard_mode);
 		/**
 		 * Grab keyboard key(s)
-		 * 
+		 *
 		 * Establishes a passive grab on the keyboard. In the future, the keyboard is
 		 * actively grabbed (as for `GrabKeyboard`), the last-keyboard-grab time is set to
 		 * the time at which the key was pressed (as transmitted in the KeyPress event),
 		 * and the KeyPress event is reported if all of the following conditions are true:
-		 * 
+		 *
 		 * The keyboard is not grabbed and the specified key (which can itself be a
 		 * modifier key) is logically pressed when the specified modifier keys are
 		 * logically down, and no other modifier keys are logically down.
-		 * 
+		 *
 		 * Either the grab_window is an ancestor of (or is) the focus window, or the
 		 * grab_window is a descendant of the focus window and contains the pointer.
-		 * 
+		 *
 		 * A passive grab on the same key combination does not exist on any ancestor of
 		 * grab_window.
-		 * 
+		 *
 		 * The interpretation of the remaining arguments is as for XGrabKeyboard.  The active grab is terminated
 		 * automatically when the logical state of the keyboard has the specified key released (independent of the
 		 * logical state of the modifier keys), at which point a KeyRelease event is reported to the grabbing window.
-		 * 
+		 *
 		 * Note that the logical state of a device (as seen by client applications) may lag the physical state if
 		 * device event processing is frozen.
-		 * 
+		 *
 		 * A modifiers argument of AnyModifier is equivalent to issuing the request for all possible modifier combinations (including the combination of no modifiers).  It is not required that all modifiers specified
 		 * have currently assigned KeyCodes.  A keycode argument of AnyKey is equivalent to issuing the request for
 		 * all possible KeyCodes.  Otherwise, the specified keycode must be in the range specified by min_keycode
 		 * and max_keycode in the connection setup, or a BadValue error results.
-		 * 
+		 *
 		 * If some other client has issued a XGrabKey with the same key combination on the same window, a BadAccess
 		 * error results.  When using AnyModifier or AnyKey, the request fails completely, and a BadAccess error
 		 * results (no grabs are established) if there is a conflicting grab for any combination.
-		 * 
-		 * 
+		 *
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link AccessError}:  Another client has already issued a GrabKey with the same button/key combination on the same window.  
+		 *  * {@link AccessError}:  Another client has already issued a GrabKey with the same button/key combination on the same window.
 		 *
 		 * @param connection The connection.
 		 * @param owner_events If 1, the `grab_window` will still get the pointer events. If 0, events are not
@@ -1670,13 +1679,13 @@ namespace Xcb
 		public VoidCookie grab_key_checked (Xcb.Connection connection, bool owner_events, ModMask modifiers, Keycode key, GrabMode pointer_mode, GrabMode keyboard_mode);
 		/**
 		 * release a key combination
-		 * 
+		 *
 		 * Releases the key combination on `grab_window` if you grabbed it using
 		 * `xcb_grab_key` before.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link WindowError}:  The specified `grab_window` does not exist.  
+		 *  * {@link WindowError}:  The specified `grab_window` does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param key The keycode of the specified key combination.
@@ -1691,13 +1700,13 @@ namespace Xcb
 		public VoidCookie ungrab_key (Xcb.Connection connection, Keycode key, ModMask modifiers);
 		/**
 		 * release a key combination
-		 * 
+		 *
 		 * Releases the key combination on `grab_window` if you grabbed it using
 		 * `xcb_grab_key` before.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link WindowError}:  The specified `grab_window` does not exist.  
+		 *  * {@link WindowError}:  The specified `grab_window` does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param key The keycode of the specified key combination.
@@ -1712,13 +1721,13 @@ namespace Xcb
 		public VoidCookie ungrab_key_checked (Xcb.Connection connection, Keycode key, ModMask modifiers);
 		/**
 		 * get pointer coordinates
-		 * 
+		 *
 		 * Gets the root window the pointer is logically on and the pointer coordinates
 		 * relative to the root window's origin.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link WindowError}:  The specified `window` does not exist.  
+		 *  * {@link WindowError}:  The specified `window` does not exist.
 		 *
 		 * @param connection The connection.
 		 */
@@ -1730,22 +1739,22 @@ namespace Xcb
 		public TranslateCoordinatesCookie translate_coordinates (Xcb.Connection connection, Window dst_window, int16 src_x, int16 src_y);
 		/**
 		 * move mouse pointer
-		 * 
+		 *
 		 * Moves the mouse pointer to the specified position.
-		 * 
+		 *
 		 * If `src_window` is not `XCB_NONE` (TODO), the move will only take place if the
 		 * pointer is inside `src_window` and within the rectangle specified by (`src_x`,
 		 * `src_y`, `src_width`, `src_height`). The rectangle coordinates are relative to
 		 * `src_window`.
-		 * 
+		 *
 		 * If `dst_window` is not `XCB_NONE` (TODO), the pointer will be moved to the
 		 * offsets (`dst_x`, `dst_y`) relative to `dst_window`. If `dst_window` is
 		 * `XCB_NONE` (TODO), the pointer will be moved by the offsets (`dst_x`, `dst_y`)
 		 * relative to the current position of the pointer.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link WindowError}:  TODO: reasons?  
+		 *  * {@link WindowError}:  TODO: reasons?
 		 *
 		 * @param connection The connection.
 		 * @param dst_window If `dst_window` is not `XCB_NONE` (TODO), the pointer will be moved to the
@@ -1759,22 +1768,22 @@ namespace Xcb
 		public VoidCookie warp_pointer (Xcb.Connection connection, Window dst_window, int16 src_x, int16 src_y, uint16 src_width, uint16 src_height, int16 dst_x, int16 dst_y);
 		/**
 		 * move mouse pointer
-		 * 
+		 *
 		 * Moves the mouse pointer to the specified position.
-		 * 
+		 *
 		 * If `src_window` is not `XCB_NONE` (TODO), the move will only take place if the
 		 * pointer is inside `src_window` and within the rectangle specified by (`src_x`,
 		 * `src_y`, `src_width`, `src_height`). The rectangle coordinates are relative to
 		 * `src_window`.
-		 * 
+		 *
 		 * If `dst_window` is not `XCB_NONE` (TODO), the pointer will be moved to the
 		 * offsets (`dst_x`, `dst_y`) relative to `dst_window`. If `dst_window` is
 		 * `XCB_NONE` (TODO), the pointer will be moved by the offsets (`dst_x`, `dst_y`)
 		 * relative to the current position of the pointer.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link WindowError}:  TODO: reasons?  
+		 *  * {@link WindowError}:  TODO: reasons?
 		 *
 		 * @param connection The connection.
 		 * @param dst_window If `dst_window` is not `XCB_NONE` (TODO), the pointer will be moved to the
@@ -1788,16 +1797,16 @@ namespace Xcb
 		public VoidCookie warp_pointer_checked (Xcb.Connection connection, Window dst_window, int16 src_x, int16 src_y, uint16 src_width, uint16 src_height, int16 dst_x, int16 dst_y);
 		/**
 		 * Sets input focus
-		 * 
+		 *
 		 * Changes the input focus and the last-focus-change time. If the specified `time`
 		 * is earlier than the current last-focus-change time, the request is ignored (to
 		 * avoid race conditions when running X over the network).
-		 * 
+		 *
 		 * A FocusIn and FocusOut event is generated when focus is changed.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link WindowError}:  The specified `focus` window does not exist.  
+		 *  * {@link WindowError}:  The specified `focus` window does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param revert_to Specifies what happens when the `focus` window becomes unviewable (if `focus`
@@ -1813,16 +1822,16 @@ namespace Xcb
 		public VoidCookie set_input_focus (Xcb.Connection connection, InputFocus revert_to, Timestamp time);
 		/**
 		 * Sets input focus
-		 * 
+		 *
 		 * Changes the input focus and the last-focus-change time. If the specified `time`
 		 * is earlier than the current last-focus-change time, the request is ignored (to
 		 * avoid race conditions when running X over the network).
-		 * 
+		 *
 		 * A FocusIn and FocusOut event is generated when focus is changed.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link WindowError}:  The specified `focus` window does not exist.  
+		 *  * {@link WindowError}:  The specified `focus` window does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param revert_to Specifies what happens when the `focus` window becomes unviewable (if `focus`
@@ -1852,7 +1861,7 @@ namespace Xcb
 	public class GetWindowAttributesReply {
 		public BackingStore backing_store;
 		public Visualid visual;
-		public WindowClass class;
+		public WindowClass _class;
 		public Gravity bit_gravity;
 		public Gravity win_gravity;
 		public uint32 backing_planes;
@@ -1885,6 +1894,11 @@ namespace Xcb
 		}
 		public int children_length {
 			[CCode (cname = "xcb_query_tree_children_length")]
+			get;
+		}
+		[CCode (array_length = false)]
+		public unowned Window[] children {
+			[CCode (cname = "xcb_query_tree_children")]
 			get;
 		}
 	}
@@ -1928,6 +1942,11 @@ namespace Xcb
 		}
 		public int atoms_length {
 			[CCode (cname = "xcb_list_properties_atoms_length")]
+			get;
+		}
+		[CCode (array_length = false)]
+		public unowned Atom[] atoms {
+			[CCode (cname = "xcb_list_properties_atoms")]
 			get;
 		}
 	}
@@ -1990,6 +2009,11 @@ namespace Xcb
 			[CCode (cname = "xcb_get_motion_events_events_length")]
 			get;
 		}
+		[CCode (array_length = false)]
+		public unowned Timecoord[] events {
+			[CCode (cname = "xcb_get_motion_events_events")]
+			get;
+		}
 	}
 
 	[SimpleType, CCode (cname = "xcb_get_motion_events_cookie_t")]
@@ -2022,6 +2046,11 @@ namespace Xcb
 		}
 		public int cmaps_length {
 			[CCode (cname = "xcb_list_installed_colormaps_cmaps_length")]
+			get;
+		}
+		[CCode (array_length = false)]
+		public unowned Colormap[] cmaps {
+			[CCode (cname = "xcb_list_installed_colormaps_cmaps")]
 			get;
 		}
 	}
@@ -2071,13 +2100,13 @@ namespace Xcb
 
 		/**
 		 * Creates a pixmap
-		 * 
+		 *
 		 * Creates a pixmap. The pixmap can only be used on the same screen as `drawable`
 		 * is on and only with drawables of the same `depth`.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link ValueError}:  TODO: reasons?  
+		 *  * {@link ValueError}:  TODO: reasons?
 		 *
 		 * @param connection The connection.
 		 * @param depth TODO
@@ -2090,13 +2119,13 @@ namespace Xcb
 		public VoidCookie create (Xcb.Connection connection, uint8 depth, Drawable drawable, uint16 width, uint16 height);
 		/**
 		 * Creates a pixmap
-		 * 
+		 *
 		 * Creates a pixmap. The pixmap can only be used on the same screen as `drawable`
 		 * is on and only with drawables of the same `depth`.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link ValueError}:  TODO: reasons?  
+		 *  * {@link ValueError}:  TODO: reasons?
 		 *
 		 * @param connection The connection.
 		 * @param depth TODO
@@ -2109,13 +2138,13 @@ namespace Xcb
 		public VoidCookie create_checked (Xcb.Connection connection, uint8 depth, Drawable drawable, uint16 width, uint16 height);
 		/**
 		 * Destroys a pixmap
-		 * 
+		 *
 		 * Deletes the association between the pixmap ID and the pixmap. The pixmap
 		 * storage will be freed when there are no more references to it.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link PixmapError}:  The specified pixmap does not exist.  
+		 *  * {@link PixmapError}:  The specified pixmap does not exist.
 		 *
 		 * @param connection The connection.
 		 */
@@ -2123,13 +2152,13 @@ namespace Xcb
 		public VoidCookie free (Xcb.Connection connection);
 		/**
 		 * Destroys a pixmap
-		 * 
+		 *
 		 * Deletes the association between the pixmap ID and the pixmap. The pixmap
 		 * storage will be freed when there are no more references to it.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link PixmapError}:  The specified pixmap does not exist.  
+		 *  * {@link PixmapError}:  The specified pixmap does not exist.
 		 *
 		 * @param connection The connection.
 		 */
@@ -2184,20 +2213,20 @@ namespace Xcb
 		public VoidCookie create_checked (Xcb.Connection connection, Pixmap source, Pixmap mask, uint16 fore_red, uint16 fore_green, uint16 fore_blue, uint16 back_red, uint16 back_green, uint16 back_blue, uint16 x, uint16 y);
 		/**
 		 * create cursor
-		 * 
+		 *
 		 * Creates a cursor from a font glyph. X provides a set of standard cursor shapes
 		 * in a special font named cursor. Applications are encouraged to use this
 		 * interface for their cursors because the font can be customized for the
 		 * individual display type.
-		 * 
+		 *
 		 * All pixels which are set to 1 in the source will use the foreground color (as
 		 * specified by `fore_red`, `fore_green` and `fore_blue`). All pixels set to 0
 		 * will use the background color (as specified by `back_red`, `back_green` and
 		 * `back_blue`).
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link AllocError}:  The X server could not allocate the requested resources (no memory?).  
+		 *  * {@link AllocError}:  The X server could not allocate the requested resources (no memory?).
 		 *
 		 * @param connection The connection.
 		 * @param source_font In which font to look for the cursor glyph.
@@ -2217,20 +2246,20 @@ namespace Xcb
 		public VoidCookie create_glyph (Xcb.Connection connection, Font source_font, Font mask_font, uint16 source_char, uint16 mask_char, uint16 fore_red, uint16 fore_green, uint16 fore_blue, uint16 back_red, uint16 back_green, uint16 back_blue);
 		/**
 		 * create cursor
-		 * 
+		 *
 		 * Creates a cursor from a font glyph. X provides a set of standard cursor shapes
 		 * in a special font named cursor. Applications are encouraged to use this
 		 * interface for their cursors because the font can be customized for the
 		 * individual display type.
-		 * 
+		 *
 		 * All pixels which are set to 1 in the source will use the foreground color (as
 		 * specified by `fore_red`, `fore_green` and `fore_blue`). All pixels set to 0
 		 * will use the background color (as specified by `back_red`, `back_green` and
 		 * `back_blue`).
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link AllocError}:  The X server could not allocate the requested resources (no memory?).  
+		 *  * {@link AllocError}:  The X server could not allocate the requested resources (no memory?).
 		 *
 		 * @param connection The connection.
 		 * @param source_font In which font to look for the cursor glyph.
@@ -2250,13 +2279,13 @@ namespace Xcb
 		public VoidCookie create_glyph_checked (Xcb.Connection connection, Font source_font, Font mask_font, uint16 source_char, uint16 mask_char, uint16 fore_red, uint16 fore_green, uint16 fore_blue, uint16 back_red, uint16 back_green, uint16 back_blue);
 		/**
 		 * Deletes a cursor
-		 * 
+		 *
 		 * Deletes the association between the cursor resource ID and the specified
 		 * cursor. The cursor is freed when no other resource references it.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link CursorError}:  The specified cursor does not exist.  
+		 *  * {@link CursorError}:  The specified cursor does not exist.
 		 *
 		 * @param connection The connection.
 		 */
@@ -2264,13 +2293,13 @@ namespace Xcb
 		public VoidCookie free (Xcb.Connection connection);
 		/**
 		 * Deletes a cursor
-		 * 
+		 *
 		 * Deletes the association between the cursor resource ID and the specified
 		 * cursor. The cursor is freed when no other resource references it.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link CursorError}:  The specified cursor does not exist.  
+		 *  * {@link CursorError}:  The specified cursor does not exist.
 		 *
 		 * @param connection The connection.
 		 */
@@ -2321,15 +2350,15 @@ namespace Xcb
 
 		/**
 		 * opens a font
-		 * 
+		 *
 		 * Opens any X core font matching the given `name` (for example "-misc-fixed-*").
-		 * 
+		 *
 		 * Note that X core fonts are deprecated (but still supported) in favor of
 		 * client-side rendering using Xft.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link NameError}:  No font matches the given `name`.  
+		 *  * {@link NameError}:  No font matches the given `name`.
 		 *
 		 * @param connection The connection.
 		 * @param name A pattern describing an X core font.
@@ -2339,15 +2368,15 @@ namespace Xcb
 		public VoidCookie open (Xcb.Connection connection, [CCode (array_length_pos = 1.2)]char[]? name);
 		/**
 		 * opens a font
-		 * 
+		 *
 		 * Opens any X core font matching the given `name` (for example "-misc-fixed-*").
-		 * 
+		 *
 		 * Note that X core fonts are deprecated (but still supported) in favor of
 		 * client-side rendering using Xft.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link NameError}:  No font matches the given `name`.  
+		 *  * {@link NameError}:  No font matches the given `name`.
 		 *
 		 * @param connection The connection.
 		 * @param name A pattern describing an X core font.
@@ -2400,44 +2429,44 @@ namespace Xcb
 
 		/**
 		 * Creates a graphics context
-		 * 
+		 *
 		 * Creates a graphics context. The graphics context can be used with any drawable
 		 * that has the same root and depth as the specified drawable.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param drawable Drawable to get the root/depth from.
 		 *
 		 */
 		[CCode (cname = "xcb_create_gc", instance_pos = 1.1)]
-		public VoidCookie create_gc (Xcb.Connection connection, Drawable drawable, uint32 value_mask = 0, [CCode (array_length = false)]uint32[]? value_list = null);
+		public VoidCookie create (Xcb.Connection connection, Drawable drawable, uint32 value_mask = 0, [CCode (array_length = false)]uint32[]? value_list = null);
 		/**
 		 * Creates a graphics context
-		 * 
+		 *
 		 * Creates a graphics context. The graphics context can be used with any drawable
 		 * that has the same root and depth as the specified drawable.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param drawable Drawable to get the root/depth from.
 		 *
 		 */
 		[CCode (cname = "xcb_create_gc_checked", instance_pos = 1.1)]
-		public VoidCookie create_gc_checked (Xcb.Connection connection, Drawable drawable, uint32 value_mask = 0, [CCode (array_length = false)]uint32[]? value_list = null);
+		public VoidCookie create_checked (Xcb.Connection connection, Drawable drawable, uint32 value_mask = 0, [CCode (array_length = false)]uint32[]? value_list = null);
 		/**
 		 * change graphics context components
-		 * 
+		 *
 		 * Changes the components specified by `value_mask` for the specified graphics context.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link FontError}:  TODO: reasons?  
+		 *  * {@link FontError}:  TODO: reasons?
 		 *
 		 * @param connection The connection.
 		 * @param value_mask value_mask
@@ -2446,15 +2475,15 @@ namespace Xcb
 		 *                   example.
 		 */
 		[CCode (cname = "xcb_change_gc", instance_pos = 1.1)]
-		public VoidCookie change_gc (Xcb.Connection connection, uint32 value_mask = 0, [CCode (array_length = false)]uint32[]? value_list = null);
+		public VoidCookie change (Xcb.Connection connection, uint32 value_mask = 0, [CCode (array_length = false)]uint32[]? value_list = null);
 		/**
 		 * change graphics context components
-		 * 
+		 *
 		 * Changes the components specified by `value_mask` for the specified graphics context.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link FontError}:  TODO: reasons?  
+		 *  * {@link FontError}:  TODO: reasons?
 		 *
 		 * @param connection The connection.
 		 * @param value_mask value_mask
@@ -2463,11 +2492,11 @@ namespace Xcb
 		 *                   example.
 		 */
 		[CCode (cname = "xcb_change_gc_checked", instance_pos = 1.1)]
-		public VoidCookie change_gc_checked (Xcb.Connection connection, uint32 value_mask = 0, [CCode (array_length = false)]uint32[]? value_list = null);
+		public VoidCookie change_checked (Xcb.Connection connection, uint32 value_mask = 0, [CCode (array_length = false)]uint32[]? value_list = null);
 		[CCode (cname = "xcb_copy_gc", instance_pos = 1.1)]
-		public VoidCookie copy_gc (Xcb.Connection connection, GContext dst_gc, GC value_mask);
+		public VoidCookie copy (Xcb.Connection connection, GContext dst_gc, GC value_mask);
 		[CCode (cname = "xcb_copy_gc_checked", instance_pos = 1.1)]
-		public VoidCookie copy_gc_checked (Xcb.Connection connection, GContext dst_gc, GC value_mask);
+		public VoidCookie copy_checked (Xcb.Connection connection, GContext dst_gc, GC value_mask);
 		[CCode (cname = "xcb_set_dashes", instance_pos = 1.1)]
 		public VoidCookie set_dashes (Xcb.Connection connection, uint16 dash_offset, [CCode (array_length_pos = 2.3)]uint8[]? dashes);
 		[CCode (cname = "xcb_set_dashes_checked", instance_pos = 1.1)]
@@ -2478,30 +2507,30 @@ namespace Xcb
 		public VoidCookie set_clip_rectangles_checked (Xcb.Connection connection, ClipOrdering ordering, int16 clip_x_origin, int16 clip_y_origin, [CCode (array_length_pos = 4.4)]Rectangle[]? rectangles);
 		/**
 		 * Destroys a graphics context
-		 * 
+		 *
 		 * Destroys the specified `gc` and all associated storage.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link GCError}:  The specified graphics context does not exist.  
+		 *  * {@link GCError}:  The specified graphics context does not exist.
 		 *
 		 * @param connection The connection.
 		 */
 		[CCode (cname = "xcb_free_gc", instance_pos = 1.1)]
-		public VoidCookie free_gc (Xcb.Connection connection);
+		public VoidCookie free (Xcb.Connection connection);
 		/**
 		 * Destroys a graphics context
-		 * 
+		 *
 		 * Destroys the specified `gc` and all associated storage.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link GCError}:  The specified graphics context does not exist.  
+		 *  * {@link GCError}:  The specified graphics context does not exist.
 		 *
 		 * @param connection The connection.
 		 */
 		[CCode (cname = "xcb_free_gc_checked", instance_pos = 1.1)]
-		public VoidCookie free_gc_checked (Xcb.Connection connection);
+		public VoidCookie free_checked (Xcb.Connection connection);
 	}
 
 	[SimpleType, CCode (cname = "xcb_colormap_iterator_t")]
@@ -2563,16 +2592,16 @@ namespace Xcb
 		public VoidCookie uninstall_checked (Xcb.Connection connection);
 		/**
 		 * Allocate a color
-		 * 
+		 *
 		 * Allocates a read-only colormap entry corresponding to the closest RGB value
 		 * supported by the hardware. If you are using TrueColor, you can take a shortcut
 		 * and directly calculate the color pixel value to avoid the round trip. But, for
 		 * example, on 16-bit color setups (VNC), you can easily get the closest supported
 		 * RGB value to the RGB value you are specifying.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link ColormapError}:  The specified colormap `cmap` does not exist.  
+		 *  * {@link ColormapError}:  The specified colormap `cmap` does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param red The red value of your color.
@@ -2701,6 +2730,11 @@ namespace Xcb
 			[CCode (cname = "xcb_query_colors_colors_length")]
 			get;
 		}
+		[CCode (array_length = false)]
+		public unowned Rgb[] colors {
+			[CCode (cname = "xcb_query_colors_colors")]
+			get;
+		}
 	}
 
 	[SimpleType, CCode (cname = "xcb_query_colors_cookie_t")]
@@ -2758,14 +2792,14 @@ namespace Xcb
 		public GetAtomNameCookie get_name (Xcb.Connection connection);
 		/**
 		 * Gets the owner of a selection
-		 * 
+		 *
 		 * Gets the owner of the specified selection.
-		 * 
+		 *
 		 * TODO: briefly explain what a selection is.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link AtomError}:  `selection` does not refer to a valid atom.  
+		 *  * {@link AtomError}:  `selection` does not refer to a valid atom.
 		 *
 		 * @param connection The connection.
 		 *
@@ -2812,12 +2846,12 @@ namespace Xcb
 	public struct Drawable : uint32 {
 		/**
 		 * Get current window geometry
-		 * 
+		 *
 		 * Gets the current geometry of the specified drawable (either `Window` or `Pixmap`).
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link DrawableError}:  TODO: reasons?  
+		 *  * {@link DrawableError}:  TODO: reasons?
 		 *
 		 * @param connection The connection.
 		 *
@@ -2826,12 +2860,12 @@ namespace Xcb
 		public GetGeometryCookie get_geometry (Xcb.Connection connection);
 		/**
 		 * copy areas
-		 * 
+		 *
 		 * Copies the specified rectangle from `src_drawable` to `dst_drawable`.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param dst_drawable The destination drawable (Window or Pixmap).
@@ -2847,12 +2881,12 @@ namespace Xcb
 		public VoidCookie copy_area (Xcb.Connection connection, Drawable dst_drawable, GContext gc, int16 src_x, int16 src_y, int16 dst_x, int16 dst_y, uint16 width, uint16 height);
 		/**
 		 * copy areas
-		 * 
+		 *
 		 * Copies the specified rectangle from `src_drawable` to `dst_drawable`.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param dst_drawable The destination drawable (Window or Pixmap).
@@ -2876,7 +2910,7 @@ namespace Xcb
 		public VoidCookie poly_point_checked (Xcb.Connection connection, CoordMode coordinate_mode, GContext gc, [CCode (array_length_pos = 3.3)]Point[]? points);
 		/**
 		 * draw lines
-		 * 
+		 *
 		 * Draws `points_len`-1 lines between each pair of points (point[i], point[i+1])
 		 * in the `points` array. The lines are drawn in the order listed in the array.
 		 * They join correctly at all intermediate points, and if the first and last
@@ -2885,10 +2919,10 @@ namespace Xcb
 		 * intersect, the intersecting pixels are drawn multiple times. If wide lines
 		 * intersect, the intersecting pixels are drawn only once, as though the entire
 		 * request were a single, filled shape.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link DrawableError}:  TODO: reasons?  
+		 *  * {@link DrawableError}:  TODO: reasons?
 		 *
 		 * @param connection The connection.
 		 * @param coordinate_mode coordinate_mode
@@ -2899,7 +2933,7 @@ namespace Xcb
 		public VoidCookie poly_line (Xcb.Connection connection, CoordMode coordinate_mode, GContext gc, [CCode (array_length_pos = 3.3)]Point[]? points);
 		/**
 		 * draw lines
-		 * 
+		 *
 		 * Draws `points_len`-1 lines between each pair of points (point[i], point[i+1])
 		 * in the `points` array. The lines are drawn in the order listed in the array.
 		 * They join correctly at all intermediate points, and if the first and last
@@ -2908,10 +2942,10 @@ namespace Xcb
 		 * intersect, the intersecting pixels are drawn multiple times. If wide lines
 		 * intersect, the intersecting pixels are drawn only once, as though the entire
 		 * request were a single, filled shape.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link DrawableError}:  TODO: reasons?  
+		 *  * {@link DrawableError}:  TODO: reasons?
 		 *
 		 * @param connection The connection.
 		 * @param coordinate_mode coordinate_mode
@@ -2922,20 +2956,20 @@ namespace Xcb
 		public VoidCookie poly_line_checked (Xcb.Connection connection, CoordMode coordinate_mode, GContext gc, [CCode (array_length_pos = 3.3)]Point[]? points);
 		/**
 		 * draw lines
-		 * 
+		 *
 		 * Draws multiple, unconnected lines. For each segment, a line is drawn between
 		 * (x1, y1) and (x2, y2). The lines are drawn in the order listed in the array of
 		 * `xcb_segment_t` structures and does not perform joining at coincident
 		 * endpoints. For any given line, a pixel is not drawn more than once. If lines
 		 * intersect, the intersecting pixels are drawn multiple times.
-		 * 
+		 *
 		 * TODO: include the xcb_segment_t data structure
-		 * 
+		 *
 		 * TODO: an example
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link DrawableError}:  The specified `drawable` does not exist.  
+		 *  * {@link DrawableError}:  The specified `drawable` does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param gc The graphics context to use.
@@ -2946,20 +2980,20 @@ namespace Xcb
 		public VoidCookie poly_segment (Xcb.Connection connection, GContext gc, [CCode (array_length_pos = 2.2)]Segment[]? segments);
 		/**
 		 * draw lines
-		 * 
+		 *
 		 * Draws multiple, unconnected lines. For each segment, a line is drawn between
 		 * (x1, y1) and (x2, y2). The lines are drawn in the order listed in the array of
 		 * `xcb_segment_t` structures and does not perform joining at coincident
 		 * endpoints. For any given line, a pixel is not drawn more than once. If lines
 		 * intersect, the intersecting pixels are drawn multiple times.
-		 * 
+		 *
 		 * TODO: include the xcb_segment_t data structure
-		 * 
+		 *
 		 * TODO: an example
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link DrawableError}:  The specified `drawable` does not exist.  
+		 *  * {@link DrawableError}:  The specified `drawable` does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param gc The graphics context to use.
@@ -2982,14 +3016,14 @@ namespace Xcb
 		public VoidCookie fill_poly_checked (Xcb.Connection connection, GContext gc, PolyShape shape, CoordMode coordinate_mode, [CCode (array_length_pos = 4.4)]Point[]? points);
 		/**
 		 * Fills rectangles
-		 * 
+		 *
 		 * Fills the specified rectangle(s) in the order listed in the array. For any
 		 * given rectangle, each pixel is not drawn more than once. If rectangles
 		 * intersect, the intersecting pixels are drawn multiple times.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param gc The graphics context to use.
@@ -3004,14 +3038,14 @@ namespace Xcb
 		public VoidCookie poly_fill_rectangle (Xcb.Connection connection, GContext gc, [CCode (array_length_pos = 2.2)]Rectangle[]? rectangles);
 		/**
 		 * Fills rectangles
-		 * 
+		 *
 		 * Fills the specified rectangle(s) in the order listed in the array. For any
 		 * given rectangle, each pixel is not drawn more than once. If rectangles
 		 * intersect, the intersecting pixels are drawn multiple times.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param gc The graphics context to use.
@@ -3044,19 +3078,19 @@ namespace Xcb
 		public VoidCookie poly_text_16_checked (Xcb.Connection connection, GContext gc, int16 x, int16 y, [CCode (array_length_pos = 4.4)]uint8[]? items);
 		/**
 		 * Draws text
-		 * 
+		 *
 		 * Fills the destination rectangle with the background pixel from `gc`, then
 		 * paints the text with the foreground pixel from `gc`. The upper-left corner of
 		 * the filled rectangle is at [x, y - font-ascent]. The width is overall-width,
 		 * the height is font-ascent + font-descent. The overall-width, font-ascent and
 		 * font-descent are as returned by `xcb_query_text_extents` (TODO).
-		 * 
+		 *
 		 * Note that using X core fonts is deprecated (but still supported) in favor of
 		 * client-side rendering using Xft.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param gc The graphics context to use.
@@ -3073,19 +3107,19 @@ namespace Xcb
 		public VoidCookie image_text_8 (Xcb.Connection connection, GContext gc, int16 x, int16 y, [CCode (array_length_pos = 1.1)]char[]? string);
 		/**
 		 * Draws text
-		 * 
+		 *
 		 * Fills the destination rectangle with the background pixel from `gc`, then
 		 * paints the text with the foreground pixel from `gc`. The upper-left corner of
 		 * the filled rectangle is at [x, y - font-ascent]. The width is overall-width,
 		 * the height is font-ascent + font-descent. The overall-width, font-ascent and
 		 * font-descent are as returned by `xcb_query_text_extents` (TODO).
-		 * 
+		 *
 		 * Note that using X core fonts is deprecated (but still supported) in favor of
 		 * client-side rendering using Xft.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param gc The graphics context to use.
@@ -3102,19 +3136,19 @@ namespace Xcb
 		public VoidCookie image_text_8_checked (Xcb.Connection connection, GContext gc, int16 x, int16 y, [CCode (array_length_pos = 1.1)]char[]? string);
 		/**
 		 * Draws text
-		 * 
+		 *
 		 * Fills the destination rectangle with the background pixel from `gc`, then
 		 * paints the text with the foreground pixel from `gc`. The upper-left corner of
 		 * the filled rectangle is at [x, y - font-ascent]. The width is overall-width,
 		 * the height is font-ascent + font-descent. The overall-width, font-ascent and
 		 * font-descent are as returned by `xcb_query_text_extents` (TODO).
-		 * 
+		 *
 		 * Note that using X core fonts is deprecated (but still supported) in favor of
 		 * client-side rendering using Xft.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param gc The graphics context to use.
@@ -3132,19 +3166,19 @@ namespace Xcb
 		public VoidCookie image_text_16 (Xcb.Connection connection, GContext gc, int16 x, int16 y, [CCode (array_length_pos = 1.1)]Char2b[]? string);
 		/**
 		 * Draws text
-		 * 
+		 *
 		 * Fills the destination rectangle with the background pixel from `gc`, then
 		 * paints the text with the foreground pixel from `gc`. The upper-left corner of
 		 * the filled rectangle is at [x, y - font-ascent]. The width is overall-width,
 		 * the height is font-ascent + font-descent. The overall-width, font-ascent and
 		 * font-descent are as returned by `xcb_query_text_extents` (TODO).
-		 * 
+		 *
 		 * Note that using X core fonts is deprecated (but still supported) in favor of
 		 * client-side rendering using Xft.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.  
+		 *  * {@link DrawableError}:  The specified `drawable` (Window or Pixmap) does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param gc The graphics context to use.
@@ -3218,20 +3252,20 @@ namespace Xcb
 	public struct Fontable : uint32 {
 		/**
 		 * query font metrics
-		 * 
+		 *
 		 * Queries information associated with the font.
-		 * 
+		 *
 		 * @param connection The connection.
 		 */
 		[CCode (cname = "xcb_query_font", instance_pos = 1.1)]
 		public QueryFontCookie query_font (Xcb.Connection connection);
 		/**
 		 * get text extents
-		 * 
+		 *
 		 * Query text extents from the X11 server. This request returns the bounding box
 		 * of the specified 16-bit character string in the specified `font` or the font
 		 * contained in the specified graphics context.
-		 * 
+		 *
 		 * `font_ascent` is set to the maximum of the ascent metrics of all characters in
 		 * the string. `font_descent` is set to the maximum of the descent metrics.
 		 * `overall_width` is set to the sum of the character-width metrics of all
@@ -3241,18 +3275,18 @@ namespace Xcb
 		 * right-side-bearing metric of the character plus W. The lbearing member is set
 		 * to the minimum L of all characters in the string. The rbearing member is set to
 		 * the maximum R.
-		 * 
+		 *
 		 * For fonts defined with linear indexing rather than 2-byte matrix indexing, each
 		 * `xcb_char2b_t` structure is interpreted as a 16-bit number with byte1 as the
 		 * most significant byte. If the font has no defined default character, undefined
 		 * characters in the string are taken to have all zero metrics.
-		 * 
+		 *
 		 * Characters with all zero metrics are ignored. If the font has no defined
 		 * default_char, the undefined characters in the string are also ignored.
-		 * 
+		 *
 		 * = Errors: =
 		 *
-		 *  * {@link GCError}:  The specified graphics context does not exist.  
+		 *  * {@link GCError}:  The specified graphics context does not exist.
 		 *
 		 * @param connection The connection.
 		 * @param string The text to get text extents for.
@@ -3284,6 +3318,11 @@ namespace Xcb
 		public unowned Fontprop[] properties {
 			[CCode (cname = "xcb_query_font_properties")]
 			get;
+		}
+		[CCode (cname = "xcb_query_font_char_infos_iterator")]
+		_CharinfoIterator _iterator ();
+		public CharinfoIterator iterator () {
+			return (CharinfoIterator) _iterator ();
 		}
 		public int char_infos_length {
 			[CCode (cname = "xcb_query_font_char_infos_length")]
@@ -3519,7 +3558,7 @@ namespace Xcb
 	[CCode (cname = "xcb_visualtype_t", has_type_id = false)]
 	public struct Visualtype {
 		public Visualid visual_id;
-		public VisualClass class;
+		public VisualClass _class;
 		public uint8 bits_per_rgb_value;
 		public uint16 colormap_entries;
 		public uint32 red_mask;
@@ -4511,12 +4550,12 @@ namespace Xcb
 
 	/**
 	 * NOT YET DOCUMENTED
-	 * 
+	 *
 	 * This event represents a ClientMessage, sent by another X11 client. An example
 	 * is a client sending the `_NET_WM_STATE` ClientMessage to the root window
 	 * to indicate the fullscreen window state, effectively requesting that the window
 	 * manager puts it into fullscreen mode.
-	 * 
+	 *
 	 *
 	 * @see Window.send_event
 	 */
@@ -5569,7 +5608,7 @@ namespace Xcb
 		public Window window;
 	}
 
-	[CCode (cname = "uint8", cprefix =  "XCB_", has_type_id = false)]
+	[CCode (cname = "guint8", cprefix =  "XCB_", has_type_id = false)]
 	public enum EventType {
 		KEY_PRESS,
 		KEY_RELEASE,
@@ -5603,6 +5642,82 @@ namespace Xcb
 		SELECTION_NOTIFY,
 		COLORMAP_NOTIFY,
 		CLIENT_MESSAGE,
-		MAPPING_NOTIFY
+		MAPPING_NOTIFY;
+
+		public string
+		to_string ()
+		{
+			switch (this)
+			{
+				case KEY_PRESS:
+					return "KeyPress event";
+				case KEY_RELEASE:
+					return "KeyRelease event";
+				case BUTTON_PRESS:
+					return "ButtonPress event";
+				case BUTTON_RELEASE:
+					return "KeyRelease event";
+				case MOTION_NOTIFY:
+					return "MotionNotify event";
+				case ENTER_NOTIFY:
+					return "EnterNotify event";
+				case LEAVE_NOTIFY:
+					return "LeaveNotify event";
+				case FOCUS_IN:
+					return "FocusIn event";
+				case FOCUS_OUT:
+					return "FocusOut event";
+				case KEYMAP_NOTIFY:
+					return "KeymapNotify event";
+				case EXPOSE:
+					return "Expose event";
+				case GRAPHICS_EXPOSURE:
+					return "GraphicExposure event";
+				case NO_EXPOSURE:
+					return "NoExposure event";
+				case VISIBILITY_NOTIFY:
+					return "VisibilityNotify event";
+				case CREATE_NOTIFY:
+					return "CreateNotify event";
+				case DESTROY_NOTIFY:
+					return "DestroyNotify event";
+				case UNMAP_NOTIFY:
+					return "Unmap event";
+				case MAP_NOTIFY:
+					return "Map event";
+				case MAP_REQUEST:
+					return "MapRequest event";
+				case REPARENT_NOTIFY:
+					return "ReparentNotify event";
+				case CONFIGURE_NOTIFY:
+					return "ConfigureNotify event";
+				case CONFIGURE_REQUEST:
+					return "ConfigureRequest event";
+				case GRAVITY_NOTIFY:
+					return "Gravity event";
+				case RESIZE_REQUEST:
+					return "ResizeRequest event";
+				case CIRCULATE_NOTIFY:
+					return "CirculateNotify event";
+				case CIRCULATE_REQUEST:
+					return "CirculateRequest event";
+				case PROPERTY_NOTIFY:
+					return "PropertyNotify event";
+				case SELECTION_CLEAR:
+					return "SelectionClear event";
+				case SELECTION_REQUEST:
+					return "SelectionRequest event";
+				case SELECTION_NOTIFY:
+					return "SelectionNotify event";
+				case COLORMAP_NOTIFY:
+					return "ColormapNotify event";
+				case CLIENT_MESSAGE:
+					return "ClientMessage event";
+				case MAPPING_NOTIFY:
+					return "MappingNotify event";
+			}
+
+			return "Unknown";
+		}
 	}
 }

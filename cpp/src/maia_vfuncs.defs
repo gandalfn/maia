@@ -660,6 +660,16 @@
   )
 )
 
+(define-vfunc on_draw
+  (of-object "MaiaItem")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicContext*" "inContext")
+    '("MaiaGraphicRegion*" "inArea")
+    '("GError**" "error")
+  )
+)
+
 (define-vfunc on_damage
   (of-object "MaiaItem")
   (return-type "none")
@@ -1038,144 +1048,9 @@
   )
 )
 
-(define-vfunc get_surface
+(define-vfunc get_window
   (of-object "MaiaCanvas")
-  (return-type "MaiaGraphicSurface*")
-)
-
-(define-vfunc on_set_pointer_cursor
-  (of-object "MaiaCanvas")
-  (return-type "none")
-  (parameters
-    '("MaiaCursor" "inCursor")
-  )
-)
-
-(define-vfunc on_move_pointer
-  (of-object "MaiaCanvas")
-  (return-type "none")
-  (parameters
-    '("MaiaGraphicPoint*" "inPosition")
-  )
-)
-
-(define-vfunc on_scroll_to
-  (of-object "MaiaCanvas")
-  (return-type "none")
-  (parameters
-    '("MaiaItem*" "inItem")
-  )
-)
-
-(define-vfunc on_grab_focus
-  (of-object "MaiaCanvas")
-  (return-type "none")
-  (parameters
-    '("MaiaItem*" "inItem")
-  )
-)
-
-(define-vfunc on_grab_pointer
-  (of-object "MaiaCanvas")
-  (return-type "gboolean")
-  (parameters
-    '("MaiaItem*" "inItem")
-  )
-)
-
-(define-vfunc on_ungrab_pointer
-  (of-object "MaiaCanvas")
-  (return-type "none")
-  (parameters
-    '("MaiaItem*" "inItem")
-  )
-)
-
-(define-vfunc on_grab_keyboard
-  (of-object "MaiaCanvas")
-  (return-type "gboolean")
-  (parameters
-    '("MaiaItem*" "inItem")
-  )
-)
-
-(define-vfunc on_ungrab_keyboard
-  (of-object "MaiaCanvas")
-  (return-type "none")
-  (parameters
-    '("MaiaItem*" "inItem")
-  )
-)
-
-(define-vfunc on_toolbox_add
-  (of-object "MaiaCanvas")
-  (return-type "none")
-  (parameters
-    '("MaiaItem*" "inItem")
-    '("gboolean" "inParent")
-  )
-)
-
-(define-vfunc on_toolbox_remove
-  (of-object "MaiaCanvas")
-  (return-type "none")
-)
-
-(define-vfunc resize
-  (of-object "MaiaCanvas")
-  (return-type "none")
-)
-
-(define-vfunc get_timeline
-  (of-object "MaiaCanvas")
-  (return-type "MaiaCoreTimeline*")
-)
-
-(define-vfunc set_timeline
-  (of-object "MaiaCanvas")
-  (return-type "none")
-  (parameters
-    '("MaiaCoreTimeline*" "inTimeline")
-  )
-)
-
-(define-vfunc get_focus_item
-  (of-object "MaiaCanvas")
-  (return-type "MaiaItem*")
-)
-
-(define-vfunc set_focus_item
-  (of-object "MaiaCanvas")
-  (return-type "none")
-  (parameters
-    '("MaiaItem*" "inItem")
-  )
-)
-
-(define-vfunc get_grab_pointer_item
-  (of-object "MaiaCanvas")
-  (return-type "MaiaItem*")
-)
-
-(define-vfunc set_grab_pointer_item
-  (of-object "MaiaCanvas")
-  (return-type "none")
-  (parameters
-    '("MaiaItem*" "inItem")
-  )
-)
-
-(define-vfunc get_grab_keyboard_item
-  (of-object "MaiaCanvas")
-  (return-type "MaiaItem*")
-)
-
-(define-vfunc set_grab_keyboard_item
-  (of-object "MaiaCanvas")
-  (return-type "none")
-  (parameters
-    '("MaiaItem*" "inItem")
-  )
+  (return-type "MaiaWindow*")
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -1195,6 +1070,14 @@
 )
 
 (define-vfunc on_geometry_event
+  (of-object "MaiaWindow")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEventArgs*" "inArgs")
+  )
+)
+
+(define-vfunc on_visibility_event
   (of-object "MaiaWindow")
   (return-type "none")
   (parameters

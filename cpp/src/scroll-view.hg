@@ -47,7 +47,5 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Adjustment> get_vadjustment () const, maia_scroll_view_get_vadjustment)
             _WRAP_METHOD(ScrollViewPolicy get_policy () const, maia_scroll_view_get_policy)
             _WRAP_METHOD(void set_policy (ScrollViewPolicy inPolicy), maia_scroll_view_set_policy)
-
-            _WRAP_PROPERTY("policy", ScrollViewPolicy)
     };
 }

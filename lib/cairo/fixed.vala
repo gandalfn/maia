@@ -22,7 +22,8 @@
 [SimpleType, IntegerType (rank = 6), CCode (has_type_id = false)]
 internal struct Maia.Cairo.Fixed : int32
 {
-    const int32 s_Frac = 8;
+    const int32 s_Bits = 32;
+    const int32 s_Frac = 4;
     const double s_Magic = ((1LL << (52 - s_Frac)) * 1.5);
 #if BIG_INDIAN
     const int s_Mantisse = 1;
@@ -40,7 +41,7 @@ internal struct Maia.Cairo.Fixed : int32
     public static inline Fixed
     from_double (double inVal)
     {
-        double val = GLib.Math.round (inVal) + s_Magic;
+        double val = inVal + s_Magic;
         void* ptr = &val;
         Fixed* tab = (Fixed*)ptr;
         return tab[s_Mantisse];

@@ -7,6 +7,10 @@ $(MAIA_LIB_NAME)-$(MAIA_ABI).vapi: $(MAIA_EXTRA_VAPIS) $(MAIA_LIB_NAME).vapi
 
 $(MAIA_LIB_NAME)-$(MAIA_ABI).deps: $(MAIA_LIB_NAME).vapi $(addprefix $(top_builddir)/lib/, $(addsuffix -$(MAIA_ABI).vapi, $(MAIA_VAPI_DEPS)))
 	$(AM_V_GEN) rm -f $@; touch $@; \
+    for i in $(MAIA_SYSTEM_VAPI_DEPS); \
+    do \
+        echo $$i >> $@; \
+    done; \
     for i in $(notdir $(basename $(MAIA_VAPI_DEPS))); \
     do \
         echo $$i-$(MAIA_ABI) >> $@; \
@@ -19,6 +23,7 @@ include_HEADERS = \
 VALAFLAGS += \
     --header=$(MAIA_LIB_NAME).h \
     --library=$(MAIA_LIB_NAME) \
+    $(addprefix --pkg=, $(MAIA_SYSTEM_VAPI_DEPS)) \
     $(addprefix --pkg=, $(notdir $(basename $(MAIA_EXTRA_VAPIS)))) \
     $(addprefix --vapidir=, $(dir $(MAIA_EXTRA_VAPIS)))
 

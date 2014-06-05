@@ -251,7 +251,7 @@ public class Maia.Button : Grid
         var endColor = new Graphic.Color.shade (sensitive ? button_color : button_inactive_color ?? button_color, ve);
 
         unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
-        if (label_item != null)
+        if (label_item != null && (label_item.shade_color == null || label_item.shade_color.compare (beginColor) != 0))
         {
             label_item.shade_color = beginColor;
         }

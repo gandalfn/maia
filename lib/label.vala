@@ -21,6 +21,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
 {
     // properties
     private Graphic.Glyph m_Glyph;
+    private Graphic.Surface m_FakeSurface;
 
     // accessors
     internal override string tag {
@@ -169,7 +170,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
         font_description = "Sans 12";
 
         // connect onto layout properties changed
-        notify["root"].connect (on_layout_property_changed);
+        notify["root"].connect (on_root_changed);
         notify["text"].connect (on_layout_property_changed);
         notify["alignment"].connect (on_layout_property_changed);
         notify["wrap-mode"].connect (on_layout_property_changed);
@@ -192,6 +193,29 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     public Label (string inId, string inLabel)
     {
         GLib.Object (id: GLib.Quark.from_string (inId), text: inLabel);
+    }
+
+    private void
+    on_root_changed ()
+    {
+        // Create a fake surface to calculate the size of path
+        m_FakeSurface = new Graphic.Surface (1, 1);
+
+        // Get stack of items
+        GLib.SList<unowned Item> list = new GLib.SList<unowned Item?> ();
+        for (unowned Core.Object? item = this; item != null; item = item.parent)
+        {
+            if (item is Item)
+            {
+                list.append (item as Item);
+            }
+        }
+
+        // Apply transform of all parents to fake surface
+        foreach (unowned Item item in list)
+        {
+            m_FakeSurface.context.transform = item.transform;
+        }
     }
 
     private void
@@ -255,7 +279,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
                     glyph_size.height = area.extents.size.height;
                 }
                 m_Glyph.size = glyph_size;
-                update_layout ();
+                m_Glyph.update (m_FakeSurface.context);
 
                 if (area.extents.size.width < m_Glyph.size.width || area.extents.size.height < m_Glyph.size.height)
                 {
@@ -272,6 +296,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
                 damage();
             }
         }
+        need_update = true;
     }
 
     private void
@@ -285,34 +310,6 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     {
         string package = LibIntl.textdomain (null);
         return inString != null ? inString.length > 0 ? LibIntl.dgettext (package, inString) : "" : null;
-    }
-
-    private void
-    update_layout ()
-    {
-        if (m_Glyph != null)
-        {
-            // Create a fake surface to calculate the size of path
-            var fake_surface = new Graphic.Surface (1, 1);
-
-            // Get stack of items
-            GLib.SList<unowned Item> list = new GLib.SList<unowned Item?> ();
-            for (unowned Core.Object? item = this; item != null; item = item.parent)
-            {
-                if (item is Item)
-                {
-                    list.append (item as Item);
-                }
-            }
-
-            // Apply transform of all parents to fake surface
-            foreach (unowned Item item in list)
-            {
-                fake_surface.context.transform = item.transform;
-            }
-
-            m_Glyph.update (fake_surface.context);
-        }
     }
 
     internal override bool
@@ -337,17 +334,11 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
 
             if (m_Glyph != null)
             {
-                unowned Document? doc = get_qdata<unowned Document> (Document.s_PageNumQuark);
-                if (doc != null)
-                {
-                    m_Glyph.text = "%u".printf (doc.current_page);
-                }
-
                 // Reset wrap if any
                 m_Glyph.size = Graphic.Size (0, 0);
 
                 // update layout
-                update_layout ();
+                m_Glyph.update (m_FakeSurface.context);
 
                 // set new size
                 size = m_Glyph.size;
@@ -360,23 +351,16 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     internal override void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
-        unowned Document? doc = get_qdata<unowned Document> (Document.s_PageNumQuark);
-        if (doc != null)
-        {
-            m_Glyph.text = "%u".printf (doc.current_page);
-            update_layout ();
-        }
-
         var allocation = inAllocation.extents;
         if (m_Glyph != null && ((xshrink && inAllocation.extents.size.width < m_Glyph.size.width) ||
                                 (yshrink && inAllocation.extents.size.height < m_Glyph.size.height)))
         {
             var glyph_size = m_Glyph.size;
-            if (xshrink && allocation.size.width < size_requested.width)
+            if (xshrink && allocation.size.width < size.width)
             {
                 glyph_size.width = allocation.size.width;
             }
-            if (yshrink && allocation.size.height < size_requested.height)
+            if (yshrink && allocation.size.height < size.height)
             {
                 glyph_size.height = allocation.size.height;
             }
@@ -400,13 +384,6 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
         // paint text
         if (m_Glyph != null && stroke_pattern != null)
         {
-            unowned Document? doc = get_qdata<unowned Document> (Document.s_PageNumQuark);
-            if (doc != null)
-            {
-                m_Glyph.text = "%u".printf (doc.current_page);
-                update_layout ();
-            }
-
             inContext.save ();
             {
                 var pos = Graphic.Point (0, 0);

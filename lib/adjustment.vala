@@ -17,6 +17,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * An object representing an adjustable bounded value
+ */
 public class Maia.Adjustment : Object
 {
     // properties
@@ -25,10 +28,11 @@ public class Maia.Adjustment : Object
     private double m_Upper;
     private double m_PageSize;
 
-    // signal
-    public signal void changed ();
-
     // accessors
+    /**
+     * The current value of the adjustment.
+     */
+    [CCode (notify = false)]
     public double @value {
         get {
             return m_Value;
@@ -37,47 +41,81 @@ public class Maia.Adjustment : Object
             if (value.clamp (m_Lower, m_Upper - m_PageSize) != m_Value)
             {
                 m_Value = value.clamp (m_Lower, m_Upper - m_PageSize);
-                changed ();
+                GLib.Signal.emit_by_name (this, "notify::value");
             }
         }
         default = 0.0;
     }
 
+    /**
+     * The current minimum value of the adjustment.
+     */
+    [CCode (notify = false)]
     public double lower {
         get {
             return m_Lower;
         }
         set {
-            m_Lower = double.min (value, m_Upper);
+            if (m_Lower != double.min (value, m_Upper))
+            {
+                m_Lower = double.min (value, m_Upper);
+                GLib.Signal.emit_by_name (this, "notify::lower");
+            }
         }
         default = 0.0;
     }
 
+    /**
+     * The current maximum value of the adjustment.
+     */
+    [CCode (notify = false)]
     public double upper {
         get {
             return m_Upper;
         }
         set {
-            m_Upper = double.max (value, m_Lower);
+            if (m_Upper != double.max (value, m_Lower))
+            {
+                m_Upper = double.max (value, m_Lower);
+                GLib.Signal.emit_by_name (this, "notify::upper");
+            }
         }
         default = 0.0;
     }
 
+    /**
+     * The current page size of the adjustment.
+     */
+    [CCode (notify = false)]
     public double page_size {
         get {
             return m_PageSize;
         }
         set {
-            m_PageSize = double.min (m_Upper - m_Lower, value);
+            if (m_PageSize != double.min (m_Upper - m_Lower, value))
+            {
+                m_PageSize = double.min (m_Upper - m_Lower, value);
+                GLib.Signal.emit_by_name (this, "notify::page-size");
+            }
         }
         default = 0.0;
     }
 
     // methods
+    /**
+     * Create a new adjustment object
+     */
     public Adjustment ()
     {
     }
 
+    /**
+     * Create a new adjustement object with default properties
+     *
+     * @param inLower the minimum value of adjustment
+     * @param inUpper the maximum value of adjustment
+     * @param inPageSize the page size of adjustment
+     */
     public Adjustment.configure (double inLower, double inUpper, double inPageSize)
     {
         GLib.Object (lower: inLower, upper: inUpper, page_size: inPageSize);

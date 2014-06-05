@@ -21,7 +21,8 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
 {
     // properties
     private Core.Map<string, unowned ToggleButton> m_ToggleButtons;
-
+    private Core.Map<string, Core.EventListener> m_ToggleButtonListeners;
+    
     // accessors
     internal string tag {
         get {
@@ -49,17 +50,21 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
 
         // Create toggle button dictionnary
         m_ToggleButtons = new Core.Map<string, unowned ToggleButton> ();
+
+        // Create event listener map
+        m_ToggleButtonListeners = new Core.Map<string, Core.EventListener> ();
     }
 
     private void
-    on_toggled (ToggleButton inButton)
+    on_toggled (Core.EventArgs? inArgs)
     {
-        string button_name = inButton.name;
-        if (inButton.active)
+        unowned ToggleButton.ToggledEventArgs? args = inArgs as ToggleButton.ToggledEventArgs;
+        
+        if (args != null && args.active)
         {
             foreach (unowned Core.Pair<string, unowned ToggleButton> pair in m_ToggleButtons)
             {
-                if (pair.first != button_name)
+                if (pair.first != args.button_name)
                 {
                     pair.second.active = false;
                 }
@@ -97,7 +102,8 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
         if (!(inButton.name in m_ToggleButtons))
         {
             m_ToggleButtons[inButton.name] = inButton;
-            inButton.toggled.connect (on_toggled);
+            m_ToggleButtonListeners[inButton.name] = inButton.toggled.subscribe (on_toggled);
+            
             if (active != null && active == inButton.name)
             {
                 inButton.active = true;
@@ -118,7 +124,7 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
     {
         if (inButton.name in m_ToggleButtons)
         {
-            inButton.toggled.disconnect (on_toggled);
+            m_ToggleButtonListeners.unset (inButton.name);
             m_ToggleButtons.unset (inButton.name);
         }
     }

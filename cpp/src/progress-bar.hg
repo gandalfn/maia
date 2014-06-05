@@ -1,0 +1,86 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * progress-bar.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/adjustment.h>
+#include <maiamm/item-packable.h>
+#include <maiamm/item.h>
+#include <maiamm/view.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/item_p.h)
+
+namespace Maia
+{
+    class ProgressBar : public Item, public ItemPackable
+    {
+        _CLASS_GOBJECT(ProgressBar, MaiaProgressBar, MAIA_PROGRESS_BAR, Item, MaiaItem)
+        _IMPLEMENTS_INTERFACE(ItemPackable)
+
+        protected:
+            _CTOR_DEFAULT()
+
+        public:
+            static Glib::RefPtr<ProgressBar> create (const Glib::ustring& inId)
+            {
+                MaiaProgressBar* pProgressBar = maia_progress_bar_new (inId.c_str ());
+
+                return Glib::RefPtr<ProgressBar> (new ProgressBar (pProgressBar));
+            }
+
+            _WRAP_METHOD(Glib::RefPtr<Adjustment> get_adjustment () const, maia_progress_bar_get_adjustment, refreturn)
+            _WRAP_METHOD(void set_adjustment (const Glib::RefPtr<Adjustment>& inAdjustment), maia_progress_bar_set_adjustment)
+
+            _WRAP_METHOD(void get_slider_area (Graphic::Rectangle& outRect), maia_progress_bar_get_slider_area)
+
+            _WRAP_METHOD(double get_round_border () const, maia_progress_bar_get_round_border)
+            _WRAP_METHOD(void set_round_border (double inBorder), maia_progress_bar_set_round_border)
+
+            _WRAP_METHOD(Orientation get_orientation () const, maia_progress_bar_get_orientation)
+            _WRAP_METHOD(void set_orientation (Orientation inOrientation), maia_progress_bar_set_orientation)
+
+            _WRAP_PROPERTY("adjustment", Glib::RefPtr<Adjustment>)
+            _WRAP_PROPERTY("slider-area", Graphic::Rectangle)
+            _WRAP_PROPERTY("round-border", double)
+            _WRAP_PROPERTY("orientation", Orientation)
+
+            _WRAP_PROPERTY("row", guint)
+            _WRAP_PROPERTY("rows", guint)
+
+            _WRAP_PROPERTY("column", guint)
+            _WRAP_PROPERTY("columns", guint)
+
+            _WRAP_PROPERTY("xexpand", bool)
+            _WRAP_PROPERTY("xfill", bool)
+            _WRAP_PROPERTY("xshrink", bool)
+            _WRAP_PROPERTY("xlimp", bool)
+            _WRAP_PROPERTY("xalign", double)
+
+            _WRAP_PROPERTY("yexpand", bool)
+            _WRAP_PROPERTY("yfill", bool)
+            _WRAP_PROPERTY("yshrink", bool)
+            _WRAP_PROPERTY("ylimp", bool)
+            _WRAP_PROPERTY("yalign", double)
+
+            _WRAP_PROPERTY("top-padding", double)
+            _WRAP_PROPERTY("bottom-padding", double)
+            _WRAP_PROPERTY("left-padding", double)
+            _WRAP_PROPERTY("right-padding", double)
+    };
+}

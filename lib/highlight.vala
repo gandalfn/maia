@@ -19,6 +19,9 @@
 
 public class Maia.Highlight : ToggleButton
 {
+    // properties
+    private unowned Label? m_Label;
+
     // accessors
     internal override string tag {
         get {
@@ -29,6 +32,11 @@ public class Maia.Highlight : ToggleButton
     public double border { get; set; default = 5; }
 
     // methods
+    construct
+    {
+        m_Label = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
+    }
+
     public Highlight (string inId, string inLabel)
     {
         base (inId, inLabel);
@@ -44,28 +52,22 @@ public class Maia.Highlight : ToggleButton
     size_request (Graphic.Size inSize)
     {
         // Get label item
-        string id_label = "%s-label".printf (name);
-        unowned Label label_item = find (GLib.Quark.from_string (id_label), false) as Label;
-        if (label_item != null)
+        if (m_Label != null)
         {
             // get position of label
-            Graphic.Point position_label = label_item.position;
+            Graphic.Point position_label = m_Label.position;
 
             // set position of label
             if (position_label.x != border || position_label.y != border)
             {
-                label_item.position = Graphic.Point (border, border);
+                m_Label.position = Graphic.Point (border, border);
 
-                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "label item position : %s", label_item.position.to_string ());
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "label item position : %s", m_Label.position.to_string ());
             }
         }
 
-
         Graphic.Size ret = base.size_request (inSize);
-        ret.width += border;
-        ret.height += border;
-
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "%s size: %s", name, ret.to_string ());
+        ret.resize (border, border);
 
         return ret;
     }
@@ -77,13 +79,13 @@ public class Maia.Highlight : ToggleButton
         {
             // Translate to align in center
             inContext.translate (Graphic.Point (area.extents.size.width / 2, area.extents.size.height / 2));
-            inContext.translate (Graphic.Point (-size_requested.width / 2, -size_requested.height / 2));
+            inContext.translate (Graphic.Point (-size.width / 2, -size.height / 2));
 
             // Paint hightlight if active
             if (active)
             {
                 var path = new Graphic.Path ();
-                path.rectangle (border / 2, border / 2, size_requested.width - border, size_requested.height - border, 5, 5);
+                path.rectangle (border / 2, border / 2, size.width - border, size.height - border, 5, 5);
 
                 if (stroke_pattern != null)
                 {

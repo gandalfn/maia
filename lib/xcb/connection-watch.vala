@@ -26,151 +26,12 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
     // methods
     public ConnectionWatch (global::Xcb.Connection inConnection)
     {
-        base (inConnection.file_descriptor);
+        base (inConnection.file_descriptor, null, GLib.Priority.DEFAULT);
 
         m_Connection = inConnection;
 
         // Get keyboard mapping
         m_Symbols = new global::Xcb.Util.KeySymbols (m_Connection);
-    }
-
-    internal override void
-    on_error ()
-    {
-        // TODO
-    }
-
-    internal override bool
-    on_process ()
-    {
-        global::Xcb.GenericEvent? evt = null;
-
-        if ((evt = m_Connection.poll_for_event ()) != null)
-        {
-            int response_type = evt.response_type & ~0x80;
-            switch (response_type)
-            {
-                // Expose event
-                case global::Xcb.EventType.EXPOSE:
-                    unowned global::Xcb.ExposeEvent evt_expose = (global::Xcb.ExposeEvent)evt;
-
-                    // send event damage
-                    Core.EventBus.default.publish ("damage", ((int)evt_expose.window).to_pointer (),
-                                                   new DamageEventArgs (evt_expose.x, evt_expose.y,
-                                                                        evt_expose.width, evt_expose.height));
-                    break;
-
-                // configure notify event
-                case global::Xcb.EventType.CONFIGURE_NOTIFY:
-                    unowned global::Xcb.ConfigureNotifyEvent evt_configure = (global::Xcb.ConfigureNotifyEvent)evt;
-
-                    // send event geometry
-                    Core.EventBus.default.publish ("geometry", ((int)evt_configure.window).to_pointer (),
-                                                   new GeometryEventArgs (evt_configure.x, evt_configure.y,
-                                                                          evt_configure.width, evt_configure.height));
-                    break;
-
-                // map notify event
-                case global::Xcb.EventType.MAP_NOTIFY:
-                    unowned global::Xcb.MapNotifyEvent evt_map_notify = (global::Xcb.MapNotifyEvent)evt;
-
-                    // send event geometry
-                    Core.EventBus.default.publish ("visibility", ((int)evt_map_notify.window).to_pointer (),
-                                                   new VisibilityEventArgs (true));
-                    break;
-
-                // unmap notify event
-                case global::Xcb.EventType.UNMAP_NOTIFY:
-                    unowned global::Xcb.UnmapNotifyEvent evt_unmap_notify = (global::Xcb.UnmapNotifyEvent)evt;
-
-                    // send event geometry
-                    Core.EventBus.default.publish ("visibility", ((int)evt_unmap_notify.window).to_pointer (),
-                                                   new VisibilityEventArgs (false));
-                    break;
-
-                // button press event
-                case global::Xcb.EventType.BUTTON_PRESS:
-                    unowned global::Xcb.ButtonPressEvent evt_button_press = (global::Xcb.ButtonPressEvent)evt;
-
-                    // send event mouse
-                    Core.EventBus.default.publish ("mouse", ((int)evt_button_press.event).to_pointer (),
-                                                   new MouseEventArgs (MouseEventArgs.EventFlags.BUTTON_PRESS,
-                                                                       evt_button_press.detail,
-                                                                       evt_button_press.event_x,
-                                                                       evt_button_press.event_y));
-                    break;
-
-                // button release event
-                case global::Xcb.EventType.BUTTON_RELEASE:
-                    unowned global::Xcb.ButtonReleaseEvent evt_button_release = (global::Xcb.ButtonReleaseEvent)evt;
-
-                    // send event mouse
-                    Core.EventBus.default.publish ("mouse", ((int)evt_button_release.event).to_pointer (),
-                                                   new MouseEventArgs (MouseEventArgs.EventFlags.BUTTON_RELEASE,
-                                                                       evt_button_release.detail,
-                                                                       evt_button_release.event_x,
-                                                                       evt_button_release.event_y));
-                    break;
-
-                // motion notify event
-                case global::Xcb.EventType.MOTION_NOTIFY:
-                    unowned global::Xcb.MotionNotifyEvent evt_motion_notify = (global::Xcb.MotionNotifyEvent)evt;
-
-                    // send event mouse
-                    Core.EventBus.default.publish ("mouse", ((int)evt_motion_notify.event).to_pointer (),
-                                                   new MouseEventArgs (MouseEventArgs.EventFlags.MOTION,
-                                                                       evt_motion_notify.detail,
-                                                                       evt_motion_notify.event_x,
-                                                                       evt_motion_notify.event_y));
-                    break;
-
-                // client message event
-                case global::Xcb.EventType.CLIENT_MESSAGE:
-                    unowned global::Xcb.ClientMessageEvent evt_client_message = (global::Xcb.ClientMessageEvent)evt;
-
-                    // check client message type
-                    if (evt_client_message.type           == Xcb.application.atoms[AtomType.WM_PROTOCOLS] &&
-                        evt_client_message.data.data32[0] == Xcb.application.atoms[AtomType.WM_DELETE_WINDOW])
-                    {
-                        Core.EventBus.default.object_publish_with_reply ("delete", ((int)evt_client_message.window).to_pointer (),
-                                                                         new DeleteEventArgs (evt_client_message.window),
-                                                                         on_delete_event_reply);
-                    }
-                    break;
-
-                // destroy notify event
-                case global::Xcb.EventType.DESTROY_NOTIFY:
-                    unowned global::Xcb.DestroyNotifyEvent evt_destroy_notify = (global::Xcb.DestroyNotifyEvent)evt;
-
-                    // send event geometry
-                    Core.EventBus.default.publish ("destroy", ((int)evt_destroy_notify.window).to_pointer (), null);
-                    break;
-
-                // key press event
-                case global::Xcb.EventType.KEY_PRESS:
-                    unowned global::Xcb.KeyPressEvent evt_key_press = (global::Xcb.KeyPressEvent)evt;
-
-                    send_keyboard_event (evt_key_press.event, true, evt_key_press.state, evt_key_press.detail);
-                    break;
-
-                // key press event
-                case global::Xcb.EventType.KEY_RELEASE:
-                    unowned global::Xcb.KeyReleaseEvent evt_key_release = (global::Xcb.KeyReleaseEvent)evt;
-
-                    send_keyboard_event (evt_key_release.event, false, evt_key_release.state, evt_key_release.detail);
-                    break;
-
-                // mapping notify event
-                case global::Xcb.EventType.MAPPING_NOTIFY:
-                    unowned global::Xcb.MappingNotifyEvent evt_mapping_notify = (global::Xcb.MappingNotifyEvent)evt;
-
-                    // refresh keybaord mapping
-                    m_Symbols.refresh_keyboard_mapping (evt_mapping_notify);
-                    break;
-            }
-        }
-
-        return true;
     }
 
     private void
@@ -245,5 +106,166 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
         Core.EventBus.default.publish ("keyboard", ((int)inWindow).to_pointer (),
                                                    new KeyboardEventArgs (inPress ? KeyboardEventArgs.State.PRESS : KeyboardEventArgs.State.RELEASE,
                                                                           modifier, key, car));
+    }
+
+    internal override bool
+    on_prepare (out int inTimeout)
+    {
+        bool ret = base.on_prepare (out inTimeout);
+
+        if (!ret)
+        {
+            m_Connection.flush ();
+            on_process ();
+        }
+
+        return ret;
+    }
+
+    internal override void
+    on_error ()
+    {
+        // TODO
+    }
+
+    internal override bool
+    on_process ()
+    {
+        Core.Map<int, MouseEventArgs> motions = new Core.Map<int, MouseEventArgs> ();
+        global::Xcb.GenericEvent? evt = null;
+
+        while ((evt = m_Connection.poll_for_event ()) != null)
+        {
+            int response_type = evt.response_type & ~0x80;
+            switch (response_type)
+            {
+                // Expose event
+                case global::Xcb.EventType.EXPOSE:
+                    unowned global::Xcb.ExposeEvent? evt_expose = (global::Xcb.ExposeEvent?)evt;
+
+                    // send event damage
+                    Core.EventBus.default.publish ("damage", ((int)evt_expose.window).to_pointer (),
+                                                   new DamageEventArgs (evt_expose.x, evt_expose.y,
+                                                                        evt_expose.width, evt_expose.height));
+                    break;
+
+                // configure notify event
+                case global::Xcb.EventType.CONFIGURE_NOTIFY:
+                    unowned global::Xcb.ConfigureNotifyEvent? evt_configure = (global::Xcb.ConfigureNotifyEvent?)evt;
+
+                    // send event geometry
+                    Core.EventBus.default.publish ("geometry", ((int)evt_configure.window).to_pointer (),
+                                                   new GeometryEventArgs (evt_configure.x, evt_configure.y,
+                                                                          evt_configure.width + (evt_configure.border_width * 2),
+                                                                          evt_configure.height + (evt_configure.border_width * 2)));
+
+                    break;
+
+                // map notify event
+                case global::Xcb.EventType.MAP_NOTIFY:
+                    unowned global::Xcb.MapNotifyEvent? evt_map_notify = (global::Xcb.MapNotifyEvent?)evt;
+
+                    // send event geometry
+                    Core.EventBus.default.publish ("visibility", ((int)evt_map_notify.window).to_pointer (),
+                                                   new VisibilityEventArgs (true));
+                    break;
+
+                // unmap notify event
+                case global::Xcb.EventType.UNMAP_NOTIFY:
+                    unowned global::Xcb.UnmapNotifyEvent? evt_unmap_notify = (global::Xcb.UnmapNotifyEvent?)evt;
+
+                    // send event geometry
+                    Core.EventBus.default.publish ("visibility", ((int)evt_unmap_notify.window).to_pointer (),
+                                                   new VisibilityEventArgs (false));
+                    break;
+
+                // button press event
+                case global::Xcb.EventType.BUTTON_PRESS:
+                    unowned global::Xcb.ButtonPressEvent? evt_button_press = (global::Xcb.ButtonPressEvent?)evt;
+
+                    // send event mouse
+                    Core.EventBus.default.publish ("mouse", ((int)evt_button_press.event).to_pointer (),
+                                                   new MouseEventArgs (MouseEventArgs.EventFlags.BUTTON_PRESS,
+                                                                       evt_button_press.detail,
+                                                                       evt_button_press.event_x,
+                                                                       evt_button_press.event_y));
+                    break;
+
+                // button release event
+                case global::Xcb.EventType.BUTTON_RELEASE:
+                    unowned global::Xcb.ButtonReleaseEvent? evt_button_release = (global::Xcb.ButtonReleaseEvent?)evt;
+
+                    // send event mouse
+                    Core.EventBus.default.publish ("mouse", ((int)evt_button_release.event).to_pointer (),
+                                                   new MouseEventArgs (MouseEventArgs.EventFlags.BUTTON_RELEASE,
+                                                                       evt_button_release.detail,
+                                                                       evt_button_release.event_x,
+                                                                       evt_button_release.event_y));
+                    break;
+
+                // motion notify event
+                case global::Xcb.EventType.MOTION_NOTIFY:
+                    unowned global::Xcb.MotionNotifyEvent? evt_motion_notify = (global::Xcb.MotionNotifyEvent?)evt;
+
+                    // Add motion event in compressed map events
+                    motions[(int)evt_motion_notify.event] = new MouseEventArgs (MouseEventArgs.EventFlags.MOTION,
+                                                                                evt_motion_notify.detail,
+                                                                                evt_motion_notify.event_x,
+                                                                                evt_motion_notify.event_y);
+                    break;
+
+                // client message event
+                case global::Xcb.EventType.CLIENT_MESSAGE:
+                    unowned global::Xcb.ClientMessageEvent? evt_client_message = (global::Xcb.ClientMessageEvent?)evt;
+
+                    // check client message type
+                    if (evt_client_message.type           == Xcb.application.atoms[AtomType.WM_PROTOCOLS] &&
+                        evt_client_message.data.data32[0] == Xcb.application.atoms[AtomType.WM_DELETE_WINDOW])
+                    {
+                        Core.EventBus.default.object_publish_with_reply ("delete", ((int)evt_client_message.window).to_pointer (),
+                                                                         new DeleteEventArgs (evt_client_message.window),
+                                                                         on_delete_event_reply);
+                    }
+                    break;
+
+                // destroy notify event
+                case global::Xcb.EventType.DESTROY_NOTIFY:
+                    unowned global::Xcb.DestroyNotifyEvent? evt_destroy_notify = (global::Xcb.DestroyNotifyEvent?)evt;
+
+                    // send event geometry
+                    Core.EventBus.default.publish ("destroy", ((int)evt_destroy_notify.window).to_pointer (), null);
+                    break;
+
+                // key press event
+                case global::Xcb.EventType.KEY_PRESS:
+                    unowned global::Xcb.KeyPressEvent? evt_key_press = (global::Xcb.KeyPressEvent?)evt;
+
+                    send_keyboard_event (evt_key_press.event, true, evt_key_press.state, evt_key_press.detail);
+                    break;
+
+                // key press event
+                case global::Xcb.EventType.KEY_RELEASE:
+                    unowned global::Xcb.KeyReleaseEvent? evt_key_release = (global::Xcb.KeyReleaseEvent?)evt;
+
+                    send_keyboard_event (evt_key_release.event, false, evt_key_release.state, evt_key_release.detail);
+                    break;
+
+                // mapping notify event
+                case global::Xcb.EventType.MAPPING_NOTIFY:
+                    unowned global::Xcb.MappingNotifyEvent? evt_mapping_notify = (global::Xcb.MappingNotifyEvent?)evt;
+
+                    // refresh keybaord mapping
+                    m_Symbols.refresh_keyboard_mapping (evt_mapping_notify);
+                    break;
+            }
+        }
+
+        // send compressed motion
+        foreach (var motion in motions)
+        {
+            Core.EventBus.default.publish ("mouse", motion.first.to_pointer (), motion.second);
+        }
+
+        return true;
     }
 }

@@ -32,7 +32,7 @@ BEGIN {
 }
 {
     if (match ($0, "#ifdef.*XK_3270.*") || match ($0, "#ifdef.*XK_TECHNICAL.*") || match ($0, "#ifdef.*XK_APL.*") ||
-        match ($0, "#ifdef.*XK_SPECIAL.*")) 
+        match ($0, "#ifdef.*XK_SPECIAL.*"))
         ignore=1
     if (match ($0, "#endif.*"))
         ignore=0
@@ -50,7 +50,8 @@ BEGIN {
         val != "XF86XK_Q" && val != "XF86XK_Calculater" && match (val, "XK_Sinh*") == 0 &&
         val != "XK_dead_greek" && val != "XK_ch" && val != "XK_Ch" && val != "XK_CH" &&
         val != "XK_c_h" && val != "XK_C_h" && val != "XK_C_H" && val != "XK_permille" &&
-        val != "XK_EZH" && val != "XK_ezh")
+        val != "XK_EZH" && val != "XK_ezh" && val != "XK_dead_lowline" && val != "XK_dead_aboveverticalline" &&
+        val != "XK_dead_belowverticalline" && val != "XK_dead_longsolidusoverlay")
     {
         if (first == 1)
             printf ("\n");

@@ -76,7 +76,7 @@ public class Maia.Graphic.Context : Core.Object
     public virtual Pattern           pattern    { get; set; }
     public virtual double            line_width { get; set; }
     public virtual double[]?         dash       { get; set; }
-    public virtual Transform         transform  { get; set; }
+    public virtual Transform         transform  { owned get; set; }
 
     // methods
     public Context (Surface inSurface)

@@ -351,6 +351,20 @@ public class Maia.Graphic.Transform : Core.Object
         m_FinalMatrix = m_BaseMatrix;
     }
 
+    /**
+     * Create a new transform has an invert of inTransform
+     *
+     * @param inTransform transform to invert
+     *
+     * @throws Graphic.Error if something goes wrong
+     */
+    public Transform.invert (Transform inTransform) throws Graphic.Error
+    {
+        this.from_matrix (inTransform.matrix);
+        m_BaseMatrix.invert ();
+        m_FinalMatrix = m_BaseMatrix;
+    }
+
     private void
     recalculate_final_matrix ()
     {

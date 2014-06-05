@@ -47,6 +47,7 @@ test_SOURCES = \
     graphic/test-transform.vala \
     manifest/test-manifest.vala \
     manifest/test-document.vala \
+    cassowary/test-cassowary.vala \
     gtk/test-gtk.vala \
     gtk/test-model.vala \
     gtk/test-canvas.vala
@@ -57,10 +58,10 @@ test_LDADD = \
     $(MAIA_GDK_PIXBUF_LIBS) \
     $(MAIA_GTK_LIBS) \
     $(MAIA_VALGRIND_LIBS) \
-    ${top_builddir}/lib/libmaia.la \
+    ${top_builddir}/lib/gtk/libmaia-gtk.la \
     ${top_builddir}/lib/cairo/libmaia-cairo-graphic.la \
-    ${top_builddir}/lib/gdk-pixbuf/libmaia-gdk-pixbuf.la \
-    ${top_builddir}/lib/gtk/libmaia-gtk.la
+    ${top_builddir}/lib/libmaia.la \
+    ${top_builddir}/lib/gdk-pixbuf/libmaia-gdk-pixbuf.la
 
 test_xcb_SOURCES = \
     test-xcb.vala

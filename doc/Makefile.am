@@ -3,6 +3,7 @@ if ENABLE_VALADOC
 VALADOC_SRCS = \
 	$(top_builddir)/lib/core/maia-any-$(MAIA_ABI).vapi \
     $(top_srcdir)/lib/core/*.vala \
+    $(top_srcdir)/lib/cassowary/*.vala \
     $(top_srcdir)/lib/graphic/*.vala \
     $(top_srcdir)/lib/manifest/*.vala \
     $(top_srcdir)/lib/*.vala \
@@ -32,9 +33,9 @@ VALADOC_FLAGS = \
     --pkg xcb \
     --pkg xcb-base \
     --pkg pangocairo \
-    --pkg gdk-keysym \
     --pkg gtk+-2.0 \
     --pkg gdk-x11-2.0 \
+    --pkg gvalue-collect \
     --pkg librsvg-2.0 \
     --package-name Maia \
     --package-version @MAIA_VERSION@

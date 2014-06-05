@@ -62,6 +62,5 @@ namespace Maia
             _WRAP_PROPERTY("toolbox", Glib::RefPtr<Toolbox>)
             _WRAP_PROPERTY("action", ToolAction)
             _WRAP_PROPERTY("sensitive-with", Glib::ustring)
-            _WRAP_PROPERTY("parent", Glib::RefPtr<Core::Object>)
     };
 }

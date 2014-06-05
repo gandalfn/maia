@@ -22,12 +22,27 @@
 #include <maiamm/item-packable.h>
 #include <maiamm/item-movable.h>
 #include <maiamm/item.h>
+#include <maiamm/core-event.h>
+#include <maiamm/core-eventargs.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/item_p.h)
+_PINCLUDE(maiamm/private/core-eventargs_p.h)
 
 namespace Maia
 {
+    _WRAP_ENUM(EntryChangedMask, MaiaEntryChangedMask, NO_GTYPE)
+
+    class EntryChangedEventArgs : public Core::EventArgs
+    {
+        _CLASS_GOBJECT(EntryChangedEventArgs, MaiaEntryChangedEventArgs, MAIA_ENTRY_CHANGED_EVENT_ARGS, Core::EventArgs, MaiaCoreEventArgs)
+
+        public:
+            _WRAP_METHOD(Glib::ustring get_text () const, maia_entry_changed_event_args_get_text)
+
+            _WRAP_PROPERTY("text", Glib::ustring)
+    };
+
     class Entry : public Item, public ItemPackable, public ItemMovable
     {
         _CLASS_GOBJECT(Entry, MaiaEntry, MAIA_ENTRY, Item, MaiaItem)
@@ -70,7 +85,10 @@ namespace Maia
             _WRAP_METHOD(bool get_only_numeric () const, maia_entry_get_only_numeric)
             _WRAP_METHOD(void set_only_numeric (bool inOnlyNumeric = true), maia_entry_set_only_numeric)
 
-            _WRAP_SIGNAL(void changed (), "changed", no_default_handler)
+            _WRAP_METHOD(EntryChangedMask get_changed_mask () const, maia_entry_get_changed_mask)
+            _WRAP_METHOD(void set_changed_mask (EntryChangedMask inMask), maia_entry_set_changed_mask)
+
+            _WRAP_METHOD(Glib::RefPtr<Core::Event> changed () const, maia_entry_get_changed, refreturn)
 
             _WRAP_PROPERTY("font-description", Glib::ustring)
             _WRAP_PROPERTY("text", Glib::ustring)
@@ -78,6 +96,8 @@ namespace Maia
             _WRAP_PROPERTY("width-in-chars", guint)
             _WRAP_PROPERTY("underline-width", Glib::ustring)
             _WRAP_PROPERTY("only-numeric", bool)
+            _WRAP_PROPERTY("changed-mask", EntryChangedMask)
+            _WRAP_PROPERTY("changed", Glib::RefPtr<Core::Event>)
 
             _WRAP_PROPERTY("row", guint)
             _WRAP_PROPERTY("rows", guint)

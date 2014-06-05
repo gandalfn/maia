@@ -95,6 +95,8 @@ namespace Maia
                 _WRAP_METHOD(void gaussian_blur (int inRadius), maia_graphic_surface_gaussian_blur, errthrow)
                 _WRAP_METHOD(void exponential_blur (int inRadius), maia_graphic_surface_exponential_blur, errthrow)
 
+                _WRAP_METHOD(void dump (const Glib::ustring& inFilename), maia_graphic_surface_dump, errthrow)
+
                 _WRAP_PROPERTY ("format", SurfaceFormat)
                 _WRAP_PROPERTY ("size", Size)
                 _WRAP_PROPERTY ("context", Glib::RefPtr<Context>)

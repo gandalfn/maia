@@ -44,6 +44,19 @@ public struct Maia.Graphic.Point
     }
 
     /**
+     * Compare point with inOther point
+     *
+     * @param inOther point to compare to
+     *
+     * @return true if poiny are equal false otherwise
+     */
+    public bool
+    equal (Point inOther)
+    {
+        return x == inOther.x && y == inOther.y;
+    }
+
+    /**
      * Return point inverted
      *
      * @return point with inverted x and y
@@ -104,6 +117,6 @@ public struct Maia.Graphic.Point
     public string
     to_string ()
     {
-        return "%f,%f".printf (x, y);
+        return "%g,%g".printf (x, y);
     }
 }

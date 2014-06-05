@@ -17,12 +17,95 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/**
+ * An item which provide text editing.
+ *
+ * =Manifest description:=
+ *
+ * {{{
+ *      Entry.<id> {
+ *          font_description: 'Liberation Sans 12';
+ *          lines: 5;
+ *          text: '';
+ *      }
+ * }}}
+ *
+ */
 public class Maia.Entry : Item, ItemPackable, ItemMovable
 {
+    // types
+    /**
+     * The mask which set when changed event will be published
+     */
+    [Flags]
+    public enum ChangedMask
+    {
+        /**
+         * Never emit changed event
+         */
+        NEVER,
+        /**
+         * Emit changed event on focus out
+         */
+        FOCUS_OUT,
+        /**
+         * Emit changed event on press return
+         */
+        RETURN,
+        /**
+         * Emit changed event on each update of text
+         */
+        EACH_TEXT_UPDATE
+    }
+
+    /**
+     * Event args provided by entry on changed event
+     */
+    public class ChangedEventArgs : Core.EventArgs
+    {
+        // properties
+        private string m_Text;
+
+        // accessors
+        internal override GLib.Variant serialize {
+            owned get {
+                return new GLib.Variant ("(s)", m_Text);
+            }
+            set {
+                if (value != null)
+                {
+                    value.get ("(s)", out m_Text);
+                }
+                else
+                {
+                    m_Text = "";
+                }
+            }
+        }
+
+        /**
+         * Entry text on changed event
+         */
+        public string text {
+            get {
+                return m_Text;
+            }
+        }
+
+        // methods
+        internal ChangedEventArgs (string inText)
+        {
+            base ();
+
+            m_Text = inText;
+        }
+    }
+
     // properties
-    private Graphic.Glyph m_Glyph;
-    private int           m_Cursor = 0;
-    private uint          m_LinePads = 0;
+    private Graphic.Glyph   m_Glyph;
+    private Graphic.Surface m_FakeSurface;
+    private int             m_Cursor = 0;
+    private uint            m_LinePads = 0;
 
     // accessors
     internal override string tag {
@@ -55,23 +138,53 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
+    /**
+     * The default font description of entry
+     */
     public string   font_description { get; set; default = "Sans 12"; }
+    /**
+     * The text of entry
+     */
     public string   text             { get; set; default = ""; }
+    /**
+     * The number of lines of entry
+     */
     public uint     lines            { get; set; default = 1; }
+    /**
+     * The number of chars of entry
+     */
     public uint     width_in_chars   { get; set; default = 0; }
+    /**
+     * The line width of entry underline
+     */
     public double   underline_width  { get; set; default = 0.2; }
+    /**
+     * If set to ``true`` only allow numeric value in entry
+     */
     public bool     only_numeric     { get; set; default = false; }
 
-    // signals
-    public signal void changed ();
+    /**
+     * {@link ChangedMask} to set when changed event will be published
+     */
+    public ChangedMask changed_mask { get; set; default = ChangedMask.FOCUS_OUT | ChangedMask.RETURN; }
+
+    // events
+    /**
+     * The event published on text changed and following {@link changed_mask}
+     */
+    public Core.Event changed { get; private set; }
 
     // methods
     construct
     {
         not_dumpable_attributes.insert ("size");
+        not_dumpable_attributes.insert ("changed");
 
         stroke_pattern = new Graphic.Color (0, 0, 0);
         background_pattern = new Graphic.Color (0, 0, 0);
+
+        // Create changed event
+        changed = new Core.Event ("changed", this);
 
         // connect under key press event
         key_press_event.connect (on_key_press_event);
@@ -97,11 +210,61 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         });
 
         notify["pointer-over"].connect (on_pointer_over_changed);
+
+        // connect onto focus changed
+        notify["have-focus"].connect (on_focus_changed);
+
+        // connect onto root changed
+        notify["root"].connect (on_root_changed);
     }
 
+    /**
+     * Create a new entry item
+     *
+     * @param inId id of entry
+     * @param inText initial text in entry
+     */
     public Entry (string inId, string? inText)
     {
         GLib.Object (id: GLib.Quark.from_string (inId), text: inText);
+    }
+
+    private void
+    on_root_changed ()
+    {
+        // Create a fake surface to calculate the size of path
+        m_FakeSurface = new Graphic.Surface (1, 1);
+
+        // Get stack of items
+        GLib.SList<unowned Item> list = new GLib.SList<unowned Item?> ();
+        for (unowned Core.Object? item = this; item != null; item = item.parent)
+        {
+            if (item is Item)
+            {
+                list.append (item as Item);
+            }
+        }
+
+        // Apply transform of all parents to fake surface
+        foreach (unowned Item item in list)
+        {
+            m_FakeSurface.context.transform = item.transform;
+        }
+    }
+
+    private void
+    on_focus_changed ()
+    {
+        if (have_focus)
+        {
+            m_Cursor = (int)(text ?? "").length;
+        }
+        else if (ChangedMask.FOCUS_OUT in changed_mask)
+        {
+            changed.publish (new ChangedEventArgs (text ?? ""));
+        }
+
+        damage ();
     }
 
     private void
@@ -115,27 +278,8 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             // Set text
             m_Glyph.text = text;
 
-            // Create a fake surface to calculate the size of glyph
-            var fake_surface = new Graphic.Surface (1, 1);
-
-            // Get stack of items
-            GLib.SList<unowned Item> list = new GLib.SList<unowned Item?> ();
-            for (unowned Core.Object? item = this; item != null; item = item.parent)
-            {
-                if (item is Item)
-                {
-                    list.append (item as Item);
-                }
-            }
-
-            // Apply transform of all parents to fake surface
-            foreach (unowned Item item in list)
-            {
-                fake_surface.context.transform = item.transform;
-            }
-
             // Calculate the size of glyph without line pads
-            m_Glyph.update (fake_surface.context);
+            m_Glyph.update (m_FakeSurface.context);
 
             // Count lines pad
             m_LinePads = 0;
@@ -159,7 +303,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             }
 
             // Calculate glyph size
-            m_Glyph.update (fake_surface.context);
+            m_Glyph.update (m_FakeSurface.context);
         }
     }
 
@@ -318,6 +462,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     {
         if (have_focus)
         {
+            bool updated = false;
             GLib.StringBuilder new_text = new GLib.StringBuilder (text);
 
             // Backspace pressed suppress last characters
@@ -327,6 +472,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                 int end = (text ?? "").index_of_nth_char (m_Cursor);
                 new_text.erase (begin, end - begin);
                 text = new_text.str;
+                updated = true;
                 m_Cursor--;
             }
             // Enter is pressed and new line
@@ -336,7 +482,13 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                 {
                     new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), "\n");
                     text = new_text.str;
+                    updated = true;
                     m_Cursor++;
+                }
+
+                if (ChangedMask.RETURN in changed_mask)
+                {
+                    changed.publish (new ChangedEventArgs (text ?? ""));
                 }
             }
             // Space is pressed
@@ -345,6 +497,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                 new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), " ");
                 text = new_text.str;
                 m_Cursor++;
+                updated = true;
 
                 check_line_size ();
             }
@@ -370,12 +523,16 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                     new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), inCar.to_string ());
                     text = new_text.str;
                     m_Cursor ++;
+                    updated = true;
 
                     check_line_size ();
                 }
             }
 
-            changed ();
+            if (updated && ChangedMask.EACH_TEXT_UPDATE in changed_mask)
+            {
+                changed.publish (new ChangedEventArgs (text ?? ""));
+            }
         }
     }
 
@@ -463,19 +620,5 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             }
             inContext.restore ();
         }
-    }
-
-    internal override bool
-    on_button_press_event (uint inButton, Graphic.Point inPoint)
-    {
-        bool ret = base.on_button_press_event (inButton, inPoint);
-
-        if  (ret)
-        {
-            m_Cursor = (int)(text ?? "").length;
-            grab_focus (this);
-        }
-
-        return ret;
     }
 }

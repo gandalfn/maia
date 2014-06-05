@@ -59,7 +59,7 @@ public interface Maia.Manifest.Element : Core.Object
     public unowned Element? root {
         get {
             unowned Core.Object? ret = this;
-            for (; ret.parent != null; ret = ret.parent);
+            for (; ret.parent != null && ret.parent is Element; ret = ret.parent);
 
             return (Element)ret;
         }

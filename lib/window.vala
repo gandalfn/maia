@@ -39,11 +39,25 @@ public class Maia.Window : Group
         }
     }
 
+    public unowned uint32 foreign { get; construct; default = 0; }
+
+    public double border { get; set; default = 0.0; }
+
+    public virtual uint8 depth { get; set; }
+
     public virtual Graphic.Surface? surface {
         get {
             return null;
         }
     }
+
+    public unowned Popup? popup {
+        get {
+            return get_qdata<unowned Popup?> (Item.s_PopupWindow);
+        }
+    }
+
+    public Graphic.Transform device_transform { get; set; default = new Graphic.Transform.identity (); }
 
     public Core.Event damage_event {
         get {
@@ -111,7 +125,7 @@ public class Maia.Window : Group
     // methods
     construct
     {
-        // Subscribe to damage event
+       // Subscribe to damage event
         m_DamageEvent.object_subscribe (on_damage_event);
 
         // Subscribe to geometry event
@@ -141,9 +155,6 @@ public class Maia.Window : Group
         grab_keyboard.connect (on_grab_keyboard);
         ungrab_keyboard.connect (on_ungrab_keyboard);
         scroll_to.connect (on_scroll_to);
-        
-        // Set main window has this window
-        window = id;
     }
 
     /**
@@ -157,6 +168,17 @@ public class Maia.Window : Group
         is_resizable = true;
     }
 
+    /**
+     * Create a foreign window
+     */
+    public Window.from_foreign (string inName, uint32 inForeign)
+    {
+        GLib.Object (id: GLib.Quark.from_string (inName), foreign: inForeign);
+
+        is_movable = true;
+        is_resizable = true;
+    }
+
     protected virtual void
     on_damage_event (Core.EventArgs? inArgs)
     {
@@ -164,8 +186,24 @@ public class Maia.Window : Group
 
         if (damage_args != null)
         {
-            var area = new Graphic.Region (damage_args.area);
-            damage (area);
+            try
+            {
+                // the area is in window with transform
+                // invert the window transform to have area in window coordinate space
+                Graphic.Rectangle damage_area = damage_args.area;
+                var matrix = transform.matrix;
+                matrix.invert ();
+                damage_area.transform (new Graphic.Transform.from_matrix (matrix));
+
+                var area = new Graphic.Region (damage_area);
+                damage (area);
+
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"$name damage event $(area.extents)");
+            }
+            catch (GLib.Error err)
+            {
+                Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"error on convert damage area in window coordinate space : $(err.message)");
+            }
         }
     }
 
@@ -174,13 +212,27 @@ public class Maia.Window : Group
     {
         unowned GeometryEventArgs? geometry_args = inArgs as GeometryEventArgs;
 
-        if (geometry_args != null && geometry != null)
+        if (geometry_args != null && geometry != null && window == null)
         {
-            if ((uint32)geometry_args.area.size.width != (uint32)geometry.extents.size.width ||
-                (uint32)geometry_args.area.size.height != (uint32)geometry.extents.size.height)
+            try
             {
-                size = geometry_args.area.size;
-                geometry = null;
+                if ((uint32)geometry_args.area.size.width  != (uint32)geometry.extents.size.width ||
+                    (uint32)geometry_args.area.size.height != (uint32)geometry.extents.size.height)
+                {
+                    position = geometry_args.area.origin;
+
+                    // the size is in window with transform
+                    // invert the window transform to have size in window coordinate space
+                    Graphic.Size window_size = geometry_args.area.size;
+                    var matrix = transform.matrix;
+                    matrix.invert ();
+                    window_size.transform (new Graphic.Transform.from_matrix (matrix));
+                    size = window_size;
+                }
+            }
+            catch (GLib.Error err)
+            {
+                Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"error on convert size in window coordinate space : $(err.message)");
             }
         }
     }
@@ -188,12 +240,6 @@ public class Maia.Window : Group
     protected virtual void
     on_visibility_event (Core.EventArgs? inArgs)
     {
-        unowned VisibilityEventArgs? visibility_args = inArgs as VisibilityEventArgs;
-
-        if (visibility_args != null && visible != visibility_args.visible)
-        {
-            visible = visibility_args.visible;
-        }
     }
 
     protected virtual void
@@ -203,82 +249,111 @@ public class Maia.Window : Group
 
         if (mouse_args != null)
         {
-            if ((mouse_args.flags & MouseEventArgs.EventFlags.MOTION) == MouseEventArgs.EventFlags.MOTION)
+            var pos = mouse_args.position;
+
+            try
             {
-                // we have grab pointer item send event
-                if (grab_pointer_item != null)
-                {
-                    grab_pointer_item.motion_event (grab_pointer_item.convert_to_item_space (mouse_args.position));
-                }
-                // else send event to window
-                else
-                {
-                    motion_event (convert_to_item_space (mouse_args.position));
-                }
-            }
+                // the current mouse position is in window with transform
+                // invert the window transform to have position in window coordinate space
+                var matrix = transform.matrix;
+                matrix.invert ();
+                pos.transform (new Graphic.Transform.from_matrix (matrix));
 
-            if ((mouse_args.flags & MouseEventArgs.EventFlags.BUTTON_PRESS) == MouseEventArgs.EventFlags.BUTTON_PRESS)
-            {
-                // we have grab pointer item send event
-                if (grab_pointer_item != null)
+                // window is under popup invert parent transform
+                if (popup != null)
                 {
-                    grab_pointer_item.button_press_event (mouse_args.button, grab_pointer_item.convert_to_item_space (mouse_args.position));
-                }
-                // else send event to window
-                else
-                {
-                    button_press_event (mouse_args.button, convert_to_item_space (mouse_args.position));
+                    matrix = popup.get_window_transform ().matrix;
+                    matrix.invert ();
+                    pos.transform (new Graphic.Transform.from_matrix (matrix));
                 }
 
-                // scroll buttons
-                if (mouse_args.button >= 4)
+                // Motion event
+                if ((mouse_args.flags & MouseEventArgs.EventFlags.MOTION) == MouseEventArgs.EventFlags.MOTION)
                 {
-                    Scroll scroll = Scroll.NONE;
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"$name $pos");
 
-                    switch (mouse_args.button)
-                    {
-                        case 4:
-                            scroll = Scroll.UP;
-                            break;
-
-                        case 5:
-                            scroll = Scroll.DOWN;
-                            break;
-
-                        case 6:
-                            scroll = Scroll.LEFT;
-                            break;
-
-                        case 7:
-                            scroll = Scroll.RIGHT;
-                            break;
-                    }
 
                     // we have grab pointer item send event
                     if (grab_pointer_item != null)
                     {
-                        grab_pointer_item.scroll_event (scroll, grab_pointer_item.convert_to_item_space (mouse_args.position));
+                        grab_pointer_item.motion_event (grab_pointer_item.convert_to_item_space (convert_to_root_space(pos)));
                     }
                     // else send event to window
                     else
                     {
-                        scroll_event (scroll, convert_to_item_space (mouse_args.position));
+                        motion_event (pos);
+                    }
+                }
+
+                // Button press event
+                if ((mouse_args.flags & MouseEventArgs.EventFlags.BUTTON_PRESS) == MouseEventArgs.EventFlags.BUTTON_PRESS)
+                {
+                    // we have grab pointer item send event
+                    if (grab_pointer_item != null)
+                    {
+                        grab_pointer_item.button_press_event (mouse_args.button, grab_pointer_item.convert_to_item_space (convert_to_root_space(pos)));
+                    }
+                    // else send event to window
+                    else
+                    {
+                        button_press_event (mouse_args.button, pos);
+                    }
+
+                    // scroll buttons
+                    if (mouse_args.button >= 4)
+                    {
+                        Scroll scroll = Scroll.NONE;
+
+                        switch (mouse_args.button)
+                        {
+                            case 4:
+                                scroll = Scroll.UP;
+                                break;
+
+                            case 5:
+                                scroll = Scroll.DOWN;
+                                break;
+
+                            case 6:
+                                scroll = Scroll.LEFT;
+                                break;
+
+                            case 7:
+                                scroll = Scroll.RIGHT;
+                                break;
+                        }
+
+                        // we have grab pointer item send event
+                        if (grab_pointer_item != null)
+                        {
+                            grab_pointer_item.scroll_event (scroll, grab_pointer_item.convert_to_item_space (convert_to_root_space(pos)));
+                        }
+                        // else send event to window
+                        else
+                        {
+                            scroll_event (scroll, pos);
+                        }
+                    }
+                }
+
+                // Button release event
+                if ((mouse_args.flags & MouseEventArgs.EventFlags.BUTTON_RELEASE) == MouseEventArgs.EventFlags.BUTTON_RELEASE)
+                {
+                    // we have grab pointer item send event
+                    if (grab_pointer_item != null)
+                    {
+                        grab_pointer_item.button_release_event (mouse_args.button, grab_pointer_item.convert_to_item_space (convert_to_root_space(pos)));
+                    }
+                    // else send event to window
+                    else
+                    {
+                        button_release_event (mouse_args.button, pos);
                     }
                 }
             }
-
-            if ((mouse_args.flags & MouseEventArgs.EventFlags.BUTTON_RELEASE) == MouseEventArgs.EventFlags.BUTTON_RELEASE)
+            catch (GLib.Error err)
             {
-                // we have grab pointer item send event
-                if (grab_pointer_item != null)
-                {
-                    grab_pointer_item.button_release_event (mouse_args.button, grab_pointer_item.convert_to_item_space (mouse_args.position));
-                }
-                // else send event to window
-                else
-                {
-                    button_release_event (mouse_args.button, convert_to_item_space (mouse_args.position));
-                }
+                Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"error on convert position in window coordinate space : $(err.message)");
             }
         }
     }
@@ -443,6 +518,62 @@ public class Maia.Window : Group
         }
     }
 
+    internal override Graphic.Size
+    childs_size_request ()
+    {
+        Graphic.Region area = new Graphic.Region ();
+
+        foreach (unowned Core.Object child in this)
+        {
+            if (child is Item)
+            {
+                unowned Item item = (Item)child;
+                Graphic.Point item_position = item.position;
+
+                if (item_position.x < border || item_position.y < border)
+                {
+                    if (item_position.x < border) item_position.x = border;
+                    if (item_position.y < border) item_position.y = border;
+                    item.position = item_position;
+                }
+
+                Graphic.Size item_size = item.size;
+                area.union_with_rect (Graphic.Rectangle (0, 0, item_position.x + item_size.width, item_position.y + item_size.height));
+            }
+        }
+
+        area.extents.size.width += border;
+        area.extents.size.height += border;
+
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "window: %s %s", name, area.extents.size.to_string ());
+
+        return Graphic.Size (area.extents.size.width + border, area.extents.size.height + border);
+    }
+
+    internal override void
+    on_hide ()
+    {
+        base.on_hide ();
+
+        // We have a focus item unset
+        if (focus_item != null)
+        {
+            grab_focus (null);
+        }
+
+        // We have a grab pointer
+        if (grab_pointer_item != null)
+        {
+            ungrab_pointer (grab_pointer_item);
+        }
+
+        // We have a grab keyboard
+        if (grab_keyboard_item != null)
+        {
+            ungrab_keyboard (grab_keyboard_item);
+        }
+    }
+
     internal override void
     on_move ()
     {
@@ -455,14 +586,74 @@ public class Maia.Window : Group
         Graphic.Region? old_geometry = geometry != null ? geometry.copy () : null;
 
         // damage parent
-        if (old_geometry != null) (parent as Item).damage (old_geometry);
+        if (old_geometry != null && parent != null && parent is Item) (parent as Item).damage (old_geometry);
 
         // reset item geometry
-        geometry = null;
+        need_update = true;
+    }
+
+    internal override void
+    on_draw (Graphic.Context inContext, Graphic.Region? inArea) throws Graphic.Error
+    {
+        if (visible && geometry != null && damaged != null && !damaged.is_empty ())
+        {
+            var ctx = surface.context;
+
+            var damaged_area = damaged.copy ();
+            if (inArea != null)
+            {
+                damaged_area.intersect (inArea);
+            }
+
+            if (!damaged_area.is_empty ())
+            {
+                Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, @"window $name damaged draw $(damaged_area.extents)");
+
+                ctx.save ();
+                {
+                    ctx.line_width = line_width;
+                    ctx.transform = device_transform;
+
+                    // Apply the window transform
+                    if (transform.matrix.xy != 0 || transform.matrix.yx != 0)
+                    {
+                        var center = Graphic.Point(geometry.extents.size.width / 2.0, geometry.extents.size.height / 2.0);
+
+                        ctx.translate (center);
+                        ctx.transform = transform;
+                        ctx.translate (center.invert ());
+                    }
+                    else
+                        ctx.transform = transform;
+
+                    // Clear area
+                    ctx.operator = Graphic.Operator.SOURCE;
+                    ctx.pattern = background_pattern != null ? background_pattern : new Graphic.Color (0, 0, 0, 0);
+                    ctx.fill (new Graphic.Path.from_region (damaged_area));
+
+                    // Clip the damaged area
+                    ctx.clip_region (damaged_area);
+
+                    // Set paint over by default
+                    ctx.operator = Graphic.Operator.OVER;
+
+                    // and paint content
+                    paint (ctx, damaged_area);
+                }
+                ctx.restore ();
+
+                repair (damaged_area);
+            }
+        }
     }
 
     public virtual void
     swap_buffer ()
+    {
+    }
+
+    public virtual void
+    flush ()
     {
     }
 }

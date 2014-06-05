@@ -33,7 +33,7 @@ public interface Maia.ItemMovable : Item
                 var new_position = position;
                 new_position.translate (inOffset);
 
-                var area = Graphic.Rectangle (new_position.x, new_position.y, size_requested.width, size_requested.height);
+                var area = Graphic.Rectangle (new_position.x, new_position.y, size.width, size.height);
 
                 // check if item is not outside parent
                 var drawing_area_geometry = drawing_area.geometry.copy ();

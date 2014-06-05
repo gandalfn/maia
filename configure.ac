@@ -1,6 +1,6 @@
 m4_define(maia_version_major, 0)
 m4_define(maia_version_minor, 2)
-m4_define(maia_version_micro, 1)
+m4_define(maia_version_micro, 2)
 AC_INIT([maia],[maia_version_major.maia_version_minor.maia_version_micro])
 AC_PREREQ(2.63)
 
@@ -56,6 +56,7 @@ GTKMM_REQUIRED=2.24.0
 XCB_REQUIRED=1.9
 XCB_UTIL_KEYSYMS_REQUIRED=0.3.9
 XCB_UTIL_CURSOR_REQUIRED=0.1.1
+XCB_UTIL_RENDER_REQUIRED=0.1.1
 AC_SUBST(GLIB_REQUIRED)
 AC_SUBST(CAIRO_REQUIRED)
 AC_SUBST(PANGO_REQUIRED)
@@ -117,6 +118,7 @@ dnl ****************************************************************************
 dnl Check for xcb packages
 dnl ****************************************************************************
 PKG_CHECK_MODULES(MAIA_XCB, [xcb >= $XCB_REQUIRED
+                             xcb-composite >= $XCB_REQUIRED
                              xcb-keysyms >= $XCB_UTIL_KEYSYMS_REQUIRED
                              xcb-cursor >= $XCB_UTIL_CURSOR_REQUIRED])
 AC_SUBST(MAIA_XCB_CFLAGS)
@@ -205,6 +207,10 @@ fi
 dnl ****************************************************************************
 dnl Check for vala
 dnl ****************************************************************************
+vala_0_22=$(which valac-0.22)
+if test ! x"$vala_0_22" = x""; then
+    VALAC=$vala_0_22
+fi
 AM_PROG_VALAC($VALA_REQUIRED)
 VALA_VAPI_PATH=$($PKG_CONFIG --variable=vapidir libvala-0.22)
 AC_SUBST(VALA_VAPI_PATH)

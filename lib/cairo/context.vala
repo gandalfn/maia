@@ -22,7 +22,6 @@ public class Maia.Cairo.Context : Graphic.Context
     // properties
     private global::Cairo.Context m_Context = null;
     private Pango.Context         m_PangoContext = null;
-    private Graphic.Transform     m_Transform = new Graphic.Transform.identity ();
     private double[]?             m_Dashes = null;
     private uint                  m_SaveCount = 0;
 
@@ -53,8 +52,12 @@ public class Maia.Cairo.Context : Graphic.Context
     }
 
     internal override Graphic.Transform transform {
-        get {
-            return m_Transform;
+        owned get {
+            global::Cairo.Matrix matrix = m_Context.get_matrix ();
+
+            return new Graphic.Transform.from_matrix (Graphic.Matrix (matrix.xx, matrix.yx,
+                                                                      matrix.xy, matrix.yy,
+                                                                      matrix.x0, matrix.y0));
         }
         set {
             if (m_Context != null)
@@ -78,6 +81,7 @@ public class Maia.Cairo.Context : Graphic.Context
             base.surface = value;
             m_Context = new global::Cairo.Context ((global::Cairo.Surface)(value as Surface).native);
             m_Context.set_fill_rule (global::Cairo.FillRule.EVEN_ODD);
+            m_Context.set_antialias (global::Cairo.Antialias.SUBPIXEL);
         }
     }
 
@@ -136,6 +140,28 @@ public class Maia.Cairo.Context : Graphic.Context
         base (inSurface);
     }
 
+    private inline Graphic.Point
+    floor_point (double inX, double inY)
+    {
+        Graphic.Point ret = Graphic.Point (inX, inY);
+        m_Context.user_to_device (ref ret.x, ref ret.y);
+        ret.x = GLib.Math.floor (ret.x);
+        ret.y = GLib.Math.floor (ret.y);
+        m_Context.device_to_user (ref ret.x, ref ret.y);
+        return ret;
+    }
+
+    private inline Graphic.Point
+    ceil_point (double inX, double inY)
+    {
+        Graphic.Point ret = Graphic.Point (inX, inY);
+        m_Context.user_to_device (ref ret.x, ref ret.y);
+        ret.x = GLib.Math.floor (ret.x + 0.5);
+        ret.y = GLib.Math.floor (ret.y + 0.5);
+        m_Context.device_to_user (ref ret.x, ref ret.y);
+        return ret;
+    }
+
     private void
     on_pattern_transform_changed ()
     {
@@ -148,7 +174,7 @@ public class Maia.Cairo.Context : Graphic.Context
                                                                 base.pattern.transform.matrix.x0, base.pattern.transform.matrix.y0);
             pattern.set_filter (global::Cairo.Filter.BEST);
             pattern.set_matrix (matrix);
-            
+
             m_Context.set_source (pattern);
         }
         base.pattern.transform.changed.connect (on_pattern_transform_changed);
@@ -433,10 +459,14 @@ public class Maia.Cairo.Context : Graphic.Context
     {
         foreach (unowned Graphic.Rectangle rect in inRegion)
         {
-            Log.debug (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "clip %s", rect.to_string ());
-            m_Context.rectangle (rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+            // round rect to bounding integer rect
+            var pos1 = floor_point (rect.origin.x, rect.origin.y);
+            var pos2 = ceil_point (rect.origin.x + rect.size.width, rect.origin.y + rect.size.height);
+
+            m_Context.rectangle (pos1.x, pos1.y, pos2.x - pos1.x, pos2.y - pos1.y);
         }
         m_Context.clip ();
+
         status ();
     }
 

@@ -27,6 +27,9 @@ _PINCLUDE(maiamm/private/core-object_p.h)
 
 namespace Maia
 {
+    class ModelIterator;
+    class ModelRow;
+    class ModelRows;
     class ModelColumn;
 
     class Model : public Core::Object, public Manifest::Element
@@ -34,20 +37,39 @@ namespace Maia
         _CLASS_GOBJECT(Model, MaiaModel, MAIA_MODEL, Core::Object, MaiaCoreObject)
         _IMPLEMENTS_INTERFACE(Manifest::Element)
 
+        _IGNORE(maia_model_set_values, maia_model_set_valuesv, maia_model_construct_model)
+
         protected:
             _CTOR_DEFAULT()
 
         public:
+            typedef ModelIterator iterator;
+            typedef ModelRow Row;
+            typedef ModelRows Rows;
+            typedef ModelColumn Column;
             typedef sigc::slot<void, guint> SlotValueChanged;
+
+            static Glib::RefPtr<Model> create (const Glib::ustring& inId);
+            static Glib::RefPtr<Model> create (const Glib::ustring& inId, const std::vector<Glib::RefPtr<Model::Column>>& inColumns);
+            static Glib::RefPtr<Model> create_foreign (const Glib::ustring& inId, ...);
+            static Glib::RefPtr<Model> create_foreign (const Glib::ustring& inId, const std::vector<Glib::RefPtr<Model::Column>>& inColumns, ...);
 
             _WRAP_METHOD(Glib::ustring get_name () const, maia_model_get_name)
 
-            inline Glib::RefPtr<ModelColumn> operator[] (const Glib::ustring& inColumnName) const
-            {
-                return get (inColumnName);
-            }
+            Model::Rows rows () const;
 
+            _WRAP_METHOD(Glib::RefPtr<Model::Column> get (const Glib::ustring& inColumnName) const, maia_model_get, refreturn)
             _WRAP_METHOD(guint get_nb_rows () const, maia_model_get_nb_rows)
+
+            _IGNORE (maia_model_append_row)
+            Model::iterator append_row ();
+
+            _IGNORE (maia_model_remove_row)
+            void remove_row (const Model::iterator& inIter);
+
+            Model::iterator get_iter (unsigned int inRow);
+
+            inline void clear ();
 
             _WRAP_SIGNAL(void value_changed (guint inRow), "value-changed", no_default_handler)
             _WRAP_SIGNAL(void row_added (guint inRow), "row-added")
@@ -65,9 +87,6 @@ namespace Maia
             _WRAP_PROPERTY("characters", Glib::ustring)
             _WRAP_PROPERTY("manifest-path", Glib::ustring)
             _WRAP_PROPERTY("manifest-styles", Core::Set<Manifest::Style>)
-
-        private:
-            _WRAP_METHOD(Glib::RefPtr<ModelColumn> get (const Glib::ustring& inColumnName) const, maia_model_get, refreturn)
     };
 
     class ModelColumn : public Core::Object, public Manifest::Element
@@ -79,16 +98,175 @@ namespace Maia
             _CTOR_DEFAULT()
 
         public:
+            static Glib::RefPtr<Model::Column> create (const Glib::ustring& inName)
+            {
+                return Glib::RefPtr<Model::Column> (new ModelColumn (maia_model_column_new (inName.c_str())));
+            }
+
+            template <typename T>
+            static Glib::RefPtr<Model::Column> create (const Glib::ustring& inName)
+            {
+                GType type = Glib::Value<T>::value_type ();
+
+                return Glib::RefPtr<Model::Column> (new ModelColumn (maia_model_column_new_with_type (inName.c_str(), type)));
+            }
+
+            static Glib::RefPtr<Model::Column> create (const Glib::ustring& inName, int inColumn)
+            {
+                return Glib::RefPtr<Model::Column> (new ModelColumn (maia_model_column_new_with_column (inName.c_str(), inColumn)));
+            }
+
             _WRAP_METHOD(Glib::ustring get_name () const, maia_model_column_get_name)
             _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_model_column_get_model, refreturn)
             _WRAP_METHOD(int get_column () const, maia_model_column_get_column)
             _WRAP_METHOD(void set_column (int inColumn) const, maia_model_column_set_column)
+            _WRAP_METHOD(GType get_column_type () const, maia_model_column_get_column_type)
 
             _IGNORE(maia_model_column_get)
-            template<typename T>
-            inline void get_value(unsigned int inRow, const Glib::Value<T>& inValue) const
+            _IGNORE(maia_model_column_set)
+
+            _WRAP_PROPERTY("name", Glib::ustring)
+            _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
+            _WRAP_PROPERTY("column", int)
+            _WRAP_PROPERTY("column-type", GType)
+
+            _WRAP_PROPERTY("tag", Glib::ustring)
+            _WRAP_PROPERTY("characters", Glib::ustring)
+            _WRAP_PROPERTY("manifest-path", Glib::ustring)
+            _WRAP_PROPERTY("manifest-styles", Core::Set<Manifest::Style>)
+    };
+
+    class ModelIterator
+    {
+        public:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+            ModelIterator (Model* inpModel, unsigned int inRow);
+            ModelIterator ();
+#endif
+            Model::iterator& operator++ ();
+            const Model::iterator operator++ (int inCount);
+            bool operator== (const Model::iterator& rhs);
+            bool operator!= (const Model::iterator& rhs);
+            inline const ModelRow& operator* () const;
+            inline const ModelRow* operator-> () const;
+            bool end () const;
+            
+
+        protected:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+            Model*       m_pModel;
+            unsigned int m_Row;
+#endif
+
+        private:
+            friend Model;
+    };
+
+    class ModelRowProxy
+    {
+        public:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+            inline ModelRowProxy (MaiaModelColumn* inpColumn, unsigned int inRow) :
+                m_pColumn (inpColumn),
+                m_Row (inRow)
             {
-                maia_model_column_get (gobj (), inRow, inValue.gobj ());
+            }
+#endif
+            template <typename T>
+            inline ModelRowProxy& operator=(const T& inVal);
+
+            template <typename T>
+            inline operator T() const;
+
+        private:
+            MaiaModelColumn* m_pColumn;
+            int              m_Row;
+
+            // no copy assignment
+            ModelRowProxy& operator=(const ModelRowProxy&) { return *this; }
+    };
+
+    class ModelRow : public ModelIterator
+    {
+        public:
+            unsigned int num () const
+            {
+                return m_Row;
+            }
+
+            ModelRowProxy operator[] (const Glib::ustring& inColumnName) const
+            {
+                return ModelRowProxy (maia_model_get (m_pModel->gobj (), inColumnName.c_str ()), m_Row);
+            }
+
+            void set_values (...) const
+            {
+                va_list var_args;
+
+                va_start (var_args, this);
+                maia_model_set_valuesv (m_pModel->gobj (), m_Row, var_args);
+                va_end (var_args);
             }
     };
+
+
+    class ModelRows
+    {
+        public:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+            ModelRows (Model* inpModel);
+#endif
+
+            Model::iterator begin () const;
+            Model::iterator end () const;
+
+            inline unsigned int size () const
+            {
+                return m_pModel->get_nb_rows ();
+            }
+
+        private:
+            Model* m_pModel;
+    };
+
+    inline void Model::clear ()
+    {
+        while (rows ().size () != 0)
+        {
+            remove_row (rows ().begin ());
+        }
+    }
+
+    inline const Model::Row& ModelIterator::operator* () const
+    {
+        return static_cast<const Model::Row&> (*this);
+    }
+
+    inline const Model::Row* ModelIterator::operator-> () const
+    {
+        return static_cast<const Model::Row*> (this);
+    }
+
+    template <typename T>
+    inline ModelRowProxy& ModelRowProxy::operator= (const T& inVal)
+    {
+        Glib::Value<T> value;
+        value.init(Glib::Value<T>::value_type());
+
+        value.set(inVal);
+        maia_model_column_set (m_pColumn, m_Row, value.gobj ());
+
+        return *this;
+    }
+
+    template <typename T>
+    inline ModelRowProxy::operator T () const
+    {
+        Glib::Value<T> value;
+        value.init(Glib::Value<T>::value_type());
+
+        maia_model_column_get (m_pColumn, m_Row, value.gobj ());
+
+        return value.get ();
+    }
 }

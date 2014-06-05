@@ -78,6 +78,8 @@ files_hg = \
     canvas.hg \
     window.hg \
     adjustment.hg \
-    scroll-view.hg
+    scroll-view.hg \
+    progress-bar.hg \
+    seek-bar.hg
 
 files_ccg = $(files_hg:.hg=.ccg)

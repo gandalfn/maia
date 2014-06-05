@@ -21,4 +21,6 @@ doc_input = \
 
 include $(top_srcdir)/build-aux/doc-reference.am
 
+EXTRA_DIST = reference/doxygen.css
+
 endif

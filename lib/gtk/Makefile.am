@@ -5,13 +5,13 @@ MAIA_VAPI_DEPS =  \
     maia \
     gdk-pixbuf/maia-gdk-pixbuf
 
+MAIA_SYSTEM_VAPI_DEPS = \
+    gtk+-2.0
+
 include $(top_srcdir)/build-aux/maia.am
 include $(top_srcdir)/build-aux/backend.am
 include $(top_srcdir)/build-aux/pkgconfig.am
 include $(top_srcdir)/build-aux/vapi.am
-
-keysym.vala:
-	$(AM_V_GEN) $(top_srcdir)/tools/generate-gdk-key-convert > $@
 
 backend_LTLIBRARIES = libmaia-gtk.la
 
@@ -19,15 +19,11 @@ libmaia_gtk_la_CFLAGS = \
     $(MAIA_GTK_CFLAGS)
 
 libmaia_gtk_la_VALAFLAGS = \
-    --pkg=gdk-keysym \
-    --pkg=gtk+-2.0 \
-    --pkg=gdk-x11-2.0
+    --pkg=gdk-x11-2.0 \
+    --pkg=gvalue-collect
 
 libmaia_gtk_la_SOURCES = \
     init.vala \
-    keysym.vala \
-    cursor.vala \
-    scroll.vala \
     image.vala \
     button.vala \
     tool.vala \

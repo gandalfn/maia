@@ -216,32 +216,32 @@ public class Maia.View : Maia.Grid
         {
             if (m_RowHightlighted >= 0)
             {
-                Graphic.Rectangle area;
+                // Get current item highlighted
+                unowned ItemPackable item = get_item (m_RowHightlighted);
 
-                if (get_row_area (m_RowHightlighted, out area))
-                {
-                    area.size.width = geometry.extents.size.width;
-                    damage (new Graphic.Region (area));
-                }
+                // Item highlighted does not change 
+                if (item == item_over_pointer) return;
+
+                // Damage old item
+                item.damage ();
+
+                // Unset highlighted item
                 m_RowHightlighted = -1;
             }
 
+            // An item is over pointer
             if (item_over_pointer != null && item_over_pointer is ItemPackable)
             {
+                // Get row of item over pointer
                 unowned ItemPackable item = item_over_pointer as ItemPackable;
                 uint row;
                 if (get_item_row (item, out row))
                 {
-                    if (m_RowHightlighted != row)
-                    {
-                        m_RowHightlighted = (int)row;
-                        Graphic.Rectangle area;
-                        if (get_row_area (m_RowHightlighted, out area))
-                        {
-                            area.size.width = geometry.extents.size.width;
-                            damage (new Graphic.Region (area));
-                        }
-                    }
+                    // Set new row highlighted
+                    m_RowHightlighted = (int)row;
+
+                    // Damage the new item
+                    item_over_pointer.damage ();
                 }
             }
         }
@@ -467,7 +467,7 @@ public class Maia.View : Maia.Grid
         var item_size = size;
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "unshift item size: %s", item_size.to_string ());
 
-        geometry = null;
+        need_update = true;
     }
 
     internal override void
@@ -475,12 +475,10 @@ public class Maia.View : Maia.Grid
     {
         if (m_RowHightlighted >= 0 && fill_pattern != null)
         {
-            Graphic.Rectangle area;
-
-            if (get_row_area (m_RowHightlighted, out area))
+            unowned Item? item = get_item (m_RowHightlighted) as Item;
+            if (item != null)
             {
-                area.size.width = geometry.extents.size.width;
-                var path = new Graphic.Path.from_region (new Graphic.Region (area));
+                var path = new Graphic.Path.from_region (item.geometry);
                 inContext.pattern = fill_pattern;
                 inContext.fill (path);
             }

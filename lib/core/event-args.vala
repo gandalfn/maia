@@ -23,7 +23,7 @@ public abstract class Maia.Core.EventArgs : GLib.Object
     private static int s_Sequence = 1;
 
     // accessors
-    public abstract GLib.Variant serialize { owned get; set; }
+    public virtual GLib.Variant serialize { owned get; set; }
     public int sequence { get; construct; }
 
     // methods

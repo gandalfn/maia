@@ -414,38 +414,25 @@ public abstract class Maia.Core.Object : Any
      *
      * @return the corresponding object to inId else `null`
      */
-    public unowned Object?
+    public virtual unowned Object?
     find (uint32 inId, bool inRecursive = true)
     {
         foreach (unowned Object? child in this)
         {
             if (child.id == inId)
+            {
                 return child;
-
-            unowned Object? ret = child.find (inId, inRecursive);
-            if (ret != null)
-                return ret;
+            }
         }
 
-        return null;
-    }
-
-    /**
-     * Find object by id from this and in this parent
-     *
-     * @param inId the id of the object to found in child
-     * @param inRecursive search also in parent childs
-     *
-     * @return the corresponding object to inId else `null`
-     */
-    public unowned Object?
-    find_in_parents (uint32 inId, bool inRecursive = true)
-    {
-        for (unowned Object? p = parent; p != null; p = p.parent)
+        if (inRecursive)
         {
-            unowned Object? found = p.find (inId, inRecursive);
-            if (found != null)
-                return found;
+            foreach (unowned Object? child in this)
+            {
+                unowned Object? ret = child.find (inId, inRecursive);
+                if (ret != null)
+                    return ret;
+            }
         }
 
         return null;
@@ -469,8 +456,11 @@ public abstract class Maia.Core.Object : Any
             {
                 list.insert (child);
             }
+        }
 
-            if (inRecursive)
+        if (inRecursive)
+        {
+            foreach (unowned Object? child in this)
             {
                 foreach (unowned T? c in child.find_by_type<T> (inRecursive))
                 {

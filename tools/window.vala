@@ -108,15 +108,15 @@ public class CanvasEditor.Window : Gtk.Window
 
             m_Toolbox = builder.get_object ("toolbox") as Gtk.ToolButton;
             m_Toolbox.sensitive = false;
-            m_Toolbox.clicked.connect (() => {
-                if (m_Canvas.toolbox != null)
-                {
-                    if (m_Canvas.toolbox.visible)
-                        m_Canvas.toolbox.hide ();
-                    else
-                        m_Canvas.toolbox.show ();
-                }
-            });
+//~             m_Toolbox.clicked.connect (() => {
+//~                 if (m_Canvas.toolbox != null)
+//~                 {
+//~                     if (m_Canvas.toolbox.visible)
+//~                         m_Canvas.toolbox.visible = false;
+//~                     else
+//~                         m_Canvas.toolbox.visible = true;
+//~                 }
+//~             });
 
             m_Dump = builder.get_object ("dump") as Gtk.ToolButton;
             m_Dump.sensitive = false;
@@ -367,7 +367,7 @@ public class CanvasEditor.Window : Gtk.Window
                 }
                 m_PreviewBox.show ();
                 m_Hide.sensitive = true;
-                m_Toolbox.sensitive = m_Canvas.toolbox != null;
+//~                 m_Toolbox.sensitive = m_Canvas.toolbox != null;
                 m_Dump.sensitive = true;
                 m_Build.sensitive = false;
             }

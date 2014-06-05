@@ -23,14 +23,7 @@ public class Maia.TestGtk : Maia.TestCase
     {
         base ("gtk");
 
-        add_test ("load-backend", test_gtk_load_backend);
         suite.add_suite (new TestModel ().suite);
         suite.add_suite (new TestCanvas ().suite);
-    }
-
-    public void
-    test_gtk_load_backend ()
-    {
-        assert (Application.default.load_backend ("gtk"));
     }
 }

@@ -57,7 +57,5 @@ namespace Maia
             _WRAP_PROPERTY("lower", double)
             _WRAP_PROPERTY("upper", double)
             _WRAP_PROPERTY("page-size", double)
-
-            _WRAP_SIGNAL(void changed (), "changed", no_default_handler)
     };
 }

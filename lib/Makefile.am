@@ -90,6 +90,27 @@ libmaia_la_SOURCES = \
     graphic/image-jpg.vala \
     graphic/image-svg.vala \
     graphic/image-gif.vala \
+    cassowary/abstract-variable.vala \
+    cassowary/box.vala \
+    cassowary/cassowary.vala \
+    cassowary/constraint.vala \
+    cassowary/double.vala \
+    cassowary/dummy-variable.vala \
+    cassowary/edit-constraint.vala \
+    cassowary/edit-info.vala \
+    cassowary/edit-or-stay-constraint.vala \
+    cassowary/linear-constraint.vala \
+    cassowary/linear-equation.vala \
+    cassowary/linear-expression.vala \
+    cassowary/linear-inequality.vala \
+    cassowary/objective-variable.vala \
+    cassowary/simplex-solver.vala \
+    cassowary/slack-variable.vala \
+    cassowary/stay-constraint.vala \
+    cassowary/strength.vala \
+    cassowary/symbolic-weight.vala \
+    cassowary/tableau.vala \
+    cassowary/variable.vala \
     backend.vala \
     application.vala \
     damage-event-args.vala \
@@ -115,6 +136,7 @@ libmaia_la_SOURCES = \
     label.vala \
     entry.vala \
     grid.vala \
+    cassogrid.vala \
     button.vala \
     togglegroup.vala \
     togglebutton.vala \
@@ -132,7 +154,12 @@ libmaia_la_SOURCES = \
     toolbox.vala \
     arrow.vala \
     scroll-view.vala \
-    canvas.vala
+    canvas.vala \
+    progress-bar.vala \
+    seek-bar.vala
+
+libmaia_la_VALAFLAGS = \
+    --pkg=gvalue-collect
 
 libmaia_la_LDFLAGS = \
     -Wl,--as-needed \

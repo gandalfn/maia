@@ -136,21 +136,23 @@ public class Maia.Cairo.Surface : Graphic.Surface
                     uint32 xid;
                     int screen_num;
                     unowned Xcb.Connection connection;
-                    Xcb.Visualtype? visual_type = null;
+                    uint32 visual;
 
                     ((GLib.Object)device).get ("xid", out xid,
-                                                 "screen-num", out screen_num,
-                                                 "connection", out connection);
+                                               "screen-num", out screen_num,
+                                               "connection", out connection,
+                                               "visual", out visual);
 
-                    unowned Xcb.Screen screen = connection.roots[screen_num];
+                    unowned global::Xcb.Screen screen = connection.roots[screen_num];
+                    Xcb.Visualtype? visual_type = null;
 
-                    foreach (unowned Xcb.Depth? depth in screen)
+                    foreach (unowned global::Xcb.Depth? depth in screen)
                     {
-                        foreach (unowned Xcb.Visualtype? visual in depth)
+                        foreach (unowned global::Xcb.Visualtype? vis in depth)
                         {
-                            if (visual.visual_id == screen.root_visual)
+                            if (vis.visual_id == visual)
                             {
-                                visual_type = visual;
+                                visual_type = vis;
                                 break;
                             }
                         }
@@ -665,6 +667,13 @@ public class Maia.Cairo.Surface : Graphic.Surface
     flush () throws Graphic.Error
     {
         m_Surface.flush ();
+        status ();
+    }
+
+    internal override void
+    dump (string inFilename) throws Graphic.Error
+    {
+        m_Surface.write_to_png (inFilename);
         status ();
     }
 }

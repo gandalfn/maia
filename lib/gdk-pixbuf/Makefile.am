@@ -4,6 +4,9 @@ MAIA_VAPI_DEPS =  \
     core/maia-any \
     maia
 
+MAIA_SYSTEM_VAPI_DEPS = \
+    gdk-pixbuf-2.0
+
 include $(top_srcdir)/build-aux/maia.am
 include $(top_srcdir)/build-aux/backend.am
 include $(top_srcdir)/build-aux/pkgconfig.am
@@ -13,9 +16,6 @@ backend_LTLIBRARIES = libmaia-gdk-pixbuf.la
 
 libmaia_gdk_pixbuf_la_CFLAGS = \
     $(MAIA_GDK_PIXBUF_CFLAGS)
-
-libmaia_gdk_pixbuf_la_VALAFLAGS = \
-    --pkg=gdk-pixbuf-2.0
 
 libmaia_gdk_pixbuf_la_SOURCES = \
     image.vala \

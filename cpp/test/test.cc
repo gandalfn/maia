@@ -24,6 +24,7 @@
 #include "test-manifest.h"
 #include "test-canvas.h"
 #include "test-derived.h"
+#include "test-model.h"
 
 int
 main (int argc, char** argv)
@@ -32,7 +33,7 @@ main (int argc, char** argv)
 
     std::vector<Glib::ustring> backends;
     backends.push_back ("gtk");
-    
+
     // Init test units
     g_test_init (&argc, &argv, 0);
 
@@ -44,7 +45,7 @@ main (int argc, char** argv)
 
     // Create maia application
     Glib::RefPtr<Maia::Application> pApp = Maia::Application::create ("test-cpp", 60, backends);
-    
+
     // Get root suite
     Maia::TestSuite root;
 
@@ -53,11 +54,13 @@ main (int argc, char** argv)
     Maia::TestManifest manifest;
     Maia::TestCanvas canvas;
     Maia::TestDerived derived;
+    Maia::TestModel model;
 
     root.add_suite (event.get_suite ());
     root.add_suite (manifest.get_suite ());
     root.add_suite (canvas.get_suite ());
     root.add_suite (derived.get_suite ());
+    root.add_suite (model.get_suite ());
 
     g_test_run ();
 

@@ -23,16 +23,24 @@ internal struct Maia.Cairo.Rectangle : global::Cairo.RectangleInt
     // methods
     public Rectangle (Graphic.Rectangle inRect)
     {
-        x = Fixed.from_double (inRect.origin.x);
-        y = Fixed.from_double (inRect.origin.y);
-        width = Fixed.from_double (inRect.size.width);
-        height = Fixed.from_double (inRect.size.height);
+        double x1 = GLib.Math.floor (inRect.origin.x);
+        double y1 = GLib.Math.floor (inRect.origin.y);
+        double x2 = GLib.Math.floor (inRect.origin.x + inRect.size.width + 0.5);
+        double y2 = GLib.Math.floor (inRect.origin.y + inRect.size.height + 0.5);
+        x = Fixed.from_double (x1);
+        y = Fixed.from_double (y1);
+        width = Fixed.from_double (x2 - x1);
+        height = Fixed.from_double (y2 - y1);
     }
 
     public inline Graphic.Rectangle
     to_rectangle ()
     {
-        return Graphic.Rectangle (((Fixed)x).to_double (), ((Fixed)y).to_double (),
-                                  ((Fixed)width).to_double (), ((Fixed)height).to_double ());
+        double x1 = GLib.Math.floor (((Fixed)x).to_double ());
+        double y1 = GLib.Math.floor (((Fixed)y).to_double ());
+        double x2 = GLib.Math.floor (((Fixed)x).to_double () + ((Fixed)width).to_double () + 0.5);
+        double y2 = GLib.Math.floor (((Fixed)y).to_double () + ((Fixed)height).to_double () + 0.5);
+
+        return Graphic.Rectangle (x1, y1, x2 - x1, y2 - y1);
     }
 }

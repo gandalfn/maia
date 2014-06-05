@@ -30,7 +30,7 @@ public interface Maia.ItemResizable : Item
             if (drawing_area.geometry != null)
             {
                 // translate the current position
-                var new_size = size_requested;
+                var new_size = size;
                 new_size.resize (inDelta.x, inDelta.y);
 
                 var area = Graphic.Rectangle (position.x, position.y, new_size.width, new_size.height);

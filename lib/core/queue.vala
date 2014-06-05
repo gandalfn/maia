@@ -26,6 +26,11 @@ public class Maia.Core.Queue<V> : Array<V>
         base ();
     }
 
+    public Queue.sorted ()
+    {
+        base.sorted ();
+    }
+
     public virtual unowned V?
     peek ()
     {
