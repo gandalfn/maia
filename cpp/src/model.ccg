@@ -134,6 +134,35 @@ namespace Maia
         return Glib::RefPtr<Model> (new Model (pModel));
     }
 
+    gboolean
+    Model::filter_func_callback (MaiaModel* inpModel, guint inRow, void* inpData)
+    {
+        if (inpData)
+        {
+            Model::SlotFilterFunc* pSlot = (Model::SlotFilterFunc*)inpData;
+            Glib::RefPtr<Model> pModel = Glib::wrap (inpModel, true);
+            Model::iterator iter = Model::iterator (pModel->cpp_obj (), inRow);
+
+            return (*pSlot) (pModel, iter);
+        }
+
+        return false;
+    }
+
+    void
+    Model::filter_func_destroy_notify_handler (void* inpData)
+    {
+        Model::SlotFilterFunc* pSlot = (Model::SlotFilterFunc*)inpData;
+        delete pSlot;
+    }
+
+    Glib::RefPtr<Model> Model::create (const Glib::ustring& inId, const Glib::RefPtr<Model>& inpModel, SlotFilterFunc inSlot)
+    {
+        SlotFilterFunc* pSlot = new SlotFilterFunc (inSlot);
+        return Glib::RefPtr<Model> (new Model (maia_model_new_filter (inId.c_str (), const_cast<MaiaModel*> (inpModel->gobj ()),
+                                                                      filter_func_callback, pSlot, filter_func_destroy_notify_handler)));
+    }
+
     Model::Rows Model::rows () const
     {
         return ModelRows (const_cast<Model*> (this));

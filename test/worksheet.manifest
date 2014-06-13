@@ -1,99 +1,16 @@
 ScrollView.scrollview {
 	Document.worksheet {
-		// Models
-	//~     Model.model_example {
-	//~         Column.name_col {
-	//~             column: 1;
-	//~         }
-	//~         Column.icon_col {
-	//~             column: 2;
-	//~         }
-	//~     }
-	//~
-	//~     View.view_example {
-	//~         model-name: model_example;
-	//~         [
-	//~           Grid.cell_1_grid {
-	//~             column-spacing: 5;
-	//~             Image.cell_1_image {
-	//~               icon: @icon_col;
-	//~             }
-	//~             Label.cell_1_label {
-	//~                 column: 1;
-	//~                 text: @name_col;
-	//~             }
-	//~         ]
-	//~     }
-
 		// Default page format
 		format: a4;
 		// TODO: fix transform on document
-		//transform: scale(1.2, 1.2);
+		transform: scale(1.2, 1.2);
 		border-width: 5;
 		background-pattern: #E0E0E0;
 		header: 'header';
 		footer: 'footer';
 		
-		Shortcut.shortcuts {
-			section: 'content';
-			label: 'Images';
-			angle: -pi/2;
-		}
-		
-		Toolbox.toolbox {
-			position: 0, 200;
-			placement: left;
-			border: 12;
-			background-pattern: rgba(0.8, 0.8, 0.8, 0.8);
-			visible: false;
-			
-			Label.label {
-				xfill: false;
-				xexpand: false;
-				alignment: left;
-				text: '<b>Shape:</b>';
-			}
-			
-			Grid.shapes {
-				row: 1;
-				column-spacing: 5;
-				
-				Tool.button {
-					button-color: rgb(0.6, 0.6, 0.6);
-					label: 'test';
-					action: remove;
-					icon-name: 'edit';
-					visible-with: 'type:Label,parent-type:DrawingArea';
-				}
-			
-				Tool.button {
-					column: 1;
-					button-color: rgb(0.6, 0.6, 0.6);
-					label: 'test';
-					action: remove;
-					visible-with: 'type:Label';
-				}
-			
-				Tool.button {
-					column: 2;
-					button-color: rgb(0.6, 0.6, 0.6);
-					label: 'test';
-					action: add;
-					visible-with: 'type:DrawingArea';
-					[
-						Label.label_draw {
-				            position: 20, 20;
-				            stroke-pattern: #000000;
-				            font-description: "Liberation Sans 14";
-				            text: "Added";
-		           		}
-					]
-				}
-			}
-		}
-
 		// Header
-		Grid.header {
+		CassoGrid.header {
 		    row-spacing: 5;
 		    grid-line-width: 1;
 		    stroke-pattern: #000000;
@@ -129,7 +46,7 @@ ScrollView.scrollview {
 		        text: "Institution name";
 		    }
 
-		    Grid.exam_info {
+		    CassoGrid.exam_info {
 		        row: 0;
 		        column: 2;
 		        xexpand: false;
@@ -157,7 +74,7 @@ ScrollView.scrollview {
 		}
 
 		// Footer
-		Grid.footer {
+		CassoGrid.footer {
 		    row-spacing: 5;
 
 		    Label.footer_right {
@@ -188,7 +105,7 @@ ScrollView.scrollview {
 		}
 
 		// Main content of worksheet
-		Grid.main {
+		CassoGrid.main {
 		    column-spacing: 5;
 		    grid-line-width: 1;
 		    stroke-pattern: #000000;
@@ -208,7 +125,7 @@ ScrollView.scrollview {
 		    }
 
 		    // Content
-		    Grid.content {
+		    CassoGrid.content {
 		    	//visible: false;
 		        row: 0;
 		        column: 1;
@@ -313,7 +230,7 @@ ScrollView.scrollview {
 		}
 
 		// Main content of worksheet
-		Grid.main_2 {
+		CassoGrid.main_2 {
 		    row: 1;
 		    border-line-width: 1;
 		    stroke-pattern: #000000;

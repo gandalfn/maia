@@ -137,7 +137,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             }
         }
     }
-    
+
     // events
     public Core.Event changed { get; private set; }
 
@@ -407,7 +407,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"popup area $(popup_area)");
             m_Popup.update (inContext, new Graphic.Region (popup_area));
 
-            damage ();
+            damaged = area.copy ();
         }
     }
 

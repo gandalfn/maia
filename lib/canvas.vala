@@ -19,9 +19,43 @@
 
 public interface Maia.Canvas : GLib.Object
 {
+    // types
+    public delegate Canvas? CreateFunc ();
     // accessors
     public abstract Window window { get; }
     public abstract Item   root   { get; set; default = null; }
+
+    // static methods
+    /**
+     * Create a new canvas
+     *
+     * @return new canvas object or ``null`` when something goess wrong
+     */
+    public static Canvas?
+    create ()
+    {
+        try
+        {
+            unowned Backend? backend = Application.default.get_backend("canvas");
+            if (backend != null)
+            {
+                unowned CreateFunc? func = (CreateFunc?)backend["canvas_create"];
+                if (func != null)
+                {
+                    return func ();
+                }
+            }
+            else
+            {
+                Log.error (GLib.Log.METHOD, Log.Category.CORE_EXTENSION, @"Could not found any backend which provide canvas");
+            }
+        }
+        catch (GLib.Error err)
+        {
+            Log.error (GLib.Log.METHOD, Log.Category.CORE_EXTENSION, @"Error on create canvas: $(err.message)");
+        }
+        return null;
+    }
 
     // methods
     /**
@@ -30,8 +64,6 @@ public interface Maia.Canvas : GLib.Object
     public void
     clear ()
     {
-        if (root != null) root.parent = null;
-
         root = null;
     }
 

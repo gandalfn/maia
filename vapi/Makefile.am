@@ -6,6 +6,7 @@ xcb-keysym.vapi:
 noinst_DATA = \
     config.vapi \
     os.vapi \
+    x11.vapi \
     xcb-base.deps \
     xcb-base.vapi \
     xcb.deps \

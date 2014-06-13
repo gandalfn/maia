@@ -29,7 +29,8 @@ libmaia_gtk_la_SOURCES = \
     tool.vala \
     model.vala \
     shortcut.vala \
-    canvas.vala
+    canvas.vala \
+    xembed.vala
 
 libmaia_gtk_la_LIBADD = \
     $(MAIA_GTK_LIBS)

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <maia-gtkmm.h>
+#include <maiamm.h>
 
 #include "test-canvas.h"
 
@@ -71,7 +71,7 @@ TestCanvas::test_create ()
                             "}");
     try
     {
-        Maia::Gtk::Canvas* pCanvas = new Maia::Gtk::Canvas ();
+        Maia::Canvas* pCanvas = Maia::Canvas::create ();
         pCanvas->load (manifest, "document");
 
         g_assert (pCanvas->get_root ());
@@ -102,7 +102,7 @@ TestCanvas::test_parse_child ()
                             "}");
     try
     {
-        Gtk::Canvas* pCanvas = new Gtk::Canvas ();
+        Maia::Canvas* pCanvas = Maia::Canvas::create ();
         pCanvas->load (manifest, "document");
 
         Glib::RefPtr<Item> pRoot = pCanvas->get_root ();
@@ -140,7 +140,7 @@ TestCanvas::test_find ()
                             "       text: '';"
                             "   }"
                             "}");
-    Gtk::Canvas* pCanvas = new Gtk::Canvas ();
+    Maia::Canvas* pCanvas = Maia::Canvas::create ();
     try
     {
         pCanvas->load (manifest, "document");

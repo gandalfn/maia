@@ -224,9 +224,7 @@ MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
 SEARCH_INCLUDES        = YES
 INCLUDE_PATH           = "@abs_top_builddir@/cpp/maiamm" \
-                         "@abs_top_srcdir@/cpp/maiamm" \
-                         "@abs_top_builddir@/cpp/gtk/maia-gtkmm" \
-                         "@abs_top_srcdir@/cpp/gtk/maia-gtkmm"
+                         "@abs_top_srcdir@/cpp/maiamm"
 INCLUDE_FILE_PATTERNS  = *.h
 PREDEFINED             = __cplusplus \
                          DOXYGEN_SHOULD_SKIP_THIS \

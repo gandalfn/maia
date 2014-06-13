@@ -32,7 +32,7 @@ public abstract class Maia.Cassowary.Constraint : Core.Object
     public double weight { get; set; }
 
     // methods
-    public Constraint (Strength inStrength = Strength.required, double inWeight = 1.0)
+    internal Constraint (Strength inStrength = Strength.required, double inWeight = 1.0)
     {
         strength = inStrength;
         weight = inWeight;

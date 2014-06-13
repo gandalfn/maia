@@ -6,11 +6,7 @@ VALADOC_SRCS = \
     $(top_srcdir)/lib/cassowary/*.vala \
     $(top_srcdir)/lib/graphic/*.vala \
     $(top_srcdir)/lib/manifest/*.vala \
-    $(top_srcdir)/lib/*.vala \
-    $(top_srcdir)/lib/cairo/*.vala \
-    $(top_srcdir)/lib/gdk-pixbuf/*.vala \
-    $(top_srcdir)/lib/gtk/*.vala \
-    $(top_srcdir)/lib/rsvg/*.vala
+    $(top_srcdir)/lib/*.vala
 
 VALADOC_FLAGS = \
     -D GLIB_2_32 \
@@ -28,15 +24,7 @@ VALADOC_FLAGS = \
     --pkg gio-2.0 \
     --pkg gmodule-2.0 \
     --pkg gio-unix-2.0 \
-    --pkg cairo \
-    --pkg cairo-xcb \
-    --pkg xcb \
-    --pkg xcb-base \
-    --pkg pangocairo \
-    --pkg gtk+-2.0 \
-    --pkg gdk-x11-2.0 \
     --pkg gvalue-collect \
-    --pkg librsvg-2.0 \
     --package-name Maia \
     --package-version @MAIA_VERSION@
 
@@ -47,8 +35,6 @@ cpp/libdoclet.so: cpp/doclet.vala
 	    --pkg glib-2.0 \
 	    --pkg gio-2.0 \
 	    --pkg gio-unix-2.0 \
-	    --pkg gtk+-2.0 \
-	    --pkg librsvg-2.0 \
 	    --pkg=valadoc-1.0 -b $(srcdir)/doc/cpp -d $(builddir)/cpp -C $(srcdir)/cpp/doclet.vala && \
 	$(CC) -shared -fPIC -o $(top_builddir)/doc/cpp/libdoclet.so $(MAIA_VALADOC_CFLAGS) $(MAIA_VALADOC_LIBS) $(top_builddir)/doc/cpp/doclet.c
 

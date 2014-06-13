@@ -159,6 +159,7 @@ public class Maia.Application : Maia.Core.Object
         Manifest.Element.register ("Label",       typeof (Label));
         Manifest.Element.register ("Entry",       typeof (Entry));
         Manifest.Element.register ("Grid",        typeof (Grid));
+        Manifest.Element.register ("CassoGrid",   typeof (CassoGrid));
         Manifest.Element.register ("ToggleGroup", typeof (ToggleGroup));
         Manifest.Element.register ("Button",      typeof (Button));
         Manifest.Element.register ("CheckButton", typeof (CheckButton));
@@ -319,6 +320,12 @@ public class Maia.Application : Maia.Core.Object
         ((Window)inObject).notify["visible"].disconnect (on_window_visible_changed);
     }
 
+    internal unowned Backend?
+    get_backend (string inProvide)
+    {
+        return m_Backends[inProvide];
+    }
+
     /**
      * Load a backend
      *
@@ -365,20 +372,6 @@ public class Maia.Application : Maia.Core.Object
         }
 
         return ret;
-    }
-
-    /**
-     * Get backend name which provide inProvide
-     *
-     * @param inProvide backend provide module
-     *
-     * @return backend name which provide inProvide else ``null``
-     */
-    public string?
-    get_backend (string inProvide)
-    {
-        unowned Backend? backend = m_Backends[inProvide];
-        return backend == null ? null : backend.name;
     }
 
     /**

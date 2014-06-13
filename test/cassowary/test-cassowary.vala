@@ -522,8 +522,8 @@ public class Maia.TestCassowary : Maia.TestCase
 
             item01.right_of (item00, 2);
             item02.right_of (item01, 2);
-            item00.same_row (item01);
-            item01.same_row (item02);
+            item00.same_height (item01);
+            item01.same_height (item02);
             item10.below (item00, 2);
             item10.below (item01, 2);
             item10.left_of (item02, 2);
@@ -533,19 +533,19 @@ public class Maia.TestCassowary : Maia.TestCase
             main.add_box (item02, Cassowary.Box.Position.TOP | Cassowary.Box.Position.RIGHT);
             main.add_box (item10, Cassowary.Box.Position.BOTTOM | Cassowary.Box.Position.LEFT);
 
-            item00.set_size (Graphic.Size (10, 10));
-            item01.set_size (Graphic.Size (20, 15));
-            item02.set_size (Graphic.Size (10, 15));
-            item10.set_size (Graphic.Size (15, 10));
+            item00.set_size_request (Graphic.Size (10, 10));
+            item01.set_size_request (Graphic.Size (20, 15));
+            item02.set_size_request (Graphic.Size (10, 15));
+            item10.set_size_request (Graphic.Size (15, 10));
 
             main.build_constraints (new Cassowary.SimplexSolver ());
 
             Test.message (@"Request");
-            
+
             Graphic.Size size_requested = main.size;
             Test.message (@"$(main)");
 
-            main.set_size (Graphic.Size (50, 50));
+            main.set_expand (Graphic.Point (50 - size_requested.width, 50 - size_requested.height));
 
             Test.message (@"Allocate");
 

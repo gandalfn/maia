@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Cassowary.EditInfo : Core.Object
+internal class Maia.Cassowary.EditInfo : Core.Object
 {
     // properties
     private Constraint    m_Constraint;

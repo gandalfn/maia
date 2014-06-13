@@ -37,6 +37,10 @@ public class Maia.Cassowary.Box : Core.Object
     private Variable                     m_Bottom;
     private Variable                     m_Width;
     private Variable                     m_Height;
+    private Variable                     m_WidthRequested;
+    private Variable                     m_HeightRequested;
+    private Variable                     m_XExpand;
+    private Variable                     m_YExpand;
     private Core.Map<string, Constraint> m_Constraints;
 
     // accessors
@@ -72,20 +76,28 @@ public class Maia.Cassowary.Box : Core.Object
         GLib.Object (id: GLib.Quark.from_string (inName));
 
         // Create variables
-        m_Left          = new Variable.with_name (@"$(inName).left");
-        m_Right         = new Variable.with_name (@"$(inName).right");
-        m_Top           = new Variable.with_name (@"$(inName).top");
-        m_Bottom        = new Variable.with_name (@"$(inName).bottom");
-        m_Width         = new Variable.with_name (@"$(inName).width");
-        m_Height        = new Variable.with_name (@"$(inName).height");
+        m_Left            = new Variable.with_name (@"$(inName).left");
+        m_Right           = new Variable.with_name (@"$(inName).right");
+        m_Top             = new Variable.with_name (@"$(inName).top");
+        m_Bottom          = new Variable.with_name (@"$(inName).bottom");
+        m_Width           = new Variable.with_name (@"$(inName).width");
+        m_Height          = new Variable.with_name (@"$(inName).height");
+        m_WidthRequested  = new Variable.with_name (@"$(inName).width_requested");
+        m_HeightRequested = new Variable.with_name (@"$(inName).height_requested");
+        m_XExpand         = new Variable.with_name (@"$(inName).xexpand");
+        m_YExpand         = new Variable.with_name (@"$(inName).yexpand");
 
         // All values must be positive
-        m_Constraints["left >= 0"]   = new LinearInequality.with_variable_value (m_Left,   Operator.GEQ, 0);
-        m_Constraints["right >= 0"]  = new LinearInequality.with_variable_value (m_Right,  Operator.GEQ, 0);
-        m_Constraints["top >= 0"]    = new LinearInequality.with_variable_value (m_Top,    Operator.GEQ, 0);
-        m_Constraints["bottom >= 0"] = new LinearInequality.with_variable_value (m_Bottom, Operator.GEQ, 0);
-        m_Constraints["width >= 0"]  = new LinearInequality.with_variable_value (m_Width,  Operator.GEQ, 0);
-        m_Constraints["height >= 0"] = new LinearInequality.with_variable_value (m_Height, Operator.GEQ, 0);
+        m_Constraints["left >= 0"]             = new LinearInequality.with_variable_value (m_Left,            Operator.GEQ, 0);
+        m_Constraints["right >= 0"]            = new LinearInequality.with_variable_value (m_Right,           Operator.GEQ, 0);
+        m_Constraints["top >= 0"]              = new LinearInequality.with_variable_value (m_Top,             Operator.GEQ, 0);
+        m_Constraints["bottom >= 0"]           = new LinearInequality.with_variable_value (m_Bottom,          Operator.GEQ, 0);
+        m_Constraints["width >= 0"]            = new LinearInequality.with_variable_value (m_Width,           Operator.GEQ, 0);
+        m_Constraints["height >= 0"]           = new LinearInequality.with_variable_value (m_Height,          Operator.GEQ, 0);
+        m_Constraints["width_requested >= 0"]  = new LinearInequality.with_variable_value (m_WidthRequested,  Operator.GEQ, 0);
+        m_Constraints["height_requested >= 0"] = new LinearInequality.with_variable_value (m_HeightRequested, Operator.GEQ, 0);
+        m_Constraints["xexpand >= 0"]          = new LinearInequality.with_variable_value (m_XExpand,         Operator.GEQ, 0);
+        m_Constraints["yexpand >= 0"]          = new LinearInequality.with_variable_value (m_YExpand,         Operator.GEQ, 0);
 
         // right = left + width
         m_Constraints["right = left + width"] = new LinearEquation.with_variable (m_Right, var_plus_expr (m_Left, new LinearExpression (m_Width)));
@@ -93,6 +105,11 @@ public class Maia.Cassowary.Box : Core.Object
         // bottom = top + height
         m_Constraints["bottom = top + height"] = new LinearEquation.with_variable (m_Bottom, var_plus_expr (m_Top, new LinearExpression (m_Height)));
 
+        // width = width_requested + xexpand
+        m_Constraints["width = width_requested + xexpand"] = new LinearEquation.with_variable (m_Width, var_plus_expr (m_WidthRequested, new LinearExpression (m_XExpand)));
+
+        // width = width_requested + xexpand
+        m_Constraints["height = height_requested + yexpand"] = new LinearEquation.with_variable (m_Height, var_plus_expr (m_HeightRequested, new LinearExpression (m_YExpand)));
     }
 
     internal override bool
@@ -168,6 +185,8 @@ public class Maia.Cassowary.Box : Core.Object
         ret += @"  y:    $(m_Top.@value)\n";
         ret += @"  width:  $(m_Width.@value)\n";
         ret += @"  height: $(m_Height.@value)\n";
+        ret += @"  xexpand: $(m_XExpand.@value)\n";
+        ret += @"  yexpand: $(m_YExpand.@value)\n";
 
         foreach (var child in this)
         {
@@ -176,51 +195,62 @@ public class Maia.Cassowary.Box : Core.Object
 
         return ret;
     }
-    
-    public void
-    set_size (Graphic.Size inSize, Strength inStrength = Strength.required) throws Error
-    {
-        m_Width.@value = inSize.width;
-        m_Height.@value = inSize.height;
 
-        m_Constraints[@"width"] = new LinearInequality.with_variable_value (m_Width,  Operator.GEQ, inSize.width, inStrength);
-        m_Constraints[@"height"] = new LinearInequality.with_variable_value (m_Height, Operator.GEQ, inSize.height, inStrength);
+    public void
+    set_position (Graphic.Point inPoint, Strength inStrength = Strength.required) throws Error
+    {
+        m_Constraints["left"] = new LinearEquation.with_variable_value (m_Left, inPoint.x, inStrength);
+        m_Constraints["top"]  = new LinearEquation.with_variable_value (m_Top,  inPoint.y, inStrength);
     }
 
     public void
-    above (Box inBox, double inSpacing = 0.0)
+    set_size_request (Graphic.Size inSize, Strength inStrength = Strength.required) throws Error
     {
-        m_Constraints[@"bottom = $(inBox.name).top - spacing"] = new LinearEquation.with_variable (m_Bottom, var_minus_constant (inBox.m_Top, inSpacing));
+        m_Constraints[@"width_requested"] = new LinearEquation.with_variable_value (m_WidthRequested, inSize.width, inStrength);
+        m_Constraints[@"height_requested"] = new LinearEquation.with_variable_value (m_HeightRequested, inSize.height, inStrength);
     }
 
     public void
-    below (Box inBox, double inSpacing = 0.0)
+    set_expand (Graphic.Point inExpand, Strength inStrength = Strength.required)
     {
-        m_Constraints[@"top = $(inBox.name).bottom + spacing"] = new LinearEquation.with_variable (m_Top, var_plus_constant (inBox.m_Bottom, inSpacing));
+        m_Constraints[@"xexpand"] = new LinearEquation.with_variable_value (m_XExpand, inExpand.x, inStrength);
+        m_Constraints[@"yexpand"] = new LinearEquation.with_variable_value (m_YExpand, inExpand.y, inStrength);
     }
 
     public void
-    left_of (Box inBox, double inSpacing = 0.0)
+    above (Box inBox, double inSpacing = 0.0, Strength inStrength = Strength.required)
     {
-        m_Constraints[@"right = $(inBox.name).left - spacing"] = new LinearEquation.with_variable (m_Right, var_minus_constant (inBox.m_Left, inSpacing));
+        m_Constraints[@"bottom = $(inBox.name).top - spacing"] = new LinearEquation.with_variable (m_Bottom, var_minus_constant (inBox.m_Top, inSpacing), inStrength);
     }
 
     public void
-    right_of (Box inBox, double inSpacing = 0.0)
+    below (Box inBox, double inSpacing = 0.0, Strength inStrength = Strength.required)
     {
-        m_Constraints[@"left = $(inBox.name).right + spacing"] = new LinearEquation.with_variable (m_Left, var_plus_constant (inBox.m_Right, inSpacing));
+        m_Constraints[@"top = $(inBox.name).bottom + spacing"] = new LinearEquation.with_variable (m_Top, var_plus_constant (inBox.m_Bottom, inSpacing), inStrength);
     }
 
     public void
-    same_column (Box inBox)
+    left_of (Box inBox, double inSpacing = 0.0, Strength inStrength = Strength.required)
     {
-        m_Constraints[@"width = $(inBox.name).width"] = new LinearEquation.with_variable (m_Width, new LinearExpression (inBox.m_Width));
+        m_Constraints[@"right = $(inBox.name).left - spacing"] = new LinearEquation.with_variable (m_Right, var_minus_constant (inBox.m_Left, inSpacing), inStrength);
     }
 
     public void
-    same_row (Box inBox)
+    right_of (Box inBox, double inSpacing = 0.0, Strength inStrength = Strength.required)
     {
-        m_Constraints[@"height = $(inBox.name).height"] = new LinearEquation.with_variable (m_Bottom, new LinearExpression (inBox.m_Bottom));
+        m_Constraints[@"left = $(inBox.name).right + spacing"] = new LinearEquation.with_variable (m_Left, var_plus_constant (inBox.m_Right, inSpacing), inStrength);
+    }
+
+    public void
+    same_width (Box inBox) throws Error
+    {
+        m_Constraints[@"width = $(inBox.name).width"] = new LinearInequality.with_variables (m_Right, Operator.GEQ, inBox.m_Right);
+    }
+
+    public void
+    same_height (Box inBox) throws Error
+    {
+        m_Constraints[@"height = $(inBox.name).height"] = new LinearInequality.with_variables (m_Bottom, Operator.GEQ, inBox.m_Bottom);
     }
 
     public void
@@ -230,21 +260,28 @@ public class Maia.Cassowary.Box : Core.Object
         inBox.parent = this;
 
         // Anchor box
+        attach (inBox, inPosition);
+    }
+
+    public void
+    attach (Box inBox, Position inPosition = Position.FREE, Strength inStrength = Strength.required)
+    {
+        // Anchor box
         if (Position.TOP in inPosition)
         {
-            m_Constraints[@"$(inBox.name).top = top"] = new LinearEquation.with_variable (inBox.m_Top, new LinearExpression (m_Top));
+            m_Constraints[@"$(inBox.name).top = top"] = new LinearEquation.with_variable (inBox.m_Top, new LinearExpression (m_Top), inStrength);
         }
         if (Position.BOTTOM in inPosition)
         {
-            m_Constraints[@"$(inBox.name).bottom = bottom"] = new LinearEquation.with_variable (inBox.m_Bottom, new LinearExpression (m_Bottom));
+            m_Constraints[@"$(inBox.name).bottom = bottom"] = new LinearEquation.with_variable (inBox.m_Bottom, new LinearExpression (m_Bottom), inStrength);
         }
         if (Position.LEFT in inPosition)
         {
-            m_Constraints[@"$(inBox.name).left = left"] = new LinearEquation.with_variable (inBox.m_Left, new LinearExpression (m_Left));
+            m_Constraints[@"$(inBox.name).left = left"] = new LinearEquation.with_variable (inBox.m_Left, new LinearExpression (m_Left), inStrength);
         }
         if (Position.RIGHT in inPosition)
         {
-            m_Constraints[@"$(inBox.name).right = right"] = new LinearEquation.with_variable (inBox.m_Right, new LinearExpression (m_Right));
+            m_Constraints[@"$(inBox.name).right = right"] = new LinearEquation.with_variable (inBox.m_Right, new LinearExpression (m_Right), inStrength);
         }
     }
 
@@ -262,7 +299,6 @@ public class Maia.Cassowary.Box : Core.Object
         // Add constraints of box
         foreach (var pair in m_Constraints)
         {
-            print (@"$(pair.first): $(pair.second)\n");
             inSolver.add_constraint (pair.second);
         }
     }

@@ -46,4 +46,11 @@ namespace Maia.Gtk
         Core.Any.undelegate (typeof (Maia.Model));
         Core.Any.undelegate (typeof (Maia.Model.Column));
     }
+
+    [CCode (cname = "canvas_create")]
+    public static Maia.Canvas?
+    canvas_create ()
+    {
+        return new Canvas ();
+    }
 }

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Cassowary.Double : Core.Object
+internal class Maia.Cassowary.Double : Core.Object
 {
     // accessors
     public int int_value {
@@ -72,8 +72,7 @@ public class Maia.Cassowary.Double : Core.Object
 
     internal override int
     compare (Core.Object inObject)
-        requires (inObject is Double)
     {
-        return (int)(@value - (inObject as Double).@value);
+        return Core.double_compare (@value, ((Double)inObject).@value);
     }
 }

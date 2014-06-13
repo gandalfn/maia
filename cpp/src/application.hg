@@ -37,7 +37,7 @@ namespace Maia
             {
                 return Glib::RefPtr<Application> (new Application (maia_application_new (inName.c_str(), inFps, 0, 0)));
             }
-            
+
             static Glib::RefPtr<Application> create (const Glib::ustring& inName, int inFps, const std::vector<Glib::ustring>& inBackends)
             {
                 int length = inBackends.size ();
@@ -79,7 +79,6 @@ namespace Maia
 
             _WRAP_METHOD(bool load_backend (const Glib::ustring& inBackend), maia_application_load_backend)
             _WRAP_METHOD(bool unload_backend (const Glib::ustring& inBackend), maia_application_unload_backend)
-            _WRAP_METHOD(Glib::ustring get_backend (const Glib::ustring& inProvide) const, maia_application_get_backend)
 
             _WRAP_METHOD(void run (), maia_application_run)
             _WRAP_METHOD(void quit (), maia_application_quit)

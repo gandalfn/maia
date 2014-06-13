@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Gtk.Tool : Maia.Tool
+internal class Maia.Gtk.Tool : Maia.Tool
 {
     // accessors
     public string? icon_name {

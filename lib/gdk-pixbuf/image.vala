@@ -20,7 +20,7 @@
 public interface Maia.GdkPixbuf.Image : Graphic.Image
 {
     // methods
-    internal Graphic.Surface
+    public Graphic.Surface
     create_surface (Gdk.Pixbuf inPixbuf)
     {
         // Get pixbuf data

@@ -20,70 +20,383 @@
 public class Maia.CassoGrid : Group, ItemPackable, ItemMovable
 {
     // types
+    private struct Area
+    {
+        public unowned Cassowary.Box? box;
+        public bool xexpand;
+        public bool yexpand;
+        public uint rows;
+        public uint columns;
+    }
+
     private struct SizeAllocation
     {
         public unowned CassoGrid  grid;
         public Cassowary.Box box;
-        public Graphic.Size  size;
+        public Core.Array<Core.Array<Area?>> boxes;
+        public Graphic.Size size;
+        public uint[] row_nb_expands;
+        public uint[] column_nb_expands;
 
         public SizeAllocation (CassoGrid inGrid)
         {
+            uint max_row = 0, max_column = 0;
+
+            // create expand arrays
+            row_nb_expands = {};
+            column_nb_expands = {};
+
+            // create boxes array
+            boxes = new Core.Array<Core.Array<Area?>> ();
+
+            // set current grid
             grid = inGrid;
 
             try
             {
+                // Create grid box allocation
                 box = new Cassowary.Box (grid.name);
+                box.set_position (Graphic.Point (0, 0));
 
+                // Parse all child item
                 foreach (unowned Core.Object child in grid)
                 {
-                    if (child is ItemPackable)
+                    unowned ItemPackable item = child as ItemPackable;
+
+                    if (item != null)
                     {
-                        unowned ItemPackable item = (ItemPackable)child;
+                        int row = (int)item.row;
+                        int column = (int)item.column;
+                        int rows = (int)item.rows;
+                        int columns = (int)item.columns;
+
+                        // Create item box allocation
                         var item_box = new Cassowary.Box (item.name);
 
-                        unowned ItemPackable? prev_item = item.prev () as ItemPackable;
-                        unowned Cassowary.Box? prev_box = item_box.prev () as Cassowary.Box;
+                        // Set size request
+                        item_box.set_size_request (item.size);
 
-                        if (prev_item != null && prev_box != null && prev_item.row == item.row  && prev_item.column != item.column)
+                        // Resize box array
+                        if (boxes.length < row + 1)
                         {
-                            print (@"$(item.name) right of $(prev_item.name)\n");
-                            item_box.right_of (prev_box, grid.column_spacing);
+                            while (boxes.length < row + 1)
+                            {
+                                boxes.insert (new Core.Array<Area?> ());
+                            }
+                        }
+                        if (boxes[row].length < column + 1)
+                        {
+                            while (boxes[row].length < column + 1)
+                            {
+                                boxes[row].insert (null);
+                            }
                         }
 
-                        if (prev_item != null && prev_item.row != item.row)
+                        // Set current item box
+                        boxes[row][column] = { item_box, item.xexpand, item.yexpand, rows, columns };
+
+                        // Calculate bounds of grid
+                        max_row = uint.max (max_row, row);
+                        max_column = uint.max (max_column, column);
+
+                        // Resize arrays of expand
+                        if (row_nb_expands.length < row + 1) row_nb_expands.resize (row + 1);
+                        if (column_nb_expands.length < column + 1) column_nb_expands.resize (column + 1);
+
+                        // Set current expand
+                        if (item.xexpand) row_nb_expands[row]++;
+                        if (item.yexpand) column_nb_expands[column]++;
+
+                        Cassowary.Box.Position position = Cassowary.Box.Position.FREE;
+
+                        // Current item under first row attach to top of box allocation of grid
+                        if (row == 0)
                         {
-                            unowned Cassowary.Box? pb = prev_box;
-                            for (unowned Core.Object? prev = prev_item; prev != null && pb != null; prev = prev.prev (), pb = (Cassowary.Box)pb.prev ())
+                            position |= Cassowary.Box.Position.TOP;
+                        }
+                        else
+                        {
+                            bool below_set = false, same_set = false;
+                            for (int cpt = 1; !below_set && !same_set && row - cpt >= 0; ++cpt)
                             {
-                                unowned ItemPackable? p =  prev as ItemPackable;
-                                if (p.column == item.column)
+                                if (boxes[row - cpt] != null)
                                 {
-                                    print (@"$(item.name) below $(p.name)\n");
-                                    item_box.below (pb, grid.row_spacing);
+                                    // Set current item below item box on same column and previous row
+                                    if (boxes[row - cpt][column] != null)
+                                    {
+                                        if (!below_set)
+                                        {
+                                            item_box.below (boxes[row - cpt][column].box, grid.row_spacing,
+                                                            cpt == 1 ? Cassowary.Strength.required : Cassowary.Strength.strong);
+                                            below_set = true;
+                                        }
+                                        if (rows == 1)
+                                        {
+                                            if (!same_set && boxes[row - cpt][column].columns == 1)
+                                            {
+                                                item_box.same_width (boxes[row - cpt][column].box);
+                                                same_set = true;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            same_set = true;
+                                        }
+                                        break;
+                                    }
                                 }
                             }
                         }
 
-                        Cassowary.Box.Position position = Cassowary.Box.Position.FREE;
-
-                        if (item.row == 0)
+                        // Current item under first column attach to left of box allocation of grid
+                        if (column == 0)
                         {
                             position |= Cassowary.Box.Position.LEFT;
                         }
-                        if (item.column == 0)
+                        else
                         {
-                            position |= Cassowary.Box.Position.TOP;
+                            if (boxes[row] != null)
+                            {
+                                bool right_set = false, same_set = false;
+
+                                for (int cpt = 1; !right_set && !same_set && column - cpt >= 0; ++cpt)
+                                {
+                                    // Set current item right of item box on same row and previous column
+                                    if (boxes[row][column - cpt] != null)
+                                    {
+                                        if (!right_set)
+                                        {
+                                            item_box.right_of (boxes[row][column - cpt].box, grid.column_spacing);
+                                            right_set = true;
+                                        }
+
+                                        if (columns == 1)
+                                        {
+                                            if (!same_set && boxes[row][column - cpt].rows == 1)
+                                            {
+                                                item_box.same_height (boxes[row][column - cpt].box);
+                                                same_set = true;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            same_set = true;
+                                        }
+
+                                        break;
+                                    }
+                                }
+                            }
                         }
 
+                        // Add item box in allocation box
                         box.add_box (item_box, position);
-
-                        print(@"$(box)\n");
-                        item_box.set_size (item.size);
                     }
                 }
-            
-                box.build_constraints (new Cassowary.SimplexSolver ());
+
+                // Parse all item box to attach box under last row, last column and set multiple columns/rows
+                for (int row = 0; row < boxes.length; ++row)
+                {
+                    for (int column = 0; column < boxes[row].length; ++column)
+                    {
+                        // item box in last row attach to bottom of grid allocation box
+                        if (row == max_row)
+                        {
+                            box.attach (boxes[row][column].box, Cassowary.Box.Position.BOTTOM);
+                        }
+                        // item box in last collumn attach to right of grid allocation box
+                        if (column == max_column)
+                        {
+                            box.attach (boxes[row][column].box, Cassowary.Box.Position.RIGHT);
+                        }
+
+                        // box on multiple rows
+                        if (boxes[row][column].rows > 1)
+                        {
+                            uint rows = boxes[row][column].rows;
+
+                            // Search the most nearest box to set above of
+                            if (boxes.length > row + rows)
+                            {
+                                unowned Cassowary.Box? under = null;
+
+                                // item box in last row attach to bottom of grid allocation box
+                                if (row + rows - 1 == max_row)
+                                {
+                                    box.attach (boxes[row][column].box, Cassowary.Box.Position.BOTTOM);
+                                }
+                                // A box is available at row + rows and same column
+                                else if (boxes[(int)row + (int)rows].length > column && boxes[(int)row + (int)rows][(int)column] != null)
+                                {
+                                    under = boxes[(int)row + (int)rows][(int)column].box;
+                                }
+                                else
+                                {
+                                    // Check of column before this column
+                                    if (column > 0)
+                                    {
+                                        for (int cpt = column - 1; cpt >= 0; --cpt)
+                                        {
+                                            if (boxes[(int)row + (int)rows][cpt] != null)
+                                            {
+                                                under = boxes[(int)row + (int)rows][cpt].box;
+                                                break;
+                                            }
+                                        }
+                                    }
+
+                                    // Check of column after this column
+                                    if (under == null)
+                                    {
+                                        for (int cpt = column + 1; cpt < boxes[(int)row + (int)rows].length; ++cpt)
+                                        {
+                                            if (boxes[(int)row + (int)rows][cpt] != null)
+                                            {
+                                                under = boxes[(int)row + (int)rows][cpt].box;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                // we found a box set this box above
+                                if (under != null)
+                                {
+                                    boxes[(int)row][(int)column].box.above (under, grid.row_spacing);
+                                }
+
+                                // Add nb expand
+                                if (boxes[(int)row][(int)column].xexpand)
+                                {
+                                    for (int cpt = row + 1; cpt < row_nb_expands.length && cpt < row + rows; ++cpt)
+                                    {
+                                        row_nb_expands[cpt]++;
+                                    }
+                                }
+
+                                // set right of column - 1 item rows
+                                if (column > 0)
+                                {
+                                    for (int cpt = row + 1; cpt < boxes.length && cpt < row + rows; ++cpt)
+                                    {
+                                        if (boxes[cpt].length > column - 1 && boxes[cpt][(int)column - 1].box != null)
+                                        {
+                                            boxes[(int)row][(int)column].box.right_of (boxes[cpt][(int)column - 1].box, grid.column_spacing);
+                                        }
+                                    }
+                                }
+
+                                // set left of column + 1 item rows
+                                if (column + 1 < max_column)
+                                {
+                                    for (int cpt = row + 1; cpt < boxes.length && cpt < row + rows; ++cpt)
+                                    {
+                                        if (boxes[cpt].length > column + 1 && boxes[cpt][(int)column + 1].box != null)
+                                        {
+                                            boxes[(int)row][(int)column].box.left_of (boxes[cpt][(int)column + 1].box, grid.column_spacing);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // box on multiple columns
+                        if (boxes[(int)row][(int)column].columns > 1)
+                        {
+                            uint columns = boxes[(int)row][(int)column].columns;
+                            unowned Cassowary.Box? right = null;
+
+                            // item box in last column attach to right of grid allocation box
+                            if (column + columns - 1 == max_column)
+                            {
+                                box.attach (boxes[row][column].box, Cassowary.Box.Position.RIGHT);
+                            }
+                            // A box is available at column + columns and same row
+                            else if (boxes[(int)row].length > column + columns)
+                            {
+                                right = boxes[(int)row][(int)column + (int)columns].box;
+                            }
+                            else
+                            {
+                                // Check of row before this row
+                                if (row > 0)
+                                {
+                                    for (int cpt = row - 1; cpt >= 0; --cpt)
+                                    {
+                                        if (boxes[cpt].length > column + columns && boxes[cpt][(int)column + (int)columns] != null)
+                                        {
+                                            right = boxes[cpt][(int)column + (int)columns].box;
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                // Check of row after this row
+                                if (right == null)
+                                {
+                                    for (int cpt = row + 1; cpt < boxes.length; ++cpt)
+                                    {
+                                        if (boxes[cpt].length > column + columns && boxes[cpt][(int)column + (int)columns] != null)
+                                        {
+                                            right = boxes[cpt][(int)column + (int)columns].box;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (right != null)
+                            {
+                                boxes[(int)row][(int)column].box.left_of (right, grid.column_spacing);
+                            }
+
+                            // Add nb expand
+                            if (boxes[(int)row][(int)column].yexpand)
+                            {
+                                for (int cpt = column + 1; cpt < column_nb_expands.length && cpt < column + columns; ++cpt)
+                                {
+                                    column_nb_expands[cpt]++;
+                                }
+                            }
+
+                            // set below row -1 item columns
+                            if (row > 0)
+                            {
+                                for (int cpt = column + 1; cpt < boxes[(int)row - 1].length && cpt < column + columns; ++cpt)
+                                {
+                                    if (boxes[(int)row - 1][cpt].box != null)
+                                    {
+                                        boxes[(int)row][(int)column].box.below (boxes[(int)row - 1][cpt].box, grid.row_spacing);
+                                    }
+                                }
+                            }
+
+                            // set above row + 1 columns
+                            if (row + 1 < boxes.length)
+                            {
+                                for (int cpt = column + 1; cpt < boxes[(int)row + 1].length && cpt < column + columns; ++cpt)
+                                {
+                                    if (boxes[(int)row + 1][cpt].box != null)
+                                    {
+                                        boxes[(int)row][(int)column].box.above (boxes[(int)row + 1][cpt].box, grid.row_spacing);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // Build constraints for grid allocation box
+                var solver = new Cassowary.SimplexSolver ();
+                solver.auto_solve = false;
+                box.build_constraints (solver);
+                solver.solve ();
+
+                // Keep size of allocation which is size requested
                 size = box.size;
+
+                // Set size request of box
+                box.set_size_request (size);
             }
             catch (GLib.Error err)
             {
@@ -100,29 +413,50 @@ public class Maia.CassoGrid : Group, ItemPackable, ItemMovable
 
             try
             {
-                box.set_size (inAllocation.extents.size);
+                // Parse all box item allocation
+                for (int row = 0; row < boxes.length; ++row)
+                {
+                    for (int column = 0; column < boxes[row].length; ++column)
+                    {
+                        double xexpand = (inAllocation.extents.size.width - size.width) / (double)row_nb_expands[row];
+                        double yexpand = (inAllocation.extents.size.height - size.height) / (double)column_nb_expands[column];
 
-                box.build_constraints (new Cassowary.SimplexSolver ());
+                        // Set the expand area for box item which is: grid.size_allocation - grid.size_request / nb_expands
+                        boxes[row][column].box.set_expand (Graphic.Point (boxes[row][column].xexpand ? xexpand : 0,
+                                                                          boxes[row][column].yexpand ? yexpand : 0),
+                                                           Cassowary.Strength.strong);
+                    }
+                }
 
-                unowned Cassowary.Box? item_box = (Cassowary.Box)box.first ();
+                // Set the fill area for grid allocation
+                box.set_expand (Graphic.Point (inAllocation.extents.size.width - size.width,
+                                               inAllocation.extents.size.height - size.height));
 
+                // Calculate the new size of item box
+                var solver = new Cassowary.SimplexSolver ();
+                solver.auto_solve = false;
+                box.build_constraints (solver);
+                solver.solve ();
+
+                // Set size allocation for each item
                 foreach (unowned Core.Object child in grid)
                 {
                     if (child is ItemPackable)
                     {
                         unowned ItemPackable item = (ItemPackable)child;
 
-                        Graphic.Rectangle area = Graphic.Rectangle (item_box.origin.x, item_box.origin.y, item_box.size.width, item_box.size.height);
+                        Graphic.Rectangle area = Graphic.Rectangle (boxes[(int)item.row][(int)item.column].box.origin.x,
+                                                                    boxes[(int)item.row][(int)item.column].box.origin.y,
+                                                                    boxes[(int)item.row][(int)item.column].box.size.width,
+                                                                    boxes[(int)item.row][(int)item.column].box.size.height);
 
                         item.update (inContext, new Graphic.Region (area));
-
-                        item_box = (Cassowary.Box)item_box.next ();
                     }
                 }
             }
             catch (GLib.Error err)
             {
-                Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"grid $(grid.name) size request error: $(err.message)");
+                Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"grid $(grid.name) size allocation error: $(err.message)");
             }
         }
 
@@ -132,16 +466,16 @@ public class Maia.CassoGrid : Group, ItemPackable, ItemMovable
             bool ret = false;
 
             outSize = Graphic.Size (0, 0);
-//~             if (inRow < rows.length)
-//~             {
-//~                 outSize.height = double.max (outSize.height, rows[inRow].size.height);
-//~                 for (int cpt = 0; cpt < columns.length; ++cpt)
-//~                 {
-//~                     outSize.width += columns[cpt].size.width;
-//~                 }
-//~ 
-//~                 ret = true;
-//~             }
+            if (inRow < boxes.length)
+            {
+                for (int cpt = 0; cpt < boxes[(int)inRow].length; ++cpt)
+                {
+                    outSize.height = double.max (outSize.height, boxes[(int)inRow][cpt].box.size.height);
+                    outSize.width += boxes[(int)inRow][cpt].box.size.width;
+                }
+
+                ret = true;
+            }
             return ret;
         }
     }
@@ -253,7 +587,7 @@ public class Maia.CassoGrid : Group, ItemPackable, ItemMovable
                 geometry.resize (s);
             }
 
-            damage ();
+            damaged = area.copy ();
         }
     }
 
@@ -286,45 +620,17 @@ public class Maia.CassoGrid : Group, ItemPackable, ItemMovable
                 {
                     item.draw (inContext, area_to_child_item_space (item, inArea));
 
-//~                     if (item.row < m_Allocation.child_allocations.length[0] && item.column < m_Allocation.child_allocations.length[1])
-//~                     {
-//~                         // paint grid
-//~                         Graphic.Region area = new Graphic.Region (m_Allocation.child_allocations[item.row, item.column]);
-//~                         if (item.columns > 0)
-//~                         {
-//~                             for (int cpt = 1; cpt < item.columns; ++cpt)
-//~                             {
-//~                                 area.union_with_rect (m_Allocation.child_allocations[item.row, item.column + cpt]);
-//~                             }
-//~                         }
-//~ 
-//~                         if (item.rows > 0)
-//~                         {
-//~                             for (int cpt = 1; cpt < item.rows; ++cpt)
-//~                             {
-//~                                 area.union_with_rect (m_Allocation.child_allocations[item.row + cpt, item.column]);
-//~                             }
-//~                         }
-//~ 
-//~                         double row_spacing = 0;
-//~                         if (this.row_spacing > 0 && m_Allocation.rows.length > 1)
-//~                         {
-//~                             row_spacing = this.row_spacing;
-//~                             if (item.row == 0) row_spacing /= 2;
-//~                             if (item.row == m_Allocation.rows.length - 1) row_spacing /= 2;
-//~                         }
-//~ 
-//~                         double column_spacing = 0;
-//~                         if (this.column_spacing > 0 && m_Allocation.columns.length > 1)
-//~                         {
-//~                             column_spacing = this.column_spacing;
-//~                             if (item.column == 0) column_spacing /= 2;
-//~                             if (item.column == m_Allocation.columns.length - 1) column_spacing /= 2;
-//~                         }
-//~ 
-//~                         grid.rectangle (area.extents.origin.x, area.extents.origin.y,
-//~                                         area.extents.size.width - column_spacing, area.extents.size.height - row_spacing);
-//~                     }
+                    if (item.row < m_Allocation.boxes.length && item.column < m_Allocation.boxes[(int)item.row].length)
+                    {
+                        // paint grid
+                        Graphic.Rectangle item_area = Graphic.Rectangle (m_Allocation.boxes[(int)item.row][(int)item.column].box.origin.x,
+                                                                         m_Allocation.boxes[(int)item.row][(int)item.column].box.origin.y,
+                                                                         m_Allocation.boxes[(int)item.row][(int)item.column].box.size.width,
+                                                                         m_Allocation.boxes[(int)item.row][(int)item.column].box.size.height);
+
+                        grid.rectangle (item_area.origin.x, item_area.origin.y,
+                                        item_area.size.width, item_area.size.height);
+                    }
                 }
             }
             else if (child is Item)

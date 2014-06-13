@@ -17,19 +17,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <maia-gtkmm.h>
+#include <maiamm.h>
 
 #include "test-case.h"
 #include "test-event.h"
 #include "test-manifest.h"
 #include "test-canvas.h"
-#include "test-derived.h"
+//#include "test-derived.h"
 #include "test-model.h"
 
 int
 main (int argc, char** argv)
 {
-    Maia::Gtk::init ();
+    Maia::init ();
 
     std::vector<Glib::ustring> backends;
     backends.push_back ("gtk");
@@ -53,13 +53,13 @@ main (int argc, char** argv)
     Maia::TestEvent event;
     Maia::TestManifest manifest;
     Maia::TestCanvas canvas;
-    Maia::TestDerived derived;
+    //Maia::TestDerived derived;
     Maia::TestModel model;
 
     root.add_suite (event.get_suite ());
     root.add_suite (manifest.get_suite ());
     root.add_suite (canvas.get_suite ());
-    root.add_suite (derived.get_suite ());
+    //lroot.add_suite (derived.get_suite ());
     root.add_suite (model.get_suite ());
 
     g_test_run ();

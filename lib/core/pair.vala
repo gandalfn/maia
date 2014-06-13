@@ -17,13 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+[CCode (has_type_id = false)]
 public class Maia.Core.Pair <F, S>
 {
     // properties
     private CompareFunc<F>  m_CompareFunc;
 
     // accessors
+    [CCode (notify = false)]
     public F first { get; set; }
+    [CCode (notify = false)]
     public S second { get; set; }
 
     // methods
@@ -44,9 +47,9 @@ public class Maia.Core.Pair <F, S>
     }
 
     public int
-    compare (Object inOther)
+    compare (Pair<F, S> inOther)
     {
-        return m_CompareFunc (first, ((Pair<F, S>)inOther).first);
+        return m_CompareFunc (first, inOther.first);
     }
 
     internal int

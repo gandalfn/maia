@@ -35,7 +35,7 @@ public class CanvasEditor.Window : Gtk.Window
     private Gtk.Entry m_Search;
     private Gtk.Entry m_Replace;
     private Gtk.Button m_ReplaceButton;
-    private Maia.Gtk.Canvas m_Canvas;
+    private Maia.Canvas m_Canvas;
     private Gtk.VBox m_Shortcuts;
 
     // methods
@@ -62,9 +62,9 @@ public class CanvasEditor.Window : Gtk.Window
             m_PreviewBox = builder.get_object ("preview_box") as Gtk.Container;
 
             m_Preview = builder.get_object ("preview") as Gtk.Container;
-            m_Canvas = new Maia.Gtk.Canvas ();
-            m_Canvas.show ();
-            m_Preview.add (m_Canvas);
+            m_Canvas = Maia.Canvas.create ();
+            (m_Canvas as Gtk.Widget).show ();
+            m_Preview.add ((m_Canvas as Gtk.Widget));
 
             var new_button = builder.get_object ("new") as Gtk.ToolButton;
             new_button.clicked.connect (on_new);
@@ -361,10 +361,10 @@ public class CanvasEditor.Window : Gtk.Window
             try
             {
                 m_Canvas.load_from_file (m_SourceView.filename);
-                foreach (unowned Gtk.Button button in m_Canvas.get_shortcut_buttons ())
-                {
-                    m_Shortcuts.pack_start (button);
-                }
+//~                 foreach (unowned Gtk.Button button in m_Canvas.get_shortcut_buttons ())
+//~                 {
+//~                     m_Shortcuts.pack_start (button);
+//~                 }
                 m_PreviewBox.show ();
                 m_Hide.sensitive = true;
 //~                 m_Toolbox.sensitive = m_Canvas.toolbox != null;

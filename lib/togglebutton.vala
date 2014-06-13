@@ -53,7 +53,7 @@ public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
                 return m_ButtonName;
             }
         }
-        
+
         /**
          * Active state on toggled event
          */
@@ -213,6 +213,8 @@ public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
     {
         if (inButton == 1)
         {
+            grab_focus (this);
+
             active = !active;
 
             toggled.publish (new ToggledEventArgs (name, active));

@@ -34,18 +34,18 @@ public abstract class Maia.Cassowary.AbstractVariable : Core.Object
     public abstract bool is_restricted { get; }
 
     // methods
-    public AbstractVariable ()
+    internal AbstractVariable ()
     {
         GLib.Object (id: GLib.Quark.from_string ("v%li".printf (s_Number)));
         s_Number++;
     }
 
-    public AbstractVariable.with_name (string inName)
+    internal AbstractVariable.with_name (string inName)
     {
         GLib.Object (id: GLib.Quark.from_string (inName));
     }
 
-    public AbstractVariable.with_prefix (long inVarNumber, string inPrefix)
+    internal AbstractVariable.with_prefix (long inVarNumber, string inPrefix)
     {
         GLib.Object (id: GLib.Quark.from_string ("%s%li".printf (inPrefix, inVarNumber)));
     }

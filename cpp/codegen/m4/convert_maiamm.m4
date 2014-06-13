@@ -277,32 +277,10 @@ _CONVERSION(`MaiaToolbox*',`Glib::RefPtr<Toolbox>',`Glib::wrap($3)')
 
 _CONVERSION(`Glib::ustring',`const gchar*',`$3.c_str ()')
 
-_CONVERSION(`Glib::RefPtr< ::Gtk::TreeModel>',`GtkTreeModel*',__CONVERT_REFPTR_TO_P)
-_CONVERSION(`const Glib::RefPtr< ::Gtk::TreeModel>&',`GtkTreeModel*',__CONVERT_REFPTR_TO_P)
-_CONVERSION(`GtkTreeModel*',`const Glib::RefPtr< ::Gtk::TreeModel>&',`Glib::wrap($3)')
-_CONVERSION(`GtkTreeModel*',`Glib::RefPtr< ::Gtk::TreeModel>',`Glib::wrap($3)')
-
-_CONVERSION(`GtkButton*', `::Gtk::Button*',__RP2PD)
-_CONVERSION(`::Gtk::Adjustment*', `GtkAdjustment*',$3->gobj ())
-_CONVERSION(`GtkAdjustment*', `::Gtk::Adjustment*',__RP2PD)
-_CONVERSION(`GList*',`Glib::ListHandle< ::Gtk::Button* >',__FL2H_SHALLOW)
 _CONVERSION(`PageFormat',`MaiaPageFormat*',`(MaiaPageFormat)$3')
 _CONVERSION(`MaiaPageFormat*',`PageFormat',`(PageFormat)$3')
 
-_CONVERSION(`GtkTreePath*',`::Gtk::TreePath', `::Gtk::TreePath($3, false)')
-_CONVERSION(`::Gtk::TreePath',`GtkTreePath*',__FR2P)
-_CONVERSION(`::Gtk::TreeIter&',`GtkTreeIter*',__FR2P)
-_CONVERSION(`const ::Gtk::TreeIter&',`GtkTreeIter*',__FCR2P)
-
-_CONVERSION(`::Cairo::RefPtr< ::Cairo::Context>',`cairo_t*',`($3)->cobj()')
-_CONVERSION(`cairo_t*',`::Cairo::RefPtr< ::Cairo::Context>',`::Cairo::RefPtr< ::Cairo::Context>(new ::Cairo::Context($3))')
-
-_CONVERSION(`Glib::RefPtr< ::Pango::Context>',`PangoContext*',`__CONVERT_REFPTR_TO_P')
-_CONVERSION(`PangoContext*',`Glib::RefPtr< ::Pango::Context>',`Glib::wrap($3)')
-
-_CONVERSION(`::Cairo::RefPtr< ::Cairo::Surface>',`cairo_surface_t*',`($3)->cobj()')
-_CONVERSION(`const ::Cairo::RefPtr< ::Cairo::Surface>&',`cairo_surface_t*',`($3)->cobj()')
-_CONVERSION(`cairo_surface_t*',`::Cairo::RefPtr< ::Cairo::Surface>',`::Cairo::RefPtr< ::Cairo::Surface>(new ::Cairo::Surface($3))')
+_CONVERSION(`Glib::ustring',`const gchar*',`$3.c_str ()')
 
 _CONVERSION(`Graphic::GlyphAlignment',`MaiaGraphicGlyphAlignment',`(MaiaGraphicGlyphAlignment)$3')
 _CONVERSION(`MaiaGraphicGlyphAlignment',`Graphic::GlyphAlignment',`(Graphic::GlyphAlignment)$3')

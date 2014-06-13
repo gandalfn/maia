@@ -167,18 +167,6 @@
   (gtype-id "MAIA_TYPE_CASSOWARY_LINEAR_EXPRESSION")
 )
 
-(define-object MaiaCassowaryEditInfo
-  (parent "MaiaCoreObject")
-  (c-name "MaiaCassowaryEditInfo")
-  (gtype-id "MAIA_TYPE_CASSOWARY_EDIT_INFO")
-)
-
-(define-object MaiaCassowaryDouble
-  (parent "MaiaCoreObject")
-  (c-name "MaiaCassowaryDouble")
-  (gtype-id "MAIA_TYPE_CASSOWARY_DOUBLE")
-)
-
 (define-object MaiaCassowaryConstraint
   (parent "MaiaCoreObject")
   (c-name "MaiaCassowaryConstraint")
@@ -237,24 +225,6 @@
   (parent "MaiaCassowaryAbstractVariable")
   (c-name "MaiaCassowaryVariable")
   (gtype-id "MAIA_TYPE_CASSOWARY_VARIABLE")
-)
-
-(define-object MaiaCassowarySlackVariable
-  (parent "MaiaCassowaryAbstractVariable")
-  (c-name "MaiaCassowarySlackVariable")
-  (gtype-id "MAIA_TYPE_CASSOWARY_SLACK_VARIABLE")
-)
-
-(define-object MaiaCassowaryObjectiveVariable
-  (parent "MaiaCassowaryAbstractVariable")
-  (c-name "MaiaCassowaryObjectiveVariable")
-  (gtype-id "MAIA_TYPE_CASSOWARY_OBJECTIVE_VARIABLE")
-)
-
-(define-object MaiaCassowaryDummyVariable
-  (parent "MaiaCassowaryAbstractVariable")
-  (c-name "MaiaCassowaryDummyVariable")
-  (gtype-id "MAIA_TYPE_CASSOWARY_DUMMY_VARIABLE")
 )
 
 (define-object MaiaApplication
@@ -4517,17 +4487,12 @@
   )
 )
 
-(define-function maia_core_object_get_type
-  (c-name "maia_core_object_get_type")
-  (return-type "GType")
-)
-
 (define-method compare
   (of-object "MaiaCorePair")
   (c-name "maia_core_pair_compare")
   (return-type "gint")
   (parameters
-    '("MaiaCoreObject*" "inOther")
+    '("MaiaCorePair*" "inOther")
   )
 )
 
@@ -4629,6 +4594,11 @@
     '("GBoxedCopyFunc" "v_dup_func")
     '("GDestroyNotify" "v_destroy_func")
   )
+)
+
+(define-function maia_core_object_get_type
+  (c-name "maia_core_object_get_type")
+  (return-type "GType")
 )
 
 (define-method insert_child
@@ -10178,33 +10148,6 @@
   (return-type "GType")
 )
 
-(define-function maia_cassowary_abstract_variable_construct
-  (c-name "maia_cassowary_abstract_variable_construct")
-  (return-type "MaiaCassowaryAbstractVariable*")
-  (parameters
-    '("GType" "object_type")
-  )
-)
-
-(define-function maia_cassowary_abstract_variable_construct_with_name
-  (c-name "maia_cassowary_abstract_variable_construct_with_name")
-  (return-type "MaiaCassowaryAbstractVariable*")
-  (parameters
-    '("GType" "object_type")
-    '("const-gchar*" "inName")
-  )
-)
-
-(define-function maia_cassowary_abstract_variable_construct_with_prefix
-  (c-name "maia_cassowary_abstract_variable_construct_with_prefix")
-  (return-type "MaiaCassowaryAbstractVariable*")
-  (parameters
-    '("GType" "object_type")
-    '("glong" "inVarNumber")
-    '("const-gchar*" "inPrefix")
-  )
-)
-
 (define-method get_name
   (of-object "MaiaCassowaryAbstractVariable")
   (c-name "maia_cassowary_abstract_variable_get_name")
@@ -10269,14 +10212,35 @@
   (return-type "GType")
 )
 
-(define-method set_size
+(define-method set_position
   (of-object "MaiaCassowaryBox")
-  (c-name "maia_cassowary_box_set_size")
+  (c-name "maia_cassowary_box_set_position")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "inPoint")
+    '("MaiaCassowaryStrength*" "inStrength")
+    '("GError**" "error")
+  )
+)
+
+(define-method set_size_request
+  (of-object "MaiaCassowaryBox")
+  (c-name "maia_cassowary_box_set_size_request")
   (return-type "none")
   (parameters
     '("MaiaGraphicSize*" "inSize")
     '("MaiaCassowaryStrength*" "inStrength")
     '("GError**" "error")
+  )
+)
+
+(define-method set_expand
+  (of-object "MaiaCassowaryBox")
+  (c-name "maia_cassowary_box_set_expand")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "inExpand")
+    '("MaiaCassowaryStrength*" "inStrength")
   )
 )
 
@@ -10287,6 +10251,7 @@
   (parameters
     '("MaiaCassowaryBox*" "inBox")
     '("gdouble" "inSpacing")
+    '("MaiaCassowaryStrength*" "inStrength")
   )
 )
 
@@ -10297,6 +10262,7 @@
   (parameters
     '("MaiaCassowaryBox*" "inBox")
     '("gdouble" "inSpacing")
+    '("MaiaCassowaryStrength*" "inStrength")
   )
 )
 
@@ -10307,6 +10273,7 @@
   (parameters
     '("MaiaCassowaryBox*" "inBox")
     '("gdouble" "inSpacing")
+    '("MaiaCassowaryStrength*" "inStrength")
   )
 )
 
@@ -10317,24 +10284,27 @@
   (parameters
     '("MaiaCassowaryBox*" "inBox")
     '("gdouble" "inSpacing")
+    '("MaiaCassowaryStrength*" "inStrength")
   )
 )
 
-(define-method same_column
+(define-method same_width
   (of-object "MaiaCassowaryBox")
-  (c-name "maia_cassowary_box_same_column")
+  (c-name "maia_cassowary_box_same_width")
   (return-type "none")
   (parameters
     '("MaiaCassowaryBox*" "inBox")
+    '("GError**" "error")
   )
 )
 
-(define-method same_row
+(define-method same_height
   (of-object "MaiaCassowaryBox")
-  (c-name "maia_cassowary_box_same_row")
+  (c-name "maia_cassowary_box_same_height")
   (return-type "none")
   (parameters
     '("MaiaCassowaryBox*" "inBox")
+    '("GError**" "error")
   )
 )
 
@@ -10345,6 +10315,17 @@
   (parameters
     '("MaiaCassowaryBox*" "inBox")
     '("MaiaCassowaryBoxPosition" "inPosition")
+  )
+)
+
+(define-method attach
+  (of-object "MaiaCassowaryBox")
+  (c-name "maia_cassowary_box_attach")
+  (return-type "none")
+  (parameters
+    '("MaiaCassowaryBox*" "inBox")
+    '("MaiaCassowaryBoxPosition" "inPosition")
+    '("MaiaCassowaryStrength*" "inStrength")
   )
 )
 
@@ -10678,16 +10659,6 @@
   (return-type "GType")
 )
 
-(define-function maia_cassowary_constraint_construct
-  (c-name "maia_cassowary_constraint_construct")
-  (return-type "MaiaCassowaryConstraint*")
-  (parameters
-    '("GType" "object_type")
-    '("MaiaCassowaryStrength*" "inStrength")
-    '("gdouble" "inWeight")
-  )
-)
-
 (define-method get_expression
   (of-object "MaiaCassowaryConstraint")
   (c-name "maia_cassowary_constraint_get_expression")
@@ -10730,135 +10701,6 @@
   )
 )
 
-(define-function maia_cassowary_double_get_type
-  (c-name "maia_cassowary_double_get_type")
-  (return-type "GType")
-)
-
-(define-function maia_cassowary_double_new
-  (c-name "maia_cassowary_double_new")
-  (is-constructor-of "MaiaCassowaryDouble")
-  (return-type "MaiaCassowaryDouble*")
-  (parameters
-    '("gdouble" "inVal")
-  )
-)
-
-(define-function maia_cassowary_double_construct
-  (c-name "maia_cassowary_double_construct")
-  (return-type "MaiaCassowaryDouble*")
-  (parameters
-    '("GType" "object_type")
-    '("gdouble" "inVal")
-  )
-)
-
-(define-method clone
-  (of-object "MaiaCassowaryDouble")
-  (c-name "maia_cassowary_double_clone")
-  (return-type "MaiaCassowaryDouble*")
-)
-
-(define-method get_int_value
-  (of-object "MaiaCassowaryDouble")
-  (c-name "maia_cassowary_double_get_int_value")
-  (return-type "gint")
-)
-
-(define-method get_long_value
-  (of-object "MaiaCassowaryDouble")
-  (c-name "maia_cassowary_double_get_long_value")
-  (return-type "glong")
-)
-
-(define-method get_float_value
-  (of-object "MaiaCassowaryDouble")
-  (c-name "maia_cassowary_double_get_float_value")
-  (return-type "gfloat")
-)
-
-(define-method get_byte_value
-  (of-object "MaiaCassowaryDouble")
-  (c-name "maia_cassowary_double_get_byte_value")
-  (return-type "guint8")
-)
-
-(define-method get_short_value
-  (of-object "MaiaCassowaryDouble")
-  (c-name "maia_cassowary_double_get_short_value")
-  (return-type "gshort")
-)
-
-(define-method get_value
-  (of-object "MaiaCassowaryDouble")
-  (c-name "maia_cassowary_double_get_value")
-  (return-type "gdouble")
-)
-
-(define-method set_value
-  (of-object "MaiaCassowaryDouble")
-  (c-name "maia_cassowary_double_set_value")
-  (return-type "none")
-  (parameters
-    '("gdouble" "value")
-  )
-)
-
-(define-function maia_cassowary_dummy_variable_get_type
-  (c-name "maia_cassowary_dummy_variable_get_type")
-  (return-type "GType")
-)
-
-(define-function maia_cassowary_dummy_variable_new
-  (c-name "maia_cassowary_dummy_variable_new")
-  (is-constructor-of "MaiaCassowaryDummyVariable")
-  (return-type "MaiaCassowaryDummyVariable*")
-)
-
-(define-function maia_cassowary_dummy_variable_construct
-  (c-name "maia_cassowary_dummy_variable_construct")
-  (return-type "MaiaCassowaryDummyVariable*")
-  (parameters
-    '("GType" "object_type")
-  )
-)
-
-(define-function maia_cassowary_dummy_variable_new_with_name
-  (c-name "maia_cassowary_dummy_variable_new_with_name")
-  (return-type "MaiaCassowaryDummyVariable*")
-  (parameters
-    '("const-gchar*" "inName")
-  )
-)
-
-(define-function maia_cassowary_dummy_variable_construct_with_name
-  (c-name "maia_cassowary_dummy_variable_construct_with_name")
-  (return-type "MaiaCassowaryDummyVariable*")
-  (parameters
-    '("GType" "object_type")
-    '("const-gchar*" "inName")
-  )
-)
-
-(define-function maia_cassowary_dummy_variable_new_with_prefix
-  (c-name "maia_cassowary_dummy_variable_new_with_prefix")
-  (return-type "MaiaCassowaryDummyVariable*")
-  (parameters
-    '("glong" "inNumber")
-    '("const-gchar*" "inPrefix")
-  )
-)
-
-(define-function maia_cassowary_dummy_variable_construct_with_prefix
-  (c-name "maia_cassowary_dummy_variable_construct_with_prefix")
-  (return-type "MaiaCassowaryDummyVariable*")
-  (parameters
-    '("GType" "object_type")
-    '("glong" "inNumber")
-    '("const-gchar*" "inPrefix")
-  )
-)
-
 (define-function maia_cassowary_edit_or_stay_constraint_get_type
   (c-name "maia_cassowary_edit_or_stay_constraint_get_type")
   (return-type "GType")
@@ -10888,81 +10730,6 @@
     '("MaiaCassowaryVariable*" "inVariable")
     '("MaiaCassowaryStrength*" "inStrength")
     '("gdouble" "inWeight")
-  )
-)
-
-(define-function maia_cassowary_edit_info_get_type
-  (c-name "maia_cassowary_edit_info_get_type")
-  (return-type "GType")
-)
-
-(define-function maia_cassowary_slack_variable_get_type
-  (c-name "maia_cassowary_slack_variable_get_type")
-  (return-type "GType")
-)
-
-(define-function maia_cassowary_edit_info_new
-  (c-name "maia_cassowary_edit_info_new")
-  (is-constructor-of "MaiaCassowaryEditInfo")
-  (return-type "MaiaCassowaryEditInfo*")
-  (parameters
-    '("MaiaCassowaryConstraint*" "inConstraint")
-    '("MaiaCassowarySlackVariable*" "inEPlus")
-    '("MaiaCassowarySlackVariable*" "inEMinus")
-    '("gdouble" "inPrevEditConstant")
-    '("gint" "inIndex")
-  )
-)
-
-(define-function maia_cassowary_edit_info_construct
-  (c-name "maia_cassowary_edit_info_construct")
-  (return-type "MaiaCassowaryEditInfo*")
-  (parameters
-    '("GType" "object_type")
-    '("MaiaCassowaryConstraint*" "inConstraint")
-    '("MaiaCassowarySlackVariable*" "inEPlus")
-    '("MaiaCassowarySlackVariable*" "inEMinus")
-    '("gdouble" "inPrevEditConstant")
-    '("gint" "inIndex")
-  )
-)
-
-(define-method get_index
-  (of-object "MaiaCassowaryEditInfo")
-  (c-name "maia_cassowary_edit_info_get_index")
-  (return-type "gint")
-)
-
-(define-method get_constraint
-  (of-object "MaiaCassowaryEditInfo")
-  (c-name "maia_cassowary_edit_info_get_constraint")
-  (return-type "MaiaCassowaryConstraint*")
-)
-
-(define-method get_edit_plus
-  (of-object "MaiaCassowaryEditInfo")
-  (c-name "maia_cassowary_edit_info_get_edit_plus")
-  (return-type "MaiaCassowarySlackVariable*")
-)
-
-(define-method get_edit_minus
-  (of-object "MaiaCassowaryEditInfo")
-  (c-name "maia_cassowary_edit_info_get_edit_minus")
-  (return-type "MaiaCassowarySlackVariable*")
-)
-
-(define-method get_prev_edit_constant
-  (of-object "MaiaCassowaryEditInfo")
-  (c-name "maia_cassowary_edit_info_get_prev_edit_constant")
-  (return-type "gdouble")
-)
-
-(define-method set_prev_edit_constant
-  (of-object "MaiaCassowaryEditInfo")
-  (c-name "maia_cassowary_edit_info_set_prev_edit_constant")
-  (return-type "none")
-  (parameters
-    '("gdouble" "value")
   )
 )
 
@@ -11188,25 +10955,6 @@
   )
 )
 
-(define-function maia_cassowary_linear_expression_new_cloned
-  (c-name "maia_cassowary_linear_expression_new_cloned")
-  (return-type "MaiaCassowaryLinearExpression*")
-  (parameters
-    '("MaiaCassowaryDouble*" "inConstant")
-    '("MaiaCoreMap*" "inTerms")
-  )
-)
-
-(define-function maia_cassowary_linear_expression_construct_cloned
-  (c-name "maia_cassowary_linear_expression_construct_cloned")
-  (return-type "MaiaCassowaryLinearExpression*")
-  (parameters
-    '("GType" "object_type")
-    '("MaiaCassowaryDouble*" "inConstant")
-    '("MaiaCoreMap*" "inTerms")
-  )
-)
-
 (define-method clone
   (of-object "MaiaCassowaryLinearExpression")
   (c-name "maia_cassowary_linear_expression_clone")
@@ -11425,12 +11173,6 @@
   )
 )
 
-(define-method get_terms
-  (of-object "MaiaCassowaryLinearExpression")
-  (c-name "maia_cassowary_linear_expression_get_terms")
-  (return-type "MaiaCoreMap*")
-)
-
 (define-method get_is_constant
   (of-object "MaiaCassowaryLinearExpression")
   (c-name "maia_cassowary_linear_expression_get_is_constant")
@@ -11599,61 +11341,6 @@
   )
 )
 
-(define-function maia_cassowary_objective_variable_get_type
-  (c-name "maia_cassowary_objective_variable_get_type")
-  (return-type "GType")
-)
-
-(define-function maia_cassowary_objective_variable_new
-  (c-name "maia_cassowary_objective_variable_new")
-  (is-constructor-of "MaiaCassowaryObjectiveVariable")
-  (return-type "MaiaCassowaryObjectiveVariable*")
-)
-
-(define-function maia_cassowary_objective_variable_construct
-  (c-name "maia_cassowary_objective_variable_construct")
-  (return-type "MaiaCassowaryObjectiveVariable*")
-  (parameters
-    '("GType" "object_type")
-  )
-)
-
-(define-function maia_cassowary_objective_variable_new_with_name
-  (c-name "maia_cassowary_objective_variable_new_with_name")
-  (return-type "MaiaCassowaryObjectiveVariable*")
-  (parameters
-    '("const-gchar*" "inName")
-  )
-)
-
-(define-function maia_cassowary_objective_variable_construct_with_name
-  (c-name "maia_cassowary_objective_variable_construct_with_name")
-  (return-type "MaiaCassowaryObjectiveVariable*")
-  (parameters
-    '("GType" "object_type")
-    '("const-gchar*" "inName")
-  )
-)
-
-(define-function maia_cassowary_objective_variable_new_with_prefix
-  (c-name "maia_cassowary_objective_variable_new_with_prefix")
-  (return-type "MaiaCassowaryObjectiveVariable*")
-  (parameters
-    '("glong" "inNumber")
-    '("const-gchar*" "inPrefix")
-  )
-)
-
-(define-function maia_cassowary_objective_variable_construct_with_prefix
-  (c-name "maia_cassowary_objective_variable_construct_with_prefix")
-  (return-type "MaiaCassowaryObjectiveVariable*")
-  (parameters
-    '("GType" "object_type")
-    '("glong" "inNumber")
-    '("const-gchar*" "inPrefix")
-  )
-)
-
 (define-function maia_cassowary_simplex_solver_new
   (c-name "maia_cassowary_simplex_solver_new")
   (is-constructor-of "MaiaCassowarySimplexSolver")
@@ -11694,27 +11381,6 @@
   (return-type "MaiaCassowaryAbstractVariable*")
   (parameters
     '("MaiaCassowaryLinearExpression*" "inExpr")
-    '("GError**" "error")
-  )
-)
-
-(define-method new_expression
-  (of-object "MaiaCassowarySimplexSolver")
-  (c-name "maia_cassowary_simplex_solver_new_expression")
-  (return-type "MaiaCassowaryLinearExpression*")
-  (parameters
-    '("MaiaCassowaryConstraint*" "inConstraint")
-    '("MaiaCorePair*" "inEPlusEMinus")
-    '("MaiaCassowaryDouble*" "inPrevEConstant")
-  )
-)
-
-(define-method optimize
-  (of-object "MaiaCassowarySimplexSolver")
-  (c-name "maia_cassowary_simplex_solver_optimize")
-  (return-type "none")
-  (parameters
-    '("MaiaCassowaryObjectiveVariable*" "inVariable")
     '("GError**" "error")
   )
 )
@@ -11903,16 +11569,6 @@
   )
 )
 
-(define-method resolve_pair
-  (of-object "MaiaCassowarySimplexSolver")
-  (c-name "maia_cassowary_simplex_solver_resolve_pair")
-  (return-type "none")
-  (parameters
-    '("MaiaCorePair*" "m_NewEditConstants")
-    '("GError**" "error")
-  )
-)
-
 (define-method resolve_values
   (of-object "MaiaCassowarySimplexSolver")
   (c-name "maia_cassowary_simplex_solver_resolve_values")
@@ -12009,56 +11665,6 @@
   (of-object "MaiaCassowarySimplexSolver")
   (c-name "maia_cassowary_simplex_solver_get_constraint_map")
   (return-type "MaiaCoreMap*")
-)
-
-(define-function maia_cassowary_slack_variable_new
-  (c-name "maia_cassowary_slack_variable_new")
-  (is-constructor-of "MaiaCassowarySlackVariable")
-  (return-type "MaiaCassowarySlackVariable*")
-)
-
-(define-function maia_cassowary_slack_variable_construct
-  (c-name "maia_cassowary_slack_variable_construct")
-  (return-type "MaiaCassowarySlackVariable*")
-  (parameters
-    '("GType" "object_type")
-  )
-)
-
-(define-function maia_cassowary_slack_variable_new_with_name
-  (c-name "maia_cassowary_slack_variable_new_with_name")
-  (return-type "MaiaCassowarySlackVariable*")
-  (parameters
-    '("const-gchar*" "inName")
-  )
-)
-
-(define-function maia_cassowary_slack_variable_construct_with_name
-  (c-name "maia_cassowary_slack_variable_construct_with_name")
-  (return-type "MaiaCassowarySlackVariable*")
-  (parameters
-    '("GType" "object_type")
-    '("const-gchar*" "inName")
-  )
-)
-
-(define-function maia_cassowary_slack_variable_new_with_prefix
-  (c-name "maia_cassowary_slack_variable_new_with_prefix")
-  (return-type "MaiaCassowarySlackVariable*")
-  (parameters
-    '("glong" "inNumber")
-    '("const-gchar*" "inPrefix")
-  )
-)
-
-(define-function maia_cassowary_slack_variable_construct_with_prefix
-  (c-name "maia_cassowary_slack_variable_construct_with_prefix")
-  (return-type "MaiaCassowarySlackVariable*")
-  (parameters
-    '("GType" "object_type")
-    '("glong" "inNumber")
-    '("const-gchar*" "inPrefix")
-  )
 )
 
 (define-function maia_cassowary_stay_constraint_get_type
@@ -12393,18 +11999,6 @@
   )
 )
 
-(define-method get_columns
-  (of-object "MaiaCassowaryTableau")
-  (c-name "maia_cassowary_tableau_get_columns")
-  (return-type "MaiaCoreMap*")
-)
-
-(define-method get_rows
-  (of-object "MaiaCassowaryTableau")
-  (c-name "maia_cassowary_tableau_get_rows")
-  (return-type "MaiaCoreMap*")
-)
-
 (define-function maia_cassowary_variable_new
   (c-name "maia_cassowary_variable_new")
   (is-constructor-of "MaiaCassowaryVariable")
@@ -12579,15 +12173,6 @@
   (return-type "gboolean")
   (parameters
     '("const-gchar*" "inBackend")
-  )
-)
-
-(define-method get_backend
-  (of-object "MaiaApplication")
-  (c-name "maia_application_get_backend")
-  (return-type "gchar*")
-  (parameters
-    '("const-gchar*" "inProvide")
   )
 )
 
@@ -15645,6 +15230,31 @@
   )
 )
 
+(define-function maia_model_new_filter
+  (c-name "maia_model_new_filter")
+  (return-type "MaiaModel*")
+  (parameters
+    '("const-gchar*" "inId")
+    '("MaiaModel*" "inModel")
+    '("MaiaModelFilterFunc" "inFunc")
+    '("void*" "inFunc_target")
+    '("GDestroyNotify" "inFunc_target_destroy_notify")
+  )
+)
+
+(define-function maia_model_construct_filter
+  (c-name "maia_model_construct_filter")
+  (return-type "MaiaModel*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+    '("MaiaModel*" "inModel")
+    '("MaiaModelFilterFunc" "inFunc")
+    '("void*" "inFunc_target")
+    '("GDestroyNotify" "inFunc_target_destroy_notify")
+  )
+)
+
 (define-method construct_model
   (of-object "MaiaModel")
   (c-name "maia_model_construct_model")
@@ -15652,6 +15262,18 @@
   (parameters
     '("MaiaModelColumn**" "inColumns")
     '("int" "inColumns_length1")
+  )
+)
+
+(define-method construct_model_filter
+  (of-object "MaiaModel")
+  (c-name "maia_model_construct_model_filter")
+  (return-type "none")
+  (parameters
+    '("MaiaModel*" "inModel")
+    '("MaiaModelFilterFunc" "inFunc")
+    '("void*" "inFunc_target")
+    '("GDestroyNotify" "inFunc_target_destroy_notify")
   )
 )
 
@@ -16510,6 +16132,11 @@
 (define-function maia_canvas_get_type
   (c-name "maia_canvas_get_type")
   (return-type "GType")
+)
+
+(define-function maia_canvas_create
+  (c-name "maia_canvas_create")
+  (return-type "MaiaCanvas*")
 )
 
 (define-method clear

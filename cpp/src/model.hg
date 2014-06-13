@@ -37,7 +37,7 @@ namespace Maia
         _CLASS_GOBJECT(Model, MaiaModel, MAIA_MODEL, Core::Object, MaiaCoreObject)
         _IMPLEMENTS_INTERFACE(Manifest::Element)
 
-        _IGNORE(maia_model_set_values, maia_model_set_valuesv, maia_model_construct_model)
+        _IGNORE(maia_model_set_values, maia_model_set_valuesv, maia_model_construct_model, maia_model_new_filter, maia_model_construct_model_filter)
 
         protected:
             _CTOR_DEFAULT()
@@ -48,9 +48,11 @@ namespace Maia
             typedef ModelRows Rows;
             typedef ModelColumn Column;
             typedef sigc::slot<void, guint> SlotValueChanged;
+            typedef sigc::slot<bool, Glib::RefPtr<Model>, iterator> SlotFilterFunc;
 
             static Glib::RefPtr<Model> create (const Glib::ustring& inId);
             static Glib::RefPtr<Model> create (const Glib::ustring& inId, const std::vector<Glib::RefPtr<Model::Column>>& inColumns);
+            static Glib::RefPtr<Model> create (const Glib::ustring& inId, const Glib::RefPtr<Model>& inpModel, SlotFilterFunc inFunc);
             static Glib::RefPtr<Model> create_foreign (const Glib::ustring& inId, ...);
             static Glib::RefPtr<Model> create_foreign (const Glib::ustring& inId, const std::vector<Glib::RefPtr<Model::Column>>& inColumns, ...);
 
@@ -87,6 +89,13 @@ namespace Maia
             _WRAP_PROPERTY("characters", Glib::ustring)
             _WRAP_PROPERTY("manifest-path", Glib::ustring)
             _WRAP_PROPERTY("manifest-styles", Core::Set<Manifest::Style>)
+
+        private:
+            Model* cpp_obj () { return this; }
+            SlotFilterFunc* m_pFilterFunc;
+
+            static gboolean filter_func_callback (MaiaModel* inpModel, guint inRow, void* inpData);
+            static void filter_func_destroy_notify_handler (void* inpData);
     };
 
     class ModelColumn : public Core::Object, public Manifest::Element
@@ -150,7 +159,7 @@ namespace Maia
             inline const ModelRow& operator* () const;
             inline const ModelRow* operator-> () const;
             bool end () const;
-            
+
 
         protected:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

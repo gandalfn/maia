@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Cairo.Surface : Graphic.Surface
+internal class Maia.Cairo.Surface : Graphic.Surface
 {
     // constants
     const int cAlphaPrecision = 16;

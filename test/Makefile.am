@@ -1,10 +1,6 @@
 MAIA_VAPI_DEPS = \
     maia \
-    core/maia-any \
-    cairo/maia-cairo-graphic \
-    rsvg/maia-rsvg \
-    gdk-pixbuf/maia-gdk-pixbuf \
-    gtk/maia-gtk
+    core/maia-any
 
 include $(top_srcdir)/build-aux/maia.am
 
@@ -17,16 +13,10 @@ noinst_PROGRAMS = \
     test-xcb
 
 INCLUDES += \
-    $(MAIA_CAIRO_CFLAGS) \
-    $(MAIA_RSVG_CFLAGS) \
-    $(MAIA_GDK_PIXBUF_CFLAGS) \
-    $(MAIA_GTK_CFLAGS)
+    $(MAIA_CAIRO_CFLAGS)
 
 test_VALAFLAGS = \
-    --pkg=gtk+-2.0 \
-    --pkg=cairo \
-    --pkg=pangocairo \
-    --pkg=librsvg-2.0
+    --pkg=cairo
 
 test_SOURCES = \
     test.vala \
@@ -47,10 +37,7 @@ test_SOURCES = \
     graphic/test-transform.vala \
     manifest/test-manifest.vala \
     manifest/test-document.vala \
-    cassowary/test-cassowary.vala \
-    gtk/test-gtk.vala \
-    gtk/test-model.vala \
-    gtk/test-canvas.vala
+    cassowary/test-cassowary.vala
 
 test_LDADD = \
     $(MAIA_LIBS) \
@@ -58,10 +45,7 @@ test_LDADD = \
     $(MAIA_GDK_PIXBUF_LIBS) \
     $(MAIA_GTK_LIBS) \
     $(MAIA_VALGRIND_LIBS) \
-    ${top_builddir}/lib/gtk/libmaia-gtk.la \
-    ${top_builddir}/lib/cairo/libmaia-cairo-graphic.la \
-    ${top_builddir}/lib/libmaia.la \
-    ${top_builddir}/lib/gdk-pixbuf/libmaia-gdk-pixbuf.la
+    ${top_builddir}/lib/libmaia.la
 
 test_xcb_SOURCES = \
     test-xcb.vala

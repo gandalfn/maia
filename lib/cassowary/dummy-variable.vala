@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Cassowary.DummyVariable : AbstractVariable
+internal class Maia.Cassowary.DummyVariable : AbstractVariable
 {
     // accessors
     internal override bool is_external {

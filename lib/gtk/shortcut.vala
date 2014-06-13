@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Gtk.Shortcut : Maia.Shortcut
+internal class Maia.Gtk.Shortcut : Maia.Shortcut
 {
     // properties
     private global::Gtk.Button m_Button;

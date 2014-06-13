@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Cairo.Context : Graphic.Context
+internal class Maia.Cairo.Context : Graphic.Context
 {
     // properties
     private global::Cairo.Context m_Context = null;

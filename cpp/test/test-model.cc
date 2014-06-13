@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <maia-gtkmm.h>
+#include <maiamm.h>
 
 #include "test-model.h"
 
@@ -34,6 +34,7 @@ TestModel::TestModel () :
     add_test ("remove", sigc::mem_fun (this, &TestModel::test_model_remove));
     add_test ("clear", sigc::mem_fun (this, &TestModel::test_model_clear));
     add_test ("set-values", sigc::mem_fun (this, &TestModel::test_model_set_values));
+    add_test ("filter", sigc::mem_fun (this, &TestModel::test_model_filter));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -267,5 +268,71 @@ TestModel::test_model_set_values ()
 
         g_assert (val == cpt + 1);
         g_assert (str == Glib::ustring::compose ("test %1", val));
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+bool
+TestModel::on_filter_func (const Glib::RefPtr<Maia::Model>& inpModel, const Maia::Model::iterator& inIter)
+{
+    const Maia::Model::Row& row = *inIter;
+
+    int val = row["column1"];
+
+    return val > 5;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void
+TestModel::test_model_filter ()
+{
+    Glib::RefPtr<Maia::Model> pModel = Maia::Model::create ("test",
+                                                            {
+                                                                Maia::Model::Column::create<int> ("column1"),
+                                                                Maia::Model::Column::create<Glib::ustring> ("column2")
+                                                            });
+    g_assert (pModel);
+
+
+    Glib::RefPtr<Maia::Model> pFilterModel = Maia::Model::create ("filter", pModel, sigc::mem_fun (this, &TestModel::on_filter_func));
+    g_assert (pFilterModel);
+
+    Maia::Model::iterator iter = pModel->append_row ();
+    g_assert (iter != pModel->rows ().end ());
+    Maia::Model::Row row = *iter;
+    row["column1"] =  1;
+    row["column2"] = Glib::ustring ("test 1");
+
+    iter = pModel->append_row ();
+    g_assert (iter != pModel->rows ().end ());
+    row = *iter;
+    row["column1"] = 15;
+    row["column2"] = Glib::ustring ("test 2");
+
+    iter = pModel->append_row ();
+    g_assert (iter != pModel->rows ().end ());
+    row = *iter;
+    row["column1"] = 3;
+    row["column2"] = Glib::ustring ("test 3");
+
+    iter = pModel->append_row ();
+    g_assert (iter != pModel->rows ().end ());
+    row = *iter;
+    row["column1"] = 8;
+    row["column2"] = Glib::ustring ("test 4");
+
+    g_assert (pModel->get_nb_rows () == 4);
+    g_assert (pFilterModel->get_nb_rows () == 2);
+
+    for (iter = pFilterModel->rows ().begin (); iter != pFilterModel->rows ().end (); ++iter)
+    {
+        row = *iter;
+        int val = row["column1"];
+        Glib::ustring str = row["column2"];
+
+        g_assert (val == 15 || val == 8);
+        g_assert (str == "test 2" || str == "test 4");
     }
 }

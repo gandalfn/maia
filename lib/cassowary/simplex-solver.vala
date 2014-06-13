@@ -110,15 +110,15 @@ public class Maia.Cassowary.SimplexSolver : Tableau
     public SimplexSolver ()
     {
         m_StayMinusErrorVars = new Core.Array<AbstractVariable> ();
-        m_StayPlusErrorVars = new Core.Array<AbstractVariable> ();
-        m_ErrorVars = new Core.Map<Constraint, Core.Set<AbstractVariable>> ();
-        m_MarkerVars = new Core.Map<Constraint, AbstractVariable> ();
+        m_StayPlusErrorVars  = new Core.Array<AbstractVariable> ();
+        m_ErrorVars          = new Core.Map<Constraint, Core.Set<AbstractVariable>> ();
+        m_MarkerVars         = new Core.Map<Constraint, AbstractVariable> ();
 
-        m_ResolvePair = new Core.Pair<Double, Double> (new Double (0), new Double (0));
+        m_ResolvePair        = new Core.Pair<Double, Double> (new Double (0), new Double (0));
 
-        m_Objective = new ObjectiveVariable.with_name ("Z");
+        m_Objective          = new ObjectiveVariable.with_name ("Z");
 
-        m_EditVarMap = new Core.Map<Variable, EditInfo> ();
+        m_EditVarMap         = new Core.Map<Variable, EditInfo> ();
 
         m_SlackCounter = 0;
         m_ArtificialCounter = 0;
@@ -304,7 +304,7 @@ public class Maia.Cassowary.SimplexSolver : Tableau
         return subject;
     }
 
-    protected LinearExpression
+    internal LinearExpression
     new_expression (Constraint inConstraint, Core.Pair<SlackVariable, SlackVariable> inEPlusEMinus, Double inPrevEConstant)
     {
         LinearExpression cnExpr = inConstraint.expression;
@@ -313,9 +313,8 @@ public class Maia.Cassowary.SimplexSolver : Tableau
         DummyVariable dummyVar = new DummyVariable ();
         SlackVariable eminus = new SlackVariable ();
         SlackVariable eplus = new SlackVariable ();
-        unowned Core.Map<AbstractVariable, Double> cnTerms = cnExpr.terms;
 
-        foreach (unowned Core.Pair<AbstractVariable, Double> pair in cnTerms)
+        foreach (unowned Core.Pair<AbstractVariable, Double> pair in cnExpr.terms)
         {
             double c = pair.second.@value;
             unowned LinearExpression? e = row_expression (pair.first);
@@ -396,7 +395,7 @@ public class Maia.Cassowary.SimplexSolver : Tableau
      *
      * The tableau should already be feasible.
      */
-    protected void
+    internal void
     optimize (ObjectiveVariable inVariable) throws Error
     {
         unowned LinearExpression? zRow = row_expression (inVariable);
@@ -1056,7 +1055,7 @@ public class Maia.Cassowary.SimplexSolver : Tableau
      * (you'll get the wrong answer, because the indices will be wrong
      * in the EditInfo objects).
      */
-    public void
+    internal void
     resolve_pair (Core.Pair<Double, Double> m_NewEditConstants) throws Error
     {
         foreach (unowned Core.Pair<Variable, EditInfo> pair in m_EditVarMap)

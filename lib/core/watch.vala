@@ -84,9 +84,14 @@ public abstract class Maia.Core.Watch : Object
     protected virtual bool
     on_prepare (out int outTimeout)
     {
+        if (check())
+        {
+            on_process ();
+        }
+
         outTimeout = -1;
 
-        return check ();
+        return false;
     }
 
     protected virtual bool

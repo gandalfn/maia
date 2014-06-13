@@ -94,7 +94,7 @@ public class Maia.Model : Core.Object, Manifest.Element
     }
 
     // delegate
-    public delegate bool FilterFunc (uint inPath);
+    public delegate bool FilterFunc (Model inModel, uint inPath);
 
     // accessors
     internal string tag {
@@ -220,7 +220,7 @@ public class Maia.Model : Core.Object, Manifest.Element
     public Model.foreignv (string inId, va_list inList)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
-        
+
         while (true)
         {
             // Get property name
@@ -229,7 +229,7 @@ public class Maia.Model : Core.Object, Manifest.Element
             {
                 break;
             }
-            
+
             // Search property
             unowned GLib.ParamSpec? param = get_class ().find_property (propertyName);
             if (param != null)
@@ -255,10 +255,22 @@ public class Maia.Model : Core.Object, Manifest.Element
             add (column);
         }
     }
-    
+
+    public Model.filter (string inId, Model inModel, owned FilterFunc inFunc)
+    {
+        GLib.Object (id: GLib.Quark.from_string (inId));
+
+        construct_model_filter (inModel, (owned)inFunc);
+    }
 
     protected virtual void
     construct_model (Column[] inColumns)
+    {
+
+    }
+
+    protected virtual void
+    construct_model_filter (Model inModel, owned FilterFunc inFunc)
     {
     }
 

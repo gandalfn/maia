@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Gtk.Image : Maia.Image
+internal class Maia.Gtk.Image : Maia.Image
 {
     // properties
     private string     m_IconName;

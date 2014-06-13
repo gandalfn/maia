@@ -42,7 +42,7 @@ public class Maia.TestModel : Maia.TestCase
                             "   }" +
                             "}";
 
-        Maia.Gtk.Canvas canvas = new Maia.Gtk.Canvas ();
+        Maia.Canvas canvas = Maia.Canvas.create ();
         try
         {
             canvas.load (manifest, "root");

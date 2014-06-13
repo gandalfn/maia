@@ -40,6 +40,11 @@ namespace Maia
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3)')
 
         public:
+            static Canvas* create ()
+            {
+                return new Canvas (maia_canvas_create ());
+            }
+
             _WRAP_METHOD(Glib::RefPtr<Item> get_root () const, maia_canvas_get_root, refreturn)
             _WRAP_METHOD(void set_root (const Glib::RefPtr<Item>& inRoot), maia_canvas_set_root)
             _WRAP_METHOD(Glib::RefPtr<Window> get_window () const, maia_canvas_get_window, refreturn)

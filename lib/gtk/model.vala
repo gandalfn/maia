@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Gtk.Model : Maia.Model
+internal class Maia.Gtk.Model : Maia.Model
 {
     // types
     public class Column : Maia.Model.Column
@@ -94,6 +94,8 @@ public class Maia.Gtk.Model : Maia.Model
 
     // properties
     private global::Gtk.TreeModel m_TreeModel;
+    private Model                 m_Model = null;
+    private Maia.Model.FilterFunc m_FilterFunc;
 
     // accessors
     internal override uint nb_rows {
@@ -133,6 +135,35 @@ public class Maia.Gtk.Model : Maia.Model
     public Model (global::Gtk.TreeModel inTreeModel)
     {
         GLib.Object (treemodel: inTreeModel);
+    }
+
+    private uint
+    convert_tree_path_to_row (global::Gtk.TreePath inPath)
+    {
+        uint row = 0;
+
+        if (inPath.get_depth () == 1 && inPath.get_indices () != null)
+        {
+            row = (uint)inPath.get_indices()[0];
+        }
+
+        return row;
+    }
+
+    private bool
+    convert_tree_iter_to_row (global::Gtk.TreeIter inIter, out uint outRow)
+    {
+        bool ret = false;
+        outRow = 0;
+
+        if (m_TreeModel != null)
+        {
+            global::Gtk.TreePath? path = m_TreeModel.get_path (inIter);
+            outRow = convert_tree_path_to_row (path);
+            ret = true;
+        }
+
+        return ret;
     }
 
     private void
@@ -191,6 +222,19 @@ public class Maia.Gtk.Model : Maia.Model
         return false;
     }
 
+    private bool
+    on_filter_func (global::Gtk.TreeModel inModel, global::Gtk.TreeIter inIter)
+    {
+        uint row = 0;
+
+        if (inModel == m_Model.m_TreeModel && m_Model.convert_tree_iter_to_row (inIter, out row))
+        {
+            return m_FilterFunc (m_Model, row);
+        }
+
+        return false;
+    }
+
     internal override void
     construct_model (Column[] inColumns)
     {
@@ -212,6 +256,33 @@ public class Maia.Gtk.Model : Maia.Model
         }
 
         treemodel = new global::Gtk.ListStore.newv (columns);
+    }
+
+    internal override void
+    construct_model_filter (Maia.Model inModel, owned Maia.Model.FilterFunc inFunc)
+        requires (inModel is Model)
+    {
+        // Set parent model
+        m_Model = inModel as Model;
+
+        // Get column
+        foreach (var child in m_Model)
+        {
+            unowned Maia.Model.Column? column =  child as Maia.Model.Column;
+            if (column != null)
+            {
+                add (new Maia.Model.Column.with_column (column.name, column.column));
+            }
+        }
+
+        // Set filter func
+        m_FilterFunc = (owned)inFunc;
+
+        // Create filter model
+        treemodel = new global::Gtk.TreeModelFilter (m_Model.m_TreeModel, null);
+
+        // Set filter func
+        (treemodel as global::Gtk.TreeModelFilter).set_visible_func (on_filter_func);
     }
 
     internal override bool
@@ -338,7 +409,6 @@ public class Maia.Gtk.Model : Maia.Model
                         columns += column.column;
                     }
                 }
-                
             }
 
             // set values in tree model
@@ -374,55 +444,5 @@ public class Maia.Gtk.Model : Maia.Model
                 }
             }
         }
-    }
-
-    public global::Gtk.TreePath
-    convert_row_to_tree_path (uint inRow)
-    {
-        return new global::Gtk.TreePath.from_string (@"$inRow");
-    }
-
-    public uint
-    convert_tree_path_to_row (global::Gtk.TreePath inPath)
-    {
-        uint row = 0;
-
-        if (inPath.get_depth () == 1 && inPath.get_indices () != null)
-        {
-            row = (uint)inPath.get_indices()[0];
-        }
-
-        return row;
-    }
-
-    public bool
-    convert_row_to_tree_iter (uint inRow, out global::Gtk.TreeIter outIter)
-    {
-        bool ret = false;
-        outIter = global::Gtk.TreeIter ();
-
-        if (m_TreeModel != null)
-        {
-            global::Gtk.TreePath path = convert_row_to_tree_path (inRow);
-            ret = m_TreeModel.get_iter (out outIter, path);
-        }
-
-        return ret;
-    }
-
-    public bool
-    convert_tree_iter_to_row (global::Gtk.TreeIter inIter, out uint outRow)
-    {
-        bool ret = false;
-        outRow = 0;
-
-        if (m_TreeModel != null)
-        {
-            global::Gtk.TreePath? path = m_TreeModel.get_path (inIter);
-            outRow = convert_tree_path_to_row (path);
-            ret = true;
-        }
-
-        return ret;
     }
 }

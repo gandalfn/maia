@@ -136,7 +136,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     private void
     on_main_window_changed ()
     {
-        if (m_Realized)
+        if (m_Realized && window != null)
         {
             // Check if window is not already reparented
             var reply = m_Window.query_tree (connection).reply (connection);
@@ -450,22 +450,6 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         base.on_hide ();
     }
 
-    internal override void
-    on_grab_focus (Item? inItem)
-    {
-        base.on_grab_focus (inItem);
-
-        // an item has focus set window has keyboard focus
-        if (inItem != null)
-        {
-            m_Window.set_input_focus (connection, global::Xcb.InputFocus.PARENT, global::Xcb.CURRENT_TIME);
-        }
-        else
-        {
-            ((global::Xcb.Window)global::Xcb.NONE).set_input_focus (connection, global::Xcb.InputFocus.PARENT, global::Xcb.CURRENT_TIME);
-        }
-    }
-
     internal override bool
     on_grab_pointer (Item inItem)
     {
@@ -606,7 +590,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
             }
 
             // damage
-            damage ();
+            damaged = area.copy ();
         }
     }
 

@@ -272,7 +272,6 @@ public class Maia.Window : Group
                 {
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"$name $pos");
 
-
                     // we have grab pointer item send event
                     if (grab_pointer_item != null)
                     {

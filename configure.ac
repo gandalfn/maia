@@ -1,6 +1,6 @@
 m4_define(maia_version_major, 0)
 m4_define(maia_version_minor, 2)
-m4_define(maia_version_micro, 2)
+m4_define(maia_version_micro, 3)
 AC_INIT([maia],[maia_version_major.maia_version_minor.maia_version_micro])
 AC_PREREQ(2.63)
 
@@ -52,7 +52,6 @@ GDK_PIXBUF_REQUIRED=2.26.0
 GTK_REQUIRED=2.24.0
 GTKSOURCEVIEW_REQUIRED=2.10.0
 GLIBMM_REQUIRED=2.32.0
-GTKMM_REQUIRED=2.24.0
 XCB_REQUIRED=1.9
 XCB_UTIL_KEYSYMS_REQUIRED=0.3.9
 XCB_UTIL_CURSOR_REQUIRED=0.1.1
@@ -65,7 +64,6 @@ AC_SUBST(GTK_REQUIRED)
 AC_SUBST(RSVG_REQUIRED)
 AC_SUBST(XCB_REQUIRED)
 AC_SUBST(GLIBMM_REQUIRED)
-AC_SUBST(GTKMM_REQUIRED)
 
 dnl ****************************************************************************
 dnl Check for build
@@ -147,11 +145,6 @@ dnl ****************************************************************************
 PKG_CHECK_MODULES(MAIA_GTK, [gtk+-2.0 >= $GTK_REQUIRED])
 AC_SUBST(MAIA_GTK_CFLAGS)
 AC_SUBST(MAIA_GTK_LIBS)
-
-AC_SUBST([MAIA_GTKMM_MODULES], ['gtkmm-2.4'])
-PKG_CHECK_MODULES([MAIA_GTKMM], [$MAIA_GTKMM_MODULES])
-AC_SUBST(MAIA_GTKMM_CFLAGS)
-AC_SUBST(MAIA_GTKMM_LIBS)
 
 dnl ****************************************************************************
 dnl Check for canvas-editor packages
@@ -262,7 +255,7 @@ dnl Check for mm-common
 dnl ****************************************************************************
 MM_PKG_CONFIG_SUBST([GTHREAD_CFLAGS], [--cflags-only-other gthread-2.0])
 MM_PKG_CONFIG_SUBST([GMMPROC_DIR], [--variable=gmmprocdir glibmm-2.4])
-MM_PKG_CONFIG_SUBST([GMMPROC_EXTRA_M4_DIR], [--variable=gmmprocm4dir pangomm-1.4 atkmm-1.6 gtkmm-2.4])
+MM_PKG_CONFIG_SUBST([GMMPROC_EXTRA_M4_DIR], [--variable=gmmprocm4dir glibmm-2.4])
 
 MM_ARG_ENABLE_WARNINGS([MAIAMM_WXXFLAGS],
                        [-Wall],
@@ -303,10 +296,6 @@ cpp/Makefile
 cpp/codegen/Makefile
 cpp/src/Makefile
 cpp/maiamm/Makefile
-cpp/gtk/maia-gtkmm.pc
-cpp/gtk/Makefile
-cpp/gtk/src/Makefile
-cpp/gtk/maia-gtkmm/Makefile
 cpp/doc/Makefile
 cpp/doc/reference/Doxyfile
 cpp/test/Makefile

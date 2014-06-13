@@ -33,7 +33,7 @@ public class Maia.Cassowary.LinearExpression : Core.Object
         }
     }
 
-    public Core.Map<AbstractVariable, Double> terms {
+    internal Core.Map<AbstractVariable, Double> terms {
         get {
             return m_Terms;
         }
@@ -60,7 +60,7 @@ public class Maia.Cassowary.LinearExpression : Core.Object
         this (null, 0, inNum);
     }
 
-    protected LinearExpression.cloned (Double inConstant, Core.Map<AbstractVariable, Double> inTerms)
+    internal LinearExpression.cloned (Double inConstant, Core.Map<AbstractVariable, Double> inTerms)
     {
         m_Constant = (Double) inConstant.clone();
         m_Terms = new Core.Map<AbstractVariable, Double> ();
@@ -399,23 +399,21 @@ public class Maia.Cassowary.LinearExpression : Core.Object
     to_string ()
     {
         string s = "";
+        bool is_first = true;
 
-        if (!approx (m_Constant.@value, 0.0) || m_Terms.length == 0)
+        if (!approx (m_Constant.@value, 0.0))
         {
             s += m_Constant.to_string ();
+            is_first = false;
         }
-        else
-        {
-            bool is_first = true;
 
-            foreach (unowned Core.Pair<AbstractVariable, Double> pair in m_Terms)
-            {
-                if (is_first)
-                    s += "%s*%s".printf (pair.first.to_string (), pair.second.to_string ());
-                else
-                    s += " + %s*%s".printf (pair.first.to_string (), pair.second.to_string ());
-                is_first = false;
-            }
+        foreach (unowned Core.Pair<AbstractVariable, Double> pair in m_Terms)
+        {
+            if (is_first)
+                s += "%s*%s".printf (pair.first.to_string (), pair.second.to_string ());
+            else
+                s += " + %s*%s".printf (pair.first.to_string (), pair.second.to_string ());
+            is_first = false;
         }
 
         return s;

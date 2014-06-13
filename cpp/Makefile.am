@@ -1,4 +1,4 @@
-SUBDIRS = codegen src maiamm gtk . doc test
+SUBDIRS = codegen src maiamm . doc test
 
 MAIA_LIB_NAME = maiamm
 

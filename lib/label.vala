@@ -389,6 +389,8 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
                 var pos = Graphic.Point (0, 0);
                 var glyph_size = m_Glyph.size;
                 m_Glyph.size = area.extents.size;
+
+                inContext.translate (Graphic.Point (0, (area.extents.size.height - glyph_size.height) / 2.0));
                 if (shade_color != null)
                 {
                     inContext.pattern = new Graphic.Color.shade (shade_color, 0.8);

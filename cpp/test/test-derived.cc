@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <maia-gtkmm.h>
+#include <maiamm.h>
 
 #include "test-derived.h"
 

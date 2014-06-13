@@ -549,9 +549,6 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
 
         if (m_Glyph != null)
         {
-            // Update layout
-            update_layout ();
-
             if (width_in_chars > 0)
             {
                 size = width_in_chars_to_size ();

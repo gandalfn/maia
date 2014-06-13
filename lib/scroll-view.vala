@@ -317,7 +317,7 @@ public class Maia.ScrollView : Item
                                                                                  m_VSeekBar.size.width,
                                                                                  geometry.extents.size.height - m_HSeekBar.size.height)));
 
-            damage ();
+            damaged = area.copy ();
         }
     }
 

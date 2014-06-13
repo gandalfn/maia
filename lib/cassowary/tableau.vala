@@ -51,19 +51,6 @@ public class Maia.Cassowary.Tableau : Core.Object
      */
     protected Core.Set<AbstractVariable> m_ExternalParametricVars; // Core.Set of ClVariable-s
 
-    // accessors
-    protected Core.Map<AbstractVariable, Core.Set<AbstractVariable>> columns {
-        get {
-            return m_Columns;
-        }
-    }
-
-    protected Core.Map<AbstractVariable, LinearExpression> rows {
-        get {
-            return m_Rows;
-        }
-    }
-
     // methods
     /**
      * Constructor is protected, since this only supports an ADT for
@@ -71,10 +58,10 @@ public class Maia.Cassowary.Tableau : Core.Object
      */
     protected Tableau()
     {
-        m_Columns = new Core.Map<AbstractVariable, Core.Set<AbstractVariable>> ();
-        m_Rows = new Core.Map<AbstractVariable, LinearExpression> ();
-        m_InfeasibleRows = new Core.Set<AbstractVariable> ();
-        m_ExternalRows = new Core.Set<AbstractVariable> ();
+        m_Columns                = new Core.Map<AbstractVariable, Core.Set<AbstractVariable>> ();
+        m_Rows                   = new Core.Map<AbstractVariable, LinearExpression> ();
+        m_InfeasibleRows         = new Core.Set<AbstractVariable> ();
+        m_ExternalRows           = new Core.Set<AbstractVariable> ();
         m_ExternalParametricVars = new Core.Set<AbstractVariable> ();
     }
 
@@ -90,9 +77,13 @@ public class Maia.Cassowary.Tableau : Core.Object
 
         // TODO: two parsing on set creation, need to be simplified
         if (rowset == null)
-            m_Columns[inParamVar] = new Core.Set<AbstractVariable> ();
+        {
+            var new_rowset = new Core.Set<AbstractVariable> ();
+            m_Columns[inParamVar] = new_rowset;
+            rowset = new_rowset;
+        }
 
-        m_Columns[inParamVar].insert (inRowVar);
+        rowset.insert (inRowVar);
     }
 
     /**

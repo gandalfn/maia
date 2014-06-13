@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Gtk.Button : Maia.Button
+internal class Maia.Gtk.Button : Maia.Button
 {
     // accessors
     public string? icon_name {

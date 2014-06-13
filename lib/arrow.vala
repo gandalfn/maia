@@ -131,11 +131,9 @@ public class Maia.Arrow : Item, ItemMovable
             start_area.translate (Graphic.Point (-arrow_width, -arrow_width));
             end_area.translate (Graphic.Point (arrow_width, arrow_width));
             var area_size = Graphic.Size (end_area.x - start_area.x, end_area.y - start_area.y);
-            if (!size.equal (area_size))
-            {
-                position = start_area;
-                size = area_size;
-            }
+
+            position = start_area;
+            size = area_size;
         }
     }
 

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
+internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
 {
     // properties
     private Window m_WindowGate = null;
@@ -41,7 +41,7 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
                 m_Root.parent = null;
             }
             m_Root = value;
-            if (m_Window != null)
+            if (m_Window != null && m_Root != null)
             {
                 m_Root.parent = m_Window;
             }
@@ -62,31 +62,31 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
 
     public Canvas ()
     {
-
     }
 
-    private void
-    send_configure ()
+    private static inline void
+    send_keyboard_event (Gdk.Window inWindow, Gdk.EventKey inEvent)
     {
-        Gdk.Event evt = new Gdk.Event (Gdk.EventType.CONFIGURE);
+        X.Event? evt = X.Event ();
+        unowned X.KeyEvent? xkey = (X.KeyEvent?)evt;
 
-        evt.configure.window = (Gdk.Window)((global::Gtk.Widget)this).window.ref ();
-        evt.configure.send_event = (char)true;
-        evt.configure.x = allocation.x;
-        evt.configure.y = allocation.y;
-        evt.configure.width = allocation.width;
-        evt.configure.height = allocation.height;
+        xkey.type = (inEvent.type == Gdk.EventType.KEY_PRESS) ? X.EventType.KeyPress : X.EventType.KeyRelease;
+        xkey.window = Gdk.x11_drawable_get_xid (inWindow);
+        xkey.root = Gdk.x11_drawable_get_xid (inWindow.get_screen ().get_root_window ());
+        xkey.subwindow = X.None;
+        xkey.time = inEvent.time;
+        xkey.x = 0;
+        xkey.y = 0;
+        xkey.x_root = 0;
+        xkey.y_root = 0;
+        xkey.state = inEvent.state;
+        xkey.keycode = inEvent.hardware_keycode;
+        xkey.same_screen = true;
 
-        event (evt);
-    }
-
-    private bool
-    on_window_button_press_event (uint inButton, Graphic.Point inPosition)
-    {
-        // Set widget has focus
-        grab_focus ();
-
-        return true;
+        Gdk.error_trap_push ();
+        Gdk.x11_display_get_xdisplay(inWindow.get_display ()).send_event (Gdk.x11_drawable_get_xid (inWindow), false, X.EventMask.NoEventMask, ref evt);
+        inWindow.get_display ().sync ();
+        Gdk.error_trap_pop ();
     }
 
     private void
@@ -113,19 +113,45 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
     internal override void
     realize ()
     {
+        Gdk.WindowAttr attributes = Gdk.WindowAttr ();
+
         // Set widget was realized
         set_realized (true);
 
-        // Create window
-        m_Window = new Maia.Window (@"$name-gtk-canvas-window", allocation.width, allocation.height);
-        m_Window.background_pattern = new Graphic.Color (1, 1, 1);
-        m_Window.position = Graphic.Point (allocation.x, allocation.y);
-        m_Window.size = Graphic.Size (allocation.width, allocation.height);
-        m_Window.button_press_event.connect (on_window_button_press_event);
-        m_Window.grab_focus.connect (on_window_grab_focus);
+        // Create widget window
+        attributes.visual = get_visual ();
+        attributes.colormap = get_colormap ();
+        attributes.x = allocation.x;
+        attributes.y = allocation.y;
+        attributes.width = allocation.width;
+        attributes.height = allocation.height;
+        attributes.wclass = Gdk.WindowClass.INPUT_OUTPUT;
+        attributes.window_type = Gdk.WindowType.CHILD;
+        attributes.event_mask = Gdk.EventMask.STRUCTURE_MASK | Gdk.EventMask.FOCUS_CHANGE_MASK;
+        int attributes_mask = Gdk.WindowAttributesType.X        |
+                              Gdk.WindowAttributesType.Y        |
+                              Gdk.WindowAttributesType.COLORMAP |
+                              Gdk.WindowAttributesType.VISUAL;
 
-        // Create gate window from gtk parent window
-        m_WindowGate = new Window.from_foreign (@"$name-gtk-canvas-parent", (uint32)Gdk.x11_drawable_get_xid (get_parent_window ()));
+        // widget window
+        ((global::Gtk.Widget)this).window = new Gdk.Window (get_parent_window (), attributes, attributes_mask);
+        ((global::Gtk.Widget)this).window.set_user_data (this);
+        ((global::Gtk.Widget)this).window.set_back_pixmap (null, false);
+        style = style.attach (((global::Gtk.Widget)this).window);
+
+        ((global::Gtk.Widget)this).window.show ();
+        ((global::Gtk.Widget)this).window.get_display ().sync ();
+
+        // Create gate window from gtk window
+        m_WindowGate = new Window.from_foreign (@"$name-gtk-canvas-parent", (uint32)Gdk.x11_drawable_get_xid (((global::Gtk.Widget)this).window));
+
+        // Create maia window
+        m_Window = new Maia.Window (@"$name-gtk-canvas-window", allocation.width, allocation.height);
+        var color_bg = style.bg[global::Gtk.StateType.NORMAL];
+        m_Window.background_pattern = new Graphic.Color ((double)color_bg.red / 65535.0, (double)color_bg.green / 65535.0, (double)color_bg.blue / 65535.0);
+        m_Window.position = Graphic.Point (0, 0);
+        m_Window.size = Graphic.Size (allocation.width, allocation.height);
+        m_Window.grab_focus.connect (on_window_grab_focus);
 
         // Set canvas window
         m_Window.set_data<unowned Window?> ("MaiaCanvasWindow", m_WindowGate);
@@ -133,23 +159,38 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
         // Set root parent has window
         if (m_Root != null) m_Root.parent = m_Window;
 
-        // Show window
-        m_Window.visible = true;
-        m_Window.flush ();
-
         // Add window to application in same time this launch window notify for reparent
         Application.@default.add (m_Window);
+    }
 
-        // Create gdk window from maia window
-        uint32 xid;
-        m_Window.get ("xid", out xid);
+    internal override void
+    map ()
+    {
+        m_Window.visible = true;
 
-        // Attach window to widget
-        ((global::Gtk.Widget)this).window = Gdk.Window.foreign_new ((Gdk.NativeWindow)xid).ref () as Gdk.Window;
-        ((global::Gtk.Widget)this).window.set_user_data (this);
-        style = style.attach (((global::Gtk.Widget)this).window);
+        base.map ();
+    }
 
-        send_configure ();
+    internal override void
+    unmap ()
+    {
+        m_Window.visible = false;
+
+        base.unmap ();
+    }
+
+    internal override bool
+    key_press_event (Gdk.EventKey inEvent)
+    {
+        if (m_Window != null && is_focus)
+        {
+            uint32 xid;
+            m_Window.get ("xid", out xid);
+
+            send_keyboard_event (Gdk.Window.foreign_new ((Gdk.NativeWindow)xid), inEvent);
+        }
+
+        return false;
     }
 
     internal override void
@@ -169,24 +210,15 @@ public class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
 
         if (get_realized ())
         {
-            m_Window.position = Graphic.Point (inAllocation.x, inAllocation.y);
+            ((global::Gtk.Widget)this).window.move_resize (inAllocation.x, inAllocation.y, inAllocation.width, inAllocation.height);
+
+            m_Window.position = Graphic.Point (0, 0);
             m_Window.size = Graphic.Size (inAllocation.width, inAllocation.height);
 
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"window size: $(inAllocation.width) $(inAllocation.height)");
-
-            send_configure ();
         }
 
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"alllocation: $(inAllocation.x) $(inAllocation.y) $(inAllocation.width) $(inAllocation.height)");
-    }
-
-    internal override bool
-    button_press_event (Gdk.EventButton inEvent)
-    {
-        // grab focus on button press event
-        grab_focus ();
-
-        return false;
     }
 
     internal override bool

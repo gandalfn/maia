@@ -74,9 +74,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 }
             }
 
-            // Update transform matrix
-            m_TransformToItemSpace = get_transform_to_item_space ();
-            m_TransformToRootSpace = get_transform_to_root_space ();
+            // Invalidate transform matrix
+            m_TransformToItemSpace = null;
+            m_TransformToRootSpace = null;
 
             // If item is root do not connect on position change
             if (parent == null)
@@ -175,9 +175,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 // New geometry
                 if (m_Geometry != null)
                 {
-                    // Calculate transformations
-                    m_TransformToItemSpace = get_transform_to_item_space ();
-                    m_TransformToRootSpace = get_transform_to_root_space ();
+                    // Invalidate transformations
+                    m_TransformToItemSpace = null;
+                    m_TransformToRootSpace = null;
                 }
 
                 // Send notify geometry signal only if geometry has been changed
@@ -211,9 +211,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 m_Transform.changed.connect (on_transform_changed);
             }
 
-            // Update transform matrix
-            m_TransformToItemSpace = get_transform_to_item_space ();
-            m_TransformToRootSpace = get_transform_to_root_space ();
+            // invalidate transform matrix
+            m_TransformToItemSpace = null;
+            m_TransformToRootSpace = null;
         }
         default = new Graphic.Transform.identity ();
     }
@@ -231,9 +231,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             {
                 m_Position = value;
 
-                // Update transform matrix
-                m_TransformToItemSpace = get_transform_to_item_space ();
-                m_TransformToRootSpace = get_transform_to_root_space ();
+                // Invalidate transform matrix
+                m_TransformToItemSpace = null;
+                m_TransformToRootSpace = null;
 
                 GLib.Signal.emit_by_name (this, "notify::position");
             }
@@ -535,8 +535,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     private void
     on_parent_root_changed ()
     {
-        m_TransformToItemSpace = get_transform_to_item_space ();
-        m_TransformToRootSpace = get_transform_to_root_space ();
+        m_TransformToItemSpace = null;
+        m_TransformToRootSpace = null;
         GLib.Signal.emit_by_name (this, "notify::root");
     }
 
@@ -1308,7 +1308,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             geometry = inAllocation;
 
-            damage ();
+            damaged = area.copy ();
         }
     }
 
@@ -1323,6 +1323,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     convert_to_item_space (Graphic.Point inRootPoint)
     {
         var point = inRootPoint;
+        if (m_TransformToItemSpace == null)
+        {
+            m_TransformToItemSpace = get_transform_to_item_space ();
+        }
         point.transform (m_TransformToItemSpace);
 
         return point;
@@ -1339,6 +1343,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     convert_to_root_space (Graphic.Point inPoint)
     {
         var point = inPoint;
+        if (m_TransformToRootSpace == null)
+        {
+            m_TransformToRootSpace = get_transform_to_root_space ();
+        }
         point.transform (m_TransformToRootSpace);
 
         return point;
