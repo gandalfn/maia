@@ -100,9 +100,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
     public abstract string tag { get; }
 
-    internal string characters { get; set; default = null; }
-    internal string manifest_path { get; set; default = null; }
-    internal Core.Set<Manifest.Style> manifest_styles { get; set; default = null; }
+    internal string         characters     { get; set; default = null; }
+    internal string         style          { get; set; default = null; }
+    internal string         manifest_path  { get; set; default = null; }
+    internal Manifest.Theme manifest_theme { get; set; default = null; }
 
     public bool is_packable {
         get {
@@ -1242,15 +1243,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     dump_childs (string inPrefix)
     {
         string ret = "";
-
-        // dump styles
-        if (parent == null && manifest_styles != null)
-        {
-            foreach (unowned Manifest.Style style in manifest_styles)
-            {
-                ret += style.dump (inPrefix);
-            }
-        }
 
         // dump childs
         foreach (unowned Core.Object child in this)

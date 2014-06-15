@@ -42,9 +42,6 @@ public class Maia.Manifest.Style : Core.Object, Element
         }
     }
 
-    // properties
-    private Core.Map<string, AttributeScanner> m_Attributes;
-
     // accessors
     internal string tag {
         get {
@@ -52,9 +49,10 @@ public class Maia.Manifest.Style : Core.Object, Element
         }
     }
 
-    internal string characters { get; set; default = null; }
-    internal string manifest_path { get; set; default = null; }
-    internal Core.Set<Manifest.Style> manifest_styles { get; set; default = null; }
+    internal string characters     { get; set; default = null; }
+    internal string style          { get; set; default = null; }
+    internal string manifest_path  { get; set; default = null; }
+    internal Theme  manifest_theme { get; set; default = null; }
 
     public string name {
         get {
@@ -62,12 +60,10 @@ public class Maia.Manifest.Style : Core.Object, Element
         }
     }
 
-    // methods
-    construct
-    {
-        m_Attributes = new Core.Map<string, AttributeScanner> ();
-    }
+    public string match      { get; set; default = null; }
+    public string match_name { get; set; default = null; }
 
+    // methods
     public Style (string inName)
     {
         GLib.Object (id: GLib.Quark.from_string (inName));
@@ -90,34 +86,24 @@ public class Maia.Manifest.Style : Core.Object, Element
                     if (inManifest.element_tag == tag)
                     {
                         // Found style accessors
-                        if (inManifest.attribute == "style")
-                        {
-                            try
-                            {
-                                // Add all style property in this style
-                                string style_name = (string)inManifest.scanner.transform (typeof (string));
-                                unowned Style? style = inManifest.get_style (style_name);
-                                if (style != null)
-                                {
-                                    foreach (unowned Core.Object child in style)
-                                    {
-                                        Property property = child as Property;
-                                        if (property != null)
-                                        {
-                                            add (property.copy ());
-                                        }
-                                    }
-                                }
-                            }
-                            catch (Manifest.Error err)
-                            {
-                                Log.error (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING, "Error on read style %s", err.message);
-                            }
-                        }
-                        else
+                        if (inManifest.attribute.down () != "style"      &&
+                            inManifest.attribute.down () != "match"      &&
+                            inManifest.attribute.down () != "match-name" &&
+                            inManifest.attribute.down () != "match_name")
                         {
                             Property property = new Property (inManifest.attribute, inManifest.scanner);
                             add (property);
+                        }
+                        else
+                        {
+                            try
+                            {
+                                set_attribute (inManifest.attribute, inManifest.scanner);
+                            }
+                            catch (Error err)
+                            {
+                                throw new Core.ParseError.PARSE ("Error on parse object %s attribute %s: %s", tag, inManifest.attribute, err.message);
+                            }
                         }
                     }
                     break;
@@ -139,5 +125,37 @@ public class Maia.Manifest.Style : Core.Object, Element
                     return;
             }
         }
+    }
+
+    public bool
+    matches (Element inElement)
+    {
+        if (match != null)
+        {
+            // Check if element tag match
+            string[] tags = match.split (",");
+            foreach (unowned string tag in tags)
+            {
+                if (tag.strip () == inElement.tag)
+                {
+                    return true;
+                }
+            }
+        }
+
+        if (match_name != null)
+        {
+            // Check if name match
+            string[] patterns = match_name.split (",");
+            foreach (unowned string pattern in patterns)
+            {
+                if (GLib.PatternSpec.match_simple (pattern, ((GLib.Quark)inElement.id).to_string ()))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

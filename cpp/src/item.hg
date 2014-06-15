@@ -25,7 +25,7 @@
 #include <maiamm/graphic-region.h>
 #include <maiamm/graphic-pattern.h>
 #include <maiamm/manifest-element.h>
-#include <maiamm/manifest-style.h>
+#include <maiamm/manifest-theme.h>
 #include <maiamm/drawable.h>
 
 _DEFS(maiamm,maia)
@@ -149,9 +149,10 @@ namespace Maia
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3)')
 
             _WRAP_PROPERTY("tag", Glib::ustring)
+            _WRAP_PROPERTY("style", Glib::ustring)
             _WRAP_PROPERTY("characters", Glib::ustring)
             _WRAP_PROPERTY("manifest-path", Glib::ustring)
-            _WRAP_PROPERTY("manifest-styles", Core::Set<Manifest::Style>)
+            _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
 
             _WRAP_PROPERTY("geometry", Glib::RefPtr<Graphic::Region>)
             _WRAP_PROPERTY("damaged", Glib::RefPtr<Graphic::Region>)

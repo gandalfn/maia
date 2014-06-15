@@ -220,6 +220,11 @@ _CONVERSION(`const Glib::RefPtr<Element>&',`MaiaManifestElement*',__CONVERT_REFP
 _CONVERSION(`MaiaManifestElement*',`const Glib::RefPtr<Element>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaManifestElement*',`Glib::RefPtr<Element>',`Glib::wrap($3)')
 
+_CONVERSION(`Glib::RefPtr<Theme>',`MaiaManifestTheme*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Theme>&',`MaiaManifestTheme*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaManifestTheme*',`const Glib::RefPtr<Theme>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaManifestTheme*',`Glib::RefPtr<Theme>',`Glib::wrap($3)')
+
 _CONVERSION(`Glib::RefPtr<Style>',`MaiaManifestStyle*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Style>&',`MaiaManifestStyle*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaManifestStyle*',`const Glib::RefPtr<Style>&',`Glib::wrap($3)')

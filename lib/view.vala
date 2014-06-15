@@ -219,7 +219,7 @@ public class Maia.View : Maia.Grid
                 // Get current item highlighted
                 unowned ItemPackable item = get_item (m_RowHightlighted);
 
-                // Item highlighted does not change 
+                // Item highlighted does not change
                 if (item == item_over_pointer) return;
 
                 // Damage old item
@@ -287,7 +287,7 @@ public class Maia.View : Maia.Grid
             {
                 m_Document = new Manifest.Document.from_buffer (characters, characters.length);
                 m_Document.path = manifest_path;
-                m_Document.styles = manifest_styles;
+                m_Document.theme = manifest_theme;
                 m_Document.attribute_bind_added.connect (on_template_attribute_bind);
             }
 
@@ -499,7 +499,7 @@ public class Maia.View : Maia.Grid
             {
                 var document = new Manifest.Document.from_buffer (characters, characters.length);
                 document.path = manifest_path;
-                document.styles = manifest_styles;
+                document.theme = manifest_theme;
 
                 ItemPackable? item = document.get (null) as ItemPackable;
 

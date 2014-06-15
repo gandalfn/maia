@@ -80,8 +80,8 @@ public class Maia.Manifest.Document : Core.Parser
         }
     }
 
-    public string path { get; set; default = null; }
-    public Core.Set<Style> styles { get; set; default = new Core.Set<Style> (); }
+    public string path  { get; set; default = null; }
+    public Theme  theme { get; set; default = null; }
 
     // Signals
     public signal void attribute_bind_added (AttributeBind inAttribute, string inProperty);
@@ -89,6 +89,7 @@ public class Maia.Manifest.Document : Core.Parser
     // Static methods
     static construct
     {
+        Element.register ("Theme", typeof (Theme));
         Element.register ("Style", typeof (Style));
     }
 
@@ -403,33 +404,5 @@ public class Maia.Manifest.Document : Core.Parser
         }
 
         return null;
-    }
-
-    /**
-     * Add a style to manifest document
-     *
-     * @param inStyle style to add
-     */
-    public void
-    add_style (Style inStyle)
-    {
-        styles.insert (inStyle);
-    }
-
-    /**
-     * Get the corresponding style to inName
-     *
-     * @param inName the style id
-     *
-     * @return Style if found ``null`` otherwise
-     */
-    public unowned Style?
-    get_style (string inName)
-    {
-        unowned Style? ret = styles.search<GLib.Quark> (GLib.Quark.from_string (inName), (s, i) => {
-            return (int)(s.id - i);
-        });
-
-        return ret;
     }
 }

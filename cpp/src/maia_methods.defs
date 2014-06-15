@@ -647,6 +647,12 @@
   (gtype-id "MAIA_TYPE_MANIFEST_STYLE_PROPERTY")
 )
 
+(define-object MaiaManifestTheme
+  (parent "MaiaCoreObject")
+  (c-name "MaiaManifestTheme")
+  (gtype-id "MAIA_TYPE_MANIFEST_THEME")
+)
+
 (define-object MaiaModel
   (parent "MaiaCoreObject")
   (c-name "MaiaModel")
@@ -7156,8 +7162,8 @@
   )
 )
 
-(define-function maia_manifest_style_get_type
-  (c-name "maia_manifest_style_get_type")
+(define-function maia_manifest_theme_get_type
+  (c-name "maia_manifest_theme_get_type")
   (return-type "GType")
 )
 
@@ -7173,24 +7179,6 @@
   (parameters
     '("const-gchar*" "inId")
     '("GError**" "error")
-  )
-)
-
-(define-method add_style
-  (of-object "MaiaManifestDocument")
-  (c-name "maia_manifest_document_add_style")
-  (return-type "none")
-  (parameters
-    '("MaiaManifestStyle*" "inStyle")
-  )
-)
-
-(define-method get_style
-  (of-object "MaiaManifestDocument")
-  (c-name "maia_manifest_document_get_style")
-  (return-type "MaiaManifestStyle*")
-  (parameters
-    '("const-gchar*" "inName")
   )
 )
 
@@ -7247,18 +7235,18 @@
   )
 )
 
-(define-method get_styles
+(define-method get_theme
   (of-object "MaiaManifestDocument")
-  (c-name "maia_manifest_document_get_styles")
-  (return-type "MaiaCoreSet*")
+  (c-name "maia_manifest_document_get_theme")
+  (return-type "MaiaManifestTheme*")
 )
 
-(define-method set_styles
+(define-method set_theme
   (of-object "MaiaManifestDocument")
-  (c-name "maia_manifest_document_set_styles")
+  (c-name "maia_manifest_document_set_theme")
   (return-type "none")
   (parameters
-    '("MaiaCoreSet*" "value")
+    '("MaiaManifestTheme*" "value")
   )
 )
 
@@ -7331,6 +7319,21 @@
   )
 )
 
+(define-method get_style
+  (of-object "MaiaManifestElement")
+  (c-name "maia_manifest_element_get_style")
+  (return-type "const-gchar*")
+)
+
+(define-method set_style
+  (of-object "MaiaManifestElement")
+  (c-name "maia_manifest_element_set_style")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
 (define-method get_manifest_path
   (of-object "MaiaManifestElement")
   (c-name "maia_manifest_element_get_manifest_path")
@@ -7346,18 +7349,18 @@
   )
 )
 
-(define-method get_manifest_styles
+(define-method get_manifest_theme
   (of-object "MaiaManifestElement")
-  (c-name "maia_manifest_element_get_manifest_styles")
-  (return-type "MaiaCoreSet*")
+  (c-name "maia_manifest_element_get_manifest_theme")
+  (return-type "MaiaManifestTheme*")
 )
 
-(define-method set_manifest_styles
+(define-method set_manifest_theme
   (of-object "MaiaManifestElement")
-  (c-name "maia_manifest_element_set_manifest_styles")
+  (c-name "maia_manifest_element_set_manifest_theme")
   (return-type "none")
   (parameters
-    '("MaiaCoreSet*" "value")
+    '("MaiaManifestTheme*" "value")
   )
 )
 
@@ -7371,6 +7374,54 @@
   (of-object "MaiaManifestElement")
   (c-name "maia_manifest_element_get_not_dumpable_attributes")
   (return-type "MaiaCoreSet*")
+)
+
+(define-function maia_manifest_theme_create_from_file
+  (c-name "maia_manifest_theme_create_from_file")
+  (return-type "MaiaManifestTheme*")
+  (parameters
+    '("const-gchar*" "inFilename")
+    '("GError**" "error")
+  )
+)
+
+(define-function maia_manifest_theme_new
+  (c-name "maia_manifest_theme_new")
+  (is-constructor-of "MaiaManifestTheme")
+  (return-type "MaiaManifestTheme*")
+  (parameters
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-function maia_manifest_theme_construct
+  (c-name "maia_manifest_theme_construct")
+  (return-type "MaiaManifestTheme*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-method apply
+  (of-object "MaiaManifestTheme")
+  (c-name "maia_manifest_theme_apply")
+  (return-type "none")
+  (parameters
+    '("MaiaManifestElement*" "inElement")
+    '("GError**" "error")
+  )
+)
+
+(define-method get_name
+  (of-object "MaiaManifestTheme")
+  (c-name "maia_manifest_theme_get_name")
+  (return-type "const-gchar*")
+)
+
+(define-function maia_manifest_style_get_type
+  (c-name "maia_manifest_style_get_type")
+  (return-type "GType")
 )
 
 (define-function maia_manifest_style_new
@@ -7391,10 +7442,49 @@
   )
 )
 
+(define-method matches
+  (of-object "MaiaManifestStyle")
+  (c-name "maia_manifest_style_matches")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaManifestElement*" "inElement")
+  )
+)
+
 (define-method get_name
   (of-object "MaiaManifestStyle")
   (c-name "maia_manifest_style_get_name")
   (return-type "const-gchar*")
+)
+
+(define-method get_match
+  (of-object "MaiaManifestStyle")
+  (c-name "maia_manifest_style_get_match")
+  (return-type "const-gchar*")
+)
+
+(define-method set_match
+  (of-object "MaiaManifestStyle")
+  (c-name "maia_manifest_style_set_match")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_match_name
+  (of-object "MaiaManifestStyle")
+  (c-name "maia_manifest_style_get_match_name")
+  (return-type "const-gchar*")
+)
+
+(define-method set_match_name
+  (of-object "MaiaManifestStyle")
+  (c-name "maia_manifest_style_set_match_name")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
 )
 
 (define-function maia_manifest_style_property_get_type

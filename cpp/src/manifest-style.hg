@@ -48,11 +48,23 @@ namespace Maia
 
                 _WRAP_METHOD(Glib::ustring get_name () const, maia_manifest_style_get_name)
 
+                _WRAP_METHOD(Glib::ustring get_match () const, maia_manifest_style_get_match)
+                _WRAP_METHOD(void set_match (const Glib::ustring& inMatch), maia_manifest_style_set_match)
+
+                _WRAP_METHOD(Glib::ustring get_match_name () const, maia_manifest_style_get_match_name)
+                _WRAP_METHOD(void set_match_name (const Glib::ustring& inPattern), maia_manifest_style_set_match_name)
+
+                _WRAP_METHOD(void matches (const Glib::RefPtr<Element>& inElement), maia_manifest_style_matches)
+
                 _WRAP_PROPERTY("name", Glib::ustring)
+                _WRAP_PROPERTY("match", Glib::ustring)
+                _WRAP_PROPERTY("match-name", Glib::ustring)
+
                 _WRAP_PROPERTY("tag", Glib::ustring)
+                _WRAP_PROPERTY("style", Glib::ustring)
                 _WRAP_PROPERTY("characters", Glib::ustring)
                 _WRAP_PROPERTY("manifest-path", Glib::ustring)
-                _WRAP_PROPERTY("manifest-styles", Core::Set<Style>)
+                _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Theme>)
         };
 
         class StyleProperty : public Core::Object

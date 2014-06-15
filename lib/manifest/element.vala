@@ -47,14 +47,16 @@ public interface Maia.Manifest.Element : Core.Object
     }
 
     // static properties
-    private static Core.Set<Create> s_Factory = null;
-    private static GLib.Quark       s_QuarkNotDumpableAttributes = 0;
+    private  static Core.Set<Create> s_Factory = null;
+    private  static GLib.Quark       s_QuarkNotDumpableAttributes = 0;
+    internal static GLib.Quark       s_AttributeSetQuark = 0;
 
     // accessors
-    public abstract string tag { get; }
-    public abstract string characters { get; set; default = null; }
-    public abstract string manifest_path { get; set; default = null; }
-    public abstract Core.Set<Style> manifest_styles { get; set; default = null; }
+    public abstract string tag            { get; }
+    public abstract string characters     { get; set; default = null; }
+    public abstract string style          { get; set; default = null; }
+    public abstract string manifest_path  { get; set; default = null; }
+    public abstract Theme  manifest_theme { get; set; default = null; }
 
     public unowned Element? root {
         get {
@@ -219,7 +221,7 @@ public interface Maia.Manifest.Element : Core.Object
         return ret;
     }
 
-    private void
+    internal void
     set_attribute (string inName, AttributeScanner inScanner) throws Error
     {
         // Search property in object class
@@ -254,8 +256,13 @@ public interface Maia.Manifest.Element : Core.Object
     {
         on_read_manifest (inManifest);
 
-        unowned Style? style = null;
+        if (s_AttributeSetQuark == 0)
+        {
+            s_AttributeSetQuark = GLib.Quark.from_string ("MaiaElementSetAttributes");
+        }
+
         Core.Set<string> attributes_set = new Core.Set<string> ();
+        set_qdata<Core.Set<string>> (s_AttributeSetQuark, attributes_set);
 
         inManifest.owner = this;
         foreach (Core.Parser.Token token in inManifest)
@@ -265,16 +272,16 @@ public interface Maia.Manifest.Element : Core.Object
                 // found a new child widget create it
                 case Core.Parser.Token.START_ELEMENT:
                     Element element = create (inManifest.element_tag, inManifest.element_id);
-                    if (element is Style)
+                    if (element is Theme)
                     {
-                        inManifest.add_style (element as Style);
+                        inManifest.theme =  element as Theme;
                         element.read_manifest (inManifest);
                         inManifest.owner = this;
                     }
                     else if (element != null)
                     {
                         element.manifest_path = inManifest.path;
-                        element.manifest_styles = inManifest.styles;
+                        element.manifest_theme = inManifest.theme;
                         add (element);
                         element.read_manifest (inManifest);
                         inManifest.owner = this;
@@ -287,16 +294,8 @@ public interface Maia.Manifest.Element : Core.Object
                     {
                         try
                         {
-                            if (inManifest.attribute.down () == "style")
-                            {
-                                string style_name = (string)inManifest.scanner.transform (typeof (string));
-                                style = inManifest.get_style (style_name);
-                            }
-                            else
-                            {
-                                attributes_set.insert (inManifest.attribute);
-                                set_attribute (inManifest.attribute, inManifest.scanner);
-                            }
+                            attributes_set.insert (inManifest.attribute);
+                            set_attribute (inManifest.attribute, inManifest.scanner);
                         }
                         catch (Error err)
                         {
@@ -317,23 +316,9 @@ public interface Maia.Manifest.Element : Core.Object
                 case Core.Parser.Token.END_ELEMENT:
                     if (inManifest.element_tag == tag)
                     {
-                        if (style != null)
+                        if (inManifest.theme != null)
                         {
-                            foreach (unowned Core.Object child in style)
-                            {
-                                unowned Style.Property? property = child as Style.Property;
-                                if (property != null && !(property.name in attributes_set))
-                                {
-                                    try
-                                    {
-                                        set_attribute (property.name, property.scanner);
-                                    }
-                                    catch (Error err)
-                                    {
-                                        throw new Core.ParseError.PARSE ("Error on parse object %s attribute %s: %s", tag, property.name, err.message);
-                                    }
-                                }
-                            }
+                            inManifest.theme.apply (this);
                         }
                         return;
                     }

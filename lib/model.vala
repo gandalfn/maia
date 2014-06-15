@@ -29,9 +29,10 @@ public class Maia.Model : Core.Object, Manifest.Element
             }
         }
 
-        internal string characters { get; set; default = null; }
-        internal string manifest_path { get; set; default = null; }
-        internal Core.Set<Manifest.Style> manifest_styles { get; set; default = null; }
+        internal string         characters     { get; set; default = null; }
+        internal string         style          { get; set; default = null; }
+        internal string         manifest_path  { get; set; default = null; }
+        internal Manifest.Theme manifest_theme { get; set; default = null; }
 
         public string name {
             owned get {
@@ -103,9 +104,10 @@ public class Maia.Model : Core.Object, Manifest.Element
         }
     }
 
-    internal string characters { get; set; default = null; }
-    internal string manifest_path { get; set; default = null; }
-    internal Core.Set<Manifest.Style> manifest_styles { get; set; default = null; }
+    internal string         characters     { get; set; default = null; }
+    internal string         style          { get; set; default = null; }
+    internal string         manifest_path  { get; set; default = null; }
+    internal Manifest.Theme manifest_theme { get; set; default = null; }
 
     public string name {
         owned get {

@@ -459,25 +459,6 @@ public class Maia.CassoGrid : Group, ItemPackable, ItemMovable
                 Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"grid $(grid.name) size allocation error: $(err.message)");
             }
         }
-
-        public bool
-        get_row_size (uint inRow, out Graphic.Size outSize)
-        {
-            bool ret = false;
-
-            outSize = Graphic.Size (0, 0);
-            if (inRow < boxes.length)
-            {
-                for (int cpt = 0; cpt < boxes[(int)inRow].length; ++cpt)
-                {
-                    outSize.height = double.max (outSize.height, boxes[(int)inRow][cpt].box.size.height);
-                    outSize.width += boxes[(int)inRow][cpt].box.size.width;
-                }
-
-                ret = true;
-            }
-            return ret;
-        }
     }
 
     // properties
@@ -662,12 +643,5 @@ public class Maia.CassoGrid : Group, ItemPackable, ItemMovable
                 inContext.stroke (path);
             }
         }
-    }
-
-    internal bool
-    get_row_size (uint inRow, out Graphic.Size outSize)
-    {
-        m_Allocation = SizeAllocation (this);
-        return m_Allocation.get_row_size (inRow, out outSize);
     }
 }

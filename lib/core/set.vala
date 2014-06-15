@@ -20,6 +20,7 @@
 public class Maia.Core.Set<V> : Collection<V>
 {
     // Types
+    [CCode (has_type_id = false)]
     private class Node<V>
     {
         // Properties

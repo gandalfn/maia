@@ -22,7 +22,7 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
     // properties
     private Core.Map<string, unowned ToggleButton> m_ToggleButtons;
     private Core.Map<string, Core.EventListener> m_ToggleButtonListeners;
-    
+
     // accessors
     internal string tag {
         get {
@@ -30,9 +30,10 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
         }
     }
 
-    internal string characters { get; set; default = null; }
-    internal string manifest_path { get; set; default = null; }
-    internal Core.Set<Manifest.Style> manifest_styles { get; set; default = null; }
+    internal string         characters     { get; set; default = null; }
+    internal string         style          { get; set; default = null; }
+    internal string         manifest_path  { get; set; default = null; }
+    internal Manifest.Theme manifest_theme { get; set; default = null; }
 
     public string name {
         owned get {
@@ -59,7 +60,7 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
     on_toggled (Core.EventArgs? inArgs)
     {
         unowned ToggleButton.ToggledEventArgs? args = inArgs as ToggleButton.ToggledEventArgs;
-        
+
         if (args != null && args.active)
         {
             foreach (unowned Core.Pair<string, unowned ToggleButton> pair in m_ToggleButtons)
@@ -103,7 +104,7 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
         {
             m_ToggleButtons[inButton.name] = inButton;
             m_ToggleButtonListeners[inButton.name] = inButton.toggled.subscribe (on_toggled);
-            
+
             if (active != null && active == inButton.name)
             {
                 inButton.active = true;

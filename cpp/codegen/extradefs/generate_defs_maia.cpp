@@ -51,6 +51,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_MANIFEST_TYPE_DOCUMENT);
     std::cout << get_defs (MAIA_MANIFEST_TYPE_ELEMENT);
     std::cout << get_defs (MAIA_MANIFEST_TYPE_FUNCTION);
+    std::cout << get_defs (MAIA_MANIFEST_TYPE_THEME);
     std::cout << get_defs (MAIA_MANIFEST_TYPE_STYLE);
     std::cout << get_defs (MAIA_MANIFEST_STYLE_TYPE_PROPERTY);
 
@@ -96,7 +97,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_PROGRESS_BAR);
     std::cout << get_defs (MAIA_TYPE_SEEK_BAR);
     std::cout << get_defs (MAIA_ENTRY_TYPE_CHANGED_EVENT_ARGS);
-    
+
 
     return 0;
 }

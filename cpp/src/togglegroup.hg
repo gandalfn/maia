@@ -21,7 +21,7 @@
 #include <maiamm/core-object.h>
 #include <maiamm/core-set.h>
 #include <maiamm/manifest-element.h>
-#include <maiamm/manifest-style.h>
+#include <maiamm/manifest-theme.h>
 #include <maiamm/togglebutton.h>
 
 _DEFS(maiamm,maia)
@@ -54,8 +54,9 @@ namespace Maia
             _WRAP_PROPERTY("active", Glib::ustring)
 
             _WRAP_PROPERTY("tag", Glib::ustring)
+            _WRAP_PROPERTY("style", Glib::ustring)
             _WRAP_PROPERTY("characters", Glib::ustring)
             _WRAP_PROPERTY("manifest-path", Glib::ustring)
-            _WRAP_PROPERTY("manifest-styles", Core::Set<Manifest::Style>)
+            _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
     };
 }

@@ -47,6 +47,7 @@ files_hg = \
     manifest-document.hg \
     manifest-element.hg \
     manifest-style.hg \
+    manifest-theme.hg \
     application.hg \
     drawable.hg \
     item.hg \

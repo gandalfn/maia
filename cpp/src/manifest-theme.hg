@@ -1,0 +1,70 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * manifest-theme.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/core-object.h>
+#include <maiamm/manifest-attribute-scanner.h>
+#include <maiamm/manifest-element.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/core-object_p.h)
+_PINCLUDE(maiamm/private/manifest-element_p.h)
+
+namespace Maia
+{
+    namespace Manifest
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Manifest)
+
+        class Theme : public Core::Object, public Element
+        {
+            _CLASS_GOBJECT(Theme, MaiaManifestTheme, MAIA_MANIFEST_THEME, Core::Object, MaiaCoreObject)
+            _IMPLEMENTS_INTERFACE(Manifest::Element)
+
+            protected:
+                _CTOR_DEFAULT()
+
+            public:
+                static Glib::RefPtr<Theme> create (const Glib::ustring& inName)
+                {
+                    MaiaManifestTheme* pTheme = maia_manifest_theme_new (inName.c_str ());
+                    return Glib::RefPtr<Theme> (new Theme (pTheme));
+                }
+
+                static Glib::RefPtr<Theme> create_from_file (const Glib::ustring& inFilename)
+                {
+                    GError* gerror = 0;
+
+                    MaiaManifestTheme* pTheme = maia_manifest_theme_create_from_file (inFilename.c_str (), &gerror);
+                    if(gerror) ::Glib::Error::throw_exception(gerror);
+                    return Glib::RefPtr<Theme> (new Theme (pTheme));
+                }
+
+                _WRAP_METHOD(Glib::ustring get_name () const, maia_manifest_theme_get_name)
+                _WRAP_METHOD(void apply (const Glib::RefPtr<Element>& inElement) const, maia_manifest_theme_apply, errthrow)
+
+                _WRAP_PROPERTY("name", Glib::ustring)
+                _WRAP_PROPERTY("tag", Glib::ustring)
+                _WRAP_PROPERTY("style", Glib::ustring)
+                _WRAP_PROPERTY("characters", Glib::ustring)
+                _WRAP_PROPERTY("manifest-path", Glib::ustring)
+                _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Theme>)
+        };
+    }
+}

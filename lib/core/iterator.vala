@@ -21,6 +21,7 @@
  * Implemented by classes that support a simple iteration over instances of the
  * collection.
  */
+ [CCode (has_type_id = false)]
 public abstract class Maia.Core.Iterator<V>
 {
     // properties

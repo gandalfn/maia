@@ -63,6 +63,7 @@ libmaia_la_SOURCES = \
     core/event-bus.vala \
     manifest/document.vala \
     manifest/element.vala \
+    manifest/theme.vala \
     manifest/style.vala \
     manifest/attribute-scanner.vala \
     manifest/attribute.vala \
