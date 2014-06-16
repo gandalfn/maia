@@ -20,7 +20,8 @@
 public class Maia.Label : Item, ItemMovable, ItemPackable
 {
     // properties
-    private Graphic.Glyph m_Glyph;
+    private string          m_Text = null;
+    private Graphic.Glyph   m_Glyph;
     private Graphic.Surface m_FakeSurface;
 
     // accessors
@@ -89,7 +90,23 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     /**
      * Text of label
      */
-    public string                      text             { get; set; default = null; }
+    [CCode (notify = false)]
+    public string text {
+        get {
+            return m_Text;
+        }
+        set {
+            if (m_Text != value)
+            {
+                m_Text = value;
+
+                on_layout_property_changed ();
+
+                GLib.Signal.emit_by_name (this, "notify::text");
+            }
+        }
+        default = null;
+    }
 
     /**
      * Shade color of label
@@ -171,7 +188,6 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
 
         // connect onto layout properties changed
         notify["root"].connect (on_root_changed);
-        notify["text"].connect (on_layout_property_changed);
         notify["alignment"].connect (on_layout_property_changed);
         notify["wrap-mode"].connect (on_layout_property_changed);
         notify["font-description"].connect (on_layout_property_changed);
@@ -243,60 +259,89 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     private void
     on_layout_property_changed ()
     {
-        m_Glyph = null;
+        if (text != null && text.length > 0)
+        {
+            if (hide_if_empty && !visible)
+            {
+                int count = get_qdata<int> (Item.s_CountHide);
+                count = int.max (count - 1, 0);
 
-        var item_size = size;
+                if (count == 0)
+                {
+                    visible = true;
+                }
+                set_qdata<int> (Item.s_CountHide, count);
+            }
+            else if (visible)
+            {
+                m_Glyph = new Graphic.Glyph (font_description);
+                m_Glyph.alignment = alignment;
+                m_Glyph.wrap = wrap_mode;
+                m_Glyph.ellipsize = ellipsize_mode;
+                m_Glyph.text = translatable ? translate (text) : text;
 
-        if (hide_if_empty && visible && (text == null || text.length == 0))
+                // Reset wrap if any
+                m_Glyph.size = Graphic.Size (0, 0);
+
+                // update layout
+                m_Glyph.update (m_FakeSurface.context);
+
+                // get glyph size
+                var item_size = m_Glyph.size;
+
+                if (area != null)
+                {
+                    if (area.extents.size.width < item_size.width || area.extents.size.height < item_size.height)
+                    {
+                        var glyph_size = m_Glyph.size;
+                        if (xshrink && area.extents.size.width < item_size.width)
+                        {
+                            glyph_size.width = area.extents.size.width;
+                        }
+                        if (yshrink && area.extents.size.height < item_size.height)
+                        {
+                            glyph_size.height = area.extents.size.height;
+                        }
+                        m_Glyph.size = glyph_size;
+                        m_Glyph.update (m_FakeSurface.context);
+
+                        if (area.extents.size.width < m_Glyph.size.width || area.extents.size.height < m_Glyph.size.height)
+                        {
+                            m_Glyph = null;
+                            geometry = null;
+                            need_update = true;
+                        }
+                        else
+                        {
+                            damage();
+                        }
+                    }
+                    else
+                    {
+                        damage();
+                    }
+                }
+                else
+                {
+                    m_Glyph = null;
+                    geometry = null;
+                    need_update = true;
+                }
+            }
+        }
+        else if (hide_if_empty && visible && (text == null || text.length == 0))
         {
             visible = false;
             int count = get_qdata<int> (Item.s_CountHide);
             count++;
             set_qdata<int> (Item.s_CountHide, count);
         }
-        else if (hide_if_empty && !visible && text != null && text.length > 0)
+        else
         {
-            int count = get_qdata<int> (Item.s_CountHide);
-            count = int.max (count - 1, 0);
-
-            if (count == 0)
-            {
-                visible = true;
-            }
-            set_qdata<int> (Item.s_CountHide, count);
+            m_Glyph = null;
+            geometry = null;
+            need_update = true;
         }
-        else if (area != null)
-        {
-            if (area.extents.size.width < item_size.width || area.extents.size.height < item_size.height)
-            {
-                var glyph_size = m_Glyph.size;
-                if (xshrink && area.extents.size.width < item_size.width)
-                {
-                    glyph_size.width = area.extents.size.width;
-                }
-                if (yshrink && area.extents.size.height < item_size.height)
-                {
-                    glyph_size.height = area.extents.size.height;
-                }
-                m_Glyph.size = glyph_size;
-                m_Glyph.update (m_FakeSurface.context);
-
-                if (area.extents.size.width < m_Glyph.size.width || area.extents.size.height < m_Glyph.size.height)
-                {
-                    m_Glyph = null;
-                    geometry = null;
-                }
-                else
-                {
-                    damage();
-                }
-            }
-            else
-            {
-                damage();
-            }
-        }
-        need_update = true;
     }
 
     private void
@@ -390,7 +435,6 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
                 var glyph_size = m_Glyph.size;
                 m_Glyph.size = area.extents.size;
 
-                inContext.translate (Graphic.Point (0, (area.extents.size.height - glyph_size.height) / 2.0));
                 if (shade_color != null)
                 {
                     inContext.pattern = new Graphic.Color.shade (shade_color, 0.8);

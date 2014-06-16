@@ -247,8 +247,13 @@ public class Maia.Popup : Group
         m_Content.size = Graphic.Size (geometry.extents.size.width - (border * 4), geometry.extents.size.height - (border * 4));
 
         // set window size and position
-        m_Window.position = convert_to_window_space (geometry.extents.origin);
+        m_Window.position = geometry.extents.origin;
         m_Window.device_transform = get_window_transform ();
+
+        m_Window.update (inContext, new Graphic.Region (Graphic.Rectangle (m_Window.position.x,
+                                                                           m_Window.position.y,
+                                                                           m_Window.size.width,
+                                                                           m_Window.size.height)));
     }
 
     internal override void

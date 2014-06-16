@@ -183,7 +183,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
                 // Send notify geometry signal only if geometry has been changed
                 // not when the geometry has been set
-                if (old_not_empty)
+                if (old_not_empty || m_Geometry == null)
                 {
                     GLib.Signal.emit_by_name (this, "notify::geometry");
                 }
@@ -912,7 +912,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     protected virtual void
     on_child_resized (Drawable inChild)
     {
-
+        geometry = null;
     }
 
     protected virtual void
@@ -1300,7 +1300,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             geometry = inAllocation;
 
-            damaged = area.copy ();
+            damage ();
         }
     }
 

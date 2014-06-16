@@ -207,17 +207,21 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
                     // We have a parent window
                     if (window != null && depth == 32)
                     {
-                        // Paint parent content into background
-                        //var pos = convert_to_window_space (geometry.extents.origin);
-                        var pos = geometry.extents.origin;
+                        var reply = m_Window.get_geometry (connection).reply (connection);
+                        if (reply != null)
+                        {
+                            // Paint parent content into background
+                            //var pos = convert_to_window_space (geometry.extents.origin);
+                            //var pos = geometry.extents.origin;
 
-                        inContext.pattern = window.surface;
-                        inContext.pattern.transform = new Graphic.Transform.init_translate (pos.x, pos.y);
-                        inContext.paint ();
+                            inContext.pattern = window.surface;
+                            inContext.pattern.transform = new Graphic.Transform.init_translate (reply.x, reply.y);
+                            inContext.paint ();
 
-                        inContext.pattern.transform = new Graphic.Transform.identity ();
+                            inContext.pattern.transform = new Graphic.Transform.identity ();
 
-                        inContext.operator = Graphic.Operator.OVER;
+                            inContext.operator = Graphic.Operator.OVER;
+                        }
                     }
 
                     // Swap buffer
@@ -590,7 +594,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
             }
 
             // damage
-            damaged = area.copy ();
+            damage ();
         }
     }
 

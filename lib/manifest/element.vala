@@ -50,6 +50,13 @@ public interface Maia.Manifest.Element : Core.Object
     private  static Core.Set<Create> s_Factory = null;
     private  static GLib.Quark       s_QuarkNotDumpableAttributes = 0;
     internal static GLib.Quark       s_AttributeSetQuark = 0;
+    private  static unowned Theme    s_CurrentTheme = null;
+
+    public static Theme current_theme {
+        get {
+            return s_CurrentTheme;
+        }
+    }
 
     // accessors
     public abstract string tag            { get; }
@@ -265,6 +272,8 @@ public interface Maia.Manifest.Element : Core.Object
         set_qdata<Core.Set<string>> (s_AttributeSetQuark, attributes_set);
 
         inManifest.owner = this;
+        s_CurrentTheme = inManifest.theme;
+        
         foreach (Core.Parser.Token token in inManifest)
         {
             switch (token)
@@ -275,6 +284,7 @@ public interface Maia.Manifest.Element : Core.Object
                     if (element is Theme)
                     {
                         inManifest.theme =  element as Theme;
+                        s_CurrentTheme = inManifest.theme;
                         element.read_manifest (inManifest);
                         inManifest.owner = this;
                     }

@@ -65,8 +65,10 @@ namespace Maia
                 _WRAP_METHOD(Glib::ustring get_manifest_path () const, maia_manifest_element_get_manifest_path)
                 _WRAP_METHOD(void set_manifest_path (const Glib::ustring& inPath) const, maia_manifest_element_set_manifest_path)
 
-                _WRAP_METHOD(Glib::RefPtr<Theme> get_manifest_theme () const, maia_manifest_element_get_manifest_theme)
+                _WRAP_METHOD(Glib::RefPtr<Theme> get_manifest_theme () const, maia_manifest_element_get_manifest_theme, refreturn)
                 _WRAP_METHOD(void set_manifest_theme (const Glib::RefPtr<Theme>& inStyles), maia_manifest_element_set_manifest_theme)
+
+                _WRAP_METHOD(static Glib::RefPtr<Theme> get_current_theme (), maia_manifest_element_get_current_theme, refreturn)
 
 
                 _WRAP_METHOD(Glib::RefPtr<Element> get_root () const, maia_manifest_element_get_root, refreturn)

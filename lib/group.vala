@@ -100,7 +100,7 @@ public class Maia.Group : Item
                 }
             }
 
-            damaged = area.copy ();
+            damage ();
         }
     }
 

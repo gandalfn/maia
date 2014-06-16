@@ -1811,6 +1811,24 @@
   (construct-only #f)
 )
 
+(define-property edit-background-pattern
+  (of-object "MaiaEntry")
+  (prop-type "GParamObject")
+  (docs "edit-background-pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property edit-stroke-pattern
+  (of-object "MaiaEntry")
+  (prop-type "GParamObject")
+  (docs "edit-stroke-pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property text
   (of-object "MaiaEntry")
   (prop-type "GParamString")

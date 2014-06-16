@@ -7298,6 +7298,11 @@
   )
 )
 
+(define-function maia_manifest_element_get_current_theme
+  (c-name "maia_manifest_element_get_current_theme")
+  (return-type "MaiaManifestTheme*")
+)
+
 (define-method get_tag
   (of-object "MaiaManifestElement")
   (c-name "maia_manifest_element_get_tag")
@@ -14207,6 +14212,36 @@
   (return-type "none")
   (parameters
     '("const-gchar*" "value")
+  )
+)
+
+(define-method get_edit_background_pattern
+  (of-object "MaiaEntry")
+  (c-name "maia_entry_get_edit_background_pattern")
+  (return-type "MaiaGraphicPattern*")
+)
+
+(define-method set_edit_background_pattern
+  (of-object "MaiaEntry")
+  (c-name "maia_entry_set_edit_background_pattern")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "value")
+  )
+)
+
+(define-method get_edit_stroke_pattern
+  (of-object "MaiaEntry")
+  (c-name "maia_entry_get_edit_stroke_pattern")
+  (return-type "MaiaGraphicPattern*")
+)
+
+(define-method set_edit_stroke_pattern
+  (of-object "MaiaEntry")
+  (c-name "maia_entry_set_edit_stroke_pattern")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "value")
   )
 )
 

@@ -102,6 +102,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     }
 
     // properties
+    private string          m_Text = "";
     private Graphic.Glyph   m_Glyph;
     private Graphic.Surface m_FakeSurface;
     private int             m_Cursor = 0;
@@ -143,9 +144,38 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
      */
     public string   font_description { get; set; default = "Sans 12"; }
     /**
+     * The background color on edit
+     */
+    public Graphic.Pattern edit_background_pattern { get; set; default = null; }
+    /**
+     * The font color on edit
+     */
+    public Graphic.Pattern edit_stroke_pattern { get; set; default = null; }
+    /**
      * The text of entry
      */
-    public string   text             { get; set; default = ""; }
+    [CCode (notify = false)]
+    public string text {
+        get {
+            return m_Text;
+        }
+        set {
+            if (m_Text != value)
+            {
+                m_Text = value;
+
+                // Update layout
+                update_layout ();
+
+                // Damage area
+                damage ();
+
+                GLib.Signal.emit_by_name (this, "notify::text");
+            }
+        }
+        default = "";
+    }
+    
     /**
      * The number of lines of entry
      */
@@ -188,9 +218,6 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
 
         // connect under key press event
         key_press_event.connect (on_key_press_event);
-
-        // connect onto text changed
-        notify["text"].connect (on_text_changed);
 
         notify["lines"].connect (() => {
             m_Glyph = null;
@@ -435,16 +462,6 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     }
 
     private void
-    on_text_changed ()
-    {
-        // Update layout
-        update_layout ();
-
-        // Damage area
-        damage ();
-    }
-
-    private void
     on_pointer_over_changed ()
     {
         if (pointer_over)
@@ -570,11 +587,36 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         {
             inContext.save ();
             {
+                // Paint background
+                if (have_focus && edit_background_pattern != null)
+                {
+                    inContext.save ();
+                    unowned Graphic.Image? image = edit_background_pattern as Graphic.Image;
+                    if (image != null)
+                    {
+                        Graphic.Size image_size = image.size;
+                        double scale = double.max (image_size.width / area.extents.size.width,
+                                                   image_size.height / area.extents.size.height);
+                        var transform = new Graphic.Transform.identity ();
+                        transform.scale (scale, scale);
+                        inContext.translate (Graphic.Point ((area.extents.size.width - (image_size.width / scale)) / 2,
+                                                            (area.extents.size.height - (image_size.height / scale)) / 2));
+                        image.transform = transform;
+                        inContext.pattern = edit_background_pattern;
+                    }
+                    else
+                    {
+                        inContext.pattern = edit_background_pattern;
+                    }
+
+                    inContext.paint ();
+                    inContext.restore ();
+                }
+                
                 // Paint text
-                inContext.pattern = stroke_pattern;
+                inContext.pattern = have_focus && edit_stroke_pattern != null ? edit_stroke_pattern : stroke_pattern;
                 inContext.render (m_Glyph);
 
-                inContext.pattern = background_pattern;
                 inContext.line_width = underline_width;
                 inContext.dash = { 1.0, 2.0 };
 

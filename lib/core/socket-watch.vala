@@ -33,7 +33,7 @@ public class Maia.Core.SocketWatch : Watch
      * @param inSocket socket to watch
      * @param inPriority watch priority
      */
-    public SocketWatch (GLib.Socket inSocket, GLib.MainContext? inContext = null, int inPriority = GLib.Priority.DEFAULT)
+    public SocketWatch (GLib.Socket inSocket, GLib.MainContext? inContext = null, int inPriority = GLib.Priority.HIGH)
     {
         base (inSocket.fd, inContext, inPriority);
         m_Socket = inSocket;
