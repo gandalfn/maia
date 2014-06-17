@@ -160,7 +160,8 @@ libmaia_la_SOURCES = \
     seek-bar.vala
 
 libmaia_la_VALAFLAGS = \
-    --pkg=gvalue-collect
+    --pkg=gvalue-collect \
+    --pkg=linux
 
 libmaia_la_LDFLAGS = \
     -Wl,--as-needed \

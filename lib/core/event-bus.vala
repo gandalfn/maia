@@ -71,10 +71,13 @@ public class Maia.Core.EventBus : Object
             m_Hashs.compare_func = Event.Hash.compare;
         }
 
-        public MessageEventAdvertise (Event inEvent)
+        public MessageEventAdvertise (Core.Set<Event.Hash> inList)
         {
             var builder = new GLib.VariantBuilder (new GLib.VariantType ("a{su}"));
-            builder.add ("{su}", inEvent.name, inEvent.owner);
+            foreach (unowned Event.Hash hash in inList)
+            {
+                builder.add ("{su}", hash.name (), hash.owner);
+            }
             var data = builder.end ();
 
             uint32 size = (uint32)data.get_size ();
@@ -473,6 +476,7 @@ public class Maia.Core.EventBus : Object
         private Set<EventListenerPool> m_Subscribers;
         private Set<EventListenerPool> m_Pendings;
         private Set<ReplyHandler>      m_ReplyHandlers;
+        private Set<Event.Hash>        m_AdvertiseEvents;
 
         // methods
         public Client (uint32 inId) throws BusError
@@ -489,6 +493,10 @@ public class Maia.Core.EventBus : Object
 
             // Create reply handler list
             m_ReplyHandlers = new Set<ReplyHandler> ();
+
+            // Create event hash advertise
+            m_AdvertiseEvents = new Set<Event.Hash> ();
+            m_AdvertiseEvents.compare_func = Event.Hash.compare;
         }
 
         private void
@@ -571,7 +579,23 @@ public class Maia.Core.EventBus : Object
         public void
         advertise (Event inEvent)
         {
-            m_Connection.send.begin (new MessageEventAdvertise (inEvent));
+            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "Advertise %s 0x%lx", inEvent.name, (ulong)inEvent.owner);
+            m_AdvertiseEvents.insert (new Event.Hash (inEvent));
+
+            if (m_AdvertiseEvents.length == 1)
+            {
+                var source = new GLib.IdleSource ();
+                source.set_callback (() => {
+                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "Create message advertise %i", m_AdvertiseEvents.length);
+                    var msg = new MessageEventAdvertise (m_AdvertiseEvents);
+                    m_AdvertiseEvents.clear ();
+
+                    m_Connection.send.begin (msg);
+
+                    return false;
+                });
+                source.attach (GLib.MainContext.get_thread_default ());
+            }
         }
 
         public void
@@ -599,7 +623,13 @@ public class Maia.Core.EventBus : Object
         public void
         publish (string inName, void* inOwner, EventArgs? inArgs = null)
         {
-            m_Connection.send.begin (new MessageEvent (inName, inOwner, inArgs));
+            var source = new GLib.IdleSource ();
+            source.set_callback (() => {
+                Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "Create message publish %s", inName);
+                m_Connection.send.begin (new MessageEvent (inName, inOwner, inArgs));
+                return false;
+            });
+            source.attach (GLib.MainContext.get_thread_default ());
         }
 
         public void
@@ -609,7 +639,12 @@ public class Maia.Core.EventBus : Object
             ReplyHandler reply = new ReplyHandler (inArgs.sequence, hash, inReply);
             m_ReplyHandlers.insert (reply);
 
-            m_Connection.send.begin (new MessageEvent (inName, inOwner, inArgs, true));
+            var source = new GLib.IdleSource ();
+            source.set_callback (() => {
+                m_Connection.send.begin (new MessageEvent (inName, inOwner, inArgs, true));
+                return false;
+            });
+            source.attach (GLib.MainContext.get_thread_default ());
         }
 
         public void
@@ -619,7 +654,12 @@ public class Maia.Core.EventBus : Object
             ReplyHandler reply = new ReplyHandler.object (inArgs.sequence, hash, inReply);
             m_ReplyHandlers.insert (reply);
 
-            m_Connection.send.begin (new MessageEvent (inName, inOwner, inArgs, true));
+            var source = new GLib.IdleSource ();
+            source.set_callback (() => {
+                m_Connection.send.begin (new MessageEvent (inName, inOwner, inArgs, true));
+                return false;
+            });
+            source.attach (GLib.MainContext.get_thread_default ());
         }
 
         public void
@@ -880,12 +920,15 @@ public class Maia.Core.EventBus : Object
             unowned Occurence occurence = m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
             if (occurence != null)
             {
+                Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "Event %s destroy", msg.hash.name ());
                 m_Occurences.remove (occurence);
             }
         }
         else if (inMessage is MessageEvent)
         {
             unowned MessageEvent? msg = (MessageEvent)inMessage;
+
+            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "Event %s publish", msg.hash.name ());
 
             // Event with reply search an occurence
             if (msg.need_reply)

@@ -25,7 +25,8 @@ void main (string[] args)
 
     if (Test.verbose ())
     {
-        //Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.MAIN_EVENT, "test"));
+        //Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.MAIN_EVENT |
+        //                                                                        Maia.Log.Category.MAIN_BUS, "test"));
     }
 
     TestSuite.get_root ().add_suite (new Maia.TestCore ().suite);

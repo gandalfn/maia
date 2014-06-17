@@ -81,6 +81,7 @@ public class Maia.TestBus : Maia.TestCase
         add_test ("event-bus",  test_event_bus);
         add_test ("event-bus-multithread",  test_event_bus_multithread);
         add_test ("event-bus-reply",  test_event_bus_reply);
+        add_test ("event-bus-contention", test_event_bus_contention);
     }
 
     public override void
@@ -371,5 +372,35 @@ public class Maia.TestBus : Maia.TestCase
         assert (message_main);
         assert (message_thread);
         assert (have_reply);
+    }
+
+    public void
+    test_event_bus_contention ()
+    {
+        var bus = new Core.EventBus ("test-event-bus");
+        Core.EventBus.default = bus;
+        Core.Event[] events = {};
+
+        for (int cpt = 0; cpt < 1000; ++cpt)
+        {
+            events += new Core.Event ("test", cpt.to_pointer ());
+            events[cpt].subscribe ((args) => {
+                if (args is TestEventArgs)
+                {
+                    unowned TestEventArgs event_args = (TestEventArgs)args;
+
+                    Test.message ("name: %s val: %u", event_args.name, event_args.val);
+
+                    if (event_args.val == 999) loop.quit ();
+                }
+            });
+        }
+
+        for (int cpt = 0; cpt < 1000; ++cpt)
+        {
+            events[cpt].publish (new TestEventArgs (@"$cpt", cpt));
+        }
+
+        loop.run ();
     }
 }

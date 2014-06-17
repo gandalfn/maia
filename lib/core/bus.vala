@@ -376,6 +376,7 @@ public abstract class Maia.Core.Bus : Object
                                     }
                                     catch (BusError err)
                                     {
+                                        Log.error (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Error on write request %s: %s", m_Bus.uuid, err.message);
                                         request.m_Status = err;
                                     }
                                 }

@@ -148,7 +148,7 @@ public class Maia.Core.SocketBusConnection : BusConnection
 
         try
         {
-            if (m_Connection.socket.condition_timed_wait (GLib.IOCondition.IN, inTimeout * 1000))
+            if (m_Connection.socket.condition_timed_wait (GLib.IOCondition.IN | GLib.IOCondition.PRI, inTimeout * 1000))
             {
                 m_Connection.input_stream.read_all (inData, out ret);
             }
