@@ -183,7 +183,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
                 // Send notify geometry signal only if geometry has been changed
                 // not when the geometry has been set
-                if (old_not_empty || m_Geometry == null)
+                if (old_not_empty)
                 {
                     GLib.Signal.emit_by_name (this, "notify::geometry");
                 }
@@ -912,7 +912,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     protected virtual void
     on_child_resized (Drawable inChild)
     {
-        geometry = null;
     }
 
     protected virtual void
@@ -927,17 +926,13 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 {
                     unowned Item item = (Item)child;
 
-                    item.damage.disconnect (on_child_damaged);
-
                     var area = area_to_child_item_space (item, inArea);
                     if (!area.is_empty () && (item.damaged == null || item.damaged.is_empty () || item.damaged.contains_rectangle (area.extents) != Graphic.Region.Overlap.IN))
                     {
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "damage child %s %s", (child as Item).name, area.extents.to_string ());
 
-                        item.damage (area);
+                        item.damage_area (area);
                     }
-
-                    item.damage.connect (on_child_damaged);
                 }
             }
         }
@@ -1300,7 +1295,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             geometry = inAllocation;
 
-            damage ();
+            damage_area ();
         }
     }
 

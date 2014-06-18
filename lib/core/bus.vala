@@ -309,16 +309,22 @@ public abstract class Maia.Core.Bus : Object
     private class Engine : Object
     {
         private unowned Bus         m_Bus;
-        private GLib.Thread<void*>? m_Id = null;
-        private AsyncQueue<Request> m_RequestQueue;
+        private GLib.Thread<void*>? m_IdRecv = null;
+        private GLib.Thread<void*>? m_IdSend = null;
+        private AsyncQueue<Request> m_RequestRecvQueue;
+        private AsyncQueue<Request> m_RequestSendQueue;
         private AsyncQueue<Request> m_RecvQueue;
         private AsyncQueue<Request> m_SendQueue;
 
         public Engine (Bus inBus)
         {
-            // Create request Queue
-            m_RequestQueue = new AsyncQueue<Request> ();
-            m_RequestQueue.is_sorted = true;
+            // Create recv request Queue
+            m_RequestRecvQueue = new AsyncQueue<Request> ();
+            m_RequestRecvQueue.is_sorted = true;
+
+            // Create send request Queue
+            m_RequestSendQueue = new AsyncQueue<Request> ();
+            m_RequestSendQueue.is_sorted = true;
 
             // Create recv/send Queue
             m_RecvQueue = new AsyncQueue<Request> ();
@@ -329,11 +335,11 @@ public abstract class Maia.Core.Bus : Object
         }
 
         private void*
-        run ()
+        recv ()
         {
             while (true)
             {
-                Request request = m_RequestQueue.pop ();
+                Request request = m_RequestRecvQueue.pop ();
                 if (request != null)
                 {
                     switch (request.m_Type)
@@ -363,6 +369,25 @@ public abstract class Maia.Core.Bus : Object
 
                             break;
 
+                        case RequestType.END:
+                            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "End request %s", m_Bus.uuid);
+                            return null;
+                    }
+                    request = null;
+                }
+            }
+        }
+
+        private void*
+        send ()
+        {
+            while (true)
+            {
+                Request request = m_RequestSendQueue.pop ();
+                if (request != null)
+                {
+                    switch (request.m_Type)
+                    {
                         case RequestType.WRITE:
                             Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Write request %s", m_Bus.uuid);
 
@@ -403,25 +428,53 @@ public abstract class Maia.Core.Bus : Object
         public void
         stop ()
         {
-            if (m_Id != null)
+            if (m_IdRecv != null)
             {
                 // Send end engine request
-                m_RequestQueue.push (new Request.end ());
+                m_RequestRecvQueue.push (new Request.end ());
 
                 // Wait end of engine
-                m_Id.join ();
+                m_IdRecv.join ();
+            }
+
+            if (m_IdSend != null)
+            {
+                // Send end engine request
+                m_RequestSendQueue.push (new Request.end ());
+
+                // Wait end of engine
+                m_IdSend.join ();
             }
         }
 
         public void
         push (Request inRequest)
         {
-            if (m_Id == null)
+            switch (inRequest.m_Type)
             {
-                m_Id = new GLib.Thread<void*> (m_Bus.uuid, run);
-            }
+                case RequestType.READ:
+                    if (m_IdRecv == null)
+                    {
+                        m_IdRecv = new GLib.Thread<void*> (@"$(m_Bus.uuid)-recv", recv);
+                    }
 
-            m_RequestQueue.push (inRequest);
+                    m_RequestRecvQueue.push (inRequest);
+                    break;
+
+                case RequestType.WRITE:
+                    if (m_IdSend == null)
+                    {
+                        m_IdSend = new GLib.Thread<void*> (@"$(m_Bus.uuid)-send", send);
+                    }
+
+                    m_RequestSendQueue.push (inRequest);
+                    break;
+
+                case RequestType.END:
+                    m_RequestRecvQueue.push (inRequest);
+                    m_RequestSendQueue.push (inRequest);
+                    break;
+            }
         }
 
         public Request?

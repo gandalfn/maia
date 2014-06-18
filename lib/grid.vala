@@ -821,7 +821,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                 geometry.resize (s);
             }
 
-            damage ();
+            damage_area ();
         }
     }
 

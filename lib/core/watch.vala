@@ -20,6 +20,7 @@
 public abstract class Maia.Core.Watch : Object
 {
     // properties
+    private bool              m_Out = false;
     private Source            m_Source;
     private GLib.MainContext? m_Context;
     private int               m_Priority;
@@ -32,6 +33,15 @@ public abstract class Maia.Core.Watch : Object
     public int fd {
         get {
             return m_Fd.fd;
+        }
+    }
+
+    /**
+     * Indicate is watch for send
+     */
+    public bool is_out {
+        get {
+            return m_Out;
         }
     }
 
@@ -55,6 +65,26 @@ public abstract class Maia.Core.Watch : Object
         start ();
     }
 
+    /**
+     * Create a new File descriptor watcher
+     *
+     * @param inFd file descriptor to watch
+     * @param inPriority watch priority
+     */
+    public Watch.out (int inFd, GLib.MainContext? inContext = null, int inPriority = GLib.Priority.DEFAULT)
+    {
+        m_Fd.fd = inFd;
+        m_Fd.events = GLib.IOCondition.OUT |
+                      GLib.IOCondition.ERR | GLib.IOCondition.HUP | GLib.IOCondition.NVAL;
+        m_Fd.revents = 0;
+
+        m_Context = inContext;
+        m_Priority = inPriority;
+        m_Out = true;
+
+        start ();
+    }
+
     ~Watch ()
     {
         stop ();
@@ -71,8 +101,9 @@ public abstract class Maia.Core.Watch : Object
             return false;
         }
 
-        return ((m_Fd.revents & GLib.IOCondition.IN)  == GLib.IOCondition.IN ||
-                (m_Fd.revents & GLib.IOCondition.PRI) == GLib.IOCondition.PRI);
+        return !m_Out ? ((m_Fd.revents & GLib.IOCondition.IN)  == GLib.IOCondition.IN ||
+                         (m_Fd.revents & GLib.IOCondition.PRI) == GLib.IOCondition.PRI) :
+                        (m_Fd.revents & GLib.IOCondition.OUT)  == GLib.IOCondition.OUT;
     }
 
     private bool
@@ -88,7 +119,6 @@ public abstract class Maia.Core.Watch : Object
         {
             on_process ();
         }
-
         outTimeout = -1;
 
         return false;

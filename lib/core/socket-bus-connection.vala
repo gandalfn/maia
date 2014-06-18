@@ -101,8 +101,9 @@ public class Maia.Core.SocketBusConnection : BusConnection
     private void
     init_connection ()
     {
+        // Create watch on receive
         m_Watch = new SocketWatch (m_Connection.socket, GLib.MainContext.get_thread_default ());
-        m_Watch.received.connect (on_received);
+        m_Watch.ready.connect (on_received);
         m_Watch.closed.connect (on_closed);
         m_Watch.stop ();
     }

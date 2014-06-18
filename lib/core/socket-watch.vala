@@ -23,7 +23,7 @@ public class Maia.Core.SocketWatch : Watch
     private GLib.Socket m_Socket;
 
     // signals
-    public signal void received ();
+    public signal void ready ();
     public signal void closed ();
 
     // methods
@@ -36,6 +36,18 @@ public class Maia.Core.SocketWatch : Watch
     public SocketWatch (GLib.Socket inSocket, GLib.MainContext? inContext = null, int inPriority = GLib.Priority.HIGH)
     {
         base (inSocket.fd, inContext, inPriority);
+        m_Socket = inSocket;
+    }
+
+    /**
+     * Create a new Socket watcher
+     *
+     * @param inSocket socket to watch
+     * @param inPriority watch priority
+     */
+    public SocketWatch.out (GLib.Socket inSocket, GLib.MainContext? inContext = null, int inPriority = GLib.Priority.HIGH)
+    {
+        base.out (inSocket.fd, inContext, inPriority);
         m_Socket = inSocket;
     }
 
@@ -59,7 +71,7 @@ public class Maia.Core.SocketWatch : Watch
     protected override bool
     on_process ()
     {
-        received ();
+        ready ();
 
         return !m_Socket.is_closed ();
     }

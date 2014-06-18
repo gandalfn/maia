@@ -100,7 +100,7 @@ public class Maia.Group : Item
                 }
             }
 
-            damage ();
+            damage_area ();
         }
     }
 

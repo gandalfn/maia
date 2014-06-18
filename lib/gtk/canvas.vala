@@ -159,6 +159,8 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
         // Set root parent has window
         if (m_Root != null) m_Root.parent = m_Window;
 
+        m_Window.flush ();
+
         // Add window to application in same time this launch window notify for reparent
         Application.@default.add (m_Window);
     }
@@ -197,8 +199,11 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
     size_request (out global::Gtk.Requisition outRequisition)
     {
         outRequisition = global::Gtk.Requisition ();
-        outRequisition.width = (int)(window.size.width);
-        outRequisition.height = (int)(window.size.height);
+        if (window != null)
+        {
+            outRequisition.width = (int)(window.size.width);
+            outRequisition.height = (int)(window.size.height);
+        }
 
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "canvas size: %i,%i", outRequisition.width, outRequisition.height);
     }

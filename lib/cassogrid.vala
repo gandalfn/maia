@@ -568,7 +568,7 @@ public class Maia.CassoGrid : Group, ItemPackable, ItemMovable
                 geometry.resize (s);
             }
 
-            damage ();
+            damage_area ();
         }
     }
 

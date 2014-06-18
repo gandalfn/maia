@@ -609,8 +609,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
                 }
             }
 
-            // damage
-            damage ();
+            damage_area ();
         }
     }
 

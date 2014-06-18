@@ -76,9 +76,6 @@ public interface Maia.Drawable : GLib.Object
         {
             var damaged_area = area.copy ();
 
-            if (this is Item)
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"damage $((this as Item).name)");
-
             if (inArea != null)
             {
                 damaged_area.intersect (inArea);
@@ -156,6 +153,80 @@ public interface Maia.Drawable : GLib.Object
     }
 
     // methods
+    /**
+     * Damage area of this drawable and its childs without emitting any signal
+     *
+     * @param inArea area to damage
+     */
+    public void
+    damage_area (Graphic.Region? inArea = null)
+    {
+        if (area != null && !area.is_empty ())
+        {
+            var damaged_area = area.copy ();
+
+            if (inArea != null)
+            {
+                damaged_area.intersect (inArea);
+
+                if (!damaged_area.is_empty ())
+                {
+                    if (damaged == null)
+                    {
+                        damaged = damaged_area;
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "area %s damage %s", damaged_area.extents.to_string (), damaged.extents.to_string ());
+                    }
+                    else if (damaged.contains_rectangle (damaged_area.extents) !=  Graphic.Region.Overlap.IN)
+                    {
+                        damaged.union_ (damaged_area);
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "area %s damage %s", damaged_area.extents.to_string (), damaged.extents.to_string ());
+                    }
+                    else
+                    {
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"region is already damaged $((this as Item).name)");
+                        return;
+                    }
+                }
+                else
+                {
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"empty damaged region $((this as Item).name)");
+                    return;
+                }
+            }
+            else
+            {
+                if (damaged == null || !damaged.equal (damaged_area))
+                {
+                    damaged = damaged_area;
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "all damage %s", damaged.extents.to_string ());
+                }
+                else
+                {
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"region is already damaged $((this as Item).name)");
+                    return;
+                }
+            }
+        }
+        else
+        {
+            return;
+        }
+
+        // Damage childs
+        unowned Core.Object? self = this as Core.Object;
+        if (self != null)
+        {
+            foreach (unowned Core.Object? child in self)
+            {
+                unowned Drawable? drawable = child as Drawable;
+                if (drawable != null)
+                {
+                    drawable.damage_area (area_to_child_item_space (drawable, inArea));
+                }
+            }
+        }
+     }
+
     /**
      * Convert a point in a child of drawable coordinate space
      *

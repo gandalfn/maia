@@ -1,5 +1,5 @@
 ScrollView.view {
 	background-pattern: rgb(1, 1, 1);
 
-	@include(/home/gandalfn/Projects/git/rubi/dev/runtime_ro/worksheet/breast/breast.manifest);
+	@include(/home/gandalfn/Projects/git/rubi/dev/runtime_ro/worksheet/carotid/carotid.manifest);
 }

@@ -409,7 +409,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             m_Popup.update (inContext, new Graphic.Region (popup_area));
             if (force_update) m_Popup.visible = false;
 
-            damage ();
+            damage_area ();
         }
     }
 
