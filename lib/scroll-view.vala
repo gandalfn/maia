@@ -44,14 +44,16 @@ public class Maia.ScrollView : Item
     }
 
     // properties
-    private Window        m_Window      = null;
-    private Window        m_Viewport    = null;
-    private unowned Item? m_Child       = null;
-    private SeekBar       m_HSeekBar    = null;
-    private SeekBar       m_VSeekBar    = null;
-    private Adjustment    m_HAdjustment = null;
-    private Adjustment    m_VAdjustment = null;
-    private Graphic.Point m_PreviousPos = Graphic.Point (0, 0);
+    private Core.Animator m_ScrollToAnimator    = null;
+    private uint          m_ScrollToTransition  = 0;
+    private Window        m_Window              = null;
+    private Window        m_Viewport            = null;
+    private unowned Item? m_Child               = null;
+    private SeekBar       m_HSeekBar            = null;
+    private SeekBar       m_VSeekBar            = null;
+    private Adjustment    m_HAdjustment         = null;
+    private Adjustment    m_VAdjustment         = null;
+    private Graphic.Point m_PreviousPos         = Graphic.Point (0, 0);
 
     // accessors
     internal override string tag {
@@ -80,6 +82,24 @@ public class Maia.ScrollView : Item
     public Adjustment vadjustment {
         get {
             return m_VAdjustment;
+        }
+    }
+
+    public double scroll_x {
+        get {
+            return m_HAdjustment.@value;
+        }
+        set {
+            m_HAdjustment.@value = value;
+        }
+    }
+
+    public double scroll_y {
+        get {
+            return m_VAdjustment.@value;
+        }
+        set {
+            m_VAdjustment.@value = value;
         }
     }
 
@@ -121,6 +141,8 @@ public class Maia.ScrollView : Item
 
         notify["visible"].connect (on_visible_changed);
         notify["background-pattern"].connect (on_background_pattern_changed);
+
+        m_ScrollToAnimator = new Core.Animator (30, 400);
     }
 
     public ScrollView (string inId)
@@ -297,25 +319,25 @@ public class Maia.ScrollView : Item
             geometry = inAllocation;
 
             // Set page size
-            hadjustment.page_size = geometry.extents.size.width - m_VSeekBar.size.width;
-            vadjustment.page_size = geometry.extents.size.height - m_HSeekBar.size.height;
+            hadjustment.page_size = double.max (0, geometry.extents.size.width - m_VSeekBar.size.width);
+            vadjustment.page_size = double.max (0, geometry.extents.size.height - m_HSeekBar.size.height);
 
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"$(geometry.extents)");
 
             var viewport_position = m_Viewport.position;
             var viewport_allocation = new Graphic.Region (Graphic.Rectangle (viewport_position.x, viewport_position.y,
-                                                                             geometry.extents.size.width - m_VSeekBar.size.width,
-                                                                             geometry.extents.size.height - m_HSeekBar.size.height));
+                                                                             double.max (0, geometry.extents.size.width - m_VSeekBar.size.width),
+                                                                             double.max (0, geometry.extents.size.height - m_HSeekBar.size.height)));
 
             m_Viewport.update (inContext, viewport_allocation);
 
             // Update seekbar geometry
             m_HSeekBar.update (inContext, new Graphic.Region (Graphic.Rectangle (0, geometry.extents.size.height - m_HSeekBar.size.height,
-                                                                                 geometry.extents.size.width - m_VSeekBar.size.width,
+                                                                                 double.max (0, geometry.extents.size.width - m_VSeekBar.size.width),
                                                                                  m_HSeekBar.size.height)));
             m_VSeekBar.update (inContext, new Graphic.Region (Graphic.Rectangle (geometry.extents.size.width - m_VSeekBar.size.width, 0,
                                                                                  m_VSeekBar.size.width,
-                                                                                 geometry.extents.size.height - m_HSeekBar.size.height)));
+                                                                                 double.max (0, geometry.extents.size.height - m_HSeekBar.size.height))));
 
             damage_area ();
         }
@@ -338,6 +360,40 @@ public class Maia.ScrollView : Item
         // draw seekbars
         m_HSeekBar.draw (inContext, area_to_child_item_space (m_HSeekBar, inArea));
         m_VSeekBar.draw (inContext, area_to_child_item_space (m_VSeekBar, inArea));
+    }
+
+    internal override void
+    scroll_to (Item inItem)
+    {
+        var root_pos = inItem.convert_to_root_space (inItem.position);
+        var pos = convert_to_item_space (root_pos);
+
+        hadjustment.@value = pos.x;
+        
+        bool move = false;
+        if (pos.y < vadjustment.@value)
+        {
+            move = true;
+        }
+        else if (pos.y > vadjustment.@value + vadjustment.page_size)
+        {
+            move = true;
+        }
+
+        if (move)
+        {
+            m_ScrollToAnimator.stop ();
+
+            if (m_ScrollToTransition > 0)
+            {
+                m_ScrollToAnimator.remove_transition (m_ScrollToTransition);
+            }
+            m_ScrollToTransition = m_ScrollToAnimator.add_transition (0, 1, Core.Animator.ProgressType.EASE_IN_EASE_OUT);
+            GLib.Value from = (double)vadjustment.@value;
+            GLib.Value to = (double)pos.y;
+            m_ScrollToAnimator.add_transition_property (m_ScrollToTransition, this, "scroll-y", from, to);
+            m_ScrollToAnimator.start ();
+        }
     }
 
     internal override bool

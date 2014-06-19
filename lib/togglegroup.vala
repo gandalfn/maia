@@ -20,8 +20,8 @@
 public class Maia.ToggleGroup : Core.Object, Manifest.Element
 {
     // properties
-    private Core.Map<string, unowned ToggleButton> m_ToggleButtons;
-    private Core.Map<string, Core.EventListener> m_ToggleButtonListeners;
+    private Core.Map<string, unowned Toggle> m_Toggles;
+    private Core.Map<string, Core.EventListener> m_ToggleListeners;
 
     // accessors
     internal string tag {
@@ -50,20 +50,25 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
         not_dumpable_attributes.insert ("name");
 
         // Create toggle button dictionnary
-        m_ToggleButtons = new Core.Map<string, unowned ToggleButton> ();
+        m_Toggles = new Core.Map<string, unowned Toggle> ();
 
         // Create event listener map
-        m_ToggleButtonListeners = new Core.Map<string, Core.EventListener> ();
+        m_ToggleListeners = new Core.Map<string, Core.EventListener> ();
+    }
+
+    public ToggleGroup (string inId)
+    {
+        GLib.Object (id: GLib.Quark.from_string (inId));
     }
 
     private void
     on_toggled (Core.EventArgs? inArgs)
     {
-        unowned ToggleButton.ToggledEventArgs? args = inArgs as ToggleButton.ToggledEventArgs;
+        unowned Toggle.ToggledEventArgs? args = inArgs as Toggle.ToggledEventArgs;
 
         if (args != null && args.active)
         {
-            foreach (unowned Core.Pair<string, unowned ToggleButton> pair in m_ToggleButtons)
+            foreach (unowned Core.Pair<string, unowned Toggle> pair in m_Toggles)
             {
                 if (pair.first != args.button_name)
                 {
@@ -98,12 +103,12 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
     }
 
     public void
-    add_button (ToggleButton inButton)
+    add_button (Toggle inButton)
     {
-        if (!(inButton.name in m_ToggleButtons))
+        if (!(inButton.name in m_Toggles))
         {
-            m_ToggleButtons[inButton.name] = inButton;
-            m_ToggleButtonListeners[inButton.name] = inButton.toggled.subscribe (on_toggled);
+            m_Toggles[inButton.name] = inButton;
+            m_ToggleListeners[inButton.name] = inButton.toggled.subscribe (on_toggled);
 
             if (active != null && active == inButton.name)
             {
@@ -121,12 +126,12 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
     }
 
     public void
-    remove_button (ToggleButton inButton)
+    remove_button (Toggle inButton)
     {
-        if (inButton.name in m_ToggleButtons)
+        if (inButton.name in m_Toggles)
         {
-            m_ToggleButtonListeners.unset (inButton.name);
-            m_ToggleButtons.unset (inButton.name);
+            m_ToggleListeners.unset (inButton.name);
+            m_Toggles.unset (inButton.name);
         }
     }
 }

@@ -140,11 +140,13 @@ libmaia_la_SOURCES = \
     cassogrid.vala \
     button.vala \
     togglegroup.vala \
-    togglebutton.vala \
+    toggle.vala \
+    toggle-button.vala \
     checkbutton.vala \
     highlight.vala \
     page.vala \
     document.vala \
+    document-view.vala \
     model.vala \
     view.vala \
     drawing-area.vala \

@@ -25,7 +25,6 @@ namespace Maia.Gtk
         Log.info (GLib.Log.METHOD, Log.Category.CORE_EXTENSION, "Loading GTK backend");
 
         // Override base item
-        Core.Any.delegate (typeof (Maia.Shortcut),     typeof (Shortcut));
         Core.Any.delegate (typeof (Maia.Image),        typeof (Image));
         Core.Any.delegate (typeof (Maia.Button),       typeof (Button));
         Core.Any.delegate (typeof (Maia.Tool),         typeof (Tool));
@@ -39,7 +38,6 @@ namespace Maia.Gtk
         Log.info (GLib.Log.METHOD, Log.Category.CORE_EXTENSION, "Unloading GTK backend");
 
         // Override base item
-        Core.Any.undelegate (typeof (Maia.Shortcut));
         Core.Any.undelegate (typeof (Maia.Image));
         Core.Any.undelegate (typeof (Maia.Button));
         Core.Any.undelegate (typeof (Maia.Tool));

@@ -513,6 +513,12 @@
   (gtype-id "MAIA_TYPE_COMBO")
 )
 
+(define-object MaiaDocumentView
+  (parent "MaiaGroup")
+  (c-name "MaiaDocumentView")
+  (gtype-id "MAIA_TYPE_DOCUMENT_VIEW")
+)
+
 (define-object MaiaDrawingArea
   (parent "MaiaGroup")
   (c-name "MaiaDrawingArea")
@@ -713,34 +719,40 @@
   (gtype-id "MAIA_TYPE_SHORTCUT")
 )
 
-(define-object MaiaToggleButton
+(define-object MaiaToggle
   (parent "MaiaGroup")
-  (c-name "MaiaToggleButton")
-  (gtype-id "MAIA_TYPE_TOGGLE_BUTTON")
+  (c-name "MaiaToggle")
+  (gtype-id "MAIA_TYPE_TOGGLE")
 )
 
 (define-object MaiaHighlight
-  (parent "MaiaToggleButton")
+  (parent "MaiaToggle")
   (c-name "MaiaHighlight")
   (gtype-id "MAIA_TYPE_HIGHLIGHT")
 )
 
 (define-object MaiaCheckButton
-  (parent "MaiaToggleButton")
+  (parent "MaiaToggle")
   (c-name "MaiaCheckButton")
   (gtype-id "MAIA_TYPE_CHECK_BUTTON")
 )
 
-(define-object MaiaToggleButtonToggledEventArgs
-  (parent "MaiaCoreEventArgs")
-  (c-name "MaiaToggleButtonToggledEventArgs")
-  (gtype-id "MAIA_TYPE_TOGGLE_BUTTON_TOGGLED_EVENT_ARGS")
+(define-object MaiaToggleButton
+  (parent "MaiaToggle")
+  (c-name "MaiaToggleButton")
+  (gtype-id "MAIA_TYPE_TOGGLE_BUTTON")
 )
 
 (define-object MaiaToggleGroup
   (parent "MaiaCoreObject")
   (c-name "MaiaToggleGroup")
   (gtype-id "MAIA_TYPE_TOGGLE_GROUP")
+)
+
+(define-object MaiaToggleToggledEventArgs
+  (parent "MaiaCoreEventArgs")
+  (c-name "MaiaToggleToggledEventArgs")
+  (gtype-id "MAIA_TYPE_TOGGLE_TOGGLED_EVENT_ARGS")
 )
 
 (define-object MaiaTool
@@ -5049,6 +5061,17 @@
   )
 )
 
+(define-function maia_core_watch_construct_out
+  (c-name "maia_core_watch_construct_out")
+  (return-type "MaiaCoreWatch*")
+  (parameters
+    '("GType" "object_type")
+    '("gint" "inFd")
+    '("GMainContext*" "inContext")
+    '("gint" "inPriority")
+  )
+)
+
 (define-method on_prepare
   (of-object "MaiaCoreWatch")
   (c-name "maia_core_watch_on_prepare")
@@ -5092,6 +5115,12 @@
   (of-object "MaiaCoreWatch")
   (c-name "maia_core_watch_get_fd")
   (return-type "gint")
+)
+
+(define-method get_is_out
+  (of-object "MaiaCoreWatch")
+  (c-name "maia_core_watch_get_is_out")
+  (return-type "gboolean")
 )
 
 (define-function maia_core_timeline_direction_get_type
@@ -6663,6 +6692,27 @@
   )
 )
 
+(define-function maia_core_socket_watch_new_out
+  (c-name "maia_core_socket_watch_new_out")
+  (return-type "MaiaCoreSocketWatch*")
+  (parameters
+    '("GSocket*" "inSocket")
+    '("GMainContext*" "inContext")
+    '("gint" "inPriority")
+  )
+)
+
+(define-function maia_core_socket_watch_construct_out
+  (c-name "maia_core_socket_watch_construct_out")
+  (return-type "MaiaCoreSocketWatch*")
+  (parameters
+    '("GType" "object_type")
+    '("GSocket*" "inSocket")
+    '("GMainContext*" "inContext")
+    '("gint" "inPriority")
+  )
+)
+
 (define-function maia_core_socket_bus_connection_get_type
   (c-name "maia_core_socket_bus_connection_get_type")
   (return-type "GType")
@@ -7276,6 +7326,16 @@
     '("MaiaManifestElementCreateFunc" "inFunc")
     '("void*" "inFunc_target")
     '("GDestroyNotify" "inFunc_target_destroy_notify")
+  )
+)
+
+(define-method duplicate
+  (of-object "MaiaManifestElement")
+  (c-name "maia_manifest_element_duplicate")
+  (return-type "MaiaManifestElement*")
+  (parameters
+    '("const-gchar*" "inId")
+    '("GError**" "error")
   )
 )
 
@@ -12620,6 +12680,15 @@
   (return-type "GType")
 )
 
+(define-method damage_area
+  (of-object "MaiaDrawable")
+  (c-name "maia_drawable_damage_area")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRegion*" "inArea")
+  )
+)
+
 (define-method convert_to_child_item_space
   (of-object "MaiaDrawable")
   (c-name "maia_drawable_convert_to_child_item_space")
@@ -14701,8 +14770,26 @@
   (return-type "GType")
 )
 
-(define-function maia_toggle_button_get_type
-  (c-name "maia_toggle_button_get_type")
+(define-function maia_toggle_group_new
+  (c-name "maia_toggle_group_new")
+  (is-constructor-of "MaiaToggleGroup")
+  (return-type "MaiaToggleGroup*")
+  (parameters
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-function maia_toggle_group_construct
+  (c-name "maia_toggle_group_construct")
+  (return-type "MaiaToggleGroup*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-function maia_toggle_get_type
+  (c-name "maia_toggle_get_type")
   (return-type "GType")
 )
 
@@ -14711,7 +14798,7 @@
   (c-name "maia_toggle_group_add_button")
   (return-type "none")
   (parameters
-    '("MaiaToggleButton*" "inButton")
+    '("MaiaToggle*" "inButton")
   )
 )
 
@@ -14720,21 +14807,7 @@
   (c-name "maia_toggle_group_remove_button")
   (return-type "none")
   (parameters
-    '("MaiaToggleButton*" "inButton")
-  )
-)
-
-(define-function maia_toggle_group_new
-  (c-name "maia_toggle_group_new")
-  (is-constructor-of "MaiaToggleGroup")
-  (return-type "MaiaToggleGroup*")
-)
-
-(define-function maia_toggle_group_construct
-  (c-name "maia_toggle_group_construct")
-  (return-type "MaiaToggleGroup*")
-  (parameters
-    '("GType" "object_type")
+    '("MaiaToggle*" "inButton")
   )
 )
 
@@ -14759,6 +14832,114 @@
   )
 )
 
+(define-function maia_toggle_construct
+  (c-name "maia_toggle_construct")
+  (return-type "MaiaToggle*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inLabel")
+  )
+)
+
+(define-method get_group
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_get_group")
+  (return-type "const-gchar*")
+)
+
+(define-method set_group
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_set_group")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_font_description
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_get_font_description")
+  (return-type "const-gchar*")
+)
+
+(define-method set_font_description
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_set_font_description")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_label
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_get_label")
+  (return-type "const-gchar*")
+)
+
+(define-method set_label
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_set_label")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_active
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_get_active")
+  (return-type "gboolean")
+)
+
+(define-method set_active
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_set_active")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
+(define-method get_toggled
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_get_toggled")
+  (return-type "MaiaCoreEvent*")
+)
+
+(define-function maia_toggle_toggled_event_args_get_type
+  (c-name "maia_toggle_toggled_event_args_get_type")
+  (return-type "GType")
+)
+
+(define-method get_button_name
+  (of-object "MaiaToggleToggledEventArgs")
+  (c-name "maia_toggle_toggled_event_args_get_button_name")
+  (return-type "const-gchar*")
+)
+
+(define-method get_active
+  (of-object "MaiaToggleToggledEventArgs")
+  (c-name "maia_toggle_toggled_event_args_get_active")
+  (return-type "gboolean")
+)
+
+(define-function maia_toggle_button_get_type
+  (c-name "maia_toggle_button_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_toggle_button_new
+  (c-name "maia_toggle_button_new")
+  (is-constructor-of "MaiaToggleButton")
+  (return-type "MaiaToggleButton*")
+  (parameters
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inLabel")
+  )
+)
+
 (define-function maia_toggle_button_construct
   (c-name "maia_toggle_button_construct")
   (return-type "MaiaToggleButton*")
@@ -14769,87 +14950,64 @@
   )
 )
 
-(define-method get_group
+(define-method get_border
   (of-object "MaiaToggleButton")
-  (c-name "maia_toggle_button_get_group")
-  (return-type "const-gchar*")
+  (c-name "maia_toggle_button_get_border")
+  (return-type "gdouble")
 )
 
-(define-method set_group
+(define-method set_border
   (of-object "MaiaToggleButton")
-  (c-name "maia_toggle_button_set_group")
+  (c-name "maia_toggle_button_set_border")
   (return-type "none")
   (parameters
-    '("const-gchar*" "value")
+    '("gdouble" "value")
   )
 )
 
-(define-method get_font_description
+(define-method get_sensitive
   (of-object "MaiaToggleButton")
-  (c-name "maia_toggle_button_get_font_description")
-  (return-type "const-gchar*")
-)
-
-(define-method set_font_description
-  (of-object "MaiaToggleButton")
-  (c-name "maia_toggle_button_set_font_description")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "value")
-  )
-)
-
-(define-method get_label
-  (of-object "MaiaToggleButton")
-  (c-name "maia_toggle_button_get_label")
-  (return-type "const-gchar*")
-)
-
-(define-method set_label
-  (of-object "MaiaToggleButton")
-  (c-name "maia_toggle_button_set_label")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "value")
-  )
-)
-
-(define-method get_active
-  (of-object "MaiaToggleButton")
-  (c-name "maia_toggle_button_get_active")
+  (c-name "maia_toggle_button_get_sensitive")
   (return-type "gboolean")
 )
 
-(define-method set_active
+(define-method set_sensitive
   (of-object "MaiaToggleButton")
-  (c-name "maia_toggle_button_set_active")
+  (c-name "maia_toggle_button_set_sensitive")
   (return-type "none")
   (parameters
     '("gboolean" "value")
   )
 )
 
-(define-method get_toggled
+(define-method get_button_color
   (of-object "MaiaToggleButton")
-  (c-name "maia_toggle_button_get_toggled")
-  (return-type "MaiaCoreEvent*")
+  (c-name "maia_toggle_button_get_button_color")
+  (return-type "MaiaGraphicColor*")
 )
 
-(define-function maia_toggle_button_toggled_event_args_get_type
-  (c-name "maia_toggle_button_toggled_event_args_get_type")
-  (return-type "GType")
+(define-method set_button_color
+  (of-object "MaiaToggleButton")
+  (c-name "maia_toggle_button_set_button_color")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicColor*" "value")
+  )
 )
 
-(define-method get_button_name
-  (of-object "MaiaToggleButtonToggledEventArgs")
-  (c-name "maia_toggle_button_toggled_event_args_get_button_name")
-  (return-type "const-gchar*")
+(define-method get_button_inactive_color
+  (of-object "MaiaToggleButton")
+  (c-name "maia_toggle_button_get_button_inactive_color")
+  (return-type "MaiaGraphicColor*")
 )
 
-(define-method get_active
-  (of-object "MaiaToggleButtonToggledEventArgs")
-  (c-name "maia_toggle_button_toggled_event_args_get_active")
-  (return-type "gboolean")
+(define-method set_button_inactive_color
+  (of-object "MaiaToggleButton")
+  (c-name "maia_toggle_button_set_button_inactive_color")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicColor*" "value")
+  )
 )
 
 (define-function maia_check_button_get_type
@@ -15003,15 +15161,6 @@
     '("MaiaGraphicContext*" "inContext")
     '("guint" "inPageNum")
     '("GError**" "error")
-  )
-)
-
-(define-method get_item_visible_area
-  (of-object "MaiaDocument")
-  (c-name "maia_document_get_item_visible_area")
-  (return-type "MaiaGraphicRegion*")
-  (parameters
-    '("MaiaItem*" "inItem")
   )
 )
 
@@ -15171,12 +15320,6 @@
   )
 )
 
-(define-method get_visible_area
-  (of-object "MaiaDocument")
-  (c-name "maia_document_get_visible_area")
-  (return-type "MaiaGraphicRegion*")
-)
-
 (define-function maia_shortcut_get_type
   (c-name "maia_shortcut_get_type")
   (return-type "GType")
@@ -15186,6 +15329,29 @@
   (of-object "MaiaDocument")
   (c-name "maia_document_get_shortcuts")
   (return-type "MaiaCoreList*")
+)
+
+(define-function maia_document_view_get_type
+  (c-name "maia_document_view_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_document_view_new
+  (c-name "maia_document_view_new")
+  (is-constructor-of "MaiaDocumentView")
+  (return-type "MaiaDocumentView*")
+  (parameters
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-function maia_document_view_construct
+  (c-name "maia_document_view_construct")
+  (return-type "MaiaDocumentView*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+  )
 )
 
 (define-function maia_model_get_type
@@ -15796,12 +15962,6 @@
   )
 )
 
-(define-method activate
-  (of-object "MaiaShortcut")
-  (c-name "maia_shortcut_activate")
-  (return-type "none")
-)
-
 (define-function maia_shortcut_new
   (c-name "maia_shortcut_new")
   (is-constructor-of "MaiaShortcut")
@@ -16237,6 +16397,36 @@
   (of-object "MaiaScrollView")
   (c-name "maia_scroll_view_get_vadjustment")
   (return-type "MaiaAdjustment*")
+)
+
+(define-method get_scroll_x
+  (of-object "MaiaScrollView")
+  (c-name "maia_scroll_view_get_scroll_x")
+  (return-type "gdouble")
+)
+
+(define-method set_scroll_x
+  (of-object "MaiaScrollView")
+  (c-name "maia_scroll_view_set_scroll_x")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_scroll_y
+  (of-object "MaiaScrollView")
+  (c-name "maia_scroll_view_get_scroll_y")
+  (return-type "gdouble")
+)
+
+(define-method set_scroll_y
+  (of-object "MaiaScrollView")
+  (c-name "maia_scroll_view_set_scroll_y")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
 )
 
 (define-method get_policy

@@ -155,6 +155,7 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
 
         // Set canvas window
         m_Window.set_data<unowned Window?> ("MaiaCanvasWindow", m_WindowGate);
+        GLib.Signal.emit_by_name (m_Window, "notify::window");
 
         // Set root parent has window
         if (m_Root != null) m_Root.parent = m_Window;
@@ -169,6 +170,7 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
     map ()
     {
         m_Window.visible = true;
+        queue_resize ();
 
         base.map ();
     }
@@ -230,23 +232,5 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
     expose_event (Gdk.EventExpose inEvent)
     {
         return true;
-    }
-
-    public GLib.List<unowned global::Gtk.Button>
-    get_shortcut_buttons ()
-    {
-        GLib.List<unowned global::Gtk.Button> list = new GLib.List<unowned global::Gtk.Button> ();
-
-        unowned Document? doc = root as Document;
-        if (doc != null)
-        {
-            foreach (unowned Maia.Shortcut child in doc.shortcuts)
-            {
-                list.prepend ((child as Shortcut).button);
-            }
-            list.reverse ();
-        }
-
-        return list;
     }
 }

@@ -40,21 +40,4 @@ public class Maia.Shortcut : Core.Object, Manifest.Element
      * The shortcut label
      */
     public string label   { get; set; default = null; }
-
-    // methods
-    /**
-     * Activate shortcut
-     */
-    public void
-    activate ()
-    {
-        if (section != null)
-        {
-            unowned Item item = root.find (GLib.Quark.from_string (section)) as Item;
-            if (item != null)
-            {
-                item.scroll_to (item);
-            }
-        }
-    }
 }

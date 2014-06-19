@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Highlight : ToggleButton
+public class Maia.Highlight : Toggle
 {
     // properties
     private unowned Label? m_Label;

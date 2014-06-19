@@ -28,7 +28,6 @@ libmaia_gtk_la_SOURCES = \
     button.vala \
     tool.vala \
     model.vala \
-    shortcut.vala \
     canvas.vala \
     xembed.vala
 

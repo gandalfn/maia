@@ -140,6 +140,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         {
             // Check if window is not already reparented
             var reply = m_Window.query_tree (connection).reply (connection);
+
             if (reply == null || reply.parent != ((Window)window).xid)
             {
                 // push reparent
@@ -558,7 +559,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         if (!inAllocation.extents.is_empty () && visible &&
             (need_update || geometry == null || geometry.extents.is_empty () || !geometry.equal (inAllocation)))
         {
-            geometry = inAllocation;
+            base.update (inContext, inAllocation);
 
             var window_size = geometry.extents.size;
             window_size.transform (device_transform);
@@ -588,28 +589,6 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 
             // Set window geometry
             m_WindowGeometry = Graphic.Rectangle (geometry.extents.origin.x, geometry.extents.origin.y, window_size.width, window_size.height);
-
-            foreach (unowned Core.Object child in this)
-            {
-                if (child is Item)
-                {
-                    unowned Item item = (Item)child;
-
-                    // Get child position and size
-                    var item_position = item.position;
-                    var item_size     = item.size;
-
-                    // Set child size allocation
-                    var child_allocation = Graphic.Rectangle (item_position.x, item_position.y,
-                                                              double.max (item_size.width, area.extents.size.width - (border * 2)),
-                                                              double.max (item_size.height, area.extents.size.height - (border * 2)));
-
-                    // Update child allocation
-                    item.update (inContext, new Graphic.Region (child_allocation));
-                }
-            }
-
-            damage_area ();
         }
     }
 

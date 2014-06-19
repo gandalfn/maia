@@ -70,7 +70,6 @@ namespace Maia
 
                 _WRAP_METHOD(static Glib::RefPtr<Theme> get_current_theme (), maia_manifest_element_get_current_theme, refreturn)
 
-
                 _WRAP_METHOD(Glib::RefPtr<Element> get_root () const, maia_manifest_element_get_root, refreturn)
 
                 _IGNORE(maia_manifest_element_get_not_dumpable_attributes)
@@ -84,6 +83,8 @@ namespace Maia
                     MaiaCoreSet* pSet = maia_manifest_element_get_not_dumpable_attributes (gobj ());
                     maia_core_collection_remove (MAIA_CORE_COLLECTION (pSet), inAttribute.c_str ());
                 }
+
+                _WRAP_METHOD(Glib::RefPtr<Element> duplicate (const Glib::ustring& inId), maia_manifest_element_duplicate, errthrow)
 
                 _WRAP_METHOD(void read_manifest (const Glib::RefPtr<Document>& inDocument), maia_manifest_element_read_manifest, errthrow)
                 _WRAP_METHOD(Glib::ustring dump (const Glib::ustring& inPrefix), maia_manifest_element_dump)

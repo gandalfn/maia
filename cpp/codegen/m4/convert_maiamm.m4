@@ -250,10 +250,10 @@ _CONVERSION(`const Glib::RefPtr<ItemPackable>&',`MaiaItemPackable*',__CONVERT_RE
 _CONVERSION(`MaiaItemPackable*',`const Glib::RefPtr<ItemPackable>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaItemPackable*',`Glib::RefPtr<ItemPackable>',`Glib::wrap($3)')
 
-_CONVERSION(`Glib::RefPtr<ToggleButton>',`MaiaToggleButton*',__CONVERT_REFPTR_TO_P)
-_CONVERSION(`const Glib::RefPtr<ToggleButton>&',`MaiaToggleButton*',__CONVERT_REFPTR_TO_P)
-_CONVERSION(`MaiaToggleButton*',`const Glib::RefPtr<ToggleButton>&',`Glib::wrap($3)')
-_CONVERSION(`MaiaToggleButton*',`Glib::RefPtr<ToggleButton>',`Glib::wrap($3)')
+_CONVERSION(`Glib::RefPtr<Toggle>',`MaiaToggle*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Toggle>&',`MaiaToggle*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaToggle*',`const Glib::RefPtr<Toggle>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaToggle*',`Glib::RefPtr<Toggle>',`Glib::wrap($3)')
 
 _CONVERSION(`Glib::RefPtr<Popup>',`MaiaPopup*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Popup>&',`MaiaPopup*',__CONVERT_REFPTR_TO_P)

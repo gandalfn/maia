@@ -22,7 +22,7 @@
 #include <maiamm/core-set.h>
 #include <maiamm/manifest-element.h>
 #include <maiamm/manifest-theme.h>
-#include <maiamm/togglebutton.h>
+#include <maiamm/toggle.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/core-object_p.h)
@@ -43,8 +43,8 @@ namespace Maia
                 return Glib::RefPtr<ToggleGroup> (new ToggleGroup ());
             }
 
-            _WRAP_METHOD(void add_button (const Glib::RefPtr<ToggleButton>& inButtton), maia_toggle_group_add_button)
-            _WRAP_METHOD(void remove_button (const Glib::RefPtr<ToggleButton>& inButtton), maia_toggle_group_remove_button)
+            _WRAP_METHOD(void add_button (const Glib::RefPtr<Toggle>& inButtton), maia_toggle_group_add_button)
+            _WRAP_METHOD(void remove_button (const Glib::RefPtr<Toggle>& inButtton), maia_toggle_group_remove_button)
 
             _WRAP_METHOD(Glib::ustring get_name () const, maia_toggle_group_get_name)
             _WRAP_METHOD(Glib::ustring get_active () const, maia_toggle_group_get_active)

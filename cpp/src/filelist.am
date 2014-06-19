@@ -56,7 +56,7 @@ files_hg = \
     item-resizable.hg \
     group.hg \
     button.hg \
-    togglebutton.hg \
+    toggle.hg \
     checkbutton.hg \
     document.hg \
     drawing-area.hg \

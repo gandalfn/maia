@@ -1,4 +1,4 @@
-ScrollView.scrollview {
+DocumentView.scrollview {
 	Document.worksheet {
 		// Default page format
 		format: a4;

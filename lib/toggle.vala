@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * togglebutton.vala
+ * toggle.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
+public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
 {
     /**
      * Event args provided by togglebuttion on toggled event
@@ -76,6 +76,7 @@ public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
     // properties
     private string m_Group = null;
     private bool m_Active = false;
+    private unowned Label m_Label = null;
 
     // accessors
     internal uint   row     { get; set; default = 0; }
@@ -120,28 +121,24 @@ public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
 
     public string font_description {
         get {
-            unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
-            return label_item == null ? "" : label_item.font_description;
+            return m_Label == null ? "" : m_Label.font_description;
         }
         set {
-            unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
-            if (label_item != null)
+            if (m_Label != null)
             {
-                label_item.font_description = value;
+                m_Label.font_description = value;
             }
         }
     }
 
     public string label {
         get {
-            unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
-            return label_item == null ? "" : label_item.text;
+            return m_Label == null ? "" : m_Label.text;
         }
         set {
-            unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
-            if (label_item != null)
+            if (m_Label != null)
             {
-                label_item.text = value;
+                m_Label.text = value;
             }
         }
     }
@@ -173,6 +170,7 @@ public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
 
         var label_item = new Label (id_label, label);
         add (label_item);
+        m_Label = label_item;
 
         notify["stroke-pattern"].connect (on_stroke_pattern_changed);
 
@@ -181,7 +179,7 @@ public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
         button_press_event.connect (on_button_press);
     }
 
-    public ToggleButton (string inId, string inLabel)
+    public Toggle (string inId, string inLabel)
     {
         GLib.Object (id: GLib.Quark.from_string (inId), label: inLabel);
     }
@@ -201,10 +199,9 @@ public abstract class Maia.ToggleButton : Group, ItemPackable, ItemMovable
     private void
     on_stroke_pattern_changed ()
     {
-        unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
-        if (label_item != null)
+        if (m_Label != null)
         {
-            label_item.stroke_pattern = stroke_pattern;
+            m_Label.stroke_pattern = stroke_pattern;
         }
     }
 

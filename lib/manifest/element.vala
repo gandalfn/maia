@@ -252,6 +252,29 @@ public interface Maia.Manifest.Element : Core.Object
     }
 
     /**
+     * Duplicate the element
+     *
+     * @param inId id of new element
+     * 
+     * @return a new duplicated element
+     */
+    public Element
+    duplicate (string inId) throws Core.ParseError
+    {
+        string content = dump ("");
+        
+        Document doc = new Document.from_buffer (content, content.length);
+        doc.theme = manifest_theme;
+        Element ret = doc.get ();
+        if (ret != null)
+        {
+            ret.id = GLib.Quark.from_string (inId);
+        }
+
+        return ret;
+    }
+
+    /**
      * Load manifest for this object
      *
      * @param inManifest manifest

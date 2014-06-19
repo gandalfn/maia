@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * button.vala
+ * toggle-button.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,65 +17,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * An item that emits a signal when clicked on
- *
- * =Manifest description:=
- *
- * {{{
- *      Button.<id> {
- *          font_description: 'Liberation Sans 12';
- *          icon_filename: '/path/filename';
- *          button_color: '#C0C0C0';
- *      }
- * }}}
- *
- */
-public class Maia.Button : Grid
+public class Maia.ToggleButton : Toggle
 {
     // properties
-    private bool m_Clicked = false;
+    private unowned Label? m_Label;
 
     // accessors
     internal override string tag {
         get {
-            return "Button";
-        }
-    }
-
-    internal override bool can_focus  { get; set; default = true; }
-
-    /**
-     * The default font description of button label
-     */
-    public string font_description {
-        get {
-            unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
-            return label_item == null ? "" : label_item.font_description;
-        }
-        set {
-            unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
-            if (label_item != null)
-            {
-                label_item.font_description = value;
-            }
-        }
-    }
-
-    /**
-     * The label of button
-     */
-    public string label {
-        get {
-            unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
-            return label_item == null ? "" : label_item.text;
-        }
-        set {
-            unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
-            if (label_item != null)
-            {
-                label_item.text = value;
-            }
+            return "ToggleButton";
         }
     }
 
@@ -90,16 +40,6 @@ public class Maia.Button : Grid
     public bool sensitive { get; set; default = true; }
 
     /**
-     * The icon filename no icon if ``null``
-     */
-    public string icon_filename { get; set; default = null; }
-
-    /**
-     * The icon size
-     */
-    public Graphic.Size icon_size { get; set; default = Graphic.Size (0, 0); }
-
-    /**
      * The background color of button if not set the button does not draw any background
      */
     public Graphic.Color button_color { get; set; default = new Graphic.Color (0.7, 0.7, 0.7); }
@@ -109,125 +49,15 @@ public class Maia.Button : Grid
      */
     public Graphic.Color button_inactive_color { get; set; default = null; }
 
-    // signals
-    /**
-     * Signal received when button was clicked
-     */
-    public signal void clicked ();
-
     // methods
     construct
     {
-        stroke_pattern = new Graphic.Color (0, 0, 0);
-
-        column_spacing = border;
-
-        // Create icon item
-        string id_icon = "%s-icon".printf (name);
-
-        var icon_item = new Image (id_icon, icon_filename);
-        icon_item.xfill = false;
-        icon_item.xexpand = false;
-        icon_item.yfill = false;
-        icon_item.top_padding = border;
-        icon_item.left_padding = border;
-        icon_item.bottom_padding = border;
-        add (icon_item);
-
-        notify ["icon-filename"].connect (() => {
-            icon_item.filename = icon_filename;
-        });
-
-        notify ["icon-size"].connect (() => {
-            icon_item.size = icon_size;
-        });
-
-        // Create label item
-        string id_label = "%s-label".printf (name);
-
-        var label_item = new Label (id_label, label);
-        label_item.column = 1;
-        label_item.xfill = false;
-        label_item.top_padding = border;
-        label_item.right_padding = border;
-        label_item.bottom_padding = border;
-        add (label_item);
-
-        notify["stroke-pattern"].connect (() => {
-            label_item.stroke_pattern = stroke_pattern;
-        });
-
-        notify["border"].connect (() => {
-            column_spacing = border;
-            icon_item.top_padding = border;
-            icon_item.left_padding = border;
-            icon_item.bottom_padding = border;
-            label_item.top_padding = border;
-            label_item.right_padding = border;
-            label_item.bottom_padding = border;
-        });
-
-        label_item.button_press_event.connect (on_button_press_event);
+        m_Label = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
     }
 
-    /**
-     * Create a new button
-     *
-     * @param inId id of item
-     * @param inLabel the label of button ``null`` if none
-     */
-    public Button (string inId, string? inLabel = null)
+    public ToggleButton (string inId, string inLabel)
     {
-        GLib.Object (id: GLib.Quark.from_string (inId), label: inLabel);
-    }
-
-    internal override bool
-    on_button_press_event (uint inButton, Graphic.Point inPoint)
-    {
-        bool ret = false;
-
-        if (sensitive && geometry != null)
-        {
-            ret = inPoint in area;
-
-            if (ret && inButton == 1)
-            {
-                m_Clicked = true;
-
-                grab_pointer (this);
-
-                damage ();
-            }
-        }
-
-        return ret;
-    }
-
-    internal override bool
-    on_button_release_event (uint inButton, Graphic.Point inPoint)
-    {
-        bool ret = false;
-
-        if (geometry != null)
-        {
-            ret = inPoint in area;
-
-            if (inButton == 1 && m_Clicked)
-            {
-                m_Clicked = false;
-
-                ungrab_pointer (this);
-
-                damage ();
-
-                if (ret)
-                {
-                    clicked ();
-                }
-            }
-        }
-
-        return ret;
+        base (inId, inLabel);
     }
 
     private void
@@ -240,7 +70,7 @@ public class Maia.Button : Grid
 
         double vb = 1, ve = 1.1, vd = 0.8, vd2 = 0.7;
 
-        if (m_Clicked && sensitive)
+        if (active && sensitive)
         {
             vb = 1.1;
             ve = 1;
@@ -250,10 +80,9 @@ public class Maia.Button : Grid
         var beginColor = new Graphic.Color.shade (sensitive ? button_color : button_inactive_color ?? button_color, vb);
         var endColor = new Graphic.Color.shade (sensitive ? button_color : button_inactive_color ?? button_color, ve);
 
-        unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
-        if (label_item != null && (label_item.shade_color == null || label_item.shade_color.compare (beginColor) != 0))
+        if (m_Label != null && (m_Label.shade_color == null || m_Label.shade_color.compare (beginColor) != 0))
         {
-            label_item.shade_color = beginColor;
+            m_Label.shade_color = beginColor;
         }
 
         var topleft = new Graphic.MeshGradient.ArcPatch (Graphic.Point (border, border),
@@ -312,6 +141,36 @@ public class Maia.Button : Grid
         inContext.paint ();
     }
 
+    internal override bool
+    can_append_child (Core.Object inObject)
+    {
+        return inObject is Label;
+    }
+
+    internal override Graphic.Size
+    size_request (Graphic.Size inSize)
+    {
+        // Get label item
+        if (m_Label != null)
+        {
+            // get position of label
+            Graphic.Point position_label = m_Label.position;
+
+            // set position of label
+            if (position_label.x != border || position_label.y != border)
+            {
+                m_Label.position = Graphic.Point (border, border);
+
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "label item position : %s", m_Label.position.to_string ());
+            }
+        }
+
+        Graphic.Size ret = base.size_request (inSize);
+        ret.resize (border, border);
+
+        return ret;
+    }
+
     internal override void
     paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
@@ -323,14 +182,20 @@ public class Maia.Button : Grid
                 draw_button (inContext);
             }
 
-            base.paint (inContext, inArea);
+            // Translate to align in center
+            inContext.translate (Graphic.Point (area.extents.size.width / 2, area.extents.size.height / 2));
+            inContext.translate (Graphic.Point (-size.width / 2, -size.height / 2));
+
+            // paint childs
+            foreach (unowned Core.Object child in this)
+            {
+                if (child is Drawable)
+                {
+                    unowned Drawable drawable = (Drawable)child;
+                    drawable.draw (inContext, area_to_child_item_space (drawable, inArea));
+                }
+            }
         }
         inContext.restore ();
-    }
-
-    internal override string
-    dump_childs (string inPrefix)
-    {
-        return "";
     }
 }

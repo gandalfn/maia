@@ -1328,15 +1328,6 @@
   (construct-only #f)
 )
 
-(define-property visible-area
-  (of-object "MaiaDocument")
-  (prop-type "GParamObject")
-  (docs "visible-area")
-  (readable #t)
-  (writable #f)
-  (construct-only #f)
-)
-
 (define-property shortcuts
   (of-object "MaiaDocument")
   (prop-type "GParamObject")
@@ -3552,10 +3543,10 @@
 
 ;; From MaiaScroll
 
-;; From MaiaToggleButton
+;; From MaiaToggle
 
 (define-property row
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamUInt")
   (docs "row")
   (readable #t)
@@ -3564,7 +3555,7 @@
 )
 
 (define-property column
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamUInt")
   (docs "column")
   (readable #t)
@@ -3573,7 +3564,7 @@
 )
 
 (define-property rows
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamUInt")
   (docs "rows")
   (readable #t)
@@ -3582,7 +3573,7 @@
 )
 
 (define-property columns
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamUInt")
   (docs "columns")
   (readable #t)
@@ -3591,7 +3582,7 @@
 )
 
 (define-property xexpand
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamBoolean")
   (docs "xexpand")
   (readable #t)
@@ -3600,7 +3591,7 @@
 )
 
 (define-property xfill
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamBoolean")
   (docs "xfill")
   (readable #t)
@@ -3609,7 +3600,7 @@
 )
 
 (define-property xshrink
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamBoolean")
   (docs "xshrink")
   (readable #t)
@@ -3618,7 +3609,7 @@
 )
 
 (define-property xlimp
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamBoolean")
   (docs "xlimp")
   (readable #t)
@@ -3627,7 +3618,7 @@
 )
 
 (define-property xalign
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamDouble")
   (docs "xalign")
   (readable #t)
@@ -3636,7 +3627,7 @@
 )
 
 (define-property yexpand
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamBoolean")
   (docs "yexpand")
   (readable #t)
@@ -3645,7 +3636,7 @@
 )
 
 (define-property yfill
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamBoolean")
   (docs "yfill")
   (readable #t)
@@ -3654,7 +3645,7 @@
 )
 
 (define-property yshrink
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamBoolean")
   (docs "yshrink")
   (readable #t)
@@ -3663,7 +3654,7 @@
 )
 
 (define-property ylimp
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamBoolean")
   (docs "ylimp")
   (readable #t)
@@ -3672,7 +3663,7 @@
 )
 
 (define-property yalign
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamDouble")
   (docs "yalign")
   (readable #t)
@@ -3681,7 +3672,7 @@
 )
 
 (define-property top-padding
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamDouble")
   (docs "top-padding")
   (readable #t)
@@ -3690,7 +3681,7 @@
 )
 
 (define-property bottom-padding
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamDouble")
   (docs "bottom-padding")
   (readable #t)
@@ -3699,7 +3690,7 @@
 )
 
 (define-property left-padding
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamDouble")
   (docs "left-padding")
   (readable #t)
@@ -3708,7 +3699,7 @@
 )
 
 (define-property right-padding
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamDouble")
   (docs "right-padding")
   (readable #t)
@@ -3717,7 +3708,7 @@
 )
 
 (define-property group
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamString")
   (docs "group")
   (readable #t)
@@ -3726,7 +3717,7 @@
 )
 
 (define-property font-description
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamString")
   (docs "font-description")
   (readable #t)
@@ -3735,7 +3726,7 @@
 )
 
 (define-property label
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamString")
   (docs "label")
   (readable #t)
@@ -3744,7 +3735,7 @@
 )
 
 (define-property active
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamBoolean")
   (docs "active")
   (readable #t)
@@ -3753,7 +3744,7 @@
 )
 
 (define-property toggled
-  (of-object "MaiaToggleButton")
+  (of-object "MaiaToggle")
   (prop-type "GParamObject")
   (docs "toggled")
   (readable #t)
@@ -3761,10 +3752,10 @@
   (construct-only #f)
 )
 
-;; From MaiaToggleButtonToggledEventArgs
+;; From MaiaToggleToggledEventArgs
 
 (define-property serialize
-  (of-object "MaiaToggleButtonToggledEventArgs")
+  (of-object "MaiaToggleToggledEventArgs")
   (prop-type "GParamVariant")
   (docs "serialize")
   (readable #t)
@@ -3773,7 +3764,7 @@
 )
 
 (define-property button-name
-  (of-object "MaiaToggleButtonToggledEventArgs")
+  (of-object "MaiaToggleToggledEventArgs")
   (prop-type "GParamString")
   (docs "button-name")
   (readable #t)
@@ -3782,7 +3773,7 @@
 )
 
 (define-property active
-  (of-object "MaiaToggleButtonToggledEventArgs")
+  (of-object "MaiaToggleToggledEventArgs")
   (prop-type "GParamBoolean")
   (docs "active")
   (readable #t)

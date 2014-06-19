@@ -23,10 +23,10 @@ public class Maia.View : Maia.Grid
     public delegate bool SetPropertyFunc (GLib.Object inObject, string inProperty, string inColumnName, uint inRow);
 
     // properties
-    private string m_ModelName = null;
-    private unowned Model m_Model = null;
-    private SetPropertyFunc m_SetPropertyFunc = null;
-    private int m_RowHightlighted = -1;
+    private string            m_ModelName = null;
+    private Model             m_Model = null;
+    private SetPropertyFunc   m_SetPropertyFunc = null;
+    private int               m_RowHightlighted = -1;
     private Manifest.Document m_Document = null;
 
     // signals
@@ -53,8 +53,8 @@ public class Maia.View : Maia.Grid
         default = null;
     }
 
-    public unowned Model model {
-        owned get {
+    public Model model {
+        get {
             if (m_ModelName != null && m_Model == null)
             {
                 m_Model = find_model (m_ModelName);

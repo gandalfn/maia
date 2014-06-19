@@ -31,35 +31,35 @@ _PINCLUDE(maiamm/private/core-eventargs_p.h)
 
 namespace Maia
 {
-    class ToggleButtonToggledEventArgs : public Core::EventArgs
+    class ToggleToggledEventArgs : public Core::EventArgs
     {
-        _CLASS_GOBJECT(ToggleButtonToggledEventArgs, MaiaToggleButtonToggledEventArgs, MAIA_TOGGLE_BUTTON_TOGGLED_EVENT_ARGS, Core::EventArgs, MaiaCoreEventArgs)
+        _CLASS_GOBJECT(ToggleToggledEventArgs, MaiaToggleToggledEventArgs, MAIA_TOGGLE_TOGGLED_EVENT_ARGS, Core::EventArgs, MaiaCoreEventArgs)
 
         public:
-            _WRAP_METHOD(bool get_active () const, maia_toggle_button_toggled_event_args_get_active)
-            _WRAP_METHOD(Glib::ustring get_button_name () const, maia_toggle_button_toggled_event_args_get_button_name)
+            _WRAP_METHOD(bool get_active () const, maia_toggle_toggled_event_args_get_active)
+            _WRAP_METHOD(Glib::ustring get_button_name () const, maia_toggle_toggled_event_args_get_button_name)
 
             _WRAP_PROPERTY("active", bool)
             _WRAP_PROPERTY("button-name", Glib::ustring)
     };
     
-    class ToggleButton : public Group, public ItemPackable, public ItemMovable
+    class Toggle : public Group, public ItemPackable, public ItemMovable
     {
-        _CLASS_GOBJECT(ToggleButton, MaiaToggleButton, MAIA_TOGGLE_BUTTON, Group, MaiaGroup)
+        _CLASS_GOBJECT(Toggle, MaiaToggle, MAIA_TOGGLE, Group, MaiaGroup)
         _IMPLEMENTS_INTERFACE(ItemPackable)
         _IMPLEMENTS_INTERFACE(ItemMovable)
 
         public:
-            _WRAP_METHOD(Glib::ustring get_group () const, maia_toggle_button_get_group)
-            _WRAP_METHOD(void set_grouo (const Glib::ustring& inGroup), maia_toggle_button_set_group)
-            _WRAP_METHOD(Glib::ustring get_font_description () const, maia_toggle_button_get_font_description)
-            _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_toggle_button_set_font_description)
-            _WRAP_METHOD(Glib::ustring get_label () const, maia_toggle_button_get_label)
-            _WRAP_METHOD(void set_label (const Glib::ustring& inLabel), maia_toggle_button_set_label)
-            _WRAP_METHOD(bool get_active () const, maia_toggle_button_get_active)
-            _WRAP_METHOD(void set_active (bool inActive = true), maia_toggle_button_set_active)
+            _WRAP_METHOD(Glib::ustring get_group () const, maia_toggle_get_group)
+            _WRAP_METHOD(void set_grouo (const Glib::ustring& inGroup), maia_toggle_set_group)
+            _WRAP_METHOD(Glib::ustring get_font_description () const, maia_toggle_get_font_description)
+            _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_toggle_set_font_description)
+            _WRAP_METHOD(Glib::ustring get_label () const, maia_toggle_get_label)
+            _WRAP_METHOD(void set_label (const Glib::ustring& inLabel), maia_toggle_set_label)
+            _WRAP_METHOD(bool get_active () const, maia_toggle_get_active)
+            _WRAP_METHOD(void set_active (bool inActive = true), maia_toggle_set_active)
 
-            _WRAP_METHOD(Glib::RefPtr<Core::Event> toggled () const, maia_toggle_button_get_toggled, refreturn)
+            _WRAP_METHOD(Glib::RefPtr<Core::Event> toggled () const, maia_toggle_get_toggled, refreturn)
 
             _WRAP_PROPERTY("group", Glib::ustring)
             _WRAP_PROPERTY("font-description", Glib::ustring)

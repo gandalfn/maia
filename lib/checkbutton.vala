@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.CheckButton : ToggleButton
+public class Maia.CheckButton : Toggle
 {
     // properties
     private unowned Label? m_Label;

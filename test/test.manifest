@@ -1,5 +1,37 @@
-ScrollView.view {
+DocumentView.view {
 	background-pattern: rgb(1, 1, 1);
+
+	Shortcut.summary_vascular_carotid_shortcut {
+		section: 'summary_vascular_carotid;
+		label: 'Patient
+Information';
+		angle: 0;
+	}
+
+	Shortcut.summary_vascular_anat_carotid_shortcut {
+		section: 'grid_anatomical_data_carotid;
+		label: 'Anatomical
+Data';
+		angle: 0;
+	}
+
+	Shortcut.patient_information_shortcut {
+		section: summary_other_information_title_grid;
+		label: 'Other
+Information';
+		angle: 0;
+	}
+
+	Shortcut.images_shortcut {
+		section: target_images;
+		label: 'Images';
+		angle: 0;
+	}
+	Shortcut.conclusion_shortcut {
+		section: summary_conclusion_title_grid;
+		label: 'Conclusion';
+		angle: 0;
+	}
 
 	@include(/home/gandalfn/Projects/git/rubi/dev/runtime_ro/worksheet/carotid/carotid.manifest);
 }

@@ -18,16 +18,16 @@
  */
 
 #include <maia.h>
-#include <maiamm/togglebutton.h>
+#include <maiamm/toggle.h>
 
 _DEFS(maiamm,maia)
-_PINCLUDE(maiamm/private/togglebutton_p.h)
+_PINCLUDE(maiamm/private/toggle_p.h)
 
 namespace Maia
 {
-    class CheckButton : public ToggleButton
+    class CheckButton : public Toggle
     {
-        _CLASS_GOBJECT(CheckButton, MaiaCheckButton, MAIA_CHECK_BUTTON, ToggleButton, MaiaToggleButton)
+        _CLASS_GOBJECT(CheckButton, MaiaCheckButton, MAIA_CHECK_BUTTON, Toggle, MaiaToggle)
 
         protected:
             _CTOR_DEFAULT()

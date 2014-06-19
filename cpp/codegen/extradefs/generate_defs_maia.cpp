@@ -81,8 +81,8 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_PATH);
     std::cout << get_defs (MAIA_TYPE_RECTANGLE);
     std::cout << get_defs (MAIA_TYPE_SCROLL);
-    std::cout << get_defs (MAIA_TYPE_TOGGLE_BUTTON);
-    std::cout << get_defs (MAIA_TOGGLE_BUTTON_TYPE_TOGGLED_EVENT_ARGS);
+    std::cout << get_defs (MAIA_TYPE_TOGGLE);
+    std::cout << get_defs (MAIA_TOGGLE_TYPE_TOGGLED_EVENT_ARGS);
     std::cout << get_defs (MAIA_TYPE_TOGGLE_GROUP);
     std::cout << get_defs (MAIA_TYPE_VIEW);
     std::cout << get_defs (MAIA_TYPE_SHORTCUT);

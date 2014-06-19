@@ -162,9 +162,11 @@ public class Maia.Application : Maia.Core.Object
         Manifest.Element.register ("CassoGrid",   typeof (CassoGrid));
         Manifest.Element.register ("ToggleGroup", typeof (ToggleGroup));
         Manifest.Element.register ("Button",      typeof (Button));
+        Manifest.Element.register ("ToggleButton",typeof (ToggleButton));
         Manifest.Element.register ("CheckButton", typeof (CheckButton));
         Manifest.Element.register ("Highlight",   typeof (Highlight));
         Manifest.Element.register ("Document",    typeof (Document));
+        Manifest.Element.register ("DocumentView",typeof (DocumentView));
         Manifest.Element.register ("Model",       typeof (Model));
         Manifest.Element.register ("Column",      typeof (Model.Column));
         Manifest.Element.register ("View",        typeof (View));
