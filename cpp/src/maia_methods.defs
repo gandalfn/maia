@@ -14765,6 +14765,12 @@
   )
 )
 
+(define-method get_clicked
+  (of-object "MaiaButton")
+  (c-name "maia_button_get_clicked")
+  (return-type "MaiaCoreEvent*")
+)
+
 (define-function maia_toggle_group_get_type
   (c-name "maia_toggle_group_get_type")
   (return-type "GType")

@@ -1071,12 +1071,6 @@
 
 ;; From MaiaButton
 
-(define-signal clicked
-  (of-object "MaiaButton")
-  (return-type "void")
-  (when "last")
-)
-
 (define-property tag
   (of-object "MaiaButton")
   (prop-type "GParamString")
@@ -1164,6 +1158,15 @@
   (docs "button-inactive-color")
   (readable #t)
   (writable #t)
+  (construct-only #f)
+)
+
+(define-property clicked
+  (of-object "MaiaButton")
+  (prop-type "GParamObject")
+  (docs "clicked")
+  (readable #t)
+  (writable #f)
   (construct-only #f)
 )
 

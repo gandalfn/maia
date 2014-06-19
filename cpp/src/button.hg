@@ -22,6 +22,7 @@
 #include <maiamm/graphic-size.h>
 #include <maiamm/item-packable.h>
 #include <maiamm/item-movable.h>
+#include <maiamm/core-event.h>
 #include <maiamm/grid.h>
 
 _DEFS(maiamm,maia)
@@ -69,7 +70,7 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_button_inactive_color () const, maia_button_get_button_inactive_color, refreturn)
             _WRAP_METHOD(void set_button_inactive_color (const Glib::RefPtr<Graphic::Color>& inColor), maia_button_set_button_inactive_color)
 
-            _WRAP_SIGNAL(void clicked (), "clicked", no_default_handler)
+            _WRAP_METHOD(Glib::RefPtr<Core::Event> clicked () const, maia_button_get_clicked, refreturn)
 
             _WRAP_PROPERTY("sensitive", bool)
             _WRAP_PROPERTY("font-description", Glib::ustring)
@@ -80,5 +81,7 @@ namespace Maia
             _WRAP_PROPERTY("button-color", Glib::RefPtr<Graphic::Color>)
             _WRAP_PROPERTY("button-inactive-color", Glib::RefPtr<Graphic::Color>)
             _WRAP_PROPERTY("can-focus", bool)
+
+            _WRAP_PROPERTY("clicked", Glib::RefPtr<Core::Event>)
     };
 }

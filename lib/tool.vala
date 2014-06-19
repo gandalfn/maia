@@ -128,7 +128,7 @@ public class Maia.Tool : Button
         not_dumpable_attributes.insert ("toolbox");
 
         // Connect onto clicked signal
-        clicked.connect (on_clicked);
+        clicked.subscribe (on_clicked);
 
         // Connect onto root changed
         notify["root"].connect (on_root_changed);
@@ -264,7 +264,7 @@ public class Maia.Tool : Button
     }
 
     private void
-    on_clicked ()
+    on_clicked (Core.EventArgs? inArgs)
     {
         // parent toolbox was found
         if (toolbox != null)

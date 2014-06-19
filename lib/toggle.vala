@@ -156,7 +156,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
         }
     }
 
-    // signals
+    // events
     public Core.Event toggled { get; private set; }
 
     // methods

@@ -18,7 +18,7 @@
  */
 
 /**
- * An item that emits a signal when clicked on
+ * An item that emits an event when clicked on
  *
  * =Manifest description:=
  *
@@ -109,15 +109,17 @@ public class Maia.Button : Grid
      */
     public Graphic.Color button_inactive_color { get; set; default = null; }
 
-    // signals
+    // events
     /**
-     * Signal received when button was clicked
+     * Event emmitted when button was clicked
      */
-    public signal void clicked ();
+    public Core.Event clicked { get; private set; }
 
     // methods
     construct
     {
+        clicked = new Core.Event ("clicked", this);
+
         stroke_pattern = new Graphic.Color (0, 0, 0);
 
         column_spacing = border;
@@ -222,7 +224,7 @@ public class Maia.Button : Grid
 
                 if (ret)
                 {
-                    clicked ();
+                    clicked.publish ();
                 }
             }
         }
