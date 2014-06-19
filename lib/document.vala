@@ -20,6 +20,7 @@
 public class Maia.Document : Item
 {
     // static
+    internal static GLib.Quark s_HeaderFooterQuark;
     internal static GLib.Quark s_PageBreakQuark;
     internal static GLib.Quark s_PageNumQuark;
     public static GLib.Quark s_PageBeginQuark;
@@ -89,6 +90,7 @@ public class Maia.Document : Item
     // static methods
     static construct
     {
+        s_HeaderFooterQuark = GLib.Quark.from_string ("MaiaDocumentHeaderFooter");
         s_PageBreakQuark = GLib.Quark.from_string ("MaiaDocumentPageBreakQuark");
         s_PageNumQuark = GLib.Quark.from_string ("MaiaDocumentPageNumQuark");
         s_PageBeginQuark = GLib.Quark.from_string ("MaiaDocumentPageBeginQuark");
@@ -294,7 +296,9 @@ public class Maia.Document : Item
     private void
     paginate_child_item (Item inRoot, Item inItem, ref Graphic.Point inoutCurrentPosition, ref unowned Page inoutPage)
     {
-        if (inItem.name != header && inItem.name != footer && inItem.visible)
+        bool is_header_footer = inItem.get_qdata (s_HeaderFooterQuark) || inItem.name == header || inItem.name == footer;
+
+        if (!is_header_footer && inItem.visible)
         {
             bool add_height = true;
 
@@ -386,8 +390,9 @@ public class Maia.Document : Item
     {
         // Get last page
         unowned Page? page = m_Pages.last ();
+        bool is_header_footer = inItem.get_qdata (s_HeaderFooterQuark) || inItem.name == header || inItem.name == footer;
 
-        if (inItem.name != header && inItem.name != footer &&  !(inItem is Popup) && inItem.visible)
+        if (!is_header_footer && !(inItem is Popup) && inItem.visible)
         {
             bool add_item_in_page = true;
 
@@ -882,12 +887,6 @@ public class Maia.Document : Item
                 {
                     uint delta = get_qdata<uint> (s_PageBeginQuark);
                     m_CurrentPage = page.num + delta;
-
-                    var page_position = Graphic.Point (0, ((format.to_size ().height + (border_width* 2.0)) * (page.num - 1)));
-                    inContext.translate (page_position.invert ());
-
-                    if (page.header != null) page.header.damage ();
-                    if (page.footer != null) page.footer.damage ();
 
                     page.draw (inContext, page.geometry);
                     break;

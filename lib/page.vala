@@ -90,12 +90,15 @@ internal class Maia.Page : GLib.Object
         set {
             if (m_Header != null)
             {
-                m_Header.damage.disconnect (on_header_footer_damaged);
+                m_Childs.remove (m_Header);
+                m_Header.parent = null;
             }
             try
             {
                 m_Header = value.duplicate (@"$(value.name)-$(num)") as Item;
-                m_Header.damage.connect (on_header_footer_damaged);
+                m_Header.set_qdata<bool> (Document.s_HeaderFooterQuark, true);
+                m_Childs.insert (m_Header);
+                m_Header.parent = m_Document;
             }
             catch (GLib.Error err)
             {
@@ -112,12 +115,15 @@ internal class Maia.Page : GLib.Object
         set {
             if (m_Footer != null)
             {
-                m_Footer.damage.disconnect (on_header_footer_damaged);
+                m_Childs.remove (m_Footer);
+                m_Footer.parent = null;
             }
             try
             {
                 m_Footer = value.duplicate (@"$(value.name)-$(num)") as Item;
-                m_Footer.damage.connect (on_header_footer_damaged);
+                m_Footer.set_qdata<bool> (Document.s_HeaderFooterQuark, true);
+                m_Childs.insert (m_Footer);
+                m_Footer.parent = m_Document;
             }
             catch (GLib.Error err)
             {
@@ -170,7 +176,7 @@ internal class Maia.Page : GLib.Object
             }
 
             // Suppress footer height
-            if (footer != null)
+            if (m_Footer != null)
             {
                 size.resize (0, -m_Footer.size.height);
             }
@@ -183,51 +189,14 @@ internal class Maia.Page : GLib.Object
     public Page (Document inDocument, uint inPageNum)
     {
         m_Document = inDocument;
-        m_Document.damage.connect (on_document_damaged);
         m_Childs = new Core.List<unowned Item> ();
         num = inPageNum;
-    }
-
-    private void
-    on_document_damaged (Drawable inChild, Graphic.Region? inArea)
-    {
-        if (m_Header != null)
-        {
-            m_Header.damage_area (m_Document.area_to_child_item_space (m_Header, inArea));
-        }
-        if (m_Footer != null)
-        {
-            m_Footer.damage_area (m_Document.area_to_child_item_space (m_Footer, inArea));
-        }
-    }
-
-    private void
-    on_header_footer_damaged (Drawable inChild, Graphic.Region? inArea)
-    {
-        if (inChild.geometry != null)
-        {
-            Graphic.Region damaged_area;
-
-            if (inArea == null)
-            {
-                damaged_area = inChild.geometry.copy ();
-            }
-            else
-            {
-                damaged_area = inChild.area_to_parent_item_space (inArea);
-            }
-
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
-
-            // damage document
-            m_Document.damage (damaged_area);
-        }
     }
 
     public void
     add (Item inItem)
     {
-        if (inItem != header && inItem != footer && !(inItem in m_Childs))
+        if (!(inItem in m_Childs))
         {
             // Insert child in list
             m_Childs.insert (inItem);
@@ -272,7 +241,7 @@ internal class Maia.Page : GLib.Object
 
         foreach (unowned Item child in m_Childs)
         {
-            if (child.geometry == null)
+            if (child != m_Header && child != m_Footer)
             {
                 // Get child position and size
                 var item_position = child.position;
@@ -293,36 +262,9 @@ internal class Maia.Page : GLib.Object
 
         inContext.save ();
         {
-            if (m_Header != null && m_Header.geometry != null)
-            {
-                var area = inArea.copy ();
-                area.translate (m_Document.position);
-                area.intersect (geometry);
-                var damaged_area = m_Document.area_to_child_item_space (m_Header, area);
-
-                if (!damaged_area.is_empty ())
-                {
-                    m_Header.draw (inContext, damaged_area);
-                }
-            }
-
-            if (m_Footer != null && m_Footer.geometry != null)
-            {
-                var area = inArea.copy ();
-                area.translate (m_Document.position);
-                area.intersect (geometry);
-                var damaged_area = m_Document.area_to_child_item_space (m_Footer, area);
-
-                if (!damaged_area.is_empty ())
-                {
-                    m_Footer.draw (inContext, damaged_area);
-                }
-            }
-
             foreach (unowned Item item in m_Childs)
             {
                 var area = inArea.copy ();
-                area.translate (m_Document.position);
                 area.intersect (geometry);
                 var damaged_area = m_Document.area_to_child_item_space (item, area);
 
