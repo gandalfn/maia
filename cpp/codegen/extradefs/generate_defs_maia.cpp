@@ -61,6 +61,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_CHECK_BUTTON);
     std::cout << get_defs (MAIA_TYPE_CURSOR);
     std::cout << get_defs (MAIA_TYPE_DOCUMENT);
+    std::cout << get_defs (MAIA_TYPE_DOCUMENT_VIEW);
     std::cout << get_defs (MAIA_TYPE_DRAWABLE);
     std::cout << get_defs (MAIA_TYPE_DRAWING_AREA);
     std::cout << get_defs (MAIA_TYPE_ENTRY);
@@ -84,6 +85,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_TOGGLE);
     std::cout << get_defs (MAIA_TOGGLE_TYPE_TOGGLED_EVENT_ARGS);
     std::cout << get_defs (MAIA_TYPE_TOGGLE_GROUP);
+    std::cout << get_defs (MAIA_TYPE_TOGGLE_BUTTON);
     std::cout << get_defs (MAIA_TYPE_VIEW);
     std::cout << get_defs (MAIA_TYPE_SHORTCUT);
     std::cout << get_defs (MAIA_TYPE_POPUP);

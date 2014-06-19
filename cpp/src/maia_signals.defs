@@ -1328,10 +1328,12 @@
   (construct-only #f)
 )
 
-(define-property shortcuts
-  (of-object "MaiaDocument")
-  (prop-type "GParamObject")
-  (docs "shortcuts")
+;; From MaiaDocumentView
+
+(define-property tag
+  (of-object "MaiaDocumentView")
+  (prop-type "GParamString")
+  (docs "tag")
   (readable #t)
   (writable #f)
   (construct-only #f)
@@ -3841,6 +3843,53 @@
   (of-object "MaiaToggleGroup")
   (prop-type "GParamString")
   (docs "active")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaToggleButton
+
+(define-property tag
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property border
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamDouble")
+  (docs "border")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property sensitive
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamBoolean")
+  (docs "sensitive")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property button-color
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamObject")
+  (docs "button-color")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property button-inactive-color
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamObject")
+  (docs "button-inactive-color")
   (readable #t)
   (writable #t)
   (construct-only #f)

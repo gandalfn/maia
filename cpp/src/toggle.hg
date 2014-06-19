@@ -42,7 +42,7 @@ namespace Maia
             _WRAP_PROPERTY("active", bool)
             _WRAP_PROPERTY("button-name", Glib::ustring)
     };
-    
+
     class Toggle : public Group, public ItemPackable, public ItemMovable
     {
         _CLASS_GOBJECT(Toggle, MaiaToggle, MAIA_TOGGLE, Group, MaiaGroup)
@@ -60,6 +60,8 @@ namespace Maia
             _WRAP_METHOD(void set_active (bool inActive = true), maia_toggle_set_active)
 
             _WRAP_METHOD(Glib::RefPtr<Core::Event> toggled () const, maia_toggle_get_toggled, refreturn)
+
+            _WRAP_PROPERTY("toggled", Glib::RefPtr<Core::Event>)
 
             _WRAP_PROPERTY("group", Glib::ustring)
             _WRAP_PROPERTY("font-description", Glib::ustring)

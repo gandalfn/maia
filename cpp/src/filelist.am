@@ -59,6 +59,7 @@ files_hg = \
     toggle.hg \
     checkbutton.hg \
     document.hg \
+    document-view.hg \
     drawing-area.hg \
     entry.hg \
     grid.hg \
@@ -68,6 +69,7 @@ files_hg = \
     path.hg \
     rectangle.hg \
     togglegroup.hg \
+    toggle-button.hg \
     model.hg \
     view.hg \
     shortcut.hg \

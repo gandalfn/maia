@@ -15320,17 +15320,6 @@
   )
 )
 
-(define-function maia_shortcut_get_type
-  (c-name "maia_shortcut_get_type")
-  (return-type "GType")
-)
-
-(define-method get_shortcuts
-  (of-object "MaiaDocument")
-  (c-name "maia_document_get_shortcuts")
-  (return-type "MaiaCoreList*")
-)
-
 (define-function maia_document_view_get_type
   (c-name "maia_document_view_get_type")
   (return-type "GType")
@@ -15960,6 +15949,11 @@
   (parameters
     '("MaiaGraphicColor*" "value")
   )
+)
+
+(define-function maia_shortcut_get_type
+  (c-name "maia_shortcut_get_type")
+  (return-type "GType")
 )
 
 (define-function maia_shortcut_new

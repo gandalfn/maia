@@ -45,6 +45,10 @@ namespace Maia
 
             _WRAP_METHOD(Glib::RefPtr<Adjustment> get_hadjustment () const, maia_scroll_view_get_hadjustment)
             _WRAP_METHOD(Glib::RefPtr<Adjustment> get_vadjustment () const, maia_scroll_view_get_vadjustment)
+            _WRAP_METHOD(double get_scroll_x () const, maia_scroll_view_get_scroll_x)
+            _WRAP_METHOD(void set_scroll_x (double inValue), maia_scroll_view_set_scroll_x)
+            _WRAP_METHOD(double get_scroll_y () const, maia_scroll_view_get_scroll_y)
+            _WRAP_METHOD(void set_scroll_y (double inValue), maia_scroll_view_set_scroll_y)
             _WRAP_METHOD(ScrollViewPolicy get_policy () const, maia_scroll_view_get_policy)
             _WRAP_METHOD(void set_policy (ScrollViewPolicy inPolicy), maia_scroll_view_set_policy)
     };

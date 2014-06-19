@@ -1,0 +1,60 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * toggle-button.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/toggle.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/toggle_p.h)
+
+namespace Maia
+{
+    class ToggleButton : public Toggle
+    {
+        _CLASS_GOBJECT(ToggleButton, MaiaToggleButton, MAIA_TOGGLE_BUTTON, Toggle, MaiaToggle)
+
+        protected:
+            _CTOR_DEFAULT()
+
+        public:
+            static Glib::RefPtr<ToggleButton> create (const Glib::ustring& inId, const Glib::ustring& inLabel)
+            {
+                MaiaToggleButton* pButton = maia_toggle_button_new (inId.c_str(), inLabel.c_str ());
+                return Glib::RefPtr<ToggleButton> (new ToggleButton (pButton));
+            }
+
+            _WRAP_METHOD(bool get_sensitive () const, maia_toggle_button_get_sensitive)
+            _WRAP_METHOD(void set_sensitive (bool inSensitive = true), maia_toggle_button_set_sensitive)
+
+            _WRAP_METHOD(double get_border () const, maia_toggle_button_get_border)
+            _WRAP_METHOD(void set_border (double inBorder), maia_toggle_button_set_border)
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_button_color () const, maia_toggle_button_get_button_color, refreturn)
+            _WRAP_METHOD(void set_button_color (const Glib::RefPtr<Graphic::Color>& inColor), maia_toggle_button_set_button_color)
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_button_inactive_color () const, maia_toggle_button_get_button_inactive_color, refreturn)
+            _WRAP_METHOD(void set_button_inactive_color (const Glib::RefPtr<Graphic::Color>& inColor), maia_toggle_button_set_button_inactive_color)
+
+
+            _WRAP_PROPERTY("sensitive", bool)
+            _WRAP_PROPERTY("border", double)
+            _WRAP_PROPERTY("button-color", Glib::RefPtr<Graphic::Color>)
+            _WRAP_PROPERTY("button-inactive-color", Glib::RefPtr<Graphic::Color>)
+
+            _WRAP_PROPERTY("tag", Glib::ustring)
+    };
+}

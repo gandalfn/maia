@@ -49,7 +49,6 @@ public class Maia.Document : Item
     // properties
     private Core.List<unowned Item>      m_Items;
     private Core.List<unowned Popup>     m_Popups;
-    private Core.List<unowned Shortcut>  m_Shortcuts;
     private Graphic.Surface              m_PageShadow;
     private Core.List<Page>              m_Pages;
     private Core.List<unowned PageBreak> m_PageBreaks;
@@ -86,12 +85,6 @@ public class Maia.Document : Item
     public string footer { get; set; default = null; }
 
     public unowned Item? item_over_pointer { get; set; default = null; }
-
-    public Core.List<unowned Shortcut>? shortcuts {
-        get {
-            return m_Shortcuts;
-        }
-    }
 
     // static methods
     static construct
@@ -138,9 +131,6 @@ public class Maia.Document : Item
 
         // create popups list
         m_Popups = new Core.List<unowned Popup> ();
-
-        // create shortcuts list
-        m_Shortcuts = new Core.List<unowned Shortcut> ();
 
         // create page break list
         m_PageBreaks = new Core.List<unowned PageBreak> ();
@@ -596,10 +586,6 @@ public class Maia.Document : Item
             {
                 m_Popups.insert (inObject as Popup);
             }
-            else if (inObject is Shortcut)
-            {
-                m_Shortcuts.insert (inObject as Shortcut);
-            }
             else if (inObject is Item)
             {
                 m_Items.insert (inObject as Item);
@@ -614,22 +600,12 @@ public class Maia.Document : Item
         {
             m_Popups.remove (inObject as Popup);
         }
-        else if (inObject is Shortcut && m_Shortcuts != null)
-        {
-            m_Shortcuts.remove (inObject as Shortcut);
-        }
         else if (inObject is Item && m_Items != null)
         {
             m_Items.remove (inObject as Item);
         }
 
         base.remove_child (inObject);
-    }
-
-    internal override bool
-    can_append_child (Core.Object inObject)
-    {
-        return base.can_append_child (inObject) || inObject is Shortcut;
     }
 
     internal override void
@@ -868,12 +844,6 @@ public class Maia.Document : Item
     {
         string ret = "";
 
-        // dump shortcuts
-        foreach (unowned Shortcut shortcut in m_Shortcuts)
-        {
-            ret += inPrefix + shortcut.dump (inPrefix) + "\n";
-        }
-
         // dump popup
         foreach (unowned Popup popup in m_Popups)
         {
@@ -886,7 +856,7 @@ public class Maia.Document : Item
         // dump all others childs
         foreach (unowned Core.Object child in this)
         {
-            if (child is Manifest.Element && !(child is Shortcut) && !(child is Popup) && !(child is Item))
+            if (child is Manifest.Element && !(child is Popup) && !(child is Item))
             {
                 ret += inPrefix + (child as Manifest.Element).dump (inPrefix) + "\n";
             }

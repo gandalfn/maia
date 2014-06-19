@@ -73,9 +73,6 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Item> get_item_over_pointer () const, maia_document_get_item_over_pointer, refreturn)
             _WRAP_METHOD(void set_pointer_over_pointer (const Glib::RefPtr<Item>& inItem), maia_document_set_item_over_pointer)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Region> get_visible_area () const, maia_document_get_visible_area, refreturn)
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Region> get_item_visible_area (const Glib::RefPtr<Item>& inItem) const, maia_document_get_item_visible_area, refreturn)
-
             _WRAP_METHOD(void draw_page (const Glib::RefPtr<Graphic::Context>& inContext, guint inNumPage), maia_document_draw_page, errthrow)
 
             _WRAP_PROPERTY("format", PageFormat)
@@ -90,6 +87,5 @@ namespace Maia
             _WRAP_PROPERTY("footer", Glib::ustring)
             _WRAP_PROPERTY("item-over-pointer", Glib::RefPtr<Item>)
             _WRAP_PROPERTY("current-page", guint)
-            _WRAP_PROPERTY("visible-area", Glib::RefPtr<Graphic::Region>)
     };
 }
