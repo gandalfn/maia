@@ -1342,6 +1342,24 @@
   (construct-only #f)
 )
 
+(define-property fit-width
+  (of-object "MaiaDocumentView")
+  (prop-type "GParamBoolean")
+  (docs "fit-width")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property fit-height
+  (of-object "MaiaDocumentView")
+  (prop-type "GParamBoolean")
+  (docs "fit-height")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaDrawable
 
 (define-signal damage

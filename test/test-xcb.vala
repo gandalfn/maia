@@ -124,13 +124,13 @@ void main (string[] args)
         window.destroy_event.subscribe (() => { application.quit (); });
 
         var cancel = window.find (GLib.Quark.from_string ("cancel")) as Maia.Button;
-        cancel.clicked.connect (() => {
+        cancel.clicked.subscribe (() => {
             application.quit ();
         });
 
         var entry = window.find (GLib.Quark.from_string ("entry")) as Maia.Entry;
         var ok = window.find (GLib.Quark.from_string ("ok")) as Maia.Button;
-        ok.clicked.connect (() => {
+        ok.clicked.subscribe (() => {
             print ("text: %s\n", entry.text);
         });
 
