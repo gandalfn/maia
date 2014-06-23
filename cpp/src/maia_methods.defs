@@ -7300,6 +7300,16 @@
   )
 )
 
+(define-function maia_manifest_attribute_get_type
+  (c-name "maia_manifest_attribute_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_manifest_attribute_bind_get_type
+  (c-name "maia_manifest_attribute_bind_get_type")
+  (return-type "GType")
+)
+
 (define-function maia_manifest_element_create
   (c-name "maia_manifest_element_create")
   (return-type "MaiaManifestElement*")
@@ -7335,6 +7345,8 @@
   (return-type "MaiaManifestElement*")
   (parameters
     '("const-gchar*" "inId")
+    '("MaiaManifestDocumentAttributeBindAddedFunc" "inFunc")
+    '("void*" "inFunc_target")
     '("GError**" "error")
   )
 )
@@ -7624,16 +7636,6 @@
     '("GValue*" "result")
     '("GError**" "error")
   )
-)
-
-(define-function maia_manifest_attribute_get_type
-  (c-name "maia_manifest_attribute_get_type")
-  (return-type "GType")
-)
-
-(define-function maia_manifest_attribute_bind_get_type
-  (c-name "maia_manifest_attribute_bind_get_type")
-  (return-type "GType")
 )
 
 (define-function maia_manifest_attribute_register_transform_func

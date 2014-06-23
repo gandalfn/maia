@@ -1,4 +1,5 @@
 DocumentView.view {
+	fit-width: true;
 	background-pattern: rgb(1, 1, 1);
 
 	Shortcut.summary_vascular_carotid_shortcut {

@@ -53,5 +53,16 @@ namespace Maia
             Element::SlotCreateFunc* pSlot = new Element::SlotCreateFunc (inFunc);
             maia_manifest_element_register_create_func (inTag.c_str (), register_create_func_callback, pSlot, register_create_func_destroy);
         }
+
+        Glib::RefPtr<Element>
+        Element::duplicate (const Glib::ustring& inId)
+        {
+            GError* gerror = 0;
+            Glib::RefPtr<Element> retvalue = Glib::wrap(maia_manifest_element_duplicate(gobj(), inId.c_str(), nullptr, nullptr, &(gerror)));
+            if(gerror)
+                ::Glib::Error::throw_exception(gerror);
+
+            return retvalue;
+        }
     }
 }

@@ -95,10 +95,12 @@ internal class Maia.Page : GLib.Object
             }
             try
             {
-                m_Header = value.duplicate (@"$(value.name)-$(num)") as Item;
+                m_Header = value.duplicate (@"$(value.name)-$(num)", m_Document.on_attribute_bind_added) as Item;
                 m_Header.set_qdata<bool> (Document.s_HeaderFooterQuark, true);
                 m_Childs.insert (m_Header);
                 m_Header.parent = m_Document;
+                m_Header.set_qdata<uint>(Document.s_PageNumQuark, num);
+                GLib.Signal.emit_by_name (m_Header, "notify::page_num");
             }
             catch (GLib.Error err)
             {
@@ -120,10 +122,12 @@ internal class Maia.Page : GLib.Object
             }
             try
             {
-                m_Footer = value.duplicate (@"$(value.name)-$(num)") as Item;
+                m_Footer = value.duplicate (@"$(value.name)-$(num)", m_Document.on_attribute_bind_added) as Item;
                 m_Footer.set_qdata<bool> (Document.s_HeaderFooterQuark, true);
                 m_Childs.insert (m_Footer);
                 m_Footer.parent = m_Document;
+                m_Footer.set_qdata<uint>(Document.s_PageNumQuark, num);
+                GLib.Signal.emit_by_name (m_Footer, "notify::page_num");
             }
             catch (GLib.Error err)
             {
@@ -200,6 +204,10 @@ internal class Maia.Page : GLib.Object
         {
             // Insert child in list
             m_Childs.insert (inItem);
+
+            // Set page num
+            inItem.set_qdata<uint>(Document.s_PageNumQuark, num);
+            GLib.Signal.emit_by_name (inItem, "notify::page_num");
         }
     }
 

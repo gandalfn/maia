@@ -1145,6 +1145,24 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 ((Item)inObject).ungrab_keyboard.connect (on_child_ungrab_keyboard);
             }
 
+            if (inObject is Manifest.Element)
+            {
+                // Item has theme and child has not theme (if in parsing the theme has been before add)
+                if (manifest_theme != null && ((Manifest.Element)inObject).manifest_theme != manifest_theme)
+                {
+                    // Apply theme of parent
+                    ((Manifest.Element)inObject).manifest_theme = manifest_theme;
+                    try
+                    {
+                        manifest_theme.apply (((Manifest.Element)inObject));
+                    }
+                    catch (GLib.Error err)
+                    {
+                        Log.error (GLib.Log.METHOD, Log.Category.CANVAS_LAYOUT, @"Error on apply theme to child of $name: $(err.message)");
+                    }
+                }
+            }
+
             need_update = true;
         }
     }

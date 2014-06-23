@@ -142,5 +142,18 @@ public class Maia.Manifest.Theme : Core.Object, Element
                 }
             }
         }
+        else if (inElement is Core.Object)
+        {
+            // Appply theme in all child
+            foreach (unowned Core.Object child in ((Core.Object)inElement))
+            {
+                unowned Element child_element = child as Element;
+                // if child theme is not same than theme apply theme
+                if (child_element != null && child_element.manifest_theme != inElement.manifest_theme)
+                {
+                    apply (child_element);
+                }
+            }
+        }
     }
 }

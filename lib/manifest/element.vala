@@ -259,11 +259,17 @@ public interface Maia.Manifest.Element : Core.Object
      * @return a new duplicated element
      */
     public Element
-    duplicate (string inId) throws Core.ParseError
+    duplicate (string inId, Document.AttributeBindAddedFunc? inFunc = null) throws Core.ParseError
     {
         string content = dump ("");
         
         Document doc = new Document.from_buffer (content, content.length);
+        if (inFunc != null)
+        {
+            doc.attribute_bind_added.connect ((attr, prop) => {
+                inFunc (attr, prop);
+            });
+        }
         doc.theme = manifest_theme;
         Element ret = doc.get ();
         if (ret != null)

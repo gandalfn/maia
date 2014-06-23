@@ -36,6 +36,9 @@ public class Maia.DocumentView : Group
         }
     }
 
+    public bool fit_width  { get; set; default = false; }
+    public bool fit_height { get; set; default = false; }
+
     // static methods
     static construct
     {
@@ -104,29 +107,20 @@ public class Maia.DocumentView : Group
     }
 
     private void
-    on_shortcut_label_changed (GLib.Object inObject, GLib.ParamSpec inParam)
+    on_shortcut_section_changed (GLib.Object inObject)
     {
-        unowned Shortcut shortcut = inObject as Shortcut;
-        unowned ToggleButton button = shortcut.get_qdata<unowned ToggleButton> (s_QuarkShortcut);
-        button.label = shortcut.label;
-    }
-
-    private void
-    on_shortcut_section_changed (GLib.Object inObject, GLib.ParamSpec inParam)
-    {
-        unowned Shortcut shortcut = inObject as Shortcut;
-        unowned ToggleButton button = shortcut.get_qdata<unowned ToggleButton> (s_QuarkShortcut);
-
-        if (shortcut.section != null)
+        if (m_Document != null)
         {
-            unowned Item item = m_Document.find (GLib.Quark.from_string (shortcut.section)) as Item;
-            if (item != null)
-            {
-                item.notify["visible"].connect (() => {
-                    button.visible = item.visible;
-                });
+            unowned Shortcut shortcut = inObject as Shortcut;
+            unowned ToggleButton button = shortcut.get_qdata<unowned ToggleButton> (s_QuarkShortcut);
 
-                button.visible = item.visible;
+            if (shortcut.section != null)
+            {
+                unowned Item item = m_Document.find (GLib.Quark.from_string (shortcut.section)) as Item;
+                if (item != null)
+                {
+                    item.bind_property ("visible", button, "visible", GLib.BindingFlags.SYNC_CREATE);
+                }
             }
         }
     }
@@ -150,8 +144,8 @@ public class Maia.DocumentView : Group
                         unowned Shortcut? data = button.get_qdata<unowned Shortcut> (s_QuarkShortcut);
                         if (data == null)
                         {
-                            shortcut.notify["label"].connect (on_shortcut_label_changed);
-                            shortcut.notify["section"].connect (on_shortcut_section_changed);
+                            shortcut.bind_property ("label", button, "label", GLib.BindingFlags.SYNC_CREATE);
+                            shortcut.notify["section"].connect ((o, p) => { on_shortcut_section_changed (o); });
                             
                             button.id = shortcut.id;
 
@@ -200,6 +194,15 @@ public class Maia.DocumentView : Group
             // Add document to scroll view
             m_Document = inObject as Document;
             m_Document.parent = m_Content;
+
+            for (int cpt = 0; cpt < m_Shortcuts.nb_rows; ++cpt)
+            {
+                Shortcut? shortcut = (Shortcut?)m_Shortcuts["shortcut"][cpt];
+                if (shortcut != null)
+                {
+                    on_shortcut_section_changed (shortcut);
+                }
+            }
         }
     }
 
@@ -252,8 +255,30 @@ public class Maia.DocumentView : Group
             // Get shortcuts toolbar size
             var toolbar_size = m_ShortcutsToolbar.size;
 
-            // Set content allocation
+            // Calculate content allocation            
             var content_allocation = Graphic.Rectangle (0, 0, geometry.extents.size.width - toolbar_size.width, geometry.extents.size.height);
+
+            // Manage fit properties
+            if (fit_width || fit_height)
+            {
+                double scale_x = 1, scale_y = 1;
+                
+                var content_size = m_Document.size;
+
+                if (fit_width)
+                {
+                    scale_x = content_allocation.size.width / (content_size.width - 5);
+                }
+                if (fit_height)
+                {
+                    scale_y = content_allocation.size.height / (content_size.height - 5);
+                }
+
+                m_Document.transform = new Graphic.Transform.init_scale (scale_x == 1 ? scale_y : scale_x, scale_y == 1 ? scale_x : scale_y);
+                content_size = m_Content.size;
+            }
+
+            // Set content allocation
             m_Content.update (inContext, new Graphic.Region (content_allocation));
 
             // Set toolbar  allocation

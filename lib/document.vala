@@ -531,7 +531,7 @@ public class Maia.Document : Item
     private static void
     on_bind_value_changed (Manifest.AttributeBind inAttribute, Object inSrc, string inProperty)
     {
-        if (inAttribute.get () == "nb_pages" || inAttribute.get () == "page_num")
+        if (inAttribute.get () == "nb_pages")
         {
             uint nb = inSrc.get_qdata<uint> (s_PageTotalQuark);
             if (nb == 0)
@@ -540,9 +540,14 @@ public class Maia.Document : Item
             }
             inAttribute.owner.set_property (inProperty, nb);
         }
+        else if (inAttribute.get () == "page_num")
+        {
+            uint num = inSrc.get_qdata<uint> (s_PageNumQuark);
+            inAttribute.owner.set_property (inProperty, num);
+        }
     }
 
-    private void
+    internal void
     on_attribute_bind_added (Manifest.AttributeBind inAttribute, string inProperty)
     {
         string name = inAttribute.get ();
@@ -558,7 +563,16 @@ public class Maia.Document : Item
 
         if (name == "page_num")
         {
-            inAttribute.owner.set_qdata<unowned Document> (s_PageNumQuark, this);
+            string signal_name = "notify::page_num";
+
+            unowned Core.Object? item = inAttribute.owner as Core.Object;
+            if (item != null)
+            {
+                // search parent which is child in document
+                for (; item.parent != null && item.parent != this; item = item.parent);
+            
+                inAttribute.bind (item, signal_name, inProperty, on_bind_value_changed);
+            }
         }
     }
 

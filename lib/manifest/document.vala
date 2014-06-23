@@ -50,6 +50,8 @@ public class Maia.Manifest.Document : Core.Parser
         }
     }
 
+    public delegate void AttributeBindAddedFunc (AttributeBind inAttribute, string inProperty);
+
     // Properties
     private Document                m_Include = null;
     private string                  m_Filename = null;
