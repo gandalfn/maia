@@ -49,7 +49,6 @@ public class Maia.Document : Item
 
     // properties
     private Core.List<unowned Item>      m_Items;
-    private Core.List<unowned Popup>     m_Popups;
     private Graphic.Surface              m_PageShadow;
     private Core.List<Page>              m_Pages;
     private Core.List<unowned PageBreak> m_PageBreaks;
@@ -130,9 +129,6 @@ public class Maia.Document : Item
 
         // create items list
         m_Items = new Core.List<unowned Item> ();
-
-        // create popups list
-        m_Popups = new Core.List<unowned Popup> ();
 
         // create page break list
         m_PageBreaks = new Core.List<unowned PageBreak> ();
@@ -392,7 +388,7 @@ public class Maia.Document : Item
         unowned Page? page = m_Pages.last ();
         bool is_header_footer = inItem.get_qdata (s_HeaderFooterQuark) || inItem.name == header || inItem.name == footer;
 
-        if (!is_header_footer && !(inItem is Popup) && inItem.visible)
+        if (!is_header_footer && inItem.visible)
         {
             bool add_item_in_page = true;
 
@@ -601,13 +597,13 @@ public class Maia.Document : Item
 
         if (can_append_child (inObject))
         {
-            if (inObject is Popup)
+            if (inObject is Item)
             {
-                m_Popups.insert (inObject as Popup);
-            }
-            else if (inObject is Item)
-            {
-                m_Items.insert (inObject as Item);
+                bool is_header_footer = inObject.get_qdata (s_HeaderFooterQuark);
+                if (!is_header_footer)
+                {
+                    m_Items.insert (inObject as Item);
+                }
             }
         }
     }
@@ -615,13 +611,13 @@ public class Maia.Document : Item
     internal override void
     remove_child (Core.Object inObject)
     {
-        if (inObject is Popup && m_Popups != null)
+        if (inObject is Item && m_Items != null)
         {
-            m_Popups.remove (inObject as Popup);
-        }
-        else if (inObject is Item && m_Items != null)
-        {
-            m_Items.remove (inObject as Item);
+            bool is_header_footer = inObject.get_qdata (s_HeaderFooterQuark);
+            if (!is_header_footer)
+            {
+                m_Items.remove (inObject as Item);
+            }
         }
 
         base.remove_child (inObject);
@@ -863,19 +859,10 @@ public class Maia.Document : Item
     {
         string ret = "";
 
-        // dump popup
-        foreach (unowned Popup popup in m_Popups)
-        {
-            if (popup is Toolbox)
-            {
-                ret += inPrefix + popup.dump (inPrefix) + "\n";
-            }
-        }
-
         // dump all others childs
         foreach (unowned Core.Object child in this)
         {
-            if (child is Manifest.Element && !(child is Popup) && !(child is Item))
+            if (child is Manifest.Element && !(child is Item))
             {
                 ret += inPrefix + (child as Manifest.Element).dump (inPrefix) + "\n";
             }

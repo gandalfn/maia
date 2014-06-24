@@ -108,15 +108,19 @@ public class CanvasEditor.Window : Gtk.Window
 
             m_Toolbox = builder.get_object ("toolbox") as Gtk.ToolButton;
             m_Toolbox.sensitive = false;
-//~             m_Toolbox.clicked.connect (() => {
-//~                 if (m_Canvas.toolbox != null)
-//~                 {
-//~                     if (m_Canvas.toolbox.visible)
-//~                         m_Canvas.toolbox.visible = false;
-//~                     else
-//~                         m_Canvas.toolbox.visible = true;
-//~                 }
-//~             });
+            m_Toolbox.clicked.connect (() => {
+                if (m_Canvas.root is Maia.DocumentView)
+                {
+                    var toolbox = (m_Canvas.root as Maia.DocumentView).toolbox;
+                    if (toolbox != null)
+                    {
+                        if (toolbox.visible)
+                            toolbox.visible = false;
+                        else
+                            toolbox.visible = true;
+                    }
+                }
+            });
 
             m_Dump = builder.get_object ("dump") as Gtk.ToolButton;
             m_Dump.sensitive = false;
@@ -361,13 +365,9 @@ public class CanvasEditor.Window : Gtk.Window
             try
             {
                 m_Canvas.load_from_file (m_SourceView.filename);
-//~                 foreach (unowned Gtk.Button button in m_Canvas.get_shortcut_buttons ())
-//~                 {
-//~                     m_Shortcuts.pack_start (button);
-//~                 }
                 m_PreviewBox.show ();
                 m_Hide.sensitive = true;
-//~                 m_Toolbox.sensitive = m_Canvas.toolbox != null;
+                m_Toolbox.sensitive = (m_Canvas.root is Maia.DocumentView) ? (m_Canvas.root as Maia.DocumentView).toolbox != null : false;
                 m_Dump.sensitive = true;
                 m_Build.sensitive = false;
             }

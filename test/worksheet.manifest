@@ -9,6 +9,8 @@ DocumentView.scrollview {
 		header: 'header';
 		footer: 'footer';
 		
+		transform: scale(1.5, 1.5);
+		
 		// Header
 		CassoGrid.header {
 		    row-spacing: 5;

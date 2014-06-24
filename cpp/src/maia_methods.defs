@@ -15351,34 +15351,21 @@
   )
 )
 
-(define-method get_fit_width
+(define-method get_document
   (of-object "MaiaDocumentView")
-  (c-name "maia_document_view_get_fit_width")
-  (return-type "gboolean")
+  (c-name "maia_document_view_get_document")
+  (return-type "MaiaDocument*")
 )
 
-(define-method set_fit_width
-  (of-object "MaiaDocumentView")
-  (c-name "maia_document_view_set_fit_width")
-  (return-type "none")
-  (parameters
-    '("gboolean" "value")
-  )
+(define-function maia_toolbox_get_type
+  (c-name "maia_toolbox_get_type")
+  (return-type "GType")
 )
 
-(define-method get_fit_height
+(define-method get_toolbox
   (of-object "MaiaDocumentView")
-  (c-name "maia_document_view_get_fit_height")
-  (return-type "gboolean")
-)
-
-(define-method set_fit_height
-  (of-object "MaiaDocumentView")
-  (c-name "maia_document_view_set_fit_height")
-  (return-type "none")
-  (parameters
-    '("gboolean" "value")
-  )
+  (c-name "maia_document_view_get_toolbox")
+  (return-type "MaiaToolbox*")
 )
 
 (define-function maia_model_get_type
@@ -16235,11 +16222,6 @@
     '("const-gchar*" "inId")
     '("const-gchar*" "inLabel")
   )
-)
-
-(define-function maia_toolbox_get_type
-  (c-name "maia_toolbox_get_type")
-  (return-type "GType")
 )
 
 (define-method get_toolbox

@@ -33,6 +33,8 @@ Information';
 		label: 'Conclusion';
 		angle: 0;
 	}
+	
+	@include(/home/gandalfn/Projects/git/rubi/dev/runtime_ro/worksheet/common/vascular-toolBox.manifest);
 
 	@include(/home/gandalfn/Projects/git/rubi/dev/runtime_ro/worksheet/carotid/carotid.manifest);
 }

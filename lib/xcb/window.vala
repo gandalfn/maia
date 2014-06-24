@@ -556,8 +556,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     internal override void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
-        if (!inAllocation.extents.is_empty () && visible &&
-            (need_update || geometry == null || geometry.extents.is_empty () || !geometry.equal (inAllocation)))
+        if (!inAllocation.extents.is_empty () && visible && (geometry == null || !geometry.equal (inAllocation)))
         {
             base.update (inContext, inAllocation);
 

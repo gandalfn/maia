@@ -456,13 +456,6 @@ public class Maia.Window : Group
         {
             focus_item.have_focus = true;
         }
-
-        // Set current item to toolbox
-        foreach (unowned Toolbox toolbox in root.find_by_type<Toolbox> (false))
-        {
-            toolbox.current_item_changed (focus_item);
-            break;
-        }
     }
 
     protected virtual bool
@@ -649,8 +642,7 @@ public class Maia.Window : Group
     internal override void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
-        if (!inAllocation.extents.is_empty () && visible &&
-            (need_update || geometry == null || geometry.extents.is_empty () || !geometry.equal (inAllocation)))
+        if (!inAllocation.extents.is_empty () && visible && (geometry == null || !geometry.equal (inAllocation)))
         {
             geometry = inAllocation;
 

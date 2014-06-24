@@ -210,6 +210,11 @@ _CONVERSION(`const Glib::RefPtr<Application>&',`MaiaApplication*',__CONVERT_REFP
 _CONVERSION(`MaiaApplication*',`const Glib::RefPtr<Application>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaApplication*',`Glib::RefPtr<Application>',`Glib::wrap($3)')
 
+_CONVERSION(`Glib::RefPtr<Document>',`MaiaDocument*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Document>&',`MaiaDocument*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaDocument*',`const Glib::RefPtr<Document>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaDocument*',`Glib::RefPtr<Document>',`Glib::wrap($3)')
+
 _CONVERSION(`Glib::RefPtr<Document>',`MaiaManifestDocument*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Document>&',`MaiaManifestDocument*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaManifestDocument*',`const Glib::RefPtr<Document>&',`Glib::wrap($3)')

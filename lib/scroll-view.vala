@@ -293,12 +293,14 @@ public class Maia.ScrollView : Item
     {
         Graphic.Region area = new Graphic.Region (Graphic.Rectangle (0, 0, inSize.width, inSize.height));
 
-        if (m_Child != null)
+        if (m_Window != null)
         {
-            Graphic.Size child_size = m_Child.size;
+            Graphic.Size window_size = m_Window.size;
 
-            area.union_with_rect (Graphic.Rectangle (0, 0, child_size.width, child_size.height));
+            area.union_with_rect (Graphic.Rectangle (0, 0, window_size.width, window_size.height));
         }
+
+        m_Viewport.need_update = false;
 
         hadjustment.lower = area.extents.origin.x;
         hadjustment.upper = area.extents.size.width;

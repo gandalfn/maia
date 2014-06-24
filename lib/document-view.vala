@@ -28,6 +28,7 @@ public class Maia.DocumentView : Group
     private ToggleGroup      m_ShortcutsGroup;
     private Model            m_Shortcuts;
     private View             m_ShortcutsToolbar;
+    private unowned Toolbox? m_Toolbox;
     
     // accessors
     internal override string tag {
@@ -36,8 +37,17 @@ public class Maia.DocumentView : Group
         }
     }
 
-    public bool fit_width  { get; set; default = false; }
-    public bool fit_height { get; set; default = false; }
+    public Document? document {
+        get {
+            return m_Document;
+        }
+    }
+
+    public Toolbox? toolbox {
+        get {
+            return m_Toolbox;
+        }
+    }
 
     // static methods
     static construct
@@ -77,6 +87,16 @@ public class Maia.DocumentView : Group
     public DocumentView (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
+    }
+
+    private void
+    on_grab_focus (Item? inItem)
+    {
+        if (m_Toolbox != null)
+        {
+            // Set current item to toolbox
+            m_Toolbox.current_item_changed (inItem);
+        }
     }
 
     private void
@@ -169,13 +189,19 @@ public class Maia.DocumentView : Group
     internal override bool
     can_append_child (Core.Object inChild)
     {
-        return inChild is ScrollView || inChild is Grid || inChild is Shortcut;
+        return inChild is ScrollView || inChild is Grid || inChild is Shortcut || inChild is Toolbox;
     }
 
     internal override void
     insert_child (Core.Object inObject)
     {
-        if (!(inObject is Document))
+        if (inObject is Toolbox)
+        {
+            m_Toolbox = inObject as Toolbox;
+
+            base.insert_child (inObject);
+        }
+        else if (!(inObject is Document))
         {
             base.insert_child (inObject);
 
@@ -193,8 +219,14 @@ public class Maia.DocumentView : Group
         {
             // Add document to scroll view
             m_Document = inObject as Document;
+
+            // connect onto grab_focus
+            m_Document.grab_focus.connect (on_grab_focus);
+
+            // Add document to content
             m_Document.parent = m_Content;
 
+            // Update shortcut section
             for (int cpt = 0; cpt < m_Shortcuts.nb_rows; ++cpt)
             {
                 Shortcut? shortcut = (Shortcut?)m_Shortcuts["shortcut"][cpt];
@@ -209,8 +241,15 @@ public class Maia.DocumentView : Group
     internal override void
     remove_child (Core.Object inObject)
     {
-        if (inObject == m_Document)
+        if (inObject == m_Toolbox)
         {
+            m_Toolbox = null;
+
+            base.remove_child (inObject);
+        }
+        else if (inObject == m_Document)
+        {
+            m_Document.grab_focus.disconnect (on_grab_focus);
             m_Document.parent = null;
             m_Document = null;
         }
@@ -258,32 +297,20 @@ public class Maia.DocumentView : Group
             // Calculate content allocation            
             var content_allocation = Graphic.Rectangle (0, 0, geometry.extents.size.width - toolbar_size.width, geometry.extents.size.height);
 
-            // Manage fit properties
-            if (fit_width || fit_height)
-            {
-                double scale_x = 1, scale_y = 1;
-                
-                var content_size = m_Document.size;
-
-                if (fit_width)
-                {
-                    scale_x = content_allocation.size.width / (content_size.width - 5);
-                }
-                if (fit_height)
-                {
-                    scale_y = content_allocation.size.height / (content_size.height - 5);
-                }
-
-                m_Document.transform = new Graphic.Transform.init_scale (scale_x == 1 ? scale_y : scale_x, scale_y == 1 ? scale_x : scale_y);
-                content_size = m_Content.size;
-            }
-
             // Set content allocation
             m_Content.update (inContext, new Graphic.Region (content_allocation));
 
             // Set toolbar  allocation
             var toolbar_allocation = Graphic.Rectangle (geometry.extents.size.width - toolbar_size.width, 0, toolbar_size.width, geometry.extents.size.height);
             m_ShortcutsToolbar.update (inContext, new Graphic.Region (toolbar_allocation));
+
+            // Set toolbox allocation
+            if (m_Toolbox != null && m_Toolbox.content != null)
+            {
+                var toolbox_allocation = Graphic.Rectangle (m_Toolbox.position.x, m_Toolbox.position.y, m_Toolbox.content.size.width, m_Toolbox.content.size.height);
+
+                m_Toolbox.update (inContext, new Graphic.Region (toolbox_allocation));
+            }
 
             damage_area ();
         }

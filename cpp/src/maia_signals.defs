@@ -1342,21 +1342,21 @@
   (construct-only #f)
 )
 
-(define-property fit-width
+(define-property document
   (of-object "MaiaDocumentView")
-  (prop-type "GParamBoolean")
-  (docs "fit-width")
+  (prop-type "GParamObject")
+  (docs "document")
   (readable #t)
-  (writable #t)
+  (writable #f)
   (construct-only #f)
 )
 
-(define-property fit-height
+(define-property toolbox
   (of-object "MaiaDocumentView")
-  (prop-type "GParamBoolean")
-  (docs "fit-height")
+  (prop-type "GParamObject")
+  (docs "toolbox")
   (readable #t)
-  (writable #t)
+  (writable #f)
   (construct-only #f)
 )
 
