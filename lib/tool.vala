@@ -62,12 +62,12 @@ public enum Maia.ToolAction
 public class Maia.Tool : Button
 {
     // static properties
-    private static unowned Item? s_CurrentItem = null;
+    private static string? s_CurrentItemName = null;
 
     // properties
-    private Manifest.Document m_Document = null;
     private uint m_ItemCounter = 0;
     private unowned Toolbox? m_Toolbox = null;
+    private Core.EventListener m_CurrentItemEventListener = null;
 
     // accessors
     internal override string tag {
@@ -115,9 +115,9 @@ public class Maia.Tool : Button
     attribute_bind_selected_item_name (Manifest.AttributeBind inAttributeBind, ref GLib.Value outValue)
         requires (outValue.holds (typeof (string)))
     {
-        if (s_CurrentItem != null)
+        if (s_CurrentItemName != null)
         {
-            outValue = s_CurrentItem.name;
+            outValue = s_CurrentItemName;
         }
     }
 
@@ -145,7 +145,8 @@ public class Maia.Tool : Button
         // Disconnect from item changed of old toolbox
         if (m_Toolbox != null)
         {
-            m_Toolbox.current_item_changed.disconnect (on_current_item_changed);
+            m_CurrentItemEventListener.parent = null;
+            m_CurrentItemEventListener = null;
         }
 
         // Search parent toolbox
@@ -153,114 +154,93 @@ public class Maia.Tool : Button
         for (unowned Core.Object? item = parent; m_Toolbox == null && item != null; item = item.parent)
         {
             m_Toolbox = item as Toolbox;
+
+            // Check if item is under popup
+            unowned Core.Object? popup = item.get_qdata<unowned Core.Object?> (Item.s_PopupWindow);
+            if (popup != null)
+            {
+                m_Toolbox = popup as Toolbox;
+                item = popup;
+            }
         }
 
         // Found toolbox connect onto item changed
         if (m_Toolbox != null)
         {
-            m_Toolbox.current_item_changed.connect (on_current_item_changed);
+            m_Toolbox.current_item.subscribe (on_current_item_changed);
         }
-    }
-
-    private Item?
-    create_template ()
-    {
-        // parse template
-        try
-        {
-            if (m_Document == null && characters != null && characters.length > 0)
-            {
-                m_Document = new Manifest.Document.from_buffer (characters, characters.length);
-            }
-
-            if (m_Document != null)
-            {
-                Item? item = m_Document.get (null) as Item;
-
-                if (item != null)
-                {
-                    item.id = GLib.Quark.from_string ("%s-%s-%u".printf (name, item.name, m_ItemCounter));
-                    m_ItemCounter++;
-                }
-
-                return item;
-            }
-        }
-        catch (Core.ParseError err)
-        {
-            Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING,
-                          "Error on parsing tool template %s: %s", name, err.message);
-        }
-
-        return null;
     }
 
     private void
-    on_current_item_changed (Item? inItem)
+    on_current_item_changed (Core.EventArgs? inArgs)
     {
-        s_CurrentItem = inItem;
+        unowned Toolbox.CurrentItemEventArgs? args = inArgs as Toolbox.CurrentItemEventArgs;
 
-        if (sensitive_with != null)
+        if (args != null)
         {
-            if (inItem != null)
+            s_CurrentItemName = args.item_name;
+
+            if (sensitive_with != null)
             {
-                bool found = false;
-                string item_name = inItem.name;
-                string[] split = sensitive_with.split (",");
-
-                foreach (unowned string criteria in split)
+                if (args.item_name.length > 0)
                 {
-                    string[] split_criteria = criteria.split (":");
-                    if (split_criteria.length == 2)
+                    bool found = false;
+                    string[] split = sensitive_with.split (",");
+
+                    foreach (unowned string criteria in split)
                     {
-                        switch (split_criteria[0].strip ().down ())
+                        string[] split_criteria = criteria.split (":");
+                        if (split_criteria.length == 2)
                         {
-                            case "name":
-                                found = GLib.PatternSpec.match_simple (split_criteria[1].strip ().down (), item_name);
-                                break;
+                            switch (split_criteria[0].strip ().down ())
+                            {
+                                case "name":
+                                    found = GLib.PatternSpec.match_simple (split_criteria[1].strip ().down (), args.item_name);
+                                    break;
 
-                            case "parent-name":
-                                found = parent != null && parent is Item && GLib.PatternSpec.match_simple (split_criteria[1].strip ().down (), (parent as Item).name);
-                                break;
+                                case "parent-name":
+                                    found = args.parent_name.length > 0 && GLib.PatternSpec.match_simple (split_criteria[1].strip ().down (), args.parent_name);
+                                    break;
 
-                            case "type":
-                                GLib.Type type = GLib.Type.from_name ("Maia" + split_criteria[1].strip ());
+                                case "type":
+                                    GLib.Type type = GLib.Type.from_name ("Maia" + split_criteria[1].strip ());
 
-                                found = type != 0 && inItem.get_type ().is_a (type);
-                                break;
+                                    found = type != 0 && args.item_type.is_a (type);
+                                    break;
 
-                            case "parent-type":
-                                GLib.Type type = GLib.Type.from_name ("Maia" + split_criteria[1].strip ());
+                                case "parent-type":
+                                    GLib.Type type = GLib.Type.from_name ("Maia" + split_criteria[1].strip ());
 
-                                found = inItem.parent != null && type != 0 && inItem.parent.get_type ().is_a (type);
-                                break;
+                                    found = args.parent_type != 0 && args.parent_type.is_a (type);
+                                    break;
 
-                            default:
-                                Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING,
-                                              "Invalid visible-with criteria %s for %s", criteria, name);
-                                break;
+                                default:
+                                    Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING,
+                                                  "Invalid visible-with criteria %s for %s", criteria, name);
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING,
+                                          "Invalid visible-with criteria %s for %s", criteria, name);
                         }
                     }
-                    else
-                    {
-                        Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING,
-                                      "Invalid visible-with criteria %s for %s", criteria, name);
-                    }
-                }
 
-                sensitive = found;
+                    sensitive = found;
+                }
+                else
+                {
+                    sensitive = false;
+                }
             }
             else
             {
-                sensitive = false;
+                sensitive = true;
             }
-        }
-        else
-        {
-            sensitive = true;
-        }
 
-        damage ();
+            damage ();
+        }
     }
 
     private void
@@ -272,30 +252,26 @@ public class Maia.Tool : Button
             switch (action)
             {
                 case ToolAction.ADD:
-                    // Create item from template
-                    Item? item = create_template ();
-                    if (item != null)
+                    if (characters != null && characters.length > 0)
                     {
-                        // Launch toolbox add signal
-                        toolbox.add_item (item, false);
+                        // Launch toolbox add event
+                        toolbox.add_item.publish (new Toolbox.AddItemEventArgs (++m_ItemCounter, characters, false));
                         toolbox.visible = false;
                     }
                     break;
 
                 case ToolAction.ADD_PARENT:
-                    // Create item from template
-                    Item? item = create_template ();
-                    if (item != null)
+                    if (characters != null && characters.length > 0)
                     {
-                        // Launch toolbox add signal
-                        toolbox.add_item (item, true);
+                        // Launch toolbox add event
+                        toolbox.add_item.publish (new Toolbox.AddItemEventArgs (++m_ItemCounter, characters, true));
                         toolbox.visible = false;
                     }
                     break;
 
                 case ToolAction.REMOVE:
-                    // Launch toolbox remove signal
-                    toolbox.remove_item ();
+                    // Launch toolbox remove event
+                    toolbox.remove_item.publish ();
                     toolbox.visible = false;
                     break;
             }

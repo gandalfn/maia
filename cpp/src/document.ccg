@@ -21,4 +21,62 @@
 
 namespace Maia
 {
+    static void on_save_finished (GObject* inpObject, GAsyncResult* inpResult, gpointer inpData)
+    {
+        Document::SlotSaveFinished* pSlot = (Document::SlotSaveFinished*)inpData;
+        if (!pSlot)
+        {
+            GError* gerror = nullptr;
+            maia_document_save_finish (MAIA_DOCUMENT (inpObject), inpResult, &gerror);
+            if (gerror) ::Glib::Error::throw_exception(gerror);
+        }
+        else
+        {
+            Glib::RefPtr<Document> pDocument = Glib::wrap (MAIA_DOCUMENT (inpObject), true);
+            Glib::RefPtr<Gio::AsyncResult> pResult = Glib::wrap (inpResult);
+            (*pSlot) (pDocument, pResult);
+        }
+
+        delete pSlot; pSlot = nullptr;
+    }
+
+    void Document::save (const Glib::ustring& inFilename, double inDpi)
+    {
+        maia_document_save (gobj (), inFilename.c_str (), inDpi, nullptr, on_save_finished, nullptr);
+    }
+
+    void Document::save (const Glib::ustring& inFilename, SlotSaveFinished inFunc)
+    {
+        SlotSaveFinished* pSlot = new SlotSaveFinished (inFunc);
+
+        maia_document_save (gobj (), inFilename.c_str (), 96, nullptr, on_save_finished, pSlot);
+    }
+
+    void Document::save (const Glib::ustring& inFilename, SlotSaveFinished inFunc, const Glib::RefPtr<Gio::Cancellable>& inCancellable)
+    {
+        SlotSaveFinished* pSlot = new SlotSaveFinished (inFunc);
+
+        maia_document_save (gobj (), inFilename.c_str (), 96, const_cast<GCancellable*> (inCancellable->gobj ()), on_save_finished, pSlot);
+    }
+
+    void Document::save (const Glib::ustring& inFilename, double inDpi, SlotSaveFinished inFunc)
+    {
+        SlotSaveFinished* pSlot = new SlotSaveFinished (inFunc);
+
+        maia_document_save (gobj (), inFilename.c_str (), inDpi, nullptr, on_save_finished, pSlot);
+    }
+
+    void Document::save (const Glib::ustring& inFilename, double inDpi, SlotSaveFinished inFunc, const Glib::RefPtr<Gio::Cancellable>& inCancellable)
+    {
+        SlotSaveFinished* pSlot = new SlotSaveFinished (inFunc);
+
+        maia_document_save (gobj (), inFilename.c_str (), inDpi, const_cast<GCancellable*> (inCancellable->gobj ()), on_save_finished, pSlot);
+    }
+
+    void Document::save_finish (const Glib::RefPtr<Gio::AsyncResult>& inResult)
+    {
+        GError* gerror = nullptr;
+        maia_document_save_finish (gobj(), const_cast<GAsyncResult*> (inResult->gobj ()), &gerror);
+        if (gerror) ::Glib::Error::throw_exception(gerror);
+    }
 }

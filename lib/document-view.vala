@@ -23,12 +23,15 @@ public class Maia.DocumentView : Group
     private static GLib.Quark s_QuarkShortcut;
     
     // properties
-    private unowned Document m_Document;
-    private ScrollView       m_Content;
-    private ToggleGroup      m_ShortcutsGroup;
-    private Model            m_Shortcuts;
-    private View             m_ShortcutsToolbar;
-    private unowned Toolbox? m_Toolbox;
+    private unowned Document   m_Document;
+    private ScrollView         m_Content;
+    private ToggleGroup        m_ShortcutsGroup;
+    private Model              m_Shortcuts;
+    private View               m_ShortcutsToolbar;
+    private unowned Toolbox?   m_Toolbox;
+    private unowned Item?      m_CurrentFocusItem;
+    private Core.EventListener m_AddItemListener;
+    private Core.EventListener m_RemoveItemListener;
     
     // accessors
     internal override string tag {
@@ -92,10 +95,15 @@ public class Maia.DocumentView : Group
     private void
     on_grab_focus (Item? inItem)
     {
-        if (m_Toolbox != null)
+        if (m_CurrentFocusItem != inItem)
         {
-            // Set current item to toolbox
-            m_Toolbox.current_item_changed (inItem);
+            m_CurrentFocusItem = inItem;
+
+            if (m_Toolbox != null)
+            {
+                // Set current item to toolbox
+                m_Toolbox.current_item.publish (new Toolbox.CurrentItemEventArgs (m_CurrentFocusItem));
+            }
         }
     }
 
@@ -186,6 +194,40 @@ public class Maia.DocumentView : Group
         return ret;
     }
 
+    private void
+    on_add_item (Core.EventArgs? inArgs)
+    {
+        unowned Toolbox.AddItemEventArgs? args = inArgs as Toolbox.AddItemEventArgs;
+
+        if (args != null && m_CurrentFocusItem != null)
+        {
+            var item = args.item;
+
+            if (!args.parent)
+            {
+                m_CurrentFocusItem.add (item);
+            }
+            else if (m_CurrentFocusItem != null)
+            {
+                unowned Item? focus_parent = m_CurrentFocusItem.parent as Item;
+                
+                if (focus_parent != null)
+                {
+                    focus_parent.add (item);
+                }
+            }
+        }
+    }
+
+    private void
+    on_remove_item (Core.EventArgs? inArgs)
+    {
+        if (m_CurrentFocusItem != null)
+        {
+            m_CurrentFocusItem.parent = null;
+        }
+    }
+
     internal override bool
     can_append_child (Core.Object inChild)
     {
@@ -197,11 +239,52 @@ public class Maia.DocumentView : Group
     {
         if (inObject is Toolbox)
         {
-            m_Toolbox = inObject as Toolbox;
+            if (m_Toolbox == null)
+            {
+                m_Toolbox = inObject as Toolbox;
 
-            base.insert_child (inObject);
+                // Connect onto add item event
+                m_AddItemListener = m_Toolbox.add_item.subscribe (on_add_item);
+
+                // Connect onto remove item event
+                m_RemoveItemListener = m_Toolbox.remove_item.subscribe (on_remove_item);
+
+                base.insert_child (inObject);
+            }
+            else
+            {
+                Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_PARSING, "Duplicate toolbox in DocumentView $name");
+            }
         }
-        else if (!(inObject is Document))
+        else if (inObject is Document)
+        {
+            if (m_Document == null)
+            {
+                // Add document to scroll view
+                m_Document = inObject as Document;
+
+                // connect onto grab_focus
+                m_Document.grab_focus.connect (on_grab_focus);
+
+                // Add document to content
+                m_Document.parent = m_Content;
+
+                // Update shortcut section
+                for (int cpt = 0; cpt < m_Shortcuts.nb_rows; ++cpt)
+                {
+                    Shortcut? shortcut = (Shortcut?)m_Shortcuts["shortcut"][cpt];
+                    if (shortcut != null)
+                    {
+                        on_shortcut_section_changed (shortcut);
+                    }
+                }
+            }
+            else
+            {
+                Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_PARSING, "Duplicate document in DocumentView $name");
+            }
+        }
+        else
         {
             base.insert_child (inObject);
 
@@ -214,28 +297,7 @@ public class Maia.DocumentView : Group
                     m_Shortcuts["shortcut"][row] = inObject as Shortcut;
                 }
             }
-        }
-        else if (m_Document == null)
-        {
-            // Add document to scroll view
-            m_Document = inObject as Document;
-
-            // connect onto grab_focus
-            m_Document.grab_focus.connect (on_grab_focus);
-
-            // Add document to content
-            m_Document.parent = m_Content;
-
-            // Update shortcut section
-            for (int cpt = 0; cpt < m_Shortcuts.nb_rows; ++cpt)
-            {
-                Shortcut? shortcut = (Shortcut?)m_Shortcuts["shortcut"][cpt];
-                if (shortcut != null)
-                {
-                    on_shortcut_section_changed (shortcut);
-                }
-            }
-        }
+        } 
     }
 
     internal override void
@@ -244,6 +306,10 @@ public class Maia.DocumentView : Group
         if (inObject == m_Toolbox)
         {
             m_Toolbox = null;
+            m_AddItemListener.parent = null;
+            m_AddItemListener = null;
+            m_RemoveItemListener.parent = null;
+            m_RemoveItemListener = null;
 
             base.remove_child (inObject);
         }

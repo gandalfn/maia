@@ -12,6 +12,7 @@ files_hg = \
     core-object.hg \
     core-iterator.hg \
     core-collection.hg \
+    core-array.hg \
     core-set.hg \
     core-pair.hg \
     core-map.hg \
@@ -60,6 +61,7 @@ files_hg = \
     checkbutton.hg \
     document.hg \
     document-view.hg \
+    report.hg \
     drawing-area.hg \
     entry.hg \
     grid.hg \

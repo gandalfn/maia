@@ -12,6 +12,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_CORE_TYPE_OBJECT);
     std::cout << get_defs (MAIA_CORE_TYPE_ITERATOR);
     std::cout << get_defs (MAIA_CORE_TYPE_COLLECTION);
+    std::cout << get_defs (MAIA_CORE_TYPE_ARRAY);
     std::cout << get_defs (MAIA_CORE_TYPE_SET);
     std::cout << get_defs (MAIA_CORE_TYPE_PAIR);
     std::cout << get_defs (MAIA_CORE_TYPE_MAP);
@@ -62,6 +63,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_CURSOR);
     std::cout << get_defs (MAIA_TYPE_DOCUMENT);
     std::cout << get_defs (MAIA_TYPE_DOCUMENT_VIEW);
+    std::cout << get_defs (MAIA_TYPE_REPORT);
     std::cout << get_defs (MAIA_TYPE_DRAWABLE);
     std::cout << get_defs (MAIA_TYPE_DRAWING_AREA);
     std::cout << get_defs (MAIA_TYPE_ENTRY);
@@ -92,6 +94,8 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_COMBO);
     std::cout << get_defs (MAIA_COMBO_TYPE_CHANGED_EVENT_ARGS);
     std::cout << get_defs (MAIA_TYPE_TOOLBOX);
+    std::cout << get_defs (MAIA_TOOLBOX_TYPE_ADD_ITEM_EVENT_ARGS);
+    std::cout << get_defs (MAIA_TOOLBOX_TYPE_CURRENT_ITEM_EVENT_ARGS);
     std::cout << get_defs (MAIA_TYPE_TOOL);
     std::cout << get_defs (MAIA_TYPE_ARROW);
     std::cout << get_defs (MAIA_TYPE_WINDOW);

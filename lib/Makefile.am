@@ -147,6 +147,7 @@ libmaia_la_SOURCES = \
     page.vala \
     document.vala \
     document-view.vala \
+    report.vala \
     model.vala \
     view.vala \
     drawing-area.vala \

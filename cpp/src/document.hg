@@ -18,6 +18,7 @@
  */
 
 #include <maia.h>
+#include <giomm.h>
 #include <maiamm/item.h>
 
 _DEFS(maiamm,maia)
@@ -35,6 +36,8 @@ namespace Maia
             _CTOR_DEFAULT()
 
         public:
+            typedef sigc::slot<void, Glib::RefPtr<Document>, Glib::RefPtr<Gio::AsyncResult> > SlotSaveFinished;
+            
             static Glib::RefPtr<Document> create (const Glib::ustring& inId, PageFormat inFormat)
             {
                 MaiaDocument* pDocument = maia_document_new (inId.c_str(), (MaiaPageFormat)inFormat);
@@ -74,6 +77,14 @@ namespace Maia
             _WRAP_METHOD(void set_pointer_over_pointer (const Glib::RefPtr<Item>& inItem), maia_document_set_item_over_pointer)
 
             _WRAP_METHOD(void draw_page (const Glib::RefPtr<Graphic::Context>& inContext, guint inNumPage), maia_document_draw_page, errthrow)
+
+            void save (const Glib::ustring& inFilename, double inDpi = 96);
+            void save (const Glib::ustring& inFilename, SlotSaveFinished inFunc);
+            void save (const Glib::ustring& inFilename, SlotSaveFinished inFunc, const Glib::RefPtr<Gio::Cancellable>& inCancellable);
+            void save (const Glib::ustring& inFilename, double inDpi, SlotSaveFinished inFunc);
+            void save (const Glib::ustring& inFilename, double inDpi, SlotSaveFinished inFunc, const Glib::RefPtr<Gio::Cancellable>& inCancellable);
+            
+            void save_finish (const Glib::RefPtr<Gio::AsyncResult>& inResult);
 
             _WRAP_PROPERTY("format", PageFormat)
             _WRAP_PROPERTY("top-margin", double)

@@ -30,7 +30,9 @@ libmaia_cairo_graphic_la_SOURCES = \
     surface.vala \
     context.vala \
     glyph.vala \
-    image-png.vala
+    image-png.vala \
+    document.vala \
+    report.vala
 
 libmaia_cairo_graphic_la_LIBADD = \
     $(MAIA_CAIRO_LIBS)

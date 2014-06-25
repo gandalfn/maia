@@ -19,6 +19,156 @@
 
 public class Maia.Toolbox : Popup
 {
+    // type
+    public class AddItemEventArgs : Core.EventArgs
+    {
+        // properties
+        private uint   m_Counter;
+        private string m_ItemContent;
+        private bool   m_Parent;
+
+        // accessors
+        internal override GLib.Variant serialize {
+            owned get {
+                return new GLib.Variant ("(usb)", m_Counter, m_ItemContent, m_Parent);
+            }
+            set {
+                if (value != null)
+                {
+                    value.get ("(usb)", out m_Counter, out m_ItemContent, out m_Parent);
+                }
+            }
+        }
+
+        /**
+         * Item to add
+         */
+        public Item? item {
+            owned get {
+                Item? ret = null;
+                try
+                {
+                    if (m_ItemContent != null && m_ItemContent.length > 0)
+                    {
+                        var document = new Manifest.Document.from_buffer (m_ItemContent, m_ItemContent.length);
+                    
+                        if (document != null)
+                        {
+                            ret = document.get (null) as Item;
+
+                            if (ret != null)
+                            {
+                                ret.id = GLib.Quark.from_string (@"$(ret.name)-$(m_Counter)");
+                            }
+                        }
+                    }
+                }
+                catch (GLib.Error err)
+                {
+                    Log.critical (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Error on get item: $(err.message)");
+                }
+
+                return ret;
+            }
+        }
+
+        /**
+         * Add item to parent
+         */
+        public bool parent {
+            get {
+                return m_Parent;
+            }
+        }
+
+        // methods
+        internal AddItemEventArgs (uint inCounter, string inItemContent, bool inParent)
+        {
+            base ();
+
+            m_Counter = inCounter;
+            m_ItemContent = inItemContent;
+            m_Parent = inParent;
+        }
+    }
+
+    public class CurrentItemEventArgs : Core.EventArgs
+    {
+        // properties
+        private string    m_ItemName = "";
+        private GLib.Type m_ItemType = 0;
+        private string    m_ParentName = "";
+        private GLib.Type m_ParentType = 0;
+
+        // accessors
+        internal override GLib.Variant serialize {
+            owned get {
+                return new GLib.Variant ("(susu)", m_ItemName, m_ItemType, m_ParentName, m_ParentType);
+            }
+            set {
+                if (value != null)
+                {
+                    value.get ("(susu)", out m_ItemName, out m_ItemType, out m_ParentName, out m_ParentType);
+                }
+            }
+        }
+
+        /**
+         * Current item name
+         */
+        public string item_name {
+            owned get {
+                return m_ItemName ?? "";
+            }
+        }
+
+        /**
+         * Current item type
+         */
+        public GLib.Type item_type {
+            get {
+                return m_ItemType;
+            }
+        }
+
+        /**
+         * Current item parent name
+         */
+        public string parent_name {
+            owned get {
+                return m_ParentName ?? "";
+            }
+        }
+
+        /**
+         * Current item parent type
+         */
+        public GLib.Type parent_type {
+            get {
+                return m_ParentType;
+            }
+        }
+
+        // methods
+        internal CurrentItemEventArgs (Item? inItem)
+        {
+            base ();
+
+            if (inItem != null)
+            {
+                m_ItemName = inItem.name;
+                m_ItemType = inItem.get_type ();
+
+                var parent = inItem.parent as Item;
+                if (parent != null)
+                {
+                    m_ParentName = parent.name;
+                    m_ParentType = parent.get_type ();
+                }
+            }
+        }
+    }
+
     // accessors
     internal override string tag {
         get {
@@ -28,25 +178,20 @@ public class Maia.Toolbox : Popup
 
     // signals
     /**
-     * Signal emitted when a tool button with add or add-parent action
+     * Event emitted when a tool button with add or add-parent action
      * is pressed
-     *
-     * @param inItem the item to add
-     * @param inParent if ``true`` add inItem to parent of focus item
      */
-    public signal void add_item (Item inItem, bool inParent);
+    public Core.Event add_item { get; private set; }
 
     /**
-     * Signal emitted when a tool button with remove action is pressed
+     * Event emitted when a tool button with remove action is pressed
      */
-    public signal void remove_item ();
+    public Core.Event remove_item { get; private set; }
 
     /**
-     * Signal emitted when the current focus item has changed
-     *
-     * @param inItem the current focus item ``null`` if no item selected
+     * Event emitted when the current focus item has changed
      */
-    public signal void current_item_changed (Item? inItem);
+    public Core.Event current_item { get; private set; }
 
     // methods
     construct
@@ -54,6 +199,15 @@ public class Maia.Toolbox : Popup
         // Create grid content
         Grid grid = new Grid ("%s-content".printf (((GLib.Quark)id).to_string ()));
         add (grid);
+
+        // Create add item event
+        add_item = new Core.Event ("add-item", this);
+
+        // Create remove item event
+        remove_item = new Core.Event ("remove-item", this);
+
+        // Create current item event
+        current_item = new Core.Event ("current-item", this);
     }
 
     public Toolbox (string inId)

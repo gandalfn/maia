@@ -701,6 +701,12 @@
   (gtype-id "MAIA_TYPE_RECTANGLE")
 )
 
+(define-object MaiaReport
+  (parent "MaiaCoreObject")
+  (c-name "MaiaReport")
+  (gtype-id "MAIA_TYPE_REPORT")
+)
+
 (define-object MaiaScrollView
   (parent "MaiaItem")
   (c-name "MaiaScrollView")
@@ -765,6 +771,18 @@
   (parent "MaiaPopup")
   (c-name "MaiaToolbox")
   (gtype-id "MAIA_TYPE_TOOLBOX")
+)
+
+(define-object MaiaToolboxAddItemEventArgs
+  (parent "MaiaCoreEventArgs")
+  (c-name "MaiaToolboxAddItemEventArgs")
+  (gtype-id "MAIA_TYPE_TOOLBOX_ADD_ITEM_EVENT_ARGS")
+)
+
+(define-object MaiaToolboxCurrentItemEventArgs
+  (parent "MaiaCoreEventArgs")
+  (c-name "MaiaToolboxCurrentItemEventArgs")
+  (gtype-id "MAIA_TYPE_TOOLBOX_CURRENT_ITEM_EVENT_ARGS")
 )
 
 (define-object MaiaView
@@ -15161,6 +15179,29 @@
   )
 )
 
+(define-method save
+  (of-object "MaiaDocument")
+  (c-name "maia_document_save")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inPdfFilename")
+    '("gdouble" "inDpi")
+    '("GCancellable*" "inCancellable")
+    '("GAsyncReadyCallback" "_callback_")
+    '("gpointer" "_user_data_")
+  )
+)
+
+(define-method save_finish
+  (of-object "MaiaDocument")
+  (c-name "maia_document_save_finish")
+  (return-type "none")
+  (parameters
+    '("GAsyncResult*" "_res_")
+    '("GError**" "error")
+  )
+)
+
 (define-method draw_page
   (of-object "MaiaDocument")
   (c-name "maia_document_draw_page")
@@ -15366,6 +15407,88 @@
   (of-object "MaiaDocumentView")
   (c-name "maia_document_view_get_toolbox")
   (return-type "MaiaToolbox*")
+)
+
+(define-function maia_report_get_type
+  (c-name "maia_report_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_report_new
+  (c-name "maia_report_new")
+  (is-constructor-of "MaiaReport")
+  (return-type "MaiaReport*")
+  (parameters
+    '("const-gchar*" "inPdfFilename")
+    '("gdouble" "inDpi")
+  )
+)
+
+(define-function maia_report_construct
+  (c-name "maia_report_construct")
+  (return-type "MaiaReport*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inPdfFilename")
+    '("gdouble" "inDpi")
+  )
+)
+
+(define-method add_document
+  (of-object "MaiaReport")
+  (c-name "maia_report_add_document")
+  (return-type "none")
+  (parameters
+    '("MaiaDocument*" "inDocument")
+  )
+)
+
+(define-method remove_document
+  (of-object "MaiaReport")
+  (c-name "maia_report_remove_document")
+  (return-type "none")
+  (parameters
+    '("MaiaDocument*" "inDocument")
+  )
+)
+
+(define-method save
+  (of-object "MaiaReport")
+  (c-name "maia_report_save")
+  (return-type "none")
+  (parameters
+    '("GCancellable*" "inCancellable")
+    '("GAsyncReadyCallback" "_callback_")
+    '("gpointer" "_user_data_")
+  )
+)
+
+(define-method save_finish
+  (of-object "MaiaReport")
+  (c-name "maia_report_save_finish")
+  (return-type "none")
+  (parameters
+    '("GAsyncResult*" "_res_")
+    '("GError**" "error")
+  )
+)
+
+(define-method get_documents
+  (of-object "MaiaReport")
+  (c-name "maia_report_get_documents")
+  (return-type "MaiaCoreArray*")
+)
+
+(define-method get_filename
+  (of-object "MaiaReport")
+  (c-name "maia_report_get_filename")
+  (return-type "const-gchar*")
+)
+
+(define-method get_resolution
+  (of-object "MaiaReport")
+  (c-name "maia_report_get_resolution")
+  (return-type "gdouble")
 )
 
 (define-function maia_model_get_type
@@ -16276,6 +16399,70 @@
     '("GType" "object_type")
     '("const-gchar*" "inId")
   )
+)
+
+(define-method get_add_item
+  (of-object "MaiaToolbox")
+  (c-name "maia_toolbox_get_add_item")
+  (return-type "MaiaCoreEvent*")
+)
+
+(define-method get_remove_item
+  (of-object "MaiaToolbox")
+  (c-name "maia_toolbox_get_remove_item")
+  (return-type "MaiaCoreEvent*")
+)
+
+(define-method get_current_item
+  (of-object "MaiaToolbox")
+  (c-name "maia_toolbox_get_current_item")
+  (return-type "MaiaCoreEvent*")
+)
+
+(define-function maia_toolbox_add_item_event_args_get_type
+  (c-name "maia_toolbox_add_item_event_args_get_type")
+  (return-type "GType")
+)
+
+(define-method get_item
+  (of-object "MaiaToolboxAddItemEventArgs")
+  (c-name "maia_toolbox_add_item_event_args_get_item")
+  (return-type "MaiaItem*")
+)
+
+(define-method get_parent
+  (of-object "MaiaToolboxAddItemEventArgs")
+  (c-name "maia_toolbox_add_item_event_args_get_parent")
+  (return-type "gboolean")
+)
+
+(define-function maia_toolbox_current_item_event_args_get_type
+  (c-name "maia_toolbox_current_item_event_args_get_type")
+  (return-type "GType")
+)
+
+(define-method get_item_name
+  (of-object "MaiaToolboxCurrentItemEventArgs")
+  (c-name "maia_toolbox_current_item_event_args_get_item_name")
+  (return-type "gchar*")
+)
+
+(define-method get_item_type
+  (of-object "MaiaToolboxCurrentItemEventArgs")
+  (c-name "maia_toolbox_current_item_event_args_get_item_type")
+  (return-type "GType")
+)
+
+(define-method get_parent_name
+  (of-object "MaiaToolboxCurrentItemEventArgs")
+  (c-name "maia_toolbox_current_item_event_args_get_parent_name")
+  (return-type "gchar*")
+)
+
+(define-method get_parent_type
+  (of-object "MaiaToolboxCurrentItemEventArgs")
+  (c-name "maia_toolbox_current_item_event_args_get_parent_type")
+  (return-type "GType")
 )
 
 (define-function maia_arrow_get_type

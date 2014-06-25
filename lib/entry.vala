@@ -213,6 +213,9 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         stroke_pattern = new Graphic.Color (0, 0, 0);
         background_pattern = new Graphic.Color (0, 0, 0);
 
+        // Create a fake surface to calculate the size of path
+        m_FakeSurface = new Graphic.Surface (1, 1);
+
         // Create changed event
         changed = new Core.Event ("changed", this);
 
@@ -259,9 +262,6 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     private void
     on_root_changed ()
     {
-        // Create a fake surface to calculate the size of path
-        m_FakeSurface = new Graphic.Surface (1, 1);
-
         // Get stack of items
         GLib.SList<unowned Item> list = new GLib.SList<unowned Item?> ();
         for (unowned Core.Object? item = this; item != null; item = item.parent)

@@ -62,6 +62,8 @@
 
 ;; From MaiaCoreCollection
 
+;; From MaiaCoreArray
+
 ;; From MaiaCoreSet
 
 ;; From MaiaCorePair
@@ -1358,6 +1360,35 @@
   (readable #t)
   (writable #f)
   (construct-only #f)
+)
+
+;; From MaiaReport
+
+(define-property documents
+  (of-object "MaiaReport")
+  (prop-type "GParamObject")
+  (docs "documents")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property filename
+  (of-object "MaiaReport")
+  (prop-type "GParamString")
+  (docs "filename")
+  (readable #t)
+  (writable #t)
+  (construct-only #t)
+)
+
+(define-property resolution
+  (of-object "MaiaReport")
+  (prop-type "GParamDouble")
+  (docs "resolution")
+  (readable #t)
+  (writable #t)
+  (construct-only #t)
 )
 
 ;; From MaiaDrawable
@@ -4342,35 +4373,113 @@
 
 ;; From MaiaToolbox
 
-(define-signal add-item
-  (of-object "MaiaToolbox")
-  (return-type "void")
-  (when "last")
-  (parameters
-    '("MaiaItem*" "p0")
-    '("gboolean" "p1")
-  )
-)
-
-(define-signal remove-item
-  (of-object "MaiaToolbox")
-  (return-type "void")
-  (when "last")
-)
-
-(define-signal current-item-changed
-  (of-object "MaiaToolbox")
-  (return-type "void")
-  (when "last")
-  (parameters
-    '("MaiaItem*" "p0")
-  )
-)
-
 (define-property tag
   (of-object "MaiaToolbox")
   (prop-type "GParamString")
   (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property add-item
+  (of-object "MaiaToolbox")
+  (prop-type "GParamObject")
+  (docs "add-item")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property remove-item
+  (of-object "MaiaToolbox")
+  (prop-type "GParamObject")
+  (docs "remove-item")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property current-item
+  (of-object "MaiaToolbox")
+  (prop-type "GParamObject")
+  (docs "current-item")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaToolboxAddItemEventArgs
+
+(define-property serialize
+  (of-object "MaiaToolboxAddItemEventArgs")
+  (prop-type "GParamVariant")
+  (docs "serialize")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property item
+  (of-object "MaiaToolboxAddItemEventArgs")
+  (prop-type "GParamObject")
+  (docs "item")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property parent
+  (of-object "MaiaToolboxAddItemEventArgs")
+  (prop-type "GParamBoolean")
+  (docs "parent")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaToolboxCurrentItemEventArgs
+
+(define-property serialize
+  (of-object "MaiaToolboxCurrentItemEventArgs")
+  (prop-type "GParamVariant")
+  (docs "serialize")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property item-name
+  (of-object "MaiaToolboxCurrentItemEventArgs")
+  (prop-type "GParamString")
+  (docs "item-name")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property item-type
+  (of-object "MaiaToolboxCurrentItemEventArgs")
+  (prop-type "GParamGType")
+  (docs "item-type")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property parent-name
+  (of-object "MaiaToolboxCurrentItemEventArgs")
+  (prop-type "GParamString")
+  (docs "parent-name")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property parent-type
+  (of-object "MaiaToolboxCurrentItemEventArgs")
+  (prop-type "GParamGType")
+  (docs "parent-type")
   (readable #t)
   (writable #f)
   (construct-only #f)

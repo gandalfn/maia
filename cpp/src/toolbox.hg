@@ -20,12 +20,43 @@
 #include <maia.h>
 #include <maiamm/item.h>
 #include <maiamm/popup.h>
+#include <maiamm/core-event.h>
+#include <maiamm/core-eventargs.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/popup_p.h)
+_PINCLUDE(maiamm/private/core-eventargs_p.h)
 
 namespace Maia
 {
+    class ToolboxAddItemEventArgs : public Core::EventArgs
+    {
+        _CLASS_GOBJECT(ToolboxAddItemEventArgs, MaiaToolboxAddItemEventArgs, MAIA_TOOLBOX_ADD_ITEM_EVENT_ARGS, Core::EventArgs, MaiaCoreEventArgs)
+
+        public:
+            _WRAP_METHOD(Glib::RefPtr<Item> get_item () const, maia_toolbox_add_item_event_args_get_item)
+            _WRAP_METHOD(bool get_parent () const, maia_toolbox_add_item_event_args_get_parent)
+
+            _WRAP_PROPERTY("item", Glib::RefPtr<Item>)
+            _WRAP_PROPERTY("parent", bool)
+    };
+
+    class ToolboxCurrentItemEventArgs : public Core::EventArgs
+    {
+        _CLASS_GOBJECT(ToolboxCurrentItemEventArgs, MaiaToolboxCurrentItemEventArgs, MAIA_TOOLBOX_CURRENT_ITEM_EVENT_ARGS, Core::EventArgs, MaiaCoreEventArgs)
+
+        public:
+            _WRAP_METHOD(Glib::ustring get_item_name () const, maia_toolbox_current_item_event_args_get_item_name)
+            _WRAP_METHOD(GType get_item_type () const, maia_toolbox_current_item_event_args_get_item_type)
+            _WRAP_METHOD(Glib::ustring get_parent_name () const, maia_toolbox_current_item_event_args_get_parent_name)
+            _WRAP_METHOD(GType get_parent_type () const, maia_toolbox_current_item_event_args_get_parent_type)
+
+            _WRAP_PROPERTY("item-name", Glib::ustring)
+            _WRAP_PROPERTY("item-type", GType)
+            _WRAP_PROPERTY("parent-name", Glib::ustring)
+            _WRAP_PROPERTY("parent-type", GType)
+    };
+
     class Toolbox : public Popup
     {
         _CLASS_GOBJECT(Toolbox, MaiaToolbox, MAIA_TOOLBOX, Popup, MaiaPopup)
@@ -41,8 +72,12 @@ namespace Maia
                 return Glib::RefPtr<Toolbox> (new Toolbox (pToolbox));
             }
 
-            _WRAP_SIGNAL(void add_item (const Glib::RefPtr<Item>& inItem, bool inParent), "add-item", no_default_handler)
-            _WRAP_SIGNAL(void remove_item (), "remove-item", no_default_handler)
-            _WRAP_SIGNAL(void current_item_changed (const Glib::RefPtr<Item>& inItem), "current-item-changed", no_default_handler)
+            _WRAP_METHOD(Glib::RefPtr<Core::Event> add_item () const, maia_toolbox_get_add_item, refreturn)
+            _WRAP_METHOD(Glib::RefPtr<Core::Event> remove_item () const, maia_toolbox_get_remove_item, refreturn)
+            _WRAP_METHOD(Glib::RefPtr<Core::Event> current_item () const, maia_toolbox_get_current_item, refreturn)
+
+            _WRAP_PROPERTY("add-item", Glib::RefPtr<Core::Event>)
+            _WRAP_PROPERTY("remove-item", Glib::RefPtr<Core::Event>)
+            _WRAP_PROPERTY("current-item", Glib::RefPtr<Core::Event>)
     };
 }

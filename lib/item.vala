@@ -167,7 +167,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             return m_Geometry;
         }
         set {
-            if (m_Geometry != value || m_Geometry == null || !m_Geometry.equal (value))
+            if (m_Geometry != value || (m_Geometry != null && !m_Geometry.equal (value)))
             {
                 bool old_not_empty = (m_Geometry != null);
 
@@ -912,6 +912,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     protected virtual void
     on_child_resized (Drawable inChild)
     {
+        if (inChild.geometry == null)
+        {
+            geometry = null;
+        }
     }
 
     protected virtual void
@@ -977,6 +981,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         // Remove all damaged area
         repair ();
 
+        // Unset geometry
         geometry = null;
     }
 
@@ -1164,6 +1169,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             }
 
             need_update = true;
+            geometry = null;
         }
     }
 

@@ -877,6 +877,12 @@ public class Maia.Document : Item
         return ret;
     }
 
+    public virtual async void
+    save (string inPdfFilename, double inDpi, GLib.Cancellable? inCancellable = null) throws Graphic.Error
+    {
+        throw new Graphic.Error.NOT_IMPLEMENTED ("Document save not implemented");
+    }
+
     public void
     draw_page (Graphic.Context inContext, uint inPageNum) throws Graphic.Error
     {

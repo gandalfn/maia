@@ -2,6 +2,11 @@ _CONVERSION(`const char*',`const Glib::ustring&',`$3')
 _CONVERSION(`unsigned int',`guint',`$3')
 _CONVERSION(`guint',`unsigned int',`$3')
 
+_CONVERSION(`Core::Array<Document>',`MaiaCoreArray*', MAIA_CORE_ARRAY($3.gobj()))
+_CONVERSION(`const Core::Array<Document>&',`MaiaCoreArray*',const_cast<MaiaCoreArray*> (MAIA_CORE_ARRAY ($3.gobj())))
+_CONVERSION(`MaiaCoreArray*',`const Core::Array<Document>&',`Maia::Core::Array<Document> (MAIA_CORE_ARRAY ($3), true)')
+_CONVERSION(`MaiaCoreArray*',`Core::Array<Document>',`Maia::Core::Array<Document> (MAIA_CORE_ARRAY ($3), true)')
+
 _CONVERSION(`Core::Set<Style>',`MaiaCoreSet*', MAIA_CORE_SET($3.gobj()))
 _CONVERSION(`const Core::Set<Style>&',`MaiaCoreSet*',const_cast<MaiaCoreSet*> (MAIA_CORE_SET ($3.gobj())))
 _CONVERSION(`MaiaCoreSet*',`const Core::Set<Style>&',`Maia::Core::Set<Style> (MAIA_CORE_SET ($3), true)')

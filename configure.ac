@@ -1,6 +1,6 @@
 m4_define(maia_version_major, 0)
 m4_define(maia_version_minor, 2)
-m4_define(maia_version_micro, 5)
+m4_define(maia_version_micro, 6)
 AC_INIT([maia],[maia_version_major.maia_version_minor.maia_version_micro])
 AC_PREREQ(2.63)
 
@@ -97,7 +97,7 @@ PKG_CHECK_MODULES(MAIA, [glib-2.0 >= $GLIB_REQUIRED
 AC_SUBST(MAIA_CFLAGS)
 AC_SUBST(MAIA_LIBS)
 
-AC_SUBST([MAIAMM_MODULES], ['glibmm-2.4'])
+AC_SUBST([MAIAMM_MODULES], ['glibmm-2.4 giomm-2.4'])
 PKG_CHECK_MODULES([MAIAMM], [$MAIAMM_MODULES])
 AC_SUBST(MAIAMM_CFLAGS)
 AC_SUBST(MAIAMM_LIBS)
