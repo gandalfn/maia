@@ -894,8 +894,12 @@ public class Maia.Document : Item
                 {
                     uint delta = get_qdata<uint> (s_PageBeginQuark);
                     m_CurrentPage = page.num + delta;
-
-                    page.draw (inContext, page.geometry);
+                    inContext.save ();
+                    {
+                        inContext.translate (page.geometry.extents.origin.invert ());
+                        page.draw (inContext, page.geometry);
+                    }
+                    inContext.restore ();
                     break;
                 }
             }

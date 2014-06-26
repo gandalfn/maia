@@ -47,10 +47,6 @@ internal class Maia.Cairo.Report : Maia.Report
         Graphic.Size doc_size = Graphic.Size (0, 0);
         foreach (unowned Maia.Document document in documents)
         {
-            // Repaginate document
-            document.position = Graphic.Point (0, 0);
-            doc_size = document.size;
-
             nb_pages += document.nb_pages;
         }
 
@@ -62,7 +58,6 @@ internal class Maia.Cairo.Report : Maia.Report
             document.set_qdata<uint> (Maia.Document.s_PageTotalQuark, nb_pages);
 
             // Repaginate document
-            document.position = Graphic.Point (0, 0);
             doc_size = document.size;
             start += document.nb_pages;
 
@@ -74,6 +69,7 @@ internal class Maia.Cairo.Report : Maia.Report
                     return;
                 }
                 document.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, doc_size.width, doc_size.height)));
+                document.damage_area ();
                 document.draw_page (ctx, cpt + 1);
                 pdf_surface.show_page ();
                 pdf_surface.flush ();
@@ -84,9 +80,6 @@ internal class Maia.Cairo.Report : Maia.Report
             // unset delta and nb pages
             document.set_qdata<uint> (Maia.Document.s_PageBeginQuark, 0);
             document.set_qdata<uint> (Maia.Document.s_PageTotalQuark, 0);
-
-            // Invalidate document geometry for display refresh
-            document.geometry = null;
         }
         pdf_surface.flush ();
         pdf_surface.finish ();

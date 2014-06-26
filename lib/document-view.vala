@@ -206,6 +206,11 @@ public class Maia.DocumentView : Group
             if (!args.parent)
             {
                 m_CurrentFocusItem.add (item);
+
+                if (item.can_focus)
+                {
+                    item.grab_focus (item);
+                }
             }
             else if (m_CurrentFocusItem != null)
             {
@@ -214,6 +219,10 @@ public class Maia.DocumentView : Group
                 if (focus_parent != null)
                 {
                     focus_parent.add (item);
+                    if (item.can_focus)
+                    {
+                        item.grab_focus (item);
+                    }
                 }
             }
         }

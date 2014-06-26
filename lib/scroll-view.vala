@@ -181,7 +181,8 @@ public class Maia.ScrollView : Item
             m_Window.position = m_PreviousPos.invert ();
 
             // translate window geometry
-            m_Window.geometry.translate (diff);
+            m_Window.geometry.translate (m_Window.geometry.extents.origin.invert ());
+            m_Window.geometry.translate (m_PreviousPos.invert ());
 
             // if scroll view is currently damaged translate damaged region
             if (damaged != null)
