@@ -101,48 +101,60 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
+    [CCode (notify = false)]
     public string group {
         get {
             return m_Group;
         }
         set {
-            m_Group = value;
-            unowned ToggleGroup? toggle_group = root.find (GLib.Quark.from_string (m_Group)) as ToggleGroup;
-            if (toggle_group != null)
+            if (m_Group != value)
             {
-                toggle_group.add_button (this);
-            }
-            else
-            {
-                Log.warning ("Maia.ToggleButton.group", Log.Category.CANVAS_PARSING, "%s can not find %s group", name, m_Group);
+                m_Group = value;
+                unowned ToggleGroup? toggle_group = root.find (GLib.Quark.from_string (m_Group)) as ToggleGroup;
+                if (toggle_group != null)
+                {
+                    toggle_group.add_button (this);
+                }
+                else
+                {
+                    Log.warning ("Maia.ToggleButton.group", Log.Category.CANVAS_PARSING, "%s can not find %s group", name, m_Group);
+                }
+
+                GLib.Signal.emit_by_name (this, "notify::group");
             }
         }
     }
 
+    [CCode (notify = false)]
     public string font_description {
         get {
             return m_Label == null ? "" : m_Label.font_description;
         }
         set {
-            if (m_Label != null)
+            if (m_Label != null && m_Label.font_description != value)
             {
                 m_Label.font_description = value;
+
+                GLib.Signal.emit_by_name (this, "notify::font-description");
             }
         }
     }
 
+    [CCode (notify = false)]
     public string label {
         get {
             return m_Label == null ? "" : m_Label.text;
         }
         set {
-            if (m_Label != null)
+            if (m_Label != null && m_Label.text != value)
             {
                 m_Label.text = value;
+                GLib.Signal.emit_by_name (this, "notify::label");
             }
         }
     }
 
+    [CCode (notify = false)]
     public bool active {
         get {
             return m_Active;
@@ -152,6 +164,8 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
             {
                 m_Active = value;
                 damage ();
+
+                GLib.Signal.emit_by_name (this, "notify::active");
             }
         }
     }
@@ -184,7 +198,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
         GLib.Object (id: GLib.Quark.from_string (inId), label: inLabel);
     }
 
-    ~ToggleButton ()
+    ~Toggle ()
     {
         if (m_Group != null)
         {

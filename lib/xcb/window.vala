@@ -19,6 +19,34 @@
 
 internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 {
+    // types
+    private class Sibling
+    {
+        private unowned Window? m_Window;
+        private unowned Window? m_Sibling;
+
+        public Sibling (Window inWindow, Window inSibling)
+        {
+            m_Window = inWindow;
+            m_Sibling = inSibling;
+
+            m_Sibling.damage.connect (on_sibling_event);
+        }
+
+        ~Sibling ()
+        {
+            m_Sibling.damage.disconnect (on_sibling_event);
+        }
+
+        private void
+        on_sibling_event ()
+        {
+            if (m_Window.area != null)
+            {
+                m_Window.m_WindowDamaged = m_Window.area.copy ();
+            }
+        }
+    }
     // properties
     private  global::Xcb.Window   m_Window;
     private  global::Xcb.Colormap m_Colormap = global::Xcb.NONE;
@@ -29,6 +57,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     private  Pixmap               m_BackBuffer = null;
     private  Graphic.Surface      m_FrontBuffer = null;
     private  Core.EventListener   m_ParentVisibilityListener = null;
+    private  Core.Array<Sibling>  m_Siblings = null;
 
     // accessors
     public string backend {
@@ -130,6 +159,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
             m_Colormap.free (connection);
         }
 
+        Maia.Xcb.application.unregister_window (this);
         m_Window.destroy (Maia.Xcb.application.connection);
     }
 
@@ -180,6 +210,36 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     }
 
     private void
+    paint_sibling (Graphic.Context inContext, Window inWindow, Graphic.Point inPosition, Graphic.Rectangle inArea) throws Graphic.Error
+    {
+        if (inWindow != this)
+        {
+            // Connect onto sibling
+            m_Siblings.insert (new Sibling (this, inWindow));
+            Graphic.Rectangle area = Graphic.Rectangle (0, 0, inWindow.m_WindowGeometry.size.width, inWindow.m_WindowGeometry.size.height);
+            area.intersect (inArea);
+            if (!area.is_empty ())
+            {
+                inContext.pattern = inWindow.surface;
+                inContext.pattern.transform = new Graphic.Transform.init_translate (inPosition.x, inPosition.y);
+                inContext.paint ();
+                inContext.pattern.transform = new Graphic.Transform.identity ();
+
+                foreach (unowned Window child in inWindow.query_tree ())
+                {
+                    var child_area = area;
+                    child_area.translate (child.position.invert ());
+
+                    var pos = inPosition;
+                    pos.translate (child.position.invert ());
+
+                    paint_sibling (inContext, child, pos, child_area);
+                }
+            }
+        }
+    }
+
+    private void
     flush_buffer (Graphic.Context inContext) throws Graphic.Error
     {
         if (m_WindowDamaged != null && !m_WindowDamaged.is_empty ())
@@ -208,21 +268,12 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
                     // We have a parent window
                     if (window != null && depth == 32)
                     {
-                        var reply = m_Window.get_geometry (connection).reply (connection);
-                        if (reply != null)
-                        {
-                            // Paint parent content into background
-                            //var pos = convert_to_window_space (geometry.extents.origin);
-                            //var pos = geometry.extents.origin;
+                        m_Siblings.clear ();
 
-                            inContext.pattern = window.surface;
-                            inContext.pattern.transform = new Graphic.Transform.init_translate (reply.x, reply.y);
-                            inContext.paint ();
+                        // Paint parent content into background
+                        paint_sibling (inContext, (Window)window, position, Graphic.Rectangle (position.x, position.y, m_WindowGeometry.size.width, m_WindowGeometry.size.height));
 
-                            inContext.pattern.transform = new Graphic.Transform.identity ();
-
-                            inContext.operator = Graphic.Operator.OVER;
-                        }
+                        inContext.operator = Graphic.Operator.OVER;
                     }
 
                     // Swap buffer
@@ -233,7 +284,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
             }
 
             // Flush all pendings operations
-            connection.flush ();
+            Maia.Xcb.application.sync ();
 
             m_WindowDamaged = null;
         }
@@ -278,6 +329,11 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 
         // connect onto device transform changed
         notify["device-transform"].connect (on_device_transform_changed);
+        // create siblings windows
+        m_Siblings = new Core.Array<Sibling> ();
+
+        // register has known windows
+        Maia.Xcb.application.register_window (this);
     }
 
     internal override void
@@ -650,5 +706,38 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     flush ()
     {
         application.flush ();
+    }
+
+    internal int
+    compare_xcb (Window inOther)
+    {
+        return (int)(m_Window - inOther.m_Window);
+    }
+
+    internal int
+    compare_with_xid (uint32 inXid)
+    {
+        return (int)(m_Window - inXid);
+    }
+
+    public Core.Array<unowned Window>
+    query_tree ()
+    {
+        Core.Array<unowned Window> ret = new Core.Array<unowned Window> ();
+
+        var reply = m_Window.query_tree (connection).reply (connection);
+        if (reply != null)
+        {
+            for (int cpt = 0; cpt < reply.children_len; ++cpt)
+            {
+                var window = Maia.Xcb.application.lookup_window (reply.children[cpt]);
+                if (window != null)
+                {
+                    ret.insert (window);
+                }
+            }
+        }
+
+        return ret;
     }
 }

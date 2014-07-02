@@ -34,6 +34,7 @@ libmaia_xcb_la_SOURCES = \
     atoms.vala \
     application.vala \
     delete-event-args.vala \
+    drawable.vala \
     pixmap.vala \
     request.vala \
     window.vala

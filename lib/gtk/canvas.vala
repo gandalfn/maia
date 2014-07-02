@@ -127,7 +127,8 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
         attributes.height = allocation.height;
         attributes.wclass = Gdk.WindowClass.INPUT_OUTPUT;
         attributes.window_type = Gdk.WindowType.CHILD;
-        attributes.event_mask = Gdk.EventMask.STRUCTURE_MASK | Gdk.EventMask.FOCUS_CHANGE_MASK;
+        attributes.event_mask = Gdk.EventMask.STRUCTURE_MASK   |
+                                Gdk.EventMask.FOCUS_CHANGE_MASK;
         int attributes_mask = Gdk.WindowAttributesType.X        |
                               Gdk.WindowAttributesType.Y        |
                               Gdk.WindowAttributesType.COLORMAP |

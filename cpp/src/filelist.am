@@ -72,6 +72,7 @@ files_hg = \
     rectangle.hg \
     togglegroup.hg \
     toggle-button.hg \
+    popup-button.hg \
     model.hg \
     view.hg \
     shortcut.hg \

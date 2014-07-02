@@ -53,7 +53,6 @@ public class Maia.ScrollView : Item
     private SeekBar       m_VSeekBar            = null;
     private Adjustment    m_HAdjustment         = null;
     private Adjustment    m_VAdjustment         = null;
-    private Graphic.Point m_PreviousPos         = Graphic.Point (0, 0);
 
     // accessors
     internal override string tag {
@@ -141,6 +140,7 @@ public class Maia.ScrollView : Item
 
         notify["visible"].connect (on_visible_changed);
         notify["background-pattern"].connect (on_background_pattern_changed);
+        notify["need-update"].connect (on_need_update_changed);
 
         m_ScrollToAnimator = new Core.Animator (30, 400);
     }
@@ -159,6 +159,12 @@ public class Maia.ScrollView : Item
     }
 
     private void
+    on_need_update_changed ()
+    {
+        m_Viewport.need_update = need_update;
+    }
+
+    private void
     on_adjustment_settings_changed ()
     {
         m_HSeekBar.need_update = true;
@@ -170,19 +176,19 @@ public class Maia.ScrollView : Item
     {
         if (geometry != null)
         {
+            // Get new position
+            var pos = Graphic.Point(hadjustment.@value, vadjustment.@value);
+
             // Calculate the move offset
-            var diff = m_PreviousPos;
-            diff.subtract (Graphic.Point(hadjustment.@value, vadjustment.@value));
+            var diff = m_Window.geometry.extents.origin.invert ();
+            diff.subtract (pos);
 
             // Set new position
-            m_PreviousPos = Graphic.Point(hadjustment.@value, vadjustment.@value);
+            m_Window.geometry.translate (m_Window.geometry.extents.origin.invert ());
+            m_Window.geometry.translate (pos.invert ());
 
             // Set the new window position
-            m_Window.position = m_PreviousPos.invert ();
-
-            // translate window geometry
-            m_Window.geometry.translate (m_Window.geometry.extents.origin.invert ());
-            m_Window.geometry.translate (m_PreviousPos.invert ());
+            m_Window.position = pos.invert ();
 
             // if scroll view is currently damaged translate damaged region
             if (damaged != null)
@@ -197,12 +203,12 @@ public class Maia.ScrollView : Item
                 Graphic.Region redraw_area = m_Viewport.area.copy ();
 
                 // Check if window must be redraw in this viewport area
-                redraw_area.translate (m_PreviousPos);
+                redraw_area.translate (pos);
                 redraw_area.intersect (m_Window.damaged);
 
                 if (!redraw_area.is_empty ())
                 {
-                    redraw_area.translate (m_PreviousPos.invert ());
+                    redraw_area.translate (pos.invert ());
 
                     // Damage scroll view
                     damage (redraw_area);
@@ -325,6 +331,16 @@ public class Maia.ScrollView : Item
             hadjustment.page_size = double.max (0, geometry.extents.size.width - m_VSeekBar.size.width);
             vadjustment.page_size = double.max (0, geometry.extents.size.height - m_HSeekBar.size.height);
 
+            // Fix adjustment value
+            if (hadjustment.@value + hadjustment.page_size > hadjustment.upper)
+            {
+                hadjustment.@value = hadjustment.upper - hadjustment.page_size;
+            }
+            if (vadjustment.@value + vadjustment.page_size > vadjustment.upper)
+            {
+                vadjustment.@value = vadjustment.upper - vadjustment.page_size;
+            }
+
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"$(geometry.extents)");
 
             var viewport_position = m_Viewport.position;
@@ -372,7 +388,7 @@ public class Maia.ScrollView : Item
         var pos = convert_to_item_space (root_pos);
 
         hadjustment.@value = pos.x;
-        
+
         bool move = false;
         if (pos.y < vadjustment.@value)
         {

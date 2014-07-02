@@ -58,7 +58,9 @@ public class Maia.Adjustment : Object
         set {
             if (m_Lower != double.min (value, m_Upper))
             {
+                double delta = (m_Upper - m_Lower) != 0 ? m_Value / (m_Upper - m_Lower) : 0;
                 m_Lower = double.min (value, m_Upper);
+                m_Value = delta * (m_Upper - m_Lower);
                 GLib.Signal.emit_by_name (this, "notify::lower");
             }
         }
@@ -76,7 +78,9 @@ public class Maia.Adjustment : Object
         set {
             if (m_Upper != double.max (value, m_Lower))
             {
+                double delta = (m_Upper - m_Lower) != 0 ? m_Value / (m_Upper - m_Lower) : 0;
                 m_Upper = double.max (value, m_Lower);
+                m_Value = delta * (m_Upper - m_Lower);
                 GLib.Signal.emit_by_name (this, "notify::upper");
             }
         }

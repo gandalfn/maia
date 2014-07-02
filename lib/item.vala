@@ -356,6 +356,21 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
     }
 
+    public Window toplevel {
+        get {
+            unowned Window? ret = window;
+
+            while (ret.window != null)
+            {
+                if (ret.get_qdata<unowned Window?> (s_CanvasWindow) == ret.window)
+                    break;
+                ret = ret.window;
+            }
+
+            return ret;
+        }
+    }
+
     // signals
     public signal bool grab_pointer (Item inItem);
     public signal void ungrab_pointer (Item inItem);

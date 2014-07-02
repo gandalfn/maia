@@ -47,7 +47,7 @@ public class Maia.Group : Item
 
         foreach (unowned Core.Object child in this)
         {
-            if (child is Item)
+            if (child is Item && !(child is Popup))
             {
                 unowned Item item = (Item)child;
                 Graphic.Point item_position = item.position;
@@ -86,7 +86,7 @@ public class Maia.Group : Item
 
             foreach (unowned Core.Object child in this)
             {
-                if (child is Item)
+                if (child is Item && !(child is Popup))
                 {
                     unowned Item item = (Item)child;
 

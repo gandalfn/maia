@@ -160,7 +160,8 @@ libmaia_la_SOURCES = \
     scroll-view.vala \
     canvas.vala \
     progress-bar.vala \
-    seek-bar.vala
+    seek-bar.vala \
+    popup-button.vala
 
 libmaia_la_VALAFLAGS = \
     --pkg=gvalue-collect \

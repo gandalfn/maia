@@ -179,6 +179,8 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         // Create popup
         m_Popup = new Popup ("%s-popup".printf (name));
         m_Popup.visible = false;
+        m_Popup.shadow_width = 7;
+        m_Popup.round_corner = 3;
         m_Popup.placement = PopupPlacement.TOP;
         m_Popup.background_pattern = fill_pattern;
 
@@ -401,7 +403,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
 
             // Set popup geometry
             bool force_update = m_Active != null && m_Active.geometry == null && !m_Popup.visible;
-            var popup_area = Graphic.Rectangle (popup_position.x, popup_position.y,
+            var popup_area = Graphic.Rectangle (popup_position.x - m_Popup.shadow_border, popup_position.y,
                                                 double.max (popup_size.width, geometry.extents.size.width - (arrow_size.width / 2)),
                                                 double.max (popup_size.height, geometry.extents.size.height));
 
@@ -446,7 +448,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
                     m_Active.geometry.translate (active_origin.invert ());
                     var active_area = m_Active.geometry.copy ();
                     active_pos = Graphic.Point (0, (this.area.extents.size.height - active_area.extents.size.height) / 2.0);
-                    
+
                     m_Active.geometry.translate (active_pos);
 
                     area.union_ (m_Active.geometry);

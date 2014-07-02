@@ -181,6 +181,7 @@ public class Maia.Application : Maia.Core.Object
         Manifest.Element.register ("Popup",       typeof (Popup));
         Manifest.Element.register ("ProgressBar", typeof (ProgressBar));
         Manifest.Element.register ("SeekBar",     typeof (SeekBar));
+        Manifest.Element.register ("PopupButton", typeof (PopupButton));
     }
 
     // methods

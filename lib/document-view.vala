@@ -366,11 +366,16 @@ public class Maia.DocumentView : Group
 
             geometry = inAllocation;
 
+            // Get content size
+            m_Content.need_update = true;
+            var content_size = m_Content.size;
+
             // Get shortcuts toolbar size
             var toolbar_size = m_ShortcutsToolbar.size;
 
             // Calculate content allocation            
-            var content_allocation = Graphic.Rectangle (0, 0, geometry.extents.size.width - toolbar_size.width, geometry.extents.size.height);
+            var content_allocation = Graphic.Rectangle (0, 0, double.max (content_size.width, geometry.extents.size.width - toolbar_size.width),
+                                                              double.max (content_size.height, geometry.extents.size.height));
 
             // Set content allocation
             m_Content.update (inContext, new Graphic.Region (content_allocation));

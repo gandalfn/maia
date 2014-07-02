@@ -9,10 +9,10 @@ DocumentView.scrollview {
 		header: 'header';
 		footer: 'footer';
 		
-		transform: scale(1.5, 1.5);
+		//transform: scale(1.5, 1.5);
 		
 		// Header
-		CassoGrid.header {
+		Grid.header {
 		    row-spacing: 5;
 		    grid-line-width: 1;
 		    stroke-pattern: #000000;
@@ -48,7 +48,7 @@ DocumentView.scrollview {
 		        text: "Institution name";
 		    }
 
-		    CassoGrid.exam_info {
+		    Grid.exam_info {
 		        row: 0;
 		        column: 2;
 		        xexpand: false;
@@ -76,7 +76,7 @@ DocumentView.scrollview {
 		}
 
 		// Footer
-		CassoGrid.footer {
+		Grid.footer {
 		    row-spacing: 5;
 
 		    Label.footer_right {
@@ -107,7 +107,7 @@ DocumentView.scrollview {
 		}
 
 		// Main content of worksheet
-		CassoGrid.main {
+		Grid.main {
 		    column-spacing: 5;
 		    grid-line-width: 1;
 		    stroke-pattern: #000000;
@@ -125,9 +125,9 @@ DocumentView.scrollview {
 		        font-description: "Liberation Sans 17";
 		        text: "Vascular";
 		    }
-
+		    
 		    // Content
-		    CassoGrid.content {
+		    Grid.content {
 		    	//visible: false;
 		        row: 0;
 		        column: 1;
@@ -148,6 +148,20 @@ DocumentView.scrollview {
 		          text: "";
 		          only-numeric: true;
 		        }
+		        
+		        PopupButton.button {
+					xexpand: false;
+					yexpand: false;
+					column: 1;
+					label: "test";
+
+					[
+						Label.label {
+							text: "content";
+						}
+					]
+				}
+
 
 		        DrawingArea.clinical_draw {
 		            row: 1;
@@ -232,7 +246,7 @@ DocumentView.scrollview {
 		}
 
 		// Main content of worksheet
-		CassoGrid.main_2 {
+		Grid.main_2 {
 		    row: 1;
 		    border-line-width: 1;
 		    stroke-pattern: #000000;

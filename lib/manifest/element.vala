@@ -313,6 +313,7 @@ public interface Maia.Manifest.Element : Core.Object
                     if (element is Theme)
                     {
                         inManifest.theme =  element as Theme;
+                        manifest_theme = inManifest.theme;
                         s_CurrentTheme = inManifest.theme;
                         element.read_manifest (inManifest);
                         inManifest.owner = this;

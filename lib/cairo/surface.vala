@@ -133,6 +133,7 @@ internal class Maia.Cairo.Surface : Graphic.Surface
             {
                 case "xcb/window":
                 case "xcb/pixmap":
+                case "xcb/drawable":
                     uint32 xid;
                     int screen_num;
                     unowned Xcb.Connection connection;

@@ -186,7 +186,7 @@ internal class Maia.Xcb.ReparentRequest : Request
     {
         if (window.window != null)
         {
-            var pos = window.convert_to_window_space (window.geometry != null ? window.geometry.extents.origin : Graphic.Point (0, 0));
+            var pos = window.geometry != null ? window.geometry.extents.origin : Graphic.Point (0, 0);
 
             // Reparent window under parent_window
             ((global::Xcb.Window)window.xid).reparent (window.connection, ((Window)window.window).xid, (int16)GLib.Math.floor (pos.x),
@@ -247,7 +247,7 @@ internal class Maia.Xcb.MoveRequest : Request
     internal override void
     run ()
     {
-        Graphic.Point window_position = window.convert_to_window_space (position);
+        Graphic.Point window_position = position;
         uint16 mask = global::Xcb.ConfigWindow.X |
                       global::Xcb.ConfigWindow.Y;
         uint32[] values = { (uint32)GLib.Math.floor (window_position.x), (uint32)GLib.Math.floor (window_position.y) };

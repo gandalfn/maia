@@ -2762,6 +2762,15 @@
   (construct-only #f)
 )
 
+(define-property toplevel
+  (of-object "MaiaItem")
+  (prop-type "GParamObject")
+  (docs "toplevel")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
 ;; From MaiaItemMovable
 
 ;; From MaiaItemPackable
@@ -3947,6 +3956,26 @@
   (construct-only #f)
 )
 
+;; From MaiaPopupButton
+
+(define-property tag
+  (of-object "MaiaPopupButton")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property content
+  (of-object "MaiaPopupButton")
+  (prop-type "GParamObject")
+  (docs "content")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaView
 
 (define-signal row-clicked
@@ -4112,6 +4141,51 @@
   (docs "content")
   (readable #t)
   (writable #f)
+  (construct-only #f)
+)
+
+(define-property shadow-color
+  (of-object "MaiaPopup")
+  (prop-type "GParamObject")
+  (docs "shadow-color")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property shadow-width
+  (of-object "MaiaPopup")
+  (prop-type "GParamDouble")
+  (docs "shadow-width")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property shadow-border
+  (of-object "MaiaPopup")
+  (prop-type "GParamFlags")
+  (docs "shadow-border")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property round-corner
+  (of-object "MaiaPopup")
+  (prop-type "GParamDouble")
+  (docs "round-corner")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property close-button
+  (of-object "MaiaPopup")
+  (prop-type "GParamBoolean")
+  (docs "close-button")
+  (readable #t)
+  (writable #t)
   (construct-only #f)
 )
 
@@ -4617,6 +4691,15 @@
   (construct-only #f)
 )
 
+(define-property close-button-scale
+  (of-object "MaiaWindow")
+  (prop-type "GParamDouble")
+  (docs "close-button-scale")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property foreign
   (of-object "MaiaWindow")
   (prop-type "GParamUInt")
@@ -4630,6 +4713,51 @@
   (of-object "MaiaWindow")
   (prop-type "GParamDouble")
   (docs "border")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property shadow-color
+  (of-object "MaiaWindow")
+  (prop-type "GParamObject")
+  (docs "shadow-color")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property shadow-width
+  (of-object "MaiaWindow")
+  (prop-type "GParamDouble")
+  (docs "shadow-width")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property shadow-border
+  (of-object "MaiaWindow")
+  (prop-type "GParamFlags")
+  (docs "shadow-border")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property round-corner
+  (of-object "MaiaWindow")
+  (prop-type "GParamDouble")
+  (docs "round-corner")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property close-button
+  (of-object "MaiaWindow")
+  (prop-type "GParamBoolean")
+  (docs "close-button")
   (readable #t)
   (writable #t)
   (construct-only #f)

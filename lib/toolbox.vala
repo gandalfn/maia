@@ -51,7 +51,7 @@ public class Maia.Toolbox : Popup
                     if (m_ItemContent != null && m_ItemContent.length > 0)
                     {
                         var document = new Manifest.Document.from_buffer (m_ItemContent, m_ItemContent.length);
-                    
+
                         if (document != null)
                         {
                             ret = document.get (null) as Item;
@@ -208,6 +208,9 @@ public class Maia.Toolbox : Popup
 
         // Create current item event
         current_item = new Core.Event ("current-item", this);
+
+        // Toolbox always hidden by default
+        visible = false;
     }
 
     public Toolbox (string inId)

@@ -19,14 +19,30 @@
 
 public class Maia.Window : Group
 {
+    // types
+    [Flags]
+    public enum Border
+    {
+        ALL,
+        LEFT,
+        RIGHT,
+        TOP,
+        BOTTOM
+    }
+
     // properties
-    private Core.Event m_DamageEvent;
-    private Core.Event m_GeometryEvent;
-    private Core.Event m_VisibilityEvent;
-    private Core.Event m_DeleteEvent;
-    private Core.Event m_DestroyEvent;
-    private Core.Event m_MouseEvent;
-    private Core.Event m_KeyboardEvent;
+    private Core.Animator   m_Animator;
+    private uint            m_Transition = 0;
+    private Graphic.Surface m_Background;
+    private Graphic.Surface m_CloseButton;
+    private bool            m_OverCloseButton = false;
+    private Core.Event      m_DamageEvent;
+    private Core.Event      m_GeometryEvent;
+    private Core.Event      m_VisibilityEvent;
+    private Core.Event      m_DeleteEvent;
+    private Core.Event      m_DestroyEvent;
+    private Core.Event      m_MouseEvent;
+    private Core.Event      m_KeyboardEvent;
 
     // accessors
     protected unowned Item? focus_item         { get; set; default = null; }
@@ -39,9 +55,21 @@ public class Maia.Window : Group
         }
     }
 
+    internal double close_button_scale { get; set; default = 0.5; }
+
     public unowned uint32 foreign { get; construct; default = 0; }
 
     public double border { get; set; default = 0.0; }
+
+    public Graphic.Color shadow_color { get; set; default = new Graphic.Color (0, 0, 0); }
+
+    public double shadow_width { get; set; default = 0.0; }
+
+    public Border shadow_border { get; set; default = Border.ALL; }
+
+    public double round_corner { get; set; default = 5.0; }
+
+    public bool close_button { get; set; default = false; }
 
     public virtual uint8 depth { get; set; }
 
@@ -125,6 +153,9 @@ public class Maia.Window : Group
     // methods
     construct
     {
+        // Create animator
+        m_Animator = new Core.Animator (60, 250);
+
        // Subscribe to damage event
         m_DamageEvent.object_subscribe (on_damage_event);
 
@@ -155,6 +186,15 @@ public class Maia.Window : Group
         grab_keyboard.connect (on_grab_keyboard);
         ungrab_keyboard.connect (on_ungrab_keyboard);
         scroll_to.connect (on_scroll_to);
+
+        // Connect onto close button scale changed
+        notify["close-button-scale"].connect (on_close_button_scale_changed);
+
+        // On background pattern changed recreate close button
+        notify["background-pattern"].connect (create_close_button);
+
+        // On stroke pattern changed recreate close button
+        notify["stroke-pattern"].connect (create_close_button);
     }
 
     /**
@@ -166,6 +206,8 @@ public class Maia.Window : Group
 
         is_movable = true;
         is_resizable = true;
+
+        create_close_button ();
     }
 
     /**
@@ -177,6 +219,49 @@ public class Maia.Window : Group
 
         is_movable = true;
         is_resizable = true;
+    }
+
+    private void
+    on_close_button_scale_changed ()
+    {
+        if (visible)
+        {
+            var button_area = Graphic.Rectangle (area.extents.size.width - (shadow_width * 2) - 16, (shadow_width * 2) - 16, 32, 32);
+            damage_area (new Graphic.Region (button_area));
+        }
+    }
+
+    private void
+    create_close_button ()
+    {
+        try
+        {
+            m_CloseButton = new Graphic.Surface (32, 32);
+            m_CloseButton.clear ();
+            
+            var background = new Graphic.Path ();
+            background.arc (16, 16, 14, 14, 0, 2 * GLib.Math.PI);
+
+            var foreground = new Graphic.Path ();
+            foreground.arc (16, 16, 14, 14, 0, 2 * GLib.Math.PI);
+            foreground.move_to (16, 16);
+            foreground.rel_line_to (-6, -6);
+            foreground.rel_line_to (12, 12);
+            foreground.move_to (16, 16);
+            foreground.rel_line_to (6, -6);
+            foreground.rel_line_to (-12, 12);
+
+            var ctx = m_CloseButton.context;
+            ctx.pattern = background_pattern ?? new Graphic.Color (1, 1, 1);
+            ctx.fill (background);
+            ctx.line_width = 4;
+            ctx.pattern = stroke_pattern ?? new Graphic.Color (0, 0, 0);
+            ctx.stroke (foreground);
+        }
+        catch (Graphic.Error err)
+        {
+            Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, @"Error on create window close button: $(err.message)");
+        }
     }
 
     protected virtual void
@@ -280,7 +365,56 @@ public class Maia.Window : Group
                     // else send event to window
                     else
                     {
-                        motion_event (pos);
+                        if (area != null &&
+                            pos.x >= area.extents.size.width - (shadow_width * 2) - (16 * close_button_scale) &&
+                            pos.y >= (shadow_width * 2) - (16 * close_button_scale) &&
+                            pos.x < area.extents.size.width - (shadow_width * 2) - (16 * close_button_scale) + (32 * close_button_scale) &&
+                            pos.y < (shadow_width * 2) - (16 * close_button_scale) + (32 * close_button_scale))
+                        {
+                            if (!m_OverCloseButton)
+                            {
+                                m_OverCloseButton = true;
+
+                                m_Animator.stop ();
+
+                                if (m_Transition > 0)
+                                {
+                                    m_Animator.remove_transition (m_Transition);
+                                    m_Transition = 0;
+                                }
+
+                                GLib.Value from = (double)close_button_scale;
+                                GLib.Value to = (double)1.0;
+
+                                m_Transition = m_Animator.add_transition (0.0, 1.0, Core.Animator.ProgressType.EASE_IN_EASE_OUT, null, null);
+                                m_Animator.add_transition_property (m_Transition, this, "close-button-scale", from, to);
+                                m_Animator.start ();
+                            }
+                        }
+                        else 
+                        {
+                            if (m_OverCloseButton)
+                            {
+                                m_OverCloseButton = false;
+
+                                m_Animator.stop ();
+
+                                if (m_Transition > 0)
+                                {
+                                    m_Animator.remove_transition (m_Transition);
+                                    m_Transition = 0;
+                                }
+
+                                GLib.Value from = (double)close_button_scale;
+                                GLib.Value to = (double)0.5;
+
+                                m_Transition = m_Animator.add_transition (0.0, 1.0, Core.Animator.ProgressType.EXPONENTIAL, null, null);
+                                m_Animator.add_transition_property (m_Transition, this, "close-button-scale", from, to);
+                                m_Animator.start ();
+                            }
+
+                            motion_event (pos);
+                        }
                     }
                 }
 
@@ -344,6 +478,10 @@ public class Maia.Window : Group
                         grab_pointer_item.button_release_event (mouse_args.button, grab_pointer_item.convert_to_item_space (convert_to_root_space(pos)));
                     }
                     // else send event to window
+                    else if (m_OverCloseButton)
+                    {
+                        visible = false;
+                    }
                     else
                     {
                         button_release_event (mouse_args.button, pos);
@@ -420,9 +558,9 @@ public class Maia.Window : Group
     }
 
     protected virtual void
-    on_move_pointer (Graphic.Point inPosition)
+    on_move_pointer (Graphic.Point inBorder)
     {
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"move pointer to $inPosition");
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"move pointer to $inBorder");
     }
 
     protected virtual void
@@ -510,10 +648,25 @@ public class Maia.Window : Group
         }
     }
 
+    internal override int
+    compare (Core.Object inOther)
+    {
+        unowned Window? other = inOther as Window;
+        if (other != null)
+        {
+            return 0;
+        }
+
+        return base.compare (inOther);
+    }
+
     internal override Graphic.Size
     childs_size_request ()
     {
         Graphic.Region area = new Graphic.Region ();
+
+        double x1_border = border + (!(Border.LEFT in shadow_border) ? 0 : shadow_border);
+        double y1_border = border + (!(Border.TOP in shadow_border) ? 0 : shadow_border);
 
         foreach (unowned Core.Object child in this)
         {
@@ -522,10 +675,10 @@ public class Maia.Window : Group
                 unowned Item item = (Item)child;
                 Graphic.Point item_position = item.position;
 
-                if (item_position.x < border || item_position.y < border)
+                if (item_position.x < x1_border || item_position.y < y1_border)
                 {
-                    if (item_position.x < border) item_position.x = border;
-                    if (item_position.y < border) item_position.y = border;
+                    if (item_position.x < x1_border) item_position.x = x1_border;
+                    if (item_position.y < y1_border) item_position.y = y1_border;
                     item.position = item_position;
                 }
 
@@ -534,12 +687,13 @@ public class Maia.Window : Group
             }
         }
 
-        area.extents.size.width += border;
-        area.extents.size.height += border;
+        var ret = area.extents.size;
+        ret.resize (border + (!(Border.RIGHT in shadow_border) ? 0 : shadow_border) * 2,
+                    border + (!(Border.BOTTOM in shadow_border) ? 0 : shadow_border) * 2);
 
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "window: %s %s", name, area.extents.size.to_string ());
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "window: %s %s", name, ret.to_string ());
 
-        return Graphic.Size (area.extents.size.width + border, area.extents.size.height + border);
+        return ret;
     }
 
     internal override void
@@ -564,6 +718,21 @@ public class Maia.Window : Group
         {
             ungrab_keyboard (grab_keyboard_item);
         }
+        
+        if (m_Animator != null)
+        {
+            m_Animator.stop ();
+
+            if (m_Transition > 0)
+            {
+                m_Animator.remove_transition (m_Transition);
+                m_Transition = 0;
+            }
+        }
+
+        m_OverCloseButton = false;
+
+        close_button_scale = 0.5;
     }
 
     internal override void
@@ -620,7 +789,8 @@ public class Maia.Window : Group
 
                     // Clear area
                     ctx.operator = Graphic.Operator.SOURCE;
-                    ctx.pattern = background_pattern != null ? background_pattern : new Graphic.Color (0, 0, 0, 0);
+
+                    ctx.pattern = m_Background;
                     ctx.fill (new Graphic.Path.from_region (damaged_area));
 
                     // Clip the damaged area
@@ -660,16 +830,101 @@ public class Maia.Window : Group
                     var item_size     = item.size;
 
                     // Set child size allocation
+                    var area_size = area.extents.size;
+                    area_size.resize (-(border + (!(Border.RIGHT in shadow_border) ? 0 : shadow_border)) * 2,
+                                      -(border + (!(Border.BOTTOM in shadow_border) ? 0 : shadow_border)) * 2);
+
                     var child_allocation = Graphic.Rectangle (item_position.x, item_position.y,
-                                                              double.max (item_size.width, area.extents.size.width - (border * 2)),
-                                                              double.max (item_size.height, area.extents.size.height - (border * 2)));
+                                                              double.max (item_size.width, area_size.width),
+                                                              double.max (item_size.height, area_size.height));
 
                     // Update child allocation
                     item.update (inContext, new Graphic.Region (child_allocation));
                 }
             }
 
+            m_Background = new Graphic.Surface ((uint)area.extents.size.width, (uint)area.extents.size.height);
+            m_Background.clear ();
+            var ctx = m_Background.context;
+            ctx.operator = Graphic.Operator.SOURCE;
+
+            var shadow_area = Graphic.Rectangle (!(Border.LEFT in shadow_border) ? 0 : shadow_border,
+                                                 !(Border.TOP in shadow_border) ? 0 : shadow_border,
+                                                 area.extents.size.width - ((!(Border.RIGHT in shadow_border) ? 0 : shadow_border) * 2),
+                                                 area.extents.size.height - ((!(Border.BOTTOM in shadow_border) ? 0 : shadow_border) * 2));
+            var path = new Graphic.Path ();
+            path.rectangle (shadow_area.origin.x, shadow_area.origin.y, shadow_area.size.width, shadow_area.size.height, shadow_border > 0 ? round_corner : 0, shadow_border > 0 ? round_corner : 0);
+
+            if (!(Border.LEFT in shadow_border))
+            {
+                path.rectangle (shadow_area.origin.x, shadow_area.origin.y, round_corner, round_corner);
+                path.rectangle (shadow_area.origin.x, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
+            }
+
+            if (!(Border.RIGHT in shadow_border))
+            {
+                path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y, round_corner, round_corner);
+                path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
+            }
+
+            if (!(Border.TOP in shadow_border))
+            {
+                path.rectangle (shadow_area.origin.x, shadow_area.origin.y, round_corner, round_corner);
+                path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y, round_corner, round_corner);
+            }
+
+            if (!(Border.BOTTOM in shadow_border))
+            {
+                path.rectangle (shadow_area.origin.x, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
+                path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
+            }
+
+            // Paint shadow if needed
+            if (shadow_border > 0)
+            {
+                ctx.pattern = shadow_color ?? new Graphic.Color (0, 0, 0);
+                ctx.fill (path);
+
+                m_Background.exponential_blur ((int)(shadow_border / 2));
+            }
+
+            ctx.operator = Graphic.Operator.SOURCE;
+            ctx.pattern = background_pattern != null ? background_pattern : new Graphic.Color (0, 0, 0, 0);
+            ctx.fill (path);
+
             damage_area ();
+        }
+    }
+
+    internal override void
+    paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
+    {
+        // paint childs
+        foreach (unowned Core.Object child in this)
+        {
+            if (child is Drawable)
+            {
+                unowned Drawable drawable = (Drawable)child;
+
+                var area = area_to_child_item_space (drawable, inArea);
+                drawable.draw (inContext, area);
+            }
+        }
+
+        // Draw close button
+        if (close_button)
+        {
+            inContext.save ();
+            {
+                var button_pos = Graphic.Point (area.extents.size.width - (shadow_width * 2) - (16 * close_button_scale), (shadow_width * 2) - (16 * close_button_scale));
+
+                inContext.operator = Graphic.Operator.OVER;
+                inContext.translate (button_pos);
+                inContext.transform = new Graphic.Transform.init_scale (close_button_scale, close_button_scale);
+                inContext.pattern = m_CloseButton;
+                inContext.paint ();
+            }
+            inContext.restore ();
         }
     }
 

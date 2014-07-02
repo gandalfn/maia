@@ -29,6 +29,7 @@ internal class Maia.Xcb.Application : Core.Object
     private global::Xcb.Util.CursorContext    m_Cursors;
     private global::Xcb.Render.Pictvisual?[,] m_VisualCache;
     private Core.Queue<Request>               m_RequestQueue;
+    private Core.Set<unowned Window>          m_Windows;
 
     // accessors
     public global::Xcb.Connection connection {
@@ -104,6 +105,10 @@ internal class Maia.Xcb.Application : Core.Object
         {
             Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Error on get visual cache");
         }
+
+        // Create window list
+        m_Windows = new Core.Set<Window> ();
+        m_Windows.compare_func = Window.compare_xcb;
     }
 
     private unowned global::Xcb.Render.Pictvisual?
@@ -250,7 +255,7 @@ internal class Maia.Xcb.Application : Core.Object
             {
                 request.run ();
             }
-            flush ();
+            sync ();
         }
     }
 
@@ -258,5 +263,23 @@ internal class Maia.Xcb.Application : Core.Object
     sync ()
     {
         m_Connection.get_input_focus ().reply (m_Connection);
+    }
+
+    public void
+    register_window (Window inWindow)
+    {
+        m_Windows.insert (inWindow);
+    }
+
+    public void
+    unregister_window (Window inWindow)
+    {
+        m_Windows.remove (inWindow);
+    }
+
+    public unowned Window?
+    lookup_window (uint32 inXid)
+    {
+        return m_Windows.search<uint32> (inXid, Window.compare_with_xid);
     }
 }

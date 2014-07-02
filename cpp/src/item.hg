@@ -90,6 +90,7 @@ namespace Maia
 
             _WRAP_METHOD(Glib::ustring get_name () const, maia_item_get_name)
             _WRAP_METHOD(Glib::RefPtr<Window> get_window () const, maia_item_get_window, refreturn)
+            _WRAP_METHOD(Glib::RefPtr<Window> get_toplevel () const, maia_item_get_toplevel, refreturn)
             _WRAP_METHOD(void set_window (const Glib::RefPtr<Window>& inNativeWindow), maia_item_set_window)
             _WRAP_METHOD(bool is_packable () const, maia_item_get_is_packable)
             _WRAP_METHOD(bool is_movable () const, maia_item_get_is_movable)
@@ -160,6 +161,7 @@ namespace Maia
 
             _WRAP_PROPERTY("name", Glib::ustring)
             _WRAP_PROPERTY("window", Glib::RefPtr<Window>)
+            _WRAP_PROPERTY("toplevel", Glib::RefPtr<Window>)
             _WRAP_PROPERTY("is-packable", bool)
             _WRAP_PROPERTY("is-movable", bool)
             _WRAP_PROPERTY("is-resizable", bool)

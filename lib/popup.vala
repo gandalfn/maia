@@ -19,6 +19,7 @@
 
 public enum Maia.PopupPlacement
 {
+    ABSOLUTE,
     TOP,
     BOTTOM,
     LEFT,
@@ -29,6 +30,9 @@ public enum Maia.PopupPlacement
     {
         switch (this)
         {
+            case ABSOLUTE:
+                return "absolute";
+
             case TOP:
                 return "top";
 
@@ -50,6 +54,9 @@ public enum Maia.PopupPlacement
     {
         switch (inValue)
         {
+            case "absolute":
+                return PopupPlacement.ABSOLUTE;
+
             case "top":
                 return PopupPlacement.TOP;
 
@@ -63,7 +70,7 @@ public enum Maia.PopupPlacement
                 return PopupPlacement.RIGHT;
         }
 
-        return PopupPlacement.TOP;
+        return PopupPlacement.ABSOLUTE;
     }
 }
 
@@ -106,8 +113,13 @@ public class Maia.Popup : Group
         }
     }
 
-    public double         border    { get; set; default = 0.0; }
-    public PopupPlacement placement { get; set; default = PopupPlacement.TOP; }
+    public Graphic.Color  shadow_color  { get; set; default = new Graphic.Color (0, 0, 0); }
+    public double         shadow_width  { get; set; default = 0.0; }
+    public Window.Border  shadow_border { get; set; default = Window.Border.ALL; }
+    public double         round_corner  { get; set; default = 5.0; }
+    public bool           close_button  { get; set; default = false; }
+    public double         border        { get; set; default = 0.0; }
+    public PopupPlacement placement     { get; set; default = PopupPlacement.TOP; }
 
     // static methods
     static construct
@@ -137,12 +149,10 @@ public class Maia.Popup : Group
     {
         // Create window
         m_Window = new Window (name + "_window", 1, 1);
+        m_Window.visible = false;
         m_Window.set_qdata<unowned Object> (Item.s_PopupWindow, this);
         m_Window.depth = 32;
-        m_Window.background_pattern = background_pattern;
-        m_Window.transform = transform;
         m_Window.parent = Application.default;
-        m_Window.border = border;
 
         // Add not dumpable attributes
         not_dumpable_attributes.insert ("content");
@@ -152,15 +162,49 @@ public class Maia.Popup : Group
 
         // Connect onto background pattern change
         notify["background-pattern"].connect (on_background_pattern_changed);
+        on_background_pattern_changed ();
+
+        // Connect onto stroke pattern change
+        notify["stroke-pattern"].connect (on_stroke_pattern_changed);
+        on_stroke_pattern_changed ();
 
         // Connect onto transform change
         notify["transform"].connect (on_transform_changed);
+        on_transform_changed ();
 
         // Connect onto window change
         notify["window"].connect (on_window_changed);
 
         // Connect onto border change
         notify["border"].connect (on_border_changed);
+        on_border_changed ();
+
+        // Connect onto shadow border change
+        notify["shadow-border"].connect (on_shadow_border_changed);
+        on_shadow_border_changed ();
+
+        // Connect onto shadow width change
+        notify["shadow-width"].connect (on_shadow_width_changed);
+        on_shadow_width_changed ();
+
+        // Connect onto shadow color change
+        notify["shadow-color"].connect (on_shadow_color_changed);
+        on_shadow_color_changed ();
+
+        // Connect onto round corner change
+        notify["round-corner"].connect (on_round_corner_changed);
+        on_round_corner_changed ();
+
+        // Connect onto close button change
+        notify["close-button"].connect (on_close_button_changed);
+        on_close_button_changed ();
+
+        // Connect onto border change
+        notify["placement"].connect (on_placement_changed);
+        on_placement_changed ();
+
+        // Connect onto window visible changed
+        m_Window.notify["visible"].connect (on_window_visible_changed);
     }
 
     public Popup (string inId)
@@ -172,6 +216,18 @@ public class Maia.Popup : Group
     {
         m_Window.parent = null;
         m_Window = null;
+    }
+
+    private void
+    on_window_visible_changed ()
+    {
+        visible = m_Window.visible;
+    }
+
+    private void
+    on_stroke_pattern_changed ()
+    {
+        m_Window.stroke_pattern = stroke_pattern;
     }
 
     private void
@@ -190,6 +246,74 @@ public class Maia.Popup : Group
     on_border_changed ()
     {
         m_Window.border = border;
+    }
+
+    private void
+    on_shadow_width_changed ()
+    {
+        m_Window.shadow_width = shadow_width;
+    }
+
+    private void
+    on_shadow_border_changed ()
+    {
+        m_Window.shadow_border = shadow_border;
+    }
+
+    private void
+    on_shadow_color_changed ()
+    {
+        m_Window.shadow_color = shadow_color;
+    }
+
+    private void
+    on_round_corner_changed ()
+    {
+        m_Window.round_corner = round_corner;
+    }
+
+    private void
+    on_close_button_changed ()
+    {
+        m_Window.close_button = close_button;
+    }
+
+    private void
+    on_placement_changed ()
+    {
+        switch (placement)
+        {
+            case PopupPlacement.ABSOLUTE:
+                m_Window.shadow_border = Window.Border.LEFT  |
+                                         Window.Border.RIGHT |
+                                         Window.Border.TOP   |
+                                         Window.Border.BOTTOM;
+                break;
+
+            case PopupPlacement.BOTTOM:
+                m_Window.shadow_border = Window.Border.TOP   |
+                                         Window.Border.RIGHT |
+                                         Window.Border.LEFT;
+                break;
+
+            case PopupPlacement.TOP:
+                m_Window.shadow_border = Window.Border.BOTTOM |
+                                         Window.Border.RIGHT  |
+                                         Window.Border.LEFT;
+                break;
+
+            case PopupPlacement.RIGHT:
+                m_Window.shadow_border = Window.Border.LEFT |
+                                         Window.Border.TOP  |
+                                         Window.Border.BOTTOM;
+                break;
+
+            case PopupPlacement.LEFT:
+                m_Window.shadow_border = Window.Border.RIGHT |
+                                         Window.Border.TOP   |
+                                         Window.Border.BOTTOM;
+                break;
+        }
     }
 
     private void
@@ -247,7 +371,7 @@ public class Maia.Popup : Group
         m_Content.size = Graphic.Size (geometry.extents.size.width - (border * 4), geometry.extents.size.height - (border * 4));
 
         // set window size and position
-        m_Window.position = geometry.extents.origin;
+        m_Window.position = convert_to_window_space(geometry.extents.origin);
         m_Window.device_transform = get_window_transform ();
 
         m_Window.update (inContext, new Graphic.Region (Graphic.Rectangle (m_Window.position.x,
@@ -266,7 +390,9 @@ public class Maia.Popup : Group
     on_show ()
     {
         // Show window when popup is visible
+        m_Window.notify["visible"].disconnect (on_window_visible_changed);
         m_Window.visible = true;
+        m_Window.notify["visible"].connect (on_window_visible_changed);
 
         m_Animator.stop ();
 
@@ -291,24 +417,28 @@ public class Maia.Popup : Group
             case PopupPlacement.BOTTOM:
                 from = (double)(popup_size.height);
                 to = (double)0.0;
+                y = (double)from;
                 m_Animator.add_transition_property (m_Transition, this, "y", from, to);
                 break;
 
             case PopupPlacement.TOP:
                 from = (double)(-popup_size.height);
                 to = (double)0.0;
+                y = (double)from;
                 m_Animator.add_transition_property (m_Transition, this, "y", from, to);
                 break;
 
             case PopupPlacement.RIGHT:
                 from = (double)(popup_size.width);
                 to = (double)0.0;
+                x = (double)from;
                 m_Animator.add_transition_property (m_Transition, this, "x", from, to);
                 break;
 
             case PopupPlacement.LEFT:
                 from = (double)(-popup_size.width);
                 to = (double)0.0;
+                x = (double)from;
                 m_Animator.add_transition_property (m_Transition, this, "x", from, to);
                 break;
         }
@@ -408,7 +538,9 @@ public class Maia.Popup : Group
         base.on_hide ();
 
         // Hide window when popup is hidden
+        m_Window.notify["visible"].disconnect (on_window_visible_changed);
         m_Window.visible = false;
+        m_Window.notify["visible"].connect (on_window_visible_changed);
     }
 
     private void

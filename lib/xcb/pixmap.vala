@@ -17,61 +17,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal class Maia.Xcb.Pixmap : Maia.Core.Object, Maia.Graphic.Device
+internal class Maia.Xcb.Pixmap : Maia.Xcb.Drawable
 {
-    // properties
-    private uint8               m_Depth;
-    private global::Xcb.Pixmap  m_Pixmap;
-    private Graphic.Surface     m_Surface = null;
-
     // accessors
-    public string backend {
+    public override string backend {
         get {
             return "xcb/pixmap";
-        }
-    }
-
-    public global::Xcb.Connection connection {
-        get {
-            return Maia.Xcb.application.connection;
-        }
-    }
-
-    public uint32 xid {
-        get {
-            return m_Pixmap;
-        }
-    }
-
-    public uint32 visual {
-        get {
-            return Maia.Xcb.application.find_visual_from_depth (screen_num, m_Depth);
-        }
-    }
-
-    public int screen_num { get; set; default = 0; }
-
-    public Graphic.Size size { get; construct; default = Graphic.Size (0, 0); }
-
-    public Graphic.Surface? surface {
-        get {
-            if (m_Surface == null)
-            {
-                m_Surface = new Graphic.Surface.from_device (this, (int)size.width, (int)size.height);
-            }
-            return m_Surface;
         }
     }
 
     // methods
     public Pixmap (Window inWindow, int inDepth, int inWidth, int inHeight)
     {
-        GLib.Object (screen_num: inWindow.screen_num, size: Graphic.Size (inWidth, inHeight));
+        var pixmap = global::Xcb.Pixmap (Maia.Xcb.application.connection);
 
-        m_Depth = (uint8)inDepth;
-        m_Pixmap = global::Xcb.Pixmap (connection);
-
-        var cookie = m_Pixmap.create_checked (connection, (uint8)inDepth, (global::Xcb.Drawable)inWindow.xid, (uint16)inWidth, (uint16)inHeight);
+        base (pixmap, inWindow.screen_num, inDepth, inWidth, inHeight);
+        
+        var cookie = pixmap.create_checked (connection, (uint8)inDepth, (global::Xcb.Drawable)inWindow.xid, (uint16)inWidth, (uint16)inHeight);
 
         if (connection.request_check (cookie) != null)
         {
@@ -81,28 +43,8 @@ internal class Maia.Xcb.Pixmap : Maia.Core.Object, Maia.Graphic.Device
         clear ();
     }
 
-    public void
-    clear ()
-    {
-        var picture = global::Xcb.Render.Picture (connection);
-        var format = Maia.Xcb.application.find_format_from_depth (screen_num, m_Depth);
-
-        picture.create (connection, m_Pixmap, format);
-        global::Xcb.Render.Color color = { 0, 0, 0, 0 };
-        global::Xcb.Rectangle rectangles[1];
-
-        rectangles[0].x = 0;
-        rectangles[0].y = 0;
-        rectangles[0].width = (uint16)size.width;
-        rectangles[0].height = (uint16)size.height;
-
-        picture.fill_rectangles (connection, global::Xcb.Render.PictOp.SRC, color, rectangles);
-
-        picture.free (connection);
-    }
-
     ~Pixmap ()
     {
-        m_Pixmap.free (Maia.Xcb.application.connection);
+        ((global::Xcb.Pixmap)xid).free (Maia.Xcb.application.connection);
     }
 }

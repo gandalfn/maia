@@ -22,6 +22,7 @@
 #include <maiamm/core-event.h>
 #include <maiamm/core-eventargs.h>
 #include <maiamm/graphic-surface.h>
+#include <maiamm/graphic-color.h>
 #include <maiamm/group.h>
 #include <maiamm/popup.h>
 
@@ -86,6 +87,16 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Graphic::Surface> get_surface () const, maia_window_get_surface, refreturn)
             _WRAP_METHOD(double get_border () const, maia_window_get_border)
             _WRAP_METHOD(void set_border (double inBorder), maia_window_set_border)
+            _WRAP_METHOD(double get_shadow_width () const, maia_window_get_shadow_width)
+            _WRAP_METHOD(void set_shadow_width (double inWidth), maia_window_set_shadow_width)
+            _WRAP_METHOD(WindowBorder get_shadow_border () const, maia_window_get_shadow_border)
+            _WRAP_METHOD(void set_shadow_border (WindowBorder inBorder), maia_window_set_shadow_border)
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_shadow_color () const, maia_window_get_shadow_color, refreturn)
+            _WRAP_METHOD(void set_shadow_color (const Glib::RefPtr<Graphic::Color>& inColor), maia_window_set_shadow_color)
+            _WRAP_METHOD(double get_round_corner () const, maia_window_get_round_corner)
+            _WRAP_METHOD(void set_round_corner (double inWidth), maia_window_set_round_corner)
+            _WRAP_METHOD(bool get_close_button () const, maia_window_get_close_button)
+            _WRAP_METHOD(void set_close_button (bool inClose = true), maia_window_set_close_button)
             _WRAP_METHOD(guint8 get_depth () const, maia_window_get_depth)
             _WRAP_METHOD(void set_depth (guint8 inDepth), maia_window_set_depth)
             _WRAP_METHOD(Glib::RefPtr<Graphic::Transform> get_device_transform () const, maia_window_get_device_transform, refreturn)
@@ -104,6 +115,11 @@ namespace Maia
 
             _WRAP_PROPERTY("surface", Glib::RefPtr<Graphic::Surface>)
             _WRAP_PROPERTY("border", double)
+            _WRAP_PROPERTY("shadow-width", double)
+            _WRAP_PROPERTY("shadow-border", WindowBorder)
+            _WRAP_PROPERTY("shadow-color", Glib::RefPtr<Graphic::Color>)
+            _WRAP_PROPERTY("round-corner", double)
+            _WRAP_PROPERTY("close-button", bool)
             _WRAP_PROPERTY("depth", guint8)
             _WRAP_PROPERTY("device-transform", Glib::RefPtr<Graphic::Transform>)
             _WRAP_PROPERTY("popup", Glib::RefPtr<Popup>)

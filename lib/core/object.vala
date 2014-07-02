@@ -103,16 +103,7 @@ public abstract class Maia.Core.Object : Any
     {
         Log.audit ("Maia.~Object", Log.Category.CORE_OBJECT, "destroy %s", get_type ().name ());
 
-        while (m_Head != null)
-        {
-            Object? object = m_Head;
-
-            m_Head = object.m_Next;
-
-            object.m_Prev = null;
-            object.m_Next = null;
-            object.m_Parent = null;
-        }
+        clear_childs ();
     }
 
     private inline void
@@ -243,6 +234,24 @@ public abstract class Maia.Core.Object : Any
 
             // unset parent object
             inObject.m_Parent = null;
+        }
+    }
+
+    /**
+     * Clear child object list
+     */
+    public void
+    clear_childs ()
+    {
+        while (m_Head != null)
+        {
+            Object? object = m_Head;
+
+            m_Head = object.m_Next;
+
+            object.m_Prev = null;
+            object.m_Next = null;
+            object.m_Parent = null;
         }
     }
 

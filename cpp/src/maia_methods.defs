@@ -749,6 +749,12 @@
   (gtype-id "MAIA_TYPE_TOGGLE_BUTTON")
 )
 
+(define-object MaiaPopupButton
+  (parent "MaiaToggleButton")
+  (c-name "MaiaPopupButton")
+  (gtype-id "MAIA_TYPE_POPUP_BUTTON")
+)
+
 (define-object MaiaToggleGroup
   (parent "MaiaCoreObject")
   (c-name "MaiaToggleGroup")
@@ -3170,6 +3176,18 @@
   )
 )
 
+(define-flags MaiaWindowBorder
+  (c-name "MaiaWindowBorder")
+  (gtype-id "MAIA_TYPE_WINDOW_BORDER")
+  (values
+    '("all" "MAIA_WINDOW_BORDER_ALL")
+    '("left" "MAIA_WINDOW_BORDER_LEFT")
+    '("right" "MAIA_WINDOW_BORDER_RIGHT")
+    '("top" "MAIA_WINDOW_BORDER_TOP")
+    '("bottom" "MAIA_WINDOW_BORDER_BOTTOM")
+  )
+)
+
 (define-flags MaiaEntryChangedMask
   (c-name "MaiaEntryChangedMask")
   (gtype-id "MAIA_TYPE_ENTRY_CHANGED_MASK")
@@ -3194,6 +3212,7 @@
   (c-name "MaiaPopupPlacement")
   (gtype-id "MAIA_TYPE_POPUP_PLACEMENT")
   (values
+    '("absolute" "MAIA_POPUP_PLACEMENT_ABSOLUTE")
     '("top" "MAIA_POPUP_PLACEMENT_TOP")
     '("bottom" "MAIA_POPUP_PLACEMENT_BOTTOM")
     '("left" "MAIA_POPUP_PLACEMENT_LEFT")
@@ -4653,6 +4672,12 @@
   (parameters
     '("MaiaCoreObject*" "inObject")
   )
+)
+
+(define-method clear_childs
+  (of-object "MaiaCoreObject")
+  (c-name "maia_core_object_clear_childs")
+  (return-type "none")
 )
 
 (define-method reorder
@@ -13278,6 +13303,12 @@
   )
 )
 
+(define-method get_toplevel
+  (of-object "MaiaItem")
+  (c-name "maia_item_get_toplevel")
+  (return-type "MaiaWindow*")
+)
+
 (define-function maia_item_packable_get_type
   (c-name "maia_item_packable_get_type")
   (return-type "GType")
@@ -13581,6 +13612,11 @@
   )
 )
 
+(define-function maia_window_border_get_type
+  (c-name "maia_window_border_get_type")
+  (return-type "GType")
+)
+
 (define-function maia_window_new
   (c-name "maia_window_new")
   (is-constructor-of "MaiaWindow")
@@ -13672,7 +13708,7 @@
   (c-name "maia_window_on_move_pointer")
   (return-type "none")
   (parameters
-    '("MaiaGraphicPoint*" "inPosition")
+    '("MaiaGraphicPoint*" "inBorder")
   )
 )
 
@@ -13805,6 +13841,81 @@
   (return-type "none")
   (parameters
     '("gdouble" "value")
+  )
+)
+
+(define-method get_shadow_color
+  (of-object "MaiaWindow")
+  (c-name "maia_window_get_shadow_color")
+  (return-type "MaiaGraphicColor*")
+)
+
+(define-method set_shadow_color
+  (of-object "MaiaWindow")
+  (c-name "maia_window_set_shadow_color")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicColor*" "value")
+  )
+)
+
+(define-method get_shadow_width
+  (of-object "MaiaWindow")
+  (c-name "maia_window_get_shadow_width")
+  (return-type "gdouble")
+)
+
+(define-method set_shadow_width
+  (of-object "MaiaWindow")
+  (c-name "maia_window_set_shadow_width")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_shadow_border
+  (of-object "MaiaWindow")
+  (c-name "maia_window_get_shadow_border")
+  (return-type "MaiaWindowBorder")
+)
+
+(define-method set_shadow_border
+  (of-object "MaiaWindow")
+  (c-name "maia_window_set_shadow_border")
+  (return-type "none")
+  (parameters
+    '("MaiaWindowBorder" "value")
+  )
+)
+
+(define-method get_round_corner
+  (of-object "MaiaWindow")
+  (c-name "maia_window_get_round_corner")
+  (return-type "gdouble")
+)
+
+(define-method set_round_corner
+  (of-object "MaiaWindow")
+  (c-name "maia_window_set_round_corner")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_close_button
+  (of-object "MaiaWindow")
+  (c-name "maia_window_get_close_button")
+  (return-type "gboolean")
+)
+
+(define-method set_close_button
+  (of-object "MaiaWindow")
+  (c-name "maia_window_set_close_button")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
   )
 )
 
@@ -16197,6 +16308,81 @@
   (return-type "MaiaItem*")
 )
 
+(define-method get_shadow_color
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_get_shadow_color")
+  (return-type "MaiaGraphicColor*")
+)
+
+(define-method set_shadow_color
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_set_shadow_color")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicColor*" "value")
+  )
+)
+
+(define-method get_shadow_width
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_get_shadow_width")
+  (return-type "gdouble")
+)
+
+(define-method set_shadow_width
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_set_shadow_width")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_shadow_border
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_get_shadow_border")
+  (return-type "MaiaWindowBorder")
+)
+
+(define-method set_shadow_border
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_set_shadow_border")
+  (return-type "none")
+  (parameters
+    '("MaiaWindowBorder" "value")
+  )
+)
+
+(define-method get_round_corner
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_get_round_corner")
+  (return-type "gdouble")
+)
+
+(define-method set_round_corner
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_set_round_corner")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_close_button
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_get_close_button")
+  (return-type "gboolean")
+)
+
+(define-method set_close_button
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_set_close_button")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
 (define-method get_border
   (of-object "MaiaPopup")
   (c-name "maia_popup_get_border")
@@ -16801,6 +16987,46 @@
   (parameters
     '("GType" "object_type")
     '("const-gchar*" "inId")
+  )
+)
+
+(define-function maia_popup_button_get_type
+  (c-name "maia_popup_button_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_popup_button_new
+  (c-name "maia_popup_button_new")
+  (is-constructor-of "MaiaPopupButton")
+  (return-type "MaiaPopupButton*")
+  (parameters
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inLabel")
+  )
+)
+
+(define-function maia_popup_button_construct
+  (c-name "maia_popup_button_construct")
+  (return-type "MaiaPopupButton*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inLabel")
+  )
+)
+
+(define-method get_content
+  (of-object "MaiaPopupButton")
+  (c-name "maia_popup_button_get_content")
+  (return-type "MaiaItem*")
+)
+
+(define-method set_content
+  (of-object "MaiaPopupButton")
+  (c-name "maia_popup_button_set_content")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "value")
   )
 )
 

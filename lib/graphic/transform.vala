@@ -429,6 +429,9 @@ public class Maia.Graphic.Transform : Core.Object
     public void
     init ()
     {
+        // clear childs
+        clear_childs ();
+
         // init base matrix
         m_BaseMatrix = Matrix.identity ();
 
