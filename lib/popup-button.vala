@@ -21,7 +21,7 @@ public class Maia.PopupButton : ToggleButton
 {
     // properties
     private Popup m_Popup;
-    
+
     // accessors
     internal override string tag {
         get {
@@ -62,7 +62,7 @@ public class Maia.PopupButton : ToggleButton
 
         // connect onto visible changed
         m_Popup.notify["visible"].connect (on_popup_visible_changed);
-        
+
         // connect onto active changed
         notify["active"].connect (on_active_changed);
 
@@ -125,7 +125,7 @@ public class Maia.PopupButton : ToggleButton
         try
         {
             Manifest.Document? document = null;
-            
+
             if (characters != null && characters.length > 0)
             {
                 document = new Manifest.Document.from_buffer (characters, characters.length);
@@ -167,12 +167,14 @@ public class Maia.PopupButton : ToggleButton
             if (toplevel_window != null && m_Popup.content != null)
             {
                 var window_size = toplevel_window.geometry.extents.size;
-                var pos = toplevel_window.convert_to_root_space (Graphic.Point ((window_size.width - m_Popup.content.size.width) / 2, (window_size.height - m_Popup.content.size.height) / 2));
-                
+                var pos = toplevel_window.convert_to_root_space (Graphic.Point ((window_size.width - m_Popup.content.size.width) / 2,
+                                                                                (window_size.height - m_Popup.content.size.height) / 2));
+
                 m_Popup.position = convert_to_item_space (pos);
 
                 // Set popup geometry
-                var popup_area = Graphic.Rectangle (m_Popup.position.x, m_Popup.position.y, m_Popup.content.size.width, m_Popup.content.size.height);
+                var popup_area = Graphic.Rectangle (m_Popup.position.x, m_Popup.position.y,
+                                                    m_Popup.content.size.width, m_Popup.content.size.height);
 
                 m_Popup.update (inContext, new Graphic.Region (popup_area));
             }

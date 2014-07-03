@@ -22,6 +22,7 @@ public class Maia.Graphic.Transform : Core.Object
     // properties
     private Matrix m_BaseMatrix;
     private Matrix m_FinalMatrix;
+    private int    m_Compare = 0;
 
     // accessors
     public Matrix matrix {
@@ -420,7 +421,31 @@ public class Maia.Graphic.Transform : Core.Object
     compare (Core.Object inOther)
     {
         // do not sort transform
-        return 0;
+        return m_Compare;
+    }
+
+    /**
+     * Append transform in child transforms
+     *
+     * @param inTransform transform to prepend to transform childs
+     */
+    public void
+    append (Transform inTransform)
+    {
+        inTransform.parent = this;
+    }
+
+    /**
+     * Prepend transform in child transforms
+     *
+     * @param inTransform transform to prepend to transform childs
+     */
+    public void
+    prepend (Transform inTransform)
+    {
+        inTransform.m_Compare = -1;
+        inTransform.parent = this;
+        inTransform.m_Compare = 0;
     }
 
     /**

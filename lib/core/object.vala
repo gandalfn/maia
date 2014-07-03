@@ -154,7 +154,7 @@ public abstract class Maia.Core.Object : Any
                 m_Tail = m_Head;
             }
             // check if child must be inserted has first
-            else if (m_Head.compare (inObject) > 0)
+            else if (inObject.compare (m_Head) < 0)
             {
                 inObject.m_Next = m_Head;
                 m_Head.m_Prev = inObject;
@@ -253,6 +253,7 @@ public abstract class Maia.Core.Object : Any
             object.m_Next = null;
             object.m_Parent = null;
         }
+        m_Tail = null;
     }
 
     /**

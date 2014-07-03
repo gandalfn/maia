@@ -7970,6 +7970,24 @@
   )
 )
 
+(define-method append
+  (of-object "MaiaGraphicTransform")
+  (c-name "maia_graphic_transform_append")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicTransform*" "inTransform")
+  )
+)
+
+(define-method prepend
+  (of-object "MaiaGraphicTransform")
+  (c-name "maia_graphic_transform_prepend")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicTransform*" "inTransform")
+  )
+)
+
 (define-method init
   (of-object "MaiaGraphicTransform")
   (c-name "maia_graphic_transform_init")
