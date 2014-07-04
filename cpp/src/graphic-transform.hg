@@ -77,6 +77,9 @@ namespace Maia
                     return Matrix (&matrix);
                 }
 
+                _WRAP_METHOD(void append (const Glib::RefPtr<Transform>& inTransform), maia_graphic_transform_append)
+                _WRAP_METHOD(void prepend (const Glib::RefPtr<Transform>& inTransform), maia_graphic_transform_prepend)
+
                 _WRAP_METHOD(void translate (double inX, double inY), maia_graphic_transform_translate)
                 _WRAP_METHOD(void scale (double inSx, double inSy), maia_graphic_transform_scale)
                 _WRAP_METHOD(void rotate (double inRadians), maia_graphic_transform_rotate)

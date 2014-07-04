@@ -45,6 +45,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     private Graphic.Transform m_Transform = new Graphic.Transform.identity ();
     private Graphic.Transform m_TransformToItemSpace = new Graphic.Transform.identity ();
     private Graphic.Transform m_TransformToRootSpace = new Graphic.Transform.identity ();
+    private Graphic.Transform m_TransformToWindowSpace = new Graphic.Transform.identity ();
 
     // accessors
     [CCode (notify = false)]
@@ -174,6 +175,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 {
                     calculate_transform_to_item_space ();
                     calculate_transform_to_root_space ();
+                    calculate_transform_to_window_space ();
                 }
 
                 // Send notify geometry signal only if geometry has been changed
@@ -211,6 +213,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             {
                 calculate_transform_to_item_space ();
                 calculate_transform_to_root_space ();
+                calculate_transform_to_window_space ();
             }
         }
         default = new Graphic.Transform.identity ();
@@ -544,12 +547,16 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     private void
     on_parent_root_changed ()
     {
+        calculate_transform_to_window_space ();
+
         GLib.Signal.emit_by_name (this, "notify::root");
     }
 
     private void
     on_parent_window_changed ()
     {
+        calculate_transform_to_window_space ();
+
         GLib.Signal.emit_by_name (this, "notify::window");
     }
 
@@ -774,6 +781,54 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         m_TransformToRootSpace.append (this_transform);
     }
 
+    private void
+    calculate_transform_to_window_space ()
+    {
+        // clear transform
+        m_TransformToWindowSpace.init ();
+
+        // add parent transform
+        if (!(this is Window))
+        {
+            for (unowned Core.Object? object = this; object != null; object = object.parent)
+            {
+                unowned Item? item = object as Item;
+                if (item != null && item != this && !(item is Popup))
+                {
+                    m_TransformToWindowSpace.append (item.m_TransformToWindowSpace);
+
+                    // add transform
+                    var parent_transform = new Graphic.Transform.identity ();
+
+                    // Ignore translation of item without geometry or window managed by application
+                    // the position of this last is the position under desktop
+                    if (geometry != null && !(item is Window))
+                    {
+                        Graphic.Point pos = item.geometry.extents.origin;
+                        Graphic.Transform item_translate = new Graphic.Transform.identity ();
+                        item_translate.translate (pos.x, pos.y);
+                        parent_transform.append (item_translate);
+                    }
+
+                    Graphic.Matrix matrix = item.transform.matrix;
+                    Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
+                    parent_transform.append (item_transform);
+
+                    m_TransformToWindowSpace.append (parent_transform);
+
+                    break;
+                }
+
+                // If item is under popup chain up on it
+                unowned Core.Object? popup = object.get_qdata<unowned Core.Object?> (s_PopupWindow);
+                if (popup != null)
+                {
+                    object = popup;
+                }
+            }
+        }
+    }
+
     protected Graphic.Transform
     get_transform_to_window_space ()
     {
@@ -812,7 +867,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         Graphic.Transform ret = new Graphic.Transform.identity ();
         foreach (unowned Item item in list)
         {
-            if (item.geometry != null)
+            if (item.geometry != null && !(item is Window))
             {
                 Graphic.Point pos = item.geometry.extents.origin;
                 Graphic.Transform item_translate = new Graphic.Transform.identity ();
@@ -1375,7 +1430,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     convert_to_window_space (Graphic.Point inPoint)
     {
         var point = inPoint;
-        point.transform (get_transform_to_window_space ());
+        point.transform (m_TransformToWindowSpace);
 
         return point;
     }

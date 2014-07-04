@@ -167,8 +167,8 @@ public class Maia.PopupButton : ToggleButton
             if (toplevel_window != null && m_Popup.content != null)
             {
                 var window_size = toplevel_window.geometry.extents.size;
-                var pos = toplevel_window.convert_to_root_space (Graphic.Point ((window_size.width - m_Popup.content.size.width) / 2,
-                                                                                (window_size.height - m_Popup.content.size.height) / 2));
+                var pos = toplevel_window.convert_to_root_space (Graphic.Point ((window_size.width - (m_Popup.content.size.width + ((m_Popup.border + m_Popup.shadow_width) * 2))) / 2,
+                                                                                (window_size.height - (m_Popup.content.size.height + ((m_Popup.border + m_Popup.shadow_width) * 2))) / 2));
 
                 m_Popup.position = convert_to_item_space (pos);
 

@@ -83,7 +83,7 @@ namespace Maia
 
             protected:
                 _CTOR_DEFAULT()
-                
+
                 _WRAP_VFUNC(Glib::RefPtr<Object> get_parent (), get_parent, refreturn_ctype)
 #m4 _CONVERSION(`MaiaCoreObject*', `const Glib::RefPtr<Object>&', `Glib::wrap($3, true)')
                 _WRAP_VFUNC(void set_parent (const Glib::RefPtr<Object>& inObject), set_parent)
@@ -147,6 +147,7 @@ namespace Maia
                 _WRAP_METHOD(Glib::RefPtr<Object> first (), maia_core_object_first, refreturn)
                 _WRAP_METHOD(Glib::RefPtr<Object> last (), maia_core_object_last, refreturn)
 
+                _WRAP_METHOD(void clear_childs (), maia_core_object_clear_childs)
                 _WRAP_METHOD(void reorder (), maia_core_object_reorder)
                 _WRAP_METHOD(Glib::ustring to_string () const, maia_core_object_to_string)
 

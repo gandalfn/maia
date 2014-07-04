@@ -371,7 +371,8 @@ public class Maia.Popup : Group
         m_Content.size = Graphic.Size (geometry.extents.size.width - (border * 4), geometry.extents.size.height - (border * 4));
 
         // set window size and position
-        m_Window.position = convert_to_window_space(geometry.extents.origin);
+        var pos = convert_to_window_space(geometry.extents.origin);
+        m_Window.position = Graphic.Point (pos.x - shadow_width, pos.y);
         m_Window.device_transform = get_window_transform ();
 
         m_Window.update (inContext, new Graphic.Region (Graphic.Rectangle (m_Window.position.x,
