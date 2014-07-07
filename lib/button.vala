@@ -131,18 +131,7 @@ public class Maia.Button : Grid
         icon_item.xfill = false;
         icon_item.xexpand = false;
         icon_item.yfill = false;
-        icon_item.top_padding = border;
-        icon_item.left_padding = border;
-        icon_item.bottom_padding = border;
         add (icon_item);
-
-        notify ["icon-filename"].connect (() => {
-            icon_item.filename = icon_filename;
-        });
-
-        notify ["icon-size"].connect (() => {
-            icon_item.size = icon_size;
-        });
 
         // Create label item
         string id_label = "%s-label".printf (name);
@@ -150,24 +139,19 @@ public class Maia.Button : Grid
         var label_item = new Label (id_label, label);
         label_item.column = 1;
         label_item.xfill = false;
-        label_item.top_padding = border;
-        label_item.right_padding = border;
-        label_item.bottom_padding = border;
         add (label_item);
 
-        notify["stroke-pattern"].connect (() => {
-            label_item.stroke_pattern = stroke_pattern;
-        });
-
-        notify["border"].connect (() => {
-            column_spacing = border;
-            icon_item.top_padding = border;
-            icon_item.left_padding = border;
-            icon_item.bottom_padding = border;
-            label_item.top_padding = border;
-            label_item.right_padding = border;
-            label_item.bottom_padding = border;
-        });
+        // plug properties
+        plug_property("stroke-pattern", label_item, "stroke-pattern");
+        plug_property("border", this, "column-spacing");
+        plug_property("icon-filename", icon_item, "filename");
+        plug_property("icon-size", icon_item, "size");
+        plug_property("border", icon_item, "top-padding");
+        plug_property("border", icon_item, "left-padding");
+        plug_property("border", icon_item, "bottom-padding");
+        plug_property("border", label_item, "top-padding");
+        plug_property("border", label_item, "right-padding");
+        plug_property("border", label_item, "bottom-padding");
 
         label_item.button_press_event.connect (on_button_press_event);
     }

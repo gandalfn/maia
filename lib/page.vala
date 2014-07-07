@@ -76,8 +76,8 @@ internal class Maia.Page : GLib.Object
 {
     // properties
     private unowned Document        m_Document;
-    private Item?                   m_Header = null;
-    private Item?                   m_Footer = null;
+    private unowned Item?           m_Header = null;
+    private unowned Item?           m_Footer = null;
     private Core.List<unowned Item> m_Childs;
 
     // accessors
@@ -92,10 +92,12 @@ internal class Maia.Page : GLib.Object
             {
                 m_Childs.remove (m_Header);
                 m_Header.parent = null;
+                m_Header = null;
             }
             try
             {
-                m_Header = value.duplicate (@"$(value.name)-$(num)", m_Document.on_attribute_bind_added) as Item;
+                var new_header = value.duplicate (@"$(value.name)-$(num)", m_Document.on_attribute_bind_added) as Item;
+                m_Header = new_header;
                 m_Header.set_qdata<bool> (Document.s_HeaderFooterQuark, true);
                 m_Childs.insert (m_Header);
                 m_Header.parent = m_Document;
@@ -119,10 +121,12 @@ internal class Maia.Page : GLib.Object
             {
                 m_Childs.remove (m_Footer);
                 m_Footer.parent = null;
+                m_Footer = null;
             }
             try
             {
-                m_Footer = value.duplicate (@"$(value.name)-$(num)", m_Document.on_attribute_bind_added) as Item;
+                var new_footer = value.duplicate (@"$(value.name)-$(num)", m_Document.on_attribute_bind_added) as Item;
+                m_Footer = new_footer;
                 m_Footer.set_qdata<bool> (Document.s_HeaderFooterQuark, true);
                 m_Childs.insert (m_Footer);
                 m_Footer.parent = m_Document;
@@ -195,6 +199,21 @@ internal class Maia.Page : GLib.Object
         m_Document = inDocument;
         m_Childs = new Core.List<unowned Item> ();
         num = inPageNum;
+    }
+
+    ~Page ()
+    {
+        if (m_Header != null)
+        {
+            m_Header.parent = null;
+            m_Header = null;
+        }
+
+        if (m_Footer != null)
+        {
+            m_Footer.parent = null;
+            m_Footer = null;
+        }
     }
 
     public void

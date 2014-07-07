@@ -156,8 +156,8 @@ internal class Maia.Cairo.Context : Graphic.Context
     {
         Graphic.Point ret = Graphic.Point (inX, inY);
         m_Context.user_to_device (ref ret.x, ref ret.y);
-        ret.x = GLib.Math.floor (ret.x + 0.5);
-        ret.y = GLib.Math.floor (ret.y + 0.5);
+        ret.x = GLib.Math.ceil (ret.x);
+        ret.y = GLib.Math.ceil (ret.y);
         m_Context.device_to_user (ref ret.x, ref ret.y);
         return ret;
     }
@@ -167,16 +167,18 @@ internal class Maia.Cairo.Context : Graphic.Context
     {
         base.pattern.transform.changed.disconnect (on_pattern_transform_changed);
         global::Cairo.Pattern? pattern = pattern_to_cairo (base.pattern);
+        pattern.set_filter (global::Cairo.Filter.GOOD);
+
         if (pattern != null)
         {
             global::Cairo.Matrix matrix = global::Cairo.Matrix (base.pattern.transform.matrix.xx, base.pattern.transform.matrix.yx,
                                                                 base.pattern.transform.matrix.xy, base.pattern.transform.matrix.yy,
                                                                 base.pattern.transform.matrix.x0, base.pattern.transform.matrix.y0);
-            pattern.set_filter (global::Cairo.Filter.BEST);
             pattern.set_matrix (matrix);
 
             m_Context.set_source (pattern);
         }
+
         base.pattern.transform.changed.connect (on_pattern_transform_changed);
     }
 
@@ -493,6 +495,13 @@ internal class Maia.Cairo.Context : Graphic.Context
     paint () throws Graphic.Error
     {
         m_Context.paint ();
+        status ();
+    }
+
+    internal override void
+    paint_with_alpha (double inAlpha) throws Graphic.Error
+    {
+        m_Context.paint_with_alpha (inAlpha);
         status ();
     }
 

@@ -130,17 +130,21 @@ public class Maia.ScrollView : Item
         m_VSeekBar.parent = this;
 
         m_Viewport = new Window (name + "_viewport", 1, 1);
-        m_Viewport.background_pattern = background_pattern;
+        m_Viewport.shadow_border = Window.Border.NONE;
         m_Viewport.parent = this;
 
         m_Window = new Window (name + "_window", 1, 1);
+        m_Window.shadow_border = Window.Border.NONE;
         m_Window.scroll_event.connect (on_window_scroll_event);
-        m_Window.background_pattern = background_pattern;
         m_Window.parent = m_Viewport;
 
-        notify["visible"].connect (on_visible_changed);
-        notify["background-pattern"].connect (on_background_pattern_changed);
-        notify["need-update"].connect (on_need_update_changed);
+        plug_property("background-pattern", m_Viewport, "background-pattern");
+        plug_property("background-pattern", m_Window, "background-pattern");
+
+        plug_property("visible", m_Viewport, "visible");
+        plug_property("visible", m_Window, "visible");
+
+        plug_property("need-update", m_Viewport, "need-update");
 
         m_ScrollToAnimator = new Core.Animator (30, 400);
     }
@@ -156,12 +160,6 @@ public class Maia.ScrollView : Item
         m_Window = null;
         m_Viewport.parent = null;
         m_Viewport = null;
-    }
-
-    private void
-    on_need_update_changed ()
-    {
-        m_Viewport.need_update = need_update;
     }
 
     private void
@@ -190,12 +188,6 @@ public class Maia.ScrollView : Item
             // Set the new window position
             m_Window.position = pos.invert ();
 
-            // if scroll view is currently damaged translate damaged region
-            if (damaged != null)
-            {
-                damaged.translate (diff);
-            }
-
             // if we have a damaged area of window
             if (m_Window.damaged != null)
             {
@@ -214,24 +206,6 @@ public class Maia.ScrollView : Item
                     damage (redraw_area);
                 }
             }
-        }
-    }
-
-    private void
-    on_background_pattern_changed ()
-    {
-        // set background pattern of window and viewport
-        m_Window.background_pattern = background_pattern;
-        m_Viewport.background_pattern = background_pattern;
-    }
-
-    private void
-    on_visible_changed ()
-    {
-        if (visible != m_Window.visible)
-        {
-            m_Viewport.visible = visible;
-            m_Window.visible = visible;
         }
     }
 
@@ -384,35 +358,19 @@ public class Maia.ScrollView : Item
     internal override void
     scroll_to (Item inItem)
     {
-        var root_pos = inItem.convert_to_root_space (inItem.position);
-        var pos = convert_to_item_space (root_pos);
+        var pos = inItem.convert_to_window_space (inItem.geometry.extents.origin);
 
-        hadjustment.@value = pos.x;
+        m_ScrollToAnimator.stop ();
 
-        bool move = false;
-        if (pos.y < vadjustment.@value)
+        if (m_ScrollToTransition > 0)
         {
-            move = true;
+            m_ScrollToAnimator.remove_transition (m_ScrollToTransition);
         }
-        else if (pos.y > vadjustment.@value + vadjustment.page_size)
-        {
-            move = true;
-        }
-
-        if (move)
-        {
-            m_ScrollToAnimator.stop ();
-
-            if (m_ScrollToTransition > 0)
-            {
-                m_ScrollToAnimator.remove_transition (m_ScrollToTransition);
-            }
-            m_ScrollToTransition = m_ScrollToAnimator.add_transition (0, 1, Core.Animator.ProgressType.EASE_IN_EASE_OUT);
-            GLib.Value from = (double)vadjustment.@value;
-            GLib.Value to = (double)pos.y;
-            m_ScrollToAnimator.add_transition_property (m_ScrollToTransition, this, "scroll-y", from, to);
-            m_ScrollToAnimator.start ();
-        }
+        m_ScrollToTransition = m_ScrollToAnimator.add_transition (0, 1, Core.Animator.ProgressType.EASE_IN_EASE_OUT);
+        GLib.Value from = (double)vadjustment.@value;
+        GLib.Value to = (double)pos.y;
+        m_ScrollToAnimator.add_transition_property (m_ScrollToTransition, this, "scroll-y", from, to);
+        m_ScrollToAnimator.start ();
     }
 
     internal override bool

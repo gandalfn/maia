@@ -58,17 +58,17 @@
   (construct-only #f)
 )
 
-;; From MaiaCoreIterator
+;; MaiaCoreIterator is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaCoreCollection
+;; MaiaCoreCollection is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaCoreArray
+;; MaiaCoreArray is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaCoreSet
+;; MaiaCoreSet is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaCorePair
+;; MaiaCorePair is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaCoreMap
+;; MaiaCoreMap is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaCoreTimeline
 
@@ -634,7 +634,7 @@
   (construct-only #f)
 )
 
-;; From MaiaGraphicPoint
+;; MaiaGraphicPoint is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaGraphicRadialGradient
 
@@ -674,7 +674,7 @@
   (construct-only #f)
 )
 
-;; From MaiaGraphicRectangle
+;; MaiaGraphicRectangle is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaGraphicRegion
 
@@ -696,7 +696,7 @@
   (construct-only #f)
 )
 
-;; From MaiaGraphicSize
+;; MaiaGraphicSize is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaGraphicSurface
 
@@ -1212,7 +1212,7 @@
   (construct-only #f)
 )
 
-;; From MaiaCursor
+;; MaiaCursor is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaDocument
 
@@ -2939,7 +2939,7 @@
 
 ;; From MaiaItemResizable
 
-;; From MaiaKey
+;; MaiaKey is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaLabel
 
@@ -3389,9 +3389,9 @@
   (construct-only #f)
 )
 
-;; From MaiaOrientation
+;; MaiaOrientation is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaPageFormat
+;; MaiaPageFormat is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaPath
 
@@ -3604,7 +3604,7 @@
   (construct-only #f)
 )
 
-;; From MaiaScroll
+;; MaiaScroll is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaToggle
 
@@ -3971,6 +3971,60 @@
   (of-object "MaiaPopupButton")
   (prop-type "GParamObject")
   (docs "content")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property shadow-color
+  (of-object "MaiaPopupButton")
+  (prop-type "GParamObject")
+  (docs "shadow-color")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property shadow-width
+  (of-object "MaiaPopupButton")
+  (prop-type "GParamDouble")
+  (docs "shadow-width")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property shadow-border
+  (of-object "MaiaPopupButton")
+  (prop-type "GParamFlags")
+  (docs "shadow-border")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property round-corner
+  (of-object "MaiaPopupButton")
+  (prop-type "GParamDouble")
+  (docs "round-corner")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property close-button
+  (of-object "MaiaPopupButton")
+  (prop-type "GParamBoolean")
+  (docs "close-button")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property popup-border
+  (of-object "MaiaPopupButton")
+  (prop-type "GParamDouble")
+  (docs "popup-border")
   (readable #t)
   (writable #t)
   (construct-only #f)

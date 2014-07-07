@@ -76,6 +76,9 @@ public enum Maia.PopupPlacement
 
 public class Maia.Popup : Group
 {
+    // static properties
+    private static unowned Popup s_PopupOpen = null;
+
     // properties
     private Core.Animator m_Animator;
     private uint          m_Transition = 0;
@@ -160,51 +163,42 @@ public class Maia.Popup : Group
         // Create animator
         m_Animator = new Core.Animator (60, 250);
 
-        // Connect onto background pattern change
-        notify["background-pattern"].connect (on_background_pattern_changed);
-        on_background_pattern_changed ();
+        // plug background pattern property to window
+        plug_property ("background-pattern", m_Window, "background-pattern");
 
-        // Connect onto stroke pattern change
-        notify["stroke-pattern"].connect (on_stroke_pattern_changed);
-        on_stroke_pattern_changed ();
+        // plug stroke pattern property to window
+        plug_property ("stroke-pattern", m_Window, "stroke-pattern");
 
-        // Connect onto transform change
-        notify["transform"].connect (on_transform_changed);
-        on_transform_changed ();
+        // plug transform property to window
+        plug_property ("transform", m_Window, "transform");
+
+        // plug border property to window
+        plug_property ("border", m_Window, "border");
+
+        // plug shadow border property to window
+        plug_property ("shadow-border", m_Window, "shadow-border");
+
+        // plug shadow width property to window
+        plug_property ("shadow-width", m_Window, "shadow-width");
+
+        // plug shadow color property to window
+        plug_property ("shadow-color", m_Window, "shadow-color");
+
+        // plug round corner property to window
+        plug_property ("round-corner", m_Window, "round-corner");
+
+        // plug close button property to window
+        plug_property ("close-button", m_Window, "close-button");
+
+        // plug visible property to window
+        m_Window.plug_property ("visible", this, "visible");
 
         // Connect onto window change
         notify["window"].connect (on_window_changed);
 
         // Connect onto border change
-        notify["border"].connect (on_border_changed);
-        on_border_changed ();
-
-        // Connect onto shadow border change
-        notify["shadow-border"].connect (on_shadow_border_changed);
-        on_shadow_border_changed ();
-
-        // Connect onto shadow width change
-        notify["shadow-width"].connect (on_shadow_width_changed);
-        on_shadow_width_changed ();
-
-        // Connect onto shadow color change
-        notify["shadow-color"].connect (on_shadow_color_changed);
-        on_shadow_color_changed ();
-
-        // Connect onto round corner change
-        notify["round-corner"].connect (on_round_corner_changed);
-        on_round_corner_changed ();
-
-        // Connect onto close button change
-        notify["close-button"].connect (on_close_button_changed);
-        on_close_button_changed ();
-
-        // Connect onto border change
         notify["placement"].connect (on_placement_changed);
         on_placement_changed ();
-
-        // Connect onto window visible changed
-        m_Window.notify["visible"].connect (on_window_visible_changed);
     }
 
     public Popup (string inId)
@@ -214,68 +208,13 @@ public class Maia.Popup : Group
 
     ~Popup ()
     {
+        if (s_PopupOpen == this)
+        {
+            s_PopupOpen = null;
+        }
+
         m_Window.parent = null;
         m_Window = null;
-    }
-
-    private void
-    on_window_visible_changed ()
-    {
-        visible = m_Window.visible;
-    }
-
-    private void
-    on_stroke_pattern_changed ()
-    {
-        m_Window.stroke_pattern = stroke_pattern;
-    }
-
-    private void
-    on_background_pattern_changed ()
-    {
-        m_Window.background_pattern = background_pattern;
-    }
-
-    private void
-    on_transform_changed ()
-    {
-        m_Window.transform = transform;
-    }
-
-    private void
-    on_border_changed ()
-    {
-        m_Window.border = border;
-    }
-
-    private void
-    on_shadow_width_changed ()
-    {
-        m_Window.shadow_width = shadow_width;
-    }
-
-    private void
-    on_shadow_border_changed ()
-    {
-        m_Window.shadow_border = shadow_border;
-    }
-
-    private void
-    on_shadow_color_changed ()
-    {
-        m_Window.shadow_color = shadow_color;
-    }
-
-    private void
-    on_round_corner_changed ()
-    {
-        m_Window.round_corner = round_corner;
-    }
-
-    private void
-    on_close_button_changed ()
-    {
-        m_Window.close_button = close_button;
     }
 
     private void
@@ -390,10 +329,19 @@ public class Maia.Popup : Group
     internal override void
     on_show ()
     {
+        // Close all other popup open
+        if (s_PopupOpen != null && s_PopupOpen != this)
+        {
+            s_PopupOpen.visible = false;
+        }
+
+        // Set popup has popup open
+        s_PopupOpen = this;
+
         // Show window when popup is visible
-        m_Window.notify["visible"].disconnect (on_window_visible_changed);
+        m_Window.lock_property("visible", this, "visible");
         m_Window.visible = true;
-        m_Window.notify["visible"].connect (on_window_visible_changed);
+        m_Window.unlock_property("visible", this, "visible");
 
         m_Animator.stop ();
 
@@ -453,6 +401,11 @@ public class Maia.Popup : Group
     internal override void
     on_hide ()
     {
+        if (s_PopupOpen == this)
+        {
+            s_PopupOpen = null;
+        }
+
         m_Animator.stop ();
 
         if (m_Transition > 0)
@@ -539,9 +492,9 @@ public class Maia.Popup : Group
         base.on_hide ();
 
         // Hide window when popup is hidden
-        m_Window.notify["visible"].disconnect (on_window_visible_changed);
+        m_Window.lock_property ("visible", this, "visible");
         m_Window.visible = false;
-        m_Window.notify["visible"].connect (on_window_visible_changed);
+        m_Window.unlock_property ("visible", this, "visible");
     }
 
     private void

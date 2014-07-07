@@ -149,6 +149,12 @@ internal class Maia.Xcb.Application : Core.Object
         return null;
     }
 
+    private void
+    on_window_destroyed (GLib.Object inObject)
+    {
+        m_Windows.remove (inObject as Window);
+    }
+
     public global::Xcb.Visualid
     find_visual_from_depth (int inScreen, uint inDepth)
     {
@@ -269,6 +275,8 @@ internal class Maia.Xcb.Application : Core.Object
     register_window (Window inWindow)
     {
         m_Windows.insert (inWindow);
+
+        inWindow.weak_ref (on_window_destroyed);
     }
 
     public void

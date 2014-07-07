@@ -30,12 +30,31 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
             m_Window = inWindow;
             m_Sibling = inSibling;
 
-            m_Sibling.damage.connect (on_sibling_event);
+            m_Sibling.notify["visible"].connect (on_sibling_event);
+            m_Sibling.repair.connect (on_sibling_event);
+
+            m_Sibling.weak_ref (on_sibling_destroyed);
         }
 
         ~Sibling ()
         {
-            m_Sibling.damage.disconnect (on_sibling_event);
+            if (m_Sibling is Window)
+            {
+                m_Sibling.notify["visible"].disconnect (on_sibling_event);
+                m_Sibling.repair.disconnect (on_sibling_event);
+                m_Sibling.weak_unref (on_sibling_destroyed);
+            }
+        }
+
+        private void
+        on_sibling_destroyed ()
+        {
+            m_Window.m_Siblings.remove (this);
+
+            if (m_Window.area != null)
+            {
+                m_Window.m_WindowDamaged = m_Window.area.copy ();
+            }
         }
 
         private void
@@ -212,14 +231,15 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     private void
     paint_sibling (Graphic.Context inContext, Window inWindow, Graphic.Point inPosition, Graphic.Rectangle inArea) throws Graphic.Error
     {
-        if (inWindow != this)
+        if (inWindow is Window && inWindow != this && inWindow.surface != null)
         {
             // Connect onto sibling
             m_Siblings.insert (new Sibling (this, inWindow));
-            Graphic.Rectangle area = Graphic.Rectangle (0, 0, inWindow.m_WindowGeometry.size.width, inWindow.m_WindowGeometry.size.height);
+            Graphic.Rectangle area = Graphic.Rectangle (0, 0, inWindow.surface.size.width, inWindow.surface.size.height);
             area.intersect (inArea);
             if (!area.is_empty ())
             {
+                inWindow.surface.flush ();
                 inContext.pattern = inWindow.surface;
                 inContext.pattern.transform = new Graphic.Transform.init_translate (inPosition.x, inPosition.y);
                 inContext.paint ();
@@ -270,13 +290,17 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
                     {
                         m_Siblings.clear ();
 
-                        // Paint parent content into background
-                        paint_sibling (inContext, (Window)window, position, Graphic.Rectangle (position.x, position.y, m_WindowGeometry.size.width, m_WindowGeometry.size.height));
+                        inContext.operator = Graphic.Operator.CLEAR;
+                        inContext.paint ();
 
                         inContext.operator = Graphic.Operator.OVER;
+
+                        // Paint parent content into background
+                        paint_sibling (inContext, (Window)window, position, Graphic.Rectangle (position.x, position.y, m_WindowGeometry.size.width, m_WindowGeometry.size.height));
                     }
 
                     // Swap buffer
+                    inContext.surface.flush ();
                     inContext.pattern = m_BackBuffer.surface;
                     inContext.paint ();
                 }
@@ -329,6 +353,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 
         // connect onto device transform changed
         notify["device-transform"].connect (on_device_transform_changed);
+
         // create siblings windows
         m_Siblings = new Core.Array<Sibling> ();
 
@@ -408,6 +433,9 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 
             mask |= global::Xcb.Cw.BACKING_STORE;
             values += global::Xcb.BackingStore.ALWAYS;
+
+            mask |= global::Xcb.Cw.SAVE_UNDER;
+            values += 1;
 
             uint32 event_mask = global::Xcb.EventMask.EXPOSURE            |
                                 global::Xcb.EventMask.STRUCTURE_NOTIFY    |
@@ -687,9 +715,6 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
                     var ctx = m_FrontBuffer.context;
 
                     ctx.operator = Graphic.Operator.SOURCE;
-
-                    // Sync all pendings operations
-                    application.sync ();
 
                     // Flush buffer under front buffer
                     flush_buffer (ctx);

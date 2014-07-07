@@ -19,7 +19,135 @@
 
 public abstract class Maia.Core.Object : Any
 {
-    // Types
+    // types
+    private class PlugProperty
+    {
+        public struct Hash
+        {
+            public string          m_SrcProperty;
+            public unowned Object? m_Dst;
+            public string          m_DstProperty;
+
+            public Hash (string inSrcProperty, Object inDst, string inDstProperty)
+            {
+                m_SrcProperty = inSrcProperty;
+                m_Dst = inDst;
+                m_DstProperty = inDstProperty;
+            }
+
+            public inline int
+            compare (Hash inHash)
+            {
+                int ret = GLib.strcmp (m_SrcProperty, inHash.m_SrcProperty);
+                if (ret == 0)
+                {
+                    ret = direct_compare (m_Dst, inHash.m_Dst);
+                    if (ret == 0)
+                    {
+                        ret = GLib.strcmp (m_DstProperty, inHash.m_DstProperty);
+                    }
+                }
+                return ret;
+            }
+        }
+
+        public unowned Object? m_Src;
+        public Hash            m_Hash;
+        public GLib.Value      m_Value;
+        public bool            m_Locked = false;
+
+        public PlugProperty (Object inSrc, string inSrcProperty, Object inDst, string inDstProperty)
+        {
+            m_Src = inSrc;
+            m_Hash = Hash (inSrcProperty, inDst, inDstProperty);
+
+            // connect onto dest object destroy
+            m_Hash.m_Dst.weak_ref (on_dest_destroyed);
+
+            var src_paramspec = m_Src.get_class ().find_property (m_Hash.m_SrcProperty);
+            if (src_paramspec != null)
+            {
+                var dst_paramspec = m_Hash.m_Dst.get_class ().find_property (m_Hash.m_DstProperty);
+                if (dst_paramspec != null)
+                {
+                    if (src_paramspec.value_type.is_a (dst_paramspec.value_type))
+                    {
+                        m_Value = GLib.Value (src_paramspec.value_type);
+
+                        // Connect onto property change
+                        m_Src.notify[m_Hash.m_SrcProperty].connect (on_src_property_changed);
+
+                        // Set initial value
+                        on_src_property_changed ();
+                    }
+                    else
+                    {
+                        Log.error (GLib.Log.METHOD, Log.Category.CORE_OBJECT, @"error on bind property: incompatible $(m_Hash.m_DstProperty) $(m_Hash.m_SrcProperty) properties");
+                    }
+                }
+                else
+                {
+                    Log.error (GLib.Log.METHOD, Log.Category.CORE_OBJECT, @"error on bind property: invalid $(m_Hash.m_DstProperty)");
+                }
+            }
+            else
+            {
+                Log.error (GLib.Log.METHOD, Log.Category.CORE_OBJECT, @"error on bind property: invalid $(m_Hash.m_SrcProperty)");
+            }
+        }
+
+        ~PlugProperty ()
+        {
+            m_Src.notify[m_Hash.m_SrcProperty].disconnect (on_src_property_changed);
+            m_Hash.m_Dst.weak_unref (on_dest_destroyed);
+        }
+
+        private void
+        on_dest_destroyed ()
+        {
+            m_Src.m_Plugs.remove (this);
+        }
+
+        private void
+        on_src_property_changed ()
+        {
+            m_Src.get_property (m_Hash.m_SrcProperty, ref m_Value);
+            m_Hash.m_Dst.set_property (m_Hash.m_DstProperty, m_Value);
+        }
+
+        public void
+        lock ()
+        {
+            if (!m_Locked)
+            {
+                m_Src.notify[m_Hash.m_SrcProperty].disconnect (on_src_property_changed);
+                m_Locked = true;
+            }
+        }
+
+        public void
+        unlock ()
+        {
+            if (m_Locked)
+            {
+                m_Src.notify[m_Hash.m_SrcProperty].connect (on_src_property_changed);
+                m_Locked = false;
+            }
+        }
+
+        public int
+        compare (PlugProperty inProperty)
+        {
+            return compare_with_hash (inProperty.m_Hash);
+        }
+
+        public int
+        compare_with_hash (Hash? inHash)
+        {
+            return m_Hash.compare (inHash);
+        }
+    }
+
     public class Iterator
     {
         private unowned Object? m_Current;
@@ -59,11 +187,12 @@ public abstract class Maia.Core.Object : Any
     }
 
     // Properties
-    private unowned Object? m_Parent;
-    private Object?         m_Head;
-    private unowned Object? m_Tail;
-    private Object?         m_Next;
-    private unowned Object? m_Prev;
+    private unowned Object?        m_Parent;
+    private Object?                m_Head;
+    private unowned Object?        m_Tail;
+    private Object?                m_Next;
+    private unowned Object?        m_Prev;
+    private Core.Set<PlugProperty> m_Plugs;
 
     // accessors
     /**
@@ -99,6 +228,12 @@ public abstract class Maia.Core.Object : Any
     }
 
     // Methods
+    construct
+    {
+        m_Plugs = new Core.Set<PlugProperty> ();
+        m_Plugs.compare_func = PlugProperty.compare;
+    }
+
     ~Object ()
     {
         Log.audit ("Maia.~Object", Log.Category.CORE_OBJECT, "destroy %s", get_type ().name ());
@@ -480,5 +615,81 @@ public abstract class Maia.Core.Object : Any
         }
 
         return list;
+    }
+
+    /**
+     * Plug property to another object
+     *
+     * @param inProperty property to plug
+     * @param inDest destination object
+     * @param inDestProperty destination object property
+     */
+    public void
+    plug_property (string inProperty, Object inDest, string inDestProperty)
+    {
+        PlugProperty.Hash hash = PlugProperty.Hash (inProperty, inDest, inDestProperty);
+        unowned PlugProperty? prop = m_Plugs.search<PlugProperty.Hash?> (hash, PlugProperty.compare_with_hash);
+
+        if (prop == null)
+        {
+            m_Plugs.insert (new PlugProperty (this, inProperty, inDest, inDestProperty));
+        }
+    }
+
+    /**
+     * Unplug property
+     *
+     * @param inProperty property to unplug
+     * @param inDest destination object
+     * @param inDestProperty destination object property
+     */
+    public void
+    unplug_property (string inProperty, Object inDest, string inDestProperty)
+    {
+        PlugProperty.Hash hash = PlugProperty.Hash (inProperty, inDest, inDestProperty);
+        unowned PlugProperty? prop = m_Plugs.search<PlugProperty.Hash?> (hash, PlugProperty.compare_with_hash);
+
+        if (prop != null)
+        {
+            m_Plugs.remove (prop);
+        }
+    }
+
+    /**
+     * Lock plug property
+     *
+     * @param inProperty property to unplug
+     * @param inDest destination object
+     * @param inDestProperty destination object property
+     */
+    public void
+    lock_property (string inProperty, Object inDest, string inDestProperty)
+    {
+        PlugProperty.Hash hash = PlugProperty.Hash (inProperty, inDest, inDestProperty);
+        unowned PlugProperty? prop = m_Plugs.search<PlugProperty.Hash?> (hash, PlugProperty.compare_with_hash);
+
+        if (prop != null)
+        {
+            prop.lock ();
+        }
+    }
+
+    /**
+     * Unlock plug property
+     *
+     * @param inProperty property to unplug
+     * @param inDest destination object
+     * @param inDestProperty destination object property
+     */
+    public void
+    unlock_property (string inProperty, Object inDest, string inDestProperty)
+    {
+        PlugProperty.Hash hash = PlugProperty.Hash (inProperty, inDest, inDestProperty);
+        unowned PlugProperty? prop = m_Plugs.search<PlugProperty.Hash?> (hash, PlugProperty.compare_with_hash);
+
+        if (prop != null)
+        {
+            prop.unlock ();
+        }
     }
 }

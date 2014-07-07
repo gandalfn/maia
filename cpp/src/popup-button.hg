@@ -19,6 +19,7 @@
 
 #include <maia.h>
 #include <maiamm/toggle-button.h>
+#include <maiamm/window.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/toggle-button_p.h)
@@ -39,9 +40,29 @@ namespace Maia
                 return Glib::RefPtr<PopupButton> (new PopupButton (pButton));
             }
 
+            _WRAP_METHOD(double get_popup_border () const, maia_popup_button_get_popup_border)
+            _WRAP_METHOD(void set_popup_border (double inBorder), maia_popup_button_set_popup_border)
+            _WRAP_METHOD(double get_shadow_width () const, maia_popup_button_get_shadow_width)
+            _WRAP_METHOD(void set_shadow_width (double inWidth), maia_popup_button_set_shadow_width)
+            _WRAP_METHOD(WindowBorder get_shadow_border () const, maia_popup_button_get_shadow_border)
+            _WRAP_METHOD(void set_shadow_border (WindowBorder inBorder), maia_popup_button_set_shadow_border)
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_shadow_color () const, maia_popup_button_get_shadow_color, refreturn)
+            _WRAP_METHOD(void set_shadow_color (const Glib::RefPtr<Graphic::Color>& inColor), maia_popup_button_set_shadow_color)
+            _WRAP_METHOD(double get_round_corner () const, maia_popup_button_get_round_corner)
+            _WRAP_METHOD(void set_round_corner (double inWidth), maia_popup_button_set_round_corner)
+            _WRAP_METHOD(bool get_close_button () const, maia_popup_button_get_close_button)
+            _WRAP_METHOD(void set_close_button (bool inClose = true), maia_popup_button_set_close_button)
+
             _WRAP_METHOD(Glib::RefPtr<Item> get_content () const, maia_popup_button_get_content, refreturn)
             _WRAP_METHOD(void set_content (const Glib::RefPtr<Item>& inItem), maia_popup_button_set_content)
 
+
+            _WRAP_PROPERTY("popup-border", double)
+            _WRAP_PROPERTY("shadow-width", double)
+            _WRAP_PROPERTY("shadow-border", WindowBorder)
+            _WRAP_PROPERTY("shadow-color", Glib::RefPtr<Graphic::Color>)
+            _WRAP_PROPERTY("round-corner", double)
+            _WRAP_PROPERTY("close-button", bool)
 
             _WRAP_PROPERTY("content", Glib::RefPtr<Item>)
 

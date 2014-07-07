@@ -4636,22 +4636,24 @@
 
 ;; Original typedef:
 ;; typedef enum  {
-;; 	MAIA_WINDOW_BORDER_ALL = 1 << 0,
+;; 	MAIA_WINDOW_BORDER_NONE = 1 << 0,
 ;; 	MAIA_WINDOW_BORDER_LEFT = 1 << 1,
 ;; 	MAIA_WINDOW_BORDER_RIGHT = 1 << 2,
 ;; 	MAIA_WINDOW_BORDER_TOP = 1 << 3,
-;; 	MAIA_WINDOW_BORDER_BOTTOM = 1 << 4
+;; 	MAIA_WINDOW_BORDER_BOTTOM = 1 << 4,
+;; 	MAIA_WINDOW_BORDER_ALL = ((MAIA_WINDOW_BORDER_LEFT | MAIA_WINDOW_BORDER_RIGHT) | MAIA_WINDOW_BORDER_TOP) | MAIA_WINDOW_BORDER_BOTTOM
 ;; } MaiaWindowBorder;
 
 (define-flags-extended WindowBorder
   (in-module "Maia")
   (c-name "MaiaWindowBorder")
   (values
-    '("all" "MAIA_WINDOW_BORDER_ALL" "1 << 0")
+    '("none" "MAIA_WINDOW_BORDER_NONE" "1 << 0")
     '("left" "MAIA_WINDOW_BORDER_LEFT" "1 << 1")
     '("right" "MAIA_WINDOW_BORDER_RIGHT" "1 << 2")
     '("top" "MAIA_WINDOW_BORDER_TOP" "1 << 3")
     '("bottom" "MAIA_WINDOW_BORDER_BOTTOM" "1 << 4")
+    '("all" "MAIA_WINDOW_BORDER_ALL" "0x1E")
   )
 )
 

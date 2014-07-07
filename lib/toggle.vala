@@ -176,6 +176,8 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
     // methods
     construct
     {
+        stroke_pattern = new Graphic.Color (0, 0, 0);
+
         not_dumpable_attributes.insert ("size");
 
         toggled = new Core.Event ("toggled", this);
@@ -186,7 +188,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
         add (label_item);
         m_Label = label_item;
 
-        notify["stroke-pattern"].connect (on_stroke_pattern_changed);
+        plug_property ("stroke-pattern", m_Label, "stroke-pattern");
 
         label_item.button_press_event.connect (on_button_press);
 
@@ -207,15 +209,6 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
             {
                 toggle_group.remove_button (this);
             }
-        }
-    }
-
-    private void
-    on_stroke_pattern_changed ()
-    {
-        if (m_Label != null)
-        {
-            m_Label.stroke_pattern = stroke_pattern;
         }
     }
 

@@ -566,7 +566,7 @@ public class Maia.Document : Item
             {
                 // search parent which is child in document
                 for (; item.parent != null && item.parent != this; item = item.parent);
-            
+
                 inAttribute.bind (item, signal_name, inProperty, on_bind_value_changed);
             }
         }

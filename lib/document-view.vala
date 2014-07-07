@@ -21,7 +21,7 @@ public class Maia.DocumentView : Group
 {
     // static properties
     private static GLib.Quark s_QuarkShortcut;
-    
+
     // properties
     private unowned Document   m_Document;
     private ScrollView         m_Content;
@@ -32,7 +32,7 @@ public class Maia.DocumentView : Group
     private unowned Item?      m_CurrentFocusItem;
     private Core.EventListener m_AddItemListener;
     private Core.EventListener m_RemoveItemListener;
-    
+
     // accessors
     internal override string tag {
         get {
@@ -57,7 +57,7 @@ public class Maia.DocumentView : Group
     {
         s_QuarkShortcut = GLib.Quark.from_string ("MaiaDocumentViewShortcut");
     }
-    
+
     // methods
     construct
     {
@@ -67,7 +67,7 @@ public class Maia.DocumentView : Group
 
         // Create shortcut model
         m_Shortcuts = new Model (@"$(name)-model", "shortcut", typeof (Shortcut));
-        
+
         // Create toolbar grid
         m_ShortcutsToolbar = new View (@"$(name)-shortcuts-toolbar");
         m_ShortcutsToolbar.column = 1;
@@ -137,19 +137,25 @@ public class Maia.DocumentView : Group
     private void
     on_shortcut_section_changed (GLib.Object inObject)
     {
-        if (m_Document != null)
-        {
-            unowned Shortcut shortcut = inObject as Shortcut;
-            unowned ToggleButton button = shortcut.get_qdata<unowned ToggleButton> (s_QuarkShortcut);
+        unowned Shortcut shortcut = inObject as Shortcut;
+        unowned ToggleButton button = shortcut.get_qdata<unowned ToggleButton> (s_QuarkShortcut);
 
-            if (shortcut.section != null)
+        if (m_Document != null && shortcut.section != null)
+        {
+            unowned Item item = m_Document.find (GLib.Quark.from_string (shortcut.section)) as Item;
+            if (item != null)
             {
-                unowned Item item = m_Document.find (GLib.Quark.from_string (shortcut.section)) as Item;
-                if (item != null)
-                {
-                    item.bind_property ("visible", button, "visible", GLib.BindingFlags.SYNC_CREATE);
-                }
+                button.visible = item.visible;
+                item.plug_property ("visible", button, "visible");
             }
+            else
+            {
+                button.visible = false;
+            }
+        }
+        else
+        {
+            button.visible = false;
         }
     }
 
@@ -172,17 +178,19 @@ public class Maia.DocumentView : Group
                         unowned Shortcut? data = button.get_qdata<unowned Shortcut> (s_QuarkShortcut);
                         if (data == null)
                         {
-                            shortcut.bind_property ("label", button, "label", GLib.BindingFlags.SYNC_CREATE);
+                            shortcut.plug_property ("label", button, "label");
                             shortcut.notify["section"].connect ((o, p) => { on_shortcut_section_changed (o); });
-                            
+
                             button.id = shortcut.id;
 
                             m_ShortcutsGroup.add_button (button);
 
                             button.set_qdata (s_QuarkShortcut, shortcut);
                             shortcut.set_qdata (s_QuarkShortcut, button);
-                            
+
                             button.toggled.subscribe (on_shortcut_button_toggled);
+
+                            on_shortcut_section_changed (shortcut);
                         }
                     }
                 }
@@ -215,7 +223,7 @@ public class Maia.DocumentView : Group
             else if (m_CurrentFocusItem != null)
             {
                 unowned Item? focus_parent = m_CurrentFocusItem.parent as Item;
-                
+
                 if (focus_parent != null)
                 {
                     focus_parent.add (item);
@@ -306,7 +314,7 @@ public class Maia.DocumentView : Group
                     m_Shortcuts["shortcut"][row] = inObject as Shortcut;
                 }
             }
-        } 
+        }
     }
 
     internal override void
@@ -364,6 +372,16 @@ public class Maia.DocumentView : Group
         {
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "");
 
+            // Update shortcut section
+            for (int cpt = 0; cpt < m_Shortcuts.nb_rows; ++cpt)
+            {
+                Shortcut? shortcut = (Shortcut?)m_Shortcuts["shortcut"][cpt];
+                if (shortcut != null)
+                {
+                    on_shortcut_section_changed (shortcut);
+                }
+            }
+
             geometry = inAllocation;
 
             // Get content size
@@ -373,7 +391,7 @@ public class Maia.DocumentView : Group
             // Get shortcuts toolbar size
             var toolbar_size = m_ShortcutsToolbar.size;
 
-            // Calculate content allocation            
+            // Calculate content allocation
             var content_allocation = Graphic.Rectangle (0, 0, double.max (content_size.width, geometry.extents.size.width - toolbar_size.width),
                                                               double.max (content_size.height, geometry.extents.size.height));
 

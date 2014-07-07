@@ -211,6 +211,9 @@ public class Maia.Toolbox : Popup
 
         // Toolbox always hidden by default
         visible = false;
+
+        // default shadow width
+        shadow_width = 7;
     }
 
     public Toolbox (string inId)

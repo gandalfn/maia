@@ -48,15 +48,19 @@ public class Maia.PopupButton : ToggleButton
         }
     }
 
+    public Graphic.Color  shadow_color  { get; set; default = new Graphic.Color (0, 0, 0); }
+    public double         shadow_width  { get; set; default = 15; }
+    public Window.Border  shadow_border { get; set; default = Window.Border.ALL; }
+    public double         round_corner  { get; set; default = 5.0; }
+    public bool           close_button  { get; set; default = true; }
+    public double         popup_border  { get; set; default = 0.0; }
+
     // methods
     construct
     {
         // Create popup
         m_Popup = new Popup (@"$name-popup");
         m_Popup.visible = false;
-        m_Popup.shadow_width = 15;
-        m_Popup.round_corner = 5;
-        m_Popup.close_button = true;
         m_Popup.placement = PopupPlacement.ABSOLUTE;
         m_Popup.parent = this;
 
@@ -70,30 +74,37 @@ public class Maia.PopupButton : ToggleButton
         notify["characters"].connect (on_characters_changed);
         on_characters_changed ();
 
-        // Connect onto background pattern change
-        notify["background-pattern"].connect (on_background_pattern_changed);
-        on_background_pattern_changed ();
+        // plug background pattern property to popup
+        plug_property ("background-pattern", m_Popup, "background-pattern");
 
-        // Connect onto stroke pattern change
-        notify["stroke-pattern"].connect (on_stroke_pattern_changed);
-        on_stroke_pattern_changed ();
+        // plug stroke pattern property to popup
+        plug_property ("stroke-pattern", m_Popup, "stroke-pattern");
+
+        // plug transform property to window
+        plug_property ("transform", m_Popup, "transform");
+
+        // plug border property to window
+        plug_property ("popup-border", m_Popup, "border");
+
+        // plug shadow border property to window
+        plug_property ("shadow-border", m_Popup, "shadow-border");
+
+        // plug shadow width property to window
+        plug_property ("shadow-width", m_Popup, "shadow-width");
+
+        // plug shadow color property to window
+        plug_property ("shadow-color", m_Popup, "shadow-color");
+
+        // plug round corner property to window
+        plug_property ("round-corner", m_Popup, "round-corner");
+
+        // plug close button property to window
+        plug_property ("close-button", m_Popup, "close-button");
     }
 
     public PopupButton (string inId, string inLabel)
     {
         base (inId, inLabel);
-    }
-
-    private void
-    on_background_pattern_changed ()
-    {
-        m_Popup.background_pattern = background_pattern;
-    }
-
-    private void
-    on_stroke_pattern_changed ()
-    {
-        m_Popup.stroke_pattern = stroke_pattern;
     }
 
     private void

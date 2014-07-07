@@ -67,7 +67,7 @@ namespace Maia
                 subscribe (T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
                 {
                     Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerFunctor<T_obj>::create (pObj, pFunc);
-                    
+
                     Glib::RefPtr<EventListener> pListener = EventListener::create (this, pFunctor);
 
                     get_bus ()->subscribe (pListener);
@@ -86,6 +86,8 @@ namespace Maia
 
                     return pListener;
                 }
+
+                _WRAP_METHOD(void publish (const Glib::RefPtr<EventArgs>& inpArgs), maia_core_event_publish)
 
                 _IGNORE(maia_core_event_get_owner)
                 _WRAP_METHOD(Glib::ustring get_name () const, maia_core_event_get_name)

@@ -133,6 +133,12 @@ public class Maia.Graphic.Context : Core.Object
     }
 
     public virtual void
+    paint_with_alpha (double inAlpha) throws Error
+    {
+        throw new Error.NOT_IMPLEMENTED ("Context paint not implemented");
+    }
+
+    public virtual void
     fill (Path inPath) throws Error
     {
         throw new Error.NOT_IMPLEMENTED ("Context fill not implemented");

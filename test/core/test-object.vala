@@ -23,6 +23,8 @@ public class Maia.TestObject : Maia.TestCase
 
     public class TestFoo : Maia.Core.Object
     {
+        public string test_property { get; set; default = null; }
+
         public TestFoo (uint32 inId)
         {
             GLib.Object (id: inId);
@@ -43,6 +45,8 @@ public class Maia.TestObject : Maia.TestCase
 
     public class TestFoo2 : Maia.Core.Object
     {
+        public string test_property_other { get; set; default = null; }
+
         public string name;
 
         public TestFoo2 (uint32 inId, string inName)
@@ -55,6 +59,28 @@ public class Maia.TestObject : Maia.TestCase
         compare (Core.Object inOther)
         {
             return GLib.strcmp (name, (inOther as TestFoo2).name);
+        }
+    }
+
+    public class TestFoo3 : Maia.Core.Object
+    {
+        public string test_property { get; set; default = null; }
+
+        public TestFoo3 (uint32 inId)
+        {
+            GLib.Object (id: inId);
+        }
+
+        public override bool
+        can_append_child (Core.Object inChild)
+        {
+            return inChild is TestFoo || inChild is TestFoo3;
+        }
+
+        public override int
+        compare (Core.Object inOther)
+        {
+            return (int)(id - inOther.id);
         }
     }
 
@@ -72,6 +98,11 @@ public class Maia.TestObject : Maia.TestCase
         add_test ("child-sort", test_object_sort_child);
         add_test ("child-reorder", test_object_child_reorder);
         add_test ("compare", test_object_compare);
+        add_test ("clear-childs", test_object_clear_childs);
+        add_test ("find", test_object_find);
+        add_test ("find-by-type", test_object_find_by_type);
+        add_test ("plug-property", test_object_plug_property);
+        add_test ("plug-property-lock", test_object_plug_property_lock);
 
         if (Test.perf())
         {
@@ -292,6 +323,133 @@ public class Maia.TestObject : Maia.TestCase
             }
             prev = child;
         }
+    }
+
+    public void
+    test_object_clear_childs ()
+    {
+        TestFoo parent = new TestFoo (1);
+        assert (parent.first () == null);
+        assert (parent.last () == null);
+
+        TestFoo first = new TestFoo (1);
+        first.parent = parent;
+        assert (parent.first () == first);
+        assert (parent.last () == first);
+
+        TestFoo middle = new TestFoo (2);
+        middle.parent = parent;
+        assert (parent.first () == first);
+        assert (parent.last () == middle);
+
+        TestFoo last = new TestFoo (3);
+        last.parent = parent;
+        assert (parent.first () == first);
+        assert (parent.last () == last);
+
+        parent.clear_childs ();
+        assert (parent.first () == null);
+        assert (parent.last () == null);
+    }
+
+    public void
+    test_object_find ()
+    {
+        TestFoo parent = new TestFoo (1);
+        assert (parent.first () == null);
+        assert (parent.last () == null);
+
+        TestFoo first = new TestFoo (1);
+        first.parent = parent;
+        assert (parent.first () == first);
+        assert (parent.last () == first);
+
+        TestFoo middle = new TestFoo (2);
+        middle.parent = parent;
+        assert (parent.first () == first);
+        assert (parent.last () == middle);
+
+        TestFoo last = new TestFoo (3);
+        last.parent = parent;
+        assert (parent.first () == first);
+        assert (parent.last () == last);
+
+        assert (parent.find (1) == first);
+        assert (parent.find (2) == middle);
+        assert (parent.find (3) == last);
+    }
+
+    public void
+    test_object_find_by_type ()
+    {
+        TestFoo3 parent = new TestFoo3 (1);
+        assert (parent.first () == null);
+        assert (parent.last () == null);
+
+        TestFoo first = new TestFoo (1);
+        first.parent = parent;
+        assert (parent.first () == first);
+        assert (parent.last () == first);
+
+        TestFoo3 middle = new TestFoo3 (2);
+        middle.parent = parent;
+        assert (parent.first () == first);
+        assert (parent.last () == middle);
+
+        TestFoo last = new TestFoo (3);
+        last.parent = parent;
+        assert (parent.first () == first);
+        assert (parent.last () == last);
+
+        Maia.Core.List<unowned TestFoo?> list = parent.find_by_type<TestFoo> ();
+        assert (list.length == 2);
+        assert (list.first () == first);
+        assert (list.last () == last);
+
+        Maia.Core.List<unowned TestFoo3?> list2 = parent.find_by_type<TestFoo3> ();
+        assert (list2.length == 1);
+        assert (list2.first () == middle);
+    }
+
+    public void
+    test_object_plug_property ()
+    {
+        TestFoo object1 = new TestFoo (1);
+        TestFoo2 object2 = new TestFoo2 (2, "object2");
+
+        object1.test_property = "test-init";
+        object1.plug_property ("test-property", object2, "test-property-other");
+        assert (object2.test_property_other == "test-init");
+
+        object1.test_property = "test-set";
+        assert (object2.test_property_other == "test-set");
+
+        object1.unplug_property ("test-property", object2, "test-property-other");
+        object1.test_property = "test-unplug";
+        assert (object2.test_property_other == "test-set");
+    }
+
+    public void
+    test_object_plug_property_lock ()
+    {
+        TestFoo object1 = new TestFoo (1);
+        TestFoo2 object2 = new TestFoo2 (2, "object2");
+
+        object1.test_property = "test-init";
+        object1.plug_property ("test-property", object2, "test-property-other");
+        assert (object2.test_property_other == "test-init");
+
+        object1.lock_property ("test-property", object2, "test-property-other");
+        object1.test_property = "test-lock";
+        assert (object2.test_property_other == "test-init");
+
+        object1.unlock_property ("test-property", object2, "test-property-other");
+        object1.test_property = "test-unlock";
+        assert (object2.test_property_other == "test-unlock");
+
+        object1.unplug_property ("test-property", object2, "test-property-other");
+        object1.test_property = "test-unplug";
+        assert (object2.test_property_other == "test-unlock");
     }
 
     public void

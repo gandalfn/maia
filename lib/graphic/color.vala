@@ -633,6 +633,8 @@ public class Maia.Graphic.Color : Pattern
             ret = "none";
         else if (m_Name != null)
             ret = m_Name;
+        else if (alpha != 1.0)
+            ret = @"rgba ($red, $green, $blue, $alpha)";
         else
             ret = "#%02x%02x%02x".printf((int)(red * 255),
                                          (int)(green * 255),

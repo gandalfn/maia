@@ -32,7 +32,7 @@ internal class Maia.Xcb.Pixmap : Maia.Xcb.Drawable
         var pixmap = global::Xcb.Pixmap (Maia.Xcb.application.connection);
 
         base (pixmap, inWindow.screen_num, inDepth, inWidth, inHeight);
-        
+
         var cookie = pixmap.create_checked (connection, (uint8)inDepth, (global::Xcb.Drawable)inWindow.xid, (uint16)inWidth, (uint16)inHeight);
 
         if (connection.request_check (cookie) != null)
@@ -41,6 +41,22 @@ internal class Maia.Xcb.Pixmap : Maia.Xcb.Drawable
         }
 
         clear ();
+    }
+
+    public Pixmap.clone (Pixmap inPixmap)
+    {
+        var pixmap = global::Xcb.Pixmap (Maia.Xcb.application.connection);
+
+        base (pixmap, inPixmap.screen_num, inPixmap.depth, (int)inPixmap.size.width, (int)inPixmap.size.height);
+
+        var cookie = pixmap.create_checked (connection, (uint8)depth, (global::Xcb.Drawable)inPixmap.xid, (uint16)size.width, (uint16)size.height);
+
+        if (connection.request_check (cookie) != null)
+        {
+            Log.error (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, @"Error on clone pixmap $(inPixmap.xid)");
+        }
+
+        inPixmap.copy (this);
     }
 
     ~Pixmap ()

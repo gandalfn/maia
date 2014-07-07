@@ -380,6 +380,8 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
 
             geometry = inAllocation;
 
+            print (@"$name update $(geometry.extents)\n");
+
             // Caculate the popup position
             var popup_position = Graphic.Point (0, geometry.extents.size.height);
             var popup_size = m_Popup.size;

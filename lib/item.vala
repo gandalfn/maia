@@ -48,6 +48,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     private Graphic.Transform m_TransformToWindowSpace = new Graphic.Transform.identity ();
 
     // accessors
+    /**
+     * {@inheritDoc}
+     */
     [CCode (notify = false)]
     public override unowned Core.Object? parent {
         get {
@@ -81,7 +84,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             else
                 notify["position"].connect (on_move);
 
-
             // Send root change notification
             GLib.Signal.emit_by_name (this, "notify::root");
             GLib.Signal.emit_by_name (this, "notify::window");
@@ -89,25 +91,34 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
     }
 
+    /**
+     * The name of item
+     */
     public string name {
         owned get {
             return ((GLib.Quark)id).to_string ();
         }
     }
 
-    public abstract string tag { get; }
+    internal abstract string tag { get; }
 
     internal string         characters     { get; set; default = null; }
     internal string         style          { get; set; default = null; }
     internal string         manifest_path  { get; set; default = null; }
     internal Manifest.Theme manifest_theme { get; set; default = null; }
 
+    /**
+     * Indicate if item can be packed in grid
+     */
     public bool is_packable {
         get {
             return m_IsPackable;
         }
     }
 
+    /**
+     * Indicate if item can be moved
+     */
     public bool is_movable {
         get {
             return m_IsMovable;
@@ -118,6 +129,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         default = false;
     }
 
+    /**
+     * Indicate if item can be resized
+     */
     public bool is_resizable {
         get {
             return m_IsResizable;
@@ -128,9 +142,19 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         default = false;
     }
 
+    /**
+     * Whether or not the item can be focused
+     */
     public virtual bool can_focus  { get; set; default = false; }
+
+    /**
+     * Whether the item has the focus.
+     */
     public bool         have_focus { get; set; default = false; }
 
+    /**
+     * Whether the item is visible.
+     */
     [CCode (notify = false)]
     public bool visible {
         get {
@@ -166,6 +190,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         set {
             if (m_Geometry != value || (m_Geometry != null && !m_Geometry.equal (value)))
             {
+                // Check if geometry has been changed (not set)
                 bool old_not_empty = (m_Geometry != null);
 
                 m_Geometry = value;
@@ -189,7 +214,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     }
 
     [CCode (notify = false)]
-    internal Graphic.Region damaged      { get; set; default = null; }
+    internal Graphic.Region damaged { get; set; default = null; }
+
     internal virtual Graphic.Transform transform {
         get {
             return m_Transform;
@@ -336,6 +362,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 ret = item.get_qdata<unowned Window?> (s_MainWindow);
             }
 
+            // this is the last window check if window is plug in canvas
             if (ret == null)
             {
                 ret = get_qdata<unowned Window?> (s_CanvasWindow);
@@ -827,60 +854,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 }
             }
         }
-    }
-
-    protected Graphic.Transform
-    get_transform_to_window_space ()
-    {
-        unowned Window? parent_window = window;
-
-        // Get stack of items
-        GLib.SList<unowned Item> list = new GLib.SList<unowned Item?> ();
-
-        // Check if item is under popup
-        unowned Core.Object? popup = get_qdata<unowned Core.Object?> (s_PopupWindow);
-
-        for (unowned Core.Object? item = popup ?? parent; item != null; item = item.parent)
-        {
-            // If item is under popup chain up on it
-            popup = item.get_qdata<unowned Core.Object?> (s_PopupWindow);
-            if (popup != null)
-            {
-                item = popup;
-            }
-
-            if (item is Item && !(item is Popup))
-            {
-                if ((item as Item).window == parent_window)
-                {
-                    list.prepend (item as Item);
-                }
-                else
-                {
-                    list.prepend (item as Item);
-                    break;
-                }
-            }
-        }
-
-        // Apply transform foreach item
-        Graphic.Transform ret = new Graphic.Transform.identity ();
-        foreach (unowned Item item in list)
-        {
-            if (item.geometry != null && !(item is Window))
-            {
-                Graphic.Point pos = item.geometry.extents.origin;
-                Graphic.Transform item_translate = new Graphic.Transform.identity ();
-                item_translate.translate (pos.x, pos.y);
-                ret.add (item_translate);
-            }
-
-            Graphic.Matrix matrix = item.transform.matrix;
-            Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
-            ret.add (item_transform);
-        }
-
-        return ret;
     }
 
     private bool

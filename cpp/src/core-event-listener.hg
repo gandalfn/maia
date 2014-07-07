@@ -47,7 +47,7 @@ namespace Maia
                     g_object_set_data (G_OBJECT (gobj ()), "EventListenerCpp", this);
                 }
         };
-        
+
         template <class T_obj>
         class EventListenerFunctor : public EventListenerFunctorBase
         {
@@ -71,7 +71,7 @@ namespace Maia
                     m_Callback (pFunc)
                 {
                 }
-                
+
 
             private:
                 T_obj*  m_pObj;
@@ -101,7 +101,7 @@ namespace Maia
                     m_pCallback (new Handler (inSlot))
                 {
                 }
-                
+
 
             private:
                 Handler* m_pCallback;
@@ -132,7 +132,7 @@ namespace Maia
                     m_Callback (pFunc)
                 {
                 }
-                
+
 
             private:
                 const Glib::RefPtr<T_obj>&  m_pObj;
@@ -154,7 +154,7 @@ namespace Maia
                 create (const Glib::RefPtr<Event>& inpEvent, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
                 {
                     Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerFunctor<T_obj>::create (pObj, pFunc);
-                    
+
                     return create (inpEvent, pFunctor);
                 }
 
@@ -162,7 +162,7 @@ namespace Maia
                 create (const Glib::RefPtr<Event>& inpEvent, const sigc::slot<void, Glib::RefPtr<EventArgs>>& inSlot)
                 {
                     Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerSigcFunctor::create (inSlot);
-                    
+
                     return create (inpEvent, pFunctor);
                 }
 
@@ -174,7 +174,7 @@ namespace Maia
                     Glib::RefPtr<EventListener> pListener = create (inpEvent, pFunctor);
 
                     pObj->add_destroy_notify_callback (pListener->gobj (), _on_gobject_child_destroy_notify);
-                    
+
                     return  pListener;
                 }
 

@@ -19,15 +19,20 @@
 
 public class Maia.Window : Group
 {
+    // constants
+    const double CLOSE_BUTTON_SIZE = 32;
+    const double CLOSE_BUTTON_LINE_SIZE = 4;
+
     // types
     [Flags]
     public enum Border
     {
-        ALL,
+        NONE,
         LEFT,
         RIGHT,
         TOP,
-        BOTTOM
+        BOTTOM,
+        ALL = LEFT | RIGHT | TOP | BOTTOM
     }
 
     // properties
@@ -65,9 +70,9 @@ public class Maia.Window : Group
 
     public double shadow_width { get; set; default = 0.0; }
 
-    public Border shadow_border { get; set; default = Border.ALL; }
+    public Border shadow_border { get; set; default = Border.NONE; }
 
-    public double round_corner { get; set; default = 5.0; }
+    public double round_corner { get; set; default = 0.0; }
 
     public bool close_button { get; set; default = false; }
 
@@ -154,7 +159,7 @@ public class Maia.Window : Group
     construct
     {
         // Create animator
-        m_Animator = new Core.Animator (60, 250);
+        m_Animator = new Core.Animator (60, 200);
 
        // Subscribe to damage event
         m_DamageEvent.object_subscribe (on_damage_event);
@@ -226,7 +231,9 @@ public class Maia.Window : Group
     {
         if (visible)
         {
-            var button_area = Graphic.Rectangle (area.extents.size.width - (shadow_width * 2) - 16, (shadow_width * 2) - 16, 32, 32);
+            var button_area = Graphic.Rectangle (area.extents.size.width - shadow_width - (CLOSE_BUTTON_SIZE + CLOSE_BUTTON_LINE_SIZE) / 2.0,
+                                                 shadow_width - (CLOSE_BUTTON_SIZE - CLOSE_BUTTON_LINE_SIZE) / 2.0,
+                                                 CLOSE_BUTTON_SIZE, CLOSE_BUTTON_SIZE);
             damage_area (new Graphic.Region (button_area));
         }
     }
@@ -236,25 +243,33 @@ public class Maia.Window : Group
     {
         try
         {
-            m_CloseButton = new Graphic.Surface (32, 32);
+            m_CloseButton = new Graphic.Surface ((uint)CLOSE_BUTTON_SIZE, (uint)CLOSE_BUTTON_SIZE);
             m_CloseButton.clear ();
-            
+
             var background = new Graphic.Path ();
-            background.arc (16, 16, 14, 14, 0, 2 * GLib.Math.PI);
+            background.arc (CLOSE_BUTTON_SIZE / 2.0, CLOSE_BUTTON_SIZE / 2.0,
+                            ((CLOSE_BUTTON_SIZE - CLOSE_BUTTON_LINE_SIZE) / 2.0), ((CLOSE_BUTTON_SIZE - CLOSE_BUTTON_LINE_SIZE) / 2.0),
+                            0, 2 * GLib.Math.PI);
 
             var foreground = new Graphic.Path ();
-            foreground.arc (16, 16, 14, 14, 0, 2 * GLib.Math.PI);
-            foreground.move_to (16, 16);
-            foreground.rel_line_to (-6, -6);
-            foreground.rel_line_to (12, 12);
-            foreground.move_to (16, 16);
-            foreground.rel_line_to (6, -6);
-            foreground.rel_line_to (-12, 12);
+            foreground.arc (CLOSE_BUTTON_SIZE / 2.0, CLOSE_BUTTON_SIZE / 2.0,
+                            ((CLOSE_BUTTON_SIZE - CLOSE_BUTTON_LINE_SIZE) / 2.0), ((CLOSE_BUTTON_SIZE - CLOSE_BUTTON_LINE_SIZE) / 2.0),
+                            0, 2 * GLib.Math.PI);
+            foreground.move_to (CLOSE_BUTTON_SIZE / 2.0, CLOSE_BUTTON_SIZE / 2.0);
+            foreground.rel_line_to (-(((CLOSE_BUTTON_SIZE / 2.0) - CLOSE_BUTTON_LINE_SIZE) / 2.0),
+                                    -(((CLOSE_BUTTON_SIZE / 2.0) - CLOSE_BUTTON_LINE_SIZE) / 2.0));
+            foreground.rel_line_to ((CLOSE_BUTTON_SIZE / 2.0) - CLOSE_BUTTON_LINE_SIZE,
+                                    (CLOSE_BUTTON_SIZE / 2.0) - CLOSE_BUTTON_LINE_SIZE);
+            foreground.move_to (CLOSE_BUTTON_SIZE / 2.0, CLOSE_BUTTON_SIZE / 2.0);
+            foreground.rel_line_to (((CLOSE_BUTTON_SIZE / 2.0) - CLOSE_BUTTON_LINE_SIZE) / 2.0,
+                                    -(((CLOSE_BUTTON_SIZE / 2.0) - CLOSE_BUTTON_LINE_SIZE) / 2.0));
+            foreground.rel_line_to (-((CLOSE_BUTTON_SIZE / 2.0) - CLOSE_BUTTON_LINE_SIZE),
+                                    (CLOSE_BUTTON_SIZE / 2.0) - CLOSE_BUTTON_LINE_SIZE);
 
             var ctx = m_CloseButton.context;
             ctx.pattern = background_pattern ?? new Graphic.Color (1, 1, 1);
             ctx.fill (background);
-            ctx.line_width = 4;
+            ctx.line_width = CLOSE_BUTTON_LINE_SIZE;
             ctx.pattern = stroke_pattern ?? new Graphic.Color (0, 0, 0);
             ctx.stroke (foreground);
         }
@@ -366,10 +381,10 @@ public class Maia.Window : Group
                     else
                     {
                         if (area != null &&
-                            pos.x >= area.extents.size.width - (shadow_width * 2) - (16 * close_button_scale) &&
-                            pos.y >= (shadow_width * 2) - (16 * close_button_scale) &&
-                            pos.x < area.extents.size.width - (shadow_width * 2) - (16 * close_button_scale) + (32 * close_button_scale) &&
-                            pos.y < (shadow_width * 2) - (16 * close_button_scale) + (32 * close_button_scale))
+                            pos.x >= area.extents.size.width - shadow_width - (((CLOSE_BUTTON_SIZE + CLOSE_BUTTON_LINE_SIZE) / 2.0) * close_button_scale) &&
+                            pos.y >= shadow_width - (((CLOSE_BUTTON_SIZE - CLOSE_BUTTON_LINE_SIZE) / 2.0) * close_button_scale) &&
+                            pos.x < area.extents.size.width - shadow_width - (((CLOSE_BUTTON_SIZE + CLOSE_BUTTON_LINE_SIZE) / 2.0) * close_button_scale) + (CLOSE_BUTTON_SIZE * close_button_scale) &&
+                            pos.y < shadow_width - (((CLOSE_BUTTON_SIZE - CLOSE_BUTTON_LINE_SIZE) / 2.0) * close_button_scale) + (CLOSE_BUTTON_SIZE * close_button_scale))
                         {
                             if (!m_OverCloseButton)
                             {
@@ -391,7 +406,7 @@ public class Maia.Window : Group
                                 m_Animator.start ();
                             }
                         }
-                        else 
+                        else
                         {
                             if (m_OverCloseButton)
                             {
@@ -665,8 +680,8 @@ public class Maia.Window : Group
     {
         Graphic.Region area = new Graphic.Region ();
 
-        double x1_border = border + (!(Border.LEFT in shadow_border) ? 0 : shadow_border);
-        double y1_border = border + (!(Border.TOP in shadow_border) ? 0 : shadow_border);
+        double x1_border = border + (!(Border.LEFT in shadow_border) ? 0 : shadow_width);
+        double y1_border = border + (!(Border.TOP in shadow_border) ? 0 : shadow_width);
 
         foreach (unowned Core.Object child in this)
         {
@@ -688,8 +703,8 @@ public class Maia.Window : Group
         }
 
         var ret = area.extents.size;
-        ret.resize (border + (!(Border.RIGHT in shadow_border) ? 0 : shadow_border) * 2,
-                    border + (!(Border.BOTTOM in shadow_border) ? 0 : shadow_border) * 2);
+        ret.resize (border + (!(Border.RIGHT in shadow_border) ? 0 : shadow_width) * 2,
+                    border + (!(Border.BOTTOM in shadow_border) ? 0 : shadow_width) * 2);
 
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "window: %s %s", name, ret.to_string ());
 
@@ -718,7 +733,7 @@ public class Maia.Window : Group
         {
             ungrab_keyboard (grab_keyboard_item);
         }
-        
+
         if (m_Animator != null)
         {
             m_Animator.stop ();
@@ -831,8 +846,8 @@ public class Maia.Window : Group
 
                     // Set child size allocation
                     var area_size = area.extents.size;
-                    area_size.resize (-(border + (!(Border.RIGHT in shadow_border) ? 0 : shadow_border)) * 2,
-                                      -(border + (!(Border.BOTTOM in shadow_border) ? 0 : shadow_border)) * 2);
+                    area_size.resize (-(border + (!(Border.RIGHT in shadow_border) ? 0 : shadow_width)) * 2,
+                                      -(border + (!(Border.BOTTOM in shadow_border) ? 0 : shadow_width)) * 2);
 
                     var child_allocation = Graphic.Rectangle (item_position.x, item_position.y,
                                                               double.max (item_size.width, area_size.width),
@@ -848,12 +863,12 @@ public class Maia.Window : Group
             var ctx = m_Background.context;
             ctx.operator = Graphic.Operator.SOURCE;
 
-            var shadow_area = Graphic.Rectangle (!(Border.LEFT in shadow_border) ? 0 : shadow_border,
-                                                 !(Border.TOP in shadow_border) ? 0 : shadow_border,
-                                                 area.extents.size.width - ((!(Border.RIGHT in shadow_border) ? 0 : shadow_border) * 2),
-                                                 area.extents.size.height - ((!(Border.BOTTOM in shadow_border) ? 0 : shadow_border) * 2));
+            var shadow_area = Graphic.Rectangle (!(Border.LEFT in shadow_border) ? 0 : shadow_width,
+                                                 !(Border.TOP in shadow_border) ? 0 : shadow_width,
+                                                 area.extents.size.width - ((!(Border.RIGHT in shadow_border) ? 0 : shadow_width) * 2),
+                                                 area.extents.size.height - ((!(Border.BOTTOM in shadow_border) ? 0 : shadow_width) * 2));
             var path = new Graphic.Path ();
-            path.rectangle (shadow_area.origin.x, shadow_area.origin.y, shadow_area.size.width, shadow_area.size.height, shadow_border > 0 ? round_corner : 0, shadow_border > 0 ? round_corner : 0);
+            path.rectangle (shadow_area.origin.x, shadow_area.origin.y, shadow_area.size.width, shadow_area.size.height, round_corner > 0 ? round_corner : 0, round_corner > 0 ? round_corner : 0);
 
             if (!(Border.LEFT in shadow_border))
             {
@@ -880,12 +895,12 @@ public class Maia.Window : Group
             }
 
             // Paint shadow if needed
-            if (shadow_border > 0)
+            if (shadow_width > 0)
             {
                 ctx.pattern = shadow_color ?? new Graphic.Color (0, 0, 0);
                 ctx.fill (path);
 
-                m_Background.exponential_blur ((int)(shadow_border / 2));
+                m_Background.exponential_blur ((int)(shadow_width / 2));
             }
 
             ctx.operator = Graphic.Operator.SOURCE;
@@ -916,13 +931,14 @@ public class Maia.Window : Group
         {
             inContext.save ();
             {
-                var button_pos = Graphic.Point (area.extents.size.width - (shadow_width * 2) - (16 * close_button_scale), (shadow_width * 2) - (16 * close_button_scale));
+                var button_pos = Graphic.Point (area.extents.size.width - shadow_width - (((CLOSE_BUTTON_SIZE + CLOSE_BUTTON_LINE_SIZE) / 2.0) * close_button_scale),
+                                                shadow_width - (((CLOSE_BUTTON_SIZE - CLOSE_BUTTON_LINE_SIZE) / 2.0) * close_button_scale));
 
                 inContext.operator = Graphic.Operator.OVER;
                 inContext.translate (button_pos);
                 inContext.transform = new Graphic.Transform.init_scale (close_button_scale, close_button_scale);
                 inContext.pattern = m_CloseButton;
-                inContext.paint ();
+                inContext.paint_with_alpha (close_button_scale);
             }
             inContext.restore ();
         }

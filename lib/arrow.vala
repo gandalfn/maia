@@ -71,7 +71,7 @@ public class Maia.Arrow : Item, ItemMovable
                 m_LinkedItem.notify["visible"].connect (on_linked_item_visible_changed);
                 m_LinkedItem.notify["size"].connect (update_size);
                 m_LinkedItem.notify["position"].connect (update_size);
-                m_LinkedItem.notify["layer"].disconnect (on_linked_item_layer_changed);
+                m_LinkedItem.notify["layer"].connect (on_linked_item_layer_changed);
 
                 visible = m_LinkedItem.visible;
                 layer = m_LinkedItem.layer + 1;

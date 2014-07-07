@@ -316,6 +316,15 @@
   )
 )
 
+(define-vfunc paint_with_alpha
+  (of-object "MaiaGraphicContext")
+  (return-type "none")
+  (parameters
+    '("double" "inAlpha")
+    '("GError**" "error")
+  )
+)
+
 (define-vfunc fill
   (of-object "MaiaGraphicContext")
   (return-type "none")
