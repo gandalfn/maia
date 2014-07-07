@@ -41,10 +41,10 @@ namespace Maia
             static Glib::RefPtr<Application> create (const Glib::ustring& inName, int inFps, const std::vector<Glib::ustring>& inBackends)
             {
                 int length = inBackends.size ();
-                char** backends = 0;
+                char** backends = nullptr;
                 if (length > 0)
                 {
-                    backends = new char*[length];
+                    backends = g_new0 (char*, length);
                     int cpt = 0;
                     for (std::vector<Glib::ustring>::const_iterator iter = inBackends.begin (); iter != inBackends.end (); ++iter)
                     {
@@ -56,7 +56,7 @@ namespace Maia
 
                 if (backends)
                 {
-                    delete backends;
+                    g_free (backends);
                 }
 
                 return Glib::RefPtr<Application> (new Application (pApplication));
