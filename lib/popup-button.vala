@@ -31,11 +31,16 @@ public class Maia.PopupButton : ToggleButton
 
     public Item? content {
         get {
+            if (m_Popup.content == null)
+            {
+                m_Popup.content = create_popup_content ();
+            }
             return m_Popup.content;
         }
         set {
             m_Popup.content = value;
         }
+        default = null;
     }
 
     public Graphic.Color  shadow_color  { get; set; default = new Graphic.Color (0, 0, 0); }

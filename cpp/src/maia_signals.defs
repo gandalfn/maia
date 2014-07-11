@@ -3949,10 +3949,37 @@
   (construct-only #f)
 )
 
+(define-property icon-filename
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamString")
+  (docs "icon-filename")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property icon-size
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamBoxed")
+  (docs "icon-size")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property button-color
   (of-object "MaiaToggleButton")
   (prop-type "GParamObject")
   (docs "button-color")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property button-active-color
+  (of-object "MaiaToggleButton")
+  (prop-type "GParamObject")
+  (docs "button-active-color")
   (readable #t)
   (writable #t)
   (construct-only #f)

@@ -26,6 +26,8 @@ libmaia_gtk_la_SOURCES = \
     init.vala \
     image.vala \
     button.vala \
+    toggle-button.vala \
+    popup-button.vala \
     tool.vala \
     model.vala \
     canvas.vala \

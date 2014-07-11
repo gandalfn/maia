@@ -148,12 +148,14 @@ DocumentView.scrollview {
 		          text: "";
 		          only-numeric: true;
 		        }
-		        
+
 		        PopupButton.button {
 					xexpand: false;
 					yexpand: false;
 					column: 1;
-					label: "test";
+					label: "";
+					icon-name: 'document-page-setup';
+					icon-size: 12, 12;
 
 					[
 						Label.label {

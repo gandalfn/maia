@@ -27,6 +27,8 @@ namespace Maia.Gtk
         // Override base item
         Core.Any.delegate (typeof (Maia.Image),        typeof (Image));
         Core.Any.delegate (typeof (Maia.Button),       typeof (Button));
+        Core.Any.delegate (typeof (Maia.ToggleButton), typeof (ToggleButton));
+        Core.Any.delegate (typeof (Maia.PopupButton),  typeof (PopupButton));
         Core.Any.delegate (typeof (Maia.Tool),         typeof (Tool));
         Core.Any.delegate (typeof (Maia.Model),        typeof (Model));
         Core.Any.delegate (typeof (Maia.Model.Column), typeof (Model.Column));
@@ -40,6 +42,8 @@ namespace Maia.Gtk
         // Override base item
         Core.Any.undelegate (typeof (Maia.Image));
         Core.Any.undelegate (typeof (Maia.Button));
+        Core.Any.undelegate (typeof (Maia.ToggleButton));
+        Core.Any.undelegate (typeof (Maia.PopupButton));
         Core.Any.undelegate (typeof (Maia.Tool));
         Core.Any.undelegate (typeof (Maia.Model));
         Core.Any.undelegate (typeof (Maia.Model.Column));

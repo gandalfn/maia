@@ -20,6 +20,7 @@
 public class Maia.ToggleButton : Toggle
 {
     // properties
+    private unowned Image? m_Icon;
     private unowned Label? m_Label;
 
     // accessors
@@ -40,11 +41,26 @@ public class Maia.ToggleButton : Toggle
     public bool sensitive { get; set; default = true; }
 
     /**
+     * The icon filename no icon if ``null``
+     */
+    public string icon_filename { get; set; default = null; }
+
+    /**
+     * The icon size
+     */
+    public Graphic.Size icon_size { get; set; default = Graphic.Size (0, 0); }
+
+    /**
      * The background color of button if not set the button does not draw any background
      */
     public Graphic.Color button_color { get; set; default = new Graphic.Color (0.7, 0.7, 0.7); }
 
     /**
+     * The active background color of button if not set the button does not draw any background
+     */
+    public Graphic.Color button_active_color { get; set; default = null; }
+
+/**
      * The insensitive background color of button if not set the button does not draw any background
      */
     public Graphic.Color button_inactive_color { get; set; default = null; }
@@ -52,6 +68,15 @@ public class Maia.ToggleButton : Toggle
     // methods
     construct
     {
+        // Create icon item
+        string id_icon = "%s-icon".printf (name);
+
+        var icon_item = new Image (id_icon, icon_filename);
+        plug_property("icon-filename", icon_item, "filename");
+        plug_property("icon-size", icon_item, "size");
+        add (icon_item);
+        m_Icon = icon_item;
+
         m_Label = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
     }
 
@@ -77,8 +102,8 @@ public class Maia.ToggleButton : Toggle
             vd = 1.05;
             vd2 = 1.15;
         }
-        var beginColor = new Graphic.Color.shade (sensitive ? button_color : button_inactive_color ?? button_color, vb);
-        var endColor = new Graphic.Color.shade (sensitive ? button_color : button_inactive_color ?? button_color, ve);
+        var beginColor = new Graphic.Color.shade (sensitive ? (active ? button_active_color ?? button_color : button_color) : button_inactive_color ?? button_color, vb);
+        var endColor = new Graphic.Color.shade (sensitive ? (active ? button_active_color ?? button_color : button_color) : button_inactive_color ?? button_color, ve);
 
         if (m_Label != null && (m_Label.shade_color == null || m_Label.shade_color.compare (beginColor) != 0))
         {
@@ -144,7 +169,7 @@ public class Maia.ToggleButton : Toggle
     internal override bool
     can_append_child (Core.Object inObject)
     {
-        return inObject is Label;
+        return inObject is Label || inObject is Image;
     }
 
     internal override Graphic.Size
@@ -153,13 +178,25 @@ public class Maia.ToggleButton : Toggle
         // Get label item
         if (m_Label != null)
         {
+            double diff = (m_Icon.size.height - m_Label.size.height) / 2.0;
+
+            // get position of icon
+            Graphic.Point position_icon = m_Icon.position;
+            if (position_icon.x != border || position_icon.y != border)
+            {
+                m_Icon.position = Graphic.Point (border, border - (diff < 0 ? diff : 0));
+            }
+
             // get position of label
             Graphic.Point position_label = m_Label.position;
 
             // set position of label
-            if (position_label.x != border || position_label.y != border)
+            if (position_label.x != border + (m_Icon.size.width > 0 ? border + m_Icon.size.width : 0) ||
+                position_label.y != border + (m_Icon.size.height > 0 ? (diff >= 0 ? diff : 0) : 0))
             {
-                m_Label.position = Graphic.Point (border, border);
+                
+                m_Label.position = Graphic.Point (border + ((m_Icon.size.width > 0 && m_Label.size.width > 0) ? border + m_Icon.size.width : 0),
+                                                  border + (m_Icon.size.height > 0 ? (diff >= 0 ? diff : 0) : 0));
 
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "label item position : %s", m_Label.position.to_string ());
             }

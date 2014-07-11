@@ -139,6 +139,7 @@ public class Maia.Button : Grid
         var label_item = new Label (id_label, label);
         label_item.column = 1;
         label_item.xfill = false;
+        label_item.yfill = false;
         add (label_item);
 
         // plug properties

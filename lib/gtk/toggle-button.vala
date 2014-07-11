@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * button.vala
+ * toggle-button.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal class Maia.Gtk.Button : Maia.Button
+internal class Maia.Gtk.ToggleButton : Maia.ToggleButton
 {
     // properties
     private string m_IconName;
@@ -28,7 +28,6 @@ internal class Maia.Gtk.Button : Maia.Button
             return m_IconName;
         }
         set {
-            print (@"icon name: $(value)\n");
             if (m_IconName != value)
             {
                 m_IconName = value;
@@ -37,7 +36,6 @@ internal class Maia.Gtk.Button : Maia.Button
                     var icon_theme = global::Gtk.IconTheme.get_default ();
                     var info = icon_theme.lookup_icon (m_IconName, -1, global::Gtk.IconLookupFlags.FORCE_SVG);
                     icon_filename = info.get_filename ();
-                    print (@"icon filename: $(icon_filename)\n");
                     not_dumpable_attributes.insert ("icon-filename");
                 }
                 else
@@ -51,7 +49,7 @@ internal class Maia.Gtk.Button : Maia.Button
     }
 
     // methods
-    public Button (string inId, string? inLabel = null)
+    public ToggleButton (string inId, string? inLabel = null)
     {
         base (inId, inLabel);
     }

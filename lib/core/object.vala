@@ -380,7 +380,7 @@ public abstract class Maia.Core.Object : Any
     /**
      * Clear child object list
      */
-    public void
+    public virtual void
     clear_childs ()
     {
         while (m_Head != null)

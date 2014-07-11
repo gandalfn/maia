@@ -15359,6 +15359,39 @@
   )
 )
 
+(define-method get_icon_filename
+  (of-object "MaiaToggleButton")
+  (c-name "maia_toggle_button_get_icon_filename")
+  (return-type "const-gchar*")
+)
+
+(define-method set_icon_filename
+  (of-object "MaiaToggleButton")
+  (c-name "maia_toggle_button_set_icon_filename")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_icon_size
+  (of-object "MaiaToggleButton")
+  (c-name "maia_toggle_button_get_icon_size")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "result")
+  )
+)
+
+(define-method set_icon_size
+  (of-object "MaiaToggleButton")
+  (c-name "maia_toggle_button_set_icon_size")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "value")
+  )
+)
+
 (define-method get_button_color
   (of-object "MaiaToggleButton")
   (c-name "maia_toggle_button_get_button_color")
@@ -15368,6 +15401,21 @@
 (define-method set_button_color
   (of-object "MaiaToggleButton")
   (c-name "maia_toggle_button_set_button_color")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicColor*" "value")
+  )
+)
+
+(define-method get_button_active_color
+  (of-object "MaiaToggleButton")
+  (c-name "maia_toggle_button_get_button_active_color")
+  (return-type "MaiaGraphicColor*")
+)
+
+(define-method set_button_active_color
+  (of-object "MaiaToggleButton")
+  (c-name "maia_toggle_button_set_button_active_color")
   (return-type "none")
   (parameters
     '("MaiaGraphicColor*" "value")

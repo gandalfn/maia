@@ -647,6 +647,39 @@ public class Maia.ChartView : Group
         }
     }
 
+    internal override void
+    clear_childs ()
+    {
+        if (m_XAxis != null)
+        {
+            m_XAxis.clear ();
+        }
+        
+        if (m_YAxis != null)
+        {
+            m_YAxis.clear ();
+        }
+
+        m_ChartAxis = null;
+        m_ZeroLabel = null;
+        m_XAxisLabel = null;
+        m_YAxisLabel = null;
+        m_Legend = null;
+
+        base.clear_childs ();
+
+        if (ref_count > 0)
+        {
+            // Create legend
+            var lgd = new Legend (@"$name-legend", this);
+            lgd.parent = this;
+            m_Legend = lgd;
+            m_Legend.visible = legend != LegendPosition.NONE;
+
+            on_axis_changed ();
+        }
+    }
+
     internal override bool
     can_append_child (Core.Object inObject)
     {
@@ -908,6 +941,9 @@ public class Maia.ChartView : Group
     internal override void
     paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
+        // paint background
+        paint_background (inContext);
+
         if (m_ChartAxis != null && !m_ChartAxis.range.size ().is_empty ())
         {
             // Calculate transform area of charts
@@ -1067,7 +1103,17 @@ public class Maia.ChartView : Group
             }
         }
 
-        base.paint (inContext, inArea);
+        // paint childs
+        foreach (unowned Core.Object child in this)
+        {
+            if (child is Drawable)
+            {
+                unowned Drawable drawable = (Drawable)child;
+
+                var area = area_to_child_item_space (drawable, inArea);
+                drawable.draw (inContext, area);
+            }
+        }
 
         // Paint points
         foreach (unowned ChartPoint point in points)
