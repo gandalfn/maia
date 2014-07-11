@@ -1,0 +1,110 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * chart-view.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/group.h>
+#include <maiamm/chart.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/group_p.h)
+
+namespace Maia
+{
+    _WRAP_ENUM(ChartViewLegendPosition, MaiaChartViewLegendPosition, NO_GTYPE)
+
+    class ChartView : public Group
+    {
+        _CLASS_GOBJECT(ChartView, MaiaChartView, MAIA_CHART_VIEW, Group, MaiaGroup)
+
+        protected:
+            _CTOR_DEFAULT()
+
+        public:
+            static Glib::RefPtr<ChartView> create (const Glib::ustring& inId, const Glib::ustring& inTitle = "")
+            {
+                MaiaChartView* pChartView = maia_chart_view_new (inId.c_str(), inTitle.c_str ());
+                return Glib::RefPtr<ChartView> (new ChartView (pChartView));
+            }
+
+            _WRAP_METHOD(Glib::ustring get_title () const, maia_chart_view_get_title)
+            _WRAP_METHOD(void set_title (const Glib::ustring& inTitle), maia_chart_view_set_title)
+
+            _WRAP_METHOD(Glib::ustring get_font_description () const, maia_chart_view_get_font_description)
+            _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_chart_view_set_font_description)
+
+            _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_chart_view_get_model, refreturn)
+            _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_chart_view_set_model)
+
+            _WRAP_METHOD(Glib::ustring get_chart_axis () const, maia_chart_view_get_chart_axis)
+            _WRAP_METHOD(void set_chart_axis (const Glib::ustring& inChartName), maia_chart_view_set_chart_axis)
+
+            _WRAP_METHOD(double get_border () const, maia_chart_view_get_border)
+            _WRAP_METHOD(void set_border (double inBorder), maia_chart_view_set_border)
+
+            _WRAP_METHOD(bool get_grid_visible () const, maia_chart_view_get_grid_visible)
+            _WRAP_METHOD(void set_grid_visible (bool inVisible = true), maia_chart_view_set_grid_visible)
+                        
+            _WRAP_METHOD(Glib::ustring get_axis_font_description () const, maia_chart_view_get_axis_font_description)
+            _WRAP_METHOD(void set_axis_font_description (const Glib::ustring& inFontDesc), maia_chart_view_set_axis_font_description)
+
+            _WRAP_METHOD(Glib::ustring get_x_axis_label () const, maia_chart_view_get_x_axis_label)
+            _WRAP_METHOD(void set_x_axis_label (const Glib::ustring& inLabelName), maia_chart_view_set_x_axis_label)
+
+            _WRAP_METHOD(Glib::ustring get_y_axis_label () const, maia_chart_view_get_y_axis_label)
+            _WRAP_METHOD(void set_y_axis_label (const Glib::ustring& inLabelName), maia_chart_view_set_y_axis_label)
+
+            _WRAP_METHOD(Glib::ustring get_x_axis_unit () const, maia_chart_view_get_x_axis_unit)
+            _WRAP_METHOD(void set_x_axis_unit (const Glib::ustring& inLabelName), maia_chart_view_set_x_axis_unit)
+
+            _WRAP_METHOD(Glib::ustring get_y_axis_unit () const, maia_chart_view_get_y_axis_unit)
+            _WRAP_METHOD(void set_y_axis_unit (const Glib::ustring& inLabelName), maia_chart_view_set_y_axis_unit)
+
+            _WRAP_METHOD(guint get_x_axis_ticks () const, maia_chart_view_get_x_axis_ticks)
+            _WRAP_METHOD(void set_x_axis_ticks (guint inMaxTicks), maia_chart_view_set_x_axis_ticks)
+
+            _WRAP_METHOD(guint get_y_axis_ticks () const, maia_chart_view_get_y_axis_ticks)
+            _WRAP_METHOD(void set_y_axis_ticks (guint inMaxTicks), maia_chart_view_set_y_axis_ticks)
+
+            _WRAP_METHOD(double get_tick_size () const, maia_chart_view_get_tick_size)
+            _WRAP_METHOD(void set_tick_size (double inBorder), maia_chart_view_set_tick_size)
+            
+            _WRAP_METHOD(ChartViewLegendPosition get_legend () const, maia_chart_view_get_legend)
+            _WRAP_METHOD(void set_legend (ChartViewLegendPosition inLegendPosition), maia_chart_view_set_legend)
+
+            _WRAP_METHOD(double get_legend_border () const, maia_chart_view_get_legend_border)
+            _WRAP_METHOD(void set_legend_border (double inBorder), maia_chart_view_set_legend_border)
+
+            _WRAP_PROPERTY("title", Glib::ustring)
+            _WRAP_PROPERTY("font-description", Glib::ustring)
+            _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
+            _WRAP_PROPERTY("chart-axis", Glib::ustring)
+            _WRAP_PROPERTY("border", double)
+            _WRAP_PROPERTY("grid-visible", bool)
+            _WRAP_PROPERTY("axis-font-description", Glib::ustring)
+            _WRAP_PROPERTY("x-axis-label", Glib::ustring)
+            _WRAP_PROPERTY("y-axis-label", Glib::ustring)
+            _WRAP_PROPERTY("x-axis-unit", Glib::ustring)
+            _WRAP_PROPERTY("y-axis-unit", Glib::ustring)
+            _WRAP_PROPERTY("x-axis-ticks", double)
+            _WRAP_PROPERTY("y-axis-ticks", double)
+            _WRAP_PROPERTY("tick-size", double)
+            _WRAP_PROPERTY("legend", ChartViewLegendPosition)
+            _WRAP_PROPERTY("legend-border", double)
+    };
+}

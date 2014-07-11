@@ -1,0 +1,79 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * chart-point.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/core-object.h>
+#include <maiamm/graphic-line-type.h>
+#include <maiamm/graphic-point.h>
+#include <maiamm/graphic-pattern.h>
+#include <maiamm/manifest-element.h>
+#include <maiamm/manifest-theme.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/core-object_p.h)
+
+namespace Maia
+{
+    class ChartPoint : public Core::Object, public Manifest::Element
+    {
+        _CLASS_GOBJECT(ChartPoint, MaiaChartPoint, MAIA_CHART_POINT, Core::Object, MaiaCoreObject)
+        _IMPLEMENTS_INTERFACE(Manifest::Element)
+        
+        protected:
+            _CTOR_DEFAULT()
+
+        public:
+            static Glib::RefPtr<ChartPoint> create (const Glib::ustring& inId, const Glib::ustring& inChart, const Graphic::Point& inPosition)
+            {
+                MaiaChartPoint* pChartPoint = maia_chart_point_new (inId.c_str(), inChart.c_str (), const_cast<MaiaGraphicPoint*> (inPosition.gobj ()));
+                return Glib::RefPtr<ChartPoint> (new ChartPoint (pChartPoint));
+            }
+            
+            _WRAP_METHOD(Glib::ustring get_chart () const, maia_chart_point_get_chart)
+            _WRAP_METHOD(void set_chart (const Glib::ustring& inChart), maia_chart_point_set_chart)
+
+            _WRAP_METHOD(void get_position (Graphic::Point& outPosition) const, maia_chart_point_get_position)
+            _WRAP_METHOD(void set_position (const Graphic::Point& inPosition), maia_chart_point_set_position)
+
+            _WRAP_METHOD(Graphic::LineType get_line_type () const, maia_chart_point_get_line_type)
+            _WRAP_METHOD(void set_line_type (Graphic::LineType inLineType), maia_chart_point_set_line_type)
+
+            _WRAP_METHOD(double get_width () const, maia_chart_point_get_width)
+            _WRAP_METHOD(void set_width (double inWidth), maia_chart_point_set_width)
+
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_stroke_pattern () const, maia_chart_point_get_stroke_pattern, refreturn)
+            _WRAP_METHOD(void set_stroke_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_chart_point_set_stroke_pattern)
+
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_fill_pattern () const, maia_chart_point_get_fill_pattern, refreturn)
+            _WRAP_METHOD(void set_fill_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_chart_point_set_fill_pattern)
+
+            _WRAP_PROPERTY("tag", Glib::ustring)
+            _WRAP_PROPERTY("style", Glib::ustring)
+            _WRAP_PROPERTY("characters", Glib::ustring)
+            _WRAP_PROPERTY("manifest-path", Glib::ustring)
+            _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
+
+            _WRAP_PROPERTY("chart", Glib::ustring)
+            _WRAP_PROPERTY("position", Graphic::Point)
+            _WRAP_PROPERTY("line-type", Graphic::LineType)
+            _WRAP_PROPERTY("width", double)
+            _WRAP_PROPERTY("stroke-pattern", Glib::RefPtr<Graphic::Pattern>)
+            _WRAP_PROPERTY("fill-pattern", Glib::RefPtr<Graphic::Pattern>)
+    };
+}

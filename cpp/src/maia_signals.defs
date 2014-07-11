@@ -674,6 +674,8 @@
   (construct-only #f)
 )
 
+;; From MaiaGraphicRange
+
 ;; From MaiaGraphicRectangle
 
 ;; From MaiaGraphicRegion
@@ -2735,6 +2737,15 @@
   (construct-only #f)
 )
 
+(define-property line-type
+  (of-object "MaiaItem")
+  (prop-type "GParamEnum")
+  (docs "line-type")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property chain-visible
   (of-object "MaiaItem")
   (prop-type "GParamString")
@@ -4194,7 +4205,7 @@
   (prop-type "GParamObject")
   (docs "content")
   (readable #t)
-  (writable #f)
+  (writable #t)
   (construct-only #f)
 )
 
@@ -5209,6 +5220,452 @@
   (docs "text")
   (readable #t)
   (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaChart
+
+(define-signal changed
+  (of-object "MaiaChart")
+  (return-type "void")
+  (when "last")
+)
+
+(define-property tag
+  (of-object "MaiaChart")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property title
+  (of-object "MaiaChart")
+  (prop-type "GParamString")
+  (docs "title")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property model
+  (of-object "MaiaChart")
+  (prop-type "GParamObject")
+  (docs "model")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property x-axis
+  (of-object "MaiaChart")
+  (prop-type "GParamString")
+  (docs "x-axis")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property y-axis
+  (of-object "MaiaChart")
+  (prop-type "GParamString")
+  (docs "y-axis")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property range
+  (of-object "MaiaChart")
+  (prop-type "GParamBoxed")
+  (docs "range")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property direction
+  (of-object "MaiaChart")
+  (prop-type "GParamEnum")
+  (docs "direction")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property smoothing
+  (of-object "MaiaChart")
+  (prop-type "GParamBoolean")
+  (docs "smoothing")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property path
+  (of-object "MaiaChart")
+  (prop-type "GParamObject")
+  (docs "path")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property reverse-path
+  (of-object "MaiaChart")
+  (prop-type "GParamObject")
+  (docs "reverse-path")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property first-point
+  (of-object "MaiaChart")
+  (prop-type "GParamBoxed")
+  (docs "first-point")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property last-point
+  (of-object "MaiaChart")
+  (prop-type "GParamBoxed")
+  (docs "last-point")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaChartPoint
+
+(define-property tag
+  (of-object "MaiaChartPoint")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property characters
+  (of-object "MaiaChartPoint")
+  (prop-type "GParamString")
+  (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property style
+  (of-object "MaiaChartPoint")
+  (prop-type "GParamString")
+  (docs "style")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property manifest-path
+  (of-object "MaiaChartPoint")
+  (prop-type "GParamString")
+  (docs "manifest-path")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property manifest-theme
+  (of-object "MaiaChartPoint")
+  (prop-type "GParamObject")
+  (docs "manifest-theme")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property chart
+  (of-object "MaiaChartPoint")
+  (prop-type "GParamString")
+  (docs "chart")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property position
+  (of-object "MaiaChartPoint")
+  (prop-type "GParamBoxed")
+  (docs "position")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property fill-pattern
+  (of-object "MaiaChartPoint")
+  (prop-type "GParamObject")
+  (docs "fill-pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property line-type
+  (of-object "MaiaChartPoint")
+  (prop-type "GParamEnum")
+  (docs "line-type")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property stroke-pattern
+  (of-object "MaiaChartPoint")
+  (prop-type "GParamObject")
+  (docs "stroke-pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property width
+  (of-object "MaiaChartPoint")
+  (prop-type "GParamDouble")
+  (docs "width")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaChartIntersect
+
+(define-property tag
+  (of-object "MaiaChartIntersect")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property characters
+  (of-object "MaiaChartIntersect")
+  (prop-type "GParamString")
+  (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property style
+  (of-object "MaiaChartIntersect")
+  (prop-type "GParamString")
+  (docs "style")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property manifest-path
+  (of-object "MaiaChartIntersect")
+  (prop-type "GParamString")
+  (docs "manifest-path")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property manifest-theme
+  (of-object "MaiaChartIntersect")
+  (prop-type "GParamObject")
+  (docs "manifest-theme")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property first-chart
+  (of-object "MaiaChartIntersect")
+  (prop-type "GParamString")
+  (docs "first-chart")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property second-chart
+  (of-object "MaiaChartIntersect")
+  (prop-type "GParamString")
+  (docs "second-chart")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property fill-pattern
+  (of-object "MaiaChartIntersect")
+  (prop-type "GParamObject")
+  (docs "fill-pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaChartView
+
+(define-property tag
+  (of-object "MaiaChartView")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property font-description
+  (of-object "MaiaChartView")
+  (prop-type "GParamString")
+  (docs "font-description")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property title
+  (of-object "MaiaChartView")
+  (prop-type "GParamString")
+  (docs "title")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property model
+  (of-object "MaiaChartView")
+  (prop-type "GParamObject")
+  (docs "model")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property chart-axis
+  (of-object "MaiaChartView")
+  (prop-type "GParamString")
+  (docs "chart-axis")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property border
+  (of-object "MaiaChartView")
+  (prop-type "GParamDouble")
+  (docs "border")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property grid-visible
+  (of-object "MaiaChartView")
+  (prop-type "GParamBoolean")
+  (docs "grid-visible")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property axis-font-description
+  (of-object "MaiaChartView")
+  (prop-type "GParamString")
+  (docs "axis-font-description")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property x-axis-label
+  (of-object "MaiaChartView")
+  (prop-type "GParamString")
+  (docs "x-axis-label")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property y-axis-label
+  (of-object "MaiaChartView")
+  (prop-type "GParamString")
+  (docs "y-axis-label")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property x-axis-unit
+  (of-object "MaiaChartView")
+  (prop-type "GParamString")
+  (docs "x-axis-unit")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property y-axis-unit
+  (of-object "MaiaChartView")
+  (prop-type "GParamString")
+  (docs "y-axis-unit")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property x-axis-ticks
+  (of-object "MaiaChartView")
+  (prop-type "GParamUInt")
+  (docs "x-axis-ticks")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property y-axis-ticks
+  (of-object "MaiaChartView")
+  (prop-type "GParamUInt")
+  (docs "y-axis-ticks")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property tick-size
+  (of-object "MaiaChartView")
+  (prop-type "GParamDouble")
+  (docs "tick-size")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property legend
+  (of-object "MaiaChartView")
+  (prop-type "GParamEnum")
+  (docs "legend")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property legend-border
+  (of-object "MaiaChartView")
+  (prop-type "GParamDouble")
+  (docs "legend-border")
+  (readable #t)
+  (writable #t)
   (construct-only #f)
 )
 

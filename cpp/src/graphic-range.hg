@@ -1,0 +1,70 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * graphic-range.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+#include <maia.h>
+#include <maiamm/model.h>
+#include <maiamm/graphic-transform.h>
+#include <maiamm/graphic-point.h>
+#include <maiamm/graphic-size.h>
+
+_DEFS(maiamm,maia)
+
+namespace Maia
+{
+    namespace Graphic
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Graphic)
+
+        class Range
+        {
+            _CLASS_BOXEDTYPE_STATIC(Range, MaiaGraphicRange)
+
+            public:
+                Range (double inXMin, double inYMin, double inXMax, double inYMax);
+
+                Range (const Glib::RefPtr<Model>& inpModel, const Glib::ustring& inXColumn, const Glib::ustring& inYColumn);
+
+                Graphic::Size size () const;
+
+                bool is_empty () const;
+
+                bool contains (const Graphic::Point& inPoint) const;
+
+                void clamp (const Graphic::Point& inPoint);
+
+                Glib::ustring to_string () const;
+
+                Range operator+(const Range& inOther) const
+                {
+                    Range range (std::min (get_min ().get_x (), inOther.get_min ().get_x ()),
+                                 std::min (get_min ().get_y (), inOther.get_min ().get_y ()),
+                                 std::max (get_max ().get_x (), inOther.get_max ().get_x ()),
+                                 std::max (get_max ().get_y (), inOther.get_max ().get_y ()));
+
+                    return range;
+                }
+
+                Point& get_min() const;
+                void set_min(const Point& value);
+                Point& get_max() const;
+                void set_max(const Point& value);
+        };
+    }
+}

@@ -40,6 +40,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_PATTERN);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_POINT);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_RADIAL_GRADIENT);
+    std::cout << get_defs (MAIA_GRAPHIC_TYPE_RANGE);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_RECTANGLE);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_REGION);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_SIZE);
@@ -104,6 +105,10 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_PROGRESS_BAR);
     std::cout << get_defs (MAIA_TYPE_SEEK_BAR);
     std::cout << get_defs (MAIA_ENTRY_TYPE_CHANGED_EVENT_ARGS);
+    std::cout << get_defs (MAIA_TYPE_CHART);
+    std::cout << get_defs (MAIA_TYPE_CHART_POINT);
+    std::cout << get_defs (MAIA_TYPE_CHART_INTERSECT);
+    std::cout << get_defs (MAIA_TYPE_CHART_VIEW);
 
 
     return 0;

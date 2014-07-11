@@ -55,6 +55,7 @@ public abstract class Maia.Core.Object : Any
         public Hash            m_Hash;
         public GLib.Value      m_Value;
         public bool            m_Locked = false;
+        private bool           m_WeakRef = true;
 
         public PlugProperty (Object inSrc, string inSrcProperty, Object inDst, string inDstProperty)
         {
@@ -99,12 +100,16 @@ public abstract class Maia.Core.Object : Any
         ~PlugProperty ()
         {
             m_Src.notify[m_Hash.m_SrcProperty].disconnect (on_src_property_changed);
-            m_Hash.m_Dst.weak_unref (on_dest_destroyed);
+            if (m_WeakRef)
+            {
+                m_Hash.m_Dst.weak_unref (on_dest_destroyed);
+            }
         }
 
         private void
         on_dest_destroyed ()
         {
+            m_WeakRef = false;
             m_Src.m_Plugs.remove (this);
         }
 

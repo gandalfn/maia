@@ -27,6 +27,7 @@ files_hg = \
     graphic-transform.hg \
     graphic-point.hg \
     graphic-size.hg \
+    graphic-range.hg \
     graphic-rectangle.hg \
     graphic-region.hg \
     graphic-pattern.hg \
@@ -41,6 +42,7 @@ files_hg = \
     graphic-radial-gradient.hg \
     graphic-mesh-gradient.hg \
     graphic-image.hg \
+    graphic-line-type.hg \
     manifest-attribute.hg \
     manifest-function.hg \
     manifest-attribute-bind.hg \
@@ -86,6 +88,10 @@ files_hg = \
     adjustment.hg \
     scroll-view.hg \
     progress-bar.hg \
-    seek-bar.hg
+    seek-bar.hg \
+    chart.hg \
+    chart-point.hg \
+    chart-intersect.hg \
+    chart-view.hg
 
 files_ccg = $(files_hg:.hg=.ccg)

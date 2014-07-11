@@ -174,6 +174,13 @@ public class Maia.Graphic.Path : Core.Object
         return data_type == DataType.PATH && inChild is Path;
     }
 
+    internal override int
+    compare (Core.Object inOther)
+    {
+        // Do not sort path
+        return 0;
+    }
+
     public Path
     copy ()
     {
@@ -605,5 +612,19 @@ public class Maia.Graphic.Path : Core.Object
     {
         Point origin = get_origin ();
         line_to (origin.x, origin.y);
+    }
+
+    public void
+    transform (Graphic.Transform inTransform)
+    {
+        for (int cpt = 0; cpt < m_Points.length; ++cpt)
+        {
+            m_Points[cpt].transform (inTransform);
+        }
+
+        foreach (unowned Object child in this)
+        {
+            (child as Graphic.Path).transform (inTransform);
+        }
     }
 }

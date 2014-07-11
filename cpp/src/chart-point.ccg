@@ -1,6 +1,6 @@
-/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * orientation.vala
+ * chart-point.ccg
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,38 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public enum Maia.Orientation
+#include <maia.h>
+
+namespace Maia
 {
-    HORIZONTAL,
-    VERTICAL;
-
-    public string
-    to_string ()
-    {
-        switch (this)
-        {
-            case HORIZONTAL:
-                return "horizontal";
-
-            case VERTICAL:
-                return "vertical";
-        }
-
-        return "";
-    }
-
-    public static Orientation
-    from_string (string inVal)
-    {
-        switch (inVal.down ())
-        {
-            case "horizontal":
-                return HORIZONTAL;
-
-            case "vertical":
-                return VERTICAL;
-        }
-
-        return Orientation.HORIZONTAL;
-    }
 }

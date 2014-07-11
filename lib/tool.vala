@@ -43,7 +43,7 @@ public enum Maia.ToolAction
     public static ToolAction
     from_string (string inValue)
     {
-        switch (inValue)
+        switch (inValue.down ())
         {
             case "add":
                 return ADD;

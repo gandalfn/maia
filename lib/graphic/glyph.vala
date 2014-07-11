@@ -47,7 +47,7 @@ public class Maia.Graphic.Glyph : Core.Object
         public static Alignment
         from_string (string inValue)
         {
-            switch (inValue)
+            switch (inValue.down ())
             {
                 case "left":
                     return LEFT;
@@ -86,7 +86,7 @@ public class Maia.Graphic.Glyph : Core.Object
         public static WrapMode
         from_string (string inValue)
         {
-            switch (inValue)
+            switch (inValue.down ())
             {
                 case "char":
                     return CHAR;
@@ -130,7 +130,7 @@ public class Maia.Graphic.Glyph : Core.Object
         public static EllipsizeMode
         from_string (string inValue)
         {
-            switch (inValue)
+            switch (inValue.down ())
             {
                 case "none":
                     return NONE;

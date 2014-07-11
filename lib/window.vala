@@ -771,7 +771,7 @@ public class Maia.Window : Group
     internal override void
     on_draw (Graphic.Context inContext, Graphic.Region? inArea) throws Graphic.Error
     {
-        if (visible && geometry != null && damaged != null && !damaged.is_empty ())
+        if (visible && geometry != null && !geometry.is_empty () && damaged != null && !damaged.is_empty ())
         {
             var ctx = surface.context;
 
@@ -921,8 +921,8 @@ public class Maia.Window : Group
             {
                 unowned Drawable drawable = (Drawable)child;
 
-                var area = area_to_child_item_space (drawable, inArea);
-                drawable.draw (inContext, area);
+                var child_area = area_to_child_item_space (drawable, inArea);
+                drawable.draw (inContext, child_area);
             }
         }
 

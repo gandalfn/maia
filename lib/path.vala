@@ -97,8 +97,6 @@ public class Maia.Path : Item, ItemPackable, ItemMovable
     {
         var path = new Graphic.Path.from_data (this.path);
 
-        inContext.line_width = line_width;
-
         if (fill_pattern != null)
         {
             inContext.pattern = fill_pattern;

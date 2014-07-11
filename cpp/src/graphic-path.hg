@@ -21,6 +21,7 @@
 #include <maiamm/core-object.h>
 #include <maiamm/graphic-point.h>
 #include <maiamm/graphic-region.h>
+#include <maiamm/graphic-transform.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/core-object_p.h)
@@ -85,6 +86,7 @@ namespace Maia
                 }
 
                 _WRAP_METHOD(Glib::RefPtr<Path> copy (), maia_graphic_path_copy, refreturn)
+                _WRAP_METHOD(void transform (const Glib::RefPtr<Transform>& inTransform), maia_graphic_path_transform)
 
                 _WRAP_METHOD(void parse (const Glib::ustring& inData), maia_graphic_path_parse)
                 _WRAP_METHOD(void move_to (double inX, double inY), maia_graphic_path_move_to)

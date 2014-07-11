@@ -68,9 +68,13 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
         {
             register_transform_func (typeof (Graphic.Point), attributes_to_point);
             register_transform_func (typeof (Graphic.Size),  attributes_to_size);
+            register_transform_func (typeof (Graphic.Rectangle), attributes_to_rectangle);
+            register_transform_func (typeof (Graphic.Range), attributes_to_range);
 
             GLib.Value.register_transform_func (typeof (Graphic.Point), typeof (string), point_to_string);
             GLib.Value.register_transform_func (typeof (Graphic.Size), typeof (string), size_to_string);
+            GLib.Value.register_transform_func (typeof (Graphic.Rectangle), typeof (string), rectangle_to_string);
+            GLib.Value.register_transform_func (typeof (Graphic.Range), typeof (string), range_to_string);
 
             s_SimpleTypeRegistered = true;
         }
@@ -144,6 +148,92 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
         Log.debug (GLib.Log.METHOD, Log.Category.MANIFEST_ATTRIBUTE, "transform to %s", size.to_string ());
 
         outValue = size;
+    }
+
+    private static void
+    rectangle_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (Graphic.Rectangle)))
+    {
+        Graphic.Rectangle val = (Graphic.Rectangle)inSrc;
+
+        outDest = val.to_string ();
+    }
+
+    private static void
+    attributes_to_rectangle (AttributeScanner inScanner, ref GLib.Value outValue) throws Error
+    {
+        Graphic.Rectangle rectangle = Graphic.Rectangle (0, 0, 0, 0);
+        int cpt = 0;
+        foreach (unowned Core.Object child in ((Core.Object)inScanner))
+        {
+            switch (cpt)
+            {
+                case 0:
+                    rectangle.origin.x = (double)(child as Attribute).transform (typeof (double));
+                    break;
+
+                case 1:
+                    rectangle.origin.y = (double)(child as Attribute).transform (typeof (double));
+                    break;
+
+                case 2:
+                    rectangle.size.width = (double)(child as Attribute).transform (typeof (double));
+                    break;
+
+                case 3:
+                    rectangle.size.width = (double)(child as Attribute).transform (typeof (double));
+                    break;
+            }
+            cpt++;
+            if (cpt > 3) break;
+        }
+
+        Log.debug (GLib.Log.METHOD, Log.Category.MANIFEST_ATTRIBUTE, "transform to %s", rectangle.to_string ());
+
+        outValue = rectangle;
+    }
+
+    private static void
+    range_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (Graphic.Range)))
+    {
+        Graphic.Range val = (Graphic.Range)inSrc;
+
+        outDest = val.to_string ();
+    }
+
+    private static void
+    attributes_to_range (AttributeScanner inScanner, ref GLib.Value outValue) throws Error
+    {
+        Graphic.Range range = Graphic.Range (0, 0, 0, 0);
+        int cpt = 0;
+        foreach (unowned Core.Object child in ((Core.Object)inScanner))
+        {
+            switch (cpt)
+            {
+                case 0:
+                    range.min.x = (double)(child as Attribute).transform (typeof (double));
+                    break;
+
+                case 1:
+                    range.min.y = (double)(child as Attribute).transform (typeof (double));
+                    break;
+
+                case 2:
+                    range.max.x = (double)(child as Attribute).transform (typeof (double));
+                    break;
+
+                case 3:
+                    range.max.y = (double)(child as Attribute).transform (typeof (double));
+                    break;
+            }
+            cpt++;
+            if (cpt > 3) break;
+        }
+
+        Log.debug (GLib.Log.METHOD, Log.Category.MANIFEST_ATTRIBUTE, "transform to %s", range.to_string ());
+
+        outValue = range;
     }
 
     public static void

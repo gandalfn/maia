@@ -1,0 +1,101 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * chart.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/core-object.h>
+#include <maiamm/graphic-path.h>
+#include <maiamm/graphic-range.h>
+#include <maiamm/item.h>
+#include <maiamm/model.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/item_p.h)
+
+namespace Maia
+{
+    _WRAP_ENUM(ChartDirection, MaiaChartDirection, NO_GTYPE)
+
+    class Chart : public Item
+    {
+        _CLASS_GOBJECT(Chart, MaiaChart, MAIA_CHART, Item, MaiaItem)
+
+        protected:
+            _CTOR_DEFAULT()
+
+        public:
+            static Glib::RefPtr<Chart> create (const Glib::ustring& inId, const Glib::ustring& inTitle = "")
+            {
+                MaiaChart* pChart = maia_chart_new (inId.c_str(), inTitle.c_str ());
+                return Glib::RefPtr<Chart> (new Chart (pChart));
+            }
+            static Glib::RefPtr<Chart> create (const Glib::ustring& inId, const Glib::ustring& inXColumn, const Glib::ustring& inYColumn, const Graphic::Range& inRange, Graphic::LineType inLineType, double inLineWidth, const Glib::ustring& inTitle)
+            {
+                MaiaChart* pChart = maia_chart_new (inId.c_str(), inTitle.c_str ());
+                Glib::RefPtr<Chart> pCppChart = Glib::RefPtr<Chart> (new Chart (pChart));
+                pCppChart->set_x_axis (inXColumn);
+                pCppChart->set_y_axis (inYColumn);
+                pCppChart->set_range (inRange);
+                pCppChart->set_line_type (inLineType);
+                pCppChart->set_line_width (inLineWidth);
+                return pCppChart;
+            }
+
+            _WRAP_METHOD(Glib::ustring get_title () const, maia_chart_get_title)
+            _WRAP_METHOD(void set_title (const Glib::ustring& inTitle), maia_chart_set_title)
+
+            _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_chart_get_model, refreturn)
+            _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_chart_set_model)
+
+            _WRAP_METHOD(Glib::ustring get_x_axis () const, maia_chart_get_x_axis)
+            _WRAP_METHOD(void set_x_axis (const Glib::ustring& inColumnName), maia_chart_set_x_axis)
+
+            _WRAP_METHOD(Glib::ustring get_y_axis () const, maia_chart_get_y_axis)
+            _WRAP_METHOD(void set_y_axis (const Glib::ustring& inColumnName), maia_chart_set_y_axis)
+
+            _WRAP_METHOD(void get_range (Graphic::Range& outRange) const, maia_chart_get_range)
+            _WRAP_METHOD(void set_range (const Graphic::Range& inRange), maia_chart_set_range)
+
+            _WRAP_METHOD(ChartDirection get_direction () const, maia_chart_get_direction)
+            _WRAP_METHOD(void set_direction (ChartDirection inDirection), maia_chart_set_direction)
+
+            _WRAP_METHOD(bool get_smoothing () const, maia_chart_get_smoothing)
+            _WRAP_METHOD(void set_smoothing (bool inSmoothing = true), maia_chart_set_smoothing)
+
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Path> get_path () const, maia_chart_get_path, refreturn)
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Path> get_reverse_path () const, maia_chart_get_reverse_path, refreturn)
+            _WRAP_METHOD(void get_first_point (Graphic::Point& outPoint) const, maia_chart_get_first_point)
+            _WRAP_METHOD(void get_last_point (Graphic::Point& outPoint) const, maia_chart_get_last_point)
+
+            _WRAP_METHOD(static void range_from_model(const Glib::RefPtr<Model>& inpModel, const Glib::ustring& inXColumn, const Glib::ustring& inYColumn, Graphic::Range& outRange), maia_chart_range_from_model)
+
+            _WRAP_SIGNAL(void changed (), "changed", no_default_handler)
+
+            _WRAP_PROPERTY("title", Glib::ustring)
+            _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
+            _WRAP_PROPERTY("x-axis", Glib::ustring)
+            _WRAP_PROPERTY("y-axis", Glib::ustring)
+            _WRAP_PROPERTY("range", Graphic::Range)
+            _WRAP_PROPERTY("direction", ChartDirection)
+            _WRAP_PROPERTY("smoothing", bool)
+            _WRAP_PROPERTY("path", Glib::RefPtr<Graphic::Path>)
+            _WRAP_PROPERTY("reverse-path", Glib::RefPtr<Graphic::Path>)
+            _WRAP_PROPERTY("first-point", Graphic::Point)
+            _WRAP_PROPERTY("last-point", Graphic::Point)
+    };
+}

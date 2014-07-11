@@ -331,11 +331,13 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
     }
 
-    public uint            layer                { get; set; default = 0; }
-    public Graphic.Pattern fill_pattern         { get; set; default = null; }
-    public Graphic.Pattern stroke_pattern       { get; set; default = null; }
-    public Graphic.Pattern background_pattern   { get; set; default = null; }
-    public double          line_width           { get; set; default = 1.0; }
+    public uint             layer                { get; set; default = 0; }
+    public Graphic.Pattern  fill_pattern         { get; set; default = null; }
+    public Graphic.Pattern  stroke_pattern       { get; set; default = null; }
+    public Graphic.Pattern  background_pattern   { get; set; default = null; }
+    public double           line_width           { get; set; default = 1.0; }
+    public Graphic.LineType line_type            { get; set; default = Graphic.LineType.CONTINUE; }
+
 
     public string          chain_visible        { get; set; default = null; }
 
@@ -918,6 +920,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 {
                     inContext.translate (geometry.extents.origin);
                     inContext.line_width = line_width;
+                    inContext.dash = line_type.to_dash (line_width);
 
                     if (transform.matrix.xy != 0 || transform.matrix.yx != 0)
                     {
@@ -1007,8 +1010,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         // Mark has need to check size
         need_update = true;
 
-        // Damage item for redraw
-        damage ();
+        // notify geometry
+        GLib.Signal.emit_by_name (this, "notify::geometry");
     }
 
     protected virtual void
@@ -1240,6 +1243,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             base.remove_child (inObject);
 
             need_update = true;
+
+            geometry = null;
         }
         else
         {

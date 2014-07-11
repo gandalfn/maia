@@ -1,0 +1,65 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * chart-intersect.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/core-object.h>
+#include <maiamm/graphic-pattern.h>
+#include <maiamm/manifest-element.h>
+#include <maiamm/manifest-theme.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/core-object_p.h)
+
+namespace Maia
+{
+    class ChartIntersect : public Core::Object, public Manifest::Element
+    {
+        _CLASS_GOBJECT(ChartIntersect, MaiaChartIntersect, MAIA_CHART_INTERSECT, Core::Object, MaiaCoreObject)
+        _IMPLEMENTS_INTERFACE(Manifest::Element)
+        
+        protected:
+            _CTOR_DEFAULT()
+
+        public:
+            static Glib::RefPtr<ChartIntersect> create (const Glib::ustring& inId, const Glib::ustring& inFirst, const Glib::ustring& inSecond)
+            {
+                MaiaChartIntersect* pChartIntersect = maia_chart_intersect_new (inId.c_str(), inFirst.c_str (), inSecond.c_str ());
+                return Glib::RefPtr<ChartIntersect> (new ChartIntersect (pChartIntersect));
+            }
+            
+            _WRAP_METHOD(Glib::ustring get_first_chart () const, maia_chart_intersect_get_first_chart)
+            _WRAP_METHOD(void set_first_chart (const Glib::ustring& inChart), maia_chart_intersect_set_first_chart)
+
+            _WRAP_METHOD(Glib::ustring get_second_chart () const, maia_chart_intersect_get_second_chart)
+            _WRAP_METHOD(void set_second_chart (const Glib::ustring& inChart), maia_chart_intersect_set_second_chart)
+
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_fill_pattern () const, maia_chart_intersect_get_fill_pattern, refreturn)
+            _WRAP_METHOD(void set_fill_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_chart_intersect_set_fill_pattern)
+
+            _WRAP_PROPERTY("tag", Glib::ustring)
+            _WRAP_PROPERTY("style", Glib::ustring)
+            _WRAP_PROPERTY("characters", Glib::ustring)
+            _WRAP_PROPERTY("manifest-path", Glib::ustring)
+            _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
+
+            _WRAP_PROPERTY("first-chart", Glib::ustring)
+            _WRAP_PROPERTY("second-chart", Glib::ustring)
+            _WRAP_PROPERTY("fill-pattern", Glib::RefPtr<Graphic::Pattern>)
+    };
+}

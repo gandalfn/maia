@@ -20,6 +20,7 @@
 #include <maia.h>
 #include <maiamm/core-object.h>
 #include <maiamm/core-set.h>
+#include <maiamm/graphic-line-type.h>
 #include <maiamm/graphic-point.h>
 #include <maiamm/graphic-size.h>
 #include <maiamm/graphic-region.h>
@@ -119,6 +120,8 @@ namespace Maia
             _WRAP_METHOD(void set_background_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_item_set_background_pattern)
             _WRAP_METHOD(double get_line_width () const, maia_item_get_line_width)
             _WRAP_METHOD(void set_line_width (double inLineWidth), maia_item_set_line_width)
+            _WRAP_METHOD(Graphic::LineType get_line_type () const, maia_item_get_line_type)
+            _WRAP_METHOD(void set_line_type (Graphic::LineType inLineType), maia_item_set_line_type)
             _WRAP_METHOD(Glib::ustring get_chain_visible () const, maia_item_get_chain_visible)
             _WRAP_METHOD(void set_chain_visible (const Glib::ustring& inItemNames) const, maia_item_set_chain_visible)
             _WRAP_METHOD(bool get_pointer_over () const, maia_item_get_pointer_over)
@@ -176,6 +179,7 @@ namespace Maia
             _WRAP_PROPERTY("stroke-pattern", Glib::RefPtr<Graphic::Pattern>)
             _WRAP_PROPERTY("background-pattern", Glib::RefPtr<Graphic::Pattern>)
             _WRAP_PROPERTY("line-width", double)
+            _WRAP_PROPERTY("line-type", Graphic::LineType)
             _WRAP_PROPERTY("chain-visible", Glib::ustring)
 
             _WRAP_PROPERTY("pointer-over", bool)

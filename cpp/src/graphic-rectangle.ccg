@@ -75,5 +75,25 @@ namespace Maia
             Glib::ustring ret (maia_graphic_rectangle_to_string (&gobject_));
             return ret;
         }
+
+        Point& Rectangle::get_origin() const
+        {
+            return *reinterpret_cast<Maia::Graphic::Point*>(&const_cast <MaiaGraphicRectangle*> (gobj())->origin);
+        }
+ 
+        void Rectangle::set_origin(const Point& value)
+        {
+            gobj()->origin = *value.gobj ();
+        }
+ 
+        Size& Rectangle::get_size() const
+        {
+            return *reinterpret_cast<Maia::Graphic::Size*>(&const_cast <MaiaGraphicRectangle*> (gobj())->size);
+        }
+ 
+        void Rectangle::set_size(const Size& value)
+        {
+            gobj()->size = *value.gobj ();
+        }
     }
 }

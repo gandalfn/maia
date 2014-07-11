@@ -75,7 +75,6 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     private  bool                 m_Realized = false;
     private  Pixmap               m_BackBuffer = null;
     private  Graphic.Surface      m_FrontBuffer = null;
-    private  Core.EventListener   m_ParentVisibilityListener = null;
     private  Core.Array<Sibling>  m_Siblings = null;
 
     // accessors
@@ -195,26 +194,6 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
                 // push reparent
                 application.push_request (new ReparentRequest (this));
             }
-        }
-
-        m_ParentVisibilityListener = null;
-
-        if (window != null && foreign == 0)
-        {
-            // listen parent visibility
-            m_ParentVisibilityListener = window.visibility_event.subscribe (on_parent_visibility_changed);
-        }
-    }
-
-    private void
-    on_parent_visibility_changed (Core.EventArgs? inArgs)
-    {
-        if (m_Realized && visible && visible != window.visible && foreign == 0)
-        {
-            if (window.visible)
-                application.push_request (new MapRequest (this));
-            else
-                application.push_request (new UnmapRequest (this));
         }
     }
 

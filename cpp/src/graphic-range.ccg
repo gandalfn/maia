@@ -1,0 +1,86 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * graphic-range.ccg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+
+namespace Maia
+{
+    namespace Graphic
+    {
+        Range::Range (double inXMin, double inYMin, double inXMax, double inYMax)
+        {
+            maia_graphic_range_init (&gobject_, inXMin, inYMin, inXMax, inYMax);
+        }
+
+        Range::Range (const Glib::RefPtr<Model>& inpModel, const Glib::ustring& inXColumn, const Glib::ustring& inYColumn)
+        {
+            maia_chart_range_from_model (const_cast<MaiaModel*> (inpModel->gobj ()), inXColumn.c_str (), inYColumn.c_str (), &gobject_);
+        }
+
+        Graphic::Size Range::size () const
+        {
+            Graphic::Size ret;
+
+            maia_graphic_range_size (const_cast<MaiaGraphicRange*> (&gobject_), ret.gobj ());
+
+            return ret;
+        }
+
+        bool Range::is_empty () const
+        {
+            return maia_graphic_range_is_empty (const_cast<MaiaGraphicRange*> (&gobject_));
+        }
+
+        void Range::clamp (const Point& inPoint)
+        {
+            maia_graphic_range_clamp (&gobject_, const_cast<MaiaGraphicPoint*>(inPoint.gobj ()));
+        }
+
+        bool Range::contains (const Point& inPoint) const
+        {
+            return maia_graphic_range_contains (const_cast<MaiaGraphicRange*> (&gobject_), const_cast<MaiaGraphicPoint*>(inPoint.gobj ()));
+        }
+
+        Glib::ustring Range::to_string () const
+        {
+            Glib::ustring ret (maia_graphic_range_to_string (const_cast<MaiaGraphicRange*> (&gobject_)));
+            return ret;
+        }
+
+        Point& Range::get_min() const
+        {
+            return *reinterpret_cast<Maia::Graphic::Point*>(&const_cast <MaiaGraphicRange*> (gobj())->min);
+        }
+ 
+        void Range::set_min(const Point& value)
+        {
+            gobj()->min = *value.gobj ();
+        }
+ 
+        Point& Range::get_max() const
+        {
+            return *reinterpret_cast<Maia::Graphic::Point*>(&const_cast <MaiaGraphicRange*> (gobj())->max);
+        }
+ 
+        void Range::set_max(const Point& value)
+        {
+            gobj()->max = *value.gobj ();
+        }
+    }
+}

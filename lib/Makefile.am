@@ -69,10 +69,12 @@ libmaia_la_SOURCES = \
     manifest/attribute.vala \
     manifest/attribute-bind.vala \
     manifest/function.vala \
+    graphic/line-type.vala \
     graphic/matrix.vala \
     graphic/transform.vala \
     graphic/point.vala \
     graphic/size.vala \
+    graphic/range.vala \
     graphic/rectangle.vala \
     graphic/region.vala \
     graphic/color.vala \
@@ -161,7 +163,11 @@ libmaia_la_SOURCES = \
     canvas.vala \
     progress-bar.vala \
     seek-bar.vala \
-    popup-button.vala
+    popup-button.vala \
+    chart-intersect.vala \
+    chart-point.vala \
+    chart-view.vala \
+    chart.vala
 
 libmaia_la_VALAFLAGS = \
     --pkg=gvalue-collect \

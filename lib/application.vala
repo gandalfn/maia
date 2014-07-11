@@ -129,7 +129,7 @@ public class Maia.Application : Maia.Core.Object
                     }
 
                     // window is damaged
-                    if (window.geometry != null && window.surface != null && window.damaged != null && !window.damaged.is_empty ())
+                    if (window.geometry != null && !window.geometry.is_empty () && window.surface != null && window.damaged != null && !window.damaged.is_empty ())
                     {
                         try
                         {
@@ -152,36 +152,40 @@ public class Maia.Application : Maia.Core.Object
     // static methods
     static construct
     {
-        Manifest.Element.register ("Group",       typeof (Group));
-        Manifest.Element.register ("Rectangle",   typeof (Rectangle));
-        Manifest.Element.register ("Path",        typeof (Path));
-        Manifest.Element.register ("Image",       typeof (Image));
-        Manifest.Element.register ("Label",       typeof (Label));
-        Manifest.Element.register ("Entry",       typeof (Entry));
-        Manifest.Element.register ("Grid",        typeof (Grid));
-        Manifest.Element.register ("CassoGrid",   typeof (CassoGrid));
-        Manifest.Element.register ("ToggleGroup", typeof (ToggleGroup));
-        Manifest.Element.register ("Button",      typeof (Button));
-        Manifest.Element.register ("ToggleButton",typeof (ToggleButton));
-        Manifest.Element.register ("CheckButton", typeof (CheckButton));
-        Manifest.Element.register ("Highlight",   typeof (Highlight));
-        Manifest.Element.register ("Document",    typeof (Document));
-        Manifest.Element.register ("DocumentView",typeof (DocumentView));
-        Manifest.Element.register ("Model",       typeof (Model));
-        Manifest.Element.register ("Column",      typeof (Model.Column));
-        Manifest.Element.register ("View",        typeof (View));
-        Manifest.Element.register ("DrawingArea", typeof (DrawingArea));
-        Manifest.Element.register ("Shortcut",    typeof (Shortcut));
-        Manifest.Element.register ("Combo",       typeof (Combo));
-        Manifest.Element.register ("Tool",        typeof (Tool));
-        Manifest.Element.register ("Toolbox",     typeof (Toolbox));
-        Manifest.Element.register ("Arrow",       typeof (Arrow));
-        Manifest.Element.register ("ScrollView",  typeof (ScrollView));
-        Manifest.Element.register ("Window",      typeof (Window));
-        Manifest.Element.register ("Popup",       typeof (Popup));
-        Manifest.Element.register ("ProgressBar", typeof (ProgressBar));
-        Manifest.Element.register ("SeekBar",     typeof (SeekBar));
-        Manifest.Element.register ("PopupButton", typeof (PopupButton));
+        Manifest.Element.register ("Group",          typeof (Group));
+        Manifest.Element.register ("Rectangle",      typeof (Rectangle));
+        Manifest.Element.register ("Path",           typeof (Path));
+        Manifest.Element.register ("Image",          typeof (Image));
+        Manifest.Element.register ("Label",          typeof (Label));
+        Manifest.Element.register ("Entry",          typeof (Entry));
+        Manifest.Element.register ("Grid",           typeof (Grid));
+        Manifest.Element.register ("CassoGrid",      typeof (CassoGrid));
+        Manifest.Element.register ("ToggleGroup",    typeof (ToggleGroup));
+        Manifest.Element.register ("Button",         typeof (Button));
+        Manifest.Element.register ("ToggleButton",   typeof (ToggleButton));
+        Manifest.Element.register ("CheckButton",    typeof (CheckButton));
+        Manifest.Element.register ("Highlight",      typeof (Highlight));
+        Manifest.Element.register ("Document",       typeof (Document));
+        Manifest.Element.register ("DocumentView",   typeof (DocumentView));
+        Manifest.Element.register ("Model",          typeof (Model));
+        Manifest.Element.register ("Column",         typeof (Model.Column));
+        Manifest.Element.register ("View",           typeof (View));
+        Manifest.Element.register ("DrawingArea",    typeof (DrawingArea));
+        Manifest.Element.register ("Shortcut",       typeof (Shortcut));
+        Manifest.Element.register ("Combo",          typeof (Combo));
+        Manifest.Element.register ("Tool",           typeof (Tool));
+        Manifest.Element.register ("Toolbox",        typeof (Toolbox));
+        Manifest.Element.register ("Arrow",          typeof (Arrow));
+        Manifest.Element.register ("ScrollView",     typeof (ScrollView));
+        Manifest.Element.register ("Window",         typeof (Window));
+        Manifest.Element.register ("Popup",          typeof (Popup));
+        Manifest.Element.register ("ProgressBar",    typeof (ProgressBar));
+        Manifest.Element.register ("SeekBar",        typeof (SeekBar));
+        Manifest.Element.register ("PopupButton",    typeof (PopupButton));
+        Manifest.Element.register ("Chart",          typeof (Chart));
+        Manifest.Element.register ("ChartView",      typeof (ChartView));
+        Manifest.Element.register ("ChartIntersect", typeof (ChartIntersect));
+        Manifest.Element.register ("ChartPoint",     typeof (ChartPoint));
     }
 
     // methods

@@ -52,7 +52,7 @@ public enum Maia.PopupPlacement
     public static PopupPlacement
     from_string (string inValue)
     {
-        switch (inValue)
+        switch (inValue.down ())
         {
             case "absolute":
                 return PopupPlacement.ABSOLUTE;
@@ -113,6 +113,17 @@ public class Maia.Popup : Group
     public unowned Item? content {
         get {
             return m_Content;
+        }
+        set {
+            if (m_Content != null)
+            {
+                m_Content.parent = null;
+                m_Content = null;
+            }
+            if (value != null)
+            {
+                add (value);
+            }
         }
     }
 

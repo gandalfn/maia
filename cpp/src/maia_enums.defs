@@ -326,6 +326,25 @@
 
 ;; Original typedef:
 ;; typedef enum  {
+;; 	MAIA_GRAPHIC_LINE_TYPE_CONTINUE,
+;; 	MAIA_GRAPHIC_LINE_TYPE_DOT,
+;; 	MAIA_GRAPHIC_LINE_TYPE_DASH,
+;; 	MAIA_GRAPHIC_LINE_TYPE_DASH_DOT
+;; } MaiaGraphicLineType;
+
+(define-enum-extended GraphicLineType
+  (in-module "Maia")
+  (c-name "MaiaGraphicLineType")
+  (values
+    '("continue" "MAIA_GRAPHIC_LINE_TYPE_CONTINUE" "0")
+    '("dot" "MAIA_GRAPHIC_LINE_TYPE_DOT" "1")
+    '("dash" "MAIA_GRAPHIC_LINE_TYPE_DASH" "2")
+    '("dash-dot" "MAIA_GRAPHIC_LINE_TYPE_DASH_DOT" "3")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
 ;; 	MAIA_GRAPHIC_ERROR_SUCCESS,
 ;; 	MAIA_GRAPHIC_ERROR_NOT_IMPLEMENTED,
 ;; 	MAIA_GRAPHIC_ERROR_NO_MEMORY,
@@ -4745,6 +4764,50 @@
     '("none" "MAIA_SCROLL_VIEW_POLICY_NONE" "0x0")
     '("vertical-scrolling" "MAIA_SCROLL_VIEW_POLICY_VERTICAL_SCROLLING" "1 << 0")
     '("horizontal-scrolling" "MAIA_SCROLL_VIEW_POLICY_HORIZONTAL_SCROLLING" "1 << 1")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_CHART_VIEW_LEGEND_POSITION_NONE,
+;; 	MAIA_CHART_VIEW_LEGEND_POSITION_NORTH_EST,
+;; 	MAIA_CHART_VIEW_LEGEND_POSITION_NORTH,
+;; 	MAIA_CHART_VIEW_LEGEND_POSITION_NORTH_WEST,
+;; 	MAIA_CHART_VIEW_LEGEND_POSITION_WEST,
+;; 	MAIA_CHART_VIEW_LEGEND_POSITION_SOUTH_WEST,
+;; 	MAIA_CHART_VIEW_LEGEND_POSITION_SOUTH,
+;; 	MAIA_CHART_VIEW_LEGEND_POSITION_SOUTH_EST,
+;; 	MAIA_CHART_VIEW_LEGEND_POSITION_EST
+;; } MaiaChartViewLegendPosition;
+
+(define-enum-extended ChartViewLegendPosition
+  (in-module "Maia")
+  (c-name "MaiaChartViewLegendPosition")
+  (values
+    '("none" "MAIA_CHART_VIEW_LEGEND_POSITION_NONE" "0")
+    '("north-est" "MAIA_CHART_VIEW_LEGEND_POSITION_NORTH_EST" "1")
+    '("north" "MAIA_CHART_VIEW_LEGEND_POSITION_NORTH" "2")
+    '("north-west" "MAIA_CHART_VIEW_LEGEND_POSITION_NORTH_WEST" "3")
+    '("west" "MAIA_CHART_VIEW_LEGEND_POSITION_WEST" "4")
+    '("south-west" "MAIA_CHART_VIEW_LEGEND_POSITION_SOUTH_WEST" "5")
+    '("south" "MAIA_CHART_VIEW_LEGEND_POSITION_SOUTH" "6")
+    '("south-est" "MAIA_CHART_VIEW_LEGEND_POSITION_SOUTH_EST" "7")
+    '("est" "MAIA_CHART_VIEW_LEGEND_POSITION_EST" "8")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_CHART_DIRECTION_RTL,
+;; 	MAIA_CHART_DIRECTION_LTR
+;; } MaiaChartDirection;
+
+(define-enum-extended ChartDirection
+  (in-module "Maia")
+  (c-name "MaiaChartDirection")
+  (values
+    '("rtl" "MAIA_CHART_DIRECTION_RTL" "0")
+    '("ltr" "MAIA_CHART_DIRECTION_LTR" "1")
   )
 )
 

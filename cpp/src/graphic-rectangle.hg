@@ -56,10 +56,10 @@ namespace Maia
 
                 Glib::ustring to_string ();
 
-                _MEMBER_GET(origin, origin, Point, MaiaGraphicPoint*)
-                _MEMBER_SET(origin, origin, Point, MaiaGraphicPoint*)
-                _MEMBER_GET(size, size, Size, MaiaGraphicSize*)
-                _MEMBER_SET(size, size, Size, MaiaGraphicSize*)
+                Point& get_origin() const;
+                void set_origin(const Point& value);
+                Size& get_size() const;
+                void set_size(const Size& value);
         };
     }
 }

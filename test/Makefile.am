@@ -10,7 +10,8 @@ endif
 
 noinst_PROGRAMS = \
     test \
-    test-xcb
+    test-xcb \
+    test-chart
 
 INCLUDES += \
     $(MAIA_CAIRO_CFLAGS)
@@ -55,11 +56,21 @@ test_xcb_LDADD = \
     $(MAIA_VALGRIND_LIBS) \
     ${top_builddir}/lib/libmaia.la
 
+test_chart_SOURCES = \
+    test-chart.vala
+
+test_chart_LDADD = \
+    $(MAIA_LIBS) \
+    $(MAIA_VALGRIND_LIBS) \
+    ${top_builddir}/lib/libmaia.la
+
 VALAFILES = \
     $(filter %.vala,$(test_SOURCES)) \
-    $(filter %.vala,$(test_xcb_SOURCES))
+    $(filter %.vala,$(test_xcb_SOURCES)) \
+    $(filter %.vala,$(test_chart_SOURCES))
 
 CLEANFILES += \
     test_vala.stamp \
     test_xcb_vala.stamp \
+    test_chart_vala.stamp \
     $(VALAFILES:.vala=.c)

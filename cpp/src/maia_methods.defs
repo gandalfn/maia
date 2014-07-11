@@ -137,6 +137,18 @@
   (gtype-id "MAIA_TYPE_CORE_BUS_CONNECTION")
 )
 
+(define-object MaiaChartPoint
+  (parent "MaiaCoreObject")
+  (c-name "MaiaChartPoint")
+  (gtype-id "MAIA_TYPE_CHART_POINT")
+)
+
+(define-object MaiaChartIntersect
+  (parent "MaiaCoreObject")
+  (c-name "MaiaChartIntersect")
+  (gtype-id "MAIA_TYPE_CHART_INTERSECT")
+)
+
 (define-object MaiaCassowaryTableau
   (parent "MaiaCoreObject")
   (c-name "MaiaCassowaryTableau")
@@ -507,6 +519,12 @@
   (gtype-id "MAIA_TYPE_CASSO_GRID")
 )
 
+(define-object MaiaChartView
+  (parent "MaiaGroup")
+  (c-name "MaiaChartView")
+  (gtype-id "MAIA_TYPE_CHART_VIEW")
+)
+
 (define-object MaiaCombo
   (parent "MaiaGroup")
   (c-name "MaiaCombo")
@@ -547,6 +565,12 @@
   (parent "MaiaItem")
   (c-name "MaiaDocument")
   (gtype-id "MAIA_TYPE_DOCUMENT")
+)
+
+(define-object MaiaChart
+  (parent "MaiaItem")
+  (c-name "MaiaChart")
+  (gtype-id "MAIA_TYPE_CHART")
 )
 
 (define-object MaiaArrow
@@ -991,6 +1015,17 @@
     '("missing-attributes" "MAIA_MANIFEST_ERROR_MISSING_ATTRIBUTES")
     '("too-many-function-argument" "MAIA_MANIFEST_ERROR_TOO_MANY_FUNCTION_ARGUMENT")
     '("missing-function-argument" "MAIA_MANIFEST_ERROR_MISSING_FUNCTION_ARGUMENT")
+  )
+)
+
+(define-enum MaiaGraphicLineType
+  (c-name "MaiaGraphicLineType")
+  (gtype-id "MAIA_TYPE_GRAPHIC_LINE_TYPE")
+  (values
+    '("continue" "MAIA_GRAPHIC_LINE_TYPE_CONTINUE")
+    '("dot" "MAIA_GRAPHIC_LINE_TYPE_DOT")
+    '("dash" "MAIA_GRAPHIC_LINE_TYPE_DASH")
+    '("dash-dot" "MAIA_GRAPHIC_LINE_TYPE_DASH_DOT")
   )
 )
 
@@ -3239,6 +3274,31 @@
     '("none" "MAIA_SCROLL_VIEW_POLICY_NONE")
     '("vertical-scrolling" "MAIA_SCROLL_VIEW_POLICY_VERTICAL_SCROLLING")
     '("horizontal-scrolling" "MAIA_SCROLL_VIEW_POLICY_HORIZONTAL_SCROLLING")
+  )
+)
+
+(define-enum MaiaChartViewLegendPosition
+  (c-name "MaiaChartViewLegendPosition")
+  (gtype-id "MAIA_TYPE_CHART_VIEW_LEGEND_POSITION")
+  (values
+    '("none" "MAIA_CHART_VIEW_LEGEND_POSITION_NONE")
+    '("north-est" "MAIA_CHART_VIEW_LEGEND_POSITION_NORTH_EST")
+    '("north" "MAIA_CHART_VIEW_LEGEND_POSITION_NORTH")
+    '("north-west" "MAIA_CHART_VIEW_LEGEND_POSITION_NORTH_WEST")
+    '("west" "MAIA_CHART_VIEW_LEGEND_POSITION_WEST")
+    '("south-west" "MAIA_CHART_VIEW_LEGEND_POSITION_SOUTH_WEST")
+    '("south" "MAIA_CHART_VIEW_LEGEND_POSITION_SOUTH")
+    '("south-est" "MAIA_CHART_VIEW_LEGEND_POSITION_SOUTH_EST")
+    '("est" "MAIA_CHART_VIEW_LEGEND_POSITION_EST")
+  )
+)
+
+(define-enum MaiaChartDirection
+  (c-name "MaiaChartDirection")
+  (gtype-id "MAIA_TYPE_CHART_DIRECTION")
+  (values
+    '("rtl" "MAIA_CHART_DIRECTION_RTL")
+    '("ltr" "MAIA_CHART_DIRECTION_LTR")
   )
 )
 
@@ -7811,6 +7871,35 @@
   )
 )
 
+(define-function maia_graphic_line_type_get_type
+  (c-name "maia_graphic_line_type_get_type")
+  (return-type "GType")
+)
+
+(define-method to_dash
+  (of-object "MaiaGraphicLineType")
+  (c-name "maia_graphic_line_type_to_dash")
+  (return-type "gdouble*")
+  (parameters
+    '("gdouble" "inLineWidth")
+    '("int*" "result_length1")
+  )
+)
+
+(define-method to_string
+  (of-object "MaiaGraphicLineType")
+  (c-name "maia_graphic_line_type_to_string")
+  (return-type "gchar*")
+)
+
+(define-function maia_graphic_line_type_from_string
+  (c-name "maia_graphic_line_type_from_string")
+  (return-type "MaiaGraphicLineType")
+  (parameters
+    '("const-gchar*" "inValue")
+  )
+)
+
 (define-method dup
   (of-object "MaiaGraphicMatrix")
   (c-name "maia_graphic_matrix_dup")
@@ -8262,6 +8351,74 @@
   (of-object "MaiaGraphicSize")
   (c-name "maia_graphic_size_contains")
   (return-type "gboolean")
+  (parameters
+    '("MaiaGraphicPoint*" "inPoint")
+  )
+)
+
+(define-function maia_graphic_range_get_type
+  (c-name "maia_graphic_range_get_type")
+  (return-type "GType")
+)
+
+(define-method dup
+  (of-object "MaiaGraphicRange")
+  (c-name "maia_graphic_range_dup")
+  (return-type "MaiaGraphicRange*")
+)
+
+(define-method free
+  (of-object "MaiaGraphicRange")
+  (c-name "maia_graphic_range_free")
+  (return-type "none")
+)
+
+(define-method init
+  (of-object "MaiaGraphicRange")
+  (c-name "maia_graphic_range_init")
+  (return-type "none")
+  (parameters
+    '("gdouble" "inXMin")
+    '("gdouble" "inYMin")
+    '("gdouble" "inXMax")
+    '("gdouble" "inYMax")
+  )
+)
+
+(define-method size
+  (of-object "MaiaGraphicRange")
+  (c-name "maia_graphic_range_size")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "result")
+  )
+)
+
+(define-method is_empty
+  (of-object "MaiaGraphicRange")
+  (c-name "maia_graphic_range_is_empty")
+  (return-type "gboolean")
+)
+
+(define-method to_string
+  (of-object "MaiaGraphicRange")
+  (c-name "maia_graphic_range_to_string")
+  (return-type "gchar*")
+)
+
+(define-method contains
+  (of-object "MaiaGraphicRange")
+  (c-name "maia_graphic_range_contains")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaGraphicPoint*" "inPoint")
+  )
+)
+
+(define-method clamp
+  (of-object "MaiaGraphicRange")
+  (c-name "maia_graphic_range_clamp")
+  (return-type "none")
   (parameters
     '("MaiaGraphicPoint*" "inPoint")
   )
@@ -9407,6 +9564,15 @@
   (of-object "MaiaGraphicPath")
   (c-name "maia_graphic_path_close")
   (return-type "none")
+)
+
+(define-method transform
+  (of-object "MaiaGraphicPath")
+  (c-name "maia_graphic_path_transform")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicTransform*" "inTransform")
+  )
 )
 
 (define-method get_data_type
@@ -13309,6 +13475,21 @@
   )
 )
 
+(define-method get_line_type
+  (of-object "MaiaItem")
+  (c-name "maia_item_get_line_type")
+  (return-type "MaiaGraphicLineType")
+)
+
+(define-method set_line_type
+  (of-object "MaiaItem")
+  (c-name "maia_item_set_line_type")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicLineType" "value")
+  )
+)
+
 (define-method get_chain_visible
   (of-object "MaiaItem")
   (c-name "maia_item_get_chain_visible")
@@ -16369,6 +16550,15 @@
   (return-type "MaiaItem*")
 )
 
+(define-method set_content
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_set_content")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "value")
+  )
+)
+
 (define-method get_shadow_color
   (of-object "MaiaPopup")
   (c-name "maia_popup_get_shadow_color")
@@ -17178,6 +17368,675 @@
   (return-type "none")
   (parameters
     '("gdouble" "value")
+  )
+)
+
+(define-function maia_chart_intersect_get_type
+  (c-name "maia_chart_intersect_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_chart_intersect_new
+  (c-name "maia_chart_intersect_new")
+  (is-constructor-of "MaiaChartIntersect")
+  (return-type "MaiaChartIntersect*")
+  (parameters
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inFirst")
+    '("const-gchar*" "inSecond")
+  )
+)
+
+(define-function maia_chart_intersect_construct
+  (c-name "maia_chart_intersect_construct")
+  (return-type "MaiaChartIntersect*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inFirst")
+    '("const-gchar*" "inSecond")
+  )
+)
+
+(define-method get_first_chart
+  (of-object "MaiaChartIntersect")
+  (c-name "maia_chart_intersect_get_first_chart")
+  (return-type "const-gchar*")
+)
+
+(define-method set_first_chart
+  (of-object "MaiaChartIntersect")
+  (c-name "maia_chart_intersect_set_first_chart")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_second_chart
+  (of-object "MaiaChartIntersect")
+  (c-name "maia_chart_intersect_get_second_chart")
+  (return-type "const-gchar*")
+)
+
+(define-method set_second_chart
+  (of-object "MaiaChartIntersect")
+  (c-name "maia_chart_intersect_set_second_chart")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_fill_pattern
+  (of-object "MaiaChartIntersect")
+  (c-name "maia_chart_intersect_get_fill_pattern")
+  (return-type "MaiaGraphicPattern*")
+)
+
+(define-method set_fill_pattern
+  (of-object "MaiaChartIntersect")
+  (c-name "maia_chart_intersect_set_fill_pattern")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "value")
+  )
+)
+
+(define-function maia_chart_point_get_type
+  (c-name "maia_chart_point_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_chart_point_new
+  (c-name "maia_chart_point_new")
+  (is-constructor-of "MaiaChartPoint")
+  (return-type "MaiaChartPoint*")
+  (parameters
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inChart")
+    '("MaiaGraphicPoint*" "inPosition")
+  )
+)
+
+(define-function maia_chart_point_construct
+  (c-name "maia_chart_point_construct")
+  (return-type "MaiaChartPoint*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inChart")
+    '("MaiaGraphicPoint*" "inPosition")
+  )
+)
+
+(define-method get_chart
+  (of-object "MaiaChartPoint")
+  (c-name "maia_chart_point_get_chart")
+  (return-type "const-gchar*")
+)
+
+(define-method set_chart
+  (of-object "MaiaChartPoint")
+  (c-name "maia_chart_point_set_chart")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_position
+  (of-object "MaiaChartPoint")
+  (c-name "maia_chart_point_get_position")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "result")
+  )
+)
+
+(define-method set_position
+  (of-object "MaiaChartPoint")
+  (c-name "maia_chart_point_set_position")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "value")
+  )
+)
+
+(define-method get_fill_pattern
+  (of-object "MaiaChartPoint")
+  (c-name "maia_chart_point_get_fill_pattern")
+  (return-type "MaiaGraphicPattern*")
+)
+
+(define-method set_fill_pattern
+  (of-object "MaiaChartPoint")
+  (c-name "maia_chart_point_set_fill_pattern")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "value")
+  )
+)
+
+(define-method get_line_type
+  (of-object "MaiaChartPoint")
+  (c-name "maia_chart_point_get_line_type")
+  (return-type "MaiaGraphicLineType")
+)
+
+(define-method set_line_type
+  (of-object "MaiaChartPoint")
+  (c-name "maia_chart_point_set_line_type")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicLineType" "value")
+  )
+)
+
+(define-method get_stroke_pattern
+  (of-object "MaiaChartPoint")
+  (c-name "maia_chart_point_get_stroke_pattern")
+  (return-type "MaiaGraphicPattern*")
+)
+
+(define-method set_stroke_pattern
+  (of-object "MaiaChartPoint")
+  (c-name "maia_chart_point_set_stroke_pattern")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "value")
+  )
+)
+
+(define-method get_width
+  (of-object "MaiaChartPoint")
+  (c-name "maia_chart_point_get_width")
+  (return-type "gdouble")
+)
+
+(define-method set_width
+  (of-object "MaiaChartPoint")
+  (c-name "maia_chart_point_set_width")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-function maia_chart_view_get_type
+  (c-name "maia_chart_view_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_chart_view_legend_position_get_type
+  (c-name "maia_chart_view_legend_position_get_type")
+  (return-type "GType")
+)
+
+(define-method to_string
+  (of-object "MaiaChartViewLegendPosition")
+  (c-name "maia_chart_view_legend_position_to_string")
+  (return-type "gchar*")
+)
+
+(define-function maia_chart_view_legend_position_from_string
+  (c-name "maia_chart_view_legend_position_from_string")
+  (return-type "MaiaChartViewLegendPosition")
+  (parameters
+    '("const-gchar*" "inValue")
+  )
+)
+
+(define-function maia_chart_view_new
+  (c-name "maia_chart_view_new")
+  (is-constructor-of "MaiaChartView")
+  (return-type "MaiaChartView*")
+  (parameters
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inTitle")
+  )
+)
+
+(define-function maia_chart_view_construct
+  (c-name "maia_chart_view_construct")
+  (return-type "MaiaChartView*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inTitle")
+  )
+)
+
+(define-method get_font_description
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_get_font_description")
+  (return-type "const-gchar*")
+)
+
+(define-method set_font_description
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_set_font_description")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_title
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_get_title")
+  (return-type "const-gchar*")
+)
+
+(define-method set_title
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_set_title")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_model
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_get_model")
+  (return-type "MaiaModel*")
+)
+
+(define-method set_model
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_set_model")
+  (return-type "none")
+  (parameters
+    '("MaiaModel*" "value")
+  )
+)
+
+(define-method get_chart_axis
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_get_chart_axis")
+  (return-type "const-gchar*")
+)
+
+(define-method set_chart_axis
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_set_chart_axis")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_border
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_get_border")
+  (return-type "gdouble")
+)
+
+(define-method set_border
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_set_border")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_grid_visible
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_get_grid_visible")
+  (return-type "gboolean")
+)
+
+(define-method set_grid_visible
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_set_grid_visible")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
+(define-method get_axis_font_description
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_get_axis_font_description")
+  (return-type "const-gchar*")
+)
+
+(define-method set_axis_font_description
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_set_axis_font_description")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_x_axis_label
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_get_x_axis_label")
+  (return-type "const-gchar*")
+)
+
+(define-method set_x_axis_label
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_set_x_axis_label")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_y_axis_label
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_get_y_axis_label")
+  (return-type "const-gchar*")
+)
+
+(define-method set_y_axis_label
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_set_y_axis_label")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_x_axis_unit
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_get_x_axis_unit")
+  (return-type "const-gchar*")
+)
+
+(define-method set_x_axis_unit
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_set_x_axis_unit")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_y_axis_unit
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_get_y_axis_unit")
+  (return-type "const-gchar*")
+)
+
+(define-method set_y_axis_unit
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_set_y_axis_unit")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_x_axis_ticks
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_get_x_axis_ticks")
+  (return-type "guint")
+)
+
+(define-method set_x_axis_ticks
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_set_x_axis_ticks")
+  (return-type "none")
+  (parameters
+    '("guint" "value")
+  )
+)
+
+(define-method get_y_axis_ticks
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_get_y_axis_ticks")
+  (return-type "guint")
+)
+
+(define-method set_y_axis_ticks
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_set_y_axis_ticks")
+  (return-type "none")
+  (parameters
+    '("guint" "value")
+  )
+)
+
+(define-method get_tick_size
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_get_tick_size")
+  (return-type "gdouble")
+)
+
+(define-method set_tick_size
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_set_tick_size")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_legend
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_get_legend")
+  (return-type "MaiaChartViewLegendPosition")
+)
+
+(define-method set_legend
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_set_legend")
+  (return-type "none")
+  (parameters
+    '("MaiaChartViewLegendPosition" "value")
+  )
+)
+
+(define-method get_legend_border
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_get_legend_border")
+  (return-type "gdouble")
+)
+
+(define-method set_legend_border
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_set_legend_border")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-function maia_chart_get_type
+  (c-name "maia_chart_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_chart_direction_get_type
+  (c-name "maia_chart_direction_get_type")
+  (return-type "GType")
+)
+
+(define-method to_string
+  (of-object "MaiaChartDirection")
+  (c-name "maia_chart_direction_to_string")
+  (return-type "gchar*")
+)
+
+(define-function maia_chart_direction_from_string
+  (c-name "maia_chart_direction_from_string")
+  (return-type "MaiaChartDirection")
+  (parameters
+    '("const-gchar*" "inValue")
+  )
+)
+
+(define-function maia_chart_range_from_model
+  (c-name "maia_chart_range_from_model")
+  (return-type "none")
+  (parameters
+    '("MaiaModel*" "inModel")
+    '("const-gchar*" "inXColumn")
+    '("const-gchar*" "inYColumn")
+    '("MaiaGraphicRange*" "result")
+  )
+)
+
+(define-function maia_chart_new
+  (c-name "maia_chart_new")
+  (is-constructor-of "MaiaChart")
+  (return-type "MaiaChart*")
+  (parameters
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inTitle")
+  )
+)
+
+(define-function maia_chart_construct
+  (c-name "maia_chart_construct")
+  (return-type "MaiaChart*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inTitle")
+  )
+)
+
+(define-method get_title
+  (of-object "MaiaChart")
+  (c-name "maia_chart_get_title")
+  (return-type "const-gchar*")
+)
+
+(define-method set_title
+  (of-object "MaiaChart")
+  (c-name "maia_chart_set_title")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_model
+  (of-object "MaiaChart")
+  (c-name "maia_chart_get_model")
+  (return-type "MaiaModel*")
+)
+
+(define-method set_model
+  (of-object "MaiaChart")
+  (c-name "maia_chart_set_model")
+  (return-type "none")
+  (parameters
+    '("MaiaModel*" "value")
+  )
+)
+
+(define-method get_x_axis
+  (of-object "MaiaChart")
+  (c-name "maia_chart_get_x_axis")
+  (return-type "const-gchar*")
+)
+
+(define-method set_x_axis
+  (of-object "MaiaChart")
+  (c-name "maia_chart_set_x_axis")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_y_axis
+  (of-object "MaiaChart")
+  (c-name "maia_chart_get_y_axis")
+  (return-type "const-gchar*")
+)
+
+(define-method set_y_axis
+  (of-object "MaiaChart")
+  (c-name "maia_chart_set_y_axis")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_range
+  (of-object "MaiaChart")
+  (c-name "maia_chart_get_range")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRange*" "result")
+  )
+)
+
+(define-method set_range
+  (of-object "MaiaChart")
+  (c-name "maia_chart_set_range")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRange*" "value")
+  )
+)
+
+(define-method get_direction
+  (of-object "MaiaChart")
+  (c-name "maia_chart_get_direction")
+  (return-type "MaiaChartDirection")
+)
+
+(define-method set_direction
+  (of-object "MaiaChart")
+  (c-name "maia_chart_set_direction")
+  (return-type "none")
+  (parameters
+    '("MaiaChartDirection" "value")
+  )
+)
+
+(define-method get_smoothing
+  (of-object "MaiaChart")
+  (c-name "maia_chart_get_smoothing")
+  (return-type "gboolean")
+)
+
+(define-method set_smoothing
+  (of-object "MaiaChart")
+  (c-name "maia_chart_set_smoothing")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
+(define-method get_path
+  (of-object "MaiaChart")
+  (c-name "maia_chart_get_path")
+  (return-type "MaiaGraphicPath*")
+)
+
+(define-method get_reverse_path
+  (of-object "MaiaChart")
+  (c-name "maia_chart_get_reverse_path")
+  (return-type "MaiaGraphicPath*")
+)
+
+(define-method get_first_point
+  (of-object "MaiaChart")
+  (c-name "maia_chart_get_first_point")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "result")
+  )
+)
+
+(define-method get_last_point
+  (of-object "MaiaChart")
+  (c-name "maia_chart_get_last_point")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "result")
   )
 )
 
