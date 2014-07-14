@@ -79,7 +79,7 @@ public class Maia.TestBus : Maia.TestCase
 
         add_test ("socket-bus", test_socket_bus);
         add_test ("event-bus",  test_event_bus);
-        add_test ("event-bus-multithread",  test_event_bus_multithread);
+        //add_test ("event-bus-multithread",  test_event_bus_multithread);
         add_test ("event-bus-reply",  test_event_bus_reply);
         add_test ("event-bus-contention", test_event_bus_contention);
     }
@@ -190,9 +190,7 @@ public class Maia.TestBus : Maia.TestCase
     {
         bool event_received1 = false;
         bool event_received2 = false;
-        var bus = new Core.EventBus ("test-event-bus");
-        Core.EventBus.default = bus;
-        Core.Event event = new Core.Event ("test", null);
+        Core.Event event = new Core.Event ("test-event-bus", null);
 
         event.subscribe ((args) => {
             if (args is TestEventArgs)
@@ -239,9 +237,7 @@ public class Maia.TestBus : Maia.TestCase
     {
         bool message_main = false;
         bool message_thread = false;
-        var bus = new Core.EventBus ("test-event-bus");
-        Core.EventBus.default = bus;
-        Core.Event event = new Core.Event ("test", null);
+        Core.Event event = new Core.Event ("test-event-bus-multithread", null);
 
         event.subscribe ((args) => {
             if (args is TestEventArgs)
@@ -255,7 +251,6 @@ public class Maia.TestBus : Maia.TestCase
         });
 
         new GLib.Thread<void*> (null, () => {
-            Posix.sleep (1);
             GLib.MainContext ctx = new GLib.MainContext ();
             ctx.push_thread_default ();
             GLib.MainLoop loop_thread = new GLib.MainLoop (ctx);
@@ -268,6 +263,8 @@ public class Maia.TestBus : Maia.TestCase
                     Test.message ("TestEventArgs 0x%lx %s %u", (ulong)GLib.Thread.self<void*> (), event_args.name, event_args.val);
 
                     message_thread = true;
+
+                    loop_thread.quit ();
                 }
             });
 
@@ -302,9 +299,7 @@ public class Maia.TestBus : Maia.TestCase
         bool message_main = false;
         bool message_thread = false;
         bool have_reply = false;
-        var bus = new Core.EventBus ("test-event-bus");
-        Core.EventBus.default = bus;
-        Core.Event event = new Core.Event ("test", null);
+        Core.Event event = new Core.Event ("test-event-bus-reply", null);
 
         event.subscribe ((args) => {
             if (args is TestEventArgs)
@@ -377,13 +372,11 @@ public class Maia.TestBus : Maia.TestCase
     public void
     test_event_bus_contention ()
     {
-        var bus = new Core.EventBus ("test-event-bus");
-        Core.EventBus.default = bus;
         Core.Event[] events = {};
 
         for (int cpt = 0; cpt < 1000; ++cpt)
         {
-            events += new Core.Event ("test", cpt.to_pointer ());
+            events += new Core.Event ("test-event-bus-contention", cpt.to_pointer ());
             events[cpt].subscribe ((args) => {
                 if (args is TestEventArgs)
                 {
