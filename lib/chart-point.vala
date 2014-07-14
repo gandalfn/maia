@@ -37,14 +37,24 @@ public class Maia.ChartPoint : Core.Object, Manifest.Element
     public string chart { get; set; default = ""; }
 
     /**
+     * Title of point
+     */
+    public string title { get; set; default = null; }
+
+    /**
      * Position of point
      */
     public Graphic.Point position { get; set; default = Graphic.Point (double.NAN, double.NAN); }
 
     /**
+     * Size of point
+     */
+    public Graphic.Size size { get; set; default = Graphic.Size (6, 6); }
+
+    /**
      * Fill pattern of point
      */
-    public Graphic.Pattern fill_pattern { get; set; default = new Graphic.Color (0, 0, 0); }
+    public Graphic.Pattern fill_pattern { get; set; default = null; }
 
     /**
      * Point position line type
@@ -57,9 +67,14 @@ public class Maia.ChartPoint : Core.Object, Manifest.Element
     public Graphic.Pattern stroke_pattern { get; set; default = new Graphic.Color (0, 0, 0); }
 
     /**
-     * Point width
+     * Point path
      */
-    public double width { get; set; default = 3.0; }
+    public string path { get; set; default = "M 0 0 L 16 0 L 16 16 L 0 16 z"; }
+
+    /**
+     * Point stroke width
+     */
+    public double stroke_width { get; set; default = 3.0; }
 
     // methods
     public ChartPoint (string inId, string inChart, Graphic.Point inPosition)

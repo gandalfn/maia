@@ -3,13 +3,18 @@ MAIA_VAPI_DEPS = \
     core/maia-any
 
 include $(top_srcdir)/build-aux/maia.am
+include $(top_srcdir)/build-aux/test.am
 
 if USE_VALGRIND
 INCLUDES += $(MAIA_VALGRIND_CFLAGS)
 endif
 
+TESTS = test
+
+check_PROGRAMS = \
+    test
+
 noinst_PROGRAMS = \
-    test \
     test-xcb \
     test-chart
 

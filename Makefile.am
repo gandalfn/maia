@@ -15,6 +15,7 @@ BUILD_FILES = \
     build-aux/pkgconfig.am \
     build-aux/vapi.am \
     build-aux/maia.am \
+    build-aux/test.am \
     build-aux/generate-binding.am \
     build-aux/compile-binding.am \
     build-aux/doc-reference.am \

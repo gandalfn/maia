@@ -19,6 +19,7 @@
 
 #include <maia.h>
 #include <maiamm/core-object.h>
+#include <maiamm/core-map.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/core-object_p.h)
@@ -88,6 +89,7 @@ namespace Maia
 
                 _WRAP_METHOD(Glib::ustring get_element () const, maia_core_parser_get_element)
                 _WRAP_METHOD(Glib::ustring get_attribute () const, maia_core_parser_get_attribute)
+                _WRAP_METHOD(Core::Map<Glib::ustring, Glib::ustring> get_attributes () const, maia_core_parser_get_attributes)
                 _WRAP_METHOD(Glib::ustring get_val () const, maia_core_parser_get_val)
                 _WRAP_METHOD(Glib::ustring get_characters () const, maia_core_parser_get_characters)
 
@@ -101,6 +103,9 @@ namespace Maia
                 _WRAP_PROPERTY ("characters", Glib::ustring)
                 _WRAP_PROPERTY ("attribute", Glib::ustring)
                 _WRAP_PROPERTY ("val", Glib::ustring)
+
+            private:
+                _WRAP_PROPERTY ("attributes", void*)
         };
 
     }

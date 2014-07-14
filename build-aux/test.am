@@ -1,0 +1,16 @@
+AM_V_CHECK = $(am__v_CHECK_$(V))
+am__v_CHECK_ = $(am__v_CHECK_$(AM_DEFAULT_VERBOSITY))
+am__v_CHECK_0 = echo "  CHECK  " $$e;
+
+AM_CHECK_VERBOSE = $(am__v_CHECK_DEEP_$(VERBOSE))
+am__v_CHECK_DEEP_ =
+am__v_CHECK_DEEP_1 = --verbose
+
+AM_CHECK_PERF = $(am__v_CHECK_PERF_$(PERF))
+am__v_CHECK_PERF_ =
+am__v_CHECK_PERF_1 = -m perf --verbose
+
+check-TESTS:  $(check_PROGRAMS)
+	@for e in $(TESTS) ; do \
+      $(AM_V_CHECK) ./$$e $(AM_CHECK_VERBOSE) $(AM_CHECK_PERF); \
+  done

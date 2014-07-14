@@ -30,7 +30,7 @@ namespace Maia
     namespace Core
     {
         class Event;
-        
+
         _GMMPROC_EXTRA_NAMESPACE(Core)
 
         class EventBus : public Object
@@ -56,6 +56,9 @@ namespace Maia
                 _WRAP_METHOD(static Glib::RefPtr<EventBus> get_default (), maia_core_event_bus_get_default, refreturn)
                 _WRAP_METHOD(static void set_default (const Glib::RefPtr<EventBus>& inBus), maia_core_event_bus_set_default)
 
+                _IGNORE(maia_core_event_bus_publish_with_reply, maia_core_event_bus_publish_event_with_reply,
+                        maia_core_event_bus_object_publish_with_reply, maia_core_event_bus_object_publish_event_with_reply,
+                        maia_core_event_bus_advertise, maia_core_event_bus_destroy)
         };
     }
 }

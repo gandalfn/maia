@@ -251,9 +251,9 @@ public interface Maia.Drawable : GLib.Object
                 matrix.invert ();
                 var child_transform = new Graphic.Transform.from_matrix (matrix);
 
-                if (transform.matrix.xy != 0 || transform.matrix.yx != 0)
+                if (child_transform.matrix.xy != 0 || child_transform.matrix.yx != 0)
                 {
-                    var center = Graphic.Point(inChild.area.extents.size.width / 2.0, inChild.area.extents.size.height / 2.0);
+                    var center = Graphic.Point(inChild.geometry.extents.size.width / 2.0, inChild.geometry.extents.size.height / 2.0);
 
                     point.translate (center);
                     point.transform (child_transform);
@@ -296,6 +296,7 @@ public interface Maia.Drawable : GLib.Object
             {
                 child_area = inArea.copy ();
             }
+
             child_area.intersect (inChild.geometry);
 
             try
@@ -306,9 +307,9 @@ public interface Maia.Drawable : GLib.Object
                 matrix.invert ();
                 var child_transform = new Graphic.Transform.from_matrix (matrix);
 
-                if (transform.matrix.xy != 0 || transform.matrix.yx != 0)
+                if (child_transform.matrix.xy != 0 || child_transform.matrix.yx != 0)
                 {
-                    var center = Graphic.Point(inChild.area.extents.size.width / 2.0, inChild.area.extents.size.height / 2.0);
+                    var center = Graphic.Point(inChild.geometry.extents.size.width / 2.0, inChild.geometry.extents.size.height / 2.0);
 
                     child_area.translate (center);
                     child_area.transform (child_transform);

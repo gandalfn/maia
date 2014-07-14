@@ -17533,6 +17533,21 @@
   )
 )
 
+(define-method get_title
+  (of-object "MaiaChartPoint")
+  (c-name "maia_chart_point_get_title")
+  (return-type "const-gchar*")
+)
+
+(define-method set_title
+  (of-object "MaiaChartPoint")
+  (c-name "maia_chart_point_set_title")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
 (define-method get_position
   (of-object "MaiaChartPoint")
   (c-name "maia_chart_point_get_position")
@@ -17548,6 +17563,24 @@
   (return-type "none")
   (parameters
     '("MaiaGraphicPoint*" "value")
+  )
+)
+
+(define-method get_size
+  (of-object "MaiaChartPoint")
+  (c-name "maia_chart_point_get_size")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "result")
+  )
+)
+
+(define-method set_size
+  (of-object "MaiaChartPoint")
+  (c-name "maia_chart_point_set_size")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "value")
   )
 )
 
@@ -17596,15 +17629,30 @@
   )
 )
 
-(define-method get_width
+(define-method get_path
   (of-object "MaiaChartPoint")
-  (c-name "maia_chart_point_get_width")
+  (c-name "maia_chart_point_get_path")
+  (return-type "const-gchar*")
+)
+
+(define-method set_path
+  (of-object "MaiaChartPoint")
+  (c-name "maia_chart_point_set_path")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_stroke_width
+  (of-object "MaiaChartPoint")
+  (c-name "maia_chart_point_get_stroke_width")
   (return-type "gdouble")
 )
 
-(define-method set_width
+(define-method set_stroke_width
   (of-object "MaiaChartPoint")
-  (c-name "maia_chart_point_set_width")
+  (c-name "maia_chart_point_set_stroke_width")
   (return-type "none")
   (parameters
     '("gdouble" "value")

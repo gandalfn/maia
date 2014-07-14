@@ -1,6 +1,9 @@
 include $(top_srcdir)/build-aux/maia.am
+include $(top_srcdir)/build-aux/test.am
 
-noinst_PROGRAMS = \
+TESTS = test
+
+check_PROGRAMS = \
     test
 
 AM_CPPFLAGS = \

@@ -86,6 +86,16 @@ namespace Maia
                     return (MaiaCorePair*)maia_core_pair_ref(gobject_);
                 }
 
+                inline F& first () const
+                {
+                    return Glib::wrap (maia_core_pair_get_first (gobj ()));
+                }
+
+                inline S& second () const
+                {
+                    return Glib::wrap (maia_core_pair_get_second (gobj ()));
+                }
+
             protected:
                 MaiaCorePair* gobject_;
        };

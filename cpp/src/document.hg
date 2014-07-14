@@ -37,7 +37,7 @@ namespace Maia
 
         public:
             typedef sigc::slot<void, Glib::RefPtr<Document>, Glib::RefPtr<Gio::AsyncResult> > SlotSaveFinished;
-            
+
             static Glib::RefPtr<Document> create (const Glib::ustring& inId, PageFormat inFormat)
             {
                 MaiaDocument* pDocument = maia_document_new (inId.c_str(), (MaiaPageFormat)inFormat);
@@ -78,12 +78,14 @@ namespace Maia
 
             _WRAP_METHOD(void draw_page (const Glib::RefPtr<Graphic::Context>& inContext, guint inNumPage), maia_document_draw_page, errthrow)
 
+            _IGNORE(maia_document_save)
             void save (const Glib::ustring& inFilename, double inDpi = 96);
             void save (const Glib::ustring& inFilename, SlotSaveFinished inFunc);
             void save (const Glib::ustring& inFilename, SlotSaveFinished inFunc, const Glib::RefPtr<Gio::Cancellable>& inCancellable);
             void save (const Glib::ustring& inFilename, double inDpi, SlotSaveFinished inFunc);
             void save (const Glib::ustring& inFilename, double inDpi, SlotSaveFinished inFunc, const Glib::RefPtr<Gio::Cancellable>& inCancellable);
-            
+
+            _IGNORE(maia_document_save_finish)
             void save_finish (const Glib::RefPtr<Gio::AsyncResult>& inResult);
 
             _WRAP_PROPERTY("format", PageFormat)

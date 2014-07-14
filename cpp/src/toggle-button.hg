@@ -46,14 +46,23 @@ namespace Maia
             _WRAP_METHOD(void set_border (double inBorder), maia_toggle_button_set_border)
             _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_button_color () const, maia_toggle_button_get_button_color, refreturn)
             _WRAP_METHOD(void set_button_color (const Glib::RefPtr<Graphic::Color>& inColor), maia_toggle_button_set_button_color)
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_button_active_color () const, maia_toggle_button_get_button_active_color, refreturn)
+            _WRAP_METHOD(void set_button_active_color (const Glib::RefPtr<Graphic::Color>& inColor), maia_toggle_button_set_button_active_color)
             _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_button_inactive_color () const, maia_toggle_button_get_button_inactive_color, refreturn)
             _WRAP_METHOD(void set_button_inactive_color (const Glib::RefPtr<Graphic::Color>& inColor), maia_toggle_button_set_button_inactive_color)
+            _WRAP_METHOD(void get_icon_size (Graphic::Size& outSize) const, maia_toggle_button_get_icon_size)
+            _WRAP_METHOD(void set_icon_size (const Graphic::Size& inSize), maia_toggle_button_set_icon_size)
+            _WRAP_METHOD(Glib::ustring get_icon_filename () const, maia_toggle_button_get_icon_filename)
+            _WRAP_METHOD(void set_icon_filename (const Glib::ustring& inFilename), maia_toggle_button_set_icon_filename)
 
 
             _WRAP_PROPERTY("sensitive", bool)
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("button-color", Glib::RefPtr<Graphic::Color>)
+            _WRAP_PROPERTY("button-active-color", Glib::RefPtr<Graphic::Color>)
             _WRAP_PROPERTY("button-inactive-color", Glib::RefPtr<Graphic::Color>)
+            _WRAP_PROPERTY("icon-filename", Glib::ustring)
+            _WRAP_PROPERTY("icon-size", Graphic::Size)
 
             _WRAP_PROPERTY("tag", Glib::ustring)
     };

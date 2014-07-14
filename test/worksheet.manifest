@@ -3,14 +3,11 @@ DocumentView.scrollview {
 		// Default page format
 		format: a4;
 		// TODO: fix transform on document
-		transform: scale(1.2, 1.2);
 		border-width: 5;
 		background-pattern: #E0E0E0;
 		header: 'header';
 		footer: 'footer';
-		
-		//transform: scale(1.5, 1.5);
-		
+
 		// Header
 		Grid.header {
 		    row-spacing: 5;

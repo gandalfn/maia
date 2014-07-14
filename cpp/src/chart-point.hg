@@ -21,6 +21,7 @@
 #include <maiamm/core-object.h>
 #include <maiamm/graphic-line-type.h>
 #include <maiamm/graphic-point.h>
+#include <maiamm/graphic-size.h>
 #include <maiamm/graphic-pattern.h>
 #include <maiamm/manifest-element.h>
 #include <maiamm/manifest-theme.h>
@@ -34,7 +35,7 @@ namespace Maia
     {
         _CLASS_GOBJECT(ChartPoint, MaiaChartPoint, MAIA_CHART_POINT, Core::Object, MaiaCoreObject)
         _IMPLEMENTS_INTERFACE(Manifest::Element)
-        
+
         protected:
             _CTOR_DEFAULT()
 
@@ -44,18 +45,27 @@ namespace Maia
                 MaiaChartPoint* pChartPoint = maia_chart_point_new (inId.c_str(), inChart.c_str (), const_cast<MaiaGraphicPoint*> (inPosition.gobj ()));
                 return Glib::RefPtr<ChartPoint> (new ChartPoint (pChartPoint));
             }
-            
+
             _WRAP_METHOD(Glib::ustring get_chart () const, maia_chart_point_get_chart)
             _WRAP_METHOD(void set_chart (const Glib::ustring& inChart), maia_chart_point_set_chart)
+
+            _WRAP_METHOD(Glib::ustring get_title () const, maia_chart_point_get_title)
+            _WRAP_METHOD(void set_title (const Glib::ustring& inTitle), maia_chart_point_set_title)
+
+            _WRAP_METHOD(Glib::ustring get_path () const, maia_chart_point_get_path)
+            _WRAP_METHOD(void set_path (const Glib::ustring& inPath), maia_chart_point_set_path)
 
             _WRAP_METHOD(void get_position (Graphic::Point& outPosition) const, maia_chart_point_get_position)
             _WRAP_METHOD(void set_position (const Graphic::Point& inPosition), maia_chart_point_set_position)
 
+            _WRAP_METHOD(void get_size (Graphic::Size& outSize) const, maia_chart_point_get_size)
+            _WRAP_METHOD(void set_size (const Graphic::Size& inSize), maia_chart_point_set_size)
+
             _WRAP_METHOD(Graphic::LineType get_line_type () const, maia_chart_point_get_line_type)
             _WRAP_METHOD(void set_line_type (Graphic::LineType inLineType), maia_chart_point_set_line_type)
 
-            _WRAP_METHOD(double get_width () const, maia_chart_point_get_width)
-            _WRAP_METHOD(void set_width (double inWidth), maia_chart_point_set_width)
+            _WRAP_METHOD(double get_stroke_width () const, maia_chart_point_get_stroke_width)
+            _WRAP_METHOD(void set_stroke_width (double inWidth), maia_chart_point_set_stroke_width)
 
             _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_stroke_pattern () const, maia_chart_point_get_stroke_pattern, refreturn)
             _WRAP_METHOD(void set_stroke_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_chart_point_set_stroke_pattern)
@@ -70,9 +80,12 @@ namespace Maia
             _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
 
             _WRAP_PROPERTY("chart", Glib::ustring)
+            _WRAP_PROPERTY("title", Glib::ustring)
+            _WRAP_PROPERTY("path", Glib::ustring)
             _WRAP_PROPERTY("position", Graphic::Point)
+            _WRAP_PROPERTY("size", Graphic::Size)
             _WRAP_PROPERTY("line-type", Graphic::LineType)
-            _WRAP_PROPERTY("width", double)
+            _WRAP_PROPERTY("stroke-width", double)
             _WRAP_PROPERTY("stroke-pattern", Glib::RefPtr<Graphic::Pattern>)
             _WRAP_PROPERTY("fill-pattern", Glib::RefPtr<Graphic::Pattern>)
     };

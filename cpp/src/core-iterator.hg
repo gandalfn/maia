@@ -118,7 +118,7 @@ namespace Maia
 
                 inline T& get () const
                 {
-                    return *(T*)maia_core_iterator_get (gobj ());
+                    return Glib::wrap (maia_core_iterator_get (gobj ()));
                 }
 
                 bool next()

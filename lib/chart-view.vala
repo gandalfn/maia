@@ -103,7 +103,7 @@ public class Maia.ChartView : Group
     {
         // properties
         private unowned ChartView m_ChartView;
-        private uint m_NbChart = 0;
+        private uint m_NbItems = 0;
 
         // methods
         public Legend (string inId, ChartView inView)
@@ -121,7 +121,7 @@ public class Maia.ChartView : Group
             inChart.plug_property ("stroke-pattern", path, "stroke-pattern");
             inChart.plug_property ("line-width", path, "line-width");
             inChart.plug_property ("line-type", path, "line-type");
-            if (m_NbChart == 0)
+            if (m_NbItems == 0)
             {
                 m_ChartView.plug_property ("legend-border", path, "top-padding");
             }
@@ -129,7 +129,7 @@ public class Maia.ChartView : Group
             m_ChartView.plug_property ("legend-border", path, "left-padding");
             m_ChartView.plug_property ("legend-border", path, "right-padding");
             path.size = Graphic.Size (16, 16);
-            path.row = m_NbChart;
+            path.row = m_NbItems;
             path.column = 0;
             path.yfill = false;
             add (path);
@@ -137,19 +137,61 @@ public class Maia.ChartView : Group
             // Create chart legend label
             Label label = new Label (@"legend-$(inChart.name)-label", inChart.title);
             inChart.plug_property ("title", label, "text");
-            if (m_NbChart == 0)
+            if (m_NbItems == 0)
             {
                 m_ChartView.plug_property ("legend-border", label, "top-padding");
             }
             m_ChartView.plug_property ("legend-border", label, "bottom-padding");
             m_ChartView.plug_property ("legend-border", label, "right-padding");
-            label.row = m_NbChart;
+            label.row = m_NbItems;
             label.column = 1;
             label.alignment = Graphic.Glyph.Alignment.LEFT;
             add (label);
 
             // Increment the number of chart
-            m_NbChart++;
+            m_NbItems++;
+        }
+
+        public void
+        add_point (ChartPoint inChartPoint)
+        {
+            if (inChartPoint.title != null)
+            {
+                // Create chartpoint path
+                Path path = new Path (@"legend-$(inChartPoint.chart)-point-$m_NbItems-path", inChartPoint.path);
+                inChartPoint.plug_property ("stroke-pattern", path, "stroke-pattern");
+                inChartPoint.plug_property ("fill-pattern", path, "fill-pattern");
+                inChartPoint.plug_property ("stroke-width", path, "line-width");
+                if (m_NbItems == 0)
+                {
+                    m_ChartView.plug_property ("legend-border", path, "top-padding");
+                }
+                m_ChartView.plug_property ("legend-border", path, "bottom-padding");
+                m_ChartView.plug_property ("legend-border", path, "left-padding");
+                m_ChartView.plug_property ("legend-border", path, "right-padding");
+                path.size = Graphic.Size (16, 16);
+                path.row = m_NbItems;
+                path.column = 0;
+                path.yfill = false;
+                add (path);
+
+                // Create chartpoint legend label
+                Label label = new Label (@"legend-$(inChartPoint.chart)-point-$m_NbItems-path", inChartPoint.title);
+                inChartPoint.plug_property ("title", label, "text");
+                if (m_NbItems == 0)
+                {
+                    m_ChartView.plug_property ("legend-border", label, "top-padding");
+                }
+                m_ChartView.plug_property ("legend-border", label, "bottom-padding");
+                m_ChartView.plug_property ("legend-border", label, "right-padding");
+                label.row = m_NbItems;
+                label.column = 1;
+                label.alignment = Graphic.Glyph.Alignment.LEFT;
+                add (label);
+
+                // Increment the number of chart
+                m_NbItems++;
+            }
         }
     }
 
@@ -500,6 +542,13 @@ public class Maia.ChartView : Group
             {
                 m_Legend.add_chart (chart);
             }
+
+            // Add all chart point in legend
+            Core.List<unowned ChartPoint> points = find_by_type<unowned ChartPoint> (false);
+            foreach (unowned ChartPoint point in points)
+            {
+                m_Legend.add_point (point);
+            }
         }
     }
 
@@ -654,7 +703,7 @@ public class Maia.ChartView : Group
         {
             m_XAxis.clear ();
         }
-        
+
         if (m_YAxis != null)
         {
             m_YAxis.clear ();
@@ -692,6 +741,7 @@ public class Maia.ChartView : Group
         base.insert_child (inObject);
 
         unowned Chart? chart = inObject as Chart;
+        unowned ChartPoint? point = inObject as ChartPoint;
 
         if (chart != null)
         {
@@ -709,12 +759,17 @@ public class Maia.ChartView : Group
                 on_axis_changed ();
             }
         }
+        else if (point != null)
+        {
+            on_legend_changed ();
+        }
     }
 
     internal override void
     remove_child (Core.Object inObject)
     {
         unowned Chart? chart = inObject as Chart;
+        unowned ChartPoint? point = inObject as ChartPoint;
 
         if (chart != null)
         {
@@ -728,7 +783,7 @@ public class Maia.ChartView : Group
 
         base.remove_child (inObject);
 
-        if (chart != null)
+        if (chart != null || point != null)
         {
             on_legend_changed ();
         }
@@ -1094,8 +1149,10 @@ public class Maia.ChartView : Group
                             inContext.dash = point.line_type.to_dash (line_width);
                             inContext.pattern = point.stroke_pattern;
                             inContext.translate (drawing_area.origin);
+                            inContext.line_width = line_width / 2.0;
                             inContext.stroke (path);
                             inContext.dash = Graphic.LineType.CONTINUE.to_dash (line_width);
+                            inContext.line_width = line_width;
                         }
                         inContext.restore ();
                     }
@@ -1111,6 +1168,7 @@ public class Maia.ChartView : Group
                 unowned Drawable drawable = (Drawable)child;
 
                 var area = area_to_child_item_space (drawable, inArea);
+
                 drawable.draw (inContext, area);
             }
         }
@@ -1129,15 +1187,30 @@ public class Maia.ChartView : Group
                     {
                         point_position.transform (chart.path_transform ());
 
-                        var path = new Graphic.Path ();
-                        path.arc (point_position.x, point_position.y, point.width, point.width, 0, 2 * GLib.Math.PI);
+                        var path = new Graphic.Path.from_data (point.path);
+                        var path_area = inContext.get_path_area (path);
+                        double scale_x = point.size.width / path_area.size.width;
+                        double scale_y = point.size.height / path_area.size.height;
+                        path.transform (new Graphic.Transform.init_scale (scale_x, scale_y));
 
                         // paint point position
                         inContext.save ();
                         {
-                            inContext.pattern = point.fill_pattern;
                             inContext.translate (drawing_area.origin);
-                            inContext.fill (path);
+                            inContext.translate (point_position);
+                            inContext.translate (Graphic.Point (-(path_area.size.width * scale_x) / 2.0,
+                                                                -(path_area.size.height * scale_y) / 2.0));
+                            if (point.fill_pattern != null)
+                            {
+                                inContext.pattern = point.fill_pattern;
+                                inContext.fill (path);
+                            }
+                            else if (point.stroke_pattern != null)
+                            {
+                                inContext.line_width = point.stroke_width;
+                                inContext.pattern = point.stroke_pattern;
+                                inContext.stroke (path);
+                            }
                         }
                         inContext.restore ();
                     }

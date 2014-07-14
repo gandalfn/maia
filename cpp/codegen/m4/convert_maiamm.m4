@@ -17,6 +17,11 @@ _CONVERSION(`const Core::Set<Manifest::Style>&',`MaiaCoreSet*',const_cast<MaiaCo
 _CONVERSION(`MaiaCoreSet*',`const Core::Set<Manifest::Style>&',`Maia::Core::Set<Manifest::Style> (MAIA_CORE_SET ($3), true)')
 _CONVERSION(`MaiaCoreSet*',`Core::Set<Manifest::Style>',`Maia::Core::Set<Manifest::Style> (MAIA_CORE_SET ($3), true)')
 
+_CONVERSION(`Core::Map<Glib::ustring, Glib::ustring>',`MaiaCoreMap*', MAIA_CORE_MAP($3.gobj()))
+_CONVERSION(`const Core::Map<Glib::ustring, Glib::ustring>&',`MaiaCoreMap*',const_cast<MaiaCoreMap*> (MAIA_CORE_MAP ($3.gobj())))
+_CONVERSION(`MaiaCoreMap*',`const Core::Map<Glib::ustring, Glib::ustring>&',`Maia::Core::Map<Glib::ustring, Glib::ustring> (MAIA_CORE_MAP ($3), true)')
+_CONVERSION(`MaiaCoreMap*',`Core::Map<Glib::ustring, Glib::ustring>',`Maia::Core::Map<Glib::ustring, Glib::ustring> (MAIA_CORE_MAP ($3), true)')
+
 _CONVERSION(`Glib::RefPtr<Object>',`MaiaCoreObject*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Object>&',`MaiaCoreObject*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaCoreObject*',`const Glib::RefPtr<Object>&',`Glib::wrap($3)')

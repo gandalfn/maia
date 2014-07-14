@@ -28,10 +28,11 @@ namespace Maia
 {
     namespace Core
     {
+        _GMMPROC_EXTRA_NAMESPACE(Core)
+
         class Event;
         class EventArgs;
 
-        _GMMPROC_EXTRA_NAMESPACE(Core)
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
         class EventListenerFunctorBase : public Glib::Object

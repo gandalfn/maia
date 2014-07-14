@@ -89,7 +89,8 @@ namespace Maia
 
                 _WRAP_METHOD(void publish (const Glib::RefPtr<EventArgs>& inpArgs), maia_core_event_publish)
 
-                _IGNORE(maia_core_event_get_owner)
+                _IGNORE(maia_core_event_get_owner, maia_core_event_publish_with_reply, maia_core_event_object_publish_with_reply)
+
                 _WRAP_METHOD(Glib::ustring get_name () const, maia_core_event_get_name)
                 _WRAP_METHOD(Glib::RefPtr<EventBus> get_bus () const, maia_core_event_get_bus, refreturn)
 

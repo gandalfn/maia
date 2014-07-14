@@ -28,7 +28,6 @@ internal class Maia.Gtk.Button : Maia.Button
             return m_IconName;
         }
         set {
-            print (@"icon name: $(value)\n");
             if (m_IconName != value)
             {
                 m_IconName = value;
@@ -37,7 +36,6 @@ internal class Maia.Gtk.Button : Maia.Button
                     var icon_theme = global::Gtk.IconTheme.get_default ();
                     var info = icon_theme.lookup_icon (m_IconName, -1, global::Gtk.IconLookupFlags.FORCE_SVG);
                     icon_filename = info.get_filename ();
-                    print (@"icon filename: $(icon_filename)\n");
                     not_dumpable_attributes.insert ("icon-filename");
                 }
                 else

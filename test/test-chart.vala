@@ -26,7 +26,7 @@ const string manifest = "Window.test {" +
                         "       x-axis-label: 'label x';" +
                         "       x-axis-unit: 'mm';" +
                         "       y-axis-label: 'label y';" +
-                        "       y-axis-label: 'wd';" +
+                        "       y-axis-unit: 'wd';" +
                         "       legend: west;" +
                         "       Chart.chart {" +
                         "           title: 'first\nchart';" +
@@ -51,6 +51,7 @@ const string manifest = "Window.test {" +
                         "       }" +
                         "       ChartPoint.point {" +
                         "           chart: chart;" +
+                        "           title: 'point 1:\nx = 35\ny = 307.5';" +
                         "           position: 35, 307.5;" +
                         "       }" +
                         "       ChartPoint.point2 {" +
