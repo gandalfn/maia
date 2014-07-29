@@ -29,6 +29,9 @@ public class Maia.DrawingArea : Group, ItemPackable
         RESIZING
     }
 
+    // static properties
+    private static GLib.Quark s_QuarkRotateItem;
+
     // properties
     private uint              m_SelectedOldLayer = 0;
     private unowned Item?     m_SelectedItem = null;
@@ -128,6 +131,12 @@ public class Maia.DrawingArea : Group, ItemPackable
     public double        selected_border            { get; set; default = 5.0; }
     public double        selected_border_line_width { get; set; default = 1.0; }
     public Graphic.Color selected_border_color      { get; set; default = new Graphic.Color (0, 0, 0); }
+
+    // static methods
+    static construct
+    {
+        s_QuarkRotateItem = GLib.Quark.from_string ("MaiaDrawingAreaRotateItem");
+    }
 
     // methods
     construct
@@ -404,23 +413,44 @@ public class Maia.DrawingArea : Group, ItemPackable
             // Point under selected item
             if (m_SelectedItem.scroll_event (inScroll, point))
             {
+                int rotate = 0;
+
                 switch (inScroll)
                 {
                     case Scroll.UP:
                     case Scroll.LEFT:
-                        m_SelectedItem.damage ();
-                        m_SelectedItem.transform.rotate (5 * 2 * GLib.Math.PI / 360);
-                        m_SelectedItem.damage ();
+                        rotate = 5;
                         ret = true;
                         break;
 
                     case Scroll.DOWN:
                     case Scroll.RIGHT:
-                        m_SelectedItem.damage ();
-                        m_SelectedItem.transform.rotate (-5 * 2 * GLib.Math.PI / 360);
-                        m_SelectedItem.damage ();
+                        rotate = -5;
                         ret = true;
                         break;
+                }
+                if (ret)
+                {
+                    foreach (unowned Core.Object child in m_SelectedItem.transform)
+                    {
+                        int is_rotate = child.get_qdata<int> (s_QuarkRotateItem);
+                        if (is_rotate != 0)
+                        {
+                            unowned Graphic.Transform? rotate_transform = child as Graphic.Transform;
+                            rotate += rotate_transform.get_qdata<int> (s_QuarkRotateItem);
+                            rotate_transform.parent = null;
+                            break;
+                        }
+                    }
+
+                    rotate %= 360;
+
+                    if (rotate != 0)
+                    {
+                        var t = new Graphic.Transform.init_rotate ((double)rotate * 2.0 * GLib.Math.PI / 360.0);
+                        t.set_qdata<int> (s_QuarkRotateItem, rotate);
+                        m_SelectedItem.transform.add (t);
+                    }
                 }
             }
         }

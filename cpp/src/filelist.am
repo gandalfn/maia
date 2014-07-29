@@ -8,90 +8,91 @@ files_defs = \
 
 files_hg = \
     logger.hg \
-    core-any.hg \
-    core-object.hg \
-    core-iterator.hg \
-    core-collection.hg \
-    core-array.hg \
-    core-set.hg \
-    core-pair.hg \
-    core-map.hg \
-    core-parser.hg \
-    core-timeline.hg \
     core-animator.hg \
-    core-eventargs.hg \
+    core-any.hg \
+    core-array.hg \
+    core-collection.hg \
     core-event-bus.hg \
-    core-event.hg \
     core-event-listener.hg \
-    graphic-matrix.hg \
-    graphic-transform.hg \
-    graphic-point.hg \
-    graphic-size.hg \
-    graphic-range.hg \
-    graphic-rectangle.hg \
-    graphic-region.hg \
-    graphic-pattern.hg \
+    core-event.hg \
+    core-eventargs.hg \
+    core-iterator.hg \
+    core-map.hg \
+    core-object.hg \
+    core-pair.hg \
+    core-parser.hg \
+    core-set.hg \
+    core-timeline.hg \
     graphic-color.hg \
-    graphic-path.hg \
     graphic-context.hg \
-    graphic-glyph.hg \
-    graphic-surface.hg \
     graphic-device.hg \
+    graphic-glyph.hg \
     graphic-gradient.hg \
-    graphic-linear-gradient.hg \
-    graphic-radial-gradient.hg \
-    graphic-mesh-gradient.hg \
     graphic-image.hg \
+    graphic-line.hg \
     graphic-line-type.hg \
-    manifest-attribute.hg \
-    manifest-function.hg \
+    graphic-linear-gradient.hg \
+    graphic-matrix.hg \
+    graphic-mesh-gradient.hg \
+    graphic-path.hg \
+    graphic-pattern.hg \
+    graphic-point.hg \
+    graphic-radial-gradient.hg \
+    graphic-range.hg \
+    graphic-region.hg \
+    graphic-rectangle.hg \
+    graphic-size.hg \
+    graphic-surface.hg \
+    graphic-transform.hg \
     manifest-attribute-bind.hg \
     manifest-attribute-scanner.hg \
+    manifest-attribute.hg \
     manifest-document.hg \
     manifest-element.hg \
+    manifest-function.hg \
     manifest-style.hg \
     manifest-theme.hg \
+    adjustment.hg \
     application.hg \
-    drawable.hg \
-    item.hg \
-    item-packable.hg \
-    item-movable.hg \
-    item-resizable.hg \
-    group.hg \
+    arrow.hg \
     button.hg \
-    toggle.hg \
+    canvas.hg \
+    chart-intersect.hg \
+    chart-point.hg \
+    chart-view.hg \
+    chart.hg \
     checkbutton.hg \
-    document.hg \
+    combo.hg \
     document-view.hg \
-    report.hg \
+    document.hg \
+    drawable.hg \
     drawing-area.hg \
     entry.hg \
     grid.hg \
+    group.hg \
     highlight.hg \
     image.hg \
+    item-movable.hg \
+    item-packable.hg \
+    item-resizable.hg \
+    item.hg \
     label.hg \
-    path.hg \
-    rectangle.hg \
-    togglegroup.hg \
-    toggle-button.hg \
-    popup-button.hg \
     model.hg \
-    view.hg \
-    shortcut.hg \
+    path.hg \
+    popup-button.hg \
     popup.hg \
-    combo.hg \
+    progress-bar.hg \
+    rectangle.hg \
+    report.hg \
+    seek-bar.hg \
+    shortcut.hg \
+    scroll-view.hg \
+    toggle-button.hg \
+    toggle.hg \
+    togglegroup.hg \
     tool.hg \
     toolbox.hg \
-    arrow.hg \
-    canvas.hg \
-    window.hg \
-    adjustment.hg \
-    scroll-view.hg \
-    progress-bar.hg \
-    seek-bar.hg \
-    chart.hg \
-    chart-point.hg \
-    chart-intersect.hg \
-    chart-view.hg
+    view.hg \
+    window.hg
 
 files_ccg = $(files_hg:.hg=.ccg)

@@ -41,6 +41,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_POINT);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_RADIAL_GRADIENT);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_RANGE);
+    std::cout << get_defs (MAIA_GRAPHIC_TYPE_LINE);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_RECTANGLE);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_REGION);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_SIZE);

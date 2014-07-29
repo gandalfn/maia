@@ -22,12 +22,47 @@ public class Maia.Graphic.Transform : Core.Object
     // properties
     private Matrix m_BaseMatrix;
     private Matrix m_FinalMatrix;
+    private Matrix m_BaseInvertMatrix;
+    private Matrix m_FinalInvertMatrix;
     private int    m_Compare = 0;
+    private bool   m_IsRotate = false;
 
     // accessors
     public Matrix matrix {
         get {
             return m_FinalMatrix;
+        }
+    }
+
+    public Matrix matrix_invert {
+        get {
+            return m_FinalInvertMatrix;
+        }
+    }
+
+    public bool is_rotate {
+        get {
+            return m_IsRotate;
+        }
+        set {
+            m_IsRotate = value;
+        }
+    }
+
+    public bool have_rotate {
+        get {
+            bool ret = m_IsRotate;
+
+            if (!ret)
+            {
+                foreach (unowned Core.Object child in this)
+                {
+                    ret |= ((Transform)child).have_rotate;
+                    if (ret) break;
+                }
+            }
+
+            return ret;
         }
     }
 
@@ -188,7 +223,7 @@ public class Maia.Graphic.Transform : Core.Object
             throw new Manifest.Error.MISSING_FUNCTION_ARGUMENT ("Missing argument in %s function", inFunction.to_string ());
         }
 
-        outDest = new Transform (1, 0, 0, 1, translate_x, translate_y);
+        outDest = new Transform.init_translate (translate_x, translate_y);
     }
 
     static void
@@ -219,7 +254,7 @@ public class Maia.Graphic.Transform : Core.Object
             throw new Manifest.Error.MISSING_FUNCTION_ARGUMENT ("Missing argument in %s function", inFunction.to_string ());
         }
 
-        outDest = new Transform (scale_x, 0, 0, scale_y, 0, 0);
+        outDest = new Transform.init_scale (scale_x, scale_y);
     }
 
     static void
@@ -247,9 +282,7 @@ public class Maia.Graphic.Transform : Core.Object
             throw new Manifest.Error.MISSING_FUNCTION_ARGUMENT ("Missing argument in %s function", inFunction.to_string ());
         }
 
-        double s = GLib.Math.sin(rotate);
-        double c = GLib.Math.cos(rotate);
-        outDest = new Transform (c, s, -s, c, 0, 0);
+        outDest = new Transform.init_rotate (rotate);
     }
 
     static void
@@ -293,6 +326,9 @@ public class Maia.Graphic.Transform : Core.Object
     {
         m_BaseMatrix = Matrix (inXx, inXy, inYx, inYy, inX0, inY0);
         m_FinalMatrix = m_BaseMatrix;
+        m_BaseInvertMatrix = m_BaseMatrix.to_invert ();
+        m_FinalInvertMatrix = m_BaseInvertMatrix;
+        m_IsRotate = m_FinalMatrix.xx == m_FinalMatrix.yy && m_FinalMatrix.xy == -m_FinalMatrix.yx && (m_FinalMatrix.xy != 0 || m_FinalMatrix.yx != 0);
     }
 
     /**
@@ -304,6 +340,9 @@ public class Maia.Graphic.Transform : Core.Object
     {
         m_BaseMatrix = inMatrix;
         m_FinalMatrix = m_BaseMatrix;
+        m_BaseInvertMatrix = m_BaseMatrix.to_invert ();
+        m_FinalInvertMatrix = m_BaseInvertMatrix;
+        m_IsRotate = m_FinalMatrix.xx == m_FinalMatrix.yy && m_FinalMatrix.xy == -m_FinalMatrix.yx && (m_FinalMatrix.xy != 0 || m_FinalMatrix.yx != 0);
     }
 
     /**
@@ -313,6 +352,8 @@ public class Maia.Graphic.Transform : Core.Object
     {
         m_BaseMatrix = Matrix.identity ();
         m_FinalMatrix = m_BaseMatrix;
+        m_BaseInvertMatrix = m_BaseMatrix.to_invert ();
+        m_FinalInvertMatrix = m_BaseInvertMatrix;
     }
 
     /**
@@ -325,6 +366,8 @@ public class Maia.Graphic.Transform : Core.Object
     {
         m_BaseMatrix = Matrix (1, 0, 0, 1, inTx, inTy);
         m_FinalMatrix = m_BaseMatrix;
+        m_BaseInvertMatrix = Matrix (1, 0, 0, 1, -inTx, -inTy);
+        m_FinalInvertMatrix = m_BaseInvertMatrix;
     }
 
     /**
@@ -337,6 +380,8 @@ public class Maia.Graphic.Transform : Core.Object
     {
         m_BaseMatrix = Matrix (inSx, 0, 0, inSy, 0, 0);
         m_FinalMatrix = m_BaseMatrix;
+        m_BaseInvertMatrix = Matrix (1 / inSx, 0, 0, 1 / inSy, 0, 0);
+        m_FinalInvertMatrix = m_BaseInvertMatrix;
     }
 
     /**
@@ -350,6 +395,13 @@ public class Maia.Graphic.Transform : Core.Object
         double c = GLib.Math.cos (inRadians);
         m_BaseMatrix = Matrix (c, s, -s, c, 0, 0);
         m_FinalMatrix = m_BaseMatrix;
+
+        double si = GLib.Math.sin (-inRadians);
+        double ci = GLib.Math.cos (-inRadians);
+        m_BaseInvertMatrix = Matrix (ci, si, -si, ci, 0, 0);
+        m_FinalInvertMatrix = m_BaseInvertMatrix;
+
+        m_IsRotate = true;
     }
 
     /**
@@ -361,19 +413,27 @@ public class Maia.Graphic.Transform : Core.Object
      */
     public Transform.invert (Transform inTransform) throws Graphic.Error
     {
-        this.from_matrix (inTransform.matrix);
-        m_BaseMatrix.invert ();
-        m_FinalMatrix = m_BaseMatrix;
+        m_BaseMatrix = inTransform.m_BaseInvertMatrix;
+        m_FinalMatrix = inTransform.m_BaseInvertMatrix;
+        m_BaseInvertMatrix = inTransform.m_BaseMatrix;
+        m_FinalInvertMatrix = inTransform.m_BaseMatrix;
+
+        foreach (unowned Core.Object child in inTransform)
+        {
+            add (new Transform.invert ((Transform)child));
+        }
     }
 
     private void
     recalculate_final_matrix ()
     {
         m_FinalMatrix = m_BaseMatrix;
+        m_FinalInvertMatrix = m_BaseInvertMatrix;
         foreach (unowned Core.Object child in this)
         {
             unowned Transform transform = (Transform)child;
-            m_FinalMatrix.multiply (transform.m_FinalMatrix);
+            m_FinalMatrix.post_multiply (transform.m_FinalMatrix);
+            m_FinalInvertMatrix.multiply (transform.m_FinalInvertMatrix);
         }
     }
 
@@ -449,6 +509,28 @@ public class Maia.Graphic.Transform : Core.Object
     }
 
     /**
+     * Copy transform
+     */
+    public Transform
+    copy ()
+    {
+        Transform ret = new Transform.identity ();
+        ret.m_BaseMatrix = m_BaseMatrix;
+        ret.m_FinalMatrix = m_BaseMatrix;
+        ret.m_BaseInvertMatrix = m_BaseInvertMatrix;
+        ret.m_FinalInvertMatrix = m_BaseInvertMatrix;
+        ret.m_Compare = m_Compare;
+        ret.m_IsRotate = m_IsRotate;
+
+        foreach (unowned Core.Object child in this)
+        {
+            ret.add (((Transform)child).copy ());
+        }
+
+        return ret;
+    }
+
+    /**
      * Reset transform to identity matrix
      */
     public void
@@ -460,6 +542,12 @@ public class Maia.Graphic.Transform : Core.Object
         // init base matrix
         m_BaseMatrix = Matrix.identity ();
 
+        // init invert base matrix
+        m_BaseInvertMatrix = m_BaseMatrix.to_invert ();
+
+        // init rotate
+        m_IsRotate = false;
+
         // recalculate final matrix
         recalculate_final_matrix ();
 
@@ -468,21 +556,14 @@ public class Maia.Graphic.Transform : Core.Object
     }
 
     /**
-     * Multiply a matrix to the transformation.
+     * Apply a matrix to the transformation.
      *
      * @param inMatrix matrix to multiply with transformation
      */
     public void
-    multiply (Matrix inMatrix)
+    apply (Matrix inMatrix)
     {
-        // multiply base matrix
-        m_BaseMatrix.multiply (inMatrix);
-
-        // recalculate final matrix
-        recalculate_final_matrix ();
-
-        // send changed signal
-        changed ();
+        add (new Transform.from_matrix (inMatrix));
     }
 
     /**
@@ -494,15 +575,7 @@ public class Maia.Graphic.Transform : Core.Object
     public void
     translate (double inTx, double inTy)
     {
-        // translate base matrix
-        Matrix matrix = Matrix (1, 0, 0, 1, inTx, inTy);
-        m_BaseMatrix.multiply (matrix);
-
-        // recalculate final matrix
-        recalculate_final_matrix ();
-
-        // send changed signal
-        changed ();
+        add (new Transform.init_translate (inTx, inTy));
     }
 
     /**
@@ -514,15 +587,7 @@ public class Maia.Graphic.Transform : Core.Object
     public void
     scale (double inSx, double inSy)
     {
-        // translate base matrix
-        Matrix matrix = Matrix (inSx, 0, 0, inSy, 0, 0);
-        m_BaseMatrix.multiply (matrix);
-
-        // recalculate final matrix
-        recalculate_final_matrix ();
-
-        // send changed signal
-        changed ();
+        add (new Transform.init_scale (inSx, inSy));
     }
 
     /**
@@ -533,17 +598,7 @@ public class Maia.Graphic.Transform : Core.Object
     public void
     rotate (double inRadians)
     {
-        // translate base matrix
-        double s = GLib.Math.sin (inRadians);
-        double c = GLib.Math.cos (inRadians);
-        Matrix matrix = Matrix (c, s, -s, c, 0, 0);
-        m_BaseMatrix.multiply (matrix);
-
-        // recalculate final matrix
-        recalculate_final_matrix ();
-
-        // send changed signal
-        changed ();
+        add (new Transform.init_rotate (inRadians));
     }
 
     /**
@@ -554,15 +609,7 @@ public class Maia.Graphic.Transform : Core.Object
     public void
     skew_x (double inRadians)
     {
-        // translate base matrix
-        Matrix matrix = Matrix (1, 0, GLib.Math.tan(inRadians), 1, 0, 0);
-        m_BaseMatrix.multiply (matrix);
-
-        // recalculate final matrix
-        recalculate_final_matrix ();
-
-        // send changed signal
-        changed ();
+        add (new Transform (1, 0, GLib.Math.tan(inRadians), 1, 0, 0));
     }
 
     /**
@@ -573,14 +620,39 @@ public class Maia.Graphic.Transform : Core.Object
     public void
     skew_y (double inRadians)
     {
-        // translate base matrix
-        Matrix matrix = Matrix (1, GLib.Math.tan(inRadians), 0, 1, 0, 0);
-        m_BaseMatrix.multiply (matrix);
+        add (new Transform (1, GLib.Math.tan(inRadians), 0, 1, 0, 0));
+    }
 
-        // recalculate final matrix
+    /**
+     * Apply center translate to rotate transform
+     *
+     * @param inCx X center of rotate
+     * @param inCy Y center of rotate
+     */
+    public void
+    apply_center_rotate (double inCx, double inCy)
+    {
+        if (m_IsRotate)
+        {
+            var m = m_BaseMatrix;
+            m_BaseMatrix = Matrix (1, 0, 0, 1, inCx, inCy);
+            m_BaseMatrix.post_multiply (m);
+            m_BaseMatrix.post_multiply (Matrix (1, 0, 0, 1, -inCx, -inCy));
+            m_FinalMatrix = m_BaseMatrix;
+
+            m = m_BaseInvertMatrix;
+            m_BaseInvertMatrix = Matrix (1, 0, 0, 1, -inCx, -inCy);
+            m_BaseInvertMatrix.multiply (m);
+            m_BaseInvertMatrix.multiply (Matrix (1, 0, 0, 1, inCx, inCy));
+            m_FinalInvertMatrix = m_BaseInvertMatrix;
+        }
+        foreach (unowned Core.Object child in this)
+        {
+            ((Transform)child).apply_center_rotate (inCx, inCy);
+        }
+
         recalculate_final_matrix ();
 
-        // send changed signal
         changed ();
     }
 }

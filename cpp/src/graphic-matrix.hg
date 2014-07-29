@@ -41,7 +41,11 @@ namespace Maia
                 Matrix (double inXX, double inYX, double inXY, double inYY, double inX0, double inY0);
                 explicit Matrix(const MaiaGraphicMatrix* gobject);
 
+                bool is_valid () const;
+
                 bool is_identity () const;
+
+                void post_multiply (const Matrix& inMatrix);
 
                 void multiply (const Matrix& inMatrix);
 

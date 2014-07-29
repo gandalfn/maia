@@ -134,100 +134,118 @@ public struct Maia.Graphic.Rectangle
     public void
     transform (Transform inTransform)
     {
-        double x1 = origin.x;
-        double y1 = origin.y;
-        double x2 = x1 + size.width;
-        double y2 = y1 + size.height;
-        Point quad[4];
+        double min_x = double.MAX, min_y = double.MAX, max_x = double.MIN, max_y = double.MIN;
 
-        if (inTransform.matrix.xy == 0 && inTransform.matrix.yx == 0)
+        var lines = get_border_lines ();
+        for (int cpt = 0; cpt < 4; ++cpt)
         {
-            if (inTransform.matrix.xx != 1)
+            lines[cpt].transform (inTransform);
+
+            min_x = double.min (lines[cpt].begin.x, min_x);
+            min_x = double.min (lines[cpt].end.x, min_x);
+            min_y = double.min (lines[cpt].begin.y, min_y);
+            min_y = double.min (lines[cpt].end.y, min_y);
+            max_x = double.max (lines[cpt].begin.x, max_x);
+            max_x = double.max (lines[cpt].end.x, max_x);
+            max_y = double.max (lines[cpt].begin.y, max_y);
+            max_y = double.max (lines[cpt].end.y, max_y);
+        }
+
+        origin.x = min_x;
+        origin.y = min_y;
+        size.width = max_x - min_x;
+        size.height = max_y - min_y;
+    }
+
+    /**
+     * Reverse transform the rectangle by inTransform.
+     *
+     * @param inTransform transform matrix
+     */
+    public void
+    reverse_transform (Transform inTransform)
+    {
+        if (inTransform.have_rotate)
+        {
+            var center = Point (origin.x + (size.width / 2.0), origin.y + (size.height / 2.0));
+            var t = inTransform.copy ();
+            t.apply_center_rotate (center.x, center.y);
+
+            Point quad[4];
+            quad[0] = origin;
+            quad[1] = Point (origin.x + size.width, origin.y);
+            quad[2] = Point (origin.x + size.width, origin.y + size.height);
+            quad[3] = Point (origin.x, origin.y + size.height);
+
+            for (int cpt = 0; cpt < 4; ++cpt)
             {
-                quad[0].x = x1 * inTransform.matrix.xx;
-                quad[1].x = x2 * inTransform.matrix.xx;
-                if (quad[0].x < quad[1].x)
-                {
-                    x1 = quad[0].x;
-                    x2 = quad[1].x;
-                }
-                else
-                {
-                    x1 = quad[1].x;
-                    x2 = quad[0].x;
-                }
-            }
-            if (inTransform.matrix.x0 != 0.0)
-            {
-                x1 += inTransform.matrix.x0;
-                x2 += inTransform.matrix.x0;
+                quad[cpt].transform (new Transform.from_matrix (t.matrix));
             }
 
-            if (inTransform.matrix.yy != 1)
+            var top = Line (origin.x, origin.y, origin.x + size.width, origin.y);
+            var bottom = Line (origin.x, origin.y + size.height, origin.x + size.width, origin.y + size.height);
+            var left = Line (origin.x, origin.y, origin.x, origin.y + size.height);
+            var right = Line (origin.x + size.width, origin.y, origin.x + size.width, origin.y + size.height);
+
+            Line line[4];
+            for (int cpt = 0; cpt < 4; ++cpt)
             {
-                quad[0].y = y1 * inTransform.matrix.yy;
-                quad[1].y = y2 * inTransform.matrix.yy;
-                if (quad[0].y < quad[1].y)
-                {
-                    y1 = quad[0].y;
-                    y2 = quad[1].y;
-                }
-                else
-                {
-                    y1 = quad[1].y;
-                    y2 = quad[0].y;
-                }
+                line[cpt] = Line (center.x, center.y, quad[cpt].x, quad[cpt].y);
             }
-            if (inTransform.matrix.y0 != 0)
+
+            Point final[4];
+            if (line[0].intersect (top, out final[0]))
             {
-                y1 += inTransform.matrix.y0;
-                y2 += inTransform.matrix.y0;
+                line[1].intersect (right,  out final[1]);
+                line[2].intersect (bottom, out final[2]);
+                line[3].intersect (left,   out final[3]);
             }
+            else if (line[0].intersect (left, out final[0]))
+            {
+                line[1].intersect (top,    out final[1]);
+                line[2].intersect (right,  out final[2]);
+                line[3].intersect (bottom, out final[3]);
+            }
+            else if (line[0].intersect (bottom, out final[0]))
+            {
+                line[1].intersect (left,  out final[1]);
+                line[2].intersect (top,   out final[2]);
+                line[3].intersect (right, out final[3]);
+            }
+            else if (line[0].intersect (right, out final[0]))
+            {
+                line[1].intersect (bottom, out final[1]);
+                line[2].intersect (left,   out final[2]);
+                line[3].intersect (top,    out final[3]);
+            }
+
+            double min_x = final[0].x, max_x = final[0].x;
+            double min_y = final[0].y, max_y = final[0].x;
+
+            for (int cpt = 1; cpt < 4; ++cpt)
+            {
+                if (final[cpt].x < min_x)
+                    min_x = final[cpt].x;
+                if (final[cpt].x > max_x)
+                    max_x = final[cpt].x;
+
+                if (final[cpt].y < min_y)
+                    min_y = final[cpt].y;
+                if (final[cpt].y > max_y)
+                    max_y = final[cpt].y;
+            }
+
+            origin.x = min_x;
+            origin.y = min_y;
+            size.width = max_x - min_x;
+            size.height = max_y - min_y;
+
+            transform (new Transform.from_matrix (t.matrix_invert));
         }
         else
         {
-            quad[0].x = x1;
-            quad[0].y = y1;
-            quad[0].transform (inTransform);
-
-            quad[1].x = x2;
-            quad[1].y = y1;
-            quad[1].transform (inTransform);
-
-            quad[2].x = x1;
-            quad[2].y = y2;
-            quad[2].transform (inTransform);
-
-            quad[3].x = x2;
-            quad[3].y = y2;
-            quad[3].transform (inTransform);
-
-            double min_x = quad[0].x, max_x = quad[0].x;
-            double min_y = quad[0].y, max_y = quad[0].x;
-
-            for (int i = 1; i < 4; i++)
-            {
-                if (quad[i].x < min_x)
-                    min_x = quad[i].x;
-                if (quad[i].x > max_x)
-                    max_x = quad[i].x;
-
-                if (quad[i].y < min_y)
-                    min_y = quad[i].y;
-                if (quad[i].y > max_y)
-                    max_y = quad[i].y;
-            }
-
-            x1 = min_x;
-            y1 = min_y;
-            x2 = max_x;
-            y2 = max_y;
+            transform (new Transform.from_matrix (inTransform.matrix_invert));
         }
-
-        origin.x = x1;
-        origin.y = y1;
-        size.width = x2 - x1;
-        size.height = y2 - y1;
     }
 
     /**
@@ -270,6 +288,24 @@ public struct Maia.Graphic.Rectangle
         origin.y = ay1;
         size.width = ax2 - ax1;
         size.height = ay2 - ay1;
+    }
+
+    /**
+     * Get border lines which compose rectangle
+     *
+     * @return array of lines which compose rectangle
+     */
+    public Line[]
+    get_border_lines ()
+    {
+        Line[] ret = {};
+
+        ret += Line (origin.x, origin.y, origin.x + size.width, origin.y);
+        ret += Line (origin.x + size.width, origin.y, origin.x + size.width, origin.y + size.height);
+        ret += Line (origin.x + size.width, origin.y + size.height, origin.x, origin.y + size.height);
+        ret += Line (origin.x, origin.y + size.height, origin.x, origin.y);
+
+        return ret;
     }
 
 

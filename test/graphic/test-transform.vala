@@ -166,16 +166,9 @@ public class Maia.TestTransform : Maia.TestCase
         assert (m_Transform.matrix.y0 == matrix.y0);
 
         matrix.invert ();
-        var m = m_Transform.matrix;
-        try
-        {
-            m.invert ();
-        }
-        catch (Graphic.Error err)
-        {
-            Test.message (err.message);
-            assert (false);
-        }
+
+        var m = m_Transform.matrix_invert;
+        assert (m.is_valid ());
 
         assert (m.xx == matrix.xx);
         assert (m.yx == matrix.yx);

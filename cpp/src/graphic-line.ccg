@@ -1,0 +1,97 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * graphic-line.ccg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+
+namespace Maia
+{
+    namespace Graphic
+    {
+        Line::Line (double inBeginX, double inBeginY, double inEndX, double inEndY)
+        {
+            maia_graphic_line_init (&gobject_, inBeginX, inBeginY, inEndX, inEndY);
+        }
+
+        Line Line::copy ()
+        {
+            MaiaGraphicLine line;
+            maia_graphic_line_copy (&gobject_, &line);
+            return Line (line.begin.x, line.begin.y, line.end.x, line.end.y);
+        }
+
+        Point Line::center ()
+        {
+            Point point (0, 0);
+            maia_graphic_line_center (&gobject_, point.gobj());
+            return point;
+        }
+
+        double Line::length ()
+        {
+            return maia_graphic_line_length (&gobject_);
+        }
+
+        bool Line::intersect (const Line& inLine)
+        {
+            return maia_graphic_line_intersect (&gobject_, const_cast<MaiaGraphicLine*>(&inLine.gobject_), nullptr);
+        }
+
+        bool Line::intersect (const Line& inLine, Point& outPoint)
+        {
+            MaiaGraphicPoint* p = nullptr;
+            bool ret = maia_graphic_line_intersect (&gobject_, const_cast<MaiaGraphicLine*>(&inLine.gobject_), &p);
+            if (p)
+            {
+                outPoint = Point (p->x, p->y);
+            }
+            return ret;
+        }
+
+        void Line::transform (const Glib::RefPtr<Transform>& inTransform)
+        {
+            maia_graphic_line_transform (&gobject_, const_cast<MaiaGraphicTransform*>(inTransform->gobj ()));
+        }
+
+        Glib::ustring Line::to_string ()
+        {
+            Glib::ustring ret (maia_graphic_line_to_string (&gobject_));
+            return ret;
+        }
+
+        Point& Line::get_begin() const
+        {
+            return *reinterpret_cast<Maia::Graphic::Point*>(&const_cast <MaiaGraphicLine*> (gobj())->begin);
+        }
+ 
+        void Line::set_begin(const Point& value)
+        {
+            gobj()->begin = *value.gobj ();
+        }
+ 
+        Point& Line::get_end() const
+        {
+            return *reinterpret_cast<Maia::Graphic::Point*>(&const_cast <MaiaGraphicLine*> (gobj())->end);
+        }
+ 
+        void Line::set_end(const Point& value)
+        {
+            gobj()->end = *value.gobj ();
+        }
+    }
+}

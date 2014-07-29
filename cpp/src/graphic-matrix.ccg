@@ -49,9 +49,19 @@ namespace Maia
                 ::Glib::Error::throw_exception(gerror);
         }
 
+        bool Matrix::is_valid () const
+        {
+            return maia_graphic_matrix_is_valid (const_cast<MaiaGraphicMatrix*>(&gobject_));
+        }
+
         bool Matrix::is_identity () const
         {
             return maia_graphic_matrix_is_identity (const_cast<MaiaGraphicMatrix*>(&gobject_));
+        }
+
+        void Matrix::post_multiply (const Matrix& inMatrix)
+        {
+            maia_graphic_matrix_post_multiply (&gobject_, const_cast<MaiaGraphicMatrix*>(&inMatrix.gobject_));
         }
 
         void Matrix::multiply (const Matrix& inMatrix)

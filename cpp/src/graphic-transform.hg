@@ -77,6 +77,22 @@ namespace Maia
                     return Matrix (&matrix);
                 }
 
+                _IGNORE(maia_graphic_transform_get_matrix_invert)
+                Matrix get_matrix_invert () const
+                {
+                    MaiaGraphicMatrix matrix;
+                    maia_graphic_transform_get_matrix_invert (MAIA_GRAPHIC_TRANSFORM (gobject_), &matrix);
+
+                    return Matrix (&matrix);
+                }
+
+                _WRAP_METHOD(Glib::RefPtr<Transform> copy () const, maia_graphic_transform_copy)
+
+                _WRAP_METHOD(bool have_rotate () const, maia_graphic_transform_get_have_rotate)
+
+                _WRAP_METHOD(bool is_rotate () const, maia_graphic_transform_get_is_rotate)
+                _WRAP_METHOD(void set_is_rotate (bool inIsRotate = true) const, maia_graphic_transform_set_is_rotate)
+
                 _WRAP_METHOD(void append (const Glib::RefPtr<Transform>& inTransform), maia_graphic_transform_append)
                 _WRAP_METHOD(void prepend (const Glib::RefPtr<Transform>& inTransform), maia_graphic_transform_prepend)
 
@@ -85,11 +101,15 @@ namespace Maia
                 _WRAP_METHOD(void rotate (double inRadians), maia_graphic_transform_rotate)
                 _WRAP_METHOD(void skew_x (double inRadians), maia_graphic_transform_skew_x)
                 _WRAP_METHOD(void skew_y (double inRadians), maia_graphic_transform_skew_y)
-                _WRAP_METHOD(void multiply (const Matrix& inMatrix), maia_graphic_transform_multiply)
+                _WRAP_METHOD(void apply (const Matrix& inMatrix), maia_graphic_transform_apply)
+                _WRAP_METHOD(void apply_center_rotate (double inCx, double inCy), maia_graphic_transform_apply_center_rotate)
 
                 _IGNORE(maia_graphic_transform_changed)
 
                 _WRAP_SIGNAL(void changed(), "changed", no_default_handler)
+
+                _WRAP_PROPERTY("is-rotate", bool)
+                _WRAP_PROPERTY("have-rotate", bool)
         };
     }
 }

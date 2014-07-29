@@ -97,6 +97,12 @@ public struct Maia.Graphic.Matrix
     }
 
     public bool
+    is_valid ()
+    {
+        return xx != 0 && yy != 0;
+    }
+
+    public bool
     is_identity ()
     {
         return xx == 1 && yx == 0 && yy == 1 && xy == 0 && x0 == 0 && y0 == 0;
@@ -143,8 +149,24 @@ public struct Maia.Graphic.Matrix
         }
     }
 
+    public Matrix
+    to_invert ()
+    {
+        Matrix ret = this;
+        try
+        {
+            ret.invert ();
+        }
+        catch (GLib.Error err)
+        {
+            ret = Matrix (0, 0, 0, 0, 0, 0);
+        }
+
+        return ret;
+    }
+
     public void
-    multiply (Matrix inMatrix)
+    post_multiply (Matrix inMatrix)
     {
         Matrix m = Matrix.identity ();
 
@@ -156,6 +178,28 @@ public struct Maia.Graphic.Matrix
 
         m.x0 = inMatrix.x0 * xx + inMatrix.y0 * xy + x0;
         m.y0 = inMatrix.x0 * yx + inMatrix.y0 * yy + y0;
+
+        xx = m.xx;
+        yx = m.yx;
+        xy = m.xy;
+        yy = m.yy;
+        x0 = m.x0;
+        y0 = m.y0;
+    }
+
+    public void
+    multiply (Matrix inMatrix)
+    {
+        Matrix m = Matrix.identity ();
+
+        m.xx = xx * inMatrix.xx + yx * inMatrix.xy;
+        m.yx = xx * inMatrix.yx + yx * inMatrix.yy;
+
+        m.xy = xy * inMatrix.xx + yy * inMatrix.xy;
+        m.yy = xy * inMatrix.yx + yy * inMatrix.yy;
+
+        m.x0 = x0 * inMatrix.xx + y0 * inMatrix.xy + inMatrix.x0;
+        m.y0 = x0 * inMatrix.yx + y0 * inMatrix.yy + inMatrix.y0;
 
         xx = m.xx;
         yx = m.yx;

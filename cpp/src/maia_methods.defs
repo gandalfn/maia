@@ -7932,6 +7932,12 @@
   (return-type "none")
 )
 
+(define-method is_valid
+  (of-object "MaiaGraphicMatrix")
+  (c-name "maia_graphic_matrix_is_valid")
+  (return-type "gboolean")
+)
+
 (define-method is_identity
   (of-object "MaiaGraphicMatrix")
   (c-name "maia_graphic_matrix_is_identity")
@@ -7949,6 +7955,24 @@
   (return-type "none")
   (parameters
     '("GError**" "error")
+  )
+)
+
+(define-method to_invert
+  (of-object "MaiaGraphicMatrix")
+  (c-name "maia_graphic_matrix_to_invert")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicMatrix*" "result")
+  )
+)
+
+(define-method post_multiply
+  (of-object "MaiaGraphicMatrix")
+  (c-name "maia_graphic_matrix_post_multiply")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicMatrix*" "inMatrix")
   )
 )
 
@@ -8122,15 +8146,21 @@
   )
 )
 
+(define-method copy
+  (of-object "MaiaGraphicTransform")
+  (c-name "maia_graphic_transform_copy")
+  (return-type "MaiaGraphicTransform*")
+)
+
 (define-method init
   (of-object "MaiaGraphicTransform")
   (c-name "maia_graphic_transform_init")
   (return-type "none")
 )
 
-(define-method multiply
+(define-method apply
   (of-object "MaiaGraphicTransform")
-  (c-name "maia_graphic_transform_multiply")
+  (c-name "maia_graphic_transform_apply")
   (return-type "none")
   (parameters
     '("MaiaGraphicMatrix*" "inMatrix")
@@ -8184,6 +8214,16 @@
   )
 )
 
+(define-method apply_center_rotate
+  (of-object "MaiaGraphicTransform")
+  (c-name "maia_graphic_transform_apply_center_rotate")
+  (return-type "none")
+  (parameters
+    '("gdouble" "inCx")
+    '("gdouble" "inCy")
+  )
+)
+
 (define-method get_matrix
   (of-object "MaiaGraphicTransform")
   (c-name "maia_graphic_transform_get_matrix")
@@ -8191,6 +8231,36 @@
   (parameters
     '("MaiaGraphicMatrix*" "result")
   )
+)
+
+(define-method get_matrix_invert
+  (of-object "MaiaGraphicTransform")
+  (c-name "maia_graphic_transform_get_matrix_invert")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicMatrix*" "result")
+  )
+)
+
+(define-method get_is_rotate
+  (of-object "MaiaGraphicTransform")
+  (c-name "maia_graphic_transform_get_is_rotate")
+  (return-type "gboolean")
+)
+
+(define-method set_is_rotate
+  (of-object "MaiaGraphicTransform")
+  (c-name "maia_graphic_transform_set_is_rotate")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
+(define-method get_have_rotate
+  (of-object "MaiaGraphicTransform")
+  (c-name "maia_graphic_transform_get_have_rotate")
+  (return-type "gboolean")
 )
 
 (define-function maia_graphic_point_get_type
@@ -8504,12 +8574,47 @@
   )
 )
 
+(define-method reverse_transform
+  (of-object "MaiaGraphicRectangle")
+  (c-name "maia_graphic_rectangle_reverse_transform")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicTransform*" "inTransform")
+  )
+)
+
 (define-method clamp
   (of-object "MaiaGraphicRectangle")
   (c-name "maia_graphic_rectangle_clamp")
   (return-type "none")
   (parameters
     '("MaiaGraphicRectangle*" "inRectangle")
+  )
+)
+
+(define-function maia_graphic_line_get_type
+  (c-name "maia_graphic_line_get_type")
+  (return-type "GType")
+)
+
+(define-method dup
+  (of-object "MaiaGraphicLine")
+  (c-name "maia_graphic_line_dup")
+  (return-type "MaiaGraphicLine*")
+)
+
+(define-method free
+  (of-object "MaiaGraphicLine")
+  (c-name "maia_graphic_line_free")
+  (return-type "none")
+)
+
+(define-method get_border_lines
+  (of-object "MaiaGraphicRectangle")
+  (c-name "maia_graphic_rectangle_get_border_lines")
+  (return-type "MaiaGraphicLine*")
+  (parameters
+    '("int*" "result_length1")
   )
 )
 
@@ -8974,6 +9079,67 @@
   (parameters
     '("MaiaGraphicColor*" "value")
   )
+)
+
+(define-method init
+  (of-object "MaiaGraphicLine")
+  (c-name "maia_graphic_line_init")
+  (return-type "none")
+  (parameters
+    '("gdouble" "inBeginX")
+    '("gdouble" "inBeginY")
+    '("gdouble" "inEndX")
+    '("gdouble" "inEndY")
+  )
+)
+
+(define-method copy
+  (of-object "MaiaGraphicLine")
+  (c-name "maia_graphic_line_copy")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicLine*" "result")
+  )
+)
+
+(define-method center
+  (of-object "MaiaGraphicLine")
+  (c-name "maia_graphic_line_center")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "result")
+  )
+)
+
+(define-method length
+  (of-object "MaiaGraphicLine")
+  (c-name "maia_graphic_line_length")
+  (return-type "gdouble")
+)
+
+(define-method intersect
+  (of-object "MaiaGraphicLine")
+  (c-name "maia_graphic_line_intersect")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaGraphicLine*" "inLine")
+    '("MaiaGraphicPoint**" "outIntersect")
+  )
+)
+
+(define-method transform
+  (of-object "MaiaGraphicLine")
+  (c-name "maia_graphic_line_transform")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicTransform*" "inTransform")
+  )
+)
+
+(define-method to_string
+  (of-object "MaiaGraphicLine")
+  (c-name "maia_graphic_line_to_string")
+  (return-type "gchar*")
 )
 
 (define-function maia_graphic_linear_gradient_get_type

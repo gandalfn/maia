@@ -580,9 +580,7 @@ public class Maia.Document : Item
         var point_transform = new Graphic.Transform.identity ();
         point_transform.translate (offset.x, offset.y);
 
-        var matrix = transform.matrix;
-        matrix.invert ();
-        var transform_invert = new Graphic.Transform.from_matrix (matrix);
+        var transform_invert = new Graphic.Transform.invert (transform);
         point_transform.add (transform_invert);
 
         point.transform (point_transform);

@@ -791,16 +791,16 @@ public class Maia.Window : Group
                     ctx.transform = device_transform;
 
                     // Apply the window transform
-                    if (transform.matrix.xy != 0 || transform.matrix.yx != 0)
+                    if (transform.have_rotate)
                     {
-                        var center = Graphic.Point(geometry.extents.size.width / 2.0, geometry.extents.size.height / 2.0);
-
-                        ctx.translate (center);
-                        ctx.transform = transform;
-                        ctx.translate (center.invert ());
+                        var t = transform.copy ();
+                        t.apply_center_rotate (geometry.extents.size.width / 2.0, geometry.extents.size.height / 2.0);
+                        ctx.transform = t;
                     }
                     else
+                    {
                         ctx.transform = transform;
+                    }
 
                     // Clear area
                     ctx.operator = Graphic.Operator.SOURCE;

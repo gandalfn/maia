@@ -108,7 +108,7 @@ DocumentView.scrollview {
 		    column-spacing: 5;
 		    grid-line-width: 1;
 		    stroke-pattern: #000000;
-
+		    
 		    // Left title
 		    Label.left_title {
 		        row: 0;
@@ -117,7 +117,7 @@ DocumentView.scrollview {
 		        xshrink: false;
 		        yshrink: false;
 		        background-pattern: #C0C0C0;
-		        transform: rotate(pi/2);
+		        transform: rotate(-pi/2);
 		        stroke-pattern: #000000;
 		        font-description: "Liberation Sans 17";
 		        text: "Vascular";
@@ -221,11 +221,11 @@ DocumentView.scrollview {
 		            	start: 100, 100;
 		            }
 
-		            //Image.image_draw {
-		            //    position: 300, 200;
-		            //    size: 150, 200;
-		            //    filename: '/usr/share/icons/SSIIcons/scalable/worksheet/meuh.svg';
-		            //}
+		            Image.image_draw {
+		                position: 300, 200;
+		                size: 100, 120;
+		                filename: '/usr/share/icons/Tango/scalable/apps/calc.svg';
+		            }
 
 		            Rectangle.rectangle_draw {
 		                position: 200, 400;

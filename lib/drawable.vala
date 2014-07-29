@@ -25,37 +25,18 @@ public interface Maia.Drawable : GLib.Object
     [CCode (notify = false)]
     public abstract Graphic.Region    damaged   { get; set; default = null; }
     public abstract Graphic.Transform transform { get; set; default = new Graphic.Transform.identity (); }
-    public Graphic.Region? area {
+    public virtual Graphic.Region? area {
         owned get {
             Graphic.Region ret = null;
 
             if (geometry != null)
             {
-                ret = geometry.copy ();
-                try
-                {
-                    ret.translate (geometry.extents.origin.invert ());
-
-                    var matrix = transform.matrix;
-                    matrix.invert ();
-                    var invert_transform = new Graphic.Transform.from_matrix (matrix);
-
-                    if (transform.matrix.xy != 0 || transform.matrix.yx != 0)
-                    {
-                        var center = Graphic.Point(geometry.extents.size.width / 2.0, geometry.extents.size.height / 2.0);
-
-                        ret.translate (center.invert ());
-                        ret.transform (invert_transform);
-                        ret.translate (center);
-                    }
-                    else
-                        ret.transform (invert_transform);
-                }
-                catch (Graphic.Error err)
-                {
-                    Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Error on get child area: %s", err.message);
-                    ret = null;
-                }
+                var ext = geometry.extents;
+                ext.reverse_transform (transform);
+                ext.translate (ext.origin.invert ());
+                ext.transform (new Graphic.Transform.init_scale ((ext.size.width / ext.size.height) / (geometry.extents.size.width / geometry.extents.size.height),
+                                                                 (ext.size.height / ext.size.width) / (geometry.extents.size.height / geometry.extents.size.width)));
+                ret = new Graphic.Region (ext);
             }
 
             return ret;
@@ -243,24 +224,20 @@ public interface Maia.Drawable : GLib.Object
 
         if (inChild.geometry != null)
         {
+            point.translate (inChild.geometry.extents.origin.invert ());
+
             try
             {
-                point.translate (inChild.geometry.extents.origin.invert ());
-
-                var matrix = inChild.transform.matrix;
-                matrix.invert ();
-                var child_transform = new Graphic.Transform.from_matrix (matrix);
-
-                if (child_transform.matrix.xy != 0 || child_transform.matrix.yx != 0)
+                if (inChild.transform.have_rotate)
                 {
-                    var center = Graphic.Point(inChild.geometry.extents.size.width / 2.0, inChild.geometry.extents.size.height / 2.0);
-
-                    point.translate (center);
-                    point.transform (child_transform);
-                    point.translate (center.invert ());
+                    var t = inChild.transform.copy ();
+                    t.apply_center_rotate (inChild.geometry.extents.size.width / 2.0, inChild.geometry.extents.size.height / 2.0);
+                    point.transform (new Graphic.Transform.invert (t));
                 }
                 else
-                    point.transform (child_transform);
+                {
+                    point.transform (new Graphic.Transform.invert (inChild.transform));
+                }
             }
             catch (Graphic.Error err)
             {
@@ -299,24 +276,20 @@ public interface Maia.Drawable : GLib.Object
 
             child_area.intersect (inChild.geometry);
 
+            child_area.translate (inChild.geometry.extents.origin.invert ());
+
             try
             {
-                child_area.translate (inChild.geometry.extents.origin.invert ());
-
-                var matrix = inChild.transform.matrix;
-                matrix.invert ();
-                var child_transform = new Graphic.Transform.from_matrix (matrix);
-
-                if (child_transform.matrix.xy != 0 || child_transform.matrix.yx != 0)
+                if (inChild.transform.have_rotate)
                 {
-                    var center = Graphic.Point(inChild.geometry.extents.size.width / 2.0, inChild.geometry.extents.size.height / 2.0);
-
-                    child_area.translate (center);
-                    child_area.transform (child_transform);
-                    child_area.translate (center.invert ());
+                    var t = inChild.transform.copy ();
+                    t.apply_center_rotate (inChild.geometry.extents.size.width / 2.0, inChild.geometry.extents.size.height / 2.0);
+                    child_area.transform (new Graphic.Transform.invert (t));
                 }
                 else
-                    child_area.transform (child_transform);
+                {
+                    child_area.transform (new Graphic.Transform.invert (inChild.transform));
+                }
             }
             catch (Graphic.Error err)
             {
@@ -342,13 +315,11 @@ public interface Maia.Drawable : GLib.Object
         Graphic.Point point = inPoint;
         if (geometry != null)
         {
-            if (transform.matrix.xy != 0 || transform.matrix.yx != 0)
+            if (transform.have_rotate)
             {
-                var center = Graphic.Point(geometry.extents.size.width / 2.0, geometry.extents.size.height / 2.0);
-
-                point.translate (center);
-                point.transform (transform);
-                point.translate (center.invert ());
+                var t = transform.copy ();
+                t.apply_center_rotate (geometry.extents.size.width / 2.0, geometry.extents.size.height / 2.0);
+                point.transform (t);
             }
             else
             {
@@ -376,13 +347,11 @@ public interface Maia.Drawable : GLib.Object
 
         if (geometry != null)
         {
-            if (transform.matrix.xy != 0 || transform.matrix.yx != 0)
+            if (transform.have_rotate)
             {
-                var center = Graphic.Point(geometry.extents.size.width / 2.0, geometry.extents.size.height / 2.0);
-
-                area.translate (center);
-                area.transform (transform);
-                area.translate (center.invert ());
+                var t = transform.copy ();
+                t.apply_center_rotate (geometry.extents.size.width / 2.0, geometry.extents.size.height / 2.0);
+                area.transform (t);
             }
             else
             {
