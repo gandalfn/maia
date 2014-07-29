@@ -170,12 +170,12 @@ public class Maia.TestTransform : Maia.TestCase
         var m = m_Transform.matrix_invert;
         assert (m.is_valid ());
 
-        assert (m.xx == matrix.xx);
-        assert (m.yx == matrix.yx);
-        assert (m.xy == matrix.xy);
-        assert (m.yy == matrix.yy);
-        assert (m.x0 == matrix.x0);
-        assert (m.y0 == matrix.y0);
+        assert (m.xx >= matrix.xx - 0.001 && m.xx <= matrix.xx + 0.001);
+        assert (m.yx >= matrix.yx - 0.001 && m.yx <= matrix.yx + 0.001);
+        assert (m.xy >= matrix.xy - 0.001 && m.xy <= matrix.xy + 0.001);
+        assert (m.yy >= matrix.yy - 0.001 && m.yy <= matrix.yy + 0.001);
+        assert (m.x0 >= matrix.x0 - 0.001 && m.x0 <= matrix.x0 + 0.001);
+        assert (m.y0 >= matrix.y0 - 0.001 && m.y0 <= matrix.y0 + 0.001);
     }
 
     public void

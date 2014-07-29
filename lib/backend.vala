@@ -81,7 +81,23 @@ internal class Maia.Backends : Maia.Core.ExtensionLoader<Maia.Backend>
     // methods
     public Backends ()
     {
-        base ("backend", { global::Config.MAIA_BACKEND_PATH });
+        string[] paths = {}; 
+
+        string? backend_paths = GLib.Environment.get_variable("MAIA_BACKEND_PATH");
+        if (backend_paths != null)
+        {
+            string[] bp = backend_paths.split(":");
+            foreach (unowned string p in bp)
+            {
+                paths += p;
+            }
+        }
+        else
+        {
+            paths += global::Config.MAIA_BACKEND_PATH;
+        }
+
+        base ("backend", paths);
     }
 
     public void

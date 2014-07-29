@@ -59,16 +59,32 @@ public class Maia.Core.Extension : Object
 
                 // Get plugin module filename
                 module_filename = m_Config.get_string ("Extension", "Module");
-
+                
                 // Module is relative to config file
                 if (GLib.Path.get_dirname (module_filename) == ".")
                 {
-                    module_filename = GLib.Module.build_path (GLib.Path.get_dirname (value), module_filename);
+                    var tmp = GLib.Module.build_path (GLib.Path.get_dirname (value), module_filename);
+                    if (!GLib.FileUtils.test (tmp, FileTest.EXISTS))
+                    {
+                        tmp = GLib.Module.build_path (GLib.Path.get_dirname (value) + "/.libs", module_filename);
+                        if (!GLib.FileUtils.test (tmp, FileTest.EXISTS))
+                        {
+                            Log.error ("Extension.configuration_filename.set", Log.Category.CORE_EXTENSION, @"Error does not found $module_filename module in $(GLib.Path.get_dirname (value))");
+                        }
+                        else
+                        {
+                            module_filename = tmp;
+                        }
+                    }
+                    else
+                    {
+                        module_filename = tmp;
+                    }
                 }
             }
             catch (ConfigError err)
             {
-                Log.error ("Extension.configuration_filename.set", Log.Category.CORE_EXTENSION, "Error on open %s: %s", value, err.message);
+                Log.error ("Extension.configuration_filename.set", Log.Category.CORE_EXTENSION, @"Error on open $value: $(err.message)");
             }
         }
     }
@@ -101,6 +117,7 @@ public class Maia.Core.Extension : Object
      */
     public Extension (string inFilename)
     {
+        print(@"extension: $inFilename\n");
         GLib.Object (configuration_filename: inFilename);
     }
 
