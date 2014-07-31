@@ -131,6 +131,7 @@ namespace Maia
             _WRAP_METHOD(void convert_to_item_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_item_space)
             _WRAP_METHOD(void convert_to_root_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_root_space)
             _WRAP_METHOD(void convert_to_window_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_window_space)
+            _WRAP_METHOD(void convert_from_window_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_from_window_space)
 
             sigc::connection connect_root_changed (SlotRootChanged inSlot);
 

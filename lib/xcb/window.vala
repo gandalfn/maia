@@ -601,22 +601,6 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     }
 
     internal override void
-    on_grab_focus (Item? inItem)
-    {
-        base.on_grab_focus (inItem);
-
-        // an item has focus set window has keyboard focus
-        if (inItem != null)
-        {
-            m_Window.set_input_focus (connection, global::Xcb.InputFocus.PARENT, global::Xcb.CURRENT_TIME);
-        }
-        else
-        {
-            ((global::Xcb.Window)global::Xcb.NONE).set_input_focus (connection, global::Xcb.InputFocus.PARENT, global::Xcb.CURRENT_TIME);
-        }
-    }
-
-    internal override void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
         if (!inAllocation.extents.is_empty () && visible && (geometry == null || !geometry.equal (inAllocation)))

@@ -13420,6 +13420,16 @@
   )
 )
 
+(define-method convert_from_window_space
+  (of-object "MaiaItem")
+  (c-name "maia_item_convert_from_window_space")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "inPoint")
+    '("MaiaGraphicPoint*" "result")
+  )
+)
+
 (define-function maia_item_construct
   (c-name "maia_item_construct")
   (return-type "MaiaItem*")

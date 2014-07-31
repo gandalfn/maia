@@ -20,6 +20,8 @@
 internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
 {
     // properties
+    private unowned global::Gtk.Widget? m_Toplevel = null;
+    private bool m_HaveFocus = false;
     private Window m_WindowGate = null;
     private Window m_Window = null;
     private Item m_Root = null;
@@ -55,9 +57,6 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
     {
         set_has_window (true);
         can_focus = true;
-        has_focus = true;
-
-        notify["is-focus"].connect (on_focus_changed);
     }
 
     public Canvas ()
@@ -84,7 +83,7 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
         xkey.same_screen = true;
 
         Gdk.error_trap_push ();
-        Gdk.x11_display_get_xdisplay(inWindow.get_display ()).send_event (Gdk.x11_drawable_get_xid (inWindow), false, X.EventMask.NoEventMask, ref evt);
+        Gdk.x11_display_get_xdisplay(inWindow.get_display ()).send_event (Gdk.x11_drawable_get_xid (inWindow), true, X.EventMask.KeyPressMask | X.EventMask.KeyReleaseMask, ref evt);
         inWindow.get_display ().sync ();
         Gdk.error_trap_pop ();
     }
@@ -107,7 +106,36 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
         if (!is_focus)
         {
             m_Window.grab_focus (null);
+            m_HaveFocus = false;
         }
+    }
+
+    private bool
+    on_key_press_event (Gdk.EventKey inEvent)
+    {
+        if (m_Window != null && m_HaveFocus)
+        {
+            uint32 xid;
+            m_Window.get ("xid", out xid);
+
+            send_keyboard_event (Gdk.Window.foreign_new ((Gdk.NativeWindow)xid), inEvent);
+        }
+
+        return false;
+    }
+
+    private bool
+    on_key_release_event (Gdk.EventKey inEvent)
+    {
+        if (m_Window != null && m_HaveFocus)
+        {
+            uint32 xid;
+            m_Window.get ("xid", out xid);
+
+            send_keyboard_event (Gdk.Window.foreign_new ((Gdk.NativeWindow)xid), inEvent);
+        }
+
+        return false;
     }
 
     internal override void
@@ -127,7 +155,7 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
         attributes.height = allocation.height;
         attributes.wclass = Gdk.WindowClass.INPUT_OUTPUT;
         attributes.window_type = Gdk.WindowType.CHILD;
-        attributes.event_mask = Gdk.EventMask.STRUCTURE_MASK   |
+        attributes.event_mask = Gdk.EventMask.STRUCTURE_MASK    |
                                 Gdk.EventMask.FOCUS_CHANGE_MASK;
         int attributes_mask = Gdk.WindowAttributesType.X        |
                               Gdk.WindowAttributesType.Y        |
@@ -143,6 +171,7 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
         ((global::Gtk.Widget)this).window.show ();
         ((global::Gtk.Widget)this).window.get_display ().sync ();
 
+        ((global::Gtk.Window)get_toplevel ()).set_focus.connect  (on_window_focus_changed);
         // Create gate window from gtk window
         m_WindowGate = new Window.from_foreign (@"$name-gtk-canvas-parent", (uint32)Gdk.x11_drawable_get_xid (((global::Gtk.Widget)this).window));
 
@@ -167,6 +196,41 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
         Application.@default.add (m_Window);
     }
 
+    private void
+    on_window_focus_changed (global::Gtk.Widget? inWidget)
+    {
+        if (m_HaveFocus != (inWidget == this))
+        {
+            m_HaveFocus = inWidget == this;
+            
+            // On widget focus lost unset all item with grab focus
+            // and then parent can regrab input focus
+            if (!m_HaveFocus)
+            {
+                m_Window.grab_focus (null);
+            }
+        }
+    }
+
+    internal override void
+    hierarchy_changed (global::Gtk.Widget? inOldTopLevel)
+    {
+        if (m_Toplevel != get_toplevel ())
+        {
+            if (m_Toplevel != null)
+            {
+                m_Toplevel.notify["is-focus"].disconnect (on_focus_changed);
+                m_Toplevel.key_press_event.disconnect (on_key_press_event);
+                m_Toplevel.key_release_event.disconnect (on_key_release_event);
+            }
+
+            m_Toplevel = get_toplevel ();
+            m_Toplevel.notify["is-focus"].connect (on_focus_changed);
+            m_Toplevel.key_press_event.connect (on_key_press_event);
+            m_Toplevel.key_release_event.connect (on_key_release_event);
+        }
+    }
+
     internal override void
     map ()
     {
@@ -182,20 +246,6 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
         m_Window.visible = false;
 
         base.unmap ();
-    }
-
-    internal override bool
-    key_press_event (Gdk.EventKey inEvent)
-    {
-        if (m_Window != null && is_focus)
-        {
-            uint32 xid;
-            m_Window.get ("xid", out xid);
-
-            send_keyboard_event (Gdk.Window.foreign_new ((Gdk.NativeWindow)xid), inEvent);
-        }
-
-        return false;
     }
 
     internal override void

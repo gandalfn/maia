@@ -290,94 +290,77 @@ public class Maia.Document : Item
     }
 
     private void
-    paginate_child_item (Item inRoot, Item inItem, ref Graphic.Point inoutCurrentPosition, ref unowned Page inoutPage)
+    paginate_grid (Item inRoot, Grid inGrid, ref unowned Page inoutPage, ref Graphic.Point inoutCurrentPosition)
     {
-        bool is_header_footer = inItem.get_qdata (s_HeaderFooterQuark) || inItem.name == header || inItem.name == footer;
-
-        if (!is_header_footer && inItem.visible)
+        Graphic.Size row_size;
+        int row = 0;
+        while (inGrid.get_row_size (row, out row_size))
         {
-            bool add_height = true;
+            // Get page geometry
+            var page_content = inoutPage.content_geometry;
 
-            // Get item allocated size
-            var item_size = inItem.size;
-
-            if (inItem is ItemPackable)
+            // Check if row can be added in page
+            if (inoutCurrentPosition.y + row_size.height <= page_content.extents.origin.y + page_content.extents.size.height)
             {
-                unowned ItemPackable item = (ItemPackable)inItem;
+                // Add grid in page
+                inoutPage.add (inRoot);
 
-                var page_content = inoutPage.content_geometry;
-                inoutCurrentPosition.y += item.top_padding;
-                item_size.height += item.bottom_padding;
-
-                // Check if item size + current position does not overlap two page
-                if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
+                if (inRoot.position.y == 0)
                 {
-                    // Check if item can be added in new page
-                    if (item_size.height <= page_content.extents.size.height)
+                    inRoot.position = inoutCurrentPosition;
+                }
+
+                inoutCurrentPosition.y += row_size.height;
+            }
+            // Check if grid row can be append in new page
+            else if (row_size.height <= page_content.extents.size.height)
+            {
+                // Item can be added in new page
+                append_page  ();
+
+                // Set current page
+                inoutPage = m_Pages.last ();
+
+                // Update current position
+                var start = convert_to_window_space (inoutCurrentPosition);
+                inoutCurrentPosition = inoutPage.content_geometry.extents.origin;
+
+                // Convert positions to window space
+                var end = convert_to_window_space (inoutCurrentPosition);
+
+                // Add page break
+                PageBreak page_break = new PageBreak (this,
+                                                      inoutPage.num,
+                                                      inGrid, row,
+                                                      end.y,
+                                                      start.y);
+                add_page_break (page_break);
+
+                // Add root item to this page
+                inoutPage.add (inRoot);
+
+                if (inRoot.position.y == 0)
+                {
+                    inRoot.position = inoutCurrentPosition;
+                }
+                
+                // Update current position
+                inoutCurrentPosition.y += row_size.height;
+            }
+            else
+            {
+                // Parse all child in grid
+                foreach (unowned Core.Object child in inGrid)
+                {
+                    unowned Grid? grid = child as Grid;
+                    if (grid != null)
                     {
-                        // Item can be added in new page
-                        append_page  ();
-
-                        // Set current page
-                        inoutPage = m_Pages.last ();
-
-                        // Update current position
-                        var start = convert_to_root_space (inoutCurrentPosition);
-                        inoutCurrentPosition = inoutPage.content_geometry.extents.origin;
-
-                        // Convert positions to root space
-                        var end = convert_to_root_space (inoutCurrentPosition);
-
-                        // Add page break
-                        PageBreak page_break = new PageBreak (this,
-                                                              inoutPage.num,
-                                                              item.parent as Grid, item.row,
-                                                              end.y,
-                                                              start.y);
-                        add_page_break (page_break);
-                    }
-                    else if (inItem is Grid)
-                    {
-                        var pos = inoutCurrentPosition;
-
-                        // Check if childs can be split in pages
-                        uint last_row = 0;
-                        foreach (unowned Core.Object child in inItem)
-                        {
-                            unowned ItemPackable? child_item = child as ItemPackable;
-                            if (child_item != null && child_item.visible)
-                            {
-                                paginate_child_item (inRoot, child_item, ref pos, ref inoutPage);
-                                if (child_item.row > last_row)
-                                {
-                                    pos.y += (inItem as Grid).row_spacing;
-                                    last_row = child_item.row;
-                                }
-                            }
-                        }
-
-                        if (inoutCurrentPosition.y != pos.y)
-                        {
-                            inoutCurrentPosition.y = pos.y;
-                            add_height = false;
-                        }
+                        paginate_grid (inRoot, grid, ref inoutPage, ref inoutCurrentPosition);
                     }
                 }
             }
 
-            // Add root item to this page
-            inoutPage.add (inRoot);
-
-            if (inRoot.position.x == 0 && inRoot.position.y == 0)
-            {
-                inRoot.position = inoutCurrentPosition;
-            }
-
-            // Add the height of item to current position
-            if (add_height)
-            {
-                inoutCurrentPosition.y += item_size.height;
-            }
+            row++;
         }
     }
 
@@ -386,74 +369,51 @@ public class Maia.Document : Item
     {
         // Get last page
         unowned Page? page = m_Pages.last ();
-        bool is_header_footer = inItem.get_qdata (s_HeaderFooterQuark) || inItem.name == header || inItem.name == footer;
+        bool add_item_in_page = true;
 
-        if (!is_header_footer && inItem.visible)
+        // Get item allocated size
+        var item_size = inItem.size;
+
+        // Check if item size + current position does not overlap two page
+        var page_content = page.content_geometry;
+
+        // If does not are on first page and item does not fit in end of page add a page
+        if (page.num > 1 && inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
         {
-            bool add_item_in_page = true;
+            // Item can be added in new page
+            append_page  ();
 
-            // Get item allocated size
-            var item_size = inItem.size;
+            // Set current page
+            page = m_Pages.last ();
 
-            // Check if item size + current position does not overlap two page
-            var page_content = page.content_geometry;
+            // Update current position
+            inoutCurrentPosition = page.content_geometry.extents.origin;
+        }
 
-            // If does not are on first page and item does not fit in end of page add a page
-            if (page.num > 1 && inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
+        // Item do not fit in page try to split child
+        if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
+        {
+            unowned Grid? grid = inItem as Grid;
+            if (grid != null)
             {
-                // Item can be added in new page
-                append_page  ();
+                grid.position = Graphic.Point (0, 0);
 
-                // Set current page
-                page = m_Pages.last ();
+                paginate_grid (grid, grid, ref page, ref inoutCurrentPosition);
 
-                // Update current position
-                inoutCurrentPosition = page.content_geometry.extents.origin;
+                add_item_in_page = false;
             }
+        }
 
-            // Item do not fit in page try to split child
-            if (inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
-            {
-                if (inItem is Grid)
-                {
-                    inItem.position = Graphic.Point (0, 0);
+        if (add_item_in_page)
+        {
+            // Add item to this page
+            page.add (inItem);
 
-                    var pos = inoutCurrentPosition;
-                    uint last_row = 0;
+            // Set item position
+            inItem.position = inoutCurrentPosition;
 
-                    foreach (unowned Core.Object child in inItem)
-                    {
-                        unowned ItemPackable child_item = child as ItemPackable;
-                        if (child_item != null && child_item.visible)
-                        {
-                            paginate_child_item (inItem, child_item, ref pos, ref page);
-                            if (child_item.row > last_row)
-                            {
-                                pos.y += (inItem as Grid).row_spacing;
-                                last_row = child_item.row;
-                            }
-                        }
-                    }
-
-                    if (inoutCurrentPosition.y != pos.y)
-                    {
-                        inoutCurrentPosition.y = pos.y;
-                        add_item_in_page = false;
-                    }
-                }
-            }
-
-            if (add_item_in_page)
-            {
-                // Add item to this page
-                page.add (inItem);
-
-                // Set item position
-                inItem.position = inoutCurrentPosition;
-
-                // Add item height to current position
-                inoutCurrentPosition.y += item_size.height;
-            }
+            // Add item height to current position
+            inoutCurrentPosition.y += item_size.height;
         }
     }
 
@@ -470,34 +430,6 @@ public class Maia.Document : Item
 
         // Add first page
         append_page ();
-
-        // Set size of header
-        unowned Page? page = m_Pages.last ();
-
-        if (page.header != null)
-        {
-            var item_size = page.header.size;
-
-            // Set width has page
-            if (item_size.width != page.content_geometry.extents.size.width)
-            {
-                item_size.width = page.content_geometry.extents.size.width;
-                page.header.size = item_size;
-            }
-        }
-
-        // Set size of footer
-        if (page.footer != null)
-        {
-            var item_size = page.footer.size;
-
-            // Set width has page
-            if (item_size.width != page.content_geometry.extents.size.width)
-            {
-                item_size.width = page.content_geometry.extents.size.width;
-                page.footer.size = item_size;
-            }
-        }
 
         // Set current position
         Graphic.Point current_position = m_Pages.last ().content_geometry.extents.origin;
@@ -572,22 +504,6 @@ public class Maia.Document : Item
         }
     }
 
-    private Graphic.Point
-    convert_to_document_space (Graphic.Point inPoint) throws Graphic.Error
-    {
-        var point = inPoint;
-        var offset = position;
-        var point_transform = new Graphic.Transform.identity ();
-        point_transform.translate (offset.x, offset.y);
-
-        var transform_invert = new Graphic.Transform.invert (transform);
-        point_transform.add (transform_invert);
-
-        point.transform (point_transform);
-
-        return point;
-    }
-
     internal override void
     insert_child (Core.Object inObject)
     {
@@ -595,12 +511,14 @@ public class Maia.Document : Item
 
         if (can_append_child (inObject))
         {
-            if (inObject is Item)
+            unowned Item? item = inObject as Item;
+                
+            if (item != null)
             {
-                bool is_header_footer = inObject.get_qdata (s_HeaderFooterQuark);
+                bool is_header_footer = item.get_qdata (s_HeaderFooterQuark) || item.name == header || item.name == footer;
                 if (!is_header_footer)
                 {
-                    m_Items.insert (inObject as Item);
+                    m_Items.insert (item);
                 }
             }
         }
@@ -609,12 +527,14 @@ public class Maia.Document : Item
     internal override void
     remove_child (Core.Object inObject)
     {
-        if (inObject is Item && m_Items != null)
+        unowned Item? item = inObject as Item;
+                
+        if (item != null && m_Items != null)
         {
-            bool is_header_footer = inObject.get_qdata (s_HeaderFooterQuark);
+            bool is_header_footer = item.get_qdata (s_HeaderFooterQuark) || item.name == header || item.name == footer;
             if (!is_header_footer)
             {
-                m_Items.remove (inObject as Item);
+                m_Items.remove (item);
             }
         }
 
@@ -703,25 +623,16 @@ public class Maia.Document : Item
     {
         bool ret = false;
 
-        try
+        foreach (unowned Page page in m_Pages)
         {
-            var point = convert_to_root_space (inPoint);
-
-            foreach (unowned Page page in m_Pages)
+            // point under child
+            if (page.button_press_event (inButton, inPoint))
             {
-                // point under child
-                if (page.button_press_event (inButton, convert_to_document_space (point)))
-                {
-                    ret = true;
-                    // event occurate under child stop signal
-                    GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
-                    break;
-                }
+                ret = true;
+                // event occurate under child stop signal
+                GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
+                break;
             }
-        }
-        catch (Graphic.Error err)
-        {
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "error on convert point to page coordinates: %s", err.message);
         }
 
         if (!ret || !can_focus)
@@ -741,25 +652,16 @@ public class Maia.Document : Item
     {
         bool ret = false;
 
-        try
+        foreach (unowned Page page in m_Pages)
         {
-            var point = convert_to_root_space (inPoint);
-
-            foreach (unowned Page page in m_Pages)
+            // point under child
+            if (page.button_release_event (inButton, inPoint))
             {
-                // point under child
-                if (page.button_release_event (inButton, convert_to_document_space (point)))
-                {
-                    ret = true;
-                    // event occurate under child stop signal
-                    GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
-                    break;
-                }
+                ret = true;
+                // event occurate under child stop signal
+                GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
+                break;
             }
-        }
-        catch (Graphic.Error err)
-        {
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "error on convert point to page coordinates: %s", err.message);
         }
 
         if (!ret)
@@ -775,35 +677,26 @@ public class Maia.Document : Item
     {
         bool ret = false;
 
-        try
+        foreach (unowned Page page in m_Pages)
         {
-            var point = convert_to_root_space (inPoint);
-
-            foreach (unowned Page page in m_Pages)
+            // point under child
+            unowned Item? item = page.motion_event (inPoint);
+            if (item != null)
             {
-                // point under child
-                unowned Item? item = page.motion_event (convert_to_document_space (point));
-                if (item != null)
+                // if item over pointer change unset pointer over for old item
+                if (item_over_pointer !=  null && item != item_over_pointer && item_over_pointer.pointer_over)
                 {
-                    // if item over pointer change unset pointer over for old item
-                    if (item_over_pointer !=  null && item != item_over_pointer && item_over_pointer.pointer_over)
-                    {
-                        item_over_pointer.pointer_over = false;
-                        item_over_pointer = item;
-                    }
-
-                    // event occurate under child stop signal
-                    ret = true;
-                    GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
-                    break;
+                    item_over_pointer.pointer_over = false;
+                    item_over_pointer = item;
                 }
+
+                // event occurate under child stop signal
+                ret = true;
+                GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);
+                break;
             }
         }
-        catch (Graphic.Error err)
-        {
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "error on convert point to page coordinates: %s", err.message);
-        }
-
+        
         // if item over pointer set unset it
         if (!ret)
         {
@@ -826,24 +719,15 @@ public class Maia.Document : Item
 
         if (geometry != null && inPoint in geometry)
         {
-            var point = convert_to_root_space (inPoint);
-
-            try
+            foreach (unowned Page page in m_Pages)
             {
-                foreach (unowned Page page in m_Pages)
+                // point under child
+                if (page.scroll_event (inScroll, inPoint))
                 {
-                    // point under child
-                    if (page.scroll_event (inScroll, convert_to_document_space (point)))
-                    {
-                        // event occurate under child stop signal
-                        ret = true;
-                        break;
-                    }
+                    // event occurate under child stop signal
+                    ret = true;
+                    break;
                 }
-            }
-            catch (Graphic.Error err)
-            {
-                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "error on convert point to page coordinates: %s", err.message);
             }
         }
 

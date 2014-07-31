@@ -117,7 +117,6 @@ public class Maia.Core.Extension : Object
      */
     public Extension (string inFilename)
     {
-        print(@"extension: $inFilename\n");
         GLib.Object (configuration_filename: inFilename);
     }
 

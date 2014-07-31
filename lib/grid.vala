@@ -270,13 +270,13 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                     {
                                         if (item.row >= page_break.row)
                                         {
-                                            Graphic.Point origin = grid.convert_to_item_space (Graphic.Point (0, page_break.start));
-                                            Graphic.Point final = grid.convert_to_item_space (Graphic.Point (0, page_break.end));
+                                            Graphic.Point origin = grid.convert_from_window_space (Graphic.Point (0, page_break.start));
+                                            Graphic.Point final = grid.convert_from_window_space (Graphic.Point (0, page_break.end));
 
                                             if (item.row == page_break.row)
                                             {
                                                 y = final.y;
-                                                page_break.start = grid.convert_to_root_space (allocation.origin).y;
+                                                page_break.start = grid.convert_to_window_space (allocation.origin).y;
                                                 is_page_break = true;
                                             }
                                             else
@@ -594,13 +594,13 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                     {
                                         if (item.row >= page_break.row)
                                         {
-                                            Graphic.Point origin = grid.convert_to_item_space (Graphic.Point (0, page_break.start));
-                                            Graphic.Point final = grid.convert_to_item_space (Graphic.Point (0, page_break.end));
+                                            Graphic.Point origin = grid.convert_from_window_space (Graphic.Point (0, page_break.start));
+                                            Graphic.Point final = grid.convert_from_window_space (Graphic.Point (0, page_break.end));
 
                                             if (item.row == page_break.row)
                                             {
                                                 y = final.y;
-                                                page_break.start = grid.convert_to_root_space (allocation.origin).y;
+                                                page_break.start = grid.convert_to_window_space (allocation.origin).y;
                                                 is_page_break = true;
                                             }
                                             else
@@ -764,12 +764,6 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         GLib.Object (id: GLib.Quark.from_string (inId));
     }
 
-    internal override bool
-    can_append_child (Core.Object inObject)
-    {
-        return inObject is ItemPackable || inObject is ToggleGroup || inObject is Model || inObject is Popup;
-    }
-
     private double
     get_page_break_delta ()
     {
@@ -797,6 +791,12 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         }
 
         return ret;
+    }
+
+    internal override bool
+    can_append_child (Core.Object inObject)
+    {
+        return inObject is ItemPackable || inObject is ToggleGroup || inObject is Model || inObject is Popup;
     }
 
     internal override void

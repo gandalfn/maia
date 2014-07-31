@@ -289,7 +289,7 @@ public class Maia.ScrollView : Item
         vadjustment.lower = area.extents.origin.y;
         vadjustment.upper = area.extents.size.height;
 
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "scroll-view: %s %s", name, area.extents.size.to_string ());
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"scroll-view: $name $(area.extents.size)");
 
         return base.size_request (inSize);
     }
