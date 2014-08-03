@@ -380,10 +380,6 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
 
             geometry = inAllocation;
 
-            // Caculate the popup position
-            var popup_position = Graphic.Point (0, geometry.extents.size.height);
-            var popup_size = m_Popup.size;
-
             // Update arrow position
             string id_arrow = "%s-arrow".printf (name);
             unowned Path arrow_item = find (GLib.Quark.from_string (id_arrow), false) as Path;
@@ -392,24 +388,20 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             {
                 arrow_size = arrow_item.size;
                 var arrow_area = Graphic.Rectangle (double.max (inAllocation.extents.size.width - ((3 * arrow_size.width) / 2), 0),
-                                                    arrow_size.height / 2,
+                                                    (area.extents.size.height - arrow_size.height) / 2,
                                                     arrow_size.width, arrow_size.height);
 
                 arrow_item.update (inContext, new Graphic.Region (arrow_area));
-
-                popup_position.x = arrow_size.width / 2;
-                popup_position.y = arrow_size.height / 2 + arrow_size.height;
             }
 
             // Set popup geometry
-            bool force_update = m_Active != null && m_Active.geometry == null && !m_Popup.visible;
-            var popup_area = Graphic.Rectangle (popup_position.x - m_Popup.shadow_border, popup_position.y,
-                                                double.max (popup_size.width, geometry.extents.size.width - (arrow_size.width / 2)),
-                                                double.max (popup_size.height, geometry.extents.size.height));
+            m_Popup.position = Graphic.Point (0, arrow_size.height + (arrow_size.height / 2.0) + ((area.extents.size.height - arrow_size.height) / 2));
 
-            if (force_update) m_Popup.visible = true;
+            var popup_area = Graphic.Rectangle (m_Popup.position.x, m_Popup.position.y,
+                                                double.max (m_Popup.size.width, geometry.extents.size.width - (arrow_size.width / 2)),
+                                                double.max (m_Popup.size.height, geometry.extents.size.height));
+
             m_Popup.update (inContext, new Graphic.Region (popup_area));
-            if (force_update) m_Popup.visible = false;
 
             damage_area ();
         }
@@ -422,7 +414,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         paint_background (inContext);
 
         // paint childs
-        var area = new Graphic.Region ();
+        var draw_area = new Graphic.Region ();
         foreach (unowned Core.Object child in this)
         {
             if (child is Path)
@@ -430,7 +422,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
                 unowned Path path = (Path)child;
                 if (path.geometry != null)
                 {
-                    area.union_ (path.geometry);
+                    draw_area.union_ (path.geometry);
                     path.draw (inContext, area_to_child_item_space (path, inArea));
                 }
             }
@@ -447,11 +439,11 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
                     var active_origin = m_Active.geometry.extents.origin;
                     m_Active.geometry.translate (active_origin.invert ());
                     var active_area = m_Active.geometry.copy ();
-                    active_pos = Graphic.Point (0, (this.area.extents.size.height - active_area.extents.size.height) / 2.0);
+                    active_pos = Graphic.Point (0, (area.extents.size.height - active_area.extents.size.height) / 2.0);
 
                     m_Active.geometry.translate (active_pos);
 
-                    area.union_ (m_Active.geometry);
+                    draw_area.union_ (m_Active.geometry);
                     var active_damaged = m_Active.damaged != null ? m_Active.damaged.copy () : null;
 
                     if (active_damaged == null)
@@ -472,7 +464,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         if (have_focus)
         {
             var path = new Graphic.Path ();
-            path.rectangle (area.extents.origin.x, area.extents.origin.y, area.extents.size.width, area.extents.size.height);
+            path.rectangle (draw_area.extents.origin.x, draw_area.extents.origin.y, draw_area.extents.size.width, draw_area.extents.size.height);
             inContext.pattern = stroke_pattern;
             inContext.dash = { 1, 1 };
             inContext.line_width = 0.5;
@@ -480,5 +472,11 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
 
             m_Popup.draw (inContext, m_Popup.geometry);
         }
+    }
+
+    internal override string
+    dump_childs (string inPrefix)
+    {
+        return "";
     }
 }

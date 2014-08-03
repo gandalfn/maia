@@ -171,7 +171,6 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     {
         Log.debug ("~Window", Log.Category.MAIN, "");
 
-
         if (m_Colormap != global::Xcb.NONE)
         {
             m_Colormap.free (connection);
@@ -296,6 +295,11 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     internal override void
     delegate_construct ()
     {
+        not_dumpable_attributes.insert ("backend");
+        not_dumpable_attributes.insert ("xid");
+        not_dumpable_attributes.insert ("visual");
+        not_dumpable_attributes.insert ("depth");
+
         // Get screen num
         screen_num = Maia.Xcb.application.default_screen;
 
@@ -603,9 +607,10 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     internal override void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
-        if (!inAllocation.extents.is_empty () && visible && (geometry == null || !geometry.equal (inAllocation)))
+        base.update (inContext, inAllocation);
+
+        if (geometry != null)
         {
-            base.update (inContext, inAllocation);
 
             var window_size = geometry.extents.size;
             window_size.transform (device_transform);

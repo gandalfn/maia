@@ -74,7 +74,7 @@ internal class Maia.Cairo.Surface : Graphic.Surface
         }
     }
 
-    public override Graphic.Device device {
+    public override unowned Graphic.Device? device {
         get {
             return base.device;
         }

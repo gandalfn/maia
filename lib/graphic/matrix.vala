@@ -212,6 +212,6 @@ public struct Maia.Graphic.Matrix
     public string
     to_string ()
     {
-        return "%g, %g, %g, %g, %g, %g".printf (xx, yx, xy, yy, x0, y0);
+        return "%.g, %g, %g, %g, %g, %g".printf (xx, yx, xy, yy, x0, y0);
     }
 }

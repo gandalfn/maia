@@ -80,10 +80,10 @@ public class Maia.Popup : Group
     private static unowned Popup s_PopupOpen = null;
 
     // properties
-    private Core.Animator m_Animator;
-    private uint          m_Transition = 0;
-    private unowned Item  m_Content;
-    private Window        m_Window;
+    private Core.Animator   m_Animator;
+    private uint            m_Transition = 0;
+    private unowned Item    m_Content;
+    private unowned Window? m_Window;
 
     // accessors
     internal override string tag {
@@ -162,7 +162,8 @@ public class Maia.Popup : Group
     construct
     {
         // Create window
-        m_Window = new Window (name + "_window", 1, 1);
+        var win = new Window (name + "_window", 1, 1);
+        m_Window = win;
         m_Window.visible = false;
         m_Window.set_qdata<unowned Object> (Item.s_PopupWindow, this);
         m_Window.depth = 32;
@@ -321,7 +322,7 @@ public class Maia.Popup : Group
         m_Content.size = Graphic.Size (geometry.extents.size.width - (border * 4), geometry.extents.size.height - (border * 4));
 
         // set window size and position
-        var pos = convert_to_window_space(geometry.extents.origin);
+        var pos = convert_to_window_space(Graphic.Point (0, 0));
         m_Window.position = Graphic.Point (pos.x - shadow_width, pos.y);
         m_Window.device_transform = get_window_transform ();
 

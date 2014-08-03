@@ -9,6 +9,7 @@ VALADOC_SRCS = \
     $(top_srcdir)/lib/*.vala
 
 VALADOC_FLAGS = \
+	--force \
     -D GLIB_2_32 \
     -D $(MAIA_RSVG_VERSION) \
     --target-glib=2.32 \

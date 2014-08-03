@@ -72,7 +72,7 @@ public class Maia.Graphic.Surface : Pattern
 
     public virtual void* native { get; construct set; }
 
-    public virtual Device device { get; construct set; default = null; }
+    public virtual unowned Device? device { get; construct set; default = null; }
 
     public Context context {
         get {

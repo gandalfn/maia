@@ -107,7 +107,7 @@ internal class Maia.Xcb.Application : Core.Object
         }
 
         // Create window list
-        m_Windows = new Core.Set<Window> ();
+        m_Windows = new Core.Set<unowned Window> ();
         m_Windows.compare_func = Window.compare_xcb;
     }
 

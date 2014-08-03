@@ -35,6 +35,8 @@ namespace Maia
     {
         _CLASS_GOBJECT(View, MaiaView, MAIA_VIEW, Grid, MaiaGrid)
 
+        _CUSTOM_DTOR
+
         _IGNORE(maia_view_set_property_func)
 
         protected:
@@ -82,6 +84,8 @@ namespace Maia
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
 
         private:
+            SlotSetProperty* m_pSlot;
+
             _WRAP_METHOD(Glib::RefPtr<ItemPackable> get_item (guint inRow) const, maia_view_get_item, refreturn)
 
             static gboolean set_property_func_callback (GObject* inpObject, const char* inProperty, const char* inColumn, guint inRow, void* inpData);

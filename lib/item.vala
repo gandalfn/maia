@@ -518,7 +518,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     public bool            pointer_over         { get; set; default = false; }
 
     [CCode (notify = false)]
-    public Window window {
+    public unowned Window? window {
         get {
             unowned Window? ret = null;
 
@@ -549,13 +549,13 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         set {
             if (get_qdata<unowned Window?> (s_MainWindow) != value)
             {
-                set_qdata<unowned Window> (s_MainWindow, value);
+                set_qdata<unowned Window?> (s_MainWindow, value);
                 GLib.Signal.emit_by_name (this, "notify::window");
             }
         }
     }
 
-    public Window toplevel {
+    public unowned Window? toplevel {
         get {
             unowned Window? ret = window;
 
@@ -688,6 +688,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         not_dumpable_attributes.insert ("geometry");
         not_dumpable_attributes.insert ("allocate-on-child-add-remove");
         not_dumpable_attributes.insert ("damaged");
+        not_dumpable_attributes.insert ("is-movable");
+        not_dumpable_attributes.insert ("is-resizable");
         not_dumpable_attributes.insert ("is-packable");
         not_dumpable_attributes.insert ("size-requested");
         not_dumpable_attributes.insert ("page-break-position");
@@ -902,7 +904,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         for (unowned Core.Object? object = this; object != null; object = object.parent)
         {
             unowned Item? item = object as Item;
-            if (item != null && item != this && !(item is Popup))
+            if (item != null && item != this)
             {
                 m_TransformToItemSpace.prepend (item.m_TransformToItemSpace);
                 break;
@@ -920,9 +922,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         var this_transform = new Graphic.Transform.identity ();
         try
         {
-            Graphic.Matrix matrix = transform.matrix;
-            matrix.invert ();
-            Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
+            Graphic.Transform item_transform = new Graphic.Transform.invert (transform);
             this_transform.append (item_transform);
         }
         catch (Graphic.Error err)
@@ -935,8 +935,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         if (geometry != null && !(parent is Application))
         {
             Graphic.Point pos = geometry.extents.origin.invert ();
-            Graphic.Transform item_translate = new Graphic.Transform.identity ();
-            item_translate.translate (pos.x, pos.y);
+            Graphic.Transform item_translate = new Graphic.Transform.init_translate (pos.x, pos.y);
             this_transform.append (item_translate);
         }
 
@@ -953,7 +952,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         for (unowned Core.Object? object = this; object != null; object = object.parent)
         {
             unowned Item? item = object as Item;
-            if (item != null && item != this && !(item is Popup))
+            if (item != null && item != this)
             {
                 m_TransformToRootSpace.append (item.m_TransformToRootSpace);
                 break;
@@ -975,13 +974,11 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         if (geometry != null && !(parent is Application))
         {
             Graphic.Point pos = geometry.extents.origin;
-            Graphic.Transform item_translate = new Graphic.Transform.identity ();
-            item_translate.translate (pos.x, pos.y);
+            Graphic.Transform item_translate = new Graphic.Transform.init_translate (pos.x, pos.y);
             this_transform.append (item_translate);
         }
 
-        Graphic.Matrix matrix = transform.matrix;
-        Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
+        Graphic.Transform item_transform = transform.copy ();
         this_transform.append (item_transform);
 
         m_TransformToRootSpace.append (this_transform);
@@ -1000,7 +997,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             for (unowned Core.Object? object = this; object != null; object = object.parent)
             {
                 unowned Item? item = object as Item;
-                if (item != null && item != this && !(item is Popup))
+                if (item != null && item != this)
                 {
                     m_TransformToWindowSpace.append (item.m_TransformToWindowSpace);
                     break;
@@ -1022,13 +1019,11 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             if (geometry != null && !(parent is Application))
             {
                 Graphic.Point pos = geometry.extents.origin;
-                Graphic.Transform item_translate = new Graphic.Transform.identity ();
-                item_translate.translate (pos.x, pos.y);
+                Graphic.Transform item_translate = new Graphic.Transform.init_translate (pos.x, pos.y);
                 this_transform.append (item_translate);
             }
 
-            Graphic.Matrix matrix = transform.matrix;
-            Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
+            Graphic.Transform item_transform = transform.copy ();
             this_transform.append (item_transform);
 
             m_TransformToWindowSpace.append (this_transform);
@@ -1048,7 +1043,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             for (unowned Core.Object? object = this; object != null; object = object.parent)
             {
                 unowned Item? item = object as Item;
-                if (item != null && item != this && !(item is Popup))
+                if (item != null && item != this)
                 {
                     m_TransformFromWindowSpace.prepend (item.m_TransformFromWindowSpace);
                     break;
@@ -1066,9 +1061,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             var this_transform = new Graphic.Transform.identity ();
             try
             {
-                Graphic.Matrix matrix = transform.matrix;
-                matrix.invert ();
-                Graphic.Transform item_transform = new Graphic.Transform.from_matrix (matrix);
+                Graphic.Transform item_transform = new Graphic.Transform.invert (transform);
                 this_transform.append (item_transform);
             }
             catch (Graphic.Error err)
@@ -1081,8 +1074,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             if (geometry != null && !(parent is Application))
             {
                 Graphic.Point pos = geometry.extents.origin.invert ();
-                Graphic.Transform item_translate = new Graphic.Transform.identity ();
-                item_translate.translate (pos.x, pos.y);
+                Graphic.Transform item_translate = new Graphic.Transform.init_translate (pos.x, pos.y);
                 this_transform.append (item_translate);
             }
 

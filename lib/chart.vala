@@ -274,6 +274,9 @@ public class Maia.Chart : Item
     // methods
     construct
     {
+        not_dumpable_attributes.insert ("first-point");
+        not_dumpable_attributes.insert ("last-point");
+
         stroke_pattern = new Graphic.Color (0, 0, 0);
     }
 

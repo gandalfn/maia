@@ -23,15 +23,15 @@ public class Maia.DocumentView : Group
     private static GLib.Quark s_QuarkShortcut;
 
     // properties
-    private unowned Document   m_Document;
-    private ScrollView         m_Content;
-    private ToggleGroup        m_ShortcutsGroup;
-    private Model              m_Shortcuts;
-    private View               m_ShortcutsToolbar;
-    private unowned Toolbox?   m_Toolbox;
-    private unowned Item?      m_CurrentFocusItem;
-    private Core.EventListener m_AddItemListener;
-    private Core.EventListener m_RemoveItemListener;
+    private unowned Document    m_Document;
+    private unowned ScrollView? m_Content;
+    private ToggleGroup         m_ShortcutsGroup;
+    private Model               m_Shortcuts;
+    private View                m_ShortcutsToolbar;
+    private unowned Toolbox?    m_Toolbox;
+    private unowned Item?       m_CurrentFocusItem;
+    private Core.EventListener  m_AddItemListener;
+    private Core.EventListener  m_RemoveItemListener;
 
     // accessors
     internal override string tag {
@@ -62,7 +62,8 @@ public class Maia.DocumentView : Group
     construct
     {
         // Create document scroll view
-        m_Content = new ScrollView (@"$(name)-content");
+        var scrollview = new ScrollView (@"$(name)-content");
+        m_Content = scrollview;
         m_Content.parent = this;
 
         // Create shortcut model
@@ -412,5 +413,28 @@ public class Maia.DocumentView : Group
 
             damage_area ();
         }
+    }
+
+    internal override string
+    dump_childs (string inPrefix)
+    {
+        string ret = "";
+
+        // dump shortcuts and toolbox
+        foreach (unowned Core.Object child in this)
+        {
+            if (child is Shortcut || child is Toolbox)
+            {
+                ret += inPrefix + (child as Manifest.Element).dump (inPrefix) + "\n";
+            }
+        }
+
+        // dump document
+        if (m_Document != null)
+        {
+            ret += inPrefix + m_Document.dump (inPrefix) + "\n";
+        }
+
+        return ret;
     }
 }

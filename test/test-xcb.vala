@@ -27,6 +27,7 @@ const string manifest = "Window.test {" +
                         "       row_spacing: 12;" +
                         "       column_spacing: 12;" +
                         "       Label.label {" +
+                        "           yexpand: false;" +
                         "           columns: 2;" +
                         "           text: 'Youpi !!!!!\nvive la karioka';" +
                         "           font_description: 'Liberation Sans 24';" +
@@ -34,24 +35,28 @@ const string manifest = "Window.test {" +
                         "       }" +
                         "       Image.image {" +
                         "           row: 1;" +
+                        "           yexpand: false;" +
                         "           size: 128, 128;" +
                         "           filename: /usr/share/pixmaps/gksu.png;" +
                         "       }" +
                         "       Entry.entry {" +
                         "           row: 1;" +
                         "           column: 1;" +
+                        "           yexpand: false;" +
                         "           lines: 6;" +
                         "       }" +
                         "       SeekBar.progress_bar {" +
-                        "           row: 2;" +
+                        "           row: 3;" +
                         "           columns: 2;" +
+                        "           yexpand: false;" +
                         "           background_pattern: #FAFAFA;" +
                         "           stroke_pattern: #A6A6A6;" +
                         "           fill_pattern: #DBDBDB;" +
                         "       }" +
                         "       Combo.combo {" +
-                        "           row: 3;" +
+                        "           row: 2;" +
                         "           columns: 2;" +
+                        "           yexpand: false;" +
                         "           fill-pattern: rgba (0.4, 0.4, 0.4, 0.85);" +
                         "           highlight-color: rgba (0.1, 0.1, 0.1, 0.6);" +
                         "           View.view_combo {"+
@@ -128,10 +133,9 @@ void main (string[] args)
             application.quit ();
         });
 
-        var entry = window.find (GLib.Quark.from_string ("entry")) as Maia.Entry;
         var ok = window.find (GLib.Quark.from_string ("ok")) as Maia.Button;
         ok.clicked.subscribe (() => {
-            print ("text: %s\n", entry.text);
+            print ("%s\n", window.dump (""));
         });
 
         var model = new Maia.Model ("model", "label", typeof (string));

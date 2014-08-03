@@ -1218,4 +1218,21 @@ public class Maia.ChartView : Group
             }
         }
     }
+
+    internal override string
+    dump_childs (string inPrefix)
+    {
+        string ret = "";
+
+        // dump shortcuts and toolbox
+        foreach (unowned Core.Object child in this)
+        {
+            if (child is Chart || child is ChartPoint || child is ChartIntersect)
+            {
+                ret += inPrefix + (child as Manifest.Element).dump (inPrefix) + "\n";
+            }
+        }
+
+        return ret;
+    }
 }

@@ -72,7 +72,7 @@ public class Maia.Core.EventListener : Object
             return m_EventHash;
         }
     }
-    
+
     /**
      * Block temporarily the event notification
      */
@@ -125,7 +125,7 @@ public class Maia.Core.EventListener : Object
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "target unref");
         m_Target = null;
         m_Handler = null;
-        unref ();
+        parent = null;
     }
 
     internal override int

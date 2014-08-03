@@ -64,7 +64,7 @@ public class Maia.Manifest.AttributeBind : Attribute
         public void
         disconnect ()
         {
-            if (id != 0 && src != null && src is Object)
+            if (id != 0 && src != null && src is Object && src.ref_count > 0)
             {
                 GLib.SignalHandler.disconnect (src, id);
                 id = 0;

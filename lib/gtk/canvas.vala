@@ -24,7 +24,7 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
     private bool m_HaveFocus = false;
     private Window m_WindowGate = null;
     private Window m_Window = null;
-    private Item m_Root = null;
+    private Item? m_Root = null;
 
     // accessors
     internal new Window window {
@@ -46,6 +46,7 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
             if (m_Window != null && m_Root != null)
             {
                 m_Root.parent = m_Window;
+                GLib.Signal.emit_by_name (m_Window, "notify::window");
             }
 
             queue_resize ();
@@ -138,6 +139,22 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
         return false;
     }
 
+    private void
+    on_window_focus_changed (global::Gtk.Widget? inWidget)
+    {
+        if (m_HaveFocus != (inWidget == this))
+        {
+            m_HaveFocus = inWidget == this;
+
+            // On widget focus lost unset all item with grab focus
+            // and then parent can regrab input focus
+            if (!m_HaveFocus)
+            {
+                m_Window.grab_focus (null);
+            }
+        }
+    }
+
     internal override void
     realize ()
     {
@@ -196,20 +213,16 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
         Application.@default.add (m_Window);
     }
 
-    private void
-    on_window_focus_changed (global::Gtk.Widget? inWidget)
+    internal override void
+    unrealize ()
     {
-        if (m_HaveFocus != (inWidget == this))
-        {
-            m_HaveFocus = inWidget == this;
-            
-            // On widget focus lost unset all item with grab focus
-            // and then parent can regrab input focus
-            if (!m_HaveFocus)
-            {
-                m_Window.grab_focus (null);
-            }
-        }
+        m_Window.parent = null;
+
+        m_Window = null;
+
+        m_WindowGate = null;
+
+        base.unrealize ();
     }
 
     internal override void

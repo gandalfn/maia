@@ -158,6 +158,8 @@ public class Maia.Window : Group
     // methods
     construct
     {
+        not_dumpable_attributes.insert ("device-transform");
+
         // Create animator
         m_Animator = new Core.Animator (60, 200);
 
@@ -827,36 +829,12 @@ public class Maia.Window : Group
     internal override void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
-        if (!inAllocation.extents.is_empty () && visible && (geometry == null || !geometry.equal (inAllocation)))
+        if (!inAllocation.extents.is_empty () && (geometry == null || !geometry.equal (inAllocation)))
         {
             geometry = inAllocation;
 
             var window_size = geometry.extents.size;
             window_size.transform (device_transform);
-
-            foreach (unowned Core.Object child in this)
-            {
-                if (child is Item)
-                {
-                    unowned Item item = (Item)child;
-
-                    // Get child position and size
-                    var item_position = item.position;
-                    var item_size     = item.size;
-
-                    // Set child size allocation
-                    var area_size = area.extents.size;
-                    area_size.resize (-(border + (!(Border.RIGHT in shadow_border) ? 0 : shadow_width)) * 2,
-                                      -(border + (!(Border.BOTTOM in shadow_border) ? 0 : shadow_width)) * 2);
-
-                    var child_allocation = Graphic.Rectangle (item_position.x, item_position.y,
-                                                              double.max (item_size.width, area_size.width),
-                                                              double.max (item_size.height, area_size.height));
-
-                    // Update child allocation
-                    item.update (inContext, new Graphic.Region (child_allocation));
-                }
-            }
 
             m_Background = new Graphic.Surface ((uint)area.extents.size.width, (uint)area.extents.size.height);
             m_Background.clear ();
@@ -906,6 +884,30 @@ public class Maia.Window : Group
             ctx.operator = Graphic.Operator.SOURCE;
             ctx.pattern = background_pattern != null ? background_pattern : new Graphic.Color (0, 0, 0, 0);
             ctx.fill (path);
+
+            foreach (unowned Core.Object child in this)
+            {
+                if (child is Item)
+                {
+                    unowned Item item = (Item)child;
+
+                    // Get child position and size
+                    var item_position = item.position;
+                    var item_size     = item.size;
+
+                    // Set child size allocation
+                    var area_size = area.extents.size;
+                    area_size.resize (-(border + (!(Border.RIGHT in shadow_border) ? 0 : shadow_width)) * 2,
+                                      -(border + (!(Border.BOTTOM in shadow_border) ? 0 : shadow_width)) * 2);
+
+                    var child_allocation = Graphic.Rectangle (item_position.x, item_position.y,
+                                                              double.max (item_size.width, area_size.width),
+                                                              double.max (item_size.height, area_size.height));
+
+                    // Update child allocation
+                    item.update (inContext, new Graphic.Region (child_allocation));
+                }
+            }
 
             damage_area ();
         }

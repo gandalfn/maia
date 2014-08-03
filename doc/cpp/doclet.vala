@@ -253,4 +253,3 @@ register_plugin (Valadoc.ModuleLoader module_loader)
 {
     return typeof (Valadoc.Cpp.Doclet);
 }
-

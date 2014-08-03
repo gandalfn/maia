@@ -32,17 +32,17 @@ namespace Maia
         return (*pSlot) (pObject, property, column, inRow);
     }
 
-    void
-    View::set_property_func_destroy (void* inpData)
+    View::~View ()
     {
-        View::SlotSetProperty* pSlot = (View::SlotSetProperty*)inpData;
-        delete pSlot;
+        delete m_pSlot; m_pSlot = 0;
     }
 
     void View::set_property_func (SlotSetProperty inSlot)
     {
-        SlotSetProperty* pSlot = new SlotSetProperty (inSlot);
+        delete m_pSlot;
 
-        maia_view_set_property_func (gobj (), &set_property_func_callback, pSlot, &set_property_func_destroy);
+        m_pSlot = new SlotSetProperty (inSlot);
+
+        maia_view_set_property_func (gobj (), &set_property_func_callback, m_pSlot);
     }
 }

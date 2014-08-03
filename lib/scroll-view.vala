@@ -44,15 +44,15 @@ public class Maia.ScrollView : Item
     }
 
     // properties
-    private Core.Animator m_ScrollToAnimator    = null;
-    private uint          m_ScrollToTransition  = 0;
-    private Window        m_Window              = null;
-    private Window        m_Viewport            = null;
-    private unowned Item? m_Child               = null;
-    private SeekBar       m_HSeekBar            = null;
-    private SeekBar       m_VSeekBar            = null;
-    private Adjustment    m_HAdjustment         = null;
-    private Adjustment    m_VAdjustment         = null;
+    private Core.Animator   m_ScrollToAnimator    = null;
+    private uint            m_ScrollToTransition  = 0;
+    private unowned Window? m_Window              = null;
+    private unowned Window? m_Viewport            = null;
+    private unowned Item?   m_Child               = null;
+    private SeekBar         m_HSeekBar            = null;
+    private SeekBar         m_VSeekBar            = null;
+    private Adjustment      m_HAdjustment         = null;
+    private Adjustment      m_VAdjustment         = null;
 
     // accessors
     internal override string tag {
@@ -129,11 +129,13 @@ public class Maia.ScrollView : Item
         m_VSeekBar.size = Graphic.Size (10, 10);
         m_VSeekBar.parent = this;
 
-        m_Viewport = new Window (name + "_viewport", 1, 1);
+        var viewport = new Window (name + "_viewport", 1, 1);
+        m_Viewport = viewport;
         m_Viewport.shadow_border = Window.Border.NONE;
         m_Viewport.parent = this;
 
-        m_Window = new Window (name + "_window", 1, 1);
+        var win = new Window (name + "_window", 1, 1);
+        m_Window = win;
         m_Window.shadow_border = Window.Border.NONE;
         m_Window.scroll_event.connect (on_window_scroll_event);
         m_Window.parent = m_Viewport;
@@ -244,6 +246,9 @@ public class Maia.ScrollView : Item
         else if (can_append_child (inObject) && m_Child == null)
         {
             m_Child = inObject as Item;
+            m_Child.weak_ref (() => {
+                m_Child = null;
+            });
 
             inObject.parent = m_Window;
 
@@ -358,7 +363,7 @@ public class Maia.ScrollView : Item
     internal override void
     scroll_to (Item inItem)
     {
-        var pos = inItem.convert_to_window_space (inItem.geometry.extents.origin);
+        var pos = inItem.convert_to_window_space (Graphic.Point (0, 0));
 
         m_ScrollToAnimator.stop ();
 
@@ -523,7 +528,10 @@ public class Maia.ScrollView : Item
     {
         string ret = "";
 
-        ret += inPrefix + m_Child.dump (inPrefix) + "\n";
+        if (m_Child != null)
+        {
+            ret += inPrefix + m_Child.dump (inPrefix) + "\n";
+        }
 
         return ret;
     }

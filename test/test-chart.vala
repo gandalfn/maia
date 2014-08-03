@@ -104,6 +104,7 @@ void main (string[] args)
         var view = window.find (GLib.Quark.from_string ("view")) as Maia.ChartView;
         view.model = model;
 
+        print (@"%s\n", window.dump (""));
         // Run application
         application.run ();
     }

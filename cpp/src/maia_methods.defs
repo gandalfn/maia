@@ -16480,7 +16480,6 @@
   (parameters
     '("MaiaViewSetPropertyFunc" "inFunc")
     '("void*" "inFunc_target")
-    '("GDestroyNotify" "inFunc_target_destroy_notify")
   )
 )
 

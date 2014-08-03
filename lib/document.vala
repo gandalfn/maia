@@ -146,6 +146,7 @@ public class Maia.Document : Item
     ~Document ()
     {
         m_Pages.clear ();
+        clear_page_breaks ();
     }
 
     private void
@@ -343,7 +344,7 @@ public class Maia.Document : Item
                 {
                     inRoot.position = inoutCurrentPosition;
                 }
-                
+
                 // Update current position
                 inoutCurrentPosition.y += row_size.height;
             }
@@ -512,7 +513,7 @@ public class Maia.Document : Item
         if (can_append_child (inObject))
         {
             unowned Item? item = inObject as Item;
-                
+
             if (item != null)
             {
                 bool is_header_footer = item.get_qdata (s_HeaderFooterQuark) || item.name == header || item.name == footer;
@@ -528,7 +529,7 @@ public class Maia.Document : Item
     remove_child (Core.Object inObject)
     {
         unowned Item? item = inObject as Item;
-                
+
         if (item != null && m_Items != null)
         {
             bool is_header_footer = item.get_qdata (s_HeaderFooterQuark) || item.name == header || item.name == footer;
@@ -696,7 +697,7 @@ public class Maia.Document : Item
                 break;
             }
         }
-        
+
         // if item over pointer set unset it
         if (!ret)
         {
