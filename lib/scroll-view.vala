@@ -264,7 +264,7 @@ public class Maia.ScrollView : Item
         {
             m_Child = inObject as Item;
             m_Child.weak_ref (on_child_destroy);
-            m_Child.notify["parent"].connect (on_child_parent_changed);
+            m_Child.notify["root"].connect (on_child_parent_changed);
 
             inObject.parent = m_Window;
 

@@ -38,7 +38,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 
         ~Sibling ()
         {
-            if (m_Sibling is Window)
+            if (m_Sibling != null)
             {
                 m_Sibling.notify["visible"].disconnect (on_sibling_event);
                 m_Sibling.repair.disconnect (on_sibling_event);
@@ -49,18 +49,20 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         private void
         on_sibling_destroyed ()
         {
-            m_Window.m_Siblings.remove (this);
+            m_Sibling = null;
 
-            if (m_Window.area != null)
+            if (m_Window is Window && m_Window.area != null)
             {
                 m_Window.m_WindowDamaged = m_Window.area.copy ();
             }
+
+            m_Window.m_Siblings.remove (this);
         }
 
         private void
         on_sibling_event ()
         {
-            if (m_Window.area != null)
+            if (m_Sibling != null && m_Window.area != null)
             {
                 m_Window.m_WindowDamaged = m_Window.area.copy ();
             }

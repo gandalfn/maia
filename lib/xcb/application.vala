@@ -282,7 +282,12 @@ internal class Maia.Xcb.Application : Core.Object
     public void
     unregister_window (Window inWindow)
     {
-        m_Windows.remove (inWindow);
+        if (inWindow in m_Windows)
+        {
+            m_Windows.remove (inWindow);
+
+            inWindow.weak_unref (on_window_destroyed);
+        }
     }
 
     public unowned Window?
