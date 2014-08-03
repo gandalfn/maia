@@ -236,6 +236,23 @@ public class Maia.ScrollView : Item
         return true;
     }
 
+    private void
+    on_child_destroy ()
+    {
+        m_Child = null;
+    }
+
+    private void
+    on_child_parent_changed ()
+    {
+        if (m_Child != null && m_Child.parent != m_Window)
+        {
+            m_Child.weak_unref (on_child_destroy);
+            m_Child.notify["parent"].disconnect (on_child_parent_changed);
+            m_Child = null;
+        }
+    }
+
     internal override void
     insert_child (Core.Object inObject)
     {
@@ -246,9 +263,8 @@ public class Maia.ScrollView : Item
         else if (can_append_child (inObject) && m_Child == null)
         {
             m_Child = inObject as Item;
-            m_Child.weak_ref (() => {
-                m_Child = null;
-            });
+            m_Child.weak_ref (on_child_destroy);
+            m_Child.notify["parent"].connect (on_child_parent_changed);
 
             inObject.parent = m_Window;
 

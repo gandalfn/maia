@@ -349,7 +349,7 @@ public class Maia.Window : Group
     {
         unowned MouseEventArgs? mouse_args = inArgs as MouseEventArgs;
 
-        if (mouse_args != null)
+        if (mouse_args != null && visible)
         {
             var pos = mouse_args.position;
 
@@ -517,7 +517,7 @@ public class Maia.Window : Group
     {
         unowned KeyboardEventArgs? keyboard_args = inArgs as KeyboardEventArgs;
 
-        if (keyboard_args != null)
+        if (keyboard_args != null && visible)
         {
             switch (keyboard_args.state)
             {

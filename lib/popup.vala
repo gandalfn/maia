@@ -225,6 +225,8 @@ public class Maia.Popup : Group
             s_PopupOpen = null;
         }
 
+        m_Window.set_qdata<unowned Object?> (Item.s_PopupWindow, null);
+
         m_Window.parent = null;
         m_Window = null;
     }

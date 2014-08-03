@@ -143,7 +143,7 @@ public class Maia.Tool : Button
     on_root_changed ()
     {
         // Disconnect from item changed of old toolbox
-        if (m_Toolbox != null)
+        if (m_Toolbox != null && m_CurrentItemEventListener != null)
         {
             m_CurrentItemEventListener.parent = null;
             m_CurrentItemEventListener = null;
@@ -165,7 +165,7 @@ public class Maia.Tool : Button
         }
 
         // Found toolbox connect onto item changed
-        if (m_Toolbox != null)
+        if (m_Toolbox != null && m_Toolbox.current_item != null)
         {
             m_Toolbox.current_item.subscribe (on_current_item_changed);
         }
