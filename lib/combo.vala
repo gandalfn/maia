@@ -395,7 +395,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             }
 
             // Set popup geometry
-            m_Popup.position = Graphic.Point (0, arrow_size.height + (arrow_size.height / 2.0) + ((area.extents.size.height - arrow_size.height) / 2));
+            m_Popup.position = Graphic.Point (0, arrow_size.height + ((area.extents.size.height - arrow_size.height) / 2));
 
             var popup_area = Graphic.Rectangle (m_Popup.position.x, m_Popup.position.y,
                                                 double.max (m_Popup.size.width, geometry.extents.size.width - (arrow_size.width / 2)),

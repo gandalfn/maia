@@ -1028,6 +1028,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             m_TransformToWindowSpace.append (this_transform);
         }
+        else
+        {
+            m_TransformToWindowSpace.append (transform.copy ());
+        }
     }
 
     private void
@@ -1079,6 +1083,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             }
 
             m_TransformFromWindowSpace.prepend (this_transform);
+        }
+        else
+        {
+            m_TransformFromWindowSpace.prepend (transform.copy ());
         }
     }
 
