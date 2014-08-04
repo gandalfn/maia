@@ -39,9 +39,6 @@ namespace Maia
 
         _IGNORE(maia_view_set_property_func)
 
-        protected:
-            _CTOR_DEFAULT()
-
         public:
             typedef sigc::slot<bool, Glib::RefPtr<Glib::Object>, Glib::ustring, Glib::ustring, unsigned int> SlotSetProperty;
 
@@ -82,6 +79,10 @@ namespace Maia
             _WRAP_PROPERTY("orientation", Orientation)
             _WRAP_PROPERTY("model-name", Glib::ustring)
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
+
+        protected:
+            View ();
+            _CUSTOM_CTOR_CAST()
 
         private:
             SlotSetProperty* m_pSlot;

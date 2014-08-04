@@ -32,6 +32,27 @@ namespace Maia
         return (*pSlot) (pObject, property, column, inRow);
     }
 
+    View::View() :
+        _CONSTRUCT_SPECIFIC(Maia::Grid, View),
+        m_pSlot (0)
+    {
+    }
+
+
+    View::View(const Glib::ConstructParams& construct_params) :
+        Grid(construct_params),
+        m_pSlot (0)
+    {
+
+    }
+
+    View::View(MaiaView* castitem) :
+        Grid((MaiaGrid*)(castitem)),
+        m_pSlot (0)
+    {
+        
+    }
+
     View::~View ()
     {
         delete m_pSlot; m_pSlot = 0;

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.ChartView : Group
+public class Maia.ChartView : Group, ItemPackable
 {
     // types
     public enum LegendPosition
@@ -222,6 +222,28 @@ public class Maia.ChartView : Group
             return "ChartView";
         }
     }
+
+    internal uint   row     { get; set; default = 0; }
+    internal uint   column  { get; set; default = 0; }
+    internal uint   rows    { get; set; default = 1; }
+    internal uint   columns { get; set; default = 1; }
+
+    internal bool   xexpand { get; set; default = true; }
+    internal bool   xfill   { get; set; default = true; }
+    internal bool   xshrink { get; set; default = false; }
+    internal bool   xlimp   { get; set; default = false; }
+    internal double xalign  { get; set; default = 0.5; }
+
+    internal bool   yexpand { get; set; default = true; }
+    internal bool   yfill   { get; set; default = true; }
+    internal bool   yshrink { get; set; default = false; }
+    internal bool   ylimp   { get; set; default = false; }
+    internal double yalign  { get; set; default = 0.5; }
+
+    internal double top_padding    { get; set; default = 0; }
+    internal double bottom_padding { get; set; default = 0; }
+    internal double left_padding   { get; set; default = 0; }
+    internal double right_padding  { get; set; default = 0; }
 
     /**
      * The font description of chart

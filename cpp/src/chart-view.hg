@@ -20,6 +20,7 @@
 #include <maia.h>
 #include <maiamm/group.h>
 #include <maiamm/chart.h>
+#include <maiamm/item-packable.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/group_p.h)
@@ -28,10 +29,11 @@ namespace Maia
 {
     _WRAP_ENUM(ChartViewLegendPosition, MaiaChartViewLegendPosition, NO_GTYPE)
 
-    class ChartView : public Group
+    class ChartView : public Group, public ItemPackable
     {
         _CLASS_GOBJECT(ChartView, MaiaChartView, MAIA_CHART_VIEW, Group, MaiaGroup)
-
+        _IMPLEMENTS_INTERFACE(ItemPackable)
+        
         protected:
             _CTOR_DEFAULT()
 
