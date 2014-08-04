@@ -435,6 +435,8 @@ public class Maia.Graphic.Transform : Core.Object
             m_FinalMatrix.post_multiply (transform.m_FinalMatrix);
             m_FinalInvertMatrix.multiply (transform.m_FinalInvertMatrix);
         }
+
+        changed ();
     }
 
     internal override bool
@@ -452,9 +454,6 @@ public class Maia.Graphic.Transform : Core.Object
 
         // recalculate final matrix
         recalculate_final_matrix ();
-
-        // send changed signal
-        changed ();
     }
 
     internal override void
@@ -466,9 +465,6 @@ public class Maia.Graphic.Transform : Core.Object
 
         // recalculate final matrix
         recalculate_final_matrix ();
-
-        // send changed signal
-        changed ();
     }
 
     internal override string
@@ -531,6 +527,32 @@ public class Maia.Graphic.Transform : Core.Object
     }
 
     /**
+     * Create a transform which is linked of this transform
+     */
+    public Transform
+    link ()
+    {
+        Transform ret = new Transform.identity ();
+        ret.m_BaseMatrix = m_FinalMatrix;
+        ret.m_FinalMatrix = m_FinalMatrix;
+        ret.m_BaseInvertMatrix = m_FinalInvertMatrix;
+        ret.m_FinalInvertMatrix = m_FinalInvertMatrix;
+        
+        changed.connect (ret.on_linked_changed);
+
+        return ret;
+    }
+
+    private void
+    on_linked_changed (Transform inModel)
+    {
+        m_BaseMatrix = inModel.m_FinalMatrix;
+        m_BaseInvertMatrix = inModel.m_FinalInvertMatrix;
+
+        recalculate_final_matrix ();
+    }
+
+    /**
      * Reset transform to identity matrix
      */
     public void
@@ -550,9 +572,6 @@ public class Maia.Graphic.Transform : Core.Object
 
         // recalculate final matrix
         recalculate_final_matrix ();
-
-        // send changed signal
-        changed ();
     }
 
     /**
@@ -652,7 +671,5 @@ public class Maia.Graphic.Transform : Core.Object
         }
 
         recalculate_final_matrix ();
-
-        changed ();
     }
 }

@@ -87,6 +87,7 @@ namespace Maia
                 }
 
                 _WRAP_METHOD(Glib::RefPtr<Transform> copy () const, maia_graphic_transform_copy)
+                _WRAP_METHOD(Glib::RefPtr<Transform> link () const, maia_graphic_transform_link)
 
                 _WRAP_METHOD(bool have_rotate () const, maia_graphic_transform_get_have_rotate)
 

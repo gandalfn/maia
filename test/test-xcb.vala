@@ -130,6 +130,7 @@ void main (string[] args)
 
         var cancel = window.find (GLib.Quark.from_string ("cancel")) as Maia.Button;
         cancel.clicked.subscribe (() => {
+            print("quit\n");
             application.quit ();
         });
 

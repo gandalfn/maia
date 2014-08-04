@@ -8152,6 +8152,12 @@
   (return-type "MaiaGraphicTransform*")
 )
 
+(define-method link
+  (of-object "MaiaGraphicTransform")
+  (c-name "maia_graphic_transform_link")
+  (return-type "MaiaGraphicTransform*")
+)
+
 (define-method init
   (of-object "MaiaGraphicTransform")
   (c-name "maia_graphic_transform_init")

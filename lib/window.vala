@@ -357,16 +357,12 @@ public class Maia.Window : Group
             {
                 // the current mouse position is in window with transform
                 // invert the window transform to have position in window coordinate space
-                var matrix = transform.matrix;
-                matrix.invert ();
-                pos.transform (new Graphic.Transform.from_matrix (matrix));
+                pos.transform (new Graphic.Transform.invert (transform));
 
                 // window is under popup invert parent transform
                 if (popup != null)
                 {
-                    matrix = popup.get_window_transform ().matrix;
-                    matrix.invert ();
-                    pos.transform (new Graphic.Transform.from_matrix (matrix));
+                    pos.transform (new Graphic.Transform.from_matrix (popup.get_window_transform ().matrix_invert));
                 }
 
                 // Motion event
@@ -377,7 +373,7 @@ public class Maia.Window : Group
                     // we have grab pointer item send event
                     if (grab_pointer_item != null)
                     {
-                        grab_pointer_item.motion_event (grab_pointer_item.convert_to_item_space (convert_to_root_space(pos)));
+                        grab_pointer_item.motion_event (grab_pointer_item.convert_from_window_space (mouse_args.position));
                     }
                     // else send event to window
                     else
@@ -441,7 +437,7 @@ public class Maia.Window : Group
                     // we have grab pointer item send event
                     if (grab_pointer_item != null)
                     {
-                        grab_pointer_item.button_press_event (mouse_args.button, grab_pointer_item.convert_to_item_space (convert_to_root_space(pos)));
+                        grab_pointer_item.button_press_event (mouse_args.button, grab_pointer_item.convert_from_window_space (mouse_args.position));
                     }
                     // else send event to window
                     else
@@ -476,7 +472,7 @@ public class Maia.Window : Group
                         // we have grab pointer item send event
                         if (grab_pointer_item != null)
                         {
-                            grab_pointer_item.scroll_event (scroll, grab_pointer_item.convert_to_item_space (convert_to_root_space(pos)));
+                            grab_pointer_item.scroll_event (scroll, grab_pointer_item.convert_from_window_space (pos));
                         }
                         // else send event to window
                         else
@@ -492,7 +488,7 @@ public class Maia.Window : Group
                     // we have grab pointer item send event
                     if (grab_pointer_item != null)
                     {
-                        grab_pointer_item.button_release_event (mouse_args.button, grab_pointer_item.convert_to_item_space (convert_to_root_space(pos)));
+                        grab_pointer_item.button_release_event (mouse_args.button, grab_pointer_item.convert_from_window_space (mouse_args.position));
                     }
                     // else send event to window
                     else if (m_OverCloseButton)

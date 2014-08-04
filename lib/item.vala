@@ -906,7 +906,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             unowned Item? item = object as Item;
             if (item != null && item != this)
             {
-                m_TransformToItemSpace.prepend (item.m_TransformToItemSpace);
+                m_TransformToItemSpace.prepend (item.m_TransformToItemSpace.link ());
                 break;
             }
 
@@ -954,7 +954,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             unowned Item? item = object as Item;
             if (item != null && item != this)
             {
-                m_TransformToRootSpace.append (item.m_TransformToRootSpace);
+                m_TransformToRootSpace.append (item.m_TransformToRootSpace.link ());
                 break;
             }
 
@@ -999,7 +999,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 unowned Item? item = object as Item;
                 if (item != null && item != this)
                 {
-                    m_TransformToWindowSpace.append (item.m_TransformToWindowSpace);
+                    m_TransformToWindowSpace.append (item.m_TransformToWindowSpace.link ());
                     break;
                 }
 
@@ -1049,7 +1049,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 unowned Item? item = object as Item;
                 if (item != null && item != this)
                 {
-                    m_TransformFromWindowSpace.prepend (item.m_TransformFromWindowSpace);
+                    m_TransformFromWindowSpace.prepend (item.m_TransformFromWindowSpace.link ());
                     break;
                 }
 
@@ -1070,7 +1070,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             }
             catch (Graphic.Error err)
             {
-                Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Error on calculate transform to item %s space: %s", name, err.message);
+                Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Error on calculate transform from window %s space: %s", name, err.message);
             }
 
             // Ignore translation of item without geometry or window managed by application
@@ -1086,7 +1086,14 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
         else
         {
-            m_TransformFromWindowSpace.prepend (transform.copy ());
+            try
+            {
+                m_TransformFromWindowSpace.append (new Graphic.Transform.invert (transform));
+            }
+            catch (Graphic.Error err)
+            {
+                Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Error on calculate transform from window %s space: %s", name, err.message);
+            }
         }
     }
 
@@ -1844,7 +1851,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         var point = inPoint;
         point.transform (m_TransformFromWindowSpace);
-
+        
         return point;
     }
 }
