@@ -180,6 +180,7 @@ internal class Maia.Cairo.Surface : Graphic.Surface
                     ((global::Cairo.XcbSurface)m_Surface).set_size ((int)size.width, (int)size.height);
                     break;
 
+                case "xcb/drawable":
                 case "xcb/pixmap":
                     create_surface_from_device ();
                     break;

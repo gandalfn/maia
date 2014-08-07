@@ -68,7 +68,7 @@ public class Maia.ChartView : Group, ItemPackable
         public static LegendPosition
         from_string (string inValue)
         {
-            switch (inValue)
+            switch (inValue.down ())
             {
                 case "north-est":
                     return NORTH_EST;
@@ -93,6 +93,41 @@ public class Maia.ChartView : Group, ItemPackable
 
                 case "est":
                     return EST;
+            }
+
+            return NONE;
+        }
+    }
+
+    public enum Frame
+    {
+        NONE,
+        IN,
+        OUT;
+
+        public string
+        to_string ()
+        {
+            switch (this)
+            {
+                case IN:
+                    return "in";
+                case OUT:
+                    return "out";
+            }
+
+            return "none";
+        }
+
+        public static Frame
+        from_string (string inValue)
+        {
+            switch (inValue.down ())
+            {
+                case "in":
+                    return IN;
+                case "out":
+                    return OUT;
             }
 
             return NONE;
@@ -363,6 +398,21 @@ public class Maia.ChartView : Group, ItemPackable
     public double tick_size { get; set; default = 5; }
 
     /**
+     * Frame type
+     */
+    public Frame frame { get; set; default = Frame.NONE; }
+
+    /**
+     * Frame stroke color
+     */
+    public Graphic.Pattern frame_stroke { get; set; default = null; }
+
+    /**
+     * Frame fill pattern
+     */
+    public Graphic.Pattern frame_fill { get; set; default = null; }
+
+    /**
      * Legend position
      */
     public LegendPosition legend { get; set; default = LegendPosition.NONE; }
@@ -399,8 +449,10 @@ public class Maia.ChartView : Group, ItemPackable
         s_AxisIndiceQuark = GLib.Quark.from_string ("MaiaChartViewAxisIndice");
 
         Manifest.Attribute.register_transform_func (typeof (LegendPosition), attribute_to_chart_legend_position);
+        Manifest.Attribute.register_transform_func (typeof (Frame), attribute_to_chart_frame);
 
         GLib.Value.register_transform_func (typeof (LegendPosition), typeof (string), chart_legend_position_to_string);
+        GLib.Value.register_transform_func (typeof (Frame), typeof (string), chart_frame_to_string);
     }
 
     static void
@@ -414,6 +466,21 @@ public class Maia.ChartView : Group, ItemPackable
         requires (inSrc.holds (typeof (LegendPosition)))
     {
         LegendPosition val = (LegendPosition)inSrc;
+
+        outDest = val.to_string ();
+    }
+
+    static void
+    attribute_to_chart_frame (Manifest.Attribute inAttribute, ref GLib.Value outValue)
+    {
+        outValue = Frame.from_string (inAttribute.get ());
+    }
+
+    static void
+    chart_frame_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (Frame)))
+    {
+        Frame val = (Frame)inSrc;
 
         outDest = val.to_string ();
     }
@@ -438,7 +505,7 @@ public class Maia.ChartView : Group, ItemPackable
         notify["y-axis-unit"].connect (on_axis_changed);
 
         // Create legend
-        var lgd = new Legend (@"$name-legend", this);
+        var lgd = new Legend ("chart-legend", this);
         lgd.parent = this;
         m_Legend = lgd;
         m_Legend.visible = legend != LegendPosition.NONE;
@@ -598,7 +665,7 @@ public class Maia.ChartView : Group, ItemPackable
             {
                 if (m_XAxisLabel == null)
                 {
-                    var label = new Label (@"$name-x-axis-label", "");
+                    var label = new Label (@"x-axis-label", "");
                     label.parent = this;
                     plug_property ("stroke-pattern", label, "stroke-pattern");
                     plug_property ("font-description", label, "font-description");
@@ -625,7 +692,7 @@ public class Maia.ChartView : Group, ItemPackable
             {
                 if (m_YAxisLabel == null)
                 {
-                    var label = new Label (@"$name-y-axis-label", "");
+                    var label = new Label (@"y-axis-label", "");
                     label.parent = this;
                     label.transform = new Graphic.Transform.init_rotate (GLib.Math.PI / 2.0);
                     plug_property ("stroke-pattern", label, "stroke-pattern");
@@ -653,7 +720,7 @@ public class Maia.ChartView : Group, ItemPackable
             int nb = (int)GLib.Math.ceil(m_ChartAxis.range.min.x / step);
             for (int cpt = 1; cpt < nb; ++cpt)
             {
-                var label = new Label (@"$name-x-axis-indice-minus-$cpt", format_indice (step * cpt, x_axis_unit, "-"));
+                var label = new Label (@"x-axis-indice-minus-$cpt", format_indice (step * cpt, x_axis_unit, "-"));
                 plug_property ("stroke-pattern", label, "stroke-pattern");
                 plug_property ("axis-font-description", label, "font-description");
                 label.parent = this;
@@ -665,7 +732,7 @@ public class Maia.ChartView : Group, ItemPackable
             nb = (int)GLib.Math.ceil(m_ChartAxis.range.max.x / step);
             for (int cpt = 1; cpt < nb; ++cpt)
             {
-                var label = new Label (@"$name-x-axis-indice-plus-$cpt", format_indice (step * cpt, x_axis_unit));
+                var label = new Label (@"x-axis-indice-plus-$cpt", format_indice (step * cpt, x_axis_unit));
                 plug_property ("stroke-pattern", label, "stroke-pattern");
                 plug_property ("axis-font-description", label, "font-description");
                 label.parent = this;
@@ -678,7 +745,7 @@ public class Maia.ChartView : Group, ItemPackable
             nb = (int)GLib.Math.ceil(m_ChartAxis.range.min.y / step);
             for (int cpt = 1; cpt < nb; ++cpt)
             {
-                var label = new Label (@"$name-y-axis-indice-minus-$cpt", format_indice (step * cpt, y_axis_unit, "-"));
+                var label = new Label (@"y-axis-indice-minus-$cpt", format_indice (step * cpt, y_axis_unit, "-"));
                 plug_property ("stroke-pattern", label, "stroke-pattern");
                 plug_property ("axis-font-description", label, "font-description");
                 label.parent = this;
@@ -690,7 +757,7 @@ public class Maia.ChartView : Group, ItemPackable
             nb = (int)GLib.Math.ceil(m_ChartAxis.range.max.y / step);
             for (int cpt = 1; cpt < nb; ++cpt)
             {
-                var label = new Label (@"$name-y-axis-indice-plus-$cpt", format_indice (step * cpt, y_axis_unit));
+                var label = new Label (@"y-axis-indice-plus-$cpt", format_indice (step * cpt, y_axis_unit));
                 plug_property ("stroke-pattern", label, "stroke-pattern");
                 plug_property ("axis-font-description", label, "font-description");
                 label.parent = this;
@@ -703,7 +770,7 @@ public class Maia.ChartView : Group, ItemPackable
             {
                 if (m_ZeroLabel == null)
                 {
-                    var label = new Label (@"$name-zero-label", "0");
+                    var label = new Label (@"zero-label", "0");
                     plug_property ("stroke-pattern", label, "stroke-pattern");
                     plug_property ("axis-font-description", label, "font-description");
                     label.parent = this;
@@ -742,7 +809,7 @@ public class Maia.ChartView : Group, ItemPackable
         if (ref_count > 0)
         {
             // Create legend
-            var lgd = new Legend (@"$name-legend", this);
+            var lgd = new Legend ("chart-legend", this);
             lgd.parent = this;
             m_Legend = lgd;
             m_Legend.visible = legend != LegendPosition.NONE;
@@ -1077,6 +1144,45 @@ public class Maia.ChartView : Group, ItemPackable
             y_axis_path.move_to (origin.x, drawing_area.origin.y);
             y_axis_path.rel_line_to (0, drawing_area.size.height);
 
+            // Draw frame
+            switch (frame)
+            {
+                case Frame.IN:
+                    var shadow_area = drawing_area;
+                    shadow_area.resize (Graphic.Size (-line_width, -line_width));
+
+                    var frame_path = new Graphic.Path.from_rectangle (shadow_area);
+                    if (frame_stroke != null)
+                    {
+                        inContext.pattern = frame_stroke;
+                        inContext.stroke (frame_path);
+                    }
+                    if (frame_fill != null)
+                    {
+                        inContext.pattern = frame_fill;
+                        inContext.fill (new Graphic.Path.from_rectangle (shadow_area));
+                    }
+                    break;
+
+                case Frame.OUT:
+                    var shadow_area = drawing_area;
+                    shadow_area.resize (Graphic.Size (-line_width * 2, -line_width * 2));
+                    shadow_area.translate (Graphic.Point (line_width, line_width));
+
+                    var frame_path = new Graphic.Path.from_rectangle (shadow_area);
+                    if (frame_stroke != null)
+                    {
+                        inContext.pattern = frame_stroke;
+                        inContext.stroke (frame_path);
+                    }
+                    if (frame_fill != null)
+                    {
+                        inContext.pattern = frame_fill;
+                        inContext.fill (new Graphic.Path.from_rectangle (shadow_area));
+                    }
+                    break;
+            }
+
             inContext.pattern = stroke_pattern;
 
             // Draw grid
@@ -1095,6 +1201,8 @@ public class Maia.ChartView : Group, ItemPackable
 
             // Draw ticks
             inContext.stroke (ticks_path);
+
+            
         }
 
         // Paint intersect

@@ -288,6 +288,20 @@ internal class Maia.Xcb.Application : Core.Object
 
             inWindow.weak_unref (on_window_destroyed);
         }
+
+        Core.List<unowned Request> to_remove = new Core.List<unowned Request> ();
+        foreach (unowned Request request in m_RequestQueue)
+        {
+            if (request.window == inWindow)
+            {
+                to_remove.insert (request);
+            }
+        }
+
+        foreach (unowned Request request in to_remove)
+        {
+            m_RequestQueue.remove (request);
+        }
     }
 
     public unowned Window?

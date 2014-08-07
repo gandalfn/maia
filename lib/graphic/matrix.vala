@@ -97,6 +97,12 @@ public struct Maia.Graphic.Matrix
     }
 
     public bool
+    equal (Matrix inOther)
+    {
+        return xx == inOther.xx && yx == inOther.yx && yy == inOther.yy && xy == inOther.xy && x0 == inOther.x0 && y0 == inOther.y0;
+    }
+
+    public bool
     is_valid ()
     {
         return xx != 0 && yy != 0;

@@ -64,6 +64,14 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
     {
     }
 
+    ~Canvas ()
+    {
+        if (m_Window != null)
+        {
+            m_Window.parent = null;
+        }
+    }
+
     private static inline void
     send_keyboard_event (Gdk.Window inWindow, Gdk.EventKey inEvent)
     {

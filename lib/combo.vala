@@ -401,7 +401,10 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
                                                 double.max (m_Popup.size.width, geometry.extents.size.width - (arrow_size.width / 2)),
                                                 double.max (m_Popup.size.height, geometry.extents.size.height));
 
+            bool force = !m_Popup.visible;
+            if (force) m_Popup.visible = true;
             m_Popup.update (inContext, new Graphic.Region (popup_area));
+            if (force) m_Popup.visible = false;
 
             damage_area ();
         }

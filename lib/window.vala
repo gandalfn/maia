@@ -803,8 +803,16 @@ public class Maia.Window : Group
                     // Clear area
                     ctx.operator = Graphic.Operator.SOURCE;
 
-                    ctx.pattern = m_Background;
-                    ctx.fill (new Graphic.Path.from_region (damaged_area));
+                    if (m_Background != null)
+                    {
+                        ctx.pattern = m_Background;
+                        ctx.fill (new Graphic.Path.from_region (damaged_area));
+                    }
+                    else
+                    {
+                        ctx.pattern = background_pattern != null ? background_pattern : new Graphic.Color (0, 0, 0, 0);
+                        ctx.fill (new Graphic.Path.from_region (damaged_area));
+                    }
 
                     // Clip the damaged area
                     ctx.clip_region (damaged_area);
@@ -832,55 +840,56 @@ public class Maia.Window : Group
             var window_size = geometry.extents.size;
             window_size.transform (device_transform);
 
-            m_Background = new Graphic.Surface ((uint)area.extents.size.width, (uint)area.extents.size.height);
-            m_Background.clear ();
-            var ctx = m_Background.context;
-            ctx.operator = Graphic.Operator.SOURCE;
-
-            var shadow_area = Graphic.Rectangle (!(Border.LEFT in shadow_border) ? 0 : shadow_width,
-                                                 !(Border.TOP in shadow_border) ? 0 : shadow_width,
-                                                 area.extents.size.width - ((!(Border.RIGHT in shadow_border) ? 0 : shadow_width) * 2),
-                                                 area.extents.size.height - ((!(Border.BOTTOM in shadow_border) ? 0 : shadow_width) * 2));
-            var path = new Graphic.Path ();
-            path.rectangle (shadow_area.origin.x, shadow_area.origin.y, shadow_area.size.width, shadow_area.size.height, round_corner > 0 ? round_corner : 0, round_corner > 0 ? round_corner : 0);
-
-            if (!(Border.LEFT in shadow_border))
-            {
-                path.rectangle (shadow_area.origin.x, shadow_area.origin.y, round_corner, round_corner);
-                path.rectangle (shadow_area.origin.x, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
-            }
-
-            if (!(Border.RIGHT in shadow_border))
-            {
-                path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y, round_corner, round_corner);
-                path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
-            }
-
-            if (!(Border.TOP in shadow_border))
-            {
-                path.rectangle (shadow_area.origin.x, shadow_area.origin.y, round_corner, round_corner);
-                path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y, round_corner, round_corner);
-            }
-
-            if (!(Border.BOTTOM in shadow_border))
-            {
-                path.rectangle (shadow_area.origin.x, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
-                path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
-            }
-
             // Paint shadow if needed
             if (shadow_width > 0)
             {
+                m_Background = new Graphic.Surface ((uint)area.extents.size.width, (uint)area.extents.size.height);
+                m_Background.clear ();
+                var ctx = m_Background.context;
+                ctx.operator = Graphic.Operator.SOURCE;
+
+                var shadow_area = Graphic.Rectangle (!(Border.LEFT in shadow_border) ? 0 : shadow_width,
+                                                     !(Border.TOP in shadow_border) ? 0 : shadow_width,
+                                                     area.extents.size.width - ((!(Border.RIGHT in shadow_border) ? 0 : shadow_width) * 2),
+                                                     area.extents.size.height - ((!(Border.BOTTOM in shadow_border) ? 0 : shadow_width) * 2));
+                var path = new Graphic.Path ();
+                path.rectangle (shadow_area.origin.x, shadow_area.origin.y, shadow_area.size.width, shadow_area.size.height, round_corner > 0 ? round_corner : 0, round_corner > 0 ? round_corner : 0);
+
+                if (!(Border.LEFT in shadow_border))
+                {
+                    path.rectangle (shadow_area.origin.x, shadow_area.origin.y, round_corner, round_corner);
+                    path.rectangle (shadow_area.origin.x, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
+                }
+
+                if (!(Border.RIGHT in shadow_border))
+                {
+                    path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y, round_corner, round_corner);
+                    path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
+                }
+
+                if (!(Border.TOP in shadow_border))
+                {
+                    path.rectangle (shadow_area.origin.x, shadow_area.origin.y, round_corner, round_corner);
+                    path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y, round_corner, round_corner);
+                }
+
+                if (!(Border.BOTTOM in shadow_border))
+                {
+                    path.rectangle (shadow_area.origin.x, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
+                    path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
+                }
+
                 ctx.pattern = shadow_color ?? new Graphic.Color (0, 0, 0);
                 ctx.fill (path);
 
                 m_Background.exponential_blur ((int)(shadow_width / 2));
+
+                ctx.operator = Graphic.Operator.SOURCE;
+                ctx.pattern = background_pattern != null ? background_pattern : new Graphic.Color (0, 0, 0, 0);
+                ctx.fill (path);
             }
 
-            ctx.operator = Graphic.Operator.SOURCE;
-            ctx.pattern = background_pattern != null ? background_pattern : new Graphic.Color (0, 0, 0, 0);
-            ctx.fill (path);
-
+            
             foreach (unowned Core.Object child in this)
             {
                 if (child is Item)

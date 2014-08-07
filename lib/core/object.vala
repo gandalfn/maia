@@ -447,11 +447,24 @@ public abstract class Maia.Core.Object : Any
     }
 
     /**
+     * Returns a Iterator that can be used for simple iteration over
+     * childs object.
+     *
+     * @return a Iterator that can be used for simple iteration over childs
+     *         object
+     */
+    public virtual Iterator
+    iterator_begin ()
+    {
+        return iterator ();
+    }
+
+    /**
      * Returns the last Iterator of childs object.
      *
      * @return the last Iteratorof childs object
      */
-    public Iterator
+    public virtual Iterator
     iterator_end ()
     {
         return new Iterator.end (this);
@@ -595,7 +608,7 @@ public abstract class Maia.Core.Object : Any
      *
      * @return the corresponding object to inId else `null`
      */
-    public List<unowned T?>
+    public virtual List<unowned T?>
     find_by_type<T> (bool inRecursive = true)
     {
         List<unowned T?> list = new List<unowned T?> ();

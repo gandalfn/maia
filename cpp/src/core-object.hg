@@ -139,7 +139,8 @@ namespace Maia
                 template <typename T>
                 inline void find (std::vector<Glib::RefPtr<T> >& inChilds, bool inRecurse = true);
 
-                _WRAP_METHOD (Object::iterator begin (), maia_core_object_iterator)
+                _IGNORE(maia_core_object_iterator)
+                _WRAP_METHOD (Object::iterator begin (), maia_core_object_iterator_begin)
                 _WRAP_METHOD (Object::iterator end (), maia_core_object_iterator_end)
 
                 _WRAP_METHOD(Glib::RefPtr<Object> next (), maia_core_object_next, refreturn)
@@ -239,7 +240,7 @@ namespace Maia
         inline void
         Object::find (const Glib::RefPtr<Object>& inpObject, std::vector<Glib::RefPtr<T> >& inoutList, bool inRecurse)
         {
-            for (iterator iter = inpObject->begin (); iter != inpObject->end (); ++iter)
+            for (iterator iter = inpObject->begin (); iter != end (); ++iter)
             {
                 Glib::RefPtr<Object> pObject = *iter;
                 Glib::RefPtr<T> pChild = Glib::RefPtr<T>::cast_dynamic (pObject);

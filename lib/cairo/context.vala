@@ -423,25 +423,71 @@ internal class Maia.Cairo.Context : Graphic.Context
             case global::Cairo.Status.SUCCESS:
                 break;
             case global::Cairo.Status.NO_MEMORY:
-                throw new Graphic.Error.NO_MEMORY ("out of memory");
+                throw new Graphic.Error.NO_MEMORY (@"$status");
             case global::Cairo.Status.INVALID_RESTORE:
-                throw new Graphic.Error.END_ELEMENT ("call end element without matching begin element");
+                throw new Graphic.Error.END_ELEMENT (@"$status");
             case global::Cairo.Status.NO_CURRENT_POINT:
-                throw new Graphic.Error.NO_CURRENT_POINT ("no current point defined");
+                throw new Graphic.Error.NO_CURRENT_POINT (@"$status");
             case global::Cairo.Status.INVALID_MATRIX:
-                throw new Graphic.Error.INVALID_MATRIX ("invalid matrix (not invertible)");
+                throw new Graphic.Error.INVALID_MATRIX (@"$status");
             case global::Cairo.Status.NULL_POINTER:
-                throw new Graphic.Error.NULL_POINTER ("null pointer");
+                throw new Graphic.Error.NULL_POINTER (@"$status");
             case global::Cairo.Status.INVALID_STRING:
-                throw new Graphic.Error.INVALID_STRING ("input string not valid UTF-8");
+                throw new Graphic.Error.INVALID_STRING (@"$status");
             case global::Cairo.Status.INVALID_PATH_DATA:
-                throw new Graphic.Error.INVALID_PATH ("input path not valid");
+                throw new Graphic.Error.INVALID_PATH (@"$status");
             case global::Cairo.Status.SURFACE_FINISHED:
-                throw new Graphic.Error.SURFACE_FINISHED ("the target surface has been finished");
+                throw new Graphic.Error.SURFACE_FINISHED (@"$status");
             case global::Cairo.Status.SURFACE_TYPE_MISMATCH:
-                throw new Graphic.Error.SURFACE_TYPE_MISMATCH ("the surface type is not appropriate for the operation");
+                throw new Graphic.Error.SURFACE_TYPE_MISMATCH (@"$status");
             case global::Cairo.Status.PATTERN_TYPE_MISMATCH:
-                throw new Graphic.Error.PATTERN_TYPE_MISMATCH ("the pattern type is not appropriate for the operation");
+                throw new Graphic.Error.PATTERN_TYPE_MISMATCH (@"$status");
+            case global::Cairo.Status.INVALID_CONTENT:
+                throw new Graphic.Error.INVALID_CONTENT (@"$status");
+            case global::Cairo.Status.INVALID_FORMAT:
+                throw new Graphic.Error.INVALID_FORMAT (@"$status");
+            case global::Cairo.Status.INVALID_VISUAL:
+                throw new Graphic.Error.INVALID_VISUAL (@"$status");
+            case global::Cairo.Status.FILE_NOT_FOUND:
+                throw new Graphic.Error.FILE_NOT_FOUND (@"$status");
+            case global::Cairo.Status.INVALID_DASH:
+                throw new Graphic.Error.INVALID_DASH (@"$status");
+            case global::Cairo.Status.INVALID_DSC_COMMENT:
+                throw new Graphic.Error.INVALID_DSC_COMMENT (@"$status");
+            case global::Cairo.Status.INVALID_INDEX:
+                throw new Graphic.Error.INVALID_INDEX (@"$status");
+            case global::Cairo.Status.CLIP_NOT_REPRESENTABLE:
+                throw new Graphic.Error.CLIP_NOT_REPRESENTABLE (@"$status");
+            case global::Cairo.Status.TEMP_FILE_ERROR:
+                throw new Graphic.Error.TEMP_FILE_ERROR (@"$status");
+            case global::Cairo.Status.INVALID_STRIDE:
+                throw new Graphic.Error.INVALID_STRIDE (@"$status");
+            case global::Cairo.Status.FONT_TYPE_MISMATCH:
+                throw new Graphic.Error.FONT_TYPE_MISMATCH (@"$status");
+            case global::Cairo.Status.USER_FONT_IMMUTABLE:
+                throw new Graphic.Error.FONT_TYPE_MISMATCH (@"$status");
+            case global::Cairo.Status.USER_FONT_ERROR:
+                throw new Graphic.Error.USER_FONT_ERROR (@"$status");
+            case global::Cairo.Status.NEGATIVE_COUNT:
+                throw new Graphic.Error.NEGATIVE_COUNT (@"$status");
+            case global::Cairo.Status.INVALID_CLUSTERS:
+                throw new Graphic.Error.INVALID_CLUSTERS (@"$status");
+            case global::Cairo.Status.INVALID_SLANT:
+                throw new Graphic.Error.INVALID_SLANT (@"$status");
+            case global::Cairo.Status.INVALID_WEIGHT:
+                throw new Graphic.Error.INVALID_WEIGHT (@"$status");
+            case global::Cairo.Status.INVALID_SIZE:
+                throw new Graphic.Error.INVALID_SIZE (@"$status");
+            case global::Cairo.Status.USER_FONT_NOT_IMPLEMENTED:
+                throw new Graphic.Error.USER_FONT_NOT_IMPLEMENTED (@"$status");
+            case global::Cairo.Status.DEVICE_TYPE_MISMATCH:
+                throw new Graphic.Error.DEVICE_TYPE_MISMATCH (@"$status");
+            case global::Cairo.Status.DEVICE_ERROR:
+                throw new Graphic.Error.DEVICE_ERROR (@"$status");
+            case global::Cairo.Status.INVALID_MESH_CONSTRUCTION:
+                throw new Graphic.Error.INVALID_MESH_CONSTRUCTION (@"$status");
+            case global::Cairo.Status.DEVICE_FINISHED:
+                throw new Graphic.Error.DEVICE_FINISHED (@"$status");
             default:
                 throw new Graphic.Error.UNKNOWN ("a unknown error occured");
         }

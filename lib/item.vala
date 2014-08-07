@@ -79,6 +79,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 }
             }
 
+            calculate_transform_to_window_space ();
+            calculate_transform_from_window_space ();
+
             // If item is root do not connect on position change
             if (parent == null)
                 notify["position"].disconnect (on_move);
@@ -88,6 +91,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             // Send root change notification
             GLib.Signal.emit_by_name (this, "notify::root");
             GLib.Signal.emit_by_name (this, "notify::window");
+
             unref ();
         }
     }
@@ -165,6 +169,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             if (m_Visible != value)
             {
                 m_Visible = value;
+
+                calculate_transform_to_window_space ();
+                calculate_transform_from_window_space ();
 
                 if (!m_Visible)
                 {
@@ -752,18 +759,12 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     private void
     on_parent_root_changed ()
     {
-        calculate_transform_to_window_space ();
-        calculate_transform_from_window_space ();
-
         GLib.Signal.emit_by_name (this, "notify::root");
     }
 
     private void
     on_parent_window_changed ()
     {
-        calculate_transform_to_window_space ();
-        calculate_transform_from_window_space ();
-
         GLib.Signal.emit_by_name (this, "notify::window");
     }
 
@@ -798,42 +799,59 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             foreach (unowned string item_name in item_names)
             {
-                unowned Item? item = root.find (GLib.Quark.from_string (item_name.strip ())) as Item;
-
-                if (item != null)
+                GLib.Quark search_id = GLib.Quark.from_string (item_name.strip ());
+                if (search_id != 0)
                 {
-                    // Get show count
-                    int count = item.get_qdata<int> (s_ChainVisibleCount);
-                    int count_hide = item.get_qdata<int> (s_CountHide);
-
-                    if (visible)
+                    // First search in child
+                    unowned Item? item = find (search_id) as Item;
+                    if (item == null)
                     {
-                        if (!item.visible)
+                        // Search in parents
+                        for (unowned Core.Object? p = parent; item == null && p != null; p = p.parent)
                         {
-                            count_hide--;
-                            if (count_hide < 0) count_hide = 0;
-                            if (count_hide == 0)
+                            unowned Item? parent_item = p as Item;
+                            if (parent_item != null)
                             {
-                                item.visible = true;
+                                item = parent_item.find (search_id) as Item;
                             }
-                            item.set_qdata<int> (Item.s_CountHide, count_hide);
                         }
-
-                        count++;
-                        item.set_qdata(s_ChainVisibleCount, count.to_pointer());
                     }
-                    else
+
+                    if (item != null)
                     {
-                        count--;
-                        if (count < 0) count = 0;
-                        item.set_qdata(s_ChainVisibleCount, count.to_pointer());
-                        if (count == 0)
+                        // Get show count
+                        int count = item.get_qdata<int> (s_ChainVisibleCount);
+                        int count_hide = item.get_qdata<int> (s_CountHide);
+
+                        if (visible)
                         {
-                            if (item.visible)
+                            if (!item.visible)
                             {
-                                item.visible = false;
-                                count_hide++;
+                                count_hide--;
+                                if (count_hide < 0) count_hide = 0;
+                                if (count_hide == 0)
+                                {
+                                    item.visible = true;
+                                }
                                 item.set_qdata<int> (Item.s_CountHide, count_hide);
+                            }
+
+                            count++;
+                            item.set_qdata(s_ChainVisibleCount, count.to_pointer());
+                        }
+                        else
+                        {
+                            count--;
+                            if (count < 0) count = 0;
+                            item.set_qdata(s_ChainVisibleCount, count.to_pointer());
+                            if (count == 0)
+                            {
+                                if (item.visible)
+                                {
+                                    item.visible = false;
+                                    count_hide++;
+                                    item.set_qdata<int> (Item.s_CountHide, count_hide);
+                                }
                             }
                         }
                     }
@@ -900,46 +918,49 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         // clear transform
         m_TransformToItemSpace.init ();
 
-        // add parent transform
-        for (unowned Core.Object? object = this; object != null; object = object.parent)
+        if (visible)
         {
-            unowned Item? item = object as Item;
-            if (item != null && item != this)
+            // add parent transform
+            for (unowned Core.Object? object = this; object != null; object = object.parent)
             {
-                m_TransformToItemSpace.prepend (item.m_TransformToItemSpace.link ());
-                break;
+                unowned Item? item = object as Item;
+                if (item != null && item != this)
+                {
+                    m_TransformToItemSpace.prepend (item.m_TransformToItemSpace.link ());
+                    break;
+                }
+
+                // If item is under popup chain up on it
+                unowned Core.Object? popup = object.get_qdata<unowned Core.Object?> (s_PopupWindow);
+                if (popup != null)
+                {
+                    object = popup;
+                }
             }
 
-            // If item is under popup chain up on it
-            unowned Core.Object? popup = object.get_qdata<unowned Core.Object?> (s_PopupWindow);
-            if (popup != null)
+            // add transform
+            var this_transform = new Graphic.Transform.identity ();
+            try
             {
-                object = popup;
+                Graphic.Transform item_transform = new Graphic.Transform.invert (transform);
+                this_transform.append (item_transform);
             }
-        }
+            catch (Graphic.Error err)
+            {
+                Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Error on calculate transform to item %s space: %s", name, err.message);
+            }
 
-        // add transform
-        var this_transform = new Graphic.Transform.identity ();
-        try
-        {
-            Graphic.Transform item_transform = new Graphic.Transform.invert (transform);
-            this_transform.append (item_transform);
-        }
-        catch (Graphic.Error err)
-        {
-            Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Error on calculate transform to item %s space: %s", name, err.message);
-        }
+            // Ignore translation of item without geometry or window managed by application
+            // the position of this last is the position under desktop
+            if (geometry != null && !(parent is Application))
+            {
+                Graphic.Point pos = geometry.extents.origin.invert ();
+                Graphic.Transform item_translate = new Graphic.Transform.init_translate (pos.x, pos.y);
+                this_transform.append (item_translate);
+            }
 
-        // Ignore translation of item without geometry or window managed by application
-        // the position of this last is the position under desktop
-        if (geometry != null && !(parent is Application))
-        {
-            Graphic.Point pos = geometry.extents.origin.invert ();
-            Graphic.Transform item_translate = new Graphic.Transform.init_translate (pos.x, pos.y);
-            this_transform.append (item_translate);
+            m_TransformToItemSpace.prepend (this_transform);
         }
-
-        m_TransformToItemSpace.prepend (this_transform);
     }
 
     private void
@@ -948,50 +969,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         // clear transform
         m_TransformToRootSpace.init ();
 
-        // add parent transform
-        for (unowned Core.Object? object = this; object != null; object = object.parent)
-        {
-            unowned Item? item = object as Item;
-            if (item != null && item != this)
-            {
-                m_TransformToRootSpace.append (item.m_TransformToRootSpace.link ());
-                break;
-            }
-
-            // If item is under popup chain up on it
-            unowned Core.Object? popup = object.get_qdata<unowned Core.Object?> (s_PopupWindow);
-            if (popup != null)
-            {
-                object = popup;
-            }
-        }
-
-        // add transform
-        var this_transform = new Graphic.Transform.identity ();
-
-        // Ignore translation of item without geometry or window managed by application
-        // the position of this last is the position under desktop
-        if (geometry != null && !(parent is Application))
-        {
-            Graphic.Point pos = geometry.extents.origin;
-            Graphic.Transform item_translate = new Graphic.Transform.init_translate (pos.x, pos.y);
-            this_transform.append (item_translate);
-        }
-
-        Graphic.Transform item_transform = transform.copy ();
-        this_transform.append (item_transform);
-
-        m_TransformToRootSpace.append (this_transform);
-    }
-
-    private void
-    calculate_transform_to_window_space ()
-    {
-        // clear transform
-        m_TransformToWindowSpace.init ();
-
-        // add parent transform
-        if (!(this is Window))
+        if (visible)
         {
             // add parent transform
             for (unowned Core.Object? object = this; object != null; object = object.parent)
@@ -999,7 +977,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 unowned Item? item = object as Item;
                 if (item != null && item != this)
                 {
-                    m_TransformToWindowSpace.append (item.m_TransformToWindowSpace.link ());
+                    m_TransformToRootSpace.append (item.m_TransformToRootSpace.link ());
                     break;
                 }
 
@@ -1026,11 +1004,60 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             Graphic.Transform item_transform = transform.copy ();
             this_transform.append (item_transform);
 
-            m_TransformToWindowSpace.append (this_transform);
+            m_TransformToRootSpace.append (this_transform);
         }
-        else
+    }
+
+    private void
+    calculate_transform_to_window_space ()
+    {
+        // clear transform
+        m_TransformToWindowSpace.init ();
+
+        if (visible)
         {
-            m_TransformToWindowSpace.append (transform.copy ());
+            // add parent transform
+            if (!(this is Window))
+            {
+                // add parent transform
+                for (unowned Core.Object? object = this; object != null; object = object.parent)
+                {
+                    unowned Item? item = object as Item;
+                    if (item != null && item != this)
+                    {
+                        m_TransformToWindowSpace.append (item.m_TransformToWindowSpace.link ());
+                        break;
+                    }
+
+                    // If item is under popup chain up on it
+                    unowned Core.Object? popup = object.get_qdata<unowned Core.Object?> (s_PopupWindow);
+                    if (popup != null)
+                    {
+                        object = popup;
+                    }
+                }
+
+                // add transform
+                var this_transform = new Graphic.Transform.identity ();
+
+                // Ignore translation of item without geometry or window managed by application
+                // the position of this last is the position under desktop
+                if (geometry != null && !(parent is Application))
+                {
+                    Graphic.Point pos = geometry.extents.origin;
+                    Graphic.Transform item_translate = new Graphic.Transform.init_translate (pos.x, pos.y);
+                    this_transform.append (item_translate);
+                }
+
+                Graphic.Transform item_transform = transform.copy ();
+                this_transform.append (item_transform);
+
+                m_TransformToWindowSpace.append (this_transform);
+            }
+            else
+            {
+                m_TransformToWindowSpace.append (transform.copy ());
+            }
         }
     }
 
@@ -1040,59 +1067,62 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         // clear transform
         m_TransformFromWindowSpace.init ();
 
-        // add parent transform
-        if (!(this is Window))
+        if (visible)
         {
             // add parent transform
-            for (unowned Core.Object? object = this; object != null; object = object.parent)
+            if (!(this is Window))
             {
-                unowned Item? item = object as Item;
-                if (item != null && item != this)
+                // add parent transform
+                for (unowned Core.Object? object = this; object != null; object = object.parent)
                 {
-                    m_TransformFromWindowSpace.prepend (item.m_TransformFromWindowSpace.link ());
-                    break;
+                    unowned Item? item = object as Item;
+                    if (item != null && item != this)
+                    {
+                        m_TransformFromWindowSpace.prepend (item.m_TransformFromWindowSpace.link ());
+                        break;
+                    }
+
+                    // If item is under popup chain up on it
+                    unowned Core.Object? popup = object.get_qdata<unowned Core.Object?> (s_PopupWindow);
+                    if (popup != null)
+                    {
+                        object = popup;
+                    }
                 }
 
-                // If item is under popup chain up on it
-                unowned Core.Object? popup = object.get_qdata<unowned Core.Object?> (s_PopupWindow);
-                if (popup != null)
+                // add transform
+                var this_transform = new Graphic.Transform.identity ();
+                try
                 {
-                    object = popup;
+                    Graphic.Transform item_transform = new Graphic.Transform.invert (transform);
+                    this_transform.append (item_transform);
                 }
-            }
+                catch (Graphic.Error err)
+                {
+                    Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Error on calculate transform from window %s space: %s", name, err.message);
+                }
 
-            // add transform
-            var this_transform = new Graphic.Transform.identity ();
-            try
-            {
-                Graphic.Transform item_transform = new Graphic.Transform.invert (transform);
-                this_transform.append (item_transform);
-            }
-            catch (Graphic.Error err)
-            {
-                Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Error on calculate transform from window %s space: %s", name, err.message);
-            }
+                // Ignore translation of item without geometry or window managed by application
+                // the position of this last is the position under desktop
+                if (geometry != null && !(parent is Application))
+                {
+                    Graphic.Point pos = geometry.extents.origin.invert ();
+                    Graphic.Transform item_translate = new Graphic.Transform.init_translate (pos.x, pos.y);
+                    this_transform.append (item_translate);
+                }
 
-            // Ignore translation of item without geometry or window managed by application
-            // the position of this last is the position under desktop
-            if (geometry != null && !(parent is Application))
-            {
-                Graphic.Point pos = geometry.extents.origin.invert ();
-                Graphic.Transform item_translate = new Graphic.Transform.init_translate (pos.x, pos.y);
-                this_transform.append (item_translate);
+                m_TransformFromWindowSpace.prepend (this_transform);
             }
-
-            m_TransformFromWindowSpace.prepend (this_transform);
-        }
-        else
-        {
-            try
+            else
             {
-                m_TransformFromWindowSpace.append (new Graphic.Transform.invert (transform));
-            }
-            catch (Graphic.Error err)
-            {
-                Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Error on calculate transform from window %s space: %s", name, err.message);
+                try
+                {
+                    m_TransformFromWindowSpace.append (new Graphic.Transform.invert (transform));
+                }
+                catch (Graphic.Error err)
+                {
+                    Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Error on calculate transform from window %s space: %s", name, err.message);
+                }
             }
         }
     }

@@ -52,7 +52,6 @@ public class Maia.Document : Item
     private Graphic.Surface              m_PageShadow;
     private Core.List<Page>              m_Pages;
     private Core.List<unowned PageBreak> m_PageBreaks;
-    private uint                         m_CurrentPage = 0;
 
     // accessors
     internal override string tag {
@@ -73,11 +72,6 @@ public class Maia.Document : Item
     public uint nb_pages {
         get {
             return m_Pages.length;
-        }
-    }
-    internal uint current_page {
-        get {
-            return m_CurrentPage;
         }
     }
 
@@ -354,7 +348,7 @@ public class Maia.Document : Item
                 foreach (unowned Core.Object child in inGrid)
                 {
                     unowned Grid? grid = child as Grid;
-                    if (grid != null)
+                    if (grid != null && grid.visible)
                     {
                         paginate_grid (inRoot, grid, ref inoutPage, ref inoutCurrentPosition);
                     }
@@ -421,8 +415,6 @@ public class Maia.Document : Item
     private void
     paginate ()
     {
-        uint old_nb_pages = nb_pages;
-
         // Clear page list
         m_Pages.clear ();
 
@@ -444,17 +436,8 @@ public class Maia.Document : Item
             }
         }
 
-        // Try to get report nb pages
-        uint nb = get_qdata<uint> (s_PageTotalQuark);
-        if (nb == 0)
-        {
-            nb = nb_pages;
-        }
-        // Check if nb pages change if change emit signal for bind
-        if (old_nb_pages != nb)
-        {
-            GLib.Signal.emit_by_name (this, "notify::nb_pages");
-        }
+        // emit signal for bind
+        GLib.Signal.emit_by_name (this, "notify::nb_pages");
     }
 
     private static void
@@ -471,8 +454,25 @@ public class Maia.Document : Item
         }
         else if (inAttribute.get () == "page_num")
         {
-            uint num = inSrc.get_qdata<uint> (s_PageNumQuark);
-            inAttribute.owner.set_property (inProperty, num);
+            uint num = 0;
+            uint start = 0;
+
+            unowned Document doc = inSrc as Document;
+            if (doc == null)
+            {
+                num = inSrc.get_qdata<uint> (s_PageNumQuark);
+                start = ((inSrc as Core.Object).parent as Document).get_qdata<uint> (s_PageBeginQuark);
+            }
+            else
+            {
+                unowned Core.Object? item = inAttribute.owner as Core.Object;
+                for (; item.parent != null && item.parent != doc; item = item.parent);
+
+                num = item.get_qdata<uint> (s_PageNumQuark);
+                start = doc.get_qdata<uint> (s_PageBeginQuark);
+            }
+
+            inAttribute.owner.set_property (inProperty, num + start);
         }
     }
 
@@ -497,10 +497,13 @@ public class Maia.Document : Item
             unowned Core.Object? item = inAttribute.owner as Core.Object;
             if (item != null)
             {
-                // search parent which is child in document
+                // search the direct child of document which own page num property
                 for (; item.parent != null && item.parent != this; item = item.parent);
 
                 inAttribute.bind (item, signal_name, inProperty, on_bind_value_changed);
+
+                // bind start page changed to add offset on report save
+                inAttribute.bind (this, "notify::start_page", inProperty, on_bind_value_changed);
             }
         }
     }
@@ -576,9 +579,6 @@ public class Maia.Document : Item
             // Update each page
             foreach (unowned Page page in m_Pages)
             {
-                uint delta = get_qdata<uint> (s_PageBeginQuark);
-                m_CurrentPage = page.num + delta;
-
                 page.update (inContext);
             }
         }
@@ -593,9 +593,6 @@ public class Maia.Document : Item
         // paint visible pages
         foreach (unowned Page page in m_Pages)
         {
-            uint delta = get_qdata<uint> (s_PageBeginQuark);
-            m_CurrentPage = page.num + delta;
-
             inContext.save ();
             {
                 var page_position = Graphic.Point (0, ((format.to_size ().height + (border_width* 2.0)) * (page.num - 1)));
@@ -775,8 +772,6 @@ public class Maia.Document : Item
             {
                 if (page.num == inPageNum)
                 {
-                    uint delta = get_qdata<uint> (s_PageBeginQuark);
-                    m_CurrentPage = page.num + delta;
                     inContext.save ();
                     {
                         inContext.translate (page.geometry.extents.origin.invert ());

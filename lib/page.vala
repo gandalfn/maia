@@ -203,6 +203,11 @@ internal class Maia.Page : GLib.Object
 
     ~Page ()
     {
+        foreach (unowned Item item in m_Childs)
+        {
+            item.steal_qdata<uint>(Document.s_PageNumQuark);
+        }
+
         if (m_Header != null)
         {
             m_Header.parent = null;

@@ -28,6 +28,7 @@ _PINCLUDE(maiamm/private/group_p.h)
 namespace Maia
 {
     _WRAP_ENUM(ChartViewLegendPosition, MaiaChartViewLegendPosition, NO_GTYPE)
+    _WRAP_ENUM(ChartViewFrame, MaiaChartViewFrame, NO_GTYPE)
 
     class ChartView : public Group, public ItemPackable
     {
@@ -86,6 +87,15 @@ namespace Maia
             _WRAP_METHOD(double get_tick_size () const, maia_chart_view_get_tick_size)
             _WRAP_METHOD(void set_tick_size (double inBorder), maia_chart_view_set_tick_size)
             
+            _WRAP_METHOD(ChartViewFrame get_frame () const, maia_chart_view_get_frame)
+            _WRAP_METHOD(void set_frame (ChartViewFrame inFrame), maia_chart_view_set_frame)
+
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_frame_stroke () const, maia_chart_view_get_frame_stroke, refreturn)
+            _WRAP_METHOD(void set_frame_stroke (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_chart_view_set_frame_stroke)
+
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_frame_fill () const, maia_chart_view_get_frame_fill, refreturn)
+            _WRAP_METHOD(void set_frame_fill (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_chart_view_set_frame_fill)
+
             _WRAP_METHOD(ChartViewLegendPosition get_legend () const, maia_chart_view_get_legend)
             _WRAP_METHOD(void set_legend (ChartViewLegendPosition inLegendPosition), maia_chart_view_set_legend)
 
@@ -106,6 +116,9 @@ namespace Maia
             _WRAP_PROPERTY("x-axis-ticks", double)
             _WRAP_PROPERTY("y-axis-ticks", double)
             _WRAP_PROPERTY("tick-size", double)
+            _WRAP_PROPERTY("frame", ChartViewFrame)
+            _WRAP_PROPERTY("frame-stroke", Glib::RefPtr<Graphic::Pattern>)
+            _WRAP_PROPERTY("frame-fill", Glib::RefPtr<Graphic::Pattern>)
             _WRAP_PROPERTY("legend", ChartViewLegendPosition)
             _WRAP_PROPERTY("legend-border", double)
 

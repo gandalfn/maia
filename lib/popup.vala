@@ -80,6 +80,8 @@ public class Maia.Popup : Group
     private static unowned Popup s_PopupOpen = null;
 
     // properties
+    private double          m_X = double.MIN;
+    private double          m_Y = double.MIN;
     private Core.Animator   m_Animator;
     private uint            m_Transition = 0;
     private unowned Item    m_Content;
@@ -94,6 +96,7 @@ public class Maia.Popup : Group
 
     internal double x {
         set {
+            m_X = value;
             var dtransform = get_window_transform ();
             dtransform.add (new Graphic.Transform.init_translate (value, 0));
             m_Window.device_transform = dtransform;
@@ -103,6 +106,7 @@ public class Maia.Popup : Group
 
     internal double y {
         set {
+            m_Y = value;
             var dtransform = get_window_transform ();
             dtransform.add (new Graphic.Transform.init_translate (0, value));
             m_Window.device_transform = dtransform;
@@ -301,6 +305,22 @@ public class Maia.Popup : Group
         return m_Window == null ? null : m_Window.find (inId, inRecursive);
     }
 
+    internal override Core.List<unowned T?>
+    find_by_type<T> (bool inRecursive = true)
+    {
+        Core.List<unowned T?> list = new Core.List<unowned T?> ();
+
+        if (m_Window != null)
+        {
+            foreach (unowned T? c in m_Window.find_by_type<T> (inRecursive))
+            {
+                list.insert (c);
+            }
+        }
+        
+        return list;
+    }
+
     internal override string
     to_string ()
     {
@@ -368,48 +388,68 @@ public class Maia.Popup : Group
         GLib.Value from = (double)0;
         GLib.Value to = (double)0;
 
-        // Create transition
-        m_Transition = m_Animator.add_transition (0.0, 1.0, Core.Animator.ProgressType.SINUSOIDAL, null, on_show_animation_finished);
-
         // Get popup size
         var popup_size = m_Window.size;
+        string prop = null;
 
         // Set animation property change
         switch (placement)
         {
             case PopupPlacement.BOTTOM:
-                from = (double)(popup_size.height);
-                to = (double)0.0;
-                y = (double)from;
-                m_Animator.add_transition_property (m_Transition, this, "y", from, to);
+                if (m_Y != 0.0)
+                {
+                    from = (double)(popup_size.height);
+                    to = (double)0.0;
+                    prop = "y";
+                }
                 break;
 
             case PopupPlacement.TOP:
-                from = (double)(-popup_size.height);
-                to = (double)0.0;
-                y = (double)from;
-                m_Animator.add_transition_property (m_Transition, this, "y", from, to);
+                if (m_Y != 0.0)
+                {
+                    from = (double)(-popup_size.height);
+                    to = (double)0.0;
+                    prop = "y";
+                }
                 break;
 
             case PopupPlacement.RIGHT:
-                from = (double)(popup_size.width);
-                to = (double)0.0;
-                x = (double)from;
-                m_Animator.add_transition_property (m_Transition, this, "x", from, to);
+                if (m_X != 0.0)
+                {
+                    from = (double)(popup_size.width);
+                    to = (double)0.0;
+                    prop = "x";
+                }
                 break;
 
             case PopupPlacement.LEFT:
-                from = (double)(-popup_size.width);
-                to = (double)0.0;
-                x = (double)from;
-                m_Animator.add_transition_property (m_Transition, this, "x", from, to);
+                if (m_X != 0.0)
+                {
+                    from = (double)(-popup_size.width);
+                    to = (double)0.0;
+                    prop = "x";
+                }
                 break;
         }
 
-        // Start animation
-        m_Animator.start ();
+        if (prop != null)
+        {
+            // Create transition
+            m_Transition = m_Animator.add_transition (0.0, 1.0, Core.Animator.ProgressType.SINUSOIDAL, null, on_show_animation_finished);
+
+            // Add property transitrion
+            m_Animator.add_transition_property (m_Transition, this, prop, from, to);
+
+            // Start animation
+            m_Animator.start ();
+        }
 
         base.on_show ();
+
+        if (prop == null)
+        {
+            on_show_animation_finished ();
+        }
     }
 
     internal override void
@@ -431,42 +471,65 @@ public class Maia.Popup : Group
         GLib.Value from = (double)0;
         GLib.Value to = (double)0;
 
-        // Create transition
-        m_Transition = m_Animator.add_transition (0.0, 1.0, Core.Animator.ProgressType.SINUSOIDAL, null, on_hide_animation_finished);
-
         // Get popup size
         var popup_size = m_Window.size;
+        string prop = null;
 
         // Set animation property change
         switch (placement)
         {
             case PopupPlacement.BOTTOM:
-                to = (double)(popup_size.height);
-                from = (double)0.0;
-                m_Animator.add_transition_property (m_Transition, this, "y", from, to);
+                if (m_Y != popup_size.height)
+                {
+                    to = (double)(popup_size.height);
+                    from = (double)0.0;
+                    prop = "y";
+                }
                 break;
 
             case PopupPlacement.TOP:
-                to = (double)(-popup_size.height);
-                from = (double)0.0;
-                m_Animator.add_transition_property (m_Transition, this, "y", from, to);
+                if (m_Y != -popup_size.height)
+                {
+                    to = (double)(-popup_size.height);
+                    from = (double)0.0;
+                    prop = "y";
+                }
                 break;
 
             case PopupPlacement.RIGHT:
-                to = (double)(popup_size.width);
-                from = (double)0.0;
-                m_Animator.add_transition_property (m_Transition, this, "x", from, to);
+                if (m_X != popup_size.width)
+                {
+                    to = (double)(popup_size.width);
+                    from = (double)0.0;
+                    prop = "x";
+                }
                 break;
 
             case PopupPlacement.LEFT:
-                to = (double)(-popup_size.width);
-                from = (double)0.0;
-                m_Animator.add_transition_property (m_Transition, this, "x", from, to);
+                if (m_X != -popup_size.width)
+                {
+                    to = (double)(-popup_size.width);
+                    from = (double)0.0;
+                    prop = "x";
+                }
                 break;
         }
 
-        // Start animation
-        m_Animator.start ();
+        if (prop != null)
+        {
+            // Create transition
+            m_Transition = m_Animator.add_transition (0.0, 1.0, Core.Animator.ProgressType.SINUSOIDAL, null, on_hide_animation_finished);
+
+            // Add property transitrion
+            m_Animator.add_transition_property (m_Transition, this, prop, from, to);
+
+            // Start animation
+            m_Animator.start ();
+        }
+        else
+        {
+            on_hide_animation_finished ();
+        }
     }
 
     public Graphic.Transform

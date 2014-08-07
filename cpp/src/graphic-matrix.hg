@@ -41,6 +41,11 @@ namespace Maia
                 Matrix (double inXX, double inYX, double inXY, double inYY, double inX0, double inY0);
                 explicit Matrix(const MaiaGraphicMatrix* gobject);
 
+                inline bool operator== (const Matrix& rhs)
+                {
+                    return maia_graphic_matrix_equal (gobj (), const_cast<MaiaGraphicMatrix*>(rhs.gobj ()));
+                }
+
                 bool is_valid () const;
 
                 bool is_identity () const;

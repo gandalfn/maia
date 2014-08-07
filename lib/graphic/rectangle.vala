@@ -127,6 +127,17 @@ public struct Maia.Graphic.Rectangle
     }
 
     /**
+     * Resize rectangle by inSize
+     *
+     * @param inSize Amount to resize
+     */
+    public void
+    resize (Graphic.Size inSize)
+    {
+        size.resize (inSize.width, inSize.height);
+    }
+
+    /**
      * Transform the rectangle by inTransform.
      *
      * @param inTransform transform matrix

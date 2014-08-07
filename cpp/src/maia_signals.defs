@@ -1319,15 +1319,6 @@
   (construct-only #f)
 )
 
-(define-property current-page
-  (of-object "MaiaDocument")
-  (prop-type "GParamUInt")
-  (docs "current-page")
-  (readable #t)
-  (writable #f)
-  (construct-only #f)
-)
-
 (define-property header
   (of-object "MaiaDocument")
   (prop-type "GParamString")
@@ -5882,6 +5873,33 @@
   (of-object "MaiaChartView")
   (prop-type "GParamDouble")
   (docs "tick-size")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property frame
+  (of-object "MaiaChartView")
+  (prop-type "GParamEnum")
+  (docs "frame")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property frame-stroke
+  (of-object "MaiaChartView")
+  (prop-type "GParamObject")
+  (docs "frame-stroke")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property frame-fill
+  (of-object "MaiaChartView")
+  (prop-type "GParamObject")
+  (docs "frame-fill")
   (readable #t)
   (writable #t)
   (construct-only #f)

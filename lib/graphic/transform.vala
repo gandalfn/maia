@@ -427,6 +427,9 @@ public class Maia.Graphic.Transform : Core.Object
     private void
     recalculate_final_matrix ()
     {
+        var old = m_FinalMatrix;
+        var old_invert = m_FinalInvertMatrix;
+
         m_FinalMatrix = m_BaseMatrix;
         m_FinalInvertMatrix = m_BaseInvertMatrix;
         foreach (unowned Core.Object child in this)
@@ -436,7 +439,10 @@ public class Maia.Graphic.Transform : Core.Object
             m_FinalInvertMatrix.multiply (transform.m_FinalInvertMatrix);
         }
 
-        changed ();
+        if (!old.equal (m_FinalMatrix) || !old_invert.equal (m_FinalInvertMatrix))
+        {
+            changed ();
+        }
     }
 
     internal override bool

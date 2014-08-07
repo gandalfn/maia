@@ -47,6 +47,11 @@ internal class Maia.Cairo.Report : Maia.Report
         Graphic.Size doc_size = Graphic.Size (0, 0);
         foreach (unowned Maia.Document document in documents)
         {
+            // Repaginate document
+            document.need_update = true;
+            doc_size = document.size;
+
+            // Count nb pages
             nb_pages += document.nb_pages;
         }
 
@@ -57,9 +62,14 @@ internal class Maia.Cairo.Report : Maia.Report
             document.set_qdata<uint> (Maia.Document.s_PageBeginQuark, start);
             document.set_qdata<uint> (Maia.Document.s_PageTotalQuark, nb_pages);
 
-            // Repaginate document
+            // Notify start page change
+            GLib.Signal.emit_by_name (document, "notify::start_page");
+
+            // Notify nb pages changed
+            GLib.Signal.emit_by_name (document, "notify::nb_pages");
+
+            // Get document size
             doc_size = document.size;
-            start += document.nb_pages;
 
             // Draw document pages
             for (int cpt = 0; cpt < document.nb_pages; ++cpt)
@@ -80,6 +90,18 @@ internal class Maia.Cairo.Report : Maia.Report
             // unset delta and nb pages
             document.set_qdata<uint> (Maia.Document.s_PageBeginQuark, 0);
             document.set_qdata<uint> (Maia.Document.s_PageTotalQuark, 0);
+
+            // Notify nb pages changes
+            GLib.Signal.emit_by_name (document, "notify::start_page");
+
+            // Notify nb pages changed
+            GLib.Signal.emit_by_name (document, "notify::nb_pages");
+
+            // Increment start page
+            start += document.nb_pages;
+
+            // force repaginate on next redraw
+            document.need_update = true;
         }
         pdf_surface.flush ();
         pdf_surface.finish ();

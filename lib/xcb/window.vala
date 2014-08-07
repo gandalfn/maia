@@ -171,7 +171,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 
     ~Window ()
     {
-        Log.debug ("~Window", Log.Category.MAIN, "");
+        Log.debug ("~Window", Log.Category.MAIN, @"destroy $name");
 
         if (m_Colormap != global::Xcb.NONE)
         {
@@ -185,12 +185,12 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     private void
     on_main_window_changed ()
     {
-        if (m_Realized && window != null)
+        if (m_Realized)
         {
             // Check if window is not already reparented
             var reply = m_Window.query_tree (connection).reply (connection);
 
-            if (reply == null || reply.parent != ((Window)window).xid)
+            if (window == null || reply == null || reply.parent != ((Window)window).xid)
             {
                 // push reparent
                 application.push_request (new ReparentRequest (this));
@@ -336,6 +336,9 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
         // connect onto window changed
         notify["window"].connect (on_main_window_changed);
 
+        // connect onto window changed
+        notify["window"].connect (on_main_window_changed);
+
         // connect onto device transform changed
         notify["device-transform"].connect (on_device_transform_changed);
 
@@ -453,7 +456,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 
             // Create window
             var cookie = m_Window.create_checked (connection,
-                                                  depth, window != null ? ((Window)window).xid : screen.root,
+                                                  depth, window != null && ((Window)window).m_Realized ? ((Window)window).xid : screen.root,
                                                   (int16)GLib.Math.floor (m_WindowGeometry.origin.x),
                                                   (int16)GLib.Math.floor (m_WindowGeometry.origin.y),
                                                   (uint16)GLib.Math.ceil (double.max (1, m_WindowGeometry.size.width)),
@@ -461,10 +464,10 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
                                                   0,
                                                   global::Xcb.WindowClass.INPUT_OUTPUT,
                                                   visual, mask, values);
-
-            if (connection.request_check (cookie) != null)
+            global::Xcb.GenericError? err = connection.request_check (cookie);
+            if (err != null)
             {
-                Log.critical (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "Error on create window");
+                Log.critical (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, @"Error on create window $(err.error_code)");
             }
             else
             {

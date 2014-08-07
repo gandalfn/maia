@@ -44,15 +44,17 @@ public class Maia.ScrollView : Item
     }
 
     // properties
-    private Core.Animator   m_ScrollToAnimator    = null;
-    private uint            m_ScrollToTransition  = 0;
-    private unowned Window? m_Window              = null;
-    private unowned Window? m_Viewport            = null;
-    private unowned Item?   m_Child               = null;
-    private SeekBar         m_HSeekBar            = null;
-    private SeekBar         m_VSeekBar            = null;
-    private Adjustment      m_HAdjustment         = null;
-    private Adjustment      m_VAdjustment         = null;
+    private Core.Animator     m_ScrollToAnimator    = null;
+    private uint              m_ScrollToTransition  = 0;
+    private Graphic.Transform m_WindowTransform     = new Graphic.Transform.identity ();
+    private unowned Window?   m_ParentWindow        = null;
+    private unowned Window?   m_Window              = null;
+    private unowned Window?   m_Viewport            = null;
+    private Item              m_Child               = null;
+    private SeekBar           m_HSeekBar            = null;
+    private SeekBar           m_VSeekBar            = null;
+    private Adjustment        m_HAdjustment         = null;
+    private Adjustment        m_VAdjustment         = null;
 
     // accessors
     internal override string tag {
@@ -68,7 +70,11 @@ public class Maia.ScrollView : Item
         }
         set {
             // set transform of window and do not set item transform to avoid duplicate transform
-            m_Window.transform = value;
+            m_WindowTransform = value;
+            if (m_Window != null)
+            {
+                m_Window.transform = m_WindowTransform;
+            }
         }
     }
 
@@ -129,24 +135,7 @@ public class Maia.ScrollView : Item
         m_VSeekBar.size = Graphic.Size (10, 10);
         m_VSeekBar.parent = this;
 
-        var viewport = new Window (name + "_viewport", 1, 1);
-        m_Viewport = viewport;
-        m_Viewport.shadow_border = Window.Border.NONE;
-        m_Viewport.parent = this;
-
-        var win = new Window (name + "_window", 1, 1);
-        m_Window = win;
-        m_Window.shadow_border = Window.Border.NONE;
-        m_Window.scroll_event.connect (on_window_scroll_event);
-        m_Window.parent = m_Viewport;
-
-        plug_property("background-pattern", m_Viewport, "background-pattern");
-        plug_property("background-pattern", m_Window, "background-pattern");
-
-        plug_property("visible", m_Viewport, "visible");
-        plug_property("visible", m_Window, "visible");
-
-        plug_property("need-update", m_Viewport, "need-update");
+        notify["window"].connect (on_window_changed);
 
         m_ScrollToAnimator = new Core.Animator (30, 400);
     }
@@ -158,10 +147,105 @@ public class Maia.ScrollView : Item
 
     ~ScrollView ()
     {
-        m_Window.parent = null;
+        if (m_Window != null)
+        {
+            m_Window.weak_unref (on_window_destroy);
+            m_Window.parent = null;
+        }
+
+        if (m_Viewport != null)
+        {
+            m_Viewport.weak_unref (on_viewport_destroy);
+            m_Viewport.parent = null;
+        }
+    }
+
+    private void
+    on_window_destroy ()
+    {
         m_Window = null;
-        m_Viewport.parent = null;
+        on_window_changed ();
+    }
+
+    private void
+    on_viewport_destroy ()
+    {
         m_Viewport = null;
+
+        if (m_Window != null)
+        {
+            m_Window.parent = null;
+            m_Window = null;
+        }
+    }
+
+    private void
+    on_window_changed ()
+    {
+        if (m_ParentWindow != window)
+        {
+            m_ParentWindow = window;
+
+            if (m_Child != null)
+            {
+                m_Child.notify["root"].disconnect (on_child_parent_changed);
+                m_Child.parent = null;
+                m_Child.notify["root"].connect (on_child_parent_changed);
+            }
+
+            if (m_Window != null)
+            {
+                unplug_property("background-pattern", m_Window, "background-pattern");
+                unplug_property("visible", m_Window, "visible");
+                m_Window.scroll_event.disconnect (on_window_scroll_event);
+                m_Window.weak_unref (on_window_destroy);
+                m_Window.parent = null;
+                m_Window = null;
+            }
+
+            if (m_Viewport != null)
+            {
+                unplug_property("background-pattern", m_Viewport, "background-pattern");
+                unplug_property("visible", m_Viewport, "visible");
+                unplug_property("need-update", m_Viewport, "need-update");
+                m_Viewport.weak_unref (on_viewport_destroy);
+                m_Viewport.parent = null;
+                m_Viewport = null;
+            }
+
+            if (m_ParentWindow != null)
+            {
+                var viewport = new Window (name + "_viewport", 1, 1);
+                m_Viewport = viewport;
+                m_Viewport.visible = false;
+                m_Viewport.shadow_border = Window.Border.NONE;
+                m_Viewport.weak_ref (on_viewport_destroy);
+                m_Viewport.parent = this;
+
+                var win = new Window (name + "_window", 1, 1);
+                m_Window = win;
+                m_Window.visible = false;
+                m_Window.shadow_border = Window.Border.NONE;
+                m_Window.weak_ref (on_window_destroy);
+                m_Window.scroll_event.connect (on_window_scroll_event);
+                m_Window.transform = m_WindowTransform;
+                m_Window.parent = m_Viewport;
+
+                if (m_Child != null)
+                {
+                    m_Child.notify["root"].disconnect (on_child_parent_changed);
+                    m_Child.parent = m_Window;
+                    m_Child.notify["root"].connect (on_child_parent_changed);
+                }
+
+                plug_property("background-pattern", m_Viewport, "background-pattern");
+                plug_property("visible", m_Viewport, "visible");
+                plug_property("need-update", m_Viewport, "need-update");
+                
+                plug_property("background-pattern", m_Window, "background-pattern");
+                plug_property("visible", m_Window, "visible");
+            }
+        }
     }
 
     private void
@@ -237,20 +321,47 @@ public class Maia.ScrollView : Item
     }
 
     private void
-    on_child_destroy ()
-    {
-        m_Child = null;
-    }
-
-    private void
     on_child_parent_changed ()
     {
-        if (m_Child != null && m_Child.parent != m_Window)
+        if (m_Child != null && m_Window != null && m_Child.parent != m_Window)
         {
-            m_Child.weak_unref (on_child_destroy);
-            m_Child.notify["parent"].disconnect (on_child_parent_changed);
+            m_Child.notify["root"].disconnect (on_child_parent_changed);
             m_Child = null;
         }
+    }
+
+    internal override Core.Object.Iterator
+    iterator_begin ()
+    {
+        return m_Child == null ? iterator_begin () : m_Child.iterator_begin ();
+    }
+
+    internal override Core.Object.Iterator
+    iterator_end ()
+    {
+        return m_Child == null ? iterator_end () : m_Child.iterator_end();
+    }
+
+    internal override unowned Core.Object?
+    find (uint32 inId, bool inRecursive = true)
+    {
+        return m_Child == null ? null : m_Child.find (inId, inRecursive);
+    }
+
+    internal override Core.List<unowned T?>
+    find_by_type<T> (bool inRecursive = true)
+    {
+        Core.List<unowned T?> list = new Core.List<unowned T?> ();
+
+        if (m_Child != null)
+        {
+            foreach (unowned T? c in m_Child.find_by_type<T> (inRecursive))
+            {
+                list.insert (c);
+            }
+        }
+        
+        return list;
     }
 
     internal override void
@@ -263,30 +374,13 @@ public class Maia.ScrollView : Item
         else if (can_append_child (inObject) && m_Child == null)
         {
             m_Child = inObject as Item;
-            m_Child.weak_ref (on_child_destroy);
+
+            if (m_Window != null)
+            {
+                m_Child.parent = m_Window;
+            }
+
             m_Child.notify["root"].connect (on_child_parent_changed);
-
-            inObject.parent = m_Window;
-
-            m_Viewport.visible = visible;
-            m_Window.visible = visible;
-        }
-    }
-
-    internal override void
-    remove_child (Core.Object inObject)
-    {
-        if (inObject == m_Child)
-        {
-            m_Child = null;
-            m_Child.parent = null;
-
-            m_Viewport.visible = false;
-            m_Window.visible = false;
-        }
-        else
-        {
-            base.remove_child (inObject);
         }
     }
 
@@ -301,8 +395,17 @@ public class Maia.ScrollView : Item
 
             area.union_with_rect (Graphic.Rectangle (0, 0, window_size.width, window_size.height));
         }
+        else if (m_Child != null)
+        {
+            Graphic.Size child_size = m_Child.size;
 
-        m_Viewport.need_update = false;
+            area.union_with_rect (Graphic.Rectangle (0, 0, child_size.width, child_size.height));
+        }
+
+        if (m_Viewport != null)
+        {
+            m_Viewport.need_update = false;
+        }
 
         hadjustment.lower = area.extents.origin.x;
         hadjustment.upper = area.extents.size.width;
@@ -320,11 +423,14 @@ public class Maia.ScrollView : Item
     {
         if (visible && (geometry == null || !geometry.equal (inAllocation)))
         {
+            m_HSeekBar.visible = m_Window.size.width > inAllocation.extents.size.width;
+            m_VSeekBar.visible = m_Window.size.height > inAllocation.extents.size.height;
+
             geometry = inAllocation;
 
             // Set page size
-            hadjustment.page_size = double.max (0, geometry.extents.size.width - m_VSeekBar.size.width);
-            vadjustment.page_size = double.max (0, geometry.extents.size.height - m_HSeekBar.size.height);
+            hadjustment.page_size = double.max (0, geometry.extents.size.width - (m_VSeekBar.visible ? m_VSeekBar.size.width : 0));
+            vadjustment.page_size = double.max (0, geometry.extents.size.height - (m_HSeekBar.visible ? m_HSeekBar.size.height : 0));
 
             // Fix adjustment value
             if (hadjustment.@value + hadjustment.page_size > hadjustment.upper)
@@ -340,18 +446,18 @@ public class Maia.ScrollView : Item
 
             var viewport_position = m_Viewport.position;
             var viewport_allocation = new Graphic.Region (Graphic.Rectangle (viewport_position.x, viewport_position.y,
-                                                                             double.max (0, geometry.extents.size.width - m_VSeekBar.size.width),
-                                                                             double.max (0, geometry.extents.size.height - m_HSeekBar.size.height)));
+                                                                             double.max (0, geometry.extents.size.width - (m_VSeekBar.visible ? m_VSeekBar.size.width : 0)),
+                                                                             double.max (0, geometry.extents.size.height - (m_HSeekBar.visible ? m_HSeekBar.size.height : 0))));
 
             m_Viewport.update (inContext, viewport_allocation);
 
             // Update seekbar geometry
             m_HSeekBar.update (inContext, new Graphic.Region (Graphic.Rectangle (0, geometry.extents.size.height - m_HSeekBar.size.height,
-                                                                                 double.max (0, geometry.extents.size.width - m_VSeekBar.size.width),
+                                                                                 double.max (0, geometry.extents.size.width - (m_VSeekBar.visible ? m_VSeekBar.size.width : 0)),
                                                                                  m_HSeekBar.size.height)));
             m_VSeekBar.update (inContext, new Graphic.Region (Graphic.Rectangle (geometry.extents.size.width - m_VSeekBar.size.width, 0,
                                                                                  m_VSeekBar.size.width,
-                                                                                 double.max (0, geometry.extents.size.height - m_HSeekBar.size.height))));
+                                                                                 double.max (0, geometry.extents.size.height - (m_HSeekBar.visible ? m_HSeekBar.size.height : 0)))));
 
             damage_area ();
         }
@@ -372,8 +478,15 @@ public class Maia.ScrollView : Item
         m_Window.swap_buffer ();
 
         // draw seekbars
-        m_HSeekBar.draw (inContext, area_to_child_item_space (m_HSeekBar, inArea));
-        m_VSeekBar.draw (inContext, area_to_child_item_space (m_VSeekBar, inArea));
+        if (m_HSeekBar.visible)
+        {
+            m_HSeekBar.draw (inContext, area_to_child_item_space (m_HSeekBar, inArea));
+        }
+        
+        if (m_VSeekBar.visible)
+        {
+            m_VSeekBar.draw (inContext, area_to_child_item_space (m_VSeekBar, inArea));
+        }
     }
 
     internal override void

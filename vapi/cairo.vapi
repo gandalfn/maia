@@ -895,7 +895,9 @@ namespace Cairo {
 		INVALID_SIZE,
 		USER_FONT_NOT_IMPLEMENTED,
 		DEVICE_TYPE_MISMATCH,
-		DEVICE_ERROR;
+		DEVICE_ERROR,
+		INVALID_MESH_CONSTRUCTION,
+		DEVICE_FINISHED;
 		[CCode (cname = "cairo_status_to_string")]
 		public unowned string to_string ();
 	}
