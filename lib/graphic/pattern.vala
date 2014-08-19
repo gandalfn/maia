@@ -32,6 +32,8 @@ public abstract class Maia.Graphic.Pattern : Core.Object
         Manifest.Function.register_transform_func (typeof (Pattern), "rgba", attribute_to_rgba_color);
         Manifest.Function.register_transform_func (typeof (Color),   "rgb",  attribute_to_rgb_color);
         Manifest.Function.register_transform_func (typeof (Color),   "rgba", attribute_to_rgba_color);
+        Manifest.Function.register_transform_func (typeof (Pattern), "shade", attribute_to_shade_color);
+        Manifest.Function.register_transform_func (typeof (Color),   "shade", attribute_to_shade_color);
 
         Manifest.Function.register_transform_func (typeof (Pattern), "linear-gradient", attribute_to_linear_gradient);
         Manifest.Function.register_transform_func (typeof (Pattern), "radial-gradient", attribute_to_radial_gradient);
@@ -65,6 +67,12 @@ public abstract class Maia.Graphic.Pattern : Core.Object
     attribute_to_rgba_color (Manifest.Function inFunction, ref GLib.Value outDest) throws Manifest.Error
     {
         outDest = new Color.from_rgba_function (inFunction);
+    }
+
+    static void
+    attribute_to_shade_color (Manifest.Function inFunction, ref GLib.Value outDest) throws Manifest.Error
+    {
+        outDest = new Color.from_shade_function (inFunction);
     }
 
     static void

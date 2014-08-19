@@ -100,7 +100,7 @@ public class Maia.Manifest.Theme : Core.Object, Element
         if (inElement is Style)
         {
             unowned Style? style = inElement as Style;
-            if (style.style != name)
+            if (style.style != null)
             {
                 unowned Style? inherit = find (GLib.Quark.from_string (style.style), false) as Style;
                 if (inherit != null)
@@ -118,6 +118,8 @@ public class Maia.Manifest.Theme : Core.Object, Element
         }
         else if (!(inElement is Theme))
         {
+            inElement.manifest_theme = this;
+
             foreach (unowned Style style in get_styles (inElement))
             {
                 foreach (unowned Core.Object child in style)
@@ -141,18 +143,27 @@ public class Maia.Manifest.Theme : Core.Object, Element
                     }
                 }
             }
-        }
-        else if (inElement is Core.Object)
-        {
-            // Appply theme in all child
-            foreach (unowned Core.Object child in ((Core.Object)inElement))
+
+            if (inElement is Popup)
             {
-                unowned Element child_element = child as Element;
-                // if child theme is not same than theme apply theme
-                if (child_element != null && child_element.manifest_theme != inElement.manifest_theme)
+                unowned Element? child_element = (inElement as Popup).content as Element;
+                if (child_element != null && child_element.manifest_theme == null)
                 {
-                    child_element.manifest_theme = inElement.manifest_theme;
                     apply (child_element);
+                }
+            }
+            else if (!(inElement is ChartView))
+            {
+                // Appply theme in all child
+                foreach (unowned Core.Object child in ((Core.Object)inElement))
+                {
+                    unowned Element child_element = child as Element;
+
+                    // if child theme is not same than theme apply theme
+                    if (child_element != null && child_element.manifest_theme == null)
+                    {
+                        apply (child_element);
+                    }
                 }
             }
         }

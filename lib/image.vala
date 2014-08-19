@@ -78,6 +78,7 @@ public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
     {
         m_Image = null;
         need_update = true;
+        geometry = null;
     }
 
     protected virtual Graphic.Image?
@@ -104,7 +105,7 @@ public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
     internal override Graphic.Size
     size_request (Graphic.Size inSize)
     {
-        if (m_Image == null || m_Image.size != inSize)
+        if (m_Image == null || !m_Image.size.equal (inSize))
         {
             m_Image = create_image (inSize);
         }
@@ -129,5 +130,11 @@ public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
             }
             inContext.restore ();
         }
+    }
+
+    internal bool
+    have_image ()
+    {
+        return m_Image != null;
     }
 }

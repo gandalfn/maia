@@ -321,10 +321,12 @@ public interface Maia.Manifest.Element : Core.Object
                     else if (element != null)
                     {
                         element.manifest_path = inManifest.path;
-                        element.manifest_theme = inManifest.theme;
+                        element.manifest_theme = (this as Theme) ?? inManifest.theme;
                         add (element);
                         element.read_manifest (inManifest);
                         inManifest.owner = this;
+                        inManifest.theme = manifest_theme;
+                        s_CurrentTheme = inManifest.theme;
                     }
                     break;
 
@@ -356,9 +358,9 @@ public interface Maia.Manifest.Element : Core.Object
                 case Core.Parser.Token.END_ELEMENT:
                     if (inManifest.element_tag == tag)
                     {
-                        if (inManifest.theme != null)
+                        if (manifest_theme != null)
                         {
-                            inManifest.theme.apply (this);
+                            manifest_theme.apply (this);
                         }
                         return;
                     }

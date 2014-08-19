@@ -16950,6 +16950,21 @@
   )
 )
 
+(define-method get_animation
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_get_animation")
+  (return-type "gboolean")
+)
+
+(define-method set_animation
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_set_animation")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
 (define-function maia_combo_get_type
   (c-name "maia_combo_get_type")
   (return-type "GType")

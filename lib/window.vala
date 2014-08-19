@@ -857,26 +857,50 @@ public class Maia.Window : Group
 
                 if (!(Border.LEFT in shadow_border))
                 {
-                    path.rectangle (shadow_area.origin.x, shadow_area.origin.y, round_corner, round_corner);
-                    path.rectangle (shadow_area.origin.x, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
+                    if (!(Border.TOP in shadow_border))
+                    {
+                        path.rectangle (shadow_area.origin.x, shadow_area.origin.y, round_corner, round_corner);
+                    }
+                    if (!(Border.BOTTOM in shadow_border))
+                    {
+                        path.rectangle (shadow_area.origin.x, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
+                    }
                 }
 
                 if (!(Border.RIGHT in shadow_border))
                 {
-                    path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y, round_corner, round_corner);
-                    path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
+                    if (!(Border.TOP in shadow_border))
+                    {
+                        path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y, round_corner, round_corner);
+                    }
+                    if (!(Border.BOTTOM in shadow_border))
+                    {
+                        path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
+                    }
                 }
 
                 if (!(Border.TOP in shadow_border))
                 {
-                    path.rectangle (shadow_area.origin.x, shadow_area.origin.y, round_corner, round_corner);
-                    path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y, round_corner, round_corner);
+                    if (!(Border.LEFT in shadow_border))
+                    {
+                        path.rectangle (shadow_area.origin.x, shadow_area.origin.y, round_corner, round_corner);
+                    }
+                    if (!(Border.RIGHT in shadow_border))
+                    {
+                        path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y, round_corner, round_corner);
+                    }
                 }
 
                 if (!(Border.BOTTOM in shadow_border))
                 {
-                    path.rectangle (shadow_area.origin.x, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
-                    path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
+                    if (!(Border.LEFT in shadow_border))
+                    {
+                        path.rectangle (shadow_area.origin.x, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
+                    }
+                    if (!(Border.RIGHT in shadow_border))
+                    {
+                        path.rectangle (shadow_area.origin.x + shadow_area.size.width - round_corner, shadow_area.origin.y + shadow_area.size.height - round_corner, round_corner, round_corner);
+                    }
                 }
 
                 ctx.pattern = shadow_color ?? new Graphic.Color (0, 0, 0);

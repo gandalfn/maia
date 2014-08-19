@@ -138,6 +138,7 @@ public class Maia.Popup : Group
     public bool           close_button  { get; set; default = false; }
     public double         border        { get; set; default = 0.0; }
     public PopupPlacement placement     { get; set; default = PopupPlacement.TOP; }
+    public bool           animation     { get; set; default = true; }
 
     // static methods
     static construct
@@ -178,6 +179,12 @@ public class Maia.Popup : Group
 
         // Create animator
         m_Animator = new Core.Animator (60, 250);
+
+        // plug manifest path
+        plug_property ("manifest-path", m_Window, "manifest-path");
+
+        // plug theme to window
+        plug_property ("manifest-theme", m_Window, "manifest-theme");
 
         // plug background pattern property to window
         plug_property ("background-pattern", m_Window, "background-pattern");
@@ -248,27 +255,19 @@ public class Maia.Popup : Group
                 break;
 
             case PopupPlacement.BOTTOM:
-                m_Window.shadow_border = Window.Border.TOP   |
-                                         Window.Border.RIGHT |
-                                         Window.Border.LEFT;
+                m_Window.shadow_border = Window.Border.TOP;
                 break;
 
             case PopupPlacement.TOP:
-                m_Window.shadow_border = Window.Border.BOTTOM |
-                                         Window.Border.RIGHT  |
-                                         Window.Border.LEFT;
+                m_Window.shadow_border = Window.Border.BOTTOM;
                 break;
 
             case PopupPlacement.RIGHT:
-                m_Window.shadow_border = Window.Border.LEFT |
-                                         Window.Border.TOP  |
-                                         Window.Border.BOTTOM;
+                m_Window.shadow_border = Window.Border.LEFT;
                 break;
 
             case PopupPlacement.LEFT:
-                m_Window.shadow_border = Window.Border.RIGHT |
-                                         Window.Border.TOP   |
-                                         Window.Border.BOTTOM;
+                m_Window.shadow_border = Window.Border.RIGHT;
                 break;
         }
     }
@@ -276,6 +275,12 @@ public class Maia.Popup : Group
     private void
     on_window_changed ()
     {
+        if (window == null || !window.visible)
+        {
+            animation = false;
+            visible = false;
+            animation = true;
+        }
         GLib.Signal.emit_by_name (m_Window, "notify::window");
     }
 
@@ -296,6 +301,7 @@ public class Maia.Popup : Group
         if (inObject == m_Content)
         {
             m_Content.parent = null;
+            m_Content = null;
         }
     }
 
@@ -392,44 +398,47 @@ public class Maia.Popup : Group
         var popup_size = m_Window.size;
         string prop = null;
 
-        // Set animation property change
-        switch (placement)
+        if (animation)
         {
-            case PopupPlacement.BOTTOM:
-                if (m_Y != 0.0)
-                {
-                    from = (double)(popup_size.height);
-                    to = (double)0.0;
-                    prop = "y";
-                }
-                break;
+            // Set animation property change
+            switch (placement)
+            {
+                case PopupPlacement.BOTTOM:
+                    if (m_Y != 0.0)
+                    {
+                        from = (double)(popup_size.height);
+                        to = (double)0.0;
+                        prop = "y";
+                    }
+                    break;
 
-            case PopupPlacement.TOP:
-                if (m_Y != 0.0)
-                {
-                    from = (double)(-popup_size.height);
-                    to = (double)0.0;
-                    prop = "y";
-                }
-                break;
+                case PopupPlacement.TOP:
+                    if (m_Y != 0.0)
+                    {
+                        from = (double)(-popup_size.height);
+                        to = (double)0.0;
+                        prop = "y";
+                    }
+                    break;
 
-            case PopupPlacement.RIGHT:
-                if (m_X != 0.0)
-                {
-                    from = (double)(popup_size.width);
-                    to = (double)0.0;
-                    prop = "x";
-                }
-                break;
+                case PopupPlacement.RIGHT:
+                    if (m_X != 0.0)
+                    {
+                        from = (double)(popup_size.width);
+                        to = (double)0.0;
+                        prop = "x";
+                    }
+                    break;
 
-            case PopupPlacement.LEFT:
-                if (m_X != 0.0)
-                {
-                    from = (double)(-popup_size.width);
-                    to = (double)0.0;
-                    prop = "x";
-                }
-                break;
+                case PopupPlacement.LEFT:
+                    if (m_X != 0.0)
+                    {
+                        from = (double)(-popup_size.width);
+                        to = (double)0.0;
+                        prop = "x";
+                    }
+                    break;
+            }
         }
 
         if (prop != null)
@@ -475,44 +484,47 @@ public class Maia.Popup : Group
         var popup_size = m_Window.size;
         string prop = null;
 
-        // Set animation property change
-        switch (placement)
+        if (animation)
         {
-            case PopupPlacement.BOTTOM:
-                if (m_Y != popup_size.height)
-                {
-                    to = (double)(popup_size.height);
-                    from = (double)0.0;
-                    prop = "y";
-                }
-                break;
+            // Set animation property change
+            switch (placement)
+            {
+                case PopupPlacement.BOTTOM:
+                    if (m_Y != popup_size.height)
+                    {
+                        to = (double)(popup_size.height);
+                        from = (double)0.0;
+                        prop = "y";
+                    }
+                    break;
 
-            case PopupPlacement.TOP:
-                if (m_Y != -popup_size.height)
-                {
-                    to = (double)(-popup_size.height);
-                    from = (double)0.0;
-                    prop = "y";
-                }
-                break;
+                case PopupPlacement.TOP:
+                    if (m_Y != -popup_size.height)
+                    {
+                        to = (double)(-popup_size.height);
+                        from = (double)0.0;
+                        prop = "y";
+                    }
+                    break;
 
-            case PopupPlacement.RIGHT:
-                if (m_X != popup_size.width)
-                {
-                    to = (double)(popup_size.width);
-                    from = (double)0.0;
-                    prop = "x";
-                }
-                break;
+                case PopupPlacement.RIGHT:
+                    if (m_X != popup_size.width)
+                    {
+                        to = (double)(popup_size.width);
+                        from = (double)0.0;
+                        prop = "x";
+                    }
+                    break;
 
-            case PopupPlacement.LEFT:
-                if (m_X != -popup_size.width)
-                {
-                    to = (double)(-popup_size.width);
-                    from = (double)0.0;
-                    prop = "x";
-                }
-                break;
+                case PopupPlacement.LEFT:
+                    if (m_X != -popup_size.width)
+                    {
+                        to = (double)(-popup_size.width);
+                        from = (double)0.0;
+                        prop = "x";
+                    }
+                    break;
+            }
         }
 
         if (prop != null)

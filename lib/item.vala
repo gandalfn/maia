@@ -79,6 +79,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 }
             }
 
+            calculate_transform_to_item_space ();
+            calculate_transform_to_root_space ();
             calculate_transform_to_window_space ();
             calculate_transform_from_window_space ();
 
@@ -170,6 +172,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             {
                 m_Visible = value;
 
+                calculate_transform_to_item_space ();
+                calculate_transform_to_root_space ();
                 calculate_transform_to_window_space ();
                 calculate_transform_from_window_space ();
 
@@ -681,8 +685,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         if (inAttributeBind.owner is Item)
         {
             unowned Item item = (Item)inAttributeBind.owner;
-            double val = item.geometry != null ? item.geometry.extents.size.height : item.size.height;
-            outValue = val;
+            outValue = item.geometry != null ? item.geometry.extents.size.height : item.size.height;
         }
     }
 
@@ -918,27 +921,27 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         // clear transform
         m_TransformToItemSpace.init ();
 
-        if (visible)
+        // add parent transform
+        for (unowned Core.Object? object = this; object != null; object = object.parent)
         {
-            // add parent transform
-            for (unowned Core.Object? object = this; object != null; object = object.parent)
+            unowned Item? item = object as Item;
+            if (item != null && item != this)
             {
-                unowned Item? item = object as Item;
-                if (item != null && item != this)
-                {
-                    m_TransformToItemSpace.prepend (item.m_TransformToItemSpace.link ());
-                    break;
-                }
-
-                // If item is under popup chain up on it
-                unowned Core.Object? popup = object.get_qdata<unowned Core.Object?> (s_PopupWindow);
-                if (popup != null)
-                {
-                    object = popup;
-                }
+                m_TransformToItemSpace.prepend (item.m_TransformToItemSpace.link ());
+                break;
             }
 
-            // add transform
+            // If item is under popup chain up on it
+            unowned Core.Object? popup = object.get_qdata<unowned Core.Object?> (s_PopupWindow);
+            if (popup != null)
+            {
+                object = popup;
+            }
+        }
+
+        if (visible)
+        {
+                    // add transform
             var this_transform = new Graphic.Transform.identity ();
             try
             {
@@ -969,27 +972,27 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         // clear transform
         m_TransformToRootSpace.init ();
 
-        if (visible)
+        // add parent transform
+        for (unowned Core.Object? object = this; object != null; object = object.parent)
         {
-            // add parent transform
-            for (unowned Core.Object? object = this; object != null; object = object.parent)
+            unowned Item? item = object as Item;
+            if (item != null && item != this)
             {
-                unowned Item? item = object as Item;
-                if (item != null && item != this)
-                {
-                    m_TransformToRootSpace.append (item.m_TransformToRootSpace.link ());
-                    break;
-                }
-
-                // If item is under popup chain up on it
-                unowned Core.Object? popup = object.get_qdata<unowned Core.Object?> (s_PopupWindow);
-                if (popup != null)
-                {
-                    object = popup;
-                }
+                m_TransformToRootSpace.append (item.m_TransformToRootSpace.link ());
+                break;
             }
 
-            // add transform
+            // If item is under popup chain up on it
+            unowned Core.Object? popup = object.get_qdata<unowned Core.Object?> (s_PopupWindow);
+            if (popup != null)
+            {
+                object = popup;
+            }
+        }
+
+        if (visible)
+        {
+                    // add transform
             var this_transform = new Graphic.Transform.identity ();
 
             // Ignore translation of item without geometry or window managed by application
@@ -1014,29 +1017,29 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         // clear transform
         m_TransformToWindowSpace.init ();
 
-        if (visible)
+        // add parent transform
+        if (!(this is Window))
         {
             // add parent transform
-            if (!(this is Window))
+            for (unowned Core.Object? object = this; object != null; object = object.parent)
             {
-                // add parent transform
-                for (unowned Core.Object? object = this; object != null; object = object.parent)
+                unowned Item? item = object as Item;
+                if (item != null && item != this)
                 {
-                    unowned Item? item = object as Item;
-                    if (item != null && item != this)
-                    {
-                        m_TransformToWindowSpace.append (item.m_TransformToWindowSpace.link ());
-                        break;
-                    }
-
-                    // If item is under popup chain up on it
-                    unowned Core.Object? popup = object.get_qdata<unowned Core.Object?> (s_PopupWindow);
-                    if (popup != null)
-                    {
-                        object = popup;
-                    }
+                    m_TransformToWindowSpace.append (item.m_TransformToWindowSpace.link ());
+                    break;
                 }
 
+                // If item is under popup chain up on it
+                unowned Core.Object? popup = object.get_qdata<unowned Core.Object?> (s_PopupWindow);
+                if (popup != null)
+                {
+                    object = popup;
+                }
+            }
+
+            if (visible)
+            {
                 // add transform
                 var this_transform = new Graphic.Transform.identity ();
 
@@ -1054,10 +1057,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
                 m_TransformToWindowSpace.append (this_transform);
             }
-            else
-            {
-                m_TransformToWindowSpace.append (transform.copy ());
-            }
+        }
+        else
+        {
+            m_TransformToWindowSpace.append (transform.copy ());
         }
     }
 
@@ -1067,30 +1070,30 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         // clear transform
         m_TransformFromWindowSpace.init ();
 
-        if (visible)
+        // add parent transform
+        if (!(this is Window))
         {
             // add parent transform
-            if (!(this is Window))
+            for (unowned Core.Object? object = this; object != null; object = object.parent)
             {
-                // add parent transform
-                for (unowned Core.Object? object = this; object != null; object = object.parent)
+                unowned Item? item = object as Item;
+                if (item != null && item != this)
                 {
-                    unowned Item? item = object as Item;
-                    if (item != null && item != this)
-                    {
-                        m_TransformFromWindowSpace.prepend (item.m_TransformFromWindowSpace.link ());
-                        break;
-                    }
-
-                    // If item is under popup chain up on it
-                    unowned Core.Object? popup = object.get_qdata<unowned Core.Object?> (s_PopupWindow);
-                    if (popup != null)
-                    {
-                        object = popup;
-                    }
+                    m_TransformFromWindowSpace.prepend (item.m_TransformFromWindowSpace.link ());
+                    break;
                 }
 
-                // add transform
+                // If item is under popup chain up on it
+                unowned Core.Object? popup = object.get_qdata<unowned Core.Object?> (s_PopupWindow);
+                if (popup != null)
+                {
+                    object = popup;
+                }
+            }
+
+            if (visible)
+            {
+                        // add transform
                 var this_transform = new Graphic.Transform.identity ();
                 try
                 {
@@ -1113,16 +1116,16 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
                 m_TransformFromWindowSpace.prepend (this_transform);
             }
-            else
+        }
+        else
+        {
+            try
             {
-                try
-                {
-                    m_TransformFromWindowSpace.append (new Graphic.Transform.invert (transform));
-                }
-                catch (Graphic.Error err)
-                {
-                    Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Error on calculate transform from window %s space: %s", name, err.message);
-                }
+                m_TransformFromWindowSpace.append (new Graphic.Transform.invert (transform));
+            }
+            catch (Graphic.Error err)
+            {
+                Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Error on calculate transform from window %s space: %s", name, err.message);
             }
         }
     }
@@ -1634,7 +1637,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             if (inObject is Manifest.Element)
             {
                 // Item has theme and child has not theme (if in parsing the theme has been before add)
-                if (manifest_theme != null && ((Manifest.Element)inObject).manifest_theme != manifest_theme)
+                if (manifest_theme != null && ((Manifest.Element)inObject).manifest_theme == null)
                 {
                     // Apply theme of parent
                     ((Manifest.Element)inObject).manifest_theme = manifest_theme;

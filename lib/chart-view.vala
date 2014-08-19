@@ -666,9 +666,9 @@ public class Maia.ChartView : Group, ItemPackable
                 if (m_XAxisLabel == null)
                 {
                     var label = new Label (@"x-axis-label", "");
-                    label.parent = this;
                     plug_property ("stroke-pattern", label, "stroke-pattern");
                     plug_property ("font-description", label, "font-description");
+                    label.parent = this;
                     m_XAxisLabel = label;
                 }
 
@@ -693,10 +693,10 @@ public class Maia.ChartView : Group, ItemPackable
                 if (m_YAxisLabel == null)
                 {
                     var label = new Label (@"y-axis-label", "");
-                    label.parent = this;
                     label.transform = new Graphic.Transform.init_rotate (GLib.Math.PI / 2.0);
                     plug_property ("stroke-pattern", label, "stroke-pattern");
                     plug_property ("font-description", label, "font-description");
+                    label.parent = this;
                     m_YAxisLabel = label;
                 }
 
@@ -733,9 +733,10 @@ public class Maia.ChartView : Group, ItemPackable
             for (int cpt = 1; cpt < nb; ++cpt)
             {
                 var label = new Label (@"x-axis-indice-plus-$cpt", format_indice (step * cpt, x_axis_unit));
+                label.manifest_theme = manifest_theme;
+                label.parent = this;
                 plug_property ("stroke-pattern", label, "stroke-pattern");
                 plug_property ("axis-font-description", label, "font-description");
-                label.parent = this;
                 label.set_qdata<int> (s_AxisIndiceQuark, (int)(step * cpt * 65535));
                 m_XAxis.insert (label);
             }

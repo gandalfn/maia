@@ -65,6 +65,8 @@ public class Maia.DocumentView : Group
         var scrollview = new ScrollView (@"$(name)-content");
         m_Content = scrollview;
         m_Content.parent = this;
+        m_Content.hadjustment.notify["value"].connect (on_adjustment_changed);
+        m_Content.vadjustment.notify["value"].connect (on_adjustment_changed);
 
         // Create shortcut model
         m_Shortcuts = new Model (@"$(name)-model", "shortcut", typeof (Shortcut));
@@ -73,10 +75,13 @@ public class Maia.DocumentView : Group
         m_ShortcutsToolbar = new View (@"$(name)-shortcuts-toolbar");
         m_ShortcutsToolbar.column = 1;
         m_ShortcutsToolbar.xexpand = false;
+        m_ShortcutsToolbar.yfill = false;
+        m_ShortcutsToolbar.yalign = 0.0;
         m_ShortcutsToolbar.characters = @"ToggleButton.$(name)-shortcut-button {\n"+
                                          "   top_padding: 5;\n" +
                                          "   left_padding: 5;\n" +
                                          "   right_padding: 5;\n" +
+                                         "   yfill: false;\n" +
                                          "   yexpand: false;\n" +
                                          "   label: @shortcut;\n" +
                                          "}";
@@ -86,11 +91,36 @@ public class Maia.DocumentView : Group
 
         // Create  shortcuts group
         m_ShortcutsGroup = new ToggleGroup (@"$(name)-shortcuts-group");
+
+        notify["window"].connect (on_window_changed);
     }
 
     public DocumentView (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
+    }
+
+    private void
+    on_window_changed ()
+    {
+        m_Content.hadjustment.@value = 0;
+        m_Content.vadjustment.@value = 0;
+
+        if (m_Toolbox != null)
+        {
+            m_Toolbox.animation = false;
+            m_Toolbox.visible = false;
+            m_Toolbox.animation = true;
+        }
+    }
+
+    private void
+    on_adjustment_changed ()
+    {
+        if (!m_Content.animator_is_playing () && m_ShortcutsGroup.active != null)
+        {
+            m_ShortcutsGroup.active = null;
+        }
     }
 
     private void
@@ -404,7 +434,7 @@ public class Maia.DocumentView : Group
             m_ShortcutsToolbar.update (inContext, new Graphic.Region (toolbar_allocation));
 
             // Set toolbox allocation
-            if (m_Toolbox != null && m_Toolbox.content != null)
+            if (m_Toolbox != null && m_Toolbox.content != null && m_Toolbox.visible)
             {
                 var toolbox_allocation = Graphic.Rectangle (m_Toolbox.position.x, m_Toolbox.position.y, m_Toolbox.content.size.width, m_Toolbox.content.size.height);
 

@@ -60,6 +60,9 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Item> get_content () const, maia_popup_get_content, refreturn)
             _WRAP_METHOD(void set_content (const Glib::RefPtr<Item>& inItem), maia_popup_set_content)
 
+            _WRAP_METHOD(bool get_animation () const, maia_popup_get_animation)
+            _WRAP_METHOD(void set_animation (bool inAnimation = true), maia_popup_set_animation)
+
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("shadow-width", double)
             _WRAP_PROPERTY("shadow-border", WindowBorder)
@@ -68,6 +71,7 @@ namespace Maia
             _WRAP_PROPERTY("close-button", bool)
             _WRAP_PROPERTY("placement", PopupPlacement)
             _WRAP_PROPERTY("content", Glib::RefPtr<Item>)
+            _WRAP_PROPERTY("animation", bool)
 
         private:
             _WRAP_PROPERTY("x", double)

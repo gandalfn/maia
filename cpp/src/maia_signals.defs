@@ -4310,6 +4310,15 @@
   (construct-only #f)
 )
 
+(define-property animation
+  (of-object "MaiaPopup")
+  (prop-type "GParamBoolean")
+  (docs "animation")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaCombo
 
 (define-property tag

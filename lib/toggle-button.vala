@@ -78,6 +78,8 @@ public class Maia.ToggleButton : Toggle
         m_Icon = icon_item;
 
         m_Label = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
+        m_Label.visible = false;
+        m_Label.hide_if_empty = true;
     }
 
     public ToggleButton (string inId, string inLabel)
@@ -93,7 +95,7 @@ public class Maia.ToggleButton : Toggle
         button_size.resize (-border * 2, -border * 2);
         var pattern = new Graphic.MeshGradient ();
 
-        double vb = 1, ve = 1.1, vd = 0.8, vd2 = 0.7;
+        double vb = 1, ve = 1.1, vd = 0.95, vd2 = 0.85;
 
         if (active && sensitive)
         {
@@ -181,24 +183,30 @@ public class Maia.ToggleButton : Toggle
             double diff = (m_Icon.size.height - m_Label.size.height) / 2.0;
 
             // get position of icon
-            Graphic.Point position_icon = m_Icon.position;
-            if (position_icon.x != border || position_icon.y != border)
+            if (!m_Icon.size.is_empty ())
             {
-                m_Icon.position = Graphic.Point (border, border - (diff < 0 ? diff : 0));
+                Graphic.Point position_icon = m_Icon.position;
+                if (position_icon.x != border || position_icon.y != border)
+                {
+                    m_Icon.position = Graphic.Point (border, border - (diff < 0 ? diff : 0));
+                }
             }
 
-            // get position of label
-            Graphic.Point position_label = m_Label.position;
-
-            // set position of label
-            if (position_label.x != border + (m_Icon.size.width > 0 ? border + m_Icon.size.width : 0) ||
-                position_label.y != border + (m_Icon.size.height > 0 ? (diff >= 0 ? diff : 0) : 0))
+            if (m_Label.visible)
             {
-                
-                m_Label.position = Graphic.Point (border + ((m_Icon.size.width > 0 && m_Label.size.width > 0) ? border + m_Icon.size.width : 0),
-                                                  border + (m_Icon.size.height > 0 ? (diff >= 0 ? diff : 0) : 0));
+                // get position of label
+                Graphic.Point position_label = m_Label.position;
 
-                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "label item position : %s", m_Label.position.to_string ());
+                // set position of label
+                if (position_label.x != border + (m_Icon.size.width > 0 ? border + m_Icon.size.width : 0) ||
+                    position_label.y != border + (m_Icon.size.height > 0 ? (diff >= 0 ? diff : 0) : 0))
+                {
+                    
+                    m_Label.position = Graphic.Point (border + ((m_Icon.size.width > 0 && m_Label.size.width > 0) ? border + m_Icon.size.width : 0),
+                                                      border + (m_Icon.size.height > 0 ? (diff >= 0 ? diff : 0) : 0));
+
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "label item position : %s", m_Label.position.to_string ());
+                }
             }
         }
 

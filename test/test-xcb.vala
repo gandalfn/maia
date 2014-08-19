@@ -48,10 +48,9 @@ const string manifest = "Window.test {" +
                         "       SeekBar.progress_bar {" +
                         "           row: 3;" +
                         "           columns: 2;" +
-                        "           yexpand: false;" +
                         "           background_pattern: #FAFAFA;" +
                         "           stroke_pattern: #A6A6A6;" +
-                        "           fill_pattern: #DBDBDB;" +
+                        "           fill_pattern: shade (#DBDBDB, 0.1);" +
                         "       }" +
                         "       Combo.combo {" +
                         "           row: 2;" +

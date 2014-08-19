@@ -163,9 +163,8 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         var arrow_item = new Path (id_arrow, "");
         add (arrow_item);
 
-        notify["stroke-pattern"].connect (on_stroke_pattern_changed);
-        notify["fill-pattern"].connect (on_fill_pattern_changed);
-
+        plug_property ("stroke-pattern", arrow_item, "fill-pattern");
+        
         arrow_item.button_press_event.connect (on_button_press);
 
         // Connect onto button press
@@ -182,9 +181,10 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         m_Popup.shadow_width = 7;
         m_Popup.round_corner = 3;
         m_Popup.placement = PopupPlacement.TOP;
-        m_Popup.background_pattern = fill_pattern;
-
+        
         add (m_Popup);
+
+        plug_property ("fill-pattern", m_Popup, "background-pattern");
     }
 
     public Combo (string inId)
@@ -206,23 +206,6 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         {
             m_Popup.visible = false;
         }
-    }
-
-    private void
-    on_stroke_pattern_changed ()
-    {
-        string id_arrow = "%s-arrow".printf (name);
-        unowned Path arrow_item = find (GLib.Quark.from_string (id_arrow), false) as Path;
-        if (arrow_item != null)
-        {
-            arrow_item.fill_pattern = stroke_pattern;
-        }
-    }
-
-    private void
-    on_fill_pattern_changed ()
-    {
-        m_Popup.background_pattern = fill_pattern;
     }
 
     private bool
@@ -283,7 +266,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         {
             if (m_View != null) m_View.parent = null;
             m_View = inObject as View;
-            m_View.fill_pattern = highlight_color;
+            plug_property ("highlight-color", m_View, "fill-pattern");
             m_View.row_clicked.connect (on_row_clicked);
             m_Popup.add (m_View);
 
@@ -300,6 +283,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     {
         if (inObject == m_View)
         {
+            unplug_property ("highlight-color", m_View, "fill-pattern");
             m_View.row_clicked.disconnect (on_row_clicked);
             m_View.parent = null;
             m_View = null;
@@ -402,10 +386,20 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
                                                 double.max (m_Popup.size.height, geometry.extents.size.height));
 
             bool force = !m_Popup.visible;
-            if (force) m_Popup.visible = true;
+            if (force)
+            {
+                m_Popup.animation = false;
+                m_Popup.visible = true;
+                m_Popup.animation = true;
+            }
             m_Popup.update (inContext, new Graphic.Region (popup_area));
-            if (force) m_Popup.visible = false;
-
+            if (force)
+            {
+                m_Popup.animation = false;
+                m_Popup.visible = false;
+                m_Popup.animation = true;
+            }
+            
             damage_area ();
         }
     }

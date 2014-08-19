@@ -35,6 +35,7 @@ public class Maia.Button : Grid
 {
     // properties
     private bool m_Clicked = false;
+    private unowned Image? m_Icon = null;
 
     // accessors
     internal override string tag {
@@ -129,27 +130,43 @@ public class Maia.Button : Grid
 
         var icon_item = new Image (id_icon, icon_filename);
         icon_item.xfill = false;
+        icon_item.xlimp = true;
         icon_item.xexpand = false;
         icon_item.yfill = false;
         add (icon_item);
+        m_Icon = icon_item;
+
+        string id_sep = "%s-separator".printf (name);
+
+        var sep_item = new Label (id_sep, "");
+        sep_item.column = 1;
+        sep_item.xexpand = false;
+        sep_item.xfill = false;
+        sep_item.yfill = false;
+        add (sep_item);
 
         // Create label item
         string id_label = "%s-label".printf (name);
 
         var label_item = new Label (id_label, label);
-        label_item.column = 1;
+        label_item.column = 2;
         label_item.xfill = false;
+        label_item.xlimp = true;
         label_item.yfill = false;
+        label_item.visible = false;
+        label_item.hide_if_empty = true;
         add (label_item);
 
         // plug properties
         plug_property("stroke-pattern", label_item, "stroke-pattern");
-        plug_property("border", this, "column-spacing");
+        plug_property("font-description", label_item, "font-description");
         plug_property("icon-filename", icon_item, "filename");
         plug_property("icon-size", icon_item, "size");
         plug_property("border", icon_item, "top-padding");
         plug_property("border", icon_item, "left-padding");
+        plug_property("border", icon_item, "right-padding");
         plug_property("border", icon_item, "bottom-padding");
+        plug_property("border", sep_item, "right-padding");
         plug_property("border", label_item, "top-padding");
         plug_property("border", label_item, "right-padding");
         plug_property("border", label_item, "bottom-padding");
@@ -168,55 +185,6 @@ public class Maia.Button : Grid
         GLib.Object (id: GLib.Quark.from_string (inId), label: inLabel);
     }
 
-    internal override bool
-    on_button_press_event (uint inButton, Graphic.Point inPoint)
-    {
-        bool ret = false;
-
-        if (sensitive && geometry != null)
-        {
-            ret = inPoint in area;
-
-            if (ret && inButton == 1)
-            {
-                m_Clicked = true;
-
-                grab_pointer (this);
-
-                damage ();
-            }
-        }
-
-        return ret;
-    }
-
-    internal override bool
-    on_button_release_event (uint inButton, Graphic.Point inPoint)
-    {
-        bool ret = false;
-
-        if (geometry != null)
-        {
-            ret = inPoint in area;
-
-            if (inButton == 1 && m_Clicked)
-            {
-                m_Clicked = false;
-
-                ungrab_pointer (this);
-
-                damage ();
-
-                if (ret)
-                {
-                    clicked.publish ();
-                }
-            }
-        }
-
-        return ret;
-    }
-
     private void
     draw_button (Graphic.Context inContext) throws Graphic.Error
     {
@@ -225,7 +193,7 @@ public class Maia.Button : Grid
         button_size.resize (-border * 2, -border * 2);
         var pattern = new Graphic.MeshGradient ();
 
-        double vb = 1, ve = 1.1, vd = 0.8, vd2 = 0.7;
+        double vb = 1, ve = 1.1, vd = 0.95, vd2 = 0.85;
 
         if (m_Clicked && sensitive)
         {
@@ -299,6 +267,14 @@ public class Maia.Button : Grid
         inContext.paint ();
     }
 
+    internal override Graphic.Size
+    size_request (Graphic.Size inSize)
+    {
+        m_Icon.visible = !m_Icon.size.is_empty () && m_Icon.have_image ();
+
+        return base.size_request (inSize);
+    }
+
     internal override void
     paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
@@ -313,6 +289,55 @@ public class Maia.Button : Grid
             base.paint (inContext, inArea);
         }
         inContext.restore ();
+    }
+
+    internal override bool
+    on_button_press_event (uint inButton, Graphic.Point inPoint)
+    {
+        bool ret = false;
+
+        if (sensitive && geometry != null)
+        {
+            ret = inPoint in area;
+
+            if (ret && inButton == 1)
+            {
+                m_Clicked = true;
+
+                grab_pointer (this);
+
+                damage ();
+            }
+        }
+
+        return ret;
+    }
+
+    internal override bool
+    on_button_release_event (uint inButton, Graphic.Point inPoint)
+    {
+        bool ret = false;
+
+        if (geometry != null)
+        {
+            ret = inPoint in area;
+
+            if (inButton == 1 && m_Clicked)
+            {
+                m_Clicked = false;
+
+                ungrab_pointer (this);
+
+                damage ();
+
+                if (ret)
+                {
+                    clicked.publish ();
+                }
+            }
+        }
+
+        return ret;
     }
 
     internal override string

@@ -248,6 +248,15 @@ public class Maia.DrawingArea : Group, ItemPackable
     }
 
     internal override void
+    on_child_resized (Drawable inChild)
+    {
+        if (inChild.geometry != null)
+        {
+            damage (inChild.geometry);
+        }
+    }
+
+    internal override void
     on_child_damaged (Drawable inChild, Graphic.Region? inArea)
     {
         if (inChild.geometry != null)
@@ -260,9 +269,7 @@ public class Maia.DrawingArea : Group, ItemPackable
             }
             else
             {
-                damaged_area = inArea.copy ();
-                damaged_area.transform (inChild.transform);
-                damaged_area.translate (inChild.geometry.extents.origin);
+                damaged_area = inChild.area_to_parent_item_space (inArea);
             }
 
             // damaged child is the selected item

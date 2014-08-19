@@ -22,6 +22,7 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
     // properties
     private Core.Map<string, unowned Toggle> m_Toggles;
     private Core.Map<string, Core.EventListener> m_ToggleListeners;
+    private string m_Active = null;
 
     // accessors
     internal string tag {
@@ -41,7 +42,37 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
         }
     }
 
-    public string active { get; set; default = null; }
+    public string active {
+        get {
+            return m_Active;
+        }
+        set {
+            if (m_Active != value)
+            {
+                m_Active = value;
+
+                if (m_Toggles != null)
+                {
+                    foreach (unowned Core.Pair<string, unowned Toggle> pair in m_Toggles)
+                    {
+                        m_ToggleListeners[pair.first].block = true;
+                        {
+                            if (m_Active != pair.first)
+                            {
+                                pair.second.active = false;
+                            }
+                            else
+                            {
+                                pair.second.active = true;
+                            }
+                        }
+                        m_ToggleListeners[pair.first].block = false;
+                    }
+                }
+            }
+        }
+        default = null;
+    }
 
     // methods
     construct
@@ -68,6 +99,7 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
 
         if (args != null && args.active)
         {
+            m_Active = args.button_name;
             foreach (unowned Core.Pair<string, unowned Toggle> pair in m_Toggles)
             {
                 if (pair.first != args.button_name)

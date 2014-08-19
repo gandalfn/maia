@@ -664,4 +664,10 @@ public class Maia.ScrollView : Item
 
         return ret;
     }
+
+    internal bool
+    animator_is_playing ()
+    {
+        return m_ScrollToAnimator.is_playing;
+    }
 }

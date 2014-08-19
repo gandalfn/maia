@@ -162,6 +162,7 @@ public class Maia.View : Maia.Grid
     {
         // Add not dumpable attributes
         not_dumpable_attributes.insert ("model");
+        not_dumpable_attributes.insert ("highlighted-row");
 
         notify["item-over-pointer"].connect (on_pointer_over_changed);
         notify["root"].connect (on_root_change);

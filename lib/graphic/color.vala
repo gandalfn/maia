@@ -412,6 +412,41 @@ public class Maia.Graphic.Color : Pattern
         }
     }
 
+    internal Color.from_shade_function (Manifest.Function inFunction) throws Manifest.Error
+    {
+        Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_PARSING, "");
+
+        Graphic.Color color = null;
+        double percent = 0.0;
+        int cpt = 0;
+        foreach (unowned Core.Object child in inFunction)
+        {
+            unowned Manifest.Attribute arg = (Manifest.Attribute)child;
+            switch (cpt)
+            {
+                case 0:
+                    color = (Color)arg.transform (typeof (Color));
+                    break;
+                case 1:
+                    percent = (double)arg.transform (typeof (double));
+                    break;
+                default:
+                    throw new Manifest.Error.TOO_MANY_FUNCTION_ARGUMENT ("Too many arguments in %s function", inFunction.to_string ());
+            }
+            cpt++;
+        }
+        if (cpt > 1)
+        {
+            this.shade (color, percent);
+        }
+        else
+        {
+            m_IsSet = false;
+            throw new Manifest.Error.MISSING_FUNCTION_ARGUMENT ("Missing argument in %s function", inFunction.to_string ());
+        }
+    }
+
+
     internal Color.from_rgba_function (Manifest.Function inFunction) throws Manifest.Error
     {
         Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_PARSING, "");

@@ -19,29 +19,30 @@
 
 internal class Maia.Gtk.Tool : Maia.Tool
 {
+    // properties
+    private string m_IconName;
+
     // accessors
     public string? icon_name {
         get {
-            unowned Image? icon_item = find (GLib.Quark.from_string ("%s-icon".printf (name)), false) as Image;
-            if (icon_item != null)
-            {
-                return icon_item.icon_name;
-            }
-
-            return null;
+            return m_IconName;
         }
         set {
-            unowned Image? icon_item = find (GLib.Quark.from_string ("%s-icon".printf (name)), false) as Image;
-            if (icon_item != null)
+            if (m_IconName != value)
             {
-                icon_item.icon_name = value;
-                if (value != null)
+                m_IconName = value;
+                if (m_IconName != null)
                 {
-                    not_dumpable_attributes.insert ("icon_filename");
+                    var icon_theme = global::Gtk.IconTheme.get_default ();
+                    var info = icon_theme.lookup_icon (m_IconName, -1, global::Gtk.IconLookupFlags.FORCE_SVG);
+                    icon_filename = info.get_filename ();
+
+                    not_dumpable_attributes.insert ("icon-filename");
                 }
                 else
                 {
-                    not_dumpable_attributes.remove ("icon_filename");
+                    icon_filename = null;
+                    not_dumpable_attributes.remove ("icon-filename");
                 }
             }
         }

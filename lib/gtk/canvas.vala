@@ -163,6 +163,12 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
         }
     }
 
+    private void
+    on_toplevel_unmap ()
+    {
+        unmap ();
+    }
+
     internal override void
     realize ()
     {
@@ -180,8 +186,7 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
         attributes.height = allocation.height;
         attributes.wclass = Gdk.WindowClass.INPUT_OUTPUT;
         attributes.window_type = Gdk.WindowType.CHILD;
-        attributes.event_mask = Gdk.EventMask.STRUCTURE_MASK    |
-                                Gdk.EventMask.FOCUS_CHANGE_MASK;
+        attributes.event_mask = Gdk.EventMask.FOCUS_CHANGE_MASK;
         int attributes_mask = Gdk.WindowAttributesType.X        |
                               Gdk.WindowAttributesType.Y        |
                               Gdk.WindowAttributesType.COLORMAP |
@@ -193,10 +198,10 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
         ((global::Gtk.Widget)this).window.set_back_pixmap (null, false);
         style = style.attach (((global::Gtk.Widget)this).window);
 
-        ((global::Gtk.Widget)this).window.show ();
         ((global::Gtk.Widget)this).window.get_display ().sync ();
 
         ((global::Gtk.Window)get_toplevel ()).set_focus.connect  (on_window_focus_changed);
+        ((global::Gtk.Window)get_toplevel ()).unmap.connect  (on_toplevel_unmap);
         // Create gate window from gtk window
         m_WindowGate = new Window.from_foreign (@"$name-gtk-canvas-parent", (uint32)Gdk.x11_drawable_get_xid (((global::Gtk.Widget)this).window));
 
@@ -255,10 +260,9 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
     internal override void
     map ()
     {
-        m_Window.visible = true;
-        queue_resize ();
-
         base.map ();
+
+        m_Window.visible = ((global::Gtk.Widget)this).window.is_visible ();
     }
 
     internal override void

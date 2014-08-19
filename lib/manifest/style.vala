@@ -116,6 +116,10 @@ public class Maia.Manifest.Style : Core.Object, Element
                 case Core.Parser.Token.END_ELEMENT:
                     if (inManifest.element_tag == tag)
                     {
+                        if (manifest_theme != null)
+                        {
+                            manifest_theme.apply (this);
+                        }
                         return;
                     }
                     break;
@@ -125,6 +129,12 @@ public class Maia.Manifest.Style : Core.Object, Element
                     return;
             }
         }
+    }
+
+    internal override int
+    compare (Core.Object inOther)
+    {
+        return 0;
     }
 
     public bool
@@ -149,9 +159,40 @@ public class Maia.Manifest.Style : Core.Object, Element
             string[] patterns = match_name.split (",");
             foreach (unowned string pattern in patterns)
             {
-                if (GLib.PatternSpec.match_simple (pattern, ((GLib.Quark)inElement.id).to_string ()))
+                string[] ascendants = pattern.split (".");
+
+                if (ascendants.length <= 1)
                 {
-                    return true;
+                    if (GLib.PatternSpec.match_simple (pattern, ((GLib.Quark)inElement.id).to_string ()))
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    bool found = true;
+                    unowned Core.Object? current = inElement as Core.Object;
+                    for (int cpt = ascendants.length - 1; cpt >= 0 && current != null; --cpt)
+                    {
+                        if (!GLib.PatternSpec.match_simple (ascendants[cpt], ((GLib.Quark)current.id).to_string ()))
+                        {
+                            found = false;
+                            break;
+                        }
+
+                        current = current.parent;
+                        if (cpt == 1 && ascendants[0].strip () == "" && current == null)
+                        {
+                            break;
+                        }
+                        else if (current == null && cpt >= 1)
+                        {
+                            found = false;
+                            break;
+                        }
+                    }
+
+                    return found;
                 }
             }
         }

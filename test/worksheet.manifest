@@ -150,10 +150,10 @@ DocumentView.scrollview {
 					xexpand: false;
 					yexpand: false;
 					column: 1;
-					label: "";
-					icon-name: 'document-page-setup';
-					icon-size: 12, 12;
-
+					label: "test";
+					icon-name: 'calc';
+					icon-size: 32,32;
+					
 					[
 						Label.label {
 							text: "content";
