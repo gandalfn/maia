@@ -244,6 +244,16 @@ public class Maia.DocumentView : Group
 
             if (!args.parent)
             {
+                if (m_CurrentFocusItem is DrawingArea)
+                {
+                    var visible_area = m_Content.get_visible_area (m_CurrentFocusItem);
+                    if (visible_area != null)
+                    {
+                        item.position = Graphic.Point (visible_area.extents.origin.x + visible_area.extents.size.width / 2.0,
+                                                       visible_area.extents.origin.x + visible_area.extents.size.height / 2.0);
+                    }
+                }
+
                 m_CurrentFocusItem.add (item);
 
                 if (item.can_focus)
@@ -257,6 +267,22 @@ public class Maia.DocumentView : Group
 
                 if (focus_parent != null)
                 {
+                    if (item is Arrow)
+                    {
+                        var pos = m_CurrentFocusItem.geometry.extents.origin;
+                        pos.translate (Graphic.Point (-20, -20));
+                        (item as Arrow).start = pos;
+                    }
+                    else if (focus_parent is DrawingArea)
+                    {
+                        var visible_area = m_Content.get_visible_area (focus_parent);
+                        if (visible_area != null)
+                        {
+                            item.position = Graphic.Point (visible_area.extents.origin.x + visible_area.extents.size.width / 2.0,
+                                                           visible_area.extents.origin.x + visible_area.extents.size.height / 2.0);
+                        }
+                    }
+
                     focus_parent.add (item);
                     if (item.can_focus)
                     {

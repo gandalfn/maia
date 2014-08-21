@@ -670,4 +670,38 @@ public class Maia.ScrollView : Item
     {
         return m_ScrollToAnimator.is_playing;
     }
+
+    public Graphic.Region?
+    get_visible_area (Item inItem)
+    {
+        Graphic.Region? ret = null;
+
+        if (inItem.geometry != null)
+        {
+            Graphic.Point p1 = inItem.convert_to_window_space(Graphic.Point (0, 0));
+            Graphic.Point p2 = inItem.convert_to_window_space(Graphic.Point (inItem.area.extents.size.width, inItem.area.extents.size.height));
+
+            Graphic.Region item_area = new Graphic.Region (Graphic.Rectangle (p1.x, p1.y, p2.x - p1.x, p2.y - p1.y));
+            item_area.transform (new Graphic.Transform.from_matrix (m_Window.transform.matrix_invert));
+            item_area.translate (m_Window.geometry.extents.origin);
+
+            Graphic.Region viewport_area = m_Viewport.area.copy ();
+            viewport_area.intersect (item_area);
+
+            if (!viewport_area.is_empty ())
+            {
+                viewport_area.translate (m_Window.geometry.extents.origin.invert ());
+                viewport_area.transform (m_Window.transform);
+
+                p1 = inItem.convert_from_window_space(Graphic.Point (viewport_area.extents.origin.x, viewport_area.extents.origin.y));
+                p2 = inItem.convert_from_window_space(Graphic.Point (viewport_area.extents.origin.x + viewport_area.extents.size.width,
+                                                                     viewport_area.extents.origin.y + viewport_area.extents.size.height));
+
+
+                ret = new Graphic.Region (Graphic.Rectangle (p1.x, p1.y, p2.x - p1.x, p2.y - p1.y));
+            }
+        }
+
+        return ret;
+    }
 }

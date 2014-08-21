@@ -1165,11 +1165,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     }
 
     private void
-    on_child_need_update (GLib.Object inObject, GLib.ParamSpec? inProperty)
+    on_child_need_update_changed (GLib.Object inObject, GLib.ParamSpec? inProperty)
     {
-        bool child_need_update = ((Item)inObject).need_update;
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"$name: $(((Item)inObject).name) need update $child_need_update");
-        need_update |= child_need_update;
+        on_child_need_update (inObject as Item);
     }
 
     protected virtual void
@@ -1379,6 +1377,14 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 repair (damaged_area);
             }
         }
+    }
+
+    protected virtual void
+    on_child_need_update (Item inChild)
+    {
+        bool child_need_update = inChild.need_update;
+        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"$name: $(inChild.name) need update $child_need_update");
+        need_update |= child_need_update;
     }
 
     protected virtual void
@@ -1623,7 +1629,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             if (inObject is Item)
             {
                 // On child need update
-                ((Item)inObject).notify["need-update"].connect (on_child_need_update);
+                ((Item)inObject).notify["need-update"].connect (on_child_need_update_changed);
 
                 // Connect under child  grab/ungrab pointer
                 ((Item)inObject).grab_pointer.connect (on_child_grab_pointer);
@@ -1681,7 +1687,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             if (inObject is Item)
             {
                 // Disconnect from child need update
-                ((Item)inObject).notify["need-update"].disconnect (on_child_need_update);
+                ((Item)inObject).notify["need-update"].disconnect (on_child_need_update_changed);
 
                 // Disconnect from child  grab/ungrab pointer
                 ((Item)inObject).grab_pointer.disconnect (on_child_grab_pointer);

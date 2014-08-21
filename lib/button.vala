@@ -133,6 +133,7 @@ public class Maia.Button : Grid
         icon_item.xlimp = true;
         icon_item.xexpand = false;
         icon_item.yfill = false;
+        icon_item.ylimp = true;
         add (icon_item);
         m_Icon = icon_item;
 
@@ -153,6 +154,7 @@ public class Maia.Button : Grid
         label_item.xfill = false;
         label_item.xlimp = true;
         label_item.yfill = false;
+        label_item.ylimp = true;
         label_item.visible = false;
         label_item.hide_if_empty = true;
         add (label_item);

@@ -155,12 +155,15 @@ public class Maia.Tool : Button
         {
             m_Toolbox = item as Toolbox;
 
-            // Check if item is under popup
-            unowned Core.Object? popup = item.get_qdata<unowned Core.Object?> (Item.s_PopupWindow);
-            if (popup != null)
+            if (m_Toolbox == null)
             {
-                m_Toolbox = popup as Toolbox;
-                item = popup;
+                // Check if item is under popup
+                unowned Core.Object? popup = item.get_qdata<unowned Core.Object?> (Item.s_PopupWindow);
+                if (popup != null)
+                {
+                    m_Toolbox = popup as Toolbox;
+                    item = popup;
+                }
             }
         }
 

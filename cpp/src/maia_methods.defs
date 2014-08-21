@@ -13320,6 +13320,15 @@
   )
 )
 
+(define-method on_child_need_update
+  (of-object "MaiaItem")
+  (c-name "maia_item_on_child_need_update")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inChild")
+  )
+)
+
 (define-method on_child_resized
   (of-object "MaiaItem")
   (c-name "maia_item_on_child_resized")
@@ -17256,7 +17265,7 @@
 (define-method get_linked_item
   (of-object "MaiaArrow")
   (c-name "maia_arrow_get_linked_item")
-  (return-type "gchar*")
+  (return-type "const-gchar*")
 )
 
 (define-method set_linked_item
@@ -17323,6 +17332,15 @@
   (parameters
     '("GType" "object_type")
     '("const-gchar*" "inId")
+  )
+)
+
+(define-method get_visible_area
+  (of-object "MaiaScrollView")
+  (c-name "maia_scroll_view_get_visible_area")
+  (return-type "MaiaGraphicRegion*")
+  (parameters
+    '("MaiaItem*" "inItem")
   )
 )
 

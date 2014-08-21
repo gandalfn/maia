@@ -20,6 +20,7 @@
 public class Maia.Arrow : Item, ItemMovable
 {
     // properties
+    private string        m_LinkedItemName = null;
     private unowned Item? m_LinkedItem = null;
 
     // accessors
@@ -45,36 +46,15 @@ public class Maia.Arrow : Item, ItemMovable
         }
     }
     public string linked_item {
-        owned get {
-            return m_LinkedItem != null ? m_LinkedItem.name : null;
+        get {
+            return m_LinkedItemName;
         }
         set {
-            if (m_LinkedItem != null)
+            if (m_LinkedItemName != value)
             {
-                m_LinkedItem.notify["visible"].disconnect (on_linked_item_visible_changed);
-                m_LinkedItem.notify["size"].disconnect (update_size);
-                m_LinkedItem.notify["position"].disconnect (update_size);
-                m_LinkedItem.notify["layer"].disconnect (on_linked_item_layer_changed);
-            }
+                m_LinkedItemName = value;
 
-            if (value != null)
-            {
-                m_LinkedItem = parent.find (GLib.Quark.from_string (value), false) as Item;
-            }
-            else
-            {
-                m_LinkedItem = null;
-            }
-
-            if (m_LinkedItem != null)
-            {
-                m_LinkedItem.notify["visible"].connect (on_linked_item_visible_changed);
-                m_LinkedItem.notify["size"].connect (update_size);
-                m_LinkedItem.notify["position"].connect (update_size);
-                m_LinkedItem.notify["layer"].connect (on_linked_item_layer_changed);
-
-                visible = m_LinkedItem.visible;
-                layer = m_LinkedItem.layer + 1;
+                on_root_changed ();
             }
         }
         default = null;
@@ -95,6 +75,9 @@ public class Maia.Arrow : Item, ItemMovable
 
         // Connect onto start changed
         notify["start"].connect (update_size);
+
+        // Connect onto root changed
+        notify["root"].connect (on_root_changed);
     }
 
     public Arrow (string inId)
@@ -103,9 +86,32 @@ public class Maia.Arrow : Item, ItemMovable
     }
 
     private void
-    on_linked_item_visible_changed ()
+    on_root_changed ()
     {
-        visible = m_LinkedItem.visible;
+        if (m_LinkedItem != null)
+        {
+            m_LinkedItem.unplug_property ("visible", this, "visible");
+            m_LinkedItem.notify["geometry"].disconnect (update_size);
+            m_LinkedItem.notify["layer"].disconnect (on_linked_item_layer_changed);
+        }
+
+        if (m_LinkedItemName != null && parent != null)
+        {
+            m_LinkedItem = parent.find (GLib.Quark.from_string (m_LinkedItemName), false) as Item;
+        }
+        else
+        {
+            m_LinkedItem = null;
+        }
+
+        if (m_LinkedItem != null)
+        {
+            m_LinkedItem.plug_property ("visible", this, "visible");
+            m_LinkedItem.notify["geometry"].connect (update_size);
+            m_LinkedItem.notify["layer"].connect (on_linked_item_layer_changed);
+
+            layer = m_LinkedItem.layer + 1;
+        }
     }
 
     private void
@@ -116,6 +122,18 @@ public class Maia.Arrow : Item, ItemMovable
 
     private void
     update_size ()
+    {
+        need_update = true;
+    }
+
+    internal override bool
+    can_append_child (Core.Object inObject)
+    {
+        return false;
+    }
+
+    internal override Graphic.Size
+    size_request (Graphic.Size inSize)
     {
         if (m_LinkedItem != null && parent is DrawingArea)
         {
@@ -135,18 +153,6 @@ public class Maia.Arrow : Item, ItemMovable
             position = start_area;
             size = area_size;
         }
-    }
-
-    internal override bool
-    can_append_child (Core.Object inObject)
-    {
-        return false;
-    }
-
-    internal override Graphic.Size
-    size_request (Graphic.Size inSize)
-    {
-        update_size ();
 
         return base.size_request (inSize);
     }
@@ -231,6 +237,8 @@ public class Maia.Arrow : Item, ItemMovable
                 {
                     start = new_position;
                 }
+
+                need_update = true;
             }
         }
     }

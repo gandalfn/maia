@@ -257,6 +257,18 @@ public class Maia.DrawingArea : Group, ItemPackable
     }
 
     internal override void
+    on_child_need_update (Item inChild)
+    {
+        if (inChild.need_update)
+        {
+            var child_position = inChild.position;
+            var child_size = inChild.size;
+
+            inChild.geometry = new Graphic.Region (Graphic.Rectangle (child_position.x, child_position.y, child_size.width, child_size.height));
+        }
+    }
+
+    internal override void
     on_child_damaged (Drawable inChild, Graphic.Region? inArea)
     {
         if (inChild.geometry != null)
