@@ -66,11 +66,11 @@ public class Maia.Core.Animator : GLib.Object
     private class PropertyRange : GLib.Object
     {
         // properties
-        public unowned GLib.Object      m_Object;
-        public string                   m_Name;
-        public GLib.ParamSpec           m_ParamSpec;
-        public GLib.Value               m_From;
-        public GLib.Value               m_To;
+        public unowned GLib.Object m_Object;
+        public string              m_Name;
+        public GLib.ParamSpec      m_ParamSpec;
+        public GLib.Value          m_From;
+        public GLib.Value          m_To;
         public PropertyCallback    m_Callback;
 
         // methods
@@ -120,9 +120,9 @@ public class Maia.Core.Animator : GLib.Object
     private class Transition : GLib.Object
     {
         // properties
-        private TransitionCallback m_Callback = null;
-        private TransitionFinished m_Finished = null;
-        private PropertyRange[]            m_Properties = {};
+        private TransitionCallback        m_Callback = null;
+        private TransitionFinished        m_Finished = null;
+        private Core.Array<PropertyRange> m_Properties = new Core.Array<PropertyRange> ();
 
         // accessors
         public uint         id            { get; construct; default = 0; }
@@ -145,7 +145,7 @@ public class Maia.Core.Animator : GLib.Object
         {
             // Create property
             PropertyRange property = new PropertyRange (inObject, inName, inFrom, inTo, (owned)inCallback);
-            m_Properties += property;
+            m_Properties.insert (property);
         }
 
         public void
@@ -205,7 +205,7 @@ public class Maia.Core.Animator : GLib.Object
     // properties
     private Timeline m_Timeline = null;
     private uint m_Duration = 1000;
-    private Transition[] m_Transitions = {};
+    private Core.Array<Transition> m_Transitions = new Core.Array<Transition> ();
     private uint m_TransitionLastId = 1;
 
     // accessors
@@ -291,18 +291,38 @@ public class Maia.Core.Animator : GLib.Object
         double progress = m_Timeline.progress;
         bool is_loop =  loop;
 
+        // duplicate list of transition to allow modification of transition in progress
+        Core.Array<Transition> transitions = new Core.Array<Transition> ();
         foreach (unowned Transition transition in m_Transitions)
         {
-            transition.progress (progress, is_loop);
+            transitions.insert (transition);
+        }
+
+        foreach (unowned Transition transition in transitions)
+        {
+            if (transition in m_Transitions)
+            {
+                transition.progress (progress, is_loop);
+            }
         }
     }
 
     private void
     on_completed ()
     {
+        // duplicate list of transition to allow modification of transition in finish
+        Core.Array<Transition> transitions = new Core.Array<Transition> ();
         foreach (unowned Transition transition in m_Transitions)
         {
             if (transition.is_playing)
+            {
+                transitions.insert (transition);
+            }
+        }
+
+        foreach (unowned Transition transition in transitions)
+        {
+            if (transition in m_Transitions)
             {
                 transition.finish ();
             }
@@ -325,7 +345,7 @@ public class Maia.Core.Animator : GLib.Object
                     owned TransitionCallback? inCallback = null, owned TransitionFinished? inFinished = null)
     {
         Transition transition = new Transition (m_TransitionLastId, inFrom, inTo, inType, (owned)inCallback, (owned)inFinished);
-        m_Transitions += transition;
+        m_Transitions.insert (transition);
         m_TransitionLastId++;
 
         return transition.id;
@@ -340,17 +360,14 @@ public class Maia.Core.Animator : GLib.Object
     remove_transition (uint inTransition)
         requires (inTransition < m_TransitionLastId)
     {
-        Transition[] new_transition = {};
+        unowned Transition? transition = m_Transitions.search<uint> (inTransition, (t, v) => {
+            return t.id == v ? 0 : 1;
+        });
 
-        foreach (unowned Transition transition in m_Transitions)
+        if (transition != null)
         {
-            if (inTransition != transition.id)
-            {
-                new_transition += transition;
-            }
+            m_Transitions.remove (transition);
         }
-
-        m_Transitions = new_transition;
     }
 
     /**

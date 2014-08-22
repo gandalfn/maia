@@ -139,6 +139,14 @@ public class Maia.Tool : Button
         base (inId, inLabel);
     }
 
+    ~Tool ()
+    {
+        if (m_CurrentItemEventListener != null)
+        {
+            m_CurrentItemEventListener.parent = null;
+        }
+    }
+
     private void
     on_root_changed ()
     {
@@ -170,7 +178,7 @@ public class Maia.Tool : Button
         // Found toolbox connect onto item changed
         if (m_Toolbox != null && m_Toolbox.current_item != null)
         {
-            m_Toolbox.current_item.subscribe (on_current_item_changed);
+            m_CurrentItemEventListener = m_Toolbox.current_item.subscribe (on_current_item_changed);
         }
     }
 
@@ -195,24 +203,27 @@ public class Maia.Tool : Button
                         string[] split_criteria = criteria.split (":");
                         if (split_criteria.length == 2)
                         {
-                            switch (split_criteria[0].strip ().down ())
+                            string cmd = split_criteria[0].strip ().down ();
+                            string val = split_criteria[1].strip ();
+
+                            switch (cmd)
                             {
                                 case "name":
-                                    found = GLib.PatternSpec.match_simple (split_criteria[1].strip ().down (), args.item_name);
+                                    found = GLib.PatternSpec.match_simple (val, args.item_name);
                                     break;
 
                                 case "parent-name":
-                                    found = args.parent_name.length > 0 && GLib.PatternSpec.match_simple (split_criteria[1].strip ().down (), args.parent_name);
+                                    found = args.parent_name.length > 0 && GLib.PatternSpec.match_simple (val, args.parent_name);
                                     break;
 
                                 case "type":
-                                    GLib.Type type = GLib.Type.from_name ("Maia" + split_criteria[1].strip ());
+                                    GLib.Type type = GLib.Type.from_name (@"Maia$val");
 
                                     found = type != 0 && args.item_type.is_a (type);
                                     break;
 
                                 case "parent-type":
-                                    GLib.Type type = GLib.Type.from_name ("Maia" + split_criteria[1].strip ());
+                                    GLib.Type type = GLib.Type.from_name (@"Maia$val");
 
                                     found = args.parent_type != 0 && args.parent_type.is_a (type);
                                     break;
