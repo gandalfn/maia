@@ -12882,15 +12882,15 @@
   )
 )
 
-(define-method get_force_refresh
+(define-method get_pause
   (of-object "MaiaApplication")
-  (c-name "maia_application_get_force_refresh")
+  (c-name "maia_application_get_pause")
   (return-type "gboolean")
 )
 
-(define-method set_force_refresh
+(define-method set_pause
   (of-object "MaiaApplication")
-  (c-name "maia_application_set_force_refresh")
+  (c-name "maia_application_set_pause")
   (return-type "none")
   (parameters
     '("gboolean" "value")

@@ -1084,10 +1084,10 @@
   (construct-only #f)
 )
 
-(define-property force-refresh
+(define-property pause
   (of-object "MaiaApplication")
   (prop-type "GParamBoolean")
-  (docs "force-refresh")
+  (docs "pause")
   (readable #t)
   (writable #t)
   (construct-only #f)

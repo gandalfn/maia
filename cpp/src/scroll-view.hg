@@ -20,6 +20,7 @@
 #include <maia.h>
 #include <maiamm/item.h>
 #include <maiamm/adjustment.h>
+#include <maiamm/graphic-region.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/item_p.h)
@@ -51,5 +52,6 @@ namespace Maia
             _WRAP_METHOD(void set_scroll_y (double inValue), maia_scroll_view_set_scroll_y)
             _WRAP_METHOD(ScrollViewPolicy get_policy () const, maia_scroll_view_get_policy)
             _WRAP_METHOD(void set_policy (ScrollViewPolicy inPolicy), maia_scroll_view_set_policy)
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Region> get_visible_area (const Glib::RefPtr<Item>& inItem) const, maia_scroll_view_get_visible_area)
     };
 }

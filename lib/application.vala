@@ -49,9 +49,9 @@ public class Maia.Application : Maia.Core.Object
     // properties
     private Backends      m_Backends;
     private Core.Timeline m_Timeline;
-    private uint32        m_ForceRefresh = 0;
     private Core.EventBus m_EventBus;
     private GLib.MainLoop m_Loop;
+    private bool          m_Pause = false;
 
     // accessors
     [CCode (notify = false)]
@@ -72,20 +72,6 @@ public class Maia.Application : Maia.Core.Object
                 m_Timeline.rewind ();
                 m_Timeline.start ();
             }
-        }
-    }
-
-    [CCode (notify = false)]
-    public bool force_refresh {
-        get {
-            return m_ForceRefresh > 0;
-        }
-        set {
-            if (value)
-                m_ForceRefresh++;
-            else if (m_ForceRefresh > 0)
-                m_ForceRefresh--;
-            on_window_visible_changed ();
         }
     }
 
@@ -147,6 +133,28 @@ public class Maia.Application : Maia.Core.Object
                 }
             }
         }
+    }
+
+    public bool pause {
+        get {
+            return m_Pause;
+        }
+        set {
+            if (m_Pause != value)
+            {
+                m_Pause = value;
+
+                if (m_Pause && m_Timeline.is_playing)
+                {
+                    m_Timeline.pause ();
+                }
+                else if (!m_Pause)
+                {
+                    on_window_visible_changed ();
+                }
+            }
+        }
+        default = false;
     }
 
     // static methods
@@ -277,21 +285,23 @@ public class Maia.Application : Maia.Core.Object
     private void
     on_window_visible_changed ()
     {
-        if (m_ForceRefresh == 0)
-        {
-            m_Timeline.stop ();
+        bool have_visible = false;
 
-            foreach (unowned Core.Object child in this)
+        foreach (unowned Core.Object child in this)
+        {
+            if (((Window)child).visible)
             {
-                if (((Window)child).visible)
-                {
-                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN, "Start timeline");
-                    m_Timeline.start ();
-                    break;
-                }
+                have_visible = true;
+                break;
             }
         }
-        else if (!m_Timeline.is_playing)
+
+        if (!have_visible && m_Timeline.is_playing)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.MAIN, "Stop timeline");
+            m_Timeline.stop ();
+        }
+        else if (have_visible && !m_Timeline.is_playing && !m_Pause)
         {
             Log.debug (GLib.Log.METHOD, Log.Category.MAIN, "Start timeline");
             m_Timeline.start ();

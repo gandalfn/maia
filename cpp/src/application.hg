@@ -74,8 +74,8 @@ namespace Maia
             _WRAP_METHOD(guint get_refresh_rate () const, maia_application_get_refresh_rate)
             _WRAP_METHOD(void set_refresh_rate (guint inRefreshRate) const, maia_application_set_refresh_rate)
 
-            _WRAP_METHOD(bool get_force_refresh () const, maia_application_get_force_refresh)
-            _WRAP_METHOD(void set_force_refresh (bool inForceRefresh) const, maia_application_set_force_refresh)
+            _WRAP_METHOD(bool get_pause () const, maia_application_get_pause)
+            _WRAP_METHOD(void set_pause (bool inPause) const, maia_application_set_pause)
 
             _WRAP_METHOD(bool load_backend (const Glib::ustring& inBackend), maia_application_load_backend)
             _WRAP_METHOD(bool unload_backend (const Glib::ustring& inBackend), maia_application_unload_backend)
@@ -88,7 +88,7 @@ namespace Maia
             _WRAP_METHOD(static Glib::RefPtr<Application> get_default (), maia_application_get_default, refreturn)
             _WRAP_METHOD(static void set_default (const Glib::RefPtr<Application>& inApplication), maia_application_set_default)
 
-            _WRAP_PROPERTY("refresh_rate", guint)
-            _WRAP_PROPERTY("force_refresh", bool)
+            _WRAP_PROPERTY("refresh-rate", guint)
+            _WRAP_PROPERTY("pause", bool)
     };
 }
