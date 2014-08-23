@@ -913,7 +913,7 @@ public class Maia.Window : Group
                 ctx.fill (path);
             }
 
-            
+
             foreach (unowned Core.Object child in this)
             {
                 if (child is Item)

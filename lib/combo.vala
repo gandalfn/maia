@@ -164,7 +164,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         add (arrow_item);
 
         plug_property ("stroke-pattern", arrow_item, "fill-pattern");
-        
+
         arrow_item.button_press_event.connect (on_button_press);
 
         // Connect onto button press
@@ -181,7 +181,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         m_Popup.shadow_width = 7;
         m_Popup.round_corner = 3;
         m_Popup.placement = PopupPlacement.TOP;
-        
+
         add (m_Popup);
 
         plug_property ("fill-pattern", m_Popup, "background-pattern");
@@ -190,12 +190,6 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     public Combo (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
-    }
-
-    ~Combo ()
-    {
-        m_Popup.parent = null;
-        m_Popup = null;
     }
 
     private void
@@ -399,7 +393,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
                 m_Popup.visible = false;
                 m_Popup.animation = true;
             }
-            
+
             damage_area ();
         }
     }

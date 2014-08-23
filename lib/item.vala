@@ -1890,7 +1890,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         var point = inPoint;
         point.transform (m_TransformFromWindowSpace);
-        
+
         return point;
     }
 }

@@ -173,6 +173,7 @@ public class Maia.Popup : Group
         m_Window.set_qdata<unowned Object> (Item.s_PopupWindow, this);
         m_Window.depth = 32;
         m_Window.parent = Application.default;
+        m_Window.weak_ref (on_window_destroyed);
 
         // Add not dumpable attributes
         not_dumpable_attributes.insert ("content");
@@ -236,9 +237,17 @@ public class Maia.Popup : Group
             s_PopupOpen = null;
         }
 
-        m_Window.set_qdata<unowned Object?> (Item.s_PopupWindow, null);
+        if (m_Window != null)
+        {
+            m_Window.weak_unref (on_window_destroyed);
+            m_Window.set_qdata<unowned Object?> (Item.s_PopupWindow, null);
+            m_Window.parent = null;
+        }
+    }
 
-        m_Window.parent = null;
+    private void
+    on_window_destroyed ()
+    {
         m_Window = null;
     }
 
@@ -281,7 +290,10 @@ public class Maia.Popup : Group
             visible = false;
             animation = true;
         }
-        GLib.Signal.emit_by_name (m_Window, "notify::window");
+        if (m_Window != null)
+        {
+            GLib.Signal.emit_by_name (m_Window, "notify::window");
+        }
     }
 
     internal override void
@@ -323,7 +335,7 @@ public class Maia.Popup : Group
                 list.insert (c);
             }
         }
-        
+
         return list;
     }
 
