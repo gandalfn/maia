@@ -68,6 +68,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
             }
         }
     }
+
     // properties
     private  global::Xcb.Window   m_Window;
     private  global::Xcb.Colormap m_Colormap = global::Xcb.NONE;
@@ -332,9 +333,6 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
 
         // set main window has this window
         window = this;
-
-        // connect onto window changed
-        notify["window"].connect (on_main_window_changed);
 
         // connect onto window changed
         notify["window"].connect (on_main_window_changed);

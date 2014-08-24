@@ -269,6 +269,8 @@ public class Maia.Application : Maia.Core.Object
 
     ~Application ()
     {
+        clear_childs ();
+
         if (this == s_Default)
         {
             Core.EventBus.default = null;
@@ -414,6 +416,7 @@ public class Maia.Application : Maia.Core.Object
         if (m_Loop != null)
         {
             m_Loop.quit ();
+            m_Loop = null;
         }
     }
 }

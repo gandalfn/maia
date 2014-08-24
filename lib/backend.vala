@@ -81,7 +81,7 @@ internal class Maia.Backends : Maia.Core.ExtensionLoader<Maia.Backend>
     // methods
     public Backends ()
     {
-        string[] paths = {}; 
+        string[] paths = {};
 
         string? backend_paths = GLib.Environment.get_variable("MAIA_BACKEND_PATH");
         if (backend_paths != null)
@@ -98,6 +98,19 @@ internal class Maia.Backends : Maia.Core.ExtensionLoader<Maia.Backend>
         }
 
         base ("backend", paths);
+    }
+
+    ~Backends ()
+    {
+        foreach (unowned Core.Object child in this)
+        {
+            unowned Backend backend = child as Backend;
+
+            if (backend != null)
+            {
+                backend.unload ();
+            }
+        }
     }
 
     public void

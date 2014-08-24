@@ -111,6 +111,14 @@ internal class Maia.Xcb.Application : Core.Object
         m_Windows.compare_func = Window.compare_xcb;
     }
 
+    ~Application ()
+    {
+        foreach (unowned Window window in m_Windows)
+        {
+            window.weak_unref (on_window_destroyed);
+        }
+    }
+
     private unowned global::Xcb.Render.Pictvisual?
     find_visual_from_info (global::Xcb.Render.QueryPictFormatsReply inReply, int inScreen, global::Xcb.Render.Pictforminfo inInfo)
     {
@@ -153,6 +161,20 @@ internal class Maia.Xcb.Application : Core.Object
     on_window_destroyed (GLib.Object inObject)
     {
         m_Windows.remove (inObject as Window);
+
+        Core.List<unowned Request> to_remove = new Core.List<unowned Request> ();
+        foreach (unowned Request request in m_RequestQueue)
+        {
+            if (request.window == inObject)
+            {
+                to_remove.insert (request);
+            }
+        }
+
+        foreach (unowned Request request in to_remove)
+        {
+            m_RequestQueue.remove (request);
+        }
     }
 
     public global::Xcb.Visualid
@@ -284,9 +306,9 @@ internal class Maia.Xcb.Application : Core.Object
     {
         if (inWindow in m_Windows)
         {
-            m_Windows.remove (inWindow);
-
             inWindow.weak_unref (on_window_destroyed);
+
+            m_Windows.remove (inWindow);
         }
 
         Core.List<unowned Request> to_remove = new Core.List<unowned Request> ();
