@@ -533,32 +533,13 @@ internal class Maia.Cairo.Surface : Graphic.Surface
 
         uint8 *pixels = ((global::Cairo.ImageSurface)((Surface)original).m_Surface).get_data ();
 
-        try
-        {
-            // Process Rows
-            exponential_blur_rows (pixels, width, height, height / 2, height, 0, width, alpha);
+        // Process Rows
+        exponential_blur_rows (pixels, width, height, height / 2, height, 0, width, alpha);
+        exponential_blur_rows (pixels, width, height, 0, height / 2, 0, width, alpha);
 
-            var th = new Thread<void*>.try (null, () => {
-                exponential_blur_rows (pixels, width, height, 0, height / 2, 0, width, alpha);
-                return null;
-            });
-
-            th.join ();
-
-            // Process Columns
-            exponential_blur_columns (pixels, width, height, width / 2, width, 0, height, alpha);
-
-            var th2 = new Thread<void*>.try (null, () => {
-                exponential_blur_columns (pixels, width, height, 0, width / 2, 0, height, alpha);
-                return null;
-            });
-
-            th2.join ();
-        }
-        catch (Error err)
-        {
-            Log.critical (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, err.message);
-        }
+        // Process Columns
+        exponential_blur_columns (pixels, width, height, width / 2, width, 0, height, alpha);
+        exponential_blur_columns (pixels, width, height, 0, width / 2, 0, height, alpha);
 
         ((Surface)original).m_Surface.mark_dirty ();
 
@@ -609,49 +590,30 @@ internal class Maia.Cairo.Surface : Graphic.Surface
             }
         }
 
-        try
+        // Horizontal Pass
+        gaussian_blur_horizontal (abuffer, bbuffer, kernel, gausswidth, width, height, height / 2, height, shiftar);
+        gaussian_blur_horizontal (abuffer, bbuffer, kernel, gausswidth, width, height, 0, height / 2, shiftar);
+
+        // Clear buffer
+        Posix.memset (abuffer, 0, sizeof(double) * size);
+
+        // Precompute vertical shifts
+        shiftar = new int[int.max (width, height), gausswidth];
+        for (var y = 0; y < height; y++)
         {
-            // Horizontal Pass
-            gaussian_blur_horizontal (abuffer, bbuffer, kernel, gausswidth, width, height, height / 2, height, shiftar);
-
-            var th = new Thread<void*>.try (null, () => {
-                gaussian_blur_horizontal (abuffer, bbuffer, kernel, gausswidth, width, height, 0, height / 2, shiftar);
-                return null;
-            });
-
-            th.join ();
-
-            // Clear buffer
-            Posix.memset (abuffer, 0, sizeof(double) * size);
-
-            // Precompute vertical shifts
-            shiftar = new int[int.max (width, height), gausswidth];
-            for (var y = 0; y < height; y++)
+            for (var k = 0; k < gausswidth; k++)
             {
-                for (var k = 0; k < gausswidth; k++)
-                {
-                    var shift = k - inRadius;
-                    if (y + shift <= 0 || y + shift >= height)
-                        shiftar[y, k] = 0;
-                    else
-                        shiftar[y, k] = shift * width * 4;
-                }
+                var shift = k - inRadius;
+                if (y + shift <= 0 || y + shift >= height)
+                    shiftar[y, k] = 0;
+                else
+                    shiftar[y, k] = shift * width * 4;
             }
-
-            // Vertical Pass
-            gaussian_blur_vertical (bbuffer, abuffer, kernel, gausswidth, width, height, width / 2, width, shiftar);
-
-            var th2 = new Thread<void*>.try (null, () => {
-                gaussian_blur_vertical (bbuffer, abuffer, kernel, gausswidth, width, height, 0, width / 2, shiftar);
-                return null;
-            });
-
-            th2.join ();
         }
-        catch (Error err)
-        {
-            Log.critical (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, err.message);
-        }
+
+        // Vertical Pass
+        gaussian_blur_vertical (bbuffer, abuffer, kernel, gausswidth, width, height, width / 2, width, shiftar);
+        gaussian_blur_vertical (bbuffer, abuffer, kernel, gausswidth, width, height, 0, width / 2, shiftar);
 
         // Save blurred image to original uint8[]
         for (var i = 0; i < size; i++)
