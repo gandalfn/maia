@@ -238,10 +238,7 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
     update_layout (Context inContext)
     {
         // Clear childs
-        while (first () != null)
-        {
-            first ().parent = null;
-        }
+        clear_childs ();
 
         // create layout
         m_Layout = new Pango.Layout (inContext.pango_context);

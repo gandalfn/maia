@@ -452,12 +452,12 @@ public class Maia.DocumentView : Group
             var content_allocation = Graphic.Rectangle (0, 0, double.max (content_size.width, geometry.extents.size.width - toolbar_size.width),
                                                               double.max (content_size.height, geometry.extents.size.height));
 
-            // Set content allocation
-            m_Content.update (inContext, new Graphic.Region (content_allocation));
-
             // Set toolbar  allocation
             var toolbar_allocation = Graphic.Rectangle (geometry.extents.size.width - toolbar_size.width, 0, toolbar_size.width, geometry.extents.size.height);
             m_ShortcutsToolbar.update (inContext, new Graphic.Region (toolbar_allocation));
+
+            // Set content allocation
+            m_Content.update (inContext, new Graphic.Region (content_allocation));
 
             // Set toolbox allocation
             if (m_Toolbox != null && m_Toolbox.content != null && m_Toolbox.visible)

@@ -21,8 +21,8 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
 {
     // properties
     private string          m_Text = null;
-    private Graphic.Glyph   m_Glyph;
-    private Graphic.Surface m_FakeSurface;
+    private Graphic.Glyph   m_Glyph = null;
+    private Graphic.Surface m_FakeSurface = null;
 
     // accessors
     internal override string tag {
@@ -235,6 +235,9 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
         {
             m_FakeSurface.context.transform = item.transform;
         }
+
+        // Destroy also glyph which is linked to fake surface context
+        m_Glyph = null;
     }
 
     private void
