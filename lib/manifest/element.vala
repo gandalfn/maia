@@ -50,6 +50,7 @@ public interface Maia.Manifest.Element : Core.Object
     private  static Core.Set<Create> s_Factory = null;
     private  static GLib.Quark       s_QuarkNotDumpableAttributes = 0;
     internal static GLib.Quark       s_AttributeSetQuark = 0;
+    internal static GLib.Quark       s_InternalParent = 0;
     private  static unowned Theme    s_CurrentTheme = null;
 
     public static Theme current_theme {
@@ -68,7 +69,18 @@ public interface Maia.Manifest.Element : Core.Object
     public unowned Element? root {
         get {
             unowned Core.Object? ret = this;
-            for (; ret.parent != null && ret.parent is Element; ret = ret.parent);
+            while ((ret.parent != null && ret.parent is Element) || ret.get_qdata<Element?> (s_InternalParent) != null)
+            {
+                unowned Element? internal_parent = ret.get_qdata<Element?> (s_InternalParent);
+                if (internal_parent != null)
+                {
+                    ret = internal_parent;
+                }
+                else
+                {
+                    ret = ret.parent;
+                }
+            }
 
             return (Element)ret;
         }
@@ -149,6 +161,11 @@ public interface Maia.Manifest.Element : Core.Object
         if (s_Factory == null)
         {
             s_Factory = new Core.Set <Create> ();
+        }
+
+        if (s_InternalParent == 0)
+        {
+            s_InternalParent = GLib.Quark.from_string ("MaiaElementInternalParent");
         }
 
         GLib.Type type = inType;

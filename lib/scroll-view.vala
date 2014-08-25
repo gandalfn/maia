@@ -326,6 +326,7 @@ public class Maia.ScrollView : Item
         if (m_Child != null && m_Window != null && m_Child.parent != m_Window)
         {
             m_Child.notify["root"].disconnect (on_child_parent_changed);
+            m_Child.set_qdata<unowned Manifest.Element?> (Manifest.Element.s_InternalParent, null);
             m_Child = null;
         }
     }
@@ -374,6 +375,7 @@ public class Maia.ScrollView : Item
         else if (can_append_child (inObject) && m_Child == null)
         {
             m_Child = inObject as Item;
+            m_Child.set_qdata<unowned Manifest.Element?> (Manifest.Element.s_InternalParent, this);
 
             if (m_Window != null)
             {
