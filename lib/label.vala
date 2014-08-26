@@ -187,7 +187,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
         font_description = "Sans 12";
 
         // connect onto layout properties changed
-        notify["root"].connect (on_root_changed);
+        notify["window"].connect (on_window_changed);
         notify["alignment"].connect (on_layout_property_changed);
         notify["wrap-mode"].connect (on_layout_property_changed);
         notify["font-description"].connect (on_layout_property_changed);
@@ -215,29 +215,20 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     }
 
     private void
-    on_root_changed ()
+    on_window_changed ()
     {
+        // unset glyph
+        m_Glyph = null;
+
         // Create a fake surface to calculate the size of path
         m_FakeSurface = new Graphic.Surface (1, 1);
+
+        // Set transform
+        m_FakeSurface.context.transform = to_window_transform ();
         
-        // Get stack of items
-        GLib.SList<unowned Item> list = new GLib.SList<unowned Item?> ();
-        for (unowned Core.Object? item = this; item != null; item = item.parent)
-        {
-            if (item is Item)
-            {
-                list.append (item as Item);
-            }
-        }
-
-        // Apply transform of all parents to fake surface
-        foreach (unowned Item item in list)
-        {
-            m_FakeSurface.context.transform = item.transform;
-        }
-
-        // Destroy also glyph which is linked to fake surface context
-        m_Glyph = null;
+        // unset geometry to force update
+        need_update = true;
+        geometry = null;
     }
 
     private void

@@ -39,8 +39,8 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         {
             grid = inGrid;
 
-            rows = new LineSizeAllocation[25];
-            columns = new LineSizeAllocation[25];
+            rows = {};
+            columns = {};
 
             uint nb_rows = 0;
             uint nb_columns = 0;
@@ -63,8 +63,8 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                     if (item.rows > 1) nb_rows = uint.max (nb_rows, item.row + item.rows);
                     if (item.columns > 1) nb_columns = uint.max (nb_columns, item.column + item.columns);
 
-                    if (rows.length < nb_rows) rows.resize ((int)nb_rows * 4);
-                    if (columns.length < nb_columns) columns.resize ((int)nb_columns * 4);
+                    if (rows.length < nb_rows) rows.resize ((int)nb_rows);
+                    if (columns.length < nb_columns) columns.resize ((int)nb_columns);
 
                     // cumulate the width of all rows
                     if (item.visible || !item.xlimp)

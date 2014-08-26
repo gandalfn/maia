@@ -94,7 +94,7 @@ public class Maia.Core.EventListener : Object
         m_EventHash = new Event.Hash (inEvent);
         m_Handler = inHandler;
 
-        m_Target = (GLib.Object?)(*(void**)((&m_Handler) + 1));
+        m_Target = (*(void**)((&m_Handler) + 1)) as GLib.Object;
         GLib.return_val_if_fail (m_Target != null, null);
         m_Target.weak_ref (on_target_destroy);
     }

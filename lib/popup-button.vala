@@ -38,7 +38,10 @@ public class Maia.PopupButton : ToggleButton
             return m_Popup.content;
         }
         set {
-            m_Popup.content = value;
+            if (m_Popup != null)
+            {
+                m_Popup.content = value;
+            }
         }
         default = null;
     }

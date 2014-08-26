@@ -51,4 +51,51 @@ namespace Maia
 
         return sigc::connection(*pSlot);
     }
+
+    void
+    Item::scroll_to (const Glib::RefPtr<Item>& inItem)
+    {
+        g_signal_emit_by_name (gobj (), "scroll-to", const_cast<MaiaItem*> (inItem->gobj ()));
+    }
+
+    const gchar*
+    Item_Class::get_tag_vfunc_callback (MaiaItem* self)
+    {
+        static Glib::ustring tag ("");
+                    
+        Glib::ObjectBase *const obj_base = static_cast<Glib::ObjectBase*>(Glib::ObjectBase::_get_current_wrapper((GObject*)self));
+
+        if(obj_base && obj_base->is_derived_())
+        {
+            CppObjectType *const obj = dynamic_cast<CppObjectType* const>(obj_base);
+            if(obj)
+            {
+#ifdef GLIBMM_EXCEPTIONS_ENABLED
+                try
+                {
+#endif
+                    obj->m_Tag = obj->get_tag_vfunc();
+                    return obj->m_Tag.c_str ();
+#ifdef GLIBMM_EXCEPTIONS_ENABLED
+                }
+                catch(...)
+                {
+                    Glib::exception_handlers_invoke();
+                }
+#endif
+            }
+        }
+
+        BaseClassType *const base = static_cast<BaseClassType*>(g_type_class_peek_parent(G_OBJECT_GET_CLASS(self)));
+
+        if(base && base->get_tag)
+        {
+            const gchar* result = (*base->get_tag)(self);
+            return result;
+        }
+
+
+        typedef const gchar* RType;
+        return RType();
+    }
 }

@@ -1808,6 +1808,12 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
     }
 
+    internal unowned Graphic.Transform?
+    to_window_transform ()
+    {
+        return m_TransformToWindowSpace;
+    }
+
     /**
      * Update the allocated geometry of item
      *

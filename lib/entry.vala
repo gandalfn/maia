@@ -245,7 +245,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         notify["have-focus"].connect (on_focus_changed);
 
         // connect onto root changed
-        notify["root"].connect (on_root_changed);
+        notify["window"].connect (on_window_changed);
     }
 
     /**
@@ -260,23 +260,20 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     }
 
     private void
-    on_root_changed ()
+    on_window_changed ()
     {
-        // Get stack of items
-        GLib.SList<unowned Item> list = new GLib.SList<unowned Item?> ();
-        for (unowned Core.Object? item = this; item != null; item = item.parent)
-        {
-            if (item is Item)
-            {
-                list.append (item as Item);
-            }
-        }
+        // unset glyph
+        m_Glyph = null;
 
-        // Apply transform of all parents to fake surface
-        foreach (unowned Item item in list)
-        {
-            m_FakeSurface.context.transform = item.transform;
-        }
+        // Create a fake surface to calculate the size of path
+        m_FakeSurface = new Graphic.Surface (1, 1);
+
+        // Set transform
+        m_FakeSurface.context.transform = to_window_transform ();
+
+        // unset geometry to force update
+        need_update = true;
+        geometry = null;
     }
 
     private void

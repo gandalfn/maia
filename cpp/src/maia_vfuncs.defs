@@ -687,6 +687,14 @@
   )
 )
 
+(define-vfunc on_child_need_update
+  (of-object "MaiaItem")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inChild")
+  )
+)
+
 (define-vfunc on_child_damaged
   (of-object "MaiaItem")
   (return-type "none")

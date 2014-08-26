@@ -149,9 +149,22 @@ public class Maia.Core.SocketBusConnection : BusConnection
 
         try
         {
-            if (m_Connection.socket.condition_timed_wait (GLib.IOCondition.IN | GLib.IOCondition.PRI, inTimeout * 1000))
+            int wait = 0;
+
+            while ((uint64)wait * 1000 < (uint64)inTimeout * 1000  && m_Connection.socket.condition_check (GLib.IOCondition.IN) != GLib.IOCondition.IN)
+            {
+                GLib.Thread.@yield ();
+                GLib.Thread.usleep (1000);
+                wait++;
+            }
+
+            if ((uint64)wait * 1000 < (uint64)inTimeout * 1000)
             {
                 m_Connection.input_stream.read_all (inData, out ret);
+            }
+            else
+            {
+                throw new BusError.READ ("error on receive message : timed out");
             }
         }
         catch (GLib.Error err)
@@ -169,9 +182,22 @@ public class Maia.Core.SocketBusConnection : BusConnection
 
         try
         {
-            if (m_Connection.socket.condition_timed_wait (GLib.IOCondition.OUT, inTimeout * 1000))
+            int wait = 0;
+
+            while ((uint64)wait * 1000 < (uint64)inTimeout * 1000  && m_Connection.socket.condition_check (GLib.IOCondition.OUT) != GLib.IOCondition.OUT)
+            {
+                GLib.Thread.@yield ();
+                GLib.Thread.usleep (1000);
+                wait++;
+            }
+
+            if ((uint64)wait * 1000 < (uint64)inTimeout * 1000)
             {
                 m_Connection.output_stream.write_all (inData, out ret);
+            }
+            else
+            {
+                throw new BusError.WRITE ("error on send message : timed out");
             }
         }
         catch (GLib.Error err)

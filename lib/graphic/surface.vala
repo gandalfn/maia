@@ -89,7 +89,7 @@ public class Maia.Graphic.Surface : Pattern
         requires (inWidth > 0 && inHeight > 0)
     {
         var size = Graphic.Size ((double)inWidth, (double)inHeight);
-        GLib.Object (size: size);
+        GLib.Object (format: Graphic.Surface.Format.ARGB32, size: size);
     }
 
     public Surface.from_device (Device inDevice, uint inWidth, uint inHeight)

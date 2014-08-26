@@ -37,8 +37,8 @@ namespace Maia
             _CLASS_INTERFACE(Element, MaiaManifestElement, MAIA_MANIFEST_ELEMENT, MaiaManifestElementIface)
 
             protected:
-                _WRAP_VFUNC(Glib::ustring get_tag (), get_tag)
-                _WRAP_VFUNC(Glib::ustring get_characters (), get_characters)
+                _WRAP_VFUNC(Glib::ustring get_tag (), get_tag, custom_vfunc_callback)
+                _WRAP_VFUNC(Glib::ustring get_characters (), get_characters, custom_vfunc_callback)
                 _WRAP_VFUNC(void set_characters (const Glib::ustring& inCharacters), set_characters)
 
             public:
@@ -98,6 +98,10 @@ namespace Maia
                 _WRAP_PROPERTY("characters", Glib::ustring)
                 _WRAP_PROPERTY("manifest-path", Glib::ustring)
                 _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
+
+            private:
+                Glib::ustring m_Tag;
+                Glib::ustring m_Characters;
         };
     }
 }

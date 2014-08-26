@@ -174,6 +174,9 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
     {
         Log.debug ("~Window", Log.Category.MAIN, @"destroy $name");
 
+        m_BackBuffer = null;
+        m_FrontBuffer = null;
+
         if (m_Colormap != global::Xcb.NONE)
         {
             m_Colormap.free (connection);
@@ -624,7 +627,7 @@ internal class Maia.Xcb.Window : Maia.Window, Maia.Graphic.Device
                 (uint32)GLib.Math.ceil (m_BackBuffer.size.height) != (uint32)GLib.Math.ceil (window_size.height))
             {
                 // Create back buffer
-                m_BackBuffer = new Pixmap (this, depth, (int)GLib.Math.ceil (window_size.width), (int)GLib.Math.ceil (window_size.height));
+                m_BackBuffer = new Pixmap (screen_num, depth, (int)GLib.Math.ceil (window_size.width), (int)GLib.Math.ceil (window_size.height));
             }
 
             // Destroy front buffer

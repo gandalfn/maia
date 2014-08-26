@@ -27,17 +27,20 @@ internal class Maia.Xcb.Pixmap : Maia.Xcb.Drawable
     }
 
     // methods
-    public Pixmap (Window inWindow, int inDepth, int inWidth, int inHeight)
+    public Pixmap (int inScreenNum, int inDepth, int inWidth, int inHeight)
     {
         var pixmap = global::Xcb.Pixmap (Maia.Xcb.application.connection);
 
-        base (pixmap, inWindow.screen_num, inDepth, inWidth, inHeight);
+        base (pixmap, inScreenNum, inDepth, inWidth, inHeight);
 
-        var cookie = pixmap.create_checked (connection, (uint8)inDepth, (global::Xcb.Drawable)inWindow.xid, (uint16)inWidth, (uint16)inHeight);
+        unowned global::Xcb.Screen screen = connection.roots[inScreenNum];
 
-        if (connection.request_check (cookie) != null)
+        var cookie = pixmap.create_checked (connection, (uint8)inDepth, (global::Xcb.Drawable)screen.root, (uint16)inWidth, (uint16)inHeight);
+
+        global::Xcb.GenericError? err = connection.request_check (cookie);
+        if (err != null)
         {
-            Log.error (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, @"Error on create pixmap for $(inWindow.name)");
+            Log.error (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, @"Error on create pixmap on screen $(inScreenNum) depth: $(inDepth) size: $(inWidth)x$(inHeight) : $(err.error_code)");
         }
 
         clear ();

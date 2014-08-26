@@ -84,7 +84,7 @@ public class Maia.Popup : Group
     private double          m_Y = double.MIN;
     private Core.Animator   m_Animator;
     private uint            m_Transition = 0;
-    private unowned Item    m_Content;
+    private Item            m_Content;
     private unowned Window? m_Window;
 
     // accessors
@@ -97,20 +97,26 @@ public class Maia.Popup : Group
     internal double x {
         set {
             m_X = value;
-            var dtransform = get_window_transform ();
-            dtransform.add (new Graphic.Transform.init_translate (value, 0));
-            m_Window.device_transform = dtransform;
-            m_Window.damage ();
+            if (m_Window != null)
+            {
+                var dtransform = get_window_transform ();
+                dtransform.add (new Graphic.Transform.init_translate (value, 0));
+                m_Window.device_transform = dtransform;
+                m_Window.damage ();
+            }
         }
     }
 
     internal double y {
         set {
             m_Y = value;
-            var dtransform = get_window_transform ();
-            dtransform.add (new Graphic.Transform.init_translate (0, value));
-            m_Window.device_transform = dtransform;
-            m_Window.damage ();
+            if (m_Window != null)
+            {
+                var dtransform = get_window_transform ();
+                dtransform.add (new Graphic.Transform.init_translate (0, value));
+                m_Window.device_transform = dtransform;
+                m_Window.damage ();
+            }
         }
     }
 
@@ -166,7 +172,47 @@ public class Maia.Popup : Group
     // methods
     construct
     {
-        // Create window
+        // Add not dumpable attributes
+        not_dumpable_attributes.insert ("content");
+
+        // Create animator
+        m_Animator = new Core.Animator (60, 250);
+
+        // Connect onto window change
+        notify["window"].connect (on_window_changed);
+
+        // Connect onto border change
+        notify["placement"].connect (on_placement_changed);
+    }
+
+    public Popup (string inId)
+    {
+        GLib.Object (id: GLib.Quark.from_string (inId));
+    }
+
+    ~Popup ()
+    {
+        if (s_PopupOpen == this)
+        {
+            s_PopupOpen = null;
+        }
+
+        if (m_Content != null)
+        {
+            m_Content.parent = null;
+        }
+
+        if (m_Window != null)
+        {
+            m_Window.weak_unref (on_window_destroyed);
+            m_Window.set_qdata<unowned Object?> (Item.s_PopupWindow, null);
+            m_Window.parent = null;
+        }
+    }
+
+    private void
+    create_window ()
+    {
         var win = new Window (name + "_window", 1, 1);
         m_Window = win;
         m_Window.visible = false;
@@ -174,12 +220,6 @@ public class Maia.Popup : Group
         m_Window.depth = 32;
         m_Window.parent = Application.default;
         m_Window.weak_ref (on_window_destroyed);
-
-        // Add not dumpable attributes
-        not_dumpable_attributes.insert ("content");
-
-        // Create animator
-        m_Animator = new Core.Animator (60, 250);
 
         // plug manifest path
         plug_property ("manifest-path", m_Window, "manifest-path");
@@ -214,70 +254,49 @@ public class Maia.Popup : Group
         // plug close button property to window
         plug_property ("close-button", m_Window, "close-button");
 
-        // plug visible property to window
-        m_Window.plug_property ("visible", this, "visible");
+        m_Window.notify["visible"].connect (on_window_visible_changed);
 
-        // Connect onto window change
-        notify["window"].connect (on_window_changed);
-
-        // Connect onto border change
-        notify["placement"].connect (on_placement_changed);
         on_placement_changed ();
-    }
-
-    public Popup (string inId)
-    {
-        GLib.Object (id: GLib.Quark.from_string (inId));
-    }
-
-    ~Popup ()
-    {
-        if (s_PopupOpen == this)
-        {
-            s_PopupOpen = null;
-        }
-
-        if (m_Window != null)
-        {
-            m_Window.weak_unref (on_window_destroyed);
-            m_Window.set_qdata<unowned Object?> (Item.s_PopupWindow, null);
-            m_Window.parent = null;
-        }
     }
 
     private void
     on_window_destroyed ()
     {
         m_Window = null;
+
+        visible = false;
     }
 
     private void
     on_placement_changed ()
     {
-        switch (placement)
+        if (m_Window != null)
         {
-            case PopupPlacement.ABSOLUTE:
-                m_Window.shadow_border = Window.Border.LEFT  |
-                                         Window.Border.RIGHT |
-                                         Window.Border.TOP   |
-                                         Window.Border.BOTTOM;
-                break;
+            switch (placement)
+            {
+                case PopupPlacement.ABSOLUTE:
+                    m_Window.shadow_border = Window.Border.LEFT  |
+                                             Window.Border.RIGHT |
+                                             Window.Border.TOP   |
+                                             Window.Border.BOTTOM;
+                    break;
 
-            case PopupPlacement.BOTTOM:
-                m_Window.shadow_border = Window.Border.TOP;
-                break;
+                case PopupPlacement.BOTTOM:
+                    m_Window.shadow_border = Window.Border.TOP;
+                    break;
 
-            case PopupPlacement.TOP:
-                m_Window.shadow_border = Window.Border.BOTTOM;
-                break;
+                case PopupPlacement.TOP:
+                    m_Window.shadow_border = Window.Border.BOTTOM;
+                    break;
 
-            case PopupPlacement.RIGHT:
-                m_Window.shadow_border = Window.Border.LEFT;
-                break;
+                case PopupPlacement.RIGHT:
+                    m_Window.shadow_border = Window.Border.LEFT;
+                    break;
 
-            case PopupPlacement.LEFT:
-                m_Window.shadow_border = Window.Border.RIGHT;
-                break;
+                case PopupPlacement.LEFT:
+                    m_Window.shadow_border = Window.Border.RIGHT;
+                    break;
+            }
         }
     }
 
@@ -296,6 +315,15 @@ public class Maia.Popup : Group
         }
     }
 
+    private void
+    on_window_visible_changed ()
+    {
+        if (visible != m_Window.visible)
+        {
+            visible = m_Window.visible;
+        }
+    }
+
     internal override void
     insert_child (Core.Object inObject)
     {
@@ -303,7 +331,10 @@ public class Maia.Popup : Group
         {
             m_Content = inObject as Item;
 
-            m_Content.parent = m_Window;
+            if (m_Window != null)
+            {
+                m_Content.parent = m_Window;
+            }
         }
     }
 
@@ -320,7 +351,7 @@ public class Maia.Popup : Group
     internal override unowned Core.Object?
     find (uint32 inId, bool inRecursive = true)
     {
-        return m_Window == null ? null : m_Window.find (inId, inRecursive);
+        return m_Content == null ? null : m_Content.find (inId, inRecursive);
     }
 
     internal override Core.List<unowned T?>
@@ -328,9 +359,9 @@ public class Maia.Popup : Group
     {
         Core.List<unowned T?> list = new Core.List<unowned T?> ();
 
-        if (m_Window != null)
+        if (m_Content != null)
         {
-            foreach (unowned T? c in m_Window.find_by_type<T> (inRecursive))
+            foreach (unowned T? c in m_Content.find_by_type<T> (inRecursive))
             {
                 list.insert (c);
             }
@@ -356,20 +387,26 @@ public class Maia.Popup : Group
     internal override void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
-        geometry = inAllocation;
+        if (visible)
+        {
+            geometry = inAllocation;
 
-        // Force content to fill the popup window
-        m_Content.size = Graphic.Size (geometry.extents.size.width - (border * 4), geometry.extents.size.height - (border * 4));
+            // Force content to fill the popup window
+            m_Content.size = Graphic.Size (geometry.extents.size.width - (border * 4), geometry.extents.size.height - (border * 4));
 
-        // set window size and position
-        var pos = convert_to_window_space(Graphic.Point (0, 0));
-        m_Window.position = Graphic.Point (pos.x - shadow_width, pos.y);
-        m_Window.device_transform = get_window_transform ();
+            if (m_Window != null)
+            {
+                // set window size and position
+                var pos = convert_to_window_space(Graphic.Point (0, 0));
+                m_Window.position = Graphic.Point (pos.x - shadow_width, pos.y);
+                m_Window.device_transform = get_window_transform ();
 
-        m_Window.update (inContext, new Graphic.Region (Graphic.Rectangle (m_Window.position.x,
-                                                                           m_Window.position.y,
-                                                                           m_Window.size.width,
-                                                                           m_Window.size.height)));
+                m_Window.update (inContext, new Graphic.Region (Graphic.Rectangle (m_Window.position.x,
+                                                                                   m_Window.position.y,
+                                                                                   m_Window.size.width,
+                                                                                   m_Window.size.height)));
+            }
+        }
     }
 
     internal override void
@@ -390,10 +427,19 @@ public class Maia.Popup : Group
         // Set popup has popup open
         s_PopupOpen = this;
 
-        // Show window when popup is visible
-        m_Window.lock_property("visible", this, "visible");
+        if (m_Window == null)
+        {
+            // Create window
+            create_window ();
+        }
+
+        if (m_Content.parent == null)
+        {
+            m_Content.parent = m_Window;
+        }
+
+       // Show window when popup is visible
         m_Window.visible = true;
-        m_Window.unlock_property("visible", this, "visible");
 
         m_Animator.stop ();
 
@@ -492,50 +538,53 @@ public class Maia.Popup : Group
         GLib.Value from = (double)0;
         GLib.Value to = (double)0;
 
-        // Get popup size
-        var popup_size = m_Window.size;
         string prop = null;
-
-        if (animation)
+        if (m_Window != null)
         {
-            // Set animation property change
-            switch (placement)
+            // Get popup size
+            var popup_size = m_Window.size;
+
+            if (animation)
             {
-                case PopupPlacement.BOTTOM:
-                    if (m_Y != popup_size.height)
-                    {
-                        to = (double)(popup_size.height);
-                        from = (double)0.0;
-                        prop = "y";
-                    }
-                    break;
+                // Set animation property change
+                switch (placement)
+                {
+                    case PopupPlacement.BOTTOM:
+                        if (m_Y != popup_size.height)
+                        {
+                            to = (double)(popup_size.height);
+                            from = (double)0.0;
+                            prop = "y";
+                        }
+                        break;
 
-                case PopupPlacement.TOP:
-                    if (m_Y != -popup_size.height)
-                    {
-                        to = (double)(-popup_size.height);
-                        from = (double)0.0;
-                        prop = "y";
-                    }
-                    break;
+                    case PopupPlacement.TOP:
+                        if (m_Y != -popup_size.height)
+                        {
+                            to = (double)(-popup_size.height);
+                            from = (double)0.0;
+                            prop = "y";
+                        }
+                        break;
 
-                case PopupPlacement.RIGHT:
-                    if (m_X != popup_size.width)
-                    {
-                        to = (double)(popup_size.width);
-                        from = (double)0.0;
-                        prop = "x";
-                    }
-                    break;
+                    case PopupPlacement.RIGHT:
+                        if (m_X != popup_size.width)
+                        {
+                            to = (double)(popup_size.width);
+                            from = (double)0.0;
+                            prop = "x";
+                        }
+                        break;
 
-                case PopupPlacement.LEFT:
-                    if (m_X != -popup_size.width)
-                    {
-                        to = (double)(-popup_size.width);
-                        from = (double)0.0;
-                        prop = "x";
-                    }
-                    break;
+                    case PopupPlacement.LEFT:
+                        if (m_X != -popup_size.width)
+                        {
+                            to = (double)(-popup_size.width);
+                            from = (double)0.0;
+                            prop = "x";
+                        }
+                        break;
+                }
             }
         }
 
@@ -593,9 +642,10 @@ public class Maia.Popup : Group
         base.on_hide ();
 
         // Hide window when popup is hidden
-        m_Window.lock_property ("visible", this, "visible");
-        m_Window.visible = false;
-        m_Window.unlock_property ("visible", this, "visible");
+        if (m_Window != null)
+        {
+            m_Window.visible = false;
+        }
     }
 
     private void
@@ -606,7 +656,10 @@ public class Maia.Popup : Group
             m_Animator.remove_transition (m_Transition);
             m_Transition = 0;
 
-            m_Window.grab_focus (m_Content);
+            if (m_Window != null && m_Content != null)
+            {
+                m_Window.grab_focus (m_Content);
+            }
         }
     }
 }

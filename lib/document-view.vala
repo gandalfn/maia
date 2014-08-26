@@ -105,12 +105,19 @@ public class Maia.DocumentView : Group
     {
         m_Content.hadjustment.@value = 0;
         m_Content.vadjustment.@value = 0;
+    }
 
-        if (m_Toolbox != null)
+    private void
+    on_toolbox_destroyed ()
+    {
+        m_Toolbox = null;
+        if (m_AddItemListener != null)
         {
-            m_Toolbox.animation = false;
-            m_Toolbox.visible = false;
-            m_Toolbox.animation = true;
+            m_AddItemListener.parent = null;
+        }
+        if (m_RemoveItemListener != null)
+        {
+            m_RemoveItemListener.parent = null;
         }
     }
 
@@ -316,6 +323,10 @@ public class Maia.DocumentView : Group
             if (m_Toolbox == null)
             {
                 m_Toolbox = inObject as Toolbox;
+                m_Toolbox.weak_ref (on_toolbox_destroyed);
+                m_Toolbox.animation = false;
+                m_Toolbox.visible = false;
+                m_Toolbox.animation = true;
 
                 // Connect onto add item event
                 m_AddItemListener = m_Toolbox.add_item.subscribe (on_add_item);

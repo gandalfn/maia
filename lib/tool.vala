@@ -65,9 +65,9 @@ public class Maia.Tool : Button
     private static string? s_CurrentItemName = null;
 
     // properties
-    private uint m_ItemCounter = 0;
-    private unowned Toolbox? m_Toolbox = null;
-    private Core.EventListener m_CurrentItemEventListener = null;
+    private uint                m_ItemCounter = 0;
+    private unowned Toolbox?    m_Toolbox = null;
+    private Core.EventListener  m_CurrentItemEventListener = null;
 
     // accessors
     internal override string tag {
@@ -150,35 +150,40 @@ public class Maia.Tool : Button
     private void
     on_root_changed ()
     {
-        // Disconnect from item changed of old toolbox
-        if (m_Toolbox != null && m_CurrentItemEventListener != null)
-        {
-            m_CurrentItemEventListener.parent = null;
-            m_CurrentItemEventListener = null;
-        }
-
         // Search parent toolbox
-        m_Toolbox = null;
-        for (unowned Core.Object? item = parent; m_Toolbox == null && item != null; item = item.parent)
+        unowned Toolbox? toolbox = null;
+        for (unowned Core.Object? item = parent; toolbox == null && item != null; item = item.parent)
         {
-            m_Toolbox = item as Toolbox;
+            toolbox = item as Toolbox;
 
-            if (m_Toolbox == null)
+            if (toolbox == null)
             {
                 // Check if item is under popup
                 unowned Core.Object? popup = item.get_qdata<unowned Core.Object?> (Item.s_PopupWindow);
                 if (popup != null)
                 {
-                    m_Toolbox = popup as Toolbox;
+                    toolbox = popup as Toolbox;
                     item = popup;
                 }
             }
         }
 
-        // Found toolbox connect onto item changed
-        if (m_Toolbox != null && m_Toolbox.current_item != null)
+        if (toolbox != m_Toolbox)
         {
-            m_CurrentItemEventListener = m_Toolbox.current_item.subscribe (on_current_item_changed);
+            // Disconnect from item changed of old toolbox
+            if (m_Toolbox != null && m_CurrentItemEventListener != null)
+            {
+                m_CurrentItemEventListener.parent = null;
+                m_CurrentItemEventListener = null;
+            }
+
+            m_Toolbox = toolbox;
+
+            // Found toolbox connect onto item changed
+            if (m_Toolbox != null && m_Toolbox.current_item != null)
+            {
+                m_CurrentItemEventListener = m_Toolbox.current_item.subscribe (on_current_item_changed);
+            }
         }
     }
 

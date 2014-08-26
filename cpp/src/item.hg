@@ -49,12 +49,13 @@ namespace Maia
                 maia_item_on_motion_event, maia_item_on_scroll_event, maia_item_get_tag, maia_item_set_characters,
                 maia_item_get_characters, maia_item_size_request, maia_item_paint,
                 maia_item_on_show, maia_item_on_hide, maia_item_on_move, maia_item_on_resize, maia_item_on_damage,
-                maia_item_on_child_resized, maia_item_on_draw, maia_item_get_transform_to_window_space)
+                maia_item_on_child_resized, maia_item_on_draw, maia_item_get_transform_to_window_space,
+                maia_item_on_child_need_update)
 
         protected:
             _CTOR_DEFAULT()
 
-            _WRAP_VFUNC(Glib::ustring get_tag (), get_tag)
+            _WRAP_VFUNC(Glib::ustring get_tag (), get_tag, custom_vfunc_callback)
             _WRAP_VFUNC(Glib::ustring dump_childs (const Glib::ustring& inPrefix), dump_childs)
             _WRAP_VFUNC(Glib::ustring dump_characters (const Glib::ustring& inPrefix), dump_characters)
 
@@ -65,6 +66,7 @@ namespace Maia
             _WRAP_VFUNC(void set_can_focus (bool inCanFocus = true), set_can_focus)
 
             _WRAP_VFUNC(void on_damage (const Glib::RefPtr<Graphic::Region>& inArea), on_damage)
+            _WRAP_VFUNC(void on_child_need_update (const Glib::RefPtr<Item>& inChild), on_child_need_update)
             _WRAP_VFUNC(void on_child_damaged (const Glib::RefPtr<Drawable>& inChild, const Glib::RefPtr<Graphic::Region>& inArea), on_child_damaged)
             _WRAP_VFUNC(void on_child_resized (const Glib::RefPtr<Drawable>& inChild), on_child_resized)
             _WRAP_VFUNC(void on_show (), on_show)
@@ -127,6 +129,8 @@ namespace Maia
             _WRAP_METHOD(bool get_pointer_over () const, maia_item_get_pointer_over)
             _WRAP_METHOD(void set_pointer_over (bool inOver = true), maia_item_set_pointer_over)
 
+            void scroll_to (const Glib::RefPtr<Item>& inItem);
+
             _WRAP_METHOD(void update (const Glib::RefPtr<Graphic::Context>& inContext, const Glib::RefPtr<Graphic::Region>& inAllocation), maia_item_update, errthrow)
             _WRAP_METHOD(void convert_to_item_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_item_space)
             _WRAP_METHOD(void convert_to_root_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_root_space)
@@ -184,5 +188,8 @@ namespace Maia
             _WRAP_PROPERTY("chain-visible", Glib::ustring)
 
             _WRAP_PROPERTY("pointer-over", bool)
+
+        private:
+            Glib::ustring m_Tag;
     };
 }
