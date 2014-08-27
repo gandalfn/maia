@@ -55,9 +55,11 @@ namespace Maia
 
 #m4 _CONVERSION(`Glib::VariantBase',`GVariant*',`g_variant_ref (($3).gobj())')
 #m4 _CONVERSION(`GVariant*',`const Glib::VariantBase&',`Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaCoreEventArgs*', `const Glib::RefPtr<EventArgs>&', `Glib::wrap($3, true)')
                 _WRAP_VFUNC(Glib::VariantBase get_serialize (), get_serialize)
                 _WRAP_VFUNC(void set_serialize (const Glib::VariantBase& inData), set_serialize, custom_vfunc_callback)
                 _WRAP_VFUNC(void accumulate (const Glib::RefPtr<EventArgs>& inOther), accumulate)
+#m4 _CONVERSION(`MaiaCoreEventArgs*', `const Glib::RefPtr<EventArgs>&', `Glib::wrap($3)')
 
                 static Glib::VariantBase serialize (const Glib::ustring& inSignature, ...);
                 static void unserialize (const Glib::VariantBase& inData, const Glib::ustring& inSignature, ...);

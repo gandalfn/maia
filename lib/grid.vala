@@ -25,13 +25,20 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         public Graphic.Size size;
         public uint nb_expands;
         public uint nb_shrinks;
+
+        public LineSizeAllocation ()
+        {
+            size = Graphic.Size (0, 0);
+            nb_expands = 0;
+            nb_shrinks = 0;
+        }
     }
 
     private struct SizeAllocation
     {
         public unowned Grid grid;
-        LineSizeAllocation[] rows;
-        LineSizeAllocation[] columns;
+        Core.Array<LineSizeAllocation?> rows;
+        Core.Array<LineSizeAllocation?> columns;
         Graphic.Size size;
         Graphic.Rectangle[,] child_allocations;
 
@@ -39,8 +46,8 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         {
             grid = inGrid;
 
-            rows = {};
-            columns = {};
+            rows = new Core.Array<LineSizeAllocation?> ();
+            columns = new Core.Array<LineSizeAllocation?> ();
 
             uint nb_rows = 0;
             uint nb_columns = 0;
@@ -63,57 +70,71 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                     if (item.rows > 1) nb_rows = uint.max (nb_rows, item.row + item.rows);
                     if (item.columns > 1) nb_columns = uint.max (nb_columns, item.column + item.columns);
 
-                    if (rows.length < nb_rows) rows.resize ((int)nb_rows);
-                    if (columns.length < nb_columns) columns.resize ((int)nb_columns);
+                    if (rows.length < nb_rows)
+                    {
+                        uint nb = nb_rows - rows.length;
+                        for (uint cpt = 0; cpt < nb; ++cpt)
+                        {
+                            rows.insert (LineSizeAllocation ());
+                        }
+                    }
+                    if (columns.length < nb_columns)
+                    {
+                        uint nb = nb_columns - columns.length;
+                        for (uint cpt = 0; cpt < nb; ++cpt)
+                        {
+                            columns.insert (LineSizeAllocation ());
+                        }
+                    }
 
                     // cumulate the width of all rows
                     if (item.visible || !item.xlimp)
                     {
-                        rows[item.row].size.width += (item_size.width / item.columns) + item.left_padding + item.right_padding;
+                        rows[(int)item.row].size.width += (item_size.width / item.columns) + item.left_padding + item.right_padding;
                     }
                     // keep the max height of row
                     if (item.visible || !item.ylimp)
                     {
-                        rows[item.row].size.height = double.max (rows[item.row].size.height, (item_size.height / item.rows) + item.top_padding + item.bottom_padding);
+                        rows[(int)item.row].size.height = double.max (rows[(int)item.row].size.height, (item_size.height / item.rows) + item.top_padding + item.bottom_padding);
                     }
 
                     // keep the max width of columns
                     if (item.visible || !item.xlimp)
                     {
-                        columns[item.column].size.width = double.max (columns[item.column].size.width, (item_size.width / item.columns) + item.left_padding + item.right_padding);
+                        columns[(int)item.column].size.width = double.max (columns[(int)item.column].size.width, (item_size.width / item.columns) + item.left_padding + item.right_padding);
                     }
                     // cumulate the height of all columns
                     if (item.visible || !item.ylimp)
                     {
-                        columns[item.column].size.height += (item_size.height / item.rows) + item.top_padding + item.bottom_padding;
+                        columns[(int)item.column].size.height += (item_size.height / item.rows) + item.top_padding + item.bottom_padding;
                     }
 
                     if (item.visible || !item.xlimp)
                     {
                         // count the number of xexpand in row
-                        rows[item.row].nb_expands += item.xexpand ? 1 : 0;
+                        rows[(int)item.row].nb_expands += item.xexpand ? 1 : 0;
                         // count the number of shrink in row
-                        rows[item.row].nb_shrinks += item.xshrink ? 1 : 0;
+                        rows[(int)item.row].nb_shrinks += item.xshrink ? 1 : 0;
                     }
                     if (item.visible || !item.ylimp)
                     {
                         // count the number of yexpand in column
-                        columns[item.column].nb_expands += item.yexpand ? 1 : 0;
+                        columns[(int)item.column].nb_expands += item.yexpand ? 1 : 0;
                         // count the number of yexpand in column
-                        columns[item.column].nb_shrinks += item.yshrink ? 1 : 0;
+                        columns[(int)item.column].nb_shrinks += item.yshrink ? 1 : 0;
                     }
 
                     if (item.columns > 1 && (item.visible || !item.xlimp))
                     {
                         for (int cpt = 1; cpt < item.columns; ++cpt)
                         {
-                            rows[item.row].size.width += (item_size.width / item.columns);
-                            rows[item.row].nb_expands += item.xexpand ? 1 : 0;
+                            rows[(int)item.row].size.width += (item_size.width / item.columns);
+                            rows[(int)item.row].nb_expands += item.xexpand ? 1 : 0;
 
-                            columns[item.column + cpt].size.width = double.max (columns[item.column + cpt].size.width,
-                                                                                columns[item.column].size.width + item.left_padding + item.right_padding);
-                            columns[item.column + cpt].size.height += (item_size.height / item.rows) + item.top_padding + item.bottom_padding;
-                            columns[item.column + cpt].nb_expands += item.yexpand ? 1 : 0;
+                            columns[(int)item.column + cpt].size.width = double.max (columns[(int)item.column + cpt].size.width,
+                                                                                columns[(int)item.column].size.width + item.left_padding + item.right_padding);
+                            columns[(int)item.column + cpt].size.height += (item_size.height / item.rows) + item.top_padding + item.bottom_padding;
+                            columns[(int)item.column + cpt].nb_expands += item.yexpand ? 1 : 0;
                         }
                     }
 
@@ -121,20 +142,17 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                     {
                         for (int cpt = 1; cpt < item.rows; ++cpt)
                         {
-                            rows[item.row + cpt].size.width += (item_size.width / item.columns) + item.left_padding + item.right_padding;
-                            rows[item.row + cpt].size.height = double.max (rows[item.row + cpt].size.height,
-                                                                           rows[item.row].size.height + item.top_padding + item.bottom_padding);
-                            rows[item.row + cpt].nb_expands += item.xexpand ? 1 : 0;
+                            rows[(int)item.row + cpt].size.width += (item_size.width / item.columns) + item.left_padding + item.right_padding;
+                            rows[(int)item.row + cpt].size.height = double.max (rows[(int)item.row + cpt].size.height,
+                                                                           rows[(int)item.row].size.height + item.top_padding + item.bottom_padding);
+                            rows[(int)item.row + cpt].nb_expands += item.xexpand ? 1 : 0;
 
-                            columns[item.column].size.height += (item_size.height / item.rows);
-                            columns[item.column].nb_expands += item.yexpand ? 1 : 0;
+                            columns[(int)item.column].size.height += (item_size.height / item.rows);
+                            columns[(int)item.column].nb_expands += item.yexpand ? 1 : 0;
                         }
                     }
                 }
             }
-
-            rows.length = (int)nb_rows;
-            columns.length = (int)nb_columns;
 
             // Get max size
             Graphic.Size max = Graphic.Size (0, 0);
@@ -380,23 +398,23 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                 // calculate the extra space
                                 if (item.xexpand)
                                 {
-                                    extra.width += xpadding / rows[item.row].nb_expands;
+                                    extra.width += xpadding / rows[(int)item.row].nb_expands;
                                 }
 
                                 if (item.yexpand)
                                 {
-                                    extra.height += ypadding / columns[item.column].nb_expands;
+                                    extra.height += ypadding / columns[(int)item.column].nb_expands;
                                 }
 
                                 // remove the shrink space
                                 if (item.xshrink)
                                 {
-                                    extra.width -= xshrink / rows[item.row].nb_shrinks;
+                                    extra.width -= xshrink / rows[(int)item.row].nb_shrinks;
                                 }
 
                                 if (item.yshrink)
                                 {
-                                    extra.height -= yshrink / columns[item.column].nb_shrinks;
+                                    extra.height -= yshrink / columns[(int)item.column].nb_shrinks;
                                 }
 
                                 if (grid.row_spacing > 0 && rows.length > 1)
@@ -418,17 +436,17 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                 if (item.visible || !item.xlimp)
                                 {
                                     child_allocations[item.row, item.column].size.width = double.max (child_allocations[item.row, item.column].size.width,
-                                                                                                      columns[item.column].size.width + extra.width);
+                                                                                                      columns[(int)item.column].size.width + extra.width);
                                 }
 
                                 if (item.visible || !item.ylimp)
                                 {
                                     child_allocations[item.row, item.column].size.height = double.max (child_allocations[item.row, item.column].size.height,
-                                                                                                       rows[item.row].size.height + extra.height);
+                                                                                                       rows[(int)item.row].size.height + extra.height);
                                 }
 
                                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s extra: %s", grid.name, item.name, extra.to_string ());
-                                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s row: %g, column: %g", grid.name, item.name, columns[item.column].size.width, rows[item.row].size.height);
+                                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s row: %g, column: %g", grid.name, item.name, columns[(int)item.column].size.width, rows[(int)item.row].size.height);
                                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s rows %u columns %u allocation: %s", grid.name, item.name, item.rows, item.columns, child_allocations[item.row, item.column].to_string ());
                             }
                         }
@@ -702,7 +720,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
             outSize = Graphic.Size (0, 0);
             if (inRow < rows.length)
             {
-                outSize.height = double.max (outSize.height, rows[inRow].size.height);
+                outSize.height = double.max (outSize.height, rows[(int)inRow].size.height);
                 for (int cpt = 0; cpt < columns.length; ++cpt)
                 {
                     outSize.width += columns[cpt].size.width;
@@ -793,10 +811,63 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         return ret;
     }
 
+    private void
+    on_child_changed ()
+    {
+        need_update = true;
+        geometry = null;
+    }
+
     internal override bool
     can_append_child (Core.Object inObject)
     {
         return inObject is ItemPackable || inObject is ToggleGroup || inObject is Model || inObject is Popup;
+    }
+
+    internal override void
+    insert_child (Core.Object inChild)
+    {
+        base.insert_child (inChild);
+
+        unowned ItemPackable? item = inChild as ItemPackable;
+        if (item != null)
+        {
+            notify["row"].connect (on_child_changed);
+            notify["column"].connect (on_child_changed);
+            notify["xexpand"].connect (on_child_changed);
+            notify["xfill"].connect (on_child_changed);
+            notify["xalign"].connect (on_child_changed);
+            notify["xshrink"].connect (on_child_changed);
+            notify["xlimp"].connect (on_child_changed);
+            notify["yexpand"].connect (on_child_changed);
+            notify["yfill"].connect (on_child_changed);
+            notify["yalign"].connect (on_child_changed);
+            notify["yshrink"].connect (on_child_changed);
+            notify["ylimp"].connect (on_child_changed);
+        }
+    }
+
+    internal override void
+    remove_child (Core.Object inChild)
+    {
+        unowned ItemPackable? item = inChild as ItemPackable;
+        if (item != null)
+        {
+            notify["row"].disconnect (on_child_changed);
+            notify["column"].disconnect (on_child_changed);
+            notify["xexpand"].disconnect (on_child_changed);
+            notify["xfill"].disconnect (on_child_changed);
+            notify["xalign"].disconnect (on_child_changed);
+            notify["xshrink"].disconnect (on_child_changed);
+            notify["xlimp"].disconnect (on_child_changed);
+            notify["yexpand"].disconnect (on_child_changed);
+            notify["yfill"].disconnect (on_child_changed);
+            notify["yalign"].disconnect (on_child_changed);
+            notify["yshrink"].disconnect (on_child_changed);
+            notify["ylimp"].disconnect (on_child_changed);
+        }
+
+        base.remove_child (inChild);
     }
 
     internal override void

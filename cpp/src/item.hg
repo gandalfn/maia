@@ -62,6 +62,7 @@ namespace Maia
 #m4 _CONVERSION(`MaiaGraphicContext*', `const Glib::RefPtr<Graphic::Context>&', `Glib::wrap($3, true)')
 #m4 _CONVERSION(`MaiaGraphicRegion*', `const Glib::RefPtr<Graphic::Region>&', `Glib::wrap($3, true)')
 #m4 _CONVERSION(`MaiaDrawable*', `const Glib::RefPtr<Drawable>&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3, true)')
             _WRAP_VFUNC(bool can_focus () const, get_can_focus)
             _WRAP_VFUNC(void set_can_focus (bool inCanFocus = true), set_can_focus)
 
@@ -85,6 +86,7 @@ namespace Maia
 #m4 _CONVERSION(`MaiaGraphicContext*', `const Glib::RefPtr<Graphic::Context>&', `Glib::wrap($3)')
 #m4 _CONVERSION(`MaiaGraphicRegion*', `const Glib::RefPtr<Graphic::Region>&', `Glib::wrap($3)')
 #m4 _CONVERSION(`MaiaDrawable*', `const Glib::RefPtr<Drawable>&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3)')
 
             _WRAP_METHOD(void paint_background (const Glib::RefPtr<Graphic::Context>& inContext), maia_item_paint_background, errthrow);
 
