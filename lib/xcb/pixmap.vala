@@ -27,15 +27,15 @@ internal class Maia.Xcb.Pixmap : Maia.Xcb.Drawable
     }
 
     // methods
-    public Pixmap (int inScreenNum, int inDepth, int inWidth, int inHeight)
+    public Pixmap (int inScreenNum, uint8 inDepth, int inWidth, int inHeight)
     {
         var pixmap = global::Xcb.Pixmap (Maia.Xcb.application.connection);
 
-        base (pixmap, inScreenNum, inDepth, inWidth, inHeight);
+        GLib.Object (xid: pixmap, screen_num: inScreenNum, depth: inDepth, size: Graphic.Size (inWidth, inHeight));
 
         unowned global::Xcb.Screen screen = connection.roots[inScreenNum];
 
-        var cookie = pixmap.create_checked (connection, (uint8)inDepth, (global::Xcb.Drawable)screen.root, (uint16)inWidth, (uint16)inHeight);
+        var cookie = pixmap.create_checked (connection, (uint8)depth, (global::Xcb.Drawable)screen.root, (uint16)inWidth, (uint16)inHeight);
 
         global::Xcb.GenericError? err = connection.request_check (cookie);
         if (err != null)
@@ -46,12 +46,28 @@ internal class Maia.Xcb.Pixmap : Maia.Xcb.Drawable
         clear ();
     }
 
+    public Pixmap.from_drawable (Drawable inDrawable, int inWidth, int inHeight)
+    {
+        var pixmap = global::Xcb.Pixmap (Maia.Xcb.application.connection);
+
+        GLib.Object (xid: pixmap, screen_num: inDrawable.screen_num, depth: inDrawable.depth, size: Graphic.Size (inWidth, inHeight));
+
+        var cookie = pixmap.create_checked (connection, (uint8)inDrawable.depth, (global::Xcb.Drawable)inDrawable.xid, (uint16)inWidth, (uint16)inHeight);
+
+        if (connection.request_check (cookie) != null)
+        {
+            Log.error (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, @"Error on create pixmap for $(inDrawable.xid)");
+        }
+
+        clear ();
+    }
+
     public Pixmap.clone (Pixmap inPixmap)
     {
         var pixmap = global::Xcb.Pixmap (Maia.Xcb.application.connection);
 
-        base (pixmap, inPixmap.screen_num, inPixmap.depth, (int)inPixmap.size.width, (int)inPixmap.size.height);
-
+        GLib.Object (xid: pixmap, screen_num: inPixmap.screen_num, depth: inPixmap.depth, size: inPixmap.size);
+        
         var cookie = pixmap.create_checked (connection, (uint8)depth, (global::Xcb.Drawable)inPixmap.xid, (uint16)size.width, (uint16)size.height);
 
         if (connection.request_check (cookie) != null)

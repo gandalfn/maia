@@ -168,7 +168,8 @@ libmaia_la_SOURCES = \
     chart-intersect.vala \
     chart-point.vala \
     chart-view.vala \
-    chart.vala
+    chart.vala \
+    viewport.vala
 
 libmaia_la_VALAFLAGS = \
     --pkg=gvalue-collect \

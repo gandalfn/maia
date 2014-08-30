@@ -93,6 +93,7 @@ files_hg = \
     tool.hg \
     toolbox.hg \
     view.hg \
+    viewport.hg \
     window.hg
 
 files_ccg = $(files_hg:.hg=.ccg)

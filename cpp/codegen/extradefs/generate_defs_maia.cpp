@@ -110,7 +110,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_CHART_POINT);
     std::cout << get_defs (MAIA_TYPE_CHART_INTERSECT);
     std::cout << get_defs (MAIA_TYPE_CHART_VIEW);
-
+    std::cout << get_defs (MAIA_TYPE_VIEWPORT);
 
     return 0;
 }

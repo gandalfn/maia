@@ -36,7 +36,10 @@ libmaia_xcb_la_SOURCES = \
     delete-event-args.vala \
     drawable.vala \
     pixmap.vala \
+    pixmap-slices.vala \
     request.vala \
+    view.vala \
+    viewport.vala \
     window.vala
 
 libmaia_xcb_la_LIBADD = \

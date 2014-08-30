@@ -68,6 +68,19 @@ public struct Maia.Graphic.Rectangle
     }
 
     /**
+     * Compare rectangle with inOther rectangle
+     *
+     * @param inOther rectangle to compare to
+     *
+     * @return true if rectangle are equal false otherwise
+     */
+    public bool
+    equal (Rectangle inOther)
+    {
+        return origin.equal (inOther.origin) && size.equal (inOther.size);
+    }
+
+    /**
      * Calculates the intersection of rectangle with inRect.
      *
      * @param inRect rectangle to intersect to

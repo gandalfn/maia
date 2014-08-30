@@ -38,7 +38,8 @@ namespace Maia
         _IGNORE(maia_window_on_set_pointer_cursor, maia_window_on_move_pointer, maia_window_on_grab_focus,
                 maia_window_on_grab_pointer, maia_window_on_ungrab_pointer, maia_window_on_grab_keyboard,
                 maia_window_on_ungrab_keyboard, maia_window_on_scroll_to, maia_window_on_damage_event,
-                maia_window_on_geometry_event, maia_window_on_mouse_event, maia_window_on_visibility_event)
+                maia_window_on_geometry_event, maia_window_on_mouse_event, maia_window_on_visibility_event,
+                maia_window_on_destroy_event, maia_window_on_delete_event, maia_window_on_keyboard_event)
 
         protected:
             _CTOR_DEFAULT()
@@ -48,9 +49,12 @@ namespace Maia
             _WRAP_VFUNC(Glib::RefPtr<Graphic::Surface> get_surface (), get_surface, refreturn_ctype)
 
             _WRAP_VFUNC(void on_damage_event(const Glib::RefPtr<Core::EventArgs>& inArgs), on_damage_event)
+            _WRAP_VFUNC(void on_delete_event(const Glib::RefPtr<Core::EventArgs>& inArgs), on_delete_event)
+            _WRAP_VFUNC(void on_destroy_event(const Glib::RefPtr<Core::EventArgs>& inArgs), on_destroy_event)
             _WRAP_VFUNC(void on_geometry_event(const Glib::RefPtr<Core::EventArgs>& inArgs), on_geometry_event)
             _WRAP_VFUNC(void on_visibility_event(const Glib::RefPtr<Core::EventArgs>& inArgs), on_visibility_event)
             _WRAP_VFUNC(void on_mouse_event(const Glib::RefPtr<Core::EventArgs>& inArgs), on_mouse_event)
+            _WRAP_VFUNC(void on_keyboard_event(const Glib::RefPtr<Core::EventArgs>& inArgs), on_keyboard_event)
 
             _WRAP_VFUNC(void on_set_pointer_cursor(Cursor inCursor), on_set_pointer_cursor)
             _WRAP_VFUNC(void on_move_pointer(const Graphic::Point& inPosition), on_move_pointer)

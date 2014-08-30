@@ -263,11 +263,15 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
         base.map ();
 
         m_Window.visible = ((global::Gtk.Widget)this).window.is_visible ();
+
+        queue_resize ();
     }
 
     internal override void
     unmap ()
     {
+        m_Window.size = Graphic.Size (1, 1);
+
         m_Window.visible = false;
 
         base.unmap ();

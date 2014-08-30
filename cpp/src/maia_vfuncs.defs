@@ -1086,6 +1086,22 @@
   )
 )
 
+(define-vfunc on_delete_event
+  (of-object "MaiaWindow")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEventArgs*" "inArgs")
+  )
+)
+
+(define-vfunc on_destroy_event
+  (of-object "MaiaWindow")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEventArgs*" "inArgs")
+  )
+)
+
 (define-vfunc on_geometry_event
   (of-object "MaiaWindow")
   (return-type "none")
@@ -1103,6 +1119,14 @@
 )
 
 (define-vfunc on_mouse_event
+  (of-object "MaiaWindow")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEventArgs*" "inArgs")
+  )
+)
+
+(define-vfunc on_keyboard_event
   (of-object "MaiaWindow")
   (return-type "none")
   (parameters

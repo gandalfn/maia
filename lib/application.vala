@@ -194,6 +194,7 @@ public class Maia.Application : Maia.Core.Object
         Manifest.Element.register ("ChartView",      typeof (ChartView));
         Manifest.Element.register ("ChartIntersect", typeof (ChartIntersect));
         Manifest.Element.register ("ChartPoint",     typeof (ChartPoint));
+        Manifest.Element.register ("Viewport",       typeof (Viewport));
     }
 
     // methods

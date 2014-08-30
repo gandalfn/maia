@@ -32,12 +32,12 @@ internal abstract class Maia.Xcb.Request : Core.Object
 
     // accessors
     public int sequence { get; construct; }
-    public unowned Window window { get; construct; }
+    public unowned View view { get; construct; }
 
     // methods
-    public Request (Window inWindow)
+    public Request (View inView)
     {
-        GLib.Object (sequence: GLib.AtomicInt.add (ref s_Sequence, 1), window: inWindow);
+        GLib.Object (sequence: GLib.AtomicInt.add (ref s_Sequence, 1), view: inView);
     }
 
     public abstract void run ();
@@ -49,19 +49,19 @@ internal abstract class Maia.Xcb.Request : Core.Object
     {
         unowned Request other = (Request)inOther;
 
-        if (window.window == null && other.window.window != null)
+        if (view.parent == null && other.view.parent != null)
             return -1;
 
-        if (window.window != null && other.window.window == null)
+        if (view.parent != null && other.view.parent == null)
             return 1;
 
-        if (window.window == null && other.window.window == null)
+        if (view.parent == null && other.view.parent == null)
             return sequence - other.sequence;
 
-        if (window.xid == ((Window)other.window.window).xid)
+        if (view.xid == other.view.parent.xid)
             return -1;
 
-        if (((Window)window.window).xid == other.window.xid)
+        if (view.parent.xid == other.view.xid)
             return 1;
 
         return sequence - other.sequence;
@@ -71,24 +71,24 @@ internal abstract class Maia.Xcb.Request : Core.Object
 internal class Maia.Xcb.MapRequest : Request
 {
     // methods
-    public MapRequest (Window inWindow)
+    public MapRequest (View inView)
     {
-        base (inWindow);
+        base (inView);
     }
 
     internal override void
     run ()
     {
         // Map window
-        ((global::Xcb.Window)window.xid).map (window.connection);
+        ((global::Xcb.Window)view.xid).map (view.connection);
     }
 
     internal override CompressAction
     compress (Request inRequest)
     {
-        if (window == inRequest.window && inRequest is MapRequest)
+        if (view.xid == inRequest.view.xid && inRequest is MapRequest)
             return CompressAction.REMOVE_CURRENT;
-        else if (window == inRequest.window && inRequest is UnmapRequest)
+        else if (view.xid == inRequest.view.xid && inRequest is UnmapRequest)
             return CompressAction.REMOVE_BOTH;
 
         return CompressAction.KEEP;
@@ -97,7 +97,7 @@ internal class Maia.Xcb.MapRequest : Request
     internal override string
     to_string ()
     {
-        return @"sequence: $sequence map window $(window.name) xid: $(window.xid)";
+        return @"sequence: $sequence map xid: $(view.xid)";
     }
 
     internal override int
@@ -106,7 +106,7 @@ internal class Maia.Xcb.MapRequest : Request
     {
         unowned Request other = (Request)inOther;
 
-        if (window.xid == other.window.xid && other is ReparentRequest)
+        if (view.xid == other.view.xid && (other is ReparentRequest || other is ResizeRequest || other is MoveRequest))
             return 1;
 
         return base.compare (inOther);
@@ -116,39 +116,42 @@ internal class Maia.Xcb.MapRequest : Request
 internal class Maia.Xcb.UnmapRequest : Request
 {
     // methods
-    public UnmapRequest (Window inWindow)
+    public UnmapRequest (View inView)
     {
-        base (inWindow);
+        base (inView);
     }
 
     internal override void
     run ()
     {
         // Unmap window
-        ((global::Xcb.Window)window.xid).unmap (window.connection);
+        ((global::Xcb.Window)view.xid).unmap (view.connection);
 
         // Damage parent window
-        if (window.window != null)
+        if (view.parent != null)
         {
+            var view_size = view.size;
+            view_size.transform (view.device_transform);
+
             char[] data = new char[32];
             unowned global::Xcb.ExposeEvent? evt = (global::Xcb.ExposeEvent?)data;
-            evt.window = ((Window)window.window).xid;
+            evt.window = view.parent.xid;
             evt.response_type = global::Xcb.EventType.EXPOSE;
-            evt.x = (int16)GLib.Math.floor (window.m_WindowGeometry.origin.x);
-            evt.y = (int16)GLib.Math.floor (window.m_WindowGeometry.origin.y);
-            evt.width = (uint16)GLib.Math.ceil (window.m_WindowGeometry.size.width);
-            evt.height = (uint16)GLib.Math.ceil (window.m_WindowGeometry.size.height);
+            evt.x = (int16)GLib.Math.floor (view.position.x);
+            evt.y = (int16)GLib.Math.floor (view.position.y);
+            evt.width = (uint16)GLib.Math.ceil (view_size.width);
+            evt.height = (uint16)GLib.Math.ceil (view_size.height);
 
-            ((global::Xcb.Window)((Window)window.window).xid).send_event (window.connection, false, global::Xcb.EventMask.EXPOSURE, data);
+            ((global::Xcb.Window)view.parent.xid).send_event (view.connection, false, global::Xcb.EventMask.EXPOSURE, data);
         }
     }
 
     internal override CompressAction
     compress (Request inRequest)
     {
-        if (window == inRequest.window && inRequest is MapRequest)
+        if (view.xid == inRequest.view.xid && inRequest is MapRequest)
             return CompressAction.REMOVE_BOTH;
-        else if (window == inRequest.window && inRequest is UnmapRequest)
+        else if (view.xid == inRequest.view.xid && inRequest is UnmapRequest)
             return CompressAction.REMOVE_CURRENT;
 
         return CompressAction.KEEP;
@@ -157,7 +160,7 @@ internal class Maia.Xcb.UnmapRequest : Request
     internal override string
     to_string ()
     {
-        return @"sequence: $sequence unmap window $(window.name) xid: $(window.xid)";
+        return @"sequence: $sequence unmap xid: $(view.xid)";
     }
 
     internal override int
@@ -166,7 +169,7 @@ internal class Maia.Xcb.UnmapRequest : Request
     {
         unowned Request other = (Request)inOther;
 
-        if (window.xid == other.window.xid && other is ReparentRequest)
+        if (view.xid == other.view.xid && other is ReparentRequest)
             return 1;
 
         return base.compare (inOther);
@@ -176,37 +179,34 @@ internal class Maia.Xcb.UnmapRequest : Request
 internal class Maia.Xcb.ReparentRequest : Request
 {
     // methods
-    public ReparentRequest (Window inWindow)
+    public ReparentRequest (View inView)
     {
-        base (inWindow);
+        base (inView);
     }
 
     internal override void
     run ()
     {
-        if (window.window != null)
+        if (view.parent != null)
         {
-            var pos = window.geometry != null ? window.geometry.extents.origin : Graphic.Point (0, 0);
-
             // Reparent window under parent_window
-            ((global::Xcb.Window)window.xid).reparent (window.connection, ((Window)window.window).xid, (int16)GLib.Math.floor (pos.x),
-                                                                                                       (int16)GLib.Math.floor (pos.y));
+            ((global::Xcb.Window)view.xid).reparent (view.connection, view.parent.xid, (int16)GLib.Math.floor (view.position.x),
+                                                                                       (int16)GLib.Math.floor (view.position.y));
         }
         else
         {
             // Reparent window under root
-            unowned global::Xcb.Screen screen = window.connection.roots[window.screen_num];
+            unowned global::Xcb.Screen screen = view.connection.roots[view.screen_num];
 
-            ((global::Xcb.Window)window.xid).reparent (window.connection, screen.root,
-                                                       (int16)GLib.Math.floor (window.position.x),
-                                                       (int16)GLib.Math.floor (window.position.y));
+            ((global::Xcb.Window)view.xid).reparent (view.connection, screen.root, (int16)GLib.Math.floor (view.position.x),
+                                                                                   (int16)GLib.Math.floor (view.position.y));
         }
     }
 
     internal override CompressAction
     compress (Request inRequest)
     {
-        if (window == inRequest.window && inRequest is ReparentRequest)
+        if (view.xid == inRequest.view.xid && inRequest is ReparentRequest)
             return CompressAction.REMOVE_CURRENT;
 
         return CompressAction.KEEP;
@@ -215,7 +215,7 @@ internal class Maia.Xcb.ReparentRequest : Request
     internal override string
     to_string ()
     {
-        return @"sequence: $sequence reparent window $(window.name) parent: $(window.window.name)";
+        return @"sequence: $sequence reparent window $(view.xid) parent: $(view.parent.xid)";
     }
 
     internal override int
@@ -224,8 +224,10 @@ internal class Maia.Xcb.ReparentRequest : Request
     {
         unowned Request other = (Request)inOther;
 
-        if (window.xid == other.window.xid && (other is MapRequest || other is UnmapRequest))
+        if (view.xid == other.view.xid && (other is MapRequest || other is UnmapRequest))
             return -1;
+        else if (view.xid == other.view.xid && (other is MoveRequest || other is ResizeRequest))
+            return 1;
 
         return base.compare (inOther);
     }
@@ -233,31 +235,25 @@ internal class Maia.Xcb.ReparentRequest : Request
 
 internal class Maia.Xcb.MoveRequest : Request
 {
-    // accessors
-    public Graphic.Point position { get; set; }
-
     // methods
-    public MoveRequest (Window inWindow, Graphic.Point inPosition)
+    public MoveRequest (View inView)
     {
-        base (inWindow);
-
-        position = inPosition;
+        base (inView);
     }
 
     internal override void
     run ()
     {
-        Graphic.Point window_position = position;
         uint16 mask = global::Xcb.ConfigWindow.X |
                       global::Xcb.ConfigWindow.Y;
-        uint32[] values = { (uint32)GLib.Math.floor (window_position.x), (uint32)GLib.Math.floor (window_position.y) };
-        ((global::Xcb.Window)window.xid).configure (window.connection, mask, values);
+        uint32[] values = { (uint32)GLib.Math.floor (view.position.x), (uint32)GLib.Math.floor (view.position.y) };
+        ((global::Xcb.Window)view.xid).configure (view.connection, mask, values);
     }
 
     internal override CompressAction
     compress (Request inRequest)
     {
-        if (window == inRequest.window && inRequest is MoveRequest)
+        if (view.xid == inRequest.view.xid && inRequest is MoveRequest)
         {
             return CompressAction.REMOVE_CURRENT;
         }
@@ -268,39 +264,44 @@ internal class Maia.Xcb.MoveRequest : Request
     internal override string
     to_string ()
     {
-        return @"sequence: $sequence move window $(window.name) xid: $(window.xid) position: $(position)";
+        return @"sequence: $sequence move xid: $(view.xid) position: $(view.position)";
+    }
+
+    internal override int
+    compare (Core.Object inOther)
+        requires (inOther is Request)
+    {
+        unowned Request other = (Request)inOther;
+
+        if (view.xid == other.view.xid && (other is MapRequest || other is ReparentRequest))
+            return -1;
+
+        return base.compare (inOther);
     }
 }
 
 internal class Maia.Xcb.ResizeRequest : Request
 {
-    // accessors
-    public Graphic.Size size { get; set; }
-
     // methods
-    public ResizeRequest (Window inWindow, Graphic.Size inSize)
+    public ResizeRequest (View inView)
     {
-        base (inWindow);
-
-        size = inSize;
+        base (inView);
     }
 
     internal override void
     run ()
     {
-        Graphic.Size window_size = size;
-
         uint16 mask = global::Xcb.ConfigWindow.WIDTH  |
                       global::Xcb.ConfigWindow.HEIGHT |
                       global::Xcb.ConfigWindow.BORDER_WIDTH;
-        uint32[] values = { (uint32)GLib.Math.ceil (window_size.width), (uint32)GLib.Math.ceil (window_size.height), 0 };
-        ((global::Xcb.Window)window.xid).configure (window.connection, mask, values);
+        uint32[] values = { (uint32)GLib.Math.ceil (view.size.width), (uint32)GLib.Math.ceil (view.size.height), 0 };
+        ((global::Xcb.Window)view.xid).configure (view.connection, mask, values);
     }
 
     internal override CompressAction
     compress (Request inRequest)
     {
-        if (window == inRequest.window && inRequest is ResizeRequest)
+        if (view.xid == inRequest.view.xid && inRequest is ResizeRequest)
         {
             return CompressAction.REMOVE_CURRENT;
         }
@@ -311,6 +312,18 @@ internal class Maia.Xcb.ResizeRequest : Request
     internal override string
     to_string ()
     {
-        return @"sequence: $sequence resize window $(window.name) xid: $(window.xid) size: $(size)";
+        return @"sequence: $sequence resize xid: $(view.xid) size: $(view.size)";
+    }
+
+    internal override int
+    compare (Core.Object inOther)
+        requires (inOther is Request)
+    {
+        unowned Request other = (Request)inOther;
+
+        if (view.xid == other.view.xid && (other is MapRequest || other is ReparentRequest))
+            return -1;
+
+        return base.compare (inOther);
     }
 }

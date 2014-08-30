@@ -163,7 +163,7 @@ public class Maia.Window : Group
         // Create animator
         m_Animator = new Core.Animator (60, 200);
 
-       // Subscribe to damage event
+        // Subscribe to damage event
         m_DamageEvent.object_subscribe (on_damage_event);
 
         // Subscribe to geometry event
@@ -508,7 +508,7 @@ public class Maia.Window : Group
         }
     }
 
-    private void
+    protected virtual void
     on_keyboard_event (Core.EventArgs? inArgs)
     {
         unowned KeyboardEventArgs? keyboard_args = inArgs as KeyboardEventArgs;
@@ -546,7 +546,7 @@ public class Maia.Window : Group
         }
     }
 
-    private void
+    protected virtual void
     on_delete_event (Core.EventArgs? inArgs)
     {
         unowned DeleteEventArgs? delete_args = inArgs as DeleteEventArgs;
@@ -557,7 +557,7 @@ public class Maia.Window : Group
         }
     }
 
-    private void
+    protected virtual void
     on_destroy_event (Core.EventArgs? inArgs)
     {
         // disconnect from application
@@ -696,6 +696,7 @@ public class Maia.Window : Group
                 }
 
                 Graphic.Size item_size = item.size;
+
                 area.union_with_rect (Graphic.Rectangle (0, 0, item_position.x + item_size.width, item_position.y + item_size.height));
             }
         }

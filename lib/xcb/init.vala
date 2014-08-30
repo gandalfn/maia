@@ -27,6 +27,7 @@ namespace Maia.Xcb
         Log.info (GLib.Log.METHOD, Log.Category.CORE_EXTENSION, "Loading XCB backend");
 
         Maia.Core.Any.delegate (typeof (Maia.Window), typeof (Maia.Xcb.Window));
+        Maia.Core.Any.delegate (typeof (Maia.Viewport), typeof (Maia.Xcb.Viewport));
 
         Maia.Xcb.application = new Maia.Xcb.Application ();
     }
@@ -37,6 +38,7 @@ namespace Maia.Xcb
         Log.info (GLib.Log.METHOD, Log.Category.CORE_EXTENSION, "Unloading XCB backend");
 
         Maia.Core.Any.undelegate (typeof (Maia.Window));
+        Maia.Core.Any.undelegate (typeof (Maia.Viewport));
 
         Maia.Xcb.application = null;
     }

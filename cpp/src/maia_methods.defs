@@ -833,6 +833,12 @@
   (gtype-id "MAIA_TYPE_WINDOW")
 )
 
+(define-object MaiaViewport
+  (parent "MaiaWindow")
+  (c-name "MaiaViewport")
+  (gtype-id "MAIA_TYPE_VIEWPORT")
+)
+
 ;; Enumerations and flags ...
 
 (define-enum MaiaLogLevel
@@ -8592,6 +8598,15 @@
   (return-type "gboolean")
 )
 
+(define-method equal
+  (of-object "MaiaGraphicRectangle")
+  (c-name "maia_graphic_rectangle_equal")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaGraphicRectangle*" "inOther")
+  )
+)
+
 (define-method intersect
   (of-object "MaiaGraphicRectangle")
   (c-name "maia_graphic_rectangle_intersect")
@@ -14184,6 +14199,33 @@
   )
 )
 
+(define-method on_keyboard_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_on_keyboard_event")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEventArgs*" "inArgs")
+  )
+)
+
+(define-method on_delete_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_on_delete_event")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEventArgs*" "inArgs")
+  )
+)
+
+(define-method on_destroy_event
+  (of-object "MaiaWindow")
+  (c-name "maia_window_on_destroy_event")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreEventArgs*" "inArgs")
+  )
+)
+
 (define-method on_set_pointer_cursor
   (of-object "MaiaWindow")
   (c-name "maia_window_on_set_pointer_cursor")
@@ -18468,6 +18510,47 @@
   (return-type "none")
   (parameters
     '("MaiaGraphicPoint*" "result")
+  )
+)
+
+(define-function maia_viewport_get_type
+  (c-name "maia_viewport_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_viewport_new
+  (c-name "maia_viewport_new")
+  (is-constructor-of "MaiaViewport")
+  (return-type "MaiaViewport*")
+  (parameters
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-function maia_viewport_construct
+  (c-name "maia_viewport_construct")
+  (return-type "MaiaViewport*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-method get_visible_area
+  (of-object "MaiaViewport")
+  (c-name "maia_viewport_get_visible_area")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRectangle*" "result")
+  )
+)
+
+(define-method set_visible_area
+  (of-object "MaiaViewport")
+  (c-name "maia_viewport_set_visible_area")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRectangle*" "value")
   )
 )
 

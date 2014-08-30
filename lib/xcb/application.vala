@@ -29,7 +29,7 @@ internal class Maia.Xcb.Application : Core.Object
     private global::Xcb.Util.CursorContext    m_Cursors;
     private global::Xcb.Render.Pictvisual?[,] m_VisualCache;
     private Core.Queue<Request>               m_RequestQueue;
-    private Core.Set<unowned Window>          m_Windows;
+    private Core.Set<unowned View>            m_Views;
 
     // accessors
     public global::Xcb.Connection connection {
@@ -107,15 +107,15 @@ internal class Maia.Xcb.Application : Core.Object
         }
 
         // Create window list
-        m_Windows = new Core.Set<unowned Window> ();
-        m_Windows.compare_func = Window.compare_xcb;
+        m_Views = new Core.Set<unowned View> ();
+        m_Views.compare_func = View.compare;
     }
 
     ~Application ()
     {
-        foreach (unowned Window window in m_Windows)
+        foreach (unowned View view in m_Views)
         {
-            window.weak_unref (on_window_destroyed);
+            view.weak_unref (on_view_destroyed);
         }
     }
 
@@ -158,14 +158,14 @@ internal class Maia.Xcb.Application : Core.Object
     }
 
     private void
-    on_window_destroyed (GLib.Object inObject)
+    on_view_destroyed (GLib.Object inObject)
     {
-        m_Windows.remove (inObject as Window);
+        m_Views.remove (inObject as View);
 
         Core.List<unowned Request> to_remove = new Core.List<unowned Request> ();
         foreach (unowned Request request in m_RequestQueue)
         {
-            if (request.window == inObject)
+            if (request.view == inObject)
             {
                 to_remove.insert (request);
             }
@@ -190,17 +190,17 @@ internal class Maia.Xcb.Application : Core.Object
     }
 
     public bool
-    have_map (Window inWindow)
+    have_map (View inView)
     {
         bool found = false;
 
         foreach (unowned Request request in m_RequestQueue)
         {
-            if (request.window == inWindow && request is MapRequest)
+            if (request.view.xid == inView.xid && request is MapRequest)
             {
                 found = true;
             }
-            else if (found && request.window == inWindow && request is UnmapRequest)
+            else if (found && request.view.xid == inView.xid && request is UnmapRequest)
             {
                 found = false;
             }
@@ -210,17 +210,17 @@ internal class Maia.Xcb.Application : Core.Object
     }
 
     public bool
-    have_unmap (Window inWindow)
+    have_unmap (View inView)
     {
         bool found = false;
 
         foreach (unowned Request request in m_RequestQueue)
         {
-            if (request.window == inWindow && request is UnmapRequest)
+            if (request.view.xid == inView.xid && request is UnmapRequest)
             {
                 found = true;
             }
-            else if (found && request.window == inWindow && request is MapRequest)
+            else if (found && request.view.xid == inView.xid && request is MapRequest)
             {
                 found = false;
             }
@@ -294,27 +294,27 @@ internal class Maia.Xcb.Application : Core.Object
     }
 
     public void
-    register_window (Window inWindow)
+    register_view (View inView)
     {
-        m_Windows.insert (inWindow);
+        m_Views.insert (inView);
 
-        inWindow.weak_ref (on_window_destroyed);
+        inView.weak_ref (on_view_destroyed);
     }
 
     public void
-    unregister_window (Window inWindow)
+    unregister_view (View inView)
     {
-        if (inWindow in m_Windows)
+        if (inView in m_Views)
         {
-            inWindow.weak_unref (on_window_destroyed);
+            inView.weak_unref (on_view_destroyed);
 
-            m_Windows.remove (inWindow);
+            m_Views.remove (inView);
         }
 
         Core.List<unowned Request> to_remove = new Core.List<unowned Request> ();
         foreach (unowned Request request in m_RequestQueue)
         {
-            if (request.window == inWindow)
+            if (request.view == inView)
             {
                 to_remove.insert (request);
             }
@@ -326,9 +326,9 @@ internal class Maia.Xcb.Application : Core.Object
         }
     }
 
-    public unowned Window?
-    lookup_window (uint32 inXid)
+    public unowned View?
+    lookup_view (uint32 inXid)
     {
-        return m_Windows.search<uint32> (inXid, Window.compare_with_xid);
+        return m_Views.search<uint32> (inXid, View.compare_with_xid);
     }
 }

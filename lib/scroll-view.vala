@@ -46,10 +46,8 @@ public class Maia.ScrollView : Item
     // properties
     private Core.Animator     m_ScrollToAnimator    = null;
     private uint              m_ScrollToTransition  = 0;
-    private Graphic.Transform m_WindowTransform     = new Graphic.Transform.identity ();
-    private unowned Window?   m_ParentWindow        = null;
-    private unowned Window?   m_Window              = null;
-    private unowned Window?   m_Viewport            = null;
+    private Graphic.Transform m_ViewportTransform   = new Graphic.Transform.identity ();
+    private unowned Viewport? m_Viewport            = null;
     private Item              m_Child               = null;
     private SeekBar           m_HSeekBar            = null;
     private SeekBar           m_VSeekBar            = null;
@@ -70,10 +68,10 @@ public class Maia.ScrollView : Item
         }
         set {
             // set transform of window and do not set item transform to avoid duplicate transform
-            m_WindowTransform = value;
-            if (m_Window != null)
+            m_ViewportTransform = value;
+            if (m_Viewport != null)
             {
-                m_Window.transform = m_WindowTransform;
+                m_Viewport.transform = m_ViewportTransform;
             }
         }
     }
@@ -135,117 +133,32 @@ public class Maia.ScrollView : Item
         m_VSeekBar.size = Graphic.Size (10, 10);
         m_VSeekBar.parent = this;
 
-        notify["window"].connect (on_window_changed);
-
         m_ScrollToAnimator = new Core.Animator (30, 400);
+
+        // create viewport
+        var viewport = new Viewport (name + "_viewport");
+        m_Viewport = viewport;
+        m_Viewport.visible = false;
+        m_Viewport.shadow_border = Window.Border.NONE;
+        m_Viewport.scroll_event.connect (on_viewport_scroll_event);
+        m_Viewport.transform = m_ViewportTransform;
+        m_Viewport.parent = this;
+
+        if (m_Child != null)
+        {
+            m_Child.notify["root"].disconnect (on_child_parent_changed);
+            m_Child.parent = m_Viewport;
+            m_Child.notify["root"].connect (on_child_parent_changed);
+        }
+
+        plug_property("background-pattern", m_Viewport, "background-pattern");
+        plug_property("visible", m_Viewport, "visible");
+        plug_property("need-update", m_Viewport, "need-update");
     }
 
     public ScrollView (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
-    }
-
-    ~ScrollView ()
-    {
-        if (m_Window != null)
-        {
-            m_Window.weak_unref (on_window_destroy);
-            m_Window.parent = null;
-        }
-
-        if (m_Viewport != null)
-        {
-            m_Viewport.weak_unref (on_viewport_destroy);
-            m_Viewport.parent = null;
-        }
-    }
-
-    private void
-    on_window_destroy ()
-    {
-        m_Window = null;
-        on_window_changed ();
-    }
-
-    private void
-    on_viewport_destroy ()
-    {
-        m_Viewport = null;
-
-        if (m_Window != null)
-        {
-            m_Window.parent = null;
-            m_Window = null;
-        }
-    }
-
-    private void
-    on_window_changed ()
-    {
-        if (m_ParentWindow != window)
-        {
-            m_ParentWindow = window;
-
-            if (m_Child != null)
-            {
-                m_Child.notify["root"].disconnect (on_child_parent_changed);
-                m_Child.parent = null;
-                m_Child.notify["root"].connect (on_child_parent_changed);
-            }
-
-            if (m_Window != null)
-            {
-                unplug_property("background-pattern", m_Window, "background-pattern");
-                unplug_property("visible", m_Window, "visible");
-                m_Window.scroll_event.disconnect (on_window_scroll_event);
-                m_Window.weak_unref (on_window_destroy);
-                m_Window.parent = null;
-                m_Window = null;
-            }
-
-            if (m_Viewport != null)
-            {
-                unplug_property("background-pattern", m_Viewport, "background-pattern");
-                unplug_property("visible", m_Viewport, "visible");
-                unplug_property("need-update", m_Viewport, "need-update");
-                m_Viewport.weak_unref (on_viewport_destroy);
-                m_Viewport.parent = null;
-                m_Viewport = null;
-            }
-
-            if (m_ParentWindow != null)
-            {
-                var viewport = new Window (name + "_viewport", 1, 1);
-                m_Viewport = viewport;
-                m_Viewport.visible = false;
-                m_Viewport.shadow_border = Window.Border.NONE;
-                m_Viewport.weak_ref (on_viewport_destroy);
-                m_Viewport.parent = this;
-
-                var win = new Window (name + "_window", 1, 1);
-                m_Window = win;
-                m_Window.visible = false;
-                m_Window.shadow_border = Window.Border.NONE;
-                m_Window.weak_ref (on_window_destroy);
-                m_Window.scroll_event.connect (on_window_scroll_event);
-                m_Window.transform = m_WindowTransform;
-                m_Window.parent = m_Viewport;
-
-                if (m_Child != null)
-                {
-                    m_Child.notify["root"].disconnect (on_child_parent_changed);
-                    m_Child.parent = m_Window;
-                    m_Child.notify["root"].connect (on_child_parent_changed);
-                }
-
-                plug_property("background-pattern", m_Viewport, "background-pattern");
-                plug_property("visible", m_Viewport, "visible");
-                plug_property("need-update", m_Viewport, "need-update");
-                
-                plug_property("background-pattern", m_Window, "background-pattern");
-                plug_property("visible", m_Window, "visible");
-            }
-        }
     }
 
     private void
@@ -260,43 +173,30 @@ public class Maia.ScrollView : Item
     {
         if (geometry != null)
         {
+            // Get visible area
+            var visible_area = m_Viewport.visible_area;
+
             // Get new position
             var pos = Graphic.Point(hadjustment.@value, vadjustment.@value);
 
             // Calculate the move offset
-            var diff = m_Window.geometry.extents.origin.invert ();
+            var diff = visible_area.origin.invert ();
             diff.subtract (pos);
 
             // Set new position
-            m_Window.geometry.translate (m_Window.geometry.extents.origin.invert ());
-            m_Window.geometry.translate (pos.invert ());
+            m_Viewport.geometry.translate (m_Viewport.geometry.extents.origin.invert ());
+            m_Viewport.geometry.translate (pos.invert ());
 
-            // Set the new window position
-            m_Window.position = pos.invert ();
+            m_Viewport.position = pos.invert ();
 
-            // if we have a damaged area of window
-            if (m_Window.damaged != null)
-            {
-                // we have the viewport area to redraw
-                Graphic.Region redraw_area = m_Viewport.area.copy ();
-
-                // Check if window must be redraw in this viewport area
-                redraw_area.translate (pos);
-                redraw_area.intersect (m_Window.damaged);
-
-                if (!redraw_area.is_empty ())
-                {
-                    redraw_area.translate (pos.invert ());
-
-                    // Damage scroll view
-                    damage (redraw_area);
-                }
-            }
+            // Set new visible area
+            visible_area.origin = pos;
+            m_Viewport.visible_area = visible_area;
         }
     }
 
     private bool
-    on_window_scroll_event (Scroll inScroll, Graphic.Point inPoint)
+    on_viewport_scroll_event (Scroll inScroll, Graphic.Point inPoint)
     {
         switch (inScroll)
         {
@@ -323,7 +223,7 @@ public class Maia.ScrollView : Item
     private void
     on_child_parent_changed ()
     {
-        if (m_Child != null && m_Window != null && m_Child.parent != m_Window)
+        if (m_Child != null && m_Viewport != null && m_Child.parent != m_Viewport)
         {
             m_Child.notify["root"].disconnect (on_child_parent_changed);
             m_Child.set_qdata<unowned Manifest.Element?> (Manifest.Element.s_InternalParent, null);
@@ -361,14 +261,14 @@ public class Maia.ScrollView : Item
                 list.insert (c);
             }
         }
-        
+
         return list;
     }
 
     internal override void
     insert_child (Core.Object inObject)
     {
-        if (inObject == m_Window || inObject == m_Viewport || inObject == m_HSeekBar || inObject == m_VSeekBar)
+        if (inObject == m_Viewport || inObject == m_HSeekBar || inObject == m_VSeekBar)
         {
             base.insert_child (inObject);
         }
@@ -377,9 +277,9 @@ public class Maia.ScrollView : Item
             m_Child = inObject as Item;
             m_Child.set_qdata<unowned Manifest.Element?> (Manifest.Element.s_InternalParent, this);
 
-            if (m_Window != null)
+            if (m_Viewport != null)
             {
-                m_Child.parent = m_Window;
+                m_Child.parent = m_Viewport;
             }
 
             m_Child.notify["root"].connect (on_child_parent_changed);
@@ -391,22 +291,11 @@ public class Maia.ScrollView : Item
     {
         Graphic.Region area = new Graphic.Region (Graphic.Rectangle (0, 0, inSize.width, inSize.height));
 
-        if (m_Window != null)
-        {
-            Graphic.Size window_size = m_Window.size;
-
-            area.union_with_rect (Graphic.Rectangle (0, 0, window_size.width, window_size.height));
-        }
-        else if (m_Child != null)
+        if (m_Child != null)
         {
             Graphic.Size child_size = m_Child.size;
 
             area.union_with_rect (Graphic.Rectangle (0, 0, child_size.width, child_size.height));
-        }
-
-        if (m_Viewport != null)
-        {
-            m_Viewport.need_update = false;
         }
 
         hadjustment.lower = area.extents.origin.x;
@@ -425,8 +314,11 @@ public class Maia.ScrollView : Item
     {
         if (visible && (geometry == null || !geometry.equal (inAllocation)))
         {
-            m_HSeekBar.visible = m_Window.size.width > inAllocation.extents.size.width;
-            m_VSeekBar.visible = m_Window.size.height > inAllocation.extents.size.height;
+            var viewport_position = m_Viewport.position;
+            var viewport_size = m_Viewport.size;
+
+            m_HSeekBar.visible = viewport_size.width > inAllocation.extents.size.width;
+            m_VSeekBar.visible = viewport_size.height > inAllocation.extents.size.height;
 
             geometry = inAllocation;
 
@@ -446,12 +338,13 @@ public class Maia.ScrollView : Item
 
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"$(geometry.extents)");
 
-            var viewport_position = m_Viewport.position;
-            var viewport_allocation = new Graphic.Region (Graphic.Rectangle (viewport_position.x, viewport_position.y,
-                                                                             double.max (0, geometry.extents.size.width - (m_VSeekBar.visible ? m_VSeekBar.size.width : 0)),
-                                                                             double.max (0, geometry.extents.size.height - (m_HSeekBar.visible ? m_HSeekBar.size.height : 0))));
+            m_Viewport.visible_area = Graphic.Rectangle (m_Viewport.visible_area.origin.x, m_Viewport.visible_area.origin.y,
+                                                         double.max (0, geometry.extents.size.width - (m_VSeekBar.visible ? m_VSeekBar.size.width : 0)),
+                                                         double.max (0, geometry.extents.size.height - (m_HSeekBar.visible ? m_HSeekBar.size.height : 0)));
 
-            m_Viewport.update (inContext, viewport_allocation);
+            m_Viewport.update (inContext, new Graphic.Region (Graphic.Rectangle (viewport_position.x, viewport_position.y,
+                                                                                 double.max (m_Viewport.visible_area.size.width, viewport_size.width),
+                                                                                 double.max (m_Viewport.visible_area.size.height, viewport_size.height))));
 
             // Update seekbar geometry
             m_HSeekBar.update (inContext, new Graphic.Region (Graphic.Rectangle (0, geometry.extents.size.height - m_HSeekBar.size.height,
@@ -476,15 +369,12 @@ public class Maia.ScrollView : Item
         m_Viewport.draw (m_Viewport.surface.context, viewport_area);
         m_Viewport.swap_buffer ();
 
-        // swap buffer of window, drawed under viewport
-        m_Window.swap_buffer ();
-
         // draw seekbars
         if (m_HSeekBar.visible)
         {
             m_HSeekBar.draw (inContext, area_to_child_item_space (m_HSeekBar, inArea));
         }
-        
+
         if (m_VSeekBar.visible)
         {
             m_VSeekBar.draw (inContext, area_to_child_item_space (m_VSeekBar, inArea));
@@ -684,16 +574,16 @@ public class Maia.ScrollView : Item
             Graphic.Point p2 = inItem.convert_to_window_space(Graphic.Point (inItem.area.extents.size.width, inItem.area.extents.size.height));
 
             Graphic.Region item_area = new Graphic.Region (Graphic.Rectangle (p1.x, p1.y, p2.x - p1.x, p2.y - p1.y));
-            item_area.transform (new Graphic.Transform.from_matrix (m_Window.transform.matrix_invert));
-            item_area.translate (m_Window.geometry.extents.origin);
+            item_area.transform (new Graphic.Transform.from_matrix (m_Viewport.transform.matrix_invert));
+            item_area.translate (m_Viewport.geometry.extents.origin);
 
             Graphic.Region viewport_area = m_Viewport.area.copy ();
             viewport_area.intersect (item_area);
 
             if (!viewport_area.is_empty ())
             {
-                viewport_area.translate (m_Window.geometry.extents.origin.invert ());
-                viewport_area.transform (m_Window.transform);
+                viewport_area.translate (m_Viewport.geometry.extents.origin.invert ());
+                viewport_area.transform (m_Viewport.transform);
 
                 p1 = inItem.convert_from_window_space(Graphic.Point (viewport_area.extents.origin.x, viewport_area.extents.origin.y));
                 p2 = inItem.convert_from_window_space(Graphic.Point (viewport_area.extents.origin.x + viewport_area.extents.size.width,
