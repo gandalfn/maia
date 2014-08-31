@@ -51,25 +51,32 @@ public class Maia.Viewport : Window
     private void
     on_visible_area_changed ()
     {
-        m_ScrollDamage = true;
-
+        // Remove old scrolled damage area
         if (m_ScrolledDamaged != null && damaged != null)
         {
             damaged.subtract (m_ScrolledDamaged);
         }
+
+        // Set new scrolled damage has visible area
         m_ScrolledDamaged = new Graphic.Region (visible_area);
+
+        // Remove damaged area from scrolled damaged area
         if (damaged != null)
         {
             m_ScrolledDamaged.subtract (damaged);
+            if (m_ScrolledDamaged.is_empty ())
+            {
+                m_ScrolledDamaged = null;
+            }
         }
-        if (!m_ScrolledDamaged.is_empty ())
-        {
-            damage (new Graphic.Region (visible_area));
-        }
-        else
-        {
-            m_ScrolledDamaged = null;
-        }
+
+        // Block childs damage
+        m_ScrollDamage = true;
+
+        // Send damage to launch redraw of visible area
+        damage (damaged);
+
+        // Unblock childs damage
         m_ScrollDamage = false;
     }
 
@@ -79,6 +86,7 @@ public class Maia.Viewport : Window
         if (!m_ScrollDamage)
         {
             base.on_damage (inArea);
+
             if (m_ScrolledDamaged != null)
             {
                 m_ScrolledDamaged.subtract (inArea ?? area);
@@ -97,18 +105,21 @@ public class Maia.Viewport : Window
         {
             var ctx = surface.context;
 
+            // area to redraw must be limited to visible area
             var visible_damaged = new Graphic.Region (visible_area);
             if (inArea != null)
             {
                 visible_damaged.intersect (inArea);
             }
 
+            // subtract area damaged for scrolling but already drawn
             if (m_ScrolledDamaged != null)
             {
                 damaged.subtract (m_ScrolledDamaged);
                 m_ScrolledDamaged = null;
             }
 
+            // get area not already drawn
             var damaged_area = damaged.copy ();
             if (inArea != null)
             {
@@ -157,6 +168,7 @@ public class Maia.Viewport : Window
 
                 repair (damaged_area);
             }
+            swap_buffer ();
         }
     }
 }

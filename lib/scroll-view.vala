@@ -367,7 +367,6 @@ public class Maia.ScrollView : Item
         // draw viewport
         var viewport_area = area_to_child_item_space (m_Viewport, inArea);
         m_Viewport.draw (m_Viewport.surface.context, viewport_area);
-        m_Viewport.swap_buffer ();
 
         // draw seekbars
         if (m_HSeekBar.visible)

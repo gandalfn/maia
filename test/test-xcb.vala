@@ -151,8 +151,9 @@ void main (string[] args)
         model.append_row (out row);
         model.set_values (row, "label", "test 5");
 
-        var view = window.find (GLib.Quark.from_string ("view_combo")) as Maia.View;
-        view.model = model;
+        var combo = window.find (GLib.Quark.from_string ("combo")) as Maia.Combo;
+        combo.view.model = model;
+        combo.active_row = 0;
 
         var progress_bar = window.find (GLib.Quark.from_string ("progress_bar")) as Maia.ProgressBar;
         progress_bar.adjustment = new Maia.Adjustment.configure (0, 100, 10);
