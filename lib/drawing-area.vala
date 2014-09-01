@@ -82,7 +82,24 @@ public class Maia.DrawingArea : Group, ItemPackable
                 if (m_SelectedItem != null)
                 {
                     m_SelectedItem.layer = m_SelectedOldLayer;
-                    m_SelectedItem.damage ();
+                    if (m_SelectedItem is Arrow)
+                    {
+                        unowned Arrow arrow = (Arrow)m_SelectedItem;
+                        if (arrow.linked_item != null)
+                        {
+                            // Search linked item
+                            unowned Item? item = find (GLib.Quark.from_string (arrow.linked_item)) as Item;
+                            if (item != null)
+                            {
+                                item.damage ();
+                                arrow.damage ();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        m_SelectedItem.damage ();
+                    }
                 }
 
                 m_SelectedItemState = SelectedItemState.NONE;
@@ -287,21 +304,29 @@ public class Maia.DrawingArea : Group, ItemPackable
             // damaged child is the selected item
             if (inChild == selected)
             {
-                // Add border to damage area
-                damaged_area.translate (Graphic.Point (-selected_border, -selected_border));
-                var area_size = damaged_area.extents.size;
-                area_size.resize (selected_border * 2.0, selected_border * 2.0);
+                // calculate item geometry with border
+                var child_area_pos = inChild.geometry.extents.origin;
+                child_area_pos.translate (Graphic.Point (-selected_border, -selected_border));
+                var child_area_size = inChild.geometry.extents.size;
+                child_area_size.resize (selected_border * 2.0, selected_border * 2.0);
 
                 // If item is movable add anchor size
                 if (selected.is_movable || selected.is_resizable)
                 {
-                    Graphic.Point anchor_border = Graphic.Point (anchor_size + selected_border_line_width,
-                                                                 anchor_size + selected_border_line_width);
-                    damaged_area.translate (anchor_border.invert ());
-                    area_size.resize (anchor_border.x * 2.0, anchor_border.y * 2.0);
+                    Graphic.Point anchor_border = Graphic.Point (anchor_size, anchor_size);
+                    child_area_pos.translate (anchor_border.invert ());
+                    child_area_size.resize (anchor_size * 2.0, anchor_size * 2.0);
                 }
 
-                damaged_area.resize (area_size);
+                var border_area = new Graphic.Region (Graphic.Rectangle ((double)(int)child_area_pos.x, (double)(int)child_area_pos.y,
+                                                                         GLib.Math.floor (child_area_size.width + child_area_pos.x) - (double)(int)child_area_pos.x,
+                                                                         GLib.Math.floor (child_area_size.height + child_area_pos.y) - (double)(int)child_area_pos.y));
+
+                // subtract child geometry to have border area
+                border_area.subtract (inChild.geometry);
+
+                // damage border area
+                damage (border_area);
             }
 
             // damage item

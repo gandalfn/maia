@@ -76,6 +76,7 @@ public class Maia.ToggleButton : Toggle
         plug_property("icon-size", icon_item, "size");
         add (icon_item);
         m_Icon = icon_item;
+        icon_item.button_press_event.connect (on_button_press);
 
         m_Label = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
         m_Label.visible = false;
@@ -201,7 +202,7 @@ public class Maia.ToggleButton : Toggle
                 if (position_label.x != border + (m_Icon.size.width > 0 ? border + m_Icon.size.width : 0) ||
                     position_label.y != border + (m_Icon.size.height > 0 ? (diff >= 0 ? diff : 0) : 0))
                 {
-                    
+
                     m_Label.position = Graphic.Point (border + ((m_Icon.size.width > 0 && m_Label.size.width > 0) ? border + m_Icon.size.width : 0),
                                                       border + (m_Icon.size.height > 0 ? (diff >= 0 ? diff : 0) : 0));
 

@@ -20,6 +20,8 @@
 internal class Maia.Xcb.View : Drawable
 {
     // types
+    private delegate void DestroyFunc ();
+
     private class Sibling
     {
         private unowned View? m_View;
@@ -121,6 +123,7 @@ internal class Maia.Xcb.View : Drawable
     private Pixmap               m_BackBuffer = null;
     private Graphic.Surface      m_FrontBuffer = null;
     private Core.Array<Sibling>  m_Siblings = null;
+    private unowned DestroyFunc? m_Func = null;
 
     // signals
     public signal void mapped ();
@@ -182,6 +185,7 @@ internal class Maia.Xcb.View : Drawable
                 if (m_Parent != null)
                 {
                     m_Parent.mapped.disconnect (on_parent_mapped);
+                    m_Parent.m_Func = null;
                 }
 
                 m_Parent = value;
@@ -189,6 +193,7 @@ internal class Maia.Xcb.View : Drawable
                 if (m_Parent != null)
                 {
                     m_Parent.mapped.connect (on_parent_mapped);
+                    m_Parent.m_Func = on_parent_destroyed;
                 }
 
                 // clear siblings
@@ -319,6 +324,17 @@ internal class Maia.Xcb.View : Drawable
 
     ~View ()
     {
+        if (m_Func != null)
+        {
+            m_Func ();
+        }
+
+        if (m_Parent != null)
+        {
+            m_Parent.mapped.disconnect (on_parent_mapped);
+            m_Parent.m_Func = null;
+        }
+
         m_BackBuffer = null;
         m_FrontBuffer = null;
 
@@ -332,6 +348,16 @@ internal class Maia.Xcb.View : Drawable
         {
             ((global::Xcb.Window)xid).destroy (Maia.Xcb.application.connection);
         }
+    }
+
+    private void
+    on_parent_destroyed ()
+    {
+        m_Parent = null;
+
+        m_Siblings.clear ();
+
+        on_parent_mapped ();
     }
 
     private void
@@ -561,7 +587,7 @@ internal class Maia.Xcb.View : Drawable
         }
 
         // Get window state
-        if (!is_mapped && !m_Foreign)
+        if (!is_mapped)
         {
             // Map window
             application.push_request (new MapRequest (this));
@@ -580,7 +606,7 @@ internal class Maia.Xcb.View : Drawable
             m_BackBuffer = null;
             m_FrontBuffer = null;
 
-            if (is_mapped && !m_Foreign)
+            if (is_mapped)
             {
                 // Unmap window
                 application.push_request (new UnmapRequest (this));

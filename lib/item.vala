@@ -40,6 +40,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     private bool              m_Visible = true;
     private Graphic.Region    m_Geometry = null;
     private Graphic.Point     m_Position = Graphic.Point (0, 0);
+    private bool              m_BlockOnResize = false;
     private Graphic.Size      m_Size = Graphic.Size (0, 0);
     private Graphic.Size      m_SizeRequested = Graphic.Size (0, 0);
     private Graphic.Transform m_Transform = new Graphic.Transform.identity ();
@@ -83,12 +84,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             calculate_transform_to_root_space ();
             calculate_transform_to_window_space ();
             calculate_transform_from_window_space ();
-
-            // If item is root do not connect on position change
-            if (parent == null)
-                notify["position"].disconnect (on_move);
-            else
-                notify["position"].connect (on_move);
 
             // Send root change notification
             GLib.Signal.emit_by_name (this, "notify::root");
@@ -443,6 +438,12 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             {
                 m_Position = value;
 
+                // If item is not root send on_move
+                if (parent != null)
+                {
+                    on_move ();
+                }
+
                 GLib.Signal.emit_by_name (this, "notify::position");
             }
         }
@@ -463,9 +464,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             else if (m_NeedUpdate)
             {
                 // Launch size request
-                notify["size"].disconnect (on_resize);
+                m_BlockOnResize = true;
                 m_SizeRequested = size_request (m_Size);
-                notify["size"].connect (on_resize);
+                m_BlockOnResize = false;
 
                 // Unset need update
                 m_NeedUpdate = false;
@@ -492,6 +493,12 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 else
                 {
                     not_dumpable_attributes.insert ("size");
+                }
+
+                // Call resize
+                if (!m_BlockOnResize)
+                {
+                    on_resize ();
                 }
 
                 // Send size notify
@@ -744,10 +751,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             // reorder object on column change
             notify["column"].connect (reorder);
         }
-
-        // connect on move and resize
-        notify["position"].connect (on_move);
-        notify["size"].connect (on_resize);
     }
 
     ~Item ()
@@ -867,24 +870,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     on_move_resize ()
     {
         // if item was moved
-        if (geometry != null && parent != null && parent is Item)
+        if (parent != null && parent is DrawingArea && (m_IsMovable || m_IsResizable))
         {
-            // keep old geometry
-            Graphic.Region old_geometry = geometry.copy ();
-
-            // reset item geometry
-            if ((!m_IsMovable && !m_IsResizable))
-            {
-                need_update = true;
-            }
-            else
-            {
-                var item_size = size;
-                geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, item_size.width, item_size.height));
-            }
-
-            // damage parent
-            (parent as Item).damage (old_geometry);
+            geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
         }
         else if (geometry != null)
         {
@@ -1411,12 +1399,22 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 {
                     unowned Item item = (Item)child;
 
-                    var area = area_to_child_item_space (item, inArea);
-                    if (!area.is_empty () && (item.damaged == null || item.damaged.is_empty () || item.damaged.contains_rectangle (area.extents) != Graphic.Region.Overlap.IN))
+                    var child_damaged_area = area_to_child_item_space (item, inArea);
+                    if (!child_damaged_area.is_empty () &&
+                        (item.damaged == null       ||
+                         item.damaged.is_empty ()   ||
+                         !item.damaged.equal (child_damaged_area)))
                     {
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "damage child %s %s", (child as Item).name, area.extents.to_string ());
+                        if (item.damaged != null)
+                        {
+                            child_damaged_area.subtract (item.damaged);
+                        }
+                        if (!child_damaged_area.is_empty ())
+                        {
+                            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"damage child $((child as Item).name) $(child_damaged_area.extents)");
 
-                        item.damage_area (area);
+                            item.damage_area (child_damaged_area);
+                        }
                     }
                 }
             }

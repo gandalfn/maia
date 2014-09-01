@@ -572,22 +572,20 @@ public class Maia.ScrollView : Item
             Graphic.Point p1 = inItem.convert_to_window_space(Graphic.Point (0, 0));
             Graphic.Point p2 = inItem.convert_to_window_space(Graphic.Point (inItem.area.extents.size.width, inItem.area.extents.size.height));
 
-            Graphic.Region item_area = new Graphic.Region (Graphic.Rectangle (p1.x, p1.y, p2.x - p1.x, p2.y - p1.y));
-            item_area.transform (new Graphic.Transform.from_matrix (m_Viewport.transform.matrix_invert));
-            item_area.translate (m_Viewport.geometry.extents.origin);
+            Graphic.Point pv1 = m_Viewport.convert_to_window_space(Graphic.Point (m_Viewport.visible_area.origin.x, m_Viewport.visible_area.origin.y));
+            Graphic.Point pv2 = m_Viewport.convert_to_window_space(Graphic.Point (m_Viewport.visible_area.origin.x + m_Viewport.visible_area.size.width,
+                                                                                  m_Viewport.visible_area.origin.y + m_Viewport.visible_area.size.height));
 
-            Graphic.Region viewport_area = m_Viewport.area.copy ();
-            viewport_area.intersect (item_area);
+            Graphic.Rectangle item_area = Graphic.Rectangle (p1.x, p1.y, p2.x - p1.x, p2.y - p1.y);
+            Graphic.Rectangle viewport_area = Graphic.Rectangle (pv1.x, pv1.y, pv2.x - pv1.x, pv2.y - pv1.y);
 
-            if (!viewport_area.is_empty ())
+            item_area.intersect (viewport_area);
+
+            if (!item_area.is_empty ())
             {
-                viewport_area.translate (m_Viewport.geometry.extents.origin.invert ());
-                viewport_area.transform (m_Viewport.transform);
-
-                p1 = inItem.convert_from_window_space(Graphic.Point (viewport_area.extents.origin.x, viewport_area.extents.origin.y));
-                p2 = inItem.convert_from_window_space(Graphic.Point (viewport_area.extents.origin.x + viewport_area.extents.size.width,
-                                                                     viewport_area.extents.origin.y + viewport_area.extents.size.height));
-
+                p1 = inItem.convert_from_window_space (Graphic.Point (item_area.origin.x, item_area.origin.y));
+                p2 = inItem.convert_from_window_space (Graphic.Point (item_area.origin.x + item_area.size.width,
+                                                                      item_area.origin.y + item_area.size.height));
 
                 ret = new Graphic.Region (Graphic.Rectangle (p1.x, p1.y, p2.x - p1.x, p2.y - p1.y));
             }

@@ -257,7 +257,7 @@ public class Maia.DocumentView : Group
                     if (visible_area != null)
                     {
                         item.position = Graphic.Point (visible_area.extents.origin.x + visible_area.extents.size.width / 2.0,
-                                                       visible_area.extents.origin.x + visible_area.extents.size.height / 2.0);
+                                                       visible_area.extents.origin.y + visible_area.extents.size.height / 2.0);
                     }
                 }
 
@@ -286,7 +286,7 @@ public class Maia.DocumentView : Group
                         if (visible_area != null)
                         {
                             item.position = Graphic.Point (visible_area.extents.origin.x + visible_area.extents.size.width / 2.0,
-                                                           visible_area.extents.origin.x + visible_area.extents.size.height / 2.0);
+                                                           visible_area.extents.origin.y + visible_area.extents.size.height / 2.0);
                         }
                     }
 

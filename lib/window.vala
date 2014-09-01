@@ -804,19 +804,19 @@ public class Maia.Window : Group
                     // Clear area
                     ctx.operator = Graphic.Operator.SOURCE;
 
+                    // Clip the damaged area
+                    ctx.clip_region (damaged_area);
+
                     if (m_Background != null)
                     {
                         ctx.pattern = m_Background;
-                        ctx.fill (new Graphic.Path.from_region (damaged_area));
+                        ctx.paint ();
                     }
                     else
                     {
                         ctx.pattern = background_pattern != null ? background_pattern : new Graphic.Color (0, 0, 0, 0);
-                        ctx.fill (new Graphic.Path.from_region (damaged_area));
+                        ctx.paint ();
                     }
-
-                    // Clip the damaged area
-                    ctx.clip_region (damaged_area);
 
                     // Set paint over by default
                     ctx.operator = Graphic.Operator.OVER;

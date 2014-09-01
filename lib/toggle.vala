@@ -212,7 +212,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
         }
     }
 
-    private bool
+    protected bool
     on_button_press (uint inButton, Graphic.Point inPoint)
     {
         if (inButton == 1)

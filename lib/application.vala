@@ -120,7 +120,7 @@ public class Maia.Application : Maia.Core.Object
                         try
                         {
                             // draw window
-                            window.draw (window.surface.context, window.area);
+                            window.draw (window.surface.context, window.damaged);
                         }
                         catch (GLib.Error err)
                         {

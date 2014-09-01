@@ -25,7 +25,7 @@ public interface Maia.ItemMovable : Item
     {
         if (parent != null && parent is DrawingArea)
         {
-            unowned DrawingArea drawing_area = (DrawingArea)parent;
+            unowned DrawingArea? drawing_area = (DrawingArea)parent;
 
             if (drawing_area.geometry != null)
             {
@@ -33,22 +33,23 @@ public interface Maia.ItemMovable : Item
                 var new_position = position;
                 new_position.translate (inOffset);
 
-                var area = Graphic.Rectangle (new_position.x, new_position.y, size.width, size.height);
+                var new_area = Graphic.Rectangle (new_position.x, new_position.y, size.width, size.height);
 
                 // check if item is not outside parent
-                var drawing_area_geometry = drawing_area.geometry.copy ();
-                drawing_area_geometry.translate (drawing_area.geometry.extents.origin.invert ());
+                var drawing_area_geometry = drawing_area.area.copy ();
                 drawing_area_geometry.translate (Graphic.Point (drawing_area.selected_border + drawing_area.anchor_size,
                                                                 drawing_area.selected_border + drawing_area.anchor_size));
                 drawing_area_geometry.resize (Graphic.Size (drawing_area_geometry.extents.size.width - (drawing_area.selected_border * 2.0) - drawing_area.anchor_size,
                                                             drawing_area_geometry.extents.size.height - (drawing_area.selected_border * 2.0) - drawing_area.anchor_size));
-                if (drawing_area_geometry.contains_rectangle (area) != Graphic.Region.Overlap.IN)
+
+                if (drawing_area_geometry.contains_rectangle (new_area) != Graphic.Region.Overlap.IN)
                 {
-                    area.clamp (drawing_area_geometry.extents);
+                    new_area.clamp (drawing_area_geometry.extents);
                 }
 
+                // set new position
                 damage ();
-                position = area.origin;
+                position = new_area.origin;
                 damage ();
             }
         }

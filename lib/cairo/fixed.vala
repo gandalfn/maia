@@ -23,7 +23,7 @@
 internal struct Maia.Cairo.Fixed : int32
 {
     const int32 s_Bits = 32;
-    const int32 s_Frac = 4;
+    const int32 s_Frac = 8;
     const double s_Magic = ((1LL << (52 - s_Frac)) * 1.5);
 #if BIG_INDIAN
     const int s_Mantisse = 1;

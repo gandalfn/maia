@@ -180,7 +180,8 @@ public class Maia.Group : Item
                     // point under child
                     if (item.button_release_event (inButton, point))
                     {
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button release event in %s", item.name);
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"button release event in $(item.name)");
+
                         // event occurate under child stop signal
                         GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
                         break;

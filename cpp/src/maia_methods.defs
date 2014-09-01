@@ -15511,6 +15511,16 @@
   )
 )
 
+(define-method on_button_press
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_on_button_press")
+  (return-type "gboolean")
+  (parameters
+    '("guint" "inButton")
+    '("MaiaGraphicPoint*" "inPoint")
+  )
+)
+
 (define-method get_group
   (of-object "MaiaToggle")
   (c-name "maia_toggle_get_group")

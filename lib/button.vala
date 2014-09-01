@@ -296,20 +296,15 @@ public class Maia.Button : Grid
     internal override bool
     on_button_press_event (uint inButton, Graphic.Point inPoint)
     {
-        bool ret = false;
+        bool ret = base.on_button_press_event (inButton, inPoint);
 
-        if (sensitive && geometry != null)
+        if (sensitive && ret && inButton == 1)
         {
-            ret = inPoint in area;
+            m_Clicked = true;
 
-            if (ret && inButton == 1)
-            {
-                m_Clicked = true;
+            grab_pointer (this);
 
-                grab_pointer (this);
-
-                damage ();
-            }
+            damage ();
         }
 
         return ret;
@@ -318,24 +313,19 @@ public class Maia.Button : Grid
     internal override bool
     on_button_release_event (uint inButton, Graphic.Point inPoint)
     {
-        bool ret = false;
+        bool ret = base.on_button_release_event (inButton, inPoint);
 
-        if (geometry != null)
+        if (inButton == 1 && m_Clicked)
         {
-            ret = inPoint in area;
+            m_Clicked = false;
 
-            if (inButton == 1 && m_Clicked)
+            ungrab_pointer (this);
+
+            damage ();
+
+            if (ret)
             {
-                m_Clicked = false;
-
-                ungrab_pointer (this);
-
-                damage ();
-
-                if (ret)
-                {
-                    clicked.publish ();
-                }
+                clicked.publish ();
             }
         }
 

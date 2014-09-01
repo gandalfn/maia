@@ -20,8 +20,9 @@
 public class Maia.Viewport : Window
 {
     // properties
-    private Graphic.Region m_ScrolledDamaged = null;
-    private bool           m_ScrollDamage = false;
+    private Graphic.Rectangle m_VisibleArea = Graphic.Rectangle (0, 0, 0, 0);
+    private Graphic.Region    m_ScrolledDamaged = null;
+    private bool              m_ScrollDamage = false;
 
     // accessors
     internal override string tag {
@@ -30,14 +31,56 @@ public class Maia.Viewport : Window
         }
     }
 
-    public virtual Graphic.Rectangle visible_area { get; set; default = Graphic.Rectangle (0, 0, 0, 0); }
+    public virtual Graphic.Rectangle visible_area {
+        get {
+            return m_VisibleArea;
+        }
+        set {
+            if (!m_VisibleArea.equal (value))
+            {
+                bool is_scroll = m_VisibleArea.size.equal (value.size) &&
+                                 !m_VisibleArea.origin.equal (value.origin);
+
+                m_VisibleArea = value;
+
+                if (is_scroll)
+                {
+                    // Remove old scrolled damage area
+                    if (m_ScrolledDamaged != null && damaged != null)
+                    {
+                        damaged.subtract (m_ScrolledDamaged);
+                    }
+
+                    // Set new scrolled damage has visible area
+                    m_ScrolledDamaged = new Graphic.Region (m_VisibleArea);
+
+                    // Remove damaged area from scrolled damaged area
+                    if (damaged != null)
+                    {
+                        m_ScrolledDamaged.subtract (damaged);
+                        if (m_ScrolledDamaged.is_empty ())
+                        {
+                            m_ScrolledDamaged = null;
+                        }
+                    }
+
+                    // Block childs damage
+                    m_ScrollDamage = true;
+
+                    // Send damage to launch redraw of visible area
+                    damage (new Graphic.Region (m_VisibleArea));
+
+                    // Unblock childs damage
+                    m_ScrollDamage = false;
+                }
+            }
+        }
+    }
 
     // methods
     construct
     {
         not_dumpable_attributes.insert ("visible-area");
-
-        notify["visible-area"].connect (on_visible_area_changed);
     }
 
     /**
@@ -46,38 +89,6 @@ public class Maia.Viewport : Window
     public Viewport (string inName)
     {
         base (inName, 1, 1);
-    }
-
-    private void
-    on_visible_area_changed ()
-    {
-        // Remove old scrolled damage area
-        if (m_ScrolledDamaged != null && damaged != null)
-        {
-            damaged.subtract (m_ScrolledDamaged);
-        }
-
-        // Set new scrolled damage has visible area
-        m_ScrolledDamaged = new Graphic.Region (visible_area);
-
-        // Remove damaged area from scrolled damaged area
-        if (damaged != null)
-        {
-            m_ScrolledDamaged.subtract (damaged);
-            if (m_ScrolledDamaged.is_empty ())
-            {
-                m_ScrolledDamaged = null;
-            }
-        }
-
-        // Block childs damage
-        m_ScrollDamage = true;
-
-        // Send damage to launch redraw of visible area
-        damage (damaged);
-
-        // Unblock childs damage
-        m_ScrollDamage = false;
     }
 
     internal override void
@@ -121,14 +132,14 @@ public class Maia.Viewport : Window
 
             // get area not already drawn
             var damaged_area = damaged.copy ();
-            if (inArea != null)
+            if (visible_damaged != null)
             {
                 damaged_area.intersect (visible_damaged);
             }
 
             if (!visible_damaged.is_empty () && !damaged_area.is_empty ())
             {
-                Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, @"window $name damaged draw $(damaged_area.extents)");
+                Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, @"viewport $name damaged draw $(damaged_area.extents)");
 
                 ctx.save ();
                 {
@@ -152,11 +163,11 @@ public class Maia.Viewport : Window
                     // Clear area
                     ctx.operator = Graphic.Operator.SOURCE;
 
-                    ctx.pattern = background_pattern != null ? background_pattern : new Graphic.Color (0, 0, 0, 0);
-                    ctx.fill (new Graphic.Path.from_region (damaged_area));
-
                     // Clip the damaged area
                     ctx.clip_region (damaged_area);
+
+                    ctx.pattern = background_pattern != null ? background_pattern : new Graphic.Color (0, 0, 0, 0);
+                    ctx.paint ();
 
                     // Set paint over by default
                     ctx.operator = Graphic.Operator.OVER;
