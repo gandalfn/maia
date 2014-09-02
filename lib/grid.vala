@@ -631,7 +631,9 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                     }
 
                                     if (y != allocation.origin.y)
+                                    {
                                         allocation.origin.y = y;
+                                    }
                                 }
 
                                 if (!is_page_break && item.row > prev_row)
@@ -651,7 +653,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                     else
                                         allocation.size.width = item_size.width;
 
-                                    allocation.origin.x += item.left_padding + ((area.size.width - item.left_padding - item.right_padding) - allocation.size.width) * item.xalign;
+                                    allocation.origin.x += item.left_padding + (double.max (0, area.size.width - item.left_padding - item.right_padding) - allocation.size.width) * item.xalign;
                                 }
                                 else
                                 {
@@ -674,7 +676,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                     else
                                         allocation.size.height = item_size.height;
 
-                                    allocation.origin.y += item.top_padding + ((area.size.height - item.top_padding - item.bottom_padding) - allocation.size.height) * item.yalign;
+                                    allocation.origin.y += item.top_padding + (double.max (0, area.size.height - item.top_padding - item.bottom_padding) - allocation.size.height) * item.yalign;
                                 }
                                 else
                                 {
@@ -687,6 +689,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
                                 // update item
                                 Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "update %s: %s", item.name, allocation.to_string ());
+
                                 item.update (inContext, new Graphic.Region (allocation));
 
                                 prev_row = item.row;

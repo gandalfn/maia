@@ -305,7 +305,7 @@ public class Maia.Document : Item
                     inRoot.position = inoutCurrentPosition;
                 }
 
-                inoutCurrentPosition.y += row_size.height;
+                inoutCurrentPosition.y += row_size.height + inGrid.row_spacing;
             }
             // Check if grid row can be append in new page
             else if (row_size.height <= page_content.extents.size.height)
@@ -340,7 +340,7 @@ public class Maia.Document : Item
                 }
 
                 // Update current position
-                inoutCurrentPosition.y += row_size.height;
+                inoutCurrentPosition.y += row_size.height + inGrid.row_spacing;
             }
             else
             {

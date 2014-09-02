@@ -62,6 +62,9 @@ public class Maia.Viewport : Window
                         {
                             m_ScrolledDamaged = null;
                         }
+
+                        // Remove viosible area from damaged area to force damage signal emission
+                        damaged.subtract (new Graphic.Region (m_VisibleArea));
                     }
 
                     // Block childs damage

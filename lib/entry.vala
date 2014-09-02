@@ -103,6 +103,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
 
     // properties
     private string          m_Text = "";
+    private string          m_Initial = "";
     private Graphic.Glyph   m_Glyph;
     private Graphic.Surface m_FakeSurface;
     private int             m_Cursor = 0;
@@ -282,10 +283,14 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         if (have_focus)
         {
             m_Cursor = (int)(text ?? "").length;
+            m_Initial = text;
         }
         else if (ChangedMask.FOCUS_OUT in changed_mask)
         {
-            changed.publish (new ChangedEventArgs (text ?? ""));
+            if (m_Initial != text)
+            {
+                changed.publish (new ChangedEventArgs (text ?? ""));
+            }
         }
 
         damage ();
@@ -500,7 +505,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                     m_Cursor++;
                 }
 
-                if (ChangedMask.RETURN in changed_mask)
+                if (ChangedMask.RETURN in changed_mask && m_Initial != text)
                 {
                     changed.publish (new ChangedEventArgs (text ?? ""));
                 }

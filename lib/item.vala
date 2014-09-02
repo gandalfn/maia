@@ -207,9 +207,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 {
                     calculate_transform_to_item_space ();
                     calculate_transform_to_root_space ();
-                    calculate_transform_to_window_space ();
-                    calculate_transform_from_window_space ();
                 }
+
+                calculate_transform_to_window_space ();
+                calculate_transform_from_window_space ();
 
                 // Send notify geometry signal only if geometry has been changed
                 // not when the geometry has been set
@@ -418,9 +419,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             {
                 calculate_transform_to_item_space ();
                 calculate_transform_to_root_space ();
-                calculate_transform_to_window_space ();
-                calculate_transform_from_window_space ();
             }
+
+            calculate_transform_to_window_space ();
+            calculate_transform_from_window_space ();
         }
         default = new Graphic.Transform.identity ();
     }
@@ -1033,9 +1035,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
                 // Ignore translation of item without geometry or window managed by application
                 // the position of this last is the position under desktop
-                if (geometry != null && !(parent is Application))
+                if (!(parent is Application))
                 {
-                    Graphic.Point pos = geometry.extents.origin;
+                    Graphic.Point pos = geometry != null ? geometry.extents.origin : position;
                     Graphic.Transform item_translate = new Graphic.Transform.init_translate (pos.x, pos.y);
                     this_transform.append (item_translate);
                 }
