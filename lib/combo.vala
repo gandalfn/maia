@@ -288,47 +288,6 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         }
     }
 
-    internal override unowned Core.Object?
-    find (uint32 inId, bool inRecursive = true)
-    {
-        if (m_View != null)
-        {
-            if (m_View.id == inId)
-            {
-                return m_View;
-            }
-
-            if (inRecursive)
-            {
-                return m_View.find (inId, inRecursive);
-            }
-        }
-        return null;
-    }
-
-    internal override Core.List<unowned T?>
-    find_by_type<T> (bool inRecursive = true)
-    {
-        Core.List<unowned T?> list = new Core.List<unowned T?> ();
-
-        if (m_View != null)
-        {
-            if (m_View.get_type ().is_a (typeof (T)))
-            {
-                list.insert (m_View);
-            }
-            if (inRecursive)
-            {
-                foreach (unowned T? c in m_View.find_by_type<T> (inRecursive))
-                {
-                    list.insert (c);
-                }
-            }
-        }
-
-        return list;
-    }
-
     internal override void
     on_child_resized (Drawable inChild)
     {

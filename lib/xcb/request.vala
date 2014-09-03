@@ -291,10 +291,12 @@ internal class Maia.Xcb.ResizeRequest : Request
     internal override void
     run ()
     {
+        var view_size = view.size;
+        view_size.transform (view.device_transform);
         uint16 mask = global::Xcb.ConfigWindow.WIDTH  |
                       global::Xcb.ConfigWindow.HEIGHT |
                       global::Xcb.ConfigWindow.BORDER_WIDTH;
-        uint32[] values = { (uint32)GLib.Math.ceil (view.size.width), (uint32)GLib.Math.ceil (view.size.height), 0 };
+        uint32[] values = { (uint32)GLib.Math.ceil (view_size.width), (uint32)GLib.Math.ceil (view_size.height), 0 };
         ((global::Xcb.Window)view.xid).configure (view.connection, mask, values);
     }
 

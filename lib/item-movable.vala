@@ -50,7 +50,6 @@ public interface Maia.ItemMovable : Item
                 // set new position
                 damage ();
                 position = new_area.origin;
-                damage ();
             }
         }
     }

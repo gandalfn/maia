@@ -51,6 +51,9 @@ internal class Maia.Cairo.Report : Maia.Report
             document.need_update = true;
             doc_size = document.size;
 
+            // repair all document to force damage on save
+            document.repair ();
+
             // Count nb pages
             nb_pages += document.nb_pages;
         }

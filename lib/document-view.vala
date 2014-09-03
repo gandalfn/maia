@@ -82,6 +82,7 @@ public class Maia.DocumentView : Group
                                          "   left_padding: 5;\n" +
                                          "   right_padding: 5;\n" +
                                          "   yfill: false;\n" +
+                                         "   ylimp: true;\n" +
                                          "   yexpand: false;\n" +
                                          "   label: @shortcut;\n" +
                                          "}";

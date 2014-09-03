@@ -215,7 +215,14 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
     private void
     on_view_damage_event (Core.EventArgs? inArgs)
     {
-        damage_event.publish (inArgs);
+        unowned DamageEventArgs? damage_args = inArgs as DamageEventArgs;
+
+        if (damage_args != null)
+        {
+            Graphic.Rectangle damage_area = damage_args.area;
+            damage_area.translate (visible_area.origin);
+            damage_event.publish (new DamageEventArgs (damage_area.origin.x, damage_area.origin.y, damage_area.size.width, damage_area.size.height));
+        }
     }
 
     private void
