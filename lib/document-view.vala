@@ -92,20 +92,11 @@ public class Maia.DocumentView : Group
 
         // Create  shortcuts group
         m_ShortcutsGroup = new ToggleGroup (@"$(name)-shortcuts-group");
-
-        notify["window"].connect (on_window_changed);
     }
 
     public DocumentView (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
-    }
-
-    private void
-    on_window_changed ()
-    {
-        m_Content.hadjustment.@value = 0;
-        m_Content.vadjustment.@value = 0;
     }
 
     private void

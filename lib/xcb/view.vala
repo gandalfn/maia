@@ -595,6 +595,9 @@ internal class Maia.Xcb.View : Drawable
 
         m_BackBuffer = null;
         m_FrontBuffer = null;
+
+        // Launch resize to create buffer is size is set
+        resize ();
     }
 
     public void

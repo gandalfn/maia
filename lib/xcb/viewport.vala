@@ -58,23 +58,26 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
         set {
             if (!base.visible_area.equal (value))
             {
-                if (!base.visible_area.is_empty ())
+                if (!base.visible_area.is_empty () && m_View != null)
                 {
                     m_Slices.set (m_View.backbuffer, base.visible_area.origin, base.visible_area);
                 }
 
                 base.visible_area = value;
 
-                m_View.size = value.size;
-
-                if (m_View.backbuffer != null)
+                if (m_View != null)
                 {
-                    m_Slices.get (m_View.backbuffer, value.origin, value);
-                }
+                    m_View.size = value.size;
 
-                var view_size = m_View.size;
-                view_size.transform (m_View.device_transform);
-                m_View.damaged = new Graphic.Region (Graphic.Rectangle (0, 0, view_size.width, view_size.height));
+                    if (m_View.backbuffer != null)
+                    {
+                        m_Slices.get (m_View.backbuffer, value.origin, value);
+                    }
+
+                    var view_size = m_View.size;
+                    view_size.transform (m_View.device_transform);
+                    m_View.damaged = new Graphic.Region (Graphic.Rectangle (0, 0, view_size.width, view_size.height));
+                }
             }
         }
     }
@@ -407,8 +410,49 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
     }
 
     internal override void
+    on_draw (Graphic.Context inContext, Graphic.Region? inArea) throws Graphic.Error
+    {
+        // view has been destroyed but viewport is already visible recreate view
+        if (visible && m_View == null)
+        {
+            create_view ();
+            m_View.show ();
+
+            // update view content from slices
+            if (!visible_area.is_empty ())
+            {
+                m_Slices.get (m_View.backbuffer, visible_area.origin, visible_area);
+
+                var view_size = m_View.size;
+                view_size.transform (m_View.device_transform);
+                m_View.damaged = new Graphic.Region (Graphic.Rectangle (0, 0, view_size.width, view_size.height));
+            }
+        }
+
+        base.on_draw (inContext, inArea);
+    }
+    
+
+    internal override void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
+        // view has been destroyed but viewport is already visible recreate view
+        if (visible && m_View == null)
+        {
+            create_view ();
+            m_View.show ();
+
+            // update view content from slices
+            if (!visible_area.is_empty ())
+            {
+                m_Slices.get (m_View.backbuffer, visible_area.origin, visible_area);
+
+                var view_size = m_View.size;
+                //view_size.transform (m_View.device_transform);
+                m_View.damaged = new Graphic.Region (Graphic.Rectangle (0, 0, view_size.width, view_size.height));
+            }
+        }
+
         base.update (inContext, inAllocation);
 
         if (geometry != null)

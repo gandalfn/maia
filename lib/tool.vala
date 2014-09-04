@@ -211,32 +211,40 @@ public class Maia.Tool : Button
                             string cmd = split_criteria[0].strip ().down ();
                             string val = split_criteria[1].strip ();
 
-                            switch (cmd)
+                            if (val.length > 0)
                             {
-                                case "name":
-                                    found = GLib.PatternSpec.match_simple (val, args.item_name);
-                                    break;
+                                switch (cmd)
+                                {
+                                    case "name":
+                                        found = GLib.PatternSpec.match_simple (val, args.item_name);
+                                        break;
 
-                                case "parent-name":
-                                    found = args.parent_name.length > 0 && GLib.PatternSpec.match_simple (val, args.parent_name);
-                                    break;
+                                    case "parent-name":
+                                        found = args.parent_name.length > 0 && GLib.PatternSpec.match_simple (val, args.parent_name);
+                                        break;
 
-                                case "type":
-                                    GLib.Type type = GLib.Type.from_name (@"Maia$val");
+                                    case "type":
+                                        GLib.Type type = GLib.Type.from_name (@"Maia$val");
 
-                                    found = type != 0 && args.item_type.is_a (type);
-                                    break;
+                                        found = type != 0 && args.item_type.is_a (type);
+                                        break;
 
-                                case "parent-type":
-                                    GLib.Type type = GLib.Type.from_name (@"Maia$val");
+                                    case "parent-type":
+                                        GLib.Type type = GLib.Type.from_name (@"Maia$val");
 
-                                    found = args.parent_type != 0 && args.parent_type.is_a (type);
-                                    break;
+                                        found = type != 0 && args.parent_type != 0 && args.parent_type.is_a (type);
+                                        break;
 
-                                default:
-                                    Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING,
+                                    default:
+                                        Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING,
+                                                      "Invalid visible-with criteria %s for %s", criteria, name);
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING,
                                                   "Invalid visible-with criteria %s for %s", criteria, name);
-                                    break;
                             }
                         }
                         else
