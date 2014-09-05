@@ -99,10 +99,8 @@ public class Maia.DocumentView : Group
         GLib.Object (id: GLib.Quark.from_string (inId));
     }
 
-    private void
-    on_toolbox_destroyed ()
+    ~DocumentView ()
     {
-        m_Toolbox = null;
         if (m_AddItemListener != null)
         {
             m_AddItemListener.parent = null;
@@ -110,6 +108,22 @@ public class Maia.DocumentView : Group
         if (m_RemoveItemListener != null)
         {
             m_RemoveItemListener.parent = null;
+        }
+    }
+
+    private void
+    on_toolbox_destroyed ()
+    {
+        m_Toolbox = null;
+        if (m_AddItemListener != null)
+        {
+            m_AddItemListener.parent = null;
+            m_AddItemListener = null;
+        }
+        if (m_RemoveItemListener != null)
+        {
+            m_RemoveItemListener.parent = null;
+            m_RemoveItemListener = null;
         }
     }
 

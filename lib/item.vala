@@ -872,9 +872,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     on_move_resize ()
     {
         // if item was moved
-        if (parent != null && parent is DrawingArea && (m_IsMovable || m_IsResizable))
+        if (geometry != null && parent != null && parent is DrawingArea && (m_IsMovable || m_IsResizable))
         {
             geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
+            need_update = false;
             damage ();
         }
         else if (geometry != null)
@@ -1403,21 +1404,11 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                     unowned Item item = (Item)child;
 
                     var child_damaged_area = area_to_child_item_space (item, inArea);
-                    if (!child_damaged_area.is_empty () &&
-                        (item.damaged == null       ||
-                         item.damaged.is_empty ()   ||
-                         !item.damaged.equal (child_damaged_area)))
+                    if (!child_damaged_area.is_empty ())
                     {
-                        if (item.damaged != null)
-                        {
-                            child_damaged_area.subtract (item.damaged);
-                        }
-                        if (!child_damaged_area.is_empty ())
-                        {
-                            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"damage child $((child as Item).name) $(child_damaged_area.extents)");
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"damage child $((child as Item).name) $(child_damaged_area.extents)");
 
-                            item.damage_area (child_damaged_area);
-                        }
+                        item.damage_area (child_damaged_area);
                     }
                 }
             }

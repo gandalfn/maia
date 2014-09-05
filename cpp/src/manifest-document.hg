@@ -78,7 +78,9 @@ namespace Maia
                 _WRAP_METHOD(Glib::RefPtr<Element> get (const Glib::ustring& inId) const, maia_manifest_document_get, refreturn, errthrow)
                 Glib::RefPtr<Element> get () const;
 
+#m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<AttributeBind>&', `Glib::wrap($3, true)')
                 _WRAP_SIGNAL(void attribute_bind_added (const Glib::RefPtr<AttributeBind>& inpAttribute, const Glib::ustring& inProperty), "attribute-bind-added", no_default_handler)
+#m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<AttributeBind>&', `Glib::wrap($3)')
 
                 _WRAP_PROPERTY("owner", Glib::RefPtr<Glib::Object>)
                 _WRAP_PROPERTY("scanner", Glib::RefPtr<AttributeScanner>)

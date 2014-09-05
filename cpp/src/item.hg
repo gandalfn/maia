@@ -141,6 +141,7 @@ namespace Maia
 
             sigc::connection connect_root_changed (SlotRootChanged inSlot);
 
+#m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3, true)')
             _WRAP_SIGNAL(bool grab_pointer (const Glib::RefPtr<Item>& inItem), "grab-pointer", no_default_handler)
             _WRAP_SIGNAL(void ungrab_pointer (const Glib::RefPtr<Item>& inItem), "ungrab-pointer", no_default_handler)
             _WRAP_SIGNAL(bool grab_keyboard (const Glib::RefPtr<Item>& inItem), "grab-keyboard", no_default_handler)
@@ -152,7 +153,6 @@ namespace Maia
             _WRAP_SIGNAL(void key_press_event (Key inKey, guint inChar), "key-press-event", no_default_handler)
             _WRAP_SIGNAL(void key_release_event (Key inKey, guint inChar), "key-release-event", no_default_handler)
 
-#m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3, true)')
             _WRAP_SIGNAL(void grab_focus (const Glib::RefPtr<Item>& inItem), "grab-focus")
             _WRAP_SIGNAL(void set_pointer_cursor (Cursor inCursor), "set-pointer-cursor")
             _WRAP_SIGNAL(void move_pointer (const Graphic::Point& inPosition), "move-pointer")
