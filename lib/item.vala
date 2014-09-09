@@ -40,7 +40,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     private bool              m_Visible = true;
     private Graphic.Region    m_Geometry = null;
     private Graphic.Point     m_Position = Graphic.Point (0, 0);
-    private bool              m_BlockOnResize = false;
+    private bool              m_BlockOnMoveResize = false;
     private Graphic.Size      m_Size = Graphic.Size (0, 0);
     private Graphic.Size      m_SizeRequested = Graphic.Size (0, 0);
     private Graphic.Transform m_Transform = new Graphic.Transform.identity ();
@@ -441,7 +441,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 m_Position = value;
 
                 // If item is not root send on_move
-                if (parent != null)
+                if (parent != null && !m_BlockOnMoveResize)
                 {
                     on_move ();
                 }
@@ -466,9 +466,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             else if (m_NeedUpdate)
             {
                 // Launch size request
-                m_BlockOnResize = true;
+                m_BlockOnMoveResize = true;
                 m_SizeRequested = size_request (m_Size);
-                m_BlockOnResize = false;
+                m_BlockOnMoveResize = false;
 
                 // Unset need update
                 m_NeedUpdate = false;
@@ -498,7 +498,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 }
 
                 // Call resize
-                if (!m_BlockOnResize)
+                if (!m_BlockOnMoveResize)
                 {
                     on_resize ();
                 }
@@ -773,6 +773,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     private void
     on_parent_window_changed ()
     {
+        geometry = null;
+        need_update = true;
         GLib.Signal.emit_by_name (this, "notify::window");
     }
 
