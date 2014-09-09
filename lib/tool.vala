@@ -226,7 +226,7 @@ public class Maia.Tool : Button
                                     case "type":
                                         GLib.Type type = GLib.Type.from_name (@"Maia$val");
 
-                                        found = type != 0 && args.item_type.is_a (type);
+                                        found = type != 0 && args.item_type != 0 && args.item_type.is_a (type);
                                         break;
 
                                     case "parent-type":

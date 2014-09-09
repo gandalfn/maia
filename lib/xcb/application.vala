@@ -283,7 +283,7 @@ internal class Maia.Xcb.Application : Core.Object
             {
                 request.run ();
             }
-            sync ();
+            m_Connection.flush ();
         }
     }
 

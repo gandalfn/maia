@@ -267,21 +267,20 @@ public class Maia.DrawingArea : Group, ItemPackable
     internal override void
     on_child_resized (Drawable inChild)
     {
-        if (inChild.geometry != null)
-        {
-            damage (inChild.geometry);
-        }
     }
 
     internal override void
     on_child_need_update (Item inChild)
     {
-        if (inChild.need_update)
+        if (inChild is Arrow && inChild.need_update && inChild.geometry != null)
         {
             var child_position = inChild.position;
             var child_size = inChild.size;
 
+            inChild.damage ();
             inChild.geometry = new Graphic.Region (Graphic.Rectangle (child_position.x, child_position.y, child_size.width, child_size.height));
+            inChild.repair ();
+            inChild.damage ();
         }
     }
 
@@ -302,7 +301,7 @@ public class Maia.DrawingArea : Group, ItemPackable
             }
 
             // damaged child is the selected item
-            if (inChild == selected)
+            if (inChild == selected || (inChild is Item && selected is Arrow && (selected as Arrow).linked_item == (inChild as Item).name))
             {
                 // calculate item geometry with border
                 var child_area_pos = inChild.geometry.extents.origin;
@@ -598,34 +597,38 @@ public class Maia.DrawingArea : Group, ItemPackable
 
                 if (item.visible)
                 {
-                    item.draw (inContext, area_to_child_item_space (item, inArea));
-
-                    if (item == selected)
+                    var child_damaged_area = area_to_child_item_space (item, inArea);
+                    if (!child_damaged_area.is_empty ())
                     {
-                        if (m_SelectedItemState > SelectedItemState.SELECTED)
+                        item.draw (inContext, child_damaged_area);
+
+                        if (item == selected)
                         {
-                            inContext.save ();
+                            if (m_SelectedItemState > SelectedItemState.SELECTED)
                             {
-                                inContext.translate (item.geometry.extents.origin);
-                                inContext.translate (Graphic.Point (selected_border + anchor_size, selected_border + anchor_size).invert ());
-                                if (m_AnchorPath == null) create_anchor_path ();
-                                inContext.pattern = selected_border_color;
-                                inContext.stroke (m_AnchorPath);
+                                inContext.save ();
+                                {
+                                    inContext.translate (item.geometry.extents.origin);
+                                    inContext.translate (Graphic.Point (selected_border + anchor_size, selected_border + anchor_size).invert ());
+                                    if (m_AnchorPath == null) create_anchor_path ();
+                                    inContext.pattern = selected_border_color;
+                                    inContext.stroke (m_AnchorPath);
+                                }
+                                inContext.restore ();
                             }
-                            inContext.restore ();
+
+                            var path = new Graphic.Path ();
+                            path.rectangle (item.geometry.extents.origin.x - selected_border / 2.0,
+                                            item.geometry.extents.origin.y - selected_border / 2.0,
+                                            item.geometry.extents.size.width + selected_border,
+                                            item.geometry.extents.size.height + selected_border,
+                                            selected_border, selected_border);
+
+                            inContext.dash = { 2, 2 };
+                            inContext.line_width = selected_border_line_width;
+                            inContext.pattern = selected_border_color;
+                            inContext.stroke (path);
                         }
-
-                        var path = new Graphic.Path ();
-                        path.rectangle (item.geometry.extents.origin.x - selected_border / 2.0,
-                                        item.geometry.extents.origin.y - selected_border / 2.0,
-                                        item.geometry.extents.size.width + selected_border,
-                                        item.geometry.extents.size.height + selected_border,
-                                        selected_border, selected_border);
-
-                        inContext.dash = { 2, 2 };
-                        inContext.line_width = selected_border_line_width;
-                        inContext.pattern = selected_border_color;
-                        inContext.stroke (path);
                     }
                 }
             }

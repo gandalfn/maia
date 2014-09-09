@@ -134,6 +134,27 @@ public interface Maia.Drawable : GLib.Object
     }
 
     // methods
+    private void
+    child_damage_area (Graphic.Region inArea)
+    {
+        // Damage childs
+        unowned Core.Object? self = this as Core.Object;
+        if (self != null)
+        {
+            foreach (unowned Core.Object? child in self)
+            {
+                unowned Drawable? drawable = child as Drawable;
+                if (drawable != null)
+                {
+                    var child_damaged_area = area_to_child_item_space (drawable, inArea);
+                    if (!child_damaged_area.is_empty ())
+                    {
+                        drawable.damage_area (child_damaged_area);
+                    }
+                }
+            }
+        }
+    }
     /**
      * Damage area of this drawable and its childs without emitting any signal
      *
@@ -155,11 +176,13 @@ public interface Maia.Drawable : GLib.Object
                     if (damaged == null)
                     {
                         damaged = damaged_area;
+                        child_damage_area (damaged_area);
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "area %s damage %s", damaged_area.extents.to_string (), damaged.extents.to_string ());
                     }
                     else if (damaged.contains_rectangle (damaged_area.extents) !=  Graphic.Region.Overlap.IN)
                     {
                         damaged.union_ (damaged_area);
+                        child_damage_area (damaged_area);
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "area %s damage %s", damaged_area.extents.to_string (), damaged.extents.to_string ());
                     }
                     else
@@ -179,6 +202,7 @@ public interface Maia.Drawable : GLib.Object
                 if (damaged == null || !damaged.equal (damaged_area))
                 {
                     damaged = damaged_area;
+                    child_damage_area (damaged_area);
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "all damage %s", damaged.extents.to_string ());
                 }
                 else
@@ -191,20 +215,6 @@ public interface Maia.Drawable : GLib.Object
         else
         {
             return;
-        }
-
-        // Damage childs
-        unowned Core.Object? self = this as Core.Object;
-        if (self != null)
-        {
-            foreach (unowned Core.Object? child in self)
-            {
-                unowned Drawable? drawable = child as Drawable;
-                if (drawable != null)
-                {
-                    drawable.damage_area (area_to_child_item_space (drawable, inArea));
-                }
-            }
         }
      }
 

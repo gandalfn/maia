@@ -25,8 +25,8 @@ internal struct Maia.Cairo.Rectangle : global::Cairo.RectangleInt
     {
         x = Fixed.from_double (inRect.origin.x);
         y = Fixed.from_double (inRect.origin.y);
-        width = Fixed.from_double (inRect.size.width);
-        height = Fixed.from_double (inRect.size.height);
+        width = Fixed.from_double (double.max (0, inRect.size.width));
+        height = Fixed.from_double (double.max (0, inRect.size.height));
     }
 
     public inline Graphic.Rectangle

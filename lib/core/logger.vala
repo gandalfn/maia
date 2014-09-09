@@ -402,7 +402,7 @@ namespace Maia.Log
      * Set default logger object
      */
     public static inline void
-    set_default_logger (Logger inLogger)
+    set_default_logger (Logger? inLogger)
     {
         s_Logger = inLogger;
         if (s_WrapGLog)

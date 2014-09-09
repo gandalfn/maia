@@ -121,5 +121,10 @@ namespace Maia
         {
             maia_log_set_default_logger (const_cast<MaiaLogLogger*> (inLogger->gobj ()));
         }
+
+        static inline void unset_default_logger ()
+        {
+            maia_log_set_default_logger (nullptr);
+        }
     }
 }

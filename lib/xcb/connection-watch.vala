@@ -207,11 +207,25 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
                 case global::Xcb.EventType.MOTION_NOTIFY:
                     unowned global::Xcb.MotionNotifyEvent? evt_motion_notify = (global::Xcb.MotionNotifyEvent?)evt;
 
-                    // Add motion event in compressed map events
-                    motions[(int)evt_motion_notify.event] = new MouseEventArgs (MouseEventArgs.EventFlags.MOTION,
-                                                                                evt_motion_notify.detail,
-                                                                                evt_motion_notify.event_x,
-                                                                                evt_motion_notify.event_y);
+                    if (evt_motion_notify.detail == global::Xcb.Motion.HINT)
+                    {
+                        var reply = evt_motion_notify.event.query_pointer (m_Connection).reply (m_Connection);
+                        if (reply != null)
+                        {
+                            motions[(int)evt_motion_notify.event] = new MouseEventArgs (MouseEventArgs.EventFlags.MOTION,
+                                                                                        0,
+                                                                                        reply.win_x,
+                                                                                        reply.win_y);
+                        }
+                    }
+                    else
+                    {
+                        // Add motion event in compressed map events
+                        motions[(int)evt_motion_notify.event] = new MouseEventArgs (MouseEventArgs.EventFlags.MOTION,
+                                                                                    0,
+                                                                                    evt_motion_notify.event_x,
+                                                                                    evt_motion_notify.event_y);
+                    }
                     break;
 
                 // client message event

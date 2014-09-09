@@ -416,7 +416,6 @@ internal class Maia.Xcb.View : Drawable
             area.intersect (inArea);
             if (!area.is_empty ())
             {
-                inView.surface.flush ();
                 inContext.pattern = inView.surface;
                 inContext.pattern.transform = new Graphic.Transform.init_translate (inPosition.x, inPosition.y);
                 inContext.paint ();
@@ -479,7 +478,6 @@ internal class Maia.Xcb.View : Drawable
                     }
 
                     // Swap buffer
-                    inContext.surface.flush ();
                     inContext.pattern = m_BackBuffer.surface;
                     inContext.paint ();
                 }
@@ -487,7 +485,7 @@ internal class Maia.Xcb.View : Drawable
             }
 
             // Flush all pendings operations
-            Maia.Xcb.application.sync ();
+            connection.flush ();
 
             damaged = null;
         }
@@ -520,7 +518,8 @@ internal class Maia.Xcb.View : Drawable
                                 global::Xcb.EventMask.BUTTON_RELEASE      |
                                 global::Xcb.EventMask.KEY_PRESS           |
                                 global::Xcb.EventMask.KEY_RELEASE         |
-                                global::Xcb.EventMask.POINTER_MOTION;
+                                global::Xcb.EventMask.POINTER_MOTION      |
+                                global::Xcb.EventMask.POINTER_MOTION_HINT;
 
             if (visual != screen.root_visual)
             {

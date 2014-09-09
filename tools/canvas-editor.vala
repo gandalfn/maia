@@ -22,7 +22,9 @@ main (string[] inArgs)
 {
     Gtk.init (ref inArgs);
 
-    //Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.CANVAS_INPUT, "canvas-editor"));
+//~     Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.CANVAS_DRAW   |
+//~                                                                             Maia.Log.Category.CANVAS_DAMAGE |
+//~                                                                             Maia.Log.Category.CANVAS_INPUT, "canvas-editor"));
 
     var application = new Maia.Application ("canvas-editor", 60, { "gtk" });
 

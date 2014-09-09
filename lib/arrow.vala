@@ -85,11 +85,20 @@ public class Maia.Arrow : Item, ItemMovable
         GLib.Object (id: GLib.Quark.from_string (inId));
     }
 
+    ~Arrow ()
+    {
+        if (m_LinkedItem != null)
+        {
+            m_LinkedItem.weak_unref (on_linked_item_destroyed);
+        }
+    }
+
     private void
     on_root_changed ()
     {
         if (m_LinkedItem != null)
         {
+            m_LinkedItem.weak_unref (on_linked_item_destroyed);
             m_LinkedItem.unplug_property ("visible", this, "visible");
             m_LinkedItem.notify["geometry"].disconnect (update_size);
             m_LinkedItem.notify["layer"].disconnect (on_linked_item_layer_changed);
@@ -106,12 +115,21 @@ public class Maia.Arrow : Item, ItemMovable
 
         if (m_LinkedItem != null)
         {
+            m_LinkedItem.weak_ref (on_linked_item_destroyed);
+
             m_LinkedItem.plug_property ("visible", this, "visible");
             m_LinkedItem.notify["geometry"].connect (update_size);
             m_LinkedItem.notify["layer"].connect (on_linked_item_layer_changed);
 
             layer = m_LinkedItem.layer + 1;
         }
+    }
+
+    private void
+    on_linked_item_destroyed ()
+    {
+        m_LinkedItem = null;
+        parent = null;
     }
 
     private void
@@ -236,9 +254,9 @@ public class Maia.Arrow : Item, ItemMovable
                 if (m_LinkedItem == null || m_LinkedItem.geometry == null || !(new_position in m_LinkedItem.geometry))
                 {
                     start = new_position;
-                }
 
-                need_update = true;
+                    need_update = true;
+                }
             }
         }
     }

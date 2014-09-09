@@ -874,8 +874,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         // if item was moved
         if (geometry != null && parent != null && parent is DrawingArea && (m_IsMovable || m_IsResizable))
         {
+            damage ();
             geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
-            need_update = false;
+            repair ();
             damage ();
         }
         else if (geometry != null)

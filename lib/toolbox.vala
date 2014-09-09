@@ -103,12 +103,12 @@ public class Maia.Toolbox : Popup
         // accessors
         internal override GLib.Variant serialize {
             owned get {
-                return new GLib.Variant ("(susu)", m_ItemName, m_ItemType, m_ParentName, m_ParentType);
+                return new GLib.Variant ("(stst)", m_ItemName, m_ItemType, m_ParentName, m_ParentType);
             }
             set {
                 if (value != null)
                 {
-                    value.get ("(susu)", out m_ItemName, out m_ItemType, out m_ParentName, out m_ParentType);
+                    value.get ("(stst)", out m_ItemName, out m_ItemType, out m_ParentName, out m_ParentType);
                 }
             }
         }

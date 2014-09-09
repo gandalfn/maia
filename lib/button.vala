@@ -36,6 +36,8 @@ public class Maia.Button : Grid
     // properties
     private bool m_Clicked = false;
     private unowned Image? m_Icon = null;
+    private unowned Label? m_Separator = null;
+    private unowned Label? m_Label = null;
 
     // accessors
     internal override string tag {
@@ -49,36 +51,12 @@ public class Maia.Button : Grid
     /**
      * The default font description of button label
      */
-    public string font_description {
-        get {
-            unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
-            return label_item == null ? "" : label_item.font_description;
-        }
-        set {
-            unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
-            if (label_item != null)
-            {
-                label_item.font_description = value;
-            }
-        }
-    }
+    public string font_description { get;  set; default = ""; }
 
     /**
      * The label of button
      */
-    public string label {
-        get {
-            unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
-            return label_item == null ? "" : label_item.text;
-        }
-        set {
-            unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
-            if (label_item != null)
-            {
-                label_item.text = value;
-            }
-        }
-    }
+    public string label { get; set; default = ""; }
 
     /**
      * The border around label and icon
@@ -141,38 +119,47 @@ public class Maia.Button : Grid
 
         var sep_item = new Label (id_sep, "");
         sep_item.column = 1;
+        sep_item.visible = false;
         sep_item.xexpand = false;
         sep_item.xfill = false;
+        sep_item.xlimp = true;
         sep_item.yfill = false;
+        sep_item.visible = false;
         add (sep_item);
+        m_Separator = sep_item;
 
         // Create label item
         string id_label = "%s-label".printf (name);
 
         var label_item = new Label (id_label, label);
         label_item.column = 2;
-        label_item.xfill = false;
         label_item.xlimp = true;
         label_item.yfill = false;
         label_item.ylimp = true;
         label_item.visible = false;
         label_item.hide_if_empty = true;
         add (label_item);
+        m_Label = label_item;
 
         // plug properties
         plug_property("stroke-pattern", label_item, "stroke-pattern");
         plug_property("font-description", label_item, "font-description");
+        plug_property("label", label_item, "text");
         plug_property("icon-filename", icon_item, "filename");
         plug_property("icon-size", icon_item, "size");
         plug_property("border", icon_item, "top-padding");
         plug_property("border", icon_item, "left-padding");
         plug_property("border", icon_item, "right-padding");
         plug_property("border", icon_item, "bottom-padding");
+        plug_property("border", sep_item, "top-padding");
         plug_property("border", sep_item, "right-padding");
+        plug_property("border", sep_item, "bottom-padding");
         plug_property("border", label_item, "top-padding");
         plug_property("border", label_item, "right-padding");
         plug_property("border", label_item, "bottom-padding");
 
+        icon_item.button_press_event.connect (on_button_press_event);
+        sep_item.button_press_event.connect (on_button_press_event);
         label_item.button_press_event.connect (on_button_press_event);
     }
 
@@ -207,10 +194,9 @@ public class Maia.Button : Grid
         var beginColor = new Graphic.Color.shade (sensitive ? button_color : button_inactive_color ?? button_color, vb);
         var endColor = new Graphic.Color.shade (sensitive ? button_color : button_inactive_color ?? button_color, ve);
 
-        unowned Label? label_item = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
-        if (label_item != null && (label_item.shade_color == null || label_item.shade_color.compare (beginColor) != 0))
+        if (m_Label.shade_color == null || m_Label.shade_color.compare (beginColor) != 0)
         {
-            label_item.shade_color = beginColor;
+            m_Label.shade_color = beginColor;
         }
 
         var topleft = new Graphic.MeshGradient.ArcPatch (Graphic.Point (border, border),
@@ -273,6 +259,10 @@ public class Maia.Button : Grid
     size_request (Graphic.Size inSize)
     {
         m_Icon.visible = !m_Icon.size.is_empty () && m_Icon.have_image ();
+
+        m_Icon.xexpand = !m_Label.visible;
+
+        m_Separator.visible = m_Icon.visible && m_Label.visible;
 
         return base.size_request (inSize);
     }

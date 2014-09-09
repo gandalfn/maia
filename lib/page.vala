@@ -290,23 +290,27 @@ internal class Maia.Page : GLib.Object
     public void
     draw (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
-        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, "Draw page %u", num);
+        var area = inArea.copy ();
+        area.intersect (geometry);
 
-        inContext.save ();
+        if (!area.is_empty ())
         {
-            foreach (unowned Item item in m_Childs)
+            inContext.save ();
             {
-                var area = inArea.copy ();
-                area.intersect (geometry);
-                var damaged_area = m_Document.area_to_child_item_space (item, area);
+                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, "Draw page %u", num);
 
-                if (!damaged_area.is_empty ())
+                foreach (unowned Item item in m_Childs)
                 {
-                    item.draw (inContext, damaged_area);
+                    var damaged_area = m_Document.area_to_child_item_space (item, area);
+
+                    if (!damaged_area.is_empty ())
+                    {
+                        item.draw (inContext, damaged_area);
+                    }
                 }
             }
+            inContext.restore ();
         }
-        inContext.restore ();
     }
 
     public bool
