@@ -50,6 +50,8 @@ namespace Maia
         _IMPLEMENTS_INTERFACE(ItemMovable)
 
         public:
+            _WRAP_METHOD(bool get_sensitive () const, maia_toggle_get_sensitive)
+            _WRAP_METHOD(void set_sensitive (bool inSensitive = true), maia_toggle_set_sensitive)
             _WRAP_METHOD(Glib::ustring get_group () const, maia_toggle_get_group)
             _WRAP_METHOD(void set_grouo (const Glib::ustring& inGroup), maia_toggle_set_group)
             _WRAP_METHOD(Glib::ustring get_font_description () const, maia_toggle_get_font_description)
@@ -60,6 +62,8 @@ namespace Maia
             _WRAP_METHOD(void set_active (bool inActive = true), maia_toggle_set_active)
 
             _WRAP_METHOD(Glib::RefPtr<Core::Event> toggled () const, maia_toggle_get_toggled, refreturn)
+
+            _WRAP_PROPERTY("sensitive", bool)
 
             _WRAP_PROPERTY("toggled", Glib::RefPtr<Core::Event>)
 

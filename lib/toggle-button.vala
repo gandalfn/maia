@@ -36,11 +36,6 @@ public class Maia.ToggleButton : Toggle
     public double border { get; set; default = 5; }
 
     /**
-     * Indicate if the button is sensitive
-     */
-    public bool sensitive { get; set; default = true; }
-
-    /**
      * The icon filename no icon if ``null``
      */
     public string icon_filename { get; set; default = null; }

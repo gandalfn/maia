@@ -15521,6 +15521,21 @@
   )
 )
 
+(define-method get_sensitive
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_get_sensitive")
+  (return-type "gboolean")
+)
+
+(define-method set_sensitive
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_set_sensitive")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
 (define-method get_group
   (of-object "MaiaToggle")
   (c-name "maia_toggle_get_group")
@@ -15641,21 +15656,6 @@
   (return-type "none")
   (parameters
     '("gdouble" "value")
-  )
-)
-
-(define-method get_sensitive
-  (of-object "MaiaToggleButton")
-  (c-name "maia_toggle_button_get_sensitive")
-  (return-type "gboolean")
-)
-
-(define-method set_sensitive
-  (of-object "MaiaToggleButton")
-  (c-name "maia_toggle_button_set_sensitive")
-  (return-type "none")
-  (parameters
-    '("gboolean" "value")
   )
 )
 

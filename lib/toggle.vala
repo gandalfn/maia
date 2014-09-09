@@ -101,6 +101,14 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
+    /**
+     * Indicate if the button is sensitive
+     */
+    public bool sensitive { get; set; default = true; }
+
+    /**
+     * Toggle group
+     */
     [CCode (notify = false)]
     public string group {
         get {
@@ -215,7 +223,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
     protected bool
     on_button_press (uint inButton, Graphic.Point inPoint)
     {
-        if (inButton == 1)
+        if (inButton == 1 && sensitive)
         {
             grab_focus (this);
 

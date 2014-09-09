@@ -39,9 +39,6 @@ namespace Maia
                 return Glib::RefPtr<ToggleButton> (new ToggleButton (pButton));
             }
 
-            _WRAP_METHOD(bool get_sensitive () const, maia_toggle_button_get_sensitive)
-            _WRAP_METHOD(void set_sensitive (bool inSensitive = true), maia_toggle_button_set_sensitive)
-
             _WRAP_METHOD(double get_border () const, maia_toggle_button_get_border)
             _WRAP_METHOD(void set_border (double inBorder), maia_toggle_button_set_border)
             _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_button_color () const, maia_toggle_button_get_button_color, refreturn)
@@ -56,7 +53,6 @@ namespace Maia
             _WRAP_METHOD(void set_icon_filename (const Glib::ustring& inFilename), maia_toggle_button_set_icon_filename)
 
 
-            _WRAP_PROPERTY("sensitive", bool)
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("button-color", Glib::RefPtr<Graphic::Color>)
             _WRAP_PROPERTY("button-active-color", Glib::RefPtr<Graphic::Color>)

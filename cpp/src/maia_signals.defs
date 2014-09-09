@@ -3792,6 +3792,15 @@
   (construct-only #f)
 )
 
+(define-property sensitive
+  (of-object "MaiaToggle")
+  (prop-type "GParamBoolean")
+  (docs "sensitive")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property group
   (of-object "MaiaToggle")
   (prop-type "GParamString")
@@ -3946,15 +3955,6 @@
   (of-object "MaiaToggleButton")
   (prop-type "GParamDouble")
   (docs "border")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
-(define-property sensitive
-  (of-object "MaiaToggleButton")
-  (prop-type "GParamBoolean")
-  (docs "sensitive")
   (readable #t)
   (writable #t)
   (construct-only #f)
