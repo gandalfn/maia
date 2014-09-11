@@ -4951,6 +4951,15 @@
   )
 )
 
+(define-method is_plugged_property
+  (of-object "MaiaCoreObject")
+  (c-name "maia_core_object_is_plugged_property")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "inProperty")
+  )
+)
+
 (define-method plug_property
   (of-object "MaiaCoreObject")
   (c-name "maia_core_object_plug_property")

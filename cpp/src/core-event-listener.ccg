@@ -29,19 +29,48 @@ namespace Maia
 {
     namespace Core
     {
-        static void* _on_listener_destroy_notify (gpointer inpData)
-        {
-            g_object_unref (G_OBJECT (inpData));
-
-            return 0;
-        }
-        
         static void _on_callback (MaiaCoreEventArgs* inpArgs, gpointer inpData)
         {
             EventListenerFunctorBase* pFunctor = (EventListenerFunctorBase*)g_object_get_data (G_OBJECT (inpData), "EventListenerCpp");
             Glib::RefPtr<EventArgs> pArgs = Glib::wrap(inpArgs, true);
 
             (*pFunctor)(pArgs);
+        }
+
+        void* EventListener::_on_gobject_child_destroy_notify (gpointer inpData)
+        {
+            EventListener* pListener = (EventListener*)inpData;
+            pListener->m_pClient = nullptr;
+            pListener->unparent ();
+
+            return 0;
+        }
+
+        EventListener::EventListener(const Glib::ConstructParams& construct_params) :
+            Object(construct_params),
+            m_pClient (0)
+        {
+        }
+
+        EventListener::EventListener(MaiaCoreEventListener* castitem) :
+            Object((MaiaCoreObject*)(castitem)),
+            m_pClient (0)
+        {
+        }
+
+        EventListener::~EventListener ()
+        {
+            if (m_pClient)
+            {
+                m_pClient->remove_destroy_notify_callback (this);
+            }
+        }
+
+        void
+        EventListener::add_gobject_watch (Glib::Object* inpObject)
+        {
+            m_pClient = inpObject;
+            inpObject->add_destroy_notify_callback (this, _on_gobject_child_destroy_notify);
         }
 
         Glib::RefPtr<EventListener>
@@ -51,8 +80,7 @@ namespace Maia
 
             MaiaCoreEventListener* pListener = maia_core_event_listener_new_object (const_cast<MaiaCoreEvent*>(inpEvent->gobj ()), _on_callback, inpFunctor->gobj ());
             Glib::RefPtr<EventListener> pCppListener = Glib::RefPtr<EventListener> (new EventListener (pListener));
-
-            pCppListener->add_destroy_notify_callback (inpFunctor->gobj (), _on_listener_destroy_notify);
+            pCppListener->m_pFunctor = inpFunctor;
 
             return pCppListener;
         }
@@ -64,8 +92,7 @@ namespace Maia
 
             MaiaCoreEventListener* pListener = maia_core_event_listener_new_object (const_cast<MaiaCoreEvent*>(inpEvent->gobj ()), _on_callback, inpFunctor->gobj ());
             Glib::RefPtr<EventListener> pCppListener = Glib::RefPtr<EventListener> (new EventListener (pListener));
-
-            pCppListener->add_destroy_notify_callback (inpFunctor->gobj (), _on_listener_destroy_notify);
+            pCppListener->m_pFunctor = inpFunctor;
 
             return pCppListener;
         }

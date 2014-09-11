@@ -62,13 +62,28 @@ namespace Maia
                 }
 
                 _IGNORE(maia_core_event_subscribe, maia_core_event_object_subscribe)
-                template <class T_obj>
-                Glib::RefPtr<EventListener>
+                template <typename T_obj>
+                typename std::enable_if<!std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<EventListener>>::type
                 subscribe (T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
                 {
                     Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerFunctor<T_obj>::create (pObj, pFunc);
 
                     Glib::RefPtr<EventListener> pListener = EventListener::create (this, pFunctor);
+
+                    get_bus ()->subscribe (pListener);
+
+                    return pListener;
+                }
+
+                template <typename T_obj>
+                typename std::enable_if<std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<EventListener>>::type
+                subscribe (T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
+                {
+                    Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerFunctor<T_obj>::create (pObj, pFunc);
+
+                    Glib::RefPtr<EventListener> pListener = EventListener::create (this, pFunctor);
+
+                    pListener->add_gobject_watch (pObj);
 
                     get_bus ()->subscribe (pListener);
 

@@ -348,9 +348,13 @@ public class Maia.Document : Item
                 foreach (unowned Core.Object child in inGrid)
                 {
                     unowned Grid? grid = child as Grid;
-                    if (grid != null && grid.visible)
+                    if (grid != null && grid.row == row && grid.visible)
                     {
                         paginate_grid (inRoot, grid, ref inoutPage, ref inoutCurrentPosition);
+                    }
+                    else if (grid.row > row)
+                    {
+                        break;
                     }
                 }
             }

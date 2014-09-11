@@ -69,7 +69,8 @@ public interface Maia.Manifest.Element : Core.Object
     public unowned Element? root {
         get {
             unowned Core.Object? ret = this;
-            while ((ret.parent != null && ret.parent is Element) || ret.get_qdata<Element?> (s_InternalParent) != null)
+            while ((ret.parent != null && ret.parent is Element && ret.parent.get_qdata<void*> (Item.s_CanvasWindow) == null) ||
+                   ret.get_qdata<Element?> (s_InternalParent) != null)
             {
                 unowned Element? internal_parent = ret.get_qdata<Element?> (s_InternalParent);
                 if (internal_parent != null)

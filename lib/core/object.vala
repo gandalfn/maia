@@ -55,7 +55,11 @@ public abstract class Maia.Core.Object : Any
         public Hash            m_Hash;
         public GLib.Value      m_Value;
         public bool            m_Locked = false;
-        private bool           m_WeakRef = true;
+
+        static construct
+        {
+            s_QuarkPluggedProperty = GLib.Quark.from_string ("MaiaCoreObjectPluggedProperty");
+        }
 
         public PlugProperty (Object inSrc, string inSrcProperty, Object inDst, string inDstProperty)
         {
@@ -80,6 +84,17 @@ public abstract class Maia.Core.Object : Any
 
                         // Set initial value
                         on_src_property_changed ();
+
+                        // Update plugged property
+                        unowned Set<string>? plugged_properties = m_Hash.m_Dst.get_qdata<unowned Set<string>> (s_QuarkPluggedProperty);
+                        if (plugged_properties == null)
+                        {
+                            var new_plugged_properties = new Core.Set<string> ();
+                            m_Hash.m_Dst.set_qdata<Set<string>> (s_QuarkPluggedProperty, new_plugged_properties);
+                            plugged_properties = new_plugged_properties;
+                        }
+
+                        plugged_properties.insert (m_Hash.m_DstProperty);
                     }
                     else
                     {
@@ -99,17 +114,22 @@ public abstract class Maia.Core.Object : Any
 
         ~PlugProperty ()
         {
-            m_Src.notify[m_Hash.m_SrcProperty].disconnect (on_src_property_changed);
-            if (m_WeakRef)
+            if (m_Hash.m_Dst != null)
             {
+                unowned Set<string>? plugged_properties = m_Hash.m_Dst.get_qdata<unowned Set<string>> (s_QuarkPluggedProperty);
+                if (plugged_properties != null)
+                {
+                    plugged_properties.remove (m_Hash.m_DstProperty);
+                }
                 m_Hash.m_Dst.weak_unref (on_dest_destroyed);
             }
+            m_Src.notify[m_Hash.m_SrcProperty].disconnect (on_src_property_changed);
         }
 
         private void
         on_dest_destroyed ()
         {
-            m_WeakRef = false;
+            m_Hash.m_Dst = null;
             m_Src.m_Plugs.remove (this);
         }
 
@@ -190,6 +210,9 @@ public abstract class Maia.Core.Object : Any
             return m_Current == null;
         }
     }
+
+    // static properties
+    private static GLib.Quark s_QuarkPluggedProperty;
 
     // Properties
     private unowned Object?        m_Parent;
@@ -633,6 +656,27 @@ public abstract class Maia.Core.Object : Any
         }
 
         return list;
+    }
+
+    /**
+     * Property is plugged on src object
+     *
+     * @param inProperty property name to check if is plugged
+     *
+     * @return ``true`` if property is updated from an another object
+     */
+    public bool
+    is_plugged_property (string inProperty)
+    {
+        bool ret = false;
+
+        unowned Set<string>? plugged_properties = get_qdata<unowned Set<string>> (s_QuarkPluggedProperty);
+        if (plugged_properties != null)
+        {
+            return inProperty in plugged_properties;
+        }
+
+        return ret;
     }
 
     /**

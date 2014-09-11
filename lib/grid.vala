@@ -793,8 +793,8 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         {
             foreach (unowned Document.PageBreak page_break in page_breaks)
             {
-                var start = convert_to_item_space (Graphic.Point (0, page_break.start));
-                var end = convert_to_item_space (Graphic.Point (0, page_break.end));
+                var start = convert_from_window_space (Graphic.Point (0, page_break.start));
+                var end = convert_from_window_space (Graphic.Point (0, page_break.end));
 
                 ret = end.y - start.y;
             }
