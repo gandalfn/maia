@@ -64,6 +64,11 @@ public class Maia.Manifest.Style : Core.Object, Element
     public string match_name { get; set; default = null; }
 
     // methods
+    construct
+    {
+        not_dumpable_attributes.insert ("name");
+    }
+
     public Style (string inName)
     {
         GLib.Object (id: GLib.Quark.from_string (inName));
@@ -135,6 +140,35 @@ public class Maia.Manifest.Style : Core.Object, Element
     compare (Core.Object inOther)
     {
         return 0;
+    }
+
+    internal string
+    dump_childs (string inPrefix)
+    {
+        string ret = "";
+
+        // dump all properties
+        foreach (unowned Core.Object child in this)
+        {
+            unowned Property? property = child as Property;
+            if (property != null)
+            {
+                try
+                {
+                    string val = (string)property.scanner.transform (typeof (string));
+                    if (val != null)
+                    {
+                        ret += inPrefix + "%s: %s;\n".printf (property.name, val);
+                    }
+                }
+                catch (GLib.Error err)
+                {
+                    Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING, @"Error on parse object attribute $(property.name): $(err.message)");
+                }
+            }
+        }
+
+        return ret;
     }
 
     public bool

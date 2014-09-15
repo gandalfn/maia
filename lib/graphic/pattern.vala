@@ -151,7 +151,7 @@ public abstract class Maia.Graphic.Pattern : Core.Object
     {
         unowned Pattern? val = (Pattern)inSrc;
 
-        outDest = val.to_string ();
+        outDest = val == null ? null : val.to_string ();
     }
 
     static void

@@ -145,10 +145,12 @@ public interface Maia.Manifest.Element : Core.Object
                 node = create.func (inId);
 
                 // Add tag and characters in not dumpable attributes
+                node.not_dumpable_attributes.insert ("parent");
                 node.not_dumpable_attributes.insert ("tag");
                 node.not_dumpable_attributes.insert ("characters");
                 node.not_dumpable_attributes.insert ("manifest-path");
                 node.not_dumpable_attributes.insert ("manifest-styles");
+                node.not_dumpable_attributes.insert ("manifest-theme");
             }
         }
 
@@ -205,7 +207,7 @@ public interface Maia.Manifest.Element : Core.Object
 
             // We found property which correspond to attribute name convert it to
             // string format
-            if (param != null)
+            if (param != null && !is_plugged_property (param.name))
             {
                 GLib.Value val = GLib.Value (param.value_type);
 

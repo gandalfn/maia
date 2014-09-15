@@ -54,6 +54,11 @@ public class Maia.Manifest.Theme : Core.Object, Element
     }
 
     // methods
+    construct
+    {
+        not_dumpable_attributes.insert ("name");
+    }
+
     public Theme (string inName)
     {
         GLib.Object (id: GLib.Quark.from_string (inName));
@@ -131,7 +136,7 @@ public class Maia.Manifest.Theme : Core.Object, Element
                         {
                             unowned Core.Set<string>? attributes_set = inElement.get_qdata<unowned Core.Set<string>> (Element.s_AttributeSetQuark);
 
-                            if (attributes_set != null && property.name in attributes_set)
+                            if ((attributes_set != null && property.name in attributes_set) || inElement.is_plugged_property (property.name))
                                 continue;
 
                             inElement.set_attribute (property.name, property.scanner);

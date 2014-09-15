@@ -186,17 +186,16 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
     {
         stroke_pattern = new Graphic.Color (0, 0, 0);
 
-        not_dumpable_attributes.insert ("size");
-
         toggled = new Core.Event ("toggled", this);
 
         string id_label = "%s-label".printf (name);
 
         var label_item = new Label (id_label, label);
-        add (label_item);
         m_Label = label_item;
 
         plug_property ("stroke-pattern", m_Label, "stroke-pattern");
+
+        add (label_item);
 
         label_item.button_press_event.connect (on_button_press);
 

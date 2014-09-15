@@ -112,7 +112,6 @@ public class Maia.Button : Grid
         icon_item.xexpand = false;
         icon_item.yfill = false;
         icon_item.ylimp = true;
-        add (icon_item);
         m_Icon = icon_item;
 
         string id_sep = "%s-separator".printf (name);
@@ -125,7 +124,6 @@ public class Maia.Button : Grid
         sep_item.xlimp = true;
         sep_item.yfill = false;
         sep_item.visible = false;
-        add (sep_item);
         m_Separator = sep_item;
 
         // Create label item
@@ -138,7 +136,6 @@ public class Maia.Button : Grid
         label_item.ylimp = true;
         label_item.visible = false;
         label_item.hide_if_empty = true;
-        add (label_item);
         m_Label = label_item;
 
         // plug properties
@@ -157,6 +154,10 @@ public class Maia.Button : Grid
         plug_property("border", label_item, "top-padding");
         plug_property("border", label_item, "right-padding");
         plug_property("border", label_item, "bottom-padding");
+
+        add (icon_item);
+        add (sep_item);
+        add (label_item);
 
         icon_item.button_press_event.connect (on_button_press_event);
         sep_item.button_press_event.connect (on_button_press_event);

@@ -70,7 +70,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     /**
      * The font description of label
      */
-    public string                      font_description { get; set; default = ""; }
+    public string                      font_description { get; set; default = "Sans 12"; }
 
     /**
      * Alignment of label ``left``, ``center`` or ``right``, default was ``center``
@@ -178,13 +178,8 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     // methods
     construct
     {
-        not_dumpable_attributes.insert ("size");
-
         // Default color
         stroke_pattern = new Graphic.Color (0, 0, 0);
-
-        // Default font
-        font_description = "Sans 12";
 
         // connect onto layout properties changed
         notify["window"].connect (on_window_changed);

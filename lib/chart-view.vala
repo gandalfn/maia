@@ -512,11 +512,28 @@ public class Maia.ChartView : Group, ItemPackable
 
         // Connect onto legend changed
         notify["legend"].connect (on_legend_changed);
+
+        // Connect onto size to set if size can be dumpable
+        notify["size"].connect (on_size_changed);
     }
 
     public ChartView (string inId, string inTitle)
     {
         GLib.Object (id: GLib.Quark.from_string (inId), title: inTitle);
+    }
+
+    private void
+    on_size_changed ()
+    {
+        // Add property in manifest dump if size is not empty
+        if (!size.is_empty ())
+        {
+            not_dumpable_attributes.remove ("size");
+        }
+        else
+        {
+            not_dumpable_attributes.insert ("size");
+        }
     }
 
     private void
@@ -1355,6 +1372,14 @@ public class Maia.ChartView : Group, ItemPackable
     {
         string ret = "";
 
+        // dump theme if any
+        bool theme_dump = manifest_theme != null && !manifest_theme.get_qdata<bool> (Item.s_ThemeDumpQuark) && (parent == null || (parent as Manifest.Element).manifest_theme != manifest_theme);
+        if (theme_dump)
+        {
+            ret += inPrefix + manifest_theme.dump (inPrefix) + "\n";
+            manifest_theme.set_qdata<bool> (Item.s_ThemeDumpQuark, theme_dump);
+        }
+
         // dump shortcuts and toolbox
         foreach (unowned Core.Object child in this)
         {
@@ -1362,6 +1387,11 @@ public class Maia.ChartView : Group, ItemPackable
             {
                 ret += inPrefix + (child as Manifest.Element).dump (inPrefix) + "\n";
             }
+        }
+
+        if (theme_dump)
+        {
+            manifest_theme.set_qdata<bool> (Item.s_ThemeDumpQuark, false);
         }
 
         return ret;

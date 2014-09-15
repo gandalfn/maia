@@ -60,7 +60,6 @@ public class Maia.PopupButton : ToggleButton
         m_Popup = new Popup (@"$name-popup");
         m_Popup.visible = false;
         m_Popup.placement = PopupPlacement.ABSOLUTE;
-        m_Popup.parent = this;
 
         // connect onto visible changed
         m_Popup.notify["visible"].connect (on_popup_visible_changed);
@@ -98,6 +97,8 @@ public class Maia.PopupButton : ToggleButton
 
         // plug close button property to window
         plug_property ("close-button", m_Popup, "close-button");
+
+        m_Popup.parent = this;
     }
 
     public PopupButton (string inId, string inLabel)

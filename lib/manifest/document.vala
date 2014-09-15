@@ -396,6 +396,7 @@ public class Maia.Manifest.Document : Core.Parser
                     Element? ret = Element.create (element_tag, element_id);
                     if (ret != null)
                     {
+                        ret.manifest_theme = theme;
                         ret.read_manifest (this);
                     }
 

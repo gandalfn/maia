@@ -493,6 +493,14 @@ public class Maia.DocumentView : Group
     {
         string ret = "";
 
+        // dump theme if any
+        bool theme_dump = manifest_theme != null && !manifest_theme.get_qdata<bool> (Item.s_ThemeDumpQuark) && (parent == null || (parent as Manifest.Element).manifest_theme != manifest_theme);
+        if (theme_dump)
+        {
+            ret += inPrefix + manifest_theme.dump (inPrefix) + "\n";
+            manifest_theme.set_qdata<bool> (Item.s_ThemeDumpQuark, theme_dump);
+        }
+
         // dump shortcuts and toolbox
         foreach (unowned Core.Object child in this)
         {
@@ -506,6 +514,11 @@ public class Maia.DocumentView : Group
         if (m_Document != null)
         {
             ret += inPrefix + m_Document.dump (inPrefix) + "\n";
+        }
+
+        if (theme_dump)
+        {
+            manifest_theme.set_qdata<bool> (Item.s_ThemeDumpQuark, false);
         }
 
         return ret;

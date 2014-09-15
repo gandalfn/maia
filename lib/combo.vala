@@ -151,7 +151,6 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         // Add not dumpable attributes
         not_dumpable_attributes.insert ("popup-progress");
         not_dumpable_attributes.insert ("view");
-        not_dumpable_attributes.insert ("size");
 
         have_focus = false;
 
@@ -160,10 +159,9 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
 
         // Create arrow
         string id_arrow = "%s-arrow".printf (name);
-        var arrow_item = new Path (id_arrow, "");
-        add (arrow_item);
-
+        var arrow_item = new Path (id_arrow, "");        
         plug_property ("stroke-pattern", arrow_item, "fill-pattern");
+        add (arrow_item);
 
         arrow_item.button_press_event.connect (on_button_press);
 
@@ -182,9 +180,9 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         m_Popup.round_corner = 3;
         m_Popup.placement = PopupPlacement.TOP;
 
-        add (m_Popup);
-
         plug_property ("fill-pattern", m_Popup, "background-pattern");
+
+        add (m_Popup);
     }
 
     public Combo (string inId)

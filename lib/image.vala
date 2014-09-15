@@ -66,11 +66,26 @@ public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
     construct
     {
         notify["filename"].connect  (on_filename_changed);
+        notify["size"].connect (on_size_changed);
     }
 
     public Image (string inId, string? inFilename)
     {
         GLib.Object (id: GLib.Quark.from_string (inId), filename: inFilename);
+    }
+
+    private void
+    on_size_changed ()
+    {
+        // Add property in manifest dump if size is not empty
+        if (!size.is_empty ())
+        {
+            not_dumpable_attributes.remove ("size");
+        }
+        else
+        {
+            not_dumpable_attributes.insert ("size");
+        }
     }
 
     private void
@@ -112,7 +127,9 @@ public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
 
         if (m_Image != null)
         {
+            notify["size"].disconnect (on_size_changed);
             size = m_Image.size;
+            notify["size"].connect (on_size_changed);
         }
 
         return base.size_request (inSize);

@@ -773,11 +773,6 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
     public double grid_line_width   { get; set; default = 0; }
 
     // methods
-    construct
-    {
-        not_dumpable_attributes.insert ("size");
-    }
-
     public Grid (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));

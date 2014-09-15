@@ -66,8 +66,6 @@ public class Maia.Arrow : Item, ItemMovable
     construct
     {
         // Add not dumpable attributes
-        not_dumpable_attributes.insert ("position");
-        not_dumpable_attributes.insert ("size");
         not_dumpable_attributes.insert ("end");
 
         // Set default stroke color

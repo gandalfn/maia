@@ -76,9 +76,13 @@ public class Maia.Manifest.Attribute : Core.Object
             register_transform_func (typeof (Orientation),      attribute_to_orientation);
             register_transform_func (typeof (Graphic.LineType), attributes_to_line_type);
 
-            GLib.Value.register_transform_func (typeof (bool), typeof (string), bool_to_string);
-            GLib.Value.register_transform_func (typeof (double), typeof (string), double_to_string);
-            GLib.Value.register_transform_func (typeof (Orientation), typeof (string), orientation_to_string);
+            GLib.Value.register_transform_func (typeof (bool),             typeof (string), bool_to_string);
+            GLib.Value.register_transform_func (typeof (int),              typeof (string), int_to_string);
+            GLib.Value.register_transform_func (typeof (uint),             typeof (string), uint_to_string);
+            GLib.Value.register_transform_func (typeof (long),             typeof (string), long_to_string);
+            GLib.Value.register_transform_func (typeof (ulong),            typeof (string), ulong_to_string);
+            GLib.Value.register_transform_func (typeof (double),           typeof (string), double_to_string);
+            GLib.Value.register_transform_func (typeof (Orientation),      typeof (string), orientation_to_string);
             GLib.Value.register_transform_func (typeof (Graphic.LineType), typeof (string), line_type_to_string);
 
             s_SimpleTypeRegistered = true;
@@ -175,6 +179,42 @@ public class Maia.Manifest.Attribute : Core.Object
         requires (inSrc.holds (typeof (bool)))
     {
         bool val = (bool)inSrc;
+
+        outDest = val.to_string ();
+    }
+
+    private static void
+    int_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (int)))
+    {
+        int val = (int)inSrc;
+
+        outDest = val.to_string ();
+    }
+
+    private static void
+    uint_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (uint)))
+    {
+        uint val = (uint)inSrc;
+
+        outDest = val.to_string ();
+    }
+
+    private static void
+    long_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (long)))
+    {
+        long val = (long)inSrc;
+
+        outDest = val.to_string ();
+    }
+
+    private static void
+    ulong_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (ulong)))
+    {
+        ulong val = (ulong)inSrc;
 
         outDest = val.to_string ();
     }

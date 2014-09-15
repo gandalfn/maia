@@ -25,6 +25,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     internal static GLib.Quark s_CanvasWindow;
     internal static GLib.Quark s_PopupWindow;
     internal static GLib.Quark s_CountHide;
+    internal static GLib.Quark s_ThemeDumpQuark;
 
     // class properties
     internal class uint mc_IdButtonPressEvent;
@@ -446,6 +447,15 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                     on_move ();
                 }
 
+                if (m_Position.x == 0 && m_Position.y == 0)
+                {
+                    not_dumpable_attributes.insert ("position");
+                }
+                else
+                {
+                    not_dumpable_attributes.remove ("position");
+                }
+
                 GLib.Signal.emit_by_name (this, "notify::position");
             }
         }
@@ -486,16 +496,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
                 // Mark size needs to be recalculated on next get
                 need_update = true;
-
-                // Hide property in manifest dump if size is empty
-                if (!m_Size.is_empty ())
-                {
-                    not_dumpable_attributes.remove ("size");
-                }
-                else
-                {
-                    not_dumpable_attributes.insert ("size");
-                }
 
                 // Call resize
                 if (!m_BlockOnMoveResize)
@@ -579,7 +579,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         get {
             unowned Window? ret = window;
 
-            while (ret.window != null)
+            while (ret != null && ret.window != null)
             {
                 if (ret.get_qdata<unowned Window?> (s_CanvasWindow) == ret.window)
                     break;
@@ -662,7 +662,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         s_MainWindow        = GLib.Quark.from_string ("MaiaMainWindow");
         s_CanvasWindow      = GLib.Quark.from_string ("MaiaCanvasWindow");
         s_PopupWindow       = GLib.Quark.from_string ("MaiaPopupWindow");
-
+        s_ThemeDumpQuark    = GLib.Quark.from_string ("MaiaItemThemeDumped");
+        
         // register attribute bind
         Manifest.AttributeBind.register_transform_func (typeof (Item), "width", attribute_bind_width);
         Manifest.AttributeBind.register_transform_func (typeof (Item), "height", attribute_bind_height);
@@ -884,23 +885,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         else if (geometry != null)
         {
             need_update = true;
-        }
-    }
-
-    private void
-    on_transform_changed ()
-    {
-        need_update = true;
-        geometry = null;
-
-        // Do not dump transform if is identity
-        if (!transform.matrix.is_identity ())
-        {
-            not_dumpable_attributes.remove ("transform");
-        }
-        else
-        {
-            not_dumpable_attributes.insert ("transform");
         }
     }
 
@@ -1163,6 +1147,23 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     on_child_need_update_changed (GLib.Object inObject, GLib.ParamSpec? inProperty)
     {
         on_child_need_update (inObject as Item);
+    }
+
+    protected virtual void
+    on_transform_changed ()
+    {
+        need_update = true;
+        geometry = null;
+
+        // Do not dump transform if is identity
+        if (!transform.matrix.is_identity ())
+        {
+            not_dumpable_attributes.remove ("transform");
+        }
+        else
+        {
+            not_dumpable_attributes.insert ("transform");
+        }
     }
 
     protected virtual void
@@ -1437,7 +1438,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
 
             // damage item
+            damage.disconnect (on_damage);
             damage (damaged_area);
+            damage.connect (on_damage);
         }
     }
 
@@ -1764,6 +1767,14 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         string ret = "";
 
+        // dump theme if any
+        bool theme_dump = manifest_theme != null && !manifest_theme.get_qdata<bool> (s_ThemeDumpQuark) && (parent == null || (parent as Manifest.Element).manifest_theme != manifest_theme);
+        if (theme_dump)
+        {
+            ret += inPrefix + manifest_theme.dump (inPrefix) + "\n";
+            manifest_theme.set_qdata<bool> (s_ThemeDumpQuark, theme_dump);
+        }
+
         // dump childs
         foreach (unowned Core.Object child in this)
         {
@@ -1771,6 +1782,11 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             {
                 ret += inPrefix + (child as Manifest.Element).dump (inPrefix) + "\n";
             }
+        }
+
+        if (theme_dump)
+        {
+            manifest_theme.set_qdata<bool> (s_ThemeDumpQuark, false);
         }
 
         return ret;

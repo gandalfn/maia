@@ -1234,6 +1234,15 @@
   (construct-only #f)
 )
 
+(define-property line-pattern
+  (of-object "MaiaCheckButton")
+  (prop-type "GParamObject")
+  (docs "line-pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaCursor
 
 ;; From MaiaDocument

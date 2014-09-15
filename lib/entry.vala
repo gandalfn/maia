@@ -208,7 +208,6 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     // methods
     construct
     {
-        not_dumpable_attributes.insert ("size");
         not_dumpable_attributes.insert ("changed");
 
         stroke_pattern = new Graphic.Color (0, 0, 0);

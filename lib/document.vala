@@ -116,7 +116,6 @@ public class Maia.Document : Item
         not_dumpable_attributes.insert ("current-page");
         not_dumpable_attributes.insert ("nb-pages");
         not_dumpable_attributes.insert ("item-over-pointer");
-        not_dumpable_attributes.insert ("size");
 
         // create pages list
         m_Pages = new Core.List<Page> ();
@@ -480,6 +479,13 @@ public class Maia.Document : Item
         }
     }
 
+    internal override void
+    on_transform_changed ()
+    {
+        need_update = true;
+        geometry = null;
+    }
+
     internal void
     on_attribute_bind_added (Manifest.AttributeBind inAttribute, string inProperty)
     {
@@ -523,7 +529,7 @@ public class Maia.Document : Item
 
             if (item != null)
             {
-                bool is_header_footer = item.get_qdata (s_HeaderFooterQuark) || item.name == header || item.name == footer;
+                bool is_header_footer = item.get_qdata<bool> (s_HeaderFooterQuark) || item.name == header || item.name == footer;
                 if (!is_header_footer)
                 {
                     m_Items.insert (item);
@@ -539,7 +545,7 @@ public class Maia.Document : Item
 
         if (item != null && m_Items != null)
         {
-            bool is_header_footer = item.get_qdata (s_HeaderFooterQuark) || item.name == header || item.name == footer;
+            bool is_header_footer = item.get_qdata<bool> (s_HeaderFooterQuark) || item.name == header || item.name == footer;
             if (!is_header_footer)
             {
                 m_Items.remove (item);
@@ -743,12 +749,25 @@ public class Maia.Document : Item
     {
         string ret = "";
 
+        // dump theme if any
+        bool theme_dump = manifest_theme != null && !manifest_theme.get_qdata<bool> (Item.s_ThemeDumpQuark) && (parent == null || (parent as Manifest.Element).manifest_theme != manifest_theme);
+        if (theme_dump)
+        {
+            ret += inPrefix + manifest_theme.dump (inPrefix) + "\n";
+            manifest_theme.set_qdata<bool> (Item.s_ThemeDumpQuark, theme_dump);
+        }
+
         // dump all others childs
         foreach (unowned Core.Object child in this)
         {
-            if (child is Manifest.Element && !(child is Item))
+            if (child is Manifest.Element)
             {
-                ret += inPrefix + (child as Manifest.Element).dump (inPrefix) + "\n";
+                unowned Item item = child as Item;
+
+                if (item == null || (!item.get_qdata<bool> (s_HeaderFooterQuark) && (item.name == header || item.name == footer)))
+                {
+                    ret += inPrefix + (child as Manifest.Element).dump (inPrefix) + "\n";
+                }
             }
         }
 
@@ -756,6 +775,11 @@ public class Maia.Document : Item
         foreach (unowned Item item in m_Items)
         {
             ret += inPrefix + item.dump (inPrefix) + "\n";
+        }
+
+        if (theme_dump)
+        {
+            manifest_theme.set_qdata<bool> (Item.s_ThemeDumpQuark, false);
         }
 
         return ret;

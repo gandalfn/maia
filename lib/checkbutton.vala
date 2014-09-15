@@ -30,6 +30,7 @@ public class Maia.CheckButton : Toggle
     }
 
     public double spacing { get; set; default = 5; }
+    public Graphic.Pattern line_pattern { get; set; default = new Graphic.Color (0, 0, 0); }
 
     // methods
     construct
@@ -100,7 +101,7 @@ public class Maia.CheckButton : Toggle
                 path.curve_to (0.5 + (size.height * 0.4), (size.height * 0.7),
                                0.5 + (size.height * 0.5), (size.height * 0.4),
                                0.5 + (size.height * 0.70), (size.height * 0.05));
-                inContext.pattern = stroke_pattern;
+                inContext.pattern = line_pattern;
                 inContext.stroke (path);
             }
         }

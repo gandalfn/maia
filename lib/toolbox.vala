@@ -258,9 +258,22 @@ public class Maia.Toolbox : Popup
     {
         string ret = "";
 
+        // dump theme if any
+        bool theme_dump = manifest_theme != null && !manifest_theme.get_qdata<bool> (Item.s_ThemeDumpQuark) && (parent == null || (parent as Manifest.Element).manifest_theme != manifest_theme);
+        if (theme_dump)
+        {
+            ret += inPrefix + manifest_theme.dump (inPrefix) + "\n";
+            manifest_theme.set_qdata<bool> (Item.s_ThemeDumpQuark, theme_dump);
+        }
+
         if (content != null)
         {
             ret += (content as Item).dump_childs (inPrefix);
+        }
+
+        if (theme_dump)
+        {
+            manifest_theme.set_qdata<bool> (Item.s_ThemeDumpQuark, false);
         }
 
         return ret;

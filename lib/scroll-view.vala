@@ -142,7 +142,6 @@ public class Maia.ScrollView : Item
         m_Viewport.shadow_border = Window.Border.NONE;
         m_Viewport.scroll_event.connect (on_viewport_scroll_event);
         m_Viewport.transform = m_ViewportTransform;
-        m_Viewport.parent = this;
 
         if (m_Child != null)
         {
@@ -154,6 +153,8 @@ public class Maia.ScrollView : Item
         plug_property("background-pattern", m_Viewport, "background-pattern");
         plug_property("visible", m_Viewport, "visible");
         plug_property("need-update", m_Viewport, "need-update");
+
+        m_Viewport.parent = this;
     }
 
     public ScrollView (string inId)
@@ -548,9 +549,22 @@ public class Maia.ScrollView : Item
     {
         string ret = "";
 
+        // dump theme if any
+        bool theme_dump = manifest_theme != null && !manifest_theme.get_qdata<bool> (Item.s_ThemeDumpQuark) && (parent == null || (parent as Manifest.Element).manifest_theme != manifest_theme);
+        if (theme_dump)
+        {
+            ret += inPrefix + manifest_theme.dump (inPrefix) + "\n";
+            manifest_theme.set_qdata<bool> (Item.s_ThemeDumpQuark, theme_dump);
+        }
+
         if (m_Child != null)
         {
             ret += inPrefix + m_Child.dump (inPrefix) + "\n";
+        }
+
+        if (theme_dump)
+        {
+            manifest_theme.set_qdata<bool> (Item.s_ThemeDumpQuark, false);
         }
 
         return ret;
