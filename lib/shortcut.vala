@@ -40,4 +40,11 @@ public class Maia.Shortcut : Core.Object, Manifest.Element
      * The shortcut label
      */
     public string label   { get; set; default = null; }
+
+    // methods
+    internal override int
+    compare (Core.Object inOther)
+    {
+        return 0;
+    }
 }
