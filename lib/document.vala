@@ -375,8 +375,9 @@ public class Maia.Document : Item
         // Check if item size + current position does not overlap two page
         var page_content = page.content_geometry;
 
-        // If does not are on first page and item does not fit in end of page add a page
-        if (page.num > 1 && inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
+        // If an item has already added on first page and item does not fit in end of page add a page
+        if ((inoutCurrentPosition.y > page_content.extents.origin.y || page.num > 1) &&
+            inoutCurrentPosition.y + item_size.height > page_content.extents.origin.y + page_content.extents.size.height)
         {
             // Item can be added in new page
             append_page  ();
@@ -386,6 +387,9 @@ public class Maia.Document : Item
 
             // Update current position
             inoutCurrentPosition = page.content_geometry.extents.origin;
+
+            // get page content geometry
+            page_content = page.content_geometry;
         }
 
         // Item do not fit in page try to split child
