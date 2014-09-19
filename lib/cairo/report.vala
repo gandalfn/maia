@@ -54,6 +54,9 @@ internal class Maia.Cairo.Report : Maia.Report
             // repair all document to force damage on save
             document.repair ();
 
+            // Update document geometry
+            document.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, doc_size.width, doc_size.height)));
+
             // Count nb pages
             nb_pages += document.nb_pages;
         }
@@ -81,8 +84,6 @@ internal class Maia.Cairo.Report : Maia.Report
                 {
                     return;
                 }
-                document.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, doc_size.width, doc_size.height)));
-                document.damage_area ();
                 document.draw_page (ctx, cpt + 1);
                 pdf_surface.show_page ();
                 pdf_surface.flush ();

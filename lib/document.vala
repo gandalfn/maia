@@ -804,6 +804,11 @@ public class Maia.Document : Item
             {
                 if (page.num == inPageNum)
                 {
+                    foreach (unowned Item? child in page.childs)
+                    {
+                        child.damage_area ();
+                    }
+
                     inContext.save ();
                     {
                         inContext.translate (page.geometry.extents.origin.invert ());

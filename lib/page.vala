@@ -193,6 +193,12 @@ internal class Maia.Page : GLib.Object
         }
     }
 
+    internal Core.List<unowned Item> childs {
+        get {
+            return m_Childs;
+        }
+    }
+
     // methods
     public Page (Document inDocument, uint inPageNum)
     {
