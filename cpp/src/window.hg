@@ -44,10 +44,11 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
-#m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3, true)')
-#m4 _CONVERSION(`MaiaCoreEventArgs*', `const Glib::RefPtr<EventArgs>&', `Glib::wrap($3, true)')
             _WRAP_VFUNC(Glib::RefPtr<Graphic::Surface> get_surface (), get_surface, refreturn_ctype)
 
+#m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaCoreEvent*', `const Glib::RefPtr<Event>&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaCoreEventArgs*', `const Glib::RefPtr<EventArgs>&', `Glib::wrap($3, true)')
             _WRAP_VFUNC(void on_damage_event(const Glib::RefPtr<Core::EventArgs>& inArgs), on_damage_event)
             _WRAP_VFUNC(void on_delete_event(const Glib::RefPtr<Core::EventArgs>& inArgs), on_delete_event)
             _WRAP_VFUNC(void on_destroy_event(const Glib::RefPtr<Core::EventArgs>& inArgs), on_destroy_event)
@@ -73,6 +74,7 @@ namespace Maia
             _WRAP_METHOD(void set_mouse_event (const Glib::RefPtr<Core::Event>& inEvent), maia_window_set_mouse_event)
             _WRAP_METHOD(void set_keyboard_event (const Glib::RefPtr<Core::Event>& inEvent), maia_window_set_keyboard_event)
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaCoreEvent*', `const Glib::RefPtr<Event>&', `Glib::wrap($3)')
 #m4 _CONVERSION(`MaiaCoreEventArgs*', `const Glib::RefPtr<EventArgs>&', `Glib::wrap($3)')
 
         public:

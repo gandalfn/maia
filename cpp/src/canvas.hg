@@ -36,7 +36,6 @@ namespace Maia
             _WRAP_VFUNC(Glib::RefPtr<Item> get_root (), get_root, refreturn_ctype)
             _WRAP_VFUNC(void set_root (const Glib::RefPtr<Item>& inRoot), set_root)
             _WRAP_VFUNC(Glib::RefPtr<Window> get_window (), get_window, refreturn_ctype)
-
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3)')
 
         public:

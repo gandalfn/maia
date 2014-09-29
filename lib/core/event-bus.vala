@@ -472,11 +472,11 @@ public class Maia.Core.EventBus : Object
     private class Client : Object
     {
         // properties
-        private BusConnection          m_Connection;
         private Set<EventListenerPool> m_Subscribers;
         private Set<EventListenerPool> m_Pendings;
         private Set<ReplyHandler>      m_ReplyHandlers;
         private Set<Event.Hash>        m_AdvertiseEvents;
+        private BusConnection          m_Connection;
 
         // methods
         public Client (uint32 inId) throws BusError
