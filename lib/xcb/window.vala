@@ -84,12 +84,6 @@ internal class Maia.Xcb.Window : Maia.Window
     }
 
     private void
-    on_transform_changed ()
-    {
-        m_View.transform = transform;
-    }
-
-    private void
     on_repair (Graphic.Region? inArea)
     {
         // Add swap damaged
@@ -142,8 +136,14 @@ internal class Maia.Xcb.Window : Maia.Window
         notify["device-transform"].connect (on_device_transform_changed);
         m_View.device_transform = device_transform;
 
-        // connect onto transform changed
-        notify["transform"].connect (on_transform_changed);
+        m_View.transform = transform;
+    }
+
+    internal override void
+    on_transform_changed ()
+    {
+        base.on_transform_changed ();
+
         m_View.transform = transform;
     }
 

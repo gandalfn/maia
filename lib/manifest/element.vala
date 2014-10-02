@@ -207,7 +207,7 @@ public interface Maia.Manifest.Element : Core.Object
 
             // We found property which correspond to attribute name convert it to
             // string format
-            if (param != null && !is_plugged_property (param.name))
+            if (param != null && (param.flags & GLib.ParamFlags.READWRITE) == GLib.ParamFlags.READWRITE && !is_plugged_property (param.name))
             {
                 GLib.Value val = GLib.Value (param.value_type);
 

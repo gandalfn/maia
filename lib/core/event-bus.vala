@@ -106,13 +106,16 @@ public class Maia.Core.EventBus : Object
             {
                 var data = get_variant (Bus.Message.HEADER_SIZE, "a{su}");
 
-                foreach (GLib.Variant iter in data)
+                if (data != null)
                 {
-                    unowned string name;
-                    uint32 owner;
+                    foreach (GLib.Variant iter in data)
+                    {
+                        unowned string name;
+                        uint32 owner;
 
-                    iter.get ("{&su}", out name, out owner);
-                    m_Hashs.insert (new Event.Hash.raw (name, (void*)owner));
+                        iter.get ("{&su}", out name, out owner);
+                        m_Hashs.insert (new Event.Hash.raw (name, (void*)owner));
+                    }
                 }
                 m_Parsed = true;
             }
@@ -173,15 +176,22 @@ public class Maia.Core.EventBus : Object
                 unowned string name, atype;
                 uint32 owner;
                 var data = get_variant (Bus.Message.HEADER_SIZE, "(susibv)");
-                data.get ("(&su&sibv)", out name, out owner, out atype, out m_Sequence, out m_NeedReply, out m_Args);
-                m_Hash = new Event.Hash.raw (name, (void*)owner);
-                if (atype != "")
+                if (data != null)
                 {
-                    m_ArgsType = GLib.Type.from_name (atype);
+                    data.get ("(&su&sibv)", out name, out owner, out atype, out m_Sequence, out m_NeedReply, out m_Args);
+                    m_Hash = new Event.Hash.raw (name, (void*)owner);
+                    if (atype != "")
+                    {
+                        m_ArgsType = GLib.Type.from_name (atype);
+                    }
+                    else
+                    {
+                        m_Args = null;
+                    }
                 }
                 else
                 {
-                    m_Args = null;
+                    m_Hash = new Event.Hash.raw ("", null);
                 }
                 m_Parsed = true;
             }
@@ -242,15 +252,22 @@ public class Maia.Core.EventBus : Object
                 unowned string name, atype;
                 uint32 owner;
                 var data = get_variant (Bus.Message.HEADER_SIZE, "(bsusiv)");
-                data.get ("(b&su&siv)", out m_Final, out name, out owner, out atype, out m_Sequence, out m_Args);
-                m_Hash = new Event.Hash.raw (name, (void*)owner);
-                if (atype != "")
+                if (data != null)
                 {
-                    m_ArgsType = GLib.Type.from_name (atype);
+                    data.get ("(b&su&siv)", out m_Final, out name, out owner, out atype, out m_Sequence, out m_Args);
+                    m_Hash = new Event.Hash.raw (name, (void*)owner);
+                    if (atype != "")
+                    {
+                        m_ArgsType = GLib.Type.from_name (atype);
+                    }
+                    else
+                    {
+                        m_Args = null;
+                    }
                 }
                 else
                 {
-                    m_Args = null;
+                    m_Hash = new Event.Hash.raw ("", null);
                 }
                 m_Parsed = true;
             }
@@ -261,9 +278,13 @@ public class Maia.Core.EventBus : Object
     {
         public Event.Hash hash {
             owned get {
-                string name;
-                uint32 owner;
-                get_variant (Bus.Message.HEADER_SIZE, "(su)").get ("(su)", out name, out owner);
+                string name = "";
+                uint32 owner = 0;
+                var v = get_variant (Bus.Message.HEADER_SIZE, "(su)");
+                if (v != null)
+                {
+                    v.get ("(su)", out name, out owner);
+                }
                 return new Event.Hash.raw (name, (void*)owner);
             }
         }
@@ -281,9 +302,13 @@ public class Maia.Core.EventBus : Object
     {
         public Event.Hash hash {
             owned get {
-                string name;
-                uint32 owner;
-                get_variant (Bus.Message.HEADER_SIZE, "(su)").get ("(su)", out name, out owner);
+                string name = "";
+                uint32 owner = 0;
+                var v = get_variant (Bus.Message.HEADER_SIZE, "(su)");
+                if (v != null)
+                {
+                    v.get ("(su)", out name, out owner);
+                }
                 return new Event.Hash.raw (name, (void*)owner);
             }
         }
@@ -301,9 +326,13 @@ public class Maia.Core.EventBus : Object
     {
         public Event.Hash hash {
             owned get {
-                string name;
-                uint32 owner;
-                get_variant (Bus.Message.HEADER_SIZE, "(su)").get ("(su)", out name, out owner);
+                string name = "";
+                uint32 owner = 0;
+                var v = get_variant (Bus.Message.HEADER_SIZE, "(su)");
+                if (v != null)
+                {
+                    v.get ("(su)", out name, out owner);
+                }
                 return new Event.Hash.raw (name, (void*)owner);
             }
         }

@@ -1,6 +1,6 @@
 m4_define(maia_version_major, 0)
 m4_define(maia_version_minor, 2)
-m4_define(maia_version_micro, 34)
+m4_define(maia_version_micro, 35)
 AC_INIT([maia],[maia_version_major.maia_version_minor.maia_version_micro])
 AC_PREREQ(2.63)
 
@@ -8,7 +8,7 @@ dnl ****************************************************************************
 dnl Define default build directory
 dnl ****************************************************************************
 AC_CONFIG_SRCDIR(lib/maia.pc.in)
-AC_CONFIG_AUX_DIR([build-aux])
+AC_CONFIG_AUX_DIR([build-aux])œ
 AC_CONFIG_MACRO_DIR([build-aux])
 AC_CONFIG_HEADERS(build-aux/config.h)
 

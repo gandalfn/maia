@@ -33,7 +33,7 @@ namespace Maia
         else
         {
             Glib::RefPtr<Report> pReport = Glib::wrap (MAIA_REPORT (inpObject), true);
-            Glib::RefPtr<Gio::AsyncResult> pResult = Glib::wrap (inpResult);
+            Glib::RefPtr<Gio::AsyncResult> pResult = Glib::wrap (inpResult, true);
             (*pSlot) (pReport, pResult);
         }
 

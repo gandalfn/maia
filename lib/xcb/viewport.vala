@@ -143,7 +143,10 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
             on_device_transform_changed ();
 
             // set transform
-            on_transform_changed ();
+            if (m_View != null)
+            {
+                m_View.transform = transform;
+            }
         }
     }
 
@@ -180,9 +183,11 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
         }
     }
 
-    private void
+    internal override void
     on_transform_changed ()
     {
+        base.on_transform_changed ();
+
         if (m_View != null)
         {
             m_View.transform = transform;
@@ -301,9 +306,6 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
 
         // connect onto device transform changed
         notify["device-transform"].connect (on_device_transform_changed);
-
-        // connect onto transform changed
-        notify["transform"].connect (on_transform_changed);
     }
 
     internal override void
