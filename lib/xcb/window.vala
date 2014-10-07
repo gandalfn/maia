@@ -20,7 +20,8 @@
 internal class Maia.Xcb.Window : Maia.Window
 {
     // properties
-    private View m_View;
+    private View              m_View;
+    private unowned Viewport? m_ParentViewport = null;
 
     // accessors
     public override uint8 depth {
@@ -61,15 +62,37 @@ internal class Maia.Xcb.Window : Maia.Window
     {
         unowned Window? parent_window = window as Window;
 
+        if (m_ParentViewport != null)
+        {
+            m_ParentViewport.notify["visible-area"].disconnect (on_viewport_parent_visible_area_changed);
+        }
         if (parent_window == null)
         {
-            unowned Viewport? parent_viewport = window as Viewport;
+            m_ParentViewport = window as Viewport;
 
-            m_View.parent = parent_viewport == null ? null : parent_viewport.view;
+            m_View.parent = m_ParentViewport == null ? null : m_ParentViewport.view;
+
+            if (m_ParentViewport != null)
+            {
+                m_ParentViewport.notify["visible-area"].connect (on_viewport_parent_visible_area_changed);
+                on_viewport_parent_visible_area_changed ();
+            }
         }
         else
         {
+            m_ParentViewport = null;
             m_View.parent = parent_window.view;
+        }
+    }
+
+    private void
+    on_viewport_parent_visible_area_changed ()
+    {
+        if (m_ParentViewport != null)
+        {
+            var pos = position;
+            pos.translate (m_ParentViewport.visible_area.origin.invert ());
+            m_View.position = pos;
         }
     }
 
@@ -152,7 +175,14 @@ internal class Maia.Xcb.Window : Maia.Window
     {
         base.on_move ();
 
-        m_View.position = position;
+        if (m_ParentViewport != null)
+        {
+            on_viewport_parent_visible_area_changed ();
+        }
+        else
+        {
+            m_View.position = position;
+        }
     }
 
     internal override void

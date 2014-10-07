@@ -31,6 +31,7 @@ public class Maia.Viewport : Window
         }
     }
 
+    [CCode (notify = false)]
     public virtual Graphic.Rectangle visible_area {
         get {
             return m_VisibleArea;
@@ -76,6 +77,8 @@ public class Maia.Viewport : Window
                     // Unblock childs damage
                     m_ScrollDamage = false;
                 }
+
+                GLib.Signal.emit_by_name (this, "notify::visible-area");
             }
         }
     }
