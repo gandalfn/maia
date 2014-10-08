@@ -155,6 +155,7 @@ public interface Maia.Drawable : GLib.Object
             }
         }
     }
+
     /**
      * Damage area of this drawable and its childs without emitting any signal
      *
@@ -216,7 +217,48 @@ public interface Maia.Drawable : GLib.Object
         {
             return;
         }
-     }
+    }
+
+    /**
+     * Repair area of this drawable and its childs without emitting any signal
+     *
+     * @param inArea area to damage
+     */
+    public void
+    repair_area (Graphic.Region? inArea = null)
+    {
+        if (area != null && !area.is_empty () && damaged != null && !damaged.is_empty ())
+        {
+            if (inArea != null)
+            {
+                damaged.subtract (inArea);
+            }
+            else
+            {
+                damaged.subtract (area);
+            }
+
+            if (damaged.is_empty ()) damaged = null;
+
+            // repair childs
+            unowned Core.Object? self = this as Core.Object;
+            if (self != null)
+            {
+                foreach (unowned Core.Object? child in self)
+                {
+                    unowned Drawable? drawable = child as Drawable;
+                    if (drawable != null)
+                    {
+                        var child_damaged_area = area_to_child_item_space (drawable, inArea);
+                        if (!child_damaged_area.is_empty ())
+                        {
+                            repair_area (child_damaged_area);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     /**
      * Convert a point in a child of drawable coordinate space

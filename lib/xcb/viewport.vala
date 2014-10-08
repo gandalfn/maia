@@ -162,10 +162,28 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
                 unowned Viewport? parent_viewport = window as Viewport;
 
                 m_View.parent = parent_viewport == null ? null : parent_viewport.view;
+
+                if (parent_viewport == null)
+                {
+                    m_View.hide ();
+                }
+                else if (visible)
+                {
+                    m_View.show ();
+                }
             }
             else
             {
                 m_View.parent = parent_window.view;
+
+                if (parent_window == null)
+                {
+                    m_View.hide ();
+                }
+                else if (visible)
+                {
+                    m_View.show ();
+                }
             }
         }
     }

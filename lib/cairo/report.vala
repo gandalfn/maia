@@ -52,7 +52,7 @@ internal class Maia.Cairo.Report : Maia.Report
             doc_size = document.size;
 
             // repair all document to force damage on save
-            document.repair ();
+            document.repair_area ();
 
             // Update document geometry
             document.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, doc_size.width, doc_size.height)));
@@ -76,6 +76,9 @@ internal class Maia.Cairo.Report : Maia.Report
 
             // Get document size
             doc_size = document.size;
+
+            // Update document geometry
+            document.update (ctx, new Graphic.Region (Graphic.Rectangle (0, 0, doc_size.width, doc_size.height)));
 
             // Draw document pages
             for (int cpt = 0; cpt < document.nb_pages; ++cpt)

@@ -495,7 +495,7 @@ public abstract class Maia.Core.Bus : Object
 
     // accessors
     public string uuid    { get; construct; default = null; }
-    public uint   timeout { get; set; default = 10000; }
+    public uint   timeout { get; set; default = 30000; }
 
     // static methods
     static construct

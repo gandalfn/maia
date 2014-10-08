@@ -13226,6 +13226,15 @@
   )
 )
 
+(define-method repair_area
+  (of-object "MaiaDrawable")
+  (c-name "maia_drawable_repair_area")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRegion*" "inArea")
+  )
+)
+
 (define-method convert_to_child_item_space
   (of-object "MaiaDrawable")
   (c-name "maia_drawable_convert_to_child_item_space")
