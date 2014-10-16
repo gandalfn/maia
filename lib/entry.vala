@@ -108,6 +108,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     private Graphic.Surface m_FakeSurface;
     private int             m_Cursor = 0;
     private uint            m_LinePads = 0;
+    private bool            m_HideIfEmpty = false;
 
     // accessors
     internal override string tag {
@@ -165,6 +166,27 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             {
                 m_Text = value;
 
+                if (m_Text == null || m_Text.length == 0)
+                {
+                    if (m_HideIfEmpty && visible)
+                    {
+                        visible = false;
+                        int count = get_qdata<int> (Item.s_CountHide);
+                        count++;
+                        set_qdata<int> (Item.s_CountHide, count);
+                    }
+                }
+                else if (m_HideIfEmpty && !visible)
+                {
+                    int count = get_qdata<int> (Item.s_CountHide);
+                    count = int.max (count - 1, 0);
+                    if (count == 0)
+                    {
+                        visible = true;
+                    }
+                    set_qdata<int> (Item.s_CountHide, count);
+                }
+
                 // Update layout
                 update_layout ();
 
@@ -175,6 +197,39 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             }
         }
         default = "";
+    }
+
+    /**
+     * If true hide label if text is empty
+     */
+    [CCode (notify = false)]
+    public bool hide_if_empty {
+        get {
+            return m_HideIfEmpty;
+        }
+        set {
+            if (m_HideIfEmpty != value)
+            {
+                m_HideIfEmpty = value;
+                if (m_HideIfEmpty && visible && (text == null || text.length == 0))
+                {
+                    visible = false;
+                    int count = get_qdata<int> (Item.s_CountHide);
+                    count++;
+                    set_qdata<int> (Item.s_CountHide, count);
+                }
+                else if (!m_HideIfEmpty && !visible)
+                {
+                    int count = get_qdata<int> (Item.s_CountHide);
+                    count = int.max (count - 1, 0);
+                    if (count == 0)
+                    {
+                        visible = true;
+                    }
+                    set_qdata<int> (Item.s_CountHide, count);
+                }
+            }
+        }
     }
     
     /**

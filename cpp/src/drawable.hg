@@ -72,6 +72,7 @@ namespace Maia
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Graphic::Region>&', `Glib::wrap($3)')
 
             _WRAP_METHOD(void damage_area (const Glib::RefPtr<Graphic::Region>& inArea), maia_drawable_damage_area)
+            _WRAP_METHOD(void repair_area (const Glib::RefPtr<Graphic::Region>& inArea), maia_drawable_repair_area)
 
             _WRAP_METHOD(void convert_to_child_item_space (const Glib::RefPtr<Drawable>& inChild, const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_drawable_convert_to_child_item_space)
             _WRAP_METHOD(Glib::RefPtr<Graphic::Region> area_to_child_item_space (const Glib::RefPtr<Drawable>& inChild, const Glib::RefPtr<Graphic::Region>& inArea), maia_drawable_area_to_child_item_space, refreturn)

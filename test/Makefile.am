@@ -39,6 +39,7 @@ test_SOURCES = \
     core/test-async-queue.vala \
     core/test-timeline.vala \
     core/test-bus.vala \
+    core/test-notification.vala \
     graphic/test-graphic.vala \
     graphic/test-transform.vala \
     manifest/test-manifest.vala \

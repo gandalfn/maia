@@ -61,6 +61,7 @@ libmaia_la_SOURCES = \
     core/event-args.vala \
     core/event-listener.vala \
     core/event-bus.vala \
+    core/notification.vala \
     manifest/document.vala \
     manifest/element.vala \
     manifest/theme.vala \

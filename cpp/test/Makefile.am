@@ -17,6 +17,8 @@ test_SOURCES = \
     test.cc \
     test-case.cc \
     test-case.h \
+    test-object.cc \
+    test-object.h \
     test-manifest.cc \
     test-manifest.h \
     test-canvas.cc \

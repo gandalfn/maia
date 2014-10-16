@@ -1,6 +1,6 @@
 /* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * core-object.ccg
+ * test-object.h
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,16 +17,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <maia.h>
-#include <core-notification.h>
+#include "test-case.h"
+
+#ifndef _MAIA_TEST_OBJECT_H
+#define _MAIA_TEST_OBJECT_H
 
 namespace Maia
 {
-    namespace Core
+    class TestObject : public TestCase
     {
-        Glib::RefPtr<Notifications> Object::notifications () const
-        {
-            return Glib::wrap (maia_core_object_get_notifications (const_cast<MaiaCoreObject*> (gobj ())), true);
-        }
-    }
+        public:
+            TestObject ();
+            ~TestObject ();
+
+            // override
+            virtual void set_up ();
+            virtual void tear_down ();
+
+        private:
+            // methods
+            void test_create ();
+            void test_notifications ();
+            void on_test_notification (const Glib::RefPtr<Maia::Core::Notification>& inpNotification);
+    };
 }
+
+#endif

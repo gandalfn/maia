@@ -18,6 +18,7 @@
  */
 
 #include <maia.h>
+#include <maiamm/manifest-attribute-bind.h>
 #include <maiamm/item.h>
 #include <maiamm/window.h>
 #include <maiamm/canvas.h>
@@ -39,6 +40,8 @@ namespace Maia
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3)')
 
         public:
+            typedef sigc::slot<void, Glib::RefPtr<Manifest::AttributeBind>, Glib::ustring> AttributeBindAddedFunc;
+
             static Canvas* create ()
             {
                 return new Canvas (maia_canvas_create ());
@@ -49,8 +52,18 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Window> get_window () const, maia_canvas_get_window, refreturn)
 
             _WRAP_METHOD(void clear (), maia_canvas_clear)
-            _WRAP_METHOD(void load (const Glib::ustring& inManifest, const Glib::ustring& inRoot), maia_canvas_load, errthrow)
-            _WRAP_METHOD(void load_from_file (const Glib::ustring& inFilename, const Glib::ustring& inRoot), maia_canvas_load_from_file, errthrow)
+
+            _IGNORE(maia_canvas_load)
+            void load (const Glib::ustring& inManifest);
+            void load (const Glib::ustring& inManifest, const Glib::ustring& inRoot);
+            void load (const Glib::ustring& inManifest, AttributeBindAddedFunc inFunc);
+            void load (const Glib::ustring& inManifest, const Glib::ustring& inRoot, AttributeBindAddedFunc inFunc);
+
+            _IGNORE(maia_canvas_load_from_file)
+            void load_from_file (const Glib::ustring& inFilename);
+            void load_from_file (const Glib::ustring& inFilename, const Glib::ustring& inRoot);
+            void load_from_file (const Glib::ustring& inFilename, AttributeBindAddedFunc inFunc);
+            void load_from_file (const Glib::ustring& inFilename, const Glib::ustring& inRoot, AttributeBindAddedFunc inFunc);
 
             _WRAP_PROPERTY("root", Glib::RefPtr<Item>)
             _WRAP_PROPERTY("window", Glib::RefPtr<Window>)

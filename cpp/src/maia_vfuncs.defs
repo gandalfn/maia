@@ -732,6 +732,11 @@
   (return-type "none")
 )
 
+(define-vfunc on_transform_changed
+  (of-object "MaiaItem")
+  (return-type "none")
+)
+
 (define-vfunc on_button_press_event
   (of-object "MaiaItem")
   (return-type "gboolean")

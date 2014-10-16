@@ -34,7 +34,7 @@ namespace Maia
             _CLASS_GOBJECT(AttributeBind, MaiaManifestAttributeBind, MAIA_MANIFEST_ATTRIBUTE_BIND, Attribute, MaiaManifestAttribute)
 
             public:
-                typedef sigc::slot<void, Glib::RefPtr<AttributeBind>, Glib::ValueBase& > SlotTransformFunc;
+                typedef sigc::slot<void, Glib::RefPtr<AttributeBind>, Glib::RefPtr<Glib::Object>, Glib::ustring > SlotBindFunc;
 
                 _IGNORE(maia_manifest_attribute_bind_register_transform_func)
                 static void register_transform_func (GType inType, const Glib::ustring& inName, SlotTransformFunc inFunc);

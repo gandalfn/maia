@@ -118,6 +118,7 @@ internal class Maia.Cairo.Surface : Graphic.Surface
 
     ~Surface ()
     {
+        m_Surface = null;
         if (data != null)
         {
             GLib.free (data);

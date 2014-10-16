@@ -1,0 +1,216 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * core-notification.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+#include <maia.h>
+#include <maiamm/core-object.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/core-object_p.h)
+
+namespace Maia
+{
+    namespace Core
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Core)
+
+        class Notification;
+
+        static void* _on_observer_destroy_notify(gpointer inpData);
+
+        class NotificationObserver : public Glib::Object
+        {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+            public:
+                virtual void operator() (const Glib::RefPtr<Notification>& inpNotification) = 0;
+                NotificationObserver* cpp_obj () { return this; }
+
+                Notification* m_pNotification;
+
+            protected:
+                NotificationObserver (Notification* inpNotification) :
+                    Glib::ObjectBase ("NotificationObserver"),
+                    m_pNotification (inpNotification)
+                {
+                    g_object_set_data (G_OBJECT (gobj ()), "NotificationObserverCpp", this);
+                }
+#endif
+        };
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+        template <class T_obj>
+        class NotificationObserverFunctor : public NotificationObserver
+        {
+            typedef void (T_obj::*Handler) (const Glib::RefPtr<Notification>& inpNotification);
+
+            public:
+                virtual void operator() (const Glib::RefPtr<Notification>& inpNotification)
+                {
+                    (m_pObj->*m_Callback) (inpNotification);
+                }
+
+                static Glib::RefPtr<NotificationObserver>
+                create (Notification* inpNotification, T_obj* pObj, Handler pFunc)
+                {
+                    NotificationObserverFunctor* pRet = new NotificationObserverFunctor (inpNotification, pObj, pFunc);
+
+                    if (std::is_base_of<Glib::Object, T_obj>::value)
+                    {
+                        pObj->add_destroy_notify_callback (pRet, &_on_observer_destroy_notify);
+                    }
+                    return Glib::RefPtr<NotificationObserver> (pRet);
+                }
+
+            protected:
+                NotificationObserverFunctor (Notification* inpNotification, T_obj* pObj, Handler pFunc) :
+                    NotificationObserver (inpNotification),
+                    m_pObj (pObj),
+                    m_Callback (pFunc)
+                {
+                }
+
+            private:
+                T_obj*  m_pObj;
+                Handler m_Callback;
+        };
+
+        class NotificationObserverSlot : public NotificationObserver
+        {
+            typedef sigc::slot<void, Glib::RefPtr<Notification>> Handler;
+
+            public:
+                ~NotificationObserverSlot ()
+                {
+                    delete m_pCallback; m_pCallback = 0;
+                }
+
+                virtual void operator() (const Glib::RefPtr<Notification>& inpNotification)
+                {
+                    (*m_pCallback) (inpNotification);
+                }
+
+                static Glib::RefPtr<NotificationObserver> create (Notification* inpNotification, const Handler& inSlot)
+                {
+                    return Glib::RefPtr<NotificationObserver> (new NotificationObserverSlot (inpNotification, inSlot));
+                }
+
+            protected:
+                NotificationObserverSlot (Notification* inpNotification, const Handler& inSlot) :
+                    NotificationObserver (inpNotification),
+                    m_pCallback (new Handler (inSlot))
+                {
+                    m_pCallback->add_destroy_notify_callback (this, &_on_observer_destroy_notify);
+                }
+
+            private:
+                Handler* m_pCallback;
+        };
+#endif
+        
+        class Notification : public Object
+        {
+            _CLASS_GOBJECT(Notification, MaiaCoreNotification, MAIA_CORE_NOTIFICATION, Object, MaiaCoreObject)
+
+            public:
+                static Glib::RefPtr<Notification>
+                create (const Glib::ustring& inName)
+                {
+                    MaiaCoreNotification* pNotification = maia_core_notification_new (inName.c_str ());
+                    return Glib::RefPtr<Notification> (new Notification (pNotification));
+                }
+
+                _WRAP_METHOD(void post (), maia_core_notification_post)
+
+                _IGNORE(maia_core_notification_add_observer)
+                template <typename T_obj>
+                Glib::RefPtr<NotificationObserver>
+                add_observer (T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<Notification>& inNotification))
+                {
+                    Glib::RefPtr<NotificationObserver> pObserver = NotificationObserverFunctor<T_obj>::create (this, pObj, pFunc);
+
+                    add_observer (pObserver);
+
+                    return pObserver;
+                }
+
+                Glib::RefPtr<NotificationObserver>
+                add_observer (const sigc::slot<void, Glib::RefPtr<Notification>>& inSlot)
+                {
+                    Glib::RefPtr<NotificationObserver> pObserver = NotificationObserverSlot::create (this, inSlot);
+
+                    add_observer (pObserver);
+
+                    return pObserver;
+                }
+
+                _IGNORE(maia_core_notification_remove_observer)
+                void remove_observer (const Glib::RefPtr<NotificationObserver>& inpObserver);
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+                void remove_observer (NotificationObserver* inpObserver);
+#endif
+                _WRAP_METHOD(Glib::ustring get_name () const, maia_core_notification_get_name)
+
+                _WRAP_METHOD(void append (const Glib::RefPtr<Notification>& inpNotification) const, maia_core_notification_append)
+
+                _WRAP_PROPERTY("name", Glib::ustring);
+
+            protected:
+                explicit Notification(const Glib::ustring& inName) :
+                    Glib::ObjectBase(0),
+                    Object((MaiaCoreObject*)(maia_core_notification_new (inName.c_str ())))
+                {
+                }
+
+            private:
+                void add_observer (const Glib::RefPtr<NotificationObserver>& inpObserver);
+
+                friend NotificationObserver;
+        };
+
+        class Notifications : public Object
+        {
+            _CLASS_GOBJECT(Notifications, MaiaCoreNotifications, MAIA_CORE_NOTIFICATIONS, Object, MaiaCoreObject)
+
+            public:
+                static Glib::RefPtr<Notifications>
+                create ()
+                {
+                    MaiaCoreNotifications* pNotifications = maia_core_notifications_new ();
+                    return Glib::RefPtr<Notifications> (new Notifications (pNotifications));
+                }
+
+
+                _WRAP_METHOD(Glib::RefPtr<Notification> get (const Glib::ustring& inName) const, maia_core_notifications_get, refreturn)
+                _WRAP_METHOD(void add (const Glib::RefPtr<Notification>& inNotification) const, maia_core_notifications_add)
+                _WRAP_METHOD(void remove (const Glib::ustring& inName) const, maia_core_notifications_remove)
+        };
+
+        static void* _on_observer_destroy_notify (gpointer inpData)
+        {
+            NotificationObserver* pSelf = (NotificationObserver*)inpData;
+            if (pSelf->m_pNotification)
+            {
+                pSelf->m_pNotification->remove_observer (pSelf);
+            }
+
+            return 0;
+        }
+    }
+}

@@ -128,7 +128,7 @@ public class Maia.Tool : Button
         not_dumpable_attributes.insert ("toolbox");
 
         // Connect onto clicked signal
-        clicked.subscribe (on_clicked);
+        clicked.object_subscribe (on_clicked);
 
         // Connect onto root changed
         notify["root"].connect (on_root_changed);

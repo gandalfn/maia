@@ -74,9 +74,10 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
     }
 
     // properties
-    private string m_Group = null;
-    private bool m_Active = false;
-    private unowned Label m_Label = null;
+    private string         m_Group          = null;
+    private bool           m_Active         = false;
+    private unowned Label? m_Label          = null;
+    private bool           m_HideIfInactive = false;
 
     // accessors
     internal uint   row     { get; set; default = 0; }
@@ -174,6 +175,60 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
                 damage ();
 
                 GLib.Signal.emit_by_name (this, "notify::active");
+
+                toggled.publish (new ToggledEventArgs (name, active));
+
+                if (m_HideIfInactive)
+                {
+                    if (visible && !m_Active)
+                    {
+                        visible = false;
+                        int count = get_qdata<int> (Item.s_CountHide);
+                        count++;
+                        set_qdata<int> (Item.s_CountHide, count);
+                    }
+                    else if (!visible && m_Active)
+                    {
+                        int count = get_qdata<int> (Item.s_CountHide);
+                        count = int.max (count - 1, 0);
+                        if (count == 0)
+                        {
+                            visible = true;
+                        }
+                        set_qdata<int> (Item.s_CountHide, count);
+                    }
+                }
+            }
+        }
+    }
+
+    [CCode (notify = false)]
+    public bool  hide_if_inactive {
+        get {
+            return m_HideIfInactive;
+        }
+        set {
+            if (m_HideIfInactive != value)
+            {
+                m_HideIfInactive = value;
+
+                if (m_HideIfInactive && visible && !active)
+                {
+                    visible = false;
+                    int count = get_qdata<int> (Item.s_CountHide);
+                    count++;
+                    set_qdata<int> (Item.s_CountHide, count);
+                }
+                else if ((m_HideIfInactive && !visible && active) || !m_HideIfInactive)
+                {
+                    int count = get_qdata<int> (Item.s_CountHide);
+                    count = int.max (count - 1, 0);
+                    if (count == 0)
+                    {
+                        visible = true;
+                    }
+                    set_qdata<int> (Item.s_CountHide, count);
+                }
             }
         }
     }
@@ -227,8 +282,6 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
             grab_focus (this);
 
             active = !active;
-
-            toggled.publish (new ToggledEventArgs (name, active));
         }
 
         return true;

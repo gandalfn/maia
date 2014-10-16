@@ -72,17 +72,24 @@ public interface Maia.Canvas : GLib.Object
      *
      * @param inManifest manifest content buffer
      * @param inRoot root id in manifest
+     * @param inFunc bind attribute callback
      *
      * @throws ParseError when somethings goes wrong
      */
     public void
-    load (string inManifest, string? inRoot = null) throws Core.ParseError
+    load (string inManifest, string? inRoot = null, owned Manifest.Document.AttributeBindAddedFunc? inFunc = null) throws Core.ParseError
     {
         // clear canvas
         clear ();
 
         // Load manifest
         Manifest.Document manifest = new Manifest.Document.from_buffer (inManifest, inManifest.length);
+        if (inFunc != null)
+        {
+            manifest.attribute_bind_added.connect ((attr, prop) => {
+                inFunc (attr, prop);
+            });
+        }
 
         // Load manifest content
         root = manifest[inRoot] as Item;
@@ -93,17 +100,24 @@ public interface Maia.Canvas : GLib.Object
      *
      * @param inFilename manifest filename
      * @param inRoot root id in manifest
+     * @param inFunc bind attribute callback
      *
      * @throws ParseError when somethings goes wrong
      */
     public void
-    load_from_file (string inFilename, string? inRoot = null) throws Core.ParseError
+    load_from_file (string inFilename, string? inRoot = null, owned Manifest.Document.AttributeBindAddedFunc? inFunc = null) throws Core.ParseError
     {
         // clear canvas
         clear ();
 
         // Load manifest
         Manifest.Document manifest = new Manifest.Document (inFilename);
+        if (inFunc != null)
+        {
+            manifest.attribute_bind_added.connect ((attr, prop) => {
+                inFunc (attr, prop);
+            });
+        }
 
         // Load manifest content
         root = manifest[inRoot] as Item;

@@ -17,6 +17,7 @@ files_hg = \
     core-event.hg \
     core-eventargs.hg \
     core-iterator.hg \
+    core-notification.hg \
     core-map.hg \
     core-object.hg \
     core-pair.hg \

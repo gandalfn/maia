@@ -72,7 +72,7 @@ TestCanvas::test_create ()
     try
     {
         Maia::Canvas* pCanvas = Maia::Canvas::create ();
-        pCanvas->load (manifest, "document");
+        pCanvas->load (manifest, Glib::ustring ("document"));
 
         g_assert (pCanvas->get_root ());
 
@@ -103,7 +103,7 @@ TestCanvas::test_parse_child ()
     try
     {
         Maia::Canvas* pCanvas = Maia::Canvas::create ();
-        pCanvas->load (manifest, "document");
+        pCanvas->load (manifest, Glib::ustring ("document"));
 
         Glib::RefPtr<Item> pRoot = pCanvas->get_root ();
         g_assert (pRoot);
@@ -143,7 +143,7 @@ TestCanvas::test_find ()
     Maia::Canvas* pCanvas = Maia::Canvas::create ();
     try
     {
-        pCanvas->load (manifest, "document");
+        pCanvas->load (manifest, Glib::ustring ("document"));
 
         Glib::RefPtr<Item> pRoot = pCanvas->get_root ();
         g_assert (pRoot);

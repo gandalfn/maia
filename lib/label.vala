@@ -21,6 +21,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
 {
     // properties
     private string          m_Text = null;
+    private bool            m_HideIfEmpty = false;
     private Graphic.Glyph   m_Glyph = null;
     private Graphic.Surface m_FakeSurface = null;
 
@@ -111,12 +112,40 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     /**
      * Shade color of label
      */
-    public Graphic.Color               shade_color      { get; set; default = null; }
+    public Graphic.Color shade_color { get; set; default = null; }
 
     /**
      * If true hide label if text is empty
      */
-    public bool                        hide_if_empty    { get; set; default = false; }
+    [CCode (notify = false)]
+    public bool hide_if_empty {
+        get {
+            return m_HideIfEmpty;
+        }
+        set {
+            if (m_HideIfEmpty != value)
+            {
+                m_HideIfEmpty = value;
+                if (m_HideIfEmpty && visible && (text == null || text.length == 0))
+                {
+                    visible = false;
+                    int count = get_qdata<int> (Item.s_CountHide);
+                    count++;
+                    set_qdata<int> (Item.s_CountHide, count);
+                }
+                else if (!m_HideIfEmpty && !visible)
+                {
+                    int count = get_qdata<int> (Item.s_CountHide);
+                    count = int.max (count - 1, 0);
+                    if (count == 0)
+                    {
+                        visible = true;
+                    }
+                    set_qdata<int> (Item.s_CountHide, count);
+                }
+            }
+        }
+    }
 
     // static methods
     static construct
@@ -191,9 +220,6 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
         notify["stroke-pattern"].connect (on_draw_property_changed);
         notify["shade-color"].connect (on_draw_property_changed);
 
-        // connect onto hide_if_empty
-        notify["hide-if-empty"].connect (on_hide_if_empty_changed);
-
         // Create a fake surface to calculate the size of path
         m_FakeSurface = new Graphic.Surface (1, 1);
     }
@@ -227,33 +253,11 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     }
 
     private void
-    on_hide_if_empty_changed ()
-    {
-        if (hide_if_empty && visible && (text == null || text.length == 0))
-        {
-            visible = false;
-            int count = get_qdata<int> (Item.s_CountHide);
-            count++;
-            set_qdata<int> (Item.s_CountHide, count);
-        }
-        else if (!hide_if_empty && !visible)
-        {
-            int count = get_qdata<int> (Item.s_CountHide);
-            count = int.max (count - 1, 0);
-            if (count == 0)
-            {
-                visible = true;
-            }
-            set_qdata<int> (Item.s_CountHide, count);
-        }
-    }
-
-    private void
     on_layout_property_changed ()
     {
         if (text != null && text.length > 0)
         {
-            if (hide_if_empty && !visible)
+            if (m_HideIfEmpty && !visible)
             {
                 int count = get_qdata<int> (Item.s_CountHide);
                 count = int.max (count - 1, 0);
@@ -321,7 +325,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
                 }
             }
         }
-        else if (hide_if_empty && visible && (text == null || text.length == 0))
+        else if (m_HideIfEmpty && visible && (text == null || text.length == 0))
         {
             visible = false;
             int count = get_qdata<int> (Item.s_CountHide);

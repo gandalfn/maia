@@ -1,0 +1,67 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * core-notification.ccg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+
+#include <maia.h>
+#include <maiamm/core-object.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/core-object_p.h)
+
+namespace Maia
+{
+    namespace Core
+    {
+        static void _on_notification_callback (MaiaCoreNotification* inpNotification, gpointer inpData)
+        {
+            NotificationObserver* pObserver = (NotificationObserver*)g_object_get_data (G_OBJECT (inpData), "NotificationObserverCpp");
+            Glib::RefPtr<Notification> pNotification = Glib::wrap (inpNotification, true);
+
+            (*pObserver) (pNotification);
+        }
+
+        static void* _destroy_notify (gpointer inpData)
+        {
+            NotificationObserver* pSelf = (NotificationObserver*)inpData;
+            pSelf->m_pNotification = nullptr;
+            pSelf->unreference ();
+
+            return 0;
+        }
+
+        void Notification::add_observer (const Glib::RefPtr<NotificationObserver>& inpObserver)
+        {
+            maia_core_notification_add_observer (gobj (), _on_notification_callback, inpObserver->gobj ());
+            add_destroy_notify_callback (inpObserver->cpp_obj (), _destroy_notify);
+            inpObserver->reference ();
+        }
+
+        void Notification::remove_observer (const Glib::RefPtr<NotificationObserver>& inpObserver)
+        {
+            remove_observer (inpObserver->cpp_obj ());
+        }
+
+        void Notification::remove_observer (NotificationObserver* inpObserver)
+        {
+            maia_core_notification_remove_observer (gobj (), _on_notification_callback, inpObserver->gobj ());
+            remove_destroy_notify_callback (inpObserver->cpp_obj ());
+            inpObserver->unreference ();
+        }
+    }
+}

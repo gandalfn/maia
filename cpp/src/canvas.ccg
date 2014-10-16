@@ -21,4 +21,102 @@
 
 namespace Maia
 {
+    static void
+    attribute_bind_added_func_callback (MaiaManifestAttributeBind* inpAttribute, const gchar* inpProperty, void* inpData)
+    {
+        Canvas::AttributeBindAddedFunc* pSlot = (Canvas::AttributeBindAddedFunc*)inpData;
+        if (pSlot)
+        {
+            Glib::RefPtr<Manifest::AttributeBind> pAttribute = Glib::wrap (inpAttribute, true);
+            Glib::ustring property = inpProperty;
+            (*pSlot) (pAttribute, property);
+        }
+    }
+
+    static void
+    attribute_bind_added_func_destroy (void* inpData)
+    {
+        Canvas::AttributeBindAddedFunc* pSlot = (Canvas::AttributeBindAddedFunc*)inpData;
+        delete pSlot;
+    }
+
+    void Canvas::load(const Glib::ustring& inManifest)
+    {
+        GError* gerror = 0;
+        maia_canvas_load(gobj(), inManifest.c_str(), nullptr, nullptr, nullptr, nullptr, &(gerror));
+        if(gerror)
+            ::Glib::Error::throw_exception(gerror);
+    }
+
+    void Canvas::load(const Glib::ustring& inManifest, const Glib::ustring& inRoot)
+    {
+        GError* gerror = 0;
+        maia_canvas_load(gobj(), inManifest.c_str(), inRoot.c_str(), nullptr, nullptr, nullptr, &(gerror));
+        if(gerror)
+            ::Glib::Error::throw_exception(gerror);
+    }
+
+    void Canvas::load(const Glib::ustring& inManifest, AttributeBindAddedFunc inFunc)
+    {
+        AttributeBindAddedFunc* pSlot = new AttributeBindAddedFunc (inFunc);
+        GError* gerror = 0;
+        maia_canvas_load(gobj(), inManifest.c_str(), nullptr, attribute_bind_added_func_callback, pSlot, attribute_bind_added_func_destroy, &(gerror));
+        if(gerror)
+        {
+            delete pSlot;
+            ::Glib::Error::throw_exception(gerror);
+        }
+    }
+
+    void Canvas::load(const Glib::ustring& inManifest, const Glib::ustring& inRoot, AttributeBindAddedFunc inFunc)
+    {
+        AttributeBindAddedFunc* pSlot = new AttributeBindAddedFunc (inFunc);
+        GError* gerror = 0;
+        maia_canvas_load(gobj(), inManifest.c_str(), inRoot.c_str(), attribute_bind_added_func_callback, pSlot, attribute_bind_added_func_destroy, &(gerror));
+        if(gerror)
+        {
+            delete pSlot;
+            ::Glib::Error::throw_exception(gerror);
+        }
+    }
+
+    void Canvas::load_from_file(const Glib::ustring& inFilename)
+    {
+        GError* gerror = 0;
+        maia_canvas_load_from_file(gobj(), inFilename.c_str(), nullptr, nullptr, nullptr, nullptr, &(gerror));
+        if(gerror)
+            ::Glib::Error::throw_exception(gerror);
+    }
+
+    void Canvas::load_from_file(const Glib::ustring& inFilename, const Glib::ustring& inRoot)
+    {
+        GError* gerror = 0;
+        maia_canvas_load_from_file(gobj(), inFilename.c_str(), inRoot.c_str(), nullptr, nullptr, nullptr, &(gerror));
+        if(gerror)
+            ::Glib::Error::throw_exception(gerror);
+    }
+
+    void Canvas::load_from_file(const Glib::ustring& inFilename, AttributeBindAddedFunc inFunc)
+    {
+        AttributeBindAddedFunc* pSlot = new AttributeBindAddedFunc (inFunc);
+        GError* gerror = 0;
+        maia_canvas_load_from_file(gobj(), inFilename.c_str(), nullptr, attribute_bind_added_func_callback, pSlot, attribute_bind_added_func_destroy, &(gerror));
+        if(gerror)
+        {
+            delete pSlot;
+            ::Glib::Error::throw_exception(gerror);
+        }
+    }
+
+    void Canvas::load_from_file(const Glib::ustring& inFilename, const Glib::ustring& inRoot, AttributeBindAddedFunc inFunc)
+    {
+        AttributeBindAddedFunc* pSlot = new AttributeBindAddedFunc (inFunc);
+        GError* gerror = 0;
+        maia_canvas_load_from_file(gobj(), inFilename.c_str(), inRoot.c_str(), attribute_bind_added_func_callback, pSlot, attribute_bind_added_func_destroy, &(gerror));
+        if(gerror)
+        {
+            delete pSlot;
+            ::Glib::Error::throw_exception(gerror);
+        }
+    }
 }

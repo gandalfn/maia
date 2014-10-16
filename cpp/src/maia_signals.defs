@@ -58,6 +58,15 @@
   (construct-only #f)
 )
 
+(define-property notifications
+  (of-object "MaiaCoreObject")
+  (prop-type "GParamObject")
+  (docs "notifications")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
 ;; From MaiaCoreIterator
 
 ;; From MaiaCoreCollection
@@ -335,6 +344,19 @@
 )
 
 ;; From MaiaCoreEventBus
+
+;; From MaiaCoreNotification
+
+(define-property name
+  (of-object "MaiaCoreNotification")
+  (prop-type "GParamString")
+  (docs "name")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaCoreNotifications
 
 ;; From MaiaGraphicColor
 
@@ -1900,6 +1922,15 @@
   (of-object "MaiaEntry")
   (prop-type "GParamString")
   (docs "text")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property hide-if-empty
+  (of-object "MaiaEntry")
+  (prop-type "GParamBoolean")
+  (docs "hide-if-empty")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -3846,6 +3877,15 @@
   (construct-only #f)
 )
 
+(define-property hide-if-inactive
+  (of-object "MaiaToggle")
+  (prop-type "GParamBoolean")
+  (docs "hide-if-inactive")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property toggled
   (of-object "MaiaToggle")
   (prop-type "GParamObject")
@@ -3944,6 +3984,15 @@
   (of-object "MaiaToggleGroup")
   (prop-type "GParamString")
   (docs "active")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property hideall-if-noactive
+  (of-object "MaiaToggleGroup")
+  (prop-type "GParamBoolean")
+  (docs "hideall-if-noactive")
   (readable #t)
   (writable #t)
   (construct-only #f)

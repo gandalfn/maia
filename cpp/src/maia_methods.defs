@@ -83,10 +83,22 @@
   (gtype-id "MAIA_TYPE_CORE_BUS_MESSAGE_AUTH")
 )
 
+(define-object MaiaCoreNotifications
+  (parent "GObject")
+  (c-name "MaiaCoreNotifications")
+  (gtype-id "MAIA_TYPE_CORE_NOTIFICATIONS")
+)
+
 (define-object MaiaCoreObject
   (parent "MaiaCoreAny")
   (c-name "MaiaCoreObject")
   (gtype-id "MAIA_TYPE_CORE_OBJECT")
+)
+
+(define-object MaiaCoreNotification
+  (parent "MaiaCoreObject")
+  (c-name "MaiaCoreNotification")
+  (gtype-id "MAIA_TYPE_CORE_NOTIFICATION")
 )
 
 (define-object MaiaCoreExtensionLoader
@@ -5042,6 +5054,17 @@
   )
 )
 
+(define-function maia_core_notifications_get_type
+  (c-name "maia_core_notifications_get_type")
+  (return-type "GType")
+)
+
+(define-method get_notifications
+  (of-object "MaiaCoreObject")
+  (c-name "maia_core_object_get_notifications")
+  (return-type "MaiaCoreNotifications*")
+)
+
 (define-method next_value
   (of-object "MaiaCoreObjectIterator")
   (c-name "maia_core_object_iterator_next_value")
@@ -7361,6 +7384,141 @@
   (of-object "MaiaCoreEventBus")
   (c-name "maia_core_event_bus_set_default")
   (return-type "none")
+)
+
+(define-function maia_core_notification_get_type
+  (c-name "maia_core_notification_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_notification_new
+  (c-name "maia_core_notification_new")
+  (is-constructor-of "MaiaCoreNotification")
+  (return-type "MaiaCoreNotification*")
+  (parameters
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-function maia_core_notification_construct
+  (c-name "maia_core_notification_construct")
+  (return-type "MaiaCoreNotification*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-method add_observer
+  (of-object "MaiaCoreNotification")
+  (c-name "maia_core_notification_add_observer")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreNotificationRecvFunc" "inFunc")
+    '("void*" "inFunc_target")
+  )
+)
+
+(define-method remove_observer
+  (of-object "MaiaCoreNotification")
+  (c-name "maia_core_notification_remove_observer")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreNotificationRecvFunc" "inFunc")
+    '("void*" "inFunc_target")
+  )
+)
+
+(define-method post
+  (of-object "MaiaCoreNotification")
+  (c-name "maia_core_notification_post")
+  (return-type "none")
+)
+
+(define-method append
+  (of-object "MaiaCoreNotification")
+  (c-name "maia_core_notification_append")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreNotification*" "inNotification")
+  )
+)
+
+(define-method get_name
+  (of-object "MaiaCoreNotification")
+  (c-name "maia_core_notification_get_name")
+  (return-type "gchar*")
+)
+
+(define-function maia_core_notifications_new
+  (c-name "maia_core_notifications_new")
+  (is-constructor-of "MaiaCoreNotifications")
+  (return-type "MaiaCoreNotifications*")
+)
+
+(define-function maia_core_notifications_construct
+  (c-name "maia_core_notifications_construct")
+  (return-type "MaiaCoreNotifications*")
+  (parameters
+    '("GType" "object_type")
+  )
+)
+
+(define-method get
+  (of-object "MaiaCoreNotifications")
+  (c-name "maia_core_notifications_get")
+  (return-type "MaiaCoreNotification*")
+  (parameters
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-method add
+  (of-object "MaiaCoreNotifications")
+  (c-name "maia_core_notifications_add")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreNotification*" "inNotification")
+  )
+)
+
+(define-method remove
+  (of-object "MaiaCoreNotifications")
+  (c-name "maia_core_notifications_remove")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-method post
+  (of-object "MaiaCoreNotifications")
+  (c-name "maia_core_notifications_post")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-method add_observer
+  (of-object "MaiaCoreNotifications")
+  (c-name "maia_core_notifications_add_observer")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inName")
+    '("MaiaCoreNotificationRecvFunc" "inFunc")
+    '("void*" "inFunc_target")
+  )
+)
+
+(define-method remove_observer
+  (of-object "MaiaCoreNotifications")
+  (c-name "maia_core_notifications_remove_observer")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreNotificationRecvFunc" "inFunc")
+    '("void*" "inFunc_target")
+  )
 )
 
 (define-function maia_manifest_error_quark
@@ -15016,6 +15174,21 @@
   )
 )
 
+(define-method get_hide_if_empty
+  (of-object "MaiaEntry")
+  (c-name "maia_entry_get_hide_if_empty")
+  (return-type "gboolean")
+)
+
+(define-method set_hide_if_empty
+  (of-object "MaiaEntry")
+  (c-name "maia_entry_set_hide_if_empty")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
 (define-method get_lines
   (of-object "MaiaEntry")
   (c-name "maia_entry_get_lines")
@@ -15525,6 +15698,21 @@
   )
 )
 
+(define-method get_hideall_if_noactive
+  (of-object "MaiaToggleGroup")
+  (c-name "maia_toggle_group_get_hideall_if_noactive")
+  (return-type "gboolean")
+)
+
+(define-method set_hideall_if_noactive
+  (of-object "MaiaToggleGroup")
+  (c-name "maia_toggle_group_set_hideall_if_noactive")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
 (define-function maia_toggle_construct
   (c-name "maia_toggle_construct")
   (return-type "MaiaToggle*")
@@ -15614,6 +15802,21 @@
 (define-method set_active
   (of-object "MaiaToggle")
   (c-name "maia_toggle_set_active")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
+(define-method get_hide_if_inactive
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_get_hide_if_inactive")
+  (return-type "gboolean")
+)
+
+(define-method set_hide_if_inactive
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_set_hide_if_inactive")
   (return-type "none")
   (parameters
     '("gboolean" "value")
@@ -17515,6 +17718,9 @@
   (parameters
     '("const-gchar*" "inManifest")
     '("const-gchar*" "inRoot")
+    '("MaiaManifestDocumentAttributeBindAddedFunc" "inFunc")
+    '("void*" "inFunc_target")
+    '("GDestroyNotify" "inFunc_target_destroy_notify")
     '("GError**" "error")
   )
 )
@@ -17526,6 +17732,9 @@
   (parameters
     '("const-gchar*" "inFilename")
     '("const-gchar*" "inRoot")
+    '("MaiaManifestDocumentAttributeBindAddedFunc" "inFunc")
+    '("void*" "inFunc_target")
+    '("GDestroyNotify" "inFunc_target_destroy_notify")
     '("GError**" "error")
   )
 )

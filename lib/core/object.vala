@@ -221,7 +221,8 @@ public abstract class Maia.Core.Object : Any
     private Object?                m_Next;
     private unowned Object?        m_Prev;
     private Core.Set<PlugProperty> m_Plugs;
-
+    private Notifications m_Notifications = new Notifications ();
+    
     // accessors
     /**
      * Object identifier
@@ -252,6 +253,15 @@ public abstract class Maia.Core.Object : Any
 
                 unref ();
             }
+        }
+    }
+
+    /**
+     * Object notifications
+     */
+    public Notifications notifications {
+        get {
+            return m_Notifications;
         }
     }
 
