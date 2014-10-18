@@ -107,6 +107,7 @@ public class Maia.Core.Event : Object
 
     ~Event ()
     {
+        Log.debug ("Event", Log.Category.MAIN_EVENT, "Destroy event %s %lx", name, (ulong)owner);
         m_EventBus.destroy (this);
     }
 

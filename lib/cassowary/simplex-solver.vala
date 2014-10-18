@@ -407,23 +407,22 @@ public class Maia.Cassowary.SimplexSolver : Tableau
         while (true)
         {
             double objectiveCoeff = 0;
-            unowned Core.Map<AbstractVariable, Double> terms = zRow.terms;
-            foreach (unowned Core.Pair<AbstractVariable, Double> pair in terms)
+            foreach (unowned Core.Pair<AbstractVariable, Double> pair in zRow.terms)
             {
                 double c = pair.second.@value;
                 if (pair.first.is_pivotable && c < objectiveCoeff)
                 {
                     objectiveCoeff = c;
                     entryVar = pair.first;
+                    break;
                 }
             }
             if (objectiveCoeff >= -m_Epsilon || entryVar == null)
                 return;
 
             double minRatio = double.MAX;
-            unowned Core.Set<AbstractVariable> columnVars = m_Columns[entryVar];
             double r = 0.0;
-            foreach (unowned AbstractVariable variable in columnVars)
+            foreach (unowned AbstractVariable variable in m_Columns[entryVar])
             {
                 if (variable.is_pivotable)
                 {

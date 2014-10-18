@@ -29,15 +29,17 @@ public class Maia.Core.SocketBusConnection : BusConnection
     {
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Connect to bus service %s", inName);
 
-        base (inName);
-
-        m_Client = new GLib.SocketClient ();
-
         try
         {
             string filename = "%s/maia-bus-socket.%x".printf (GLib.Environment.get_tmp_dir (), inService);
 
-            m_Connection = m_Client.connect (new GLib.UnixSocketAddress (filename));
+            var client = new GLib.SocketClient ();
+            var connection = client.connect (new GLib.UnixSocketAddress (filename));
+
+            base (inName, new SocketWatch (connection.socket), new SocketWatch (connection.socket, Watch.Condition.OUT));
+
+            m_Client = client;
+            m_Connection = connection;
 
             init_connection ();
 
@@ -53,13 +55,15 @@ public class Maia.Core.SocketBusConnection : BusConnection
     {
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Connect to bus service %s:%u", inHost, inPort);
 
-        base (inName);
-
-        m_Client = new GLib.SocketClient ();
-
         try
         {
-            m_Connection = m_Client.connect_to_host (inHost, inPort);
+            var client = new GLib.SocketClient ();
+            var connection = m_Client.connect_to_host (inHost, inPort);
+
+            base (inName, new SocketWatch (connection.socket), new SocketWatch (connection.socket, Watch.Condition.OUT));
+
+            m_Client = client;
+            m_Connection = connection;
 
             init_connection ();
 
@@ -75,7 +79,7 @@ public class Maia.Core.SocketBusConnection : BusConnection
     {
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "");
 
-        base (inName);
+        base (inName, new SocketWatch (inConnection.socket), new SocketWatch (inConnection.socket, Watch.Condition.OUT));
 
         m_Connection = inConnection;
 
@@ -102,13 +106,13 @@ public class Maia.Core.SocketBusConnection : BusConnection
     init_connection ()
     {
         // Create watch on receive
-        m_Watch = new SocketWatch (m_Connection.socket, GLib.MainContext.get_thread_default ());
+        m_Watch = new SocketWatch (m_Connection.socket);
         m_Watch.ready.connect (on_received);
         m_Watch.closed.connect (on_closed);
         m_Watch.stop ();
     }
 
-    private void
+    private bool
     on_received ()
     {
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "receive message");
@@ -126,6 +130,8 @@ public class Maia.Core.SocketBusConnection : BusConnection
             }
             m_Watch.start ();
         });
+
+        return true;
     }
 
     private void
@@ -149,16 +155,7 @@ public class Maia.Core.SocketBusConnection : BusConnection
 
         try
         {
-            int wait = 0;
-
-            while ((uint64)wait * 1000 < (uint64)inTimeout * 1000  && m_Connection.socket.condition_check (GLib.IOCondition.IN) != GLib.IOCondition.IN)
-            {
-                GLib.Thread.@yield ();
-                GLib.Thread.usleep (1000);
-                wait++;
-            }
-
-            if ((uint64)wait * 1000 < (uint64)inTimeout * 1000)
+            if (m_Connection.socket.condition_timed_wait (GLib.IOCondition.IN | GLib.IOCondition.PRI, (int64)inTimeout * 1000))
             {
                 m_Connection.input_stream.read_all (inData, out ret);
             }
@@ -182,16 +179,7 @@ public class Maia.Core.SocketBusConnection : BusConnection
 
         try
         {
-            int wait = 0;
-
-            while ((uint64)wait * 1000 < (uint64)inTimeout * 1000  && m_Connection.socket.condition_check (GLib.IOCondition.OUT) != GLib.IOCondition.OUT)
-            {
-                GLib.Thread.@yield ();
-                GLib.Thread.usleep (1000);
-                wait++;
-            }
-
-            if ((uint64)wait * 1000 < (uint64)inTimeout * 1000)
+            if (m_Connection.socket.condition_timed_wait (GLib.IOCondition.OUT, (int64)inTimeout * 1000))
             {
                 m_Connection.output_stream.write_all (inData, out ret);
             }

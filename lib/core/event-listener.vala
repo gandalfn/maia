@@ -22,6 +22,16 @@ internal class Maia.Core.EventListenerPool : Object
     // properties
     private Event.Hash m_EventHash;
 
+    // accessors
+    public bool event_destroyed {
+        set {
+            foreach (Object child in this)
+            {
+                (child as EventListener).event_destroyed = value;
+            }
+        }
+    }
+
     // methods
     public EventListenerPool (Event.Hash inEventHash)
     {
@@ -73,6 +83,9 @@ public class Maia.Core.EventListener : Object
         }
     }
 
+    // accessors
+    public bool event_destroyed { get; set; default = false; }
+
     /**
      * Block temporarily the event notification
      */
@@ -106,7 +119,7 @@ public class Maia.Core.EventListener : Object
         {
             m_Target.weak_unref (on_target_destroy);
         }
-        if (m_Connection != null)
+        if (m_Connection != null && !event_destroyed)
         {
             m_Connection.send.begin (new EventBus.MessageUnsubscribe (m_EventHash));
             m_Connection.weak_unref (on_connection_destroy);

@@ -374,7 +374,7 @@ public class Maia.TestBus : Maia.TestCase
     {
         Core.Event[] events = {};
 
-        for (int cpt = 0; cpt < 1000; ++cpt)
+        for (int cpt = 0; cpt < 2000; ++cpt)
         {
             events += new Core.Event ("test-event-bus-contention", cpt.to_pointer ());
             events[cpt].subscribe ((args) => {
@@ -384,15 +384,18 @@ public class Maia.TestBus : Maia.TestCase
 
                     Test.message ("name: %s val: %u", event_args.name, event_args.val);
 
-                    if (event_args.val == 999) loop.quit ();
+                    if (event_args.val == 1999) loop.quit ();
                 }
             });
         }
 
-        for (int cpt = 0; cpt < 1000; ++cpt)
-        {
-            events[cpt].publish (new TestEventArgs (@"$cpt", cpt));
-        }
+        GLib.Timeout.add_seconds (5, () => {
+            for (int cpt = 0; cpt < 2000; ++cpt)
+            {
+                events[cpt].publish (new TestEventArgs (@"$cpt", cpt));
+            }
+            return false;
+        });
 
         loop.run ();
     }

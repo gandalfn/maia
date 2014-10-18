@@ -19,12 +19,21 @@
 
 public abstract class Maia.Core.Watch : Object
 {
+    // type
+    public enum Condition
+    {
+        IN,
+        OUT
+    }
+
     // properties
-    private bool              m_Out = false;
+    private Condition         m_Condition = Condition.IN;
     private Source            m_Source;
     private GLib.MainContext? m_Context;
     private int               m_Priority;
     private GLib.PollFD       m_Fd = GLib.PollFD ();
+    private uint64            m_CurrentTime;
+    private bool              m_TimedOut = false;
 
     // accessors
     /**
@@ -37,50 +46,61 @@ public abstract class Maia.Core.Watch : Object
     }
 
     /**
-     * Indicate is watch for send
+     * Indicate is watch for which Condiition
      */
-    public bool is_out {
+    public Condition condition {
         get {
-            return m_Out;
+            return m_Condition;
         }
     }
+
+    /**
+     * Time in milliseconds to wait before watch timed out
+     */
+    public int timeout { get; set; default = -1; }
+
+
+    /**
+     * Indicate if watch is currently running
+     */
+    public bool is_started {
+        get {
+            return m_Source != null;
+        }
+    }
+
+    // signals
+    public signal bool ready ();
+    public signal bool timed_out ();
 
     // methods
     /**
      * Create a new File descriptor watcher
      *
      * @param inFd file descriptor to watch
+     * @param inCondition watch condition
+     * @param inContext main context
      * @param inPriority watch priority
      */
-    public Watch (int inFd, GLib.MainContext? inContext = null, int inPriority = GLib.Priority.DEFAULT)
+    public Watch (int inFd, Condition inCondition = Condition.IN, GLib.MainContext? inContext = null, int inPriority = GLib.Priority.DEFAULT)
     {
+        m_Condition = inCondition;
         m_Fd.fd = inFd;
-        m_Fd.events = GLib.IOCondition.IN  | GLib.IOCondition.PRI |
-                      GLib.IOCondition.ERR | GLib.IOCondition.HUP | GLib.IOCondition.NVAL;
+        if (m_Condition == Condition.IN)
+        {
+            m_Fd.events = GLib.IOCondition.IN  | GLib.IOCondition.PRI |
+                          GLib.IOCondition.ERR | GLib.IOCondition.HUP | GLib.IOCondition.NVAL;
+        }
+        else
+        {
+            m_Fd.events = GLib.IOCondition.OUT |
+                          GLib.IOCondition.ERR | GLib.IOCondition.HUP | GLib.IOCondition.NVAL;
+        }
+
         m_Fd.revents = 0;
 
         m_Context = inContext;
         m_Priority = inPriority;
-
-        start ();
-    }
-
-    /**
-     * Create a new File descriptor watcher
-     *
-     * @param inFd file descriptor to watch
-     * @param inPriority watch priority
-     */
-    public Watch.out (int inFd, GLib.MainContext? inContext = null, int inPriority = GLib.Priority.DEFAULT)
-    {
-        m_Fd.fd = inFd;
-        m_Fd.events = GLib.IOCondition.OUT |
-                      GLib.IOCondition.ERR | GLib.IOCondition.HUP | GLib.IOCondition.NVAL;
-        m_Fd.revents = 0;
-
-        m_Context = inContext;
-        m_Priority = inPriority;
-        m_Out = true;
 
         start ();
     }
@@ -91,43 +111,75 @@ public abstract class Maia.Core.Watch : Object
     }
 
     private bool
-    check ()
+    on_dispatch (SourceFunc inCallback)
     {
-        if ((m_Fd.revents & GLib.IOCondition.ERR)  == GLib.IOCondition.ERR ||
+        ref ();
+
+        bool ret = false;
+
+        if (timeout >= 0 && m_TimedOut)
+        {
+            ret = on_timeout ();
+            m_TimedOut = false;
+        }
+        else
+        {
+            ret = on_process ();
+        }
+
+        if (!ret)
+        {
+            m_Source = null;
+        }
+        else if (timeout >= 0)
+        {
+            m_CurrentTime = m_Source.get_time();
+        }
+
+        unref ();
+
+        return ret;
+    }
+
+    private bool
+    on_prepare (out int outTimeout)
+    {
+        m_TimedOut = false;
+        if (timeout >= 0)
+        {
+            m_CurrentTime = m_Source.get_time();
+        }
+
+        outTimeout = timeout;
+
+        return check ();
+    }
+
+    private bool
+    on_check ()
+    {
+        bool ret = false;
+
+        uint64 now = m_Source.get_time ();
+        if (timeout >= 0 && (now - m_CurrentTime) / 1000 > timeout)
+        {
+            m_TimedOut = true;
+            ret = true;
+        }
+        else if ((m_Fd.revents & GLib.IOCondition.ERR)  == GLib.IOCondition.ERR ||
             (m_Fd.revents & GLib.IOCondition.HUP)  == GLib.IOCondition.HUP ||
             (m_Fd.revents & GLib.IOCondition.NVAL) == GLib.IOCondition.NVAL)
         {
             on_error ();
-            return false;
         }
-
-        return !m_Out ? ((m_Fd.revents & GLib.IOCondition.IN)  == GLib.IOCondition.IN ||
-                         (m_Fd.revents & GLib.IOCondition.PRI) == GLib.IOCondition.PRI) :
-                        (m_Fd.revents & GLib.IOCondition.OUT)  == GLib.IOCondition.OUT;
-    }
-
-    private bool
-    on_dispatch (SourceFunc inCallback)
-    {
-        return on_process ();
-    }
-
-    protected virtual bool
-    on_prepare (out int outTimeout)
-    {
-        if (check())
+        else if (m_Condition == Condition.IN ? ((m_Fd.revents & GLib.IOCondition.IN)  == GLib.IOCondition.IN ||
+                                                (m_Fd.revents & GLib.IOCondition.PRI) == GLib.IOCondition.PRI)
+                                             : (m_Fd.revents & GLib.IOCondition.OUT)  == GLib.IOCondition.OUT)
         {
-            on_process ();
+            ret = check ();
         }
-        outTimeout = -1;
 
-        return false;
-    }
-
-    protected virtual bool
-    on_check ()
-    {
-        return check ();
+        return ret;
     }
 
     /**
@@ -136,9 +188,29 @@ public abstract class Maia.Core.Watch : Object
     protected abstract void on_error ();
 
     /**
+     * Called when a time out occur on fd
+     */
+    protected virtual bool
+    on_timeout ()
+    {
+        return timed_out ();
+    }
+
+    /**
      * Called when a data has been available on fd
      */
-    protected abstract bool on_process ();
+    protected virtual bool
+    on_process ()
+    {
+        return ready ();
+    }
+
+    /**
+     * Called to verify if watch is ready
+     *
+     * @return  ``true`` if watch is ready
+     */
+    public abstract bool check ();
 
     /**
      * Start watch

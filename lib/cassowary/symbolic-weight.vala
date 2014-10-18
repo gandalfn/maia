@@ -59,20 +59,12 @@ public class Maia.Cassowary.SymbolicWeight : Core.Object
 
     public SymbolicWeight.with_weights (double inW1, double inW2, double inW3)
     {
-        m_Values = {};
-        m_Values += inW1;
-        m_Values += inW2;
-        m_Values += inW3;
+        m_Values = { inW1, inW2, inW3 };
     }
 
     public SymbolicWeight.with_values (double[] inWeights)
     {
-        m_Values = {};
-
-        foreach (double weight in inWeights)
-        {
-            m_Values += weight;
-        }
+        m_Values = inWeights;
     }
 
     public SymbolicWeight

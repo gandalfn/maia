@@ -218,284 +218,46 @@ public abstract class Maia.Core.Bus : Object
         }
     }
 
-    private delegate void RequestCallback ();
-
-    private enum RequestType
-    {
-        READ,
-        WRITE,
-        END
-    }
+    private delegate void RequestCallback (Request inRequest);
 
     private class Request : Object
     {
-        public RequestType             m_Type;
         public unowned Bus             m_Bus;
         public Message                 m_Message;
         public uint                    m_Timeout;
         public BusError                m_Status;
         public GLib.Cancellable        m_Cancellable;
         public unowned RequestCallback m_Callback;
-        public GLib.IdleSource         m_Source;
-        public GLib.MainContext        m_Context;
 
-        internal Request.read (Bus inBus, uint inTimeout, RequestCallback inCallback, GLib.Cancellable? inCancellable = null)
+        internal Request (Bus inBus, uint inTimeout, RequestCallback inCallback, Message? inMessage = null, GLib.Cancellable? inCancellable = null)
         {
-            m_Type = RequestType.READ;
-            m_Bus = inBus;
-            m_Message = null;
-            m_Timeout = inTimeout;
-            m_Status = new BusError.OK ("");
-            m_Cancellable = inCancellable;
-            m_Callback = inCallback;
-            m_Source = new GLib.IdleSource ();
-            m_Source.set_callback (on_callback);
-            m_Context = GLib.MainContext.get_thread_default ();
-
-            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Read request context : 0x%lx", (ulong)m_Context);
-        }
-
-        internal Request.write (Bus inBus, Message inMessage, uint inTimeout, RequestCallback inCallback, GLib.Cancellable? inCancellable = null)
-        {
-            m_Type = RequestType.WRITE;
             m_Bus = inBus;
             m_Message = inMessage;
             m_Timeout = inTimeout;
             m_Status = new BusError.OK ("");
             m_Cancellable = inCancellable;
             m_Callback = inCallback;
-            m_Source = new GLib.IdleSource ();
-            m_Source.set_callback (on_callback);
-            m_Context = GLib.MainContext.get_thread_default ();
-
-            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Write request context : 0x%lx", (ulong)m_Context);
-        }
-
-        internal Request.end ()
-        {
-            m_Type = RequestType.END;
-            m_Message = null;
-            m_Timeout = 0;
-        }
-
-        internal override int
-        compare (Object inObject)
-            requires (inObject is Request)
-        {
-            Request other = inObject as Request;
-
-            if (m_Type == RequestType.END)
-                return 1;
-            else if (other.m_Type == RequestType.END)
-                return -1;
-
-            return 0;
-        }
-
-        private bool
-        on_callback ()
-        {
-            m_Callback ();
-            return false;
         }
 
         public void
         complete ()
         {
-            m_Source.attach (m_Context);
-        }
-    }
-
-    private class Engine : Object
-    {
-        private unowned Bus         m_Bus;
-        private GLib.Thread<void*>? m_IdRecv = null;
-        private GLib.Thread<void*>? m_IdSend = null;
-        private AsyncQueue<Request> m_RequestRecvQueue;
-        private AsyncQueue<Request> m_RequestSendQueue;
-        private AsyncQueue<Request> m_RecvQueue;
-        private AsyncQueue<Request> m_SendQueue;
-
-        public Engine (Bus inBus)
-        {
-            // Create recv request Queue
-            m_RequestRecvQueue = new AsyncQueue<Request> ();
-            m_RequestRecvQueue.is_sorted = true;
-
-            // Create send request Queue
-            m_RequestSendQueue = new AsyncQueue<Request> ();
-            m_RequestSendQueue.is_sorted = true;
-
-            // Create recv/send Queue
-            m_RecvQueue = new AsyncQueue<Request> ();
-            m_SendQueue = new AsyncQueue<Request> ();
-
-            // Get bus
-            m_Bus = inBus;
-        }
-
-        private void*
-        recv ()
-        {
-            while (true)
-            {
-                Request request = m_RequestRecvQueue.pop ();
-                if (request != null)
-                {
-                    switch (request.m_Type)
-                    {
-                        case RequestType.READ:
-                            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Read request %s", m_Bus.uuid);
-
-                            if (request.m_Cancellable == null || !request.m_Cancellable.is_cancelled ())
-                            {
-                                try
-                                {
-                                    request.m_Message = Message.recv (request.m_Bus, request.m_Timeout);
-                                }
-                                catch (BusError err)
-                                {
-                                    request.m_Status = err;
-                                }
-                            }
-                            else
-                            {
-                                request.m_Status = new BusError.CANCELLED ("Read request cancelled");
-                            }
-
-                            m_RecvQueue.push (request);
-
-                            request.complete ();
-
-                            break;
-
-                        case RequestType.END:
-                            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "End request %s", m_Bus.uuid);
-                            return null;
-                    }
-                    request = null;
-                }
-            }
-        }
-
-        private void*
-        send ()
-        {
-            while (true)
-            {
-                Request request = m_RequestSendQueue.pop ();
-                if (request != null)
-                {
-                    switch (request.m_Type)
-                    {
-                        case RequestType.WRITE:
-                            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Write request %s", m_Bus.uuid);
-
-                            if (request.m_Message != null)
-                            {
-                                if ((request.m_Cancellable == null || !request.m_Cancellable.is_cancelled ()))
-                                {
-                                    try
-                                    {
-                                        request.m_Message.send (request.m_Bus, request.m_Timeout);
-                                    }
-                                    catch (BusError err)
-                                    {
-                                        Log.error (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Error on write request %s: %s", m_Bus.uuid, err.message);
-                                        request.m_Status = err;
-                                    }
-                                }
-                                else
-                                {
-                                    request.m_Status = new BusError.CANCELLED ("Write request cancelled");
-                                }
-
-                                m_SendQueue.push (request);
-
-                                request.complete ();
-                            }
-                            break;
-
-                        case RequestType.END:
-                            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "End request %s", m_Bus.uuid);
-                            return null;
-                    }
-                    request = null;
-                }
-            }
-        }
-
-        public void
-        stop ()
-        {
-            if (m_IdRecv != null)
-            {
-                // Send end engine request
-                m_RequestRecvQueue.push (new Request.end ());
-
-                // Wait end of engine
-                m_IdRecv.join ();
-            }
-
-            if (m_IdSend != null)
-            {
-                // Send end engine request
-                m_RequestSendQueue.push (new Request.end ());
-
-                // Wait end of engine
-                m_IdSend.join ();
-            }
-        }
-
-        public void
-        push (Request inRequest)
-        {
-            switch (inRequest.m_Type)
-            {
-                case RequestType.READ:
-                    if (m_IdRecv == null)
-                    {
-                        m_IdRecv = new GLib.Thread<void*> (@"$(m_Bus.uuid)-recv", recv);
-                    }
-
-                    m_RequestRecvQueue.push (inRequest);
-                    break;
-
-                case RequestType.WRITE:
-                    if (m_IdSend == null)
-                    {
-                        m_IdSend = new GLib.Thread<void*> (@"$(m_Bus.uuid)-send", send);
-                    }
-
-                    m_RequestSendQueue.push (inRequest);
-                    break;
-
-                case RequestType.END:
-                    m_RequestRecvQueue.push (inRequest);
-                    m_RequestSendQueue.push (inRequest);
-                    break;
-            }
-        }
-
-        public Request?
-        pop_recv ()
-        {
-            return m_RecvQueue.pop ();
-        }
-
-        public Request?
-        pop_send ()
-        {
-            return m_SendQueue.pop ();
+            m_Callback (this);
         }
     }
 
     // properties
-    private Engine m_Engine;
+    private Queue<Request> m_RequestRecvQueue;
+    private Queue<Request> m_RequestSendQueue;
 
     // accessors
-    public string uuid    { get; construct; default = null; }
-    public uint   timeout { get; set; default = 30000; }
+    public string uuid       { get; construct; default = null; }
+    public uint   timeout    { get; set; default = 1000; }
+    public Watch  recv_watch { get; construct; }
+    public Watch  send_watch { get; construct; }
+
+    // signals
+    public signal void received (Message inMessage);
 
     // static methods
     static construct
@@ -511,14 +273,143 @@ public abstract class Maia.Core.Bus : Object
         // Set bus id
         if (uuid != null) id = uuid.hash ();
 
-        // Create engine
-        m_Engine = new Engine (this);
+        if (recv_watch != null)
+        {
+            // Create receive request queue
+            m_RequestRecvQueue = new Queue<Request> ();
+
+            // Connect onto watch received callback
+            recv_watch.ready.connect (on_receive_ready);
+            // Connect onto watch timed out
+            recv_watch.timed_out.connect (on_receive_timed_out);
+            recv_watch.stop ();
+        }
+
+        if (send_watch != null)
+        {
+            // Create send request queue
+            m_RequestSendQueue = new Queue<Request> ();
+
+            // Connect onto watch send callback
+            send_watch.ready.connect (on_send_ready);
+            // Connect onto watch timed out
+            send_watch.timed_out.connect (on_send_timed_out);
+            send_watch.stop ();
+        }
     }
 
-    ~Bus ()
+    private bool
+    on_receive_timed_out ()
     {
-        // Stop engine
-        m_Engine.stop ();
+        Request request = null;
+        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Receive timed out %s %lu", uuid, (ulong)GLib.Thread.self<void*> ());
+        if ((request = m_RequestRecvQueue.pop ()) != null)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Timed out request %s", uuid);
+
+            if (request.m_Cancellable == null || !request.m_Cancellable.is_cancelled ())
+            {
+                request.m_Status = new BusError.READ ("error on receive message : timed out");
+            }
+            else
+            {
+                request.m_Status = new BusError.CANCELLED ("Read request cancelled");
+            }
+
+            request.complete ();
+        }
+
+        return m_RequestRecvQueue.length != 0;
+    }
+
+    private bool
+    on_receive_ready ()
+    {
+        Request request = null;
+        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Receive ready %s %lu", uuid, (ulong)GLib.Thread.self<void*> ());
+        while (recv_watch.check () && (request = m_RequestRecvQueue.pop ()) != null)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Read request %s", uuid);
+
+            if (request.m_Cancellable == null || !request.m_Cancellable.is_cancelled ())
+            {
+                try
+                {
+                    request.m_Message = Message.recv (this, timeout);
+                }
+                catch (BusError err)
+                {
+                    Log.error (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Error on read request %s: %s", uuid, err.message);
+                    request.m_Status = err;
+                }
+            }
+            else
+            {
+                request.m_Status = new BusError.CANCELLED ("Read request cancelled");
+            }
+
+            request.complete ();
+        }
+
+        return m_RequestRecvQueue.length != 0;
+    }
+
+    private bool
+    on_send_timed_out ()
+    {
+        Request request = null;
+        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Write timed out %s %lu", uuid, (ulong)GLib.Thread.self<void*> ());
+        if ((request = m_RequestSendQueue.pop ()) != null)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Timed out request %s", uuid);
+
+            if (request.m_Cancellable == null || !request.m_Cancellable.is_cancelled ())
+            {
+                request.m_Status = new BusError.WRITE ("error on send message : timed out");
+            }
+            else
+            {
+                request.m_Status = new BusError.CANCELLED ("Write request cancelled");
+            }
+
+            request.complete ();
+        }
+
+        return m_RequestSendQueue.length != 0;
+    }
+
+    private bool
+    on_send_ready ()
+    {
+        Request request = null;
+        while (send_watch.check () && (request = m_RequestSendQueue.pop ()) != null)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Write request %s", uuid);
+
+            if (request.m_Message != null)
+            {
+                if ((request.m_Cancellable == null || !request.m_Cancellable.is_cancelled ()))
+                {
+                    try
+                    {
+                        request.m_Message.send (this, timeout);
+                    }
+                    catch (BusError err)
+                    {
+                        Log.error (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Error on write request %s: %s", uuid, err.message);
+                        request.m_Status = err;
+                    }
+                }
+                else
+                {
+                    request.m_Status = new BusError.CANCELLED ("Write request cancelled");
+                }
+
+                request.complete ();
+            }
+        }
+
+        return m_RequestSendQueue.length != 0;
     }
 
     protected abstract size_t read (uint8[] inData, uint inTimeout) throws BusError;
@@ -527,46 +418,65 @@ public abstract class Maia.Core.Bus : Object
     public async Message?
     recv (GLib.Cancellable? inCancellable = null) throws BusError
     {
-        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Launch recv");
-
-        Request? ret = null;
-
-        m_Engine.push (new Request.read (this, timeout, () => {
-                ret = m_Engine.pop_recv ();
-
-                recv.callback ();
-            }, inCancellable));
-
-        yield;
-
-        if (!(ret.m_Status is BusError.OK))
+        if (recv_watch != null)
         {
-            throw ret.m_Status;
+            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Launch recv");
+
+            if (!recv_watch.is_started)
+            {
+                recv_watch.timeout = (int)timeout;
+            }
+            recv_watch.start ();
+
+            Request? ret = null;
+            m_RequestRecvQueue.push (new Request (this, timeout, (request) => {
+                    ret = request;
+
+                    recv.callback ();
+                }, null, inCancellable));
+
+            yield;
+
+            if (!(ret.m_Status is BusError.OK))
+            {
+                throw ret.m_Status;
+            }
+
+            return ret.m_Message;
         }
 
-        return ret.m_Message;
+        return null;
     }
 
     public async void
     send (Message inMessage, GLib.Cancellable? inCancellable = null) throws BusError
     {
-        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Launch send");
-
-        Request? ret = null;
-
-        if (inMessage.sender == 0) inMessage.sender = id;
-
-        m_Engine.push (new Request.write (this, inMessage, timeout, () => {
-                ret = m_Engine.pop_send ();
-
-                send.callback ();
-        }, inCancellable));
-
-        yield;
-
-        if (!(ret.m_Status is BusError.OK))
+        if (send_watch != null)
         {
-            throw ret.m_Status;
+            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Launch send");
+
+            Request? ret = null;
+
+            if (inMessage.sender == 0) inMessage.sender = id;
+
+            if (!send_watch.is_started)
+            {
+                send_watch.timeout = (int)timeout;
+            }
+            send_watch.start ();
+
+            m_RequestSendQueue.push (new Request (this, timeout, (request) => {
+                    ret = request;
+
+                    send.callback ();
+            }, inMessage, inCancellable));
+
+            yield;
+
+            if (!(ret.m_Status is BusError.OK))
+            {
+                throw ret.m_Status;
+            }
         }
     }
 }

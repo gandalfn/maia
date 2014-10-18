@@ -23,7 +23,6 @@ public class Maia.Core.SocketWatch : Watch
     private GLib.Socket m_Socket;
 
     // signals
-    public signal void ready ();
     public signal void closed ();
 
     // methods
@@ -31,23 +30,13 @@ public class Maia.Core.SocketWatch : Watch
      * Create a new Socket watcher
      *
      * @param inSocket socket to watch
+     * @param inCondition condition to watch
+     * @param inContext main context
      * @param inPriority watch priority
      */
-    public SocketWatch (GLib.Socket inSocket, GLib.MainContext? inContext = null, int inPriority = GLib.Priority.HIGH)
+    public SocketWatch (GLib.Socket inSocket, Watch.Condition inCondition = Watch.Condition.IN, GLib.MainContext? inContext = GLib.MainContext.get_thread_default (), int inPriority = GLib.Priority.HIGH)
     {
-        base (inSocket.fd, inContext, inPriority);
-        m_Socket = inSocket;
-    }
-
-    /**
-     * Create a new Socket watcher
-     *
-     * @param inSocket socket to watch
-     * @param inPriority watch priority
-     */
-    public SocketWatch.out (GLib.Socket inSocket, GLib.MainContext? inContext = null, int inPriority = GLib.Priority.HIGH)
-    {
-        base.out (inSocket.fd, inContext, inPriority);
+        base (inSocket.fd, inCondition, inContext, inPriority);
         m_Socket = inSocket;
     }
 
@@ -57,22 +46,38 @@ public class Maia.Core.SocketWatch : Watch
     }
 
     /**
-     * Called when an error occur on fd
+     * {@inheritDoc}
      */
-    protected override void
+    internal override void
     on_error ()
     {
         closed ();
     }
 
     /**
-     * Called when a data has been available on fd
+     * {@inheritDoc}
      */
-    protected override bool
+    internal override bool
+    check ()
+    {
+        var status = m_Socket.condition_check (GLib.IOCondition.OUT | GLib.IOCondition.IN | GLib.IOCondition.PRI);
+
+        if (condition == Watch.Condition.OUT)
+        {
+            return GLib.IOCondition.OUT in status;
+        }
+
+        return ((GLib.IOCondition.IN in status) || (GLib.IOCondition.PRI in status)) && m_Socket.get_available_bytes () != 0;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    internal override bool
     on_process ()
     {
-        ready ();
+        bool ret = base.on_process ();
 
-        return !m_Socket.is_closed ();
+        return !m_Socket.is_closed () && ret;
     }
 }

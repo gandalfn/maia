@@ -498,6 +498,75 @@ public class Maia.Core.EventBus : Object
         }
     }
 
+    private class Engine : GLib.Object
+    {
+        private unowned EventBus  m_EventBus;
+        private GLib.Thread<bool> m_Thread;
+        private GLib.MainContext  m_Context;
+        private GLib.MainLoop     m_Loop;
+        private GLib.Mutex        m_Mutex = GLib.Mutex ();
+        private GLib.Cond         m_Cond  = GLib.Cond ();
+
+
+        public Engine (EventBus inBus)
+        {
+            m_EventBus = inBus;
+
+            // Create thread service
+            m_Mutex.lock ();
+            m_Thread = new GLib.Thread<bool> ("event-bus", run);
+            m_Cond.wait (m_Mutex);
+            m_Mutex.unlock ();
+        }
+
+        ~Engine ()
+        {
+            Log.debug ("~Engine", Log.Category.MAIN_EVENT, @"Destroy event-bus engine $((GLib.Quark)m_EventBus.id)");
+            stop ();
+        }
+
+        private bool
+        run ()
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Start event-bus $((GLib.Quark)m_EventBus.id)");
+
+            // Create context and loop
+            m_Context = new GLib.MainContext ();
+            m_Context.push_thread_default ();
+            m_Loop = new GLib.MainLoop (m_Context);
+
+            // Start event bus
+            m_EventBus.start ();
+
+            // Signal has loop run
+            m_Mutex.lock ();
+            m_Cond.signal ();
+            m_Mutex.unlock ();
+
+            // Run main loop
+            m_Loop.run ();
+
+            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Stop event-bus engine $((GLib.Quark)m_EventBus.id)");
+
+            return false;
+        }
+
+        public void
+        stop ()
+        {
+            if (m_Thread != null && m_Loop != null)
+            {
+                Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Stop event-bus engine $((GLib.Quark)m_EventBus.id)");
+
+                m_Loop.quit ();
+                m_Loop = null;
+
+                m_Thread.join ();
+                m_Thread = null;
+            }
+        }
+    }
+
     private class Client : Object
     {
         // properties
@@ -600,6 +669,7 @@ public class Maia.Core.EventBus : Object
                 unowned EventListenerPool? pool = m_Subscribers.search<Event.Hash> (msg.hash, EventListenerPool.compare_with_event_hash);
                 if (pool != null)
                 {
+                    pool.event_destroyed = true;
                     m_Subscribers.remove (pool);
                 }
             }
@@ -826,6 +896,22 @@ public class Maia.Core.EventBus : Object
             }
         }
 
+        public Set<uint32>
+        get_subscriber_destinations ()
+        {
+            Set<uint32> ret = new Set<uint32> ();
+
+            foreach (unowned Subscriber? subscriber in subscribers)
+            {
+                if (subscriber != null)
+                {
+                    ret.insert (subscriber.id);
+                }
+            }
+
+            return ret;
+        }
+
         public int
         compare (Occurence inOther)
         {
@@ -840,10 +926,10 @@ public class Maia.Core.EventBus : Object
     }
 
     // static properties
-    private static unowned EventBus s_Default = null;
+    private static unowned EventBus? s_Default = null;
 
     // static accessors
-    public static EventBus @default {
+    public static unowned EventBus @default {
         get {
             return s_Default;
         }
@@ -853,6 +939,7 @@ public class Maia.Core.EventBus : Object
     }
 
     // properties
+    private Engine         m_Engine;
     private BusService     m_Service;
     private Set<Occurence> m_Occurences;
     private GLib.Private   m_Client;
@@ -881,11 +968,29 @@ public class Maia.Core.EventBus : Object
 
     public EventBus (string inName)
     {
+        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Create event-bus $inName");
+
         // Create event bus
         GLib.Object (id: GLib.Quark.from_string (inName));
 
+        // Create engine
+        m_Engine = new Engine (this);
+    }
+
+    ~EventBus ()
+    {
+        Log.debug ("~EventBus", Log.Category.MAIN_EVENT, @"Destroy event-bus $((GLib.Quark)id)");
+
+        m_Engine.stop ();
+    }
+
+    private void
+    start ()
+    {
+        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Start event-bus $((GLib.Quark)id)");
+
         // Create bus service
-        m_Service = new SocketBusService (inName);
+        m_Service = new SocketBusService (((GLib.Quark)id).to_string ());
         m_Service.new_connection.connect (on_new_connection);
         m_Service.set_dispatch_func (on_dispatch_message);
     }
@@ -949,9 +1054,28 @@ public class Maia.Core.EventBus : Object
             unowned Occurence occurence = m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
             if (occurence != null)
             {
+                // Get list of destination of event
+                Set<uint32> destination = occurence.get_subscriber_destinations ();
+                if (destination.length > 0)
+                {
+                    // Send event for client which is subscribed on
+                    foreach (unowned Core.Object? child in m_Service)
+                    {
+                        unowned BusConnection? client = child as BusConnection;
+                        if (client != null && client.id in destination)
+                        {
+                            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event destroy $(msg.hash.name ()) to client $(client.id)");
+                            // send message to client
+                            client.send.begin (inMessage);
+                        }
+                    }
+                }
+
                 Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "Event %s destroy", msg.hash.name ());
                 m_Occurences.remove (occurence);
             }
+
+            ret = true;
         }
         else if (inMessage is MessageEvent)
         {
@@ -959,16 +1083,35 @@ public class Maia.Core.EventBus : Object
 
             Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "Event %s publish", msg.hash.name ());
 
-            // Event with reply search an occurence
-            if (msg.need_reply)
+            unowned Occurence occurence = m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
+            if (occurence != null)
             {
-                unowned Occurence occurence = m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
-                if (occurence != null)
+                // Event with reply
+                if (msg.need_reply)
                 {
-                    // Add pending reply
+                   // Add pending reply
                     occurence.add_reply (msg.sender, msg.args);
                 }
+
+                // Get list of destination of event
+                Set<uint32> destination = occurence.get_subscriber_destinations ();
+                if (destination.length > 0)
+                {
+                    // Send event for client which is subscribed on
+                    foreach (unowned Core.Object? child in m_Service)
+                    {
+                        unowned BusConnection? client = child as BusConnection;
+                        if (client != null && client.id in destination)
+                        {
+                            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event $(msg.hash.name ()) to client $(client.id)");
+                            // send message to client
+                            client.send.begin (inMessage);
+                        }
+                    }
+                }
             }
+
+            ret = true;
         }
         else if (inMessage is MessageEventReply)
         {

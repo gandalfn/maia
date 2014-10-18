@@ -73,7 +73,7 @@ public class Maia.Cassowary.Tableau : Core.Object
     private inline void
     insert_col_var (AbstractVariable inParamVar, AbstractVariable inRowVar)
     {
-        unowned Core.Set<AbstractVariable> rowset = m_Columns[inParamVar];
+        unowned Core.Set<AbstractVariable>? rowset = m_Columns[inParamVar];
 
         // TODO: two parsing on set creation, need to be simplified
         if (rowset == null)

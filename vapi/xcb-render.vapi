@@ -270,16 +270,16 @@ namespace Xcb.Render
 	[SimpleType, CCode (cname = "xcb_render_glyphset_iterator_t")]
 	struct _GlyphsetIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Glyphset? data;
+		public int rem;
+		public int index;
+		public unowned Glyphset? data;
 	}
 
 	[CCode (cname = "xcb_render_glyphset_iterator_t")]
 	public struct GlyphsetIterator
 	{
 		[CCode (cname = "xcb_render_glyphset_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Glyphset?
 		next_value ()
@@ -329,16 +329,16 @@ namespace Xcb.Render
 	[SimpleType, CCode (cname = "xcb_render_picture_iterator_t")]
 	struct _PictureIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Picture? data;
+		public int rem;
+		public int index;
+		public unowned Picture? data;
 	}
 
 	[CCode (cname = "xcb_render_picture_iterator_t")]
 	public struct PictureIterator
 	{
 		[CCode (cname = "xcb_render_picture_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Picture?
 		next_value ()
@@ -452,16 +452,16 @@ namespace Xcb.Render
 	[SimpleType, CCode (cname = "xcb_render_pictformat_iterator_t")]
 	struct _PictformatIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Pictformat? data;
+		public int rem;
+		public int index;
+		public unowned Pictformat? data;
 	}
 
 	[CCode (cname = "xcb_render_pictformat_iterator_t")]
 	public struct PictformatIterator
 	{
 		[CCode (cname = "xcb_render_pictformat_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Pictformat?
 		next_value ()
@@ -534,16 +534,16 @@ namespace Xcb.Render
 	[SimpleType, CCode (cname = "xcb_render_directformat_iterator_t")]
 	struct _DirectformatIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Directformat? data;
+		public int rem;
+		public int index;
+		public unowned Directformat? data;
 	}
 
 	[CCode (cname = "xcb_render_directformat_iterator_t")]
 	public struct DirectformatIterator
 	{
 		[CCode (cname = "xcb_render_directformat_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Directformat?
 		next_value ()
@@ -573,16 +573,16 @@ namespace Xcb.Render
 	[SimpleType, CCode (cname = "xcb_render_pictforminfo_iterator_t")]
 	struct _PictforminfoIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Pictforminfo? data;
+		public int rem;
+		public int index;
+		public unowned Pictforminfo? data;
 	}
 
 	[CCode (cname = "xcb_render_pictforminfo_iterator_t")]
 	public struct PictforminfoIterator
 	{
 		[CCode (cname = "xcb_render_pictforminfo_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Pictforminfo?
 		next_value ()
@@ -609,16 +609,16 @@ namespace Xcb.Render
 	[SimpleType, CCode (cname = "xcb_render_pictvisual_iterator_t")]
 	struct _PictvisualIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Pictvisual? data;
+		public int rem;
+		public int index;
+		public unowned Pictvisual? data;
 	}
 
 	[CCode (cname = "xcb_render_pictvisual_iterator_t")]
 	public struct PictvisualIterator
 	{
 		[CCode (cname = "xcb_render_pictvisual_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Pictvisual?
 		next_value ()
@@ -642,16 +642,16 @@ namespace Xcb.Render
 	[SimpleType, CCode (cname = "xcb_render_pictdepth_iterator_t")]
 	struct _PictdepthIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Pictdepth? data;
+		public int rem;
+		public int index;
+		public unowned Pictdepth? data;
 	}
 
 	[CCode (cname = "xcb_render_pictdepth_iterator_t")]
 	public struct PictdepthIterator
 	{
 		[CCode (cname = "xcb_render_pictdepth_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Pictdepth?
 		next_value ()
@@ -680,16 +680,16 @@ namespace Xcb.Render
 	[SimpleType, CCode (cname = "xcb_render_pictscreen_iterator_t")]
 	struct _PictscreenIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Pictscreen? data;
+		public int rem;
+		public int index;
+		public unowned Pictscreen? data;
 	}
 
 	[CCode (cname = "xcb_render_pictscreen_iterator_t")]
 	public struct PictscreenIterator
 	{
 		[CCode (cname = "xcb_render_pictscreen_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Pictscreen?
 		next_value ()
@@ -718,16 +718,16 @@ namespace Xcb.Render
 	[SimpleType, CCode (cname = "xcb_render_indexvalue_iterator_t")]
 	struct _IndexvalueIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Indexvalue? data;
+		public int rem;
+		public int index;
+		public unowned Indexvalue? data;
 	}
 
 	[CCode (cname = "xcb_render_indexvalue_iterator_t")]
 	public struct IndexvalueIterator
 	{
 		[CCode (cname = "xcb_render_indexvalue_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Indexvalue?
 		next_value ()
@@ -754,16 +754,16 @@ namespace Xcb.Render
 	[SimpleType, CCode (cname = "xcb_render_color_iterator_t")]
 	struct _ColorIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Color? data;
+		public int rem;
+		public int index;
+		public unowned Color? data;
 	}
 
 	[CCode (cname = "xcb_render_color_iterator_t")]
 	public struct ColorIterator
 	{
 		[CCode (cname = "xcb_render_color_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Color?
 		next_value ()
@@ -789,16 +789,16 @@ namespace Xcb.Render
 	[SimpleType, CCode (cname = "xcb_render_pointfix_iterator_t")]
 	struct _PointfixIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Pointfix? data;
+		public int rem;
+		public int index;
+		public unowned Pointfix? data;
 	}
 
 	[CCode (cname = "xcb_render_pointfix_iterator_t")]
 	public struct PointfixIterator
 	{
 		[CCode (cname = "xcb_render_pointfix_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Pointfix?
 		next_value ()
@@ -822,16 +822,16 @@ namespace Xcb.Render
 	[SimpleType, CCode (cname = "xcb_render_linefix_iterator_t")]
 	struct _LinefixIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Linefix? data;
+		public int rem;
+		public int index;
+		public unowned Linefix? data;
 	}
 
 	[CCode (cname = "xcb_render_linefix_iterator_t")]
 	public struct LinefixIterator
 	{
 		[CCode (cname = "xcb_render_linefix_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Linefix?
 		next_value ()
@@ -855,16 +855,16 @@ namespace Xcb.Render
 	[SimpleType, CCode (cname = "xcb_render_triangle_iterator_t")]
 	struct _TriangleIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Triangle? data;
+		public int rem;
+		public int index;
+		public unowned Triangle? data;
 	}
 
 	[CCode (cname = "xcb_render_triangle_iterator_t")]
 	public struct TriangleIterator
 	{
 		[CCode (cname = "xcb_render_triangle_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Triangle?
 		next_value ()
@@ -889,16 +889,16 @@ namespace Xcb.Render
 	[SimpleType, CCode (cname = "xcb_render_trapezoid_iterator_t")]
 	struct _TrapezoidIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Trapezoid? data;
+		public int rem;
+		public int index;
+		public unowned Trapezoid? data;
 	}
 
 	[CCode (cname = "xcb_render_trapezoid_iterator_t")]
 	public struct TrapezoidIterator
 	{
 		[CCode (cname = "xcb_render_trapezoid_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Trapezoid?
 		next_value ()
@@ -924,16 +924,16 @@ namespace Xcb.Render
 	[SimpleType, CCode (cname = "xcb_render_glyphinfo_iterator_t")]
 	struct _GlyphinfoIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Glyphinfo? data;
+		public int rem;
+		public int index;
+		public unowned Glyphinfo? data;
 	}
 
 	[CCode (cname = "xcb_render_glyphinfo_iterator_t")]
 	public struct GlyphinfoIterator
 	{
 		[CCode (cname = "xcb_render_glyphinfo_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Glyphinfo?
 		next_value ()
@@ -961,16 +961,16 @@ namespace Xcb.Render
 	[SimpleType, CCode (cname = "xcb_render_transform_iterator_t")]
 	struct _TransformIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Transform? data;
+		public int rem;
+		public int index;
+		public unowned Transform? data;
 	}
 
 	[CCode (cname = "xcb_render_transform_iterator_t")]
 	public struct TransformIterator
 	{
 		[CCode (cname = "xcb_render_transform_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Transform?
 		next_value ()
@@ -1001,16 +1001,16 @@ namespace Xcb.Render
 	[SimpleType, CCode (cname = "xcb_render_animcursorelt_iterator_t")]
 	struct _AnimcursoreltIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Animcursorelt? data;
+		public int rem;
+		public int index;
+		public unowned Animcursorelt? data;
 	}
 
 	[CCode (cname = "xcb_render_animcursorelt_iterator_t")]
 	public struct AnimcursoreltIterator
 	{
 		[CCode (cname = "xcb_render_animcursorelt_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Animcursorelt?
 		next_value ()
@@ -1034,16 +1034,16 @@ namespace Xcb.Render
 	[SimpleType, CCode (cname = "xcb_render_spanfix_iterator_t")]
 	struct _SpanfixIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Spanfix? data;
+		public int rem;
+		public int index;
+		public unowned Spanfix? data;
 	}
 
 	[CCode (cname = "xcb_render_spanfix_iterator_t")]
 	public struct SpanfixIterator
 	{
 		[CCode (cname = "xcb_render_spanfix_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Spanfix?
 		next_value ()
@@ -1068,16 +1068,16 @@ namespace Xcb.Render
 	[SimpleType, CCode (cname = "xcb_render_trap_iterator_t")]
 	struct _TrapIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Trap? data;
+		public int rem;
+		public int index;
+		public unowned Trap? data;
 	}
 
 	[CCode (cname = "xcb_render_trap_iterator_t")]
 	public struct TrapIterator
 	{
 		[CCode (cname = "xcb_render_trap_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Trap?
 		next_value ()

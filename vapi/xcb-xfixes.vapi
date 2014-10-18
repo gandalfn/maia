@@ -255,16 +255,16 @@ namespace Xcb.XFixes
 	[SimpleType, CCode (cname = "xcb_xfixes_region_iterator_t")]
 	struct _RegionIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Region? data;
+		public int rem;
+		public int index;
+		public unowned Region? data;
 	}
 
 	[CCode (cname = "xcb_xfixes_region_iterator_t")]
 	public struct RegionIterator
 	{
 		[CCode (cname = "xcb_xfixes_region_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Region?
 		next_value ()
@@ -402,16 +402,16 @@ namespace Xcb.XFixes
 	[SimpleType, CCode (cname = "xcb_xfixes_barrier_iterator_t")]
 	struct _BarrierIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Barrier? data;
+		public int rem;
+		public int index;
+		public unowned Barrier? data;
 	}
 
 	[CCode (cname = "xcb_xfixes_barrier_iterator_t")]
 	public struct BarrierIterator
 	{
 		[CCode (cname = "xcb_xfixes_barrier_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Barrier?
 		next_value ()

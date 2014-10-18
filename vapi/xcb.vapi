@@ -625,16 +625,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_char2b_iterator_t")]
 	struct _Char2bIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Char2b? data;
+		public int rem;
+		public int index;
+		public unowned Char2b? data;
 	}
 
 	[CCode (cname = "xcb_char2b_iterator_t")]
 	public struct Char2bIterator
 	{
 		[CCode (cname = "xcb_char2b_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Char2b?
 		next_value ()
@@ -658,16 +658,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_window_iterator_t")]
 	struct _WindowIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Window? data;
+		public int rem;
+		public int index;
+		public unowned Window? data;
 	}
 
 	[CCode (cname = "xcb_window_iterator_t")]
 	public struct WindowIterator
 	{
 		[CCode (cname = "xcb_window_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Window?
 		next_value ()
@@ -2064,16 +2064,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_pixmap_iterator_t")]
 	struct _PixmapIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Pixmap? data;
+		public int rem;
+		public int index;
+		public unowned Pixmap? data;
 	}
 
 	[CCode (cname = "xcb_pixmap_iterator_t")]
 	public struct PixmapIterator
 	{
 		[CCode (cname = "xcb_pixmap_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Pixmap?
 		next_value ()
@@ -2169,16 +2169,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_cursor_iterator_t")]
 	struct _CursorIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Cursor? data;
+		public int rem;
+		public int index;
+		public unowned Cursor? data;
 	}
 
 	[CCode (cname = "xcb_cursor_iterator_t")]
 	public struct CursorIterator
 	{
 		[CCode (cname = "xcb_cursor_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Cursor?
 		next_value ()
@@ -2314,16 +2314,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_font_iterator_t")]
 	struct _FontIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Font? data;
+		public int rem;
+		public int index;
+		public unowned Font? data;
 	}
 
 	[CCode (cname = "xcb_font_iterator_t")]
 	public struct FontIterator
 	{
 		[CCode (cname = "xcb_font_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Font?
 		next_value ()
@@ -2393,16 +2393,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_gcontext_iterator_t")]
 	struct _GContextIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned GContext? data;
+		public int rem;
+		public int index;
+		public unowned GContext? data;
 	}
 
 	[CCode (cname = "xcb_gcontext_iterator_t")]
 	public struct GContextIterator
 	{
 		[CCode (cname = "xcb_gcontext_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned GContext?
 		next_value ()
@@ -2536,16 +2536,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_colormap_iterator_t")]
 	struct _ColormapIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Colormap? data;
+		public int rem;
+		public int index;
+		public unowned Colormap? data;
 	}
 
 	[CCode (cname = "xcb_colormap_iterator_t")]
 	public struct ColormapIterator
 	{
 		[CCode (cname = "xcb_colormap_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Colormap?
 		next_value ()
@@ -2762,16 +2762,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_atom_iterator_t")]
 	struct _AtomIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Atom? data;
+		public int rem;
+		public int index;
+		public unowned Atom? data;
 	}
 
 	[CCode (cname = "xcb_atom_iterator_t")]
 	public struct AtomIterator
 	{
 		[CCode (cname = "xcb_atom_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Atom?
 		next_value ()
@@ -3382,16 +3382,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_point_iterator_t")]
 	struct _PointIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Point? data;
+		public int rem;
+		public int index;
+		public unowned Point? data;
 	}
 
 	[CCode (cname = "xcb_point_iterator_t")]
 	public struct PointIterator
 	{
 		[CCode (cname = "xcb_point_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Point?
 		next_value ()
@@ -3415,16 +3415,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_rectangle_iterator_t")]
 	struct _RectangleIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Rectangle? data;
+		public int rem;
+		public int index;
+		public unowned Rectangle? data;
 	}
 
 	[CCode (cname = "xcb_rectangle_iterator_t")]
 	public struct RectangleIterator
 	{
 		[CCode (cname = "xcb_rectangle_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Rectangle?
 		next_value ()
@@ -3450,16 +3450,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_arc_iterator_t")]
 	struct _ArcIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Arc? data;
+		public int rem;
+		public int index;
+		public unowned Arc? data;
 	}
 
 	[CCode (cname = "xcb_arc_iterator_t")]
 	public struct ArcIterator
 	{
 		[CCode (cname = "xcb_arc_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Arc?
 		next_value ()
@@ -3487,16 +3487,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_format_iterator_t")]
 	struct _FormatIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Format? data;
+		public int rem;
+		public int index;
+		public unowned Format? data;
 	}
 
 	[CCode (cname = "xcb_format_iterator_t")]
 	public struct FormatIterator
 	{
 		[CCode (cname = "xcb_format_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Format?
 		next_value ()
@@ -3531,16 +3531,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_visualtype_iterator_t")]
 	struct _VisualtypeIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Visualtype? data;
+		public int rem;
+		public int index;
+		public unowned Visualtype? data;
 	}
 
 	[CCode (cname = "xcb_visualtype_iterator_t")]
 	public struct VisualtypeIterator
 	{
 		[CCode (cname = "xcb_visualtype_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Visualtype?
 		next_value ()
@@ -3569,16 +3569,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_depth_iterator_t")]
 	struct _DepthIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Depth? data;
+		public int rem;
+		public int index;
+		public unowned Depth? data;
 	}
 
 	[CCode (cname = "xcb_depth_iterator_t")]
 	public struct DepthIterator
 	{
 		[CCode (cname = "xcb_depth_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Depth?
 		next_value ()
@@ -3669,16 +3669,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_setup_request_iterator_t")]
 	struct _SetupRequestIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned SetupRequest? data;
+		public int rem;
+		public int index;
+		public unowned SetupRequest? data;
 	}
 
 	[CCode (cname = "xcb_setup_request_iterator_t")]
 	public struct SetupRequestIterator
 	{
 		[CCode (cname = "xcb_setup_request_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned SetupRequest?
 		next_value ()
@@ -3705,16 +3705,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_setup_failed_iterator_t")]
 	struct _SetupFailedIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned SetupFailed? data;
+		public int rem;
+		public int index;
+		public unowned SetupFailed? data;
 	}
 
 	[CCode (cname = "xcb_setup_failed_iterator_t")]
 	public struct SetupFailedIterator
 	{
 		[CCode (cname = "xcb_setup_failed_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned SetupFailed?
 		next_value ()
@@ -3741,16 +3741,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_setup_authenticate_iterator_t")]
 	struct _SetupAuthenticateIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned SetupAuthenticate? data;
+		public int rem;
+		public int index;
+		public unowned SetupAuthenticate? data;
 	}
 
 	[CCode (cname = "xcb_setup_authenticate_iterator_t")]
 	public struct SetupAuthenticateIterator
 	{
 		[CCode (cname = "xcb_setup_authenticate_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned SetupAuthenticate?
 		next_value ()
@@ -4779,16 +4779,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_timecoord_iterator_t")]
 	struct _TimecoordIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Timecoord? data;
+		public int rem;
+		public int index;
+		public unowned Timecoord? data;
 	}
 
 	[CCode (cname = "xcb_timecoord_iterator_t")]
 	public struct TimecoordIterator
 	{
 		[CCode (cname = "xcb_timecoord_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Timecoord?
 		next_value ()
@@ -4828,16 +4828,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_fontprop_iterator_t")]
 	struct _FontpropIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Fontprop? data;
+		public int rem;
+		public int index;
+		public unowned Fontprop? data;
 	}
 
 	[CCode (cname = "xcb_fontprop_iterator_t")]
 	public struct FontpropIterator
 	{
 		[CCode (cname = "xcb_fontprop_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Fontprop?
 		next_value ()
@@ -4861,16 +4861,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_charinfo_iterator_t")]
 	struct _CharinfoIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Charinfo? data;
+		public int rem;
+		public int index;
+		public unowned Charinfo? data;
 	}
 
 	[CCode (cname = "xcb_charinfo_iterator_t")]
 	public struct CharinfoIterator
 	{
 		[CCode (cname = "xcb_charinfo_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Charinfo?
 		next_value ()
@@ -4898,16 +4898,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_str_iterator_t")]
 	struct _StrIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Str? data;
+		public int rem;
+		public int index;
+		public unowned Str? data;
 	}
 
 	[CCode (cname = "xcb_str_iterator_t")]
 	public struct StrIterator
 	{
 		[CCode (cname = "xcb_str_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Str?
 		next_value ()
@@ -5041,16 +5041,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_segment_iterator_t")]
 	struct _SegmentIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Segment? data;
+		public int rem;
+		public int index;
+		public unowned Segment? data;
 	}
 
 	[CCode (cname = "xcb_segment_iterator_t")]
 	public struct SegmentIterator
 	{
 		[CCode (cname = "xcb_segment_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Segment?
 		next_value ()
@@ -5103,16 +5103,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_coloritem_iterator_t")]
 	struct _ColoritemIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Coloritem? data;
+		public int rem;
+		public int index;
+		public unowned Coloritem? data;
 	}
 
 	[CCode (cname = "xcb_coloritem_iterator_t")]
 	public struct ColoritemIterator
 	{
 		[CCode (cname = "xcb_coloritem_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Coloritem?
 		next_value ()
@@ -5139,16 +5139,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_rgb_iterator_t")]
 	struct _RgbIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Rgb? data;
+		public int rem;
+		public int index;
+		public unowned Rgb? data;
 	}
 
 	[CCode (cname = "xcb_rgb_iterator_t")]
 	public struct RgbIterator
 	{
 		[CCode (cname = "xcb_rgb_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Rgb?
 		next_value ()
@@ -5244,16 +5244,16 @@ namespace Xcb
 	[SimpleType, CCode (cname = "xcb_host_iterator_t")]
 	struct _HostIterator
 	{
-		internal int rem;
-		internal int index;
-		internal unowned Host? data;
+		public int rem;
+		public int index;
+		public unowned Host? data;
 	}
 
 	[CCode (cname = "xcb_host_iterator_t")]
 	public struct HostIterator
 	{
 		[CCode (cname = "xcb_host_next")]
-		internal void _next ();
+		public void _next ();
 
 		public inline unowned Host?
 		next_value ()

@@ -21,10 +21,74 @@ using Xcb.Render;
 
 internal class Maia.Xcb.Application : Core.Object
 {
+    // types
+    private class Engine : GLib.Object
+    {
+        private unowned Application m_Application;
+        private ConnectionWatch     m_Watch;
+        private GLib.Thread<bool>   m_Thread;
+        private GLib.MainContext    m_Context;
+        private GLib.MainLoop       m_Loop;
+        private GLib.Mutex          m_Mutex = GLib.Mutex ();
+        private GLib.Cond           m_Cond  = GLib.Cond ();
+
+
+        public Engine (Application inApplication)
+        {
+            m_Application = inApplication;
+
+            // Create thread service
+            m_Mutex.lock ();
+            m_Thread = new GLib.Thread<bool> ("xcb-events", run);
+            m_Cond.wait (m_Mutex);
+            m_Mutex.unlock ();
+        }
+
+        ~Engine ()
+        {
+            stop ();
+        }
+
+        private bool
+        run ()
+        {
+            // Create context and loop
+            m_Context = new GLib.MainContext ();
+            m_Context.push_thread_default ();
+            m_Loop = new GLib.MainLoop (m_Context);
+
+            // Watch xorg connection for events
+            m_Watch = new ConnectionWatch (m_Application.connection);
+
+            // Signal has loop run
+            m_Mutex.lock ();
+            m_Cond.signal ();
+            m_Mutex.unlock ();
+
+            // Run main loop
+            m_Loop.run ();
+
+            return false;
+        }
+
+        public void
+        stop ()
+        {
+            if (m_Thread != null && m_Loop != null)
+            {
+                m_Loop.quit ();
+                m_Loop = null;
+
+                m_Thread.join ();
+                m_Thread = null;
+            }
+        }
+    }
+
     // properties
     private global::Xcb.Connection            m_Connection;
     private int                               m_DefaultScreen;
-    private ConnectionWatch                   m_Watch;
+    private Engine                            m_Engine;
     private Atoms                             m_Atoms;
     private global::Xcb.Util.CursorContext    m_Cursors;
     private global::Xcb.Render.Pictvisual?[,] m_VisualCache;
@@ -72,8 +136,8 @@ internal class Maia.Xcb.Application : Core.Object
         // Create atoms
         m_Atoms = new Atoms (m_Connection);
 
-        // Watch xorg connection for events
-        m_Watch = new ConnectionWatch (m_Connection);
+        // start engine for events
+        m_Engine = new Engine (this);
 
         // Create cursor context
         m_Cursors = global::Xcb.Util.CursorContext.create (m_Connection, m_Connection.roots[m_DefaultScreen]);
@@ -113,6 +177,8 @@ internal class Maia.Xcb.Application : Core.Object
 
     ~Application ()
     {
+        m_Engine.stop ();
+
         foreach (unowned View view in m_Views)
         {
             view.weak_unref (on_view_destroyed);

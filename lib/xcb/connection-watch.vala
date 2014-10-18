@@ -22,11 +22,12 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
     // properties
     private unowned global::Xcb.Connection m_Connection;
     private global::Xcb.Util.KeySymbols    m_Symbols;
+    private global::Xcb.GenericEvent?      m_LastEvent = null;
 
     // methods
     public ConnectionWatch (global::Xcb.Connection inConnection)
     {
-        base (inConnection.file_descriptor, null, GLib.Priority.DEFAULT);
+        base (inConnection.file_descriptor, Core.Watch.Condition.IN, null, GLib.Priority.DEFAULT);
 
         m_Connection = inConnection;
 
@@ -108,20 +109,6 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
                                                                           modifier, key, car));
     }
 
-    internal override bool
-    on_prepare (out int inTimeout)
-    {
-        bool ret = base.on_prepare (out inTimeout);
-
-        if (!ret)
-        {
-            m_Connection.flush ();
-            on_process ();
-        }
-
-        return ret;
-    }
-
     internal override void
     on_error ()
     {
@@ -129,19 +116,24 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
     }
 
     internal override bool
+    check ()
+    {
+        return (m_LastEvent != null || (m_LastEvent = m_Connection.poll_for_event ()) != null);
+    }
+
+    internal override bool
     on_process ()
     {
         Core.Map<int, MouseEventArgs> motions = new Core.Map<int, MouseEventArgs> ();
-        global::Xcb.GenericEvent? evt = null;
 
-        while ((evt = m_Connection.poll_for_event ()) != null)
+        while (m_LastEvent != null || (m_LastEvent = m_Connection.poll_for_event ()) != null)
         {
-            int response_type = evt.response_type & ~0x80;
+            int response_type = m_LastEvent.response_type & ~0x80;
             switch (response_type)
             {
                 // Expose event
                 case global::Xcb.EventType.EXPOSE:
-                    unowned global::Xcb.ExposeEvent? evt_expose = (global::Xcb.ExposeEvent?)evt;
+                    unowned global::Xcb.ExposeEvent? evt_expose = (global::Xcb.ExposeEvent?)m_LastEvent;
 
                     // send event damage
                     Core.EventBus.default.publish ("damage", ((int)evt_expose.window).to_pointer (),
@@ -151,7 +143,7 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
 
                 // configure notify event
                 case global::Xcb.EventType.CONFIGURE_NOTIFY:
-                    unowned global::Xcb.ConfigureNotifyEvent? evt_configure = (global::Xcb.ConfigureNotifyEvent?)evt;
+                    unowned global::Xcb.ConfigureNotifyEvent? evt_configure = (global::Xcb.ConfigureNotifyEvent?)m_LastEvent;
 
                     // send event geometry
                     Core.EventBus.default.publish ("geometry", ((int)evt_configure.window).to_pointer (),
@@ -163,7 +155,7 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
 
                 // map notify event
                 case global::Xcb.EventType.MAP_NOTIFY:
-                    unowned global::Xcb.MapNotifyEvent? evt_map_notify = (global::Xcb.MapNotifyEvent?)evt;
+                    unowned global::Xcb.MapNotifyEvent? evt_map_notify = (global::Xcb.MapNotifyEvent?)m_LastEvent;
 
                     // send event geometry
                     Core.EventBus.default.publish ("visibility", ((int)evt_map_notify.window).to_pointer (),
@@ -172,7 +164,7 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
 
                 // unmap notify event
                 case global::Xcb.EventType.UNMAP_NOTIFY:
-                    unowned global::Xcb.UnmapNotifyEvent? evt_unmap_notify = (global::Xcb.UnmapNotifyEvent?)evt;
+                    unowned global::Xcb.UnmapNotifyEvent? evt_unmap_notify = (global::Xcb.UnmapNotifyEvent?)m_LastEvent;
 
                     // send event geometry
                     Core.EventBus.default.publish ("visibility", ((int)evt_unmap_notify.window).to_pointer (),
@@ -181,7 +173,7 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
 
                 // button press event
                 case global::Xcb.EventType.BUTTON_PRESS:
-                    unowned global::Xcb.ButtonPressEvent? evt_button_press = (global::Xcb.ButtonPressEvent?)evt;
+                    unowned global::Xcb.ButtonPressEvent? evt_button_press = (global::Xcb.ButtonPressEvent?)m_LastEvent;
 
                     // send event mouse
                     Core.EventBus.default.publish ("mouse", ((int)evt_button_press.event).to_pointer (),
@@ -193,7 +185,7 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
 
                 // button release event
                 case global::Xcb.EventType.BUTTON_RELEASE:
-                    unowned global::Xcb.ButtonReleaseEvent? evt_button_release = (global::Xcb.ButtonReleaseEvent?)evt;
+                    unowned global::Xcb.ButtonReleaseEvent? evt_button_release = (global::Xcb.ButtonReleaseEvent?)m_LastEvent;
 
                     // send event mouse
                     Core.EventBus.default.publish ("mouse", ((int)evt_button_release.event).to_pointer (),
@@ -205,7 +197,7 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
 
                 // motion notify event
                 case global::Xcb.EventType.MOTION_NOTIFY:
-                    unowned global::Xcb.MotionNotifyEvent? evt_motion_notify = (global::Xcb.MotionNotifyEvent?)evt;
+                    unowned global::Xcb.MotionNotifyEvent? evt_motion_notify = (global::Xcb.MotionNotifyEvent?)m_LastEvent;
 
                     if (evt_motion_notify.detail == global::Xcb.Motion.HINT)
                     {
@@ -230,7 +222,7 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
 
                 // client message event
                 case global::Xcb.EventType.CLIENT_MESSAGE:
-                    unowned global::Xcb.ClientMessageEvent? evt_client_message = (global::Xcb.ClientMessageEvent?)evt;
+                    unowned global::Xcb.ClientMessageEvent? evt_client_message = (global::Xcb.ClientMessageEvent?)m_LastEvent;
 
                     // check client message type
                     if (evt_client_message.type           == Xcb.application.atoms[AtomType.WM_PROTOCOLS] &&
@@ -244,7 +236,7 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
 
                 // destroy notify event
                 case global::Xcb.EventType.DESTROY_NOTIFY:
-                    unowned global::Xcb.DestroyNotifyEvent? evt_destroy_notify = (global::Xcb.DestroyNotifyEvent?)evt;
+                    unowned global::Xcb.DestroyNotifyEvent? evt_destroy_notify = (global::Xcb.DestroyNotifyEvent?)m_LastEvent;
 
                     // send event geometry
                     Core.EventBus.default.publish ("destroy", ((int)evt_destroy_notify.window).to_pointer (), null);
@@ -252,26 +244,28 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
 
                 // key press event
                 case global::Xcb.EventType.KEY_PRESS:
-                    unowned global::Xcb.KeyPressEvent? evt_key_press = (global::Xcb.KeyPressEvent?)evt;
+                    unowned global::Xcb.KeyPressEvent? evt_key_press = (global::Xcb.KeyPressEvent?)m_LastEvent;
 
                     send_keyboard_event (evt_key_press.event, true, evt_key_press.state, evt_key_press.detail);
                     break;
 
                 // key press event
                 case global::Xcb.EventType.KEY_RELEASE:
-                    unowned global::Xcb.KeyReleaseEvent? evt_key_release = (global::Xcb.KeyReleaseEvent?)evt;
+                    unowned global::Xcb.KeyReleaseEvent? evt_key_release = (global::Xcb.KeyReleaseEvent?)m_LastEvent;
 
                     send_keyboard_event (evt_key_release.event, false, evt_key_release.state, evt_key_release.detail);
                     break;
 
                 // mapping notify event
                 case global::Xcb.EventType.MAPPING_NOTIFY:
-                    unowned global::Xcb.MappingNotifyEvent? evt_mapping_notify = (global::Xcb.MappingNotifyEvent?)evt;
+                    unowned global::Xcb.MappingNotifyEvent? evt_mapping_notify = (global::Xcb.MappingNotifyEvent?)m_LastEvent;
 
                     // refresh keybaord mapping
                     m_Symbols.refresh_keyboard_mapping (evt_mapping_notify);
                     break;
             }
+
+            m_LastEvent = null;
         }
 
         // send compressed motion

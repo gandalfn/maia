@@ -26,9 +26,9 @@ public abstract class Maia.Core.BusConnection : Bus
     public signal void message_received (Bus.Message inMessage);
 
     // methods
-    protected BusConnection (string inUUID)
+    protected BusConnection (string inUUID, Watch inRecvWatch, Watch inSendWatch)
     {
-        GLib.Object (uuid: inUUID);
+        GLib.Object (uuid: inUUID, recv_watch: inRecvWatch, send_watch: inSendWatch);
     }
 
     protected async bool

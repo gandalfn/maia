@@ -20,6 +20,7 @@
 public class Maia.Core.AsyncQueue<V> : Queue<V>
 {
     // properties
+    private uint       m_WaitingThreads = 0;
     private GLib.Mutex m_Mutex = GLib.Mutex ();
     private GLib.Cond  m_Cond  = GLib.Cond ();
 
@@ -32,22 +33,23 @@ public class Maia.Core.AsyncQueue<V> : Queue<V>
     public unowned V?
     peek_timed (uint inWait = 0)
     {
-        int64 until = (inWait > 0) ? GLib.get_monotonic_time () + inWait * 1000 : inWait;
         unowned V? ret = null;
 
         m_Mutex.lock ();
         {
+            m_WaitingThreads++;
             while ((ret = base.peek ()) == null)
             {
-                if (until == 0)
+                if (inWait == 0)
                 {
                     m_Cond.wait (m_Mutex);
                 }
-                else if (!m_Cond.wait_until (m_Mutex, until))
+                else if (!m_Cond.wait_until (m_Mutex, GLib.get_monotonic_time () + inWait * GLib.TimeSpan.MILLISECOND))
                 {
                     break;
                 }
             }
+            m_WaitingThreads--;
         }
         m_Mutex.unlock ();
 
@@ -63,22 +65,23 @@ public class Maia.Core.AsyncQueue<V> : Queue<V>
     public V?
     pop_timed (uint inWait = 0)
     {
-        int64 until = (inWait > 0) ? GLib.get_monotonic_time () + inWait * 1000 : inWait;
         V? ret = null;
 
-        m_Mutex.lock ();
+        m_Mutex.@lock ();
         {
+            m_WaitingThreads++;
             while ((ret = base.pop ()) == null)
             {
-                if (until == 0)
+                if (inWait == 0)
                 {
                     m_Cond.wait (m_Mutex);
                 }
-                else if (!m_Cond.wait_until (m_Mutex, until))
+                else if (!m_Cond.wait_until (m_Mutex, GLib.get_monotonic_time () + inWait * GLib.TimeSpan.MILLISECOND))
                 {
                     break;
                 }
             }
+            m_WaitingThreads--;
         }
         m_Mutex.unlock ();
 
@@ -94,10 +97,14 @@ public class Maia.Core.AsyncQueue<V> : Queue<V>
     public override void
     push (V inVal)
     {
-        m_Mutex.lock ();
+        m_Mutex.@lock ();
         {
-            insert (inVal);
-            m_Cond.signal ();
+            base.push (inVal);
+
+            if (m_WaitingThreads > 0)
+            {
+                m_Cond.@signal ();
+            }
         }
         m_Mutex.unlock ();
     }

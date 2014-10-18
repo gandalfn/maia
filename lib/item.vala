@@ -663,7 +663,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         s_CanvasWindow      = GLib.Quark.from_string ("MaiaCanvasWindow");
         s_PopupWindow       = GLib.Quark.from_string ("MaiaPopupWindow");
         s_ThemeDumpQuark    = GLib.Quark.from_string ("MaiaItemThemeDumped");
-        
+
         // register attribute bind
         Manifest.AttributeBind.register_transform_func (typeof (Item), "width", attribute_bind_width);
         Manifest.AttributeBind.register_transform_func (typeof (Item), "height", attribute_bind_height);
@@ -1424,22 +1424,22 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         if (inChild.geometry != null)
         {
-            Graphic.Region damaged_area;
+            Graphic.Region child_damaged_area;
 
             if (inArea == null)
             {
-                damaged_area = inChild.geometry.copy ();
+                child_damaged_area = inChild.geometry.copy ();
             }
             else
             {
-                damaged_area = inChild.area_to_parent_item_space (inArea);
+                child_damaged_area = inChild.area_to_parent_item_space (inArea);
             }
 
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, damaged_area.extents.to_string ());
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, child_damaged_area.extents.to_string ());
 
             // damage item
             damage.disconnect (on_damage);
-            damage (damaged_area);
+            damage (child_damaged_area);
             damage.connect (on_damage);
         }
     }

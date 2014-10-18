@@ -21,13 +21,13 @@ void main (string[] args)
 {
     Test.init (ref args);
 
-    var application = new Maia.Application ("test", 60, { "gtk" } );
-
     if (Test.verbose ())
     {
-        //Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.MAIN_EVENT |
-        //                                                                        Maia.Log.Category.MAIN_BUS, "test"));
+        Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.MAIN_EVENT |
+                                                                                Maia.Log.Category.MAIN_BUS, "test"));
     }
+
+    var application = new Maia.Application ("test", 60, { "gtk" } );
 
     TestSuite.get_root ().add_suite (new Maia.TestCore ().suite);
     TestSuite.get_root ().add_suite (new Maia.TestGraphic ().suite);

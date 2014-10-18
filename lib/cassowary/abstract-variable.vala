@@ -36,8 +36,7 @@ public abstract class Maia.Cassowary.AbstractVariable : Core.Object
     // methods
     internal AbstractVariable ()
     {
-        GLib.Object (id: GLib.Quark.from_string ("v%li".printf (s_Number)));
-        s_Number++;
+        GLib.Object (id: GLib.Quark.from_string (@"v$(s_Number++)"));
     }
 
     internal AbstractVariable.with_name (string inName)
@@ -47,6 +46,6 @@ public abstract class Maia.Cassowary.AbstractVariable : Core.Object
 
     internal AbstractVariable.with_prefix (long inVarNumber, string inPrefix)
     {
-        GLib.Object (id: GLib.Quark.from_string ("%s%li".printf (inPrefix, inVarNumber)));
+        GLib.Object (id: GLib.Quark.from_string (@"$inPrefix$inPrefix"));
     }
 }

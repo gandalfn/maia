@@ -61,7 +61,7 @@ public class Maia.TestAsyncQueue : Maia.TestCase
             int cpt = 0;
             while (ret && cpt < NB_KEYS)
             {
-                int val = m_Queue.pop ();
+                int? val = m_Queue.pop ();
 
                 ret = val == m_Keys[cpt];
                 ++cpt;
@@ -110,11 +110,13 @@ public class Maia.TestAsyncQueue : Maia.TestCase
 
                 if (val == 0)
                 {
+                    if (cpt < NB_KEYS / 2) continue;
                     Test.message ("pop timeout %i", (int)elapsed);
                     ret = elapsed >= 200;
                     break;
                 }
 
+                Test.message (@"pop $(val)");
                 ret = val == m_Keys[cpt];
                 ++cpt;
             }
@@ -122,10 +124,9 @@ public class Maia.TestAsyncQueue : Maia.TestCase
             return ret;
         });
 
-        Posix.usleep (100000);
-
         for (int cpt = 0; cpt < NB_KEYS / 2; ++cpt)
         {
+            Test.message (@"push $(m_Keys[cpt])");
             if (m_Keys[cpt] != 0) m_Queue.push (m_Keys[cpt]);
         }
 
