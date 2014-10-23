@@ -32,7 +32,10 @@ namespace Maia
 
         class Notification;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
         static void* _on_observer_destroy_notify(gpointer inpData);
+        static void _on_observer_gobject_destroy_notify (gpointer inpData, GObject* inpObject);
+#endif
 
         class NotificationObserver : public Glib::Object
         {
@@ -40,6 +43,7 @@ namespace Maia
             public:
                 virtual void operator() (const Glib::RefPtr<Notification>& inpNotification) = 0;
                 virtual NotificationObserver* clone () = 0;
+                virtual void finalize () = 0;
                 NotificationObserver* cpp_obj () { return this; }
 
                 Notification* m_pNotification;
@@ -61,6 +65,14 @@ namespace Maia
             typedef void (T_obj::*Handler) (const Glib::RefPtr<Notification>& inpNotification);
 
             public:
+                ~NotificationObserverFunctor ()
+                {
+                    if (m_pGObject)
+                    {
+                        g_object_weak_unref (m_pGObject, &_on_observer_gobject_destroy_notify, this);
+                    }
+                }
+
                 virtual void operator() (const Glib::RefPtr<Notification>& inpNotification)
                 {
                     (m_pObj->*m_Callback) (inpNotification);
@@ -68,18 +80,31 @@ namespace Maia
 
                 virtual NotificationObserver* clone ()
                 {
-                    return new NotificationObserverFunctor (m_pNotification, m_pObj, m_Callback);
+                    NotificationObserverFunctor* pRet = new NotificationObserverFunctor (m_pNotification, m_pObj, m_Callback);
+
+                    if (m_pGObject)
+                    {
+                        pRet->m_pGObject = m_pGObject;
+                        g_object_weak_ref (pRet->m_pGObject, &_on_observer_gobject_destroy_notify, pRet);
+                    }
+                    return pRet;
+                }
+
+                virtual void finalize ()
+                {
+                    m_pGObject = nullptr;
                 }
 
                 static Glib::RefPtr<NotificationObserver>
                 create (Notification* inpNotification, T_obj* pObj, Handler pFunc)
                 {
                     NotificationObserverFunctor* pRet = new NotificationObserverFunctor (inpNotification, pObj, pFunc);
-
                     if (std::is_base_of<Glib::Object, T_obj>::value)
                     {
-                        pObj->add_destroy_notify_callback (pRet, &_on_observer_destroy_notify);
+                        pRet->m_pGObject = G_OBJECT (pObj->gobj ());
+                        g_object_weak_ref (pRet->m_pGObject, &_on_observer_gobject_destroy_notify, pRet);
                     }
+
                     return Glib::RefPtr<NotificationObserver> (pRet);
                 }
 
@@ -87,13 +112,15 @@ namespace Maia
                 NotificationObserverFunctor (Notification* inpNotification, T_obj* pObj, Handler pFunc) :
                     NotificationObserver (inpNotification),
                     m_pObj (pObj),
-                    m_Callback (pFunc)
+                    m_Callback (pFunc),
+                    m_pGObject (nullptr)
                 {
                 }
 
             private:
-                T_obj*  m_pObj;
-                Handler m_Callback;
+                T_obj*   m_pObj;
+                Handler  m_Callback;
+                GObject* m_pGObject;
         };
 
         class NotificationObserverSlot : public NotificationObserver
@@ -103,7 +130,7 @@ namespace Maia
             public:
                 ~NotificationObserverSlot ()
                 {
-                    delete m_pCallback; m_pCallback = 0;
+                    delete m_pCallback; m_pCallback = nullptr;
                 }
 
                 virtual void operator() (const Glib::RefPtr<Notification>& inpNotification)
@@ -114,6 +141,11 @@ namespace Maia
                 virtual NotificationObserver* clone ()
                 {
                     return new NotificationObserverSlot (m_pNotification, *m_pCallback);
+                }
+
+                virtual void finalize ()
+                {
+                    m_pCallback = nullptr;
                 }
 
                 static Glib::RefPtr<NotificationObserver> create (Notification* inpNotification, const Handler& inSlot)
@@ -137,6 +169,8 @@ namespace Maia
         class Notification : public Object
         {
             _CLASS_GOBJECT(Notification, MaiaCoreNotification, MAIA_CORE_NOTIFICATION, Object, MaiaCoreObject)
+
+            _CUSTOM_DTOR
 
             public:
                 static Glib::RefPtr<Notification>
@@ -173,7 +207,7 @@ namespace Maia
                 void remove_observer (const Glib::RefPtr<NotificationObserver>& inpObserver);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-                void remove_observer (NotificationObserver* inpObserver);
+                void remove_observer (NotificationObserver* inpObserver, bool unref = true);
 #endif
                 _WRAP_METHOD(Glib::ustring get_name () const, maia_core_notification_get_name)
 
@@ -202,6 +236,8 @@ namespace Maia
         {
             _CLASS_GOBJECT(Notifications, MaiaCoreNotifications, MAIA_CORE_NOTIFICATIONS, Object, MaiaCoreObject)
 
+            _CUSTOM_DTOR
+
             public:
                 static Glib::RefPtr<Notifications>
                 create ()
@@ -227,10 +263,21 @@ namespace Maia
             NotificationObserver* pSelf = (NotificationObserver*)inpData;
             if (pSelf->m_pNotification)
             {
-                pSelf->m_pNotification->remove_observer (pSelf);
+                pSelf->m_pNotification->remove_observer (pSelf, false);
+                pSelf->finalize ();
             }
 
             return 0;
+        }
+
+        static void _on_observer_gobject_destroy_notify (gpointer inpData, GObject*)
+        {
+            NotificationObserver* pSelf = (NotificationObserver*)inpData;
+            if (pSelf->m_pNotification)
+            {
+                pSelf->m_pNotification->remove_observer (pSelf, false);
+                pSelf->finalize ();
+            }
         }
     }
 }
