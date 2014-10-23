@@ -25,6 +25,11 @@ public class Maia.Core.SocketBusConnection : BusConnection
     private SocketWatch           m_Watch;
 
     // methods
+    construct
+    {
+        notifications["connected"].add_object_observer (on_connected);
+    }
+
     public SocketBusConnection (string inName, uint32 inService) throws BusError
     {
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Connect to bus service %s", inName);
@@ -99,6 +104,8 @@ public class Maia.Core.SocketBusConnection : BusConnection
             {
                 Log.critical ("~SocketBusConnection", Log.Category.MAIN_BUS, "Error on close client connection: %s", err.message);
             }
+
+            m_Watch.stop ();
         }
     }
 
@@ -107,45 +114,52 @@ public class Maia.Core.SocketBusConnection : BusConnection
     {
         // Create watch on receive
         m_Watch = new SocketWatch (m_Connection.socket);
-        m_Watch.ready.connect (on_received);
-        m_Watch.closed.connect (on_closed);
+        m_Watch.notifications["ready"].add_object_observer (on_received);
+        m_Watch.notifications["closed"].add_object_observer (on_closed);
         m_Watch.stop ();
-    }
-
-    private bool
-    on_received ()
-    {
-        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "receive message");
-
-        m_Watch.stop ();
-
-        recv.begin (null, (obj, res) => {
-            try
-            {
-                message_received (recv.end (res));
-            }
-            catch (BusError err)
-            {
-                Log.critical (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Error on receive message: %s", err.message);
-            }
-            m_Watch.start ();
-        });
-
-        return true;
     }
 
     private void
-    on_closed ()
+    on_connected (Core.Notification inpNotification)
+    {
+        m_Watch.start ();
+    }
+
+    private void
+    on_received (Core.Notification inNotification)
+    {
+        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "receive message");
+
+        unowned Core.Watch.Notification? notification = inNotification as Core.Watch.Notification;
+
+        if (notification != null)
+        {
+            m_Watch.stop ();
+
+            recv.begin (null, (obj, res) => {
+                try
+                {
+                    unowned BusConnection.MessageReceivedNotification notify = notifications["message-received"] as BusConnection.MessageReceivedNotification;
+                    notify.message = recv.end (res);
+                    notify.post ();
+                }
+                catch (BusError err)
+                {
+                    Log.critical (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Error on receive message: %s", err.message);
+                }
+                m_Watch.start ();
+            });
+
+            notification.@continue = true;
+        }
+    }
+
+    private void
+    on_closed (Core.Notification inNotification)
     {
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "");
         m_Watch.stop ();
         parent = null;
-    }
-
-    internal override void
-    connected ()
-    {
-        m_Watch.start ();
     }
 
     internal override size_t

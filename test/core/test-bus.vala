@@ -116,8 +116,9 @@ public class Maia.TestBus : Maia.TestCase
                 assert (false);
             }
 
-            client2.message_received.connect ((msg) => {
-                unowned Core.Bus.MessageData message = msg as Core.Bus.MessageData;
+            client2.notifications["message-received"].add_observer ((n) => {
+                unowned Core.BusConnection.MessageReceivedNotification notification = n as Core.BusConnection.MessageReceivedNotification;
+                unowned Core.Bus.MessageData message = notification.message as Core.Bus.MessageData;
 
                 if (message != null)
                 {
@@ -147,13 +148,14 @@ public class Maia.TestBus : Maia.TestCase
                 Test.message (err.message);
                 assert (false);
             }
-            client1.connected.connect (() => {
+            client1.notifications["connected"].add_observer ((n) => {
                 var data = new GLib.Variant ("(s)", "test bus message");
                 client1.send.begin (new Core.Bus.MessageData (data));
             });
 
-            client1.message_received.connect ((msg) => {
-                unowned Core.Bus.MessageData message = msg as Core.Bus.MessageData;
+            client1.notifications["message-received"].add_observer ((n) => {
+                unowned Core.BusConnection.MessageReceivedNotification notification = n as Core.BusConnection.MessageReceivedNotification;
+                unowned Core.Bus.MessageData message = notification.message as Core.Bus.MessageData;
 
                 if (message != null)
                 {

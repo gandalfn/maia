@@ -25,6 +25,7 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
     private Window m_WindowGate = null;
     private Window m_Window = null;
     private Item? m_Root = null;
+    private Core.Notifications m_Notifications = new Core.Notifications ();
 
     // accessors
     internal new Window window {
@@ -50,6 +51,12 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
             }
 
             queue_resize ();
+        }
+    }
+
+    internal Core.Notifications notifications {
+        get {
+            return m_Notifications;
         }
     }
 

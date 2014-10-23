@@ -50,7 +50,16 @@ public class Maia.Manifest.Document : Core.Parser
         }
     }
 
-    public delegate void AttributeBindAddedFunc (AttributeBind inAttribute, string inProperty);
+    public class AttributeBindAddedNotification : Core.Notification
+    {
+        public unowned AttributeBind attribute { get; set; default = null; }
+        public string                property  { get; set; default = null; }
+
+        public AttributeBindAddedNotification (string inName)
+        {
+            base (inName);
+        }
+    }
 
     // Properties
     private Document                m_Include = null;
@@ -85,9 +94,6 @@ public class Maia.Manifest.Document : Core.Parser
     public string path  { get; set; default = null; }
     public Theme  theme { get; set; default = null; }
 
-    // Signals
-    public signal void attribute_bind_added (AttributeBind inAttribute, string inProperty);
-
     // Static methods
     static construct
     {
@@ -99,6 +105,7 @@ public class Maia.Manifest.Document : Core.Parser
     construct
     {
         m_ElementStack = new Core.Stack<ElementTag> ();
+        notifications.add (new AttributeBindAddedNotification ("attribute-bind-added"));
     }
 
     /**
@@ -187,7 +194,13 @@ public class Maia.Manifest.Document : Core.Parser
         string property = m_Attribute;
         m_Scanner = new AttributeScanner (owner, ref m_pCurrent, m_pEnd, ';', (a) => {
             a.owner.set_data<string> ("MaiaElementDumpPropertyBind", property + "@" + a.get ());
-            attribute_bind_added (a, property);
+            unowned AttributeBindAddedNotification? notification = notifications["attribute-bind-added"] as AttributeBindAddedNotification;
+            if (notification != null)
+            {
+                notification.attribute = a;
+                notification.property = property;
+                notification.post ();
+            }
         });
 
         if (m_pCurrent[0] != ';')
@@ -293,9 +306,7 @@ public class Maia.Manifest.Document : Core.Parser
                 next_char ();
                 m_Include = new Document (filename);
                 m_Include.bind_property ("owner", this, "owner", GLib.BindingFlags.BIDIRECTIONAL | GLib.BindingFlags.SYNC_CREATE);
-                m_Include.attribute_bind_added.connect ((a, p) => {
-                    attribute_bind_added (a, p);
-                });
+                m_Include.notifications["attribute-bind-added"].append_observers (notifications["attribute-bind-added"]);
                 token = m_Include.next_token ();
                 if (token == Core.Parser.Token.EOF)
                 {

@@ -22,10 +22,12 @@ public class Maia.Core.SocketWatch : Watch
     // properties
     private GLib.Socket m_Socket;
 
-    // signals
-    public signal void closed ();
-
     // methods
+    construct
+    {
+        notifications.add (new Notification ("closed"));
+    }
+
     /**
      * Create a new Socket watcher
      *
@@ -51,7 +53,7 @@ public class Maia.Core.SocketWatch : Watch
     internal override void
     on_error ()
     {
-        closed ();
+        notifications["closed"].post ();
     }
 
     /**

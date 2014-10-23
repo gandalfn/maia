@@ -581,7 +581,7 @@ public class Maia.Core.EventBus : Object
         {
             // Create connection
             m_Connection = new SocketBusConnection ("event-bus-client-%lx".printf ((long)GLib.Thread.self<void*> ()), inId);
-            m_Connection.message_received.connect (on_message_received);
+            m_Connection.notifications["message-received"].add_object_observer (on_message_received);
 
             // Create subscribers
             m_Subscribers = new Set<EventListenerPool> ();
@@ -598,79 +598,86 @@ public class Maia.Core.EventBus : Object
         }
 
         private void
-        on_message_received (Bus.Message inMessage)
+        on_message_received (Core.Notification inNotification)
         {
-            if (inMessage is MessageEventAdvertise)
+            unowned BusConnection.MessageReceivedNotification? notification =  inNotification as BusConnection.MessageReceivedNotification;
+
+            if (notification != null)
             {
-                unowned MessageEventAdvertise? msg =  (MessageEventAdvertise)inMessage;
+                unowned Bus.Message message = notification.message;
 
-                foreach (unowned Event.Hash hash in msg.hash)
+                if (message is MessageEventAdvertise)
                 {
-                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "Event advertise %s", hash.name ());
-                    unowned EventListenerPool? pool = m_Subscribers.search<Event.Hash> (hash, EventListenerPool.compare_with_event_hash);
-                    if (pool == null)
+                    unowned MessageEventAdvertise? msg =  (MessageEventAdvertise)message;
+
+                    foreach (unowned Event.Hash hash in msg.hash)
                     {
-                        pool = m_Pendings.search<Event.Hash> (hash, EventListenerPool.compare_with_event_hash);
-
-                        if (pool != null)
+                        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "Event advertise %s", hash.name ());
+                        unowned EventListenerPool? pool = m_Subscribers.search<Event.Hash> (hash, EventListenerPool.compare_with_event_hash);
+                        if (pool == null)
                         {
-                            m_Subscribers.insert (pool);
-                            m_Pendings.remove (pool);
+                            pool = m_Pendings.search<Event.Hash> (hash, EventListenerPool.compare_with_event_hash);
 
-                            foreach (unowned Core.Object child in pool)
+                            if (pool != null)
                             {
-                                unowned EventListener? listener = (EventListener)child;
+                                m_Subscribers.insert (pool);
+                                m_Pendings.remove (pool);
 
-                                if (listener != null)
+                                foreach (unowned Core.Object child in pool)
                                 {
-                                    listener.attach (m_Connection);
+                                    unowned EventListener? listener = (EventListener)child;
+
+                                    if (listener != null)
+                                    {
+                                        listener.attach (m_Connection);
+                                    }
                                 }
                             }
-                        }
-                        else
-                        {
-                            var new_pool = new EventListenerPool (hash);
-                            m_Subscribers.insert (new_pool);
+                            else
+                            {
+                                var new_pool = new EventListenerPool (hash);
+                                m_Subscribers.insert (new_pool);
+                            }
                         }
                     }
                 }
-            }
-            else if (inMessage is MessageEvent)
-            {
-                unowned MessageEvent? msg =  (MessageEvent)inMessage;
+                else if (message is MessageEvent)
+                {
+                    unowned MessageEvent? msg =  (MessageEvent)message;
 
-                unowned EventListenerPool? pool = m_Subscribers.search<Event.Hash> (msg.hash, EventListenerPool.compare_with_event_hash);
-                if (pool != null)
-                {
-                    EventArgs args = msg.args;
-                    pool.notify (args);
-                    if (msg.need_reply)
+                    unowned EventListenerPool? pool = m_Subscribers.search<Event.Hash> (msg.hash, EventListenerPool.compare_with_event_hash);
+                    if (pool != null)
                     {
-                        MessageEventReply reply = new MessageEventReply (msg.hash, args);
-                        reply.destination = msg.sender;
-                        m_Connection.send.begin (reply);
+                        EventArgs args = msg.args;
+                        pool.notify (args);
+                        if (msg.need_reply)
+                        {
+                            MessageEventReply reply = new MessageEventReply (msg.hash, args);
+                            reply.destination = msg.sender;
+                            m_Connection.send.begin (reply);
+                        }
                     }
                 }
-            }
-            else if (inMessage is MessageEventReply)
-            {
-                unowned MessageEventReply? msg =  (MessageEventReply)inMessage;
-                ReplyHandler.Hash hash = ReplyHandler.Hash (msg.args.sequence, msg.hash);
-                unowned ReplyHandler? handler = m_ReplyHandlers.search<ReplyHandler.Hash?> (hash, ReplyHandler.compare_with_hash);
-                if (handler != null)
+                else if (message is MessageEventReply)
                 {
-                    handler.callback (msg.args);
-                    m_ReplyHandlers.remove (handler);
+                    unowned MessageEventReply? msg =  (MessageEventReply)message;
+                    ReplyHandler.Hash hash = ReplyHandler.Hash (msg.args.sequence, msg.hash);
+                    unowned ReplyHandler? handler = m_ReplyHandlers.search<ReplyHandler.Hash?> (hash, ReplyHandler.compare_with_hash);
+                    if (handler != null)
+                    {
+                        handler.callback (msg.args);
+                        m_ReplyHandlers.remove (handler);
+                    }
                 }
-            }
-            else if (inMessage is MessageDestroyEvent)
-            {
-                unowned MessageDestroyEvent? msg =  (MessageDestroyEvent)inMessage;
-                unowned EventListenerPool? pool = m_Subscribers.search<Event.Hash> (msg.hash, EventListenerPool.compare_with_event_hash);
-                if (pool != null)
+                else if (message is MessageDestroyEvent)
                 {
-                    pool.event_destroyed = true;
-                    m_Subscribers.remove (pool);
+                    unowned MessageDestroyEvent? msg =  (MessageDestroyEvent)message;
+                    unowned EventListenerPool? pool = m_Subscribers.search<Event.Hash> (msg.hash, EventListenerPool.compare_with_event_hash);
+                    if (pool != null)
+                    {
+                        pool.event_destroyed = true;
+                        m_Subscribers.remove (pool);
+                    }
                 }
             }
         }
@@ -991,7 +998,7 @@ public class Maia.Core.EventBus : Object
 
         // Create bus service
         m_Service = new SocketBusService (((GLib.Quark)id).to_string ());
-        m_Service.new_connection.connect (on_new_connection);
+        m_Service.notifications["connection"].add_object_observer (on_new_connection);
         m_Service.set_dispatch_func (on_dispatch_message);
     }
 
@@ -1018,11 +1025,15 @@ public class Maia.Core.EventBus : Object
     }
 
     private void
-    on_new_connection (BusConnection inConnection)
+    on_new_connection (Core.Notification inNotification)
     {
         if (m_Occurences.length > 0)
         {
-            inConnection.send.begin (new MessageEventAdvertise.list (m_Occurences));
+            unowned BusService.ConnectionNotification? notification = inNotification as BusService.ConnectionNotification;
+            if (notification != null)
+            {
+                notification.connection.send.begin (new MessageEventAdvertise.list (m_Occurences));
+            }
         }
     }
 

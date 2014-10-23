@@ -28,6 +28,8 @@ namespace Maia
 {
     namespace Core
     {
+        void (*Notification::append_observers_parent) (MaiaCoreNotification* self, MaiaCoreNotification* inNotification) = nullptr;
+
         static void _on_notification_callback (MaiaCoreNotification* inpNotification, gpointer inpData)
         {
             NotificationObserver* pObserver = (NotificationObserver*)g_object_get_data (G_OBJECT (inpData), "NotificationObserverCpp");
@@ -45,11 +47,79 @@ namespace Maia
             return 0;
         }
 
+        void Notification::_append_observers_vfunc_callback(MaiaCoreNotification* self, MaiaCoreNotification* inpNotification)
+        {
+            if (Notification::append_observers_parent)
+            {
+                (*Notification::append_observers_parent) (self, inpNotification);
+            }
+            else if (MAIA_CORE_NOTIFICATION_GET_CLASS (self)->append_observers)
+            {
+                (*MAIA_CORE_NOTIFICATION_GET_CLASS (self)->append_observers) (self, inpNotification);
+            }
+
+            Notification* pNotification = (Notification*)g_object_get_data (G_OBJECT (inpNotification), "MaiaCoreNotificationCpp");
+            if (pNotification)
+            {
+                Glib::RefPtr<Notification> pSelf = Glib::wrap(self, true);
+                if (pSelf)
+                {
+                    for (auto observer : pNotification->m_Observers)
+                    {
+                        auto clone = observer->clone ();
+                        clone->m_pNotification = pSelf->cpp_obj ();
+                        maia_core_notification_add_object_observer (pSelf->gobj (), _on_notification_callback, clone->gobj ());
+                        pSelf->add_destroy_notify_callback (clone, _destroy_notify);
+                        clone->reference ();
+                        pSelf->m_Observers.insert (clone);
+                    }
+                }
+            }
+        }
+
+        Notification::Notification(const Glib::ustring& inName) :
+            Glib::ObjectBase(0),
+            Object((MaiaCoreObject*)(maia_core_notification_new (inName.c_str ())))
+        {
+            if (MAIA_CORE_NOTIFICATION_GET_CLASS (gobj ())->append_observers != _append_observers_vfunc_callback)
+            {
+                append_observers_parent = MAIA_CORE_NOTIFICATION_GET_CLASS (gobj ())->append_observers;
+                MAIA_CORE_NOTIFICATION_GET_CLASS (gobj ())->append_observers = &_append_observers_vfunc_callback;
+            }
+
+            g_object_set_data (G_OBJECT (gobj ()), "MaiaCoreNotificationCpp", this);
+        }
+
+        Notification::Notification(const Glib::ConstructParams& construct_params) :
+            Object(construct_params)
+        {
+            if (MAIA_CORE_NOTIFICATION_GET_CLASS (gobj ())->append_observers != _append_observers_vfunc_callback)
+            {
+                append_observers_parent = MAIA_CORE_NOTIFICATION_GET_CLASS (gobj ())->append_observers;
+                MAIA_CORE_NOTIFICATION_GET_CLASS (gobj ())->append_observers = &_append_observers_vfunc_callback;
+            }
+
+            g_object_set_data (G_OBJECT (gobj ()), "MaiaCoreNotificationCpp", this);
+        }
+
+        Notification::Notification(MaiaCoreNotification* castitem) :
+            Object((MaiaCoreObject*)(castitem))
+        {
+            if (MAIA_CORE_NOTIFICATION_GET_CLASS (gobj ())->append_observers != _append_observers_vfunc_callback)
+            {
+                append_observers_parent = MAIA_CORE_NOTIFICATION_GET_CLASS (gobj ())->append_observers;
+                MAIA_CORE_NOTIFICATION_GET_CLASS (gobj ())->append_observers = &_append_observers_vfunc_callback;
+            }
+
+            g_object_set_data (G_OBJECT (gobj ()), "MaiaCoreNotificationCpp", this);
+        }
+
         void Notification::add_observer (const Glib::RefPtr<NotificationObserver>& inpObserver)
         {
-            maia_core_notification_add_observer (gobj (), _on_notification_callback, inpObserver->gobj ());
+            maia_core_notification_add_object_observer (gobj (), _on_notification_callback, inpObserver->gobj ());
             add_destroy_notify_callback (inpObserver->cpp_obj (), _destroy_notify);
             inpObserver->reference ();
+            m_Observers.insert (inpObserver->cpp_obj ());
         }
 
         void Notification::remove_observer (const Glib::RefPtr<NotificationObserver>& inpObserver)
@@ -62,6 +132,18 @@ namespace Maia
             maia_core_notification_remove_observer (gobj (), _on_notification_callback, inpObserver->gobj ());
             remove_destroy_notify_callback (inpObserver->cpp_obj ());
             inpObserver->unreference ();
+            inpObserver->m_pNotification = nullptr;
+            m_Observers.erase (inpObserver);
+        }
+
+        Notifications::Notifications(const Glib::ConstructParams& construct_params) :
+            Object(construct_params)
+        {
+        }
+
+        Notifications::Notifications(MaiaCoreNotifications* castitem) :
+            Object((MaiaCoreObject*)(castitem))
+        {
         }
     }
 }

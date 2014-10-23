@@ -20,10 +20,12 @@
 #include <maia.h>
 #include <maiamm/core-set.h>
 #include <maiamm/core-parser.h>
+#include <maiamm/core-notification.h>
 #include <maiamm/manifest-attribute-scanner.h>
 #include <maiamm/manifest-attribute-bind.h>
 
 _DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/core-notification_p.h)
 _PINCLUDE(maiamm/private/core-parser_p.h)
 
 namespace Maia
@@ -37,6 +39,24 @@ namespace Maia
         _GMMPROC_EXTRA_NAMESPACE(Manifest)
 
         _WRAP_GERROR(Error, MaiaManifestError, MAIA_MANIFEST_ERROR, NO_GTYPE)
+
+        class DocumentAttributeBindAddedNotification : public Core::Notification
+        {
+            _CLASS_GOBJECT(DocumentAttributeBindAddedNotification, MaiaManifestDocumentAttributeBindAddedNotification, MAIA_MANIFEST_DOCUMENT_ATTRIBUTE_BIND_ADDED_NOTIFICATION, Core::Notification, MaiaCoreNotification)
+
+            protected:
+                _CTOR_DEFAULT()
+
+            public:
+                _WRAP_METHOD(Glib::RefPtr<AttributeBind> get_attribute () const, maia_manifest_document_attribute_bind_added_notification_get_attribute, refreturn)
+                _WRAP_METHOD(void set_attribute (const Glib::RefPtr<AttributeBind>& inpAttribute), maia_manifest_document_attribute_bind_added_notification_set_attribute)
+
+                _WRAP_METHOD(Glib::ustring get_property () const, maia_manifest_document_attribute_bind_added_notification_get_property)
+                _WRAP_METHOD(void set_property (const Glib::ustring& inProperty), maia_manifest_document_attribute_bind_added_notification_set_property)
+
+                _WRAP_PROPERTY("attribute", Glib::RefPtr<AttributeBind>)
+                _WRAP_PROPERTY("property", Glib::ustring)
+        };
 
         class Document : public Core::Parser
         {
@@ -77,10 +97,6 @@ namespace Maia
 
                 _WRAP_METHOD(Glib::RefPtr<Element> get (const Glib::ustring& inId) const, maia_manifest_document_get, refreturn, errthrow)
                 Glib::RefPtr<Element> get () const;
-
-#m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<AttributeBind>&', `Glib::wrap($3, true)')
-                _WRAP_SIGNAL(void attribute_bind_added (const Glib::RefPtr<AttributeBind>& inpAttribute, const Glib::ustring& inProperty), "attribute-bind-added", no_default_handler)
-#m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<AttributeBind>&', `Glib::wrap($3)')
 
                 _WRAP_PROPERTY("owner", Glib::RefPtr<Glib::Object>)
                 _WRAP_PROPERTY("scanner", Glib::RefPtr<AttributeScanner>)

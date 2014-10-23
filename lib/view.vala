@@ -164,6 +164,9 @@ public class Maia.View : Maia.Grid
         not_dumpable_attributes.insert ("model");
         not_dumpable_attributes.insert ("highlighted-row");
 
+        // Add notifications
+        notifications.add (new Manifest.Document.AttributeBindAddedNotification ("attribute-bind-added"));
+
         notify["item-over-pointer"].connect (on_pointer_over_changed);
         notify["root"].connect (on_root_change);
     }
@@ -249,15 +252,16 @@ public class Maia.View : Maia.Grid
     }
 
     private void
-    on_template_attribute_bind (Manifest.AttributeBind inAttribute, string inProperty)
+    on_template_attribute_bind (Core.Notification inNotification)
     {
-        if (m_Model != null)
+        unowned Manifest.Document.AttributeBindAddedNotification? notification = inNotification as Manifest.Document.AttributeBindAddedNotification;
+        if (notification != null && m_Model != null)
         {
-            string signal_name = "value-changed::%s".printf (inAttribute.get ());
+            string signal_name = "value-changed::%s".printf (notification.attribute.get ());
 
-            if (!inAttribute.is_bind (signal_name, inProperty))
+            if (!notification.attribute.is_bind (signal_name, notification.property))
             {
-                inAttribute.bind (m_Model, signal_name, inProperty, on_bind_value_changed);
+                notification.attribute.bind (m_Model, signal_name, notification.property, on_bind_value_changed);
             }
         }
     }
@@ -289,7 +293,8 @@ public class Maia.View : Maia.Grid
                 m_Document = new Manifest.Document.from_buffer (characters, characters.length);
                 m_Document.path = manifest_path;
                 m_Document.theme = manifest_theme;
-                m_Document.attribute_bind_added.connect (on_template_attribute_bind);
+                m_Document.notifications["attribute-bind-added"].add_object_observer (on_template_attribute_bind);
+                m_Document.notifications["attribute-bind-added"].append_observers (notifications["attribute-bind-added"]);
             }
 
             if (m_Document != null)
@@ -469,6 +474,14 @@ public class Maia.View : Maia.Grid
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "unshift item size: %s", item_size.to_string ());
 
         need_update = true;
+    }
+
+
+
+    internal override void
+    on_read_manifest (Manifest.Document inDocument) throws Core.ParseError
+    {
+        notifications["attribute-bind-added"].append_observers (inDocument.notifications["attribute-bind-added"]);
     }
 
     internal override void

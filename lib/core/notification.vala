@@ -26,25 +26,39 @@ public class Maia.Core.Notification : Object
     {
         private unowned Notification m_Notification;
         private unowned RecvFunc     m_Callback;
-        private unowned GLib.Object? m_Target;
+        private void*                m_Target;
+        private unowned GLib.Object? m_TargetObject;
 
-        public Observer (Notification inNotifcation, RecvFunc inFunc)
+        public bool is_clonable {
+            get {
+                return m_TargetObject == null || m_TargetObject.get_data<void*> ("NotificationObserverCpp") == null;
+            }
+        }
+
+        public Observer (Notification inNotification, RecvFunc inFunc)
         {
-            m_Notification = inNotifcation;
+            m_Notification = inNotification;
             m_Callback = inFunc;
+            m_Target = (*(void**)((&m_Callback) + 1));
+            m_TargetObject = null;
+        }
 
-            m_Target = (*(void**)((&m_Callback) + 1)) as GLib.Object;
-            if (m_Target != null)
+        public Observer.object (Notification inNotification, RecvFunc inFunc)
+        {
+            this (inNotification, inFunc);
+
+            m_TargetObject = m_Target as GLib.Object;
+            if (m_TargetObject != null)
             {
-                m_Target.weak_ref (on_target_destroy);
+                m_TargetObject.weak_ref (on_target_destroy);
             }
         }
 
         ~Observer ()
         {
-            if (m_Target != null)
+            if (m_TargetObject != null)
             {
-                m_Target.weak_unref (on_target_destroy);
+                m_TargetObject.weak_unref (on_target_destroy);
             }
         }
 
@@ -52,6 +66,7 @@ public class Maia.Core.Notification : Object
         on_target_destroy ()
         {
             m_Target = null;
+            m_TargetObject = null;
             m_Callback = null;
             parent = null;
         }
@@ -79,9 +94,9 @@ public class Maia.Core.Notification : Object
         }
 
         public Observer
-        clone ()
+        clone (Notification inNotification)
         {
-            return new Observer (m_Notification, m_Callback);
+            return m_TargetObject != null ? new Observer.object (inNotification, m_Callback) : new Observer (inNotification, m_Callback);
         }
     }
 
@@ -90,7 +105,7 @@ public class Maia.Core.Notification : Object
             return ((GLib.Quark)id).to_string ();
         }
     }
-    
+
     // methods
     public Notification (string inName)
     {
@@ -101,6 +116,13 @@ public class Maia.Core.Notification : Object
     add_observer (RecvFunc inFunc)
     {
         var observer = new Observer (this, inFunc);
+        observer.parent = this;
+    }
+
+    public void
+    add_object_observer (RecvFunc inFunc)
+    {
+        var observer = new Observer.object (this, inFunc);
         observer.parent = this;
     }
 
@@ -131,15 +153,15 @@ public class Maia.Core.Notification : Object
         }
     }
 
-    public void
-    append (Notification inNotification)
+    public virtual void
+    append_observers (Notification inNotification)
     {
         foreach (unowned Object? child in inNotification)
         {
             unowned Observer? observer = child as Observer;
-            if (observer != null)
+            if (observer != null && observer.is_clonable)
             {
-                add (observer.clone ());
+                add (observer.clone (this));
             }
         }
     }
@@ -216,6 +238,20 @@ public class Maia.Core.Notifications : GLib.Object
         }
 
         notification.add_observer (inFunc);
+    }
+
+    public void
+    add_object_observer (string inName, Notification.RecvFunc inFunc)
+    {
+        unowned Notification? notification = this[inName];
+        if (notification == null)
+        {
+            var new_notification = new Notification (inName);
+            m_Notifications.insert (new_notification);
+            notification = new_notification;
+        }
+
+        notification.add_object_observer (inFunc);
     }
 
     public void

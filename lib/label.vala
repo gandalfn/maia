@@ -132,6 +132,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
                     int count = get_qdata<int> (Item.s_CountHide);
                     count++;
                     set_qdata<int> (Item.s_CountHide, count);
+                    not_dumpable_attributes.insert ("visible");
                 }
                 else if (!m_HideIfEmpty && !visible)
                 {
@@ -140,6 +141,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
                     if (count == 0)
                     {
                         visible = true;
+                        not_dumpable_attributes.remove ("visible");
                     }
                     set_qdata<int> (Item.s_CountHide, count);
                 }
@@ -265,6 +267,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
                 if (count == 0)
                 {
                     visible = true;
+                    not_dumpable_attributes.remove ("visible");
                 }
                 set_qdata<int> (Item.s_CountHide, count);
             }
@@ -331,6 +334,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
             int count = get_qdata<int> (Item.s_CountHide);
             count++;
             set_qdata<int> (Item.s_CountHide, count);
+            not_dumpable_attributes.insert ("visible");
         }
         else
         {

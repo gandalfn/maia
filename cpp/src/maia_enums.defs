@@ -134,6 +134,21 @@
 
 ;; Original typedef:
 ;; typedef enum  {
+;; 	MAIA_CORE_WATCH_CONDITION_IN,
+;; 	MAIA_CORE_WATCH_CONDITION_OUT
+;; } MaiaCoreWatchCondition;
+
+(define-enum-extended CoreWatchCondition
+  (in-module "Maia")
+  (c-name "MaiaCoreWatchCondition")
+  (values
+    '("in" "MAIA_CORE_WATCH_CONDITION_IN" "0")
+    '("out" "MAIA_CORE_WATCH_CONDITION_OUT" "1")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
 ;; 	MAIA_CORE_TIMELINE_DIRECTION_FORWARD,
 ;; 	MAIA_CORE_TIMELINE_DIRECTION_BACKWARD
 ;; } MaiaCoreTimelineDirection;

@@ -22,33 +22,47 @@ public abstract class Maia.Core.BusService : Bus
     // types
     public delegate bool DispatchFunc (Bus.Message inMessage);
 
+    public class ConnectionNotification : Notification
+    {
+        public unowned BusConnection? connection { get; set; default = null; }
+
+        public ConnectionNotification (string inName)
+        {
+            base (inName);
+        }
+    }
+
     // properties
     private unowned DispatchFunc m_DispatchFunc = null;
 
-    // signals
-    public signal void new_connection (BusConnection inConnection);
-
     // methods
+    construct
+    {
+        notifications.add (new ConnectionNotification ("connection"));
+    }
+
     protected BusService (string inUUID)
     {
         GLib.Object (uuid: inUUID);
     }
 
     private void
-    on_client_message_received (Bus.Message inMessage)
+    on_client_message_received (Core.Notification inNotification)
     {
-        if (m_DispatchFunc == null || !m_DispatchFunc (inMessage))
+        unowned BusConnection.MessageReceivedNotification? notification =  inNotification as BusConnection.MessageReceivedNotification;
+
+        if (notification != null && (m_DispatchFunc == null || !m_DispatchFunc (notification.message)))
         {
             foreach (unowned Core.Object? child in this)
             {
                 unowned BusConnection? client = child as BusConnection;
-                if (client != null && (inMessage.destination == 0 || inMessage.destination == client.id))
+                if (client != null && (notification.message.destination == 0 || notification.message.destination == client.id))
                 {
                     // send message to client
-                    client.send.begin (inMessage);
+                    client.send.begin (notification.message);
 
                     // if no broadcast stop on first match
-                    if (inMessage.destination != 0) break;
+                    if (notification.message.destination != 0) break;
                 }
             }
         }
@@ -101,7 +115,7 @@ public abstract class Maia.Core.BusService : Bus
                         ret = !found;
 
                         // Send client connected signal to restart watch
-                        if (!found) inClient.connected ();
+                        if (!found) inClient.notifications["connected"].post ();
                         break;
                 }
             }
@@ -132,9 +146,11 @@ public abstract class Maia.Core.BusService : Bus
                 {
                     base.insert_child(client);
 
-                    new_connection (client);
+                    unowned ConnectionNotification? notification = notifications["connection"] as ConnectionNotification;
+                    notification.connection = client;
+                    notification.post ();
 
-                    client.message_received.connect (on_client_message_received);
+                    client.notifications["message-received"].add_object_observer (on_client_message_received);
                 }
             });
         }

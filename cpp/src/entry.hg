@@ -95,6 +95,9 @@ namespace Maia
             _WRAP_METHOD(EntryChangedMask get_changed_mask () const, maia_entry_get_changed_mask)
             _WRAP_METHOD(void set_changed_mask (EntryChangedMask inMask), maia_entry_set_changed_mask)
 
+            _WRAP_METHOD(bool get_hide_if_empty () const, maia_entry_get_hide_if_empty)
+            _WRAP_METHOD(void set_hide_if_empty (bool inHideIfEmpty = true), maia_entry_set_hide_if_empty)
+
             _WRAP_METHOD(Glib::RefPtr<Core::Event> changed () const, maia_entry_get_changed, refreturn)
 
             _WRAP_PROPERTY("font-description", Glib::ustring)
@@ -106,6 +109,7 @@ namespace Maia
             _WRAP_PROPERTY("underline-width", Glib::ustring)
             _WRAP_PROPERTY("only-numeric", bool)
             _WRAP_PROPERTY("changed-mask", EntryChangedMask)
+            _WRAP_PROPERTY("hide-if-empty", bool)
             _WRAP_PROPERTY("changed", Glib::RefPtr<Core::Event>)
 
             _WRAP_PROPERTY("row", guint)

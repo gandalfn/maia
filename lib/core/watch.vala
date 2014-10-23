@@ -26,6 +26,16 @@ public abstract class Maia.Core.Watch : Object
         OUT
     }
 
+    public class Notification : Core.Notification
+    {
+        public bool @continue { get; set; default = false; }
+
+        public Notification (string inName)
+        {
+            base (inName);
+        }
+    }
+
     // properties
     private Condition         m_Condition = Condition.IN;
     private Source            m_Source;
@@ -69,11 +79,13 @@ public abstract class Maia.Core.Watch : Object
         }
     }
 
-    // signals
-    public signal bool ready ();
-    public signal bool timed_out ();
-
     // methods
+    construct
+    {
+        notifications.add (new Notification ("ready"));
+        notifications.add (new Notification ("timeout"));
+    }
+
     /**
      * Create a new File descriptor watcher
      *
@@ -193,7 +205,10 @@ public abstract class Maia.Core.Watch : Object
     protected virtual bool
     on_timeout ()
     {
-        return timed_out ();
+        unowned Notification notification = notifications["timeout"] as Notification;
+        notification.@continue = false;
+        notification.post ();
+        return notification.@continue;
     }
 
     /**
@@ -202,7 +217,10 @@ public abstract class Maia.Core.Watch : Object
     protected virtual bool
     on_process ()
     {
-        return ready ();
+        unowned Notification notification = notifications["ready"] as Notification;
+        notification.@continue = false;
+        notification.post ();
+        return notification.@continue;
     }
 
     /**

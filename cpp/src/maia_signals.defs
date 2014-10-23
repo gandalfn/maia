@@ -334,6 +334,15 @@
   (construct-only #f)
 )
 
+(define-property event-destroyed
+  (of-object "MaiaCoreEventListener")
+  (prop-type "GParamBoolean")
+  (docs "event-destroyed")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property block
   (of-object "MaiaCoreEventListener")
   (prop-type "GParamBoolean")
@@ -823,16 +832,6 @@
 
 ;; From MaiaManifestDocument
 
-(define-signal attribute-bind-added
-  (of-object "MaiaManifestDocument")
-  (return-type "void")
-  (when "last")
-  (parameters
-    '("MaiaManifestAttributeBind*" "p0")
-    '("const-gchar*" "p1")
-  )
-)
-
 (define-property owner
   (of-object "MaiaManifestDocument")
   (prop-type "GParamObject")
@@ -1086,6 +1085,26 @@
   (construct-only #f)
 )
 
+;; From MaiaManifestDocumentAttributeBindAddedNotification
+
+(define-property attribute
+  (of-object "MaiaManifestDocumentAttributeBindAddedNotification")
+  (prop-type "GParamObject")
+  (docs "attribute")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property property
+  (of-object "MaiaManifestDocumentAttributeBindAddedNotification")
+  (prop-type "GParamString")
+  (docs "property")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaApplication
 
 (define-signal new-frame
@@ -1217,6 +1236,15 @@
 )
 
 ;; From MaiaCanvas
+
+(define-property notifications
+  (of-object "MaiaCanvas")
+  (prop-type "GParamObject")
+  (docs "notifications")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
 
 (define-property root
   (of-object "MaiaCanvas")

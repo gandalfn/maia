@@ -57,6 +57,11 @@ _CONVERSION(`const Glib::RefPtr<Notifications>&',`MaiaCoreNotifications*',__CONV
 _CONVERSION(`MaiaCoreNotifications*',`const Glib::RefPtr<Notifications>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaCoreNotifications*',`Glib::RefPtr<Notifications>',`Glib::wrap($3)')
 
+_CONVERSION(`Glib::RefPtr<Core::Notifications>',`MaiaCoreNotifications*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Core::Notifications>&',`MaiaCoreNotifications*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaCoreNotifications*',`const Glib::RefPtr<Core::Notifications>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaCoreNotifications*',`Glib::RefPtr<Core::Notifications>',`Glib::wrap($3)')
+
 _CONVERSION(`Glib::RefPtr<Core::Event>',`MaiaCoreEvent*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Core::Event>&',`MaiaCoreEvent*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaCoreEvent*',`const Glib::RefPtr<Core::Event>&',`Glib::wrap($3)')

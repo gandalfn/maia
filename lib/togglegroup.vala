@@ -83,6 +83,7 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
             if (m_HideAllIfNoActive != value)
             {
                 m_HideAllIfNoActive = value;
+
                 bool found = false;
                 foreach (unowned Core.Pair<string, unowned Toggle> pair in m_Toggles)
                 {
@@ -101,14 +102,16 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
                         int count = pair.second.get_qdata<int> (Item.s_CountHide);
                         count++;
                         pair.second.set_qdata<int> (Item.s_CountHide, count);
+                        pair.second.not_dumpable_attributes.insert ("visible");
                     }
-                    else if ((m_HideAllIfNoActive && !pair.second.visible && found) || !m_HideAllIfNoActive)
+                    else if (((m_HideAllIfNoActive && found) || !m_HideAllIfNoActive) && !pair.second.visible)
                     {
                         int count = pair.second.get_qdata<int> (Item.s_CountHide);
                         count = int.max (count - 1, 0);
                         if (count == 0)
                         {
                             pair.second.visible = true;
+                            pair.second.not_dumpable_attributes.remove ("visible");
                         }
                         pair.second.set_qdata<int> (Item.s_CountHide, count);
                     }
@@ -177,6 +180,7 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
                 }
             }
 
+#if 0
             if (m_HideAllIfNoActive)
             {
                 foreach (unowned Core.Pair<string, unowned Toggle> pair in m_Toggles)
@@ -187,6 +191,7 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
                         int count = pair.second.get_qdata<int> (Item.s_CountHide);
                         count++;
                         pair.second.set_qdata<int> (Item.s_CountHide, count);
+                        pair.second.not_dumpable_attributes.insert ("visible");
                     }
                     else if (!pair.second.visible && found)
                     {
@@ -195,11 +200,13 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
                         if (count == 0)
                         {
                             pair.second.visible = true;
+                            pair.second.not_dumpable_attributes.remove ("visible");
                         }
                         pair.second.set_qdata<int> (Item.s_CountHide, count);
                     }
                 }
             }
+#endif
         }
     }
 

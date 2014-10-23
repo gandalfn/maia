@@ -491,33 +491,37 @@ public class Maia.Document : Item
     }
 
     internal void
-    on_attribute_bind_added (Manifest.AttributeBind inAttribute, string inProperty)
+    on_attribute_bind_added (Core.Notification inNotification)
     {
-        string name = inAttribute.get ();
-        if (name == "nb_pages")
+        unowned Manifest.Document.AttributeBindAddedNotification? notification = inNotification as Manifest.Document.AttributeBindAddedNotification;
+        if (notification != null)
         {
-            string signal_name = "notify::nb_pages";
-
-            if (!inAttribute.is_bind (signal_name, inProperty))
+            string name = notification.attribute.get ();
+            if (name == "nb_pages")
             {
-                inAttribute.bind (this, signal_name, inProperty, on_bind_value_changed);
+                string signal_name = "notify::nb_pages";
+
+                if (!notification.attribute.is_bind (signal_name, notification.property))
+                {
+                    notification.attribute.bind (this, signal_name, notification.property, on_bind_value_changed);
+                }
             }
-        }
 
-        if (name == "page_num")
-        {
-            string signal_name = "notify::page_num";
-
-            unowned Core.Object? item = inAttribute.owner as Core.Object;
-            if (item != null)
+            if (name == "page_num")
             {
-                // search the direct child of document which own page num property
-                for (; item.parent != null && item.parent != this; item = item.parent);
+                string signal_name = "notify::page_num";
 
-                inAttribute.bind (item, signal_name, inProperty, on_bind_value_changed);
+                unowned Core.Object? item = notification.attribute.owner as Core.Object;
+                if (item != null)
+                {
+                    // search the direct child of document which own page num property
+                    for (; item.parent != null && item.parent != this; item = item.parent);
 
-                // bind start page changed to add offset on report save
-                inAttribute.bind (this, "notify::start_page", inProperty, on_bind_value_changed);
+                    notification.attribute.bind (item, signal_name, notification.property, on_bind_value_changed);
+
+                    // bind start page changed to add offset on report save
+                    notification.attribute.bind (this, "notify::start_page", notification.property, on_bind_value_changed);
+                }
             }
         }
     }
@@ -562,7 +566,7 @@ public class Maia.Document : Item
     internal override void
     on_read_manifest (Manifest.Document inDocument) throws Core.ParseError
     {
-        inDocument.attribute_bind_added.connect (on_attribute_bind_added);
+        inDocument.notifications["attribute-bind-added"].add_object_observer (on_attribute_bind_added);
     }
 
     internal override Graphic.Size

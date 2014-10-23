@@ -154,7 +154,7 @@ namespace Maia
                 _WRAP_METHOD(void reorder (), maia_core_object_reorder)
                 _WRAP_METHOD(Glib::ustring to_string () const, maia_core_object_to_string)
 
-                Glib::RefPtr<Notifications> notifications () const;
+                _WRAP_METHOD(Glib::RefPtr<Notifications> notifications () const, maia_core_object_get_notifications, refreturn)
 
                 _WRAP_METHOD(bool is_plugged_property (const Glib::ustring& inProperty) const, maia_core_object_is_plugged_property)
                 _WRAP_METHOD(void plug_property (const Glib::ustring& inProperty, const Glib::RefPtr<Object>& inpDst, const Glib::ustring& inDstProperty), maia_core_object_plug_property)
@@ -167,6 +167,7 @@ namespace Maia
 
                 _WRAP_PROPERTY("id", Glib::QueryQuark)
                 _WRAP_PROPERTY("parent", Glib::RefPtr<Object>)
+                _WRAP_PROPERTY("notifications", Glib::RefPtr<Notifications>)
 
             private:
                 template <class T>

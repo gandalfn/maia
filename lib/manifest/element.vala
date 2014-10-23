@@ -275,20 +275,18 @@ public interface Maia.Manifest.Element : Core.Object
      * Duplicate the element
      *
      * @param inId id of new element
-     * 
+     *
      * @return a new duplicated element
      */
     public Element
-    duplicate (string inId, Document.AttributeBindAddedFunc? inFunc = null) throws Core.ParseError
+    duplicate (string inId, Core.Notification.RecvFunc? inAttributeBindAddedNotificationFunc = null) throws Core.ParseError
     {
         string content = dump ("");
-        
+
         Document doc = new Document.from_buffer (content, content.length);
-        if (inFunc != null)
+        if (inAttributeBindAddedNotificationFunc != null)
         {
-            doc.attribute_bind_added.connect ((attr, prop) => {
-                inFunc (attr, prop);
-            });
+            doc.notifications["attribute-bind-added"].add_object_observer (inAttributeBindAddedNotificationFunc);
         }
         doc.theme = manifest_theme;
         Element ret = doc.get ();
@@ -322,7 +320,7 @@ public interface Maia.Manifest.Element : Core.Object
 
         inManifest.owner = this;
         s_CurrentTheme = inManifest.theme;
-        
+
         foreach (Core.Parser.Token token in inManifest)
         {
             switch (token)

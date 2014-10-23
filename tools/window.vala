@@ -364,7 +364,7 @@ public class CanvasEditor.Window : Gtk.Window
             on_save ();
             try
             {
-                m_Canvas.load_from_file (m_SourceView.filename, null, null);
+                m_Canvas.load_from_file (m_SourceView.filename);
                 m_PreviewBox.show ();
                 m_Hide.sensitive = true;
                 m_Toolbox.sensitive = (m_Canvas.root is Maia.DocumentView) ? (m_Canvas.root as Maia.DocumentView).toolbox != null : false;

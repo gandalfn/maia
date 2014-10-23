@@ -39,6 +39,8 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         public unowned Grid grid;
         LineSizeAllocation[] rows;
         LineSizeAllocation[] columns;
+        Core.Set<uint> visible_rows;
+        Core.Set<uint> visible_columns;
         Graphic.Size size;
         Graphic.Rectangle[,] child_allocations;
 
@@ -48,6 +50,9 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
             rows = new LineSizeAllocation[1];
             columns = new LineSizeAllocation[1];
+
+            visible_rows = new Core.Set<int> ();
+            visible_columns = new Core.Set<int> ();
 
             uint nb_rows = 0;
             uint nb_columns = 0;
@@ -59,6 +64,21 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                     unowned ItemPackable item = (ItemPackable)child;
 
                     Graphic.Size item_size = item.size;
+
+                    if (item.visible)
+                    {
+                        visible_rows.insert (item.row);
+                        visible_columns.insert (item.column);
+
+                        for (int cpt = 0; cpt < item.rows; ++cpt)
+                        {
+                            visible_rows.insert (item.row + cpt);
+                        }
+                        for (int cpt = 0; cpt < item.columns; ++cpt)
+                        {
+                            visible_columns.insert (item.column + cpt);
+                        }
+                    }
 
                     // count the number of rows
                     nb_rows = uint.max (nb_rows, item.row + 1);
@@ -179,15 +199,15 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                 }
 
                 // the maximal width size is the max width row
-                if (rows.length > 1)
+                if (visible_rows.length > 1)
                 {
-                    size.height += grid.row_spacing * (rows.length - 1);
+                    size.height += grid.row_spacing * (visible_rows.length - 1);
                 }
 
                 // the maximal height size is the max height column
-                if (columns.length > 1)
+                if (visible_columns.length > 1)
                 {
-                    size.width += grid.column_spacing * (columns.length - 1);
+                    size.width += grid.column_spacing * (visible_columns.length - 1);
                 }
             }
 
@@ -353,13 +373,13 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         if (cpt < rows.length) natural.height += rows[cpt].size.height;
                         if (cpt < columns.length) natural.width += columns[cpt].size.width;
                     }
-                    if (rows.length > 1)
+                    if (visible_rows.length > 1)
                     {
-                        natural.height += grid.row_spacing * (rows.length - 1);
+                        natural.height += grid.row_spacing * (visible_rows.length - 1);
                     }
-                    if (columns.length > 1)
+                    if (visible_columns.length > 1)
                     {
-                        natural.width += grid.column_spacing * (columns.length - 1);
+                        natural.width += grid.column_spacing * (visible_columns.length - 1);
                     }
 
                     Graphic.Rectangle allocation = inAllocation.extents;
@@ -415,19 +435,43 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                     extra.height -= yshrink / columns[item.column].nb_shrinks;
                                 }
 
-                                if (grid.row_spacing > 0 && rows.length > 1)
+                                if (grid.row_spacing > 0 && visible_rows.length > 1 && item.row in visible_rows)
                                 {
                                     double spacing = grid.row_spacing;
-                                    if (item.row == 0) spacing /= 2;
-                                    if (item.row == rows.length - 1) spacing /= 2;
+                                    bool found_first = false;
+                                    bool found_last = false;
+                                    for (uint cpt = 0; !found_first && cpt < item.row; ++cpt)
+                                    {
+                                        found_first = cpt in visible_rows;
+                                    }
+                                    for (uint cpt = item.row + 1; !found_last && cpt < rows.length; ++cpt)
+                                    {
+                                        found_last = cpt in visible_rows;
+                                    }
+                                    if (!found_first || !found_last)
+                                    {
+                                        spacing /= 2;
+                                    }
                                     extra.height += spacing;
                                 }
 
-                                if (grid.column_spacing > 0 && columns.length > 1)
+                                if (grid.column_spacing > 0 && visible_columns.length > 1 && item.column in visible_columns)
                                 {
                                     double spacing = grid.column_spacing;
-                                    if (item.column == 0) spacing /= 2;
-                                    if (item.column == columns.length - 1) spacing /= 2;
+                                    bool found_first = false;
+                                    bool found_last = false;
+                                    for (uint cpt = 0; !found_first && cpt < item.column; ++cpt)
+                                    {
+                                        found_first = cpt in visible_columns;
+                                    }
+                                    for (uint cpt = item.column + 1; !found_last && cpt < columns.length; ++cpt)
+                                    {
+                                        found_last = cpt in visible_columns;
+                                    }
+                                    if (!found_first || !found_last)
+                                    {
+                                        spacing /= 2;
+                                    }
                                     extra.width += spacing;
                                 }
 
@@ -496,6 +540,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                             if (child_allocations[row, item.column].size.height != 0)
                                             {
                                                 child_allocations[item.row, item.column].origin.y = child_allocations[row, item.column].origin.y + child_allocations[row, item.column].size.height;
+                                                child_allocations[row + 1, item.column].size.width = child_allocations[item.row, item.column].size.width;
                                                 found = true;
                                                 break;
                                             }
@@ -504,6 +549,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                         if (!found)
                                         {
                                             child_allocations[item.row, item.column].origin.y = child_allocations[0, item.column].origin.y + child_allocations[0, item.column].size.height;
+                                            child_allocations[0, item.column].size.width = child_allocations[item.row, item.column].size.width;
                                         }
                                     }
                                     else
@@ -522,6 +568,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                             if (child_allocations[item.row, column].size.width != 0)
                                             {
                                                 child_allocations[item.row, item.column].origin.x = child_allocations[item.row, column].origin.x + child_allocations[item.row, column].size.width;
+                                                child_allocations[item.row, column + 1].size.height = child_allocations[item.row, item.column].size.height;
                                                 found = true;
                                                 break;
                                             }
@@ -530,6 +577,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                         if (!found)
                                         {
                                             child_allocations[item.row, item.column].origin.x = child_allocations[item.row, 0].origin.x + child_allocations[item.row, 0].size.width;
+                                            child_allocations[item.row, 0].size.height = child_allocations[item.row, item.column].size.height;
                                         }
                                     }
                                     else
@@ -559,21 +607,51 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                 Graphic.Rectangle area = child_allocations[item.row, item.column];
 
                                 double row_spacing = 0;
-                                if (grid.row_spacing > 0 && rows.length > 1)
+                                if (grid.row_spacing > 0 && rows.length > 1 && item.row in visible_rows)
                                 {
                                     row_spacing = grid.row_spacing;
-                                    if (item.row == 0) row_spacing /= 2;
-                                    if (item.row == rows.length - 1) row_spacing /= 2;
-                                    if (item.row > 0) area.origin.y += row_spacing / 2;
+                                    bool found_first = false;
+                                    bool found_last = false;
+                                    for (uint cpt = 0; !found_first && cpt < item.row; ++cpt)
+                                    {
+                                        found_first = cpt in visible_rows;
+                                    }
+                                    for (uint cpt = item.row + 1; !found_last && cpt < rows.length; ++cpt)
+                                    {
+                                        found_last = cpt in visible_rows;
+                                    }
+                                    if (!found_first || !found_last)
+                                    {
+                                        row_spacing /= 2;
+                                    }
+                                    else
+                                    {
+                                        area.origin.y += row_spacing / 2;
+                                    }
                                 }
 
                                 double column_spacing = 0;
-                                if (grid.column_spacing > 0 && columns.length > 1)
+                                if (grid.column_spacing > 0 && columns.length > 1 && item.column in visible_columns)
                                 {
                                     column_spacing = grid.column_spacing;
-                                    if (item.column == 0) column_spacing /= 2;
-                                    if (item.column == columns.length - 1) column_spacing /= 2;
-                                    if (item.column > 0) area.origin.x += column_spacing / 2;
+                                    bool found_first = false;
+                                    bool found_last = false;
+                                    for (uint cpt = 0; !found_first && cpt < item.column; ++cpt)
+                                    {
+                                        found_first = cpt in visible_columns;
+                                    }
+                                    for (uint cpt = item.column + 1; !found_last && cpt < columns.length; ++cpt)
+                                    {
+                                        found_last = cpt in visible_columns;
+                                    }
+                                    if (!found_first || !found_last)
+                                    {
+                                        column_spacing /= 2;
+                                    }
+                                    else
+                                    {
+                                        area.origin.x += column_spacing / 2;
+                                    }
                                 }
 
                                 area.size.width = double.max (area.size.width - column_spacing, 0);

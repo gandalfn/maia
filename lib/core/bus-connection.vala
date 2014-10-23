@@ -19,13 +19,24 @@
 
 public abstract class Maia.Core.BusConnection : Bus
 {
-    // signals
-    [Signal (run = "first")]
-    public virtual signal void connected () {}
+    // types
+    public class MessageReceivedNotification : Core.Notification
+    {
+        public unowned Bus.Message message { get; set; default = null; }
 
-    public signal void message_received (Bus.Message inMessage);
+        public MessageReceivedNotification (string inName)
+        {
+            base (inName);
+        }
+    }
 
     // methods
+    construct
+    {
+        notifications.add (new Notification ("connected"));
+        notifications.add (new MessageReceivedNotification ("message-received"));
+    }
+
     protected BusConnection (string inUUID, Watch inRecvWatch, Watch inSendWatch)
     {
         GLib.Object (uuid: inUUID, recv_watch: inRecvWatch, send_watch: inSendWatch);
@@ -46,7 +57,7 @@ public abstract class Maia.Core.BusConnection : Bus
             Bus.MessageStatus reply = (yield recv ()) as Bus.MessageStatus;
             ret = reply.status == Bus.Status.OK;
 
-            if (ret) connected ();
+            if (ret) notifications["connected"].post ();
         }
         catch (GLib.Error err)
         {

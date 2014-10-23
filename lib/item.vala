@@ -740,6 +740,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         // connect to damage event
         damage.connect (on_damage);
 
+        notify["root"].connect (on_visible_changed);
+        notify["chain-visible"].connect (on_visible_changed);
+
         // connect to trasnform events
         m_Transform.changed.connect (on_transform_changed);
         notify["transform"].connect (on_transform_changed);
@@ -831,37 +834,45 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                     if (item != null)
                     {
                         // Get show count
-                        int count = item.get_qdata<int> (s_ChainVisibleCount);
+                        unowned Core.Set<unowned Item>? count = item.get_qdata<unowned Core.Set<unowned Item>> (s_ChainVisibleCount);
+                        if (count == null)
+                        {
+                            Core.Set<unowned Item> new_count = new Core.Set<unowned Item> ();
+                            count = new_count;
+                            item.set_qdata<Core.Set<unowned Item>> (s_ChainVisibleCount, new_count);
+                        }
                         int count_hide = item.get_qdata<int> (s_CountHide);
 
                         if (visible)
                         {
-                            if (!item.visible)
+                            if (!(this in count))
                             {
-                                count_hide--;
-                                if (count_hide < 0) count_hide = 0;
-                                if (count_hide == 0)
+                                if (!item.visible)
                                 {
-                                    item.visible = true;
+                                    count_hide--;
+                                    if (count_hide < 0) count_hide = 0;
+                                    if (count_hide == 0)
+                                    {
+                                        item.visible = true;
+                                        item.not_dumpable_attributes.remove ("visible");
+                                    }
+                                    item.set_qdata<int> (Item.s_CountHide, count_hide);
                                 }
-                                item.set_qdata<int> (Item.s_CountHide, count_hide);
-                            }
 
-                            count++;
-                            item.set_qdata(s_ChainVisibleCount, count.to_pointer());
+                                count.insert (this);
+                            }
                         }
-                        else
+                        else if (this in count)
                         {
-                            count--;
-                            if (count < 0) count = 0;
-                            item.set_qdata(s_ChainVisibleCount, count.to_pointer());
-                            if (count == 0)
+                            count.remove (this);
+                            if (count.length == 0)
                             {
                                 if (item.visible)
                                 {
                                     item.visible = false;
                                     count_hide++;
                                     item.set_qdata<int> (Item.s_CountHide, count_hide);
+                                    item.not_dumpable_attributes.insert ("visible");
                                 }
                             }
                         }

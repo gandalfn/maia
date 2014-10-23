@@ -21,6 +21,7 @@
 #include <maiamm/manifest-attribute-bind.h>
 #include <maiamm/item.h>
 #include <maiamm/window.h>
+#include <maiamm/core-notification.h>
 #include <maiamm/canvas.h>
 
 _DEFS(maiamm,maia)
@@ -40,8 +41,6 @@ namespace Maia
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3)')
 
         public:
-            typedef sigc::slot<void, Glib::RefPtr<Manifest::AttributeBind>, Glib::ustring> AttributeBindAddedFunc;
-
             static Canvas* create ()
             {
                 return new Canvas (maia_canvas_create ());
@@ -56,16 +55,15 @@ namespace Maia
             _IGNORE(maia_canvas_load)
             void load (const Glib::ustring& inManifest);
             void load (const Glib::ustring& inManifest, const Glib::ustring& inRoot);
-            void load (const Glib::ustring& inManifest, AttributeBindAddedFunc inFunc);
-            void load (const Glib::ustring& inManifest, const Glib::ustring& inRoot, AttributeBindAddedFunc inFunc);
 
             _IGNORE(maia_canvas_load_from_file)
             void load_from_file (const Glib::ustring& inFilename);
             void load_from_file (const Glib::ustring& inFilename, const Glib::ustring& inRoot);
-            void load_from_file (const Glib::ustring& inFilename, AttributeBindAddedFunc inFunc);
-            void load_from_file (const Glib::ustring& inFilename, const Glib::ustring& inRoot, AttributeBindAddedFunc inFunc);
+
+            _WRAP_METHOD(Glib::RefPtr<Core::Notifications> notifications (), maia_canvas_get_notifications, refreturn);
 
             _WRAP_PROPERTY("root", Glib::RefPtr<Item>)
             _WRAP_PROPERTY("window", Glib::RefPtr<Window>)
+            _WRAP_PROPERTY("notifications", Glib::RefPtr<Core::Notifications>)
     };
 }

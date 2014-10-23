@@ -50,16 +50,25 @@ namespace Maia
         _IMPLEMENTS_INTERFACE(ItemMovable)
 
         public:
+            _IGNORE(maia_toggle_on_button_press)
+
             _WRAP_METHOD(bool get_sensitive () const, maia_toggle_get_sensitive)
             _WRAP_METHOD(void set_sensitive (bool inSensitive = true), maia_toggle_set_sensitive)
+
             _WRAP_METHOD(Glib::ustring get_group () const, maia_toggle_get_group)
             _WRAP_METHOD(void set_grouo (const Glib::ustring& inGroup), maia_toggle_set_group)
+
             _WRAP_METHOD(Glib::ustring get_font_description () const, maia_toggle_get_font_description)
             _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_toggle_set_font_description)
+
             _WRAP_METHOD(Glib::ustring get_label () const, maia_toggle_get_label)
             _WRAP_METHOD(void set_label (const Glib::ustring& inLabel), maia_toggle_set_label)
+
             _WRAP_METHOD(bool get_active () const, maia_toggle_get_active)
             _WRAP_METHOD(void set_active (bool inActive = true), maia_toggle_set_active)
+
+            _WRAP_METHOD(bool get_hide_if_inactive () const, maia_toggle_get_hide_if_inactive)
+            _WRAP_METHOD(void set_hide_if_inactive (bool inHideIfEmpty = true), maia_toggle_set_hide_if_inactive)
 
             _WRAP_METHOD(Glib::RefPtr<Core::Event> toggled () const, maia_toggle_get_toggled, refreturn)
 
@@ -71,6 +80,7 @@ namespace Maia
             _WRAP_PROPERTY("font-description", Glib::ustring)
             _WRAP_PROPERTY("label", Glib::ustring)
             _WRAP_PROPERTY("active", bool)
+            _WRAP_PROPERTY("hide-if-inactive", bool)
 
             _WRAP_PROPERTY("row", guint)
             _WRAP_PROPERTY("rows", guint)

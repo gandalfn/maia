@@ -78,7 +78,8 @@ TestObject::TestObject () :
     TestCase ("object")
 {
     add_test ("create", sigc::mem_fun (this, &TestObject::test_create));
-    add_test ("parse",  sigc::mem_fun (this, &TestObject::test_notifications));
+    add_test ("notifications",  sigc::mem_fun (this, &TestObject::test_notifications));
+    add_test ("append-notifications",  sigc::mem_fun (this, &TestObject::test_append_notifications));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -92,6 +93,8 @@ TestObject::~TestObject ()
 void
 TestObject::set_up ()
 {
+    notification_value = "";
+    notification_count = 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -120,9 +123,10 @@ TestObject::on_test_notification (const Glib::RefPtr<Maia::Core::Notification>& 
 
     g_assert (pNotification);
 
-    g_assert (pNotification->value == "test");
-    g_assert (pNotification->count == 1);
+    notification_value = pNotification->value;
+    notification_count = pNotification->count;
 }
+
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void
@@ -144,8 +148,45 @@ TestObject::test_notifications ()
     pNotification->count = 1;
     pNotification->post ();
 
+    g_assert (notification_value == "test");
+    g_assert (notification_count == 1);
+
     g_assert (pFoo->notifications ()->get ("test-object-notification"));
     pFoo->notifications ()->get ("test-object-notification")->post ();
 
     g_assert (pFoo->last_notification == "test-object-notification");
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void
+TestObject::test_append_notifications ()
+{
+    Glib::RefPtr<Foo> pFoo = Foo::create ("foo");
+    g_assert (pFoo);
+
+    g_assert (pFoo->notifications ());
+    pFoo->notifications ()->add (FooNotification::create ("test-notification"));
+    g_assert (pFoo->notifications ()->get ("test-notification"));
+
+    pFoo->notifications ()->get ("test-notification")->add_observer (sigc::mem_fun (this, &TestObject::on_test_notification));
+
+    Glib::RefPtr<Foo> pFoo2 = Foo::create ("foo");
+    g_assert (pFoo2);
+
+    g_assert (pFoo2->notifications ());
+    pFoo2->notifications ()->add (FooNotification::create ("test-notification-append"));
+    g_assert (pFoo2->notifications ()->get ("test-notification-append"));
+
+    pFoo2->notifications ()->get ("test-notification-append")->append_observers (pFoo->notifications ()->get ("test-notification"));
+
+    Glib::RefPtr<FooNotification> pNotification = Glib::RefPtr<FooNotification>::cast_dynamic (pFoo2->notifications ()->get ("test-notification-append"));
+    g_assert (pNotification);
+
+    pNotification->value = "test-append";
+    pNotification->count = 2;
+    pNotification->post ();
+
+    g_assert (notification_value == "test-append");
+    g_assert (notification_count == 2);
 }

@@ -24,9 +24,5 @@ namespace Maia
 {
     namespace Core
     {
-        Glib::RefPtr<Notifications> Object::notifications () const
-        {
-            return Glib::wrap (maia_core_object_get_notifications (const_cast<MaiaCoreObject*> (gobj ())), true);
-        }
     }
 }

@@ -38,7 +38,11 @@ namespace Maia
             // methods
             void test_create ();
             void test_notifications ();
+            void test_append_notifications ();
             void on_test_notification (const Glib::RefPtr<Maia::Core::Notification>& inpNotification);
+
+            Glib::ustring notification_value;
+            int notification_count;
     };
 }
 

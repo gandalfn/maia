@@ -252,7 +252,7 @@ public abstract class Maia.Core.Bus : Object
 
     // accessors
     public string uuid       { get; construct; default = null; }
-    public uint   timeout    { get; set; default = 1000; }
+    public uint   timeout    { get; set; default = 30000; }
     public Watch  recv_watch { get; construct; }
     public Watch  send_watch { get; construct; }
 
@@ -279,9 +279,9 @@ public abstract class Maia.Core.Bus : Object
             m_RequestRecvQueue = new Queue<Request> ();
 
             // Connect onto watch received callback
-            recv_watch.ready.connect (on_receive_ready);
+            recv_watch.notifications["ready"].add_object_observer (on_receive_ready);
             // Connect onto watch timed out
-            recv_watch.timed_out.connect (on_receive_timed_out);
+            recv_watch.notifications["timeout"].add_object_observer (on_receive_timeout);
             recv_watch.stop ();
         }
 
@@ -291,125 +291,169 @@ public abstract class Maia.Core.Bus : Object
             m_RequestSendQueue = new Queue<Request> ();
 
             // Connect onto watch send callback
-            send_watch.ready.connect (on_send_ready);
+            send_watch.notifications["ready"].add_object_observer (on_send_ready);
             // Connect onto watch timed out
-            send_watch.timed_out.connect (on_send_timed_out);
+            send_watch.notifications["timeout"].add_object_observer (on_send_timeout);
             send_watch.stop ();
         }
     }
 
-    private bool
-    on_receive_timed_out ()
+    ~Bus ()
     {
-        Request request = null;
-        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Receive timed out %s %lu", uuid, (ulong)GLib.Thread.self<void*> ());
-        if ((request = m_RequestRecvQueue.pop ()) != null)
+        if (recv_watch != null)
         {
-            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Timed out request %s", uuid);
-
-            if (request.m_Cancellable == null || !request.m_Cancellable.is_cancelled ())
-            {
-                request.m_Status = new BusError.READ ("error on receive message : timed out");
-            }
-            else
-            {
-                request.m_Status = new BusError.CANCELLED ("Read request cancelled");
-            }
-
-            request.complete ();
+            recv_watch.stop ();
         }
-
-        return m_RequestRecvQueue.length != 0;
+        if (send_watch != null)
+        {
+            send_watch.stop ();
+        }
     }
 
-    private bool
-    on_receive_ready ()
+    private void
+    on_receive_timeout (Core.Notification inNotification)
     {
-        Request request = null;
-        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Receive ready %s %lu", uuid, (ulong)GLib.Thread.self<void*> ());
-        while (recv_watch.check () && (request = m_RequestRecvQueue.pop ()) != null)
+        unowned Core.Watch.Notification? notification = inNotification as Core.Watch.Notification;
+        if (notification != null)
         {
-            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Read request %s", uuid);
-
-            if (request.m_Cancellable == null || !request.m_Cancellable.is_cancelled ())
+            ref ();
             {
-                try
+                Request request = null;
+                Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Receive timed out %s %lu", uuid, (ulong)GLib.Thread.self<void*> ());
+                if ((request = m_RequestRecvQueue.pop ()) != null)
                 {
-                    request.m_Message = Message.recv (this, timeout);
-                }
-                catch (BusError err)
-                {
-                    Log.error (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Error on read request %s: %s", uuid, err.message);
-                    request.m_Status = err;
-                }
-            }
-            else
-            {
-                request.m_Status = new BusError.CANCELLED ("Read request cancelled");
-            }
+                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Timed out request %s", uuid);
 
-            request.complete ();
-        }
-
-        return m_RequestRecvQueue.length != 0;
-    }
-
-    private bool
-    on_send_timed_out ()
-    {
-        Request request = null;
-        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Write timed out %s %lu", uuid, (ulong)GLib.Thread.self<void*> ());
-        if ((request = m_RequestSendQueue.pop ()) != null)
-        {
-            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Timed out request %s", uuid);
-
-            if (request.m_Cancellable == null || !request.m_Cancellable.is_cancelled ())
-            {
-                request.m_Status = new BusError.WRITE ("error on send message : timed out");
-            }
-            else
-            {
-                request.m_Status = new BusError.CANCELLED ("Write request cancelled");
-            }
-
-            request.complete ();
-        }
-
-        return m_RequestSendQueue.length != 0;
-    }
-
-    private bool
-    on_send_ready ()
-    {
-        Request request = null;
-        while (send_watch.check () && (request = m_RequestSendQueue.pop ()) != null)
-        {
-            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Write request %s", uuid);
-
-            if (request.m_Message != null)
-            {
-                if ((request.m_Cancellable == null || !request.m_Cancellable.is_cancelled ()))
-                {
-                    try
+                    if (request.m_Cancellable == null || !request.m_Cancellable.is_cancelled ())
                     {
-                        request.m_Message.send (this, timeout);
+                        request.m_Status = new BusError.READ ("error on receive message : timed out");
                     }
-                    catch (BusError err)
+                    else
                     {
-                        Log.error (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Error on write request %s: %s", uuid, err.message);
-                        request.m_Status = err;
+                        request.m_Status = new BusError.CANCELLED ("Read request cancelled");
+                    }
+
+                    request.complete ();
+                }
+
+                notification.@continue = m_RequestRecvQueue.length != 0;
+            }
+            unref ();
+        }
+    }
+
+    private void
+    on_receive_ready (Core.Notification inNotification)
+    {
+        unowned Core.Watch.Notification? notification = inNotification as Core.Watch.Notification;
+        if (notification != null)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Receive ready %s %lu", uuid, (ulong)GLib.Thread.self<void*> ());
+            ref ();
+            {
+                Request request = null;
+                while (recv_watch != null && recv_watch.check () && (request = m_RequestRecvQueue.pop ()) != null)
+                {
+                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Read request %s", uuid);
+
+                    if (request.m_Cancellable == null || !request.m_Cancellable.is_cancelled ())
+                    {
+                        try
+                        {
+                            request.m_Message = Message.recv (this, timeout);
+                        }
+                        catch (BusError err)
+                        {
+                            Log.error (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Error on read request %s: %s", uuid, err.message);
+                            request.m_Status = err;
+                        }
+                    }
+                    else
+                    {
+                        request.m_Status = new BusError.CANCELLED ("Read request cancelled");
+                    }
+
+                    request.complete ();
+                }
+
+                notification.@continue = m_RequestRecvQueue.length != 0;
+            }
+            unref ();
+        }
+    }
+
+    private void
+    on_send_timeout (Core.Notification inNotification)
+    {
+        unowned Core.Watch.Notification? notification = inNotification as Core.Watch.Notification;
+        if (notification != null)
+        {
+            ref ();
+            {
+                Request request = null;
+                Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Write timed out %s %lu", uuid, (ulong)GLib.Thread.self<void*> ());
+                if ((request = m_RequestSendQueue.pop ()) != null)
+                {
+                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Timed out request %s", uuid);
+
+                    if (request.m_Cancellable == null || !request.m_Cancellable.is_cancelled ())
+                    {
+                        request.m_Status = new BusError.WRITE ("error on send message : timed out");
+                    }
+                    else
+                    {
+                        request.m_Status = new BusError.CANCELLED ("Write request cancelled");
+                    }
+
+                    request.complete ();
+                }
+
+                notification.@continue = m_RequestSendQueue.length != 0;
+            }
+            unref ();
+        }
+    }
+
+    private void
+    on_send_ready (Core.Notification inNotification)
+    {
+        unowned Core.Watch.Notification? notification = inNotification as Core.Watch.Notification;
+        if (notification != null)
+        {
+            ref ();
+            {
+                Request request = null;
+                while (send_watch != null && send_watch.check () && (request = m_RequestSendQueue.pop ()) != null)
+                {
+                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Write request %s", uuid);
+
+                    if (request.m_Message != null)
+                    {
+                        if ((request.m_Cancellable == null || !request.m_Cancellable.is_cancelled ()))
+                        {
+                            try
+                            {
+                                request.m_Message.send (this, timeout);
+                            }
+                            catch (BusError err)
+                            {
+                                Log.error (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Error on write request %s: %s", uuid, err.message);
+                                request.m_Status = err;
+                            }
+                        }
+                        else
+                        {
+                            request.m_Status = new BusError.CANCELLED ("Write request cancelled");
+                        }
+
+                        request.complete ();
                     }
                 }
-                else
-                {
-                    request.m_Status = new BusError.CANCELLED ("Write request cancelled");
-                }
 
-                request.complete ();
+                notification.@continue = m_RequestSendQueue.length != 0;
             }
+            unref ();
         }
-
-        return m_RequestSendQueue.length != 0;
     }
 
     protected abstract size_t read (uint8[] inData, uint inTimeout) throws BusError;

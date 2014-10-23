@@ -186,6 +186,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
                         int count = get_qdata<int> (Item.s_CountHide);
                         count++;
                         set_qdata<int> (Item.s_CountHide, count);
+                        not_dumpable_attributes.insert ("visible");
                     }
                     else if (!visible && m_Active)
                     {
@@ -194,6 +195,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
                         if (count == 0)
                         {
                             visible = true;
+                            not_dumpable_attributes.remove ("visible");
                         }
                         set_qdata<int> (Item.s_CountHide, count);
                     }
@@ -218,6 +220,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
                     int count = get_qdata<int> (Item.s_CountHide);
                     count++;
                     set_qdata<int> (Item.s_CountHide, count);
+                    not_dumpable_attributes.insert ("visible");
                 }
                 else if ((m_HideIfInactive && !visible && active) || !m_HideIfInactive)
                 {
@@ -226,6 +229,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
                     if (count == 0)
                     {
                         visible = true;
+                        not_dumpable_attributes.remove ("visible");
                     }
                     set_qdata<int> (Item.s_CountHide, count);
                 }
