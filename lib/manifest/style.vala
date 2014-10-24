@@ -29,6 +29,7 @@ public class Maia.Manifest.Style : Core.Object, Element
             }
         }
         public AttributeScanner scanner { get; set; default = null; }
+        public bool is_copy { get; set; default = false; }
 
         // methods
         public Property (string inName, AttributeScanner inScanner)
@@ -38,9 +39,14 @@ public class Maia.Manifest.Style : Core.Object, Element
 
         public Property copy ()
         {
-            return new Property (name, scanner);
+            var ret  = new Property (name, scanner);
+            ret.is_copy = true;
+            return ret;
         }
     }
+
+    // static properties
+    internal static GLib.Quark s_AttributeSetQuark = 0;
 
     // accessors
     internal string tag {
@@ -62,6 +68,12 @@ public class Maia.Manifest.Style : Core.Object, Element
 
     public string match      { get; set; default = null; }
     public string match_name { get; set; default = null; }
+
+    // static methods
+    static construct
+    {
+        s_AttributeSetQuark = GLib.Quark.from_string ("MaiaManifestStyleAttributeSet");
+    }
 
     // methods
     construct
@@ -95,9 +107,13 @@ public class Maia.Manifest.Style : Core.Object, Element
                             inManifest.attribute.down () != "match"      &&
                             inManifest.attribute.down () != "match-name" &&
                             inManifest.attribute.down () != "match_name")
+                            
                         {
-                            Property property = new Property (inManifest.attribute, inManifest.scanner);
-                            add (property);
+                            if (find (GLib.Quark.from_string (inManifest.attribute)) == null)
+                            {
+                                Property property = new Property (inManifest.attribute, inManifest.scanner);
+                                add (property);
+                            }
                         }
                         else
                         {
@@ -151,19 +167,16 @@ public class Maia.Manifest.Style : Core.Object, Element
         foreach (unowned Core.Object child in this)
         {
             unowned Property? property = child as Property;
-            if (property != null)
+            if (property != null && !property.is_copy)
             {
-                try
+                var val = (property.scanner.first () as Attribute).to_string () ?? "''";
+                if (val.strip ().length == 0)
                 {
-                    string val = (string)property.scanner.transform (typeof (string));
-                    if (val != null)
-                    {
-                        ret += inPrefix + "%s: %s;\n".printf (property.name, val);
-                    }
+                    ret += inPrefix + "%s: '%s';\n".printf (property.name, (property.scanner.first () as Attribute).to_string ()); 
                 }
-                catch (GLib.Error err)
+                else
                 {
-                    Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING, @"Error on parse object attribute $(property.name): $(err.message)");
+                    ret += inPrefix + "%s: %s;\n".printf (property.name, (property.scanner.first () as Attribute).to_string () ?? "''");
                 }
             }
         }

@@ -302,6 +302,7 @@ public class Maia.Document : Item
                 if (inRoot.position.y == 0)
                 {
                     inRoot.position = inoutCurrentPosition;
+                    inRoot.not_dumpable_attributes.insert ("position");
                 }
 
                 inoutCurrentPosition.y += row_size.height + inGrid.row_spacing;
@@ -336,6 +337,7 @@ public class Maia.Document : Item
                 if (inRoot.position.y == 0)
                 {
                     inRoot.position = inoutCurrentPosition;
+                    inRoot.not_dumpable_attributes.insert ("position");
                 }
 
                 // Update current position
@@ -413,6 +415,7 @@ public class Maia.Document : Item
 
             // Set item position
             inItem.position = inoutCurrentPosition;
+            inItem.not_dumpable_attributes.insert ("position");
 
             // Add item height to current position
             inoutCurrentPosition.y += item_size.height;

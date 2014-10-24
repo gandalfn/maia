@@ -113,7 +113,7 @@ public class Maia.Manifest.Theme : Core.Object, Element
                     foreach (unowned Core.Object child in inherit)
                     {
                         Style.Property property = child as Style.Property;
-                        if (property != null)
+                        if (property != null && style.find (property.id) == null)
                         {
                             style.add (property.copy ());
                         }
@@ -139,6 +139,14 @@ public class Maia.Manifest.Theme : Core.Object, Element
                             if ((attributes_set != null && property.name in attributes_set) || inElement.is_plugged_property (property.name))
                                 continue;
 
+                            unowned Core.Set<string>? style_attributes_set = inElement.get_qdata<unowned Core.Set<string>> (Style.s_AttributeSetQuark);
+                            if (style_attributes_set == null)
+                            {
+                                Core.Set<string> sas = new Core.Set<string> ();
+                                inElement.set_qdata<Core.Set<string>> (Style.s_AttributeSetQuark, sas);
+                                style_attributes_set = sas;
+                            }
+                            style_attributes_set.insert (property.name);
                             inElement.set_attribute (property.name, property.scanner);
                         }
                         catch (Error err)

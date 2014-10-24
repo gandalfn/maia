@@ -8220,6 +8220,21 @@
   )
 )
 
+(define-method get_is_copy
+  (of-object "MaiaManifestStyleProperty")
+  (c-name "maia_manifest_style_property_get_is_copy")
+  (return-type "gboolean")
+)
+
+(define-method set_is_copy
+  (of-object "MaiaManifestStyleProperty")
+  (c-name "maia_manifest_style_property_set_is_copy")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
 (define-function maia_manifest_attribute_scanner_register_transform_func
   (c-name "maia_manifest_attribute_scanner_register_transform_func")
   (return-type "none")

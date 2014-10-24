@@ -69,6 +69,8 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
                         }
                         m_ToggleListeners[pair.first].block = false;
                     }
+
+                    check_hide_if_noactive ();
                 }
             }
         }
@@ -83,39 +85,7 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
             if (m_HideAllIfNoActive != value)
             {
                 m_HideAllIfNoActive = value;
-
-                bool found = false;
-                foreach (unowned Core.Pair<string, unowned Toggle> pair in m_Toggles)
-                {
-                    if (pair.second.active)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-
-                foreach (unowned Core.Pair<string, unowned Toggle> pair in m_Toggles)
-                {
-                    if (m_HideAllIfNoActive && pair.second.visible && !found)
-                    {
-                        pair.second.visible = false;
-                        int count = pair.second.get_qdata<int> (Item.s_CountHide);
-                        count++;
-                        pair.second.set_qdata<int> (Item.s_CountHide, count);
-                        pair.second.not_dumpable_attributes.insert ("visible");
-                    }
-                    else if (((m_HideAllIfNoActive && found) || !m_HideAllIfNoActive) && !pair.second.visible)
-                    {
-                        int count = pair.second.get_qdata<int> (Item.s_CountHide);
-                        count = int.max (count - 1, 0);
-                        if (count == 0)
-                        {
-                            pair.second.visible = true;
-                            pair.second.not_dumpable_attributes.remove ("visible");
-                        }
-                        pair.second.set_qdata<int> (Item.s_CountHide, count);
-                    }
-                }
+                check_hide_if_noactive ();
             }
         }
     }
@@ -148,13 +118,52 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
     }
 
     private void
+    check_hide_if_noactive ()
+    {
+        if (m_Toggles != null)
+        {
+            bool found = false;
+            foreach (unowned Core.Pair<string, unowned Toggle> pair in m_Toggles)
+            {
+                if (pair.second.active)
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            foreach (unowned Core.Pair<string, unowned Toggle> pair in m_Toggles)
+            {
+                if (m_HideAllIfNoActive && pair.second.visible && !found)
+                {
+                    pair.second.visible = false;
+                    int count = pair.second.get_qdata<int> (Item.s_CountHide);
+                    count++;
+                    pair.second.set_qdata<int> (Item.s_CountHide, count);
+                    pair.second.not_dumpable_attributes.insert ("visible");
+                }
+                else if (((m_HideAllIfNoActive && found) || !m_HideAllIfNoActive) && !pair.second.visible)
+                {
+                    int count = pair.second.get_qdata<int> (Item.s_CountHide);
+                    count = int.max (count - 1, 0);
+                    if (count == 0)
+                    {
+                        pair.second.visible = true;
+                        pair.second.not_dumpable_attributes.remove ("visible");
+                    }
+                    pair.second.set_qdata<int> (Item.s_CountHide, count);
+                }
+            }
+        }
+    }
+
+    private void
     on_toggled (Core.EventArgs? inArgs)
     {
         unowned Toggle.ToggledEventArgs? args = inArgs as Toggle.ToggledEventArgs;
 
         if (args != null)
         {
-            bool found = false;
             if (args.active)
             {
                 m_Active = args.button_name;
@@ -164,49 +173,10 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
                     {
                         pair.second.active = false;
                     }
-                    
-                }
-                found = true;
-            }
-            else
-            {
-                foreach (unowned Core.Pair<string, unowned Toggle> pair in m_Toggles)
-                {
-                    if (pair.second.active)
-                    {
-                        found = true;
-                        break;
-                    }
                 }
             }
 
-#if 0
-            if (m_HideAllIfNoActive)
-            {
-                foreach (unowned Core.Pair<string, unowned Toggle> pair in m_Toggles)
-                {
-                    if (pair.second.visible && !found)
-                    {
-                        pair.second.visible = false;
-                        int count = pair.second.get_qdata<int> (Item.s_CountHide);
-                        count++;
-                        pair.second.set_qdata<int> (Item.s_CountHide, count);
-                        pair.second.not_dumpable_attributes.insert ("visible");
-                    }
-                    else if (!pair.second.visible && found)
-                    {
-                        int count = pair.second.get_qdata<int> (Item.s_CountHide);
-                        count = int.max (count - 1, 0);
-                        if (count == 0)
-                        {
-                            pair.second.visible = true;
-                            pair.second.not_dumpable_attributes.remove ("visible");
-                        }
-                        pair.second.set_qdata<int> (Item.s_CountHide, count);
-                    }
-                }
-            }
-#endif
+            check_hide_if_noactive ();
         }
     }
 
@@ -250,6 +220,8 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
             {
                 inButton.active = false;
             }
+
+            check_hide_if_noactive ();
         }
         else
         {
@@ -265,6 +237,8 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
             m_ToggleListeners[inButton.name].parent = null;
             m_ToggleListeners.unset (inButton.name);
             m_Toggles.unset (inButton.name);
+
+            check_hide_if_noactive ();
         }
     }
 }

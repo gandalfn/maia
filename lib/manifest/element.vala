@@ -226,7 +226,9 @@ public interface Maia.Manifest.Element : Core.Object
                 {
                     get_property (name, ref val);
 
-                    if (!param.value_defaults (val))
+                    unowned Core.Set<string>? attributes_set = get_qdata<unowned Core.Set<string>> (s_AttributeSetQuark);
+
+                    if (!param.value_defaults (val) || (attributes_set != null && name in attributes_set))
                     {
                         if (val.type () != typeof (string))
                         {
@@ -416,6 +418,10 @@ public interface Maia.Manifest.Element : Core.Object
             string param_name = param.get_name ();
             if (param_name != "id")
             {
+                unowned Core.Set<string>? style_attributes_set = get_qdata<unowned Core.Set<string>> (Style.s_AttributeSetQuark);
+                if (style_attributes_set != null && param_name in style_attributes_set)
+                    continue;
+
                 string attr;
                 if (get_attribute (param_name, out attr) && attr != null)
                 {

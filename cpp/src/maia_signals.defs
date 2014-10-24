@@ -1085,6 +1085,15 @@
   (construct-only #f)
 )
 
+(define-property is-copy
+  (of-object "MaiaManifestStyleProperty")
+  (prop-type "GParamBoolean")
+  (docs "is-copy")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaManifestDocumentAttributeBindAddedNotification
 
 (define-property attribute
