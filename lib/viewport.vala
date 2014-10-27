@@ -135,7 +135,7 @@ public class Maia.Viewport : Window
                 damaged.subtract (m_ScrolledDamaged);
                 m_ScrolledDamaged = null;
             }
-
+            
             // get area not already drawn
             var damaged_area = damaged.copy ();
             if (visible_damaged != null)
@@ -187,5 +187,13 @@ public class Maia.Viewport : Window
             }
             swap_buffer ();
         }
+    }
+
+    internal override void
+    update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
+    {
+        m_ScrolledDamaged = null;
+
+        base.update (inContext, inAllocation);
     }
 }

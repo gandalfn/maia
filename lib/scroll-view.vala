@@ -185,11 +185,14 @@ public class Maia.ScrollView : Item
             diff.subtract (pos);
 
             // Set new position
-            m_Viewport.geometry.translate (m_Viewport.geometry.extents.origin.invert ());
-            m_Viewport.geometry.translate (pos.invert ());
+            if (m_Viewport.geometry != null)
+            {
+                m_Viewport.geometry.translate (m_Viewport.geometry.extents.origin.invert ());
+                m_Viewport.geometry.translate (pos.invert ());
+            }
 
             m_Viewport.position = pos.invert ();
-
+            
             // Set new visible area
             visible_area.origin = pos;
             m_Viewport.visible_area = visible_area;
@@ -299,11 +302,8 @@ public class Maia.ScrollView : Item
             area.union_with_rect (Graphic.Rectangle (0, 0, child_size.width, child_size.height));
         }
 
-        hadjustment.lower = area.extents.origin.x;
-        hadjustment.upper = area.extents.size.width;
-
-        vadjustment.lower = area.extents.origin.y;
-        vadjustment.upper = area.extents.size.height;
+        hadjustment.configure (area.extents.origin.x, area.extents.size.width, hadjustment.page_size);
+        vadjustment.configure (area.extents.origin.y, area.extents.size.height, vadjustment.page_size);
 
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"scroll-view: $name $(area.extents.size)");
 
@@ -336,6 +336,9 @@ public class Maia.ScrollView : Item
             {
                 vadjustment.@value = vadjustment.upper - vadjustment.page_size;
             }
+
+            viewport_position = m_Viewport.position;
+            viewport_size = m_Viewport.size;
 
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"$(geometry.extents)");
 

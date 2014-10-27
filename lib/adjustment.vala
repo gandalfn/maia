@@ -120,8 +120,26 @@ public class Maia.Adjustment : Object
      * @param inUpper the maximum value of adjustment
      * @param inPageSize the page size of adjustment
      */
-    public Adjustment.configure (double inLower, double inUpper, double inPageSize)
+    public Adjustment.with_properties (double inLower, double inUpper, double inPageSize)
     {
         GLib.Object (lower: inLower, upper: inUpper, page_size: inPageSize);
+    }
+
+    /**
+     * Configure adjustment
+     *
+     * @param inLower the minimum value of adjustment
+     * @param inUpper the maximum value of adjustment
+     * @param inPageSize the page size of adjustment
+     */
+    public void
+    configure (double inLower, double inUpper, double inPageSize)
+    {
+        double delta = (m_Upper - m_Lower) != 0 ? m_Value / (m_Upper - m_Lower) : 0;
+
+        m_Lower = double.min (inLower, m_Upper);
+        m_Upper = double.max (inUpper, m_Lower);
+        m_Value = delta * (m_Upper - m_Lower);
+        m_PageSize = double.min (m_Upper - m_Lower, inPageSize);
     }
 }

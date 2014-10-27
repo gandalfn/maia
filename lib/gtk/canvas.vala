@@ -171,15 +171,12 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
     }
 
     private void
-    on_toplevel_map ()
-    {
-        map ();
-    }
-
-    private void
     on_toplevel_unmap ()
     {
-        unmap ();
+        if (is_realized () && is_mapped ())
+        {
+            unmap ();
+        }
     }
 
     internal override void
@@ -213,9 +210,8 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
 
         ((global::Gtk.Widget)this).window.get_display ().sync ();
 
-        ((global::Gtk.Window)get_toplevel ()).set_focus.connect  (on_window_focus_changed);
-        ((global::Gtk.Window)get_toplevel ()).map.connect  (on_toplevel_map);
-        ((global::Gtk.Window)get_toplevel ()).unmap.connect  (on_toplevel_unmap);
+        hierarchy_changed (get_toplevel ());
+
         // Create gate window from gtk window
         m_WindowGate = new Window.from_foreign (@"$name-gtk-canvas-parent", (uint32)Gdk.x11_drawable_get_xid (((global::Gtk.Widget)this).window));
 
@@ -260,15 +256,28 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
         {
             if (m_Toplevel != null)
             {
+                if (m_Toplevel is global::Gtk.Window)
+                {
+                    (m_Toplevel as global::Gtk.Window).set_focus.connect  (on_window_focus_changed);
+                }
+                m_Toplevel.unmap.connect  (on_toplevel_unmap);
                 m_Toplevel.notify["is-focus"].disconnect (on_focus_changed);
                 m_Toplevel.key_press_event.disconnect (on_key_press_event);
                 m_Toplevel.key_release_event.disconnect (on_key_release_event);
             }
 
             m_Toplevel = get_toplevel ();
-            m_Toplevel.notify["is-focus"].connect (on_focus_changed);
-            m_Toplevel.key_press_event.connect (on_key_press_event);
-            m_Toplevel.key_release_event.connect (on_key_release_event);
+            if (m_Toplevel != null)
+            {
+                if (m_Toplevel is global::Gtk.Window)
+                {
+                    (m_Toplevel as global::Gtk.Window).set_focus.connect  (on_window_focus_changed);
+                }
+                m_Toplevel.unmap.connect  (on_toplevel_unmap);
+                m_Toplevel.notify["is-focus"].connect (on_focus_changed);
+                m_Toplevel.key_press_event.connect (on_key_press_event);
+                m_Toplevel.key_release_event.connect (on_key_release_event);
+            }
         }
     }
 
@@ -278,15 +287,11 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
         base.map ();
 
         m_Window.visible = true;
-
-        queue_resize ();
     }
 
     internal override void
     unmap ()
     {
-        m_Window.size = Graphic.Size (1, 1);
-
         m_Window.visible = false;
 
         base.unmap ();

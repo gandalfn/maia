@@ -3408,8 +3408,8 @@
   )
 )
 
-(define-function maia_adjustment_new_configure
-  (c-name "maia_adjustment_new_configure")
+(define-function maia_adjustment_new_with_properties
+  (c-name "maia_adjustment_new_with_properties")
   (return-type "MaiaAdjustment*")
   (parameters
     '("gdouble" "inLower")
@@ -3418,11 +3418,22 @@
   )
 )
 
-(define-function maia_adjustment_construct_configure
-  (c-name "maia_adjustment_construct_configure")
+(define-function maia_adjustment_construct_with_properties
+  (c-name "maia_adjustment_construct_with_properties")
   (return-type "MaiaAdjustment*")
   (parameters
     '("GType" "object_type")
+    '("gdouble" "inLower")
+    '("gdouble" "inUpper")
+    '("gdouble" "inPageSize")
+  )
+)
+
+(define-method configure
+  (of-object "MaiaAdjustment")
+  (c-name "maia_adjustment_configure")
+  (return-type "none")
+  (parameters
     '("gdouble" "inLower")
     '("gdouble" "inUpper")
     '("gdouble" "inPageSize")
