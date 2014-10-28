@@ -167,7 +167,7 @@ public class Maia.Manifest.Style : Core.Object, Element
         foreach (unowned Core.Object child in this)
         {
             unowned Property? property = child as Property;
-            if (property != null && !property.is_copy)
+            if (property != null && !property.is_copy && property.scanner.first () is Attribute)
             {
                 var val = (property.scanner.first () as Attribute).to_string () ?? "''";
                 if (val.strip ().length == 0)

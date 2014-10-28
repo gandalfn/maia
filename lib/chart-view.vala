@@ -710,7 +710,7 @@ public class Maia.ChartView : Group, ItemPackable
                 if (m_YAxisLabel == null)
                 {
                     var label = new Label (@"y-axis-label", "");
-                    label.transform = new Graphic.Transform.init_rotate (GLib.Math.PI / 2.0);
+                    label.transform = new Graphic.Transform.init_rotate (-GLib.Math.PI / 2.0);
                     plug_property ("stroke-pattern", label, "stroke-pattern");
                     plug_property ("font-description", label, "font-description");
                     label.parent = this;

@@ -192,16 +192,19 @@ public class Maia.Manifest.Document : Core.Parser
     read_attribute_value () throws Core.ParseError
     {
         string property = m_Attribute;
-        m_Scanner = new AttributeScanner (owner, ref m_pCurrent, m_pEnd, ';', (a) => {
-            a.owner.set_data<string> ("MaiaElementDumpPropertyBind", property + "@" + a.get ());
-            unowned AttributeBindAddedNotification? notification = notifications["attribute-bind-added"] as AttributeBindAddedNotification;
-            if (notification != null)
-            {
-                notification.attribute = a;
-                notification.property = property;
-                notification.post ();
-            }
-        });
+        if (owner != null)
+        {
+            m_Scanner = new AttributeScanner (owner, ref m_pCurrent, m_pEnd, ';', (a) => {
+                a.owner.set_data<string> ("MaiaElementDumpPropertyBind", property + "@" + a.get ());
+                unowned AttributeBindAddedNotification? notification = notifications["attribute-bind-added"] as AttributeBindAddedNotification;
+                if (notification != null)
+                {
+                    notification.attribute = a;
+                    notification.property = property;
+                    notification.post ();
+                }
+            });
+        }
 
         if (m_pCurrent[0] != ';')
             throw new Core.ParseError.INVALID_NAME ("Error on read attribute value %s: unexpected end of line at %i,%i missing ;",

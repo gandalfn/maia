@@ -238,7 +238,16 @@ public interface Maia.Manifest.Element : Core.Object
                         }
                         else
                         {
-                            outRet = "'%s'".printf (((string)val).replace ("'", "\\'"));
+                            string str = (string)val;
+
+                            if (str == null)
+                            {
+                                outRet = "''";
+                            }
+                            else
+                            {
+                                outRet = "'%s'".printf (((string)val).replace ("'", "\\'"));
+                            }
                         }
 
                         ret = true;

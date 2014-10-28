@@ -365,6 +365,14 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                 }
                 else
                 {
+                    var first_row_iter = visible_rows.iterator ();
+                    uint? first_row =  null;
+                    if (first_row_iter.next ()) first_row = first_row_iter.get ();
+
+                    var first_column_iter = visible_columns.iterator ();
+                    uint? first_column =  null;
+                    if (first_column_iter.next ()) first_column = first_column_iter.get ();
+
                     // Get natural size
                     Graphic.Size natural = Graphic.Size (0, 0);
 
@@ -411,6 +419,16 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
                             if (item.row < rows.length && item.column < columns.length)
                             {
+                                var iter_row = visible_rows.get (item.row);
+                                bool in_visible_rows = iter_row != null;
+                                bool have_prev_row = first_row != null && first_row < item.row;
+                                bool have_next_row = iter_row != null && iter_row.next ();
+                                
+                                var iter_column = visible_columns.get (item.column);
+                                bool in_visible_columns = iter_column != null;
+                                bool have_prev_column = first_column != null && first_column < item.column;
+                                bool have_next_column = iter_column != null && iter_column.next ();
+                                
                                 Graphic.Size extra = Graphic.Size (0, 0);
 
                                 // calculate the extra space
@@ -435,40 +453,22 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                     extra.height -= yshrink / columns[item.column].nb_shrinks;
                                 }
 
-                                if (grid.row_spacing > 0 && visible_rows.length > 1 && item.row in visible_rows)
+                                if (grid.row_spacing > 0 && visible_rows.length > 1 && in_visible_rows)
                                 {
                                     double spacing = grid.row_spacing;
-                                    bool found_first = false;
-                                    bool found_last = false;
-                                    for (uint cpt = 0; !found_first && cpt < item.row; ++cpt)
-                                    {
-                                        found_first = cpt in visible_rows;
-                                    }
-                                    for (uint cpt = item.row + 1; !found_last && cpt < rows.length; ++cpt)
-                                    {
-                                        found_last = cpt in visible_rows;
-                                    }
-                                    if (!found_first || !found_last)
+
+                                    if (!have_prev_row || !have_next_row)
                                     {
                                         spacing /= 2;
                                     }
                                     extra.height += spacing;
                                 }
 
-                                if (grid.column_spacing > 0 && visible_columns.length > 1 && item.column in visible_columns)
+                                if (grid.column_spacing > 0 && visible_columns.length > 1 && in_visible_columns)
                                 {
                                     double spacing = grid.column_spacing;
-                                    bool found_first = false;
-                                    bool found_last = false;
-                                    for (uint cpt = 0; !found_first && cpt < item.column; ++cpt)
-                                    {
-                                        found_first = cpt in visible_columns;
-                                    }
-                                    for (uint cpt = item.column + 1; !found_last && cpt < columns.length; ++cpt)
-                                    {
-                                        found_last = cpt in visible_columns;
-                                    }
-                                    if (!found_first || !found_last)
+                                
+                                    if (!have_prev_column || !have_next_column)
                                     {
                                         spacing /= 2;
                                     }
@@ -505,6 +505,16 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
                             if (item.row < rows.length && item.column < columns.length)
                             {
+                                var iter_row = visible_rows.get (item.row);
+                                bool in_visible_rows = iter_row != null;
+                                bool have_prev_row = first_row != null && first_row < item.row;
+                                bool have_next_row = iter_row != null && iter_row.next ();
+                                
+                                var iter_column = visible_columns.get (item.column);
+                                bool in_visible_columns = iter_column != null;
+                                bool have_prev_column = first_column != null && first_column < item.column;
+                                bool have_next_column = iter_column != null && iter_column.next ();
+                    
                                 // calculate size of multiple columns
                                 if (item.columns > 1)
                                 {
@@ -607,20 +617,11 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                 Graphic.Rectangle area = child_allocations[item.row, item.column];
 
                                 double row_spacing = 0;
-                                if (grid.row_spacing > 0 && rows.length > 1 && item.row in visible_rows)
+                                if (grid.row_spacing > 0 && rows.length > 1 && in_visible_rows)
                                 {
                                     row_spacing = grid.row_spacing;
-                                    bool found_first = false;
-                                    bool found_last = false;
-                                    for (uint cpt = 0; !found_first && cpt < item.row; ++cpt)
-                                    {
-                                        found_first = cpt in visible_rows;
-                                    }
-                                    for (uint cpt = item.row + 1; !found_last && cpt < rows.length; ++cpt)
-                                    {
-                                        found_last = cpt in visible_rows;
-                                    }
-                                    if (!found_first || !found_last)
+
+                                    if (!have_prev_row || !have_next_row)
                                     {
                                         row_spacing /= 2;
                                     }
@@ -631,20 +632,11 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                 }
 
                                 double column_spacing = 0;
-                                if (grid.column_spacing > 0 && columns.length > 1 && item.column in visible_columns)
+                                if (grid.column_spacing > 0 && columns.length > 1 && in_visible_columns)
                                 {
                                     column_spacing = grid.column_spacing;
-                                    bool found_first = false;
-                                    bool found_last = false;
-                                    for (uint cpt = 0; !found_first && cpt < item.column; ++cpt)
-                                    {
-                                        found_first = cpt in visible_columns;
-                                    }
-                                    for (uint cpt = item.column + 1; !found_last && cpt < columns.length; ++cpt)
-                                    {
-                                        found_last = cpt in visible_columns;
-                                    }
-                                    if (!found_first || !found_last)
+
+                                    if (!have_prev_column || !have_next_column)
                                     {
                                         column_spacing /= 2;
                                     }

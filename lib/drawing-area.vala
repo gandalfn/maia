@@ -265,11 +265,6 @@ public class Maia.DrawingArea : Group, ItemPackable
     }
 
     internal override void
-    on_child_resized (Drawable inChild)
-    {
-    }
-
-    internal override void
     on_child_need_update (Item inChild)
     {
         if (inChild is Arrow && inChild.need_update && inChild.geometry != null)

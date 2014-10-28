@@ -766,6 +766,56 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
         // send ungrab keyboard
         ungrab_keyboard (this);
+
+        // Remove item from chain visible
+        if (chain_visible != null)
+        {
+            string[] item_names = chain_visible.split(",");
+
+            foreach (unowned string item_name in item_names)
+            {
+                GLib.Quark search_id = GLib.Quark.from_string (item_name.strip ());
+                if (search_id != 0)
+                {
+                    // First search in child
+                    unowned Item? item = find (search_id) as Item;
+                    if (item == null)
+                    {
+                        // Search in parents
+                        for (unowned Core.Object? p = parent; item == null && p != null; p = p.parent)
+                        {
+                            unowned Item? parent_item = p as Item;
+                            if (parent_item != null)
+                            {
+                                item = parent_item.find (search_id) as Item;
+                            }
+                        }
+                    }
+
+                    if (item != null)
+                    {
+                        // Get show count
+                        unowned Core.Set<void*>? count = item.get_qdata<unowned Core.Set<void*>> (s_ChainVisibleCount);
+                        if (count != null)
+                        {
+                            int count_hide = item.get_qdata<int> (s_CountHide);
+                            count.remove (this);
+
+                            if (count.length == 0)
+                            {
+                                if (item.visible)
+                                {
+                                    item.visible = false;
+                                    count_hide++;
+                                    item.set_qdata<int> (Item.s_CountHide, count_hide);
+                                    item.not_dumpable_attributes.insert ("visible");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void
@@ -834,12 +884,13 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                     if (item != null)
                     {
                         // Get show count
-                        unowned Core.Set<unowned Item>? count = item.get_qdata<unowned Core.Set<unowned Item>> (s_ChainVisibleCount);
+                        unowned Core.Set<void*>? count = item.get_qdata<unowned Core.Set<void*>> (s_ChainVisibleCount);
                         if (count == null)
                         {
-                            Core.Set<unowned Item> new_count = new Core.Set<unowned Item> ();
+                            Core.Set<void*> new_count = new Core.Set<void*> ();
+                            new_count.compare_func = Core.direct_compare;
                             count = new_count;
-                            item.set_qdata<Core.Set<unowned Item>> (s_ChainVisibleCount, new_count);
+                            item.set_qdata<Core.Set<void*>> (s_ChainVisibleCount, new_count);
                         }
                         int count_hide = item.get_qdata<int> (s_CountHide);
 
@@ -1201,7 +1252,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                     inContext.translate (geometry.extents.origin);
                     if (transform.have_rotate)
                     {
-                        inContext.translate (Graphic.Point ((geometry.extents.size.width - m_Size.width) / 2.0,
+                        // TODO: Fix rotate transform calculation
+                        inContext.translate (Graphic.Point ((geometry.extents.size.width - m_Size.width),
                                                             (geometry.extents.size.height - m_Size.height) / 2.0));
 
                         var t = transform.copy ();
@@ -1375,7 +1427,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                         inContext.transform = transform;
                     }
 
-                    inContext.clip_region (damaged_area);
+                    // TODO: Fix rotate transform calculation
+                    if (!transform.have_rotate) inContext.clip_region (damaged_area);
 
                     paint (inContext, damaged_area);
                 }
