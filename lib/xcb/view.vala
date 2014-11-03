@@ -608,13 +608,11 @@ internal class Maia.Xcb.View : Drawable
             m_BackBuffer = null;
             m_FrontBuffer = null;
 
-            if (is_mapped)
-            {
-                // Unmap window
-                application.push_request (new UnmapRequest (this));
+            // Unmap window
+            application.push_request (new UnmapRequest (this));
 
-                application.flush ();
-            }
+            // Flush all pendings operation on unmap since the application does not flush if window is not visible
+            application.flush ();
         }
     }
 
