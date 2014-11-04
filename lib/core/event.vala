@@ -54,6 +54,12 @@ public class Maia.Core.Event : Object
 
             return ret;
         }
+
+        public string
+        to_string ()
+        {
+            return @"name: $(name()) owner: 0x%lx".printf ((ulong)owner);
+        }
     }
 
     /**

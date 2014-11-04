@@ -60,6 +60,10 @@ namespace Maia
 
         EventListener::~EventListener ()
         {
+            if (m_pFunctor)
+            {
+                m_pFunctor.reset ();
+            }
             if (m_pClient)
             {
                 m_pClient->remove_destroy_notify_callback (this);

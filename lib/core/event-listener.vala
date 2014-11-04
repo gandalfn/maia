@@ -145,7 +145,12 @@ public class Maia.Core.EventListener : Object
     compare (Core.Object inOther)
         requires (inOther is EventListener)
     {
-        return (int)((ulong)m_Handler - (ulong)((EventListener)inOther).m_Handler);
+        int result = (int)((ulong)m_Handler - (ulong)((EventListener)inOther).m_Handler);
+        if (result == 0)
+        {
+            result = (int)((ulong)m_Target - (ulong)((EventListener)inOther).m_Target);
+        }
+        return result;
     }
 
     internal void

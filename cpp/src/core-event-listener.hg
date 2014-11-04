@@ -85,7 +85,16 @@ namespace Maia
         class EventListenerSigcFunctor : public EventListenerFunctorBase
         {
             typedef sigc::slot<void, Glib::RefPtr<EventArgs>> Handler;
+            private:
+                static void* _on_destroy_notify (gpointer inpData)
+                {
+                    EventListenerSigcFunctor* pSelf = (EventListenerSigcFunctor*)inpData;
 
+                    pSelf->unreference ();
+
+                    return 0;
+                }
+            
             public:
                 ~EventListenerSigcFunctor ()
                 {
@@ -107,6 +116,7 @@ namespace Maia
                     EventListenerFunctorBase (),
                     m_pCallback (new Handler (inSlot))
                 {
+                    m_pCallback->add_destroy_notify_callback (this, &_on_destroy_notify);
                 }
 
 
