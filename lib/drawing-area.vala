@@ -300,9 +300,9 @@ public class Maia.DrawingArea : Group, ItemPackable
             {
                 // calculate item geometry with border
                 var child_area_pos = inChild.geometry.extents.origin;
-                child_area_pos.translate (Graphic.Point (-selected_border, -selected_border));
+                child_area_pos.translate (Graphic.Point (-selected_border * 2.0, -selected_border * 2.0));
                 var child_area_size = inChild.geometry.extents.size;
-                child_area_size.resize (selected_border * 2.0, selected_border * 2.0);
+                child_area_size.resize (selected_border * 4.0, selected_border * 4.0);
 
                 // If item is movable add anchor size
                 if (selected.is_movable || selected.is_resizable)
@@ -318,12 +318,11 @@ public class Maia.DrawingArea : Group, ItemPackable
 
                 // subtract child geometry to have border area
                 border_area.subtract (inChild.geometry);
-
-                // damage border area
-                damage (border_area);
+                damaged_area.union_ (border_area);
             }
 
             // damage item
+            damaged_area.intersect (area);
             damage (damaged_area);
         }
     }
