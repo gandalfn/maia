@@ -36,19 +36,26 @@ public class Maia.Window : Group
     }
 
     // properties
-    private Core.Animator   m_Animator;
-    private uint            m_Transition = 0;
-    private Graphic.Surface m_Background;
-    private Graphic.Surface m_CloseButton;
-    private bool            m_OverCloseButton = false;
-    private Core.Event      m_DamageEvent;
-    private Core.Event      m_GeometryEvent;
-    private Core.Event      m_VisibilityEvent;
-    private Core.Event      m_DeleteEvent;
-    private Core.Event      m_DestroyEvent;
-    private Core.Event      m_MouseEvent;
-    private Core.Event      m_KeyboardEvent;
-
+    private Core.Animator      m_Animator;
+    private uint               m_Transition = 0;
+    private Graphic.Surface    m_Background;
+    private Graphic.Surface    m_CloseButton;
+    private bool               m_OverCloseButton = false;
+    private Core.Event         m_DamageEvent;
+    private Core.EventListener m_DamageListener;
+    private Core.Event         m_GeometryEvent;
+    private Core.EventListener m_GeometryListener;
+    private Core.Event         m_VisibilityEvent;
+    private Core.EventListener m_VisibilityListener;
+    private Core.Event         m_DeleteEvent;
+    private Core.EventListener m_DeleteListener;
+    private Core.Event         m_DestroyEvent;
+    private Core.EventListener m_DestroyListener;
+    private Core.Event         m_MouseEvent;
+    private Core.EventListener m_MouseListener;
+    private Core.Event         m_KeyboardEvent;
+    private Core.EventListener m_KeyboardListener;
+    
     // accessors
     protected unowned Item? focus_item         { get; set; default = null; }
     protected unowned Item? grab_pointer_item  { get; set; default = null; }
@@ -164,25 +171,25 @@ public class Maia.Window : Group
         m_Animator = new Core.Animator (60, 200);
 
         // Subscribe to damage event
-        m_DamageEvent.object_subscribe (on_damage_event);
+        m_DamageListener = m_DamageEvent.object_subscribe (on_damage_event);
 
         // Subscribe to geometry event
-        m_GeometryEvent.object_subscribe (on_geometry_event);
+        m_GeometryListener = m_GeometryEvent.object_subscribe (on_geometry_event);
 
         // Subscribe to visibility event
-        m_VisibilityEvent.object_subscribe (on_visibility_event);
+        m_VisibilityListener = m_VisibilityEvent.object_subscribe (on_visibility_event);
 
         // Subscribe to delete event
-        m_DeleteEvent.object_subscribe (on_delete_event);
+        m_DeleteListener = m_DeleteEvent.object_subscribe (on_delete_event);
 
         // Subscribe to destroy event
-        m_DestroyEvent.object_subscribe (on_destroy_event);
+        m_DestroyListener = m_DestroyEvent.object_subscribe (on_destroy_event);
 
         // Subscribe to mouse event
-        m_MouseEvent.object_subscribe (on_mouse_event);
+        m_MouseListener = m_MouseEvent.object_subscribe (on_mouse_event);
 
         // Subscribe to keyboard event
-        m_KeyboardEvent.object_subscribe (on_keyboard_event);
+        m_KeyboardListener = m_KeyboardEvent.object_subscribe (on_keyboard_event);
 
         // Connect onto signals from childs
         set_pointer_cursor.connect (on_set_pointer_cursor);
@@ -226,6 +233,17 @@ public class Maia.Window : Group
 
         is_movable = true;
         is_resizable = true;
+    }
+
+    ~Window ()
+    {
+        if (m_DamageListener != null) m_DamageListener.parent = null;
+        if (m_GeometryListener != null) m_GeometryListener.parent = null;
+        if (m_VisibilityListener != null) m_VisibilityListener.parent = null;
+        if (m_DeleteListener != null) m_DeleteListener.parent = null;
+        if (m_DestroyListener != null) m_DestroyListener.parent = null;
+        if (m_MouseListener != null) m_MouseListener.parent = null;
+        if (m_KeyboardListener != null) m_KeyboardListener.parent = null;
     }
 
     private void

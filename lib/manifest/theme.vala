@@ -165,7 +165,7 @@ public class Maia.Manifest.Theme : Core.Object, Element
                     apply (child_element);
                 }
             }
-            else if (!(inElement is ChartView))
+            else
             {
                 // Appply theme in all child
                 foreach (unowned Core.Object child in ((Core.Object)inElement))

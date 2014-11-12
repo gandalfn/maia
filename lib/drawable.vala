@@ -284,7 +284,15 @@ public interface Maia.Drawable : GLib.Object
                 {
                     var t = inChild.transform.copy ();
                     t.apply_center_rotate (inChild.geometry.extents.size.width / 2.0, inChild.geometry.extents.size.height / 2.0);
-                    point.transform (new Graphic.Transform.invert (t));
+                    var ti = new Graphic.Transform.invert (t);
+
+                    point.transform (ti);
+
+                    var temp = inChild.geometry.copy ();
+                    temp.translate (inChild.geometry.extents.origin.invert ());
+                    temp.transform (ti);
+
+                    point.translate (temp.extents.origin.invert ());
                 }
                 else
                 {
@@ -329,14 +337,22 @@ public interface Maia.Drawable : GLib.Object
             child_area.intersect (inChild.geometry);
 
             child_area.translate (inChild.geometry.extents.origin.invert ());
-
+            
             try
             {
                 if (inChild.transform.have_rotate)
                 {
                     var t = inChild.transform.copy ();
                     t.apply_center_rotate (inChild.geometry.extents.size.width / 2.0, inChild.geometry.extents.size.height / 2.0);
-                    child_area.transform (new Graphic.Transform.invert (t));
+                    var ti = new Graphic.Transform.invert (t);
+
+                    child_area.transform (ti);
+
+                    var temp = inChild.geometry.copy ();
+                    temp.translate (inChild.geometry.extents.origin.invert ());
+                    temp.transform (ti);
+
+                    child_area.translate (temp.extents.origin.invert ());
                 }
                 else
                 {
@@ -369,9 +385,16 @@ public interface Maia.Drawable : GLib.Object
         {
             if (transform.have_rotate)
             {
+                var area_size = area.extents.size;
+
                 var t = transform.copy ();
-                t.apply_center_rotate (geometry.extents.size.width / 2.0, geometry.extents.size.height / 2.0);
+                t.apply_center_rotate (area_size.width / 2.0, area_size.height / 2.0);
                 point.transform (t);
+
+                var temp = area.copy ();
+                temp.transform (t);
+
+                point.translate (temp.extents.origin.invert ());
             }
             else
             {
@@ -395,25 +418,32 @@ public interface Maia.Drawable : GLib.Object
     area_to_parent_item_space (Graphic.Region inArea)
     {
         // Transform point to item coordinate space
-        Graphic.Region area = inArea.copy ();
+        Graphic.Region parent_area = inArea.copy ();
 
         if (geometry != null)
         {
             if (transform.have_rotate)
             {
+                var area_size = area.extents.size;
+
                 var t = transform.copy ();
-                t.apply_center_rotate (geometry.extents.size.width / 2.0, geometry.extents.size.height / 2.0);
-                area.transform (t);
+                t.apply_center_rotate (area_size.width / 2.0, area_size.height / 2.0);
+                parent_area.transform (t);
+
+                var temp = area.copy ();
+                temp.transform (t);
+
+                parent_area.translate (temp.extents.origin.invert ());
             }
             else
             {
-                area.transform (transform);
+                parent_area.transform (transform);
             }
 
-            area.translate (geometry.extents.origin);
+            parent_area.translate (geometry.extents.origin);
         }
 
-        return area;
+        return parent_area;
     }
 
     /**

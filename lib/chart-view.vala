@@ -176,6 +176,8 @@ public class Maia.ChartView : Group, ItemPackable
             {
                 m_ChartView.plug_property ("legend-border", label, "top-padding");
             }
+            m_ChartView.plug_property ("font-description", label, "font-description");
+            m_ChartView.plug_property ("stroke-pattern", label, "stroke-pattern");
             m_ChartView.plug_property ("legend-border", label, "bottom-padding");
             m_ChartView.plug_property ("legend-border", label, "right-padding");
             label.row = m_NbItems;
@@ -683,6 +685,7 @@ public class Maia.ChartView : Group, ItemPackable
                 if (m_XAxisLabel == null)
                 {
                     var label = new Label (@"x-axis-label", "");
+                    label.xshrink = false;
                     plug_property ("stroke-pattern", label, "stroke-pattern");
                     plug_property ("font-description", label, "font-description");
                     label.parent = this;
@@ -710,6 +713,7 @@ public class Maia.ChartView : Group, ItemPackable
                 if (m_YAxisLabel == null)
                 {
                     var label = new Label (@"y-axis-label", "");
+                    label.xshrink = false;
                     label.transform = new Graphic.Transform.init_rotate (-GLib.Math.PI / 2.0);
                     plug_property ("stroke-pattern", label, "stroke-pattern");
                     plug_property ("font-description", label, "font-description");
@@ -982,7 +986,7 @@ public class Maia.ChartView : Group, ItemPackable
 
                     if (m_ChartAxis.range.min.x >= 0)
                     {
-                        m_YLabelSize += label_size.width;
+                        m_YLabelSize += label_allocation.size.width;
                     }
 
                     m_YAxisLabel.update (inContext, new Graphic.Region (label_allocation));
@@ -998,7 +1002,7 @@ public class Maia.ChartView : Group, ItemPackable
 
                     if (m_ChartAxis.range.min.y >= 0)
                     {
-                        m_XLabelSize += label_size.height;
+                        m_XLabelSize += label_allocation.size.height;
                     }
 
                     m_XAxisLabel.update (inContext, new Graphic.Region (label_allocation));
@@ -1314,7 +1318,7 @@ public class Maia.ChartView : Group, ItemPackable
             if (child is Drawable)
             {
                 unowned Drawable drawable = (Drawable)child;
-
+                
                 var area = area_to_child_item_space (drawable, inArea);
 
                 drawable.draw (inContext, area);

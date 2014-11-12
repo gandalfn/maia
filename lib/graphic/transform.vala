@@ -660,15 +660,15 @@ public class Maia.Graphic.Transform : Core.Object
         if (m_IsRotate)
         {
             var m = m_BaseMatrix;
-            m_BaseMatrix = Matrix (1, 0, 0, 1, inCx, inCy);
+            m_BaseMatrix = Matrix (1, 0, 0, 1, -inCx, -inCy);
             m_BaseMatrix.post_multiply (m);
-            m_BaseMatrix.post_multiply (Matrix (1, 0, 0, 1, -inCx, -inCy));
+            m_BaseMatrix.post_multiply (Matrix (1, 0, 0, 1, inCx, inCy));
             m_FinalMatrix = m_BaseMatrix;
 
             m = m_BaseInvertMatrix;
-            m_BaseInvertMatrix = Matrix (1, 0, 0, 1, -inCx, -inCy);
+            m_BaseInvertMatrix = Matrix (1, 0, 0, 1, inCx, inCy);
             m_BaseInvertMatrix.multiply (m);
-            m_BaseInvertMatrix.multiply (Matrix (1, 0, 0, 1, inCx, inCy));
+            m_BaseInvertMatrix.multiply (Matrix (1, 0, 0, 1, -inCx, -inCy));
             m_FinalInvertMatrix = m_BaseInvertMatrix;
         }
         foreach (unowned Core.Object child in this)
