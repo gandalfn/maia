@@ -20,14 +20,15 @@
 internal class Maia.Xcb.Viewport : Maia.Viewport
 {
     // properties
-    private PixmapSlices m_Slices;
-    private View         m_View;
-    private Core.Event   m_DamageEvent;
-    private Core.Event   m_GeometryEvent;
-    private Core.Event   m_VisibilityEvent;
-    private Core.Event   m_DestroyEvent;
-    private Core.Event   m_MouseEvent;
-    private Core.Event   m_KeyboardEvent;
+    private PixmapSlices  m_Slices;
+    private unowned Item? m_ParentWindow;
+    private View          m_View;
+    private Core.Event    m_DamageEvent;
+    private Core.Event    m_GeometryEvent;
+    private Core.Event    m_VisibilityEvent;
+    private Core.Event    m_DestroyEvent;
+    private Core.Event    m_MouseEvent;
+    private Core.Event    m_KeyboardEvent;
 
     // accessors
     public unowned View? view {
@@ -38,16 +39,19 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
 
     public override uint8 depth {
         get {
-            return m_View.depth;
+            return m_View != null ? m_View.depth : 0;
         }
         set {
-            m_View.depth = value;
+            if (m_View != null)
+            {
+                m_View.depth = value;
+            }
         }
     }
 
     public override Graphic.Surface? surface {
         get {
-            return m_View.surface;
+            return m_View != null ? m_View.surface : null;
         }
     }
 
@@ -84,7 +88,7 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
 
     public uint32 xid {
         get {
-            return m_View.xid;
+            return m_View != null ? m_View.xid : 0;
         }
     }
 
@@ -153,13 +157,34 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
     private void
     on_main_window_changed ()
     {
-        if (m_View != null)
+        if (m_View != null && m_ParentWindow != window)
         {
-            unowned Window? parent_window = window as Window;
+            if (m_ParentWindow != null)
+            {
+                m_ParentWindow.notify["view"].disconnect (on_parent_view_changed);
+            }
+
+            m_ParentWindow = window;
+
+            if (m_ParentWindow != null)
+            {
+                m_ParentWindow.notify["view"].connect (on_parent_view_changed);
+            }
+        }
+
+        on_parent_view_changed ();
+    }
+
+    private void
+    on_parent_view_changed ()
+    {
+        if (m_ParentWindow != null && m_View != null)
+        {
+            unowned Window? parent_window = m_ParentWindow as Window;
 
             if (parent_window == null)
             {
-                unowned Viewport? parent_viewport = window as Viewport;
+                unowned Viewport? parent_viewport = m_ParentWindow as Viewport;
 
                 m_View.parent = parent_viewport == null ? null : parent_viewport.view;
 
@@ -185,6 +210,11 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
                     m_View.show ();
                 }
             }
+        }
+        else if (m_View != null)
+        {
+            m_View.hide ();
+            m_View.parent = null;
         }
     }
 
@@ -267,6 +297,7 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
     on_view_destroy_event (Core.EventArgs? inArgs)
     {
         m_View = null;
+        GLib.Signal.emit_by_name (this, "notify::view");
     }
 
     private void
@@ -345,6 +376,8 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
 
         m_View.show ();
 
+        GLib.Signal.emit_by_name (this, "notify::view");
+
         base.on_show ();
     }
 
@@ -357,6 +390,14 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
         }
 
         base.on_hide ();
+    }
+
+    internal override void
+    on_destroy_event (Core.EventArgs? inArgs)
+    {
+        m_View = null;
+
+        base.on_destroy_event (inArgs);
     }
 
     internal override bool
@@ -437,6 +478,7 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
         {
             create_view ();
             m_View.show ();
+            GLib.Signal.emit_by_name (this, "notify::view");
 
             // update view content from slices
             if (!visible_area.is_empty ())
@@ -461,6 +503,7 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
         {
             create_view ();
             m_View.show ();
+            GLib.Signal.emit_by_name (this, "notify::view");
 
             // update view content from slices
             if (!visible_area.is_empty ())

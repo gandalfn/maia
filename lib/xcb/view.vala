@@ -334,6 +334,7 @@ internal class Maia.Xcb.View : Drawable
             m_Parent.mapped.disconnect (on_parent_mapped);
             m_Parent.m_Func = null;
         }
+        m_Parent = null;
 
         m_BackBuffer = null;
         m_FrontBuffer = null;

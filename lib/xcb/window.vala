@@ -20,28 +20,31 @@
 internal class Maia.Xcb.Window : Maia.Window
 {
     // properties
-    private View              m_View;
-    private unowned Viewport? m_ParentViewport = null;
+    private View          m_View;
+    private unowned Item? m_ParentWindow = null;
 
     // accessors
     public override uint8 depth {
         get {
-            return m_View.depth;
+            return m_View != null ? m_View.depth : 0;
         }
         set {
-            m_View.depth = value;
+            if (m_View != null)
+            {
+                m_View.depth = value;
+            }
         }
     }
 
     public override Graphic.Surface? surface {
         get {
-            return m_View.surface;
+            return m_View != null ? m_View.surface : null;
         }
     }
 
     public uint32 xid {
         get {
-            return m_View.xid;
+            return m_View != null ? m_View.xid : 0;
         }
     }
 
@@ -60,38 +63,61 @@ internal class Maia.Xcb.Window : Maia.Window
     private void
     on_main_window_changed ()
     {
-        unowned Window? parent_window = window as Window;
-
-        if (m_ParentViewport != null)
+        if (m_View != null && m_ParentWindow != window)
         {
-            m_ParentViewport.notify["visible-area"].disconnect (on_viewport_parent_visible_area_changed);
-        }
-        if (parent_window == null)
-        {
-            m_ParentViewport = window as Viewport;
-
-            m_View.parent = m_ParentViewport == null ? null : m_ParentViewport.view;
-
-            if (m_ParentViewport != null)
+            if (m_ParentWindow != null)
             {
-                m_ParentViewport.notify["visible-area"].connect (on_viewport_parent_visible_area_changed);
-                on_viewport_parent_visible_area_changed ();
+                m_ParentWindow.notify["view"].disconnect (on_parent_view_changed);
+                m_ParentWindow.notify["visible-area"].disconnect (on_viewport_parent_visible_area_changed);
+            }
+
+            m_ParentWindow = window;
+
+            if (m_ParentWindow != null)
+            {
+                m_ParentWindow.notify["view"].connect (on_parent_view_changed);
+                m_ParentWindow.notify["visible-area"].connect (on_viewport_parent_visible_area_changed);
             }
         }
-        else
+
+        on_parent_view_changed ();
+    }
+
+    private void
+    on_parent_view_changed ()
+    {
+        if (m_ParentWindow != null && m_View != null)
         {
-            m_ParentViewport = null;
-            m_View.parent = parent_window.view;
+            unowned Window? parent_window = m_ParentWindow as Window;
+
+            if (parent_window == null)
+            {
+                unowned Viewport? parent_viewport = m_ParentWindow as Viewport;
+
+                m_View.parent = parent_viewport == null ? null : parent_viewport.view;
+
+                on_viewport_parent_visible_area_changed ();
+            }
+            else
+            {
+                m_View.parent = parent_window.view;
+            }
+
+        }
+        else if (m_View != null)
+        {
+            m_View.parent = null;
         }
     }
 
     private void
     on_viewport_parent_visible_area_changed ()
     {
-        if (m_ParentViewport != null)
+        unowned Viewport? parent_viewport = m_ParentWindow as Viewport;
+        if (parent_viewport != null && m_View != null)
         {
             var pos = position;
-            pos.translate (m_ParentViewport.visible_area.origin.invert ());
+            pos.translate (parent_viewport.visible_area.origin.invert ());
             m_View.position = pos;
         }
     }
@@ -99,23 +125,29 @@ internal class Maia.Xcb.Window : Maia.Window
     private void
     on_device_transform_changed ()
     {
-        m_View.device_transform = device_transform;
-        if (m_View.backbuffer != null)
+        if (m_View != null)
         {
-            m_View.backbuffer.clear ();
+            m_View.device_transform = device_transform;
+            if (m_View.backbuffer != null)
+            {
+                m_View.backbuffer.clear ();
+            }
         }
     }
 
     private void
     on_repair (Graphic.Region? inArea)
     {
-        // Add swap damaged
-        if (m_View.damaged != null)
-            m_View.damaged.union_ (inArea ?? area);
-        else
-            m_View.damaged = (inArea ?? area).copy ();
+        if (m_View != null)
+        {
+            // Add swap damaged
+            if (m_View.damaged != null)
+                m_View.damaged.union_ (inArea ?? area);
+            else
+                m_View.damaged = (inArea ?? area).copy ();
 
-        m_View.updated ();
+            m_View.updated ();
+        }
     }
 
     internal override void
@@ -167,7 +199,18 @@ internal class Maia.Xcb.Window : Maia.Window
     {
         base.on_transform_changed ();
 
-        m_View.transform = transform;
+        if (m_View != null)
+        {
+            m_View.transform = transform;
+        }
+    }
+
+    internal override void
+    on_destroy_event (Core.EventArgs? inArgs)
+    {
+        m_View = null;
+
+        base.on_destroy_event (inArgs);
     }
 
     internal override void
@@ -175,11 +218,12 @@ internal class Maia.Xcb.Window : Maia.Window
     {
         base.on_move ();
 
-        if (m_ParentViewport != null)
+        unowned Viewport? parent_viewport = m_ParentWindow as Viewport;
+        if (parent_viewport != null)
         {
             on_viewport_parent_visible_area_changed ();
         }
-        else
+        else if (m_View != null)
         {
             m_View.position = position;
         }
@@ -188,7 +232,10 @@ internal class Maia.Xcb.Window : Maia.Window
     internal override void
     on_resize ()
     {
-        m_View.size = size;
+        if (m_View != null)
+        {
+            m_View.size = size;
+        }
 
         base.on_resize ();
     }
@@ -210,13 +257,19 @@ internal class Maia.Xcb.Window : Maia.Window
     {
         base.on_show ();
 
-        m_View.show ();
+        if (m_View != null)
+        {
+            m_View.show ();
+        }
     }
 
     internal override void
     on_hide ()
     {
-        m_View.hide ();
+        if (m_View != null)
+        {
+            m_View.hide ();
+        }
 
         base.on_hide ();
     }
@@ -227,7 +280,7 @@ internal class Maia.Xcb.Window : Maia.Window
         bool ret = base.on_grab_pointer (inItem);
 
         // an item was grabbed grab pointer
-        if (ret && grab_pointer_item != null)
+        if (ret && grab_pointer_item != null && m_View != null)
         {
             m_View.grab_pointer ();
         }
@@ -249,7 +302,7 @@ internal class Maia.Xcb.Window : Maia.Window
         bool ret = base.on_grab_keyboard (inItem);
 
         // an item was grabbed grab pointer
-        if (ret && grab_keyboard_item != null)
+        if (ret && grab_keyboard_item != null && m_View != null)
         {
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab pointer %s", inItem.name);
             m_View.grab_keyboard ();
@@ -263,7 +316,7 @@ internal class Maia.Xcb.Window : Maia.Window
     {
         base.on_ungrab_keyboard (inItem);
 
-        if (grab_keyboard_item == null)
+        if (grab_keyboard_item == null && m_View != null)
         {
             m_View.ungrab_keyboard ();
         }
@@ -272,13 +325,19 @@ internal class Maia.Xcb.Window : Maia.Window
     internal override void
     on_set_pointer_cursor (Cursor inCursor)
     {
-        m_View.set_pointer_cursor (inCursor);
+        if (m_View != null)
+        {
+            m_View.set_pointer_cursor (inCursor);
+        }
     }
 
     internal override void
     on_move_pointer (Graphic.Point inPosition)
     {
-        m_View.move_pointer (inPosition);
+        if (m_View != null)
+        {
+            m_View.move_pointer (inPosition);
+        }
     }
 
     internal override void
@@ -286,7 +345,7 @@ internal class Maia.Xcb.Window : Maia.Window
     {
         base.update (inContext, inAllocation);
 
-        if (geometry != null)
+        if (geometry != null && m_View != null)
         {
             m_View.size = geometry.extents.size;
         }
@@ -295,6 +354,9 @@ internal class Maia.Xcb.Window : Maia.Window
     internal override void
     swap_buffer ()
     {
-        m_View.swap_buffer ();
+        if (m_View != null)
+        {
+            m_View.swap_buffer ();
+        }
     }
 }
