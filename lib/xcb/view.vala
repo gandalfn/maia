@@ -88,7 +88,7 @@ internal class Maia.Xcb.View : Drawable
             {
                 for (int cpt = 0; cpt < reply.children_len; ++cpt)
                 {
-                    var view = Maia.Xcb.application.lookup_view (reply.children[cpt]);
+                    unowned View? view = Maia.Xcb.application.lookup_view (reply.children[cpt]);
                     if (view != null)
                     {
                         m_Childs.insert (view);
