@@ -1,6 +1,6 @@
 m4_define(maia_version_major, 0)
-m4_define(maia_version_minor, 2)
-m4_define(maia_version_micro, 48)
+m4_define(maia_version_minor, 3)
+m4_define(maia_version_micro, 0)
 AC_INIT([maia],[maia_version_major.maia_version_minor.maia_version_micro])
 AC_PREREQ(2.63)
 
@@ -43,7 +43,7 @@ dnl ****************************************************************************
 dnl Packages version required
 dnl ****************************************************************************
 GLIB_REQUIRED=2.32.0
-VALA_REQUIRED=0.22.0
+VALA_REQUIRED=0.26.0
 PIXMAN_REQUIRED=0.16.4
 CAIRO_REQUIRED=1.10.2
 PANGO_REQUIRED=1.30.0
@@ -131,6 +131,7 @@ AC_SUBST(MAIA_RSVG_CFLAGS)
 AC_SUBST(MAIA_RSVG_LIBS)
 MAIA_RSVG_VERSION=$(pkg-config --modversion librsvg-2.0  | awk -F "." '{print "LIBRSVG_"$1"_"$2"_"$3;}')
 AC_SUBST(MAIA_RSVG_VERSION)
+AM_CONDITIONAL(USE_RSVG_VAPI, test "x$MAIA_RSVG_VERSION" = "xLIBRSVG_2_36_1")
 
 dnl ****************************************************************************
 dnl Check for gdk-pixbuf packages
@@ -200,12 +201,12 @@ fi
 dnl ****************************************************************************
 dnl Check for vala
 dnl ****************************************************************************
-vala_0_22=$(which valac-0.22)
-if test ! x"$vala_0_22" = x""; then
-    VALAC=$vala_0_22
+vala_0_26=$(which valac-0.26)
+if test ! x"$vala_0_26" = x""; then
+    VALAC=$vala_0_26
 fi
 AM_PROG_VALAC($VALA_REQUIRED)
-VALA_VAPI_PATH=$($PKG_CONFIG --variable=vapidir libvala-0.22)
+VALA_VAPI_PATH=$($PKG_CONFIG --variable=vapidir libvala-0.26)
 AC_SUBST(VALA_VAPI_PATH)
 
 dnl ****************************************************************************

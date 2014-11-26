@@ -32,7 +32,9 @@ noinst_DATA = \
     gtk+-2.0.deps \
     libintl.vapi \
     uuid.vapi \
-    gvalue-collect.vapi
+    gvalue-collect.vapi \
+    librsvg-2.36.1.vapi \
+    librsvg-2.36.1.deps
 
 EXTRA_DIST += \
     $(noinst_DATA)

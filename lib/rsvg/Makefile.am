@@ -17,8 +17,13 @@ libmaia_rsvg_la_CFLAGS = \
 libmaia_rsvg_la_VALAFLAGS = \
     --pkg=cairo \
     --pkg=gdk-pixbuf-2.0 \
-    --pkg=librsvg-2.0 \
     -D $(MAIA_RSVG_VERSION)
+
+if USE_RSVG_VAPI
+libmaia_rsvg_la_VALAFLAGS += --pkg=librsvg-2.36.1
+else
+libmaia_rsvg_la_VALAFLAGS += --pkg=librsvg-2.0
+endif
 
 libmaia_rsvg_la_SOURCES = \
     image-svg.vala \
