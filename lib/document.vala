@@ -117,6 +117,9 @@ public class Maia.Document : Item
         not_dumpable_attributes.insert ("nb-pages");
         not_dumpable_attributes.insert ("item-over-pointer");
 
+        // Create header/footer add attribute bind notification
+        notifications.add (new Manifest.Document.AttributeBindAddedNotification ("header-footer-attribute-bind-added"));
+
         // create pages list
         m_Pages = new Core.List<Page> ();
 
@@ -570,6 +573,7 @@ public class Maia.Document : Item
     on_read_manifest (Manifest.Document inDocument) throws Core.ParseError
     {
         inDocument.notifications["attribute-bind-added"].add_object_observer (on_attribute_bind_added);
+        notifications["header-footer-attribute-bind-added"].append_observers (inDocument.notifications["attribute-bind-added"]);
     }
 
     internal override Graphic.Size

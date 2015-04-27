@@ -178,7 +178,7 @@ public class Maia.ScrollView : Item
             var visible_area = m_Viewport.visible_area;
 
             // Get new position
-            var pos = Graphic.Point(hadjustment.@value, vadjustment.@value);
+            var pos = Graphic.Point(GLib.Math.floor (hadjustment.@value), GLib.Math.floor (vadjustment.@value));
 
             // Calculate the move offset
             var diff = visible_area.origin.invert ();
@@ -192,10 +192,10 @@ public class Maia.ScrollView : Item
             }
 
             m_Viewport.position = pos.invert ();
-            
+
             // Set new visible area
             visible_area.origin = pos;
-            m_Viewport.visible_area = visible_area;
+            m_Viewport.visible_area = visible_area.ceil ();
         }
     }
 

@@ -96,7 +96,7 @@ internal class Maia.Page : GLib.Object
             }
             try
             {
-                var new_header = value.duplicate (@"$(value.name)-$(num)", m_Document.on_attribute_bind_added) as Item;
+                var new_header = value.duplicate_with_notification (@"$(value.name)-$(num)", m_Document.notifications["header-footer-attribute-bind-added"]) as Item;
                 m_Header = new_header;
                 m_Header.set_qdata<bool> (Document.s_HeaderFooterQuark, true);
                 m_Childs.insert (m_Header);
@@ -125,7 +125,7 @@ internal class Maia.Page : GLib.Object
             }
             try
             {
-                var new_footer = value.duplicate (@"$(value.name)-$(num)", m_Document.on_attribute_bind_added) as Item;
+                var new_footer = value.duplicate_with_notification (@"$(value.name)-$(num)", m_Document.notifications["header-footer-attribute-bind-added"]) as Item;
                 m_Footer = new_footer;
                 m_Footer.set_qdata<bool> (Document.s_HeaderFooterQuark, true);
                 m_Childs.insert (m_Footer);

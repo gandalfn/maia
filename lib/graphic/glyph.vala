@@ -210,4 +210,11 @@ public class Maia.Graphic.Glyph : Core.Object
     {
         outLine = 0;
     }
+
+    public virtual void
+    get_index_from_position (Graphic.Point inPosition, out int outIndex, out int outTrailing)
+    {
+        outIndex = 0;
+        outTrailing = 0;
+    }
 }

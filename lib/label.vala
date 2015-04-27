@@ -54,6 +54,8 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
+    internal Graphic.Pattern backcell_pattern { get; set; default = null; }
+
     internal override bool can_focus  {
         get {
             return parent is DrawingArea;
@@ -248,7 +250,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
 
         // Set transform
         m_FakeSurface.context.transform = to_window_transform ();
-        
+
         // unset geometry to force update
         need_update = true;
         geometry = null;
@@ -379,8 +381,11 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
 
             if (m_Glyph != null)
             {
-                // Reset wrap if any
-                m_Glyph.size = Graphic.Size (0, 0);
+                if (!get_qdata<bool> (Grid.s_Reallocate))
+                {
+                    // Reset wrap if any
+                    m_Glyph.size = Graphic.Size (0, 0);
+                }
 
                 // update layout
                 m_Glyph.update (m_FakeSurface.context);
@@ -396,20 +401,27 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     internal override void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
     {
+        bool reallocate = false;
         var allocation = inAllocation.extents;
         if (m_Glyph != null && ((xshrink && inAllocation.extents.size.width < m_Glyph.size.width) ||
                                 (yshrink && inAllocation.extents.size.height < m_Glyph.size.height)))
         {
-            var glyph_size = m_Glyph.size;
+            var glyph_size = Graphic.Size (0, 0);
             if (xshrink && allocation.size.width < size.width)
             {
                 glyph_size.width = allocation.size.width;
+                reallocate = true;
             }
             if (yshrink && allocation.size.height < size.height)
             {
                 glyph_size.height = allocation.size.height;
+                reallocate = true;
             }
-            m_Glyph.size = glyph_size;
+            if (reallocate)
+            {
+                m_Glyph.size = glyph_size;
+                m_Glyph.update (inContext);
+            }
             glyph_size = m_Glyph.size;
 
             glyph_size.transform (transform);
@@ -418,6 +430,8 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
         }
 
         base.update (inContext, new Graphic.Region (allocation));
+
+        set_qdata<bool> (Grid.s_Reallocate, reallocate);
     }
 
     internal override void

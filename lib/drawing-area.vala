@@ -70,6 +70,8 @@ public class Maia.DrawingArea : Group, ItemPackable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
+    internal Graphic.Pattern backcell_pattern { get; set; default = null; }
+
     public unowned Item? selected  {
         get {
             return m_SelectedItem;

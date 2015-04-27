@@ -25,6 +25,7 @@ public class Maia.View : Maia.Grid
     // properties
     private string                  m_ModelName = null;
     private Model                   m_Model = null;
+    private bool                    m_HideIfEmpty = false;
     private unowned SetPropertyFunc m_SetPropertyFunc = null;
     private int                     m_RowHightlighted = -1;
     private Manifest.Document       m_Document = null;
@@ -114,6 +115,41 @@ public class Maia.View : Maia.Grid
             {
                 m_RowHightlighted = value;
                 damage ();
+            }
+        }
+    }
+
+    /**
+     * If true hide view if model is empty
+     */
+    [CCode (notify = false)]
+    public bool hide_if_model_empty {
+        get {
+            return m_HideIfEmpty;
+        }
+        set {
+            if (m_HideIfEmpty != value)
+            {
+                m_HideIfEmpty = value;
+                if (m_HideIfEmpty && visible && (m_Model == null || m_Model.nb_rows == 0))
+                {
+                    visible = false;
+                    int count = get_qdata<int> (Item.s_CountHide);
+                    count++;
+                    set_qdata<int> (Item.s_CountHide, count);
+                    not_dumpable_attributes.insert ("visible");
+                }
+                else if (!m_HideIfEmpty && !visible)
+                {
+                    int count = get_qdata<int> (Item.s_CountHide);
+                    count = int.max (count - 1, 0);
+                    if (count == 0)
+                    {
+                        visible = true;
+                        not_dumpable_attributes.remove ("visible");
+                    }
+                    set_qdata<int> (Item.s_CountHide, count);
+                }
             }
         }
     }
@@ -393,6 +429,19 @@ public class Maia.View : Maia.Grid
         ItemPackable? item = create_cell (inRow);
         if (item != null)
         {
+            if (m_HideIfEmpty && !visible)
+            {
+                int count = get_qdata<int> (Item.s_CountHide);
+                count = int.max (count - 1, 0);
+
+                if (count == 0)
+                {
+                    visible = true;
+                    not_dumpable_attributes.remove ("visible");
+                }
+                set_qdata<int> (Item.s_CountHide, count);
+            }
+
             // Shift current items
             shift (inRow);
 
@@ -435,6 +484,15 @@ public class Maia.View : Maia.Grid
 
             // unshift all siblings item
             unshift (inRow);
+
+            if (m_HideIfEmpty && visible && m_Model.nb_rows == 0)
+            {
+                visible = false;
+                int count = get_qdata<int> (Item.s_CountHide);
+                count++;
+                set_qdata<int> (Item.s_CountHide, count);
+                not_dumpable_attributes.insert ("visible");
+            }
         }
     }
 
@@ -454,17 +512,21 @@ public class Maia.View : Maia.Grid
                 else
                     pos = (item.row * lines) + item.column;
 
-                if (pos < inNewOrder.length)
+                for (int cpt = 0; cpt < inNewOrder.length; ++cpt)
                 {
-                    if (orientation == Orientation.HORIZONTAL)
+                    if (pos == inNewOrder[cpt])
                     {
-                        item.row = inNewOrder[pos] % lines;
-                        item.column = inNewOrder[pos] / lines;
-                    }
-                    else
-                    {
-                        item.row = inNewOrder[pos] / lines;
-                        item.column = inNewOrder[pos] % lines;
+                        if (orientation == Orientation.HORIZONTAL)
+                        {
+                            item.row = cpt % lines;
+                            item.column = cpt / lines;
+                        }
+                        else
+                        {
+                            item.row = cpt / lines;
+                            item.column = cpt % lines;
+                        }
+                        break;
                     }
                 }
             }

@@ -84,12 +84,20 @@ public class Maia.Core.EventListener : Object
     }
 
     // accessors
+    [CCode (notify = false)]
     public bool event_destroyed { get; set; default = false; }
 
     /**
      * Block temporarily the event notification
      */
+    [CCode (notify = false)]
     public bool block { get; set; default = false; }
+
+    /**
+     * Block the next event notification
+     */
+    [CCode (notify = false)]
+    public int block_next_nb_events { get; set; default = 0; }
 
     // methods
     public EventListener (Event inEvent, Event.Handler inHandler)
@@ -166,9 +174,10 @@ public class Maia.Core.EventListener : Object
     {
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "");
 
-        if (!block && m_Handler != null)
+        if (!block && block_next_nb_events <= 0 && m_Handler != null)
         {
             m_Handler (inEventArgs);
         }
+        _block_next_nb_events = int.max (0, _block_next_nb_events--);
     }
 }

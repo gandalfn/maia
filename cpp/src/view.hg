@@ -57,6 +57,9 @@ namespace Maia
             _WRAP_METHOD(Orientation get_orientation () const, maia_view_get_orientation)
             _WRAP_METHOD(void set_orientation (Orientation inOrientation), maia_view_set_orientation)
 
+            _WRAP_METHOD(bool get_hide_if_model_empty () const, maia_view_get_hide_if_model_empty)
+            _WRAP_METHOD(void set_hide_if_model_empty (bool inHideIfEmpty = true), maia_view_set_hide_if_model_empty)
+
             _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_view_get_model, refreturn)
             _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_view_set_model)
 
@@ -79,6 +82,7 @@ namespace Maia
             _WRAP_PROPERTY("orientation", Orientation)
             _WRAP_PROPERTY("model-name", Glib::ustring)
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
+            _WRAP_PROPERTY("hide-if-model-empty", bool)
 
         protected:
             View ();

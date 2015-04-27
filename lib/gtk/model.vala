@@ -202,6 +202,7 @@ internal class Maia.Gtk.Model : Maia.Model
         unowned uint[]? new_order = (uint[]?)inNewOrder;
         if (new_order != null)
         {
+            new_order.length = m_TreeModel.iter_n_children (inIter);
             rows_reordered (new_order);
         }
     }

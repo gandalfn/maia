@@ -141,6 +141,8 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
+    internal Graphic.Pattern backcell_pattern { get; set; default = null; }
+
     /**
      * The default font description of entry
      */
@@ -235,7 +237,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             }
         }
     }
-    
+
     /**
      * The number of lines of entry
      */
@@ -305,6 +307,9 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
 
         // connect onto root changed
         notify["window"].connect (on_window_changed);
+
+        // connect onto button press event
+        button_press_event.connect (on_button_press_event);
     }
 
     /**
@@ -672,7 +677,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                     inContext.paint ();
                     inContext.restore ();
                 }
-                
+
                 // Paint text
                 inContext.pattern = have_focus && edit_stroke_pattern != null ? edit_stroke_pattern : stroke_pattern;
                 inContext.render (m_Glyph);
@@ -719,5 +724,24 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             }
             inContext.restore ();
         }
+    }
+
+    internal override bool
+    on_button_press_event (uint inButton, Graphic.Point inPosition)
+    {
+        bool ret = base.on_button_press_event (inButton, inPosition);
+
+        if (inButton == 1 && ret && m_Glyph != null)
+        {
+            int index, trailing;
+            m_Glyph.get_index_from_position (inPosition, out index, out trailing);
+            int pos = m_Text.char_count (index) + trailing;
+            if (pos < m_Text.length)
+            {
+                m_Cursor = pos;
+            }
+        }
+
+        return ret;
     }
 }

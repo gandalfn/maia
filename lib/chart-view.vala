@@ -282,6 +282,8 @@ public class Maia.ChartView : Group, ItemPackable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
+    internal Graphic.Pattern backcell_pattern { get; set; default = null; }
+
     /**
      * The font description of chart
      */
@@ -1224,7 +1226,7 @@ public class Maia.ChartView : Group, ItemPackable
             // Draw ticks
             inContext.stroke (ticks_path);
 
-            
+
         }
 
         // Paint intersect
@@ -1318,7 +1320,7 @@ public class Maia.ChartView : Group, ItemPackable
             if (child is Drawable)
             {
                 unowned Drawable drawable = (Drawable)child;
-                
+
                 var area = area_to_child_item_space (drawable, inArea);
 
                 drawable.draw (inContext, area);

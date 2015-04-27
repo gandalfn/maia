@@ -65,6 +65,11 @@ namespace Maia
             maia_graphic_rectangle_clamp (&gobject_, const_cast<MaiaGraphicRectangle*>(&inRectangle.gobject_));
         }
 
+        void Rectangle::ceil (const Rectangle& inRectangle)
+        {
+            maia_graphic_rectangle_ceil (&gobject_, const_cast<MaiaGraphicRectangle*>(&inRectangle.gobject_));
+        }
+
         bool Rectangle::contains (const Point& inPoint)
         {
             return maia_graphic_rectangle_contains (&gobject_, const_cast<MaiaGraphicPoint*>(inPoint.gobj ()));
@@ -80,17 +85,17 @@ namespace Maia
         {
             return *reinterpret_cast<Maia::Graphic::Point*>(&const_cast <MaiaGraphicRectangle*> (gobj())->origin);
         }
- 
+
         void Rectangle::set_origin(const Point& value)
         {
             gobj()->origin = *value.gobj ();
         }
- 
+
         Size& Rectangle::get_size() const
         {
             return *reinterpret_cast<Maia::Graphic::Size*>(&const_cast <MaiaGraphicRectangle*> (gobj())->size);
         }
- 
+
         void Rectangle::set_size(const Size& value)
         {
             gobj()->size = *value.gobj ();

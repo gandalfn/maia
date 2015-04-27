@@ -55,12 +55,12 @@ internal class Maia.Cairo.Surface : Graphic.Surface
                 if (format != Graphic.Surface.Format.INVALID && data != null)
                 {
                     m_Surface = new global::Cairo.ImageSurface.for_data ((uchar[])data, format_to_cairo_format (format),
-                                                                         (int)size.width, (int)size.height,
-                                                                         format.stride_for_width ((int)size.width));
+                                                                         (int)GLib.Math.ceil (size.width), (int)GLib.Math.ceil (size.height),
+                                                                         format.stride_for_width ((int)GLib.Math.ceil (size.width)));
                 }
                 else
                 {
-                    m_Surface = new global::Cairo.ImageSurface (global::Cairo.Format.ARGB32, (int)size.width, (int)size.height);
+                    m_Surface = new global::Cairo.ImageSurface (global::Cairo.Format.ARGB32, (int)GLib.Math.ceil (size.width), (int)GLib.Math.ceil (size.height));
                 }
             }
 
@@ -163,7 +163,7 @@ internal class Maia.Cairo.Surface : Graphic.Surface
 
                     m_Surface = new global::Cairo.XcbSurface (connection,
                                                               (Xcb.Drawable)xid, visual_type,
-                                                              (int)size.width, (int)size.height);
+                                                              (int)GLib.Math.ceil (size.width), (int)GLib.Math.ceil (size.height));
 
                     break;
             }
@@ -178,7 +178,7 @@ internal class Maia.Cairo.Surface : Graphic.Surface
             switch (device.backend)
             {
                 case "xcb/window":
-                    ((global::Cairo.XcbSurface)m_Surface).set_size ((int)size.width, (int)size.height);
+                    ((global::Cairo.XcbSurface)m_Surface).set_size ((int)GLib.Math.ceil (size.width), (int)GLib.Math.ceil (size.height));
                     break;
 
                 case "xcb/drawable":

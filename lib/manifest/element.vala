@@ -310,6 +310,30 @@ public interface Maia.Manifest.Element : Core.Object
     }
 
     /**
+     * Duplicate the element
+     *
+     * @param inId id of new element
+     *
+     * @return a new duplicated element
+     */
+    public Element
+    duplicate_with_notification (string inId, Core.Notification inNotification) throws Core.ParseError
+    {
+        string content = dump ("");
+
+        Document doc = new Document.from_buffer (content, content.length);
+        doc.notifications["attribute-bind-added"].append_observers (inNotification);
+        doc.theme = manifest_theme;
+        Element ret = doc.get ();
+        if (ret != null)
+        {
+            ret.id = GLib.Quark.from_string (inId);
+        }
+
+        return ret;
+    }
+
+    /**
      * Load manifest for this object
      *
      * @param inManifest manifest
@@ -367,6 +391,10 @@ public interface Maia.Manifest.Element : Core.Object
                         {
                             attributes_set.insert (inManifest.attribute);
                             set_attribute (inManifest.attribute, inManifest.scanner);
+                        }
+                        catch (Error.BIND_ATTRIBUTE err)
+                        {
+                            // Bind attribute no value
                         }
                         catch (Error err)
                         {

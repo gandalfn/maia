@@ -86,6 +86,7 @@ namespace Maia
                 _WRAP_METHOD(void set_origin (const Point& inPoint), maia_graphic_glyph_set_origin)
                 _WRAP_METHOD(int get_line_count () const, maia_graphic_glyph_get_line_count)
                 _WRAP_METHOD(void get_line_position (int inIndex, bool inTrailing, int& outLine), maia_graphic_glyph_get_line_position)
+                _WRAP_METHOD(void get_index_from_position (const Graphic::Point& inPosition, int& outIndex, int& trailing), maia_graphic_glyph_get_index_from_position)
 
                 _WRAP_METHOD(void update (const Glib::RefPtr<Context>& inpContext), maia_graphic_glyph_update)
                 _WRAP_METHOD(void get_cursor_position (int inIndex, Rectangle& outRectangle), maia_graphic_glyph_get_cursor_position)

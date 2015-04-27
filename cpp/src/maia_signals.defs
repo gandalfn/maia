@@ -352,6 +352,15 @@
   (construct-only #f)
 )
 
+(define-property block-next-nb-events
+  (of-object "MaiaCoreEventListener")
+  (prop-type "GParamInt")
+  (docs "block-next-nb-events")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaCoreEventBus
 
 ;; From MaiaCoreNotification
@@ -1701,6 +1710,15 @@
   (construct-only #f)
 )
 
+(define-property backcell-pattern
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamObject")
+  (docs "backcell-pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property selected
   (of-object "MaiaDrawingArea")
   (prop-type "GParamObject")
@@ -1923,6 +1941,15 @@
   (of-object "MaiaEntry")
   (prop-type "GParamDouble")
   (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property backcell-pattern
+  (of-object "MaiaEntry")
+  (prop-type "GParamObject")
+  (docs "backcell-pattern")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -2200,6 +2227,15 @@
   (construct-only #f)
 )
 
+(define-property backcell-pattern
+  (of-object "MaiaGrid")
+  (prop-type "GParamObject")
+  (docs "backcell-pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property homogeneous
   (of-object "MaiaGrid")
   (prop-type "GParamBoolean")
@@ -2453,6 +2489,15 @@
   (of-object "MaiaImage")
   (prop-type "GParamDouble")
   (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property backcell-pattern
+  (of-object "MaiaImage")
+  (prop-type "GParamObject")
+  (docs "backcell-pattern")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -2874,6 +2919,15 @@
 
 ;; From MaiaItemPackable
 
+(define-property backcell-pattern
+  (of-object "MaiaItemPackable")
+  (prop-type "GParamObject")
+  (docs "backcell-pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property bottom-padding
   (of-object "MaiaItemPackable")
   (prop-type "GParamDouble")
@@ -3208,6 +3262,15 @@
   (of-object "MaiaLabel")
   (prop-type "GParamDouble")
   (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property backcell-pattern
+  (of-object "MaiaLabel")
+  (prop-type "GParamObject")
+  (docs "backcell-pattern")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -3665,6 +3728,15 @@
   (construct-only #f)
 )
 
+(define-property backcell-pattern
+  (of-object "MaiaPath")
+  (prop-type "GParamObject")
+  (docs "backcell-pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property can-focus
   (of-object "MaiaPath")
   (prop-type "GParamBoolean")
@@ -3864,6 +3936,15 @@
   (of-object "MaiaToggle")
   (prop-type "GParamDouble")
   (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property backcell-pattern
+  (of-object "MaiaToggle")
+  (prop-type "GParamObject")
+  (docs "backcell-pattern")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -4239,6 +4320,15 @@
   (construct-only #f)
 )
 
+(define-property hide-if-model-empty
+  (of-object "MaiaView")
+  (prop-type "GParamBoolean")
+  (docs "hide-if-model-empty")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaShortcut
 
 (define-property tag
@@ -4591,6 +4681,15 @@
   (of-object "MaiaCombo")
   (prop-type "GParamDouble")
   (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property backcell-pattern
+  (of-object "MaiaCombo")
+  (prop-type "GParamObject")
+  (docs "backcell-pattern")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -5280,6 +5379,15 @@
   (construct-only #f)
 )
 
+(define-property backcell-pattern
+  (of-object "MaiaProgressBar")
+  (prop-type "GParamObject")
+  (docs "backcell-pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property adjustment
   (of-object "MaiaProgressBar")
   (prop-type "GParamObject")
@@ -5851,6 +5959,15 @@
   (of-object "MaiaChartView")
   (prop-type "GParamDouble")
   (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property backcell-pattern
+  (of-object "MaiaChartView")
+  (prop-type "GParamObject")
+  (docs "backcell-pattern")
   (readable #t)
   (writable #t)
   (construct-only #f)

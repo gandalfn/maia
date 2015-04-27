@@ -97,6 +97,8 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
+    internal Graphic.Pattern backcell_pattern { get; set; default = null; }
+
     public unowned View view {
         get {
             return m_View;
@@ -159,7 +161,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
 
         // Create arrow
         string id_arrow = "%s-arrow".printf (name);
-        var arrow_item = new Path (id_arrow, "");        
+        var arrow_item = new Path (id_arrow, "");
         plug_property ("stroke-pattern", arrow_item, "fill-pattern");
         add (arrow_item);
 

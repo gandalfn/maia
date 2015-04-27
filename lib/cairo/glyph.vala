@@ -19,6 +19,16 @@
 
 internal class Maia.Cairo.Glyph : Graphic.Glyph
 {
+    private const double EPSILON = 0.01;
+
+    private static double
+    ceil (double inValue)
+    {
+        double val = GLib.Math.ceil (inValue);
+
+        return val < EPSILON ? 0 : val;
+    }
+
     // type
     public class Line : Graphic.Glyph.Line
     {
@@ -32,7 +42,7 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
                 {
                     Pango.Rectangle ink, logical;
                     m_Layout.get_pixel_extents (out ink, out logical);
-                    return Graphic.Size (GLib.Math.ceil (logical.x + logical.width), GLib.Math.ceil (logical.y + logical.height));
+                    return Graphic.Size (ceil (logical.x + logical.width), ceil (logical.y + logical.height));
                 }
                 return Graphic.Size (0, 0);
             }
@@ -292,6 +302,18 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
         {
             int x;
             m_Layout.index_to_line_x (inIndex, inTrailing, out outLine, out x);
+        }
+    }
+
+    public override void
+    get_index_from_position (Graphic.Point inPosition, out int outIndex, out int outTrailing)
+    {
+        outIndex = 0;
+        outTrailing = 0;
+
+        if (m_Layout != null && text != null)
+        {
+            m_Layout.xy_to_index ((int)GLib.Math.ceil (inPosition.x * Pango.SCALE), (int)GLib.Math.ceil (inPosition.y * Pango.SCALE), out outIndex, out outTrailing);
         }
     }
 

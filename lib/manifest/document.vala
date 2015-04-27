@@ -23,7 +23,8 @@ public errordomain Maia.Manifest.Error
     TOO_MANY_ATTRIBUTES,
     MISSING_ATTRIBUTES,
     TOO_MANY_FUNCTION_ARGUMENT,
-    MISSING_FUNCTION_ARGUMENT
+    MISSING_FUNCTION_ARGUMENT,
+    BIND_ATTRIBUTE,
 }
 
 public class Maia.Manifest.Document : Core.Parser

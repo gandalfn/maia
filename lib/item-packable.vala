@@ -41,4 +41,6 @@ public interface Maia.ItemPackable : Item
     public abstract double bottom_padding { get; set; default = 0; }
     public abstract double left_padding   { get; set; default = 0; }
     public abstract double right_padding  { get; set; default = 0; }
+
+    public abstract Graphic.Pattern backcell_pattern { get; set; default = null; }
 }

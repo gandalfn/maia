@@ -110,7 +110,7 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
             }
             else
             {
-                m_View = new View ((int)visible_area.size.width, (int)visible_area.size.height);
+                m_View = new View ((int)GLib.Math.ceil (visible_area.size.width), (int)GLib.Math.ceil (visible_area.size.height));
                 m_View.managed = false;
             }
 
@@ -493,7 +493,7 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
 
         base.on_draw (inContext, inArea);
     }
-    
+
 
     internal override void
     update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error

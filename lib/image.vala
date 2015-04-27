@@ -51,6 +51,8 @@ public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
+    internal Graphic.Pattern backcell_pattern { get; set; default = null; }
+
     internal override bool can_focus  {
         get {
             return parent is DrawingArea;

@@ -64,7 +64,7 @@ public struct Maia.Graphic.Rectangle
     public bool
     is_empty ()
     {
-        return size.is_empty () || origin.x + size.width <= 0 || origin.y + size.height <= 0;
+        return size.is_empty () || origin.x + size.width <= 0.01 || origin.y + size.height <= 0.01;
     }
 
     /**
@@ -356,5 +356,18 @@ public struct Maia.Graphic.Rectangle
     {
         return inPoint.x >= origin.x && inPoint.x <= origin.x + size.width &&
                inPoint.y >= origin.y && inPoint.y <= origin.y + size.height;
+    }
+
+    /**
+     * Ceil rectangle
+     *
+     * @return ceil rectangle
+     */
+    public Graphic.Rectangle
+    ceil ()
+    {
+        return Graphic.Rectangle (GLib.Math.floor (origin.x), GLib.Math.floor (origin.y),
+                                  GLib.Math.ceil (size.width + origin.x) - GLib.Math.floor (origin.x),
+                                  GLib.Math.ceil (size.height + origin.y) - GLib.Math.floor (origin.y));
     }
 }

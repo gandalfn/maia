@@ -389,7 +389,7 @@ internal class Maia.Xcb.View : Drawable
                 (uint32)GLib.Math.ceil (m_BackBuffer.size.width) != (uint32)GLib.Math.ceil (view_size.width) ||
                 (uint32)GLib.Math.ceil (m_BackBuffer.size.height) != (uint32)GLib.Math.ceil (view_size.height))
             {
-                m_BackBuffer = new Pixmap (screen_num, depth, (int)view_size.width, (int)view_size.height);
+                m_BackBuffer = new Pixmap (screen_num, depth, (int)GLib.Math.ceil (view_size.width), (int)GLib.Math.ceil (view_size.height));
             }
 
             m_FrontBuffer = null;

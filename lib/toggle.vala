@@ -102,6 +102,8 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
+    internal Graphic.Pattern backcell_pattern { get; set; default = null; }
+
     /**
      * Indicate if the button is sensitive
      */

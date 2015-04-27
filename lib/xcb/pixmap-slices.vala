@@ -24,6 +24,7 @@ internal class Maia.Xcb.PixmapSlices : GLib.Object
     {
         // properties
         public Graphic.Point position;
+        public Graphic.Size  size;
         public Xcb.Pixmap    pixmap;
 
         // methods
@@ -32,8 +33,11 @@ internal class Maia.Xcb.PixmapSlices : GLib.Object
             // Set position
             position = inArea.origin;
 
+            // Set size
+            size = inArea.size;
+
             // Create pixmap
-            pixmap = new Xcb.Pixmap (inScreen, (uint8)inDepth, (int)inArea.size.width, (int)inArea.size.height);
+            pixmap = new Xcb.Pixmap (inScreen, (uint8)inDepth, (int)GLib.Math.ceil (inArea.size.width), (int)GLib.Math.ceil (inArea.size.height));
         }
     }
 
@@ -111,7 +115,7 @@ internal class Maia.Xcb.PixmapSlices : GLib.Object
     }
 
     public new void
-    get (Pixmap inPixmap, Graphic.Point inPosition, Graphic.Rectangle inRepaintArea)
+    @get (Pixmap inPixmap, Graphic.Point inPosition, Graphic.Rectangle inRepaintArea)
     {
         Graphic.Rectangle src_area = Graphic.Rectangle (inPosition.x, inPosition.y, inPixmap.size.width, inPixmap.size.height);
         src_area.intersect (inRepaintArea);
@@ -122,8 +126,8 @@ internal class Maia.Xcb.PixmapSlices : GLib.Object
             {
                 Graphic.Rectangle dst_area = Graphic.Rectangle (m_Slices[row, column].position.x,
                                                                 m_Slices[row, column].position.y,
-                                                                m_Slices[row, column].pixmap.size.width,
-                                                                m_Slices[row, column].pixmap.size.height);
+                                                                m_Slices[row, column].size.width,
+                                                                m_Slices[row, column].size.height);
                 dst_area.intersect (src_area);
 
                 if (!dst_area.is_empty ())
@@ -139,7 +143,7 @@ internal class Maia.Xcb.PixmapSlices : GLib.Object
     }
 
     public new void
-    set (Pixmap inPixmap, Graphic.Point inPosition, Graphic.Rectangle inRepaintArea)
+    @set (Pixmap inPixmap, Graphic.Point inPosition, Graphic.Rectangle inRepaintArea)
     {
         Graphic.Rectangle src_area = Graphic.Rectangle (inPosition.x, inPosition.y, inPixmap.size.width, inPixmap.size.height);
         src_area.intersect (inRepaintArea);
@@ -150,8 +154,8 @@ internal class Maia.Xcb.PixmapSlices : GLib.Object
             {
                 Graphic.Rectangle dst_area = Graphic.Rectangle (m_Slices[row, column].position.x,
                                                                 m_Slices[row, column].position.y,
-                                                                m_Slices[row, column].pixmap.size.width,
-                                                                m_Slices[row, column].pixmap.size.height);
+                                                                m_Slices[row, column].size.width,
+                                                                m_Slices[row, column].size.height);
                 Graphic.Rectangle tmp = src_area;
                 tmp.intersect (dst_area);
                 if (!tmp.is_empty ())

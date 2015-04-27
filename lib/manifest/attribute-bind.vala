@@ -187,7 +187,7 @@ public class Maia.Manifest.AttributeBind : Attribute
             }
         }
 
-        base.on_transform (inType, ref outValue);
+        throw new Error.BIND_ATTRIBUTE ("Bind attribute %s", get ());
     }
 
     internal override string

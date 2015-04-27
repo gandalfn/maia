@@ -1066,6 +1066,7 @@
     '("missing-attributes" "MAIA_MANIFEST_ERROR_MISSING_ATTRIBUTES")
     '("too-many-function-argument" "MAIA_MANIFEST_ERROR_TOO_MANY_FUNCTION_ARGUMENT")
     '("missing-function-argument" "MAIA_MANIFEST_ERROR_MISSING_FUNCTION_ARGUMENT")
+    '("bind-attribute" "MAIA_MANIFEST_ERROR_BIND_ATTRIBUTE")
   )
 )
 
@@ -7434,6 +7435,21 @@
   )
 )
 
+(define-method get_block_next_nb_events
+  (of-object "MaiaCoreEventListener")
+  (c-name "maia_core_event_listener_get_block_next_nb_events")
+  (return-type "gint")
+)
+
+(define-method set_block_next_nb_events
+  (of-object "MaiaCoreEventListener")
+  (c-name "maia_core_event_listener_set_block_next_nb_events")
+  (return-type "none")
+  (parameters
+    '("gint" "value")
+  )
+)
+
 (define-function maia_core_event_bus_message_type_get_type
   (c-name "maia_core_event_bus_message_type_get_type")
   (return-type "GType")
@@ -7962,6 +7978,17 @@
     '("const-gchar*" "inId")
     '("MaiaCoreNotificationRecvFunc" "inAttributeBindAddedNotificationFunc")
     '("void*" "inAttributeBindAddedNotificationFunc_target")
+    '("GError**" "error")
+  )
+)
+
+(define-method duplicate_with_notification
+  (of-object "MaiaManifestElement")
+  (c-name "maia_manifest_element_duplicate_with_notification")
+  (return-type "MaiaManifestElement*")
+  (parameters
+    '("const-gchar*" "inId")
+    '("MaiaCoreNotification*" "inNotification")
     '("GError**" "error")
   )
 )
@@ -9145,6 +9172,15 @@
   (return-type "gboolean")
   (parameters
     '("MaiaGraphicPoint*" "inPoint")
+  )
+)
+
+(define-method ceil
+  (of-object "MaiaGraphicRectangle")
+  (c-name "maia_graphic_rectangle_ceil")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRectangle*" "result")
   )
 )
 
@@ -10383,6 +10419,17 @@
     '("gint" "inIndex")
     '("gboolean" "inTrailing")
     '("gint*" "outLine")
+  )
+)
+
+(define-method get_index_from_position
+  (of-object "MaiaGraphicGlyph")
+  (c-name "maia_graphic_glyph_get_index_from_position")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "inPosition")
+    '("gint*" "outIndex")
+    '("gint*" "outTrailing")
   )
 )
 
@@ -14541,6 +14588,21 @@
   )
 )
 
+(define-method get_backcell_pattern
+  (of-object "MaiaItemPackable")
+  (c-name "maia_item_packable_get_backcell_pattern")
+  (return-type "MaiaGraphicPattern*")
+)
+
+(define-method set_backcell_pattern
+  (of-object "MaiaItemPackable")
+  (c-name "maia_item_packable_set_backcell_pattern")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "value")
+  )
+)
+
 (define-function maia_item_movable_get_type
   (c-name "maia_item_movable_get_type")
   (return-type "GType")
@@ -17210,6 +17272,21 @@
   (return-type "none")
   (parameters
     '("gint" "value")
+  )
+)
+
+(define-method get_hide_if_model_empty
+  (of-object "MaiaView")
+  (c-name "maia_view_get_hide_if_model_empty")
+  (return-type "gboolean")
+)
+
+(define-method set_hide_if_model_empty
+  (of-object "MaiaView")
+  (c-name "maia_view_set_hide_if_model_empty")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
   )
 )
 

@@ -51,6 +51,8 @@ public class Maia.ProgressBar : Item, ItemPackable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
+    internal Graphic.Pattern backcell_pattern { get; set; default = null; }
+
     public Adjustment? adjustment {
         get {
             return m_Adjustment;

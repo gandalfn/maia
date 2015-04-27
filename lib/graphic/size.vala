@@ -50,7 +50,7 @@ public struct Maia.Graphic.Size
     public bool
     is_empty ()
     {
-        return width <= 0 || height <= 0;
+        return width <= 0.01 || height <= 0.01;
     }
 
     /**

@@ -47,23 +47,39 @@ public class Maia.CheckButton : Toggle
     }
 
     internal override Graphic.Size
-    size_request (Graphic.Size inSize)
+    childs_size_request ()
     {
-        // Get label item
+        Graphic.Size ret = Graphic.Size (0, 0);
+
         if (m_Label != null)
         {
             // get size of label
             Graphic.Size size_label = m_Label.size;
 
-            // set position of label
-            if (m_Label.position.x != size_label.height + spacing)
+            if (size_label.is_empty () || m_Label.text == null || m_Label.text.strip() == "")
             {
-                m_Label.position = Graphic.Point (size_label.height + spacing, 0);
-                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "label item position : %s", m_Label.position.to_string ());
+                string text = m_Label.text;
+                m_Label.text = "Z";
+                size_label = m_Label.size;
+                m_Label.position = Graphic.Point (0, 0);
+                ret = Graphic.Size (size_label.height, size_label.height);
+                m_Label.text = text;
+                size_label = m_Label.size;
+            }
+            else
+            {
+                // set position of label
+                if (m_Label.position.x != size_label.height + spacing)
+                {
+                    m_Label.position = Graphic.Point (size_label.height + spacing, 0);
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "label item position : %s", m_Label.position.to_string ());
+                }
+
+                ret = Graphic.Size (size_label.height + spacing + size_label.width, size_label.height);
             }
         }
 
-        return base.size_request (inSize);
+        return ret;
     }
 
     internal override void

@@ -493,6 +493,8 @@ public class Maia.CassoGrid : Group, ItemPackable, ItemMovable
     internal double left_padding   { get; set; default = 0; }
     internal double right_padding  { get; set; default = 0; }
 
+    internal Graphic.Pattern backcell_pattern { get; set; default = null; }
+
     public bool   homogeneous       { get; set; default = false; }
     public double row_spacing       { get; set; default = 0; }
     public double column_spacing    { get; set; default = 0; }
