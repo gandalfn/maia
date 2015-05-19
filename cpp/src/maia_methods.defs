@@ -8363,6 +8363,21 @@
   )
 )
 
+(define-method bind_with_arg1
+  (of-object "MaiaManifestAttributeBind")
+  (c-name "maia_manifest_attribute_bind_bind_with_arg1")
+  (return-type "none")
+  (parameters
+    '("GType" "t_type")
+    '("GBoxedCopyFunc" "t_dup_func")
+    '("GDestroyNotify" "t_destroy_func")
+    '("GObject*" "inSrc")
+    '("const-gchar*" "inSignalName")
+    '("const-gchar*" "inProperty")
+    '("MaiaManifestAttributeBindBindFuncArg1" "inFunc")
+  )
+)
+
 (define-function maia_manifest_function_get_type
   (c-name "maia_manifest_function_get_type")
   (return-type "GType")

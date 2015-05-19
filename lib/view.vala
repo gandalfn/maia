@@ -156,7 +156,7 @@ public class Maia.View : Maia.Grid
 
     // static methods
     private static void
-    on_bind_value_changed (Manifest.AttributeBind inAttribute, Object inSrc, string inProperty)
+    on_bind_value_changed (Manifest.AttributeBind inAttribute, Object inSrc, string inProperty, uint inRow)
     {
         // Search the direct child of view
         unowned Core.Object? child = (Core.Object)inAttribute.owner;
@@ -171,7 +171,7 @@ public class Maia.View : Maia.Grid
             // Get row num of child
             uint row_num;
 
-            if (view.get_item_row (item, out row_num))
+            if (view.get_item_row (item, out row_num) && row_num == inRow)
             {
                 string column_name = inAttribute.get ();
                 if (view.m_SetPropertyFunc == null || !view.m_SetPropertyFunc (inAttribute.owner, inProperty, column_name, row_num))
@@ -297,7 +297,7 @@ public class Maia.View : Maia.Grid
 
             if (!notification.attribute.is_bind (signal_name, notification.property))
             {
-                notification.attribute.bind (m_Model, signal_name, notification.property, on_bind_value_changed);
+                notification.attribute.bind_with_arg1<uint> (m_Model, signal_name, notification.property, on_bind_value_changed);
             }
         }
     }
@@ -499,6 +499,8 @@ public class Maia.View : Maia.Grid
     private void
     on_rows_reordered (uint[] inNewOrder)
     {
+        Core.Map<uint, unowned ItemPackable?> childs = new Core.Map<uint, unowned ItemPackable?> ();
+
         foreach (unowned Core.Object child in this)
         {
             if (child is ItemPackable)
@@ -512,22 +514,27 @@ public class Maia.View : Maia.Grid
                 else
                     pos = (item.row * lines) + item.column;
 
-                for (int cpt = 0; cpt < inNewOrder.length; ++cpt)
+                childs[pos] = item;
+            }
+        }
+
+        foreach (unowned Core.Pair<uint, unowned ItemPackable?> pair in childs)
+        {
+            for (int cpt = 0; cpt < inNewOrder.length; ++cpt)
+            {
+                if (inNewOrder[cpt] != cpt && pair.first == inNewOrder[cpt])
                 {
-                    if (pos == inNewOrder[cpt])
+                    if (orientation == Orientation.HORIZONTAL)
                     {
-                        if (orientation == Orientation.HORIZONTAL)
-                        {
-                            item.row = cpt % lines;
-                            item.column = cpt / lines;
-                        }
-                        else
-                        {
-                            item.row = cpt / lines;
-                            item.column = cpt % lines;
-                        }
-                        break;
+                        pair.second.row = cpt % lines;
+                        pair.second.column = cpt / lines;
                     }
+                    else
+                    {
+                        pair.second.row = cpt / lines;
+                        pair.second.column = cpt % lines;
+                    }
+                    break;
                 }
             }
         }

@@ -22,23 +22,31 @@ public class Maia.Manifest.AttributeBind : Attribute
     // Types
     [CCode (has_target = false)]
     public delegate void BindFunc (AttributeBind inAttributeBind, Object inSrc, string inProperty);
+    [CCode (has_target = false)]
+    public delegate void BindFuncArg1<T> (AttributeBind inAttributeBind, Object inSrc, string inProperty, T inArg);
     public delegate void TransformFunc (AttributeBind inAttributeBind, ref GLib.Value outValue) throws Error;
 
     private class BindClosure
     {
-        AttributeBind  attribute;
-        string         quark;
-        string         property;
-        unowned Object src;
-        ulong          id;
-        BindFunc       func;
+        protected AttributeBind  attribute;
+        protected string         quark;
+        protected string         property;
+        protected unowned Object src;
+        protected ulong          id;
+        protected BindFunc       func;
 
-        public BindClosure (AttributeBind inAttribute, Object inSrc, string inProperty, string inSignalName, BindFunc inFunc)
+        protected BindClosure.init (AttributeBind inAttribute, Object inSrc, string inProperty, string inSignalName, BindFunc inFunc)
         {
             attribute = inAttribute;
             src = inSrc;
             func = inFunc;
             property = inProperty;
+        }
+
+        public BindClosure (AttributeBind inAttribute, Object inSrc, string inProperty, string inSignalName, BindFunc inFunc)
+        {
+            this.init (inAttribute, inSrc, inProperty, inSignalName, inFunc);
+
             id = GLib.Signal.connect_swapped (inSrc, inSignalName, (GLib.Callback)on_bind, this);
 
             quark = "MaiaAttributeBind%s%s%lu".printf (inProperty, inSignalName, id);
@@ -51,7 +59,7 @@ public class Maia.Manifest.AttributeBind : Attribute
             func (attribute, src, property);
         }
 
-        private static void
+        protected static void
         on_source_destroy (BindClosure inThis)
         {
             if (inThis.id != 0)
@@ -70,6 +78,25 @@ public class Maia.Manifest.AttributeBind : Attribute
                 id = 0;
                 src.steal_data<ulong> (quark);
             }
+        }
+    }
+
+    private class BindClosureArg1<T> : BindClosure
+    {
+        public BindClosureArg1 (AttributeBind inAttribute, Object inSrc, string inProperty, string inSignalName, BindFuncArg1<T> inFunc)
+        {
+            this.init (inAttribute, inSrc, inProperty, inSignalName, (BindFunc)inFunc);
+
+            id = GLib.Signal.connect_swapped (inSrc, inSignalName, (GLib.Callback)on_bind, this);
+
+            quark = "MaiaAttributeBind%s%s%lu".printf (inProperty, inSignalName, id);
+            inSrc.set_data_full (quark, this, (GLib.DestroyNotify)on_source_destroy);
+        }
+
+        private void
+        on_bind (T inArg)
+        {
+            ((BindFuncArg1)func) (attribute, src, property, inArg);
         }
     }
 
@@ -209,6 +236,18 @@ public class Maia.Manifest.AttributeBind : Attribute
         if (owner != null)
         {
             BindClosure* pClosure = new BindClosure (this, inSrc, inProperty, inSignalName, inFunc);
+            string quark = "MaiaAttributeBind%s%s%s".printf (get (), inSignalName, inProperty);
+
+            owner.set_data_full (quark, pClosure, on_bind_closure_destroy);
+        }
+    }
+
+    public void
+    bind_with_arg1<T> (Object inSrc, string inSignalName, string inProperty, BindFuncArg1<T> inFunc)
+    {
+        if (owner != null)
+        {
+            BindClosureArg1<T>* pClosure = new BindClosureArg1<T> (this, inSrc, inProperty, inSignalName, inFunc);
             string quark = "MaiaAttributeBind%s%s%s".printf (get (), inSignalName, inProperty);
 
             owner.set_data_full (quark, pClosure, on_bind_closure_destroy);

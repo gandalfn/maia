@@ -62,12 +62,14 @@ public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
         }
     }
 
+
     public string? filename { get; set; default = null; }
 
     // methods
     construct
     {
-        notify["filename"].connect  (on_filename_changed);
+        notify["filename"].connect  (on_filename_characters_changed);
+        notify["characters"].connect  (on_filename_characters_changed);
         notify["size"].connect (on_size_changed);
     }
 
@@ -91,7 +93,7 @@ public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
     }
 
     private void
-    on_filename_changed ()
+    on_filename_characters_changed ()
     {
         m_Image = null;
         need_update = true;
