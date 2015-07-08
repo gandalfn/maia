@@ -102,6 +102,11 @@ internal class Maia.Page : GLib.Object
                 m_Childs.insert (m_Header);
                 m_Header.parent = m_Document;
                 m_Header.set_qdata<uint>(Document.s_PageNumQuark, num);
+
+                var header_geometry = new Graphic.Region (Graphic.Rectangle (0, 0, content_geometry.extents.size.width, geometry.extents.size.height));
+                var fake = new Graphic.Surface (1, 1);
+                m_Header.update (fake.context, header_geometry);
+
                 GLib.Signal.emit_by_name (m_Header, "notify::page_num");
             }
             catch (GLib.Error err)
@@ -131,6 +136,11 @@ internal class Maia.Page : GLib.Object
                 m_Childs.insert (m_Footer);
                 m_Footer.parent = m_Document;
                 m_Footer.set_qdata<uint>(Document.s_PageNumQuark, num);
+
+                var footer_geometry = new Graphic.Region (Graphic.Rectangle (0, 0, content_geometry.extents.size.width, geometry.extents.size.height));
+                var fake = new Graphic.Surface (1, 1);
+                m_Footer.update (fake.context, footer_geometry);
+
                 GLib.Signal.emit_by_name (m_Footer, "notify::page_num");
             }
             catch (GLib.Error err)
@@ -163,6 +173,7 @@ internal class Maia.Page : GLib.Object
             // Add margins
             position.translate (Graphic.Point (Core.convert_inch_to_pixel (m_Document.left_margin),
                                                Core.convert_inch_to_pixel (m_Document.top_margin)));
+
 
             // Add header height
             if (m_Header != null)
