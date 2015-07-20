@@ -19,6 +19,43 @@
 
 public class Maia.ToggleGroup : Core.Object, Manifest.Element
 {
+    // type
+    public class ChangedEventArgs : Core.EventArgs
+    {
+        // properties
+        private string m_Active;
+
+        // accessors
+        internal override GLib.Variant serialize {
+            owned get {
+                return new GLib.Variant ("(s)", m_Active);
+            }
+            set {
+                if (value != null)
+                {
+                    value.get ("(s)", out m_Active);
+                }
+            }
+        }
+
+        /**
+         * Active item name
+         */
+        public string active {
+            get {
+                return m_Active;
+            }
+        }
+
+        // methods
+        internal ChangedEventArgs (string inItemName)
+        {
+            base ();
+
+            m_Active = inItemName;
+        }
+    }
+
     // properties
     private Core.Map<string, unowned Toggle> m_Toggles;
     private Core.Map<string, Core.EventListener> m_ToggleListeners;
@@ -43,6 +80,7 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
         }
     }
 
+    [CCode (notify = false)]
     public string active {
         get {
             return m_Active;
@@ -56,27 +94,34 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
                 {
                     foreach (unowned Core.Pair<string, unowned Toggle> pair in m_Toggles)
                     {
-                        m_ToggleListeners[pair.first].block = true;
+                        if (m_Active != pair.first)
                         {
-                            if (m_Active != pair.first)
+                            if (pair.second.active)
                             {
+                                m_ToggleListeners[pair.first].block_next_nb_events++;
                                 pair.second.active = false;
                             }
-                            else
+                        }
+                        else
+                        {
+                            if (!pair.second.active)
                             {
+                                m_ToggleListeners[pair.first].block_next_nb_events++;
                                 pair.second.active = true;
                             }
                         }
-                        m_ToggleListeners[pair.first].block = false;
                     }
 
                     check_hide_if_noactive ();
                 }
+
+                changed.publish (new ChangedEventArgs (m_Active));
             }
         }
-        default = null;
+        default = "";
     }
 
+    [CCode (notify = false)]
     public bool hideall_if_noactive {
         get {
             return m_HideAllIfNoActive;
@@ -90,11 +135,21 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
         }
     }
 
+    // events
+    /**
+     * Event emitted when the active item changed
+     * is pressed
+     */
+    public Core.Event changed { get; private set; }
+
     // methods
     construct
     {
         // Add not dumpable attributes
         not_dumpable_attributes.insert ("name");
+
+        // Create event changed
+        changed = new Core.Event ("changed", this);
 
         // Create toggle button dictionnary
         m_Toggles = new Core.Map<string, unowned Toggle> ();
@@ -114,7 +169,7 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
         {
             pair.second.parent = null;
         }
-        
+
     }
 
     private void
@@ -171,9 +226,21 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
                 {
                     if (pair.first != args.button_name)
                     {
-                        pair.second.active = false;
+                        if (pair.second.active)
+                        {
+                            m_ToggleListeners[pair.first].block_next_nb_events++;
+                            pair.second.active = false;
+                        }
                     }
                 }
+
+                changed.publish (new ChangedEventArgs (m_Active));
+            }
+            else if (m_Active == args.button_name)
+            {
+                m_Active = "";
+
+                changed.publish (new ChangedEventArgs (m_Active));
             }
 
             check_hide_if_noactive ();
@@ -214,11 +281,19 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
 
             if (active != null && active == inButton.name)
             {
-                inButton.active = true;
+                if (!inButton.active)
+                {
+                    m_ToggleListeners[inButton.name].block_next_nb_events++;
+                    inButton.active = true;
+                }
             }
             else
             {
-                inButton.active = false;
+                if (inButton.active)
+                {
+                    m_ToggleListeners[inButton.name].block_next_nb_events++;
+                    inButton.active = false;
+                }
             }
 
             check_hide_if_noactive ();

@@ -114,6 +114,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_CHART_INTERSECT);
     std::cout << get_defs (MAIA_TYPE_CHART_VIEW);
     std::cout << get_defs (MAIA_TYPE_VIEWPORT);
+    std::cout << get_defs (MAIA_TOGGLE_GROUP_TYPE_CHANGED_EVENT_ARGS);
 
     return 0;
 }

@@ -20,15 +20,29 @@
 #include <maia.h>
 #include <maiamm/core-object.h>
 #include <maiamm/core-set.h>
+#include <maiamm/core-event.h>
+#include <maiamm/core-eventargs.h>
 #include <maiamm/manifest-element.h>
 #include <maiamm/manifest-theme.h>
 #include <maiamm/toggle.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/core-object_p.h)
+_PINCLUDE(maiamm/private/core-eventargs_p.h)
 
 namespace Maia
 {
+    class ToggleGroupChangedEventArgs : public Core::EventArgs
+    {
+        _CLASS_GOBJECT(ToggleGroupChangedEventArgs, MaiaToggleGroupChangedEventArgs, MAIA_TOGGLE_GROUP_CHANGED_EVENT_ARGS, Core::EventArgs, MaiaCoreEventArgs)
+
+        public:
+            _WRAP_METHOD(Glib::ustring get_active () const, maia_toggle_group_changed_event_args_get_active)
+
+            _WRAP_PROPERTY("active", Glib::ustring)
+    };
+
+
     class ToggleGroup : public Core::Object, public Manifest::Element
     {
         _CLASS_GOBJECT(ToggleGroup, MaiaToggleGroup, MAIA_TOGGLE_GROUP, Core::Object, MaiaCoreObject)
@@ -52,6 +66,8 @@ namespace Maia
             _WRAP_METHOD(bool get_hideall_if_noactive () const, maia_toggle_group_get_hideall_if_noactive)
             _WRAP_METHOD(void set_hideall_if_noactive (bool inHide), maia_toggle_group_set_hideall_if_noactive)
 
+            _WRAP_METHOD(Glib::RefPtr<Core::Event> changed () const, maia_toggle_group_get_changed, refreturn)
+
             _WRAP_PROPERTY("name", Glib::ustring)
             _WRAP_PROPERTY("active", Glib::ustring)
             _WRAP_PROPERTY("hideall-if-noactive", bool)
@@ -61,5 +77,6 @@ namespace Maia
             _WRAP_PROPERTY("characters", Glib::ustring)
             _WRAP_PROPERTY("manifest-path", Glib::ustring)
             _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
+            _WRAP_PROPERTY("changed", Glib::RefPtr<Core::Event>)
     };
 }

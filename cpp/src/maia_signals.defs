@@ -2045,6 +2045,15 @@
   (construct-only #f)
 )
 
+(define-property alignment
+  (of-object "MaiaEntry")
+  (prop-type "GParamEnum")
+  (docs "alignment")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property changed
   (of-object "MaiaEntry")
   (prop-type "GParamObject")
@@ -4116,6 +4125,15 @@
   (construct-only #f)
 )
 
+(define-property changed
+  (of-object "MaiaToggleGroup")
+  (prop-type "GParamObject")
+  (docs "changed")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
 ;; From MaiaToggleButton
 
 (define-property tag
@@ -6161,6 +6179,26 @@
   (docs "visible-area")
   (readable #t)
   (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaToggleGroupChangedEventArgs
+
+(define-property serialize
+  (of-object "MaiaToggleGroupChangedEventArgs")
+  (prop-type "GParamVariant")
+  (docs "serialize")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property active
+  (of-object "MaiaToggleGroupChangedEventArgs")
+  (prop-type "GParamString")
+  (docs "active")
+  (readable #t)
+  (writable #f)
   (construct-only #f)
 )
 

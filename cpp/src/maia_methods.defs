@@ -821,6 +821,12 @@
   (gtype-id "MAIA_TYPE_TOGGLE_GROUP")
 )
 
+(define-object MaiaToggleGroupChangedEventArgs
+  (parent "MaiaCoreEventArgs")
+  (c-name "MaiaToggleGroupChangedEventArgs")
+  (gtype-id "MAIA_TYPE_TOGGLE_GROUP_CHANGED_EVENT_ARGS")
+)
+
 (define-object MaiaToggleToggledEventArgs
   (parent "MaiaCoreEventArgs")
   (c-name "MaiaToggleToggledEventArgs")
@@ -15611,6 +15617,21 @@
   )
 )
 
+(define-method get_alignment
+  (of-object "MaiaEntry")
+  (c-name "maia_entry_get_alignment")
+  (return-type "MaiaGraphicGlyphAlignment")
+)
+
+(define-method set_alignment
+  (of-object "MaiaEntry")
+  (c-name "maia_entry_set_alignment")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicGlyphAlignment" "value")
+  )
+)
+
 (define-method get_changed
   (of-object "MaiaEntry")
   (c-name "maia_entry_get_changed")
@@ -16058,6 +16079,23 @@
   (parameters
     '("gboolean" "value")
   )
+)
+
+(define-method get_changed
+  (of-object "MaiaToggleGroup")
+  (c-name "maia_toggle_group_get_changed")
+  (return-type "MaiaCoreEvent*")
+)
+
+(define-function maia_toggle_group_changed_event_args_get_type
+  (c-name "maia_toggle_group_changed_event_args_get_type")
+  (return-type "GType")
+)
+
+(define-method get_active
+  (of-object "MaiaToggleGroupChangedEventArgs")
+  (c-name "maia_toggle_group_changed_event_args_get_active")
+  (return-type "const-gchar*")
 )
 
 (define-function maia_toggle_construct

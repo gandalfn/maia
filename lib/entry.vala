@@ -260,6 +260,11 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
      */
     public ChangedMask changed_mask { get; set; default = ChangedMask.FOCUS_OUT | ChangedMask.RETURN; }
 
+    /**
+     * Alignment of label ``left``, ``center`` or ``right``, default was ``left``
+     */
+    public Graphic.Glyph.Alignment alignment { get; set; default = Graphic.Glyph.Alignment.LEFT; }
+
     // events
     /**
      * The event published on text changed and following {@link changed_mask}
@@ -290,6 +295,12 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         });
 
         notify["font-description"].connect (() => {
+            m_Glyph = null;
+            create_glyph ();
+            damage ();
+        });
+
+        notify["alignment"].connect (() => {
             m_Glyph = null;
             create_glyph ();
             damage ();
@@ -387,11 +398,11 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             // Set text with line pad
             if (m_LinePads > 0)
             {
-                m_Glyph.text = (text ?? "") + " " + string.nfill (m_LinePads, '\n');
+                m_Glyph.text = (text ?? "") + (alignment == Graphic.Glyph.Alignment.LEFT ? " " : "") + string.nfill (m_LinePads, '\n');
             }
             else
             {
-                m_Glyph.text = (text ?? "") + " ";
+                m_Glyph.text = (text ?? "") + (alignment == Graphic.Glyph.Alignment.LEFT ? " " : "");
             }
 
             // Calculate glyph size
@@ -476,7 +487,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         {
             // Create fake glyph
             var glyph = new Graphic.Glyph (font_description);
-            glyph.alignment = Graphic.Glyph.Alignment.LEFT;
+            glyph.alignment = alignment;
             glyph.use_markup = false;
             glyph.wrap = Graphic.Glyph.WrapMode.WORD;
             glyph.text = string.nfill (width_in_chars, 'Z');
@@ -516,7 +527,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         {
             // Create glyph
             m_Glyph = new Graphic.Glyph (font_description);
-            m_Glyph.alignment = Graphic.Glyph.Alignment.LEFT;
+            m_Glyph.alignment = alignment;
             m_Glyph.use_markup = false;
             m_Glyph.wrap = Graphic.Glyph.WrapMode.WORD;
             m_Glyph.text = text ?? "";
@@ -600,9 +611,16 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             // Other key is pressed check if character is printable (filter sepcial key)
             else if (inCar.isprint ())
             {
-                if (!only_numeric || inCar.isdigit ())
+                if (!only_numeric || inCar.isdigit () || ((inCar == '.' || inCar == ',') && !("." in text)))
                 {
-                    new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), inCar.to_string ());
+                    if (only_numeric && inCar == ',')
+                    {
+                        new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), ".");
+                    }
+                    else
+                    {
+                        new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), inCar.to_string ());
+                    }
                     text = new_text.str;
                     m_Cursor ++;
                     updated = true;
@@ -643,6 +661,16 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         }
 
         return base.size_request (inSize);
+    }
+
+    internal override void
+    update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
+    {
+        bool update = geometry == null && !(parent is DrawingArea);
+
+        base.update (inContext, inAllocation);
+
+        if (update) update_layout ();
     }
 
     internal override void
@@ -701,10 +729,28 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                     {
                         // Add line
                         Graphic.Glyph.Line line = (Graphic.Glyph.Line)child;
-                        path.move_to (line.size.width, y + rect.size.height);
-                        path.line_to (glyph_line_width, y + rect.size.height);
+                        switch (alignment)
+                        {
+                            case Graphic.Glyph.Alignment.LEFT:
+                                path.move_to (line.size.width, y + rect.size.height);
+                                path.line_to (glyph_line_width, y + rect.size.height);
+                                y += rect.size.height;
+                                break;
 
-                        y += rect.size.height;
+                            case Graphic.Glyph.Alignment.RIGHT:
+                                path.move_to (0, y + rect.size.height);
+                                path.line_to (glyph_line_width - line.size.width, y + rect.size.height);
+                                y += rect.size.height;
+                                break;
+
+                            case Graphic.Glyph.Alignment.CENTER:
+                                path.move_to (0, y + rect.size.height);
+                                path.line_to ((glyph_line_width - line.size.width) / 2, y + rect.size.height);
+                                path.move_to (((glyph_line_width - line.size.width) / 2) + line.size.width, y + rect.size.height);
+                                path.line_to (glyph_line_width, y + rect.size.height);
+                                y += rect.size.height;
+                                break;
+                        }
                     }
                     inContext.stroke (path);
                 }
@@ -715,10 +761,28 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                 // If have focus
                 if (have_focus)
                 {
+                    double x = rect.origin.x;
+
+                    if (index == 0 && m_Text.length == 0)
+                    {
+                        switch (alignment)
+                        {
+                            case Graphic.Glyph.Alignment.LEFT:
+                                break;
+
+                            case Graphic.Glyph.Alignment.RIGHT:
+                                x = width_in_chars > 0 ? width_in_chars_to_size ().width : geometry.extents.size.width;
+                                break;
+
+                            case Graphic.Glyph.Alignment.CENTER:
+                                x = (width_in_chars > 0 ? width_in_chars_to_size ().width : geometry.extents.size.width) / 2.0;
+                                break;
+                        }
+                    }
                     // Draw cursor
                     path = new Graphic.Path ();
-                    path.move_to (rect.origin.x, rect.origin.y);
-                    path.line_to (rect.origin.x, rect.origin.y + rect.size.height);
+                    path.move_to (x, rect.origin.y);
+                    path.line_to (x, rect.origin.y + rect.size.height);
                     inContext.stroke (path);
                 }
             }

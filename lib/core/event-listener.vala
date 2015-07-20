@@ -178,6 +178,9 @@ public class Maia.Core.EventListener : Object
         {
             m_Handler (inEventArgs);
         }
-        _block_next_nb_events = int.max (0, _block_next_nb_events--);
+        else if (!block && block_next_nb_events > 0)
+        {
+            block_next_nb_events = int.max (0, block_next_nb_events - 1);
+        }
     }
 }
