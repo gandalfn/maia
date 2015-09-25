@@ -145,6 +145,8 @@ public class Maia.Popup : Group
     public double         border        { get; set; default = 0.0; }
     public PopupPlacement placement     { get; set; default = PopupPlacement.TOP; }
     public bool           animation     { get; set; default = true; }
+    public Window.Type    window_type   { get; set; default = Window.Type.CHILD; }
+    public Window?        transient_for { get; set; default = null; }
 
     // static methods
     static construct
@@ -218,6 +220,7 @@ public class Maia.Popup : Group
         m_Window.visible = false;
         m_Window.set_qdata<unowned Object> (Item.s_PopupWindow, this);
         m_Window.depth = 32;
+        m_Window.window_type = window_type;
         m_Window.weak_ref (on_window_destroyed);
 
         // plug manifest path
@@ -252,6 +255,9 @@ public class Maia.Popup : Group
 
         // plug close button property to window
         plug_property ("close-button", m_Window, "close-button");
+
+        // plug transient for property to window
+        plug_property ("transient-for", m_Window, "transient-for");
 
         m_Window.parent = Application.default;
 

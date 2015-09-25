@@ -218,6 +218,7 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
         // Create maia window
         m_Window = new Maia.Window (@"$name-gtk-canvas-window", allocation.width, allocation.height);
         m_Window.visible = false;
+        m_Window.depth = (uint8)get_visual ().get_depth ();
         var color_bg = style.bg[global::Gtk.StateType.NORMAL];
         m_Window.background_pattern = new Graphic.Color ((double)color_bg.red / 65535.0, (double)color_bg.green / 65535.0, (double)color_bg.blue / 65535.0);
         m_Window.position = Graphic.Point (0, 0);

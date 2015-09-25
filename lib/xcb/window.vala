@@ -36,6 +36,23 @@ internal class Maia.Xcb.Window : Maia.Window
         }
     }
 
+    public override Maia.Window? transient_for {
+        get {
+            return base.transient_for;
+        }
+        set {
+            if (transient_for != value)
+            {
+                base.transient_for = value;
+
+                if (m_View != null && value is Window)
+                {
+                    m_View.transient_for = (value as Window).m_View;
+                }
+            }
+        }
+    }
+
     public override Graphic.Surface? surface {
         get {
             return m_View != null ? m_View.surface : null;
@@ -84,9 +101,22 @@ internal class Maia.Xcb.Window : Maia.Window
     }
 
     private void
+    on_close_button_changed ()
+    {
+        if (m_View != null && window_type == Type.TOPLEVEL)
+        {
+            m_View.override_redirect = close_button;
+        }
+    }
+
+    private void
     on_parent_view_changed ()
     {
-        if (m_ParentWindow != null && m_View != null)
+        if (m_View != null && window_type == Type.TOPLEVEL)
+        {
+            m_View.parent = null;
+        }
+        else if (m_ParentWindow != null && m_View != null)
         {
             unowned Window? parent_window = m_ParentWindow as Window;
 
@@ -116,9 +146,16 @@ internal class Maia.Xcb.Window : Maia.Window
         unowned Viewport? parent_viewport = m_ParentWindow as Viewport;
         if (parent_viewport != null && m_View != null)
         {
-            var pos = position;
-            pos.translate (parent_viewport.visible_area.origin.invert ());
-            m_View.position = pos;
+            if (m_View.override_redirect)
+            {
+                m_View.position = Graphic.Point ((1920 - size.width) / 2, (1080 - size.height) / 2);
+            }
+            else
+            {
+                var pos = position;
+                pos.translate (parent_viewport.visible_area.origin.invert ());
+                m_View.position = pos;
+            }
         }
     }
 
@@ -187,6 +224,12 @@ internal class Maia.Xcb.Window : Maia.Window
         // connect onto window changed
         notify["window"].connect (on_main_window_changed);
 
+        // connect onto window-type changed
+        notify["window-type"].connect (on_parent_view_changed);
+
+        // connect onto close button changed
+        notify["close-button"].connect (on_close_button_changed);
+
         // connect onto device transform changed
         notify["device-transform"].connect (on_device_transform_changed);
         m_View.device_transform = device_transform;
@@ -225,7 +268,14 @@ internal class Maia.Xcb.Window : Maia.Window
         }
         else if (m_View != null)
         {
-            m_View.position = position;
+            if (m_View.override_redirect)
+            {
+                m_View.position = Graphic.Point ((1920 - size.width) / 2, (1080 - size.height) / 2);
+            }
+            else
+            {
+                m_View.position = position;
+            }
         }
     }
 
@@ -282,7 +332,7 @@ internal class Maia.Xcb.Window : Maia.Window
         // an item was grabbed grab pointer
         if (ret && grab_pointer_item != null && m_View != null)
         {
-            m_View.grab_pointer ();
+            m_View.grab_pointer (!(grab_pointer_item is Popup));
         }
 
         return ret;

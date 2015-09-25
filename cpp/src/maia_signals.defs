@@ -4522,6 +4522,24 @@
   (construct-only #f)
 )
 
+(define-property window-type
+  (of-object "MaiaPopup")
+  (prop-type "GParamEnum")
+  (docs "window-type")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property transient-for
+  (of-object "MaiaPopup")
+  (prop-type "GParamObject")
+  (docs "transient-for")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaCombo
 
 (define-property tag
@@ -5024,6 +5042,15 @@
   (construct-only #f)
 )
 
+(define-property window-type
+  (of-object "MaiaWindow")
+  (prop-type "GParamEnum")
+  (docs "window-type")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property foreign
   (of-object "MaiaWindow")
   (prop-type "GParamUInt")
@@ -5091,6 +5118,15 @@
   (of-object "MaiaWindow")
   (prop-type "GParamUChar")
   (docs "depth")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property transient-for
+  (of-object "MaiaWindow")
+  (prop-type "GParamObject")
+  (docs "transient-for")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -5512,6 +5548,15 @@
   (of-object "MaiaChart")
   (prop-type "GParamString")
   (docs "title")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property alignment
+  (of-object "MaiaChart")
+  (prop-type "GParamEnum")
+  (docs "alignment")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -6157,6 +6202,15 @@
   (of-object "MaiaChartView")
   (prop-type "GParamDouble")
   (docs "legend-border")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property font-pattern
+  (of-object "MaiaChartView")
+  (prop-type "GParamObject")
+  (docs "font-pattern")
   (readable #t)
   (writable #t)
   (construct-only #f)

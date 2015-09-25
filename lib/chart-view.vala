@@ -152,7 +152,7 @@ public class Maia.ChartView : Group, ItemPackable
         add_chart (Chart inChart)
         {
             // Create chart line path
-            Path path = new Path (@"legend-$(inChart.name)-line", "M 0 8 l 16 0");
+            Path path = new Path (@"legend-$(inChart.name)-$m_NbItems-line", "M 0 8 l 16 0");
             inChart.plug_property ("stroke-pattern", path, "stroke-pattern");
             inChart.plug_property ("line-width", path, "line-width");
             inChart.plug_property ("line-type", path, "line-type");
@@ -166,23 +166,25 @@ public class Maia.ChartView : Group, ItemPackable
             path.size = Graphic.Size (16, 16);
             path.row = m_NbItems;
             path.column = 0;
-            path.yfill = false;
+            path.xfill = false;
+            path.xexpand = false;
             add (path);
 
             // Create chart legend label
-            Label label = new Label (@"legend-$(inChart.name)-label", inChart.title);
+            Label label = new Label (@"legend-$(inChart.name)-$m_NbItems-label", inChart.title);
             inChart.plug_property ("title", label, "text");
+            inChart.plug_property ("alignment", label, "alignment");
             if (m_NbItems == 0)
             {
                 m_ChartView.plug_property ("legend-border", label, "top-padding");
             }
             m_ChartView.plug_property ("font-description", label, "font-description");
-            m_ChartView.plug_property ("stroke-pattern", label, "stroke-pattern");
+            m_ChartView.plug_property ("font-pattern", label, "stroke-pattern");
             m_ChartView.plug_property ("legend-border", label, "bottom-padding");
             m_ChartView.plug_property ("legend-border", label, "right-padding");
             label.row = m_NbItems;
             label.column = 1;
-            label.alignment = Graphic.Glyph.Alignment.LEFT;
+            label.xshrink = false;
             add (label);
 
             // Increment the number of chart
@@ -209,21 +211,25 @@ public class Maia.ChartView : Group, ItemPackable
                 path.size = Graphic.Size (16, 16);
                 path.row = m_NbItems;
                 path.column = 0;
-                path.yfill = false;
+                path.xfill = false;
+                path.xexpand = false;
                 add (path);
 
                 // Create chartpoint legend label
-                Label label = new Label (@"legend-$(inChartPoint.chart)-point-$m_NbItems-path", inChartPoint.title);
+                Label label = new Label (@"legend-$(inChartPoint.chart)-point-$m_NbItems-label", inChartPoint.title);
                 inChartPoint.plug_property ("title", label, "text");
                 if (m_NbItems == 0)
                 {
                     m_ChartView.plug_property ("legend-border", label, "top-padding");
                 }
+                m_ChartView.plug_property ("font-description", label, "font-description");
+                m_ChartView.plug_property ("font-pattern", label, "stroke-pattern");
                 m_ChartView.plug_property ("legend-border", label, "bottom-padding");
                 m_ChartView.plug_property ("legend-border", label, "right-padding");
                 label.row = m_NbItems;
                 label.column = 1;
                 label.alignment = Graphic.Glyph.Alignment.LEFT;
+                label.xshrink = false;
                 add (label);
 
                 // Increment the number of chart
@@ -426,6 +432,11 @@ public class Maia.ChartView : Group, ItemPackable
      */
     public double legend_border { get; set; default = 5.0; }
 
+    /**
+     * Font pattern
+     */
+    public Graphic.Pattern font_pattern { get; set; default = null; }
+
     private Graphic.Rectangle drawing_area {
         get {
             if (m_DrawingArea.is_empty ())
@@ -493,6 +504,7 @@ public class Maia.ChartView : Group, ItemPackable
     construct
     {
         stroke_pattern = new Graphic.Color (0, 0, 0);
+        font_pattern = new Graphic.Color (0, 0, 0);
 
         // Create array of axis labels
         m_XAxis = new Core.Array<unowned Label> ();
@@ -688,7 +700,7 @@ public class Maia.ChartView : Group, ItemPackable
                 {
                     var label = new Label (@"x-axis-label", "");
                     label.xshrink = false;
-                    plug_property ("stroke-pattern", label, "stroke-pattern");
+                    plug_property ("font-pattern", label, "stroke-pattern");
                     plug_property ("font-description", label, "font-description");
                     label.parent = this;
                     m_XAxisLabel = label;
@@ -717,7 +729,7 @@ public class Maia.ChartView : Group, ItemPackable
                     var label = new Label (@"y-axis-label", "");
                     label.xshrink = false;
                     label.transform = new Graphic.Transform.init_rotate (-GLib.Math.PI / 2.0);
-                    plug_property ("stroke-pattern", label, "stroke-pattern");
+                    plug_property ("font-pattern", label, "stroke-pattern");
                     plug_property ("font-description", label, "font-description");
                     label.parent = this;
                     m_YAxisLabel = label;
@@ -744,7 +756,7 @@ public class Maia.ChartView : Group, ItemPackable
             for (int cpt = 1; cpt < nb; ++cpt)
             {
                 var label = new Label (@"x-axis-indice-minus-$cpt", format_indice (step * cpt, x_axis_unit, "-"));
-                plug_property ("stroke-pattern", label, "stroke-pattern");
+                plug_property ("font-pattern", label, "stroke-pattern");
                 plug_property ("axis-font-description", label, "font-description");
                 label.parent = this;
                 label.set_qdata<int> (s_AxisIndiceQuark, -(int)(step * cpt * 65535));
@@ -758,7 +770,7 @@ public class Maia.ChartView : Group, ItemPackable
                 var label = new Label (@"x-axis-indice-plus-$cpt", format_indice (step * cpt, x_axis_unit));
                 label.manifest_theme = manifest_theme;
                 label.parent = this;
-                plug_property ("stroke-pattern", label, "stroke-pattern");
+                plug_property ("font-pattern", label, "stroke-pattern");
                 plug_property ("axis-font-description", label, "font-description");
                 label.set_qdata<int> (s_AxisIndiceQuark, (int)(step * cpt * 65535));
                 m_XAxis.insert (label);
@@ -770,7 +782,7 @@ public class Maia.ChartView : Group, ItemPackable
             for (int cpt = 1; cpt < nb; ++cpt)
             {
                 var label = new Label (@"y-axis-indice-minus-$cpt", format_indice (step * cpt, y_axis_unit, "-"));
-                plug_property ("stroke-pattern", label, "stroke-pattern");
+                plug_property ("font-pattern", label, "stroke-pattern");
                 plug_property ("axis-font-description", label, "font-description");
                 label.parent = this;
                 label.set_qdata<int> (s_AxisIndiceQuark, -(int)(step * cpt * 65535));
@@ -782,7 +794,7 @@ public class Maia.ChartView : Group, ItemPackable
             for (int cpt = 1; cpt < nb; ++cpt)
             {
                 var label = new Label (@"y-axis-indice-plus-$cpt", format_indice (step * cpt, y_axis_unit));
-                plug_property ("stroke-pattern", label, "stroke-pattern");
+                plug_property ("font-pattern", label, "stroke-pattern");
                 plug_property ("axis-font-description", label, "font-description");
                 label.parent = this;
                 label.set_qdata<int> (s_AxisIndiceQuark, (int)(step * cpt * 65535));
@@ -795,7 +807,7 @@ public class Maia.ChartView : Group, ItemPackable
                 if (m_ZeroLabel == null)
                 {
                     var label = new Label (@"zero-label", "0");
-                    plug_property ("stroke-pattern", label, "stroke-pattern");
+                    plug_property ("font-pattern", label, "stroke-pattern");
                     plug_property ("axis-font-description", label, "font-description");
                     label.parent = this;
                     m_ZeroLabel = label;

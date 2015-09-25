@@ -35,6 +35,12 @@ public class Maia.Window : Group
         ALL = LEFT | RIGHT | TOP | BOTTOM
     }
 
+    public enum Type
+    {
+        TOPLEVEL,
+        CHILD
+    }
+
     // properties
     private Core.Animator      m_Animator;
     private uint               m_Transition = 0;
@@ -55,7 +61,7 @@ public class Maia.Window : Group
     private Core.EventListener m_MouseListener;
     private Core.Event         m_KeyboardEvent;
     private Core.EventListener m_KeyboardListener;
-    
+
     // accessors
     protected unowned Item? focus_item         { get; set; default = null; }
     protected unowned Item? grab_pointer_item  { get; set; default = null; }
@@ -67,7 +73,9 @@ public class Maia.Window : Group
         }
     }
 
-    internal double close_button_scale { get; set; default = 0.5; }
+    internal double close_button_scale { get; set; default = 0.75; }
+
+    public Type window_type { get; set; default = Type.CHILD; }
 
     public unowned uint32 foreign { get; construct; default = 0; }
 
@@ -84,6 +92,8 @@ public class Maia.Window : Group
     public bool close_button { get; set; default = false; }
 
     public virtual uint8 depth { get; set; }
+
+    public virtual Window? transient_for { get; set; default = null; }
 
     public virtual Graphic.Surface? surface {
         get {
@@ -437,7 +447,7 @@ public class Maia.Window : Group
                                 }
 
                                 GLib.Value from = (double)close_button_scale;
-                                GLib.Value to = (double)0.5;
+                                GLib.Value to = (double)0.75;
 
                                 m_Transition = m_Animator.add_transition (0.0, 1.0, Core.Animator.ProgressType.EXPONENTIAL, null, null);
                                 m_Animator.add_transition_property (m_Transition, this, "close-button-scale", from, to);
@@ -764,7 +774,7 @@ public class Maia.Window : Group
 
         m_OverCloseButton = false;
 
-        close_button_scale = 0.5;
+        close_button_scale = 0.75;
     }
 
     internal override void
@@ -988,7 +998,7 @@ public class Maia.Window : Group
                 inContext.translate (button_pos);
                 inContext.transform = new Graphic.Transform.init_scale (close_button_scale, close_button_scale);
                 inContext.pattern = m_CloseButton;
-                inContext.paint_with_alpha (close_button_scale);
+                inContext.paint ();
             }
             inContext.restore ();
         }

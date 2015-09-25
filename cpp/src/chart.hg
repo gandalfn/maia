@@ -21,6 +21,7 @@
 #include <maiamm/core-object.h>
 #include <maiamm/graphic-path.h>
 #include <maiamm/graphic-range.h>
+#include <maiamm/graphic-glyph.h>
 #include <maiamm/item.h>
 #include <maiamm/model.h>
 
@@ -59,6 +60,9 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_title () const, maia_chart_get_title)
             _WRAP_METHOD(void set_title (const Glib::ustring& inTitle), maia_chart_set_title)
 
+            _WRAP_METHOD(Graphic::GlyphAlignment get_alignment () const, maia_chart_get_alignment)
+            _WRAP_METHOD(void set_alignment (Graphic::GlyphAlignment inAlignment), maia_chart_set_alignment)
+
             _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_chart_get_model, refreturn)
             _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_chart_set_model)
 
@@ -87,6 +91,7 @@ namespace Maia
             _WRAP_SIGNAL(void changed (), "changed", no_default_handler)
 
             _WRAP_PROPERTY("title", Glib::ustring)
+            _WRAP_PROPERTY("alignment", Graphic::GlyphAlignment)
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
             _WRAP_PROPERTY("x-axis", Glib::ustring)
             _WRAP_PROPERTY("y-axis", Glib::ustring)

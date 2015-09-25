@@ -26,6 +26,8 @@ internal enum Maia.Xcb.AtomType
     WM_TAKE_FOCUS,
     WM_NAME,
     WM_STATE,
+    WM_TRANSIENT_FOR,
+    WM_CLIENT_LEADER,
 
     _MOTIF_WM_HINTS,
 

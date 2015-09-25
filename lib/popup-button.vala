@@ -58,6 +58,7 @@ public class Maia.PopupButton : ToggleButton
     {
         // Create popup
         m_Popup = new Popup (@"$name-popup");
+        m_Popup.window_type = Window.Type.TOPLEVEL;
         m_Popup.visible = false;
         m_Popup.placement = PopupPlacement.ABSOLUTE;
 
@@ -112,6 +113,15 @@ public class Maia.PopupButton : ToggleButton
         notify["active"].disconnect (on_active_changed);
         active = m_Popup.visible;
         notify["active"].connect (on_active_changed);
+
+        if (active)
+        {
+            m_Popup.grab_pointer (m_Popup);
+        }
+        else
+        {
+            m_Popup.ungrab_pointer (m_Popup);
+        }
     }
 
     private void
@@ -120,6 +130,15 @@ public class Maia.PopupButton : ToggleButton
         m_Popup.notify["visible"].disconnect (on_popup_visible_changed);
         m_Popup.visible = active;
         m_Popup.notify["visible"].connect (on_popup_visible_changed);
+
+        if (active)
+        {
+            m_Popup.grab_pointer (m_Popup);
+        }
+        else
+        {
+            m_Popup.ungrab_pointer (m_Popup);
+        }
     }
 
     private void
@@ -175,11 +194,7 @@ public class Maia.PopupButton : ToggleButton
 
             if (toplevel_window != null && m_Popup.content != null && m_Popup.visible)
             {
-                var window_size = toplevel_window.geometry.extents.size;
-                var pos = toplevel_window.convert_to_root_space (Graphic.Point ((window_size.width - m_Popup.content.size.width) / 2,
-                                                                                (window_size.height - m_Popup.content.size.height) / 2));
-
-                m_Popup.position = convert_to_item_space (pos);
+                m_Popup.transient_for = toplevel_window;
 
                 // Set popup geometry
                 var popup_area = Graphic.Rectangle (m_Popup.position.x, m_Popup.position.y,

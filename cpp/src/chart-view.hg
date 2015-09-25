@@ -21,6 +21,7 @@
 #include <maiamm/group.h>
 #include <maiamm/chart.h>
 #include <maiamm/item-packable.h>
+#include <maiamm/graphic-pattern.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/group_p.h)
@@ -34,7 +35,7 @@ namespace Maia
     {
         _CLASS_GOBJECT(ChartView, MaiaChartView, MAIA_CHART_VIEW, Group, MaiaGroup)
         _IMPLEMENTS_INTERFACE(ItemPackable)
-        
+
         protected:
             _CTOR_DEFAULT()
 
@@ -51,6 +52,9 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_font_description () const, maia_chart_view_get_font_description)
             _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_chart_view_set_font_description)
 
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_font_pattern () const, maia_chart_view_get_font_pattern, refreturn)
+            _WRAP_METHOD(void set_font_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_chart_view_set_font_pattern)
+
             _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_chart_view_get_model, refreturn)
             _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_chart_view_set_model)
 
@@ -62,7 +66,7 @@ namespace Maia
 
             _WRAP_METHOD(bool get_grid_visible () const, maia_chart_view_get_grid_visible)
             _WRAP_METHOD(void set_grid_visible (bool inVisible = true), maia_chart_view_set_grid_visible)
-                        
+
             _WRAP_METHOD(Glib::ustring get_axis_font_description () const, maia_chart_view_get_axis_font_description)
             _WRAP_METHOD(void set_axis_font_description (const Glib::ustring& inFontDesc), maia_chart_view_set_axis_font_description)
 
@@ -86,7 +90,7 @@ namespace Maia
 
             _WRAP_METHOD(double get_tick_size () const, maia_chart_view_get_tick_size)
             _WRAP_METHOD(void set_tick_size (double inBorder), maia_chart_view_set_tick_size)
-            
+
             _WRAP_METHOD(ChartViewFrame get_frame () const, maia_chart_view_get_frame)
             _WRAP_METHOD(void set_frame (ChartViewFrame inFrame), maia_chart_view_set_frame)
 
@@ -104,6 +108,7 @@ namespace Maia
 
             _WRAP_PROPERTY("title", Glib::ustring)
             _WRAP_PROPERTY("font-description", Glib::ustring)
+            _WRAP_PROPERTY("font-pattern", Glib::RefPtr<Graphic::Pattern>)
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
             _WRAP_PROPERTY("chart-axis", Glib::ustring)
             _WRAP_PROPERTY("border", double)

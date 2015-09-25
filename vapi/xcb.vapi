@@ -1190,8 +1190,8 @@ namespace Xcb
 		 * @param data The property data.
 		 *
 		 */
-		[CCode (cname = "xcb_change_property", instance_pos = 2.2)]
-		public VoidCookie change_property (Xcb.Connection connection, PropMode mode, Atom property, Atom type, uint8 format, [CCode (array_length_pos = 5.6)]void[]? data);
+		[CCode (cname = "xcb_change_property", instance_pos = 2.2, simple_generics = true)]
+		public VoidCookie change_property<T> (Xcb.Connection connection, PropMode mode, Atom property, Atom type, uint8 format, [CCode (array_length_pos = 5.6)]T[]? data);
 		/**
 		 * Changes a window property
 		 *
@@ -1920,7 +1920,7 @@ namespace Xcb
 			get;
 		}
 		[CCode (array_length = false)]
-		public unowned void[] value {
+		public unowned void[] @value {
 			[CCode (cname = "xcb_get_property_value")]
 			get;
 		}

@@ -55,6 +55,7 @@ public abstract class Maia.Core.Object : Any
         public Hash            m_Hash;
         public GLib.Value      m_Value;
         public bool            m_Locked = false;
+        public bool            m_DstDestroyed = false;
 
         static construct
         {
@@ -114,7 +115,7 @@ public abstract class Maia.Core.Object : Any
 
         ~PlugProperty ()
         {
-            if (m_Hash.m_Dst != null)
+            if (!m_DstDestroyed)
             {
                 unowned Set<string>? plugged_properties = m_Hash.m_Dst.get_qdata<unowned Set<string>> (s_QuarkPluggedProperty);
                 if (plugged_properties != null)
@@ -129,15 +130,18 @@ public abstract class Maia.Core.Object : Any
         private void
         on_dest_destroyed ()
         {
-            m_Hash.m_Dst = null;
+            m_DstDestroyed = true;
             m_Src.m_Plugs.remove (this);
         }
 
         private void
         on_src_property_changed ()
         {
-            m_Src.get_property (m_Hash.m_SrcProperty, ref m_Value);
-            m_Hash.m_Dst.set_property (m_Hash.m_DstProperty, m_Value);
+            if (!m_DstDestroyed)
+            {
+                m_Src.get_property (m_Hash.m_SrcProperty, ref m_Value);
+                m_Hash.m_Dst.set_property (m_Hash.m_DstProperty, m_Value);
+            }
         }
 
         public void
@@ -222,7 +226,7 @@ public abstract class Maia.Core.Object : Any
     private unowned Object?        m_Prev;
     private Core.Set<PlugProperty> m_Plugs;
     private Notifications m_Notifications = new Notifications ();
-    
+
     // accessors
     /**
      * Object identifier

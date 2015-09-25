@@ -3305,6 +3305,15 @@
   )
 )
 
+(define-enum MaiaWindowType
+  (c-name "MaiaWindowType")
+  (gtype-id "MAIA_TYPE_WINDOW_TYPE")
+  (values
+    '("toplevel" "MAIA_WINDOW_TYPE_TOPLEVEL")
+    '("child" "MAIA_WINDOW_TYPE_CHILD")
+  )
+)
+
 (define-flags MaiaEntryChangedMask
   (c-name "MaiaEntryChangedMask")
   (gtype-id "MAIA_TYPE_ENTRY_CHANGED_MASK")
@@ -14657,6 +14666,11 @@
   (return-type "GType")
 )
 
+(define-function maia_window_type_get_type
+  (c-name "maia_window_type_get_type")
+  (return-type "GType")
+)
+
 (define-function maia_window_new
   (c-name "maia_window_new")
   (is-constructor-of "MaiaWindow")
@@ -14890,6 +14904,21 @@
   )
 )
 
+(define-method get_window_type
+  (of-object "MaiaWindow")
+  (c-name "maia_window_get_window_type")
+  (return-type "MaiaWindowType")
+)
+
+(define-method set_window_type
+  (of-object "MaiaWindow")
+  (c-name "maia_window_set_window_type")
+  (return-type "none")
+  (parameters
+    '("MaiaWindowType" "value")
+  )
+)
+
 (define-method get_foreign
   (of-object "MaiaWindow")
   (c-name "maia_window_get_foreign")
@@ -14998,6 +15027,21 @@
   (return-type "none")
   (parameters
     '("guint8" "value")
+  )
+)
+
+(define-method get_transient_for
+  (of-object "MaiaWindow")
+  (c-name "maia_window_get_transient_for")
+  (return-type "MaiaWindow*")
+)
+
+(define-method set_transient_for
+  (of-object "MaiaWindow")
+  (c-name "maia_window_set_transient_for")
+  (return-type "none")
+  (parameters
+    '("MaiaWindow*" "value")
   )
 )
 
@@ -17668,6 +17712,36 @@
   )
 )
 
+(define-method get_window_type
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_get_window_type")
+  (return-type "MaiaWindowType")
+)
+
+(define-method set_window_type
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_set_window_type")
+  (return-type "none")
+  (parameters
+    '("MaiaWindowType" "value")
+  )
+)
+
+(define-method get_transient_for
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_get_transient_for")
+  (return-type "MaiaWindow*")
+)
+
+(define-method set_transient_for
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_set_transient_for")
+  (return-type "none")
+  (parameters
+    '("MaiaWindow*" "value")
+  )
+)
+
 (define-function maia_combo_get_type
   (c-name "maia_combo_get_type")
   (return-type "GType")
@@ -18978,6 +19052,21 @@
   )
 )
 
+(define-method get_font_pattern
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_get_font_pattern")
+  (return-type "MaiaGraphicPattern*")
+)
+
+(define-method set_font_pattern
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_set_font_pattern")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "value")
+  )
+)
+
 (define-function maia_chart_get_type
   (c-name "maia_chart_get_type")
   (return-type "GType")
@@ -19045,6 +19134,21 @@
   (return-type "none")
   (parameters
     '("const-gchar*" "value")
+  )
+)
+
+(define-method get_alignment
+  (of-object "MaiaChart")
+  (c-name "maia_chart_get_alignment")
+  (return-type "MaiaGraphicGlyphAlignment")
+)
+
+(define-method set_alignment
+  (of-object "MaiaChart")
+  (c-name "maia_chart_set_alignment")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicGlyphAlignment" "value")
   )
 )
 

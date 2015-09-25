@@ -329,3 +329,61 @@ internal class Maia.Xcb.ResizeRequest : Request
         return base.compare (inOther);
     }
 }
+
+internal class Maia.Xcb.OverrideRedirectRequest : Request
+{
+    private bool m_Enable;
+
+    // methods
+    public OverrideRedirectRequest (View inView, bool inEnable)
+    {
+        base (inView);
+
+        m_Enable = inEnable;
+    }
+
+    internal override void
+    run ()
+    {
+        uint32 mask = global::Xcb.Cw.OVERRIDE_REDIRECT;
+        uint32[] values = { m_Enable ? 1 : 0 };
+
+        ((global::Xcb.Window)view.xid).change_attributes (view.connection, mask, values);
+    }
+
+    internal override CompressAction
+    compress (Request inRequest)
+    {
+        if (view.xid == inRequest.view.xid && inRequest is OverrideRedirectRequest)
+        {
+            if ((inRequest as OverrideRedirectRequest).m_Enable == m_Enable)
+            {
+                return CompressAction.REMOVE_CURRENT;
+            }
+            else if ((inRequest as OverrideRedirectRequest).m_Enable != m_Enable)
+            {
+                return CompressAction.REMOVE_BOTH;
+            }
+        }
+
+        return CompressAction.KEEP;
+    }
+
+    internal override string
+    to_string ()
+    {
+        return @"sequence: $sequence override redirect $m_Enable xid: $(view.xid) size: $(view.size)";
+    }
+
+    internal override int
+    compare (Core.Object inOther)
+        requires (inOther is Request)
+    {
+        unowned Request other = (Request)inOther;
+
+        if (view.xid == other.view.xid && (other is MapRequest || other is ReparentRequest))
+            return -1;
+
+        return base.compare (inOther);
+    }
+}

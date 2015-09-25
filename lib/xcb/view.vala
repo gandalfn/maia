@@ -116,8 +116,10 @@ internal class Maia.Xcb.View : Drawable
     private Graphic.Transform    m_Transform = new Graphic.Transform.identity ();
     private Graphic.Transform    m_DeviceTransform = new Graphic.Transform.identity ();
     private unowned View?        m_Parent;
+    private unowned View?        m_TransientFor = null;
     private global::Xcb.Colormap m_Colormap = global::Xcb.NONE;
     private Graphic.Point        m_Position;
+    private bool                 m_OverrideRedirect = false;
     private bool                 m_Foreign = false;
     private bool                 m_Realized = false;
     private Pixmap               m_BackBuffer = null;
@@ -163,6 +165,19 @@ internal class Maia.Xcb.View : Drawable
         }
     }
 
+    public bool override_redirect {
+        get {
+            return m_OverrideRedirect;
+        }
+        set {
+            if (m_OverrideRedirect != value)
+            {
+                m_OverrideRedirect = value;
+                application.push_request (new OverrideRedirectRequest (this, m_OverrideRedirect));
+            }
+        }
+    }
+
     public unowned Pixmap? backbuffer {
         get {
             return m_BackBuffer;
@@ -204,6 +219,70 @@ internal class Maia.Xcb.View : Drawable
         }
     }
 
+    public View? transient_for {
+        get {
+            return m_TransientFor;
+        }
+        set {
+            if (m_TransientFor != value)
+            {
+                m_TransientFor = value;
+
+                if (m_Realized)
+                {
+                    if (m_TransientFor != null)
+                    {
+                        global::Xcb.Window xtoplevel = ((global::Xcb.Window)(m_TransientFor.xid));
+
+                        while (true)
+                        {
+                            var reply = xtoplevel.query_tree (connection).reply (connection);
+                            if (reply.root != reply.parent)
+                            {
+                                xtoplevel = reply.parent;
+
+                                var reply_prop = xtoplevel.get_property (connection, false, Xcb.application.atoms[AtomType._NET_WM_WINDOW_TYPE], global::Xcb.AtomType.ATOM, 0, 1).reply (connection);
+                                if (reply_prop != null && ((global::Xcb.Atom[]?)reply_prop.@value)[0] == Xcb.application.atoms[AtomType._NET_WM_WINDOW_TYPE_NORMAL])
+                                {
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                        global::Xcb.Window[] properties = { xtoplevel };
+                        ((global::Xcb.Window)xid).change_property<global::Xcb.Window> (connection, global::Xcb.PropMode.REPLACE,
+                                                                                       Xcb.application.atoms[AtomType.WM_TRANSIENT_FOR],
+                                                                                       global::Xcb.AtomType.WINDOW,
+                                                                                       32, properties);
+                        ((global::Xcb.Window)xid).change_property<global::Xcb.Window> (connection, global::Xcb.PropMode.REPLACE,
+                                                                                       Xcb.application.atoms[AtomType.WM_CLIENT_LEADER],
+                                                                                       global::Xcb.AtomType.WINDOW,
+                                                                                       32, properties);
+                        global::Xcb.Atom[] states = { Xcb.application.atoms[AtomType._NET_WM_STATE_MODAL] };
+                        ((global::Xcb.Window)xid).change_property<global::Xcb.Atom> (connection, global::Xcb.PropMode.REPLACE,
+                                                                                     Xcb.application.atoms[AtomType._NET_WM_STATE],
+                                                                                     global::Xcb.AtomType.ATOM,
+                                                                                     32, states);
+                        global::Xcb.Atom[] types = { Xcb.application.atoms[AtomType._NET_WM_WINDOW_TYPE_DIALOG] };
+                        ((global::Xcb.Window)xid).change_property<global::Xcb.Atom> (connection, global::Xcb.PropMode.REPLACE,
+                                                                                     Xcb.application.atoms[AtomType._NET_WM_WINDOW_TYPE],
+                                                                                     global::Xcb.AtomType.ATOM,
+                                                                                     32, types);
+                    }
+                    else
+                    {
+                        ((global::Xcb.Window)xid).delete_property (connection, Xcb.application.atoms[AtomType.WM_TRANSIENT_FOR]);
+                        ((global::Xcb.Window)xid).delete_property (connection, Xcb.application.atoms[AtomType.WM_CLIENT_LEADER]);
+                        ((global::Xcb.Window)xid).delete_property (connection, Xcb.application.atoms[AtomType._NET_WM_STATE]);
+                        ((global::Xcb.Window)xid).delete_property (connection, Xcb.application.atoms[AtomType._NET_WM_WINDOW_TYPE]);
+                    }
+               }
+           }
+        }
+    }
     public bool is_mapped {
         get {
             bool ret = false;
@@ -513,6 +592,9 @@ internal class Maia.Xcb.View : Drawable
             mask |= global::Xcb.Cw.SAVE_UNDER;
             values += 1;
 
+            mask |= global::Xcb.Cw.OVERRIDE_REDIRECT;
+            values += m_OverrideRedirect ? 1 : 0;
+
             uint32 event_mask = global::Xcb.EventMask.EXPOSURE            |
                                 global::Xcb.EventMask.STRUCTURE_NOTIFY    |
                                 global::Xcb.EventMask.BUTTON_PRESS        |
@@ -566,16 +648,45 @@ internal class Maia.Xcb.View : Drawable
                     // Set properties
                     global::Xcb.Atom[] properties = { Xcb.application.atoms[AtomType.WM_DELETE_WINDOW],
                                                       Xcb.application.atoms[AtomType.WM_TAKE_FOCUS] };
-                    ((global::Xcb.Window)xid).change_property (connection, global::Xcb.PropMode.REPLACE,
-                                                               Xcb.application.atoms[AtomType.WM_PROTOCOLS],
-                                                               global::Xcb.AtomType.ATOM,
-                                                               32, (void[]?)properties);
+                    ((global::Xcb.Window)xid).change_property<global::Xcb.Atom> (connection, global::Xcb.PropMode.REPLACE,
+                                                                                 Xcb.application.atoms[AtomType.WM_PROTOCOLS],
+                                                                                 global::Xcb.AtomType.ATOM,
+                                                                                 32, properties);
 
                     ulong[] mwm_hints = { 2, 1, 0, 0, 0 };
-                    ((global::Xcb.Window)xid).change_property (connection, global::Xcb.PropMode.REPLACE,
-                                                               Xcb.application.atoms[AtomType._MOTIF_WM_HINTS],
-                                                               Xcb.application.atoms[AtomType._MOTIF_WM_HINTS],
-                                                               32, (void[]?)mwm_hints);
+                    ((global::Xcb.Window)xid).change_property<ulong> (connection, global::Xcb.PropMode.REPLACE,
+                                                                      Xcb.application.atoms[AtomType._MOTIF_WM_HINTS],
+                                                                      Xcb.application.atoms[AtomType._MOTIF_WM_HINTS],
+                                                                      32, mwm_hints);
+                }
+
+                if (m_TransientFor != null)
+                {
+                    global::Xcb.Window xtoplevel = ((global::Xcb.Window)(m_TransientFor.xid));
+
+                    while (true)
+                    {
+                        var reply = xtoplevel.query_tree (connection).reply (connection);
+                        if (reply.root != reply.parent)
+                        {
+                            xtoplevel = reply.parent;
+
+                            var reply_prop = xtoplevel.get_property (connection, false, Xcb.application.atoms[AtomType._NET_WM_WINDOW_TYPE], global::Xcb.AtomType.ATOM, 0, 1).reply (connection);
+                            if (reply_prop != null && ((global::Xcb.Atom[]?)reply_prop.@value)[0] == Xcb.application.atoms[AtomType._NET_WM_WINDOW_TYPE_NORMAL])
+                            {
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    global::Xcb.Window[] properties = { xtoplevel };
+                    ((global::Xcb.Window)xid).change_property<global::Xcb.Window> (connection, global::Xcb.PropMode.REPLACE,
+                                                                                   Xcb.application.atoms[AtomType.WM_TRANSIENT_FOR],
+                                                                                   global::Xcb.AtomType.WINDOW,
+                                                                                   32, properties);
                 }
 
                 // set window damaged area
@@ -618,18 +729,16 @@ internal class Maia.Xcb.View : Drawable
     }
 
     public void
-    grab_pointer ()
+    grab_pointer (bool inConfineTo = true)
     {
         ((global::Xcb.Window)xid).grab_pointer (connection, true,
-                                                global::Xcb.EventMask.EXPOSURE            |
-                                                global::Xcb.EventMask.STRUCTURE_NOTIFY    |
-                                                global::Xcb.EventMask.SUBSTRUCTURE_NOTIFY |
                                                 global::Xcb.EventMask.BUTTON_PRESS        |
                                                 global::Xcb.EventMask.BUTTON_RELEASE      |
                                                 global::Xcb.EventMask.POINTER_MOTION,
                                                 global::Xcb.GrabMode.ASYNC,
                                                 global::Xcb.GrabMode.ASYNC,
-                                                (global::Xcb.Window)xid, global::Xcb.NONE, global::Xcb.CURRENT_TIME);
+                                                inConfineTo ? (global::Xcb.Window)xid : global::Xcb.NONE,
+                                                global::Xcb.NONE, global::Xcb.CURRENT_TIME);
     }
 
     public void

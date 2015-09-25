@@ -85,6 +85,11 @@ public class Maia.Chart : Item
     public string title { get; set; default = ""; }
 
     /**
+     * Alignment of title ``left``, ``center`` or ``right``, default was ``left``
+     */
+    public Graphic.Glyph.Alignment alignment { get; set; default = Graphic.Glyph.Alignment.LEFT; }
+
+    /**
      * Model of chart
      */
     public Model model {

@@ -4741,6 +4741,21 @@
 
 ;; Original typedef:
 ;; typedef enum  {
+;; 	MAIA_WINDOW_TYPE_TOPLEVEL,
+;; 	MAIA_WINDOW_TYPE_CHILD
+;; } MaiaWindowType;
+
+(define-enum-extended WindowType
+  (in-module "Maia")
+  (c-name "MaiaWindowType")
+  (values
+    '("toplevel" "MAIA_WINDOW_TYPE_TOPLEVEL" "0")
+    '("child" "MAIA_WINDOW_TYPE_CHILD" "1")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
 ;; 	MAIA_ENTRY_CHANGED_MASK_NEVER = 1 << 0,
 ;; 	MAIA_ENTRY_CHANGED_MASK_FOCUS_OUT = 1 << 1,
 ;; 	MAIA_ENTRY_CHANGED_MASK_RETURN = 1 << 2,
