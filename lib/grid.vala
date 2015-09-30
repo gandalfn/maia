@@ -186,17 +186,17 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                     if (cpt < columns.length) size.width = double.max (size.width, columns[cpt].size.width);
                 }
 
-                size.width *= columns.length;
-                size.height *= rows.length;
+                size.width *= visible_columns.length;
+                size.height *= visible_rows.length;
 
-                if (rows.length > 1)
+                if (visible_rows.length > 1)
                 {
-                    size.height += grid.row_spacing * (rows.length - 1);
+                    size.height += grid.row_spacing * (visible_rows.length - 1);
                 }
 
-                if (columns.length > 1)
+                if (visible_columns.length > 1)
                 {
-                    size.width += grid.column_spacing * (columns.length - 1);
+                    size.width += grid.column_spacing * (visible_columns.length - 1);
                 }
             }
             else
@@ -244,13 +244,51 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                     {
                         for (int j = 0; j < columns.length; ++j)
                         {
-                            child_allocations[i, j].size.width = (allocation.size.width - (grid.column_spacing * (columns.length - 1))) / columns.length;
-                            child_allocations[i, j].size.height = (allocation.size.height - (grid.row_spacing * (rows.length - 1))) / rows.length;
+                            if (j in visible_columns)
+                            {
+                                child_allocations[i, j].size.width = (allocation.size.width - (grid.column_spacing * (visible_columns.length - 1))) / visible_columns.length;
 
-                            if (i > 0)
-                                child_allocations[i, j].origin.y = child_allocations[i - 1, j].origin.y + grid.row_spacing + child_allocations[i - 1, j].size.height;
-                            if (j > 0)
-                                child_allocations[i, j].origin.x = child_allocations[i, j - 1].origin.x + grid.column_spacing + child_allocations[i, j - 1].size.width;
+                                bool first = true;
+                                uint prev = 0;
+                                foreach (uint c in visible_columns)
+                                {
+                                    if (c == j)
+                                    {
+                                        if (!first)
+                                        {
+                                            child_allocations[i, j].origin.x = child_allocations[i, prev].origin.x + grid.column_spacing + child_allocations[i, prev].size.width;
+                                        }
+
+                                        break;
+                                    }
+
+                                    first = false;
+                                    prev = c;
+                                }
+                            }
+
+                            if (i in visible_rows)
+                            {
+                                child_allocations[i, j].size.height = (allocation.size.height - (grid.row_spacing * (visible_rows.length - 1))) / visible_rows.length;
+
+                                bool first = true;
+                                uint prev = 0;
+                                foreach (uint r in visible_rows)
+                                {
+                                    if (r == i)
+                                    {
+                                        if (!first)
+                                        {
+                                            child_allocations[i, j].origin.y = child_allocations[prev, j].origin.y + grid.row_spacing + child_allocations[prev, j].size.height;
+                                        }
+
+                                        break;
+                                    }
+
+                                    first = false;
+                                    prev = r;
+                                }
+                            }
                         }
                     }
 
