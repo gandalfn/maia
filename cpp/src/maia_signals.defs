@@ -2054,6 +2054,15 @@
   (construct-only #f)
 )
 
+(define-property allowed-values
+  (of-object "MaiaEntry")
+  (prop-type "GParamObject")
+  (docs "allowed-values")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property changed
   (of-object "MaiaEntry")
   (prop-type "GParamObject")

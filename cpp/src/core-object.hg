@@ -136,9 +136,6 @@ namespace Maia
                 inline void find (const Glib::ustring& inName, Glib::RefPtr<T>& outChild, bool inRecurse = true);
 
                 template <typename T>
-                inline void find_in_parents (const Glib::ustring& inName, Glib::RefPtr<T>& outChild, bool inRecurse = true);
-
-                template <typename T>
                 inline void find (std::vector<Glib::RefPtr<T> >& inChilds, bool inRecurse = true);
 
                 _IGNORE(maia_core_object_iterator)

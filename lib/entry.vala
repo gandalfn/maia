@@ -55,7 +55,77 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         /**
          * Emit changed event on each update of text
          */
-        EACH_TEXT_UPDATE
+        EACH_TEXT_UPDATE;
+
+        public string
+        to_string ()
+        {
+            string ret = "never";
+
+            if (FOCUS_OUT in this)
+            {
+                ret = "focus-out";
+            }
+
+            if (RETURN in this)
+            {
+                if (ret == "never")
+                    ret = "return";
+                else
+                    ret = " | return";
+            }
+
+            if (EACH_TEXT_UPDATE in this)
+            {
+                if (ret == "never")
+                    ret = "each-text-update";
+                else
+                    ret = " | each-text-update";
+            }
+
+            return ret;
+        }
+
+        public static ChangedMask
+        from_string (string inValue)
+        {
+            ChangedMask ret = ChangedMask.NEVER;
+
+            string[] values = inValue.split("|");
+
+            foreach (unowned string? val in values)
+            {
+                switch (val.strip ().down ())
+                {
+                    case "focus-out":
+                    case "focus_out":
+                        if (ret == ChangedMask.NEVER)
+                            ret = ChangedMask.FOCUS_OUT;
+                        else
+                            ret |= ChangedMask.FOCUS_OUT;
+                        break;
+
+                    case "return":
+                        if (ret == ChangedMask.NEVER)
+                            ret = ChangedMask.RETURN;
+                        else
+                            ret |= ChangedMask.RETURN;
+                        break;
+
+                    case "each-text-update":
+                    case "each_text_update":
+                    case "each-text_update":
+                    case "each_text-update":
+                        if (ret == ChangedMask.NEVER)
+                            ret = ChangedMask.EACH_TEXT_UPDATE;
+                        else
+                            ret |= ChangedMask.EACH_TEXT_UPDATE;
+                        break;
+                }
+            }
+
+            return ret;
+        }
     }
 
     /**
@@ -98,6 +168,90 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             base ();
 
             m_Text = inText;
+        }
+    }
+
+    public class AllowedValues : GLib.Object
+    {
+        public class Iterator
+        {
+            private unowned AllowedValues m_AllowedValues;
+            private int m_Index;
+
+            internal Iterator (AllowedValues inAllowedValues)
+            {
+                m_AllowedValues = inAllowedValues;
+                m_Index = -1;
+            }
+
+            public bool
+            next ()
+            {
+                m_Index++;
+                return m_Index < m_AllowedValues.m_Values.length;
+            }
+
+            public unowned string?
+            @get ()
+            {
+                return m_AllowedValues.m_Values[m_Index];
+            }
+        }
+
+        private string[] m_Values;
+
+        internal AllowedValues ()
+        {
+            m_Values = {};
+        }
+
+        internal AllowedValues.from_string (string inValues)
+        {
+            m_Values = {};
+
+            string[] values = inValues.split(",");
+            foreach (unowned string? val in values)
+            {
+                m_Values += val.strip ();
+            }
+        }
+
+        public bool
+        contains (string inValue)
+        {
+            if (m_Values.length == 0) return true;
+
+            foreach (unowned string val in m_Values)
+            {
+                if ((inValue == val) || (inValue.length < val.length && val.has_prefix (inValue)))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public Iterator
+        iterator ()
+        {
+            return new Iterator (this);
+        }
+
+        public string
+        to_string ()
+        {
+            string ret = "";
+
+            foreach (unowned string val in this)
+            {
+                if (ret == "")
+                    ret += val;
+                else
+                    ret += "," + val;
+            }
+
+            return ret;
         }
     }
 
@@ -265,11 +419,56 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
      */
     public Graphic.Glyph.Alignment alignment { get; set; default = Graphic.Glyph.Alignment.LEFT; }
 
+    /**
+     * Allowed values in entry
+     */
+    public AllowedValues allowed_values { get; set; default = new AllowedValues (); }
+
     // events
     /**
      * The event published on text changed and following {@link changed_mask}
      */
     public Core.Event changed { get; private set; }
+
+    // static methods
+    static construct
+    {
+        Manifest.Attribute.register_transform_func (typeof (ChangedMask), attribute_to_changed_mask);
+        Manifest.Attribute.register_transform_func (typeof (AllowedValues), attribute_to_allowed_values);
+
+        GLib.Value.register_transform_func (typeof (ChangedMask), typeof (string), changed_mask_value_to_string);
+        GLib.Value.register_transform_func (typeof (AllowedValues), typeof (string), allowed_values_value_to_string);
+    }
+
+    static void
+    attribute_to_changed_mask (Manifest.Attribute inAttribute, ref GLib.Value outValue)
+    {
+        outValue = ChangedMask.from_string (inAttribute.get ());
+    }
+
+    static void
+    changed_mask_value_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (ChangedMask)))
+    {
+        ChangedMask val = (ChangedMask)inSrc;
+
+        outDest = val.to_string ();
+    }
+
+    static void
+    attribute_to_allowed_values (Manifest.Attribute inAttribute, ref GLib.Value outValue)
+    {
+        outValue = new AllowedValues.from_string (inAttribute.get ());
+    }
+
+    static void
+    allowed_values_value_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (AllowedValues)))
+    {
+        AllowedValues val = (AllowedValues)inSrc;
+
+        outDest = val.to_string ();
+    }
 
     // methods
     construct
@@ -621,11 +820,14 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                     {
                         new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), inCar.to_string ());
                     }
-                    text = new_text.str;
-                    m_Cursor ++;
-                    updated = true;
+                    if (new_text.str in allowed_values)
+                    {
+                        text = new_text.str;
+                        m_Cursor ++;
+                        updated = true;
 
-                    check_line_size ();
+                        check_line_size ();
+                    }
                 }
             }
 
