@@ -171,12 +171,18 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
     }
 
     private void
+    on_toplevel_map ()
+    {
+        if (is_realized () && is_mapped () && visible)
+        {
+            window.visible = true;
+        }
+    }
+
+    private void
     on_toplevel_unmap ()
     {
-        if (is_realized () && is_mapped ())
-        {
-            unmap ();
-        }
+        window.visible = false;
     }
 
     internal override void
@@ -186,6 +192,7 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
 
         // Set widget was realized
         set_realized (true);
+        set_has_window (true);
 
         // Create widget window
         attributes.visual = get_visual ();
@@ -263,7 +270,8 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
                 {
                     (m_Toplevel as global::Gtk.Window).set_focus.connect  (on_window_focus_changed);
                 }
-                m_Toplevel.unmap.connect  (on_toplevel_unmap);
+                m_Toplevel.map.disconnect  (on_toplevel_map);
+                m_Toplevel.unmap.disconnect  (on_toplevel_unmap);
                 m_Toplevel.notify["is-focus"].disconnect (on_focus_changed);
                 m_Toplevel.key_press_event.disconnect (on_key_press_event);
                 m_Toplevel.key_release_event.disconnect (on_key_release_event);
@@ -276,7 +284,8 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
                 {
                     (m_Toplevel as global::Gtk.Window).set_focus.connect  (on_window_focus_changed);
                 }
-                m_Toplevel.unmap.connect  (on_toplevel_unmap);
+                m_Toplevel.map.connect_after  (on_toplevel_map);
+                m_Toplevel.unmap.connect_after  (on_toplevel_unmap);
                 m_Toplevel.notify["is-focus"].connect (on_focus_changed);
                 m_Toplevel.key_press_event.connect (on_key_press_event);
                 m_Toplevel.key_release_event.connect (on_key_release_event);

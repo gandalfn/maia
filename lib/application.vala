@@ -64,6 +64,7 @@ public class Maia.Application : Maia.Core.Object
             if (m_Timeline.is_playing)
             {
                 m_Timeline.stop ();
+                restart = true;
             }
             m_Timeline.speed = value;
             m_Timeline.n_frames = value;
@@ -126,10 +127,10 @@ public class Maia.Application : Maia.Core.Object
                         {
                             Log.critical (GLib.Log.METHOD, Log.Category.MAIN, @"Error on window refresh: $(err.message)");
                         }
-                    }
 
-                    // finally swap buffer
-                    window.swap_buffer ();
+                        // finally swap buffer
+                        window.swap_buffer ();
+                    }
                 }
             }
         }
@@ -302,7 +303,7 @@ public class Maia.Application : Maia.Core.Object
         if (!have_visible && m_Timeline.is_playing)
         {
             Log.debug (GLib.Log.METHOD, Log.Category.MAIN, "Stop timeline");
-            m_Timeline.stop ();
+            m_Timeline.pause ();
         }
         else if (have_visible && !m_Timeline.is_playing && !m_Pause)
         {

@@ -59,7 +59,7 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
     // properties
     private Core.Map<string, unowned Toggle> m_Toggles;
     private Core.Map<string, Core.EventListener> m_ToggleListeners;
-    private string m_Active = null;
+    private string m_Active = "";
     private bool m_HideAllIfNoActive = false;
 
     // accessors
@@ -115,10 +115,12 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
                     check_hide_if_noactive ();
                 }
 
-                changed.publish (new ChangedEventArgs (m_Active));
+                if (changed != null && m_Active != null)
+                {
+                    changed.publish (new ChangedEventArgs (m_Active));
+                }
             }
         }
-        default = "";
     }
 
     [CCode (notify = false)]
@@ -219,7 +221,7 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
 
         if (args != null)
         {
-            if (args.active)
+            if (args.active && args.button_name != null)
             {
                 m_Active = args.button_name;
                 foreach (unowned Core.Pair<string, unowned Toggle> pair in m_Toggles)
