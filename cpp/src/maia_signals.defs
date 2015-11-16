@@ -4540,6 +4540,15 @@
   (construct-only #f)
 )
 
+(define-property position-policy
+  (of-object "MaiaPopup")
+  (prop-type "GParamFlags")
+  (docs "position-policy")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property transient-for
   (of-object "MaiaPopup")
   (prop-type "GParamObject")
@@ -5055,6 +5064,15 @@
   (of-object "MaiaWindow")
   (prop-type "GParamEnum")
   (docs "window-type")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property position-policy
+  (of-object "MaiaWindow")
+  (prop-type "GParamFlags")
+  (docs "position-policy")
   (readable #t)
   (writable #t)
   (construct-only #f)

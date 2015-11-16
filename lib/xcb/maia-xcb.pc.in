@@ -8,6 +8,6 @@ includedir=@includedir@/maia-@MAIA_ABI@
 Name: maia-xcb-@MAIA_ABI@
 Description: Maia XCB library
 Version: @MAIA_VERSION@
-Requires: maia-@MAIA_ABI@ xcb >= @XCB_REQUIRED@
+Requires: maia-@MAIA_ABI@ xcb >= @XCB_REQUIRED@ xcb-randr >= @XCB_REQUIRED@
 Libs: -Wl,-rpath=${libdir} -L${libdir} -lmaia-xcb
 Cflags: -I${includedir}

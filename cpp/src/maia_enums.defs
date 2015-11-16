@@ -4742,6 +4742,7 @@
 ;; Original typedef:
 ;; typedef enum  {
 ;; 	MAIA_WINDOW_TYPE_TOPLEVEL,
+;; 	MAIA_WINDOW_TYPE_POPUP,
 ;; 	MAIA_WINDOW_TYPE_CHILD
 ;; } MaiaWindowType;
 
@@ -4750,7 +4751,25 @@
   (c-name "MaiaWindowType")
   (values
     '("toplevel" "MAIA_WINDOW_TYPE_TOPLEVEL" "0")
-    '("child" "MAIA_WINDOW_TYPE_CHILD" "1")
+    '("popup" "MAIA_WINDOW_TYPE_POPUP" "1")
+    '("child" "MAIA_WINDOW_TYPE_CHILD" "2")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_WINDOW_POSITION_POLICY_NONE = 1 << 0,
+;; 	MAIA_WINDOW_POSITION_POLICY_ALWAYS_CENTER = 1 << 1,
+;; 	MAIA_WINDOW_POSITION_POLICY_CLAMP_MONITOR = 1 << 2
+;; } MaiaWindowPositionPolicy;
+
+(define-flags-extended WindowPositionPolicy
+  (in-module "Maia")
+  (c-name "MaiaWindowPositionPolicy")
+  (values
+    '("none" "MAIA_WINDOW_POSITION_POLICY_NONE" "1 << 0")
+    '("always-center" "MAIA_WINDOW_POSITION_POLICY_ALWAYS_CENTER" "1 << 1")
+    '("clamp-monitor" "MAIA_WINDOW_POSITION_POLICY_CLAMP_MONITOR" "1 << 2")
   )
 )
 

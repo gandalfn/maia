@@ -180,7 +180,11 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         m_Popup.visible = false;
         m_Popup.shadow_width = 7;
         m_Popup.round_corner = 3;
+        m_Popup.window_type = Window.Type.POPUP;
+        m_Popup.position_policy = Window.PositionPolicy.CLAMP_MONITOR;
+        m_Popup.visible = false;
         m_Popup.placement = PopupPlacement.TOP;
+
 
         plug_property ("fill-pattern", m_Popup, "background-pattern");
 

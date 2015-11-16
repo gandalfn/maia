@@ -35,15 +35,21 @@ internal abstract class Maia.Xcb.Drawable : GLib.Object, Graphic.Device
         }
     }
 
+    public unowned Screen? screen {
+        get {
+            return Maia.Xcb.application[screen_num];
+        }
+    }
+
     public uint32 xid { get; construct; default = 0; }
 
     public int screen_num { get; set; default = 0; }
 
-    public virtual uint8 depth { get; set; default = 0; }
+    public virtual uint8 depth { get; set; default = (uint8)application.default_screen; }
 
     public uint32 visual {
         get {
-            return Maia.Xcb.application.find_visual_from_depth (screen_num, depth);
+            return screen.find_visual_from_depth (depth);
         }
     }
 
@@ -64,7 +70,7 @@ internal abstract class Maia.Xcb.Drawable : GLib.Object, Graphic.Device
     clear ()
     {
         var picture = global::Xcb.Render.Picture (connection);
-        var format = Maia.Xcb.application.find_format_from_depth (screen_num, depth);
+        var format = screen.find_format_from_depth (depth);
 
         picture.create (connection, xid, format);
         global::Xcb.Render.Color color = { 0, 0, 0, 0 };
@@ -91,11 +97,11 @@ internal abstract class Maia.Xcb.Drawable : GLib.Object, Graphic.Device
     copy_area (Drawable inDrawable, Graphic.Rectangle inArea, Graphic.Point inOffset = Graphic.Point (0, 0))
     {
         var src = global::Xcb.Render.Picture (connection);
-        var format_src = Maia.Xcb.application.find_format_from_depth (screen_num, depth);
+        var format_src = screen.find_format_from_depth (depth);
         src.create (connection, xid, format_src);
 
         var dst = global::Xcb.Render.Picture (connection);
-        var format_dst = Maia.Xcb.application.find_format_from_depth (inDrawable.screen_num, inDrawable.depth);
+        var format_dst = inDrawable.screen.find_format_from_depth (inDrawable.depth);
         dst.create (connection, inDrawable.xid, format_dst);
 
         src.composite (connection, global::Xcb.Render.PictOp.SRC, global::Xcb.NONE, dst,

@@ -13,6 +13,8 @@ noinst_DATA = \
     xcb.vapi \
     xcb-composite.deps \
     xcb-composite.vapi \
+    xcb-randr.deps \
+    xcb-randr.vapi \
     xcb-render.deps \
     xcb-render.vapi \
     xcb-render-util.deps \

@@ -3316,7 +3316,18 @@
   (gtype-id "MAIA_TYPE_WINDOW_TYPE")
   (values
     '("toplevel" "MAIA_WINDOW_TYPE_TOPLEVEL")
+    '("popup" "MAIA_WINDOW_TYPE_POPUP")
     '("child" "MAIA_WINDOW_TYPE_CHILD")
+  )
+)
+
+(define-flags MaiaWindowPositionPolicy
+  (c-name "MaiaWindowPositionPolicy")
+  (gtype-id "MAIA_TYPE_WINDOW_POSITION_POLICY")
+  (values
+    '("none" "MAIA_WINDOW_POSITION_POLICY_NONE")
+    '("always-center" "MAIA_WINDOW_POSITION_POLICY_ALWAYS_CENTER")
+    '("clamp-monitor" "MAIA_WINDOW_POSITION_POLICY_CLAMP_MONITOR")
   )
 )
 
@@ -14677,6 +14688,11 @@
   (return-type "GType")
 )
 
+(define-function maia_window_position_policy_get_type
+  (c-name "maia_window_position_policy_get_type")
+  (return-type "GType")
+)
+
 (define-function maia_window_new
   (c-name "maia_window_new")
   (is-constructor-of "MaiaWindow")
@@ -14922,6 +14938,21 @@
   (return-type "none")
   (parameters
     '("MaiaWindowType" "value")
+  )
+)
+
+(define-method get_position_policy
+  (of-object "MaiaWindow")
+  (c-name "maia_window_get_position_policy")
+  (return-type "MaiaWindowPositionPolicy")
+)
+
+(define-method set_position_policy
+  (of-object "MaiaWindow")
+  (c-name "maia_window_set_position_policy")
+  (return-type "none")
+  (parameters
+    '("MaiaWindowPositionPolicy" "value")
   )
 )
 
@@ -17856,6 +17887,21 @@
   (return-type "none")
   (parameters
     '("MaiaWindowType" "value")
+  )
+)
+
+(define-method get_position_policy
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_get_position_policy")
+  (return-type "MaiaWindowPositionPolicy")
+)
+
+(define-method set_position_policy
+  (of-object "MaiaPopup")
+  (c-name "maia_popup_set_position_policy")
+  (return-type "none")
+  (parameters
+    '("MaiaWindowPositionPolicy" "value")
   )
 )
 

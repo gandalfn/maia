@@ -59,6 +59,7 @@ public class Maia.PopupButton : ToggleButton
         // Create popup
         m_Popup = new Popup (@"$name-popup");
         m_Popup.window_type = Window.Type.TOPLEVEL;
+        m_Popup.position_policy = Window.PositionPolicy.ALWAYS_CENTER;
         m_Popup.visible = false;
         m_Popup.placement = PopupPlacement.ABSOLUTE;
 

@@ -137,16 +137,17 @@ public class Maia.Popup : Group
         }
     }
 
-    public Graphic.Color  shadow_color  { get; set; default = new Graphic.Color (0, 0, 0); }
-    public double         shadow_width  { get; set; default = 0.0; }
-    public Window.Border  shadow_border { get; set; default = Window.Border.ALL; }
-    public double         round_corner  { get; set; default = 5.0; }
-    public bool           close_button  { get; set; default = false; }
-    public double         border        { get; set; default = 0.0; }
-    public PopupPlacement placement     { get; set; default = PopupPlacement.TOP; }
-    public bool           animation     { get; set; default = true; }
-    public Window.Type    window_type   { get; set; default = Window.Type.CHILD; }
-    public Window?        transient_for { get; set; default = null; }
+    public Graphic.Color         shadow_color    { get; set; default = new Graphic.Color (0, 0, 0); }
+    public double                shadow_width    { get; set; default = 0.0; }
+    public Window.Border         shadow_border   { get; set; default = Window.Border.ALL; }
+    public double                round_corner    { get; set; default = 5.0; }
+    public bool                  close_button    { get; set; default = false; }
+    public double                border          { get; set; default = 0.0; }
+    public PopupPlacement        placement       { get; set; default = PopupPlacement.TOP; }
+    public bool                  animation       { get; set; default = true; }
+    public Window.Type           window_type     { get; set; default = Window.Type.CHILD; }
+    public Window.PositionPolicy position_policy { get; set; default = Window.PositionPolicy.NONE; }
+    public Window?               transient_for   { get; set; default = null; }
 
     // static methods
     static construct
@@ -221,6 +222,7 @@ public class Maia.Popup : Group
         m_Window.set_qdata<unowned Object> (Item.s_PopupWindow, this);
         m_Window.depth = 32;
         m_Window.window_type = window_type;
+        m_Window.position_policy = position_policy;
         m_Window.weak_ref (on_window_destroyed);
 
         // plug manifest path

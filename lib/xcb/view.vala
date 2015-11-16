@@ -283,6 +283,7 @@ internal class Maia.Xcb.View : Drawable
            }
         }
     }
+
     public bool is_mapped {
         get {
             bool ret = false;
@@ -334,6 +335,45 @@ internal class Maia.Xcb.View : Drawable
                     }
                 }
             }
+        }
+    }
+
+    public Graphic.Point root_position {
+        get {
+            Graphic.Point p = Graphic.Point (0, 0);
+            if (m_Realized)
+            {
+                var reply = ((global::Xcb.Window)xid).get_geometry (connection).reply (connection);
+                if (reply != null)
+                {
+                    p.x = (double)reply.x;
+                    p.y = (double)reply.y;
+                }
+
+                global::Xcb.Window xtoplevel = ((global::Xcb.Window)xid);
+
+                while (true)
+                {
+                    var reply_toplevel = xtoplevel.query_tree (connection).reply (connection);
+                    if (reply_toplevel.root != reply_toplevel.parent)
+                    {
+                        xtoplevel = reply_toplevel.parent;
+
+                        var reply_geo = xtoplevel.get_geometry (connection).reply (connection);
+                        if (reply_geo != null)
+                        {
+                            p.x += (double)reply_geo.x;
+                            p.y += (double)reply_geo.y;
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return p;
         }
     }
 

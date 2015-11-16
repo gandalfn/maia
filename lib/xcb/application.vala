@@ -91,7 +91,7 @@ internal class Maia.Xcb.Application : Core.Object
     private Engine                            m_Engine;
     private Atoms                             m_Atoms;
     private global::Xcb.Util.CursorContext    m_Cursors;
-    private global::Xcb.Render.Pictvisual?[,] m_VisualCache;
+    private Screen[]                          m_Screens = {};
     private Core.Queue<Request>               m_RequestQueue;
     private Core.Set<unowned View>            m_Views;
 
@@ -142,32 +142,10 @@ internal class Maia.Xcb.Application : Core.Object
         // Create cursor context
         m_Cursors = global::Xcb.Util.CursorContext.create (m_Connection, m_Connection.roots[m_DefaultScreen]);
 
-        // Create visual cache
-        m_VisualCache = new Pictvisual?[m_Connection.roots.length, 5];
-        var reply = ((global::Xcb.Render.Connection)m_Connection).query_pict_formats ().reply (m_Connection);
-        if (reply != null)
+        // Get all screens
+        for (int cpt = 0; cpt < m_Connection.roots.length; ++cpt)
         {
-            for (int cpt = 0; cpt < m_Connection.roots.length; ++cpt)
-            {
-                unowned global::Xcb.Render.Pictforminfo? info;
-
-                info = global::Xcb.Render.Util.find_standard_format (reply, global::Xcb.Render.Util.PictStandard.ARGB_32);
-                if (info != null)
-                    m_VisualCache[cpt, 32 / 8] = find_visual_from_info (reply, cpt, info);
-                info = global::Xcb.Render.Util.find_standard_format (reply, global::Xcb.Render.Util.PictStandard.RGB_24);
-                if (info != null)
-                    m_VisualCache[cpt, 24 / 8] = find_visual_from_info (reply, cpt, info);
-                info = global::Xcb.Render.Util.find_standard_format (reply, global::Xcb.Render.Util.PictStandard.A_8);
-                if (info != null)
-                    m_VisualCache[cpt, 8 / 8] = find_visual_from_info (reply, cpt, info);
-                info = global::Xcb.Render.Util.find_standard_format (reply, global::Xcb.Render.Util.PictStandard.A_1);
-                if (info != null)
-                    m_VisualCache[cpt, 1 / 8] = find_visual_from_info (reply, cpt, info);
-            }
-        }
-        else
-        {
-            Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "Error on get visual cache");
+            m_Screens += new Screen (m_Connection, cpt);
         }
 
         // Create window list
@@ -183,44 +161,6 @@ internal class Maia.Xcb.Application : Core.Object
         {
             view.weak_unref (on_view_destroyed);
         }
-    }
-
-    private unowned global::Xcb.Render.Pictvisual?
-    find_visual_from_info (global::Xcb.Render.QueryPictFormatsReply inReply, int inScreen, global::Xcb.Render.Pictforminfo inInfo)
-    {
-        unowned global::Xcb.Screen screen = connection.roots[inScreen];
-
-        foreach (unowned global::Xcb.Depth? depth in screen)
-        {
-            foreach (unowned global::Xcb.Visualtype? visual in depth)
-            {
-                switch (visual._class)
-                {
-                    case global::Xcb.VisualClass.TRUE_COLOR:
-                        if (inInfo.type != global::Xcb.Render.PictType.DIRECT)
-                            continue;
-                        break;
-
-                    case global::Xcb.VisualClass.DIRECT_COLOR:
-                        continue;
-
-                    case global::Xcb.VisualClass.STATIC_GRAY:
-                    case global::Xcb.VisualClass.GRAY_SCALE:
-                    case global::Xcb.VisualClass.STATIC_COLOR:
-                    case global::Xcb.VisualClass.PSEUDO_COLOR:
-                        if (inInfo.type != global::Xcb.Render.PictType.INDEXED)
-                            continue;
-                        break;
-                }
-
-                unowned global::Xcb.Render.Pictvisual? info = global::Xcb.Render.Util.find_visual_format (inReply, visual.visual_id);
-
-                if (info != null && inInfo.id == info.format)
-                    return info;
-            }
-        }
-
-        return null;
     }
 
     private void
@@ -243,16 +183,11 @@ internal class Maia.Xcb.Application : Core.Object
         }
     }
 
-    public global::Xcb.Visualid
-    find_visual_from_depth (int inScreen, uint inDepth)
+    public new unowned Screen?
+    @get (uint inScreenNum)
+        requires (inScreenNum < m_Screens.length)
     {
-        return m_VisualCache[inScreen, inDepth / 8] != null ? m_VisualCache[inScreen, inDepth / 8].visual : global::Xcb.NONE;
-    }
-
-    public global::Xcb.Render.Pictformat
-    find_format_from_depth (int inScreen, uint inDepth)
-    {
-        return m_VisualCache[inScreen, inDepth / 8] != null ? m_VisualCache[inScreen, inDepth / 8].format : global::Xcb.NONE;
+        return m_Screens[inScreenNum];
     }
 
     public bool

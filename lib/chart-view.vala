@@ -196,25 +196,6 @@ public class Maia.ChartView : Group, ItemPackable
         {
             if (inChartPoint.title != null)
             {
-                // Create chartpoint path
-                Path path = new Path (@"legend-$(inChartPoint.chart)-point-$m_NbItems-path", inChartPoint.path);
-                inChartPoint.plug_property ("stroke-pattern", path, "stroke-pattern");
-                inChartPoint.plug_property ("fill-pattern", path, "fill-pattern");
-                inChartPoint.plug_property ("stroke-width", path, "line-width");
-                if (m_NbItems == 0)
-                {
-                    m_ChartView.plug_property ("legend-border", path, "top-padding");
-                }
-                m_ChartView.plug_property ("legend-border", path, "bottom-padding");
-                m_ChartView.plug_property ("legend-border", path, "left-padding");
-                m_ChartView.plug_property ("legend-border", path, "right-padding");
-                path.size = Graphic.Size (16, 16);
-                path.row = m_NbItems;
-                path.column = 0;
-                path.xfill = false;
-                path.xexpand = false;
-                add (path);
-
                 // Create chartpoint legend label
                 Label label = new Label (@"legend-$(inChartPoint.chart)-point-$m_NbItems-label", inChartPoint.title);
                 inChartPoint.plug_property ("title", label, "text");
@@ -231,6 +212,25 @@ public class Maia.ChartView : Group, ItemPackable
                 label.alignment = Graphic.Glyph.Alignment.LEFT;
                 label.xshrink = false;
                 add (label);
+
+                // Create chartpoint path
+                Path path = new Path (@"legend-$(inChartPoint.chart)-point-$m_NbItems-path", inChartPoint.path);
+                inChartPoint.plug_property ("stroke-pattern", path, "stroke-pattern");
+                inChartPoint.plug_property ("fill-pattern", path, "fill-pattern");
+                inChartPoint.plug_property ("stroke-width", path, "line-width");
+                if (m_NbItems == 0)
+                {
+                    m_ChartView.plug_property ("legend-border", path, "top-padding");
+                }
+                m_ChartView.plug_property ("legend-border", path, "bottom-padding");
+                m_ChartView.plug_property ("legend-border", path, "left-padding");
+                m_ChartView.plug_property ("legend-border", path, "right-padding");
+                path.size = Graphic.Size (12, 12);
+                path.row = m_NbItems;
+                path.column = 0;
+                path.xfill = false;
+                path.xexpand = false;
+                add (path);
 
                 // Increment the number of chart
                 m_NbItems++;
@@ -1355,8 +1355,8 @@ public class Maia.ChartView : Group, ItemPackable
 
                         var path = new Graphic.Path.from_data (point.path);
                         var path_area = inContext.get_path_area (path);
-                        double scale_x = point.size.width / path_area.size.width;
-                        double scale_y = point.size.height / path_area.size.height;
+                        double scale_x = (chart.line_width * 4) / path_area.size.width;
+                        double scale_y = (chart.line_width * 4) / path_area.size.height;
                         path.transform (new Graphic.Transform.init_scale (scale_x, scale_y));
 
                         // paint point position
@@ -1371,7 +1371,8 @@ public class Maia.ChartView : Group, ItemPackable
                                 inContext.pattern = point.fill_pattern;
                                 inContext.fill (path);
                             }
-                            else if (point.stroke_pattern != null)
+
+                            if (point.stroke_pattern != null)
                             {
                                 inContext.line_width = point.stroke_width;
                                 inContext.pattern = point.stroke_pattern;

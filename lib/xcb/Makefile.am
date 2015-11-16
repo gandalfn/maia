@@ -19,6 +19,7 @@ libmaia_xcb_la_CFLAGS = \
 
 libmaia_xcb_la_VALAFLAGS = \
     --pkg=xcb \
+    --pkg=xcb-randr \
     --pkg=xcb-composite \
     --pkg=xcb-render-util \
     --pkg=xcb-keysyms \
@@ -32,6 +33,8 @@ libmaia_xcb_la_SOURCES = \
     cursor.vala \
     connection-watch.vala \
     atoms.vala \
+    monitor.vala \
+    screen.vala \
     application.vala \
     delete-event-args.vala \
     drawable.vala \

@@ -1,6 +1,6 @@
 m4_define(maia_version_major, 0)
 m4_define(maia_version_minor, 3)
-m4_define(maia_version_micro, 8)
+m4_define(maia_version_micro, 9)
 AC_INIT([maia],[maia_version_major.maia_version_minor.maia_version_micro])
 AC_PREREQ(2.63)
 
@@ -116,6 +116,7 @@ dnl ****************************************************************************
 dnl Check for xcb packages
 dnl ****************************************************************************
 PKG_CHECK_MODULES(MAIA_XCB, [xcb >= $XCB_REQUIRED
+                             xcb-randr >= $XCB_REQUIRED
                              xcb-composite >= $XCB_REQUIRED
                              xcb-keysyms >= $XCB_UTIL_KEYSYMS_REQUIRED
                              xcb-cursor >= $XCB_UTIL_CURSOR_REQUIRED])

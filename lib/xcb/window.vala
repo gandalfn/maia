@@ -103,16 +103,16 @@ internal class Maia.Xcb.Window : Maia.Window
     private void
     on_close_button_changed ()
     {
-        if (m_View != null && window_type == Type.TOPLEVEL)
+        if (m_View != null && (window_type == Type.TOPLEVEL || window_type == Type.POPUP))
         {
-            m_View.override_redirect = close_button;
+            m_View.override_redirect = close_button || window_type == Type.POPUP;
         }
     }
 
     private void
     on_parent_view_changed ()
     {
-        if (m_View != null && window_type == Type.TOPLEVEL)
+        if (m_View != null && (window_type == Type.TOPLEVEL || window_type == Type.POPUP))
         {
             m_View.parent = null;
         }
@@ -148,7 +148,28 @@ internal class Maia.Xcb.Window : Maia.Window
         {
             if (m_View.override_redirect)
             {
-                m_View.position = Graphic.Point ((1920 - size.width) / 2, (1080 - size.height) / 2);
+                var pos = position;
+
+                if (PositionPolicy.ALWAYS_CENTER in position_policy)
+                {
+                    Graphic.Rectangle monitorGeometry =  m_View.screen.get_monitor_at (Graphic.Point (0, 0)).geometry;
+                    pos = Graphic.Point (monitorGeometry.origin.x + (monitorGeometry.size.width - size.width) / 2, monitorGeometry.origin.y + (monitorGeometry.size.height - size.height) / 2);
+                }
+                else
+                {
+                    pos.translate (parent_viewport.visible_area.origin.invert ());
+                    pos.translate (parent_viewport.view.root_position);
+                }
+
+                Graphic.Rectangle geo = Graphic.Rectangle (0, 0, 0, 0);
+                geo.origin = pos;
+                geo.size = m_View.size;
+                if (PositionPolicy.CLAMP_MONITOR in position_policy)
+                {
+                    geo.clamp (m_View.screen.get_monitor_at (pos).geometry);
+                }
+
+                m_View.position = geo.origin;
             }
             else
             {
@@ -270,7 +291,23 @@ internal class Maia.Xcb.Window : Maia.Window
         {
             if (m_View.override_redirect)
             {
-                m_View.position = Graphic.Point ((1920 - size.width) / 2, (1080 - size.height) / 2);
+                var pos = position;
+
+                if (PositionPolicy.ALWAYS_CENTER in position_policy)
+                {
+                    Graphic.Rectangle monitorGeometry =  m_View.screen.get_monitor_at (Graphic.Point (0, 0)).geometry;
+                    pos = Graphic.Point (monitorGeometry.origin.x + (monitorGeometry.size.width - size.width) / 2, monitorGeometry.origin.y + (monitorGeometry.size.height - size.height) / 2);
+                }
+
+                Graphic.Rectangle geo = Graphic.Rectangle (0, 0, 0, 0);
+                geo.origin = pos;
+                geo.size = m_View.size;
+                if (PositionPolicy.CLAMP_MONITOR in position_policy)
+                {
+                    geo.clamp (m_View.screen.get_monitor_at (pos).geometry);
+                }
+
+                m_View.position = geo.origin;
             }
             else
             {

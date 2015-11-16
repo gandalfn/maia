@@ -38,7 +38,16 @@ public class Maia.Window : Group
     public enum Type
     {
         TOPLEVEL,
+        POPUP,
         CHILD
+    }
+
+    [Flags]
+    public enum PositionPolicy
+    {
+        NONE,
+        ALWAYS_CENTER,
+        CLAMP_MONITOR
     }
 
     // properties
@@ -76,6 +85,8 @@ public class Maia.Window : Group
     internal double close_button_scale { get; set; default = 0.75; }
 
     public Type window_type { get; set; default = Type.CHILD; }
+
+    public PositionPolicy position_policy { get; set; default = PositionPolicy.NONE; }
 
     public unowned uint32 foreign { get; construct; default = 0; }
 
