@@ -52,6 +52,8 @@ const string manifest = "Window.test {" +
                         "       ChartPoint.point {" +
                         "           chart: chart;" +
                         "           title: 'point 1:\nx = 35\ny = 307.5';" +
+                        "           path: 'M2,8 A6,6,0,1,0,14,8 M14,8 A6,6,0,1,0,2,8'; " +
+                        "           fill-pattern: #FF0000; " +
                         "           position: 35, 307.5;" +
                         "       }" +
                         "       ChartPoint.point2 {" +
