@@ -221,7 +221,7 @@ public class Maia.Group : Item
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "%s motion event in %s", name, item.name);
 
                         // if item over pointer change unset pointer over for old item
-                        if (item_over_pointer is Item && item != item_over_pointer && item_over_pointer.pointer_over)
+                        if (item_over_pointer != null && item_over_pointer is Item && item != item_over_pointer && item_over_pointer.pointer_over)
                         {
                             item_over_pointer.pointer_over = false;
                         }

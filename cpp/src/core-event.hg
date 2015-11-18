@@ -45,11 +45,19 @@ namespace Maia
                     return Glib::RefPtr<Event> (new Event (pEvent));
                 }
 
-                template<typename T_obj>
-                static Glib::RefPtr<Event>
-                create (const Glib::ustring& inName, T_obj obj, const Glib::RefPtr<EventBus>& inpBus = EventBus::get_default ())
+                template <typename T_obj>
+                static typename std::enable_if<!std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<Event>>::type
+                create (const Glib::ustring& inName, const T_obj& obj, const Glib::RefPtr<EventBus>& inpBus = EventBus::get_default ())
                 {
                     MaiaCoreEvent* pEvent = maia_core_event_new (inName.c_str (), (void*)&obj, const_cast<MaiaCoreEventBus*> (inpBus->gobj ()));
+                    return Glib::RefPtr<Event> (new Event (pEvent));
+                }
+
+                template <typename T_obj>
+                static typename std::enable_if<std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<Event>>::type
+                create (const Glib::ustring& inName, const T_obj& obj, const Glib::RefPtr<EventBus>& inpBus = EventBus::get_default ())
+                {
+                    MaiaCoreEvent* pEvent = maia_core_event_new (inName.c_str (), (void*)(obj.gobj()), const_cast<MaiaCoreEventBus*> (inpBus->gobj ()));
                     return Glib::RefPtr<Event> (new Event (pEvent));
                 }
 
