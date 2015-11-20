@@ -429,9 +429,9 @@ public class Maia.Core.Set<V> : Collection<V>
 
             m_Size++;
 
-            iter = new Iterator<V> (this, node);
-
             stamp++;
+
+            iter = new Iterator<V> (this, node);
         }
         else
         {

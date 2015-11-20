@@ -59,7 +59,7 @@ public abstract class Maia.Core.BusService : Bus
                 if (client != null && (notification.message.destination == 0 || notification.message.destination == client.id))
                 {
                     // send message to client
-                    client.send.begin (notification.message);
+                    client.send_async.begin (notification.message);
 
                     // if no broadcast stop on first match
                     if (notification.message.destination != 0) break;
@@ -77,7 +77,7 @@ public abstract class Maia.Core.BusService : Bus
 
         try
         {
-            Bus.MessageAuth? msg = (yield inClient.recv ()) as Bus.MessageAuth;
+            Bus.MessageAuth? msg = (yield inClient.recv_async ()) as Bus.MessageAuth;
 
             Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Receive auth %s", msg.auth_type.to_string ());
             if (msg != null)
@@ -111,7 +111,7 @@ public abstract class Maia.Core.BusService : Bus
 
                         // Send reply
                         Bus.MessageStatus reply = new Bus.MessageStatus(found ? Bus.Status.ERROR : Bus.Status.OK);
-                        yield inClient.send (reply);
+                        yield inClient.send_async (reply);
                         ret = !found;
 
                         // Send client connected signal to restart watch

@@ -129,7 +129,14 @@ public class Maia.Core.EventListener : Object
         }
         if (m_Connection != null && !event_destroyed)
         {
-            m_Connection.send.begin (new EventBus.MessageUnsubscribe (m_EventHash));
+            try
+            {
+                m_Connection.send (new EventBus.MessageUnsubscribe (m_EventHash));
+            }
+            catch (BusError err)
+            {
+                Log.error (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Error on send unsubscribe: $(err.message)");
+            }
             m_Connection.weak_unref (on_connection_destroy);
         }
     }
@@ -166,7 +173,6 @@ public class Maia.Core.EventListener : Object
     {
         m_Connection = inConnection;
         m_Connection.weak_ref (on_connection_destroy);
-        m_Connection.send.begin (new EventBus.MessageSubscribe (m_EventHash));
     }
 
     internal new void

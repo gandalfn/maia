@@ -77,9 +77,9 @@ public class Maia.TestBus : Maia.TestCase
     {
         base ("bus");
 
-        add_test ("socket-bus", test_socket_bus);
+        //add_test ("socket-bus", test_socket_bus);
         add_test ("event-bus",  test_event_bus);
-        //add_test ("event-bus-multithread",  test_event_bus_multithread);
+        add_test ("event-bus-multithread",  test_event_bus_multithread);
         add_test ("event-bus-reply",  test_event_bus_reply);
         add_test ("event-bus-contention", test_event_bus_contention);
     }
@@ -131,7 +131,7 @@ public class Maia.TestBus : Maia.TestCase
                     data = new GLib.Variant ("(s)", "reply client 2");
                     var reply = new Core.Bus.MessageData (data);
                     reply.destination = client1.id;
-                    client2.send.begin (reply);
+                    client2.send_async.begin (reply);
                 }
             });
 
@@ -150,7 +150,7 @@ public class Maia.TestBus : Maia.TestCase
             }
             client1.notifications["connected"].add_observer ((n) => {
                 var data = new GLib.Variant ("(s)", "test bus message");
-                client1.send.begin (new Core.Bus.MessageData (data));
+                client1.send_async.begin (new Core.Bus.MessageData (data));
             });
 
             client1.notifications["message-received"].add_observer ((n) => {
@@ -376,7 +376,7 @@ public class Maia.TestBus : Maia.TestCase
     {
         Core.Event[] events = {};
 
-        for (int cpt = 0; cpt < 2000; ++cpt)
+        for (int cpt = 0; cpt < 5000; ++cpt)
         {
             events += new Core.Event ("test-event-bus-contention", cpt.to_pointer ());
             events[cpt].subscribe ((args) => {
@@ -386,13 +386,13 @@ public class Maia.TestBus : Maia.TestCase
 
                     Test.message ("name: %s val: %u", event_args.name, event_args.val);
 
-                    if (event_args.val == 1999) loop.quit ();
+                    if (event_args.val == 4999) loop.quit ();
                 }
             });
         }
 
         GLib.Timeout.add_seconds (5, () => {
-            for (int cpt = 0; cpt < 2000; ++cpt)
+            for (int cpt = 0; cpt < 5000; ++cpt)
             {
                 events[cpt].publish (new TestEventArgs (@"$cpt", cpt));
             }

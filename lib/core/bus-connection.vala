@@ -37,12 +37,12 @@ public abstract class Maia.Core.BusConnection : Bus
         notifications.add (new MessageReceivedNotification ("message-received"));
     }
 
-    protected BusConnection (string inUUID, Watch inRecvWatch, Watch inSendWatch)
+    protected BusConnection (string inUUID)
     {
-        GLib.Object (uuid: inUUID, recv_watch: inRecvWatch, send_watch: inSendWatch);
+        GLib.Object (uuid: inUUID);
     }
 
-    protected async bool
+    protected bool
     connect_to_service ()
     {
         bool ret = false;
@@ -52,9 +52,9 @@ public abstract class Maia.Core.BusConnection : Bus
         try
         {
             Bus.MessageAuth msg = new MessageAuth (Bus.AuthType.NONE);
-            yield send (msg);
+            send (msg);
 
-            Bus.MessageStatus reply = (yield recv ()) as Bus.MessageStatus;
+            Bus.MessageStatus reply = recv () as Bus.MessageStatus;
             ret = reply.status == Bus.Status.OK;
 
             if (ret) notifications["connected"].post ();

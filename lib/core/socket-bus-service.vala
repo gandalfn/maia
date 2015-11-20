@@ -111,13 +111,25 @@ public class Maia.Core.SocketBusService : BusService
     }
 
     internal override size_t
-    write (uint8[] inData, uint inTimeout) throws BusError
+    write (uint8[] inData) throws BusError
+    {
+        return 0;
+    }
+
+    internal override async size_t
+    write_async (uint8[] inData, GLib.Cancellable? inCancellable) throws BusError
     {
         return 0;
     }
 
     internal override size_t
-    read (uint8[] inData, uint inTimeout) throws BusError
+    read (uint8[] inData) throws BusError
+    {
+        return 0;
+    }
+
+    internal override async size_t
+    read_async (uint8[] inData, GLib.Cancellable? inCancellable) throws BusError
     {
         return 0;
     }

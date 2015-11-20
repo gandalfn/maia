@@ -143,6 +143,7 @@ public class Maia.Core.Notification : Object
     public void
     post ()
     {
+        ref ();
         foreach (unowned Core.Object? child in this)
         {
             unowned Observer? observer = child as Observer;
@@ -151,6 +152,7 @@ public class Maia.Core.Notification : Object
                 observer.notify ();
             }
         }
+        unref ();
     }
 
     public virtual void
@@ -200,10 +202,11 @@ public class Maia.Core.Notifications : GLib.Object
         return m_Notifications.search<uint32> ((uint32)GLib.Quark.from_string (inName), Notification.compare_with_id);
     }
 
-    public void
+    public unowned Notification?
     add (Notification inNotification)
     {
-        m_Notifications.insert (inNotification);
+        var iter = m_Notifications.insert (inNotification);
+        return iter.get ();
     }
 
     public void

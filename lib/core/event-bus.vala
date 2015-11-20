@@ -28,6 +28,7 @@ public class Maia.Core.EventBus : Object
         EVENT_REPLY,
         EVENT_DESTROY,
         SUBSCRIBE,
+        SUBSCRIBE_RESULT,
         UNSUBSCRIBE;
 
         public string
@@ -45,6 +46,8 @@ public class Maia.Core.EventBus : Object
                     return "EventDestroy";
                 case SUBSCRIBE:
                     return "Subscribe";
+                case SUBSCRIBE_RESULT:
+                    return "SubscribeResult";
                 case UNSUBSCRIBE:
                     return "Unsubscribe";
             }
@@ -55,67 +58,25 @@ public class Maia.Core.EventBus : Object
 
     private class MessageEventAdvertise : Bus.Message
     {
-        private bool                 m_Parsed;
-        private Core.Set<Event.Hash> m_Hashs;
-
-        public Core.Set<Event.Hash> hash {
-            get {
-                parse ();
-                return m_Hashs;
-            }
-        }
-
-        construct
-        {
-            m_Hashs = new Core.Set<Event.Hash> ();
-            m_Hashs.compare_func = Event.Hash.compare;
-        }
-
-        public MessageEventAdvertise (Event.Hash inEventHash)
-        {
-            var builder = new GLib.VariantBuilder (new GLib.VariantType ("a{su}"));
-            builder.add ("{su}", inEventHash.name (), inEventHash.owner);
-            var data = builder.end ();
-
-            uint32 size = (uint32)data.get_size ();
-            GLib.Object (message_type: MessageType.EVENT_ADVERTISE, message_size: size);
-            set_variant (Bus.Message.HEADER_SIZE, data);
-        }
-
-        public MessageEventAdvertise.list (Core.Set<Occurence> inList)
-        {
-            var builder = new GLib.VariantBuilder (new GLib.VariantType ("a{su}"));
-            foreach (unowned Occurence occurence in inList)
-            {
-                builder.add ("{su}", occurence.hash.name (), occurence.hash.owner);
-            }
-            var data = builder.end ();
-
-            uint32 size = (uint32)data.get_size ();
-            GLib.Object (message_type: MessageType.EVENT_ADVERTISE, message_size: size);
-            set_variant (Bus.Message.HEADER_SIZE, data);
-        }
-
-        private void
-        parse ()
-        {
-            if (!m_Parsed)
-            {
-                var data = get_variant (Bus.Message.HEADER_SIZE, "a{su}");
-
-                if (data != null)
+        public Event.Hash hash {
+            owned get {
+                string name = "";
+                uint32 owner = 0;
+                var v = get_variant (Bus.Message.HEADER_SIZE, "(su)");
+                if (v != null)
                 {
-                    foreach (GLib.Variant iter in data)
-                    {
-                        unowned string name;
-                        uint32 owner;
-
-                        iter.get ("{&su}", out name, out owner);
-                        m_Hashs.insert (new Event.Hash.raw (name, (void*)owner));
-                    }
+                    v.get ("(su)", out name, out owner);
                 }
-                m_Parsed = true;
+                return new Event.Hash.raw (name, (void*)owner);
             }
+        }
+
+        public MessageEventAdvertise (Event.Hash inHash)
+        {
+            var data = new GLib.Variant ("(su)", inHash.name (), inHash.owner);
+            uint32 size = (uint32)data.get_size ();
+            GLib.Object (message_type: MessageType.EVENT_ADVERTISE, message_size: size);
+            set_variant (Bus.Message.HEADER_SIZE, data);
         }
     }
 
@@ -319,6 +280,52 @@ public class Maia.Core.EventBus : Object
         }
     }
 
+    internal class MessageSubscribeResult : Bus.Message
+    {
+        private bool        m_Parsed = false;
+        private Event.Hash  m_Hash;
+        private bool        m_Subscribed;
+
+        public Event.Hash hash {
+            get {
+                parse ();
+                return m_Hash;
+            }
+        }
+
+        public bool subscribed {
+            get {
+                parse ();
+                return m_Subscribed;
+            }
+        }
+
+        public MessageSubscribeResult (Event.Hash inHash, bool inSubscribed)
+        {
+            var data = new GLib.Variant ("(sub)", inHash.name (), inHash.owner, inSubscribed);
+            uint32 size = (uint32)data.get_size ();
+            GLib.Object (message_type: MessageType.SUBSCRIBE_RESULT, message_size: size);
+            set_variant (Bus.Message.HEADER_SIZE, data);
+        }
+
+        private void
+        parse ()
+        {
+            if (!m_Parsed)
+            {
+                string name = "";
+                uint32 owner = 0;
+                var v = get_variant (Bus.Message.HEADER_SIZE, "(sub)");
+                if (v != null)
+                {
+                    v.get ("(sub)", out name, out owner, out m_Subscribed);
+                }
+                m_Hash = new Event.Hash.raw (name, (void*)owner);
+                m_Parsed = true;
+            }
+        }
+    }
+
     internal class MessageUnsubscribe : Bus.Message
     {
         public Event.Hash hash {
@@ -518,7 +525,7 @@ public class Maia.Core.EventBus : Object
 
         ~Engine ()
         {
-            Log.debug ("~Engine", Log.Category.MAIN_EVENT, @"Destroy event-bus engine $((GLib.Quark)m_EventBus.id)");
+            Log.debug ("Maia.Core.~Engine", Log.Category.MAIN_EVENT, @"Destroy event-bus engine $((GLib.Quark)m_EventBus.id)");
             stop ();
         }
 
@@ -592,45 +599,38 @@ public class Maia.Core.EventBus : Object
         private void
         on_message_received (Core.Notification inNotification)
         {
-            unowned BusConnection.MessageReceivedNotification? notification =  inNotification as BusConnection.MessageReceivedNotification;
+            unowned BusConnection.MessageReceivedNotification? notification = inNotification as BusConnection.MessageReceivedNotification;
 
             if (notification != null)
             {
                 unowned Bus.Message message = notification.message;
 
-                if (message is MessageEventAdvertise)
+                if (message is MessageSubscribeResult)
                 {
-                    unowned MessageEventAdvertise? msg =  (MessageEventAdvertise)message;
+                    unowned MessageSubscribeResult? msg =  (MessageSubscribeResult)message;
+                    Event.Hash hash = msg.hash;
 
-                    foreach (unowned Event.Hash hash in msg.hash)
+                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Event subscribe result $hash: $(msg.subscribed)");
+                    unowned EventListenerPool? pool = m_Pendings.search<Event.Hash> (hash, EventListenerPool.compare_with_event_hash);
+
+                    if (pool != null)
                     {
-                        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "Event advertise %s", hash.to_string ());
-                        unowned EventListenerPool? pool = m_Subscribers.search<Event.Hash> (hash, EventListenerPool.compare_with_event_hash);
-                        if (pool == null)
+                        if (msg.subscribed)
                         {
-                            pool = m_Pendings.search<Event.Hash> (hash, EventListenerPool.compare_with_event_hash);
+                            m_Subscribers.insert (pool);
 
-                            if (pool != null)
+                            foreach (unowned Core.Object? child in pool)
                             {
-                                m_Subscribers.insert (pool);
-                                m_Pendings.remove (pool);
+                                unowned EventListener? listener = (EventListener)child;
 
-                                foreach (unowned Core.Object child in pool)
+                                if (listener != null)
                                 {
-                                    unowned EventListener? listener = (EventListener)child;
-
-                                    if (listener != null)
-                                    {
-                                        listener.attach (m_Connection);
-                                    }
+                                    listener.attach (m_Connection);
                                 }
                             }
-                            else
-                            {
-                                var new_pool = new EventListenerPool (hash);
-                                m_Subscribers.insert (new_pool);
-                            }
                         }
+
+                        m_Pendings.remove (pool);
                     }
                 }
                 else if (message is MessageEvent)
@@ -646,7 +646,14 @@ public class Maia.Core.EventBus : Object
                         {
                             MessageEventReply reply = new MessageEventReply (msg.hash, args);
                             reply.destination = msg.sender;
-                            m_Connection.send.begin (reply);
+                            try
+                            {
+                                m_Connection.send (reply);
+                            }
+                            catch (BusError err)
+                            {
+                                Log.error (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Error on send message event: $(err.message)");
+                            }
                         }
                     }
                 }
@@ -679,7 +686,15 @@ public class Maia.Core.EventBus : Object
         {
             Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "Advertise %s 0x%lx", inEvent.name, (ulong)inEvent.owner);
 
-            m_Connection.send.begin (new MessageEventAdvertise (new Event.Hash (inEvent)));
+            var msg = new MessageEventAdvertise (new Event.Hash (inEvent));
+            try
+            {
+                m_Connection.send (msg);
+            }
+            catch (BusError err)
+            {
+                Log.error (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Error on send abvertise message: $(err.message)");
+            }
         }
 
         public void
@@ -701,14 +716,30 @@ public class Maia.Core.EventBus : Object
             }
 
             // Send destroy event message
-            m_Connection.send.begin (new MessageDestroyEvent (inEvent));
+            var msg = new MessageDestroyEvent (inEvent);
+            try
+            {
+                m_Connection.send (msg);
+            }
+            catch (BusError err)
+            {
+                Log.error (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Error on send destroy message: $(err.message)");
+            }
         }
 
         public void
         publish (string inName, void* inOwner, EventArgs? inArgs = null)
         {
             Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "Create message publish %s", inName);
-            m_Connection.send.begin (new MessageEvent (inName, inOwner, inArgs));
+            var msg = new MessageEvent (inName, inOwner, inArgs);
+            try
+            {
+                m_Connection.send (msg);
+            }
+            catch (BusError err)
+            {
+                Log.error (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Error on send publish message: $(err.message)");
+            }
         }
 
         public void
@@ -718,7 +749,15 @@ public class Maia.Core.EventBus : Object
             ReplyHandler reply = new ReplyHandler (inArgs.sequence, hash, inReply);
             m_ReplyHandlers.insert (reply);
 
-            m_Connection.send.begin (new MessageEvent (inName, inOwner, inArgs, true));
+            var msg = new MessageEvent (inName, inOwner, inArgs, true);
+            try
+            {
+                m_Connection.send (msg);
+            }
+            catch (BusError err)
+            {
+                Log.error (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Error on send publish with reply message: $(err.message)");
+            }
         }
 
         public void
@@ -728,7 +767,15 @@ public class Maia.Core.EventBus : Object
             ReplyHandler reply = new ReplyHandler.object (inArgs.sequence, hash, inReply);
             m_ReplyHandlers.insert (reply);
 
-            m_Connection.send.begin (new MessageEvent (inName, inOwner, inArgs, true));
+            var msg = new MessageEvent (inName, inOwner, inArgs, true);
+            try
+            {
+                m_Connection.send (msg);
+            }
+            catch (BusError err)
+            {
+                Log.error (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Error on send object publish with reply message: $(err.message)");
+            }
         }
 
         public void
@@ -745,8 +792,15 @@ public class Maia.Core.EventBus : Object
                     var new_pool = new EventListenerPool (inListener.hash);
                     m_Pendings.insert (new_pool);
                     pool = new_pool;
+                }
+                else
+                {
                     send = false;
                 }
+            }
+            else
+            {
+                send = false;
             }
 
             if (!(inListener in pool))
@@ -755,7 +809,15 @@ public class Maia.Core.EventBus : Object
 
                 if (send)
                 {
-                    inListener.attach (m_Connection);
+                    var msg = new EventBus.MessageSubscribe (inListener.hash);
+                    try
+                    {
+                        m_Connection.send (msg);
+                    }
+                    catch (BusError err)
+                    {
+                        Log.error (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Error on send subscribe message: $(err.message)");
+                    }
                 }
             }
             else
@@ -916,31 +978,23 @@ public class Maia.Core.EventBus : Object
     private Engine         m_Engine;
     private BusService     m_Service;
     private Set<Occurence> m_Occurences;
-    private Set<Occurence> m_PendingsOccurences;
     private GLib.Private   m_Client;
 
     // static methods
     static construct
     {
-        Bus.Message.register (MessageType.EVENT_ADVERTISE, typeof (MessageEventAdvertise));
-        Bus.Message.register (MessageType.EVENT,           typeof (MessageEvent));
-        Bus.Message.register (MessageType.EVENT_REPLY,     typeof (MessageEventReply));
-        Bus.Message.register (MessageType.EVENT_DESTROY,   typeof (MessageDestroyEvent));
-        Bus.Message.register (MessageType.SUBSCRIBE,       typeof (MessageSubscribe));
-        Bus.Message.register (MessageType.UNSUBSCRIBE,     typeof (MessageUnsubscribe));
+        Bus.Message.register (MessageType.EVENT_ADVERTISE,  typeof (MessageEventAdvertise));
+        Bus.Message.register (MessageType.EVENT,            typeof (MessageEvent));
+        Bus.Message.register (MessageType.EVENT_REPLY,      typeof (MessageEventReply));
+        Bus.Message.register (MessageType.EVENT_DESTROY,    typeof (MessageDestroyEvent));
+        Bus.Message.register (MessageType.SUBSCRIBE,        typeof (MessageSubscribe));
+        Bus.Message.register (MessageType.SUBSCRIBE_RESULT, typeof (MessageSubscribeResult));
+        Bus.Message.register (MessageType.UNSUBSCRIBE,      typeof (MessageUnsubscribe));
     }
 
     // method
     construct
     {
-        // Create occurence list
-        m_Occurences = new Core.Set<Occurence> ();
-        m_Occurences.compare_func = Occurence.compare;
-
-        // Create pendings occurence list
-        m_PendingsOccurences = new Core.Set<Occurence> ();
-        m_PendingsOccurences.compare_func = Occurence.compare;
-
         // Create client private
         m_Client = new GLib.Private (GLib.Object.unref);
     }
@@ -968,9 +1022,12 @@ public class Maia.Core.EventBus : Object
     {
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Start event-bus $((GLib.Quark)id)");
 
+        // Create occurence list
+        m_Occurences = new Core.Set<Occurence> ();
+        m_Occurences.compare_func = Occurence.compare;
+
         // Create bus service
         m_Service = new SocketBusService (((GLib.Quark)id).to_string ());
-        m_Service.notifications["connection"].add_object_observer (on_new_connection);
         m_Service.set_dispatch_func (on_dispatch_message);
     }
 
@@ -997,19 +1054,6 @@ public class Maia.Core.EventBus : Object
     }
 
     private void
-    on_new_connection (Core.Notification inNotification)
-    {
-        if (m_Occurences.length > 0)
-        {
-            unowned BusService.ConnectionNotification? notification = inNotification as BusService.ConnectionNotification;
-            if (notification != null)
-            {
-                notification.connection.send.begin (new MessageEventAdvertise.list (m_Occurences));
-            }
-        }
-    }
-
-    private void
     notify_occurence_destroy_event (Occurence inOccurence, Bus.Message inMessage)
     {
         // Get list of destination of event
@@ -1024,7 +1068,7 @@ public class Maia.Core.EventBus : Object
                 {
                     Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event destroy $(((MessageDestroyEvent)inMessage).hash) to client $(client.id)");
                     // send message to client
-                    client.send.begin (inMessage);
+                    client.send_async.begin (inMessage);
                 }
             }
         }
@@ -1039,24 +1083,14 @@ public class Maia.Core.EventBus : Object
         {
             unowned MessageEventAdvertise? msg = (MessageEventAdvertise)inMessage;
 
-            foreach (unowned Event.Hash hash in msg.hash)
+            unowned Occurence? occurence = m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
+            if (occurence == null)
             {
-                unowned Occurence? occurence = m_Occurences.search<Event.Hash> (hash, Occurence.compare_with_event_hash);
-                if (occurence == null)
-                {
-                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Event $(hash) advertise");
-                    occurence = m_PendingsOccurences.search<Event.Hash> (hash, Occurence.compare_with_event_hash);
-                    if (occurence != null)
-                    {
-                        m_Occurences.insert (occurence);
-                        m_PendingsOccurences.remove (occurence);
-                    }
-                    else
-                    {
-                        m_Occurences.insert (new Occurence (hash));
-                    }
-                }
+                Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Event $(msg.hash) advertise");
+                m_Occurences.insert (new Occurence (msg.hash));
             }
+
+            ret = true;
         }
         else if (inMessage is MessageDestroyEvent)
         {
@@ -1070,14 +1104,6 @@ public class Maia.Core.EventBus : Object
                 notify_occurence_destroy_event (occurence, inMessage);
                 Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Event $(msg.hash) destroy");
                 m_Occurences.remove (occurence);
-            }
-
-            occurence = m_PendingsOccurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
-            if (occurence != null)
-            {
-                notify_occurence_destroy_event (occurence, inMessage);
-                Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Event $(msg.hash) destroy");
-                m_PendingsOccurences.remove (occurence);
             }
 
             ret = true;
@@ -1110,7 +1136,7 @@ public class Maia.Core.EventBus : Object
                         {
                             Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event $(msg.hash) to client $(client.id)");
                             // send message to client
-                            client.send.begin (inMessage);
+                            client.send_async.begin (inMessage);
                         }
                     }
                 }
@@ -1140,7 +1166,7 @@ public class Maia.Core.EventBus : Object
                         unowned BusConnection? connection = m_Service.find (msg.destination, false) as BusConnection;
                         if (connection != null)
                         {
-                            connection.send.begin (reply);
+                            connection.send_async.begin (reply);
                         }
                     }
                 }
@@ -1159,16 +1185,17 @@ public class Maia.Core.EventBus : Object
             {
                 occurence.subscribe (msg.sender);
             }
-            else
+
+            // Send subscribe result to sender
+            foreach (unowned Core.Object? child in m_Service)
             {
-                occurence = m_PendingsOccurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
-                if (occurence == null)
+                unowned BusConnection? client = child as BusConnection;
+                if (client != null && client.id == msg.sender)
                 {
-                    var new_occurence = new Occurence (msg.hash);
-                    m_PendingsOccurences.insert (new_occurence);
-                    occurence = new_occurence;
+                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send subscribe result $(occurence != null) to client $(client.id)");
+                    client.send_async.begin (new MessageSubscribeResult (msg.hash, occurence != null));
+                    break;
                 }
-                occurence.subscribe (msg.sender);
             }
 
             ret = true;
@@ -1183,15 +1210,6 @@ public class Maia.Core.EventBus : Object
             if (occurence != null)
             {
                 occurence.unsubscribe (msg.sender);
-            }
-            occurence = m_PendingsOccurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
-            if (occurence != null)
-            {
-                occurence.unsubscribe (msg.sender);
-                if (occurence.subscribers.length == 0)
-                {
-                    m_PendingsOccurences.remove (occurence);
-                }
             }
 
             ret = true;
