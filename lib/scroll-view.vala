@@ -40,7 +40,58 @@ public class Maia.ScrollView : Item
     {
         NONE                 = 0,
         VERTICAL_SCROLLING   = 1 << 0,
-        HORIZONTAL_SCROLLING = 1 << 1
+        HORIZONTAL_SCROLLING = 1 << 1;
+
+        public string
+        to_string ()
+        {
+            string ret = "";
+
+            if (VERTICAL_SCROLLING in this)
+            {
+                ret = "vertical";
+            }
+
+            if (HORIZONTAL_SCROLLING in this)
+            {
+                if (ret == "")
+                    ret = "horizontal";
+                else
+                    ret += " | horizontal";
+            }
+
+            return ret;
+        }
+
+        public static Policy
+        from_string (string inValue)
+        {
+            Policy ret = Policy.NONE;
+
+            string[] values = inValue.split("|");
+
+            foreach (unowned string? val in values)
+            {
+                switch (val.strip ().down ())
+                {
+                    case "vertical":
+                        if (ret == Policy.NONE)
+                            ret = Policy.VERTICAL_SCROLLING;
+                        else
+                            ret |= Policy.VERTICAL_SCROLLING;
+                        break;
+
+                    case "horizontal":
+                        if (ret == Policy.NONE)
+                            ret = Policy.HORIZONTAL_SCROLLING;
+                        else
+                            ret |= Policy.HORIZONTAL_SCROLLING;
+                        break;
+                }
+            }
+
+            return ret;
+        }
     }
 
     // properties
@@ -107,6 +158,29 @@ public class Maia.ScrollView : Item
     }
 
     public Policy policy { get; set; default = Policy.VERTICAL_SCROLLING | Policy.HORIZONTAL_SCROLLING; }
+
+    // static methods
+    static construct
+    {
+        Manifest.Attribute.register_transform_func (typeof (Policy), attribute_to_policy);
+
+        GLib.Value.register_transform_func (typeof (Policy), typeof (string), policy_value_to_string);
+    }
+
+    static void
+    attribute_to_policy (Manifest.Attribute inAttribute, ref GLib.Value outValue)
+    {
+        outValue = Policy.from_string (inAttribute.get ());
+    }
+
+    static void
+    policy_value_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (Policy)))
+    {
+        Policy val = (Policy)inSrc;
+
+        outDest = val.to_string ();
+    }
 
     // methods
     construct
@@ -318,8 +392,8 @@ public class Maia.ScrollView : Item
             var viewport_position = m_Viewport.position;
             var viewport_size = m_Viewport.size;
 
-            m_HSeekBar.visible = viewport_size.width > inAllocation.extents.size.width;
-            m_VSeekBar.visible = viewport_size.height > inAllocation.extents.size.height;
+            m_HSeekBar.visible = (Policy.HORIZONTAL_SCROLLING in policy) && viewport_size.width > inAllocation.extents.size.width;
+            m_VSeekBar.visible = (Policy.VERTICAL_SCROLLING in policy) && viewport_size.height > inAllocation.extents.size.height;
 
             geometry = inAllocation;
 

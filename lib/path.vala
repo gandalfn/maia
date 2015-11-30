@@ -98,6 +98,11 @@ public class Maia.Path : Item, ItemPackable, ItemMovable
     paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
         var path = new Graphic.Path.from_data (this.path);
+        var path_area = inContext.get_path_area (path);
+        double scale_x = area.extents.size.width / (path_area.origin.x + path_area.size.width);
+        double scale_y = area.extents.size.height / (path_area.origin.y + path_area.size.height);
+
+        path.transform (new Graphic.Transform.init_scale (scale_x, scale_y));
 
         if (fill_pattern != null)
         {

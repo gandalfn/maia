@@ -69,7 +69,7 @@ public class Maia.ChartPoint : Core.Object, Manifest.Element
     /**
      * Point path
      */
-    public string path { get; set; default = "M 0 0 L 16 0 L 16 16 L 0 16 z"; }
+    public string path { get; set; default = "M 0 0 L 12 0 L 12 12 L 0 12 L 0 0"; }
 
     /**
      * Point stroke width

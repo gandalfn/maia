@@ -196,6 +196,33 @@ public class Maia.ChartView : Group, ItemPackable
         {
             if (inChartPoint.title != null)
             {
+                // Calculate the size of glyph
+                var glyph =  new Graphic.Glyph (m_ChartView.font_description);
+                glyph.text = "Z";
+                var fake_surface = new Graphic.Surface (1, 1);
+                glyph.size = Graphic.Size (0, 0);
+                glyph.update (fake_surface.context);
+
+                // Create chartpoint path
+                Path path = new Path (@"legend-$(inChartPoint.chart)-point-$m_NbItems-path", inChartPoint.path);
+                inChartPoint.plug_property ("stroke-pattern", path, "stroke-pattern");
+                inChartPoint.plug_property ("fill-pattern", path, "fill-pattern");
+                inChartPoint.plug_property ("stroke-width", path, "line-width");
+                if (m_NbItems == 0)
+                {
+                    m_ChartView.plug_property ("legend-border", path, "top-padding");
+                }
+                m_ChartView.plug_property ("legend-border", path, "bottom-padding");
+                m_ChartView.plug_property ("legend-border", path, "left-padding");
+                m_ChartView.plug_property ("legend-border", path, "right-padding");
+                path.size = Graphic.Size ((2 * glyph.size.height) / 3, (2 * glyph.size.height) / 3);
+                path.row = m_NbItems;
+                path.xfill = false;
+                path.xexpand = false;
+                path.yfill = false;
+                path.yexpand = false;
+                add (path);
+
                 // Create chartpoint legend label
                 Label label = new Label (@"legend-$(inChartPoint.chart)-point-$m_NbItems-label", inChartPoint.title);
                 inChartPoint.plug_property ("title", label, "text");
@@ -212,25 +239,6 @@ public class Maia.ChartView : Group, ItemPackable
                 label.alignment = Graphic.Glyph.Alignment.LEFT;
                 label.xshrink = false;
                 add (label);
-
-                // Create chartpoint path
-                Path path = new Path (@"legend-$(inChartPoint.chart)-point-$m_NbItems-path", inChartPoint.path);
-                inChartPoint.plug_property ("stroke-pattern", path, "stroke-pattern");
-                inChartPoint.plug_property ("fill-pattern", path, "fill-pattern");
-                inChartPoint.plug_property ("stroke-width", path, "line-width");
-                if (m_NbItems == 0)
-                {
-                    m_ChartView.plug_property ("legend-border", path, "top-padding");
-                }
-                m_ChartView.plug_property ("legend-border", path, "bottom-padding");
-                m_ChartView.plug_property ("legend-border", path, "left-padding");
-                m_ChartView.plug_property ("legend-border", path, "right-padding");
-                path.size = Graphic.Size (12, 12);
-                path.row = m_NbItems;
-                path.column = 0;
-                path.xfill = false;
-                path.xexpand = false;
-                add (path);
 
                 // Increment the number of chart
                 m_NbItems++;
@@ -250,6 +258,10 @@ public class Maia.ChartView : Group, ItemPackable
     private Core.Array<unowned Label> m_XAxis;
     private unowned Label             m_YAxisLabel;
     private Core.Array<unowned Label> m_YAxis;
+    private string                    m_XAxisLabelStr = "";
+    private string                    m_YAxisLabelStr = "";
+    private string                    m_XAxisUnitStr = "";
+    private string                    m_YAxisUnitStr = "";
     private double                    m_XLabelSize;
     private double                    m_YLabelSize;
     private double                    m_XAxisSize;
@@ -375,26 +387,106 @@ public class Maia.ChartView : Group, ItemPackable
     /**
      * Label of x axis
      */
-    public string x_axis_label { get; set; default = ""; }
+    public string x_axis_label {
+        get {
+            return m_XAxisLabelStr;
+        }
+        set {
+            if (m_XAxisLabelStr != (value ?? ""))
+            {
+                m_XAxisLabelStr = (value ?? "");
+                notify_property("x-axis-label");
+                if (m_XAxisLabelStr == "")
+                {
+                    not_dumpable_attributes.insert ("x-axis-label");
+                }
+                else
+                {
+                    not_dumpable_attributes.remove ("x-axis-label");
+                }
+            }
+        }
+    }
 
     /**
      * Label of y axis
      */
-    public string y_axis_label { get; set; default = ""; }
+    [CCode (notify = false)]
+    public string y_axis_label {
+        get {
+            return m_YAxisLabelStr;
+        }
+        set {
+            if (value != null && m_YAxisLabelStr != value)
+            {
+                m_YAxisLabelStr = value;
+                notify_property("y-axis-label");
+                if (m_YAxisLabelStr == "")
+                {
+                    not_dumpable_attributes.insert ("y-axis-label");
+                }
+                else
+                {
+                    not_dumpable_attributes.remove ("y-axis-label");
+                }
+            }
+        }
+    }
 
     /**
      * Unit of x axis
      */
-    public string x_axis_unit { get; set; default = ""; }
+    [CCode (notify = false)]
+    public string x_axis_unit {
+        get {
+            return m_XAxisUnitStr;
+        }
+        set {
+            if (m_XAxisUnitStr != (value ?? ""))
+            {
+                m_XAxisUnitStr = (value ?? "");
+                notify_property("x-axis-unit");
+                if (m_XAxisUnitStr == "")
+                {
+                    not_dumpable_attributes.insert ("x-axis-unit");
+                }
+                else
+                {
+                    not_dumpable_attributes.remove ("x-axis-unit");
+                }
+            }
+        }
+    }
 
     /**
      * Unit of y axis
      */
-    public string y_axis_unit { get; set; default = ""; }
+    [CCode (notify = false)]
+    public string y_axis_unit {
+        get {
+            return m_YAxisUnitStr;
+        }
+        set {
+            if (m_YAxisUnitStr != (value ?? ""))
+            {
+                m_YAxisUnitStr = (value ?? "");
+                notify_property("y-axis-unit");
+                if (m_YAxisUnitStr == "")
+                {
+                    not_dumpable_attributes.insert ("y-axis-unit");
+                }
+                else
+                {
+                    not_dumpable_attributes.remove ("y-axis-unit");
+                }
+            }
+        }
+    }
 
     /**
      * Max tick on x axis
      */
+    [CCode (notify = false)]
     public uint x_axis_ticks { get; set; default = 10; }
 
     /**
@@ -510,13 +602,16 @@ public class Maia.ChartView : Group, ItemPackable
         m_XAxis = new Core.Array<unowned Label> ();
         m_YAxis = new Core.Array<unowned Label> ();
 
+        not_dumpable_attributes.insert ("x-axis-label");
+        not_dumpable_attributes.insert ("y-axis-label");
+        not_dumpable_attributes.insert ("x-axis-unit");
+        not_dumpable_attributes.insert ("y-axis-unit");
+
         // Connect onto x axis changed
-        notify["x-axis"].connect (on_axis_changed);
         notify["x-axis-label"].connect (on_axis_changed);
         notify["x-axis-unit"].connect (on_axis_changed);
 
         // Connect onto x axis changed
-        notify["y-axis"].connect (on_axis_changed);
         notify["y-axis-label"].connect (on_axis_changed);
         notify["y-axis-unit"].connect (on_axis_changed);
 
@@ -1355,8 +1450,8 @@ public class Maia.ChartView : Group, ItemPackable
 
                         var path = new Graphic.Path.from_data (point.path);
                         var path_area = inContext.get_path_area (path);
-                        double scale_x = (chart.line_width * 4) / path_area.size.width;
-                        double scale_y = (chart.line_width * 4) / path_area.size.height;
+                        double scale_x = point.size.width / path_area.size.width;
+                        double scale_y = point.size.height / path_area.size.height;
                         path.transform (new Graphic.Transform.init_scale (scale_x, scale_y));
 
                         // paint point position

@@ -317,6 +317,18 @@
   (gtype-id "MAIA_TYPE_CORE_STACK")
 )
 
+(define-object MaiaCoreTask
+  (parent "MaiaCoreObject")
+  (c-name "MaiaCoreTask")
+  (gtype-id "MAIA_TYPE_CORE_TASK")
+)
+
+(define-object MaiaCoreTaskPool
+  (parent "GObject")
+  (c-name "MaiaCoreTaskPool")
+  (gtype-id "MAIA_TYPE_CORE_TASK_POOL")
+)
+
 (define-object MaiaCoreTimeline
   (parent "MaiaCoreObject")
   (c-name "MaiaCoreTimeline")
@@ -1065,6 +1077,7 @@
     '("event-reply" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_EVENT_REPLY")
     '("event-destroy" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_EVENT_DESTROY")
     '("subscribe" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_SUBSCRIBE")
+    '("subscribe-result" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_SUBSCRIBE_RESULT")
     '("unsubscribe" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_UNSUBSCRIBE")
   )
 )
@@ -6697,7 +6710,6 @@
   (parameters
     '("guint8*" "inData")
     '("int" "inData_length1")
-    '("guint" "inTimeout")
     '("GError**" "error")
   )
 )
@@ -6709,25 +6721,79 @@
   (parameters
     '("guint8*" "inData")
     '("int" "inData_length1")
-    '("guint" "inTimeout")
     '("GError**" "error")
   )
 )
 
-(define-method recv
+(define-method read_async
   (of-object "MaiaCoreBus")
-  (c-name "maia_core_bus_recv")
+  (c-name "maia_core_bus_read_async")
   (return-type "none")
   (parameters
+    '("guint8*" "inData")
+    '("int" "inData_length1")
     '("GCancellable*" "inCancellable")
     '("GAsyncReadyCallback" "_callback_")
     '("gpointer" "_user_data_")
   )
 )
 
+(define-method read_finish
+  (of-object "MaiaCoreBus")
+  (c-name "maia_core_bus_read_finish")
+  (return-type "gsize")
+  (parameters
+    '("GAsyncResult*" "_res_")
+    '("GError**" "error")
+  )
+)
+
+(define-method write_async
+  (of-object "MaiaCoreBus")
+  (c-name "maia_core_bus_write_async")
+  (return-type "none")
+  (parameters
+    '("guint8*" "inData")
+    '("int" "inData_length1")
+    '("GCancellable*" "inCancellable")
+    '("GAsyncReadyCallback" "_callback_")
+    '("gpointer" "_user_data_")
+  )
+)
+
+(define-method write_finish
+  (of-object "MaiaCoreBus")
+  (c-name "maia_core_bus_write_finish")
+  (return-type "gsize")
+  (parameters
+    '("GAsyncResult*" "_res_")
+    '("GError**" "error")
+  )
+)
+
 (define-function maia_core_bus_message_get_type
   (c-name "maia_core_bus_message_get_type")
   (return-type "GType")
+)
+
+(define-method recv
+  (of-object "MaiaCoreBus")
+  (c-name "maia_core_bus_recv")
+  (return-type "MaiaCoreBusMessage*")
+  (parameters
+    '("GError**" "error")
+  )
+)
+
+(define-method recv_async
+  (of-object "MaiaCoreBus")
+  (c-name "maia_core_bus_recv_async")
+  (return-type "none")
+  (parameters
+    '("GCancellable*" "inCancellable")
+    '("GAsyncReadyCallback" "_callback_")
+    '("gpointer" "_user_data_")
+  )
 )
 
 (define-method recv_finish
@@ -6743,6 +6809,16 @@
 (define-method send
   (of-object "MaiaCoreBus")
   (c-name "maia_core_bus_send")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreBusMessage*" "inMessage")
+    '("GError**" "error")
+  )
+)
+
+(define-method send_async
+  (of-object "MaiaCoreBus")
+  (c-name "maia_core_bus_send_async")
   (return-type "none")
   (parameters
     '("MaiaCoreBusMessage*" "inMessage")
@@ -6774,33 +6850,6 @@
   (of-object "MaiaCoreBus")
   (c-name "maia_core_bus_get_uuid")
   (return-type "const-gchar*")
-)
-
-(define-method get_timeout
-  (of-object "MaiaCoreBus")
-  (c-name "maia_core_bus_get_timeout")
-  (return-type "guint")
-)
-
-(define-method set_timeout
-  (of-object "MaiaCoreBus")
-  (c-name "maia_core_bus_set_timeout")
-  (return-type "none")
-  (parameters
-    '("guint" "value")
-  )
-)
-
-(define-method get_recv_watch
-  (of-object "MaiaCoreBus")
-  (c-name "maia_core_bus_get_recv_watch")
-  (return-type "MaiaCoreWatch*")
-)
-
-(define-method get_send_watch
-  (of-object "MaiaCoreBus")
-  (c-name "maia_core_bus_get_send_watch")
-  (return-type "MaiaCoreWatch*")
 )
 
 (define-function maia_core_bus_message_register
@@ -6969,28 +7018,13 @@
   (parameters
     '("GType" "object_type")
     '("const-gchar*" "inUUID")
-    '("MaiaCoreWatch*" "inRecvWatch")
-    '("MaiaCoreWatch*" "inSendWatch")
   )
 )
 
 (define-method connect_to_service
   (of-object "MaiaCoreBusConnection")
   (c-name "maia_core_bus_connection_connect_to_service")
-  (return-type "none")
-  (parameters
-    '("GAsyncReadyCallback" "_callback_")
-    '("gpointer" "_user_data_")
-  )
-)
-
-(define-method connect_to_service_finish
-  (of-object "MaiaCoreBusConnection")
-  (c-name "maia_core_bus_connection_connect_to_service_finish")
   (return-type "gboolean")
-  (parameters
-    '("GAsyncResult*" "_res_")
-  )
 )
 
 (define-function maia_core_bus_connection_message_received_notification_get_type
@@ -7620,6 +7654,140 @@
   (return-type "none")
 )
 
+(define-function maia_core_task_get_type
+  (c-name "maia_core_task_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_task_construct
+  (c-name "maia_core_task_construct")
+  (return-type "MaiaCoreTask*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-method main
+  (of-object "MaiaCoreTask")
+  (c-name "maia_core_task_main")
+  (return-type "none")
+  (parameters
+    '("GMainContext*" "inContext")
+  )
+)
+
+(define-method finish
+  (of-object "MaiaCoreTask")
+  (c-name "maia_core_task_finish")
+  (return-type "none")
+)
+
+(define-method cancel
+  (of-object "MaiaCoreTask")
+  (c-name "maia_core_task_cancel")
+  (return-type "none")
+)
+
+(define-method add_finish_object_observer
+  (of-object "MaiaCoreTask")
+  (c-name "maia_core_task_add_finish_object_observer")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreTaskCallback" "inCallback")
+    '("void*" "inCallback_target")
+    '("GMainContext*" "inContext")
+  )
+)
+
+(define-method add_finish_observer
+  (of-object "MaiaCoreTask")
+  (c-name "maia_core_task_add_finish_observer")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreTaskCallback" "inCallback")
+    '("void*" "inCallback_target")
+    '("GMainContext*" "inContext")
+  )
+)
+
+(define-method get_name
+  (of-object "MaiaCoreTask")
+  (c-name "maia_core_task_get_name")
+  (return-type "gchar*")
+)
+
+(define-method get_is_running
+  (of-object "MaiaCoreTask")
+  (c-name "maia_core_task_get_is_running")
+  (return-type "gboolean")
+)
+
+(define-method get_is_cancelled
+  (of-object "MaiaCoreTask")
+  (c-name "maia_core_task_get_is_cancelled")
+  (return-type "gboolean")
+)
+
+(define-function maia_core_task_pool_get_type
+  (c-name "maia_core_task_pool_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_task_pool_new
+  (c-name "maia_core_task_pool_new")
+  (is-constructor-of "MaiaCoreTaskPool")
+  (return-type "MaiaCoreTaskPool*")
+  (parameters
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-function maia_core_task_pool_construct
+  (c-name "maia_core_task_pool_construct")
+  (return-type "MaiaCoreTaskPool*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-method push
+  (of-object "MaiaCoreTaskPool")
+  (c-name "maia_core_task_pool_push")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreTask*" "inTask")
+  )
+)
+
+(define-method get_name
+  (of-object "MaiaCoreTaskPool")
+  (c-name "maia_core_task_pool_get_name")
+  (return-type "const-gchar*")
+)
+
+(define-method get_is_running
+  (of-object "MaiaCoreTaskPool")
+  (c-name "maia_core_task_pool_get_is_running")
+  (return-type "gboolean")
+)
+
+(define-method get_idle_time
+  (of-object "MaiaCoreTaskPool")
+  (c-name "maia_core_task_pool_get_idle_time")
+  (return-type "guint")
+)
+
+(define-method set_idle_time
+  (of-object "MaiaCoreTaskPool")
+  (c-name "maia_core_task_pool_set_idle_time")
+  (return-type "none")
+  (parameters
+    '("guint" "value")
+  )
+)
+
 (define-function maia_core_notification_new
   (c-name "maia_core_notification_new")
   (is-constructor-of "MaiaCoreNotification")
@@ -7715,7 +7883,7 @@
 (define-method add
   (of-object "MaiaCoreNotifications")
   (c-name "maia_core_notifications_add")
-  (return-type "none")
+  (return-type "MaiaCoreNotification*")
   (parameters
     '("MaiaCoreNotification*" "inNotification")
   )
@@ -18261,6 +18429,20 @@
 (define-function maia_scroll_view_policy_get_type
   (c-name "maia_scroll_view_policy_get_type")
   (return-type "GType")
+)
+
+(define-method to_string
+  (of-object "MaiaScrollViewPolicy")
+  (c-name "maia_scroll_view_policy_to_string")
+  (return-type "gchar*")
+)
+
+(define-function maia_scroll_view_policy_from_string
+  (c-name "maia_scroll_view_policy_from_string")
+  (return-type "MaiaScrollViewPolicy")
+  (parameters
+    '("const-gchar*" "inValue")
+  )
 )
 
 (define-function maia_scroll_view_new

@@ -222,13 +222,18 @@ public abstract class Maia.Core.Task : Object
     }
 
     // notifications
-    internal Notification finished {
+    internal unowned Notification? finished {
         get {
-            return notifications["finished"] ?? notifications.add (new Notification ("finished"));
+            return notifications["finished"];
         }
     }
 
     // methods
+    construct
+    {
+        notifications.add (new Notification ("finished"));
+    }
+
     public Task (string inName)
     {
         GLib.Object (id: (uint32)GLib.Quark.from_string (inName));

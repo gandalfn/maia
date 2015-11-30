@@ -107,7 +107,7 @@ public class Maia.Manifest.Style : Core.Object, Element
                             inManifest.attribute.down () != "match"      &&
                             inManifest.attribute.down () != "match-name" &&
                             inManifest.attribute.down () != "match_name")
-                            
+
                         {
                             if (find (GLib.Quark.from_string (inManifest.attribute)) == null)
                             {
@@ -169,14 +169,37 @@ public class Maia.Manifest.Style : Core.Object, Element
             unowned Property? property = child as Property;
             if (property != null && !property.is_copy && property.scanner.first () is Attribute)
             {
-                var val = (property.scanner.first () as Attribute).to_string () ?? "''";
-                if (val.strip ().length == 0)
+                ret += inPrefix + @"$(property.name): ";
+
+                string values = "";
+                foreach (unowned Core.Object? child_scanner in ((Core.Object)property.scanner))
                 {
-                    ret += inPrefix + "%s: '%s';\n".printf (property.name, (property.scanner.first () as Attribute).to_string ()); 
+                    unowned Attribute? attribute = child_scanner as Attribute;
+                    if (attribute != null)
+                    {
+                        var val = attribute.to_string ();
+
+                        if (val != null && val.strip ().length > 0)
+                        {
+                            if (values == "")
+                            {
+                                values += @"$val";
+                            }
+                            else
+                            {
+                                values += @",$val";
+                            }
+                        }
+                    }
+                }
+
+                if (values == "")
+                {
+                    ret += "''\n;";
                 }
                 else
                 {
-                    ret += inPrefix + "%s: %s;\n".printf (property.name, (property.scanner.first () as Attribute).to_string () ?? "''");
+                    ret += @"$(values);\n";
                 }
             }
         }

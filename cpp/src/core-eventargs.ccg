@@ -40,12 +40,12 @@ namespace Maia
                     try
                     {
                         obj->set_serialize_vfunc(Glib::wrap(inData, true));
-                        return;
                     }
                     catch(...)
                     {
-                        Glib::exception_handlers_invoke();
                     }
+
+                    return;
                 }
             }
 
@@ -53,7 +53,13 @@ namespace Maia
 
             if(base && base->set_serialize)
             {
-                (*base->set_serialize)(self, inData);
+                try
+                {
+                    (*base->set_serialize)(self, inData);
+                }
+                catch (...)
+                {
+                }
             }
         }
 
