@@ -357,11 +357,16 @@ public class Maia.Window : Group
         {
             try
             {
+                print(@"position: $position, geometry: $(geometry.extents) geometry_args: $(geometry_args.area)\n");
+                if ((uint32)geometry_args.area.origin.x != (uint32)geometry.extents.origin.x ||
+                    (uint32)geometry_args.area.origin.y != (uint32)geometry.extents.origin.y)
+                {
+                    position = geometry_args.area.origin;
+                }
+
                 if ((uint32)geometry_args.area.size.width  != (uint32)geometry.extents.size.width ||
                     (uint32)geometry_args.area.size.height != (uint32)geometry.extents.size.height)
                 {
-                    position = geometry_args.area.origin;
-
                     // the size is in window with transform
                     // invert the window transform to have size in window coordinate space
                     Graphic.Size window_size = geometry_args.area.size;

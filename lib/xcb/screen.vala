@@ -26,6 +26,12 @@ internal class Maia.Xcb.Screen : Core.Object
     private Monitor[]                       m_Monitors = {};
 
     // accessors
+    public unowned global::Xcb.Screen? xscreen {
+        get {
+            return connection.roots[(int)id];
+        }
+    }
+
     public global::Xcb.Connection connection {
         get {
             return m_Connection;

@@ -246,6 +246,7 @@ internal class Maia.Xcb.MoveRequest : Request
     {
         uint16 mask = global::Xcb.ConfigWindow.X |
                       global::Xcb.ConfigWindow.Y;
+        print(@"move to $(GLib.Math.floor (view.position.x)), $((uint32)GLib.Math.floor (view.position.y)), position $(view.position)\n");
         uint32[] values = { (uint32)GLib.Math.floor (view.position.x), (uint32)GLib.Math.floor (view.position.y) };
         ((global::Xcb.Window)view.xid).configure (view.connection, mask, values);
     }
@@ -297,6 +298,7 @@ internal class Maia.Xcb.ResizeRequest : Request
                       global::Xcb.ConfigWindow.HEIGHT |
                       global::Xcb.ConfigWindow.BORDER_WIDTH;
         uint32[] values = { (uint32)GLib.Math.ceil (view_size.width), (uint32)GLib.Math.ceil (view_size.height), 0 };
+        print(@"resize to $(view_size)\n");
         ((global::Xcb.Window)view.xid).configure (view.connection, mask, values);
     }
 

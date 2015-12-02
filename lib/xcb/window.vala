@@ -43,7 +43,17 @@ internal class Maia.Xcb.Window : Maia.Window
         set {
             if (transient_for != value)
             {
+                if (base.transient_for != null)
+                {
+                    base.transient_for.notify["position"].disconnect (on_window_parent_move);
+                }
+
                 base.transient_for = value;
+
+                if (value != null)
+                {
+                    value.notify["position"].connect (on_window_parent_move);
+                }
 
                 if (m_View != null && value is Window)
                 {
@@ -131,12 +141,53 @@ internal class Maia.Xcb.Window : Maia.Window
             else
             {
                 m_View.parent = parent_window.view;
+
+                on_window_parent_move ();
             }
 
         }
         else if (m_View != null)
         {
             m_View.parent = null;
+        }
+    }
+
+    private void
+    on_window_parent_move ()
+    {
+        print(@"$(GLib.Log.METHOD)\n");
+        unowned Window? parent_window = m_ParentWindow as Window;
+        if (parent_window != null && m_View != null)
+        {
+            if (m_View.override_redirect)
+            {
+                var pos = position;
+
+                if (PositionPolicy.ALWAYS_CENTER in position_policy)
+                {
+                    Graphic.Rectangle monitorGeometry =  m_View.screen.get_monitor_at (Graphic.Point (0, 0)).geometry;
+                    pos = Graphic.Point (monitorGeometry.origin.x + (monitorGeometry.size.width - size.width) / 2, monitorGeometry.origin.y + (monitorGeometry.size.height - size.height) / 2);
+                }
+                else
+                {
+                    pos.translate (parent_window.m_View.root_position);
+                }
+
+                Graphic.Rectangle geo = Graphic.Rectangle (0, 0, 0, 0);
+                geo.origin = pos;
+                geo.size = m_View.size;
+                if (PositionPolicy.CLAMP_MONITOR in position_policy)
+                {
+                    geo.clamp (m_View.screen.get_monitor_at (pos).geometry);
+                }
+
+                print (@"window position: $(geo.origin)\n");
+                m_View.position = geo.origin;
+            }
+            else
+            {
+                m_View.position = position;
+            }
         }
     }
 
@@ -278,14 +329,39 @@ internal class Maia.Xcb.Window : Maia.Window
     }
 
     internal override void
+    on_geometry_event (Core.EventArgs? inArgs)
+    {
+        unowned GeometryEventArgs? geometry_args = inArgs as GeometryEventArgs;
+
+        if (geometry_args != null && geometry != null && window == null)
+        {
+            print(@"frame_extents: $(m_View.frame_extents) geometry: $(geometry_args.area.origin) frame: $(m_View.frame_extents) root position: $(m_View.root_position)\n");
+
+            base.on_geometry_event (new GeometryEventArgs (m_View.root_position.x - m_View.frame_extents.min.x,
+                                                           m_View.root_position.y - m_View.frame_extents.min.y,
+                                                           geometry_args.area.size.width,
+                                                           geometry_args.area.size.height));
+        }
+        else
+        {
+            base.on_geometry_event (inArgs);
+        }
+    }
+
+    internal override void
     on_move ()
     {
         base.on_move ();
 
         unowned Viewport? parent_viewport = m_ParentWindow as Viewport;
+        unowned Window? parent_window     = m_ParentWindow as Window;
         if (parent_viewport != null)
         {
             on_viewport_parent_visible_area_changed ();
+        }
+        else if (parent_window != null)
+        {
+            on_window_parent_move ();
         }
         else if (m_View != null)
         {
@@ -297,6 +373,10 @@ internal class Maia.Xcb.Window : Maia.Window
                 {
                     Graphic.Rectangle monitorGeometry =  m_View.screen.get_monitor_at (Graphic.Point (0, 0)).geometry;
                     pos = Graphic.Point (monitorGeometry.origin.x + (monitorGeometry.size.width - size.width) / 2, monitorGeometry.origin.y + (monitorGeometry.size.height - size.height) / 2);
+                }
+                else if (m_ParentWindow != null)
+                {
+                    pos.translate ((m_ParentWindow as Window).m_View.root_position);
                 }
 
                 Graphic.Rectangle geo = Graphic.Rectangle (0, 0, 0, 0);
@@ -311,6 +391,7 @@ internal class Maia.Xcb.Window : Maia.Window
             }
             else
             {
+                print(@"position: $position\n");
                 m_View.position = position;
             }
         }

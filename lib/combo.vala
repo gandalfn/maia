@@ -376,6 +376,12 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
                 arrow_item.update (inContext, new Graphic.Region (arrow_area));
             }
 
+            var toplevel_window = toplevel;
+            if (toplevel_window != null && m_Popup.visible)
+            {
+                m_Popup.transient_for = toplevel_window;
+            }
+
             // Set popup geometry
             m_Popup.position = Graphic.Point ((arrow_size.width / 2) - 3.5, arrow_size.height + ((area.extents.size.height - arrow_size.height) / 2));
 
@@ -397,7 +403,6 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
                 m_Popup.visible = false;
                 m_Popup.animation = true;
             }
-
             damage_area ();
         }
     }

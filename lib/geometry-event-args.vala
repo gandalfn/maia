@@ -21,7 +21,7 @@ public class Maia.GeometryEventArgs : Maia.Core.EventArgs
 {
     // properties
     private Graphic.Rectangle m_Area;
-    
+
     // accessors
     public override GLib.Variant serialize {
         owned get {

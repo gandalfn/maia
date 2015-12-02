@@ -141,10 +141,31 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
                                                                         evt_expose.width, evt_expose.height));
                     break;
 
+                // reparent notify
+                case global::Xcb.EventType.REPARENT_NOTIFY:
+                    unowned global::Xcb.ReparentNotifyEvent? evt_reparent = (global::Xcb.ReparentNotifyEvent?)m_LastEvent;
+
+                    print (@"reparent window: 0x%lx parent: 0x%lx \n", evt_reparent.window, evt_reparent.parent);
+
+                    var reply = evt_reparent.parent.get_attributes (m_Connection).reply (m_Connection);
+                    if (reply != null)
+                    {
+                        uint32 mask = global::Xcb.Cw.EVENT_MASK;
+                        uint32[] values = {};
+
+                        print (@"reparent window: 0x%lx event_mask: $(reply.all_event_masks)\n", evt_reparent.parent);
+
+                        values += reply.all_event_masks & ~global::Xcb.EventMask.SUBSTRUCTURE_REDIRECT;
+
+                        evt_reparent.parent.change_attributes_checked (m_Connection, mask, values);
+                    }
+                    break;
+
                 // configure notify event
                 case global::Xcb.EventType.CONFIGURE_NOTIFY:
                     unowned global::Xcb.ConfigureNotifyEvent? evt_configure = (global::Xcb.ConfigureNotifyEvent?)m_LastEvent;
 
+                    print (@"event: 0x%lx window: 0x%lx, $(evt_configure.x),$(evt_configure.y) $(evt_configure.width)x$(evt_configure.height) override_redirect: $(evt_configure.override_redirect)\n", evt_configure.event, evt_configure.window);
                     // send event geometry
                     Core.EventBus.default.publish ("geometry", ((int)evt_configure.window).to_pointer (),
                                                    new GeometryEventArgs (evt_configure.x, evt_configure.y,

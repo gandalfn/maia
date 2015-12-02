@@ -39,6 +39,8 @@ internal enum Maia.Xcb.AtomType
 
     _NET_WM_DESKTOP,
 
+    _NET_FRAME_EXTENTS,
+
     _NET_WM_WINDOW_TYPE,
     _NET_WM_WINDOW_TYPE_DESKTOP,
     _NET_WM_WINDOW_TYPE_DOCK,

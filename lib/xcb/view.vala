@@ -126,6 +126,7 @@ internal class Maia.Xcb.View : Drawable
     private Graphic.Surface      m_FrontBuffer = null;
     private Core.Array<Sibling>  m_Siblings = null;
     private unowned DestroyFunc? m_Func = null;
+    private Graphic.Range?       m_FrameExtents = null;
 
     // signals
     public signal void mapped ();
@@ -325,14 +326,7 @@ internal class Maia.Xcb.View : Drawable
 
                 if (m_Realized && !m_Foreign)
                 {
-                    var reply = ((global::Xcb.Window)xid).get_geometry (connection).reply (connection);
-                    if (reply != null)
-                    {
-                        if (reply.x != m_Position.x || reply.y != m_Position.y)
-                        {
-                            application.push_request (new MoveRequest (this));
-                        }
-                    }
+                    application.push_request (new MoveRequest (this));
                 }
             }
         }
@@ -343,33 +337,13 @@ internal class Maia.Xcb.View : Drawable
             Graphic.Point p = Graphic.Point (0, 0);
             if (m_Realized)
             {
-                var reply = ((global::Xcb.Window)xid).get_geometry (connection).reply (connection);
+                var reply = ((global::Xcb.Window)xid).translate_coordinates (connection,
+                                                                             screen.xscreen.root,
+                                                                             0, 0).reply (connection);
                 if (reply != null)
                 {
-                    p.x = (double)reply.x;
-                    p.y = (double)reply.y;
-                }
-
-                global::Xcb.Window xtoplevel = ((global::Xcb.Window)xid);
-
-                while (true)
-                {
-                    var reply_toplevel = xtoplevel.query_tree (connection).reply (connection);
-                    if (reply_toplevel.root != reply_toplevel.parent)
-                    {
-                        xtoplevel = reply_toplevel.parent;
-
-                        var reply_geo = xtoplevel.get_geometry (connection).reply (connection);
-                        if (reply_geo != null)
-                        {
-                            p.x += (double)reply_geo.x;
-                            p.y += (double)reply_geo.y;
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    p.x = (double)reply.dst_x;
+                    p.y = (double)reply.dst_y;
                 }
             }
 
@@ -390,6 +364,24 @@ internal class Maia.Xcb.View : Drawable
             }
         }
         default = Graphic.Size (0, 0);
+    }
+
+    public unowned Graphic.Range? frame_extents {
+        get {
+            if (m_FrameExtents == null)
+            {
+                var reply_prop = ((global::Xcb.Window)xid).get_property (connection, false,
+                                                                         Xcb.application.atoms[AtomType._NET_FRAME_EXTENTS],
+                                                                         global::Xcb.AtomType.CARDINAL, 0, 4).reply (connection);
+
+                if (reply_prop != null)
+                {
+                    m_FrameExtents = Graphic.Range (((uint32[]?)reply_prop.@value)[0], ((uint32[]?)reply_prop.@value)[2],
+                                                    ((uint32[]?)reply_prop.@value)[1], ((uint32[]?)reply_prop.@value)[3]);
+                }
+            }
+            return m_FrameExtents;
+        }
     }
 
     public Graphic.Transform device_transform {
@@ -632,8 +624,11 @@ internal class Maia.Xcb.View : Drawable
             mask |= global::Xcb.Cw.SAVE_UNDER;
             values += 1;
 
-            mask |= global::Xcb.Cw.OVERRIDE_REDIRECT;
-            values += m_OverrideRedirect ? 1 : 0;
+            if (m_OverrideRedirect)
+            {
+                mask |= global::Xcb.Cw.OVERRIDE_REDIRECT;
+                values += 1;
+            }
 
             uint32 event_mask = global::Xcb.EventMask.EXPOSURE            |
                                 global::Xcb.EventMask.STRUCTURE_NOTIFY    |
@@ -698,6 +693,12 @@ internal class Maia.Xcb.View : Drawable
                                                                       Xcb.application.atoms[AtomType._MOTIF_WM_HINTS],
                                                                       Xcb.application.atoms[AtomType._MOTIF_WM_HINTS],
                                                                       32, mwm_hints);
+
+                    properties = { Xcb.application.atoms[AtomType._NET_WM_WINDOW_TYPE_NORMAL] };
+                    ((global::Xcb.Window)xid).change_property<global::Xcb.Atom> (connection, global::Xcb.PropMode.REPLACE,
+                                                                                 Xcb.application.atoms[AtomType._NET_WM_WINDOW_TYPE],
+                                                                                 global::Xcb.AtomType.ATOM,
+                                                                                 32, properties);
                 }
 
                 if (m_TransientFor != null)
