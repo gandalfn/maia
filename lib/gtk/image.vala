@@ -68,7 +68,8 @@ internal class Maia.Gtk.Image : Maia.Image
                     not_dumpable_attributes.remove ("filename");
                     not_dumpable_attributes.remove ("icon-name");
                 }
-                damage ();
+                need_update = true;
+                geometry = null;
             }
         }
     }
