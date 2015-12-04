@@ -24,20 +24,20 @@
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/core-object_p.h)
 
-#define MAIA_CORE_EVENT_ARGS_DEFINE(klass) \
-    static Glib::ObjectBase* wrap_new(GObject* object) \
-    { \
-        return new klass ((MaiaCoreEventArgs*)object); \
-    } \
-    klass () : \
-        Glib::ObjectBase ("##klass##"), \
-        Maia::Core::EventArgs (& klass ::wrap_new) \
-    { \
-    } \
-    klass (MaiaCoreEventArgs* inpSelf) : \
-        Glib::ObjectBase ("##klass##"), \
-        Maia::Core::EventArgs (inpSelf) \
-    { \
+#define MAIA_CORE_EVENT_ARGS_DEFINE(signature,klass)                   \
+    static Glib::ObjectBase* wrap_new(GObject* object)                 \
+    {                                                                  \
+        return new klass ((MaiaCoreEventArgs*)object);                 \
+    }                                                                  \
+    klass () :                                                         \
+        Glib::ObjectBase ("##klass##"),                                \
+        Maia::Core::EventArgs (signature, & klass ::wrap_new)          \
+    {                                                                  \
+    }                                                                  \
+    klass (MaiaCoreEventArgs* inpSelf) :                               \
+        Glib::ObjectBase ("##klass##"),                                \
+        Maia::Core::EventArgs (inpSelf)                                \
+    {                                                                  \
     }
 
 namespace Maia
@@ -51,18 +51,27 @@ namespace Maia
             _CLASS_GOBJECT(EventArgs, MaiaCoreEventArgs, MAIA_CORE_EVENT_ARGS, Glib::Object, GObject)
 
             protected:
-                EventArgs (Glib::WrapNewFunction inWrapFunc);
+                EventArgs (const Glib::ustring& inSignature, Glib::WrapNewFunction inWrapFunc);
 
 #m4 _CONVERSION(`Glib::VariantBase',`GVariant*',`g_variant_ref (($3).gobj())')
 #m4 _CONVERSION(`GVariant*',`const Glib::VariantBase&',`Glib::wrap($3, true)')
 #m4 _CONVERSION(`MaiaCoreEventArgs*', `const Glib::RefPtr<EventArgs>&', `Glib::wrap($3, true)')
-                _WRAP_VFUNC(Glib::VariantBase get_serialize (), get_serialize)
-                _WRAP_VFUNC(void set_serialize (const Glib::VariantBase& inData), set_serialize, custom_vfunc_callback)
+                _WRAP_VFUNC(Glib::VariantBase serialize (), get_serialize)
+                _WRAP_VFUNC(void unserialize (const Glib::VariantBase& inData), set_serialize, custom_vfunc_callback)
                 _WRAP_VFUNC(void accumulate (const Glib::RefPtr<EventArgs>& inOther), accumulate)
 #m4 _CONVERSION(`MaiaCoreEventArgs*', `const Glib::RefPtr<EventArgs>&', `Glib::wrap($3)')
 
-                static Glib::VariantBase serialize (const Glib::ustring& inSignature, ...);
-                static void unserialize (const Glib::VariantBase& inData, const Glib::ustring& inSignature, ...);
+                template<typename T>
+                Glib::VariantBase serialize (T inVal);
+
+                template<typename T, typename... Args>
+                Glib::VariantBase serialize (T inVal, Args... inArgs);
+
+                template<typename T>
+                void unserialize (const Glib::VariantBase& inVariant, T& inVal);
+
+                template<typename T, typename... Args>
+                void unserialize (const Glib::VariantBase& inVariant, T& inVal, Args&... inArgs);
 
             public:
                 _WRAP_METHOD(int get_sequence (), maia_core_event_args_get_sequence)
@@ -73,6 +82,119 @@ namespace Maia
 
                 _WRAP_PROPERTY("sequence", int)
                 _WRAP_PROPERTY("serialize", Glib::VariantBase)
+
+            private:
+                class SerializeClosure
+                {
+                    public:
+                        enum class EContainerType
+                        {
+                            UNKNOWN,
+                            BASIC,
+                            TUPLE,
+                            ARRAY
+                        };
+
+                    public:
+                        SerializeClosure (const GVariantType* inType);
+                        virtual ~SerializeClosure ();
+
+                        Glib::VariantBase get ();
+                        void set (const Glib::VariantBase& inVal);
+
+
+                    private:
+                        EContainerType                 m_ContainerType;
+                        GVariantType*                  m_pType;
+                        const GVariantType*            m_pCurrentType;
+                        Glib::VariantBase              m_Variant;
+                        std::vector<SerializeClosure*> m_Childs;
+                };
+
+                class UnserializeClosure
+                {
+                    public:
+                        enum class EContainerType
+                        {
+                            UNKNOWN,
+                            BASIC,
+                            TUPLE,
+                            ARRAY
+                        };
+
+                    public:
+                        UnserializeClosure (const Glib::VariantBase& inVariant);
+                        virtual ~UnserializeClosure ();
+
+                        Glib::VariantBase get ();
+
+                    private:
+                        EContainerType                   m_ContainerType;
+                        Glib::VariantBase                m_Variant;
+                        std::vector<UnserializeClosure*> m_Childs;
+                        int                              m_Index;
+                };
+
+                Glib::ustring       m_Signature;
+                SerializeClosure*   m_pSerialize;
         };
+
+        template<typename T>
+        Glib::VariantBase EventArgs::serialize (T inVal)
+        {
+            if (!m_pSerialize)
+            {
+                m_pSerialize = new SerializeClosure (g_variant_type_new (m_Signature.c_str ()));
+            }
+            m_pSerialize->set (Glib::Variant<T>::create (inVal));
+
+            Glib::VariantBase ret = m_pSerialize->get ();
+            delete m_pSerialize; m_pSerialize = nullptr;
+
+            return ret;
+        }
+
+        template<typename T, typename... Args>
+        Glib::VariantBase EventArgs::serialize (T inVal, Args... inArgs)
+        {
+            if (!m_pSerialize)
+            {
+                m_pSerialize = new SerializeClosure (g_variant_type_new (m_Signature.c_str ()));
+            }
+            m_pSerialize->set (Glib::Variant<T>::create (inVal));
+
+            return serialize (inArgs...);
+        }
+
+        template<typename T>
+        void EventArgs::unserialize (const Glib::VariantBase& inVariant, T& inVal)
+        {
+            UnserializeClosure* pClosure = (UnserializeClosure*)steal_data ("Maia::Core::EventArgs::UnserializeClosure");
+            if (!pClosure)
+            {
+                pClosure = new UnserializeClosure (inVariant);
+            }
+            Glib::VariantBase variant = pClosure->get ();
+
+            delete pClosure; pClosure = nullptr;
+
+            inVal = Glib::VariantBase::cast_dynamic< Glib::Variant<T> > (variant).get ();
+        }
+
+        template<typename T, typename... Args>
+        void EventArgs::unserialize (const Glib::VariantBase& inVariant, T& inVal, Args&... inArgs)
+        {
+            UnserializeClosure* pClosure = (UnserializeClosure*)get_data ("Maia::Core::EventArgs::UnserializeClosure");
+            if (!pClosure)
+            {
+                pClosure = new UnserializeClosure (inVariant);
+                set_data ("Maia::Core::EventArgs::UnserializeClosure", (void*)pClosure);
+            }
+
+            Glib::VariantBase variant = pClosure->get ();
+            inVal = Glib::VariantBase::cast_dynamic< Glib::Variant<T> > (variant).get ();
+
+            unserialize (inVariant, inArgs...);
+        }
     }
 }

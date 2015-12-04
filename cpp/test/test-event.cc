@@ -26,14 +26,10 @@ using namespace Maia;
 class TestEventArgs : public Core::EventArgs
 {
     public:
-        virtual ~TestEventArgs ()
-        {
-        }
-
         // methods
-        unsigned long get_data () { return m_Data; }
-        Glib::ustring get_foo () { return m_Foo; }
-        int           get_count () { return m_Count; }
+        unsigned long get_data  () const { return m_Data;  }
+        Glib::ustring get_foo   () const { return m_Foo;   }
+        int           get_count () const { return m_Count; }
 
         // static methods
         static Glib::RefPtr<TestEventArgs> create (unsigned long inData, const Glib::ustring& inFoo, int inCount)
@@ -42,7 +38,7 @@ class TestEventArgs : public Core::EventArgs
         }
 
     protected:
-        MAIA_CORE_EVENT_ARGS_DEFINE(TestEventArgs)
+        MAIA_CORE_EVENT_ARGS_DEFINE("(tsi)", TestEventArgs)
 
         TestEventArgs (unsigned long inData, const Glib::ustring& inFoo, int inCount) :
             TestEventArgs ()
@@ -55,19 +51,15 @@ class TestEventArgs : public Core::EventArgs
 
         // overrides
         virtual Glib::VariantBase
-        get_serialize_vfunc ()
+        serialize_vfunc ()
         {
-            return Core::EventArgs::serialize ("(t&si)", (unsigned long)m_Data, ((Glib::ustring)m_Foo).c_str (), m_Count);
+            return serialize (m_Data, m_Foo, m_Count);
         }
 
         virtual void
-        set_serialize_vfunc (const Glib::VariantBase& inData)
+        unserialize_vfunc (const Glib::VariantBase& inData)
         {
-            char* str;
-            Core::EventArgs::unserialize (inData, "(t&si)", &m_Data, &str, &m_Count);
-            m_Foo = Glib::ustring (str);
-
-            g_test_message ("serialize %s %lu", str, m_Data);
+            unserialize (inData, m_Data, m_Foo, m_Count);
         }
 
     private:

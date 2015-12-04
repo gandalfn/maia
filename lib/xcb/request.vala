@@ -235,10 +235,13 @@ internal class Maia.Xcb.ReparentRequest : Request
 
 internal class Maia.Xcb.MoveRequest : Request
 {
+    private Graphic.Point m_Position;
+
     // methods
-    public MoveRequest (View inView)
+    public MoveRequest (View inView, Graphic.Point inPosition)
     {
         base (inView);
+        m_Position = inPosition;
     }
 
     internal override void
@@ -246,8 +249,7 @@ internal class Maia.Xcb.MoveRequest : Request
     {
         uint16 mask = global::Xcb.ConfigWindow.X |
                       global::Xcb.ConfigWindow.Y;
-        print(@"move to $(GLib.Math.floor (view.position.x)), $((uint32)GLib.Math.floor (view.position.y)), position $(view.position)\n");
-        uint32[] values = { (uint32)GLib.Math.floor (view.position.x), (uint32)GLib.Math.floor (view.position.y) };
+        uint32[] values = { (uint32)GLib.Math.floor (m_Position.x), (uint32)GLib.Math.floor (m_Position.y) };
         ((global::Xcb.Window)view.xid).configure (view.connection, mask, values);
     }
 
@@ -283,22 +285,26 @@ internal class Maia.Xcb.MoveRequest : Request
 
 internal class Maia.Xcb.ResizeRequest : Request
 {
+    // properties
+    private Graphic.Size m_Size;
+
     // methods
-    public ResizeRequest (View inView)
+    public ResizeRequest (View inView, Graphic.Size inSize)
     {
         base (inView);
+
+        m_Size = inSize;
     }
 
     internal override void
     run ()
     {
-        var view_size = view.size;
+        var view_size = m_Size;
         view_size.transform (view.device_transform);
         uint16 mask = global::Xcb.ConfigWindow.WIDTH  |
                       global::Xcb.ConfigWindow.HEIGHT |
                       global::Xcb.ConfigWindow.BORDER_WIDTH;
         uint32[] values = { (uint32)GLib.Math.ceil (view_size.width), (uint32)GLib.Math.ceil (view_size.height), 0 };
-        print(@"resize to $(view_size)\n");
         ((global::Xcb.Window)view.xid).configure (view.connection, mask, values);
     }
 

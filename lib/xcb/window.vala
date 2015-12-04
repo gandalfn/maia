@@ -126,7 +126,8 @@ internal class Maia.Xcb.Window : Maia.Window
         {
             m_View.parent = null;
         }
-        else if (m_ParentWindow != null && m_View != null)
+
+        if (m_ParentWindow != null && m_View != null)
         {
             unowned Window? parent_window = m_ParentWindow as Window;
 
@@ -159,7 +160,7 @@ internal class Maia.Xcb.Window : Maia.Window
         unowned Window? parent_window = m_ParentWindow as Window;
         if (parent_window != null && m_View != null)
         {
-            if (m_View.override_redirect)
+            if (m_View.override_redirect || window_type == Type.POPUP)
             {
                 var pos = position;
 
@@ -176,6 +177,7 @@ internal class Maia.Xcb.Window : Maia.Window
                 Graphic.Rectangle geo = Graphic.Rectangle (0, 0, 0, 0);
                 geo.origin = pos;
                 geo.size = m_View.size;
+                geo.size.transform (new Graphic.Transform.invert (m_View.device_transform));
                 if (PositionPolicy.CLAMP_MONITOR in position_policy)
                 {
                     geo.clamp (m_View.screen.get_monitor_at (pos).geometry);
@@ -215,6 +217,7 @@ internal class Maia.Xcb.Window : Maia.Window
                 Graphic.Rectangle geo = Graphic.Rectangle (0, 0, 0, 0);
                 geo.origin = pos;
                 geo.size = m_View.size;
+                geo.size.transform (new Graphic.Transform.invert (m_View.device_transform));
                 if (PositionPolicy.CLAMP_MONITOR in position_policy)
                 {
                     geo.clamp (m_View.screen.get_monitor_at (pos).geometry);
@@ -344,6 +347,7 @@ internal class Maia.Xcb.Window : Maia.Window
         }
         else
         {
+            print(@"geometry: $(geometry_args.area)\n");
             base.on_geometry_event (inArgs);
         }
     }
@@ -382,10 +386,13 @@ internal class Maia.Xcb.Window : Maia.Window
                 Graphic.Rectangle geo = Graphic.Rectangle (0, 0, 0, 0);
                 geo.origin = pos;
                 geo.size = m_View.size;
+                geo.size.transform (new Graphic.Transform.invert (m_View.device_transform));
                 if (PositionPolicy.CLAMP_MONITOR in position_policy)
                 {
                     geo.clamp (m_View.screen.get_monitor_at (pos).geometry);
                 }
+
+                print(@"move position: $geo.origin\n");
 
                 m_View.position = geo.origin;
             }

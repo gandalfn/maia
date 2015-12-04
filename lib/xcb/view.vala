@@ -54,7 +54,6 @@ internal class Maia.Xcb.View : Drawable
             if (m_View is View && m_View.is_mapped)
             {
                 var view_size = m_View.size;
-                view_size.transform (m_View.device_transform);
                 m_View.damaged = new Graphic.Region (Graphic.Rectangle (0, 0, view_size.width, view_size.height));
             }
 
@@ -67,7 +66,6 @@ internal class Maia.Xcb.View : Drawable
             if (m_Sibling != null && m_View.is_mapped)
             {
                 var view_size = m_View.size;
-                view_size.transform (m_View.device_transform);
                 m_View.damaged = new Graphic.Region (Graphic.Rectangle (0, 0, view_size.width, view_size.height));
             }
         }
@@ -118,7 +116,6 @@ internal class Maia.Xcb.View : Drawable
     private unowned View?        m_Parent;
     private unowned View?        m_TransientFor = null;
     private global::Xcb.Colormap m_Colormap = global::Xcb.NONE;
-    private Graphic.Point        m_Position;
     private bool                 m_OverrideRedirect = false;
     private bool                 m_Foreign = false;
     private bool                 m_Realized = false;
@@ -317,16 +314,23 @@ internal class Maia.Xcb.View : Drawable
 
     public Graphic.Point position {
         get {
-            return m_Position;
+            Graphic.Point ret = Graphic.Point (0, 0);
+
+            var reply = ((global::Xcb.Window)xid).get_geometry (connection).reply (connection);
+            if (reply != null)
+            {
+                ret.x = reply.x;
+                ret.y = reply.y;
+            }
+
+            return ret;
         }
         set {
-            if (!m_Position.equal (value))
+            if (!position.equal (value))
             {
-                m_Position = value;
-
                 if (m_Realized && !m_Foreign)
                 {
-                    application.push_request (new MoveRequest (this));
+                    application.push_request (new MoveRequest (this, value));
                 }
             }
         }
@@ -353,14 +357,21 @@ internal class Maia.Xcb.View : Drawable
 
     public override Graphic.Size size {
         get {
-            return base.size;
+            Graphic.Size ret = Graphic.Size (0, 0);
+
+            var reply = ((global::Xcb.Window)xid).get_geometry (connection).reply (connection);
+            if (reply != null)
+            {
+                ret.width = reply.width   + (reply.border_width * 2);
+                ret.height = reply.height + (reply.border_width * 2);
+            }
+
+            return ret;
         }
         set {
-            if (!base.size.equal (value))
+            if (!size.equal (value))
             {
-                base.size = Graphic.Size (double.max (1, value.width), double.max (1, value.height));
-
-                resize ();
+                resize (Graphic.Size (double.max (1, value.width), double.max (1, value.height)));
             }
         }
         default = Graphic.Size (0, 0);
@@ -391,7 +402,7 @@ internal class Maia.Xcb.View : Drawable
         set {
             m_DeviceTransform = value;
 
-            resize ();
+            resize (size);
         }
     }
 
@@ -402,7 +413,7 @@ internal class Maia.Xcb.View : Drawable
         set {
             m_Transform = value;
 
-            resize ();
+            resize (size);
         }
     }
 
@@ -489,11 +500,11 @@ internal class Maia.Xcb.View : Drawable
     }
 
     private void
-    resize ()
+    resize (Graphic.Size inSize)
     {
         if (m_Realized && !m_Foreign && !size.is_empty ())
         {
-            var view_size = size;
+            var view_size = inSize;
             view_size.transform (device_transform);
 
             if (m_BackBuffer == null ||
@@ -505,15 +516,7 @@ internal class Maia.Xcb.View : Drawable
 
             m_FrontBuffer = null;
 
-            var reply = ((global::Xcb.Window)xid).get_geometry (connection).reply (connection);
-            if (reply != null)
-            {
-                if ((uint32)(reply.width  + (reply.border_width * 2)) != (uint32)GLib.Math.ceil (view_size.width) ||
-                    (uint32)(reply.height + (reply.border_width * 2)) != (uint32)GLib.Math.ceil (view_size.height))
-                {
-                    application.push_request (new ResizeRequest (this));
-                }
-            }
+            application.push_request (new ResizeRequest (this, inSize));
         }
     }
 
@@ -748,8 +751,8 @@ internal class Maia.Xcb.View : Drawable
         m_BackBuffer = null;
         m_FrontBuffer = null;
 
-        // Launch resize to create buffer is size is set
-        resize ();
+        // Launch resize to create buffer if size is set
+        resize (size);
     }
 
     public void

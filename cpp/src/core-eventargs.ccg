@@ -39,7 +39,7 @@ namespace Maia
                 {
                     try
                     {
-                        obj->set_serialize_vfunc(Glib::wrap(inData, true));
+                        obj->unserialize_vfunc(Glib::wrap(inData, true));
                     }
                     catch(...)
                     {
@@ -63,9 +63,11 @@ namespace Maia
             }
         }
 
-        EventArgs::EventArgs (Glib::WrapNewFunction inWrapFunc) :
+        EventArgs::EventArgs (const Glib::ustring& inSignature, Glib::WrapNewFunction inWrapFunc) :
             Glib::ObjectBase(0),
-            Glib::Object(Glib::ConstructParams(eventargs_class_.init()))
+            Glib::Object(Glib::ConstructParams(eventargs_class_.init())),
+            m_Signature (inSignature),
+            m_pSerialize (nullptr)
         {
             /**
              * WARNING!!!! TODO
@@ -80,26 +82,123 @@ namespace Maia
             }
         }
 
-        Glib::VariantBase
-        EventArgs::serialize (const Glib::ustring& inSignature, ...)
+        EventArgs::SerializeClosure::SerializeClosure (const GVariantType* inpType) :
+            m_ContainerType (EContainerType::UNKNOWN),
+            m_pType (g_variant_type_copy (inpType)),
+            m_pCurrentType (nullptr)
         {
-            va_list var_args;
+            if (g_variant_type_is_tuple (m_pType))
+            {
+                m_ContainerType = EContainerType::TUPLE;
+                m_pCurrentType = g_variant_type_first (m_pType);
+            }
+            else if (g_variant_type_is_basic (m_pType))
+            {
+                m_ContainerType = EContainerType::BASIC;
+                m_pCurrentType = m_pType;
+            }
+        }
 
-            va_start (var_args, inSignature);
-            Glib::VariantBase variant (g_variant_new_va (inSignature.c_str (), 0, &var_args), true);
-            va_end (var_args);
+        EventArgs::SerializeClosure::~SerializeClosure ()
+        {
+            if (m_pType)
+            {
+                g_variant_type_free (m_pType);
+                m_pType = nullptr;
+            }
 
-            return variant;
+            m_pCurrentType = nullptr;
+
+            for (auto& pChild : m_Childs)
+            {
+                delete pChild;
+            }
+        }
+
+        Glib::VariantBase
+        EventArgs::SerializeClosure::get ()
+        {
+            if (m_ContainerType == EContainerType::TUPLE && !m_Childs.empty ())
+            {
+                GVariant* childs[m_Childs.size ()];
+
+                for (int cpt = 0; cpt < (int)m_Childs.size (); ++cpt)
+                {
+                    childs[cpt] = m_Childs[cpt]->m_Variant.gobj ();
+                }
+
+                m_Variant = Glib::VariantBase (g_variant_new_tuple (childs, m_Childs.size ()), true);
+            }
+
+            return m_Variant;
         }
 
         void
-        EventArgs::unserialize (const Glib::VariantBase& inData, const Glib::ustring& inSignature, ...)
+        EventArgs::SerializeClosure::set (const Glib::VariantBase& inVal)
         {
-            va_list var_args;
+            if (m_ContainerType == EContainerType::BASIC)
+            {
+                if (g_variant_type_equal (m_pCurrentType, g_variant_get_type (const_cast<GVariant*>(inVal.gobj ()))))
+                {
+                    m_Variant = inVal;
+                }
+            }
+            else if (m_ContainerType == EContainerType::TUPLE)
+            {
+                SerializeClosure* pChild = new SerializeClosure (m_pCurrentType);
+                pChild->set (inVal);
+                m_Childs.push_back (pChild);
+                m_pCurrentType = g_variant_type_next (m_pCurrentType);
+            }
+        }
 
-            va_start (var_args, inSignature);
-            g_variant_get_va (const_cast<GVariant*> (inData.gobj ()), inSignature.c_str (), 0, &var_args);
-            va_end (var_args);
+        EventArgs::UnserializeClosure::UnserializeClosure (const Glib::VariantBase& inVariant) :
+            m_ContainerType (EContainerType::UNKNOWN),
+            m_Variant (inVariant),
+            m_Index (0)
+        {
+            if (m_Variant.get_type ().is_tuple ())
+            {
+                m_ContainerType = EContainerType::TUPLE;
+                Glib::VariantContainerBase container = Glib::VariantContainerBase::cast_dynamic<Glib::VariantContainerBase> (m_Variant);
+                for (int cpt = 0; cpt < (int)container.get_n_children (); ++cpt)
+                {
+                    UnserializeClosure* pChild = new UnserializeClosure (container.get_child (cpt));
+                    m_Childs.push_back (pChild);
+                }
+            }
+            else if (m_Variant.get_type ().is_basic ())
+            {
+                m_ContainerType = EContainerType::BASIC;
+            }
+        }
+
+        EventArgs::UnserializeClosure::~UnserializeClosure ()
+        {
+            for (auto& pChild : m_Childs)
+            {
+                delete pChild;
+            }
+        }
+
+        Glib::VariantBase
+        EventArgs::UnserializeClosure::get ()
+        {
+            Glib::VariantBase ret;
+            if (m_ContainerType == EContainerType::TUPLE)
+            {
+                if (m_Index < (int)m_Childs.size ())
+                {
+                    ret = m_Childs[m_Index]->get ();
+                    ++m_Index;
+                }
+            }
+            else if (m_ContainerType == EContainerType::BASIC)
+            {
+                ret = m_Variant;
+            }
+
+            return ret;
         }
     }
 }
