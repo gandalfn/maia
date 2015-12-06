@@ -40,6 +40,7 @@ test_SOURCES = \
     core/test-timeline.vala \
     core/test-bus.vala \
     core/test-notification.vala \
+    core/test-protocol.vala \
     graphic/test-graphic.vala \
     graphic/test-transform.vala \
     manifest/test-manifest.vala \

@@ -322,6 +322,58 @@
 
 ;; Original typedef:
 ;; typedef enum  {
+;; 	MAIA_PROTOCOL_FIELD_RULE_INVALID,
+;; 	MAIA_PROTOCOL_FIELD_RULE_REQUIRED,
+;; 	MAIA_PROTOCOL_FIELD_RULE_OPTIONAL,
+;; 	MAIA_PROTOCOL_FIELD_RULE_REPEATED
+;; } MaiaProtocolFieldRule;
+
+(define-enum-extended ProtocolFieldRule
+  (in-module "Maia")
+  (c-name "MaiaProtocolFieldRule")
+  (values
+    '("invalid" "MAIA_PROTOCOL_FIELD_RULE_INVALID" "0")
+    '("required" "MAIA_PROTOCOL_FIELD_RULE_REQUIRED" "1")
+    '("optional" "MAIA_PROTOCOL_FIELD_RULE_OPTIONAL" "2")
+    '("repeated" "MAIA_PROTOCOL_FIELD_RULE_REPEATED" "3")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_PROTOCOL_FIELD_TYPE_BOOLEAN,
+;; 	MAIA_PROTOCOL_FIELD_TYPE_BYTE,
+;; 	MAIA_PROTOCOL_FIELD_TYPE_UINT16,
+;; 	MAIA_PROTOCOL_FIELD_TYPE_INT16,
+;; 	MAIA_PROTOCOL_FIELD_TYPE_UINT32,
+;; 	MAIA_PROTOCOL_FIELD_TYPE_INT32,
+;; 	MAIA_PROTOCOL_FIELD_TYPE_UINT64,
+;; 	MAIA_PROTOCOL_FIELD_TYPE_INT64,
+;; 	MAIA_PROTOCOL_FIELD_TYPE_DOUBLE,
+;; 	MAIA_PROTOCOL_FIELD_TYPE_STRING,
+;; 	MAIA_PROTOCOL_FIELD_TYPE_MESSAGE
+;; } MaiaProtocolFieldType;
+
+(define-enum-extended ProtocolFieldType
+  (in-module "Maia")
+  (c-name "MaiaProtocolFieldType")
+  (values
+    '("boolean" "MAIA_PROTOCOL_FIELD_TYPE_BOOLEAN" "0")
+    '("byte" "MAIA_PROTOCOL_FIELD_TYPE_BYTE" "1")
+    '("uint16" "MAIA_PROTOCOL_FIELD_TYPE_UINT16" "2")
+    '("int16" "MAIA_PROTOCOL_FIELD_TYPE_INT16" "3")
+    '("uint32" "MAIA_PROTOCOL_FIELD_TYPE_UINT32" "4")
+    '("int32" "MAIA_PROTOCOL_FIELD_TYPE_INT32" "5")
+    '("uint64" "MAIA_PROTOCOL_FIELD_TYPE_UINT64" "6")
+    '("int64" "MAIA_PROTOCOL_FIELD_TYPE_INT64" "7")
+    '("double" "MAIA_PROTOCOL_FIELD_TYPE_DOUBLE" "8")
+    '("string" "MAIA_PROTOCOL_FIELD_TYPE_STRING" "9")
+    '("message" "MAIA_PROTOCOL_FIELD_TYPE_MESSAGE" "10")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
 ;; 	MAIA_MANIFEST_ERROR_INVALID_TYPE,
 ;; 	MAIA_MANIFEST_ERROR_TOO_MANY_ATTRIBUTES,
 ;; 	MAIA_MANIFEST_ERROR_MISSING_ATTRIBUTES,

@@ -68,7 +68,7 @@ install-data-hook: devhelp
 	$(INSTALL_DATA) -t $(DESTDIR)$(datadir)/devhelp/books/Maia devhelp/Maia/*.*
 	$(INSTALL_DATA) -t $(DESTDIR)$(datadir)/devhelp/books/Maia/img devhelp/Maia/img/*
 
-all-local: cpp/libdoclet.so valadoc-html valadoc-devhelp valadoc-mm
+all-local: cpp/libdoclet.so valadoc-html valadoc-devhelp
 
 EXTRA_DIST = \
 	cpp/doclet.vala

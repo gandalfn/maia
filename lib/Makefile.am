@@ -64,6 +64,10 @@ libmaia_la_SOURCES = \
     core/task.vala \
     core/task-pool.vala \
     core/notification.vala \
+    protocol/buffer.vala \
+    protocol/buffer-child.vala \
+    protocol/message.vala \
+    protocol/field.vala \
     manifest/document.vala \
     manifest/element.vala \
     manifest/theme.vala \
