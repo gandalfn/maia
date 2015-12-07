@@ -7437,6 +7437,26 @@
   (return-type "MaiaCoreEventBus*")
 )
 
+(define-function maia_core_event_args_register_protocol
+  (c-name "maia_core_event_args_register_protocol")
+  (return-type "none")
+  (parameters
+    '("GType" "inType")
+    '("const-gchar*" "inMessage")
+    '("const-gchar*" "inBuffer")
+  )
+)
+
+(define-function maia_core_event_args_register_protocol_from_filename
+  (c-name "maia_core_event_args_register_protocol_from_filename")
+  (return-type "none")
+  (parameters
+    '("GType" "inType")
+    '("const-gchar*" "inMessage")
+    '("const-gchar*" "inFilename")
+  )
+)
+
 (define-function maia_core_event_args_construct
   (c-name "maia_core_event_args_construct")
   (return-type "MaiaCoreEventArgs*")
@@ -7458,6 +7478,20 @@
   (of-object "MaiaCoreEventArgs")
   (c-name "maia_core_event_args_copy")
   (return-type "MaiaCoreEventArgs*")
+)
+
+(define-function maia_protocol_field_get_type
+  (c-name "maia_protocol_field_get_type")
+  (return-type "GType")
+)
+
+(define-method get
+  (of-object "MaiaCoreEventArgs")
+  (c-name "maia_core_event_args_get")
+  (return-type "MaiaProtocolField*")
+  (parameters
+    '("const-gchar*" "inName")
+  )
 )
 
 (define-method get_serialize
@@ -8056,6 +8090,21 @@
   (return-type "GType")
 )
 
+(define-method set_variant
+  (of-object "MaiaProtocolBufferChild")
+  (c-name "maia_protocol_buffer_child_set_variant")
+  (return-type "none")
+  (parameters
+    '("GVariant*" "inVariant")
+  )
+)
+
+(define-method to_variant
+  (of-object "MaiaProtocolBufferChild")
+  (c-name "maia_protocol_buffer_child_to_variant")
+  (return-type "GVariant*")
+)
+
 (define-method get_buffer
   (of-object "MaiaProtocolBufferChild")
   (c-name "maia_protocol_buffer_child_get_buffer")
@@ -8078,11 +8127,6 @@
     '("GType" "object_type")
     '("const-gchar*" "inName")
   )
-)
-
-(define-function maia_protocol_field_get_type
-  (c-name "maia_protocol_field_get_type")
-  (return-type "GType")
 )
 
 (define-method get
@@ -8119,6 +8163,7 @@
     '("MaiaProtocolFieldType" "inType")
     '("const-gchar*" "inName")
     '("const-gchar*" "inDefault")
+    '("GError**" "error")
   )
 )
 
@@ -8131,6 +8176,7 @@
     '("MaiaProtocolFieldType" "inType")
     '("const-gchar*" "inName")
     '("const-gchar*" "inDefault")
+    '("GError**" "error")
   )
 )
 

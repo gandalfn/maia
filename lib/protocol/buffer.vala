@@ -96,7 +96,7 @@ public class Maia.Protocol.Buffer : Core.Parser
         }
         catch (FileError error)
         {
-            throw new Core.ParseError.OPEN("Error on open %s: %s", inFilename, error.message);
+            throw new Core.ParseError.OPEN(@"Error on open $inFilename: $(error.message)");
         }
     }
 
@@ -128,7 +128,14 @@ public class Maia.Protocol.Buffer : Core.Parser
             {
                 Message msg = new Message (message);
                 add (msg);
-                msg.read_buffer (this);
+                try
+                {
+                    msg.read_buffer (this);
+                }
+                catch (Core.ParseError err)
+                {
+                    throw new Core.ParseError.PARSE (@"$(err.message) at $(GLib.Path.get_basename (m_Filename)):$m_Line,$m_Col");
+                }
             }
         }
     }
@@ -171,7 +178,7 @@ public class Maia.Protocol.Buffer : Core.Parser
             }
             else
             {
-                throw new Core.ParseError.INVALID_UTF8 ("Invalid UTF-8 character at %i,%i", m_Line, m_Col);
+                throw new Core.ParseError.INVALID_UTF8 (@"Invalid UTF-8 character at $(GLib.Path.get_basename (m_Filename)):$m_Line,$m_Col");
             }
 
             if (!have_char)
@@ -193,14 +200,14 @@ public class Maia.Protocol.Buffer : Core.Parser
     {
         if (m_pCurrent[0] == '{')
         {
-            throw new Core.ParseError.PARSE ("Unexpected message at %s:%i,%i", GLib.Path.get_basename (m_Filename), m_Line, m_Col);
+            throw new Core.ParseError.PARSE (@"Unexpected message at $(GLib.Path.get_basename (m_Filename)):$m_Line,$m_Col");
         }
 
         m_LastWord = read_word ();
 
         if (m_LastWord == "")
         {
-            throw new Core.ParseError.PARSE ("Unexpected message at %s:%i,%i", GLib.Path.get_basename (m_Filename), m_Line, m_Col);
+            throw new Core.ParseError.PARSE (@"Unexpected message at $(GLib.Path.get_basename (m_Filename)):$m_Line,$m_Col");
         }
 
         m_MessageStack.push (m_CurrentMessage);
@@ -208,7 +215,7 @@ public class Maia.Protocol.Buffer : Core.Parser
 
         if (m_pCurrent[0] != '{')
         {
-            throw new Core.ParseError.PARSE ("Unexpected message at %s:%i,%i", GLib.Path.get_basename (m_Filename), m_Line, m_Col);
+            throw new Core.ParseError.PARSE (@"Unexpected message at $(GLib.Path.get_basename (m_Filename)):$m_Line,$m_Col");
         }
     }
 
@@ -219,21 +226,21 @@ public class Maia.Protocol.Buffer : Core.Parser
 
         if (m_pCurrent[0] == ';')
         {
-            throw new Core.ParseError.PARSE ("Unexpected attribute at %s:%i,%i", GLib.Path.get_basename (m_Filename), m_Line, m_Col);
+            throw new Core.ParseError.PARSE (@"Unexpected attribute at $(GLib.Path.get_basename (m_Filename)):$m_Line,$m_Col");
         }
 
         m_CurrentAttribute.type = read_word ();
 
         if (m_CurrentAttribute.type == "")
         {
-            throw new Core.ParseError.PARSE ("Unexpected attribute at %s:%i,%i", GLib.Path.get_basename (m_Filename), m_Line, m_Col);
+            throw new Core.ParseError.PARSE (@"Unexpected attribute at $(GLib.Path.get_basename (m_Filename)):$m_Line,$m_Col");
         }
 
         m_CurrentAttribute.name = read_word ();
 
         if (m_CurrentAttribute.name == "")
         {
-            throw new Core.ParseError.PARSE ("Unexpected attribute at %s:%i,%i", GLib.Path.get_basename (m_Filename), m_Line, m_Col);
+            throw new Core.ParseError.PARSE (@"Unexpected attribute at $(GLib.Path.get_basename (m_Filename)):$m_Line,$m_Col");
         }
 
         if (m_pCurrent[0] == '[')
@@ -243,10 +250,8 @@ public class Maia.Protocol.Buffer : Core.Parser
 
             if (m_CurrentAttribute.options == "" || m_pCurrent[0] != ']')
             {
-                throw new Core.ParseError.PARSE ("Unexpected attribute options at %s:%i,%i", GLib.Path.get_basename (m_Filename), m_Line, m_Col);
+                throw new Core.ParseError.PARSE (@"Unexpected attribute options at $(GLib.Path.get_basename (m_Filename)):$m_Line,$m_Col");
             }
-
-            print(@"$(m_CurrentAttribute.options)\n");
 
             next_char ();
             skip_space ();
@@ -254,7 +259,7 @@ public class Maia.Protocol.Buffer : Core.Parser
 
         if (m_pCurrent[0] != ';')
         {
-            throw new Core.ParseError.PARSE ("Unexpected attribute at %s:%i,%i", GLib.Path.get_basename (m_Filename), m_Line, m_Col);
+            throw new Core.ParseError.PARSE (@"Unexpected attribute at $(GLib.Path.get_basename (m_Filename)):$m_Line,$m_Col");
         }
     }
 
@@ -312,8 +317,7 @@ public class Maia.Protocol.Buffer : Core.Parser
                 token = Core.Parser.Token.END_ELEMENT;
                 if (m_MessageStack.length == 0)
                 {
-                    throw new Core.ParseError.PARSE ("Unexpected end at %s:%i,%i",
-                                                     GLib.Path.get_basename (m_Filename), m_Line, m_Col);
+                    throw new Core.ParseError.PARSE (@"Unexpected end at $(GLib.Path.get_basename (m_Filename)):$m_Line,$m_Col");
                 }
                 m_CurrentMessage = m_MessageStack.pop ();
                 next_char ();
@@ -321,8 +325,7 @@ public class Maia.Protocol.Buffer : Core.Parser
             else
             {
                 next_char ();
-                throw new Core.ParseError.PARSE ("Unexpected data for %s at %s:%i,%i", m_Element,
-                                                 GLib.Path.get_basename (m_Filename), m_Line, m_Col);
+                throw new Core.ParseError.PARSE (@"Unexpected data at $(GLib.Path.get_basename (m_Filename)):$m_Line,$m_Col");
             }
         }
 

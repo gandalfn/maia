@@ -71,10 +71,10 @@ public class Maia.Protocol.Field : Core.Object, BufferChild
                     return typeof (uchar);
 
                 case UINT16:
-                    return typeof (uint16);
+                    return typeof (uint);
 
                 case INT16:
-                    return typeof (int16);
+                    return typeof (int);
 
                 case UINT32:
                     return typeof (uint32);
@@ -99,6 +99,48 @@ public class Maia.Protocol.Field : Core.Object, BufferChild
             }
 
             return GLib.Type.INVALID;
+        }
+
+        internal GLib.VariantType
+        to_variant_type ()
+        {
+            switch (this)
+            {
+                case BOOLEAN:
+                    return GLib.VariantType.BOOLEAN;
+
+                case BYTE:
+                    return GLib.VariantType.BYTE;
+
+                case UINT16:
+                    return GLib.VariantType.UINT16;
+
+                case INT16:
+                    return GLib.VariantType.INT16;
+
+                case UINT32:
+                    return GLib.VariantType.UINT32;
+
+                case INT32:
+                    return GLib.VariantType.INT32;
+
+                case UINT64:
+                    return GLib.VariantType.UINT64;
+
+                case INT64:
+                    return GLib.VariantType.INT64;
+
+                case DOUBLE:
+                    return GLib.VariantType.DOUBLE;
+
+                case STRING:
+                    return GLib.VariantType.STRING;
+
+                case MESSAGE:
+                    return GLib.VariantType.TUPLE;
+            }
+
+            return GLib.VariantType.ANY;
         }
 
         internal static Type
@@ -162,12 +204,122 @@ public class Maia.Protocol.Field : Core.Object, BufferChild
         }
     }
 
+    // static methods
+    static construct
+    {
+        GLib.Value.register_transform_func (typeof (string), typeof (bool),   string_to_bool);
+        GLib.Value.register_transform_func (typeof (string), typeof (uchar),  string_to_uchar);
+        GLib.Value.register_transform_func (typeof (string), typeof (uint16), string_to_uint16);
+        GLib.Value.register_transform_func (typeof (string), typeof (int16),  string_to_int16);
+        GLib.Value.register_transform_func (typeof (string), typeof (uint32), string_to_uint32);
+        GLib.Value.register_transform_func (typeof (string), typeof (int32),  string_to_int32);
+        GLib.Value.register_transform_func (typeof (string), typeof (uint64), string_to_uint64);
+        GLib.Value.register_transform_func (typeof (string), typeof (int64),  string_to_int64);
+        GLib.Value.register_transform_func (typeof (string), typeof (double), string_to_double);
+    }
+
+    private static void
+    string_to_bool (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (string)))
+    {
+        string val = (string)inSrc;
+
+        outDest = bool.parse (val);
+    }
+
+    private static void
+    string_to_uchar (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (string)))
+    {
+        string val = (string)inSrc;
+
+        outDest = val.to_utf8()[0];
+    }
+
+    private static void
+    string_to_uint16 (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (string)))
+    {
+        string val = (string)inSrc;
+
+        outDest = (uint)int.parse (val);
+    }
+
+    private static void
+    string_to_int16 (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (string)))
+    {
+        string val = (string)inSrc;
+
+        outDest = (int)int.parse (val);
+    }
+
+    private static void
+    string_to_uint32 (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (string)))
+    {
+        string val = (string)inSrc;
+
+        outDest = (uint32)int.parse (val);
+    }
+
+    private static void
+    string_to_int32 (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (string)))
+    {
+        string val = (string)inSrc;
+
+        outDest = (int32)int.parse (val);
+    }
+
+    private static void
+    string_to_uint64 (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (string)))
+    {
+        string val = (string)inSrc;
+
+        outDest = uint64.parse (val);
+    }
+
+    private static void
+    string_to_int64 (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (string)))
+    {
+        string val = (string)inSrc;
+
+        outDest = int64.parse (val);
+    }
+
+    private static void
+    string_to_double (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (string)))
+    {
+        string val = (string)inSrc;
+
+        outDest = double.parse (val);
+    }
+
     // methods
-    public Field (Rule inRule, Type inType, string inName, string? inDefault)
+    public Field (Rule inRule, Type inType, string inName, string? inDefault) throws Core.ParseError
     {
         GLib.Object (id: GLib.Quark.from_string (inName), rule: inRule, field_type: inType);
         m_DefaultValue = inDefault;
         m_Value = GLib.Value (field_type.to_gtype ());
+        if (inDefault != null)
+        {
+            if (field_type != Type.STRING)
+            {
+                GLib.Value default_value = inDefault;
+                if (!default_value.transform (ref m_Value))
+                {
+                    throw new Core.ParseError.PARSE (@"Invalid default value $inDefault for $inName");
+                }
+            }
+            else
+            {
+                m_Value = inDefault;
+            }
+        }
     }
 
     internal override string
@@ -235,6 +387,109 @@ public class Maia.Protocol.Field : Core.Object, BufferChild
         }
 
         return ret;
+    }
+
+    internal void
+    set_variant (GLib.Variant inVariant)
+        requires (inVariant.get_type ().equal (field_type.to_variant_type ()))
+    {
+        switch (field_type)
+        {
+            case Type.BOOLEAN:
+                m_Value = inVariant.get_boolean ();
+                break;
+
+            case Type.BYTE:
+                m_Value = inVariant.get_byte ();
+                break;
+
+            case Type.UINT16:
+                m_Value = (int)inVariant.get_uint16 ();
+                break;
+
+            case Type.INT16:
+                m_Value = (int)inVariant.get_int16 ();
+                break;
+
+            case Type.UINT32:
+                m_Value = inVariant.get_uint32 ();
+                break;
+
+            case Type.INT32:
+                m_Value = inVariant.get_int32 ();
+                break;
+
+            case Type.UINT64:
+                m_Value = inVariant.get_uint64 ();
+                break;
+
+            case Type.INT64:
+                m_Value = inVariant.get_int64 ();
+                break;
+
+            case Type.DOUBLE:
+                m_Value = inVariant.get_double ();
+                break;
+
+            case Type.STRING:
+                m_Value = inVariant.get_string ();
+                break;
+
+            case Type.MESSAGE:
+                unowned Message? msg = (Message?)m_Value;
+                if (msg != null)
+                {
+                    msg.set_variant (inVariant);
+                }
+                break;
+        }
+    }
+
+    internal GLib.Variant?
+    to_variant ()
+    {
+        switch (field_type)
+        {
+            case Type.BOOLEAN:
+                return new GLib.Variant.boolean ((bool)m_Value);
+
+            case Type.BYTE:
+                return new GLib.Variant.byte ((uchar)m_Value);
+
+            case Type.UINT16:
+                return new GLib.Variant.uint16 ((uint16)(int)m_Value);
+
+            case Type.INT16:
+                return new GLib.Variant.int16 ((int16)(int)m_Value);
+
+            case Type.UINT32:
+                return new GLib.Variant.uint32 ((uint32)m_Value);
+
+            case Type.INT32:
+                return new GLib.Variant.int32 ((int32)m_Value);
+
+            case Type.UINT64:
+                return new GLib.Variant.uint64 ((uint64)m_Value);
+
+            case Type.INT64:
+                return new GLib.Variant.int64 ((int64)m_Value);
+
+            case Type.DOUBLE:
+                return new GLib.Variant.double ((double)m_Value);
+
+            case Type.STRING:
+                return new GLib.Variant.string ((string)m_Value);
+
+            case Type.MESSAGE:
+                unowned Message? msg = (Message?)m_Value;
+                if (msg != null)
+                {
+                    return msg.to_variant ();
+                }
+                break;
+        }
+
+        return null;
     }
 
     public new GLib.Value

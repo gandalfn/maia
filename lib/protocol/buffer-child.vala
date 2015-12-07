@@ -30,4 +30,7 @@ public interface Maia.Protocol.BufferChild : Core.Object
             return ret;
         }
     }
+
+    public abstract void set_variant (GLib.Variant inVariant);
+    public abstract GLib.Variant? to_variant ();
 }

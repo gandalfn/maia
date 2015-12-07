@@ -19,12 +19,30 @@
 
 public class Maia.TestProtocol : Maia.TestCase
 {
+    private class ProtocolEventArgs : Core.EventArgs
+    {
+        static construct
+        {
+            Core.EventArgs.register_protocol (typeof (ProtocolEventArgs),
+                                              "EventArgsProtocol",
+                                              "message EventArgsProtocol {" +
+                                              "     required uint32 val;"   +
+                                              "     required string str;"   +
+                                              "}");
+        }
+
+        public ProtocolEventArgs ()
+        {
+        }
+    }
+
     public TestProtocol ()
     {
         base ("protocol");
 
         add_test ("simple", test_protocol_simple);
         add_test ("message", test_protocol_message);
+        add_test ("event", test_protocol_event);
     }
 
     public override void
@@ -67,6 +85,7 @@ public class Maia.TestProtocol : Maia.TestCase
                        "message Test2 { " +
                        "    repeated Test test;" +
                        "    required double val;" +
+                       "    optional string str [default = 'test chaine default'];" +
                        "}";
 
         var buffer = new Protocol.Buffer.from_data (proto, proto.length);
@@ -77,11 +96,38 @@ public class Maia.TestProtocol : Maia.TestCase
         assert (msg["val"] != null);
         assert (msg["str"] != null);
         assert (msg["count"] != null);
+        Test.message(@"$((int32)msg["count"].get())");
+        Test.message(@"$((string)msg2["str"].get())");
+        assert ((int)msg["count"].get() == 5);
         assert (msg2 != null);
         assert (((Protocol.Message)msg2["test"].get())["val"] != null);
         assert (((Protocol.Message)msg2["test"].get())["str"] != null);
         assert (((Protocol.Message)msg2["test"].get())["count"] != null);
         assert (msg2["val"] != null);
         Test.message (@"signature test: $(msg), signature: $(msg2)");
+    }
+
+    public void
+    test_protocol_event ()
+    {
+        ProtocolEventArgs evt = new ProtocolEventArgs ();
+        assert (evt["val"] != null);
+        assert (evt["str"] != null);
+
+        evt["val"].set ((uint32)34);
+        evt["str"].set ("test str");
+
+        assert ((uint32)evt["val"].get () == 34);
+        assert ((string)evt["str"].get () == "test str");
+
+        Test.message (@"serialize: $(evt.serialize.print(false))");
+
+        ProtocolEventArgs evt2 = new ProtocolEventArgs ();
+        evt2.serialize = evt.serialize;
+
+        assert ((uint32)evt2["val"].get () == 34);
+        assert ((string)evt2["str"].get () == "test str");
+
+        Test.message (@"serialize: $(evt2.serialize.print(false))");
     }
 }

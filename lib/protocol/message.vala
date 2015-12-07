@@ -57,12 +57,12 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
                         }
                         try
                         {
-                            GLib.Regex re = new GLib.Regex ("""^default[^=]+=(.*)""");
+                            GLib.Regex re = new GLib.Regex ("""^default[^=]*=\s*(["']?)([^'"]*)\1$""");
                             if (re.match (inBuffer.attribute_options))
                             {
                                 string[] v = re.split (inBuffer.attribute_options);
 
-                                default_value = v[1].strip();
+                                default_value = v[2].strip();
                             }
                             else
                             {
@@ -120,6 +120,43 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
         }
 
         return msg;
+    }
+
+    internal GLib.Variant?
+    to_variant ()
+    {
+        GLib.Variant[] childs = {};
+
+        foreach (unowned Core.Object? child in this)
+        {
+            unowned BufferChild? bufferChild = child as BufferChild;
+            if (bufferChild != null)
+            {
+                GLib.Variant? val = bufferChild.to_variant ();
+                if (val != null)
+                {
+                    childs += val;
+                }
+            }
+        }
+
+        return new GLib.Variant.tuple (childs);
+    }
+
+    internal void
+    set_variant (GLib.Variant inVariant)
+        requires (inVariant.get_type ().is_tuple ())
+    {
+        int cpt = 0;
+        foreach (unowned Core.Object? child in this)
+        {
+            unowned BufferChild? bufferChild = child as BufferChild;
+            if (bufferChild != null)
+            {
+                bufferChild.set_variant (inVariant.get_child_value (cpt));
+                cpt++;
+            }
+        }
     }
 
     public new unowned Field?
