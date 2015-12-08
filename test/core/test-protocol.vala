@@ -21,17 +21,39 @@ public class Maia.TestProtocol : Maia.TestCase
 {
     private class ProtocolEventArgs : Core.EventArgs
     {
+        public const string ProtoBuf = "message EventArgsProtocol {" +
+                                       "     required uint32 val;"   +
+                                       "     required string str;"   +
+                                       "}";
         static construct
         {
             Core.EventArgs.register_protocol (typeof (ProtocolEventArgs),
                                               "EventArgsProtocol",
-                                              "message EventArgsProtocol {" +
-                                              "     required uint32 val;"   +
-                                              "     required string str;"   +
-                                              "}");
+                                              ProtoBuf);
         }
 
         public ProtocolEventArgs ()
+        {
+            print(@"$(get_type().name())\n");
+        }
+    }
+
+    private class InheritProtocolEventArgs : ProtocolEventArgs
+    {
+        public const string ProtoBuf = "message InheritEventArgsProtocol {" +
+                                       "     required EventArgsProtocol protocol;"   +
+                                       "     required uint32 count;"   +
+                                       "}";
+
+        static construct
+        {
+            Core.EventArgs.register_protocol (typeof (InheritProtocolEventArgs),
+                                              "InheritEventArgsProtocol",
+                                              ProtocolEventArgs.ProtoBuf +
+                                              ProtoBuf);
+        }
+
+        public InheritProtocolEventArgs ()
         {
         }
     }
@@ -43,6 +65,7 @@ public class Maia.TestProtocol : Maia.TestCase
         add_test ("simple", test_protocol_simple);
         add_test ("message", test_protocol_message);
         add_test ("event", test_protocol_event);
+        add_test ("inherit-event", test_protocol_inherit_event);
     }
 
     public override void
@@ -84,7 +107,7 @@ public class Maia.TestProtocol : Maia.TestCase
                        "}" +
                        "message Test2 { " +
                        "    repeated Test test;" +
-                       "    required double val;" +
+                       "    required double val;;" +
                        "    optional string str [default = 'test chaine default'];" +
                        "}";
 
@@ -127,6 +150,34 @@ public class Maia.TestProtocol : Maia.TestCase
 
         assert ((uint32)evt2["val"].get () == 34);
         assert ((string)evt2["str"].get () == "test str");
+
+        Test.message (@"serialize: $(evt2.serialize.print(false))");
+    }
+
+    public void
+    test_protocol_inherit_event ()
+    {
+        InheritProtocolEventArgs evt = new InheritProtocolEventArgs ();
+        assert (evt["val"] != null);
+        assert (evt["str"] != null);
+
+        evt["val"].set ((uint32)34);
+        evt["str"].set ("test str");
+        evt["count"].set ((uint32)1);
+
+        assert ((uint32)evt["val"].get () == 34);
+        assert ((string)evt["str"].get () == "test str");
+        assert ((uint32)evt["count"].get () == 1);
+
+        Test.message (@"serialize: $(evt.serialize.print(false))");
+
+        InheritProtocolEventArgs evt2 = new InheritProtocolEventArgs ();
+        evt2.serialize = evt.serialize;
+        evt2["count"].set ((uint32)2);
+
+        assert ((uint32)evt2["val"].get () == 34);
+        assert ((string)evt2["str"].get () == "test str");
+        assert ((uint32)evt2["count"].get () == 2);
 
         Test.message (@"serialize: $(evt2.serialize.print(false))");
     }

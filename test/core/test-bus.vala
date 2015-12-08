@@ -40,11 +40,11 @@ public class Maia.TestEventArgs : Maia.Core.EventArgs
     static construct
     {
         Core.EventArgs.register_protocol (typeof (TestEventArgs),
-                                              "Test",
-                                              "message Test {"               +
-                                              "     required string name;"   +
-                                              "     required uint32 val;"    +
-                                              "}");
+                                          "Test",
+                                          "message Test {"               +
+                                          "     required string name;"   +
+                                          "     required uint32 val;"    +
+                                          "}");
     }
 
     public TestEventArgs (string inName, uint32 inVal)
@@ -73,10 +73,10 @@ public class Maia.TestBus : Maia.TestCase
         base ("bus");
 
         //add_test ("socket-bus", test_socket_bus);
-        add_test ("event-bus",  test_event_bus);
-        add_test ("event-bus-multithread",  test_event_bus_multithread);
-        add_test ("event-bus-reply",  test_event_bus_reply);
-        add_test ("event-bus-contention", test_event_bus_contention);
+        add_test ("event-bus",             test_event_bus);
+        add_test ("event-bus-multithread", test_event_bus_multithread);
+        add_test ("event-bus-reply",       test_event_bus_reply);
+        add_test ("event-bus-contention",  test_event_bus_contention);
     }
 
     public override void
@@ -370,6 +370,7 @@ public class Maia.TestBus : Maia.TestCase
     test_event_bus_contention ()
     {
         Core.Event[] events = {};
+        double min = double.MAX, max = double.MIN;
 
         for (int cpt = 0; cpt < 2000; ++cpt)
         {
@@ -377,6 +378,9 @@ public class Maia.TestBus : Maia.TestCase
             events[cpt].subscribe ((args) => {
                 if (args is TestEventArgs)
                 {
+                    double elapsed = (Test.timer_elapsed () * 1000);
+                    min = double.min (elapsed, min);
+                    max = double.max (elapsed, max);
                     unowned TestEventArgs event_args = (TestEventArgs)args;
 
                     //Test.message ("name: %s val: %u", event_args.name, event_args.val);
@@ -398,5 +402,8 @@ public class Maia.TestBus : Maia.TestCase
         });
 
         loop.run ();
+
+        Test.minimized_result (min, "Received min time %f ms", min);
+        Test.maximized_result (min, "Received max time %f ms", max);
     }
 }

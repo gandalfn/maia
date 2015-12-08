@@ -19,43 +19,34 @@
 
 public class Maia.VisibilityEventArgs : Maia.Core.EventArgs
 {
-    // properties
-    private bool m_Visible;
+    // constants
+    public const string ProtoBuf = "message Visibility {"         +
+                                   "     required bool visible;"   +
+                                   "}";
 
     // accessors
-    public override GLib.Variant serialize {
-        owned get {
-            return new GLib.Variant ("(b)", m_Visible);
-        }
-        set {
-            if (value != null)
-            {
-                value.get ("(b)", out m_Visible);
-            }
-            else
-            {
-                m_Visible = false;
-            }
+    public bool visible {
+        get {
+            return (bool)this["visible"].get ();
         }
     }
 
-    public bool visible {
-        get {
-            return m_Visible;
-        }
+    // static methods
+    static construct
+    {
+        Core.EventArgs.register_protocol (typeof (VisibilityEventArgs),
+                                          "Visibility", ProtoBuf);
     }
 
     // methods
-    public VisibilityEventArgs (bool inVisible)
+    public VisibilityEventArgs ()
     {
         base ();
-
-        m_Visible = inVisible;
     }
 
     public override void
     accumulate (Core.EventArgs inArgs)
     {
-        m_Visible |= ((VisibilityEventArgs)inArgs).m_Visible;
+        this["visible"].set (visible | ((VisibilityEventArgs)inArgs).visible);
     }
 }

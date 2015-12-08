@@ -123,7 +123,48 @@ public abstract class Maia.Core.EventArgs : GLib.Object
 
         if (m_Message != null)
         {
+            // search field in message
             ret = m_Message.get (inName);
+
+            // field not found search in parent class
+            if (ret == null)
+            {
+                unowned Protocol.Message? msg = null;
+
+                // search in parent class
+                for (GLib.Type p = get_type ().parent (); ret == null && p != typeof (EventArgs) && p != 0; p = p.parent ())
+                {
+                    msg = (Protocol.Message?)p.get_qdata (s_EventArgsProtoBufferQuark);
+                    // same message than type ignore
+                    if (msg != null && msg.name == m_Message.name)
+                    {
+                        msg = null;
+                    }
+
+                    if (msg != null)
+                    {
+                        // search field message
+                        foreach (unowned Core.Object child in m_Message)
+                        {
+                            unowned Protocol.Field? field = child as Protocol.Field;
+
+                            // found field message
+                            if (field != null && field.field_type == Protocol.Field.Type.MESSAGE)
+                            {
+                                Protocol.Message? message = (Protocol.Message)field.get ();
+
+                                // field message matches message type of parent
+                                if (message != null && message.name == msg.name)
+                                {
+                                    // search field in message
+                                    ret = message[inName];
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         return ret;

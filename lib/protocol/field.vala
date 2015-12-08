@@ -293,7 +293,7 @@ public class Maia.Protocol.Field : Core.Object, BufferChild
     }
 
     // methods
-    public Field (Rule inRule, Type inType, string inName, string? inDefault) throws Core.ParseError
+    public Field (Rule inRule, Type inType, string inName, string? inDefault) throws ProtocolError
     {
         GLib.Object (id: GLib.Quark.from_string (inName), rule: inRule, field_type: inType);
         m_Value = GLib.Value (field_type.to_gtype ());
@@ -304,7 +304,7 @@ public class Maia.Protocol.Field : Core.Object, BufferChild
                 GLib.Value default_value = inDefault;
                 if (!default_value.transform (ref m_Value))
                 {
-                    throw new Core.ParseError.PARSE (@"Invalid default value $inDefault for $inName");
+                    throw new ProtocolError.INVALID_DEFAULT_VALUE (@"Invalid default value $inDefault for $inName");
                 }
             }
             else
@@ -392,7 +392,7 @@ public class Maia.Protocol.Field : Core.Object, BufferChild
 
     internal void
     set_variant (GLib.Variant inVariant)
-        requires (inVariant.get_type ().equal (field_type.to_variant_type ()))
+        requires (inVariant.get_type ().equal (field_type.to_variant_type ()) || (field_type == Type.MESSAGE && inVariant.get_type ().is_tuple ()))
     {
         switch (field_type)
         {

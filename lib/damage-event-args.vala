@@ -19,32 +19,27 @@
 
 public class Maia.DamageEventArgs : Maia.Core.EventArgs
 {
-    // properties
-    private Graphic.Rectangle m_Area;
-    
     // accessors
-    public override GLib.Variant serialize {
-        owned get {
-            return new GLib.Variant ("(dddd)", m_Area.origin.x, m_Area.origin.y, m_Area.size.width, m_Area.size.height);
-        }
-        set {
-            if (value != null)
-            {
-                double x, y, width, height;
-                value.get ("(dddd)", out x, out y, out width, out height);
-                m_Area = Graphic.Rectangle (x, y, width, height);
-            }
-            else
-            {
-                m_Area = Graphic.Rectangle (0, 0, 0, 0);
-            }
+    public Graphic.Rectangle area {
+        get {
+            return Graphic.Rectangle ((double)this["x"].get (),
+                                      (double)this["y"].get (),
+                                      (double)this["width"].get (),
+                                      (double)this["height"].get ());
         }
     }
 
-    public Graphic.Rectangle area {
-        get {
-            return m_Area;
-        }
+    // static methods
+    static construct
+    {
+        Core.EventArgs.register_protocol (typeof (DamageEventArgs),
+                                          "Area",
+                                          "message Area {"               +
+                                          "     required double x;"      +
+                                          "     required double y;"      +
+                                          "     required double width;"  +
+                                          "     required double height;" +
+                                          "}");
     }
 
     // methods
@@ -52,12 +47,22 @@ public class Maia.DamageEventArgs : Maia.Core.EventArgs
     {
         base ();
 
-        m_Area = Graphic.Rectangle (inX, inY, inWidth, inHeight);
+        this["x"].set (inX);
+        this["y"].set (inY);
+        this["width"].set (inWidth);
+        this["height"].set (inHeight);
     }
 
     public override void
     accumulate (Core.EventArgs inArgs)
     {
-        m_Area.union_ (((DamageEventArgs)inArgs).m_Area);
+        Graphic.Rectangle a = area;
+        Graphic.Rectangle b = ((DamageEventArgs)inArgs).area;
+        a.union_ (b);
+
+        this["x"].set ((double)inArgs["x"].get ());
+        this["y"].set ((double)inArgs["y"].get ());
+        this["width"].set ((double)inArgs["width"].get ());
+        this["height"].set ((double)inArgs["height"].get ());
     }
 }

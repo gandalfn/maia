@@ -56,7 +56,7 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
     }
 
     internal void
-    read_buffer (Buffer inBuffer) throws Core.ParseError
+    read_buffer (Buffer inBuffer) throws Core.ParseError, ProtocolError
     {
         foreach (Core.Parser.Token token in inBuffer)
         {
@@ -74,10 +74,6 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
                     string? default_value = null;
                     if (inBuffer.attribute_options != null)
                     {
-                        if (rule != Field.Rule.OPTIONAL)
-                        {
-                            throw new Core.ParseError.PARSE (@"Invalid field options for a not optional field $(inBuffer.attribute_options)");
-                        }
                         try
                         {
                             GLib.Regex re = new GLib.Regex ("""^default[^=]*=\s*(["']?)([^'"]*)\1$""");
@@ -89,12 +85,12 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
                             }
                             else
                             {
-                                throw new Core.ParseError.PARSE (@"Invalid field options $(inBuffer.attribute_options)");
+                                throw new ProtocolError.INVALID_OPTION (@"Invalid field options $(inBuffer.attribute_options)");
                             }
                         }
                         catch (GLib.Error err)
                         {
-                            throw new Core.ParseError.PARSE (@"Invalid field options $(inBuffer.attribute_options): $(err.message)");
+                            throw new ProtocolError.INVALID_OPTION (@"Invalid field options $(inBuffer.attribute_options): $(err.message)");
                         }
                     }
                     Field field = new Field (rule, type, inBuffer.attribute_name, default_value);
@@ -103,7 +99,7 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
                         Message? msg = buffer[inBuffer.attribute_type];
                         if (msg == null)
                         {
-                            throw new Core.ParseError.PARSE (@"Invalid field type $(inBuffer.attribute_type)");
+                            throw new ProtocolError.INVALID_TYPE (@"Invalid field type $(inBuffer.attribute_type)");
                         }
                         field.set ((owned)msg);
                     }

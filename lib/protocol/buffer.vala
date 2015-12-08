@@ -17,6 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+public errordomain Maia.ProtocolError
+{
+    INVALID_TYPE,
+    INVALID_OPTION,
+    INVALID_DEFAULT_VALUE
+}
+
 public class Maia.Protocol.Buffer : Core.Parser
 {
     // Types
@@ -132,7 +139,7 @@ public class Maia.Protocol.Buffer : Core.Parser
                 {
                     msg.read_buffer (this);
                 }
-                catch (Core.ParseError err)
+                catch (ProtocolError err)
                 {
                     throw new Core.ParseError.PARSE (@"$(err.message) at $(GLib.Path.get_basename (m_Filename)):$m_Line,$m_Col");
                 }
