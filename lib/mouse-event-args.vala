@@ -28,48 +28,36 @@ public class Maia.MouseEventArgs : Maia.Core.EventArgs
         MOTION          = 1 << 2
     }
 
-    // properties
-    private uint8         m_EventFlags;
-    private uint8         m_Button;
-    private Graphic.Point m_Position;
-
     // accessors
-    public override GLib.Variant serialize {
-        owned get {
-            return new GLib.Variant ("(yydd)", m_EventFlags, m_Button, m_Position.x, m_Position.y);
-        }
-        set {
-            if (value != null)
-            {
-                double x, y;
-                value.get ("(yydd)", out m_EventFlags, out m_Button, out x, out y);
-                m_Position = Graphic.Point (x, y);
-            }
-            else
-            {
-                m_EventFlags = 0;
-                m_Button = 0;
-                m_Position = Graphic.Point (0, 0);
-            }
-        }
-    }
-
     public uint8 flags {
         get {
-            return m_EventFlags;
+            return (uint8)(uchar)this["flags"].get ();
         }
     }
 
     public uint8 button {
         get {
-            return m_Button;
+            return (uint8)(uchar)this["button"].get ();
         }
     }
 
     public Graphic.Point position {
         get {
-            return m_Position;
+            return Graphic.Point ((double)this["x"].get (), (double)this["y"].get ());
         }
+    }
+
+    // static methods
+    static construct
+    {
+        Core.EventArgs.register_protocol (typeof (MouseEventArgs),
+                                          "Mouse",
+                                          "message Mouse {"             +
+                                          "     required byte flags;"   +
+                                          "     required byte button;"  +
+                                          "     required double x;"     +
+                                          "     required double y;"     +
+                                          "}");
     }
 
     // methods
@@ -77,8 +65,9 @@ public class Maia.MouseEventArgs : Maia.Core.EventArgs
     {
         base ();
 
-        m_EventFlags = inEventFlags;
-        m_Button = inButton;
-        m_Position = Graphic.Point (inX, inY);
+        this["flags"].set ((uchar)inEventFlags);
+        this["button"].set ((uchar)inButton);
+        this["x"].set (inX);
+        this["y"].set (inY);
     }
 }

@@ -32,6 +32,29 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
         GLib.Object (id: GLib.Quark.from_string (inName));
     }
 
+    public Message
+    copy ()
+    {
+        Message msg = new Message (name);
+        foreach (unowned Core.Object child in this)
+        {
+            unowned Field? childField = child as Field;
+            if (childField != null)
+            {
+                msg.add (childField.copy ());
+            }
+            else
+            {
+                unowned Message? childMsg = child as Message;
+                if (childMsg != null)
+                {
+                    msg.add (childMsg.copy ());
+                }
+            }
+        }
+        return msg;
+    }
+
     internal void
     read_buffer (Buffer inBuffer) throws Core.ParseError
     {

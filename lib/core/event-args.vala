@@ -24,7 +24,7 @@ public abstract class Maia.Core.EventArgs : GLib.Object
     private static GLib.Quark s_EventArgsProtoBufferQuark;
 
     // properties
-    private unowned Protocol.Message? m_Message;
+    private Protocol.Message? m_Message;
 
     // accessors
     public virtual GLib.Variant serialize {
@@ -85,7 +85,18 @@ public abstract class Maia.Core.EventArgs : GLib.Object
     // methods
     construct
     {
-        m_Message = (Protocol.Message?)get_type ().get_qdata (s_EventArgsProtoBufferQuark);
+        unowned Protocol.Message? msg = (Protocol.Message?)get_type ().get_qdata (s_EventArgsProtoBufferQuark);
+        if (msg == null)
+        {
+            for (GLib.Type p = get_type ().parent (); msg == null && p != typeof (EventArgs) && p != 0; p = p.parent ())
+            {
+                msg = (Protocol.Message?)p.get_qdata (s_EventArgsProtoBufferQuark);
+            }
+        }
+        if (msg != null)
+        {
+            m_Message = msg.copy ();
+        }
     }
 
     public EventArgs ()

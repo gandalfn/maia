@@ -19,53 +19,48 @@
 
 public class Maia.TestEventArgs : Maia.Core.EventArgs
 {
-    private string m_Name;
-    private uint32 m_Val;
-
-    public override GLib.Variant serialize {
-        owned get {
-            return new GLib.Variant ("(su)", m_Name, m_Val);
-        }
-        set {
-            if (value != null)
-            {
-                value.get ("(su)", out m_Name, out m_Val);
-            }
-        }
-    }
-
     public string name {
-        get {
-            return m_Name;
+        owned get {
+            return (string)this["name"].get ();
         }
         set {
-            m_Name = value;
+            this["name"].set (value);
         }
     }
 
     public uint32 val {
         get {
-            return m_Val;
+            return (uint32)this["val"].get ();
         }
         set {
-            m_Val = value;
+            this["val"].set (value);
         }
+    }
+
+    static construct
+    {
+        Core.EventArgs.register_protocol (typeof (TestEventArgs),
+                                              "Test",
+                                              "message Test {"               +
+                                              "     required string name;"   +
+                                              "     required uint32 val;"    +
+                                              "}");
     }
 
     public TestEventArgs (string inName, uint32 inVal)
     {
-        m_Name = inName;
-        m_Val = inVal;
+        this["name"].set (inName);
+        this["val"].set (inVal);
     }
 
     internal override void
     accumulate (Core.EventArgs inArgs)
         requires (inArgs is TestEventArgs)
     {
-        m_Name += "|" + ((TestEventArgs)inArgs).m_Name;
-        m_Val += ((TestEventArgs)inArgs).m_Val;
+        name += "|" + ((TestEventArgs)inArgs).name;
+        val += ((TestEventArgs)inArgs).val;
 
-        Test.message ("accumulate name: %s val: %u", m_Name, m_Val);
+        Test.message ("accumulate name: %s val: %u", name, val);
     }
 }
 
@@ -376,7 +371,7 @@ public class Maia.TestBus : Maia.TestCase
     {
         Core.Event[] events = {};
 
-        for (int cpt = 0; cpt < 5000; ++cpt)
+        for (int cpt = 0; cpt < 2000; ++cpt)
         {
             events += new Core.Event ("test-event-bus-contention", cpt.to_pointer ());
             events[cpt].subscribe ((args) => {
@@ -384,18 +379,21 @@ public class Maia.TestBus : Maia.TestCase
                 {
                     unowned TestEventArgs event_args = (TestEventArgs)args;
 
-                    Test.message ("name: %s val: %u", event_args.name, event_args.val);
+                    //Test.message ("name: %s val: %u", event_args.name, event_args.val);
 
-                    if (event_args.val == 4999) loop.quit ();
+                    if (event_args.val == 1999) loop.quit ();
                 }
             });
         }
 
         GLib.Timeout.add_seconds (5, () => {
-            for (int cpt = 0; cpt < 5000; ++cpt)
+            Test.timer_start ();
+            for (int cpt = 0; cpt < 2000; ++cpt)
             {
                 events[cpt].publish (new TestEventArgs (@"$cpt", cpt));
             }
+            double elapsed = Test.timer_elapsed () * 1000;
+            Test.message ("elapsed: %g", elapsed);
             return false;
         });
 

@@ -19,45 +19,36 @@
 
 public class Maia.Xcb.DeleteEventArgs : Maia.DeleteEventArgs
 {
-    // properties
-    private unowned global::Xcb.Window m_Window;
-
     // accessors
-    public override GLib.Variant serialize {
-        owned get {
-            return new GLib.Variant ("(vu)", base.serialize, m_Window);
-        }
-        set {
-            if (value != null)
-            {
-                GLib.Variant val;
-                value.get ("(vu)", out val, out m_Window);
-                base.serialize = val;
-            }
-            else
-            {
-                cancel = false;
-            }
+    public global::Xcb.Window window {
+        get {
+            return (global::Xcb.Window)(uint32)this["window"].get ();
         }
     }
 
-    public global::Xcb.Window window {
-        get {
-            return m_Window;
-        }
+    // static methods
+    static construct
+    {
+        Core.EventArgs.register_protocol (typeof (DeleteEventArgs),
+                                          "DeleteXcb",
+                                          Maia.DeleteEventArgs.ProtoBuf +
+                                          "message DeleteXcb {" +
+                                          "     required Delete delete;" +
+                                          "     required uint32 window;" +
+                                          "]");
     }
 
     // methods
     public DeleteEventArgs (global::Xcb.Window inWindow)
     {
         base ();
-        m_Window = inWindow;
+        this["window"].set ((uint32)inWindow);
     }
 
     public override void
     accumulate (Core.EventArgs inArgs)
     {
-        if (m_Window == ((DeleteEventArgs)inArgs).m_Window)
+        if (window == ((DeleteEventArgs)inArgs).window)
         {
             base.accumulate (inArgs);
         }

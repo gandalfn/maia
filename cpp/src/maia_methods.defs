@@ -8129,6 +8129,12 @@
   )
 )
 
+(define-method copy
+  (of-object "MaiaProtocolMessage")
+  (c-name "maia_protocol_message_copy")
+  (return-type "MaiaProtocolMessage*")
+)
+
 (define-method get
   (of-object "MaiaProtocolMessage")
   (c-name "maia_protocol_message_get")
@@ -8180,6 +8186,12 @@
   )
 )
 
+(define-method copy
+  (of-object "MaiaProtocolField")
+  (c-name "maia_protocol_field_copy")
+  (return-type "MaiaProtocolField*")
+)
+
 (define-method get
   (of-object "MaiaProtocolField")
   (c-name "maia_protocol_field_get")
@@ -8214,12 +8226,6 @@
   (of-object "MaiaProtocolField")
   (c-name "maia_protocol_field_get_name")
   (return-type "gchar*")
-)
-
-(define-method get_default_value
-  (of-object "MaiaProtocolField")
-  (c-name "maia_protocol_field_get_default_value")
-  (return-type "const-gchar*")
 )
 
 (define-function maia_manifest_error_quark

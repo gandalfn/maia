@@ -19,6 +19,11 @@
 
 public class Maia.DeleteEventArgs : Maia.Core.EventArgs
 {
+    // constants
+    public const string ProtoBuf = "message Delete {"             +
+                                   "     required bool cancel;"   +
+                                   "}";
+
     // accessors
     public bool cancel {
         get {
@@ -33,10 +38,7 @@ public class Maia.DeleteEventArgs : Maia.Core.EventArgs
     static construct
     {
         Core.EventArgs.register_protocol (typeof (DeleteEventArgs),
-                                          "Delete",
-                                          "message Delete {"             +
-                                          "     required bool cancel;"   +
-                                          "}");
+                                          "Delete", ProtoBuf);
     }
 
     // methods

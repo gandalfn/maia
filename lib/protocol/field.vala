@@ -185,7 +185,6 @@ public class Maia.Protocol.Field : Core.Object, BufferChild
 
     // properties
     private GLib.Value m_Value;
-    private string? m_DefaultValue = null;
 
     // accessors
     public Rule rule { get; construct; default = Rule.INVALID; }
@@ -195,12 +194,6 @@ public class Maia.Protocol.Field : Core.Object, BufferChild
     public string name {
         owned get {
             return ((GLib.Quark)id).to_string ();
-        }
-    }
-
-    public string? default_value {
-        get {
-            return m_DefaultValue;
         }
     }
 
@@ -303,7 +296,6 @@ public class Maia.Protocol.Field : Core.Object, BufferChild
     public Field (Rule inRule, Type inType, string inName, string? inDefault) throws Core.ParseError
     {
         GLib.Object (id: GLib.Quark.from_string (inName), rule: inRule, field_type: inType);
-        m_DefaultValue = inDefault;
         m_Value = GLib.Value (field_type.to_gtype ());
         if (inDefault != null)
         {
@@ -320,6 +312,15 @@ public class Maia.Protocol.Field : Core.Object, BufferChild
                 m_Value = inDefault;
             }
         }
+    }
+
+    public Field
+    copy ()
+    {
+        Field field = GLib.Object.new (typeof (Field), id: GLib.Quark.from_string (name), rule: rule, field_type: field_type) as Field;
+        field.m_Value = GLib.Value (field_type.to_gtype ());
+        m_Value.copy (ref field.m_Value);
+        return field;
     }
 
     internal override string

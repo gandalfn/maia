@@ -27,54 +27,42 @@ public class Maia.KeyboardEventArgs : Maia.Core.EventArgs
         RELEASE
     }
 
-    // properties
-    private State    m_State;
-    private Modifier m_Modifier;
-    private Key      m_Key;
-    private unichar  m_Character;
-
     // accessors
-    public override GLib.Variant serialize {
-        owned get {
-            return new GLib.Variant ("(yyuu)", m_State, m_Modifier, m_Key, m_Character);
-        }
-        set {
-            if (value != null)
-            {
-                value.get ("(yyuu)", out m_State, out m_Modifier, out m_Key, out m_Character);
-            }
-            else
-            {
-                m_State = State.INVALID;
-                m_Modifier = Modifier.NONE;
-                m_Key = Key.VoidSymbol;
-                m_Character = 0;
-            }
-        }
-    }
-
     public State state {
         get {
-            return m_State;
+            return (State)(uchar)this["state"].get ();
         }
     }
 
     public Modifier modifier {
         get {
-            return m_Modifier;
+            return (Modifier)(uchar)this["modifier"].get ();
         }
     }
 
     public Key key {
         get {
-            return m_Key;
+            return (Key)(uint32)this["key"].get ();
         }
     }
 
     public unichar character {
         get {
-            return m_Character;
+            return (unichar)(uint32)this["character"].get ();
         }
+    }
+
+    // static methods
+    static construct
+    {
+        Core.EventArgs.register_protocol (typeof (KeyboardEventArgs),
+                                          "Key",
+                                          "message Key {"                   +
+                                          "     required byte state;"       +
+                                          "     required byte modifier;"    +
+                                          "     required uint32 key;"       +
+                                          "     required uint32 character;" +
+                                          "}");
     }
 
     // methods
@@ -82,9 +70,9 @@ public class Maia.KeyboardEventArgs : Maia.Core.EventArgs
     {
         base ();
 
-        m_State = inState;
-        m_Modifier = inModifier;
-        m_Key = inKey;
-        m_Character = inChar;
+        this["state"].set ((uchar)inState);
+        this["modifier"].set ((uchar)inModifier);
+        this["key"].set ((uint32)inKey);
+        this["character"].set ((uint32)inChar);
     }
 }
