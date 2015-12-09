@@ -1105,6 +1105,16 @@
   )
 )
 
+(define-enum MaiaProtocolError
+  (c-name "MaiaProtocolError")
+  (gtype-id "MAIA_TYPE_PROTOCOL_ERROR")
+  (values
+    '("type" "MAIA_PROTOCOL_ERROR_INVALID_TYPE")
+    '("option" "MAIA_PROTOCOL_ERROR_INVALID_OPTION")
+    '("default-value" "MAIA_PROTOCOL_ERROR_INVALID_DEFAULT_VALUE")
+  )
+)
+
 (define-enum MaiaProtocolFieldRule
   (c-name "MaiaProtocolFieldRule")
   (gtype-id "MAIA_TYPE_PROTOCOL_FIELD_RULE")
@@ -8023,6 +8033,11 @@
     '("MaiaCoreNotificationRecvFunc" "inFunc")
     '("void*" "inFunc_target")
   )
+)
+
+(define-function maia_protocol_error_quark
+  (c-name "maia_protocol_error_quark")
+  (return-type "GQuark")
 )
 
 (define-function maia_protocol_buffer_get_type

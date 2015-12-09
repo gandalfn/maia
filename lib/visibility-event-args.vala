@@ -39,9 +39,11 @@ public class Maia.VisibilityEventArgs : Maia.Core.EventArgs
     }
 
     // methods
-    public VisibilityEventArgs ()
+    public VisibilityEventArgs (bool inVisible)
     {
         base ();
+
+        this["visible"].set (inVisible);
     }
 
     public override void
