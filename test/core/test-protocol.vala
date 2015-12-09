@@ -40,7 +40,7 @@ public class Maia.TestProtocol : Maia.TestCase
 
     private class InheritProtocolEventArgs : ProtocolEventArgs
     {
-        public const string ProtoBuf = "message InheritEventArgsProtocol {" +
+        public new const string ProtoBuf = "message InheritEventArgsProtocol {" +
                                        "     required EventArgsProtocol protocol;"   +
                                        "     required uint32 count;"   +
                                        "}";
@@ -106,27 +106,36 @@ public class Maia.TestProtocol : Maia.TestCase
                        "    optional int32 count [default = 5];" +
                        "}" +
                        "message Test2 { " +
-                       "    repeated Test test;" +
-                       "    required double val;;" +
+                       "    required Test test;" +
+                       "    required double val;" +
                        "    optional string str [default = 'test chaine default'];" +
+                       "}" +
+                       "message Test3 { " +
+                       "    repeated uint32 array;" +
                        "}";
 
         var buffer = new Protocol.Buffer.from_data (proto, proto.length);
         var msg = buffer["Test"];
         var msg2 = buffer["Test2"];
+        var msg3 = buffer["Test3"];
 
         assert (msg != null);
         assert (msg["val"] != null);
         assert (msg["str"] != null);
         assert (msg["count"] != null);
+
         Test.message(@"$((int32)msg["count"].get())");
         Test.message(@"$((string)msg2["str"].get())");
+
         assert ((int)msg["count"].get() == 5);
+
         assert (msg2 != null);
+
         assert (((Protocol.Message)msg2["test"].get())["val"] != null);
         assert (((Protocol.Message)msg2["test"].get())["str"] != null);
         assert (((Protocol.Message)msg2["test"].get())["count"] != null);
         assert (msg2["val"] != null);
+
         Test.message (@"signature test: $(msg), signature: $(msg2)");
     }
 

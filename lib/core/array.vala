@@ -117,13 +117,31 @@ public class Maia.Core.Array <V> : Collection <V>
         }
     }
 
+    /**
+     * typeof of array items
+     */
+    public GLib.Type item_type {
+        get {
+            return typeof (V);
+        }
+    }
+
+    /**
+     * get array raw data
+     */
+    internal V* raw {
+        get  {
+            return (V*)m_pContent;
+        }
+    }
+
     // Methods
     // TODO: It is very stable ? I doubt it though even if the unit test pass.
     //       I must check much more this class.
     public Array ()
     {
         m_pContent = new Node<V>[m_ReservedSize];
-        
+
     }
 
     public Array.sorted ()
@@ -279,7 +297,7 @@ public class Maia.Core.Array <V> : Collection <V>
                                   (m_Size - inPos) * sizeof (Node<V>));
 
             GLib.Memory.set (&m_pContent[m_Size], 0, sizeof (Node<V>));
-            
+
             pos = get_nearest_pos (val);
 
             m_Size++;
@@ -438,7 +456,7 @@ public class Maia.Core.Array <V> : Collection <V>
         m_Size--;
 
         m_pContent[inPos].val = null;
-        
+
         if (inPos != m_Size)
             GLib.Memory.move (&m_pContent[inPos], &m_pContent[inPos + 1],
                               (m_Size - inPos) * sizeof (Node<V>));

@@ -296,20 +296,75 @@ public class Maia.Protocol.Field : Core.Object, BufferChild
     public Field (Rule inRule, Type inType, string inName, string? inDefault) throws ProtocolError
     {
         GLib.Object (id: GLib.Quark.from_string (inName), rule: inRule, field_type: inType);
-        m_Value = GLib.Value (field_type.to_gtype ());
-        if (inDefault != null)
+
+        if (rule != Rule.REPEATED)
         {
-            if (field_type != Type.STRING)
+            m_Value = GLib.Value (field_type.to_gtype ());
+            if (inDefault != null)
             {
-                GLib.Value default_value = inDefault;
-                if (!default_value.transform (ref m_Value))
+                if (field_type != Type.STRING)
                 {
-                    throw new ProtocolError.INVALID_DEFAULT_VALUE (@"Invalid default value $inDefault for $inName");
+                    GLib.Value default_value = inDefault;
+                    if (!default_value.transform (ref m_Value))
+                    {
+                        throw new ProtocolError.INVALID_DEFAULT_VALUE (@"Invalid default value $inDefault for $inName");
+                    }
+                }
+                else
+                {
+                    m_Value = inDefault;
                 }
             }
-            else
+        }
+        else
+        {
+            m_Value = GLib.Value (typeof (Core.Array));
+
+            switch (field_type)
             {
-                m_Value = inDefault;
+                case Type.BOOLEAN:
+                    m_Value = new Core.Array<bool> ();
+                    break;
+
+                case Type.BYTE:
+                    m_Value = new Core.Array<uchar> ();
+                    break;
+
+                case Type.UINT16:
+                    m_Value = new Core.Array<uint> ();
+                    break;
+
+                case Type.INT16:
+                    m_Value = new Core.Array<int> ();
+                    break;
+
+                case Type.UINT32:
+                    m_Value = new Core.Array<uint32> ();
+                    break;
+
+                case Type.INT32:
+                    m_Value = new Core.Array<int32> ();
+                    break;
+
+                case Type.UINT64:
+                    m_Value = new Core.Array<uint64?> ();
+                    break;
+
+                case Type.INT64:
+                    m_Value = new Core.Array<int64?> ();
+                    break;
+
+                case Type.DOUBLE:
+                    m_Value = new Core.Array<double?> ();
+                    break;
+
+                case Type.STRING:
+                    m_Value = new Core.Array<string> ();
+                    break;
+
+                case Type.MESSAGE:
+                    m_Value = new Core.Array<Message> ();
+                    break;
             }
         }
     }
@@ -392,57 +447,131 @@ public class Maia.Protocol.Field : Core.Object, BufferChild
 
     internal void
     set_variant (GLib.Variant inVariant)
-        requires (inVariant.get_type ().equal (field_type.to_variant_type ()) || (field_type == Type.MESSAGE && inVariant.get_type ().is_tuple ()))
+        requires ((rule != Rule.REPEATED && !inVariant.get_type ().is_array () &&
+                   (field_type != Type.MESSAGE && inVariant.get_type ().equal (field_type.to_variant_type ()) ||
+                   (field_type == Type.MESSAGE && inVariant.get_type ().is_tuple ()))) ||
+                  (rule == Rule.REPEATED && inVariant.get_type ().is_array () &&
+                   (field_type != Type.MESSAGE && inVariant.get_type ().element ().equal (field_type.to_variant_type ()) ||
+                   (field_type == Type.MESSAGE && inVariant.get_type ().element ().is_tuple ()))))
     {
-        switch (field_type)
+        if (rule != Rule.REPEATED)
         {
-            case Type.BOOLEAN:
-                m_Value = inVariant.get_boolean ();
-                break;
+            switch (field_type)
+            {
+                case Type.BOOLEAN:
+                    m_Value = inVariant.get_boolean ();
+                    break;
 
-            case Type.BYTE:
-                m_Value = inVariant.get_byte ();
-                break;
+                case Type.BYTE:
+                    m_Value = inVariant.get_byte ();
+                    break;
 
-            case Type.UINT16:
-                m_Value = (int)inVariant.get_uint16 ();
-                break;
+                case Type.UINT16:
+                    m_Value = (uint)inVariant.get_uint16 ();
+                    break;
 
-            case Type.INT16:
-                m_Value = (int)inVariant.get_int16 ();
-                break;
+                case Type.INT16:
+                    m_Value = (int)inVariant.get_int16 ();
+                    break;
 
-            case Type.UINT32:
-                m_Value = inVariant.get_uint32 ();
-                break;
+                case Type.UINT32:
+                    m_Value = inVariant.get_uint32 ();
+                    break;
 
-            case Type.INT32:
-                m_Value = inVariant.get_int32 ();
-                break;
+                case Type.INT32:
+                    m_Value = inVariant.get_int32 ();
+                    break;
 
-            case Type.UINT64:
-                m_Value = inVariant.get_uint64 ();
-                break;
+                case Type.UINT64:
+                    m_Value = inVariant.get_uint64 ();
+                    break;
 
-            case Type.INT64:
-                m_Value = inVariant.get_int64 ();
-                break;
+                case Type.INT64:
+                    m_Value = inVariant.get_int64 ();
+                    break;
 
-            case Type.DOUBLE:
-                m_Value = inVariant.get_double ();
-                break;
+                case Type.DOUBLE:
+                    m_Value = inVariant.get_double ();
+                    break;
 
-            case Type.STRING:
-                m_Value = inVariant.get_string ();
-                break;
+                case Type.STRING:
+                    m_Value = inVariant.get_string ();
+                    break;
 
-            case Type.MESSAGE:
-                unowned Message? msg = (Message?)m_Value;
-                if (msg != null)
+                case Type.MESSAGE:
+                    unowned Message? msg = (Message?)m_Value;
+                    if (msg != null)
+                    {
+                        msg.set_variant (inVariant);
+                    }
+                    break;
+            }
+        }
+        else
+        {
+            ((Core.Array)m_Value).clear ();
+            for (int cpt = 0; cpt < inVariant.n_children (); ++cpt)
+            {
+                var variant = inVariant.get_child_value (cpt);
+
+                switch (field_type)
                 {
-                    msg.set_variant (inVariant);
+                    case Type.BOOLEAN:
+                        Core.Array<bool> val = (Core.Array<bool>)m_Value;
+                        val.insert (variant.get_boolean ());
+                        break;
+
+                    case Type.BYTE:
+                        Core.Array<uchar> val = (Core.Array<uchar>)m_Value;
+                        val.insert (variant.get_byte ());
+                        break;
+
+                    case Type.UINT16:
+                        Core.Array<uint> val = (Core.Array<uint>)m_Value;
+                        val.insert ((uint)variant.get_uint16 ());
+                        break;
+
+                    case Type.INT16:
+                        Core.Array<int> val = (Core.Array<int>)m_Value;
+                        val.insert ((int)variant.get_int16 ());
+                        break;
+
+                    case Type.UINT32:
+                        Core.Array<uint32> val = (Core.Array<uint32>)m_Value;
+                        val.insert (variant.get_uint32 ());
+                        break;
+
+                    case Type.INT32:
+                        Core.Array<int32> val = (Core.Array<int32>)m_Value;
+                        val.insert (variant.get_int32 ());
+                        break;
+
+                    case Type.UINT64:
+                        Core.Array<uint64?> val = (Core.Array<uint64?>)m_Value;
+                        val.insert (variant.get_uint64 ());
+                        break;
+
+                    case Type.INT64:
+                        Core.Array<int64?> val = (Core.Array<int64?>)m_Value;
+                        val.insert (variant.get_int64 ());
+                        break;
+
+                    case Type.DOUBLE:
+                        Core.Array<double?> val = (Core.Array<double?>)m_Value;
+                        val.insert (variant.get_double ());
+                        break;
+
+                    case Type.STRING:
+                        Core.Array<string> val = (Core.Array<string>)m_Value;
+                        val.insert (variant.get_string ());
+                        break;
+
+                    case Type.MESSAGE:
+                        Core.Array<Message> val = (Core.Array<Message>)m_Value;
+                        // TODO
+                        break;
                 }
-                break;
+            }
         }
     }
 
@@ -496,13 +625,16 @@ public class Maia.Protocol.Field : Core.Object, BufferChild
     public new GLib.Value
     @get ()
     {
-        return m_Value;
+        GLib.Value ret = GLib.Value (field_type.to_gtype ());
+        m_Value.copy (ref ret);
+        return ret;
     }
 
     public new void
     @set (GLib.Value inValue)
-        requires (inValue.holds (field_type.to_gtype ()))
+        requires ((rule != Rule.REPEATED && inValue.holds (field_type.to_gtype ())) ||
+                  (rule == Rule.REPEATED && inValue.holds (typeof (Core.Array))) && ((Core.Array)m_Value).item_type == field_type.to_gtype ())
     {
-        m_Value = inValue;
+        inValue.copy (ref m_Value);
     }
 }

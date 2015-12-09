@@ -4409,6 +4409,12 @@
   )
 )
 
+(define-method get_item_type
+  (of-object "MaiaCoreArray")
+  (c-name "maia_core_array_get_item_type")
+  (return-type "GType")
+)
+
 (define-function maia_core_queue_get_type
   (c-name "maia_core_queue_get_type")
   (return-type "GType")
