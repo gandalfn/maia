@@ -126,15 +126,6 @@ public class Maia.Core.Array <V> : Collection <V>
         }
     }
 
-    /**
-     * get array raw data
-     */
-    internal V* raw {
-        get  {
-            return (V*)m_pContent;
-        }
-    }
-
     // Methods
     // TODO: It is very stable ? I doubt it though even if the unit test pass.
     //       I must check much more this class.

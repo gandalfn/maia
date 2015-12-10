@@ -25,6 +25,7 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
     private bool have_parameters = false;
     private bool enable_property = false;
     private bool enable_signal = false;
+    private string current_class = null;
 
     public void
     process (Valadoc.Settings inSettings, Valadoc.Api.Tree inTree, Valadoc.ErrorReporter inReporter)
@@ -64,7 +65,6 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
 
         m_Writer.start_tag ("root");
         inPackage.accept_all_children (this);
-        m_Writer.raw_text ("\n");
         m_Writer.end_tag ("root");
     }
 
@@ -77,13 +77,17 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
     public override void
     visit_interface (Valadoc.Api.Interface inItem)
     {
+        current_class = inItem.get_cname ();
         inItem.accept_all_children (this);
+        current_class = null;
     }
 
     public override void
     visit_class (Valadoc.Api.Class inItem)
     {
+        current_class = inItem.get_cname ();
         inItem.accept_all_children (this);
+        current_class = null;
     }
 
     public override void
@@ -107,23 +111,20 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
     public override void
     visit_property (Valadoc.Api.Property inItem)
     {
-        if (enable_property)
+        if (enable_property && current_class != null)
         {
             string[] attributes = {};
             attributes += "name";
-            attributes += inItem.get_cname ();
+            attributes += current_class + "::" + inItem.get_cname ();
             m_Writer.start_tag ("property", attributes);
             Valadoc.Content.Comment? doctree = inItem.documentation;
             if (doctree != null)
             {
                 m_Writer.start_tag ("description");
-                m_Writer.raw_text ("\n");
                 var renderer = new Valadoc.GtkdocRenderer ();
                 renderer.render (doctree);
                 m_Writer.text (Valadoc.MarkupWriter.escape (renderer.content));
-                m_Writer.raw_text ("\n\n");
                 m_Writer.end_tag ("description");
-                m_Writer.raw_text ("\n");
             }
             m_Writer.end_tag ("property");
         }
@@ -172,13 +173,10 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
                 attributes += inItem.get_cname ();
                 m_Writer.start_tag ("signal", attributes);
                 m_Writer.start_tag ("description");
-                m_Writer.raw_text ("\n");
                 var renderer = new Valadoc.GtkdocRenderer ();
                 renderer.render (doctree);
                 m_Writer.text (Valadoc.MarkupWriter.escape (renderer.content));
-                m_Writer.raw_text ("\n\n");
                 m_Writer.end_tag ("description");
-                m_Writer.raw_text ("\n");
                 m_Writer.end_tag ("signal");
             }
         }
@@ -202,13 +200,10 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
                 attributes += inItem.name;
                 m_Writer.start_tag ("parameter", attributes);
                 m_Writer.start_tag ("parameter_description");
-                m_Writer.raw_text ("\n");
                 var renderer = new Valadoc.GtkdocRenderer ();
                 renderer.render (doctree);
                 m_Writer.text (Valadoc.MarkupWriter.escape (renderer.content));
-                m_Writer.raw_text ("\n\n");
                 m_Writer.end_tag ("parameter_description");
-                m_Writer.raw_text ("\n");
                 m_Writer.end_tag ("parameter");
             }
         }
@@ -225,23 +220,18 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
             attributes += inItem.get_cname ();
             m_Writer.start_tag ("function", attributes);
             m_Writer.start_tag ("description");
-            m_Writer.raw_text ("\n");
             var renderer = new Valadoc.GtkdocRenderer ();
             renderer.render (doctree);
             m_Writer.text (Valadoc.MarkupWriter.escape (renderer.content));
-            m_Writer.raw_text ("\n\n");
             m_Writer.end_tag ("description");
-            m_Writer.raw_text ("\n");
             in_function = true;
             have_parameters = false;
             inItem.accept_all_children (this);
             in_function = false;
             if (have_parameters)
             {
-                m_Writer.raw_text ("\n");
                 m_Writer.end_tag ("parameters");
             }
-            m_Writer.raw_text ("\n");
             m_Writer.end_tag ("function");
         }
     }

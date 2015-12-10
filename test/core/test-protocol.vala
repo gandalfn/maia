@@ -147,6 +147,12 @@ public class Maia.TestProtocol : Maia.TestCase
 
         Test.message(@"$(msg3.to_variant ().print (false))");
 
+        array = new Core.Array<uint32>.from_data ({ 123, 345, 237, 322, 456});
+        msg3["array"].set (array);
+
+        Test.message(@"$(msg3.to_variant ().print (false))");
+
+
         Test.message (@"signature test: $(msg), signature test2: $(msg2), signature test3: $(msg3)");
     }
 
