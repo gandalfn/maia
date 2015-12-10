@@ -93,16 +93,16 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
                             throw new ProtocolError.INVALID_OPTION (@"Invalid field options $(inBuffer.attribute_options): $(err.message)");
                         }
                     }
-                    Field field = new Field (rule, type, inBuffer.attribute_name, default_value);
+                    Message? msg = null;
                     if (type == Field.Type.MESSAGE)
                     {
-                        Message? msg = buffer[inBuffer.attribute_type];
+                        msg = buffer[inBuffer.attribute_type];
                         if (msg == null)
                         {
                             throw new ProtocolError.INVALID_TYPE (@"Invalid field type $(inBuffer.attribute_type)");
                         }
-                        field.set ((owned)msg);
                     }
+                    Field field = new Field (rule, type, inBuffer.attribute_name, default_value, msg);
                     add (field);
                     break;
 

@@ -136,7 +136,18 @@ public class Maia.TestProtocol : Maia.TestCase
         assert (((Protocol.Message)msg2["test"].get())["count"] != null);
         assert (msg2["val"] != null);
 
-        Test.message (@"signature test: $(msg), signature: $(msg2)");
+        assert (msg3 != null);
+
+        Core.Array<uint32> array = (Core.Array<uint32>)msg3["array"].get ();
+        assert (array != null);
+        array.insert (13);
+        array.insert (24);
+        array.insert (5);
+        array.insert (47);
+
+        Test.message(@"$(msg3.to_variant ().print (false))");
+
+        Test.message (@"signature test: $(msg), signature test2: $(msg2), signature test3: $(msg3)");
     }
 
     public void

@@ -324,16 +324,18 @@
 ;; typedef enum  {
 ;; 	MAIA_PROTOCOL_ERROR_INVALID_TYPE,
 ;; 	MAIA_PROTOCOL_ERROR_INVALID_OPTION,
-;; 	MAIA_PROTOCOL_ERROR_INVALID_DEFAULT_VALUE
+;; 	MAIA_PROTOCOL_ERROR_INVALID_DEFAULT_VALUE,
+;; 	MAIA_PROTOCOL_ERROR_MISSING_MESSAGE
 ;; } MaiaProtocolError;
 
 (define-enum-extended ProtocolError
   (in-module "Maia")
   (c-name "MaiaProtocolError")
   (values
-    '("type" "MAIA_PROTOCOL_ERROR_INVALID_TYPE" "0")
-    '("option" "MAIA_PROTOCOL_ERROR_INVALID_OPTION" "1")
-    '("default-value" "MAIA_PROTOCOL_ERROR_INVALID_DEFAULT_VALUE" "2")
+    '("invalid-type" "MAIA_PROTOCOL_ERROR_INVALID_TYPE" "0")
+    '("invalid-option" "MAIA_PROTOCOL_ERROR_INVALID_OPTION" "1")
+    '("invalid-default-value" "MAIA_PROTOCOL_ERROR_INVALID_DEFAULT_VALUE" "2")
+    '("missing-message" "MAIA_PROTOCOL_ERROR_MISSING_MESSAGE" "3")
   )
 )
 

@@ -21,7 +21,8 @@ public errordomain Maia.ProtocolError
 {
     INVALID_TYPE,
     INVALID_OPTION,
-    INVALID_DEFAULT_VALUE
+    INVALID_DEFAULT_VALUE,
+    MISSING_MESSAGE
 }
 
 public class Maia.Protocol.Buffer : Core.Parser
