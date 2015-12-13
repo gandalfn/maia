@@ -57,11 +57,11 @@ public class Maia.KeyboardEventArgs : Maia.Core.EventArgs
     {
         Core.EventArgs.register_protocol (typeof (KeyboardEventArgs),
                                           "Key",
-                                          "message Key {"                   +
-                                          "     required byte state;"       +
-                                          "     required byte modifier;"    +
-                                          "     required uint32 key;"       +
-                                          "     required uint32 character;" +
+                                          "message Key {"          +
+                                          "     byte state;"       +
+                                          "     byte modifier;"    +
+                                          "     uint32 key;"       +
+                                          "     uint32 character;" +
                                           "}");
     }
 

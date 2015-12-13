@@ -20,8 +20,8 @@
 public class Maia.VisibilityEventArgs : Maia.Core.EventArgs
 {
     // constants
-    public const string ProtoBuf = "message Visibility {"         +
-                                   "     required bool visible;"   +
+    public const string ProtoBuf = "message Visibility {" +
+                                   "     bool visible;"   +
                                    "}";
 
     // accessors

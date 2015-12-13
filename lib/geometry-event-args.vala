@@ -34,11 +34,11 @@ public class Maia.GeometryEventArgs : Maia.Core.EventArgs
     {
         Core.EventArgs.register_protocol (typeof (GeometryEventArgs),
                                           "Area",
-                                          "message Area {"               +
-                                          "     required double x;"      +
-                                          "     required double y;"      +
-                                          "     required double width;"  +
-                                          "     required double height;" +
+                                          "message Area {"      +
+                                          "     double x;"      +
+                                          "     double y;"      +
+                                          "     double width;"  +
+                                          "     double height;" +
                                           "}");
     }
 

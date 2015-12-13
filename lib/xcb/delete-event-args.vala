@@ -33,8 +33,8 @@ public class Maia.Xcb.DeleteEventArgs : Maia.DeleteEventArgs
                                           "DeleteXcb",
                                           Maia.DeleteEventArgs.ProtoBuf +
                                           "message DeleteXcb {" +
-                                          "     required Delete delete;" +
-                                          "     required uint32 window;" +
+                                          "     Delete delete;" +
+                                          "     uint32 window;" +
                                           "}");
     }
 

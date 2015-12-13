@@ -22,8 +22,8 @@ public class Maia.TestProtocol : Maia.TestCase
     private class ProtocolEventArgs : Core.EventArgs
     {
         public const string ProtoBuf = "message EventArgsProtocol {" +
-                                       "     required uint32 val;"   +
-                                       "     required string str;"   +
+                                       "     uint32 val;"   +
+                                       "     string str;"   +
                                        "}";
         static construct
         {
@@ -41,8 +41,8 @@ public class Maia.TestProtocol : Maia.TestCase
     private class InheritProtocolEventArgs : ProtocolEventArgs
     {
         public new const string ProtoBuf = "message InheritEventArgsProtocol {" +
-                                       "     required EventArgsProtocol protocol;"   +
-                                       "     required uint32 count;"   +
+                                       "     EventArgsProtocol protocol;"   +
+                                       "     uint32 count;"   +
                                        "}";
 
         static construct
@@ -82,9 +82,9 @@ public class Maia.TestProtocol : Maia.TestCase
     test_protocol_simple ()
     {
         string proto = "message Test { " +
-                       "    required int64 val;" +
-                       "    required string str;" +
-                       "    optional int32 count;" +
+                       "    int64 val;" +
+                       "    string str;" +
+                       "    int32 count;" +
                        "}";
 
         var buffer = new Protocol.Buffer.from_data (proto, proto.length);
@@ -101,14 +101,14 @@ public class Maia.TestProtocol : Maia.TestCase
     test_protocol_message ()
     {
         string proto = "message Test { " +
-                       "    required int64 val;" +
-                       "    required string str;" +
-                       "    optional int32 count [default = 5];" +
+                       "    int64 val;" +
+                       "    string str;" +
+                       "    int32 count [default = 5];" +
                        "}" +
                        "message Test2 { " +
-                       "    required Test test;" +
-                       "    required double val;" +
-                       "    optional string str [default = 'test chaine default'];" +
+                       "    Test test;" +
+                       "    double val;" +
+                       "    string str [default = 'test chaine default'];" +
                        "}" +
                        "message Test3 { " +
                        "    repeated uint32 array;" +
@@ -146,12 +146,6 @@ public class Maia.TestProtocol : Maia.TestCase
         array.insert (47);
 
         Test.message(@"$(msg3.to_variant ().print (false))");
-
-        array = new Core.Array<uint32>.from_data ({ 123, 345, 237, 322, 456});
-        msg3["array"].set (array);
-
-        Test.message(@"$(msg3.to_variant ().print (false))");
-
 
         Test.message (@"signature test: $(msg), signature test2: $(msg2), signature test3: $(msg3)");
     }

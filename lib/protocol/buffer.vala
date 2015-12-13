@@ -169,14 +169,21 @@ public class Maia.Protocol.Buffer : Core.Parser
     read_word (bool inKeepSpace = false) throws Core.ParseError
     {
         bool have_char = false;
+        bool in_template = false;
         char* begin = m_pCurrent;
 
         while (m_pCurrent < m_pEnd)
         {
             if (m_pCurrent[0] == '{' || m_pCurrent[0] == '\n' || m_pCurrent[0] == '}' ||
                 m_pCurrent[0] == '[' || m_pCurrent[0] == ']' || m_pCurrent[0] == ';' ||
-                (have_char && (m_pCurrent[0] == ' ' || m_pCurrent[0] == '\t')))
+                (in_template && m_pCurrent[0] == '>') ||
+                (have_char && !in_template && (m_pCurrent[0] == ' ' || m_pCurrent[0] == '\t')))
                 break;
+
+            if (m_pCurrent == "<")
+            {
+                in_template = true;
+            }
 
             unichar u = ((string) m_pCurrent).get_char_validated ((long) (m_pEnd - m_pCurrent));
             if (u != (unichar) (-1))
@@ -230,14 +237,26 @@ public class Maia.Protocol.Buffer : Core.Parser
     private void
     read_attribute () throws Core.ParseError
     {
-        m_CurrentAttribute = { m_LastWord, null, null, null };
+        if (m_LastWord == "repeated")
+        {
+            m_CurrentAttribute = { m_LastWord, null, null, null };
+
+            if (m_pCurrent[0] == ';')
+            {
+                throw new Core.ParseError.PARSE (@"Unexpected attribute at $(GLib.Path.get_basename (m_Filename)):$m_Line,$m_Col");
+            }
+
+            m_CurrentAttribute.type = read_word ();
+        }
+        else
+        {
+            m_CurrentAttribute = { "", m_LastWord, null, null };
+        }
 
         if (m_pCurrent[0] == ';')
         {
             throw new Core.ParseError.PARSE (@"Unexpected attribute at $(GLib.Path.get_basename (m_Filename)):$m_Line,$m_Col");
         }
-
-        m_CurrentAttribute.type = read_word ();
 
         if (m_CurrentAttribute.type == "")
         {
@@ -297,17 +316,13 @@ public class Maia.Protocol.Buffer : Core.Parser
         {
             m_LastWord = read_word ();
 
-            switch (m_LastWord)
+            if (m_LastWord == "message")
             {
-                case "message":
-                    read_message ();
-                    break;
-
-                case "required":
-                case "optional":
-                case "repeated":
-                    read_attribute ();
-                    break;
+                read_message ();
+            }
+            else if (m_LastWord != "")
+            {
+                read_attribute ();
             }
 
             if (m_pCurrent[0] == '{')

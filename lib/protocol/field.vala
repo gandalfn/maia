@@ -23,7 +23,6 @@ public class Maia.Protocol.Field : Core.Object, BufferChild
     {
         INVALID,
         REQUIRED,
-        OPTIONAL,
         REPEATED;
 
         internal static Rule
@@ -31,11 +30,8 @@ public class Maia.Protocol.Field : Core.Object, BufferChild
         {
             switch (inVal.down ())
             {
-                case "required":
+                case "":
                     return REQUIRED;
-
-                case "optional":
-                    return OPTIONAL;
 
                 case "repeated":
                     return REPEATED;
@@ -412,10 +408,6 @@ public class Maia.Protocol.Field : Core.Object, BufferChild
 
         switch (rule)
         {
-            case Rule.OPTIONAL:
-                ret += "m";
-                break;
-
             case Rule.REPEATED:
                 ret += "a";
                 break;

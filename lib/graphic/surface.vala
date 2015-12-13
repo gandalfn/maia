@@ -123,7 +123,7 @@ public class Maia.Graphic.Surface : Pattern
     }
 
     /**
-     * Clears the internal {@link Maia.Graphic.Surface}, making all pixels fully transparent.
+     * Clears the internal surface, making all pixels fully transparent.
      */
     public virtual void
     clear () throws Graphic.Error
@@ -132,7 +132,7 @@ public class Maia.Graphic.Surface : Pattern
     }
 
     /**
-     * Performs a blur operation on the internal {@link Maia.Graphic.Surface}.
+     * Performs a blur operation on the internal surface.
      *
      * @param inRadius the blur radius
      * @param inProcessCount the number of times to perform the operation
@@ -144,7 +144,7 @@ public class Maia.Graphic.Surface : Pattern
     }
 
     /**
-     * Performs a blur operation on the internal {@link Maia.Graphic.Surface}, using an
+     * Performs a blur operation on the internal surface, using an
      * exponential blurring algorithm. This method is usually the fastest
      * and produces good-looking results (though not quite as good as gaussian's).
      *
@@ -157,7 +157,7 @@ public class Maia.Graphic.Surface : Pattern
     }
 
     /**
-     * Performs a blur operation on the internal {@link Maia.Graphic.Surface}, using a
+     * Performs a blur operation on the internal surface, using a
      * gaussian blurring algorithm. This method is very slow, albeit producing
      * debatably the best-looking results, and in most cases developers should
      * use the exponential blurring algorithm instead.

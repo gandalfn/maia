@@ -1122,7 +1122,6 @@
   (values
     '("invalid" "MAIA_PROTOCOL_FIELD_RULE_INVALID")
     '("required" "MAIA_PROTOCOL_FIELD_RULE_REQUIRED")
-    '("optional" "MAIA_PROTOCOL_FIELD_RULE_OPTIONAL")
     '("repeated" "MAIA_PROTOCOL_FIELD_RULE_REPEATED")
   )
 )

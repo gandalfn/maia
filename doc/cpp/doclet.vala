@@ -19,6 +19,7 @@
 
 public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
 {
+    private Valadoc.GtkdocRenderer renderer;
     private Valadoc.MarkupWriter m_Writer;
     private Valadoc.Settings m_Settings;
     private bool in_function = false;
@@ -31,6 +32,7 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
     process (Valadoc.Settings inSettings, Valadoc.Api.Tree inTree, Valadoc.ErrorReporter inReporter)
     {
         m_Settings = inSettings;
+        renderer = new Valadoc.GtkdocRenderer ();
         GLib.DirUtils.create_with_parents (m_Settings.path, 0777);
         inTree.accept (this);
     }
@@ -60,7 +62,7 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
 
         var stream = GLib.FileStream.open (filepath, "w");
         m_Writer = new Valadoc.MarkupWriter ((str) => {
-            stream.printf (str);
+            stream.puts (str);
         }, false);
 
         m_Writer.start_tag ("root");
@@ -121,7 +123,6 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
             if (doctree != null)
             {
                 m_Writer.start_tag ("description");
-                var renderer = new Valadoc.GtkdocRenderer ();
                 renderer.render (doctree);
                 m_Writer.text (Valadoc.MarkupWriter.escape (renderer.content));
                 m_Writer.end_tag ("description");
@@ -173,7 +174,6 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
                 attributes += inItem.get_cname ();
                 m_Writer.start_tag ("signal", attributes);
                 m_Writer.start_tag ("description");
-                var renderer = new Valadoc.GtkdocRenderer ();
                 renderer.render (doctree);
                 m_Writer.text (Valadoc.MarkupWriter.escape (renderer.content));
                 m_Writer.end_tag ("description");
@@ -200,7 +200,6 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
                 attributes += inItem.name;
                 m_Writer.start_tag ("parameter", attributes);
                 m_Writer.start_tag ("parameter_description");
-                var renderer = new Valadoc.GtkdocRenderer ();
                 renderer.render (doctree);
                 m_Writer.text (Valadoc.MarkupWriter.escape (renderer.content));
                 m_Writer.end_tag ("parameter_description");
@@ -220,8 +219,7 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
             attributes += inItem.get_cname ();
             m_Writer.start_tag ("function", attributes);
             m_Writer.start_tag ("description");
-            var renderer = new Valadoc.GtkdocRenderer ();
-            renderer.render (doctree);
+            renderer.render_symbol (doctree);
             m_Writer.text (Valadoc.MarkupWriter.escape (renderer.content));
             m_Writer.end_tag ("description");
             in_function = true;

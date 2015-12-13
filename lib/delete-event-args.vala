@@ -20,8 +20,8 @@
 public class Maia.DeleteEventArgs : Maia.Core.EventArgs
 {
     // constants
-    public const string ProtoBuf = "message Delete {"             +
-                                   "     required bool cancel;"   +
+    public const string ProtoBuf = "message Delete {"  +
+                                   "     bool cancel;" +
                                    "}";
 
     // accessors

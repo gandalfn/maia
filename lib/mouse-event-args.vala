@@ -52,11 +52,11 @@ public class Maia.MouseEventArgs : Maia.Core.EventArgs
     {
         Core.EventArgs.register_protocol (typeof (MouseEventArgs),
                                           "Mouse",
-                                          "message Mouse {"             +
-                                          "     required byte flags;"   +
-                                          "     required byte button;"  +
-                                          "     required double x;"     +
-                                          "     required double y;"     +
+                                          "message Mouse {"   +
+                                          "     byte flags;"  +
+                                          "     byte button;" +
+                                          "     double x;"    +
+                                          "     double y;"    +
                                           "}");
     }
 

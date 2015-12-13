@@ -41,9 +41,9 @@ public class Maia.TestEventArgs : Maia.Core.EventArgs
     {
         Core.EventArgs.register_protocol (typeof (TestEventArgs),
                                           "Test",
-                                          "message Test {"               +
-                                          "     required string name;"   +
-                                          "     required uint32 val;"    +
+                                          "message Test {"    +
+                                          "     string name;" +
+                                          "     uint32 val;"  +
                                           "}");
     }
 
