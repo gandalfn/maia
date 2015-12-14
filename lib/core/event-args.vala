@@ -32,7 +32,7 @@ public abstract class Maia.Core.EventArgs : GLib.Object
             GLib.Variant ret = null;
             if (m_Message != null)
             {
-                ret = m_Message.to_variant ();
+                ret = m_Message.serialize;
             }
 
             return ret;
@@ -40,7 +40,7 @@ public abstract class Maia.Core.EventArgs : GLib.Object
         set {
             if (m_Message != null)
             {
-                m_Message.set_variant (value);
+                m_Message.serialize = value;
             }
         }
     }
@@ -95,7 +95,14 @@ public abstract class Maia.Core.EventArgs : GLib.Object
         }
         if (msg != null)
         {
-            m_Message = msg.copy ();
+            try
+            {
+                m_Message = msg.copy () as Protocol.Message;
+            }
+            catch (ProtocolError err)
+            {
+                Log.critical (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Error on copy message: $(err.message)");
+            }
         }
     }
 
@@ -104,37 +111,25 @@ public abstract class Maia.Core.EventArgs : GLib.Object
         GLib.Object (sequence: GLib.AtomicInt.add (ref s_Sequence, 1));
     }
 
-    public virtual void
-    accumulate (EventArgs inArgs)
-        requires (inArgs.get_type ().is_a (get_type ()))
+    private unowned Protocol.Message?
+    get_message (string inFieldName)
     {
-    }
-
-    public EventArgs
-    copy ()
-    {
-        return GLib.Object.new (get_type (), sequence: sequence, serialize: serialize) as EventArgs;
-    }
-
-    public new unowned Protocol.Field?
-    @get (string inName)
-    {
-        unowned Protocol.Field? ret = null;
+        unowned Protocol.Message? msg = null;
 
         if (m_Message != null)
         {
-            // search field in message
-            ret = m_Message.get (inName);
-
-            // field not found search in parent class
-            if (ret == null)
+            // field is in instance message
+            if (inFieldName in m_Message)
             {
-                unowned Protocol.Message? msg = null;
-
+                msg = m_Message;
+            }
+            else
+            {
                 // search in parent class
-                for (GLib.Type p = get_type ().parent (); ret == null && p != typeof (EventArgs) && p != 0; p = p.parent ())
+                for (GLib.Type p = get_type ().parent (); msg == null && p != typeof (EventArgs) && p != 0; p = p.parent ())
                 {
                     msg = (Protocol.Message?)p.get_qdata (s_EventArgsProtoBufferQuark);
+
                     // same message than type ignore
                     if (msg != null && msg.name == m_Message.name)
                     {
@@ -151,13 +146,12 @@ public abstract class Maia.Core.EventArgs : GLib.Object
                             // found field message
                             if (field != null && field.field_type == Protocol.Field.Type.MESSAGE)
                             {
-                                Protocol.Message? message = (Protocol.Message)field.get ();
+                                Protocol.Message? message = (Protocol.Message)field[0];
 
                                 // field message matches message type of parent
-                                if (message != null && message.name == msg.name)
+                                if (message != null && message.name == msg.name && inFieldName in message)
                                 {
-                                    // search field in message
-                                    ret = message[inName];
+                                    msg = message;
                                     break;
                                 }
                             }
@@ -167,6 +161,42 @@ public abstract class Maia.Core.EventArgs : GLib.Object
             }
         }
 
+        return msg;
+    }
+
+    public virtual void
+    accumulate (EventArgs inArgs)
+        requires (inArgs.get_type ().is_a (get_type ()))
+    {
+    }
+
+    public EventArgs
+    copy ()
+    {
+        return GLib.Object.new (get_type (), sequence: sequence, serialize: serialize) as EventArgs;
+    }
+
+    public new GLib.Value?
+    @get (string inName, int inIndex = 0)
+    {
+        GLib.Value? ret = null;
+
+        unowned Protocol.Message msg = get_message (inName);
+        if (msg != null)
+        {
+            ret = msg[inName, inIndex];
+        }
+
         return ret;
+    }
+
+    public new void
+    @set (string inName, int inIndex, GLib.Value inVal)
+    {
+        unowned Protocol.Message msg = get_message (inName);
+        if (msg != null)
+        {
+            msg[inName, inIndex] = inVal;
+        }
     }
 }

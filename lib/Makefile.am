@@ -68,6 +68,14 @@ libmaia_la_SOURCES = \
     protocol/buffer-child.vala \
     protocol/message.vala \
     protocol/field.vala \
+    protocol/bool-field.vala \
+    protocol/byte-field.vala \
+    protocol/uint16-field.vala \
+    protocol/int16-field.vala \
+    protocol/uint32-field.vala \
+    protocol/int32-field.vala \
+    protocol/uint64-field.vala \
+    protocol/int64-field.vala \
     manifest/document.vala \
     manifest/element.vala \
     manifest/theme.vala \

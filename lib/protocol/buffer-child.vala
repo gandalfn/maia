@@ -31,6 +31,8 @@ public interface Maia.Protocol.BufferChild : Core.Object
         }
     }
 
-    public abstract void set_variant (GLib.Variant inVariant);
-    public abstract GLib.Variant? to_variant ();
+    public abstract GLib.Variant serialize { owned get; set; }
+
+    // methods
+    public abstract BufferChild copy () throws ProtocolError;
 }

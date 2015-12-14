@@ -30,25 +30,25 @@ public class Maia.KeyboardEventArgs : Maia.Core.EventArgs
     // accessors
     public State state {
         get {
-            return (State)(uchar)this["state"].get ();
+            return (State)(uchar)this["state"];
         }
     }
 
     public Modifier modifier {
         get {
-            return (Modifier)(uchar)this["modifier"].get ();
+            return (Modifier)(uchar)this["modifier"];
         }
     }
 
     public Key key {
         get {
-            return (Key)(uint32)this["key"].get ();
+            return (Key)(uint32)this["key"];
         }
     }
 
     public unichar character {
         get {
-            return (unichar)(uint32)this["character"].get ();
+            return (unichar)(uint32)this["character"];
         }
     }
 
@@ -70,9 +70,9 @@ public class Maia.KeyboardEventArgs : Maia.Core.EventArgs
     {
         base ();
 
-        this["state"].set ((uchar)inState);
-        this["modifier"].set ((uchar)inModifier);
-        this["key"].set ((uint32)inKey);
-        this["character"].set ((uint32)inChar);
+        this["state", 0]     = (uchar)inState;
+        this["modifier", 0]  = (uchar)inModifier;
+        this["key", 0]       = (uint32)inKey;
+        this["character", 0] = (uint32)inChar;
     }
 }

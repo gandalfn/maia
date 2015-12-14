@@ -27,10 +27,10 @@ public class Maia.DeleteEventArgs : Maia.Core.EventArgs
     // accessors
     public bool cancel {
         get {
-            return (bool)this["cancel"].get ();
+            return (bool)this["cancel"];
         }
         set {
-            this["cancel"].set (value);
+            this["cancel", 0] = value;
         }
     }
 

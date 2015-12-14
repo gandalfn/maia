@@ -1,0 +1,94 @@
+/*
+ * uint16-field.vala
+ * Copyright (C) Nicolas Bruguier 2010-2015 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+internal class Maia.Protocol.UInt16Field : Field
+{
+    // accessors
+    public override Field.Type field_type {
+        get {
+            return Field.Type.UINT16;
+        }
+    }
+
+    // static methods
+    static construct
+    {
+        GLib.Value.register_transform_func (typeof (string), typeof (uint16), string_to_uint16);
+    }
+
+    private static void
+    string_to_uint16 (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (string)))
+    {
+        string val = (string)inSrc;
+
+        outDest = (uint)int.parse (val);
+    }
+
+    // methods
+    public UInt16Field (string inName, bool inRepeated, string? inDefault) throws ProtocolError
+    {
+        base (inName, inRepeated, inDefault);
+    }
+
+    public override BufferChild
+    copy () throws ProtocolError
+    {
+        Field field = new UInt16Field (name, repeated, null);
+        field.m_Values = {};
+        foreach (unowned GLib.Value? val in m_Values)
+        {
+            GLib.Value field_val = create_value ();
+            val.copy (ref field_val);
+            field.m_Values += val;
+        }
+        return field;
+    }
+
+    internal override void
+    set_default (string? inDefault)
+    {
+        base.set_default (inDefault ?? "0");
+    }
+
+    internal override GLib.Variant
+    get_variant (int inIndex)
+        requires (inIndex < m_Values.length)
+    {
+        return new GLib.Variant.uint16 ((uint16)(uint)m_Values[inIndex]);
+    }
+
+    internal override void
+    set_variant (int inIndex, GLib.Variant inVariant)
+        requires (inIndex < m_Values.length)
+        requires (inVariant.get_type ().equal (field_type.to_variant_type ()))
+    {
+        m_Values[inIndex] = (uint)inVariant.get_uint16 ();
+    }
+
+    internal override string
+    to_string ()
+    {
+        string ret = "";
+
+        if (repeated) ret += "a";
+        ret += "q";
+
+        return ret;
+    }
+}

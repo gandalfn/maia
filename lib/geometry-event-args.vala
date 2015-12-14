@@ -22,10 +22,10 @@ public class Maia.GeometryEventArgs : Maia.Core.EventArgs
     // accessors
     public Graphic.Rectangle area {
         get {
-            return Graphic.Rectangle ((double)this["x"].get (),
-                                      (double)this["y"].get (),
-                                      (double)this["width"].get (),
-                                      (double)this["height"].get ());
+            return Graphic.Rectangle ((double)this["x"],
+                                      (double)this["y"],
+                                      (double)this["width"],
+                                      (double)this["height"]);
         }
     }
 
@@ -47,18 +47,18 @@ public class Maia.GeometryEventArgs : Maia.Core.EventArgs
     {
         base ();
 
-        this["x"].set (inX);
-        this["y"].set (inY);
-        this["width"].set (inWidth);
-        this["height"].set (inHeight);
+        this["x", 0] = inX;
+        this["y", 0] = inY;
+        this["width", 0] = inWidth;
+        this["height", 0] = inHeight;
     }
 
     public override void
     accumulate (Core.EventArgs inArgs)
     {
-        this["x"].set ((double)inArgs["x"].get ());
-        this["y"].set ((double)inArgs["y"].get ());
-        this["width"].set ((double)inArgs["width"].get ());
-        this["height"].set ((double)inArgs["height"].get ());
+        this["x", 0] = (double)inArgs["x"];
+        this["y", 0] = (double)inArgs["y"];
+        this["width", 0] = (double)inArgs["width"];
+        this["height", 0] = (double)inArgs["height"];
     }
 }

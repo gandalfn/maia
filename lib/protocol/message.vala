@@ -26,14 +26,90 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
         }
     }
 
+    public GLib.Variant serialize {
+        owned get {
+            GLib.Variant[] childs = {};
+
+            foreach (unowned Core.Object? child in this)
+            {
+                unowned Field? field = child as Field;
+                if (field != null)
+                {
+                    childs += field.serialize;
+                }
+            }
+
+            return new GLib.Variant.tuple (childs);
+        }
+        set {
+            int cpt = 0;
+            foreach (unowned Core.Object? child in this)
+            {
+                unowned Field? field = child as Field;
+                if (field != null)
+                {
+                    field.serialize = value.get_child_value (cpt);
+                    cpt++;
+                }
+            }
+        }
+    }
+
     // methods
     public Message (string inName)
     {
         GLib.Object (id: GLib.Quark.from_string (inName));
     }
 
-    public Message
-    copy ()
+    private Field
+    create_field (string inType, string? inRule, string inName, string? inOptions) throws ProtocolError
+    {
+        Field.Type type = Field.Type.from_string (inType);
+        bool repeated = inRule != null && inRule == "repeated";
+
+        string? default_value = null;
+        if (inOptions != null)
+        {
+            try
+            {
+                GLib.Regex re = new GLib.Regex ("""^default[^=]*=\s*(["']?)([^'"]*)\1$""");
+                if (re.match (inOptions))
+                {
+                    string[] v = re.split (inOptions);
+
+                    default_value = v[2].strip();
+                }
+                else
+                {
+                    throw new ProtocolError.INVALID_OPTION (@"Invalid field options $(inOptions)");
+                }
+            }
+            catch (GLib.Error err)
+            {
+                throw new ProtocolError.INVALID_OPTION (@"Invalid field options $(inOptions): $(err.message)");
+            }
+        }
+
+        Field field = null;
+        switch (type)
+        {
+            case Field.Type.BOOLEAN:
+                field = new BoolField (inName, repeated, default_value);
+                break;
+
+            case Field.Type.BYTE:
+                field = new ByteField (inName, repeated, default_value);
+                break;
+
+            default:
+                throw new ProtocolError.INVALID_TYPE (@"Invalid field type $(inType)");
+        }
+
+        return field;
+    }
+
+    public BufferChild
+    copy () throws ProtocolError
     {
         Message msg = new Message (name);
         foreach (unowned Core.Object child in this)
@@ -69,40 +145,7 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
                     break;
 
                 case Core.Parser.Token.ATTRIBUTE:
-                    Field.Rule rule = Field.Rule.from_string (inBuffer.attribute_rule);
-                    Field.Type type = Field.Type.from_string (inBuffer.attribute_type);
-                    string? default_value = null;
-                    if (inBuffer.attribute_options != null)
-                    {
-                        try
-                        {
-                            GLib.Regex re = new GLib.Regex ("""^default[^=]*=\s*(["']?)([^'"]*)\1$""");
-                            if (re.match (inBuffer.attribute_options))
-                            {
-                                string[] v = re.split (inBuffer.attribute_options);
-
-                                default_value = v[2].strip();
-                            }
-                            else
-                            {
-                                throw new ProtocolError.INVALID_OPTION (@"Invalid field options $(inBuffer.attribute_options)");
-                            }
-                        }
-                        catch (GLib.Error err)
-                        {
-                            throw new ProtocolError.INVALID_OPTION (@"Invalid field options $(inBuffer.attribute_options): $(err.message)");
-                        }
-                    }
-                    Message? msg = null;
-                    if (type == Field.Type.MESSAGE)
-                    {
-                        msg = buffer[inBuffer.attribute_type];
-                        if (msg == null)
-                        {
-                            throw new ProtocolError.INVALID_TYPE (@"Invalid field type $(inBuffer.attribute_type)");
-                        }
-                    }
-                    Field field = new Field (rule, type, inBuffer.attribute_name, default_value, msg);
+                    Field field = create_field (inBuffer.attribute_type, inBuffer.attribute_rule, inBuffer.attribute, inBuffer.attribute_options);
                     add (field);
                     break;
 
@@ -141,46 +184,28 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
         return msg;
     }
 
-    internal GLib.Variant?
-    to_variant ()
+    public new bool
+    contains (string inName)
     {
-        GLib.Variant[] childs = {};
-
-        foreach (unowned Core.Object? child in this)
-        {
-            unowned BufferChild? bufferChild = child as BufferChild;
-            if (bufferChild != null)
-            {
-                GLib.Variant? val = bufferChild.to_variant ();
-                if (val != null)
-                {
-                    childs += val;
-                }
-            }
-        }
-
-        return new GLib.Variant.tuple (childs);
+        unowned Field? field = find (GLib.Quark.from_string (inName), false) as Field;
+        return field != null;
     }
 
-    internal void
-    set_variant (GLib.Variant inVariant)
-        requires (inVariant.get_type ().is_tuple ())
+    public new GLib.Value?
+    @get (string inName, int inIndex = 0)
     {
-        int cpt = 0;
-        foreach (unowned Core.Object? child in this)
-        {
-            unowned BufferChild? bufferChild = child as BufferChild;
-            if (bufferChild != null)
-            {
-                bufferChild.set_variant (inVariant.get_child_value (cpt));
-                cpt++;
-            }
-        }
+        unowned Field? field = find (GLib.Quark.from_string (inName), false) as Field;
+        GLib.return_val_if_fail (field != null, null);
+
+        return field[inIndex];
     }
 
-    public new unowned Field?
-    @get (string inName)
+    public new void
+    @set (string inName, int inIndex, GLib.Value inValue)
     {
-        return find (GLib.Quark.from_string (inName), false) as Field;
+        unowned Field? field = find (GLib.Quark.from_string (inName), false) as Field;
+        GLib.return_if_fail (field != null);
+
+        field[inIndex] = inValue;
     }
 }

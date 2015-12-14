@@ -27,7 +27,7 @@ public class Maia.VisibilityEventArgs : Maia.Core.EventArgs
     // accessors
     public bool visible {
         get {
-            return (bool)this["visible"].get ();
+            return (bool)this["visible"];
         }
     }
 
@@ -43,12 +43,12 @@ public class Maia.VisibilityEventArgs : Maia.Core.EventArgs
     {
         base ();
 
-        this["visible"].set (inVisible);
+        this["visible", 0] = inVisible;
     }
 
     public override void
     accumulate (Core.EventArgs inArgs)
     {
-        this["visible"].set (visible | ((VisibilityEventArgs)inArgs).visible);
+        this["visible", 0] = visible | ((VisibilityEventArgs)inArgs).visible;
     }
 }

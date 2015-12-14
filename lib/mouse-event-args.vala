@@ -31,19 +31,19 @@ public class Maia.MouseEventArgs : Maia.Core.EventArgs
     // accessors
     public uint8 flags {
         get {
-            return (uint8)(uchar)this["flags"].get ();
+            return (uint8)(uchar)this["flags"];
         }
     }
 
     public uint8 button {
         get {
-            return (uint8)(uchar)this["button"].get ();
+            return (uint8)(uchar)this["button"];
         }
     }
 
     public Graphic.Point position {
         get {
-            return Graphic.Point ((double)this["x"].get (), (double)this["y"].get ());
+            return Graphic.Point ((double)this["x"], (double)this["y"]);
         }
     }
 
@@ -65,9 +65,9 @@ public class Maia.MouseEventArgs : Maia.Core.EventArgs
     {
         base ();
 
-        this["flags"].set ((uchar)inEventFlags);
-        this["button"].set ((uchar)inButton);
-        this["x"].set (inX);
-        this["y"].set (inY);
+        this["flags", 0] = (uchar)inEventFlags;
+        this["button", 0] = (uchar)inButton;
+        this["x", 0] = inX;
+        this["y", 0] = inY;
     }
 }
