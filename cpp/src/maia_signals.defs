@@ -67,17 +67,17 @@
   (construct-only #f)
 )
 
-;; MaiaCoreIterator is neither a GObject nor a GInterface. Not checked for signals and properties.
+;; From MaiaCoreIterator
 
-;; MaiaCoreCollection is neither a GObject nor a GInterface. Not checked for signals and properties.
+;; From MaiaCoreCollection
 
-;; MaiaCoreArray is neither a GObject nor a GInterface. Not checked for signals and properties.
+;; From MaiaCoreArray
 
-;; MaiaCoreSet is neither a GObject nor a GInterface. Not checked for signals and properties.
+;; From MaiaCoreSet
 
-;; MaiaCorePair is neither a GObject nor a GInterface. Not checked for signals and properties.
+;; From MaiaCorePair
 
-;; MaiaCoreMap is neither a GObject nor a GInterface. Not checked for signals and properties.
+;; From MaiaCoreMap
 
 ;; From MaiaCoreTimeline
 
@@ -674,7 +674,7 @@
   (construct-only #f)
 )
 
-;; MaiaGraphicPoint is neither a GObject nor a GInterface. Not checked for signals and properties.
+;; From MaiaGraphicPoint
 
 ;; From MaiaGraphicRadialGradient
 
@@ -714,11 +714,11 @@
   (construct-only #f)
 )
 
-;; MaiaGraphicRange is neither a GObject nor a GInterface. Not checked for signals and properties.
+;; From MaiaGraphicRange
 
-;; MaiaGraphicLine is neither a GObject nor a GInterface. Not checked for signals and properties.
+;; From MaiaGraphicLine
 
-;; MaiaGraphicRectangle is neither a GObject nor a GInterface. Not checked for signals and properties.
+;; From MaiaGraphicRectangle
 
 ;; From MaiaGraphicRegion
 
@@ -740,7 +740,7 @@
   (construct-only #f)
 )
 
-;; MaiaGraphicSize is neither a GObject nor a GInterface. Not checked for signals and properties.
+;; From MaiaGraphicSize
 
 ;; From MaiaGraphicSurface
 
@@ -1311,7 +1311,7 @@
   (construct-only #f)
 )
 
-;; MaiaCursor is neither a GObject nor a GInterface. Not checked for signals and properties.
+;; From MaiaCursor
 
 ;; From MaiaDocument
 
@@ -3110,7 +3110,7 @@
 
 ;; From MaiaItemResizable
 
-;; MaiaKey is neither a GObject nor a GInterface. Not checked for signals and properties.
+;; From MaiaKey
 
 ;; From MaiaLabel
 
@@ -3569,9 +3569,9 @@
   (construct-only #f)
 )
 
-;; MaiaOrientation is neither a GObject nor a GInterface. Not checked for signals and properties.
+;; From MaiaOrientation
 
-;; MaiaPageFormat is neither a GObject nor a GInterface. Not checked for signals and properties.
+;; From MaiaPageFormat
 
 ;; From MaiaPath
 
@@ -3793,7 +3793,7 @@
   (construct-only #f)
 )
 
-;; MaiaScroll is neither a GObject nor a GInterface. Not checked for signals and properties.
+;; From MaiaScroll
 
 ;; From MaiaToggle
 

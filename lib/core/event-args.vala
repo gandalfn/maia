@@ -95,14 +95,7 @@ public abstract class Maia.Core.EventArgs : GLib.Object
         }
         if (msg != null)
         {
-            try
-            {
-                m_Message = msg.copy () as Protocol.Message;
-            }
-            catch (ProtocolError err)
-            {
-                Log.critical (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Error on copy message: $(err.message)");
-            }
+            m_Message = msg.copy () as Protocol.Message;
         }
     }
 

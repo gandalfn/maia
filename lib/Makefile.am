@@ -76,6 +76,9 @@ libmaia_la_SOURCES = \
     protocol/int32-field.vala \
     protocol/uint64-field.vala \
     protocol/int64-field.vala \
+    protocol/double-field.vala \
+    protocol/string-field.vala \
+    protocol/message-field.vala \
     manifest/document.vala \
     manifest/element.vala \
     manifest/theme.vala \

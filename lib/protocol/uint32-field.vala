@@ -19,9 +19,15 @@
 internal class Maia.Protocol.UInt32Field : Field
 {
     // accessors
-    public override Field.Type field_type {
+    internal override Field.Type field_type {
         get {
             return Field.Type.UINT32;
+        }
+    }
+
+    internal override string @default {
+        set {
+            base.@default = value ?? "0";
         }
     }
 
@@ -41,29 +47,9 @@ internal class Maia.Protocol.UInt32Field : Field
     }
 
     // methods
-    public UInt32Field (string inName, bool inRepeated, string? inDefault) throws ProtocolError
+    public UInt32Field (string inName, bool inRepeated, string? inDefault)
     {
         base (inName, inRepeated, inDefault);
-    }
-
-    public override BufferChild
-    copy () throws ProtocolError
-    {
-        Field field = new UInt32Field (name, repeated, null);
-        field.m_Values = {};
-        foreach (unowned GLib.Value? val in m_Values)
-        {
-            GLib.Value field_val = create_value ();
-            val.copy (ref field_val);
-            field.m_Values += val;
-        }
-        return field;
-    }
-
-    internal override void
-    set_default (string? inDefault)
-    {
-        base.set_default (inDefault ?? "0");
     }
 
     internal override GLib.Variant

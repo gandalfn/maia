@@ -21,19 +21,19 @@ public class Maia.TestEventArgs : Maia.Core.EventArgs
 {
     public string name {
         owned get {
-            return (string)this["name"].get ();
+            return (string)this["name"];
         }
         set {
-            this["name"].set (value);
+            this["name", 0] = value;
         }
     }
 
     public uint32 val {
         get {
-            return (uint32)this["val"].get ();
+            return (uint32)this["val"];
         }
         set {
-            this["val"].set (value);
+            this["val", 0] = value;
         }
     }
 
@@ -49,8 +49,8 @@ public class Maia.TestEventArgs : Maia.Core.EventArgs
 
     public TestEventArgs (string inName, uint32 inVal)
     {
-        this["name"].set (inName);
-        this["val"].set (inVal);
+        this["name", 0] = inName;
+        this["val", 0] = inVal;
     }
 
     internal override void

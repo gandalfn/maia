@@ -34,5 +34,5 @@ public interface Maia.Protocol.BufferChild : Core.Object
     public abstract GLib.Variant serialize { owned get; set; }
 
     // methods
-    public abstract BufferChild copy () throws ProtocolError;
+    public abstract BufferChild copy ();
 }

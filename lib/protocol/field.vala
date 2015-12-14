@@ -75,6 +75,48 @@ internal abstract class Maia.Protocol.Field : Core.Object, BufferChild
             return GLib.Type.INVALID;
         }
 
+        internal GLib.Type
+        to_field_gtype ()
+        {
+            switch (this)
+            {
+                case BOOLEAN:
+                    return typeof (BoolField);
+
+                case BYTE:
+                    return typeof (ByteField);
+
+                case UINT16:
+                    return typeof (UInt16Field);
+
+                case INT16:
+                    return typeof (Int16Field);
+
+                case UINT32:
+                    return typeof (UInt32Field);
+
+                case INT32:
+                    return typeof (Int32Field);
+
+                case UINT64:
+                    return typeof (UInt64Field);
+
+                case INT64:
+                    return typeof (Int64Field);
+
+                case DOUBLE:
+                    return typeof (DoubleField);
+
+                case STRING:
+                    return typeof (StringField);
+
+                case MESSAGE:
+                    return typeof (Message);
+            }
+
+            return GLib.Type.INVALID;
+        }
+
         internal GLib.VariantType
         to_variant_type ()
         {
@@ -243,45 +285,56 @@ internal abstract class Maia.Protocol.Field : Core.Object, BufferChild
         }
     }
 
-    // methods
-    public Field (string inName, bool inRepeated, string? inDefault) throws ProtocolError
-    {
-        GLib.Object (id: GLib.Quark.from_string (inName), repeated: inRepeated);
+    public virtual string @default {
+        set {
+            if (!repeated && m_Values.length > 1)
+            {
+                if (field_type != Type.STRING)
+                {
+                    GLib.Value default_value = value;
+                    if (!default_value.transform (ref m_Values[0]))
+                    {
+                        Log.critical (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Invalid default value $value for $name");
+                    }
+                }
+                else
+                {
+                    m_Values[0] = value;
+                }
+            }
+        }
+    }
 
+    // methods
+    construct
+    {
         if (!repeated)
         {
             m_Values += create_value ();
         }
-
-        set_default (inDefault);
     }
 
-    public abstract BufferChild copy () throws ProtocolError;
+    public Field (string inName, bool inRepeated, string? inDefault)
+    {
+        GLib.Object (id: GLib.Quark.from_string (inName), repeated: inRepeated, default: inDefault);
+    }
+
+    public virtual BufferChild
+    copy ()
+    {
+        Field field = GLib.Object.new (field_type.to_field_gtype (), id: id, repeated: repeated) as Field;
+        field.m_Values = {};
+        foreach (unowned GLib.Value? val in m_Values)
+        {
+            field.add_value (val);
+        }
+        return field;
+    }
 
     protected virtual GLib.Value
     create_value ()
     {
         return GLib.Value (field_type.to_gtype ());
-    }
-
-    protected virtual void
-    set_default (string? inDefault)
-    {
-        if (!repeated && m_Values.length > 1)
-        {
-            if (field_type != Type.STRING)
-            {
-                GLib.Value default_value = inDefault;
-                if (!default_value.transform (ref m_Values[0]))
-                {
-                    Log.critical (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Invalid default value $inDefault for $name");
-                }
-            }
-            else
-            {
-                m_Values[0] = inDefault;
-            }
-        }
     }
 
     public new GLib.Value
@@ -299,6 +352,17 @@ internal abstract class Maia.Protocol.Field : Core.Object, BufferChild
         requires (inValue.holds (field_type.to_gtype ()))
     {
         inValue.copy (ref m_Values[inIndex]);
+    }
+
+    public virtual int add_value (GLib.Value inValue)
+        requires ((!repeated && m_Values.length == 0) || repeated)
+        requires (inValue.holds (field_type.to_gtype ()))
+    {
+        int ret = m_Values.length;
+        m_Values += create_value ();
+        set(ret, inValue);
+
+        return ret;
     }
 
     public abstract GLib.Variant get_variant (int inIndex);

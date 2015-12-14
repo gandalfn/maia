@@ -784,12 +784,6 @@
   (gtype-id "MAIA_TYPE_PROTOCOL_BUFFER_CHILD")
 )
 
-(define-object MaiaProtocolField
-  (parent "MaiaCoreObject")
-  (c-name "MaiaProtocolField")
-  (gtype-id "MAIA_TYPE_PROTOCOL_FIELD")
-)
-
 (define-object MaiaProtocolMessage
   (parent "MaiaCoreObject")
   (c-name "MaiaProtocolMessage")
@@ -1113,34 +1107,6 @@
     '("invalid-option" "MAIA_PROTOCOL_ERROR_INVALID_OPTION")
     '("invalid-default-value" "MAIA_PROTOCOL_ERROR_INVALID_DEFAULT_VALUE")
     '("missing-message" "MAIA_PROTOCOL_ERROR_MISSING_MESSAGE")
-  )
-)
-
-(define-enum MaiaProtocolFieldRule
-  (c-name "MaiaProtocolFieldRule")
-  (gtype-id "MAIA_TYPE_PROTOCOL_FIELD_RULE")
-  (values
-    '("invalid" "MAIA_PROTOCOL_FIELD_RULE_INVALID")
-    '("required" "MAIA_PROTOCOL_FIELD_RULE_REQUIRED")
-    '("repeated" "MAIA_PROTOCOL_FIELD_RULE_REPEATED")
-  )
-)
-
-(define-enum MaiaProtocolFieldType
-  (c-name "MaiaProtocolFieldType")
-  (gtype-id "MAIA_TYPE_PROTOCOL_FIELD_TYPE")
-  (values
-    '("boolean" "MAIA_PROTOCOL_FIELD_TYPE_BOOLEAN")
-    '("byte" "MAIA_PROTOCOL_FIELD_TYPE_BYTE")
-    '("uint16" "MAIA_PROTOCOL_FIELD_TYPE_UINT16")
-    '("int16" "MAIA_PROTOCOL_FIELD_TYPE_INT16")
-    '("uint32" "MAIA_PROTOCOL_FIELD_TYPE_UINT32")
-    '("int32" "MAIA_PROTOCOL_FIELD_TYPE_INT32")
-    '("uint64" "MAIA_PROTOCOL_FIELD_TYPE_UINT64")
-    '("int64" "MAIA_PROTOCOL_FIELD_TYPE_INT64")
-    '("double" "MAIA_PROTOCOL_FIELD_TYPE_DOUBLE")
-    '("string" "MAIA_PROTOCOL_FIELD_TYPE_STRING")
-    '("message" "MAIA_PROTOCOL_FIELD_TYPE_MESSAGE")
   )
 )
 
@@ -7496,17 +7462,24 @@
   (return-type "MaiaCoreEventArgs*")
 )
 
-(define-function maia_protocol_field_get_type
-  (c-name "maia_protocol_field_get_type")
-  (return-type "GType")
-)
-
 (define-method get
   (of-object "MaiaCoreEventArgs")
   (c-name "maia_core_event_args_get")
-  (return-type "MaiaProtocolField*")
+  (return-type "GValue*")
   (parameters
     '("const-gchar*" "inName")
+    '("gint" "inIndex")
+  )
+)
+
+(define-method set
+  (of-object "MaiaCoreEventArgs")
+  (c-name "maia_core_event_args_set")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inName")
+    '("gint" "inIndex")
+    '("GValue*" "inVal")
   )
 )
 
@@ -8111,25 +8084,31 @@
   (return-type "GType")
 )
 
-(define-method set_variant
+(define-method copy
   (of-object "MaiaProtocolBufferChild")
-  (c-name "maia_protocol_buffer_child_set_variant")
-  (return-type "none")
-  (parameters
-    '("GVariant*" "inVariant")
-  )
-)
-
-(define-method to_variant
-  (of-object "MaiaProtocolBufferChild")
-  (c-name "maia_protocol_buffer_child_to_variant")
-  (return-type "GVariant*")
+  (c-name "maia_protocol_buffer_child_copy")
+  (return-type "MaiaProtocolBufferChild*")
 )
 
 (define-method get_buffer
   (of-object "MaiaProtocolBufferChild")
   (c-name "maia_protocol_buffer_child_get_buffer")
   (return-type "MaiaProtocolBuffer*")
+)
+
+(define-method get_serialize
+  (of-object "MaiaProtocolBufferChild")
+  (c-name "maia_protocol_buffer_child_get_serialize")
+  (return-type "GVariant*")
+)
+
+(define-method set_serialize
+  (of-object "MaiaProtocolBufferChild")
+  (c-name "maia_protocol_buffer_child_set_serialize")
+  (return-type "none")
+  (parameters
+    '("GVariant*" "value")
+  )
 )
 
 (define-function maia_protocol_message_new
@@ -8150,104 +8129,49 @@
   )
 )
 
-(define-method copy
+(define-method contains
   (of-object "MaiaProtocolMessage")
-  (c-name "maia_protocol_message_copy")
-  (return-type "MaiaProtocolMessage*")
+  (c-name "maia_protocol_message_contains")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "inName")
+  )
 )
 
 (define-method get
   (of-object "MaiaProtocolMessage")
   (c-name "maia_protocol_message_get")
-  (return-type "MaiaProtocolField*")
+  (return-type "GValue*")
   (parameters
     '("const-gchar*" "inName")
+    '("gint" "inIndex")
+  )
+)
+
+(define-method set
+  (of-object "MaiaProtocolMessage")
+  (c-name "maia_protocol_message_set")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inName")
+    '("gint" "inIndex")
+    '("GValue*" "inValue")
+  )
+)
+
+(define-method add_value
+  (of-object "MaiaProtocolMessage")
+  (c-name "maia_protocol_message_add_value")
+  (return-type "gint")
+  (parameters
+    '("const-gchar*" "inName")
+    '("GValue*" "inValue")
   )
 )
 
 (define-method get_name
   (of-object "MaiaProtocolMessage")
   (c-name "maia_protocol_message_get_name")
-  (return-type "gchar*")
-)
-
-(define-function maia_protocol_field_rule_get_type
-  (c-name "maia_protocol_field_rule_get_type")
-  (return-type "GType")
-)
-
-(define-function maia_protocol_field_type_get_type
-  (c-name "maia_protocol_field_type_get_type")
-  (return-type "GType")
-)
-
-(define-function maia_protocol_field_new
-  (c-name "maia_protocol_field_new")
-  (is-constructor-of "MaiaProtocolField")
-  (return-type "MaiaProtocolField*")
-  (parameters
-    '("MaiaProtocolFieldRule" "inRule")
-    '("MaiaProtocolFieldType" "inType")
-    '("const-gchar*" "inName")
-    '("const-gchar*" "inDefault")
-    '("MaiaProtocolMessage*" "inMessage")
-    '("GError**" "error")
-  )
-)
-
-(define-function maia_protocol_field_construct
-  (c-name "maia_protocol_field_construct")
-  (return-type "MaiaProtocolField*")
-  (parameters
-    '("GType" "object_type")
-    '("MaiaProtocolFieldRule" "inRule")
-    '("MaiaProtocolFieldType" "inType")
-    '("const-gchar*" "inName")
-    '("const-gchar*" "inDefault")
-    '("MaiaProtocolMessage*" "inMessage")
-    '("GError**" "error")
-  )
-)
-
-(define-method copy
-  (of-object "MaiaProtocolField")
-  (c-name "maia_protocol_field_copy")
-  (return-type "MaiaProtocolField*")
-)
-
-(define-method get
-  (of-object "MaiaProtocolField")
-  (c-name "maia_protocol_field_get")
-  (return-type "none")
-  (parameters
-    '("GValue*" "result")
-  )
-)
-
-(define-method set
-  (of-object "MaiaProtocolField")
-  (c-name "maia_protocol_field_set")
-  (return-type "none")
-  (parameters
-    '("GValue*" "inValue")
-  )
-)
-
-(define-method get_rule
-  (of-object "MaiaProtocolField")
-  (c-name "maia_protocol_field_get_rule")
-  (return-type "MaiaProtocolFieldRule")
-)
-
-(define-method get_field_type
-  (of-object "MaiaProtocolField")
-  (c-name "maia_protocol_field_get_field_type")
-  (return-type "MaiaProtocolFieldType")
-)
-
-(define-method get_name
-  (of-object "MaiaProtocolField")
-  (c-name "maia_protocol_field_get_name")
   (return-type "gchar*")
 )
 

@@ -90,26 +90,17 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
             }
         }
 
-        Field field = null;
-        switch (type)
+        Field field = GLib.Object.new (type.to_field_gtype (), id: GLib.Quark.from_string (inName), repeated: repeated, default: default_value) as Field;
+        if (field == null)
         {
-            case Field.Type.BOOLEAN:
-                field = new BoolField (inName, repeated, default_value);
-                break;
-
-            case Field.Type.BYTE:
-                field = new ByteField (inName, repeated, default_value);
-                break;
-
-            default:
-                throw new ProtocolError.INVALID_TYPE (@"Invalid field type $(inType)");
+            throw new ProtocolError.INVALID_TYPE (@"Invalid field type $(inType)");
         }
 
         return field;
     }
 
     public BufferChild
-    copy () throws ProtocolError
+    copy ()
     {
         Message msg = new Message (name);
         foreach (unowned Core.Object child in this)
@@ -207,5 +198,14 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
         GLib.return_if_fail (field != null);
 
         field[inIndex] = inValue;
+    }
+
+    public int
+    add_value (string inName, GLib.Value inValue)
+    {
+        unowned Field? field = find (GLib.Quark.from_string (inName), false) as Field;
+        GLib.return_val_if_fail (field != null, -1);
+
+        return field.add_value (inValue);
     }
 }

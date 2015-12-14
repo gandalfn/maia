@@ -1,5 +1,5 @@
 /*
- * int32-field.vala
+ * double-field.vala
  * Copyright (C) Nicolas Bruguier 2010-2015 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -16,38 +16,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal class Maia.Protocol.Int32Field : Field
+internal class Maia.Protocol.DoubleField : Field
 {
     // accessors
-    public override Field.Type field_type {
+    internal override Field.Type field_type {
         get {
-            return Field.Type.INT32;
+            return Field.Type.DOUBLE;
         }
     }
 
     internal override string @default {
         set {
-            base.@default = value ?? "0";
+            base.@default = value ?? "0.0";
         }
     }
 
     // static methods
     static construct
     {
-        GLib.Value.register_transform_func (typeof (string), typeof (int32), string_to_int32);
+        GLib.Value.register_transform_func (typeof (string), typeof (double), string_to_double);
     }
 
     private static void
-    string_to_int32 (GLib.Value inSrc, out GLib.Value outDest)
+    string_to_double (GLib.Value inSrc, out GLib.Value outDest)
         requires (inSrc.holds (typeof (string)))
     {
         string val = (string)inSrc;
 
-        outDest = (int32)int.parse (val);
+        outDest = double.parse (val);
     }
 
     // methods
-    public Int32Field (string inName, bool inRepeated, string? inDefault)
+    public DoubleField (string inName, bool inRepeated, string? inDefault)
     {
         base (inName, inRepeated, inDefault);
     }
@@ -56,7 +56,7 @@ internal class Maia.Protocol.Int32Field : Field
     get_variant (int inIndex)
         requires (inIndex < m_Values.length)
     {
-        return new GLib.Variant.int32 ((int32)m_Values[inIndex]);
+        return new GLib.Variant.double ((double)m_Values[inIndex]);
     }
 
     internal override void
@@ -64,7 +64,7 @@ internal class Maia.Protocol.Int32Field : Field
         requires (inIndex < m_Values.length)
         requires (inVariant.get_type ().equal (field_type.to_variant_type ()))
     {
-        m_Values[inIndex] = inVariant.get_int32 ();
+        m_Values[inIndex] = inVariant.get_double ();
     }
 
     internal override string
@@ -73,7 +73,7 @@ internal class Maia.Protocol.Int32Field : Field
         string ret = "";
 
         if (repeated) ret += "a";
-        ret += "i";
+        ret += "t";
 
         return ret;
     }

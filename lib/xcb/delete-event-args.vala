@@ -22,7 +22,7 @@ public class Maia.Xcb.DeleteEventArgs : Maia.DeleteEventArgs
     // accessors
     public global::Xcb.Window window {
         get {
-            return (global::Xcb.Window)(uint32)this["window"].get ();
+            return (global::Xcb.Window)(uint32)this["window"];
         }
     }
 
@@ -42,7 +42,7 @@ public class Maia.Xcb.DeleteEventArgs : Maia.DeleteEventArgs
     public DeleteEventArgs (global::Xcb.Window inWindow)
     {
         base ();
-        this["window"].set ((uint32)inWindow);
+        this["window", 0] = (uint32)inWindow;
     }
 
     public override void

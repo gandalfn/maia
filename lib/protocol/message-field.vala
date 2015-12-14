@@ -1,5 +1,5 @@
 /*
- * int32-field.vala
+ * message-field.vala
  * Copyright (C) Nicolas Bruguier 2010-2015 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -16,55 +16,62 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal class Maia.Protocol.Int32Field : Field
+internal class Maia.Protocol.MessageField : Field
 {
     // accessors
-    public override Field.Type field_type {
+    public Message message { get; construct; default = null; }
+
+    internal override Field.Type field_type {
         get {
-            return Field.Type.INT32;
+            return Field.Type.MESSAGE;
         }
     }
 
     internal override string @default {
         set {
-            base.@default = value ?? "0";
+            base.@default = null;
         }
     }
 
-    // static methods
-    static construct
-    {
-        GLib.Value.register_transform_func (typeof (string), typeof (int32), string_to_int32);
-    }
-
-    private static void
-    string_to_int32 (GLib.Value inSrc, out GLib.Value outDest)
-        requires (inSrc.holds (typeof (string)))
-    {
-        string val = (string)inSrc;
-
-        outDest = (int32)int.parse (val);
-    }
-
     // methods
-    public Int32Field (string inName, bool inRepeated, string? inDefault)
+    public MessageField (string inName, bool inRepeated, Message inMessage, string? inDefault)
     {
-        base (inName, inRepeated, inDefault);
+        GLib.Object (id: GLib.Quark.from_string (inName), repeated: inRepeated, message: inMessage, default: inDefault);
+    }
+
+    protected override GLib.Value
+    create_value ()
+    {
+        GLib.Value ret = GLib.Value (field_type.to_gtype ());
+        ret = message.copy ();
+        return ret;
+    }
+
+    internal override BufferChild
+    copy ()
+    {
+        Field field = new MessageField (name, repeated, message, null);
+        field.m_Values = {};
+        foreach (unowned GLib.Value? val in m_Values)
+        {
+            field.add_value (val);
+        }
+        return field;
     }
 
     internal override GLib.Variant
     get_variant (int inIndex)
         requires (inIndex < m_Values.length)
     {
-        return new GLib.Variant.int32 ((int32)m_Values[inIndex]);
+        return ((Message)m_Values[inIndex]).serialize;
     }
 
     internal override void
     set_variant (int inIndex, GLib.Variant inVariant)
         requires (inIndex < m_Values.length)
-        requires (inVariant.get_type ().equal (field_type.to_variant_type ()))
+        requires (inVariant.get_type ().is_tuple ())
     {
-        m_Values[inIndex] = inVariant.get_int32 ();
+        ((Message)m_Values[inIndex]).serialize = inVariant;
     }
 
     internal override string
@@ -73,7 +80,7 @@ internal class Maia.Protocol.Int32Field : Field
         string ret = "";
 
         if (repeated) ret += "a";
-        ret += "i";
+        ret += message.to_string ();
 
         return ret;
     }
