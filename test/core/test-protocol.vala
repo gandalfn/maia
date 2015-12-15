@@ -89,14 +89,14 @@ public class Maia.TestProtocol : Maia.TestCase
         var buffer = new Protocol.Buffer.from_data (proto, proto.length);
         var msg = buffer["Test"];
 
-        msg["val", 0] = 123;
+        msg["val", 0] = (int64)123;
         msg["str", 0] = "test";
-        msg["count", 0] = 3;
+        msg["count", 0] = (int32)3;
 
         assert (msg != null);
-        assert ((uint64)msg["val"] == 123);
+        assert ((int64)msg["val"] == 123);
         assert ((string)msg["str"] == "test");
-        assert ((uint32)msg["count"] == 3);
+        assert ((int32)msg["count"] == 3);
 
         Test.message (@"signature: $(msg) serialized: $(msg.serialize.print(false))");
     }
@@ -123,36 +123,35 @@ public class Maia.TestProtocol : Maia.TestCase
         var msg2 = buffer["Test2"];
         var msg3 = buffer["Test3"];
 
-        msg["val", 0] = 123;
+        msg["val", 0] = (int64)123;
         msg["str", 0] = "test";
-        msg["count", 0] = 1;
 
         assert (msg != null);
-        assert ((uint64)msg["val"] == 123);
+        assert ((int64)msg["val"] == 123);
         assert ((string)msg["str"] == "test");
-        assert ((uint32)msg["count"] == 1);
+        assert ((int32)msg["count"] == 5);
 
         Test.message(@"msg: $(msg.serialize.print (false))");
 
         assert (msg2 != null);
 
-        ((Protocol.Message)msg2["test"])["val", 0] = 321;
+        ((Protocol.Message)msg2["test"])["val", 0] = (int64)321;
         ((Protocol.Message)msg2["test"])["str", 0] = "test 2";
-        ((Protocol.Message)msg2["test"])["count", 0] = 2;
+        ((Protocol.Message)msg2["test"])["count", 0] = (int32)2;
         msg2["val", 0] = 456.345;
 
-        assert ((uint64)((Protocol.Message)msg2["test"])["val"] == 321);
-        assert ((string)((Protocol.Message)msg2["test"])["val"] == "test 2");
-        assert ((uint32)((Protocol.Message)msg2["test"])["val"] == 2);
+        assert ((int64)((Protocol.Message)msg2["test"])["val"] == 321);
+        assert ((string)((Protocol.Message)msg2["test"])["str"] == "test 2");
+        assert ((int32)((Protocol.Message)msg2["test"])["count"] == 2);
         assert ((double)msg2["val"] == 456.345);
 
         Test.message(@"msg2: $(msg2.serialize.print (false))");
 
         assert (msg3 != null);
-        msg3.add_value ("array", 12);
-        msg3.add_value ("array", 34);
-        msg3.add_value ("array", 56);
-        msg3.add_value ("array", 78);
+        msg3.add_value ("array", (uint32)12);
+        msg3.add_value ("array", (uint32)34);
+        msg3.add_value ("array", (uint32)56);
+        msg3.add_value ("array", (uint32)78);
 
         assert ((uint32)msg3["array", 0] == 12);
         assert ((uint32)msg3["array", 1] == 34);
@@ -169,7 +168,7 @@ public class Maia.TestProtocol : Maia.TestCase
     {
         ProtocolEventArgs evt = new ProtocolEventArgs ();
 
-        evt["val", 0] = 34;
+        evt["val", 0] = (uint32)34;
         evt["str", 0] = "test str";
 
         assert ((uint32)evt["val"] == 34);
@@ -191,9 +190,9 @@ public class Maia.TestProtocol : Maia.TestCase
     {
         InheritProtocolEventArgs evt = new InheritProtocolEventArgs ();
 
-        evt["val", 0] = 34;
+        evt["val", 0] = (uint32)34;
         evt["str", 0] = "test str";
-        evt["count", 0] = 1;
+        evt["count", 0] = (uint32)1;
 
         assert ((uint32)evt["val"] == 34);
         assert ((string)evt["str"] == "test str");
@@ -203,7 +202,7 @@ public class Maia.TestProtocol : Maia.TestCase
 
         InheritProtocolEventArgs evt2 = new InheritProtocolEventArgs ();
         evt2.serialize = evt.serialize;
-        evt2["count", 0] = 2;
+        evt2["count", 0] = (uint32)2;
 
         assert ((uint32)evt2["val"] == 34);
         assert ((string)evt2["str"] == "test str");

@@ -111,7 +111,7 @@ internal abstract class Maia.Protocol.Field : Core.Object, BufferChild
                     return typeof (StringField);
 
                 case MESSAGE:
-                    return typeof (Message);
+                    return typeof (MessageField);
             }
 
             return GLib.Type.INVALID;
@@ -287,7 +287,7 @@ internal abstract class Maia.Protocol.Field : Core.Object, BufferChild
 
     public virtual string @default {
         set {
-            if (!repeated && m_Values.length > 1)
+            if (!repeated && m_Values.length > 0)
             {
                 if (field_type != Type.STRING)
                 {

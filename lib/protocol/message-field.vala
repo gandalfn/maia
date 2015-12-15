@@ -29,7 +29,6 @@ internal class Maia.Protocol.MessageField : Field
 
     internal override string @default {
         set {
-            base.@default = null;
         }
     }
 

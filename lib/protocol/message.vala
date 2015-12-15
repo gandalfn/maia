@@ -90,7 +90,21 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
             }
         }
 
-        Field field = GLib.Object.new (type.to_field_gtype (), id: GLib.Quark.from_string (inName), repeated: repeated, default: default_value) as Field;
+        Field field = null;
+        if (type == Field.Type.MESSAGE)
+        {
+            unowned Message? msg = buffer[inType];
+            if (msg == null)
+            {
+                throw new ProtocolError.INVALID_TYPE (@"Invalid field type $(inType)");
+            }
+            field = GLib.Object.new (type.to_field_gtype (), id: GLib.Quark.from_string (inName), repeated: repeated, message: msg, default: default_value) as Field;
+        }
+        else
+        {
+            field = GLib.Object.new (type.to_field_gtype (), id: GLib.Quark.from_string (inName), repeated: repeated, default: default_value) as Field;
+        }
+
         if (field == null)
         {
             throw new ProtocolError.INVALID_TYPE (@"Invalid field type $(inType)");
@@ -136,7 +150,7 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
                     break;
 
                 case Core.Parser.Token.ATTRIBUTE:
-                    Field field = create_field (inBuffer.attribute_type, inBuffer.attribute_rule, inBuffer.attribute, inBuffer.attribute_options);
+                    Field field = create_field (inBuffer.attribute_type, inBuffer.attribute_rule, inBuffer.attribute_name, inBuffer.attribute_options);
                     add (field);
                     break;
 
