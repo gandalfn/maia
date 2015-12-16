@@ -34,16 +34,16 @@ internal class Maia.Protocol.ByteField : Field
     // static methods
     static construct
     {
-        GLib.Value.register_transform_func (typeof (string), typeof (uchar),  string_to_uchar);
+        GLib.Value.register_transform_func (typeof (string), typeof (uint8), string_to_uint8);
     }
 
     private static void
-    string_to_uchar (GLib.Value inSrc, out GLib.Value outDest)
+    string_to_uint8 (GLib.Value inSrc, out GLib.Value outDest)
         requires (inSrc.holds (typeof (string)))
     {
         string val = (string)inSrc;
 
-        outDest = val.to_utf8()[0];
+        outDest = (uint8)val.to_utf8()[0];
     }
 
     // methods
@@ -56,7 +56,7 @@ internal class Maia.Protocol.ByteField : Field
     get_variant (int inIndex)
         requires (inIndex < m_Values.length)
     {
-        return new GLib.Variant.byte ((uchar)m_Values[inIndex]);
+        return new GLib.Variant.byte ((uint8)m_Values[inIndex]);
     }
 
     internal override void
@@ -64,7 +64,7 @@ internal class Maia.Protocol.ByteField : Field
         requires (inIndex < m_Values.length)
         requires (inVariant.get_type ().equal (field_type.to_variant_type ()))
     {
-        m_Values[inIndex] = (uchar)inVariant.get_byte ();
+        m_Values[inIndex] = (uint8)inVariant.get_byte ();
     }
 
     internal override string

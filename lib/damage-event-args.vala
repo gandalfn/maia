@@ -60,9 +60,9 @@ public class Maia.DamageEventArgs : Maia.Core.EventArgs
         Graphic.Rectangle b = ((DamageEventArgs)inArgs).area;
         a.union_ (b);
 
-        this["x", 0] = (double)inArgs["x"];
-        this["y", 0] = (double)inArgs["y"];
-        this["width", 0] = (double)inArgs["width"];
-        this["height", 0] = (double)inArgs["height"];
+        this["x", 0] = a.origin.x;
+        this["y", 0] = a.origin.y;
+        this["width", 0] = a.size.width;
+        this["height", 0] = a.size.height;
     }
 }

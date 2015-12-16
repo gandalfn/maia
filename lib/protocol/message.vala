@@ -122,14 +122,14 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
             unowned Field? childField = child as Field;
             if (childField != null)
             {
-                msg.add (childField.copy ());
+                msg.add (childField.copy () as Field);
             }
             else
             {
                 unowned Message? childMsg = child as Message;
                 if (childMsg != null)
                 {
-                    msg.add (childMsg.copy ());
+                    msg.add (childMsg.copy () as Message);
                 }
             }
         }

@@ -42,7 +42,7 @@ internal class Maia.Protocol.MessageField : Field
     create_value ()
     {
         GLib.Value ret = GLib.Value (field_type.to_gtype ());
-        ret = message.copy ();
+        ret = message.copy () as Message;
         return ret;
     }
 

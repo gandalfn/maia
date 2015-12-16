@@ -42,7 +42,7 @@ internal abstract class Maia.Protocol.Field : Core.Object, BufferChild
                     return typeof (bool);
 
                 case BYTE:
-                    return typeof (uchar);
+                    return typeof (uint8);
 
                 case UINT16:
                     return typeof (uint);
@@ -199,33 +199,6 @@ internal abstract class Maia.Protocol.Field : Core.Object, BufferChild
         }
     }
 
-    public class Iterator
-    {
-        private unowned Field m_Field;
-        private int m_Index;
-
-        internal Iterator (Field inField)
-        {
-            m_Field = inField;
-            m_Index = -1;
-        }
-
-        public bool
-        next ()
-        {
-            m_Index++;
-
-            return m_Index < m_Field.m_Values.length;
-        }
-
-        public unowned GLib.Value?
-        @get ()
-            requires (m_Index < m_Field.m_Values.length)
-        {
-            return m_Field.m_Values[m_Index];
-        }
-    }
-
     // properties
     protected GLib.Value[] m_Values = {};
 
@@ -349,14 +322,13 @@ internal abstract class Maia.Protocol.Field : Core.Object, BufferChild
     public new void
     @set (int inIndex, GLib.Value inValue)
         requires (inIndex < m_Values.length)
-        requires (inValue.holds (field_type.to_gtype ()))
+        requires (GLib.Value.type_compatible (inValue.type (), m_Values[inIndex].type ()))
     {
         inValue.copy (ref m_Values[inIndex]);
     }
 
     public virtual int add_value (GLib.Value inValue)
         requires ((!repeated && m_Values.length == 0) || repeated)
-        requires (inValue.holds (field_type.to_gtype ()))
     {
         int ret = m_Values.length;
         m_Values += create_value ();

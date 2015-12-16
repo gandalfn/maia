@@ -86,19 +86,26 @@ public class Maia.TestProtocol : Maia.TestCase
                        "    int32 count;" +
                        "}";
 
-        var buffer = new Protocol.Buffer.from_data (proto, proto.length);
-        var msg = buffer["Test"];
+        try
+        {
+            var buffer = new Protocol.Buffer.from_data (proto, proto.length);
+            var msg = buffer["Test"];
 
-        msg["val", 0] = (int64)123;
-        msg["str", 0] = "test";
-        msg["count", 0] = (int32)3;
+            msg["val", 0] = (int64)123;
+            msg["str", 0] = "test";
+            msg["count", 0] = (int32)3;
 
-        assert (msg != null);
-        assert ((int64)msg["val"] == 123);
-        assert ((string)msg["str"] == "test");
-        assert ((int32)msg["count"] == 3);
+            assert (msg != null);
+            assert ((int64)msg["val"] == 123);
+            assert ((string)msg["str"] == "test");
+            assert ((int32)msg["count"] == 3);
 
-        Test.message (@"signature: $(msg) serialized: $(msg.serialize.print(false))");
+            Test.message (@"signature: $(msg) serialized: $(msg.serialize.print(false))");
+        }
+        catch (Core.ParseError err)
+        {
+            assert (false);
+        }
     }
 
     public void
@@ -118,49 +125,56 @@ public class Maia.TestProtocol : Maia.TestCase
                        "    repeated uint32 array;" +
                        "}";
 
-        var buffer = new Protocol.Buffer.from_data (proto, proto.length);
-        var msg = buffer["Test"];
-        var msg2 = buffer["Test2"];
-        var msg3 = buffer["Test3"];
+        try
+        {
+            var buffer = new Protocol.Buffer.from_data (proto, proto.length);
+            var msg = buffer["Test"];
+            var msg2 = buffer["Test2"];
+            var msg3 = buffer["Test3"];
 
-        msg["val", 0] = (int64)123;
-        msg["str", 0] = "test";
+            msg["val", 0] = (int64)123;
+            msg["str", 0] = "test";
 
-        assert (msg != null);
-        assert ((int64)msg["val"] == 123);
-        assert ((string)msg["str"] == "test");
-        assert ((int32)msg["count"] == 5);
+            assert (msg != null);
+            assert ((int64)msg["val"] == 123);
+            assert ((string)msg["str"] == "test");
+            assert ((int32)msg["count"] == 5);
 
-        Test.message(@"msg: $(msg.serialize.print (false))");
+            Test.message(@"msg: $(msg.serialize.print (false))");
 
-        assert (msg2 != null);
+            assert (msg2 != null);
 
-        ((Protocol.Message)msg2["test"])["val", 0] = (int64)321;
-        ((Protocol.Message)msg2["test"])["str", 0] = "test 2";
-        ((Protocol.Message)msg2["test"])["count", 0] = (int32)2;
-        msg2["val", 0] = 456.345;
+            ((Protocol.Message)msg2["test"])["val", 0] = (int64)321;
+            ((Protocol.Message)msg2["test"])["str", 0] = "test 2";
+            ((Protocol.Message)msg2["test"])["count", 0] = (int32)2;
+            msg2["val", 0] = 456.345;
 
-        assert ((int64)((Protocol.Message)msg2["test"])["val"] == 321);
-        assert ((string)((Protocol.Message)msg2["test"])["str"] == "test 2");
-        assert ((int32)((Protocol.Message)msg2["test"])["count"] == 2);
-        assert ((double)msg2["val"] == 456.345);
+            assert ((int64)((Protocol.Message)msg2["test"])["val"] == 321);
+            assert ((string)((Protocol.Message)msg2["test"])["str"] == "test 2");
+            assert ((int32)((Protocol.Message)msg2["test"])["count"] == 2);
+            assert ((double)msg2["val"] == 456.345);
 
-        Test.message(@"msg2: $(msg2.serialize.print (false))");
+            Test.message(@"msg2: $(msg2.serialize.print (false))");
 
-        assert (msg3 != null);
-        msg3.add_value ("array", (uint32)12);
-        msg3.add_value ("array", (uint32)34);
-        msg3.add_value ("array", (uint32)56);
-        msg3.add_value ("array", (uint32)78);
+            assert (msg3 != null);
+            msg3.add_value ("array", (uint32)12);
+            msg3.add_value ("array", (uint32)34);
+            msg3.add_value ("array", (uint32)56);
+            msg3.add_value ("array", (uint32)78);
 
-        assert ((uint32)msg3["array", 0] == 12);
-        assert ((uint32)msg3["array", 1] == 34);
-        assert ((uint32)msg3["array", 2] == 56);
-        assert ((uint32)msg3["array", 3] == 78);
+            assert ((uint32)msg3["array", 0] == 12);
+            assert ((uint32)msg3["array", 1] == 34);
+            assert ((uint32)msg3["array", 2] == 56);
+            assert ((uint32)msg3["array", 3] == 78);
 
-        Test.message(@"msg3: $(msg3.serialize.print (false))");
+            Test.message(@"msg3: $(msg3.serialize.print (false))");
 
-        Test.message (@"signature test: $(msg), signature test2: $(msg2), signature test3: $(msg3)");
+            Test.message (@"signature test: $(msg), signature test2: $(msg2), signature test3: $(msg3)");
+        }
+        catch (Core.ParseError err)
+        {
+            assert (false);
+        }
     }
 
     public void

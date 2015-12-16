@@ -31,13 +31,13 @@ public class Maia.MouseEventArgs : Maia.Core.EventArgs
     // accessors
     public uint8 flags {
         get {
-            return (uint8)(uchar)this["flags"];
+            return (uint8)this["flags"];
         }
     }
 
     public uint8 button {
         get {
-            return (uint8)(uchar)this["button"];
+            return (uint8)this["button"];
         }
     }
 
@@ -65,8 +65,8 @@ public class Maia.MouseEventArgs : Maia.Core.EventArgs
     {
         base ();
 
-        this["flags", 0] = (uchar)inEventFlags;
-        this["button", 0] = (uchar)inButton;
+        this["flags", 0] = inEventFlags;
+        this["button", 0] = inButton;
         this["x", 0] = inX;
         this["y", 0] = inY;
     }
