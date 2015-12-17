@@ -19,6 +19,14 @@
 
 public class Maia.MouseEventArgs : Maia.Core.EventArgs
 {
+    // constants
+    public const string PROTOBUF = "message Mouse {"   +
+                                   "     byte flags;"  +
+                                   "     byte button;" +
+                                   "     double x;"    +
+                                   "     double y;"    +
+                                   "}";
+
     // type
     [Flags]
     public enum EventFlags
@@ -51,13 +59,7 @@ public class Maia.MouseEventArgs : Maia.Core.EventArgs
     static construct
     {
         Core.EventArgs.register_protocol (typeof (MouseEventArgs),
-                                          "Mouse",
-                                          "message Mouse {"   +
-                                          "     byte flags;"  +
-                                          "     byte button;" +
-                                          "     double x;"    +
-                                          "     double y;"    +
-                                          "}");
+                                          "Mouse", PROTOBUF);
     }
 
     // methods

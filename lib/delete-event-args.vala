@@ -20,7 +20,7 @@
 public class Maia.DeleteEventArgs : Maia.Core.EventArgs
 {
     // constants
-    public const string ProtoBuf = "message Delete {"  +
+    public const string PROTOBUF = "message Delete {"  +
                                    "     bool cancel;" +
                                    "}";
 
@@ -38,7 +38,7 @@ public class Maia.DeleteEventArgs : Maia.Core.EventArgs
     static construct
     {
         Core.EventArgs.register_protocol (typeof (DeleteEventArgs),
-                                          "Delete", ProtoBuf);
+                                          "Delete", PROTOBUF);
     }
 
     // methods

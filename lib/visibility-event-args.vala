@@ -20,7 +20,7 @@
 public class Maia.VisibilityEventArgs : Maia.Core.EventArgs
 {
     // constants
-    public const string ProtoBuf = "message Visibility {" +
+    public const string PROTOBUF = "message Visibility {" +
                                    "     bool visible;"   +
                                    "}";
 
@@ -35,7 +35,7 @@ public class Maia.VisibilityEventArgs : Maia.Core.EventArgs
     static construct
     {
         Core.EventArgs.register_protocol (typeof (VisibilityEventArgs),
-                                          "Visibility", ProtoBuf);
+                                          "Visibility", PROTOBUF);
     }
 
     // methods

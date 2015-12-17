@@ -19,6 +19,14 @@
 
 public class Maia.KeyboardEventArgs : Maia.Core.EventArgs
 {
+    // constants
+    public const string PROTOBUF = "message Key {"          +
+                                   "     byte state;"       +
+                                   "     byte modifier;"    +
+                                   "     uint32 key;"       +
+                                   "     uint32 character;" +
+                                   "}";
+
     // type
     public enum State
     {
@@ -56,13 +64,7 @@ public class Maia.KeyboardEventArgs : Maia.Core.EventArgs
     static construct
     {
         Core.EventArgs.register_protocol (typeof (KeyboardEventArgs),
-                                          "Key",
-                                          "message Key {"          +
-                                          "     byte state;"       +
-                                          "     byte modifier;"    +
-                                          "     uint32 key;"       +
-                                          "     uint32 character;" +
-                                          "}");
+                                          "Key", PROTOBUF);
     }
 
     // methods

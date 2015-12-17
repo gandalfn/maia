@@ -19,6 +19,13 @@
 
 public class Maia.GeometryEventArgs : Maia.Core.EventArgs
 {
+    // constants
+    public const string PROTOBUF = "message Area {"      +
+                                   "     double x;"      +
+                                   "     double y;"      +
+                                   "     double width;"  +
+                                   "     double height;" +
+                                   "}";
     // accessors
     public Graphic.Rectangle area {
         get {
@@ -33,13 +40,7 @@ public class Maia.GeometryEventArgs : Maia.Core.EventArgs
     static construct
     {
         Core.EventArgs.register_protocol (typeof (GeometryEventArgs),
-                                          "Area",
-                                          "message Area {"      +
-                                          "     double x;"      +
-                                          "     double y;"      +
-                                          "     double width;"  +
-                                          "     double height;" +
-                                          "}");
+                                          "Area", PROTOBUF);
     }
 
     // methods

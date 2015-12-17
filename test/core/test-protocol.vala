@@ -22,9 +22,9 @@ public class Maia.TestProtocol : Maia.TestCase
     private class ProtocolEventArgs : Core.EventArgs
     {
         public const string ProtoBuf = "message EventArgsProtocol {" +
-                                       "     uint32 val;"   +
-                                       "     string str;"   +
-                                       "}";
+                                         "     uint32 val;"   +
+                                         "     string str;"   +
+                                         "}";
         static construct
         {
             Core.EventArgs.register_protocol (typeof (ProtocolEventArgs),
@@ -40,16 +40,15 @@ public class Maia.TestProtocol : Maia.TestCase
     private class InheritProtocolEventArgs : ProtocolEventArgs
     {
         public new const string ProtoBuf = "message InheritEventArgsProtocol {" +
-                                           "     EventArgsProtocol protocol;"   +
-                                           "     uint32 count;"   +
-                                           "}";
+                                             "     EventArgsProtocol protocol;"   +
+                                             "     uint32 count;"   +
+                                             "}";
 
         static construct
         {
             Core.EventArgs.register_protocol (typeof (InheritProtocolEventArgs),
                                               "InheritEventArgsProtocol",
-                                              ProtocolEventArgs.ProtoBuf +
-                                              ProtoBuf);
+                                              ProtocolEventArgs.ProtoBuf + ProtoBuf);
         }
 
         public InheritProtocolEventArgs ()

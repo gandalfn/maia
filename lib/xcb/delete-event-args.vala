@@ -19,6 +19,12 @@
 
 public class Maia.Xcb.DeleteEventArgs : Maia.DeleteEventArgs
 {
+    // constants
+    public const string PROTOBUF = "message DeleteXcb {" +
+                                   "     Delete delete;" +
+                                   "     uint32 window;" +
+                                   "}";
+
     // accessors
     public global::Xcb.Window window {
         get {
@@ -31,11 +37,7 @@ public class Maia.Xcb.DeleteEventArgs : Maia.DeleteEventArgs
     {
         Core.EventArgs.register_protocol (typeof (DeleteEventArgs),
                                           "DeleteXcb",
-                                          Maia.DeleteEventArgs.ProtoBuf +
-                                          "message DeleteXcb {" +
-                                          "     Delete delete;" +
-                                          "     uint32 window;" +
-                                          "}");
+                                          Maia.DeleteEventArgs.PROTOBUF + PROTOBUF);
     }
 
     // methods
