@@ -332,27 +332,6 @@ internal class Maia.Xcb.Window : Maia.Window
     }
 
     internal override void
-    on_geometry_event (Core.EventArgs? inArgs)
-    {
-        unowned GeometryEventArgs? geometry_args = inArgs as GeometryEventArgs;
-
-        if (geometry_args != null && geometry != null && window == null)
-        {
-            print(@"frame_extents: $(m_View.frame_extents) geometry: $(geometry_args.area.origin) frame: $(m_View.frame_extents) root position: $(m_View.root_position)\n");
-
-            base.on_geometry_event (new GeometryEventArgs (m_View.root_position.x - m_View.frame_extents.min.x,
-                                                           m_View.root_position.y - m_View.frame_extents.min.y,
-                                                           geometry_args.area.size.width,
-                                                           geometry_args.area.size.height));
-        }
-        else
-        {
-            print(@"geometry: $(geometry_args.area)\n");
-            base.on_geometry_event (inArgs);
-        }
-    }
-
-    internal override void
     on_move ()
     {
         base.on_move ();
@@ -392,13 +371,10 @@ internal class Maia.Xcb.Window : Maia.Window
                     geo.clamp (m_View.screen.get_monitor_at (pos).geometry);
                 }
 
-                print(@"move position: $geo.origin\n");
-
                 m_View.position = geo.origin;
             }
             else
             {
-                print(@"position: $position\n");
                 m_View.position = position;
             }
         }

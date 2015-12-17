@@ -3631,7 +3631,65 @@ namespace Xcb
 		FOCUS_CHANGE,
 		PROPERTY_CHANGE,
 		COLOR_MAP_CHANGE,
-		OWNER_GRAB_BUTTON
+		OWNER_GRAB_BUTTON;
+
+		public string
+		to_string ()
+		{
+			string ret = "";
+			if (KEY_PRESS in this)
+				ret += "KEY_PRESS ";
+			if (KEY_RELEASE in this)
+				ret += "KEY_RELEASE ";
+			if (BUTTON_PRESS in this)
+				ret += "BUTTON_PRESS ";
+			if (BUTTON_RELEASE in this)
+				ret += "BUTTON_RELEASE ";
+			if (ENTER_WINDOW in this)
+				ret += "ENTER_WINDOW ";
+			if (LEAVE_WINDOW in this)
+				ret += "LEAVE_WINDOW ";
+			if (POINTER_MOTION in this)
+				ret += "POINTER_MOTION ";
+			if (POINTER_MOTION_HINT in this)
+				ret += "POINTER_MOTION_HINT ";
+			if (BUTTON_1_MOTION in this)
+				ret += "BUTTON_1_MOTION ";
+			if (BUTTON_2_MOTION in this)
+				ret += "BUTTON_2_MOTION ";
+			if (BUTTON_3_MOTION in this)
+				ret += "BUTTON_3_MOTION ";
+			if (BUTTON_4_MOTION in this)
+				ret += "BUTTON_4_MOTION ";
+			if (BUTTON_5_MOTION in this)
+				ret += "BUTTON_5_MOTION ";
+			if (BUTTON_MOTION in this)
+				ret += "BUTTON_MOTION ";
+			if (KEYMAP_STATE in this)
+				ret += "KEYMAP_STATE ";
+			if (EXPOSURE in this)
+				ret += "EXPOSURE ";
+			if (VISIBILITY_CHANGE in this)
+				ret += "VISIBILITY_CHANGE ";
+			if (STRUCTURE_NOTIFY in this)
+				ret += "STRUCTURE_NOTIFY ";
+			if (RESIZE_REDIRECT in this)
+				ret += "RESIZE_REDIRECT ";
+			if (SUBSTRUCTURE_NOTIFY in this)
+				ret += "SUBSTRUCTURE_NOTIFY ";
+			if (SUBSTRUCTURE_REDIRECT in this)
+				ret += "SUBSTRUCTURE_REDIRECT ";
+			if (FOCUS_CHANGE in this)
+				ret += "FOCUS_CHANGE ";
+			if (PROPERTY_CHANGE in this)
+				ret += "PROPERTY_CHANGE ";
+			if (COLOR_MAP_CHANGE in this)
+				ret += "COLOR_MAP_CHANGE ";
+			if (OWNER_GRAB_BUTTON in this)
+				ret += "OWNER_GRAB_BUTTON ";
+
+			return ret;
+		}
 	}
 
 	[CCode (cname = "xcb_backing_store_t", cprefix =  "XCB_BACKING_STORE_", has_type_id = false)]

@@ -357,22 +357,25 @@ public class Maia.Window : Group
         {
             try
             {
+                // the size is in window with transform
+                // invert the window transform to have size in window coordinate space
+                Graphic.Size window_size = geometry_args.area.size;
+                var matrix = transform.matrix;
+                matrix.invert ();
+                window_size.transform (new Graphic.Transform.from_matrix (matrix));
+
                 print(@"position: $position, geometry: $(geometry.extents) geometry_args: $(geometry_args.area)\n");
-                if ((uint32)geometry_args.area.origin.x != (uint32)geometry.extents.origin.x ||
-                    (uint32)geometry_args.area.origin.y != (uint32)geometry.extents.origin.y)
+                if ((uint32)geometry_args.area.origin.x != (uint32)position.x ||
+                    (uint32)geometry_args.area.origin.y != (uint32)position.y)
                 {
                     position = geometry_args.area.origin;
                 }
 
-                if ((uint32)geometry_args.area.size.width  != (uint32)geometry.extents.size.width ||
-                    (uint32)geometry_args.area.size.height != (uint32)geometry.extents.size.height)
+                print(@"window_size: $window_size, size: $(size)\n");
+                if ((uint32)window_size.width  != (uint32)size.width ||
+                    (uint32)window_size.height != (uint32)size.height)
                 {
-                    // the size is in window with transform
-                    // invert the window transform to have size in window coordinate space
-                    Graphic.Size window_size = geometry_args.area.size;
-                    var matrix = transform.matrix;
-                    matrix.invert ();
-                    window_size.transform (new Graphic.Transform.from_matrix (matrix));
+                    need_update = true;
                     size = window_size;
                 }
             }
@@ -746,8 +749,8 @@ public class Maia.Window : Group
         }
 
         var ret = area.extents.size;
-        ret.resize (border + (!(Border.RIGHT in shadow_border) ? 0 : shadow_width) * 2,
-                    border + (!(Border.BOTTOM in shadow_border) ? 0 : shadow_width) * 2);
+        ret.resize (border + (!(Border.RIGHT in shadow_border) ? 0 : shadow_width),
+                    border + (!(Border.BOTTOM in shadow_border) ? 0 : shadow_width));
 
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "window: %s %s", name, ret.to_string ());
 
@@ -827,6 +830,7 @@ public class Maia.Window : Group
             if (!damaged_area.is_empty ())
             {
                 Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, @"window $name damaged draw $(damaged_area.extents)");
+                print (@"window $name damaged draw $(damaged_area.extents) \n");
 
                 ctx.save ();
                 {
@@ -881,9 +885,6 @@ public class Maia.Window : Group
         if (!inAllocation.extents.is_empty () && (geometry == null || !geometry.equal (inAllocation)))
         {
             geometry = inAllocation;
-
-            var window_size = geometry.extents.size;
-            window_size.transform (device_transform);
 
             // Paint shadow if needed
             if (shadow_width > 0)
@@ -971,13 +972,14 @@ public class Maia.Window : Group
 
                     // Set child size allocation
                     var area_size = area.extents.size;
-                    area_size.resize (-(border + (!(Border.RIGHT in shadow_border) ? 0 : shadow_width)) * 2,
-                                      -(border + (!(Border.BOTTOM in shadow_border) ? 0 : shadow_width)) * 2);
+                    area_size.resize (-(border + (!(Border.LEFT in shadow_border) ? 0 : shadow_width) + border + (!(Border.RIGHT in shadow_border) ? 0 : shadow_width)),
+                                      -(border + (!(Border.TOP in shadow_border) ? 0 : shadow_width) + border + (!(Border.BOTTOM in shadow_border) ? 0 : shadow_width)));
 
                     var child_allocation = Graphic.Rectangle (item_position.x, item_position.y,
-                                                              double.max (item_size.width, area_size.width),
-                                                              double.max (item_size.height, area_size.height));
+                                                              item_position.x + item_size.width < (area_size.width - (border + (!(Border.RIGHT in shadow_border) ? 0 : shadow_width))) ? area_size.width : item_size.width,
+                                                              item_position.y + item_size.height < (area_size.height - (border + (!(Border.BOTTOM in shadow_border) ? 0 : shadow_width))) ? area_size.height : item_size.height);
 
+                    print (@"window: $(area.extents) child: $(item.name) allocation: $(child_allocation)\n");
                     // Update child allocation
                     item.update (inContext, new Graphic.Region (child_allocation));
                 }

@@ -21,19 +21,18 @@ const string manifest = "Window.test {" +
                         "    background_pattern: #CECECE;" +
                         "    border: 5;" +
                         "    Grid.grid {" +
-                        "       left_padding: 12;" +
-                        "       right_padding: 12;" +
                         "       row_spacing: 12;" +
                         "       column_spacing: 12;" +
                         "       Label.label {" +
                         "           yexpand: false;" +
                         "           columns: 2;" +
-                        "           text: 'Youpi !!!!!\nvive la karioka';" +
+                        "           text: 'Youpi !!!!!\ndansons la karioka';" +
                         "           font_description: 'Liberation Sans 24';" +
                         "           stroke_pattern: rgb (0, 0, 0);" +
                         "       }" +
                         "       Image.image {" +
                         "           row: 1;" +
+                        "           xexpand: false;" +
                         "           yexpand: false;" +
                         "           size: 128, 128;" +
                         "           filename: /usr/share/pixmaps/gksu.png;" +
@@ -47,6 +46,8 @@ const string manifest = "Window.test {" +
                         "       SeekBar.progress_bar {" +
                         "           row: 3;" +
                         "           columns: 2;" +
+                        "           size: 20,20;" +
+                        "           yexpand: false;" +
                         "           background_pattern: #FAFAFA;" +
                         "           stroke_pattern: #A6A6A6;" +
                         "           fill_pattern: shade (#DBDBDB, 0.1);" +
@@ -69,7 +70,6 @@ const string manifest = "Window.test {" +
                         "       DrawingArea.clinical_draw {" +
                         "           row: 4;" +
                         "           columns: 2;" +
-                        "           yexpand: false;" +
                         "           Label.label_draw {" +
                         "               position: 10, 10;" +
                         "               stroke-pattern: #000000;" +

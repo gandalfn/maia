@@ -319,18 +319,21 @@ internal class Maia.Xcb.View : Drawable
             var reply = ((global::Xcb.Window)xid).get_geometry (connection).reply (connection);
             if (reply != null)
             {
-                ret.x = reply.x;
-                ret.y = reply.y;
+                ret.x = reply.x + frame_extents.min.x;
+                ret.y = reply.y + frame_extents.min.y;
             }
 
             return ret;
         }
         set {
-            if (!position.equal (value))
+            Graphic.Point pt = value;
+            pt.x -= frame_extents.min.x;
+            pt.y -= frame_extents.min.y;
+            if (!position.equal (pt))
             {
                 if (m_Realized && !m_Foreign)
                 {
-                    application.push_request (new MoveRequest (this, value));
+                    application.push_request (new MoveRequest (this, pt));
                 }
             }
         }
@@ -369,10 +372,7 @@ internal class Maia.Xcb.View : Drawable
             return ret;
         }
         set {
-            if (!size.equal (value))
-            {
-                resize (Graphic.Size (double.max (1, value.width), double.max (1, value.height)));
-            }
+            resize (Graphic.Size (double.max (1, value.width), double.max (1, value.height)));
         }
         default = Graphic.Size (0, 0);
     }
@@ -389,6 +389,10 @@ internal class Maia.Xcb.View : Drawable
                 {
                     m_FrameExtents = Graphic.Range (((uint32[]?)reply_prop.@value)[0], ((uint32[]?)reply_prop.@value)[2],
                                                     ((uint32[]?)reply_prop.@value)[1], ((uint32[]?)reply_prop.@value)[3]);
+                }
+                else
+                {
+                    m_FrameExtents = Graphic.Range (0, 0, 0, 0);
                 }
             }
             return m_FrameExtents;
@@ -511,12 +515,17 @@ internal class Maia.Xcb.View : Drawable
                 (uint32)GLib.Math.ceil (m_BackBuffer.size.width) != (uint32)GLib.Math.ceil (view_size.width) ||
                 (uint32)GLib.Math.ceil (m_BackBuffer.size.height) != (uint32)GLib.Math.ceil (view_size.height))
             {
+                print(@"resize backbuffer $(m_BackBuffer.size) -> $view_size\n");
                 m_BackBuffer = new Pixmap (screen_num, depth, (int)GLib.Math.ceil (view_size.width), (int)GLib.Math.ceil (view_size.height));
             }
 
             m_FrontBuffer = null;
 
-            application.push_request (new ResizeRequest (this, inSize));
+            if (!view_size.equal (size))
+            {
+                print(@"resize $size -> $view_size\n");
+                application.push_request (new ResizeRequest (this, inSize));
+            }
         }
     }
 
@@ -633,7 +642,8 @@ internal class Maia.Xcb.View : Drawable
                 values += 1;
             }
 
-            uint32 event_mask = global::Xcb.EventMask.EXPOSURE            |
+            uint32 event_mask = global::Xcb.EventMask.PROPERTY_CHANGE     |
+                                global::Xcb.EventMask.EXPOSURE            |
                                 global::Xcb.EventMask.STRUCTURE_NOTIFY    |
                                 global::Xcb.EventMask.BUTTON_PRESS        |
                                 global::Xcb.EventMask.BUTTON_RELEASE      |

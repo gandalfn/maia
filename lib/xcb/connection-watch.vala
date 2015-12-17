@@ -125,10 +125,14 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
     on_process ()
     {
         Core.Map<int, MouseEventArgs> motions = new Core.Map<int, MouseEventArgs> ();
+        Core.Map<int, GeometryEventArgs> configures = new Core.Map<int, GeometryEventArgs> ();
 
         while (m_LastEvent != null || (m_LastEvent = m_Connection.poll_for_event ()) != null)
         {
-            int response_type = m_LastEvent.response_type & ~0x80;
+            int response_type = m_LastEvent.response_type & 0x7f;
+            bool send_event = (m_LastEvent.response_type & 0x80) != 0;
+
+            print(@"response_type: $((global::Xcb.EventType)response_type) send_event: $send_event\n");
             switch (response_type)
             {
                 // Expose event
@@ -141,37 +145,17 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
                                                                         evt_expose.width, evt_expose.height));
                     break;
 
-                // reparent notify
-                case global::Xcb.EventType.REPARENT_NOTIFY:
-                    unowned global::Xcb.ReparentNotifyEvent? evt_reparent = (global::Xcb.ReparentNotifyEvent?)m_LastEvent;
-
-                    print (@"reparent window: 0x%lx parent: 0x%lx \n", evt_reparent.window, evt_reparent.parent);
-
-                    var reply = evt_reparent.parent.get_attributes (m_Connection).reply (m_Connection);
-                    if (reply != null)
-                    {
-                        uint32 mask = global::Xcb.Cw.EVENT_MASK;
-                        uint32[] values = {};
-
-                        print (@"reparent window: 0x%lx event_mask: $(reply.all_event_masks)\n", evt_reparent.parent);
-
-                        values += reply.all_event_masks & ~global::Xcb.EventMask.SUBSTRUCTURE_REDIRECT;
-
-                        evt_reparent.parent.change_attributes_checked (m_Connection, mask, values);
-                    }
-                    break;
-
                 // configure notify event
                 case global::Xcb.EventType.CONFIGURE_NOTIFY:
-                    unowned global::Xcb.ConfigureNotifyEvent? evt_configure = (global::Xcb.ConfigureNotifyEvent?)m_LastEvent;
+                    if (send_event)
+                    {
+                        unowned global::Xcb.ConfigureNotifyEvent? evt_configure = (global::Xcb.ConfigureNotifyEvent?)m_LastEvent;
 
-                    print (@"event: 0x%lx window: 0x%lx, $(evt_configure.x),$(evt_configure.y) $(evt_configure.width)x$(evt_configure.height) override_redirect: $(evt_configure.override_redirect)\n", evt_configure.event, evt_configure.window);
-                    // send event geometry
-                    Core.EventBus.default.publish ("geometry", ((int)evt_configure.window).to_pointer (),
-                                                   new GeometryEventArgs (evt_configure.x, evt_configure.y,
-                                                                          evt_configure.width + (evt_configure.border_width * 2),
-                                                                          evt_configure.height + (evt_configure.border_width * 2)));
-
+                        // send event geometry
+                        configures[(int)evt_configure.window] = new GeometryEventArgs (evt_configure.x, evt_configure.y,
+                                                                                       evt_configure.width + (evt_configure.border_width * 2),
+                                                                                       evt_configure.height + (evt_configure.border_width * 2));
+                    }
                     break;
 
                 // map notify event
@@ -287,6 +271,12 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
             }
 
             m_LastEvent = null;
+        }
+
+        // send compressed configure
+        foreach (var configure in configures)
+        {
+            Core.EventBus.default.publish ("geometry", configure.first.to_pointer (), configure.second);
         }
 
         // send compressed motion

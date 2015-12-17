@@ -20,10 +20,10 @@
 public class Maia.Xcb.DeleteEventArgs : Maia.DeleteEventArgs
 {
     // constants
-    public const string PROTOBUF = "message DeleteXcb {" +
-                                   "     Delete delete;" +
-                                   "     uint32 window;" +
-                                   "}";
+    public new const string PROTOBUF = "message DeleteXcb {" +
+                                       "     Delete delete;" +
+                                       "     uint32 window;" +
+                                       "}";
 
     // accessors
     public global::Xcb.Window window {
