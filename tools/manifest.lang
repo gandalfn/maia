@@ -190,32 +190,46 @@
         <keyword>visible-with</keyword>
         <keyword>icon-name</keyword>
         <keyword>transform</keyword>
+        <keyword>decorated</keyword>
     </context>
 
     <context id="classes" style-ref="type">
-        <keyword>Group</keyword>
-        <keyword>Rectangle</keyword>
-        <keyword>Path</keyword>
-        <keyword>Image</keyword>
-        <keyword>Label</keyword>
+        <keyword>Arrow</keyword>
+        <keyword>Button</keyword>
+        <keyword>CassoGrid</keyword>
+        <keyword>ChartIntersect</keyword>
+        <keyword>ChartPoint</keyword>
+        <keyword>ChartView</keyword>
+        <keyword>Chart</keyword>
+        <keyword>CheckButton</keyword>
+        <keyword>Column</keyword>
+        <keyword>Combo</keyword>
+        <keyword>DocumentView</keyword>
+        <keyword>Document</keyword>
+        <keyword>DrawingArea</keyword>
         <keyword>Entry</keyword>
         <keyword>Grid</keyword>
-        <keyword>ToggleGroup</keyword>
-        <keyword>Button</keyword>
-        <keyword>CheckButton</keyword>
+        <keyword>Group</keyword>
         <keyword>Highlight</keyword>
-        <keyword>Document</keyword>
+        <keyword>Image</keyword>
+        <keyword>Label</keyword>
         <keyword>Model</keyword>
-        <keyword>Column</keyword>
-        <keyword>View</keyword>
-        <keyword>DrawingArea</keyword>
-        <keyword>Shortcut</keyword>
-        <keyword>Combo</keyword>
+        <keyword>Path</keyword>
+        <keyword>PopupButton</keyword>
         <keyword>Popup</keyword>
+        <keyword>ProgressBar</keyword>
+        <keyword>Rectangle</keyword>
+        <keyword>ScrollView</keyword>
+        <keyword>SeekBar</keyword>
         <keyword>Style</keyword>
+        <keyword>Shortcut</keyword>
+        <keyword>ToggleButton</keyword>
+        <keyword>ToggleGroup</keyword>
         <keyword>Tool</keyword>
         <keyword>Toolbox</keyword>
-        <keyword>Arrow</keyword>
+        <keyword>View</keyword>
+        <keyword>Viewport</keyword>
+        <keyword>Window</keyword>
     </context>
 
     <context id="attribute-value-delimiters" style-ref="others-2">

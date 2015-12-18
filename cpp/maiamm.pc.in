@@ -8,6 +8,6 @@ includedir=@includedir@/maiamm-@MAIA_ABI@
 Name: maiamm-@MAIA_ABI@
 Description: Maiamm library
 Version: @MAIA_VERSION@
-Requires: maia-@MAIA_ABI@ glibmm-2.4 >= @GLIBMM_REQUIRED@
+Requires: maia-@MAIA_ABI@ glibmm-2.4 >= @GLIBMM_REQUIRED@ giomm-2.4 >= @GLIBMM_REQUIRED@
 Libs: -Wl,-rpath=${libdir} -L${libdir} -lmaiamm
 Cflags: -I${includedir}

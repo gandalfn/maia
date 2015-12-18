@@ -213,7 +213,7 @@ namespace Maia
 
                 _WRAP_METHOD(void append_observers (const Glib::RefPtr<Notification>& inpNotification), maia_core_notification_append_observers)
 
-                _WRAP_PROPERTY("name", Glib::ustring);
+                _WRAP_PROPERTY("name", Glib::ustring)
 
             protected:
                 _CUSTOM_CTOR_CAST()

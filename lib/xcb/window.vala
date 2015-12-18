@@ -397,6 +397,7 @@ internal class Maia.Xcb.Window : Maia.Window
         if (m_View != null)
         {
             m_View.size = size;
+            application.sync ();
         }
 
         base.on_resize ();
@@ -417,23 +418,23 @@ internal class Maia.Xcb.Window : Maia.Window
     internal override void
     on_show ()
     {
-        base.on_show ();
-
         if (m_View != null)
         {
             m_View.show ();
         }
+
+        base.on_show ();
     }
 
     internal override void
     on_hide ()
     {
+        base.on_hide ();
+
         if (m_View != null)
         {
             m_View.hide ();
         }
-
-        base.on_hide ();
     }
 
     internal override bool

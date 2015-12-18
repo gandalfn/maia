@@ -204,29 +204,42 @@ public class CanvasEditor.ManifestProvider : Provider
     {
         m_Keywords = new Maia.Core.Set<string> ();
 
-        m_Keywords.insert ("Group");
-        m_Keywords.insert ("Rectangle");
-        m_Keywords.insert ("Path");
-        m_Keywords.insert ("Image");
-        m_Keywords.insert ("Label");
+        m_Keywords.insert ("Arrow");
+        m_Keywords.insert ("Button");
+        m_Keywords.insert ("CassoGrid");
+        m_Keywords.insert ("ChartIntersect");
+        m_Keywords.insert ("ChartPoint");
+        m_Keywords.insert ("ChartView");
+        m_Keywords.insert ("Chart");
+        m_Keywords.insert ("CheckButton");
+        m_Keywords.insert ("Column");
+        m_Keywords.insert ("Combo");
+        m_Keywords.insert ("DocumentView");
+        m_Keywords.insert ("Document");
+        m_Keywords.insert ("DrawingArea");
         m_Keywords.insert ("Entry");
         m_Keywords.insert ("Grid");
-        m_Keywords.insert ("ToggleGroup");
-        m_Keywords.insert ("Button");
-        m_Keywords.insert ("CheckButton");
+        m_Keywords.insert ("Group");
         m_Keywords.insert ("Highlight");
-        m_Keywords.insert ("Document");
+        m_Keywords.insert ("Image");
+        m_Keywords.insert ("Label");
         m_Keywords.insert ("Model");
-        m_Keywords.insert ("Column");
-        m_Keywords.insert ("View");
-        m_Keywords.insert ("DrawingArea");
-        m_Keywords.insert ("Style");
-        m_Keywords.insert ("Combo");
+        m_Keywords.insert ("Path");
+        m_Keywords.insert ("PopupButton");
         m_Keywords.insert ("Popup");
+        m_Keywords.insert ("ProgressBar");
+        m_Keywords.insert ("Rectangle");
+        m_Keywords.insert ("ScrollView");
+        m_Keywords.insert ("SeekBar");
+        m_Keywords.insert ("Style");
         m_Keywords.insert ("Shortcut");
-        m_Keywords.insert ("Toolbox");
+        m_Keywords.insert ("ToggleButton");
+        m_Keywords.insert ("ToggleGroup");
         m_Keywords.insert ("Tool");
-        m_Keywords.insert ("Arrow");
+        m_Keywords.insert ("Toolbox");
+        m_Keywords.insert ("View");
+        m_Keywords.insert ("Viewport");
+        m_Keywords.insert ("Window");
     }
 
     private void
@@ -296,7 +309,7 @@ public class CanvasEditor.ManifestProvider : Provider
         m_Properties.insert ("right-padding");
         m_Properties.insert ("border-width");
         m_Properties.insert ("style");
-        m_Properties.insert ("section");
+        m_Properties.insert ("section") ;
         m_Properties.insert ("angle");
         m_Properties.insert ("alignment");
         m_Properties.insert ("wrap-mode");
@@ -308,6 +321,8 @@ public class CanvasEditor.ManifestProvider : Provider
         m_Properties.insert ("linked-item");
         m_Properties.insert ("action");
         m_Properties.insert ("visible-with");
+        m_Properties.insert ("hide-if-empty");
+        m_Properties.insert ("decorated");
     }
 
     private GLib.List<string>

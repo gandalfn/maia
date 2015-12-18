@@ -89,7 +89,7 @@ namespace Maia
 #m4 _CONVERSION(`MaiaDrawable*', `const Glib::RefPtr<Drawable>&', `Glib::wrap($3)')
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3)')
 
-            _WRAP_METHOD(void paint_background (const Glib::RefPtr<Graphic::Context>& inContext), maia_item_paint_background, errthrow);
+            _WRAP_METHOD(void paint_background (const Glib::RefPtr<Graphic::Context>& inContext), maia_item_paint_background, errthrow)
 
         public:
             typedef sigc::slot<void> SlotRootChanged;

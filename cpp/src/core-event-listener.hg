@@ -133,7 +133,7 @@ namespace Maia
 
             _CUSTOM_DTOR
 
-            _IGNORE(maia_core_event_listener_new, maia_core_event_listener_new_object, maia_core_event_listener_set_block);
+            _IGNORE(maia_core_event_listener_new, maia_core_event_listener_new_object, maia_core_event_listener_set_block)
 
             public:
                 template <typename T_obj>

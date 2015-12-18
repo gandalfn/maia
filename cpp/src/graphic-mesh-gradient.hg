@@ -81,7 +81,7 @@ namespace Maia
                 static Glib::RefPtr<MeshGradientLinePatch> create (const Rectangle& inRectangle, const std::vector<Glib::RefPtr<Color> >& inColors)
                 {
                     int nb = std::min ((int)inColors.size (), 4);
-                    MaiaGraphicColor* colors[nb];
+                    MaiaGraphicColor** colors = new MaiaGraphicColor*[nb];
                     int cpt = 0;
 
                     for (std::vector<Glib::RefPtr<Color> >::const_iterator iter = inColors.begin (); cpt < 4 && iter != inColors.end (); ++iter, ++cpt)
@@ -90,6 +90,7 @@ namespace Maia
                     }
 
                     MaiaGraphicMeshGradientLinePatch* pPatch = maia_graphic_mesh_gradient_line_patch_new (const_cast<MaiaGraphicRectangle*> (inRectangle.gobj ()), colors, nb);
+                    delete colors; colors = nullptr;
                     return Glib::RefPtr<MeshGradientLinePatch> (new MeshGradientLinePatch (pPatch));
                 }
 
@@ -107,7 +108,7 @@ namespace Maia
                 static Glib::RefPtr<MeshGradientArcPatch> create (const Point& inCenter, double inStart, double inEnd, double inRadius, const std::vector<Glib::RefPtr<Color> >& inColors)
                 {
                     int nb = std::min ((int)inColors.size (), 4);
-                    MaiaGraphicColor* colors[nb];
+                    MaiaGraphicColor** colors = new MaiaGraphicColor*[nb];
                     int cpt = 0;
 
                     for (std::vector<Glib::RefPtr<Color> >::const_iterator iter = inColors.begin (); cpt < 4 && iter != inColors.end (); ++iter, ++cpt)
@@ -117,6 +118,7 @@ namespace Maia
 
                     MaiaGraphicMeshGradientArcPatch* pPatch = maia_graphic_mesh_gradient_arc_patch_new (const_cast<MaiaGraphicPoint*> (inCenter.gobj ()),
                                                                                                         inStart, inEnd, inRadius, colors, nb);
+                    delete colors; colors = nullptr;
                     return Glib::RefPtr<MeshGradientArcPatch> (new MeshGradientArcPatch (pPatch));
                 }
 

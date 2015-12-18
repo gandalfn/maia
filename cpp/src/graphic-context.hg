@@ -126,13 +126,14 @@ namespace Maia
                 {
                     if (!inDashes.empty ())
                     {
-                        double dashes[inDashes.size ()];
+                        double* dashes = new double[inDashes.size ()];
                         int cpt = 0;
                         for (std::vector<double>::iterator iter = inDashes.begin (); iter != inDashes.end (); ++iter, ++cpt)
                         {
                             dashes[cpt] = *iter;
                         }
                         maia_graphic_context_set_dash (gobj (), dashes, inDashes.size ());
+                        delete dashes; dashes = nullptr;
                     }
                     else
                     {

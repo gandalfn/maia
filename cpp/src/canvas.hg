@@ -60,7 +60,7 @@ namespace Maia
             void load_from_file (const Glib::ustring& inFilename);
             void load_from_file (const Glib::ustring& inFilename, const Glib::ustring& inRoot);
 
-            _WRAP_METHOD(Glib::RefPtr<Core::Notifications> notifications (), maia_canvas_get_notifications, refreturn);
+            _WRAP_METHOD(Glib::RefPtr<Core::Notifications> notifications (), maia_canvas_get_notifications, refreturn)
 
             _WRAP_PROPERTY("root", Glib::RefPtr<Item>)
             _WRAP_PROPERTY("window", Glib::RefPtr<Window>)

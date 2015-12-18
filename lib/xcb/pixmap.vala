@@ -67,7 +67,7 @@ internal class Maia.Xcb.Pixmap : Maia.Xcb.Drawable
         var pixmap = global::Xcb.Pixmap (Maia.Xcb.application.connection);
 
         GLib.Object (xid: pixmap, screen_num: inPixmap.screen_num, depth: inPixmap.depth, size: inPixmap.size);
-        
+
         var cookie = pixmap.create_checked (connection, (uint8)depth, (global::Xcb.Drawable)inPixmap.xid, (uint16)size.width, (uint16)size.height);
 
         if (connection.request_check (cookie) != null)

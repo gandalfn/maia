@@ -70,7 +70,7 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                static Glib::RefPtr<File> create (const Glib::ustring& inFilename, Level inLevel, Category inCategory, Glib::ustring& inDomain)
+                static Glib::RefPtr<File> create (const Glib::ustring& inFilename, Level inLevel, Category inCategory, const Glib::ustring& inDomain)
                 {
                     MaiaLogFile* pFile = maia_log_file_new (inFilename.c_str (), (MaiaLogLevel)inLevel, (MaiaLogCategory)inCategory, inDomain.c_str ());
                     return Glib::RefPtr<File> (new File (pFile));
@@ -90,7 +90,7 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                static Glib::RefPtr<Stdout> create (Level inLevel, Category inCategory, Glib::ustring& inDomain)
+                static Glib::RefPtr<Stdout> create (Level inLevel, Category inCategory, const Glib::ustring& inDomain)
                 {
                     MaiaLogStdout* pLogger = maia_log_stdout_new ((MaiaLogLevel)inLevel, (MaiaLogCategory)inCategory, inDomain.c_str ());
                     return Glib::RefPtr<Stdout> (new Stdout (pLogger));
@@ -105,7 +105,7 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                static Glib::RefPtr<Stderr> create (Level inLevel, Category inCategory, Glib::ustring& inDomain)
+                static Glib::RefPtr<Stderr> create (Level inLevel, Category inCategory, const Glib::ustring& inDomain)
                 {
                     MaiaLogStderr* pLogger = maia_log_stderr_new ((MaiaLogLevel)inLevel, (MaiaLogCategory)inCategory, inDomain.c_str ());
                     return Glib::RefPtr<Stderr> (new Stderr (pLogger));

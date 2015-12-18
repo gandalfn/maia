@@ -127,8 +127,8 @@ namespace Maia
                     return rect;
                 }
 
-                _WRAP_METHOD(Region::iterator begin (), maia_graphic_region_iterator);
-                _WRAP_METHOD(Region::iterator end (), maia_graphic_region_iterator_end);
+                _WRAP_METHOD(Region::iterator begin (), maia_graphic_region_iterator)
+                _WRAP_METHOD(Region::iterator end (), maia_graphic_region_iterator_end)
 
                 _IGNORE(maia_graphic_region_equal)
                 inline bool operator== (const Glib::RefPtr<Region>& rhs)
