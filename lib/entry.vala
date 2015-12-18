@@ -133,33 +133,25 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
      */
     public class ChangedEventArgs : Core.EventArgs
     {
-        // properties
-        private string m_Text;
-
-        // accessors
-        internal override GLib.Variant serialize {
-            owned get {
-                return new GLib.Variant ("(s)", m_Text);
-            }
-            set {
-                if (value != null)
-                {
-                    value.get ("(s)", out m_Text);
-                }
-                else
-                {
-                    m_Text = "";
-                }
-            }
-        }
+        // constants
+        public const string PROTOBUF = "message Changed {" +
+                                       "    string text;"  +
+                                       "}";
 
         /**
          * Entry text on changed event
          */
         public string text {
-            get {
-                return m_Text;
+            owned get {
+                return (string)this["text"];
             }
+        }
+
+        // static methods
+        static construct
+        {
+            Core.EventArgs.register_protocol (typeof (ChangedEventArgs),
+                                              "Changed", PROTOBUF);
         }
 
         // methods
@@ -167,7 +159,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         {
             base ();
 
-            m_Text = inText;
+            this["text", 0] = inText;
         }
     }
 

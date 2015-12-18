@@ -132,7 +132,6 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
             int response_type = m_LastEvent.response_type & 0x7f;
             bool send_event = (m_LastEvent.response_type & 0x80) != 0;
 
-            print(@"response_type: $((global::Xcb.EventType)response_type) send_event: $send_event\n");
             switch (response_type)
             {
                 // Expose event
@@ -147,7 +146,7 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
 
                 // configure notify event
                 case global::Xcb.EventType.CONFIGURE_NOTIFY:
-                    if (send_event)
+                    if (!send_event)
                     {
                         unowned global::Xcb.ConfigureNotifyEvent? evt_configure = (global::Xcb.ConfigureNotifyEvent?)m_LastEvent;
 

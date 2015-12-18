@@ -134,5 +134,7 @@ namespace Maia
             _WRAP_PROPERTY("bottom-padding", double)
             _WRAP_PROPERTY("left-padding", double)
             _WRAP_PROPERTY("right-padding", double)
+
+            _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
     };
 }

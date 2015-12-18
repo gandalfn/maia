@@ -20,13 +20,13 @@
 #include <maia.h>
 #include <maiamm/group.h>
 #include <maiamm/graphic-color.h>
+#include <maiamm/window.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/group_p.h)
 
 namespace Maia
 {
-    _WRAP_ENUM(WindowBorder, MaiaWindowBorder, NO_GTYPE)
     _WRAP_ENUM(PopupPlacement, MaiaPopupPlacement, NO_GTYPE)
 
     class Popup : public Group
@@ -63,6 +63,16 @@ namespace Maia
             _WRAP_METHOD(bool get_animation () const, maia_popup_get_animation)
             _WRAP_METHOD(void set_animation (bool inAnimation = true), maia_popup_set_animation)
 
+            _WRAP_METHOD(Glib::RefPtr<Window> get_transient_for () const, maia_popup_get_transient_for, refreturn)
+            _WRAP_METHOD(void set_transient_for (const Glib::RefPtr<Window>& inTransientFor), maia_popup_set_transient_for)
+
+            _WRAP_METHOD(WindowType get_window_type () const, maia_popup_get_window_type)
+            _WRAP_METHOD(void set_window_type (WindowType inType), maia_popup_set_window_type)
+
+            _WRAP_METHOD(WindowPositionPolicy get_position_policy () const, maia_popup_get_position_policy)
+            _WRAP_METHOD(void set_position_policy (WindowPositionPolicy inPolicy), maia_popup_set_position_policy)
+
+
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("shadow-width", double)
             _WRAP_PROPERTY("shadow-border", WindowBorder)
@@ -72,6 +82,9 @@ namespace Maia
             _WRAP_PROPERTY("placement", PopupPlacement)
             _WRAP_PROPERTY("content", Glib::RefPtr<Item>)
             _WRAP_PROPERTY("animation", bool)
+            _WRAP_PROPERTY("transient-for", Glib::RefPtr<Window>)
+            _WRAP_PROPERTY("window-type", WindowType)
+            _WRAP_PROPERTY("position-policy", WindowPositionPolicy)
 
         private:
             _WRAP_PROPERTY("x", double)

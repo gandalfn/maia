@@ -120,6 +120,15 @@ internal class Maia.Xcb.Window : Maia.Window
     }
 
     private void
+    on_decorated_changed ()
+    {
+        if (m_View != null)
+        {
+            m_View.decorated = decorated;
+        }
+    }
+
+    private void
     on_parent_view_changed ()
     {
         if (m_View != null && (window_type == Type.TOPLEVEL || window_type == Type.POPUP))
@@ -156,7 +165,6 @@ internal class Maia.Xcb.Window : Maia.Window
     private void
     on_window_parent_move ()
     {
-        print(@"$(GLib.Log.METHOD)\n");
         unowned Window? parent_window = m_ParentWindow as Window;
         if (parent_window != null && m_View != null)
         {
@@ -183,7 +191,6 @@ internal class Maia.Xcb.Window : Maia.Window
                     geo.clamp (m_View.screen.get_monitor_at (pos).geometry);
                 }
 
-                print (@"window position: $(geo.origin)\n");
                 m_View.position = geo.origin;
             }
             else
@@ -279,6 +286,7 @@ internal class Maia.Xcb.Window : Maia.Window
         else
         {
             m_View = new View ((int)size.width, (int)size.height);
+            m_View.decorated = decorated;
         }
 
         // Create event
@@ -304,6 +312,9 @@ internal class Maia.Xcb.Window : Maia.Window
 
         // connect onto close button changed
         notify["close-button"].connect (on_close_button_changed);
+
+        // connect onto close button changed
+        notify["decorated"].connect (on_decorated_changed);
 
         // connect onto device transform changed
         notify["device-transform"].connect (on_device_transform_changed);

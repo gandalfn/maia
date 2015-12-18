@@ -24,13 +24,18 @@
 #include <maiamm/graphic-surface.h>
 #include <maiamm/graphic-color.h>
 #include <maiamm/group.h>
-#include <maiamm/popup.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/group_p.h)
 
 namespace Maia
 {
+    class Popup;
+
+    _WRAP_ENUM(WindowBorder, MaiaWindowBorder, NO_GTYPE)
+    _WRAP_ENUM(WindowType, MaiaWindowType, NO_GTYPE)
+    _WRAP_ENUM(WindowPositionPolicy, MaiaWindowPositionPolicy, NO_GTYPE)
+
     class Window : public Group
     {
         _CLASS_GOBJECT(Window, MaiaWindow, MAIA_WINDOW, Group, MaiaGroup)
@@ -116,11 +121,23 @@ namespace Maia
             _WRAP_METHOD(bool get_close_button () const, maia_window_get_close_button)
             _WRAP_METHOD(void set_close_button (bool inClose = true), maia_window_set_close_button)
 
+            _WRAP_METHOD(bool get_decorated () const, maia_window_get_decorated)
+            _WRAP_METHOD(void set_decorated (bool inDecorated = true), maia_window_set_decorated)
+
             _WRAP_METHOD(guint8 get_depth () const, maia_window_get_depth)
             _WRAP_METHOD(void set_depth (guint8 inDepth), maia_window_set_depth)
 
+            _WRAP_METHOD(Glib::RefPtr<Window> get_transient_for () const, maia_window_get_transient_for, refreturn)
+            _WRAP_METHOD(void set_transient_for (const Glib::RefPtr<Window>& inTransientFor), maia_window_set_transient_for)
+
             _WRAP_METHOD(Glib::RefPtr<Graphic::Transform> get_device_transform () const, maia_window_get_device_transform, refreturn)
             _WRAP_METHOD(void set_device_transform (const Glib::RefPtr<Graphic::Transform>& inTransform), maia_window_set_device_transform)
+
+            _WRAP_METHOD(WindowType get_window_type () const, maia_window_get_window_type)
+            _WRAP_METHOD(void set_window_type (WindowType inType), maia_window_set_window_type)
+
+            _WRAP_METHOD(WindowPositionPolicy get_position_policy () const, maia_window_get_position_policy)
+            _WRAP_METHOD(void set_position_policy (WindowPositionPolicy inPolicy), maia_window_set_position_policy)
 
             _WRAP_METHOD(Glib::RefPtr<Popup> get_popup () const, maia_window_get_popup, refreturn)
 
@@ -141,8 +158,10 @@ namespace Maia
             _WRAP_PROPERTY("shadow-color", Glib::RefPtr<Graphic::Color>)
             _WRAP_PROPERTY("round-corner", double)
             _WRAP_PROPERTY("close-button", bool)
+            _WRAP_PROPERTY("decorated", bool)
             _WRAP_PROPERTY("depth", guint8)
             _WRAP_PROPERTY("device-transform", Glib::RefPtr<Graphic::Transform>)
+            _WRAP_PROPERTY("transient-for", Glib::RefPtr<Window>)
             _WRAP_PROPERTY("popup", Glib::RefPtr<Popup>)
             _WRAP_PROPERTY("foreign", guint32)
             _WRAP_PROPERTY("focus-item", Glib::RefPtr<Item>)
@@ -155,6 +174,8 @@ namespace Maia
             _WRAP_PROPERTY("delete-event", Glib::RefPtr<Core::Event>)
             _WRAP_PROPERTY("mouse-event", Glib::RefPtr<Core::Event>)
             _WRAP_PROPERTY("keyboard-event", Glib::RefPtr<Core::Event>)
+            _WRAP_PROPERTY("window-type", WindowType)
+            _WRAP_PROPERTY("position-policy", WindowPositionPolicy)
 
         private:
             _WRAP_PROPERTY("close-button-scale", double)

@@ -67,7 +67,7 @@ namespace Maia
             _WRAP_PROPERTY("view", Glib::RefPtr<View>)
             _WRAP_PROPERTY("highlight-color", Glib::RefPtr<Graphic::Color>)
             _WRAP_PROPERTY("active-row", gint)
-            
+
             _WRAP_PROPERTY("changed", Glib::RefPtr<Core::Event>)
 
             _WRAP_PROPERTY("row", guint)
@@ -92,6 +92,8 @@ namespace Maia
             _WRAP_PROPERTY("bottom-padding", double)
             _WRAP_PROPERTY("left-padding", double)
             _WRAP_PROPERTY("right-padding", double)
+
+            _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
 
             _WRAP_PROPERTY("can-focus", bool)
     };

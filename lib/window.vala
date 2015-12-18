@@ -102,6 +102,8 @@ public class Maia.Window : Group
 
     public bool close_button { get; set; default = false; }
 
+    public virtual bool decorated { get; set; default = true; }
+
     public virtual uint8 depth { get; set; }
 
     public virtual Window? transient_for { get; set; default = null; }
@@ -364,14 +366,12 @@ public class Maia.Window : Group
                 matrix.invert ();
                 window_size.transform (new Graphic.Transform.from_matrix (matrix));
 
-                print(@"position: $position, geometry: $(geometry.extents) geometry_args: $(geometry_args.area)\n");
                 if ((uint32)geometry_args.area.origin.x != (uint32)position.x ||
                     (uint32)geometry_args.area.origin.y != (uint32)position.y)
                 {
                     position = geometry_args.area.origin;
                 }
 
-                print(@"window_size: $window_size, size: $(size)\n");
                 if ((uint32)window_size.width  != (uint32)size.width ||
                     (uint32)window_size.height != (uint32)size.height)
                 {
@@ -830,7 +830,6 @@ public class Maia.Window : Group
             if (!damaged_area.is_empty ())
             {
                 Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, @"window $name damaged draw $(damaged_area.extents)");
-                print (@"window $name damaged draw $(damaged_area.extents) \n");
 
                 ctx.save ();
                 {
@@ -979,7 +978,6 @@ public class Maia.Window : Group
                                                               item_position.x + item_size.width < (area_size.width - (border + (!(Border.RIGHT in shadow_border) ? 0 : shadow_width))) ? area_size.width : item_size.width,
                                                               item_position.y + item_size.height < (area_size.height - (border + (!(Border.BOTTOM in shadow_border) ? 0 : shadow_width))) ? area_size.height : item_size.height);
 
-                    print (@"window: $(area.extents) child: $(item.name) allocation: $(child_allocation)\n");
                     // Update child allocation
                     item.update (inContext, new Graphic.Region (child_allocation));
                 }

@@ -171,7 +171,10 @@ internal class Maia.Xcb.View : Drawable
             if (m_OverrideRedirect != value)
             {
                 m_OverrideRedirect = value;
-                application.push_request (new OverrideRedirectRequest (this, m_OverrideRedirect));
+                if (m_Realized && !m_Foreign)
+                {
+                    application.push_request (new OverrideRedirectRequest (this, m_OverrideRedirect));
+                }
             }
         }
     }
@@ -319,16 +322,16 @@ internal class Maia.Xcb.View : Drawable
             var reply = ((global::Xcb.Window)xid).get_geometry (connection).reply (connection);
             if (reply != null)
             {
-                ret.x = reply.x + frame_extents.min.x;
-                ret.y = reply.y + frame_extents.min.y;
+                ret.x = reply.x + (decorated ? frame_extents.min.x : 0);
+                ret.y = reply.y + (decorated ? frame_extents.min.y : 0);
             }
 
             return ret;
         }
         set {
             Graphic.Point pt = value;
-            pt.x -= frame_extents.min.x;
-            pt.y -= frame_extents.min.y;
+            pt.x -= decorated ? frame_extents.min.x : 0;
+            pt.y -= decorated ? frame_extents.min.y : 0;
             if (!position.equal (pt))
             {
                 if (m_Realized && !m_Foreign)
@@ -423,6 +426,8 @@ internal class Maia.Xcb.View : Drawable
 
     public Graphic.Region damaged { get; set; default = null; }
 
+    public bool decorated { get; set; default = true; }
+
     public bool managed { get; set; default = true; }
 
     // methods
@@ -515,7 +520,6 @@ internal class Maia.Xcb.View : Drawable
                 (uint32)GLib.Math.ceil (m_BackBuffer.size.width) != (uint32)GLib.Math.ceil (view_size.width) ||
                 (uint32)GLib.Math.ceil (m_BackBuffer.size.height) != (uint32)GLib.Math.ceil (view_size.height))
             {
-                print(@"resize backbuffer $(m_BackBuffer.size) -> $view_size\n");
                 m_BackBuffer = new Pixmap (screen_num, depth, (int)GLib.Math.ceil (view_size.width), (int)GLib.Math.ceil (view_size.height));
             }
 
@@ -523,7 +527,6 @@ internal class Maia.Xcb.View : Drawable
 
             if (!view_size.equal (size))
             {
-                print(@"resize $size -> $view_size\n");
                 application.push_request (new ResizeRequest (this, inSize));
             }
         }
@@ -701,7 +704,7 @@ internal class Maia.Xcb.View : Drawable
                                                                                  global::Xcb.AtomType.ATOM,
                                                                                  32, properties);
 
-                    ulong[] mwm_hints = { 2, 1, 0, 0, 0 };
+                    ulong[] mwm_hints = { 2, decorated ? 1 : 0, 0, 0, 0 };
                     ((global::Xcb.Window)xid).change_property<ulong> (connection, global::Xcb.PropMode.REPLACE,
                                                                       Xcb.application.atoms[AtomType._MOTIF_WM_HINTS],
                                                                       Xcb.application.atoms[AtomType._MOTIF_WM_HINTS],

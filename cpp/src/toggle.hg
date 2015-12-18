@@ -19,6 +19,7 @@
 
 #include <maia.h>
 #include <maiamm/graphic-color.h>
+#include <maiamm/graphic-pattern.h>
 #include <maiamm/item-packable.h>
 #include <maiamm/item-movable.h>
 #include <maiamm/group.h>
@@ -104,5 +105,7 @@ namespace Maia
             _WRAP_PROPERTY("bottom-padding", double)
             _WRAP_PROPERTY("left-padding", double)
             _WRAP_PROPERTY("right-padding", double)
+
+            _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
     };
 }
