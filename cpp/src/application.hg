@@ -46,7 +46,7 @@ namespace Maia
                 {
                     backends = g_new0 (char*, length);
                     int cpt = 0;
-                    for (std::vector<Glib::ustring>::const_iterator iter = inBackends.begin (); iter != inBackends.end (); ++iter)
+                    for (std::vector<Glib::ustring>::const_iterator iter = inBackends.begin (); iter != inBackends.end (); ++iter, ++cpt)
                     {
                         backends[cpt] = (char*)iter->c_str ();
                     }

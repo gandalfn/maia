@@ -528,6 +528,8 @@ internal class Maia.Xcb.View : Drawable
             if (!view_size.equal (size))
             {
                 application.push_request (new ResizeRequest (this, inSize));
+                application.flush ();
+                application.sync ();
             }
         }
     }

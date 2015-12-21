@@ -1144,7 +1144,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
                     if (item.backcell_pattern != null && item.damaged != null && !item.damaged.is_empty ())
                     {
-                        Graphic.Path path = new Graphic.Path.from_rectangle (rect);
+                        Graphic.Path path = new Graphic.Path.from_rectangle (area.extents);
 
                         inContext.pattern = item.backcell_pattern;
                         inContext.fill (path);

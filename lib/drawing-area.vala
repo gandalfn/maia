@@ -545,8 +545,10 @@ public class Maia.DrawingArea : Group, ItemPackable
                             arrow_transform.translate (start_arrow.x, start_arrow.y);
                             arrow_transform.rotate (angle);
                             arrow_transform.translate (-start_arrow.x, -start_arrow.y);
-                            path.rectangle (start_arrow.x - GLib.Math.sqrt (GLib.Math.pow (width, 2) + GLib.Math.pow (height, 2)) - selected_border,
-                                            start_arrow.y - selected_border, GLib.Math.sqrt (GLib.Math.pow (width, 2) + GLib.Math.pow (height, 2)) + selected_border * 2.0,
+                            path.rectangle (start_arrow.x - GLib.Math.sqrt (GLib.Math.pow (width, 2) + GLib.Math.pow (height, 2)),
+                                            start_arrow.y - selected_border - arrow.arrow_width / 2.0,
+                                            GLib.Math.sqrt (GLib.Math.pow (width, 2) + GLib.Math.pow (height, 2)) + selected_border * 2.0,
+                                            (selected_border * 2) + arrow.arrow_width,
                                             selected_border * 2, selected_border * 2);
 
                             inContext.save ();

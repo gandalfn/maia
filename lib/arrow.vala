@@ -207,7 +207,7 @@ public class Maia.Arrow : Item, ItemMovable
                                                              start_point.y + arrow_width * GLib.Math.sin (angle + arrow_angle));
 
                 line.move_to (end_point.x, end_point.y);
-                line.line_to (start_point.x, start_point.y);
+                line.line_to (start_point.x + (arrow_width / 2.0) * GLib.Math.cos (angle), start_point.y + (arrow_width / 2.0) * GLib.Math.sin (angle));
                 inContext.line_width = line_width;
                 inContext.pattern = stroke_pattern;
                 inContext.stroke (line);
