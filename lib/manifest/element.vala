@@ -230,7 +230,12 @@ public interface Maia.Manifest.Element : Core.Object
 
                     if (!param.value_defaults (val) || (attributes_set != null && name in attributes_set))
                     {
-                        if (val.type () != typeof (string))
+                        if (val.type () == typeof (GLib.Type))
+                        {
+                            GLib.Type type = (GLib.Type)val;
+                            outRet = type.name ();
+                        }
+                        else if (val.type () != typeof (string))
                         {
                             GLib.Value o = GLib.Value (typeof (string));
                             val.transform (ref o);
@@ -279,6 +284,11 @@ public interface Maia.Manifest.Element : Core.Object
 
     internal virtual void
     on_read_manifest (Document inManifest) throws Core.ParseError
+    {
+    }
+
+    internal virtual void
+    on_finish_read_manifest ()
     {
     }
 
@@ -419,12 +429,14 @@ public interface Maia.Manifest.Element : Core.Object
                         {
                             manifest_theme.apply (this);
                         }
+                        on_finish_read_manifest ();
                         return;
                     }
                     break;
 
                 // end of file
                 case Core.Parser.Token.EOF:
+                    on_finish_read_manifest ();
                     return;
             }
         }

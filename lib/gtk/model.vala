@@ -132,6 +132,12 @@ internal class Maia.Gtk.Model : Maia.Model
     }
 
     // methods
+    construct
+    {
+        // Add not dumpable attributes
+        not_dumpable_attributes.insert ("treemodel");
+    }
+
     public Model (global::Gtk.TreeModel inTreeModel)
     {
         GLib.Object (treemodel: inTreeModel);
@@ -237,7 +243,31 @@ internal class Maia.Gtk.Model : Maia.Model
     }
 
     internal override void
-    construct_model (Column[] inColumns)
+    construct_model ()
+    {
+        int cpt = 0;
+
+        GLib.Type[] columns = {};
+        foreach (unowned Core.Object? child in this)
+        {
+            unowned Column? column = child as Column;
+            if (column != null)
+            {
+                // Add column type
+                columns += column.column_type;
+
+                // Set column num
+                column.column = cpt;
+
+                cpt++;
+            }
+        }
+
+        treemodel = new global::Gtk.ListStore.newv (columns);
+    }
+
+    internal override void
+    construct_model_with_columns (Column[] inColumns)
     {
         int cpt = 0;
 
@@ -284,6 +314,15 @@ internal class Maia.Gtk.Model : Maia.Model
 
         // Set filter func
         (treemodel as global::Gtk.TreeModelFilter).set_visible_func (on_filter_func);
+    }
+
+    internal override void
+    refilter ()
+    {
+        if (treemodel is global::Gtk.TreeModelFilter)
+        {
+            (treemodel as global::Gtk.TreeModelFilter).refilter ();
+        }
     }
 
     internal override bool

@@ -47,7 +47,7 @@ public class Maia.Model : Core.Object, Manifest.Element
         }
 
         public int column { get; set; default = -1; }
-        public GLib.Type column_type { get; private set; default = GLib.Type.INVALID; }
+        public GLib.Type column_type { get; set; default = GLib.Type.INVALID; }
 
         // methods
         construct
@@ -55,7 +55,7 @@ public class Maia.Model : Core.Object, Manifest.Element
             // Add not dumpable attributes
             not_dumpable_attributes.insert ("name");
             not_dumpable_attributes.insert ("model");
-            not_dumpable_attributes.insert ("column_type");
+            not_dumpable_attributes.insert ("column");
         }
 
         public Column (string inId)
@@ -80,6 +80,20 @@ public class Maia.Model : Core.Object, Manifest.Element
         {
             // column can not have childs
             return false;
+        }
+
+//~         internal string
+//~         dump_attributes (string inPrefix)
+//~         {
+//~             return inPrefix + @"column-type: $(column_type.name ());\n";
+//~         }
+
+        public virtual string
+        get_string_value (uint inPath)
+        {
+            GLib.Value val = GLib.Value(typeof(string));
+            get(inPath).transform (ref val);
+            return (string)val;
         }
 
         public virtual new GLib.Value
@@ -161,6 +175,7 @@ public class Maia.Model : Core.Object, Manifest.Element
     {
         // Add not dumpable attributes
         not_dumpable_attributes.insert ("name");
+        not_dumpable_attributes.insert ("nb-rows");
     }
 
     [CCode (sentinel = "NULL")]
@@ -191,7 +206,7 @@ public class Maia.Model : Core.Object, Manifest.Element
         }
         if (columns.length > 0)
         {
-            construct_model (columns);
+            construct_model_with_columns (columns);
         }
     }
 
@@ -199,7 +214,7 @@ public class Maia.Model : Core.Object, Manifest.Element
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
 
-        construct_model (inColumns);
+        construct_model_with_columns (inColumns);
     }
 
     [CCode (sentinel = "NULL")]
@@ -266,7 +281,13 @@ public class Maia.Model : Core.Object, Manifest.Element
     }
 
     protected virtual void
-    construct_model (Column[] inColumns)
+    construct_model ()
+    {
+
+    }
+
+    protected virtual void
+    construct_model_with_columns (Column[] inColumns)
     {
 
     }
@@ -305,6 +326,43 @@ public class Maia.Model : Core.Object, Manifest.Element
         return ret;
     }
 
+    internal void
+    on_finish_read_manifest ()
+    {
+        if (first () != null)
+        {
+            construct_model ();
+        }
+    }
+
+    internal string
+    dump_characters (string inPrefix)
+    {
+        string ret = "";
+
+        if (nb_rows > 0)
+        {
+            ret += inPrefix + "[\n";
+            for (int cpt = 0; cpt < nb_rows; ++cpt)
+            {
+                ret += inPrefix + @"\tRow.$(cpt) {\n";
+
+                foreach (unowned Core.Object? child in this)
+                {
+                    unowned Column? column = child as Column;
+                    if (column != null)
+                    {
+                        ret += inPrefix + @"\t\t$(column.name): $((string)this[column.name].get_string_value(cpt));\n";
+                    }
+                }
+                ret += inPrefix + @"\t}\n";
+            }
+            ret += inPrefix + "]\n";
+        }
+
+        return ret;
+    }
+
     public virtual bool
     append_row (out uint outPath)
     {
@@ -314,6 +372,11 @@ public class Maia.Model : Core.Object, Manifest.Element
 
     public virtual void
     remove_row (uint inPath)
+    {
+    }
+
+    public virtual void
+    refilter ()
     {
     }
 

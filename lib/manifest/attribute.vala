@@ -75,6 +75,7 @@ public class Maia.Manifest.Attribute : Core.Object
             register_transform_func (typeof (double),           attribute_to_double);
             register_transform_func (typeof (Orientation),      attribute_to_orientation);
             register_transform_func (typeof (Graphic.LineType), attributes_to_line_type);
+            register_transform_func (typeof (GLib.Type),        attribute_to_gtype);
 
             GLib.Value.register_transform_func (typeof (bool),             typeof (string), bool_to_string);
             GLib.Value.register_transform_func (typeof (int),              typeof (string), int_to_string);
@@ -84,6 +85,7 @@ public class Maia.Manifest.Attribute : Core.Object
             GLib.Value.register_transform_func (typeof (double),           typeof (string), double_to_string);
             GLib.Value.register_transform_func (typeof (Orientation),      typeof (string), orientation_to_string);
             GLib.Value.register_transform_func (typeof (Graphic.LineType), typeof (string), line_type_to_string);
+            GLib.Value.register_transform_func (typeof (GLib.Type),        typeof (string), gtype_to_string);
 
             s_SimpleTypeRegistered = true;
         }
@@ -175,6 +177,12 @@ public class Maia.Manifest.Attribute : Core.Object
     }
 
     private static void
+    attribute_to_gtype (Attribute inAttribute, ref GLib.Value outValue)
+    {
+        outValue = GLib.Type.from_name (inAttribute.get ());
+    }
+
+    private static void
     bool_to_string (GLib.Value inSrc, out GLib.Value outDest)
         requires (inSrc.holds (typeof (bool)))
     {
@@ -244,6 +252,15 @@ public class Maia.Manifest.Attribute : Core.Object
         Graphic.LineType val = (Graphic.LineType)inSrc;
 
         outDest = val.to_string ();
+    }
+
+    private static void
+    gtype_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (GLib.Type)))
+    {
+        GLib.Type val = (GLib.Type)inSrc;
+
+        outDest = val.name ();
     }
 
     public static void

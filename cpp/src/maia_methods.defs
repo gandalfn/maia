@@ -17641,6 +17641,12 @@
   (of-object "MaiaModel")
   (c-name "maia_model_construct_model")
   (return-type "none")
+)
+
+(define-method construct_model_with_columns
+  (of-object "MaiaModel")
+  (c-name "maia_model_construct_model_with_columns")
+  (return-type "none")
   (parameters
     '("MaiaModelColumn**" "inColumns")
     '("int" "inColumns_length1")
@@ -17685,6 +17691,12 @@
   (parameters
     '("guint" "inPath")
   )
+)
+
+(define-method refilter
+  (of-object "MaiaModel")
+  (c-name "maia_model_refilter")
+  (return-type "none")
 )
 
 (define-method set_values
@@ -17771,6 +17783,15 @@
     '("GType" "object_type")
     '("const-gchar*" "inId")
     '("gint" "inColumn")
+  )
+)
+
+(define-method get_string_value
+  (of-object "MaiaModelColumn")
+  (c-name "maia_model_column_get_string_value")
+  (return-type "gchar*")
+  (parameters
+    '("guint" "inPath")
   )
 )
 

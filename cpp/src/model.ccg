@@ -21,6 +21,30 @@
 
 namespace Maia
 {
+    struct ColumnWrap
+    {
+        ColumnWrap (const std::vector<Glib::RefPtr<ModelColumn>>& inColumns) :
+            columns (0)
+        {
+            length = inColumns.size ();
+            columns = g_new0 (MaiaModelColumn*, length);
+            int cpt = 0;
+            for (auto column : inColumns)
+            {
+                columns[cpt] = column->gobj ();
+                cpt++;
+            }
+        }
+
+        ~ColumnWrap ()
+        {
+            g_free (columns);
+        }
+
+        MaiaModelColumn** columns;
+        size_t            length;
+    };
+
     ModelIterator::ModelIterator (Model* inpModel, unsigned int inRow) :
         m_pModel (inpModel),
         m_Row (inRow)
@@ -82,6 +106,11 @@ namespace Maia
         return ModelIterator (m_pModel, m_pModel->get_nb_rows ());
     }
 
+    Model::Model (const Glib::ustring& inId, const std::vector<Glib::RefPtr<ModelColumn>>& inColumns) :
+        Model (maia_model_new_with_columns (inId.c_str (), ColumnWrap (inColumns).columns, inColumns.size ()))
+    {
+    }
+
     Glib::RefPtr<Model> Model::create (const Glib::ustring& inId)
     {
         return Glib::RefPtr<Model> (new Model (maia_model_new (inId.c_str (), nullptr)));
@@ -100,36 +129,16 @@ namespace Maia
 
     Glib::RefPtr<Model> Model::create (const Glib::ustring& inId, const std::vector<Glib::RefPtr<ModelColumn>>& inColumns)
     {
-        MaiaModelColumn** columns = g_new0 (MaiaModelColumn*, inColumns.size ());
-        int cpt = 0;
-        for (auto column : inColumns)
-        {
-            columns[cpt] = column->gobj ();
-            cpt++;
-        }
-
-        MaiaModel* pModel = maia_model_new_with_columns (inId.c_str (), columns, inColumns.size ());
-        g_free (columns);
-
-        return Glib::RefPtr<Model> (new Model (pModel));
+        return Glib::RefPtr<Model> (new Model (inId, inColumns));
     }
 
     Glib::RefPtr<Model> Model::create_foreign (const Glib::ustring& inId, const std::vector<Glib::RefPtr<ModelColumn>>& inColumns, ...)
     {
         va_list var_args;
-        MaiaModelColumn** columns = g_new0 (MaiaModelColumn*, inColumns.size ());
-        int cpt = 0;
-        for (auto column : inColumns)
-        {
-            columns[cpt] = column->gobj ();
-            cpt++;
-        }
 
         va_start (var_args, inColumns);
-        MaiaModel* pModel = maia_model_new_foreign_with_columnsv (inId.c_str (), columns, inColumns.size (), var_args);
+        MaiaModel* pModel = maia_model_new_foreign_with_columnsv (inId.c_str (), ColumnWrap (inColumns).columns, inColumns.size (), var_args);
         va_end (var_args);
-
-        g_free (columns);
 
         return Glib::RefPtr<Model> (new Model (pModel));
     }

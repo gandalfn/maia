@@ -42,6 +42,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            Model (const Glib::ustring& inId, const std::vector<Glib::RefPtr<ModelColumn>>& inColumns);
+
         public:
             typedef ModelIterator iterator;
             typedef ModelRow Row;
@@ -55,6 +57,8 @@ namespace Maia
             static Glib::RefPtr<Model> create (const Glib::ustring& inId, const Glib::RefPtr<Model>& inpModel, SlotFilterFunc inFunc);
             static Glib::RefPtr<Model> create_foreign (const Glib::ustring& inId, ...);
             static Glib::RefPtr<Model> create_foreign (const Glib::ustring& inId, const std::vector<Glib::RefPtr<Model::Column>>& inColumns, ...);
+
+            _WRAP_METHOD(void refilter (), maia_model_refilter)
 
             _WRAP_METHOD(Glib::ustring get_name () const, maia_model_get_name)
 

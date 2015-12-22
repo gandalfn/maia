@@ -133,6 +133,8 @@ TestModel::test_model_append ()
         g_assert (val == cpt + 1);
         g_assert (str == Glib::ustring::compose ("test %1", val));
     }
+
+    g_print("%s\n", pModel->dump ("").c_str ());
 }
 
 ////////////////////////////////////////////////////////////////////////////////
