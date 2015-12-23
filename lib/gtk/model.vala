@@ -254,7 +254,7 @@ internal class Maia.Gtk.Model : Maia.Model
             if (column != null)
             {
                 // Add column type
-                columns += column.column_type;
+                columns += column.m_Type;
 
                 // Set column num
                 column.column = cpt;
@@ -275,7 +275,7 @@ internal class Maia.Gtk.Model : Maia.Model
         foreach (Column column in inColumns)
         {
             // Add column type
-            columns += column.column_type;
+            columns += column.m_Type;
 
             // Set column num
             column.column = cpt;

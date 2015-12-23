@@ -134,7 +134,7 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_model_column_get_model, refreturn)
             _WRAP_METHOD(int get_column () const, maia_model_column_get_column)
             _WRAP_METHOD(void set_column (int inColumn) const, maia_model_column_set_column)
-            _WRAP_METHOD(GType get_column_type () const, maia_model_column_get_column_type)
+            _WRAP_METHOD(Glib::ustring get_column_type () const, maia_model_column_get_column_type)
 
             _IGNORE(maia_model_column_get)
             _IGNORE(maia_model_column_set)
@@ -142,7 +142,7 @@ namespace Maia
             _WRAP_PROPERTY("name", Glib::ustring)
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
             _WRAP_PROPERTY("column", int)
-            _WRAP_PROPERTY("column-type", GType)
+            _WRAP_PROPERTY("column-type", Glib::ustring)
 
             _WRAP_PROPERTY("tag", Glib::ustring)
             _WRAP_PROPERTY("characters", Glib::ustring)

@@ -22,6 +22,9 @@ public class Maia.Model : Core.Object, Manifest.Element
     // types
     public class Column : Core.Object, Manifest.Element
     {
+        // properties
+        public GLib.Type m_Type = GLib.Type.INVALID;
+
         // accessors
         internal string tag {
             get {
@@ -47,7 +50,165 @@ public class Maia.Model : Core.Object, Manifest.Element
         }
 
         public int column { get; set; default = -1; }
-        public GLib.Type column_type { get; set; default = GLib.Type.INVALID; }
+
+        public string column_type {
+            get {
+                if (m_Type == typeof(bool))
+                {
+                    return "bool";
+                }
+                else if (m_Type == typeof(char))
+                {
+                    return "char";
+                }
+                else if (m_Type == typeof(uchar))
+                {
+                    return "uchar";
+                }
+                else if (m_Type == typeof(int))
+                {
+                    return "int";
+                }
+                else if (m_Type == typeof(uint))
+                {
+                    return "uint";
+                }
+                else if (m_Type == typeof(long))
+                {
+                    return "long";
+                }
+                else if (m_Type == typeof(ulong))
+                {
+                    return "ulong";
+                }
+                else if (m_Type == typeof(double))
+                {
+                    return "double";
+                }
+                else if (m_Type == typeof(float))
+                {
+                    return "float";
+                }
+                else if (m_Type == typeof(string))
+                {
+                    return "string";
+                }
+                else if (m_Type == typeof(int8))
+                {
+                    return "int8";
+                }
+                else if (m_Type == typeof(uint8))
+                {
+                    return "uint8";
+                }
+                else if (m_Type == typeof(int16))
+                {
+                    return "int16";
+                }
+                else if (m_Type == typeof(int16))
+                {
+                    return "uint16";
+                }
+                else if (m_Type == typeof(int32))
+                {
+                    return "int32";
+                }
+                else if (m_Type == typeof(uint32))
+                {
+                    return "uint32";
+                }
+                else if (m_Type == typeof(int64))
+                {
+                    return "int64";
+                }
+                else if (m_Type == typeof(uint64))
+                {
+                    return "uint64";
+                }
+
+                return m_Type.name ();
+            }
+            set {
+                switch (value)
+                {
+                    case "bool":
+                        m_Type = typeof (bool);
+                        break;
+
+                    case "char":
+                        m_Type = typeof(char);
+                        break;
+
+                    case "uchar":
+                        m_Type = typeof(uchar);
+                        break;
+
+                    case "int":
+                        m_Type = typeof(int);
+                        break;
+
+                    case "uint":
+                        m_Type = typeof(uint);
+                        break;
+
+                    case "long":
+                        m_Type = typeof(long);
+                        break;
+
+                    case "ulong":
+                        m_Type = typeof(ulong);
+                        break;
+
+                    case "double":
+                        m_Type = typeof(double);
+                        break;
+
+                    case "float":
+                        m_Type = typeof(float);
+                        break;
+
+                    case "string":
+                        m_Type = typeof(string);
+                        break;
+
+                    case "int8":
+                        m_Type = typeof(int8);
+                        break;
+
+                    case "uint8":
+                        m_Type = typeof(uint8);
+                        break;
+
+                    case "int16":
+                        m_Type = typeof(int16);
+                        break;
+
+                    case "uint16":
+                        m_Type = typeof(uint16);
+                        break;
+
+                    case "int32":
+                        m_Type = typeof(int32);
+                        break;
+
+                    case "uint32":
+                        m_Type = typeof(uint32);
+                        break;
+
+                    case "int64":
+                        m_Type = typeof(int64);
+                        break;
+
+                    case "uint64":
+                        m_Type = typeof(uint64);
+                        break;
+
+                    default:
+                        m_Type = GLib.Type.from_name (value);
+                        break;
+                }
+            }
+        }
 
         // methods
         construct
@@ -66,7 +227,7 @@ public class Maia.Model : Core.Object, Manifest.Element
         public Column.with_type (string inId, GLib.Type inType)
         {
             GLib.Object (id: GLib.Quark.from_string (inId));
-            column_type = inType;
+            m_Type = inType;
         }
 
         public Column.with_column (string inId, int inColumn)
@@ -82,24 +243,37 @@ public class Maia.Model : Core.Object, Manifest.Element
             return false;
         }
 
-//~         internal string
-//~         dump_attributes (string inPrefix)
-//~         {
-//~             return inPrefix + @"column-type: $(column_type.name ());\n";
-//~         }
-
-        public virtual string
+        internal string
         get_string_value (uint inPath)
         {
-            GLib.Value val = GLib.Value(typeof(string));
-            get(inPath).transform (ref val);
-            return (string)val;
+            string ret;
+            if (m_Type == typeof (string))
+            {
+                string str = (string)@get(inPath);
+
+                if (str == null)
+                {
+                    ret = "''";
+                }
+                else
+                {
+                    ret = "'%s'".printf (((string)str).replace ("'", "\\'"));
+                }
+            }
+            else
+            {
+                GLib.Value val = GLib.Value(typeof(string));
+                get(inPath).transform (ref val);
+                ret = (string)val;
+            }
+
+            return ret;
         }
 
         public virtual new GLib.Value
         @get (uint inPath)
         {
-            return GLib.Value (column_type);
+            return GLib.Value (m_Type);
         }
 
         public virtual new void
@@ -280,6 +454,55 @@ public class Maia.Model : Core.Object, Manifest.Element
         construct_model_filter (inModel, (owned)inFunc);
     }
 
+    private void
+    parse_characters ()
+    {
+        if (characters != null && characters.length > 0)
+        {
+            bool inRow = false;
+            uint row = 0;
+            try
+            {
+                Manifest.Document document = new Manifest.Document.from_buffer (characters, characters.length);
+                foreach (Core.Parser.Token token in document)
+                {
+                    switch (token)
+                    {
+                        case Core.Parser.Token.START_ELEMENT:
+                            if (document.element_tag == "Row")
+                            {
+                                inRow = append_row (out row);
+                            }
+                            break;
+
+                        case Core.Parser.Token.ATTRIBUTE:
+                            if (inRow)
+                            {
+                                unowned Column? column = this[document.attribute];
+                                if (column != null)
+                                {
+                                    column[row] = document.scanner.transform (column.m_Type);
+                                }
+                            }
+                            break;
+
+                        case Core.Parser.Token.END_ELEMENT:
+                            if (inRow)
+                            {
+                                inRow = false;
+                            }
+                            break;
+                    }
+                }
+            }
+            catch (GLib.Error err)
+            {
+                Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING,
+                                  @"Error on parse model $name characters: $(err.message)");
+            }
+        }
+    }
+
     protected virtual void
     construct_model ()
     {
@@ -332,6 +555,7 @@ public class Maia.Model : Core.Object, Manifest.Element
         if (first () != null)
         {
             construct_model ();
+            parse_characters ();
         }
     }
 

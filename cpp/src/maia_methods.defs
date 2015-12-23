@@ -17786,15 +17786,6 @@
   )
 )
 
-(define-method get_string_value
-  (of-object "MaiaModelColumn")
-  (c-name "maia_model_column_get_string_value")
-  (return-type "gchar*")
-  (parameters
-    '("guint" "inPath")
-  )
-)
-
 (define-method get
   (of-object "MaiaModelColumn")
   (c-name "maia_model_column_get")
@@ -17845,7 +17836,16 @@
 (define-method get_column_type
   (of-object "MaiaModelColumn")
   (c-name "maia_model_column_get_column_type")
-  (return-type "GType")
+  (return-type "const-gchar*")
+)
+
+(define-method set_column_type
+  (of-object "MaiaModelColumn")
+  (c-name "maia_model_column_set_column_type")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
 )
 
 (define-function maia_view_get_type

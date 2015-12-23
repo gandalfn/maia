@@ -230,12 +230,7 @@ public interface Maia.Manifest.Element : Core.Object
 
                     if (!param.value_defaults (val) || (attributes_set != null && name in attributes_set))
                     {
-                        if (val.type () == typeof (GLib.Type))
-                        {
-                            GLib.Type type = (GLib.Type)val;
-                            outRet = type.name ();
-                        }
-                        else if (val.type () != typeof (string))
+                        if (val.type () != typeof (string))
                         {
                             GLib.Value o = GLib.Value (typeof (string));
                             val.transform (ref o);
@@ -276,7 +271,6 @@ public interface Maia.Manifest.Element : Core.Object
         // to property type and set
         if (param != null)
         {
-            Log.debug (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING, @"name: $name");
             // set property from attribute scanner
             set_property (name, inScanner.transform (param.value_type));
         }
