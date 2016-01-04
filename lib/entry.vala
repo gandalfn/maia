@@ -150,7 +150,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         // static methods
         static construct
         {
-            Core.EventArgs.register_protocol (typeof (ChangedEventArgs),
+            Core.EventArgs.register_protocol (typeof (ChangedEventArgs).name (),
                                               "Changed", PROTOBUF);
         }
 

@@ -58,7 +58,7 @@ public class Maia.MouseEventArgs : Maia.Core.EventArgs
     // static methods
     static construct
     {
-        Core.EventArgs.register_protocol (typeof (MouseEventArgs),
+        Core.EventArgs.register_protocol (typeof (MouseEventArgs).name (),
                                           "Mouse", PROTOBUF);
     }
 

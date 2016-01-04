@@ -198,6 +198,7 @@ public abstract class Maia.Core.Task : Object
 
     // properties
     private EventWatch   m_Cancel;
+    private EventWatch[] m_Start;
     private EventWatch[] m_Finish;
     private bool         m_IsRunning = false;
     private bool         m_IsCancelled = false;
@@ -277,6 +278,18 @@ public abstract class Maia.Core.Task : Object
         finished.post ();
     }
 
+    protected virtual void
+    start ()
+    {
+        lock (m_Start)
+        {
+            foreach (unowned EventWatch? f in m_Start)
+            {
+                f.@signal ();
+            }
+        }
+    }
+
     internal void
     run (GLib.MainContext? inContext)
     {
@@ -286,6 +299,7 @@ public abstract class Maia.Core.Task : Object
         if (m_Cancel.is_waiting)
         {
             m_IsRunning = true;
+            start ();
             main (inContext);
         }
         else
@@ -298,6 +312,32 @@ public abstract class Maia.Core.Task : Object
     cancel ()
     {
         m_Cancel.@signal ();
+    }
+
+    public void
+    add_start_object_observer (Callback inCallback, GLib.MainContext? inContext = null)
+    {
+        lock (m_Start)
+        {
+            var f = new EventWatch (this, (EventWatch.DestroyNotifyFunc)unref);
+            f.set_object_observer (inCallback);
+            f.attach (inContext ?? GLib.MainContext.@default ());
+            m_Start += f;
+            ref ();
+        }
+    }
+
+    public void
+    add_start_observer (Callback inCallback, GLib.MainContext? inContext = null)
+    {
+        lock (m_Start)
+        {
+            var f = new EventWatch (this, (EventWatch.DestroyNotifyFunc)unref);
+            f.set_observer (inCallback);
+            f.attach (inContext ?? GLib.MainContext.@default ());
+            m_Start += f;
+            ref ();
+        }
     }
 
     public void

@@ -19,9 +19,49 @@
 
 public abstract class Maia.Core.EventArgs : GLib.Object
 {
+    // types
+    internal class ProtocolBuffer : Core.Object
+    {
+        // properties
+        private string           m_Buffer;
+        private string           m_Root;
+        private Protocol.Message m_Message;
+
+        // accessors
+        public Protocol.Message message {
+            get {
+                return m_Message;
+            }
+        }
+
+        // methods
+        public ProtocolBuffer (string inName, string inRoot, string inBuffer) throws ProtocolError, ParseError
+        {
+            GLib.Object (id: GLib.Quark.from_string (inName));
+
+            m_Root = inRoot;
+            m_Buffer = inBuffer;
+
+            Protocol.Buffer buffer = new Protocol.Buffer.from_data (m_Buffer, m_Buffer.length);
+            m_Message = buffer[m_Root];
+        }
+
+        internal override int
+        compare (Object inOther)
+        {
+            return (int)(id - inOther.id);
+        }
+
+        public int
+        compare_with_id (uint32 inId)
+        {
+            return (int)(id - inId);
+        }
+    }
+
     // static properties
     private static int s_Sequence = 1;
-    private static GLib.Quark s_EventArgsProtoBufferQuark;
+    private static Set<ProtocolBuffer> s_EventArgsProtocolBuffers;
 
     // properties
     private Protocol.Message? m_Message;
@@ -49,54 +89,35 @@ public abstract class Maia.Core.EventArgs : GLib.Object
     // static methods
     static construct
     {
-        s_EventArgsProtoBufferQuark = GLib.Quark.from_string ("MaiaCoreEventArgsProtoBufferQuark");
-    }
-
-    public static void
-    register_protocol (GLib.Type inType, string inMessage, string inBuffer)
-    {
-        try
+        if (s_EventArgsProtocolBuffers == null)
         {
-            Protocol.Buffer buffer = new Protocol.Buffer.from_data (inBuffer, inBuffer.length);
-            Protocol.Message msg = buffer[inMessage];
-            inType.set_qdata (s_EventArgsProtoBufferQuark, (owned)msg);
-        }
-        catch (GLib.Error error)
-        {
-            Log.error (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Error on register protocol $inMessage for $(inType.name()): $(error.message)");
+            s_EventArgsProtocolBuffers = new Set<ProtocolBuffer> ();
         }
     }
 
     public static void
-    register_protocol_from_filename (GLib.Type inType, string inMessage, string inFilename)
+    register_protocol (string inTypeName, string inMessage, string inBuffer)
     {
+        if (s_EventArgsProtocolBuffers == null)
+        {
+            s_EventArgsProtocolBuffers = new Set<ProtocolBuffer> ();
+        }
+
         try
         {
-            Protocol.Buffer buffer = new Protocol.Buffer (inFilename);
-            Protocol.Message msg = buffer[inMessage];
-            inType.set_qdata (s_EventArgsProtoBufferQuark, (owned)msg);
+            ProtocolBuffer buffer = new ProtocolBuffer (inTypeName, inMessage, inBuffer);
+            s_EventArgsProtocolBuffers.insert (buffer);
         }
         catch (GLib.Error error)
         {
-            Log.error (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Error on register protocol $inMessage for $(inType.name()): $(error.message)");
+            Log.error (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Error on register protocol $inMessage for $(inTypeName): $(error.message)");
         }
     }
 
     // methods
     construct
     {
-        unowned Protocol.Message? msg = (Protocol.Message?)get_type ().get_qdata (s_EventArgsProtoBufferQuark);
-        if (msg == null)
-        {
-            for (GLib.Type p = get_type ().parent (); msg == null && p != typeof (EventArgs) && p != 0; p = p.parent ())
-            {
-                msg = (Protocol.Message?)p.get_qdata (s_EventArgsProtoBufferQuark);
-            }
-        }
-        if (msg != null)
-        {
-            m_Message = msg.copy () as Protocol.Message;
-        }
+        get_protocol_buffer_message ();
     }
 
     public EventArgs ()
@@ -121,15 +142,9 @@ public abstract class Maia.Core.EventArgs : GLib.Object
                 // search in parent class
                 for (GLib.Type p = get_type ().parent (); msg == null && p != typeof (EventArgs) && p != 0; p = p.parent ())
                 {
-                    msg = (Protocol.Message?)p.get_qdata (s_EventArgsProtoBufferQuark);
+                    unowned ProtocolBuffer? buffer = s_EventArgsProtocolBuffers.search<uint32> ((uint32)GLib.Quark.from_string (p.name ()), ProtocolBuffer.compare_with_id);
 
-                    // same message than type ignore
-                    if (msg != null && msg.name == m_Message.name)
-                    {
-                        msg = null;
-                    }
-
-                    if (msg != null)
+                    if (buffer != null && buffer.message.name != m_Message.name)
                     {
                         // search field message
                         foreach (unowned Core.Object child in m_Message)
@@ -142,7 +157,7 @@ public abstract class Maia.Core.EventArgs : GLib.Object
                                 Protocol.Message? message = (Protocol.Message)field[0];
 
                                 // field message matches message type of parent
-                                if (message != null && message.name == msg.name && inFieldName in message)
+                                if (message != null && message.name == buffer.message.name && inFieldName in message)
                                 {
                                     msg = message;
                                     break;
@@ -157,6 +172,26 @@ public abstract class Maia.Core.EventArgs : GLib.Object
         return msg;
     }
 
+    protected void
+    get_protocol_buffer_message ()
+    {
+        if (m_Message == null)
+        {
+            unowned ProtocolBuffer? buffer = s_EventArgsProtocolBuffers.search<uint32> ((uint32)GLib.Quark.from_string (get_type ().name ()), ProtocolBuffer.compare_with_id);
+            if (buffer == null)
+            {
+                for (GLib.Type p = get_type ().parent (); buffer == null && p != typeof (EventArgs) && p != 0; p = p.parent ())
+                {
+                    buffer = s_EventArgsProtocolBuffers.search<uint32> ((uint32)GLib.Quark.from_string (p.name ()), ProtocolBuffer.compare_with_id);
+                }
+            }
+            if (buffer != null)
+            {
+                m_Message = buffer.message.copy () as Protocol.Message;
+            }
+        }
+    }
+
     public virtual void
     accumulate (EventArgs inArgs)
         requires (inArgs.get_type ().is_a (get_type ()))
@@ -167,6 +202,47 @@ public abstract class Maia.Core.EventArgs : GLib.Object
     copy ()
     {
         return GLib.Object.new (get_type (), sequence: sequence, serialize: serialize) as EventArgs;
+    }
+
+    public bool
+    contains (string inName)
+    {
+        bool ret = false;
+
+        unowned Protocol.Message msg = get_message (inName);
+        if (msg != null)
+        {
+            ret = inName in msg;
+        }
+
+        return ret;
+    }
+
+    public bool
+    is_array (string inName)
+    {
+        bool ret = false;
+
+        unowned Protocol.Message msg = get_message (inName);
+        if (msg != null)
+        {
+            ret = msg.is_array (inName);
+        }
+
+        return ret;
+    }
+
+    public int
+    get_field_length (string inName)
+    {
+        int ret = 0;
+        unowned Protocol.Message msg = get_message (inName);
+        if (msg != null)
+        {
+            ret = msg.get_field_length (inName);
+        }
+
+        return ret;
     }
 
     public new GLib.Value?
@@ -191,5 +267,29 @@ public abstract class Maia.Core.EventArgs : GLib.Object
         {
             msg[inName, inIndex] = inVal;
         }
+    }
+
+    public void
+    clear (string inName)
+    {
+        unowned Protocol.Message msg = get_message (inName);
+        if (msg != null)
+        {
+            msg.clear (inName);
+        }
+    }
+
+    public int
+    add_value (string inName, GLib.Value inVal)
+    {
+        int ret = -1;
+        unowned Protocol.Message msg = get_message (inName);
+
+        if (msg != null)
+        {
+            ret = msg.add_value (inName, inVal);
+        }
+
+        return ret;
     }
 }

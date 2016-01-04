@@ -133,7 +133,8 @@ namespace Maia
 
             _CUSTOM_DTOR
 
-            _IGNORE(maia_core_event_listener_new, maia_core_event_listener_new_object, maia_core_event_listener_set_block)
+            _IGNORE(maia_core_event_listener_new, maia_core_event_listener_new_object, maia_core_event_listener_set_block,
+                    maia_core_event_listener_new_with_hash, maia_core_event_listener_new_with_hash_object)
 
             public:
                 template <typename T_obj>
@@ -153,7 +154,7 @@ namespace Maia
                     Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerFunctor<T_obj>::create (pObj, pFunc);
                     Glib::RefPtr<EventListener> pListener = create (inpEvent, pFunctor);
 
-                    add_gobject_watch (pObj);
+                    pListener->add_gobject_watch (pObj);
 
                     return pListener;
                 }
@@ -164,6 +165,66 @@ namespace Maia
                     Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerSigcFunctor::create (inSlot);
 
                     return create (inpEvent, pFunctor);
+                }
+
+                template <typename T_obj>
+                static typename std::enable_if<!std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<EventListener>>::type
+                create (const Glib::ustring& inName, void* inpOwner, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
+                {
+                    Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerFunctor<T_obj>::create (pObj, pFunc);
+                    Glib::RefPtr<EventListener> pListener = create (inName, inpOwner, pFunctor);
+
+                    return pListener;
+                }
+
+                template <typename T_obj>
+                static typename std::enable_if<std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<EventListener>>::type
+                create (const Glib::ustring& inName, void* inpOwner, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
+                {
+                    Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerFunctor<T_obj>::create (pObj, pFunc);
+                    Glib::RefPtr<EventListener> pListener = create (inName, inpOwner, pFunctor);
+
+                    pListener->add_gobject_watch (pObj);
+
+                    return pListener;
+                }
+
+                static Glib::RefPtr<EventListener>
+                create (const Glib::ustring& inName, void* inpOwner, const sigc::slot<void, Glib::RefPtr<EventArgs>>& inSlot)
+                {
+                    Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerSigcFunctor::create (inSlot);
+
+                    return create (inName, inpOwner, pFunctor);
+                }
+
+                template <typename T_obj>
+                static typename std::enable_if<!std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<EventListener>>::type
+                create (const Glib::ustring& inName, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
+                {
+                    Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerFunctor<T_obj>::create (pObj, pFunc);
+                    Glib::RefPtr<EventListener> pListener = create (inName, 0, pFunctor);
+
+                    return pListener;
+                }
+
+                template <typename T_obj>
+                static typename std::enable_if<std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<EventListener>>::type
+                create (const Glib::ustring& inName, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
+                {
+                    Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerFunctor<T_obj>::create (pObj, pFunc);
+                    Glib::RefPtr<EventListener> pListener = create (inName, 0, pFunctor);
+
+                    pListener->add_gobject_watch (pObj);
+
+                    return pListener;
+                }
+
+                static Glib::RefPtr<EventListener>
+                create (const Glib::ustring& inName, const sigc::slot<void, Glib::RefPtr<EventArgs>>& inSlot)
+                {
+                    Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerSigcFunctor::create (inSlot);
+
+                    return create (inName, 0, pFunctor);
                 }
 
                 _WRAP_METHOD(bool is_blocked () const, maia_core_event_listener_get_block)
@@ -190,6 +251,7 @@ namespace Maia
             private:
                 static Glib::RefPtr<EventListener> create (const Glib::RefPtr<Event>& inpEvent, const Glib::RefPtr<EventListenerFunctorBase>& inpFunctor);
                 static Glib::RefPtr<EventListener> create (Event* inpEvent, const Glib::RefPtr<EventListenerFunctorBase>& inpFunctor);
+                static Glib::RefPtr<EventListener> create (const Glib::ustring& inName, void* inpOwner, const Glib::RefPtr<EventListenerFunctorBase>& inpFunctor);
 
                 Glib::RefPtr<EventListenerFunctorBase> m_pFunctor;
                 Glib::Object* m_pClient;

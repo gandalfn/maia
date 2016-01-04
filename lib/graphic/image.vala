@@ -20,7 +20,9 @@
 public abstract class Maia.Graphic.Image : Graphic.Pattern
 {
     // accessors
+    [CCode (notify = false)]
     public virtual string?           filename  { get; set; default = null; }
+    [CCode (notify = false)]
     public virtual Graphic.Size      size      { get; set; default = Graphic.Size (0, 0); }
     public virtual Surface? surface {
         get {

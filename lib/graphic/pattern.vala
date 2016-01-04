@@ -21,7 +21,7 @@ public abstract class Maia.Graphic.Pattern : Core.Object
 {
     // property
     private Graphic.Transform m_Transform = new Graphic.Transform.identity ();
-    
+
     // methods
     static construct
     {
@@ -161,6 +161,7 @@ public abstract class Maia.Graphic.Pattern : Core.Object
         outDest = new Color.parse ((string)inSrc);
     }
 
+    [CCode (notify = false)]
     public virtual Graphic.Transform transform {
         get {
             return m_Transform;

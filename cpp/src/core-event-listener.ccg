@@ -88,13 +88,25 @@ namespace Maia
 
             return pCppListener;
         }
-        
+
         Glib::RefPtr<EventListener>
         EventListener::create (Event* inpEvent, const Glib::RefPtr<EventListenerFunctorBase>& inpFunctor)
         {
             inpFunctor->reference ();
 
             MaiaCoreEventListener* pListener = maia_core_event_listener_new_object (const_cast<MaiaCoreEvent*>(inpEvent->gobj ()), _on_callback, inpFunctor->gobj ());
+            Glib::RefPtr<EventListener> pCppListener = Glib::RefPtr<EventListener> (new EventListener (pListener));
+            pCppListener->m_pFunctor = inpFunctor;
+
+            return pCppListener;
+        }
+
+        Glib::RefPtr<EventListener>
+        EventListener::create (const Glib::ustring& inName, void* inpOwner, const Glib::RefPtr<EventListenerFunctorBase>& inpFunctor)
+        {
+            inpFunctor->reference ();
+
+            MaiaCoreEventListener* pListener = maia_core_event_listener_new_with_hash_object (inName.c_str (), inpOwner, _on_callback, inpFunctor->gobj ());
             Glib::RefPtr<EventListener> pCppListener = Glib::RefPtr<EventListener> (new EventListener (pListener));
             pCppListener->m_pFunctor = inpFunctor;
 

@@ -45,6 +45,8 @@ files_hg = \
     graphic-size.hg \
     graphic-surface.hg \
     graphic-transform.hg \
+    graphic-renderer.hg \
+    graphic-glrenderer.hg \
     manifest-attribute-bind.hg \
     manifest-attribute-scanner.hg \
     manifest-attribute.hg \
@@ -53,6 +55,9 @@ files_hg = \
     manifest-function.hg \
     manifest-style.hg \
     manifest-theme.hg \
+    protocol-buffer.hg \
+    protocol-bufferchild.hg \
+    protocol-message.hg \
     adjustment.hg \
     application.hg \
     arrow.hg \
@@ -84,6 +89,7 @@ files_hg = \
     popup.hg \
     progress-bar.hg \
     rectangle.hg \
+    renderer-view.hg \
     report.hg \
     seek-bar.hg \
     shortcut.hg \

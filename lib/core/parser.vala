@@ -130,6 +130,18 @@ public abstract class Maia.Core.Parser : Object
         }
     }
 
+    public int line {
+        get {
+            return m_Line;
+        }
+    }
+
+    public int column {
+        get {
+            return m_Col;
+        }
+    }
+
     // Methods
 
     /**

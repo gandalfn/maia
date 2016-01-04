@@ -40,6 +40,7 @@ public class Maia.Graphic.Transform : Core.Object
         }
     }
 
+    [CCode (notify = false)]
     public bool is_rotate {
         get {
             return m_IsRotate;
@@ -543,7 +544,7 @@ public class Maia.Graphic.Transform : Core.Object
         ret.m_FinalMatrix = m_FinalMatrix;
         ret.m_BaseInvertMatrix = m_FinalInvertMatrix;
         ret.m_FinalInvertMatrix = m_FinalInvertMatrix;
-        
+
         changed.connect (ret.on_linked_changed);
 
         return ret;

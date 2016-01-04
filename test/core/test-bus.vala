@@ -39,7 +39,7 @@ public class Maia.TestEventArgs : Maia.Core.EventArgs
 
     static construct
     {
-        Core.EventArgs.register_protocol (typeof (TestEventArgs),
+        Core.EventArgs.register_protocol (typeof (TestEventArgs).name (),
                                           "Test",
                                           "message Test {"    +
                                           "     string name;" +

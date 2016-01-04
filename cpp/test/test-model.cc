@@ -255,14 +255,17 @@ TestModel::test_model_set_values ()
     Maia::Model::iterator iter = pModel->append_row ();
     g_assert (iter != pModel->rows ().end ());
     Maia::Model::Row row = *iter;
-    row.set_values ("column1", 1, "column2", "test 1", 0);
+    row.set_values ("column1", 1, "column2", "test 1");
 
     iter = pModel->append_row ();
     g_assert (iter != pModel->rows ().end ());
     row = *iter;
-    row.set_values ("column1", 2, "column2", "test 2", 0);
+    row.set_values ("column1", 2, "column2", "test 2");
 
-    g_assert (pModel->get_nb_rows () == 2);
+    iter = pModel->append_values ("column1", 3, "column2", "test 3");
+    g_assert (!iter->end ());
+
+    g_assert (pModel->get_nb_rows () == 3);
 
     cpt = 0;
     for (iter = pModel->rows ().begin (); iter != pModel->rows ().end (); ++iter, ++cpt)

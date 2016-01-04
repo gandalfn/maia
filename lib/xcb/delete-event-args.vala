@@ -35,7 +35,7 @@ public class Maia.Xcb.DeleteEventArgs : Maia.DeleteEventArgs
     // static methods
     static construct
     {
-        Core.EventArgs.register_protocol (typeof (DeleteEventArgs),
+        Core.EventArgs.register_protocol (typeof (DeleteEventArgs).name (),
                                           "DeleteXcb",
                                           Maia.DeleteEventArgs.PROTOBUF + PROTOBUF);
     }

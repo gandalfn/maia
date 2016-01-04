@@ -196,6 +196,24 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
         return field != null;
     }
 
+    public bool
+    is_array (string inName)
+    {
+        unowned Field? field = find (GLib.Quark.from_string (inName), false) as Field;
+        GLib.return_val_if_fail (field != null, false);
+
+        return field.repeated;
+    }
+
+    public int
+    get_field_length (string inName)
+    {
+        unowned Field? field = find (GLib.Quark.from_string (inName), false) as Field;
+        GLib.return_val_if_fail (field != null, 0);
+
+        return field.length;
+    }
+
     public new GLib.Value?
     @get (string inName, int inIndex = 0)
     {
@@ -212,6 +230,15 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
         GLib.return_if_fail (field != null);
 
         field[inIndex] = inValue;
+    }
+
+    public void
+    clear (string inName)
+    {
+        unowned Field? field = find (GLib.Quark.from_string (inName), false) as Field;
+        GLib.return_if_fail (field != null);
+
+        field.clear ();
     }
 
     public int

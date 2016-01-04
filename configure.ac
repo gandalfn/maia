@@ -52,6 +52,7 @@ GDK_PIXBUF_REQUIRED=2.26.0
 GTK_REQUIRED=2.24.0
 GTKSOURCEVIEW_REQUIRED=2.10.0
 GLIBMM_REQUIRED=2.32.0
+X11_XCB_REQUIRED=1.6.2
 XCB_REQUIRED=1.9
 XCB_UTIL_KEYSYMS_REQUIRED=0.3.9
 XCB_UTIL_CURSOR_REQUIRED=0.1.1
@@ -115,9 +116,11 @@ AC_SUBST(MAIA_CAIRO_LIBS)
 dnl ****************************************************************************
 dnl Check for xcb packages
 dnl ****************************************************************************
-PKG_CHECK_MODULES(MAIA_XCB, [xcb >= $XCB_REQUIRED
+PKG_CHECK_MODULES(MAIA_XCB, [x11-xcb >= $X11_XCB_REQUIRED
+                             xcb >= $XCB_REQUIRED
                              xcb-randr >= $XCB_REQUIRED
                              xcb-composite >= $XCB_REQUIRED
+                             xcb-glx >= $XCB_REQUIRED
                              xcb-keysyms >= $XCB_UTIL_KEYSYMS_REQUIRED
                              xcb-cursor >= $XCB_UTIL_CURSOR_REQUIRED])
 AC_SUBST(MAIA_XCB_CFLAGS)

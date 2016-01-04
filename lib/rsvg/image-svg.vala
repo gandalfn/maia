@@ -23,6 +23,7 @@ internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
     private Graphic.Surface   m_Surface   = null;
 
     // accessors
+    [CCode (notify = false)]
     public override string? filename {
         get {
             return base.filename;
@@ -36,6 +37,7 @@ internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
         }
     }
 
+    [CCode (notify = false)]
     public override string? data {
         get {
             return base.data;
@@ -49,6 +51,7 @@ internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
         }
     }
 
+    [CCode (notify = false)]
     public override Graphic.Size size {
         get {
             if (base.size.is_empty ())
@@ -69,6 +72,7 @@ internal class Maia.Rsvg.ImageSvg : Graphic.ImageSvg
         }
     }
 
+    [CCode (notify = false)]
     public override Graphic.Transform transform {
         get {
             return base.transform;

@@ -28,6 +28,8 @@ namespace Maia.Xcb
 
         Maia.Core.Any.delegate (typeof (Maia.Window), typeof (Maia.Xcb.Window));
         Maia.Core.Any.delegate (typeof (Maia.Viewport), typeof (Maia.Xcb.Viewport));
+        Maia.Core.Any.delegate (typeof (Maia.Graphic.Renderer), typeof (Maia.Xcb.Renderer));
+        Maia.Core.Any.delegate (typeof (Maia.Graphic.GLRenderer), typeof (Maia.Xcb.GLRenderer));
 
         Maia.Xcb.application = new Maia.Xcb.Application ();
     }
@@ -39,6 +41,8 @@ namespace Maia.Xcb
 
         Maia.Core.Any.undelegate (typeof (Maia.Window));
         Maia.Core.Any.undelegate (typeof (Maia.Viewport));
+        Maia.Core.Any.undelegate (typeof (Maia.Graphic.Renderer));
+        Maia.Core.Any.undelegate (typeof (Maia.Graphic.GLRenderer));
 
         Maia.Xcb.application = null;
     }

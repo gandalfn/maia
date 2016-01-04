@@ -20,15 +20,22 @@
 internal class Maia.Xcb.Screen : Core.Object
 {
     // properties
-    private unowned global::Xcb.Connection? m_Connection;
-    private Graphic.Rectangle               m_Geometry = Graphic.Rectangle (0, 0, 0, 0);
-    private global::Xcb.Render.Pictvisual?  m_VisualCache[5];
-    private Monitor[]                       m_Monitors = {};
+    private unowned global::X.Display      m_Display;
+    private unowned global::Xcb.Connection m_Connection;
+    private Graphic.Rectangle              m_Geometry = Graphic.Rectangle (0, 0, 0, 0);
+    private global::Xcb.Render.Pictvisual? m_VisualCache[5];
+    private Monitor[]                      m_Monitors = {};
 
     // accessors
     public unowned global::Xcb.Screen? xscreen {
         get {
             return connection.roots[(int)id];
+        }
+    }
+
+    public global::X.Display display {
+        get {
+            return m_Display;
         }
     }
 
@@ -45,12 +52,13 @@ internal class Maia.Xcb.Screen : Core.Object
     }
 
     // methods
-    public Screen (global::Xcb.Connection inConnection, int inNum)
+    public Screen (global::X.Display inDisplay, int inNum)
     {
         GLib.Object (id: inNum);
 
         // set connection
-        m_Connection = inConnection;
+        m_Display = inDisplay;
+        m_Connection = m_Display.connection;
 
         // Get screen geometry
         unowned global::Xcb.Screen? screen = connection.roots[inNum];
@@ -141,6 +149,79 @@ internal class Maia.Xcb.Screen : Core.Object
         }
 
         return null;
+    }
+
+    private uint32
+    glx_get_property (uint32* prop_list, uint prop_count, uint32 prop_name)
+    {
+        for (int i = 0; i < (int)(prop_count * 2); i += 2)
+        {
+            if (prop_list[i] == prop_name)
+            {
+                return prop_list[i + 1];
+            }
+        }
+
+        return global::Xcb.NONE;
+    }
+
+    public global::Xcb.Glx.Fbconfig
+    glx_choose_fb_configs (uint32[] attrib_list)
+    {
+        global::Xcb.Glx.GetFbconfigsCookie cookie = ((global::Xcb.Glx.Connection)connection).get_fb_configs (id);
+        global::Xcb.GenericError error;
+
+        global::Xcb.Glx.GetFbconfigsReply reply = cookie.reply ((global::Xcb.Glx.Connection)connection, out error);
+        if (error != null)
+        {
+            return global::Xcb.NONE;
+        }
+
+        unowned uint32[] prop_list = reply.property_list;
+        uint32* fbconfig_line   = (uint32*)prop_list;
+        uint32  fbconfig_linesz = reply.num_properties * 2;
+
+        fbconfig_line   = (uint32*)prop_list;
+
+        for (int i = 0; i < reply.num_FB_configs; ++i)
+        {
+            bool good_fbconfig = true;
+
+            for (uint j = 0; j < attrib_list.length; j += 2)
+            {
+                if (glx_get_property (fbconfig_line, reply.num_properties, attrib_list[j]) != attrib_list[j + 1])
+                {
+                    good_fbconfig = false;
+                    break;
+                }
+            }
+
+            if (good_fbconfig)
+            {
+                return (global::Xcb.Glx.Fbconfig)glx_get_property (fbconfig_line, reply.num_properties, GLX.FBCONFIG_ID);
+            }
+
+            fbconfig_line += fbconfig_linesz;
+        }
+
+        return global::Xcb.NONE;
+    }
+
+    public int
+    find_depth_from_visualid (global::Xcb.Visualid inId)
+    {
+        foreach (unowned global::Xcb.Depth? depth in xscreen)
+        {
+            foreach (unowned global::Xcb.Visualtype? visual in depth)
+            {
+                if (visual.visual_id == inId)
+                {
+                    return depth.depth;
+                }
+            }
+        }
+
+        return 0;
     }
 
     public global::Xcb.Visualid

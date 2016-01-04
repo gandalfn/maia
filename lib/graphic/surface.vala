@@ -64,16 +64,22 @@ public class Maia.Graphic.Surface : Pattern
     private Context m_Context;
 
     // accessors
+    [CCode (notify = false)]
     public virtual Graphic.Size size { get; construct set; default = Graphic.Size (0, 0); }
 
+    [CCode (notify = false)]
     public Format format { get; construct; default = Format.INVALID; }
 
+    [CCode (notify = false)]
     public uchar* data { get; construct; default = null; }
 
+    [CCode (notify = false)]
     public virtual void* native { get; construct set; }
 
+    [CCode (notify = false)]
     public virtual unowned Device? device { get; construct set; default = null; }
 
+    [CCode (notify = false)]
     public Context context {
         get {
             if (m_Context == null)

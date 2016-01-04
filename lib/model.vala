@@ -455,50 +455,72 @@ public class Maia.Model : Core.Object, Manifest.Element
     }
 
     private void
-    parse_characters ()
+    parse_characters () throws Manifest.Error, Core.ParseError
     {
         if (characters != null && characters.length > 0)
         {
             bool inRow = false;
-            uint row = 0;
-            try
+            int[] columns = {};
+            GLib.Value[] values = {};
+
+            Manifest.Document document = new Manifest.Document.from_buffer (characters, characters.length);
+            foreach (Core.Parser.Token token in document)
             {
-                Manifest.Document document = new Manifest.Document.from_buffer (characters, characters.length);
-                foreach (Core.Parser.Token token in document)
+                switch (token)
                 {
-                    switch (token)
-                    {
-                        case Core.Parser.Token.START_ELEMENT:
-                            if (document.element_tag == "Row")
+                    case Core.Parser.Token.START_ELEMENT:
+                        if (document.element_tag == "Row")
+                        {
+                            if (!inRow)
                             {
-                                inRow = append_row (out row);
+                                columns = {};
+                                values = {};
+                                inRow = true;
                             }
-                            break;
+                            else
+                            {
+                                throw new Core.ParseError.PARSE (@"Unexpected Row tag at $(document.line):$(document.column)");
+                            }
+                        }
+                        else
+                        {
+                            throw new Core.ParseError.PARSE (@"Unexpected $(document.element_tag) tag at $(document.line):$(document.column)");
+                        }
+                        break;
 
-                        case Core.Parser.Token.ATTRIBUTE:
-                            if (inRow)
+                    case Core.Parser.Token.ATTRIBUTE:
+                        if (inRow)
+                        {
+                            unowned Column? column = this[document.attribute];
+                            if (column != null)
                             {
-                                unowned Column? column = this[document.attribute];
-                                if (column != null)
-                                {
-                                    column[row] = document.scanner.transform (column.m_Type);
-                                }
+                                columns += column.column;
+                                values += document.scanner.transform (column.m_Type);
                             }
-                            break;
+                            else
+                            {
+                                throw new Core.ParseError.PARSE (@"Invalid $(document.attribute) column name at $(document.line):$(document.column)");
+                            }
+                        }
+                        else
+                        {
+                            throw new Core.ParseError.PARSE (@"Unexpected $(document.attribute) attribute at $(document.line):$(document.column)");
+                        }
+                        break;
 
-                        case Core.Parser.Token.END_ELEMENT:
-                            if (inRow)
-                            {
-                                inRow = false;
-                            }
-                            break;
-                    }
+                    case Core.Parser.Token.END_ELEMENT:
+                        if (inRow)
+                        {
+                            uint row;
+                            append_valuesv (out row, columns, values);
+                            inRow = false;
+                        }
+                        else
+                        {
+                            throw new Core.ParseError.PARSE (@"Unexpected end element at $(document.line):$(document.column)");
+                        }
+                        break;
                 }
-            }
-            catch (GLib.Error err)
-            {
-                Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING,
-                                  @"Error on parse model $name characters: $(err.message)");
             }
         }
     }
@@ -521,8 +543,16 @@ public class Maia.Model : Core.Object, Manifest.Element
     }
 
     protected virtual void
-    set_valuesv (uint inRow, va_list inList)
+    set_valuesv (uint inRow, int[] inColumns, GLib.Value[] inValue)
     {
+    }
+
+    protected virtual bool
+    append_valuesv (out uint outRow, int[] inColumns, GLib.Value[] inValue)
+    {
+        outRow = 0;
+
+        return false;
     }
 
     internal override bool
@@ -555,7 +585,16 @@ public class Maia.Model : Core.Object, Manifest.Element
         if (first () != null)
         {
             construct_model ();
-            parse_characters ();
+
+            try
+            {
+                parse_characters ();
+            }
+            catch (GLib.Error err)
+            {
+                Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING,
+                                  @"Error on parse model $name characters: $(err.message)");
+            }
         }
     }
 
@@ -605,11 +644,75 @@ public class Maia.Model : Core.Object, Manifest.Element
     }
 
     [CCode (sentinel = "NULL")]
+    public bool
+    append_values (out uint outRow, ...)
+    {
+        va_list list = va_list ();
+
+        int[] columns = {};
+        GLib.Value[] values = {};
+
+        while (true)
+        {
+            // Get column name
+            unowned string? columnName = list.arg ();
+            if (columnName == null)
+            {
+                break;
+            }
+            // Get column
+            unowned Column? column = find(GLib.Quark.from_string (columnName), false) as Column;
+            if (column != null)
+            {
+                // Get value
+                GLib.Value val = GLib.Value (column.m_Type);
+                string? error = null;
+                GLib.ValueCollect.get (ref val, list, 0, ref error);
+                if (error == null)
+                {
+                    values += val;
+                    columns += column.column;
+                }
+            }
+        }
+
+        return append_valuesv (out outRow, columns, values);
+    }
+
+    [CCode (sentinel = "NULL")]
     public void
     set_values (uint inRow, ...)
     {
         va_list list = va_list ();
-        set_valuesv (inRow, list);
+
+        int[] columns = {};
+        GLib.Value[] values = {};
+
+        while (true)
+        {
+            // Get column name
+            unowned string? columnName = list.arg ();
+            if (columnName == null)
+            {
+                break;
+            }
+            // Get column
+            unowned Column? column = find(GLib.Quark.from_string (columnName), false) as Column;
+            if (column != null)
+            {
+                // Get value
+                GLib.Value val = GLib.Value (column.m_Type);
+                string? error = null;
+                GLib.ValueCollect.get (ref val, list, 0, ref error);
+                if (error == null)
+                {
+                    values += val;
+                    columns += column.column;
+                }
+            }
+        }
+
+        set_valuesv (inRow, columns, values);
     }
 
     public new unowned Column?

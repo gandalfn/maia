@@ -53,6 +53,58 @@ namespace Maia
                     publish (inName, 0, inpArgs);
                 }
 
+                template <typename T_obj>
+                typename std::enable_if<!std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<EventListener>>::type
+                subscribe (const Glib::ustring& inName, void* inpOwner, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
+                {
+                    Glib::RefPtr<EventListener> pListener = EventListener::create (inName, inpOwner, pObj, pFunc);
+                    subscribe (pListener);
+                    return pListener;
+                }
+
+                template <typename T_obj>
+                typename std::enable_if<std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<EventListener>>::type
+                subscribe (const Glib::ustring& inName, void* inpOwner, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
+                {
+                    Glib::RefPtr<EventListener> pListener = EventListener::create (inName, inpOwner, pObj, pFunc);
+                    subscribe (pListener);
+                    return pListener;
+                }
+
+                Glib::RefPtr<EventListener>
+                subscribe (const Glib::ustring& inName, void* inpOwner, const sigc::slot<void, Glib::RefPtr<EventArgs>>& inSlot)
+                {
+                    Glib::RefPtr<EventListener> pListener = EventListener::create (inName, inpOwner, inSlot);
+                    subscribe (pListener);
+                    return pListener;
+                }
+
+                template <typename T_obj>
+                typename std::enable_if<!std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<EventListener>>::type
+                subscribe (const Glib::ustring& inName, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
+                {
+                    Glib::RefPtr<EventListener> pListener = EventListener::create (inName, pObj, pFunc);
+                    subscribe (pListener);
+                    return pListener;
+                }
+
+                template <typename T_obj>
+                typename std::enable_if<std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<EventListener>>::type
+                subscribe (const Glib::ustring& inName, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
+                {
+                    Glib::RefPtr<EventListener> pListener = EventListener::create (inName, pObj, pFunc);
+                    subscribe (pListener);
+                    return pListener;
+                }
+
+                Glib::RefPtr<EventListener>
+                subscribe (const Glib::ustring& inName, const sigc::slot<void, Glib::RefPtr<EventArgs>>& inSlot)
+                {
+                    Glib::RefPtr<EventListener> pListener = EventListener::create (inName, inSlot);
+                    subscribe (pListener);
+                    return pListener;
+                }
+
                 _WRAP_METHOD(static Glib::RefPtr<EventBus> get_default (), maia_core_event_bus_get_default, refreturn)
                 _WRAP_METHOD(static void set_default (const Glib::RefPtr<EventBus>& inBus), maia_core_event_bus_set_default)
 

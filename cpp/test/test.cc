@@ -26,6 +26,7 @@
 #include "test-canvas.h"
 //#include "test-derived.h"
 #include "test-model.h"
+#include "test-protocol.h"
 
 int
 main (int argc, char** argv)
@@ -57,6 +58,7 @@ main (int argc, char** argv)
     Maia::TestCanvas canvas;
     //Maia::TestDerived derived;
     Maia::TestModel model;
+    Maia::TestProtocol protocol;
 
     root.add_suite (object.get_suite ());
     root.add_suite (event.get_suite ());
@@ -64,6 +66,7 @@ main (int argc, char** argv)
     root.add_suite (canvas.get_suite ());
     //lroot.add_suite (derived.get_suite ());
     root.add_suite (model.get_suite ());
+    root.add_suite (protocol.get_suite ());
 
     g_test_run ();
 

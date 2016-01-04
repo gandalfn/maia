@@ -39,7 +39,7 @@ public class Maia.GeometryEventArgs : Maia.Core.EventArgs
     // static methods
     static construct
     {
-        Core.EventArgs.register_protocol (typeof (GeometryEventArgs),
+        Core.EventArgs.register_protocol (typeof (GeometryEventArgs).name (),
                                           "Area", PROTOBUF);
     }
 

@@ -24,6 +24,7 @@ public class Maia.GdkPixbuf.ImagePixbuf : Graphic.Image, Image
     private global::Gdk.Pixbuf m_Pixbuf    = null;
 
     // accessors
+    [CCode (notify = false)]
     public override Graphic.Size size {
         get {
             if (base.size.is_empty ())
@@ -44,6 +45,7 @@ public class Maia.GdkPixbuf.ImagePixbuf : Graphic.Image, Image
         }
     }
 
+    [CCode (notify = false)]
     public override Graphic.Transform transform {
         get {
             return base.transform;
@@ -79,6 +81,7 @@ public class Maia.GdkPixbuf.ImagePixbuf : Graphic.Image, Image
         }
     }
 
+    [CCode (notify = false)]
     public Gdk.Pixbuf pixbuf {
         get {
             return m_Pixbuf;

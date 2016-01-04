@@ -20,24 +20,133 @@
 
 #include <maia.h>
 #include <maiamm/core-object.h>
+#include <maiamm/protocol-message.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/core-object_p.h)
 
-#define MAIA_CORE_EVENT_ARGS_DEFINE(signature,klass)                   \
-    static Glib::ObjectBase* wrap_new(GObject* object)                 \
-    {                                                                  \
-        return new klass ((MaiaCoreEventArgs*)object);                 \
-    }                                                                  \
-    klass () :                                                         \
-        Glib::ObjectBase ("##klass##"),                                \
-        Maia::Core::EventArgs (signature, & klass ::wrap_new)          \
-    {                                                                  \
-    }                                                                  \
-    klass (MaiaCoreEventArgs* inpSelf) :                               \
-        Glib::ObjectBase ("##klass##"),                                \
-        Maia::Core::EventArgs (inpSelf)                                \
-    {                                                                  \
+#define MAIA_CORE_EVENT_ARGS_DEFINE_EXTENDED(protobuf,message,ns,klass)        \
+    class klass : public Maia::Core::EventArgs                                 \
+    {                                                                          \
+        public:                                                                \
+            static Glib::RefPtr< klass > create ()                             \
+            {                                                                  \
+                register_protobuf();                                           \
+                return Glib::RefPtr< klass > (new klass ());                   \
+            }                                                                  \
+            template<typename T, typename... Args>                             \
+            static Glib::RefPtr< klass > create (const T& inVal, Args... inArgs)\
+            {                                                                  \
+                register_protobuf();                                           \
+                klass * pThis = new klass ();                                  \
+                FieldsClosure closure (pThis);                                 \
+                closure.add_field_value (inVal, inArgs...);                    \
+                return Glib::RefPtr< klass > (pThis);                          \
+            }                                                                  \
+            static Glib::ObjectBase* wrap_new(GObject* object)                 \
+            {                                                                  \
+                register_protobuf();                                           \
+                return new klass ((MaiaCoreEventArgs*)object);                 \
+            }                                                                  \
+        protected:                                                             \
+            klass () :                                                         \
+                Glib::ObjectBase(#ns #klass),                                  \
+                Maia::Core::EventArgs (& klass ::wrap_new)                     \
+            {                                                                  \
+            }                                                                  \
+            klass (MaiaCoreEventArgs* inpSelf) :                               \
+                Glib::ObjectBase(#ns #klass),                                  \
+                Maia::Core::EventArgs (inpSelf)                                \
+            {                                                                  \
+            }                                                                  \
+            virtual void unserialize_vfunc (const Glib::VariantBase& inData)   \
+            {                                                                  \
+                register_protobuf ();                                          \
+                maia_core_event_args_get_protocol_buffer_message (gobj ());    \
+                Maia::Core::EventArgs::unserialize_vfunc (inData);             \
+            }                                                                  \
+        private:                                                               \
+            static void register_protobuf()                                    \
+            {                                                                  \
+                static bool registered = false;                                \
+                if (!registered)                                               \
+                {                                                              \
+                    maia_core_event_args_register_protocol ("gtkmm__CustomObject_" #ns #klass ,\
+                                                            message ,          \
+                                                            protobuf );        \
+                    registered = true;                                         \
+                }                                                              \
+            }                                                                  \
+    };
+
+#define MAIA_CORE_EVENT_ARGS_DEFINE(protobuf,message,klass)                    \
+    class klass : public Maia::Core::EventArgs                                 \
+    {                                                                          \
+        public:                                                                \
+            static Glib::RefPtr< klass > create ()                             \
+            {                                                                  \
+                register_protobuf();                                           \
+                return Glib::RefPtr< klass > (new klass ());                   \
+            }                                                                  \
+            template<typename T, typename... Args>                             \
+            static Glib::RefPtr< klass > create (const T& inVal, Args... inArgs)\
+            {                                                                  \
+                register_protobuf();                                           \
+                klass * pThis = new klass ();                                  \
+                FieldsClosure closure (pThis);                                 \
+                closure.add_field_value (inVal, inArgs...);                    \
+                return Glib::RefPtr< klass > (pThis);                          \
+            }                                                                  \
+            static Glib::ObjectBase* wrap_new(GObject* object)                 \
+            {                                                                  \
+                register_protobuf();                                           \
+                return new klass ((MaiaCoreEventArgs*)object);                 \
+            }                                                                  \
+        protected:                                                             \
+            klass () :                                                         \
+                Glib::ObjectBase(#klass),                                      \
+                Maia::Core::EventArgs (& klass ::wrap_new)                     \
+            {                                                                  \
+            }                                                                  \
+            klass (MaiaCoreEventArgs* inpSelf) :                               \
+                Glib::ObjectBase(#klass),                                      \
+                Maia::Core::EventArgs (inpSelf)                                \
+            {                                                                  \
+            }                                                                  \
+            virtual void unserialize_vfunc (const Glib::VariantBase& inData)   \
+            {                                                                  \
+                register_protobuf ();                                          \
+                maia_core_event_args_get_protocol_buffer_message (gobj ());    \
+                Maia::Core::EventArgs::unserialize_vfunc (inData);             \
+            }                                                                  \
+        private:                                                               \
+            static void register_protobuf()                                    \
+            {                                                                  \
+                static bool registered = false;                                \
+                if (!registered)                                               \
+                {                                                              \
+                    maia_core_event_args_register_protocol ("gtkmm__CustomObject_" #klass ,\
+                                                            message ,          \
+                                                            protobuf );        \
+                    registered = true;                                         \
+                }                                                              \
+            }                                                                  \
+    };
+
+#define MAIA_CORE_EVENT_ARGS_CONSTRUCTOR(signature,klass)                      \
+    static Glib::ObjectBase* wrap_new(GObject* object)                         \
+    {                                                                          \
+        return new klass ((MaiaCoreEventArgs*)object);                         \
+    }                                                                          \
+    klass () :                                                                 \
+        Glib::ObjectBase (#klass),                                             \
+        Maia::Core::EventArgs (signature, & klass ::wrap_new)                  \
+    {                                                                          \
+    }                                                                          \
+    klass (MaiaCoreEventArgs* inpSelf) :                                       \
+        Glib::ObjectBase (#klass),                                             \
+        Maia::Core::EventArgs (inpSelf)                                        \
+    {                                                                          \
     }
 
 namespace Maia
@@ -46,12 +155,113 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Core)
 
+        class EventArgsField
+        {
+            public:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+                inline EventArgsField (MaiaCoreEventArgs* inpEventArgs, const Glib::ustring& inField, int inIndex = 0) :
+                    m_pEventArgs (inpEventArgs),
+                    m_Field (inField),
+                    m_Index (inIndex)
+                {
+
+                }
+#endif
+
+                template <typename T>
+                inline EventArgsField& operator=(const T& inVal);
+
+                template <typename T>
+                inline operator T() const;
+
+                template <typename T>
+                inline EventArgsField& operator=(const std::vector<T>& inVal);
+
+                template <typename T>
+                inline operator std::vector<T>() const;
+
+                template <typename T>
+                inline int push_back (T inVal);
+
+                EventArgsField operator[] (int inIndex) const
+                {
+                    return EventArgsField (m_pEventArgs, m_Field, inIndex);
+                }
+
+                Protocol::Message::Field operator[] (const Glib::ustring& inField) const
+                {
+                    GValue* val = maia_core_event_args_get (m_pEventArgs, m_Field.c_str (), m_Index);
+                    if (!G_VALUE_HOLDS (val, MAIA_PROTOCOL_TYPE_MESSAGE))
+                    {
+                        GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                          "Cannot get field %s in %s not a message", inField.c_str (), m_Field.c_str ());
+                        throw Glib::Error(error);
+                    }
+                    MaiaProtocolMessage* pMessage = MAIA_PROTOCOL_MESSAGE (g_value_get_object (val));
+                    if (!pMessage)
+                    {
+                        GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                          "Cannot get field %s in %s not a message", inField.c_str (), m_Field.c_str ());
+                        throw Glib::Error(error);
+                    }
+                    if (!maia_protocol_message_contains (pMessage, inField.c_str ()))
+                    {
+                        GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                          "Field %s not found in %s", inField.c_str (), m_Field.c_str ());
+                        throw Glib::Error(error);
+                    }
+
+                    return Protocol::Message::Field (pMessage, inField);
+                }
+
+            private:
+                MaiaCoreEventArgs* m_pEventArgs;
+                Glib::ustring      m_Field;
+                int                m_Index;
+
+                // no copy assignment
+                EventArgsField& operator=(const EventArgsField&) { return *this; }
+        };
+
+        class EventArgsFields
+        {
+            public:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+                inline EventArgsFields (MaiaCoreEventArgs* inpEventArgs) :
+                    m_pEventArgs (inpEventArgs)
+                {
+                }
+#endif
+
+                EventArgsField operator[] (const Glib::ustring& inField) const
+                {
+                    if (!maia_core_event_args_contains (m_pEventArgs, inField.c_str ()))
+                    {
+                        GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                          "Field %s not found", inField.c_str ());
+                        throw Glib::Error(error);
+                    }
+                    return EventArgsField (m_pEventArgs, inField);
+                }
+
+            private:
+                MaiaCoreEventArgs* m_pEventArgs;
+
+                // no copy assignment
+                EventArgsFields& operator=(const EventArgsFields&) { return *this; }
+        };
+
         class EventArgs : public Glib::Object
         {
             _CLASS_GOBJECT(EventArgs, MaiaCoreEventArgs, MAIA_CORE_EVENT_ARGS, Glib::Object, GObject)
 
+            _IGNORE(maia_core_event_args_get_protocol_buffer_message, maia_core_event_args_get, maia_core_event_args_set,
+                    maia_core_event_args_contains, maia_core_event_args_is_array, maia_core_event_args_add_value,
+                    maia_core_event_args_get_field_length, maia_core_event_args_clear)
+
             protected:
-                EventArgs (const Glib::ustring& inSignature, Glib::WrapNewFunction inWrapFunc);
+                explicit EventArgs (Glib::WrapNewFunction inWrapFunc);
+                explicit EventArgs (const Glib::ustring& inSignature, Glib::WrapNewFunction inWrapFunc);
 
 #m4 _CONVERSION(`Glib::VariantBase',`GVariant*',`g_variant_ref (($3).gobj())')
 #m4 _CONVERSION(`GVariant*',`const Glib::VariantBase&',`Glib::wrap($3, true)')
@@ -74,6 +284,9 @@ namespace Maia
                 void unserialize (const Glib::VariantBase& inVariant, T& inVal, Args&... inArgs);
 
             public:
+                typedef EventArgsField Field;
+                typedef EventArgsFields Fields;
+
                 _WRAP_METHOD(int get_sequence (), maia_core_event_args_get_sequence)
                 _WRAP_METHOD(Glib::VariantBase get_serialize (), maia_core_event_args_get_serialize)
                 _WRAP_METHOD(void set_serialize (const Glib::VariantBase& inData), maia_core_event_args_set_serialize)
@@ -82,6 +295,131 @@ namespace Maia
 
                 _WRAP_PROPERTY("sequence", int)
                 _WRAP_PROPERTY("serialize", Glib::VariantBase)
+
+                Fields fields () const
+                {
+                    return Fields (const_cast<MaiaCoreEventArgs*> (gobj ()));
+                }
+
+            protected:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+                class FieldsClosure
+                {
+                    public:
+                        FieldsClosure (EventArgs* inpEventArgs) :
+                            m_pEventArgs (inpEventArgs),
+                            m_CurrentColumn ("")
+                        {
+                        }
+
+                        template <typename T>
+                        void add_field_value (const T& inValue)
+                        {
+                            if (!m_CurrentColumn.empty ())
+                            {
+                                set_value (inValue);
+                                m_CurrentColumn = "";
+                            }
+                        }
+
+                        void add_field_value (const char* inValue)
+                        {
+                            if (!m_CurrentColumn.empty ())
+                            {
+                                set_value ((Glib::ustring)inValue);
+                                m_CurrentColumn = "";
+                            }
+                        }
+
+                        template <typename... Args>
+                        void add_field_value (const Glib::ustring& inValue, Args... inArgs)
+                        {
+                            if (!m_CurrentColumn.empty ())
+                            {
+                                set_value (inValue);
+                                m_CurrentColumn = "";
+                            }
+                            else
+                            {
+                                m_CurrentColumn = inValue;
+                            }
+
+                            add_field_value (inArgs...);
+                        }
+
+                        template <typename... Args>
+                        void add_field_value (const char* inValue, Args... inArgs)
+                        {
+                            if (!m_CurrentColumn.empty ())
+                            {
+                                set_value (Glib::ustring (inValue));
+                                m_CurrentColumn = "";
+                            }
+                            else
+                            {
+                                m_CurrentColumn = Glib::ustring (inValue);
+                            }
+
+                            add_field_value (inArgs...);
+                        }
+
+                        template <typename T, typename... Args>
+                        void add_field_value (const T& inValue, Args... inArgs)
+                        {
+                            if (!m_CurrentColumn.empty ())
+                            {
+                                set_value (inValue);
+                                m_CurrentColumn = "";
+                            }
+
+                            add_field_value (inArgs...);
+                        }
+
+                    private:
+                        EventArgs*      m_pEventArgs;
+                        Glib::ustring   m_CurrentColumn;
+
+                        template <typename T>
+                        void set_value (const T& inValue)
+                        {
+                            if (!m_CurrentColumn.empty ())
+                            {
+                                if (m_CurrentColumn.find ("::") != Glib::ustring::npos)
+                                {
+                                    gchar** columns = g_strsplit (m_CurrentColumn.c_str (), "::", -1);
+                                    if (columns)
+                                    {
+                                        Glib::ustring column = columns[0];
+                                        Field field = m_pEventArgs->fields ()[column];
+
+                                        if (columns[1])
+                                        {
+                                            column = columns[1];
+                                            Protocol::Message::Field f = field[column];
+
+                                            for (int cpt = 2; columns[cpt]; ++cpt)
+                                            {
+                                                column = columns[cpt];
+                                                f = f[column];
+                                            }
+
+                                            f = inValue;
+                                        }
+                                        else
+                                        {
+                                            field = inValue;
+                                        }
+                                        g_strfreev (columns);
+                                    }
+                                }
+                                else
+                                {
+                                    m_pEventArgs->fields ()[m_CurrentColumn] = inValue;
+                                }
+                            }
+                        }
+                };
+#endif
 
             private:
                 class SerializeClosure
@@ -195,6 +533,96 @@ namespace Maia
             inVal = Glib::VariantBase::cast_dynamic< Glib::Variant<T> > (variant).get ();
 
             unserialize (inVariant, inArgs...);
+        }
+
+        template <typename T>
+        inline EventArgsField& EventArgsField::operator= (const T& inVal)
+        {
+            Glib::Value<T> value;
+            value.init(Glib::Value<T>::value_type());
+
+            value.set(inVal);
+            maia_core_event_args_set (m_pEventArgs, m_Field.c_str (), m_Index, value.gobj ());
+
+            return *this;
+        }
+
+        template <typename T>
+        inline EventArgsField::operator T () const
+        {
+            Glib::Value<T> value;
+            value.init(Glib::Value<T>::value_type());
+
+            GValue* val = maia_core_event_args_get (m_pEventArgs, m_Field.c_str (), m_Index);
+            g_value_copy (val, value.gobj ());
+
+            return value.get ();
+        }
+
+        template <typename T>
+        inline EventArgsField& EventArgsField::operator= (const std::vector<T>& inVal)
+        {
+            if (!maia_core_event_args_is_array (m_pEventArgs, m_Field.c_str ()))
+            {
+                GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                  "Cannot set array value for field %s not an array", m_Field.c_str ());
+                throw Glib::Error(error);
+            }
+
+            maia_core_event_args_clear (m_pEventArgs, m_Field.c_str ());
+            for (const T& val : inVal)
+            {
+                Glib::Value<T> value;
+                value.init(Glib::Value<T>::value_type());
+
+                value.set(val);
+                maia_core_event_args_add_value (m_pEventArgs, m_Field.c_str (), value.gobj ());
+            }
+
+            return *this;
+        }
+
+        template <typename T>
+        inline EventArgsField::operator std::vector<T> () const
+        {
+            std::vector<T> ret;
+
+            if (!maia_core_event_args_is_array (m_pEventArgs, m_Field.c_str ()))
+            {
+                GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                  "Cannot get array value for field %s not an array", m_Field.c_str ());
+                throw Glib::Error(error);
+            }
+
+            for (int cpt = 0; cpt < maia_core_event_args_get_field_length (m_pEventArgs, m_Field.c_str ()); ++cpt)
+            {
+                Glib::Value<T> value;
+                value.init(Glib::Value<T>::value_type());
+
+                GValue* val = maia_core_event_args_get (m_pEventArgs, m_Field.c_str (), cpt);
+                g_value_copy (val, value.gobj ());
+
+                ret.push_back (value.get ());
+            }
+
+            return ret;
+        }
+
+        template <typename T>
+        inline int EventArgsField::push_back (T inVal)
+        {
+            if (!maia_core_event_args_is_array (m_pEventArgs, m_Field.c_str ()))
+            {
+                GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                  "Cannot push back value in field %s not an array", m_Field.c_str ());
+                throw Glib::Error(error);
+            }
+
+            Glib::Value<T> value;
+            value.init(Glib::Value<T>::value_type());
+
+            value.set(inVal);
+            return maia_core_event_args_add_value (m_pEventArgs, m_Field.c_str (), value.gobj ());
         }
     }
 }

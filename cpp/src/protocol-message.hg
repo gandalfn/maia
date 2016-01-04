@@ -1,0 +1,261 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * protocol-message.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+
+#include <maiamm/core-object.h>
+#include <maiamm/protocol-bufferchild.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/core-object_p.h)
+_PINCLUDE(maiamm/private/protocol-bufferchild_p.h)
+
+namespace Maia
+{
+    namespace Protocol
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Protocol)
+
+        class MessageField
+        {
+            public:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+                inline MessageField (MaiaProtocolMessage* inpMessage, const Glib::ustring& inField, int inIndex = 0) :
+                    m_pMessage (inpMessage),
+                    m_Field (inField),
+                    m_Index (inIndex)
+                {
+
+                }
+
+                inline MessageField (const MessageField& inField) :
+                    m_pMessage (inField.m_pMessage),
+                    m_Field (inField.m_Field),
+                    m_Index (inField.m_Index)
+                {
+
+                }
+
+                inline MessageField& operator=(const MessageField& inField)
+                {
+                    m_pMessage = inField.m_pMessage;
+                    m_Field = inField.m_Field;
+                    m_Index = inField.m_Index;
+                    return *this;
+                }
+#endif
+
+                template <typename T>
+                inline MessageField& operator=(const T& inVal);
+
+                template <typename T>
+                inline operator T() const;
+
+                template <typename T>
+                inline MessageField& operator=(const std::vector<T>& inVal);
+
+                template <typename T>
+                inline operator std::vector<T>() const;
+
+                template <typename T>
+                inline int push_back (T inVal);
+
+                MessageField operator[] (int inIndex) const
+                {
+                    return MessageField (m_pMessage, m_Field, inIndex);
+                }
+
+                MessageField operator[] (const Glib::ustring& inField) const
+                {
+                    GValue* val = maia_protocol_message_get (m_pMessage, m_Field.c_str (), m_Index);
+                    if (!G_VALUE_HOLDS (val, MAIA_PROTOCOL_TYPE_MESSAGE))
+                    {
+                        GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                          "Cannot get field %s in %s not a message", inField.c_str (), m_Field.c_str ());
+                        throw Glib::Error(error);
+                    }
+                    MaiaProtocolMessage* pMessage = MAIA_PROTOCOL_MESSAGE (g_value_get_object (val));
+                    if (!pMessage)
+                    {
+                        GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                          "Cannot get field %s in %s not a message", inField.c_str (), m_Field.c_str ());
+                        throw Glib::Error(error);
+                    }
+                    if (!maia_protocol_message_contains (pMessage, inField.c_str ()))
+                    {
+                        GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                          "Field %s not found in %s", inField.c_str (), m_Field.c_str ());
+                        throw Glib::Error(error);
+                    }
+
+                    return MessageField (pMessage, inField);
+                }
+
+            private:
+                MaiaProtocolMessage* m_pMessage;
+                Glib::ustring        m_Field;
+                int                  m_Index;
+        };
+
+        class MessageFields
+        {
+            public:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+                inline MessageFields (MaiaProtocolMessage* inpMessage) :
+                    m_pMessage (inpMessage)
+                {
+                }
+#endif
+
+                MessageField operator[] (const Glib::ustring& inField) const
+                {
+                    if (!maia_protocol_message_contains (m_pMessage, inField.c_str ()))
+                    {
+                        GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                          "Field %s not found", inField.c_str ());
+                        throw Glib::Error(error);
+                    }
+                    return MessageField (m_pMessage, inField);
+                }
+
+            private:
+                MaiaProtocolMessage* m_pMessage;
+
+                // no copy assignment
+                MessageFields& operator=(const MessageFields&) { return *this; }
+        };
+
+        class Message : public Core::Object, public BufferChild
+        {
+            _CLASS_GOBJECT(Message, MaiaProtocolMessage, MAIA_PROTOCOL_MESSAGE, Core::Object, MaiaCoreObject)
+            _IMPLEMENTS_INTERFACE(BufferChild)
+
+            _IGNORE(maia_protocol_message_add_value, maia_protocol_message_clear, maia_protocol_message_get, maia_protocol_message_set,
+                    maia_protocol_message_get_field_length, maia_protocol_message_is_array, maia_protocol_message_new)
+
+            protected:
+                _CTOR_DEFAULT()
+
+            public:
+                typedef MessageField Field;
+                typedef MessageFields Fields;
+
+                _WRAP_METHOD(Glib::ustring get_name () const, maia_protocol_message_get_name)
+                _WRAP_METHOD(bool contains (const Glib::ustring& inName) const, maia_protocol_message_contains)
+
+                Fields fields () const
+                {
+                    return Fields (const_cast<MaiaProtocolMessage*> (gobj ()));
+                }
+
+                _WRAP_PROPERTY("name", Glib::ustring)
+                _WRAP_PROPERTY("serialize", Glib::VariantBase)
+        };
+
+        template <typename T>
+        inline MessageField& MessageField::operator= (const T& inVal)
+        {
+            Glib::Value<T> value;
+            value.init(Glib::Value<T>::value_type());
+
+            value.set(inVal);
+            maia_protocol_message_set (m_pMessage, m_Field.c_str (), m_Index, value.gobj ());
+
+            return *this;
+        }
+
+        template <typename T>
+        inline MessageField::operator T () const
+        {
+            Glib::Value<T> value;
+            value.init(Glib::Value<T>::value_type());
+
+            GValue* val = maia_protocol_message_get (m_pMessage, m_Field.c_str (), m_Index);
+            g_value_copy (val, value.gobj ());
+
+            return value.get ();
+        }
+
+        template <typename T>
+        inline MessageField& MessageField::operator= (const std::vector<T>& inVal)
+        {
+            if (!maia_protocol_message_is_array (m_pMessage, m_Field.c_str ()))
+            {
+                GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                  "Cannot set array value for field %s not an array", m_Field.c_str ());
+                throw Glib::Error(error);
+            }
+
+            maia_protocol_message_clear (m_pMessage, m_Field.c_str ());
+            for (const T& val : inVal)
+            {
+                Glib::Value<T> value;
+                value.init(Glib::Value<T>::value_type());
+
+                value.set(val);
+                maia_protocol_message_add_value (m_pMessage, m_Field.c_str (), value.gobj ());
+            }
+
+            return *this;
+        }
+
+        template <typename T>
+        inline MessageField::operator std::vector<T> () const
+        {
+            std::vector<T> ret;
+
+            if (!maia_protocol_message_is_array (m_pMessage, m_Field.c_str ()))
+            {
+                GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                  "Cannot get array value for field %s not an array", m_Field.c_str ());
+                throw Glib::Error(error);
+            }
+
+            for (int cpt = 0; cpt < maia_protocol_message_get_field_length (m_pMessage, m_Field.c_str ()); ++cpt)
+            {
+                Glib::Value<T> value;
+                value.init(Glib::Value<T>::value_type());
+
+                GValue* val = maia_protocol_message_get (m_pMessage, m_Field.c_str (), cpt);
+                g_value_copy (val, value.gobj ());
+
+                ret.push_back (value.get ());
+            }
+
+            return ret;
+        }
+
+        template <typename T>
+        inline int MessageField::push_back (T inVal)
+        {
+            if (!maia_protocol_message_is_array (m_pMessage, m_Field.c_str ()))
+            {
+                GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                  "Cannot push back value in field %s not an array", m_Field.c_str ());
+                throw Glib::Error(error);
+            }
+
+            Glib::Value<T> value;
+            value.init(Glib::Value<T>::value_type());
+
+            value.set(inVal);
+            return maia_protocol_message_add_value (m_pMessage, m_Field.c_str (), value.gobj ());
+        }
+    }
+}

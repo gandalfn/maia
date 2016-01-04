@@ -63,7 +63,7 @@ public class Maia.KeyboardEventArgs : Maia.Core.EventArgs
     // static methods
     static construct
     {
-        Core.EventArgs.register_protocol (typeof (KeyboardEventArgs),
+        Core.EventArgs.register_protocol (typeof (KeyboardEventArgs).name (),
                                           "Key", PROTOBUF);
     }
 

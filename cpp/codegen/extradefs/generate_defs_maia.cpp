@@ -49,6 +49,10 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_SIZE);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_SURFACE);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_TRANSFORM);
+    std::cout << get_defs (MAIA_GRAPHIC_TYPE_RENDERER);
+    std::cout << get_defs (MAIA_GRAPHIC_RENDERER_TYPE_INITIALIZE_NOTIFICATION);
+    std::cout << get_defs (MAIA_GRAPHIC_RENDERER_TYPE_NEW_FRAME_NOTIFICATION);
+    std::cout << get_defs (MAIA_GRAPHIC_TYPE_GL_RENDERER);
 
     std::cout << get_defs (MAIA_MANIFEST_TYPE_ATTRIBUTE);
     std::cout << get_defs (MAIA_MANIFEST_TYPE_ATTRIBUTE_BIND);
@@ -60,6 +64,10 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_MANIFEST_TYPE_STYLE);
     std::cout << get_defs (MAIA_MANIFEST_STYLE_TYPE_PROPERTY);
     std::cout << get_defs (MAIA_MANIFEST_DOCUMENT_TYPE_ATTRIBUTE_BIND_ADDED_NOTIFICATION);
+
+    std::cout << get_defs (MAIA_PROTOCOL_TYPE_BUFFER);
+    std::cout << get_defs (MAIA_PROTOCOL_TYPE_BUFFER_CHILD);
+    std::cout << get_defs (MAIA_PROTOCOL_TYPE_MESSAGE);
 
     std::cout << get_defs (MAIA_TYPE_APPLICATION);
     std::cout << get_defs (MAIA_TYPE_BUTTON);
@@ -115,6 +123,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_CHART_VIEW);
     std::cout << get_defs (MAIA_TYPE_VIEWPORT);
     std::cout << get_defs (MAIA_TOGGLE_GROUP_TYPE_CHANGED_EVENT_ARGS);
+    std::cout << get_defs (MAIA_TYPE_RENDERER_VIEW);
 
     return 0;
 }

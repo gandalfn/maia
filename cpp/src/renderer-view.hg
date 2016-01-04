@@ -1,0 +1,87 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * renderer-view.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/group.h>
+#include <maiamm/graphic-renderer.h>
+#include <maiamm/item-packable.h>
+#include <maiamm/item-movable.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/group_p.h)
+
+namespace Maia
+{
+    class RendererView : public Group, public ItemPackable, public ItemMovable
+    {
+        _CLASS_GOBJECT(RendererView, MaiaRendererView, MAIA_RENDERER_VIEW, Group, MaiaGroup)
+        _IMPLEMENTS_INTERFACE(ItemPackable)
+        _IMPLEMENTS_INTERFACE(ItemMovable)
+
+        protected:
+            _CTOR_DEFAULT()
+
+        public:
+            static Glib::RefPtr<RendererView> create (const Glib::ustring& inName, const Glib::RefPtr<Graphic::Renderer>& inpRenderer)
+            {
+                MaiaRendererView* pView = maia_renderer_view_new (inName.c_str (), const_cast<MaiaGraphicRenderer*> (inpRenderer->gobj ()));
+                return Glib::RefPtr<RendererView> (new RendererView (pView));
+            }
+
+            _WRAP_METHOD(unsigned int get_frame_rate () const, maia_renderer_view_get_frame_rate)
+            _WRAP_METHOD(void set_frame_rate (unsigned int inFrameRate), maia_renderer_view_set_frame_rate)
+
+            _WRAP_METHOD(unsigned int get_nb_frames () const, maia_renderer_view_get_nb_frames)
+            _WRAP_METHOD(void set_nb_frames (unsigned int inFrameRate), maia_renderer_view_set_nb_frames)
+
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Renderer> get_renderer () const, maia_renderer_view_get_renderer, refreturn)
+            _WRAP_METHOD(void set_renderer (const Glib::RefPtr<Graphic::Renderer>& inpRenderer), maia_renderer_view_set_renderer)
+
+            _WRAP_PROPERTY("renderer", Glib::RefPtr<Graphic::Renderer>)
+            _WRAP_PROPERTY("frame-rate", unsigned int)
+            _WRAP_PROPERTY("nb-frames", unsigned int)
+
+            _WRAP_PROPERTY("can-focus", bool)
+
+            _WRAP_PROPERTY("row", guint)
+            _WRAP_PROPERTY("rows", guint)
+
+            _WRAP_PROPERTY("column", guint)
+            _WRAP_PROPERTY("columns", guint)
+
+            _WRAP_PROPERTY("xexpand", bool)
+            _WRAP_PROPERTY("xfill", bool)
+            _WRAP_PROPERTY("xshrink", bool)
+            _WRAP_PROPERTY("xlimp", bool)
+            _WRAP_PROPERTY("xalign", double)
+
+            _WRAP_PROPERTY("yexpand", bool)
+            _WRAP_PROPERTY("yfill", bool)
+            _WRAP_PROPERTY("yshrink", bool)
+            _WRAP_PROPERTY("ylimp", bool)
+            _WRAP_PROPERTY("yalign", double)
+
+            _WRAP_PROPERTY("top-padding", double)
+            _WRAP_PROPERTY("bottom-padding", double)
+            _WRAP_PROPERTY("left-padding", double)
+            _WRAP_PROPERTY("right-padding", double)
+
+            _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
+    };
+}

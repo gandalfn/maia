@@ -47,14 +47,27 @@ namespace Maia
 
     ModelIterator::ModelIterator (Model* inpModel, unsigned int inRow) :
         m_pModel (inpModel),
-        m_Row (inRow)
+        m_Row (inRow),
+        m_CurrentColumn (-1),
+        m_Size (0),
+        m_Columns (0),
+        m_Values (0)
     {
     }
 
     ModelIterator::ModelIterator () :
         m_pModel (0),
-        m_Row (0)
+        m_Row (0),
+        m_CurrentColumn (-1),
+        m_Size (0),
+        m_Columns (0),
+        m_Values (0)
     {
+    }
+
+    ModelIterator::~ModelIterator ()
+    {
+        clear ();
     }
 
     Model::iterator& ModelIterator::operator++()

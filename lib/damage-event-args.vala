@@ -40,7 +40,7 @@ public class Maia.DamageEventArgs : Maia.Core.EventArgs
     // static methods
     static construct
     {
-        Core.EventArgs.register_protocol (typeof (DamageEventArgs),
+        Core.EventArgs.register_protocol (typeof (DamageEventArgs).name (),
                                           "Area", PROTOBUF);
     }
 

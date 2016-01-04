@@ -160,14 +160,22 @@ public class Maia.Graphic.Glyph : Core.Object
     }
 
     // accessors
+    [CCode (notify = false)]
     public string        font_description { get; construct set; }
+    [CCode (notify = false)]
     public Alignment     alignment        { get; set; default = Alignment.CENTER; }
+    [CCode (notify = false)]
     public WrapMode      wrap             { get; set; default = WrapMode.WORD; }
+    [CCode (notify = false)]
     public EllipsizeMode ellipsize        { get; set; default = EllipsizeMode.NONE; }
+    [CCode (notify = false)]
     public bool          use_markup       { get; set; default = true; }
+    [CCode (notify = false)]
     public string        text             { get; set; }
+    [CCode (notify = false)]
     public Point         origin           { get; set; }
 
+    [CCode (notify = false)]
     public virtual Size size {
         get {
             return Size (0, 0);

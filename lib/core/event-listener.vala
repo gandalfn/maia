@@ -108,11 +108,31 @@ public class Maia.Core.EventListener : Object
         m_Handler = inHandler;
     }
 
+    public EventListener.with_hash (string inName, void* inOwner, Event.Handler inHandler)
+    {
+        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "create eventlistener");
+
+        m_EventHash = new Event.Hash.raw (inName, inOwner);
+        m_Handler = inHandler;
+    }
+
     public EventListener.object (Event inEvent, Event.Handler inHandler)
     {
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "create eventlistener");
 
         m_EventHash = new Event.Hash (inEvent);
+        m_Handler = inHandler;
+
+        m_Target = (*(void**)((&m_Handler) + 1)) as GLib.Object;
+        GLib.return_val_if_fail (m_Target != null, null);
+        m_Target.weak_ref (on_target_destroy);
+    }
+
+    public EventListener.with_hash_object (string inName, void* inOwner, Event.Handler inHandler)
+    {
+        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "create eventlistener");
+
+        m_EventHash = new Event.Hash.raw (inName, inOwner);
         m_Handler = inHandler;
 
         m_Target = (*(void**)((&m_Handler) + 1)) as GLib.Object;

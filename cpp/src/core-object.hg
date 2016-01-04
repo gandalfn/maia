@@ -19,6 +19,7 @@
 
 #include <maia.h>
 
+#include "maiamm/refptr.h"
 #include "maiamm/core-any.h"
 
 _DEFS(maiamm,maia)
@@ -28,8 +29,6 @@ namespace Maia
 {
     namespace Core
     {
-        _GMMPROC_EXTRA_NAMESPACE(Core)
-
         class ObjectIterator;
         class Object;
         class Notifications;
@@ -78,6 +77,38 @@ namespace Maia
                 // no copy assignment
                 ObjectDerivedProxy& operator=(const ObjectDerivedProxy&) { return *this; }
         };
+    }
+
+    template <class V>
+    class Proxy<V, typename std::enable_if<std::is_base_of<Core::ObjectProxy, V>::value>::type>
+    {
+        public:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+            inline Proxy(const V& inProxy) :
+                m_Proxy (inProxy)
+            {
+            }
+#endif
+            template <typename T>
+            inline Proxy<V>& operator=(const Glib::RefPtr<T>& inpObject)
+            {
+                m_Proxy = Core::ObjectProxy (inpObject);
+                return *this;
+            }
+
+            template <typename T>
+            inline operator Glib::RefPtr<T>() const
+            {
+                return (Glib::RefPtr<T>)m_Proxy;
+            }
+
+        private:
+           Core::ObjectProxy m_Proxy;
+    };
+
+    namespace Core
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Core)
 
         class Object : public Any
         {
@@ -137,6 +168,12 @@ namespace Maia
 
                 template <typename T>
                 inline void find (std::vector<Glib::RefPtr<T> >& inChilds, bool inRecurse = true);
+
+                inline Proxy<ObjectProxy> operator[] (const Glib::ustring& inName)
+                {
+                    ObjectProxy proxy (find (inName, false));
+                    return Proxy<ObjectProxy> (proxy);
+                }
 
                 _IGNORE(maia_core_object_iterator)
                 _WRAP_METHOD (Object::iterator begin (), maia_core_object_iterator_begin)

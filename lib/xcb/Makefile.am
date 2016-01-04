@@ -18,6 +18,7 @@ libmaia_xcb_la_CFLAGS = \
     $(MAIA_XCB_CFLAGS)
 
 libmaia_xcb_la_VALAFLAGS = \
+    --pkg=x11-xcb \
     --pkg=xcb \
     --pkg=xcb-randr \
     --pkg=xcb-composite \
@@ -25,7 +26,9 @@ libmaia_xcb_la_VALAFLAGS = \
     --pkg=xcb-keysyms \
     --pkg=xcb-keysym \
     --pkg=xcb-cursor \
-    --pkg=xcb-cursorfont
+    --pkg=xcb-cursorfont \
+    --pkg=xcb-glx \
+    --pkg=glx
 
 libmaia_xcb_la_SOURCES = \
     init.vala \
@@ -43,7 +46,9 @@ libmaia_xcb_la_SOURCES = \
     request.vala \
     view.vala \
     viewport.vala \
-    window.vala
+    window.vala \
+    renderer.vala \
+    gl-renderer.vala
 
 libmaia_xcb_la_LIBADD = \
     $(MAIA_XCB_LIBS)

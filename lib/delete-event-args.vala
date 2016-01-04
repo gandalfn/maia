@@ -37,7 +37,7 @@ public class Maia.DeleteEventArgs : Maia.Core.EventArgs
     // static methods
     static construct
     {
-        Core.EventArgs.register_protocol (typeof (DeleteEventArgs),
+        Core.EventArgs.register_protocol (typeof (DeleteEventArgs).name (),
                                           "Delete", PROTOBUF);
     }
 

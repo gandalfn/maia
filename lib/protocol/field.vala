@@ -205,6 +205,12 @@ internal abstract class Maia.Protocol.Field : Core.Object, BufferChild
     // accessors
     public bool repeated { get; construct; default = false; }
 
+    public int length {
+        get {
+            return m_Values.length;
+        }
+    }
+
     public abstract Type field_type { get; }
 
     public string name {
@@ -325,6 +331,17 @@ internal abstract class Maia.Protocol.Field : Core.Object, BufferChild
         requires (GLib.Value.type_compatible (inValue.type (), m_Values[inIndex].type ()))
     {
         inValue.copy (ref m_Values[inIndex]);
+    }
+
+    public void
+    clear ()
+    {
+        m_Values = {};
+
+        if (!repeated)
+        {
+            m_Values += create_value ();
+        }
     }
 
     public virtual int add_value (GLib.Value inValue)

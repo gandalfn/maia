@@ -69,6 +69,7 @@ public class Maia.Graphic.Region : Core.Any
 
 
     // accessors
+    [CCode (notify = false)]
     public virtual Rectangle extents { get; construct set; }
 
     public virtual int length {

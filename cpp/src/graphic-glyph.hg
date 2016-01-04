@@ -69,7 +69,7 @@ namespace Maia
                 }
 
                 _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_glyph_get_size)
-                _WRAP_METHOD(void Set_size (const Size& outSize) const, maia_graphic_glyph_set_size)
+                _WRAP_METHOD(void set_size (const Size& outSize) const, maia_graphic_glyph_set_size)
                 _WRAP_METHOD(Glib::ustring get_font_description () const, maia_graphic_glyph_get_font_description)
                 _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_graphic_glyph_set_font_description)
                 _WRAP_METHOD(bool get_use_markup () const, maia_graphic_glyph_get_use_markup)

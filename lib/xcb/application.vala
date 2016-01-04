@@ -86,7 +86,8 @@ internal class Maia.Xcb.Application : Core.Object
     }
 
     // properties
-    private global::Xcb.Connection            m_Connection;
+    private global::X.Display                 m_Display;
+    private unowned global::Xcb.Connection    m_Connection;
     private int                               m_DefaultScreen;
     private Engine                            m_Engine;
     private Atoms                             m_Atoms;
@@ -96,6 +97,12 @@ internal class Maia.Xcb.Application : Core.Object
     private Core.Set<unowned View>            m_Views;
 
     // accessors
+    public global::X.Display display {
+        get {
+            return m_Display;
+        }
+    }
+
     public global::Xcb.Connection connection {
         get {
             return m_Connection;
@@ -125,8 +132,15 @@ internal class Maia.Xcb.Application : Core.Object
     {
         GLib.Object (id: inDisplay != null ? GLib.Quark.from_string (inDisplay) : 0);
 
+        X.init_threads ();
+
         // Connect onto xorg
-        m_Connection = new global::Xcb.Connection (inDisplay, out m_DefaultScreen);
+        m_Display = new global::X.Display (inDisplay);
+        m_Display.set_event_queue_owner (X.EventQueueOwner.XCB);
+        m_DefaultScreen = m_Display.default_screen ().num;
+
+        // get xcb connection
+        m_Connection = m_Display.connection;
 
         m_Connection.prefetch_maximum_request_length ();
 
@@ -145,7 +159,7 @@ internal class Maia.Xcb.Application : Core.Object
         // Get all screens
         for (int cpt = 0; cpt < m_Connection.roots.length; ++cpt)
         {
-            m_Screens += new Screen (m_Connection, cpt);
+            m_Screens += new Screen (m_Display, cpt);
         }
 
         // Create window list

@@ -20,6 +20,7 @@
 public class Maia.Graphic.ImageSvg : Graphic.Image
 {
     // accessors
+    [CCode (notify = false)]
     public virtual string? data { get; set; default = null; }
 
     // methods

@@ -42,15 +42,20 @@ internal class Maia.Cairo.Context : Graphic.Context
         }
     }
 
+    [CCode (notify = false)]
     internal override Graphic.Operator operator {
         get {
             return m_Context != null ? (Graphic.Operator)m_Context.get_operator () : Graphic.Operator.OVER;
         }
         set {
-            m_Context.set_operator ((global::Cairo.Operator)value);
+            if (m_Context != null)
+            {
+                m_Context.set_operator ((global::Cairo.Operator)value);
+            }
         }
     }
 
+    [CCode (notify = false)]
     internal override Graphic.Transform transform {
         owned get {
             global::Cairo.Matrix matrix = m_Context.get_matrix ();
@@ -73,18 +78,23 @@ internal class Maia.Cairo.Context : Graphic.Context
         }
     }
 
+    [CCode (notify = false)]
     public override unowned Graphic.Surface surface {
         get {
             return base.surface;
         }
         construct set {
             base.surface = value;
-            m_Context = new global::Cairo.Context ((global::Cairo.Surface)(value as Surface).native);
-            m_Context.set_fill_rule (global::Cairo.FillRule.EVEN_ODD);
-            m_Context.set_antialias (global::Cairo.Antialias.SUBPIXEL);
+            if ((value as Surface).native != null)
+            {
+                m_Context = new global::Cairo.Context ((global::Cairo.Surface)(value as Surface).native);
+                m_Context.set_fill_rule (global::Cairo.FillRule.EVEN_ODD);
+                m_Context.set_antialias (global::Cairo.Antialias.SUBPIXEL);
+            }
         }
     }
 
+    [CCode (notify = false)]
     internal override double line_width {
         get {
             if (m_Context != null)
@@ -101,6 +111,7 @@ internal class Maia.Cairo.Context : Graphic.Context
         }
     }
 
+    [CCode (notify = false)]
     internal override double[]? dash {
         get {
             return m_Dashes;
@@ -114,6 +125,7 @@ internal class Maia.Cairo.Context : Graphic.Context
         }
     }
 
+    [CCode (notify = false)]
     internal override Graphic.Pattern pattern {
         get {
             return base.pattern;
@@ -165,21 +177,24 @@ internal class Maia.Cairo.Context : Graphic.Context
     private void
     on_pattern_transform_changed ()
     {
-        base.pattern.transform.changed.disconnect (on_pattern_transform_changed);
-        global::Cairo.Pattern? pattern = pattern_to_cairo (base.pattern);
-        pattern.set_filter (global::Cairo.Filter.GOOD);
-
-        if (pattern != null)
+        if (m_Context != null)
         {
-            global::Cairo.Matrix matrix = global::Cairo.Matrix (base.pattern.transform.matrix.xx, base.pattern.transform.matrix.yx,
-                                                                base.pattern.transform.matrix.xy, base.pattern.transform.matrix.yy,
-                                                                base.pattern.transform.matrix.x0, base.pattern.transform.matrix.y0);
-            pattern.set_matrix (matrix);
+            base.pattern.transform.changed.disconnect (on_pattern_transform_changed);
+            global::Cairo.Pattern? pattern = pattern_to_cairo (base.pattern);
+            pattern.set_filter (global::Cairo.Filter.GOOD);
 
-            m_Context.set_source (pattern);
+            if (pattern != null)
+            {
+                global::Cairo.Matrix matrix = global::Cairo.Matrix (base.pattern.transform.matrix.xx, base.pattern.transform.matrix.yx,
+                                                                    base.pattern.transform.matrix.xy, base.pattern.transform.matrix.yy,
+                                                                    base.pattern.transform.matrix.x0, base.pattern.transform.matrix.y0);
+                pattern.set_matrix (matrix);
+
+                m_Context.set_source (pattern);
+            }
+
+            base.pattern.transform.changed.connect (on_pattern_transform_changed);
         }
-
-        base.pattern.transform.changed.connect (on_pattern_transform_changed);
     }
 
     private global::Cairo.Pattern?
@@ -389,204 +404,293 @@ internal class Maia.Cairo.Context : Graphic.Context
     internal override void
     save () throws Graphic.Error
     {
-        m_Context.save ();
-        status ();
-        m_SaveCount++;
+        if (m_Context != null)
+        {
+            m_Context.save ();
+            status ();
+            m_SaveCount++;
+        }
+        else
+        {
+            base.save ();
+        }
     }
 
     internal override void
     restore () throws Graphic.Error
     {
-        if (m_SaveCount > 0)
+        if (m_Context != null)
         {
-            m_Context.restore ();
-            status ();
-            m_SaveCount--;
+            if (m_SaveCount > 0)
+            {
+                m_Context.restore ();
+                status ();
+                m_SaveCount--;
+            }
+        }
+        else
+        {
+            base.restore ();
         }
     }
 
     internal override void
     status () throws Graphic.Error
     {
-        global::Cairo.Status status = m_Context.status ();
-
-        if (status != global::Cairo.Status.SUCCESS)
+        if (m_Context != null)
         {
-            for (int cpt = 0; cpt < m_SaveCount; cpt++)
+            global::Cairo.Status status = m_Context.status ();
+
+            if (status != global::Cairo.Status.SUCCESS)
             {
-                m_Context.restore ();
+                for (int cpt = 0; cpt < m_SaveCount; cpt++)
+                {
+                    m_Context.restore ();
+                }
+            }
+
+            switch (status)
+            {
+                case global::Cairo.Status.SUCCESS:
+                    break;
+                case global::Cairo.Status.NO_MEMORY:
+                    throw new Graphic.Error.NO_MEMORY (@"$status");
+                case global::Cairo.Status.INVALID_RESTORE:
+                    throw new Graphic.Error.END_ELEMENT (@"$status");
+                case global::Cairo.Status.NO_CURRENT_POINT:
+                    throw new Graphic.Error.NO_CURRENT_POINT (@"$status");
+                case global::Cairo.Status.INVALID_MATRIX:
+                    throw new Graphic.Error.INVALID_MATRIX (@"$status");
+                case global::Cairo.Status.NULL_POINTER:
+                    throw new Graphic.Error.NULL_POINTER (@"$status");
+                case global::Cairo.Status.INVALID_STRING:
+                    throw new Graphic.Error.INVALID_STRING (@"$status");
+                case global::Cairo.Status.INVALID_PATH_DATA:
+                    throw new Graphic.Error.INVALID_PATH (@"$status");
+                case global::Cairo.Status.SURFACE_FINISHED:
+                    throw new Graphic.Error.SURFACE_FINISHED (@"$status");
+                case global::Cairo.Status.SURFACE_TYPE_MISMATCH:
+                    throw new Graphic.Error.SURFACE_TYPE_MISMATCH (@"$status");
+                case global::Cairo.Status.PATTERN_TYPE_MISMATCH:
+                    throw new Graphic.Error.PATTERN_TYPE_MISMATCH (@"$status");
+                case global::Cairo.Status.INVALID_CONTENT:
+                    throw new Graphic.Error.INVALID_CONTENT (@"$status");
+                case global::Cairo.Status.INVALID_FORMAT:
+                    throw new Graphic.Error.INVALID_FORMAT (@"$status");
+                case global::Cairo.Status.INVALID_VISUAL:
+                    throw new Graphic.Error.INVALID_VISUAL (@"$status");
+                case global::Cairo.Status.FILE_NOT_FOUND:
+                    throw new Graphic.Error.FILE_NOT_FOUND (@"$status");
+                case global::Cairo.Status.INVALID_DASH:
+                    throw new Graphic.Error.INVALID_DASH (@"$status");
+                case global::Cairo.Status.INVALID_DSC_COMMENT:
+                    throw new Graphic.Error.INVALID_DSC_COMMENT (@"$status");
+                case global::Cairo.Status.INVALID_INDEX:
+                    throw new Graphic.Error.INVALID_INDEX (@"$status");
+                case global::Cairo.Status.CLIP_NOT_REPRESENTABLE:
+                    throw new Graphic.Error.CLIP_NOT_REPRESENTABLE (@"$status");
+                case global::Cairo.Status.TEMP_FILE_ERROR:
+                    throw new Graphic.Error.TEMP_FILE_ERROR (@"$status");
+                case global::Cairo.Status.INVALID_STRIDE:
+                    throw new Graphic.Error.INVALID_STRIDE (@"$status");
+                case global::Cairo.Status.FONT_TYPE_MISMATCH:
+                    throw new Graphic.Error.FONT_TYPE_MISMATCH (@"$status");
+                case global::Cairo.Status.USER_FONT_IMMUTABLE:
+                    throw new Graphic.Error.FONT_TYPE_MISMATCH (@"$status");
+                case global::Cairo.Status.USER_FONT_ERROR:
+                    throw new Graphic.Error.USER_FONT_ERROR (@"$status");
+                case global::Cairo.Status.NEGATIVE_COUNT:
+                    throw new Graphic.Error.NEGATIVE_COUNT (@"$status");
+                case global::Cairo.Status.INVALID_CLUSTERS:
+                    throw new Graphic.Error.INVALID_CLUSTERS (@"$status");
+                case global::Cairo.Status.INVALID_SLANT:
+                    throw new Graphic.Error.INVALID_SLANT (@"$status");
+                case global::Cairo.Status.INVALID_WEIGHT:
+                    throw new Graphic.Error.INVALID_WEIGHT (@"$status");
+                case global::Cairo.Status.INVALID_SIZE:
+                    throw new Graphic.Error.INVALID_SIZE (@"$status");
+                case global::Cairo.Status.USER_FONT_NOT_IMPLEMENTED:
+                    throw new Graphic.Error.USER_FONT_NOT_IMPLEMENTED (@"$status");
+                case global::Cairo.Status.DEVICE_TYPE_MISMATCH:
+                    throw new Graphic.Error.DEVICE_TYPE_MISMATCH (@"$status");
+                case global::Cairo.Status.DEVICE_ERROR:
+                    throw new Graphic.Error.DEVICE_ERROR (@"$status");
+                case global::Cairo.Status.INVALID_MESH_CONSTRUCTION:
+                    throw new Graphic.Error.INVALID_MESH_CONSTRUCTION (@"$status");
+                case global::Cairo.Status.DEVICE_FINISHED:
+                    throw new Graphic.Error.DEVICE_FINISHED (@"$status");
+                default:
+                    throw new Graphic.Error.UNKNOWN ("a unknown error occured");
             }
         }
-
-        switch (status)
+        else
         {
-            case global::Cairo.Status.SUCCESS:
-                break;
-            case global::Cairo.Status.NO_MEMORY:
-                throw new Graphic.Error.NO_MEMORY (@"$status");
-            case global::Cairo.Status.INVALID_RESTORE:
-                throw new Graphic.Error.END_ELEMENT (@"$status");
-            case global::Cairo.Status.NO_CURRENT_POINT:
-                throw new Graphic.Error.NO_CURRENT_POINT (@"$status");
-            case global::Cairo.Status.INVALID_MATRIX:
-                throw new Graphic.Error.INVALID_MATRIX (@"$status");
-            case global::Cairo.Status.NULL_POINTER:
-                throw new Graphic.Error.NULL_POINTER (@"$status");
-            case global::Cairo.Status.INVALID_STRING:
-                throw new Graphic.Error.INVALID_STRING (@"$status");
-            case global::Cairo.Status.INVALID_PATH_DATA:
-                throw new Graphic.Error.INVALID_PATH (@"$status");
-            case global::Cairo.Status.SURFACE_FINISHED:
-                throw new Graphic.Error.SURFACE_FINISHED (@"$status");
-            case global::Cairo.Status.SURFACE_TYPE_MISMATCH:
-                throw new Graphic.Error.SURFACE_TYPE_MISMATCH (@"$status");
-            case global::Cairo.Status.PATTERN_TYPE_MISMATCH:
-                throw new Graphic.Error.PATTERN_TYPE_MISMATCH (@"$status");
-            case global::Cairo.Status.INVALID_CONTENT:
-                throw new Graphic.Error.INVALID_CONTENT (@"$status");
-            case global::Cairo.Status.INVALID_FORMAT:
-                throw new Graphic.Error.INVALID_FORMAT (@"$status");
-            case global::Cairo.Status.INVALID_VISUAL:
-                throw new Graphic.Error.INVALID_VISUAL (@"$status");
-            case global::Cairo.Status.FILE_NOT_FOUND:
-                throw new Graphic.Error.FILE_NOT_FOUND (@"$status");
-            case global::Cairo.Status.INVALID_DASH:
-                throw new Graphic.Error.INVALID_DASH (@"$status");
-            case global::Cairo.Status.INVALID_DSC_COMMENT:
-                throw new Graphic.Error.INVALID_DSC_COMMENT (@"$status");
-            case global::Cairo.Status.INVALID_INDEX:
-                throw new Graphic.Error.INVALID_INDEX (@"$status");
-            case global::Cairo.Status.CLIP_NOT_REPRESENTABLE:
-                throw new Graphic.Error.CLIP_NOT_REPRESENTABLE (@"$status");
-            case global::Cairo.Status.TEMP_FILE_ERROR:
-                throw new Graphic.Error.TEMP_FILE_ERROR (@"$status");
-            case global::Cairo.Status.INVALID_STRIDE:
-                throw new Graphic.Error.INVALID_STRIDE (@"$status");
-            case global::Cairo.Status.FONT_TYPE_MISMATCH:
-                throw new Graphic.Error.FONT_TYPE_MISMATCH (@"$status");
-            case global::Cairo.Status.USER_FONT_IMMUTABLE:
-                throw new Graphic.Error.FONT_TYPE_MISMATCH (@"$status");
-            case global::Cairo.Status.USER_FONT_ERROR:
-                throw new Graphic.Error.USER_FONT_ERROR (@"$status");
-            case global::Cairo.Status.NEGATIVE_COUNT:
-                throw new Graphic.Error.NEGATIVE_COUNT (@"$status");
-            case global::Cairo.Status.INVALID_CLUSTERS:
-                throw new Graphic.Error.INVALID_CLUSTERS (@"$status");
-            case global::Cairo.Status.INVALID_SLANT:
-                throw new Graphic.Error.INVALID_SLANT (@"$status");
-            case global::Cairo.Status.INVALID_WEIGHT:
-                throw new Graphic.Error.INVALID_WEIGHT (@"$status");
-            case global::Cairo.Status.INVALID_SIZE:
-                throw new Graphic.Error.INVALID_SIZE (@"$status");
-            case global::Cairo.Status.USER_FONT_NOT_IMPLEMENTED:
-                throw new Graphic.Error.USER_FONT_NOT_IMPLEMENTED (@"$status");
-            case global::Cairo.Status.DEVICE_TYPE_MISMATCH:
-                throw new Graphic.Error.DEVICE_TYPE_MISMATCH (@"$status");
-            case global::Cairo.Status.DEVICE_ERROR:
-                throw new Graphic.Error.DEVICE_ERROR (@"$status");
-            case global::Cairo.Status.INVALID_MESH_CONSTRUCTION:
-                throw new Graphic.Error.INVALID_MESH_CONSTRUCTION (@"$status");
-            case global::Cairo.Status.DEVICE_FINISHED:
-                throw new Graphic.Error.DEVICE_FINISHED (@"$status");
-            default:
-                throw new Graphic.Error.UNKNOWN ("a unknown error occured");
+            base.status ();
         }
     }
 
     internal override void
     clip (Graphic.Path inPath) throws Graphic.Error
     {
-        m_Context.new_path ();
-        set_path (inPath);
-        m_Context.clip ();
-        status ();
+        if (m_Context != null)
+        {
+            m_Context.new_path ();
+            set_path (inPath);
+            m_Context.clip ();
+            status ();
+        }
+        else
+        {
+            base.clip (inPath);
+        }
     }
 
     internal override void
     clip_region (Graphic.Region inRegion) throws Graphic.Error
     {
-        foreach (unowned Graphic.Rectangle rect in inRegion)
+        if (m_Context != null)
         {
-            // round rect to bounding integer rect
-            var pos1 = floor_point (rect.origin.x, rect.origin.y);
-            var pos2 = ceil_point (rect.origin.x + rect.size.width, rect.origin.y + rect.size.height);
+            foreach (unowned Graphic.Rectangle rect in inRegion)
+            {
+                // round rect to bounding integer rect
+                var pos1 = floor_point (rect.origin.x, rect.origin.y);
+                var pos2 = ceil_point (rect.origin.x + rect.size.width, rect.origin.y + rect.size.height);
 
-            m_Context.rectangle (pos1.x, pos1.y, pos2.x - pos1.x, pos2.y - pos1.y);
+                m_Context.rectangle (pos1.x, pos1.y, pos2.x - pos1.x, pos2.y - pos1.y);
+            }
+            m_Context.clip ();
+
+            status ();
         }
-        m_Context.clip ();
-
-        status ();
+        else
+        {
+            base.clip_region (inRegion);
+        }
     }
 
     internal override void
     translate (Graphic.Point inOffset) throws Graphic.Error
     {
-        m_Context.translate (inOffset.x, inOffset.y);
-        status ();
+        if (m_Context != null)
+        {
+            m_Context.translate (inOffset.x, inOffset.y);
+            status ();
+        }
+        else
+        {
+            base.translate (inOffset);
+        }
     }
 
     internal override void
     mask (Graphic.Pattern inPattern) throws Graphic.Error
     {
-        global::Cairo.Pattern? pattern = pattern_to_cairo (inPattern);
-        status ();
-        if (pattern != null)
+        if (m_Context != null)
         {
-            m_Context.mask (pattern);
+            global::Cairo.Pattern? pattern = pattern_to_cairo (inPattern);
             status ();
+            if (pattern != null)
+            {
+                m_Context.mask (pattern);
+                status ();
+            }
+        }
+        else
+        {
+            base.mask (inPattern);
         }
     }
 
     internal override void
     paint () throws Graphic.Error
     {
-        m_Context.paint ();
-        status ();
+        if (m_Context != null)
+        {
+            m_Context.paint ();
+            status ();
+        }
+        else
+        {
+            base.paint ();
+        }
     }
 
     internal override void
     paint_with_alpha (double inAlpha) throws Graphic.Error
     {
-        m_Context.paint_with_alpha (inAlpha);
-        status ();
+        if (m_Context != null)
+        {
+            m_Context.paint_with_alpha (inAlpha);
+            status ();
+        }
+        else
+        {
+            base.paint_with_alpha (inAlpha);
+        }
     }
 
     internal override void
     fill (Graphic.Path inPath) throws Graphic.Error
     {
-        m_Context.new_path ();
-        set_path (inPath);
-        m_Context.fill ();
-        status ();
+        if (m_Context != null)
+        {
+            m_Context.new_path ();
+            set_path (inPath);
+            m_Context.fill ();
+            status ();
+        }
+        else
+        {
+            base.fill (inPath);
+        }
     }
 
     internal override void
     stroke (Graphic.Path inPath) throws Graphic.Error
     {
-        m_Context.new_path ();
-        set_path (inPath);
-        m_Context.stroke ();
-        status ();
+        if (m_Context != null)
+        {
+            m_Context.new_path ();
+            set_path (inPath);
+            m_Context.stroke ();
+            status ();
+        }
+        else
+        {
+            base.stroke (inPath);
+        }
     }
 
     internal override void
     render (Graphic.Glyph inGlyph) throws Graphic.Error
     {
-        m_Context.move_to (inGlyph.origin.x, inGlyph.origin.y);
-        status ();
-        Pango.cairo_show_layout (m_Context, (inGlyph as Glyph).layout);
-        status ();
+        if (m_Context != null)
+        {
+            m_Context.move_to (inGlyph.origin.x, inGlyph.origin.y);
+            status ();
+            Pango.cairo_show_layout (m_Context, (inGlyph as Glyph).layout);
+            status ();
+        }
+        else
+        {
+            render (inGlyph);
+        }
     }
 
     internal override Graphic.Rectangle
     get_path_area (Graphic.Path inPath) throws Graphic.Error
     {
-        double x1, y1, x2, y2;
+        if (m_Context != null)
+        {
+            double x1, y1, x2, y2;
 
-        m_Context.new_path ();
-        set_path (inPath);
-        m_Context.path_extents (out x1, out y1, out x2, out y2);
-        status ();
-        return Graphic.Rectangle (x1, y1, x2 - x1, y2 - y1);
+            m_Context.new_path ();
+            set_path (inPath);
+            m_Context.path_extents (out x1, out y1, out x2, out y2);
+            status ();
+            return Graphic.Rectangle (x1, y1, x2 - x1, y2 - y1);
+        }
+
+        return base.get_path_area (inPath);
     }
 }

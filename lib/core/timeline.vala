@@ -25,7 +25,8 @@ public enum Maia.Core.TimelineDirection
 
 public class Maia.Core.Timeline : Object
 {
-    static TimeoutPool s_TimeoutPool = null;
+    static GLib.Private s_TimeoutPool;
+
     static bool        s_HaveDefault = false;
     static int         s_DefaultPriority = 0;
 
@@ -144,7 +145,7 @@ public class Maia.Core.Timeline : Object
     // static methods
     static construct
     {
-        s_TimeoutPool = new TimeoutPool (s_HaveDefault ? s_DefaultPriority : Priority.HIGH);
+        s_TimeoutPool = new GLib.Private (GLib.Object.unref);
     }
 
 
@@ -186,13 +187,28 @@ public class Maia.Core.Timeline : Object
         }
     }
 
+    private static unowned TimeoutPool?
+    get_timeout_pool ()
+    {
+        unowned TimeoutPool? pool = (TimeoutPool?)s_TimeoutPool.get ();
+        if (pool == null)
+        {
+            var new_pool = new TimeoutPool (s_HaveDefault ? s_DefaultPriority : Priority.HIGH, GLib.MainContext.get_thread_default ());
+            s_TimeoutPool.set (new_pool);
+            new_pool.ref ();
+            pool = new_pool;
+        }
+
+        return pool;
+    }
+
     private void
     add_timeout ()
     {
         if (m_PrevFrameTimeVal.tv_sec == 0)
             m_PrevFrameTimeVal.get_current_time ();
 
-        m_Timeout = s_TimeoutPool.add_timeout (m_Fps, on_timeout, this, null);
+        m_Timeout = get_timeout_pool ().add_timeout (m_Fps, on_timeout, this, null);
     }
 
     private inline bool
@@ -400,6 +416,6 @@ public class Maia.Core.Timeline : Object
     public static void
     set_priority (int inPriority)
     {
-        s_TimeoutPool.set_priority (inPriority);
+        get_timeout_pool ().set_priority (inPriority);
     }
 }

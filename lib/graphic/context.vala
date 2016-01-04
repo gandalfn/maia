@@ -94,11 +94,17 @@ public enum Maia.Graphic.Operator
 public class Maia.Graphic.Context : Core.Object
 {
     // accessors
+    [CCode (notify = false)]
     public virtual Operator          operator   { get; set; default = Operator.OVER; }
+    [CCode (notify = false)]
     public virtual unowned Surface   surface    { get; construct set; }
+    [CCode (notify = false)]
     public virtual Pattern           pattern    { get; set; }
+    [CCode (notify = false)]
     public virtual double            line_width { get; set; }
+    [CCode (notify = false)]
     public virtual double[]?         dash       { get; set; }
+    [CCode (notify = false)]
     public virtual Transform         transform  { owned get; set; }
 
     // methods

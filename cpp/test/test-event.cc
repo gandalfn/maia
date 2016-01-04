@@ -23,6 +23,14 @@
 
 using namespace Maia;
 
+MAIA_CORE_EVENT_ARGS_DEFINE("message TestProtobuf {"
+                            "     uint64 data;"
+                            "     string foo;"
+                            "     repeated int32 array;"
+                            "}",
+                            "TestProtobuf",
+                            TestProtobufEventArgs)
+
 class TestEventArgs : public Core::EventArgs
 {
     public:
@@ -38,7 +46,7 @@ class TestEventArgs : public Core::EventArgs
         }
 
     protected:
-        MAIA_CORE_EVENT_ARGS_DEFINE("(tsi)", TestEventArgs)
+        MAIA_CORE_EVENT_ARGS_CONSTRUCTOR("(tsi)", TestEventArgs)
 
         TestEventArgs (unsigned long inData, const Glib::ustring& inFoo, int inCount) :
             TestEventArgs ()
@@ -139,6 +147,50 @@ bool
 TestEvent::on_publish ()
 {
     static int cpt = 0;
+
+    Glib::RefPtr<TestProtobufEventArgs> pProtobufArgs = TestProtobufEventArgs::create ();
+    Core::EventArgs::Fields fields = pProtobufArgs->fields ();
+    fields["data"] = (unsigned long long)1234;
+    fields["foo"] = (Glib::ustring)"toto";
+    fields["array"].push_back (23);
+    fields["array"].push_back (45);
+    fields["array"].push_back (67);
+
+    unsigned long long data = fields["data"];
+    Glib::ustring foo = fields["foo"];
+
+    g_assert (data == 1234);
+    g_assert (foo == "toto");
+    g_assert ((int)fields["array"][0] == 23);
+    g_assert ((int)fields["array"][1] == 45);
+    g_assert ((int)fields["array"][2] == 67);
+
+    std::vector<int> array = fields["array"];
+    g_assert (array[0] == 23);
+    g_assert (array[1] == 45);
+    g_assert (array[2] == 67);
+
+    std::vector<int> val;
+    val.push_back (98);
+    val.push_back (76);
+    val.push_back (54);
+    fields["array"] = val;
+
+    g_assert ((int)fields["array"][0] == 98);
+    g_assert ((int)fields["array"][1] == 76);
+    g_assert ((int)fields["array"][2] == 54);
+
+    Glib::RefPtr<TestProtobufEventArgs> pProtobufArgs2 = TestProtobufEventArgs::create ("data", 1234ULL, "foo", "toto", "array", val);
+    Core::EventArgs::Fields fields2 = pProtobufArgs2->fields ();
+    unsigned long long data2 = fields2["data"];
+    Glib::ustring foo2 = fields2["foo"];
+    std::vector<int> array2 = fields2["array"];
+
+    g_assert (data2 == 1234);
+    g_assert (foo2 == "toto");
+    g_assert (array2[0] == 98);
+    g_assert (array2[1] == 76);
+    g_assert (array2[2] == 54);
 
     Glib::RefPtr<TestEventArgs> pArgs = TestEventArgs::create (1245, "toto", ++cpt);
     g_test_message ("Send test-event \"toto\" 1245 %i %u", cpt, G_OBJECT (Core::EventBus::get_default ()->gobj ())->ref_count);

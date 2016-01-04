@@ -37,7 +37,7 @@ namespace Maia
         _CLASS_GOBJECT(Model, MaiaModel, MAIA_MODEL, Core::Object, MaiaCoreObject)
         _IMPLEMENTS_INTERFACE(Manifest::Element)
 
-        _IGNORE(maia_model_set_values, maia_model_set_valuesv, maia_model_construct_model, maia_model_new_filter, maia_model_construct_model_filter)
+        _IGNORE(maia_model_append_values, maia_model_append_valuesv, maia_model_set_values, maia_model_set_valuesv, maia_model_construct_model, maia_model_new_filter, maia_model_construct_model_filter, maia_model_construct_model_with_columns)
 
         protected:
             _CTOR_DEFAULT()
@@ -69,6 +69,9 @@ namespace Maia
 
             _IGNORE (maia_model_append_row)
             Model::iterator append_row ();
+
+            template<typename T, typename... Args>
+            inline Model::iterator append_values (const T& inValue, Args... inArgs);
 
             _IGNORE (maia_model_remove_row)
             void remove_row (const Model::iterator& inIter);
@@ -135,6 +138,7 @@ namespace Maia
             _WRAP_METHOD(int get_column () const, maia_model_column_get_column)
             _WRAP_METHOD(void set_column (int inColumn) const, maia_model_column_set_column)
             _WRAP_METHOD(Glib::ustring get_column_type () const, maia_model_column_get_column_type)
+            _WRAP_METHOD(void set_column_type (const Glib::ustring& inValue), maia_model_column_set_column_type)
 
             _IGNORE(maia_model_column_get)
             _IGNORE(maia_model_column_set)
@@ -157,6 +161,7 @@ namespace Maia
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
             ModelIterator (Model* inpModel, unsigned int inRow);
             ModelIterator ();
+            virtual ~ModelIterator ();
 #endif
             Model::iterator& operator++ ();
             const Model::iterator operator++ (int inCount);
@@ -171,6 +176,177 @@ namespace Maia
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
             Model*       m_pModel;
             unsigned int m_Row;
+            int          m_CurrentColumn;
+            int          m_Size;
+            int*         m_Columns;
+            GValue*      m_Values;
+
+            template<typename T>
+            void append_values (const T& inValue)
+            {
+                if (m_CurrentColumn != -1)
+                {
+                    set_value (inValue);
+                    m_CurrentColumn = -1;
+                }
+
+                append ();
+            }
+
+            void append_values (const char* inValue)
+            {
+                if (m_CurrentColumn != -1)
+                {
+                    set_value ((Glib::ustring)inValue);
+                    m_CurrentColumn = -1;
+                }
+
+                append ();
+            }
+
+            void append_values (const Glib::ustring& inValue)
+            {
+                if (m_CurrentColumn != -1)
+                {
+                    set_value (inValue);
+                    m_CurrentColumn = -1;
+                }
+
+                append ();
+            }
+
+            template<typename... Args>
+            void append_values (const Glib::ustring& inColumnName, Args... inArgs)
+            {
+                int column = -1;
+                MaiaModelColumn* pColumn = maia_model_get (m_pModel->gobj (), inColumnName.c_str ());
+                if (pColumn)
+                {
+                    column = maia_model_column_get_column (pColumn);
+                }
+
+                if (m_CurrentColumn == -1 && column != -1)
+                {
+                    m_CurrentColumn = column;
+                    grow ();
+                }
+                else if (m_CurrentColumn != -1)
+                {
+                    set_value (inColumnName);
+                    m_CurrentColumn = -1;
+                }
+                else
+                {
+                    m_CurrentColumn = -1;
+                }
+
+                append_values (inArgs...);
+            }
+
+            template<typename... Args>
+            void append_values (const char* inColumnName, Args... inArgs)
+            {
+                int column = -1;
+                MaiaModelColumn* pColumn = maia_model_get (m_pModel->gobj (), inColumnName);
+                if (pColumn)
+                {
+                    column = maia_model_column_get_column (pColumn);
+                }
+
+                if (m_CurrentColumn == -1 && column != -1)
+                {
+                    m_CurrentColumn = column;
+                    grow ();
+                }
+                else if (m_CurrentColumn != -1)
+                {
+                    set_value ((Glib::ustring)inColumnName);
+                    m_CurrentColumn = -1;
+                }
+                else
+                {
+                    m_CurrentColumn = -1;
+                }
+
+                append_values (inArgs...);
+            }
+
+            template<typename T, typename... Args>
+            void append_values (const T& inValue, Args... inArgs)
+            {
+                if (m_CurrentColumn != -1)
+                {
+                    set_value (inValue);
+                    m_CurrentColumn = -1;
+                }
+
+                append_values (inArgs...);
+            }
+
+            void clear ()
+            {
+                if (m_Size > 0)
+                {
+                    m_Size = 0;
+                    g_free (m_Columns); m_Columns = 0;
+                    g_free (m_Values); m_Values = 0;
+                }
+                m_CurrentColumn = -1;
+            }
+
+            void grow ()
+            {
+                m_Size++;
+                if (m_Size == 1)
+                {
+                    m_Columns = g_new (int, m_Size);
+                    m_Values = g_new (GValue, m_Size);
+                    m_Values[m_Size - 1] = G_VALUE_INIT;
+                }
+                else
+                {
+                    m_Columns = g_renew (int, m_Columns, m_Size);
+                    m_Values = g_renew (GValue, m_Values, m_Size);
+                    m_Values[m_Size - 1] = G_VALUE_INIT;
+                }
+            }
+
+            void append ()
+            {
+                if (m_Size > 0)
+                {
+                    unsigned int row;
+                    if (maia_model_append_valuesv (m_pModel->gobj (), &row, m_Columns, m_Size, m_Values, m_Size))
+                    {
+                        m_Row = row;
+                    }
+                    clear ();
+                }
+            }
+
+            void update ()
+            {
+                if (m_Size > 0)
+                {
+                    maia_model_set_valuesv (m_pModel->gobj (), m_Row, m_Columns, m_Size, m_Values, m_Size);
+                    clear ();
+                }
+            }
+
+            template<typename T>
+            void set_value (const T& m_Value)
+            {
+                if (m_CurrentColumn != -1)
+                {
+                    Glib::Value<T> value;
+                    value.init (Glib::Value<T>::value_type ());
+                    value.set(m_Value);
+
+                    g_value_init (&m_Values[m_Size - 1], G_VALUE_TYPE (value.gobj ()));
+                    g_value_copy (value.gobj(), &m_Values[m_Size - 1]);
+                    m_Columns[m_Size - 1] = m_CurrentColumn;
+                }
+            }
 #endif
 
         private:
@@ -214,13 +390,95 @@ namespace Maia
                 return ModelRowProxy (maia_model_get (m_pModel->gobj (), inColumnName.c_str ()), m_Row);
             }
 
-            void set_values (...) const
+            template<typename T>
+            void set_values (const T& inValue)
             {
-                va_list var_args;
+                if (m_CurrentColumn != -1)
+                {
+                    set_value (inValue);
+                    m_CurrentColumn = -1;
+                }
 
-                va_start (var_args, this);
-                maia_model_set_valuesv (m_pModel->gobj (), m_Row, var_args);
-                va_end (var_args);
+                update ();
+            }
+
+            void set_values (const char* inValue)
+            {
+                if (m_CurrentColumn != -1)
+                {
+                    set_value ((Glib::ustring)inValue);
+                    m_CurrentColumn = -1;
+                }
+
+                update ();
+            }
+
+            template<typename... Args>
+            void set_values (const Glib::ustring& inColumnName, Args... inArgs)
+            {
+                int column = -1;
+                MaiaModelColumn* pColumn = maia_model_get (m_pModel->gobj (), inColumnName.c_str ());
+                if (pColumn)
+                {
+                    column = maia_model_column_get_column (pColumn);
+                }
+
+                if (m_CurrentColumn == -1 && column != -1)
+                {
+                    m_CurrentColumn = column;
+                    grow ();
+                }
+                else if (m_CurrentColumn != -1)
+                {
+                    set_value (inColumnName);
+                    m_CurrentColumn = -1;
+                }
+                else
+                {
+                    m_CurrentColumn = -1;
+                }
+
+                set_values (inArgs...);
+            }
+
+            template<typename... Args>
+            void set_values (const char* inColumnName, Args... inArgs)
+            {
+                int column = -1;
+                MaiaModelColumn* pColumn = maia_model_get (m_pModel->gobj (), inColumnName);
+                if (pColumn)
+                {
+                    column = maia_model_column_get_column (pColumn);
+                }
+
+                if (m_CurrentColumn == -1 && column != -1)
+                {
+                    m_CurrentColumn = column;
+                    grow ();
+                }
+                else if (m_CurrentColumn != -1)
+                {
+                    set_value ((Glib::ustring)inColumnName);
+                    m_CurrentColumn = -1;
+                }
+                else
+                {
+                    m_CurrentColumn = -1;
+                }
+
+                set_values (inArgs...);
+            }
+
+            template<typename T, typename... Args>
+            void set_values (const T& inValue, Args... inArgs)
+            {
+                if (m_CurrentColumn != -1)
+                {
+                    set_value (inValue);
+                    m_CurrentColumn = -1;
+                }
+
+                set_values (inArgs...);
             }
     };
 
@@ -243,6 +501,17 @@ namespace Maia
         private:
             Model* m_pModel;
     };
+
+    template<typename T, typename... Args>
+    inline Model::iterator Model::append_values (const T& inValue, Args... inArgs)
+    {
+        Model::iterator iter(this, get_nb_rows ());
+
+        iter.append_values (inValue, inArgs...);
+
+        return iter;
+    }
+
 
     inline void Model::clear ()
     {

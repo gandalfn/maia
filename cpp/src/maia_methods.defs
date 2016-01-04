@@ -531,6 +531,30 @@
   (gtype-id "MAIA_TYPE_GRAPHIC_REGION")
 )
 
+(define-object MaiaGraphicRenderer
+  (parent "MaiaCoreObject")
+  (c-name "MaiaGraphicRenderer")
+  (gtype-id "MAIA_TYPE_GRAPHIC_RENDERER")
+)
+
+(define-object MaiaGraphicGLRenderer
+  (parent "MaiaGraphicRenderer")
+  (c-name "MaiaGraphicGLRenderer")
+  (gtype-id "MAIA_TYPE_GRAPHIC_GLRENDERER")
+)
+
+(define-object MaiaGraphicRendererInitializeNotification
+  (parent "MaiaCoreNotification")
+  (c-name "MaiaGraphicRendererInitializeNotification")
+  (gtype-id "MAIA_TYPE_GRAPHIC_RENDERER_INITIALIZE_NOTIFICATION")
+)
+
+(define-object MaiaGraphicRendererNewFrameNotification
+  (parent "MaiaCoreNotification")
+  (c-name "MaiaGraphicRendererNewFrameNotification")
+  (gtype-id "MAIA_TYPE_GRAPHIC_RENDERER_NEW_FRAME_NOTIFICATION")
+)
+
 (define-object MaiaGraphicSurface
   (parent "MaiaGraphicPattern")
   (c-name "MaiaGraphicSurface")
@@ -794,6 +818,12 @@
   (parent "MaiaItem")
   (c-name "MaiaRectangle")
   (gtype-id "MAIA_TYPE_RECTANGLE")
+)
+
+(define-object MaiaRendererView
+  (parent "MaiaGroup")
+  (c-name "MaiaRendererView")
+  (gtype-id "MAIA_TYPE_RENDERER_VIEW")
 )
 
 (define-object MaiaReport
@@ -1107,6 +1137,7 @@
     '("invalid-option" "MAIA_PROTOCOL_ERROR_INVALID_OPTION")
     '("invalid-default-value" "MAIA_PROTOCOL_ERROR_INVALID_DEFAULT_VALUE")
     '("missing-message" "MAIA_PROTOCOL_ERROR_MISSING_MESSAGE")
+    '("invalid-field" "MAIA_PROTOCOL_ERROR_INVALID_FIELD")
   )
 )
 
@@ -1277,6 +1308,27 @@
     '("a8" "MAIA_GRAPHIC_SURFACE_FORMAT_A8")
     '("rgb24" "MAIA_GRAPHIC_SURFACE_FORMAT_RGB24")
     '("argb32" "MAIA_GRAPHIC_SURFACE_FORMAT_ARGB32")
+  )
+)
+
+(define-enum MaiaGraphicGLRendererAttribute
+  (c-name "MaiaGraphicGLRendererAttribute")
+  (gtype-id "MAIA_TYPE_GRAPHIC_GLRENDERER_ATTRIBUTE")
+  (values
+    '("buffer-size" "MAIA_GRAPHIC_GL_RENDERER_ATTRIBUTE_BUFFER_SIZE")
+    '("doublebuffer" "MAIA_GRAPHIC_GL_RENDERER_ATTRIBUTE_DOUBLEBUFFER")
+    '("stereo" "MAIA_GRAPHIC_GL_RENDERER_ATTRIBUTE_STEREO")
+    '("aux-buffers" "MAIA_GRAPHIC_GL_RENDERER_ATTRIBUTE_AUX_BUFFERS")
+    '("red-size" "MAIA_GRAPHIC_GL_RENDERER_ATTRIBUTE_RED_SIZE")
+    '("green-size" "MAIA_GRAPHIC_GL_RENDERER_ATTRIBUTE_GREEN_SIZE")
+    '("blue-size" "MAIA_GRAPHIC_GL_RENDERER_ATTRIBUTE_BLUE_SIZE")
+    '("alpha-size" "MAIA_GRAPHIC_GL_RENDERER_ATTRIBUTE_ALPHA_SIZE")
+    '("depth-size" "MAIA_GRAPHIC_GL_RENDERER_ATTRIBUTE_DEPTH_SIZE")
+    '("stencil-size" "MAIA_GRAPHIC_GL_RENDERER_ATTRIBUTE_STENCIL_SIZE")
+    '("accum-red-size" "MAIA_GRAPHIC_GL_RENDERER_ATTRIBUTE_ACCUM_RED_SIZE")
+    '("accum-green-size" "MAIA_GRAPHIC_GL_RENDERER_ATTRIBUTE_ACCUM_GREEN_SIZE")
+    '("accum-blue-size" "MAIA_GRAPHIC_GL_RENDERER_ATTRIBUTE_ACCUM_BLUE_SIZE")
+    '("accum-alpha-size" "MAIA_GRAPHIC_GL_RENDERER_ATTRIBUTE_ACCUM_ALPHA_SIZE")
   )
 )
 
@@ -5364,6 +5416,18 @@
   (return-type "const-gchar*")
 )
 
+(define-method get_line
+  (of-object "MaiaCoreParser")
+  (c-name "maia_core_parser_get_line")
+  (return-type "gint")
+)
+
+(define-method get_column
+  (of-object "MaiaCoreParser")
+  (c-name "maia_core_parser_get_column")
+  (return-type "gint")
+)
+
 (define-method next
   (of-object "MaiaCoreParserIterator")
   (c-name "maia_core_parser_iterator_next")
@@ -7423,19 +7487,9 @@
   (c-name "maia_core_event_args_register_protocol")
   (return-type "none")
   (parameters
-    '("GType" "inType")
+    '("const-gchar*" "inTypeName")
     '("const-gchar*" "inMessage")
     '("const-gchar*" "inBuffer")
-  )
-)
-
-(define-function maia_core_event_args_register_protocol_from_filename
-  (c-name "maia_core_event_args_register_protocol_from_filename")
-  (return-type "none")
-  (parameters
-    '("GType" "inType")
-    '("const-gchar*" "inMessage")
-    '("const-gchar*" "inFilename")
   )
 )
 
@@ -7445,6 +7499,12 @@
   (parameters
     '("GType" "object_type")
   )
+)
+
+(define-method get_protocol_buffer_message
+  (of-object "MaiaCoreEventArgs")
+  (c-name "maia_core_event_args_get_protocol_buffer_message")
+  (return-type "none")
 )
 
 (define-method accumulate
@@ -7460,6 +7520,33 @@
   (of-object "MaiaCoreEventArgs")
   (c-name "maia_core_event_args_copy")
   (return-type "MaiaCoreEventArgs*")
+)
+
+(define-method contains
+  (of-object "MaiaCoreEventArgs")
+  (c-name "maia_core_event_args_contains")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-method is_array
+  (of-object "MaiaCoreEventArgs")
+  (c-name "maia_core_event_args_is_array")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-method get_field_length
+  (of-object "MaiaCoreEventArgs")
+  (c-name "maia_core_event_args_get_field_length")
+  (return-type "gint")
+  (parameters
+    '("const-gchar*" "inName")
+  )
 )
 
 (define-method get
@@ -7479,6 +7566,25 @@
   (parameters
     '("const-gchar*" "inName")
     '("gint" "inIndex")
+    '("GValue*" "inVal")
+  )
+)
+
+(define-method clear
+  (of-object "MaiaCoreEventArgs")
+  (c-name "maia_core_event_args_clear")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-method add_value
+  (of-object "MaiaCoreEventArgs")
+  (c-name "maia_core_event_args_add_value")
+  (return-type "gint")
+  (parameters
+    '("const-gchar*" "inName")
     '("GValue*" "inVal")
   )
 )
@@ -7525,6 +7631,29 @@
   )
 )
 
+(define-function maia_core_event_listener_new_with_hash
+  (c-name "maia_core_event_listener_new_with_hash")
+  (return-type "MaiaCoreEventListener*")
+  (parameters
+    '("const-gchar*" "inName")
+    '("void*" "inOwner")
+    '("MaiaCoreEventHandler" "inHandler")
+    '("void*" "inHandler_target")
+  )
+)
+
+(define-function maia_core_event_listener_construct_with_hash
+  (c-name "maia_core_event_listener_construct_with_hash")
+  (return-type "MaiaCoreEventListener*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+    '("void*" "inOwner")
+    '("MaiaCoreEventHandler" "inHandler")
+    '("void*" "inHandler_target")
+  )
+)
+
 (define-method listener_new_object
   (of-object "MaiaCoreEvent")
   (c-name "maia_core_event_listener_new_object")
@@ -7541,6 +7670,29 @@
   (parameters
     '("GType" "object_type")
     '("MaiaCoreEvent*" "inEvent")
+    '("MaiaCoreEventHandler" "inHandler")
+    '("void*" "inHandler_target")
+  )
+)
+
+(define-function maia_core_event_listener_new_with_hash_object
+  (c-name "maia_core_event_listener_new_with_hash_object")
+  (return-type "MaiaCoreEventListener*")
+  (parameters
+    '("const-gchar*" "inName")
+    '("void*" "inOwner")
+    '("MaiaCoreEventHandler" "inHandler")
+    '("void*" "inHandler_target")
+  )
+)
+
+(define-function maia_core_event_listener_construct_with_hash_object
+  (c-name "maia_core_event_listener_construct_with_hash_object")
+  (return-type "MaiaCoreEventListener*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+    '("void*" "inOwner")
     '("MaiaCoreEventHandler" "inHandler")
     '("void*" "inHandler_target")
   )
@@ -7758,10 +7910,38 @@
   (return-type "none")
 )
 
+(define-method start
+  (of-object "MaiaCoreTask")
+  (c-name "maia_core_task_start")
+  (return-type "none")
+)
+
 (define-method cancel
   (of-object "MaiaCoreTask")
   (c-name "maia_core_task_cancel")
   (return-type "none")
+)
+
+(define-method add_start_object_observer
+  (of-object "MaiaCoreTask")
+  (c-name "maia_core_task_add_start_object_observer")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreTaskCallback" "inCallback")
+    '("void*" "inCallback_target")
+    '("GMainContext*" "inContext")
+  )
+)
+
+(define-method add_start_observer
+  (of-object "MaiaCoreTask")
+  (c-name "maia_core_task_add_start_observer")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreTaskCallback" "inCallback")
+    '("void*" "inCallback_target")
+    '("GMainContext*" "inContext")
+  )
 )
 
 (define-method add_finish_object_observer
@@ -8079,6 +8259,36 @@
   )
 )
 
+(define-method get_message
+  (of-object "MaiaProtocolBuffer")
+  (c-name "maia_protocol_buffer_get_message")
+  (return-type "const-gchar*")
+)
+
+(define-method get_attribute_name
+  (of-object "MaiaProtocolBuffer")
+  (c-name "maia_protocol_buffer_get_attribute_name")
+  (return-type "const-gchar*")
+)
+
+(define-method get_attribute_rule
+  (of-object "MaiaProtocolBuffer")
+  (c-name "maia_protocol_buffer_get_attribute_rule")
+  (return-type "const-gchar*")
+)
+
+(define-method get_attribute_type
+  (of-object "MaiaProtocolBuffer")
+  (c-name "maia_protocol_buffer_get_attribute_type")
+  (return-type "const-gchar*")
+)
+
+(define-method get_attribute_options
+  (of-object "MaiaProtocolBuffer")
+  (c-name "maia_protocol_buffer_get_attribute_options")
+  (return-type "const-gchar*")
+)
+
 (define-function maia_protocol_buffer_child_get_type
   (c-name "maia_protocol_buffer_child_get_type")
   (return-type "GType")
@@ -8138,6 +8348,24 @@
   )
 )
 
+(define-method is_array
+  (of-object "MaiaProtocolMessage")
+  (c-name "maia_protocol_message_is_array")
+  (return-type "gboolean")
+  (parameters
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-method get_field_length
+  (of-object "MaiaProtocolMessage")
+  (c-name "maia_protocol_message_get_field_length")
+  (return-type "gint")
+  (parameters
+    '("const-gchar*" "inName")
+  )
+)
+
 (define-method get
   (of-object "MaiaProtocolMessage")
   (c-name "maia_protocol_message_get")
@@ -8156,6 +8384,15 @@
     '("const-gchar*" "inName")
     '("gint" "inIndex")
     '("GValue*" "inValue")
+  )
+)
+
+(define-method clear
+  (of-object "MaiaProtocolMessage")
+  (c-name "maia_protocol_message_clear")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inName")
   )
 )
 
@@ -11758,6 +11995,201 @@
     '("GType" "object_type")
     '("const-gchar*" "inFilename")
     '("MaiaGraphicSize*" "inSize")
+  )
+)
+
+(define-function maia_graphic_renderer_get_type
+  (c-name "maia_graphic_renderer_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_graphic_renderer_new
+  (c-name "maia_graphic_renderer_new")
+  (is-constructor-of "MaiaGraphicRenderer")
+  (return-type "MaiaGraphicRenderer*")
+  (parameters
+    '("MaiaGraphicSize*" "inSize")
+  )
+)
+
+(define-function maia_graphic_renderer_construct
+  (c-name "maia_graphic_renderer_construct")
+  (return-type "MaiaGraphicRenderer*")
+  (parameters
+    '("GType" "object_type")
+    '("MaiaGraphicSize*" "inSize")
+  )
+)
+
+(define-method start
+  (of-object "MaiaGraphicRenderer")
+  (c-name "maia_graphic_renderer_start")
+  (return-type "none")
+)
+
+(define-method render
+  (of-object "MaiaGraphicRenderer")
+  (c-name "maia_graphic_renderer_render")
+  (return-type "none")
+  (parameters
+    '("guint" "inFrameNum")
+  )
+)
+
+(define-method get_surface
+  (of-object "MaiaGraphicRenderer")
+  (c-name "maia_graphic_renderer_get_surface")
+  (return-type "MaiaGraphicSurface*")
+)
+
+(define-method get_size
+  (of-object "MaiaGraphicRenderer")
+  (c-name "maia_graphic_renderer_get_size")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "result")
+  )
+)
+
+(define-method set_size
+  (of-object "MaiaGraphicRenderer")
+  (c-name "maia_graphic_renderer_set_size")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "value")
+  )
+)
+
+(define-function maia_graphic_renderer_initialize_notification_get_type
+  (c-name "maia_graphic_renderer_initialize_notification_get_type")
+  (return-type "GType")
+)
+
+(define-method get_initialize
+  (of-object "MaiaGraphicRenderer")
+  (c-name "maia_graphic_renderer_get_initialize")
+  (return-type "MaiaGraphicRendererInitializeNotification*")
+)
+
+(define-function maia_graphic_renderer_new_frame_notification_get_type
+  (c-name "maia_graphic_renderer_new_frame_notification_get_type")
+  (return-type "GType")
+)
+
+(define-method get_new_frame
+  (of-object "MaiaGraphicRenderer")
+  (c-name "maia_graphic_renderer_get_new_frame")
+  (return-type "MaiaGraphicRendererNewFrameNotification*")
+)
+
+(define-function maia_graphic_renderer_initialize_notification_new
+  (c-name "maia_graphic_renderer_initialize_notification_new")
+  (is-constructor-of "MaiaGraphicRendererInitializeNotification")
+  (return-type "MaiaGraphicRendererInitializeNotification*")
+  (parameters
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-function maia_graphic_renderer_initialize_notification_construct
+  (c-name "maia_graphic_renderer_initialize_notification_construct")
+  (return-type "MaiaGraphicRendererInitializeNotification*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-method get_size
+  (of-object "MaiaGraphicRendererInitializeNotification")
+  (c-name "maia_graphic_renderer_initialize_notification_get_size")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "result")
+  )
+)
+
+(define-method set_size
+  (of-object "MaiaGraphicRendererInitializeNotification")
+  (c-name "maia_graphic_renderer_initialize_notification_set_size")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "value")
+  )
+)
+
+(define-function maia_graphic_renderer_new_frame_notification_new
+  (c-name "maia_graphic_renderer_new_frame_notification_new")
+  (is-constructor-of "MaiaGraphicRendererNewFrameNotification")
+  (return-type "MaiaGraphicRendererNewFrameNotification*")
+  (parameters
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-function maia_graphic_renderer_new_frame_notification_construct
+  (c-name "maia_graphic_renderer_new_frame_notification_construct")
+  (return-type "MaiaGraphicRendererNewFrameNotification*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-method get_num_frame
+  (of-object "MaiaGraphicRendererNewFrameNotification")
+  (c-name "maia_graphic_renderer_new_frame_notification_get_num_frame")
+  (return-type "guint")
+)
+
+(define-method set_num_frame
+  (of-object "MaiaGraphicRendererNewFrameNotification")
+  (c-name "maia_graphic_renderer_new_frame_notification_set_num_frame")
+  (return-type "none")
+  (parameters
+    '("guint" "value")
+  )
+)
+
+(define-function maia_graphic_gl_renderer_get_type
+  (c-name "maia_graphic_gl_renderer_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_graphic_gl_renderer_attribute_get_type
+  (c-name "maia_graphic_gl_renderer_attribute_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_graphic_gl_renderer_new
+  (c-name "maia_graphic_gl_renderer_new")
+  (is-constructor-of "MaiaGraphicGlRenderer")
+  (return-type "MaiaGraphicGLRenderer*")
+  (parameters
+    '("MaiaGraphicSize*" "inSize")
+    '("guint32*" "inAttributes")
+    '("int" "inAttributes_length1")
+  )
+)
+
+(define-function maia_graphic_gl_renderer_construct
+  (c-name "maia_graphic_gl_renderer_construct")
+  (return-type "MaiaGraphicGLRenderer*")
+  (parameters
+    '("GType" "object_type")
+    '("MaiaGraphicSize*" "inSize")
+    '("guint32*" "inAttributes")
+    '("int" "inAttributes_length1")
+  )
+)
+
+(define-method init
+  (of-object "MaiaGraphicGLRenderer")
+  (c-name "maia_graphic_gl_renderer_init")
+  (return-type "none")
+  (parameters
+    '("guint32*" "inAttributes")
+    '("int" "inAttributes_length1")
   )
 )
 
@@ -17671,7 +18103,23 @@
   (return-type "none")
   (parameters
     '("guint" "inRow")
-    '("va_list" "inList")
+    '("gint*" "inColumns")
+    '("int" "inColumns_length1")
+    '("GValue*" "inValue")
+    '("int" "inValue_length1")
+  )
+)
+
+(define-method append_valuesv
+  (of-object "MaiaModel")
+  (c-name "maia_model_append_valuesv")
+  (return-type "gboolean")
+  (parameters
+    '("guint*" "outRow")
+    '("gint*" "inColumns")
+    '("int" "inColumns_length1")
+    '("GValue*" "inValue")
+    '("int" "inValue_length1")
   )
 )
 
@@ -17697,6 +18145,16 @@
   (of-object "MaiaModel")
   (c-name "maia_model_refilter")
   (return-type "none")
+)
+
+(define-method append_values
+  (of-object "MaiaModel")
+  (c-name "maia_model_append_values")
+  (return-type "gboolean")
+  (parameters
+    '("guint*" "outRow")
+  )
+  (varargs #t)
 )
 
 (define-method set_values
@@ -19945,6 +20403,76 @@
   (return-type "none")
   (parameters
     '("MaiaGraphicRectangle*" "value")
+  )
+)
+
+(define-function maia_renderer_view_get_type
+  (c-name "maia_renderer_view_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_renderer_view_new
+  (c-name "maia_renderer_view_new")
+  (is-constructor-of "MaiaRendererView")
+  (return-type "MaiaRendererView*")
+  (parameters
+    '("const-gchar*" "inId")
+    '("MaiaGraphicRenderer*" "inRenderer")
+  )
+)
+
+(define-function maia_renderer_view_construct
+  (c-name "maia_renderer_view_construct")
+  (return-type "MaiaRendererView*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+    '("MaiaGraphicRenderer*" "inRenderer")
+  )
+)
+
+(define-method get_frame_rate
+  (of-object "MaiaRendererView")
+  (c-name "maia_renderer_view_get_frame_rate")
+  (return-type "guint")
+)
+
+(define-method set_frame_rate
+  (of-object "MaiaRendererView")
+  (c-name "maia_renderer_view_set_frame_rate")
+  (return-type "none")
+  (parameters
+    '("guint" "value")
+  )
+)
+
+(define-method get_nb_frames
+  (of-object "MaiaRendererView")
+  (c-name "maia_renderer_view_get_nb_frames")
+  (return-type "guint")
+)
+
+(define-method set_nb_frames
+  (of-object "MaiaRendererView")
+  (c-name "maia_renderer_view_set_nb_frames")
+  (return-type "none")
+  (parameters
+    '("guint" "value")
+  )
+)
+
+(define-method get_renderer
+  (of-object "MaiaRendererView")
+  (c-name "maia_renderer_view_get_renderer")
+  (return-type "MaiaGraphicRenderer*")
+)
+
+(define-method set_renderer
+  (of-object "MaiaRendererView")
+  (c-name "maia_renderer_view_set_renderer")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRenderer*" "value")
   )
 )
 

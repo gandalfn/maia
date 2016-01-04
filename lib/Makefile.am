@@ -112,6 +112,8 @@ libmaia_la_SOURCES = \
     graphic/image-jpg.vala \
     graphic/image-svg.vala \
     graphic/image-gif.vala \
+    graphic/renderer.vala \
+    graphic/gl-renderer.vala \
     cassowary/abstract-variable.vala \
     cassowary/box.vala \
     cassowary/cassowary.vala \
@@ -187,7 +189,8 @@ libmaia_la_SOURCES = \
     chart-point.vala \
     chart-view.vala \
     chart.vala \
-    viewport.vala
+    viewport.vala \
+    renderer-view.vala
 
 libmaia_la_VALAFLAGS = \
     --pkg=gvalue-collect \

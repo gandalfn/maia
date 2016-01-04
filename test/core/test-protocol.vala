@@ -27,7 +27,7 @@ public class Maia.TestProtocol : Maia.TestCase
                                          "}";
         static construct
         {
-            Core.EventArgs.register_protocol (typeof (ProtocolEventArgs),
+            Core.EventArgs.register_protocol (typeof (ProtocolEventArgs).name (),
                                               "EventArgsProtocol",
                                               ProtoBuf);
         }
@@ -46,7 +46,7 @@ public class Maia.TestProtocol : Maia.TestCase
 
         static construct
         {
-            Core.EventArgs.register_protocol (typeof (InheritProtocolEventArgs),
+            Core.EventArgs.register_protocol (typeof (InheritProtocolEventArgs).name (),
                                               "InheritEventArgsProtocol",
                                               ProtocolEventArgs.ProtoBuf + ProtoBuf);
         }

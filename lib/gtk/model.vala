@@ -328,50 +328,19 @@ internal class Maia.Gtk.Model : Maia.Model
     internal override bool
     append_row (out uint outRow)
     {
-        unowned global::Gtk.TreeModel? model = m_TreeModel;
-        global::Gtk.TreeIter iter;
-        global::Gtk.TreeIter? parent_iter = null;
-        bool found = false;
-
         outRow = 0;
-        while (!found)
+
+        if (m_TreeModel is global::Gtk.ListStore)
         {
-            if (model is global::Gtk.ListStore)
-            {
-                ((global::Gtk.ListStore)model).append (out iter);
-                return convert_tree_iter_to_row (iter, out outRow);
-            }
-            else if (model is global::Gtk.TreeStore)
-            {
-                ((global::Gtk.TreeStore)model).append (out iter, parent_iter);
-                return convert_tree_iter_to_row (iter, out outRow);
-            }
-            else if (model is global::Gtk.TreeModelFilter)
-            {
-                var parentmodel = ((global::Gtk.TreeModelFilter)model).child_model;
-                if (parent_iter == null)
-                {
-                    if (!parentmodel.get_iter (out parent_iter, ((global::Gtk.TreeModelFilter)model).virtual_root))
-                    {
-                        parent_iter = null;
-                    }
-                }
-                else
-                {
-                    ((global::Gtk.TreeModelFilter)model).convert_iter_to_child_iter (out parent_iter, parent_iter);
-                }
-                model = parentmodel;
-                found = true;
-            }
-            else if (treemodel is global::Gtk.TreeModelSort)
-            {
-                var parentmodel = ((global::Gtk.TreeModelSort)treemodel).child_model;
-                treemodel = parentmodel;
-            }
-            else
-            {
-                found = true;
-            }
+            global::Gtk.TreeIter iter;
+            ((global::Gtk.ListStore)m_TreeModel).append (out iter);
+            return convert_tree_iter_to_row (iter, out outRow);
+        }
+        else if (m_TreeModel is global::Gtk.TreeStore)
+        {
+            global::Gtk.TreeIter iter;
+            ((global::Gtk.TreeStore)m_TreeModel).append (out iter, null);
+            return convert_tree_iter_to_row (iter, out outRow);
         }
 
         return false;
@@ -417,40 +386,33 @@ internal class Maia.Gtk.Model : Maia.Model
         }
     }
 
+    internal override bool
+    append_valuesv (out uint outRow, int[] inColumns, GLib.Value[] inValues)
+    {
+        outRow = 0;
+
+        if (m_TreeModel is global::Gtk.ListStore)
+        {
+            global::Gtk.TreeIter iter;
+            ((global::Gtk.ListStore)m_TreeModel).insert_with_valuesv (out iter, -1, inColumns, inValues);
+            return convert_tree_iter_to_row (iter, out outRow);
+        }
+        else if (m_TreeModel is global::Gtk.TreeStore)
+        {
+            global::Gtk.TreeIter iter;
+            ((global::Gtk.TreeStore)m_TreeModel).insert_with_valuesv (out iter, null, -1, inColumns, inValues);
+            return convert_tree_iter_to_row (iter, out outRow);
+        }
+
+        return false;
+    }
+
     internal override void
-    set_valuesv (uint inRow, va_list inList)
+    set_valuesv (uint inRow, int[] inColumns, GLib.Value[] inValues)
     {
         global::Gtk.TreeIter iter;
         if (m_TreeModel.get_iter_from_string (out iter, "%u".printf (inRow)))
         {
-            int[] columns = {};
-            GLib.Value[] values = {};
-
-            while (true)
-            {
-                // Get column name
-                unowned string? columnName = inList.arg ();
-                if (columnName == null)
-                {
-                    break;
-                }
-                // Get column
-                unowned Column? column = find(GLib.Quark.from_string (columnName), false) as Column;
-                if (column != null)
-                {
-                    // Get value
-                    GLib.Type type_column = m_TreeModel.get_column_type (column.column);
-                    GLib.Value val = GLib.Value (type_column);
-                    string? error = null;
-                    GLib.ValueCollect.get (ref val, inList, 0, ref error);
-                    if (error == null)
-                    {
-                        values += val;
-                        columns += column.column;
-                    }
-                }
-            }
-
             // set values in tree model
             unowned global::Gtk.TreeModel? model = m_TreeModel;
             bool found = false;
@@ -458,12 +420,12 @@ internal class Maia.Gtk.Model : Maia.Model
             {
                 if (model is global::Gtk.ListStore)
                 {
-                    ((global::Gtk.ListStore)model).set_valuesv (iter, columns, values);
+                    ((global::Gtk.ListStore)model).set_valuesv (iter, inColumns, inValues);
                     found = true;
                 }
                 else if (model is global::Gtk.TreeStore)
                 {
-                    ((global::Gtk.TreeStore)model).set_valuesv (iter, columns, values);
+                    ((global::Gtk.TreeStore)model).set_valuesv (iter, inColumns, inValues);
                     found = true;
                 }
                 else if (model is global::Gtk.TreeModelFilter)

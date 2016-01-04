@@ -26,6 +26,7 @@ internal class Maia.Cairo.Region : Graphic.Region
     /**
      * {@inheritDoc}
      */
+    [CCode (notify = false)]
     public override Graphic.Rectangle extents {
         get {
             return ((Rectangle)m_Region.get_extents ()).to_rectangle ();

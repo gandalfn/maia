@@ -22,7 +22,8 @@ public errordomain Maia.ProtocolError
     INVALID_TYPE,
     INVALID_OPTION,
     INVALID_DEFAULT_VALUE,
-    MISSING_MESSAGE
+    MISSING_MESSAGE,
+    INVALID_FIELD
 }
 
 public class Maia.Protocol.Buffer : Core.Parser
@@ -45,31 +46,31 @@ public class Maia.Protocol.Buffer : Core.Parser
     private Attribute?              m_CurrentAttribute = null;
 
     // accessors
-    internal string message {
+    public string message {
         get {
             return m_CurrentMessage;
         }
     }
 
-    internal string attribute_name {
+    public string attribute_name {
         get {
             return m_CurrentAttribute != null ? m_CurrentAttribute.name : null;
         }
     }
 
-    internal string attribute_rule {
+    public string attribute_rule {
         get {
             return m_CurrentAttribute != null ? m_CurrentAttribute.rule : null;
         }
     }
 
-    internal string attribute_type {
+    public string attribute_type {
         get {
             return m_CurrentAttribute != null ? m_CurrentAttribute.type : null;
         }
     }
 
-    internal string attribute_options {
+    public string attribute_options {
         get {
             return m_CurrentAttribute != null ? m_CurrentAttribute.options : null;
         }

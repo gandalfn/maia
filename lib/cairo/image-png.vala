@@ -23,6 +23,7 @@ internal class Maia.Cairo.ImagePng : Graphic.ImagePng
     private Graphic.Surface   m_Surface   = null;
 
     // accessors
+    [CCode (notify = false)]
     public override string? filename {
         get {
             return base.filename;
@@ -36,6 +37,7 @@ internal class Maia.Cairo.ImagePng : Graphic.ImagePng
         }
     }
 
+    [CCode (notify = false)]
     public override Graphic.Size size {
         get {
             if (base.size.is_empty ())
@@ -56,6 +58,7 @@ internal class Maia.Cairo.ImagePng : Graphic.ImagePng
         }
     }
 
+    [CCode (notify = false)]
     public override Graphic.Transform transform {
         get {
             return base.transform;

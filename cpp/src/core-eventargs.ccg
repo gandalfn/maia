@@ -63,6 +63,25 @@ namespace Maia
             }
         }
 
+        EventArgs::EventArgs (Glib::WrapNewFunction inWrapFunc) :
+            Glib::ObjectBase(0),
+            Glib::Object(Glib::ConstructParams(eventargs_class_.init())),
+            m_Signature (""),
+            m_pSerialize (nullptr)
+        {
+            /**
+             * WARNING!!!! TODO
+             * This implementation imply a first instance of derived event args was created before received it
+             * in bus. It works if all class are in same process, but not if event come from another
+             * machine or process
+             */
+            const gpointer idx = g_type_get_qdata(G_OBJECT_TYPE(gobj ()), Glib::quark_);
+            if (!idx)
+            {
+                Glib::wrap_register (G_OBJECT_TYPE(gobj ()), inWrapFunc);
+            }
+        }
+
         EventArgs::EventArgs (const Glib::ustring& inSignature, Glib::WrapNewFunction inWrapFunc) :
             Glib::ObjectBase(0),
             Glib::Object(Glib::ConstructParams(eventargs_class_.init())),

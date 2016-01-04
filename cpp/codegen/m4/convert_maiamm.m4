@@ -239,6 +239,30 @@ _CONVERSION(`const Glib::RefPtr<Device>&',`MaiaGraphicDevice*',__CONVERT_REFPTR_
 _CONVERSION(`MaiaGraphicDevice*',`const Glib::RefPtr<Device>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaGraphicDevice*',`Glib::RefPtr<Device>',`Glib::wrap($3)')
 
+_CONVERSION(`Glib::RefPtr<Renderer>',`MaiaGraphicRenderer*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`Glib::RefPtr<Graphic::Renderer>',`MaiaGraphicRenderer*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Renderer>&',`MaiaGraphicRenderer*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Graphic::Renderer>&',`MaiaGraphicRenderer*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaGraphicRenderer*',`const Glib::RefPtr<Renderer>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicRenderer*',`const Glib::RefPtr<Graphic::Renderer>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicRenderer*',`Glib::RefPtr<Renderer>',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicRenderer*',`Glib::RefPtr<Graphic::Renderer>',`Glib::wrap($3)')
+
+_CONVERSION(`Glib::RefPtr<RendererInitializeNotification>',`MaiaGraphicRendererInitializeNotification*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<RendererInitializeNotification>&',`MaiaGraphicRendererInitializeNotification*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaGraphicRendererInitializeNotification*',`const Glib::RefPtr<RendererInitializeNotification>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicRendererInitializeNotification*',`Glib::RefPtr<RendererInitializeNotification>',`Glib::wrap($3)')
+
+_CONVERSION(`Glib::RefPtr<RendererNewFrameNotification>',`MaiaGraphicRendererNewFrameNotification*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<RendererNewFrameNotification>&',`MaiaGraphicRendererNewFrameNotification*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaGraphicRendererNewFrameNotification*',`const Glib::RefPtr<RendererNewFrameNotification>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicRendererNewFrameNotification*',`Glib::RefPtr<RendererNewFrameNotification>',`Glib::wrap($3)')
+
+_CONVERSION(`Glib::RefPtr<GLRenderer>',`MaiaGraphicGLRenderer*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<GLRenderer>&',`MaiaGraphicGLRenderer*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaGraphicGLRenderer*',`const Glib::RefPtr<GLRenderer>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicGLRenderer*',`Glib::RefPtr<GLRenderer>',`Glib::wrap($3)')
+
 _CONVERSION(`Glib::RefPtr<AttributeBind>',`MaiaManifestAttributeBind*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<AttributeBind>&',`MaiaManifestAttributeBind*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaManifestAttributeBind*',`const Glib::RefPtr<AttributeBind>&',`Glib::wrap($3)')
@@ -283,6 +307,21 @@ _CONVERSION(`Glib::RefPtr<StyleProperty>',`MaiaManifestStyleProperty*',__CONVERT
 _CONVERSION(`const Glib::RefPtr<StyleProperty>&',`MaiaManifestStyleProperty*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaManifestStyleProperty*',`const Glib::RefPtr<StyleProperty>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaManifestStyleProperty*',`Glib::RefPtr<StyleProperty>',`Glib::wrap($3)')
+
+_CONVERSION(`Glib::RefPtr<Buffer>',`MaiaProtocolBuffer*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Buffer>&',`MaiaProtocolBuffer*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaProtocolBuffer*',`const Glib::RefPtr<Buffer>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaProtocolBuffer*',`Glib::RefPtr<Buffer>',`Glib::wrap($3)')
+
+_CONVERSION(`Glib::RefPtr<BufferChild>',`MaiaProtocolBufferChild*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<BufferChild>&',`MaiaProtocolBufferChild*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaProtocolBufferChild*',`const Glib::RefPtr<BufferChild>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaProtocolBufferChild*',`Glib::RefPtr<BufferChild>',`Glib::wrap($3)')
+
+_CONVERSION(`Glib::RefPtr<Message>',`MaiaProtocolMessage*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Message>&',`MaiaProtocolMessage*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaProtocolMessage*',`const Glib::RefPtr<Message>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaProtocolMessage*',`Glib::RefPtr<Message>',`Glib::wrap($3)')
 
 _CONVERSION(`Glib::RefPtr<Drawable>',`MaiaDrawable*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Drawable>&',`MaiaDrawable*',__CONVERT_REFPTR_TO_P)
@@ -349,6 +388,11 @@ _CONVERSION(`const Glib::RefPtr<Toolbox>&',`MaiaToolbox*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaToolbox*',`const Glib::RefPtr<Toolbox>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaToolbox*',`Glib::RefPtr<Toolbox>',`Glib::wrap($3)')
 
+_CONVERSION(`Glib::RefPtr<RendererView>',`MaiaRendererView*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<RendererView>&',`MaiaRendererView*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaRendererView*',`const Glib::RefPtr<RendererView>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaRendererView*',`Glib::RefPtr<RendererView>',`Glib::wrap($3)')
+
 _CONVERSION(`Glib::ustring',`const gchar*',`$3.c_str ()')
 
 _CONVERSION(`PageFormat',`MaiaPageFormat*',`(MaiaPageFormat)$3')
@@ -396,6 +440,10 @@ _CONVERSION(`MaiaChartViewLegendPosition',`ChartViewLegendPosition',`(ChartViewL
 _CONVERSION(`ChartViewFrame',`MaiaChartViewFrame',`(MaiaChartViewFrame)$3')
 _CONVERSION(`MaiaChartViewFrame',`ChartViewFrame',`(ChartViewFrame)$3')
 
+_CONVERSION(`GVariant*',`const Glib::VariantBase&',`Glib::VariantBase ($3)')
+_CONVERSION(`Glib::VariantBase',`GVariant*',`$3.gobj()')
+
+
 _CONV_ENUM(MaiaLog,Level)
 _CONV_ENUM(MaiaLog,Category)
 _CONV_ENUM(MaiaCore,ParserToken)
@@ -409,6 +457,7 @@ _CONV_ENUM(MaiaGraphic,GlyphWrapMode)
 _CONV_ENUM(MaiaGraphic,GlyphEllipsizeMode)
 _CONV_ENUM(MaiaGraphic,SurfaceFormat)
 _CONV_ENUM(MaiaGraphic,LineType)
+_CONV_ENUM(MaiaGraphic,GLRendererAttribute)
 _CONV_ENUM(Maia,Scroll)
 _CONV_ENUM(Maia,Key)
 _CONV_ENUM(Maia,Cursor)

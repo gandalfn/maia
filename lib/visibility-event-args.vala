@@ -34,7 +34,7 @@ public class Maia.VisibilityEventArgs : Maia.Core.EventArgs
     // static methods
     static construct
     {
-        Core.EventArgs.register_protocol (typeof (VisibilityEventArgs),
+        Core.EventArgs.register_protocol (typeof (VisibilityEventArgs).name (),
                                           "Visibility", PROTOBUF);
     }
 

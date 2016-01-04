@@ -1,0 +1,97 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * graphic-renderer.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/core-object.h>
+#include <maiamm/core-notification.h>
+#include <maiamm/graphic-surface.h>
+#include <maiamm/graphic-size.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/core-object_p.h)
+_PINCLUDE(maiamm/private/core-notification_p.h)
+
+namespace Maia
+{
+    namespace Graphic
+    {
+        _GMMPROC_EXTRA_NAMESPACE(Graphic)
+
+        class RendererInitializeNotification : public Core::Notification
+        {
+            _CLASS_GOBJECT(RendererInitializeNotification, MaiaGraphicRendererInitializeNotification, MAIA_GRAPHIC_RENDERER_INITIALIZE_NOTIFICATION, Core::Notification, MaiaCoreNotification)
+
+            protected:
+                _CTOR_DEFAULT()
+
+            public:
+                _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_renderer_initialize_notification_get_size)
+                _WRAP_METHOD(void set_size (const Size& outSize) const, maia_graphic_renderer_initialize_notification_set_size)
+
+                _WRAP_PROPERTY("size", Size)
+        };
+
+        class RendererNewFrameNotification : public Core::Notification
+        {
+            _CLASS_GOBJECT(RendererNewFrameNotification, MaiaGraphicRendererNewFrameNotification, MAIA_GRAPHIC_RENDERER_NEW_FRAME_NOTIFICATION, Core::Notification, MaiaCoreNotification)
+
+            protected:
+                _CTOR_DEFAULT()
+
+            public:
+                _WRAP_METHOD(unsigned int get_num_frame () const, maia_graphic_renderer_new_frame_notification_get_num_frame)
+                _WRAP_METHOD(void set_num_frame (unsigned int inNumFrame) const, maia_graphic_renderer_new_frame_notification_set_num_frame)
+
+                _WRAP_PROPERTY("num-frame", unsigned int)
+        };
+
+        class Renderer : public Core::Object
+        {
+            _CLASS_GOBJECT(Renderer, MaiaGraphicRenderer, MAIA_GRAPHIC_RENDERER, Core::Object, MaiaCoreObject)
+
+            protected:
+                _CTOR_DEFAULT()
+
+                _WRAP_VFUNC(void initialize (), start)
+                _WRAP_VFUNC(void render (unsigned int inFrameNum), render)
+
+            public:
+                static Glib::RefPtr<Renderer> create (const Size& inSize)
+                {
+                    MaiaGraphicRenderer* pRenderer = maia_graphic_renderer_new (const_cast<MaiaGraphicSize*> (inSize.gobj ()));
+                    return Glib::RefPtr<Renderer> (new Renderer (pRenderer));
+                }
+
+                _WRAP_METHOD(Glib::RefPtr<Surface> get_surface () const, maia_graphic_renderer_get_surface, refreturn)
+                _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_renderer_get_size)
+                _WRAP_METHOD(void set_size (const Size& outSize) const, maia_graphic_renderer_set_size)
+
+                _WRAP_METHOD(Glib::RefPtr<RendererInitializeNotification> initialize_notification () const, maia_graphic_renderer_get_initialize, refreturn)
+                _WRAP_METHOD(Glib::RefPtr<RendererNewFrameNotification> new_frame_notification () const, maia_graphic_renderer_get_new_frame, refreturn)
+
+                _WRAP_METHOD(void initialize (), maia_graphic_renderer_start)
+                _WRAP_METHOD(void render (unsigned int inFrameNum), maia_graphic_renderer_render)
+
+                _WRAP_PROPERTY("surface", Glib::RefPtr<Surface>)
+                _WRAP_PROPERTY("size", Size)
+                _WRAP_PROPERTY("initialize", Glib::RefPtr<RendererInitializeNotification>)
+                _WRAP_PROPERTY("new-frame", Glib::RefPtr<RendererNewFrameNotification>)
+        };
+    }
+}

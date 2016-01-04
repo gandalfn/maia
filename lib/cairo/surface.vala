@@ -27,6 +27,7 @@ internal class Maia.Cairo.Surface : Graphic.Surface
     private global::Cairo.Surface m_Surface = null;
 
     // accessors
+    [CCode (notify = false)]
     public override Graphic.Size size {
         get {
             return base.size;
@@ -48,6 +49,7 @@ internal class Maia.Cairo.Surface : Graphic.Surface
         }
     }
 
+    [CCode (notify = false)]
     public override void* native {
         get {
             if (device == null && m_Surface == null && !size.is_empty ())
@@ -74,6 +76,7 @@ internal class Maia.Cairo.Surface : Graphic.Surface
         }
     }
 
+    [CCode (notify = false)]
     public override unowned Graphic.Device? device {
         get {
             return base.device;
@@ -134,6 +137,7 @@ internal class Maia.Cairo.Surface : Graphic.Surface
             {
                 case "xcb/window":
                 case "xcb/pixmap":
+                case "glx/pixmap":
                 case "xcb/drawable":
                     uint32 xid;
                     int screen_num;
@@ -183,6 +187,7 @@ internal class Maia.Cairo.Surface : Graphic.Surface
 
                 case "xcb/drawable":
                 case "xcb/pixmap":
+                case "glx/pixmap":
                     create_surface_from_device ();
                     break;
             }

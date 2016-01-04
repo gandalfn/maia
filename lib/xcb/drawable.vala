@@ -43,9 +43,9 @@ internal abstract class Maia.Xcb.Drawable : GLib.Object, Graphic.Device
 
     public uint32 xid { get; construct; default = 0; }
 
-    public int screen_num { get; set; default = 0; }
+    public int screen_num { get; set; default = Maia.Xcb.application.default_screen; }
 
-    public virtual uint8 depth { get; set; default = (uint8)application.default_screen; }
+    public virtual uint8 depth { get; set; default = 24; }
 
     public uint32 visual {
         get {

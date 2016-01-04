@@ -22,7 +22,9 @@ public abstract class Maia.Graphic.Gradient : Pattern
     // type
     public class ColorStop : Core.Object
     {
+        [CCode (notify = false)]
         public double offset { get; construct set; default = 0.0; }
+        [CCode (notify = false)]
         public Color  color  { get; construct set; default = null; }
 
         public ColorStop (double inOffset, Color inColor)

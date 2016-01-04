@@ -7,12 +7,15 @@ noinst_DATA = \
     config.vapi \
     os.vapi \
     x11.vapi \
+    x11-xcb.vapi \
     xcb-base.deps \
     xcb-base.vapi \
     xcb.deps \
     xcb.vapi \
     xcb-composite.deps \
     xcb-composite.vapi \
+    xcb-glx.deps \
+    xcb-glx.vapi \
     xcb-randr.deps \
     xcb-randr.vapi \
     xcb-render.deps \
@@ -27,6 +30,8 @@ noinst_DATA = \
     xcb-keysyms.vapi \
     xcb-cursor.vapi \
     xcb-cursorfont.vapi \
+    gl.vapi \
+    glx.vapi \
     cairo.vapi \
     cairo-xcb.vapi \
     valgrind.vapi \

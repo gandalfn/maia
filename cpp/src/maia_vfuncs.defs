@@ -572,6 +572,22 @@
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaGraphicRenderer
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-vfunc start
+  (of-object "MaiaGraphicRenderer")
+  (return-type "none")
+)
+
+(define-vfunc render
+  (of-object "MaiaGraphicRenderer")
+  (return-type "none")
+  (parameters
+    '("guint" "inFrameNum")
+  )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; From MaiaManifestElement
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define-vfunc get_tag
@@ -590,6 +606,27 @@
   (parameters
     '("const-gchar*" "inCharacters")
   )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaProtocolBufferChild
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-vfunc get_serialize
+  (of-object "MaiaProtocolBufferChild")
+  (return-type "GVariant*")
+)
+
+(define-vfunc set_serialize
+  (of-object "MaiaProtocolBufferChild")
+  (return-type "none")
+  (parameters
+    '("GVariant*" "inVariant")
+  )
+)
+
+(define-vfunc copy
+  (of-object "MaiaProtocolBufferChild")
+  (return-type "MaiaProtocolBufferChild*")
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
