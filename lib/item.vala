@@ -1101,7 +1101,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             if (!damaged_area.is_empty ())
             {
-                Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, "item %s damaged draw %s %s", name, damaged.extents.to_string (), area.extents.to_string ());
+                Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, @"item $(name) damaged draw $(damaged.extents) $(area.extents)");
 
                 inContext.operator = Graphic.Operator.OVER;
                 inContext.save ();
@@ -1155,6 +1155,11 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     }
 
     protected virtual void
+    on_damage_area (Graphic.Region inArea)
+    {
+    }
+
+    protected virtual void
     on_damage (Graphic.Region? inArea = null)
     {
         if (visible)
@@ -1169,7 +1174,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                     var child_damaged_area = area_to_child_item_space (item, inArea);
                     if (!child_damaged_area.is_empty ())
                     {
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"damage child $((child as Item).name) $(child_damaged_area.extents)");
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"damage child $(item.name) $(child_damaged_area.extents)");
 
                         item.damage_area (child_damaged_area);
                     }
@@ -1194,7 +1199,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 child_damaged_area = inChild.area_to_parent_item_space (inArea);
             }
 
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "child %s damaged, damage %s", (inChild as Item).name, child_damaged_area.extents.to_string ());
+            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"child $((inChild as Item).name) damaged, damage $(child_damaged_area.extents)");
 
             // damage item
             damage.disconnect (on_damage);

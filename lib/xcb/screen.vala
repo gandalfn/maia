@@ -189,7 +189,8 @@ internal class Maia.Xcb.Screen : Core.Object
 
             for (uint j = 0; j < attrib_list.length; j += 2)
             {
-                if (glx_get_property (fbconfig_line, reply.num_properties, attrib_list[j]) != attrib_list[j + 1])
+                if (((attrib_list[j] != GLX.DRAWABLE_TYPE) && (glx_get_property (fbconfig_line, reply.num_properties, attrib_list[j]) != attrib_list[j + 1])) ||
+                    ((attrib_list[j] == GLX.DRAWABLE_TYPE) && ((glx_get_property (fbconfig_line, reply.num_properties, attrib_list[j]) & attrib_list[j + 1]) != attrib_list[j + 1])))
                 {
                     good_fbconfig = false;
                     break;

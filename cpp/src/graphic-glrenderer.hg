@@ -21,6 +21,7 @@
 #include <maiamm/graphic-renderer.h>
 
 _DEFS(maiamm,maia)
+_PINCLUDE(glibmm/private/object_p.h)
 _PINCLUDE(maiamm/private/graphic-renderer_p.h)
 
 namespace Maia
@@ -31,27 +32,36 @@ namespace Maia
 
         _WRAP_ENUM(GLRendererAttribute, MaiaGraphicGLRendererAttribute, s#GRAPHIC_##,  NO_GTYPE)
 
-        class GLRenderer : public Renderer
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+        class GLRendererObject : public RendererObject
         {
-            _CLASS_GOBJECT(GLRenderer, MaiaGraphicGLRenderer, MAIA_GRAPHIC_GL_RENDERER, Renderer, MaiaGraphicRenderer)
+            _CLASS_GOBJECT(GLRendererObject, MaiaGraphicGLRenderer, MAIA_GRAPHIC_GL_RENDERER, RendererObject, MaiaGraphicRenderer)
 
             protected:
                 _CTOR_DEFAULT()
 
+                GLRendererObject (const Size& inSize, const std::vector<uint32_t>& inAttributes);
+
             public:
+                static Glib::RefPtr<GLRendererObject> create (const Size& inSize, const std::vector<uint32_t>& inAttributes)
+                {
+                    return Glib::RefPtr<GLRendererObject> (new GLRendererObject (inSize, inAttributes));
+                }
+        };
+#endif
+
+        class GLRenderer : public Renderer
+        {
+            public:
+                virtual ~GLRenderer ();
+
                 static Glib::RefPtr<GLRenderer> create (const Size& inSize, const std::vector<uint32_t>& inAttributes)
                 {
-                    uint32_t* attrs = new uint32_t[inAttributes.size ()];
-                    int cpt = 0;
-                    for (auto attr : inAttributes)
-                    {
-                        attrs[cpt] = attr;
-                        cpt++;
-                    }
-                    MaiaGraphicGLRenderer* pRenderer = maia_graphic_gl_renderer_new (const_cast<MaiaGraphicSize*> (inSize.gobj ()), attrs, inAttributes.size ());
-                    delete attrs; attrs = 0;
-                    return Glib::RefPtr<GLRenderer> (new GLRenderer (pRenderer));
+                    return Glib::RefPtr<GLRenderer> (new GLRenderer (inSize, inAttributes));
                 }
+
+            protected:
+                GLRenderer (const Size& inSize, const std::vector<uint32_t>& inAttributes);
         };
     }
 }

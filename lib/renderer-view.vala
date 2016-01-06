@@ -23,8 +23,8 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
     private class Task : Core.Task
     {
         // properties
-        private unowned RendererView m_View;
-        private Core.Timeline        m_Timeline;
+        private unowned RendererView   m_View;
+        private Core.Timeline          m_Timeline;
         private Core.Event           m_Damaged;
 
         // events
@@ -87,7 +87,10 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
     // properties
     private uint             m_FrameRate = 60;
     private uint             m_NbFrames = 60;
+    private bool             m_RendererDamaged = false;
     private Graphic.Renderer m_Renderer;
+    private Graphic.Renderer m_Front;
+    private Graphic.Region   m_FrontDamaged;
     private Core.TaskPool    m_Pool;
     private Task             m_Task;
     private GLib.Mutex       m_Mutex = GLib.Mutex ();
@@ -258,9 +261,79 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
     }
 
     private void
+    add_front_damage (Graphic.Region? inArea)
+    {
+        if (inArea != null)
+        {
+            var damaged_area = inArea.copy ();
+            damaged_area.intersect (inArea);
+
+            if (!damaged_area.is_empty ())
+            {
+                if (m_FrontDamaged == null)
+                {
+                    m_FrontDamaged = damaged_area;
+                }
+                else if (m_FrontDamaged.contains_rectangle (damaged_area.extents) !=  Graphic.Region.Overlap.IN)
+                {
+                    m_FrontDamaged.union_ (damaged_area);
+                }
+            }
+        }
+        else
+        {
+            m_FrontDamaged = area;
+        }
+    }
+
+    private void
     on_renderer_damaged (Core.EventArgs? inArgs)
     {
-        damage ();
+        m_RendererDamaged = true;
+        damage (area);
+        m_RendererDamaged = false;
+    }
+
+    internal override void
+    on_damage_area (Graphic.Region inArea)
+    {
+        if (!m_RendererDamaged)
+        {
+            add_front_damage (inArea);
+        }
+    }
+
+    internal override void
+    on_child_damaged (Drawable inChild, Graphic.Region? inArea)
+    {
+        base.on_child_damaged (inChild, inArea);
+
+        if (inChild.geometry != null)
+        {
+            Graphic.Region child_damaged_area;
+
+            if (inArea == null)
+            {
+                child_damaged_area = inChild.geometry.copy ();
+            }
+            else
+            {
+                child_damaged_area = inChild.area_to_parent_item_space (inArea);
+            }
+
+            add_front_damage (child_damaged_area);
+        }
+    }
+
+    internal override void
+    on_damage (Graphic.Region? inArea)
+    {
+        if (!m_RendererDamaged)
+        {
+            base.on_damage (inArea);
+
+            add_front_damage (inArea);
+        }
     }
 
     internal override void
@@ -269,6 +342,15 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
         if (!inAllocation.extents.is_empty () && (geometry == null || !geometry.equal (inAllocation)))
         {
             geometry = inAllocation;
+
+            if (m_Front == null)
+            {
+                m_Front = new Graphic.Renderer (area.extents.size);
+            }
+            else if (!m_Front.size.equal (area.extents.size))
+            {
+                m_Front.size = area.extents.size;
+            }
 
             if (m_Renderer != null)
             {
@@ -328,15 +410,34 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
         }
 
         // paint childs
-        foreach (unowned Core.Object child in this)
+        if (m_FrontDamaged != null && !m_FrontDamaged.is_empty ())
         {
-            if (child is Drawable)
+            foreach (unowned Core.Object child in this)
             {
-                unowned Drawable drawable = (Drawable)child;
+                if (child is Drawable)
+                {
+                    unowned Drawable drawable = (Drawable)child;
 
-                var area = area_to_child_item_space (drawable, inArea);
-                drawable.draw (inContext, area);
+                    if (drawable.damaged != null && !drawable.damaged.is_empty ())
+                    {
+                        var area = area_to_child_item_space (drawable, m_FrontDamaged);
+
+                        m_Front.surface.context.save ();
+                            m_Front.surface.context.clip (new Graphic.Path.from_region (m_FrontDamaged));
+                            m_Front.surface.clear ();
+
+                            m_Front.surface.context.operator = Graphic.Operator.OVER;
+                            drawable.draw (m_Front.surface.context, area);
+                        m_Front.surface.context.restore ();
+                    }
+                }
             }
+
+            m_FrontDamaged = null;
         }
+
+        inContext.operator = Graphic.Operator.OVER;
+        inContext.pattern = m_Front.surface;
+        inContext.paint ();
     }
 }

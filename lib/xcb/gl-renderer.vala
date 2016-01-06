@@ -148,7 +148,11 @@ internal class Maia.Xcb.GLRenderer : Maia.Graphic.GLRenderer
         attribs += GLX.RGBA_BIT;
 
         attribs += GLX.DRAWABLE_TYPE;
-        attribs += GLX.WINDOW_BIT | GLX.PIXMAP_BIT | GLX.PBUFFER_BIT;
+        attribs += GLX.PIXMAP_BIT;
+
+        attribs += GLX.X_VISUAL_TYPE;
+        attribs += GLX.TRUE_COLOR;
+
 
         int screen_num = Maia.Xcb.application.default_screen;
         m_FBConfig = application[screen_num].glx_choose_fb_configs (attribs);

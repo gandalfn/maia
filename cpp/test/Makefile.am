@@ -26,9 +26,11 @@ test_SOURCES = \
     test-event.cc \
     test-event.h \
     test-model.cc \
-    test-model.h \
-    test-protocol.cc \
-    test-protocol.h
+    test-model.h
+
+#     \
+#    test-protocol.cc \
+#    test-protocol.h
 
 test_LDFLAGS = \
 	-Wl,--as-needed

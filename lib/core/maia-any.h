@@ -44,6 +44,7 @@ struct _MaiaCoreAnyClass
 struct _MaiaCoreAny
 {
     GObject         parent_instance;
+    gpointer        cpp_instance;
 };
 
 GType maia_core_any_get_type (void) G_GNUC_CONST;

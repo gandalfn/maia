@@ -19,6 +19,45 @@
 
 #include <maia.h>
 
+#include <maiamm/graphic-renderer.h>
+
 namespace Maia
 {
+    Glib::RefPtr<Graphic::Renderer>
+    RendererView::get_renderer ()
+    {
+        MaiaGraphicRenderer* pRenderer = maia_renderer_view_get_renderer (gobj ());
+
+        if (m_pRenderer && m_pRenderer->get_renderer ()->gobj () != pRenderer)
+        {
+            if (pRenderer)
+            {
+                Glib::RefPtr<Graphic::RendererObject> pRendererObject = Glib::wrap (pRenderer, true);
+                m_pRenderer = Graphic::Renderer::create (pRendererObject);
+            }
+            else
+            {
+                m_pRenderer.reset ();
+            }
+        }
+
+        return m_pRenderer;
+    }
+
+    void
+    RendererView::set_renderer (const Glib::RefPtr<Graphic::Renderer>& inpRenderer)
+    {
+        if (m_pRenderer != inpRenderer)
+        {
+            m_pRenderer = inpRenderer;
+            if (m_pRenderer)
+            {
+                maia_renderer_view_set_renderer (gobj(), inpRenderer->get_renderer ()->gobj ());
+            }
+            else
+            {
+                maia_renderer_view_set_renderer (gobj(), 0);
+            }
+        }
+    }
 }

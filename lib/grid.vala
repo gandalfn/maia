@@ -851,9 +851,11 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
     internal static GLib.Quark s_Reallocate;
 
     // properties
-    private SizeAllocation m_Allocation;
-    private bool           m_XShrink = false;
-    private bool           m_YShrink = false;
+    private SizeAllocation  m_Allocation;
+    private bool            m_XShrink = false;
+    private bool            m_YShrink = false;
+    private Graphic.Path    m_GridPath = null;
+    private Graphic.Path[,] m_ChildPathAreas;
 
     // accessors
     internal override string tag {
@@ -936,6 +938,12 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
     }
 
     // methods
+    construct
+    {
+        notify["stroke-pattern"].connect (invalidate_grid_path);
+        notify["grid-line-width"].connect (invalidate_grid_path);
+    }
+
     public Grid (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
@@ -975,6 +983,92 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
     {
         need_update = true;
         geometry = null;
+    }
+
+    private void
+    invalidate_grid_path ()
+    {
+        m_GridPath = null;
+        m_ChildPathAreas = null;
+    }
+
+    private void
+    create_grid_path ()
+    {
+        if (m_GridPath == null)
+        {
+            m_GridPath = new Graphic.Path ();
+            m_ChildPathAreas = new Graphic.Path[m_Allocation.rows.length, m_Allocation.columns.length];
+            foreach (unowned Core.Object child in this)
+            {
+                if (child is ItemPackable)
+                {
+                    unowned ItemPackable item = (ItemPackable)child;
+
+                    if (item.row < m_Allocation.child_allocations.length[0] && item.column < m_Allocation.child_allocations.length[1])
+                    {
+                        Graphic.Region area = new Graphic.Region (m_Allocation.child_allocations[item.row, item.column]);
+                        if (item.columns > 0)
+                        {
+                            for (int cpt = 1; cpt < item.columns; ++cpt)
+                            {
+                                var child_allocation = m_Allocation.child_allocations[item.row, item.column + cpt];
+                                area.union_with_rect (child_allocation);
+                            }
+                        }
+
+                        if (item.rows > 0)
+                        {
+                            for (int cpt = 1; cpt < item.rows; ++cpt)
+                            {
+                                var child_allocation = m_Allocation.child_allocations[item.row + cpt, item.column];
+                                area.union_with_rect (child_allocation);
+                            }
+                        }
+
+                        double y_offset = 0;
+                        double row_spacing = 0;
+                        if (this.row_spacing > 0 && m_Allocation.rows.length > 1)
+                        {
+                            row_spacing = this.row_spacing;
+                            y_offset = row_spacing / 2;
+                            if (item.row == 0)
+                            {
+                                y_offset = 0;
+                                row_spacing /= 2;
+                            }
+                            if (item.row == m_Allocation.rows.length - 1 || (item.rows > 0 && item.row + item.rows >= m_Allocation.rows.length))
+                            {
+                                row_spacing /= 2;
+                            }
+                        }
+
+                        double x_offset = 0;
+                        double column_spacing = 0;
+                        if (this.column_spacing > 0 && m_Allocation.columns.length > 1)
+                        {
+                            column_spacing = this.column_spacing;
+                            x_offset = column_spacing / 2;
+                            if (item.column == 0)
+                            {
+                                x_offset = 0;
+                                column_spacing /= 2;
+                            }
+                            if (item.column == m_Allocation.columns.length - 1 || (item.columns > 0 && item.column + item.columns >= m_Allocation.columns.length))
+                            {
+                                column_spacing /= 2;
+                            }
+                        }
+
+                        Graphic.Rectangle rect = Graphic.Rectangle (area.extents.origin.x - x_offset, area.extents.origin.y - y_offset,
+                                                                    area.extents.size.width + column_spacing, area.extents.size.height + row_spacing);
+                        m_GridPath.rectangle (rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+
+                        m_ChildPathAreas[item.row, item.column] = new Graphic.Path.from_rectangle (area.extents);
+                    }
+                }
+            }
+        }
     }
 
     internal override bool
@@ -1053,6 +1147,8 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                 geometry.resize (s);
             }
 
+            invalidate_grid_path ();
+
             damage_area ();
         }
     }
@@ -1071,90 +1167,26 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
     internal override void
     paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
+        // Create grid path
+        create_grid_path ();
+
         // paint background
         paint_background (inContext);
 
         // paint childs
-        Graphic.Path grid = new Graphic.Path ();
         foreach (unowned Core.Object child in this)
         {
             if (child is ItemPackable)
             {
                 unowned ItemPackable item = (ItemPackable)child;
 
-                if (item.row < m_Allocation.child_allocations.length[0] && item.column < m_Allocation.child_allocations.length[1])
+                if (m_ChildPathAreas[item.row, item.column] != null && item.backcell_pattern != null && item.damaged != null && !item.damaged.is_empty ())
                 {
-                    // paint grid
-                    Graphic.Region area = new Graphic.Region (m_Allocation.child_allocations[item.row, item.column]);
-                    if (item.columns > 0)
-                    {
-                        for (int cpt = 1; cpt < item.columns; ++cpt)
-                        {
-                            var child_allocation = m_Allocation.child_allocations[item.row, item.column + cpt];
-                            area.union_with_rect (child_allocation);
-                        }
-                    }
-
-                    if (item.rows > 0)
-                    {
-                        for (int cpt = 1; cpt < item.rows; ++cpt)
-                        {
-                            var child_allocation = m_Allocation.child_allocations[item.row + cpt, item.column];
-                            area.union_with_rect (child_allocation);
-                        }
-                    }
-
-                    double y_offset = 0;
-                    double row_spacing = 0;
-                    if (this.row_spacing > 0 && m_Allocation.rows.length > 1)
-                    {
-                        row_spacing = this.row_spacing;
-                        y_offset = row_spacing / 2;
-                        if (item.row == 0)
-                        {
-                            y_offset = 0;
-                            row_spacing /= 2;
-                        }
-                        if (item.row == m_Allocation.rows.length - 1 || (item.rows > 0 && item.row + item.rows >= m_Allocation.rows.length))
-                        {
-                            row_spacing /= 2;
-                        }
-                    }
-
-                    double x_offset = 0;
-                    double column_spacing = 0;
-                    if (this.column_spacing > 0 && m_Allocation.columns.length > 1)
-                    {
-                        column_spacing = this.column_spacing;
-                        x_offset = column_spacing / 2;
-                        if (item.column == 0)
-                        {
-                            x_offset = 0;
-                            column_spacing /= 2;
-                        }
-                        if (item.column == m_Allocation.columns.length - 1 || (item.columns > 0 && item.column + item.columns >= m_Allocation.columns.length))
-                        {
-                            column_spacing /= 2;
-                        }
-                    }
-
-                    Graphic.Rectangle rect = Graphic.Rectangle (area.extents.origin.x - x_offset, area.extents.origin.y - y_offset,
-                                                                area.extents.size.width + column_spacing, area.extents.size.height + row_spacing);
-                    grid.rectangle (rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-
-                    if (item.backcell_pattern != null && item.damaged != null && !item.damaged.is_empty ())
-                    {
-                        Graphic.Path path = new Graphic.Path.from_rectangle (area.extents);
-
-                        inContext.pattern = item.backcell_pattern;
-                        inContext.fill (path);
-                    }
+                    inContext.pattern = item.backcell_pattern;
+                    inContext.fill (m_ChildPathAreas[item.row, item.column]);
                 }
 
-                if (item.damaged != null && !item.damaged.is_empty ())
-                {
-                    item.draw (inContext, area_to_child_item_space (item, inArea));
-                }
+                item.draw (inContext, area_to_child_item_space (item, inArea));
             }
             else if (child is Item)
             {
@@ -1170,7 +1202,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
             {
                 inContext.pattern = stroke_pattern;
                 inContext.line_width = grid_line_width;
-                inContext.stroke (grid);
+                inContext.stroke (m_GridPath);
             }
 
             // paint border

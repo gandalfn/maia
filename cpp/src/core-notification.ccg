@@ -30,9 +30,11 @@ namespace Maia
     {
         void (*Notification::append_observers_parent) (MaiaCoreNotification* self, MaiaCoreNotification* inNotification) = nullptr;
 
+        GQuark NotificationObserver::ObserverQuark = g_quark_from_static_string ("NotificationObserverCpp");
+
         static void _on_notification_callback (MaiaCoreNotification* inpNotification, gpointer inpData)
         {
-            NotificationObserver* pObserver = (NotificationObserver*)g_object_get_data (G_OBJECT (inpData), "NotificationObserverCpp");
+            NotificationObserver* pObserver = (NotificationObserver*)((MaiaCoreAny*)inpData)->cpp_instance;
             Glib::RefPtr<Notification> pNotification = Glib::wrap (inpNotification, true);
 
             (*pObserver) (pNotification);
@@ -56,7 +58,7 @@ namespace Maia
                 (*MAIA_CORE_NOTIFICATION_GET_CLASS (self)->append_observers) (self, inpNotification);
             }
 
-            Notification* pNotification = (Notification*)g_object_get_data (G_OBJECT (inpNotification), "MaiaCoreNotificationCpp");
+            Notification* pNotification = (Notification*)g_object_get_qdata (G_OBJECT (inpNotification), NotificationObserver::ObserverQuark);
             if (pNotification)
             {
                 Glib::RefPtr<Notification> pSelf = Glib::wrap(self, true);
@@ -85,7 +87,7 @@ namespace Maia
                 MAIA_CORE_NOTIFICATION_GET_CLASS (gobj ())->append_observers = &_append_observers_vfunc_callback;
             }
 
-            g_object_set_data (G_OBJECT (gobj ()), "MaiaCoreNotificationCpp", this);
+            g_object_set_qdata (G_OBJECT (gobj ()), NotificationObserver::ObserverQuark, this);
         }
 
         Notification::Notification(const Glib::ConstructParams& construct_params) :
@@ -97,7 +99,7 @@ namespace Maia
                 MAIA_CORE_NOTIFICATION_GET_CLASS (gobj ())->append_observers = &_append_observers_vfunc_callback;
             }
 
-            g_object_set_data (G_OBJECT (gobj ()), "MaiaCoreNotificationCpp", this);
+            g_object_set_qdata (G_OBJECT (gobj ()), NotificationObserver::ObserverQuark, this);
         }
 
         Notification::Notification(MaiaCoreNotification* castitem) :
@@ -109,7 +111,7 @@ namespace Maia
                 MAIA_CORE_NOTIFICATION_GET_CLASS (gobj ())->append_observers = &_append_observers_vfunc_callback;
             }
 
-            g_object_set_data (G_OBJECT (gobj ()), "MaiaCoreNotificationCpp", this);
+            g_object_set_qdata (G_OBJECT (gobj ()), NotificationObserver::ObserverQuark, this);
         }
 
         Notification::~Notification ()

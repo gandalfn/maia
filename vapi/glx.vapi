@@ -73,6 +73,10 @@ namespace GLX
 	public const int PIXMAP_BIT;
 	[CCode (cname = "GLX_PBUFFER_BIT")]
 	public const int PBUFFER_BIT;
+	[CCode (cname = "GLX_X_VISUAL_TYPE")]
+	public const int X_VISUAL_TYPE;
+	[CCode (cname = "GLX_TRUE_COLOR")]
+	public const int TRUE_COLOR;
 
 	[SimpleType]
 	public struct Context { }

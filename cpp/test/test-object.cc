@@ -58,9 +58,9 @@ class Foo : public Maia::Core::Object
             notifications ()->get ("test-object-notification")->add_observer (this, &Foo::on_object_notification);
         }
 
-        static Glib::RefPtr<Foo> create (const Glib::ustring& inName)
+        static Maia::RefPtr<Foo> create (const Glib::ustring& inName)
         {
-            return Glib::RefPtr<Foo> (new Foo (inName));
+            return Maia::RefPtr<Foo> (new Foo (inName));
         }
 
         void
@@ -132,8 +132,15 @@ TestObject::on_test_notification (const Glib::RefPtr<Maia::Core::Notification>& 
 void
 TestObject::test_notifications ()
 {
-    Glib::RefPtr<Foo> pFoo = Foo::create ("foo");
+    Maia::RefPtr<Foo> pFoo = Foo::create ("foo");
     g_assert (pFoo);
+
+    Maia::RefPtr<Foo> pFoo2 = Foo::create ("foo2");
+    pFoo->add (pFoo2);
+
+    Glib::ustring test ("foo2");
+    Maia::RefPtr<Foo> pFoo3 = pFoo[test];
+    g_assert (pFoo3);
 
     g_assert (pFoo->notifications ());
     pFoo->notifications ()->add (FooNotification::create ("test-notification"));

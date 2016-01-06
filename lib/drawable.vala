@@ -53,9 +53,10 @@ public interface Maia.Drawable : GLib.Object
     public virtual signal void
     damage (Graphic.Region? inArea = null)
     {
-        if (area != null && !area.is_empty ())
+        Graphic.Region item_area = area;
+        if (item_area != null && !item_area.is_empty ())
         {
-            var damaged_area = area.copy ();
+            var damaged_area = item_area;
 
             if (inArea != null)
             {
@@ -114,7 +115,8 @@ public interface Maia.Drawable : GLib.Object
     public virtual signal void
     repair (Graphic.Region? inArea = null)
     {
-        if (area != null && !area.is_empty () && damaged != null && !damaged.is_empty ())
+        Graphic.Region item_area = area;
+        if (item_area != null && !item_area.is_empty () && damaged != null && !damaged.is_empty ())
         {
             if (inArea != null)
             {
@@ -122,7 +124,7 @@ public interface Maia.Drawable : GLib.Object
             }
             else
             {
-                damaged.subtract (area);
+                damaged.subtract (item_area);
             }
 
             if (damaged.is_empty ()) damaged = null;
@@ -156,6 +158,11 @@ public interface Maia.Drawable : GLib.Object
         }
     }
 
+    protected virtual void
+    on_damage_area (Graphic.Region inArea)
+    {
+    }
+
     /**
      * Damage area of this drawable and its childs without emitting any signal
      *
@@ -164,9 +171,10 @@ public interface Maia.Drawable : GLib.Object
     public void
     damage_area (Graphic.Region? inArea = null)
     {
-        if (area != null && !area.is_empty ())
+        Graphic.Region item_area = area;
+        if (item_area != null && !item_area.is_empty ())
         {
-            var damaged_area = area.copy ();
+            var damaged_area = item_area;
 
             if (inArea != null)
             {
@@ -178,24 +186,24 @@ public interface Maia.Drawable : GLib.Object
                     {
                         damaged = damaged_area;
                         child_damage_area (damaged_area);
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "area %s damage %s", damaged_area.extents.to_string (), damaged.extents.to_string ());
+                        on_damage_area (damaged_area);
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"area $(damaged_area.extents) damage $(damaged.extents)");
                     }
                     else if (damaged.contains_rectangle (damaged_area.extents) !=  Graphic.Region.Overlap.IN)
                     {
                         damaged.union_ (damaged_area);
                         child_damage_area (damaged_area);
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "area %s damage %s", damaged_area.extents.to_string (), damaged.extents.to_string ());
+                        on_damage_area (damaged_area);
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"area $(damaged_area.extents) damage $(damaged.extents)");
                     }
                     else
                     {
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"region is already damaged $((this as Item).name)");
-                        return;
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"region is already damaged");
                     }
                 }
                 else
                 {
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"empty damaged region $((this as Item).name)");
-                    return;
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"empty damaged region");
                 }
             }
             else
@@ -204,18 +212,14 @@ public interface Maia.Drawable : GLib.Object
                 {
                     damaged = damaged_area;
                     child_damage_area (damaged_area);
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "all damage %s", damaged.extents.to_string ());
+                    on_damage_area (damaged_area);
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"all damage $(damaged.extents)");
                 }
                 else
                 {
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"region is already damaged $((this as Item).name)");
-                    return;
+                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"region is already damaged");
                 }
             }
-        }
-        else
-        {
-            return;
         }
     }
 
@@ -227,7 +231,8 @@ public interface Maia.Drawable : GLib.Object
     public void
     repair_area (Graphic.Region? inArea = null)
     {
-        if (area != null && !area.is_empty () && damaged != null && !damaged.is_empty ())
+        Graphic.Region item_area = area;
+        if (item_area != null && !item_area.is_empty () && damaged != null && !damaged.is_empty ())
         {
             if (inArea != null)
             {
@@ -235,7 +240,7 @@ public interface Maia.Drawable : GLib.Object
             }
             else
             {
-                damaged.subtract (area);
+                damaged.subtract (item_area);
             }
 
             if (damaged.is_empty ()) damaged = null;
@@ -327,7 +332,7 @@ public interface Maia.Drawable : GLib.Object
             // Transform area to item coordinate space
             if (inArea == null)
             {
-                child_area = area.copy ();
+                child_area = area;
             }
             else
             {
@@ -337,7 +342,7 @@ public interface Maia.Drawable : GLib.Object
             child_area.intersect (inChild.geometry);
 
             child_area.translate (inChild.geometry.extents.origin.invert ());
-            
+
             try
             {
                 if (inChild.transform.have_rotate)
@@ -391,7 +396,7 @@ public interface Maia.Drawable : GLib.Object
                 t.apply_center_rotate (area_size.width / 2.0, area_size.height / 2.0);
                 point.transform (t);
 
-                var temp = area.copy ();
+                var temp = area;
                 temp.transform (t);
 
                 point.translate (temp.extents.origin.invert ());
@@ -430,7 +435,7 @@ public interface Maia.Drawable : GLib.Object
                 t.apply_center_rotate (area_size.width / 2.0, area_size.height / 2.0);
                 parent_area.transform (t);
 
-                var temp = area.copy ();
+                var temp = area;
                 temp.transform (t);
 
                 parent_area.translate (temp.extents.origin.invert ());

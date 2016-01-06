@@ -30,6 +30,8 @@ namespace Maia.Xcb
         Maia.Core.Any.delegate (typeof (Maia.Viewport), typeof (Maia.Xcb.Viewport));
         Maia.Core.Any.delegate (typeof (Maia.Graphic.Renderer), typeof (Maia.Xcb.Renderer));
         Maia.Core.Any.delegate (typeof (Maia.Graphic.GLRenderer), typeof (Maia.Xcb.GLRenderer));
+        Maia.Core.Any.delegate (GLib.Type.from_name ("gtkmm__MaiaGraphicRenderer"), typeof (Maia.Xcb.Renderer));
+        Maia.Core.Any.delegate (GLib.Type.from_name ("gtkmm__MaiaGraphicGLRenderer"), typeof (Maia.Xcb.GLRenderer));
 
         Maia.Xcb.application = new Maia.Xcb.Application ();
     }
@@ -43,6 +45,8 @@ namespace Maia.Xcb
         Maia.Core.Any.undelegate (typeof (Maia.Viewport));
         Maia.Core.Any.undelegate (typeof (Maia.Graphic.Renderer));
         Maia.Core.Any.undelegate (typeof (Maia.Graphic.GLRenderer));
+        Maia.Core.Any.undelegate (GLib.Type.from_name ("gtkmm__MaiaGraphicRenderer"));
+        Maia.Core.Any.undelegate (GLib.Type.from_name ("gtkmm__MaiaGraphicGLRenderer"));
 
         Maia.Xcb.application = null;
     }

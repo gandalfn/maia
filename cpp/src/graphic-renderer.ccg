@@ -23,5 +23,97 @@ namespace Maia
 {
     namespace Graphic
     {
+        void
+        Renderer::_on_initialize (MaiaCoreNotification* inpNotification, gpointer inpData)
+        {
+            Renderer* pRenderer = static_cast<Renderer*> (inpData);
+
+            if (pRenderer)
+            {
+                pRenderer->on_initialize ();
+            }
+        }
+
+        void
+        Renderer::_on_new_frame (MaiaCoreNotification* inpNotification, gpointer inpData)
+        {
+            Renderer* pRenderer = static_cast<Renderer*> (inpData);
+
+            if (pRenderer)
+            {
+                MaiaGraphicRendererNewFrameNotification* notification = (MaiaGraphicRendererNewFrameNotification*)inpNotification;
+                unsigned int num_frame = maia_graphic_renderer_new_frame_notification_get_num_frame (notification);
+                pRenderer->on_new_frame (num_frame);
+            }
+        }
+
+        Renderer::Renderer (const Size& inSize) :
+            Renderer (RendererObject::create (inSize))
+        {
+
+        }
+
+        Renderer::Renderer (const Glib::RefPtr<RendererObject>& inpRenderer) :
+            m_pRenderer (inpRenderer)
+        {
+            maia_core_notification_add_observer (MAIA_CORE_NOTIFICATION (maia_graphic_renderer_get_initialize (m_pRenderer->gobj ())), _on_initialize, this);
+            maia_core_notification_add_observer (MAIA_CORE_NOTIFICATION (maia_graphic_renderer_get_new_frame (m_pRenderer->gobj ())), _on_new_frame, this);
+        }
+
+        Renderer::~Renderer ()
+        {
+            maia_core_notification_remove_observer (MAIA_CORE_NOTIFICATION (maia_graphic_renderer_get_initialize (m_pRenderer->gobj ())), _on_initialize, this);
+            maia_core_notification_remove_observer (MAIA_CORE_NOTIFICATION (maia_graphic_renderer_get_new_frame (m_pRenderer->gobj ())), _on_new_frame, this);
+
+            m_pRenderer.reset ();
+        }
+
+        void
+        Renderer::on_initialize ()
+        {
+        }
+
+        void
+        Renderer::on_new_frame (unsigned int inNumFrame)
+        {
+        }
+
+        void
+        Renderer::initialize ()
+        {
+            m_pRenderer->initialize ();
+        }
+
+        void
+        Renderer::render (unsigned int inFrameNum)
+        {
+            m_pRenderer->render (inFrameNum);
+        }
+
+        Size
+        Renderer::get_size () const
+        {
+            Size size;
+            m_pRenderer->get_size (size);
+            return size;
+        }
+
+        void
+        Renderer::set_size (const Size& inSize)
+        {
+            m_pRenderer->set_size (inSize);
+        }
+
+        Glib::RefPtr<RendererInitializeNotification>
+        Renderer::initialize_notification () const
+        {
+            return m_pRenderer->initialize_notification ();
+        }
+
+        Glib::RefPtr<RendererNewFrameNotification>
+        Renderer::new_frame_notification () const
+        {
+            return m_pRenderer->new_frame_notification ();
+        }
     }
 }

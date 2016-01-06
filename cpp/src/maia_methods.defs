@@ -14575,6 +14575,15 @@
   (return-type "GType")
 )
 
+(define-method on_damage_area
+  (of-object "MaiaDrawable")
+  (c-name "maia_drawable_on_damage_area")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRegion*" "inArea")
+  )
+)
+
 (define-method damage_area
   (of-object "MaiaDrawable")
   (c-name "maia_drawable_damage_area")
@@ -14732,6 +14741,15 @@
   (return-type "none")
   (parameters
     '("MaiaDrawable*" "inChild")
+  )
+)
+
+(define-method on_damage_area
+  (of-object "MaiaItem")
+  (c-name "maia_item_on_damage_area")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRegion*" "inArea")
   )
 )
 

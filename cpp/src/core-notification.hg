@@ -37,7 +37,7 @@ namespace Maia
         static void _on_observer_gobject_destroy_notify (gpointer inpData, GObject* inpObject);
 #endif
 
-        class NotificationObserver : public Glib::Object
+        class NotificationObserver : public Core::Object
         {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
             public:
@@ -48,12 +48,15 @@ namespace Maia
 
                 Notification* m_pNotification;
 
+                static GQuark ObserverQuark;
+
             protected:
                 NotificationObserver (Notification* inpNotification) :
                     Glib::ObjectBase ("NotificationObserver"),
                     m_pNotification (inpNotification)
                 {
-                    g_object_set_data (G_OBJECT (gobj ()), "NotificationObserverCpp", this);
+                    ((MaiaCoreAny*)gobj ())->cpp_instance = this;
+                    g_object_set_qdata (G_OBJECT (gobj ()), ObserverQuark, this);
                 }
 #endif
         };
@@ -110,6 +113,7 @@ namespace Maia
 
             protected:
                 NotificationObserverFunctor (Notification* inpNotification, T_obj* pObj, Handler pFunc) :
+                    Glib::ObjectBase ("NotificationObserverFunctor"),
                     NotificationObserver (inpNotification),
                     m_pObj (pObj),
                     m_Callback (pFunc),
@@ -155,6 +159,7 @@ namespace Maia
 
             protected:
                 NotificationObserverSlot (Notification* inpNotification, const Handler& inSlot) :
+                    Glib::ObjectBase ("NotificationObserverSlot"),
                     NotificationObserver (inpNotification),
                     m_pCallback (new Handler (inSlot))
                 {

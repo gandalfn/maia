@@ -114,6 +114,7 @@ maia_core_any_constructor (GType inType, guint inNConstructProperties,
 static void
 maia_core_any_init (MaiaCoreAny* inSelf)
 {
+    inSelf->cpp_instance = NULL;
 }
 
 static void

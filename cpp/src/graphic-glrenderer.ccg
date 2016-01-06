@@ -23,5 +23,19 @@ namespace Maia
 {
     namespace Graphic
     {
+        GLRendererObject::GLRendererObject (const Size& inSize, const std::vector<uint32_t>& inAttributes) :
+            GLRendererObject(Glib::ConstructParams(glrendererobject_class_.init(), "size",const_cast<MaiaGraphicSize*> (inSize.gobj ()), static_cast<char*>(0)))
+        {
+            maia_graphic_gl_renderer_init (gobj(), (uint32_t*)inAttributes.data (), inAttributes.size ());
+        }
+
+        GLRenderer::GLRenderer (const Size& inSize, const std::vector<uint32_t>& inAttributes):
+            Renderer (GLRendererObject::create (inSize, inAttributes))
+        {
+        }
+
+        GLRenderer::~GLRenderer ()
+        {
+        }
     }
 }

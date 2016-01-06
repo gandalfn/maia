@@ -40,22 +40,24 @@ namespace Maia
         public:
             static Glib::RefPtr<RendererView> create (const Glib::ustring& inName, const Glib::RefPtr<Graphic::Renderer>& inpRenderer)
             {
-                MaiaRendererView* pView = maia_renderer_view_new (inName.c_str (), const_cast<MaiaGraphicRenderer*> (inpRenderer->gobj ()));
-                return Glib::RefPtr<RendererView> (new RendererView (pView));
+                RendererView* pView = new RendererView (maia_renderer_view_new (inName.c_str (), const_cast<MaiaGraphicRenderer*> (inpRenderer->get_renderer ()->gobj ())));
+                pView->m_pRenderer = inpRenderer;
+                return Glib::RefPtr<RendererView> (pView);
             }
 
-            _WRAP_METHOD(unsigned int get_frame_rate () const, maia_renderer_view_get_frame_rate)
-            _WRAP_METHOD(void set_frame_rate (unsigned int inFrameRate), maia_renderer_view_set_frame_rate)
+            _WRAP_METHOD(guint get_frame_rate () const, maia_renderer_view_get_frame_rate)
+            _WRAP_METHOD(void set_frame_rate (guint inFrameRate), maia_renderer_view_set_frame_rate)
 
-            _WRAP_METHOD(unsigned int get_nb_frames () const, maia_renderer_view_get_nb_frames)
-            _WRAP_METHOD(void set_nb_frames (unsigned int inFrameRate), maia_renderer_view_set_nb_frames)
+            _WRAP_METHOD(guint get_nb_frames () const, maia_renderer_view_get_nb_frames)
+            _WRAP_METHOD(void set_nb_frames (guint inFrameRate), maia_renderer_view_set_nb_frames)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Renderer> get_renderer () const, maia_renderer_view_get_renderer, refreturn)
-            _WRAP_METHOD(void set_renderer (const Glib::RefPtr<Graphic::Renderer>& inpRenderer), maia_renderer_view_set_renderer)
+            _IGNORE (maia_renderer_view_get_renderer, maia_renderer_view_set_renderer)
 
-            _WRAP_PROPERTY("renderer", Glib::RefPtr<Graphic::Renderer>)
-            _WRAP_PROPERTY("frame-rate", unsigned int)
-            _WRAP_PROPERTY("nb-frames", unsigned int)
+            Glib::RefPtr<Graphic::Renderer> get_renderer ();
+            void set_renderer (const Glib::RefPtr<Graphic::Renderer>& inpRenderer);
+
+            _WRAP_PROPERTY("frame-rate", guint)
+            _WRAP_PROPERTY("nb-frames", guint)
 
             _WRAP_PROPERTY("can-focus", bool)
 
@@ -83,5 +85,10 @@ namespace Maia
             _WRAP_PROPERTY("right-padding", double)
 
             _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
+
+      private:
+            Glib::RefPtr<Graphic::Renderer> m_pRenderer;
+
+            _WRAP_PROPERTY("renderer", Glib::RefPtr<Graphic::RendererObject>)
     };
 }
