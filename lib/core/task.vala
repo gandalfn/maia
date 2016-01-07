@@ -244,11 +244,6 @@ public abstract class Maia.Core.Task : Object
         m_Finish = {};
     }
 
-    ~Task ()
-    {
-        Log.debug ("~Task", Log.Category.MAIN_BUS, "");
-    }
-
     private void
     on_cancelled (Task inTask)
     {

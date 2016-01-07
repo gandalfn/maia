@@ -567,6 +567,12 @@
   (gtype-id "MAIA_TYPE_GRAPHIC_TRANSFORM")
 )
 
+(define-object MaiaGraphicTransformChangedNotification
+  (parent "MaiaCoreNotification")
+  (c-name "MaiaGraphicTransformChangedNotification")
+  (gtype-id "MAIA_TYPE_GRAPHIC_TRANSFORM_CHANGED_NOTIFICATION")
+)
+
 (define-object MaiaItem
   (parent "MaiaCoreObject")
   (c-name "MaiaItem")
@@ -9473,6 +9479,32 @@
   (of-object "MaiaGraphicTransform")
   (c-name "maia_graphic_transform_get_have_rotate")
   (return-type "gboolean")
+)
+
+(define-function maia_graphic_transform_changed_notification_get_type
+  (c-name "maia_graphic_transform_changed_notification_get_type")
+  (return-type "GType")
+)
+
+(define-method get_changed
+  (of-object "MaiaGraphicTransform")
+  (c-name "maia_graphic_transform_get_changed")
+  (return-type "MaiaGraphicTransformChangedNotification*")
+)
+
+(define-method get_transform
+  (of-object "MaiaGraphicTransformChangedNotification")
+  (c-name "maia_graphic_transform_changed_notification_get_transform")
+  (return-type "MaiaGraphicTransform*")
+)
+
+(define-method set_transform
+  (of-object "MaiaGraphicTransformChangedNotification")
+  (c-name "maia_graphic_transform_changed_notification_set_transform")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicTransform*" "value")
+  )
 )
 
 (define-function maia_graphic_point_get_type

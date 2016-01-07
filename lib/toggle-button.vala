@@ -201,7 +201,9 @@ public class Maia.ToggleButton : Toggle
                     m_Label.position = Graphic.Point (border + ((m_Icon.size.width > 0 && m_Label.size.width > 0) ? border + m_Icon.size.width : 0),
                                                       border + (m_Icon.size.height > 0 ? (diff >= 0 ? diff : 0) : 0));
 
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "label item position : %s", m_Label.position.to_string ());
+#endif
                 }
             }
         }

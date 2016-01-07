@@ -110,7 +110,9 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
             if (cpt > 1) break;
         }
 
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MANIFEST_ATTRIBUTE, "transform to %s", point.to_string ());
+#endif
 
         outValue = point;
     }
@@ -145,7 +147,9 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
             if (cpt > 1) break;
         }
 
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MANIFEST_ATTRIBUTE, "transform to %s", size.to_string ());
+#endif
 
         outValue = size;
     }
@@ -188,7 +192,9 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
             if (cpt > 3) break;
         }
 
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MANIFEST_ATTRIBUTE, "transform to %s", rectangle.to_string ());
+#endif
 
         outValue = rectangle;
     }
@@ -231,7 +237,9 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
             if (cpt > 3) break;
         }
 
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MANIFEST_ATTRIBUTE, "transform to %s", range.to_string ());
+#endif
 
         outValue = range;
     }
@@ -483,7 +491,9 @@ public class Maia.Manifest.AttributeScanner : Core.Parser
         unowned Transform? transform = null;
         if (s_Transforms != null)
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.MANIFEST_ATTRIBUTE, "type: %s", inType.name ());
+#endif
             transform = s_Transforms.search<GLib.Type> (inType, Transform.compare_with_type);
         }
 

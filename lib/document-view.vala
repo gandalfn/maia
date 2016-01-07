@@ -444,7 +444,9 @@ public class Maia.DocumentView : Group
     {
         if (visible && (geometry == null || !geometry.equal (inAllocation)))
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "");
+#endif
 
             // Update shortcut section
             for (int cpt = 0; cpt < m_Shortcuts.nb_rows; ++cpt)

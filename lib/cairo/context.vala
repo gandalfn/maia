@@ -133,13 +133,13 @@ internal class Maia.Cairo.Context : Graphic.Context
         set {
             if (base.pattern != null)
             {
-                base.pattern.transform.changed.disconnect (on_pattern_transform_changed);
+                base.pattern.transform.changed.remove_observer (on_pattern_transform_changed);
             }
             base.pattern = value;
 
             if (base.pattern != null)
             {
-                base.pattern.transform.changed.connect (on_pattern_transform_changed);
+                base.pattern.transform.changed.add_object_observer (on_pattern_transform_changed);
             }
 
             on_pattern_transform_changed ();
@@ -179,7 +179,7 @@ internal class Maia.Cairo.Context : Graphic.Context
     {
         if (m_Context != null)
         {
-            base.pattern.transform.changed.disconnect (on_pattern_transform_changed);
+            base.pattern.transform.changed.remove_observer (on_pattern_transform_changed);
             global::Cairo.Pattern? pattern = pattern_to_cairo (base.pattern);
             pattern.set_filter (global::Cairo.Filter.GOOD);
 
@@ -193,7 +193,7 @@ internal class Maia.Cairo.Context : Graphic.Context
                 m_Context.set_source (pattern);
             }
 
-            base.pattern.transform.changed.connect (on_pattern_transform_changed);
+            base.pattern.transform.changed.add_object_observer (on_pattern_transform_changed);
         }
     }
 

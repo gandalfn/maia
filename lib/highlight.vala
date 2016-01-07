@@ -62,7 +62,9 @@ public class Maia.Highlight : Toggle
             {
                 m_Label.position = Graphic.Point (border, border);
 
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "label item position : %s", m_Label.position.to_string ());
+#endif
             }
         }
 

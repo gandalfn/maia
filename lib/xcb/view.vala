@@ -582,7 +582,9 @@ internal class Maia.Xcb.View : Drawable
             // Swap buffer
             if (m_BackBuffer != null)
             {
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, @"$xid swap buffer: $(damaged_area.extents) $(transform.matrix)");
+#endif
 
                 inContext.save ();
                 {

@@ -160,7 +160,9 @@ public class Maia.Core.SocketBusConnection : BusConnection
     private void
     on_received (Core.Notification inNotification)
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "receive message");
+#endif
 
         unowned Core.Watch.Notification? notification = inNotification as Core.Watch.Notification;
 
@@ -184,7 +186,9 @@ public class Maia.Core.SocketBusConnection : BusConnection
     private void
     on_send_ready (Core.Notification inNotification)
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "send ready");
+#endif
 
         unowned Core.Watch.Notification? notification = inNotification as Core.Watch.Notification;
 
@@ -193,7 +197,9 @@ public class Maia.Core.SocketBusConnection : BusConnection
             Request? request = m_SendQueue.pop ();
             if (request != null)
             {
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "write message");
+#endif
                 try
                 {
                     do

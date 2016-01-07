@@ -147,8 +147,9 @@ public abstract class Maia.Core.Bus : Object
                 unowned uint8[] data = msg.raw[HEADER_SIZE:msg.raw.length];
                 yield inBus.read_async (data, inCancellable);
 
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Received message %s : %s", msg.get_type ().name (), msg.to_string ());
-
+#endif
                 return msg;
             }
 
@@ -174,7 +175,9 @@ public abstract class Maia.Core.Bus : Object
                 unowned uint8[] data = msg.raw[HEADER_SIZE:msg.raw.length];
                 inBus.read (data);
 
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Received message %s : %s", msg.get_type ().name (), msg.to_string ());
+#endif
 
                 return msg;
             }
@@ -185,8 +188,9 @@ public abstract class Maia.Core.Bus : Object
         internal async void
         send_async (Bus inBus, GLib.Cancellable? inCancellable) throws BusError
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Send message %s : %s", message_type.to_string (), to_string ());
-
+#endif
             yield inBus.write_async (raw, inCancellable);
         }
 
@@ -214,7 +218,9 @@ public abstract class Maia.Core.Bus : Object
             GLib.Object (message_type: MessageType.AUTH, message_size: 1);
             push_back (inType);
 
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "New auth message : %s", to_string ());
+#endif
         }
     }
 

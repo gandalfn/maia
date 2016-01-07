@@ -319,7 +319,9 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
             outRequisition.height = (int)(window.size.height);
         }
 
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "canvas size: %i,%i", outRequisition.width, outRequisition.height);
+#endif
     }
 
     internal override void
@@ -334,9 +336,13 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
             m_Window.position = Graphic.Point (0, 0);
             m_Window.size = Graphic.Size (inAllocation.width, inAllocation.height);
 
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"window size: $(inAllocation.width) $(inAllocation.height)");
+#endif
         }
 
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"alllocation: $(inAllocation.x) $(inAllocation.y) $(inAllocation.width) $(inAllocation.height)");
+#endif
     }
 }

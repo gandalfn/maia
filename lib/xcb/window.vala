@@ -467,7 +467,9 @@ internal class Maia.Xcb.Window : Maia.Window
         // an item was grabbed grab pointer
         if (ret && grab_keyboard_item != null && m_View != null)
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab pointer %s", inItem.name);
+#endif
             m_View.grab_keyboard ();
         }
 

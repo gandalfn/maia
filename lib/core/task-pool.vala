@@ -56,7 +56,9 @@ public class Maia.Core.TaskPool : GLib.Object
 
     ~TaskPool ()
     {
+#if MAIA_DEBUG
         Log.debug ("~TaskPool", Log.Category.MAIN_BUS, "");
+#endif
         if (m_Thread != null && m_Loop != null)
         {
             m_Loop.quit ();
@@ -72,7 +74,9 @@ public class Maia.Core.TaskPool : GLib.Object
     private void
     on_task_finished (Notification inNotification)
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, @"task finished $(m_CurrentTask.ref_count)");
+#endif
 
         program_pop ();
     }
@@ -80,7 +84,10 @@ public class Maia.Core.TaskPool : GLib.Object
     private bool
     pop ()
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, @"$m_IdPop");
+#endif
+
         if (m_IdPop != 0)
         {
             m_Mutex.@lock ();
@@ -89,17 +96,23 @@ public class Maia.Core.TaskPool : GLib.Object
                 if (m_CurrentTask == null)
                 {
                     m_IsWaiting = true;
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, @"wait task");
+#endif
                     if (m_Cond.wait_until (m_Mutex, GLib.get_monotonic_time () + m_IdleTime * GLib.TimeSpan.SECOND))
                     {
                         m_CurrentTask = m_Tasks.pop ();
+#if MAIA_DEBUG
                         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, @"task pop $(m_CurrentTask.ref_count)");
+#endif
                     }
                     m_IsWaiting = false;
                 }
                 else
                 {
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, @"task pop $(m_CurrentTask.ref_count)");
+#endif
                 }
 
                 m_IdPop = 0;
@@ -108,7 +121,9 @@ public class Maia.Core.TaskPool : GLib.Object
                 {
                     if (is_running)
                     {
+#if MAIA_DEBUG
                         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, @"quit task");
+#endif
                         m_Loop.quit ();
                     }
                     is_running = false;
@@ -117,9 +132,13 @@ public class Maia.Core.TaskPool : GLib.Object
                 {
                     is_running = true;
                     m_CurrentTask.finished.add_object_observer (on_task_finished);
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, @"task launch $(m_CurrentTask.ref_count)");
+#endif
                     m_CurrentTask.run (m_Context);
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, @"task launched $(m_CurrentTask.ref_count)");
+#endif
                 }
             }
             m_Mutex.unlock ();
@@ -131,7 +150,9 @@ public class Maia.Core.TaskPool : GLib.Object
     private void
     program_pop ()
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, @"$m_IdPop");
+#endif
         if (m_IdPop == 0)
         {
             var source = new GLib.IdleSource ();
@@ -143,7 +164,9 @@ public class Maia.Core.TaskPool : GLib.Object
     private void*
     main ()
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, @"start $name");
+#endif
 
         m_Context = new GLib.MainContext ();
         m_Context.push_thread_default ();
@@ -163,7 +186,9 @@ public class Maia.Core.TaskPool : GLib.Object
     {
         m_Mutex.@lock ();
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, @"push is_running: $is_running $m_IsWaiting");
+#endif
             m_Tasks.push (inTask);
 
             if (!is_running)

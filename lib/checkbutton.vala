@@ -72,7 +72,9 @@ public class Maia.CheckButton : Toggle
                 if (m_Label.position.x != size_label.height + spacing)
                 {
                     m_Label.position = Graphic.Point (size_label.height + spacing, 0);
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "label item position : %s", m_Label.position.to_string ());
+#endif
                 }
 
                 ret = Graphic.Size (size_label.height + spacing + size_label.width, size_label.height);

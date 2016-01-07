@@ -418,7 +418,9 @@ public class Maia.Manifest.Document : Core.Parser
         {
             if (token == Core.Parser.Token.START_ELEMENT)
             {
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING, @"tag: $element_tag, id: $element_id");
+#endif
                 if ((inId == null && first) || element_id == inId)
                 {
                     Element? ret = Element.create (element_tag, element_id);

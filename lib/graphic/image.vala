@@ -44,7 +44,9 @@ public abstract class Maia.Graphic.Image : Graphic.Pattern
             {
                 var info = file.query_info (GLib.FileAttribute.STANDARD_CONTENT_TYPE, 0);
                 string content = info.get_content_type ();
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "filename: %s content: %s", inFilename, content);
+#endif
                 switch (content)
                 {
                     case "image/png":
@@ -77,7 +79,9 @@ public abstract class Maia.Graphic.Image : Graphic.Pattern
         }
         else
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "Invalid filename %s", inFilename);
+#endif
         }
 
         return ret;

@@ -341,7 +341,9 @@ public class Maia.Window : Group
                 var area = new Graphic.Region (damage_area);
                 damage (area);
 
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"$name damage event $(area.extents)");
+#endif
             }
             catch (GLib.Error err)
             {
@@ -415,7 +417,9 @@ public class Maia.Window : Group
                 // Motion event
                 if ((mouse_args.flags & MouseEventArgs.EventFlags.MOTION) == MouseEventArgs.EventFlags.MOTION)
                 {
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"$name $pos");
+#endif
 
                     // we have grab pointer item send event
                     if (grab_pointer_item != null)
@@ -614,19 +618,25 @@ public class Maia.Window : Group
     protected virtual void
     on_set_pointer_cursor (Cursor inCursor)
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"set pointer cursor $inCursor");
+#endif
     }
 
     protected virtual void
     on_move_pointer (Graphic.Point inBorder)
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"move pointer to $inBorder");
+#endif
     }
 
     protected virtual void
     on_scroll_to (Item inItem)
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "scroll to %s", inItem.name);
+#endif
     }
 
     protected virtual void
@@ -635,10 +645,12 @@ public class Maia.Window : Group
         if (inItem is Button)
             return;
 
+#if MAIA_DEBUG
         if (inItem == null)
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab focus");
         else
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab focus %s", inItem.name);
+#endif
 
         // Unset item have focus
         if (focus_item != null)
@@ -664,7 +676,9 @@ public class Maia.Window : Group
         // Can grab only nobody have already grab
         if (grab_pointer_item == null)
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab pointer %s", inItem.name);
+#endif
             grab_pointer_item = inItem;
             ret = true;
         }
@@ -677,7 +691,9 @@ public class Maia.Window : Group
     {
         if (grab_pointer_item == inItem)
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab pointer %s", grab_pointer_item.name);
+#endif
             grab_pointer_item = null;
         }
     }
@@ -690,7 +706,9 @@ public class Maia.Window : Group
         // Only focused item can grab keyboard
         if (grab_keyboard_item != null)
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab keyboard %s", inItem.name);
+#endif
             grab_keyboard_item = inItem;
             ret = true;
         }
@@ -703,7 +721,9 @@ public class Maia.Window : Group
     {
         if (grab_keyboard_item == inItem)
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab keyboard %s", grab_keyboard_item.name);
+#endif
             grab_keyboard_item = null;
         }
     }
@@ -752,7 +772,9 @@ public class Maia.Window : Group
         ret.resize (border + (!(Border.RIGHT in shadow_border) ? 0 : shadow_width),
                     border + (!(Border.BOTTOM in shadow_border) ? 0 : shadow_width));
 
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "window: %s %s", name, ret.to_string ());
+#endif
 
         return ret;
     }

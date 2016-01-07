@@ -88,14 +88,18 @@ public class Maia.Manifest.Function : Attribute
     internal override void
     on_transform (GLib.Type inType, ref GLib.Value outValue) throws Error
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MANIFEST_ATTRIBUTE, "type: %s, name: %s", inType.name (), get ());
+#endif
         unowned Core.Set<Transform>? functions = s_Transforms[inType];
         if (functions != null)
         {
             unowned Transform? transform = functions.search<string> (get (), Transform.compare_with_name);
             if (transform != null)
             {
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.MANIFEST_ATTRIBUTE, "found name: %s", get ());
+#endif
                 transform.func (this, ref outValue);
                 return;
             }

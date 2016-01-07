@@ -105,7 +105,9 @@ public class Maia.Core.Event : Object
      */
     public Event (string inName, void* inOwner = null, EventBus? inBus = EventBus.default)
     {
+#if MAIA_DEBUG
         Log.debug ("Event", Log.Category.MAIN_EVENT, "Create event %s %lx", inName, (ulong)inOwner);
+#endif
         GLib.Object (id: GLib.Quark.from_string (inName), owner: inOwner);
         m_EventBus = inBus;
         m_EventBus.advertise (this);
@@ -113,7 +115,9 @@ public class Maia.Core.Event : Object
 
     ~Event ()
     {
+#if MAIA_DEBUG
         Log.debug ("Event", Log.Category.MAIN_EVENT, "Destroy event %s %lx", name, (ulong)owner);
+#endif
         m_EventBus.destroy (this);
     }
 
@@ -138,7 +142,9 @@ public class Maia.Core.Event : Object
     public void
     publish (EventArgs? inArgs = null)
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "publish event %s", name);
+#endif
 
         m_EventBus.publish_event (this, inArgs);
     }
@@ -152,7 +158,9 @@ public class Maia.Core.Event : Object
     public void
     publish_with_reply (EventArgs inArgs, Event.Handler inHandler)
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "publish with reply event %s", name);
+#endif
 
         m_EventBus.publish_event_with_reply (this, inArgs, inHandler);
     }
@@ -166,7 +174,9 @@ public class Maia.Core.Event : Object
     public void
     object_publish_with_reply (EventArgs inArgs, Event.Handler inHandler)
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "publish with reply event %s", name);
+#endif
 
         m_EventBus.object_publish_event_with_reply (this, inArgs, inHandler);
     }

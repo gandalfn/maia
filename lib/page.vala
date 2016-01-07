@@ -314,7 +314,9 @@ internal class Maia.Page : GLib.Object
         {
             inContext.save ();
             {
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, "Draw page %u", num);
+#endif
 
                 foreach (unowned Item item in m_Childs)
                 {
@@ -345,7 +347,9 @@ internal class Maia.Page : GLib.Object
                 // point under child
                 if (iter.get ().button_press_event (inButton, point))
                 {
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button press event in %s page %u", iter.get ().name, num);
+#endif
                     return true;
                 }
             } while (iter.prev ());
@@ -360,7 +364,9 @@ internal class Maia.Page : GLib.Object
             // point under child
             if (m_Header.button_press_event (inButton, point))
             {
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button press event in %s page %u", m_Header.name, num);
+#endif
                 return true;
             }
         }
@@ -374,7 +380,9 @@ internal class Maia.Page : GLib.Object
             // point under child
             if (m_Footer.button_press_event (inButton, point))
             {
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button press event in %s page %u", m_Footer.name, num);
+#endif
                 return true;
             }
         }
@@ -397,7 +405,9 @@ internal class Maia.Page : GLib.Object
                 // point under child
                 if (iter.get ().button_release_event (inButton, point))
                 {
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button release event in %s page %u", iter.get ().name, num);
+#endif
                     return true;
                 }
             } while (iter.prev ());
@@ -412,7 +422,9 @@ internal class Maia.Page : GLib.Object
             // point under child
             if (m_Header.button_release_event (inButton, point))
             {
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button press event in %s page %u", m_Header.name, num);
+#endif
                 return true;
             }
         }
@@ -426,7 +438,9 @@ internal class Maia.Page : GLib.Object
             // point under child
             if (m_Footer.button_release_event (inButton, point))
             {
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button press event in %s page %u", m_Footer.name, num);
+#endif
                 return true;
             }
         }
@@ -449,7 +463,9 @@ internal class Maia.Page : GLib.Object
                 // point under child
                 if (iter.get ().motion_event (point))
                 {
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "motion event in %s page %u", iter.get ().name, num);
+#endif
                     return iter.get ();
                 }
             } while (iter.prev ());
@@ -464,7 +480,9 @@ internal class Maia.Page : GLib.Object
             // point under child
             if (m_Header.motion_event (point))
             {
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button press event in %s page %u", m_Header.name, num);
+#endif
                 return m_Header;
             }
         }
@@ -478,7 +496,9 @@ internal class Maia.Page : GLib.Object
             // point under child
             if (m_Footer.motion_event (point))
             {
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button press event in %s page %u", m_Footer.name, num);
+#endif
                 return m_Footer;
             }
         }
@@ -501,7 +521,9 @@ internal class Maia.Page : GLib.Object
                 // point under child
                 if (iter.get ().scroll_event (inScroll, point))
                 {
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "scroll event in %s page %u", iter.get ().name, num);
+#endif
                     return true;
                 }
             } while (iter.prev ());
@@ -516,7 +538,9 @@ internal class Maia.Page : GLib.Object
             // point under child
             if (m_Header.scroll_event (inScroll, point))
             {
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button press event in %s page %u", m_Header.name, num);
+#endif
                 return true;
             }
         }
@@ -530,7 +554,9 @@ internal class Maia.Page : GLib.Object
             // point under child
             if (m_Footer.scroll_event (inScroll, point))
             {
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button press event in %s page %u", m_Footer.name, num);
+#endif
                 return true;
             }
         }

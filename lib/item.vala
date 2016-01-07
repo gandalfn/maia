@@ -259,7 +259,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         set {
             if (m_Transform != null)
             {
-                m_Transform.changed.disconnect (on_transform_changed);
+                m_Transform.changed.remove_observer (on_transform_changed);
             }
 
             damage ();
@@ -268,7 +268,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             if (m_Transform != null)
             {
-                m_Transform.changed.connect (on_transform_changed);
+                m_Transform.changed.add_object_observer (on_transform_changed);
             }
 
             if (m_Geometry != null)
@@ -545,7 +545,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     attribute_bind_height (Manifest.AttributeBind inAttributeBind, ref GLib.Value outValue)
         requires (outValue.holds (typeof (double)))
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MANIFEST_ATTRIBUTE, "%s", inAttributeBind.get ());
+#endif
 
         if (inAttributeBind.owner is Item)
         {
@@ -599,7 +601,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         notify["chain-visible"].connect (on_visible_changed);
 
         // connect to trasnform events
-        m_Transform.changed.connect (on_transform_changed);
+        m_Transform.changed.add_object_observer (on_transform_changed);
         notify["transform"].connect (on_transform_changed);
 
         // reorder object on layer change
@@ -1138,7 +1140,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     on_child_need_update (Item inChild)
     {
         bool child_need_update = inChild.need_update;
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"$name: $(inChild.name) need update $child_need_update");
+#endif
         need_update |= child_need_update;
     }
 
@@ -1174,7 +1178,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                     var child_damaged_area = area_to_child_item_space (item, inArea);
                     if (!child_damaged_area.is_empty ())
                     {
+#if MAIA_DEBUG
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"damage child $(item.name) $(child_damaged_area.extents)");
+#endif
 
                         item.damage_area (child_damaged_area);
                     }
@@ -1199,7 +1205,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 child_damaged_area = inChild.area_to_parent_item_space (inArea);
             }
 
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"child $((inChild as Item).name) damaged, damage $(child_damaged_area.extents)");
+#endif
 
             // damage item
             damage.disconnect (on_damage);
@@ -1330,7 +1338,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         Graphic.Size transformed_size;
         get_transformed_position_and_size (out transformed_position, out transformed_size);
 
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "%s size request: %s", name, transformed_size.to_string ());
+#endif
         return transformed_size;
     }
 

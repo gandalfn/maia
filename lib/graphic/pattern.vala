@@ -103,7 +103,9 @@ public abstract class Maia.Graphic.Pattern : Core.Object
             switch (cpt)
             {
                 case 0:
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.GRAPHIC_PARSING, "Load image %s", arg.get ());
+#endif
                     outDest = Image.create (arg.get ());
                     break;
 
@@ -129,7 +131,9 @@ public abstract class Maia.Graphic.Pattern : Core.Object
             switch (cpt)
             {
                 case 0:
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.GRAPHIC_PARSING, "Load svg image %s", arg.get ());
+#endif
                     outDest = new ImageSvg.from_data (arg.get ());
                     break;
 

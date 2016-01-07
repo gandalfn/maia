@@ -303,12 +303,16 @@ public class Maia.Application : Maia.Core.Object
 
         if (!have_visible && m_Timeline.is_playing)
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.MAIN, "Stop timeline");
+#endif
             m_Timeline.pause ();
         }
         else if (have_visible && !m_Timeline.is_playing && !m_Pause)
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.MAIN, "Start timeline");
+#endif
             m_Timeline.start ();
         }
     }

@@ -81,7 +81,9 @@ public class Maia.Graphic.Region : Core.Any
     // static methods
     static construct
     {
+#if MAIA_DEBUG
         Log.debug ("Region.static_construct", Log.Category.GRAPHIC_GEOMETRY, "Register transform functions");
+#endif
         Manifest.AttributeScanner.register_transform_func (typeof (Region), attributes_to_region);
     }
 
@@ -114,7 +116,9 @@ public class Maia.Graphic.Region : Core.Any
             if (cpt > 3) break;
         }
 
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.GRAPHIC_GEOMETRY, "transform to %s", rect.to_string ());
+#endif
 
         outDest = new Region (rect);
     }

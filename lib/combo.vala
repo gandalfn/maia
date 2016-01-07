@@ -358,7 +358,9 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     {
         if (visible && (geometry == null || !geometry.equal (inAllocation)))
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "");
+#endif
 
             geometry = inAllocation;
 

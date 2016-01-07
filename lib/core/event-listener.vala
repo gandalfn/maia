@@ -102,7 +102,9 @@ public class Maia.Core.EventListener : Object
     // methods
     public EventListener (Event inEvent, Event.Handler inHandler)
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "create eventlistener");
+#endif
 
         m_EventHash = new Event.Hash (inEvent);
         m_Handler = inHandler;
@@ -110,7 +112,9 @@ public class Maia.Core.EventListener : Object
 
     public EventListener.with_hash (string inName, void* inOwner, Event.Handler inHandler)
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "create eventlistener");
+#endif
 
         m_EventHash = new Event.Hash.raw (inName, inOwner);
         m_Handler = inHandler;
@@ -118,7 +122,9 @@ public class Maia.Core.EventListener : Object
 
     public EventListener.object (Event inEvent, Event.Handler inHandler)
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "create eventlistener");
+#endif
 
         m_EventHash = new Event.Hash (inEvent);
         m_Handler = inHandler;
@@ -130,7 +136,9 @@ public class Maia.Core.EventListener : Object
 
     public EventListener.with_hash_object (string inName, void* inOwner, Event.Handler inHandler)
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "create eventlistener");
+#endif
 
         m_EventHash = new Event.Hash.raw (inName, inOwner);
         m_Handler = inHandler;
@@ -170,7 +178,9 @@ public class Maia.Core.EventListener : Object
     private void
     on_target_destroy ()
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "target unref");
+#endif
         m_Target = null;
         m_Handler = null;
         parent = null;

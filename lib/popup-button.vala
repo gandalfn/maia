@@ -187,7 +187,9 @@ public class Maia.PopupButton : ToggleButton
     {
         if (visible && (geometry == null || !geometry.equal (inAllocation)))
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "");
+#endif
 
             base.update (inContext, inAllocation);
 

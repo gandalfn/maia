@@ -19,6 +19,27 @@
 
 public class Maia.Graphic.Transform : Core.Object
 {
+    // types
+    public class ChangedNotification : Core.Notification
+    {
+        private unowned Transform? m_Transform;
+
+        [CCode (notify = false)]
+        public Transform transform {
+            get {
+                return m_Transform;
+            }
+            set {
+                m_Transform = value;
+            }
+        }
+
+        internal ChangedNotification (string inName)
+        {
+            base (inName);
+        }
+    }
+
     // properties
     private Matrix m_BaseMatrix;
     private Matrix m_FinalMatrix;
@@ -67,8 +88,12 @@ public class Maia.Graphic.Transform : Core.Object
         }
     }
 
-    // signals
-    public signal void changed ();
+    // notifications
+    public ChangedNotification changed {
+        get {
+            return notifications["changed"] as ChangedNotification;
+        }
+    }
 
     // static methods
     static construct
@@ -318,6 +343,11 @@ public class Maia.Graphic.Transform : Core.Object
     }
 
     // methods
+    construct
+    {
+        notifications.add (new ChangedNotification ("changed"));
+    }
+
     /**
      * Create a new transform stack
      */
@@ -442,7 +472,9 @@ public class Maia.Graphic.Transform : Core.Object
 
         if (!old.equal (m_FinalMatrix) || !old_invert.equal (m_FinalInvertMatrix))
         {
-            changed ();
+            unowned ChangedNotification notification = notifications["changed"] as ChangedNotification;
+            notification.transform = this;
+            notification.post ();
         }
     }
 
@@ -457,7 +489,7 @@ public class Maia.Graphic.Transform : Core.Object
     {
         base.insert_child (inObject);
 
-        ((Transform)inObject).changed.connect (recalculate_final_matrix);
+        ((Transform)inObject).changed.add_object_observer (recalculate_final_matrix);
 
         // recalculate final matrix
         recalculate_final_matrix ();
@@ -468,7 +500,7 @@ public class Maia.Graphic.Transform : Core.Object
     {
         base.remove_child (inObject);
 
-        ((Transform)inObject).changed.disconnect (recalculate_final_matrix);
+        ((Transform)inObject).changed.remove_observer (recalculate_final_matrix);
 
         // recalculate final matrix
         recalculate_final_matrix ();
@@ -545,16 +577,18 @@ public class Maia.Graphic.Transform : Core.Object
         ret.m_BaseInvertMatrix = m_FinalInvertMatrix;
         ret.m_FinalInvertMatrix = m_FinalInvertMatrix;
 
-        changed.connect (ret.on_linked_changed);
+        changed.add_object_observer (ret.on_linked_changed);
 
         return ret;
     }
 
     private void
-    on_linked_changed (Transform inModel)
+    on_linked_changed (Core.Notification inNotification)
     {
-        m_BaseMatrix = inModel.m_FinalMatrix;
-        m_BaseInvertMatrix = inModel.m_FinalInvertMatrix;
+        unowned ChangedNotification? notification = (ChangedNotification)inNotification;
+
+        m_BaseMatrix = notification.transform.m_FinalMatrix;
+        m_BaseInvertMatrix = notification.transform.m_FinalInvertMatrix;
 
         recalculate_final_matrix ();
     }

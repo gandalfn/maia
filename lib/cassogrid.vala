@@ -403,13 +403,17 @@ public class Maia.CassoGrid : Group, ItemPackable, ItemMovable
                 Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"grid $(grid.name) size request error: $(err.message)");
             }
 
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s size : %s", grid.name, size.to_string ());
+#endif
         }
 
         public void
         size_allocate (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s size allocation : %s", grid.name, inAllocation.extents.to_string ());
+#endif
 
             try
             {
@@ -548,7 +552,9 @@ public class Maia.CassoGrid : Group, ItemPackable, ItemMovable
     {
         if (visible && m_Allocation.grid != null && (geometry == null || !geometry.equal (inAllocation)))
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "%s allocation: %s", name, inAllocation.extents.to_string ());
+#endif
 
             // Set geometry
             geometry = inAllocation;

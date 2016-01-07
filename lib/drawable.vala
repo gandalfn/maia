@@ -67,22 +67,30 @@ public interface Maia.Drawable : GLib.Object
                     if (damaged == null)
                     {
                         damaged = damaged_area;
+#if MAIA_DEBUG
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "area %s damage %s", damaged_area.extents.to_string (), damaged.extents.to_string ());
+#endif
                     }
                     else if (damaged.contains_rectangle (damaged_area.extents) !=  Graphic.Region.Overlap.IN)
                     {
                         damaged.union_ (damaged_area);
+#if MAIA_DEBUG
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "area %s damage %s", damaged_area.extents.to_string (), damaged.extents.to_string ());
+#endif
                     }
                     else
                     {
+#if MAIA_DEBUG
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"region is already damaged $((this as Item).name)");
+#endif
                         GLib.Signal.stop_emission_by_name (this, "damage");
                     }
                 }
                 else
                 {
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"empty damaged region $((this as Item).name)");
+#endif
                     GLib.Signal.stop_emission_by_name (this, "damage");
                 }
             }
@@ -91,11 +99,15 @@ public interface Maia.Drawable : GLib.Object
                 if (damaged == null || !damaged.equal (damaged_area))
                 {
                     damaged = damaged_area;
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "all damage %s", damaged.extents.to_string ());
+#endif
                 }
                 else
                 {
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"region is already damaged $((this as Item).name)");
+#endif
                     GLib.Signal.stop_emission_by_name (this, "damage");
                 }
             }
@@ -187,23 +199,31 @@ public interface Maia.Drawable : GLib.Object
                         damaged = damaged_area;
                         child_damage_area (damaged_area);
                         on_damage_area (damaged_area);
+#if MAIA_DEBUG
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"area $(damaged_area.extents) damage $(damaged.extents)");
+#endif
                     }
                     else if (damaged.contains_rectangle (damaged_area.extents) !=  Graphic.Region.Overlap.IN)
                     {
                         damaged.union_ (damaged_area);
                         child_damage_area (damaged_area);
                         on_damage_area (damaged_area);
+#if MAIA_DEBUG
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"area $(damaged_area.extents) damage $(damaged.extents)");
+#endif
                     }
                     else
                     {
+#if MAIA_DEBUG
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"region is already damaged");
+#endif
                     }
                 }
                 else
                 {
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"empty damaged region");
+#endif
                 }
             }
             else
@@ -213,11 +233,15 @@ public interface Maia.Drawable : GLib.Object
                     damaged = damaged_area;
                     child_damage_area (damaged_area);
                     on_damage_area (damaged_area);
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"all damage $(damaged.extents)");
+#endif
                 }
                 else
                 {
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"region is already damaged");
+#endif
                 }
             }
         }

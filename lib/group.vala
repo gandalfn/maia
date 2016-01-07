@@ -70,7 +70,9 @@ public class Maia.Group : Item
 
         size = Graphic.Size (area.extents.origin.x + area.extents.size.width, area.extents.origin.y + area.extents.size.height);
 
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "group: %s %s", name, Graphic.Size (area.extents.origin.x + area.extents.size.width, area.extents.origin.y + area.extents.size.height).to_string ());
+#endif
 
         return base.size_request (inSize);
     }
@@ -80,7 +82,9 @@ public class Maia.Group : Item
     {
         if (visible && (geometry == null || !geometry.equal (inAllocation)))
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "");
+#endif
 
             geometry = inAllocation;
 
@@ -144,7 +148,9 @@ public class Maia.Group : Item
                     // point under child
                     if (item.button_press_event (inButton, point))
                     {
+#if MAIA_DEBUG
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"button press event in $(item.name)");
+#endif
 
                         // event occurate under child stop signal
                         GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
@@ -180,7 +186,9 @@ public class Maia.Group : Item
                     // point under child
                     if (item.button_release_event (inButton, point))
                     {
+#if MAIA_DEBUG
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"button release event in $(item.name)");
+#endif
 
                         // event occurate under child stop signal
                         GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
@@ -218,7 +226,9 @@ public class Maia.Group : Item
                     // point under child
                     if (item.motion_event (point))
                     {
+#if MAIA_DEBUG
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "%s motion event in %s", name, item.name);
+#endif
 
                         // if item over pointer change unset pointer over for old item
                         if (item_over_pointer != null && item_over_pointer is Item && item != item_over_pointer && item_over_pointer.pointer_over)

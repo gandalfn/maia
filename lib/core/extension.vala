@@ -59,7 +59,7 @@ public class Maia.Core.Extension : Object
 
                 // Get plugin module filename
                 module_filename = m_Config.get_string ("Extension", "Module");
-                
+
                 // Module is relative to config file
                 if (GLib.Path.get_dirname (module_filename) == ".")
                 {
@@ -142,7 +142,9 @@ public class Maia.Core.Extension : Object
                 throw new ExtensionError.LOADING ("Error on loading %s: %s", module_filename, GLib.Module.error ());
             }
 
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CORE_EXTENSION, "Open module %s for extension %s", module_filename, name);
+#endif
         }
     }
 
@@ -156,7 +158,9 @@ public class Maia.Core.Extension : Object
         {
             m_Module = null;
 
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CORE_EXTENSION, "Close module %s for extension %s", module_filename, name);
+#endif
         }
     }
 

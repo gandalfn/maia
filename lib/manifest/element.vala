@@ -203,7 +203,9 @@ public interface Maia.Manifest.Element : Core.Object
             // Search property in object class
             string name = format_attribute_name (inName);
             unowned GLib.ParamSpec param = get_class ().find_property (name);
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING, @"name: $name");
+#endif
 
             // We found property which correspond to attribute name convert it to
             // string format
@@ -266,7 +268,9 @@ public interface Maia.Manifest.Element : Core.Object
         string name = format_attribute_name (inName);
         unowned GLib.ParamSpec param = get_class ().find_property (name);
 
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING, @"search name: $name");
+#endif
         // We found property which correspond to attribute name convert value
         // to property type and set
         if (param != null)

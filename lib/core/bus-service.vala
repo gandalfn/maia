@@ -79,7 +79,9 @@ public abstract class Maia.Core.BusService : Bus
         {
             Bus.MessageAuth? msg = (yield inClient.recv_async ()) as Bus.MessageAuth;
 
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Receive auth %s", msg.auth_type.to_string ());
+#endif
             if (msg != null)
             {
                 switch (msg.auth_type)

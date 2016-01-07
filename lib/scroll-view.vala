@@ -379,7 +379,9 @@ public class Maia.ScrollView : Item
         hadjustment.configure (area.extents.origin.x, area.extents.size.width, hadjustment.page_size);
         vadjustment.configure (area.extents.origin.y, area.extents.size.height, vadjustment.page_size);
 
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"scroll-view: $name $(area.extents.size)");
+#endif
 
         return base.size_request (inSize);
     }
@@ -414,7 +416,9 @@ public class Maia.ScrollView : Item
             viewport_position = m_Viewport.position;
             viewport_size = m_Viewport.size;
 
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"$(geometry.extents)");
+#endif
 
             m_Viewport.visible_area = Graphic.Rectangle (m_Viewport.visible_area.origin.x, m_Viewport.visible_area.origin.y,
                                                          double.max (0, geometry.extents.size.width - (m_VSeekBar.visible ? m_VSeekBar.size.width : 0)),
@@ -497,7 +501,9 @@ public class Maia.ScrollView : Item
                     // point under child
                     if (item.button_press_event (inButton, point))
                     {
+#if MAIA_DEBUG
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button press event in %s", item.name);
+#endif
                         // event occurate under child stop signal
                         GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
                         break;
@@ -532,7 +538,9 @@ public class Maia.ScrollView : Item
                     // point under child
                     if (item.button_release_event (inButton, point))
                     {
+#if MAIA_DEBUG
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "button release event in %s", item.name);
+#endif
                         // event occurate under child stop signal
                         GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
                         break;
@@ -569,7 +577,9 @@ public class Maia.ScrollView : Item
                     // point under child
                     if (item.motion_event (point))
                     {
+#if MAIA_DEBUG
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "%s motion event in %s", name, item.name);
+#endif
 
                         // event occurate under child stop signal
                         GLib.Signal.stop_emission (this, mc_IdMotionEvent, 0);

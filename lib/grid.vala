@@ -222,13 +222,17 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                 }
             }
 
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s size : %s", grid.name, size.to_string ());
+#endif
         }
 
         public void
         size_allocate (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s size allocation : %s", grid.name, inAllocation.extents.to_string ());
+#endif
 
             if (rows.length > 0 || columns.length > 0)
             {
@@ -446,7 +450,9 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         // Calculate the the size of ypadding
                         double ypadding = double.max (allocation.size.height - natural.height - (grid.row_spacing * (visible_rows.length - 1)), 0);
 
+#if MAIA_DEBUG
                         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s natural: %s padding: %g,%g", grid.name, natural.to_string (), xpadding, ypadding);
+#endif
 
                         // append padding
                         child_allocations = new Graphic.Rectangle [rows.length, columns.length];
@@ -491,9 +497,11 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                                                                                            rows[item.row].size.height + extra.height);
                                     }
 
+#if MAIA_DEBUG
                                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s extra: %s", grid.name, item.name, extra.to_string ());
                                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s row: %g, column: %g", grid.name, item.name, columns[item.column].size.width, rows[item.row].size.height);
                                     Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s rows %u columns %u allocation: %s", grid.name, item.name, item.rows, item.columns, child_allocations[item.row, item.column].to_string ());
+#endif
                                 }
                             }
                         }
@@ -1130,7 +1138,9 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
         if (visible && m_Allocation.grid != null && (geometry == null || !geometry.equal (inAllocation)))
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "%s allocation: %s", name, inAllocation.extents.to_string ());
+#endif
 
             // Set geometry
             geometry = inAllocation;
