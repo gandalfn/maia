@@ -26,7 +26,7 @@ _PINCLUDE(maiamm/private/item_p.h)
 
 namespace Maia
 {
-    _WRAP_ENUM(PageFormat, MaiaPageFormat, NO_GTYPE)
+    _WRAP_ENUM(class PageFormat, MaiaPageFormat, s#PAGE_FORMAT_##, NO_GTYPE)
 
     class Document : public Item
     {

@@ -455,8 +455,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     public signal bool button_release_event (uint inButton, Graphic.Point inPosition);
     public signal bool motion_event (Graphic.Point inPosition);
     public signal bool scroll_event (Scroll inScroll, Graphic.Point inPosition);
-    public signal void key_press_event (Key inKey, unichar inChar);
-    public signal void key_release_event (Key inKey, unichar inChar);
+    public signal void key_press_event (Modifier inModifier, Key inKey, unichar inChar);
+    public signal void key_release_event (Modifier inModifier, Key inKey, unichar inChar);
 
     [Signal (run = "first")]
     public virtual signal void

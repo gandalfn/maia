@@ -28,7 +28,7 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Log)
 
-        _WRAP_ENUM(Level, MaiaLogLevel, NO_GTYPE)
+        _WRAP_ENUM(class Level, MaiaLogLevel, s#LOG_LEVEL_##, NO_GTYPE)
         _WRAP_ENUM(Category, MaiaLogCategory, NO_GTYPE)
 
         class Logger : public Glib::Object

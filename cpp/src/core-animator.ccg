@@ -61,7 +61,7 @@ namespace Maia
         }
 
         unsigned int
-        Animator::add_transition (double inFrom, double inTo, AnimatorProgressType inType, SlotTransitionCallback inCallback, SlotTransitionFinished inFinished)
+        Animator::add_transition (double inFrom, double inTo, Animator::ProgressType inType, SlotTransitionCallback inCallback, SlotTransitionFinished inFinished)
         {
             AnimatorClosure* pClosure = new AnimatorClosure (inCallback, inFinished);
 
@@ -71,7 +71,7 @@ namespace Maia
         }
 
         unsigned int
-        Animator::add_transition (double inFrom, double inTo, AnimatorProgressType inType, SlotTransitionCallback inCallback)
+        Animator::add_transition (double inFrom, double inTo, Animator::ProgressType inType, SlotTransitionCallback inCallback)
         {
             AnimatorClosure* pClosure = new AnimatorClosure (inCallback);
 
@@ -81,7 +81,7 @@ namespace Maia
         }
 
         unsigned int
-        Animator::add_transition (double inFrom, double inTo, AnimatorProgressType inType, SlotTransitionFinished inFinished)
+        Animator::add_transition (double inFrom, double inTo, Animator::ProgressType inType, SlotTransitionFinished inFinished)
         {
             AnimatorClosure* pClosure = new AnimatorClosure (inFinished);
 
@@ -91,7 +91,7 @@ namespace Maia
         }
 
         unsigned int
-        Animator::add_transition (double inFrom, double inTo, AnimatorProgressType inType)
+        Animator::add_transition (double inFrom, double inTo, Animator::ProgressType inType)
         {
             unsigned int id = maia_core_animator_add_transition (gobj (), inFrom, inTo, (MaiaCoreAnimatorProgressType)inType, 0, 0, 0, 0, 0, 0);
 

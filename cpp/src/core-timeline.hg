@@ -29,8 +29,6 @@ namespace Maia
     namespace Core
     {
         _GMMPROC_EXTRA_NAMESPACE(Core)
-        _WRAP_ENUM(TimelineDirection, MaiaCoreTimelineDirection, s#DIRECTION_##,  NO_GTYPE)
-
         class Timeline : public Object
         {
             _CLASS_GOBJECT(Timeline, MaiaCoreTimeline, MAIA_CORE_TIMELINE, Object, MaiaCoreObject)
@@ -39,6 +37,8 @@ namespace Maia
                 _CTOR_DEFAULT
 
             public:
+                _WRAP_ENUM(class Direction, MaiaCoreTimelineDirection, s#CORE_TIMELINE_DIRECTION_##,  NO_GTYPE)
+
                 static Glib::RefPtr<Timeline> create (unsigned int inNbFrames, unsigned int inFps)
                 {
                     MaiaCoreTimeline* pTimeline = maia_core_timeline_new (inNbFrames, inFps);
@@ -51,8 +51,8 @@ namespace Maia
                     return Glib::RefPtr<Timeline> (new Timeline (pTimeline));
                 }
 
-                _WRAP_METHOD(TimelineDirection get_direction() const, maia_core_timeline_get_direction)
-                _WRAP_METHOD(void set_direction(TimelineDirection direction), maia_core_timeline_set_direction)
+                _WRAP_METHOD(Timeline::Direction get_direction() const, maia_core_timeline_get_direction)
+                _WRAP_METHOD(void set_direction(Timeline::Direction direction), maia_core_timeline_set_direction)
                 _WRAP_METHOD(guint get_speed() const, maia_core_timeline_get_speed)
                 _WRAP_METHOD(void set_speed(guint fps), maia_core_timeline_set_speed)
                 _WRAP_METHOD(guint get_n_frames() const, maia_core_timeline_get_n_frames)
@@ -73,7 +73,7 @@ namespace Maia
                 _WRAP_METHOD(void skip(gint n_frames), maia_core_timeline_skip)
                 _WRAP_METHOD(void advance(guint frame_num), maia_core_timeline_advance)
 
-                _WRAP_PROPERTY("direction", TimelineDirection)
+                _WRAP_PROPERTY("direction", Timeline::Direction)
                 _WRAP_PROPERTY("duration", guint)
                 _WRAP_PROPERTY("speed", guint)
                 _WRAP_PROPERTY("loop", bool)

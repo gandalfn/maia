@@ -29,7 +29,7 @@ _PINCLUDE(maiamm/private/grid_p.h)
 
 namespace Maia
 {
-    _WRAP_ENUM(Orientation, MaiaOrientation, NO_GTYPE)
+    _WRAP_ENUM(class Orientation, MaiaOrientation, s#ORIENTATION_##, NO_GTYPE)
 
     class View : public Grid
     {

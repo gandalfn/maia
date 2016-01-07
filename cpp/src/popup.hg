@@ -27,13 +27,13 @@ _PINCLUDE(maiamm/private/group_p.h)
 
 namespace Maia
 {
-    _WRAP_ENUM(PopupPlacement, MaiaPopupPlacement, NO_GTYPE)
-
     class Popup : public Group
     {
         _CLASS_GOBJECT(Popup, MaiaPopup, MAIA_POPUP, Group, MaiaGroup)
 
         public:
+            _WRAP_ENUM(class Placement, MaiaPopupPlacement, s#POPUP_PLACEMENT_##, NO_GTYPE)
+
             _IGNORE(maia_popup_get_window_transform)
 
             _WRAP_METHOD(double get_border () const, maia_popup_get_border)
@@ -54,8 +54,8 @@ namespace Maia
             _WRAP_METHOD(bool get_close_button () const, maia_popup_get_close_button)
             _WRAP_METHOD(void set_close_button (bool inClose = true), maia_popup_set_close_button)
 
-            _WRAP_METHOD(PopupPlacement get_placement () const, maia_popup_get_placement)
-            _WRAP_METHOD(void set_placement (PopupPlacement inPlacement), maia_popup_set_placement)
+            _WRAP_METHOD(Popup::Placement get_placement () const, maia_popup_get_placement)
+            _WRAP_METHOD(void set_placement (Popup::Placement inPlacement), maia_popup_set_placement)
 
             _WRAP_METHOD(Glib::RefPtr<Item> get_content () const, maia_popup_get_content, refreturn)
             _WRAP_METHOD(void set_content (const Glib::RefPtr<Item>& inItem), maia_popup_set_content)
@@ -66,8 +66,8 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Window> get_transient_for () const, maia_popup_get_transient_for, refreturn)
             _WRAP_METHOD(void set_transient_for (const Glib::RefPtr<Window>& inTransientFor), maia_popup_set_transient_for)
 
-            _WRAP_METHOD(WindowType get_window_type () const, maia_popup_get_window_type)
-            _WRAP_METHOD(void set_window_type (WindowType inType), maia_popup_set_window_type)
+            _WRAP_METHOD(Window::Type get_window_type () const, maia_popup_get_window_type)
+            _WRAP_METHOD(void set_window_type (Window::Type inType), maia_popup_set_window_type)
 
             _WRAP_METHOD(WindowPositionPolicy get_position_policy () const, maia_popup_get_position_policy)
             _WRAP_METHOD(void set_position_policy (WindowPositionPolicy inPolicy), maia_popup_set_position_policy)
@@ -79,11 +79,11 @@ namespace Maia
             _WRAP_PROPERTY("shadow-color", Glib::RefPtr<Graphic::Color>)
             _WRAP_PROPERTY("round-corner", double)
             _WRAP_PROPERTY("close-button", bool)
-            _WRAP_PROPERTY("placement", PopupPlacement)
+            _WRAP_PROPERTY("placement", Popup::Placement)
             _WRAP_PROPERTY("content", Glib::RefPtr<Item>)
             _WRAP_PROPERTY("animation", bool)
             _WRAP_PROPERTY("transient-for", Glib::RefPtr<Window>)
-            _WRAP_PROPERTY("window-type", WindowType)
+            _WRAP_PROPERTY("window-type", Window::Type)
             _WRAP_PROPERTY("position-policy", WindowPositionPolicy)
 
         private:

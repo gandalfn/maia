@@ -33,10 +33,6 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
-        _WRAP_ENUM(GlyphAlignment, MaiaGraphicGlyphAlignment, s#GRAPHIC_##,  NO_GTYPE)
-        _WRAP_ENUM(GlyphWrapMode, MaiaGraphicGlyphWrapMode, s#GRAPHIC_##,  NO_GTYPE)
-        _WRAP_ENUM(GlyphEllipsizeMode, MaiaGraphicGlyphEllipsizeMode, s#GRAPHIC_##,  NO_GTYPE)
-
         class GlyphLine : public Core::Object
         {
             _CLASS_GOBJECT(GlyphLine, MaiaGraphicGlyphLine, MAIA_GRAPHIC_GLYPH_LINE, Core::Object, MaiaCoreObject)
@@ -62,6 +58,10 @@ namespace Maia
 #m4 _CONVERSION(`MaiaGraphicContext*', `const Glib::RefPtr<Graphic::Context>&', `Glib::wrap($3)')
 
             public:
+                _WRAP_ENUM(class Alignment, MaiaGraphicGlyphAlignment, s#GRAPHIC_GLYPH_ALIGNMENT_##,  NO_GTYPE)
+                _WRAP_ENUM(class WrapMode, MaiaGraphicGlyphWrapMode, s#GRAPHIC_GLYPH_WRAP_MODE_##,  NO_GTYPE)
+                _WRAP_ENUM(class EllipsizeMode, MaiaGraphicGlyphEllipsizeMode, s#GRAPHIC_GLYPH_ELLIPSIZE_MODE_##,  NO_GTYPE)
+
                 static Glib::RefPtr<Glyph> create (const Glib::ustring& inFontDesc)
                 {
                     MaiaGraphicGlyph* pGlyph = maia_graphic_glyph_new (inFontDesc.c_str ());
@@ -74,12 +74,12 @@ namespace Maia
                 _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_graphic_glyph_set_font_description)
                 _WRAP_METHOD(bool get_use_markup () const, maia_graphic_glyph_get_use_markup)
                 _WRAP_METHOD(void set_use_markup (bool inUseMarkup = true), maia_graphic_glyph_set_use_markup)
-                _WRAP_METHOD(GlyphAlignment get_alignment () const, maia_graphic_glyph_get_alignment)
-                _WRAP_METHOD(void set_alignment (GlyphAlignment inAlignment), maia_graphic_glyph_set_alignment)
-                _WRAP_METHOD(GlyphWrapMode get_wrap () const, maia_graphic_glyph_get_wrap)
-                _WRAP_METHOD(void set_wrap (GlyphWrapMode inMode), maia_graphic_glyph_set_wrap)
-                _WRAP_METHOD(GlyphEllipsizeMode get_ellipsize () const, maia_graphic_glyph_get_ellipsize)
-                _WRAP_METHOD(void set_ellipsize (GlyphEllipsizeMode inMode), maia_graphic_glyph_set_ellipsize)
+                _WRAP_METHOD(Glyph::Alignment get_alignment () const, maia_graphic_glyph_get_alignment)
+                _WRAP_METHOD(void set_alignment (Glyph::Alignment inAlignment), maia_graphic_glyph_set_alignment)
+                _WRAP_METHOD(Glyph::WrapMode get_wrap () const, maia_graphic_glyph_get_wrap)
+                _WRAP_METHOD(void set_wrap (Glyph::WrapMode inMode), maia_graphic_glyph_set_wrap)
+                _WRAP_METHOD(Glyph::EllipsizeMode get_ellipsize () const, maia_graphic_glyph_get_ellipsize)
+                _WRAP_METHOD(void set_ellipsize (Glyph::EllipsizeMode inMode), maia_graphic_glyph_set_ellipsize)
                 _WRAP_METHOD(Glib::ustring get_text () const, maia_graphic_glyph_get_text)
                 _WRAP_METHOD(void set_text (const Glib::ustring& inText), maia_graphic_glyph_set_text)
                 _WRAP_METHOD(void get_origin (Point& outPoint) const, maia_graphic_glyph_get_origin)
@@ -94,9 +94,9 @@ namespace Maia
                 _WRAP_PROPERTY("size", Size)
                 _WRAP_PROPERTY("font-description", Glib::ustring)
                 _WRAP_PROPERTY("use_markup", bool)
-                _WRAP_PROPERTY("alignment", GlyphAlignment)
-                _WRAP_PROPERTY("wrap", GlyphWrapMode)
-                _WRAP_PROPERTY("ellipsize", GlyphEllipsizeMode)
+                _WRAP_PROPERTY("alignment", Glyph::Alignment)
+                _WRAP_PROPERTY("wrap", Glyph::WrapMode)
+                _WRAP_PROPERTY("ellipsize", Glyph::EllipsizeMode)
                 _WRAP_PROPERTY("text", Glib::ustring)
                 _WRAP_PROPERTY("origin", Point)
                 _WRAP_PROPERTY("line-count", int)

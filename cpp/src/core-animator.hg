@@ -29,8 +29,6 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Core)
 
-        _WRAP_ENUM(AnimatorProgressType, MaiaCoreAnimatorProgressType, NO_GTYPE)
-
         class Animator : public Glib::Object
         {
             _CLASS_GOBJECT(Animator, MaiaCoreAnimator, MAIA_CORE_ANIMATOR, Glib::Object, GObject)
@@ -39,6 +37,8 @@ namespace Maia
                 _WRAP_CTOR(Animator(guint speed, guint duration), maia_core_animator_new)
 
             public:
+                _WRAP_ENUM(class ProgressType, MaiaCoreAnimatorProgressType, s#CORE_ANIMATOR_PROGRESS_TYPE_##, NO_GTYPE)
+
                 _CUSTOM_DTOR
 
                 typedef sigc::slot<bool, double> SlotTransitionCallback;
@@ -57,16 +57,16 @@ namespace Maia
                 _WRAP_METHOD(void set_loop(bool loop = true), maia_core_animator_set_loop)
                 _WRAP_METHOD(bool get_loop() const, maia_core_animator_get_loop)
                 _WRAP_METHOD(bool is_playing() const, maia_core_animator_get_is_playing)
-                _WRAP_METHOD(void set_direction(TimelineDirection direction), maia_core_animator_set_direction)
-                _WRAP_METHOD(TimelineDirection get_direction() const, maia_core_animator_get_direction)
+                _WRAP_METHOD(void set_direction(Timeline::Direction direction), maia_core_animator_set_direction)
+                _WRAP_METHOD(Timeline::Direction get_direction() const, maia_core_animator_get_direction)
 
                 _WRAP_METHOD(void start(), maia_core_animator_start)
                 _WRAP_METHOD(void stop(), maia_core_animator_stop)
 
-                unsigned int add_transition (double inFrom, double inTo, AnimatorProgressType inType, SlotTransitionCallback inCallback, SlotTransitionFinished inFinished);
-                unsigned int add_transition (double inFrom, double inTo, AnimatorProgressType inType, SlotTransitionCallback inCallback);
-                unsigned int add_transition (double inFrom, double inTo, AnimatorProgressType inType, SlotTransitionFinished inFinished);
-                unsigned int add_transition (double inFrom, double inTo, AnimatorProgressType inType);
+                unsigned int add_transition (double inFrom, double inTo, Animator::ProgressType inType, SlotTransitionCallback inCallback, SlotTransitionFinished inFinished);
+                unsigned int add_transition (double inFrom, double inTo, Animator::ProgressType inType, SlotTransitionCallback inCallback);
+                unsigned int add_transition (double inFrom, double inTo, Animator::ProgressType inType, SlotTransitionFinished inFinished);
+                unsigned int add_transition (double inFrom, double inTo, Animator::ProgressType inType);
 
                 void remove_transition (unsigned int inTransition);
 
@@ -74,7 +74,7 @@ namespace Maia
                 void add_transition_property (unsigned int inTransition, Glib::Object& inObject, const Glib::ustring& inName, float inFrom, float inTo);
                 void add_transition_property (unsigned int inTransition, Glib::Object& inObject, const Glib::ustring& inName, int inFrom, int inTo);
 
-                _WRAP_PROPERTY("direction", TimelineDirection)
+                _WRAP_PROPERTY("direction", Timeline::Direction)
                 _WRAP_PROPERTY("duration", guint)
                 _WRAP_PROPERTY("speed", guint)
                 _WRAP_PROPERTY("loop", bool)

@@ -29,7 +29,7 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
-        _WRAP_ENUM(LineType, MaiaGraphicLineType, s#GRAPHIC_##,  NO_GTYPE)
+        _WRAP_ENUM(class LineType, MaiaGraphicLineType, s#GRAPHIC_LINE_TYPE_##,  NO_GTYPE)
 
         std::vector<double> line_type_to_dash (LineType inLineType, double inLineWidth);
     }

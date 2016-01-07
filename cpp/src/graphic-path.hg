@@ -32,8 +32,6 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
-        _WRAP_ENUM(PathDataType, MaiaGraphicPathDataType, s#GRAPHIC_##,  NO_GTYPE)
-
         class Path : public Core::Object
         {
             _CLASS_GOBJECT(Path, MaiaGraphicPath, MAIA_GRAPHIC_PATH, Core::Object, MaiaCoreObject)
@@ -42,6 +40,8 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
+                _WRAP_ENUM(class DataType, MaiaGraphicPathDataType, s#GRAPHIC_PATH_DATA_TYPE_##,  NO_GTYPE)
+
                 static Glib::RefPtr<Path> create ()
                 {
                     MaiaGraphicPath* pPath = maia_graphic_path_new ();
@@ -64,7 +64,7 @@ namespace Maia
                 _IGNORE(maia_graphic_path_new_from_data)
                 _IGNORE(maia_graphic_path_new_from_region)
 
-                _WRAP_METHOD(PathDataType get_data_type (), maia_graphic_path_get_data_type)
+                _WRAP_METHOD(Path::DataType get_data_type (), maia_graphic_path_get_data_type)
 
                 _IGNORE(maia_graphic_path_get_points)
                 std::vector<Point> get_points () const
@@ -108,7 +108,7 @@ namespace Maia
                 _WRAP_METHOD(void close (), maia_graphic_path_close)
 
 
-                _WRAP_PROPERTY ("data-type", PathDataType)
+                _WRAP_PROPERTY ("data-type", Path::DataType)
         };
 
     }

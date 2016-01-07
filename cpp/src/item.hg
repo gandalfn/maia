@@ -36,9 +36,10 @@ namespace Maia
 {
     class Window;
 
-    _WRAP_ENUM(Scroll, MaiaScroll, NO_GTYPE)
-    _WRAP_ENUM(Key, MaiaKey, NO_GTYPE)
-    _WRAP_ENUM(Cursor, MaiaCursor, NO_GTYPE)
+    _WRAP_ENUM(class Scroll, MaiaScroll, s#SCROLL_##, NO_GTYPE)
+    _WRAP_ENUM(class Modifier : int, MaiaModifier, s#MODIFIER_##, NO_GTYPE)
+    _WRAP_ENUM(class Key, MaiaKey, s#KEY_##, s#^0$#key_0#, s#^1$#key_1#, s#^2$#key_2#, s#^3$#key_3#, s#^4$#key_4#, s#^5$#key_5#, s#^6$#key_6#, s#^7$#key_7#, s#^8$#key_8#, s#^9$#key_9#, NO_GTYPE)
+    _WRAP_ENUM(class Cursor, MaiaCursor, s#CURSOR_##, NO_GTYPE)
 
     class Item : public Core::Object, public Drawable, public Manifest::Element
     {
@@ -151,8 +152,8 @@ namespace Maia
             _WRAP_SIGNAL(bool button_release_event (guint inButton, const Graphic::Point& inPoint), "button-release-event", no_default_handler)
             _WRAP_SIGNAL(bool motion_event (const Graphic::Point& inPoint), "motion-event", no_default_handler)
             _WRAP_SIGNAL(bool scroll_event (Scroll inScroll, const Graphic::Point& inPoint), "scroll-event", no_default_handler)
-            _WRAP_SIGNAL(void key_press_event (Key inKey, guint inChar), "key-press-event", no_default_handler)
-            _WRAP_SIGNAL(void key_release_event (Key inKey, guint inChar), "key-release-event", no_default_handler)
+            _WRAP_SIGNAL(void key_press_event (Modifier inModifier, Key inKey, guint inChar), "key-press-event", no_default_handler)
+            _WRAP_SIGNAL(void key_release_event (Modifier inModifier, Key inKey, guint inChar), "key-release-event", no_default_handler)
 
             _WRAP_SIGNAL(void grab_focus (const Glib::RefPtr<Item>& inItem), "grab-focus")
             _WRAP_SIGNAL(void set_pointer_cursor (Cursor inCursor), "set-pointer-cursor")

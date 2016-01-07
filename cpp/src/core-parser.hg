@@ -30,8 +30,51 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Core)
 
-        _WRAP_ENUM(ParserToken, MaiaCoreParserToken, NO_GTYPE)
         _WRAP_GERROR(ParseError, MaiaCoreParseError, MAIA_CORE_PARSE_ERROR, NO_GTYPE)
+
+        class ParserIterator;
+
+        class Parser : public Object
+        {
+            _CLASS_GOBJECT(Parser, MaiaCoreParser, MAIA_CORE_PARSER, Object, MaiaCoreObject)
+
+            public:
+                _WRAP_ENUM(class Token, MaiaCoreParserToken, s#CORE_PARSER_TOKEN_##, s#EOF#END_OF_FILE#, NO_GTYPE)
+
+                typedef ParserIterator iterator;
+
+                _WRAP_METHOD(Glib::ustring get_element () const, maia_core_parser_get_element)
+                _WRAP_METHOD(Glib::ustring get_attribute () const, maia_core_parser_get_attribute)
+                _WRAP_METHOD(Core::Map<Glib::ustring, Glib::ustring> get_attributes () const, maia_core_parser_get_attributes)
+                _WRAP_METHOD(Glib::ustring get_val () const, maia_core_parser_get_val)
+                _WRAP_METHOD(Glib::ustring get_characters () const, maia_core_parser_get_characters)
+                _WRAP_METHOD(int get_line () const, maia_core_parser_get_line)
+                _WRAP_METHOD(int get_column () const, maia_core_parser_get_column)
+
+                _IGNORE (maia_core_parser_get_attributes)
+                std::map<Glib::ustring, Glib::ustring> get_attributes ();
+
+                _WRAP_METHOD(Parser::iterator begin (), maia_core_parser_iterator)
+                _WRAP_METHOD(Parser::iterator end (), maia_core_parser_iterator_end)
+
+                _WRAP_PROPERTY ("element", Glib::ustring)
+                _WRAP_PROPERTY ("characters", Glib::ustring)
+                _WRAP_PROPERTY ("attribute", Glib::ustring)
+                _WRAP_PROPERTY ("val", Glib::ustring)
+                _WRAP_PROPERTY ("line", int)
+                _WRAP_PROPERTY ("column", int)
+
+            protected:
+                _WRAP_METHOD(void next_char (), maia_core_parser_next_char)
+                _WRAP_METHOD(void next_unichar (gunichar inChar), maia_core_parser_next_unichar)
+                _WRAP_METHOD(void skip_space (), maia_core_parser_skip_space)
+
+                _WRAP_VFUNC(Parser::Token next_token (), next_token, errthrow)
+                _WRAP_METHOD(Parser::Token next_token (), maia_core_parser_next_token, errthrow)
+
+            private:
+                _WRAP_PROPERTY ("attributes", void*)
+        };
 
         class ParserIterator
         {
@@ -50,7 +93,7 @@ namespace Maia
                     return *this;
                 }
 
-                inline ParserToken operator*()
+                inline Parser::Token operator*()
                 {
                     return get ();
                 }
@@ -69,44 +112,7 @@ namespace Maia
 
                 _WRAP_METHOD(bool next (), maia_core_parser_iterator_next, errthrow)
                 _WRAP_METHOD(bool is_end () const, maia_core_parser_iterator_is_end)
-                _WRAP_METHOD(ParserToken get () const, maia_core_parser_iterator_get)
+                _WRAP_METHOD(Parser::Token get () const, maia_core_parser_iterator_get)
         };
-
-        class Parser : public Object
-        {
-            _CLASS_GOBJECT(Parser, MaiaCoreParser, MAIA_CORE_PARSER, Object, MaiaCoreObject)
-
-            protected:
-                _WRAP_METHOD(void next_char (), maia_core_parser_next_char)
-                _WRAP_METHOD(void next_unichar (gunichar inChar), maia_core_parser_next_unichar)
-                _WRAP_METHOD(void skip_space (), maia_core_parser_skip_space)
-
-                _WRAP_VFUNC(ParserToken next_token (), next_token, errthrow)
-                _WRAP_METHOD(ParserToken next_token (), maia_core_parser_next_token, errthrow)
-
-            public:
-                typedef ParserIterator iterator;
-
-                _WRAP_METHOD(Glib::ustring get_element () const, maia_core_parser_get_element)
-                _WRAP_METHOD(Glib::ustring get_attribute () const, maia_core_parser_get_attribute)
-                _WRAP_METHOD(Core::Map<Glib::ustring, Glib::ustring> get_attributes () const, maia_core_parser_get_attributes)
-                _WRAP_METHOD(Glib::ustring get_val () const, maia_core_parser_get_val)
-                _WRAP_METHOD(Glib::ustring get_characters () const, maia_core_parser_get_characters)
-
-                _IGNORE (maia_core_parser_get_attributes)
-                std::map<Glib::ustring, Glib::ustring> get_attributes ();
-
-                _WRAP_METHOD(Parser::iterator begin (), maia_core_parser_iterator)
-                _WRAP_METHOD(Parser::iterator end (), maia_core_parser_iterator_end)
-
-                _WRAP_PROPERTY ("element", Glib::ustring)
-                _WRAP_PROPERTY ("characters", Glib::ustring)
-                _WRAP_PROPERTY ("attribute", Glib::ustring)
-                _WRAP_PROPERTY ("val", Glib::ustring)
-
-            private:
-                _WRAP_PROPERTY ("attributes", void*)
-        };
-
     }
 }

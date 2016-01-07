@@ -572,12 +572,16 @@ public class Maia.Window : Group
                     // we have grab keyboard item send event
                     if (grab_keyboard_item != null)
                     {
-                        grab_keyboard_item.key_press_event (keyboard_args.key, keyboard_args.character);
+                        grab_keyboard_item.key_press_event (keyboard_args.modifier, keyboard_args.key, keyboard_args.character);
                     }
                     // we have focus item send event
                     else if (focus_item != null)
                     {
-                        focus_item.key_press_event (keyboard_args.key, keyboard_args.character);
+                        focus_item.key_press_event (keyboard_args.modifier, keyboard_args.key, keyboard_args.character);
+                    }
+                    else
+                    {
+                        key_press_event (keyboard_args.modifier, keyboard_args.key, keyboard_args.character);
                     }
                     break;
 
@@ -585,12 +589,16 @@ public class Maia.Window : Group
                     // we have grab keyboard item send event
                     if (grab_keyboard_item != null)
                     {
-                        grab_keyboard_item.key_release_event (keyboard_args.key, keyboard_args.character);
+                        grab_keyboard_item.key_release_event (keyboard_args.modifier, keyboard_args.key, keyboard_args.character);
                     }
                     // we have focus item send event
                     else if (focus_item != null)
                     {
-                        focus_item.key_release_event (keyboard_args.key, keyboard_args.character);
+                        focus_item.key_release_event (keyboard_args.modifier, keyboard_args.key, keyboard_args.character);
+                    }
+                    else
+                    {
+                        key_release_event (keyboard_args.modifier, keyboard_args.key, keyboard_args.character);
                     }
                     break;
             }

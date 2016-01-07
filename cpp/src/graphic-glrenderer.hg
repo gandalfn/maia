@@ -30,8 +30,6 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
-        _WRAP_ENUM(GLRendererAttribute, MaiaGraphicGLRendererAttribute, s#GRAPHIC_##,  NO_GTYPE)
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
         class GLRendererObject : public RendererObject
         {
@@ -53,6 +51,8 @@ namespace Maia
         class GLRenderer : public Renderer
         {
             public:
+                _WRAP_ENUM(class Attribute : uint32_t, MaiaGraphicGLRendererAttribute, s#GRAPHIC_GL_RENDERER_ATTRIBUTE_##,  NO_GTYPE)
+
                 virtual ~GLRenderer ();
 
                 static Glib::RefPtr<GLRenderer> create (const Size& inSize, const std::vector<uint32_t>& inAttributes)

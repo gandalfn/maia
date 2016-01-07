@@ -31,8 +31,6 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
-        _WRAP_ENUM(SurfaceFormat, MaiaGraphicSurfaceFormat, s#GRAPHIC_##,  NO_GTYPE)
-
         class Surface : public Pattern
         {
             _CLASS_GOBJECT(Surface, MaiaGraphicSurface, MAIA_GRAPHIC_SURFACE, Pattern, MaiaGraphicPattern)
@@ -46,6 +44,8 @@ namespace Maia
                 _WRAP_VFUNC(void exponential_blur (int inRadius), exponential_blur, errthrow)
 
             public:
+                _WRAP_ENUM(class Format, MaiaGraphicSurfaceFormat, s#GRAPHIC_SURFACE_FORMAT_##,  NO_GTYPE)
+
                 static Glib::RefPtr<Surface> create (unsigned int inWidth, unsigned int inHeight)
                 {
                     MaiaGraphicSurface* pSurface = maia_graphic_surface_new (inWidth, inHeight);
@@ -62,7 +62,7 @@ namespace Maia
 
                 _IGNORE(maia_graphic_surface_new_from_device)
 
-                static Glib::RefPtr<Surface> create (SurfaceFormat inFormat, unsigned char* inpData, unsigned int inWidth, unsigned int inHeight)
+                static Glib::RefPtr<Surface> create (Surface::Format inFormat, unsigned char* inpData, unsigned int inWidth, unsigned int inHeight)
                 {
                     MaiaGraphicSurface* pSurface = maia_graphic_surface_new_from_data ((MaiaGraphicSurfaceFormat)inFormat, inpData, inWidth, inHeight);
                     return Glib::RefPtr<Surface> (new Surface (pSurface));
@@ -78,7 +78,7 @@ namespace Maia
 
                 _IGNORE(maia_graphic_surface_new_from_native)
 
-                _WRAP_METHOD(SurfaceFormat get_format () const, maia_graphic_surface_get_format)
+                _WRAP_METHOD(Surface::Format get_format () const, maia_graphic_surface_get_format)
                 _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_surface_get_size)
                 _WRAP_METHOD(void set_size (const Size& inSize), maia_graphic_surface_set_size)
                 _WRAP_METHOD(Glib::RefPtr<Context> get_context () const, maia_graphic_surface_get_context, refreturn)
@@ -97,7 +97,7 @@ namespace Maia
 
                 _WRAP_METHOD(void dump (const Glib::ustring& inFilename), maia_graphic_surface_dump, errthrow)
 
-                _WRAP_PROPERTY ("format", SurfaceFormat)
+                _WRAP_PROPERTY ("format", Surface::Format)
                 _WRAP_PROPERTY ("size", Size)
                 _WRAP_PROPERTY ("context", Glib::RefPtr<Context>)
                 _WRAP_PROPERTY ("device", Glib::RefPtr<Device>)

@@ -30,8 +30,6 @@ _PINCLUDE(maiamm/private/item_p.h)
 
 namespace Maia
 {
-    _WRAP_ENUM(ChartDirection, MaiaChartDirection, NO_GTYPE)
-
     class Chart : public Item
     {
         _CLASS_GOBJECT(Chart, MaiaChart, MAIA_CHART, Item, MaiaItem)
@@ -40,6 +38,8 @@ namespace Maia
             _CTOR_DEFAULT()
 
         public:
+            _WRAP_ENUM(class Direction, MaiaChartDirection, s#CHART_DIRECTION_##, NO_GTYPE)
+
             static Glib::RefPtr<Chart> create (const Glib::ustring& inId, const Glib::ustring& inTitle = "")
             {
                 MaiaChart* pChart = maia_chart_new (inId.c_str(), inTitle.c_str ());
@@ -60,8 +60,8 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_title () const, maia_chart_get_title)
             _WRAP_METHOD(void set_title (const Glib::ustring& inTitle), maia_chart_set_title)
 
-            _WRAP_METHOD(Graphic::GlyphAlignment get_alignment () const, maia_chart_get_alignment)
-            _WRAP_METHOD(void set_alignment (Graphic::GlyphAlignment inAlignment), maia_chart_set_alignment)
+            _WRAP_METHOD(Graphic::Glyph::Alignment get_alignment () const, maia_chart_get_alignment)
+            _WRAP_METHOD(void set_alignment (Graphic::Glyph::Alignment inAlignment), maia_chart_set_alignment)
 
             _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_chart_get_model, refreturn)
             _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_chart_set_model)
@@ -75,8 +75,8 @@ namespace Maia
             _WRAP_METHOD(void get_range (Graphic::Range& outRange) const, maia_chart_get_range)
             _WRAP_METHOD(void set_range (const Graphic::Range& inRange), maia_chart_set_range)
 
-            _WRAP_METHOD(ChartDirection get_direction () const, maia_chart_get_direction)
-            _WRAP_METHOD(void set_direction (ChartDirection inDirection), maia_chart_set_direction)
+            _WRAP_METHOD(Chart::Direction get_direction () const, maia_chart_get_direction)
+            _WRAP_METHOD(void set_direction (Chart::Direction inDirection), maia_chart_set_direction)
 
             _WRAP_METHOD(bool get_smoothing () const, maia_chart_get_smoothing)
             _WRAP_METHOD(void set_smoothing (bool inSmoothing = true), maia_chart_set_smoothing)
@@ -91,12 +91,12 @@ namespace Maia
             _WRAP_SIGNAL(void changed (), "changed", no_default_handler)
 
             _WRAP_PROPERTY("title", Glib::ustring)
-            _WRAP_PROPERTY("alignment", Graphic::GlyphAlignment)
+            _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
             _WRAP_PROPERTY("x-axis", Glib::ustring)
             _WRAP_PROPERTY("y-axis", Glib::ustring)
             _WRAP_PROPERTY("range", Graphic::Range)
-            _WRAP_PROPERTY("direction", ChartDirection)
+            _WRAP_PROPERTY("direction", Chart::Direction)
             _WRAP_PROPERTY("smoothing", bool)
             _WRAP_PROPERTY("path", Glib::RefPtr<Graphic::Path>)
             _WRAP_PROPERTY("reverse-path", Glib::RefPtr<Graphic::Path>)

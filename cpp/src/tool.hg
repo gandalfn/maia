@@ -27,8 +27,6 @@ _PINCLUDE(maiamm/private/button_p.h)
 
 namespace Maia
 {
-    _WRAP_ENUM(ToolAction, MaiaToolAction, NO_GTYPE)
-
     class Tool : public Button
     {
         _CLASS_GOBJECT(Tool, MaiaTool, MAIA_TOOL, Button, MaiaButton)
@@ -37,6 +35,8 @@ namespace Maia
             _CTOR_DEFAULT()
 
         public:
+            _WRAP_ENUM(class Action, MaiaToolAction, s#TOOL_ACTION_##, NO_GTYPE)
+
             static Glib::RefPtr<Tool> create (const Glib::ustring& inId)
             {
                 MaiaTool* pTool = maia_tool_new (inId.c_str (), 0);
@@ -53,14 +53,14 @@ namespace Maia
 
             _WRAP_METHOD(Glib::RefPtr<Toolbox> get_toolbox () const, maia_tool_get_toolbox, refreturn)
 
-            _WRAP_METHOD(ToolAction get_action () const, maia_tool_get_action)
-            _WRAP_METHOD(void set_action (ToolAction inAction), maia_tool_set_action)
+            _WRAP_METHOD(Tool::Action get_action () const, maia_tool_get_action)
+            _WRAP_METHOD(void set_action (Tool::Action inAction), maia_tool_set_action)
 
             _WRAP_METHOD(Glib::ustring get_sensitive_with () const, maia_tool_get_sensitive_with)
             _WRAP_METHOD(void set_sensitive_with (const Glib::ustring& inCriteria), maia_tool_set_sensitive_with)
 
             _WRAP_PROPERTY("toolbox", Glib::RefPtr<Toolbox>)
-            _WRAP_PROPERTY("action", ToolAction)
+            _WRAP_PROPERTY("action", Tool::Action)
             _WRAP_PROPERTY("sensitive-with", Glib::ustring)
     };
 }

@@ -38,7 +38,7 @@ namespace Maia
 
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
-        _WRAP_ENUM(Operator, MaiaGraphicOperator, s#GRAPHIC_##,  NO_GTYPE)
+        _WRAP_ENUM(class Operator, MaiaGraphicOperator, s#GRAPHIC_OPERATOR_##,  NO_GTYPE)
         _WRAP_GERROR(Error, MaiaGraphicError, MAIA_GRAPHIC_ERROR, NO_GTYPE)
 
         class Context : public Core::Object

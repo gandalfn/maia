@@ -742,7 +742,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     }
 
     private void
-    on_key_press_event (Key inKey, unichar inCar)
+    on_key_press_event (Modifier inModifier, Key inKey, unichar inCar)
     {
         if (have_focus)
         {
