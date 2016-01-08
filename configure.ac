@@ -44,6 +44,7 @@ dnl Packages version required
 dnl ****************************************************************************
 GLIB_REQUIRED=2.32.0
 VALA_REQUIRED=0.26.0
+UUID_REQUIRED=2.25.0
 PIXMAN_REQUIRED=0.16.4
 CAIRO_REQUIRED=1.10.2
 PANGO_REQUIRED=1.30.0
@@ -94,7 +95,8 @@ PKG_CHECK_MODULES(MAIA, [glib-2.0 >= $GLIB_REQUIRED
                          gio-2.0 >= $GLIB_REQUIRED
                          gio-unix-2.0 >= $GLIB_REQUIRED
                          gobject-2.0 >= $GLIB_REQUIRED
-                         gmodule-2.0 >= $GLIB_REQUIRED])
+                         gmodule-2.0 >= $GLIB_REQUIRED
+                         uuid >= $UUID_REQUIRED])
 AC_SUBST(MAIA_CFLAGS)
 AC_SUBST(MAIA_LIBS)
 

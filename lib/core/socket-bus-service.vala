@@ -21,61 +21,36 @@ public class Maia.Core.SocketBusService : BusService
 {
     // properties
     private GLib.SocketService m_Socket;
-    private uint               m_Port;
     private ulong              m_ClientCount = 0;
 
-    // accessors
-    public uint port {
-        get {
-            return m_Port;
-        }
-    }
-
     // methods
-    public SocketBusService (string inName)
+    public SocketBusService (string inName, BusAddress inAddress)
     {
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Create socket bus service %s", inName);
 
-        base (inName);
+        base (inName, inAddress);
 
         m_Socket = new GLib.SocketService ();
 
         try
         {
-            string filename = "%s/maia-bus-socket.%x".printf (GLib.Environment.get_tmp_dir (), id);
-
-            GLib.FileUtils.unlink (filename);
-
-            m_Socket.add_address (new GLib.UnixSocketAddress (filename),
-                                  GLib.SocketType.STREAM, GLib.SocketProtocol.DEFAULT, null, null);
-        }
-        catch (GLib.Error err)
-        {
-        }
-
-        m_Socket.incoming.connect (on_client_connect);
-
-        m_Socket.start ();
-    }
-
-    public SocketBusService.tcp (string inName, uint inPort = 0)
-    {
-        Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Create socket bus service %s on port : %u", inName, inPort);
-
-        base (inName);
-
-        m_Socket = new GLib.SocketService ();
-        m_Port = inPort;
-
-        try
-        {
-            if (m_Port == 0)
+            switch (inAddress.address_type)
             {
-                m_Port = m_Socket.add_any_inet_port (null);
-            }
-            else
-            {
-                m_Socket.add_inet_port ((uint16)m_Port, null);
+                case BusAddress.Type.UNIX:
+                    m_Socket.add_address (new GLib.UnixSocketAddress.as_abstract (inAddress.hier, -1),
+                                          GLib.SocketType.STREAM, GLib.SocketProtocol.DEFAULT, null, null);
+                    break;
+
+                case BusAddress.Type.SOCKET:
+                    if (inAddress.port == 0)
+                    {
+                        inAddress.port = m_Socket.add_any_inet_port (null);
+                    }
+                    else
+                    {
+                        m_Socket.add_inet_port ((uint16)inAddress.port, null);
+                    }
+                    break;
             }
         }
         catch (GLib.Error err)
@@ -98,7 +73,7 @@ public class Maia.Core.SocketBusService : BusService
     on_client_connect (GLib.SocketConnection inConnection, GLib.Object? inSource)
     {
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Client connected");
-        var client = new SocketBusConnection.client ("%s-connection-%lu".printf (uuid, ++m_ClientCount), inConnection);
+        var client = new SocketBusConnection.client (@"$address-connection-$(++m_ClientCount)", address, inConnection);
         add (client);
 
         return false;

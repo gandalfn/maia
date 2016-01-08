@@ -585,10 +585,10 @@ public class Maia.Core.EventBus : Object
         private BusConnection          m_Connection;
 
         // methods
-        public Client (uint32 inId) throws BusError
+        public Client (BusAddress inAddress) throws BusError
         {
             // Create connection
-            m_Connection = new SocketBusConnection ("event-bus-client-%lx".printf ((long)GLib.Thread.self<void*> ()), inId);
+            m_Connection = new SocketBusConnection ("event-bus-client-%lx".printf ((long)GLib.Thread.self<void*> ()), inAddress);
             m_Connection.notifications["message-received"].add_object_observer (on_message_received);
 
             // Create subscribers
@@ -991,6 +991,7 @@ public class Maia.Core.EventBus : Object
 
     // properties
     private Engine         m_Engine;
+    private BusAddress     m_Address;
     private BusService     m_Service;
     private Set<Occurence> m_Occurences;
     private GLib.Private   m_Client;
@@ -1014,7 +1015,7 @@ public class Maia.Core.EventBus : Object
         m_Client = new GLib.Private (GLib.Object.unref);
     }
 
-    public EventBus (string inName)
+    public EventBus (string inName, string inAddress)
     {
 #if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Create event-bus $inName");
@@ -1022,6 +1023,9 @@ public class Maia.Core.EventBus : Object
 
         // Create event bus
         GLib.Object (id: GLib.Quark.from_string (inName));
+
+        // Create address
+        m_Address = new BusAddress (inAddress);
 
         // Create engine
         m_Engine = new Engine (this);
@@ -1048,7 +1052,7 @@ public class Maia.Core.EventBus : Object
         m_Occurences.compare_func = Occurence.compare;
 
         // Create bus service
-        m_Service = new SocketBusService (((GLib.Quark)id).to_string ());
+        m_Service = new SocketBusService (((GLib.Quark)id).to_string (), m_Address);
         m_Service.set_dispatch_func (on_dispatch_message);
     }
 
@@ -1060,7 +1064,7 @@ public class Maia.Core.EventBus : Object
         {
             try
             {
-                var new_client = new Client (m_Service.id);
+                var new_client = new Client (m_Service.address);
                 m_Client.set (new_client);
                 new_client.ref ();
                 client = new_client;

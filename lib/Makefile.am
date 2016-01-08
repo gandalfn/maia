@@ -51,6 +51,7 @@ libmaia_la_SOURCES = \
     core/extension.vala \
     core/extension-loader.vala \
     core/message.vala \
+    core/bus-address.vala \
     core/bus.vala \
     core/bus-connection.vala \
     core/bus-service.vala \
@@ -194,7 +195,8 @@ libmaia_la_SOURCES = \
 
 libmaia_la_VALAFLAGS = \
     --pkg=gvalue-collect \
-    --pkg=linux
+    --pkg=linux \
+    --pkg=uuid
 
 libmaia_la_LDFLAGS = \
     -Wl,--as-needed \

@@ -35,10 +35,10 @@ namespace Maia
         public:
             static Glib::RefPtr<Application> create (const Glib::ustring& inName, int inFps = 60)
             {
-                return Glib::RefPtr<Application> (new Application (maia_application_new (inName.c_str(), inFps, 0, 0)));
+                return Glib::RefPtr<Application> (new Application (maia_application_new (inName.c_str(), inFps, 0, 0, "unix://")));
             }
 
-            static Glib::RefPtr<Application> create (const Glib::ustring& inName, int inFps, const std::vector<Glib::ustring>& inBackends)
+            static Glib::RefPtr<Application> create (const Glib::ustring& inName, int inFps, const std::vector<Glib::ustring>& inBackends, const Glib::ustring& inUri = "unix://")
             {
                 int length = inBackends.size ();
                 char** backends = nullptr;
@@ -52,7 +52,7 @@ namespace Maia
                     }
                 }
 
-                MaiaApplication* pApplication = maia_application_new (inName.c_str(), inFps, backends, length);
+                MaiaApplication* pApplication = maia_application_new (inName.c_str(), inFps, backends, length, inUri.c_str ());
 
                 if (backends)
                 {

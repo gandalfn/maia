@@ -259,7 +259,7 @@ public abstract class Maia.Core.Bus : Object
     }
 
     // accessors
-    public string uuid       { get; construct; default = null; }
+    public BusAddress address { get; construct; default = null; }
 
     // static methods
     static construct
@@ -270,12 +270,6 @@ public abstract class Maia.Core.Bus : Object
     }
 
     // methods
-    construct
-    {
-        // Set bus id
-        if (uuid != null) id = uuid.hash ();
-    }
-
     protected abstract size_t read  (uint8[] inData) throws BusError;
     protected abstract size_t write (uint8[] inData) throws BusError;
 

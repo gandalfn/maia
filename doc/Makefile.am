@@ -21,6 +21,7 @@ VALADOC_FLAGS = \
     --pkg config \
     --pkg posix \
     --pkg os \
+    --pkg uuid \
     --pkg libintl \
     --pkg glib-2.0 \
     --pkg gio-2.0 \

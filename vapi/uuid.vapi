@@ -1,50 +1,62 @@
-/* -*- Mode: C; indent-tabs-mode: null; c-basic-offset: 4; tab-width: 4 -*- */
-/*
- * uuid.vapi
- * Copyright (C) Nicolas Bruguier 2009 <gandalfn@club-internet.fr>
+/* libuuid Vala Bindings
+ * Copyright 2014 Evan Nemerson <evan@nemerson.com>
  *
- * maia is free software: you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ * Permission is hereby granted, free of charge, to any person
+ * obtaining a copy of this software and associated documentation
+ * files (the "Software"), to deal in the Software without
+ * restriction, including without limitation the rights to use, copy,
+ * modify, merge, publish, distribute, sublicense, and/or sell copies
+ * of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * maia is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the GNU Lesser General Public License for more details.
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS
+ * BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+ * ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+ * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
  */
 
-[CCode (cprefix = "", lower_case_cprefix = "", cheader_filename = "uuid.h")]
-namespace libuuid
-{
-    [SimpleType, CCode (cname = "uuid_t")]
-    public struct UUID
-    {
-        [CCode (cname = "uuid_generate")]
-        public void generate ();
+[CCode (cheader_filename = "uuid.h", lower_case_cprefix = "uuid_")]
+namespace UUID {
+	[CCode (cname = "int", has_type_id = false)]
+	public enum Variant
+	{
+		NCS,
+		DCE,
+		MICROSOFT,
+		OTHER
+	}
 
-        [CCode (cname = "uuid_parse", instance_pos = -1)]
-        public void parse (string inStr);
+	[CCode (cname = "int", has_type_id = false)]
+	public enum Type
+	{
+		DCE_TIME,
+		DCE_RANDOM
+	}
 
-        [CCode (cname = "uuid_compare")]
-        public int compare (UUID inOther);
+	public static void clear ([CCode (array_length = false)] uint8 uu[16]);
+	public static void copy (uint8 dst[16], uint8 src[16]);
 
-        [CCode (cname = "uuid_is_null")]
-        public bool is_null ();
+	public static void generate ([CCode (array_length = false)] uint8 @out[16]);
+	public static void generate_random ([CCode (array_length = false)] uint8 @out[16]);
+	public static void generate_time ([CCode (array_length = false)] uint8 @out[16]);
+	public static void generate_time_safe ([CCode (array_length = false)] uint8 @out[16]);
 
-        [CCode (cname = "uuid_unparse")]
-        private void unparse ([CCode (array_length = "false")]uchar[] outStr);
-        public string
-        to_string ()
-        {
-            uchar[] str = new uchar[37];
+	public static bool is_null ([CCode (array_length = false)] uint8 uu[16]);
 
-            unparse (str);
+	public static int parse (string in, [CCode (array_length = false)] uint8 uu[16]);
 
-            return (string)str;
-        }
-    }
+	public static void unparse ([CCode (array_length = false)] uint8 uu[16], [CCode (array_length = false)] char @out[37]);
+	public static void unparse_lower ([CCode (array_length = false)] uint8 uu[16], [CCode (array_length = false)] char @out[37]);
+	public static void unparse_upper ([CCode (array_length = false)] uint8 uu[16], [CCode (array_length = false)] char @out[37]);
+
+	public static time_t time ([CCode (array_length = false)] uint8 uu[16], out Posix.timeval ret_tv);
+	public static UUID.Type type ([CCode (array_length = false)] uint8 uu[16]);
+	public static UUID.Variant variant ([CCode (array_length = false)] uint8 uu[16]);
 }

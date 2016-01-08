@@ -57,18 +57,27 @@ public class Maia.Core.SocketBusConnection : BusConnection
         m_SendQueue = new Queue<Request> ();
     }
 
-    public SocketBusConnection (string inName, uint32 inService) throws BusError
+    public SocketBusConnection (string inName, BusAddress inAddress) throws BusError
     {
-        Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Connect to bus service %s", inName);
+        Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, @"Connect to bus service $inAddress");
 
         try
         {
-            string filename = "%s/maia-bus-socket.%x".printf (GLib.Environment.get_tmp_dir (), inService);
-
             var client = new GLib.SocketClient ();
-            var connection = client.connect (new GLib.UnixSocketAddress (filename));
+            GLib.SocketConnection connection = null;
 
-            base (inName);
+            switch (inAddress.address_type)
+            {
+                case BusAddress.Type.UNIX:
+                    connection = client.connect (new GLib.UnixSocketAddress.as_abstract (inAddress.hier, -1));
+                    break;
+
+                case BusAddress.Type.SOCKET:
+                    connection = m_Client.connect_to_host (inAddress.hier, (uint16)inAddress.port);
+                    break;
+            }
+
+            base (inName, inAddress);
 
             m_Client = client;
             m_Connection = connection;
@@ -83,35 +92,11 @@ public class Maia.Core.SocketBusConnection : BusConnection
         }
     }
 
-    public SocketBusConnection.tcp (string inName, string inHost, uint16 inPort) throws BusError
-    {
-        Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Connect to bus service %s:%u", inHost, inPort);
-
-        try
-        {
-            var client = new GLib.SocketClient ();
-            var connection = m_Client.connect_to_host (inHost, inPort);
-
-            base (inName);
-
-            m_Client = client;
-            m_Connection = connection;
-
-            init_connection ();
-
-            connect_to_service ();
-        }
-        catch (GLib.Error err)
-        {
-            throw new BusError.CONNECT ("Error on connect bus service: %s", err.message);
-        }
-    }
-
-    internal SocketBusConnection.client (string inName, GLib.SocketConnection inConnection)
+    internal SocketBusConnection.client (string inName, BusAddress inAddress, GLib.SocketConnection inConnection)
     {
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "");
 
-        base (inName);
+        base (inName, inAddress);
 
         m_Connection = inConnection;
 
@@ -120,7 +105,7 @@ public class Maia.Core.SocketBusConnection : BusConnection
 
     ~SocketBusConnection ()
     {
-        Log.audit ("~SocketBusConnection", Log.Category.MAIN_BUS, @"$uuid");
+        Log.audit ("~SocketBusConnection", Log.Category.MAIN_BUS, @"$address");
         if (m_Connection != null)
         {
             try

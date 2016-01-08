@@ -22,8 +22,9 @@ public class Maia.Application : Maia.Core.Object
     // constants
     const GLib.OptionEntry[] cOptionEntries =
     {
-        { "backends",     'b', 0, GLib.OptionArg.NONE, ref s_Backends, "List of backends", null },
-        { "refresh-rate", 'r', 0, GLib.OptionArg.INT,  ref s_Fps,      "Refresh rate",     null },
+        { "backends",     'b', 0, GLib.OptionArg.NONE,   ref s_Backends, "List of backends",  null },
+        { "refresh-rate", 'r', 0, GLib.OptionArg.INT,    ref s_Fps,      "Refresh rate",      null },
+        { "address",      'a', 0, GLib.OptionArg.STRING, ref s_Fps,      "Event bus address", null },
         { null }
     };
 
@@ -31,6 +32,7 @@ public class Maia.Application : Maia.Core.Object
     private static unowned Application? s_Default = null;
     private static string               s_Backends = null;
     private static int                  s_Fps = 60;
+    private static string               s_Uri = "unix://";
 
     // static accessors
     public static Application @default {
@@ -211,8 +213,9 @@ public class Maia.Application : Maia.Core.Object
      * @param inName name of application
      * @param inFps refresh rate in frame per seconds
      * @param inBackends list of backends
+     * @param inUri event bus address
      */
-    public Application (string inName, int inFps, string[]? inBackends = null)
+    public Application (string inName, int inFps, string[]? inBackends = null, string inUri = "unix://")
     {
         GLib.Object (id: GLib.Quark.from_string (inName));
 
@@ -231,7 +234,7 @@ public class Maia.Application : Maia.Core.Object
         m_Timeline.new_frame.connect (on_new_frame);
 
         // Create event bus
-        m_EventBus = new Core.EventBus (inName);
+        m_EventBus = new Core.EventBus (inName, inUri);
 
         // First application is the default application
         if (s_Default == null)
@@ -267,7 +270,7 @@ public class Maia.Application : Maia.Core.Object
             backends = s_Backends.split (",");
         }
 
-        this (inName, s_Fps, backends);
+        this (inName, s_Fps, backends, s_Uri);
     }
 
     ~Application ()

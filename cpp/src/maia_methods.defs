@@ -143,6 +143,12 @@
   (gtype-id "MAIA_TYPE_CORE_EVENT")
 )
 
+(define-object MaiaCoreBusAddress
+  (parent "MaiaCoreObject")
+  (c-name "MaiaCoreBusAddress")
+  (gtype-id "MAIA_TYPE_CORE_BUS_ADDRESS")
+)
+
 (define-object MaiaCoreBus
   (parent "MaiaCoreObject")
   (c-name "MaiaCoreBus")
@@ -1077,6 +1083,16 @@
     '("loading" "MAIA_CORE_EXTENSION_ERROR_LOADING")
     '("not-loaded" "MAIA_CORE_EXTENSION_ERROR_NOT_LOADED")
     '("create-plugin" "MAIA_CORE_EXTENSION_ERROR_CREATE_PLUGIN")
+  )
+)
+
+(define-enum MaiaCoreBusAddressType
+  (c-name "MaiaCoreBusAddressType")
+  (gtype-id "MAIA_TYPE_CORE_BUS_ADDRESS_TYPE")
+  (values
+    '("invalid" "MAIA_CORE_BUS_ADDRESS_TYPE_INVALID")
+    '("unix" "MAIA_CORE_BUS_ADDRESS_TYPE_UNIX")
+    '("socket" "MAIA_CORE_BUS_ADDRESS_TYPE_SOCKET")
   )
 )
 
@@ -6776,6 +6792,75 @@
   (return-type "guint")
 )
 
+(define-function maia_core_bus_address_get_type
+  (c-name "maia_core_bus_address_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_core_bus_address_type_get_type
+  (c-name "maia_core_bus_address_type_get_type")
+  (return-type "GType")
+)
+
+(define-method to_string
+  (of-object "MaiaCoreBusAddressType")
+  (c-name "maia_core_bus_address_type_to_string")
+  (return-type "gchar*")
+)
+
+(define-function maia_core_bus_address_type_from_uri
+  (c-name "maia_core_bus_address_type_from_uri")
+  (return-type "MaiaCoreBusAddressType")
+  (parameters
+    '("const-gchar*" "inUri")
+  )
+)
+
+(define-function maia_core_bus_address_new
+  (c-name "maia_core_bus_address_new")
+  (is-constructor-of "MaiaCoreBusAddress")
+  (return-type "MaiaCoreBusAddress*")
+  (parameters
+    '("const-gchar*" "inUri")
+  )
+)
+
+(define-function maia_core_bus_address_construct
+  (c-name "maia_core_bus_address_construct")
+  (return-type "MaiaCoreBusAddress*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inUri")
+  )
+)
+
+(define-method get_address_type
+  (of-object "MaiaCoreBusAddress")
+  (c-name "maia_core_bus_address_get_address_type")
+  (return-type "MaiaCoreBusAddressType")
+)
+
+(define-method get_hier
+  (of-object "MaiaCoreBusAddress")
+  (c-name "maia_core_bus_address_get_hier")
+  (return-type "const-gchar*")
+)
+
+(define-method get_port
+  (of-object "MaiaCoreBusAddress")
+  (c-name "maia_core_bus_address_get_port")
+  (return-type "guint")
+)
+
+(define-method set_port
+  (of-object "MaiaCoreBusAddress")
+  (c-name "maia_core_bus_address_set_port")
+  (return-type "none")
+  (parameters
+    '("guint" "value")
+  )
+)
+
 (define-function maia_core_bus_error_quark
   (c-name "maia_core_bus_error_quark")
   (return-type "GQuark")
@@ -6950,10 +7035,10 @@
   )
 )
 
-(define-method get_uuid
+(define-method get_address
   (of-object "MaiaCoreBus")
-  (c-name "maia_core_bus_get_uuid")
-  (return-type "const-gchar*")
+  (c-name "maia_core_bus_get_address")
+  (return-type "MaiaCoreBusAddress*")
 )
 
 (define-function maia_core_bus_message_register
@@ -7121,7 +7206,8 @@
   (return-type "MaiaCoreBusConnection*")
   (parameters
     '("GType" "object_type")
-    '("const-gchar*" "inUUID")
+    '("const-gchar*" "inName")
+    '("MaiaCoreBusAddress*" "inAddress")
   )
 )
 
@@ -7179,7 +7265,8 @@
   (return-type "MaiaCoreBusService*")
   (parameters
     '("GType" "object_type")
-    '("const-gchar*" "inUUID")
+    '("const-gchar*" "inName")
+    '("MaiaCoreBusAddress*" "inAddress")
   )
 )
 
@@ -7291,7 +7378,7 @@
   (return-type "MaiaCoreSocketBusConnection*")
   (parameters
     '("const-gchar*" "inName")
-    '("guint32" "inService")
+    '("MaiaCoreBusAddress*" "inAddress")
     '("GError**" "error")
   )
 )
@@ -7302,30 +7389,7 @@
   (parameters
     '("GType" "object_type")
     '("const-gchar*" "inName")
-    '("guint32" "inService")
-    '("GError**" "error")
-  )
-)
-
-(define-function maia_core_socket_bus_connection_new_tcp
-  (c-name "maia_core_socket_bus_connection_new_tcp")
-  (return-type "MaiaCoreSocketBusConnection*")
-  (parameters
-    '("const-gchar*" "inName")
-    '("const-gchar*" "inHost")
-    '("guint16" "inPort")
-    '("GError**" "error")
-  )
-)
-
-(define-function maia_core_socket_bus_connection_construct_tcp
-  (c-name "maia_core_socket_bus_connection_construct_tcp")
-  (return-type "MaiaCoreSocketBusConnection*")
-  (parameters
-    '("GType" "object_type")
-    '("const-gchar*" "inName")
-    '("const-gchar*" "inHost")
-    '("guint16" "inPort")
+    '("MaiaCoreBusAddress*" "inAddress")
     '("GError**" "error")
   )
 )
@@ -7341,6 +7405,7 @@
   (return-type "MaiaCoreSocketBusService*")
   (parameters
     '("const-gchar*" "inName")
+    '("MaiaCoreBusAddress*" "inAddress")
   )
 )
 
@@ -7350,32 +7415,8 @@
   (parameters
     '("GType" "object_type")
     '("const-gchar*" "inName")
+    '("MaiaCoreBusAddress*" "inAddress")
   )
-)
-
-(define-function maia_core_socket_bus_service_new_tcp
-  (c-name "maia_core_socket_bus_service_new_tcp")
-  (return-type "MaiaCoreSocketBusService*")
-  (parameters
-    '("const-gchar*" "inName")
-    '("guint" "inPort")
-  )
-)
-
-(define-function maia_core_socket_bus_service_construct_tcp
-  (c-name "maia_core_socket_bus_service_construct_tcp")
-  (return-type "MaiaCoreSocketBusService*")
-  (parameters
-    '("GType" "object_type")
-    '("const-gchar*" "inName")
-    '("guint" "inPort")
-  )
-)
-
-(define-method get_port
-  (of-object "MaiaCoreSocketBusService")
-  (c-name "maia_core_socket_bus_service_get_port")
-  (return-type "guint")
 )
 
 (define-function maia_core_event_get_type
@@ -7766,6 +7807,7 @@
   (return-type "MaiaCoreEventBus*")
   (parameters
     '("const-gchar*" "inName")
+    '("const-gchar*" "inAddress")
   )
 )
 
@@ -7775,6 +7817,7 @@
   (parameters
     '("GType" "object_type")
     '("const-gchar*" "inName")
+    '("const-gchar*" "inAddress")
   )
 )
 
@@ -14204,6 +14247,7 @@
     '("gint" "inFps")
     '("gchar**" "inBackends")
     '("int" "inBackends_length1")
+    '("const-gchar*" "inUri")
   )
 )
 
@@ -14216,6 +14260,7 @@
     '("gint" "inFps")
     '("gchar**" "inBackends")
     '("int" "inBackends_length1")
+    '("const-gchar*" "inUri")
   )
 )
 

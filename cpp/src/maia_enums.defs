@@ -227,6 +227,23 @@
 
 ;; Original typedef:
 ;; typedef enum  {
+;; 	MAIA_CORE_BUS_ADDRESS_TYPE_INVALID,
+;; 	MAIA_CORE_BUS_ADDRESS_TYPE_UNIX,
+;; 	MAIA_CORE_BUS_ADDRESS_TYPE_SOCKET
+;; } MaiaCoreBusAddressType;
+
+(define-enum-extended CoreBusAddressType
+  (in-module "Maia")
+  (c-name "MaiaCoreBusAddressType")
+  (values
+    '("invalid" "MAIA_CORE_BUS_ADDRESS_TYPE_INVALID" "0")
+    '("unix" "MAIA_CORE_BUS_ADDRESS_TYPE_UNIX" "1")
+    '("socket" "MAIA_CORE_BUS_ADDRESS_TYPE_SOCKET" "2")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
 ;; 	MAIA_CORE_BUS_ERROR_OK,
 ;; 	MAIA_CORE_BUS_ERROR_CONNECT,
 ;; 	MAIA_CORE_BUS_ERROR_READ,

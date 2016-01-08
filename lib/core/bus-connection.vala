@@ -37,9 +37,9 @@ public abstract class Maia.Core.BusConnection : Bus
         notifications.add (new MessageReceivedNotification ("message-received"));
     }
 
-    protected BusConnection (string inUUID)
+    protected BusConnection (string inName, BusAddress inAddress)
     {
-        GLib.Object (uuid: inUUID);
+        GLib.Object (id: GLib.Quark.from_string (inName), address: inAddress);
     }
 
     protected bool
