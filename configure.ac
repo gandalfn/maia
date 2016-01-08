@@ -44,7 +44,7 @@ dnl Packages version required
 dnl ****************************************************************************
 GLIB_REQUIRED=2.32.0
 VALA_REQUIRED=0.26.0
-UUID_REQUIRED=2.25.0
+UUID_REQUIRED=2.20.0
 PIXMAN_REQUIRED=0.16.4
 CAIRO_REQUIRED=1.10.2
 PANGO_REQUIRED=1.30.0

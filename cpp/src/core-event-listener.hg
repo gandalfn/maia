@@ -134,7 +134,9 @@ namespace Maia
             _CUSTOM_DTOR
 
             _IGNORE(maia_core_event_listener_new, maia_core_event_listener_new_object, maia_core_event_listener_set_block,
-                    maia_core_event_listener_new_with_hash, maia_core_event_listener_new_with_hash_object)
+                    maia_core_event_listener_new_with_hash, maia_core_event_listener_new_with_hash_object,
+                    maia_core_event_listener_set_event_destroyed, maia_core_event_listener_set_block_next_nb_events,
+                    maia_core_event_listener_get_event_destroyed, maia_core_event_listener_get_block_next_nb_events)
 
             public:
                 template <typename T_obj>

@@ -73,7 +73,7 @@ public class Maia.Core.SocketBusConnection : BusConnection
                     break;
 
                 case BusAddress.Type.SOCKET:
-                    connection = m_Client.connect_to_host (inAddress.hier, (uint16)inAddress.port);
+                    connection = client.connect_to_host (inAddress.hier == "" ? "127.0.0.1" : inAddress.hier, (uint16)inAddress.port);
                     break;
             }
 

@@ -42,7 +42,20 @@ public class Maia.Core.SocketBusService : BusService
                     break;
 
                 case BusAddress.Type.SOCKET:
-                    if (inAddress.port == 0)
+                    GLib.Resolver resolver = GLib.Resolver.get_default ();
+
+                    if (inAddress.hier != "")
+                    {
+                        GLib.List<GLib.InetAddress> addresses = resolver.lookup_by_name (inAddress.hier, null);
+                        GLib.InetAddress address = addresses.nth_data (0);
+                        GLib.SocketAddress effective;
+                        m_Socket.add_address (new GLib.InetSocketAddress (address, (uint16)inAddress.port),
+                                              GLib.SocketType.STREAM, GLib.SocketProtocol.TCP, null, out effective);
+
+                        inAddress.hier = ((GLib.InetSocketAddress)effective).get_address ().to_string ();
+                        inAddress.port = ((GLib.InetSocketAddress)effective).get_port ();
+                    }
+                    else if (inAddress.port == 0)
                     {
                         inAddress.port = m_Socket.add_any_inet_port (null);
                     }

@@ -6846,6 +6846,15 @@
   (return-type "const-gchar*")
 )
 
+(define-method set_hier
+  (of-object "MaiaCoreBusAddress")
+  (c-name "maia_core_bus_address_set_hier")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
 (define-method get_port
   (of-object "MaiaCoreBusAddress")
   (c-name "maia_core_bus_address_get_port")
@@ -7928,6 +7937,12 @@
   (of-object "MaiaCoreEventBus")
   (c-name "maia_core_event_bus_set_default")
   (return-type "none")
+)
+
+(define-method get_address
+  (of-object "MaiaCoreEventBus")
+  (c-name "maia_core_event_bus_get_address")
+  (return-type "gchar*")
 )
 
 (define-function maia_core_task_get_type

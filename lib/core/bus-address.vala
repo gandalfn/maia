@@ -66,7 +66,7 @@ public class Maia.Core.BusAddress : Object
     /**
      * Address hier
      */
-    public string hier { get; private set; default = ""; }
+    public string hier { get; set; default = ""; }
 
     /**
      * Address port

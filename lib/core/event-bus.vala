@@ -996,6 +996,13 @@ public class Maia.Core.EventBus : Object
     private Set<Occurence> m_Occurences;
     private GLib.Private   m_Client;
 
+    // accessors
+    public string address {
+        owned get {
+            return m_Address.to_string ();
+        }
+    }
+
     // static methods
     static construct
     {
