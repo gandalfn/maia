@@ -38,7 +38,7 @@ public class Maia.Cassowary.Variable : AbstractVariable
         }
     }
 
-    public double @value { get; set; default = 0.0; }
+    public double @value;
 
     // methods
     public Variable (double inValue)

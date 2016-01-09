@@ -88,6 +88,7 @@ public class Maia.Cassowary.SimplexSolver : Tableau
      * of constraints [ala the AddDel test in ClTests] saved about 20 % in
      * runtime, from 60sec to 54sec for 900 constraints, with 126 failed adds).
      */
+    [CCode (notify = false)]
     public bool auto_solve {
         get {
             return m_OptimizeAutomatically;
@@ -156,7 +157,7 @@ public class Maia.Cassowary.SimplexSolver : Tableau
 
         unowned LinearExpression? azTableauRow = row_expression (az);
 
-        if (!approx (azTableauRow.constant, 0.0))
+        if (!approx (azTableauRow.constant.@value, 0.0))
         {
             remove_row (az);
             remove_column (av);
@@ -292,7 +293,7 @@ public class Maia.Cassowary.SimplexSolver : Tableau
             }
         }
 
-        if (!approx(inExpr.constant, 0.0))
+        if (!approx(inExpr.constant.@value, 0.0))
         {
             throw new Error.REQUIRED_FAILURE ("");
         }
@@ -308,7 +309,7 @@ public class Maia.Cassowary.SimplexSolver : Tableau
     new_expression (Constraint inConstraint, Core.Pair<SlackVariable, SlackVariable> inEPlusEMinus, Double inPrevEConstant)
     {
         LinearExpression cnExpr = inConstraint.expression;
-        LinearExpression expr = new LinearExpression.from_constant (cnExpr.constant);
+        LinearExpression expr = new LinearExpression.from_constant (cnExpr.constant.@value);
         SlackVariable slackVar = new SlackVariable ();
         DummyVariable dummyVar = new DummyVariable ();
         SlackVariable eminus = new SlackVariable ();
@@ -379,12 +380,12 @@ public class Maia.Cassowary.SimplexSolver : Tableau
                 {
                     inEPlusEMinus.first = eplus;
                     inEPlusEMinus.second = eminus;
-                    inPrevEConstant.@value = cnExpr.constant;
+                    inPrevEConstant.@value = cnExpr.constant.@value;
                 }
             }
         }
 
-        if (expr.constant < 0)
+        if (expr.constant.@value < 0)
             expr.multiply_me (-1);
 
         return expr;
@@ -430,7 +431,7 @@ public class Maia.Cassowary.SimplexSolver : Tableau
                     double coeff = expr.coefficient_for (entryVar);
                     if (coeff < 0.0)
                     {
-                        r = - expr.constant / coeff;
+                        r = - expr.constant.@value / coeff;
                         if (r < minRatio)
                         {
                             minRatio = r;
@@ -475,7 +476,7 @@ public class Maia.Cassowary.SimplexSolver : Tableau
         {
             exprPlus.increment_constant (inDelta);
 
-            if (exprPlus.constant < 0.0)
+            if (exprPlus.constant.@value < 0.0)
             {
                 m_InfeasibleRows.insert (inPlusErrorVar);
             }
@@ -486,7 +487,7 @@ public class Maia.Cassowary.SimplexSolver : Tableau
         if (exprMinus != null)
         {
             exprMinus.increment_constant (-inDelta);
-            if (exprMinus.constant < 0.0)
+            if (exprMinus.constant.@value < 0.0)
             {
                 m_InfeasibleRows.insert (inMinusErrorVar);
             }
@@ -500,7 +501,7 @@ public class Maia.Cassowary.SimplexSolver : Tableau
             unowned LinearExpression? expr = row_expression (basicVar);
             double c = expr.coefficient_for (inMinusErrorVar);
             expr.increment_constant (c * inDelta);
-            if (basicVar.is_restricted && expr.constant < 0.0)
+            if (basicVar.is_restricted && expr.constant.@value < 0.0)
             {
                 m_InfeasibleRows.insert (basicVar);
             }
@@ -527,7 +528,7 @@ public class Maia.Cassowary.SimplexSolver : Tableau
             unowned LinearExpression? expr = row_expression (exitVar);
             if (expr != null)
             {
-                if (expr.constant < 0.0)
+                if (expr.constant.@value < 0.0)
                 {
                     double ratio = double.MAX;
                     double r;
@@ -604,7 +605,7 @@ public class Maia.Cassowary.SimplexSolver : Tableau
             if (expr == null)
                 expr = row_expression (m_StayMinusErrorVars[cpt]);
             if (expr != null)
-                expr.constant = 0.0;
+                expr.constant.@value = 0.0;
         }
     }
 
@@ -622,19 +623,20 @@ public class Maia.Cassowary.SimplexSolver : Tableau
     protected void
     set_external_variables ()
     {
-        foreach (unowned AbstractVariable variable in m_ExternalParametricVars)
-        {
-            if (row_expression (variable) != null)
-                continue;
+        m_ExternalParametricVars.iterator ().foreach ((variable) => {
+                if (row_expression (variable) != null)
+                    return true;
 
-            ((Variable)variable).@value = 0.0;
-        }
+                ((Variable)variable).@value = 0.0;
 
-        foreach (unowned AbstractVariable variable in m_ExternalRows)
-        {
-            unowned LinearExpression? expr = row_expression (variable);
-            ((Variable)variable).@value = expr.constant;
-        }
+                return true;
+            });
+
+        m_ExternalRows.iterator ().foreach ((variable) => {
+                unowned LinearExpression? expr = row_expression (variable);
+                ((Variable)variable).@value = expr.constant.@value;
+                return true;
+            });
 
         m_NeedsSolving = false;
     }
@@ -927,7 +929,7 @@ public class Maia.Cassowary.SimplexSolver : Tableau
 
                     if (coeff < 0.0)
                     {
-                        double r = -expr.constant / coeff;
+                        double r = -expr.constant.@value / coeff;
                         if (exitVar == null || r < minRatio)
                         {
                             minRatio = r;
@@ -945,7 +947,7 @@ public class Maia.Cassowary.SimplexSolver : Tableau
                     {
                         unowned LinearExpression? expr = row_expression (variable);
                         double coeff = expr.coefficient_for (marker);
-                        double r = expr.constant / coeff;
+                        double r = expr.constant.@value / coeff;
                         if (exitVar == null || r < minRatio)
                         {
                             minRatio = r;

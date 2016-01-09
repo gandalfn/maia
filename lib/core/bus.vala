@@ -197,7 +197,9 @@ public abstract class Maia.Core.Bus : Object
         internal void
         send (Bus inBus) throws BusError
         {
+#if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Send message %s : %s", message_type.to_string (), to_string ());
+#endif
 
             inBus.write (raw);
         }
@@ -279,7 +281,9 @@ public abstract class Maia.Core.Bus : Object
     public Message?
     recv () throws BusError
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Launch recv");
+#endif
 
         Message? msg = Message.recv (this);
 
@@ -289,7 +293,9 @@ public abstract class Maia.Core.Bus : Object
     public async Message?
     recv_async (GLib.Cancellable? inCancellable = null) throws BusError
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Launch recv");
+#endif
 
         Message? msg = yield Message.recv_async (this, inCancellable);
 
@@ -299,7 +305,9 @@ public abstract class Maia.Core.Bus : Object
     public void
     send (Message inMessage) throws BusError
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Launch send");
+#endif
 
         if (inMessage.sender == 0) inMessage.sender = id;
 
@@ -309,7 +317,9 @@ public abstract class Maia.Core.Bus : Object
     public async void
     send_async (Message inMessage, GLib.Cancellable? inCancellable = null) throws BusError
     {
+#if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Launch send");
+#endif
 
         if (inMessage.sender == 0) inMessage.sender = id;
 

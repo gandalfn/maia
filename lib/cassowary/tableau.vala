@@ -275,7 +275,7 @@ public class Maia.Cassowary.Tableau : Core.Object
         {
             unowned LinearExpression row = m_Rows[variable];
             row.substitute_out (inOldVar, inExpr, variable, this);
-            if (variable.is_restricted && row.constant < 0.0)
+            if (variable.is_restricted && row.constant.@value < 0.0)
             {
                 m_InfeasibleRows.insert (variable);
             }

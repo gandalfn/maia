@@ -21,7 +21,6 @@ public class Maia.Core.SocketBusService : BusService
 {
     // properties
     private GLib.SocketService m_Socket;
-    private ulong              m_ClientCount = 0;
 
     // methods
     public SocketBusService (string inName, BusAddress inAddress)
@@ -75,18 +74,11 @@ public class Maia.Core.SocketBusService : BusService
         m_Socket.start ();
     }
 
-    ~SocketBusService ()
-    {
-        string filename = "%s/maia-bus-socket.%x".printf (GLib.Environment.get_tmp_dir (), id);
-
-        GLib.FileUtils.unlink (filename);
-    }
-
     private bool
     on_client_connect (GLib.SocketConnection inConnection, GLib.Object? inSource)
     {
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Client connected");
-        var client = new SocketBusConnection.client (@"$address-connection-$(++m_ClientCount)", address, inConnection);
+        var client = new SocketBusConnection.client (BusAddress.uuid_generate (), address, inConnection);
         add (client);
 
         return false;

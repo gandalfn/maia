@@ -50,7 +50,7 @@ internal class Maia.Cassowary.Double : Core.Object
         }
     }
 
-    public double @value { get; set; }
+    public double @value;
 
     // methods
     public Double (double inVal = 0.0)

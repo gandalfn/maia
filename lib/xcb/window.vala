@@ -182,16 +182,23 @@ internal class Maia.Xcb.Window : Maia.Window
                     pos.translate (parent_window.m_View.root_position);
                 }
 
-                Graphic.Rectangle geo = Graphic.Rectangle (0, 0, 0, 0);
-                geo.origin = pos;
-                geo.size = m_View.size;
-                geo.size.transform (new Graphic.Transform.invert (m_View.device_transform));
-                if (PositionPolicy.CLAMP_MONITOR in position_policy)
+                try
                 {
-                    geo.clamp (m_View.screen.get_monitor_at (pos).geometry);
-                }
+                    Graphic.Rectangle geo = Graphic.Rectangle (0, 0, 0, 0);
+                    geo.origin = pos;
+                    geo.size = m_View.size;
+                    geo.size.transform (new Graphic.Transform.invert (m_View.device_transform));
+                    if (PositionPolicy.CLAMP_MONITOR in position_policy)
+                    {
+                        geo.clamp (m_View.screen.get_monitor_at (pos).geometry);
+                    }
 
-                m_View.position = geo.origin;
+                    m_View.position = geo.origin;
+                }
+                catch (Graphic.Error err)
+                {
+                    Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"error on convert position in window coordinate space : $(err.message)");
+                }
             }
             else
             {
@@ -221,16 +228,23 @@ internal class Maia.Xcb.Window : Maia.Window
                     pos.translate (parent_viewport.view.root_position);
                 }
 
-                Graphic.Rectangle geo = Graphic.Rectangle (0, 0, 0, 0);
-                geo.origin = pos;
-                geo.size = m_View.size;
-                geo.size.transform (new Graphic.Transform.invert (m_View.device_transform));
-                if (PositionPolicy.CLAMP_MONITOR in position_policy)
+                try
                 {
-                    geo.clamp (m_View.screen.get_monitor_at (pos).geometry);
-                }
+                    Graphic.Rectangle geo = Graphic.Rectangle (0, 0, 0, 0);
+                    geo.origin = pos;
+                    geo.size = m_View.size;
+                    geo.size.transform (new Graphic.Transform.invert (m_View.device_transform));
+                    if (PositionPolicy.CLAMP_MONITOR in position_policy)
+                    {
+                        geo.clamp (m_View.screen.get_monitor_at (pos).geometry);
+                    }
 
-                m_View.position = geo.origin;
+                    m_View.position = geo.origin;
+                }
+                catch (Graphic.Error err)
+                {
+                    Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"error on convert size in window coordinate space : $(err.message)");
+                }
             }
             else
             {
@@ -373,16 +387,23 @@ internal class Maia.Xcb.Window : Maia.Window
                     pos.translate ((m_ParentWindow as Window).m_View.root_position);
                 }
 
-                Graphic.Rectangle geo = Graphic.Rectangle (0, 0, 0, 0);
-                geo.origin = pos;
-                geo.size = m_View.size;
-                geo.size.transform (new Graphic.Transform.invert (m_View.device_transform));
-                if (PositionPolicy.CLAMP_MONITOR in position_policy)
+                try
                 {
-                    geo.clamp (m_View.screen.get_monitor_at (pos).geometry);
-                }
+                    Graphic.Rectangle geo = Graphic.Rectangle (0, 0, 0, 0);
+                    geo.origin = pos;
+                    geo.size = m_View.size;
+                    geo.size.transform (new Graphic.Transform.invert (m_View.device_transform));
+                    if (PositionPolicy.CLAMP_MONITOR in position_policy)
+                    {
+                        geo.clamp (m_View.screen.get_monitor_at (pos).geometry);
+                    }
 
-                m_View.position = geo.origin;
+                    m_View.position = geo.origin;
+                }
+                catch (Graphic.Error err)
+                {
+                    Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"error on convert position in window coordinate space : $(err.message)");
+                }
             }
             else
             {

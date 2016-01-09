@@ -208,23 +208,6 @@ internal class Maia.Xcb.Screen : Core.Object
         return global::Xcb.NONE;
     }
 
-    public int
-    find_depth_from_visualid (global::Xcb.Visualid inId)
-    {
-        foreach (unowned global::Xcb.Depth? depth in xscreen)
-        {
-            foreach (unowned global::Xcb.Visualtype? visual in depth)
-            {
-                if (visual.visual_id == inId)
-                {
-                    return depth.depth;
-                }
-            }
-        }
-
-        return 0;
-    }
-
     public global::Xcb.Visualid
     find_visual_from_depth (uint inDepth)
     {

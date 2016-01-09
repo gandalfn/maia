@@ -96,14 +96,14 @@ public class Maia.TestBus : Maia.TestCase
     {
         bool message_client1 = false;
         bool message_client2 = false;
-        var bus = new Core.SocketBusService ("service");
+        var bus = new Core.SocketBusService ("service", new Core.BusAddress ("unix://"));
         Core.SocketBusConnection client1 = null,
                                  client2 = null;
 
         GLib.Timeout.add_seconds (1, () => {
             try
             {
-                client2 = new Core.SocketBusConnection ("client2", bus.id);
+                client2 = new Core.SocketBusConnection ("client2", bus.address);
             }
             catch (GLib.Error err)
             {
@@ -136,7 +136,7 @@ public class Maia.TestBus : Maia.TestCase
         GLib.Timeout.add_seconds (2, () => {
             try
             {
-                client1 = new Core.SocketBusConnection ("client1", bus.id);
+                client1 = new Core.SocketBusConnection ("client1", bus.address);
             }
             catch (GLib.Error err)
             {

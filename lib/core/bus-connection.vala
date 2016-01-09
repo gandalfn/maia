@@ -39,7 +39,7 @@ public abstract class Maia.Core.BusConnection : Bus
 
     protected BusConnection (string inName, BusAddress inAddress)
     {
-        GLib.Object (id: GLib.Quark.from_string (inName), address: inAddress);
+        GLib.Object (id: inName.hash (), address: inAddress);
     }
 
     protected bool

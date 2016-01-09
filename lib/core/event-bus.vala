@@ -83,6 +83,7 @@ public class Maia.Core.EventBus : Object
     private class MessageEvent : Bus.Message
     {
         private bool          m_Parsed = false;
+        private bool          m_ArgsParsed = false;
         private Event.Hash    m_Hash;
         private GLib.Type     m_ArgsType = GLib.Type.INVALID;
         private int           m_Sequence;
@@ -105,8 +106,14 @@ public class Maia.Core.EventBus : Object
 
         public EventArgs? args {
             owned get {
-                parse ();
-                return m_Args != null ? GLib.Object.new (m_ArgsType, sequence: m_Sequence, serialize: m_Args) as EventArgs : null;
+                parse_args ();
+
+                if (m_Args != null && m_ArgsType != GLib.Type.INVALID)
+                {
+                    return GLib.Object.new (m_ArgsType, sequence: m_Sequence, serialize: m_Args) as EventArgs;
+                }
+
+                return null;
             }
         }
 
@@ -115,11 +122,11 @@ public class Maia.Core.EventBus : Object
             GLib.Variant data;
             if (inArgs == null)
             {
-                data = new GLib.Variant ("(susibv)", inName, (uint32)inOwner, "", 0, false, new GLib.Variant ("()"));
+                data = new GLib.Variant ("(subsiv)", inName, (uint32)inOwner, false, "", 0, new GLib.Variant ("()"));
             }
             else
             {
-                data = new GLib.Variant ("(susibv)", inName, (uint32)inOwner, inArgs.get_type ().name (), inArgs.sequence, inNeedReply, inArgs.serialize);
+                data = new GLib.Variant ("(subsiv)", inName, (uint32)inOwner, inNeedReply, inArgs.get_type ().name (), inArgs.sequence, inArgs.serialize);
             }
             uint32 size = (uint32)data.get_size ();
             GLib.Object (message_type: MessageType.EVENT, message_size: size);
@@ -131,13 +138,32 @@ public class Maia.Core.EventBus : Object
         {
             if (!m_Parsed)
             {
-                unowned string name, atype;
+                unowned string name;
                 uint32 owner;
-                var data = get_variant (Bus.Message.HEADER_SIZE, "(susibv)");
+                var data = get_variant (Bus.Message.HEADER_SIZE, "(subsiv)");
                 if (data != null)
                 {
-                    data.get ("(&su&sibv)", out name, out owner, out atype, out m_Sequence, out m_NeedReply, out m_Args);
+                    data.get ("(&sub&siv)", out name, out owner, out m_NeedReply, null, null, null);
                     m_Hash = new Event.Hash.raw (name, (void*)owner);
+                }
+                else
+                {
+                    m_Hash = new Event.Hash.raw ("", null);
+                }
+                m_Parsed = true;
+            }
+        }
+
+        private void
+        parse_args ()
+        {
+            if (!m_ArgsParsed)
+            {
+                unowned string atype;
+                var data = get_variant (Bus.Message.HEADER_SIZE, "(subsiv)");
+                if (data != null)
+                {
+                    data.get ("(&sub&siv)", null, null, null, out atype, out m_Sequence, out m_Args);
                     if (atype != "")
                     {
                         m_ArgsType = GLib.Type.from_name (atype);
@@ -147,11 +173,7 @@ public class Maia.Core.EventBus : Object
                         m_Args = null;
                     }
                 }
-                else
-                {
-                    m_Hash = new Event.Hash.raw ("", null);
-                }
-                m_Parsed = true;
+                m_ArgsParsed = true;
             }
         }
     }
@@ -588,7 +610,7 @@ public class Maia.Core.EventBus : Object
         public Client (BusAddress inAddress) throws BusError
         {
             // Create connection
-            m_Connection = new SocketBusConnection ("event-bus-client-%lx".printf ((long)GLib.Thread.self<void*> ()), inAddress);
+            m_Connection = new SocketBusConnection (BusAddress.uuid_generate (), inAddress);
             m_Connection.notifications["message-received"].add_object_observer (on_message_received);
 
             // Create subscribers
@@ -1022,14 +1044,14 @@ public class Maia.Core.EventBus : Object
         m_Client = new GLib.Private (GLib.Object.unref);
     }
 
-    public EventBus (string inName, string inAddress)
+    public EventBus (string inAddress)
     {
 #if MAIA_DEBUG
-        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Create event-bus $inName");
+        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Create event-bus $(inAddress.to_string ().hash ())");
 #endif
 
         // Create event bus
-        GLib.Object (id: GLib.Quark.from_string (inName));
+        GLib.Object (id: inAddress.to_string ().hash ());
 
         // Create address
         m_Address = new BusAddress (inAddress);
@@ -1041,7 +1063,7 @@ public class Maia.Core.EventBus : Object
     ~EventBus ()
     {
 #if MAIA_DEBUG
-        Log.debug ("~EventBus", Log.Category.MAIN_EVENT, @"Destroy event-bus $((GLib.Quark)id)");
+        Log.debug ("~EventBus", Log.Category.MAIN_EVENT, @"Destroy event-bus $id");
 #endif
 
         m_Engine.stop ();
@@ -1051,7 +1073,7 @@ public class Maia.Core.EventBus : Object
     start ()
     {
 #if MAIA_DEBUG
-        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Start event-bus $((GLib.Quark)id)");
+        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Start event-bus $id");
 #endif
 
         // Create occurence list
@@ -1059,7 +1081,7 @@ public class Maia.Core.EventBus : Object
         m_Occurences.compare_func = Occurence.compare;
 
         // Create bus service
-        m_Service = new SocketBusService (((GLib.Quark)id).to_string (), m_Address);
+        m_Service = new SocketBusService (m_Address.to_string (), m_Address);
         m_Service.set_dispatch_func (on_dispatch_message);
     }
 
@@ -1078,7 +1100,7 @@ public class Maia.Core.EventBus : Object
             }
             catch (BusError err)
             {
-                Log.critical (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "Error on create client: %s", err.message);
+                Log.critical (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Error on create client: $(err.message)");
             }
         }
 

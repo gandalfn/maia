@@ -28,8 +28,8 @@ public abstract class Maia.Cassowary.Constraint : Core.Object
         }
     }
 
-    public Strength strength { get; set; }
-    public double weight { get; set; }
+    public Strength strength;
+    public double weight;
 
     // methods
     internal Constraint (Strength inStrength = Strength.required, double inWeight = 1.0)

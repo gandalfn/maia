@@ -7815,7 +7815,6 @@
   (is-constructor-of "MaiaCoreEventBus")
   (return-type "MaiaCoreEventBus*")
   (parameters
-    '("const-gchar*" "inName")
     '("const-gchar*" "inAddress")
   )
 )
@@ -7825,7 +7824,6 @@
   (return-type "MaiaCoreEventBus*")
   (parameters
     '("GType" "object_type")
-    '("const-gchar*" "inName")
     '("const-gchar*" "inAddress")
   )
 )
@@ -13295,21 +13293,6 @@
   (return-type "none")
   (parameters
     '("gdouble" "inC")
-  )
-)
-
-(define-method get_constant
-  (of-object "MaiaCassowaryLinearExpression")
-  (c-name "maia_cassowary_linear_expression_get_constant")
-  (return-type "gdouble")
-)
-
-(define-method set_constant
-  (of-object "MaiaCassowaryLinearExpression")
-  (c-name "maia_cassowary_linear_expression_set_constant")
-  (return-type "none")
-  (parameters
-    '("gdouble" "value")
   )
 )
 

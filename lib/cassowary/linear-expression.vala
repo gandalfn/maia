@@ -20,19 +20,10 @@
 public class Maia.Cassowary.LinearExpression : Core.Object
 {
     // properties
-    private Double                             m_Constant;
+    internal Double                            constant;
     private Core.Map<AbstractVariable, Double> m_Terms;
 
     // accessors
-    public double constant {
-        get {
-            return m_Constant.@value;
-        }
-        set {
-            m_Constant.@value = value;
-        }
-    }
-
     internal Core.Map<AbstractVariable, Double> terms {
         get {
             return m_Terms;
@@ -48,7 +39,7 @@ public class Maia.Cassowary.LinearExpression : Core.Object
     // methods
     public LinearExpression (AbstractVariable? inVariable, double inValue = 1.0, double inConstant = 0.0)
     {
-        m_Constant = new Double(inConstant);
+        constant = new Double(inConstant);
         m_Terms = new Core.Map<AbstractVariable, Double> ();
 
         if (inVariable != null)
@@ -62,7 +53,7 @@ public class Maia.Cassowary.LinearExpression : Core.Object
 
     internal LinearExpression.cloned (Double inConstant, Core.Map<AbstractVariable, Double> inTerms)
     {
-        m_Constant = (Double) inConstant.clone();
+        constant = (Double) inConstant.clone();
         m_Terms = new Core.Map<AbstractVariable, Double> ();
 
         foreach (unowned Core.Pair<AbstractVariable, Double> pair in inTerms)
@@ -74,13 +65,13 @@ public class Maia.Cassowary.LinearExpression : Core.Object
     public LinearExpression
     clone()
     {
-        return new LinearExpression.cloned (m_Constant, m_Terms);
+        return new LinearExpression.cloned (constant, m_Terms);
     }
 
     public LinearExpression
     multiply_me (double inX)
     {
-        m_Constant.@value = m_Constant.@value * inX;
+        constant.@value = constant.@value * inX;
 
         foreach (unowned Core.Pair<AbstractVariable, Double> pair in m_Terms)
         {
@@ -101,14 +92,14 @@ public class Maia.Cassowary.LinearExpression : Core.Object
     {
         if (is_constant)
         {
-            return inExpr.times_with_value (m_Constant.@value);
+            return inExpr.times_with_value (constant.@value);
         }
         else if (!inExpr.is_constant)
         {
             throw new Error.NON_LINEAR_EXPRESSION ("Non linear expression");
         }
 
-        return times_with_value (inExpr.m_Constant.@value);
+        return times_with_value (inExpr.constant.@value);
     }
 
     public LinearExpression
@@ -154,18 +145,18 @@ public class Maia.Cassowary.LinearExpression : Core.Object
             throw new Error.NON_LINEAR_EXPRESSION ("Non linear expression");
         }
 
-        return divide_by_value (inExpr.m_Constant.@value);
+        return divide_by_value (inExpr.constant.@value);
     }
 
     public LinearExpression
     div_from (LinearExpression inExpr) throws Error
     {
-        if (!is_constant || approx (m_Constant.@value, 0.0))
+        if (!is_constant || approx (constant.@value, 0.0))
         {
             throw new Error.NON_LINEAR_EXPRESSION ("Non linear expression");
         }
 
-        return inExpr.divide_by_value (m_Constant.@value);
+        return inExpr.divide_by_value (constant.@value);
     }
 
     public LinearExpression
@@ -182,7 +173,7 @@ public class Maia.Cassowary.LinearExpression : Core.Object
     public LinearExpression
     add_expression (LinearExpression inExpr, double inN = 1.0, AbstractVariable? inSubject = null, Tableau? inSolver = null)
     {
-        increment_constant (inN * inExpr.m_Constant.@value);
+        increment_constant (inN * inExpr.constant.@value);
 
         foreach (unowned Core.Pair<AbstractVariable, Double> pair in inExpr.m_Terms)
         {
@@ -283,7 +274,7 @@ public class Maia.Cassowary.LinearExpression : Core.Object
     {
         double multiplier = m_Terms[inVariable].@value;
         m_Terms.unset (inVariable);
-        increment_constant (multiplier * inExpr.m_Constant.@value);
+        increment_constant (multiplier * inExpr.constant.@value);
 
         foreach (unowned Core.Pair<AbstractVariable, Double> pair in inExpr.m_Terms)
         {
@@ -392,7 +383,7 @@ public class Maia.Cassowary.LinearExpression : Core.Object
     public void
     increment_constant(double inC)
     {
-        m_Constant.@value = m_Constant.@value + inC;
+        constant.@value = constant.@value + inC;
     }
 
     internal override string
@@ -401,9 +392,9 @@ public class Maia.Cassowary.LinearExpression : Core.Object
         string s = "";
         bool is_first = true;
 
-        if (!approx (m_Constant.@value, 0.0))
+        if (!approx (constant.@value, 0.0))
         {
-            s += m_Constant.to_string ();
+            s += constant.to_string ();
             is_first = false;
         }
 

@@ -43,7 +43,7 @@ public abstract class Maia.Core.BusService : Bus
 
     protected BusService (string inName, BusAddress inAddress)
     {
-        GLib.Object (id: GLib.Quark.from_string (inName), address: inAddress);
+        GLib.Object (id: inName.hash (), address: inAddress);
     }
 
     private void

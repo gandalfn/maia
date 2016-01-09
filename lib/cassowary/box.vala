@@ -50,8 +50,8 @@ public class Maia.Cassowary.Box : Core.Object
         }
     }
 
-    public int row    { get; set; default = -1; }
-    public int column { get; set; default = -1; }
+    public int row = -1;
+    public int column = -1;
 
     public Graphic.Point origin {
         get {

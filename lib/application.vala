@@ -234,7 +234,7 @@ public class Maia.Application : Maia.Core.Object
         m_Timeline.new_frame.connect (on_new_frame);
 
         // Create event bus
-        m_EventBus = new Core.EventBus (inName, inUri);
+        m_EventBus = new Core.EventBus (inUri);
 
         // First application is the default application
         if (s_Default == null)

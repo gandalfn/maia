@@ -74,7 +74,7 @@ public class Maia.Core.BusAddress : Object
     public uint port { get; set; default = 0; }
 
     // static methods
-    private static string uuid_generate ()
+    internal static string uuid_generate ()
     {
         var uuid_str = new char[37];
         var uuid = new uint8[16];

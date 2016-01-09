@@ -23,7 +23,6 @@ internal class Maia.Cassowary.EditInfo : Core.Object
     private Constraint    m_Constraint;
     private SlackVariable m_EditPlus;
     private SlackVariable m_EditMinus;
-    private double        m_PrevEditConstant;
     private int           m_Index;
 
     // accessors
@@ -51,14 +50,7 @@ internal class Maia.Cassowary.EditInfo : Core.Object
         }
     }
 
-    public double prev_edit_constant {
-        get {
-            return m_PrevEditConstant;
-        }
-        set {
-            m_PrevEditConstant = value;
-        }
-    }
+    public double prev_edit_constant;
 
     // methods
     public EditInfo (Constraint inConstraint, SlackVariable inEPlus, SlackVariable inEMinus,
@@ -67,7 +59,7 @@ internal class Maia.Cassowary.EditInfo : Core.Object
         m_Constraint = inConstraint;
         m_EditPlus = inEPlus;
         m_EditMinus = inEMinus;
-        m_PrevEditConstant = inPrevEditConstant;
+        prev_edit_constant = inPrevEditConstant;
         m_Index = inIndex;
     }
 }
