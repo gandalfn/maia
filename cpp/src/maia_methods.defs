@@ -1148,6 +1148,9 @@
     '("subscribe" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_SUBSCRIBE")
     '("subscribe-result" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_SUBSCRIBE_RESULT")
     '("unsubscribe" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_UNSUBSCRIBE")
+    '("link-bus" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_LINK_BUS")
+    '("link-bus-reply" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_LINK_BUS_REPLY")
+    '("unlink-bus" "MAIA_CORE_EVENT_BUS_MESSAGE_TYPE_UNLINK_BUS")
   )
 )
 
@@ -7926,6 +7929,37 @@
   )
 )
 
+(define-method link_bus
+  (of-object "MaiaCoreEventBus")
+  (c-name "maia_core_event_bus_link_bus")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inUri")
+    '("MaiaCoreEventBusLinkBusCallback" "inCallback")
+    '("void*" "inCallback_target")
+  )
+)
+
+(define-method object_link_bus
+  (of-object "MaiaCoreEventBus")
+  (c-name "maia_core_event_bus_object_link_bus")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inUri")
+    '("MaiaCoreEventBusLinkBusCallback" "inCallback")
+    '("void*" "inCallback_target")
+  )
+)
+
+(define-method unlink_bus
+  (of-object "MaiaCoreEventBus")
+  (c-name "maia_core_event_bus_unlink_bus")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inUri")
+  )
+)
+
 (define-function maia_core_event_bus_get_default
   (c-name "maia_core_event_bus_get_default")
   (return-type "MaiaCoreEventBus*")
@@ -12493,36 +12527,6 @@
   (return-type "gchar*")
 )
 
-(define-method get_row
-  (of-object "MaiaCassowaryBox")
-  (c-name "maia_cassowary_box_get_row")
-  (return-type "gint")
-)
-
-(define-method set_row
-  (of-object "MaiaCassowaryBox")
-  (c-name "maia_cassowary_box_set_row")
-  (return-type "none")
-  (parameters
-    '("gint" "value")
-  )
-)
-
-(define-method get_column
-  (of-object "MaiaCassowaryBox")
-  (c-name "maia_cassowary_box_get_column")
-  (return-type "gint")
-)
-
-(define-method set_column
-  (of-object "MaiaCassowaryBox")
-  (c-name "maia_cassowary_box_set_column")
-  (return-type "none")
-  (parameters
-    '("gint" "value")
-  )
-)
-
 (define-method get_origin
   (of-object "MaiaCassowaryBox")
   (c-name "maia_cassowary_box_get_origin")
@@ -12807,36 +12811,6 @@
   (of-object "MaiaCassowaryConstraint")
   (c-name "maia_cassowary_constraint_get_is_required")
   (return-type "gboolean")
-)
-
-(define-method get_strength
-  (of-object "MaiaCassowaryConstraint")
-  (c-name "maia_cassowary_constraint_get_strength")
-  (return-type "MaiaCassowaryStrength*")
-)
-
-(define-method set_strength
-  (of-object "MaiaCassowaryConstraint")
-  (c-name "maia_cassowary_constraint_set_strength")
-  (return-type "none")
-  (parameters
-    '("MaiaCassowaryStrength*" "value")
-  )
-)
-
-(define-method get_weight
-  (of-object "MaiaCassowaryConstraint")
-  (c-name "maia_cassowary_constraint_get_weight")
-  (return-type "gdouble")
-)
-
-(define-method set_weight
-  (of-object "MaiaCassowaryConstraint")
-  (c-name "maia_cassowary_constraint_set_weight")
-  (return-type "none")
-  (parameters
-    '("gdouble" "value")
-  )
 )
 
 (define-function maia_cassowary_edit_or_stay_constraint_get_type
@@ -14213,21 +14187,6 @@
     '("glong" "inNumber")
     '("const-gchar*" "inPrefix")
     '("gdouble" "inValue")
-  )
-)
-
-(define-method get_value
-  (of-object "MaiaCassowaryVariable")
-  (c-name "maia_cassowary_variable_get_value")
-  (return-type "gdouble")
-)
-
-(define-method set_value
-  (of-object "MaiaCassowaryVariable")
-  (c-name "maia_cassowary_variable_set_value")
-  (return-type "none")
-  (parameters
-    '("gdouble" "value")
   )
 )
 

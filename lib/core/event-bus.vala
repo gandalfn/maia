@@ -20,6 +20,8 @@
 public class Maia.Core.EventBus : Object
 {
     // types
+    public delegate void LinkBusCallback (bool inConnected, string? inMessage);
+
     public enum MessageType
     {
         INVALID = 10,
@@ -29,7 +31,10 @@ public class Maia.Core.EventBus : Object
         EVENT_DESTROY,
         SUBSCRIBE,
         SUBSCRIBE_RESULT,
-        UNSUBSCRIBE;
+        UNSUBSCRIBE,
+        LINK_BUS,
+        LINK_BUS_REPLY,
+        UNLINK_BUS;
 
         public string
         to_string ()
@@ -50,6 +55,12 @@ public class Maia.Core.EventBus : Object
                     return "SubscribeResult";
                 case UNSUBSCRIBE:
                     return "Unsubscribe";
+                case LINK_BUS:
+                    return "LinkBus";
+                case LINK_BUS_REPLY:
+                    return "LinkBusReply";
+                case UNLINK_BUS:
+                    return "UnlinkBus";
             }
 
             return "Invalid";
@@ -372,6 +383,113 @@ public class Maia.Core.EventBus : Object
         }
     }
 
+    private class MessageLinkBus : Bus.Message
+    {
+        private bool m_Parsed = false;
+        private string m_Uri;
+
+        public string uri {
+            get {
+                if (!m_Parsed)
+                {
+                    var v = get_variant (Bus.Message.HEADER_SIZE, "(s)");
+                    if (v != null)
+                    {
+                        v.get ("(s)", out m_Uri);
+                        m_Parsed = true;
+                    }
+                }
+                return m_Uri;
+            }
+        }
+
+        public MessageLinkBus (string inUri)
+        {
+            var data = new GLib.Variant ("(s)", inUri);
+            uint32 size = (uint32)data.get_size ();
+            GLib.Object (message_type: MessageType.LINK_BUS, message_size: size);
+            set_variant (Bus.Message.HEADER_SIZE, data);
+        }
+    }
+
+    private class MessageLinkBusReply : Bus.Message
+    {
+        private bool m_Parsed = false;
+        private string m_Uri;
+        private bool m_Connected;
+        private string m_Message;
+
+        public string uri {
+            get {
+                parse ();
+                return m_Uri;
+            }
+        }
+        public bool connected {
+            get {
+                parse ();
+                return m_Connected;
+            }
+        }
+        public string message {
+            get {
+                parse ();
+                return m_Message;
+            }
+        }
+
+        public MessageLinkBusReply (string inUri, bool inConnected, string? inMessage = null)
+        {
+            var data = new GLib.Variant ("(sbms)", inUri, inConnected, inMessage);
+            uint32 size = (uint32)data.get_size ();
+            GLib.Object (message_type: MessageType.LINK_BUS_REPLY, message_size: size);
+            set_variant (Bus.Message.HEADER_SIZE, data);
+        }
+
+        private void
+        parse ()
+        {
+            if (!m_Parsed)
+            {
+                var v = get_variant (Bus.Message.HEADER_SIZE, "(sbms)");
+                if (v != null)
+                {
+                    v.get ("(sbms)", out m_Uri, out m_Connected, out m_Message);
+                    m_Parsed = true;
+                }
+            }
+        }
+    }
+
+    private class MessageUnlinkBus : Bus.Message
+    {
+        private bool m_Parsed = false;
+        private string m_Uri;
+
+        public string uri {
+            get {
+                if (!m_Parsed)
+                {
+                    var v = get_variant (Bus.Message.HEADER_SIZE, "(s)");
+                    if (v != null)
+                    {
+                        v.get ("(s)", out m_Uri);
+                        m_Parsed = true;
+                    }
+                }
+                return m_Uri;
+            }
+        }
+
+        public MessageUnlinkBus (string inUri)
+        {
+            var data = new GLib.Variant ("(s)", inUri);
+            uint32 size = (uint32)data.get_size ();
+            GLib.Object (message_type: MessageType.UNLINK_BUS, message_size: size);
+            set_variant (Bus.Message.HEADER_SIZE, data);
+        }
+    }
+
     private class Reply
     {
         public struct Hash
@@ -524,6 +642,73 @@ public class Maia.Core.EventBus : Object
         }
     }
 
+    private class LinkBusHandler : Object
+    {
+        // properties
+        private unowned LinkBusCallback? m_Callback;
+        private unowned GLib.Object?        m_Target;
+
+        // accessors
+        public string uri {
+            owned get {
+                return ((GLib.Quark)id).to_string ();
+            }
+        }
+
+        // methods
+        public LinkBusHandler (string inUri, LinkBusCallback inCallback)
+        {
+            GLib.Object (id: GLib.Quark.from_string (inUri));
+            m_Callback = inCallback;
+            m_Target = null;
+        }
+
+        public LinkBusHandler.object (string inUri, LinkBusCallback inCallback)
+        {
+            GLib.Object (id: GLib.Quark.from_string (inUri));
+            m_Callback = inCallback;
+            m_Target = (GLib.Object?)(*(void**)((&m_Callback) + 1));
+            GLib.return_val_if_fail (m_Target != null, null);
+            m_Target.weak_ref (on_target_destroy);
+        }
+
+        ~LinkBusHandler ()
+        {
+            if (m_Target != null)
+            {
+                m_Target.weak_unref (on_target_destroy);
+            }
+        }
+
+        private void
+        on_target_destroy ()
+        {
+            m_Target = null;
+            m_Callback = null;
+        }
+
+        internal override int
+        compare (Object inOther)
+        {
+            return (int)(id - inOther.id);
+        }
+
+        public int
+        compare_with_id (uint32 inId)
+        {
+            return (int)(id - inId);
+        }
+
+        public void
+        @callback (bool inConnected, string? inMessage)
+        {
+            if (m_Callback != null)
+            {
+                m_Callback (inConnected, inMessage);
+            }
+        }
+    }
+
     private class Engine : GLib.Object
     {
         private unowned EventBus  m_EventBus;
@@ -604,6 +789,7 @@ public class Maia.Core.EventBus : Object
         private Set<EventListenerPool> m_Subscribers;
         private Set<EventListenerPool> m_Pendings;
         private Set<ReplyHandler>      m_ReplyHandlers;
+        private Set<LinkBusHandler>    m_LinkBusHandlers;
         private BusConnection          m_Connection;
 
         // methods
@@ -621,6 +807,9 @@ public class Maia.Core.EventBus : Object
 
             // Create reply handler list
             m_ReplyHandlers = new Set<ReplyHandler> ();
+
+            // Create connect bus handler list
+            m_LinkBusHandlers = new Set<LinkBusHandler> ();
         }
 
         private void
@@ -705,6 +894,16 @@ public class Maia.Core.EventBus : Object
                     {
                         pool.event_destroyed = true;
                         m_Subscribers.remove (pool);
+                    }
+                }
+                else if (message is MessageLinkBusReply)
+                {
+                    unowned MessageLinkBusReply? msg =  (MessageLinkBusReply)message;
+                    unowned LinkBusHandler? handler = m_LinkBusHandlers.search<uint32> (GLib.Quark.from_string (msg.uri), LinkBusHandler.compare_with_id);
+                    if (handler != null)
+                    {
+                        handler.callback (msg.connected, msg.message);
+                        m_LinkBusHandlers.remove (handler);
                     }
                 }
             }
@@ -858,6 +1057,73 @@ public class Maia.Core.EventBus : Object
                 Log.warning (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "listener already in pool %s", inListener.hash.to_string ());
             }
         }
+
+        public void
+        object_link_bus (string inUri, LinkBusCallback inCallback)
+        {
+            unowned LinkBusHandler? handler = m_LinkBusHandlers.search<uint32> (GLib.Quark.from_string (inUri), LinkBusHandler.compare_with_id);
+            if (handler == null)
+            {
+                var msg = new MessageLinkBus (inUri);
+
+                try
+                {
+                    m_Connection.send (msg);
+
+                    var new_handler = new LinkBusHandler.object (inUri, inCallback);
+                    m_LinkBusHandlers.insert (new_handler);
+                }
+                catch (BusError err)
+                {
+                    Log.error (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Error on send connect bus $(inUri): $(err.message)");
+                }
+            }
+            else
+            {
+                inCallback (false, @"Bus connection to $inUri already launched !");
+            }
+        }
+
+        public void
+        link_bus (string inUri, LinkBusCallback inCallback)
+        {
+            unowned LinkBusHandler? handler = m_LinkBusHandlers.search<uint32> (GLib.Quark.from_string (inUri), LinkBusHandler.compare_with_id);
+            if (handler == null)
+            {
+                var msg = new MessageLinkBus (inUri);
+
+                try
+                {
+                    m_Connection.send (msg);
+
+                    var new_handler = new LinkBusHandler (inUri, inCallback);
+                    m_LinkBusHandlers.insert (new_handler);
+                }
+                catch (BusError err)
+                {
+                    Log.error (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Error on send link bus $(inUri): $(err.message)");
+                }
+            }
+            else
+            {
+                inCallback (false, @"Bus connection to $inUri already launched !");
+            }
+        }
+
+        public void
+        unlink_bus (string inUri)
+        {
+            var msg = new MessageUnlinkBus (inUri);
+
+            try
+            {
+                m_Connection.send (msg);
+            }
+            catch (BusError err)
+            {
+                Log.error (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Error on send unlink bus $(inUri): $(err.message)");
+            }
+        }
     }
 
     private class Subscriber
@@ -998,6 +1264,50 @@ public class Maia.Core.EventBus : Object
         }
     }
 
+    private class Bridge
+    {
+        // properties
+        private BusConnection m_Connection;
+
+        // methods
+        public Bridge (BusAddress inAddress) throws BusError
+        {
+            // Create connection
+            m_Connection = new SocketBusConnection (BusAddress.uuid_generate (), inAddress);
+            m_Connection.notifications["message-received"].add_object_observer (on_message_received);
+        }
+
+        private void
+        on_message_received (Core.Notification inNotification)
+        {
+            unowned BusConnection.MessageReceivedNotification? notification = inNotification as BusConnection.MessageReceivedNotification;
+
+            if (notification != null)
+            {
+                print(@"bridge receive message\n");
+                unowned Bus.Message message = notification.message;
+
+                if (message is MessageEvent)
+                {
+                    unowned MessageEvent? msg = (MessageEvent)message;
+                    print (@"bridge received event: $(msg.hash.name ())\n");
+                }
+            }
+        }
+
+        public int
+        compare (Bridge inOther)
+        {
+            return GLib.strcmp (m_Connection.address.to_string (), inOther.m_Connection.address.to_string ());
+        }
+
+        public int
+        compare_with_address (string inAddress)
+        {
+            return GLib.strcmp (m_Connection.address.to_string (), inAddress);
+        }
+    }
+
     // static properties
     private static unowned EventBus? s_Default = null;
 
@@ -1016,6 +1326,7 @@ public class Maia.Core.EventBus : Object
     private BusAddress     m_Address;
     private BusService     m_Service;
     private Set<Occurence> m_Occurences;
+    private Set<Bridge>    m_Bridges;
     private GLib.Private   m_Client;
 
     // accessors
@@ -1035,6 +1346,9 @@ public class Maia.Core.EventBus : Object
         Bus.Message.register (MessageType.SUBSCRIBE,        typeof (MessageSubscribe));
         Bus.Message.register (MessageType.SUBSCRIBE_RESULT, typeof (MessageSubscribeResult));
         Bus.Message.register (MessageType.UNSUBSCRIBE,      typeof (MessageUnsubscribe));
+        Bus.Message.register (MessageType.LINK_BUS,         typeof (MessageLinkBus));
+        Bus.Message.register (MessageType.LINK_BUS_REPLY,   typeof (MessageLinkBusReply));
+        Bus.Message.register (MessageType.UNLINK_BUS,       typeof (MessageUnlinkBus));
     }
 
     // method
@@ -1079,6 +1393,10 @@ public class Maia.Core.EventBus : Object
         // Create occurence list
         m_Occurences = new Core.Set<Occurence> ();
         m_Occurences.compare_func = Occurence.compare;
+
+        // Create bridge list
+        m_Bridges = new Core.Set<Bridge> ();
+        m_Bridges.compare_func = Bridge.compare;
 
         // Create bus service
         m_Service = new SocketBusService (m_Address.to_string (), m_Address);
@@ -1284,6 +1602,68 @@ public class Maia.Core.EventBus : Object
 
             ret = true;
         }
+        else if (inMessage is MessageLinkBus)
+        {
+            unowned MessageLinkBus? msg = (MessageLinkBus)inMessage;
+
+            Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Link to bus $(msg.uri)");
+
+            unowned Bridge? bridge = m_Bridges.search<string> (msg.uri, Bridge.compare_with_address);
+            bool connected = false;
+            string message = null;
+
+            // Bridge not found connect on bus
+            if (bridge == null)
+            {
+                var address = new BusAddress (msg.uri);
+                if (address.address_type != BusAddress.Type.INVALID)
+                {
+                    try
+                    {
+                        var new_bridge = new Bridge (address);
+                        m_Bridges.insert (new_bridge);
+                        connected = true;
+                    }
+                    catch (BusError error)
+                    {
+                        message = error.message;
+                    }
+                }
+                else
+                {
+                    message = @"Invalid $(msg.uri) address !";
+                }
+            }
+            else
+            {
+                message = @"Already connected to $(msg.uri) !";
+            }
+
+            // Send connect bus result to sender
+            foreach (unowned Core.Object? child in m_Service)
+            {
+                unowned BusConnection? client = child as BusConnection;
+                if (client != null && client.id == msg.sender)
+                {
+                    client.send_async.begin (new MessageLinkBusReply (msg.uri, connected, message));
+                    break;
+                }
+            }
+
+            ret = true;
+        }
+        else if (inMessage is MessageUnlinkBus)
+        {
+            unowned MessageUnlinkBus? msg = (MessageUnlinkBus)inMessage;
+
+            Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Unlink to bus $(msg.uri)");
+
+            unowned Bridge? bridge = m_Bridges.search<string> (msg.uri, Bridge.compare_with_address);
+            if (bridge != null)
+            {
+                m_Bridges.remove (bridge);
+            }
+        }
 
         return ret;
     }
@@ -1384,6 +1764,39 @@ public class Maia.Core.EventBus : Object
         if (client != null)
         {
             client.subscribe (inListener);
+        }
+    }
+
+    public void
+    link_bus (string inUri, LinkBusCallback inCallback)
+    {
+        unowned Client? client = get_client ();
+
+        if (client != null)
+        {
+            client.link_bus (inUri, inCallback);
+        }
+    }
+
+    public void
+    object_link_bus (string inUri, LinkBusCallback inCallback)
+    {
+        unowned Client? client = get_client ();
+
+        if (client != null)
+        {
+            client.object_link_bus (inUri, inCallback);
+        }
+    }
+
+    public void
+    unlink_bus (string inUri)
+    {
+        unowned Client? client = get_client ();
+
+        if (client != null)
+        {
+            client.unlink_bus (inUri);
         }
     }
 }

@@ -17,7 +17,9 @@ check_PROGRAMS = \
 noinst_PROGRAMS = \
     test-xcb \
     test-chart \
-    test-glx
+    test-glx \
+    test-bus-client \
+    test-bus-server
 
 INCLUDES += \
     $(MAIA_CAIRO_CFLAGS)
@@ -84,10 +86,28 @@ test_chart_LDADD = \
     $(MAIA_VALGRIND_LIBS) \
     ${top_builddir}/lib/libmaia.la
 
+test_bus_server_SOURCES = \
+    test-bus-server.vala
+
+test_bus_server_LDADD = \
+    $(MAIA_LIBS) \
+    $(MAIA_VALGRIND_LIBS) \
+    ${top_builddir}/lib/libmaia.la
+
+test_bus_client_SOURCES = \
+    test-bus-client.vala
+
+test_bus_client_LDADD = \
+    $(MAIA_LIBS) \
+    $(MAIA_VALGRIND_LIBS) \
+    ${top_builddir}/lib/libmaia.la
+
 VALAFILES = \
     $(filter %.vala,$(test_SOURCES)) \
     $(filter %.vala,$(test_xcb_SOURCES)) \
     $(filter %.vala,$(test_glx_SOURCES)) \
+    $(filter %.vala,$(test_bus_server_SOURCES)) \
+    $(filter %.vala,$(test_bus_client_SOURCES)) \
     $(filter %.vala,$(test_chart_SOURCES))
 
 CLEANFILES += \
@@ -95,4 +115,6 @@ CLEANFILES += \
     test_xcb_vala.stamp \
     test_glx_vala.stamp \
     test_chart_vala.stamp \
+    test_bus_server_vala.stamp \
+    test_bus_client_vala.stamp \
     $(VALAFILES:.vala=.c)
