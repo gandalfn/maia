@@ -34,7 +34,9 @@ public class Maia.Core.EventBus : Object
         UNSUBSCRIBE,
         LINK_BUS,
         LINK_BUS_REPLY,
-        UNLINK_BUS;
+        UNLINK_BUS,
+        LINK_BUS_AUTH,
+        LINK_BUS_AUTH_REPLY;
 
         public string
         to_string ()
@@ -61,6 +63,10 @@ public class Maia.Core.EventBus : Object
                     return "LinkBusReply";
                 case UNLINK_BUS:
                     return "UnlinkBus";
+                case LINK_BUS_AUTH:
+                    return "LinkBusAuth";
+                case LINK_BUS_AUTH_REPLY:
+                    return "LinkBusAuthReply";
             }
 
             return "Invalid";
@@ -69,25 +75,66 @@ public class Maia.Core.EventBus : Object
 
     private class MessageEventAdvertise : Bus.Message
     {
-        public Event.Hash hash {
-            owned get {
-                string name = "";
-                uint32 owner = 0;
-                var v = get_variant (Bus.Message.HEADER_SIZE, "(su)");
-                if (v != null)
-                {
-                    v.get ("(su)", out name, out owner);
-                }
-                return new Event.Hash.raw (name, (void*)owner);
+        private bool                   m_Parsed;
+        private Core.Array<Event.Hash> m_Hashs;
+
+        public Core.Array<Event.Hash> hashs {
+            get {
+                parse ();
+                return m_Hashs;
             }
+        }
+
+        construct
+        {
+            m_Hashs = new Core.Array<Event.Hash> ();
         }
 
         public MessageEventAdvertise (Event.Hash inHash)
         {
-            var data = new GLib.Variant ("(su)", inHash.name (), inHash.owner);
+            var builder = new GLib.VariantBuilder (new GLib.VariantType ("a{su}"));
+            builder.add ("{su}", inHash.name (), inHash.owner);
+            var data = builder.end ();
+
             uint32 size = (uint32)data.get_size ();
             GLib.Object (message_type: MessageType.EVENT_ADVERTISE, message_size: size);
             set_variant (Bus.Message.HEADER_SIZE, data);
+        }
+
+        public MessageEventAdvertise.list (Core.Set<Occurence> inList)
+        {
+            var builder = new GLib.VariantBuilder (new GLib.VariantType ("a{su}"));
+            foreach (unowned Occurence occurence in inList)
+            {
+                builder.add ("{su}", occurence.hash.name (), occurence.hash.owner);
+            }
+
+            var data = builder.end ();
+            uint32 size = (uint32)data.get_size ();
+            GLib.Object (message_type: MessageType.EVENT_ADVERTISE, message_size: size);
+            set_variant (Bus.Message.HEADER_SIZE, data);
+        }
+
+        private void
+        parse ()
+        {
+            if (!m_Parsed)
+            {
+                var data = get_variant (Bus.Message.HEADER_SIZE, "a{su}");
+
+                if (data != null)
+                {
+                    foreach (GLib.Variant iter in data)
+                    {
+                        unowned string name;
+                        uint32 owner;
+
+                        iter.get ("{&su}", out name, out owner);
+                        m_Hashs.insert (new Event.Hash.raw (name, (void*)owner));
+                    }
+                }
+                m_Parsed = true;
+            }
         }
     }
 
@@ -487,6 +534,77 @@ public class Maia.Core.EventBus : Object
             uint32 size = (uint32)data.get_size ();
             GLib.Object (message_type: MessageType.UNLINK_BUS, message_size: size);
             set_variant (Bus.Message.HEADER_SIZE, data);
+        }
+    }
+
+    private class MessageLinkBusAuth : Bus.Message
+    {
+        private bool m_Parsed = false;
+        private string m_Uri;
+
+        public string uri {
+            get {
+                if (!m_Parsed)
+                {
+                    var v = get_variant (Bus.Message.HEADER_SIZE, "(s)");
+                    if (v != null)
+                    {
+                        v.get ("(s)", out m_Uri);
+                        m_Parsed = true;
+                    }
+                }
+                return m_Uri;
+            }
+        }
+
+        public MessageLinkBusAuth (string inUri)
+        {
+            var data = new GLib.Variant ("(s)", inUri);
+            uint32 size = (uint32)data.get_size ();
+            GLib.Object (message_type: MessageType.LINK_BUS_AUTH, message_size: size);
+            set_variant (Bus.Message.HEADER_SIZE, data);
+        }
+    }
+
+    private class MessageLinkBusAuthReply : Bus.Message
+    {
+        private bool m_Parsed = false;
+        private string m_Uri;
+        private bool m_Connected;
+
+        public string uri {
+            get {
+                parse ();
+                return m_Uri;
+            }
+        }
+        public bool connected {
+            get {
+                parse ();
+                return m_Connected;
+            }
+        }
+
+        public MessageLinkBusAuthReply (string inUri, bool inConnected)
+        {
+            var data = new GLib.Variant ("(sb)", inUri, inConnected);
+            uint32 size = (uint32)data.get_size ();
+            GLib.Object (message_type: MessageType.LINK_BUS_AUTH_REPLY, message_size: size);
+            set_variant (Bus.Message.HEADER_SIZE, data);
+        }
+
+        private void
+        parse ()
+        {
+            if (!m_Parsed)
+            {
+                var v = get_variant (Bus.Message.HEADER_SIZE, "(sb)");
+                if (v != null)
+                {
+                    v.get ("(sb)", out m_Uri, out m_Connected);
+                    m_Parsed = true;
+                }
+            }
         }
     }
 
@@ -1152,9 +1270,10 @@ public class Maia.Core.EventBus : Object
 
     private class Occurence
     {
-        public Event.Hash      hash;
-        public Set<Subscriber> subscribers;
-        public Set<Reply>      replies;
+        public Event.Hash          hash;
+        public Set<Subscriber>     subscribers;
+        public Set<unowned Bridge> bridges;
+        public Set<Reply>          replies;
 
         public Occurence (Event.Hash inHash)
         {
@@ -1165,9 +1284,28 @@ public class Maia.Core.EventBus : Object
             subscribers = new Set<Subscriber> ();
             subscribers.compare_func = Subscriber.compare;
 
+            // create bridge list
+            bridges = new Set<unowned Bridge> ();
+            bridges.compare_func = Bridge.compare;
+
             // create reply list
             replies = new Set<Reply> ();
             replies.compare_func = Reply.compare;
+        }
+
+        ~Occurence ()
+        {
+            foreach (unowned Bridge bridge in bridges)
+            {
+                bridge.weak_unref (on_bridge_destroy);
+            }
+        }
+
+        private void
+        on_bridge_destroy (GLib.Object inBridge)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge destroyed");
+            bridges.remove ((Bridge)inBridge);
         }
 
         public void
@@ -1235,6 +1373,28 @@ public class Maia.Core.EventBus : Object
             }
         }
 
+        public void
+        bridge_subscribe (Bridge inBridge)
+        {
+            Maia.Core.Iterator <unowned Bridge> iter = bridges.get (inBridge);
+            if (iter == null)
+            {
+                bridges.insert (inBridge);
+                inBridge.weak_ref (on_bridge_destroy);
+            }
+        }
+
+        public void
+        bridge_unsubscribe (Bridge inBridge)
+        {
+            Maia.Core.Iterator <unowned Bridge> iter = bridges.get (inBridge);
+            if (iter != null)
+            {
+                inBridge.weak_unref (on_bridge_destroy);
+                bridges.erase (iter);
+            }
+        }
+
         public Set<uint32>
         get_subscriber_destinations ()
         {
@@ -1264,17 +1424,116 @@ public class Maia.Core.EventBus : Object
         }
     }
 
-    private class Bridge
+    private class Bridge : GLib.Object
     {
+        // types
+        private class PendingSubscribe
+        {
+            // properties
+            public Event.Hash hash;
+            public Set<uint32> subscribers;
+
+            // methods
+            public PendingSubscribe (Event.Hash inHash)
+            {
+                hash = inHash;
+                subscribers = new Set<uint32> ();
+            }
+
+            public int
+            compare (PendingSubscribe inOther)
+            {
+                return hash.compare (inOther.hash);
+            }
+
+            public int
+            compare_with_event_hash (Event.Hash inHash)
+            {
+                return hash.compare (inHash);
+            }
+        }
+
         // properties
-        private BusConnection m_Connection;
+        private unowned EventBus      m_EventBus;
+        private uint32                m_Requester;
+        private string                m_Address;
+        private BusConnection         m_Connection;
+        private Set<Occurence>        m_Occurences;
+        private Set<PendingSubscribe> m_PendingsSubscriber;
+
+        // accessors
+        public BusConnection connection {
+            get {
+                return m_Connection;
+            }
+        }
+
+        public string address {
+            get {
+                return m_Address;
+            }
+        }
 
         // methods
-        public Bridge (BusAddress inAddress) throws BusError
+        public Bridge (EventBus inBus, uint32 inRequester, BusAddress inAddress) throws BusError
         {
+            // Get event bus
+            m_EventBus = inBus;
+
+            // Get requester
+            m_Requester = inRequester;
+
+            // Get bus address
+            m_Address = inAddress.to_string ();
+
+            // Create pending list
+            m_PendingsSubscriber = new Set<PendingSubscribe> ();
+            m_PendingsSubscriber.compare_func = PendingSubscribe.compare;
+
+            // Create occurence list
+            m_Occurences = new Core.Set<Occurence> ();
+            m_Occurences.compare_func = Occurence.compare;
+
             // Create connection
             m_Connection = new SocketBusConnection (BusAddress.uuid_generate (), inAddress);
             m_Connection.notifications["message-received"].add_object_observer (on_message_received);
+            m_Connection.notifications["closed"].add_object_observer (on_closed);
+
+            // Send bus authentification
+            var msg = new MessageLinkBusAuth (inBus.address);
+            m_Connection.send (msg);
+        }
+
+        public Bridge.from_connection (EventBus inBus, string inAddress, SocketBusConnection inConnection)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Create bridge from connection $(inAddress)");
+
+            // Get event bus
+            m_EventBus = inBus;
+
+            // Get bus address
+            m_Address = inAddress;
+
+            // Create occurence list
+            m_Occurences = new Core.Set<Occurence> ();
+            m_Occurences.compare_func = Occurence.compare;
+
+            // Create connection
+            m_Connection = inConnection;
+            m_Connection.notifications["message-received"].add_object_observer (on_message_received);
+
+            // Send occurences to link
+            if (m_EventBus.m_Occurences.length > 0)
+            {
+                m_Connection.send_async.begin (new MessageEventAdvertise.list (m_EventBus.m_Occurences));
+            }
+        }
+
+        private void
+        on_closed (Core.Notification inNotification)
+        {
+            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge closed, $ref_count");
+            m_EventBus.m_Bridges.remove (this);
         }
 
         private void
@@ -1284,27 +1543,189 @@ public class Maia.Core.EventBus : Object
 
             if (notification != null)
             {
-                print(@"bridge receive message\n");
+                Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"bridge receive message");
                 unowned Bus.Message message = notification.message;
 
-                if (message is MessageEvent)
+                if (message is MessageLinkBusAuthReply)
+                {
+                    unowned MessageLinkBusAuthReply? msg = (MessageLinkBusAuthReply)message;
+
+                    // Link not authorized remove it
+                    if (!msg.connected)
+                    {
+                        Log.info (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge $m_Address not authorized remove it");
+                        m_EventBus.m_Bridges.remove (this);
+                    }
+                    else
+                    {
+                        // Send occurences to link
+                        if (m_EventBus.m_Occurences.length > 0)
+                        {
+                            m_Connection.send_async.begin (new MessageEventAdvertise.list (m_EventBus.m_Occurences));
+                        }
+                    }
+
+                    // If we have a requester send link reply
+                    if (m_Requester != 0)
+                    {
+                        unowned BusConnection? connection = m_EventBus.m_Service.find (m_Requester, false) as BusConnection;
+                        if (connection != null)
+                        {
+                            connection.send_async.begin (new MessageLinkBusReply (msg.uri, msg.connected, msg.connected ? null : @"Link with $m_Address not authorized"));
+                        }
+
+                        m_Requester = 0;
+                    }
+                }
+                else if (message is MessageEvent)
                 {
                     unowned MessageEvent? msg = (MessageEvent)message;
-                    print (@"bridge received event: $(msg.hash.name ())\n");
+
+//#if MAIA_DEBUG
+                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Event $(msg.hash) publish");
+//#endif
+
+                    unowned Occurence occurence = m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
+                    if (occurence != null)
+                    {
+                        // Event with reply
+//~                         if (msg.need_reply)
+//~                         {
+//~                            // Add pending reply
+//~                             occurence.add_reply (msg.sender, msg.args);
+//~                         }
+
+                        // Get list of destination of event
+                        Set<uint32> destination = occurence.get_subscriber_destinations ();
+                        if (destination.length > 0)
+                        {
+                            // Send event for client which is subscribed on
+                            foreach (unowned Core.Object? child in m_EventBus.m_Service)
+                            {
+                                unowned BusConnection? client = child as BusConnection;
+                                if (client != null && client.id in destination)
+                                {
+//#if MAIA_DEBUG
+                                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event $(msg.hash) to client $(client.id)");
+//#endif
+                                    // send message to client
+                                    client.send_async.begin (message);
+                                }
+                            }
+                        }
+                    }
+
+                }
+                else if (message is MessageEventAdvertise)
+                {
+                    unowned MessageEventAdvertise? msg = (MessageEventAdvertise)message;
+
+                    foreach (var hash in msg.hashs)
+                    {
+                        unowned Occurence? occurence = m_Occurences.search<Event.Hash> (hash, Occurence.compare_with_event_hash);
+                        if (occurence == null)
+                        {
+//#if MAIA_DEBUG
+                            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge event $(hash) advertise");
+//#endif
+                            m_Occurences.insert (new Occurence (hash));
+                        }
+                    }
+                }
+                else if (message is MessageSubscribe)
+                {
+                    unowned MessageSubscribe? msg = (MessageSubscribe)message;
+
+                    Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge subscribe $(msg.sender) event $(msg.hash)");
+
+                    unowned Occurence occurence = m_EventBus.m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
+                    if (occurence != null)
+                    {
+                        occurence.bridge_subscribe (this);
+                    }
+
+                    // Send subscribe result to sender
+                    m_Connection.send_async.begin (new MessageSubscribeResult (msg.hash, occurence != null));
+                }
+                else if (message is MessageSubscribeResult)
+                {
+                    unowned MessageSubscribeResult? msg = (MessageSubscribeResult)message;
+
+                    // Search in pending
+                    unowned PendingSubscribe? pending = m_PendingsSubscriber.search<Event.Hash> (msg.hash, PendingSubscribe.compare_with_event_hash);
+                    if (pending != null)
+                    {
+                        foreach (uint32 subscriber in pending.subscribers)
+                        {
+                            unowned BusConnection? connection = m_EventBus.m_Service.find (subscriber, false) as BusConnection;
+                            if (connection != null)
+                            {
+                                unowned Occurence occurence = m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
+                                if (occurence != null && msg.subscribed)
+                                {
+                                    occurence.subscribe (subscriber);
+//#if MAIA_DEBUG
+                                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge subscribe event $(msg.hash)");
+//#endif
+                                }
+                                connection.send_async.begin (new MessageSubscribeResult (msg.hash, occurence != null && msg.subscribed));
+                            }
+                        }
+
+                        m_PendingsSubscriber.remove (pending);
+                    }
                 }
             }
+        }
+
+        public bool
+        subscribe (uint32 inSubscribe, Event.Hash inHash)
+        {
+            unowned Occurence occurence = m_Occurences.search<Event.Hash> (inHash, Occurence.compare_with_event_hash);
+            if (occurence != null)
+            {
+                // Search in pending
+                unowned PendingSubscribe? pending = m_PendingsSubscriber.search<Event.Hash> (inHash, PendingSubscribe.compare_with_event_hash);
+                if (pending == null)
+                {
+                    var new_pending = new PendingSubscribe (inHash);
+                    m_PendingsSubscriber.insert (new_pending);
+                    pending = new_pending;
+
+                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Request bridge subscribe event $(inHash)");
+
+                    // Send subscribe to linked bus
+                    m_Connection.send_async.begin (new MessageSubscribe (inHash));
+                }
+
+                pending.subscribers.insert (inSubscribe);
+            }
+
+            return occurence != null;
+        }
+
+        public bool
+        unsubscribe (uint32 inSubscribe, Event.Hash inHash)
+        {
+            unowned Occurence occurence = m_Occurences.search<Event.Hash> (inHash, Occurence.compare_with_event_hash);
+            if (occurence != null)
+            {
+                occurence.unsubscribe (inSubscribe);
+            }
+
+            return occurence != null;
         }
 
         public int
         compare (Bridge inOther)
         {
-            return GLib.strcmp (m_Connection.address.to_string (), inOther.m_Connection.address.to_string ());
+            return GLib.strcmp (m_Address, inOther.m_Address);
         }
 
         public int
         compare_with_address (string inAddress)
         {
-            return GLib.strcmp (m_Connection.address.to_string (), inAddress);
+            return GLib.strcmp (m_Address, inAddress);
         }
     }
 
@@ -1339,16 +1760,18 @@ public class Maia.Core.EventBus : Object
     // static methods
     static construct
     {
-        Bus.Message.register (MessageType.EVENT_ADVERTISE,  typeof (MessageEventAdvertise));
-        Bus.Message.register (MessageType.EVENT,            typeof (MessageEvent));
-        Bus.Message.register (MessageType.EVENT_REPLY,      typeof (MessageEventReply));
-        Bus.Message.register (MessageType.EVENT_DESTROY,    typeof (MessageDestroyEvent));
-        Bus.Message.register (MessageType.SUBSCRIBE,        typeof (MessageSubscribe));
-        Bus.Message.register (MessageType.SUBSCRIBE_RESULT, typeof (MessageSubscribeResult));
-        Bus.Message.register (MessageType.UNSUBSCRIBE,      typeof (MessageUnsubscribe));
-        Bus.Message.register (MessageType.LINK_BUS,         typeof (MessageLinkBus));
-        Bus.Message.register (MessageType.LINK_BUS_REPLY,   typeof (MessageLinkBusReply));
-        Bus.Message.register (MessageType.UNLINK_BUS,       typeof (MessageUnlinkBus));
+        Bus.Message.register (MessageType.EVENT_ADVERTISE,     typeof (MessageEventAdvertise));
+        Bus.Message.register (MessageType.EVENT,               typeof (MessageEvent));
+        Bus.Message.register (MessageType.EVENT_REPLY,         typeof (MessageEventReply));
+        Bus.Message.register (MessageType.EVENT_DESTROY,       typeof (MessageDestroyEvent));
+        Bus.Message.register (MessageType.SUBSCRIBE,           typeof (MessageSubscribe));
+        Bus.Message.register (MessageType.SUBSCRIBE_RESULT,    typeof (MessageSubscribeResult));
+        Bus.Message.register (MessageType.UNSUBSCRIBE,         typeof (MessageUnsubscribe));
+        Bus.Message.register (MessageType.LINK_BUS,            typeof (MessageLinkBus));
+        Bus.Message.register (MessageType.LINK_BUS_REPLY,      typeof (MessageLinkBusReply));
+        Bus.Message.register (MessageType.UNLINK_BUS,          typeof (MessageUnlinkBus));
+        Bus.Message.register (MessageType.LINK_BUS_AUTH,       typeof (MessageLinkBusAuth));
+        Bus.Message.register (MessageType.LINK_BUS_AUTH_REPLY, typeof (MessageLinkBusAuthReply));
     }
 
     // method
@@ -1457,13 +1880,16 @@ public class Maia.Core.EventBus : Object
         {
             unowned MessageEventAdvertise? msg = (MessageEventAdvertise)inMessage;
 
-            unowned Occurence? occurence = m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
-            if (occurence == null)
+            foreach (var hash in msg.hashs)
             {
-#if MAIA_DEBUG
-                Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Event $(msg.hash) advertise");
-#endif
-                m_Occurences.insert (new Occurence (msg.hash));
+                unowned Occurence? occurence = m_Occurences.search<Event.Hash> (hash, Occurence.compare_with_event_hash);
+                if (occurence == null)
+                {
+//#if MAIA_DEBUG
+                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Event $(hash) advertise");
+//#endif
+                    m_Occurences.insert (new Occurence (hash));
+                }
             }
 
             ret = true;
@@ -1524,6 +1950,13 @@ public class Maia.Core.EventBus : Object
                         }
                     }
                 }
+
+                // Send to bridge connected to event
+                foreach (unowned Bridge bridge in occurence.bridges)
+                {
+                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event $(msg.hash) to bridge $(bridge.address)");
+                    bridge.connection.send_async.begin (inMessage);
+                }
             }
 
             ret = true;
@@ -1563,6 +1996,7 @@ public class Maia.Core.EventBus : Object
         else if (inMessage is MessageSubscribe)
         {
             unowned MessageSubscribe? msg = (MessageSubscribe)inMessage;
+            bool result = false;
 
             Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Subscribe $(msg.sender) event $(msg.hash)");
 
@@ -1570,19 +2004,33 @@ public class Maia.Core.EventBus : Object
             if (occurence != null)
             {
                 occurence.subscribe (msg.sender);
+
+                // Send subscribe result to sender
+                unowned BusConnection? connection = m_Service.find (msg.sender, false) as BusConnection;
+                if (connection != null)
+                {
+                    connection.send_async.begin (new MessageSubscribeResult (msg.hash, true));
+                }
+            }
+            else
+            {
+                foreach (unowned Bridge bridge in m_Bridges)
+                {
+                    if (bridge.subscribe (msg.sender, msg.hash))
+                    {
+                        result = true;
+                        break;
+                    }
+                }
             }
 
-            // Send subscribe result to sender
-            foreach (unowned Core.Object? child in m_Service)
+            if (!result)
             {
-                unowned BusConnection? client = child as BusConnection;
-                if (client != null && client.id == msg.sender)
+                // Send subscribe result to sender
+                unowned BusConnection? connection = m_Service.find (msg.sender, false) as BusConnection;
+                if (connection != null)
                 {
-#if MAIA_DEBUG
-                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send subscribe result $(occurence != null) to client $(client.id)");
-#endif
-                    client.send_async.begin (new MessageSubscribeResult (msg.hash, occurence != null));
-                    break;
+                    connection.send_async.begin (new MessageSubscribeResult (msg.hash, false));
                 }
             }
 
@@ -1598,6 +2046,16 @@ public class Maia.Core.EventBus : Object
             if (occurence != null)
             {
                 occurence.unsubscribe (msg.sender);
+            }
+            else
+            {
+                foreach (unowned Bridge bridge in m_Bridges)
+                {
+                    if (bridge.unsubscribe (msg.sender, msg.hash))
+                    {
+                        break;
+                    }
+                }
             }
 
             ret = true;
@@ -1620,7 +2078,7 @@ public class Maia.Core.EventBus : Object
                 {
                     try
                     {
-                        var new_bridge = new Bridge (address);
+                        var new_bridge = new Bridge (this, msg.sender, address);
                         m_Bridges.insert (new_bridge);
                         connected = true;
                     }
@@ -1639,15 +2097,67 @@ public class Maia.Core.EventBus : Object
                 message = @"Already connected to $(msg.uri) !";
             }
 
-            // Send connect bus result to sender
+            // If not connected send connect bus result to sender elsewhere wait link bus auth response
+            if (!connected)
+            {
+                foreach (unowned Core.Object? child in m_Service)
+                {
+                    unowned BusConnection? client = child as BusConnection;
+                    if (client != null && client.id == msg.sender)
+                    {
+                        client.send_async.begin (new MessageLinkBusReply (msg.uri, connected, message));
+                        break;
+                    }
+                }
+            }
+
+            ret = true;
+        }
+        else if (inMessage is MessageLinkBusAuth)
+        {
+            unowned MessageLinkBusAuth? msg = (MessageLinkBusAuth)inMessage;
+
+            Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Link bus authentification $(msg.uri)");
+
+            unowned SocketBusConnection? sender_connection = null;
+
+            // Search sender connection
             foreach (unowned Core.Object? child in m_Service)
             {
                 unowned BusConnection? client = child as BusConnection;
                 if (client != null && client.id == msg.sender)
                 {
-                    client.send_async.begin (new MessageLinkBusReply (msg.uri, connected, message));
+                    sender_connection = client as SocketBusConnection;
                     break;
                 }
+            }
+
+            if (sender_connection != null)
+            {
+                sender_connection.ref ();
+                {
+                    // unlink connection from event bus
+                    sender_connection.parent = null;
+
+                    // check if a bridge with this bus exist for this event bus
+                    unowned Bridge? bridge = m_Bridges.search<string> (msg.uri, Bridge.compare_with_address);
+
+                    if (bridge == null)
+                    {
+                        // create a new bridge from connection
+                        Bridge new_bridge = new Bridge.from_connection (this, msg.uri, sender_connection);
+                        m_Bridges.insert (new_bridge);
+                        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Add bridge $(new_bridge.ref_count)");
+                    }
+                    else
+                    {
+                        Log.critical (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bus link auth rejected $(msg.uri) an existing bridge was found");
+                    }
+
+                    // Send auth reply
+                    sender_connection.send_async.begin (new MessageLinkBusAuthReply (address, bridge == null));
+                }
+                sender_connection.unref ();
             }
 
             ret = true;

@@ -133,6 +133,7 @@ public class Maia.Core.SocketBusConnection : BusConnection
         // Create watch on send
         m_SendWatch = new SocketWatch (m_Connection.socket, Watch.Condition.OUT);
         m_SendWatch.notifications["ready"].add_object_observer (on_send_ready);
+        m_SendWatch.notifications["closed"].add_object_observer (on_closed);
         m_SendWatch.stop ();
     }
 
@@ -192,9 +193,9 @@ public class Maia.Core.SocketBusConnection : BusConnection
                         request.m_Size += m_Connection.output_stream.write (request.m_Data[request.m_Size:request.m_Data.length], request.m_Cancellable);
                     } while (request.m_Size < request.m_Data.length);
                 }
-                catch (GLib.Error err)
+                catch (GLib.IOError err)
                 {
-                    Log.error (GLib.Log.METHOD, Log.Category.MAIN_BUS, @"error on write message : $(err.message)");
+                    Log.error (GLib.Log.METHOD, Log.Category.MAIN_BUS, @"error on write message : $(err.code) $(err.message)");
                     request.m_Size = 0;
                     if (!request.m_Cancellable.is_cancelled ())
                     {
@@ -221,6 +222,7 @@ public class Maia.Core.SocketBusConnection : BusConnection
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "");
         m_RecvWatch.stop ();
         m_SendWatch.stop ();
+        notifications["closed"].post ();
         parent = null;
     }
 

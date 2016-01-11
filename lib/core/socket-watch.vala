@@ -62,7 +62,14 @@ public class Maia.Core.SocketWatch : Watch
     internal override bool
     check ()
     {
-        var status = m_Socket.condition_check (GLib.IOCondition.OUT | GLib.IOCondition.IN | GLib.IOCondition.PRI);
+        var status = m_Socket.condition_check (GLib.IOCondition.OUT | GLib.IOCondition.IN | GLib.IOCondition.PRI | GLib.IOCondition.HUP | GLib.IOCondition.ERR | GLib.IOCondition.NVAL);
+
+        if ((GLib.IOCondition.ERR in status) || (GLib.IOCondition.HUP in status) || (GLib.IOCondition.NVAL in status))
+        {
+            on_error ();
+
+            return false;
+        }
 
         if (condition == Watch.Condition.OUT)
         {

@@ -158,6 +158,15 @@ public abstract class Maia.Core.BusService : Bus
         }
     }
 
+    internal override void
+    remove_child (Core.Object inChild)
+    {
+        unowned BusConnection client = inChild as BusConnection;
+        client.notifications["message-received"].remove_observer (on_client_message_received);
+
+        base.remove_child (inChild);
+    }
+
     public void
     set_dispatch_func (DispatchFunc inDispatchFunc)
     {

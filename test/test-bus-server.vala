@@ -64,15 +64,18 @@ public class Maia.TestEventArgs : Maia.Core.EventArgs
 
 static void main (string[] args)
 {
-    Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.ALL, "test-glx"));
+    Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.ALL, "test-bus-server"));
 
     var application = new Maia.Application ("test-bus-server", 60, { "gtk" }, args.length > 1 ? args[1] : "unix://");
     print (@"bus address: $(Maia.Core.EventBus.default.address)\n");
 
     var event = new Maia.Core.Event ("test");
+    uint32 count = 1;
 
-    GLib.Timeout.add_seconds (10, () => {
-        event.publish (new Maia.TestEventArgs ("test", 1));
+    GLib.Timeout.add_seconds (1, () => {
+        print(@"send event name: event number $count, val: $count\n");
+        event.publish (new Maia.TestEventArgs (@"event number $count", count));
+        count++;
 
         return true;
     });

@@ -35,6 +35,7 @@ public abstract class Maia.Core.BusConnection : Bus
     {
         notifications.add (new Notification ("connected"));
         notifications.add (new MessageReceivedNotification ("message-received"));
+        notifications.add (new Notification ("closed"));
     }
 
     protected BusConnection (string inName, BusAddress inAddress)

@@ -62,19 +62,32 @@ public class Maia.TestEventArgs : Maia.Core.EventArgs
     }
 }
 
+static Maia.Core.EventListener s_Listener = null;
+
 static void on_bus_linked (bool connected, string? message)
 {
     if (connected)
+    {
         print (@"linked to server\n");
+
+        Maia.Core.EventBus.default.subscribe (s_Listener);
+    }
     else
         print (@"not linked: $message\n");
 }
 
 static void main (string[] args)
 {
-    Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.ALL, "test-glx"));
+    //Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.ALL, "test-bus-client"));
 
     var application = new Maia.Application ("test-bus-client", 60, { "gtk" });
+    var foo = new Maia.TestEventArgs ("", 0);
+
+    s_Listener = new Maia.Core.EventListener.with_hash ("test", null, (inArgs) => {
+        unowned Maia.TestEventArgs msg = (Maia.TestEventArgs)inArgs;
+
+        print(@"received event name: $(msg.name) val: $(msg.val)\n");
+    });
     Maia.Core.EventBus.default.link_bus (args[1], on_bus_linked);
 
     // Run application

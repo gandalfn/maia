@@ -179,8 +179,8 @@ public abstract class Maia.Core.Watch : Object
             ret = true;
         }
         else if ((m_Fd.revents & GLib.IOCondition.ERR)  == GLib.IOCondition.ERR ||
-            (m_Fd.revents & GLib.IOCondition.HUP)  == GLib.IOCondition.HUP ||
-            (m_Fd.revents & GLib.IOCondition.NVAL) == GLib.IOCondition.NVAL)
+                 (m_Fd.revents & GLib.IOCondition.HUP)  == GLib.IOCondition.HUP ||
+                 (m_Fd.revents & GLib.IOCondition.NVAL) == GLib.IOCondition.NVAL)
         {
             on_error ();
         }
