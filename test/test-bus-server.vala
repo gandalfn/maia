@@ -28,12 +28,12 @@ public class Maia.TestEventArgs : Maia.Core.EventArgs
         }
     }
 
-    public uint32 val {
+    public int64 time {
         get {
-            return (uint32)this["val"];
+            return (int64)this["time"];
         }
         set {
-            this["val", 0] = value;
+            this["time", 0] = value;
         }
     }
 
@@ -43,14 +43,14 @@ public class Maia.TestEventArgs : Maia.Core.EventArgs
                                           "Test",
                                           "message Test {"    +
                                           "     string name;" +
-                                          "     uint32 val;"  +
+                                          "     int64 time;"  +
                                           "}");
     }
 
-    public TestEventArgs (string inName, uint32 inVal)
+    public TestEventArgs (string inName)
     {
         this["name", 0] = inName;
-        this["val", 0] = inVal;
+        this["time", 0] = GLib.get_monotonic_time ();
     }
 
     internal override void
@@ -58,7 +58,6 @@ public class Maia.TestEventArgs : Maia.Core.EventArgs
         requires (inArgs is TestEventArgs)
     {
         name += "|" + ((TestEventArgs)inArgs).name;
-        val += ((TestEventArgs)inArgs).val;
     }
 }
 
@@ -72,9 +71,9 @@ static void main (string[] args)
     var event = new Maia.Core.Event ("test");
     uint32 count = 1;
 
-    GLib.Timeout.add_seconds (1, () => {
-        print(@"send event name: event number $count, val: $count\n");
-        event.publish (new Maia.TestEventArgs (@"event number $count", count));
+    GLib.Timeout.add (100, () => {
+        print(@"send event name: event number $count\n");
+        event.publish (new Maia.TestEventArgs (@"event number $count"));
         count++;
 
         return true;

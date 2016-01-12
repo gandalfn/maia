@@ -164,7 +164,11 @@ public abstract class Maia.Core.Watch : Object
 
         outTimeout = timeout;
 
-        return check ();
+        ref ();
+        bool ret = check ();
+        unref ();
+
+        return ret;
     }
 
     private bool
@@ -172,6 +176,7 @@ public abstract class Maia.Core.Watch : Object
     {
         bool ret = false;
 
+        ref ();
         uint64 now = m_Source.get_time ();
         if (timeout >= 0 && (now - m_CurrentTime) / 1000 > timeout)
         {
@@ -190,6 +195,7 @@ public abstract class Maia.Core.Watch : Object
         {
             ret = check ();
         }
+        unref ();
 
         return ret;
     }

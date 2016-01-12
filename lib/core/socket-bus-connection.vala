@@ -220,10 +220,13 @@ public class Maia.Core.SocketBusConnection : BusConnection
     on_closed (Core.Notification inNotification)
     {
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "");
+
+        ref ();
         m_RecvWatch.stop ();
         m_SendWatch.stop ();
         notifications["closed"].post ();
         parent = null;
+        unref ();
     }
 
     internal override size_t

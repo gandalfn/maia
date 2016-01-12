@@ -28,12 +28,12 @@ public class Maia.TestEventArgs : Maia.Core.EventArgs
         }
     }
 
-    public uint32 val {
+    public int64 time {
         get {
-            return (uint32)this["val"];
+            return (int64)this["time"];
         }
         set {
-            this["val", 0] = value;
+            this["time", 0] = value;
         }
     }
 
@@ -43,14 +43,14 @@ public class Maia.TestEventArgs : Maia.Core.EventArgs
                                           "Test",
                                           "message Test {"    +
                                           "     string name;" +
-                                          "     uint32 val;"  +
+                                          "     int64 time;"  +
                                           "}");
     }
 
-    public TestEventArgs (string inName, uint32 inVal)
+    public TestEventArgs (string inName)
     {
         this["name", 0] = inName;
-        this["val", 0] = inVal;
+        this["time", 0] = GLib.get_monotonic_time ();
     }
 
     internal override void
@@ -58,7 +58,6 @@ public class Maia.TestEventArgs : Maia.Core.EventArgs
         requires (inArgs is TestEventArgs)
     {
         name += "|" + ((TestEventArgs)inArgs).name;
-        val += ((TestEventArgs)inArgs).val;
     }
 }
 
@@ -81,12 +80,16 @@ static void main (string[] args)
     //Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.ALL, "test-bus-client"));
 
     var application = new Maia.Application ("test-bus-client", 60, { "gtk" });
-    var foo = new Maia.TestEventArgs ("", 0);
+    //var foo = new Maia.TestEventArgs ("");
+    typeof (Maia.TestEventArgs).class_peek ();
 
     s_Listener = new Maia.Core.EventListener.with_hash ("test", null, (inArgs) => {
         unowned Maia.TestEventArgs msg = (Maia.TestEventArgs)inArgs;
 
-        print(@"received event name: $(msg.name) val: $(msg.val)\n");
+        int64 now = GLib.get_monotonic_time ();
+        double diff = (double)(now - msg.time) / 1000.0;
+
+        print(@"received event name: $(msg.name) time: $(diff) ms\n");
     });
     Maia.Core.EventBus.default.link_bus (args[1], on_bus_linked);
 

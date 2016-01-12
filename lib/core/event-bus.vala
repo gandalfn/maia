@@ -1521,6 +1521,7 @@ public class Maia.Core.EventBus : Object
             // Create connection
             m_Connection = inConnection;
             m_Connection.notifications["message-received"].add_object_observer (on_message_received);
+            m_Connection.notifications["closed"].add_object_observer (on_closed);
 
             // Send occurences to link
             if (m_EventBus.m_Occurences.length > 0)
