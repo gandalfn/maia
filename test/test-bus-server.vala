@@ -71,9 +71,14 @@ static void main (string[] args)
     var event = new Maia.Core.Event ("test");
     uint32 count = 1;
 
-    GLib.Timeout.add (100, () => {
+    GLib.Timeout.add_seconds (10, () => {
         print(@"send event name: event number $count\n");
-        event.publish (new Maia.TestEventArgs (@"event number $count"));
+        event.publish_with_reply (new Maia.TestEventArgs (@"event number $count"), (inA) => {
+            unowned Maia.TestEventArgs a = (Maia.TestEventArgs)inA;
+            int64 now = GLib.get_monotonic_time ();
+            double diff = (double)(now - a.time) / 1000.0;
+            print (@"reply: $(a.name) diff: $(diff) ms\n");
+        });
         count++;
 
         return true;

@@ -1324,16 +1324,43 @@ public class Maia.Core.EventBus : Object
             Reply.Hash reply_hash = Reply.Hash (inId, inArgs.sequence);
 
             unowned Reply? reply = replies.search<Reply.Hash?> (reply_hash, Reply.compare_with_hash);
-            if (reply != null && reply.count < subscribers.length)
+            if (reply != null && reply.count < (subscribers.length + bridges.length))
             {
                 reply.args.accumulate (inArgs);
                 reply.count++;
 
-#if MAIA_DEBUG
+//#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "check reply %s %u count: %u", hash.to_string (), inArgs.sequence, reply.count);
-#endif
+//#endif
 
-                if (reply.count == subscribers.length)
+                if (reply.count == (subscribers.length + bridges.length))
+                {
+                    ret = new MessageEventReply.final (hash, reply.args);
+                    ret.destination = inId;
+                    replies.remove (reply);
+                }
+            }
+
+            return ret;
+        }
+
+        public MessageEventReply?
+        check_reply_without_accumulate (uint32 inId, EventArgs inArgs)
+        {
+            MessageEventReply? ret = null;
+            Reply.Hash reply_hash = Reply.Hash (inId, inArgs.sequence);
+
+            unowned Reply? reply = replies.search<Reply.Hash?> (reply_hash, Reply.compare_with_hash);
+            if (reply != null && reply.count < (subscribers.length + bridges.length))
+            {
+                reply.args = inArgs;
+                reply.count++;
+
+//#if MAIA_DEBUG
+                Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "check reply %s %u count: %u", hash.to_string (), inArgs.sequence, reply.count);
+//#endif
+
+                if (reply.count == (subscribers.length + bridges.length))
                 {
                     ret = new MessageEventReply.final (hash, reply.args);
                     ret.destination = inId;
@@ -1590,11 +1617,13 @@ public class Maia.Core.EventBus : Object
                     if (occurence != null)
                     {
                         // Event with reply
-//~                         if (msg.need_reply)
-//~                         {
-//~                            // Add pending reply
-//~                             occurence.add_reply (msg.sender, msg.args);
-//~                         }
+                        if (msg.need_reply)
+                        {
+                            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge receive event $(msg.hash) with reply");
+
+                            // Add pending reply
+                            occurence.add_reply (msg.sender, msg.args);
+                        }
 
                         // Get list of destination of event
                         Set<uint32> destination = occurence.get_subscriber_destinations ();
@@ -1616,6 +1645,34 @@ public class Maia.Core.EventBus : Object
                         }
                     }
 
+                }
+                else if (message is MessageEventReply)
+                {
+                    unowned MessageEventReply? msg = (MessageEventReply)message;
+
+                    // Search the corresponding occurence in event bus
+                    unowned Occurence occurence = m_EventBus.m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
+                    if (occurence != null)
+                    {
+                        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge check event reply $(msg.hash) $(msg.args.sequence)");
+
+                        // Check if we reach all reply
+                        MessageEventReply? reply = occurence.check_reply_without_accumulate (msg.destination, msg.args);
+
+                        if (reply != null)
+                        {
+//#if MAIA_DEBUG
+                            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge send event reply $(msg.hash) $(msg.args.sequence)");
+//#endif
+
+                            // send reply to sender
+                            unowned BusConnection? connection = m_EventBus.m_Service.find (msg.destination, false) as BusConnection;
+                            if (connection != null)
+                            {
+                                connection.send_async.begin (reply);
+                            }
+                        }
+                    }
                 }
                 else if (message is MessageEventAdvertise)
                 {
@@ -1712,6 +1769,28 @@ public class Maia.Core.EventBus : Object
             if (occurence != null)
             {
                 occurence.unsubscribe (inSubscribe);
+            }
+
+            return occurence != null;
+        }
+
+        public bool
+        check_reply (MessageEventReply inMessage)
+        {
+            unowned Occurence occurence = m_Occurences.search<Event.Hash> (inMessage.hash, Occurence.compare_with_event_hash);
+            if (occurence != null)
+            {
+                MessageEventReply? reply = occurence.check_reply (inMessage.destination, inMessage.args);
+
+                if (reply != null)
+                {
+//#if MAIA_DEBUG
+                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event reply $(inMessage.hash) $(inMessage.args.sequence)");
+//#endif
+
+                    // send reply to sender
+                    m_Connection.send_async.begin (reply);
+                }
             }
 
             return occurence != null;
@@ -1987,6 +2066,17 @@ public class Maia.Core.EventBus : Object
                         if (connection != null)
                         {
                             connection.send_async.begin (reply);
+                        }
+                    }
+                }
+                else
+                {
+                    foreach (unowned Bridge bridge in m_Bridges)
+                    {
+                        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Check event reply for bridge $(bridge.connection.address) $(msg.hash) $(msg.args.sequence)");
+                        if (bridge.check_reply (msg))
+                        {
+                            break;
                         }
                     }
                 }

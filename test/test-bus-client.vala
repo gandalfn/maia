@@ -77,7 +77,7 @@ static void on_bus_linked (bool connected, string? message)
 
 static void main (string[] args)
 {
-    //Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.ALL, "test-bus-client"));
+    Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.ALL, "test-bus-client"));
 
     var application = new Maia.Application ("test-bus-client", 60, { "gtk" });
     //var foo = new Maia.TestEventArgs ("");
@@ -90,6 +90,8 @@ static void main (string[] args)
         double diff = (double)(now - msg.time) / 1000.0;
 
         print(@"received event name: $(msg.name) time: $(diff) ms\n");
+
+        msg.name = "reply";
     });
     Maia.Core.EventBus.default.link_bus (args[1], on_bus_linked);
 
