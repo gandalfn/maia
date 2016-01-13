@@ -23,6 +23,7 @@ sourceview_DATA = \
 
 canvas_editor_VALAFLAGS = \
     --pkg=config \
+    --pkg=x11 \
     --pkg=gtk+-2.0 \
     --pkg=gtksourceview-2.0
 

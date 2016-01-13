@@ -247,6 +247,7 @@ public class CanvasEditor.Window : Gtk.Window
 
         var filter = new Gtk.FileFilter ();
         filter.set_name ("Manifest");
+        filter.add_pattern ("*.maia");
         filter.add_pattern ("*.manifest");
         dialog.add_filter (filter);
 

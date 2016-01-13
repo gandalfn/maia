@@ -254,7 +254,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     internal override bool
     can_append_child (Core.Object inObject)
     {
-        return inObject is Label || inObject is Path || inObject is Popup;
+        return inObject is Label || inObject is Path || inObject is Popup || inObject is Model;
     }
 
     internal override void
@@ -319,7 +319,18 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
 
             if (m_View != null)
             {
-                if (m_View.get_row_size (0, out row_size))
+                int row = 0;
+                Graphic.Size tmp_size;
+                while (m_View.get_row_size (row, out tmp_size))
+                {
+                    row_size.width = double.max (tmp_size.width, row_size.width);
+                    row_size.height = double.max (tmp_size.height, row_size.height);
+                    row++;
+                }
+
+                print(@"row size: $(row_size)\n");
+
+                if (row_size.width > 0 && row_size.height > 0)
                 {
                     arrow_item.path = "M 3,3 L %g,3 L %g,%g Z".printf (row_size.height - 3,
                                                                        3 + (row_size.height - 6) / 2.0,
@@ -348,6 +359,8 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             }
 
             m_Popup.border = arrow_size.width / 4;
+
+            print(@"row size: $(childs_size)\n");
         }
 
         return childs_size;

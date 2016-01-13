@@ -80,8 +80,8 @@ public class Maia.Core.Notification : Object
         public bool
         equals (RecvFunc inFunc)
         {
-            var observer = new Observer (m_Notification, inFunc);
-            return  m_Callback == observer.m_Callback && m_Target == observer.m_Target;
+            void* target = (*(void**)((&inFunc) + 1));
+            return  m_Callback == inFunc && m_Target == target;
         }
 
         public new void

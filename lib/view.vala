@@ -48,8 +48,11 @@ public class Maia.View : Maia.Grid
             return m_ModelName;
         }
         set {
-            m_ModelName = value;
-            model = find_model (value);
+            if (value != m_ModelName)
+            {
+                m_ModelName = value;
+                model = find_model (value);
+            }
         }
         default = null;
     }
@@ -100,6 +103,7 @@ public class Maia.View : Maia.Grid
                 // Add all row already inserted
                 for (uint cpt = 0; cpt < m_Model.nb_rows; ++cpt)
                 {
+                    print(@"row add $cpt\n");
                     m_Model.row_added (cpt);
                 }
             }
@@ -217,7 +221,8 @@ public class Maia.View : Maia.Grid
     {
         if (m_ModelName != null && m_Model == null)
         {
-            model_name = m_ModelName;
+            print (@"root changed find model $(m_ModelName)\n");
+            model = find_model (m_ModelName);
         }
     }
 
@@ -245,6 +250,8 @@ public class Maia.View : Maia.Grid
                 }
             }
         }
+
+        print (@"find model $inName found: $(model != null)\n");
 
         return model;
     }

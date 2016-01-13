@@ -537,28 +537,45 @@ internal class Maia.Xcb.View : Drawable
     private void
     paint_sibling (Graphic.Context inContext, View inView, Graphic.Point inPosition, Graphic.Rectangle inArea) throws Graphic.Error
     {
+        print(@"0x%x paint sibling 0x%x pos: $inPosition area: $inArea\n", xid, inView.xid);
         if (inView is View && inView != this && inView.surface != null)
         {
+            print(@"$(GLib.Log.METHOD):$(GLib.Log.LINE)\n");
             // Connect onto sibling
             m_Siblings.insert (new Sibling (this, inView));
+            print(@"$(GLib.Log.METHOD):$(GLib.Log.LINE)\n");
             Graphic.Rectangle area = Graphic.Rectangle (0, 0, inView.surface.size.width, inView.surface.size.height);
+            print(@"$(GLib.Log.METHOD):$(GLib.Log.LINE)\n");
             area.intersect (inArea);
+            print(@"$(GLib.Log.METHOD):$(GLib.Log.LINE)\n");
             if (!area.is_empty ())
             {
+            print(@"$(GLib.Log.METHOD):$(GLib.Log.LINE)\n");
                 inContext.pattern = inView.surface;
+            print(@"$(GLib.Log.METHOD):$(GLib.Log.LINE)\n");
                 inContext.pattern.transform = new Graphic.Transform.init_translate (inPosition.x, inPosition.y);
+            print(@"$(GLib.Log.METHOD):$(GLib.Log.LINE)\n");
                 inContext.paint ();
+            print(@"$(GLib.Log.METHOD):$(GLib.Log.LINE)\n");
                 inContext.pattern.transform = new Graphic.Transform.identity ();
+print(@"$(GLib.Log.METHOD):$(GLib.Log.LINE)\n");
 
+            print(@"$(GLib.Log.METHOD):$(GLib.Log.LINE)\n");
                 foreach (unowned View child in inView)
                 {
+            print(@"$(GLib.Log.METHOD):$(GLib.Log.LINE)\n");
                     var child_area = area;
+            print(@"$(GLib.Log.METHOD):$(GLib.Log.LINE)\n");
                     child_area.translate (child.position.invert ());
 
+            print(@"$(GLib.Log.METHOD):$(GLib.Log.LINE)\n");
                     var pos = inPosition;
+            print(@"$(GLib.Log.METHOD):$(GLib.Log.LINE)\n");
                     pos.translate (child.position.invert ());
 
+            print(@"$(GLib.Log.METHOD):$(GLib.Log.LINE)\n");
                     paint_sibling (inContext, child, pos, child_area);
+            print(@"$(GLib.Log.METHOD):$(GLib.Log.LINE)\n");
                 }
             }
         }
