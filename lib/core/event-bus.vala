@@ -1329,9 +1329,9 @@ public class Maia.Core.EventBus : Object
                 reply.args.accumulate (inArgs);
                 reply.count++;
 
-//#if MAIA_DEBUG
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "check reply %s %u count: %u", hash.to_string (), inArgs.sequence, reply.count);
-//#endif
+#endif
 
                 if (reply.count == (subscribers.length + bridges.length))
                 {
@@ -1356,9 +1356,9 @@ public class Maia.Core.EventBus : Object
                 reply.args = inArgs;
                 reply.count++;
 
-//#if MAIA_DEBUG
+#if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "check reply %s %u count: %u", hash.to_string (), inArgs.sequence, reply.count);
-//#endif
+#endif
 
                 if (reply.count == (subscribers.length + bridges.length))
                 {
@@ -1369,6 +1369,12 @@ public class Maia.Core.EventBus : Object
             }
 
             return ret;
+        }
+
+        public bool
+        contains (uint32 inId)
+        {
+            return subscribers.search<uint32> (inId, Subscriber.compare_with_id) != null;
         }
 
         public void
@@ -1571,7 +1577,6 @@ public class Maia.Core.EventBus : Object
 
             if (notification != null)
             {
-                Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"bridge receive message");
                 unowned Bus.Message message = notification.message;
 
                 if (message is MessageLinkBusAuthReply)
@@ -1605,13 +1610,31 @@ public class Maia.Core.EventBus : Object
                         m_Requester = 0;
                     }
                 }
+                else if (message is MessageDestroyEvent)
+                {
+                    unowned MessageDestroyEvent? msg = (MessageDestroyEvent)message;
+
+#if MAIA_DEBUG
+                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"bridge event $(msg.hash) remove");
+#endif
+
+                    unowned Occurence occurence = m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
+                    if (occurence != null)
+                    {
+                        m_EventBus.notify_occurence_destroy_event (occurence, message);
+#if MAIA_DEBUG
+                        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"bridge event $(msg.hash) destroy");
+#endif
+                        m_Occurences.remove (occurence);
+                    }
+                }
                 else if (message is MessageEvent)
                 {
                     unowned MessageEvent? msg = (MessageEvent)message;
 
-//#if MAIA_DEBUG
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Event $(msg.hash) publish");
-//#endif
+#endif
 
                     unowned Occurence occurence = m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
                     if (occurence != null)
@@ -1619,7 +1642,9 @@ public class Maia.Core.EventBus : Object
                         // Event with reply
                         if (msg.need_reply)
                         {
+#if MAIA_DEBUG
                             Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge receive event $(msg.hash) with reply");
+#endif
 
                             // Add pending reply
                             occurence.add_reply (msg.sender, msg.args);
@@ -1635,9 +1660,9 @@ public class Maia.Core.EventBus : Object
                                 unowned BusConnection? client = child as BusConnection;
                                 if (client != null && client.id in destination)
                                 {
-//#if MAIA_DEBUG
+#if MAIA_DEBUG
                                     Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event $(msg.hash) to client $(client.id)");
-//#endif
+#endif
                                     // send message to client
                                     client.send_async.begin (message);
                                 }
@@ -1654,16 +1679,18 @@ public class Maia.Core.EventBus : Object
                     unowned Occurence occurence = m_EventBus.m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
                     if (occurence != null)
                     {
+#if MAIA_DEBUG
                         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge check event reply $(msg.hash) $(msg.args.sequence)");
+#endif
 
                         // Check if we reach all reply
                         MessageEventReply? reply = occurence.check_reply_without_accumulate (msg.destination, msg.args);
 
                         if (reply != null)
                         {
-//#if MAIA_DEBUG
+#if MAIA_DEBUG
                             Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge send event reply $(msg.hash) $(msg.args.sequence)");
-//#endif
+#endif
 
                             // send reply to sender
                             unowned BusConnection? connection = m_EventBus.m_Service.find (msg.destination, false) as BusConnection;
@@ -1683,9 +1710,9 @@ public class Maia.Core.EventBus : Object
                         unowned Occurence? occurence = m_Occurences.search<Event.Hash> (hash, Occurence.compare_with_event_hash);
                         if (occurence == null)
                         {
-//#if MAIA_DEBUG
+#if MAIA_DEBUG
                             Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge event $(hash) advertise");
-//#endif
+#endif
                             m_Occurences.insert (new Occurence (hash));
                         }
                     }
@@ -1705,6 +1732,18 @@ public class Maia.Core.EventBus : Object
                     // Send subscribe result to sender
                     m_Connection.send_async.begin (new MessageSubscribeResult (msg.hash, occurence != null));
                 }
+                else if (message is MessageUnsubscribe)
+                {
+                    unowned MessageUnsubscribe? msg = (MessageUnsubscribe)message;
+
+                    Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge unsubscribe $(msg.sender) event $(msg.hash)");
+
+                    unowned Occurence occurence = m_EventBus.m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
+                    if (occurence != null)
+                    {
+                        occurence.bridge_unsubscribe (this);
+                    }
+                }
                 else if (message is MessageSubscribeResult)
                 {
                     unowned MessageSubscribeResult? msg = (MessageSubscribeResult)message;
@@ -1722,9 +1761,9 @@ public class Maia.Core.EventBus : Object
                                 if (occurence != null && msg.subscribed)
                                 {
                                     occurence.subscribe (subscriber);
-//#if MAIA_DEBUG
+#if MAIA_DEBUG
                                     Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge subscribe event $(msg.hash)");
-//#endif
+#endif
                                 }
                                 connection.send_async.begin (new MessageSubscribeResult (msg.hash, occurence != null && msg.subscribed));
                             }
@@ -1750,7 +1789,9 @@ public class Maia.Core.EventBus : Object
                     m_PendingsSubscriber.insert (new_pending);
                     pending = new_pending;
 
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Request bridge subscribe event $(inHash)");
+#endif
 
                     // Send subscribe to linked bus
                     m_Connection.send_async.begin (new MessageSubscribe (inHash));
@@ -1769,6 +1810,12 @@ public class Maia.Core.EventBus : Object
             if (occurence != null)
             {
                 occurence.unsubscribe (inSubscribe);
+
+                if (!(inSubscribe in occurence))
+                {
+                    // Send unsubscribe to linked bus
+                    m_Connection.send_async.begin (new MessageUnsubscribe (inHash));
+                }
             }
 
             return occurence != null;
@@ -1784,9 +1831,9 @@ public class Maia.Core.EventBus : Object
 
                 if (reply != null)
                 {
-//#if MAIA_DEBUG
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event reply $(inMessage.hash) $(inMessage.args.sequence)");
-//#endif
+#endif
 
                     // send reply to sender
                     m_Connection.send_async.begin (reply);
@@ -1965,9 +2012,9 @@ public class Maia.Core.EventBus : Object
                 unowned Occurence? occurence = m_Occurences.search<Event.Hash> (hash, Occurence.compare_with_event_hash);
                 if (occurence == null)
                 {
-//#if MAIA_DEBUG
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Event $(hash) advertise");
-//#endif
+#endif
                     m_Occurences.insert (new Occurence (hash));
                 }
             }
@@ -2034,7 +2081,9 @@ public class Maia.Core.EventBus : Object
                 // Send to bridge connected to event
                 foreach (unowned Bridge bridge in occurence.bridges)
                 {
+#if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event $(msg.hash) to bridge $(bridge.address)");
+#endif
                     bridge.connection.send_async.begin (inMessage);
                 }
             }
@@ -2073,7 +2122,9 @@ public class Maia.Core.EventBus : Object
                 {
                     foreach (unowned Bridge bridge in m_Bridges)
                     {
+#if MAIA_DEBUG
                         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Check event reply for bridge $(bridge.connection.address) $(msg.hash) $(msg.args.sequence)");
+#endif
                         if (bridge.check_reply (msg))
                         {
                             break;
@@ -2238,7 +2289,9 @@ public class Maia.Core.EventBus : Object
                         // create a new bridge from connection
                         Bridge new_bridge = new Bridge.from_connection (this, msg.uri, sender_connection);
                         m_Bridges.insert (new_bridge);
+#if MAIA_DEBUG
                         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Add bridge $(new_bridge.ref_count)");
+#endif
                     }
                     else
                     {

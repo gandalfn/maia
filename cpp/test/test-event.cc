@@ -23,13 +23,16 @@
 
 using namespace Maia;
 
-MAIA_CORE_EVENT_ARGS_DEFINE("message TestProtobuf {"
-                            "     uint64 data;"
-                            "     string foo;"
-                            "     repeated int32 array;"
-                            "}",
-                            "TestProtobuf",
-                            TestProtobufEventArgs)
+MAIA_CORE_EVENT_ARGS_DEFINE(TestProtobufEventArgs)
+
+MAIA_CORE_EVENT_ARGS_REGISTER("message TestProtobuf {"
+                              "     uint64 data;"
+                              "     string foo;"
+                              "     repeated int32 array;"
+                              "}",
+                              "TestProtobuf",
+                              TestProtobufEventArgs)
+
 
 class TestEventArgs : public Core::EventArgs
 {

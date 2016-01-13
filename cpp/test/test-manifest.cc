@@ -100,11 +100,11 @@ TestManifest::test_parse ()
 
         for (Core::Parser::iterator iter = pDocument->begin (); iter != pDocument->end (); ++iter)
         {
-            Core::ParserToken token = *iter;
+            Core::Parser::Token token = *iter;
 
             switch (token)
             {
-                case Core::CORE_PARSER_TOKEN_START_ELEMENT:
+                case Core::Parser::Token::START_ELEMENT:
                     {
                         Glib::ustring element = pDocument->get_element ();
                         g_test_message ("Start token = %s", element.c_str ());

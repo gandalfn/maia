@@ -20,6 +20,7 @@
 #include <maiamm/init.h>
 #include <glibmm/init.h>
 #include <maiamm/wrap_init.h>
+#include <maiamm/core-eventargs.h>
 #include <maia.h>
 
 
@@ -29,5 +30,6 @@ namespace Maia
     {
         Glib::init();
         wrap_init();
+        Core::EventArgs::init ();
     }
 }

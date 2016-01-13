@@ -63,6 +63,26 @@ namespace Maia
             }
         }
 
+        MaiaCoreEventArgsLoadVector* EventArgs::s_LoadVector = nullptr;
+
+        void EventArgs::init ()
+        {
+            static bool initialized = false;
+
+            if (!initialized)
+            {
+                MaiaCoreEventArgsLoadVector* iter = s_LoadVector;
+
+                while (iter)
+                {
+                    iter->func ();
+                    iter = iter->next;
+                }
+
+                initialized = true;
+            }
+        }
+
         EventArgs::EventArgs (Glib::WrapNewFunction inWrapFunc) :
             Glib::ObjectBase(0),
             Glib::Object(Glib::ConstructParams(eventargs_class_.init())),

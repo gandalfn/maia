@@ -77,7 +77,7 @@ static void on_bus_linked (bool connected, string? message)
 
 static void main (string[] args)
 {
-    Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.ALL, "test-bus-client"));
+    //Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.ALL, "test-bus-client"));
 
     var application = new Maia.Application ("test-bus-client", 60, { "gtk" });
     //var foo = new Maia.TestEventArgs ("");

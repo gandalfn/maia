@@ -42,7 +42,7 @@ main (int argc, char** argv)
     if (g_test_thorough ())
     {
         Glib::ustring domain ("test");
-        Maia::Log::set_default_logger (Maia::Log::Stderr::create (Maia::Log::LOG_LEVEL_DEBUG, Maia::Log::LOG_CATEGORY_ALL, domain));
+        Maia::Log::set_default_logger (Maia::Log::Stderr::create (Maia::Log::Level::DEBUG, Maia::Log::LOG_CATEGORY_ALL, domain));
     }
 
     // Create maia application

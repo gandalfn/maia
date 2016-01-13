@@ -25,19 +25,44 @@
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/core-object_p.h)
 
-#define MAIA_CORE_EVENT_ARGS_DEFINE_EXTENDED(protobuf,message,ns,klass)        \
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+typedef void (*MaiaCoreEventArgsRegisterFunc) ();
+
+struct MaiaCoreEventArgsLoadVector
+{
+    MaiaCoreEventArgsRegisterFunc func;
+    MaiaCoreEventArgsLoadVector* next;
+};
+
+#define MAIA_CORE_EVENT_ARGS_REGISTER_WITH_NAMESPACE(protobuf,message,ns,klass)\
+    MaiaCoreEventArgsLoadVector klass ::s_LoadEntry;                           \
+                                                                               \
+    void klass ::register_protobuf()                                           \
+    {                                                                          \
+        maia_core_event_args_register_protocol ("gtkmm__CustomObject_" #ns "++" #klass ,\
+                                                message ,                      \
+                                                protobuf );                    \
+    }                                                                          \
+                                                                               \
+    void klass ::constructor ()                                                \
+    {                                                                          \
+        s_LoadEntry.func = register_protobuf;                                  \
+        s_LoadEntry.next = EventArgs::s_LoadVector;                            \
+        EventArgs::s_LoadVector = &s_LoadEntry;                                \
+    }
+
+#define MAIA_CORE_EVENT_ARGS_DEFINE_WITH_NAMESPACE(ns,klass)                   \
     class klass : public Maia::Core::EventArgs                                 \
     {                                                                          \
         public:                                                                \
             static Glib::RefPtr< klass > create ()                             \
             {                                                                  \
-                register_protobuf();                                           \
                 return Glib::RefPtr< klass > (new klass ());                   \
             }                                                                  \
             template<typename T, typename... Args>                             \
             static Glib::RefPtr< klass > create (const T& inVal, Args... inArgs)\
             {                                                                  \
-                register_protobuf();                                           \
                 klass * pThis = new klass ();                                  \
                 FieldsClosure closure (pThis);                                 \
                 closure.add_field_value (inVal, inArgs...);                    \
@@ -45,53 +70,60 @@ _PINCLUDE(maiamm/private/core-object_p.h)
             }                                                                  \
             static Glib::ObjectBase* wrap_new(GObject* object)                 \
             {                                                                  \
-                register_protobuf();                                           \
                 return new klass ((MaiaCoreEventArgs*)object);                 \
             }                                                                  \
         protected:                                                             \
             klass () :                                                         \
-                Glib::ObjectBase(#ns #klass),                                  \
+                Glib::ObjectBase(#ns "::" #klass),                             \
                 Maia::Core::EventArgs (& klass ::wrap_new)                     \
             {                                                                  \
             }                                                                  \
             klass (MaiaCoreEventArgs* inpSelf) :                               \
-                Glib::ObjectBase(#ns #klass),                                  \
+                Glib::ObjectBase(#ns "::" #klass),                             \
                 Maia::Core::EventArgs (inpSelf)                                \
             {                                                                  \
             }                                                                  \
             virtual void unserialize_vfunc (const Glib::VariantBase& inData)   \
             {                                                                  \
-                register_protobuf ();                                          \
                 maia_core_event_args_get_protocol_buffer_message (gobj ());    \
                 Maia::Core::EventArgs::unserialize_vfunc (inData);             \
             }                                                                  \
         private:                                                               \
-            static void register_protobuf()                                    \
-            {                                                                  \
-                static bool registered = false;                                \
-                if (!registered)                                               \
-                {                                                              \
-                    maia_core_event_args_register_protocol ("gtkmm__CustomObject_" #ns #klass ,\
-                                                            message ,          \
-                                                            protobuf );        \
-                    registered = true;                                         \
-                }                                                              \
-            }                                                                  \
+            static MaiaCoreEventArgsLoadVector s_LoadEntry;                    \
+                                                                               \
+            static void register_protobuf();                                   \
+            __attribute__ ((constructor))                                      \
+            static void constructor ();                                        \
     };
 
-#define MAIA_CORE_EVENT_ARGS_DEFINE(protobuf,message,klass)                    \
+#define MAIA_CORE_EVENT_ARGS_REGISTER(protobuf,message,klass)                  \
+    MaiaCoreEventArgsLoadVector klass ::s_LoadEntry;                           \
+                                                                               \
+    void klass ::register_protobuf()                                           \
+    {                                                                          \
+        maia_core_event_args_register_protocol ("gtkmm__CustomObject_" #klass ,\
+                                                message ,                      \
+                                                protobuf );                    \
+    }                                                                          \
+                                                                               \
+    void klass ::constructor ()                                                \
+    {                                                                          \
+        s_LoadEntry.func = & klass ::register_protobuf;                        \
+        s_LoadEntry.next = EventArgs::s_LoadVector;                            \
+        EventArgs::s_LoadVector = &s_LoadEntry;                                \
+    }
+
+#define MAIA_CORE_EVENT_ARGS_DEFINE(klass)                                     \
     class klass : public Maia::Core::EventArgs                                 \
     {                                                                          \
         public:                                                                \
             static Glib::RefPtr< klass > create ()                             \
             {                                                                  \
-                register_protobuf();                                           \
                 return Glib::RefPtr< klass > (new klass ());                   \
             }                                                                  \
             template<typename T, typename... Args>                             \
             static Glib::RefPtr< klass > create (const T& inVal, Args... inArgs)\
             {                                                                  \
-                register_protobuf();                                           \
                 klass * pThis = new klass ();                                  \
                 FieldsClosure closure (pThis);                                 \
                 closure.add_field_value (inVal, inArgs...);                    \
@@ -99,7 +131,6 @@ _PINCLUDE(maiamm/private/core-object_p.h)
             }                                                                  \
             static Glib::ObjectBase* wrap_new(GObject* object)                 \
             {                                                                  \
-                register_protobuf();                                           \
                 return new klass ((MaiaCoreEventArgs*)object);                 \
             }                                                                  \
         protected:                                                             \
@@ -115,22 +146,15 @@ _PINCLUDE(maiamm/private/core-object_p.h)
             }                                                                  \
             virtual void unserialize_vfunc (const Glib::VariantBase& inData)   \
             {                                                                  \
-                register_protobuf ();                                          \
                 maia_core_event_args_get_protocol_buffer_message (gobj ());    \
                 Maia::Core::EventArgs::unserialize_vfunc (inData);             \
             }                                                                  \
         private:                                                               \
-            static void register_protobuf()                                    \
-            {                                                                  \
-                static bool registered = false;                                \
-                if (!registered)                                               \
-                {                                                              \
-                    maia_core_event_args_register_protocol ("gtkmm__CustomObject_" #klass ,\
-                                                            message ,          \
-                                                            protobuf );        \
-                    registered = true;                                         \
-                }                                                              \
-            }                                                                  \
+            static MaiaCoreEventArgsLoadVector s_LoadEntry;                    \
+                                                                               \
+            static void register_protobuf();                                   \
+            __attribute__ ((constructor))                                      \
+            static void constructor ();                                        \
     };
 
 #define MAIA_CORE_EVENT_ARGS_CONSTRUCTOR(signature,klass)                      \
@@ -148,6 +172,8 @@ _PINCLUDE(maiamm/private/core-object_p.h)
         Maia::Core::EventArgs (inpSelf)                                        \
     {                                                                          \
     }
+
+#endif
 
 namespace Maia
 {
@@ -287,6 +313,8 @@ namespace Maia
                 typedef EventArgsField Field;
                 typedef EventArgsFields Fields;
 
+                static void init ();
+
                 _WRAP_METHOD(int get_sequence (), maia_core_event_args_get_sequence)
                 _WRAP_METHOD(Glib::VariantBase get_serialize (), maia_core_event_args_get_serialize)
                 _WRAP_METHOD(void set_serialize (const Glib::VariantBase& inData), maia_core_event_args_set_serialize)
@@ -303,6 +331,8 @@ namespace Maia
 
             protected:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+                static MaiaCoreEventArgsLoadVector* s_LoadVector;
+
                 class FieldsClosure
                 {
                     public:
