@@ -38,6 +38,8 @@ namespace Maia
             _CLASS_GOBJECT(EventBus, MaiaCoreEventBus, MAIA_CORE_EVENT_BUS, Object, MaiaCoreObject)
 
             public:
+                typedef sigc::slot<void, bool, Glib::ustring> SlotLinkBusCallback;
+
                 _WRAP_METHOD(void subscribe (const Glib::RefPtr<EventListener>& inpListener), maia_core_event_bus_subscribe)
                 _WRAP_METHOD(void publish (const Glib::RefPtr<Event>& inpEvent, const Glib::RefPtr<EventArgs>& inpArgs), maia_core_event_bus_publish_event)
                 _WRAP_METHOD(void publish (const Glib::ustring& inName, void* inpOwner, const Glib::RefPtr<EventArgs>& inpArgs), maia_core_event_bus_publish)
@@ -98,6 +100,9 @@ namespace Maia
                     return pListener;
                 }
 
+                void link_bus (const Glib::ustring& inUri, SlotLinkBusCallback inFunc);
+                void unlink_bus (const Glib::ustring& inUri);
+
                 _WRAP_METHOD(static Glib::RefPtr<EventBus> get_default (), maia_core_event_bus_get_default, refreturn)
                 _WRAP_METHOD(static void set_default (const Glib::RefPtr<EventBus>& inBus), maia_core_event_bus_set_default)
 
@@ -105,7 +110,8 @@ namespace Maia
 
                 _IGNORE(maia_core_event_bus_publish_with_reply, maia_core_event_bus_publish_event_with_reply,
                         maia_core_event_bus_object_publish_with_reply, maia_core_event_bus_object_publish_event_with_reply,
-                        maia_core_event_bus_advertise, maia_core_event_bus_destroy)
+                        maia_core_event_bus_advertise, maia_core_event_bus_destroy, maia_core_event_bus_link_bus,
+                        maia_core_event_bus_object_link_bus, maia_core_event_bus_unlink_bus)
 
                 _WRAP_PROPERTY("address", Glib::ustring)
         };

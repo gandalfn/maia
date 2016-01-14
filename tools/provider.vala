@@ -229,6 +229,7 @@ public class CanvasEditor.ManifestProvider : Provider
         m_Keywords.insert ("Popup");
         m_Keywords.insert ("ProgressBar");
         m_Keywords.insert ("Rectangle");
+        m_Keywords.insert ("Row");
         m_Keywords.insert ("ScrollView");
         m_Keywords.insert ("SeekBar");
         m_Keywords.insert ("Style");
@@ -323,6 +324,11 @@ public class CanvasEditor.ManifestProvider : Provider
         m_Properties.insert ("visible-with");
         m_Properties.insert ("hide-if-empty");
         m_Properties.insert ("decorated");
+        m_Properties.insert ("highlight-color");
+        m_Properties.insert ("active-row");
+        m_Properties.insert ("column-type");
+        m_Properties.insert ("width-in-chars");
+        m_Properties.insert ("only-numeric");
     }
 
     private GLib.List<string>

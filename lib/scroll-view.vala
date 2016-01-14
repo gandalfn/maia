@@ -32,7 +32,7 @@
  *
  */
 
-public class Maia.ScrollView : Item
+public class Maia.ScrollView : Item, ItemPackable
 {
     // types
     [Flags]
@@ -158,6 +158,31 @@ public class Maia.ScrollView : Item
     }
 
     public Policy policy { get; set; default = Policy.VERTICAL_SCROLLING | Policy.HORIZONTAL_SCROLLING; }
+
+    internal uint   row     { get; set; default = 0; }
+    internal uint   column  { get; set; default = 0; }
+    internal uint   rows    { get; set; default = 1; }
+    internal uint   columns { get; set; default = 1; }
+
+    internal bool   xexpand { get; set; default = true; }
+    internal bool   xfill   { get; set; default = true; }
+    internal bool   xshrink { get; set; default = false; }
+    internal bool   xlimp   { get; set; default = false; }
+    internal double xalign  { get; set; default = 0.5; }
+
+    internal bool   yexpand { get; set; default = true; }
+    internal bool   yfill   { get; set; default = true; }
+    internal bool   yshrink { get; set; default = false; }
+    internal bool   ylimp   { get; set; default = false; }
+    internal double yalign  { get; set; default = 0.5; }
+
+    internal double top_padding    { get; set; default = 0; }
+    internal double bottom_padding { get; set; default = 0; }
+    internal double left_padding   { get; set; default = 0; }
+    internal double right_padding  { get; set; default = 0; }
+
+    internal Graphic.Pattern backcell_pattern { get; set; default = null; }
+
 
     // static methods
     static construct

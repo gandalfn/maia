@@ -25,5 +25,31 @@ namespace Maia
 {
     namespace Core
     {
+        static void
+        on_link_bus_callback (gboolean inLinked, const char* inMessage, void* inpData)
+        {
+            if (inpData)
+            {
+                EventBus::SlotLinkBusCallback* pSlot = (EventBus::SlotLinkBusCallback*)inpData;
+
+                bool linked = inLinked;
+                Glib::ustring message (inMessage ? inMessage : "");
+                (*pSlot) (linked, message);
+                delete pSlot; pSlot = 0;
+            }
+        }
+
+        void
+        EventBus::link_bus (const Glib::ustring& inUri, SlotLinkBusCallback inFunc)
+        {
+            SlotLinkBusCallback* pSlot = new SlotLinkBusCallback (inFunc);
+            maia_core_event_bus_link_bus (const_cast<MaiaCoreEventBus*> (gobj ()), inUri.c_str (), on_link_bus_callback, (gpointer)pSlot);
+        }
+
+        void
+        EventBus::unlink_bus (const Glib::ustring& inUri)
+        {
+            maia_core_event_bus_unlink_bus (const_cast<MaiaCoreEventBus*> (gobj ()), inUri.c_str ());
+        }
     }
 }

@@ -79,32 +79,34 @@ public class Maia.View : Maia.Grid
             return m_Model;
         }
         set {
-            if (m_Model != null)
+            if (m_Model != value)
             {
-                m_Model.row_added.disconnect (on_row_added);
-                m_Model.row_deleted.disconnect (on_row_deleted);
-                m_Model.rows_reordered.disconnect (on_rows_reordered);
-
-                // Remove all rows
-                for (uint cpt = 0; cpt < m_Model.nb_rows; ++cpt)
+                if (m_Model != null)
                 {
-                    m_Model.row_deleted (cpt);
+                    m_Model.row_added.disconnect (on_row_added);
+                    m_Model.row_deleted.disconnect (on_row_deleted);
+                    m_Model.rows_reordered.disconnect (on_rows_reordered);
+
+                    // Remove all rows
+                    for (uint cpt = 0; cpt < m_Model.nb_rows; ++cpt)
+                    {
+                        m_Model.row_deleted (cpt);
+                    }
                 }
-            }
 
-            m_Model = value;
+                m_Model = value;
 
-            if (m_Model != null)
-            {
-                m_Model.row_added.connect (on_row_added);
-                m_Model.row_deleted.connect (on_row_deleted);
-                m_Model.rows_reordered.connect (on_rows_reordered);
-
-                // Add all row already inserted
-                for (uint cpt = 0; cpt < m_Model.nb_rows; ++cpt)
+                if (m_Model != null)
                 {
-                    print(@"row add $cpt\n");
-                    m_Model.row_added (cpt);
+                    m_Model.row_added.connect (on_row_added);
+                    m_Model.row_deleted.connect (on_row_deleted);
+                    m_Model.rows_reordered.connect (on_rows_reordered);
+
+                    // Add all row already inserted
+                    for (uint cpt = 0; cpt < m_Model.nb_rows; ++cpt)
+                    {
+                        m_Model.row_added (cpt);
+                    }
                 }
             }
         }
@@ -221,7 +223,6 @@ public class Maia.View : Maia.Grid
     {
         if (m_ModelName != null && m_Model == null)
         {
-            print (@"root changed find model $(m_ModelName)\n");
             model = find_model (m_ModelName);
         }
     }
@@ -250,8 +251,6 @@ public class Maia.View : Maia.Grid
                 }
             }
         }
-
-        print (@"find model $inName found: $(model != null)\n");
 
         return model;
     }
@@ -342,7 +341,7 @@ public class Maia.View : Maia.Grid
 
             if (m_Document != null)
             {
-                return m_Document.get (null) as ItemPackable;
+                return m_Document.get () as ItemPackable;
             }
         }
         catch (Core.ParseError err)

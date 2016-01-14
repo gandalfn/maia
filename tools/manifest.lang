@@ -3,7 +3,7 @@
 <language id="manifest" _name="Manifest" version="2.0" _section="Others">
   <metadata>
     <property name="mimetypes">text/cache-manifest</property>
-    <property name="globs">*.manifest;*.Manifest</property>
+    <property name="globs">*.manifest;*.Manifest;*.maia;*.Maia</property>
     <property name="line-comment-start">//</property>
     <property name="block-comment-start">/*</property>
     <property name="block-comment-end">*/</property>
@@ -191,6 +191,11 @@
         <keyword>icon-name</keyword>
         <keyword>transform</keyword>
         <keyword>decorated</keyword>
+        <keyword>highlight-color</keyword>
+        <keyword>active-row</keyword>
+        <keyword>column-type</keyword>
+        <keyword>width-in-chars</keyword>
+        <keyword>only-numeric</keyword>
     </context>
 
     <context id="classes" style-ref="type">
@@ -218,6 +223,7 @@
         <keyword>PopupButton</keyword>
         <keyword>Popup</keyword>
         <keyword>ProgressBar</keyword>
+        <keyword>Row</keyword>
         <keyword>Rectangle</keyword>
         <keyword>ScrollView</keyword>
         <keyword>SeekBar</keyword>

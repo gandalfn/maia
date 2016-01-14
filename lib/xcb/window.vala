@@ -175,7 +175,15 @@ internal class Maia.Xcb.Window : Maia.Window
                 if (PositionPolicy.ALWAYS_CENTER in position_policy)
                 {
                     Graphic.Rectangle monitorGeometry =  m_View.screen.get_monitor_at (Graphic.Point (0, 0)).geometry;
-                    pos = Graphic.Point (monitorGeometry.origin.x + (monitorGeometry.size.width - size.width) / 2, monitorGeometry.origin.y + (monitorGeometry.size.height - size.height) / 2);
+                    if (m_View.parent != null)
+                    {
+                        pos = Graphic.Point (m_View.parent.position.x + (m_View.parent.size.width - size.width) / 2, m_View.parent.position.y + (m_View.parent.size.height - size.height) / 2);
+                        print(@"WINDOW PARENT position: $pos\n");
+                    }
+                    else
+                    {
+                        pos = Graphic.Point (monitorGeometry.origin.x + (monitorGeometry.size.width - size.width) / 2, monitorGeometry.origin.y + (monitorGeometry.size.height - size.height) / 2);
+                    }
                 }
 
                 try
@@ -183,13 +191,16 @@ internal class Maia.Xcb.Window : Maia.Window
                     Graphic.Rectangle geo = Graphic.Rectangle (0, 0, 0, 0);
                     geo.origin = pos;
                     geo.size = m_View.size;
+                    geo.size.resize (border * 2, border * 2);
                     geo.size.transform (new Graphic.Transform.invert (m_View.device_transform));
                     if (PositionPolicy.CLAMP_MONITOR in position_policy)
                     {
-                        geo.clamp (m_View.screen.get_monitor_at (pos).geometry);
+                        Graphic.Point root_pos = parent_window.view.root_position;
+                        geo.origin.translate (root_pos);
+                        geo.clamp (m_View.screen.get_monitor_at (geo.origin).geometry);
+                        geo.origin.translate (root_pos.invert ());
                     }
 
-                    print(@"pos: $pos, position: $position origin: $(geo.origin)\n");
                     m_View.position = Graphic.Point (double.max (geo.origin.x, 0), double.max (geo.origin.y, 0));
                 }
                 catch (Graphic.Error err)
@@ -210,7 +221,7 @@ internal class Maia.Xcb.Window : Maia.Window
         unowned Viewport? parent_viewport = m_ParentWindow as Viewport;
         if (parent_viewport != null && m_View != null)
         {
-            if (m_View.override_redirect)
+            if (m_View.override_redirect || window_type == Type.POPUP)
             {
                 var pos = position;
 
@@ -222,7 +233,6 @@ internal class Maia.Xcb.Window : Maia.Window
                 else
                 {
                     pos.translate (parent_viewport.visible_area.origin.invert ());
-                    pos.translate (parent_viewport.view.root_position);
                 }
 
                 try
@@ -230,13 +240,17 @@ internal class Maia.Xcb.Window : Maia.Window
                     Graphic.Rectangle geo = Graphic.Rectangle (0, 0, 0, 0);
                     geo.origin = pos;
                     geo.size = m_View.size;
+                    geo.size.resize (border * 2, border * 2);
                     geo.size.transform (new Graphic.Transform.invert (m_View.device_transform));
                     if (PositionPolicy.CLAMP_MONITOR in position_policy)
                     {
-                        geo.clamp (m_View.screen.get_monitor_at (pos).geometry);
+                        Graphic.Point root_pos = parent_viewport.view.root_position;
+                        geo.origin.translate (root_pos);
+                        geo.clamp (m_View.screen.get_monitor_at (geo.origin).geometry);
+                        geo.origin.translate (root_pos.invert ());
                     }
 
-                    m_View.position = geo.origin;
+                    m_View.position = Graphic.Point (double.max (geo.origin.x, 0), double.max (geo.origin.y, 0));
                 }
                 catch (Graphic.Error err)
                 {
@@ -370,7 +384,7 @@ internal class Maia.Xcb.Window : Maia.Window
         }
         else if (m_View != null)
         {
-            if (m_View.override_redirect)
+            if (m_View.override_redirect || window_type == Type.POPUP)
             {
                 var pos = position;
 
@@ -378,10 +392,7 @@ internal class Maia.Xcb.Window : Maia.Window
                 {
                     Graphic.Rectangle monitorGeometry =  m_View.screen.get_monitor_at (Graphic.Point (0, 0)).geometry;
                     pos = Graphic.Point (monitorGeometry.origin.x + (monitorGeometry.size.width - size.width) / 2, monitorGeometry.origin.y + (monitorGeometry.size.height - size.height) / 2);
-                }
-                else if (m_ParentWindow != null)
-                {
-                    pos.translate ((m_ParentWindow as Window).m_View.root_position);
+                    print(@"position: $pos\n");
                 }
 
                 try
@@ -389,13 +400,17 @@ internal class Maia.Xcb.Window : Maia.Window
                     Graphic.Rectangle geo = Graphic.Rectangle (0, 0, 0, 0);
                     geo.origin = pos;
                     geo.size = m_View.size;
+                    geo.size.resize (border * 2, border * 2);
                     geo.size.transform (new Graphic.Transform.invert (m_View.device_transform));
                     if (PositionPolicy.CLAMP_MONITOR in position_policy)
                     {
-                        geo.clamp (m_View.screen.get_monitor_at (pos).geometry);
+                        Graphic.Point root_pos = parent_viewport.view.root_position;
+                        geo.origin.translate (root_pos);
+                        geo.clamp (m_View.screen.get_monitor_at (geo.origin).geometry);
+                        geo.origin.translate (root_pos.invert ());
                     }
 
-                    m_View.position = geo.origin;
+                    m_View.position = Graphic.Point (double.max (geo.origin.x, 0), double.max (geo.origin.y, 0));
                 }
                 catch (Graphic.Error err)
                 {

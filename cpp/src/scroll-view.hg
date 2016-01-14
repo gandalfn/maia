@@ -21,6 +21,7 @@
 #include <maiamm/item.h>
 #include <maiamm/adjustment.h>
 #include <maiamm/graphic-region.h>
+#include <maiamm/item-packable.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/item_p.h)
@@ -29,9 +30,10 @@ namespace Maia
 {
     _WRAP_ENUM(ScrollViewPolicy, MaiaScrollViewPolicy, NO_GTYPE)
 
-    class ScrollView : public Item
+    class ScrollView : public Item, public ItemPackable
     {
         _CLASS_GOBJECT(ScrollView, MaiaScrollView, MAIA_SCROLL_VIEW, Item, MaiaItem)
+        _IMPLEMENTS_INTERFACE(ItemPackable)
 
         protected:
             _CTOR_DEFAULT()

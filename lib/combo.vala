@@ -178,8 +178,6 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         // Create popup
         m_Popup = new Popup ("%s-popup".printf (name));
         m_Popup.visible = false;
-        m_Popup.shadow_width = 0;
-        m_Popup.round_corner = 5;
         m_Popup.window_type = Window.Type.POPUP;
         m_Popup.position_policy = Window.PositionPolicy.CLAMP_MONITOR;
         m_Popup.visible = false;
@@ -194,6 +192,22 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     public Combo (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
+    }
+
+    private void
+    on_view_need_update_changed ()
+    {
+        need_update |= m_View.need_update;
+    }
+
+    private void
+    on_view_geometry_changed ()
+    {
+        if (m_View.geometry == null)
+        {
+            need_update = true;
+            geometry = null;
+        }
     }
 
     private void
@@ -265,10 +279,13 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             if (m_View != null) m_View.parent = null;
             m_View = inObject as View;
             plug_property ("highlight-color", m_View, "fill-pattern");
+            m_View.notify["need-update"].connect (on_view_need_update_changed);
+            m_View.notify["geometry"].connect (on_view_geometry_changed);
             m_View.row_clicked.connect (on_row_clicked);
             m_Popup.add (m_View);
 
             need_update = true;
+            geometry = null;
         }
         else
         {
@@ -283,6 +300,8 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         {
             unplug_property ("highlight-color", m_View, "fill-pattern");
             m_View.row_clicked.disconnect (on_row_clicked);
+            m_View.notify["need-update"].disconnect (on_view_need_update_changed);
+            m_View.notify["geometry"].disconnect (on_view_geometry_changed);
             m_View.parent = null;
             m_View = null;
         }
@@ -328,8 +347,6 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
                     row++;
                 }
 
-                print(@"row size: $(row_size)\n");
-
                 if (row_size.width > 0 && row_size.height > 0)
                 {
                     arrow_item.path = "M 3,3 L %g,3 L %g,%g Z".printf (row_size.height - 3,
@@ -342,11 +359,11 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             var arrow_size = arrow_item.size;
             if (row_size.width > 0)
             {
-                childs_size.width = row_size.width + arrow_size.width + (arrow_size.width / 2);
+                childs_size.width = row_size.width + arrow_size.width;
             }
             else
             {
-                childs_size.width = (3 * arrow_size.width) / 2;
+                childs_size.width = arrow_size.width;
             }
 
             if (row_size.height > 0)
@@ -362,8 +379,6 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
 
             childs_size.width += arrow_size.width / 2;
             childs_size.height += arrow_size.width / 2;
-
-            print(@"row size: $(childs_size)\n");
         }
 
         return childs_size;
@@ -389,7 +404,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             if (arrow_item != null)
             {
                 arrow_size = arrow_item.size;
-                var arrow_area = Graphic.Rectangle (double.max (item_area.extents.size.width - ((3 * arrow_size.width) / 2), 0), 0,
+                var arrow_area = Graphic.Rectangle (double.max (item_area.extents.size.width - arrow_size.width, 0), 0,
                                                     arrow_size.width, arrow_size.height);
 
                 arrow_item.update (inContext, new Graphic.Region (arrow_area));
@@ -403,10 +418,11 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
 
             // Set popup geometry
             m_Popup.position = Graphic.Point (0, arrow_size.height);
+            Graphic.Size popup_size = Graphic.Size (m_Popup.size.width < item_area.extents.size.width || m_Popup.size.width > item_area.extents.size.width ? item_area.extents.size.width : m_Popup.size.width,
+                                                    m_Popup.size.height < item_area.extents.size.height || m_Popup.size.height > item_area.extents.size.height ? item_area.extents.size.height : m_Popup.size.height);
 
-            var popup_area = Graphic.Rectangle (m_Popup.position.x, m_Popup.position.y,
-                                                double.max (m_Popup.size.width, item_area.extents.size.width),
-                                                double.max (m_Popup.size.height, item_area.extents.size.height));
+
+            var popup_area = Graphic.Rectangle (m_Popup.position.x, m_Popup.position.y, popup_size.width + (m_Popup.border * 2), popup_size.height + (m_Popup.border * 2));
 
             bool force = !m_Popup.visible;
             if (force)
