@@ -41,6 +41,7 @@ canvas_editor_LDADD = \
     $(MAIA_LIBS) \
     $(MAIA_VALGRIND_LIBS) \
     $(MAIA_CANVAS_EDITOR_LIBS) \
+    -lX11 \
     ${top_builddir}/lib/libmaia.la
 
 VALAFILES = \

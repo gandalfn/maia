@@ -843,10 +843,10 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
             outSize = Graphic.Size (0, 0);
             if (inRow < rows.length)
             {
-                outSize.height = double.max (outSize.height, rows[inRow].size.height);
+                outSize.height = double.max (outSize.height, rows[inRow].size.height + grid.row_spacing);
                 for (int cpt = 0; cpt < columns.length; ++cpt)
                 {
-                    outSize.width += columns[cpt].size.width;
+                    outSize.width += columns[cpt].size.width + grid.column_spacing;
                 }
 
                 ret = true;

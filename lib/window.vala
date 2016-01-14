@@ -915,6 +915,8 @@ public class Maia.Window : Group
         {
             geometry = inAllocation;
 
+            Graphic.Region item_area = area;
+
             // Paint shadow if needed
             if (shadow_width > 0)
             {
@@ -925,8 +927,8 @@ public class Maia.Window : Group
 
                 var shadow_area = Graphic.Rectangle (!(Border.LEFT in shadow_border) ? 0 : shadow_width,
                                                      !(Border.TOP in shadow_border) ? 0 : shadow_width,
-                                                     area.extents.size.width - ((!(Border.RIGHT in shadow_border) ? 0 : shadow_width) * 2),
-                                                     area.extents.size.height - ((!(Border.BOTTOM in shadow_border) ? 0 : shadow_width) * 2));
+                                                     item_area.extents.size.width - ((!(Border.RIGHT in shadow_border) ? 0 : shadow_width) * 2),
+                                                     item_area.extents.size.height - ((!(Border.BOTTOM in shadow_border) ? 0 : shadow_width) * 2));
                 var path = new Graphic.Path ();
                 path.rectangle (shadow_area.origin.x, shadow_area.origin.y, shadow_area.size.width, shadow_area.size.height, round_corner > 0 ? round_corner : 0, round_corner > 0 ? round_corner : 0);
 
@@ -988,7 +990,6 @@ public class Maia.Window : Group
                 ctx.fill (path);
             }
 
-
             foreach (unowned Core.Object child in this)
             {
                 if (child is Item)
@@ -1000,7 +1001,7 @@ public class Maia.Window : Group
                     var item_size     = item.size;
 
                     // Set child size allocation
-                    var area_size = area.extents.size;
+                    var area_size = item_area.extents.size;
                     area_size.resize (-(border + (!(Border.LEFT in shadow_border) ? 0 : shadow_width) + border + (!(Border.RIGHT in shadow_border) ? 0 : shadow_width)),
                                       -(border + (!(Border.TOP in shadow_border) ? 0 : shadow_width) + border + (!(Border.BOTTOM in shadow_border) ? 0 : shadow_width)));
 

@@ -95,6 +95,12 @@
   (gtype-id "MAIA_TYPE_CORE_OBJECT")
 )
 
+(define-object MaiaCoreNotificationObserver
+  (parent "MaiaCoreObject")
+  (c-name "MaiaCoreNotificationObserver")
+  (gtype-id "MAIA_TYPE_CORE_NOTIFICATION_OBSERVER")
+)
+
 (define-object MaiaCoreNotification
   (parent "MaiaCoreObject")
   (c-name "MaiaCoreNotification")
@@ -8169,10 +8175,15 @@
   )
 )
 
+(define-function maia_core_notification_observer_get_type
+  (c-name "maia_core_notification_observer_get_type")
+  (return-type "GType")
+)
+
 (define-method add_object_observer
   (of-object "MaiaCoreNotification")
   (c-name "maia_core_notification_add_object_observer")
-  (return-type "none")
+  (return-type "MaiaCoreNotificationObserver*")
   (parameters
     '("MaiaCoreNotificationRecvFunc" "inFunc")
     '("void*" "inFunc_target")
@@ -8208,6 +8219,21 @@
   (of-object "MaiaCoreNotification")
   (c-name "maia_core_notification_get_name")
   (return-type "gchar*")
+)
+
+(define-method get_block
+  (of-object "MaiaCoreNotificationObserver")
+  (c-name "maia_core_notification_observer_get_block")
+  (return-type "gboolean")
+)
+
+(define-method set_block
+  (of-object "MaiaCoreNotificationObserver")
+  (c-name "maia_core_notification_observer_set_block")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
 )
 
 (define-function maia_core_notifications_new

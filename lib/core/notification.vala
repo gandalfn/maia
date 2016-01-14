@@ -22,20 +22,26 @@ public class Maia.Core.Notification : Object
     // types
     public delegate void RecvFunc (Notification inNotification);
 
-    private class Observer : Object
+    public class Observer : Object
     {
         private unowned Notification m_Notification;
         private unowned RecvFunc     m_Callback;
         private void*                m_Target;
         private unowned GLib.Object? m_TargetObject;
 
-        public bool is_clonable {
+        /**
+         * Block temporarily the event notification
+         */
+        [CCode (notify = false)]
+        public bool block { get; set; default = false; }
+
+        internal bool is_clonable {
             get {
                 return m_TargetObject == null || m_TargetObject.get_data<void*> ("NotificationObserverCpp") == null;
             }
         }
 
-        public Observer (Notification inNotification, RecvFunc inFunc)
+        internal Observer (Notification inNotification, RecvFunc inFunc)
         {
             m_Notification = inNotification;
             m_Callback = inFunc;
@@ -43,7 +49,7 @@ public class Maia.Core.Notification : Object
             m_TargetObject = null;
         }
 
-        public Observer.object (Notification inNotification, RecvFunc inFunc)
+        internal Observer.object (Notification inNotification, RecvFunc inFunc)
         {
             this (inNotification, inFunc);
 
@@ -77,23 +83,23 @@ public class Maia.Core.Notification : Object
             return 0;
         }
 
-        public bool
+        internal bool
         equals (RecvFunc inFunc)
         {
             void* target = (*(void**)((&inFunc) + 1));
             return  m_Callback == inFunc && m_Target == target;
         }
 
-        public new void
+        internal new void
         notify ()
         {
-            if (m_Callback != null)
+            if (!block && m_Callback != null)
             {
                 m_Callback (m_Notification);
             }
         }
 
-        public Observer
+        internal Observer
         clone (Notification inNotification)
         {
             return m_TargetObject != null ? new Observer.object (inNotification, m_Callback) : new Observer (inNotification, m_Callback);
@@ -119,11 +125,12 @@ public class Maia.Core.Notification : Object
         observer.parent = this;
     }
 
-    public void
+    public Observer
     add_object_observer (RecvFunc inFunc)
     {
         var observer = new Observer.object (this, inFunc);
         observer.parent = this;
+        return observer;
     }
 
     public void

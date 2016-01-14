@@ -34,6 +34,7 @@ public abstract class Maia.Core.BusService : Bus
 
     // properties
     private unowned DispatchFunc m_DispatchFunc = null;
+    private Notification.Observer m_ReceiveObserver = null;
 
     // methods
     construct
@@ -152,7 +153,7 @@ public abstract class Maia.Core.BusService : Bus
                     notification.connection = client;
                     notification.post ();
 
-                    client.notifications["message-received"].add_object_observer (on_client_message_received);
+                    m_ReceiveObserver = client.notifications["message-received"].add_object_observer (on_client_message_received);
                 }
             });
         }
@@ -161,8 +162,7 @@ public abstract class Maia.Core.BusService : Bus
     internal override void
     remove_child (Core.Object inChild)
     {
-        unowned BusConnection client = inChild as BusConnection;
-        client.notifications["message-received"].remove_observer (on_client_message_received);
+        m_ReceiveObserver.parent = null;
 
         base.remove_child (inChild);
     }

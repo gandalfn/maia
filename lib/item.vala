@@ -34,21 +34,22 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     internal class uint mc_IdScrollEvent;
 
     // properties
-    private bool              m_NeedUpdate = true;
-    private bool              m_IsPackable = false;
-    private bool              m_IsMovable = false;
-    private bool              m_IsResizable = false;
-    private bool              m_Visible = true;
-    private Graphic.Region    m_Geometry = null;
-    private Graphic.Point     m_Position = Graphic.Point (0, 0);
-    private bool              m_BlockOnMoveResize = false;
-    private Graphic.Size      m_Size = Graphic.Size (0, 0);
-    private Graphic.Size      m_SizeRequested = Graphic.Size (0, 0);
-    private Graphic.Transform m_Transform = new Graphic.Transform.identity ();
-    private Graphic.Transform m_TransformToItemSpace = new Graphic.Transform.identity ();
-    private Graphic.Transform m_TransformToRootSpace = new Graphic.Transform.identity ();
-    private Graphic.Transform m_TransformToWindowSpace = new Graphic.Transform.identity ();
-    private Graphic.Transform m_TransformFromWindowSpace = new Graphic.Transform.identity ();
+    private bool                       m_NeedUpdate = true;
+    private bool                       m_IsPackable = false;
+    private bool                       m_IsMovable = false;
+    private bool                       m_IsResizable = false;
+    private bool                       m_Visible = true;
+    private Graphic.Region             m_Geometry = null;
+    private Graphic.Point              m_Position = Graphic.Point (0, 0);
+    private bool                       m_BlockOnMoveResize = false;
+    private Graphic.Size               m_Size = Graphic.Size (0, 0);
+    private Graphic.Size               m_SizeRequested = Graphic.Size (0, 0);
+    private Graphic.Transform          m_Transform = new Graphic.Transform.identity ();
+    private Graphic.Transform          m_TransformToItemSpace = new Graphic.Transform.identity ();
+    private Graphic.Transform          m_TransformToRootSpace = new Graphic.Transform.identity ();
+    private Graphic.Transform          m_TransformToWindowSpace = new Graphic.Transform.identity ();
+    private Graphic.Transform          m_TransformFromWindowSpace = new Graphic.Transform.identity ();
+    private Core.Notification.Observer m_TransformObserver = null;
 
     // accessors
     /**
@@ -257,9 +258,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             return m_Transform;
         }
         set {
-            if (m_Transform != null)
+            if (m_TransformObserver != null)
             {
-                m_Transform.changed.remove_observer (on_transform_changed);
+                m_TransformObserver.parent = null;
+                m_TransformObserver = null;
             }
 
             damage ();
@@ -268,7 +270,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             if (m_Transform != null)
             {
-                m_Transform.changed.add_object_observer (on_transform_changed);
+                m_TransformObserver = m_Transform.changed.add_object_observer (on_transform_changed);
             }
 
             if (m_Geometry != null)
@@ -601,7 +603,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         notify["chain-visible"].connect (on_visible_changed);
 
         // connect to trasnform events
-        m_Transform.changed.add_object_observer (on_transform_changed);
+        m_TransformObserver = m_Transform.changed.add_object_observer (on_transform_changed);
         notify["transform"].connect (on_transform_changed);
 
         // reorder object on layer change

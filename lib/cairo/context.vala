@@ -20,10 +20,11 @@
 internal class Maia.Cairo.Context : Graphic.Context
 {
     // properties
-    private global::Cairo.Context m_Context = null;
-    private Pango.Context         m_PangoContext = null;
-    private double[]?             m_Dashes = null;
-    private uint                  m_SaveCount = 0;
+    private global::Cairo.Context      m_Context = null;
+    private Pango.Context              m_PangoContext = null;
+    private double[]?                  m_Dashes = null;
+    private uint                       m_SaveCount = 0;
+    private Core.Notification.Observer m_TransformPatternObserver = null;
 
     // accessors
     public global::Cairo.Context context {
@@ -131,15 +132,16 @@ internal class Maia.Cairo.Context : Graphic.Context
             return base.pattern;
         }
         set {
-            if (base.pattern != null)
+            if (m_TransformPatternObserver != null)
             {
-                base.pattern.transform.changed.remove_observer (on_pattern_transform_changed);
+                m_TransformPatternObserver.parent = null;
+                m_TransformPatternObserver = null;
             }
             base.pattern = value;
 
             if (base.pattern != null)
             {
-                base.pattern.transform.changed.add_object_observer (on_pattern_transform_changed);
+                m_TransformPatternObserver = base.pattern.transform.changed.add_object_observer (on_pattern_transform_changed);
             }
 
             on_pattern_transform_changed ();
@@ -179,7 +181,7 @@ internal class Maia.Cairo.Context : Graphic.Context
     {
         if (m_Context != null)
         {
-            base.pattern.transform.changed.remove_observer (on_pattern_transform_changed);
+            m_TransformPatternObserver.block = true;
             global::Cairo.Pattern? pattern = pattern_to_cairo (base.pattern);
             pattern.set_filter (global::Cairo.Filter.GOOD);
 
@@ -192,8 +194,7 @@ internal class Maia.Cairo.Context : Graphic.Context
 
                 m_Context.set_source (pattern);
             }
-
-            base.pattern.transform.changed.add_object_observer (on_pattern_transform_changed);
+            m_TransformPatternObserver.block = false;
         }
     }
 

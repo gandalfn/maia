@@ -177,10 +177,6 @@ internal class Maia.Xcb.Window : Maia.Window
                     Graphic.Rectangle monitorGeometry =  m_View.screen.get_monitor_at (Graphic.Point (0, 0)).geometry;
                     pos = Graphic.Point (monitorGeometry.origin.x + (monitorGeometry.size.width - size.width) / 2, monitorGeometry.origin.y + (monitorGeometry.size.height - size.height) / 2);
                 }
-                else
-                {
-                    pos.translate (parent_window.m_View.root_position);
-                }
 
                 try
                 {
@@ -193,7 +189,8 @@ internal class Maia.Xcb.Window : Maia.Window
                         geo.clamp (m_View.screen.get_monitor_at (pos).geometry);
                     }
 
-                    m_View.position = geo.origin;
+                    print(@"pos: $pos, position: $position origin: $(geo.origin)\n");
+                    m_View.position = Graphic.Point (double.max (geo.origin.x, 0), double.max (geo.origin.y, 0));
                 }
                 catch (Graphic.Error err)
                 {
