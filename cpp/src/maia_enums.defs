@@ -5014,3 +5014,22 @@
   )
 )
 
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_SCALE_BAR_PLACEMENT_TOP,
+;; 	MAIA_SCALE_BAR_PLACEMENT_BOTTOM,
+;; 	MAIA_SCALE_BAR_PLACEMENT_LEFT,
+;; 	MAIA_SCALE_BAR_PLACEMENT_RIGHT
+;; } MaiaScaleBarPlacement;
+
+(define-enum-extended ScaleBarPlacement
+  (in-module "Maia")
+  (c-name "MaiaScaleBarPlacement")
+  (values
+    '("top" "MAIA_SCALE_BAR_PLACEMENT_TOP" "0")
+    '("bottom" "MAIA_SCALE_BAR_PLACEMENT_BOTTOM" "1")
+    '("left" "MAIA_SCALE_BAR_PLACEMENT_LEFT" "2")
+    '("right" "MAIA_SCALE_BAR_PLACEMENT_RIGHT" "3")
+  )
+)
+

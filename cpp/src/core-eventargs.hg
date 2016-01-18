@@ -43,6 +43,7 @@ struct MaiaCoreEventArgsLoadVector
         maia_core_event_args_register_protocol ("gtkmm__CustomObject_" #ns "++" #klass ,\
                                                 message ,                      \
                                                 protobuf );                    \
+        klass ::create ();                                                     \
     }                                                                          \
                                                                                \
     void klass ::constructor ()                                                \
@@ -104,6 +105,7 @@ struct MaiaCoreEventArgsLoadVector
         maia_core_event_args_register_protocol ("gtkmm__CustomObject_" #klass ,\
                                                 message ,                      \
                                                 protobuf );                    \
+        klass ::create ();                                                     \
     }                                                                          \
                                                                                \
     void klass ::constructor ()                                                \

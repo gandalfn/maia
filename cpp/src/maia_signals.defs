@@ -67,17 +67,17 @@
   (construct-only #f)
 )
 
-;; From MaiaCoreIterator
+;; MaiaCoreIterator is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaCoreCollection
+;; MaiaCoreCollection is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaCoreArray
+;; MaiaCoreArray is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaCoreSet
+;; MaiaCoreSet is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaCorePair
+;; MaiaCorePair is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaCoreMap
+;; MaiaCoreMap is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaCoreTimeline
 
@@ -701,7 +701,7 @@
   (construct-only #f)
 )
 
-;; From MaiaGraphicPoint
+;; MaiaGraphicPoint is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaGraphicRadialGradient
 
@@ -741,11 +741,11 @@
   (construct-only #f)
 )
 
-;; From MaiaGraphicRange
+;; MaiaGraphicRange is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaGraphicLine
+;; MaiaGraphicLine is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaGraphicRectangle
+;; MaiaGraphicRectangle is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaGraphicRegion
 
@@ -767,7 +767,7 @@
   (construct-only #f)
 )
 
-;; From MaiaGraphicSize
+;; MaiaGraphicSize is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaGraphicSurface
 
@@ -1481,7 +1481,7 @@
   (construct-only #f)
 )
 
-;; From MaiaCursor
+;; MaiaCursor is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaDocument
 
@@ -3282,7 +3282,7 @@
 
 ;; From MaiaItemResizable
 
-;; From MaiaKey
+;; MaiaKey is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaLabel
 
@@ -3741,9 +3741,9 @@
   (construct-only #f)
 )
 
-;; From MaiaOrientation
+;; MaiaOrientation is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaPageFormat
+;; MaiaPageFormat is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaPath
 
@@ -3965,7 +3965,7 @@
   (construct-only #f)
 )
 
-;; From MaiaScroll
+;; MaiaScroll is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaToggle
 
@@ -5441,6 +5441,15 @@
   (construct-only #f)
 )
 
+(define-property step
+  (of-object "MaiaAdjustment")
+  (prop-type "GParamDouble")
+  (docs "step")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property lower
   (of-object "MaiaAdjustment")
   (prop-type "GParamDouble")
@@ -6668,6 +6677,296 @@
   (of-object "MaiaRendererView")
   (prop-type "GParamObject")
   (docs "renderer")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaScaleBar
+
+(define-property tag
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property can-focus
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamBoolean")
+  (docs "can-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property row
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamUInt")
+  (docs "row")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property column
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamUInt")
+  (docs "column")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property rows
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamUInt")
+  (docs "rows")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property columns
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamUInt")
+  (docs "columns")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xexpand
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamBoolean")
+  (docs "xexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xfill
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamBoolean")
+  (docs "xfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xshrink
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamBoolean")
+  (docs "xshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xlimp
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamBoolean")
+  (docs "xlimp")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xalign
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamDouble")
+  (docs "xalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yexpand
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamBoolean")
+  (docs "yexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yfill
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamBoolean")
+  (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yshrink
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamBoolean")
+  (docs "yshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property ylimp
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamBoolean")
+  (docs "ylimp")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yalign
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamDouble")
+  (docs "yalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property top-padding
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamDouble")
+  (docs "top-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property bottom-padding
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamDouble")
+  (docs "bottom-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property left-padding
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamDouble")
+  (docs "left-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property right-padding
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamDouble")
+  (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property backcell-pattern
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamObject")
+  (docs "backcell-pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property adjustment
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamObject")
+  (docs "adjustment")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property placement
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamEnum")
+  (docs "placement")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property font-description
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamString")
+  (docs "font-description")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property step-font-description
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamString")
+  (docs "step-font-description")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property display-slide-label
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamBoolean")
+  (docs "display-slide-label")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property label-border
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamDouble")
+  (docs "label-border")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property label-stroke-pattern
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamObject")
+  (docs "label-stroke-pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property step-line-width
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamDouble")
+  (docs "step-line-width")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property step-stroke-pattern
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamObject")
+  (docs "step-stroke-pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property display-step-label
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamBoolean")
+  (docs "display-step-label")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property display-step-middle
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamBoolean")
+  (docs "display-step-middle")
   (readable #t)
   (writable #t)
   (construct-only #f)

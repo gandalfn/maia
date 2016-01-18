@@ -1669,7 +1669,38 @@ public class Maia.Core.EventBus : Object
                             }
                         }
                     }
+                    else
+                    {
+                        occurence = m_EventBus.m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
+                        if (occurence != null)
+                        {
+                            // Event with reply
+                            if (msg.need_reply)
+                            {
+                               // Add pending reply
+                                occurence.add_reply (msg.sender, msg.args);
+                            }
 
+                            // Get list of destination of event
+                            Set<uint32> destination = occurence.get_subscriber_destinations ();
+                            if (destination.length > 0)
+                            {
+                                // Send event for client which is subscribed on
+                                foreach (unowned Core.Object? child in m_EventBus.m_Service)
+                                {
+                                    unowned BusConnection? client = child as BusConnection;
+                                    if (client != null && client.id in destination)
+                                    {
+#if MAIA_DEBUG
+                                        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event $(msg.hash) to client $(client.id)");
+#endif
+                                        // send message to client
+                                        client.send_async.begin (message);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
                 else if (message is MessageEventReply)
                 {
@@ -2084,6 +2115,13 @@ public class Maia.Core.EventBus : Object
 #if MAIA_DEBUG
                     Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event $(msg.hash) to bridge $(bridge.address)");
 #endif
+                    bridge.connection.send_async.begin (inMessage);
+                }
+            }
+            else
+            {
+                foreach (unowned Bridge bridge in m_Bridges)
+                {
                     bridge.connection.send_async.begin (inMessage);
                 }
             }

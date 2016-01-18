@@ -25,21 +25,13 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
         // properties
         private unowned RendererView   m_View;
         private Core.Timeline          m_Timeline;
-        private Core.Event           m_Damaged;
-
-        // events
-        public Core.Event damaged {
-            get {
-                return m_Damaged;
-            }
-        }
+        private Core.Task.EventWatch[] m_Damaged = {};
 
         // methods
         public Task (RendererView inView)
         {
             base ("task-renderer-view");
             m_View = inView;
-            m_Damaged = new Core.Event ("damaged", this);
         }
 
         private void
@@ -49,7 +41,13 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
             m_View.renderer.render (inFrameNum);
             m_View.m_Lock.unlock ();
 
-            damaged.publish ();
+            lock (m_Damaged)
+            {
+                foreach (unowned Core.Task.EventWatch? f in m_Damaged)
+                {
+                    f.@signal ();
+                }
+            }
         }
 
         internal override void
@@ -81,6 +79,19 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
 
             // start timeline
             m_Timeline.start ();
+        }
+
+        internal void
+        add_damage_observer (Core.Task.Callback inCallback, GLib.MainContext? inContext = null)
+        {
+            lock (m_Damaged)
+            {
+                var f = new Core.Task.EventWatch (this, (Core.Task.EventWatch.DestroyNotifyFunc)unref);
+                f.set_object_observer (inCallback);
+                f.attach (inContext ?? GLib.MainContext.@default ());
+                m_Damaged += f;
+                ref ();
+            }
         }
     }
 
@@ -236,7 +247,7 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
         if (m_Task == null)
         {
             m_Task = new Task (this);
-            m_Task.damaged.object_subscribe (on_renderer_damaged);
+            m_Task.add_damage_observer (on_renderer_damaged);
 
             m_Mutex.lock ();
             {
@@ -286,12 +297,14 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
         }
     }
 
-    private void
-    on_renderer_damaged (Core.EventArgs? inArgs)
+    private bool
+    on_renderer_damaged (Core.Task inTask)
     {
         m_RendererDamaged = true;
         damage (area);
         m_RendererDamaged = false;
+
+        return true;
     }
 
     internal override void

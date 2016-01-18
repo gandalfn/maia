@@ -199,6 +199,7 @@ public class Maia.Application : Maia.Core.Object
         Manifest.Element.register ("ChartPoint",     typeof (ChartPoint));
         Manifest.Element.register ("Viewport",       typeof (Viewport));
         Manifest.Element.register ("RendererView",   typeof (RendererView));
+        Manifest.Element.register ("ScaleBar",       typeof (ScaleBar));
     }
 
     // methods

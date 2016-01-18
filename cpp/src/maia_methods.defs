@@ -850,6 +850,12 @@
   (gtype-id "MAIA_TYPE_REPORT")
 )
 
+(define-object MaiaScaleBar
+  (parent "MaiaGroup")
+  (c-name "MaiaScaleBar")
+  (gtype-id "MAIA_TYPE_SCALE_BAR")
+)
+
 (define-object MaiaScrollView
   (parent "MaiaItem")
   (c-name "MaiaScrollView")
@@ -3545,6 +3551,17 @@
   )
 )
 
+(define-enum MaiaScaleBarPlacement
+  (c-name "MaiaScaleBarPlacement")
+  (gtype-id "MAIA_TYPE_SCALE_BAR_PLACEMENT")
+  (values
+    '("top" "MAIA_SCALE_BAR_PLACEMENT_TOP")
+    '("bottom" "MAIA_SCALE_BAR_PLACEMENT_BOTTOM")
+    '("left" "MAIA_SCALE_BAR_PLACEMENT_LEFT")
+    '("right" "MAIA_SCALE_BAR_PLACEMENT_RIGHT")
+  )
+)
+
 
 ;; From maia.h
 
@@ -3574,6 +3591,7 @@
     '("gdouble" "inLower")
     '("gdouble" "inUpper")
     '("gdouble" "inPageSize")
+    '("gdouble" "inStep")
   )
 )
 
@@ -3585,6 +3603,7 @@
     '("gdouble" "inLower")
     '("gdouble" "inUpper")
     '("gdouble" "inPageSize")
+    '("gdouble" "inStep")
   )
 )
 
@@ -3596,6 +3615,7 @@
     '("gdouble" "inLower")
     '("gdouble" "inUpper")
     '("gdouble" "inPageSize")
+    '("gdouble" "inStep")
   )
 )
 
@@ -3608,6 +3628,21 @@
 (define-method set_value
   (of-object "MaiaAdjustment")
   (c-name "maia_adjustment_set_value")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_step
+  (of-object "MaiaAdjustment")
+  (c-name "maia_adjustment_get_step")
+  (return-type "gdouble")
+)
+
+(define-method set_step
+  (of-object "MaiaAdjustment")
+  (c-name "maia_adjustment_set_step")
   (return-type "none")
   (parameters
     '("gdouble" "value")
@@ -20553,6 +20588,213 @@
   (return-type "none")
   (parameters
     '("MaiaGraphicRenderer*" "value")
+  )
+)
+
+(define-function maia_scale_bar_get_type
+  (c-name "maia_scale_bar_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_scale_bar_placement_get_type
+  (c-name "maia_scale_bar_placement_get_type")
+  (return-type "GType")
+)
+
+(define-method to_string
+  (of-object "MaiaScaleBarPlacement")
+  (c-name "maia_scale_bar_placement_to_string")
+  (return-type "gchar*")
+)
+
+(define-function maia_scale_bar_placement_from_string
+  (c-name "maia_scale_bar_placement_from_string")
+  (return-type "MaiaScaleBarPlacement")
+  (parameters
+    '("const-gchar*" "inValue")
+  )
+)
+
+(define-function maia_scale_bar_new
+  (c-name "maia_scale_bar_new")
+  (is-constructor-of "MaiaScaleBar")
+  (return-type "MaiaScaleBar*")
+  (parameters
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-function maia_scale_bar_construct
+  (c-name "maia_scale_bar_construct")
+  (return-type "MaiaScaleBar*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-method get_adjustment
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_get_adjustment")
+  (return-type "MaiaAdjustment*")
+)
+
+(define-method set_adjustment
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_set_adjustment")
+  (return-type "none")
+  (parameters
+    '("MaiaAdjustment*" "value")
+  )
+)
+
+(define-method get_placement
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_get_placement")
+  (return-type "MaiaScaleBarPlacement")
+)
+
+(define-method set_placement
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_set_placement")
+  (return-type "none")
+  (parameters
+    '("MaiaScaleBarPlacement" "value")
+  )
+)
+
+(define-method get_font_description
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_get_font_description")
+  (return-type "const-gchar*")
+)
+
+(define-method set_font_description
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_set_font_description")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_step_font_description
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_get_step_font_description")
+  (return-type "const-gchar*")
+)
+
+(define-method set_step_font_description
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_set_step_font_description")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_display_slide_label
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_get_display_slide_label")
+  (return-type "gboolean")
+)
+
+(define-method set_display_slide_label
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_set_display_slide_label")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
+(define-method get_label_border
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_get_label_border")
+  (return-type "gdouble")
+)
+
+(define-method set_label_border
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_set_label_border")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_label_stroke_pattern
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_get_label_stroke_pattern")
+  (return-type "MaiaGraphicPattern*")
+)
+
+(define-method set_label_stroke_pattern
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_set_label_stroke_pattern")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "value")
+  )
+)
+
+(define-method get_step_line_width
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_get_step_line_width")
+  (return-type "gdouble")
+)
+
+(define-method set_step_line_width
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_set_step_line_width")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_step_stroke_pattern
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_get_step_stroke_pattern")
+  (return-type "MaiaGraphicPattern*")
+)
+
+(define-method set_step_stroke_pattern
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_set_step_stroke_pattern")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "value")
+  )
+)
+
+(define-method get_display_step_label
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_get_display_step_label")
+  (return-type "gboolean")
+)
+
+(define-method set_display_step_label
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_set_display_step_label")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
+(define-method get_display_step_middle
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_get_display_step_middle")
+  (return-type "gboolean")
+)
+
+(define-method set_display_step_middle
+  (of-object "MaiaScaleBar")
+  (c-name "maia_scale_bar_set_display_step_middle")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
   )
 )
 

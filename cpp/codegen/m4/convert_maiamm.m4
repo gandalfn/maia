@@ -393,6 +393,11 @@ _CONVERSION(`const Glib::RefPtr<RendererView>&',`MaiaRendererView*',__CONVERT_RE
 _CONVERSION(`MaiaRendererView*',`const Glib::RefPtr<RendererView>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaRendererView*',`Glib::RefPtr<RendererView>',`Glib::wrap($3)')
 
+_CONVERSION(`Glib::RefPtr<ScaleBar>',`MaiaScaleBar*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<ScaleBar>&',`MaiaScaleBar*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaScaleBar*',`const Glib::RefPtr<ScaleBar>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaScaleBar*',`Glib::RefPtr<ScaleBar>',`Glib::wrap($3)')
+
 _CONVERSION(`Glib::ustring',`const gchar*',`$3.c_str ()')
 
 _CONVERSION(`PageFormat',`MaiaPageFormat*',`(MaiaPageFormat)$3')
@@ -476,6 +481,9 @@ _CONVERSION(`MaiaToolAction',`Tool::Action',`(Tool::Action)$3')
 _CONVERSION(`GVariant*',`const Glib::VariantBase&',`Glib::VariantBase ($3)')
 _CONVERSION(`Glib::VariantBase',`GVariant*',`$3.gobj()')
 
+_CONVERSION(`ScaleBar::Placement',`MaiaScaleBarPlacement',`(MaiaScaleBarPlacement)$3')
+_CONVERSION(`MaiaScaleBarPlacement',`ScaleBar::Placement',`(ScaleBar::Placement)$3')
+
 
 _CONV_ENUM(MaiaLog,Level)
 _CONV_ENUM(MaiaLog,Category)
@@ -507,3 +515,4 @@ _CONV_ENUM(MaiaChartView,Frame)
 _CONV_ENUM(MaiaWindow,Border)
 _CONV_ENUM(MaiaWindow,Type)
 _CONV_ENUM(MaiaWindowPosition,Policy)
+_CONV_ENUM(MaiaScaleBar,Placement)

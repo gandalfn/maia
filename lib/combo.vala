@@ -491,10 +491,17 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             inContext.restore ();
         }
 
+        var path = new Graphic.Path ();
+        path.rectangle (draw_area.extents.origin.x, draw_area.extents.origin.y, draw_area.extents.size.width, draw_area.extents.size.height);
+
+        if (fill_pattern != null)
+        {
+            inContext.pattern = fill_pattern;
+            inContext.fill (path);
+        }
+
         if (have_focus)
         {
-            var path = new Graphic.Path ();
-            path.rectangle (draw_area.extents.origin.x, draw_area.extents.origin.y, draw_area.extents.size.width, draw_area.extents.size.height);
             inContext.pattern = stroke_pattern;
             inContext.dash = { 1, 1 };
             inContext.line_width = 0.5;

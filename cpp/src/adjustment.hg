@@ -38,9 +38,9 @@ namespace Maia
                 return Glib::RefPtr<Adjustment> (new Adjustment (pAdjustment));
             }
 
-            static Glib::RefPtr<Adjustment> create (double inLower, double inUpper, double inPageSize)
+            static Glib::RefPtr<Adjustment> create (double inLower, double inUpper, double inPageSize, double inStep = 1.0)
             {
-                MaiaAdjustment* pAdjustment = maia_adjustment_new_with_properties (inLower, inUpper, inPageSize);
+                MaiaAdjustment* pAdjustment = maia_adjustment_new_with_properties (inLower, inUpper, inPageSize, inStep);
                 return Glib::RefPtr<Adjustment> (new Adjustment (pAdjustment));
             }
 
@@ -52,12 +52,15 @@ namespace Maia
             _WRAP_METHOD(double get_upper() const, maia_adjustment_get_upper)
             _WRAP_METHOD(void set_page_size(double inPageSize), maia_adjustment_set_page_size)
             _WRAP_METHOD(double get_page_size() const, maia_adjustment_get_page_size)
+            _WRAP_METHOD(void set_step(double inPageSize), maia_adjustment_set_step)
+            _WRAP_METHOD(double get_step() const, maia_adjustment_get_step)
 
-            _WRAP_METHOD(void configure (double inLower, double inUpper, double inPageSize), maia_adjustment_configure)
+            _WRAP_METHOD(void configure (double inLower, double inUpper, double inPageSize, double inStep), maia_adjustment_configure)
 
             _WRAP_PROPERTY("value", double)
             _WRAP_PROPERTY("lower", double)
             _WRAP_PROPERTY("upper", double)
             _WRAP_PROPERTY("page-size", double)
+            _WRAP_PROPERTY("step", double)
     };
 }

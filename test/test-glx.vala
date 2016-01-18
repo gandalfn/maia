@@ -32,6 +32,17 @@ const string manifest = "Window.test {" +
                         "               font-description: 'Liberation Sans Bold 24';" +
                         "               text: 'Maia opengl renderer';" +
                         "           }" +
+                        "           ScaleBar.scale_bar {" +
+                        "               position: 900, 10;" +
+                        "               size: 48, 600;" +
+                        "               placement: right;" +
+                        "               line-width: 2.0;" +
+                        "               step-line-width: 1.0;" +
+                        "               label_border: 5.0;" +
+                        "               stroke-pattern: #FFFFFF;" +
+                        "               font-description: 'Liberation Sans 8';" +
+                        "               fill-pattern: rgba (1, 1, 1, 0.9);" +
+                        "           }" +
                         "           Image.maya {" +
                         "               position: 350, 250;" +
                         "               size: 300, 300;" +
@@ -179,6 +190,11 @@ static void main (string[] args)
         renderer.initialize.add_observer (on_initialize);
         renderer.new_frame.add_observer (on_new_frame);
         renderer_view.renderer = renderer;
+
+        var scale = window.find (GLib.Quark.from_string ("scale_bar")) as Maia.ScaleBar;
+        var adjustment = new Maia.Adjustment.with_properties (0, 100, 10, 10);
+        adjustment.@value = 42;
+        scale.adjustment = adjustment;
 
         // Run application
         application.run ();

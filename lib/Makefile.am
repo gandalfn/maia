@@ -191,7 +191,8 @@ libmaia_la_SOURCES = \
     chart-view.vala \
     chart.vala \
     viewport.vala \
-    renderer-view.vala
+    renderer-view.vala \
+    scale-bar.vala
 
 libmaia_la_VALAFLAGS = \
     --pkg=gvalue-collect \

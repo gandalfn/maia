@@ -124,6 +124,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_VIEWPORT);
     std::cout << get_defs (MAIA_TOGGLE_GROUP_TYPE_CHANGED_EVENT_ARGS);
     std::cout << get_defs (MAIA_TYPE_RENDERER_VIEW);
+    std::cout << get_defs (MAIA_TYPE_SCALE_BAR);
 
     return 0;
 }

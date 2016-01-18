@@ -155,7 +155,7 @@ void main (string[] args)
         combo.active_row = 0;
 
         var progress_bar = window.find (GLib.Quark.from_string ("progress_bar")) as Maia.ProgressBar;
-        progress_bar.adjustment = new Maia.Adjustment.with_properties (0, 100, 10);
+        progress_bar.adjustment = new Maia.Adjustment.with_properties (0, 100, 10, 1);
         progress_bar.adjustment.@value = 43;
 
         // Run application

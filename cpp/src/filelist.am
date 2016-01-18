@@ -91,6 +91,7 @@ files_hg = \
     rectangle.hg \
     renderer-view.hg \
     report.hg \
+    scale-bar.hg \
     seek-bar.hg \
     shortcut.hg \
     scroll-view.hg \

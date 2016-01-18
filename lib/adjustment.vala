@@ -27,6 +27,7 @@ public class Maia.Adjustment : Object
     private double m_Lower;
     private double m_Upper;
     private double m_PageSize;
+    private double m_Step;
 
     // accessors
     /**
@@ -48,6 +49,24 @@ public class Maia.Adjustment : Object
     }
 
     /**
+     * The current step value of the adjustment
+     */
+    [CCode (notify = false)]
+    public double step {
+        get {
+            return m_Step;
+        }
+        set {
+            if (m_Step != double.min (value, (m_Upper - m_Lower)))
+            {
+                m_Step = double.min (value, (m_Upper - m_Lower));
+                GLib.Signal.emit_by_name (this, "notify::step");
+            }
+        }
+        default = 0.0;
+    }
+
+    /**
      * The current minimum value of the adjustment.
      */
     [CCode (notify = false)]
@@ -61,6 +80,7 @@ public class Maia.Adjustment : Object
                 double delta = (m_Upper - m_Lower) != 0 ? m_Value / (m_Upper - m_Lower) : 0;
                 m_Lower = double.min (value, m_Upper);
                 m_Value = delta * (m_Upper - m_Lower);
+                m_Step = double.min (m_Step, (m_Upper - m_Lower));
                 GLib.Signal.emit_by_name (this, "notify::lower");
             }
         }
@@ -81,6 +101,7 @@ public class Maia.Adjustment : Object
                 double delta = (m_Upper - m_Lower) != 0 ? m_Value / (m_Upper - m_Lower) : 0;
                 m_Upper = double.max (value, m_Lower);
                 m_Value = delta * (m_Upper - m_Lower);
+                m_Step = double.min (m_Step, (m_Upper - m_Lower));
                 GLib.Signal.emit_by_name (this, "notify::upper");
             }
         }
@@ -119,10 +140,11 @@ public class Maia.Adjustment : Object
      * @param inLower the minimum value of adjustment
      * @param inUpper the maximum value of adjustment
      * @param inPageSize the page size of adjustment
+     * @param inStep the step of adjustment
      */
-    public Adjustment.with_properties (double inLower, double inUpper, double inPageSize)
+    public Adjustment.with_properties (double inLower, double inUpper, double inPageSize, double inStep = 1.0)
     {
-        GLib.Object (lower: inLower, upper: inUpper, page_size: inPageSize);
+        GLib.Object (lower: inLower, upper: inUpper, page_size: inPageSize, step: inStep);
     }
 
     /**
@@ -131,9 +153,10 @@ public class Maia.Adjustment : Object
      * @param inLower the minimum value of adjustment
      * @param inUpper the maximum value of adjustment
      * @param inPageSize the page size of adjustment
+     * @param inStep the step of adjustment
      */
     public void
-    configure (double inLower, double inUpper, double inPageSize)
+    configure (double inLower, double inUpper, double inPageSize, double inStep = 1.0)
     {
         double delta = (m_Upper - m_Lower) != 0 ? m_Value / (m_Upper - m_Lower) : 0;
 
@@ -141,5 +164,6 @@ public class Maia.Adjustment : Object
         m_Upper = double.max (inUpper, m_Lower);
         m_Value = delta * (m_Upper - m_Lower);
         m_PageSize = double.min (m_Upper - m_Lower, inPageSize);
+        m_Step = double.min (inStep, (m_Upper - m_Lower));
     }
 }

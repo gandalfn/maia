@@ -20,7 +20,7 @@
 public abstract class Maia.Core.Task : Object
 {
     // types
-    public delegate void Callback (Task inTask);
+    public delegate bool Callback (Task inTask);
 
     private class Observer : GLib.Object
     {
@@ -64,13 +64,15 @@ public abstract class Maia.Core.Task : Object
             m_Callback = null;
         }
 
-        public new void
+        public new bool
         notify ()
         {
             if (m_Callback != null)
             {
-                m_Callback (m_Task);
+                return m_Callback (m_Task);
             }
+
+            return false;
         }
     }
 
@@ -80,7 +82,7 @@ public abstract class Maia.Core.Task : Object
         READY
     }
 
-    private class EventWatch : GLib.Object
+    internal class EventWatch : GLib.Object
     {
         [CCode (has_target = false)]
         public delegate void DestroyNotifyFunc (Task inTask);
@@ -124,18 +126,23 @@ public abstract class Maia.Core.Task : Object
             {
                 lock (m_State)
                 {
-                    if (m_State == EventState.WAITING)
+                    if (m_State == EventState.READY)
                     {
+                        bool ret = false;
                         if (m_Observer != null)
                         {
-                            m_Observer.notify ();
+                            ret = m_Observer.notify ();
                         }
-                        if (m_DestroyFunc != null)
+                        if (!ret)
                         {
-                            m_DestroyFunc (m_Task);
+                            if (m_DestroyFunc != null)
+                            {
+                                m_DestroyFunc (m_Task);
+                            }
+                            m_Task = null;
                         }
-                        m_Task = null;
-                        m_State = EventState.READY;
+
+                        m_State = EventState.WAITING;
                     }
                 }
             }
@@ -176,6 +183,7 @@ public abstract class Maia.Core.Task : Object
                     {
                         if (m_Context != null && m_Source == null)
                         {
+                            m_State = EventState.READY;
                             m_Source = new GLib.IdleSource ();
                             m_Source.set_callback (on_process);
                             m_Source.set_priority (GLib.Priority.HIGH);
@@ -244,7 +252,7 @@ public abstract class Maia.Core.Task : Object
         m_Finish = {};
     }
 
-    private void
+    private bool
     on_cancelled (Task inTask)
     {
         m_IsCancelled = true;
@@ -253,6 +261,8 @@ public abstract class Maia.Core.Task : Object
         {
             finish ();
         }
+
+        return false;
     }
 
     protected abstract void main (GLib.MainContext? inContext);

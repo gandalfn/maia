@@ -178,7 +178,6 @@ internal class Maia.Xcb.Window : Maia.Window
                     if (m_View.parent != null)
                     {
                         pos = Graphic.Point (m_View.parent.position.x + (m_View.parent.size.width - size.width) / 2, m_View.parent.position.y + (m_View.parent.size.height - size.height) / 2);
-                        print(@"WINDOW PARENT position: $pos\n");
                     }
                     else
                     {
@@ -392,7 +391,6 @@ internal class Maia.Xcb.Window : Maia.Window
                 {
                     Graphic.Rectangle monitorGeometry =  m_View.screen.get_monitor_at (Graphic.Point (0, 0)).geometry;
                     pos = Graphic.Point (monitorGeometry.origin.x + (monitorGeometry.size.width - size.width) / 2, monitorGeometry.origin.y + (monitorGeometry.size.height - size.height) / 2);
-                    print(@"position: $pos\n");
                 }
 
                 try
