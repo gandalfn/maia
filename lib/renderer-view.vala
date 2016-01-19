@@ -53,6 +53,9 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
         internal override void
         finish ()
         {
+            m_Damaged = {};
+            m_Timeline.stop ();
+
             base.finish ();
 
             // Signal has task is finished
@@ -276,7 +279,7 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
     {
         if (inArea != null)
         {
-            var damaged_area = inArea.copy ();
+            var damaged_area = area;
             damaged_area.intersect (inArea);
 
             if (!damaged_area.is_empty ())
@@ -344,7 +347,6 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
         if (!m_RendererDamaged)
         {
             base.on_damage (inArea);
-
             add_front_damage (inArea);
         }
     }
@@ -370,8 +372,8 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
                 if (!m_Renderer.size.equal (area.extents.size))
                 {
                     cancel_task ();
-                    create_task ();
                     m_Renderer.size = area.extents.size;
+                    create_task ();
                 }
                 else if (m_Task == null)
                 {
@@ -415,9 +417,11 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
         {
             m_Lock.lock ();
             {
+                m_Renderer.surface.flush ();
                 inContext.operator = Graphic.Operator.OVER;
                 inContext.pattern = m_Renderer.surface;
                 inContext.paint ();
+                inContext.surface.flush ();
             }
             m_Lock.unlock ();
         }

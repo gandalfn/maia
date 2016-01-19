@@ -26,6 +26,9 @@ namespace X
 
         [CCode (cname = "XDefaultScreenOfDisplay")]
         public unowned Screen default_screen ();
+
+        [CCode (cname = "XSync")]
+        public int sync (bool discard = false);
     }
 
     [Compact]

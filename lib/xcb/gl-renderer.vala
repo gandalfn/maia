@@ -57,6 +57,7 @@ internal class Maia.Xcb.GLRenderer : Maia.Graphic.GLRenderer
         return 0;
     }
     // properties
+    private global::X.Display        m_Display;
     private global::Xcb.Glx.Fbconfig m_FBConfig;
     private Pixmap                   m_Pixmap = null;
     private GLX.Context              m_GLXContext;
@@ -100,11 +101,11 @@ internal class Maia.Xcb.GLRenderer : Maia.Graphic.GLRenderer
     {
         if (m_GLXPixmap != (GLX.Pixmap)global::Xcb.NONE)
         {
-            GLX.destroy_pixmap (application.display, m_GLXPixmap);
+            GLX.destroy_pixmap (m_Display, m_GLXPixmap);
             m_GLXPixmap = (GLX.Pixmap)global::Xcb.NONE;
         }
 
-        GLX.destroy_context (application.display, m_GLXContext);
+        GLX.destroy_context (m_Display, m_GLXContext);
     }
 
     private void
@@ -114,7 +115,7 @@ internal class Maia.Xcb.GLRenderer : Maia.Graphic.GLRenderer
         m_Pixmap = null;
         if (m_GLXPixmap != (GLX.Pixmap)global::Xcb.NONE)
         {
-            GLX.destroy_pixmap (application.display, m_GLXPixmap);
+            GLX.destroy_pixmap (m_Display, m_GLXPixmap);
             m_GLXPixmap = global::Xcb.NONE;
         }
 
@@ -122,13 +123,13 @@ internal class Maia.Xcb.GLRenderer : Maia.Graphic.GLRenderer
         {
             int screen_num = Maia.Xcb.application.default_screen;
 
-            GLX.VisualInfo vinfo = GLX.get_visual_from_fbconfig (application.display, m_FBConfig);
+            GLX.VisualInfo vinfo = GLX.get_visual_from_fbconfig (m_Display, m_FBConfig);
 
             m_Pixmap = new Pixmap (screen_num, (uint8)vinfo.depth, (int)GLib.Math.ceil (m_Size.width), (int)GLib.Math.ceil (m_Size.height));
 
             m_Surface = new Graphic.Surface.from_device (m_Pixmap, (int)GLib.Math.ceil (m_Size.width), (int)GLib.Math.ceil (m_Size.height));
 
-            m_GLXPixmap = GLX.create_pixmap (application.display, m_FBConfig, m_Pixmap.xid, null);
+            m_GLXPixmap = GLX.create_pixmap (m_Display, m_FBConfig, m_Pixmap.xid, null);
         }
     }
 
@@ -157,9 +158,16 @@ internal class Maia.Xcb.GLRenderer : Maia.Graphic.GLRenderer
         int screen_num = Maia.Xcb.application.default_screen;
         m_FBConfig = application[screen_num].glx_choose_fb_configs (attribs);
 
-        m_GLXContext = GLX.create_new_context (application.display, m_FBConfig, GLX.RGBA_TYPE, null, true);
+        m_GLXContext = GLX.create_new_context (m_Display, m_FBConfig, GLX.RGBA_TYPE, null, true);
 
         create_surface ();
+    }
+
+    internal override void
+    delegate_construct ()
+    {
+        // create a xlib connection for glx
+        m_Display = new global::X.Display (application.id == 0 ? null : ((GLib.Quark)application.id).to_string ());
     }
 
     public override void
@@ -169,7 +177,7 @@ internal class Maia.Xcb.GLRenderer : Maia.Graphic.GLRenderer
         {
             GLX.wait_x ();
 
-            GLX.make_current (application.display, m_GLXPixmap, m_GLXContext);
+            GLX.make_current (m_Display, m_GLXPixmap, m_GLXContext);
 
             base.start ();
 
@@ -184,11 +192,13 @@ internal class Maia.Xcb.GLRenderer : Maia.Graphic.GLRenderer
         {
             GLX.wait_x ();
 
-            GLX.make_current (application.display, m_GLXPixmap, m_GLXContext);
+            GLX.make_current (m_Display, m_GLXPixmap, m_GLXContext);
 
             base.render (inFrameNum);
 
             GLX.wait_gl ();
+
+            m_Display.sync ();
         }
     }
 }

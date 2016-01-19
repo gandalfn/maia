@@ -20,7 +20,6 @@
 internal class Maia.Xcb.Screen : Core.Object
 {
     // properties
-    private unowned global::X.Display      m_Display;
     private unowned global::Xcb.Connection m_Connection;
     private Graphic.Rectangle              m_Geometry = Graphic.Rectangle (0, 0, 0, 0);
     private global::Xcb.Render.Pictvisual? m_VisualCache[5];
@@ -30,12 +29,6 @@ internal class Maia.Xcb.Screen : Core.Object
     public unowned global::Xcb.Screen? xscreen {
         get {
             return connection.roots[(int)id];
-        }
-    }
-
-    public global::X.Display display {
-        get {
-            return m_Display;
         }
     }
 
@@ -52,13 +45,12 @@ internal class Maia.Xcb.Screen : Core.Object
     }
 
     // methods
-    public Screen (global::X.Display inDisplay, int inNum)
+    public Screen (global::Xcb.Connection inConnection, int inNum)
     {
         GLib.Object (id: inNum);
 
         // set connection
-        m_Display = inDisplay;
-        m_Connection = m_Display.connection;
+        m_Connection = inConnection;
 
         // Get screen geometry
         unowned global::Xcb.Screen? screen = connection.roots[inNum];

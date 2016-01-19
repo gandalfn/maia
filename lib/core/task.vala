@@ -141,8 +141,10 @@ public abstract class Maia.Core.Task : Object
                             }
                             m_Task = null;
                         }
-
-                        m_State = EventState.WAITING;
+                        else
+                        {
+                            m_State = EventState.WAITING;
+                        }
                     }
                 }
             }
@@ -278,6 +280,7 @@ public abstract class Maia.Core.Task : Object
             {
                 f.@signal ();
             }
+            m_Finish = {};
         }
 
         finished.post ();
@@ -292,6 +295,7 @@ public abstract class Maia.Core.Task : Object
             {
                 f.@signal ();
             }
+            m_Start = {};
         }
     }
 
