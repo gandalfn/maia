@@ -211,8 +211,20 @@ namespace Maia
                 template <typename T>
                 inline int push_back (T inVal);
 
+                int size () const
+                {
+                    return maia_core_event_args_get_field_length (const_cast<MaiaCoreEventArgs*> (m_pEventArgs), m_Field.c_str ());
+                }
+
                 EventArgsField operator[] (int inIndex) const
                 {
+                    if (inIndex >= maia_core_event_args_get_field_length (m_pEventArgs, m_Field.c_str ()))
+                    {
+                        GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                          "%i out of bound of field %s", inIndex, m_Field.c_str ());
+                        throw Glib::Error(error);
+                    }
+
                     return EventArgsField (m_pEventArgs, m_Field, inIndex);
                 }
 

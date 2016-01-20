@@ -78,7 +78,6 @@ public class Maia.Core.TaskPool : GLib.Object
         Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, @"task finished $(m_CurrentTask.ref_count)");
 #endif
 
-        print (@"task finished $(m_CurrentTask.ref_count)");
         m_CurrentTask = null;
         program_pop ();
     }

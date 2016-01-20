@@ -76,8 +76,20 @@ namespace Maia
                 template <typename T>
                 inline int push_back (T inVal);
 
+                int size () const
+                {
+                    return maia_protocol_message_get_field_length (const_cast<MaiaProtocolMessage*> (m_pMessage), m_Field.c_str ());
+                }
+
                 MessageField operator[] (int inIndex) const
                 {
+                    if (inIndex >= maia_protocol_message_get_field_length (m_pMessage, m_Field.c_str ()))
+                    {
+                        GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                          "%i out of bound of field %s", inIndex, m_Field.c_str ());
+                        throw Glib::Error(error);
+                    }
+
                     return MessageField (m_pMessage, m_Field, inIndex);
                 }
 

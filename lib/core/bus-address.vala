@@ -99,7 +99,11 @@ public class Maia.Core.BusAddress : Object
         switch (address_type)
         {
             case Type.UNIX:
-                hier = @"$(uuid_generate ())";
+                string hier_part = inUri.substring ("unix://".length).strip ();
+                if (hier_part.length == 0)
+                    hier = @"$(uuid_generate ())";
+                else
+                    hier = hier_part;
                 break;
 
             case Type.SOCKET:
