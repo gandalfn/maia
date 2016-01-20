@@ -555,6 +555,14 @@ public class Maia.Model : Core.Object, Manifest.Element
         return false;
     }
 
+    protected virtual bool
+    insert_valuesv (uint inRow, out uint outRow, int[] inColumns, GLib.Value[] inValue)
+    {
+        outRow = 0;
+
+        return false;
+    }
+
     internal override bool
     can_append_child (Core.Object inObject)
     {
@@ -677,6 +685,42 @@ public class Maia.Model : Core.Object, Manifest.Element
         }
 
         return append_valuesv (out outRow, columns, values);
+    }
+
+    [CCode (sentinel = "NULL")]
+    public bool
+    insert_values (uint inRow, out uint outRow, ...)
+    {
+        va_list list = va_list ();
+
+        int[] columns = {};
+        GLib.Value[] values = {};
+
+        while (true)
+        {
+            // Get column name
+            unowned string? columnName = list.arg ();
+            if (columnName == null)
+            {
+                break;
+            }
+            // Get column
+            unowned Column? column = find(GLib.Quark.from_string (columnName), false) as Column;
+            if (column != null)
+            {
+                // Get value
+                GLib.Value val = GLib.Value (column.m_Type);
+                string? error = null;
+                GLib.ValueCollect.get (ref val, list, 0, ref error);
+                if (error == null)
+                {
+                    values += val;
+                    columns += column.column;
+                }
+            }
+        }
+
+        return insert_valuesv (inRow, out outRow, columns, values);
     }
 
     [CCode (sentinel = "NULL")]

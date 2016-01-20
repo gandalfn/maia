@@ -407,6 +407,27 @@ internal class Maia.Gtk.Model : Maia.Model
         return false;
     }
 
+    internal override bool
+    insert_valuesv (uint inRow, out uint outRow, int[] inColumns, GLib.Value[] inValues)
+    {
+        outRow = 0;
+
+        if (m_TreeModel is global::Gtk.ListStore)
+        {
+            global::Gtk.TreeIter iter;
+            ((global::Gtk.ListStore)m_TreeModel).insert_with_valuesv (out iter, (int)inRow, inColumns, inValues);
+            return convert_tree_iter_to_row (iter, out outRow);
+        }
+        else if (m_TreeModel is global::Gtk.TreeStore)
+        {
+            global::Gtk.TreeIter iter;
+            ((global::Gtk.TreeStore)m_TreeModel).insert_with_valuesv (out iter, null, (int)inRow, inColumns, inValues);
+            return convert_tree_iter_to_row (iter, out outRow);
+        }
+
+        return false;
+    }
+
     internal override void
     set_valuesv (uint inRow, int[] inColumns, GLib.Value[] inValues)
     {

@@ -18238,6 +18238,20 @@
   )
 )
 
+(define-method insert_valuesv
+  (of-object "MaiaModel")
+  (c-name "maia_model_insert_valuesv")
+  (return-type "gboolean")
+  (parameters
+    '("guint" "inRow")
+    '("guint*" "outRow")
+    '("gint*" "inColumns")
+    '("int" "inColumns_length1")
+    '("GValue*" "inValue")
+    '("int" "inValue_length1")
+  )
+)
+
 (define-method append_row
   (of-object "MaiaModel")
   (c-name "maia_model_append_row")
@@ -18267,6 +18281,17 @@
   (c-name "maia_model_append_values")
   (return-type "gboolean")
   (parameters
+    '("guint*" "outRow")
+  )
+  (varargs #t)
+)
+
+(define-method insert_values
+  (of-object "MaiaModel")
+  (c-name "maia_model_insert_values")
+  (return-type "gboolean")
+  (parameters
+    '("guint" "inRow")
     '("guint*" "outRow")
   )
   (varargs #t)
