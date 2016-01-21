@@ -542,6 +542,17 @@ namespace Maia
                 update ();
             }
 
+            void set_values (const Glib::ustring& inValue)
+            {
+                if (m_CurrentColumn != -1)
+                {
+                    set_value (inValue);
+                    m_CurrentColumn = -1;
+                }
+
+                update ();
+            }
+
             template<typename... Args>
             void set_values (const Glib::ustring& inColumnName, Args... inArgs)
             {
