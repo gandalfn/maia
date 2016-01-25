@@ -279,13 +279,23 @@ public abstract class Maia.Core.EventArgs : GLib.Object
         }
     }
 
+    public void
+    resize (string inName, uint inSize)
+    {
+        unowned Protocol.Message msg = get_message (inName);
+        if (msg != null && msg.is_array (inName))
+        {
+            msg.resize (inName, inSize);
+        }
+    }
+
     public int
     add_value (string inName, GLib.Value inVal)
     {
         int ret = -1;
         unowned Protocol.Message msg = get_message (inName);
 
-        if (msg != null)
+        if (msg != null && msg.is_array (inName))
         {
             ret = msg.add_value (inName, inVal);
         }

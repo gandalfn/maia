@@ -66,15 +66,4 @@ internal class Maia.Protocol.Int32Field : Field
     {
         m_Values[inIndex] = inVariant.get_int32 ();
     }
-
-    internal override string
-    to_string ()
-    {
-        string ret = "";
-
-        if (repeated) ret += "a";
-        ret += "i";
-
-        return ret;
-    }
 }

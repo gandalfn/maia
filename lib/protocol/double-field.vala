@@ -66,15 +66,4 @@ internal class Maia.Protocol.DoubleField : Field
     {
         m_Values[inIndex] = inVariant.get_double ();
     }
-
-    internal override string
-    to_string ()
-    {
-        string ret = "";
-
-        if (repeated) ret += "a";
-        ret += "t";
-
-        return ret;
-    }
 }

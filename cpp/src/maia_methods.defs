@@ -7681,6 +7681,16 @@
   )
 )
 
+(define-method resize
+  (of-object "MaiaCoreEventArgs")
+  (c-name "maia_core_event_args_resize")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inName")
+    '("guint" "inSize")
+  )
+)
+
 (define-method add_value
   (of-object "MaiaCoreEventArgs")
   (c-name "maia_core_event_args_add_value")
@@ -8552,6 +8562,16 @@
   (return-type "none")
   (parameters
     '("const-gchar*" "inName")
+  )
+)
+
+(define-method resize
+  (of-object "MaiaProtocolMessage")
+  (c-name "maia_protocol_message_resize")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inName")
+    '("guint" "inSize")
   )
 )
 

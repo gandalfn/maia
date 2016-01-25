@@ -66,15 +66,4 @@ internal class Maia.Protocol.BoolField : Field
     {
         m_Values[inIndex] = inVariant.get_boolean ();
     }
-
-    internal override string
-    to_string ()
-    {
-        string ret = "";
-
-        if (repeated) ret += "a";
-        ret += "b";
-
-        return ret;
-    }
 }

@@ -66,15 +66,4 @@ internal class Maia.Protocol.UInt16Field : Field
     {
         m_Values[inIndex] = (uint)inVariant.get_uint16 ();
     }
-
-    internal override string
-    to_string ()
-    {
-        string ret = "";
-
-        if (repeated) ret += "a";
-        ret += "q";
-
-        return ret;
-    }
 }

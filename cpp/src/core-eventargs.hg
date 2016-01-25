@@ -216,13 +216,37 @@ namespace Maia
                     return maia_core_event_args_get_field_length (const_cast<MaiaCoreEventArgs*> (m_pEventArgs), m_Field.c_str ());
                 }
 
-                EventArgsField operator[] (int inIndex) const
+                EventArgsField at (int inIndex) const
                 {
-                    if (inIndex >= maia_core_event_args_get_field_length (m_pEventArgs, m_Field.c_str ()))
+                    if (!maia_core_event_args_is_array (m_pEventArgs, m_Field.c_str ()))
+                    {
+                        GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                          "Cannot get field %s index %i not an array", m_Field.c_str (), inIndex);
+                        throw Glib::Error(error);
+                    }
+
+                    if (inIndex > maia_core_event_args_get_field_length (m_pEventArgs, m_Field.c_str ()))
                     {
                         GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
                                                           "%i out of bound of field %s", inIndex, m_Field.c_str ());
                         throw Glib::Error(error);
+                    }
+
+                    return EventArgsField (m_pEventArgs, m_Field, inIndex);
+                }
+
+                EventArgsField operator[] (int inIndex) const
+                {
+                    if (!maia_core_event_args_is_array (m_pEventArgs, m_Field.c_str ()))
+                    {
+                        GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                          "Cannot get field %s index %i not an array", m_Field.c_str (), inIndex);
+                        throw Glib::Error(error);
+                    }
+
+                    if (inIndex >= maia_core_event_args_get_field_length (m_pEventArgs, m_Field.c_str ()))
+                    {
+                        maia_core_event_args_resize (m_pEventArgs, m_Field.c_str (), inIndex + 1);
                     }
 
                     return EventArgsField (m_pEventArgs, m_Field, inIndex);
@@ -297,7 +321,7 @@ namespace Maia
 
             _IGNORE(maia_core_event_args_get_protocol_buffer_message, maia_core_event_args_get, maia_core_event_args_set,
                     maia_core_event_args_contains, maia_core_event_args_is_array, maia_core_event_args_add_value,
-                    maia_core_event_args_get_field_length, maia_core_event_args_clear)
+                    maia_core_event_args_get_field_length, maia_core_event_args_clear, maia_core_event_args_resize)
 
             protected:
                 explicit EventArgs (Glib::WrapNewFunction inWrapFunc);

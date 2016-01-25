@@ -159,6 +159,45 @@ internal abstract class Maia.Protocol.Field : Core.Object, BufferChild
             return GLib.VariantType.ANY;
         }
 
+        internal string
+        to_string ()
+        {
+            switch (this)
+            {
+                case BOOLEAN:
+                    return "bool";
+
+                case BYTE:
+                    return "byte";
+
+                case UINT16:
+                    return "uint16";
+
+                case INT16:
+                    return "in16";
+
+                case UINT32:
+                    return "uint32";
+
+                case INT32:
+                    return "int32";
+
+                case UINT64:
+                    return "uint64";
+
+                case INT64:
+                    return "int64";
+
+                case DOUBLE:
+                    return "double";
+
+                case STRING:
+                    return "string";
+            }
+
+            return "";
+        }
+
         internal static Type
         from_string (string inVal)
         {
@@ -231,7 +270,7 @@ internal abstract class Maia.Protocol.Field : Core.Object, BufferChild
                     childs += get_variant (cpt);
                 }
 
-                ret = new GLib.Variant.array (field_type.to_variant_type (), childs);
+                ret = new GLib.Variant.array (null, childs);
             }
             else
             {
@@ -344,6 +383,22 @@ internal abstract class Maia.Protocol.Field : Core.Object, BufferChild
         }
     }
 
+    public void
+    resize (uint inSize)
+    {
+        if (inSize > m_Values.length)
+        {
+            for (int cpt = m_Values.length; cpt < inSize; ++cpt)
+            {
+                m_Values += create_value ();
+            }
+        }
+        else if (inSize < m_Values.length)
+        {
+            m_Values.resize ((int)inSize);
+        }
+    }
+
     public virtual int add_value (GLib.Value inValue)
         requires ((!repeated && m_Values.length == 0) || repeated)
     {
@@ -356,4 +411,15 @@ internal abstract class Maia.Protocol.Field : Core.Object, BufferChild
 
     public abstract GLib.Variant get_variant (int inIndex);
     public abstract void set_variant (int inIndex, GLib.Variant inVariant);
+
+    internal override string
+    to_string ()
+    {
+        string ret = "";
+
+        if (repeated) ret += "repeated ";
+        ret += field_type.to_string () + " " + name + ";";
+
+        return ret;
+    }
 }

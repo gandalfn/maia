@@ -64,6 +64,8 @@ namespace Maia
                 template <typename T>
                 inline MessageField& operator=(const T& inVal);
 
+                inline MessageField& operator=(const char* inVal);
+
                 template <typename T>
                 inline operator T() const;
 
@@ -81,13 +83,37 @@ namespace Maia
                     return maia_protocol_message_get_field_length (const_cast<MaiaProtocolMessage*> (m_pMessage), m_Field.c_str ());
                 }
 
-                MessageField operator[] (int inIndex) const
+                MessageField at (int inIndex) const
                 {
+                    if (!maia_protocol_message_is_array (m_pMessage, m_Field.c_str ()))
+                    {
+                        GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                          "Cannot get field %s index %i not an array", m_Field.c_str (), inIndex);
+                        throw Glib::Error(error);
+                    }
+
                     if (inIndex >= maia_protocol_message_get_field_length (m_pMessage, m_Field.c_str ()))
                     {
                         GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
                                                           "%i out of bound of field %s", inIndex, m_Field.c_str ());
                         throw Glib::Error(error);
+                    }
+
+                    return MessageField (m_pMessage, m_Field, inIndex);
+                }
+
+                MessageField operator[] (int inIndex) const
+                {
+                    if (!maia_protocol_message_is_array (m_pMessage, m_Field.c_str ()))
+                    {
+                        GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                          "Cannot get field %s index %i not an array", m_Field.c_str (), inIndex);
+                        throw Glib::Error(error);
+                    }
+
+                    if (inIndex >= maia_protocol_message_get_field_length (m_pMessage, m_Field.c_str ()))
+                    {
+                        maia_protocol_message_resize (m_pMessage, m_Field.c_str (), inIndex + 1);
                     }
 
                     return MessageField (m_pMessage, m_Field, inIndex);
@@ -159,7 +185,7 @@ namespace Maia
             _IMPLEMENTS_INTERFACE(BufferChild)
 
             _IGNORE(maia_protocol_message_add_value, maia_protocol_message_clear, maia_protocol_message_get, maia_protocol_message_set,
-                    maia_protocol_message_get_field_length, maia_protocol_message_is_array, maia_protocol_message_new)
+                    maia_protocol_message_get_field_length, maia_protocol_message_resize, maia_protocol_message_is_array, maia_protocol_message_new)
 
             protected:
                 _CTOR_DEFAULT()
@@ -187,6 +213,17 @@ namespace Maia
             value.init(Glib::Value<T>::value_type());
 
             value.set(inVal);
+            maia_protocol_message_set (m_pMessage, m_Field.c_str (), m_Index, value.gobj ());
+
+            return *this;
+        }
+
+        inline MessageField& MessageField::operator= (const char* inVal)
+        {
+            Glib::Value<Glib::ustring> value;
+            value.init(Glib::Value<Glib::ustring>::value_type());
+
+            value.set(Glib::ustring (inVal));
             maia_protocol_message_set (m_pMessage, m_Field.c_str (), m_Index, value.gobj ());
 
             return *this;

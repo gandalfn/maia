@@ -177,7 +177,7 @@ namespace Maia
             bool end () const;
             inline operator bool () const
             {
-                return end ();
+                return !end ();
             }
 
 

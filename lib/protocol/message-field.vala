@@ -78,8 +78,8 @@ internal class Maia.Protocol.MessageField : Field
     {
         string ret = "";
 
-        if (repeated) ret += "a";
-        ret += message.to_string ();
+        if (repeated) ret += "repeated ";
+        ret += message.name + " " + name + ";";
 
         return ret;
     }

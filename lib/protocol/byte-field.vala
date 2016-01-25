@@ -66,15 +66,4 @@ internal class Maia.Protocol.ByteField : Field
     {
         m_Values[inIndex] = (uint8)inVariant.get_byte ();
     }
-
-    internal override string
-    to_string ()
-    {
-        string ret = "";
-
-        if (repeated) ret += "a";
-        ret += "y";
-
-        return ret;
-    }
 }

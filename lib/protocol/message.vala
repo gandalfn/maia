@@ -163,14 +163,14 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
     internal override string
     to_string ()
     {
-        string ret = "(";
+        string ret = @"message $name {\n";
 
         foreach (unowned Core.Object? child in this)
         {
-            ret += @"$child";
+            ret += @"\t$child\n";
         }
 
-        ret += ")";
+        ret += "}\n";
 
         return ret;
     }
@@ -239,6 +239,17 @@ public class Maia.Protocol.Message : Core.Object, BufferChild
         GLib.return_if_fail (field != null);
 
         field.clear ();
+    }
+
+    public void
+    resize (string inName, uint inSize)
+        requires (inSize > 0)
+    {
+        unowned Field? field = find (GLib.Quark.from_string (inName), false) as Field;
+        GLib.return_if_fail (field != null);
+        GLib.return_if_fail (field.repeated);
+
+        field.resize (inSize);
     }
 
     public int
