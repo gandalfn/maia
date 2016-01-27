@@ -6655,19 +6655,10 @@
   (construct-only #f)
 )
 
-(define-property frame-rate
+(define-property looper
   (of-object "MaiaRendererView")
-  (prop-type "GParamUInt")
-  (docs "frame-rate")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
-(define-property nb-frames
-  (of-object "MaiaRendererView")
-  (prop-type "GParamUInt")
-  (docs "nb-frames")
+  (prop-type "GParamObject")
+  (docs "looper")
   (readable #t)
   (writable #t)
   (construct-only #f)

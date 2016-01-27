@@ -66,6 +66,12 @@ internal class Maia.Xcb.GLRenderer : Maia.Graphic.GLRenderer
     private Graphic.Surface?         m_Surface = null;
 
     // accessors
+    public uint32 xid {
+        get {
+            return m_Pixmap != null ? m_Pixmap.xid : 0;
+        }
+    }
+
     public override Graphic.Surface? surface {
         get {
             return m_Surface;
@@ -128,6 +134,8 @@ internal class Maia.Xcb.GLRenderer : Maia.Graphic.GLRenderer
             m_Pixmap = new Pixmap (screen_num, (uint8)vinfo.depth, (int)GLib.Math.ceil (m_Size.width), (int)GLib.Math.ceil (m_Size.height));
 
             m_Surface = new Graphic.Surface.from_device (m_Pixmap, (int)GLib.Math.ceil (m_Size.width), (int)GLib.Math.ceil (m_Size.height));
+
+            Maia.Xcb.application.sync ();
 
             m_GLXPixmap = GLX.create_pixmap (m_Display, m_FBConfig, m_Pixmap.xid, null);
         }

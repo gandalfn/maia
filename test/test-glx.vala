@@ -22,6 +22,7 @@ const string manifest = "Window.test {" +
                         "    border: 5;" +
                         "    size: 1000,800;" +
                         "    RendererView.renderer {" +
+                        "       looper: timeline (25, 360);" +
                         "       background_pattern: #CECECE;" +
                         "       DrawingArea.clinical_draw {" +
                         "           selected-border-color: #FFFFFF;" +
@@ -175,8 +176,6 @@ static void main (string[] args)
         window.destroy_event.subscribe (() => { application.quit (); });
 
         var renderer_view = window.find (GLib.Quark.from_string ("renderer")) as Maia.RendererView;
-        renderer_view.nb_frames = 360;
-        renderer_view.frame_rate = 25;
 
         uint32[] attribs = {
                              Maia.Graphic.GLRenderer.Attribute.DOUBLEBUFFER, 0,

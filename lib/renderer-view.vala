@@ -20,11 +20,85 @@
 public class Maia.RendererView : Group, ItemPackable, ItemMovable
 {
     // types
+    public delegate void RenderFunc(int inFrameNum);
+
+    public abstract class Looper : GLib.Object
+    {
+        public abstract void prepare (RenderFunc inFunc);
+        public abstract void finish ();
+    }
+
+    public class TimelineLooper : Looper
+    {
+        private Core.Timeline      m_Timeline;
+        private unowned RenderFunc m_Func;
+
+        public TimelineLooper (int inFps, int inNbFrames)
+        {
+            m_Timeline = new Core.Timeline (inNbFrames, inFps);
+            m_Timeline.loop = true;
+            m_Timeline.new_frame.connect (on_new_frame);
+        }
+
+        internal TimelineLooper.from_function (Manifest.Function inFunction) throws Manifest.Error
+        {
+            int cpt = 0;
+            int framerate = 0;
+            int nb_frames = 0;
+            foreach (unowned Core.Object child in inFunction)
+            {
+                unowned Manifest.Attribute arg = (Manifest.Attribute)child;
+                switch (cpt)
+                {
+                    case 0:
+                        framerate = (int)arg.transform (typeof (int));
+                        break;
+                    case 1:
+                        nb_frames = (int)arg.transform (typeof (int));
+                    break;
+                    default:
+                        throw new Manifest.Error.TOO_MANY_FUNCTION_ARGUMENT ("Too many arguments in %s function", inFunction.to_string ());
+                }
+                cpt++;
+            }
+            if (cpt >= 2)
+            {
+                this (framerate, nb_frames);
+            }
+            else
+            {
+                throw new Manifest.Error.MISSING_FUNCTION_ARGUMENT ("Missing argument in %s function", inFunction.to_string ());
+            }
+        }
+
+        private void
+        on_new_frame (int inFrameNum)
+        {
+            if (m_Func != null)
+            {
+                m_Func (inFrameNum);
+            }
+        }
+
+        internal override void
+        prepare (RenderFunc inFunc)
+        {
+            m_Func = inFunc;
+            m_Timeline.start ();
+        }
+
+        internal override void
+        finish ()
+        {
+            m_Timeline.stop ();
+            m_Func = null;
+        }
+    }
+
     private class Task : Core.Task
     {
         // properties
         private unowned RendererView   m_View;
-        private Core.Timeline          m_Timeline;
         private Core.Task.EventWatch[] m_Damaged = {};
 
         // methods
@@ -54,7 +128,7 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
         finish ()
         {
             m_Damaged = {};
-            m_Timeline.stop ();
+            m_View.m_Looper.finish ();
 
             base.finish ();
 
@@ -67,21 +141,16 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
         internal override void
         main (GLib.MainContext? inContext)
         {
-            m_Timeline = new Core.Timeline (m_View.nb_frames, m_View.frame_rate);
-            m_Timeline.loop = true;
-            m_Timeline.new_frame.connect (on_new_frame);
-
             m_View.m_Lock.lock ();
             m_View.renderer.start ();
             m_View.m_Lock.unlock ();
+
+            m_View.m_Looper.prepare (on_new_frame);
 
             // Signal has task is running
             m_View.m_Mutex.lock ();
             m_View.m_Cond.signal ();
             m_View.m_Mutex.unlock ();
-
-            // start timeline
-            m_Timeline.start ();
         }
 
         internal void
@@ -99,8 +168,7 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
     }
 
     // properties
-    private uint             m_FrameRate = 60;
-    private uint             m_NbFrames = 60;
+    private Looper           m_Looper = null;
     private bool             m_RendererDamaged = false;
     private Graphic.Renderer m_Renderer;
     private Graphic.Renderer m_Front;
@@ -145,39 +213,18 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
     internal Graphic.Pattern backcell_pattern { get; set; default = null; }
 
     /**
-     * Refresh frame rate
+     * Renderer looper
      */
-    public uint frame_rate {
+    public Looper looper {
         get {
-            return m_FrameRate;
+            return m_Looper;
         }
         set {
-            if (m_FrameRate != value)
+            if (m_Looper != value)
             {
-                m_FrameRate = value;
+                m_Looper = value;
 
-                if (m_Task != null)
-                {
-                    cancel_task ();
-                    create_task ();
-                }
-            }
-        }
-    }
-
-    /**
-     * Nb frames
-     */
-    public uint nb_frames {
-        get {
-            return m_NbFrames;
-        }
-        set {
-            if (m_NbFrames != value)
-            {
-                m_NbFrames = value;
-
-                if (m_Task != null)
+                if (m_Task != null && m_Looper != null)
                 {
                     cancel_task ();
                     create_task ();
@@ -202,6 +249,18 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
                 create_task ();
             }
         }
+    }
+
+    // static methods
+    static construct
+    {
+        Manifest.Function.register_transform_func (typeof (Looper), "timeline",  attribute_to_timeline);
+    }
+
+    static void
+    attribute_to_timeline (Manifest.Function inFunction, ref GLib.Value outDest) throws Manifest.Error
+    {
+        outDest = new TimelineLooper.from_function (inFunction);
     }
 
     // methods
@@ -247,7 +306,7 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
     private void
     create_task ()
     {
-        if (m_Task == null)
+        if (m_Task == null && m_Looper != null)
         {
             m_Task = new Task (this);
             m_Task.add_damage_observer (on_renderer_damaged);
