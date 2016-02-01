@@ -39,6 +39,7 @@ libmaia_la_SOURCES = \
     core/pair.vala \
     core/map.vala \
     core/object.vala \
+    core/serializable.vala \
     core/parser.vala \
     core/source.vala \
     core/watch.vala \
@@ -114,6 +115,7 @@ libmaia_la_SOURCES = \
     graphic/image-svg.vala \
     graphic/image-gif.vala \
     graphic/renderer.vala \
+    graphic/clone-renderer.vala \
     graphic/gl-renderer.vala \
     cassowary/abstract-variable.vala \
     cassowary/box.vala \

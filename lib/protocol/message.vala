@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Protocol.Message : Core.Object, BufferChild
+public class Maia.Protocol.Message : Core.Object, Core.Serializable, BufferChild
 {
     // accessors
     public string name {

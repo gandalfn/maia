@@ -123,6 +123,7 @@ PKG_CHECK_MODULES(MAIA_XCB, [x11-xcb >= $X11_XCB_REQUIRED
                              xcb-randr >= $XCB_REQUIRED
                              xcb-composite >= $XCB_REQUIRED
                              xcb-glx >= $XCB_REQUIRED
+                             xcb-damage >= $XCB_REQUIRED
                              xcb-keysyms >= $XCB_UTIL_KEYSYMS_REQUIRED
                              xcb-cursor >= $XCB_UTIL_CURSOR_REQUIRED])
 AC_SUBST(MAIA_XCB_CFLAGS)

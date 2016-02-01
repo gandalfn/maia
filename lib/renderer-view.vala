@@ -20,81 +20,6 @@
 public class Maia.RendererView : Group, ItemPackable, ItemMovable
 {
     // types
-    public delegate void RenderFunc(int inFrameNum);
-
-    public abstract class Looper : GLib.Object
-    {
-        public abstract void prepare (RenderFunc inFunc);
-        public abstract void finish ();
-    }
-
-    public class TimelineLooper : Looper
-    {
-        private Core.Timeline      m_Timeline;
-        private unowned RenderFunc m_Func;
-
-        public TimelineLooper (int inFps, int inNbFrames)
-        {
-            m_Timeline = new Core.Timeline (inNbFrames, inFps);
-            m_Timeline.loop = true;
-            m_Timeline.new_frame.connect (on_new_frame);
-        }
-
-        internal TimelineLooper.from_function (Manifest.Function inFunction) throws Manifest.Error
-        {
-            int cpt = 0;
-            int framerate = 0;
-            int nb_frames = 0;
-            foreach (unowned Core.Object child in inFunction)
-            {
-                unowned Manifest.Attribute arg = (Manifest.Attribute)child;
-                switch (cpt)
-                {
-                    case 0:
-                        framerate = (int)arg.transform (typeof (int));
-                        break;
-                    case 1:
-                        nb_frames = (int)arg.transform (typeof (int));
-                    break;
-                    default:
-                        throw new Manifest.Error.TOO_MANY_FUNCTION_ARGUMENT ("Too many arguments in %s function", inFunction.to_string ());
-                }
-                cpt++;
-            }
-            if (cpt >= 2)
-            {
-                this (framerate, nb_frames);
-            }
-            else
-            {
-                throw new Manifest.Error.MISSING_FUNCTION_ARGUMENT ("Missing argument in %s function", inFunction.to_string ());
-            }
-        }
-
-        private void
-        on_new_frame (int inFrameNum)
-        {
-            if (m_Func != null)
-            {
-                m_Func (inFrameNum);
-            }
-        }
-
-        internal override void
-        prepare (RenderFunc inFunc)
-        {
-            m_Func = inFunc;
-            m_Timeline.start ();
-        }
-
-        internal override void
-        finish ()
-        {
-            m_Timeline.stop ();
-            m_Func = null;
-        }
-    }
-
     private class Task : Core.Task
     {
         // properties
@@ -168,16 +93,16 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
     }
 
     // properties
-    private Looper           m_Looper = null;
-    private bool             m_RendererDamaged = false;
-    private Graphic.Renderer m_Renderer;
-    private Graphic.Renderer m_Front;
-    private Graphic.Region   m_FrontDamaged;
-    private Core.TaskPool    m_Pool;
-    private Task             m_Task;
-    private GLib.Mutex       m_Mutex = GLib.Mutex ();
-    private GLib.Cond        m_Cond  = GLib.Cond ();
-    private GLib.Mutex       m_Lock = GLib.Mutex ();
+    private Graphic.Renderer.Looper m_Looper = null;
+    private bool                    m_RendererDamaged = false;
+    private Graphic.Renderer        m_Renderer;
+    private Graphic.Renderer        m_Front;
+    private Graphic.Region          m_FrontDamaged;
+    private Core.TaskPool           m_Pool;
+    private Task                    m_Task;
+    private GLib.Mutex              m_Mutex = GLib.Mutex ();
+    private GLib.Cond               m_Cond  = GLib.Cond ();
+    private GLib.Mutex              m_Lock = GLib.Mutex ();
 
     // accessors
     internal override string tag {
@@ -215,7 +140,7 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
     /**
      * Renderer looper
      */
-    public Looper looper {
+    public Graphic.Renderer.Looper looper {
         get {
             return m_Looper;
         }
@@ -254,13 +179,13 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
     // static methods
     static construct
     {
-        Manifest.Function.register_transform_func (typeof (Looper), "timeline",  attribute_to_timeline);
+        Manifest.Function.register_transform_func (typeof (Graphic.Renderer.Looper), "timeline",  attribute_to_timeline);
     }
 
     static void
     attribute_to_timeline (Manifest.Function inFunction, ref GLib.Value outDest) throws Manifest.Error
     {
-        outDest = new TimelineLooper.from_function (inFunction);
+        outDest = new Graphic.Renderer.TimelineLooper.from_function (inFunction);
     }
 
     // methods

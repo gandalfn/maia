@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal abstract class Maia.Protocol.Field : Core.Object, BufferChild
+internal abstract class Maia.Protocol.Field : Core.Object, Core.Serializable, BufferChild
 {
     // types
     public enum Type

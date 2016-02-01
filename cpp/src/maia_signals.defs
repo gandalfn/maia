@@ -1264,15 +1264,6 @@
 
 ;; From MaiaProtocolBufferChild
 
-(define-property serialize
-  (of-object "MaiaProtocolBufferChild")
-  (prop-type "GParamVariant")
-  (docs "serialize")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
 ;; From MaiaProtocolMessage
 
 (define-property name

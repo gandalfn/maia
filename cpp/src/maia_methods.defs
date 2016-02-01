@@ -299,6 +299,11 @@
   (gtype-id "MAIA_TYPE_CORE_ASYNC_QUEUE")
 )
 
+(define-object MaiaCoreSerializable
+  (c-name "MaiaCoreSerializable")
+  (gtype-id "MAIA_TYPE_CORE_SERIALIZABLE")
+)
+
 (define-object MaiaCoreSet
   (parent "MaiaCoreCollection")
   (c-name "MaiaCoreSet")
@@ -555,16 +560,40 @@
   (gtype-id "MAIA_TYPE_GRAPHIC_GLRENDERER")
 )
 
+(define-object MaiaGraphicCloneRenderer
+  (parent "MaiaGraphicRenderer")
+  (c-name "MaiaGraphicCloneRenderer")
+  (gtype-id "MAIA_TYPE_GRAPHIC_CLONE_RENDERER")
+)
+
 (define-object MaiaGraphicRendererInitializeNotification
   (parent "MaiaCoreNotification")
   (c-name "MaiaGraphicRendererInitializeNotification")
   (gtype-id "MAIA_TYPE_GRAPHIC_RENDERER_INITIALIZE_NOTIFICATION")
 )
 
+(define-object MaiaGraphicRendererLooper
+  (parent "MaiaCoreObject")
+  (c-name "MaiaGraphicRendererLooper")
+  (gtype-id "MAIA_TYPE_GRAPHIC_RENDERER_LOOPER")
+)
+
+(define-object MaiaGraphicCloneRendererLooper
+  (parent "MaiaGraphicRendererLooper")
+  (c-name "MaiaGraphicCloneRendererLooper")
+  (gtype-id "MAIA_TYPE_GRAPHIC_CLONE_RENDERER_LOOPER")
+)
+
 (define-object MaiaGraphicRendererNewFrameNotification
   (parent "MaiaCoreNotification")
   (c-name "MaiaGraphicRendererNewFrameNotification")
   (gtype-id "MAIA_TYPE_GRAPHIC_RENDERER_NEW_FRAME_NOTIFICATION")
+)
+
+(define-object MaiaGraphicRendererTimelineLooper
+  (parent "MaiaGraphicRendererLooper")
+  (c-name "MaiaGraphicRendererTimelineLooper")
+  (gtype-id "MAIA_TYPE_GRAPHIC_RENDERER_TIMELINE_LOOPER")
 )
 
 (define-object MaiaGraphicSurface
@@ -842,18 +871,6 @@
   (parent "MaiaGroup")
   (c-name "MaiaRendererView")
   (gtype-id "MAIA_TYPE_RENDERER_VIEW")
-)
-
-(define-object MaiaRendererViewLooper
-  (parent "GObject")
-  (c-name "MaiaRendererViewLooper")
-  (gtype-id "MAIA_TYPE_RENDERER_VIEW_LOOPER")
-)
-
-(define-object MaiaRendererViewTimelineLooper
-  (parent "MaiaRendererViewLooper")
-  (c-name "MaiaRendererViewTimelineLooper")
-  (gtype-id "MAIA_TYPE_RENDERER_VIEW_TIMELINE_LOOPER")
 )
 
 (define-object MaiaReport
@@ -5339,6 +5356,26 @@
   (return-type "gboolean")
 )
 
+(define-function maia_core_serializable_get_type
+  (c-name "maia_core_serializable_get_type")
+  (return-type "GType")
+)
+
+(define-method get_serialize
+  (of-object "MaiaCoreSerializable")
+  (c-name "maia_core_serializable_get_serialize")
+  (return-type "GVariant*")
+)
+
+(define-method set_serialize
+  (of-object "MaiaCoreSerializable")
+  (c-name "maia_core_serializable_set_serialize")
+  (return-type "none")
+  (parameters
+    '("GVariant*" "value")
+  )
+)
+
 (define-function maia_core_parse_error_quark
   (c-name "maia_core_parse_error_quark")
   (return-type "GQuark")
@@ -8485,21 +8522,6 @@
   (of-object "MaiaProtocolBufferChild")
   (c-name "maia_protocol_buffer_child_get_buffer")
   (return-type "MaiaProtocolBuffer*")
-)
-
-(define-method get_serialize
-  (of-object "MaiaProtocolBufferChild")
-  (c-name "maia_protocol_buffer_child_get_serialize")
-  (return-type "GVariant*")
-)
-
-(define-method set_serialize
-  (of-object "MaiaProtocolBufferChild")
-  (c-name "maia_protocol_buffer_child_set_serialize")
-  (return-type "none")
-  (parameters
-    '("GVariant*" "value")
-  )
 )
 
 (define-function maia_protocol_message_new
@@ -12366,6 +12388,123 @@
   (parameters
     '("guint" "value")
   )
+)
+
+(define-function maia_graphic_renderer_looper_get_type
+  (c-name "maia_graphic_renderer_looper_get_type")
+  (return-type "GType")
+)
+
+(define-method prepare
+  (of-object "MaiaGraphicRendererLooper")
+  (c-name "maia_graphic_renderer_looper_prepare")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRendererRenderFunc" "inFunc")
+    '("void*" "inFunc_target")
+  )
+)
+
+(define-method finish
+  (of-object "MaiaGraphicRendererLooper")
+  (c-name "maia_graphic_renderer_looper_finish")
+  (return-type "none")
+)
+
+(define-function maia_graphic_renderer_looper_construct
+  (c-name "maia_graphic_renderer_looper_construct")
+  (return-type "MaiaGraphicRendererLooper*")
+  (parameters
+    '("GType" "object_type")
+  )
+)
+
+(define-function maia_graphic_renderer_timeline_looper_get_type
+  (c-name "maia_graphic_renderer_timeline_looper_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_graphic_renderer_timeline_looper_new
+  (c-name "maia_graphic_renderer_timeline_looper_new")
+  (is-constructor-of "MaiaGraphicRendererTimelineLooper")
+  (return-type "MaiaGraphicRendererTimelineLooper*")
+  (parameters
+    '("gint" "inFps")
+    '("gint" "inNbFrames")
+  )
+)
+
+(define-function maia_graphic_renderer_timeline_looper_construct
+  (c-name "maia_graphic_renderer_timeline_looper_construct")
+  (return-type "MaiaGraphicRendererTimelineLooper*")
+  (parameters
+    '("GType" "object_type")
+    '("gint" "inFps")
+    '("gint" "inNbFrames")
+  )
+)
+
+(define-function maia_graphic_clone_renderer_get_type
+  (c-name "maia_graphic_clone_renderer_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_graphic_clone_renderer_new
+  (c-name "maia_graphic_clone_renderer_new")
+  (is-constructor-of "MaiaGraphicCloneRenderer")
+  (return-type "MaiaGraphicCloneRenderer*")
+  (parameters
+    '("MaiaGraphicSize*" "inSize")
+    '("MaiaGraphicDevice*" "inDevice")
+  )
+)
+
+(define-function maia_graphic_clone_renderer_construct
+  (c-name "maia_graphic_clone_renderer_construct")
+  (return-type "MaiaGraphicCloneRenderer*")
+  (parameters
+    '("GType" "object_type")
+    '("MaiaGraphicSize*" "inSize")
+    '("MaiaGraphicDevice*" "inDevice")
+  )
+)
+
+(define-method init
+  (of-object "MaiaGraphicCloneRenderer")
+  (c-name "maia_graphic_clone_renderer_init")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicDevice*" "inDevice")
+  )
+)
+
+(define-function maia_graphic_clone_renderer_looper_get_type
+  (c-name "maia_graphic_clone_renderer_looper_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_graphic_clone_renderer_looper_new
+  (c-name "maia_graphic_clone_renderer_looper_new")
+  (is-constructor-of "MaiaGraphicCloneRendererLooper")
+  (return-type "MaiaGraphicCloneRendererLooper*")
+  (parameters
+    '("MaiaGraphicDevice*" "inDevice")
+  )
+)
+
+(define-function maia_graphic_clone_renderer_looper_construct
+  (c-name "maia_graphic_clone_renderer_looper_construct")
+  (return-type "MaiaGraphicCloneRendererLooper*")
+  (parameters
+    '("GType" "object_type")
+    '("MaiaGraphicDevice*" "inDevice")
+  )
+)
+
+(define-method get_device
+  (of-object "MaiaGraphicCloneRendererLooper")
+  (c-name "maia_graphic_clone_renderer_looper_get_device")
+  (return-type "MaiaGraphicDevice*")
 )
 
 (define-function maia_graphic_gl_renderer_get_type
@@ -20603,15 +20742,10 @@
   )
 )
 
-(define-function maia_renderer_view_looper_get_type
-  (c-name "maia_renderer_view_looper_get_type")
-  (return-type "GType")
-)
-
 (define-method get_looper
   (of-object "MaiaRendererView")
   (c-name "maia_renderer_view_get_looper")
-  (return-type "MaiaRendererViewLooper*")
+  (return-type "MaiaGraphicRendererLooper*")
 )
 
 (define-method set_looper
@@ -20619,7 +20753,7 @@
   (c-name "maia_renderer_view_set_looper")
   (return-type "none")
   (parameters
-    '("MaiaRendererViewLooper*" "value")
+    '("MaiaGraphicRendererLooper*" "value")
   )
 )
 
@@ -20635,55 +20769,6 @@
   (return-type "none")
   (parameters
     '("MaiaGraphicRenderer*" "value")
-  )
-)
-
-(define-method prepare
-  (of-object "MaiaRendererViewLooper")
-  (c-name "maia_renderer_view_looper_prepare")
-  (return-type "none")
-  (parameters
-    '("MaiaRendererViewRenderFunc" "inFunc")
-    '("void*" "inFunc_target")
-  )
-)
-
-(define-method finish
-  (of-object "MaiaRendererViewLooper")
-  (c-name "maia_renderer_view_looper_finish")
-  (return-type "none")
-)
-
-(define-function maia_renderer_view_looper_construct
-  (c-name "maia_renderer_view_looper_construct")
-  (return-type "MaiaRendererViewLooper*")
-  (parameters
-    '("GType" "object_type")
-  )
-)
-
-(define-function maia_renderer_view_timeline_looper_get_type
-  (c-name "maia_renderer_view_timeline_looper_get_type")
-  (return-type "GType")
-)
-
-(define-function maia_renderer_view_timeline_looper_new
-  (c-name "maia_renderer_view_timeline_looper_new")
-  (is-constructor-of "MaiaRendererViewTimelineLooper")
-  (return-type "MaiaRendererViewTimelineLooper*")
-  (parameters
-    '("gint" "inFps")
-    '("gint" "inNbFrames")
-  )
-)
-
-(define-function maia_renderer_view_timeline_looper_construct
-  (c-name "maia_renderer_view_timeline_looper_construct")
-  (return-type "MaiaRendererViewTimelineLooper*")
-  (parameters
-    '("GType" "object_type")
-    '("gint" "inFps")
-    '("gint" "inNbFrames")
   )
 )
 

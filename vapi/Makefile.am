@@ -14,6 +14,8 @@ noinst_DATA = \
     xcb.vapi \
     xcb-composite.deps \
     xcb-composite.vapi \
+    xcb-damage.deps \
+    xcb-damage.vapi \
     xcb-glx.deps \
     xcb-glx.vapi \
     xcb-randr.deps \

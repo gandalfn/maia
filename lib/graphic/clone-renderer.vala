@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * device.vala
+ * clone-renderer.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,8 +17,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public interface Maia.Graphic.Device : GLib.Object, Core.Serializable
+public class Maia.Graphic.CloneRenderer : Renderer
 {
+    // types
+    public class Looper : Renderer.Looper
+    {
+        public Graphic.Device device { get; construct; }
+
+        public Looper (Graphic.Device inDevice)
+        {
+            GLib.Object (device: inDevice);
+        }
+
+        internal override void
+        prepare (Renderer.RenderFunc inFunc)
+        {
+        }
+
+        internal override void
+        finish ()
+        {
+        }
+    }
+
     // methods
-    public abstract string backend { get; }
+    public CloneRenderer (Graphic.Size inSize, Graphic.Device inDevice)
+    {
+        base (inSize);
+
+        init (inDevice);
+    }
+
+    protected virtual void
+    init (Graphic.Device inDevice)
+    {
+    }
 }

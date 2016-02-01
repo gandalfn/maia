@@ -1,5 +1,6 @@
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * buffer-child.vala
+ * serializable.vala
  * Copyright (C) Nicolas Bruguier 2010-2015 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -16,21 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public interface Maia.Protocol.BufferChild : Core.Object
+public interface Maia.Core.Serializable : GLib.Object
 {
     // accessors
-    public Buffer? buffer {
-        get {
-            unowned Buffer? ret = null;
-            for (unowned Core.Object? item = parent; ret == null && item != null; item = item.parent)
-            {
-                ret = item as Buffer;
-            }
-
-            return ret;
-        }
-    }
-
-    // methods
-    public abstract BufferChild copy ();
+    public abstract GLib.Variant serialize { owned get; set; }
 }

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.Core.EventArgs : GLib.Object
+public abstract class Maia.Core.EventArgs : GLib.Object, Core.Serializable
 {
     // types
     internal class ProtocolBuffer : Core.Object

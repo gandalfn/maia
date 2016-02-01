@@ -137,7 +137,6 @@ internal class Maia.Cairo.Surface : Graphic.Surface
             {
                 case "xcb/window":
                 case "xcb/pixmap":
-                case "glx/pixmap":
                 case "xcb/drawable":
                     uint32 xid;
                     int screen_num;
@@ -187,7 +186,6 @@ internal class Maia.Cairo.Surface : Graphic.Surface
 
                 case "xcb/drawable":
                 case "xcb/pixmap":
-                case "glx/pixmap":
                     create_surface_from_device ();
                     break;
             }

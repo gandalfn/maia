@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal abstract class Maia.Xcb.Drawable : GLib.Object, Graphic.Device
+internal abstract class Maia.Xcb.Drawable : GLib.Object, Graphic.Device, Core.Serializable
 {
     // properties
     private Graphic.Surface m_Surface = null;
@@ -41,7 +41,7 @@ internal abstract class Maia.Xcb.Drawable : GLib.Object, Graphic.Device
         }
     }
 
-    public uint32 xid { get; construct; default = 0; }
+    public uint32 xid { get; construct set; default = 0; }
 
     public int screen_num { get; set; default = Maia.Xcb.application.default_screen; }
 
@@ -62,6 +62,25 @@ internal abstract class Maia.Xcb.Drawable : GLib.Object, Graphic.Device
                 m_Surface = new Graphic.Surface.from_device (this, (int)size.width, (int)size.height);
             }
             return m_Surface;
+        }
+    }
+
+    public GLib.Variant serialize {
+        owned get {
+            return new GLib.Variant ("(iuyii)", screen_num, xid, depth, (int)size.width, (int)size.height);
+        }
+        set {
+            int screen_num;
+            uint32 xid;
+            uint8 depth;
+            int width, height;
+
+            value.get ("(iuydd)", out screen_num, out xid, out depth, out width, out height);
+
+            this.xid = xid;
+            this.screen_num = screen_num;
+            this.depth = depth;
+            this.size = Graphic.Size ((double)width, (double)height);
         }
     }
 

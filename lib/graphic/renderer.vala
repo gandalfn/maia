@@ -40,6 +40,81 @@ public class Maia.Graphic.Renderer : Core.Object
         }
     }
 
+    public delegate void RenderFunc(int inFrameNum);
+
+    public abstract class Looper : Core.Object
+    {
+        public abstract void prepare (RenderFunc inFunc);
+        public abstract void finish ();
+    }
+
+    public class TimelineLooper : Looper
+    {
+        private Core.Timeline      m_Timeline;
+        private unowned RenderFunc m_Func;
+
+        public TimelineLooper (int inFps, int inNbFrames)
+        {
+            m_Timeline = new Core.Timeline (inNbFrames, inFps);
+            m_Timeline.loop = true;
+            m_Timeline.new_frame.connect (on_new_frame);
+        }
+
+        internal TimelineLooper.from_function (Manifest.Function inFunction) throws Manifest.Error
+        {
+            int cpt = 0;
+            int framerate = 0;
+            int nb_frames = 0;
+            foreach (unowned Core.Object child in inFunction)
+            {
+                unowned Manifest.Attribute arg = (Manifest.Attribute)child;
+                switch (cpt)
+                {
+                    case 0:
+                        framerate = (int)arg.transform (typeof (int));
+                        break;
+                    case 1:
+                        nb_frames = (int)arg.transform (typeof (int));
+                    break;
+                    default:
+                        throw new Manifest.Error.TOO_MANY_FUNCTION_ARGUMENT ("Too many arguments in %s function", inFunction.to_string ());
+                }
+                cpt++;
+            }
+            if (cpt >= 2)
+            {
+                this (framerate, nb_frames);
+            }
+            else
+            {
+                throw new Manifest.Error.MISSING_FUNCTION_ARGUMENT ("Missing argument in %s function", inFunction.to_string ());
+            }
+        }
+
+        private void
+        on_new_frame (int inFrameNum)
+        {
+            if (m_Func != null)
+            {
+                m_Func (inFrameNum);
+            }
+        }
+
+        internal override void
+        prepare (RenderFunc inFunc)
+        {
+            m_Func = inFunc;
+            m_Timeline.start ();
+        }
+
+        internal override void
+        finish ()
+        {
+            m_Timeline.stop ();
+            m_Func = null;
+        }
+    }
+
     // accessors
     public virtual Surface? surface {
         get {
