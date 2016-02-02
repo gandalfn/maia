@@ -11797,6 +11797,23 @@
   (return-type "GType")
 )
 
+(define-function maia_graphic_device_register
+  (c-name "maia_graphic_device_register")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inBackend")
+    '("GType" "inType")
+  )
+)
+
+(define-function maia_graphic_device_get_backend_type
+  (c-name "maia_graphic_device_get_backend_type")
+  (return-type "GType")
+  (parameters
+    '("const-gchar*" "inBackend")
+  )
+)
+
 (define-method get_backend
   (of-object "MaiaGraphicDevice")
   (c-name "maia_graphic_device_get_backend")

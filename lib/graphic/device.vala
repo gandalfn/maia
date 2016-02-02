@@ -19,6 +19,28 @@
 
 public interface Maia.Graphic.Device : GLib.Object, Core.Serializable
 {
+    // static properties
+    private static Core.Map<string, GLib.Type> s_Factory = null;
+
+    // static methods
+    public static void
+    register (string inBackend, GLib.Type inType)
+        requires (inType.is_a (typeof (Device)))
+    {
+        if (s_Factory == null)
+        {
+            s_Factory = new Core.Map<string, GLib.Type> ();
+        }
+
+        s_Factory[inBackend] = inType;
+    }
+
+    public static GLib.Type
+    get_backend_type (string inBackend)
+    {
+        return s_Factory[inBackend];
+    }
+
     // methods
     public abstract string backend { get; }
 }
