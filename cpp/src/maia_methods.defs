@@ -11814,6 +11814,20 @@
   )
 )
 
+(define-function maia_graphic_device_from_variant
+  (c-name "maia_graphic_device_from_variant")
+  (return-type "MaiaGraphicDevice*")
+  (parameters
+    '("GVariant*" "inVariant")
+  )
+)
+
+(define-method to_variant
+  (of-object "MaiaGraphicDevice")
+  (c-name "maia_graphic_device_to_variant")
+  (return-type "GVariant*")
+)
+
 (define-method get_backend
   (of-object "MaiaGraphicDevice")
   (c-name "maia_graphic_device_get_backend")

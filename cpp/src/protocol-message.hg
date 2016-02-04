@@ -21,6 +21,7 @@
 
 #include <maiamm/core-object.h>
 #include <maiamm/protocol-bufferchild.h>
+#include <maiamm/core-serializable.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/core-object_p.h)
@@ -179,10 +180,11 @@ namespace Maia
                 MessageFields& operator=(const MessageFields&) { return *this; }
         };
 
-        class Message : public Core::Object, public BufferChild
+        class Message : public Core::Object, public BufferChild, public Core::Serializable
         {
             _CLASS_GOBJECT(Message, MaiaProtocolMessage, MAIA_PROTOCOL_MESSAGE, Core::Object, MaiaCoreObject)
             _IMPLEMENTS_INTERFACE(BufferChild)
+            _IMPLEMENTS_INTERFACE(Core::Serializable)
 
             _IGNORE(maia_protocol_message_add_value, maia_protocol_message_clear, maia_protocol_message_get, maia_protocol_message_set,
                     maia_protocol_message_get_field_length, maia_protocol_message_resize, maia_protocol_message_is_array, maia_protocol_message_new)
@@ -203,6 +205,8 @@ namespace Maia
                 }
 
                 _WRAP_PROPERTY("name", Glib::ustring)
+
+            private:
                 _WRAP_PROPERTY("serialize", Glib::VariantBase)
         };
 

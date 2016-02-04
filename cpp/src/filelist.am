@@ -22,6 +22,7 @@ files_hg = \
     core-object.hg \
     core-pair.hg \
     core-parser.hg \
+    core-serializable.hg \
     core-set.hg \
     core-timeline.hg \
     graphic-color.hg \

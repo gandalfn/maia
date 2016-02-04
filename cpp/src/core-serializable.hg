@@ -1,6 +1,6 @@
 /* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * graphic-device.hg
+ * core-serializable.hg
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -19,29 +19,33 @@
 
 #include <maia.h>
 
+#include <maiamm/core-object.h>
+
 _DEFS(maiamm,maia)
 _PINCLUDE(glibmm/private/object_p.h)
 
 namespace Maia
 {
-    namespace Graphic
+    namespace Core
     {
-        _GMMPROC_EXTRA_NAMESPACE(Graphic)
+        _GMMPROC_EXTRA_NAMESPACE(Core)
 
-        class Device : public Glib::Interface
+        class Serializable : public Glib::Interface
         {
-            _CLASS_INTERFACE(Device, MaiaGraphicDevice, MAIA_GRAPHIC_DEVICE, MaiaGraphicDeviceIface)
+            _CLASS_INTERFACE(Serializable, MaiaCoreSerializable, MAIA_CORE_SERIALIZABLE, MaiaCoreSerializableIface)
 
             protected:
-                _WRAP_VFUNC(Glib::ustring get_backend (), get_backend)
+#m4 _CONVERSION(`Glib::VariantBase',`GVariant*',`g_variant_ref (($3).gobj())')
+#m4 _CONVERSION(`GVariant*',`const Glib::VariantBase&',`Glib::wrap($3, true)')
+                _WRAP_VFUNC(Glib::VariantBase serialize (), get_serialize)
+                _WRAP_VFUNC(void unserialize (const Glib::VariantBase& inData), set_serialize, custom_vfunc_callback)
 
             public:
-                static Glib::RefPtr<Device> create (const Glib::VariantBase& inVariant);
+                _WRAP_METHOD(Glib::VariantBase serialize (), maia_core_serializable_get_serialize)
+                _WRAP_METHOD(void unserialize (const Glib::VariantBase& inData), maia_core_serializable_set_serialize)
 
-                _WRAP_METHOD(Glib::ustring get_backend () const, maia_graphic_device_get_backend)
-                _WRAP_METHOD(Glib::VariantBase to_variant () const, maia_graphic_device_to_variant);
-
-                _WRAP_PROPERTY ("backend", Glib::ustring)
+            private:
+                _WRAP_PROPERTY("serialize", Glib::VariantBase)
         };
     }
 }

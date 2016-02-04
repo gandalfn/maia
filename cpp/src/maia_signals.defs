@@ -67,6 +67,17 @@
   (construct-only #f)
 )
 
+;; From MaiaCoreSerializable
+
+(define-property serialize
+  (of-object "MaiaCoreSerializable")
+  (prop-type "GParamVariant")
+  (docs "serialize")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; MaiaCoreIterator is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; MaiaCoreCollection is neither a GObject nor a GInterface. Not checked for signals and properties.

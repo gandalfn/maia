@@ -35,17 +35,11 @@ namespace Maia
             _CLASS_INTERFACE(BufferChild, MaiaProtocolBufferChild, MAIA_PROTOCOL_BUFFER_CHILD, MaiaProtocolBufferChildIface)
 
             protected:
-                _WRAP_VFUNC(Glib::VariantBase serialize (), get_serialize)
-                _WRAP_VFUNC(void unserialize (const Glib::VariantBase& inVariant), set_serialize)
                 _WRAP_VFUNC(Glib::RefPtr<BufferChild> copy (), copy)
 
             public:
                 _WRAP_METHOD(Glib::RefPtr<Buffer> get_buffer () const, maia_protocol_buffer_child_get_buffer, refreturn)
-                _WRAP_METHOD(Glib::VariantBase serialize (), maia_protocol_buffer_child_get_serialize)
-                _WRAP_METHOD(void unserialize (const Glib::VariantBase& inVariant), maia_protocol_buffer_child_set_serialize)
-                _WRAP_METHOD(Glib::RefPtr<BufferChild> copy (), maia_protocol_buffer_child_copy, refretur)
-
-                _WRAP_PROPERTY("serialize", Glib::VariantBase)
+                _WRAP_METHOD(Glib::RefPtr<BufferChild> copy (), maia_protocol_buffer_child_copy, refreturn)
         };
     }
 }

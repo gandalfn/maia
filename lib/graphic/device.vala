@@ -41,6 +41,32 @@ public interface Maia.Graphic.Device : GLib.Object, Core.Serializable
         return s_Factory[inBackend];
     }
 
+    public static Device?
+    from_variant (GLib.Variant inVariant)
+    {
+        unowned string backend;
+        GLib.Variant data;
+
+        inVariant.get ("(&sv)", out backend, out data);
+
+        if (backend != null)
+        {
+            GLib.Type type = get_backend_type (backend);
+            if (type != 0)
+            {
+                return GLib.Object.new (type, serialize: inVariant) as Device;
+            }
+        }
+
+        return null;
+    }
+
     // methods
+    public GLib.Variant
+    to_variant ()
+    {
+        return new GLib.Variant ("(sv)", backend, serialize);
+    }
+
     public abstract string backend { get; }
 }

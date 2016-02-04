@@ -1,0 +1,66 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * core-serializable.ccg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+
+namespace Maia
+{
+    namespace Core
+    {
+        void Serializable_Class::set_serialize_vfunc_callback(MaiaCoreSerializable* self, GVariant* inData)
+        {
+            Glib::ObjectBase* obj_base = static_cast<Glib::ObjectBase*>(Glib::ObjectBase::_get_current_wrapper((GObject*)self));
+
+            if (!obj_base)
+            {
+                obj_base = Glib::wrap_auto ((GObject*)self, false);
+            }
+
+            if (obj_base && obj_base->is_derived_())
+            {
+                CppObjectType *const obj = dynamic_cast<CppObjectType* const>(obj_base);
+                if (obj)
+                {
+                    try
+                    {
+                        obj->unserialize_vfunc(Glib::wrap(inData, true));
+                    }
+                    catch(...)
+                    {
+                    }
+
+                    return;
+                }
+            }
+
+            BaseClassType* const base = static_cast<BaseClassType*> (g_type_interface_peek_parent (g_type_interface_peek (G_OBJECT_GET_CLASS (self), CppObjectType::get_type())));
+
+            if(base && base->set_serialize)
+            {
+                try
+                {
+                    (*base->set_serialize)(self, inData);
+                }
+                catch (...)
+                {
+                }
+            }
+        }
+    }
+}

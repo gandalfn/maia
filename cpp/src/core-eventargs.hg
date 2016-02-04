@@ -20,6 +20,7 @@
 
 #include <maia.h>
 #include <maiamm/core-object.h>
+#include <maiamm/core-serializable.h>
 #include <maiamm/protocol-message.h>
 
 _DEFS(maiamm,maia)
@@ -315,9 +316,10 @@ namespace Maia
                 EventArgsFields& operator=(const EventArgsFields&) { return *this; }
         };
 
-        class EventArgs : public Glib::Object
+        class EventArgs : public Glib::Object, public Core::Serializable
         {
             _CLASS_GOBJECT(EventArgs, MaiaCoreEventArgs, MAIA_CORE_EVENT_ARGS, Glib::Object, GObject)
+            _IMPLEMENTS_INTERFACE(Serializable)
 
             _IGNORE(maia_core_event_args_get_protocol_buffer_message, maia_core_event_args_get, maia_core_event_args_set,
                     maia_core_event_args_contains, maia_core_event_args_is_array, maia_core_event_args_add_value,
@@ -354,13 +356,12 @@ namespace Maia
                 static void init ();
 
                 _WRAP_METHOD(int get_sequence (), maia_core_event_args_get_sequence)
-                _WRAP_METHOD(Glib::VariantBase get_serialize (), maia_core_event_args_get_serialize)
-                _WRAP_METHOD(void set_serialize (const Glib::VariantBase& inData), maia_core_event_args_set_serialize)
+                _WRAP_METHOD(Glib::VariantBase serialize (), maia_core_event_args_get_serialize)
+                _WRAP_METHOD(void unserialize (const Glib::VariantBase& inData), maia_core_event_args_set_serialize)
                 _WRAP_METHOD(void accumulate (const Glib::RefPtr<EventArgs>& inOther), maia_core_event_args_accumulate)
                 _WRAP_METHOD(Glib::RefPtr<EventArgs> copy () const, maia_core_event_args_copy, refreturn)
 
                 _WRAP_PROPERTY("sequence", int)
-                _WRAP_PROPERTY("serialize", Glib::VariantBase)
 
                 Fields fields () const
                 {
@@ -490,6 +491,8 @@ namespace Maia
 #endif
 
             private:
+                _WRAP_PROPERTY("serialize", Glib::VariantBase)
+
                 class SerializeClosure
                 {
                     public:

@@ -10,6 +10,7 @@ int main (int argc, char** argv)
 
     std::cout << get_defs (MAIA_CORE_TYPE_ANY);
     std::cout << get_defs (MAIA_CORE_TYPE_OBJECT);
+    std::cout << get_defs (MAIA_CORE_TYPE_SERIALIZABLE);
     std::cout << get_defs (MAIA_CORE_TYPE_ITERATOR);
     std::cout << get_defs (MAIA_CORE_TYPE_COLLECTION);
     std::cout << get_defs (MAIA_CORE_TYPE_ARRAY);
