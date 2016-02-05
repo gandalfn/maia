@@ -112,6 +112,8 @@ internal class Maia.Xcb.GLRenderer : Maia.Graphic.GLRenderer
         }
 
         GLX.destroy_context (m_Display, m_GLXContext);
+
+        m_Display.sync ();
     }
 
     private void
@@ -123,6 +125,7 @@ internal class Maia.Xcb.GLRenderer : Maia.Graphic.GLRenderer
         {
             GLX.destroy_pixmap (m_Display, m_GLXPixmap);
             m_GLXPixmap = global::Xcb.NONE;
+            m_Display.sync ();
         }
 
         if (m_Size.width != 0 && m_Size.height != 0)

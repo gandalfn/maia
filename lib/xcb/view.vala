@@ -117,8 +117,8 @@ internal class Maia.Xcb.View : Drawable
     private unowned View?        m_TransientFor = null;
     private global::Xcb.Colormap m_Colormap = global::Xcb.NONE;
     private bool                 m_OverrideRedirect = false;
-    private bool                 m_Foreign = false;
-    private bool                 m_Realized = false;
+    private bool                 m_Foreign = true;
+    private bool                 m_Realized = true;
     private Pixmap               m_BackBuffer = null;
     private Graphic.Surface      m_FrontBuffer = null;
     private Core.Array<Sibling>  m_Siblings = null;
@@ -449,13 +449,13 @@ internal class Maia.Xcb.View : Drawable
     {
         global::Xcb.Window win = global::Xcb.Window (Maia.Xcb.application.connection);
         GLib.Object (xid: win, size: Graphic.Size (inWidth, inHeight));
+        m_Foreign = false;
+        m_Realized = false;
     }
 
     public View.foreign (uint32 inForeign)
     {
         GLib.Object (xid: inForeign);
-        m_Foreign = true;
-        m_Realized = true;
     }
 
     ~View ()

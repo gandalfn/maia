@@ -61,6 +61,57 @@ public interface Maia.Graphic.Device : GLib.Object, Core.Serializable
         return null;
     }
 
+    [CCode (sentinel = "NULL")]
+    public static Device?
+    @new (string inBackend, ...)
+    {
+        va_list args = va_list ();
+
+        return newv (inBackend, args);
+    }
+
+    public static Device?
+    newv (string inBackend, va_list inList)
+    {
+        Device? device = null;
+        GLib.Type type = get_backend_type (inBackend);
+
+        if (type != 0)
+        {
+            GLib.Parameter[] params = {};
+
+            while (true)
+            {
+                // Get property name
+                unowned string? propertyName = inList.arg ();
+                if (propertyName == null)
+                {
+                    break;
+                }
+
+                // Search property
+                unowned GLib.ParamSpec? paramspec = device.get_class ().find_property (propertyName);
+                if (paramspec != null)
+                {
+                    GLib.Parameter param = GLib.Parameter ();
+                    param.name = propertyName;
+                    param.value = GLib.Value (paramspec.value_type);
+
+                    string? error = null;
+                    GLib.ValueCollect.get (ref param.value, inList, 0, ref error);
+                    if (error == null)
+                    {
+                        params += param;
+                    }
+                }
+            }
+
+            device = GLib.Object.newv (type, params) as Device;
+        }
+
+        return device;
+    }
+
     // methods
     public GLib.Variant
     to_variant ()

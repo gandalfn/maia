@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-internal abstract class Maia.Xcb.Drawable : GLib.Object, Graphic.Device, Core.Serializable
+internal abstract class Maia.Xcb.Drawable : GLib.Object, Core.Serializable, Graphic.Device
 {
     // properties
     private Graphic.Surface m_Surface = null;

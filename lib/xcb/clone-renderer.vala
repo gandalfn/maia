@@ -40,6 +40,8 @@ public class Maia.Xcb.CloneRenderer : Maia.Graphic.CloneRenderer
             {
                 m_Func (0);
             }
+
+            m_Damage.subtract (application.connection, global::Xcb.NONE, global::Xcb.NONE);
         }
 
         internal override void
@@ -50,7 +52,7 @@ public class Maia.Xcb.CloneRenderer : Maia.Graphic.CloneRenderer
                 unowned Drawable? drawable = (Drawable)device;
 
                 m_Damage = global::Xcb.Damage.Damage (application.connection);
-                m_Damage.create (application.connection, drawable.xid, global::Xcb.Damage.ReportLevel.BOUNDING_BOX);
+                m_Damage.create (application.connection, drawable.xid, global::Xcb.Damage.ReportLevel.NON_EMPTY);
 
                 m_DamageEvent = new Core.Event ("damage", ((int)m_Damage).to_pointer ());
                 m_DamageEvent.subscribe (on_damage_event);

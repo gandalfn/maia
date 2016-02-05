@@ -11822,6 +11822,25 @@
   )
 )
 
+(define-function maia_graphic_device_new
+  (c-name "maia_graphic_device_new")
+  (is-constructor-of "MaiaGraphicDevice")
+  (return-type "MaiaGraphicDevice*")
+  (parameters
+    '("const-gchar*" "inBackend")
+  )
+  (varargs #t)
+)
+
+(define-function maia_graphic_device_newv
+  (c-name "maia_graphic_device_newv")
+  (return-type "MaiaGraphicDevice*")
+  (parameters
+    '("const-gchar*" "inBackend")
+    '("va_list" "inList")
+  )
+)
+
 (define-method to_variant
   (of-object "MaiaGraphicDevice")
   (c-name "maia_graphic_device_to_variant")
