@@ -20,16 +20,32 @@
 
 #include <maia.h>
 #include <maiamm/core-object.h>
+#include <maiamm/core-notification.h>
 #include <maiamm/graphic-matrix.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/core-object_p.h)
+_PINCLUDE(maiamm/private/core-notification_p.h)
 
 namespace Maia
 {
     namespace Graphic
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
+
+        class Transform;
+
+        class TransformChangedNotification : public Core::Notification
+        {
+            _CLASS_GOBJECT(TransformChangedNotification, MaiaGraphicTransformChangedNotification, MAIA_GRAPHIC_TRANSFORM_CHANGED_NOTIFICATION, Core::Notification, MaiaCoreNotification)
+
+            protected:
+                _CTOR_DEFAULT()
+
+            public:
+                _WRAP_METHOD(Glib::RefPtr<Transform> get_transform () const, maia_graphic_transform_changed_notification_get_transform, refreturn)
+                _WRAP_METHOD(void set_transform (const Glib::RefPtr<Transform>& inTransform) const, maia_graphic_transform_changed_notification_set_transform)
+        };
 
         class Transform : public Core::Object
         {
@@ -89,6 +105,8 @@ namespace Maia
                 _WRAP_METHOD(Glib::RefPtr<Transform> copy () const, maia_graphic_transform_copy)
                 _WRAP_METHOD(Glib::RefPtr<Transform> link () const, maia_graphic_transform_link)
 
+                _WRAP_METHOD(Glib::RefPtr<TransformChangedNotification> changed (), maia_graphic_transform_get_changed)
+
                 _WRAP_METHOD(bool have_rotate () const, maia_graphic_transform_get_have_rotate)
 
                 _WRAP_METHOD(bool is_rotate () const, maia_graphic_transform_get_is_rotate)
@@ -107,10 +125,9 @@ namespace Maia
 
                 _IGNORE(maia_graphic_transform_changed)
 
-                _WRAP_SIGNAL(void changed(), "changed", no_default_handler)
-
                 _WRAP_PROPERTY("is-rotate", bool)
                 _WRAP_PROPERTY("have-rotate", bool)
+                _WRAP_PROPERTY("changed", Glib::RefPtr<TransformChangedNotification>)
         };
     }
 }

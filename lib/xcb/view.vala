@@ -430,11 +430,6 @@ internal class Maia.Xcb.View : Drawable
 
     public bool managed { get; set; default = true; }
 
-    static construct
-    {
-        Graphic.Device.register ("xcb/window", typeof (View));
-    }
-
     // methods
     construct
     {

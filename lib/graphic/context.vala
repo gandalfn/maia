@@ -55,6 +55,8 @@ public errordomain Maia.Graphic.Error
     DEVICE_ERROR,
     INVALID_MESH_CONSTRUCTION,
     DEVICE_FINISHED,
+    INVALID_BACKEND,
+    INVALID_PROPERTY,
     UNKNOWN
 }
 

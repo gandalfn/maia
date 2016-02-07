@@ -1273,6 +1273,8 @@
     '("device-error" "MAIA_GRAPHIC_ERROR_DEVICE_ERROR")
     '("invalid-mesh-construction" "MAIA_GRAPHIC_ERROR_INVALID_MESH_CONSTRUCTION")
     '("device-finished" "MAIA_GRAPHIC_ERROR_DEVICE_FINISHED")
+    '("invalid-backend" "MAIA_GRAPHIC_ERROR_INVALID_BACKEND")
+    '("invalid-property" "MAIA_GRAPHIC_ERROR_INVALID_PROPERTY")
     '("unknown" "MAIA_GRAPHIC_ERROR_UNKNOWN")
   )
 )
@@ -11806,6 +11808,14 @@
   )
 )
 
+(define-function maia_graphic_device_unregister
+  (c-name "maia_graphic_device_unregister")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inBackend")
+  )
+)
+
 (define-function maia_graphic_device_get_backend_type
   (c-name "maia_graphic_device_get_backend_type")
   (return-type "GType")
@@ -11832,12 +11842,22 @@
   (varargs #t)
 )
 
+(define-function maia_graphic_device_newva
+  (c-name "maia_graphic_device_newva")
+  (return-type "MaiaGraphicDevice*")
+  (parameters
+    '("const-gchar*" "inBackend")
+    '("va_list" "inList")
+  )
+)
+
 (define-function maia_graphic_device_newv
   (c-name "maia_graphic_device_newv")
   (return-type "MaiaGraphicDevice*")
   (parameters
     '("const-gchar*" "inBackend")
-    '("va_list" "inList")
+    '("GParameter*" "inParameters")
+    '("int" "inParameters_length1")
   )
 )
 

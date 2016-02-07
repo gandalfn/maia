@@ -34,6 +34,12 @@ namespace Xcb.Damage
 	[CCode (cname = "xcb_damage_id")]
 	public Xcb.Extension extension;
 
+	[CCode (cname = "XCB_DAMAGE_MAJOR_VERSION")]
+	public const uint32 MAJOR_VERSION;
+
+	[CCode (cname = "XCB_DAMAGE_MINOR_VERSION")]
+	public const uint32 MINOR_VERSION;
+
 	[CCode (cname = "xcb_drawable_t", has_type_id = false)]
 	public struct Drawable : Xcb.Drawable {
 		[CCode (cname = "xcb_damage_add", instance_pos = 1.1)]

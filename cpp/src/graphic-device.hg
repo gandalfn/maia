@@ -36,12 +36,233 @@ namespace Maia
                 _WRAP_VFUNC(Glib::ustring get_backend (), get_backend)
 
             public:
+                const Glib::ustring XCB_WINDOW_BACKEND = "xcb/window";
+                const Glib::ustring XCB_PIXMAP_BACKEND = "xcb/pixmap";
+
                 static Glib::RefPtr<Device> create (const Glib::VariantBase& inVariant);
 
+                static Glib::RefPtr<Device> create (const Glib::ustring& inBackend)
+                {
+                    Device* pDevice = new Device (maia_graphic_device_new (inBackend.c_str (), NULL));
+                    return Glib::RefPtr<Device> (pDevice);
+                }
+
+                template<typename... Args>
+                static Glib::RefPtr<Device> create (const Glib::ustring& inBackend, const Glib::ustring& inProperty, Args... inArgs)
+                {
+                    ParamClosure closure (inBackend);
+                    closure.parse (inProperty, inArgs...);
+                    return closure.create_device ();
+                }
+
+                template<typename... Args>
+                static Glib::RefPtr<Device> create (const Glib::ustring& inBackend, const char* inProperty, Args... inArgs)
+                {
+                    ParamClosure closure (inBackend);
+                    closure.parse (inProperty, inArgs...);
+                    return closure.create_device ();
+                }
+
                 _WRAP_METHOD(Glib::ustring get_backend () const, maia_graphic_device_get_backend)
-                _WRAP_METHOD(Glib::VariantBase to_variant () const, maia_graphic_device_to_variant);
+                _WRAP_METHOD(Glib::VariantBase to_variant () const, maia_graphic_device_to_variant)
 
                 _WRAP_PROPERTY ("backend", Glib::ustring)
+
+            private:
+                class ParamClosure
+                {
+                    public:
+                        ParamClosure (const Glib::ustring& inBackend) :
+                            m_Backend (inBackend),
+                            m_Type (maia_graphic_device_get_backend_type (inBackend.c_str ())),
+                            m_TypeClass (nullptr),
+                            m_pCurrent (nullptr),
+                            m_pParams (g_new0 (GParameter, 0)),
+                            m_Size (0)
+                        {
+                            if (!m_Type)
+                            {
+                                GError* const error = g_error_new(MAIA_GRAPHIC_ERROR, MAIA_GRAPHIC_ERROR_INVALID_BACKEND,
+                                                                  "Invalid backend %s", inBackend.c_str ());
+                                throw Glib::Error(error);
+                            }
+
+                            m_TypeClass = (GTypeClass*)g_type_class_ref (m_Type);
+                        }
+
+                        ~ParamClosure ()
+                        {
+                            if (m_TypeClass)
+                            {
+                                g_type_class_unref (m_TypeClass);
+                            }
+
+                            if (m_pParams)
+                            {
+                                for (int cpt = 0; cpt < m_Size; ++cpt)
+                                {
+                                    if (G_IS_VALUE (&m_pParams[cpt].value)) g_value_unset (&m_pParams[cpt].value);
+                                }
+                                g_free (m_pParams);
+                            }
+                        }
+
+                        Glib::RefPtr<Device> create_device ()
+                        {
+                            Device* pDevice = new Device (maia_graphic_device_newv (m_Backend.c_str (), m_pParams, m_Size));
+                            return Glib::RefPtr<Device> (pDevice);
+                        }
+
+                    private:
+                        void add_parameter ()
+                        {
+                            m_Size++;
+                            m_pParams = g_renew (GParameter, m_pParams, m_Size);
+                            m_pCurrent = &m_pParams[m_Size - 1];
+                            memset (m_pCurrent, 0, sizeof (GParameter));
+                        }
+
+                        template <typename T>
+                        inline void set_current_value (const T& inVal)
+                        {
+                            Glib::Value<T> value;
+                            value.init(Glib::Value<T>::value_type());
+
+                            value.set(inVal);
+
+                            g_value_copy(value.gobj (), &m_pCurrent->value);
+                        }
+
+                        Glib::ustring m_Backend;
+                        GType         m_Type;
+                        GTypeClass*   m_TypeClass;
+                        GParameter*   m_pCurrent;
+                        GParameter*   m_pParams;
+                        int           m_Size;
+
+                    public:
+                        void parse (const Glib::ustring& inVal)
+                        {
+                            if (m_pCurrent)
+                            {
+                                GParamSpec* pSpec = g_object_class_find_property ((GObjectClass*)m_TypeClass, m_pCurrent->name);
+                                if (!pSpec)
+                                {
+                                    GError* const error = g_error_new(MAIA_GRAPHIC_ERROR, MAIA_GRAPHIC_ERROR_INVALID_PROPERTY,
+                                                                      "Invalid property %s", m_pCurrent->name);
+                                    throw Glib::Error(error);
+                                }
+                                g_value_init (&m_pCurrent->value, pSpec->value_type);
+                                set_current_value (inVal);
+                                m_pCurrent = nullptr;
+                            }
+                        }
+
+                        void parse (const char* inVal)
+                        {
+                            if (m_pCurrent)
+                            {
+                                GParamSpec* pSpec = g_object_class_find_property ((GObjectClass*)m_TypeClass, m_pCurrent->name);
+                                if (!pSpec)
+                                {
+                                    GError* const error = g_error_new(MAIA_GRAPHIC_ERROR, MAIA_GRAPHIC_ERROR_INVALID_PROPERTY,
+                                                                      "Invalid property %s", m_pCurrent->name);
+                                    throw Glib::Error(error);
+                                }
+                                g_value_init (&m_pCurrent->value, pSpec->value_type);
+                                set_current_value ((Glib::ustring)inVal);
+                                m_pCurrent = nullptr;
+                            }
+                        }
+
+                        template<typename T>
+                        void parse (const T& inVal)
+                        {
+                            if (m_pCurrent)
+                            {
+                                GParamSpec* pSpec = g_object_class_find_property ((GObjectClass*)m_TypeClass, m_pCurrent->name);
+                                if (!pSpec)
+                                {
+                                    GError* const error = g_error_new(MAIA_GRAPHIC_ERROR, MAIA_GRAPHIC_ERROR_INVALID_PROPERTY,
+                                                                      "Invalid property %s", m_pCurrent->name);
+                                    throw Glib::Error(error);
+                                }
+                                g_value_init (&m_pCurrent->value, pSpec->value_type);
+                                set_current_value (inVal);
+                                m_pCurrent = nullptr;
+                            }
+                        }
+
+                        template<typename... Args>
+                        void parse (const Glib::ustring& inVal, Args... inArgs)
+                        {
+                            if (!m_pCurrent)
+                            {
+                                add_parameter ();
+                                m_pCurrent->name = inVal.c_str ();
+                            }
+                            else
+                            {
+                                GParamSpec* pSpec = g_object_class_find_property ((GObjectClass*)m_TypeClass, m_pCurrent->name);
+                                if (!pSpec)
+                                {
+                                    GError* const error = g_error_new(MAIA_GRAPHIC_ERROR, MAIA_GRAPHIC_ERROR_INVALID_PROPERTY,
+                                                                      "Invalid property %s", m_pCurrent->name);
+                                    throw Glib::Error(error);
+                                }
+                                g_value_init (&m_pCurrent->value, pSpec->value_type);
+                                set_current_value (inVal);
+                                m_pCurrent = nullptr;
+                            }
+
+                            parse (inArgs...);
+                        }
+
+                        template<typename... Args>
+                        void parse (const char* inVal, Args... inArgs)
+                        {
+                            if (!m_pCurrent)
+                            {
+                                add_parameter ();
+                                m_pCurrent->name = inVal;
+                            }
+                            else
+                            {
+                                GParamSpec* pSpec = g_object_class_find_property ((GObjectClass*)m_TypeClass, m_pCurrent->name);
+                                if (!pSpec)
+                                {
+                                    GError* const error = g_error_new(MAIA_GRAPHIC_ERROR, MAIA_GRAPHIC_ERROR_INVALID_PROPERTY,
+                                                                      "Invalid property %s", m_pCurrent->name);
+                                    throw Glib::Error(error);
+                                }
+                                g_value_init (&m_pCurrent->value, pSpec->value_type);
+                                set_current_value ((Glib::ustring)inVal);
+                                m_pCurrent = nullptr;
+                            }
+
+                            parse (inArgs...);
+                        }
+
+                        template<typename T, typename... Args>
+                        void parse (const T& inVal, Args... inArgs)
+                        {
+                            if (m_pCurrent)
+                            {
+                                GParamSpec* pSpec = g_object_class_find_property ((GObjectClass*)m_TypeClass, m_pCurrent->name);
+                                if (!pSpec)
+                                {
+                                    GError* const error = g_error_new(MAIA_GRAPHIC_ERROR, MAIA_GRAPHIC_ERROR_INVALID_PROPERTY,
+                                                                      "Invalid property %s", m_pCurrent->name);
+                                    throw Glib::Error(error);
+                                }
+                                g_value_init (&m_pCurrent->value, pSpec->value_type);
+                                set_current_value (inVal);
+                                m_pCurrent = nullptr;
+                            }
+
+                            parse (inArgs...);
+                        }
+                };
         };
     }
 }

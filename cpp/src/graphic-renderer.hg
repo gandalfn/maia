@@ -61,6 +61,45 @@ namespace Maia
                 _WRAP_PROPERTY("num-frame", guint)
         };
 
+        class RendererLooper: public Core::Object
+        {
+            _CLASS_GOBJECT(RendererLooper, MaiaGraphicRendererLooper, MAIA_GRAPHIC_RENDERER_LOOPER, Core::Object, MaiaCoreObject)
+            _IGNORE (maia_graphic_renderer_looper_prepare, maia_graphic_renderer_looper_finish)
+
+            public:
+                typedef sigc::slot<void, unsigned int> RenderSlot;
+
+            protected:
+                _CTOR_DEFAULT()
+
+                virtual void prepare (const RenderSlot& /*inSlot*/) {}
+                virtual void finish () {}
+
+            private:
+                _WRAP_VFUNC(void prepare (MaiaGraphicRendererRenderFunc inFunc, gpointer inpData), prepare, custom_vfunc)
+                _WRAP_VFUNC(void finish (), finish, custom_vfunc)
+
+                void render_slot_callback (unsigned int inNumFrame);
+
+                MaiaGraphicRendererRenderFunc m_Func;
+                gpointer                      m_pData;
+        };
+
+        class RendererTimelineLooper: public RendererLooper
+        {
+            _CLASS_GOBJECT(RendererTimelineLooper, MaiaGraphicRendererTimelineLooper, MAIA_GRAPHIC_RENDERER_TIMELINE_LOOPER, RendererLooper, MaiaGraphicRendererLooper)
+
+            protected:
+                _CTOR_DEFAULT
+
+            public:
+                static Glib::RefPtr<RendererTimelineLooper> create (int inFps, int inNbFrames)
+                {
+                    RendererTimelineLooper* pLooper = new RendererTimelineLooper (maia_graphic_renderer_timeline_looper_new (inFps, inNbFrames));
+                    return Glib::RefPtr<RendererTimelineLooper> (pLooper);
+                }
+        };
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
         class RendererObject : public Core::Object
         {

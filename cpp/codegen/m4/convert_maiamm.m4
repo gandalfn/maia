@@ -146,8 +146,15 @@ _CONVERSION(`MaiaGraphicRectangle*',`Graphic::Rectangle&',`Glib::wrap($3)')
 _CONVERSION(`MaiaGraphicRectangle*',`Rectangle',`Glib::wrap($3)')
 _CONVERSION(`MaiaGraphicRectangle*',`Graphic::Rectangle',`Glib::wrap($3)')
 
+_CONVERSION(`Glib::RefPtr<Transform>',`MaiaGraphicTransform*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Transform>&',`MaiaGraphicTransform*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaGraphicTransform*',`const Glib::RefPtr<Transform>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicTransform*',`Glib::RefPtr<Transform>',`Glib::wrap($3)')
+
+_CONVERSION(`Glib::RefPtr<TransformChangedNotification>',`MaiaGraphicTransformChangedNotification*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<TransformChangedNotification>&',`MaiaGraphicTransformChangedNotification*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaGraphicTransformChangedNotification*',`const Glib::RefPtr<TransformChangedNotification>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicTransformChangedNotification*',`Glib::RefPtr<TransformChangedNotification>',`Glib::wrap($3)')
 
 _CONVERSION(`const Glib::RefPtr<Region>&',`MaiaGraphicRegion*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Graphic::Region>&',`MaiaGraphicRegion*',__CONVERT_REFPTR_TO_P)
@@ -247,6 +254,15 @@ _CONVERSION(`MaiaGraphicRenderer*',`const Glib::RefPtr<Renderer>&',`Glib::wrap($
 _CONVERSION(`MaiaGraphicRenderer*',`const Glib::RefPtr<Graphic::Renderer>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaGraphicRenderer*',`Glib::RefPtr<Renderer>',`Glib::wrap($3)')
 _CONVERSION(`MaiaGraphicRenderer*',`Glib::RefPtr<Graphic::Renderer>',`Glib::wrap($3)')
+
+_CONVERSION(`Glib::RefPtr<RendererLooper>',`MaiaGraphicRendererLooper*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`Glib::RefPtr<Graphic::RendererLooper>',`MaiaGraphicRendererLooper*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<RendererLooper>&',`MaiaGraphicRendererLooper*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Graphic::RendererLooper>&',`MaiaGraphicRendererLooper*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaGraphicRendererLooper*',`const Glib::RefPtr<RendererLooper>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicRendererLooper*',`const Glib::RefPtr<Graphic::RendererLooper>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicRendererLooper*',`Glib::RefPtr<RendererLooper>',`Glib::wrap($3)')
+_CONVERSION(`MaiaGraphicRendererLooper*',`Glib::RefPtr<Graphic::RendererLooper>',`Glib::wrap($3)')
 
 _CONVERSION(`Glib::RefPtr<RendererInitializeNotification>',`MaiaGraphicRendererInitializeNotification*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<RendererInitializeNotification>&',`MaiaGraphicRendererInitializeNotification*',__CONVERT_REFPTR_TO_P)

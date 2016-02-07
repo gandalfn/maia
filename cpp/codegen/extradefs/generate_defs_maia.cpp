@@ -50,10 +50,14 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_SIZE);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_SURFACE);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_TRANSFORM);
+    std::cout << get_defs (MAIA_GRAPHIC_TRANSFORM_TYPE_CHANGED_NOTIFICATION);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_RENDERER);
+    std::cout << get_defs (MAIA_GRAPHIC_RENDERER_TYPE_LOOPER);
+    std::cout << get_defs (MAIA_GRAPHIC_RENDERER_TYPE_TIMELINE_LOOPER);
     std::cout << get_defs (MAIA_GRAPHIC_RENDERER_TYPE_INITIALIZE_NOTIFICATION);
     std::cout << get_defs (MAIA_GRAPHIC_RENDERER_TYPE_NEW_FRAME_NOTIFICATION);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_GL_RENDERER);
+    std::cout << get_defs (MAIA_GRAPHIC_TYPE_CLONE_RENDERER);
 
     std::cout << get_defs (MAIA_MANIFEST_TYPE_ATTRIBUTE);
     std::cout << get_defs (MAIA_MANIFEST_TYPE_ATTRIBUTE_BIND);

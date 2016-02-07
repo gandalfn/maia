@@ -26,12 +26,20 @@ namespace Maia.Xcb
     {
         Log.info (GLib.Log.METHOD, Log.Category.CORE_EXTENSION, "Loading XCB backend");
 
+        Graphic.Device.register ("xcb/window", typeof (View));
+        Graphic.Device.register ("xcb/pixmap", typeof (Pixmap));
+
         Maia.Core.Any.delegate (typeof (Maia.Window), typeof (Maia.Xcb.Window));
         Maia.Core.Any.delegate (typeof (Maia.Viewport), typeof (Maia.Xcb.Viewport));
         Maia.Core.Any.delegate (typeof (Maia.Graphic.Renderer), typeof (Maia.Xcb.Renderer));
         Maia.Core.Any.delegate (typeof (Maia.Graphic.GLRenderer), typeof (Maia.Xcb.GLRenderer));
+        Maia.Core.Any.delegate (typeof (Maia.Graphic.CloneRenderer), typeof (Maia.Xcb.CloneRenderer));
+        Maia.Core.Any.delegate (typeof (Maia.Graphic.CloneRenderer.Looper), typeof (Maia.Xcb.CloneRenderer.Looper));
+
         Maia.Core.Any.delegate (GLib.Type.from_name ("gtkmm__MaiaGraphicRenderer"), typeof (Maia.Xcb.Renderer));
         Maia.Core.Any.delegate (GLib.Type.from_name ("gtkmm__MaiaGraphicGLRenderer"), typeof (Maia.Xcb.GLRenderer));
+        Maia.Core.Any.delegate (GLib.Type.from_name ("gtkmm__MaiaGraphicCloneRenderer"), typeof (Maia.Xcb.CloneRenderer));
+        Maia.Core.Any.delegate (GLib.Type.from_name ("gtkmm__MaiaGraphicCloneRendererLooper"), typeof (Maia.Xcb.CloneRenderer.Looper));
 
         Maia.Xcb.application = new Maia.Xcb.Application ();
     }
@@ -41,12 +49,20 @@ namespace Maia.Xcb
     {
         Log.info (GLib.Log.METHOD, Log.Category.CORE_EXTENSION, "Unloading XCB backend");
 
+        Graphic.Device.unregister ("xcb/window");
+        Graphic.Device.unregister ("xcb/pixmap");
+
         Maia.Core.Any.undelegate (typeof (Maia.Window));
         Maia.Core.Any.undelegate (typeof (Maia.Viewport));
         Maia.Core.Any.undelegate (typeof (Maia.Graphic.Renderer));
         Maia.Core.Any.undelegate (typeof (Maia.Graphic.GLRenderer));
+        Maia.Core.Any.undelegate (typeof (Maia.Graphic.CloneRenderer));
+        Maia.Core.Any.undelegate (typeof (Maia.Graphic.CloneRenderer.Looper));
+
         Maia.Core.Any.undelegate (GLib.Type.from_name ("gtkmm__MaiaGraphicRenderer"));
         Maia.Core.Any.undelegate (GLib.Type.from_name ("gtkmm__MaiaGraphicGLRenderer"));
+        Maia.Core.Any.undelegate (GLib.Type.from_name ("gtkmm__MaiaGraphicCloneRenderer"));
+        Maia.Core.Any.undelegate (GLib.Type.from_name ("gtkmm__MaiaGraphicCloneRendererLooper"));
 
         Maia.Xcb.application = null;
     }

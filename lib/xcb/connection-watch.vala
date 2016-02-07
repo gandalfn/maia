@@ -23,6 +23,8 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
     private unowned global::Xcb.Connection m_Connection;
     private global::Xcb.Util.KeySymbols    m_Symbols;
     private global::Xcb.GenericEvent?      m_LastEvent = null;
+    private bool                           m_DamagePresent = false;
+    private uint8                          m_DamageFirstEvent = 0;
 
     // methods
     public ConnectionWatch (global::Xcb.Connection inConnection)
@@ -30,6 +32,18 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
         base (inConnection.file_descriptor, Core.Watch.Condition.IN, null, GLib.Priority.DEFAULT);
 
         m_Connection = inConnection;
+
+        // Query damage extensionn
+        m_Connection.prefetch_extension_data (ref global::Xcb.Damage.extension);
+        unowned global::Xcb.QueryExtensionReply? extension_reply = m_Connection.get_extension_data (ref global::Xcb.Damage.extension);
+        if (extension_reply.present)
+        {
+            m_DamagePresent = true;
+            m_DamageFirstEvent = extension_reply.first_event;
+
+            ((global::Xcb.Damage.Connection)m_Connection).query_version (global::Xcb.Damage.MAJOR_VERSION, global::Xcb.Damage.MINOR_VERSION);
+        }
+
 
         // Get keyboard mapping
         m_Symbols = new global::Xcb.Util.KeySymbols (m_Connection);
@@ -129,7 +143,7 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
 
         while (m_LastEvent != null || (m_LastEvent = m_Connection.poll_for_event ()) != null)
         {
-            int response_type = m_LastEvent.response_type & 0x7f;
+            uint8 response_type = m_LastEvent.response_type & 0x7f;
             bool send_event = (m_LastEvent.response_type & 0x80) != 0;
 
             switch (response_type)
@@ -267,6 +281,20 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
                     // refresh keybaord mapping
                     m_Symbols.refresh_keyboard_mapping (evt_mapping_notify);
                     break;
+
+                default:
+                    // Damage event
+                    if (m_DamagePresent && response_type == m_DamageFirstEvent + global::Xcb.Damage.EventType.NOTIFY)
+                    {
+                        unowned global::Xcb.Damage.NotifyEvent? evt_damage = (global::Xcb.Damage.NotifyEvent?)m_LastEvent;
+
+                        // send event damage
+                        Core.EventBus.default.publish ("damage", ((int)evt_damage.damage).to_pointer (),
+                                                       new DamageEventArgs (evt_damage.area.x, evt_damage.area.y,
+                                                                            evt_damage.area.width, evt_damage.area.height));
+                    }
+                    break;
+
             }
 
             m_LastEvent = null;

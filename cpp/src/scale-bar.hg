@@ -64,6 +64,9 @@ namespace Maia
             _WRAP_METHOD(bool display_slide_label () const, maia_scale_bar_get_display_slide_label)
             _WRAP_METHOD(void set_display_slide_label (bool inDisplay = true), maia_scale_bar_set_display_slide_label)
 
+            _WRAP_METHOD(bool display_step_middle () const, maia_scale_bar_get_display_step_middle)
+            _WRAP_METHOD(void set_display_step_middle (bool inDisplay = true), maia_scale_bar_set_display_step_middle)
+
             _WRAP_METHOD(double get_label_border () const, maia_scale_bar_get_label_border)
             _WRAP_METHOD(void set_label_border (double inBorder), maia_scale_bar_set_label_border)
 
@@ -80,6 +83,7 @@ namespace Maia
             _WRAP_PROPERTY("font-description", Glib::ustring)
             _WRAP_PROPERTY("placement", ScaleBar::Placement)
             _WRAP_PROPERTY("display-slide-label", bool)
+            _WRAP_PROPERTY("display-step-middle", bool)
             _WRAP_PROPERTY("label-border", double)
             _WRAP_PROPERTY("label-stroke-pattern", Glib::RefPtr<Graphic::Pattern>)
             _WRAP_PROPERTY("display-step-label", bool)

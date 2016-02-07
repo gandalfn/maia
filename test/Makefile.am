@@ -18,6 +18,7 @@ noinst_PROGRAMS = \
     test-xcb \
     test-chart \
     test-glx \
+    test-clone \
     test-bus-client \
     test-bus-server
 
@@ -66,6 +67,14 @@ test_xcb_LDADD = \
     $(MAIA_VALGRIND_LIBS) \
     ${top_builddir}/lib/libmaia.la
 
+test_clone_SOURCES = \
+    test-clone.vala
+
+test_clone_LDADD = \
+    $(MAIA_LIBS) \
+    $(MAIA_VALGRIND_LIBS) \
+    ${top_builddir}/lib/libmaia.la
+
 test_glx_VALAFLAGS = \
     --pkg=gl
 
@@ -105,6 +114,7 @@ test_bus_client_LDADD = \
 VALAFILES = \
     $(filter %.vala,$(test_SOURCES)) \
     $(filter %.vala,$(test_xcb_SOURCES)) \
+    $(filter %.vala,$(test_clone_SOURCES)) \
     $(filter %.vala,$(test_glx_SOURCES)) \
     $(filter %.vala,$(test_bus_server_SOURCES)) \
     $(filter %.vala,$(test_bus_client_SOURCES)) \
@@ -113,6 +123,7 @@ VALAFILES = \
 CLEANFILES += \
     test_vala.stamp \
     test_xcb_vala.stamp \
+    test_clone_vala.stamp \
     test_glx_vala.stamp \
     test_chart_vala.stamp \
     test_bus_server_vala.stamp \

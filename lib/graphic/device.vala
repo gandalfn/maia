@@ -35,6 +35,17 @@ public interface Maia.Graphic.Device : GLib.Object, Core.Serializable
         s_Factory[inBackend] = inType;
     }
 
+    public static void
+    unregister (string inBackend)
+    {
+        if (s_Factory == null)
+        {
+            s_Factory = new Core.Map<string, GLib.Type> ();
+        }
+
+        s_Factory.unset (inBackend);
+    }
+
     public static GLib.Type
     get_backend_type (string inBackend)
     {
@@ -67,11 +78,11 @@ public interface Maia.Graphic.Device : GLib.Object, Core.Serializable
     {
         va_list args = va_list ();
 
-        return newv (inBackend, args);
+        return newva (inBackend, args);
     }
 
     public static Device?
-    newv (string inBackend, va_list inList)
+    newva (string inBackend, va_list inList)
     {
         Device? device = null;
         GLib.Type type = get_backend_type (inBackend);
@@ -90,7 +101,8 @@ public interface Maia.Graphic.Device : GLib.Object, Core.Serializable
                 }
 
                 // Search property
-                unowned GLib.ParamSpec? paramspec = device.get_class ().find_property (propertyName);
+                GLib.ObjectClass tclass = (GLib.ObjectClass)type.class_ref ();
+                unowned GLib.ParamSpec? paramspec = tclass.find_property (propertyName);
                 if (paramspec != null)
                 {
                     GLib.Parameter param = GLib.Parameter ();
@@ -107,6 +119,20 @@ public interface Maia.Graphic.Device : GLib.Object, Core.Serializable
             }
 
             device = GLib.Object.newv (type, params) as Device;
+        }
+
+        return device;
+    }
+
+    public static Device?
+    newv (string inBackend, GLib.Parameter[] inParameters)
+    {
+        Device? device = null;
+        GLib.Type type = get_backend_type (inBackend);
+
+        if (type != 0)
+        {
+            device = GLib.Object.newv (type, inParameters) as Device;
         }
 
         return device;

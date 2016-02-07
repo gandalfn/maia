@@ -53,9 +53,20 @@ public class Maia.Xcb.CloneRenderer : Maia.Graphic.CloneRenderer
 
                 m_Damage = global::Xcb.Damage.Damage (application.connection);
                 m_Damage.create (application.connection, drawable.xid, global::Xcb.Damage.ReportLevel.NON_EMPTY);
+                m_Damage.subtract (application.connection, global::Xcb.NONE, global::Xcb.NONE);
 
                 m_DamageEvent = new Core.Event ("damage", ((int)m_Damage).to_pointer ());
                 m_DamageEvent.subscribe (on_damage_event);
+
+                global::Xcb.XFixes.Region region = global::Xcb.XFixes.Region (application.connection);
+                global::Xcb.Rectangle rects[1];
+                rects[0].x = 0;
+                rects[0].y = 0;
+                rects[0].width = (uint16)drawable.size.width;
+                rects[0].height = (uint16)drawable.size.height;
+                region.create (application.connection, rects);
+
+                ((global::Xcb.Damage.Drawable)drawable.xid).add (application.connection, region);
 
                 m_Func = inFunc;
             }
@@ -140,16 +151,17 @@ public class Maia.Xcb.CloneRenderer : Maia.Graphic.CloneRenderer
             {
                 var ctx = m_Surface.context;
                 ctx.save ();
-                    Graphic.Size clone_size = m_CloneSurface.size;
+                    Graphic.Size clone_size   = m_CloneSurface.size;
                     Graphic.Size surface_size = m_Surface.size;
 
-                    double scale = double.max (surface_size.width / clone_size.width,
+                    double scale = double.min (surface_size.width  / clone_size.width,
                                                surface_size.height / clone_size.height);
+
                     var transform = new Graphic.Transform.identity ();
+                    transform.translate ((surface_size.width  - (clone_size.width  * scale)) / 2,
+                                         (surface_size.height - (clone_size.height * scale)) / 2);
                     transform.scale (scale, scale);
 
-                    ctx.translate (Graphic.Point ((surface_size.width - (clone_size.width / scale)) / 2,
-                                                  (surface_size.height - (clone_size.height / scale)) / 2));
                     ctx.transform = transform;
                     ctx.pattern = m_CloneSurface;
                     ctx.paint ();

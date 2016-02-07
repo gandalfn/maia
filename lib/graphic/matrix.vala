@@ -52,7 +52,7 @@ public struct Maia.Graphic.Matrix
     private inline double
     compute_determinant ()
     {
-        return xx * yy - yx * xy;
+        return (xx * yy) - (yx * xy);
     }
 
     private inline void
@@ -79,8 +79,8 @@ public struct Maia.Graphic.Matrix
         yx = -b;
         xy = -c;
         yy = a;
-        x0 = c * ty - d * tx;
-        y0 = b * tx - a * ty;
+        x0 = (c * ty) - (d * tx);
+        y0 = (b * tx) - (a * ty);
     }
 
     private inline void
@@ -176,14 +176,14 @@ public struct Maia.Graphic.Matrix
     {
         Matrix m = Matrix.identity ();
 
-        m.xx = inMatrix.xx * xx + inMatrix.yx * xy;
-        m.yx = inMatrix.xx * yx + inMatrix.yx * yy;
+        m.xx = (inMatrix.xx * xx) + (inMatrix.yx * xy);
+        m.yx = (inMatrix.xx * yx) + (inMatrix.yx * yy);
 
-        m.xy = inMatrix.xy * xx + inMatrix.yy * xy;
-        m.yy = inMatrix.xy * yx + inMatrix.yy * yy;
+        m.xy = (inMatrix.xy * xx) + (inMatrix.yy * xy);
+        m.yy = (inMatrix.xy * yx) + (inMatrix.yy * yy);
 
-        m.x0 = inMatrix.x0 * xx + inMatrix.y0 * xy + x0;
-        m.y0 = inMatrix.x0 * yx + inMatrix.y0 * yy + y0;
+        m.x0 = (inMatrix.x0 * xx) + (inMatrix.y0 * xy) + x0;
+        m.y0 = (inMatrix.x0 * yx) + (inMatrix.y0 * yy) + y0;
 
         xx = m.xx;
         yx = m.yx;
@@ -198,14 +198,14 @@ public struct Maia.Graphic.Matrix
     {
         Matrix m = Matrix.identity ();
 
-        m.xx = xx * inMatrix.xx + yx * inMatrix.xy;
-        m.yx = xx * inMatrix.yx + yx * inMatrix.yy;
+        m.xx = (xx * inMatrix.xx) + (yx * inMatrix.xy);
+        m.yx = (xx * inMatrix.yx) + (yx * inMatrix.yy);
 
-        m.xy = xy * inMatrix.xx + yy * inMatrix.xy;
-        m.yy = xy * inMatrix.yx + yy * inMatrix.yy;
+        m.xy = (xy * inMatrix.xx) + (yy * inMatrix.xy);
+        m.yy = (xy * inMatrix.yx) + (yy * inMatrix.yy);
 
-        m.x0 = x0 * inMatrix.xx + y0 * inMatrix.xy + inMatrix.x0;
-        m.y0 = x0 * inMatrix.yx + y0 * inMatrix.yy + inMatrix.y0;
+        m.x0 = (x0 * inMatrix.xx) + (y0 * inMatrix.xy) + inMatrix.x0;
+        m.y0 = (x0 * inMatrix.yx) + (y0 * inMatrix.yy) + inMatrix.y0;
 
         xx = m.xx;
         yx = m.yx;
@@ -218,6 +218,6 @@ public struct Maia.Graphic.Matrix
     public string
     to_string ()
     {
-        return "%.g, %g, %g, %g, %g, %g".printf (xx, yx, xy, yy, x0, y0);
+        return "%f, %f, %f, %f, %f, %f".printf (xx, yx, xy, yy, x0, y0);
     }
 }

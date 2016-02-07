@@ -26,13 +26,6 @@ internal class Maia.Xcb.Pixmap : Maia.Xcb.Drawable
         }
     }
 
-    // static methods
-    static construct
-    {
-        Graphic.Device.register ("xcb/pixmap", typeof (Pixmap));
-    }
-
-
     // methods
     public Pixmap (int inScreenNum, uint8 inDepth, int inWidth, int inHeight)
     {

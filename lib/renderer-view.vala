@@ -401,11 +401,9 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
         {
             m_Lock.lock ();
             {
-                m_Renderer.surface.flush ();
                 inContext.operator = Graphic.Operator.OVER;
                 inContext.pattern = m_Renderer.surface;
                 inContext.paint ();
-                inContext.surface.flush ();
             }
             m_Lock.unlock ();
         }

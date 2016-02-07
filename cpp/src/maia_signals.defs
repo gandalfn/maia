@@ -865,6 +865,17 @@
   (construct-only #f)
 )
 
+;; From MaiaGraphicTransformChangedNotification
+
+(define-property transform
+  (of-object "MaiaGraphicTransformChangedNotification")
+  (prop-type "GParamObject")
+  (docs "transform")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaGraphicRenderer
 
 (define-property surface
@@ -903,6 +914,10 @@
   (construct-only #f)
 )
 
+;; From MaiaGraphicRendererLooper
+
+;; From MaiaGraphicRendererTimelineLooper
+
 ;; From MaiaGraphicRendererInitializeNotification
 
 (define-property size
@@ -926,6 +941,8 @@
 )
 
 ;; From MaiaGraphicGLRenderer
+
+;; From MaiaGraphicCloneRenderer
 
 ;; From MaiaManifestAttribute
 

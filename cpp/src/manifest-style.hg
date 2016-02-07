@@ -79,12 +79,17 @@ namespace Maia
                 }
 
                 _WRAP_METHOD(Glib::RefPtr<StyleProperty> copy (), maia_manifest_style_property_copy, refreturn)
+                _WRAP_METHOD(bool is_copy () const, maia_manifest_style_property_get_is_copy)
+                _IGNORE(maia_manifest_style_property_set_is_copy)
+
                 _WRAP_METHOD(Glib::ustring get_name () const, maia_manifest_style_property_get_name)
+
                 _WRAP_METHOD(Glib::RefPtr<AttributeScanner> get_scanner () const, maia_manifest_style_property_get_scanner, refreturn)
                 _WRAP_METHOD(void set_scanner (const Glib::RefPtr<AttributeScanner>& inScanner), maia_manifest_style_property_set_scanner)
 
                 _WRAP_PROPERTY("name", Glib::ustring)
                 _WRAP_PROPERTY("scanner", Glib::RefPtr<AttributeScanner>)
+                _WRAP_PROPERTY("is-copy", bool)
         };
     }
 }

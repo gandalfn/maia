@@ -48,6 +48,7 @@ files_hg = \
     graphic-transform.hg \
     graphic-renderer.hg \
     graphic-glrenderer.hg \
+    graphic-clone-renderer.hg \
     manifest-attribute-bind.hg \
     manifest-attribute-scanner.hg \
     manifest-attribute.hg \

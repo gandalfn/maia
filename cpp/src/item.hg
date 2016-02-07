@@ -51,7 +51,7 @@ namespace Maia
                 maia_item_get_characters, maia_item_size_request, maia_item_paint,
                 maia_item_on_show, maia_item_on_hide, maia_item_on_move, maia_item_on_resize, maia_item_on_damage,
                 maia_item_on_child_resized, maia_item_on_draw, maia_item_get_transform_to_window_space,
-                maia_item_on_child_need_update, maia_item_on_transform_changed)
+                maia_item_on_child_need_update, maia_item_on_transform_changed, maia_item_on_damage_area)
 
         protected:
             _CTOR_DEFAULT()

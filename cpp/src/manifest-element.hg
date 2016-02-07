@@ -84,7 +84,7 @@ namespace Maia
                     maia_core_collection_remove (MAIA_CORE_COLLECTION (pSet), inAttribute.c_str ());
                 }
 
-                _IGNORE(maia_manifest_element_duplicate)
+                _IGNORE(maia_manifest_element_duplicate, maia_manifest_element_duplicate_with_notification)
                 Glib::RefPtr<Element> duplicate (const Glib::ustring& inId);
 
                 _WRAP_METHOD(void read_manifest (const Glib::RefPtr<Document>& inDocument), maia_manifest_element_read_manifest, errthrow)

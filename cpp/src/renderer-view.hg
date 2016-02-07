@@ -45,19 +45,15 @@ namespace Maia
                 return Glib::RefPtr<RendererView> (pView);
             }
 
-            _WRAP_METHOD(guint get_frame_rate () const, maia_renderer_view_get_frame_rate)
-            _WRAP_METHOD(void set_frame_rate (guint inFrameRate), maia_renderer_view_set_frame_rate)
-
-            _WRAP_METHOD(guint get_nb_frames () const, maia_renderer_view_get_nb_frames)
-            _WRAP_METHOD(void set_nb_frames (guint inFrameRate), maia_renderer_view_set_nb_frames)
+            _WRAP_METHOD(Glib::RefPtr<Graphic::RendererLooper> get_looper () const, maia_renderer_view_get_looper)
+            _WRAP_METHOD(void set_looper (const Glib::RefPtr<Graphic::RendererLooper>& inpLooper), maia_renderer_view_set_looper)
 
             _IGNORE (maia_renderer_view_get_renderer, maia_renderer_view_set_renderer)
 
             Glib::RefPtr<Graphic::Renderer> get_renderer ();
             void set_renderer (const Glib::RefPtr<Graphic::Renderer>& inpRenderer);
 
-            _WRAP_PROPERTY("frame-rate", guint)
-            _WRAP_PROPERTY("nb-frames", guint)
+            _WRAP_PROPERTY("looper", Glib::RefPtr<Graphic::RendererLooper>)
 
             _WRAP_PROPERTY("can-focus", bool)
 

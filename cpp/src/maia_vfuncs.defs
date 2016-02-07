@@ -588,6 +588,23 @@
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaGraphicRendererLooper
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-vfunc prepare
+  (of-object "MaiaGraphicRendererLooper")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRendererRenderFunc" "inFunc")
+    '("gpointer" "inpData")
+  )
+)
+
+(define-vfunc finish
+  (of-object "MaiaGraphicRendererLooper")
+  (return-type "none")
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; From MaiaManifestElement
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define-vfunc get_tag

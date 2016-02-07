@@ -24,6 +24,27 @@ namespace Maia
     namespace Graphic
     {
         void
+        RendererLooper::render_slot_callback (unsigned int inNumFrame)
+        {
+            m_Func (inNumFrame, m_pData);
+        }
+
+        void
+        RendererLooper::prepare_vfunc (MaiaGraphicRendererRenderFunc inFunc, gpointer inpData)
+        {
+            m_Func = inFunc;
+            m_pData = inpData;
+
+            prepare (sigc::mem_fun (this, &RendererLooper::render_slot_callback));
+        }
+
+        void
+        RendererLooper::finish_vfunc ()
+        {
+            finish ();
+        }
+
+        void
         Renderer::_on_initialize (MaiaCoreNotification* inpNotification, gpointer inpData)
         {
             Renderer* pRenderer = static_cast<Renderer*> (inpData);

@@ -31,6 +31,8 @@ namespace Maia
     {
         _CLASS_INTERFACE(Drawable, MaiaDrawable, MAIA_DRAWABLE, MaiaDrawableIface)
 
+        _IGNORE(maia_drawable_on_damage_area)
+
         protected:
 #m4 _CONVERSION(`MaiaGraphicRegion*', `const Glib::RefPtr<Graphic::Region>&', `Glib::wrap($3, true)')
 #m4 _CONVERSION(`MaiaGraphicTransform*', `const Glib::RefPtr<Graphic::Transform>&', `Glib::wrap($3, true)')
