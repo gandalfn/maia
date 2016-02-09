@@ -68,7 +68,7 @@ namespace Maia
                 _WRAP_METHOD(bool next (), maia_graphic_region_iterator_next)
         };
 
-        class Region : public Core::Object
+        class Region final : public Core::Object
         {
             _CLASS_GOBJECT(Region, MaiaGraphicRegion, MAIA_GRAPHIC_REGION, Core::Object, MaiaCoreObject)
 

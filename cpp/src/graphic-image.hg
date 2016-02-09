@@ -68,7 +68,7 @@ namespace Maia
                 _WRAP_PROPERTY ("surface", Glib::RefPtr<Surface>)
         };
 
-        class ImageGif : public Image
+        class ImageGif final : public Image
         {
             _CLASS_GOBJECT(ImageGif, MaiaGraphicImageGif, MAIA_GRAPHIC_IMAGE_GIF, Image, MaiaGraphicImage)
 
@@ -82,7 +82,7 @@ namespace Maia
                 }
         };
 
-        class ImageJpg : public Image
+        class ImageJpg final : public Image
         {
             _CLASS_GOBJECT(ImageJpg, MaiaGraphicImageJpg, MAIA_GRAPHIC_IMAGE_JPG, Image, MaiaGraphicImage)
 
@@ -96,7 +96,7 @@ namespace Maia
                 }
         };
 
-        class ImagePng : public Image
+        class ImagePng final : public Image
         {
             _CLASS_GOBJECT(ImagePng, MaiaGraphicImagePng, MAIA_GRAPHIC_IMAGE_PNG, Image, MaiaGraphicImage)
 
@@ -110,7 +110,7 @@ namespace Maia
                 }
         };
 
-        class ImageSvg : public Image
+        class ImageSvg final : public Image
         {
             _CLASS_GOBJECT(ImageSvg, MaiaGraphicImageSvg, MAIA_GRAPHIC_IMAGE_SVG, Image, MaiaGraphicImage)
 

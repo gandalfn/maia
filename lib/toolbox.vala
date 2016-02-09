@@ -28,6 +28,7 @@ public class Maia.Toolbox : Popup
         private bool   m_Parent;
 
         // accessors
+        [CCode (notify = false)]
         internal override GLib.Variant serialize {
             owned get {
                 return new GLib.Variant ("(usb)", m_Counter, m_ItemContent, m_Parent);
@@ -101,6 +102,7 @@ public class Maia.Toolbox : Popup
         private GLib.Type m_ParentType = 0;
 
         // accessors
+        [CCode (notify = false)]
         internal override GLib.Variant serialize {
             owned get {
                 return new GLib.Variant ("(stst)", m_ItemName, m_ItemType, m_ParentName, m_ParentType);

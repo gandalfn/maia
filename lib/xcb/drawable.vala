@@ -65,6 +65,7 @@ internal abstract class Maia.Xcb.Drawable : GLib.Object, Core.Serializable, Grap
         }
     }
 
+    [CCode (notify = false)]
     public GLib.Variant serialize {
         owned get {
             return new GLib.Variant ("(iuyii)", screen_num, xid, depth, (int)size.width, (int)size.height);

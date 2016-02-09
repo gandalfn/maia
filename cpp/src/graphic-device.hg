@@ -28,7 +28,7 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
-        class Device : public Glib::Interface
+        class Device final : public Glib::Interface
         {
             _CLASS_INTERFACE(Device, MaiaGraphicDevice, MAIA_GRAPHIC_DEVICE, MaiaGraphicDeviceIface)
 

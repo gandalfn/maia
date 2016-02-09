@@ -797,7 +797,7 @@
   (docs "format")
   (readable #t)
   (writable #t)
-  (construct-only #t)
+  (construct-only #f)
 )
 
 (define-property data
@@ -833,6 +833,15 @@
   (docs "context")
   (readable #t)
   (writable #f)
+  (construct-only #f)
+)
+
+(define-property serialize
+  (of-object "MaiaGraphicSurface")
+  (prop-type "GParamVariant")
+  (docs "serialize")
+  (readable #t)
+  (writable #t)
   (construct-only #f)
 )
 

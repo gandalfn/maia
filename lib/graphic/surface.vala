@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Graphic.Surface : Pattern
+public class Maia.Graphic.Surface : Pattern, Core.Serializable
 {
     // types
     public enum Format
@@ -68,7 +68,7 @@ public class Maia.Graphic.Surface : Pattern
     public virtual Graphic.Size size { get; construct set; default = Graphic.Size (0, 0); }
 
     [CCode (notify = false)]
-    public Format format { get; construct; default = Format.INVALID; }
+    public Format format { get; construct set; default = Format.INVALID; }
 
     [CCode (notify = false)]
     public uchar* data { get; construct; default = null; }
@@ -87,6 +87,16 @@ public class Maia.Graphic.Surface : Pattern
                 m_Context = new Context (this);
             }
             return m_Context;
+        }
+    }
+
+    [CCode (notify = false)]
+    public virtual GLib.Variant serialize {
+        owned get {
+            GLib.Variant ret = null;
+            return ret;
+        }
+        set {
         }
     }
 

@@ -26,6 +26,7 @@ public class Maia.Protocol.Message : Core.Object, Core.Serializable, BufferChild
         }
     }
 
+    [CCode (notify = false)]
     public GLib.Variant serialize {
         owned get {
             GLib.Variant[] childs = {};

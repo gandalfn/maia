@@ -33,7 +33,7 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
-        class GlyphLine : public Core::Object
+        class GlyphLine final : public Core::Object
         {
             _CLASS_GOBJECT(GlyphLine, MaiaGraphicGlyphLine, MAIA_GRAPHIC_GLYPH_LINE, Core::Object, MaiaCoreObject)
 
@@ -44,7 +44,7 @@ namespace Maia
                 _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_glyph_line_get_size)
         };
 
-        class Glyph : public Core::Object
+        class Glyph final : public Core::Object
         {
             _CLASS_GOBJECT(Glyph, MaiaGraphicGlyph, MAIA_GRAPHIC_GLYPH, Core::Object, MaiaCoreObject)
 

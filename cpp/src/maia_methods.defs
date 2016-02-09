@@ -12070,6 +12070,15 @@
   (return-type "MaiaGraphicSurfaceFormat")
 )
 
+(define-method set_format
+  (of-object "MaiaGraphicSurface")
+  (c-name "maia_graphic_surface_set_format")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSurfaceFormat" "value")
+  )
+)
+
 (define-method get_data
   (of-object "MaiaGraphicSurface")
   (c-name "maia_graphic_surface_get_data")
@@ -12110,6 +12119,21 @@
   (of-object "MaiaGraphicSurface")
   (c-name "maia_graphic_surface_get_context")
   (return-type "MaiaGraphicContext*")
+)
+
+(define-method get_serialize
+  (of-object "MaiaGraphicSurface")
+  (c-name "maia_graphic_surface_get_serialize")
+  (return-type "GVariant*")
+)
+
+(define-method set_serialize
+  (of-object "MaiaGraphicSurface")
+  (c-name "maia_graphic_surface_set_serialize")
+  (return-type "none")
+  (parameters
+    '("GVariant*" "value")
+  )
 )
 
 (define-function maia_graphic_image_get_type

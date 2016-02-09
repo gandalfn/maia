@@ -20,5 +20,6 @@
 public interface Maia.Core.Serializable : GLib.Object
 {
     // accessors
+    [CCode (notify = false)]
     public abstract GLib.Variant serialize { owned get; set; }
 }

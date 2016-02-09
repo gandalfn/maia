@@ -18,6 +18,7 @@
  */
 
 #include <maia.h>
+#include <maiamm/core-serializable.h>
 #include <maiamm/graphic-size.h>
 #include <maiamm/graphic-context.h>
 #include <maiamm/graphic-device.h>
@@ -31,9 +32,10 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
-        class Surface : public Pattern
+        class Surface final : public Pattern, public Core::Serializable
         {
             _CLASS_GOBJECT(Surface, MaiaGraphicSurface, MAIA_GRAPHIC_SURFACE, Pattern, MaiaGraphicPattern)
+            _IMPLEMENTS_INTERFACE(Core::Serializable)
 
             protected:
                 _CTOR_DEFAULT()
@@ -78,6 +80,7 @@ namespace Maia
 
                 _IGNORE(maia_graphic_surface_new_from_native)
 
+                _IGNORE(maia_graphic_surface_set_format)
                 _WRAP_METHOD(Surface::Format get_format () const, maia_graphic_surface_get_format)
                 _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_surface_get_size)
                 _WRAP_METHOD(void set_size (const Size& inSize), maia_graphic_surface_set_size)
@@ -87,6 +90,8 @@ namespace Maia
                 _WRAP_METHOD(guchar* get_data () const, maia_graphic_surface_get_data)
                 _WRAP_METHOD(void* get_native () const, maia_graphic_surface_get_native)
                 _WRAP_METHOD(void set_native (void* inpNative), maia_graphic_surface_set_native)
+                _WRAP_METHOD(Glib::VariantBase serialize (), maia_graphic_surface_get_serialize)
+                _WRAP_METHOD(void unserialize (const Glib::VariantBase& inData), maia_graphic_surface_set_serialize)
 
                 _WRAP_METHOD(void status (), maia_graphic_surface_status, errthrow)
                 _WRAP_METHOD(void flush (), maia_graphic_surface_flush, errthrow)
@@ -103,6 +108,9 @@ namespace Maia
                 _WRAP_PROPERTY ("device", Glib::RefPtr<Device>)
                 _WRAP_PROPERTY ("data", guchar*)
                 _WRAP_PROPERTY ("native", void*)
+
+            private:
+                 _WRAP_PROPERTY("serialize", Glib::VariantBase)
         };
 
     }

@@ -26,6 +26,7 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
         private string m_Active;
 
         // accessors
+        [CCode (notify = false)]
         internal override GLib.Variant serialize {
             owned get {
                 return new GLib.Variant ("(s)", m_Active);

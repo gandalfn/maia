@@ -258,6 +258,7 @@ internal abstract class Maia.Protocol.Field : Core.Object, Core.Serializable, Bu
         }
     }
 
+    [CCode (notify = false)]
     public GLib.Variant serialize {
         owned get {
             GLib.Variant ret;
@@ -303,6 +304,7 @@ internal abstract class Maia.Protocol.Field : Core.Object, Core.Serializable, Bu
         }
     }
 
+    [CCode (notify = false)]
     public virtual string @default {
         set {
             if (!repeated && m_Values.length > 0)

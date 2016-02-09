@@ -67,6 +67,7 @@ public abstract class Maia.Core.EventArgs : GLib.Object, Core.Serializable
     private Protocol.Message? m_Message;
 
     // accessors
+    [CCode (notify = false)]
     public virtual GLib.Variant serialize {
         owned get {
             GLib.Variant ret = null;

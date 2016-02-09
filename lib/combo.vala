@@ -28,6 +28,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         private int m_ActiveRow;
 
         // accessors
+        [CCode (notify = false)]
         internal override GLib.Variant serialize {
             owned get {
                 return new GLib.Variant ("(i)", m_ActiveRow);

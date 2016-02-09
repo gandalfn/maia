@@ -92,6 +92,46 @@ internal class Maia.Cairo.Surface : Graphic.Surface
         }
     }
 
+    [CCode (notify = false)]
+    public override GLib.Variant serialize {
+        owned get {
+            if (native != null)
+            {
+                global::Cairo.ImageSurface image = (global::Cairo.ImageSurface)m_Surface.map_to_image (null);
+                GLib.VariantBuilder data = new GLib.VariantBuilder (new VariantType ("ay"));
+                unowned uchar[] image_data = image.get_data ();
+                for (int cpt = 0; cpt < ((image.get_width () + image.get_stride ()) * image.get_height ()); ++cpt)
+                {
+                    data.add ("y", image_data[cpt]);
+                }
+                return new GLib.Variant ("(iddv)", (int)format, size.width, size.height, data.end ());
+            }
+
+            return base.serialize;
+        }
+        set {
+            int format;
+            double width, height;
+            GLib.Variant data;
+            value.get ("(iddv)", out format, out width, out height, out data);
+            this.format = (Graphic.Surface.Format)format;
+            this.size = Graphic.Size (width, height);
+            if (native != null)
+            {
+                global::Cairo.ImageSurface image = (global::Cairo.ImageSurface)m_Surface.map_to_image (null);
+                unowned uchar[] image_data = image.get_data ();
+                GLib.VariantIter iter = data.iterator ();
+                for (int cpt = 0; cpt < ((image.get_width () + image.get_stride ()) * image.get_height ()); ++cpt)
+                {
+                    if (!iter.next ("y", out image_data[cpt])) break;
+                }
+                image.mark_dirty ();
+                image.flush ();
+                m_Surface.unmap_image (image);
+            }
+        }
+    }
+
     // static methods
     private static global::Cairo.Format
     format_to_cairo_format (Graphic.Surface.Format inFormat)

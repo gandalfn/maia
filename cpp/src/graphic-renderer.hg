@@ -61,7 +61,7 @@ namespace Maia
                 _WRAP_PROPERTY("num-frame", guint)
         };
 
-        class RendererLooper: public Core::Object
+        class RendererLooper : public Core::Object
         {
             _CLASS_GOBJECT(RendererLooper, MaiaGraphicRendererLooper, MAIA_GRAPHIC_RENDERER_LOOPER, Core::Object, MaiaCoreObject)
             _IGNORE (maia_graphic_renderer_looper_prepare, maia_graphic_renderer_looper_finish)
@@ -85,7 +85,7 @@ namespace Maia
                 gpointer                      m_pData;
         };
 
-        class RendererTimelineLooper: public RendererLooper
+        class RendererTimelineLooper : public RendererLooper
         {
             _CLASS_GOBJECT(RendererTimelineLooper, MaiaGraphicRendererTimelineLooper, MAIA_GRAPHIC_RENDERER_TIMELINE_LOOPER, RendererLooper, MaiaGraphicRendererLooper)
 

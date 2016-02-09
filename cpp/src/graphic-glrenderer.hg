@@ -31,7 +31,7 @@ namespace Maia
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-        class GLRendererObject : public RendererObject
+        class GLRendererObject final : public RendererObject
         {
             _CLASS_GOBJECT(GLRendererObject, MaiaGraphicGLRenderer, MAIA_GRAPHIC_GL_RENDERER, RendererObject, MaiaGraphicRenderer)
 

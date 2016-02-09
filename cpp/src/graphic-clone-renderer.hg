@@ -46,7 +46,7 @@ namespace Maia
         };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-        class CloneRendererObject : public RendererObject
+        class CloneRendererObject final : public RendererObject
         {
             _CLASS_GOBJECT(CloneRendererObject, MaiaGraphicCloneRenderer, MAIA_GRAPHIC_CLONE_RENDERER, RendererObject, MaiaGraphicRenderer)
 

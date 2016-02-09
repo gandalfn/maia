@@ -29,6 +29,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
         private bool m_Active;
 
         // accessors
+        [CCode (notify = false)]
         internal override GLib.Variant serialize {
             owned get {
                 return new GLib.Variant ("(sb)", m_ButtonName, m_Active);
