@@ -47,6 +47,7 @@ test_SOURCES = \
     core/test-protocol.vala \
     graphic/test-graphic.vala \
     graphic/test-transform.vala \
+    graphic/test-surface.vala \
     manifest/test-manifest.vala \
     manifest/test-document.vala \
     cassowary/test-cassowary.vala

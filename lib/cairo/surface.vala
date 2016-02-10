@@ -97,37 +97,45 @@ internal class Maia.Cairo.Surface : Graphic.Surface
         owned get {
             if (native != null)
             {
-                global::Cairo.ImageSurface image = (global::Cairo.ImageSurface)m_Surface.map_to_image (null);
-                GLib.VariantBuilder data = new GLib.VariantBuilder (new VariantType ("ay"));
-                unowned uchar[] image_data = image.get_data ();
-                for (int cpt = 0; cpt < ((image.get_width () + image.get_stride ()) * image.get_height ()); ++cpt)
+                unowned global::Cairo.ImageSurface image = m_Surface.map_to_image (null);
+                unowned uint32[] image_data = (uint32[])image.get_data ();
+                GLib.Variant[] datas = {};
+                int width = image.get_width ();
+                int height = image.get_height ();
+                int stride = image.get_stride ();
+                for (int cpt = 0; cpt < ((stride / 4) * height); ++cpt)
                 {
-                    data.add ("y", image_data[cpt]);
+                    datas += new GLib.Variant ("u", image_data[cpt]);
                 }
-                return new GLib.Variant ("(iddv)", (int)format, size.width, size.height, data.end ());
+                m_Surface.unmap_image (image);
+                GLib.Variant data = new GLib.Variant.array (null, datas);
+                return new GLib.Variant ("(iiiiv)", (int)format, width, height, stride, data);
             }
 
             return base.serialize;
         }
         set {
-            int format;
-            double width, height;
+            int format, width, height, stride;
             GLib.Variant data;
-            value.get ("(iddv)", out format, out width, out height, out data);
+            value.get ("(iiiiv)", out format, out width, out height, out stride, out data);
             this.format = (Graphic.Surface.Format)format;
             this.size = Graphic.Size (width, height);
+
             if (native != null)
             {
-                global::Cairo.ImageSurface image = (global::Cairo.ImageSurface)m_Surface.map_to_image (null);
-                unowned uchar[] image_data = image.get_data ();
-                GLib.VariantIter iter = data.iterator ();
-                for (int cpt = 0; cpt < ((image.get_width () + image.get_stride ()) * image.get_height ()); ++cpt)
+                uint32[] image_data = new uint32[(stride / 4) * height];
+                var iter = data.iterator ();
+                for (int cpt = 0; cpt < ((stride / 4) * height); ++cpt)
                 {
-                    if (!iter.next ("y", out image_data[cpt])) break;
+                    if (!iter.next ("u", out image_data[cpt])) break;
                 }
-                image.mark_dirty ();
-                image.flush ();
-                m_Surface.unmap_image (image);
+
+                global::Cairo.ImageSurface? image = new global::Cairo.ImageSurface.for_data ((uchar[])image_data, format_to_cairo_format (this.format), width, height, stride);
+
+                var ctx = new global::Cairo.Context (m_Surface);
+                ctx.set_operator (global::Cairo.Operator.SOURCE);
+                ctx.set_source_surface (image, 0, 0);
+                ctx.paint ();
             }
         }
     }
