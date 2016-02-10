@@ -98,18 +98,16 @@ internal class Maia.Cairo.Surface : Graphic.Surface
             if (native != null)
             {
                 unowned global::Cairo.ImageSurface image = m_Surface.map_to_image (null);
-                unowned uint32[] image_data = (uint32[])image.get_data ();
-                GLib.Variant[] datas = {};
                 int width = image.get_width ();
                 int height = image.get_height ();
                 int stride = image.get_stride ();
-                for (int cpt = 0; cpt < ((stride / 4) * height); ++cpt)
-                {
-                    datas += new GLib.Variant ("u", image_data[cpt]);
-                }
+                unowned uint32[] image_data = (uint32[])image.get_data ();
+                image_data.length = (stride / 4) * height;
+                unowned GLib.Variant data = GLib.Variant.new_fixed_array<uint32> (new GLib.VariantType("u"), image_data, sizeof (uint32));
+                GLib.Variant ret = new GLib.Variant ("(iiiiv)", (int)format, width, height, stride, data);
                 m_Surface.unmap_image (image);
-                GLib.Variant data = new GLib.Variant.array (null, datas);
-                return new GLib.Variant ("(iiiiv)", (int)format, width, height, stride, data);
+
+                return ret;
             }
 
             return base.serialize;
