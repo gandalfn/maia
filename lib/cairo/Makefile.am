@@ -20,7 +20,8 @@ libmaia_cairo_graphic_la_CFLAGS = \
 
 libmaia_cairo_graphic_la_VALAFLAGS = \
     --pkg=cairo-xcb \
-    --pkg=xcb
+    --pkg=xcb \
+    --pkg=gvalue-collect
 
 libmaia_cairo_graphic_la_SOURCES = \
     fixed.vala \

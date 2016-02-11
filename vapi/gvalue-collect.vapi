@@ -24,4 +24,14 @@ namespace GLib
         [CCode (cname = "G_VALUE_COLLECT", cheader_filename = "glib-object.h,gobject/gvaluecollector.h")]
         public static void get (ref GLib.Value val, va_list list, int flags, ref string error);
     }
+
+    [Compact]
+    [CCode (cname="GVariant", ref_function = "g_variant_ref", unref_function = "g_variant_unref", ref_sink_function = "g_variant_ref_sink", type_id = "G_TYPE_VARIANT", marshaller_type_name = "VARIANT", param_spec_function = "g_param_spec_variant", get_value_function = "g_value_get_variant", set_value_function = "g_value_set_variant", take_value_function = "g_value_take_variant", type_signature = "v")]
+    public class VariantFixed : Variant {
+        [CCode (cname = "g_variant_new_fixed_array", simple_generics = true)]
+        public static unowned Variant @new<T> (VariantType? element_type, [CCode (array_length_type = "gsize")] T[] elements, size_t element_size);
+
+        [CCode (cname = "g_variant_get_fixed_array", simple_generics = true, array_length_pos = 0.1, array_length_type = "gsize")]
+        public unowned T[] @get<T> (size_t element_size);
+    }
 }

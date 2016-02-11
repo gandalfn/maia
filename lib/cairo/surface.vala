@@ -103,7 +103,7 @@ internal class Maia.Cairo.Surface : Graphic.Surface
                 int stride = image.get_stride ();
                 unowned uint32[] image_data = (uint32[])image.get_data ();
                 image_data.length = (stride / 4) * height;
-                unowned GLib.Variant data = GLib.Variant.new_fixed_array<uint32> (new GLib.VariantType("u"), image_data, sizeof (uint32));
+                unowned GLib.Variant data = GLib.VariantFixed.new<uint32> (new GLib.VariantType("u"), image_data, sizeof (uint32));
                 GLib.Variant ret = new GLib.Variant ("(iiiiv)", (int)format, width, height, stride, data);
                 m_Surface.unmap_image (image);
 
@@ -114,19 +114,14 @@ internal class Maia.Cairo.Surface : Graphic.Surface
         }
         set {
             int format, width, height, stride;
-            GLib.Variant data;
+            GLib.VariantFixed data;
             value.get ("(iiiiv)", out format, out width, out height, out stride, out data);
             this.format = (Graphic.Surface.Format)format;
             this.size = Graphic.Size (width, height);
 
             if (native != null)
             {
-                uint32[] image_data = new uint32[(stride / 4) * height];
-                var iter = data.iterator ();
-                for (int cpt = 0; cpt < ((stride / 4) * height); ++cpt)
-                {
-                    if (!iter.next ("u", out image_data[cpt])) break;
-                }
+                unowned uint32[] image_data = data.get<uint32> (sizeof (uint32));
 
                 global::Cairo.ImageSurface? image = new global::Cairo.ImageSurface.for_data ((uchar[])image_data, format_to_cairo_format (this.format), width, height, stride);
 
