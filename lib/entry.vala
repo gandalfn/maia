@@ -776,7 +776,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                 }
             }
             // Space is pressed
-            else if (inKey == Key.space || inKey == Key.KP_Space)
+            else if ((inKey == Key.space || inKey == Key.KP_Space) && !only_numeric)
             {
                 new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), " ");
                 text = new_text.str;
