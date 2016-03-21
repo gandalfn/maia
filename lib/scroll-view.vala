@@ -396,9 +396,10 @@ public class Maia.ScrollView : Item, ItemPackable
 
         if (m_Child != null)
         {
+            Graphic.Point child_position = m_Child.position;
             Graphic.Size child_size = m_Child.size;
 
-            area.union_with_rect (Graphic.Rectangle (0, 0, child_size.width, child_size.height));
+            area.union_with_rect (Graphic.Rectangle (0, 0, child_position.x + child_size.width, child_position.y + child_size.height));
         }
 
         hadjustment.configure (area.extents.origin.x, area.extents.size.width, hadjustment.page_size);
@@ -408,7 +409,23 @@ public class Maia.ScrollView : Item, ItemPackable
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"scroll-view: $name $(area.extents.size)");
 #endif
 
-        return base.size_request (inSize);
+        Graphic.Size ret = inSize;
+
+        var viewport_size = m_Viewport.size;
+        ret.width += viewport_size.width;
+        ret.height += viewport_size.height;
+
+        if ((Policy.HORIZONTAL_SCROLLING in policy) && viewport_size.width > ret.width)
+        {
+            ret.height += m_HSeekBar.size.height;
+        }
+
+        if ((Policy.VERTICAL_SCROLLING in policy) && viewport_size.height > ret.height)
+        {
+            ret.width += m_VSeekBar.size.width;
+        }
+
+        return base.size_request (ret);
     }
 
     internal override void

@@ -179,6 +179,8 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         // Create popup
         m_Popup = new Popup ("%s-popup".printf (name));
         m_Popup.visible = false;
+        m_Popup.shadow_width = 7;
+        m_Popup.round_corner = 3;
         m_Popup.window_type = Window.Type.POPUP;
         m_Popup.position_policy = Window.PositionPolicy.CLAMP_MONITOR;
         m_Popup.visible = false;

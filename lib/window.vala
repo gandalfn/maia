@@ -364,9 +364,7 @@ public class Maia.Window : Group
                 // the size is in window with transform
                 // invert the window transform to have size in window coordinate space
                 Graphic.Size window_size = geometry_args.area.size;
-                var matrix = transform.matrix;
-                matrix.invert ();
-                window_size.transform (new Graphic.Transform.from_matrix (matrix));
+                window_size.transform (new Graphic.Transform.invert (transform));
 
                 if ((uint32)geometry_args.area.origin.x != (uint32)position.x ||
                     (uint32)geometry_args.area.origin.y != (uint32)position.y)

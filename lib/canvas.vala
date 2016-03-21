@@ -25,7 +25,6 @@ public interface Maia.Canvas : GLib.Object
     public abstract Window window { get; }
     public abstract Item   root   { get; set; default = null; }
     public abstract Core.Notifications notifications { get; }
-    
 
     // static methods
     /**

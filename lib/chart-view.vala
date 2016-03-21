@@ -250,6 +250,7 @@ public class Maia.ChartView : Group, ItemPackable
     private static GLib.Quark s_AxisIndiceQuark;
 
     // properties
+    private string                    m_ModelName = null;
     private Model                     m_Model;
     private string                    m_ChartAxisName;
     private unowned Chart?            m_ChartAxis;
@@ -311,6 +312,23 @@ public class Maia.ChartView : Group, ItemPackable
      * Title of chart view
      */
     public string title { get; set; default = null; }
+
+    /**
+     * Model name of chart view
+     */
+    public string model_name {
+        get {
+            return m_ModelName;
+        }
+        set {
+            if (value != m_ModelName)
+            {
+                m_ModelName = value;
+                model = find_model (value);
+            }
+        }
+        default = null;
+    }
 
     /**
      * Model of chart view
@@ -631,6 +649,34 @@ public class Maia.ChartView : Group, ItemPackable
     public ChartView (string inId, string inTitle)
     {
         GLib.Object (id: GLib.Quark.from_string (inId), title: inTitle);
+    }
+
+    private inline unowned Model?
+    find_model (string? inName)
+    {
+        unowned Model? model = null;
+
+        if (inName != null)
+        {
+            for (unowned Core.Object item = parent; item != null; item = item.parent)
+            {
+                unowned View? view = item.parent as View;
+
+                // If view is in view search model in cell first
+                if (view != null)
+                {
+                    model = item.find (GLib.Quark.from_string (inName), false) as Model;
+                    if (model != null) break;
+                }
+                // We not found model in view parents search in root
+                else if (item.parent == null)
+                {
+                    model = item.find (GLib.Quark.from_string (inName)) as Model;
+                }
+            }
+        }
+
+        return model;
     }
 
     private void

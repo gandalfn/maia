@@ -411,8 +411,8 @@ public class Maia.Popup : Group
 
                 m_Window.update (inContext, new Graphic.Region (Graphic.Rectangle (m_Window.position.x,
                                                                                    m_Window.position.y,
-                                                                                   m_Window.size.width,
-                                                                                   m_Window.size.height)));
+                                                                                   m_Content.size.width + (border * 2),
+                                                                                   m_Content.size.height + (border * 5))));
             }
         }
     }

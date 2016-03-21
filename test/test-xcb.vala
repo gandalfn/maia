@@ -20,6 +20,7 @@
 const string manifest = "Window.test {" +
                         "    background_pattern: #CECECE;" +
                         "    border: 5;" +
+                        "    transform: scale (1.2, 1.2);" +
                         "    Grid.grid {" +
                         "       row_spacing: 12;" +
                         "       column_spacing: 12;" +

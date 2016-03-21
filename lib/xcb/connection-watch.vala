@@ -165,9 +165,12 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
                         unowned global::Xcb.ConfigureNotifyEvent? evt_configure = (global::Xcb.ConfigureNotifyEvent?)m_LastEvent;
 
                         // send event geometry
-                        configures[(int)evt_configure.window] = new GeometryEventArgs (evt_configure.x, evt_configure.y,
-                                                                                       evt_configure.width + (evt_configure.border_width * 2),
-                                                                                       evt_configure.height + (evt_configure.border_width * 2));
+                        if (evt_configure.window == evt_configure.event)
+                        {
+                            configures[(int)evt_configure.window] = new GeometryEventArgs (evt_configure.x, evt_configure.y,
+                                                                                           evt_configure.width + (evt_configure.border_width * 2),
+                                                                                           evt_configure.height + (evt_configure.border_width * 2));
+                        }
                     }
                     break;
 

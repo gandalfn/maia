@@ -20292,6 +20292,21 @@
   )
 )
 
+(define-method get_model_name
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_get_model_name")
+  (return-type "const-gchar*")
+)
+
+(define-method set_model_name
+  (of-object "MaiaChartView")
+  (c-name "maia_chart_view_set_model_name")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
 (define-method get_model
   (of-object "MaiaChartView")
   (c-name "maia_chart_view_get_model")

@@ -399,7 +399,6 @@ internal class Maia.Xcb.Window : Maia.Window
                     geo.origin = pos;
                     geo.size = m_View.size;
                     geo.size.resize (border * 2, border * 2);
-                    geo.size.transform (new Graphic.Transform.invert (m_View.device_transform));
                     if (PositionPolicy.CLAMP_MONITOR in position_policy)
                     {
                         Graphic.Point root_pos = parent_viewport.view.root_position;

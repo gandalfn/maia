@@ -21,13 +21,70 @@ const string manifest = "Window.test {" +
                         "    background_pattern: #CECECE;" +
                         "    border: 5;" +
                         "    size: 600, 400;" +
+                        "    Model.data {" +
+                        "       Column.x {" +
+                        "           column-type: double;" +
+                        "       }" +
+                        "       Column.x1 {" +
+                        "           column-type: double;" +
+                        "       }" +
+                        "       Column.y1 {" +
+                        "           column-type: double;" +
+                        "       }" +
+                        "       [" +
+                        "           Row.0 {" +
+                        "               x: 10.0;" +
+                        "               x1: 50.0;" +
+                        "               y1: 70.0;" +
+                        "           }" +
+                        "           Row.1 {" +
+                        "               x: 20.0;" +
+                        "               x1: 120.0;" +
+                        "               y1: 140.0;" +
+                        "           }" +
+                        "           Row.2 {" +
+                        "               x: 30.0;" +
+                        "               x1: 280.0;" +
+                        "               y1: 300.0;" +
+                        "           }" +
+                        "           Row.3 {" +
+                        "               x: 40.0;" +
+                        "               x1: 320.0;" +
+                        "               y1: 340.0;" +
+                        "           }" +
+                        "           Row.4 {" +
+                        "               x: 50.0;" +
+                        "               x1: 350.0;" +
+                        "               y1: 370.0;" +
+                        "           }" +
+                        "           Row.5 {" +
+                        "               x: 60.0;" +
+                        "               x1: 370.0;" +
+                        "               y1: 390.0;" +
+                        "           }" +
+                        "           Row.6 {" +
+                        "               x: 70.0;" +
+                        "               x1: 380.0;" +
+                        "               y1: 400.0;" +
+                        "           }" +
+                        "           Row.7 {" +
+                        "               x: 80.0;" +
+                        "               x1: 385.0;" +
+                        "               y1: 405.0;" +
+                        "           }" +
+                        "           Row.8 {" +
+                        "               x: 90.0;" +
+                        "               x1: 387.0;" +
+                        "               y1: 407.0;" +
+                        "           }" +
+                        "           Row.9 {" +
+                        "               x: 100.0;" +
+                        "               x1: 388.0;" +
+                        "               y1: 408.0;" +
+                        "           }" +
+                        "       ]" +
+                        "    }" +
                         "    ChartView.view { " +
-                        "       chart-axis: chart;" +
-                        "       x-axis-label: 'label x';" +
-                        "       x-axis-unit: 'mm';" +
-                        "       y-axis-label: 'label y';" +
-                        "       y-axis-unit: 'wd';" +
-                        "       legend: west;" +
                         "       Chart.chart {" +
                         "           title: 'first\nchart';" +
                         "           stroke-pattern: #FF0000;" +
@@ -60,6 +117,13 @@ const string manifest = "Window.test {" +
                         "           chart: chart;" +
                         "           position: 25, 289.5;" +
                         "       }" +
+                        "       model-name: 'data';" +
+                        "       chart-axis: chart;" +
+                        "       x-axis-label: 'label x';" +
+                        "       x-axis-unit: 'mm';" +
+                        "       y-axis-label: 'label y';" +
+                        "       y-axis-unit: 'wd';" +
+                        "       legend: west;" +
                         "   }" +
                         "}";
 
@@ -79,32 +143,6 @@ void main (string[] args)
         window.visible = true;
 
         window.destroy_event.subscribe (() => { application.quit (); });
-
-        var model = new Maia.Model ("model", "x", typeof (double), "y1", typeof (double), "y2", typeof (double));
-        uint row;
-        model.append_row (out row);
-        model.set_values (row, "x", 10.0, "y1", 50.0, "y2", 70.0);
-        model.append_row (out row);
-        model.set_values (row, "x", 20.0, "y1", 120.0, "y2", 140.0);
-        model.append_row (out row);
-        model.set_values (row, "x", 30.0, "y1", 280.0, "y2", 300.0);
-        model.append_row (out row);
-        model.set_values (row, "x", 40.0, "y1", 320.0, "y2", 340.0);
-        model.append_row (out row);
-        model.set_values (row, "x", 50.0, "y1", 350.0, "y2", 370.0);
-        model.append_row (out row);
-        model.set_values (row, "x", 60.0, "y1", 370.0, "y2", 390.0);
-        model.append_row (out row);
-        model.set_values (row, "x", 70.0, "y1", 380.0, "y2", 400.0);
-        model.append_row (out row);
-        model.set_values (row, "x", 80.0, "y1", 385.0, "y2", 405.0);
-        model.append_row (out row);
-        model.set_values (row, "x", 90.0, "y1", 387.0, "y2", 407.0);
-        model.append_row (out row);
-        model.set_values (row, "x", 100.0, "y1", 388.0, "y2", 408.0);
-
-        var view = window.find (GLib.Quark.from_string ("view")) as Maia.ChartView;
-        view.model = model;
 
         print (@"%s\n", window.dump (""));
         // Run application

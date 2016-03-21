@@ -372,6 +372,14 @@ internal class Maia.Xcb.View : Drawable
                 ret.height = reply.height + (reply.border_width * 2);
             }
 
+            try
+            {
+                ret.transform (new Graphic.Transform.invert (m_DeviceTransform));
+            }
+            catch (GLib.Error err)
+            {
+            }
+
             return ret;
         }
         set {
@@ -407,9 +415,10 @@ internal class Maia.Xcb.View : Drawable
             return m_DeviceTransform;
         }
         set {
+            var old_size = size;
             m_DeviceTransform = value;
 
-            resize (size);
+            resize (old_size);
         }
     }
 
@@ -418,9 +427,10 @@ internal class Maia.Xcb.View : Drawable
             return m_Transform;
         }
         set {
+            var old_size = size;
             m_Transform = value;
 
-            resize (size);
+            resize (old_size);
         }
     }
 
@@ -511,7 +521,7 @@ internal class Maia.Xcb.View : Drawable
     private void
     resize (Graphic.Size inSize)
     {
-        if (m_Realized && !m_Foreign && !size.is_empty ())
+        if (m_Realized && !m_Foreign && !inSize.is_empty ())
         {
             var view_size = inSize;
             view_size.transform (device_transform);
@@ -525,9 +535,11 @@ internal class Maia.Xcb.View : Drawable
 
             m_FrontBuffer = null;
 
-            if (!view_size.equal (size))
+            var current_size = size;
+            if ((uint32)GLib.Math.ceil (current_size.width) != (uint32)GLib.Math.ceil (inSize.width) ||
+                (uint32)GLib.Math.ceil (current_size.height) != (uint32)GLib.Math.ceil (inSize.height))
             {
-                application.push_request (new ResizeRequest (this, inSize));
+                application.push_request (new ResizeRequest (this, view_size));
                 application.flush ();
                 application.sync ();
             }
@@ -552,13 +564,16 @@ internal class Maia.Xcb.View : Drawable
 
                 foreach (unowned View child in inView)
                 {
-                    var child_area = area;
-                    child_area.translate (child.position.invert ());
+                    if (child != this)
+                    {
+                        var child_area = area;
+                        child_area.translate (child.position.invert ());
 
-                    var pos = inPosition;
-                    pos.translate (child.position.invert ());
+                        var pos = inPosition;
+                        pos.translate (child.position.invert ());
 
-                    paint_sibling (inContext, child, pos, child_area);
+                        paint_sibling (inContext, child, pos, child_area);
+                    }
                 }
             }
         }
