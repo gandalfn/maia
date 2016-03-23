@@ -54,6 +54,7 @@ internal class Maia.Xcb.View : Drawable
             if (m_View is View && m_View.is_mapped)
             {
                 var view_size = m_View.size;
+                view_size.transform (m_View.device_transform);
                 m_View.damaged = new Graphic.Region (Graphic.Rectangle (0, 0, view_size.width, view_size.height));
             }
 
@@ -66,6 +67,7 @@ internal class Maia.Xcb.View : Drawable
             if (m_Sibling != null && m_View.is_mapped)
             {
                 var view_size = m_View.size;
+                view_size.transform (m_View.device_transform);
                 m_View.damaged = new Graphic.Region (Graphic.Rectangle (0, 0, view_size.width, view_size.height));
             }
         }

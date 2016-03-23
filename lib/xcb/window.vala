@@ -226,8 +226,12 @@ internal class Maia.Xcb.Window : Maia.Window
 
                 if (PositionPolicy.ALWAYS_CENTER in position_policy)
                 {
-                    Graphic.Rectangle monitorGeometry =  m_View.screen.get_monitor_at (Graphic.Point (0, 0)).geometry;
-                    pos = Graphic.Point (monitorGeometry.origin.x + (monitorGeometry.size.width - size.width) / 2, monitorGeometry.origin.y + (monitorGeometry.size.height - size.height) / 2);
+                    var monitor = m_View.screen.get_monitor_at (Graphic.Point (0, 0));
+                    if (monitor != null)
+                    {
+                        var monitorGeometry = monitor.geometry;
+                        pos = Graphic.Point (monitorGeometry.origin.x + (monitorGeometry.size.width - size.width) / 2, monitorGeometry.origin.y + (monitorGeometry.size.height - size.height) / 2);
+                    }
                 }
                 else
                 {
@@ -245,7 +249,11 @@ internal class Maia.Xcb.Window : Maia.Window
                     {
                         Graphic.Point root_pos = parent_viewport.view.root_position;
                         geo.origin.translate (root_pos);
-                        geo.clamp (m_View.screen.get_monitor_at (geo.origin).geometry);
+                        var monitor = m_View.screen.get_monitor_at (geo.origin);
+                        if (monitor != null)
+                        {
+                            geo.clamp (monitor.geometry);
+                        }
                         geo.origin.translate (root_pos.invert ());
                     }
 
@@ -389,8 +397,12 @@ internal class Maia.Xcb.Window : Maia.Window
 
                 if (PositionPolicy.ALWAYS_CENTER in position_policy)
                 {
-                    Graphic.Rectangle monitorGeometry =  m_View.screen.get_monitor_at (Graphic.Point (0, 0)).geometry;
-                    pos = Graphic.Point (monitorGeometry.origin.x + (monitorGeometry.size.width - size.width) / 2, monitorGeometry.origin.y + (monitorGeometry.size.height - size.height) / 2);
+                    var monitor = m_View.screen.get_monitor_at (Graphic.Point (0, 0));
+                    if (monitor != null)
+                    {
+                        Graphic.Rectangle monitorGeometry =  monitor.geometry;
+                        pos = Graphic.Point (monitorGeometry.origin.x + (monitorGeometry.size.width - size.width) / 2, monitorGeometry.origin.y + (monitorGeometry.size.height - size.height) / 2);
+                    }
                 }
 
                 try
@@ -403,7 +415,11 @@ internal class Maia.Xcb.Window : Maia.Window
                     {
                         Graphic.Point root_pos = parent_viewport.view.root_position;
                         geo.origin.translate (root_pos);
-                        geo.clamp (m_View.screen.get_monitor_at (geo.origin).geometry);
+                        var monitor = m_View.screen.get_monitor_at (geo.origin);
+                        if (monitor != null)
+                        {
+                            geo.clamp (monitor.geometry);
+                        }
                         geo.origin.translate (root_pos.invert ());
                     }
 
@@ -416,21 +432,27 @@ internal class Maia.Xcb.Window : Maia.Window
             }
             else
             {
-                m_View.position = position;
+                print (@"position: $position win_pos: $(m_View.position) root_pos: $(m_View.root_position)\n");
             }
         }
     }
 
     internal override void
-    on_resize ()
+    on_geometry_event (Core.EventArgs? inArgs)
     {
-        if (m_View != null)
-        {
-            m_View.size = size;
-            application.sync ();
-        }
+        unowned GeometryEventArgs? geometry_args = inArgs as GeometryEventArgs;
 
-        base.on_resize ();
+        if (decorated)
+        {
+            var geometry_area = geometry_args.area;
+            geometry_area.origin = m_View.root_position;
+
+            base.on_geometry_event (new GeometryEventArgs (geometry_area.origin.x, geometry_area.origin.y, geometry_area.size.width, geometry_area.size.height));
+        }
+        else
+        {
+            base.on_geometry_event (inArgs);
+        }
     }
 
     internal override void

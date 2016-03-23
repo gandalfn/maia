@@ -366,14 +366,14 @@ public class Maia.Window : Group
                 Graphic.Size window_size = geometry_args.area.size;
                 window_size.transform (new Graphic.Transform.invert (transform));
 
-                if ((uint32)geometry_args.area.origin.x != (uint32)position.x ||
-                    (uint32)geometry_args.area.origin.y != (uint32)position.y)
+                if ((uint32)GLib.Math.ceil (geometry_args.area.origin.x) != (uint32)GLib.Math.ceil (position.x) ||
+                    (uint32)GLib.Math.ceil (geometry_args.area.origin.y) != (uint32)GLib.Math.ceil (position.y))
                 {
                     position = geometry_args.area.origin;
                 }
 
-                if ((uint32)window_size.width  != (uint32)size.width ||
-                    (uint32)window_size.height != (uint32)size.height)
+                if ((uint32)GLib.Math.ceil (window_size.width)  != (uint32)GLib.Math.ceil (size.width) ||
+                    (uint32)GLib.Math.ceil (window_size.height) != (uint32)GLib.Math.ceil (size.height))
                 {
                     need_update = true;
                     size = window_size;

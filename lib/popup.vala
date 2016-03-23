@@ -408,11 +408,12 @@ public class Maia.Popup : Group
                 // set window size and position
                 m_Window.position = convert_to_window_space(Graphic.Point (0, 0));
                 m_Window.device_transform = get_window_transform ();
+                m_Window.size = Graphic.Size (m_Content.size.width, m_Content.size.height);
 
                 m_Window.update (inContext, new Graphic.Region (Graphic.Rectangle (m_Window.position.x,
                                                                                    m_Window.position.y,
-                                                                                   m_Content.size.width + (border * 2),
-                                                                                   m_Content.size.height + (border * 5))));
+                                                                                   m_Window.size.width,
+                                                                                   m_Window.size.height + (border * 2))));
             }
         }
     }
