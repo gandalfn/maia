@@ -4887,6 +4887,25 @@
 
 ;; Original typedef:
 ;; typedef enum  {
+;; 	MAIA_BUTTON_TAB_PLACEMENT_TOP,
+;; 	MAIA_BUTTON_TAB_PLACEMENT_BOTTOM,
+;; 	MAIA_BUTTON_TAB_PLACEMENT_LEFT,
+;; 	MAIA_BUTTON_TAB_PLACEMENT_RIGHT
+;; } MaiaButtonTabPlacement;
+
+(define-enum-extended ButtonTabPlacement
+  (in-module "Maia")
+  (c-name "MaiaButtonTabPlacement")
+  (values
+    '("top" "MAIA_BUTTON_TAB_PLACEMENT_TOP" "0")
+    '("bottom" "MAIA_BUTTON_TAB_PLACEMENT_BOTTOM" "1")
+    '("left" "MAIA_BUTTON_TAB_PLACEMENT_LEFT" "2")
+    '("right" "MAIA_BUTTON_TAB_PLACEMENT_RIGHT" "3")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
 ;; 	MAIA_PAGE_FORMAT_A4,
 ;; 	MAIA_PAGE_FORMAT_LETTER
 ;; } MaiaPageFormat;

@@ -206,6 +206,7 @@ public class CanvasEditor.ManifestProvider : Provider
 
         m_Keywords.insert ("Arrow");
         m_Keywords.insert ("Button");
+        m_Keywords.insert ("ButtonTab");
         m_Keywords.insert ("CassoGrid");
         m_Keywords.insert ("ChartIntersect");
         m_Keywords.insert ("ChartPoint");
@@ -234,6 +235,7 @@ public class CanvasEditor.ManifestProvider : Provider
         m_Keywords.insert ("SeekBar");
         m_Keywords.insert ("Style");
         m_Keywords.insert ("Shortcut");
+        m_Keywords.insert ("SwitchButton");
         m_Keywords.insert ("ToggleButton");
         m_Keywords.insert ("ToggleGroup");
         m_Keywords.insert ("Tool");
@@ -329,6 +331,13 @@ public class CanvasEditor.ManifestProvider : Provider
         m_Properties.insert ("column-type");
         m_Properties.insert ("width-in-chars");
         m_Properties.insert ("only-numeric");
+        m_Properties.insert ("button-color");
+        m_Properties.insert ("button-active-color");
+        m_Properties.insert ("button-inactive-color");
+        m_Properties.insert ("indicator-color");
+        m_Properties.insert ("indicator-placement");
+        m_Properties.insert ("indicator-thickness");
+        m_Properties.insert ("spacing");
     }
 
     private GLib.List<string>

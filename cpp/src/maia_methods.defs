@@ -909,6 +909,12 @@
   (gtype-id "MAIA_TYPE_TOGGLE")
 )
 
+(define-object MaiaSwitchButton
+  (parent "MaiaToggle")
+  (c-name "MaiaSwitchButton")
+  (gtype-id "MAIA_TYPE_SWITCH_BUTTON")
+)
+
 (define-object MaiaHighlight
   (parent "MaiaToggle")
   (c-name "MaiaHighlight")
@@ -919,6 +925,12 @@
   (parent "MaiaToggle")
   (c-name "MaiaCheckButton")
   (gtype-id "MAIA_TYPE_CHECK_BUTTON")
+)
+
+(define-object MaiaButtonTab
+  (parent "MaiaToggle")
+  (c-name "MaiaButtonTab")
+  (gtype-id "MAIA_TYPE_BUTTON_TAB")
 )
 
 (define-object MaiaToggleButton
@@ -3502,6 +3514,17 @@
     '("focus-out" "MAIA_ENTRY_CHANGED_MASK_FOCUS_OUT")
     '("return" "MAIA_ENTRY_CHANGED_MASK_RETURN")
     '("each-text-update" "MAIA_ENTRY_CHANGED_MASK_EACH_TEXT_UPDATE")
+  )
+)
+
+(define-enum MaiaButtonTabPlacement
+  (c-name "MaiaButtonTabPlacement")
+  (gtype-id "MAIA_TYPE_BUTTON_TAB_PLACEMENT")
+  (values
+    '("top" "MAIA_BUTTON_TAB_PLACEMENT_TOP")
+    '("bottom" "MAIA_BUTTON_TAB_PLACEMENT_BOTTOM")
+    '("left" "MAIA_BUTTON_TAB_PLACEMENT_LEFT")
+    '("right" "MAIA_BUTTON_TAB_PLACEMENT_RIGHT")
   )
 )
 
@@ -17842,6 +17865,200 @@
   )
 )
 
+(define-function maia_button_tab_get_type
+  (c-name "maia_button_tab_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_button_tab_placement_get_type
+  (c-name "maia_button_tab_placement_get_type")
+  (return-type "GType")
+)
+
+(define-method to_string
+  (of-object "MaiaButtonTabPlacement")
+  (c-name "maia_button_tab_placement_to_string")
+  (return-type "gchar*")
+)
+
+(define-function maia_button_tab_placement_from_string
+  (c-name "maia_button_tab_placement_from_string")
+  (return-type "MaiaButtonTabPlacement")
+  (parameters
+    '("const-gchar*" "inValue")
+  )
+)
+
+(define-function maia_button_tab_new
+  (c-name "maia_button_tab_new")
+  (is-constructor-of "MaiaButtonTab")
+  (return-type "MaiaButtonTab*")
+  (parameters
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inLabel")
+  )
+)
+
+(define-function maia_button_tab_construct
+  (c-name "maia_button_tab_construct")
+  (return-type "MaiaButtonTab*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inLabel")
+  )
+)
+
+(define-method get_border
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_get_border")
+  (return-type "gdouble")
+)
+
+(define-method set_border
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_set_border")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_button_pattern
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_get_button_pattern")
+  (return-type "MaiaGraphicPattern*")
+)
+
+(define-method set_button_pattern
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_set_button_pattern")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "value")
+  )
+)
+
+(define-method get_button_highlight_pattern
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_get_button_highlight_pattern")
+  (return-type "MaiaGraphicPattern*")
+)
+
+(define-method set_button_highlight_pattern
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_set_button_highlight_pattern")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "value")
+  )
+)
+
+(define-method get_stroke_highlight_pattern
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_get_stroke_highlight_pattern")
+  (return-type "MaiaGraphicPattern*")
+)
+
+(define-method set_stroke_highlight_pattern
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_set_stroke_highlight_pattern")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "value")
+  )
+)
+
+(define-method get_button_inactive_pattern
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_get_button_inactive_pattern")
+  (return-type "MaiaGraphicPattern*")
+)
+
+(define-method set_button_inactive_pattern
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_set_button_inactive_pattern")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "value")
+  )
+)
+
+(define-method get_indicator_pattern
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_get_indicator_pattern")
+  (return-type "MaiaGraphicPattern*")
+)
+
+(define-method set_indicator_pattern
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_set_indicator_pattern")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "value")
+  )
+)
+
+(define-method get_indicator_placement
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_get_indicator_placement")
+  (return-type "MaiaButtonTabPlacement")
+)
+
+(define-method set_indicator_placement
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_set_indicator_placement")
+  (return-type "none")
+  (parameters
+    '("MaiaButtonTabPlacement" "value")
+  )
+)
+
+(define-method get_indicator_thickness
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_get_indicator_thickness")
+  (return-type "gdouble")
+)
+
+(define-method set_indicator_thickness
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_set_indicator_thickness")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_spacing
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_get_spacing")
+  (return-type "gdouble")
+)
+
+(define-method set_spacing
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_set_spacing")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_highlight
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_get_highlight")
+  (return-type "gboolean")
+)
+
+(define-method set_highlight
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_set_highlight")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
 (define-function maia_highlight_get_type
   (c-name "maia_highlight_get_type")
   (return-type "GType")
@@ -21085,6 +21302,61 @@
   (return-type "none")
   (parameters
     '("gboolean" "value")
+  )
+)
+
+(define-function maia_switch_button_get_type
+  (c-name "maia_switch_button_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_switch_button_new
+  (c-name "maia_switch_button_new")
+  (is-constructor-of "MaiaSwitchButton")
+  (return-type "MaiaSwitchButton*")
+  (parameters
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inLabel")
+  )
+)
+
+(define-function maia_switch_button_construct
+  (c-name "maia_switch_button_construct")
+  (return-type "MaiaSwitchButton*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+    '("const-gchar*" "inLabel")
+  )
+)
+
+(define-method get_spacing
+  (of-object "MaiaSwitchButton")
+  (c-name "maia_switch_button_get_spacing")
+  (return-type "gdouble")
+)
+
+(define-method set_spacing
+  (of-object "MaiaSwitchButton")
+  (c-name "maia_switch_button_set_spacing")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_line_pattern
+  (of-object "MaiaSwitchButton")
+  (c-name "maia_switch_button_get_line_pattern")
+  (return-type "MaiaGraphicPattern*")
+)
+
+(define-method set_line_pattern
+  (of-object "MaiaSwitchButton")
+  (c-name "maia_switch_button_set_line_pattern")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "value")
   )
 )
 

@@ -55,7 +55,7 @@ public class Maia.ToggleButton : Toggle
      */
     public Graphic.Color button_active_color { get; set; default = null; }
 
-/**
+    /**
      * The insensitive background color of button if not set the button does not draw any background
      */
     public Graphic.Color button_inactive_color { get; set; default = null; }

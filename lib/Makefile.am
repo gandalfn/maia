@@ -169,6 +169,7 @@ libmaia_la_SOURCES = \
     toggle.vala \
     toggle-button.vala \
     checkbutton.vala \
+    button-tab.vala \
     highlight.vala \
     page.vala \
     document.vala \
@@ -194,7 +195,8 @@ libmaia_la_SOURCES = \
     chart.vala \
     viewport.vala \
     renderer-view.vala \
-    scale-bar.vala
+    scale-bar.vala \
+    switch-button.vala
 
 libmaia_la_VALAFLAGS = \
     --pkg=gvalue-collect \

@@ -196,11 +196,17 @@
         <keyword>column-type</keyword>
         <keyword>width-in-chars</keyword>
         <keyword>only-numeric</keyword>
+        <keyword>button-color</keyword>
+        <keyword>button-active-color</keyword>
+        <keyword>button-inactive-color</keyword>
+        <keyword>indicator-color</keyword>
+        <keyword>indicator-placement</keyword>
     </context>
 
     <context id="classes" style-ref="type">
         <keyword>Arrow</keyword>
         <keyword>Button</keyword>
+        <keyword>ButtonTab</keyword>
         <keyword>CassoGrid</keyword>
         <keyword>ChartIntersect</keyword>
         <keyword>ChartPoint</keyword>

@@ -174,6 +174,7 @@ public class Maia.Application : Maia.Core.Object
         Manifest.Element.register ("ToggleGroup",    typeof (ToggleGroup));
         Manifest.Element.register ("Button",         typeof (Button));
         Manifest.Element.register ("ToggleButton",   typeof (ToggleButton));
+        Manifest.Element.register ("ButtonTab",      typeof (ButtonTab));
         Manifest.Element.register ("CheckButton",    typeof (CheckButton));
         Manifest.Element.register ("Highlight",      typeof (Highlight));
         Manifest.Element.register ("Document",       typeof (Document));
@@ -200,6 +201,7 @@ public class Maia.Application : Maia.Core.Object
         Manifest.Element.register ("Viewport",       typeof (Viewport));
         Manifest.Element.register ("RendererView",   typeof (RendererView));
         Manifest.Element.register ("ScaleBar",       typeof (ScaleBar));
+        Manifest.Element.register ("SwitchButton",   typeof (SwitchButton));
     }
 
     // methods
