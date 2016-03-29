@@ -83,13 +83,14 @@ public class Maia.ProgressBar : Item, ItemPackable
             {
                 double val = (adjustment.upper - adjustment.lower) == 0 ? 0 : (adjustment.@value - adjustment.lower) / (adjustment.upper - adjustment.lower);
 
+                var item_area = area;
                 if (orientation == Orientation.HORIZONTAL)
                 {
-                    slider = Graphic.Rectangle (0, 0, area.extents.size.width * val, area.extents.size.height);
+                    slider = Graphic.Rectangle (0, 0, item_area.extents.size.width * val, item_area.extents.size.height);
                 }
                 else
                 {
-                    slider = Graphic.Rectangle (0, 0, area.extents.size.width, area.extents.size.height * val);
+                    slider = Graphic.Rectangle (0, 0, item_area.extents.size.width, item_area.extents.size.height * val);
                 }
             }
 

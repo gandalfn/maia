@@ -427,10 +427,11 @@ public class Maia.Window : Group
                     // else send event to window
                     else
                     {
-                        if (area != null &&
-                            pos.x >= area.extents.size.width - shadow_width - (((CLOSE_BUTTON_SIZE + CLOSE_BUTTON_LINE_SIZE) / 2.0) * close_button_scale) &&
+                        var item_area = area;
+                        if (item_area != null &&
+                            pos.x >= item_area.extents.size.width - shadow_width - (((CLOSE_BUTTON_SIZE + CLOSE_BUTTON_LINE_SIZE) / 2.0) * close_button_scale) &&
                             pos.y >= shadow_width - (((CLOSE_BUTTON_SIZE - CLOSE_BUTTON_LINE_SIZE) / 2.0) * close_button_scale) &&
-                            pos.x < area.extents.size.width - shadow_width - (((CLOSE_BUTTON_SIZE + CLOSE_BUTTON_LINE_SIZE) / 2.0) * close_button_scale) + (CLOSE_BUTTON_SIZE * close_button_scale) &&
+                            pos.x < item_area.extents.size.width - shadow_width - (((CLOSE_BUTTON_SIZE + CLOSE_BUTTON_LINE_SIZE) / 2.0) * close_button_scale) + (CLOSE_BUTTON_SIZE * close_button_scale) &&
                             pos.y < shadow_width - (((CLOSE_BUTTON_SIZE - CLOSE_BUTTON_LINE_SIZE) / 2.0) * close_button_scale) + (CLOSE_BUTTON_SIZE * close_button_scale))
                         {
                             if (!m_OverCloseButton)

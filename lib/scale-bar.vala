@@ -425,34 +425,35 @@ public class Maia.ScaleBar : Group, ItemPackable, ItemMovable
             double val_lower = (adjustment.upper - adjustment.lower) == 0 ? 0 : (lower - adjustment.lower) / (adjustment.upper - adjustment.lower);
             double val_upper = (adjustment.upper - adjustment.lower) == 0 ? 0 : (upper - adjustment.lower) / (adjustment.upper - adjustment.lower);
 
+            var item_area = area;
             switch (placement)
             {
                 case Placement.TOP:
                     double slide_pos = 0;
-                    double slide_height = area.extents.size.height / 3;
-                    path.rectangle (area.extents.size.width * val_lower, slide_pos,
-                                    (area.extents.size.width * val_upper) - (area.extents.size.width * val_lower), slide_height);
+                    double slide_height = item_area.extents.size.height / 3;
+                    path.rectangle (item_area.extents.size.width * val_lower, slide_pos,
+                                    (item_area.extents.size.width * val_upper) - (item_area.extents.size.width * val_lower), slide_height);
                     break;
 
                 case Placement.BOTTOM:
-                    double slide_pos = 2 * (area.extents.size.height / 3);
-                    double slide_height = area.extents.size.height / 3;
-                    path.rectangle (area.extents.size.width * val_lower, slide_pos,
-                                    (area.extents.size.width * val_upper) - (area.extents.size.width * val_lower), slide_height);
+                    double slide_pos = 2 * (item_area.extents.size.height / 3);
+                    double slide_height = item_area.extents.size.height / 3;
+                    path.rectangle (item_area.extents.size.width * val_lower, slide_pos,
+                                    (item_area.extents.size.width * val_upper) - (item_area.extents.size.width * val_lower), slide_height);
                     break;
 
                 case Placement.LEFT:
                     double slide_pos = 0;
-                    double slide_width = area.extents.size.width / 3;
-                    path.rectangle (slide_pos, area.extents.size.height * val_lower,
-                                    slide_width, (area.extents.size.height * val_upper) - (area.extents.size.height * val_lower));
+                    double slide_width = item_area.extents.size.width / 3;
+                    path.rectangle (slide_pos, item_area.extents.size.height * val_lower,
+                                    slide_width, (item_area.extents.size.height * val_upper) - (item_area.extents.size.height * val_lower));
                     break;
 
                 case Placement.RIGHT:
-                    double slide_pos = 2 * (area.extents.size.width / 3);
-                    double slide_width = area.extents.size.width / 3;
-                    path.rectangle (slide_pos, area.extents.size.height * val_lower,
-                                    slide_width, (area.extents.size.height * val_upper) - (area.extents.size.height * val_lower));
+                    double slide_pos = 2 * (item_area.extents.size.width / 3);
+                    double slide_width = item_area.extents.size.width / 3;
+                    path.rectangle (slide_pos, item_area.extents.size.height * val_lower,
+                                    slide_width, (item_area.extents.size.height * val_upper) - (item_area.extents.size.height * val_lower));
                     break;
 
             }

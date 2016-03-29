@@ -104,7 +104,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
     }
 
-    internal abstract string tag { get; }
+    public abstract string tag { get; }
 
     internal string         characters     { get; set; default = null; }
     internal string         style          { get; set; default = null; }
@@ -1116,10 +1116,11 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                     inContext.translate (geometry.extents.origin);
                     if (transform.have_rotate)
                     {
+                        var item_area = area;
                         // TODO: Fix rotate transform calculation
                         inContext.translate (Graphic.Point (-geometry.extents.size.width / 2.0, -geometry.extents.size.height / 2.0));
                         inContext.transform = transform;
-                        inContext.translate (Graphic.Point (-area.extents.size.width, area.extents.size.height / 4.0));
+                        inContext.translate (Graphic.Point (-item_area.extents.size.width, item_area.extents.size.height / 4.0));
                     }
                     else
                     {
@@ -1356,13 +1357,14 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             unowned Graphic.Image? image = background_pattern as Graphic.Image;
             if (image != null)
             {
+                var item_area = area;
                 Graphic.Size image_size = image.size;
-                double scale = double.max (image_size.width / area.extents.size.width,
-                                           image_size.height / area.extents.size.height);
+                double scale = double.max (image_size.width / item_area.extents.size.width,
+                                           image_size.height / item_area.extents.size.height);
                 var transform = new Graphic.Transform.identity ();
                 transform.scale (scale, scale);
-                inContext.translate (Graphic.Point ((area.extents.size.width - (image_size.width / scale)) / 2,
-                                                    (area.extents.size.height - (image_size.height / scale)) / 2));
+                inContext.translate (Graphic.Point ((item_area.extents.size.width - (image_size.width / scale)) / 2,
+                                                    (item_area.extents.size.height - (image_size.height / scale)) / 2));
                 image.transform = transform;
                 inContext.pattern = background_pattern;
             }

@@ -1,5 +1,9 @@
 MAIA_LIB_NAME = maia
 
+MAIA_SYSTEM_VAPI_DEPS = \
+    glib-2.0 \
+    gio-2.0
+
 MAIA_VAPI_DEPS = \
     core/maia-any
 

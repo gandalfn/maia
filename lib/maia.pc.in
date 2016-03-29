@@ -3,6 +3,7 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 datarootdir=@datarootdir@
 datadir=@datadir@
+vapidir=@vapidir@
 includedir=@includedir@/maia-@MAIA_ABI@
 
 Name: maia-@MAIA_ABI@

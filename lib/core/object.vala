@@ -617,7 +617,7 @@ public abstract class Maia.Core.Object : Any
     public virtual unowned Object?
     find (uint32 inId, bool inRecursive = true)
     {
-        foreach (unowned Object? child in this)
+        for (unowned Object? child = m_Head; child != null; child = child.m_Next)
         {
             if (child.id == inId)
             {
@@ -627,7 +627,7 @@ public abstract class Maia.Core.Object : Any
 
         if (inRecursive)
         {
-            foreach (unowned Object? child in this)
+            for (unowned Object? child = m_Head; child != null; child = child.m_Next)
             {
                 unowned Object? ret = child.find (inId, inRecursive);
                 if (ret != null)

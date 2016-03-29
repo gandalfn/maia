@@ -342,21 +342,22 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
         {
             geometry = inAllocation;
 
+            var item_area = area;
             if (m_Front == null)
             {
-                m_Front = new Graphic.Renderer (area.extents.size);
+                m_Front = new Graphic.Renderer (item_area.extents.size);
             }
-            else if (!m_Front.size.equal (area.extents.size))
+            else if (!m_Front.size.equal (item_area.extents.size))
             {
-                m_Front.size = area.extents.size;
+                m_Front.size = item_area.extents.size;
             }
 
             if (m_Renderer != null)
             {
-                if (!m_Renderer.size.equal (area.extents.size))
+                if (!m_Renderer.size.equal (item_area.extents.size))
                 {
                     cancel_task ();
-                    m_Renderer.size = area.extents.size;
+                    m_Renderer.size = item_area.extents.size;
                     create_task ();
                 }
                 else if (m_Task == null)
@@ -376,10 +377,10 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
                     var item_size     = item.size;
 
                     // Set child size allocation
-                    var area_size = area.extents.size;
+                    var item_area_size = item_area.extents.size;
                     var child_allocation = Graphic.Rectangle (item_position.x, item_position.y,
-                                                              item_position.x + item_size.width < area_size.width ? area_size.width : item_size.width,
-                                                              item_position.y + item_size.height < area_size.height ? area_size.height : item_size.height);
+                                                              item_position.x + item_size.width < item_area_size.width ? item_area_size.width : item_size.width,
+                                                              item_position.y + item_size.height < item_area_size.height ? item_area_size.height : item_size.height);
 
                     // Update child allocation
                     item.update (inContext, new Graphic.Region (child_allocation));

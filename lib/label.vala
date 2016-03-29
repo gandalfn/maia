@@ -290,23 +290,25 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
                 // get glyph size
                 var item_size = m_Glyph.size;
 
-                if (area != null)
+                var item_area = area;
+
+                if (item_area != null)
                 {
-                    if (area.extents.size.width < item_size.width || area.extents.size.height < item_size.height)
+                    if (item_area.extents.size.width < item_size.width || item_area.extents.size.height < item_size.height)
                     {
                         var glyph_size = m_Glyph.size;
-                        if (xshrink && area.extents.size.width < item_size.width)
+                        if (xshrink && item_area.extents.size.width < item_size.width)
                         {
-                            glyph_size.width = area.extents.size.width;
+                            glyph_size.width = item_area.extents.size.width;
                         }
-                        if (yshrink && area.extents.size.height < item_size.height)
+                        if (yshrink && item_area.extents.size.height < item_size.height)
                         {
-                            glyph_size.height = area.extents.size.height;
+                            glyph_size.height = item_area.extents.size.height;
                         }
                         m_Glyph.size = glyph_size;
                         m_Glyph.update (m_FakeSurface.context);
 
-                        if (area.extents.size.width < m_Glyph.size.width || area.extents.size.height < m_Glyph.size.height)
+                        if (item_area.extents.size.width < m_Glyph.size.width || item_area.extents.size.height < m_Glyph.size.height)
                         {
                             m_Glyph = null;
                             geometry = null;
