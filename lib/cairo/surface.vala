@@ -62,7 +62,8 @@ internal class Maia.Cairo.Surface : Graphic.Surface
                 }
                 else
                 {
-                    m_Surface = new global::Cairo.ImageSurface (global::Cairo.Format.ARGB32, (int)GLib.Math.ceil (size.width), (int)GLib.Math.ceil (size.height));
+                    m_Surface = new global::Cairo.ImageSurface (format_to_cairo_format (format != Graphic.Surface.Format.INVALID ? format : Graphic.Surface.Format.ARGB32),
+                                                                (int)GLib.Math.ceil (size.width), (int)GLib.Math.ceil (size.height));
                 }
             }
 

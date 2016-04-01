@@ -200,7 +200,8 @@ libmaia_la_SOURCES = \
     viewport.vala \
     renderer-view.vala \
     scale-bar.vala \
-    switch-button.vala
+    switch-button.vala \
+    step-button.vala
 
 libmaia_la_VALAFLAGS = \
     --pkg=gvalue-collect \

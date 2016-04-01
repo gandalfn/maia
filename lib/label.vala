@@ -405,6 +405,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     {
         bool reallocate = false;
         var allocation = inAllocation.extents;
+
         if (m_Glyph != null && ((xshrink && inAllocation.extents.size.width < m_Glyph.size.width) ||
                                 (yshrink && inAllocation.extents.size.height < m_Glyph.size.height)))
         {
@@ -449,7 +450,15 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
             {
                 var pos = Graphic.Point (0, 0);
                 var glyph_size = m_Glyph.size;
-                m_Glyph.size = area.extents.size;
+                var item_size = area.extents.size;
+                m_Glyph.size = item_size;
+
+//~                 if (yexpand && item_size.height > glyph_size.height)
+//~                 {
+//~                     glyph_size.transform (transform);
+
+//~                     pos.y = double.max (pos.y, ((item_size.height - glyph_size.height) * yalign) - glyph_size.height);
+//~                 }
 
                 if (shade_color != null)
                 {
@@ -465,6 +474,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
 
                     pos.translate (Graphic.Point (-1, -1));
                 }
+
                 m_Glyph.origin = pos;
                 inContext.pattern = stroke_pattern;
                 inContext.render (m_Glyph);

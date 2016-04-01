@@ -129,7 +129,7 @@ public class Maia.SwitchButton : Toggle
 #endif
                 }
 
-                ret = Graphic.Size (size_label.height + spacing + size_label.width, size_label.height);
+                ret = Graphic.Size ((size_label.height * 2) + spacing + size_label.width, size_label.height);
             }
         }
 

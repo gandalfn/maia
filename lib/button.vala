@@ -31,13 +31,11 @@
  * }}}
  *
  */
-public class Maia.Button : Grid
+public class Maia.Button : Item, ItemPackable, ItemMovable
 {
     // properties
-    private bool m_Clicked = false;
-    private unowned Image? m_Icon = null;
-    private unowned Label? m_Separator = null;
-    private unowned Label? m_Label = null;
+    private bool          m_Clicked = false;
+    private unowned Item? m_Content = null;
 
     // accessors
     internal override string tag {
@@ -45,6 +43,30 @@ public class Maia.Button : Grid
             return "Button";
         }
     }
+
+    internal uint   row     { get; set; default = 0; }
+    internal uint   column  { get; set; default = 0; }
+    internal uint   rows    { get; set; default = 1; }
+    internal uint   columns { get; set; default = 1; }
+
+    internal bool   xexpand { get; set; default = true; }
+    internal bool   xfill   { get; set; default = true; }
+    internal bool   xshrink { get; set; default = true; }
+    internal bool   xlimp   { get; set; default = false; }
+    internal double xalign  { get; set; default = 0.5; }
+
+    internal bool   yexpand { get; set; default = true; }
+    internal bool   yfill   { get; set; default = true; }
+    internal bool   yshrink { get; set; default = false; }
+    internal bool   ylimp   { get; set; default = false; }
+    internal double yalign  { get; set; default = 0.5; }
+
+    internal double top_padding    { get; set; default = 0; }
+    internal double bottom_padding { get; set; default = 0; }
+    internal double left_padding   { get; set; default = 0; }
+    internal double right_padding  { get; set; default = 0; }
+
+    internal Graphic.Pattern backcell_pattern { get; set; default = null; }
 
     internal override bool can_focus  { get; set; default = true; }
 
@@ -54,14 +76,29 @@ public class Maia.Button : Grid
     public string font_description { get;  set; default = ""; }
 
     /**
+     * Alignment of label ``left``, ``center`` or ``right``, default was ``center``
+     */
+    public Graphic.Glyph.Alignment alignment { get; set; default = Graphic.Glyph.Alignment.LEFT; }
+
+    /**
+     * Shade color of label
+     */
+    public Graphic.Color shade_color { get; set; default = null; }
+
+    /**
      * The label of button
      */
     public string label { get; set; default = ""; }
 
     /**
-     * The border around label and icon
+     * The border around button content
      */
-    public double border { get; set; default = 5; }
+    public double border { get; set; default = 5.0; }
+
+    /**
+     * The spacing between button component
+     */
+    public double spacing { get; set; default = 5.0; }
 
     /**
      * Indicate if the button is sensitive
@@ -97,71 +134,38 @@ public class Maia.Button : Grid
     // methods
     construct
     {
+        // Create clicked event
         clicked = new Core.Event ("clicked", this);
 
+        // Set default property
         stroke_pattern = new Graphic.Color (0, 0, 0);
 
-        column_spacing = border;
-
-        // Create icon item
-        string id_icon = "%s-icon".printf (name);
-
-        var icon_item = new Image (id_icon, icon_filename);
-        icon_item.xfill = false;
-        icon_item.xlimp = true;
-        icon_item.xexpand = false;
-        icon_item.yfill = false;
-        icon_item.ylimp = true;
-        m_Icon = icon_item;
-
-        string id_sep = "%s-separator".printf (name);
-
-        var sep_item = new Label (id_sep, "");
-        sep_item.column = 1;
-        sep_item.visible = false;
-        sep_item.xexpand = false;
-        sep_item.xfill = false;
-        sep_item.xlimp = true;
-        sep_item.yfill = false;
-        sep_item.visible = false;
-        m_Separator = sep_item;
-
-        // Create label item
-        string id_label = "%s-label".printf (name);
-
-        var label_item = new Label (id_label, label);
-        label_item.column = 2;
-        label_item.xlimp = true;
-        label_item.yfill = false;
-        label_item.ylimp = true;
-        label_item.visible = false;
-        label_item.hide_if_empty = true;
-        m_Label = label_item;
-
-        // plug properties
-        plug_property("stroke-pattern", label_item, "stroke-pattern");
-        plug_property("font-description", label_item, "font-description");
-        plug_property("label", label_item, "text");
-        plug_property("icon-filename", icon_item, "filename");
-        plug_property("icon-size", icon_item, "size");
-        plug_property("border", icon_item, "top-padding");
-        plug_property("border", icon_item, "left-padding");
-        plug_property("border", icon_item, "right-padding");
-        plug_property("border", icon_item, "bottom-padding");
-        plug_property("border", sep_item, "top-padding");
-        plug_property("border", sep_item, "right-padding");
-        plug_property("border", sep_item, "bottom-padding");
-        plug_property("border", label_item, "top-padding");
-        plug_property("border", label_item, "right-padding");
-        plug_property("border", label_item, "bottom-padding");
-
-        add (icon_item);
-        add (sep_item);
-        add (label_item);
-
-        icon_item.button_press_event.connect (on_button_press_event);
-        sep_item.button_press_event.connect (on_button_press_event);
-        label_item.button_press_event.connect (on_button_press_event);
+        // Set default content
+        characters = @"Grid.$(name)_content { " +
+                     @"    column-spacing: @spacing;" +
+                     @"    Image.$(name)_image { "    +
+                     @"        yfill: false;" +
+                     @"        yexpand: true;" +
+                     @"        xexpand: false;" +
+                     @"        xfill: false;" +
+                     @"        xlimp: true;" +
+                     @"        filename: @icon-filename;" +
+                     @"        size: @icon-size;" +
+                     @"    }" +
+                     @"    Label.$(name)_label { "    +
+                     @"        column: 1; "    +
+                     @"        yfill: false;" +
+                     @"        yexpand: true;" +
+                     @"        xexpand: true;" +
+                     @"        xfill: true;" +
+                     @"        xlimp: true;" +
+                     @"        alignment: @alignment;" +
+                     @"        shade-color: @shade-color;" +
+                     @"        font-description: @font-description;" +
+                     @"        stroke-pattern: @stroke-pattern;" +
+                     @"        text: @label;" +
+                     @"    }" +
+                     @"}";
     }
 
     /**
@@ -176,7 +180,41 @@ public class Maia.Button : Grid
     }
 
     private void
-    draw_button (Graphic.Context inContext) throws Graphic.Error
+    on_template_attribute_bind (Core.Notification inNotification)
+    {
+        unowned Manifest.Document.AttributeBindAddedNotification? notification = inNotification as Manifest.Document.AttributeBindAddedNotification;
+        if (notification != null)
+        {
+            // plug property to binded property
+            plug_property (notification.attribute.get (), notification.attribute.owner as Core.Object, notification.property);
+        }
+    }
+
+    private Item?
+    create_content ()
+    {
+        if (characters != null && characters.length > 0)
+        {
+            // parse template
+            try
+            {
+                var document = new Manifest.Document.from_buffer (characters, characters.length);
+                document.path = manifest_path;
+                document.theme = manifest_theme;
+                document.notifications["attribute-bind-added"].add_object_observer (on_template_attribute_bind);
+                return document.get () as Item;
+            }
+            catch (Core.ParseError err)
+            {
+                Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING, "Error on parsing cell %s: %s", name, err.message);
+            }
+        }
+
+        return null;
+    }
+
+    private Graphic.Pattern
+    get_button_pattern () throws Graphic.Error
     {
         // Paint Background
         var button_size = geometry.extents.size;
@@ -195,9 +233,9 @@ public class Maia.Button : Grid
         var beginColor = new Graphic.Color.shade (sensitive ? button_color : button_inactive_color ?? button_color, vb);
         var endColor = new Graphic.Color.shade (sensitive ? button_color : button_inactive_color ?? button_color, ve);
 
-        if (m_Label.shade_color == null || m_Label.shade_color.compare (beginColor) != 0)
+        if (shade_color == null || shade_color.compare (beginColor) != 0)
         {
-            m_Label.shade_color = beginColor;
+            shade_color = beginColor;
         }
 
         var topleft = new Graphic.MeshGradient.ArcPatch (Graphic.Point (border, border),
@@ -252,20 +290,56 @@ public class Maia.Button : Grid
         pattern.add (left);
         pattern.add (main);
 
-        inContext.pattern = pattern;
-        inContext.paint ();
+        return pattern;
+    }
+
+    internal override bool
+    can_append_child (Core.Object inObject)
+    {
+        return m_Content == null;
     }
 
     internal override Graphic.Size
     size_request (Graphic.Size inSize)
     {
-        m_Icon.visible = !m_Icon.size.is_empty () && m_Icon.have_image ();
+        Graphic.Size ret = Graphic.Size (border * 2.0, border * 2.0);
+        if (m_Content == null && characters != null)
+        {
+            var content = create_content ();
+            add (content);
+            m_Content = content;
+        }
 
-        m_Icon.xexpand = !m_Label.visible;
+        if (m_Content != null)
+        {
+            var area = Graphic.Rectangle (0, 0, border * 2.0, border * 2.0);
+            var content_size = m_Content.size;
+            area.union_ (Graphic.Rectangle (border, border, content_size.width, content_size.height));
 
-        m_Separator.visible = m_Icon.visible && m_Label.visible;
+            ret = area.size;
+            ret.resize (border, border);
+        }
 
-        return base.size_request (inSize);
+        return ret;
+    }
+
+    internal override void
+    update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
+    {
+        if (visible && (geometry == null || !geometry.equal (inAllocation)))
+        {
+            geometry = inAllocation;
+
+            if (m_Content != null)
+            {
+                var item_size = area.extents.size;
+                item_size.resize (-border * 2.0, -border * 2.0);
+                var content_size = m_Content.size;
+                m_Content.update (inContext, new Graphic.Region (Graphic.Rectangle (border, border + ((item_size.height - content_size.height) / 2.0 ), item_size.width, content_size.height)));
+            }
+
+            damage_area ();
+        }
     }
 
     internal override void
@@ -274,12 +348,21 @@ public class Maia.Button : Grid
         inContext.save ();
         {
             // Paint button background
-            if (button_color != null)
+            if (background_pattern == null && button_color != null)
             {
-                draw_button (inContext);
+                inContext.pattern = get_button_pattern ();
+                inContext.paint ();
+            }
+            else
+            {
+                paint_background (inContext);
             }
 
-            base.paint (inContext, inArea);
+            if (m_Content != null)
+            {
+                var child_area = area_to_child_item_space (m_Content, inArea);
+                m_Content.draw (inContext, child_area);
+            }
         }
         inContext.restore ();
     }

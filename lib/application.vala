@@ -202,6 +202,7 @@ public class Maia.Application : Maia.Core.Object
         Manifest.Element.register ("RendererView",   typeof (RendererView));
         Manifest.Element.register ("ScaleBar",       typeof (ScaleBar));
         Manifest.Element.register ("SwitchButton",   typeof (SwitchButton));
+        Manifest.Element.register ("StepButton",     typeof (StepButton));
     }
 
     // methods

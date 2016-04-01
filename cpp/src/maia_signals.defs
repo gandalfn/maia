@@ -1361,6 +1361,177 @@
   (construct-only #f)
 )
 
+(define-property row
+  (of-object "MaiaButton")
+  (prop-type "GParamUInt")
+  (docs "row")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property column
+  (of-object "MaiaButton")
+  (prop-type "GParamUInt")
+  (docs "column")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property rows
+  (of-object "MaiaButton")
+  (prop-type "GParamUInt")
+  (docs "rows")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property columns
+  (of-object "MaiaButton")
+  (prop-type "GParamUInt")
+  (docs "columns")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xexpand
+  (of-object "MaiaButton")
+  (prop-type "GParamBoolean")
+  (docs "xexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xfill
+  (of-object "MaiaButton")
+  (prop-type "GParamBoolean")
+  (docs "xfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xshrink
+  (of-object "MaiaButton")
+  (prop-type "GParamBoolean")
+  (docs "xshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xlimp
+  (of-object "MaiaButton")
+  (prop-type "GParamBoolean")
+  (docs "xlimp")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xalign
+  (of-object "MaiaButton")
+  (prop-type "GParamDouble")
+  (docs "xalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yexpand
+  (of-object "MaiaButton")
+  (prop-type "GParamBoolean")
+  (docs "yexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yfill
+  (of-object "MaiaButton")
+  (prop-type "GParamBoolean")
+  (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yshrink
+  (of-object "MaiaButton")
+  (prop-type "GParamBoolean")
+  (docs "yshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property ylimp
+  (of-object "MaiaButton")
+  (prop-type "GParamBoolean")
+  (docs "ylimp")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yalign
+  (of-object "MaiaButton")
+  (prop-type "GParamDouble")
+  (docs "yalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property top-padding
+  (of-object "MaiaButton")
+  (prop-type "GParamDouble")
+  (docs "top-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property bottom-padding
+  (of-object "MaiaButton")
+  (prop-type "GParamDouble")
+  (docs "bottom-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property left-padding
+  (of-object "MaiaButton")
+  (prop-type "GParamDouble")
+  (docs "left-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property right-padding
+  (of-object "MaiaButton")
+  (prop-type "GParamDouble")
+  (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property backcell-pattern
+  (of-object "MaiaButton")
+  (prop-type "GParamObject")
+  (docs "backcell-pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property can-focus
   (of-object "MaiaButton")
   (prop-type "GParamBoolean")
@@ -1379,6 +1550,24 @@
   (construct-only #f)
 )
 
+(define-property alignment
+  (of-object "MaiaButton")
+  (prop-type "GParamEnum")
+  (docs "alignment")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property shade-color
+  (of-object "MaiaButton")
+  (prop-type "GParamObject")
+  (docs "shade-color")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property label
   (of-object "MaiaButton")
   (prop-type "GParamString")
@@ -1392,6 +1581,15 @@
   (of-object "MaiaButton")
   (prop-type "GParamDouble")
   (docs "border")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property spacing
+  (of-object "MaiaButton")
+  (prop-type "GParamDouble")
+  (docs "spacing")
   (readable #t)
   (writable #t)
   (construct-only #f)

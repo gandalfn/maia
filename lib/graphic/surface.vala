@@ -108,6 +108,13 @@ public class Maia.Graphic.Surface : Pattern, Core.Serializable
         GLib.Object (format: Graphic.Surface.Format.ARGB32, size: size);
     }
 
+    public Surface.with_format (Graphic.Surface.Format inFormat, uint inWidth, uint inHeight)
+        requires (inWidth > 0 && inHeight > 0)
+    {
+        var size = Graphic.Size ((double)inWidth, (double)inHeight);
+        GLib.Object (format: inFormat, size: size);
+    }
+
     public Surface.from_device (Device inDevice, uint inWidth, uint inHeight)
         requires (inWidth > 0 && inHeight > 0)
     {

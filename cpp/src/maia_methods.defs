@@ -668,12 +668,6 @@
   (gtype-id "MAIA_TYPE_GRID")
 )
 
-(define-object MaiaButton
-  (parent "MaiaGrid")
-  (c-name "MaiaButton")
-  (gtype-id "MAIA_TYPE_BUTTON")
-)
-
 (define-object MaiaEntry
   (parent "MaiaItem")
   (c-name "MaiaEntry")
@@ -690,6 +684,12 @@
   (parent "MaiaItem")
   (c-name "MaiaChart")
   (gtype-id "MAIA_TYPE_CHART")
+)
+
+(define-object MaiaButton
+  (parent "MaiaItem")
+  (c-name "MaiaButton")
+  (gtype-id "MAIA_TYPE_BUTTON")
 )
 
 (define-object MaiaArrow
@@ -901,6 +901,18 @@
   (parent "MaiaCoreObject")
   (c-name "MaiaShortcut")
   (gtype-id "MAIA_TYPE_SHORTCUT")
+)
+
+(define-object MaiaStepButton
+  (parent "MaiaItem")
+  (c-name "MaiaStepButton")
+  (gtype-id "MAIA_TYPE_STEP_BUTTON")
+)
+
+(define-object MaiaStepButtonChangedEventArgs
+  (parent "MaiaCoreEventArgs")
+  (c-name "MaiaStepButtonChangedEventArgs")
+  (gtype-id "MAIA_TYPE_STEP_BUTTON_CHANGED_EVENT_ARGS")
 )
 
 (define-object MaiaToggle
@@ -11936,6 +11948,27 @@
   )
 )
 
+(define-function maia_graphic_surface_new_with_format
+  (c-name "maia_graphic_surface_new_with_format")
+  (return-type "MaiaGraphicSurface*")
+  (parameters
+    '("MaiaGraphicSurfaceFormat" "inFormat")
+    '("guint" "inWidth")
+    '("guint" "inHeight")
+  )
+)
+
+(define-function maia_graphic_surface_construct_with_format
+  (c-name "maia_graphic_surface_construct_with_format")
+  (return-type "MaiaGraphicSurface*")
+  (parameters
+    '("GType" "object_type")
+    '("MaiaGraphicSurfaceFormat" "inFormat")
+    '("guint" "inWidth")
+    '("guint" "inHeight")
+  )
+)
+
 (define-function maia_graphic_surface_new_from_device
   (c-name "maia_graphic_surface_new_from_device")
   (return-type "MaiaGraphicSurface*")
@@ -15316,6 +15349,12 @@
   (return-type "gchar*")
 )
 
+(define-method get_tag
+  (of-object "MaiaItem")
+  (c-name "maia_item_get_tag")
+  (return-type "const-gchar*")
+)
+
 (define-method get_is_packable
   (of-object "MaiaItem")
   (c-name "maia_item_get_is_packable")
@@ -17346,6 +17385,36 @@
   )
 )
 
+(define-method get_alignment
+  (of-object "MaiaButton")
+  (c-name "maia_button_get_alignment")
+  (return-type "MaiaGraphicGlyphAlignment")
+)
+
+(define-method set_alignment
+  (of-object "MaiaButton")
+  (c-name "maia_button_set_alignment")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicGlyphAlignment" "value")
+  )
+)
+
+(define-method get_shade_color
+  (of-object "MaiaButton")
+  (c-name "maia_button_get_shade_color")
+  (return-type "MaiaGraphicColor*")
+)
+
+(define-method set_shade_color
+  (of-object "MaiaButton")
+  (c-name "maia_button_set_shade_color")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicColor*" "value")
+  )
+)
+
 (define-method get_label
   (of-object "MaiaButton")
   (c-name "maia_button_get_label")
@@ -17370,6 +17439,21 @@
 (define-method set_border
   (of-object "MaiaButton")
   (c-name "maia_button_set_border")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_spacing
+  (of-object "MaiaButton")
+  (c-name "maia_button_get_spacing")
+  (return-type "gdouble")
+)
+
+(define-method set_spacing
+  (of-object "MaiaButton")
+  (c-name "maia_button_set_spacing")
   (return-type "none")
   (parameters
     '("gdouble" "value")
@@ -21345,6 +21429,21 @@
   )
 )
 
+(define-method get_shadow_pattern
+  (of-object "MaiaSwitchButton")
+  (c-name "maia_switch_button_get_shadow_pattern")
+  (return-type "MaiaGraphicPattern*")
+)
+
+(define-method set_shadow_pattern
+  (of-object "MaiaSwitchButton")
+  (c-name "maia_switch_button_set_shadow_pattern")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "value")
+  )
+)
+
 (define-method get_line_pattern
   (of-object "MaiaSwitchButton")
   (c-name "maia_switch_button_get_line_pattern")
@@ -21358,6 +21457,187 @@
   (parameters
     '("MaiaGraphicPattern*" "value")
   )
+)
+
+(define-function maia_step_button_get_type
+  (c-name "maia_step_button_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_step_button_new
+  (c-name "maia_step_button_new")
+  (is-constructor-of "MaiaStepButton")
+  (return-type "MaiaStepButton*")
+  (parameters
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-function maia_step_button_construct
+  (c-name "maia_step_button_construct")
+  (return-type "MaiaStepButton*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-method get_font_description
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_get_font_description")
+  (return-type "const-gchar*")
+)
+
+(define-method set_font_description
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_set_font_description")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_alignment
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_get_alignment")
+  (return-type "MaiaGraphicGlyphAlignment")
+)
+
+(define-method set_alignment
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_set_alignment")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicGlyphAlignment" "value")
+  )
+)
+
+(define-method get_label
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_get_label")
+  (return-type "const-gchar*")
+)
+
+(define-method set_label
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_set_label")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_border
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_get_border")
+  (return-type "gdouble")
+)
+
+(define-method set_border
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_set_border")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_spacing
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_get_spacing")
+  (return-type "gdouble")
+)
+
+(define-method set_spacing
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_set_spacing")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_sensitive
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_get_sensitive")
+  (return-type "gboolean")
+)
+
+(define-method set_sensitive
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_set_sensitive")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
+(define-method get_model_name
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_get_model_name")
+  (return-type "const-gchar*")
+)
+
+(define-method set_model_name
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_set_model_name")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_model
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_get_model")
+  (return-type "MaiaModel*")
+)
+
+(define-method set_model
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_set_model")
+  (return-type "none")
+  (parameters
+    '("MaiaModel*" "value")
+  )
+)
+
+(define-method get_active
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_get_active")
+  (return-type "guint")
+)
+
+(define-method set_active
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_set_active")
+  (return-type "none")
+  (parameters
+    '("guint" "value")
+  )
+)
+
+(define-method get_clicked
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_get_clicked")
+  (return-type "MaiaCoreEvent*")
+)
+
+(define-method get_changed
+  (of-object "MaiaStepButton")
+  (c-name "maia_step_button_get_changed")
+  (return-type "MaiaCoreEvent*")
+)
+
+(define-function maia_step_button_changed_event_args_get_type
+  (c-name "maia_step_button_changed_event_args_get_type")
+  (return-type "GType")
+)
+
+(define-method get_active
+  (of-object "MaiaStepButtonChangedEventArgs")
+  (c-name "maia_step_button_changed_event_args_get_active")
+  (return-type "guint")
 )
 
 

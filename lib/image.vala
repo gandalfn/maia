@@ -152,10 +152,4 @@ public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
             inContext.restore ();
         }
     }
-
-    internal bool
-    have_image ()
-    {
-        return m_Image != null;
-    }
 }
