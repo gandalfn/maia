@@ -93,6 +93,20 @@ public enum Maia.Graphic.Operator
     HSL_LUMINOSITY
 }
 
+public enum Maia.Graphic.LineJoin
+{
+    MITER,
+    ROUND,
+    BEVEL
+}
+
+public enum Maia.Graphic.LineCap
+{
+    BUTT,
+    ROUND,
+    SQUARE
+}
+
 public class Maia.Graphic.Context : Core.Object
 {
     // accessors
@@ -104,6 +118,10 @@ public class Maia.Graphic.Context : Core.Object
     public virtual Pattern           pattern    { get; set; }
     [CCode (notify = false)]
     public virtual double            line_width { get; set; }
+    [CCode (notify = false)]
+    public virtual LineJoin          line_join  { get; set; }
+    [CCode (notify = false)]
+    public virtual LineCap           line_cap   { get; set; }
     [CCode (notify = false)]
     public virtual double[]?         dash       { get; set; }
     [CCode (notify = false)]

@@ -113,6 +113,40 @@ internal class Maia.Cairo.Context : Graphic.Context
     }
 
     [CCode (notify = false)]
+    internal override Graphic.LineJoin line_join {
+        get {
+            if (m_Context != null)
+            {
+                return (Graphic.LineJoin)m_Context.get_line_join ();
+            }
+            return Graphic.LineJoin.MITER;
+        }
+        set {
+            if (m_Context != null)
+            {
+                m_Context.set_line_join ((global::Cairo.LineJoin)value);
+            }
+        }
+    }
+
+    [CCode (notify = false)]
+    internal override Graphic.LineCap line_cap {
+        get {
+            if (m_Context != null)
+            {
+                return (Graphic.LineCap)m_Context.get_line_cap ();
+            }
+            return Graphic.LineCap.BUTT;
+        }
+        set {
+            if (m_Context != null)
+            {
+                m_Context.set_line_cap ((global::Cairo.LineCap)value);
+            }
+        }
+    }
+
+    [CCode (notify = false)]
     internal override double[]? dash {
         get {
             return m_Dashes;
