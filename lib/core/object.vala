@@ -270,12 +270,6 @@ public abstract class Maia.Core.Object : Any
     }
 
     // Methods
-    construct
-    {
-        m_Plugs = new Core.Set<PlugProperty> ();
-        m_Plugs.compare_func = PlugProperty.compare;
-    }
-
     ~Object ()
     {
         Log.audit ("Maia.~Object", Log.Category.CORE_OBJECT, "destroy %s", get_type ().name ());
@@ -703,8 +697,17 @@ public abstract class Maia.Core.Object : Any
     public void
     plug_property (string inProperty, Object inDest, string inDestProperty)
     {
-        PlugProperty.Hash hash = PlugProperty.Hash (inProperty, inDest, inDestProperty);
-        unowned PlugProperty? prop = m_Plugs.search<PlugProperty.Hash?> (hash, PlugProperty.compare_with_hash);
+        unowned PlugProperty? prop = null;
+        if (m_Plugs == null)
+        {
+            m_Plugs = new Core.Set<PlugProperty> ();
+            m_Plugs.compare_func = PlugProperty.compare;
+        }
+        else
+        {
+            PlugProperty.Hash hash = PlugProperty.Hash (inProperty, inDest, inDestProperty);
+            prop = m_Plugs.search<PlugProperty.Hash?> (hash, PlugProperty.compare_with_hash);
+        }
 
         if (prop == null)
         {
@@ -722,8 +725,17 @@ public abstract class Maia.Core.Object : Any
     public void
     unplug_property (string inProperty, Object inDest, string inDestProperty)
     {
-        PlugProperty.Hash hash = PlugProperty.Hash (inProperty, inDest, inDestProperty);
-        unowned PlugProperty? prop = m_Plugs.search<PlugProperty.Hash?> (hash, PlugProperty.compare_with_hash);
+        unowned PlugProperty? prop = null;
+        if (m_Plugs == null)
+        {
+            m_Plugs = new Core.Set<PlugProperty> ();
+            m_Plugs.compare_func = PlugProperty.compare;
+        }
+        else
+        {
+            PlugProperty.Hash hash = PlugProperty.Hash (inProperty, inDest, inDestProperty);
+            prop = m_Plugs.search<PlugProperty.Hash?> (hash, PlugProperty.compare_with_hash);
+        }
 
         if (prop != null)
         {
@@ -741,8 +753,17 @@ public abstract class Maia.Core.Object : Any
     public void
     lock_property (string inProperty, Object inDest, string inDestProperty)
     {
-        PlugProperty.Hash hash = PlugProperty.Hash (inProperty, inDest, inDestProperty);
-        unowned PlugProperty? prop = m_Plugs.search<PlugProperty.Hash?> (hash, PlugProperty.compare_with_hash);
+        unowned PlugProperty? prop = null;
+        if (m_Plugs == null)
+        {
+            m_Plugs = new Core.Set<PlugProperty> ();
+            m_Plugs.compare_func = PlugProperty.compare;
+        }
+        else
+        {
+            PlugProperty.Hash hash = PlugProperty.Hash (inProperty, inDest, inDestProperty);
+            prop = m_Plugs.search<PlugProperty.Hash?> (hash, PlugProperty.compare_with_hash);
+        }
 
         if (prop != null)
         {
@@ -760,8 +781,17 @@ public abstract class Maia.Core.Object : Any
     public void
     unlock_property (string inProperty, Object inDest, string inDestProperty)
     {
-        PlugProperty.Hash hash = PlugProperty.Hash (inProperty, inDest, inDestProperty);
-        unowned PlugProperty? prop = m_Plugs.search<PlugProperty.Hash?> (hash, PlugProperty.compare_with_hash);
+        unowned PlugProperty? prop = null;
+        if (m_Plugs == null)
+        {
+            m_Plugs = new Core.Set<PlugProperty> ();
+            m_Plugs.compare_func = PlugProperty.compare;
+        }
+        else
+        {
+            PlugProperty.Hash hash = PlugProperty.Hash (inProperty, inDest, inDestProperty);
+            prop = m_Plugs.search<PlugProperty.Hash?> (hash, PlugProperty.compare_with_hash);
+        }
 
         if (prop != null)
         {
