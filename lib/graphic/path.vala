@@ -182,6 +182,20 @@ public class Maia.Graphic.Path : Core.Object
         return 0;
     }
 
+    public new Graphic.Point
+    @get (uint inIndex)
+        requires (inIndex < m_Points.length)
+    {
+        return m_Points[inIndex];
+    }
+
+    public new void
+    @set (uint inIndex, Graphic.Point inPoint)
+        requires (inIndex < m_Points.length)
+    {
+        m_Points[inIndex] = inPoint;
+    }
+
     public Path
     copy ()
     {

@@ -235,6 +235,7 @@ public class CanvasEditor.ManifestProvider : Provider
         m_Keywords.insert ("SeekBar");
         m_Keywords.insert ("Style");
         m_Keywords.insert ("Shortcut");
+        m_Keywords.insert ("StepButton");
         m_Keywords.insert ("SwitchButton");
         m_Keywords.insert ("ToggleButton");
         m_Keywords.insert ("ToggleGroup");
@@ -306,6 +307,10 @@ public class CanvasEditor.ManifestProvider : Provider
         m_Properties.insert ("yshrink");
         m_Properties.insert ("xalign");
         m_Properties.insert ("yalign");
+        m_Properties.insert ("xshrink");
+        m_Properties.insert ("yshrink");
+        m_Properties.insert ("xlimp");
+        m_Properties.insert ("ylimp");
         m_Properties.insert ("top-padding");
         m_Properties.insert ("bottom-padding");
         m_Properties.insert ("left-padding");
@@ -338,6 +343,8 @@ public class CanvasEditor.ManifestProvider : Provider
         m_Properties.insert ("indicator-placement");
         m_Properties.insert ("indicator-thickness");
         m_Properties.insert ("spacing");
+        m_Properties.insert ("icon-name");
+        m_Properties.insert ("icon-size");
     }
 
     private GLib.List<string>

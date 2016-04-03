@@ -78,66 +78,7 @@ public class Maia.Application : Maia.Core.Object
         }
     }
 
-    // signals
-    [Signal (run = "first")]
-    public virtual signal void
-    new_frame (int inNumFrame)
-    {
-        foreach (unowned Core.Object child in this)
-        {
-            unowned Window window = child as Window;
-            if (window != null)
-            {
-                if (window.visible)
-                {
-                    if (window.geometry == null || window.need_update)
-                    {
-                        var window_position = window.position;
-                        var window_size = window.size;
-
-                        var geometry = new Graphic.Region (Graphic.Rectangle (window_position.x,
-                                                                              window_position.y,
-                                                                              window_size.width,
-                                                                              window_size.height));
-
-                        // set window geometry from its size requested
-                        Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"window set geometry $(geometry.extents)");
-
-                        try
-                        {
-                            // Create fake for window update
-                            var surface = new Graphic.Surface (1, 1);
-
-                            // update geometry of window
-                            window.update (surface.context, geometry);
-                        }
-                        catch (GLib.Error err)
-                        {
-                            Log.critical (GLib.Log.METHOD, Log.Category.MAIN, @"Error on window refresh: $(err.message)");
-                        }
-                    }
-
-                    // window is damaged
-                    if (window.geometry != null && !window.geometry.is_empty () && window.surface != null && window.damaged != null && !window.damaged.is_empty ())
-                    {
-                        try
-                        {
-                            // draw window
-                            window.draw (window.surface.context, window.damaged);
-                        }
-                        catch (GLib.Error err)
-                        {
-                            Log.critical (GLib.Log.METHOD, Log.Category.MAIN, @"Error on window refresh: $(err.message)");
-                        }
-
-                        // finally swap buffer
-                        window.swap_buffer ();
-                    }
-                }
-            }
-        }
-    }
-
+    [CCode (notify = false)]
     public bool pause {
         get {
             return m_Pause;
@@ -235,7 +176,7 @@ public class Maia.Application : Maia.Core.Object
         // Create refresh timeline
         m_Timeline = new Core.Timeline(inFps, inFps);
         m_Timeline.loop = true;
-        m_Timeline.new_frame.connect (on_new_frame);
+        m_Timeline.new_frame.add_object_observer (on_new_frame);
 
         // Create event bus
         m_EventBus = new Core.EventBus (inUri);
@@ -289,9 +230,61 @@ public class Maia.Application : Maia.Core.Object
     }
 
     private void
-    on_new_frame (int inFrameNum)
+    on_new_frame (Core.Notification inNotification)
     {
-        new_frame (inFrameNum);
+        foreach (unowned Core.Object child in this)
+        {
+            unowned Window window = child as Window;
+            if (window != null)
+            {
+                if (window.visible)
+                {
+                    if (window.geometry == null || window.need_update)
+                    {
+                        var window_position = window.position;
+                        var window_size = window.size;
+
+                        var geometry = new Graphic.Region (Graphic.Rectangle (window_position.x,
+                                                                              window_position.y,
+                                                                              window_size.width,
+                                                                              window_size.height));
+
+                        // set window geometry from its size requested
+                        Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"window set geometry $(geometry.extents)");
+
+                        try
+                        {
+                            // Create fake for window update
+                            var surface = new Graphic.Surface (1, 1);
+
+                            // update geometry of window
+                            window.update (surface.context, geometry);
+                        }
+                        catch (GLib.Error err)
+                        {
+                            Log.critical (GLib.Log.METHOD, Log.Category.MAIN, @"Error on window refresh: $(err.message)");
+                        }
+                    }
+
+                    // window is damaged
+                    if (window.geometry != null && !window.geometry.is_empty () && window.surface != null && window.damaged != null && !window.damaged.is_empty ())
+                    {
+                        try
+                        {
+                            // draw window
+                            window.draw (window.surface.context, window.damaged);
+                        }
+                        catch (GLib.Error err)
+                        {
+                            Log.critical (GLib.Log.METHOD, Log.Category.MAIN, @"Error on window refresh: $(err.message)");
+                        }
+
+                        // finally swap buffer
+                        window.swap_buffer ();
+                    }
+                }
+            }
+        }
     }
 
     private void

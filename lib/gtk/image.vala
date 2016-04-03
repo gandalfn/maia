@@ -44,7 +44,7 @@ internal class Maia.Gtk.Image : Maia.Image
                 {
                     not_dumpable_attributes.remove ("filename");
                 }
-                damage ();
+                damage.post ();
             }
         }
         default = null;

@@ -175,7 +175,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
             if (m_Active != value)
             {
                 m_Active = value;
-                damage ();
+                damage.post ();
 
                 GLib.Signal.emit_by_name (this, "notify::active");
 

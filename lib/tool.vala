@@ -266,7 +266,7 @@ public class Maia.Tool : Button
                 sensitive = true;
             }
 
-            damage ();
+            damage.post ();
         }
     }
 
@@ -308,13 +308,13 @@ public class Maia.Tool : Button
     internal override void
     on_show ()
     {
-        damage ();
+        damage.post ();
     }
 
     internal override void
     on_hide ()
     {
-        damage ();
+        damage.post ();
     }
 
     internal override string

@@ -131,7 +131,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
 
                     changed.publish (new ChangedEventArgs (value));
 
-                    damage ();
+                    damage.post ();
                 }
                 else if (m_Active != null)
                 {
@@ -139,7 +139,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
 
                     changed.publish (new ChangedEventArgs (-1));
 
-                    damage ();
+                    damage.post ();
                 }
             }
         }
@@ -251,7 +251,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
                 }
             }
 
-            damage ();
+            damage.post ();
         }
 
         return true;
@@ -323,7 +323,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         }
         else
         {
-            damage ();
+            damage.post ();
         }
     }
 

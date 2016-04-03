@@ -189,6 +189,7 @@
         <keyword>action</keyword>
         <keyword>visible-with</keyword>
         <keyword>icon-name</keyword>
+        <keyword>icon-size</keyword>
         <keyword>transform</keyword>
         <keyword>decorated</keyword>
         <keyword>highlight-color</keyword>

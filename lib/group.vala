@@ -59,6 +59,17 @@ public class Maia.Group : Item
         return area.extents.size;
     }
 
+    internal override void
+    remove_child (Core.Object inObject)
+    {
+        base.remove_child (inObject);
+
+        if (item_over_pointer == inObject)
+        {
+            item_over_pointer = null;
+        }
+    }
+
     internal override Graphic.Size
     size_request (Graphic.Size inSize)
     {

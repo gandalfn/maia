@@ -201,7 +201,7 @@ public class Maia.ScaleBar : Group, ItemPackable, ItemMovable
             add_slider_label ();
         }
 
-        damage ();
+        damage.post ();
     }
 
     private void

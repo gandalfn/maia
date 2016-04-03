@@ -17,8 +17,152 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public interface Maia.Drawable : GLib.Object
+public interface Maia.Drawable : Core.Object
 {
+    // types
+    public class DamageNotification : Core.Notification
+    {
+        // properties
+        private unowned Drawable        m_Drawable;
+        private unowned Graphic.Region? m_Area;
+
+        // accessors
+        public unowned Drawable drawable {
+            get {
+                return m_Drawable;
+            }
+        }
+
+        public unowned Graphic.Region? area {
+            get {
+                return m_Area;
+            }
+        }
+
+        public DamageNotification (string inName, Drawable inDrawable)
+        {
+            base (inName);
+            m_Drawable = inDrawable;
+        }
+
+        public new void
+        post (Graphic.Region? inArea = null)
+        {
+            m_Area = inArea;
+
+            Graphic.Region item_area = m_Drawable.area;
+            if (item_area != null && !item_area.is_empty ())
+            {
+                var damaged_area = item_area;
+                var drawable_damaged = m_Drawable.damaged;
+
+                if (inArea != null)
+                {
+                    damaged_area.intersect (m_Area);
+
+                    if (!damaged_area.is_empty ())
+                    {
+                        if (drawable_damaged == null)
+                        {
+                            m_Drawable.damaged = damaged_area;
+                            base.post ();
+#if MAIA_DEBUG
+                            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "area %s damage %s", damaged_area.extents.to_string (), damaged.extents.to_string ());
+#endif
+                        }
+                        else if (drawable_damaged.contains_rectangle (damaged_area.extents) !=  Graphic.Region.Overlap.IN)
+                        {
+                            drawable_damaged.union_ (damaged_area);
+                            base.post ();
+#if MAIA_DEBUG
+                            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "area %s damage %s", damaged_area.extents.to_string (), damaged.extents.to_string ());
+#endif
+                        }
+                        else
+                        {
+#if MAIA_DEBUG
+                            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"region is already damaged $((this as Item).name)");
+#endif
+                        }
+                    }
+                    else
+                    {
+#if MAIA_DEBUG
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"empty damaged region $((this as Item).name)");
+#endif
+                    }
+                }
+                else
+                {
+                    if (drawable_damaged == null || !drawable_damaged.equal (damaged_area))
+                    {
+                        m_Drawable.damaged = damaged_area;
+                        base.post ();
+#if MAIA_DEBUG
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "all damage %s", damaged.extents.to_string ());
+#endif
+                    }
+                    else
+                    {
+#if MAIA_DEBUG
+                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"region is already damaged $((this as Item).name)");
+#endif
+                    }
+                }
+            }
+        }
+    }
+
+    public class RepairNotification : Core.Notification
+    {
+        // properties
+        private unowned Drawable        m_Drawable;
+        private unowned Graphic.Region? m_Area;
+
+        // accessors
+        public unowned Drawable drawable {
+            get {
+                return m_Drawable;
+            }
+        }
+
+        public unowned Graphic.Region? area {
+            get {
+                return m_Area;
+            }
+        }
+
+        public RepairNotification (string inName, Drawable inDrawable)
+        {
+            base (inName);
+            m_Drawable = inDrawable;
+        }
+
+        public new void
+        post (Graphic.Region? inArea = null)
+        {
+            m_Area = inArea;
+
+            Graphic.Region item_area = area;
+            var drawable_damaged = m_Drawable.damaged;
+            if (item_area != null && !item_area.is_empty () && drawable_damaged != null && !drawable_damaged.is_empty ())
+            {
+                if (inArea != null)
+                {
+                    drawable_damaged.subtract (inArea);
+                }
+                else
+                {
+                    drawable_damaged.subtract (item_area);
+                }
+
+                if (drawable_damaged.is_empty ()) m_Drawable.damaged = null;
+
+                base.post ();
+            }
+        }
+    }
+
     // accessors
     [CCode (notify = false)]
     public abstract Graphic.Region    geometry  { get; set; default = null; }
@@ -43,107 +187,38 @@ public interface Maia.Drawable : GLib.Object
         }
     }
 
-    // signals
+    // notifications
     /**
      * Damage drawable
-     *
-     * @param inArea area to damage
      */
-    [Signal (run = "first")]
-    public virtual signal void
-    damage (Graphic.Region? inArea = null)
-    {
-        Graphic.Region item_area = area;
-        if (item_area != null && !item_area.is_empty ())
-        {
-            var damaged_area = item_area;
+    public unowned DamageNotification? damage {
+        get {
+            unowned DamageNotification? ret = notifications["damage"] as DamageNotification;
 
-            if (inArea != null)
+            if (ret == null)
             {
-                damaged_area.intersect (inArea);
-
-                if (!damaged_area.is_empty ())
-                {
-                    if (damaged == null)
-                    {
-                        damaged = damaged_area;
-#if MAIA_DEBUG
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "area %s damage %s", damaged_area.extents.to_string (), damaged.extents.to_string ());
-#endif
-                    }
-                    else if (damaged.contains_rectangle (damaged_area.extents) !=  Graphic.Region.Overlap.IN)
-                    {
-                        damaged.union_ (damaged_area);
-#if MAIA_DEBUG
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "area %s damage %s", damaged_area.extents.to_string (), damaged.extents.to_string ());
-#endif
-                    }
-                    else
-                    {
-#if MAIA_DEBUG
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"region is already damaged $((this as Item).name)");
-#endif
-                        GLib.Signal.stop_emission_by_name (this, "damage");
-                    }
-                }
-                else
-                {
-#if MAIA_DEBUG
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"empty damaged region $((this as Item).name)");
-#endif
-                    GLib.Signal.stop_emission_by_name (this, "damage");
-                }
+                DamageNotification new_notification = new DamageNotification ("damage", this);
+                notifications.add (new_notification);
+                ret = new_notification;
             }
-            else
-            {
-                if (damaged == null || !damaged.equal (damaged_area))
-                {
-                    damaged = damaged_area;
-#if MAIA_DEBUG
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "all damage %s", damaged.extents.to_string ());
-#endif
-                }
-                else
-                {
-#if MAIA_DEBUG
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"region is already damaged $((this as Item).name)");
-#endif
-                    GLib.Signal.stop_emission_by_name (this, "damage");
-                }
-            }
-        }
-        else
-        {
-            GLib.Signal.stop_emission_by_name (this, "damage");
+            return ret;
         }
     }
 
     /**
      * Repair drawable
-     *
-     * @param inArea area to damage
      */
-    [Signal (run = "first")]
-    public virtual signal void
-    repair (Graphic.Region? inArea = null)
-    {
-        Graphic.Region item_area = area;
-        if (item_area != null && !item_area.is_empty () && damaged != null && !damaged.is_empty ())
-        {
-            if (inArea != null)
-            {
-                damaged.subtract (inArea);
-            }
-            else
-            {
-                damaged.subtract (item_area);
-            }
+    public unowned RepairNotification? repair {
+        get {
+            unowned RepairNotification? ret = notifications["repair"] as RepairNotification;
 
-            if (damaged.is_empty ()) damaged = null;
-        }
-        else
-        {
-            GLib.Signal.stop_emission_by_name (this, "repair");
+            if (ret == null)
+            {
+                RepairNotification new_notification = new RepairNotification ("repair", this);
+                notifications.add (new_notification);
+                ret = new_notification;
+            }
+            return ret;
         }
     }
 

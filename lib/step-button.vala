@@ -206,7 +206,7 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
             if (m_Progress != value)
             {
                 m_Progress = value;
-                damage ();
+                damage.post ();
             }
         }
     }
@@ -301,7 +301,7 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
         Graphic.Region area = new Graphic.Region ();
 
         var label_size = m_Label.size;
-        Graphic.Rectangle label_area = Graphic.Rectangle (border, border, label_size.width, label_size.height);
+        Graphic.Rectangle label_area = Graphic.Rectangle (border, border, label_size.width + border, label_size.height + border);
         area.union_with_rect (label_area);
 
         if (model != null && model.nb_rows > 0)
@@ -313,21 +313,18 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
             view_size.width -= spacing * (model.nb_rows - 1);
 
             // Calculate item size
-            view_size.width /= m_View.model.nb_rows;
+            view_size.width /= model.nb_rows;
 
             // Three item has been visible
             view_size.width *= 3;
-            view_size.width = spacing * 2.0;
+            view_size.width += spacing * 2.0;
 
-            var view_area = Graphic.Rectangle (border, border + label_size.height + spacing, view_size.width, view_size.height);
+            var view_area = Graphic.Rectangle (border, border + label_size.height + spacing, view_size.width + border, view_size.height + border);
             area.union_with_rect (view_area);
         }
 
         // get area size
         var ret = area.extents.size;
-
-        // add right and bottom border
-        ret.resize (border * 2.0, border * 2.0);
 
         return ret;
     }
@@ -341,6 +338,9 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
         {
             var item_size = area.extents.size;
             item_size.resize (-border * 2.0, -border * 2.0);
+
+            Graphic.Point start = Graphic.Point (0, 0);
+            Graphic.Point end = Graphic.Point (item_size.width, 0);
 
             // Set label size allocation
             var label_size = m_Label.size;
@@ -367,13 +367,10 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
             m_View.update (inContext, new Graphic.Region (view_area));
 
             // Create view surface
-            m_ViewSurface = new Graphic.Surface ((uint)GLib.Math.ceil (item_size.width), (uint)GLib.Math.ceil (view_size.height));
+            m_ViewSurface = new Graphic.Surface.similar (inContext.surface, (uint)GLib.Math.ceil (item_size.width), (uint)GLib.Math.ceil (view_size.height));
             m_ViewSurface.clear ();
 
             // Create mask pattern
-            Graphic.Point start = Graphic.Point (0, 0);
-            Graphic.Point end = Graphic.Point (item_size.width, 0);
-
             var color = new Graphic.Color (0, 0, 0, 0);
             var color_half = new Graphic.Color (0, 0, 0, 0.5);
             var color_full = new Graphic.Color (0, 0, 0, 1.0);
@@ -456,6 +453,7 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
                     m_View.draw (ctx);
                 }
                 ctx.restore ();
+                m_ViewSurface.dump ("view.png");
 
                 // Paint view under button
                 inContext.clip (new Graphic.Path.from_rectangle (view_area));
@@ -507,7 +505,7 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
             {
                 grab_pointer (this);
 
-                damage ();
+                damage.post ();
             }
         }
 
@@ -547,7 +545,7 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
 
             m_AreaClicked = -1;
 
-            damage ();
+            damage.post ();
 
             ungrab_pointer (this);
         }

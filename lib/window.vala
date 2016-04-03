@@ -339,7 +339,7 @@ public class Maia.Window : Group
                 damage_area.transform (new Graphic.Transform.from_matrix (matrix));
 
                 var area = new Graphic.Region (damage_area);
-                damage (area);
+                damage.post (area);
 
 #if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"$name damage event $(area.extents)");
@@ -837,7 +837,7 @@ public class Maia.Window : Group
         Graphic.Region? old_geometry = geometry != null ? geometry.copy () : null;
 
         // damage parent
-        if (old_geometry != null && parent != null && parent is Item) (parent as Item).damage (old_geometry);
+        if (old_geometry != null && parent != null && parent is Item) (parent as Item).damage.post (old_geometry);
 
         // reset item geometry
         need_update = true;
@@ -902,7 +902,7 @@ public class Maia.Window : Group
                 }
                 ctx.restore ();
 
-                repair (damaged_area);
+                repair.post (damaged_area);
             }
         }
     }

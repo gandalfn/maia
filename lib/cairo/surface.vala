@@ -78,6 +78,18 @@ internal class Maia.Cairo.Surface : Graphic.Surface
     }
 
     [CCode (notify = false)]
+    public override Graphic.Surface surface {
+        construct set {
+            if (value is Surface && !size.is_empty ())
+            {
+                m_Surface = new global::Cairo.Surface.similar ((global::Cairo.Surface)((value as Surface).native),
+                                                                global::Cairo.Content.COLOR_ALPHA,
+                                                                (int)GLib.Math.ceil (size.width), (int)GLib.Math.ceil (size.height));
+            }
+        }
+    }
+
+    [CCode (notify = false)]
     public override unowned Graphic.Device? device {
         get {
             return base.device;

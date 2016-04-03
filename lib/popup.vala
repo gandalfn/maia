@@ -102,7 +102,7 @@ public class Maia.Popup : Group
                 var dtransform = get_window_transform ();
                 dtransform.add (new Graphic.Transform.init_translate (value, 0));
                 m_Window.device_transform = dtransform;
-                m_Window.damage ();
+                m_Window.damage.post ();
             }
         }
     }
@@ -115,7 +115,7 @@ public class Maia.Popup : Group
                 var dtransform = get_window_transform ();
                 dtransform.add (new Graphic.Transform.init_translate (0, value));
                 m_Window.device_transform = dtransform;
-                m_Window.damage ();
+                m_Window.damage.post ();
             }
         }
     }

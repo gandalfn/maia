@@ -287,15 +287,17 @@ internal class Maia.Xcb.Window : Maia.Window
     }
 
     private void
-    on_repair (Graphic.Region? inArea)
+    on_repair (Core.Notification inNotification)
     {
         if (m_View != null)
         {
+            unowned Maia.Drawable.RepairNotification notification = inNotification as Maia.Drawable.RepairNotification;
+
             // Add swap damaged
             if (m_View.damaged != null)
-                m_View.damaged.union_ (inArea ?? area);
+                m_View.damaged.union_ (notification.area ?? area);
             else
-                m_View.damaged = (inArea ?? area).copy ();
+                m_View.damaged = (notification.area ?? area).copy ();
 
             m_View.updated ();
         }
@@ -308,7 +310,7 @@ internal class Maia.Xcb.Window : Maia.Window
         not_dumpable_attributes.insert ("depth");
 
         // Connect onto repair signal
-        repair.connect (on_repair);
+        repair.add_object_observer (on_repair);
 
         // Get foreign xid if set
         if (foreign != 0)
@@ -405,30 +407,23 @@ internal class Maia.Xcb.Window : Maia.Window
                     }
                 }
 
-                try
+                Graphic.Rectangle geo = Graphic.Rectangle (0, 0, 0, 0);
+                geo.origin = pos;
+                geo.size = m_View.size;
+                geo.size.resize (border * 2, border * 2);
+                if (PositionPolicy.CLAMP_MONITOR in position_policy)
                 {
-                    Graphic.Rectangle geo = Graphic.Rectangle (0, 0, 0, 0);
-                    geo.origin = pos;
-                    geo.size = m_View.size;
-                    geo.size.resize (border * 2, border * 2);
-                    if (PositionPolicy.CLAMP_MONITOR in position_policy)
+                    Graphic.Point root_pos = parent_viewport.view.root_position;
+                    geo.origin.translate (root_pos);
+                    var monitor = m_View.screen.get_monitor_at (geo.origin);
+                    if (monitor != null)
                     {
-                        Graphic.Point root_pos = parent_viewport.view.root_position;
-                        geo.origin.translate (root_pos);
-                        var monitor = m_View.screen.get_monitor_at (geo.origin);
-                        if (monitor != null)
-                        {
-                            geo.clamp (monitor.geometry);
-                        }
-                        geo.origin.translate (root_pos.invert ());
+                        geo.clamp (monitor.geometry);
                     }
+                    geo.origin.translate (root_pos.invert ());
+                }
 
-                    m_View.position = Graphic.Point (double.max (geo.origin.x, 0), double.max (geo.origin.y, 0));
-                }
-                catch (Graphic.Error err)
-                {
-                    Log.critical (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"error on convert position in window coordinate space : $(err.message)");
-                }
+                m_View.position = Graphic.Point (double.max (geo.origin.x, 0), double.max (geo.origin.y, 0));
             }
             else
             {

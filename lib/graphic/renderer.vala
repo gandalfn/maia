@@ -22,21 +22,37 @@ public class Maia.Graphic.Renderer : Core.Object
     // types
     public class InitializeNotification : Core.Notification
     {
+        [CCode (notify = false)]
         public Graphic.Size size { get; set; default = Graphic.Size (0, 0); }
 
         public InitializeNotification (string inName)
         {
             base (inName);
         }
+
+        public new void
+        post (Graphic.Size inSize)
+        {
+            size = inSize;
+            base.post ();
+        }
     }
 
     public class NewFrameNotification : Core.Notification
     {
+        [CCode (notify = false)]
         public uint num_frame { get; set; default = 0; }
 
         public NewFrameNotification (string inName)
         {
             base (inName);
+        }
+
+        public new void
+        post (uint inNumFrame)
+        {
+            num_frame = inNumFrame;
+            base.post ();
         }
     }
 
@@ -57,7 +73,7 @@ public class Maia.Graphic.Renderer : Core.Object
         {
             m_Timeline = new Core.Timeline (inNbFrames, inFps);
             m_Timeline.loop = true;
-            m_Timeline.new_frame.connect (on_new_frame);
+            m_Timeline.new_frame.add_object_observer (on_new_frame);
         }
 
         internal TimelineLooper.from_function (Manifest.Function inFunction) throws Manifest.Error
@@ -92,11 +108,13 @@ public class Maia.Graphic.Renderer : Core.Object
         }
 
         private void
-        on_new_frame (int inFrameNum)
+        on_new_frame (Core.Notification inNotification)
         {
             if (m_Func != null)
             {
-                m_Func (inFrameNum);
+                Core.Timeline.NewFrameNotification notification = (Core.Timeline.NewFrameNotification)inNotification;
+
+                m_Func ((int)notification.num_frame);
             }
         }
 
@@ -153,15 +171,13 @@ public class Maia.Graphic.Renderer : Core.Object
     private void
     on_initialize ()
     {
-        initialize.size = size;
-        initialize.post ();
+        initialize.post (size);
     }
 
     private void
     on_new_frame (uint inFrameNum)
     {
-        new_frame.num_frame = inFrameNum;
-        new_frame.post ();
+        new_frame.post (inFrameNum);
     }
 
     public virtual void

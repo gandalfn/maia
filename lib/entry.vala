@@ -341,7 +341,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                 update_layout ();
 
                 // Damage area
-                damage ();
+                damage.post ();
 
                 GLib.Signal.emit_by_name (this, "notify::text");
             }
@@ -482,24 +482,24 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         notify["lines"].connect (() => {
             m_Glyph = null;
             create_glyph ();
-            damage ();
+            damage.post ();
         });
 
         notify["font-description"].connect (() => {
             m_Glyph = null;
             create_glyph ();
-            damage ();
+            damage.post ();
         });
 
         notify["alignment"].connect (() => {
             m_Glyph = null;
             create_glyph ();
-            damage ();
+            damage.post ();
         });
 
         // connect onto have docus to damage
         notify["have-focus"].connect (() => {
-            damage ();
+            damage.post ();
         });
 
         notify["pointer-over"].connect (on_pointer_over_changed);
@@ -558,7 +558,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             }
         }
 
-        damage ();
+        damage.post ();
     }
 
     private void
@@ -662,9 +662,9 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             }
             else
             {
-                damage ();
+                damage.post ();
                 size = m_Glyph.size;
-                damage ();
+                damage.post ();
             }
         }
     }
@@ -790,14 +790,14 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             {
                 m_Cursor--;
                 m_Cursor = int.max (0, m_Cursor);
-                damage ();
+                damage.post ();
             }
             // Right arrow is pressed move cursor on right
             else if (inKey == Key.Right || inKey == Key.Right)
             {
                 m_Cursor++;
                 m_Cursor = int.min ((int)(text ?? "").length, m_Cursor);
-                damage ();
+                damage.post ();
             }
             // Other key is pressed check if character is printable (filter sepcial key)
             else if (inCar.isprint ())

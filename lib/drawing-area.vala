@@ -93,14 +93,14 @@ public class Maia.DrawingArea : Group, ItemPackable
                             unowned Item? item = find (GLib.Quark.from_string (arrow.linked_item)) as Item;
                             if (item != null)
                             {
-                                item.damage ();
-                                arrow.damage ();
+                                item.damage.post ();
+                                arrow.damage.post ();
                             }
                         }
                     }
                     else
                     {
-                        m_SelectedItem.damage ();
+                        m_SelectedItem.damage.post ();
                     }
                 }
 
@@ -126,14 +126,14 @@ public class Maia.DrawingArea : Group, ItemPackable
                             unowned Item? item = find (GLib.Quark.from_string (arrow.linked_item)) as Item;
                             if (item != null)
                             {
-                                item.damage ();
-                                arrow.damage ();
+                                item.damage.post ();
+                                arrow.damage.post ();
                             }
                         }
                     }
                     else
                     {
-                        m_SelectedItem.damage ();
+                        m_SelectedItem.damage.post ();
                     }
                 }
             }
@@ -250,7 +250,7 @@ public class Maia.DrawingArea : Group, ItemPackable
         }
 
         // Damage item
-        m_SelectedItem.damage ();
+        m_SelectedItem.damage.post ();
     }
 
     internal override void
@@ -274,10 +274,10 @@ public class Maia.DrawingArea : Group, ItemPackable
             var child_position = inChild.position;
             var child_size = inChild.size;
 
-            inChild.damage ();
+            inChild.damage.post ();
             inChild.geometry = new Graphic.Region (Graphic.Rectangle (child_position.x, child_position.y, child_size.width, child_size.height));
-            inChild.repair ();
-            inChild.damage ();
+            inChild.repair.post ();
+            inChild.damage.post ();
         }
     }
 
@@ -325,7 +325,7 @@ public class Maia.DrawingArea : Group, ItemPackable
 
             // damage item
             damaged_area.intersect (area);
-            damage (damaged_area);
+            damage.post (damaged_area);
         }
     }
 
@@ -563,7 +563,7 @@ public class Maia.DrawingArea : Group, ItemPackable
                             inContext.restore ();
 
                             // Create mask for item selected area
-                            var mask = new Graphic.Surface ((int)geometry.extents.size.width, (int)geometry.extents.size.height);
+                            var mask = new Graphic.Surface.similar (inContext.surface, (int)geometry.extents.size.width, (int)geometry.extents.size.height);
                             mask.clear ();
                             mask.context.operator = Graphic.Operator.SOURCE;
                             var path_item = new Graphic.Path ();

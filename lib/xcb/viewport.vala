@@ -243,13 +243,15 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
     }
 
     private void
-    on_repair (Graphic.Region? inArea)
+    on_repair (Core.Notification inNotification)
     {
+        unowned Maia.Drawable.RepairNotification notification = inNotification as Maia.Drawable.RepairNotification;
+
         if (m_View != null)
         {
             // Translate area to visible area
             var damaged_area = new Graphic.Region (visible_area);
-            damaged_area.intersect (inArea ?? area);
+            damaged_area.intersect (notification.area ?? area);
             damaged_area.translate (visible_area.origin.invert ());
 
             // Add swap damaged
@@ -326,7 +328,7 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
         not_dumpable_attributes.insert ("depth");
 
         // Connect onto repair signal
-        repair.connect (on_repair);
+        repair.add_object_observer (on_repair);
 
         // create view
         create_view ();

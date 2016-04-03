@@ -80,6 +80,9 @@ public class Maia.Graphic.Surface : Pattern, Core.Serializable
     public virtual unowned Device? device { get; construct set; default = null; }
 
     [CCode (notify = false)]
+    public virtual Graphic.Surface surface { construct set {} }
+
+    [CCode (notify = false)]
     public Context context {
         get {
             if (m_Context == null)
@@ -113,6 +116,13 @@ public class Maia.Graphic.Surface : Pattern, Core.Serializable
     {
         var size = Graphic.Size ((double)inWidth, (double)inHeight);
         GLib.Object (format: inFormat, size: size);
+    }
+
+    public Surface.similar (Surface inSurface, uint inWidth, uint inHeight)
+        requires (inWidth > 0 && inHeight > 0)
+    {
+        var size = Graphic.Size ((double)inWidth, (double)inHeight);
+        GLib.Object (format: inSurface.format, size: size, surface: inSurface);
     }
 
     public Surface.from_device (Device inDevice, uint inWidth, uint inHeight)

@@ -19,6 +19,72 @@
 
 public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 {
+    // types
+    public enum State
+    {
+        NORMAL,
+        ACTIVE,
+        PRELIGHT,
+        SELECTED,
+        INSENSITIVE,
+        FOCUSED,
+        N;
+
+        public string
+        to_string ()
+        {
+            switch (this)
+            {
+                case NORMAL:
+                    return "normal";
+
+                case ACTIVE:
+                    return "active";
+
+                case PRELIGHT:
+                    return "prelight";
+
+                case SELECTED:
+                    return "selected";
+
+                case INSENSITIVE:
+                    return "insensitive";
+
+                case FOCUSED:
+                    return "focused";
+            }
+
+            return "normal";
+        }
+
+        public static State
+        from_string (string inValue)
+        {
+            switch (inValue.down ())
+            {
+                case "normal":
+                    return NORMAL;
+
+                case "active":
+                    return ACTIVE;
+
+                case "prelight":
+                    return PRELIGHT;
+
+                case "selected":
+                    return SELECTED;
+
+                case "insensitive":
+                    return INSENSITIVE;
+
+                case "focused":
+                    return FOCUSED;
+            }
+
+            return N;
+        }
+    }
+
     // static properties
     internal static GLib.Quark s_ChainVisibleCount;
     internal static GLib.Quark s_MainWindow;
@@ -40,6 +106,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     private bool                       m_IsResizable = false;
     private bool                       m_Visible = true;
     private Graphic.Region             m_Geometry = null;
+    private Graphic.Region             m_Area = null;
     private Graphic.Point              m_Position = Graphic.Point (0, 0);
     private bool                       m_BlockOnMoveResize = false;
     private Graphic.Size               m_Size = Graphic.Size (0, 0);
@@ -203,6 +270,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 bool old_not_empty = (m_Geometry != null);
 
                 m_Geometry = value;
+                m_Area = null;
 
                 // New geometry
                 if (m_Geometry != null)
@@ -230,20 +298,25 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             if (geometry != null)
             {
-                ret = geometry.copy ();
-                ret.translate (geometry.extents.origin.invert ());
+                if (m_Area == null)
+                {
+                    m_Area = geometry.copy ();
+                    m_Area.translate (geometry.extents.origin.invert ());
 
-                if (transform.have_rotate)
-                {
-                    var t = transform.copy ();
-                    t.apply_center_rotate (geometry.extents.size.width / 2.0, geometry.extents.size.height / 2.0);
-                    ret.transform (new Graphic.Transform.from_matrix (t.matrix_invert));
-                    ret.translate (ret.extents.origin.invert ());
+                    if (transform.have_rotate)
+                    {
+                        var t = transform.copy ();
+                        t.apply_center_rotate (geometry.extents.size.width / 2.0, geometry.extents.size.height / 2.0);
+                        m_Area.transform (new Graphic.Transform.from_matrix (t.matrix_invert));
+                        m_Area.translate (ret.extents.origin.invert ());
+                    }
+                    else
+                    {
+                        m_Area.transform (new Graphic.Transform.from_matrix (transform.matrix_invert));
+                    }
                 }
-                else
-                {
-                    ret.transform (new Graphic.Transform.from_matrix (transform.matrix_invert));
-                }
+
+                ret = m_Area.copy ();
             }
 
             return ret;
@@ -264,9 +337,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 m_TransformObserver = null;
             }
 
-            damage ();
+            damage.post ();
             m_Transform = value;
-            damage ();
+            m_Area = null;
+            damage.post ();
 
             if (m_Transform != null)
             {
@@ -597,7 +671,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         scroll_event.connect (on_scroll_event);
 
         // connect to damage event
-        damage.connect (on_damage);
+        damage.add_object_observer (on_damage_notification);
 
         notify["root"].connect (on_visible_changed);
         notify["chain-visible"].connect (on_visible_changed);
@@ -675,6 +749,20 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 }
             }
         }
+    }
+
+    private void
+    on_damage_notification (Core.Notification inNotification)
+    {
+        on_damage ((inNotification as Drawable.DamageNotification).area);
+    }
+
+    private void
+    on_child_damaged_notification (Core.Notification inNotification)
+    {
+        unowned Drawable.DamageNotification notification = inNotification as Drawable.DamageNotification;
+
+        on_child_damaged (notification.drawable, notification.area);
     }
 
     private void
@@ -798,10 +886,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         // if item was moved
         if (geometry != null && parent != null && parent is DrawingArea && (m_IsMovable || m_IsResizable))
         {
-            damage ();
+            damage.post ();
             geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
-            repair ();
-            damage ();
+            repair.post ();
+            damage.post ();
         }
         else if (geometry != null)
         {
@@ -1134,7 +1222,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 }
                 inContext.restore ();
 
-                repair (damaged_area);
+                repair.post (damaged_area);
             }
         }
     }
@@ -1213,9 +1301,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 #endif
 
             // damage item
-            damage.disconnect (on_damage);
-            damage (child_damaged_area);
-            damage.connect (on_damage);
+            damage.remove_observer (on_damage_notification);
+            damage.post (child_damaged_area);
+            damage.add_object_observer (on_damage_notification);
         }
     }
 
@@ -1233,7 +1321,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     on_hide ()
     {
         // Remove all damaged area
-        repair ();
+        repair.post ();
 
         // Mark has need to check size
         need_update = true;
@@ -1399,7 +1487,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 inObject.notify["geometry"].connect (on_child_geometry_changed);
 
                 // Connect under child damage
-                ((Drawable)inObject).damage.connect (on_child_damaged);
+                ((Drawable)inObject).damage.add_object_observer (on_child_damaged_notification);
             }
 
             if (inObject is Item)
@@ -1457,7 +1545,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 inObject.notify["geometry"].disconnect (on_child_geometry_changed);
 
                 // Disconnect from child damage
-                ((Drawable)inObject).damage.disconnect (on_child_damaged);
+                ((Drawable)inObject).damage.remove_observer (on_child_damaged_notification);
             }
 
             if (inObject is Item)

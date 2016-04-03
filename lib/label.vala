@@ -316,12 +316,12 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
                         }
                         else
                         {
-                            damage();
+                            damage.post ();
                         }
                     }
                     else
                     {
-                        damage();
+                        damage.post ();
                     }
                 }
                 else
@@ -351,7 +351,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     private void
     on_draw_property_changed ()
     {
-        damage ();
+        damage.post ();
     }
 
     private inline unowned string?
@@ -452,13 +452,6 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
                 var glyph_size = m_Glyph.size;
                 var item_size = area.extents.size;
                 m_Glyph.size = item_size;
-
-//~                 if (yexpand && item_size.height > glyph_size.height)
-//~                 {
-//~                     glyph_size.transform (transform);
-
-//~                     pos.y = double.max (pos.y, ((item_size.height - glyph_size.height) * yalign) - glyph_size.height);
-//~                 }
 
                 if (shade_color != null)
                 {

@@ -72,7 +72,7 @@ public class Maia.Viewport : Window
                     m_ScrollDamage = true;
 
                     // Send damage to launch redraw of visible area
-                    damage (new Graphic.Region (m_VisibleArea));
+                    damage.post (new Graphic.Region (m_VisibleArea));
 
                     // Unblock childs damage
                     m_ScrollDamage = false;
@@ -135,7 +135,7 @@ public class Maia.Viewport : Window
                 damaged.subtract (m_ScrolledDamaged);
                 m_ScrolledDamaged = null;
             }
-            
+
             // get area not already drawn
             var damaged_area = damaged.copy ();
             if (visible_damaged != null)
@@ -183,7 +183,7 @@ public class Maia.Viewport : Window
                 }
                 ctx.restore ();
 
-                repair (damaged_area);
+                repair.post (damaged_area);
             }
             swap_buffer ();
         }

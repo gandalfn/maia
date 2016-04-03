@@ -47,9 +47,9 @@ public interface Maia.ItemResizable : Item
                     area.clamp (drawing_area_geometry.extents);
                 }
 
-                damage ();
+                damage.post ();
                 size = area.size;
-                damage ();
+                damage.post ();
             }
         }
     }

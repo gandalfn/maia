@@ -567,6 +567,11 @@ public class Maia.Document : Item
         }
 
         base.remove_child (inObject);
+
+        if (item_over_pointer == inObject)
+        {
+            item_over_pointer = null;
+        }
     }
 
     internal override void

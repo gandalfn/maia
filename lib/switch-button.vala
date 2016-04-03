@@ -40,7 +40,7 @@ public class Maia.SwitchButton : Toggle
         }
         set {
             m_SwitchProgress = value;
-            damage ();
+            damage.post ();
         }
     }
 

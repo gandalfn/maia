@@ -120,7 +120,7 @@ public class Maia.View : Maia.Grid
             if (m_RowHightlighted != value)
             {
                 m_RowHightlighted = value;
-                damage ();
+                damage.post ();
             }
         }
     }
@@ -269,7 +269,7 @@ public class Maia.View : Maia.Grid
                 if (item == item_over_pointer) return;
 
                 // Damage old item
-                item.damage ();
+                item.damage.post ();
 
                 // Unset highlighted item
                 m_RowHightlighted = -1;
@@ -287,7 +287,7 @@ public class Maia.View : Maia.Grid
                     m_RowHightlighted = (int)row;
 
                     // Damage the new item
-                    item_over_pointer.damage ();
+                    item_over_pointer.damage.post ();
                 }
             }
         }

@@ -120,7 +120,7 @@ public class Maia.ProgressBar : Item, ItemPackable
     private void
     on_adjustment_changed ()
     {
-        damage ();
+        damage.post ();
     }
 
     internal override bool

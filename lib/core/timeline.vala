@@ -25,11 +25,31 @@ public enum Maia.Core.TimelineDirection
 
 public class Maia.Core.Timeline : Object
 {
+    // types
+    public class NewFrameNotification : Core.Notification
+    {
+        public uint num_frame { get; set; default = 0; }
+
+        public NewFrameNotification (string inName)
+        {
+            base (inName);
+        }
+
+        public new void
+        post (uint inNumFrame)
+        {
+            num_frame = inNumFrame;
+            base.post ();
+        }
+    }
+
+    // static properties
     static GLib.Private s_TimeoutPool;
 
     static bool        s_HaveDefault = false;
     static int         s_DefaultPriority = 0;
 
+    // properties
     private Timeout?          m_Timeout = null;
     private TimelineDirection m_Direction = TimelineDirection.FORWARD;
     private int               m_CurrentFrameNum = 0;
@@ -136,11 +156,30 @@ public class Maia.Core.Timeline : Object
         }
     }
 
-    // signals
-    public virtual signal void started () {}
-    public virtual signal void paused ()  {}
-    public virtual signal void new_frame (int inNumFrame)  {}
-    public virtual signal void completed () {}
+    // notifications
+    public unowned Core.Notification started {
+        get {
+            return notifications["started"];
+        }
+    }
+
+    public unowned Core.Notification paused {
+        get {
+            return notifications["started"];
+        }
+    }
+
+    public unowned NewFrameNotification new_frame {
+        get {
+            return notifications["new-frame"] as NewFrameNotification;
+        }
+    }
+
+    public unowned Core.Notification completed {
+        get {
+            return notifications["completed"];
+        }
+    }
 
     // static methods
     static construct
@@ -154,6 +193,15 @@ public class Maia.Core.Timeline : Object
     {
         s_DefaultPriority = inPriority;
         s_HaveDefault = true;
+    }
+
+    // methods
+    construct
+    {
+        notifications.add (new Core.Notification ("started"));
+        notifications.add (new Core.Notification ("paused"));
+        notifications.add (new NewFrameNotification ("new-frame"));
+        notifications.add (new Core.Notification ("completed"));
     }
 
     /**
@@ -249,7 +297,7 @@ public class Maia.Core.Timeline : Object
 
         if (!is_complete ())
         {
-            new_frame (m_CurrentFrameNum);
+            new_frame.post (m_CurrentFrameNum);
 
             if (m_Timeout == null)
             {
@@ -275,7 +323,7 @@ public class Maia.Core.Timeline : Object
 
             end_frame = m_CurrentFrameNum;
 
-            new_frame (m_CurrentFrameNum);
+            new_frame.post (m_CurrentFrameNum);
 
             if (m_CurrentFrameNum != end_frame)
                 return true;
@@ -286,7 +334,7 @@ public class Maia.Core.Timeline : Object
                 m_Timeout = null;
             }
 
-            completed ();
+            completed.post ();
 
             if (m_CurrentFrameNum != end_frame &&
                 !((m_CurrentFrameNum == 0 && end_frame == this.n_frames) ||
@@ -330,7 +378,7 @@ public class Maia.Core.Timeline : Object
 
         add_timeout ();
 
-        started ();
+        started.post ();
     }
 
     /**
@@ -348,7 +396,7 @@ public class Maia.Core.Timeline : Object
         m_PrevFrameTimeVal.tv_sec = 0;
         m_PrevFrameTimeVal.tv_usec = 0;
 
-        paused ();
+        paused.post ();
     }
 
     /**

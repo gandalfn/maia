@@ -260,9 +260,9 @@ public class Maia.Core.Animator : GLib.Object
     construct
     {
         m_Timeline = new Timeline (20, 20);
-        m_Timeline.started.connect (on_started);
-        m_Timeline.new_frame.connect (on_new_frame);
-        m_Timeline.completed.connect (on_completed);
+        m_Timeline.started.add_object_observer (on_started);
+        m_Timeline.new_frame.add_object_observer (on_new_frame);
+        m_Timeline.completed.add_object_observer (on_completed);
     }
 
     /**
@@ -277,7 +277,7 @@ public class Maia.Core.Animator : GLib.Object
     }
 
     private void
-    on_started ()
+    on_started (Core.Notification inNotification)
     {
         foreach (unowned Transition transition in m_Transitions)
         {
@@ -286,7 +286,7 @@ public class Maia.Core.Animator : GLib.Object
     }
 
     private void
-    on_new_frame (int inNumFrame)
+    on_new_frame (Core.Notification inNotification)
     {
         double progress = m_Timeline.progress;
         bool is_loop =  loop;
@@ -308,7 +308,7 @@ public class Maia.Core.Animator : GLib.Object
     }
 
     private void
-    on_completed ()
+    on_completed (Core.Notification inNotification)
     {
         // duplicate list of transition to allow modification of transition in finish
         Core.Array<Transition> transitions = new Core.Array<Transition> ();
