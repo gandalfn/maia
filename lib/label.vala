@@ -212,7 +212,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     construct
     {
         // Default color
-        stroke_pattern = new Graphic.Color (0, 0, 0);
+        stroke_pattern = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0));
 
         // connect onto layout properties changed
         notify["window"].connect (on_window_changed);
@@ -444,7 +444,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
         paint_background (inContext);
 
         // paint text
-        if (m_Glyph != null && stroke_pattern != null)
+        if (m_Glyph != null && stroke_pattern[Item.State.NORMAL] != null)
         {
             inContext.save ();
             {
@@ -469,7 +469,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
                 }
 
                 m_Glyph.origin = pos;
-                inContext.pattern = stroke_pattern;
+                inContext.pattern = stroke_pattern[Item.State.NORMAL];
                 inContext.render (m_Glyph);
 
                 m_Glyph.size = glyph_size;

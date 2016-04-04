@@ -230,7 +230,7 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
         changed = new Core.Event ("changed", this);
 
         // Set default properties
-        stroke_pattern = new Graphic.Color (0, 0, 0);
+        stroke_pattern = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0));
 
         // Create areas
         m_Areas = new Graphic.Region[4];
@@ -410,11 +410,11 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
                         inContext.translate (Graphic.Point ((item_area.extents.size.width - (image_size.width / scale)) / 2,
                                                             (item_area.extents.size.height - (image_size.height / scale)) / 2));
                         image.transform = transform;
-                        inContext.pattern = fill_pattern;
+                        inContext.pattern = fill_pattern[Item.State.NORMAL];
                     }
                     else
                     {
-                        inContext.pattern = fill_pattern;
+                        inContext.pattern = fill_pattern[Item.State.NORMAL];
                     }
 
                     inContext.paint ();

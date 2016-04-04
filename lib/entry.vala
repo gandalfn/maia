@@ -467,7 +467,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     {
         not_dumpable_attributes.insert ("changed");
 
-        stroke_pattern = new Graphic.Color (0, 0, 0);
+        stroke_pattern = new StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0));
         background_pattern = new Graphic.Color (0, 0, 0);
 
         // Create a fake surface to calculate the size of path
@@ -901,7 +901,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                 }
 
                 // Paint text
-                inContext.pattern = have_focus && edit_stroke_pattern != null ? edit_stroke_pattern : stroke_pattern;
+                inContext.pattern = have_focus && edit_stroke_pattern != null ? edit_stroke_pattern : stroke_pattern[Item.State.NORMAL];
                 inContext.render (m_Glyph);
 
                 inContext.line_width = underline_width;

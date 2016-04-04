@@ -613,7 +613,7 @@ public class Maia.ChartView : Group, ItemPackable
     // methods
     construct
     {
-        stroke_pattern = new Graphic.Color (0, 0, 0);
+        stroke_pattern = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0));
         font_pattern = new Graphic.Color (0, 0, 0);
 
         // Create array of axis labels
@@ -1360,7 +1360,7 @@ public class Maia.ChartView : Group, ItemPackable
                     break;
             }
 
-            inContext.pattern = stroke_pattern;
+            inContext.pattern = stroke_pattern[Item.State.NORMAL];
 
             // Draw grid
             if (grid_visible)

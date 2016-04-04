@@ -313,7 +313,7 @@ public class Maia.Window : Group
             ctx.pattern = background_pattern ?? new Graphic.Color (1, 1, 1);
             ctx.fill (background);
             ctx.line_width = CLOSE_BUTTON_LINE_SIZE;
-            ctx.pattern = stroke_pattern ?? new Graphic.Color (0, 0, 0);
+            ctx.pattern = stroke_pattern[Item.State.NORMAL] ?? new Graphic.Color (0, 0, 0);
             ctx.stroke (foreground);
         }
         catch (Graphic.Error err)

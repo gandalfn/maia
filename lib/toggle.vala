@@ -246,7 +246,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
     // methods
     construct
     {
-        stroke_pattern = new Graphic.Color (0, 0, 0);
+        stroke_pattern = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0));
 
         toggled = new Core.Event ("toggled", this);
 

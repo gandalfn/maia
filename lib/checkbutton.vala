@@ -35,8 +35,8 @@ public class Maia.CheckButton : Toggle
     // methods
     construct
     {
-        fill_pattern = new Graphic.Color (1, 1, 1);
-        stroke_pattern = new Graphic.Color (0, 0, 0);
+        fill_pattern = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (1, 1, 1));
+        stroke_pattern = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0));
 
         m_Label = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
     }
@@ -97,7 +97,7 @@ public class Maia.CheckButton : Toggle
             base.paint (inContext, inArea);
 
             // Paint check box
-            Graphic.Color color = fill_pattern as Graphic.Color ?? new Graphic.Color (0.7, 0.7, 0.7);
+            Graphic.Color color = fill_pattern[Item.State.NORMAL] as Graphic.Color ?? new Graphic.Color (0.7, 0.7, 0.7);
             Graphic.Color shade = new Graphic.Color.shade (color, 0.6);
 
             var path = new Graphic.Path ();

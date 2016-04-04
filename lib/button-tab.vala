@@ -82,16 +82,6 @@ public class Maia.ButtonTab : Toggle
     public double border { get; set; default = 5.0; }
 
     /**
-     * The background color of button if not set the button does not draw any background
-     */
-    public Graphic.Pattern button_pattern { get; set; default = new Graphic.Color (0.7, 0.7, 0.7); }
-
-    /**
-     * The highlight background color of button if not set the button does not draw any background
-     */
-    public Graphic.Pattern button_highlight_pattern { get; set; default = null; }
-
-    /**
      * The highlight font color of button
      */
     public Graphic.Pattern stroke_highlight_pattern { get; set; default = null; }
@@ -318,22 +308,22 @@ public class Maia.ButtonTab : Toggle
             if (sensitive)
             {
                 // paint button background if is highlighted
-                if (highlight && button_highlight_pattern != null)
+                if (highlight && fill_pattern[Item.State.PRELIGHT] != null)
                 {
-                    inContext.pattern = button_highlight_pattern;
+                    inContext.pattern = fill_pattern[Item.State.PRELIGHT];
                     inContext.fill (background);
                 }
                 // paint button background if is not active
-                else if (!highlight && button_pattern != null)
+                else if (!highlight && fill_pattern[Item.State.NORMAL] != null)
                 {
-                    inContext.pattern = button_pattern;
+                    inContext.pattern = fill_pattern[Item.State.NORMAL];
                     inContext.fill (background);
                 }
             }
             // paint button background if is not sensitive
-            else if (button_inactive_pattern != null)
+            else if (fill_pattern[Item.State.INSENSITIVE] != null)
             {
-                inContext.pattern = button_inactive_pattern;
+                inContext.pattern = fill_pattern[Item.State.INSENSITIVE];
                 inContext.fill (background);
             }
 

@@ -570,7 +570,7 @@ public class Maia.View : Maia.Grid
             if (item != null)
             {
                 var path = new Graphic.Path.from_region (item.geometry);
-                inContext.pattern = fill_pattern;
+                inContext.pattern = fill_pattern[Item.State.NORMAL];
                 inContext.fill (path);
             }
         }

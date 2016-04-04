@@ -172,8 +172,8 @@ public class Maia.ScaleBar : Group, ItemPackable, ItemMovable
         m_StepLabels = new Core.Array<unowned Label> ();
 
         // Default colors
-        stroke_pattern     = new Graphic.Color (0, 0, 0);
-        fill_pattern       = new Graphic.Color (0, 0, 0, 0.6);
+        stroke_pattern = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0));
+        fill_pattern   = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0, 0.6));
 
         // connect onto font-description changed
         notify["step-font-description"].connect (on_adjustment_changed);
@@ -751,10 +751,10 @@ public class Maia.ScaleBar : Group, ItemPackable, ItemMovable
         }
 
         // Draw main scale
-        if (stroke_pattern != null)
+        if (stroke_pattern[Item.State.NORMAL] != null)
         {
             inContext.line_width = line_width;
-            inContext.pattern = stroke_pattern;
+            inContext.pattern = stroke_pattern[Item.State.NORMAL];
             inContext.stroke (get_scale_path ());
         }
 
@@ -771,9 +771,9 @@ public class Maia.ScaleBar : Group, ItemPackable, ItemMovable
         }
 
         // Draw slider
-        if (fill_pattern != null)
+        if (fill_pattern[Item.State.NORMAL] != null)
         {
-            inContext.pattern = fill_pattern;
+            inContext.pattern = fill_pattern[Item.State.NORMAL];
             inContext.fill (get_slider_path ());
         }
     }

@@ -157,16 +157,6 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
      */
     public Relief relief { get; set; default = Relief.NORMAL; }
 
-    /**
-     * The background color of button if not set the button does not draw any background
-     */
-    public Graphic.Color button_color { get; set; default = new Graphic.Color (0.7, 0.7, 0.7); }
-
-    /**
-     * The insensitive background color of button if not set the button does not draw any background
-     */
-    public Graphic.Color button_inactive_color { get; set; default = null; }
-
     // events
     /**
      * Event emmitted when button was clicked
@@ -203,7 +193,8 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
         clicked = new Core.Event ("clicked", this);
 
         // Set default property
-        stroke_pattern = new Graphic.Color (0, 0, 0);
+        fill_pattern   = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0.7, 0.7, 0.7));
+        stroke_pattern = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0));
 
         // Set default content
         characters = @"Grid.$(name)_content { " +
@@ -294,6 +285,8 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
             vd = 1.05;
             vd2 = 1.15;
         }
+        var button_color = fill_pattern[Item.State.NORMAL] as Graphic.Color;
+        var button_inactive_color = fill_pattern[Item.State.INSENSITIVE] as Graphic.Color;
         var beginColor = new Graphic.Color.shade (sensitive ? button_color : button_inactive_color ?? button_color, vb);
         var endColor = new Graphic.Color.shade (sensitive ? button_color : button_inactive_color ?? button_color, ve);
 
@@ -417,7 +410,7 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
         inContext.save ();
         {
             // Paint button background
-            if (button_color != null)
+            if (fill_pattern[Item.State.NORMAL] != null && fill_pattern[Item.State.NORMAL] is Graphic.Color)
             {
                 inContext.pattern = get_button_pattern ();
                 inContext.paint ();

@@ -69,7 +69,7 @@ public class Maia.Arrow : Item, ItemMovable
         not_dumpable_attributes.insert ("end");
 
         // Set default stroke color
-        stroke_pattern = new Graphic.Color (0, 0, 0);
+        stroke_pattern = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0));
 
         // Connect onto start changed
         notify["start"].connect (update_size);
@@ -209,7 +209,7 @@ public class Maia.Arrow : Item, ItemMovable
                 line.move_to (end_point.x, end_point.y);
                 line.line_to (start_point.x + (arrow_width / 2.0) * GLib.Math.cos (angle), start_point.y + (arrow_width / 2.0) * GLib.Math.sin (angle));
                 inContext.line_width = line_width;
-                inContext.pattern = stroke_pattern;
+                inContext.pattern = stroke_pattern[Item.State.NORMAL];
                 inContext.stroke (line);
 
                 var arrow = new Graphic.Path ();

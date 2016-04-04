@@ -91,14 +91,14 @@ public class Maia.Highlight : Toggle
 
                 if (stroke_pattern != null)
                 {
-                    inContext.pattern = stroke_pattern;
+                    inContext.pattern = stroke_pattern[Item.State.NORMAL];
                     inContext.line_width = line_width;
                     inContext.stroke (path);
                 }
 
                 if (fill_pattern != null)
                 {
-                    inContext.pattern = fill_pattern;
+                    inContext.pattern = fill_pattern[Item.State.NORMAL];
                     inContext.fill (path);
                 }
             }

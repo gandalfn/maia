@@ -282,7 +282,7 @@ public class Maia.Chart : Item
         not_dumpable_attributes.insert ("first-point");
         not_dumpable_attributes.insert ("last-point");
 
-        stroke_pattern = new Graphic.Color (0, 0, 0);
+        stroke_pattern = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0));
     }
 
     public Chart (string inId, string inTitle)
@@ -437,7 +437,7 @@ public class Maia.Chart : Item
         {
             inContext.save ();
             {
-                inContext.pattern = stroke_pattern;
+                inContext.pattern = stroke_pattern[Item.State.NORMAL];
                 inContext.stroke (m_Path);
             }
             inContext.restore ();

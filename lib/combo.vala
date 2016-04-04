@@ -174,7 +174,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         // Connect onto focus change
         notify["have-focus"].connect (on_focus_changed);
 
-        stroke_pattern = new Graphic.Color (0, 0, 0);
+        stroke_pattern = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0));
 
         // Create popup
         m_Popup = new Popup ("%s-popup".printf (name));
@@ -499,13 +499,13 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
 
         if (fill_pattern != null)
         {
-            inContext.pattern = fill_pattern;
+            inContext.pattern = fill_pattern[Item.State.NORMAL];
             inContext.fill (path);
         }
 
         if (have_focus)
         {
-            inContext.pattern = stroke_pattern;
+            inContext.pattern = stroke_pattern[Item.State.NORMAL];
             inContext.dash = { 1, 1 };
             inContext.line_width = 0.5;
             inContext.stroke (path);

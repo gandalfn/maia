@@ -22,7 +22,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     // types
     public enum State
     {
-        NORMAL,
+        NORMAL = 1,
         ACTIVE,
         PRELIGHT,
         SELECTED,
@@ -82,6 +82,116 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             }
 
             return N;
+        }
+    }
+
+    public class StatePatterns : Core.Object
+    {
+        // properties
+        private Graphic.Pattern[] m_Patterns;
+
+        // methods
+        public StatePatterns (State inState, ...)
+        {
+            m_Patterns = new Graphic.Pattern[State.N];
+
+            va_list args = va_list ();
+            State state = inState;
+            while (true)
+            {
+                m_Patterns[state] = args.arg ();
+
+                state = args.arg ();
+                if ((int)state == 0)
+                {
+                    break;
+                }
+            }
+        }
+
+        internal StatePatterns.from_attribute (Manifest.Attribute inAttribute)
+        {
+            m_Patterns = new Graphic.Pattern[State.N];
+
+            m_Patterns[State.NORMAL] = new Graphic.Color.from_attribute (inAttribute);
+        }
+
+        internal StatePatterns.from_states_function (Manifest.Function inFunction) throws Manifest.Error
+        {
+            m_Patterns = new Graphic.Pattern[State.N];
+
+            int cpt = 0;
+            State state = State.N;
+            foreach (unowned Core.Object child in inFunction)
+            {
+                unowned Manifest.Attribute arg = (Manifest.Attribute)child;
+                switch (cpt % 2)
+                {
+                    case 0:
+                        state = State.from_string ((string)arg.transform (typeof (string)));
+                        break;
+                    case 1:
+                        m_Patterns[state] = (Graphic.Pattern)arg.transform (typeof (Graphic.Pattern));
+                        break;
+                }
+                cpt++;
+            }
+        }
+
+        internal override string
+        to_string ()
+        {
+            string ret = "";
+
+            bool have_state_function = false;
+            for (int cpt = State.NORMAL; cpt < State.N; ++cpt)
+            {
+                if (m_Patterns[cpt] != null)
+                {
+                    if (ret.length > 0)
+                    {
+                        ret += "," + ((State)cpt).to_string () + "," + m_Patterns[cpt].to_string ();
+                    }
+                    else if (cpt != State.NORMAL)
+                    {
+                        ret += ((State)cpt).to_string () + "," + m_Patterns[cpt].to_string ();
+                    }
+                    else
+                    {
+                        ret += m_Patterns[cpt].to_string ();
+                    }
+
+                    have_state_function = ((State)cpt != State.NORMAL);
+                }
+            }
+
+            if (have_state_function)
+            {
+                if (m_Patterns[State.NORMAL] != null)
+                {
+                    ret = "states(" + State.NORMAL.to_string () + "," + ret + ")";
+                }
+                else
+                {
+                    ret = "states(" + ret + ")";
+                }
+            }
+
+            return ret;
+        }
+
+        public new unowned Graphic.Pattern?
+        @get (State inState)
+            requires (inState < State.N)
+        {
+            return m_Patterns[inState];
+        }
+
+        public new void
+        @set (State inState, Graphic.Pattern? inPattern)
+            requires (inState < State.N)
+        {
+            m_Patterns[inState] = inPattern;
         }
     }
 
@@ -457,8 +567,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     }
 
     public uint             layer                { get; set; default = 0; }
-    public Graphic.Pattern  fill_pattern         { get; set; default = null; }
-    public Graphic.Pattern  stroke_pattern       { get; set; default = null; }
+    public StatePatterns    fill_pattern         { get; set; default = null; }
+    public StatePatterns    stroke_pattern       { get; set; default = null; }
     public Graphic.Pattern  background_pattern   { get; set; default = null; }
     public double           line_width           { get; set; default = 1.0; }
     public Graphic.LineType line_type            { get; set; default = Graphic.LineType.CONTINUE; }
@@ -599,11 +709,39 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         Manifest.AttributeBind.register_transform_func (typeof (Item), "width", attribute_bind_width);
         Manifest.AttributeBind.register_transform_func (typeof (Item), "height", attribute_bind_height);
 
+        // register attribute transform
+        Manifest.Attribute.register_transform_func (typeof (StatePatterns), attribute_to_state_patterns);
+        GLib.Value.register_transform_func (typeof (StatePatterns), typeof (string), state_patterns_to_string);
+
+        // register function transform
+        Manifest.Function.register_transform_func (typeof (StatePatterns), "states",  function_to_state_patterns);
+
         // get mouse event id
         mc_IdButtonPressEvent   = GLib.Signal.lookup ("button-press-event", typeof (Item));
         mc_IdButtonReleaseEvent = GLib.Signal.lookup ("button-release-event", typeof (Item));
         mc_IdMotionEvent        = GLib.Signal.lookup ("motion-event", typeof (Item));
         mc_IdScrollEvent        = GLib.Signal.lookup ("scroll-event", typeof (Item));
+    }
+
+    static void
+    attribute_to_state_patterns (Manifest.Attribute inAttribute, ref GLib.Value outValue)
+    {
+        outValue = new StatePatterns.from_attribute (inAttribute);
+    }
+
+    static void
+    state_patterns_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (StatePatterns)))
+    {
+        StatePatterns val = (StatePatterns)inSrc;
+
+        outDest = val.to_string ();
+    }
+
+    static void
+    function_to_state_patterns (Manifest.Function inFunction, ref GLib.Value outDest) throws Manifest.Error
+    {
+        outDest = new StatePatterns.from_states_function (inFunction);
     }
 
     static void
