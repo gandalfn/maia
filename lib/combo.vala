@@ -106,8 +106,6 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         }
     }
 
-    public Graphic.Color highlight_color { get; set; default = new Graphic.Color (0.2, 0.2, 0.2); }
-
     public int active_row {
         get {
             if (m_View != null && m_Active != null)
@@ -174,7 +172,8 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         // Connect onto focus change
         notify["have-focus"].connect (on_focus_changed);
 
-        stroke_pattern = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0));
+        fill_pattern[State.PRELIGHT] = new Graphic.Color (0.2, 0.2, 0.2);
+        stroke_pattern[State.NORMAL] = new Graphic.Color (0, 0, 0);
 
         // Create popup
         m_Popup = new Popup ("%s-popup".printf (name));
@@ -281,10 +280,11 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         {
             if (m_View != null) m_View.parent = null;
             m_View = inObject as View;
-            plug_property ("highlight-color", m_View, "fill-pattern");
+            plug_property ("fill-pattern", m_View, "fill-pattern");
             m_View.notify["need-update"].connect (on_view_need_update_changed);
             m_View.notify["geometry"].connect (on_view_geometry_changed);
             m_View.row_clicked.connect (on_row_clicked);
+            m_View.state = State.PRELIGHT;
             m_Popup.add (m_View);
 
             need_update = true;
@@ -301,7 +301,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     {
         if (inObject == m_View)
         {
-            unplug_property ("highlight-color", m_View, "fill-pattern");
+            unplug_property ("fill-pattern", m_View, "fill-pattern");
             m_View.row_clicked.disconnect (on_row_clicked);
             m_View.notify["need-update"].disconnect (on_view_need_update_changed);
             m_View.notify["geometry"].disconnect (on_view_geometry_changed);
@@ -499,13 +499,13 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
 
         if (fill_pattern != null)
         {
-            inContext.pattern = fill_pattern[Item.State.NORMAL];
+            inContext.pattern = fill_pattern[state];
             inContext.fill (path);
         }
 
         if (have_focus)
         {
-            inContext.pattern = stroke_pattern[Item.State.NORMAL];
+            inContext.pattern = stroke_pattern[state];
             inContext.dash = { 1, 1 };
             inContext.line_width = 0.5;
             inContext.stroke (path);

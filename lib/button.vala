@@ -71,8 +71,8 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
     }
 
     // properties
-    private bool          m_Clicked = false;
-    private unowned Item? m_Content = null;
+    private bool          m_Clicked        = false;
+    private unowned Item? m_Content        = null;
 
     // accessors
     internal override string tag {
@@ -189,17 +189,20 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
     // methods
     construct
     {
+        // Do not dump characters
+        not_dumpable_characters = true;
+
         // Create clicked event
         clicked = new Core.Event ("clicked", this);
 
         // Set default property
-        fill_pattern   = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0.7, 0.7, 0.7));
-        stroke_pattern = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0));
+        fill_pattern[State.NORMAL] = new Graphic.Color (0.7, 0.7, 0.7);
+        stroke_pattern[State.NORMAL] = new Graphic.Color (0, 0, 0);
 
         // Set default content
-        characters = @"Grid.$(name)_content { " +
+        characters = @"Grid.$(name)-content { " +
                      @"    column-spacing: @spacing;" +
-                     @"    Image.$(name)_image { "    +
+                     @"    Image.$(name)-image { "    +
                      @"        yfill: false;" +
                      @"        yexpand: true;" +
                      @"        xexpand: false;" +
@@ -208,7 +211,7 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
                      @"        filename: @icon-filename;" +
                      @"        size: @icon-size;" +
                      @"    }" +
-                     @"    Label.$(name)_label { "    +
+                     @"    Label.$(name)-label { "    +
                      @"        column: 1; "    +
                      @"        yfill: false;" +
                      @"        yexpand: true;" +
@@ -222,6 +225,8 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
                      @"        text: @label;" +
                      @"    }" +
                      @"}";
+
+        notify["characters"].connect (on_characters_changed);
     }
 
     /**
@@ -244,6 +249,18 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
             // plug property to binded property
             plug_property (notification.attribute.get (), notification.attribute.owner as Core.Object, notification.property);
         }
+    }
+
+    private void
+    on_characters_changed ()
+    {
+        if (m_Content != null)
+        {
+            m_Content.parent = null;
+            m_Content = null;
+        }
+
+        not_dumpable_characters = false;
     }
 
     private Item?
@@ -269,7 +286,7 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
         return null;
     }
 
-    private Graphic.Pattern
+    private Graphic.Pattern?
     get_button_pattern () throws Graphic.Error
     {
         // Paint Background
@@ -285,74 +302,78 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
             vd = 1.05;
             vd2 = 1.15;
         }
-        var button_color = fill_pattern[Item.State.NORMAL] as Graphic.Color;
-        var button_inactive_color = fill_pattern[Item.State.INSENSITIVE] as Graphic.Color;
-        var beginColor = new Graphic.Color.shade (sensitive ? button_color : button_inactive_color ?? button_color, vb);
-        var endColor = new Graphic.Color.shade (sensitive ? button_color : button_inactive_color ?? button_color, ve);
-
-        if (shade_color == null || shade_color.compare (beginColor) != 0)
+        var button_color = fill_pattern[state] as Graphic.Color;
+        if (button_color != null)
         {
-            shade_color = beginColor;
+            var beginColor = new Graphic.Color.shade (button_color, vb);
+            var endColor = new Graphic.Color.shade (button_color, ve);
+
+            if (shade_color == null || shade_color.compare (beginColor) != 0)
+            {
+                shade_color = beginColor;
+            }
+
+            if (relief == Relief.NORMAL)
+            {
+                var pattern = new Graphic.MeshGradient ();
+                var topleft = new Graphic.MeshGradient.ArcPatch (Graphic.Point (border, border),
+                                                                 -GLib.Math.PI, -GLib.Math.PI / 2, border,
+                                                                 { beginColor, endColor, endColor, beginColor });
+
+                var color1 = endColor;
+                var color2 =  new Graphic.Color.shade (color1, vd);
+                var top =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (border, 0,
+                                                                                  button_size.width,
+                                                                                  border),
+                                                               { color1, color2, beginColor, beginColor });
+
+                var topright = new Graphic.MeshGradient.ArcPatch (Graphic.Point (button_size.width + border, border),
+                                                                  -GLib.Math.PI / 2, 0, border,
+                                                                  { beginColor, color2, color2, beginColor });
+
+                var color3 = color2;
+                var color4 =  new Graphic.Color.shade (color3, vd2);
+                var right =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (button_size.width + border, border,
+                                                                                    border, button_size.height),
+                                                                 { beginColor, color3, color4, beginColor });
+
+                var bottomright = new Graphic.MeshGradient.ArcPatch (Graphic.Point (button_size.width + border,
+                                                                                    button_size.height + border),
+                                                                     0, GLib.Math.PI / 2, border,
+                                                                     { beginColor, color4, color4, beginColor });
+
+                var bottom =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (border, button_size.height + border,
+                                                                                     button_size.width, border),
+                                                                 { beginColor, beginColor, color4, color2 });
+
+                var bottomleft = new Graphic.MeshGradient.ArcPatch (Graphic.Point (border, button_size.height + border),
+                                                                    GLib.Math.PI / 2, GLib.Math.PI, border,
+                                                                    { beginColor, color2, color2, beginColor });
+
+                var left =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (0, border,
+                                                                                   border, button_size.height),
+                                                               { color1, beginColor, beginColor, color2 });
+
+                var main =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (border, border,
+                                                                                   button_size.width, button_size.height),
+                                                               { beginColor, beginColor, beginColor, beginColor });
+
+                pattern.add (topleft);
+                pattern.add (top);
+                pattern.add (topright);
+                pattern.add (right);
+                pattern.add (bottomright);
+                pattern.add (bottom);
+                pattern.add (bottomleft);
+                pattern.add (left);
+                pattern.add (main);
+                return pattern;
+            }
+
+            return beginColor;
         }
 
-        if (relief == Relief.NORMAL)
-        {
-            var pattern = new Graphic.MeshGradient ();
-            var topleft = new Graphic.MeshGradient.ArcPatch (Graphic.Point (border, border),
-                                                             -GLib.Math.PI, -GLib.Math.PI / 2, border,
-                                                             { beginColor, endColor, endColor, beginColor });
-
-            var color1 = endColor;
-            var color2 =  new Graphic.Color.shade (color1, vd);
-            var top =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (border, 0,
-                                                                              button_size.width,
-                                                                              border),
-                                                           { color1, color2, beginColor, beginColor });
-
-            var topright = new Graphic.MeshGradient.ArcPatch (Graphic.Point (button_size.width + border, border),
-                                                              -GLib.Math.PI / 2, 0, border,
-                                                              { beginColor, color2, color2, beginColor });
-
-            var color3 = color2;
-            var color4 =  new Graphic.Color.shade (color3, vd2);
-            var right =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (button_size.width + border, border,
-                                                                                border, button_size.height),
-                                                             { beginColor, color3, color4, beginColor });
-
-            var bottomright = new Graphic.MeshGradient.ArcPatch (Graphic.Point (button_size.width + border,
-                                                                                button_size.height + border),
-                                                                 0, GLib.Math.PI / 2, border,
-                                                                 { beginColor, color4, color4, beginColor });
-
-            var bottom =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (border, button_size.height + border,
-                                                                                 button_size.width, border),
-                                                             { beginColor, beginColor, color4, color2 });
-
-            var bottomleft = new Graphic.MeshGradient.ArcPatch (Graphic.Point (border, button_size.height + border),
-                                                                GLib.Math.PI / 2, GLib.Math.PI, border,
-                                                                { beginColor, color2, color2, beginColor });
-
-            var left =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (0, border,
-                                                                               border, button_size.height),
-                                                           { color1, beginColor, beginColor, color2 });
-
-            var main =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (border, border,
-                                                                               button_size.width, button_size.height),
-                                                           { beginColor, beginColor, beginColor, beginColor });
-
-            pattern.add (topleft);
-            pattern.add (top);
-            pattern.add (topright);
-            pattern.add (right);
-            pattern.add (bottomright);
-            pattern.add (bottom);
-            pattern.add (bottomleft);
-            pattern.add (left);
-            pattern.add (main);
-            return pattern;
-        }
-
-        return beginColor;
+        return null;
     }
 
     internal override bool
@@ -410,7 +431,8 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
         inContext.save ();
         {
             // Paint button background
-            if (fill_pattern[Item.State.NORMAL] != null && fill_pattern[Item.State.NORMAL] is Graphic.Color)
+            var button_pattern = get_button_pattern ();
+            if (button_pattern != null)
             {
                 inContext.pattern = get_button_pattern ();
                 inContext.paint ();

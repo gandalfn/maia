@@ -49,6 +49,7 @@ public interface Maia.Manifest.Element : Core.Object
     // static properties
     private  static Core.Set<Create> s_Factory = null;
     private  static GLib.Quark       s_QuarkNotDumpableAttributes = 0;
+    private  static GLib.Quark       s_QuarkNotDumpableCharacters = 0;
     internal static GLib.Quark       s_AttributeSetQuark = 0;
     internal static GLib.Quark       s_InternalParent = 0;
     private  static unowned Theme    s_CurrentTheme = null;
@@ -102,6 +103,25 @@ public interface Maia.Manifest.Element : Core.Object
                 ret = not_dumpable;
             }
             return ret;
+        }
+    }
+
+    public bool not_dumpable_characters {
+        get {
+            if (s_QuarkNotDumpableCharacters == 0)
+            {
+                s_QuarkNotDumpableCharacters = GLib.Quark.from_string ("%sNotDumpableCharacters".printf (get_type ().name ()));
+            }
+
+            return get_qdata<bool> (s_QuarkNotDumpableCharacters);
+        }
+        set {
+            if (s_QuarkNotDumpableCharacters == 0)
+            {
+                s_QuarkNotDumpableCharacters = GLib.Quark.from_string ("%sNotDumpableCharacters".printf (get_type ().name ()));
+            }
+
+            set_qdata<bool> (s_QuarkNotDumpableCharacters, value);
         }
     }
 
@@ -470,7 +490,7 @@ public interface Maia.Manifest.Element : Core.Object
                     continue;
 
                 string attr;
-                if (get_attribute (param_name, out attr) && attr != null)
+                if (get_attribute (param_name, out attr) && attr != null && attr.length > 0)
                 {
                     ret += inPrefix + "%s: %s;\n".printf (param_name, attr);
                 }
@@ -503,7 +523,7 @@ public interface Maia.Manifest.Element : Core.Object
         string ret = "";
 
         // dump characters
-        if (characters != null)
+        if (characters != null && !not_dumpable_characters)
         {
             ret += inPrefix + "[\n";
             ret += inPrefix + "\t" + characters + "\n";

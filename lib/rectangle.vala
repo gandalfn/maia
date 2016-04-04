@@ -54,15 +54,15 @@ public class Maia.Rectangle : Item, ItemMovable, ItemResizable
 
         inContext.line_width = line_width;
 
-        if (fill_pattern[Item.State.NORMAL] != null)
+        if (fill_pattern[state] != null)
         {
-            inContext.pattern = fill_pattern[Item.State.NORMAL];
+            inContext.pattern = fill_pattern[state];
             inContext.fill (path);
         }
 
-        if (stroke_pattern[Item.State.NORMAL] != null)
+        if (stroke_pattern[state] != null)
         {
-            inContext.pattern = stroke_pattern[Item.State.NORMAL];
+            inContext.pattern = stroke_pattern[state];
             inContext.stroke (path);
         }
     }

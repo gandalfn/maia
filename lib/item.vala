@@ -19,182 +19,6 @@
 
 public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 {
-    // types
-    public enum State
-    {
-        NORMAL = 1,
-        ACTIVE,
-        PRELIGHT,
-        SELECTED,
-        INSENSITIVE,
-        FOCUSED,
-        N;
-
-        public string
-        to_string ()
-        {
-            switch (this)
-            {
-                case NORMAL:
-                    return "normal";
-
-                case ACTIVE:
-                    return "active";
-
-                case PRELIGHT:
-                    return "prelight";
-
-                case SELECTED:
-                    return "selected";
-
-                case INSENSITIVE:
-                    return "insensitive";
-
-                case FOCUSED:
-                    return "focused";
-            }
-
-            return "normal";
-        }
-
-        public static State
-        from_string (string inValue)
-        {
-            switch (inValue.down ())
-            {
-                case "normal":
-                    return NORMAL;
-
-                case "active":
-                    return ACTIVE;
-
-                case "prelight":
-                    return PRELIGHT;
-
-                case "selected":
-                    return SELECTED;
-
-                case "insensitive":
-                    return INSENSITIVE;
-
-                case "focused":
-                    return FOCUSED;
-            }
-
-            return N;
-        }
-    }
-
-    public class StatePatterns : Core.Object
-    {
-        // properties
-        private Graphic.Pattern[] m_Patterns;
-
-        // methods
-        public StatePatterns (State inState, ...)
-        {
-            m_Patterns = new Graphic.Pattern[State.N];
-
-            va_list args = va_list ();
-            State state = inState;
-            while (true)
-            {
-                m_Patterns[state] = args.arg ();
-
-                state = args.arg ();
-                if ((int)state == 0)
-                {
-                    break;
-                }
-            }
-        }
-
-        internal StatePatterns.from_attribute (Manifest.Attribute inAttribute)
-        {
-            m_Patterns = new Graphic.Pattern[State.N];
-
-            m_Patterns[State.NORMAL] = new Graphic.Color.from_attribute (inAttribute);
-        }
-
-        internal StatePatterns.from_states_function (Manifest.Function inFunction) throws Manifest.Error
-        {
-            m_Patterns = new Graphic.Pattern[State.N];
-
-            int cpt = 0;
-            State state = State.N;
-            foreach (unowned Core.Object child in inFunction)
-            {
-                unowned Manifest.Attribute arg = (Manifest.Attribute)child;
-                switch (cpt % 2)
-                {
-                    case 0:
-                        state = State.from_string ((string)arg.transform (typeof (string)));
-                        break;
-                    case 1:
-                        m_Patterns[state] = (Graphic.Pattern)arg.transform (typeof (Graphic.Pattern));
-                        break;
-                }
-                cpt++;
-            }
-        }
-
-        internal override string
-        to_string ()
-        {
-            string ret = "";
-
-            bool have_state_function = false;
-            for (int cpt = State.NORMAL; cpt < State.N; ++cpt)
-            {
-                if (m_Patterns[cpt] != null)
-                {
-                    if (ret.length > 0)
-                    {
-                        ret += "," + ((State)cpt).to_string () + "," + m_Patterns[cpt].to_string ();
-                    }
-                    else if (cpt != State.NORMAL)
-                    {
-                        ret += ((State)cpt).to_string () + "," + m_Patterns[cpt].to_string ();
-                    }
-                    else
-                    {
-                        ret += m_Patterns[cpt].to_string ();
-                    }
-
-                    have_state_function = ((State)cpt != State.NORMAL);
-                }
-            }
-
-            if (have_state_function)
-            {
-                if (m_Patterns[State.NORMAL] != null)
-                {
-                    ret = "states(" + State.NORMAL.to_string () + "," + ret + ")";
-                }
-                else
-                {
-                    ret = "states(" + ret + ")";
-                }
-            }
-
-            return ret;
-        }
-
-        public new unowned Graphic.Pattern?
-        @get (State inState)
-            requires (inState < State.N)
-        {
-            return m_Patterns[inState];
-        }
-
-        public new void
-        @set (State inState, Graphic.Pattern? inPattern)
-            requires (inState < State.N)
-        {
-            m_Patterns[inState] = inPattern;
-        }
-    }
-
     // static properties
     internal static GLib.Quark s_ChainVisibleCount;
     internal static GLib.Quark s_MainWindow;
@@ -567,11 +391,13 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     }
 
     public uint             layer                { get; set; default = 0; }
-    public StatePatterns    fill_pattern         { get; set; default = null; }
-    public StatePatterns    stroke_pattern       { get; set; default = null; }
-    public Graphic.Pattern  background_pattern   { get; set; default = null; }
+    public StatePatterns    fill_pattern         { get; set; }
+    public StatePatterns    stroke_pattern       { get; set; }
+    public StatePatterns    background_pattern   { get; set; }
     public double           line_width           { get; set; default = 1.0; }
     public Graphic.LineType line_type            { get; set; default = Graphic.LineType.CONTINUE; }
+
+    public State            state                { get; set; default = State.NORMAL; }
 
 
     public string          chain_visible        { get; set; default = null; }
@@ -709,39 +535,13 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         Manifest.AttributeBind.register_transform_func (typeof (Item), "width", attribute_bind_width);
         Manifest.AttributeBind.register_transform_func (typeof (Item), "height", attribute_bind_height);
 
-        // register attribute transform
-        Manifest.Attribute.register_transform_func (typeof (StatePatterns), attribute_to_state_patterns);
-        GLib.Value.register_transform_func (typeof (StatePatterns), typeof (string), state_patterns_to_string);
-
-        // register function transform
-        Manifest.Function.register_transform_func (typeof (StatePatterns), "states",  function_to_state_patterns);
-
         // get mouse event id
         mc_IdButtonPressEvent   = GLib.Signal.lookup ("button-press-event", typeof (Item));
         mc_IdButtonReleaseEvent = GLib.Signal.lookup ("button-release-event", typeof (Item));
         mc_IdMotionEvent        = GLib.Signal.lookup ("motion-event", typeof (Item));
         mc_IdScrollEvent        = GLib.Signal.lookup ("scroll-event", typeof (Item));
-    }
 
-    static void
-    attribute_to_state_patterns (Manifest.Attribute inAttribute, ref GLib.Value outValue)
-    {
-        outValue = new StatePatterns.from_attribute (inAttribute);
-    }
-
-    static void
-    state_patterns_to_string (GLib.Value inSrc, out GLib.Value outDest)
-        requires (inSrc.holds (typeof (StatePatterns)))
-    {
-        StatePatterns val = (StatePatterns)inSrc;
-
-        outDest = val.to_string ();
-    }
-
-    static void
-    function_to_state_patterns (Manifest.Function inFunction, ref GLib.Value outDest) throws Manifest.Error
-    {
-        outDest = new StatePatterns.from_states_function (inFunction);
+        // create state pattter
     }
 
     static void
@@ -776,6 +576,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         // Add not dumpable attributes
         not_dumpable_attributes.insert ("tag");
         not_dumpable_attributes.insert ("name");
+        not_dumpable_attributes.insert ("state");
         not_dumpable_attributes.insert ("geometry");
         not_dumpable_attributes.insert ("allocate-on-child-add-remove");
         not_dumpable_attributes.insert ("damaged");
@@ -801,6 +602,14 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
         // check if object is resizable
         m_IsResizable = this is ItemResizable;
+
+        // create state patterns
+        stroke_pattern     = new StatePatterns ();
+        fill_pattern       = new StatePatterns ();
+        background_pattern = new StatePatterns ();
+
+        // connect to state changed
+        notify["state"].connect (on_state_changed);
 
         // connect to mouse events
         button_press_event.connect (on_button_press_event);
@@ -887,6 +696,12 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 }
             }
         }
+    }
+
+    private void
+    on_state_changed ()
+    {
+        damage.post ();
     }
 
     private void
@@ -1577,10 +1392,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     paint_background (Graphic.Context inContext) throws Graphic.Error
     {
         // paint background
-        if (background_pattern != null)
+        if (background_pattern[state] != null)
         {
             inContext.save ();
-            unowned Graphic.Image? image = background_pattern as Graphic.Image;
+            unowned Graphic.Image? image = background_pattern[state] as Graphic.Image;
             if (image != null)
             {
                 var item_area = area;
@@ -1592,11 +1407,11 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 inContext.translate (Graphic.Point ((item_area.extents.size.width - (image_size.width / scale)) / 2,
                                                     (item_area.extents.size.height - (image_size.height / scale)) / 2));
                 image.transform = transform;
-                inContext.pattern = background_pattern;
+                inContext.pattern = background_pattern[state];
             }
             else
             {
-                inContext.pattern = background_pattern;
+                inContext.pattern = background_pattern[state];
             }
 
             inContext.paint ();

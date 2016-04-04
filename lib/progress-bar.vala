@@ -107,9 +107,9 @@ public class Maia.ProgressBar : Item, ItemPackable
         not_dumpable_attributes.insert ("adjustment");
 
         // Default colors
-        background_pattern = new Graphic.Color (1, 1, 1);
-        stroke_pattern     = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0));
-        fill_pattern       = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0.6, 0.6, 0.6));
+        background_pattern[State.NORMAL] = new Graphic.Color (1, 1, 1);
+        stroke_pattern[State.NORMAL]     = new Graphic.Color (0, 0, 0);
+        fill_pattern[State.NORMAL]       = new Graphic.Color (0.6, 0.6, 0.6);
     }
 
     public ProgressBar (string inId)
@@ -151,24 +151,24 @@ public class Maia.ProgressBar : Item, ItemPackable
         // Paint background
         if (background_pattern != null)
         {
-            inContext.pattern = background_pattern;
+            inContext.pattern = background_pattern[state];
             inContext.fill (background_path);
         }
-        if (stroke_pattern[Item.State.NORMAL] != null)
+        if (stroke_pattern[state] != null)
         {
-            inContext.pattern = stroke_pattern[Item.State.NORMAL];
+            inContext.pattern = stroke_pattern[state];
             inContext.stroke (background_path);
         }
 
         // Paint progress
-        if (fill_pattern[Item.State.NORMAL] != null)
+        if (fill_pattern[state] != null)
         {
-            inContext.pattern = fill_pattern[Item.State.NORMAL];
+            inContext.pattern = fill_pattern[state];
             inContext.fill (progress_path);
         }
-        if (stroke_pattern[Item.State.NORMAL] != null)
+        if (stroke_pattern[state] != null)
         {
-            inContext.pattern = stroke_pattern[Item.State.NORMAL];
+            inContext.pattern = stroke_pattern[state];
             inContext.stroke (progress_path);
         }
     }

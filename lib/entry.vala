@@ -292,15 +292,8 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     /**
      * The default font description of entry
      */
-    public string   font_description { get; set; default = "Sans 12"; }
-    /**
-     * The background color on edit
-     */
-    public Graphic.Pattern edit_background_pattern { get; set; default = null; }
-    /**
-     * The font color on edit
-     */
-    public Graphic.Pattern edit_stroke_pattern { get; set; default = null; }
+    public string font_description { get; set; default = "Sans 12"; }
+
     /**
      * The text of entry
      */
@@ -467,8 +460,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     {
         not_dumpable_attributes.insert ("changed");
 
-        stroke_pattern = new StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0));
-        background_pattern = new Graphic.Color (0, 0, 0);
+        stroke_pattern[State.NORMAL] = new Graphic.Color (0, 0, 0);
 
         // Create a fake surface to calculate the size of path
         m_FakeSurface = new Graphic.Surface (1, 1);
@@ -558,7 +550,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             }
         }
 
-        damage.post ();
+        state = have_focus ? State.ACTIVE : State.NORMAL;
     }
 
     private void
@@ -875,33 +867,10 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             inContext.save ();
             {
                 // Paint background
-                if (have_focus && edit_background_pattern != null)
-                {
-                    inContext.save ();
-                    unowned Graphic.Image? image = edit_background_pattern as Graphic.Image;
-                    if (image != null)
-                    {
-                        Graphic.Size image_size = image.size;
-                        double scale = double.max (image_size.width / area.extents.size.width,
-                                                   image_size.height / area.extents.size.height);
-                        var transform = new Graphic.Transform.identity ();
-                        transform.scale (scale, scale);
-                        inContext.translate (Graphic.Point ((area.extents.size.width - (image_size.width / scale)) / 2,
-                                                            (area.extents.size.height - (image_size.height / scale)) / 2));
-                        image.transform = transform;
-                        inContext.pattern = edit_background_pattern;
-                    }
-                    else
-                    {
-                        inContext.pattern = edit_background_pattern;
-                    }
-
-                    inContext.paint ();
-                    inContext.restore ();
-                }
+                paint_background (inContext);
 
                 // Paint text
-                inContext.pattern = have_focus && edit_stroke_pattern != null ? edit_stroke_pattern : stroke_pattern[Item.State.NORMAL];
+                inContext.pattern = stroke_pattern[state];
                 inContext.render (m_Glyph);
 
                 inContext.line_width = underline_width;

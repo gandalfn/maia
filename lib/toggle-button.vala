@@ -31,11 +31,6 @@ public class Maia.ToggleButton : Toggle
     }
 
     /**
-     * The border around label and icon
-     */
-    public double border { get; set; default = 5; }
-
-    /**
      * The icon filename no icon if ``null``
      */
     public string icon_filename { get; set; default = null; }
@@ -71,7 +66,7 @@ public class Maia.ToggleButton : Toggle
         plug_property("icon-size", icon_item, "size");
         add (icon_item);
         m_Icon = icon_item;
-        icon_item.button_press_event.connect (on_button_press);
+        //icon_item.button_press_event.connect (on_button_press);
 
         m_Label = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
         m_Label.visible = false;

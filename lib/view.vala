@@ -258,7 +258,7 @@ public class Maia.View : Maia.Grid
     private void
     on_pointer_over_changed ()
     {
-        if (fill_pattern != null)
+        if (fill_pattern[state] != null)
         {
             if (m_RowHightlighted >= 0)
             {
@@ -564,13 +564,13 @@ public class Maia.View : Maia.Grid
     internal override void
     paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
-        if (m_RowHightlighted >= 0 && fill_pattern != null)
+        if (m_RowHightlighted >= 0 && fill_pattern[state] != null)
         {
             unowned Item? item = get_item (m_RowHightlighted) as Item;
             if (item != null)
             {
                 var path = new Graphic.Path.from_region (item.geometry);
-                inContext.pattern = fill_pattern[Item.State.NORMAL];
+                inContext.pattern = fill_pattern[state];
                 inContext.fill (path);
             }
         }

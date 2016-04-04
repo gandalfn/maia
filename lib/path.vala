@@ -104,15 +104,15 @@ public class Maia.Path : Item, ItemPackable, ItemMovable
 
         path.transform (new Graphic.Transform.init_scale (scale_x, scale_y));
 
-        if (fill_pattern[Item.State.NORMAL] != null)
+        if (fill_pattern[state] != null)
         {
-            inContext.pattern = fill_pattern[Item.State.NORMAL];
+            inContext.pattern = fill_pattern[state];
             inContext.fill (path);
         }
 
-        if (stroke_pattern != null)
+        if (stroke_pattern[state] != null)
         {
-            inContext.pattern = stroke_pattern[Item.State.NORMAL];
+            inContext.pattern = stroke_pattern[state];
             inContext.stroke (path);
         }
     }

@@ -155,6 +155,7 @@ libmaia_la_SOURCES = \
     scroll.vala \
     orientation.vala \
     drawable.vala \
+    state.vala \
     item.vala \
     item-packable.vala \
     item-movable.vala \

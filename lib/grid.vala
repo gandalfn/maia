@@ -1210,7 +1210,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         {
             if (grid_line_width > 0)
             {
-                inContext.pattern = stroke_pattern[Item.State.NORMAL];
+                inContext.pattern = stroke_pattern[state];
                 inContext.line_width = grid_line_width;
                 inContext.stroke (m_GridPath);
             }
@@ -1222,7 +1222,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                 area.translate (geometry.extents.origin.invert ());
                 Graphic.Path path = new Graphic.Path.from_region (area);
 
-                inContext.pattern = stroke_pattern[Item.State.NORMAL];
+                inContext.pattern = stroke_pattern[state];
                 inContext.line_width = border_line_width;
                 inContext.stroke (path);
             }

@@ -230,7 +230,7 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
         changed = new Core.Event ("changed", this);
 
         // Set default properties
-        stroke_pattern = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0));
+        stroke_pattern[State.NORMAL] = new Graphic.Color (0, 0, 0);
 
         // Create areas
         m_Areas = new Graphic.Region[4];
@@ -398,7 +398,7 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
             {
                 inContext.save ();
                 {
-                    unowned Graphic.Image? image = fill_pattern as Graphic.Image;
+                    unowned Graphic.Image? image = fill_pattern[state] as Graphic.Image;
                     if (image != null)
                     {
                         var item_area = area;
@@ -410,11 +410,11 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
                         inContext.translate (Graphic.Point ((item_area.extents.size.width - (image_size.width / scale)) / 2,
                                                             (item_area.extents.size.height - (image_size.height / scale)) / 2));
                         image.transform = transform;
-                        inContext.pattern = fill_pattern[Item.State.NORMAL];
+                        inContext.pattern = fill_pattern[state];
                     }
                     else
                     {
-                        inContext.pattern = fill_pattern[Item.State.NORMAL];
+                        inContext.pattern = fill_pattern[state];
                     }
 
                     inContext.paint ();
@@ -503,9 +503,9 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
 
             if (m_AreaClicked >= 0)
             {
-                grab_pointer (this);
+                state = State.ACTIVE;
 
-                damage.post ();
+                grab_pointer (this);
             }
         }
 
@@ -545,7 +545,7 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
 
             m_AreaClicked = -1;
 
-            damage.post ();
+            state = State.NORMAL;
 
             ungrab_pointer (this);
         }

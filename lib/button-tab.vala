@@ -77,24 +77,9 @@ public class Maia.ButtonTab : Toggle
     }
 
     /**
-     * The border around label and indicator
-     */
-    public double border { get; set; default = 5.0; }
-
-    /**
-     * The highlight font color of button
-     */
-    public Graphic.Pattern stroke_highlight_pattern { get; set; default = null; }
-
-    /**
-     * The insensitive background color of button if not set the button does not draw any background
-     */
-    public Graphic.Pattern button_inactive_pattern { get; set; default = null; }
-
-    /**
      * The active color of indicator if not set the button does not draw any indicator
      */
-    public Graphic.Pattern indicator_pattern { get; set; default = new Graphic.Color (1, 1, 1); }
+    public StatePatterns indicator_pattern { get; set; }
 
     /**
      * Indicator placement
@@ -123,20 +108,9 @@ public class Maia.ButtonTab : Toggle
             {
                 m_Highlight = value;
 
-                if (m_Highlight)
-                {
-                    unplug_property("stroke-pattern", m_Label, "stroke-pattern");
-                    plug_property("stroke-highlight-pattern", m_Label, "stroke-pattern");
-                }
-                else
-                {
-                    plug_property("stroke-pattern", m_Label, "stroke-pattern");
-                    unplug_property("stroke-highlight-pattern", m_Label, "stroke-pattern");
-                }
+                m_Label.state = m_Highlight ? State.PRELIGHT : State.NORMAL;
 
                 GLib.Signal.emit_by_name (this, "notify::highlight");
-
-                damage.post ();
             }
         }
     }
@@ -167,6 +141,10 @@ public class Maia.ButtonTab : Toggle
     // methods
     construct
     {
+        // Construct indicator state patterns
+        indicator_pattern = new StatePatterns.va (State.NORMAL, new Graphic.Color (1, 1, 1, 0),
+                                                  State.PRELIGHT, new Graphic.Color (1, 1, 1));
+
         // Get label
         m_Label = find (GLib.Quark.from_string (@"$(name)-label"), false) as Label;
         m_Label.visible = false;
@@ -177,7 +155,11 @@ public class Maia.ButtonTab : Toggle
         indicator.visible = true;
         indicator.parent = this;
         m_Indicator = indicator;
+
+        // plug properties
+        plug_property ("stroke-pattern",    m_Label,     "stroke-pattern");
         plug_property ("indicator-pattern", m_Indicator, "fill-pattern");
+        plug_property ("state",             m_Indicator, "state");
     }
 
     public ButtonTab (string inId, string inLabel)
@@ -304,26 +286,10 @@ public class Maia.ButtonTab : Toggle
         {
             Graphic.Path background = new Graphic.Path.from_region (area);
 
-            // paint button background if is sensitive
-            if (sensitive)
+            // paint button background
+            if (fill_pattern[m_Highlight ? State.PRELIGHT : state] != null)
             {
-                // paint button background if is highlighted
-                if (highlight && fill_pattern[Item.State.PRELIGHT] != null)
-                {
-                    inContext.pattern = fill_pattern[Item.State.PRELIGHT];
-                    inContext.fill (background);
-                }
-                // paint button background if is not active
-                else if (!highlight && fill_pattern[Item.State.NORMAL] != null)
-                {
-                    inContext.pattern = fill_pattern[Item.State.NORMAL];
-                    inContext.fill (background);
-                }
-            }
-            // paint button background if is not sensitive
-            else if (fill_pattern[Item.State.INSENSITIVE] != null)
-            {
-                inContext.pattern = fill_pattern[Item.State.INSENSITIVE];
+                inContext.pattern = fill_pattern[m_Highlight ? State.PRELIGHT : state];
                 inContext.fill (background);
             }
 
@@ -333,10 +299,7 @@ public class Maia.ButtonTab : Toggle
                 if (child is Drawable)
                 {
                     unowned Drawable drawable = (Drawable)child;
-                    if (drawable == m_Label || (drawable == m_Indicator && active))
-                    {
-                        drawable.draw (inContext, area_to_child_item_space (drawable, inArea));
-                    }
+                    drawable.draw (inContext, area_to_child_item_space (drawable, inArea));
                 }
             }
         }

@@ -172,7 +172,7 @@ public class Maia.Viewport : Window
                     // Clip the damaged area
                     ctx.clip_region (damaged_area);
 
-                    ctx.pattern = background_pattern != null ? background_pattern : new Graphic.Color (0, 0, 0, 0);
+                    ctx.pattern = background_pattern[state] != null ? background_pattern[state] : new Graphic.Color (0, 0, 0, 0);
                     ctx.paint ();
 
                     // Set paint over by default

@@ -352,6 +352,12 @@
   (gtype-id "MAIA_TYPE_CORE_TIMELINE")
 )
 
+(define-object MaiaCoreTimelineNewFrameNotification
+  (parent "MaiaCoreNotification")
+  (c-name "MaiaCoreTimelineNewFrameNotification")
+  (gtype-id "MAIA_TYPE_CORE_TIMELINE_NEW_FRAME_NOTIFICATION")
+)
+
 (define-object MaiaCoreWatch
   (parent "MaiaCoreObject")
   (c-name "MaiaCoreWatch")
@@ -385,6 +391,18 @@
 (define-object MaiaDrawable
   (c-name "MaiaDrawable")
   (gtype-id "MAIA_TYPE_DRAWABLE")
+)
+
+(define-object MaiaDrawableDamageNotification
+  (parent "MaiaCoreNotification")
+  (c-name "MaiaDrawableDamageNotification")
+  (gtype-id "MAIA_TYPE_DRAWABLE_DAMAGE_NOTIFICATION")
+)
+
+(define-object MaiaDrawableRepairNotification
+  (parent "MaiaCoreNotification")
+  (c-name "MaiaDrawableRepairNotification")
+  (gtype-id "MAIA_TYPE_DRAWABLE_REPAIR_NOTIFICATION")
 )
 
 (define-object MaiaEntryAllowedValues
@@ -903,6 +921,12 @@
   (gtype-id "MAIA_TYPE_SHORTCUT")
 )
 
+(define-object MaiaStatePatterns
+  (parent "MaiaCoreObject")
+  (c-name "MaiaStatePatterns")
+  (gtype-id "MAIA_TYPE_STATE_PATTERNS")
+)
+
 (define-object MaiaStepButton
   (parent "MaiaItem")
   (c-name "MaiaStepButton")
@@ -1390,6 +1414,26 @@
     '("hsl-saturation" "MAIA_GRAPHIC_OPERATOR_HSL_SATURATION")
     '("hsl-color" "MAIA_GRAPHIC_OPERATOR_HSL_COLOR")
     '("hsl-luminosity" "MAIA_GRAPHIC_OPERATOR_HSL_LUMINOSITY")
+  )
+)
+
+(define-enum MaiaGraphicLineJoin
+  (c-name "MaiaGraphicLineJoin")
+  (gtype-id "MAIA_TYPE_GRAPHIC_LINE_JOIN")
+  (values
+    '("miter" "MAIA_GRAPHIC_LINE_JOIN_MITER")
+    '("round" "MAIA_GRAPHIC_LINE_JOIN_ROUND")
+    '("bevel" "MAIA_GRAPHIC_LINE_JOIN_BEVEL")
+  )
+)
+
+(define-enum MaiaGraphicLineCap
+  (c-name "MaiaGraphicLineCap")
+  (gtype-id "MAIA_TYPE_GRAPHIC_LINE_CAP")
+  (values
+    '("butt" "MAIA_GRAPHIC_LINE_CAP_BUTT")
+    '("round" "MAIA_GRAPHIC_LINE_CAP_ROUND")
+    '("square" "MAIA_GRAPHIC_LINE_CAP_SQUARE")
   )
 )
 
@@ -3485,6 +3529,20 @@
   )
 )
 
+(define-enum MaiaState
+  (c-name "MaiaState")
+  (gtype-id "MAIA_TYPE_STATE")
+  (values
+    '("normal" "MAIA_STATE_NORMAL")
+    '("active" "MAIA_STATE_ACTIVE")
+    '("prelight" "MAIA_STATE_PRELIGHT")
+    '("selected" "MAIA_STATE_SELECTED")
+    '("insensitive" "MAIA_STATE_INSENSITIVE")
+    '("focused" "MAIA_STATE_FOCUSED")
+    '("n" "MAIA_STATE_N")
+  )
+)
+
 (define-flags MaiaWindowBorder
   (c-name "MaiaWindowBorder")
   (gtype-id "MAIA_TYPE_WINDOW_BORDER")
@@ -3526,6 +3584,15 @@
     '("focus-out" "MAIA_ENTRY_CHANGED_MASK_FOCUS_OUT")
     '("return" "MAIA_ENTRY_CHANGED_MASK_RETURN")
     '("each-text-update" "MAIA_ENTRY_CHANGED_MASK_EACH_TEXT_UPDATE")
+  )
+)
+
+(define-enum MaiaButtonRelief
+  (c-name "MaiaButtonRelief")
+  (gtype-id "MAIA_TYPE_BUTTON_RELIEF")
+  (values
+    '("rmal" "MAIA_BUTTON_RELIEF_NORMAL")
+    '("ne" "MAIA_BUTTON_RELIEF_NONE")
   )
 )
 
@@ -5942,6 +6009,77 @@
   (of-object "MaiaCoreTimeline")
   (c-name "maia_core_timeline_get_progress")
   (return-type "gdouble")
+)
+
+(define-method get_started
+  (of-object "MaiaCoreTimeline")
+  (c-name "maia_core_timeline_get_started")
+  (return-type "MaiaCoreNotification*")
+)
+
+(define-method get_paused
+  (of-object "MaiaCoreTimeline")
+  (c-name "maia_core_timeline_get_paused")
+  (return-type "MaiaCoreNotification*")
+)
+
+(define-function maia_core_timeline_new_frame_notification_get_type
+  (c-name "maia_core_timeline_new_frame_notification_get_type")
+  (return-type "GType")
+)
+
+(define-method get_new_frame
+  (of-object "MaiaCoreTimeline")
+  (c-name "maia_core_timeline_get_new_frame")
+  (return-type "MaiaCoreTimelineNewFrameNotification*")
+)
+
+(define-method get_completed
+  (of-object "MaiaCoreTimeline")
+  (c-name "maia_core_timeline_get_completed")
+  (return-type "MaiaCoreNotification*")
+)
+
+(define-function maia_core_timeline_new_frame_notification_new
+  (c-name "maia_core_timeline_new_frame_notification_new")
+  (is-constructor-of "MaiaCoreTimelineNewFrameNotification")
+  (return-type "MaiaCoreTimelineNewFrameNotification*")
+  (parameters
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-function maia_core_timeline_new_frame_notification_construct
+  (c-name "maia_core_timeline_new_frame_notification_construct")
+  (return-type "MaiaCoreTimelineNewFrameNotification*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+  )
+)
+
+(define-method post
+  (of-object "MaiaCoreTimelineNewFrameNotification")
+  (c-name "maia_core_timeline_new_frame_notification_post")
+  (return-type "none")
+  (parameters
+    '("guint" "inNumFrame")
+  )
+)
+
+(define-method get_num_frame
+  (of-object "MaiaCoreTimelineNewFrameNotification")
+  (c-name "maia_core_timeline_new_frame_notification_get_num_frame")
+  (return-type "guint")
+)
+
+(define-method set_num_frame
+  (of-object "MaiaCoreTimelineNewFrameNotification")
+  (c-name "maia_core_timeline_new_frame_notification_set_num_frame")
+  (return-type "none")
+  (parameters
+    '("guint" "value")
+  )
 )
 
 (define-function maia_core_animator_get_type
@@ -9018,6 +9156,21 @@
   (return-type "MaiaCoreSet*")
 )
 
+(define-method get_not_dumpable_characters
+  (of-object "MaiaManifestElement")
+  (c-name "maia_manifest_element_get_not_dumpable_characters")
+  (return-type "gboolean")
+)
+
+(define-method set_not_dumpable_characters
+  (of-object "MaiaManifestElement")
+  (c-name "maia_manifest_element_set_not_dumpable_characters")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
 (define-function maia_manifest_theme_create_from_file
   (c-name "maia_manifest_theme_create_from_file")
   (return-type "MaiaManifestTheme*")
@@ -11032,6 +11185,26 @@
   )
 )
 
+(define-method get
+  (of-object "MaiaGraphicPath")
+  (c-name "maia_graphic_path_get")
+  (return-type "none")
+  (parameters
+    '("guint" "inIndex")
+    '("MaiaGraphicPoint*" "result")
+  )
+)
+
+(define-method set
+  (of-object "MaiaGraphicPath")
+  (c-name "maia_graphic_path_set")
+  (return-type "none")
+  (parameters
+    '("guint" "inIndex")
+    '("MaiaGraphicPoint*" "inPoint")
+  )
+)
+
 (define-method copy
   (of-object "MaiaGraphicPath")
   (c-name "maia_graphic_path_copy")
@@ -11562,6 +11735,16 @@
   (return-type "GType")
 )
 
+(define-function maia_graphic_line_join_get_type
+  (c-name "maia_graphic_line_join_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_graphic_line_cap_get_type
+  (c-name "maia_graphic_line_cap_get_type")
+  (return-type "GType")
+)
+
 (define-function maia_graphic_surface_get_type
   (c-name "maia_graphic_surface_get_type")
   (return-type "GType")
@@ -11772,6 +11955,36 @@
   )
 )
 
+(define-method get_line_join
+  (of-object "MaiaGraphicContext")
+  (c-name "maia_graphic_context_get_line_join")
+  (return-type "MaiaGraphicLineJoin")
+)
+
+(define-method set_line_join
+  (of-object "MaiaGraphicContext")
+  (c-name "maia_graphic_context_set_line_join")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicLineJoin" "value")
+  )
+)
+
+(define-method get_line_cap
+  (of-object "MaiaGraphicContext")
+  (c-name "maia_graphic_context_get_line_cap")
+  (return-type "MaiaGraphicLineCap")
+)
+
+(define-method set_line_cap
+  (of-object "MaiaGraphicContext")
+  (c-name "maia_graphic_context_set_line_cap")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicLineCap" "value")
+  )
+)
+
 (define-method get_dash
   (of-object "MaiaGraphicContext")
   (c-name "maia_graphic_context_get_dash")
@@ -11964,6 +12177,27 @@
   (parameters
     '("GType" "object_type")
     '("MaiaGraphicSurfaceFormat" "inFormat")
+    '("guint" "inWidth")
+    '("guint" "inHeight")
+  )
+)
+
+(define-method new_similar
+  (of-object "MaiaGraphicSurface")
+  (c-name "maia_graphic_surface_new_similar")
+  (return-type "MaiaGraphicSurface*")
+  (parameters
+    '("guint" "inWidth")
+    '("guint" "inHeight")
+  )
+)
+
+(define-function maia_graphic_surface_construct_similar
+  (c-name "maia_graphic_surface_construct_similar")
+  (return-type "MaiaGraphicSurface*")
+  (parameters
+    '("GType" "object_type")
+    '("MaiaGraphicSurface*" "inSurface")
     '("guint" "inWidth")
     '("guint" "inHeight")
   )
@@ -12168,6 +12402,15 @@
   (return-type "none")
   (parameters
     '("MaiaGraphicDevice*" "value")
+  )
+)
+
+(define-method set_surface
+  (of-object "MaiaGraphicSurface")
+  (c-name "maia_graphic_surface_set_surface")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSurface*" "value")
   )
 )
 
@@ -12489,6 +12732,15 @@
   )
 )
 
+(define-method post
+  (of-object "MaiaGraphicRendererInitializeNotification")
+  (c-name "maia_graphic_renderer_initialize_notification_post")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "inSize")
+  )
+)
+
 (define-method get_size
   (of-object "MaiaGraphicRendererInitializeNotification")
   (c-name "maia_graphic_renderer_initialize_notification_get_size")
@@ -12522,6 +12774,15 @@
   (parameters
     '("GType" "object_type")
     '("const-gchar*" "inName")
+  )
+)
+
+(define-method post
+  (of-object "MaiaGraphicRendererNewFrameNotification")
+  (c-name "maia_graphic_renderer_new_frame_notification_post")
+  (return-type "none")
+  (parameters
+    '("guint" "inNumFrame")
   )
 )
 
@@ -15122,6 +15383,196 @@
   (return-type "MaiaGraphicRegion*")
 )
 
+(define-function maia_drawable_damage_notification_get_type
+  (c-name "maia_drawable_damage_notification_get_type")
+  (return-type "GType")
+)
+
+(define-method get_damage
+  (of-object "MaiaDrawable")
+  (c-name "maia_drawable_get_damage")
+  (return-type "MaiaDrawableDamageNotification*")
+)
+
+(define-function maia_drawable_repair_notification_get_type
+  (c-name "maia_drawable_repair_notification_get_type")
+  (return-type "GType")
+)
+
+(define-method get_repair
+  (of-object "MaiaDrawable")
+  (c-name "maia_drawable_get_repair")
+  (return-type "MaiaDrawableRepairNotification*")
+)
+
+(define-function maia_drawable_damage_notification_new
+  (c-name "maia_drawable_damage_notification_new")
+  (is-constructor-of "MaiaDrawableDamageNotification")
+  (return-type "MaiaDrawableDamageNotification*")
+  (parameters
+    '("const-gchar*" "inName")
+    '("MaiaDrawable*" "inDrawable")
+  )
+)
+
+(define-function maia_drawable_damage_notification_construct
+  (c-name "maia_drawable_damage_notification_construct")
+  (return-type "MaiaDrawableDamageNotification*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+    '("MaiaDrawable*" "inDrawable")
+  )
+)
+
+(define-method post
+  (of-object "MaiaDrawableDamageNotification")
+  (c-name "maia_drawable_damage_notification_post")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRegion*" "inArea")
+  )
+)
+
+(define-method get_drawable
+  (of-object "MaiaDrawableDamageNotification")
+  (c-name "maia_drawable_damage_notification_get_drawable")
+  (return-type "MaiaDrawable*")
+)
+
+(define-method get_area
+  (of-object "MaiaDrawableDamageNotification")
+  (c-name "maia_drawable_damage_notification_get_area")
+  (return-type "MaiaGraphicRegion*")
+)
+
+(define-function maia_drawable_repair_notification_new
+  (c-name "maia_drawable_repair_notification_new")
+  (is-constructor-of "MaiaDrawableRepairNotification")
+  (return-type "MaiaDrawableRepairNotification*")
+  (parameters
+    '("const-gchar*" "inName")
+    '("MaiaDrawable*" "inDrawable")
+  )
+)
+
+(define-function maia_drawable_repair_notification_construct
+  (c-name "maia_drawable_repair_notification_construct")
+  (return-type "MaiaDrawableRepairNotification*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inName")
+    '("MaiaDrawable*" "inDrawable")
+  )
+)
+
+(define-method post
+  (of-object "MaiaDrawableRepairNotification")
+  (c-name "maia_drawable_repair_notification_post")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicRegion*" "inArea")
+  )
+)
+
+(define-method get_drawable
+  (of-object "MaiaDrawableRepairNotification")
+  (c-name "maia_drawable_repair_notification_get_drawable")
+  (return-type "MaiaDrawable*")
+)
+
+(define-method get_area
+  (of-object "MaiaDrawableRepairNotification")
+  (c-name "maia_drawable_repair_notification_get_area")
+  (return-type "MaiaGraphicRegion*")
+)
+
+(define-function maia_state_get_type
+  (c-name "maia_state_get_type")
+  (return-type "GType")
+)
+
+(define-method to_string
+  (of-object "MaiaState")
+  (c-name "maia_state_to_string")
+  (return-type "gchar*")
+)
+
+(define-function maia_state_from_string
+  (c-name "maia_state_from_string")
+  (return-type "MaiaState")
+  (parameters
+    '("const-gchar*" "inValue")
+  )
+)
+
+(define-function maia_state_patterns_get_type
+  (c-name "maia_state_patterns_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_state_patterns_new
+  (c-name "maia_state_patterns_new")
+  (is-constructor-of "MaiaStatePatterns")
+  (return-type "MaiaStatePatterns*")
+)
+
+(define-function maia_state_patterns_construct
+  (c-name "maia_state_patterns_construct")
+  (return-type "MaiaStatePatterns*")
+  (parameters
+    '("GType" "object_type")
+  )
+)
+
+(define-method patterns_new_va
+  (of-object "MaiaState")
+  (c-name "maia_state_patterns_new_va")
+  (return-type "MaiaStatePatterns*")
+  (parameters
+  )
+  (varargs #t)
+)
+
+(define-function maia_state_patterns_construct_va
+  (c-name "maia_state_patterns_construct_va")
+  (return-type "MaiaStatePatterns*")
+  (parameters
+    '("GType" "object_type")
+    '("MaiaState" "inState")
+  )
+  (varargs #t)
+)
+
+(define-function maia_state_patterns_constructv_va
+  (c-name "maia_state_patterns_constructv_va")
+  (return-type "MaiaStatePatterns*")
+  (parameters
+    '("GType" "object_type")
+    '("MaiaState" "inState")
+    '("va_list" "_vala_va_list")
+  )
+)
+
+(define-method get
+  (of-object "MaiaStatePatterns")
+  (c-name "maia_state_patterns_get")
+  (return-type "MaiaGraphicPattern*")
+  (parameters
+    '("MaiaState" "inState")
+  )
+)
+
+(define-method set
+  (of-object "MaiaStatePatterns")
+  (c-name "maia_state_patterns_set")
+  (return-type "none")
+  (parameters
+    '("MaiaState" "inState")
+    '("MaiaGraphicPattern*" "inPattern")
+  )
+)
+
 (define-function maia_item_get_type
   (c-name "maia_item_get_type")
   (return-type "GType")
@@ -15505,7 +15956,7 @@
 (define-method get_fill_pattern
   (of-object "MaiaItem")
   (c-name "maia_item_get_fill_pattern")
-  (return-type "MaiaGraphicPattern*")
+  (return-type "MaiaStatePatterns*")
 )
 
 (define-method set_fill_pattern
@@ -15513,14 +15964,14 @@
   (c-name "maia_item_set_fill_pattern")
   (return-type "none")
   (parameters
-    '("MaiaGraphicPattern*" "value")
+    '("MaiaStatePatterns*" "value")
   )
 )
 
 (define-method get_stroke_pattern
   (of-object "MaiaItem")
   (c-name "maia_item_get_stroke_pattern")
-  (return-type "MaiaGraphicPattern*")
+  (return-type "MaiaStatePatterns*")
 )
 
 (define-method set_stroke_pattern
@@ -15528,14 +15979,14 @@
   (c-name "maia_item_set_stroke_pattern")
   (return-type "none")
   (parameters
-    '("MaiaGraphicPattern*" "value")
+    '("MaiaStatePatterns*" "value")
   )
 )
 
 (define-method get_background_pattern
   (of-object "MaiaItem")
   (c-name "maia_item_get_background_pattern")
-  (return-type "MaiaGraphicPattern*")
+  (return-type "MaiaStatePatterns*")
 )
 
 (define-method set_background_pattern
@@ -15543,7 +15994,7 @@
   (c-name "maia_item_set_background_pattern")
   (return-type "none")
   (parameters
-    '("MaiaGraphicPattern*" "value")
+    '("MaiaStatePatterns*" "value")
   )
 )
 
@@ -15574,6 +16025,21 @@
   (return-type "none")
   (parameters
     '("MaiaGraphicLineType" "value")
+  )
+)
+
+(define-method get_state
+  (of-object "MaiaItem")
+  (c-name "maia_item_get_state")
+  (return-type "MaiaState")
+)
+
+(define-method set_state
+  (of-object "MaiaItem")
+  (c-name "maia_item_set_state")
+  (return-type "none")
+  (parameters
+    '("MaiaState" "value")
   )
 )
 
@@ -16870,36 +17336,6 @@
   )
 )
 
-(define-method get_edit_background_pattern
-  (of-object "MaiaEntry")
-  (c-name "maia_entry_get_edit_background_pattern")
-  (return-type "MaiaGraphicPattern*")
-)
-
-(define-method set_edit_background_pattern
-  (of-object "MaiaEntry")
-  (c-name "maia_entry_set_edit_background_pattern")
-  (return-type "none")
-  (parameters
-    '("MaiaGraphicPattern*" "value")
-  )
-)
-
-(define-method get_edit_stroke_pattern
-  (of-object "MaiaEntry")
-  (c-name "maia_entry_get_edit_stroke_pattern")
-  (return-type "MaiaGraphicPattern*")
-)
-
-(define-method set_edit_stroke_pattern
-  (of-object "MaiaEntry")
-  (c-name "maia_entry_set_edit_stroke_pattern")
-  (return-type "none")
-  (parameters
-    '("MaiaGraphicPattern*" "value")
-  )
-)
-
 (define-method get_text
   (of-object "MaiaEntry")
   (c-name "maia_entry_get_text")
@@ -17350,6 +17786,25 @@
   (return-type "GType")
 )
 
+(define-function maia_button_relief_get_type
+  (c-name "maia_button_relief_get_type")
+  (return-type "GType")
+)
+
+(define-method to_string
+  (of-object "MaiaButtonRelief")
+  (c-name "maia_button_relief_to_string")
+  (return-type "gchar*")
+)
+
+(define-function maia_button_relief_from_string
+  (c-name "maia_button_relief_from_string")
+  (return-type "MaiaButtonRelief")
+  (parameters
+    '("const-gchar*" "inValue")
+  )
+)
+
 (define-function maia_button_new
   (c-name "maia_button_new")
   (is-constructor-of "MaiaButton")
@@ -17508,33 +17963,18 @@
   )
 )
 
-(define-method get_button_color
+(define-method get_relief
   (of-object "MaiaButton")
-  (c-name "maia_button_get_button_color")
-  (return-type "MaiaGraphicColor*")
+  (c-name "maia_button_get_relief")
+  (return-type "MaiaButtonRelief")
 )
 
-(define-method set_button_color
+(define-method set_relief
   (of-object "MaiaButton")
-  (c-name "maia_button_set_button_color")
+  (c-name "maia_button_set_relief")
   (return-type "none")
   (parameters
-    '("MaiaGraphicColor*" "value")
-  )
-)
-
-(define-method get_button_inactive_color
-  (of-object "MaiaButton")
-  (c-name "maia_button_get_button_inactive_color")
-  (return-type "MaiaGraphicColor*")
-)
-
-(define-method set_button_inactive_color
-  (of-object "MaiaButton")
-  (c-name "maia_button_set_button_inactive_color")
-  (return-type "none")
-  (parameters
-    '("MaiaGraphicColor*" "value")
+    '("MaiaButtonRelief" "value")
   )
 )
 
@@ -17937,7 +18377,7 @@
 (define-method get_line_pattern
   (of-object "MaiaCheckButton")
   (c-name "maia_check_button_get_line_pattern")
-  (return-type "MaiaGraphicPattern*")
+  (return-type "MaiaStatePatterns*")
 )
 
 (define-method set_line_pattern
@@ -17945,7 +18385,7 @@
   (c-name "maia_check_button_set_line_pattern")
   (return-type "none")
   (parameters
-    '("MaiaGraphicPattern*" "value")
+    '("MaiaStatePatterns*" "value")
   )
 )
 
@@ -18008,70 +18448,10 @@
   )
 )
 
-(define-method get_button_pattern
-  (of-object "MaiaButtonTab")
-  (c-name "maia_button_tab_get_button_pattern")
-  (return-type "MaiaGraphicPattern*")
-)
-
-(define-method set_button_pattern
-  (of-object "MaiaButtonTab")
-  (c-name "maia_button_tab_set_button_pattern")
-  (return-type "none")
-  (parameters
-    '("MaiaGraphicPattern*" "value")
-  )
-)
-
-(define-method get_button_highlight_pattern
-  (of-object "MaiaButtonTab")
-  (c-name "maia_button_tab_get_button_highlight_pattern")
-  (return-type "MaiaGraphicPattern*")
-)
-
-(define-method set_button_highlight_pattern
-  (of-object "MaiaButtonTab")
-  (c-name "maia_button_tab_set_button_highlight_pattern")
-  (return-type "none")
-  (parameters
-    '("MaiaGraphicPattern*" "value")
-  )
-)
-
-(define-method get_stroke_highlight_pattern
-  (of-object "MaiaButtonTab")
-  (c-name "maia_button_tab_get_stroke_highlight_pattern")
-  (return-type "MaiaGraphicPattern*")
-)
-
-(define-method set_stroke_highlight_pattern
-  (of-object "MaiaButtonTab")
-  (c-name "maia_button_tab_set_stroke_highlight_pattern")
-  (return-type "none")
-  (parameters
-    '("MaiaGraphicPattern*" "value")
-  )
-)
-
-(define-method get_button_inactive_pattern
-  (of-object "MaiaButtonTab")
-  (c-name "maia_button_tab_get_button_inactive_pattern")
-  (return-type "MaiaGraphicPattern*")
-)
-
-(define-method set_button_inactive_pattern
-  (of-object "MaiaButtonTab")
-  (c-name "maia_button_tab_set_button_inactive_pattern")
-  (return-type "none")
-  (parameters
-    '("MaiaGraphicPattern*" "value")
-  )
-)
-
 (define-method get_indicator_pattern
   (of-object "MaiaButtonTab")
   (c-name "maia_button_tab_get_indicator_pattern")
-  (return-type "MaiaGraphicPattern*")
+  (return-type "MaiaStatePatterns*")
 )
 
 (define-method set_indicator_pattern
@@ -18079,7 +18459,7 @@
   (c-name "maia_button_tab_set_indicator_pattern")
   (return-type "none")
   (parameters
-    '("MaiaGraphicPattern*" "value")
+    '("MaiaStatePatterns*" "value")
   )
 )
 
@@ -19551,21 +19931,6 @@
   (of-object "MaiaCombo")
   (c-name "maia_combo_get_view")
   (return-type "MaiaView*")
-)
-
-(define-method get_highlight_color
-  (of-object "MaiaCombo")
-  (c-name "maia_combo_get_highlight_color")
-  (return-type "MaiaGraphicColor*")
-)
-
-(define-method set_highlight_color
-  (of-object "MaiaCombo")
-  (c-name "maia_combo_set_highlight_color")
-  (return-type "none")
-  (parameters
-    '("MaiaGraphicColor*" "value")
-  )
 )
 
 (define-method get_active_row

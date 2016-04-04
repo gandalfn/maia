@@ -77,7 +77,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
     // properties
     private string         m_Group          = null;
     private bool           m_Active         = false;
-    private unowned Label? m_Label          = null;
+    private unowned Item?  m_Content        = null;
     private bool           m_HideIfInactive = false;
 
     // accessors
@@ -106,11 +106,6 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
     internal Graphic.Pattern backcell_pattern { get; set; default = null; }
 
     /**
-     * Indicate if the button is sensitive
-     */
-    public bool sensitive { get; set; default = true; }
-
-    /**
      * Toggle group
      */
     [CCode (notify = false)]
@@ -137,35 +132,34 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
         }
     }
 
-    [CCode (notify = false)]
-    public string font_description {
-        get {
-            return m_Label == null ? "" : m_Label.font_description;
-        }
-        set {
-            if (m_Label != null && m_Label.font_description != value)
-            {
-                m_Label.font_description = value;
+    /**
+     * The default font description of button label
+     */
+    public string font_description { get;  set; default = ""; }
 
-                GLib.Signal.emit_by_name (this, "notify::font-description");
-            }
-        }
-    }
+    /**
+     * Shade color of label
+     */
+    public Graphic.Color shade_color { get; set; default = null; }
 
-    [CCode (notify = false)]
-    public string label {
-        get {
-            return m_Label == null ? "" : m_Label.text;
-        }
-        set {
-            if (m_Label != null && m_Label.text != value)
-            {
-                m_Label.text = value;
-                GLib.Signal.emit_by_name (this, "notify::label");
-            }
-        }
-    }
+    /**
+     * The label of button
+     */
+    public string label { get; set; default = ""; }
 
+    /**
+     * The border around button content
+     */
+    public double border { get; set; default = 5.0; }
+
+    /**
+     * Indicate if the button is sensitive
+     */
+    public bool sensitive { get; set; default = true; }
+
+    /**
+     * Indicate if toggle is active
+     */
     [CCode (notify = false)]
     public bool active {
         get {
@@ -175,7 +169,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
             if (m_Active != value)
             {
                 m_Active = value;
-                damage.post ();
+                state = m_Active ? State.ACTIVE : State.NORMAL;
 
                 GLib.Signal.emit_by_name (this, "notify::active");
 
@@ -207,6 +201,9 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
         }
     }
 
+    /**
+     * Hide toggle if inactive
+     */
     [CCode (notify = false)]
     public bool  hide_if_inactive {
         get {
@@ -240,28 +237,63 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
         }
     }
 
+    public Item? content {
+        get {
+            if (m_Content == null && characters != null && characters.length > 0)
+            {
+                // parse template
+                try
+                {
+                    var document = new Manifest.Document.from_buffer (characters, characters.length);
+                    document.path = manifest_path;
+                    document.theme = manifest_theme;
+                    document.notifications["attribute-bind-added"].add_object_observer (on_template_attribute_bind);
+                    var item = document.get () as Item;
+                    add (item);
+                    m_Content = item;
+                }
+                catch (Core.ParseError err)
+                {
+                    Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING, "Error on parsing cell %s: %s", name, err.message);
+                }
+            }
+
+            return m_Content;
+        }
+    }
+
     // events
     public Core.Event toggled { get; private set; }
 
     // methods
     construct
     {
-        stroke_pattern = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0));
+        // Do not dump characters
+        not_dumpable_characters = true;
 
+        // Set default patterns
+        stroke_pattern[State.NORMAL] = new Graphic.Color (0, 0, 0);
+
+        // Create toggled event
         toggled = new Core.Event ("toggled", this);
 
-        string id_label = "%s-label".printf (name);
+        // Set default content
+        characters = @"Grid.$(name)-content { " +
+                     @"    Label.$(name)-label { " +
+                     @"        yfill: false;" +
+                     @"        yexpand: true;" +
+                     @"        xexpand: true;" +
+                     @"        xfill: true;" +
+                     @"        state: @state;" +
+                     @"        alignment: left;" +
+                     @"        shade-color: @shade-color;" +
+                     @"        font-description: @font-description;" +
+                     @"        stroke-pattern: @stroke-pattern;" +
+                     @"        text: @label;" +
+                     @"    }" +
+                     @"}";
 
-        var label_item = new Label (id_label, label);
-        m_Label = label_item;
-
-        plug_property ("stroke-pattern", m_Label, "stroke-pattern");
-
-        add (label_item);
-
-        label_item.button_press_event.connect (on_button_press);
-
-        button_press_event.connect (on_button_press);
+        notify["characters"].connect (on_characters_changed);
     }
 
     public Toggle (string inId, string inLabel)
@@ -281,17 +313,48 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
         }
     }
 
-    protected bool
-    on_button_press (uint inButton, Graphic.Point inPoint)
+    private void
+    on_template_attribute_bind (Core.Notification inNotification)
     {
-        if (inButton == 1 && sensitive)
+        unowned Manifest.Document.AttributeBindAddedNotification? notification = inNotification as Manifest.Document.AttributeBindAddedNotification;
+        if (notification != null)
+        {
+            // plug property to binded property
+            plug_property (notification.attribute.get (), notification.attribute.owner as Core.Object, notification.property);
+        }
+    }
+
+    private void
+    on_characters_changed ()
+    {
+        if (m_Content != null)
+        {
+            m_Content.parent = null;
+            m_Content = null;
+        }
+
+        not_dumpable_characters = false;
+    }
+
+    internal override bool
+    on_button_press_event (uint inButton, Graphic.Point inPoint)
+    {
+        bool ret = base.on_button_press_event (inButton, inPoint);
+
+        if (sensitive && ret && inButton == 1)
         {
             grab_focus (this);
 
             active = !active;
         }
 
-        return true;
+        return ret;
+    }
+
+    internal override bool
+    can_append_child (Core.Object inChild)
+    {
+        return m_Content == null;
     }
 
     internal override string

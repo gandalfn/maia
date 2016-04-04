@@ -19,9 +19,6 @@
 
 public class Maia.CheckButton : Toggle
 {
-    // properties
-    private unowned Label? m_Label;
-
     // accessors
     internal override string tag {
         get {
@@ -30,15 +27,14 @@ public class Maia.CheckButton : Toggle
     }
 
     public double spacing { get; set; default = 5; }
-    public Graphic.Pattern line_pattern { get; set; default = new Graphic.Color (0, 0, 0); }
+    public StatePatterns line_pattern { get; set; }
 
     // methods
     construct
     {
-        fill_pattern = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (1, 1, 1));
-        stroke_pattern = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0));
-
-        m_Label = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
+        fill_pattern[State.NORMAL] = new Graphic.Color (1, 1, 1);
+        stroke_pattern[State.NORMAL] = new Graphic.Color (0, 0, 0);
+        line_pattern = new StatePatterns.va (State.NORMAL, new Graphic.Color (0, 0, 0));
     }
 
     public CheckButton (string inId, string inLabel)
@@ -51,37 +47,48 @@ public class Maia.CheckButton : Toggle
     {
         Graphic.Size ret = Graphic.Size (0, 0);
 
-        if (m_Label != null)
+        if (content != null)
         {
+            var area = Graphic.Rectangle (0, 0, border * 2.0, border * 2.0);
+
             // get size of label
-            Graphic.Size size_label = m_Label.size;
+            Graphic.Size content_size = content.size;
 
-            if (size_label.is_empty () || m_Label.text == null || m_Label.text.strip() == "")
+            if (content_size.is_empty () || label == null || label.length == 0 || label.strip().length == 0)
             {
-                string text = m_Label.text;
-                m_Label.text = "Z";
-                size_label = m_Label.size;
-                m_Label.position = Graphic.Point (0, 0);
-                ret = Graphic.Size (size_label.height, size_label.height);
-                m_Label.text = text;
-                size_label = m_Label.size;
+                // create a fake label
+                var label = new Label ("fake", "Z");
+                content_size = label.size;
+                print(@"$content_size\n");
             }
-            else
-            {
-                // set position of label
-                if (m_Label.position.x != size_label.height + spacing)
-                {
-                    m_Label.position = Graphic.Point (size_label.height + spacing, 0);
-#if MAIA_DEBUG
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "label item position : %s", m_Label.position.to_string ());
-#endif
-                }
 
-                ret = Graphic.Size (size_label.height + spacing + size_label.width, size_label.height);
-            }
+            area.union_ (Graphic.Rectangle (border + content_size.height + spacing, border, content_size.width, content_size.height));
+            ret = area.size;
+            ret.resize (border, border);
         }
 
         return ret;
+    }
+
+    internal override void
+    update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
+    {
+        if (visible && (geometry == null || !geometry.equal (inAllocation)))
+        {
+            geometry = inAllocation;
+
+            if (content != null)
+            {
+                var item_size = area.extents.size;
+                item_size.resize (-border * 2.0, -border * 2.0);
+                var content_size = content.size;
+                content.update (inContext, new Graphic.Region (Graphic.Rectangle (border + content_size.height + spacing,
+                                                                                  border + ((item_size.height - content_size.height) / 2.0),
+                                                                                  item_size.width, content_size.height)));
+            }
+
+            damage_area ();
+        }
     }
 
     internal override void
@@ -89,24 +96,31 @@ public class Maia.CheckButton : Toggle
     {
         inContext.save ();
         {
-            // Translate to align in center
-            inContext.translate (Graphic.Point (area.extents.size.width / 2, area.extents.size.height / 2));
-            inContext.translate (Graphic.Point (-size.width / 2, -size.height / 2));
+            var content_size = content.size;
 
-            // Draw label
-            base.paint (inContext, inArea);
+            // Draw content
+            if (content_size.is_empty () || label == null || label.length == 0 || label.strip().length == 0)
+            {
+                base.paint (inContext, inArea);
+            }
+
+            var item_size = area.extents.size;
+            item_size.resize (-border * 2.0, -border * 2.0);
+
+            // Translate to align in height center
+            inContext.translate (Graphic.Point (border, double.max (border, border + (item_size.height - content_size.height) / 2)));
 
             // Paint check box
-            Graphic.Color color = fill_pattern[Item.State.NORMAL] as Graphic.Color ?? new Graphic.Color (0.7, 0.7, 0.7);
+            Graphic.Color color = fill_pattern[state] as Graphic.Color ?? new Graphic.Color (0.7, 0.7, 0.7);
             Graphic.Color shade = new Graphic.Color.shade (color, 0.6);
 
             var path = new Graphic.Path ();
-            path.rectangle (0, 0, size.height, size.height, 5, 5);
+            path.rectangle (0, 0, content_size.height, content_size.height, 5, 5);
             inContext.pattern = shade;
             inContext.fill (path);
 
             path = new Graphic.Path ();
-            path.rectangle (1.5, 1.5, size.height - 3, size.height - 3, 5, 5);
+            path.rectangle (1.5, 1.5, content_size.height - 3, content_size.height - 3, 5, 5);
             inContext.pattern = color;
             inContext.fill (path);
 
@@ -114,12 +128,12 @@ public class Maia.CheckButton : Toggle
             if (active)
             {
                 path = new Graphic.Path ();
-                path.move_to (0.5 + (size.height * 0.2), (size.height * 0.5));
-                path.line_to (0.5 + (size.height * 0.4), (size.height * 0.7));
-                path.curve_to (0.5 + (size.height * 0.4), (size.height * 0.7),
-                               0.5 + (size.height * 0.5), (size.height * 0.4),
-                               0.5 + (size.height * 0.70), (size.height * 0.05));
-                inContext.pattern = line_pattern;
+                path.move_to (0.5 + (content_size.height * 0.2), (content_size.height * 0.5));
+                path.line_to (0.5 + (content_size.height * 0.4), (content_size.height * 0.7));
+                path.curve_to (0.5 + (content_size.height * 0.4), (content_size.height * 0.7),
+                               0.5 + (content_size.height * 0.5), (content_size.height * 0.4),
+                               0.5 + (content_size.height * 0.70), (content_size.height * 0.05));
+                inContext.pattern = line_pattern[state];
                 inContext.stroke (path);
             }
         }

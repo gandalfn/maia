@@ -310,10 +310,10 @@ public class Maia.Window : Group
                                     (CLOSE_BUTTON_SIZE / 2.0) - CLOSE_BUTTON_LINE_SIZE);
 
             var ctx = m_CloseButton.context;
-            ctx.pattern = background_pattern ?? new Graphic.Color (1, 1, 1);
+            ctx.pattern = background_pattern[state] ?? new Graphic.Color (1, 1, 1);
             ctx.fill (background);
             ctx.line_width = CLOSE_BUTTON_LINE_SIZE;
-            ctx.pattern = stroke_pattern[Item.State.NORMAL] ?? new Graphic.Color (0, 0, 0);
+            ctx.pattern = stroke_pattern[state] ?? new Graphic.Color (0, 0, 0);
             ctx.stroke (foreground);
         }
         catch (Graphic.Error err)
@@ -890,7 +890,7 @@ public class Maia.Window : Group
                     }
                     else
                     {
-                        ctx.pattern = background_pattern != null ? background_pattern : new Graphic.Color (0, 0, 0, 0);
+                        ctx.pattern = background_pattern[state] != null ? background_pattern[state] : new Graphic.Color (0, 0, 0, 0);
                         ctx.paint ();
                     }
 
@@ -985,7 +985,7 @@ public class Maia.Window : Group
                 m_Background.exponential_blur ((int)(shadow_width / 2));
 
                 ctx.operator = Graphic.Operator.SOURCE;
-                ctx.pattern = background_pattern != null ? background_pattern : new Graphic.Color (0, 0, 0, 0);
+                ctx.pattern = background_pattern[state] != null ? background_pattern[state] : new Graphic.Color (0, 0, 0, 0);
                 ctx.fill (path);
             }
 

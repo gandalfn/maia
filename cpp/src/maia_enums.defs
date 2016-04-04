@@ -663,6 +663,40 @@
 
 ;; Original typedef:
 ;; typedef enum  {
+;; 	MAIA_GRAPHIC_LINE_JOIN_MITER,
+;; 	MAIA_GRAPHIC_LINE_JOIN_ROUND,
+;; 	MAIA_GRAPHIC_LINE_JOIN_BEVEL
+;; } MaiaGraphicLineJoin;
+
+(define-enum-extended GraphicLineJoin
+  (in-module "Maia")
+  (c-name "MaiaGraphicLineJoin")
+  (values
+    '("miter" "MAIA_GRAPHIC_LINE_JOIN_MITER" "0")
+    '("round" "MAIA_GRAPHIC_LINE_JOIN_ROUND" "1")
+    '("bevel" "MAIA_GRAPHIC_LINE_JOIN_BEVEL" "2")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_GRAPHIC_LINE_CAP_BUTT,
+;; 	MAIA_GRAPHIC_LINE_CAP_ROUND,
+;; 	MAIA_GRAPHIC_LINE_CAP_SQUARE
+;; } MaiaGraphicLineCap;
+
+(define-enum-extended GraphicLineCap
+  (in-module "Maia")
+  (c-name "MaiaGraphicLineCap")
+  (values
+    '("butt" "MAIA_GRAPHIC_LINE_CAP_BUTT" "0")
+    '("round" "MAIA_GRAPHIC_LINE_CAP_ROUND" "1")
+    '("square" "MAIA_GRAPHIC_LINE_CAP_SQUARE" "2")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
 ;; 	MAIA_GRAPHIC_SURFACE_FORMAT_INVALID,
 ;; 	MAIA_GRAPHIC_SURFACE_FORMAT_A1,
 ;; 	MAIA_GRAPHIC_SURFACE_FORMAT_A8,
@@ -4811,6 +4845,31 @@
 
 ;; Original typedef:
 ;; typedef enum  {
+;; 	MAIA_STATE_NORMAL,
+;; 	MAIA_STATE_ACTIVE,
+;; 	MAIA_STATE_PRELIGHT,
+;; 	MAIA_STATE_SELECTED,
+;; 	MAIA_STATE_INSENSITIVE,
+;; 	MAIA_STATE_FOCUSED,
+;; 	MAIA_STATE_N
+;; } MaiaState;
+
+(define-enum-extended State
+  (in-module "Maia")
+  (c-name "MaiaState")
+  (values
+    '("normal" "MAIA_STATE_NORMAL" "0")
+    '("active" "MAIA_STATE_ACTIVE" "1")
+    '("prelight" "MAIA_STATE_PRELIGHT" "2")
+    '("selected" "MAIA_STATE_SELECTED" "3")
+    '("insensitive" "MAIA_STATE_INSENSITIVE" "4")
+    '("focused" "MAIA_STATE_FOCUSED" "5")
+    '("n" "MAIA_STATE_N" "6")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
 ;; 	MAIA_WINDOW_BORDER_NONE = 1 << 0,
 ;; 	MAIA_WINDOW_BORDER_LEFT = 1 << 1,
 ;; 	MAIA_WINDOW_BORDER_RIGHT = 1 << 2,
@@ -4882,6 +4941,21 @@
     '("focus-out" "MAIA_ENTRY_CHANGED_MASK_FOCUS_OUT" "1 << 1")
     '("return" "MAIA_ENTRY_CHANGED_MASK_RETURN" "1 << 2")
     '("each-text-update" "MAIA_ENTRY_CHANGED_MASK_EACH_TEXT_UPDATE" "1 << 3")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_BUTTON_RELIEF_NORMAL,
+;; 	MAIA_BUTTON_RELIEF_NONE
+;; } MaiaButtonRelief;
+
+(define-enum-extended ButtonRelief
+  (in-module "Maia")
+  (c-name "MaiaButtonRelief")
+  (values
+    '("normal" "MAIA_BUTTON_RELIEF_NORMAL" "0")
+    '("none" "MAIA_BUTTON_RELIEF_NONE" "1")
   )
 )
 

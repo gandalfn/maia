@@ -92,33 +92,6 @@
 
 ;; From MaiaCoreTimeline
 
-(define-signal started
-  (of-object "MaiaCoreTimeline")
-  (return-type "void")
-  (when "last")
-)
-
-(define-signal paused
-  (of-object "MaiaCoreTimeline")
-  (return-type "void")
-  (when "last")
-)
-
-(define-signal new-frame
-  (of-object "MaiaCoreTimeline")
-  (return-type "void")
-  (when "last")
-  (parameters
-    '("gint" "p0")
-  )
-)
-
-(define-signal completed
-  (of-object "MaiaCoreTimeline")
-  (return-type "void")
-  (when "last")
-)
-
 (define-property direction
   (of-object "MaiaCoreTimeline")
   (prop-type "GParamEnum")
@@ -186,6 +159,42 @@
   (of-object "MaiaCoreTimeline")
   (prop-type "GParamDouble")
   (docs "progress")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property started
+  (of-object "MaiaCoreTimeline")
+  (prop-type "GParamObject")
+  (docs "started")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property paused
+  (of-object "MaiaCoreTimeline")
+  (prop-type "GParamObject")
+  (docs "paused")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property new-frame
+  (of-object "MaiaCoreTimeline")
+  (prop-type "GParamObject")
+  (docs "new-frame")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property completed
+  (of-object "MaiaCoreTimeline")
+  (prop-type "GParamObject")
+  (docs "completed")
   (readable #t)
   (writable #f)
   (construct-only #f)
@@ -517,6 +526,24 @@
   (construct-only #f)
 )
 
+(define-property line-join
+  (of-object "MaiaGraphicContext")
+  (prop-type "GParamEnum")
+  (docs "line-join")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property line-cap
+  (of-object "MaiaGraphicContext")
+  (prop-type "GParamEnum")
+  (docs "line-cap")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property transform
   (of-object "MaiaGraphicContext")
   (prop-type "GParamObject")
@@ -823,6 +850,15 @@
   (prop-type "GParamObject")
   (docs "device")
   (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property surface
+  (of-object "MaiaGraphicSurface")
+  (prop-type "GParamObject")
+  (docs "surface")
+  (readable #f)
   (writable #t)
   (construct-only #f)
 )
@@ -1323,15 +1359,6 @@
 
 ;; From MaiaApplication
 
-(define-signal new-frame
-  (of-object "MaiaApplication")
-  (return-type "void")
-  (when "first")
-  (parameters
-    '("gint" "p0")
-  )
-)
-
 (define-property refresh-rate
   (of-object "MaiaApplication")
   (prop-type "GParamUInt")
@@ -1622,19 +1649,10 @@
   (construct-only #f)
 )
 
-(define-property button-color
+(define-property relief
   (of-object "MaiaButton")
-  (prop-type "GParamObject")
-  (docs "button-color")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
-(define-property button-inactive-color
-  (of-object "MaiaButton")
-  (prop-type "GParamObject")
-  (docs "button-inactive-color")
+  (prop-type "GParamEnum")
+  (docs "relief")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -1878,24 +1896,6 @@
 )
 
 ;; From MaiaDrawable
-
-(define-signal damage
-  (of-object "MaiaDrawable")
-  (return-type "void")
-  (when "first")
-  (parameters
-    '("MaiaGraphicRegion*" "p0")
-  )
-)
-
-(define-signal repair
-  (of-object "MaiaDrawable")
-  (return-type "void")
-  (when "first")
-  (parameters
-    '("MaiaGraphicRegion*" "p0")
-  )
-)
 
 (define-property damaged
   (of-object "MaiaDrawable")
@@ -2355,24 +2355,6 @@
   (of-object "MaiaEntry")
   (prop-type "GParamString")
   (docs "font-description")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
-(define-property edit-background-pattern
-  (of-object "MaiaEntry")
-  (prop-type "GParamObject")
-  (docs "edit-background-pattern")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
-(define-property edit-stroke-pattern
-  (of-object "MaiaEntry")
-  (prop-type "GParamObject")
-  (docs "edit-stroke-pattern")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -3290,6 +3272,15 @@
   (of-object "MaiaItem")
   (prop-type "GParamEnum")
   (docs "line-type")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property state
+  (of-object "MaiaItem")
+  (prop-type "GParamEnum")
+  (docs "state")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -5153,15 +5144,6 @@
   (docs "view")
   (readable #t)
   (writable #f)
-  (construct-only #f)
-)
-
-(define-property highlight-color
-  (of-object "MaiaCombo")
-  (prop-type "GParamObject")
-  (docs "highlight-color")
-  (readable #t)
-  (writable #t)
   (construct-only #f)
 )
 

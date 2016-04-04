@@ -57,8 +57,8 @@ const string manifest = "Window.test {" +
                         "           row: 2;" +
                         "           columns: 2;" +
                         "           yexpand: false;" +
-                        "           fill-pattern: rgba (0.4, 0.4, 0.4, 0.85);" +
-                        "           highlight-color: rgba (0.1, 0.1, 0.1, 0.6);" +
+                        "           fill-pattern: states (normal, rgba (0.4, 0.4, 0.4, 0.85)," +
+                        "                                 prelight, rgba (0.1, 0.1, 0.1, 0.6));" +
                         "           View.view_combo {"+
                         "               [" +
                         "                   Label.label_combo {" +

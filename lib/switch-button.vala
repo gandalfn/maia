@@ -63,8 +63,8 @@ public class Maia.SwitchButton : Toggle
     construct
     {
         // Set default property
-        fill_pattern = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (1, 1, 1));
-        stroke_pattern = new Item.StatePatterns (Item.State.NORMAL, new Graphic.Color (0, 0, 0));
+        fill_pattern[State.NORMAL] = new Graphic.Color (1, 1, 1);
+        stroke_pattern[State.NORMAL] = new Graphic.Color (0, 0, 0);
 
         // get toggle label
         m_Label = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
@@ -162,7 +162,7 @@ public class Maia.SwitchButton : Toggle
             double start = size_height;
             double end = size_width - size_height;
             path.arc (start + (switch_progress * (end - start)), offset + (size_height / 2.0), size_height, size_height, 0, 2 * GLib.Math.PI);
-            inContext.pattern = fill_pattern[Item.State.NORMAL] ?? new Graphic.Color (0.7, 0.7, 0.7);
+            inContext.pattern = fill_pattern[state] ?? new Graphic.Color (0.7, 0.7, 0.7);
             inContext.fill (path);
             if (line_pattern != null)
             {

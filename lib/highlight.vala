@@ -29,8 +29,6 @@ public class Maia.Highlight : Toggle
         }
     }
 
-    public double border { get; set; default = 5; }
-
     // methods
     construct
     {
@@ -91,14 +89,14 @@ public class Maia.Highlight : Toggle
 
                 if (stroke_pattern != null)
                 {
-                    inContext.pattern = stroke_pattern[Item.State.NORMAL];
+                    inContext.pattern = stroke_pattern[state];
                     inContext.line_width = line_width;
                     inContext.stroke (path);
                 }
 
                 if (fill_pattern != null)
                 {
-                    inContext.pattern = fill_pattern[Item.State.NORMAL];
+                    inContext.pattern = fill_pattern[state];
                     inContext.fill (path);
                 }
             }
