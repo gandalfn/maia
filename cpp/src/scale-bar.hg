@@ -70,14 +70,14 @@ namespace Maia
             _WRAP_METHOD(double get_label_border () const, maia_scale_bar_get_label_border)
             _WRAP_METHOD(void set_label_border (double inBorder), maia_scale_bar_set_label_border)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_label_stroke_pattern () const, maia_scale_bar_get_label_stroke_pattern)
-            _WRAP_METHOD(void set_label_stroke_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_scale_bar_set_label_stroke_pattern)
+            _WRAP_METHOD(Glib::RefPtr<StatePatterns> get_label_stroke_pattern () const, maia_scale_bar_get_label_stroke_pattern)
+            _WRAP_METHOD(void set_label_stroke_pattern (const Glib::RefPtr<StatePatterns>& inPattern), maia_scale_bar_set_label_stroke_pattern)
 
             _WRAP_METHOD(double get_step_line_width () const, maia_scale_bar_get_step_line_width)
             _WRAP_METHOD(void set_step_line_width (double inBorder), maia_scale_bar_set_step_line_width)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_step_stroke_pattern () const, maia_scale_bar_get_step_stroke_pattern)
-            _WRAP_METHOD(void set_step_stroke_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_scale_bar_set_step_stroke_pattern)
+            _WRAP_METHOD(Glib::RefPtr<StatePatterns> get_step_stroke_pattern () const, maia_scale_bar_get_step_stroke_pattern)
+            _WRAP_METHOD(void set_step_stroke_pattern (const Glib::RefPtr<StatePatterns>& inPattern), maia_scale_bar_set_step_stroke_pattern)
 
             _WRAP_PROPERTY("adjustment", Glib::RefPtr<Adjustment>)
             _WRAP_PROPERTY("font-description", Glib::ustring)
@@ -85,11 +85,11 @@ namespace Maia
             _WRAP_PROPERTY("display-slide-label", bool)
             _WRAP_PROPERTY("display-step-middle", bool)
             _WRAP_PROPERTY("label-border", double)
-            _WRAP_PROPERTY("label-stroke-pattern", Glib::RefPtr<Graphic::Pattern>)
+            _WRAP_PROPERTY("label-stroke-pattern", Glib::RefPtr<StatePatterns>)
             _WRAP_PROPERTY("display-step-label", bool)
             _WRAP_PROPERTY("step-font-description", Glib::ustring)
             _WRAP_PROPERTY("step-line-width", double)
-            _WRAP_PROPERTY("step-stroke-pattern", Glib::RefPtr<Graphic::Pattern>)
+            _WRAP_PROPERTY("step-stroke-pattern", Glib::RefPtr<StatePatterns>)
 
             _WRAP_PROPERTY("row", guint)
             _WRAP_PROPERTY("rows", guint)

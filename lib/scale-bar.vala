@@ -134,9 +134,9 @@ public class Maia.ScaleBar : Group, ItemPackable, ItemMovable
     public string          step_font_description { get; set; default = "Sans 8"; }
     public bool            display_slide_label   { get; set; default = true; }
     public double          label_border          { get; set; default = 2.0; }
-    public Graphic.Pattern label_stroke_pattern  { get; set; default = new Graphic.Color (0, 0, 0); }
+    public StatePatterns   label_stroke_pattern  { get; set; }
     public double          step_line_width       { get; set; default = 1.0; }
-    public Graphic.Pattern step_stroke_pattern   { get; set; default = new Graphic.Color (0, 0, 0); }
+    public StatePatterns   step_stroke_pattern   { get; set; }
     public bool            display_step_label    { get; set; default = true; }
     public bool            display_step_middle   { get; set; default = false; }
 
@@ -174,6 +174,8 @@ public class Maia.ScaleBar : Group, ItemPackable, ItemMovable
         // Default colors
         stroke_pattern[State.NORMAL] = new Graphic.Color (0, 0, 0);
         fill_pattern[State.NORMAL] = new Graphic.Color (0, 0, 0, 0.6);
+        label_stroke_pattern = new StatePatterns.va (State.NORMAL, new Graphic.Color (0, 0, 0));
+        step_stroke_pattern = new StatePatterns.va (State.NORMAL, new Graphic.Color (0, 0, 0));
 
         // connect onto font-description changed
         notify["step-font-description"].connect (on_adjustment_changed);
@@ -741,7 +743,7 @@ public class Maia.ScaleBar : Group, ItemPackable, ItemMovable
         if (step_stroke_pattern != null)
         {
             inContext.line_width = step_line_width;
-            inContext.pattern = step_stroke_pattern;
+            inContext.pattern = step_stroke_pattern[state];
             inContext.stroke (get_step_path ());
 
             if (display_step_middle)

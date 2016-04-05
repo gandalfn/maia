@@ -21723,7 +21723,7 @@
 (define-method get_label_stroke_pattern
   (of-object "MaiaScaleBar")
   (c-name "maia_scale_bar_get_label_stroke_pattern")
-  (return-type "MaiaGraphicPattern*")
+  (return-type "MaiaStatePatterns*")
 )
 
 (define-method set_label_stroke_pattern
@@ -21731,7 +21731,7 @@
   (c-name "maia_scale_bar_set_label_stroke_pattern")
   (return-type "none")
   (parameters
-    '("MaiaGraphicPattern*" "value")
+    '("MaiaStatePatterns*" "value")
   )
 )
 
@@ -21753,7 +21753,7 @@
 (define-method get_step_stroke_pattern
   (of-object "MaiaScaleBar")
   (c-name "maia_scale_bar_get_step_stroke_pattern")
-  (return-type "MaiaGraphicPattern*")
+  (return-type "MaiaStatePatterns*")
 )
 
 (define-method set_step_stroke_pattern
@@ -21761,7 +21761,7 @@
   (c-name "maia_scale_bar_set_step_stroke_pattern")
   (return-type "none")
   (parameters
-    '("MaiaGraphicPattern*" "value")
+    '("MaiaStatePatterns*" "value")
   )
 )
 
