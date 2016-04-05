@@ -65,9 +65,10 @@ public class Maia.ButtonTab : Toggle
     }
 
     // properties
-    private bool               m_Highlight = false;
-    private unowned Label?     m_Label;
-    private unowned Rectangle? m_Indicator;
+    private Core.Animator  m_IndicatorAnimator   = null;
+    private uint           m_IndicatorTransition = 0;
+    private double         m_IndicatorProgress   = 0.0;
+    private bool           m_Highlight           = false;
 
     // accessors
     internal override string tag {
@@ -76,10 +77,70 @@ public class Maia.ButtonTab : Toggle
         }
     }
 
-    /**
-     * The active color of indicator if not set the button does not draw any indicator
-     */
-    public StatePatterns indicator_pattern { get; set; }
+    internal override string main_data {
+        owned get {
+            return @"Grid.$(name)-content {\n" +
+                   @"    homogeneous: true;\n" +
+                   @"    row-spacing: @spacing;\n" +
+                   @"    Grid.$(name)_icon_label {\n" +
+                   @"       column-spacing: @spacing;\n" +
+                   @"       xexpand: true;\n" +
+                   @"       xfill: true;\n" +
+                   @"       Image.$(name)-image {\n"    +
+                   @"           yfill: false;\n" +
+                   @"           yexpand: true;\n" +
+                   @"           xexpand: false;\n" +
+                   @"           xfill: false;\n" +
+                   @"           xlimp: true;\n" +
+                   @"           filename: @icon-filename;\n" +
+                   @"           state: @state;\n" +
+                   @"           size: @icon-size;\n" +
+                   @"       }\n" +
+                   @"       Label.$(name)-label {\n"    +
+                   @"           column: 1;\n"    +
+                   @"           xfill: true;\n" +
+                   @"           xexpand: true;\n" +
+                   @"           xlimp: true;\n" +
+                   @"           yfill: false;\n" +
+                   @"           yexpand: true;\n" +
+                   @"           hide-if-empty: true;\n" +
+                   @"           alignment: @alignment;\n" +
+                   @"           state: @label-state;\n" +
+                   @"           font-description: @font-description;\n" +
+                   @"           stroke-pattern: @stroke-pattern;\n" +
+                   @"           text: @label;\n" +
+                   @"       }\n" +
+                   @"    }\n" +
+                   @"    Label.$(name)-value {\n"    +
+                   @"        row: 1;\n"    +
+                   @"        xfill: true;\n" +
+                   @"        xexpand: true;\n" +
+                   @"        yfill: false;\n" +
+                   @"        yexpand: true;\n" +
+                   @"        ylimp: true;\n" +
+                   @"        hide-if-empty: true;\n" +
+                   @"        alignment: @alignment;\n" +
+                   @"        state: @label-state;\n" +
+                   @"        font-description: @font-description;\n" +
+                   @"        stroke-pattern: @stroke-pattern;\n" +
+                   @"        text: @value;\n" +
+                   @"    }\n" +
+                   @"}";
+        }
+    }
+
+    internal State label_state { get; set; default = State.NORMAL; }
+
+    [CCode (notify = false)]
+    internal double indicator_progress {
+        get {
+            return m_IndicatorProgress;
+        }
+        set {
+            m_IndicatorProgress = value;
+            damage.post ();
+        }
+    }
 
     /**
      * Indicator placement
@@ -92,9 +153,29 @@ public class Maia.ButtonTab : Toggle
     public double indicator_thickness { get; set; default = 5.0; }
 
     /**
-     * Indicator label spacing
+     * Alignment of label ``left``, ``center`` or ``right``, default was ``center``
+     */
+    public Graphic.Glyph.Alignment alignment { get; set; default = Graphic.Glyph.Alignment.CENTER; }
+
+    /**
+     * Content spacing
      */
     public double spacing { get; set; default = 5.0; }
+
+    /**
+     * The icon filename no icon if ``null``
+     */
+    public string icon_filename { get; set; default = null; }
+
+    /**
+     * The icon size
+     */
+    public Graphic.Size icon_size { get; set; default = Graphic.Size (0, 0); }
+
+    /**
+     * Value of tab
+     */
+    public string @value { get; set; default = null; }
 
     /**
      * Indicate if button is highlighted
@@ -108,7 +189,7 @@ public class Maia.ButtonTab : Toggle
             {
                 m_Highlight = value;
 
-                m_Label.state = m_Highlight ? State.PRELIGHT : State.NORMAL;
+                label_state = m_Highlight ? State.PRELIGHT : state;
 
                 GLib.Signal.emit_by_name (this, "notify::highlight");
             }
@@ -141,25 +222,13 @@ public class Maia.ButtonTab : Toggle
     // methods
     construct
     {
-        // Construct indicator state patterns
-        indicator_pattern = new StatePatterns.va (State.NORMAL, new Graphic.Color (1, 1, 1, 0),
-                                                  State.PRELIGHT, new Graphic.Color (1, 1, 1));
+        not_dumpable_attributes.insert ("indicator-progress");
 
-        // Get label
-        m_Label = find (GLib.Quark.from_string (@"$(name)-label"), false) as Label;
-        m_Label.visible = false;
-        m_Label.hide_if_empty = true;
+        // create switch animator
+        m_IndicatorAnimator = new Core.Animator (30, 180);
 
-        // Create indicator
-        var indicator = new Rectangle (@"$(name)-indicator");
-        indicator.visible = true;
-        indicator.parent = this;
-        m_Indicator = indicator;
-
-        // plug properties
-        plug_property ("stroke-pattern",    m_Label,     "stroke-pattern");
-        plug_property ("indicator-pattern", m_Indicator, "fill-pattern");
-        plug_property ("state",             m_Indicator, "state");
+        // connect activate changed
+        notify["active"].connect (on_active_changed);
     }
 
     public ButtonTab (string inId, string inLabel)
@@ -167,54 +236,66 @@ public class Maia.ButtonTab : Toggle
         base (inId, inLabel);
     }
 
-    internal override bool
-    can_append_child (Core.Object inObject)
+    private void
+    on_active_changed ()
     {
-        return inObject is Label || inObject is Rectangle;
+        m_IndicatorAnimator.stop ();
+
+        if (m_IndicatorTransition > 0)
+        {
+            m_IndicatorAnimator.remove_transition (m_IndicatorTransition);
+        }
+        m_IndicatorTransition = m_IndicatorAnimator.add_transition (0, 1, Core.Animator.ProgressType.LINEAR);
+        GLib.Value from = m_IndicatorProgress;
+        GLib.Value to = active ? 1.0 : 0.0;
+        m_IndicatorAnimator.add_transition_property (m_IndicatorTransition, this, "indicator-progress", from, to);
+        m_IndicatorAnimator.start ();
+
     }
 
     internal override Graphic.Size
-    size_request (Graphic.Size inSize)
+    childs_size_request ()
     {
-        // Get label item
-        if (m_Label != null)
+        Graphic.Size ret = Graphic.Size (0, 0);
+
+        if (main_content != null)
         {
+            var area = Graphic.Rectangle (0, 0, border * 2.0, border * 2.0);
+
             // Set position and size of indicator and label
-            Graphic.Point indicator_position = Graphic.Point (border, border);
-            Graphic.Size indicator_size = Graphic.Size (indicator_thickness, indicator_thickness);
-            Graphic.Point label_position = Graphic.Point (border, border);
-            Graphic.Size label_size = m_Label.size;
+            var indicator_area = Graphic.Rectangle (border, border, indicator_thickness, indicator_thickness);
+            var main_content_size = main_content.size;
+            var main_content_area = Graphic.Rectangle (border, border, main_content_size.width, main_content_size.height);
 
             switch (indicator_placement)
             {
                 case Placement.TOP:
-                    indicator_size.width = double.max (label_size.width, inSize.width);
-                    label_position.y = indicator_position.y + indicator_size.height + spacing;
+                    indicator_area.size.width = main_content_size.width;
+                    main_content_area.origin.y = indicator_area.origin.y + indicator_area.size.height + spacing;
                     break;
 
                 case Placement.BOTTOM:
-                    indicator_size.width = double.max (label_size.width, inSize.width);
-                    indicator_position.y = label_position.y + label_size.height + spacing;
+                    indicator_area.size.width = main_content_size.width;
+                    indicator_area.origin.y = main_content_area.origin.y + main_content_area.size.height + spacing;
                     break;
 
                 case Placement.LEFT:
-                    indicator_size.height = double.max (label_size.height, inSize.height);
-                    label_position.x = indicator_position.x + indicator_size.width + spacing;
+                    indicator_area.size.height = main_content_size.height;
+                    main_content_area.origin.x = indicator_area.origin.x + indicator_area.size.width + spacing;
                     break;
 
                 case Placement.RIGHT:
-                    indicator_size.height = double.max (label_size.height, inSize.height);
-                    indicator_position.x = label_position.x + label_size.width + spacing;
+                    indicator_area.size.height = main_content_size.height;
+                    indicator_area.origin.x = main_content_area.origin.x + main_content_area.size.width + spacing;
                     break;
             }
 
-            m_Indicator.position = indicator_position;
-            m_Indicator.size = indicator_size;
-            m_Label.position = label_position;
-        }
+            area.union_ (indicator_area);
+            area.union_ (main_content_area);
 
-        Graphic.Size ret = base.size_request (inSize);
-        ret.resize (border, border);
+            ret = area.size;
+            ret.resize (border, border);
+        }
 
         return ret;
     }
@@ -224,56 +305,47 @@ public class Maia.ButtonTab : Toggle
     {
         if (visible && (geometry == null || !geometry.equal (inAllocation)))
         {
-#if MAIA_DEBUG
-            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "");
-#endif
-
             geometry = inAllocation;
 
-            var item_area = area;
-
-            // Set position and size of indicator and label
-            Graphic.Point indicator_position = m_Indicator.position;
-            Graphic.Size indicator_size = m_Indicator.size;
-            Graphic.Point label_position = m_Label.position;
-            Graphic.Size label_size = m_Label.size;
-
-            switch (indicator_placement)
+            if (main_content != null)
             {
-                case Placement.TOP:
-                    indicator_size.width = item_area.extents.size.width - (border * 2.0);
-                    label_size.width = item_area.extents.size.width - (border * 2.0);
-                    label_position.y += ((item_area.extents.size.height - label_position.y - border) - label_size.height) / 2.0;
-                    break;
+                // Set position and size of main content
+                var item_size = area.extents.size;
+                item_size.resize (-border * 2.0, -border * 2.0);
+                var main_content_area = Graphic.Rectangle (border, border, item_size.width, item_size.height);
 
-                case Placement.BOTTOM:
-                    indicator_size.width = item_area.extents.size.width - (border * 2.0);
-                    indicator_position.y = item_area.extents.size.height - border - indicator_size.height;
-                    label_size.width = item_area.extents.size.width - (border * 2.0);
-                    label_position.y += (item_area.extents.size.height - indicator_size.height - spacing - (border * 2.0) - label_size.height) / 2.0;
-                    break;
+                switch (indicator_placement)
+                {
+                    case Placement.TOP:
+                        main_content_area.size.height -= indicator_thickness + spacing;
+                        main_content_area.origin.y += (indicator_thickness + spacing) + double.max (0, (main_content_area.size.height - main_content.size.height) / 2.0);
+                        main_content_area.size.height = main_content.size.height;
+                        break;
 
-                case Placement.LEFT:
-                    indicator_size.height = item_area.extents.size.height - (border * 2.0);
-                    label_size.width = item_area.extents.size.width - label_position.x - border;
-                    label_position.y = (item_area.extents.size.height - (border * 2.0) - label_size.height) / 2.0;
-                    break;
+                    case Placement.BOTTOM:
+                        main_content_area.size.height -= indicator_thickness + spacing;
+                        main_content_area.origin.y += double.max (0, (main_content_area.size.height - main_content.size.height) / 2.0);
+                        main_content_area.size.height = main_content.size.height;
+                        break;
 
-                case Placement.RIGHT:
-                    indicator_size.height = item_area.extents.size.height - (border * 2.0);
-                    indicator_position.x = item_area.extents.size.width - border - indicator_size.width;
-                    label_size.width = item_area.extents.size.width - indicator_size.width - spacing - (border * 2.0);
-                    label_position.y = (item_area.extents.size.height - (border * 2.0) - label_size.height) / 2.0;
-                    break;
+                    case Placement.LEFT:
+                        main_content_area.size.height -= indicator_thickness + spacing;
+                        main_content_area.origin.y += double.max (0, (main_content_area.size.height - main_content.size.height) / 2.0);
+                        main_content_area.size.height = main_content.size.height;
+                        main_content_area.size.width -= indicator_thickness + spacing;
+                        main_content_area.origin.x += indicator_thickness + spacing;
+                        break;
+
+                    case Placement.RIGHT:
+                        main_content_area.size.height -= indicator_thickness + spacing;
+                        main_content_area.origin.y += double.max (0, (main_content_area.size.height - main_content.size.height) / 2.0);
+                        main_content_area.size.height = main_content.size.height;
+                        main_content_area.size.width -= indicator_thickness + spacing;
+                        break;
+                }
+
+                main_content.update (inContext, new Graphic.Region (main_content_area));
             }
-
-            // Set label size allocation
-            var label_allocation = new Graphic.Region (Graphic.Rectangle (label_position.x, label_position.y, label_size.width, label_size.height));
-            m_Label.update (inContext, label_allocation);
-
-            // Set indicator size allocation
-            var indicator_allocation = new Graphic.Region (Graphic.Rectangle (indicator_position.x, indicator_position.y, indicator_size.width, indicator_size.height));
-            m_Indicator.update (inContext, indicator_allocation);
 
             damage_area ();
         }
@@ -284,23 +356,106 @@ public class Maia.ButtonTab : Toggle
     {
         inContext.save ();
         {
-            Graphic.Path background = new Graphic.Path.from_region (area);
-
             // paint button background
-            if (fill_pattern[m_Highlight ? State.PRELIGHT : state] != null)
+            if (background_pattern[m_Highlight ? State.PRELIGHT : state] != null)
             {
-                inContext.pattern = fill_pattern[m_Highlight ? State.PRELIGHT : state];
-                inContext.fill (background);
+                inContext.save ();
+                {
+                    unowned Graphic.Image? image = background_pattern[m_Highlight ? State.PRELIGHT : state] as Graphic.Image;
+                    if (image != null)
+                    {
+                        var item_area = area;
+                        Graphic.Size image_size = image.size;
+                        double scale = double.max (image_size.width / item_area.extents.size.width,
+                                                   image_size.height / item_area.extents.size.height);
+                        var transform = new Graphic.Transform.identity ();
+                        transform.scale (scale, scale);
+                        inContext.translate (Graphic.Point ((item_area.extents.size.width - (image_size.width / scale)) / 2,
+                                                            (item_area.extents.size.height - (image_size.height / scale)) / 2));
+                        image.transform = transform;
+                        inContext.pattern = background_pattern[state];
+                    }
+                    else
+                    {
+                        inContext.pattern = background_pattern[m_Highlight ? State.PRELIGHT : state];
+                    }
+
+                    inContext.paint ();
+                }
+                inContext.restore ();
             }
 
-            // paint childs
-            foreach (unowned Core.Object child in this)
+            var main_content_area = Graphic.Rectangle (0, 0, 0, 0);
+
+            // paint main content
+            if (main_content != null)
             {
-                if (child is Drawable)
+                var child_area = area_to_child_item_space (main_content, inArea);
+                main_content.draw (inContext, child_area);
+                main_content_area = main_content.geometry.extents;
+            }
+
+
+            var item_size = area.extents.size;
+            item_size.resize (-border * 2.0, -border * 2.0);
+
+            // paint indicator
+            var indicator_area = Graphic.Rectangle (border, border, indicator_thickness, indicator_thickness);
+            switch (indicator_placement)
+            {
+                case Placement.TOP:
+                    indicator_area.size.width = item_size.width;
+                    break;
+
+                case Placement.BOTTOM:
+                    indicator_area.size.width = item_size.width;
+                    indicator_area.origin.y = item_size.height + border - indicator_thickness;
+                    break;
+
+                case Placement.LEFT:
+                    indicator_area.size.height = item_size.height;
+                    break;
+
+                case Placement.RIGHT:
+                    indicator_area.size.height = item_size.height;
+                    indicator_area.origin.x = item_size.width + border - indicator_thickness;
+                    break;
+            }
+
+            Graphic.Path indicator = new Graphic.Path ();
+            indicator.rectangle (indicator_area.origin.x, indicator_area.origin.y, indicator_area.size.width, indicator_area.size.height);
+
+            var color_active = fill_pattern[State.ACTIVE] as Graphic.Color;
+            var color_inactive = fill_pattern[State.NORMAL] as Graphic.Color;
+            if (color_active != null)
+            {
+                if (active)
                 {
-                    unowned Drawable drawable = (Drawable)child;
-                    drawable.draw (inContext, area_to_child_item_space (drawable, inArea));
+                    if (color_inactive != null)
+                    {
+                        inContext.pattern = new Graphic.Color (color_inactive.red, color_inactive.green, color_inactive.blue, color_inactive.alpha * (1 - m_IndicatorProgress));
+                        inContext.fill (indicator);
+                    }
+
+                    inContext.pattern = new Graphic.Color (color_active.red, color_active.green, color_active.blue, color_active.alpha * m_IndicatorProgress);
+                    inContext.fill (indicator);
                 }
+                else
+                {
+                    inContext.pattern = new Graphic.Color (color_active.red, color_active.green, color_active.blue, color_active.alpha * m_IndicatorProgress);
+                    inContext.fill (indicator);
+
+                    if (color_inactive != null)
+                    {
+                        inContext.pattern = new Graphic.Color (color_inactive.red, color_inactive.green, color_inactive.blue, color_inactive.alpha * (1 - m_IndicatorProgress));
+                        inContext.fill (indicator);
+                    }
+                }
+            }
+            else if (fill_pattern[state] != null)
+            {
+                inContext.pattern = fill_pattern[state];
+                inContext.fill (indicator);
             }
         }
         inContext.restore ();

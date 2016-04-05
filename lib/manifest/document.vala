@@ -212,13 +212,11 @@ public class Maia.Manifest.Document : Core.Parser
         }
 
         if (m_pCurrent[0] != ';')
-            throw new Core.ParseError.INVALID_NAME ("Error on read attribute value %s: unexpected end of line at %i,%i missing ;",
-                                                    m_Attribute, m_Line, m_Col);
+            throw new Core.ParseError.INVALID_NAME (@"Error on read attribute value $m_Attribute: unexpected end of line at $m_Line,$m_Col missing ; : $(get_current_line ())");
         next_char ();
 
         if (m_pCurrent == m_pEnd)
-            throw new Core.ParseError.INVALID_NAME ("Error on read attribute value %s: unexpected end of line at %i,%i",
-                                                    m_Attribute, m_Line, m_Col);
+            throw new Core.ParseError.INVALID_NAME (@"Error on read attribute value $m_Attribute: unexpected end of line at $m_Line,$m_Col  : $(get_current_line ())");
     }
 
     private string
@@ -376,16 +374,14 @@ public class Maia.Manifest.Document : Core.Parser
                 token = Core.Parser.Token.END_ELEMENT;
                 if (m_ElementStack.length == 0)
                 {
-                    throw new Core.ParseError.PARSE ("Unexpected end at %s:%i,%i",
-                                                     m_Filename != null ? GLib.Path.get_basename (m_Filename) : ".", m_Line, m_Col);
+                    throw new Core.ParseError.PARSE (@"Unexpected end at %s:$m_Line:$m_Col", m_Filename != null ? GLib.Path.get_basename (m_Filename) : ".");
                 }
                 m_CurrentTag = m_ElementStack.pop ();
                 next_char ();
             }
             else
             {
-                throw new Core.ParseError.PARSE ("Unexpected data for %s at %s:%i,%i", m_Element,
-                                                 m_Filename != null ? GLib.Path.get_basename (m_Filename) : ".", m_Line, m_Col);
+                throw new Core.ParseError.PARSE (@"Unexpected data for %s %s:$m_Line:$m_Col : $(get_current_line ())", m_Element ?? "", m_Filename != null ? GLib.Path.get_basename (m_Filename) : ".");
             }
         }
 

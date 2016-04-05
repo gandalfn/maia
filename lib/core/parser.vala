@@ -143,7 +143,6 @@ public abstract class Maia.Core.Parser : Object
     }
 
     // Methods
-
     /**
      * Create a new parser
      */
@@ -206,5 +205,31 @@ public abstract class Maia.Core.Parser : Object
     iterator_end ()
     {
         return new Iterator.end (this);
+    }
+
+    public string
+    get_current_line ()
+    {
+        char* begin = m_pCurrent;
+        while (begin != m_pBegin)
+        {
+            begin--;
+            if (begin[0] == '\n')
+            {
+                begin++;
+                break;
+            }
+        }
+        char* end = m_pCurrent;
+        while (end < m_pEnd)
+        {
+            end++;
+            if (end[0] == '\n')
+            {
+                end--;
+                break;
+            }
+        }
+        return ((string)begin).substring (0, (int)(end - begin)).strip ();
     }
 }

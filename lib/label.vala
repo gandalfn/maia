@@ -151,63 +151,6 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
         }
     }
 
-    // static methods
-    static construct
-    {
-        Manifest.Attribute.register_transform_func (typeof (Graphic.Glyph.Alignment), attribute_to_alignment);
-        Manifest.Attribute.register_transform_func (typeof (Graphic.Glyph.WrapMode), attribute_to_wrap_mode);
-        Manifest.Attribute.register_transform_func (typeof (Graphic.Glyph.EllipsizeMode), attribute_to_ellipsize_mode);
-
-        GLib.Value.register_transform_func (typeof (Graphic.Glyph.Alignment), typeof (string), alignment_to_string);
-        GLib.Value.register_transform_func (typeof (Graphic.Glyph.WrapMode), typeof (string), wrap_mode_to_string);
-        GLib.Value.register_transform_func (typeof (Graphic.Glyph.EllipsizeMode), typeof (string), ellipsize_mode_to_string);
-    }
-
-    static void
-    attribute_to_alignment (Manifest.Attribute inAttribute, ref GLib.Value outValue)
-    {
-        outValue = Graphic.Glyph.Alignment.from_string (inAttribute.get ());
-    }
-
-    static void
-    alignment_to_string (GLib.Value inSrc, out GLib.Value outDest)
-        requires (inSrc.holds (typeof (Graphic.Glyph.Alignment)))
-    {
-        Graphic.Glyph.Alignment val = (Graphic.Glyph.Alignment)inSrc;
-
-        outDest = val.to_string ();
-    }
-
-    static void
-    attribute_to_wrap_mode (Manifest.Attribute inAttribute, ref GLib.Value outValue)
-    {
-        outValue = Graphic.Glyph.WrapMode.from_string (inAttribute.get ());
-    }
-
-    static void
-    wrap_mode_to_string (GLib.Value inSrc, out GLib.Value outDest)
-        requires (inSrc.holds (typeof (Graphic.Glyph.WrapMode)))
-    {
-        Graphic.Glyph.WrapMode val = (Graphic.Glyph.WrapMode)inSrc;
-
-        outDest = val.to_string ();
-    }
-
-    static void
-    attribute_to_ellipsize_mode (Manifest.Attribute inAttribute, ref GLib.Value outValue)
-    {
-        outValue = Graphic.Glyph.EllipsizeMode.from_string (inAttribute.get ());
-    }
-
-    static void
-    ellipsize_mode_to_string (GLib.Value inSrc, out GLib.Value outDest)
-        requires (inSrc.holds (typeof (Graphic.Glyph.EllipsizeMode)))
-    {
-        Graphic.Glyph.EllipsizeMode val = (Graphic.Glyph.EllipsizeMode)inSrc;
-
-        outDest = val.to_string ();
-    }
-
     // methods
     construct
     {

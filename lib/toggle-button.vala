@@ -19,10 +19,6 @@
 
 public class Maia.ToggleButton : Toggle
 {
-    // properties
-    private unowned Image? m_Icon;
-    private unowned Label? m_Label;
-
     // accessors
     internal override string tag {
         get {
@@ -41,50 +37,57 @@ public class Maia.ToggleButton : Toggle
     public Graphic.Size icon_size { get; set; default = Graphic.Size (0, 0); }
 
     /**
-     * The background color of button if not set the button does not draw any background
+     * Sets the relief style of the edges of the button
      */
-    public Graphic.Color button_color { get; set; default = new Graphic.Color (0.7, 0.7, 0.7); }
+    public Button.Relief relief { get; set; default = Button.Relief.NORMAL; }
 
     /**
-     * The active background color of button if not set the button does not draw any background
+     * The spacing between button component
      */
-    public Graphic.Color button_active_color { get; set; default = null; }
+    public double spacing { get; set; default = 5.0; }
 
-    /**
-     * The insensitive background color of button if not set the button does not draw any background
-     */
-    public Graphic.Color button_inactive_color { get; set; default = null; }
-
-    // methods
-    construct
-    {
-        // Create icon item
-        string id_icon = "%s-icon".printf (name);
-
-        var icon_item = new Image (id_icon, icon_filename);
-        plug_property("icon-filename", icon_item, "filename");
-        plug_property("icon-size", icon_item, "size");
-        add (icon_item);
-        m_Icon = icon_item;
-        //icon_item.button_press_event.connect (on_button_press);
-
-        m_Label = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
-        m_Label.visible = false;
-        m_Label.hide_if_empty = true;
+    internal override string main_data {
+        owned get {
+            return @"Grid.$(name)-content { " +
+                   @"    column-spacing: @spacing;" +
+                   @"    Image.$(name)-image { "    +
+                   @"        yfill: false;" +
+                   @"        yexpand: true;" +
+                   @"        xexpand: false;" +
+                   @"        xfill: false;" +
+                   @"        xlimp: true;" +
+                   @"        filename: @icon-filename;" +
+                   @"        size: @icon-size;" +
+                   @"    }" +
+                   @"    Label.$(name)-label { "    +
+                   @"        column: 1; "    +
+                   @"        yfill: false;" +
+                   @"        yexpand: true;" +
+                   @"        xexpand: true;" +
+                   @"        xfill: true;" +
+                   @"        xlimp: true;" +
+                   @"        alignment: left;" +
+                   @"        shade-color: @shade-color;" +
+                   @"        font-description: @font-description;" +
+                   @"        stroke-pattern: @stroke-pattern;" +
+                   @"        text: @label;" +
+                   @"    }" +
+                   @"}";
+        }
     }
 
+    // methods
     public ToggleButton (string inId, string inLabel)
     {
         base (inId, inLabel);
     }
 
-    private void
-    draw_button (Graphic.Context inContext) throws Graphic.Error
+    private Graphic.Pattern?
+    get_button_pattern () throws Graphic.Error
     {
         // Paint Background
         var button_size = geometry.extents.size;
         button_size.resize (-border * 2, -border * 2);
-        var pattern = new Graphic.MeshGradient ();
 
         double vb = 1, ve = 1.1, vd = 0.95, vd2 = 0.85;
 
@@ -95,118 +98,114 @@ public class Maia.ToggleButton : Toggle
             vd = 1.05;
             vd2 = 1.15;
         }
-        var beginColor = new Graphic.Color.shade (sensitive ? (active ? button_active_color ?? button_color : button_color) : button_inactive_color ?? button_color, vb);
-        var endColor = new Graphic.Color.shade (sensitive ? (active ? button_active_color ?? button_color : button_color) : button_inactive_color ?? button_color, ve);
-
-        if (m_Label != null && (m_Label.shade_color == null || m_Label.shade_color.compare (beginColor) != 0))
+        var button_color = fill_pattern[state] as Graphic.Color ?? new Graphic.Color (0.7, 0.7, 0.7);;
+        if (button_color != null)
         {
-            m_Label.shade_color = beginColor;
+            var beginColor = new Graphic.Color.shade (button_color, vb);
+            var endColor = new Graphic.Color.shade (button_color, ve);
+
+            if (shade_color == null || shade_color.compare (beginColor) != 0)
+            {
+                shade_color = beginColor;
+            }
+
+            if (relief == Button.Relief.NORMAL)
+            {
+                var pattern = new Graphic.MeshGradient ();
+                var topleft = new Graphic.MeshGradient.ArcPatch (Graphic.Point (border, border),
+                                                                 -GLib.Math.PI, -GLib.Math.PI / 2, border,
+                                                                 { beginColor, endColor, endColor, beginColor });
+
+                var color1 = endColor;
+                var color2 =  new Graphic.Color.shade (color1, vd);
+                var top =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (border, 0,
+                                                                                  button_size.width,
+                                                                                  border),
+                                                               { color1, color2, beginColor, beginColor });
+
+                var topright = new Graphic.MeshGradient.ArcPatch (Graphic.Point (button_size.width + border, border),
+                                                                  -GLib.Math.PI / 2, 0, border,
+                                                                  { beginColor, color2, color2, beginColor });
+
+                var color3 = color2;
+                var color4 =  new Graphic.Color.shade (color3, vd2);
+                var right =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (button_size.width + border, border,
+                                                                                    border, button_size.height),
+                                                                 { beginColor, color3, color4, beginColor });
+
+                var bottomright = new Graphic.MeshGradient.ArcPatch (Graphic.Point (button_size.width + border,
+                                                                                    button_size.height + border),
+                                                                     0, GLib.Math.PI / 2, border,
+                                                                     { beginColor, color4, color4, beginColor });
+
+                var bottom =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (border, button_size.height + border,
+                                                                                     button_size.width, border),
+                                                                 { beginColor, beginColor, color4, color2 });
+
+                var bottomleft = new Graphic.MeshGradient.ArcPatch (Graphic.Point (border, button_size.height + border),
+                                                                    GLib.Math.PI / 2, GLib.Math.PI, border,
+                                                                    { beginColor, color2, color2, beginColor });
+
+                var left =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (0, border,
+                                                                                   border, button_size.height),
+                                                               { color1, beginColor, beginColor, color2 });
+
+                var main =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (border, border,
+                                                                                   button_size.width, button_size.height),
+                                                               { beginColor, beginColor, beginColor, beginColor });
+
+                pattern.add (topleft);
+                pattern.add (top);
+                pattern.add (topright);
+                pattern.add (right);
+                pattern.add (bottomright);
+                pattern.add (bottom);
+                pattern.add (bottomleft);
+                pattern.add (left);
+                pattern.add (main);
+                return pattern;
+            }
+
+            return beginColor;
         }
 
-        var topleft = new Graphic.MeshGradient.ArcPatch (Graphic.Point (border, border),
-                                                         -GLib.Math.PI, -GLib.Math.PI / 2, border,
-                                                         { beginColor, endColor, endColor, beginColor });
-
-        var color1 = endColor;
-        var color2 =  new Graphic.Color.shade (color1, vd);
-        var top =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (border, 0,
-                                                                          button_size.width,
-                                                                          border),
-                                                       { color1, color2, beginColor, beginColor });
-
-        var topright = new Graphic.MeshGradient.ArcPatch (Graphic.Point (button_size.width + border, border),
-                                                          -GLib.Math.PI / 2, 0, border,
-                                                          { beginColor, color2, color2, beginColor });
-
-        var color3 = color2;
-        var color4 =  new Graphic.Color.shade (color3, vd2);
-        var right =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (button_size.width + border, border,
-                                                                            border, button_size.height),
-                                                         { beginColor, color3, color4, beginColor });
-
-        var bottomright = new Graphic.MeshGradient.ArcPatch (Graphic.Point (button_size.width + border,
-                                                                            button_size.height + border),
-                                                             0, GLib.Math.PI / 2, border,
-                                                             { beginColor, color4, color4, beginColor });
-
-        var bottom =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (border, button_size.height + border,
-                                                                             button_size.width, border),
-                                                         { beginColor, beginColor, color4, color2 });
-
-        var bottomleft = new Graphic.MeshGradient.ArcPatch (Graphic.Point (border, button_size.height + border),
-                                                            GLib.Math.PI / 2, GLib.Math.PI, border,
-                                                            { beginColor, color2, color2, beginColor });
-
-        var left =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (0, border,
-                                                                           border, button_size.height),
-                                                       { color1, beginColor, beginColor, color2 });
-
-        var main =  new Graphic.MeshGradient.LinePatch (Graphic.Rectangle (border, border,
-                                                                           button_size.width, button_size.height),
-                                                       { beginColor, beginColor, beginColor, beginColor });
-
-        pattern.add (topleft);
-        pattern.add (top);
-        pattern.add (topright);
-        pattern.add (right);
-        pattern.add (bottomright);
-        pattern.add (bottom);
-        pattern.add (bottomleft);
-        pattern.add (left);
-        pattern.add (main);
-
-        inContext.pattern = pattern;
-        inContext.paint ();
-    }
-
-    internal override bool
-    can_append_child (Core.Object inObject)
-    {
-        return inObject is Label || inObject is Image;
+        return null;
     }
 
     internal override Graphic.Size
     size_request (Graphic.Size inSize)
     {
-        // Get label item
-        if (m_Label != null)
+        Graphic.Size ret = Graphic.Size (border * 2.0, border * 2.0);
+        if (main_content != null)
         {
-            double diff = (m_Icon.size.height - m_Label.size.height) / 2.0;
+            var area = Graphic.Rectangle (0, 0, border * 2.0, border * 2.0);
+            var content_size = main_content.size;
+            area.union_ (Graphic.Rectangle (border, border, content_size.width, content_size.height));
 
-            // get position of icon
-            if (!m_Icon.size.is_empty ())
-            {
-                Graphic.Point position_icon = m_Icon.position;
-                if (position_icon.x != border || position_icon.y != border)
-                {
-                    m_Icon.position = Graphic.Point (border, border - (diff < 0 ? diff : 0));
-                }
-            }
-
-            if (m_Label.visible)
-            {
-                // get position of label
-                Graphic.Point position_label = m_Label.position;
-
-                // set position of label
-                if (position_label.x != border + (m_Icon.size.width > 0 ? border + m_Icon.size.width : 0) ||
-                    position_label.y != border + (m_Icon.size.height > 0 ? (diff >= 0 ? diff : 0) : 0))
-                {
-
-                    m_Label.position = Graphic.Point (border + ((m_Icon.size.width > 0 && m_Label.size.width > 0) ? border + m_Icon.size.width : 0),
-                                                      border + (m_Icon.size.height > 0 ? (diff >= 0 ? diff : 0) : 0));
-
-#if MAIA_DEBUG
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "label item position : %s", m_Label.position.to_string ());
-#endif
-                }
-            }
+            ret = area.size;
+            ret.resize (border, border);
         }
 
-        Graphic.Size ret = base.size_request (inSize);
-        ret.resize (border, border);
-
         return ret;
+    }
+
+    internal override void
+    update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
+    {
+        if (visible && (geometry == null || !geometry.equal (inAllocation)))
+        {
+            geometry = inAllocation;
+
+            if (main_content != null)
+            {
+                var item_size = area.extents.size;
+                item_size.resize (-border * 2.0, -border * 2.0);
+                var content_size = main_content.size;
+                main_content.update (inContext, new Graphic.Region (Graphic.Rectangle (border, border + ((item_size.height - content_size.height) / 2.0 ), item_size.width, content_size.height)));
+            }
+
+            damage_area ();
+        }
     }
 
     internal override void
@@ -215,23 +214,17 @@ public class Maia.ToggleButton : Toggle
         inContext.save ();
         {
             // Paint button background
-            if (button_color != null)
+            var button_pattern = get_button_pattern ();
+            if (button_pattern != null)
             {
-                draw_button (inContext);
+                inContext.pattern = get_button_pattern ();
+                inContext.paint ();
             }
 
-            // Translate to align in center
-            inContext.translate (Graphic.Point (area.extents.size.width / 2, area.extents.size.height / 2));
-            inContext.translate (Graphic.Point (-size.width / 2, -size.height / 2));
-
-            // paint childs
-            foreach (unowned Core.Object child in this)
+            if (main_content != null)
             {
-                if (child is Drawable)
-                {
-                    unowned Drawable drawable = (Drawable)child;
-                    drawable.draw (inContext, area_to_child_item_space (drawable, inArea));
-                }
+                var child_area = area_to_child_item_space (main_content, inArea);
+                main_content.draw (inContext, child_area);
             }
         }
         inContext.restore ();

@@ -19,10 +19,26 @@
 
 public class Maia.CheckButton : Toggle
 {
+    // properties
+    private Core.Animator  m_CheckAnimator    = null;
+    private uint           m_CheckTransition  = 0;
+    private double         m_CheckProgress    = 0.0;
+
     // accessors
     internal override string tag {
         get {
             return "CheckButton";
+        }
+    }
+
+    [CCode (notify = false)]
+    internal double check_progress {
+        get {
+            return m_CheckProgress;
+        }
+        set {
+            m_CheckProgress = value;
+            damage.post ();
         }
     }
 
@@ -32,14 +48,40 @@ public class Maia.CheckButton : Toggle
     // methods
     construct
     {
+        not_dumpable_attributes.insert ("check-progress");
+
+        // Set default patterns
         fill_pattern[State.NORMAL] = new Graphic.Color (1, 1, 1);
         stroke_pattern[State.NORMAL] = new Graphic.Color (0, 0, 0);
         line_pattern = new StatePatterns.va (State.NORMAL, new Graphic.Color (0, 0, 0));
+
+        // create switch animator
+        m_CheckAnimator = new Core.Animator (30, 180);
+
+        // connect activate changed
+        notify["active"].connect (on_active_changed);
     }
 
     public CheckButton (string inId, string inLabel)
     {
         base (inId, inLabel);
+    }
+
+    private void
+    on_active_changed ()
+    {
+        m_CheckAnimator.stop ();
+
+        if (m_CheckTransition > 0)
+        {
+            m_CheckAnimator.remove_transition (m_CheckTransition);
+        }
+        m_CheckTransition = m_CheckAnimator.add_transition (0, 1, Core.Animator.ProgressType.LINEAR);
+        GLib.Value from = m_CheckProgress;
+        GLib.Value to = active ? 1.0 : 0.0;
+        m_CheckAnimator.add_transition_property (m_CheckTransition, this, "check-progress", from, to);
+        m_CheckAnimator.start ();
+
     }
 
     internal override Graphic.Size
@@ -134,15 +176,32 @@ public class Maia.CheckButton : Toggle
             inContext.fill (path);
 
             // Paint check if active
-            if (active)
+            if (active && m_CheckProgress > 0.0)
             {
+                var line_color = line_pattern[state] as Graphic.Color;
+                if (line_color != null)
+                {
+                    var start = Graphic.Point (0, 0);
+                    var end = Graphic.Point (main_content_size.height, 0);
+                    var gradient = new Graphic.LinearGradient (start, end);
+
+                    gradient.add (new Graphic.Gradient.ColorStop (0.0, line_color));
+                    gradient.add (new Graphic.Gradient.ColorStop (m_CheckProgress, line_color));
+                    gradient.add (new Graphic.Gradient.ColorStop (m_CheckProgress, new Graphic.Color (0, 0, 0, 0)));
+                    gradient.add (new Graphic.Gradient.ColorStop (1.0, new Graphic.Color (0, 0, 0, 0)));
+                    inContext.pattern = gradient;
+                }
+                else
+                {
+                    inContext.pattern = line_pattern[state];
+                }
+
                 path = new Graphic.Path ();
-                path.move_to (0.5 + (main_content_size.height * 0.2), (main_content_size.height * 0.5));
-                path.line_to (0.5 + (main_content_size.height * 0.4), (main_content_size.height * 0.7));
+                path.move_to  (0.5 + (main_content_size.height * 0.2), (main_content_size.height * 0.5));
+                path.line_to  (0.5 + (main_content_size.height * 0.4), (main_content_size.height * 0.7));
                 path.curve_to (0.5 + (main_content_size.height * 0.4), (main_content_size.height * 0.7),
                                0.5 + (main_content_size.height * 0.5), (main_content_size.height * 0.4),
-                               0.5 + (main_content_size.height * 0.70), (main_content_size.height * 0.05));
-                inContext.pattern = line_pattern[state];
+                               0.5 + (main_content_size.height * 0.7), (main_content_size.height * 0.05));
                 inContext.stroke (path);
             }
         }

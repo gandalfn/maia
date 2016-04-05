@@ -302,7 +302,7 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
             vd = 1.05;
             vd2 = 1.15;
         }
-        var button_color = fill_pattern[state] as Graphic.Color;
+        var button_color = fill_pattern[state] as Graphic.Color ?? new Graphic.Color (0.7, 0.7, 0.7);
         if (button_color != null)
         {
             var beginColor = new Graphic.Color.shade (button_color, vb);

@@ -20,7 +20,6 @@
 public class Maia.SwitchButton : Toggle
 {
     // properties
-    private unowned Label? m_Label;
     private Core.Animator  m_SwitchAnimator    = null;
     private uint           m_SwitchTransition  = 0;
     private double         m_SwitchProgress = 0.0;
@@ -52,7 +51,7 @@ public class Maia.SwitchButton : Toggle
     /**
      * Shadow pattern of switch
      */
-    public Graphic.Pattern shadow_pattern { get; set; default = new Graphic.Color (0.8, 0.8, 0.8); }
+    public StatePatterns shadow_pattern { get; set; }
 
     /**
      * Line pattern of switch
@@ -62,12 +61,14 @@ public class Maia.SwitchButton : Toggle
     // methods
     construct
     {
+        not_dumpable_attributes.insert ("switch-progress");
+
         // Set default property
         fill_pattern[State.NORMAL] = new Graphic.Color (1, 1, 1);
         stroke_pattern[State.NORMAL] = new Graphic.Color (0, 0, 0);
 
-        // get toggle label
-        m_Label = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
+        // create state patterns
+        shadow_pattern = new StatePatterns.va (State.NORMAL, new Graphic.Color (0.8, 0.8, 0.8));
 
         // create switch animator
         m_SwitchAnimator = new Core.Animator (60, 120);
@@ -103,37 +104,53 @@ public class Maia.SwitchButton : Toggle
     {
         Graphic.Size ret = Graphic.Size (0, 0);
 
-        if (m_Label != null)
+        if (main_content != null)
         {
-            // get size of label
-            Graphic.Size size_label = m_Label.size;
+            var area = Graphic.Rectangle (0, 0, border * 2.0, border * 2.0);
 
-            if (size_label.is_empty () || m_Label.text == null || m_Label.text.strip() == "")
+            // get size of label
+            Graphic.Size main_content_size = main_content.size;
+            if (main_content_size.is_empty ())
             {
-                string text = m_Label.text;
-                m_Label.text = "Z";
-                size_label = m_Label.size;
-                m_Label.position = Graphic.Point (0, 0);
-                ret = Graphic.Size (size_label.height * 2, size_label.height);
-                m_Label.text = text;
-                size_label = m_Label.size;
+                // create a fake label
+                var label = new Label ("fake", "Z");
+                label.font_description = font_description;
+                main_content_size = label.size;
+                area.union_ (Graphic.Rectangle (border, border, main_content_size.height * 2.0, main_content_size.height));
             }
             else
             {
-                // set position of label
-                if (m_Label.position.x != size_label.height + spacing)
-                {
-                    m_Label.position = Graphic.Point ((size_label.height * 2) + spacing, 0);
-#if MAIA_DEBUG
-                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "label item position : %s", m_Label.position.to_string ());
-#endif
-                }
-
-                ret = Graphic.Size ((size_label.height * 2) + spacing + size_label.width, size_label.height);
+                area.union_ (Graphic.Rectangle (border + (main_content_size.height * 2.0) + spacing, border, main_content_size.width, main_content_size.height));
             }
+            ret = area.size;
+            ret.resize (border, border);
         }
 
         return ret;
+    }
+
+    internal override void
+    update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
+    {
+        if (visible && (geometry == null || !geometry.equal (inAllocation)))
+        {
+            geometry = inAllocation;
+
+            if (main_content != null)
+            {
+                var item_size = area.extents.size;
+                item_size.resize (-border * 2.0, -border * 2.0);
+                var main_content_size = main_content.size;
+                if (!main_content_size.is_empty ())
+                {
+                    main_content.update (inContext, new Graphic.Region (Graphic.Rectangle (border + (main_content_size.height * 2.0) + spacing,
+                                                                                      border + ((item_size.height - main_content_size.height) / 2.0),
+                                                                                      item_size.width - ((main_content_size.height * 2.0) + spacing), main_content_size.height)));
+                }
+            }
+
+            damage_area ();
+        }
     }
 
     internal override void
@@ -141,21 +158,32 @@ public class Maia.SwitchButton : Toggle
     {
         inContext.save ();
         {
-            // Translate to align in center
-            inContext.translate (Graphic.Point (area.extents.size.width / 2, area.extents.size.height / 2));
-            inContext.translate (Graphic.Point (-size.width / 2, -size.height / 2));
+            var main_content_size = (main_content.geometry == null) ? Graphic.Size (0, 0) : main_content.geometry.extents.size;
+            if (main_content_size.is_empty ())
+            {
+                main_content_size = size;
+                main_content_size.resize (-border * 2.0, -border * 2.0);
+            }
+            else
+            {
+                var child_area = area_to_child_item_space (main_content, inArea);
+                main_content.draw (inContext, child_area);
+            }
 
-            // Draw label
-            base.paint (inContext, inArea);
+            var item_size = area.extents.size;
+            item_size.resize (-border * 2.0, -border * 2.0);
 
-            double size_width = size.height * 2.0;
-            double size_height = size.height / 2.0;
-            double offset = size.height / 4.0;
+            // Translate to align in height center
+            inContext.translate (Graphic.Point (border, double.max (border, border + (item_size.height - main_content_size.height) / 2)));
+
+            double size_width = main_content_size.height * 2.0;
+            double size_height = main_content_size.height / 2.0;
+            double offset = main_content_size.height / 4.0;
 
             // Draw switch box
             var path = new Graphic.Path ();
             path.rectangle (0, offset, size_width, size_height, size_height / 2.0, size_height / 2.0);
-            inContext.pattern = shadow_pattern;
+            inContext.pattern = shadow_pattern[state];
             inContext.fill (path);
 
             path = new Graphic.Path ();

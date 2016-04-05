@@ -20,7 +20,9 @@
 public class Maia.Highlight : Toggle
 {
     // properties
-    private unowned Label? m_Label;
+    private Core.Animator  m_HighlightAnimator    = null;
+    private uint           m_HighlightTransition  = 0;
+    private double         m_HighlightProgress    = 0.0;
 
     // accessors
     internal override string tag {
@@ -29,10 +31,52 @@ public class Maia.Highlight : Toggle
         }
     }
 
+    internal override string main_data {
+        owned get {
+            return @"Grid.$(name)-content { " +
+                   @"    Label.$(name)-label { " +
+                   @"        yfill: false;" +
+                   @"        yexpand: true;" +
+                   @"        xexpand: true;" +
+                   @"        xfill: true;" +
+                   @"        state: @state;" +
+                   @"        alignment: @alignment;" +
+                   @"        shade-color: @shade-color;" +
+                   @"        font-description: @font-description;" +
+                   @"        stroke-pattern: @stroke-pattern;" +
+                   @"        text: @label;" +
+                   @"    }" +
+                   @"}";
+        }
+    }
+
+    [CCode (notify = false)]
+    internal double highlight_progress {
+        get {
+            return m_HighlightProgress;
+        }
+        set {
+            m_HighlightProgress = value;
+            damage.post ();
+        }
+    }
+
+    /**
+     * Alignment of label ``left``, ``center`` or ``right``, default was ``center``
+     */
+    public Graphic.Glyph.Alignment alignment { get; set; default = Graphic.Glyph.Alignment.CENTER; }
+
+
     // methods
     construct
     {
-        m_Label = find (GLib.Quark.from_string ("%s-label".printf (name)), false) as Label;
+        not_dumpable_attributes.insert ("highlight-progress");
+
+        // create switch animator
+        m_HighlightAnimator = new Core.Animator (60, 120);
+
+        // connect activate changed
+        notify["active"].connect (on_active_changed);
     }
 
     public Highlight (string inId, string inLabel)
@@ -40,63 +84,103 @@ public class Maia.Highlight : Toggle
         base (inId, inLabel);
     }
 
-    internal override bool
-    can_append_child (Core.Object inObject)
+    private void
+    on_active_changed ()
     {
-        return inObject is Label;
+        m_HighlightAnimator.stop ();
+
+        if (m_HighlightTransition > 0)
+        {
+            m_HighlightAnimator.remove_transition (m_HighlightTransition);
+        }
+        m_HighlightTransition = m_HighlightAnimator.add_transition (0, 1, Core.Animator.ProgressType.LINEAR);
+        GLib.Value from = m_HighlightProgress;
+        GLib.Value to = active ? 1.0 : 0.0;
+        m_HighlightAnimator.add_transition_property (m_HighlightTransition, this, "highlight-progress", from, to);
+        m_HighlightAnimator.start ();
+
     }
 
     internal override Graphic.Size
-    size_request (Graphic.Size inSize)
+    childs_size_request ()
     {
-        // Get label item
-        if (m_Label != null)
+        Graphic.Size ret = Graphic.Size (0, 0);
+
+        if (main_content != null)
         {
-            // get position of label
-            Graphic.Point position_label = m_Label.position;
+            var area = Graphic.Rectangle (0, 0, border * 2.0, border * 2.0);
 
-            // set position of label
-            if (position_label.x != border || position_label.y != border)
-            {
-                m_Label.position = Graphic.Point (border, border);
-
-#if MAIA_DEBUG
-                Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "label item position : %s", m_Label.position.to_string ());
-#endif
-            }
+            // get size of label
+            Graphic.Size main_content_size = main_content.size;
+            area.union_ (Graphic.Rectangle (border, border, main_content_size.width, main_content_size.height));
+            ret = area.size;
+            ret.resize (border, border);
         }
-
-        Graphic.Size ret = base.size_request (inSize);
-        ret.resize (border, border);
 
         return ret;
     }
 
     internal override void
+    update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
+    {
+        if (visible && (geometry == null || !geometry.equal (inAllocation)))
+        {
+            geometry = inAllocation;
+
+            if (main_content != null)
+            {
+                var item_size = area.extents.size;
+                item_size.resize (-border * 2.0, -border * 2.0);
+                var main_content_size = main_content.size;
+                main_content.update (inContext, new Graphic.Region (Graphic.Rectangle (border, border + ((item_size.height - main_content_size.height) / 2.0),
+                                                                                       item_size.width, main_content_size.height)));
+            }
+
+            damage_area ();
+        }
+    }
+    internal override void
     paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
         inContext.save ();
         {
-            // Translate to align in center
-            inContext.translate (Graphic.Point (area.extents.size.width / 2, area.extents.size.height / 2));
-            inContext.translate (Graphic.Point (-size.width / 2, -size.height / 2));
-
             // Paint hightlight if active
-            if (active)
+            if (m_HighlightProgress > 0)
             {
+                var main_content_area = main_content.geometry.extents;
+                main_content_area.translate (Graphic.Point (-border / 2.0, -border / 2.0));
+                main_content_area.resize (Graphic.Size (border, border));
+
                 var path = new Graphic.Path ();
-                path.rectangle (border / 2, border / 2, size.width - border, size.height - border, 5, 5);
+                path.rectangle (double.max (main_content_area.origin.x, 0), double.max (main_content_area.origin.y, 0), main_content_area.size.width, main_content_area.size.height, 5, 5);
 
                 if (stroke_pattern != null)
                 {
-                    inContext.pattern = stroke_pattern[state];
+                    var stroke_color = stroke_pattern[state] as Graphic.Color;
+
+                    if (stroke_color != null)
+                    {
+                        inContext.pattern = new Graphic.Color (stroke_color.red, stroke_color.green, stroke_color.blue, stroke_color.alpha * m_HighlightProgress);
+                    }
+                    else
+                    {
+                        inContext.pattern = stroke_pattern[state];
+                    }
                     inContext.line_width = line_width;
                     inContext.stroke (path);
                 }
 
                 if (fill_pattern != null)
                 {
-                    inContext.pattern = fill_pattern[state];
+                    var fill_color = fill_pattern[state] as Graphic.Color;
+                    if (fill_color != null)
+                    {
+                        inContext.pattern = new Graphic.Color (fill_color.red, fill_color.green, fill_color.blue, fill_color.alpha * m_HighlightProgress);
+                    }
+                    else
+                    {
+                        inContext.pattern = fill_pattern[state];
+                    }
                     inContext.fill (path);
                 }
             }
