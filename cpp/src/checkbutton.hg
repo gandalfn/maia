@@ -19,7 +19,7 @@
 
 #include <maia.h>
 #include <maiamm/toggle.h>
-#include <maiamm/graphic-pattern.h>
+#include <maiamm/state.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/toggle_p.h)
@@ -43,13 +43,16 @@ namespace Maia
             _WRAP_METHOD(double get_spacing () const, maia_check_button_get_spacing)
             _WRAP_METHOD(void set_spacing (double inSpacing), maia_check_button_set_spacing)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_line_pattern () const, maia_check_button_get_line_pattern, refreturn)
-            _WRAP_METHOD(void set_line_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_check_button_set_line_pattern)
-            
+            _WRAP_METHOD(Glib::RefPtr<StatePatterns> get_line_pattern () const, maia_check_button_get_line_pattern, refreturn)
+            _WRAP_METHOD(void set_line_pattern (const Glib::RefPtr<StatePatterns>& inPattern), maia_check_button_set_line_pattern)
+
 
             _WRAP_PROPERTY("spacing", double)
-            _WRAP_PROPERTY("line-pattern", Glib::RefPtr<Graphic::Pattern>)
+            _WRAP_PROPERTY("line-pattern", Glib::RefPtr<StatePatterns>)
 
             _WRAP_PROPERTY("tag", Glib::ustring)
+
+        private:
+            _WRAP_PROPERTY("check-progress", double)
     };
 }

@@ -84,6 +84,9 @@ namespace Maia
                     maia_core_collection_remove (MAIA_CORE_COLLECTION (pSet), inAttribute.c_str ());
                 }
 
+                _WRAP_METHOD(bool not_dumpable_characters () const, maia_manifest_element_get_not_dumpable_characters)
+                _WRAP_METHOD(void set_not_dumpable_characters (bool inNotDumpableCharacters) const, maia_manifest_element_set_not_dumpable_characters)
+
                 _IGNORE(maia_manifest_element_duplicate, maia_manifest_element_duplicate_with_notification)
                 Glib::RefPtr<Element> duplicate (const Glib::ustring& inId);
 

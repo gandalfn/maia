@@ -68,6 +68,7 @@ namespace Maia
                 _WRAP_METHOD(void next_char (), maia_core_parser_next_char)
                 _WRAP_METHOD(void next_unichar (gunichar inChar), maia_core_parser_next_unichar)
                 _WRAP_METHOD(void skip_space (), maia_core_parser_skip_space)
+                _WRAP_METHOD(Glib::ustring get_current_line () const, maia_core_parser_get_current_line)
 
                 _WRAP_VFUNC(Parser::Token next_token (), next_token, errthrow)
                 _WRAP_METHOD(Parser::Token next_token (), maia_core_parser_next_token, errthrow)

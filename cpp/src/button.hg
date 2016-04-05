@@ -20,6 +20,7 @@
 #include <maia.h>
 #include <maiamm/graphic-color.h>
 #include <maiamm/graphic-size.h>
+#include <maiamm/graphic-glyph.h>
 #include <maiamm/item-packable.h>
 #include <maiamm/item-movable.h>
 #include <maiamm/core-event.h>
@@ -38,6 +39,8 @@ namespace Maia
             _CTOR_DEFAULT()
 
         public:
+            _WRAP_ENUM(class Relief, MaiaButtonRelief, s#BUTTON_RELIEF_##, NO_GTYPE)
+
             static Glib::RefPtr<Button> create (const Glib::ustring& inId)
             {
                 MaiaButton* pButton = maia_button_new (inId.c_str (), 0);
@@ -57,31 +60,70 @@ namespace Maia
 
             _WRAP_METHOD(Glib::ustring get_font_description () const, maia_button_get_font_description)
             _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_button_set_font_description)
+
+            _WRAP_METHOD(Graphic::Glyph::Alignment get_alignment () const, maia_button_get_alignment)
+            _WRAP_METHOD(void set_alignment (Graphic::Glyph::Alignment inAlignment), maia_button_set_alignment)
+
             _WRAP_METHOD(void get_icon_size (Graphic::Size& outSize) const, maia_button_get_icon_size)
             _WRAP_METHOD(void set_icon_size (const Graphic::Size& inSize), maia_button_set_icon_size)
+
             _WRAP_METHOD(Glib::ustring get_label () const, maia_button_get_label)
             _WRAP_METHOD(void set_label (const Glib::ustring& inLabel), maia_button_set_label)
+
             _WRAP_METHOD(double get_border () const, maia_button_get_border)
             _WRAP_METHOD(void set_border (double inBorder), maia_button_set_border)
+
+            _WRAP_METHOD(Button::Relief get_relief () const, maia_button_get_relief)
+            _WRAP_METHOD(void set_relief (Button::Relief inRelief), maia_button_set_relief)
+
+            _WRAP_METHOD(double get_spacing () const, maia_button_get_spacing)
+            _WRAP_METHOD(void set_spacing (double inSpacing), maia_button_set_spacing)
+
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_shade_color () const, maia_button_get_shade_color, refreturn)
+            _WRAP_METHOD(void set_shade_color (const Glib::RefPtr<Graphic::Color>& inColor), maia_button_set_shade_color)
+
             _WRAP_METHOD(Glib::ustring get_icon_filename () const, maia_button_get_icon_filename)
             _WRAP_METHOD(void set_icon_filename (const Glib::ustring& inFilename), maia_button_set_icon_filename)
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_button_color () const, maia_button_get_button_color, refreturn)
-            _WRAP_METHOD(void set_button_color (const Glib::RefPtr<Graphic::Color>& inColor), maia_button_set_button_color)
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_button_inactive_color () const, maia_button_get_button_inactive_color, refreturn)
-            _WRAP_METHOD(void set_button_inactive_color (const Glib::RefPtr<Graphic::Color>& inColor), maia_button_set_button_inactive_color)
 
             _WRAP_METHOD(Glib::RefPtr<Core::Event> clicked () const, maia_button_get_clicked, refreturn)
 
             _WRAP_PROPERTY("sensitive", bool)
             _WRAP_PROPERTY("font-description", Glib::ustring)
+            _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
             _WRAP_PROPERTY("label", Glib::ustring)
             _WRAP_PROPERTY("border", double)
+            _WRAP_PROPERTY("relief", Button::Relief)
+            _WRAP_PROPERTY("spacing", double)
+            _WRAP_PROPERTY("shade-color", Glib::RefPtr<Graphic::Color>)
             _WRAP_PROPERTY("icon-filename", Glib::ustring)
             _WRAP_PROPERTY("icon-size", Graphic::Size)
-            _WRAP_PROPERTY("button-color", Glib::RefPtr<Graphic::Color>)
-            _WRAP_PROPERTY("button-inactive-color", Glib::RefPtr<Graphic::Color>)
             _WRAP_PROPERTY("can-focus", bool)
 
             _WRAP_PROPERTY("clicked", Glib::RefPtr<Core::Event>)
+
+            _WRAP_PROPERTY("row", guint)
+            _WRAP_PROPERTY("rows", guint)
+
+            _WRAP_PROPERTY("column", guint)
+            _WRAP_PROPERTY("columns", guint)
+
+            _WRAP_PROPERTY("xexpand", bool)
+            _WRAP_PROPERTY("xshrink", bool)
+            _WRAP_PROPERTY("xfill", bool)
+            _WRAP_PROPERTY("xlimp", bool)
+            _WRAP_PROPERTY("xalign", double)
+
+            _WRAP_PROPERTY("yexpand", bool)
+            _WRAP_PROPERTY("yshrink", bool)
+            _WRAP_PROPERTY("yfill", bool)
+            _WRAP_PROPERTY("ylimp", bool)
+            _WRAP_PROPERTY("yalign", double)
+
+            _WRAP_PROPERTY("top-padding", double)
+            _WRAP_PROPERTY("bottom-padding", double)
+            _WRAP_PROPERTY("left-padding", double)
+            _WRAP_PROPERTY("right-padding", double)
+
+            _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
     };
 }

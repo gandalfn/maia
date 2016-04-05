@@ -20,6 +20,7 @@
 #include <maia.h>
 #include <maiamm/graphic-color.h>
 #include <maiamm/graphic-pattern.h>
+#include <maiamm/graphic-glyph.h>
 #include <maiamm/item-packable.h>
 #include <maiamm/item-movable.h>
 #include <maiamm/item.h>
@@ -71,14 +72,11 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_font_description () const, maia_entry_get_font_description)
             _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_entry_set_font_description)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_edit_stroke_pattern () const, maia_entry_get_edit_stroke_pattern, refreturn)
-            _WRAP_METHOD(void set_edit_stroke_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_entry_set_edit_stroke_pattern)
-
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_edit_background_pattern () const, maia_entry_get_edit_background_pattern, refreturn)
-            _WRAP_METHOD(void set_edit_background_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_entry_set_edit_background_pattern)
-
             _WRAP_METHOD(Glib::ustring get_text () const, maia_entry_get_text)
             _WRAP_METHOD(void set_text (const Glib::ustring& inLabel), maia_entry_set_text)
+
+            _WRAP_METHOD(Graphic::Glyph::Alignment get_alignment () const, maia_entry_get_alignment)
+            _WRAP_METHOD(void set_alignment (Graphic::Glyph::Alignment inAlignment), maia_entry_set_alignment)
 
             _WRAP_METHOD(guint get_lines () const, maia_entry_get_lines)
             _WRAP_METHOD(void set_lines (guint inLines), maia_entry_set_lines)
@@ -101,9 +99,8 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Core::Event> changed () const, maia_entry_get_changed, refreturn)
 
             _WRAP_PROPERTY("font-description", Glib::ustring)
-            _WRAP_PROPERTY("edit-stroke-pattern", Glib::RefPtr<Graphic::Pattern>)
-            _WRAP_PROPERTY("edit-background-pattern", Glib::RefPtr<Graphic::Pattern>)
             _WRAP_PROPERTY("text", Glib::ustring)
+            _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
             _WRAP_PROPERTY("lines", guint)
             _WRAP_PROPERTY("width-in-chars", guint)
             _WRAP_PROPERTY("underline-width", Glib::ustring)

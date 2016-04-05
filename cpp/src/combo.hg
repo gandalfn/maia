@@ -57,15 +57,12 @@ namespace Maia
             }
 
             _WRAP_METHOD(Glib::RefPtr<View> get_view () const, maia_combo_get_view, refreturn)
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_highlight_color () const, maia_combo_get_highlight_color, refreturn)
-            _WRAP_METHOD(void set_highlight_color (const Glib::RefPtr<Graphic::Color>& inColor), maia_combo_set_highlight_color)
             _WRAP_METHOD(gint get_active_row () const, maia_combo_get_active_row)
             _WRAP_METHOD(void set_active_row (int inRow), maia_combo_set_active_row)
 
             _WRAP_METHOD(Glib::RefPtr<Core::Event> changed () const, maia_combo_get_changed, refreturn)
 
             _WRAP_PROPERTY("view", Glib::RefPtr<View>)
-            _WRAP_PROPERTY("highlight-color", Glib::RefPtr<Graphic::Color>)
             _WRAP_PROPERTY("active-row", gint)
 
             _WRAP_PROPERTY("changed", Glib::RefPtr<Core::Event>)

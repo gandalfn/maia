@@ -5607,6 +5607,12 @@
   (return-type "MaiaCoreParserIterator*")
 )
 
+(define-method get_current_line
+  (of-object "MaiaCoreParser")
+  (c-name "maia_core_parser_get_current_line")
+  (return-type "gchar*")
+)
+
 (define-method get_element
   (of-object "MaiaCoreParser")
   (c-name "maia_core_parser_get_element")
@@ -18093,31 +18099,6 @@
   )
 )
 
-(define-method on_button_press
-  (of-object "MaiaToggle")
-  (c-name "maia_toggle_on_button_press")
-  (return-type "gboolean")
-  (parameters
-    '("guint" "inButton")
-    '("MaiaGraphicPoint*" "inPoint")
-  )
-)
-
-(define-method get_sensitive
-  (of-object "MaiaToggle")
-  (c-name "maia_toggle_get_sensitive")
-  (return-type "gboolean")
-)
-
-(define-method set_sensitive
-  (of-object "MaiaToggle")
-  (c-name "maia_toggle_set_sensitive")
-  (return-type "none")
-  (parameters
-    '("gboolean" "value")
-  )
-)
-
 (define-method get_group
   (of-object "MaiaToggle")
   (c-name "maia_toggle_get_group")
@@ -18148,6 +18129,21 @@
   )
 )
 
+(define-method get_shade_color
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_get_shade_color")
+  (return-type "MaiaGraphicColor*")
+)
+
+(define-method set_shade_color
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_set_shade_color")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicColor*" "value")
+  )
+)
+
 (define-method get_label
   (of-object "MaiaToggle")
   (c-name "maia_toggle_get_label")
@@ -18160,6 +18156,36 @@
   (return-type "none")
   (parameters
     '("const-gchar*" "value")
+  )
+)
+
+(define-method get_border
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_get_border")
+  (return-type "gdouble")
+)
+
+(define-method set_border
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_set_border")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_sensitive
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_get_sensitive")
+  (return-type "gboolean")
+)
+
+(define-method set_sensitive
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_set_sensitive")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
   )
 )
 
@@ -18191,6 +18217,18 @@
   (parameters
     '("gboolean" "value")
   )
+)
+
+(define-method get_main_data
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_get_main_data")
+  (return-type "gchar*")
+)
+
+(define-method get_main_content
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_get_main_content")
+  (return-type "MaiaItem*")
 )
 
 (define-method get_toggled
@@ -18241,21 +18279,6 @@
   )
 )
 
-(define-method get_border
-  (of-object "MaiaToggleButton")
-  (c-name "maia_toggle_button_get_border")
-  (return-type "gdouble")
-)
-
-(define-method set_border
-  (of-object "MaiaToggleButton")
-  (c-name "maia_toggle_button_set_border")
-  (return-type "none")
-  (parameters
-    '("gdouble" "value")
-  )
-)
-
 (define-method get_icon_filename
   (of-object "MaiaToggleButton")
   (c-name "maia_toggle_button_get_icon_filename")
@@ -18289,48 +18312,33 @@
   )
 )
 
-(define-method get_button_color
+(define-method get_relief
   (of-object "MaiaToggleButton")
-  (c-name "maia_toggle_button_get_button_color")
-  (return-type "MaiaGraphicColor*")
+  (c-name "maia_toggle_button_get_relief")
+  (return-type "MaiaButtonRelief")
 )
 
-(define-method set_button_color
+(define-method set_relief
   (of-object "MaiaToggleButton")
-  (c-name "maia_toggle_button_set_button_color")
+  (c-name "maia_toggle_button_set_relief")
   (return-type "none")
   (parameters
-    '("MaiaGraphicColor*" "value")
+    '("MaiaButtonRelief" "value")
   )
 )
 
-(define-method get_button_active_color
+(define-method get_spacing
   (of-object "MaiaToggleButton")
-  (c-name "maia_toggle_button_get_button_active_color")
-  (return-type "MaiaGraphicColor*")
+  (c-name "maia_toggle_button_get_spacing")
+  (return-type "gdouble")
 )
 
-(define-method set_button_active_color
+(define-method set_spacing
   (of-object "MaiaToggleButton")
-  (c-name "maia_toggle_button_set_button_active_color")
+  (c-name "maia_toggle_button_set_spacing")
   (return-type "none")
   (parameters
-    '("MaiaGraphicColor*" "value")
-  )
-)
-
-(define-method get_button_inactive_color
-  (of-object "MaiaToggleButton")
-  (c-name "maia_toggle_button_get_button_inactive_color")
-  (return-type "MaiaGraphicColor*")
-)
-
-(define-method set_button_inactive_color
-  (of-object "MaiaToggleButton")
-  (c-name "maia_toggle_button_set_button_inactive_color")
-  (return-type "none")
-  (parameters
-    '("MaiaGraphicColor*" "value")
+    '("gdouble" "value")
   )
 )
 
@@ -18433,36 +18441,6 @@
   )
 )
 
-(define-method get_border
-  (of-object "MaiaButtonTab")
-  (c-name "maia_button_tab_get_border")
-  (return-type "gdouble")
-)
-
-(define-method set_border
-  (of-object "MaiaButtonTab")
-  (c-name "maia_button_tab_set_border")
-  (return-type "none")
-  (parameters
-    '("gdouble" "value")
-  )
-)
-
-(define-method get_indicator_pattern
-  (of-object "MaiaButtonTab")
-  (c-name "maia_button_tab_get_indicator_pattern")
-  (return-type "MaiaStatePatterns*")
-)
-
-(define-method set_indicator_pattern
-  (of-object "MaiaButtonTab")
-  (c-name "maia_button_tab_set_indicator_pattern")
-  (return-type "none")
-  (parameters
-    '("MaiaStatePatterns*" "value")
-  )
-)
-
 (define-method get_indicator_placement
   (of-object "MaiaButtonTab")
   (c-name "maia_button_tab_get_indicator_placement")
@@ -18493,6 +18471,21 @@
   )
 )
 
+(define-method get_alignment
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_get_alignment")
+  (return-type "MaiaGraphicGlyphAlignment")
+)
+
+(define-method set_alignment
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_set_alignment")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicGlyphAlignment" "value")
+  )
+)
+
 (define-method get_spacing
   (of-object "MaiaButtonTab")
   (c-name "maia_button_tab_get_spacing")
@@ -18505,6 +18498,54 @@
   (return-type "none")
   (parameters
     '("gdouble" "value")
+  )
+)
+
+(define-method get_icon_filename
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_get_icon_filename")
+  (return-type "const-gchar*")
+)
+
+(define-method set_icon_filename
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_set_icon_filename")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_icon_size
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_get_icon_size")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "result")
+  )
+)
+
+(define-method set_icon_size
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_set_icon_size")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "value")
+  )
+)
+
+(define-method get_value
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_get_value")
+  (return-type "const-gchar*")
+)
+
+(define-method set_value
+  (of-object "MaiaButtonTab")
+  (c-name "maia_button_tab_set_value")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
   )
 )
 
@@ -18548,18 +18589,18 @@
   )
 )
 
-(define-method get_border
+(define-method get_alignment
   (of-object "MaiaHighlight")
-  (c-name "maia_highlight_get_border")
-  (return-type "gdouble")
+  (c-name "maia_highlight_get_alignment")
+  (return-type "MaiaGraphicGlyphAlignment")
 )
 
-(define-method set_border
+(define-method set_alignment
   (of-object "MaiaHighlight")
-  (c-name "maia_highlight_set_border")
+  (c-name "maia_highlight_set_alignment")
   (return-type "none")
   (parameters
-    '("gdouble" "value")
+    '("MaiaGraphicGlyphAlignment" "value")
   )
 )
 
@@ -21797,7 +21838,7 @@
 (define-method get_shadow_pattern
   (of-object "MaiaSwitchButton")
   (c-name "maia_switch_button_get_shadow_pattern")
-  (return-type "MaiaGraphicPattern*")
+  (return-type "MaiaStatePatterns*")
 )
 
 (define-method set_shadow_pattern
@@ -21805,7 +21846,7 @@
   (c-name "maia_switch_button_set_shadow_pattern")
   (return-type "none")
   (parameters
-    '("MaiaGraphicPattern*" "value")
+    '("MaiaStatePatterns*" "value")
   )
 )
 

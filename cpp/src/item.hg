@@ -24,10 +24,10 @@
 #include <maiamm/graphic-point.h>
 #include <maiamm/graphic-size.h>
 #include <maiamm/graphic-region.h>
-#include <maiamm/graphic-pattern.h>
 #include <maiamm/manifest-element.h>
 #include <maiamm/manifest-theme.h>
 #include <maiamm/drawable.h>
+#include <maiamm/state.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/core-object_p.h)
@@ -118,12 +118,12 @@ namespace Maia
             _WRAP_METHOD(void set_size (const Graphic::Size& inSize), maia_item_set_size)
             _WRAP_METHOD(guint get_layer () const, maia_item_get_layer)
             _WRAP_METHOD(void set_layer (guint inLayer) const, maia_item_set_layer)
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_fill_pattern () const, maia_item_get_fill_pattern, refreturn)
-            _WRAP_METHOD(void set_fill_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_item_set_fill_pattern)
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_stroke_pattern () const, maia_item_get_stroke_pattern, refreturn)
-            _WRAP_METHOD(void set_stroke_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_item_set_stroke_pattern)
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_background_pattern () const, maia_item_get_background_pattern, refreturn)
-            _WRAP_METHOD(void set_background_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_item_set_background_pattern)
+            _WRAP_METHOD(Glib::RefPtr<StatePatterns> get_fill_pattern () const, maia_item_get_fill_pattern, refreturn)
+            _WRAP_METHOD(void set_fill_pattern (const Glib::RefPtr<StatePatterns>& inPattern), maia_item_set_fill_pattern)
+            _WRAP_METHOD(Glib::RefPtr<StatePatterns> get_stroke_pattern () const, maia_item_get_stroke_pattern, refreturn)
+            _WRAP_METHOD(void set_stroke_pattern (const Glib::RefPtr<StatePatterns>& inPattern), maia_item_set_stroke_pattern)
+            _WRAP_METHOD(Glib::RefPtr<StatePatterns> get_background_pattern () const, maia_item_get_background_pattern, refreturn)
+            _WRAP_METHOD(void set_background_pattern (const Glib::RefPtr<StatePatterns>& inPattern), maia_item_set_background_pattern)
             _WRAP_METHOD(double get_line_width () const, maia_item_get_line_width)
             _WRAP_METHOD(void set_line_width (double inLineWidth), maia_item_set_line_width)
             _WRAP_METHOD(Graphic::LineType get_line_type () const, maia_item_get_line_type)
@@ -132,6 +132,8 @@ namespace Maia
             _WRAP_METHOD(void set_chain_visible (const Glib::ustring& inItemNames) const, maia_item_set_chain_visible)
             _WRAP_METHOD(bool get_pointer_over () const, maia_item_get_pointer_over)
             _WRAP_METHOD(void set_pointer_over (bool inOver = true), maia_item_set_pointer_over)
+            _WRAP_METHOD(State get_state () const, maia_item_get_state)
+            _WRAP_METHOD(void set_state (State inState), maia_item_set_state)
 
             void scroll_to (const Glib::RefPtr<Item>& inItem);
 
@@ -174,6 +176,7 @@ namespace Maia
             _WRAP_PROPERTY("name", Glib::ustring)
             _WRAP_PROPERTY("window", Glib::RefPtr<Window>)
             _WRAP_PROPERTY("toplevel", Glib::RefPtr<Window>)
+            _WRAP_PROPERTY("state", State)
             _WRAP_PROPERTY("is-packable", bool)
             _WRAP_PROPERTY("is-movable", bool)
             _WRAP_PROPERTY("is-resizable", bool)
@@ -184,9 +187,9 @@ namespace Maia
             _WRAP_PROPERTY("position", Graphic::Point)
             _WRAP_PROPERTY("size", Graphic::Size)
             _WRAP_PROPERTY("layer", guint)
-            _WRAP_PROPERTY("fill-pattern", Glib::RefPtr<Graphic::Pattern>)
-            _WRAP_PROPERTY("stroke-pattern", Glib::RefPtr<Graphic::Pattern>)
-            _WRAP_PROPERTY("background-pattern", Glib::RefPtr<Graphic::Pattern>)
+            _WRAP_PROPERTY("fill-pattern", Glib::RefPtr<StatePatterns>)
+            _WRAP_PROPERTY("stroke-pattern", Glib::RefPtr<StatePatterns>)
+            _WRAP_PROPERTY("background-pattern", Glib::RefPtr<StatePatterns>)
             _WRAP_PROPERTY("line-width", double)
             _WRAP_PROPERTY("line-type", Graphic::LineType)
             _WRAP_PROPERTY("chain-visible", Glib::ustring)

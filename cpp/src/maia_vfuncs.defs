@@ -1273,3 +1273,11 @@
   (of-object "MaiaWindow")
   (return-type "none")
 )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaToggle
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-vfunc get_main_data
+  (of-object "MaiaToggle")
+  (return-type "gchar*")
+)

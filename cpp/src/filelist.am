@@ -97,6 +97,7 @@ files_hg = \
     seek-bar.hg \
     shortcut.hg \
     scroll-view.hg \
+    state.hg \
     toggle-button.hg \
     toggle.hg \
     togglegroup.hg \

@@ -39,6 +39,8 @@ namespace Maia
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
         _WRAP_ENUM(class Operator, MaiaGraphicOperator, s#GRAPHIC_OPERATOR_##,  NO_GTYPE)
+        _WRAP_ENUM(class LineJoin, MaiaGraphicLineJoin, s#GRAPHIC_LINE_JOIN_##,  NO_GTYPE)
+        _WRAP_ENUM(class LineCap,  MaiaGraphicLineCap,  s#GRAPHIC_LINE_CAP_##,  NO_GTYPE)
         _WRAP_GERROR(Error, MaiaGraphicError, MAIA_GRAPHIC_ERROR, NO_GTYPE)
 
         class Context final : public Core::Object
@@ -100,6 +102,10 @@ namespace Maia
                 _WRAP_METHOD(void set_line_width (double inLineWidth), maia_graphic_context_set_line_width)
                 _WRAP_METHOD(Glib::RefPtr<Transform> get_transform () const, maia_graphic_context_get_transform, refreturn)
                 _WRAP_METHOD(void set_transform (const Glib::RefPtr<Transform>& inTransform), maia_graphic_context_set_transform)
+                _WRAP_METHOD(LineJoin get_line_join () const, maia_graphic_context_get_line_join)
+                _WRAP_METHOD(void set_line_join (LineJoin inLineJoin), maia_graphic_context_set_line_join)
+                _WRAP_METHOD(LineCap get_line_cap () const, maia_graphic_context_get_line_cap)
+                _WRAP_METHOD(void set_line_cap (LineCap inLineCap), maia_graphic_context_set_line_cap)
 
                 _IGNORE(maia_graphic_context_get_dash)
                 std::vector<double> get_dash () const
@@ -166,6 +172,8 @@ namespace Maia
                 _WRAP_PROPERTY ("surface", Glib::RefPtr<Surface>)
                 _WRAP_PROPERTY ("pattern", Glib::RefPtr<Pattern>)
                 _WRAP_PROPERTY ("transform", Glib::RefPtr<Transform>)
+                _WRAP_PROPERTY ("line-join", LineJoin)
+                _WRAP_PROPERTY ("line-cap", LineCap)
         };
     }
 }

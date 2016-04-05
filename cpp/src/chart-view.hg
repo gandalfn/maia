@@ -55,6 +55,9 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_font_pattern () const, maia_chart_view_get_font_pattern, refreturn)
             _WRAP_METHOD(void set_font_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_chart_view_set_font_pattern)
 
+            _WRAP_METHOD(Glib::ustring get_model_name () const, maia_chart_view_get_model_name)
+            _WRAP_METHOD(void set_model_name (const Glib::ustring& inTitle), maia_chart_view_set_model_name)
+
             _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_chart_view_get_model, refreturn)
             _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_chart_view_set_model)
 
@@ -109,6 +112,7 @@ namespace Maia
             _WRAP_PROPERTY("title", Glib::ustring)
             _WRAP_PROPERTY("font-description", Glib::ustring)
             _WRAP_PROPERTY("font-pattern", Glib::RefPtr<Graphic::Pattern>)
+            _WRAP_PROPERTY("model-name", Glib::ustring)
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
             _WRAP_PROPERTY("chart-axis", Glib::ustring)
             _WRAP_PROPERTY("border", double)

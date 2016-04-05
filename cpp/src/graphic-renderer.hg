@@ -37,6 +37,8 @@ namespace Maia
         {
             _CLASS_GOBJECT(RendererInitializeNotification, MaiaGraphicRendererInitializeNotification, MAIA_GRAPHIC_RENDERER_INITIALIZE_NOTIFICATION, Core::Notification, MaiaCoreNotification)
 
+            _IGNORE(maia_graphic_renderer_initialize_notification_post)
+
             protected:
                 _CTOR_DEFAULT()
 
@@ -50,6 +52,8 @@ namespace Maia
         class RendererNewFrameNotification : public Core::Notification
         {
             _CLASS_GOBJECT(RendererNewFrameNotification, MaiaGraphicRendererNewFrameNotification, MAIA_GRAPHIC_RENDERER_NEW_FRAME_NOTIFICATION, Core::Notification, MaiaCoreNotification)
+
+            _IGNORE(maia_graphic_renderer_new_frame_notification_post)
 
             protected:
                 _CTOR_DEFAULT()

@@ -200,6 +200,17 @@
   (construct-only #f)
 )
 
+;; From MaiaCoreTimelineNewFrameNotification
+
+(define-property num-frame
+  (of-object "MaiaCoreTimelineNewFrameNotification")
+  (prop-type "GParamUInt")
+  (docs "num-frame")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaCoreAnimator
 
 (define-property speed
@@ -1707,6 +1718,15 @@
   (construct-only #f)
 )
 
+(define-property check-progress
+  (of-object "MaiaCheckButton")
+  (prop-type "GParamDouble")
+  (docs "check-progress")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property spacing
   (of-object "MaiaCheckButton")
   (prop-type "GParamDouble")
@@ -1921,6 +1941,46 @@
   (docs "transform")
   (readable #t)
   (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaDrawableDamageNotification
+
+(define-property drawable
+  (of-object "MaiaDrawableDamageNotification")
+  (prop-type "GParamObject")
+  (docs "drawable")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property area
+  (of-object "MaiaDrawableDamageNotification")
+  (prop-type "GParamObject")
+  (docs "area")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaDrawableRepairNotification
+
+(define-property drawable
+  (of-object "MaiaDrawableRepairNotification")
+  (prop-type "GParamObject")
+  (docs "drawable")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property area
+  (of-object "MaiaDrawableRepairNotification")
+  (prop-type "GParamObject")
+  (docs "area")
+  (readable #t)
+  (writable #f)
   (construct-only #f)
 )
 
@@ -2708,10 +2768,28 @@
   (construct-only #f)
 )
 
-(define-property border
+(define-property main-data
+  (of-object "MaiaHighlight")
+  (prop-type "GParamString")
+  (docs "main-data")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property highlight-progress
   (of-object "MaiaHighlight")
   (prop-type "GParamDouble")
-  (docs "border")
+  (docs "highlight-progress")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property alignment
+  (of-object "MaiaHighlight")
+  (prop-type "GParamEnum")
+  (docs "alignment")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -4357,15 +4435,6 @@
   (construct-only #f)
 )
 
-(define-property sensitive
-  (of-object "MaiaToggle")
-  (prop-type "GParamBoolean")
-  (docs "sensitive")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
 (define-property group
   (of-object "MaiaToggle")
   (prop-type "GParamString")
@@ -4384,10 +4453,37 @@
   (construct-only #f)
 )
 
+(define-property shade-color
+  (of-object "MaiaToggle")
+  (prop-type "GParamObject")
+  (docs "shade-color")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property label
   (of-object "MaiaToggle")
   (prop-type "GParamString")
   (docs "label")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property border
+  (of-object "MaiaToggle")
+  (prop-type "GParamDouble")
+  (docs "border")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property sensitive
+  (of-object "MaiaToggle")
+  (prop-type "GParamBoolean")
+  (docs "sensitive")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -4408,6 +4504,24 @@
   (docs "hide-if-inactive")
   (readable #t)
   (writable #t)
+  (construct-only #f)
+)
+
+(define-property main-data
+  (of-object "MaiaToggle")
+  (prop-type "GParamString")
+  (docs "main-data")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property main-content
+  (of-object "MaiaToggle")
+  (prop-type "GParamObject")
+  (docs "main-content")
+  (readable #t)
+  (writable #f)
   (construct-only #f)
 )
 
@@ -4543,15 +4657,6 @@
   (construct-only #f)
 )
 
-(define-property border
-  (of-object "MaiaToggleButton")
-  (prop-type "GParamDouble")
-  (docs "border")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
 (define-property icon-filename
   (of-object "MaiaToggleButton")
   (prop-type "GParamString")
@@ -4570,30 +4675,30 @@
   (construct-only #f)
 )
 
-(define-property button-color
+(define-property relief
   (of-object "MaiaToggleButton")
-  (prop-type "GParamObject")
-  (docs "button-color")
+  (prop-type "GParamEnum")
+  (docs "relief")
   (readable #t)
   (writable #t)
   (construct-only #f)
 )
 
-(define-property button-active-color
+(define-property spacing
   (of-object "MaiaToggleButton")
-  (prop-type "GParamObject")
-  (docs "button-active-color")
+  (prop-type "GParamDouble")
+  (docs "spacing")
   (readable #t)
   (writable #t)
   (construct-only #f)
 )
 
-(define-property button-inactive-color
+(define-property main-data
   (of-object "MaiaToggleButton")
-  (prop-type "GParamObject")
-  (docs "button-inactive-color")
+  (prop-type "GParamString")
+  (docs "main-data")
   (readable #t)
-  (writable #t)
+  (writable #f)
   (construct-only #f)
 )
 
@@ -7179,4 +7284,6 @@
   (writable #t)
   (construct-only #f)
 )
+
+;; From MaiaStatePatterns
 

@@ -18,6 +18,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_CORE_TYPE_PAIR);
     std::cout << get_defs (MAIA_CORE_TYPE_MAP);
     std::cout << get_defs (MAIA_CORE_TYPE_TIMELINE);
+    std::cout << get_defs (MAIA_CORE_TIMELINE_TYPE_NEW_FRAME_NOTIFICATION);
     std::cout << get_defs (MAIA_CORE_TYPE_ANIMATOR);
     std::cout << get_defs (MAIA_CORE_TYPE_PARSER);
     std::cout << get_defs (MAIA_CORE_TYPE_EVENT_ARGS);
@@ -83,6 +84,8 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_DOCUMENT_VIEW);
     std::cout << get_defs (MAIA_TYPE_REPORT);
     std::cout << get_defs (MAIA_TYPE_DRAWABLE);
+    std::cout << get_defs (MAIA_DRAWABLE_TYPE_DAMAGE_NOTIFICATION);
+    std::cout << get_defs (MAIA_DRAWABLE_TYPE_REPAIR_NOTIFICATION);
     std::cout << get_defs (MAIA_TYPE_DRAWING_AREA);
     std::cout << get_defs (MAIA_TYPE_ENTRY);
     std::cout << get_defs (MAIA_TYPE_GRID);
@@ -130,6 +133,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TOGGLE_GROUP_TYPE_CHANGED_EVENT_ARGS);
     std::cout << get_defs (MAIA_TYPE_RENDERER_VIEW);
     std::cout << get_defs (MAIA_TYPE_SCALE_BAR);
+    std::cout << get_defs (MAIA_TYPE_STATE_PATTERNS);
 
     return 0;
 }

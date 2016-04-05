@@ -45,6 +45,8 @@ namespace Maia
             public:
                 _WRAP_METHOD(Glib::RefPtr<Transform> get_transform () const, maia_graphic_transform_changed_notification_get_transform, refreturn)
                 _WRAP_METHOD(void set_transform (const Glib::RefPtr<Transform>& inTransform) const, maia_graphic_transform_changed_notification_set_transform)
+
+                _WRAP_PROPERTY("transform", Glib::RefPtr<Transform>)
         };
 
         class Transform : public Core::Object

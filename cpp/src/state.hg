@@ -1,0 +1,83 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * state.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/core-object.h>
+#include <maiamm/graphic-pattern.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/core-object_p.h)
+
+namespace Maia
+{
+    _WRAP_ENUM(class State, MaiaState, s#STATE_##, NO_GTYPE)
+
+    class StatePatternProxy
+    {
+        public:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+            inline StatePatternProxy (MaiaStatePatterns* inpPatterns, State inState) :
+                m_pPatterns (inpPatterns),
+                m_State (inState)
+            {
+            }
+#endif
+            inline StatePatternProxy& operator=(const Glib::RefPtr<Graphic::Pattern>& inpPattern)
+            {
+                maia_state_patterns_set (m_pPatterns, (MaiaState)m_State, const_cast<MaiaGraphicPattern*> (inpPattern->gobj ()));
+
+                return *this;
+            }
+
+            inline operator Glib::RefPtr<Graphic::Pattern>() const
+            {
+                MaiaGraphicPattern* pPattern = maia_state_patterns_get (m_pPatterns, (MaiaState)m_State);
+                return Glib::wrap (pPattern, true);
+            }
+
+        private:
+            MaiaStatePatterns* m_pPatterns;
+            State              m_State;
+
+            // no copy assignment
+            StatePatternProxy& operator=(const StatePatternProxy&) { return *this; }
+    };
+
+    class StatePatterns : public Core::Object
+    {
+        _CLASS_GOBJECT(StatePatterns, MaiaStatePatterns, MAIA_STATE_PATTERNS, Core::Object, MaiaCoreObject)
+
+        protected:
+            _CTOR_DEFAULT()
+
+        public:
+            static Glib::RefPtr<StatePatterns> create ()
+            {
+                MaiaStatePatterns* pPatterns = maia_state_patterns_new ();
+                return Glib::RefPtr<StatePatterns> (new StatePatterns (pPatterns));
+            }
+
+            _IGNORE(maia_state_patterns_get, maia_state_patterns_set);
+
+            StatePatternProxy operator[] (State inState)
+            {
+                return StatePatternProxy (gobj (), inState);
+            }
+    };
+}

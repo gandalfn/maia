@@ -31,6 +31,37 @@ namespace Maia
     namespace Graphic
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
+        class PathPointProxy
+        {
+            public:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+                inline PathPointProxy (MaiaGraphicPath* inpPath, unsigned int inIndex) :
+                    m_pPath (inpPath),
+                    m_Index (inIndex)
+                {
+                }
+#endif
+                inline PathPointProxy& operator=(const Graphic::Point& inPoint)
+                {
+                    maia_graphic_path_set (m_pPath, m_Index, const_cast<MaiaGraphicPoint*> (inPoint.gobj ()));
+
+                    return *this;
+                }
+
+                inline operator Graphic::Point() const
+                {
+                    MaiaGraphicPoint point;
+                    maia_graphic_path_get (m_pPath, m_Index, &point);
+                    return Graphic::Point (point.x, point.y);
+                }
+
+            private:
+                MaiaGraphicPath* m_pPath;
+                unsigned int     m_Index;
+
+                // no copy assignment
+                PathPointProxy& operator=(const PathPointProxy&) { return *this; }
+        };
 
         class Path : public Core::Object
         {
@@ -107,6 +138,12 @@ namespace Maia
                 _WRAP_METHOD(void arc (double inXc, double inYc, double inRx, double inRy, double inAngle1, double inAngle2), maia_graphic_path_arc)
                 _WRAP_METHOD(void close (), maia_graphic_path_close)
 
+                _IGNORE (maia_graphic_path_get, maia_graphic_path_set)
+
+                PathPointProxy operator[] (unsigned int inIndex)
+                {
+                    return PathPointProxy (gobj (), inIndex);
+                }
 
                 _WRAP_PROPERTY ("data-type", Path::DataType)
         };

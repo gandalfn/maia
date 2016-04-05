@@ -19,6 +19,7 @@
 
 #include <maia.h>
 #include <maiamm/toggle.h>
+#include <maiamm/graphic-glyph.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/toggle_p.h)
@@ -39,11 +40,13 @@ namespace Maia
                 return Glib::RefPtr<Highlight> (new Highlight (pButton));
             }
 
-            _WRAP_METHOD(double get_border () const, maia_highlight_get_border)
-            _WRAP_METHOD(void set_border (double inSpacing), maia_highlight_set_border)
+            _WRAP_METHOD(Graphic::Glyph::Alignment get_alignment () const, maia_highlight_get_alignment)
+            _WRAP_METHOD(void set_alignment (Graphic::Glyph::Alignment inAlignment), maia_highlight_set_alignment)
 
-            _WRAP_PROPERTY("border", double)
-
+            _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
             _WRAP_PROPERTY("tag", Glib::ustring)
+
+        private:
+            _WRAP_PROPERTY("highlight-progress", double)
     };
 }
