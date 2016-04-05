@@ -248,9 +248,17 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
     internal override void
     unrealize ()
     {
-        m_Root.parent = null;
+        if (m_Root != null)
+        {
+            m_Root.parent = null;
+        }
 
-        m_Window.parent = null;
+        m_Root = null;
+
+        if (m_Window != null)
+        {
+            m_Window.parent = null;
+        }
 
         m_Window = null;
 

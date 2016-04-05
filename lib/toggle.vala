@@ -237,14 +237,34 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
         }
     }
 
-    public Item? content {
+    public virtual string main_data {
+        owned get {
+            return @"Grid.$(name)-content { " +
+                   @"    Label.$(name)-label { " +
+                   @"        yfill: false;" +
+                   @"        yexpand: true;" +
+                   @"        xexpand: true;" +
+                   @"        xfill: true;" +
+                   @"        state: @state;" +
+                   @"        alignment: left;" +
+                   @"        shade-color: @shade-color;" +
+                   @"        font-description: @font-description;" +
+                   @"        stroke-pattern: @stroke-pattern;" +
+                   @"        text: @label;" +
+                   @"    }" +
+                   @"}";
+        }
+    }
+
+    public unowned Item? main_content {
         get {
-            if (m_Content == null && characters != null && characters.length > 0)
+            string data = main_data;
+            if (m_Content == null && data != null && data.length > 0)
             {
                 // parse template
                 try
                 {
-                    var document = new Manifest.Document.from_buffer (characters, characters.length);
+                    var document = new Manifest.Document.from_buffer (data, data.length);
                     document.path = manifest_path;
                     document.theme = manifest_theme;
                     document.notifications["attribute-bind-added"].add_object_observer (on_template_attribute_bind);
@@ -269,31 +289,14 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
     construct
     {
         // Do not dump characters
-        not_dumpable_characters = true;
+        not_dumpable_attributes.insert ("main-data");
+        not_dumpable_attributes.insert ("main-content");
 
         // Set default patterns
         stroke_pattern[State.NORMAL] = new Graphic.Color (0, 0, 0);
 
         // Create toggled event
         toggled = new Core.Event ("toggled", this);
-
-        // Set default content
-        characters = @"Grid.$(name)-content { " +
-                     @"    Label.$(name)-label { " +
-                     @"        yfill: false;" +
-                     @"        yexpand: true;" +
-                     @"        xexpand: true;" +
-                     @"        xfill: true;" +
-                     @"        state: @state;" +
-                     @"        alignment: left;" +
-                     @"        shade-color: @shade-color;" +
-                     @"        font-description: @font-description;" +
-                     @"        stroke-pattern: @stroke-pattern;" +
-                     @"        text: @label;" +
-                     @"    }" +
-                     @"}";
-
-        notify["characters"].connect (on_characters_changed);
     }
 
     public Toggle (string inId, string inLabel)
@@ -322,18 +325,6 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
             // plug property to binded property
             plug_property (notification.attribute.get (), notification.attribute.owner as Core.Object, notification.property);
         }
-    }
-
-    private void
-    on_characters_changed ()
-    {
-        if (m_Content != null)
-        {
-            m_Content.parent = null;
-            m_Content = null;
-        }
-
-        not_dumpable_characters = false;
     }
 
     internal override bool

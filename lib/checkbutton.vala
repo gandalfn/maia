@@ -47,22 +47,24 @@ public class Maia.CheckButton : Toggle
     {
         Graphic.Size ret = Graphic.Size (0, 0);
 
-        if (content != null)
+        if (main_content != null)
         {
             var area = Graphic.Rectangle (0, 0, border * 2.0, border * 2.0);
 
             // get size of label
-            Graphic.Size content_size = content.size;
-
-            if (content_size.is_empty () || label == null || label.length == 0 || label.strip().length == 0)
+            Graphic.Size main_content_size = main_content.size;
+            if (main_content_size.is_empty ())
             {
                 // create a fake label
                 var label = new Label ("fake", "Z");
-                content_size = label.size;
-                print(@"$content_size\n");
+                label.font_description = font_description;
+                main_content_size = label.size;
+                area.union_ (Graphic.Rectangle (border, border, main_content_size.height, main_content_size.height));
             }
-
-            area.union_ (Graphic.Rectangle (border + content_size.height + spacing, border, content_size.width, content_size.height));
+            else
+            {
+                area.union_ (Graphic.Rectangle (border + main_content_size.height + spacing, border, main_content_size.width, main_content_size.height));
+            }
             ret = area.size;
             ret.resize (border, border);
         }
@@ -77,14 +79,17 @@ public class Maia.CheckButton : Toggle
         {
             geometry = inAllocation;
 
-            if (content != null)
+            if (main_content != null)
             {
                 var item_size = area.extents.size;
                 item_size.resize (-border * 2.0, -border * 2.0);
-                var content_size = content.size;
-                content.update (inContext, new Graphic.Region (Graphic.Rectangle (border + content_size.height + spacing,
-                                                                                  border + ((item_size.height - content_size.height) / 2.0),
-                                                                                  item_size.width, content_size.height)));
+                var main_content_size = main_content.size;
+                if (!main_content_size.is_empty ())
+                {
+                    main_content.update (inContext, new Graphic.Region (Graphic.Rectangle (border + main_content_size.height + spacing,
+                                                                                      border + ((item_size.height - main_content_size.height) / 2.0),
+                                                                                      item_size.width - (main_content_size.height + spacing), main_content_size.height)));
+                }
             }
 
             damage_area ();
@@ -96,31 +101,35 @@ public class Maia.CheckButton : Toggle
     {
         inContext.save ();
         {
-            var content_size = content.size;
-
-            // Draw content
-            if (content_size.is_empty () || label == null || label.length == 0 || label.strip().length == 0)
+            var main_content_size = (main_content.geometry == null) ? Graphic.Size (0, 0) : main_content.geometry.extents.size;
+            if (main_content_size.is_empty ())
             {
-                base.paint (inContext, inArea);
+                main_content_size = size;
+                main_content_size.resize (-border * 2.0, -border * 2.0);
+            }
+            else
+            {
+                var child_area = area_to_child_item_space (main_content, inArea);
+                main_content.draw (inContext, child_area);
             }
 
             var item_size = area.extents.size;
             item_size.resize (-border * 2.0, -border * 2.0);
 
             // Translate to align in height center
-            inContext.translate (Graphic.Point (border, double.max (border, border + (item_size.height - content_size.height) / 2)));
+            inContext.translate (Graphic.Point (border, double.max (border, border + (item_size.height - main_content_size.height) / 2)));
 
             // Paint check box
             Graphic.Color color = fill_pattern[state] as Graphic.Color ?? new Graphic.Color (0.7, 0.7, 0.7);
             Graphic.Color shade = new Graphic.Color.shade (color, 0.6);
 
             var path = new Graphic.Path ();
-            path.rectangle (0, 0, content_size.height, content_size.height, 5, 5);
+            path.rectangle (0, 0, main_content_size.height, main_content_size.height, 5, 5);
             inContext.pattern = shade;
             inContext.fill (path);
 
             path = new Graphic.Path ();
-            path.rectangle (1.5, 1.5, content_size.height - 3, content_size.height - 3, 5, 5);
+            path.rectangle (1.5, 1.5, main_content_size.height - 3, main_content_size.height - 3, 5, 5);
             inContext.pattern = color;
             inContext.fill (path);
 
@@ -128,11 +137,11 @@ public class Maia.CheckButton : Toggle
             if (active)
             {
                 path = new Graphic.Path ();
-                path.move_to (0.5 + (content_size.height * 0.2), (content_size.height * 0.5));
-                path.line_to (0.5 + (content_size.height * 0.4), (content_size.height * 0.7));
-                path.curve_to (0.5 + (content_size.height * 0.4), (content_size.height * 0.7),
-                               0.5 + (content_size.height * 0.5), (content_size.height * 0.4),
-                               0.5 + (content_size.height * 0.70), (content_size.height * 0.05));
+                path.move_to (0.5 + (main_content_size.height * 0.2), (main_content_size.height * 0.5));
+                path.line_to (0.5 + (main_content_size.height * 0.4), (main_content_size.height * 0.7));
+                path.curve_to (0.5 + (main_content_size.height * 0.4), (main_content_size.height * 0.7),
+                               0.5 + (main_content_size.height * 0.5), (main_content_size.height * 0.4),
+                               0.5 + (main_content_size.height * 0.70), (main_content_size.height * 0.05));
                 inContext.pattern = line_pattern[state];
                 inContext.stroke (path);
             }

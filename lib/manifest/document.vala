@@ -384,7 +384,6 @@ public class Maia.Manifest.Document : Core.Parser
             }
             else
             {
-                next_char ();
                 throw new Core.ParseError.PARSE ("Unexpected data for %s at %s:%i,%i", m_Element,
                                                  m_Filename != null ? GLib.Path.get_basename (m_Filename) : ".", m_Line, m_Col);
             }
