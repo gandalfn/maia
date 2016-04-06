@@ -151,6 +151,13 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
         }
     }
 
+    // static methods
+    static construct
+    {
+        // Ref Grid class to register grid quarks
+        typeof (Grid).class_ref ();
+    }
+
     // methods
     construct
     {

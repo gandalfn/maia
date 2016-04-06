@@ -51,6 +51,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     private Graphic.Transform          m_TransformToWindowSpace = new Graphic.Transform.identity ();
     private Graphic.Transform          m_TransformFromWindowSpace = new Graphic.Transform.identity ();
     private Core.Notification.Observer m_TransformObserver = null;
+    private Core.Notification.Observer m_DamageObserver = null;
 
     // accessors
     /**
@@ -399,10 +400,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
     public State            state                { get; set; default = State.NORMAL; }
 
+    public string           chain_visible        { get; set; default = null; }
 
-    public string          chain_visible        { get; set; default = null; }
-
-    public bool            pointer_over         { get; set; default = false; }
+    public bool             pointer_over         { get; set; default = false; }
 
     [CCode (notify = false)]
     public unowned Window? window {
@@ -549,8 +549,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         mc_IdButtonReleaseEvent = GLib.Signal.lookup ("button-release-event", typeof (Item));
         mc_IdMotionEvent        = GLib.Signal.lookup ("motion-event", typeof (Item));
         mc_IdScrollEvent        = GLib.Signal.lookup ("scroll-event", typeof (Item));
-
-        // create state pattter
     }
 
     static void
@@ -672,7 +670,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         scroll_event.connect (on_scroll_event);
 
         // connect to damage event
-        damage.add_object_observer (on_damage_notification);
+        m_DamageObserver = damage.add_object_observer (on_damage_notification);
 
         notify["root"].connect (on_visible_changed);
         notify["chain-visible"].connect (on_visible_changed);
@@ -1308,9 +1306,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 #endif
 
             // damage item
-            damage.remove_observer (on_damage_notification);
+            m_DamageObserver.block = true;
             damage.post (child_damaged_area);
-            damage.add_object_observer (on_damage_notification);
+            m_DamageObserver.block = false;
         }
     }
 

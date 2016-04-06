@@ -288,7 +288,7 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
     on_renderer_damaged (Core.Task inTask)
     {
         m_RendererDamaged = true;
-        damage.post (area);
+        damage.post ();
         m_RendererDamaged = false;
 
         return true;

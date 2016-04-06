@@ -24,7 +24,7 @@ public interface Maia.Drawable : Core.Object
     {
         // properties
         private unowned Drawable        m_Drawable;
-        private unowned Graphic.Region? m_Area;
+        private Graphic.Region? m_Area;
 
         // accessors
         public unowned Drawable drawable {
@@ -33,7 +33,7 @@ public interface Maia.Drawable : Core.Object
             }
         }
 
-        public unowned Graphic.Region? area {
+        public Graphic.Region? area {
             get {
                 return m_Area;
             }
@@ -117,7 +117,7 @@ public interface Maia.Drawable : Core.Object
     {
         // properties
         private unowned Drawable        m_Drawable;
-        private unowned Graphic.Region? m_Area;
+        private Graphic.Region? m_Area;
 
         // accessors
         public unowned Drawable drawable {
@@ -126,7 +126,7 @@ public interface Maia.Drawable : Core.Object
             }
         }
 
-        public unowned Graphic.Region? area {
+        public Graphic.Region? area {
             get {
                 return m_Area;
             }
@@ -143,7 +143,7 @@ public interface Maia.Drawable : Core.Object
         {
             m_Area = inArea;
 
-            Graphic.Region item_area = area;
+            Graphic.Region item_area = m_Drawable.area;
             var drawable_damaged = m_Drawable.damaged;
             if (item_area != null && !item_area.is_empty () && drawable_damaged != null && !drawable_damaged.is_empty ())
             {

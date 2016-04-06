@@ -151,12 +151,14 @@ public class Maia.Core.Notification : Object
     post ()
     {
         ref ();
-        foreach (unowned Core.Object? child in this)
         {
-            unowned Observer? observer = child as Observer;
-            if (observer != null)
+            foreach (unowned Core.Object? child in this)
             {
-                observer.notify ();
+                unowned Observer? observer = child as Observer;
+                if (observer != null)
+                {
+                    observer.notify ();
+                }
             }
         }
         unref ();

@@ -94,6 +94,7 @@ public class Maia.StatePatterns : Core.Object
         // register attribute transform
         Manifest.Attribute.register_transform_func (typeof (StatePatterns), attribute_to_state_patterns);
         GLib.Value.register_transform_func (typeof (StatePatterns), typeof (string), state_patterns_to_string);
+        GLib.Value.register_transform_func (typeof (string),  typeof (StatePatterns), string_to_state_patterns);
 
         // register function transform
         Manifest.Function.register_transform_func (typeof (StatePatterns), "states",          function_states_to_state_patterns);
@@ -119,6 +120,13 @@ public class Maia.StatePatterns : Core.Object
         StatePatterns val = (StatePatterns)inSrc;
 
         outDest = val.to_string ();
+    }
+
+    static void
+    string_to_state_patterns (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (string)))
+    {
+        outDest = new StatePatterns.parse ((string)inSrc);
     }
 
     static void
@@ -191,6 +199,13 @@ public class Maia.StatePatterns : Core.Object
                 break;
             }
         }
+    }
+
+    internal StatePatterns.parse (string inValue)
+    {
+        this ();
+
+        m_Patterns[State.NORMAL] = new Graphic.Color.parse (inValue);
     }
 
     internal StatePatterns.from_attribute (Manifest.Attribute inAttribute)
