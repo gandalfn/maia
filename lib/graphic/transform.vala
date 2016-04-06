@@ -91,7 +91,16 @@ public class Maia.Graphic.Transform : Core.Object
     // notifications
     public ChangedNotification changed {
         get {
-            return notifications["changed"] as ChangedNotification;
+            unowned ChangedNotification ret = notifications["changed"] as ChangedNotification;
+
+            if (ret == null)
+            {
+                var notification = new ChangedNotification ("changed");
+                notifications.add (notification);
+                ret = notification;
+            }
+
+            return ret;
         }
     }
 
@@ -343,11 +352,6 @@ public class Maia.Graphic.Transform : Core.Object
     }
 
     // methods
-    construct
-    {
-        notifications.add (new ChangedNotification ("changed"));
-    }
-
     /**
      * Create a new transform stack
      */
@@ -472,7 +476,7 @@ public class Maia.Graphic.Transform : Core.Object
 
         if (!old.equal (m_FinalMatrix) || !old_invert.equal (m_FinalInvertMatrix))
         {
-            unowned ChangedNotification notification = notifications["changed"] as ChangedNotification;
+            unowned ChangedNotification notification = changed;
             notification.transform = this;
             notification.post ();
         }
