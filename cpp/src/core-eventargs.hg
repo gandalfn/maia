@@ -400,6 +400,15 @@ namespace Maia
                             }
                         }
 
+                        void add_field_value (const Glib::ustring& inValue)
+                        {
+                            if (!m_CurrentColumn.empty ())
+                            {
+                                set_value (inValue);
+                                m_CurrentColumn = "";
+                            }
+                        }
+
                         template <typename... Args>
                         void add_field_value (const Glib::ustring& inValue, Args... inArgs)
                         {

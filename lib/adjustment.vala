@@ -39,9 +39,9 @@ public class Maia.Adjustment : Object
             return m_Value;
         }
         set {
-            if (value.clamp (m_Lower, m_Upper - m_PageSize) != m_Value)
+            if (value.clamp (m_Lower, m_Upper) != m_Value)
             {
-                m_Value = value.clamp (m_Lower, m_Upper - m_PageSize);
+                m_Value = value.clamp (m_Lower, m_Upper);
                 GLib.Signal.emit_by_name (this, "notify::value");
             }
         }

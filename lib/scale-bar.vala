@@ -427,6 +427,7 @@ public class Maia.ScaleBar : Group, ItemPackable, ItemMovable
             double val_lower = (adjustment.upper - adjustment.lower) == 0 ? 0 : (lower - adjustment.lower) / (adjustment.upper - adjustment.lower);
             double val_upper = (adjustment.upper - adjustment.lower) == 0 ? 0 : (upper - adjustment.lower) / (adjustment.upper - adjustment.lower);
 
+            print(@"value: $(adjustment.@value) val: $val, lower: $lower upper: $upper val_lower: $val_lower val_upper: $val_upper\n");
             var item_area = area;
             switch (placement)
             {
