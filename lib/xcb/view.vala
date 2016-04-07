@@ -324,16 +324,16 @@ internal class Maia.Xcb.View : Drawable
             var reply = ((global::Xcb.Window)xid).get_geometry (connection).reply (connection);
             if (reply != null)
             {
-                ret.x = reply.x + (decorated ? frame_extents.min.x : 0);
-                ret.y = reply.y + (decorated ? frame_extents.min.y : 0);
+                ret.x = reply.x + ((decorated && parent == null) ? frame_extents.min.x : 0);
+                ret.y = reply.y + ((decorated && parent == null) ? frame_extents.min.y : 0);
             }
 
             return ret;
         }
         set {
             Graphic.Point pt = value;
-            pt.x -= decorated ? frame_extents.min.x : 0;
-            pt.y -= decorated ? frame_extents.min.y : 0;
+            pt.x -= (decorated && parent == null) ? frame_extents.min.x : 0;
+            pt.y -= (decorated && parent == null) ? frame_extents.min.y : 0;
             if (!position.equal (pt))
             {
                 if (m_Realized && !m_Foreign)

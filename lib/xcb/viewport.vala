@@ -522,6 +522,12 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
 
         if (geometry != null)
         {
+            var pos = geometry.extents.origin;
+            if (m_View.parent != null)
+            {
+                pos.transform (m_View.parent.device_transform);
+            }
+            m_View.position = pos;
             m_Slices.size = geometry.extents.size;
         }
     }

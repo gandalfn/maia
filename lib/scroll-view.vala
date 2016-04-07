@@ -433,7 +433,6 @@ public class Maia.ScrollView : Item, ItemPackable
     {
         if (visible && (geometry == null || !geometry.equal (inAllocation)))
         {
-            var viewport_position = m_Viewport.position;
             var viewport_size = m_Viewport.size;
 
             m_HSeekBar.visible = (Policy.HORIZONTAL_SCROLLING in policy) && viewport_size.width > inAllocation.extents.size.width;
@@ -455,9 +454,6 @@ public class Maia.ScrollView : Item, ItemPackable
                 vadjustment.@value = vadjustment.upper - vadjustment.page_size;
             }
 
-            viewport_position = m_Viewport.position;
-            viewport_size = m_Viewport.size;
-
 #if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"$(geometry.extents)");
 #endif
@@ -465,6 +461,9 @@ public class Maia.ScrollView : Item, ItemPackable
             m_Viewport.visible_area = Graphic.Rectangle (m_Viewport.visible_area.origin.x, m_Viewport.visible_area.origin.y,
                                                          double.max (0, geometry.extents.size.width - (m_VSeekBar.visible ? m_VSeekBar.size.width : 0)),
                                                          double.max (0, geometry.extents.size.height - (m_HSeekBar.visible ? m_HSeekBar.size.height : 0)));
+
+            var viewport_position = convert_to_window_space(Graphic.Point (0, 0));
+            viewport_size = m_Viewport.size;
 
             m_Viewport.update (inContext, new Graphic.Region (Graphic.Rectangle (viewport_position.x, viewport_position.y,
                                                                                  double.max (m_Viewport.visible_area.size.width, viewport_size.width),
