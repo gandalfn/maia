@@ -64,6 +64,7 @@ files_hg = \
     application.hg \
     arrow.hg \
     button.hg \
+    button-tab.hg \
     canvas.hg \
     chart-intersect.hg \
     chart-point.hg \
@@ -86,6 +87,8 @@ files_hg = \
     item.hg \
     label.hg \
     model.hg \
+    notebook.hg \
+    notebook-page.hg \
     path.hg \
     popup-button.hg \
     popup.hg \
@@ -98,6 +101,7 @@ files_hg = \
     shortcut.hg \
     scroll-view.hg \
     state.hg \
+    step-button.hg \
     toggle-button.hg \
     toggle.hg \
     togglegroup.hg \

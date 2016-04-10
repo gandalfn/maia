@@ -539,10 +539,12 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         Manifest.Attribute.register_transform_func (typeof (Graphic.Glyph.Alignment), attribute_to_alignment);
         Manifest.Attribute.register_transform_func (typeof (Graphic.Glyph.WrapMode), attribute_to_wrap_mode);
         Manifest.Attribute.register_transform_func (typeof (Graphic.Glyph.EllipsizeMode), attribute_to_ellipsize_mode);
+        Manifest.Attribute.register_transform_func (typeof (Placement), attribute_to_placement);
 
         GLib.Value.register_transform_func (typeof (Graphic.Glyph.Alignment), typeof (string), alignment_to_string);
         GLib.Value.register_transform_func (typeof (Graphic.Glyph.WrapMode), typeof (string), wrap_mode_to_string);
         GLib.Value.register_transform_func (typeof (Graphic.Glyph.EllipsizeMode), typeof (string), ellipsize_mode_to_string);
+        GLib.Value.register_transform_func (typeof (Placement), typeof (string), placement_to_string);
 
         // get mouse event id
         mc_IdButtonPressEvent   = GLib.Signal.lookup ("button-press-event", typeof (Item));
@@ -581,6 +583,21 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     attribute_to_alignment (Manifest.Attribute inAttribute, ref GLib.Value outValue)
     {
         outValue = Graphic.Glyph.Alignment.from_string (inAttribute.get ());
+    }
+
+    static void
+    attribute_to_placement (Manifest.Attribute inAttribute, ref GLib.Value outValue)
+    {
+        outValue = Placement.from_string (inAttribute.get ());
+    }
+
+    static void
+    placement_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (Placement)))
+    {
+        Placement val = (Placement)inSrc;
+
+        outDest = val.to_string ();
     }
 
     static void

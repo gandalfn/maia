@@ -44,6 +44,8 @@ namespace Maia
             _WRAP_PROPERTY("button-name", Glib::ustring)
     };
 
+    class ToggleGroup;
+
     class Toggle : public Group, public ItemPackable, public ItemMovable
     {
         _CLASS_GOBJECT(Toggle, MaiaToggle, MAIA_TOGGLE, Group, MaiaGroup)
@@ -60,6 +62,9 @@ namespace Maia
         public:
             _IGNORE(maia_toggle_on_button_press)
 
+            _WRAP_METHOD(Glib::RefPtr<ToggleGroup> get_toggle_group () const, maia_toggle_get_toggle_group, refreturn)
+            _WRAP_METHOD(void set_toggle_group (const Glib::RefPtr<ToggleGroup>& inToggleGroup), maia_toggle_set_toggle_group)
+
             _WRAP_METHOD(double get_border () const, maia_toggle_get_border)
             _WRAP_METHOD(void set_border (double inBorder), maia_toggle_set_border)
 
@@ -70,7 +75,7 @@ namespace Maia
             _WRAP_METHOD(void set_sensitive (bool inSensitive = true), maia_toggle_set_sensitive)
 
             _WRAP_METHOD(Glib::ustring get_group () const, maia_toggle_get_group)
-            _WRAP_METHOD(void set_grouo (const Glib::ustring& inGroup), maia_toggle_set_group)
+            _WRAP_METHOD(void set_group (const Glib::ustring& inGroup), maia_toggle_set_group)
 
             _WRAP_METHOD(Glib::ustring get_font_description () const, maia_toggle_get_font_description)
             _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_toggle_set_font_description)
@@ -93,6 +98,7 @@ namespace Maia
             _WRAP_PROPERTY("toggled", Glib::RefPtr<Core::Event>)
 
             _WRAP_PROPERTY("group", Glib::ustring)
+            _WRAP_PROPERTY("toggle-group", Glib::RefPtr<ToggleGroup>)
             _WRAP_PROPERTY("font-description", Glib::ustring)
             _WRAP_PROPERTY("label", Glib::ustring)
             _WRAP_PROPERTY("active", bool)

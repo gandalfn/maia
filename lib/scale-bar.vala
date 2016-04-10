@@ -19,51 +19,6 @@
 
 public class Maia.ScaleBar : Group, ItemPackable, ItemMovable
 {
-    // types
-    public enum Placement
-    {
-        TOP,
-        BOTTOM,
-        LEFT,
-        RIGHT;
-
-        public string
-        to_string ()
-        {
-            switch (this)
-            {
-                case TOP:
-                    return "top";
-                case BOTTOM:
-                    return "bottom";
-                case LEFT:
-                    return "left";
-                case RIGHT:
-                    return "right";
-            }
-
-            return "";
-        }
-
-        public static Placement
-        from_string (string inValue)
-        {
-            switch (inValue.down ())
-            {
-                case "top":
-                    return TOP;
-                case "bottom":
-                    return BOTTOM;
-                case "left":
-                    return LEFT;
-                case "right":
-                    return RIGHT;
-            }
-
-            return TOP;
-        }
-    }
-
     // properties
     private Adjustment?               m_Adjustment = null;
     private unowned Label             m_SliderLabelLower = null;
@@ -139,29 +94,6 @@ public class Maia.ScaleBar : Group, ItemPackable, ItemMovable
     public StatePatterns   step_stroke_pattern   { get; set; }
     public bool            display_step_label    { get; set; default = true; }
     public bool            display_step_middle   { get; set; default = false; }
-
-    // static methods
-    static construct
-    {
-        Manifest.Attribute.register_transform_func (typeof (Placement), attribute_to_scale_placement);
-
-        GLib.Value.register_transform_func (typeof (Placement), typeof (string), scale_placement_to_string);
-    }
-
-    static void
-    attribute_to_scale_placement (Manifest.Attribute inAttribute, ref GLib.Value outValue)
-    {
-        outValue = Placement.from_string (inAttribute.get ());
-    }
-
-    static void
-    scale_placement_to_string (GLib.Value inSrc, out GLib.Value outDest)
-        requires (inSrc.holds (typeof (Placement)))
-    {
-        Placement val = (Placement)inSrc;
-
-        outDest = val.to_string ();
-    }
 
     // methods
     construct

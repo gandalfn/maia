@@ -40,6 +40,7 @@ namespace Maia
     _WRAP_ENUM(class Modifier : int, MaiaModifier, s#MODIFIER_##, NO_GTYPE)
     _WRAP_ENUM(class Key, MaiaKey, s#KEY_##, s#^0$#key_0#, s#^1$#key_1#, s#^2$#key_2#, s#^3$#key_3#, s#^4$#key_4#, s#^5$#key_5#, s#^6$#key_6#, s#^7$#key_7#, s#^8$#key_8#, s#^9$#key_9#, NO_GTYPE)
     _WRAP_ENUM(class Cursor, MaiaCursor, s#CURSOR_##, NO_GTYPE)
+    _WRAP_ENUM(class Placement, MaiaPlacement, s#PLACEMENT_##, NO_GTYPE)
 
     class Item : public Core::Object, public Drawable, public Manifest::Element
     {

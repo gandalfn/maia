@@ -78,17 +78,17 @@
   (construct-only #f)
 )
 
-;; From MaiaCoreIterator
+;; MaiaCoreIterator is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaCoreCollection
+;; MaiaCoreCollection is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaCoreArray
+;; MaiaCoreArray is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaCoreSet
+;; MaiaCoreSet is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaCorePair
+;; MaiaCorePair is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaCoreMap
+;; MaiaCoreMap is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaCoreTimeline
 
@@ -750,7 +750,7 @@
   (construct-only #f)
 )
 
-;; From MaiaGraphicPoint
+;; MaiaGraphicPoint is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaGraphicRadialGradient
 
@@ -790,11 +790,11 @@
   (construct-only #f)
 )
 
-;; From MaiaGraphicRange
+;; MaiaGraphicRange is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaGraphicLine
+;; MaiaGraphicLine is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaGraphicRectangle
+;; MaiaGraphicRectangle is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaGraphicRegion
 
@@ -816,7 +816,7 @@
   (construct-only #f)
 )
 
-;; From MaiaGraphicSize
+;; MaiaGraphicSize is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaGraphicSurface
 
@@ -1745,7 +1745,7 @@
   (construct-only #f)
 )
 
-;; From MaiaCursor
+;; MaiaCursor is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaDocument
 
@@ -3577,7 +3577,7 @@
 
 ;; From MaiaItemResizable
 
-;; From MaiaKey
+;; MaiaKey is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaLabel
 
@@ -4036,9 +4036,9 @@
   (construct-only #f)
 )
 
-;; From MaiaOrientation
+;; MaiaOrientation is neither a GObject nor a GInterface. Not checked for signals and properties.
 
-;; From MaiaPageFormat
+;; MaiaPageFormat is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaPath
 
@@ -4260,7 +4260,7 @@
   (construct-only #f)
 )
 
-;; From MaiaScroll
+;; MaiaScroll is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; From MaiaToggle
 
@@ -4439,6 +4439,15 @@
   (of-object "MaiaToggle")
   (prop-type "GParamString")
   (docs "group")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property toggle-group
+  (of-object "MaiaToggle")
+  (prop-type "GParamObject")
+  (docs "toggle-group")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -4632,6 +4641,15 @@
   (of-object "MaiaToggleGroup")
   (prop-type "GParamBoolean")
   (docs "hideall-if-noactive")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property exclusive
+  (of-object "MaiaToggleGroup")
+  (prop-type "GParamBoolean")
+  (docs "exclusive")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -7286,4 +7304,698 @@
 )
 
 ;; From MaiaStatePatterns
+
+;; From MaiaButtonTab
+
+(define-property tag
+  (of-object "MaiaButtonTab")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property main-data
+  (of-object "MaiaButtonTab")
+  (prop-type "GParamString")
+  (docs "main-data")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property label-state
+  (of-object "MaiaButtonTab")
+  (prop-type "GParamEnum")
+  (docs "label-state")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property indicator-progress
+  (of-object "MaiaButtonTab")
+  (prop-type "GParamDouble")
+  (docs "indicator-progress")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property indicator-placement
+  (of-object "MaiaButtonTab")
+  (prop-type "GParamEnum")
+  (docs "indicator-placement")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property indicator-thickness
+  (of-object "MaiaButtonTab")
+  (prop-type "GParamDouble")
+  (docs "indicator-thickness")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property alignment
+  (of-object "MaiaButtonTab")
+  (prop-type "GParamEnum")
+  (docs "alignment")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property spacing
+  (of-object "MaiaButtonTab")
+  (prop-type "GParamDouble")
+  (docs "spacing")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property icon-filename
+  (of-object "MaiaButtonTab")
+  (prop-type "GParamString")
+  (docs "icon-filename")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property icon-size
+  (of-object "MaiaButtonTab")
+  (prop-type "GParamBoxed")
+  (docs "icon-size")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property value
+  (of-object "MaiaButtonTab")
+  (prop-type "GParamString")
+  (docs "value")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property highlight
+  (of-object "MaiaButtonTab")
+  (prop-type "GParamBoolean")
+  (docs "highlight")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaStepButton
+
+(define-property tag
+  (of-object "MaiaStepButton")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property row
+  (of-object "MaiaStepButton")
+  (prop-type "GParamUInt")
+  (docs "row")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property column
+  (of-object "MaiaStepButton")
+  (prop-type "GParamUInt")
+  (docs "column")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property rows
+  (of-object "MaiaStepButton")
+  (prop-type "GParamUInt")
+  (docs "rows")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property columns
+  (of-object "MaiaStepButton")
+  (prop-type "GParamUInt")
+  (docs "columns")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xexpand
+  (of-object "MaiaStepButton")
+  (prop-type "GParamBoolean")
+  (docs "xexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xfill
+  (of-object "MaiaStepButton")
+  (prop-type "GParamBoolean")
+  (docs "xfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xshrink
+  (of-object "MaiaStepButton")
+  (prop-type "GParamBoolean")
+  (docs "xshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xlimp
+  (of-object "MaiaStepButton")
+  (prop-type "GParamBoolean")
+  (docs "xlimp")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xalign
+  (of-object "MaiaStepButton")
+  (prop-type "GParamDouble")
+  (docs "xalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yexpand
+  (of-object "MaiaStepButton")
+  (prop-type "GParamBoolean")
+  (docs "yexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yfill
+  (of-object "MaiaStepButton")
+  (prop-type "GParamBoolean")
+  (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yshrink
+  (of-object "MaiaStepButton")
+  (prop-type "GParamBoolean")
+  (docs "yshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property ylimp
+  (of-object "MaiaStepButton")
+  (prop-type "GParamBoolean")
+  (docs "ylimp")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yalign
+  (of-object "MaiaStepButton")
+  (prop-type "GParamDouble")
+  (docs "yalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property top-padding
+  (of-object "MaiaStepButton")
+  (prop-type "GParamDouble")
+  (docs "top-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property bottom-padding
+  (of-object "MaiaStepButton")
+  (prop-type "GParamDouble")
+  (docs "bottom-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property left-padding
+  (of-object "MaiaStepButton")
+  (prop-type "GParamDouble")
+  (docs "left-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property right-padding
+  (of-object "MaiaStepButton")
+  (prop-type "GParamDouble")
+  (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property backcell-pattern
+  (of-object "MaiaStepButton")
+  (prop-type "GParamObject")
+  (docs "backcell-pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property can-focus
+  (of-object "MaiaStepButton")
+  (prop-type "GParamBoolean")
+  (docs "can-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property font-description
+  (of-object "MaiaStepButton")
+  (prop-type "GParamString")
+  (docs "font-description")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property alignment
+  (of-object "MaiaStepButton")
+  (prop-type "GParamEnum")
+  (docs "alignment")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property label
+  (of-object "MaiaStepButton")
+  (prop-type "GParamString")
+  (docs "label")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property border
+  (of-object "MaiaStepButton")
+  (prop-type "GParamDouble")
+  (docs "border")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property spacing
+  (of-object "MaiaStepButton")
+  (prop-type "GParamDouble")
+  (docs "spacing")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property sensitive
+  (of-object "MaiaStepButton")
+  (prop-type "GParamBoolean")
+  (docs "sensitive")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property model-name
+  (of-object "MaiaStepButton")
+  (prop-type "GParamString")
+  (docs "model-name")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property model
+  (of-object "MaiaStepButton")
+  (prop-type "GParamObject")
+  (docs "model")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property active
+  (of-object "MaiaStepButton")
+  (prop-type "GParamUInt")
+  (docs "active")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property progress
+  (of-object "MaiaStepButton")
+  (prop-type "GParamDouble")
+  (docs "progress")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property clicked
+  (of-object "MaiaStepButton")
+  (prop-type "GParamObject")
+  (docs "clicked")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property changed
+  (of-object "MaiaStepButton")
+  (prop-type "GParamObject")
+  (docs "changed")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaStepButtonChangedEventArgs
+
+(define-property active
+  (of-object "MaiaStepButtonChangedEventArgs")
+  (prop-type "GParamUInt")
+  (docs "active")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaNotebook
+
+(define-property tag
+  (of-object "MaiaNotebook")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property page
+  (of-object "MaiaNotebook")
+  (prop-type "GParamUInt")
+  (docs "page")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property n-pages
+  (of-object "MaiaNotebook")
+  (prop-type "GParamUInt")
+  (docs "n-pages")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property show-tabs
+  (of-object "MaiaNotebook")
+  (prop-type "GParamBoolean")
+  (docs "show-tabs")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property expand-tabs
+  (of-object "MaiaNotebook")
+  (prop-type "GParamBoolean")
+  (docs "expand-tabs")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property tab-placement
+  (of-object "MaiaNotebook")
+  (prop-type "GParamEnum")
+  (docs "tab-placement")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaNotebookPage
+
+(define-property tag
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property row
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamUInt")
+  (docs "row")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property column
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamUInt")
+  (docs "column")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property rows
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamUInt")
+  (docs "rows")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property columns
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamUInt")
+  (docs "columns")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xexpand
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamBoolean")
+  (docs "xexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xfill
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamBoolean")
+  (docs "xfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xshrink
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamBoolean")
+  (docs "xshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xlimp
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamBoolean")
+  (docs "xlimp")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property xalign
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamDouble")
+  (docs "xalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yexpand
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamBoolean")
+  (docs "yexpand")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yfill
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamBoolean")
+  (docs "yfill")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yshrink
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamBoolean")
+  (docs "yshrink")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property ylimp
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamBoolean")
+  (docs "ylimp")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property yalign
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamDouble")
+  (docs "yalign")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property top-padding
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamDouble")
+  (docs "top-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property bottom-padding
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamDouble")
+  (docs "bottom-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property left-padding
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamDouble")
+  (docs "left-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property right-padding
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamDouble")
+  (docs "right-padding")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property backcell-pattern
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamObject")
+  (docs "backcell-pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property toggle
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamObject")
+  (docs "toggle")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property font-description
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamString")
+  (docs "font-description")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property alignment
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamEnum")
+  (docs "alignment")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property label
+  (of-object "MaiaNotebookPage")
+  (prop-type "GParamString")
+  (docs "label")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
 

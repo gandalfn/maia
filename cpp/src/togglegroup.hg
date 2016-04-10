@@ -61,16 +61,22 @@ namespace Maia
             _WRAP_METHOD(void remove_button (const Glib::RefPtr<Toggle>& inButtton), maia_toggle_group_remove_button)
 
             _WRAP_METHOD(Glib::ustring get_name () const, maia_toggle_group_get_name)
+
             _WRAP_METHOD(Glib::ustring get_active () const, maia_toggle_group_get_active)
             _WRAP_METHOD(void set_active (const Glib::ustring& inName), maia_toggle_group_set_active)
+
             _WRAP_METHOD(bool get_hideall_if_noactive () const, maia_toggle_group_get_hideall_if_noactive)
             _WRAP_METHOD(void set_hideall_if_noactive (bool inHide), maia_toggle_group_set_hideall_if_noactive)
+
+            _WRAP_METHOD(bool get_exclusive () const, maia_toggle_group_get_exclusive)
+            _WRAP_METHOD(void set_exclusive (bool inExclusive = true), maia_toggle_group_set_exclusive)
 
             _WRAP_METHOD(Glib::RefPtr<Core::Event> changed () const, maia_toggle_group_get_changed, refreturn)
 
             _WRAP_PROPERTY("name", Glib::ustring)
             _WRAP_PROPERTY("active", Glib::ustring)
             _WRAP_PROPERTY("hideall-if-noactive", bool)
+            _WRAP_PROPERTY("exclusive", bool)
 
             _WRAP_PROPERTY("tag", Glib::ustring)
             _WRAP_PROPERTY("style", Glib::ustring)

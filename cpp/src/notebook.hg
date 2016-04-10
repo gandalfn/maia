@@ -1,0 +1,72 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * notebook.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/graphic-color.h>
+#include <maiamm/graphic-size.h>
+#include <maiamm/graphic-glyph.h>
+#include <maiamm/item-packable.h>
+#include <maiamm/item-movable.h>
+#include <maiamm/core-event.h>
+#include <maiamm/grid.h>
+#include <maiamm/notebook-page.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/grid_p.h)
+
+namespace Maia
+{
+    class Notebook : public Grid
+    {
+        _CLASS_GOBJECT(Notebook, MaiaNotebook, MAIA_NOTEBOOK, Grid, MaiaGrid)
+
+        protected:
+            _CTOR_DEFAULT()
+
+        public:
+            static Glib::RefPtr<Notebook> create (const Glib::ustring& inId)
+            {
+                MaiaNotebook* pNotebook = maia_notebook_new (inId.c_str ());
+
+                return Glib::RefPtr<Notebook> (new Notebook (pNotebook));
+            }
+
+            _WRAP_METHOD(guint get_page () const, maia_notebook_get_page)
+            _WRAP_METHOD(void set_page (guint inPage), maia_notebook_set_page)
+
+            _WRAP_METHOD(guint get_n_pages () const, maia_notebook_get_n_pages)
+
+            _WRAP_METHOD(bool get_show_tabs () const, maia_notebook_get_show_tabs)
+            _WRAP_METHOD(void set_show_tabs (bool inShowTabs = true), maia_notebook_set_show_tabs)
+
+            _WRAP_METHOD(bool get_expand_tabs () const, maia_notebook_get_expand_tabs)
+            _WRAP_METHOD(void set_expand_tabs (bool inExpandTabs = true), maia_notebook_set_expand_tabs)
+
+            _WRAP_METHOD(Placement get_tab_placement () const, maia_notebook_get_tab_placement)
+            _WRAP_METHOD(void set_tab_placement (Placement inPlacement), maia_notebook_set_tab_placement)
+
+            _WRAP_METHOD(Glib::RefPtr<NotebookPage> get_nth_page (guint inNumPage) const, maia_notebook_get_nth_page)
+
+            _WRAP_PROPERTY("page", guint)
+            _WRAP_PROPERTY("n-pages", guint)
+            _WRAP_PROPERTY("show-tabs", bool)
+            _WRAP_PROPERTY("expand-tabs", bool)
+            _WRAP_PROPERTY("tab-placement", Placement)
+    };
+}

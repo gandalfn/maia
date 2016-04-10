@@ -202,7 +202,10 @@ libmaia_la_SOURCES = \
     renderer-view.vala \
     scale-bar.vala \
     switch-button.vala \
-    step-button.vala
+    step-button.vala \
+    placement.vala \
+    notebook-page.vala \
+    notebook.vala
 
 libmaia_la_VALAFLAGS = \
     --pkg=gvalue-collect \

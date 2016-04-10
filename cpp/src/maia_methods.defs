@@ -844,6 +844,18 @@
   (gtype-id "MAIA_TYPE_MOUSE_EVENT_ARGS")
 )
 
+(define-object MaiaNotebook
+  (parent "MaiaGrid")
+  (c-name "MaiaNotebook")
+  (gtype-id "MAIA_TYPE_NOTEBOOK")
+)
+
+(define-object MaiaNotebookPage
+  (parent "MaiaGroup")
+  (c-name "MaiaNotebookPage")
+  (gtype-id "MAIA_TYPE_NOTEBOOK_PAGE")
+)
+
 (define-object MaiaPath
   (parent "MaiaItem")
   (c-name "MaiaPath")
@@ -3596,14 +3608,14 @@
   )
 )
 
-(define-enum MaiaButtonTabPlacement
-  (c-name "MaiaButtonTabPlacement")
-  (gtype-id "MAIA_TYPE_BUTTON_TAB_PLACEMENT")
+(define-enum MaiaPlacement
+  (c-name "MaiaPlacement")
+  (gtype-id "MAIA_TYPE_PLACEMENT")
   (values
-    '("top" "MAIA_BUTTON_TAB_PLACEMENT_TOP")
-    '("bottom" "MAIA_BUTTON_TAB_PLACEMENT_BOTTOM")
-    '("left" "MAIA_BUTTON_TAB_PLACEMENT_LEFT")
-    '("right" "MAIA_BUTTON_TAB_PLACEMENT_RIGHT")
+    '("top" "MAIA_PLACEMENT_TOP")
+    '("bottom" "MAIA_PLACEMENT_BOTTOM")
+    '("left" "MAIA_PLACEMENT_LEFT")
+    '("right" "MAIA_PLACEMENT_RIGHT")
   )
 )
 
@@ -3681,17 +3693,6 @@
   (values
     '("rtl" "MAIA_CHART_DIRECTION_RTL")
     '("ltr" "MAIA_CHART_DIRECTION_LTR")
-  )
-)
-
-(define-enum MaiaScaleBarPlacement
-  (c-name "MaiaScaleBarPlacement")
-  (gtype-id "MAIA_TYPE_SCALE_BAR_PLACEMENT")
-  (values
-    '("top" "MAIA_SCALE_BAR_PLACEMENT_TOP")
-    '("bottom" "MAIA_SCALE_BAR_PLACEMENT_BOTTOM")
-    '("left" "MAIA_SCALE_BAR_PLACEMENT_LEFT")
-    '("right" "MAIA_SCALE_BAR_PLACEMENT_RIGHT")
   )
 )
 
@@ -18072,6 +18073,21 @@
   )
 )
 
+(define-method get_exclusive
+  (of-object "MaiaToggleGroup")
+  (c-name "maia_toggle_group_get_exclusive")
+  (return-type "gboolean")
+)
+
+(define-method set_exclusive
+  (of-object "MaiaToggleGroup")
+  (c-name "maia_toggle_group_set_exclusive")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
 (define-method get_changed
   (of-object "MaiaToggleGroup")
   (c-name "maia_toggle_group_get_changed")
@@ -18111,6 +18127,21 @@
   (return-type "none")
   (parameters
     '("const-gchar*" "value")
+  )
+)
+
+(define-method get_toggle_group
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_get_toggle_group")
+  (return-type "MaiaToggleGroup*")
+)
+
+(define-method set_toggle_group
+  (of-object "MaiaToggle")
+  (c-name "maia_toggle_set_toggle_group")
+  (return-type "none")
+  (parameters
+    '("MaiaToggleGroup*" "value")
   )
 )
 
@@ -18402,25 +18433,6 @@
   (return-type "GType")
 )
 
-(define-function maia_button_tab_placement_get_type
-  (c-name "maia_button_tab_placement_get_type")
-  (return-type "GType")
-)
-
-(define-method to_string
-  (of-object "MaiaButtonTabPlacement")
-  (c-name "maia_button_tab_placement_to_string")
-  (return-type "gchar*")
-)
-
-(define-function maia_button_tab_placement_from_string
-  (c-name "maia_button_tab_placement_from_string")
-  (return-type "MaiaButtonTabPlacement")
-  (parameters
-    '("const-gchar*" "inValue")
-  )
-)
-
 (define-function maia_button_tab_new
   (c-name "maia_button_tab_new")
   (is-constructor-of "MaiaButtonTab")
@@ -18441,10 +18453,15 @@
   )
 )
 
+(define-function maia_placement_get_type
+  (c-name "maia_placement_get_type")
+  (return-type "GType")
+)
+
 (define-method get_indicator_placement
   (of-object "MaiaButtonTab")
   (c-name "maia_button_tab_get_indicator_placement")
-  (return-type "MaiaButtonTabPlacement")
+  (return-type "MaiaPlacement")
 )
 
 (define-method set_indicator_placement
@@ -18452,7 +18469,7 @@
   (c-name "maia_button_tab_set_indicator_placement")
   (return-type "none")
   (parameters
-    '("MaiaButtonTabPlacement" "value")
+    '("MaiaPlacement" "value")
   )
 )
 
@@ -21593,25 +21610,6 @@
   (return-type "GType")
 )
 
-(define-function maia_scale_bar_placement_get_type
-  (c-name "maia_scale_bar_placement_get_type")
-  (return-type "GType")
-)
-
-(define-method to_string
-  (of-object "MaiaScaleBarPlacement")
-  (c-name "maia_scale_bar_placement_to_string")
-  (return-type "gchar*")
-)
-
-(define-function maia_scale_bar_placement_from_string
-  (c-name "maia_scale_bar_placement_from_string")
-  (return-type "MaiaScaleBarPlacement")
-  (parameters
-    '("const-gchar*" "inValue")
-  )
-)
-
 (define-function maia_scale_bar_new
   (c-name "maia_scale_bar_new")
   (is-constructor-of "MaiaScaleBar")
@@ -21648,7 +21646,7 @@
 (define-method get_placement
   (of-object "MaiaScaleBar")
   (c-name "maia_scale_bar_get_placement")
-  (return-type "MaiaScaleBarPlacement")
+  (return-type "MaiaPlacement")
 )
 
 (define-method set_placement
@@ -21656,7 +21654,7 @@
   (c-name "maia_scale_bar_set_placement")
   (return-type "none")
   (parameters
-    '("MaiaScaleBarPlacement" "value")
+    '("MaiaPlacement" "value")
   )
 )
 
@@ -22044,6 +22042,201 @@
   (of-object "MaiaStepButtonChangedEventArgs")
   (c-name "maia_step_button_changed_event_args_get_active")
   (return-type "guint")
+)
+
+(define-method to_string
+  (of-object "MaiaPlacement")
+  (c-name "maia_placement_to_string")
+  (return-type "gchar*")
+)
+
+(define-function maia_placement_from_string
+  (c-name "maia_placement_from_string")
+  (return-type "MaiaPlacement")
+  (parameters
+    '("const-gchar*" "inValue")
+  )
+)
+
+(define-function maia_notebook_page_get_type
+  (c-name "maia_notebook_page_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_notebook_page_new
+  (c-name "maia_notebook_page_new")
+  (is-constructor-of "MaiaNotebookPage")
+  (return-type "MaiaNotebookPage*")
+  (parameters
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-function maia_notebook_page_construct
+  (c-name "maia_notebook_page_construct")
+  (return-type "MaiaNotebookPage*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-method get_toggle
+  (of-object "MaiaNotebookPage")
+  (c-name "maia_notebook_page_get_toggle")
+  (return-type "MaiaToggle*")
+)
+
+(define-method set_toggle
+  (of-object "MaiaNotebookPage")
+  (c-name "maia_notebook_page_set_toggle")
+  (return-type "none")
+  (parameters
+    '("MaiaToggle*" "value")
+  )
+)
+
+(define-method get_font_description
+  (of-object "MaiaNotebookPage")
+  (c-name "maia_notebook_page_get_font_description")
+  (return-type "const-gchar*")
+)
+
+(define-method set_font_description
+  (of-object "MaiaNotebookPage")
+  (c-name "maia_notebook_page_set_font_description")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_alignment
+  (of-object "MaiaNotebookPage")
+  (c-name "maia_notebook_page_get_alignment")
+  (return-type "MaiaGraphicGlyphAlignment")
+)
+
+(define-method set_alignment
+  (of-object "MaiaNotebookPage")
+  (c-name "maia_notebook_page_set_alignment")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicGlyphAlignment" "value")
+  )
+)
+
+(define-method get_label
+  (of-object "MaiaNotebookPage")
+  (c-name "maia_notebook_page_get_label")
+  (return-type "const-gchar*")
+)
+
+(define-method set_label
+  (of-object "MaiaNotebookPage")
+  (c-name "maia_notebook_page_set_label")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-function maia_notebook_get_type
+  (c-name "maia_notebook_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_notebook_new
+  (c-name "maia_notebook_new")
+  (is-constructor-of "MaiaNotebook")
+  (return-type "MaiaNotebook*")
+  (parameters
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-function maia_notebook_construct
+  (c-name "maia_notebook_construct")
+  (return-type "MaiaNotebook*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-method get_nth_page
+  (of-object "MaiaNotebook")
+  (c-name "maia_notebook_get_nth_page")
+  (return-type "MaiaNotebookPage*")
+  (parameters
+    '("guint" "inPage")
+  )
+)
+
+(define-method get_page
+  (of-object "MaiaNotebook")
+  (c-name "maia_notebook_get_page")
+  (return-type "guint")
+)
+
+(define-method set_page
+  (of-object "MaiaNotebook")
+  (c-name "maia_notebook_set_page")
+  (return-type "none")
+  (parameters
+    '("guint" "value")
+  )
+)
+
+(define-method get_n_pages
+  (of-object "MaiaNotebook")
+  (c-name "maia_notebook_get_n_pages")
+  (return-type "guint")
+)
+
+(define-method get_show_tabs
+  (of-object "MaiaNotebook")
+  (c-name "maia_notebook_get_show_tabs")
+  (return-type "gboolean")
+)
+
+(define-method set_show_tabs
+  (of-object "MaiaNotebook")
+  (c-name "maia_notebook_set_show_tabs")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
+(define-method get_expand_tabs
+  (of-object "MaiaNotebook")
+  (c-name "maia_notebook_get_expand_tabs")
+  (return-type "gboolean")
+)
+
+(define-method set_expand_tabs
+  (of-object "MaiaNotebook")
+  (c-name "maia_notebook_set_expand_tabs")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
+(define-method get_tab_placement
+  (of-object "MaiaNotebook")
+  (c-name "maia_notebook_get_tab_placement")
+  (return-type "MaiaPlacement")
+)
+
+(define-method set_tab_placement
+  (of-object "MaiaNotebook")
+  (c-name "maia_notebook_set_tab_placement")
+  (return-type "none")
+  (parameters
+    '("MaiaPlacement" "value")
+  )
 )
 
 

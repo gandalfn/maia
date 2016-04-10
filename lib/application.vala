@@ -144,6 +144,8 @@ public class Maia.Application : Maia.Core.Object
         Manifest.Element.register ("ScaleBar",       typeof (ScaleBar));
         Manifest.Element.register ("SwitchButton",   typeof (SwitchButton));
         Manifest.Element.register ("StepButton",     typeof (StepButton));
+        Manifest.Element.register ("Notebook",       typeof (Notebook));
+        Manifest.Element.register ("NotebookPage",   typeof (NotebookPage));
     }
 
     // methods

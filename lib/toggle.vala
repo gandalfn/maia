@@ -76,6 +76,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
 
     // properties
     private string         m_Group          = null;
+    private ToggleGroup    m_ToggleGroup    = null;
     private bool           m_Active         = false;
     private unowned Item?  m_Content        = null;
     private bool           m_HideIfInactive = false;
@@ -106,7 +107,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
     internal Graphic.Pattern backcell_pattern { get; set; default = null; }
 
     /**
-     * Toggle group
+     * Toggle group name
      */
     [CCode (notify = false)]
     public string group {
@@ -117,17 +118,46 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
             if (m_Group != value)
             {
                 m_Group = value;
-                unowned ToggleGroup? toggle_group = root.find (GLib.Quark.from_string (m_Group)) as ToggleGroup;
-                if (toggle_group != null)
-                {
-                    toggle_group.add_button (this);
-                }
-                else
+
+                // Unset toggle group
+                m_ToggleGroup = null;
+
+                // Set and check toggle group
+                if (toggle_group == null)
                 {
                     Log.warning ("Maia.ToggleButton.group", Log.Category.CANVAS_PARSING, "%s can not find %s group", name, m_Group);
                 }
 
                 GLib.Signal.emit_by_name (this, "notify::group");
+            }
+        }
+    }
+
+    /**
+     * Toggle group
+     */
+    public unowned ToggleGroup? toggle_group {
+        get {
+            if (m_ToggleGroup == null && m_Group != null)
+            {
+                m_ToggleGroup = root.find (GLib.Quark.from_string (m_Group)) as ToggleGroup;
+                m_ToggleGroup.add_button (this);
+            }
+
+            return m_ToggleGroup;
+        }
+        set {
+            if (m_ToggleGroup != value)
+            {
+                if (m_ToggleGroup != null)
+                {
+                    m_ToggleGroup.remove_button (this);
+                }
+                m_ToggleGroup = value;
+                if (m_ToggleGroup != null)
+                {
+                    m_ToggleGroup.add_button (this);
+                }
             }
         }
     }
@@ -336,7 +366,10 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
         {
             grab_focus (this);
 
-            active = !active;
+            if (!m_ToggleGroup.exclusive || m_ToggleGroup.active != name)
+            {
+                active = !active;
+            }
         }
 
         return ret;

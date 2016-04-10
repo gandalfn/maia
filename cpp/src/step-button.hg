@@ -1,0 +1,135 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * step-button.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/graphic-color.h>
+#include <maiamm/graphic-size.h>
+#include <maiamm/graphic-glyph.h>
+#include <maiamm/item.h>
+#include <maiamm/item-packable.h>
+#include <maiamm/item-movable.h>
+#include <maiamm/core-event.h>
+#include <maiamm/model.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/item_p.h)
+_PINCLUDE(maiamm/private/core-eventargs_p.h)
+
+namespace Maia
+{
+    class StepButtonChangedEventArgs : public Core::EventArgs
+    {
+        _CLASS_GOBJECT(StepButtonChangedEventArgs, MaiaStepButtonChangedEventArgs, MAIA_STEP_BUTTON_CHANGED_EVENT_ARGS, Core::EventArgs, MaiaCoreEventArgs)
+
+        public:
+            _WRAP_METHOD(bool get_active () const, maia_step_button_changed_event_args_get_active)
+
+            _WRAP_PROPERTY("active", bool)
+    };
+
+    class StepButton : public Item, public ItemPackable, public ItemMovable
+    {
+        _CLASS_GOBJECT(StepButton, MaiaStepButton, MAIA_STEP_BUTTON, Item, MaiaItem)
+        _IMPLEMENTS_INTERFACE(ItemPackable)
+        _IMPLEMENTS_INTERFACE(ItemMovable)
+
+        protected:
+            _CTOR_DEFAULT()
+
+        public:
+            static Glib::RefPtr<StepButton> create (const Glib::ustring& inId)
+            {
+                MaiaStepButton* pButton = maia_step_button_new (inId.c_str ());
+
+                return Glib::RefPtr<StepButton> (new StepButton (pButton));
+            }
+
+            _WRAP_METHOD(bool get_sensitive () const, maia_step_button_get_sensitive)
+            _WRAP_METHOD(void set_sensitive (bool inSensitive = true), maia_step_button_set_sensitive)
+
+            _WRAP_METHOD(Glib::ustring get_font_description () const, maia_step_button_get_font_description)
+            _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_step_button_set_font_description)
+
+            _WRAP_METHOD(Graphic::Glyph::Alignment get_alignment () const, maia_step_button_get_alignment)
+            _WRAP_METHOD(void set_alignment (Graphic::Glyph::Alignment inAlignment), maia_step_button_set_alignment)
+
+            _WRAP_METHOD(Glib::ustring get_label () const, maia_step_button_get_label)
+            _WRAP_METHOD(void set_label (const Glib::ustring& inLabel), maia_step_button_set_label)
+
+            _WRAP_METHOD(double get_border () const, maia_step_button_get_border)
+            _WRAP_METHOD(void set_border (double inBorder), maia_step_button_set_border)
+
+            _WRAP_METHOD(double get_spacing () const, maia_step_button_get_spacing)
+            _WRAP_METHOD(void set_spacing (double inSpacing), maia_step_button_set_spacing)
+
+            _WRAP_METHOD(guint get_active () const, maia_step_button_get_active)
+            _WRAP_METHOD(void set_active (guint inActive), maia_step_button_set_active)
+
+            _WRAP_METHOD(Glib::ustring get_model_name () const, maia_step_button_get_model_name)
+            _WRAP_METHOD(void set_model_name (const Glib::ustring& inModelName), maia_step_button_set_model_name)
+
+            _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_step_button_get_model, refreturn)
+            _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_step_button_set_model)
+
+            _WRAP_METHOD(Glib::RefPtr<Core::Event> clicked () const, maia_step_button_get_clicked, refreturn)
+            _WRAP_METHOD(Glib::RefPtr<Core::Event> changed () const, maia_step_button_get_changed, refreturn)
+
+            _WRAP_PROPERTY("sensitive", bool)
+            _WRAP_PROPERTY("font-description", Glib::ustring)
+            _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
+            _WRAP_PROPERTY("label", Glib::ustring)
+            _WRAP_PROPERTY("border", double)
+            _WRAP_PROPERTY("spacing", double)
+            _WRAP_PROPERTY("active", guint)
+            _WRAP_PROPERTY("can-focus", bool)
+            _WRAP_PROPERTY("model-name", Glib::ustring)
+            _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
+
+            _WRAP_PROPERTY("clicked", Glib::RefPtr<Core::Event>)
+            _WRAP_PROPERTY("changed", Glib::RefPtr<Core::Event>)
+
+            _WRAP_PROPERTY("row", guint)
+            _WRAP_PROPERTY("rows", guint)
+
+            _WRAP_PROPERTY("column", guint)
+            _WRAP_PROPERTY("columns", guint)
+
+            _WRAP_PROPERTY("xexpand", bool)
+            _WRAP_PROPERTY("xshrink", bool)
+            _WRAP_PROPERTY("xfill", bool)
+            _WRAP_PROPERTY("xlimp", bool)
+            _WRAP_PROPERTY("xalign", double)
+
+            _WRAP_PROPERTY("yexpand", bool)
+            _WRAP_PROPERTY("yshrink", bool)
+            _WRAP_PROPERTY("yfill", bool)
+            _WRAP_PROPERTY("ylimp", bool)
+            _WRAP_PROPERTY("yalign", double)
+
+            _WRAP_PROPERTY("top-padding", double)
+            _WRAP_PROPERTY("bottom-padding", double)
+            _WRAP_PROPERTY("left-padding", double)
+            _WRAP_PROPERTY("right-padding", double)
+
+            _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
+
+        private:
+            _WRAP_PROPERTY("progress", double)
+    };
+}

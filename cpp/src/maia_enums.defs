@@ -4961,20 +4961,20 @@
 
 ;; Original typedef:
 ;; typedef enum  {
-;; 	MAIA_BUTTON_TAB_PLACEMENT_TOP,
-;; 	MAIA_BUTTON_TAB_PLACEMENT_BOTTOM,
-;; 	MAIA_BUTTON_TAB_PLACEMENT_LEFT,
-;; 	MAIA_BUTTON_TAB_PLACEMENT_RIGHT
-;; } MaiaButtonTabPlacement;
+;; 	MAIA_PLACEMENT_TOP,
+;; 	MAIA_PLACEMENT_BOTTOM,
+;; 	MAIA_PLACEMENT_LEFT,
+;; 	MAIA_PLACEMENT_RIGHT
+;; } MaiaPlacement;
 
-(define-enum-extended ButtonTabPlacement
+(define-enum-extended Placement
   (in-module "Maia")
-  (c-name "MaiaButtonTabPlacement")
+  (c-name "MaiaPlacement")
   (values
-    '("top" "MAIA_BUTTON_TAB_PLACEMENT_TOP" "0")
-    '("bottom" "MAIA_BUTTON_TAB_PLACEMENT_BOTTOM" "1")
-    '("left" "MAIA_BUTTON_TAB_PLACEMENT_LEFT" "2")
-    '("right" "MAIA_BUTTON_TAB_PLACEMENT_RIGHT" "3")
+    '("top" "MAIA_PLACEMENT_TOP" "0")
+    '("bottom" "MAIA_PLACEMENT_BOTTOM" "1")
+    '("left" "MAIA_PLACEMENT_LEFT" "2")
+    '("right" "MAIA_PLACEMENT_RIGHT" "3")
   )
 )
 
@@ -5108,25 +5108,6 @@
   (values
     '("rtl" "MAIA_CHART_DIRECTION_RTL" "0")
     '("ltr" "MAIA_CHART_DIRECTION_LTR" "1")
-  )
-)
-
-;; Original typedef:
-;; typedef enum  {
-;; 	MAIA_SCALE_BAR_PLACEMENT_TOP,
-;; 	MAIA_SCALE_BAR_PLACEMENT_BOTTOM,
-;; 	MAIA_SCALE_BAR_PLACEMENT_LEFT,
-;; 	MAIA_SCALE_BAR_PLACEMENT_RIGHT
-;; } MaiaScaleBarPlacement;
-
-(define-enum-extended ScaleBarPlacement
-  (in-module "Maia")
-  (c-name "MaiaScaleBarPlacement")
-  (values
-    '("top" "MAIA_SCALE_BAR_PLACEMENT_TOP" "0")
-    '("bottom" "MAIA_SCALE_BAR_PLACEMENT_BOTTOM" "1")
-    '("left" "MAIA_SCALE_BAR_PLACEMENT_LEFT" "2")
-    '("right" "MAIA_SCALE_BAR_PLACEMENT_RIGHT" "3")
   )
 )
 

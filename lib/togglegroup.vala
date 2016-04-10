@@ -138,6 +138,8 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
         }
     }
 
+    public bool exclusive { get; set; default = false; }
+
     // events
     /**
      * Event emitted when the active item changed

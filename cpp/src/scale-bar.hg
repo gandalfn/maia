@@ -38,8 +38,6 @@ namespace Maia
             _CTOR_DEFAULT()
 
         public:
-            _WRAP_ENUM(class Placement, MaiaScaleBarPlacement, s#SCALE_BAR_PLACEMENT_##, NO_GTYPE)
-
             static Glib::RefPtr<ScaleBar> create (const Glib::ustring& inId)
             {
                 MaiaScaleBar* pScaleBar = maia_scale_bar_new (inId.c_str());
@@ -58,8 +56,8 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_step_font_description () const, maia_scale_bar_get_step_font_description)
             _WRAP_METHOD(void set_step_font_description (const Glib::ustring& inFontDesc), maia_scale_bar_set_step_font_description)
 
-            _WRAP_METHOD(ScaleBar::Placement get_placement () const, maia_scale_bar_get_placement)
-            _WRAP_METHOD(void set_placement (ScaleBar::Placement inPlacement), maia_scale_bar_set_placement)
+            _WRAP_METHOD(Placement get_placement () const, maia_scale_bar_get_placement)
+            _WRAP_METHOD(void set_placement (Placement inPlacement), maia_scale_bar_set_placement)
 
             _WRAP_METHOD(bool display_slide_label () const, maia_scale_bar_get_display_slide_label)
             _WRAP_METHOD(void set_display_slide_label (bool inDisplay = true), maia_scale_bar_set_display_slide_label)
@@ -81,7 +79,7 @@ namespace Maia
 
             _WRAP_PROPERTY("adjustment", Glib::RefPtr<Adjustment>)
             _WRAP_PROPERTY("font-description", Glib::ustring)
-            _WRAP_PROPERTY("placement", ScaleBar::Placement)
+            _WRAP_PROPERTY("placement", Placement)
             _WRAP_PROPERTY("display-slide-label", bool)
             _WRAP_PROPERTY("display-step-middle", bool)
             _WRAP_PROPERTY("label-border", double)

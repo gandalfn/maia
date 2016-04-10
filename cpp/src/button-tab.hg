@@ -1,0 +1,89 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * button-tab.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/graphic-glyph.h>
+#include <maiamm/toggle.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/toggle_p.h)
+
+namespace Maia
+{
+    class ButtonTab : public Toggle
+    {
+        _CLASS_GOBJECT(ButtonTab, MaiaButtonTab, MAIA_BUTTON_TAB, Toggle, MaiaToggle)
+
+        protected:
+            _CTOR_DEFAULT()
+
+        public:
+            static Glib::RefPtr<ButtonTab> create (const Glib::ustring& inId)
+            {
+                MaiaButtonTab* pButton = maia_button_tab_new (inId.c_str (), 0);
+
+                return Glib::RefPtr<ButtonTab> (new ButtonTab (pButton));
+            }
+
+            static Glib::RefPtr<ButtonTab> create (const Glib::ustring& inId, const Glib::ustring& inLabel)
+            {
+                MaiaButtonTab* pButton = maia_button_tab_new (inId.c_str (), inLabel.c_str ());
+
+                return Glib::RefPtr<ButtonTab> (new ButtonTab (pButton));
+            }
+
+            _WRAP_METHOD(Placement get_indicator_placement () const, maia_button_tab_get_indicator_placement)
+            _WRAP_METHOD(void set_indicator_placement (Placement inPlacement), maia_button_tab_set_indicator_placement)
+
+            _WRAP_METHOD(double get_indicator_thickness () const, maia_button_tab_get_indicator_thickness)
+            _WRAP_METHOD(void set_indicator_thickness (double inThickness), maia_button_tab_set_indicator_thickness)
+
+            _WRAP_METHOD(Graphic::Glyph::Alignment get_alignment () const, maia_button_tab_get_alignment)
+            _WRAP_METHOD(void set_alignment (Graphic::Glyph::Alignment inAlignment), maia_button_tab_set_alignment)
+
+            _WRAP_METHOD(double get_spacing () const, maia_button_tab_get_spacing)
+            _WRAP_METHOD(void set_spacing (double inSpacing), maia_button_tab_set_spacing)
+
+            _WRAP_METHOD(Glib::ustring get_icon_filename () const, maia_button_tab_get_icon_filename)
+            _WRAP_METHOD(void set_icon_filename (const Glib::ustring& inFilename), maia_button_tab_set_icon_filename)
+
+            _WRAP_METHOD(void get_icon_size (Graphic::Size& outSize) const, maia_button_tab_get_icon_size)
+            _WRAP_METHOD(void set_icon_size (const Graphic::Size& inSize), maia_button_tab_set_icon_size)
+
+            _WRAP_METHOD(Glib::ustring get_value () const, maia_button_tab_get_value)
+            _WRAP_METHOD(void set_value (const Glib::ustring& inLabel), maia_button_tab_set_value)
+
+            _WRAP_METHOD(bool get_highlight () const, maia_button_tab_get_highlight)
+            _WRAP_METHOD(void set_highlight (bool inHighlight), maia_button_tab_set_highlight)
+
+            _WRAP_PROPERTY("tag", Glib::ustring)
+            _WRAP_PROPERTY("indicator-placement", Placement)
+            _WRAP_PROPERTY("indicator-thickness", double)
+            _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
+            _WRAP_PROPERTY("spacing", double)
+            _WRAP_PROPERTY("icon-filename", Glib::ustring)
+            _WRAP_PROPERTY("icon-size", Graphic::Size)
+            _WRAP_PROPERTY("value", Glib::ustring)
+            _WRAP_PROPERTY("highlight", bool)
+
+        private:
+            _WRAP_PROPERTY("indicator-progress", double)
+            _WRAP_PROPERTY("label-state", State)
+    };
+}

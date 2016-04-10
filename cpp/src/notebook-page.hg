@@ -1,0 +1,89 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * notebook-page.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/graphic-color.h>
+#include <maiamm/graphic-glyph.h>
+#include <maiamm/graphic-pattern.h>
+#include <maiamm/item-packable.h>
+#include <maiamm/item-movable.h>
+#include <maiamm/toggle.h>
+#include <maiamm/group.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/group_p.h)
+
+namespace Maia
+{
+    class NotebookPage : public Group, public ItemPackable
+    {
+        _CLASS_GOBJECT(NotebookPage, MaiaNotebookPage, MAIA_NOTEBOOK_PAGE, Group, MaiaGroup)
+        _IMPLEMENTS_INTERFACE(ItemPackable)
+
+        public:
+            static Glib::RefPtr<NotebookPage> create (const Glib::ustring& inId)
+            {
+                MaiaNotebookPage* pPage = maia_notebook_page_new (inId.c_str ());
+
+                return Glib::RefPtr<NotebookPage> (new NotebookPage (pPage));
+            }
+
+            _WRAP_METHOD(Glib::ustring get_font_description () const, maia_notebook_page_get_font_description)
+            _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_notebook_page_set_font_description)
+
+            _WRAP_METHOD(Graphic::Glyph::Alignment get_alignment () const, maia_notebook_page_get_alignment)
+            _WRAP_METHOD(void set_alignment (Graphic::Glyph::Alignment inAlignment), maia_notebook_page_set_alignment)
+
+            _WRAP_METHOD(Glib::ustring get_label () const, maia_notebook_page_get_label)
+            _WRAP_METHOD(void set_label (const Glib::ustring& inLabel), maia_notebook_page_set_label)
+
+            _WRAP_METHOD(Glib::RefPtr<Toggle> get_toggle () const, maia_notebook_page_get_toggle)
+            _WRAP_METHOD(void set_toggle (const Glib::RefPtr<Toggle>& inLabel), maia_notebook_page_set_toggle)
+
+            _WRAP_PROPERTY("font-description", Glib::ustring)
+            _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
+            _WRAP_PROPERTY("label", Glib::ustring)
+            _WRAP_PROPERTY("toggle", Glib::RefPtr<Toggle>)
+
+            _WRAP_PROPERTY("row", guint)
+            _WRAP_PROPERTY("rows", guint)
+
+            _WRAP_PROPERTY("column", guint)
+            _WRAP_PROPERTY("columns", guint)
+
+            _WRAP_PROPERTY("xexpand", bool)
+            _WRAP_PROPERTY("xfill", bool)
+            _WRAP_PROPERTY("xshrink", bool)
+            _WRAP_PROPERTY("xlimp", bool)
+            _WRAP_PROPERTY("xalign", double)
+
+            _WRAP_PROPERTY("yexpand", bool)
+            _WRAP_PROPERTY("yfill", bool)
+            _WRAP_PROPERTY("yshrink", bool)
+            _WRAP_PROPERTY("ylimp", bool)
+            _WRAP_PROPERTY("yalign", double)
+
+            _WRAP_PROPERTY("top-padding", double)
+            _WRAP_PROPERTY("bottom-padding", double)
+            _WRAP_PROPERTY("left-padding", double)
+            _WRAP_PROPERTY("right-padding", double)
+
+            _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
+    };
+}

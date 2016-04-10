@@ -19,56 +19,11 @@
 
 public class Maia.ButtonTab : Toggle
 {
-    // types
-    public enum Placement
-    {
-        TOP,
-        BOTTOM,
-        LEFT,
-        RIGHT;
-
-        public string
-        to_string ()
-        {
-            switch (this)
-            {
-                case TOP:
-                    return "top";
-                case BOTTOM:
-                    return "bottom";
-                case LEFT:
-                    return "left";
-                case RIGHT:
-                    return "right";
-            }
-
-            return "";
-        }
-
-        public static Placement
-        from_string (string inValue)
-        {
-            switch (inValue.down ())
-            {
-                case "top":
-                    return TOP;
-                case "bottom":
-                    return BOTTOM;
-                case "left":
-                    return LEFT;
-                case "right":
-                    return RIGHT;
-            }
-
-            return TOP;
-        }
-    }
-
     // properties
-    private Core.Animator  m_IndicatorAnimator   = null;
-    private uint           m_IndicatorTransition = 0;
-    private double         m_IndicatorProgress   = 0.0;
-    private bool           m_Highlight           = false;
+    private Core.Animator     m_IndicatorAnimator   = null;
+    private uint              m_IndicatorTransition = 0;
+    private double            m_IndicatorProgress   = 0.0;
+    private bool              m_Highlight           = false;
 
     // accessors
     internal override string tag {
@@ -196,29 +151,6 @@ public class Maia.ButtonTab : Toggle
         }
     }
 
-    // static methods
-    static construct
-    {
-        Manifest.Attribute.register_transform_func (typeof (Placement), attribute_to_scale_placement);
-
-        GLib.Value.register_transform_func (typeof (Placement), typeof (string), scale_placement_to_string);
-    }
-
-    static void
-    attribute_to_scale_placement (Manifest.Attribute inAttribute, ref GLib.Value outValue)
-    {
-        outValue = Placement.from_string (inAttribute.get ());
-    }
-
-    static void
-    scale_placement_to_string (GLib.Value inSrc, out GLib.Value outDest)
-        requires (inSrc.holds (typeof (Placement)))
-    {
-        Placement val = (Placement)inSrc;
-
-        outDest = val.to_string ();
-    }
-
     // methods
     construct
     {
@@ -231,7 +163,7 @@ public class Maia.ButtonTab : Toggle
         notify["active"].connect (on_active_changed);
     }
 
-    public ButtonTab (string inId, string inLabel)
+    public ButtonTab (string inId, string? inLabel)
     {
         base (inId, inLabel);
     }
@@ -250,7 +182,6 @@ public class Maia.ButtonTab : Toggle
         GLib.Value to = active ? 1.0 : 0.0;
         m_IndicatorAnimator.add_transition_property (m_IndicatorTransition, this, "indicator-progress", from, to);
         m_IndicatorAnimator.start ();
-
     }
 
     internal override Graphic.Size
