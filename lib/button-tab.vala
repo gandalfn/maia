@@ -189,14 +189,16 @@ public class Maia.ButtonTab : Toggle
     {
         Graphic.Size ret = Graphic.Size (0, 0);
 
+        bool horizontal = (indicator_placement == Placement.TOP || indicator_placement == Placement.BOTTOM);
+
         if (main_content != null)
         {
-            var area = Graphic.Rectangle (0, 0, border * 2.0, border * 2.0);
+            var area = Graphic.Rectangle (0, 0, horizontal ? border * 2.0 : 0, !horizontal ? border * 2.0 : 0);
 
             // Set position and size of indicator and label
-            var indicator_area = Graphic.Rectangle (border, border, indicator_thickness, indicator_thickness);
+            var indicator_area = Graphic.Rectangle (horizontal ? border : 0, !horizontal ? border : 0, indicator_thickness, indicator_thickness);
             var main_content_size = main_content.size;
-            var main_content_area = Graphic.Rectangle (border, border, main_content_size.width, main_content_size.height);
+            var main_content_area = Graphic.Rectangle (horizontal ? border : 0, !horizontal ? border : 0, main_content_size.width, main_content_size.height);
 
             switch (indicator_placement)
             {
@@ -225,7 +227,7 @@ public class Maia.ButtonTab : Toggle
             area.union_ (main_content_area);
 
             ret = area.size;
-            ret.resize (border, border);
+            ret.resize (horizontal ? border : 0, !horizontal ? border : 0);
         }
 
         return ret;
@@ -238,12 +240,14 @@ public class Maia.ButtonTab : Toggle
         {
             geometry = inAllocation;
 
+            bool horizontal = (indicator_placement == Placement.TOP || indicator_placement == Placement.BOTTOM);
+
             if (main_content != null)
             {
                 // Set position and size of main content
                 var item_size = area.extents.size;
-                item_size.resize (-border * 2.0, -border * 2.0);
-                var main_content_area = Graphic.Rectangle (border, border, item_size.width, item_size.height);
+                item_size.resize (horizontal ? -border * 2.0 : 0, !horizontal ? -border * 2.0 : 0);
+                var main_content_area = Graphic.Rectangle (horizontal ? border : 0, !horizontal ? border : 0, item_size.width, item_size.height);
 
                 switch (indicator_placement)
                 {
@@ -287,6 +291,8 @@ public class Maia.ButtonTab : Toggle
     {
         inContext.save ();
         {
+            bool horizontal = (indicator_placement == Placement.TOP || indicator_placement == Placement.BOTTOM);
+
             // paint button background
             if (background_pattern[m_Highlight ? State.PRELIGHT : state] != null)
             {
@@ -326,12 +332,11 @@ public class Maia.ButtonTab : Toggle
                 main_content_area = main_content.geometry.extents;
             }
 
-
             var item_size = area.extents.size;
-            item_size.resize (-border * 2.0, -border * 2.0);
+            item_size.resize (horizontal ? -border * 2.0 : 0, !horizontal ? -border * 2.0 : 0);
 
             // paint indicator
-            var indicator_area = Graphic.Rectangle (border, border, indicator_thickness, indicator_thickness);
+            var indicator_area = Graphic.Rectangle (horizontal ? border : 0, !horizontal ? border : 0, indicator_thickness, indicator_thickness);
             switch (indicator_placement)
             {
                 case Placement.TOP:
@@ -340,7 +345,7 @@ public class Maia.ButtonTab : Toggle
 
                 case Placement.BOTTOM:
                     indicator_area.size.width = item_size.width;
-                    indicator_area.origin.y = item_size.height + border - indicator_thickness;
+                    indicator_area.origin.y = item_size.height - indicator_thickness;
                     break;
 
                 case Placement.LEFT:
@@ -349,7 +354,7 @@ public class Maia.ButtonTab : Toggle
 
                 case Placement.RIGHT:
                     indicator_area.size.height = item_size.height;
-                    indicator_area.origin.x = item_size.width + border - indicator_thickness;
+                    indicator_area.origin.x = item_size.width - indicator_thickness;
                     break;
             }
 
@@ -387,6 +392,32 @@ public class Maia.ButtonTab : Toggle
             {
                 inContext.pattern = fill_pattern[state];
                 inContext.fill (indicator);
+            }
+
+            var border_path = new Graphic.Path ();
+            switch (indicator_placement)
+            {
+                case Placement.TOP:
+                case Placement.BOTTOM:
+                    border_path.move_to (0, 0);
+                    border_path.line_to (0, item_size.height);
+                    border_path.move_to ((border * 2.0) + item_size.width, 0);
+                    border_path.line_to ((border * 2.0) + item_size.width, item_size.height);
+                    break;
+
+                case Placement.LEFT:
+                case Placement.RIGHT:
+                    border_path.move_to (0, 0);
+                    border_path.line_to (item_size.width, 0);
+                    border_path.move_to (0, (border * 2.0) + item_size.height);
+                    border_path.line_to (item_size.width, (border * 2.0) + item_size.height);
+                    break;
+            }
+
+            if (stroke_pattern[state] != null)
+            {
+                inContext.pattern = stroke_pattern[state];
+                inContext.stroke (border_path);
             }
         }
         inContext.restore ();

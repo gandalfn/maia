@@ -91,6 +91,42 @@ public class Maia.NotebookPage : Group, ItemPackable
      */
     public string label { get; set; default = ""; }
 
+    // static methods
+    static construct
+    {
+        Manifest.Attribute.register_transform_func (typeof (Toggle), attribute_to_toggle);
+    }
+
+    static void
+    attribute_to_toggle (Manifest.Attribute inAttribute, ref GLib.Value outValue)
+    {
+        unowned Toggle? toggle = null;
+        unowned Core.Object object = inAttribute.owner as Core.Object;
+
+        if (object != null)
+        {
+            GLib.Quark id  = GLib.Quark.from_string (inAttribute.get ());
+            for (unowned Core.Object item = object.parent; item != null; item = item.parent)
+            {
+                unowned View? view = item.parent as View;
+
+                // If view is in view search toggle in cell first
+                if (view != null)
+                {
+                    toggle = item.find (id, false) as Toggle;
+                    if (toggle != null) break;
+                }
+                // We not found toggle in view parents search in root
+                else if (item.parent == null)
+                {
+                    toggle = item.find (id) as Toggle;
+                }
+            }
+        }
+
+        outValue = toggle;
+    }
+
     // methods
     construct
     {

@@ -1218,12 +1218,18 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
             // paint border
             if (border_line_width > 0)
             {
-                var area = geometry.copy ();
-                area.translate (geometry.extents.origin.invert ());
                 Graphic.Path path = new Graphic.Path.from_region (area);
 
                 inContext.pattern = stroke_pattern[state];
                 inContext.line_width = border_line_width;
+                inContext.stroke (path);
+            }
+            else if (background_pattern[state] != null && grid_line_width > 0)
+            {
+                Graphic.Path path = new Graphic.Path.from_region (area);
+
+                inContext.pattern = background_pattern[state];
+                inContext.line_width = grid_line_width * 2.0;
                 inContext.stroke (path);
             }
         }

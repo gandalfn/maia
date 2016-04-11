@@ -140,6 +140,18 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
 
     public bool exclusive { get; set; default = false; }
 
+    public GLib.List<unowned Toggle> toggles {
+        owned get {
+            GLib.List<unowned Toggle> ret = new GLib.List<Toggle> ();
+            foreach (unowned Core.Pair<string, unowned Toggle> pair in m_Toggles)
+            {
+                ret.prepend (pair.second);
+            }
+
+            return ret;
+        }
+    }
+
     // events
     /**
      * Event emitted when the active item changed

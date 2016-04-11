@@ -18088,6 +18088,12 @@
   )
 )
 
+(define-method get_toggles
+  (of-object "MaiaToggleGroup")
+  (c-name "maia_toggle_group_get_toggles")
+  (return-type "GList*")
+)
+
 (define-method get_changed
   (of-object "MaiaToggleGroup")
   (c-name "maia_toggle_group_get_changed")

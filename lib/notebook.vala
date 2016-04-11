@@ -19,6 +19,9 @@
 
 public class Maia.Notebook : Grid
 {
+    // static properties
+    private static GLib.Quark s_QuarkNotebookPageNum;
+
     // properties
     private uint         m_Page = 0;
     private uint         m_NbPages = 0;
@@ -79,28 +82,21 @@ public class Maia.Notebook : Grid
         set {
             if (m_Placement != value)
             {
-                var old_placement = m_Placement;
                 m_Placement = value;
 
-                foreach (unowned Core.Object tab_child in m_Tab)
+                foreach (unowned Toggle? toggle in m_TabGroup.toggles)
                 {
-                    unowned Toggle? toggle = tab_child as Toggle;
-                    if (toggle != null)
+                    if (toggle.parent == m_Tab)
                     {
-                        uint pos;
-                        if (old_placement == Placement.TOP || old_placement == Placement.BOTTOM)
-                        {
-                            pos = toggle.column;
-                        }
-                        else
-                        {
-                            pos = toggle.row;
-                        }
+                        uint pos = toggle.get_qdata<uint> (s_QuarkNotebookPageNum);
 
                         if (m_Placement == Placement.TOP || m_Placement == Placement.BOTTOM)
                         {
-                            toggle.row = 0;
-                            toggle.column = pos;
+                            if (toggle.parent == m_Tab)
+                            {
+                                toggle.row = 0;
+                                toggle.column = pos;
+                            }
                             if (toggle is ButtonTab)
                             {
                                 (toggle as ButtonTab).indicator_placement = m_Placement == Placement.TOP ? Placement.BOTTOM : Placement.TOP;
@@ -108,8 +104,11 @@ public class Maia.Notebook : Grid
                         }
                         else
                         {
-                            toggle.column = 0;
-                            toggle.row = pos;
+                            if (toggle.parent == m_Tab)
+                            {
+                                toggle.column = 0;
+                                toggle.row = pos;
+                            }
                             if (toggle is ButtonTab)
                             {
                                 (toggle as ButtonTab).indicator_placement = m_Placement == Placement.LEFT ? Placement.RIGHT : Placement.LEFT;
@@ -166,6 +165,8 @@ public class Maia.Notebook : Grid
     // static methods
     static construct
     {
+        s_QuarkNotebookPageNum = GLib.Quark.from_string ("MaiaNotebookPageNum");
+
         Manifest.Attribute.register_transform_func (typeof (Placement), attribute_to_tab_placement);
 
         GLib.Value.register_transform_func (typeof (Placement), typeof (string), tab_placement_to_value_string);
@@ -199,6 +200,8 @@ public class Maia.Notebook : Grid
         m_Tab = tab;
         m_Tab.yfill = false;
         m_Tab.yexpand = false;
+        m_Tab.ylimp = true;
+        m_Tab.xlimp = true;
         m_Tab.visible = true;
         m_Tab.parent = this;
         plug_property ("expand-tabs", m_Tab, "xfill");
@@ -251,32 +254,40 @@ public class Maia.Notebook : Grid
             if (page != null)
             {
                 unowned Toggle? found = null;
-                foreach (unowned Core.Object tab_child in m_Tab)
+                foreach (unowned Toggle? toggle in m_TabGroup.toggles)
                 {
-                    unowned Toggle? toggle = tab_child as Toggle;
-                    uint num_page = (tab_placement == Placement.TOP || tab_placement == Placement.BOTTOM) ? toggle.column : toggle.row;
-                    if (toggle != null && num_page == cpt)
+                    print (@"$(toggle != null) && $(toggle.get_qdata<uint> (s_QuarkNotebookPageNum)) == $cpt\n");
+                    if (toggle != null && toggle.get_qdata<uint> (s_QuarkNotebookPageNum) == cpt)
                     {
                         found = toggle;
+                        print(@"found: $(found != null)\n");
                         break;
                     }
                 }
 
                 if (found != page.toggle)
                 {
+                    print(@"toggle found: $(found != null)\n");
                     m_TabGroup.remove_button (found);
-                    found.parent = null;
+                    if (found.parent == m_Tab)
+                    {
+                        found.parent = null;
+                    }
                     page.toggle.toggle_group = m_TabGroup;
                     page.toggle.active = true;
-                    if (tab_placement == Placement.TOP || tab_placement == Placement.BOTTOM)
+                    page.toggle.set_qdata<uint> (s_QuarkNotebookPageNum, cpt);
+                    if (page.toggle.parent == null)
                     {
-                        page.toggle.column = cpt;
+                        if (tab_placement == Placement.TOP || tab_placement == Placement.BOTTOM)
+                        {
+                            page.toggle.column = cpt;
+                        }
+                        else
+                        {
+                            page.toggle.row = cpt;
+                        }
+                        page.toggle.parent = m_Tab;
                     }
-                    else
-                    {
-                        page.toggle.row = cpt;
-                    }
-                    page.toggle.parent = m_Tab;
                 }
 
                 cpt++;
@@ -290,12 +301,12 @@ public class Maia.Notebook : Grid
         unowned ToggleGroup.ChangedEventArgs? args = inArgs as ToggleGroup.ChangedEventArgs;
         if (args != null)
         {
-            foreach (unowned Core.Object child in m_Tab)
+            foreach (unowned Toggle? toggle in m_TabGroup.toggles)
             {
-                unowned Toggle? toggle = child as Toggle;
-                if (toggle != null && toggle.name == args.active)
+                if (toggle.name == args.active)
                 {
-                    switch_page ((tab_placement == Placement.TOP || tab_placement == Placement.BOTTOM) ? toggle.column : toggle.row);
+                    print(@"$(toggle.name) active switch to $(toggle.get_qdata<uint> (s_QuarkNotebookPageNum))\n");
+                    switch_page (toggle.get_qdata<uint> (s_QuarkNotebookPageNum));
                     break;
                 }
             }
@@ -330,29 +341,33 @@ public class Maia.Notebook : Grid
             page.notify["toggle"].connect (on_toggle_page_changed);
             if (page.toggle != null)
             {
+                page.toggle.set_qdata<uint> (s_QuarkNotebookPageNum, m_NbPages);
                 page.toggle.toggle_group = m_TabGroup;
                 if (m_Page == m_NbPages)
                 {
                     m_TabGroup.active = page.toggle.name;
                     page.toggle.active = true;
                 }
-                if (tab_placement == Placement.TOP || tab_placement == Placement.BOTTOM)
+                if (page.toggle.parent == null)
                 {
-                    page.toggle.column = m_NbPages;
-                    if (page.toggle is ButtonTab)
+                    if (tab_placement == Placement.TOP || tab_placement == Placement.BOTTOM)
                     {
-                        (page.toggle as ButtonTab).indicator_placement = m_Placement == Placement.TOP ? Placement.BOTTOM : Placement.TOP;
+                        page.toggle.column = m_NbPages;
+                        if (page.toggle is ButtonTab)
+                        {
+                            (page.toggle as ButtonTab).indicator_placement = m_Placement == Placement.TOP ? Placement.BOTTOM : Placement.TOP;
+                        }
                     }
-                }
-                else
-                {
-                    page.toggle.row = m_NbPages;
-                    if (page.toggle is ButtonTab)
+                    else
                     {
-                        (page.toggle as ButtonTab).indicator_placement = m_Placement == Placement.LEFT ? Placement.RIGHT : Placement.LEFT;
+                        page.toggle.row = m_NbPages;
+                        if (page.toggle is ButtonTab)
+                        {
+                            (page.toggle as ButtonTab).indicator_placement = m_Placement == Placement.LEFT ? Placement.RIGHT : Placement.LEFT;
+                        }
                     }
+                    page.toggle.parent = m_Tab;
                 }
-                page.toggle.parent = m_Tab;
             }
             m_NbPages++;
         }
@@ -369,7 +384,10 @@ public class Maia.Notebook : Grid
             page.notify["toggle"].disconnect (on_toggle_page_changed);
             if (page.toggle != null)
             {
-                page.toggle.parent = null;
+                if (page.toggle.parent == m_Tab)
+                {
+                    page.toggle.parent = null;
+                }
                 m_TabGroup.remove_button (page.toggle);
             }
             m_NbPages--;
