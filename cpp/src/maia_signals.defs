@@ -7745,6 +7745,15 @@
   (construct-only #f)
 )
 
+(define-property switch-progress
+  (of-object "MaiaNotebook")
+  (prop-type "GParamDouble")
+  (docs "switch-progress")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property page
   (of-object "MaiaNotebook")
   (prop-type "GParamUInt")
@@ -7785,6 +7794,15 @@
   (of-object "MaiaNotebook")
   (prop-type "GParamEnum")
   (docs "tab-placement")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property transition
+  (of-object "MaiaNotebook")
+  (prop-type "GParamEnum")
+  (docs "transition")
   (readable #t)
   (writable #t)
   (construct-only #f)

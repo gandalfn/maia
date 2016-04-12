@@ -743,6 +743,12 @@
   (gtype-id "MAIA_TYPE_LABEL")
 )
 
+(define-object MaiaLine
+  (parent "MaiaItem")
+  (c-name "MaiaLine")
+  (gtype-id "MAIA_TYPE_LINE")
+)
+
 (define-object MaiaLogLogger
   (parent "GObject")
   (c-name "MaiaLogLogger")
@@ -3693,6 +3699,17 @@
   (values
     '("rtl" "MAIA_CHART_DIRECTION_RTL")
     '("ltr" "MAIA_CHART_DIRECTION_LTR")
+  )
+)
+
+(define-enum MaiaNotebookTransition
+  (c-name "MaiaNotebookTransition")
+  (gtype-id "MAIA_TYPE_NOTEBOOK_TRANSITION")
+  (values
+    '("none" "MAIA_NOTEBOOK_TRANSITION_NONE")
+    '("opacity" "MAIA_NOTEBOOK_TRANSITION_OPACITY")
+    '("slide" "MAIA_NOTEBOOK_TRANSITION_SLIDE")
+    '("zoom" "MAIA_NOTEBOOK_TRANSITION_ZOOM")
   )
 )
 
@@ -22152,6 +22169,25 @@
   (return-type "GType")
 )
 
+(define-function maia_notebook_transition_get_type
+  (c-name "maia_notebook_transition_get_type")
+  (return-type "GType")
+)
+
+(define-method to_string
+  (of-object "MaiaNotebookTransition")
+  (c-name "maia_notebook_transition_to_string")
+  (return-type "gchar*")
+)
+
+(define-function maia_notebook_transition_from_string
+  (c-name "maia_notebook_transition_from_string")
+  (return-type "MaiaNotebookTransition")
+  (parameters
+    '("const-gchar*" "inValue")
+  )
+)
+
 (define-function maia_notebook_new
   (c-name "maia_notebook_new")
   (is-constructor-of "MaiaNotebook")
@@ -22242,6 +22278,44 @@
   (return-type "none")
   (parameters
     '("MaiaPlacement" "value")
+  )
+)
+
+(define-method get_transition
+  (of-object "MaiaNotebook")
+  (c-name "maia_notebook_get_transition")
+  (return-type "MaiaNotebookTransition")
+)
+
+(define-method set_transition
+  (of-object "MaiaNotebook")
+  (c-name "maia_notebook_set_transition")
+  (return-type "none")
+  (parameters
+    '("MaiaNotebookTransition" "value")
+  )
+)
+
+(define-function maia_line_get_type
+  (c-name "maia_line_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_line_new
+  (c-name "maia_line_new")
+  (is-constructor-of "MaiaLine")
+  (return-type "MaiaLine*")
+  (parameters
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-function maia_line_construct
+  (c-name "maia_line_construct")
+  (return-type "MaiaLine*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
   )
 )
 

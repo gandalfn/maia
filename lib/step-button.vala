@@ -241,7 +241,7 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
 
         // Create view
         m_View = new View (@"$name-view");
-        m_View.homogeneous = true;
+        m_View.layout = Grid.Layout.HOMOGENEOUS;
         m_View.orientation = Orientation.HORIZONTAL;
         m_View.visible = true;
 

@@ -5111,3 +5111,22 @@
   )
 )
 
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_NOTEBOOK_TRANSITION_NONE,
+;; 	MAIA_NOTEBOOK_TRANSITION_OPACITY,
+;; 	MAIA_NOTEBOOK_TRANSITION_SLIDE,
+;; 	MAIA_NOTEBOOK_TRANSITION_ZOOM
+;; } MaiaNotebookTransition;
+
+(define-enum-extended NotebookTransition
+  (in-module "Maia")
+  (c-name "MaiaNotebookTransition")
+  (values
+    '("none" "MAIA_NOTEBOOK_TRANSITION_NONE" "0")
+    '("opacity" "MAIA_NOTEBOOK_TRANSITION_OPACITY" "1")
+    '("slide" "MAIA_NOTEBOOK_TRANSITION_SLIDE" "2")
+    '("zoom" "MAIA_NOTEBOOK_TRANSITION_ZOOM" "3")
+  )
+)
+

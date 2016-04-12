@@ -20,6 +20,43 @@
 public class Maia.Grid : Group, ItemPackable, ItemMovable
 {
     // types
+    public enum Layout
+    {
+        FREE,
+        HOMOGENEOUS,
+        LINEAR;
+
+        public string
+        to_string ()
+        {
+            switch (this)
+            {
+                case HOMOGENEOUS:
+                    return "homogeneous";
+
+                case LINEAR:
+                    return "linear";
+            }
+
+            return "free";
+        }
+
+        public static Layout
+        from_string (string inValue)
+        {
+            switch (inValue.down ())
+            {
+                case "homogeneous":
+                    return HOMOGENEOUS;
+
+                case "linear":
+                    return LINEAR;
+            }
+
+            return FREE;
+        }
+    }
+
     private struct LineSizeAllocation
     {
         public Graphic.Size size;
@@ -176,50 +213,53 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
             rows.length = (int)nb_rows;
             columns.length = (int)nb_columns;
 
-            if (grid.homogeneous)
+            switch (grid.layout)
             {
-                size = Graphic.Size (0, 0);
+                case Layout.HOMOGENEOUS:
+                    size = Graphic.Size (0, 0);
 
-                for (int cpt = 0; cpt < rows.length || cpt < columns.length; ++cpt)
-                {
-                    if (cpt < rows.length) size.height = double.max (size.height, rows[cpt].size.height);
-                    if (cpt < columns.length) size.width = double.max (size.width, columns[cpt].size.width);
-                }
+                    for (int cpt = 0; cpt < rows.length || cpt < columns.length; ++cpt)
+                    {
+                        if (cpt < rows.length) size.height = double.max (size.height, rows[cpt].size.height);
+                        if (cpt < columns.length) size.width = double.max (size.width, columns[cpt].size.width);
+                    }
 
-                size.width *= visible_columns.length;
-                size.height *= visible_rows.length;
+                    size.width *= visible_columns.length;
+                    size.height *= visible_rows.length;
 
-                if (visible_rows.length > 1)
-                {
-                    size.height += grid.row_spacing * (visible_rows.length - 1);
-                }
+                    if (visible_rows.length > 1)
+                    {
+                        size.height += grid.row_spacing * (visible_rows.length - 1);
+                    }
 
-                if (visible_columns.length > 1)
-                {
-                    size.width += grid.column_spacing * (visible_columns.length - 1);
-                }
-            }
-            else
-            {
-                size = Graphic.Size (0, 0);
+                    if (visible_columns.length > 1)
+                    {
+                        size.width += grid.column_spacing * (visible_columns.length - 1);
+                    }
+                    break;
 
-                for (int cpt = 0; cpt < rows.length || cpt < columns.length; ++cpt)
-                {
-                    if (cpt < rows.length) size.height += rows[cpt].size.height;
-                    if (cpt < columns.length) size.width += columns[cpt].size.width;;
-                }
+                case Layout.LINEAR:
+                case Layout.FREE:
+                    size = Graphic.Size (0, 0);
 
-                // the maximal width size is the max width row
-                if (visible_rows.length > 1)
-                {
-                    size.height += grid.row_spacing * (visible_rows.length - 1);
-                }
+                    for (int cpt = 0; cpt < rows.length || cpt < columns.length; ++cpt)
+                    {
+                        if (cpt < rows.length) size.height += rows[cpt].size.height;
+                        if (cpt < columns.length) size.width += columns[cpt].size.width;;
+                    }
 
-                // the maximal height size is the max height column
-                if (visible_columns.length > 1)
-                {
-                    size.width += grid.column_spacing * (visible_columns.length - 1);
-                }
+                    // the maximal width size is the max width row
+                    if (visible_rows.length > 1)
+                    {
+                        size.height += grid.row_spacing * (visible_rows.length - 1);
+                    }
+
+                    // the maximal height size is the max height column
+                    if (visible_columns.length > 1)
+                    {
+                        size.width += grid.column_spacing * (visible_columns.length - 1);
+                    }
+                    break;
             }
 
 #if MAIA_DEBUG
@@ -239,274 +279,65 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                 // Get page break list
                 unowned Core.List<Document.PageBreak>? page_breaks = grid.get_qdata<Core.List<Document.PageBreak>> (Document.s_PageBreakQuark);
 
-                if (grid.homogeneous)
+                switch (grid.layout)
                 {
-                    Graphic.Rectangle allocation = inAllocation.extents;
-
-                    child_allocations = new Graphic.Rectangle [rows.length, columns.length];
-                    for (int i = 0; i < rows.length; ++i)
+                    case Layout.HOMOGENEOUS:
                     {
-                        for (int j = 0; j < columns.length; ++j)
-                        {
-                            if (j in visible_columns)
-                            {
-                                child_allocations[i, j].size.width = (allocation.size.width - (grid.column_spacing * (visible_columns.length - 1))) / visible_columns.length;
-
-                                bool first = true;
-                                uint prev = 0;
-                                foreach (uint c in visible_columns)
-                                {
-                                    if (c == j)
-                                    {
-                                        if (!first)
-                                        {
-                                            child_allocations[i, j].origin.x = child_allocations[i, prev].origin.x + grid.column_spacing + child_allocations[i, prev].size.width;
-                                        }
-
-                                        break;
-                                    }
-
-                                    first = false;
-                                    prev = c;
-                                }
-                            }
-
-                            if (i in visible_rows)
-                            {
-                                child_allocations[i, j].size.height = (allocation.size.height - (grid.row_spacing * (visible_rows.length - 1))) / visible_rows.length;
-
-                                bool first = true;
-                                uint prev = 0;
-                                foreach (uint r in visible_rows)
-                                {
-                                    if (r == i)
-                                    {
-                                        if (!first)
-                                        {
-                                            child_allocations[i, j].origin.y = child_allocations[prev, j].origin.y + grid.row_spacing + child_allocations[prev, j].size.height;
-                                        }
-
-                                        break;
-                                    }
-
-                                    first = false;
-                                    prev = r;
-                                }
-                            }
-                        }
-                    }
-
-                    uint prev_row = 0;
-                    double delta = 0.0;
-                    foreach (unowned Core.Object child in grid)
-                    {
-                        if (child is ItemPackable)
-                        {
-                            unowned ItemPackable item = (ItemPackable)child;
-
-                            if (item.row < rows.length && item.column < columns.length)
-                            {
-                                // calculate size of multiple columns
-                                if (item.columns > 1)
-                                {
-                                    for (int cpt = 1; cpt < item.columns; ++cpt)
-                                    {
-                                        child_allocations[item.row, item.column].size.width += child_allocations[item.row, item.column + cpt].size.width;
-                                    }
-                                }
-
-                                // calculate size of multiple rows
-                                if (item.rows > 1)
-                                {
-                                    for (int cpt = 1; cpt < item.rows; ++cpt)
-                                    {
-                                        child_allocations[item.row, item.column].size.height += child_allocations[item.row + cpt, item.column].size.height;
-                                    }
-                                }
-
-                                // calculate allocation of item
-                                allocation = Graphic.Rectangle (child_allocations[item.row, item.column].origin.x,
-                                                                child_allocations[item.row, item.column].origin.y, 0, 0);
-
-                                Graphic.Size item_size = item.size;
-
-                                if (item.xfill)
-                                {
-                                    allocation.size.width = child_allocations[item.row, item.column].size.width;
-                                }
-                                else
-                                {
-                                    allocation.size.width = double.min (item_size.width, child_allocations[item.row, item.column].size.width);
-                                    allocation.origin.x += (child_allocations[item.row, item.column].size.width - item_size.width) * item.xalign;
-                                }
-
-                                if (item.yfill)
-                                {
-                                    allocation.size.height = child_allocations[item.row, item.column].size.height;
-                                }
-                                else
-                                {
-                                    allocation.size.height = double.min (item_size.height, child_allocations[item.row, item.column].size.height);
-                                    allocation.origin.y += (child_allocations[item.row, item.column].size.height - item_size.height) * item.yalign;
-                                }
-
-                                bool is_page_break = false;
-                                if (page_breaks != null)
-                                {
-                                    double y = allocation.origin.y;
-
-                                    foreach (unowned Document.PageBreak? page_break in page_breaks)
-                                    {
-                                        if (item.row >= page_break.row)
-                                        {
-                                            Graphic.Point origin = grid.convert_from_window_space (Graphic.Point (0, page_break.start));
-                                            Graphic.Point final = grid.convert_from_window_space (Graphic.Point (0, page_break.end));
-
-                                            if (item.row == page_break.row)
-                                            {
-                                                y = final.y;
-                                                page_break.start = grid.convert_to_window_space (allocation.origin).y;
-                                                is_page_break = true;
-                                            }
-                                            else
-                                            {
-                                                y = allocation.origin.y;
-                                                y += final.y - origin.y;
-                                                is_page_break = true;
-                                            }
-                                        }
-                                    }
-
-                                    if (y != allocation.origin.y)
-                                        allocation.origin.y = y;
-                                }
-
-                                if (!is_page_break && item.row > prev_row)
-                                {
-                                    allocation.origin.y += delta;
-                                }
-
-                                // suppress padding from item allocation
-                                allocation.origin.x += item.left_padding;
-                                allocation.origin.y += item.top_padding;
-                                allocation.size.width -= item.left_padding + item.right_padding;
-                                allocation.size.height -= item.top_padding + item.bottom_padding;
-
-                                // update item
-                                Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "update %s: %s", item.name, allocation.to_string ());
-                                item.update (inContext, new Graphic.Region (allocation));
-
-                                prev_row = item.row;
-
-                                // item is a grid take its delta
-                                unowned Grid? item_grid = item as Grid;
-                                if (item_grid != null)
-                                {
-                                    delta += item_grid.get_page_break_delta ();
-                                }
-                            }
-                        }
-                        else if (child is Item)
-                        {
-                            unowned Item item = (Item)child;
-                            var item_position = item.position;
-                            var item_size = item.size;
-                            item.update (inContext, new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y,
-                                                                                           item_size.width, item_size.height)));
-                        }
-                    }
-                }
-                else
-                {
-                    int pass = 1;
-
-                    do
-                    {
-                        bool second_pass = false;
-
-                        // Get natural size
-                        Graphic.Size natural = Graphic.Size (0, 0);
-
-                        for (int cpt = 0; cpt < rows.length || cpt < columns.length; ++cpt)
-                        {
-                            if (cpt < rows.length) natural.height += rows[cpt].size.height;
-                            if (cpt < columns.length) natural.width += columns[cpt].size.width;
-                        }
-
                         Graphic.Rectangle allocation = inAllocation.extents;
 
-                        // Calculate the the size of shrink
-                        double xshrink = 0;
-                        if (grid.xshrink)
-                            xshrink = double.max (natural.width - (allocation.size.width - (grid.column_spacing * (visible_columns.length - 1))), 0);
-
-                        double yshrink = 0;
-                        if (grid.yshrink)
-                            yshrink = double.max (natural.height - (allocation.size.height - (grid.row_spacing * (visible_rows.length - 1))), 0);
-
-                        // Calculate the the size of xpadding
-                        double xpadding = double.max (allocation.size.width - natural.width - (grid.column_spacing * (visible_columns.length - 1)), 0);
-
-                        // Calculate the the size of ypadding
-                        double ypadding = double.max (allocation.size.height - natural.height - (grid.row_spacing * (visible_rows.length - 1)), 0);
-
-#if MAIA_DEBUG
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s natural: %s padding: %g,%g", grid.name, natural.to_string (), xpadding, ypadding);
-#endif
-
-                        // append padding
                         child_allocations = new Graphic.Rectangle [rows.length, columns.length];
-                        foreach (unowned Core.Object child in grid)
+                        for (int i = 0; i < rows.length; ++i)
                         {
-                            if (child is ItemPackable)
+                            for (int j = 0; j < columns.length; ++j)
                             {
-                                unowned ItemPackable item = (ItemPackable)child;
-
-                                if (item.row < rows.length && item.column < columns.length)
+                                if (j in visible_columns)
                                 {
-                                    Graphic.Size extra = Graphic.Size (0, 0);
+                                    child_allocations[i, j].size.width = (allocation.size.width - (grid.column_spacing * (visible_columns.length - 1))) / visible_columns.length;
 
-                                    // calculate the extra space
-                                    if (item.xexpand)
+                                    bool first = true;
+                                    uint prev = 0;
+                                    foreach (uint c in visible_columns)
                                     {
-                                        extra.width += xpadding / rows[item.row].nb_expands;
-                                    }
-                                    if (item.yexpand)
-                                    {
-                                        extra.height += ypadding / columns[item.column].nb_expands;
-                                    }
+                                        if (c == j)
+                                        {
+                                            if (!first)
+                                            {
+                                                child_allocations[i, j].origin.x = child_allocations[i, prev].origin.x + grid.column_spacing + child_allocations[i, prev].size.width;
+                                            }
 
-                                    // remove the shrink space
-                                    if (item.xshrink)
-                                    {
-                                        extra.width -= xshrink / rows[item.row].nb_shrinks;
-                                    }
-                                    if (item.yshrink)
-                                    {
-                                        extra.height -= yshrink / columns[item.column].nb_shrinks;
-                                    }
+                                            break;
+                                        }
 
-                                    if (item.visible || !item.xlimp)
-                                    {
-                                        child_allocations[item.row, item.column].size.width = double.max (child_allocations[item.row, item.column].size.width,
-                                                                                                          columns[item.column].size.width + extra.width);
+                                        first = false;
+                                        prev = c;
                                     }
-                                    if (item.visible || !item.ylimp)
-                                    {
-                                        child_allocations[item.row, item.column].size.height = double.max (child_allocations[item.row, item.column].size.height,
-                                                                                                           rows[item.row].size.height + extra.height);
-                                    }
+                                }
 
-#if MAIA_DEBUG
-                                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s extra: %s", grid.name, item.name, extra.to_string ());
-                                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s row: %g, column: %g", grid.name, item.name, columns[item.column].size.width, rows[item.row].size.height);
-                                    Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s rows %u columns %u allocation: %s", grid.name, item.name, item.rows, item.columns, child_allocations[item.row, item.column].to_string ());
-#endif
+                                if (i in visible_rows)
+                                {
+                                    child_allocations[i, j].size.height = (allocation.size.height - (grid.row_spacing * (visible_rows.length - 1))) / visible_rows.length;
+
+                                    bool first = true;
+                                    uint prev = 0;
+                                    foreach (uint r in visible_rows)
+                                    {
+                                        if (r == i)
+                                        {
+                                            if (!first)
+                                            {
+                                                child_allocations[i, j].origin.y = child_allocations[prev, j].origin.y + grid.row_spacing + child_allocations[prev, j].size.height;
+                                            }
+
+                                            break;
+                                        }
+
+                                        first = false;
+                                        prev = r;
+                                    }
                                 }
                             }
                         }
 
-                        // Update childs
                         uint prev_row = 0;
                         double delta = 0.0;
                         foreach (unowned Core.Object child in grid)
@@ -522,185 +353,45 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                     {
                                         for (int cpt = 1; cpt < item.columns; ++cpt)
                                         {
-                                            child_allocations[item.row, item.column + cpt].size.width = double.max (child_allocations[item.row, item.column + cpt].size.width,
-                                                                                                                    child_allocations[item.row, item.column].size.width);
-                                            child_allocations[item.row, item.column + cpt].size.height = double.max (child_allocations[item.row, item.column + cpt].size.height,
-                                                                                                                     child_allocations[item.row, item.column].size.height);
+                                            child_allocations[item.row, item.column].size.width += child_allocations[item.row, item.column + cpt].size.width;
                                         }
                                     }
-
 
                                     // calculate size of multiple rows
                                     if (item.rows > 1)
                                     {
                                         for (int cpt = 1; cpt < item.rows; ++cpt)
                                         {
-                                            child_allocations[item.row + cpt, item.column].size.width = double.max (child_allocations[item.row + cpt, item.column].size.width,
-                                                                                                                    child_allocations[item.row, item.column].size.width);
-                                            child_allocations[item.row + cpt, item.column].size.height = double.max (child_allocations[item.row + cpt, item.column].size.height,
-                                                                                                                     child_allocations[item.row, item.column].size.height);
-                                        }
-                                    }
-
-                                    int position_row = (int)item.row;
-                                    int position_column = (int)item.column;
-
-                                    // Search last visible row
-                                    if (item.row > 0)
-                                    {
-                                        position_row = (int)item.row - 1;
-                                        if (child_allocations[item.row - 1, item.column].size.is_empty ())
-                                        {
-                                            bool found = false;
-                                            for (int row = (int)item.row - 1; row >= 0; --row)
-                                            {
-                                                if (!child_allocations[row, item.column].size.is_empty ())
-                                                {
-                                                    position_row = row;
-                                                    found = true;
-                                                    break;
-                                                }
-                                            }
-
-                                            if (!found)
-                                            {
-                                                position_row = -1;
-                                            }
-                                        }
-                                    }
-
-                                    // Search last visible column
-                                    if (item.column > 0)
-                                    {
-                                        position_column = (int)item.column - 1;
-                                        if (child_allocations[item.row, item.column - 1].size.is_empty ())
-                                        {
-                                            bool found = false;
-                                            for (int column = (int)item.column - 1; column >= 0; --column)
-                                            {
-                                                if (!child_allocations[item.row, column].size.is_empty ())
-                                                {
-                                                    position_column = column;
-                                                    found = true;
-                                                    break;
-                                                }
-                                            }
-
-                                            if (!found)
-                                            {
-                                                position_column = -1;
-                                            }
-                                        }
-                                    }
-
-                                    // calculate position after last row/column visible
-                                    if (position_row < item.row || position_column < item.column)
-                                    {
-                                        // the new position is conflict with a visible cell move under the row
-                                        if (position_row < item.row && position_column + 1 < item.column)
-                                        {
-                                            while (!child_allocations[position_row, position_column + 1].size.is_empty ())
-                                            {
-                                                if (position_row + 1 < item.row)
-                                                {
-                                                    if (child_allocations[position_row + 1, position_column + 1].size.is_empty ()) break;
-                                                    position_row++;
-                                                }
-                                                else
-                                                {
-                                                    break;
-                                                }
-                                            }
-                                        }
-
-                                        if (position_row < item.row)
-                                        {
-                                            // no visible last row  found on first row
-                                            if (position_row < 0)
-                                            {
-                                                child_allocations[item.row, item.column].origin.y = 0;
-                                            }
-                                            // calculate position after last visible row
-                                            else
-                                            {
-                                                child_allocations[item.row, item.column].origin.y = child_allocations[position_row, uint.min (position_column + 1, item.column)].origin.y +
-                                                                                                    child_allocations[position_row, uint.min (position_column + 1, item.column)].size.height +
-                                                                                                    grid.row_spacing;
-                                            }
-                                        }
-
-                                        if (position_column < item.column)
-                                        {
-                                            // no visible last column  found on first column
-                                            if (position_column < 0)
-                                            {
-                                                child_allocations[item.row, item.column].origin.x = 0;
-                                            }
-                                            // calculate position after last visible column
-                                            else
-                                            {
-                                                child_allocations[item.row, item.column].origin.x = child_allocations[uint.min (position_row + 1, item.row), position_column].origin.x +
-                                                                                                    child_allocations[uint.min (position_row + 1, item.row), position_column].size.width +
-                                                                                                    grid.column_spacing;
-                                            }
-                                        }
-
-                                        // Update the size of row where we are if we override a empty row
-                                        if ((position_row + 1 < item.row || position_column + 1 < item.column) &&
-                                            child_allocations[uint.min (position_row + 1, item.row), uint.min (position_column + 1, item.column)].size.is_empty ())
-                                        {
-                                            child_allocations[uint.min (position_row + 1, item.row), uint.min (position_column + 1, item.column)] = child_allocations[item.row, item.column];
-                                        }
-                                    }
-
-                                    if (item.columns > 1)
-                                    {
-                                        for (int cpt = 1; cpt < item.columns; ++cpt)
-                                        {
-                                            child_allocations[item.row, item.column + cpt].origin.x = child_allocations[item.row, item.column + cpt - 1].origin.x +
-                                                                                                      child_allocations[item.row, item.column + cpt - 1].size.width +
-                                                                                                      grid.column_spacing;
-                                            child_allocations[item.row, item.column + cpt].origin.y = child_allocations[item.row, item.column + cpt - 1].origin.y;
-                                        }
-                                    }
-
-                                    if (item.rows > 1)
-                                    {
-                                        for (int cpt = 1; cpt < item.rows; ++cpt)
-                                        {
-                                            child_allocations[item.row + cpt, item.column].origin.x = child_allocations[item.row + cpt - 1, item.column].origin.x;
-                                            child_allocations[item.row + cpt, item.column].origin.y = child_allocations[item.row + cpt - 1, item.column].origin.y +
-                                                                                                      child_allocations[item.row + cpt - 1, item.column].size.height +
-                                                                                                      grid.row_spacing;
-                                        }
-                                    }
-
-                                    Graphic.Rectangle area = child_allocations[item.row, item.column];
-                                    area.size.width = double.max (area.size.width, 0);
-                                    area.size.height = double.max (area.size.height, 0);
-
-                                    // If item is under multiple row add height of each row
-                                    if (item.rows > 1)
-                                    {
-                                        for (int cpt = 1; cpt < item.rows; ++cpt)
-                                        {
-                                            area.size.height += child_allocations[item.row + cpt, item.column].size.height + grid.row_spacing;
-                                        }
-                                    }
-
-                                    // If item is under multiple columns add width of each column
-                                    if (item.columns > 1)
-                                    {
-                                        for (int cpt = 1; cpt < item.columns; ++cpt)
-                                        {
-                                            area.size.width += child_allocations[item.row, item.column + cpt].size.width + grid.column_spacing;
+                                            child_allocations[item.row, item.column].size.height += child_allocations[item.row + cpt, item.column].size.height;
                                         }
                                     }
 
                                     // calculate allocation of item
-                                    allocation = Graphic.Rectangle (area.origin.x, area.origin.y, 0, 0);
+                                    allocation = Graphic.Rectangle (child_allocations[item.row, item.column].origin.x,
+                                                                    child_allocations[item.row, item.column].origin.y, 0, 0);
 
                                     Graphic.Size item_size = item.size;
+
+                                    if (item.xfill)
+                                    {
+                                        allocation.size.width = child_allocations[item.row, item.column].size.width;
+                                    }
+                                    else
+                                    {
+                                        allocation.size.width = double.min (item_size.width, child_allocations[item.row, item.column].size.width);
+                                        allocation.origin.x += (child_allocations[item.row, item.column].size.width - item_size.width) * item.xalign;
+                                    }
+
+                                    if (item.yfill)
+                                    {
+                                        allocation.size.height = child_allocations[item.row, item.column].size.height;
+                                    }
+                                    else
+                                    {
+                                        allocation.size.height = double.min (item_size.height, child_allocations[item.row, item.column].size.height);
+                                        allocation.origin.y += (child_allocations[item.row, item.column].size.height - item_size.height) * item.yalign;
+                                    }
+
                                     bool is_page_break = false;
                                     if (page_breaks != null)
                                     {
@@ -729,9 +420,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                         }
 
                                         if (y != allocation.origin.y)
-                                        {
                                             allocation.origin.y = y;
-                                        }
                                     }
 
                                     if (!is_page_break && item.row > prev_row)
@@ -739,69 +428,21 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                         allocation.origin.y += delta;
                                     }
 
-                                    if (item.xfill)
-                                    {
-                                        allocation.size.width = area.size.width - item.left_padding - item.right_padding;
-                                        allocation.origin.x += item.left_padding;
-                                    }
-                                    else if (item.xexpand)
-                                    {
-                                        if (item.xshrink)
-                                            allocation.size.width = double.min (item_size.width, area.size.width - item.left_padding - item.right_padding);
-                                        else
-                                            allocation.size.width = item_size.width;
-
-                                        allocation.origin.x += item.left_padding + (double.max (0, area.size.width - item.left_padding - item.right_padding) - allocation.size.width) * item.xalign;
-                                    }
-                                    else
-                                    {
-                                        if (item.xshrink)
-                                            allocation.size.width = double.min (item_size.width, area.size.width - item.left_padding - item.right_padding);
-                                        else
-                                            allocation.size.width = item_size.width;
-                                        allocation.origin.x += item.left_padding;
-                                    }
-
-                                    if (item.yfill)
-                                    {
-                                        allocation.size.height = area.size.height - item.top_padding - item.bottom_padding;
-                                        allocation.origin.y += item.top_padding;
-                                    }
-                                    else if (item.yexpand)
-                                    {
-                                        if (item.yshrink)
-                                            allocation.size.height = double.min (item_size.height, area.size.height - item.top_padding - item.bottom_padding);
-                                        else
-                                            allocation.size.height = item_size.height;
-
-                                        allocation.origin.y += item.top_padding + (double.max (0, area.size.height - item.top_padding - item.bottom_padding) - allocation.size.height) * item.yalign;
-                                    }
-                                    else
-                                    {
-                                        if (item.yshrink)
-                                            allocation.size.height = double.min (item_size.height, area.size.height - item.top_padding - item.bottom_padding);
-                                        else
-                                            allocation.size.height = item_size.height;
-                                        allocation.origin.y += item.top_padding;
-                                    }
+                                    // suppress padding from item allocation
+                                    allocation.origin.x += item.left_padding;
+                                    allocation.origin.y += item.top_padding;
+                                    allocation.size.width -= item.left_padding + item.right_padding;
+                                    allocation.size.height -= item.top_padding + item.bottom_padding;
 
                                     // update item
                                     Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "update %s: %s", item.name, allocation.to_string ());
-
                                     item.update (inContext, new Graphic.Region (allocation));
-
-                                    // the item is larger than allocate whithout shrink or is lesser than allocate
-                                    if (item.get_qdata<bool> (s_Reallocate))
-                                    {
-                                        item.need_update = true;
-                                        second_pass = true;
-                                    }
 
                                     prev_row = item.row;
 
                                     // item is a grid take its delta
                                     unowned Grid? item_grid = item as Grid;
-                                    if (item_grid != null && item_grid.visible)
+                                    if (item_grid != null)
                                     {
                                         delta += item_grid.get_page_break_delta ();
                                     }
@@ -816,21 +457,709 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                                                                                item_size.width, item_size.height)));
                             }
                         }
+                    }
+                    break;
 
-                        if (second_pass)
+                    case Layout.LINEAR:
+                    {
+                        int pass = 1;
+
+                        Graphic.Rectangle allocation = inAllocation.extents;
+
+                        do
                         {
-                            size_request ();
-                            pass++;
-                            if (pass <= 2)
+                            bool second_pass = false;
+
+                            // Get natural size and the max size of each columns and rows
+                            double[] rows_max_height = new double[rows.length];
+                            double[] columns_max_width = new double[columns.length];
+                            Graphic.Size natural = Graphic.Size (0, 0);
+                            for (int cpt = 0; cpt < rows.length || cpt < columns.length; ++cpt)
                             {
-                                grid.set_qdata<bool> (s_Reallocate, true);
+                                if (cpt < rows.length)
+                                {
+                                    rows_max_height[cpt] = rows[cpt].size.height;
+                                    natural.height += rows_max_height[cpt];
+                                }
+                                if (cpt < columns.length)
+                                {
+                                    columns_max_width[cpt] = columns[cpt].size.width;
+                                    natural.width += columns_max_width[cpt];
+                                }
                             }
-                        }
-                        else
+
+                            // Calculate the the size of shrink
+                            double xshrink = 0;
+                            if (grid.xshrink)
+                                xshrink = double.max (natural.width - (allocation.size.width - (grid.column_spacing * (visible_columns.length - 1))), 0);
+
+                            double yshrink = 0;
+                            if (grid.yshrink)
+                                yshrink = double.max (natural.height - (allocation.size.height - (grid.row_spacing * (visible_rows.length - 1))), 0);
+
+                            // Calculate the the size of xpadding
+                            double xpadding = double.max (allocation.size.width - natural.width - (grid.column_spacing * (visible_columns.length - 1)), 0);
+
+                            // Calculate the the size of ypadding
+                            double ypadding = double.max (allocation.size.height - natural.height - (grid.row_spacing * (visible_rows.length - 1)), 0);
+
+                            // Calculate the max height/width with shrink and padding
+//~                             foreach (unowned Core.Object child in grid)
+//~                             {
+//~                                 unowned ItemPackable? item = child as ItemPackable;
+//~                                 if (item != null)
+//~                                 {
+//~                                     if (item.row < rows.length && item.column < columns.length)
+//~                                     {
+//~                                         Graphic.Size extra = Graphic.Size (0, 0);
+
+//~                                         // calculate the extra space
+//~                                         if (item.xexpand)
+//~                                         {
+//~                                             extra.width += xpadding / rows[item.row].nb_expands;
+//~                                         }
+//~                                         if (item.yexpand)
+//~                                         {
+//~                                             extra.height += ypadding / columns[item.column].nb_expands;
+//~                                         }
+
+//~                                         // remove the shrink space
+//~                                         if (item.xshrink)
+//~                                         {
+//~                                             extra.width -= xshrink / rows[item.row].nb_shrinks;
+//~                                         }
+//~                                         if (item.yshrink)
+//~                                         {
+//~                                             extra.height -= yshrink / columns[item.column].nb_shrinks;
+//~                                         }
+
+//~                                         if (item.visible)
+//~                                         {
+//~                                             columns_max_width[item.column] += extra.width;
+//~                                         }
+//~                                         if (item.visible)
+//~                                         {
+//~                                             rows_max_height[item.row] += extra.height;
+//~                                         }
+//~                                     }
+//~                                 }
+//~                             }
+
+                            // linear allocation
+                            child_allocations = new Graphic.Rectangle [rows.length, columns.length];
+                            for (int i = 0; i < rows.length; ++i)
+                            {
+                                for (int j = 0; j < columns.length; ++j)
+                                {
+                                    child_allocations[i, j].size.width = columns_max_width[j];
+                                    child_allocations[i, j].size.height = rows_max_height[i];
+                                    if (j > 0)
+                                    {
+                                        child_allocations[i, j].origin.y = child_allocations[i, j - 1].origin.x + child_allocations[i, j - 1].size.width + grid.column_spacing;
+                                    }
+                                    else
+                                    {
+                                        child_allocations[i, j].origin.x = 0;
+                                    }
+                                    if (i > 0)
+                                    {
+                                        child_allocations[i, j].origin.y = child_allocations[i - 1, j].origin.y + child_allocations[i - 1, j].size.height + grid.row_spacing;
+                                    }
+                                    else
+                                    {
+                                        child_allocations[i, j].origin.y = 0;
+                                    }
+                                    print(@"child_allocations[$i,$j]: $(child_allocations[i, j])\n");
+                                }
+                            }
+
+
+                            // Update childs
+                            uint prev_row = 0;
+                            double delta = 0.0;
+                            foreach (unowned Core.Object child in grid)
+                            {
+                                if (child is ItemPackable)
+                                {
+                                    unowned ItemPackable item = child as ItemPackable;
+
+                                    if (item.row < rows.length && item.column < columns.length)
+                                    {
+                                        // calculate size of multiple columns
+                                        if (item.columns > 1)
+                                        {
+                                            for (int cpt = 1; cpt < item.columns; ++cpt)
+                                            {
+                                                child_allocations[item.row, item.column].size.width += child_allocations[item.row, item.column + cpt].size.width + grid.column_spacing;
+                                            }
+                                        }
+                                        // calculate size of multiple rows
+                                        if (item.rows > 1)
+                                        {
+                                            for (int cpt = 1; cpt < item.rows; ++cpt)
+                                            {
+                                                child_allocations[item.row, item.column].size.height += child_allocations[item.row, item.column + cpt].size.height + grid.row_spacing;
+                                            }
+                                        }
+
+                                        Graphic.Rectangle area = child_allocations[item.row, item.column];
+                                        area.size.width = double.max (area.size.width, 0);
+                                        area.size.height = double.max (area.size.height, 0);
+
+                                        // calculate allocation of item
+                                        allocation = Graphic.Rectangle (area.origin.x, area.origin.y, 0, 0);
+
+                                        Graphic.Size item_size = item.size;
+                                        bool is_page_break = false;
+                                        if (page_breaks != null)
+                                        {
+                                            double y = allocation.origin.y;
+
+                                            foreach (unowned Document.PageBreak? page_break in page_breaks)
+                                            {
+                                                if (item.row >= page_break.row)
+                                                {
+                                                    Graphic.Point origin = grid.convert_from_window_space (Graphic.Point (0, page_break.start));
+                                                    Graphic.Point final = grid.convert_from_window_space (Graphic.Point (0, page_break.end));
+
+                                                    if (item.row == page_break.row)
+                                                    {
+                                                        y = final.y;
+                                                        page_break.start = grid.convert_to_window_space (allocation.origin).y;
+                                                        is_page_break = true;
+                                                    }
+                                                    else
+                                                    {
+                                                        y = allocation.origin.y;
+                                                        y += final.y - origin.y;
+                                                        is_page_break = true;
+                                                    }
+                                                }
+                                            }
+
+                                            if (y != allocation.origin.y)
+                                            {
+                                                allocation.origin.y = y;
+                                            }
+                                        }
+
+                                        if (!is_page_break && item.row > prev_row)
+                                        {
+                                            allocation.origin.y += delta;
+                                        }
+
+                                        if (item.xfill)
+                                        {
+                                            allocation.size.width = area.size.width - item.left_padding - item.right_padding;
+                                            allocation.origin.x += item.left_padding;
+                                        }
+                                        else if (item.xexpand)
+                                        {
+                                            if (item.xshrink)
+                                                allocation.size.width = double.min (item_size.width, area.size.width - item.left_padding - item.right_padding);
+                                            else
+                                                allocation.size.width = item_size.width;
+
+                                            allocation.origin.x += item.left_padding + (double.max (0, area.size.width - item.left_padding - item.right_padding) - allocation.size.width) * item.xalign;
+                                        }
+                                        else
+                                        {
+                                            if (item.xshrink)
+                                                allocation.size.width = double.min (item_size.width, area.size.width - item.left_padding - item.right_padding);
+                                            else
+                                                allocation.size.width = item_size.width;
+                                            allocation.origin.x += item.left_padding;
+                                        }
+
+                                        if (item.yfill)
+                                        {
+                                            allocation.size.height = area.size.height - item.top_padding - item.bottom_padding;
+                                            allocation.origin.y += item.top_padding;
+                                        }
+                                        else if (item.yexpand)
+                                        {
+                                            if (item.yshrink)
+                                                allocation.size.height = double.min (item_size.height, area.size.height - item.top_padding - item.bottom_padding);
+                                            else
+                                                allocation.size.height = item_size.height;
+
+                                            allocation.origin.y += item.top_padding + (double.max (0, area.size.height - item.top_padding - item.bottom_padding) - allocation.size.height) * item.yalign;
+                                        }
+                                        else
+                                        {
+                                            if (item.yshrink)
+                                                allocation.size.height = double.min (item_size.height, area.size.height - item.top_padding - item.bottom_padding);
+                                            else
+                                                allocation.size.height = item_size.height;
+                                            allocation.origin.y += item.top_padding;
+                                        }
+
+                                        // update item
+                                        Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "update %s: %s", item.name, allocation.to_string ());
+
+                                        item.update (inContext, new Graphic.Region (allocation));
+
+                                        // the item is larger than allocate whithout shrink or is lesser than allocate
+                                        if (item.get_qdata<bool> (s_Reallocate))
+                                        {
+                                            item.need_update = true;
+                                            second_pass = true;
+                                        }
+
+                                        prev_row = item.row;
+
+                                        // item is a grid take its delta
+                                        unowned Grid? item_grid = item as Grid;
+                                        if (item_grid != null && item_grid.visible)
+                                        {
+                                            delta += item_grid.get_page_break_delta ();
+                                        }
+                                    }
+                                }
+                                else if (child is Item)
+                                {
+                                    unowned Item item = (Item)child;
+                                    var item_position = item.position;
+                                    var item_size = item.size;
+                                    item.update (inContext, new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y,
+                                                                                                   item_size.width, item_size.height)));
+                                }
+                            }
+
+                            if (second_pass)
+                            {
+                                size_request ();
+                                pass++;
+                                if (pass <= 2)
+                                {
+                                    grid.set_qdata<bool> (s_Reallocate, true);
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        } while (pass <= 2);
+                    }
+                    break;
+
+                    case Layout.FREE:
+                    {
+                        int pass = 1;
+
+                        do
                         {
-                            break;
-                        }
-                    } while (pass <= 2);
+                            bool second_pass = false;
+
+                            // Get natural size
+                            Graphic.Size natural = Graphic.Size (0, 0);
+
+                            for (int cpt = 0; cpt < rows.length || cpt < columns.length; ++cpt)
+                            {
+                                if (cpt < rows.length) natural.height += rows[cpt].size.height;
+                                if (cpt < columns.length) natural.width += columns[cpt].size.width;
+                            }
+
+                            Graphic.Rectangle allocation = inAllocation.extents;
+
+                            // Calculate the the size of shrink
+                            double xshrink = 0;
+                            if (grid.xshrink)
+                                xshrink = double.max (natural.width - (allocation.size.width - (grid.column_spacing * (visible_columns.length - 1))), 0);
+
+                            double yshrink = 0;
+                            if (grid.yshrink)
+                                yshrink = double.max (natural.height - (allocation.size.height - (grid.row_spacing * (visible_rows.length - 1))), 0);
+
+                            // Calculate the the size of xpadding
+                            double xpadding = double.max (allocation.size.width - natural.width - (grid.column_spacing * (visible_columns.length - 1)), 0);
+
+                            // Calculate the the size of ypadding
+                            double ypadding = double.max (allocation.size.height - natural.height - (grid.row_spacing * (visible_rows.length - 1)), 0);
+
+#if MAIA_DEBUG
+                            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s natural: %s padding: %g,%g", grid.name, natural.to_string (), xpadding, ypadding);
+#endif
+
+                            // append padding
+                            child_allocations = new Graphic.Rectangle [rows.length, columns.length];
+                            foreach (unowned Core.Object child in grid)
+                            {
+                                if (child is ItemPackable)
+                                {
+                                    unowned ItemPackable item = (ItemPackable)child;
+
+                                    if (item.row < rows.length && item.column < columns.length)
+                                    {
+                                        Graphic.Size extra = Graphic.Size (0, 0);
+
+                                        // calculate the extra space
+                                        if (item.xexpand)
+                                        {
+                                            extra.width += xpadding / rows[item.row].nb_expands;
+                                        }
+                                        if (item.yexpand)
+                                        {
+                                            extra.height += ypadding / columns[item.column].nb_expands;
+                                        }
+
+                                        // remove the shrink space
+                                        if (item.xshrink)
+                                        {
+                                            extra.width -= xshrink / rows[item.row].nb_shrinks;
+                                        }
+                                        if (item.yshrink)
+                                        {
+                                            extra.height -= yshrink / columns[item.column].nb_shrinks;
+                                        }
+
+                                        if (item.visible || !item.xlimp)
+                                        {
+                                            child_allocations[item.row, item.column].size.width = double.max (child_allocations[item.row, item.column].size.width,
+                                                                                                              columns[item.column].size.width + extra.width);
+                                        }
+                                        if (item.visible || !item.ylimp)
+                                        {
+                                            child_allocations[item.row, item.column].size.height = double.max (child_allocations[item.row, item.column].size.height,
+                                                                                                               rows[item.row].size.height + extra.height);
+                                        }
+
+#if MAIA_DEBUG
+                                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s extra: %s", grid.name, item.name, extra.to_string ());
+                                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s row: %g, column: %g", grid.name, item.name, columns[item.column].size.width, rows[item.row].size.height);
+                                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "grid %s child %s rows %u columns %u allocation: %s", grid.name, item.name, item.rows, item.columns, child_allocations[item.row, item.column].to_string ());
+#endif
+                                    }
+                                }
+                            }
+
+                            // Update childs
+                            uint prev_row = 0;
+                            double delta = 0.0;
+                            foreach (unowned Core.Object child in grid)
+                            {
+                                if (child is ItemPackable)
+                                {
+                                    unowned ItemPackable item = (ItemPackable)child;
+
+                                    if (item.row < rows.length && item.column < columns.length)
+                                    {
+                                        // calculate size of multiple columns
+                                        if (item.columns > 1)
+                                        {
+                                            for (int cpt = 1; cpt < item.columns; ++cpt)
+                                            {
+                                                child_allocations[item.row, item.column + cpt].size.width = double.max (child_allocations[item.row, item.column + cpt].size.width,
+                                                                                                                        child_allocations[item.row, item.column].size.width);
+                                                child_allocations[item.row, item.column + cpt].size.height = double.max (child_allocations[item.row, item.column + cpt].size.height,
+                                                                                                                         child_allocations[item.row, item.column].size.height);
+                                            }
+                                        }
+
+
+                                        // calculate size of multiple rows
+                                        if (item.rows > 1)
+                                        {
+                                            for (int cpt = 1; cpt < item.rows; ++cpt)
+                                            {
+                                                child_allocations[item.row + cpt, item.column].size.width = double.max (child_allocations[item.row + cpt, item.column].size.width,
+                                                                                                                        child_allocations[item.row, item.column].size.width);
+                                                child_allocations[item.row + cpt, item.column].size.height = double.max (child_allocations[item.row + cpt, item.column].size.height,
+                                                                                                                         child_allocations[item.row, item.column].size.height);
+                                            }
+                                        }
+
+                                        int position_row = (int)item.row;
+                                        int position_column = (int)item.column;
+
+                                        // Search last visible row
+                                        if (item.row > 0)
+                                        {
+                                            position_row = (int)item.row - 1;
+                                            if (child_allocations[item.row - 1, item.column].size.is_empty ())
+                                            {
+                                                bool found = false;
+                                                for (int row = (int)item.row - 1; row >= 0; --row)
+                                                {
+                                                    if (!child_allocations[row, item.column].size.is_empty ())
+                                                    {
+                                                        position_row = row;
+                                                        found = true;
+                                                        break;
+                                                    }
+                                                }
+
+                                                if (!found)
+                                                {
+                                                    position_row = -1;
+                                                }
+                                            }
+                                        }
+
+                                        // Search last visible column
+                                        if (item.column > 0)
+                                        {
+                                            position_column = (int)item.column - 1;
+                                            if (child_allocations[item.row, item.column - 1].size.is_empty ())
+                                            {
+                                                bool found = false;
+                                                for (int column = (int)item.column - 1; column >= 0; --column)
+                                                {
+                                                    if (!child_allocations[item.row, column].size.is_empty ())
+                                                    {
+                                                        position_column = column;
+                                                        found = true;
+                                                        break;
+                                                    }
+                                                }
+
+                                                if (!found)
+                                                {
+                                                    position_column = -1;
+                                                }
+                                            }
+                                        }
+
+                                        // calculate position after last row/column visible
+                                        if (position_row < item.row || position_column < item.column)
+                                        {
+                                            // the new position is conflict with a visible cell move under the row
+                                            if (position_row < item.row && position_column + 1 < item.column)
+                                            {
+                                                while (!child_allocations[position_row, position_column + 1].size.is_empty ())
+                                                {
+                                                    if (position_row + 1 < item.row)
+                                                    {
+                                                        if (child_allocations[position_row + 1, position_column + 1].size.is_empty ()) break;
+                                                        position_row++;
+                                                    }
+                                                    else
+                                                    {
+                                                        break;
+                                                    }
+                                                }
+                                            }
+
+                                            if (position_row < item.row)
+                                            {
+                                                // no visible last row  found on first row
+                                                if (position_row < 0)
+                                                {
+                                                    child_allocations[item.row, item.column].origin.y = 0;
+                                                }
+                                                // calculate position after last visible row
+                                                else
+                                                {
+                                                    child_allocations[item.row, item.column].origin.y = child_allocations[position_row, uint.min (position_column + 1, item.column)].origin.y +
+                                                                                                        child_allocations[position_row, uint.min (position_column + 1, item.column)].size.height +
+                                                                                                        grid.row_spacing;
+                                                }
+                                            }
+
+                                            if (position_column < item.column)
+                                            {
+                                                // no visible last column  found on first column
+                                                if (position_column < 0)
+                                                {
+                                                    child_allocations[item.row, item.column].origin.x = 0;
+                                                }
+                                                // calculate position after last visible column
+                                                else
+                                                {
+                                                    child_allocations[item.row, item.column].origin.x = child_allocations[uint.min (position_row + 1, item.row), position_column].origin.x +
+                                                                                                        child_allocations[uint.min (position_row + 1, item.row), position_column].size.width +
+                                                                                                        grid.column_spacing;
+                                                }
+                                            }
+
+                                            // Update the size of row where we are if we override a empty row
+                                            if ((position_row + 1 < item.row || position_column + 1 < item.column) &&
+                                                child_allocations[uint.min (position_row + 1, item.row), uint.min (position_column + 1, item.column)].size.is_empty ())
+                                            {
+                                                child_allocations[uint.min (position_row + 1, item.row), uint.min (position_column + 1, item.column)] = child_allocations[item.row, item.column];
+                                            }
+                                        }
+
+                                        if (item.columns > 1)
+                                        {
+                                            for (int cpt = 1; cpt < item.columns; ++cpt)
+                                            {
+                                                child_allocations[item.row, item.column + cpt].origin.x = child_allocations[item.row, item.column + cpt - 1].origin.x +
+                                                                                                          child_allocations[item.row, item.column + cpt - 1].size.width +
+                                                                                                          grid.column_spacing;
+                                                child_allocations[item.row, item.column + cpt].origin.y = child_allocations[item.row, item.column + cpt - 1].origin.y;
+                                            }
+                                        }
+
+                                        if (item.rows > 1)
+                                        {
+                                            for (int cpt = 1; cpt < item.rows; ++cpt)
+                                            {
+                                                child_allocations[item.row + cpt, item.column].origin.x = child_allocations[item.row + cpt - 1, item.column].origin.x;
+                                                child_allocations[item.row + cpt, item.column].origin.y = child_allocations[item.row + cpt - 1, item.column].origin.y +
+                                                                                                          child_allocations[item.row + cpt - 1, item.column].size.height +
+                                                                                                          grid.row_spacing;
+                                            }
+                                        }
+
+                                        Graphic.Rectangle area = child_allocations[item.row, item.column];
+                                        area.size.width = double.max (area.size.width, 0);
+                                        area.size.height = double.max (area.size.height, 0);
+
+                                        // If item is under multiple row add height of each row
+                                        if (item.rows > 1)
+                                        {
+                                            for (int cpt = 1; cpt < item.rows; ++cpt)
+                                            {
+                                                area.size.height += child_allocations[item.row + cpt, item.column].size.height + grid.row_spacing;
+                                            }
+                                        }
+
+                                        // If item is under multiple columns add width of each column
+                                        if (item.columns > 1)
+                                        {
+                                            for (int cpt = 1; cpt < item.columns; ++cpt)
+                                            {
+                                                area.size.width += child_allocations[item.row, item.column + cpt].size.width + grid.column_spacing;
+                                            }
+                                        }
+
+                                        // calculate allocation of item
+                                        allocation = Graphic.Rectangle (area.origin.x, area.origin.y, 0, 0);
+
+                                        Graphic.Size item_size = item.size;
+                                        bool is_page_break = false;
+                                        if (page_breaks != null)
+                                        {
+                                            double y = allocation.origin.y;
+
+                                            foreach (unowned Document.PageBreak? page_break in page_breaks)
+                                            {
+                                                if (item.row >= page_break.row)
+                                                {
+                                                    Graphic.Point origin = grid.convert_from_window_space (Graphic.Point (0, page_break.start));
+                                                    Graphic.Point final = grid.convert_from_window_space (Graphic.Point (0, page_break.end));
+
+                                                    if (item.row == page_break.row)
+                                                    {
+                                                        y = final.y;
+                                                        page_break.start = grid.convert_to_window_space (allocation.origin).y;
+                                                        is_page_break = true;
+                                                    }
+                                                    else
+                                                    {
+                                                        y = allocation.origin.y;
+                                                        y += final.y - origin.y;
+                                                        is_page_break = true;
+                                                    }
+                                                }
+                                            }
+
+                                            if (y != allocation.origin.y)
+                                            {
+                                                allocation.origin.y = y;
+                                            }
+                                        }
+
+                                        if (!is_page_break && item.row > prev_row)
+                                        {
+                                            allocation.origin.y += delta;
+                                        }
+
+                                        if (item.xfill)
+                                        {
+                                            allocation.size.width = area.size.width - item.left_padding - item.right_padding;
+                                            allocation.origin.x += item.left_padding;
+                                        }
+                                        else if (item.xexpand)
+                                        {
+                                            if (item.xshrink)
+                                                allocation.size.width = double.min (item_size.width, area.size.width - item.left_padding - item.right_padding);
+                                            else
+                                                allocation.size.width = item_size.width;
+
+                                            allocation.origin.x += item.left_padding + (double.max (0, area.size.width - item.left_padding - item.right_padding) - allocation.size.width) * item.xalign;
+                                        }
+                                        else
+                                        {
+                                            if (item.xshrink)
+                                                allocation.size.width = double.min (item_size.width, area.size.width - item.left_padding - item.right_padding);
+                                            else
+                                                allocation.size.width = item_size.width;
+                                            allocation.origin.x += item.left_padding;
+                                        }
+
+                                        if (item.yfill)
+                                        {
+                                            allocation.size.height = area.size.height - item.top_padding - item.bottom_padding;
+                                            allocation.origin.y += item.top_padding;
+                                        }
+                                        else if (item.yexpand)
+                                        {
+                                            if (item.yshrink)
+                                                allocation.size.height = double.min (item_size.height, area.size.height - item.top_padding - item.bottom_padding);
+                                            else
+                                                allocation.size.height = item_size.height;
+
+                                            allocation.origin.y += item.top_padding + (double.max (0, area.size.height - item.top_padding - item.bottom_padding) - allocation.size.height) * item.yalign;
+                                        }
+                                        else
+                                        {
+                                            if (item.yshrink)
+                                                allocation.size.height = double.min (item_size.height, area.size.height - item.top_padding - item.bottom_padding);
+                                            else
+                                                allocation.size.height = item_size.height;
+                                            allocation.origin.y += item.top_padding;
+                                        }
+
+                                        // update item
+                                        Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "update %s: %s", item.name, allocation.to_string ());
+
+                                        item.update (inContext, new Graphic.Region (allocation));
+
+                                        // the item is larger than allocate whithout shrink or is lesser than allocate
+                                        if (item.get_qdata<bool> (s_Reallocate))
+                                        {
+                                            item.need_update = true;
+                                            second_pass = true;
+                                        }
+
+                                        prev_row = item.row;
+
+                                        // item is a grid take its delta
+                                        unowned Grid? item_grid = item as Grid;
+                                        if (item_grid != null && item_grid.visible)
+                                        {
+                                            delta += item_grid.get_page_break_delta ();
+                                        }
+                                    }
+                                }
+                                else if (child is Item)
+                                {
+                                    unowned Item item = (Item)child;
+                                    var item_position = item.position;
+                                    var item_size = item.size;
+                                    item.update (inContext, new Graphic.Region (Graphic.Rectangle (item_position.x, item_position.y,
+                                                                                                   item_size.width, item_size.height)));
+                                }
+                            }
+
+                            if (second_pass)
+                            {
+                                size_request ();
+                                pass++;
+                                if (pass <= 2)
+                                {
+                                    grid.set_qdata<bool> (s_Reallocate, true);
+                                }
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        } while (pass <= 2);
+                    }
+                    break;
                 }
             }
         }
@@ -932,7 +1261,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
 
     internal Graphic.Pattern backcell_pattern { get; set; default = null; }
 
-    public bool   homogeneous       { get; set; default = false; }
+    public Layout layout            { get; set; default = Layout.FREE; }
     public double row_spacing       { get; set; default = 0; }
     public double column_spacing    { get; set; default = 0; }
 
@@ -943,6 +1272,25 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
     static construct
     {
         s_Reallocate = GLib.Quark.from_string ("MaiaGridItemReallocate");
+
+        Manifest.Attribute.register_transform_func (typeof (Layout), attribute_to_layout);
+
+        GLib.Value.register_transform_func (typeof (Layout), typeof (string), layout_to_value_string);
+    }
+
+    static void
+    attribute_to_layout (Manifest.Attribute inAttribute, ref GLib.Value outValue)
+    {
+        outValue = Layout.from_string (inAttribute.get ());
+    }
+
+    static void
+    layout_to_value_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (Layout)))
+    {
+        Layout val = (Layout)inSrc;
+
+        outDest = val.to_string ();
     }
 
     // methods

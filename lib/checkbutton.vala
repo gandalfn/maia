@@ -171,7 +171,7 @@ public class Maia.CheckButton : Toggle
             inContext.fill (path);
 
             path = new Graphic.Path ();
-            path.rectangle (1.5, 1.5, main_content_size.height - 3, main_content_size.height - 3, 5, 5);
+            path.rectangle (line_width, line_width, main_content_size.height - (line_width * 2.0), main_content_size.height - (line_width * 2.0), 5, 5);
             inContext.pattern = color;
             inContext.fill (path);
 
