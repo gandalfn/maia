@@ -1224,14 +1224,6 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                 inContext.line_width = border_line_width;
                 inContext.stroke (path);
             }
-            else if (background_pattern[state] != null && grid_line_width > 0)
-            {
-                Graphic.Path path = new Graphic.Path.from_region (area);
-
-                inContext.pattern = background_pattern[state];
-                inContext.line_width = grid_line_width * 2.0;
-                inContext.stroke (path);
-            }
         }
     }
 

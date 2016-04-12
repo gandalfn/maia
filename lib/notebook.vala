@@ -19,20 +19,82 @@
 
 public class Maia.Notebook : Grid
 {
+    // type
+    public enum Transition
+    {
+        NONE,
+        OPACITY,
+        SLIDE,
+        ZOOM;
+
+        public string
+        to_string ()
+        {
+            switch (this)
+            {
+                case OPACITY:
+                    return "opacity";
+
+                case SLIDE:
+                    return "slide";
+
+                case ZOOM:
+                    return "zoom";
+            }
+
+            return "none";
+        }
+
+        public static Transition
+        from_string (string inValue)
+        {
+            switch (inValue.down ())
+            {
+                case "opacity":
+                    return OPACITY;
+
+                case "slide":
+                    return SLIDE;
+
+                case "zoom":
+                    return ZOOM;
+            }
+
+            return NONE;
+        }
+    }
+
     // static properties
     private static GLib.Quark s_QuarkNotebookPageNum;
 
     // properties
-    private uint         m_Page = 0;
-    private uint         m_NbPages = 0;
-    private ToggleGroup  m_TabGroup;
-    private unowned Grid m_Tab = null;
-    private Placement    m_Placement = Placement.TOP;
+    private uint            m_Page = 0;
+    private uint            m_NbPages = 0;
+    private ToggleGroup     m_TabGroup;
+    private unowned Grid    m_Tab = null;
+    private Placement       m_Placement = Placement.TOP;
+    private Graphic.Surface m_CurrentPage = null;
+    private Graphic.Surface m_PrevPage = null;
+    private Core.Animator   m_SwitchAnimator = null;
+    private uint            m_SwitchTransition = 0;
+    private double          m_SwitchProgress = 1.0;
+    private bool            m_SwitchDirectionUp = false;
 
     // accessors
     internal override string tag {
         get {
             return "Notebook";
+        }
+    }
+
+    [CCode (notify = false)]
+    internal double switch_progress {
+        get {
+            return m_SwitchProgress;
+        }
+        set {
+            m_SwitchProgress = value;
+            damage.post ();
         }
     }
 
@@ -162,14 +224,22 @@ public class Maia.Notebook : Grid
         default = Placement.TOP;
     }
 
+    /**
+     * Transition animation
+     */
+    [CCode (notify = false)]
+    public Transition transition { get; set; default = Transition.NONE; }
+
     // static methods
     static construct
     {
         s_QuarkNotebookPageNum = GLib.Quark.from_string ("MaiaNotebookPageNum");
 
         Manifest.Attribute.register_transform_func (typeof (Placement), attribute_to_tab_placement);
+        Manifest.Attribute.register_transform_func (typeof (Transition), attribute_to_transition);
 
         GLib.Value.register_transform_func (typeof (Placement), typeof (string), tab_placement_to_value_string);
+        GLib.Value.register_transform_func (typeof (Transition), typeof (string), transition_to_value_string);
     }
 
     static void
@@ -187,9 +257,27 @@ public class Maia.Notebook : Grid
         outDest = val.to_string ();
     }
 
+    static void
+    attribute_to_transition (Manifest.Attribute inAttribute, ref GLib.Value outValue)
+    {
+        outValue = Transition.from_string (inAttribute.get ());
+    }
+
+    static void
+    transition_to_value_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (Transition)))
+    {
+        Transition val = (Transition)inSrc;
+
+        outDest = val.to_string ();
+    }
+
     // methods
     construct
     {
+        // create switch animator
+        m_SwitchAnimator = new Core.Animator (60, 120);
+
         // Create tab toggle group
         m_TabGroup = new ToggleGroup (@"$(name)-group");
         m_TabGroup.exclusive = true;
@@ -228,6 +316,8 @@ public class Maia.Notebook : Grid
                 prev.visible = false;
             }
 
+            m_SwitchDirectionUp = inPage > m_Page;
+
             m_Page = inPage;
 
             // Get current page
@@ -240,8 +330,36 @@ public class Maia.Notebook : Grid
                     m_TabGroup.active = current.toggle.name;
                     current.toggle.active = true;
                 }
+
+                // prepare animation
+                if (m_CurrentPage != null && transition != Transition.NONE)
+                {
+                    m_PrevPage = m_CurrentPage;
+
+                    m_SwitchAnimator.stop ();
+
+                    if (m_SwitchTransition > 0)
+                    {
+                        m_SwitchAnimator.remove_transition (m_SwitchTransition);
+                    }
+
+                    m_SwitchTransition = m_SwitchAnimator.add_transition (0, 1, Core.Animator.ProgressType.EXPONENTIAL, null, on_transition_finished);
+                    m_SwitchProgress = 1.0 - m_SwitchProgress;
+                    GLib.Value from = m_SwitchProgress;
+                    GLib.Value to = 1.0;
+                    m_SwitchAnimator.add_transition_property (m_SwitchTransition, this, "switch-progress", from, to);
+                    m_SwitchAnimator.start ();
+                }
             }
         }
+    }
+
+    private void
+    on_transition_finished ()
+    {
+        m_PrevPage = null;
+        m_SwitchProgress = 1.0;
+        m_SwitchTransition = 0;
     }
 
     private void
@@ -256,18 +374,15 @@ public class Maia.Notebook : Grid
                 unowned Toggle? found = null;
                 foreach (unowned Toggle? toggle in m_TabGroup.toggles)
                 {
-                    print (@"$(toggle != null) && $(toggle.get_qdata<uint> (s_QuarkNotebookPageNum)) == $cpt\n");
                     if (toggle != null && toggle.get_qdata<uint> (s_QuarkNotebookPageNum) == cpt)
                     {
                         found = toggle;
-                        print(@"found: $(found != null)\n");
                         break;
                     }
                 }
 
                 if (found != page.toggle)
                 {
-                    print(@"toggle found: $(found != null)\n");
                     m_TabGroup.remove_button (found);
                     if (found.parent == m_Tab)
                     {
@@ -305,7 +420,6 @@ public class Maia.Notebook : Grid
             {
                 if (toggle.name == args.active)
                 {
-                    print(@"$(toggle.name) active switch to $(toggle.get_qdata<uint> (s_QuarkNotebookPageNum))\n");
                     switch_page (toggle.get_qdata<uint> (s_QuarkNotebookPageNum));
                     break;
                 }
@@ -428,6 +542,123 @@ public class Maia.Notebook : Grid
         }
 
         return ret;
+    }
+
+    internal override void
+    update (Graphic.Context inContext, Graphic.Region inAllocation) throws Graphic.Error
+    {
+        base.update (inContext, inAllocation);
+
+        var item_size = Graphic.Size (0, 0);
+        foreach (unowned Core.Object child in this)
+        {
+            unowned NotebookPage? page = child as NotebookPage;
+            if (page != null && page.visible)
+            {
+                var page_size = page.geometry.extents.size;
+                item_size.width = double.max (item_size.width, page_size.width);
+                item_size.height = double.max (item_size.height, page_size.height);
+            }
+        }
+        m_CurrentPage = new Graphic.Surface.similar (inContext.surface, (uint)GLib.Math.ceil (item_size.width), (uint)GLib.Math.ceil (item_size.height));
+        m_CurrentPage.clear ();
+    }
+
+    internal override void
+    paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
+    {
+        m_CurrentPage.clear ();
+        var ctx = m_CurrentPage.context;
+        var page_origin = Graphic.Point (0, 0);
+
+        ctx.save ();
+        {
+            // paint childs
+            foreach (unowned Core.Object child in this)
+            {
+                unowned NotebookPage? page = child as NotebookPage;
+                if (page != null && page.visible)
+                {
+                    page_origin = page.geometry.extents.origin;
+                    ctx.translate (page_origin.invert ());
+                    page.draw (ctx, area_to_child_item_space (page, inArea));
+                    break;
+                }
+            }
+        }
+        ctx.restore ();
+
+        inContext.save ();
+        {
+            // Draw tab
+            m_Tab.draw (inContext, area_to_child_item_space (m_Tab, inArea));
+
+            // Paint page
+            inContext.translate (page_origin);
+            switch (transition)
+            {
+                case Transition.OPACITY:
+                    if (m_PrevPage != null && m_SwitchProgress < 1.0)
+                    {
+                        inContext.pattern = m_PrevPage;
+                        inContext.paint_with_alpha (1 - m_SwitchProgress);
+                    }
+                    inContext.pattern = m_CurrentPage;
+                    inContext.paint_with_alpha (m_SwitchProgress);
+                    break;
+
+                case Transition.ZOOM:
+                    if (m_SwitchDirectionUp)
+                    {
+                        if (m_PrevPage != null && m_SwitchProgress < 1.0)
+                        {
+                            double scale = 0.5 + ((1.0 - m_SwitchProgress) / 2.0);
+                            var surface_size = m_PrevPage.size;
+                            inContext.save ();
+                            {
+                                inContext.translate (Graphic.Point ((surface_size.width - (surface_size.width * scale)) / 2.0,
+                                                                    (surface_size.height - (surface_size.height * scale)) / 2.0));
+                                inContext.transform = new Graphic.Transform.init_scale (scale, scale);
+                                inContext.pattern = m_PrevPage;
+                                inContext.paint_with_alpha (1 - m_SwitchProgress);
+                            }
+                            inContext.restore ();
+                        }
+                        inContext.pattern = m_CurrentPage;
+                        inContext.paint_with_alpha (m_SwitchProgress);
+                    }
+                    else
+                    {
+                        if (m_PrevPage != null && m_SwitchProgress < 1.0)
+                        {
+                            inContext.pattern = m_PrevPage;
+                            inContext.paint_with_alpha (1 - m_SwitchProgress);
+                        }
+
+                        if (m_SwitchProgress > 0)
+                        {
+                            double scale = 0.5 + (m_SwitchProgress / 2.0);
+                            var surface_size = m_CurrentPage.size;
+                            inContext.save ();
+                            {
+                                inContext.translate (Graphic.Point ((surface_size.width - (surface_size.width * scale)) / 2.0,
+                                                                    (surface_size.height - (surface_size.height * scale)) / 2.0));
+                                inContext.transform = new Graphic.Transform.init_scale (scale, scale);
+                                inContext.pattern = m_CurrentPage;
+                                inContext.paint_with_alpha (m_SwitchProgress);
+                            }
+                            inContext.restore ();
+                        }
+                    }
+                    break;
+
+                default:
+                    inContext.pattern = m_CurrentPage;
+                    inContext.paint ();
+                    break;
+            }
+        }
+        inContext.restore ();
     }
 
     public unowned NotebookPage?

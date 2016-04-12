@@ -106,6 +106,7 @@ public class Maia.Application : Maia.Core.Object
     {
         Manifest.Element.register ("Group",          typeof (Group));
         Manifest.Element.register ("Rectangle",      typeof (Rectangle));
+        Manifest.Element.register ("Line",           typeof (Line));
         Manifest.Element.register ("Path",           typeof (Path));
         Manifest.Element.register ("Image",          typeof (Image));
         Manifest.Element.register ("Label",          typeof (Label));

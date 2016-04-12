@@ -514,6 +514,7 @@ public class Maia.Popup : Group
             m_Transition = m_Animator.add_transition (0.0, 1.0, Core.Animator.ProgressType.SINUSOIDAL, null, on_show_animation_finished);
 
             // Add property transitrion
+            set_property (prop, from);
             m_Animator.add_transition_property (m_Transition, this, prop, from, to);
 
             // Start animation
@@ -603,6 +604,7 @@ public class Maia.Popup : Group
             m_Transition = m_Animator.add_transition (0.0, 1.0, Core.Animator.ProgressType.SINUSOIDAL, null, on_hide_animation_finished);
 
             // Add property transitrion
+            set_property (prop, from);
             m_Animator.add_transition_property (m_Transition, this, prop, from, to);
 
             // Start animation

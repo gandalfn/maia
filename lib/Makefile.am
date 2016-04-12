@@ -205,7 +205,8 @@ libmaia_la_SOURCES = \
     step-button.vala \
     placement.vala \
     notebook-page.vala \
-    notebook.vala
+    notebook.vala \
+    line.vala
 
 libmaia_la_VALAFLAGS = \
     --pkg=gvalue-collect \
