@@ -206,7 +206,9 @@ libmaia_la_SOURCES = \
     placement.vala \
     notebook-page.vala \
     notebook.vala \
-    line.vala
+    line.vala \
+    table-view.vala \
+    table-view-column.vala
 
 libmaia_la_VALAFLAGS = \
     --pkg=gvalue-collect \

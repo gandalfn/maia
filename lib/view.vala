@@ -23,7 +23,6 @@ public class Maia.View : Maia.Grid
     public delegate bool SetPropertyFunc (GLib.Object inObject, string inProperty, string inColumnName, uint inRow);
 
     // properties
-    private string                  m_ModelName = null;
     private Model                   m_Model = null;
     private bool                    m_HideIfEmpty = false;
     private unowned SetPropertyFunc m_SetPropertyFunc = null;
@@ -43,39 +42,8 @@ public class Maia.View : Maia.Grid
     public uint lines { get; set; default = 1; }
     public Orientation orientation { get; set; default = Orientation.VERTICAL; }
 
-    public string model_name {
-        get {
-            return m_ModelName;
-        }
-        set {
-            if (value != m_ModelName)
-            {
-                m_ModelName = value;
-                model = find_model (value);
-            }
-        }
-        default = null;
-    }
-
     public Model model {
         get {
-            if (m_ModelName != null && m_Model == null)
-            {
-                m_Model = find_model (m_ModelName);
-
-                if (m_Model != null)
-                {
-                    m_Model.row_added.connect (on_row_added);
-                    m_Model.row_deleted.connect (on_row_deleted);
-                    m_Model.rows_reordered.connect (on_rows_reordered);
-
-                    // Add all row already inserted
-                    for (uint cpt = 0; cpt < m_Model.nb_rows; ++cpt)
-                    {
-                        m_Model.row_added (cpt);
-                    }
-                }
-            }
             return m_Model;
         }
         set {
@@ -83,15 +51,15 @@ public class Maia.View : Maia.Grid
             {
                 if (m_Model != null)
                 {
-                    m_Model.row_added.disconnect (on_row_added);
-                    m_Model.row_deleted.disconnect (on_row_deleted);
-                    m_Model.rows_reordered.disconnect (on_rows_reordered);
-
                     // Remove all rows
                     for (uint cpt = 0; cpt < m_Model.nb_rows; ++cpt)
                     {
                         m_Model.row_deleted (cpt);
                     }
+
+                    m_Model.row_added.disconnect (on_row_added);
+                    m_Model.row_deleted.disconnect (on_row_deleted);
+                    m_Model.rows_reordered.disconnect (on_rows_reordered);
                 }
 
                 m_Model = value;
@@ -161,6 +129,12 @@ public class Maia.View : Maia.Grid
     }
 
     // static methods
+    static construct
+    {
+        // Ref Mpdel class to register model transform
+        typeof (Model).class_ref ();
+    }
+
     private static void
     on_bind_value_changed (Manifest.AttributeBind inAttribute, Object inSrc, string inProperty, uint inRow)
     {
@@ -203,56 +177,17 @@ public class Maia.View : Maia.Grid
     construct
     {
         // Add not dumpable attributes
-        not_dumpable_attributes.insert ("model");
         not_dumpable_attributes.insert ("highlighted-row");
 
         // Add notifications
         notifications.add (new Manifest.Document.AttributeBindAddedNotification ("attribute-bind-added"));
 
         notify["item-over-pointer"].connect (on_pointer_over_changed);
-        notify["root"].connect (on_root_change);
     }
 
     public View (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
-    }
-
-    private void
-    on_root_change ()
-    {
-        if (m_ModelName != null && m_Model == null)
-        {
-            model = find_model (m_ModelName);
-        }
-    }
-
-    private inline unowned Model?
-    find_model (string? inName)
-    {
-        unowned Model? model = null;
-
-        if (inName != null)
-        {
-            for (unowned Core.Object item = parent; item != null; item = item.parent)
-            {
-                unowned View? view = item.parent as View;
-
-                // If view is in view search model in cell first
-                if (view != null)
-                {
-                    model = item.find (GLib.Quark.from_string (inName), false) as Model;
-                    if (model != null) break;
-                }
-                // We not found model in view parents search in root
-                else if (item.parent == null)
-                {
-                    model = item.find (GLib.Quark.from_string (inName)) as Model;
-                }
-            }
-        }
-
-        return model;
     }
 
     private void
@@ -552,8 +487,6 @@ public class Maia.View : Maia.Grid
 
         need_update = true;
     }
-
-
 
     internal override void
     on_read_manifest (Manifest.Document inDocument) throws Core.ParseError

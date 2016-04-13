@@ -344,6 +344,50 @@ public class Maia.Model : Core.Object, Manifest.Element
     public signal void row_deleted    (uint inRow);
     public signal void rows_reordered (uint[] inNewOrder);
 
+    // static methods
+    static construct
+    {
+        Manifest.Attribute.register_transform_func (typeof (Model), attribute_to_model);
+
+        GLib.Value.register_transform_func (typeof (Model), typeof (string), model_to_value_string);
+    }
+
+    static void
+    attribute_to_model (Manifest.Attribute inAttribute, ref GLib.Value outValue)
+    {
+        unowned Core.Object object = inAttribute.owner as Core.Object;
+        unowned Model? model = null;
+
+        GLib.Quark id  = GLib.Quark.from_string (inAttribute.get ());
+        for (unowned Core.Object item = object.parent; item != null; item = item.parent)
+        {
+            unowned View? view = item.parent as View;
+
+            // If view is in view search model in cell first
+            if (view != null)
+            {
+                model = item.find (id, false) as Model;
+                if (model != null) break;
+            }
+            // We not found model in view parents search in root
+            else if (item.parent == null)
+            {
+                model = item.find (id) as Model;
+            }
+        }
+
+        outValue = model;
+    }
+
+    static void
+    model_to_value_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (Model)))
+    {
+        unowned Model val = (Model)inSrc;
+
+        outDest = val.name;
+    }
+
     // methods
     construct
     {

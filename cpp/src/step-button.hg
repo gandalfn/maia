@@ -81,9 +81,6 @@ namespace Maia
             _WRAP_METHOD(guint get_active () const, maia_step_button_get_active)
             _WRAP_METHOD(void set_active (guint inActive), maia_step_button_set_active)
 
-            _WRAP_METHOD(Glib::ustring get_model_name () const, maia_step_button_get_model_name)
-            _WRAP_METHOD(void set_model_name (const Glib::ustring& inModelName), maia_step_button_set_model_name)
-
             _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_step_button_get_model, refreturn)
             _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_step_button_set_model)
 
@@ -98,7 +95,6 @@ namespace Maia
             _WRAP_PROPERTY("spacing", double)
             _WRAP_PROPERTY("active", guint)
             _WRAP_PROPERTY("can-focus", bool)
-            _WRAP_PROPERTY("model-name", Glib::ustring)
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
 
             _WRAP_PROPERTY("clicked", Glib::RefPtr<Core::Event>)

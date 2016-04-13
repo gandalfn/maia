@@ -52,7 +52,6 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
     }
 
     // properties
-    private string                 m_ModelName = null;
     private uint                   m_Active = 0;
     private Core.Animator          m_Animator = null;
     private uint                   m_Transition = 0;
@@ -135,23 +134,6 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
     public bool sensitive { get; set; default = true; }
 
     /**
-     * Model name
-     */
-    [CCode (notify = false)]
-    public string model_name {
-        get {
-            return m_ModelName;
-        }
-        set {
-            if (value != m_ModelName)
-            {
-                m_ModelName = value;
-                m_View.model = find_model (value);
-            }
-        }
-    }
-
-    /**
      * Model
      */
     [CCode (notify = false)]
@@ -222,6 +204,13 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
      */
     public Core.Event changed { get; private set; }
 
+    // static methods
+    static construct
+    {
+        // Ref Mpdel class to register model transform
+        typeof (Model).class_ref ();
+    }
+
     // methods
     construct
     {
@@ -265,34 +254,6 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
     public StepButton (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
-    }
-
-    private inline unowned Model?
-    find_model (string? inName)
-    {
-        unowned Model? model = null;
-
-        if (inName != null)
-        {
-            for (unowned Core.Object item = parent; item != null; item = item.parent)
-            {
-                unowned View? view = item.parent as View;
-
-                // If view is in view search model in cell first
-                if (view != null)
-                {
-                    model = item.find (GLib.Quark.from_string (inName), false) as Model;
-                    if (model != null) break;
-                }
-                // We not found model in view parents search in root
-                else if (item.parent == null)
-                {
-                    model = item.find (GLib.Quark.from_string (inName)) as Model;
-                }
-            }
-        }
-
-        return model;
     }
 
     internal override Graphic.Size

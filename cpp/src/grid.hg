@@ -37,6 +37,8 @@ namespace Maia
             _CTOR_DEFAULT()
 
         public:
+            _WRAP_ENUM(class Layout, MaiaGridLayout, s#GRID_LAYOUT_##, NO_GTYPE)
+
             static Glib::RefPtr<Grid> create (const Glib::ustring& inId)
             {
                 MaiaGrid* pGrid = maia_grid_new (inId.c_str ());
@@ -44,8 +46,8 @@ namespace Maia
                 return Glib::RefPtr<Grid> (new Grid (pGrid));
             }
 
-            _WRAP_METHOD(bool get_homogeneous () const, maia_grid_get_homogeneous)
-            _WRAP_METHOD(void set_homogeneous (bool inHomogenous), maia_grid_set_homogeneous)
+            _WRAP_METHOD(Grid::Layout get_layout () const, maia_grid_get_layout)
+            _WRAP_METHOD(void set_layout (Grid::Layout inLayout), maia_grid_set_layout)
 
             _WRAP_METHOD(double get_row_spacing () const, maia_grid_get_row_spacing)
             _WRAP_METHOD(void set_row_spacing (double inSpacing) const, maia_grid_set_row_spacing)
@@ -59,7 +61,7 @@ namespace Maia
             _WRAP_METHOD(double get_grid_line_width () const, maia_grid_get_grid_line_width)
             _WRAP_METHOD(void set_grid_line_width (double inLineWidth) const, maia_grid_set_grid_line_width)
 
-            _WRAP_PROPERTY("homogeneous", bool)
+            _WRAP_PROPERTY("layout", Grid::Layout)
             _WRAP_PROPERTY("row-spacing", double)
             _WRAP_PROPERTY("column-spacing", double)
             _WRAP_PROPERTY("border-line-width", double)

@@ -4946,6 +4946,23 @@
 
 ;; Original typedef:
 ;; typedef enum  {
+;; 	MAIA_GRID_LAYOUT_FREE,
+;; 	MAIA_GRID_LAYOUT_HOMOGENEOUS,
+;; 	MAIA_GRID_LAYOUT_LINEAR
+;; } MaiaGridLayout;
+
+(define-enum-extended GridLayout
+  (in-module "Maia")
+  (c-name "MaiaGridLayout")
+  (values
+    '("free" "MAIA_GRID_LAYOUT_FREE" "0")
+    '("homogeneous" "MAIA_GRID_LAYOUT_HOMOGENEOUS" "1")
+    '("linear" "MAIA_GRID_LAYOUT_LINEAR" "2")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
 ;; 	MAIA_BUTTON_RELIEF_NORMAL,
 ;; 	MAIA_BUTTON_RELIEF_NONE
 ;; } MaiaButtonRelief;

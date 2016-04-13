@@ -95,6 +95,8 @@ public class Maia.NotebookPage : Group, ItemPackable
     static construct
     {
         Manifest.Attribute.register_transform_func (typeof (Toggle), attribute_to_toggle);
+
+        GLib.Value.register_transform_func (typeof (Toggle), typeof (string), toggle_value_to_string);
     }
 
     static void
@@ -125,6 +127,15 @@ public class Maia.NotebookPage : Group, ItemPackable
         }
 
         outValue = toggle;
+    }
+
+    static void
+    toggle_value_to_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (Toggle)))
+    {
+        unowned Toggle val = (Toggle)inSrc;
+
+        outDest = val.name;
     }
 
     // methods

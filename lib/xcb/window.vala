@@ -425,10 +425,6 @@ internal class Maia.Xcb.Window : Maia.Window
 
                 m_View.position = Graphic.Point (double.max (geo.origin.x, 0), double.max (geo.origin.y, 0));
             }
-            else
-            {
-                print (@"position: $position win_pos: $(m_View.position) root_pos: $(m_View.root_position)\n");
-            }
         }
     }
 

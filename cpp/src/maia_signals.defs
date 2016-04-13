@@ -2692,10 +2692,10 @@
   (construct-only #f)
 )
 
-(define-property homogeneous
+(define-property layout
   (of-object "MaiaGrid")
-  (prop-type "GParamBoolean")
-  (docs "homogeneous")
+  (prop-type "GParamEnum")
+  (docs "layout")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -4841,15 +4841,6 @@
   (construct-only #f)
 )
 
-(define-property model-name
-  (of-object "MaiaView")
-  (prop-type "GParamString")
-  (docs "model-name")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
 (define-property model
   (of-object "MaiaView")
   (prop-type "GParamObject")
@@ -6602,15 +6593,6 @@
   (construct-only #f)
 )
 
-(define-property model-name
-  (of-object "MaiaChartView")
-  (prop-type "GParamString")
-  (docs "model-name")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
 (define-property model
   (of-object "MaiaChartView")
   (prop-type "GParamObject")
@@ -7664,15 +7646,6 @@
   (of-object "MaiaStepButton")
   (prop-type "GParamBoolean")
   (docs "sensitive")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
-(define-property model-name
-  (of-object "MaiaStepButton")
-  (prop-type "GParamString")
-  (docs "model-name")
   (readable #t)
   (writable #t)
   (construct-only #f)

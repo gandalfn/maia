@@ -957,6 +957,18 @@
   (gtype-id "MAIA_TYPE_STEP_BUTTON_CHANGED_EVENT_ARGS")
 )
 
+(define-object MaiaTableView
+  (parent "MaiaGrid")
+  (c-name "MaiaTableView")
+  (gtype-id "MAIA_TYPE_TABLE_VIEW")
+)
+
+(define-object MaiaTableViewColumn
+  (parent "MaiaItem")
+  (c-name "MaiaTableViewColumn")
+  (gtype-id "MAIA_TYPE_TABLE_VIEW_COLUMN")
+)
+
 (define-object MaiaToggle
   (parent "MaiaGroup")
   (c-name "MaiaToggle")
@@ -3602,6 +3614,16 @@
     '("focus-out" "MAIA_ENTRY_CHANGED_MASK_FOCUS_OUT")
     '("return" "MAIA_ENTRY_CHANGED_MASK_RETURN")
     '("each-text-update" "MAIA_ENTRY_CHANGED_MASK_EACH_TEXT_UPDATE")
+  )
+)
+
+(define-enum MaiaGridLayout
+  (c-name "MaiaGridLayout")
+  (gtype-id "MAIA_TYPE_GRID_LAYOUT")
+  (values
+    '("free" "MAIA_GRID_LAYOUT_FREE")
+    '("homogeneous" "MAIA_GRID_LAYOUT_HOMOGENEOUS")
+    '("linear" "MAIA_GRID_LAYOUT_LINEAR")
   )
 )
 
@@ -17614,6 +17636,25 @@
   (return-type "GType")
 )
 
+(define-function maia_grid_layout_get_type
+  (c-name "maia_grid_layout_get_type")
+  (return-type "GType")
+)
+
+(define-method to_string
+  (of-object "MaiaGridLayout")
+  (c-name "maia_grid_layout_to_string")
+  (return-type "gchar*")
+)
+
+(define-function maia_grid_layout_from_string
+  (c-name "maia_grid_layout_from_string")
+  (return-type "MaiaGridLayout")
+  (parameters
+    '("const-gchar*" "inValue")
+  )
+)
+
 (define-function maia_grid_new
   (c-name "maia_grid_new")
   (is-constructor-of "MaiaGrid")
@@ -17632,18 +17673,18 @@
   )
 )
 
-(define-method get_homogeneous
+(define-method get_layout
   (of-object "MaiaGrid")
-  (c-name "maia_grid_get_homogeneous")
-  (return-type "gboolean")
+  (c-name "maia_grid_get_layout")
+  (return-type "MaiaGridLayout")
 )
 
-(define-method set_homogeneous
+(define-method set_layout
   (of-object "MaiaGrid")
-  (c-name "maia_grid_set_homogeneous")
+  (c-name "maia_grid_set_layout")
   (return-type "none")
   (parameters
-    '("gboolean" "value")
+    '("MaiaGridLayout" "value")
   )
 )
 
@@ -19555,21 +19596,6 @@
   )
 )
 
-(define-method get_model_name
-  (of-object "MaiaView")
-  (c-name "maia_view_get_model_name")
-  (return-type "const-gchar*")
-)
-
-(define-method set_model_name
-  (of-object "MaiaView")
-  (c-name "maia_view_set_model_name")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "value")
-  )
-)
-
 (define-method get_model
   (of-object "MaiaView")
   (c-name "maia_view_get_model")
@@ -21039,21 +21065,6 @@
   )
 )
 
-(define-method get_model_name
-  (of-object "MaiaChartView")
-  (c-name "maia_chart_view_get_model_name")
-  (return-type "const-gchar*")
-)
-
-(define-method set_model_name
-  (of-object "MaiaChartView")
-  (c-name "maia_chart_view_set_model_name")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "value")
-  )
-)
-
 (define-method get_model
   (of-object "MaiaChartView")
   (c-name "maia_chart_view_get_model")
@@ -21999,21 +22010,6 @@
   )
 )
 
-(define-method get_model_name
-  (of-object "MaiaStepButton")
-  (c-name "maia_step_button_get_model_name")
-  (return-type "const-gchar*")
-)
-
-(define-method set_model_name
-  (of-object "MaiaStepButton")
-  (c-name "maia_step_button_set_model_name")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "value")
-  )
-)
-
 (define-method get_model
   (of-object "MaiaStepButton")
   (c-name "maia_step_button_get_model")
@@ -22316,6 +22312,149 @@
   (parameters
     '("GType" "object_type")
     '("const-gchar*" "inId")
+  )
+)
+
+(define-function maia_table_view_get_type
+  (c-name "maia_table_view_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_table_view_new
+  (c-name "maia_table_view_new")
+  (is-constructor-of "MaiaTableView")
+  (return-type "MaiaTableView*")
+  (parameters
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-function maia_table_view_construct
+  (c-name "maia_table_view_construct")
+  (return-type "MaiaTableView*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-method set_property_func
+  (of-object "MaiaTableView")
+  (c-name "maia_table_view_set_property_func")
+  (return-type "none")
+  (parameters
+    '("MaiaTableViewSetPropertyFunc" "inFunc")
+    '("void*" "inFunc_target")
+  )
+)
+
+(define-method get_item_row
+  (of-object "MaiaTableView")
+  (c-name "maia_table_view_get_item_row")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaItemPackable*" "inItem")
+    '("guint*" "outRow")
+  )
+)
+
+(define-method get_model
+  (of-object "MaiaTableView")
+  (c-name "maia_table_view_get_model")
+  (return-type "MaiaModel*")
+)
+
+(define-method set_model
+  (of-object "MaiaTableView")
+  (c-name "maia_table_view_set_model")
+  (return-type "none")
+  (parameters
+    '("MaiaModel*" "value")
+  )
+)
+
+(define-method get_highlighted_row
+  (of-object "MaiaTableView")
+  (c-name "maia_table_view_get_highlighted_row")
+  (return-type "gint")
+)
+
+(define-method set_highlighted_row
+  (of-object "MaiaTableView")
+  (c-name "maia_table_view_set_highlighted_row")
+  (return-type "none")
+  (parameters
+    '("gint" "value")
+  )
+)
+
+(define-method get_hide_if_model_empty
+  (of-object "MaiaTableView")
+  (c-name "maia_table_view_get_hide_if_model_empty")
+  (return-type "gboolean")
+)
+
+(define-method set_hide_if_model_empty
+  (of-object "MaiaTableView")
+  (c-name "maia_table_view_set_hide_if_model_empty")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
+(define-function maia_table_view_column_get_type
+  (c-name "maia_table_view_column_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_table_view_column_new
+  (c-name "maia_table_view_column_new")
+  (is-constructor-of "MaiaTableViewColumn")
+  (return-type "MaiaTableViewColumn*")
+  (parameters
+    '("const-gchar*" "inId")
+    '("MaiaModel*" "inModel")
+  )
+)
+
+(define-function maia_table_view_column_construct
+  (c-name "maia_table_view_column_construct")
+  (return-type "MaiaTableViewColumn*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+    '("MaiaModel*" "inModel")
+  )
+)
+
+(define-method get_label
+  (of-object "MaiaTableViewColumn")
+  (c-name "maia_table_view_column_get_label")
+  (return-type "const-gchar*")
+)
+
+(define-method set_label
+  (of-object "MaiaTableViewColumn")
+  (c-name "maia_table_view_column_set_label")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_model
+  (of-object "MaiaTableViewColumn")
+  (c-name "maia_table_view_column_get_model")
+  (return-type "MaiaModel*")
+)
+
+(define-method set_model
+  (of-object "MaiaTableViewColumn")
+  (c-name "maia_table_view_column_set_model")
+  (return-type "none")
+  (parameters
+    '("MaiaModel*" "value")
   )
 )
 
