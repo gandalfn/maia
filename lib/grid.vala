@@ -62,12 +62,16 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         public Graphic.Size size;
         public uint nb_expands;
         public uint nb_shrinks;
+        public bool linear_expands;
+        public bool linear_shrinks;
 
         public LineSizeAllocation ()
         {
             size = Graphic.Size (0, 0);
             nb_expands = 0;
             nb_shrinks = 0;
+            linear_expands = false;
+            linear_shrinks = false;
         }
     }
 
@@ -172,6 +176,10 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         rows[item.row].nb_expands += item.xexpand ? 1 : 0;
                         // count the number of shrink in row
                         rows[item.row].nb_shrinks += item.xshrink ? 1 : 0;
+                        // set linear expand in row
+                        rows[item.row].linear_expands |= item.yexpand;
+                        // set linear shrink in row
+                        rows[item.row].linear_shrinks |= item.yshrink;
                     }
 
                     if (item.visible || !item.ylimp)
@@ -180,6 +188,10 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         columns[item.column].nb_expands += item.yexpand ? 1 : 0;
                         // count the number of yexpand in column
                         columns[item.column].nb_shrinks += item.yshrink ? 1 : 0;
+                        // set linear expand in column
+                        columns[item.column].linear_expands |= item.xexpand;
+                        // set linear shrink in column
+                        columns[item.column].linear_shrinks |= item.xshrink;
                     }
 
                     if (item.columns > 1 && (item.visible || !item.xlimp))
@@ -192,6 +204,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                             columns[item.column + cpt].size.width = double.max (columns[item.column + cpt].size.width, item_size.width / item.columns);
                             columns[item.column + cpt].size.height += item_size.height / item.rows;
                             columns[item.column + cpt].nb_expands += item.yexpand ? 1 : 0;
+                            columns[item.column + cpt].linear_expands |= item.xexpand;
                         }
                     }
 
@@ -205,6 +218,7 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                             rows[item.row + cpt].size.width += item_size.width / item.columns;
                             rows[item.row + cpt].size.height = double.max (rows[item.row + cpt].size.height, item_size.height / item.rows);
                             rows[item.row + cpt].nb_expands += item.xexpand ? 1 : 0;
+                            rows[item.row + cpt].linear_expands |= item.yexpand;
                         }
                     }
                 }
@@ -504,46 +518,72 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                             double ypadding = double.max (allocation.size.height - natural.height - (grid.row_spacing * (visible_rows.length - 1)), 0);
 
                             // Calculate the max height/width with shrink and padding
-//~                             foreach (unowned Core.Object child in grid)
-//~                             {
-//~                                 unowned ItemPackable? item = child as ItemPackable;
-//~                                 if (item != null)
-//~                                 {
-//~                                     if (item.row < rows.length && item.column < columns.length)
-//~                                     {
-//~                                         Graphic.Size extra = Graphic.Size (0, 0);
+                            double[] rows_extra_width = new double[rows.length];
+                            double[] columns_extra_height = new double[columns.length];
+                            for (int i = 0; i < rows.length; ++i)
+                            {
+                                double extra_width = 0;
+                                uint nb_expands = 0;
+                                uint nb_shrinks = 0;
 
-//~                                         // calculate the extra space
-//~                                         if (item.xexpand)
-//~                                         {
-//~                                             extra.width += xpadding / rows[item.row].nb_expands;
-//~                                         }
-//~                                         if (item.yexpand)
-//~                                         {
-//~                                             extra.height += ypadding / columns[item.column].nb_expands;
-//~                                         }
+                                for (int j = 0; j < columns.length; ++j)
+                                {
+                                    if (columns[j].linear_expands)
+                                    {
+                                        nb_expands++;
+                                    }
+                                    if (columns[j].linear_shrinks)
+                                    {
+                                        nb_shrinks++;
+                                    }
+                                }
 
-//~                                         // remove the shrink space
-//~                                         if (item.xshrink)
-//~                                         {
-//~                                             extra.width -= xshrink / rows[item.row].nb_shrinks;
-//~                                         }
-//~                                         if (item.yshrink)
-//~                                         {
-//~                                             extra.height -= yshrink / columns[item.column].nb_shrinks;
-//~                                         }
+                                // calculate the extra space
+                                if (nb_expands > 0)
+                                {
+                                    extra_width += xpadding / nb_expands;
+                                }
 
-//~                                         if (item.visible)
-//~                                         {
-//~                                             columns_max_width[item.column] += extra.width;
-//~                                         }
-//~                                         if (item.visible)
-//~                                         {
-//~                                             rows_max_height[item.row] += extra.height;
-//~                                         }
-//~                                     }
-//~                                 }
-//~                             }
+                                // remove the shrink space
+                                if (nb_shrinks > 0)
+                                {
+                                    extra_width -= xshrink / nb_shrinks;
+                                }
+
+                                rows_extra_width[i] = double.max (rows_extra_width[i], extra_width);
+                            }
+                            for (int i = 0; i < columns.length; ++i)
+                            {
+                                double extra_height = 0;
+                                uint nb_expands = 0;
+                                uint nb_shrinks = 0;
+
+                                for (int j = 0; j < rows.length; ++j)
+                                {
+                                    if (rows[j].linear_expands)
+                                    {
+                                        nb_expands++;
+                                    }
+                                    if (rows[j].linear_shrinks)
+                                    {
+                                        nb_shrinks++;
+                                    }
+                                }
+
+                                // calculate the extra space
+                                if (nb_expands > 0)
+                                {
+                                    extra_height += ypadding / nb_expands;
+                                }
+
+                                // remove the shrink space
+                                if (nb_shrinks > 0)
+                                {
+                                    extra_height -= yshrink / nb_shrinks;
+                                }
+
+                                columns_extra_height[i] = double.max (columns_extra_height[i], extra_height);
+                            }
 
                             // linear allocation
                             child_allocations = new Graphic.Rectangle [rows.length, columns.length];
@@ -551,11 +591,11 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                             {
                                 for (int j = 0; j < columns.length; ++j)
                                 {
-                                    child_allocations[i, j].size.width = columns_max_width[j];
-                                    child_allocations[i, j].size.height = rows_max_height[i];
+                                    child_allocations[i, j].size.width = columns_max_width[j] + rows_extra_width[i];
+                                    child_allocations[i, j].size.height = rows_max_height[i] + columns_extra_height[j];
                                     if (j > 0)
                                     {
-                                        child_allocations[i, j].origin.y = child_allocations[i, j - 1].origin.x + child_allocations[i, j - 1].size.width + grid.column_spacing;
+                                        child_allocations[i, j].origin.x = child_allocations[i, j - 1].origin.x + child_allocations[i, j - 1].size.width + grid.column_spacing;
                                     }
                                     else
                                     {
