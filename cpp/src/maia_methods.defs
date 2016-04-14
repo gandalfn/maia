@@ -1059,6 +1059,12 @@
   (gtype-id "MAIA_TYPE_VIEW")
 )
 
+(define-object MaiaViewItemAddedRemovedNotification
+  (parent "MaiaCoreNotification")
+  (c-name "MaiaViewItemAddedRemovedNotification")
+  (gtype-id "MAIA_TYPE_VIEW_ITEM_ADDED_REMOVED_NOTIFICATION")
+)
+
 (define-object MaiaVisibilityEventArgs
   (parent "MaiaCoreEventArgs")
   (c-name "MaiaVisibilityEventArgs")
@@ -19639,6 +19645,38 @@
   (parameters
     '("gboolean" "value")
   )
+)
+
+(define-function maia_view_item_added_removed_notification_get_type
+  (c-name "maia_view_item_added_removed_notification_get_type")
+  (return-type "GType")
+)
+
+(define-method get_item_added
+  (of-object "MaiaView")
+  (c-name "maia_view_get_item_added")
+  (return-type "MaiaViewItemAddedRemovedNotification*")
+)
+
+(define-method get_item_removed
+  (of-object "MaiaView")
+  (c-name "maia_view_get_item_removed")
+  (return-type "MaiaViewItemAddedRemovedNotification*")
+)
+
+(define-method post
+  (of-object "MaiaViewItemAddedRemovedNotification")
+  (c-name "maia_view_item_added_removed_notification_post")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-method get_item
+  (of-object "MaiaViewItemAddedRemovedNotification")
+  (c-name "maia_view_item_added_removed_notification_get_item")
+  (return-type "MaiaItem*")
 )
 
 (define-function maia_drawing_area_get_type

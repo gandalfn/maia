@@ -111,6 +111,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_TOGGLE_BUTTON);
     std::cout << get_defs (MAIA_TYPE_POPUP_BUTTON);
     std::cout << get_defs (MAIA_TYPE_VIEW);
+    std::cout << get_defs (MAIA_VIEW_TYPE_ITEM_ADDED_REMOVED_NOTIFICATION);
     std::cout << get_defs (MAIA_TYPE_SHORTCUT);
     std::cout << get_defs (MAIA_TYPE_POPUP);
     std::cout << get_defs (MAIA_TYPE_COMBO);

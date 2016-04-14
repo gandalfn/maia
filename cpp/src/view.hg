@@ -23,13 +23,30 @@
 #include <maiamm/item.h>
 #include <maiamm/model.h>
 #include <maiamm/item-packable.h>
+#include <maiamm/item.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/grid_p.h)
+_PINCLUDE(maiamm/private/core-notification_p.h)
 
 namespace Maia
 {
     _WRAP_ENUM(class Orientation, MaiaOrientation, s#ORIENTATION_##, NO_GTYPE)
+
+    class ViewItemAddedRemovedNotification : public Core::Notification
+    {
+        _CLASS_GOBJECT(ViewItemAddedRemovedNotification, MaiaViewItemAddedRemovedNotification, MAIA_VIEW_ITEM_ADDED_REMOVED_NOTIFICATION, Core::Notification, MaiaCoreNotification)
+
+        protected:
+            _CTOR_DEFAULT()
+
+        public:
+            _WRAP_METHOD(Glib::RefPtr<Item> get_item () const, maia_view_item_added_removed_notification_get_item, refreturn)
+
+            _WRAP_METHOD(void post (const Glib::RefPtr<Item>& inItem), maia_view_item_added_removed_notification_post)
+
+            _WRAP_PROPERTY("item", Glib::RefPtr<Item>)
+    };
 
     class View : public Grid
     {
@@ -47,6 +64,9 @@ namespace Maia
                 MaiaView* pView = maia_view_new (inId.c_str());
                 return Glib::RefPtr<View> (new View (pView));
             }
+
+            _WRAP_METHOD(Glib::RefPtr<ViewItemAddedRemovedNotification> item_added () const, maia_view_get_item_added, refreturn)
+            _WRAP_METHOD(Glib::RefPtr<ViewItemAddedRemovedNotification> item_removed () const, maia_view_get_item_removed, refreturn)
 
             _WRAP_METHOD(guint get_lines () const, maia_view_get_lines)
             _WRAP_METHOD(void set_lines (guint inLines), maia_view_set_lines)
@@ -110,5 +130,8 @@ namespace Maia
 
             static gboolean set_property_func_callback (GObject* inpObject, const char* inProperty, const char* inColumn, guint inRow, void* inpData);
             static void set_property_func_destroy (void* inpData);
+
+            _WRAP_PROPERTY("item-added", Glib::RefPtr<ViewItemAddedRemovedNotification>)
+            _WRAP_PROPERTY("item-removed", Glib::RefPtr<ViewItemAddedRemovedNotification>)
     };
 }

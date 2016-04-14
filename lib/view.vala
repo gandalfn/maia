@@ -19,6 +19,36 @@
 
 public class Maia.View : Maia.Grid
 {
+    // types
+    public class ItemAddedRemovedNotification : Core.Notification
+    {
+        // properties
+        private unowned Item? m_Item;
+
+        // accessors
+        public unowned Item? item {
+            get {
+                return m_Item;
+            }
+        }
+
+        // methods
+        internal ItemAddedRemovedNotification (string inName)
+        {
+            base (inName);
+        }
+
+        public new void
+        post (Item? inItem)
+        {
+            m_Item = inItem;
+
+            base.post ();
+
+            m_Item = null;
+        }
+    }
+
     // delegates
     public delegate bool SetPropertyFunc (GLib.Object inObject, string inProperty, string inColumnName, uint inRow);
 
@@ -128,6 +158,19 @@ public class Maia.View : Maia.Grid
         }
     }
 
+    // notifications
+    public unowned ItemAddedRemovedNotification item_added {
+        get {
+            return notifications["item-added"] as ItemAddedRemovedNotification;
+        }
+    }
+
+    public unowned ItemAddedRemovedNotification item_removed {
+        get {
+            return notifications["item-removed"] as ItemAddedRemovedNotification;
+        }
+    }
+
     // static methods
     static construct
     {
@@ -181,6 +224,8 @@ public class Maia.View : Maia.Grid
 
         // Add notifications
         notifications.add (new Manifest.Document.AttributeBindAddedNotification ("attribute-bind-added"));
+        notifications.add (new ItemAddedRemovedNotification ("item-added"));
+        notifications.add (new ItemAddedRemovedNotification ("item-removed"));
 
         notify["item-over-pointer"].connect (on_pointer_over_changed);
     }
@@ -398,6 +443,7 @@ public class Maia.View : Maia.Grid
                 item.column = inRow % lines;
             }
             add (item);
+            item_added.post (item);
 
             // connect onto cell button press
             item.button_press_event.connect (on_item_button_press);
@@ -417,23 +463,29 @@ public class Maia.View : Maia.Grid
 
         if (item != null)
         {
-            // disconnect from cell button press
-            item.button_press_event.disconnect (on_item_button_press);
-
-            // dettach item
-            item.parent = null;
-
-            // unshift all siblings item
-            unshift (inRow);
-
-            if (m_HideIfEmpty && visible && m_Model.nb_rows == 0)
+            item.ref ();
             {
-                visible = false;
-                int count = get_qdata<int> (Item.s_CountHide);
-                count++;
-                set_qdata<int> (Item.s_CountHide, count);
-                not_dumpable_attributes.insert ("visible");
+                // disconnect from cell button press
+                item.button_press_event.disconnect (on_item_button_press);
+
+                // dettach item
+                item.parent = null;
+
+                // unshift all siblings item
+                unshift (inRow);
+
+                if (m_HideIfEmpty && visible && m_Model.nb_rows == 0)
+                {
+                    visible = false;
+                    int count = get_qdata<int> (Item.s_CountHide);
+                    count++;
+                    set_qdata<int> (Item.s_CountHide, count);
+                    not_dumpable_attributes.insert ("visible");
+                }
+
+                item_removed.post (item);
             }
+            item.unref ();
         }
     }
 
