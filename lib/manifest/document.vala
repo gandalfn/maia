@@ -178,7 +178,7 @@ public class Maia.Manifest.Document : Core.Parser
             if (u != (unichar) (-1))
                 next_unichar (u);
             else
-                throw new Core.ParseError.INVALID_UTF8 ("Invalid UTF-8 character at %i,%i", m_Line, m_Col);
+                throw new Core.ParseError.INVALID_UTF8 (@"Invalid UTF-8 character at $m_Line,$m_Col  : $(get_current_line ())");
 
             skip_space ();
         }

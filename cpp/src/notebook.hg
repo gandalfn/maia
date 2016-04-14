@@ -40,6 +40,8 @@ namespace Maia
             _CTOR_DEFAULT()
 
         public:
+            _WRAP_ENUM(class Transition, MaiaNotebookTransition, s#NOTEBOOK_TRANSITION_##, NO_GTYPE)
+
             static Glib::RefPtr<Notebook> create (const Glib::ustring& inId)
             {
                 MaiaNotebook* pNotebook = maia_notebook_new (inId.c_str ());
@@ -61,6 +63,9 @@ namespace Maia
             _WRAP_METHOD(Placement get_tab_placement () const, maia_notebook_get_tab_placement)
             _WRAP_METHOD(void set_tab_placement (Placement inPlacement), maia_notebook_set_tab_placement)
 
+            _WRAP_METHOD(Notebook::Transition get_transition () const, maia_notebook_get_transition)
+            _WRAP_METHOD(void set_transition (Notebook::Transition inTransition), maia_notebook_set_transition)
+
             _WRAP_METHOD(Glib::RefPtr<NotebookPage> get_nth_page (guint inNumPage) const, maia_notebook_get_nth_page)
 
             _WRAP_PROPERTY("page", guint)
@@ -68,5 +73,9 @@ namespace Maia
             _WRAP_PROPERTY("show-tabs", bool)
             _WRAP_PROPERTY("expand-tabs", bool)
             _WRAP_PROPERTY("tab-placement", Placement)
+            _WRAP_PROPERTY("transition", Notebook::Transition)
+
+        private:
+            _WRAP_PROPERTY("switch-progress", double)
     };
 }

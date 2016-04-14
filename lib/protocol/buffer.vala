@@ -194,7 +194,7 @@ public class Maia.Protocol.Buffer : Core.Parser
             }
             else
             {
-                throw new Core.ParseError.INVALID_UTF8 (@"Invalid UTF-8 character at $(GLib.Path.get_basename (m_Filename)):$m_Line,$m_Col");
+                throw new Core.ParseError.INVALID_UTF8 (@"Invalid UTF-8 character at $(GLib.Path.get_basename (m_Filename)):$m_Line,$m_Col : $(get_current_line ())");
             }
 
             if (!have_char)

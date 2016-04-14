@@ -40,7 +40,7 @@ public class Maia.TableView : Maia.Grid
 
                     foreach (unowned ItemPackable item in m_Items)
                     {
-                        item.row = m_Row;
+                        item.row = m_Row + 1;
                     }
                 }
             }
@@ -71,7 +71,7 @@ public class Maia.TableView : Maia.Grid
             {
                 ItemPackable? item = column.create_cell ();
 
-                item.row = m_Row;
+                item.row = m_Row + 1;
                 item.column = cpt;
 
                 m_View.add (item);
@@ -239,6 +239,11 @@ public class Maia.TableView : Maia.Grid
             }
         }
     }
+
+    /**
+     * Header pattern
+     */
+    public Graphic.Pattern header_pattern { get; set; default = null; }
 
     // static methods
     static construct
@@ -415,6 +420,12 @@ public class Maia.TableView : Maia.Grid
         {
             unowned TableViewColumn column = inObject as TableViewColumn;
             column.model = m_Model;
+
+            var header = column.header;
+            header.row = 0;
+            header.column = m_Columns.length;
+            add (header);
+
             m_Columns.insert (column);
 
             m_Rows.clear ();
@@ -439,6 +450,7 @@ public class Maia.TableView : Maia.Grid
         {
             unowned TableViewColumn column = inObject as TableViewColumn;
             m_Columns.remove (column);
+            column.header.parent = null;
 
             m_Rows.clear ();
             if (m_Model != null)
@@ -460,6 +472,38 @@ public class Maia.TableView : Maia.Grid
     {
         Graphic.Color color = fill_pattern[state] as Graphic.Color ?? new Graphic.Color (0.7, 0.7, 0.7);
         Graphic.Color shade = new Graphic.Color.shade (color, 0.6);
+
+        if (header_pattern != null)
+        {
+            var col_geo = new Graphic.Region ();
+            foreach (unowned TableViewColumn column in m_Columns)
+            {
+                col_geo.union_ (column.header.geometry);
+            }
+
+
+            var col_area = col_geo.extents;
+            col_area.translate (Graphic.Point (0, -(row_spacing / 2.0)));
+            col_area.resize (Graphic.Size (0, row_spacing));
+
+            var path = new Graphic.Path.from_rectangle (col_area);
+            inContext.pattern = header_pattern;
+            inContext.fill (path);
+
+            if (stroke_pattern[state] != null)
+            {
+                path = new Graphic.Path ();
+                for (int cpt = 0; cpt < col_geo.length - 1; ++cpt)
+                {
+                    var rect = col_geo[cpt];
+                    path.move_to (rect.origin.x + rect.size.width + (column_spacing / 2.0), col_area.origin.y);
+                    path.line_to (rect.origin.x + rect.size.width + (column_spacing / 2.0), col_area.origin.y + col_area.size.height);
+                }
+
+                inContext.pattern = stroke_pattern[state];
+                inContext.stroke (path);
+            }
+        }
 
         foreach (unowned Row row in m_Rows)
         {

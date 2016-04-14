@@ -1,0 +1,98 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * table-view.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/core-object.h>
+#include <maiamm/grid.h>
+#include <maiamm/item.h>
+#include <maiamm/model.h>
+#include <maiamm/item-packable.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/grid_p.h)
+
+namespace Maia
+{
+    class TableView : public Grid
+    {
+        _CLASS_GOBJECT(TableView, MaiaTableView, MAIA_TABLE_VIEW, Grid, MaiaGrid)
+
+        _CUSTOM_DTOR
+
+        _IGNORE(maia_table_view_set_property_func)
+
+        public:
+            typedef sigc::slot<bool, Glib::RefPtr<Glib::Object>, Glib::ustring, Glib::ustring, unsigned int> SlotSetProperty;
+
+            static Glib::RefPtr<TableView> create (const Glib::ustring& inId)
+            {
+                MaiaTableView* pView = maia_table_view_new (inId.c_str());
+                return Glib::RefPtr<TableView> (new TableView (pView));
+            }
+
+            _WRAP_METHOD(gint get_highlighted_row () const, maia_table_view_get_highlighted_row)
+            _WRAP_METHOD(void set_highlighted_row (gint inRow), maia_table_view_set_highlighted_row)
+
+            _WRAP_METHOD(bool get_hide_if_model_empty () const, maia_table_view_get_hide_if_model_empty)
+            _WRAP_METHOD(void set_hide_if_model_empty (bool inHideIfEmpty = true), maia_table_view_set_hide_if_model_empty)
+
+            _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_table_view_get_model, refreturn)
+            _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_table_view_set_model)
+
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_header_pattern () const, maia_table_view_get_header_pattern, refreturn)
+            _WRAP_METHOD(void set_header_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_table_view_set_header_pattern)
+
+
+            inline bool get_item_row (const Glib::RefPtr<ItemPackable>& inpItem, Maia::Model::Row& outRow) const
+            {
+                bool ret = false;
+                unsigned int row;
+
+                if (get_item_row (inpItem, row))
+                {
+                    Maia::Model::iterator iter = get_model ()->get_iter (row);
+                    outRow = *iter;
+                    ret = true;
+                }
+
+                return ret;
+            }
+
+            void set_property_func (SlotSetProperty inSplot);
+
+            _WRAP_SIGNAL(void row_clicked (guint inRow), "row-clicked", no_default_handler)
+
+            _WRAP_PROPERTY("highlighted-row", gint)
+            _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
+            _WRAP_PROPERTY("hide-if-model-empty", bool)
+            _WRAP_PROPERTY("header-pattern", Glib::RefPtr<Graphic::Pattern>)
+
+        protected:
+            TableView ();
+            _CUSTOM_CTOR_CAST()
+
+        private:
+            SlotSetProperty* m_pSlot;
+
+            _WRAP_METHOD(bool get_item_row (const Glib::RefPtr<ItemPackable>& inpItem, guint& inRow) const, maia_table_view_get_item_row)
+
+            static gboolean set_property_func_callback (GObject* inpObject, const char* inProperty, const char* inColumn, guint inRow, void* inpData);
+            static void set_property_func_destroy (void* inpData);
+    };
+}

@@ -139,6 +139,9 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_STEP_BUTTON_TYPE_CHANGED_EVENT_ARGS);
     std::cout << get_defs (MAIA_TYPE_NOTEBOOK);
     std::cout << get_defs (MAIA_TYPE_NOTEBOOK_PAGE);
+    std::cout << get_defs (MAIA_TYPE_LINE);
+    std::cout << get_defs (MAIA_TYPE_TABLE_VIEW);
+    std::cout << get_defs (MAIA_TYPE_TABLE_VIEW_COLUMN);
 
     return 0;
 }

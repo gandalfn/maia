@@ -24,6 +24,7 @@ public class Maia.TableViewColumn : Item
 
     // properties
     private Manifest.Document m_Document = null;
+    private ItemPackable?     m_Header = null;
 
     // accessors
     internal override string tag {
@@ -32,8 +33,66 @@ public class Maia.TableViewColumn : Item
         }
     }
 
-    public string label { get; set; default = null; }
+    /**
+     * The default font description of button label
+     */
+    public string font_description { get;  set; default = "Sans 12"; }
+
+    /**
+     * Alignment of label ``left``, ``center`` or ``right``, default was ``center``
+     */
+    public Graphic.Glyph.Alignment alignment { get; set; default = Graphic.Glyph.Alignment.LEFT; }
+
+    /**
+     * The label of header button
+     */
+    public string label { get; set; default = ""; }
+
+    /**
+     * The border around header button content
+     */
+    public double border { get; set; default = 0.0; }
+
+    /**
+     * The model of the column
+     */
     public Model model { get; set; default = null; }
+
+    /**
+     * Header item
+     */
+    public unowned ItemPackable? header {
+        get {
+            if (m_Header == null)
+            {
+                // parse template
+                try
+                {
+                    string data = @"Button.$(name)_header_button {\n" +
+                                  @"    xexpand: false;\n" +
+                                  @"    yexpand: false;\n" +
+                                  @"    stroke-pattern: @stroke-pattern;\n" +
+                                  @"    fill-pattern: @fill-pattern;\n" +
+                                  @"    alignment: @alignment;\n" +
+                                  @"    font-description: @font-description;\n" +
+                                  @"    border: @border;\n" +
+                                  @"    relief: none;\n" +
+                                  @"    label: @label;\n" +
+                                  @"}";
+                    var document = new Manifest.Document.from_buffer (data, data.length);
+                    document.path = manifest_path;
+                    document.theme = manifest_theme;
+                    document.notifications["attribute-bind-added"].add_object_observer (on_header_attribute_bind);
+                    m_Header = document.get () as ItemPackable;
+                }
+                catch (Core.ParseError err)
+                {
+                    Log.critical (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING, "Error on parsing header %s: %s", name, err.message);
+                }
+            }
+            return m_Header;
+        }
+    }
 
     // static methods
     private static void
@@ -98,6 +157,17 @@ public class Maia.TableViewColumn : Item
             {
                 notification.attribute.bind_with_arg1<uint> (model, signal_name, notification.property, on_bind_value_changed);
             }
+        }
+    }
+
+    private void
+    on_header_attribute_bind (Core.Notification inNotification)
+    {
+        unowned Manifest.Document.AttributeBindAddedNotification? notification = inNotification as Manifest.Document.AttributeBindAddedNotification;
+        if (notification != null)
+        {
+            // plug property to binded property
+            plug_property (notification.attribute.get (), notification.attribute.owner as Core.Object, notification.property);
         }
     }
 

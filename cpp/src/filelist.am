@@ -86,6 +86,7 @@ files_hg = \
     item-resizable.hg \
     item.hg \
     label.hg \
+    line.hg \
     model.hg \
     notebook.hg \
     notebook-page.hg \
@@ -102,6 +103,8 @@ files_hg = \
     scroll-view.hg \
     state.hg \
     step-button.hg \
+    table-view.hg \
+    table-view-column.hg \
     toggle-button.hg \
     toggle.hg \
     togglegroup.hg \

@@ -22403,6 +22403,21 @@
   )
 )
 
+(define-method get_header_pattern
+  (of-object "MaiaTableView")
+  (c-name "maia_table_view_get_header_pattern")
+  (return-type "MaiaGraphicPattern*")
+)
+
+(define-method set_header_pattern
+  (of-object "MaiaTableView")
+  (c-name "maia_table_view_set_header_pattern")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPattern*" "value")
+  )
+)
+
 (define-function maia_table_view_column_get_type
   (c-name "maia_table_view_column_get_type")
   (return-type "GType")
@@ -22428,6 +22443,36 @@
   )
 )
 
+(define-method get_font_description
+  (of-object "MaiaTableViewColumn")
+  (c-name "maia_table_view_column_get_font_description")
+  (return-type "const-gchar*")
+)
+
+(define-method set_font_description
+  (of-object "MaiaTableViewColumn")
+  (c-name "maia_table_view_column_set_font_description")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "value")
+  )
+)
+
+(define-method get_alignment
+  (of-object "MaiaTableViewColumn")
+  (c-name "maia_table_view_column_get_alignment")
+  (return-type "MaiaGraphicGlyphAlignment")
+)
+
+(define-method set_alignment
+  (of-object "MaiaTableViewColumn")
+  (c-name "maia_table_view_column_set_alignment")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicGlyphAlignment" "value")
+  )
+)
+
 (define-method get_label
   (of-object "MaiaTableViewColumn")
   (c-name "maia_table_view_column_get_label")
@@ -22440,6 +22485,21 @@
   (return-type "none")
   (parameters
     '("const-gchar*" "value")
+  )
+)
+
+(define-method get_border
+  (of-object "MaiaTableViewColumn")
+  (c-name "maia_table_view_column_get_border")
+  (return-type "gdouble")
+)
+
+(define-method set_border
+  (of-object "MaiaTableViewColumn")
+  (c-name "maia_table_view_column_set_border")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
   )
 )
 
@@ -22456,6 +22516,12 @@
   (parameters
     '("MaiaModel*" "value")
   )
+)
+
+(define-method get_header
+  (of-object "MaiaTableViewColumn")
+  (c-name "maia_table_view_column_get_header")
+  (return-type "MaiaItemPackable*")
 )
 
 

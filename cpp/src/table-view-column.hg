@@ -1,0 +1,71 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * table-view-column.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/graphic-color.h>
+#include <maiamm/graphic-glyph.h>
+#include <maiamm/item.h>
+#include <maiamm/item-packable.h>
+#include <maiamm/model.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/item_p.h)
+
+namespace Maia
+{
+    class TableViewColumn : public Item
+    {
+        _CLASS_GOBJECT(TableViewColumn, MaiaTableViewColumn, MAIA_TABLE_VIEW_COLUMN, Item, MaiaItem)
+
+        protected:
+            _CTOR_DEFAULT()
+
+        public:
+            static Glib::RefPtr<TableViewColumn> create (const Glib::ustring& inId, const Glib::RefPtr<Model>& inpModel)
+            {
+                MaiaTableViewColumn* pColumn = maia_table_view_column_new (inId.c_str (), const_cast<MaiaModel*> (inpModel->gobj ()));
+
+                return Glib::RefPtr<TableViewColumn> (new TableViewColumn (pColumn));
+            }
+
+            _WRAP_METHOD(Glib::ustring get_font_description () const, maia_table_view_column_get_font_description)
+            _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_table_view_column_set_font_description)
+
+            _WRAP_METHOD(Graphic::Glyph::Alignment get_alignment () const, maia_table_view_column_get_alignment)
+            _WRAP_METHOD(void set_alignment (Graphic::Glyph::Alignment inAlignment), maia_table_view_column_set_alignment)
+
+            _WRAP_METHOD(Glib::ustring get_label () const, maia_table_view_column_get_label)
+            _WRAP_METHOD(void set_label (const Glib::ustring& inLabel), maia_table_view_column_set_label)
+
+            _WRAP_METHOD(double get_border () const, maia_table_view_column_get_border)
+            _WRAP_METHOD(void set_border (double inBorder), maia_table_view_column_set_border)
+
+            _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_table_view_column_get_model, refreturn)
+            _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_table_view_column_set_model)
+
+            _WRAP_METHOD(Glib::RefPtr<ItemPackable> get_header () const, maia_table_view_column_get_header, refreturn)
+
+            _WRAP_PROPERTY("font-description", Glib::ustring)
+            _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
+            _WRAP_PROPERTY("label", Glib::ustring)
+            _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
+            _WRAP_PROPERTY("border", double)
+            _WRAP_PROPERTY("header", Glib::RefPtr<ItemPackable>)
+    };
+}

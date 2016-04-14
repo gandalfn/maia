@@ -110,7 +110,7 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
     /**
      * The default font description of button label
      */
-    public string font_description { get;  set; default = ""; }
+    public string font_description { get;  set; default = "Sans 12"; }
 
     /**
      * Alignment of label ``left``, ``center`` or ``right``, default was ``center``
