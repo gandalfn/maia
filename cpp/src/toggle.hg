@@ -53,6 +53,10 @@ namespace Maia
         _IMPLEMENTS_INTERFACE(ItemMovable)
 
         protected:
+            _CTOR_DEFAULT()
+
+            explicit Toggle(const Glib::ustring& inId);
+
             _WRAP_VFUNC(Glib::ustring get_main_data (), get_main_data)
 
             _WRAP_METHOD(Glib::ustring get_main_data () const, maia_toggle_get_main_data)

@@ -40,6 +40,11 @@ namespace Maia
         delete pSlot;
     }
 
+    Item::Item(const Glib::ustring& inId) :
+        _CONSTRUCT("id", g_quark_from_string (inId.c_str ()))
+    {
+    }
+
     sigc::connection
     Item::connect_root_changed (SlotRootChanged inSlot)
     {
@@ -62,7 +67,7 @@ namespace Maia
     Item_Class::get_tag_vfunc_callback (MaiaItem* self)
     {
         static Glib::ustring tag ("");
-                    
+
         Glib::ObjectBase *const obj_base = static_cast<Glib::ObjectBase*>(Glib::ObjectBase::_get_current_wrapper((GObject*)self));
 
         if(obj_base && obj_base->is_derived_())

@@ -35,6 +35,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit Document(const Glib::ustring& inId);
+
         public:
             typedef sigc::slot<void, Glib::RefPtr<Document>, Glib::RefPtr<Gio::AsyncResult> > SlotSaveFinished;
 

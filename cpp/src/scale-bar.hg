@@ -37,6 +37,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit ScaleBar(const Glib::ustring& inId);
+
         public:
             static Glib::RefPtr<ScaleBar> create (const Glib::ustring& inId)
             {

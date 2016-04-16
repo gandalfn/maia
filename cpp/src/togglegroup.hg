@@ -51,6 +51,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit ToggleGroup(const Glib::ustring& inId);
+
         public:
             static Glib::RefPtr<ToggleGroup> create ()
             {

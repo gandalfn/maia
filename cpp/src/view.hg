@@ -120,6 +120,7 @@ namespace Maia
 
         protected:
             View ();
+            explicit View(const Glib::ustring& inId);
             _CUSTOM_CTOR_CAST()
 
         private:

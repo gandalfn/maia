@@ -32,6 +32,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit Application(const Glib::ustring& inId);
+
         public:
             static Glib::RefPtr<Application> create (const Glib::ustring& inName, int inFps = 60)
             {

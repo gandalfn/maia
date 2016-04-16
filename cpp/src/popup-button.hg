@@ -33,6 +33,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit PopupButton(const Glib::ustring& inId);
+
         public:
             static Glib::RefPtr<PopupButton> create (const Glib::ustring& inId, const Glib::ustring& inLabel)
             {

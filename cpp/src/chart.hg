@@ -37,6 +37,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit Chart(const Glib::ustring& inId);
+
         public:
             _WRAP_ENUM(class Direction, MaiaChartDirection, s#CHART_DIRECTION_##, NO_GTYPE)
 

@@ -38,6 +38,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit Image(const Glib::ustring& inId);
+
         public:
             static Glib::RefPtr<Image> create (const Glib::ustring& inId, const Glib::ustring& inFilename)
             {

@@ -36,6 +36,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit ProgressBar(const Glib::ustring& inId);
+
         public:
             static Glib::RefPtr<ProgressBar> create (const Glib::ustring& inId)
             {

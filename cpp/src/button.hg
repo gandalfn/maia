@@ -38,6 +38,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit Button(const Glib::ustring& inId);
+
         public:
             _WRAP_ENUM(class Relief, MaiaButtonRelief, s#BUTTON_RELIEF_##, NO_GTYPE)
 

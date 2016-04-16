@@ -40,6 +40,17 @@ namespace Maia
         }
 
         void
+        EventBus::_on_publish_reply_callback (MaiaCoreEventArgs* inpArgs, gpointer inpData)
+        {
+            EventListenerFunctorBase* pFunctor = (EventListenerFunctorBase*)inpData;
+            Glib::RefPtr<EventArgs> pArgs = Glib::wrap(inpArgs, true);
+
+            (*pFunctor)(pArgs);
+
+            delete pFunctor;
+        }
+
+        void
         EventBus::link_bus (const Glib::ustring& inUri, SlotLinkBusCallback inFunc)
         {
             SlotLinkBusCallback* pSlot = new SlotLinkBusCallback (inFunc);

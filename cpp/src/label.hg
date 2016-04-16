@@ -38,6 +38,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit Label(const Glib::ustring& inId);
+
         public:
             static Glib::RefPtr<Label> create (const Glib::ustring& inId, const Glib::ustring& inText)
             {

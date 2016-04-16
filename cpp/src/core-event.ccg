@@ -24,5 +24,15 @@ namespace Maia
 {
     namespace Core
     {
+        void
+        Event::_on_publish_reply_callback (MaiaCoreEventArgs* inpArgs, gpointer inpData)
+        {
+            EventListenerFunctorBase* pFunctor = (EventListenerFunctorBase*)inpData;
+            Glib::RefPtr<EventArgs> pArgs = Glib::wrap(inpArgs, true);
+
+            (*pFunctor)(pArgs);
+
+            delete pFunctor;
+        }
     }
 }

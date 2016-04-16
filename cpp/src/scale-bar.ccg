@@ -21,4 +21,8 @@
 
 namespace Maia
 {
+    ScaleBar::ScaleBar(const Glib::ustring& inId) :
+        _CONSTRUCT("id", g_quark_from_string (inId.c_str ()))
+    {
+    }
 }

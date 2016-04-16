@@ -39,6 +39,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit ChartPoint(const Glib::ustring& inId);
+
         public:
             static Glib::RefPtr<ChartPoint> create (const Glib::ustring& inId, const Glib::ustring& inChart, const Graphic::Point& inPosition)
             {

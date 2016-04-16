@@ -36,6 +36,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit Grid(const Glib::ustring& inId);
+
         public:
             _WRAP_ENUM(class Layout, MaiaGridLayout, s#GRID_LAYOUT_##, NO_GTYPE)
 

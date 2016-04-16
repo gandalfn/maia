@@ -36,6 +36,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit Shortcut(const Glib::ustring& inId);
+
         public:
             static Glib::RefPtr<Shortcut> create ()
             {

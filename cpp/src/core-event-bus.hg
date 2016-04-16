@@ -21,6 +21,7 @@
 #include <maia.h>
 #include <maiamm/core-object.h>
 #include <maiamm/core-event-listener.h>
+#include <maiamm/core-eventargs.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/core-object_p.h)
@@ -33,20 +34,166 @@ namespace Maia
 
         _GMMPROC_EXTRA_NAMESPACE(Core)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+        class EventReplyFunctorBase : public Glib::Object
+        {
+            public:
+                virtual void operator() (const Glib::RefPtr<EventArgs>& inArgs) = 0;
+                EventReplyFunctorBase* cpp_obj () { return this; }
+
+            protected:
+                EventReplyFunctorBase () :
+                    Glib::ObjectBase ("Maia::Core::EventReplyFunctorBase")
+                {
+                }
+        };
+
+        template <class T_obj>
+        class EventReplyObject : public EventReplyFunctorBase
+        {
+            typedef void (T_obj::*Handler) (const Glib::RefPtr<EventArgs>& inpArgs);
+
+            public:
+                virtual void operator() (const Glib::RefPtr<EventArgs>& inArgs)
+                {
+                    (m_pObj->*m_Callback) (inArgs);
+                }
+
+                EventReplyObject (T_obj* pObj, Handler pFunc) :
+                    EventReplyFunctorBase (),
+                    m_pObj (pObj),
+                    m_Callback (pFunc)
+                {
+                }
+
+
+            private:
+                T_obj*  m_pObj;
+                Handler m_Callback;
+
+                friend Event;
+        };
+
+        template <class T_obj>
+        class EventReplyGObject : public EventReplyFunctorBase
+        {
+            typedef void (T_obj::*Handler) (const Glib::RefPtr<EventArgs>& inpArgs);
+
+            private:
+                static void* _on_destroy_notify (gpointer inpData)
+                {
+                    EventReplyGObject* pSelf = (EventReplyGObject*)inpData;
+
+                    pSelf->unreference ();
+
+                    return 0;
+                }
+
+            public:
+                virtual void operator() (const Glib::RefPtr<EventArgs>& inArgs)
+                {
+                    (m_pObj->*m_Callback) (inArgs);
+                }
+
+                EventReplyGObject (T_obj* pObj, Handler pFunc) :
+                    EventReplyFunctorBase (),
+                    m_pObj (pObj),
+                    m_Callback (pFunc)
+                {
+                    static_cast<Glib::Object*> (pObj)->add_destroy_notify_callback (this, _on_destroy_notify);
+                }
+
+
+            private:
+                T_obj*  m_pObj;
+                Handler m_Callback;
+
+                friend Event;
+        };
+
+        class EventReplySigcFunctor : public EventReplyFunctorBase
+        {
+            typedef sigc::slot<void, Glib::RefPtr<EventArgs>> Handler;
+
+            private:
+                static void* _on_destroy_notify (gpointer inpData)
+                {
+                    EventReplySigcFunctor* pSelf = (EventReplySigcFunctor*)inpData;
+
+                    pSelf->unreference ();
+
+                    return 0;
+                }
+
+            public:
+                ~EventReplySigcFunctor ()
+                {
+                    delete m_pCallback; m_pCallback = 0;
+                }
+
+                virtual void operator() (const Glib::RefPtr<EventArgs>& inArgs)
+                {
+                    (*m_pCallback) (inArgs);
+                }
+
+                EventReplySigcFunctor (const Handler& inSlot) :
+                    EventReplyFunctorBase (),
+                    m_pCallback (new Handler (inSlot))
+                {
+                    m_pCallback->add_destroy_notify_callback (this, &_on_destroy_notify);
+                }
+
+
+            private:
+                Handler* m_pCallback;
+
+                friend Event;
+        };
+#endif /* DOXYGEN_SHOULD_SKIP_THIS */
+
+
         class EventBus : public Object
         {
             _CLASS_GOBJECT(EventBus, MaiaCoreEventBus, MAIA_CORE_EVENT_BUS, Object, MaiaCoreObject)
 
+            _IGNORE(maia_core_event_bus_publish_event, maia_core_event_bus_publish,
+                    maia_core_event_bus_publish_with_reply, maia_core_event_bus_publish_event_with_reply,
+                    maia_core_event_bus_object_publish_with_reply, maia_core_event_bus_object_publish_event_with_reply,
+                    maia_core_event_bus_advertise, maia_core_event_bus_destroy, maia_core_event_bus_link_bus,
+                    maia_core_event_bus_object_link_bus, maia_core_event_bus_unlink_bus)
+
             public:
                 typedef sigc::slot<void, bool, Glib::ustring> SlotLinkBusCallback;
+                typedef sigc::slot<void, Glib::RefPtr<EventArgs>> SlotReplyCallback;
 
-                _WRAP_METHOD(void subscribe (const Glib::RefPtr<EventListener>& inpListener), maia_core_event_bus_subscribe)
-                _WRAP_METHOD(void publish (const Glib::RefPtr<Event>& inpEvent, const Glib::RefPtr<EventArgs>& inpArgs), maia_core_event_bus_publish_event)
-                _WRAP_METHOD(void publish (const Glib::ustring& inName, void* inpOwner, const Glib::RefPtr<EventArgs>& inpArgs), maia_core_event_bus_publish)
                 void publish (const Glib::ustring& inName, const Glib::RefPtr<EventArgs>& inpArgs)
                 {
-                    publish (inName, 0, inpArgs);
+                    maia_core_event_bus_publish (gobj (), inName.c_str (), 0, const_cast<MaiaCoreEventArgs*> (inpArgs->gobj ()));
                 }
+
+                template <typename T_obj>
+                typename std::enable_if<!std::is_base_of<Glib::Object, T_obj>::value, void>::type
+                publish_with_reply (const Glib::ustring& inName, const Glib::RefPtr<EventArgs>& inpArgs, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
+                {
+                    EventReplyObject<T_obj>* pHandler = new EventReplyObject<T_obj> (pObj, pFunc);
+                    maia_core_event_bus_object_publish_with_reply (gobj (), inName.c_str (), 0, const_cast<MaiaCoreEventArgs*> (inpArgs->gobj ()), &EventBus::_on_publish_reply_callback, (gpointer)pHandler);
+                }
+
+                template <typename T_obj>
+                typename std::enable_if<std::is_base_of<Glib::Object, T_obj>::value, void>::type
+                publish_with_reply (const Glib::ustring& inName, const Glib::RefPtr<EventArgs>& inpArgs, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
+                {
+                    EventReplyGObject<T_obj>* pHandler = new EventReplyGObject<T_obj> (pObj, pFunc);
+                    maia_core_event_bus_object_publish_with_reply (gobj (), inName.c_str (), 0, const_cast<MaiaCoreEventArgs*> (inpArgs->gobj ()), &EventBus::_on_publish_reply_callback, (gpointer)pHandler);
+                }
+
+                void publish_with_reply (const Glib::ustring& inName, const Glib::RefPtr<EventArgs>& inpArgs, SlotReplyCallback inSlot)
+                {
+                    EventReplySigcFunctor* pHandler = new EventReplySigcFunctor (inSlot);
+                    maia_core_event_bus_object_publish_with_reply (gobj (), inName.c_str (), 0, const_cast<MaiaCoreEventArgs*> (inpArgs->gobj ()), &EventBus::_on_publish_reply_callback, (gpointer)pHandler);
+                }
+
+                _WRAP_METHOD(void subscribe (const Glib::RefPtr<EventListener>& inpListener), maia_core_event_bus_subscribe)
 
                 template <typename T_obj>
                 typename std::enable_if<!std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<EventListener>>::type
@@ -108,12 +255,10 @@ namespace Maia
 
                 _WRAP_METHOD(Glib::ustring get_address () const, maia_core_event_bus_get_address)
 
-                _IGNORE(maia_core_event_bus_publish_with_reply, maia_core_event_bus_publish_event_with_reply,
-                        maia_core_event_bus_object_publish_with_reply, maia_core_event_bus_object_publish_event_with_reply,
-                        maia_core_event_bus_advertise, maia_core_event_bus_destroy, maia_core_event_bus_link_bus,
-                        maia_core_event_bus_object_link_bus, maia_core_event_bus_unlink_bus)
-
                 _WRAP_PROPERTY("address", Glib::ustring)
+
+            private:
+                static void _on_publish_reply_callback (MaiaCoreEventArgs* inpArgs, gpointer inpData);
         };
     }
 }

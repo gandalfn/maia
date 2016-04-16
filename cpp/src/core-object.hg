@@ -117,6 +117,8 @@ namespace Maia
             protected:
                 _CTOR_DEFAULT()
 
+                explicit Object(const Glib::ustring& inId);
+
                 _WRAP_VFUNC(Glib::RefPtr<Object> get_parent (), get_parent, refreturn_ctype)
 #m4 _CONVERSION(`MaiaCoreObject*', `const Glib::RefPtr<Object>&', `Glib::wrap($3, true)')
                 _WRAP_VFUNC(void set_parent (const Glib::RefPtr<Object>& inObject), set_parent)

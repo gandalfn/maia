@@ -48,6 +48,11 @@ namespace Maia
         _IMPLEMENTS_INTERFACE(ItemPackable)
         _IMPLEMENTS_INTERFACE(ItemMovable)
 
+        protected:
+            _CTOR_DEFAULT()
+
+            explicit Combo(const Glib::ustring& inId);
+
         public:
             static Glib::RefPtr<Combo> create (const Glib::ustring& inId)
             {

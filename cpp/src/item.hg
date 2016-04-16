@@ -57,6 +57,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit Item(const Glib::ustring& inId);
+
             _WRAP_VFUNC(Glib::ustring get_tag (), get_tag, custom_vfunc_callback)
             _WRAP_VFUNC(Glib::ustring dump_childs (const Glib::ustring& inPrefix), dump_childs)
             _WRAP_VFUNC(Glib::ustring dump_characters (const Glib::ustring& inPrefix), dump_characters)

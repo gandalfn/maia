@@ -38,6 +38,11 @@ namespace Maia
     {
     }
 
+    View::View(const Glib::ustring& inId) :
+        _CONSTRUCT_SPECIFIC(Maia::Grid, View, "id", g_quark_from_string (inId.c_str ())),
+        m_pSlot (0)
+    {
+    }
 
     View::View(const Glib::ConstructParams& construct_params) :
         Grid(construct_params),
@@ -50,7 +55,7 @@ namespace Maia
         Grid((MaiaGrid*)(castitem)),
         m_pSlot (0)
     {
-        
+
     }
 
     View::~View ()

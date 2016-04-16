@@ -64,6 +64,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit Toolbox(const Glib::ustring& inId);
+
         public:
             static Glib::RefPtr<Toolbox> create (const Glib::ustring& inId)
             {

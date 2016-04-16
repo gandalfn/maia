@@ -40,6 +40,11 @@ namespace Maia
         delete pSlot; pSlot = nullptr;
     }
 
+    Report::Report(const Glib::ustring& inId) :
+        _CONSTRUCT("id", g_quark_from_string (inId.c_str ()))
+    {
+    }
+
     void Report::save ()
     {
         maia_report_save (gobj (), nullptr, on_save_finished, nullptr);

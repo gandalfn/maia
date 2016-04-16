@@ -35,6 +35,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit Report(const Glib::ustring& inId);
+
         public:
             typedef sigc::slot<void, Glib::RefPtr<Report>, Glib::RefPtr<Gio::AsyncResult> > SlotSaveFinished;
 
@@ -54,7 +56,7 @@ namespace Maia
             void save ();
             void save (SlotSaveFinished inFunc);
             void save (SlotSaveFinished inFunc, const Glib::RefPtr<Gio::Cancellable>& inCancellable);
-            
+
             void save_finish (const Glib::RefPtr<Gio::AsyncResult>& inResult);
 
             _WRAP_PROPERTY("filename", Glib::ustring)

@@ -39,6 +39,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit Notebook(const Glib::ustring& inId);
+
         public:
             _WRAP_ENUM(class Transition, MaiaNotebookTransition, s#NOTEBOOK_TRANSITION_##, NO_GTYPE)
 

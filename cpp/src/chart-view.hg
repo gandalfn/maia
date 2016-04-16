@@ -36,6 +36,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit ChartView(const Glib::ustring& inId);
+
         public:
             _WRAP_ENUM(class LegendPosition, MaiaChartViewLegendPosition, s#CHART_VIEW_LEGEND_POSITION_##, NO_GTYPE)
             _WRAP_ENUM(class Frame, MaiaChartViewFrame, s#CHART_VIEW_FRAME_##, NO_GTYPE)

@@ -34,6 +34,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit Tool(const Glib::ustring& inId);
+
         public:
             _WRAP_ENUM(class Action, MaiaToolAction, s#TOOL_ACTION_##, NO_GTYPE)
 

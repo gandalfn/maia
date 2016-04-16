@@ -145,6 +145,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit Window(const Glib::ustring& inId);
+
             _WRAP_VFUNC(Glib::RefPtr<Graphic::Surface> get_surface (), get_surface, refreturn_ctype)
 
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3, true)')

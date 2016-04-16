@@ -79,7 +79,7 @@ public class Maia.NotebookPage : Group, ItemPackable
     /**
      * The default font description of button label
      */
-    public string font_description { get;  set; default = ""; }
+    public string font_description { get;  set; default = "Sans 11"; }
 
     /**
      * Alignment of label ``left``, ``center`` or ``right``, default was ``center``

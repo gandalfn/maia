@@ -34,6 +34,8 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+            explicit Group(const Glib::ustring& inId);
+
             _WRAP_VFUNC(void childs_size_request (Graphic::Size& outSize), childs_size_request)
 
         public:
