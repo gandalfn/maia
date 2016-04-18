@@ -359,11 +359,11 @@ public class Maia.Model : Core.Object, Manifest.Element
         unowned Model? model = null;
 
         GLib.Quark id  = GLib.Quark.from_string (inAttribute.get ());
-        for (unowned Core.Object item = object.parent; item != null; item = item.parent)
+        for (unowned Core.Object item = object; item != null; item = item.parent)
         {
             unowned View? view = item.parent as View;
 
-            // If view is in view search model in cell first
+            // If owned is in view search model in cell first
             if (view != null)
             {
                 model = item.find (id, false) as Model;
