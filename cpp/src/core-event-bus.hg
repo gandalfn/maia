@@ -38,6 +38,7 @@ namespace Maia
         class EventReplyFunctorBase : public Glib::Object
         {
             public:
+
                 virtual void operator() (const Glib::RefPtr<EventArgs>& inArgs) = 0;
                 EventReplyFunctorBase* cpp_obj () { return this; }
 
@@ -171,12 +172,17 @@ namespace Maia
                     maia_core_event_bus_publish (gobj (), inName.c_str (), 0, const_cast<MaiaCoreEventArgs*> (inpArgs->gobj ()));
                 }
 
+                void publish (const Glib::ustring& inName)
+                {
+                    maia_core_event_bus_publish (gobj (), inName.c_str (), 0, 0);
+                }
+
                 template <typename T_obj>
                 typename std::enable_if<!std::is_base_of<Glib::Object, T_obj>::value, void>::type
                 publish_with_reply (const Glib::ustring& inName, const Glib::RefPtr<EventArgs>& inpArgs, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
                 {
                     EventReplyObject<T_obj>* pHandler = new EventReplyObject<T_obj> (pObj, pFunc);
-                    maia_core_event_bus_object_publish_with_reply (gobj (), inName.c_str (), 0, const_cast<MaiaCoreEventArgs*> (inpArgs->gobj ()), &EventBus::_on_publish_reply_callback, (gpointer)pHandler);
+                    maia_core_event_bus_object_publish_with_reply (gobj (), inName.c_str (), 0, const_cast<MaiaCoreEventArgs*> (inpArgs->gobj ()), &EventBus::_on_publish_reply_callback, (gpointer)pHandler->gobj ());
                 }
 
                 template <typename T_obj>
@@ -184,13 +190,13 @@ namespace Maia
                 publish_with_reply (const Glib::ustring& inName, const Glib::RefPtr<EventArgs>& inpArgs, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
                 {
                     EventReplyGObject<T_obj>* pHandler = new EventReplyGObject<T_obj> (pObj, pFunc);
-                    maia_core_event_bus_object_publish_with_reply (gobj (), inName.c_str (), 0, const_cast<MaiaCoreEventArgs*> (inpArgs->gobj ()), &EventBus::_on_publish_reply_callback, (gpointer)pHandler);
+                    maia_core_event_bus_object_publish_with_reply (gobj (), inName.c_str (), 0, const_cast<MaiaCoreEventArgs*> (inpArgs->gobj ()), &EventBus::_on_publish_reply_callback, (gpointer)pHandler->gobj ());
                 }
 
                 void publish_with_reply (const Glib::ustring& inName, const Glib::RefPtr<EventArgs>& inpArgs, SlotReplyCallback inSlot)
                 {
                     EventReplySigcFunctor* pHandler = new EventReplySigcFunctor (inSlot);
-                    maia_core_event_bus_object_publish_with_reply (gobj (), inName.c_str (), 0, const_cast<MaiaCoreEventArgs*> (inpArgs->gobj ()), &EventBus::_on_publish_reply_callback, (gpointer)pHandler);
+                    maia_core_event_bus_object_publish_with_reply (gobj (), inName.c_str (), 0, const_cast<MaiaCoreEventArgs*> (inpArgs->gobj ()), &EventBus::_on_publish_reply_callback, (gpointer)pHandler->gobj ());
                 }
 
                 _WRAP_METHOD(void subscribe (const Glib::RefPtr<EventListener>& inpListener), maia_core_event_bus_subscribe)
