@@ -795,7 +795,6 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                         {
                             total += child_allocations[0, cpt].size.width;
                         }
-                        print(@"total: $(total) allocation: $(inAllocation.extents.size.width)\n");
                     }
                     break;
 
@@ -1499,6 +1498,8 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         {
             notify["row"].connect (on_child_changed);
             notify["column"].connect (on_child_changed);
+            notify["rows"].connect (on_child_changed);
+            notify["columns"].connect (on_child_changed);
             notify["xexpand"].connect (on_child_changed);
             notify["xfill"].connect (on_child_changed);
             notify["xalign"].connect (on_child_changed);
@@ -1520,6 +1521,8 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
         {
             notify["row"].disconnect (on_child_changed);
             notify["column"].disconnect (on_child_changed);
+            notify["rows"].disconnect (on_child_changed);
+            notify["columns"].disconnect (on_child_changed);
             notify["xexpand"].disconnect (on_child_changed);
             notify["xfill"].disconnect (on_child_changed);
             notify["xalign"].disconnect (on_child_changed);
