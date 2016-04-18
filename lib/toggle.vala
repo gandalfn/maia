@@ -366,7 +366,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
         {
             grab_focus (this);
 
-            if (!m_ToggleGroup.exclusive || m_ToggleGroup.active != name)
+            if (m_ToggleGroup == null || !m_ToggleGroup.exclusive || m_ToggleGroup.active != name)
             {
                 active = !active;
             }
