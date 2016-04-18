@@ -75,7 +75,7 @@ namespace Maia
 
             _IGNORE(maia_state_patterns_get, maia_state_patterns_set);
 
-            StatePatternProxy operator[] (State inState)
+            StatePatternProxy get (State inState)
             {
                 return StatePatternProxy (gobj (), inState);
             }
