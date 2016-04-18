@@ -64,6 +64,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     }
     // properties
     private Popup                 m_Popup  = null;
+    private Model                 m_Model  = null;
     private unowned View?         m_View   = null;
     private unowned ItemPackable? m_Active = null;
 
@@ -143,8 +144,32 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         }
     }
 
+    [CCode (notify = false)]
+    public Model model {
+        get {
+            return m_Model;
+        }
+        set {
+            if (m_Model != value)
+            {
+                m_Model = value;
+                if (m_View != null)
+                {
+                    m_View.model = m_Model;
+                }
+            }
+        }
+    }
+
     // events
     public Core.Event changed { get; private set; }
+
+    // static methods
+    static construct
+    {
+        // Ref Mpdel class to register model transform
+        typeof (Model).class_ref ();
+    }
 
     // methods
     construct
@@ -285,6 +310,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             m_View.notify["geometry"].connect (on_view_geometry_changed);
             m_View.row_clicked.connect (on_row_clicked);
             m_View.state = State.PRELIGHT;
+            m_View.model = m_Model;
             m_Popup.add (m_View);
 
             need_update = true;
@@ -466,6 +492,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
             }
         }
 
+
         if (m_Active != null)
         {
             inContext.save ();
@@ -496,12 +523,6 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
 
         var path = new Graphic.Path ();
         path.rectangle (draw_area.extents.origin.x, draw_area.extents.origin.y, draw_area.extents.size.width, draw_area.extents.size.height);
-
-        if (fill_pattern != null)
-        {
-            inContext.pattern = fill_pattern[state];
-            inContext.fill (path);
-        }
 
         if (have_focus)
         {
