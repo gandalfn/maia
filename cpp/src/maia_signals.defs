@@ -5308,6 +5308,15 @@
   (construct-only #f)
 )
 
+(define-property model
+  (of-object "MaiaCombo")
+  (prop-type "GParamObject")
+  (docs "model")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property changed
   (of-object "MaiaCombo")
   (prop-type "GParamObject")

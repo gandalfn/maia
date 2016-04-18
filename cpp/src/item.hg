@@ -148,6 +148,39 @@ namespace Maia
 
             sigc::connection connect_root_changed (SlotRootChanged inSlot);
 
+            bool grab_pointer (const Glib::RefPtr<Item>& inpItem)
+            {
+                gboolean ret = false;
+                g_signal_emit_by_name (gobj (), "grab-pointer", const_cast<MaiaItem*> (inpItem->gobj ()), &ret);
+                return (bool)ret;
+            }
+
+            bool ungrab_pointer (const Glib::RefPtr<Item>& inpItem)
+            {
+                gboolean ret = false;
+                g_signal_emit_by_name (gobj (), "ungrab-pointer", const_cast<MaiaItem*> (inpItem->gobj ()), &ret);
+                return (bool)ret;
+            }
+
+            bool grab_keyboard (const Glib::RefPtr<Item>& inpItem)
+            {
+                gboolean ret = false;
+                g_signal_emit_by_name (gobj (), "grab-keyboard", const_cast<MaiaItem*> (inpItem->gobj ()), &ret);
+                return (bool)ret;
+            }
+
+            bool ungrab_keyboard (const Glib::RefPtr<Item>& inpItem)
+            {
+                gboolean ret = false;
+                g_signal_emit_by_name (gobj (), "ungrab-keyboard", const_cast<MaiaItem*> (inpItem->gobj ()), &ret);
+                return (bool)ret;
+            }
+
+            void set_pointer_cursor (Cursor inCursor)
+            {
+                g_signal_emit_by_name (gobj (), "set-pointer-cursor", inCursor);
+            }
+
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3, true)')
             _WRAP_SIGNAL(bool grab_pointer (const Glib::RefPtr<Item>& inItem), "grab-pointer", no_default_handler)
             _WRAP_SIGNAL(void ungrab_pointer (const Glib::RefPtr<Item>& inItem), "ungrab-pointer", no_default_handler)

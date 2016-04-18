@@ -108,6 +108,9 @@ namespace Maia
 
             _WRAP_METHOD(guint32 get_foreign () const, maia_window_get_foreign)
 
+            _WRAP_METHOD(void grab_key (Modifier inModifier, Key inKey) const, maia_window_grab_key)
+            _WRAP_METHOD(void ungrab_key (Modifier inModifier, Key inKey) const, maia_window_ungrab_key)
+
             _WRAP_METHOD(Glib::RefPtr<Core::Event> damage_event () const, maia_window_get_damage_event, refreturn)
             _WRAP_METHOD(Glib::RefPtr<Core::Event> geometry_event () const, maia_window_get_geometry_event, refreturn)
             _WRAP_METHOD(Glib::RefPtr<Core::Event> visibility_event () const, maia_window_get_visibility_event, refreturn)

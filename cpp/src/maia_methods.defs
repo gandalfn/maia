@@ -16665,6 +16665,26 @@
   )
 )
 
+(define-method grab_key
+  (of-object "MaiaWindow")
+  (c-name "maia_window_grab_key")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaModifier" "inModifier")
+    '("MaiaKey" "inKey")
+  )
+)
+
+(define-method ungrab_key
+  (of-object "MaiaWindow")
+  (c-name "maia_window_ungrab_key")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaModifier" "inModifier")
+    '("MaiaKey" "inKey")
+  )
+)
+
 (define-method swap_buffer
   (of-object "MaiaWindow")
   (c-name "maia_window_swap_buffer")
@@ -20090,6 +20110,21 @@
   (return-type "none")
   (parameters
     '("gint" "value")
+  )
+)
+
+(define-method get_model
+  (of-object "MaiaCombo")
+  (c-name "maia_combo_get_model")
+  (return-type "MaiaModel*")
+)
+
+(define-method set_model
+  (of-object "MaiaCombo")
+  (c-name "maia_combo_set_model")
+  (return-type "none")
+  (parameters
+    '("MaiaModel*" "value")
   )
 )
 

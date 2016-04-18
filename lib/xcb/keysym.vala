@@ -827,8 +827,8 @@ namespace Maia.Xcb
         return 0;
     }
 
-    internal static Maia.Key
-    convert_xcb_keysym_to_key (global::Xcb.Keysym inKey)
+    private static void
+    create_keysym_map ()
     {
         if (s_Keysyms == null)
         {
@@ -2634,7 +2634,26 @@ namespace Maia.Xcb
             s_Keysyms[global::Xcb.KeySym.braille_dots_2345678] = Maia.Key.braille_dots_2345678;
             s_Keysyms[global::Xcb.KeySym.braille_dots_12345678] = Maia.Key.braille_dots_12345678;
         }
+    }
 
+    internal static Maia.Key
+    convert_xcb_keysym_to_key (global::Xcb.Keysym inKey)
+    {
+        create_keysym_map ();
         return (Maia.Key)s_Keysyms[inKey];
+    }
+
+    internal static global::Xcb.Keysym
+    convert_key_to_xcb_keysym (Maia.Key inKey)
+    {
+        create_keysym_map ();
+        foreach (unowned Maia.Core.Pair<global::Xcb.Keysym, Maia.Key> pair in s_Keysyms)
+        {
+            if ((Maia.Key)s_Keysyms[pair.first] == inKey)
+            {
+                return pair.first;
+            }
+        }
+        return (global::Xcb.Keysym)0;
     }
 }

@@ -23,7 +23,7 @@ internal class Maia.Xcb.Screen : Core.Object
     private unowned global::Xcb.Connection m_Connection;
     private Graphic.Rectangle              m_Geometry = Graphic.Rectangle (0, 0, 0, 0);
     private global::Xcb.Render.Pictvisual? m_VisualCache[5];
-    private Monitor[]                      m_Monitors = {};
+    private Core.Set<Monitor>              m_Monitors = new Core.Set<Monitor> ();
 
     // accessors
     public unowned global::Xcb.Screen? xscreen {
@@ -93,7 +93,7 @@ internal class Maia.Xcb.Screen : Core.Object
                             var reply_get_crtc_info = reply_output_info.crtc.get_info (connection, reply_res.config_timestamp).reply (connection);
                             if (reply_get_crtc_info != null)
                             {
-                                m_Monitors += new Monitor (reply_get_crtc_info);
+                                m_Monitors.insert (new Monitor (reply_get_crtc_info));
                             }
                         }
                     }
@@ -210,6 +210,23 @@ internal class Maia.Xcb.Screen : Core.Object
     find_format_from_depth (uint inDepth)
     {
         return m_VisualCache[inDepth / 8] != null ? m_VisualCache[inDepth / 8].format : global::Xcb.NONE;
+    }
+
+    public unowned Monitor?
+    get_monitor (uint inMonitor)
+        requires (inMonitor < m_Monitors.length)
+    {
+        int cpt = 0;
+        foreach (unowned Monitor monitor in m_Monitors)
+        {
+            if (cpt == inMonitor)
+            {
+                return monitor;
+            }
+            cpt++;
+        }
+
+        return null;
     }
 
     public unowned Monitor?

@@ -113,19 +113,22 @@ internal class Maia.Xcb.View : Drawable
     }
 
     // properties
-    private Graphic.Transform    m_Transform = new Graphic.Transform.identity ();
-    private Graphic.Transform    m_DeviceTransform = new Graphic.Transform.identity ();
-    private unowned View?        m_Parent;
-    private unowned View?        m_TransientFor = null;
-    private global::Xcb.Colormap m_Colormap = global::Xcb.NONE;
-    private bool                 m_OverrideRedirect = false;
-    private bool                 m_Foreign = true;
-    private bool                 m_Realized = true;
-    private Pixmap               m_BackBuffer = null;
-    private Graphic.Surface      m_FrontBuffer = null;
-    private Core.Array<Sibling>  m_Siblings = null;
-    private unowned DestroyFunc? m_Func = null;
-    private Graphic.Range?       m_FrameExtents = null;
+    private global::Xcb.Util.KeySymbols m_Symbols;
+    private Graphic.Transform           m_Transform = new Graphic.Transform.identity ();
+    private Graphic.Transform           m_DeviceTransform = new Graphic.Transform.identity ();
+    private unowned View?               m_Parent;
+    private unowned View?               m_TransientFor = null;
+    private global::Xcb.Colormap        m_Colormap = global::Xcb.NONE;
+    private bool                        m_OverrideRedirect = false;
+    private bool                        m_Foreign = true;
+    private bool                        m_Realized = true;
+    private Pixmap                      m_BackBuffer = null;
+    private Graphic.Surface             m_FrontBuffer = null;
+    private Core.Array<Sibling>         m_Siblings = null;
+    private unowned DestroyFunc?        m_Func = null;
+    private Graphic.Range?              m_FrameExtents = null;
+    private int                         m_NbGrabsPointer = 0;
+    private int                         m_NbGrabsKeyboard = 0;
 
     // signals
     public signal void mapped ();
@@ -442,9 +445,41 @@ internal class Maia.Xcb.View : Drawable
 
     public bool managed { get; set; default = true; }
 
+    // static methods
+    private static global::Xcb.ModMask
+    modifier_to_mod_mask (Modifier inModifier)
+    {
+        global::Xcb.ModMask ret = (global::Xcb.ModMask)0;
+
+        if (Maia.Modifier.SHIFT in inModifier)
+        {
+            ret |= global::Xcb.ModMask.SHIFT;
+        }
+
+        if (Maia.Modifier.CONTROL in inModifier)
+        {
+            ret |= global::Xcb.ModMask.CONTROL;
+        }
+
+        if (Maia.Modifier.ALT in inModifier)
+        {
+            ret |= global::Xcb.ModMask.ONE;
+        }
+
+        if (Maia.Modifier.SUPER in inModifier)
+        {
+            ret |= global::Xcb.ModMask.FOUR;
+        }
+
+        return ret;
+    }
+
     // methods
     construct
     {
+        // Get keyboard mapping
+        m_Symbols = new global::Xcb.Util.KeySymbols (connection);
+
         // create siblings windows
         m_Siblings = new Core.Array<Sibling> ();
 
@@ -809,35 +844,95 @@ internal class Maia.Xcb.View : Drawable
     public void
     grab_pointer (bool inConfineTo = true)
     {
-        ((global::Xcb.Window)xid).grab_pointer (connection, true,
-                                                global::Xcb.EventMask.BUTTON_PRESS        |
-                                                global::Xcb.EventMask.BUTTON_RELEASE      |
-                                                global::Xcb.EventMask.POINTER_MOTION,
-                                                global::Xcb.GrabMode.ASYNC,
-                                                global::Xcb.GrabMode.ASYNC,
-                                                inConfineTo ? (global::Xcb.Window)xid : global::Xcb.NONE,
-                                                global::Xcb.NONE, global::Xcb.CURRENT_TIME);
+        if (m_NbGrabsPointer == 0)
+        {
+            print (@"grab pointer\n");
+            ((global::Xcb.Window)xid).grab_pointer (connection, true,
+                                                    global::Xcb.EventMask.BUTTON_PRESS        |
+                                                    global::Xcb.EventMask.BUTTON_RELEASE      |
+                                                    global::Xcb.EventMask.POINTER_MOTION,
+                                                    global::Xcb.GrabMode.ASYNC,
+                                                    global::Xcb.GrabMode.ASYNC,
+                                                    inConfineTo ? (global::Xcb.Window)xid : global::Xcb.NONE,
+                                                    global::Xcb.NONE, global::Xcb.CURRENT_TIME);
+        }
+        m_NbGrabsPointer++;
     }
 
     public void
     ungrab_pointer ()
     {
-        connection.ungrab_pointer (global::Xcb.CURRENT_TIME);
+        m_NbGrabsPointer = int.max (0, m_NbGrabsPointer - 1);
+
+        if (m_NbGrabsPointer == 0)
+        {
+            print (@"ungrab pointer\n");
+            connection.ungrab_pointer (global::Xcb.CURRENT_TIME);
+        }
     }
 
     public void
     grab_keyboard ()
     {
-        ((global::Xcb.Window)xid).grab_keyboard (connection, true,
-                                                 global::Xcb.CURRENT_TIME,
-                                                 global::Xcb.GrabMode.ASYNC,
-                                                 global::Xcb.GrabMode.ASYNC);
+        if (m_NbGrabsKeyboard == 0)
+        {
+            print (@"grab keyboard\n");
+            ((global::Xcb.Window)xid).grab_keyboard (connection, true,
+                                                     global::Xcb.CURRENT_TIME,
+                                                     global::Xcb.GrabMode.ASYNC,
+                                                     global::Xcb.GrabMode.ASYNC);
+        }
+        m_NbGrabsKeyboard++;
     }
 
     public void
     ungrab_keyboard ()
     {
-        connection.ungrab_keyboard (global::Xcb.CURRENT_TIME);
+        m_NbGrabsKeyboard = int.max (0, m_NbGrabsKeyboard - 1);
+
+        if (m_NbGrabsKeyboard == 0)
+        {
+            print (@"ungrab keyboard\n");
+            connection.ungrab_keyboard (global::Xcb.CURRENT_TIME);
+        }
+    }
+
+    public void
+    grab_key (Modifier inModifier, Key inKey)
+    {
+        global::Xcb.ModMask mask = modifier_to_mod_mask (inModifier);
+        global::Xcb.Keysym keysym = convert_key_to_xcb_keysym (inKey);
+        global::Xcb.Keycode[]? keycode = m_Symbols.get_keycode (keysym);
+
+        if (keycode != null)
+        {
+            print(@"grab key $inModifier $inKey\n");
+            var cookie = ((global::Xcb.Window)xid).grab_key_checked (connection, true, mask, keycode[0], global::Xcb.GrabMode.ASYNC, global::Xcb.GrabMode.ASYNC);
+            global::Xcb.GenericError? err = connection.request_check (cookie);
+            if (err != null)
+            {
+                Log.critical (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, @"Error on grab key $(err.error_code)");
+            }
+        }
+    }
+
+    public void
+    ungrab_key (Modifier inModifier, Key inKey)
+    {
+        global::Xcb.ModMask mask = modifier_to_mod_mask (inModifier);
+        global::Xcb.Keysym keysym = convert_key_to_xcb_keysym (inKey);
+        global::Xcb.Keycode[]? keycode = m_Symbols.get_keycode (keysym);
+
+        if (keycode != null)
+        {
+            print(@"ungrab key $inModifier $inKey\n");
+            var cookie = ((global::Xcb.Window)xid).ungrab_key_checked (connection, keycode[0], mask);
+            global::Xcb.GenericError? err = connection.request_check (cookie);
+            if (err != null)
+            {
+                Log.critical (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, @"Error on ungrab key $(err.error_code)");
+            }
+        }
     }
 
     public void

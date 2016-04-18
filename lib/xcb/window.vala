@@ -22,6 +22,7 @@ internal class Maia.Xcb.Window : Maia.Window
     // properties
     private View          m_View;
     private unowned Item? m_ParentWindow = null;
+    private int          m_Monitor = -1;
 
     // accessors
     public override uint8 depth {
@@ -79,6 +80,29 @@ internal class Maia.Xcb.Window : Maia.Window
         get {
             return m_View;
         }
+    }
+
+    [CCode (notify = false)]
+    public int monitor {
+        get {
+            return m_Monitor;
+        }
+        set {
+            if (m_Monitor != value)
+            {
+                m_Monitor = value;
+
+                if (m_View != null && m_Monitor >= 0)
+                {
+                    unowned Monitor? monitor = m_View.screen.get_monitor (m_Monitor);
+                    if (monitor != null)
+                    {
+                        m_View.position = monitor.geometry.origin;
+                    }
+                }
+            }
+        }
+        default = -1;
     }
 
     // methods
@@ -464,6 +488,14 @@ internal class Maia.Xcb.Window : Maia.Window
         if (m_View != null)
         {
             m_View.show ();
+            if (m_Monitor >= 0)
+            {
+                unowned Monitor? monitor = m_View.screen.get_monitor (m_Monitor);
+                if (monitor != null)
+                {
+                    m_View.position = monitor.geometry.origin;
+                }
+            }
         }
 
         base.on_show ();
@@ -546,6 +578,32 @@ internal class Maia.Xcb.Window : Maia.Window
         {
             m_View.move_pointer (inPosition);
         }
+    }
+
+    internal override bool
+    grab_key (Modifier inModifier, Key inKey)
+    {
+        bool ret = base.grab_key (inModifier, inKey);
+
+        if (ret)
+        {
+            m_View.grab_key (inModifier, inKey);
+        }
+
+        return ret;
+    }
+
+    internal override bool
+    ungrab_key (Modifier inModifier, Key inKey)
+    {
+        bool ret = base.ungrab_key (inModifier, inKey);
+
+        if (ret)
+        {
+            m_View.ungrab_key (inModifier, inKey);
+        }
+
+        return ret;
     }
 
     internal override void

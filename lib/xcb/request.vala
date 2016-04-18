@@ -107,7 +107,7 @@ internal class Maia.Xcb.MapRequest : Request
         unowned Request other = (Request)inOther;
 
         if (view.xid == other.view.xid && (other is ReparentRequest || other is ResizeRequest || other is MoveRequest))
-            return 1;
+            return -1;
 
         return base.compare (inOther);
     }
@@ -225,9 +225,9 @@ internal class Maia.Xcb.ReparentRequest : Request
         unowned Request other = (Request)inOther;
 
         if (view.xid == other.view.xid && (other is MapRequest || other is UnmapRequest))
-            return -1;
-        else if (view.xid == other.view.xid && (other is MoveRequest || other is ResizeRequest))
             return 1;
+        else if (view.xid == other.view.xid && (other is MoveRequest || other is ResizeRequest))
+            return -1;
 
         return base.compare (inOther);
     }
@@ -277,7 +277,7 @@ internal class Maia.Xcb.MoveRequest : Request
         unowned Request other = (Request)inOther;
 
         if (view.xid == other.view.xid && (other is MapRequest || other is ReparentRequest))
-            return -1;
+            return 1;
 
         return base.compare (inOther);
     }
@@ -330,7 +330,7 @@ internal class Maia.Xcb.ResizeRequest : Request
         unowned Request other = (Request)inOther;
 
         if (view.xid == other.view.xid && (other is MapRequest || other is ReparentRequest))
-            return -1;
+            return 1;
 
         return base.compare (inOther);
     }
@@ -388,7 +388,7 @@ internal class Maia.Xcb.OverrideRedirectRequest : Request
         unowned Request other = (Request)inOther;
 
         if (view.xid == other.view.xid && (other is MapRequest || other is ReparentRequest))
-            return -1;
+            return 1;
 
         return base.compare (inOther);
     }

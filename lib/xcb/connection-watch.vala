@@ -117,6 +117,8 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
         // convert keysym to unichar
         unichar car = keysym_to_unicode (keysym);
 
+        print(@"send key $modifier $key\n");
+
         // send keyboard event
         Core.EventBus.default.publish ("keyboard", ((int)inWindow).to_pointer (),
                                                    new KeyboardEventArgs (inPress ? KeyboardEventArgs.State.PRESS : KeyboardEventArgs.State.RELEASE,

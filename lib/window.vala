@@ -50,6 +50,27 @@ public class Maia.Window : Group
         CLAMP_MONITOR
     }
 
+    private class BindKey : Core.Object
+    {
+        public Modifier m_Modifier;
+        public Key m_Key;
+
+        public BindKey (Modifier inModifier, Key inKey)
+        {
+            m_Modifier = inModifier;
+            m_Key = inKey;
+        }
+
+        internal override int
+        compare (Core.Object inObject)
+            requires (inObject is BindKey)
+        {
+            unowned BindKey other = inObject as BindKey;
+
+            return ((int)m_Modifier - (int)other.m_Modifier) + ((int)m_Key - (int)other.m_Key);
+        }
+    }
+
     // properties
     private Core.Animator      m_Animator;
     private uint               m_Transition = 0;
@@ -70,6 +91,7 @@ public class Maia.Window : Group
     private Core.EventListener m_MouseListener;
     private Core.Event         m_KeyboardEvent;
     private Core.EventListener m_KeyboardListener;
+    private Core.Set<BindKey>  m_BindKeys;
 
     // accessors
     protected unowned Item? focus_item         { get; set; default = null; }
@@ -568,8 +590,14 @@ public class Maia.Window : Group
             switch (keyboard_args.state)
             {
                 case KeyboardEventArgs.State.PRESS:
+                    var bind = new BindKey (keyboard_args.modifier, keyboard_args.key);
+
+                    if (m_BindKeys != null && bind in m_BindKeys)
+                    {
+                        key_press_event (keyboard_args.modifier, keyboard_args.key, keyboard_args.character);
+                    }
                     // we have grab keyboard item send event
-                    if (grab_keyboard_item != null)
+                    else if (grab_keyboard_item != null)
                     {
                         grab_keyboard_item.key_press_event (keyboard_args.modifier, keyboard_args.key, keyboard_args.character);
                     }
@@ -585,6 +613,12 @@ public class Maia.Window : Group
                     break;
 
                 case KeyboardEventArgs.State.RELEASE:
+                    var bind = new BindKey (keyboard_args.modifier, keyboard_args.key);
+
+                    if (bind in m_BindKeys)
+                    {
+                        key_release_event (keyboard_args.modifier, keyboard_args.key, keyboard_args.character);
+                    }
                     // we have grab keyboard item send event
                     if (grab_keyboard_item != null)
                     {
@@ -1048,6 +1082,44 @@ public class Maia.Window : Group
             }
             inContext.restore ();
         }
+    }
+
+    public virtual bool
+    grab_key (Modifier inModifier, Key inKey)
+    {
+        bool ret = false;
+
+        if (m_BindKeys == null)
+        {
+            m_BindKeys = new Core.Set<BindKey> ();
+        }
+        var bind = new BindKey (inModifier, inKey);
+        if (!(bind in m_BindKeys))
+        {
+            m_BindKeys.insert (bind);
+            ret = true;
+        }
+
+        return ret;
+    }
+
+    public virtual bool
+    ungrab_key (Modifier inModifier, Key inKey)
+    {
+        bool ret = false;
+
+        if (m_BindKeys == null)
+        {
+            m_BindKeys = new Core.Set<BindKey> ();
+        }
+        var bind = new BindKey (inModifier, inKey);
+        if (bind in m_BindKeys)
+        {
+            m_BindKeys.remove (bind);
+            ret = true;
+        }
+
+        return ret;
     }
 
     public virtual void
