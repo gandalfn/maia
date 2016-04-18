@@ -314,6 +314,9 @@ internal class Maia.Gtk.Model : Maia.Model
 
         // Set filter func
         (treemodel as global::Gtk.TreeModelFilter).set_visible_func (on_filter_func);
+
+        // Refilter content
+        refilter ();
     }
 
     internal override void
