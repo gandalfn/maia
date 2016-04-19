@@ -116,6 +116,11 @@ namespace Maia
 
                 _WRAP_METHOD(void publish (const Glib::RefPtr<EventArgs>& inpArgs), maia_core_event_publish)
 
+                void publish ()
+                {
+                    maia_core_event_publish (gobj (), 0);
+                }
+
                 template <typename T_obj>
                 typename std::enable_if<!std::is_base_of<Glib::Object, T_obj>::value, void>::type
                 publish_with_reply (const Glib::RefPtr<EventArgs>& inpArgs, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))

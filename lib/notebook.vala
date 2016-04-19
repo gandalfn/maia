@@ -560,105 +560,116 @@ public class Maia.Notebook : Grid
                 item_size.height = double.max (item_size.height, page_size.height);
             }
         }
-        m_CurrentPage = new Graphic.Surface.similar (inContext.surface, (uint)GLib.Math.ceil (item_size.width), (uint)GLib.Math.ceil (item_size.height));
-        m_CurrentPage.clear ();
+
+        if (!item_size.is_empty ())
+        {
+            m_CurrentPage = new Graphic.Surface.similar (inContext.surface, (uint)GLib.Math.ceil (item_size.width), (uint)GLib.Math.ceil (item_size.height));
+            m_CurrentPage.clear ();
+        }
+        else
+        {
+            m_CurrentPage = null;
+        }
     }
 
     internal override void
     paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
-        m_CurrentPage.clear ();
-        var ctx = m_CurrentPage.context;
-        var page_origin = Graphic.Point (0, 0);
-
-        ctx.save ();
+        if (m_CurrentPage != null)
         {
-            // paint childs
-            foreach (unowned Core.Object child in this)
+            m_CurrentPage.clear ();
+            var ctx = m_CurrentPage.context;
+            var page_origin = Graphic.Point (0, 0);
+
+            ctx.save ();
             {
-                unowned NotebookPage? page = child as NotebookPage;
-                if (page != null && page.visible)
+                // paint childs
+                foreach (unowned Core.Object child in this)
                 {
-                    page_origin = page.geometry.extents.origin;
-                    ctx.translate (page_origin.invert ());
-                    page.draw (ctx, area_to_child_item_space (page, inArea));
-                    break;
+                    unowned NotebookPage? page = child as NotebookPage;
+                    if (page != null && page.visible)
+                    {
+                        page_origin = page.geometry.extents.origin;
+                        ctx.translate (page_origin.invert ());
+                        page.draw (ctx, area_to_child_item_space (page, inArea));
+                        break;
+                    }
                 }
             }
-        }
-        ctx.restore ();
+            ctx.restore ();
 
-        inContext.save ();
-        {
-            // Draw tab
-            m_Tab.draw (inContext, area_to_child_item_space (m_Tab, inArea));
-
-            // Paint page
-            inContext.translate (page_origin);
-            switch (transition)
+            inContext.save ();
             {
-                case Transition.OPACITY:
-                    if (m_PrevPage != null && m_SwitchProgress < 1.0)
-                    {
-                        inContext.pattern = m_PrevPage;
-                        inContext.paint_with_alpha (1 - m_SwitchProgress);
-                    }
-                    inContext.pattern = m_CurrentPage;
-                    inContext.paint_with_alpha (m_SwitchProgress);
-                    break;
+                // Draw tab
+                m_Tab.draw (inContext, area_to_child_item_space (m_Tab, inArea));
 
-                case Transition.ZOOM:
-                    if (m_SwitchDirectionUp)
-                    {
-                        if (m_PrevPage != null && m_SwitchProgress < 1.0)
-                        {
-                            double scale = 0.5 + ((1.0 - m_SwitchProgress) / 2.0);
-                            var surface_size = m_PrevPage.size;
-                            inContext.save ();
-                            {
-                                inContext.translate (Graphic.Point ((surface_size.width - (surface_size.width * scale)) / 2.0,
-                                                                    (surface_size.height - (surface_size.height * scale)) / 2.0));
-                                inContext.transform = new Graphic.Transform.init_scale (scale, scale);
-                                inContext.pattern = m_PrevPage;
-                                inContext.paint_with_alpha (1 - m_SwitchProgress);
-                            }
-                            inContext.restore ();
-                        }
-                        inContext.pattern = m_CurrentPage;
-                        inContext.paint_with_alpha (m_SwitchProgress);
-                    }
-                    else
-                    {
+                // Paint page
+                inContext.translate (page_origin);
+                switch (transition)
+                {
+                    case Transition.OPACITY:
                         if (m_PrevPage != null && m_SwitchProgress < 1.0)
                         {
                             inContext.pattern = m_PrevPage;
                             inContext.paint_with_alpha (1 - m_SwitchProgress);
                         }
+                        inContext.pattern = m_CurrentPage;
+                        inContext.paint_with_alpha (m_SwitchProgress);
+                        break;
 
-                        if (m_SwitchProgress > 0)
+                    case Transition.ZOOM:
+                        if (m_SwitchDirectionUp)
                         {
-                            double scale = 0.5 + (m_SwitchProgress / 2.0);
-                            var surface_size = m_CurrentPage.size;
-                            inContext.save ();
+                            if (m_PrevPage != null && m_SwitchProgress < 1.0)
                             {
-                                inContext.translate (Graphic.Point ((surface_size.width - (surface_size.width * scale)) / 2.0,
-                                                                    (surface_size.height - (surface_size.height * scale)) / 2.0));
-                                inContext.transform = new Graphic.Transform.init_scale (scale, scale);
-                                inContext.pattern = m_CurrentPage;
-                                inContext.paint_with_alpha (m_SwitchProgress);
+                                double scale = 0.5 + ((1.0 - m_SwitchProgress) / 2.0);
+                                var surface_size = m_PrevPage.size;
+                                inContext.save ();
+                                {
+                                    inContext.translate (Graphic.Point ((surface_size.width - (surface_size.width * scale)) / 2.0,
+                                                                        (surface_size.height - (surface_size.height * scale)) / 2.0));
+                                    inContext.transform = new Graphic.Transform.init_scale (scale, scale);
+                                    inContext.pattern = m_PrevPage;
+                                    inContext.paint_with_alpha (1 - m_SwitchProgress);
+                                }
+                                inContext.restore ();
                             }
-                            inContext.restore ();
+                            inContext.pattern = m_CurrentPage;
+                            inContext.paint_with_alpha (m_SwitchProgress);
                         }
-                    }
-                    break;
+                        else
+                        {
+                            if (m_PrevPage != null && m_SwitchProgress < 1.0)
+                            {
+                                inContext.pattern = m_PrevPage;
+                                inContext.paint_with_alpha (1 - m_SwitchProgress);
+                            }
 
-                default:
-                    inContext.pattern = m_CurrentPage;
-                    inContext.paint ();
-                    break;
+                            if (m_SwitchProgress > 0)
+                            {
+                                double scale = 0.5 + (m_SwitchProgress / 2.0);
+                                var surface_size = m_CurrentPage.size;
+                                inContext.save ();
+                                {
+                                    inContext.translate (Graphic.Point ((surface_size.width - (surface_size.width * scale)) / 2.0,
+                                                                        (surface_size.height - (surface_size.height * scale)) / 2.0));
+                                    inContext.transform = new Graphic.Transform.init_scale (scale, scale);
+                                    inContext.pattern = m_CurrentPage;
+                                    inContext.paint_with_alpha (m_SwitchProgress);
+                                }
+                                inContext.restore ();
+                            }
+                        }
+                        break;
+
+                    default:
+                        inContext.pattern = m_CurrentPage;
+                        inContext.paint ();
+                        break;
+                }
             }
+            inContext.restore ();
         }
-        inContext.restore ();
     }
 
     public unowned NotebookPage?

@@ -27,6 +27,8 @@ _CONVERSION(`const Glib::RefPtr<Object>&',`MaiaCoreObject*',__CONVERT_REFPTR_TO_
 _CONVERSION(`MaiaCoreObject*',`const Glib::RefPtr<Object>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaCoreObject*',`Glib::RefPtr<Object>',`Glib::wrap($3)')
 
+_CONVERSION(`Object*',`MaiaCoreObject*',$3->gobj ())
+8
 _CONVERSION(`Glib::RefPtr<EventArgs>',`MaiaCoreEventArgs*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<EventArgs>&',`MaiaCoreEventArgs*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaCoreEventArgs*',`const Glib::RefPtr<EventArgs>&',`Glib::wrap($3)')

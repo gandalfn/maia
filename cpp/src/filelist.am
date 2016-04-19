@@ -103,6 +103,7 @@ files_hg = \
     scroll-view.hg \
     state.hg \
     step-button.hg \
+    switch-button.hg \
     table-view.hg \
     table-view-column.hg \
     toggle-button.hg \

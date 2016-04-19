@@ -77,7 +77,7 @@ public class Maia.SwitchButton : Toggle
         notify["active"].connect (on_active_changed);
     }
 
-    public SwitchButton (string inId, string inLabel)
+    public SwitchButton (string inId, string? inLabel)
     {
         base (inId, inLabel);
     }

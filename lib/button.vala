@@ -209,6 +209,7 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
                      @"        xfill: false;" +
                      @"        xlimp: true;" +
                      @"        filename: @icon-filename;" +
+                     @"        state: @state;" +
                      @"        size: @icon-size;" +
                      @"    }" +
                      @"    Label.$(name)-label { "    +
@@ -222,6 +223,7 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
                      @"        shade-color: @shade-color;" +
                      @"        font-description: @font-description;" +
                      @"        stroke-pattern: @stroke-pattern;" +
+                     @"        state: @state;" +
                      @"        text: @label;" +
                      @"    }" +
                      @"}";

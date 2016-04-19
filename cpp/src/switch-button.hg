@@ -1,0 +1,72 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * switch-button.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/graphic-glyph.h>
+#include <maiamm/state.h>
+#include <maiamm/toggle.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/toggle_p.h)
+
+namespace Maia
+{
+    class SwitchButton : public Toggle
+    {
+        _CLASS_GOBJECT(SwitchButton, MaiaSwitchButton, MAIA_SWITCH_BUTTON, Toggle, MaiaToggle)
+
+        protected:
+            _CTOR_DEFAULT()
+
+            explicit SwitchButton(const Glib::ustring& inId);
+
+        public:
+            static Glib::RefPtr<SwitchButton> create (const Glib::ustring& inId)
+            {
+                MaiaSwitchButton* pButton = maia_switch_button_new (inId.c_str (), 0);
+
+                return Glib::RefPtr<SwitchButton> (new SwitchButton (pButton));
+            }
+
+            static Glib::RefPtr<SwitchButton> create (const Glib::ustring& inId, const Glib::ustring& inLabel)
+            {
+                MaiaSwitchButton* pButton = maia_switch_button_new (inId.c_str (), inLabel.c_str ());
+
+                return Glib::RefPtr<SwitchButton> (new SwitchButton (pButton));
+            }
+
+            _WRAP_METHOD(double get_spacing () const, maia_switch_button_get_spacing)
+            _WRAP_METHOD(void set_spacing (double inSpacing), maia_switch_button_set_spacing)
+
+            _WRAP_METHOD(Glib::RefPtr<StatePatterns> get_shadow_pattern () const, maia_switch_button_get_shadow_pattern, refreturn)
+            _WRAP_METHOD(void set_shadow_pattern (const Glib::RefPtr<StatePatterns>& inPattern), maia_switch_button_set_shadow_pattern)
+
+            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_line_pattern () const, maia_switch_button_get_line_pattern, refreturn)
+            _WRAP_METHOD(void set_line_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_switch_button_set_line_pattern)
+
+            _WRAP_PROPERTY("spacing", double)
+            _WRAP_PROPERTY("shadow-pattern", Glib::RefPtr<StatePatterns>)
+            _WRAP_PROPERTY("line-pattern", Graphic::Pattern)
+
+            _WRAP_PROPERTY("tag", Glib::ustring)
+
+        private:
+            _WRAP_PROPERTY("switch-progress", double)
+    };
+}

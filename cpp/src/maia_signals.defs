@@ -7745,6 +7745,53 @@
   (construct-only #f)
 )
 
+;; From MaiaSwitchButton
+
+(define-property tag
+  (of-object "MaiaSwitchButton")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property switch-progress
+  (of-object "MaiaSwitchButton")
+  (prop-type "GParamDouble")
+  (docs "switch-progress")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property spacing
+  (of-object "MaiaSwitchButton")
+  (prop-type "GParamDouble")
+  (docs "spacing")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property shadow-pattern
+  (of-object "MaiaSwitchButton")
+  (prop-type "GParamObject")
+  (docs "shadow-pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property line-pattern
+  (of-object "MaiaSwitchButton")
+  (prop-type "GParamObject")
+  (docs "line-pattern")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaNotebook
 
 (define-property tag

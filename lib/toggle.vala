@@ -191,7 +191,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
      * Indicate if toggle is active
      */
     [CCode (notify = false)]
-    public bool active {
+    public virtual bool active {
         get {
             return m_Active;
         }

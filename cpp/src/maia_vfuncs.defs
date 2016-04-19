@@ -1281,3 +1281,16 @@
   (of-object "MaiaToggle")
   (return-type "gchar*")
 )
+
+(define-vfunc get_active
+  (of-object "MaiaToggle")
+  (return-type "gboolean")
+)
+
+(define-vfunc set_active
+  (of-object "MaiaToggle")
+  (return-type "none")
+  (parameters
+    '("gboolean" "inActive")
+  )
+)

@@ -194,9 +194,13 @@ namespace Maia
 
                 _WRAP_METHOD(bool is_plugged_property (const Glib::ustring& inProperty) const, maia_core_object_is_plugged_property)
                 _WRAP_METHOD(void plug_property (const Glib::ustring& inProperty, const Glib::RefPtr<Object>& inpDst, const Glib::ustring& inDstProperty), maia_core_object_plug_property)
+                _WRAP_METHOD(void plug_property (const Glib::ustring& inProperty, Object* inpDst, const Glib::ustring& inDstProperty), maia_core_object_plug_property)
                 _WRAP_METHOD(void unplug_property (const Glib::ustring& inProperty, const Glib::RefPtr<Object>& inpDst, const Glib::ustring& inDstProperty), maia_core_object_unplug_property)
+                _WRAP_METHOD(void unplug_property (const Glib::ustring& inProperty, Object* inpDst, const Glib::ustring& inDstProperty), maia_core_object_unplug_property)
                 _WRAP_METHOD(void lock_property (const Glib::ustring& inProperty, const Glib::RefPtr<Object>& inpDst, const Glib::ustring& inDstProperty), maia_core_object_lock_property)
+                _WRAP_METHOD(void lock_property (const Glib::ustring& inProperty, Object* inpDst, const Glib::ustring& inDstProperty), maia_core_object_lock_property)
                 _WRAP_METHOD(void unlock_property (const Glib::ustring& inProperty, const Glib::RefPtr<Object>& inpDst, const Glib::ustring& inDstProperty), maia_core_object_unlock_property)
+                _WRAP_METHOD(void unlock_property (const Glib::ustring& inProperty, Object* inpDst, const Glib::ustring& inDstProperty), maia_core_object_unlock_property)
 
                 _IGNORE(maia_core_object_compare)
                 _WRAP_COMPARE(maia_core_object_compare, unconst)

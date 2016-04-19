@@ -61,7 +61,10 @@ namespace Maia
 
             _WRAP_METHOD(Glib::ustring get_main_data () const, maia_toggle_get_main_data)
 
-            _WRAP_METHOD(Glib::RefPtr<Item> get_main_content () const, maia_toggle_get_main_content)
+            _WRAP_METHOD(Glib::RefPtr<Item> get_main_content () const, maia_toggle_get_main_content, refreturn)
+
+            _WRAP_VFUNC(bool get_active (), get_active)
+            _WRAP_VFUNC(void set_active (bool inActive), set_active)
 
         public:
             _IGNORE(maia_toggle_on_button_press)
