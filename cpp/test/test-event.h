@@ -36,11 +36,15 @@ namespace Maia
             unsigned long m_Data;
             Glib::ustring m_Foo;
             int m_Count;
-            
+
             // methods
             void test_event_publish ();
+            void test_event_publish_with_reply ();
+            void on_event_reply (const Glib::RefPtr<Core::EventArgs>& inpArgs);
             void on_event (const Glib::RefPtr<Core::EventArgs>& inpArgs);
             bool on_publish ();
+            bool on_publish_with_reply ();
+            void on_reply (const Glib::RefPtr<Core::EventArgs>& inpArgs);
             bool on_quit ();
     };
 }

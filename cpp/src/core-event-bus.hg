@@ -46,6 +46,7 @@ namespace Maia
                 EventReplyFunctorBase () :
                     Glib::ObjectBase ("Maia::Core::EventReplyFunctorBase")
                 {
+                    g_object_set_data (G_OBJECT (gobj ()), "EventReplyCpp", this);
                 }
         };
 

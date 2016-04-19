@@ -846,7 +846,6 @@ internal class Maia.Xcb.View : Drawable
     {
         if (m_NbGrabsPointer == 0)
         {
-            print (@"grab pointer\n");
             ((global::Xcb.Window)xid).grab_pointer (connection, true,
                                                     global::Xcb.EventMask.BUTTON_PRESS        |
                                                     global::Xcb.EventMask.BUTTON_RELEASE      |
@@ -866,7 +865,6 @@ internal class Maia.Xcb.View : Drawable
 
         if (m_NbGrabsPointer == 0)
         {
-            print (@"ungrab pointer\n");
             connection.ungrab_pointer (global::Xcb.CURRENT_TIME);
         }
     }
@@ -876,7 +874,6 @@ internal class Maia.Xcb.View : Drawable
     {
         if (m_NbGrabsKeyboard == 0)
         {
-            print (@"grab keyboard\n");
             ((global::Xcb.Window)xid).grab_keyboard (connection, true,
                                                      global::Xcb.CURRENT_TIME,
                                                      global::Xcb.GrabMode.ASYNC,
@@ -892,7 +889,6 @@ internal class Maia.Xcb.View : Drawable
 
         if (m_NbGrabsKeyboard == 0)
         {
-            print (@"ungrab keyboard\n");
             connection.ungrab_keyboard (global::Xcb.CURRENT_TIME);
         }
     }
@@ -906,7 +902,6 @@ internal class Maia.Xcb.View : Drawable
 
         if (keycode != null)
         {
-            print(@"grab key $inModifier $inKey\n");
             var cookie = ((global::Xcb.Window)xid).grab_key_checked (connection, true, mask, keycode[0], global::Xcb.GrabMode.ASYNC, global::Xcb.GrabMode.ASYNC);
             global::Xcb.GenericError? err = connection.request_check (cookie);
             if (err != null)
@@ -925,7 +920,6 @@ internal class Maia.Xcb.View : Drawable
 
         if (keycode != null)
         {
-            print(@"ungrab key $inModifier $inKey\n");
             var cookie = ((global::Xcb.Window)xid).ungrab_key_checked (connection, keycode[0], mask);
             global::Xcb.GenericError? err = connection.request_check (cookie);
             if (err != null)

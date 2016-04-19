@@ -33,6 +33,14 @@ MAIA_CORE_EVENT_ARGS_REGISTER("message TestProtobuf {"
                               "TestProtobuf",
                               TestProtobufEventArgs)
 
+MAIA_CORE_EVENT_ARGS_DEFINE(TestReplyEventArgs)
+
+MAIA_CORE_EVENT_ARGS_REGISTER("message TestReply {"
+                              "     uint32 cpt;"
+                              "}",
+                              "TestReply",
+                              TestReplyEventArgs)
+
 
 class TestEventArgs : public Core::EventArgs
 {
@@ -90,6 +98,7 @@ TestEvent::TestEvent () :
     m_Count (0)
 {
     add_test ("publish", sigc::mem_fun (this, &TestEvent::test_event_publish));
+    add_test ("publish-reply", sigc::mem_fun (this, &TestEvent::test_event_publish_with_reply));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -131,6 +140,28 @@ TestEvent::test_event_publish ()
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void
+TestEvent::test_event_publish_with_reply ()
+{
+
+    m_pEvent = Core::Event::create ("test-event-reply");
+    Core::EventBus::get_default ()->subscribe ("test-event-reply", this, &TestEvent::on_event_reply);
+
+    {
+        Glib::RefPtr<Glib::TimeoutSource> pTimeout = Glib::TimeoutSource::create (1000);
+        pTimeout->connect (sigc::mem_fun (this, &TestEvent::on_publish_with_reply));
+        pTimeout->attach (Glib::MainContext::get_default ());
+
+        Glib::RefPtr<Glib::TimeoutSource> pEnd = Glib::TimeoutSource::create (5000);
+        pEnd->connect (sigc::mem_fun (this, &TestEvent::on_quit));
+        pEnd->attach (Glib::MainContext::get_default ());
+    }
+
+    Application::get_default ()->run ();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void
 TestEvent::on_event (const Glib::RefPtr<Core::EventArgs>& inpArgs)
 {
     g_test_message ("Receive test-event");
@@ -142,6 +173,42 @@ TestEvent::on_event (const Glib::RefPtr<Core::EventArgs>& inpArgs)
         m_Count = pArgs->get_count ();
         g_test_message ("Receive test-event \"%s\" %lu %i", m_Foo.c_str (), m_Data, m_Count);
     }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void
+TestEvent::on_event_reply (const Glib::RefPtr<Core::EventArgs>& inpArgs)
+{
+    uint32_t val = inpArgs->fields ()["cpt"];
+    g_test_message ("Receive test-event-reply recv %u", val);
+    inpArgs->fields ()["cpt"] = (uint32_t)g_test_rand_int_range (0, 100);
+    val = inpArgs->fields ()["cpt"];
+    g_test_message ("Receive test-event-reply send %u", val);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+bool
+TestEvent::on_publish_with_reply ()
+{
+    static int cpt = 0;
+
+    Glib::RefPtr<TestReplyEventArgs> pArgs = TestReplyEventArgs::create ("cpt", (uint32_t)g_test_rand_int_range (0, 100));
+
+    Maia::Core::EventBus::get_default ()->publish_with_reply ("test-event-reply", pArgs, this, &TestEvent::on_reply);
+    ++cpt;
+    return cpt < 3;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void
+TestEvent::on_reply (const Glib::RefPtr<Core::EventArgs>& inpArgs)
+{
+    g_test_message ("Receive reply test-event-reply");
+    uint32_t val = inpArgs->fields ()["cpt"];
+    g_test_message ("reply val = %u", val);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

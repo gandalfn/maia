@@ -266,12 +266,16 @@ internal abstract class Maia.Protocol.Field : Core.Object, Core.Serializable, Bu
             {
                 GLib.Variant[] childs = {};
 
+                if (m_Values.length == 0 && !field_type.to_variant_type ().is_definite ())
+                {
+                    m_Values += create_value ();
+                }
                 for (int cpt = 0; cpt < m_Values.length; ++cpt)
                 {
                     childs += get_variant (cpt);
                 }
 
-                ret = new GLib.Variant.array (null, childs);
+                ret = new GLib.Variant.array (childs.length == 0 ? field_type.to_variant_type () : null, childs);
             }
             else
             {

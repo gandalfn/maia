@@ -197,6 +197,10 @@ public abstract class Maia.Core.EventArgs : GLib.Object, Core.Serializable
     accumulate (EventArgs inArgs)
         requires (inArgs.get_type ().is_a (get_type ()))
     {
+        if (m_Message != null && inArgs.m_Message != null)
+        {
+            m_Message = inArgs.m_Message.copy () as Protocol.Message;
+        }
     }
 
     public EventArgs
