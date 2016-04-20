@@ -205,6 +205,8 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
 
                 toggled.publish (new ToggledEventArgs (name, active));
 
+                damage.post ();
+
                 if (m_HideIfInactive)
                 {
                     if (visible && !m_Active)

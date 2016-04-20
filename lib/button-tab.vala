@@ -147,6 +147,8 @@ public class Maia.ButtonTab : Toggle
                 label_state = m_Highlight ? State.PRELIGHT : state;
 
                 GLib.Signal.emit_by_name (this, "notify::highlight");
+
+                damage.post ();
             }
         }
     }

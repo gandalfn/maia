@@ -255,7 +255,7 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
 
         if (args != null)
         {
-            if (args.active && args.button_name != null)
+            if (args.active && args.button_name != null && m_Active != args.button_name)
             {
                 m_Active = args.button_name;
                 foreach (unowned Core.Pair<string, unowned Toggle> pair in m_Toggles)
@@ -272,7 +272,7 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
 
                 changed.publish (new ChangedEventArgs (m_Active));
             }
-            else if (m_Active == args.button_name)
+            else if (!args.active && m_Active == args.button_name)
             {
                 m_Active = "";
 
