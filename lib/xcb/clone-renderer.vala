@@ -110,9 +110,9 @@ public class Maia.Xcb.CloneRenderer : Maia.Graphic.CloneRenderer
     }
 
     // methods
-    public CloneRenderer (Graphic.Size inSize, Graphic.Device inDevice)
+    public CloneRenderer (Graphic.Rectangle inArea, Graphic.Device inDevice)
     {
-        base (inSize, inDevice);
+        base (inArea, inDevice);
     }
 
     public override void
@@ -151,18 +151,9 @@ public class Maia.Xcb.CloneRenderer : Maia.Graphic.CloneRenderer
             {
                 var ctx = m_Surface.context;
                 ctx.save ();
-                    Graphic.Size clone_size   = m_CloneSurface.size;
-                    Graphic.Size surface_size = m_Surface.size;
-
-                    double scale = double.min (surface_size.width  / clone_size.width,
-                                               surface_size.height / clone_size.height);
-
-                    var transform = new Graphic.Transform.identity ();
-                    transform.translate ((surface_size.width  - (clone_size.width  * scale)) / 2,
-                                         (surface_size.height - (clone_size.height * scale)) / 2);
-                    transform.scale (scale, scale);
-
-                    ctx.transform = transform;
+                    m_CloneSurface.transform = new Graphic.Transform.init_translate (position.x, position.y);
+                    ctx.operator = Graphic.Operator.SOURCE;
+                    ctx.clip (new Graphic.Path.from_rectangle (Graphic.Rectangle (0, 0, m_Size.width, m_Size.height)));
                     ctx.pattern = m_CloneSurface;
                     ctx.paint ();
                 ctx.restore ();

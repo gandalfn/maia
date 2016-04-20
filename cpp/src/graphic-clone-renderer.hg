@@ -53,12 +53,12 @@ namespace Maia
             protected:
                 _CTOR_DEFAULT()
 
-                CloneRendererObject (const Size& inSize, const Glib::RefPtr<Device>& inpDevice);
+                CloneRendererObject (const Rectangle& inArea, const Glib::RefPtr<Device>& inpDevice);
 
             public:
-                static Glib::RefPtr<CloneRendererObject> create (const Size& inSize, const Glib::RefPtr<Device>& inpDevice)
+                static Glib::RefPtr<CloneRendererObject> create (const Rectangle& inArea, const Glib::RefPtr<Device>& inpDevice)
                 {
-                    return Glib::RefPtr<CloneRendererObject> (new CloneRendererObject (inSize, inpDevice));
+                    return Glib::RefPtr<CloneRendererObject> (new CloneRendererObject (inArea, inpDevice));
                 }
         };
 #endif
@@ -68,13 +68,13 @@ namespace Maia
             public:
                 virtual ~CloneRenderer ();
 
-                static Glib::RefPtr<CloneRenderer> create (const Size& inSize, const Glib::RefPtr<Device>& inpDevice)
+                static Glib::RefPtr<CloneRenderer> create (const Rectangle& inArea, const Glib::RefPtr<Device>& inpDevice)
                 {
-                    return Glib::RefPtr<CloneRenderer> (new CloneRenderer (inSize, inpDevice));
+                    return Glib::RefPtr<CloneRenderer> (new CloneRenderer (inArea, inpDevice));
                 }
 
             protected:
-                CloneRenderer (const Size& inSize, const Glib::RefPtr<Device>& inpDevice);
+                CloneRenderer (const Rectangle& inArea, const Glib::RefPtr<Device>& inpDevice);
         };
     }
 }

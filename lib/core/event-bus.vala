@@ -1330,7 +1330,7 @@ public class Maia.Core.EventBus : Object
                 reply.count++;
 
 #if MAIA_DEBUG
-                Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "check reply %s %u count: %u", hash.to_string (), inArgs.sequence, reply.count);
+                Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "Check reply %s %u count: %u", hash.to_string (), inArgs.sequence, reply.count);
 #endif
 
                 if (reply.count == (subscribers.length + bridges.length))
@@ -1633,7 +1633,7 @@ public class Maia.Core.EventBus : Object
                     unowned MessageEvent? msg = (MessageEvent)message;
 
 #if MAIA_DEBUG
-                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Event $(msg.hash) publish");
+                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridget receive event $(msg.hash)");
 #endif
 
                     unowned Occurence occurence = m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
@@ -1643,7 +1643,7 @@ public class Maia.Core.EventBus : Object
                         if (msg.need_reply)
                         {
 #if MAIA_DEBUG
-                            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge receive event $(msg.hash) with reply");
+                            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge receive event $(msg.hash) from $(msg.sender) with reply");
 #endif
 
                             // Add pending reply
@@ -1661,7 +1661,7 @@ public class Maia.Core.EventBus : Object
                                 if (client != null && client.id in destination)
                                 {
 #if MAIA_DEBUG
-                                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event $(msg.hash) to client $(client.id)");
+                                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge send event $(msg.hash) to client $(client.id)");
 #endif
                                     // send message to client
                                     client.send_async.begin (message);
@@ -1677,6 +1677,9 @@ public class Maia.Core.EventBus : Object
                             // Event with reply
                             if (msg.need_reply)
                             {
+#if MAIA_DEBUG
+                                Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge receive event $(msg.hash) from $(msg.sender) with reply");
+#endif
                                // Add pending reply
                                 occurence.add_reply (msg.sender, msg.args);
                             }
@@ -1692,7 +1695,7 @@ public class Maia.Core.EventBus : Object
                                     if (client != null && client.id in destination)
                                     {
 #if MAIA_DEBUG
-                                        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event $(msg.hash) to client $(client.id)");
+                                        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge send event $(msg.hash) to client $(client.id)");
 #endif
                                         // send message to client
                                         client.send_async.begin (message);
@@ -1708,6 +1711,9 @@ public class Maia.Core.EventBus : Object
 
                     // Search the corresponding occurence in event bus
                     unowned Occurence occurence = m_EventBus.m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
+#if MAIA_DEBUG
+                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge check event reply occurence $(msg.hash) $(msg.args.sequence): $(occurence != null)");
+#endif
                     if (occurence != null)
                     {
 #if MAIA_DEBUG
@@ -1863,7 +1869,7 @@ public class Maia.Core.EventBus : Object
                 if (reply != null)
                 {
 #if MAIA_DEBUG
-                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event reply $(inMessage.hash) $(inMessage.args.sequence)");
+                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge send event reply $(inMessage.hash) $(inMessage.args.sequence)");
 #endif
 
                     // send reply to sender
@@ -2122,6 +2128,9 @@ public class Maia.Core.EventBus : Object
             {
                 foreach (unowned Bridge bridge in m_Bridges)
                 {
+#if MAIA_DEBUG
+                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event $(msg.hash) to bridge $(bridge.address)");
+#endif
                     bridge.connection.send_async.begin (inMessage);
                 }
             }
@@ -2153,6 +2162,16 @@ public class Maia.Core.EventBus : Object
                         if (connection != null)
                         {
                             connection.send_async.begin (reply);
+                        }
+                        else
+                        {
+                            foreach (unowned Bridge bridge in m_Bridges)
+                            {
+#if MAIA_DEBUG
+                                Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge send event reply $(msg.hash) to bridge $(bridge.address)");
+#endif
+                                bridge.connection.send_async.begin (reply);
+                            }
                         }
                     }
                 }

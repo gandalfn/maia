@@ -40,10 +40,14 @@ public class Maia.Graphic.CloneRenderer : Renderer
         }
     }
 
+    // accessors
+    [CCode (notify = false)]
+    public virtual Point position { get; construct set; default = Point (0, 0); }
+
     // methods
-    public CloneRenderer (Graphic.Size inSize, Graphic.Device inDevice)
+    public CloneRenderer (Graphic.Rectangle inArea, Graphic.Device inDevice)
     {
-        base (inSize);
+        GLib.Object (size: inArea.size, position: inArea.origin);
 
         init (inDevice);
     }

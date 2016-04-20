@@ -12917,7 +12917,7 @@
   (is-constructor-of "MaiaGraphicCloneRenderer")
   (return-type "MaiaGraphicCloneRenderer*")
   (parameters
-    '("MaiaGraphicSize*" "inSize")
+    '("MaiaGraphicRectangle*" "inArea")
     '("MaiaGraphicDevice*" "inDevice")
   )
 )
@@ -12927,7 +12927,7 @@
   (return-type "MaiaGraphicCloneRenderer*")
   (parameters
     '("GType" "object_type")
-    '("MaiaGraphicSize*" "inSize")
+    '("MaiaGraphicRectangle*" "inArea")
     '("MaiaGraphicDevice*" "inDevice")
   )
 )
@@ -12938,6 +12938,24 @@
   (return-type "none")
   (parameters
     '("MaiaGraphicDevice*" "inDevice")
+  )
+)
+
+(define-method get_position
+  (of-object "MaiaGraphicCloneRenderer")
+  (c-name "maia_graphic_clone_renderer_get_position")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "result")
+  )
+)
+
+(define-method set_position
+  (of-object "MaiaGraphicCloneRenderer")
+  (c-name "maia_graphic_clone_renderer_set_position")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "value")
   )
 )
 

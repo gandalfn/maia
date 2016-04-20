@@ -66,30 +66,12 @@ public interface Maia.Drawable : Core.Object
                         {
                             m_Drawable.damaged = damaged_area;
                             base.post ();
-#if MAIA_DEBUG
-                            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "area %s damage %s", damaged_area.extents.to_string (), damaged.extents.to_string ());
-#endif
                         }
                         else if (drawable_damaged.contains_rectangle (damaged_area.extents) !=  Graphic.Region.Overlap.IN)
                         {
                             drawable_damaged.union_ (damaged_area);
                             base.post ();
-#if MAIA_DEBUG
-                            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "area %s damage %s", damaged_area.extents.to_string (), damaged.extents.to_string ());
-#endif
                         }
-                        else
-                        {
-#if MAIA_DEBUG
-                            Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"region is already damaged $((this as Item).name)");
-#endif
-                        }
-                    }
-                    else
-                    {
-#if MAIA_DEBUG
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"empty damaged region $((this as Item).name)");
-#endif
                     }
                 }
                 else
@@ -98,15 +80,6 @@ public interface Maia.Drawable : Core.Object
                     {
                         m_Drawable.damaged = damaged_area;
                         base.post ();
-#if MAIA_DEBUG
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, "all damage %s", damaged.extents.to_string ());
-#endif
-                    }
-                    else
-                    {
-#if MAIA_DEBUG
-                        Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_DAMAGE, @"region is already damaged $((this as Item).name)");
-#endif
                     }
                 }
             }

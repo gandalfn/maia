@@ -42,6 +42,7 @@ public class Maia.ButtonTab : Toggle
                    @"       xexpand: true;\n" +
                    @"       xfill: true;\n" +
                    @"       Image.$(name)-image {\n"    +
+                   @"           column: 1;\n"    +
                    @"           yfill: false;\n" +
                    @"           yexpand: true;\n" +
                    @"           xexpand: false;\n" +
@@ -52,7 +53,6 @@ public class Maia.ButtonTab : Toggle
                    @"           size: @icon-size;\n" +
                    @"       }\n" +
                    @"       Label.$(name)-label {\n"    +
-                   @"           column: 1;\n"    +
                    @"           xfill: true;\n" +
                    @"           xexpand: true;\n" +
                    @"           xlimp: true;\n" +
