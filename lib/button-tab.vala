@@ -163,11 +163,20 @@ public class Maia.ButtonTab : Toggle
 
         // connect activate changed
         notify["active"].connect (on_active_changed);
+
+        // connect state changed
+        notify["state"].connect (on_state_changed);
     }
 
     public ButtonTab (string inId, string? inLabel)
     {
         base (inId, inLabel);
+    }
+
+    private void
+    on_state_changed ()
+    {
+        label_state = m_Highlight ? State.PRELIGHT : state;
     }
 
     private void
@@ -416,9 +425,9 @@ public class Maia.ButtonTab : Toggle
                     break;
             }
 
-            if (stroke_pattern[state] != null)
+            if (stroke_pattern[State.NORMAL] != null)
             {
-                inContext.pattern = stroke_pattern[state];
+                inContext.pattern = stroke_pattern[State.NORMAL];
                 inContext.stroke (border_path);
             }
         }
