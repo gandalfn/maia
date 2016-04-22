@@ -60,6 +60,8 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
     private View                   m_View;
     private Graphic.Region[]       m_Areas;
     private int                    m_AreaClicked = -1;
+    private bool                   m_Button1Pressed = false;
+    private Graphic.Point          m_Button1Origin = Graphic.Point (0, 0);
     private Graphic.Surface        m_ViewSurface;
     private Graphic.LinearGradient m_ViewMask;
 
@@ -157,19 +159,9 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
         set {
             if (m_Active != value)
             {
-                m_Active = value;
+                m_Active = uint.min (value, m_View.model != null ? m_View.model.nb_rows : 0);
 
-                m_Animator.stop ();
-
-                if (m_Transition > 0)
-                {
-                    m_Animator.remove_transition (m_Transition);
-                }
-                m_Transition = m_Animator.add_transition (0, 1, Core.Animator.ProgressType.EXPONENTIAL);
-                GLib.Value from = m_Progress;
-                GLib.Value to = (double)m_Active;
-                m_Animator.add_transition_property (m_Transition, this, "progress", from, to);
-                m_Animator.start ();
+                launch_active_progess ((int)m_Active);
 
                 changed.publish (new ChangedEventArgs (m_Active));
 
@@ -254,6 +246,52 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
     public StepButton (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
+    }
+
+    private void
+    inc_dec_active (bool inInc)
+    {
+        int val = (int)m_Active + (inInc ? 1 : -1);
+        if (val < 0)
+        {
+            m_Active = (uint)((int)m_View.model.nb_rows + val) % (int)m_View.model.nb_rows;
+        }
+        else
+        {
+            m_Active = (uint)(val % (int)m_View.model.nb_rows);
+        }
+
+        launch_active_progess (val);
+
+        changed.publish (new ChangedEventArgs (m_Active));
+
+        GLib.Signal.emit_by_name (this, "notify::active");
+    }
+
+    private void
+    launch_active_progess (int inActive)
+    {
+        m_Animator.stop ();
+
+        if (m_Transition > 0)
+        {
+            m_Animator.remove_transition (m_Transition);
+        }
+        m_Transition = m_Animator.add_transition (0, 1, Core.Animator.ProgressType.EXPONENTIAL);
+        uint nb = m_View.model != null ? m_View.model.nb_rows : 0;
+        if (m_Progress < 0)
+        {
+            m_Progress = nb + m_Progress;
+        }
+        else if (m_Progress >= nb)
+        {
+            m_Progress = m_Progress - nb;
+        }
+
+        GLib.Value from = m_Progress;
+        GLib.Value to = (double)inActive;
+        m_Animator.add_transition_property (m_Transition, this, "progress", from, to);
+        m_Animator.start ();
     }
 
     internal override Graphic.Size
@@ -414,7 +452,61 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
                     m_View.draw (ctx);
                 }
                 ctx.restore ();
-                m_ViewSurface.dump ("view.png");
+
+                uint nb = m_View.model.nb_rows;
+
+                if (m_Progress < 1)
+                {
+                    var view_size = m_View.geometry.extents.size;
+                    double diff = 1.0 - m_Progress;
+
+                    ctx.save ();
+                    {
+                        ctx.translate (Graphic.Point (-view_size.width + ((item_size.width + spacing) * diff), 0));
+
+                        m_View.damage_area ();
+                        m_View.draw (ctx);
+                    }
+                    ctx.restore ();
+                    if (stroke_pattern[State.NORMAL] != null)
+                    {
+                        ctx.save ();
+                        {
+                            var line = new Graphic.Path ();
+                            line.move_to (((item_size.width + spacing) * diff), 0);
+                            line.line_to (((item_size.width + spacing) * diff), view_size.height);
+                            ctx.pattern = stroke_pattern[State.NORMAL];
+                            ctx.stroke (line);
+                        }
+                        ctx.restore ();
+                    }
+                }
+                else if (m_Progress > nb - 2)
+                {
+                    var view_size = m_View.geometry.extents.size;
+                    double diff = nb - 1.0 - m_Progress;
+
+                    ctx.save ();
+                    {
+                        ctx.translate (Graphic.Point (((item_size.width + spacing) * 2) + (item_size.width * diff), 0));
+
+                        m_View.damage_area ();
+                        m_View.draw (ctx);
+                    }
+                    ctx.restore ();
+                    if (stroke_pattern[State.NORMAL] != null)
+                    {
+                        ctx.save ();
+                        {
+                            var line = new Graphic.Path ();
+                            line.move_to (((item_size.width + spacing) * 2) + ((item_size.width + (spacing / 2.0)) * diff), 0);
+                            line.line_to (((item_size.width + spacing) * 2) + ((item_size.width + (spacing / 2.0)) * diff), view_size.height);
+                            ctx.pattern = stroke_pattern[State.NORMAL];
+                            ctx.stroke (line);
+                        }
+                        ctx.restore ();
+                    }
+                }
 
                 // Paint view under button
                 inContext.clip (new Graphic.Path.from_rectangle (view_area));
@@ -436,7 +528,7 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
             m_AreaClicked = -1;
             if (inButton == 1)
             {
-                if (active >= 1 && !m_Areas[0].is_empty () && inPoint in m_Areas[0])
+                if (!m_Areas[0].is_empty () && inPoint in m_Areas[0])
                 {
                     m_AreaClicked = 0;
                 }
@@ -444,7 +536,7 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
                 {
                     m_AreaClicked = 1;
                 }
-                else if (active < (m_View.model.nb_rows - 1) && !m_Areas[2].is_empty () && inPoint in m_Areas[2])
+                else if (!m_Areas[2].is_empty () && inPoint in m_Areas[2])
                 {
                     m_AreaClicked = 2;
                 }
@@ -452,12 +544,15 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
                 {
                     m_AreaClicked = 3;
                 }
+
+                m_Button1Pressed = true;
+                m_Button1Origin = inPoint;
             }
             else if (inButton == 4 && active >= 1)
             {
                 m_AreaClicked = 0;
             }
-            else if (inButton == 5 && active < (m_View.model.nb_rows - 1))
+            else if (inButton == 5)
             {
                 m_AreaClicked = 2;
             }
@@ -482,26 +577,26 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
         {
             if (inButton == 1)
             {
-                if (m_AreaClicked == 0 && active >= 1 && !m_Areas[0].is_empty () && inPoint in m_Areas[0])
+                if (m_AreaClicked == 0 && !m_Areas[0].is_empty () && inPoint in m_Areas[0])
                 {
-                    active--;
+                    inc_dec_active (false);
                 }
                 else if ((m_AreaClicked == 1 && !m_Areas[1].is_empty () && inPoint in m_Areas[1]) || (m_AreaClicked == 3 && !m_Areas[3].is_empty () && inPoint in m_Areas[3]))
                 {
                     clicked.publish ();
                 }
-                else if (m_AreaClicked == 2 && active < (m_View.model.nb_rows - 1) && !m_Areas[2].is_empty () && inPoint in m_Areas[2])
+                else if (m_AreaClicked == 2  && !m_Areas[2].is_empty () && inPoint in m_Areas[2])
                 {
-                    active++;
+                    inc_dec_active (true);
                 }
             }
             else if (inButton == 4 && ret)
             {
-                active--;
+                inc_dec_active (false);
             }
             else if (inButton == 5 && ret)
             {
-                active++;
+                inc_dec_active (true);
             }
 
             m_AreaClicked = -1;
@@ -509,6 +604,45 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
             state = State.NORMAL;
 
             ungrab_pointer (this);
+        }
+
+        if (inButton == 1) m_Button1Pressed = false;
+
+        return ret;
+    }
+
+    internal override bool
+    on_motion_event (Graphic.Point inPoint)
+    {
+        bool ret = base.on_motion_event (inPoint);
+
+        if (ret && m_Button1Pressed)
+        {
+            double diff = inPoint.x - m_Button1Origin.x;
+            if (diff > 0 && diff > m_Areas[1].extents.size.width)
+            {
+                inc_dec_active (false);
+
+                m_AreaClicked = -1;
+
+                state = State.NORMAL;
+
+                ungrab_pointer (this);
+
+                m_Button1Origin = inPoint;
+            }
+            else if (diff < 0 && diff < -m_Areas[1].extents.size.width)
+            {
+                inc_dec_active (true);
+
+                m_AreaClicked = -1;
+
+                state = State.NORMAL;
+
+                ungrab_pointer (this);
+
+                m_Button1Origin = inPoint;
+            }
         }
 
         return ret;

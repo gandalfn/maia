@@ -1000,6 +1000,15 @@
 
 ;; From MaiaGraphicCloneRenderer
 
+(define-property position
+  (of-object "MaiaGraphicCloneRenderer")
+  (prop-type "GParamBoxed")
+  (docs "position")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaManifestAttribute
 
 (define-property owner
