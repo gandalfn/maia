@@ -61,7 +61,38 @@ public class Maia.TestEventArgs : Maia.Core.EventArgs
     }
 }
 
+public class Maia.TestSurfaceEventArgs : Maia.Core.EventArgs
+{
+    public Maia.Graphic.Surface surface {
+        owned get {
+            return (Maia.Graphic.Surface)this["surface"];
+        }
+    }
+
+    public int64 time {
+        get {
+            return (int64)this["time"];
+        }
+    }
+
+    static construct
+    {
+        Core.EventArgs.register_protocol (typeof (TestSurfaceEventArgs).name (),
+                                          "TestSurface",
+                                          "message TestSurface {"    +
+                                          "     surface surface;" +
+                                          "     int64 time;"  +
+                                          "}");
+    }
+
+    public TestSurfaceEventArgs (Maia.Graphic.Surface inSurface)
+    {
+        this["surface", 0] = inSurface;
+    }
+}
+
 static Maia.Core.EventListener s_Listener = null;
+static Maia.Core.EventListener s_ListenerSurface = null;
 
 static void on_bus_linked (bool connected, string? message)
 {
@@ -70,6 +101,7 @@ static void on_bus_linked (bool connected, string? message)
         print (@"linked to server\n");
 
         Maia.Core.EventBus.default.subscribe (s_Listener);
+        Maia.Core.EventBus.default.subscribe (s_ListenerSurface);
     }
     else
         print (@"not linked: $message\n");
@@ -82,6 +114,7 @@ static void main (string[] args)
     var application = new Maia.Application ("test-bus-client", 60, { "gtk" });
     //var foo = new Maia.TestEventArgs ("");
     typeof (Maia.TestEventArgs).class_peek ();
+    typeof (Maia.TestSurfaceEventArgs).class_peek ();
 
     s_Listener = new Maia.Core.EventListener.with_hash ("test", null, (inArgs) => {
         unowned Maia.TestEventArgs msg = (Maia.TestEventArgs)inArgs;
@@ -93,6 +126,18 @@ static void main (string[] args)
 
         msg.name = "reply";
     });
+
+    s_ListenerSurface = new Maia.Core.EventListener.with_hash ("test-surface", null, (inArgs) => {
+        unowned Maia.TestSurfaceEventArgs msg = (Maia.TestSurfaceEventArgs)inArgs;
+
+        int64 now = GLib.get_monotonic_time ();
+        double diff = (double)(now - msg.time) / 1000.0;
+
+        print(@"received event surface time: $(diff) ms\n");
+
+        msg.surface.dump ("received.png");
+    });
+
     Maia.Core.EventBus.default.link_bus (args[1], on_bus_linked);
 
     // Run application

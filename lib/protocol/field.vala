@@ -31,6 +31,7 @@ internal abstract class Maia.Protocol.Field : Core.Object, Core.Serializable, Bu
         INT64,
         DOUBLE,
         STRING,
+        SURFACE,
         MESSAGE;
 
         internal GLib.Type
@@ -67,6 +68,9 @@ internal abstract class Maia.Protocol.Field : Core.Object, Core.Serializable, Bu
 
                 case STRING:
                     return typeof (string);
+
+                case SURFACE:
+                    return typeof (Graphic.Surface);
 
                 case MESSAGE:
                     return typeof (Message);
@@ -110,6 +114,9 @@ internal abstract class Maia.Protocol.Field : Core.Object, Core.Serializable, Bu
                 case STRING:
                     return typeof (StringField);
 
+                case SURFACE:
+                    return typeof (SurfaceField);
+
                 case MESSAGE:
                     return typeof (MessageField);
             }
@@ -152,6 +159,9 @@ internal abstract class Maia.Protocol.Field : Core.Object, Core.Serializable, Bu
                 case STRING:
                     return GLib.VariantType.STRING;
 
+                case SURFACE:
+                    return GLib.VariantType.TUPLE;
+
                 case MESSAGE:
                     return GLib.VariantType.TUPLE;
             }
@@ -193,6 +203,9 @@ internal abstract class Maia.Protocol.Field : Core.Object, Core.Serializable, Bu
 
                 case STRING:
                     return "string";
+
+                case SURFACE:
+                    return "surface";
             }
 
             return "";
@@ -232,6 +245,9 @@ internal abstract class Maia.Protocol.Field : Core.Object, Core.Serializable, Bu
 
                 case "string":
                     return STRING;
+
+                case "surface":
+                    return SURFACE;
             }
 
             return MESSAGE;

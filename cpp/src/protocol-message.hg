@@ -20,6 +20,7 @@
 #include <maia.h>
 
 #include <maiamm/core-object.h>
+#include <maiamm/graphic-surface.h>
 #include <maiamm/protocol-bufferchild.h>
 #include <maiamm/core-serializable.h>
 
@@ -65,19 +66,29 @@ namespace Maia
                 template <typename T>
                 inline MessageField& operator=(const T& inVal);
 
+                inline MessageField& operator=(const Glib::RefPtr<Graphic::Surface>& inVal);
+
                 inline MessageField& operator=(const char* inVal);
 
                 template <typename T>
                 inline operator T() const;
 
+                inline operator Glib::RefPtr<Graphic::Surface>() const;
+
                 template <typename T>
                 inline MessageField& operator=(const std::vector<T>& inVal);
+
+                inline MessageField& operator=(const std::vector< Glib::RefPtr<Graphic::Surface> >& inVal);
 
                 template <typename T>
                 inline operator std::vector<T>() const;
 
+                inline operator std::vector< Glib::RefPtr<Graphic::Surface> >() const;
+
                 template <typename T>
-                inline int push_back (T inVal);
+                inline int push_back (const T& inVal);
+
+                inline int push_back (const Glib::RefPtr<Graphic::Surface>& inVal);
 
                 int size () const
                 {
@@ -233,6 +244,16 @@ namespace Maia
             return *this;
         }
 
+        inline MessageField& MessageField::operator= (const Glib::RefPtr<Graphic::Surface>& inVal)
+        {
+            GValue value = G_VALUE_INIT;
+            g_value_init (&value, MAIA_GRAPHIC_TYPE_SURFACE);
+            g_value_take_object (&value, const_cast<MaiaGraphicSurface*> (inVal->gobj ()));
+            maia_protocol_message_set (m_pMessage, m_Field.c_str (), m_Index, &value);
+
+            return *this;
+        }
+
         template <typename T>
         inline MessageField::operator T () const
         {
@@ -243,6 +264,12 @@ namespace Maia
             g_value_copy (val, value.gobj ());
 
             return value.get ();
+        }
+
+        inline MessageField::operator Glib::RefPtr<Graphic::Surface> () const
+        {
+            GValue* value = maia_protocol_message_get (m_pMessage, m_Field.c_str (), m_Index);
+            return Glib::wrap (MAIA_GRAPHIC_SURFACE (g_value_get_object (value)), true);
         }
 
         template <typename T>
@@ -263,6 +290,28 @@ namespace Maia
 
                 value.set(val);
                 maia_protocol_message_add_value (m_pMessage, m_Field.c_str (), value.gobj ());
+            }
+
+            return *this;
+        }
+
+        inline MessageField& MessageField::operator= (const std::vector< Glib::RefPtr<Graphic::Surface> >& inVal)
+        {
+            if (!maia_protocol_message_is_array (m_pMessage, m_Field.c_str ()))
+            {
+                GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                  "Cannot set array value for field %s not an array", m_Field.c_str ());
+                throw Glib::Error(error);
+            }
+
+            maia_protocol_message_clear (m_pMessage, m_Field.c_str ());
+            for (const Glib::RefPtr<Graphic::Surface>& val : inVal)
+            {
+                GValue value = G_VALUE_INIT;
+                g_value_init (&value, MAIA_GRAPHIC_TYPE_SURFACE);
+                g_value_take_object (&value, const_cast<MaiaGraphicSurface*> (val->gobj ()));
+
+                maia_protocol_message_add_value (m_pMessage, m_Field.c_str (), &value);
             }
 
             return *this;
@@ -294,8 +343,28 @@ namespace Maia
             return ret;
         }
 
+        inline MessageField::operator std::vector< Glib::RefPtr<Graphic::Surface> > () const
+        {
+            std::vector< Glib::RefPtr<Graphic::Surface> > ret;
+
+            if (!maia_protocol_message_is_array (m_pMessage, m_Field.c_str ()))
+            {
+                GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                  "Cannot get array value for field %s not an array", m_Field.c_str ());
+                throw Glib::Error(error);
+            }
+
+            for (int cpt = 0; cpt < maia_protocol_message_get_field_length (m_pMessage, m_Field.c_str ()); ++cpt)
+            {
+                GValue* value = maia_protocol_message_get (m_pMessage, m_Field.c_str (), cpt);
+                ret.push_back (Glib::wrap (MAIA_GRAPHIC_SURFACE (g_value_get_object (value)), true));
+            }
+
+            return ret;
+        }
+
         template <typename T>
-        inline int MessageField::push_back (T inVal)
+        inline int MessageField::push_back (const T& inVal)
         {
             if (!maia_protocol_message_is_array (m_pMessage, m_Field.c_str ()))
             {
@@ -309,6 +378,21 @@ namespace Maia
 
             value.set(inVal);
             return maia_protocol_message_add_value (m_pMessage, m_Field.c_str (), value.gobj ());
+        }
+
+        inline int MessageField::push_back (const Glib::RefPtr<Graphic::Surface>& inVal)
+        {
+            if (!maia_protocol_message_is_array (m_pMessage, m_Field.c_str ()))
+            {
+                GError* const error = g_error_new(MAIA_PROTOCOL_ERROR, MAIA_PROTOCOL_ERROR_INVALID_FIELD,
+                                                  "Cannot push back value in field %s not an array", m_Field.c_str ());
+                throw Glib::Error(error);
+            }
+
+            GValue value = G_VALUE_INIT;
+            g_value_init (&value, MAIA_GRAPHIC_TYPE_SURFACE);
+            g_value_take_object (&value, const_cast<MaiaGraphicSurface*> (inVal->gobj ()));
+            return maia_protocol_message_add_value (m_pMessage, m_Field.c_str (), &value);
         }
     }
 }
