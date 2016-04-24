@@ -246,7 +246,6 @@ public class Maia.Application : Maia.Core.Object
                 {
                     if (window.geometry == null || window.need_update)
                     {
-                        var timer = new GLib.Timer ();
                         var window_position = window.position;
                         var window_size = window.size;
 
@@ -271,7 +270,6 @@ public class Maia.Application : Maia.Core.Object
                             Log.critical (GLib.Log.METHOD, Log.Category.MAIN, @"Error on window refresh: $(err.message)");
                         }
 
-                        print(@"update elapsed $(timer.elapsed () * 1000)\n");
                     }
 
                     // window is damaged

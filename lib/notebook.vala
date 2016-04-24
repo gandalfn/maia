@@ -555,7 +555,7 @@ public class Maia.Notebook : Grid
             unowned NotebookPage? page = child as NotebookPage;
             if (page != null && page.visible)
             {
-                var page_size = page.geometry.extents.size;
+                var page_size = page.geometry != null ? page.geometry.extents.size : page.size;
                 item_size.width = double.max (item_size.width, page_size.width);
                 item_size.height = double.max (item_size.height, page_size.height);
             }

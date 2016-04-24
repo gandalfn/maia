@@ -84,10 +84,13 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 }
             }
 
-            calculate_transform_to_item_space ();
-            calculate_transform_to_root_space ();
-            calculate_transform_to_window_space ();
-            calculate_transform_from_window_space ();
+            if (visible && m_Geometry != null)
+            {
+                calculate_transform_to_item_space ();
+                calculate_transform_to_root_space ();
+                calculate_transform_to_window_space ();
+                calculate_transform_from_window_space ();
+            }
 
             // Send root change notification
             GLib.Signal.emit_by_name (this, "notify::root");
@@ -171,10 +174,13 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             {
                 m_Visible = value;
 
-                calculate_transform_to_item_space ();
-                calculate_transform_to_root_space ();
-                calculate_transform_to_window_space ();
-                calculate_transform_from_window_space ();
+                if (m_Visible && m_Geometry != null)
+                {
+                    calculate_transform_to_item_space ();
+                    calculate_transform_to_root_space ();
+                    calculate_transform_to_window_space ();
+                    calculate_transform_from_window_space ();
+                }
 
                 if (!m_Visible)
                 {
@@ -203,19 +209,23 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             {
                 // Check if geometry has been changed (not set)
                 bool old_not_empty = (m_Geometry != null);
+                Graphic.Size old_size = Graphic.Size (0, 0);
+                if (old_not_empty)
+                {
+                    old_size = m_Geometry.extents.size;
+                }
 
                 m_Geometry = value;
                 m_Area = null;
 
                 // New geometry
-                if (m_Geometry != null)
+                if (visible && m_Geometry != null)
                 {
                     calculate_transform_to_item_space ();
                     calculate_transform_to_root_space ();
+                    calculate_transform_to_window_space ();
+                    calculate_transform_from_window_space ();
                 }
-
-                calculate_transform_to_window_space ();
-                calculate_transform_from_window_space ();
 
                 // Send notify geometry signal only if geometry has been changed
                 // not when the geometry has been set
@@ -282,14 +292,13 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 m_TransformObserver = m_Transform.changed.add_object_observer (on_transform_changed);
             }
 
-            if (m_Geometry != null)
+            if (visible && m_Geometry != null)
             {
                 calculate_transform_to_item_space ();
                 calculate_transform_to_root_space ();
+                calculate_transform_to_window_space ();
+                calculate_transform_from_window_space ();
             }
-
-            calculate_transform_to_window_space ();
-            calculate_transform_from_window_space ();
         }
         default = new Graphic.Transform.identity ();
     }
@@ -1092,7 +1101,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             for (unowned Core.Object? object = this; object != null; object = object.parent)
             {
                 unowned Item? item = object as Item;
-                if (item != null && item != this)
+                if (item != null && item != this && !(item is Window))
                 {
                     m_TransformFromWindowSpace.prepend (item.m_TransformFromWindowSpace.link ());
                     break;
@@ -1108,7 +1117,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             if (visible)
             {
-                        // add transform
+                // add transform
                 var this_transform = new Graphic.Transform.identity ();
                 try
                 {

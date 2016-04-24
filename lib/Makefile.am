@@ -84,6 +84,7 @@ libmaia_la_SOURCES = \
     protocol/int64-field.vala \
     protocol/double-field.vala \
     protocol/string-field.vala \
+    protocol/surface-field.vala \
     protocol/message-field.vala \
     manifest/document.vala \
     manifest/element.vala \

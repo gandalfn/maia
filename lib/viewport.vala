@@ -64,7 +64,7 @@ public class Maia.Viewport : Window
                             m_ScrolledDamaged = null;
                         }
 
-                        // Remove viosible area from damaged area to force damage signal emission
+                        // Remove visible area from damaged area to force damage signal emission
                         damaged.subtract (new Graphic.Region (m_VisibleArea));
                     }
 
@@ -100,10 +100,10 @@ public class Maia.Viewport : Window
     internal override void
     on_damage (Graphic.Region? inArea = null)
     {
+        base.on_damage (inArea);
+
         if (!m_ScrollDamage)
         {
-            base.on_damage (inArea);
-
             if (m_ScrolledDamaged != null)
             {
                 m_ScrolledDamaged.subtract (inArea ?? area);
@@ -137,13 +137,13 @@ public class Maia.Viewport : Window
             }
 
             // get area not already drawn
-            var damaged_area = damaged.copy ();
+            var damaged_area = new Graphic.Region (damaged.extents);
             if (visible_damaged != null)
             {
                 damaged_area.intersect (visible_damaged);
             }
 
-            if (!visible_damaged.is_empty () && !damaged_area.is_empty ())
+            if (!visible_damaged.is_empty ())
             {
                 Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, @"viewport $name damaged draw $(damaged_area.extents)");
 
@@ -151,8 +151,6 @@ public class Maia.Viewport : Window
                 {
                     ctx.line_width = line_width;
                     ctx.dash = line_type.to_dash (line_width);
-
-                    ctx.translate (geometry.extents.origin);
 
                     // Apply the window transform
                     if (transform.have_rotate)
@@ -171,6 +169,9 @@ public class Maia.Viewport : Window
 
                     // Clip the damaged area
                     ctx.clip_region (damaged_area);
+
+                    // set visible area offset
+                    ctx.translate (visible_area.origin.invert ());
 
                     ctx.pattern = background_pattern[state] != null ? background_pattern[state] : new Graphic.Color (0, 0, 0, 0);
                     ctx.paint ();

@@ -308,7 +308,8 @@ public class Maia.ScrollView : Item, ItemPackable
                 break;
 
             case Scroll.DOWN:
-                vadjustment.@value += 0.01 * (vadjustment.upper - vadjustment.lower);
+                double val = vadjustment.@value + 0.01 * (vadjustment.upper - vadjustment.lower);
+                vadjustment.@value = double.min (val, vadjustment.upper - vadjustment.page_size);
                 break;
 
             case Scroll.LEFT:
@@ -316,7 +317,8 @@ public class Maia.ScrollView : Item, ItemPackable
                 break;
 
             case Scroll.RIGHT:
-                hadjustment.@value += 0.01 * (hadjustment.upper - hadjustment.lower);
+                double val = hadjustment.@value + 0.01 * (hadjustment.upper - hadjustment.lower);
+                hadjustment.@value = double.min (val, hadjustment.upper - hadjustment.page_size);
                 break;
         }
 
@@ -349,7 +351,18 @@ public class Maia.ScrollView : Item, ItemPackable
     internal override unowned Core.Object?
     find (uint32 inId, bool inRecursive = true)
     {
-        return m_Child == null ? null : m_Child.find (inId, inRecursive);
+        if (m_Child != null)
+        {
+            if (m_Child.id == inId)
+            {
+                return m_Child;
+            }
+            else
+            {
+                return m_Child.find (inId, inRecursive);
+            }
+        }
+        return null;
     }
 
     internal override Core.List<unowned T?>
@@ -488,8 +501,12 @@ public class Maia.ScrollView : Item, ItemPackable
         paint_background (inContext);
 
         // draw viewport
-        var viewport_area = area_to_child_item_space (m_Viewport, inArea);
-        m_Viewport.draw (inContext, viewport_area);
+        var viewport_area = inArea.copy ();
+        var viewport_position = m_Viewport.geometry.extents.origin;
+        viewport_area.translate (viewport_position);
+        var damaged_viewport_area = area_to_child_item_space (m_Viewport, viewport_area);
+        damaged_viewport_area.translate (m_Viewport.visible_area.origin);
+        m_Viewport.draw (inContext, damaged_viewport_area);
 
         // draw seekbars
         if (m_HSeekBar.visible)
@@ -516,7 +533,7 @@ public class Maia.ScrollView : Item, ItemPackable
         }
         m_ScrollToTransition = m_ScrollToAnimator.add_transition (0, 1, Core.Animator.ProgressType.EASE_IN_EASE_OUT);
         GLib.Value from = (double)vadjustment.@value;
-        GLib.Value to = (double)pos.y;
+        GLib.Value to = (double)double.min (pos.y, vadjustment.upper - vadjustment.page_size);
         m_ScrollToAnimator.add_transition_property (m_ScrollToTransition, this, "scroll-y", from, to);
         m_ScrollToAnimator.start ();
     }
