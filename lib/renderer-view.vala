@@ -388,6 +388,8 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
             }
 
             damage_area ();
+
+            add_front_damage (null);
         }
     }
 

@@ -154,6 +154,8 @@ public class Maia.NotebookPage : Group, ItemPackable
                      @"}";
 
         notify["characters"].connect (on_characters_changed);
+
+        notify["visible"].connect (on_visible_changed);
     }
 
     public NotebookPage (string inId)
@@ -169,6 +171,17 @@ public class Maia.NotebookPage : Group, ItemPackable
         {
             // plug property to binded property
             plug_property (notification.attribute.get (), notification.attribute.owner as Core.Object, notification.property);
+        }
+    }
+
+    private void
+    on_visible_changed ()
+    {
+        // TODO: fix scrollview visible when a parent of this was hidden/show
+        Core.List<ScrollView> scrollviews = find_by_type<ScrollView> ();
+        foreach (unowned ScrollView scroll in scrollviews)
+        {
+            scroll.visible = visible;
         }
     }
 

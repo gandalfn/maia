@@ -48,7 +48,7 @@ static void main (string[] args)
         window.destroy_event.subscribe (() => { application.quit (); });
 
         var renderer_view = window.find (GLib.Quark.from_string ("renderer")) as Maia.RendererView;
-        var renderer = new Maia.Graphic.CloneRenderer (Maia.Graphic.Size (1000, 800), device);
+        var renderer = new Maia.Graphic.CloneRenderer (Maia.Graphic.Rectangle (0, 0,1000, 800), device);
         renderer_view.looper = new Maia.Graphic.CloneRenderer.Looper (device);
         renderer_view.renderer = renderer;
 

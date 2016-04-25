@@ -136,6 +136,11 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
     public bool sensitive { get; set; default = true; }
 
     /**
+     * Display separator
+     */
+    public bool separator { get; set; default = true; }
+
+    /**
      * Model
      */
     [CCode (notify = false)]
@@ -468,7 +473,7 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
                         m_View.draw (ctx);
                     }
                     ctx.restore ();
-                    if (stroke_pattern[State.NORMAL] != null)
+                    if (stroke_pattern[State.NORMAL] != null && separator)
                     {
                         ctx.save ();
                         {
@@ -494,7 +499,7 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
                         m_View.draw (ctx);
                     }
                     ctx.restore ();
-                    if (stroke_pattern[State.NORMAL] != null)
+                    if (stroke_pattern[State.NORMAL] != null && separator)
                     {
                         ctx.save ();
                         {

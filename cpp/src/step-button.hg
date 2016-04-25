@@ -86,6 +86,9 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_step_button_get_model, refreturn)
             _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_step_button_set_model)
 
+            _WRAP_METHOD(bool get_separator () const, maia_step_button_get_separator)
+            _WRAP_METHOD(void set_separator (bool inSeparator = true), maia_step_button_set_separator)
+
             _WRAP_METHOD(Glib::RefPtr<Core::Event> clicked () const, maia_step_button_get_clicked, refreturn)
             _WRAP_METHOD(Glib::RefPtr<Core::Event> changed () const, maia_step_button_get_changed, refreturn)
 
@@ -96,8 +99,10 @@ namespace Maia
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("spacing", double)
             _WRAP_PROPERTY("active", guint)
-            _WRAP_PROPERTY("can-focus", bool)
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
+            _WRAP_PROPERTY("separator", bool)
+
+            _WRAP_PROPERTY("can-focus", bool)
 
             _WRAP_PROPERTY("clicked", Glib::RefPtr<Core::Event>)
             _WRAP_PROPERTY("changed", Glib::RefPtr<Core::Event>)
