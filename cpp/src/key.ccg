@@ -1,0 +1,88 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * key.ccg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+
+namespace Maia
+{
+    namespace Keysym
+    {
+        Glib::ustring key_to_string (Key inKey)
+        {
+            return Glib::ustring (maia_key_to_string ((MaiaKey)inKey));
+        }
+
+        Key key_from_string (const Glib::ustring& inKey)
+        {
+            return (Key)maia_key_from_string (inKey.c_str ());
+        }
+
+        Glib::ustring modifier_to_string (Modifier inModifier)
+        {
+            return Glib::ustring (maia_modifier_to_string ((MaiaModifier)inModifier));
+        }
+
+        Modifier modifier_from_string (const Glib::ustring& inModifier)
+        {
+            return (Modifier)maia_modifier_from_string (inModifier.c_str ());
+        }
+
+        void get_modifiers_keys_from_string (const Glib::ustring& inValue, std::vector<Modifier>& outModifiers, std::vector<Key>& outKeys)
+        {
+            MaiaModifier* modifiers = nullptr;
+            int modifiers_length = 0;
+            MaiaKey* keys = nullptr;
+            int keys_length = 0;
+
+            maia_keysym_get_modifiers_keys_from_string (inValue.c_str (), &modifiers, &modifiers_length, &keys, &keys_length);
+
+            if (modifiers)
+            {
+                for (int cpt = 0; cpt < modifiers_length; ++cpt)
+                {
+                    outModifiers.push_back ((Modifier)modifiers[cpt]);
+                }
+            }
+            if (keys)
+            {
+                for (int cpt = 0; cpt < keys_length; ++cpt)
+                {
+                    outKeys.push_back ((Key)keys[cpt]);
+                }
+            }
+        }
+
+        Glib::ustring modifiers_keys_to_string (const std::vector<Modifier>& inModifiers, const std::vector<Key>& inKeys)
+        {
+            Glib::ustring ret ("");
+
+            for (auto modifier : inModifiers)
+            {
+                ret += modifier_to_string (modifier);
+            }
+
+            for (auto key : inKeys)
+            {
+                ret += key_to_string (key);
+            }
+
+            return ret;
+        }
+    }
+}

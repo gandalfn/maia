@@ -85,6 +85,7 @@ files_hg = \
     item-packable.hg \
     item-resizable.hg \
     item.hg \
+    key.hg \
     label.hg \
     line.hg \
     model.hg \

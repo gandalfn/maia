@@ -109,6 +109,16 @@ static void on_bus_linked (bool connected, string? message)
 
 static void main (string[] args)
 {
+    Maia.Modifier[] modifiers;
+    Maia.Key[] keys;
+
+    Maia.Keysym.get_modifiers_keys_from_string (args[1], out modifiers, out keys);
+    foreach (var modifier in modifiers)
+        print (@"modifier: $modifier\n");
+    foreach (var key in keys)
+        print (@"key: $key\n");
+    return;
+
     //Maia.Log.set_default_logger (new Maia.Log.Stderr (Maia.Log.Level.DEBUG, Maia.Log.Category.ALL, "test-bus-client"));
 
     var application = new Maia.Application ("test-bus-client", 60, { "gtk" });

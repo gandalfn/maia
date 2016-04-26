@@ -7698,6 +7698,15 @@
   (construct-only #f)
 )
 
+(define-property separator
+  (of-object "MaiaStepButton")
+  (prop-type "GParamBoolean")
+  (docs "separator")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property model
   (of-object "MaiaStepButton")
   (prop-type "GParamObject")
