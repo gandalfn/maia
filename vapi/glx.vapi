@@ -78,6 +78,12 @@ namespace GLX
 	[CCode (cname = "GLX_TRUE_COLOR")]
 	public const int TRUE_COLOR;
 
+	[CCode (cname = "GLX_CONTEXT_MAJOR_VERSION_ARB")]
+	public const int CONTEXT_MAJOR_VERSION_ARB;
+	[CCode (cname = "GLX_CONTEXT_MINOR_VERSION_ARB")]
+	public const int CONTEXT_MINOR_VERSION_ARB;
+
+
 	[SimpleType]
 	public struct Context { }
 	[SimpleType]
@@ -127,6 +133,9 @@ namespace GLX
 	public static Pixmap create_pixmap (X.Display dpy, Xcb.Glx.Fbconfig config, Pixmap pixmap, [CCode (array_length = false)] int[]? attribList);
 	[CCode (cname = "glXDestroyPixmap")]
 	public static void destroy_pixmap (X.Display dpy, Pixmap pixmap);
+
+	[CCode (cname = "glXCreateContextAttribsARB")]
+	public static Context create_context_attribs_arb (void* dpy, Xcb.Glx.Fbconfig config, Context? share_context, bool direct, [CCode (array_length = false)] int[] attrib_list);
 
 	[CCode (cname = "glXWaitGL")]
 	public static void wait_gl ();

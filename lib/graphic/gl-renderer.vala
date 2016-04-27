@@ -39,16 +39,16 @@ public class Maia.Graphic.GLRenderer : Renderer
     }
 
     // methods
-    public GLRenderer (Graphic.Size inSize, uint32[] inAttributes)
+    public GLRenderer (Graphic.Size inSize, int inGLMajorVersion, int inGLMinorVersion, uint32[] inAttributes)
         requires ((inAttributes.length % 2) == 0)
     {
         base (inSize);
 
-        init (inAttributes);
+        init (inGLMajorVersion, inGLMinorVersion, inAttributes);
     }
 
     protected virtual void
-    init (uint32[] inAttributes)
+    init (int inGLMajorVersion, int inGLMinorVersion, uint32[] inAttributes)
     {
     }
 }

@@ -97,10 +97,10 @@ internal class Maia.Xcb.GLRenderer : Maia.Graphic.GLRenderer
     }
 
     // methods
-    public GLRenderer (Graphic.Size inSize, uint32[] inAttributes)
+    public GLRenderer (Graphic.Size inSize, int inGLMajorVersion, int inGLMinorVersion, uint32[] inAttributes)
         requires ((inAttributes.length % 2) == 0)
     {
-        base (inSize, inAttributes);
+        base (inSize, inGLMajorVersion, inGLMinorVersion, inAttributes);
     }
 
     ~GLRenderer ()
@@ -145,7 +145,8 @@ internal class Maia.Xcb.GLRenderer : Maia.Graphic.GLRenderer
     }
 
     protected override void
-    init (uint32[] inAttributes)
+    init (int inGLMajorVersion, int inGLMinorVersion, uint32[] inAttributes)
+        requires (inGLMajorVersion >= 1)
         requires ((inAttributes.length % 2) == 0)
     {
         uint32[] attribs = {};
@@ -165,11 +166,22 @@ internal class Maia.Xcb.GLRenderer : Maia.Graphic.GLRenderer
         attribs += GLX.X_VISUAL_TYPE;
         attribs += GLX.TRUE_COLOR;
 
+        attribs += 0;
+
 
         int screen_num = Maia.Xcb.application.default_screen;
         m_FBConfig = application[screen_num].glx_choose_fb_configs (attribs);
 
-        m_GLXContext = GLX.create_new_context (m_Display, m_FBConfig, GLX.RGBA_TYPE, null, true);
+        int[] ctx_attribs = {};
+        ctx_attribs += GLX.CONTEXT_MAJOR_VERSION_ARB;
+        ctx_attribs += inGLMajorVersion;
+
+        ctx_attribs += GLX.CONTEXT_MINOR_VERSION_ARB;
+        ctx_attribs += inGLMinorVersion;
+
+        ctx_attribs += 0;
+
+        m_GLXContext = GLX.create_context_attribs_arb (m_Display, m_FBConfig, null, true, ctx_attribs);
 
         create_surface ();
     }

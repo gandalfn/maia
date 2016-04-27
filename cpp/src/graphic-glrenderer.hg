@@ -38,12 +38,12 @@ namespace Maia
             protected:
                 _CTOR_DEFAULT()
 
-                GLRendererObject (const Size& inSize, const std::vector<uint32_t>& inAttributes);
+                GLRendererObject (const Size& inSize, int inGLMajorVersion, int inGLMinorVersion, const std::vector<uint32_t>& inAttributes);
 
             public:
-                static Glib::RefPtr<GLRendererObject> create (const Size& inSize, const std::vector<uint32_t>& inAttributes)
+                static Glib::RefPtr<GLRendererObject> create (const Size& inSize, int inGLMajorVersion, int inGLMinorVersion, const std::vector<uint32_t>& inAttributes)
                 {
-                    return Glib::RefPtr<GLRendererObject> (new GLRendererObject (inSize, inAttributes));
+                    return Glib::RefPtr<GLRendererObject> (new GLRendererObject (inSize, inGLMajorVersion, inGLMinorVersion, inAttributes));
                 }
         };
 #endif
@@ -55,13 +55,13 @@ namespace Maia
 
                 virtual ~GLRenderer ();
 
-                static Glib::RefPtr<GLRenderer> create (const Size& inSize, const std::vector<uint32_t>& inAttributes)
+                static Glib::RefPtr<GLRenderer> create (const Size& inSize, int inGLMajorVersion, int inGLMinorVersion, const std::vector<uint32_t>& inAttributes)
                 {
-                    return Glib::RefPtr<GLRenderer> (new GLRenderer (inSize, inAttributes));
+                    return Glib::RefPtr<GLRenderer> (new GLRenderer (inSize, inGLMajorVersion, inGLMinorVersion, inAttributes));
                 }
 
             protected:
-                GLRenderer (const Size& inSize, const std::vector<uint32_t>& inAttributes);
+                GLRenderer (const Size& inSize, int inGLMajorVersion, int inGLMinorVersion, const std::vector<uint32_t>& inAttributes);
         };
     }
 }

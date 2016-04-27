@@ -185,7 +185,7 @@ static void main (string[] args)
                              Maia.Graphic.GLRenderer.Attribute.ALPHA_SIZE,   8
                            };
 
-        var renderer = new Maia.Graphic.GLRenderer (Maia.Graphic.Size (1000, 800), attribs);
+        var renderer = new Maia.Graphic.GLRenderer (Maia.Graphic.Size (1000, 800), 1, 0, attribs);
         renderer.initialize.add_observer (on_initialize);
         renderer.new_frame.add_observer (on_new_frame);
         renderer_view.renderer = renderer;
