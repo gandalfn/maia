@@ -3229,6 +3229,15 @@
   (construct-only #f)
 )
 
+(define-property is-selectable
+  (of-object "MaiaItem")
+  (prop-type "GParamBoolean")
+  (docs "is-selectable")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property can-focus
   (of-object "MaiaItem")
   (prop-type "GParamBoolean")

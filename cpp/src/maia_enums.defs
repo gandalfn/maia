@@ -5147,3 +5147,18 @@
   )
 )
 
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_LINE_SHAPE_CALIPER_CROSS,
+;; 	MAIA_LINE_SHAPE_CALIPER_TRIANGLE
+;; } MaiaLineShapeCaliper;
+
+(define-enum-extended LineShapeCaliper
+  (in-module "Maia")
+  (c-name "MaiaLineShapeCaliper")
+  (values
+    '("cross" "MAIA_LINE_SHAPE_CALIPER_CROSS" "0")
+    '("triangle" "MAIA_LINE_SHAPE_CALIPER_TRIANGLE" "1")
+  )
+)
+

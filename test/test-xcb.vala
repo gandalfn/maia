@@ -82,12 +82,13 @@ const string manifest = "Window.test {" +
                         "               size: 100, 100;" +
                         "               fill-pattern: #00FF00;" +
                         "           }" +
-                        "           Path.path_draw {" +
-                        "               position: 50, 100;" +
-                        "               path: 'M 0,0 L 50,50 L 0,50 Z';" +
-                        "               fill-pattern: linear-gradient (0, 0, @width, 0," +
-                        "                                              color-stop (0, rgb (0, 1, 0))," +
-                        "                                              color-stop (1, rgb (0, 0, 1)));" +
+                        "           LineShape.line {" +
+                        "               fill-pattern: states(active, #0000FF);" +
+                        "               stroke-pattern: states(normal, #000000, active, #FF0000);" +
+                        "               caliper-line-width: 2;" +
+                        "               caliper-size: 8, 8;" +
+                        "               line-type: dash;" +
+                        "               position: 50, 50;" +
                         "           }" +
                         "       }" +
                         "       Button.cancel {" +

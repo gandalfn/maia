@@ -149,6 +149,7 @@ public class Maia.Application : Maia.Core.Object
         Manifest.Element.register ("NotebookPage",    typeof (NotebookPage));
         Manifest.Element.register ("TableView",       typeof (TableView));
         Manifest.Element.register ("TableViewColumn", typeof (TableViewColumn));
+        Manifest.Element.register ("LineShape",       typeof (LineShape));
     }
 
     // methods

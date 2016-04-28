@@ -38,6 +38,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     private bool                       m_IsPackable = false;
     private bool                       m_IsMovable = false;
     private bool                       m_IsResizable = false;
+    private bool                       m_IsSelectable = false;
     private bool                       m_Visible = true;
     private Graphic.Region             m_Geometry = null;
     private Graphic.Region             m_Area = null;
@@ -152,6 +153,19 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     }
 
     /**
+     * Indicate if item can be selected
+     */
+    public bool is_selectable {
+        get {
+            return m_IsSelectable;
+        }
+        set {
+            m_IsSelectable = value;
+        }
+        default = false;
+    }
+
+    /**
      * Whether or not the item can be focused
      */
     public virtual bool can_focus  { get; set; default = false; }
@@ -159,6 +173,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     /**
      * Whether the item has the focus.
      */
+
+
     public bool         have_focus { get; set; default = false; }
 
     /**
@@ -680,6 +696,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
         // check if object is resizable
         m_IsResizable = this is ItemResizable;
+
+        // check if object is selectable
+        m_IsSelectable = this is ItemMovable || this is ItemResizable;
 
         // create state patterns
         stroke_pattern     = new StatePatterns ();

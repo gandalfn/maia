@@ -749,6 +749,12 @@
   (gtype-id "MAIA_TYPE_LINE")
 )
 
+(define-object MaiaLineShape
+  (parent "MaiaItem")
+  (c-name "MaiaLineShape")
+  (gtype-id "MAIA_TYPE_LINE_SHAPE")
+)
+
 (define-object MaiaLogLogger
   (parent "GObject")
   (c-name "MaiaLogLogger")
@@ -3738,6 +3744,15 @@
     '("opacity" "MAIA_NOTEBOOK_TRANSITION_OPACITY")
     '("slide" "MAIA_NOTEBOOK_TRANSITION_SLIDE")
     '("zoom" "MAIA_NOTEBOOK_TRANSITION_ZOOM")
+  )
+)
+
+(define-enum MaiaLineShapeCaliper
+  (c-name "MaiaLineShapeCaliper")
+  (gtype-id "MAIA_TYPE_LINE_SHAPE_CALIPER")
+  (values
+    '("cross" "MAIA_LINE_SHAPE_CALIPER_CROSS")
+    '("triangle" "MAIA_LINE_SHAPE_CALIPER_TRIANGLE")
   )
 )
 
@@ -13004,6 +13019,8 @@
   (return-type "MaiaGraphicGLRenderer*")
   (parameters
     '("MaiaGraphicSize*" "inSize")
+    '("gint" "inGLMajorVersion")
+    '("gint" "inGLMinorVersion")
     '("guint32*" "inAttributes")
     '("int" "inAttributes_length1")
   )
@@ -13015,6 +13032,8 @@
   (parameters
     '("GType" "object_type")
     '("MaiaGraphicSize*" "inSize")
+    '("gint" "inGLMajorVersion")
+    '("gint" "inGLMinorVersion")
     '("guint32*" "inAttributes")
     '("int" "inAttributes_length1")
   )
@@ -13025,6 +13044,8 @@
   (c-name "maia_graphic_gl_renderer_init")
   (return-type "none")
   (parameters
+    '("gint" "inGLMajorVersion")
+    '("gint" "inGLMinorVersion")
     '("guint32*" "inAttributes")
     '("int" "inAttributes_length1")
   )
@@ -15957,6 +15978,21 @@
 (define-method set_is_resizable
   (of-object "MaiaItem")
   (c-name "maia_item_set_is_resizable")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
+(define-method get_is_selectable
+  (of-object "MaiaItem")
+  (c-name "maia_item_get_is_selectable")
+  (return-type "gboolean")
+)
+
+(define-method set_is_selectable
+  (of-object "MaiaItem")
+  (c-name "maia_item_set_is_selectable")
   (return-type "none")
   (parameters
     '("gboolean" "value")
@@ -22679,6 +22715,141 @@
   (of-object "MaiaTableViewColumn")
   (c-name "maia_table_view_column_get_header")
   (return-type "MaiaItemPackable*")
+)
+
+(define-function maia_line_shape_get_type
+  (c-name "maia_line_shape_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_line_shape_caliper_get_type
+  (c-name "maia_line_shape_caliper_get_type")
+  (return-type "GType")
+)
+
+(define-method to_string
+  (of-object "MaiaLineShapeCaliper")
+  (c-name "maia_line_shape_caliper_to_string")
+  (return-type "gchar*")
+)
+
+(define-function maia_line_shape_caliper_from_string
+  (c-name "maia_line_shape_caliper_from_string")
+  (return-type "MaiaLineShapeCaliper")
+  (parameters
+    '("const-gchar*" "inValue")
+  )
+)
+
+(define-method to_path
+  (of-object "MaiaLineShapeCaliper")
+  (c-name "maia_line_shape_caliper_to_path")
+  (return-type "gchar*")
+  (parameters
+    '("MaiaGraphicSize*" "inSize")
+  )
+)
+
+(define-function maia_line_shape_new
+  (c-name "maia_line_shape_new")
+  (is-constructor-of "MaiaLineShape")
+  (return-type "MaiaLineShape*")
+  (parameters
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-function maia_line_shape_construct
+  (c-name "maia_line_shape_construct")
+  (return-type "MaiaLineShape*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-method get_border
+  (of-object "MaiaLineShape")
+  (c-name "maia_line_shape_get_border")
+  (return-type "gdouble")
+)
+
+(define-method set_border
+  (of-object "MaiaLineShape")
+  (c-name "maia_line_shape_set_border")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_caliper
+  (of-object "MaiaLineShape")
+  (c-name "maia_line_shape_get_caliper")
+  (return-type "MaiaLineShapeCaliper")
+)
+
+(define-method set_caliper
+  (of-object "MaiaLineShape")
+  (c-name "maia_line_shape_set_caliper")
+  (return-type "none")
+  (parameters
+    '("MaiaLineShapeCaliper" "value")
+  )
+)
+
+(define-method get_caliper_size
+  (of-object "MaiaLineShape")
+  (c-name "maia_line_shape_get_caliper_size")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "result")
+  )
+)
+
+(define-method set_caliper_size
+  (of-object "MaiaLineShape")
+  (c-name "maia_line_shape_set_caliper_size")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "value")
+  )
+)
+
+(define-method get_begin
+  (of-object "MaiaLineShape")
+  (c-name "maia_line_shape_get_begin")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "result")
+  )
+)
+
+(define-method set_begin
+  (of-object "MaiaLineShape")
+  (c-name "maia_line_shape_set_begin")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "value")
+  )
+)
+
+(define-method get_end
+  (of-object "MaiaLineShape")
+  (c-name "maia_line_shape_get_end")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "result")
+  )
+)
+
+(define-method set_end
+  (of-object "MaiaLineShape")
+  (c-name "maia_line_shape_set_end")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "value")
+  )
 )
 
 

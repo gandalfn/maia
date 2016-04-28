@@ -371,9 +371,10 @@ public class Maia.DrawingArea : Group, ItemPackable
                         GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
 
                         // Set the selected item;
-                        if (item.is_movable || item.is_resizable)
+                        if (item.is_movable || item.is_resizable || item.is_selectable)
                         {
                             selected = item;
+                            item.state = State.ACTIVE;
                         }
 
                         break;
@@ -385,6 +386,7 @@ public class Maia.DrawingArea : Group, ItemPackable
 
             if (ret)
             {
+                if (selected != null) selected.state = State.NORMAL;
                 selected = null;
                 grab_focus (this);
             }
@@ -600,7 +602,7 @@ public class Maia.DrawingArea : Group, ItemPackable
                     {
                         item.draw (inContext, child_damaged_area);
 
-                        if (item == selected)
+                        if (item == selected && (item.is_movable || item.is_resizable))
                         {
                             if (m_SelectedItemState > SelectedItemState.SELECTED)
                             {
