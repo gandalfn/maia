@@ -52,21 +52,11 @@ public class Maia.Xcb.CloneRenderer : Maia.Graphic.CloneRenderer
                 unowned Drawable? drawable = (Drawable)device;
 
                 m_Damage = global::Xcb.Damage.Damage (application.connection);
-                m_Damage.create (application.connection, drawable.xid, global::Xcb.Damage.ReportLevel.NON_EMPTY);
+                m_Damage.create (application.connection, drawable.xid, global::Xcb.Damage.ReportLevel.BOUNDING_BOX);
                 m_Damage.subtract (application.connection, global::Xcb.NONE, global::Xcb.NONE);
 
                 m_DamageEvent = new Core.Event ("damage", ((int)m_Damage).to_pointer ());
                 m_DamageEvent.subscribe (on_damage_event);
-
-                global::Xcb.XFixes.Region region = global::Xcb.XFixes.Region (application.connection);
-                global::Xcb.Rectangle rects[1];
-                rects[0].x = 0;
-                rects[0].y = 0;
-                rects[0].width = (uint16)drawable.size.width;
-                rects[0].height = (uint16)drawable.size.height;
-                region.create (application.connection, rects);
-
-                ((global::Xcb.Damage.Drawable)drawable.xid).add (application.connection, region);
 
                 m_Func = inFunc;
             }
@@ -81,7 +71,6 @@ public class Maia.Xcb.CloneRenderer : Maia.Graphic.CloneRenderer
     }
 
     // properties
-    private Pixmap                   m_Pixmap = null;
     private Graphic.Size             m_Size = Graphic.Size (0, 0);
     private Graphic.Surface?         m_Surface = null;
     private Drawable?                m_CloneDevice = null;
@@ -130,15 +119,10 @@ public class Maia.Xcb.CloneRenderer : Maia.Graphic.CloneRenderer
     create_surface ()
     {
         m_Surface = null;
-        m_Pixmap = null;
 
         if (m_Size.width != 0 && m_Size.height != 0)
         {
-            int screen_num = Maia.Xcb.application.default_screen;
-
-            m_Pixmap = new Pixmap (screen_num, (uint8)32, (int)GLib.Math.ceil (m_Size.width), (int)GLib.Math.ceil (m_Size.height));
-
-            m_Surface = new Graphic.Surface.from_device (m_Pixmap, (int)GLib.Math.ceil (m_Size.width), (int)GLib.Math.ceil (m_Size.height));
+            m_Surface = new Graphic.Surface.similar (m_CloneSurface, (int)GLib.Math.ceil (m_Size.width), (int)GLib.Math.ceil (m_Size.height));
         }
     }
 
@@ -153,9 +137,8 @@ public class Maia.Xcb.CloneRenderer : Maia.Graphic.CloneRenderer
                 ctx.save ();
                     m_CloneSurface.transform = new Graphic.Transform.init_translate (position.x, position.y);
                     ctx.operator = Graphic.Operator.SOURCE;
-                    ctx.clip (new Graphic.Path.from_rectangle (Graphic.Rectangle (0, 0, m_Size.width, m_Size.height)));
                     ctx.pattern = m_CloneSurface;
-                    ctx.paint ();
+                    ctx.fill (new Graphic.Path.from_rectangle (Graphic.Rectangle (0, 0, m_Size.width, m_Size.height)));
                 ctx.restore ();
             }
             catch (Graphic.Error err)

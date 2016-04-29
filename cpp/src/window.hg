@@ -69,9 +69,9 @@ namespace Maia
                 MOTION          = 1 << 2
             };
 
-            static Glib::RefPtr<MouseEventArgs> create (guint8 inButton, guint8 inFlags, double inX, double inY)
+            static Glib::RefPtr<MouseEventArgs> create (guint8 inFlags, guint8 inButton, double inX, double inY)
             {
-                MaiaMouseEventArgs* pArgs = maia_mouse_event_args_new (inButton, inFlags, inX, inY);
+                MaiaMouseEventArgs* pArgs = maia_mouse_event_args_new (inFlags, inButton, inX, inY);
                 return Glib::RefPtr<MouseEventArgs> (new MouseEventArgs (pArgs));
             }
 
