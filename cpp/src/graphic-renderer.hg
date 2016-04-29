@@ -124,7 +124,7 @@ namespace Maia
 
                 _WRAP_METHOD(Glib::RefPtr<Surface> get_surface () const, maia_graphic_renderer_get_surface, refreturn)
                 _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_renderer_get_size)
-                _WRAP_METHOD(void set_size (const Size& outSize) const, maia_graphic_renderer_set_size)
+                _WRAP_METHOD(void set_size (const Size& inSize), maia_graphic_renderer_set_size)
 
                 _WRAP_METHOD(Glib::RefPtr<RendererInitializeNotification> initialize_notification () const, maia_graphic_renderer_get_initialize, refreturn)
                 _WRAP_METHOD(Glib::RefPtr<RendererNewFrameNotification> new_frame_notification () const, maia_graphic_renderer_get_new_frame, refreturn)

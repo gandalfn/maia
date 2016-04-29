@@ -21,12 +21,14 @@
 #include <maiamm/item.h>
 #include <maiamm/core-event.h>
 #include <maiamm/core-eventargs.h>
+#include <maiamm/graphic-rectangle.h>
 #include <maiamm/graphic-surface.h>
 #include <maiamm/graphic-color.h>
 #include <maiamm/group.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/group_p.h)
+_PINCLUDE(maiamm/private/core-eventargs_p.h)
 
 namespace Maia
 {
@@ -34,6 +36,57 @@ namespace Maia
 
     _WRAP_ENUM(WindowBorder, MaiaWindowBorder, NO_GTYPE)
     _WRAP_ENUM(WindowPositionPolicy, MaiaWindowPositionPolicy, NO_GTYPE)
+
+    class GeometryEventArgs : public Core::EventArgs
+    {
+        _CLASS_GOBJECT(GeometryEventArgs, MaiaGeometryEventArgs, MAIA_GEOMETRY_EVENT_ARGS, Core::EventArgs, MaiaCoreEventArgs)
+
+        public:
+            static Glib::RefPtr<GeometryEventArgs> create (double inX, double inY, double inWidth, double inHeight)
+            {
+                MaiaGeometryEventArgs* pArgs = maia_geometry_event_args_new (inX, inY, inWidth, inHeight);
+                return Glib::RefPtr<GeometryEventArgs> (new GeometryEventArgs (pArgs));
+            }
+
+            _WRAP_METHOD(void get_area (Graphic::Rectangle& outArea), maia_geometry_event_args_get_area)
+
+        protected:
+            _CTOR_DEFAULT()
+
+        private:
+            _WRAP_PROPERTY("area", Graphic::Rectangle)
+    };
+
+    class MouseEventArgs : public Core::EventArgs
+    {
+        _CLASS_GOBJECT(MouseEventArgs, MaiaMouseEventArgs, MAIA_MOUSE_EVENT_ARGS, Core::EventArgs, MaiaCoreEventArgs)
+
+        public:
+            enum class Flags
+            {
+                BUTTON_PRESS    = 1 << 0,
+                BUTTON_RELEASE  = 1 << 1,
+                MOTION          = 1 << 2
+            };
+
+            static Glib::RefPtr<MouseEventArgs> create (guint8 inButton, guint8 inFlags, double inX, double inY)
+            {
+                MaiaMouseEventArgs* pArgs = maia_mouse_event_args_new (inButton, inFlags, inX, inY);
+                return Glib::RefPtr<MouseEventArgs> (new MouseEventArgs (pArgs));
+            }
+
+            _WRAP_METHOD(guint8 get_button () const, maia_mouse_event_args_get_button)
+            _WRAP_METHOD(guint8 get_flags () const, maia_mouse_event_args_get_flags)
+            _WRAP_METHOD(void get_position (Graphic::Point& outPosition) const, maia_mouse_event_args_get_position)
+
+        protected:
+            _CTOR_DEFAULT()
+
+        private:
+            _WRAP_PROPERTY("button", guint8)
+            _WRAP_PROPERTY("flags", guint8)
+            _WRAP_PROPERTY("position", Graphic::Point)
+    };
 
     class Window : public Group
     {

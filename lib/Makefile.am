@@ -210,6 +210,7 @@ libmaia_la_SOURCES = \
     line.vala \
     table-view.vala \
     table-view-column.vala \
+    shape.vala \
     line-shape.vala
 
 libmaia_la_VALAFLAGS = \

@@ -83,6 +83,7 @@ public class Maia.DrawingArea : Group, ItemPackable
                 // Damage the old selected item
                 if (m_SelectedItem != null)
                 {
+                    m_SelectedItem.state = State.NORMAL;
                     m_SelectedItem.layer = m_SelectedOldLayer;
                     if (m_SelectedItem is Arrow)
                     {
@@ -113,6 +114,7 @@ public class Maia.DrawingArea : Group, ItemPackable
                 // Damage the new selected item
                 if (m_SelectedItem != null)
                 {
+                    m_SelectedItem.state = State.ACTIVE;
                     m_SelectedOldLayer = m_SelectedItem.layer;
                     m_SelectedItem.layer = ((Item)last ()).layer + 1;
                     m_SelectedItemState = SelectedItemState.SELECTED;
@@ -374,7 +376,6 @@ public class Maia.DrawingArea : Group, ItemPackable
                         if (item.is_movable || item.is_resizable || item.is_selectable)
                         {
                             selected = item;
-                            item.state = State.ACTIVE;
                         }
 
                         break;
@@ -386,7 +387,6 @@ public class Maia.DrawingArea : Group, ItemPackable
 
             if (ret)
             {
-                if (selected != null) selected.state = State.NORMAL;
                 selected = null;
                 grab_focus (this);
             }

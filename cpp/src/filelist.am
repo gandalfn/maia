@@ -88,6 +88,7 @@ files_hg = \
     key.hg \
     label.hg \
     line.hg \
+    line-shape.hg \
     model.hg \
     notebook.hg \
     notebook-page.hg \
@@ -102,6 +103,7 @@ files_hg = \
     seek-bar.hg \
     shortcut.hg \
     scroll-view.hg \
+    shape.hg \
     state.hg \
     step-button.hg \
     switch-button.hg \

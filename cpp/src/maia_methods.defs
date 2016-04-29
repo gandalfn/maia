@@ -749,12 +749,6 @@
   (gtype-id "MAIA_TYPE_LINE")
 )
 
-(define-object MaiaLineShape
-  (parent "MaiaItem")
-  (c-name "MaiaLineShape")
-  (gtype-id "MAIA_TYPE_LINE_SHAPE")
-)
-
 (define-object MaiaLogLogger
   (parent "GObject")
   (c-name "MaiaLogLogger")
@@ -937,6 +931,18 @@
   (parent "MaiaProgressBar")
   (c-name "MaiaSeekBar")
   (gtype-id "MAIA_TYPE_SEEK_BAR")
+)
+
+(define-object MaiaShape
+  (parent "MaiaItem")
+  (c-name "MaiaShape")
+  (gtype-id "MAIA_TYPE_SHAPE")
+)
+
+(define-object MaiaLineShape
+  (parent "MaiaShape")
+  (c-name "MaiaLineShape")
+  (gtype-id "MAIA_TYPE_LINE_SHAPE")
 )
 
 (define-object MaiaShortcut
@@ -3747,12 +3753,12 @@
   )
 )
 
-(define-enum MaiaLineShapeCaliper
-  (c-name "MaiaLineShapeCaliper")
-  (gtype-id "MAIA_TYPE_LINE_SHAPE_CALIPER")
+(define-enum MaiaShapeCaliper
+  (c-name "MaiaShapeCaliper")
+  (gtype-id "MAIA_TYPE_SHAPE_CALIPER")
   (values
-    '("cross" "MAIA_LINE_SHAPE_CALIPER_CROSS")
-    '("triangle" "MAIA_LINE_SHAPE_CALIPER_TRIANGLE")
+    '("cross" "MAIA_SHAPE_CALIPER_CROSS")
+    '("triangle" "MAIA_SHAPE_CALIPER_TRIANGLE")
   )
 )
 
@@ -22717,37 +22723,113 @@
   (return-type "MaiaItemPackable*")
 )
 
-(define-function maia_line_shape_get_type
-  (c-name "maia_line_shape_get_type")
+(define-function maia_shape_get_type
+  (c-name "maia_shape_get_type")
   (return-type "GType")
 )
 
-(define-function maia_line_shape_caliper_get_type
-  (c-name "maia_line_shape_caliper_get_type")
+(define-function maia_shape_caliper_get_type
+  (c-name "maia_shape_caliper_get_type")
   (return-type "GType")
 )
 
 (define-method to_string
-  (of-object "MaiaLineShapeCaliper")
-  (c-name "maia_line_shape_caliper_to_string")
+  (of-object "MaiaShapeCaliper")
+  (c-name "maia_shape_caliper_to_string")
   (return-type "gchar*")
 )
 
-(define-function maia_line_shape_caliper_from_string
-  (c-name "maia_line_shape_caliper_from_string")
-  (return-type "MaiaLineShapeCaliper")
+(define-function maia_shape_caliper_from_string
+  (c-name "maia_shape_caliper_from_string")
+  (return-type "MaiaShapeCaliper")
   (parameters
     '("const-gchar*" "inValue")
   )
 )
 
 (define-method to_path
-  (of-object "MaiaLineShapeCaliper")
-  (c-name "maia_line_shape_caliper_to_path")
+  (of-object "MaiaShapeCaliper")
+  (c-name "maia_shape_caliper_to_path")
   (return-type "gchar*")
   (parameters
     '("MaiaGraphicSize*" "inSize")
   )
+)
+
+(define-function maia_shape_construct
+  (c-name "maia_shape_construct")
+  (return-type "MaiaShape*")
+  (parameters
+    '("GType" "object_type")
+  )
+)
+
+(define-method get_border
+  (of-object "MaiaShape")
+  (c-name "maia_shape_get_border")
+  (return-type "gdouble")
+)
+
+(define-method set_border
+  (of-object "MaiaShape")
+  (c-name "maia_shape_set_border")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_caliper
+  (of-object "MaiaShape")
+  (c-name "maia_shape_get_caliper")
+  (return-type "MaiaShapeCaliper")
+)
+
+(define-method set_caliper
+  (of-object "MaiaShape")
+  (c-name "maia_shape_set_caliper")
+  (return-type "none")
+  (parameters
+    '("MaiaShapeCaliper" "value")
+  )
+)
+
+(define-method get_caliper_size
+  (of-object "MaiaShape")
+  (c-name "maia_shape_get_caliper_size")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "result")
+  )
+)
+
+(define-method set_caliper_size
+  (of-object "MaiaShape")
+  (c-name "maia_shape_set_caliper_size")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicSize*" "value")
+  )
+)
+
+(define-method get_caliper_line_width
+  (of-object "MaiaShape")
+  (c-name "maia_shape_get_caliper_line_width")
+  (return-type "gdouble")
+)
+
+(define-method set_caliper_line_width
+  (of-object "MaiaShape")
+  (c-name "maia_shape_set_caliper_line_width")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-function maia_line_shape_get_type
+  (c-name "maia_line_shape_get_type")
+  (return-type "GType")
 )
 
 (define-function maia_line_shape_new
@@ -22765,54 +22847,6 @@
   (parameters
     '("GType" "object_type")
     '("const-gchar*" "inId")
-  )
-)
-
-(define-method get_border
-  (of-object "MaiaLineShape")
-  (c-name "maia_line_shape_get_border")
-  (return-type "gdouble")
-)
-
-(define-method set_border
-  (of-object "MaiaLineShape")
-  (c-name "maia_line_shape_set_border")
-  (return-type "none")
-  (parameters
-    '("gdouble" "value")
-  )
-)
-
-(define-method get_caliper
-  (of-object "MaiaLineShape")
-  (c-name "maia_line_shape_get_caliper")
-  (return-type "MaiaLineShapeCaliper")
-)
-
-(define-method set_caliper
-  (of-object "MaiaLineShape")
-  (c-name "maia_line_shape_set_caliper")
-  (return-type "none")
-  (parameters
-    '("MaiaLineShapeCaliper" "value")
-  )
-)
-
-(define-method get_caliper_size
-  (of-object "MaiaLineShape")
-  (c-name "maia_line_shape_get_caliper_size")
-  (return-type "none")
-  (parameters
-    '("MaiaGraphicSize*" "result")
-  )
-)
-
-(define-method set_caliper_size
-  (of-object "MaiaLineShape")
-  (c-name "maia_line_shape_set_caliper_size")
-  (return-type "none")
-  (parameters
-    '("MaiaGraphicSize*" "value")
   )
 )
 

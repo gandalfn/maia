@@ -1,0 +1,62 @@
+/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/*
+ * shape.hg
+ * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
+ *
+ * maia is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * maia is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <maia.h>
+#include <maiamm/graphic-size.h>
+#include <maiamm/item-movable.h>
+#include <maiamm/item-resizable.h>
+#include <maiamm/item.h>
+
+_DEFS(maiamm,maia)
+_PINCLUDE(maiamm/private/item_p.h)
+
+namespace Maia
+{
+    class Shape : public Item, public ItemMovable, public ItemResizable
+    {
+        _CLASS_GOBJECT(Shape, MaiaShape, MAIA_SHAPE, Item, MaiaItem)
+        _IMPLEMENTS_INTERFACE(ItemMovable)
+        _IMPLEMENTS_INTERFACE(ItemResizable)
+
+        protected:
+            _CTOR_DEFAULT()
+
+            explicit Shape(const Glib::ustring& inId);
+
+        public:
+            _WRAP_ENUM(class Caliper, MaiaShapeCaliper, s#SHAPE_CALIPER_##, NO_GTYPE)
+
+            _WRAP_METHOD(double get_border () const, maia_shape_get_border)
+            _WRAP_METHOD(void set_border (double inBorder), maia_shape_set_border)
+
+            _WRAP_METHOD(Shape::Caliper get_caliper () const, maia_shape_get_caliper)
+            _WRAP_METHOD(void set_caliper (Shape::Caliper inCaliper), maia_shape_set_caliper)
+
+            _WRAP_METHOD(void get_caliper_size (Graphic::Size& outSize) const, maia_shape_get_caliper_size)
+            _WRAP_METHOD(void set_caliper_size (const Graphic::Size& inSize), maia_shape_set_caliper_size)
+
+            _WRAP_METHOD(double get_caliper_line_width () const, maia_shape_get_caliper_line_width)
+            _WRAP_METHOD(void set_caliper_line_width (double inWidth), maia_shape_set_caliper_line_width)
+
+            _WRAP_PROPERTY("border", double)
+            _WRAP_PROPERTY("caliper", Shape::Caliper)
+            _WRAP_PROPERTY("caliper-size", Graphic::Size)
+            _WRAP_PROPERTY("caliper-line-width", double)
+    };
+}

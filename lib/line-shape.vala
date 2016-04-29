@@ -17,51 +17,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.LineShape : Item, ItemMovable, ItemResizable
+public class Maia.LineShape : Shape
 {
-    // types
-    public enum Caliper
-    {
-        CROSS,
-        TRIANGLE;
-
-        public string
-        to_string ()
-        {
-            switch (this)
-            {
-                case TRIANGLE:
-                    return "triangle";
-            }
-
-            return "cross";
-        }
-
-        public static Caliper
-        from_string (string inValue)
-        {
-            switch (inValue.down ())
-            {
-                case "triangle":
-                    return TRIANGLE;
-            }
-
-            return CROSS;
-        }
-
-        public string
-        to_path (Graphic.Size inSize)
-        {
-            switch (this)
-            {
-                case TRIANGLE:
-                    return @"M $(inSize.width / 2.0),0 L $(inSize.width),$(inSize.height) L 0, $(inSize.height) L $(inSize.width / 2.0),0";
-            }
-
-            return @"M 0, 0 L $(inSize.width),$(inSize.height) M 0,$(inSize.height) L $(inSize.width),0";
-        }
-    }
-
     // properties
     private Graphic.Point m_Begin;
     private Graphic.Point m_End;
@@ -74,14 +31,6 @@ public class Maia.LineShape : Item, ItemMovable, ItemResizable
             return "LineShape";
         }
     }
-
-    public double border { get; set; default = 8; }
-
-    public Caliper caliper { get; set; default = Caliper.CROSS; }
-
-    public Graphic.Size caliper_size { get; set; default = Graphic.Size (32, 32); }
-
-    public double caliper_line_width { get; set; default = 1.0; }
 
     public Graphic.Point begin {
         get {
@@ -113,19 +62,11 @@ public class Maia.LineShape : Item, ItemMovable, ItemResizable
     construct
     {
         stroke_pattern[State.NORMAL] = new Graphic.Color (0, 0, 0);
-        is_movable = false;
-        is_resizable = false;
     }
 
     public LineShape (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
-    }
-
-    internal override bool
-    can_append_child (Core.Object inObject)
-    {
-        return false;
     }
 
     internal override Graphic.Size
@@ -262,6 +203,34 @@ public class Maia.LineShape : Item, ItemMovable, ItemResizable
                 var line = new Graphic.Path ();
                 line.move_to (m_Begin.x, m_Begin.y);
                 line.line_to (m_End.x, m_End.y);
+
+                if (background_pattern[state] != null)
+                {
+                    inContext.save ();
+                    {
+                        inContext.pattern = background_pattern[state];
+                        inContext.translate (Graphic.Point (-1, 0));
+                        inContext.stroke (line);
+                        inContext.translate (Graphic.Point (1, 0));
+
+                        inContext.pattern = background_pattern[state];
+                        inContext.translate (Graphic.Point (1, 0));
+                        inContext.stroke (line);
+                        inContext.translate (Graphic.Point (-1, 0));
+
+                        inContext.pattern = background_pattern[state];
+                        inContext.translate (Graphic.Point (0, -1));
+                        inContext.stroke (line);
+                        inContext.translate (Graphic.Point (0, 1));
+
+                        inContext.pattern = background_pattern[state];
+                        inContext.translate (Graphic.Point (0, 1));
+                        inContext.stroke (line);
+                        inContext.translate (Graphic.Point (0, -1));
+                    }
+                    inContext.restore ();
+                }
+
                 inContext.pattern = stroke_pattern[state];
                 inContext.stroke (line);
             }
@@ -287,6 +256,32 @@ public class Maia.LineShape : Item, ItemMovable, ItemResizable
                 var caliper = new Graphic.Path.from_data (caliper.to_path (caliper_size));
                 inContext.line_width = caliper_line_width;
                 inContext.dash = Graphic.LineType.CONTINUE.to_dash (line_width);
+                if (background_pattern[state] != null)
+                {
+                    inContext.save ();
+                    {
+                        inContext.pattern = background_pattern[state];
+                        inContext.translate (Graphic.Point (-1, 0));
+                        inContext.stroke (caliper);
+                        inContext.translate (Graphic.Point (1, 0));
+
+                        inContext.pattern = background_pattern[state];
+                        inContext.translate (Graphic.Point (1, 0));
+                        inContext.stroke (caliper);
+                        inContext.translate (Graphic.Point (-1, 0));
+
+                        inContext.pattern = background_pattern[state];
+                        inContext.translate (Graphic.Point (0, -1));
+                        inContext.stroke (caliper);
+                        inContext.translate (Graphic.Point (0, 1));
+
+                        inContext.pattern = background_pattern[state];
+                        inContext.translate (Graphic.Point (0, 1));
+                        inContext.stroke (caliper);
+                        inContext.translate (Graphic.Point (0, -1));
+                    }
+                    inContext.restore ();
+                }
                 inContext.pattern = stroke_pattern[state];
                 inContext.stroke (caliper);
 
@@ -316,6 +311,32 @@ public class Maia.LineShape : Item, ItemMovable, ItemResizable
                     var caliper = new Graphic.Path.from_data (caliper.to_path (caliper_size));
                     inContext.line_width = caliper_line_width;
                     inContext.dash = Graphic.LineType.CONTINUE.to_dash (line_width);
+                    if (background_pattern[state] != null)
+                    {
+                        inContext.save ();
+                        {
+                            inContext.pattern = background_pattern[state];
+                            inContext.translate (Graphic.Point (-1, 0));
+                            inContext.stroke (caliper);
+                            inContext.translate (Graphic.Point (1, 0));
+
+                            inContext.pattern = background_pattern[state];
+                            inContext.translate (Graphic.Point (1, 0));
+                            inContext.stroke (caliper);
+                            inContext.translate (Graphic.Point (-1, 0));
+
+                            inContext.pattern = background_pattern[state];
+                            inContext.translate (Graphic.Point (0, -1));
+                            inContext.stroke (caliper);
+                            inContext.translate (Graphic.Point (0, 1));
+
+                            inContext.pattern = background_pattern[state];
+                            inContext.translate (Graphic.Point (0, 1));
+                            inContext.stroke (caliper);
+                            inContext.translate (Graphic.Point (0, -1));
+                        }
+                        inContext.restore ();
+                    }
                     inContext.pattern = stroke_pattern[state];
                     inContext.stroke (caliper);
                 }
@@ -335,7 +356,7 @@ public class Maia.LineShape : Item, ItemMovable, ItemResizable
             var begin_area = Graphic.Rectangle (border + m_Begin.x, border + m_Begin.y, caliper_size.width, caliper_size.height);
             var end_area = Graphic.Rectangle (border + m_End.x, border + m_End.y, caliper_size.width, caliper_size.height);
 
-            if (!ret && m_Begin.x < 0 && m_Begin.y < 0)
+            if (m_Begin.x < 0 && m_Begin.y < 0)
             {
                 Graphic.Point moved_point = inPoint;
                 moved_point.x -= border + caliper_size.width / 2.0;

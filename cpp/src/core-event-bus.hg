@@ -168,6 +168,16 @@ namespace Maia
                 typedef sigc::slot<void, bool, Glib::ustring> SlotLinkBusCallback;
                 typedef sigc::slot<void, Glib::RefPtr<EventArgs>> SlotReplyCallback;
 
+                void publish (const Glib::ustring& inName, void* inOwner, const Glib::RefPtr<EventArgs>& inpArgs)
+                {
+                    maia_core_event_bus_publish (gobj (), inName.c_str (), inOwner, const_cast<MaiaCoreEventArgs*> (inpArgs->gobj ()));
+                }
+
+                void publish (const Glib::ustring& inName, int inOwner, const Glib::RefPtr<EventArgs>& inpArgs)
+                {
+                    maia_core_event_bus_publish (gobj (), inName.c_str (), GINT_TO_POINTER (inOwner), const_cast<MaiaCoreEventArgs*> (inpArgs->gobj ()));
+                }
+
                 void publish (const Glib::ustring& inName, const Glib::RefPtr<EventArgs>& inpArgs)
                 {
                     maia_core_event_bus_publish (gobj (), inName.c_str (), 0, const_cast<MaiaCoreEventArgs*> (inpArgs->gobj ()));
@@ -224,6 +234,32 @@ namespace Maia
                 subscribe (const Glib::ustring& inName, void* inpOwner, const sigc::slot<void, Glib::RefPtr<EventArgs>>& inSlot)
                 {
                     Glib::RefPtr<EventListener> pListener = EventListener::create (inName, inpOwner, inSlot);
+                    subscribe (pListener);
+                    return pListener;
+                }
+
+                template <typename T_obj>
+                typename std::enable_if<!std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<EventListener>>::type
+                subscribe (const Glib::ustring& inName, int inOwner, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
+                {
+                    Glib::RefPtr<EventListener> pListener = EventListener::create (inName, GINT_TO_POINTER (inOwner), pObj, pFunc);
+                    subscribe (pListener);
+                    return pListener;
+                }
+
+                template <typename T_obj>
+                typename std::enable_if<std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<EventListener>>::type
+                subscribe (const Glib::ustring& inName, int inOwner, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
+                {
+                    Glib::RefPtr<EventListener> pListener = EventListener::create (inName, GINT_TO_POINTER (inOwner), pObj, pFunc);
+                    subscribe (pListener);
+                    return pListener;
+                }
+
+                Glib::RefPtr<EventListener>
+                subscribe (const Glib::ustring& inName, int inOwner, const sigc::slot<void, Glib::RefPtr<EventArgs>>& inSlot)
+                {
+                    Glib::RefPtr<EventListener> pListener = EventListener::create (inName, GINT_TO_POINTER (inOwner), inSlot);
                     subscribe (pListener);
                     return pListener;
                 }

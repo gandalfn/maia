@@ -201,6 +201,28 @@ namespace Maia
 
                 template <typename T_obj>
                 static typename std::enable_if<!std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<EventListener>>::type
+                create (const Glib::ustring& inName, int inOwner, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
+                {
+                    Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerFunctor<T_obj>::create (pObj, pFunc);
+                    Glib::RefPtr<EventListener> pListener = create (inName, GINT_TO_POINTER (inOwner), pFunctor);
+
+                    return pListener;
+                }
+
+                template <typename T_obj>
+                static typename std::enable_if<std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<EventListener>>::type
+                create (const Glib::ustring& inName, int inOwner, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
+                {
+                    Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerFunctor<T_obj>::create (pObj, pFunc);
+                    Glib::RefPtr<EventListener> pListener = create (inName, GINT_TO_POINTER (inOwner), pFunctor);
+
+                    pListener->add_gobject_watch (pObj);
+
+                    return pListener;
+                }
+
+                template <typename T_obj>
+                static typename std::enable_if<!std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<EventListener>>::type
                 create (const Glib::ustring& inName, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
                 {
                     Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerFunctor<T_obj>::create (pObj, pFunc);
