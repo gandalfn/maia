@@ -96,10 +96,11 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
     private Graphic.Renderer.Looper m_Looper = null;
     private bool                    m_RendererDamaged = false;
     private Graphic.Renderer        m_Renderer;
-    private Graphic.Renderer        m_Front;
+    private Graphic.Surface         m_Front;
     private Graphic.Region          m_FrontDamaged;
     private Core.TaskPool           m_Pool;
     private Task                    m_Task;
+    private bool                    m_Pause;
     private GLib.Mutex              m_Mutex = GLib.Mutex ();
     private GLib.Cond               m_Cond  = GLib.Cond ();
     private GLib.Mutex              m_Lock = GLib.Mutex ();
@@ -176,6 +177,32 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
         }
     }
 
+    /**
+     * Pause task
+     */
+    public bool pause {
+        get {
+            return m_Pause;
+        }
+        set {
+            if (m_Pause != value)
+            {
+                m_Pause = value;
+
+                if (m_Pause && m_Task != null)
+                {
+                    cancel_task ();
+                    m_Task = null;
+                }
+                else if (!m_Pause && m_Task == null)
+                {
+                    create_task ();
+                }
+            }
+        }
+    }
+
+
     // static methods
     static construct
     {
@@ -231,7 +258,7 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
     private void
     create_task ()
     {
-        if (m_Task == null && m_Looper != null)
+        if (m_Task == null && m_Looper != null && !m_Pause)
         {
             m_Task = new Task (this);
             m_Task.add_damage_observer (on_renderer_damaged);
@@ -343,13 +370,9 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
             geometry = inAllocation;
 
             var item_area = area;
-            if (m_Front == null)
+            if (m_Front == null || !m_Front.size.equal (item_area.extents.size))
             {
-                m_Front = new Graphic.Renderer (item_area.extents.size);
-            }
-            else if (!m_Front.size.equal (item_area.extents.size))
-            {
-                m_Front.size = item_area.extents.size;
+                m_Front = new Graphic.Surface.similar (inContext.surface, (int)item_area.extents.size.width, (int)item_area.extents.size.height);
             }
 
             if (m_Renderer != null)
@@ -414,6 +437,7 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
         // paint childs
         if (m_FrontDamaged != null && !m_FrontDamaged.is_empty ())
         {
+            var ctx = m_Front.context;
             foreach (unowned Core.Object child in this)
             {
                 if (child is Drawable)
@@ -424,13 +448,14 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
                     {
                         var area = area_to_child_item_space (drawable, m_FrontDamaged);
 
-                        m_Front.surface.context.save ();
-                            m_Front.surface.context.clip (new Graphic.Path.from_region (m_FrontDamaged));
-                            m_Front.surface.clear ();
+                        ctx.save ();
+                            ctx.clip (new Graphic.Path.from_region (m_FrontDamaged));
+                            ctx.operator = Graphic.Operator.CLEAR;
+                            ctx.paint ();
 
-                            m_Front.surface.context.operator = Graphic.Operator.OVER;
-                            drawable.draw (m_Front.surface.context, area);
-                        m_Front.surface.context.restore ();
+                            ctx.operator = Graphic.Operator.OVER;
+                            drawable.draw (ctx, area);
+                        ctx.restore ();
                     }
                 }
             }
@@ -439,7 +464,7 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
         }
 
         inContext.operator = Graphic.Operator.OVER;
-        inContext.pattern = m_Front.surface;
+        inContext.pattern = m_Front;
         inContext.paint ();
     }
 }

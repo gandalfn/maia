@@ -50,12 +50,17 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Graphic::RendererLooper> get_looper () const, maia_renderer_view_get_looper)
             _WRAP_METHOD(void set_looper (const Glib::RefPtr<Graphic::RendererLooper>& inpLooper), maia_renderer_view_set_looper)
 
+            _WRAP_METHOD(bool paused () const, maia_renderer_view_get_pause)
+            _WRAP_METHOD(void set_pause (bool inPause = true), maia_renderer_view_set_pause)
+
             _IGNORE (maia_renderer_view_get_renderer, maia_renderer_view_set_renderer)
 
             Glib::RefPtr<Graphic::Renderer> get_renderer ();
             void set_renderer (const Glib::RefPtr<Graphic::Renderer>& inpRenderer);
 
             _WRAP_PROPERTY("looper", Glib::RefPtr<Graphic::RendererLooper>)
+
+            _WRAP_PROPERTY("pause", bool)
 
             _WRAP_PROPERTY("can-focus", bool)
 

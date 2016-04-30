@@ -2049,9 +2049,9 @@ public class Maia.Core.EventBus : Object
                 unowned Occurence? occurence = m_Occurences.search<Event.Hash> (hash, Occurence.compare_with_event_hash);
                 if (occurence == null)
                 {
-#if MAIA_DEBUG
-                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Event $(hash) advertise");
-#endif
+//#if MAIA_DEBUG
+                    Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Event $(hash) advertise");
+//#endif
                     m_Occurences.insert (new Occurence (hash));
                 }
             }
@@ -2209,6 +2209,7 @@ public class Maia.Core.EventBus : Object
                 if (connection != null)
                 {
                     connection.send_async.begin (new MessageSubscribeResult (msg.hash, true));
+                    result = true;
                 }
             }
             else
