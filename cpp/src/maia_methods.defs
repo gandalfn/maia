@@ -21823,6 +21823,21 @@
   )
 )
 
+(define-method get_pause
+  (of-object "MaiaRendererView")
+  (c-name "maia_renderer_view_get_pause")
+  (return-type "gboolean")
+)
+
+(define-method set_pause
+  (of-object "MaiaRendererView")
+  (c-name "maia_renderer_view_set_pause")
+  (return-type "none")
+  (parameters
+    '("gboolean" "value")
+  )
+)
+
 (define-function maia_scale_bar_get_type
   (c-name "maia_scale_bar_get_type")
   (return-type "GType")

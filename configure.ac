@@ -208,12 +208,12 @@ fi
 dnl ****************************************************************************
 dnl Check for vala
 dnl ****************************************************************************
-vala_0_26=$(which valac-0.26)
-if test ! x"$vala_0_26" = x""; then
-    VALAC=$vala_0_26
+vala_0_32=$(which valac-0.32)
+if test ! x"$vala_0_32" = x""; then
+    VALAC=$vala_0_32
 fi
 AM_PROG_VALAC($VALA_REQUIRED)
-VALA_VAPI_PATH=$($PKG_CONFIG --variable=vapidir libvala-0.26)
+VALA_VAPI_PATH=$($PKG_CONFIG --variable=vapidir libvala-0.32)
 AC_SUBST(VALA_VAPI_PATH)
 
 dnl ****************************************************************************
