@@ -18,7 +18,7 @@
  */
 
 #include <maia.h>
-#include <maiamm/item-packable.h>
+#include <maiamm/item-resizable.h>
 #include <maiamm/item-movable.h>
 #include <maiamm/item.h>
 
@@ -27,10 +27,10 @@ _PINCLUDE(maiamm/private/item_p.h)
 
 namespace Maia
 {
-    class Rectangle : public Item, public ItemPackable, public ItemMovable
+    class Rectangle : public Item, public ItemResizable, public ItemMovable
     {
         _CLASS_GOBJECT(Rectangle, MaiaRectangle, MAIA_RECTANGLE, Item, MaiaItem)
-        _IMPLEMENTS_INTERFACE(ItemPackable)
+        _IMPLEMENTS_INTERFACE(ItemResizable)
         _IMPLEMENTS_INTERFACE(ItemMovable)
 
         protected:
