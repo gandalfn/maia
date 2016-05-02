@@ -161,7 +161,7 @@ internal class Maia.Cairo.Context : Graphic.Context
     }
 
     [CCode (notify = false)]
-    internal override Graphic.Pattern pattern {
+    internal override unowned Graphic.Pattern pattern {
         get {
             return base.pattern;
         }

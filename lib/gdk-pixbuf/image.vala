@@ -79,6 +79,8 @@ public interface Maia.GdkPixbuf.Image : Graphic.Image
         }
 
         // Create new surface
-        return new Graphic.Surface.from_data (format, data, width, height);
+        var ret = new Graphic.Surface.from_data (format, data, width, height);
+        ret.set_data_full ("MaiaGdkPixbufImageData", data, GLib.free);
+        return ret;
     }
 }

@@ -12390,6 +12390,15 @@
   )
 )
 
+(define-method render_noise
+  (of-object "MaiaGraphicSurface")
+  (c-name "maia_graphic_surface_render_noise")
+  (return-type "none")
+  (parameters
+    '("GError**" "error")
+  )
+)
+
 (define-method flush
   (of-object "MaiaGraphicSurface")
   (c-name "maia_graphic_surface_flush")

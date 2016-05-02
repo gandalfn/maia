@@ -204,6 +204,15 @@ public class Maia.Graphic.Surface : Pattern, Core.Serializable
     }
 
     /**
+     * Fill surface with random noise
+     */
+    public virtual void
+    render_noise () throws Graphic.Error
+    {
+        throw new Error.NOT_IMPLEMENTED ("Render noise not implemented");
+    }
+
+    /**
      * Do any pending drawing for the surface and also restore any temporary modifications
      * has made to the surface's state.
      */

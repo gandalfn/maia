@@ -57,6 +57,7 @@ public class Maia.TestSurface : Maia.TestCase
 
         add_test ("serialize", test_surface_serialize);
         add_test ("event", test_surface_event);
+        add_test ("noise", test_surface_noise);
     }
 
     public void
@@ -117,5 +118,24 @@ public class Maia.TestSurface : Maia.TestCase
         });
 
         loop.run ();
+    }
+
+    public void
+    test_surface_noise ()
+    {
+        try
+        {
+            var surface = new Graphic.Surface.with_format (Graphic.Surface.Format.A8, 1492, 892);
+            surface.clear ();
+            Test.timer_start ();
+            surface.render_noise ();
+            surface.fast_blur (2);
+            Test.message (@"noise elapsed: $(Test.timer_elapsed () * 1000)ms");
+            surface.dump ("noise.png");
+        }
+        catch (Graphic.Error err)
+        {
+            assert (false);
+        }
     }
 }

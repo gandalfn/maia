@@ -115,7 +115,7 @@ public class Maia.Graphic.Context : Core.Object
     [CCode (notify = false)]
     public virtual unowned Surface   surface    { get; construct set; }
     [CCode (notify = false)]
-    public virtual Pattern           pattern    { get; set; }
+    public virtual unowned Pattern   pattern    { get; set; }
     [CCode (notify = false)]
     public virtual double            line_width { get; set; }
     [CCode (notify = false)]

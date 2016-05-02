@@ -23,6 +23,9 @@ internal class Maia.Cairo.Surface : Graphic.Surface
     const int cAlphaPrecision = 16;
     const int cParamPrecision = 7;
 
+    // static
+    private static uint s_Seed;
+
     // properties
     private global::Cairo.Surface m_Surface = null;
 
@@ -176,10 +179,6 @@ internal class Maia.Cairo.Surface : Graphic.Surface
     ~Surface ()
     {
         m_Surface = null;
-        if (data != null)
-        {
-            GLib.free (data);
-        }
     }
 
     private void
@@ -676,6 +675,30 @@ internal class Maia.Cairo.Surface : Graphic.Surface
         // Save blurred image to original uint8[]
         for (var i = 0; i < size; i++)
             src[i] = (uint8) abuffer[i];
+
+        ((Surface)original).m_Surface.mark_dirty ();
+
+        context.operator = Graphic.Operator.SOURCE;
+        context.pattern  = original;
+        context.paint ();
+        context.operator = Graphic.Operator.OVER;
+    }
+
+    internal override void
+    render_noise () throws Graphic.Error
+    {
+        int width = (int)size.width;
+        int height = (int)size.height;
+
+        var original = new Graphic.Surface.with_format (Graphic.Surface.Format.A8, (uint)width, (uint)height);
+        uint8 *src = ((global::Cairo.ImageSurface)((Surface)original).native).get_data ();
+
+        var size = height * ((global::Cairo.ImageSurface)((Surface)original).native).get_stride ();
+        for (var i = 0; i < size; i++)
+        {
+            s_Seed = (214013 * s_Seed + 2531011);
+            src[i] = (uint8)(((s_Seed >> 16) & 0x7FFF) % 255);
+        }
 
         ((Surface)original).m_Surface.mark_dirty ();
 

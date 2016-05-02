@@ -34,16 +34,18 @@ public class Maia.TestTimeline : Maia.TestCase
     }
 
     private void
-    on_new_frame (int inNumFrame)
+    on_new_frame (Core.Notification inNotification)
     {
-        m_Count = inNumFrame;
+        unowned Core.Timeline.NewFrameNotification? notification = (Core.Timeline.NewFrameNotification)inNotification;
+
+        m_Count = (int)notification.num_frame;
         double elapsed = Test.timer_elapsed () * 1000;
         Test.message (@"count = $m_Count elapsed = $elapsed");
         Test.timer_start ();
     }
 
     private void
-    on_completed ()
+    on_completed (Core.Notification inNotification)
     {
         m_Loop.quit ();
     }
@@ -74,8 +76,8 @@ public class Maia.TestTimeline : Maia.TestCase
     {
         assert (m_Timeline != null);
 
-        m_Timeline.new_frame.connect (on_new_frame);
-        m_Timeline.completed.connect (on_completed);
+        m_Timeline.new_frame.add_object_observer (on_new_frame);
+        m_Timeline.completed.add_object_observer (on_completed);
         Test.timer_start ();
         m_Timeline.start ();
         m_Loop.run ();
