@@ -31,7 +31,7 @@
  * }}}
  *
  */
-public class Maia.Entry : Item, ItemPackable, ItemMovable
+public class Maia.Entry : Item, ItemPackable, ItemMovable, ItemFocusable
 {
     // types
     /**
@@ -255,6 +255,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     private int             m_Cursor = 0;
     private uint            m_LinePads = 0;
     private bool            m_HideIfEmpty = false;
+    private FocusGroup      m_FocusGroup = null;
 
     // accessors
     internal override string tag {
@@ -263,7 +264,28 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
         }
     }
 
-    internal override bool can_focus { get; set; default = true; }
+    internal bool   can_focus   { get; set; default = true; }
+    internal bool   have_focus  { get; set; default = false; }
+    internal int    focus_order { get; set; default = -1; }
+    internal FocusGroup focus_group {
+        get {
+            return m_FocusGroup;
+        }
+        set {
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.remove (this);
+            }
+
+            m_FocusGroup = value;
+
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.add (this);
+            }
+        }
+        default = null;
+    }
 
     internal uint   row     { get; set; default = 0; }
     internal uint   column  { get; set; default = 0; }
@@ -409,6 +431,35 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
      */
     public AllowedValues allowed_values { get; set; default = new AllowedValues (); }
 
+    /**
+     * Touchscreen mode
+     */
+    public bool touchscreen_mode { get; set; default = false; }
+
+    /**
+     * If set entry always interact elsewhere it does not have focus
+     */
+    public bool always_active { get; set; default = false; }
+
+    /**
+     * Indicate the label item which labelled this entry
+     */
+    public unowned Label labelled_by { get; set; default = null; }
+
+    /**
+     * Cursor position
+     */
+    public int cursor {
+        get {
+            return m_Cursor;
+        }
+        set {
+            m_Cursor = int.min(value, text.length);
+            damage.post ();
+        }
+        default = 0;
+    }
+
     // events
     /**
      * The event published on text changed and following {@link changed_mask}
@@ -423,6 +474,9 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
 
         GLib.Value.register_transform_func (typeof (ChangedMask), typeof (string), changed_mask_value_to_string);
         GLib.Value.register_transform_func (typeof (AllowedValues), typeof (string), allowed_values_value_to_string);
+
+        // Ref FocusGroup class to register focus group transform
+        typeof (FocusGroup).class_ref ();
     }
 
     static void
@@ -539,7 +593,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     {
         if (have_focus)
         {
-            m_Cursor = (int)(text ?? "").length;
+            cursor = (int)(text ?? "").length;
             m_Initial = text;
         }
         else if (ChangedMask.FOCUS_OUT in changed_mask)
@@ -550,7 +604,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             }
         }
 
-        state = have_focus ? State.ACTIVE : State.NORMAL;
+        state = (have_focus || always_active) ? State.ACTIVE : State.NORMAL;
     }
 
     private void
@@ -597,11 +651,11 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     remove_char_at_cursor ()
     {
         GLib.StringBuilder new_text = new GLib.StringBuilder (text);
-        int begin = (text ?? "").index_of_nth_char (m_Cursor - 1);
-        int end = (text ?? "").index_of_nth_char (m_Cursor);
+        int begin = (text ?? "").index_of_nth_char (cursor - 1);
+        int end = (text ?? "").index_of_nth_char (cursor);
         new_text.erase (begin, end - begin);
         text = new_text.str;
-        m_Cursor--;
+        cursor--;
     }
 
     private void
@@ -617,15 +671,15 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             }
 
             // cursor is not set, move on end of text
-            if (m_Cursor == 0)
+            if (cursor == 0)
             {
-                m_Cursor = (int)(text ?? "").length;
+                cursor = (int)(text ?? "").length;
             }
 
             if (!(parent is DrawingArea))
             {
                 // get current line at cusor position
-                m_Glyph.get_line_position (m_Cursor, true, out line);
+                m_Glyph.get_line_position (cursor, true, out line);
 
                 if (line >= lines)
                 {
@@ -723,43 +777,62 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
     private void
     on_pointer_over_changed ()
     {
-        if (pointer_over)
+        if (!touchscreen_mode)
         {
-            set_pointer_cursor (Cursor.XTERM);
-        }
-        else
-        {
-            set_pointer_cursor (Cursor.TOP_LEFT_ARROW);
+            if (pointer_over)
+            {
+                set_pointer_cursor (Cursor.XTERM);
+            }
+            else
+            {
+                set_pointer_cursor (Cursor.TOP_LEFT_ARROW);
+            }
         }
     }
 
     private void
     on_key_press_event (Modifier inModifier, Key inKey, unichar inCar)
     {
-        if (have_focus)
+        if (have_focus || always_active)
         {
             bool updated = false;
             GLib.StringBuilder new_text = new GLib.StringBuilder (text);
 
-            // Backspace pressed suppress last characters
-            if (inKey == Key.BackSpace && m_Cursor > 0)
+            // Tab pressed pass to next focusable item
+            if (inKey == Key.Tab)
             {
-                int begin = (text ?? "").index_of_nth_char (m_Cursor - 1);
-                int end = (text ?? "").index_of_nth_char (m_Cursor);
+                if (focus_group != null)
+                {
+                    // TODO: Check why shift TAB do not work
+                    if (inModifier == Modifier.CONTROL)
+                    {
+                        focus_group.prev ();
+                    }
+                    else if (inModifier == Modifier.NONE)
+                    {
+                        focus_group.next ();
+                    }
+                }
+            }
+            // Backspace pressed suppress last characters
+            else if (inKey == Key.BackSpace && cursor > 0)
+            {
+                int begin = (text ?? "").index_of_nth_char (cursor - 1);
+                int end = (text ?? "").index_of_nth_char (cursor);
                 new_text.erase (begin, end - begin);
                 text = new_text.str;
                 updated = true;
-                m_Cursor--;
+                cursor--;
             }
             // Enter is pressed and new line
             else if (inKey == Key.Return || inKey == Key.ISO_Enter || inKey == Key.KP_Enter)
             {
                 if (parent is DrawingArea || m_Glyph.line_count - m_LinePads < lines)
                 {
-                    new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), "\n");
+                    new_text.insert ((text ?? "").index_of_nth_char (cursor), "\n");
                     text = new_text.str;
                     updated = true;
-                    m_Cursor++;
+                    cursor++;
                 }
 
                 if (ChangedMask.RETURN in changed_mask && m_Initial != text)
@@ -770,9 +843,9 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             // Space is pressed
             else if ((inKey == Key.space || inKey == Key.KP_Space) && !only_numeric)
             {
-                new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), " ");
+                new_text.insert ((text ?? "").index_of_nth_char (cursor), " ");
                 text = new_text.str;
-                m_Cursor++;
+                cursor++;
                 updated = true;
 
                 check_line_size ();
@@ -780,15 +853,15 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             // Left arrow is pressed move cursor on left
             else if (inKey == Key.Left || inKey == Key.KP_Left)
             {
-                m_Cursor--;
-                m_Cursor = int.max (0, m_Cursor);
+                cursor--;
+                cursor = int.max (0, cursor);
                 damage.post ();
             }
             // Right arrow is pressed move cursor on right
             else if (inKey == Key.Right || inKey == Key.Right)
             {
-                m_Cursor++;
-                m_Cursor = int.min ((int)(text ?? "").length, m_Cursor);
+                cursor++;
+                cursor = int.min ((int)(text ?? "").length, cursor);
                 damage.post ();
             }
             // Other key is pressed check if character is printable (filter sepcial key)
@@ -798,16 +871,16 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                 {
                     if (only_numeric && inCar == ',')
                     {
-                        new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), ".");
+                        new_text.insert ((text ?? "").index_of_nth_char (cursor), ".");
                     }
                     else
                     {
-                        new_text.insert ((text ?? "").index_of_nth_char (m_Cursor), inCar.to_string ());
+                        new_text.insert ((text ?? "").index_of_nth_char (cursor), inCar.to_string ());
                     }
                     if (new_text.str in allowed_values)
                     {
                         text = new_text.str;
-                        m_Cursor ++;
+                        cursor ++;
                         updated = true;
 
                         check_line_size ();
@@ -877,7 +950,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                 inContext.dash = { 1.0, 2.0 };
 
                 // Calculate raw cursor index from utf8 string
-                int index = m_Glyph.text.index_of_nth_char (m_Cursor);
+                int index = m_Glyph.text.index_of_nth_char (cursor);
 
                 // Get cursor pos
                 Graphic.Rectangle rect = m_Glyph.get_cursor_position (index);
@@ -922,7 +995,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
                 inContext.dash = null;
 
                 // If have focus
-                if (have_focus)
+                if (have_focus || always_active)
                 {
                     double x = rect.origin.x;
 
@@ -965,7 +1038,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable
             int pos = m_Text.char_count (index) + trailing;
             if (pos < m_Text.length)
             {
-                m_Cursor = pos;
+                cursor = pos;
             }
         }
 

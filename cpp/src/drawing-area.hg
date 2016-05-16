@@ -21,6 +21,7 @@
 
 #include <maiamm/graphic-color.h>
 #include <maiamm/item-packable.h>
+#include <maiamm/item-focusable.h>
 #include <maiamm/item.h>
 #include <maiamm/group.h>
 
@@ -29,10 +30,11 @@ _PINCLUDE(maiamm/private/group_p.h)
 
 namespace Maia
 {
-    class DrawingArea : public Group, public ItemPackable
+    class DrawingArea : public Group, public ItemPackable, public ItemFocusable
     {
         _CLASS_GOBJECT(DrawingArea, MaiaDrawingArea, MAIA_DRAWING_AREA, Group, MaiaGroup)
         _IMPLEMENTS_INTERFACE(ItemPackable)
+        _IMPLEMENTS_INTERFACE(ItemFocusable)
 
         protected:
             _CTOR_DEFAULT()
@@ -69,6 +71,9 @@ namespace Maia
             _WRAP_PROPERTY("selected-border-color", Glib::RefPtr<Graphic::Color>)
 
             _WRAP_PROPERTY("can-focus", bool)
+            _WRAP_PROPERTY("have-focus", bool)
+            _WRAP_PROPERTY("focus-order", int)
+            _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
 
             _WRAP_PROPERTY("row", guint)
             _WRAP_PROPERTY("rows", guint)

@@ -269,7 +269,7 @@ public class Maia.DocumentView : Group
 
                 m_CurrentFocusItem.add (item);
 
-                if (item.can_focus)
+                if ((item is ItemFocusable) && (item as ItemFocusable).can_focus)
                 {
                     item.grab_focus (item);
                 }
@@ -297,7 +297,7 @@ public class Maia.DocumentView : Group
                     }
 
                     focus_parent.add (item);
-                    if (item.can_focus)
+                    if ((item is ItemFocusable) && (item as ItemFocusable).can_focus)
                     {
                         item.grab_focus (item);
                     }

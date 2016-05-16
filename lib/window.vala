@@ -94,9 +94,9 @@ public class Maia.Window : Group
     private Core.Set<BindKey>  m_BindKeys;
 
     // accessors
-    protected unowned Item? focus_item         { get; set; default = null; }
-    protected unowned Item? grab_pointer_item  { get; set; default = null; }
-    protected unowned Item? grab_keyboard_item { get; set; default = null; }
+    protected unowned ItemFocusable? focus_item { get; set; default = null; }
+    protected unowned Item? grab_pointer_item   { get; set; default = null; }
+    protected unowned Item? grab_keyboard_item  { get; set; default = null; }
 
     internal override string tag {
         get {
@@ -683,11 +683,13 @@ public class Maia.Window : Group
     protected virtual void
     on_grab_focus (Item? inItem)
     {
-        if (inItem is Button)
+        unowned ItemFocusable? item = inItem as ItemFocusable;
+
+        if (item != null && item is Button)
             return;
 
 #if MAIA_DEBUG
-        if (inItem == null)
+        if (item == null)
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab focus");
         else
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab focus %s", inItem.name);
@@ -700,10 +702,10 @@ public class Maia.Window : Group
         }
 
         // Set focused item
-        focus_item = inItem;
+        focus_item = item;
 
         // Set item have focus
-        if (inItem != null)
+        if (focus_item != null)
         {
             focus_item.have_focus = true;
         }
@@ -791,7 +793,7 @@ public class Maia.Window : Group
 
         foreach (unowned Core.Object child in this)
         {
-            if (child is Item)
+            if (child is Item && !(child is Popup))
             {
                 unowned Item item = (Item)child;
                 Graphic.Point item_position = item.position;
@@ -1025,7 +1027,7 @@ public class Maia.Window : Group
 
             foreach (unowned Core.Object child in this)
             {
-                if (child is Item)
+                if (child is Item && !(child is Popup))
                 {
                     unowned Item item = (Item)child;
 
@@ -1044,6 +1046,17 @@ public class Maia.Window : Group
 
                     // Update child allocation
                     item.update (inContext, new Graphic.Region (child_allocation));
+                }
+                else if (child is Popup)
+                {
+                    unowned Popup popup = (Popup)child;
+
+                    // Get child position and size
+                    var popup_position = popup.position;
+                    var popup_size     = popup.content.size;
+
+                    var popup_allocation = Graphic.Rectangle (popup_position.x, popup_position.y, popup_size.width, popup_size.height);
+                    popup.update (inContext, new Graphic.Region (popup_allocation));
                 }
             }
 

@@ -53,6 +53,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     private Graphic.Transform          m_TransformFromWindowSpace = new Graphic.Transform.identity ();
     private Core.Notification.Observer m_TransformObserver = null;
     private Core.Notification.Observer m_DamageObserver = null;
+    private Gesture                    m_Gesture = null;
 
     // accessors
     /**
@@ -164,18 +165,6 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
         default = false;
     }
-
-    /**
-     * Whether or not the item can be focused
-     */
-    public virtual bool can_focus  { get; set; default = false; }
-
-    /**
-     * Whether the item has the focus.
-     */
-
-
-    public bool         have_focus { get; set; default = false; }
 
     /**
      * Whether the item is visible.
@@ -545,6 +534,13 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
     }
 
+    // notifications
+    public Gesture.Notification gesture {
+        get {
+            return m_Gesture.notification;
+        }
+    }
+
     // static methods
     static construct
     {
@@ -734,6 +730,10 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             // reorder object on column change
             notify["column"].connect (reorder);
         }
+
+        // create gesture
+        m_Gesture = new Gesture (this);
+        m_Gesture.notification.add_object_observer (on_gesture_notification);
     }
 
     ~Item ()
@@ -799,6 +799,12 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     on_state_changed ()
     {
         damage.post ();
+    }
+
+    private void
+    on_gesture_notification (Core.Notification inNotification)
+    {
+        on_gesture (inNotification as Gesture.Notification);
     }
 
     private void
@@ -1300,6 +1306,11 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     }
 
     protected virtual void
+    on_gesture (Gesture.Notification inNotification)
+    {
+    }
+
+    protected virtual void
     on_damage_area (Graphic.Region inArea)
     {
     }
@@ -1413,7 +1424,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         {
             GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
         }
-        else if (can_focus && inButton == 1)
+        else if ((this is ItemFocusable) && (this as ItemFocusable).can_focus && inButton == 1)
         {
             grab_focus (this);
         }

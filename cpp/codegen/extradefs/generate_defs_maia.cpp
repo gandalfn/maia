@@ -96,6 +96,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_ITEM_MOVABLE);
     std::cout << get_defs (MAIA_TYPE_ITEM_PACKABLE);
     std::cout << get_defs (MAIA_TYPE_ITEM_RESIZABLE);
+    std::cout << get_defs (MAIA_TYPE_ITEM_FOCUSABLE);
     std::cout << get_defs (MAIA_TYPE_KEY);
     std::cout << get_defs (MAIA_TYPE_LABEL);
     std::cout << get_defs (MAIA_TYPE_MODEL);
@@ -148,6 +149,8 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_LINE_SHAPE);
     std::cout << get_defs (MAIA_TYPE_GEOMETRY_EVENT_ARGS);
     std::cout << get_defs (MAIA_TYPE_MOUSE_EVENT_ARGS);
+    std::cout << get_defs (MAIA_GESTURE_TYPE_NOTIFICATION);
+    std::cout << get_defs (MAIA_TYPE_FOCUS_GROUP);
 
     return 0;
 }

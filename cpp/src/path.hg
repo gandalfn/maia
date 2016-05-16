@@ -20,6 +20,7 @@
 #include <maia.h>
 #include <maiamm/item-packable.h>
 #include <maiamm/item-movable.h>
+#include <maiamm/item-focusable.h>
 #include <maiamm/item.h>
 
 _DEFS(maiamm,maia)
@@ -27,11 +28,12 @@ _PINCLUDE(maiamm/private/item_p.h)
 
 namespace Maia
 {
-    class Path : public Item, public ItemPackable, public ItemMovable
+    class Path : public Item, public ItemPackable, public ItemMovable, public ItemFocusable
     {
         _CLASS_GOBJECT(Path, MaiaPath, MAIA_PATH, Item, MaiaItem)
         _IMPLEMENTS_INTERFACE(ItemPackable)
         _IMPLEMENTS_INTERFACE(ItemMovable)
+        _IMPLEMENTS_INTERFACE(ItemFocusable)
 
         protected:
             _CTOR_DEFAULT()
@@ -50,6 +52,11 @@ namespace Maia
             _WRAP_METHOD(void set_path (const Glib::ustring& inPath), maia_path_set_path)
 
             _WRAP_PROPERTY("path", Glib::ustring)
+
+            _WRAP_PROPERTY("can-focus", bool)
+            _WRAP_PROPERTY("have-focus", bool)
+            _WRAP_PROPERTY("focus-order", int)
+            _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
 
             _WRAP_PROPERTY("row", guint)
             _WRAP_PROPERTY("rows", guint)

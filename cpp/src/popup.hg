@@ -31,6 +31,11 @@ namespace Maia
     {
         _CLASS_GOBJECT(Popup, MaiaPopup, MAIA_POPUP, Group, MaiaGroup)
 
+        protected:
+            _CTOR_DEFAULT()
+
+            explicit Popup(const Glib::ustring& inId);
+
         public:
             _WRAP_ENUM(class Placement, MaiaPopupPlacement, s#POPUP_PLACEMENT_##, NO_GTYPE)
 
@@ -72,6 +77,8 @@ namespace Maia
             _WRAP_METHOD(WindowPositionPolicy get_position_policy () const, maia_popup_get_position_policy)
             _WRAP_METHOD(void set_position_policy (WindowPositionPolicy inPolicy), maia_popup_set_position_policy)
 
+            _WRAP_METHOD(Glib::RefPtr<Window> get_bin_window () const, maia_popup_get_bin_window, refreturn)
+
 
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("shadow-width", double)
@@ -85,6 +92,7 @@ namespace Maia
             _WRAP_PROPERTY("transient-for", Glib::RefPtr<Window>)
             _WRAP_PROPERTY("window-type", Window::Type)
             _WRAP_PROPERTY("position-policy", WindowPositionPolicy)
+            _WRAP_PROPERTY("bin-window", Glib::RefPtr<Window>)
 
         private:
             _WRAP_PROPERTY("x", double)

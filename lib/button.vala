@@ -31,7 +31,7 @@
  * }}}
  *
  */
-public class Maia.Button : Item, ItemPackable, ItemMovable
+public class Maia.Button : Item, ItemPackable, ItemMovable, ItemFocusable
 {
     // types
     public enum Relief
@@ -71,8 +71,8 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
     }
 
     // properties
-    private bool          m_Clicked        = false;
-    private unowned Item? m_Content        = null;
+    private unowned Item? m_Content = null;
+    private unowned FocusGroup? m_FocusGroup = null;
 
     // accessors
     internal override string tag {
@@ -105,7 +105,28 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
 
     internal Graphic.Pattern backcell_pattern { get; set; default = null; }
 
-    internal override bool can_focus  { get; set; default = true; }
+    internal bool   can_focus   { get; set; default = true; }
+    internal bool   have_focus  { get; set; default = false; }
+    internal int    focus_order { get; set; default = -1; }
+    internal FocusGroup focus_group {
+        get {
+            return m_FocusGroup;
+        }
+        set {
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.remove (this);
+            }
+
+            m_FocusGroup = value;
+
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.add (this);
+            }
+        }
+        default = null;
+    }
 
     /**
      * The default font description of button label
@@ -169,6 +190,9 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
         Manifest.Attribute.register_transform_func (typeof (Relief), attribute_to_relief_value);
 
         GLib.Value.register_transform_func (typeof (Relief), typeof (string), relief_value_to_string);
+
+        // Ref FocusGroup class to register focus group transform
+        typeof (FocusGroup).class_ref ();
     }
 
     static void
@@ -297,7 +321,7 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
 
         double vb = 1, ve = 1.1, vd = 0.95, vd2 = 0.85;
 
-        if (m_Clicked && sensitive)
+        if (state == State.ACTIVE && sensitive)
         {
             vb = 1.1;
             ve = 1;
@@ -454,13 +478,10 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
     {
         bool ret = base.on_button_press_event (inButton, inPoint);
 
-        if (sensitive && ret && inButton == 1)
+        if (sensitive && ret)
         {
-            m_Clicked = true;
-
+            state = State.ACTIVE;
             grab_pointer (this);
-
-            damage.post ();
         }
 
         return ret;
@@ -471,21 +492,33 @@ public class Maia.Button : Item, ItemPackable, ItemMovable
     {
         bool ret = base.on_button_release_event (inButton, inPoint);
 
-        if (inButton == 1 && m_Clicked)
+        if (state == State.ACTIVE)
         {
-            m_Clicked = false;
+            state = State.NORMAL;
 
             ungrab_pointer (this);
-
-            damage.post ();
-
-            if (ret)
-            {
-                clicked.publish ();
-            }
         }
 
         return ret;
+    }
+
+    internal override void
+    on_gesture (Gesture.Notification inNotification)
+    {
+        if (sensitive && inNotification.button == 1)
+        {
+            switch (inNotification.gesture_type)
+            {
+                case Gesture.Type.PRESS:
+                    inNotification.proceed = true;
+                    break;
+
+                case Gesture.Type.RELEASE:
+                    clicked.publish ();
+                    inNotification.proceed = true;
+                    break;
+            }
+        }
     }
 
     internal override string

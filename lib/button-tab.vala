@@ -333,20 +333,9 @@ public class Maia.ButtonTab : Toggle
                 inContext.restore ();
             }
 
-            var main_content_area = Graphic.Rectangle (0, 0, 0, 0);
-
-            // paint main content
-            if (main_content != null)
-            {
-                var child_area = area_to_child_item_space (main_content, inArea);
-                main_content.draw (inContext, child_area);
-                main_content_area = main_content.geometry.extents;
-            }
-
             var item_size = area.extents.size;
             item_size.resize (horizontal ? -border * 2.0 : 0, !horizontal ? -border * 2.0 : 0);
 
-            // paint indicator
             var indicator_area = Graphic.Rectangle (horizontal ? border : 0, !horizontal ? border : 0, indicator_thickness, indicator_thickness);
             switch (indicator_placement)
             {
@@ -369,6 +358,7 @@ public class Maia.ButtonTab : Toggle
                     break;
             }
 
+            // paint indicator
             Graphic.Path indicator = new Graphic.Path ();
             indicator.rectangle (indicator_area.origin.x, indicator_area.origin.y, indicator_area.size.width, indicator_area.size.height);
 
@@ -403,6 +393,13 @@ public class Maia.ButtonTab : Toggle
             {
                 inContext.pattern = fill_pattern[state];
                 inContext.fill (indicator);
+            }
+
+            // paint main content
+            if (main_content != null)
+            {
+                var child_area = area_to_child_item_space (main_content, inArea);
+                main_content.draw (inContext, child_area);
             }
 
             var border_path = new Graphic.Path ();

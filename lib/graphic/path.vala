@@ -623,6 +623,18 @@ public class Maia.Graphic.Path : Core.Object
     }
 
     public void
+    arc_negative (double inXc, double inYc, double inRx, double inRy,double inAngle1, double inAngle2)
+    {
+        Path path = new Path ();
+        path.id = ++m_NbChilds;
+        path.data_type = DataType.ARC_NEGATIVE;
+        path.m_Points += Point (inXc, inYc);
+        path.m_Points += Point (inRx, inRy);
+        path.m_Points += Point (inAngle1, inAngle2);
+        add (path);
+    }
+
+    public void
     close ()
     {
         Point origin = get_origin ();

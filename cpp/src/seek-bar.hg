@@ -19,15 +19,17 @@
 
 #include <maia.h>
 #include <maiamm/progress-bar.h>
+#include <maiamm/item-focusable.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/progress-bar_p.h)
 
 namespace Maia
 {
-    class SeekBar : public ProgressBar
+    class SeekBar : public ProgressBar, public ItemFocusable
     {
         _CLASS_GOBJECT(SeekBar, MaiaSeekBar, MAIA_SEEK_BAR, ProgressBar, MaiaProgressBar)
+        _IMPLEMENTS_INTERFACE(ItemFocusable)
 
         protected:
             _CTOR_DEFAULT()
@@ -41,5 +43,10 @@ namespace Maia
 
                 return Glib::RefPtr<SeekBar> (new SeekBar (pSeekBar));
             }
+
+            _WRAP_PROPERTY("can-focus", bool)
+            _WRAP_PROPERTY("have-focus", bool)
+            _WRAP_PROPERTY("focus-order", int)
+            _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
     };
 }

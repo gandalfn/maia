@@ -28,6 +28,7 @@
 #include <maiamm/manifest-theme.h>
 #include <maiamm/drawable.h>
 #include <maiamm/state.h>
+#include <maiamm/gesture.h>
 #include <maiamm/key.h>
 
 _DEFS(maiamm,maia)
@@ -47,11 +48,10 @@ namespace Maia
         _IMPLEMENTS_INTERFACE(Drawable)
         _IMPLEMENTS_INTERFACE(Manifest::Element)
         _IGNORE(maia_item_on_button_press_event, maia_item_on_button_release_event, maia_item_on_child_damaged,
-                maia_item_on_motion_event, maia_item_on_scroll_event, maia_item_get_tag, maia_item_set_characters,
-                maia_item_get_characters, maia_item_size_request, maia_item_paint,
+                maia_item_on_motion_event, maia_item_on_scroll_event, maia_item_get_tag, maia_item_size_request, maia_item_paint,
                 maia_item_on_show, maia_item_on_hide, maia_item_on_move, maia_item_on_resize, maia_item_on_damage,
-                maia_item_on_child_resized, maia_item_on_draw, maia_item_get_transform_to_window_space,
-                maia_item_on_child_need_update, maia_item_on_transform_changed, maia_item_on_damage_area)
+                maia_item_on_child_resized, maia_item_on_draw, maia_item_on_child_need_update, maia_item_on_transform_changed,
+                maia_item_on_damage_area, maia_item_on_gesture)
 
         protected:
             _CTOR_DEFAULT()
@@ -66,8 +66,8 @@ namespace Maia
 #m4 _CONVERSION(`MaiaGraphicRegion*', `const Glib::RefPtr<Graphic::Region>&', `Glib::wrap($3, true)')
 #m4 _CONVERSION(`MaiaDrawable*', `const Glib::RefPtr<Drawable>&', `Glib::wrap($3, true)')
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3, true)')
-            _WRAP_VFUNC(bool can_focus () const, get_can_focus)
-            _WRAP_VFUNC(void set_can_focus (bool inCanFocus = true), set_can_focus)
+#m4 _CONVERSION(`MaiaGestureNotification*', `const Glib::RefPtr<Gesture::Notification>&', `Glib::wrap($3, true)')
+            _WRAP_VFUNC(void on_gesture (const Glib::RefPtr<Gesture::Notification>& inpNotification), on_gesture)
 
             _WRAP_VFUNC(void on_damage (const Glib::RefPtr<Graphic::Region>& inArea), on_damage)
             _WRAP_VFUNC(void on_child_need_update (const Glib::RefPtr<Item>& inChild), on_child_need_update)
@@ -87,6 +87,7 @@ namespace Maia
             _WRAP_VFUNC(void size_request (const Graphic::Size& inSize, Graphic::Size& outSize), size_request)
             _WRAP_VFUNC(void paint (const Glib::RefPtr<Graphic::Context>& inContext, const Glib::RefPtr<Graphic::Region>& inArea), paint, errthrow)
             _WRAP_VFUNC(void update (const Glib::RefPtr<Graphic::Context>& inContext, const Glib::RefPtr<Graphic::Region>& inAllocation), update, errthrow)
+#m4 _CONVERSION(`MaiaGestureNotification*', `const Glib::RefPtr<Gesture::Notification>&', `Glib::wrap($3)')
 #m4 _CONVERSION(`MaiaGraphicContext*', `const Glib::RefPtr<Graphic::Context>&', `Glib::wrap($3)')
 #m4 _CONVERSION(`MaiaGraphicRegion*', `const Glib::RefPtr<Graphic::Region>&', `Glib::wrap($3)')
 #m4 _CONVERSION(`MaiaDrawable*', `const Glib::RefPtr<Drawable>&', `Glib::wrap($3)')
@@ -98,44 +99,63 @@ namespace Maia
             typedef sigc::slot<void> SlotRootChanged;
 
             _WRAP_METHOD(Glib::ustring get_name () const, maia_item_get_name)
+
             _WRAP_METHOD(Glib::RefPtr<Window> get_window () const, maia_item_get_window, refreturn)
-            _WRAP_METHOD(Glib::RefPtr<Window> get_toplevel () const, maia_item_get_toplevel, refreturn)
             _WRAP_METHOD(void set_window (const Glib::RefPtr<Window>& inNativeWindow), maia_item_set_window)
+
+            _WRAP_METHOD(Glib::RefPtr<Window> get_toplevel () const, maia_item_get_toplevel, refreturn)
+
             _WRAP_METHOD(bool is_packable () const, maia_item_get_is_packable)
+
             _WRAP_METHOD(bool is_movable () const, maia_item_get_is_movable)
             _WRAP_METHOD(void set_movable (bool inMovable = true), maia_item_set_is_movable)
+
             _WRAP_METHOD(bool is_resizable () const, maia_item_get_is_resizable)
             _WRAP_METHOD(void set_resizable (bool inResizable = true), maia_item_set_is_resizable)
-            _WRAP_METHOD(bool can_focus () const, maia_item_get_can_focus)
-            _WRAP_METHOD(void set_can_focus (bool inCanFocus = true), maia_item_set_can_focus)
-            _WRAP_METHOD(bool have_focus () const, maia_item_get_have_focus)
-            _WRAP_METHOD(void set_have_focus (bool inFocus = true), maia_item_set_have_focus)
+
+            _WRAP_METHOD(bool is_selectable () const, maia_item_get_is_selectable)
+            _WRAP_METHOD(void set_selectable (bool inSelectable = true), maia_item_set_is_selectable)
+
             _WRAP_METHOD(bool visible () const, maia_item_get_visible)
             _WRAP_METHOD(void set_visible (bool inVisible = true), maia_item_set_visible)
+
             _WRAP_METHOD(bool need_update () const, maia_item_get_need_update)
             _WRAP_METHOD(void set_need_update (bool inNeedUpdate = true), maia_item_set_need_update)
+
             _WRAP_METHOD(void get_position (Graphic::Point& outPoint) const, maia_item_get_position)
             _WRAP_METHOD(void set_position (const Graphic::Point& inPosition), maia_item_set_position)
+
             _WRAP_METHOD(void get_size (Graphic::Size& outSize) const, maia_item_get_size)
             _WRAP_METHOD(void set_size (const Graphic::Size& inSize), maia_item_set_size)
+
             _WRAP_METHOD(guint get_layer () const, maia_item_get_layer)
             _WRAP_METHOD(void set_layer (guint inLayer) const, maia_item_set_layer)
+
             _WRAP_METHOD(Glib::RefPtr<StatePatterns> get_fill_pattern () const, maia_item_get_fill_pattern, refreturn)
             _WRAP_METHOD(void set_fill_pattern (const Glib::RefPtr<StatePatterns>& inPattern), maia_item_set_fill_pattern)
+
             _WRAP_METHOD(Glib::RefPtr<StatePatterns> get_stroke_pattern () const, maia_item_get_stroke_pattern, refreturn)
             _WRAP_METHOD(void set_stroke_pattern (const Glib::RefPtr<StatePatterns>& inPattern), maia_item_set_stroke_pattern)
+
             _WRAP_METHOD(Glib::RefPtr<StatePatterns> get_background_pattern () const, maia_item_get_background_pattern, refreturn)
             _WRAP_METHOD(void set_background_pattern (const Glib::RefPtr<StatePatterns>& inPattern), maia_item_set_background_pattern)
+
             _WRAP_METHOD(double get_line_width () const, maia_item_get_line_width)
             _WRAP_METHOD(void set_line_width (double inLineWidth), maia_item_set_line_width)
+
             _WRAP_METHOD(Graphic::LineType get_line_type () const, maia_item_get_line_type)
             _WRAP_METHOD(void set_line_type (Graphic::LineType inLineType), maia_item_set_line_type)
+
             _WRAP_METHOD(Glib::ustring get_chain_visible () const, maia_item_get_chain_visible)
             _WRAP_METHOD(void set_chain_visible (const Glib::ustring& inItemNames) const, maia_item_set_chain_visible)
+
             _WRAP_METHOD(bool get_pointer_over () const, maia_item_get_pointer_over)
             _WRAP_METHOD(void set_pointer_over (bool inOver = true), maia_item_set_pointer_over)
+
             _WRAP_METHOD(State get_state () const, maia_item_get_state)
             _WRAP_METHOD(void set_state (State inState), maia_item_set_state)
+
+            _WRAP_METHOD(Glib::RefPtr<Gesture::Notification> gesture () const, maia_item_get_gesture)
 
             void scroll_to (const Glib::RefPtr<Item>& inItem);
 
@@ -147,6 +167,11 @@ namespace Maia
 
             sigc::connection connect_root_changed (SlotRootChanged inSlot);
 
+            void grab_focus (const Glib::RefPtr<Item>& inpItem)
+            {
+                g_signal_emit_by_name (gobj (), "grab-focus", const_cast<MaiaItem*> (inpItem->gobj ()));
+            }
+            
             bool grab_pointer (const Glib::RefPtr<Item>& inpItem)
             {
                 gboolean ret = false;
@@ -180,6 +205,37 @@ namespace Maia
                 g_signal_emit_by_name (gobj (), "set-pointer-cursor", inCursor);
             }
 
+            bool button_press_event (guint inButton, const Maia::Graphic::Point& inPoint)
+            {
+                gboolean ret = FALSE;
+                g_signal_emit_by_name (gobj (), "button-press-event", inButton, inPoint.gobj (), &ret);
+                return ret;
+            }
+
+            bool button_release_event (guint inButton, const Maia::Graphic::Point& inPoint)
+            {
+                gboolean ret = FALSE;
+                g_signal_emit_by_name (gobj (), "button-release-event", inButton, inPoint.gobj (), &ret);
+                return ret;
+            }
+
+            bool motion_event (const Maia::Graphic::Point& inPoint)
+            {
+                gboolean ret = FALSE;
+                g_signal_emit_by_name (gobj (), "motion-event", inPoint.gobj (), &ret);
+                return ret;
+            }
+
+            void key_press_event (Modifier inModifier, Key inKey, guint inChar)
+            {
+                g_signal_emit_by_name (gobj (), "key-press-event", inModifier, inKey, inChar);
+            }
+
+            void key_release_event (Modifier inModifier, Key inKey, guint inChar)
+            {
+                g_signal_emit_by_name (gobj (), "key-release-event", inModifier, inKey, inChar);
+            }
+
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3, true)')
             _WRAP_SIGNAL(bool grab_pointer (const Glib::RefPtr<Item>& inItem), "grab-pointer", no_default_handler)
             _WRAP_SIGNAL(void ungrab_pointer (const Glib::RefPtr<Item>& inItem), "ungrab-pointer", no_default_handler)
@@ -204,6 +260,8 @@ namespace Maia
             _WRAP_PROPERTY("manifest-path", Glib::ustring)
             _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
 
+            _WRAP_PROPERTY("gesture", Glib::RefPtr<Gesture::Notification>)
+
             _WRAP_PROPERTY("geometry", Glib::RefPtr<Graphic::Region>)
             _WRAP_PROPERTY("damaged", Glib::RefPtr<Graphic::Region>)
             _WRAP_PROPERTY("transform", Glib::RefPtr<Graphic::Transform>)
@@ -215,9 +273,8 @@ namespace Maia
             _WRAP_PROPERTY("is-packable", bool)
             _WRAP_PROPERTY("is-movable", bool)
             _WRAP_PROPERTY("is-resizable", bool)
-            _WRAP_PROPERTY("can-focus", bool)
+            _WRAP_PROPERTY("is-selectable", bool)
             _WRAP_PROPERTY("need-update", bool)
-            _WRAP_PROPERTY("have-focus", bool)
             _WRAP_PROPERTY("visible", bool)
             _WRAP_PROPERTY("position", Graphic::Point)
             _WRAP_PROPERTY("size", Graphic::Size)

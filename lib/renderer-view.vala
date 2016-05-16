@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.RendererView : Group, ItemPackable, ItemMovable
+public class Maia.RendererView : Group, ItemPackable, ItemMovable, ItemFocusable
 {
     // types
     private class Task : Core.Task
@@ -104,6 +104,7 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
     private GLib.Mutex              m_Mutex = GLib.Mutex ();
     private GLib.Cond               m_Cond  = GLib.Cond ();
     private GLib.Mutex              m_Lock = GLib.Mutex ();
+    private FocusGroup              m_FocusGroup = null;
 
     // accessors
     internal override string tag {
@@ -112,7 +113,28 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
         }
     }
 
-    internal override bool can_focus { get; set; default = true; }
+    internal bool can_focus   { get; set; default = true; }
+    internal bool have_focus  { get; set; default = false; }
+    internal int  focus_order { get; set; default = -1; }
+    internal FocusGroup focus_group {
+        get {
+            return m_FocusGroup;
+        }
+        set {
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.remove (this);
+            }
+
+            m_FocusGroup = value;
+
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.add (this);
+            }
+        }
+        default = null;
+    }
 
     internal uint   row     { get; set; default = 0; }
     internal uint   column  { get; set; default = 0; }
@@ -207,6 +229,9 @@ public class Maia.RendererView : Group, ItemPackable, ItemMovable
     static construct
     {
         Manifest.Function.register_transform_func (typeof (Graphic.Renderer.Looper), "timeline",  attribute_to_timeline);
+
+        // Ref FocusGroup class to register focus group transform
+        typeof (FocusGroup).class_ref ();
     }
 
     static void

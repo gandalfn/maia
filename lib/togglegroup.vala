@@ -143,7 +143,7 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
 
     public GLib.List<unowned Toggle> toggles {
         owned get {
-            GLib.List<unowned Toggle> ret = new GLib.List<Toggle> ();
+            GLib.List<unowned Toggle> ret = new GLib.List<unowned Toggle> ();
             foreach (unowned Core.Pair<string, unowned Toggle> pair in m_Toggles)
             {
                 ret.prepend (pair.second);

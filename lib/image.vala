@@ -17,10 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
+public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable, ItemFocusable
 {
     // properties
     private Graphic.Image m_Image;
+    private FocusGroup    m_FocusGroup = null;
 
     // accessors
     internal override string tag {
@@ -53,17 +54,44 @@ public class Maia.Image : Item, ItemPackable, ItemMovable, ItemResizable
 
     internal Graphic.Pattern backcell_pattern { get; set; default = null; }
 
-    internal override bool can_focus  {
+    internal bool can_focus {
         get {
             return parent is DrawingArea;
         }
         set {
-            base.can_focus = value;
         }
+    }
+    internal bool have_focus  { get; set; default = false; }
+    internal int  focus_order { get; set; default = -1; }
+    internal FocusGroup focus_group {
+        get {
+            return m_FocusGroup;
+        }
+        set {
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.remove (this);
+            }
+
+            m_FocusGroup = value;
+
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.add (this);
+            }
+        }
+        default = null;
     }
 
 
     public string? filename { get; set; default = null; }
+
+    // static methods
+    static construct
+    {
+        // Ref FocusGroup class to register focus group transform
+        typeof (FocusGroup).class_ref ();
+    }
 
     // methods
     construct

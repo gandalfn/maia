@@ -22,6 +22,7 @@
 #include <maiamm/view.h>
 #include <maiamm/item-packable.h>
 #include <maiamm/item-movable.h>
+#include <maiamm/item-focusable.h>
 #include <maiamm/item.h>
 #include <maiamm/core-event.h>
 #include <maiamm/core-eventargs.h>
@@ -42,11 +43,12 @@ namespace Maia
             _WRAP_PROPERTY("active-row", int)
     };
 
-    class Combo : public Item, public ItemPackable, public ItemMovable
+    class Combo : public Item, public ItemPackable, public ItemMovable, public ItemFocusable
     {
         _CLASS_GOBJECT(Combo, MaiaCombo, MAIA_COMBO, Item, MaiaItem)
         _IMPLEMENTS_INTERFACE(ItemPackable)
         _IMPLEMENTS_INTERFACE(ItemMovable)
+        _IMPLEMENTS_INTERFACE(ItemFocusable)
 
         protected:
             _CTOR_DEFAULT()
@@ -77,6 +79,11 @@ namespace Maia
 
             _WRAP_PROPERTY("changed", Glib::RefPtr<Core::Event>)
 
+            _WRAP_PROPERTY("can-focus", bool)
+            _WRAP_PROPERTY("have-focus", bool)
+            _WRAP_PROPERTY("focus-order", int)
+            _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
+
             _WRAP_PROPERTY("row", guint)
             _WRAP_PROPERTY("rows", guint)
 
@@ -101,7 +108,5 @@ namespace Maia
             _WRAP_PROPERTY("right-padding", double)
 
             _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
-
-            _WRAP_PROPERTY("can-focus", bool)
     };
 }

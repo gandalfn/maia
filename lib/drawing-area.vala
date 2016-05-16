@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.DrawingArea : Group, ItemPackable
+public class Maia.DrawingArea : Group, ItemPackable, ItemFocusable
 {
     // types
     private enum SelectedItemState
@@ -37,6 +37,7 @@ public class Maia.DrawingArea : Group, ItemPackable
     private unowned Item?     m_SelectedItem = null;
     private SelectedItemState m_SelectedItemState = SelectedItemState.NONE;
     private Graphic.Point     m_LastPointerPosition;
+    private FocusGroup        m_FocusGroup = null;
     public Graphic.Path       m_AnchorPath;
 
     // accessors
@@ -46,7 +47,28 @@ public class Maia.DrawingArea : Group, ItemPackable
         }
     }
 
-    internal override bool can_focus  { get; set; default = true; }
+    internal bool   can_focus   { get; set; default = true; }
+    internal bool   have_focus  { get; set; default = false; }
+    internal int    focus_order { get; set; default = -1; }
+    internal FocusGroup focus_group {
+        get {
+            return m_FocusGroup;
+        }
+        set {
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.remove (this);
+            }
+
+            m_FocusGroup = value;
+
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.add (this);
+            }
+        }
+        default = null;
+    }
 
     internal uint   row     { get; set; default = 0; }
     internal uint   column  { get; set; default = 0; }
@@ -157,6 +179,9 @@ public class Maia.DrawingArea : Group, ItemPackable
     static construct
     {
         s_QuarkRotateItem = GLib.Quark.from_string ("MaiaDrawingAreaRotateItem");
+
+        // Ref FocusGroup class to register focus group transform
+        typeof (FocusGroup).class_ref ();
     }
 
     // methods

@@ -22,7 +22,8 @@ public class Maia.SwitchButton : Toggle
     // properties
     private Core.Animator  m_SwitchAnimator    = null;
     private uint           m_SwitchTransition  = 0;
-    private double         m_SwitchProgress = 0.0;
+    private double         m_SwitchProgress    = 0.0;
+    private bool           m_ScrollGesture     = false;
 
 
     // accessors
@@ -200,5 +201,42 @@ public class Maia.SwitchButton : Toggle
             }
         }
         inContext.restore ();
+    }
+
+    internal override void
+    on_gesture (Gesture.Notification inNotification)
+    {
+        if (sensitive && inNotification.button == 1)
+        {
+            switch (inNotification.gesture_type)
+            {
+                case Gesture.Type.HSCROLL:
+                    if (inNotification.position.x > 0 && inNotification.position.x > main_content.geometry.extents.size.height / 4.0)
+                    {
+                        active = true;
+                        m_ScrollGesture = true;
+                        inNotification.proceed = true;
+                    }
+                    else if (inNotification.position.x < 0 && inNotification.position.x < -main_content.geometry.extents.size.height / 4.0)
+                    {
+                        active = false;
+                        m_ScrollGesture = true;
+                        inNotification.proceed = false;
+                    }
+                    break;
+
+                case Gesture.Type.PRESS:
+                    m_ScrollGesture = false;
+                    base.on_gesture (inNotification);
+                    break;
+
+                case Gesture.Type.RELEASE:
+                    if (!m_ScrollGesture)
+                    {
+                        base.on_gesture (inNotification);
+                    }
+                    break;
+            }
+        }
     }
 }

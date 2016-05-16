@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Combo : Group, ItemPackable, ItemMovable
+public class Maia.Combo : Group, ItemPackable, ItemMovable, ItemFocusable
 {
     /**
      * Event args provided by Combo on chaned event
@@ -63,10 +63,11 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         }
     }
     // properties
-    private Popup                 m_Popup  = null;
-    private Model                 m_Model  = null;
-    private unowned View?         m_View   = null;
-    private unowned ItemPackable? m_Active = null;
+    private Popup                 m_Popup      = null;
+    private Model                 m_Model      = null;
+    private unowned View?         m_View       = null;
+    private unowned ItemPackable? m_Active     = null;
+    private unowned FocusGroup?   m_FocusGroup = null;
 
     // accessors
     internal override string tag {
@@ -75,7 +76,28 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
         }
     }
 
-    internal override bool can_focus { get; set; default = true; }
+    internal bool   can_focus   { get; set; default = true; }
+    internal bool   have_focus  { get; set; default = false; }
+    internal int    focus_order { get; set; default = -1; }
+    internal FocusGroup focus_group {
+        get {
+            return m_FocusGroup;
+        }
+        set {
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.remove (this);
+            }
+
+            m_FocusGroup = value;
+
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.add (this);
+            }
+        }
+        default = null;
+    }
 
     internal uint   row     { get; set; default = 0; }
     internal uint   column  { get; set; default = 0; }
@@ -169,6 +191,9 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable
     {
         // Ref Mpdel class to register model transform
         typeof (Model).class_ref ();
+
+        // Ref FocusGroup class to register focus group transform
+        typeof (FocusGroup).class_ref ();
     }
 
     // methods

@@ -35,8 +35,6 @@ namespace Maia
         {
             _CLASS_GOBJECT(Logger, MaiaLogLogger, MAIA_LOG_LOGGER, Glib::Object, GObject)
 
-            _IGNORE (maia_log_logger_write)
-
             protected:
                 _CTOR_DEFAULT()
 

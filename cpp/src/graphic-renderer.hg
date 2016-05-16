@@ -109,8 +109,6 @@ namespace Maia
         {
             _CLASS_GOBJECT(RendererObject, MaiaGraphicRenderer, MAIA_GRAPHIC_RENDERER, Core::Object, MaiaCoreObject)
 
-            _IGNORE (maia_graphic_renderer_on_initialize, maia_graphic_renderer_on_new_frame)
-
             protected:
                 _CTOR_DEFAULT()
 

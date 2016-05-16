@@ -48,6 +48,16 @@ namespace Maia
             public:
                 _WRAP_ENUM(class Format, MaiaGraphicSurfaceFormat, s#GRAPHIC_SURFACE_FORMAT_##,  NO_GTYPE)
 
+                static int format_bits_per_pixel (Surface::Format inFormat)
+                {
+                    return maia_graphic_surface_format_bits_per_pixel ((MaiaGraphicSurfaceFormat)inFormat);
+                }
+
+                static int format_stride_for_width (Surface::Format inFormat, int inWidth)
+                {
+                    return maia_graphic_surface_format_stride_for_width ((MaiaGraphicSurfaceFormat)inFormat, inWidth);
+                }
+
                 static Glib::RefPtr<Surface> create (unsigned int inWidth, unsigned int inHeight)
                 {
                     MaiaGraphicSurface* pSurface = maia_graphic_surface_new (inWidth, inHeight);

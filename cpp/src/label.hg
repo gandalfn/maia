@@ -22,6 +22,7 @@
 #include <maiamm/graphic-glyph.h>
 #include <maiamm/item-packable.h>
 #include <maiamm/item-movable.h>
+#include <maiamm/item-focusable.h>
 #include <maiamm/item.h>
 
 _DEFS(maiamm,maia)
@@ -29,11 +30,12 @@ _PINCLUDE(maiamm/private/item_p.h)
 
 namespace Maia
 {
-    class Label : public Item, public ItemPackable, public ItemMovable
+    class Label : public Item, public ItemPackable, public ItemMovable, public ItemFocusable
     {
         _CLASS_GOBJECT(Label, MaiaLabel, MAIA_LABEL, Item, MaiaItem)
         _IMPLEMENTS_INTERFACE(ItemPackable)
         _IMPLEMENTS_INTERFACE(ItemMovable)
+        _IMPLEMENTS_INTERFACE(ItemFocusable)
 
         protected:
             _CTOR_DEFAULT()
@@ -80,6 +82,11 @@ namespace Maia
             _WRAP_PROPERTY("translatable", bool)
             _WRAP_PROPERTY("text", Glib::ustring)
             _WRAP_PROPERTY("hide-if-empty", bool)
+
+            _WRAP_PROPERTY("can-focus", bool)
+            _WRAP_PROPERTY("have-focus", bool)
+            _WRAP_PROPERTY("focus-order", int)
+            _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
 
             _WRAP_PROPERTY("row", guint)
             _WRAP_PROPERTY("rows", guint)

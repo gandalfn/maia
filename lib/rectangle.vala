@@ -17,8 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Rectangle : Item, ItemMovable, ItemResizable
+public class Maia.Rectangle : Item, ItemMovable, ItemResizable, ItemFocusable
 {
+    // properties
+    private FocusGroup m_FocusGroup = null;
+
     // accessors
     internal override string tag {
         get {
@@ -26,13 +29,40 @@ public class Maia.Rectangle : Item, ItemMovable, ItemResizable
         }
     }
 
-    internal override bool can_focus  {
+    internal bool can_focus  {
         get {
             return parent is DrawingArea;
         }
         set {
-            base.can_focus = value;
         }
+    }
+    internal bool have_focus  { get; set; default = false; }
+    internal int  focus_order { get; set; default = -1; }
+    internal FocusGroup focus_group {
+        get {
+            return m_FocusGroup;
+        }
+        set {
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.remove (this);
+            }
+
+            m_FocusGroup = value;
+
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.add (this);
+            }
+        }
+        default = null;
+    }
+
+    // static methods
+    static construct
+    {
+        // Ref FocusGroup class to register focus group transform
+        typeof (FocusGroup).class_ref ();
     }
 
     // methods

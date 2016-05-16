@@ -665,13 +665,9 @@ public class Maia.Document : Item
             }
         }
 
-        if (!ret || !can_focus)
+        if (!ret)
         {
             GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
-        }
-        else if (can_focus)
-        {
-            grab_focus (this);
         }
 
         return ret;

@@ -43,32 +43,26 @@ namespace Maia
             return (Modifier)maia_modifier_from_string (inModifier.c_str ());
         }
 
-        void get_modifiers_keys_from_string (const Glib::ustring& inValue, std::vector<Modifier>& outModifiers, std::vector<Key>& outKeys)
+        void get_modifiers_key_from_string (const Glib::ustring& inValue, std::vector<Modifier>& outModifiers, Key& outKey)
         {
             MaiaModifier* modifiers = nullptr;
             int modifiers_length = 0;
-            MaiaKey* keys = nullptr;
-            int keys_length = 0;
-
-            maia_keysym_get_modifiers_keys_from_string (inValue.c_str (), &modifiers, &modifiers_length, &keys, &keys_length);
+            
+            maia_keysym_get_modifiers_key_from_string (inValue.c_str (), &modifiers, &modifiers_length, (MaiaKey*)&outKey);
 
             if (modifiers)
             {
                 for (int cpt = 0; cpt < modifiers_length; ++cpt)
                 {
-                    outModifiers.push_back ((Modifier)modifiers[cpt]);
-                }
-            }
-            if (keys)
-            {
-                for (int cpt = 0; cpt < keys_length; ++cpt)
-                {
-                    outKeys.push_back ((Key)keys[cpt]);
+                    if (modifiers[cpt] != MAIA_MODIFIER_NONE)
+                    {
+                        outModifiers.push_back ((Modifier)modifiers[cpt]);
+                    }
                 }
             }
         }
 
-        Glib::ustring modifiers_keys_to_string (const std::vector<Modifier>& inModifiers, const std::vector<Key>& inKeys)
+        Glib::ustring modifiers_key_to_string (const std::vector<Modifier>& inModifiers, const Key& inKey)
         {
             Glib::ustring ret ("");
 
@@ -77,10 +71,7 @@ namespace Maia
                 ret += modifier_to_string (modifier);
             }
 
-            for (auto key : inKeys)
-            {
-                ret += key_to_string (key);
-            }
+            ret += key_to_string (inKey);
 
             return ret;
         }

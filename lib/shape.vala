@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public abstract class Maia.Shape : Item, ItemMovable, ItemResizable
+public abstract class Maia.Shape : Item, ItemMovable, ItemResizable, ItemFocusable
 {
     // types
     public enum Caliper
@@ -62,8 +62,32 @@ public abstract class Maia.Shape : Item, ItemMovable, ItemResizable
         }
     }
 
+    // properties
+    private FocusGroup m_FocusGroup = null;
+
     // accessors
-    internal override bool can_focus { get; set; default = false; }
+    internal bool can_focus   { get; set; default = true; }
+    internal bool have_focus  { get; set; default = false; }
+    internal int  focus_order { get; set; default = -1; }
+    internal FocusGroup focus_group {
+        get {
+            return m_FocusGroup;
+        }
+        set {
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.remove (this);
+            }
+
+            m_FocusGroup = value;
+
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.add (this);
+            }
+        }
+        default = null;
+    }
 
     public double border { get; set; default = 8; }
 
@@ -72,6 +96,13 @@ public abstract class Maia.Shape : Item, ItemMovable, ItemResizable
     public Graphic.Size caliper_size { get; set; default = Graphic.Size (32, 32); }
 
     public double caliper_line_width { get; set; default = 1.0; }
+
+    // static methods
+    static construct
+    {
+        // Ref FocusGroup class to register focus group transform
+        typeof (FocusGroup).class_ref ();
+    }
 
     // methods
     construct

@@ -136,6 +136,7 @@ namespace Maia
                 _WRAP_METHOD(void rel_arc_to (double inRx, double inRy, double inXAxisRotation, bool inLargeArcFlag, bool inSweepFlag, double inX, double inY), maia_graphic_path_rel_arc_to)
                 _WRAP_METHOD(void rectangle (double inX, double inY, double inWidth, double inHeight, double inRx = 0.0, double inRy = 0.0), maia_graphic_path_rectangle)
                 _WRAP_METHOD(void arc (double inXc, double inYc, double inRx, double inRy, double inAngle1, double inAngle2), maia_graphic_path_arc)
+                _WRAP_METHOD(void arc_negative (double inXc, double inYc, double inRx, double inRy, double inAngle1, double inAngle2), maia_graphic_path_arc_negative)
                 _WRAP_METHOD(void close (), maia_graphic_path_close)
 
                 _IGNORE (maia_graphic_path_get, maia_graphic_path_set)

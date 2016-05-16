@@ -4870,6 +4870,27 @@
 
 ;; Original typedef:
 ;; typedef enum  {
+;; 	MAIA_GESTURE_TYPE_NONE,
+;; 	MAIA_GESTURE_TYPE_PRESS,
+;; 	MAIA_GESTURE_TYPE_RELEASE,
+;; 	MAIA_GESTURE_TYPE_HSCROLL,
+;; 	MAIA_GESTURE_TYPE_VSCROLL
+;; } MaiaGestureType;
+
+(define-enum-extended GestureType
+  (in-module "Maia")
+  (c-name "MaiaGestureType")
+  (values
+    '("none" "MAIA_GESTURE_TYPE_NONE" "0")
+    '("press" "MAIA_GESTURE_TYPE_PRESS" "1")
+    '("release" "MAIA_GESTURE_TYPE_RELEASE" "2")
+    '("hscroll" "MAIA_GESTURE_TYPE_HSCROLL" "3")
+    '("vscroll" "MAIA_GESTURE_TYPE_VSCROLL" "4")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
 ;; 	MAIA_WINDOW_BORDER_NONE = 1 << 0,
 ;; 	MAIA_WINDOW_BORDER_LEFT = 1 << 1,
 ;; 	MAIA_WINDOW_BORDER_RIGHT = 1 << 2,

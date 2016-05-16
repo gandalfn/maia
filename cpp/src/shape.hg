@@ -21,6 +21,7 @@
 #include <maiamm/graphic-size.h>
 #include <maiamm/item-movable.h>
 #include <maiamm/item-resizable.h>
+#include <maiamm/item-focusable.h>
 #include <maiamm/item.h>
 
 _DEFS(maiamm,maia)
@@ -28,11 +29,12 @@ _PINCLUDE(maiamm/private/item_p.h)
 
 namespace Maia
 {
-    class Shape : public Item, public ItemMovable, public ItemResizable
+    class Shape : public Item, public ItemMovable, public ItemResizable, public ItemFocusable
     {
         _CLASS_GOBJECT(Shape, MaiaShape, MAIA_SHAPE, Item, MaiaItem)
         _IMPLEMENTS_INTERFACE(ItemMovable)
         _IMPLEMENTS_INTERFACE(ItemResizable)
+        _IMPLEMENTS_INTERFACE(ItemFocusable)
 
         protected:
             _CTOR_DEFAULT()
@@ -58,5 +60,10 @@ namespace Maia
             _WRAP_PROPERTY("caliper", Shape::Caliper)
             _WRAP_PROPERTY("caliper-size", Graphic::Size)
             _WRAP_PROPERTY("caliper-line-width", double)
+
+            _WRAP_PROPERTY("can-focus", bool)
+            _WRAP_PROPERTY("have-focus", bool)
+            _WRAP_PROPERTY("focus-order", int)
+            _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
     };
 }

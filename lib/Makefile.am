@@ -157,7 +157,9 @@ libmaia_la_SOURCES = \
     orientation.vala \
     drawable.vala \
     state.vala \
+    gesture.vala \
     item.vala \
+    item-focusable.vala \
     item-packable.vala \
     item-movable.vala \
     item-resizable.vala \
@@ -211,7 +213,8 @@ libmaia_la_SOURCES = \
     table-view.vala \
     table-view-column.vala \
     shape.vala \
-    line-shape.vala
+    line-shape.vala \
+    focus-group.vala
 
 libmaia_la_VALAFLAGS = \
     --pkg=gvalue-collect \

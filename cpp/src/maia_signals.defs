@@ -1588,6 +1588,33 @@
   (construct-only #f)
 )
 
+(define-property have-focus
+  (of-object "MaiaButton")
+  (prop-type "GParamBoolean")
+  (docs "have-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-order
+  (of-object "MaiaButton")
+  (prop-type "GParamInt")
+  (docs "focus-order")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-group
+  (of-object "MaiaButton")
+  (prop-type "GParamObject")
+  (docs "focus-group")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property font-description
   (of-object "MaiaButton")
   (prop-type "GParamString")
@@ -2013,6 +2040,33 @@
   (construct-only #f)
 )
 
+(define-property have-focus
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamBoolean")
+  (docs "have-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-order
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamInt")
+  (docs "focus-order")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-group
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamObject")
+  (docs "focus-group")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property row
   (of-object "MaiaDrawingArea")
   (prop-type "GParamUInt")
@@ -2244,6 +2298,33 @@
   (of-object "MaiaEntry")
   (prop-type "GParamBoolean")
   (docs "can-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property have-focus
+  (of-object "MaiaEntry")
+  (prop-type "GParamBoolean")
+  (docs "have-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-order
+  (of-object "MaiaEntry")
+  (prop-type "GParamInt")
+  (docs "focus-order")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-group
+  (of-object "MaiaEntry")
+  (prop-type "GParamObject")
+  (docs "focus-group")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -2505,6 +2586,42 @@
   (of-object "MaiaEntry")
   (prop-type "GParamObject")
   (docs "allowed-values")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property touchscreen-mode
+  (of-object "MaiaEntry")
+  (prop-type "GParamBoolean")
+  (docs "touchscreen-mode")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property always-active
+  (of-object "MaiaEntry")
+  (prop-type "GParamBoolean")
+  (docs "always-active")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property labelled-by
+  (of-object "MaiaEntry")
+  (prop-type "GParamObject")
+  (docs "labelled-by")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property cursor
+  (of-object "MaiaEntry")
+  (prop-type "GParamInt")
+  (docs "cursor")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -2995,6 +3112,33 @@
   (construct-only #f)
 )
 
+(define-property have-focus
+  (of-object "MaiaImage")
+  (prop-type "GParamBoolean")
+  (docs "have-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-order
+  (of-object "MaiaImage")
+  (prop-type "GParamInt")
+  (docs "focus-order")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-group
+  (of-object "MaiaImage")
+  (prop-type "GParamObject")
+  (docs "focus-group")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property filename
   (of-object "MaiaImage")
   (prop-type "GParamString")
@@ -3238,24 +3382,6 @@
   (construct-only #f)
 )
 
-(define-property can-focus
-  (of-object "MaiaItem")
-  (prop-type "GParamBoolean")
-  (docs "can-focus")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
-(define-property have-focus
-  (of-object "MaiaItem")
-  (prop-type "GParamBoolean")
-  (docs "have-focus")
-  (readable #t)
-  (writable #t)
-  (construct-only #f)
-)
-
 (define-property visible
   (of-object "MaiaItem")
   (prop-type "GParamBoolean")
@@ -3413,6 +3539,15 @@
   (of-object "MaiaItem")
   (prop-type "GParamObject")
   (docs "toplevel")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property gesture
+  (of-object "MaiaItem")
+  (prop-type "GParamObject")
+  (docs "gesture")
   (readable #t)
   (writable #f)
   (construct-only #f)
@@ -3594,6 +3729,44 @@
 )
 
 ;; From MaiaItemResizable
+
+;; From MaiaItemFocusable
+
+(define-property can-focus
+  (of-object "MaiaItemFocusable")
+  (prop-type "GParamBoolean")
+  (docs "can-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-group
+  (of-object "MaiaItemFocusable")
+  (prop-type "GParamObject")
+  (docs "focus-group")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-order
+  (of-object "MaiaItemFocusable")
+  (prop-type "GParamInt")
+  (docs "focus-order")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property have-focus
+  (of-object "MaiaItemFocusable")
+  (prop-type "GParamBoolean")
+  (docs "have-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
 
 ;; MaiaKey is neither a GObject nor a GInterface. Not checked for signals and properties.
 
@@ -3783,6 +3956,33 @@
   (of-object "MaiaLabel")
   (prop-type "GParamBoolean")
   (docs "can-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property have-focus
+  (of-object "MaiaLabel")
+  (prop-type "GParamBoolean")
+  (docs "have-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-order
+  (of-object "MaiaLabel")
+  (prop-type "GParamInt")
+  (docs "focus-order")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-group
+  (of-object "MaiaLabel")
+  (prop-type "GParamObject")
+  (docs "focus-group")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -4249,6 +4449,33 @@
   (construct-only #f)
 )
 
+(define-property have-focus
+  (of-object "MaiaPath")
+  (prop-type "GParamBoolean")
+  (docs "have-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-order
+  (of-object "MaiaPath")
+  (prop-type "GParamInt")
+  (docs "focus-order")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-group
+  (of-object "MaiaPath")
+  (prop-type "GParamObject")
+  (docs "focus-group")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property path
   (of-object "MaiaPath")
   (prop-type "GParamString")
@@ -4273,6 +4500,33 @@
   (of-object "MaiaRectangle")
   (prop-type "GParamBoolean")
   (docs "can-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property have-focus
+  (of-object "MaiaRectangle")
+  (prop-type "GParamBoolean")
+  (docs "have-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-order
+  (of-object "MaiaRectangle")
+  (prop-type "GParamInt")
+  (docs "focus-order")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-group
+  (of-object "MaiaRectangle")
+  (prop-type "GParamObject")
+  (docs "focus-group")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -5117,6 +5371,15 @@
   (construct-only #f)
 )
 
+(define-property bin-window
+  (of-object "MaiaPopup")
+  (prop-type "GParamObject")
+  (docs "bin-window")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
 ;; From MaiaCombo
 
 (define-property tag
@@ -5132,6 +5395,33 @@
   (of-object "MaiaCombo")
   (prop-type "GParamBoolean")
   (docs "can-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property have-focus
+  (of-object "MaiaCombo")
+  (prop-type "GParamBoolean")
+  (docs "have-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-order
+  (of-object "MaiaCombo")
+  (prop-type "GParamInt")
+  (docs "focus-order")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-group
+  (of-object "MaiaCombo")
+  (prop-type "GParamObject")
+  (docs "focus-group")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -6102,6 +6392,33 @@
   (construct-only #f)
 )
 
+(define-property have-focus
+  (of-object "MaiaSeekBar")
+  (prop-type "GParamBoolean")
+  (docs "have-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-order
+  (of-object "MaiaSeekBar")
+  (prop-type "GParamInt")
+  (docs "focus-order")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-group
+  (of-object "MaiaSeekBar")
+  (prop-type "GParamObject")
+  (docs "focus-group")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property slider-area
   (of-object "MaiaSeekBar")
   (prop-type "GParamBoxed")
@@ -6871,6 +7188,33 @@
   (construct-only #f)
 )
 
+(define-property have-focus
+  (of-object "MaiaRendererView")
+  (prop-type "GParamBoolean")
+  (docs "have-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-order
+  (of-object "MaiaRendererView")
+  (prop-type "GParamInt")
+  (docs "focus-order")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-group
+  (of-object "MaiaRendererView")
+  (prop-type "GParamObject")
+  (docs "focus-group")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property row
   (of-object "MaiaRendererView")
   (prop-type "GParamUInt")
@@ -7084,6 +7428,33 @@
   (of-object "MaiaScaleBar")
   (prop-type "GParamBoolean")
   (docs "can-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property have-focus
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamBoolean")
+  (docs "have-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-order
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamInt")
+  (docs "focus-order")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-group
+  (of-object "MaiaScaleBar")
+  (prop-type "GParamObject")
+  (docs "focus-group")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -7662,6 +8033,33 @@
   (construct-only #f)
 )
 
+(define-property have-focus
+  (of-object "MaiaStepButton")
+  (prop-type "GParamBoolean")
+  (docs "have-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-order
+  (of-object "MaiaStepButton")
+  (prop-type "GParamInt")
+  (docs "focus-order")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-group
+  (of-object "MaiaStepButton")
+  (prop-type "GParamObject")
+  (docs "focus-group")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property font-description
   (of-object "MaiaStepButton")
   (prop-type "GParamString")
@@ -7771,6 +8169,15 @@
 )
 
 ;; From MaiaStepButtonChangedEventArgs
+
+(define-property name
+  (of-object "MaiaStepButtonChangedEventArgs")
+  (prop-type "GParamString")
+  (docs "name")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
 
 (define-property active
   (of-object "MaiaStepButtonChangedEventArgs")
@@ -8443,6 +8850,33 @@
   (construct-only #f)
 )
 
+(define-property have-focus
+  (of-object "MaiaShape")
+  (prop-type "GParamBoolean")
+  (docs "have-focus")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-order
+  (of-object "MaiaShape")
+  (prop-type "GParamInt")
+  (docs "focus-order")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property focus-group
+  (of-object "MaiaShape")
+  (prop-type "GParamObject")
+  (docs "focus-group")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property border
   (of-object "MaiaShape")
   (prop-type "GParamDouble")
@@ -8543,6 +8977,127 @@
   (of-object "MaiaMouseEventArgs")
   (prop-type "GParamBoxed")
   (docs "position")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaGestureNotification
+
+(define-property button
+  (of-object "MaiaGestureNotification")
+  (prop-type "GParamUInt")
+  (docs "button")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property gesture-type
+  (of-object "MaiaGestureNotification")
+  (prop-type "GParamEnum")
+  (docs "gesture-type")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property position
+  (of-object "MaiaGestureNotification")
+  (prop-type "GParamBoxed")
+  (docs "position")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property proceed
+  (of-object "MaiaGestureNotification")
+  (prop-type "GParamBoolean")
+  (docs "proceed")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+;; From MaiaFocusGroup
+
+(define-property tag
+  (of-object "MaiaFocusGroup")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property characters
+  (of-object "MaiaFocusGroup")
+  (prop-type "GParamString")
+  (docs "characters")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property style
+  (of-object "MaiaFocusGroup")
+  (prop-type "GParamString")
+  (docs "style")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property manifest-path
+  (of-object "MaiaFocusGroup")
+  (prop-type "GParamString")
+  (docs "manifest-path")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property manifest-theme
+  (of-object "MaiaFocusGroup")
+  (prop-type "GParamObject")
+  (docs "manifest-theme")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property parent
+  (of-object "MaiaFocusGroup")
+  (prop-type "GParamObject")
+  (docs "parent")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property name
+  (of-object "MaiaFocusGroup")
+  (prop-type "GParamString")
+  (docs "name")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property items
+  (of-object "MaiaFocusGroup")
+  (prop-type "GParamPointer")
+  (docs "items")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property current
+  (of-object "MaiaFocusGroup")
+  (prop-type "GParamObject")
+  (docs "current")
   (readable #t)
   (writable #f)
   (construct-only #f)

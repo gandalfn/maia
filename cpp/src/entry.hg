@@ -23,7 +23,9 @@
 #include <maiamm/graphic-glyph.h>
 #include <maiamm/item-packable.h>
 #include <maiamm/item-movable.h>
+#include <maiamm/item-focusable.h>
 #include <maiamm/item.h>
+#include <maiamm/label.h>
 #include <maiamm/core-event.h>
 #include <maiamm/core-eventargs.h>
 
@@ -45,11 +47,12 @@ namespace Maia
             _WRAP_PROPERTY("text", Glib::ustring)
     };
 
-    class Entry : public Item, public ItemPackable, public ItemMovable
+    class Entry : public Item, public ItemPackable, public ItemMovable, public ItemFocusable
     {
         _CLASS_GOBJECT(Entry, MaiaEntry, MAIA_ENTRY, Item, MaiaItem)
         _IMPLEMENTS_INTERFACE(ItemPackable)
         _IMPLEMENTS_INTERFACE(ItemMovable)
+        _IMPLEMENTS_INTERFACE(ItemFocusable)
 
         protected:
             _CTOR_DEFAULT()
@@ -98,6 +101,18 @@ namespace Maia
             _WRAP_METHOD(bool get_hide_if_empty () const, maia_entry_get_hide_if_empty)
             _WRAP_METHOD(void set_hide_if_empty (bool inHideIfEmpty = true), maia_entry_set_hide_if_empty)
 
+            _WRAP_METHOD(bool touchscreen_mode () const, maia_entry_get_touchscreen_mode)
+            _WRAP_METHOD(void set_touchscreen_mode (bool inTouchscrenMode = true), maia_entry_set_touchscreen_mode)
+
+            _WRAP_METHOD(bool always_active () const, maia_entry_get_always_active)
+            _WRAP_METHOD(void set_always_active (bool inAlwaysActive = true), maia_entry_set_always_active)
+
+            _WRAP_METHOD(Glib::RefPtr<Label> labelled_by () const, maia_entry_get_labelled_by, refreturn)
+            _WRAP_METHOD(void set_labelled_by (const Glib::RefPtr<Label>& inLabel), maia_entry_set_labelled_by)
+
+            _WRAP_METHOD(int get_cursor () const, maia_entry_get_cursor)
+            _WRAP_METHOD(void set_cursor (int inCursor), maia_entry_set_cursor)
+
             _WRAP_METHOD(Glib::RefPtr<Core::Event> changed () const, maia_entry_get_changed, refreturn)
 
             _WRAP_PROPERTY("font-description", Glib::ustring)
@@ -109,7 +124,17 @@ namespace Maia
             _WRAP_PROPERTY("only-numeric", bool)
             _WRAP_PROPERTY("changed-mask", EntryChangedMask)
             _WRAP_PROPERTY("hide-if-empty", bool)
+            _WRAP_PROPERTY("touchscreen-mode", bool)
+            _WRAP_PROPERTY("always-active", bool)
+            _WRAP_PROPERTY("labelled-by", Glib::RefPtr<Label>)
+            _WRAP_PROPERTY("cursor", int)
+
             _WRAP_PROPERTY("changed", Glib::RefPtr<Core::Event>)
+
+            _WRAP_PROPERTY("can-focus", bool)
+            _WRAP_PROPERTY("have-focus", bool)
+            _WRAP_PROPERTY("focus-order", int)
+            _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
 
             _WRAP_PROPERTY("row", guint)
             _WRAP_PROPERTY("rows", guint)

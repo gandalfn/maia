@@ -1,6 +1,6 @@
 /* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * key.hg
+ * focus-group.ccg
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -19,22 +19,28 @@
 
 #include <maia.h>
 
-_DEFS(maiamm,maia)
+#include <maiamm/item-focusable.h>
 
 namespace Maia
 {
-    _WRAP_ENUM(class Modifier : int, MaiaModifier, s#MODIFIER_##, NO_GTYPE)
-    _WRAP_ENUM(class Key, MaiaKey, s#KEY_##, s#^0$#key_0#, s#^1$#key_1#, s#^2$#key_2#, s#^3$#key_3#, s#^4$#key_4#, s#^5$#key_5#, s#^6$#key_6#, s#^7$#key_7#, s#^8$#key_8#, s#^9$#key_9#, NO_GTYPE)
-
-    namespace Keysym
+    FocusGroup::FocusGroup(const Glib::ustring& inId) :
+        _CONSTRUCT("id", g_quark_from_string (inId.c_str ()))
     {
-        Glib::ustring key_to_string (Key inKey);
-        Key key_from_string (const Glib::ustring& inKey);
+    }
 
-        Glib::ustring modifier_to_string (Modifier inModifier);
-        Modifier modifier_from_string (const Glib::ustring& inModifier);
+    std::vector<Glib::RefPtr<ItemFocusable>>
+    FocusGroup::get_items () const
+    {
+        std::vector<Glib::RefPtr<ItemFocusable>> ret;
+        GList* pList = maia_focus_group_get_items (const_cast<MaiaFocusGroup*> (gobj ()));
+        if (pList)
+        {
+            for (GList* item = pList; item; item = item->next)
+            {
+                ret.push_back (Glib::wrap ((MaiaItemFocusable*)item->data, true));
+            }
+        }
 
-        void get_modifiers_key_from_string (const Glib::ustring& inValue, std::vector<Modifier>& outModifiers, Key& outKeys);
-        Glib::ustring modifiers_key_to_string (const std::vector<Modifier>& inModifiers, const Key& inKey);
+        return ret;
     }
 }

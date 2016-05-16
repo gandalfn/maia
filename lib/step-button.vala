@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.StepButton : Item, ItemMovable, ItemPackable
+public class Maia.StepButton : Item, ItemMovable, ItemPackable, ItemFocusable
 {
     /**
      * Event args provided by step button on changed event
@@ -25,6 +25,15 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
     public class ChangedEventArgs : Core.EventArgs
     {
         // accessors
+        /**
+         * Name of step button
+         */
+        public string name {
+            owned get {
+                return (string)this["name", 0];
+            }
+        }
+        
         /**
          * Active state of step button
          */
@@ -40,13 +49,15 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
             Core.EventArgs.register_protocol (typeof (ChangedEventArgs).name (),
                                               "Changed",
                                               "message Changed {"    +
+                                              "     string name;"    +
                                               "     uint32 active;"  +
                                               "}");
         }
 
         // methods
-        internal ChangedEventArgs (uint inActive)
+        internal ChangedEventArgs (string inName, uint inActive)
         {
+            this["name", 0] = (string)inName;
             this["active", 0] = (uint32)inActive;
         }
     }
@@ -60,10 +71,9 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
     private View                   m_View;
     private Graphic.Region[]       m_Areas;
     private int                    m_AreaClicked = -1;
-    private bool                   m_Button1Pressed = false;
-    private Graphic.Point          m_Button1Origin = Graphic.Point (0, 0);
     private Graphic.Surface        m_ViewSurface;
     private Graphic.LinearGradient m_ViewMask;
+    private FocusGroup             m_FocusGroup = null;
 
     // accessors
     internal override string tag {
@@ -96,13 +106,33 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
 
     internal Graphic.Pattern backcell_pattern { get; set; default = null; }
 
-    internal override bool can_focus  {
+    internal bool can_focus  {
         get {
             return parent is DrawingArea;
         }
         set {
-            base.can_focus = value;
         }
+    }
+    internal bool have_focus  { get; set; default = false; }
+    internal int  focus_order { get; set; default = -1; }
+    internal FocusGroup focus_group {
+        get {
+            return m_FocusGroup;
+        }
+        set {
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.remove (this);
+            }
+
+            m_FocusGroup = value;
+
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.add (this);
+            }
+        }
+        default = null;
     }
 
     /**
@@ -168,9 +198,7 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
 
                 launch_active_progess ((int)m_Active);
 
-                changed.publish (new ChangedEventArgs (m_Active));
-
-                GLib.Signal.emit_by_name (this, "notify::active");
+                on_active_changed ();
             }
         }
     }
@@ -206,6 +234,9 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
     {
         // Ref Mpdel class to register model transform
         typeof (Model).class_ref ();
+
+        // Ref FocusGroup class to register focus group transform
+        typeof (FocusGroup).class_ref ();
     }
 
     // methods
@@ -268,9 +299,7 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
 
         launch_active_progess (val);
 
-        changed.publish (new ChangedEventArgs (m_Active));
-
-        GLib.Signal.emit_by_name (this, "notify::active");
+        on_active_changed ();
     }
 
     private void
@@ -297,6 +326,14 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
         GLib.Value to = (double)inActive;
         m_Animator.add_transition_property (m_Transition, this, "progress", from, to);
         m_Animator.start ();
+    }
+
+    protected virtual void
+    on_active_changed ()
+    {
+        changed.publish (new ChangedEventArgs (name, m_Active));
+
+        GLib.Signal.emit_by_name (this, "notify::active");
     }
 
     internal override Graphic.Size
@@ -528,46 +565,10 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
     {
         bool ret = base.on_button_press_event (inButton, inPoint);
 
-        if (sensitive && ret && m_View.model != null)
+        if (sensitive && ret)
         {
-            m_AreaClicked = -1;
-            if (inButton == 1)
-            {
-                if (!m_Areas[0].is_empty () && inPoint in m_Areas[0])
-                {
-                    m_AreaClicked = 0;
-                }
-                else if (!m_Areas[1].is_empty () && inPoint in m_Areas[1])
-                {
-                    m_AreaClicked = 1;
-                }
-                else if (!m_Areas[2].is_empty () && inPoint in m_Areas[2])
-                {
-                    m_AreaClicked = 2;
-                }
-                else if (!m_Areas[3].is_empty () && inPoint in m_Areas[3])
-                {
-                    m_AreaClicked = 3;
-                }
-
-                m_Button1Pressed = true;
-                m_Button1Origin = inPoint;
-            }
-            else if (inButton == 4 && active >= 1)
-            {
-                m_AreaClicked = 0;
-            }
-            else if (inButton == 5)
-            {
-                m_AreaClicked = 2;
-            }
-
-            if (m_AreaClicked >= 0)
-            {
-                state = State.ACTIVE;
-
-                grab_pointer (this);
-            }
+            state = State.ACTIVE;
+            grab_pointer (this);
         }
 
         return ret;
@@ -578,79 +579,112 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable
     {
         bool ret = base.on_button_release_event (inButton, inPoint);
 
-        if (m_AreaClicked >= 0)
+        if (state == State.ACTIVE)
         {
-            if (inButton == 1)
-            {
-                if (m_AreaClicked == 0 && !m_Areas[0].is_empty () && inPoint in m_Areas[0])
-                {
-                    inc_dec_active (false);
-                }
-                else if ((m_AreaClicked == 1 && !m_Areas[1].is_empty () && inPoint in m_Areas[1]) || (m_AreaClicked == 3 && !m_Areas[3].is_empty () && inPoint in m_Areas[3]))
-                {
-                    clicked.publish ();
-                }
-                else if (m_AreaClicked == 2  && !m_Areas[2].is_empty () && inPoint in m_Areas[2])
-                {
-                    inc_dec_active (true);
-                }
-            }
-            else if (inButton == 4 && ret)
-            {
-                inc_dec_active (false);
-            }
-            else if (inButton == 5 && ret)
-            {
-                inc_dec_active (true);
-            }
-
-            m_AreaClicked = -1;
-
             state = State.NORMAL;
-
+            if (!ret) m_AreaClicked = -1;
             ungrab_pointer (this);
         }
-
-        if (inButton == 1) m_Button1Pressed = false;
 
         return ret;
     }
 
-    internal override bool
-    on_motion_event (Graphic.Point inPoint)
+    internal override void
+    on_gesture (Gesture.Notification inNotification)
     {
-        bool ret = base.on_motion_event (inPoint);
-
-        if (ret && m_Button1Pressed)
+        if (sensitive && m_View.model != null)
         {
-            double diff = inPoint.x - m_Button1Origin.x;
-            if (diff > 0 && diff > m_Areas[1].extents.size.width)
+            switch (inNotification.gesture_type)
             {
-                inc_dec_active (false);
+                case Gesture.Type.PRESS:
+                    m_AreaClicked = -1;
+                    if (inNotification.button == 1)
+                    {
+                        if (!m_Areas[0].is_empty () && inNotification.position in m_Areas[0])
+                        {
+                            m_AreaClicked = 0;
+                        }
+                        else if (!m_Areas[1].is_empty () && inNotification.position in m_Areas[1])
+                        {
+                            m_AreaClicked = 1;
+                        }
+                        else if (!m_Areas[2].is_empty () && inNotification.position in m_Areas[2])
+                        {
+                            m_AreaClicked = 2;
+                        }
+                        else if (!m_Areas[3].is_empty () && inNotification.position in m_Areas[3])
+                        {
+                            m_AreaClicked = 3;
+                        }
 
-                m_AreaClicked = -1;
+                        inNotification.proceed = true;
+                    }
+                    else if (inNotification.button == 8)
+                    {
+                        inc_dec_active (false);
 
-                state = State.NORMAL;
+                        m_AreaClicked = -1;
 
-                ungrab_pointer (this);
+                        inNotification.proceed = true;
+                    }
+                    else if (inNotification.button == 9)
+                    {
+                        inc_dec_active (true);
 
-                m_Button1Origin = inPoint;
-            }
-            else if (diff < 0 && diff < -m_Areas[1].extents.size.width)
-            {
-                inc_dec_active (true);
+                        m_AreaClicked = -1;
 
-                m_AreaClicked = -1;
+                        inNotification.proceed = true;
+                    }
 
-                state = State.NORMAL;
+                    break;
 
-                ungrab_pointer (this);
+                case Gesture.Type.RELEASE:
+                    if (m_AreaClicked >= 0)
+                    {
+                        if (inNotification.button == 1)
+                        {
+                            if (m_AreaClicked == 0 && !m_Areas[0].is_empty () && inNotification.position in m_Areas[0])
+                            {
+                                inc_dec_active (false);
+                            }
+                            else if ((m_AreaClicked == 1 && !m_Areas[1].is_empty () && inNotification.position in m_Areas[1]) ||
+                                     (m_AreaClicked == 3 && !m_Areas[3].is_empty () && inNotification.position in m_Areas[3]))
+                            {
+                                clicked.publish ();
+                            }
+                            else if (m_AreaClicked == 2  && !m_Areas[2].is_empty () && inNotification.position in m_Areas[2])
+                            {
+                                inc_dec_active (true);
+                            }
+                        }
 
-                m_Button1Origin = inPoint;
+                        m_AreaClicked = -1;
+
+                        inNotification.proceed = true;
+                    }
+
+                    break;
+
+                case Gesture.Type.HSCROLL:
+                    if (inNotification.button == 1 && inNotification.position.x > 0 && inNotification.position.x > m_Areas[1].extents.size.width)
+                    {
+                        inc_dec_active (false);
+
+                        m_AreaClicked = -1;
+
+                        inNotification.proceed = true;
+                    }
+                    else if (inNotification.button == 1 && inNotification.position.x < 0 && inNotification.position.x < -m_Areas[1].extents.size.width)
+                    {
+                        inc_dec_active (true);
+
+                        m_AreaClicked = -1;
+
+                        inNotification.proceed = true;
+                    }
+                    break;
             }
         }
-
-        return ret;
     }
 
     internal override string

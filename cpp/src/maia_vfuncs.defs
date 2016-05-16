@@ -722,16 +722,11 @@
   )
 )
 
-(define-vfunc get_can_focus
-  (of-object "MaiaItem")
-  (return-type "gboolean")
-)
-
-(define-vfunc set_can_focus
+(define-vfunc on_gesture
   (of-object "MaiaItem")
   (return-type "none")
   (parameters
-    '("gboolean" "inCanFocus")
+    '("MaiaGestureNotification*" "inNotification")
   )
 )
 
@@ -1110,6 +1105,61 @@
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaItemFocusable
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-vfunc get_can_focus
+  (of-object "MaiaItemFocusable")
+  (return-type "gboolean")
+)
+
+(define-vfunc set_can_focus
+  (of-object "MaiaItemFocusable")
+  (return-type "none")
+  (parameters
+    '("gboolean" "inCanFocus")
+  )
+)
+
+(define-vfunc get_have_focus
+  (of-object "MaiaItemFocusable")
+  (return-type "gboolean")
+)
+
+(define-vfunc set_have_focus
+  (of-object "MaiaItemFocusable")
+  (return-type "none")
+  (parameters
+    '("gboolean" "inHaveFocus")
+  )
+)
+
+(define-vfunc get_focus_order
+  (of-object "MaiaItemFocusable")
+  (return-type "gint")
+)
+
+(define-vfunc set_focus_order
+  (of-object "MaiaItemFocusable")
+  (return-type "none")
+  (parameters
+    '("gint" "inFocusOrder")
+  )
+)
+
+(define-vfunc get_focus_group
+  (of-object "MaiaItemFocusable")
+  (return-type "MaiaFocusGroup*")
+)
+
+(define-vfunc set_focus_group
+  (of-object "MaiaItemFocusable")
+  (return-type "none")
+  (parameters
+    '("MaiaFocusGroup*" "inFocusGroup")
+  )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; From MaiaGroup
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define-vfunc childs_size_request
@@ -1293,4 +1343,12 @@
   (parameters
     '("gboolean" "inActive")
   )
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; From MaiaStepButton
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-vfunc on_active_changed
+  (of-object "MaiaStepButton")
+  (return-type "none")
 )

@@ -67,8 +67,6 @@ namespace Maia
             _WRAP_VFUNC(void set_active (bool inActive), set_active)
 
         public:
-            _IGNORE(maia_toggle_on_button_press)
-
             _WRAP_METHOD(Glib::RefPtr<ToggleGroup> get_toggle_group () const, maia_toggle_get_toggle_group, refreturn)
             _WRAP_METHOD(void set_toggle_group (const Glib::RefPtr<ToggleGroup>& inToggleGroup), maia_toggle_set_toggle_group)
 

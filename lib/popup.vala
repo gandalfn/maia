@@ -148,6 +148,11 @@ public class Maia.Popup : Group
     public Window.Type           window_type     { get; set; default = Window.Type.CHILD; }
     public Window.PositionPolicy position_policy { get; set; default = Window.PositionPolicy.NONE; }
     public Window?               transient_for   { get; set; default = null; }
+    public unowned Window?       bin_window {
+        get {
+            return m_Window;
+        }
+    }
 
     // static methods
     static construct
@@ -291,19 +296,27 @@ public class Maia.Popup : Group
                     break;
 
                 case PopupPlacement.BOTTOM:
-                    m_Window.shadow_border = Window.Border.TOP;
+                    m_Window.shadow_border = Window.Border.TOP   |
+                                             Window.Border.LEFT  |
+                                             Window.Border.RIGHT;
                     break;
 
                 case PopupPlacement.TOP:
-                    m_Window.shadow_border = Window.Border.BOTTOM;
+                    m_Window.shadow_border = Window.Border.BOTTOM |
+                                             Window.Border.LEFT   |
+                                             Window.Border.RIGHT;
                     break;
 
                 case PopupPlacement.RIGHT:
-                    m_Window.shadow_border = Window.Border.LEFT;
+                    m_Window.shadow_border = Window.Border.LEFT |
+                                             Window.Border.TOP  |
+                                             Window.Border.BOTTOM;
                     break;
 
                 case PopupPlacement.LEFT:
-                    m_Window.shadow_border = Window.Border.RIGHT;
+                    m_Window.shadow_border = Window.Border.RIGHT |
+                                             Window.Border.TOP   |
+                                             Window.Border.BOTTOM;
                     break;
             }
         }

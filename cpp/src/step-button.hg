@@ -24,6 +24,7 @@
 #include <maiamm/item.h>
 #include <maiamm/item-packable.h>
 #include <maiamm/item-movable.h>
+#include <maiamm/item-focusable.h>
 #include <maiamm/core-event.h>
 #include <maiamm/model.h>
 
@@ -38,21 +39,28 @@ namespace Maia
         _CLASS_GOBJECT(StepButtonChangedEventArgs, MaiaStepButtonChangedEventArgs, MAIA_STEP_BUTTON_CHANGED_EVENT_ARGS, Core::EventArgs, MaiaCoreEventArgs)
 
         public:
+            _WRAP_METHOD(Glib::ustring get_name () const, maia_step_button_changed_event_args_get_name)
             _WRAP_METHOD(bool get_active () const, maia_step_button_changed_event_args_get_active)
 
+            _WRAP_PROPERTY("name", Glib::ustring)
             _WRAP_PROPERTY("active", bool)
     };
 
-    class StepButton : public Item, public ItemPackable, public ItemMovable
+    class StepButton : public Item, public ItemPackable, public ItemMovable, public ItemFocusable
     {
         _CLASS_GOBJECT(StepButton, MaiaStepButton, MAIA_STEP_BUTTON, Item, MaiaItem)
         _IMPLEMENTS_INTERFACE(ItemPackable)
         _IMPLEMENTS_INTERFACE(ItemMovable)
+        _IMPLEMENTS_INTERFACE(ItemFocusable)
+
+        _IGNORE(maia_step_button_on_active_changed)
 
         protected:
             _CTOR_DEFAULT()
 
             explicit StepButton(const Glib::ustring& inId);
+
+            _WRAP_VFUNC(void on_active_changed (), on_active_changed)
 
         public:
             static Glib::RefPtr<StepButton> create (const Glib::ustring& inId)
@@ -102,10 +110,13 @@ namespace Maia
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
             _WRAP_PROPERTY("separator", bool)
 
-            _WRAP_PROPERTY("can-focus", bool)
-
             _WRAP_PROPERTY("clicked", Glib::RefPtr<Core::Event>)
             _WRAP_PROPERTY("changed", Glib::RefPtr<Core::Event>)
+
+            _WRAP_PROPERTY("can-focus", bool)
+            _WRAP_PROPERTY("have-focus", bool)
+            _WRAP_PROPERTY("focus-order", int)
+            _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
 
             _WRAP_PROPERTY("row", guint)
             _WRAP_PROPERTY("rows", guint)

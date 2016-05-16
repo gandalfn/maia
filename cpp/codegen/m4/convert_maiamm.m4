@@ -28,7 +28,7 @@ _CONVERSION(`MaiaCoreObject*',`const Glib::RefPtr<Object>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaCoreObject*',`Glib::RefPtr<Object>',`Glib::wrap($3)')
 
 _CONVERSION(`Object*',`MaiaCoreObject*',$3->gobj ())
-8
+
 _CONVERSION(`Glib::RefPtr<EventArgs>',`MaiaCoreEventArgs*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<EventArgs>&',`MaiaCoreEventArgs*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaCoreEventArgs*',`const Glib::RefPtr<EventArgs>&',`Glib::wrap($3)')
@@ -376,6 +376,11 @@ _CONVERSION(`const Glib::RefPtr<Drawable>&',`MaiaDrawable*',__CONVERT_REFPTR_TO_
 _CONVERSION(`MaiaDrawable*',`const Glib::RefPtr<Drawable>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaDrawable*',`Glib::RefPtr<Drawable>',`Glib::wrap($3)')
 
+_CONVERSION(`Glib::RefPtr<Label>',`MaiaLabel*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Label>&',`MaiaLabel*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaLabel*',`const Glib::RefPtr<Label>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaLabel*',`Glib::RefPtr<Label>',`Glib::wrap($3)')
+
 _CONVERSION(`Glib::RefPtr<StatePatterns>',`MaiaStatePatterns*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<StatePatterns>&',`MaiaStatePatterns*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaStatePatterns*',`const Glib::RefPtr<StatePatterns>&',`Glib::wrap($3)')
@@ -385,6 +390,11 @@ _CONVERSION(`Glib::RefPtr<Item>',`MaiaItem*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Item>&',`MaiaItem*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaItem*',`const Glib::RefPtr<Item>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaItem*',`Glib::RefPtr<Item>',`Glib::wrap($3)')
+
+_CONVERSION(`Glib::RefPtr<ItemFocusable>',`MaiaItemFocusable*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<ItemFocusable>&',`MaiaItemFocusable*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaItemFocusable*',`const Glib::RefPtr<ItemFocusable>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaItemFocusable*',`Glib::RefPtr<ItemFocusable>',`Glib::wrap($3)')
 
 _CONVERSION(`Glib::RefPtr<Chart>',`MaiaChart*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<Chart>&',`MaiaChart*',__CONVERT_REFPTR_TO_P)
@@ -506,6 +516,16 @@ _CONVERSION(`const Glib::RefPtr<Window>&',`MaiaWindow*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaWindow*',`const Glib::RefPtr<Window>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaWindow*',`Glib::RefPtr<Window>',`Glib::wrap($3)')
 
+_CONVERSION(`Glib::RefPtr<Gesture::Notification>',`MaiaGestureNotification*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Gesture::Notification>&',`MaiaGestureNotification*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaGestureNotification*',`const Glib::RefPtr<Gesture::Notification>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaGestureNotification*',`Glib::RefPtr<Gesture::Notification>',`Glib::wrap($3)')
+
+_CONVERSION(`Glib::RefPtr<FocusGroup>',`MaiaFocusGroup*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<FocusGroup>&',`MaiaFocusGroup*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaFocusGroup*',`const Glib::RefPtr<FocusGroup>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaFocusGroup*',`Glib::RefPtr<FocusGroup>',`Glib::wrap($3)')
+
 _CONVERSION(`ScrollViewPolicy',`MaiaScrollViewPolicy',`(MaiaScrollViewPolicy)$3')
 _CONVERSION(`MaiaScrollViewPolicy',`ScrollViewPolicy',`(ScrollViewPolicy)$3')
 
@@ -569,6 +589,9 @@ _CONVERSION(`MaiaNotebookTransition',`Notebook::Transition',`(Notebook::Transiti
 _CONVERSION(`Shape::Caliper',`MaiaShapeCaliper',`(MaiaShapeCaliper)$3')
 _CONVERSION(`MaiaShapeCaliper',`Shape::Caliper',`(Shape::Caliper)$3')
 
+_CONVERSION(`Gesture::Type',`MaiaGestureType',`(MaiaGestureType)$3')
+_CONVERSION(`MaiaGestureType',`Gesture::Type',`(Gesture::Type)$3')
+
 _CONV_ENUM(MaiaLog,Level)
 _CONV_ENUM(MaiaLog,Category)
 _CONV_ENUM(MaiaCoreParser,Token)
@@ -607,3 +630,4 @@ _CONV_ENUM(Maia,Placement)
 _CONV_ENUM(MaiaGrid,Layout)
 _CONV_ENUM(MaiaNotebook,Transition)
 _CONV_ENUM(MaiaShape,Caliper)
+_CONV_ENUM(MaiaGesture,Type)

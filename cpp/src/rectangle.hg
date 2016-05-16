@@ -20,6 +20,7 @@
 #include <maia.h>
 #include <maiamm/item-resizable.h>
 #include <maiamm/item-movable.h>
+#include <maiamm/item-focusable.h>
 #include <maiamm/item.h>
 
 _DEFS(maiamm,maia)
@@ -27,11 +28,12 @@ _PINCLUDE(maiamm/private/item_p.h)
 
 namespace Maia
 {
-    class Rectangle : public Item, public ItemResizable, public ItemMovable
+    class Rectangle : public Item, public ItemResizable, public ItemMovable, public ItemFocusable
     {
         _CLASS_GOBJECT(Rectangle, MaiaRectangle, MAIA_RECTANGLE, Item, MaiaItem)
         _IMPLEMENTS_INTERFACE(ItemResizable)
         _IMPLEMENTS_INTERFACE(ItemMovable)
+        _IMPLEMENTS_INTERFACE(ItemFocusable)
 
         protected:
             _CTOR_DEFAULT()
@@ -45,5 +47,10 @@ namespace Maia
 
                 return Glib::RefPtr<Rectangle> (new Rectangle (pRectangle));
             }
+
+            _WRAP_PROPERTY("can-focus", bool)
+            _WRAP_PROPERTY("have-focus", bool)
+            _WRAP_PROPERTY("focus-order", int)
+            _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
     };
 }

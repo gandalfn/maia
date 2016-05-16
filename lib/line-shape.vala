@@ -346,6 +346,12 @@ public class Maia.LineShape : Shape
         inContext.restore ();
     }
 
+    internal override void
+    on_gesture (Gesture.Notification inNotification)
+    {
+        inNotification.proceed = true;
+    }
+
     internal override bool
     on_button_press_event (uint inButton, Graphic.Point inPoint)
     {

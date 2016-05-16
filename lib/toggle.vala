@@ -364,17 +364,44 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
     {
         bool ret = base.on_button_press_event (inButton, inPoint);
 
-        if (sensitive && ret && inButton == 1)
+        if (sensitive && ret)
         {
-            grab_focus (this);
-
-            if (m_ToggleGroup == null || !m_ToggleGroup.exclusive || m_ToggleGroup.active != name)
-            {
-                active = !active;
-            }
+            grab_pointer (this);
         }
 
         return ret;
+    }
+
+    internal override bool
+    on_button_release_event (uint inButton, Graphic.Point inPoint)
+    {
+        bool ret = base.on_button_release_event (inButton, inPoint);
+
+        ungrab_pointer (this);
+
+        return ret;
+    }
+
+    internal override void
+    on_gesture (Gesture.Notification inNotification)
+    {
+        if (sensitive && inNotification.button == 1)
+        {
+            switch (inNotification.gesture_type)
+            {
+                case Gesture.Type.PRESS:
+                    inNotification.proceed = true;
+                    break;
+
+                case Gesture.Type.RELEASE:
+                    if (m_ToggleGroup == null || !m_ToggleGroup.exclusive || m_ToggleGroup.active != name)
+                    {
+                        active = !active;
+                    }
+                    inNotification.proceed = true;
+                    break;
+            }
+        }
     }
 
     internal override bool

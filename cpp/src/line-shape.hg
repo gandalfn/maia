@@ -49,5 +49,7 @@ namespace Maia
 
             _WRAP_PROPERTY("begin", Graphic::Point)
             _WRAP_PROPERTY("end", Graphic::Point)
+
+            _WRAP_PROPERTY("tag", Glib::ustring)
     };
 }

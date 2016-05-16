@@ -125,8 +125,6 @@ namespace Maia
                 _WRAP_METHOD(void apply (const Matrix& inMatrix), maia_graphic_transform_apply)
                 _WRAP_METHOD(void apply_center_rotate (double inCx, double inCy), maia_graphic_transform_apply_center_rotate)
 
-                _IGNORE(maia_graphic_transform_changed)
-
                 _WRAP_PROPERTY("is-rotate", bool)
                 _WRAP_PROPERTY("have-rotate", bool)
                 _WRAP_PROPERTY("changed", Glib::RefPtr<TransformChangedNotification>)

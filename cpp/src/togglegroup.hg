@@ -48,6 +48,8 @@ namespace Maia
         _CLASS_GOBJECT(ToggleGroup, MaiaToggleGroup, MAIA_TOGGLE_GROUP, Core::Object, MaiaCoreObject)
         _IMPLEMENTS_INTERFACE(Manifest::Element)
 
+        _IGNORE(maia_toggle_group_get_toggles)
+
         protected:
             _CTOR_DEFAULT()
 
@@ -74,6 +76,8 @@ namespace Maia
             _WRAP_METHOD(void set_exclusive (bool inExclusive = true), maia_toggle_group_set_exclusive)
 
             _WRAP_METHOD(Glib::RefPtr<Core::Event> changed () const, maia_toggle_group_get_changed, refreturn)
+
+            std::vector<Glib::RefPtr<Toggle>> get_toggles () const;
 
             _WRAP_PROPERTY("name", Glib::ustring)
             _WRAP_PROPERTY("active", Glib::ustring)

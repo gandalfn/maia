@@ -19,6 +19,7 @@
 
 #include <maia.h>
 #include <maiamm/item.h>
+#include <maiamm/item-focusable.h>
 #include <maiamm/core-event.h>
 #include <maiamm/core-eventargs.h>
 #include <maiamm/graphic-rectangle.h>
@@ -110,8 +111,8 @@ namespace Maia
             _WRAP_METHOD(void swap_buffer (), maia_window_swap_buffer)
             _WRAP_METHOD(void flush (), maia_window_flush)
 
-            _WRAP_METHOD(Glib::RefPtr<Item> get_focus_item () const, maia_window_get_focus_item, refreturn)
-            _WRAP_METHOD(void set_focus_item (const Glib::RefPtr<Item>& inItem), maia_window_set_focus_item)
+            _WRAP_METHOD(Glib::RefPtr<ItemFocusable> get_focus_item () const, maia_window_get_focus_item, refreturn)
+            _WRAP_METHOD(void set_focus_item (const Glib::RefPtr<ItemFocusable>& inItem), maia_window_set_focus_item)
 
             _WRAP_METHOD(Glib::RefPtr<Item> get_grab_pointer_item () const, maia_window_get_grab_pointer_item, refreturn)
             _WRAP_METHOD(void set_grab_pointer_item (const Glib::RefPtr<Item>& inItem), maia_window_set_grab_pointer_item)

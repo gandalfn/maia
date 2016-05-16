@@ -17,13 +17,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Label : Item, ItemMovable, ItemPackable
+public class Maia.Label : Item, ItemMovable, ItemPackable, ItemFocusable
 {
     // properties
     private string          m_Text = null;
     private bool            m_HideIfEmpty = false;
     private Graphic.Glyph   m_Glyph = null;
     private Graphic.Surface m_FakeSurface = null;
+    private FocusGroup      m_FocusGroup = null;
 
     // accessors
     internal override string tag {
@@ -56,13 +57,33 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
 
     internal Graphic.Pattern backcell_pattern { get; set; default = null; }
 
-    internal override bool can_focus  {
+    internal bool can_focus  {
         get {
             return parent is DrawingArea;
         }
         set {
-            base.can_focus = value;
         }
+    }
+    internal bool have_focus  { get; set; default = false; }
+    internal int  focus_order { get; set; default = -1; }
+    internal FocusGroup focus_group {
+        get {
+            return m_FocusGroup;
+        }
+        set {
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.remove (this);
+            }
+
+            m_FocusGroup = value;
+
+            if (m_FocusGroup != null)
+            {
+                m_FocusGroup.add (this);
+            }
+        }
+        default = null;
     }
 
     /**
@@ -156,6 +177,49 @@ public class Maia.Label : Item, ItemMovable, ItemPackable
     {
         // Ref Grid class to register grid quarks
         typeof (Grid).class_ref ();
+
+        // Ref FocusGroup class to register focus group transform
+        typeof (FocusGroup).class_ref ();
+
+        Manifest.Attribute.register_transform_func (typeof (Label), attribute_to_label);
+
+        GLib.Value.register_transform_func (typeof (Label), typeof (string), label_to_value_string);
+    }
+
+    static void
+    attribute_to_label (Manifest.Attribute inAttribute, ref GLib.Value outValue)
+    {
+        unowned Core.Object object = inAttribute.owner as Core.Object;
+        unowned Label? label = null;
+
+        GLib.Quark id  = GLib.Quark.from_string (inAttribute.get ());
+        for (unowned Core.Object item = object; item != null; item = item.parent)
+        {
+            unowned View? view = item.parent as View;
+
+            // If owned is in view search model in cell first
+            if (view != null)
+            {
+                label = item.find (id, false) as Label;
+                if (label != null) break;
+            }
+            // We not found model in view parents search in root
+            else if (item.parent == null)
+            {
+                label = item.find (id) as Label;
+            }
+        }
+
+        outValue = label;
+    }
+
+    static void
+    label_to_value_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (Label)))
+    {
+        unowned Label val = (Label)inSrc;
+
+        outDest = val.name;
     }
 
     // methods

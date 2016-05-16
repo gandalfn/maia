@@ -1,6 +1,6 @@
-/* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
+/* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * togglegroup.ccg
+ * item-focusable.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,28 +17,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <maia.h>
-
-namespace Maia
+public interface Maia.ItemFocusable : Item
 {
-    ToggleGroup::ToggleGroup(const Glib::ustring& inId) :
-        _CONSTRUCT("id", g_quark_from_string (inId.c_str ()))
-    {
-    }
+    // properties
+    /**
+     * Whether or not the item can be focused
+     */
+    public abstract bool can_focus  { get; set; default = true; }
 
-    std::vector<Glib::RefPtr<Toggle>>
-    ToggleGroup::get_toggles () const
-    {
-        std::vector<Glib::RefPtr<Toggle>> ret;
-        GList* pList = maia_toggle_group_get_toggles (const_cast<MaiaToggleGroup*> (gobj ()));
-        if (pList)
-        {
-            for (GList* item = pList; item; item = item->next)
-            {
-                ret.push_back (Glib::wrap ((MaiaToggle*)item->data, true));
-            }
-        }
+    /**
+     * Whether the item has the focus.
+     */
+    public abstract bool have_focus { get; set; default = false; }
 
-        return ret;
-    }
+    /**
+     * Focus order of item
+     */
+    public abstract int focus_order { get; set; default = -1; }
+
+    /**
+     * The focus group of item
+     */
+    public abstract FocusGroup focus_group { get; set; default = null; }
 }

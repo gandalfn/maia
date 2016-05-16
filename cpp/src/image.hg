@@ -21,6 +21,7 @@
 #include <maiamm/item-packable.h>
 #include <maiamm/item-movable.h>
 #include <maiamm/item-resizable.h>
+#include <maiamm/item-focusable.h>
 #include <maiamm/item.h>
 
 _DEFS(maiamm,maia)
@@ -28,12 +29,13 @@ _PINCLUDE(maiamm/private/item_p.h)
 
 namespace Maia
 {
-    class Image : public Item, public ItemPackable, public ItemMovable, public ItemResizable
+    class Image : public Item, public ItemPackable, public ItemMovable, public ItemResizable, public ItemFocusable
     {
         _CLASS_GOBJECT(Image, MaiaImage, MAIA_IMAGE, Item, MaiaItem)
         _IMPLEMENTS_INTERFACE(ItemPackable)
         _IMPLEMENTS_INTERFACE(ItemMovable)
         _IMPLEMENTS_INTERFACE(ItemResizable)
+        _IMPLEMENTS_INTERFACE(ItemFocusable)
 
         protected:
             _CTOR_DEFAULT()
@@ -58,6 +60,11 @@ namespace Maia
             _IGNORE(maia_image_create_image)
 
             _WRAP_PROPERTY("filename", Glib::ustring)
+
+            _WRAP_PROPERTY("can-focus", bool)
+            _WRAP_PROPERTY("have-focus", bool)
+            _WRAP_PROPERTY("focus-order", int)
+            _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
 
             _WRAP_PROPERTY("row", guint)
             _WRAP_PROPERTY("rows", guint)

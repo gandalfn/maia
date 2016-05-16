@@ -22,17 +22,19 @@
 #include <maiamm/graphic-renderer.h>
 #include <maiamm/item-packable.h>
 #include <maiamm/item-movable.h>
+#include <maiamm/item-focusable.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/group_p.h)
 
 namespace Maia
 {
-    class RendererView : public Group, public ItemPackable, public ItemMovable
+    class RendererView : public Group, public ItemPackable, public ItemMovable, public ItemFocusable
     {
         _CLASS_GOBJECT(RendererView, MaiaRendererView, MAIA_RENDERER_VIEW, Group, MaiaGroup)
         _IMPLEMENTS_INTERFACE(ItemPackable)
         _IMPLEMENTS_INTERFACE(ItemMovable)
+        _IMPLEMENTS_INTERFACE(ItemFocusable)
 
         protected:
             _CTOR_DEFAULT()
@@ -63,6 +65,9 @@ namespace Maia
             _WRAP_PROPERTY("pause", bool)
 
             _WRAP_PROPERTY("can-focus", bool)
+            _WRAP_PROPERTY("have-focus", bool)
+            _WRAP_PROPERTY("focus-order", int)
+            _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
 
             _WRAP_PROPERTY("row", guint)
             _WRAP_PROPERTY("rows", guint)
