@@ -389,7 +389,7 @@ internal abstract class Maia.Protocol.Field : Core.Object, Core.Serializable, Bu
     public new void
     @set (int inIndex, GLib.Value inValue)
         requires (inIndex < m_Values.length)
-        requires (GLib.Value.type_compatible (inValue.type (), m_Values[inIndex].type ()))
+        //requires (GLib.Value.type_compatible (inValue.type (), m_Values[inIndex].type ()))
     {
         inValue.copy (ref m_Values[inIndex]);
     }

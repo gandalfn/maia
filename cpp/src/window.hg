@@ -18,6 +18,7 @@
  */
 
 #include <maia.h>
+#include <maiamm/input-device.h>
 #include <maiamm/item.h>
 #include <maiamm/item-focusable.h>
 #include <maiamm/core-event.h>
@@ -97,7 +98,8 @@ namespace Maia
                 maia_window_on_grab_pointer, maia_window_on_ungrab_pointer, maia_window_on_grab_keyboard,
                 maia_window_on_ungrab_keyboard, maia_window_on_scroll_to, maia_window_on_damage_event,
                 maia_window_on_geometry_event, maia_window_on_mouse_event, maia_window_on_visibility_event,
-                maia_window_on_destroy_event, maia_window_on_delete_event, maia_window_on_keyboard_event)
+                maia_window_on_destroy_event, maia_window_on_delete_event, maia_window_on_keyboard_event,
+                maia_window_get_input_devices, maia_window_set_input_devices)
 
         public:
             _WRAP_ENUM(class Type, MaiaWindowType, s#WINDOW_TYPE_##, NO_GTYPE)
@@ -164,6 +166,9 @@ namespace Maia
 
             _WRAP_METHOD(void grab_key (Modifier inModifier, Key inKey) const, maia_window_grab_key)
             _WRAP_METHOD(void ungrab_key (Modifier inModifier, Key inKey) const, maia_window_ungrab_key)
+
+            std::vector<Glib::RefPtr<InputDevice>> input_devices () const;
+            void set_input_devices (const std::vector<Glib::RefPtr<InputDevice>>& inDevices);
 
             _WRAP_METHOD(Glib::RefPtr<Core::Event> damage_event () const, maia_window_get_damage_event, refreturn)
             _WRAP_METHOD(Glib::RefPtr<Core::Event> geometry_event () const, maia_window_get_geometry_event, refreturn)

@@ -1,6 +1,6 @@
 /* -*- Mode: C++; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * line-shape.ccg
+ * input-device.ccg
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -21,32 +21,4 @@
 
 namespace Maia
 {
-    LineShape::LineShape(const Glib::ustring& inId) :
-        _CONSTRUCT("id", g_quark_from_string (inId.c_str ()))
-    {
-    }
-
-    bool
-    LineShape::begin_clicked () const
-    {
-        return gobj ()->m_BeginClicked;
-    }
-
-    void
-    LineShape::set_begin_clicked (bool inClicked)
-    {
-        gobj ()->m_BeginClicked = inClicked;
-    }
-
-    bool
-    LineShape::end_clicked () const
-    {
-        return gobj ()->m_EndClicked;
-    }
-
-    void
-    LineShape::set_end_clicked (bool inClicked)
-    {
-        gobj ()->m_EndClicked = inClicked;
-    }
 }

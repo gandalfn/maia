@@ -144,6 +144,9 @@ public class Maia.Window : Group
 
     public Graphic.Transform device_transform { get; set; default = new Graphic.Transform.identity (); }
 
+    [CCode (notify = false)]
+    public virtual Core.List<unowned Maia.InputDevice>? input_devices { owned get; set; }
+
     public Core.Event damage_event {
         get {
             return m_DamageEvent;
@@ -211,6 +214,7 @@ public class Maia.Window : Group
     construct
     {
         not_dumpable_attributes.insert ("device-transform");
+        not_dumpable_attributes.insert ("input-device");
 
         // Create animator
         m_Animator = new Core.Animator (60, 200);
@@ -615,7 +619,7 @@ public class Maia.Window : Group
                 case KeyboardEventArgs.State.RELEASE:
                     var bind = new BindKey (keyboard_args.modifier, keyboard_args.key);
 
-                    if (bind in m_BindKeys)
+                    if (m_BindKeys != null && bind in m_BindKeys)
                     {
                         key_release_event (keyboard_args.modifier, keyboard_args.key, keyboard_args.character);
                     }

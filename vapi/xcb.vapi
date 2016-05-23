@@ -5700,7 +5700,8 @@ namespace Xcb
 		SELECTION_NOTIFY,
 		COLORMAP_NOTIFY,
 		CLIENT_MESSAGE,
-		MAPPING_NOTIFY;
+		MAPPING_NOTIFY,
+		GE_GENERIC;
 
 		public string
 		to_string ()
@@ -5773,6 +5774,8 @@ namespace Xcb
 					return "ClientMessage event";
 				case MAPPING_NOTIFY:
 					return "MappingNotify event";
+				case GE_GENERIC:
+					return "Generic event";
 			}
 
 			return "Unknown";

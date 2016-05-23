@@ -70,6 +70,23 @@ internal class Maia.Xcb.Window : Maia.Window
         }
     }
 
+    [CCode (notify = false)]
+    public override Core.List<unowned Maia.InputDevice>? input_devices {
+        owned get {
+            if (m_View != null)
+            {
+                return m_View.input_devices;
+            }
+            return null;
+        }
+        set {
+            if (m_View != null)
+            {
+                m_View.input_devices = value;
+            }
+        }
+    }
+
     public uint32 xid {
         get {
             return m_View != null ? m_View.xid : 0;

@@ -5183,3 +5183,20 @@
   )
 )
 
+;; Original typedef:
+;; typedef enum  {
+;; 	MAIA_INPUT_DEVICE_TYPE_NONE,
+;; 	MAIA_INPUT_DEVICE_TYPE_POINTER,
+;; 	MAIA_INPUT_DEVICE_TYPE_KEYBOARD
+;; } MaiaInputDeviceType;
+
+(define-enum-extended InputDeviceType
+  (in-module "Maia")
+  (c-name "MaiaInputDeviceType")
+  (values
+    '("none" "MAIA_INPUT_DEVICE_TYPE_NONE" "0")
+    '("pointer" "MAIA_INPUT_DEVICE_TYPE_POINTER" "1")
+    '("keyboard" "MAIA_INPUT_DEVICE_TYPE_KEYBOARD" "2")
+  )
+)
+

@@ -90,7 +90,7 @@ namespace Maia
 
                 _WRAP_METHOD(void get_extents(Rectangle& outRect), maia_graphic_region_get_extents)
                 _WRAP_METHOD(void set_extents(Rectangle inRect), maia_graphic_region_set_extents)
-                _WRAP_METHOD(int get_length (), maia_graphic_region_get_length)
+                _WRAP_METHOD(int size (), maia_graphic_region_get_length)
                 _WRAP_METHOD(bool empty (), maia_graphic_region_is_empty)
 
                 _IGNORE(maia_graphic_region_get)

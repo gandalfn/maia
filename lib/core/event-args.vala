@@ -62,6 +62,7 @@ public abstract class Maia.Core.EventArgs : GLib.Object, Core.Serializable
     // static properties
     private static int s_Sequence = 1;
     private static Set<ProtocolBuffer> s_EventArgsProtocolBuffers;
+    private static Map<string, string> s_EventArgsTypes;
 
     // properties
     private Protocol.Message? m_Message;
@@ -113,6 +114,45 @@ public abstract class Maia.Core.EventArgs : GLib.Object, Core.Serializable
         {
             Log.error (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Error on register protocol $inMessage for $(inTypeName): $(error.message)");
         }
+    }
+
+    public static void
+    register_type_name (string inTypeName, string inName)
+    {
+        if (s_EventArgsTypes == null)
+        {
+            s_EventArgsTypes = new Map<string, string> ();
+        }
+
+        s_EventArgsTypes[inTypeName] = inName;
+    }
+
+    internal static string
+    get_type_name (GLib.Type inType)
+    {
+        if (s_EventArgsTypes != null && inType.name () in s_EventArgsTypes)
+        {
+            return s_EventArgsTypes[inType.name ()];
+        }
+
+        return inType.name ();
+    }
+
+    internal static GLib.Type
+    get_type_from_name (string inName)
+    {
+//~         if (s_EventArgsTypes != null)
+//~         {
+//~             foreach (unowned Pair<string, string> pair in s_EventArgsTypes)
+//~             {
+//~                 if (pair.second == inName)
+//~                 {
+//~                     return GLib.Type.from_name (pair.first);
+//~                 }
+//~             }
+//~         }
+
+        return GLib.Type.from_name (inName);
     }
 
     // methods

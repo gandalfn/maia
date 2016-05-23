@@ -184,7 +184,7 @@ public class Maia.Core.EventBus : Object
             }
             else
             {
-                data = new GLib.Variant ("(subsiv)", inName, (uint32)inOwner, inNeedReply, inArgs.get_type ().name (), inArgs.sequence, inArgs.serialize);
+                data = new GLib.Variant ("(subsiv)", inName, (uint32)inOwner, inNeedReply, EventArgs.get_type_name (inArgs.get_type ()), inArgs.sequence, inArgs.serialize);
             }
             uint32 size = (uint32)data.get_size ();
             GLib.Object (message_type: MessageType.EVENT, message_size: size);
@@ -224,7 +224,7 @@ public class Maia.Core.EventBus : Object
                     data.get ("(&sub&siv)", null, null, null, out atype, out m_Sequence, out m_Args);
                     if (atype != "")
                     {
-                        m_ArgsType = GLib.Type.from_name (atype);
+                        m_ArgsType = EventArgs.get_type_from_name (atype);
                     }
                     else
                     {

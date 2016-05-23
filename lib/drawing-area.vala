@@ -126,7 +126,7 @@ public class Maia.DrawingArea : Group, ItemPackable, ItemFocusable
                         m_SelectedItem.damage.post ();
                     }
                 }
-
+                
                 m_SelectedItemState = SelectedItemState.NONE;
                 m_SelectedItem = value;
 
@@ -138,7 +138,10 @@ public class Maia.DrawingArea : Group, ItemPackable, ItemFocusable
                 {
                     m_SelectedItem.state = State.ACTIVE;
                     m_SelectedOldLayer = m_SelectedItem.layer;
-                    m_SelectedItem.layer = ((Item)last ()).layer + 1;
+                    if (!(m_SelectedItem is Shape))
+                    {
+                        m_SelectedItem.layer = ((Item)last ()).layer + 1;
+                    }
                     m_SelectedItemState = SelectedItemState.SELECTED;
 
                     if (m_SelectedItem is Arrow)
@@ -174,6 +177,11 @@ public class Maia.DrawingArea : Group, ItemPackable, ItemFocusable
     public double        selected_border            { get; set; default = 5.0; }
     public double        selected_border_line_width { get; set; default = 1.0; }
     public Graphic.Color selected_border_color      { get; set; default = new Graphic.Color (0, 0, 0); }
+
+    /**
+     * Touchscreen mode
+     */
+    public bool touchscreen_mode { get; set; default = false; }
 
     // static methods
     static construct
@@ -252,7 +260,10 @@ public class Maia.DrawingArea : Group, ItemPackable, ItemFocusable
 
             // Grab pointer and set invisible
             grab_pointer (this);
-            set_pointer_cursor (Cursor.BLANK_CURSOR);
+            if (!touchscreen_mode)
+            {
+                set_pointer_cursor (Cursor.BLANK_CURSOR);
+            }
         }
         else if ((m_SelectedItemState == SelectedItemState.SELECTED || m_SelectedItemState == SelectedItemState.MOVING) && m_SelectedItem.is_resizable)
         {
@@ -263,7 +274,10 @@ public class Maia.DrawingArea : Group, ItemPackable, ItemFocusable
                 set_pointer_cursor (Cursor.BLANK_CURSOR);
             }
 
-            m_SelectedItemState = SelectedItemState.RESIZING;
+            if (!touchscreen_mode)
+            {
+                m_SelectedItemState = SelectedItemState.RESIZING;
+            }
             m_AnchorPath = null;
         }
         else
@@ -273,7 +287,10 @@ public class Maia.DrawingArea : Group, ItemPackable, ItemFocusable
 
             // Ungrab pointer and restore cursor
             ungrab_pointer (this);
-            set_pointer_cursor (Cursor.TOP_LEFT_ARROW);
+            if (!touchscreen_mode)
+            {
+                set_pointer_cursor (Cursor.TOP_LEFT_ARROW);
+            }
         }
 
         // Damage item
@@ -334,7 +351,7 @@ public class Maia.DrawingArea : Group, ItemPackable, ItemFocusable
                 child_area_size.resize (selected_border * 4.0, selected_border * 4.0);
 
                 // If item is movable add anchor size
-                if (selected.is_movable || selected.is_resizable)
+                if ((selected.is_movable || selected.is_resizable) && !(selected is Shape))
                 {
                     Graphic.Point anchor_border = Graphic.Point (anchor_size, anchor_size);
                     child_area_pos.translate (anchor_border.invert ());
@@ -351,7 +368,6 @@ public class Maia.DrawingArea : Group, ItemPackable, ItemFocusable
             }
 
             // damage item
-            damaged_area.intersect (area);
             damage.post (damaged_area);
         }
     }
@@ -397,7 +413,7 @@ public class Maia.DrawingArea : Group, ItemPackable, ItemFocusable
                         ret = false;
                         GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
 
-                        // Set the selected item;
+                        // Set the selected item
                         if (item.is_movable || item.is_resizable || item.is_selectable)
                         {
                             selected = item;
@@ -414,6 +430,32 @@ public class Maia.DrawingArea : Group, ItemPackable, ItemFocusable
             {
                 selected = null;
                 grab_focus (this);
+            }
+        }
+        else
+        {
+            // parse child from last to first since item has sorted by layer
+            unowned Core.Object? child = last ();
+            while (child != null)
+            {
+                if (child is Item)
+                {
+                    unowned Item item = (Item)child;
+
+                    // Transform point to item coordinate space
+                    Graphic.Point point = convert_to_child_item_space (item, inPoint);
+
+                    // point under child
+                    if (item.button_press_event (inButton, point))
+                    {
+                        // event occurate under child stop signal
+                        ret = false;
+                        GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
+                        break;
+                    }
+                }
+
+                child = child.prev ();
             }
         }
 
@@ -627,7 +669,7 @@ public class Maia.DrawingArea : Group, ItemPackable, ItemFocusable
                     {
                         item.draw (inContext, child_damaged_area);
 
-                        if (item == selected && (item.is_movable || item.is_resizable))
+                        if (item == selected && (item.is_movable || item.is_resizable) && !(item is Shape))
                         {
                             if (m_SelectedItemState > SelectedItemState.SELECTED)
                             {

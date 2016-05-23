@@ -230,6 +230,11 @@ public class Maia.Popup : Group
         m_Window.position_policy = position_policy;
         m_Window.weak_ref (on_window_destroyed);
 
+        if (window != null)
+        {
+            m_Window.input_devices = window.input_devices;
+        }
+
         // plug manifest path
         plug_property ("manifest-path", m_Window, "manifest-path");
 
@@ -333,6 +338,10 @@ public class Maia.Popup : Group
         }
         if (m_Window != null)
         {
+            if (window != null)
+            {
+                m_Window.input_devices = window.input_devices;
+            }
             GLib.Signal.emit_by_name (m_Window, "notify::window");
         }
     }

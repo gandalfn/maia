@@ -50,6 +50,16 @@ namespace Maia
                 _MEMBER_SET(x, x, double, double)
                 _MEMBER_GET(y, y, double, double)
                 _MEMBER_SET(y, y, double, double)
+
+                inline bool operator== (const Point& inOther)
+                {
+                    return get_x () == inOther.get_x () && get_y () == inOther.get_y ();
+                }
+
+                inline bool operator!= (const Point& inOther)
+                {
+                    return get_x () != inOther.get_x () || get_y () != inOther.get_y ();
+                }
         };
     }
 }

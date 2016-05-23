@@ -78,6 +78,17 @@ public class Maia.Rectangle : Item, ItemMovable, ItemResizable, ItemFocusable
     }
 
     internal override void
+    on_gesture (Gesture.Notification inNotification)
+    {
+        switch (inNotification.gesture_type)
+        {
+            case Gesture.Type.PRESS:
+                inNotification.proceed = true;
+                break;
+        }
+    }
+
+    internal override void
     paint (Graphic.Context inContext, Graphic.Region inArea) throws Graphic.Error
     {
         var path = new Graphic.Path.from_region (area);

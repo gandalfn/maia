@@ -17,6 +17,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_CORE_TYPE_SET);
     std::cout << get_defs (MAIA_CORE_TYPE_PAIR);
     std::cout << get_defs (MAIA_CORE_TYPE_MAP);
+    std::cout << get_defs (MAIA_CORE_TYPE_LIST);
     std::cout << get_defs (MAIA_CORE_TYPE_TIMELINE);
     std::cout << get_defs (MAIA_CORE_TIMELINE_TYPE_NEW_FRAME_NOTIFICATION);
     std::cout << get_defs (MAIA_CORE_TYPE_ANIMATOR);
@@ -48,6 +49,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_LINE);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_RECTANGLE);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_REGION);
+    std::cout << get_defs (MAIA_GRAPHIC_REGION_TYPE_ITERATOR);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_SIZE);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_SURFACE);
     std::cout << get_defs (MAIA_GRAPHIC_TYPE_TRANSFORM);
@@ -151,6 +153,9 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_MOUSE_EVENT_ARGS);
     std::cout << get_defs (MAIA_GESTURE_TYPE_NOTIFICATION);
     std::cout << get_defs (MAIA_TYPE_FOCUS_GROUP);
+    std::cout << get_defs (MAIA_TYPE_INPUT_DEVICES);
+    std::cout << get_defs (MAIA_INPUT_DEVICES_TYPE_ITERATOR);
+    std::cout << get_defs (MAIA_TYPE_INPUT_DEVICE);
 
     return 0;
 }

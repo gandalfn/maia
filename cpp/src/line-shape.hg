@@ -34,6 +34,12 @@ namespace Maia
 
             explicit LineShape(const Glib::ustring& inId);
 
+            bool begin_clicked () const;
+            void set_begin_clicked (bool inClicked);
+
+            bool end_clicked () const;
+            void set_end_clicked (bool inClicked);
+
         public:
             static Glib::RefPtr<LineShape> create (const Glib::ustring& inId)
             {

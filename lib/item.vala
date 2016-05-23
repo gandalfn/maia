@@ -944,7 +944,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         {
             damage.post ();
             geometry = new Graphic.Region (Graphic.Rectangle (position.x, position.y, size.width, size.height));
-            repair.post ();
+            repair_area ();
             damage.post ();
         }
         else if (geometry != null)
@@ -1424,7 +1424,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         {
             GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
         }
-        else if ((this is ItemFocusable) && (this as ItemFocusable).can_focus && inButton == 1)
+        else if (inButton == 1 && this is ItemFocusable && (this as ItemFocusable).can_focus)
         {
             grab_focus (this);
         }

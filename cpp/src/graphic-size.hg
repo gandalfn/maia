@@ -50,6 +50,11 @@ namespace Maia
                     return maia_graphic_size_equal (&gobject_, const_cast <MaiaGraphicSize*> (&rhs.gobject_));
                 }
 
+                inline bool operator!= (const Size& rhs)
+                {
+                    return !maia_graphic_size_equal (&gobject_, const_cast <MaiaGraphicSize*> (&rhs.gobject_));
+                }
+
                 bool contains (const Point& inPoint);
 
                 Glib::ustring to_string ();

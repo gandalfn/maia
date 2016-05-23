@@ -7,6 +7,11 @@ _CONVERSION(`const Core::Array<Document>&',`MaiaCoreArray*',const_cast<MaiaCoreA
 _CONVERSION(`MaiaCoreArray*',`const Core::Array<Document>&',`Maia::Core::Array<Document> (MAIA_CORE_ARRAY ($3), true)')
 _CONVERSION(`MaiaCoreArray*',`Core::Array<Document>',`Maia::Core::Array<Document> (MAIA_CORE_ARRAY ($3), true)')
 
+_CONVERSION(`Core::List<Document>',`MaiaCoreList*', MAIA_CORE_List($3.gobj()))
+_CONVERSION(`const Core::List<Document>&',`MaiaCoreList*',const_cast<MaiaCoreList*> (MAIA_CORE_List ($3.gobj())))
+_CONVERSION(`MaiaCoreList*',`const Core::List<InputDevice>&',`Maia::Core::List<InputDevice> (MAIA_CORE_List ($3), true)')
+_CONVERSION(`MaiaCoreList*',`Core::List<InputDevice>',`Maia::Core::List<InputDevice> (MAIA_CORE_List ($3), true)')
+
 _CONVERSION(`Core::Set<Style>',`MaiaCoreSet*', MAIA_CORE_SET($3.gobj()))
 _CONVERSION(`const Core::Set<Style>&',`MaiaCoreSet*',const_cast<MaiaCoreSet*> (MAIA_CORE_SET ($3.gobj())))
 _CONVERSION(`MaiaCoreSet*',`const Core::Set<Style>&',`Maia::Core::Set<Style> (MAIA_CORE_SET ($3), true)')
@@ -526,6 +531,19 @@ _CONVERSION(`const Glib::RefPtr<FocusGroup>&',`MaiaFocusGroup*',__CONVERT_REFPTR
 _CONVERSION(`MaiaFocusGroup*',`const Glib::RefPtr<FocusGroup>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaFocusGroup*',`Glib::RefPtr<FocusGroup>',`Glib::wrap($3)')
 
+_CONVERSION(`Glib::RefPtr<InputDevices>',`MaiaInputDevices*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<InputDevices>&',`MaiaInputDevices*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaInputDevices*',`const Glib::RefPtr<InputDevices>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaInputDevices*',`Glib::RefPtr<InputDevices>',`Glib::wrap($3)')
+
+_CONVERSION(`MaiaInputDevicesIterator*',`InputDevices::iterator',`Glib::wrap($3)')
+
+
+_CONVERSION(`Glib::RefPtr<InputDevice>',`MaiaInputDevice*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<InputDevice>&',`MaiaInputDevice*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaInputDevice*',`const Glib::RefPtr<InputDevice>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaInputDevice*',`Glib::RefPtr<InputDevice>',`Glib::wrap($3)')
+
 _CONVERSION(`ScrollViewPolicy',`MaiaScrollViewPolicy',`(MaiaScrollViewPolicy)$3')
 _CONVERSION(`MaiaScrollViewPolicy',`ScrollViewPolicy',`(ScrollViewPolicy)$3')
 
@@ -592,6 +610,9 @@ _CONVERSION(`MaiaShapeCaliper',`Shape::Caliper',`(Shape::Caliper)$3')
 _CONVERSION(`Gesture::Type',`MaiaGestureType',`(MaiaGestureType)$3')
 _CONVERSION(`MaiaGestureType',`Gesture::Type',`(Gesture::Type)$3')
 
+_CONVERSION(`InputDevice::Type',`MaiaInputDeviceType',`(MaiaInputDeviceType)$3')
+_CONVERSION(`MaiaInputDeviceType',`InputDevice::Type',`(InputDevice::Type)$3')
+
 _CONV_ENUM(MaiaLog,Level)
 _CONV_ENUM(MaiaLog,Category)
 _CONV_ENUM(MaiaCoreParser,Token)
@@ -631,3 +652,4 @@ _CONV_ENUM(MaiaGrid,Layout)
 _CONV_ENUM(MaiaNotebook,Transition)
 _CONV_ENUM(MaiaShape,Caliper)
 _CONV_ENUM(MaiaGesture,Type)
+_CONV_ENUM(MaiaInputDevice,Type)

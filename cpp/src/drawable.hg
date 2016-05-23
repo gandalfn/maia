@@ -119,7 +119,16 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<DrawableDamageNotification> damage () const, maia_drawable_get_damage, refreturn)
             _WRAP_METHOD(Glib::RefPtr<DrawableRepairNotification> repair () const, maia_drawable_get_repair, refreturn)
 
+            void damage_area ()
+            {
+                maia_drawable_damage_area (gobj (), 0);
+            }
             _WRAP_METHOD(void damage_area (const Glib::RefPtr<Graphic::Region>& inArea), maia_drawable_damage_area)
+
+            void repair_area ()
+            {
+                maia_drawable_repair_area (gobj (), 0);
+            }
             _WRAP_METHOD(void repair_area (const Glib::RefPtr<Graphic::Region>& inArea), maia_drawable_repair_area)
 
             _WRAP_METHOD(void convert_to_child_item_space (const Glib::RefPtr<Drawable>& inChild, const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_drawable_convert_to_child_item_space)

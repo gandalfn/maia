@@ -90,6 +90,8 @@
 
 ;; MaiaCoreMap is neither a GObject nor a GInterface. Not checked for signals and properties.
 
+;; MaiaCoreList is neither a GObject nor a GInterface. Not checked for signals and properties.
+
 ;; From MaiaCoreTimeline
 
 (define-property direction
@@ -815,6 +817,8 @@
   (writable #f)
   (construct-only #f)
 )
+
+;; MaiaGraphicRegionIterator is neither a GObject nor a GInterface. Not checked for signals and properties.
 
 ;; MaiaGraphicSize is neither a GObject nor a GInterface. Not checked for signals and properties.
 
@@ -2278,6 +2282,15 @@
   (of-object "MaiaDrawingArea")
   (prop-type "GParamObject")
   (docs "selected-border-color")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property touchscreen-mode
+  (of-object "MaiaDrawingArea")
+  (prop-type "GParamBoolean")
+  (docs "touchscreen-mode")
   (readable #t)
   (writable #t)
   (construct-only #f)
@@ -6044,6 +6057,15 @@
   (construct-only #f)
 )
 
+(define-property input-devices
+  (of-object "MaiaWindow")
+  (prop-type "GParamObject")
+  (docs "input-devices")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 (define-property damage-event
   (of-object "MaiaWindow")
   (prop-type "GParamObject")
@@ -9100,6 +9122,48 @@
   (docs "current")
   (readable #t)
   (writable #f)
+  (construct-only #f)
+)
+
+;; From MaiaInputDevices
+
+(define-property length
+  (of-object "MaiaInputDevices")
+  (prop-type "GParamInt")
+  (docs "length")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+;; MaiaInputDevicesIterator is neither a GObject nor a GInterface. Not checked for signals and properties.
+
+;; From MaiaInputDevice
+
+(define-property name
+  (of-object "MaiaInputDevice")
+  (prop-type "GParamString")
+  (docs "name")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property device-type
+  (of-object "MaiaInputDevice")
+  (prop-type "GParamEnum")
+  (docs "device-type")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property master
+  (of-object "MaiaInputDevice")
+  (prop-type "GParamBoolean")
+  (docs "master")
+  (readable #t)
+  (writable #t)
   (construct-only #f)
 )
 

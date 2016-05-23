@@ -29,6 +29,7 @@ libmaia_xcb_la_VALAFLAGS = \
     --pkg=xcb-cursorfont \
     --pkg=xcb-glx \
     --pkg=xcb-damage \
+    --pkg=xcb-xinput \
     --pkg=glx
 
 libmaia_xcb_la_SOURCES = \
@@ -50,7 +51,9 @@ libmaia_xcb_la_SOURCES = \
     window.vala \
     renderer.vala \
     gl-renderer.vala \
-    clone-renderer.vala
+    clone-renderer.vala \
+    input-devices.vala \
+    input-device.vala
 
 libmaia_xcb_la_LIBADD = \
     $(MAIA_XCB_LIBS)

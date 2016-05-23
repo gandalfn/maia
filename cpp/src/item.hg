@@ -171,11 +171,25 @@ namespace Maia
             {
                 g_signal_emit_by_name (gobj (), "grab-focus", const_cast<MaiaItem*> (inpItem->gobj ()));
             }
-            
+
+            bool grab_pointer ()
+            {
+                gboolean ret = false;
+                g_signal_emit_by_name (gobj (), "grab-pointer", gobj (), &ret);
+                return (bool)ret;
+            }
+
             bool grab_pointer (const Glib::RefPtr<Item>& inpItem)
             {
                 gboolean ret = false;
                 g_signal_emit_by_name (gobj (), "grab-pointer", const_cast<MaiaItem*> (inpItem->gobj ()), &ret);
+                return (bool)ret;
+            }
+
+            bool ungrab_pointer ()
+            {
+                gboolean ret = false;
+                g_signal_emit_by_name (gobj (), "ungrab-pointer", gobj (), &ret);
                 return (bool)ret;
             }
 
@@ -186,10 +200,24 @@ namespace Maia
                 return (bool)ret;
             }
 
+            bool grab_keyboard ()
+            {
+                gboolean ret = false;
+                g_signal_emit_by_name (gobj (), "grab-keyboard", gobj (), &ret);
+                return (bool)ret;
+            }
+
             bool grab_keyboard (const Glib::RefPtr<Item>& inpItem)
             {
                 gboolean ret = false;
                 g_signal_emit_by_name (gobj (), "grab-keyboard", const_cast<MaiaItem*> (inpItem->gobj ()), &ret);
+                return (bool)ret;
+            }
+
+            bool ungrab_keyboard ()
+            {
+                gboolean ret = false;
+                g_signal_emit_by_name (gobj (), "ungrab-keyboard", gobj (), &ret);
                 return (bool)ret;
             }
 
@@ -234,6 +262,11 @@ namespace Maia
             void key_release_event (Modifier inModifier, Key inKey, guint inChar)
             {
                 g_signal_emit_by_name (gobj (), "key-release-event", inModifier, inKey, inChar);
+            }
+
+            void move_pointer (const Maia::Graphic::Point& inPosition)
+            {
+                g_signal_emit_by_name (gobj (), "move-pointer", inPosition.gobj ());
             }
 
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3, true)')

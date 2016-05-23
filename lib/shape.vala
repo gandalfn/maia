@@ -116,4 +116,16 @@ public abstract class Maia.Shape : Item, ItemMovable, ItemResizable, ItemFocusab
     {
         return false;
     }
+
+    internal override void
+    on_gesture (Gesture.Notification inNotification)
+    {
+        switch (inNotification.gesture_type)
+        {
+            case Gesture.Type.PRESS:
+            case Gesture.Type.RELEASE:
+                inNotification.proceed = true;
+                break;
+        }
+    }
 }

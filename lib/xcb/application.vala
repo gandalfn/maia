@@ -88,6 +88,7 @@ internal class Maia.Xcb.Application : Core.Object
     // properties
     private global::Xcb.Connection            m_Connection;
     private int                               m_DefaultScreen;
+    private InputDevices                      m_InputDevices;
     private Engine                            m_Engine;
     private Atoms                             m_Atoms;
     private global::Xcb.Util.CursorContext    m_Cursors;
@@ -99,6 +100,12 @@ internal class Maia.Xcb.Application : Core.Object
     public global::Xcb.Connection connection {
         get {
             return m_Connection;
+        }
+    }
+
+    public unowned InputDevices input_devices {
+        get {
+            return m_InputDevices;
         }
     }
 
@@ -150,6 +157,9 @@ internal class Maia.Xcb.Application : Core.Object
         // Create window list
         m_Views = new Core.Set<unowned View> ();
         m_Views.compare_func = View.compare;
+
+        // Create input device list
+        m_InputDevices = new InputDevices (m_Connection);
     }
 
     ~Application ()

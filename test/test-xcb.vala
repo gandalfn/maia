@@ -128,6 +128,28 @@ void main (string[] args)
 
         window.destroy_event.subscribe (() => { application.quit (); });
 
+        Maia.Core.List<unowned Maia.InputDevice> devices = new Maia.Core.List<unowned Maia.InputDevice> ();
+//~         var input_devices = new Maia.InputDevices ();
+//~         foreach (var device in input_devices)
+//~         {
+//~             print (@"device: $(device.name) master:$(device.master)\n");
+
+//~             if (device.name == "Mt-Manager Pointer - Elo Touch Solutions - Elo Touch Solutions Pcap USB Interfa" ||
+//~                 device.device_type == Maia.InputDevice.Type.KEYBOARD)
+//~             {
+//~                 print (@"device: $device master:$(device.master)\n");
+//~                 device.master = true;
+//~                 devices.insert (device);
+//~             }
+//~         }
+        
+//~         window.input_devices = devices;
+
+        window.grab_key (Maia.Modifier.NONE, Maia.Key.F2);
+        window.key_press_event.connect (() => {
+            print(@"key pressed\n");
+        });
+
         var cancel = window.find (GLib.Quark.from_string ("cancel")) as Maia.Button;
         cancel.clicked.subscribe (() => {
             print("quit\n");

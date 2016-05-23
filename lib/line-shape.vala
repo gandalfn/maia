@@ -22,8 +22,8 @@ public class Maia.LineShape : Shape
     // properties
     private Graphic.Point m_Begin;
     private Graphic.Point m_End;
-    private bool m_BeginClicked = false;
-    private bool m_EndClicked = false;
+    protected bool m_BeginClicked = false;
+    protected bool m_EndClicked = false;
 
     // accessors
     internal override string tag {
@@ -241,13 +241,13 @@ public class Maia.LineShape : Shape
                 if (m_BeginClicked && (fill_pattern[state] as Graphic.Color) != null)
                 {
                     var color = fill_pattern[state] as Graphic.Color;
-                    var gradiant = new Graphic.RadialGradient (begin_point, 0, begin_point, double.max (caliper_size.width + border / 2.0, caliper_size.height + border / 2.0));
+                    var gradiant = new Graphic.RadialGradient (begin_point, 0, begin_point, double.max (caliper_size.width + border / 4.0, caliper_size.height + border / 4.0));
                     gradiant.add (new Graphic.Gradient.ColorStop (0, color));
-                    gradiant.add (new Graphic.Gradient.ColorStop (0.8, new Graphic.Color (color.red, color.green, color.blue, 0.4)));
+                    gradiant.add (new Graphic.Gradient.ColorStop (0.8, new Graphic.Color (color.red, color.green, color.blue, 0.3)));
                     gradiant.add (new Graphic.Gradient.ColorStop (1, new Graphic.Color (color.red, color.green, color.blue, 0.0)));
                     inContext.pattern = gradiant;
                     var path = new Graphic.Path ();
-                    path.arc (begin_point.x, begin_point.y, caliper_size.width + border / 2.0, caliper_size.height + border / 2.0, 0, 2* GLib.Math.PI);
+                    path.arc (begin_point.x, begin_point.y, caliper_size.width + border / 4.0, caliper_size.height + border / 4.0, 0, 2* GLib.Math.PI);
                     inContext.fill (path);
                 }
 

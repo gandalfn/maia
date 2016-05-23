@@ -35,6 +35,8 @@ namespace Maia.Xcb
         Maia.Core.Any.delegate (typeof (Maia.Graphic.GLRenderer), typeof (Maia.Xcb.GLRenderer));
         Maia.Core.Any.delegate (typeof (Maia.Graphic.CloneRenderer), typeof (Maia.Xcb.CloneRenderer));
         Maia.Core.Any.delegate (typeof (Maia.Graphic.CloneRenderer.Looper), typeof (Maia.Xcb.CloneRenderer.Looper));
+        Maia.Core.Any.delegate (typeof (Maia.InputDevices), typeof (Maia.Xcb.InputDevices));
+        Maia.Core.Any.delegate (typeof (Maia.InputDevice), typeof (Maia.Xcb.InputDevice));
 
         Maia.Core.Any.delegate (GLib.Type.from_name ("gtkmm__MaiaGraphicRenderer"), typeof (Maia.Xcb.Renderer));
         Maia.Core.Any.delegate (GLib.Type.from_name ("gtkmm__MaiaGraphicGLRenderer"), typeof (Maia.Xcb.GLRenderer));
@@ -58,6 +60,8 @@ namespace Maia.Xcb
         Maia.Core.Any.undelegate (typeof (Maia.Graphic.GLRenderer));
         Maia.Core.Any.undelegate (typeof (Maia.Graphic.CloneRenderer));
         Maia.Core.Any.undelegate (typeof (Maia.Graphic.CloneRenderer.Looper));
+        Maia.Core.Any.undelegate (typeof (Maia.InputDevices));
+        Maia.Core.Any.undelegate (typeof (Maia.InputDevice));
 
         Maia.Core.Any.undelegate (GLib.Type.from_name ("gtkmm__MaiaGraphicRenderer"));
         Maia.Core.Any.undelegate (GLib.Type.from_name ("gtkmm__MaiaGraphicGLRenderer"));

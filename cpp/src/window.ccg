@@ -19,11 +19,46 @@
 
 #include <maia.h>
 #include <maiamm/popup.h>
+#include <maiamm/core-list.h>
 
 namespace Maia
 {
     Window::Window(const Glib::ustring& inId) :
         _CONSTRUCT("id", g_quark_from_string (inId.c_str ()))
     {
+    }
+
+    std::vector<Glib::RefPtr<InputDevice>>
+    Window::input_devices () const
+    {
+        std::vector<Glib::RefPtr<InputDevice>> ret;
+
+        MaiaCoreList* pList = maia_window_get_input_devices (const_cast<MaiaWindow*> (gobj ()));
+        if (pList)
+        {
+            MaiaCoreIterator* iter = maia_core_collection_iterator ((MaiaCoreCollection*)pList);
+            while (maia_core_iterator_next (iter))
+            {
+                MaiaInputDevice* device = (MaiaInputDevice*)maia_core_iterator_get (iter);
+                ret.push_back (Glib::wrap (device, true));
+            }
+            maia_core_iterator_unref (iter);
+            maia_core_collection_unref ((MaiaCoreCollection*)pList);
+        }
+
+        return ret;
+    }
+
+    void
+    Window::set_input_devices (const std::vector<Glib::RefPtr<InputDevice>>& inDevices)
+    {
+        MaiaCoreList* pList = maia_core_list_new (MAIA_TYPE_INPUT_DEVICE, NULL, NULL);
+        for (auto device : inDevices)
+        {
+            maia_core_collection_insert ((MaiaCoreCollection*)pList, device->gobj ());
+        }
+
+        maia_window_set_input_devices (gobj (), pList);
+        maia_core_collection_unref ((MaiaCoreCollection*)pList);
     }
 }

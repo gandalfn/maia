@@ -113,7 +113,6 @@ internal class Maia.Xcb.View : Drawable
     }
 
     // properties
-    private global::Xcb.Util.KeySymbols m_Symbols;
     private Graphic.Transform           m_Transform = new Graphic.Transform.identity ();
     private Graphic.Transform           m_DeviceTransform = new Graphic.Transform.identity ();
     private unowned View?               m_Parent;
@@ -445,46 +444,53 @@ internal class Maia.Xcb.View : Drawable
 
     public bool managed { get; set; default = true; }
 
-    // static methods
-    private static global::Xcb.ModMask
-    modifier_to_mod_mask (Modifier inModifier)
-    {
-        global::Xcb.ModMask ret = (global::Xcb.ModMask)0;
+    [CCode (notify = false)]
+    public Core.List<unowned Maia.InputDevice> input_devices {
+        owned get {
+            Core.List<unowned Maia.InputDevice> ret = new Core.List<unowned Maia.InputDevice> ();
 
-        if (Maia.Modifier.SHIFT in inModifier)
-        {
-            ret |= global::Xcb.ModMask.SHIFT;
+            foreach (unowned Maia.InputDevice device in Maia.Xcb.application.input_devices)
+            {
+                if (this in (device as InputDevice))
+                {
+                    ret.insert (device);
+                }
+            }
+
+            return ret;
         }
+        set {
+            Maia.Xcb.application.input_devices.unwatch_events (this);
+            foreach (unowned Maia.InputDevice device in input_devices)
+            {
+                (device as InputDevice).unassociate_view (this);
+            }
 
-        if (Maia.Modifier.CONTROL in inModifier)
-        {
-            ret |= global::Xcb.ModMask.CONTROL;
+            foreach (unowned Maia.InputDevice device in value)
+            {
+                (device as InputDevice).associate_view (this);
+            }
+            Maia.Xcb.application.input_devices.watch_events (this);
         }
-
-        if (Maia.Modifier.ALT in inModifier)
-        {
-            ret |= global::Xcb.ModMask.ONE;
-        }
-
-        if (Maia.Modifier.SUPER in inModifier)
-        {
-            ret |= global::Xcb.ModMask.FOUR;
-        }
-
-        return ret;
     }
 
     // methods
     construct
     {
-        // Get keyboard mapping
-        m_Symbols = new global::Xcb.Util.KeySymbols (connection);
-
         // create siblings windows
         m_Siblings = new Core.Array<Sibling> ();
 
         // register has known windows
         Maia.Xcb.application.register_view (this);
+
+        // associate view to master input device
+        foreach (unowned Maia.InputDevice device in Maia.Xcb.application.input_devices)
+        {
+            if (device.master)
+            {
+                (device as InputDevice).associate_view (this);
+            }
+        }
     }
 
     public View (int inWidth, int inHeight)
@@ -703,13 +709,7 @@ internal class Maia.Xcb.View : Drawable
 
             uint32 event_mask = global::Xcb.EventMask.PROPERTY_CHANGE     |
                                 global::Xcb.EventMask.EXPOSURE            |
-                                global::Xcb.EventMask.STRUCTURE_NOTIFY    |
-                                global::Xcb.EventMask.BUTTON_PRESS        |
-                                global::Xcb.EventMask.BUTTON_RELEASE      |
-                                global::Xcb.EventMask.KEY_PRESS           |
-                                global::Xcb.EventMask.KEY_RELEASE         |
-                                global::Xcb.EventMask.POINTER_MOTION      |
-                                global::Xcb.EventMask.POINTER_MOTION_HINT;
+                                global::Xcb.EventMask.STRUCTURE_NOTIFY;
 
             if (visual != screen.root_visual)
             {
@@ -807,6 +807,9 @@ internal class Maia.Xcb.View : Drawable
 
                 // send mapped signal
                 mapped ();
+
+                // watch input devices events
+                Maia.Xcb.application.input_devices.watch_events (this);
             }
         }
 
@@ -815,6 +818,16 @@ internal class Maia.Xcb.View : Drawable
         {
             // Map window
             application.push_request (new MapRequest (this));
+
+            if (m_NbGrabsPointer > 0)
+            {
+                Maia.Xcb.application.input_devices.grab_pointer (this);
+            }
+
+            if (m_NbGrabsKeyboard > 0)
+            {
+                Maia.Xcb.application.input_devices.grab_keyboard (this);
+            }
         }
 
         m_BackBuffer = null;
@@ -846,14 +859,10 @@ internal class Maia.Xcb.View : Drawable
     {
         if (m_NbGrabsPointer == 0)
         {
-            ((global::Xcb.Window)xid).grab_pointer (connection, true,
-                                                    global::Xcb.EventMask.BUTTON_PRESS        |
-                                                    global::Xcb.EventMask.BUTTON_RELEASE      |
-                                                    global::Xcb.EventMask.POINTER_MOTION,
-                                                    global::Xcb.GrabMode.ASYNC,
-                                                    global::Xcb.GrabMode.ASYNC,
-                                                    inConfineTo ? (global::Xcb.Window)xid : global::Xcb.NONE,
-                                                    global::Xcb.NONE, global::Xcb.CURRENT_TIME);
+            if (is_mapped)
+            {
+                Maia.Xcb.application.input_devices.grab_pointer (this);
+            }
         }
         m_NbGrabsPointer++;
     }
@@ -865,7 +874,7 @@ internal class Maia.Xcb.View : Drawable
 
         if (m_NbGrabsPointer == 0)
         {
-            connection.ungrab_pointer (global::Xcb.CURRENT_TIME);
+            Maia.Xcb.application.input_devices.ungrab_pointer (this);
         }
     }
 
@@ -874,10 +883,10 @@ internal class Maia.Xcb.View : Drawable
     {
         if (m_NbGrabsKeyboard == 0)
         {
-            ((global::Xcb.Window)xid).grab_keyboard (connection, true,
-                                                     global::Xcb.CURRENT_TIME,
-                                                     global::Xcb.GrabMode.ASYNC,
-                                                     global::Xcb.GrabMode.ASYNC);
+            if (is_mapped)
+            {
+                Maia.Xcb.application.input_devices.grab_keyboard (this);
+            }
         }
         m_NbGrabsKeyboard++;
     }
@@ -889,43 +898,27 @@ internal class Maia.Xcb.View : Drawable
 
         if (m_NbGrabsKeyboard == 0)
         {
-            connection.ungrab_keyboard (global::Xcb.CURRENT_TIME);
+            Maia.Xcb.application.input_devices.ungrab_keyboard (this);
         }
     }
 
     public void
     grab_key (Modifier inModifier, Key inKey)
     {
-        global::Xcb.ModMask mask = modifier_to_mod_mask (inModifier);
-        global::Xcb.Keysym keysym = convert_key_to_xcb_keysym (inKey);
-        global::Xcb.Keycode[]? keycode = m_Symbols.get_keycode (keysym);
-
-        if (keycode != null)
+        if (is_mapped)
         {
-            var cookie = ((global::Xcb.Window)xid).grab_key_checked (connection, true, mask, keycode[0], global::Xcb.GrabMode.ASYNC, global::Xcb.GrabMode.ASYNC);
-            global::Xcb.GenericError? err = connection.request_check (cookie);
-            if (err != null)
-            {
-                Log.critical (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, @"Error on grab key $(err.error_code)");
-            }
+            grab_keyboard ();
+            Maia.Xcb.application.input_devices.grab_key (this, inModifier, inKey);
         }
     }
 
     public void
     ungrab_key (Modifier inModifier, Key inKey)
     {
-        global::Xcb.ModMask mask = modifier_to_mod_mask (inModifier);
-        global::Xcb.Keysym keysym = convert_key_to_xcb_keysym (inKey);
-        global::Xcb.Keycode[]? keycode = m_Symbols.get_keycode (keysym);
-
-        if (keycode != null)
+        if (is_mapped)
         {
-            var cookie = ((global::Xcb.Window)xid).ungrab_key_checked (connection, keycode[0], mask);
-            global::Xcb.GenericError? err = connection.request_check (cookie);
-            if (err != null)
-            {
-                Log.critical (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, @"Error on ungrab key $(err.error_code)");
-            }
+            ungrab_keyboard ();
+            Maia.Xcb.application.input_devices.ungrab_key (this, inModifier, inKey);
         }
     }
 
@@ -942,13 +935,7 @@ internal class Maia.Xcb.View : Drawable
     public void
     move_pointer (Graphic.Point inPosition)
     {
-        var view_size = size;
-        view_size.transform (device_transform);
-
-        ((global::Xcb.Window)xid).warp_pointer (connection, (global::Xcb.Window)xid, 0, 0,
-                                                (uint16)GLib.Math.ceil (view_size.width),
-                                                (uint16)GLib.Math.ceil (view_size.height),
-                                                (int16)inPosition.x, (int16)inPosition.y);
+        Maia.Xcb.application.input_devices.wrap_pointer (this, inPosition);
         connection.flush ();
     }
 

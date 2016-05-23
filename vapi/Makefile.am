@@ -32,6 +32,8 @@ noinst_DATA = \
     xcb-keysyms.vapi \
     xcb-cursor.vapi \
     xcb-cursorfont.vapi \
+    xcb-xinput.deps \
+    xcb-xinput.vapi \
     gl.vapi \
     glx.vapi \
     cairo.vapi \

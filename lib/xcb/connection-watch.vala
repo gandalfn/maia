@@ -25,6 +25,8 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
     private global::Xcb.GenericEvent?      m_LastEvent = null;
     private bool                           m_DamagePresent = false;
     private uint8                          m_DamageFirstEvent = 0;
+    private bool                           m_XInputPresent = false;
+    private uint8                          m_XInputFirstEvent = 0;
 
     // methods
     public ConnectionWatch (global::Xcb.Connection inConnection)
@@ -44,6 +46,12 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
             ((global::Xcb.Damage.Connection)m_Connection).query_version (global::Xcb.Damage.MAJOR_VERSION, global::Xcb.Damage.MINOR_VERSION);
         }
 
+        extension_reply = inConnection.get_extension_data (ref global::Xcb.Input.extension);
+        if (extension_reply != null && extension_reply.present)
+        {
+            m_XInputPresent = true;
+            m_XInputFirstEvent = extension_reply.first_event;
+        }
 
         // Get keyboard mapping
         m_Symbols = new global::Xcb.Util.KeySymbols (m_Connection);
@@ -63,7 +71,7 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
     }
 
     private void
-    send_keyboard_event (global::Xcb.Window inWindow, bool inPress, global::Xcb.KeyButMask inMask, global::Xcb.Keycode inCode)
+    send_keyboard_event (global::Xcb.Window inWindow, bool inPress, uint32 inMask, uint32 inCode)
     {
         Maia.Modifier modifier = Maia.Modifier.NONE;
 
@@ -106,12 +114,12 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
             col += 4;
         }
         // Verr num
-        if (global::Xcb.Util.is_keypad_key (m_Symbols[inCode, 0]) &&
+        if (global::Xcb.Util.is_keypad_key (m_Symbols[(global::Xcb.Keycode)inCode, 0]) &&
             (inMask & global::Xcb.KeyButMask.MOD_2) == global::Xcb.KeyButMask.MOD_2)
             col++;
 
         // Get the keysym code with the modifier
-        global::Xcb.Keysym keysym = m_Symbols[inCode, col];
+        global::Xcb.Keysym keysym = m_Symbols[(global::Xcb.Keycode)inCode, col];
         // convert keysym to maia key
         Maia.Key key = convert_xcb_keysym_to_key (keysym);
         // convert keysym to unichar
@@ -285,6 +293,62 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
                     m_Symbols.refresh_keyboard_mapping (evt_mapping_notify);
                     break;
 
+                // GEEvent
+                case global::Xcb.EventType.GE_GENERIC:
+                    unowned global::Xcb.GEEvent? ge_event = (global::Xcb.GEEvent?)m_LastEvent;
+
+                    switch (ge_event.event_type)
+                    {
+                        case global::Xcb.Input.EventType.BUTTON_PRESS:
+                            unowned global::Xcb.Input.ButtonPressEvent? evt_button_press = (global::Xcb.Input.ButtonPressEvent?)m_LastEvent;
+
+                            // send event mouse
+                            Core.EventBus.default.publish ("mouse", ((int)evt_button_press.event).to_pointer (),
+                                                           new MouseEventArgs (MouseEventArgs.EventFlags.BUTTON_PRESS,
+                                                                               (uint8)evt_button_press.detail,
+                                                                               evt_button_press.event_x >> 16,
+                                                                               evt_button_press.event_y >> 16));
+                            break;
+
+                        case global::Xcb.Input.EventType.BUTTON_RELEASE:
+                            unowned global::Xcb.Input.ButtonReleaseEvent? evt_button_release = (global::Xcb.Input.ButtonReleaseEvent?)m_LastEvent;
+
+                            // send event mouse
+                            Core.EventBus.default.publish ("mouse", ((int)evt_button_release.event).to_pointer (),
+                                                           new MouseEventArgs (MouseEventArgs.EventFlags.BUTTON_RELEASE,
+                                                                               (uint8)evt_button_release.detail,
+                                                                               evt_button_release.event_x >> 16,
+                                                                               evt_button_release.event_y >> 16));
+                            break;
+
+                        case global::Xcb.Input.EventType.MOTION:
+                            unowned global::Xcb.Input.MotionEvent? evt_motion_notify = (global::Xcb.Input.MotionEvent?)m_LastEvent;
+
+                            // Add motion event in compressed map events
+                            motions[(int)evt_motion_notify.event] = new MouseEventArgs (MouseEventArgs.EventFlags.MOTION,
+                                                                                        0,
+                                                                                        evt_motion_notify.event_x >> 16,
+                                                                                        evt_motion_notify.event_y >> 16);
+                            break;
+
+                        // key press event
+                        case global::Xcb.Input.EventType.DEVICE_KEY_PRESS:
+                        case global::Xcb.Input.EventType.KEY_PRESS:
+                            unowned global::Xcb.Input.KeyPressEvent? evt_key_press = (global::Xcb.Input.KeyPressEvent?)m_LastEvent;
+
+                            send_keyboard_event (evt_key_press.event, true, evt_key_press.mods.base, evt_key_press.detail);
+                            break;
+
+                        // key press event
+                        case global::Xcb.Input.EventType.KEY_RELEASE:
+                            unowned global::Xcb.Input.KeyReleaseEvent? evt_key_release = (global::Xcb.Input.KeyReleaseEvent?)m_LastEvent;
+
+                            send_keyboard_event (evt_key_release.event, false, evt_key_release.mods.base, evt_key_release.detail);
+                            break;
+
+                    }
+                    break;
+
                 default:
                     // Damage event
                     if (m_DamagePresent && response_type == m_DamageFirstEvent + global::Xcb.Damage.EventType.NOTIFY)
@@ -295,6 +359,61 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
                         Core.EventBus.default.publish ("damage", ((int)evt_damage.damage).to_pointer (),
                                                        new DamageEventArgs (evt_damage.area.x, evt_damage.area.y,
                                                                             evt_damage.area.width, evt_damage.area.height));
+                    }
+
+                    // XInput event
+                    if (m_XInputPresent)
+                    {
+                        int event_type = (int)response_type - (int)m_XInputFirstEvent + 1;
+                        switch (event_type)
+                        {
+                            case global::Xcb.Input.EventType.BUTTON_PRESS:
+                                unowned global::Xcb.ButtonPressEvent? evt_button_press = (global::Xcb.ButtonPressEvent?)m_LastEvent;
+
+                                // send event mouse
+                                Core.EventBus.default.publish ("mouse", ((int)evt_button_press.event).to_pointer (),
+                                                               new MouseEventArgs (MouseEventArgs.EventFlags.BUTTON_PRESS,
+                                                                                   evt_button_press.detail,
+                                                                                   evt_button_press.event_x,
+                                                                                   evt_button_press.event_y));
+                                break;
+
+                            case global::Xcb.Input.EventType.BUTTON_RELEASE:
+                                unowned global::Xcb.ButtonReleaseEvent? evt_button_release = (global::Xcb.ButtonReleaseEvent?)m_LastEvent;
+
+                                // send event mouse
+                                Core.EventBus.default.publish ("mouse", ((int)evt_button_release.event).to_pointer (),
+                                                               new MouseEventArgs (MouseEventArgs.EventFlags.BUTTON_RELEASE,
+                                                                                   evt_button_release.detail,
+                                                                                   evt_button_release.event_x,
+                                                                                   evt_button_release.event_y));
+                                break;
+
+                            case global::Xcb.Input.EventType.MOTION:
+                                unowned global::Xcb.MotionNotifyEvent? evt_motion_notify = (global::Xcb.MotionNotifyEvent?)m_LastEvent;
+
+                                // Add motion event in compressed map events
+                                motions[(int)evt_motion_notify.event] = new MouseEventArgs (MouseEventArgs.EventFlags.MOTION,
+                                                                                            0,
+                                                                                            evt_motion_notify.event_x,
+                                                                                            evt_motion_notify.event_y);
+                                break;
+
+                            // key press event
+                            case global::Xcb.Input.EventType.KEY_PRESS:
+                                unowned global::Xcb.KeyPressEvent? evt_key_press = (global::Xcb.KeyPressEvent?)m_LastEvent;
+
+                                send_keyboard_event (evt_key_press.event, true, evt_key_press.state, evt_key_press.detail);
+                                break;
+
+                            // key press event
+                            case global::Xcb.Input.EventType.KEY_RELEASE:
+                                unowned global::Xcb.KeyReleaseEvent? evt_key_release = (global::Xcb.KeyReleaseEvent?)m_LastEvent;
+
+                                send_keyboard_event (evt_key_release.event, false, evt_key_release.state, evt_key_release.detail);
+                                break;
+
+                        }
                     }
                     break;
 

@@ -160,6 +160,50 @@ public class Maia.ToggleGroup : Core.Object, Manifest.Element
      */
     public Core.Event changed { get; private set; }
 
+    // static methods
+    static construct
+    {
+        Manifest.Attribute.register_transform_func (typeof (ToggleGroup), attribute_to_toggle_group);
+
+        GLib.Value.register_transform_func (typeof (ToggleGroup), typeof (string), toggle_group_to_value_string);
+    }
+
+    static void
+    attribute_to_toggle_group (Manifest.Attribute inAttribute, ref GLib.Value outValue)
+    {
+        unowned Core.Object object = inAttribute.owner as Core.Object;
+        unowned ToggleGroup? group = null;
+
+        GLib.Quark id  = GLib.Quark.from_string (inAttribute.get ());
+        for (unowned Core.Object item = object; item != null; item = item.parent)
+        {
+            unowned View? view = item.parent as View;
+
+            // If owned is in view search model in cell first
+            if (view != null)
+            {
+                group = item.find (id, false) as ToggleGroup;
+                if (group != null) break;
+            }
+            // We not found model in view parents search in root
+            else if (item.parent == null)
+            {
+                group = item.find (id) as ToggleGroup;
+            }
+        }
+
+        outValue = group;
+    }
+
+    static void
+    toggle_group_to_value_string (GLib.Value inSrc, out GLib.Value outDest)
+        requires (inSrc.holds (typeof (ToggleGroup)))
+    {
+        unowned ToggleGroup val = (ToggleGroup)inSrc;
+
+        outDest = val.name;
+    }
+
     // methods
     construct
     {

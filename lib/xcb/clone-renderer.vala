@@ -120,7 +120,7 @@ public class Maia.Xcb.CloneRenderer : Maia.Graphic.CloneRenderer
     {
         m_Surface = null;
 
-        if (m_Size.width != 0 && m_Size.height != 0)
+        if (m_CloneSurface != null && m_Size.width != 0 && m_Size.height != 0)
         {
             m_Surface = new Graphic.Surface.similar (m_CloneSurface, (int)GLib.Math.ceil (m_Size.width), (int)GLib.Math.ceil (m_Size.height));
         }

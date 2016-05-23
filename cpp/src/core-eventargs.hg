@@ -55,6 +55,26 @@ struct MaiaCoreEventArgsLoadVector
         EventArgs::s_LoadVector = &s_LoadEntry;                                \
     }
 
+#define MAIA_CORE_EVENT_ARGS_REGISTER_EXTERNAL_WITH_NAMESPACE(protobuf,message,ns,klass,external)\
+    MaiaCoreEventArgsLoadVector klass ::s_LoadEntry;                   \
+                                                                       \
+    void klass ::register_protobuf()                                   \
+    {                                                                  \
+        maia_core_event_args_register_protocol ("gtkmm__CustomObject_" #ns "++" #klass ,\
+                                                message ,              \
+                                                protobuf );            \
+        maia_core_event_args_register_type_name ( "gtkmm__CustomObject_" #ns "++" #klass ,\
+                                                  external);           \
+        klass ::create ();                                             \
+    }                                                                  \
+                                                                       \
+    void klass ::constructor ()                                        \
+    {                                                                  \
+        s_LoadEntry.func = register_protobuf;                          \
+        s_LoadEntry.next = EventArgs::s_LoadVector;                    \
+        EventArgs::s_LoadVector = &s_LoadEntry;                        \
+    }
+
 #define MAIA_CORE_EVENT_ARGS_DEFINE_WITH_NAMESPACE(ns,klass)                   \
     class klass : public Maia::Core::EventArgs                                 \
     {                                                                          \

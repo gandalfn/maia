@@ -17,6 +17,7 @@ files_hg = \
     core-event.hg \
     core-eventargs.hg \
     core-iterator.hg \
+    core-list.hg \
     core-notification.hg \
     core-map.hg \
     core-object.hg \
@@ -83,6 +84,8 @@ files_hg = \
     group.hg \
     highlight.hg \
     image.hg \
+    input-device.hg \
+    input-devices.hg \
     item-movable.hg \
     item-packable.hg \
     item-resizable.hg \

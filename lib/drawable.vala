@@ -460,22 +460,25 @@ public interface Maia.Drawable : Core.Object
         Graphic.Point point = inPoint;
         if (geometry != null)
         {
-            if (transform.have_rotate)
+            if (transform != null)
             {
-                var area_size = area.extents.size;
+                if (transform.have_rotate)
+                {
+                    var area_size = area.extents.size;
 
-                var t = transform.copy ();
-                t.apply_center_rotate (area_size.width / 2.0, area_size.height / 2.0);
-                point.transform (t);
+                    var t = transform.copy ();
+                    t.apply_center_rotate (area_size.width / 2.0, area_size.height / 2.0);
+                    point.transform (t);
 
-                var temp = area;
-                temp.transform (t);
+                    var temp = area;
+                    temp.transform (t);
 
-                point.translate (temp.extents.origin.invert ());
-            }
-            else
-            {
-                point.transform (transform);
+                    point.translate (temp.extents.origin.invert ());
+                }
+                else
+                {
+                    point.transform (transform);
+                }
             }
 
             point.translate (geometry.extents.origin);

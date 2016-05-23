@@ -62,6 +62,16 @@ namespace Maia
                 void set_origin(const Point& value);
                 Size& get_size() const;
                 void set_size(const Size& value);
+
+                inline bool operator== (const Rectangle& inOther)
+                {
+                    return get_origin () == inOther.get_origin () && get_size () == inOther.get_size ();
+                }
+
+                inline bool operator!= (const Rectangle& inOther)
+                {
+                    return get_origin () != inOther.get_origin () || get_size () != inOther.get_size ();
+                }
         };
     }
 }

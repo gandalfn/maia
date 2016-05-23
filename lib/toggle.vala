@@ -138,7 +138,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
      */
     public unowned ToggleGroup? toggle_group {
         get {
-            if (m_ToggleGroup == null && m_Group != null)
+            if (m_ToggleGroup == null && m_Group != null && root != null)
             {
                 m_ToggleGroup = root.find (GLib.Quark.from_string (m_Group)) as ToggleGroup;
                 m_ToggleGroup.add_button (this);
@@ -317,6 +317,13 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
     // events
     public Core.Event toggled { get; private set; }
 
+    // static methods
+    static construct
+    {
+        // Ref ToggleGroup class to register toggle group transform
+        typeof (ToggleGroup).class_ref ();
+    }
+
     // methods
     construct
     {
@@ -329,6 +336,9 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
 
         // Create toggled event
         toggled = new Core.Event ("toggled", this);
+
+        // Connect onto root changed
+        notify["root"].connect (on_root_changed);
     }
 
     public Toggle (string inId, string inLabel)
@@ -345,6 +355,16 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
             {
                 toggle_group.remove_button (this);
             }
+        }
+    }
+
+    private void
+    on_root_changed ()
+    {
+        if (m_ToggleGroup == null && m_Group != null && root != null)
+        {
+            m_ToggleGroup = root.find (GLib.Quark.from_string (m_Group)) as ToggleGroup;
+            m_ToggleGroup.add_button (this);
         }
     }
 

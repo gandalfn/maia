@@ -214,7 +214,8 @@ libmaia_la_SOURCES = \
     table-view-column.vala \
     shape.vala \
     line-shape.vala \
-    focus-group.vala
+    focus-group.vala \
+    input-device.vala
 
 libmaia_la_VALAFLAGS = \
     --pkg=gvalue-collect \
