@@ -214,6 +214,7 @@ libmaia_la_SOURCES = \
     table-view-column.vala \
     shape.vala \
     line-shape.vala \
+    ellipse-shape.vala \
     focus-group.vala \
     input-device.vala
 

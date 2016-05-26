@@ -32,6 +32,7 @@ public interface Maia.ItemResizable : Item
                 // translate the current position
                 var new_size = size;
                 new_size.resize (inDelta.x, inDelta.y);
+                new_size.transform (new Graphic.Transform.from_matrix (transform.matrix_invert));
 
                 var area = Graphic.Rectangle (position.x, position.y, new_size.width, new_size.height);
 

@@ -58,14 +58,14 @@ namespace Maia
                     return maia_graphic_surface_format_stride_for_width ((MaiaGraphicSurfaceFormat)inFormat, inWidth);
                 }
 
-                static Glib::RefPtr<Surface> create (unsigned int inWidth, unsigned int inHeight)
+                _IGNORE(maia_graphic_surface_new)
+               static Glib::RefPtr<Surface> create (unsigned int inWidth, unsigned int inHeight)
                 {
                     MaiaGraphicSurface* pSurface = maia_graphic_surface_new (inWidth, inHeight);
                     return Glib::RefPtr<Surface> (new Surface (pSurface));
                 }
-
-                _IGNORE(maia_graphic_surface_new)
-
+ 
+                _IGNORE(maia_graphic_surface_new_from_device)
                 static Glib::RefPtr<Surface> create (const Glib::RefPtr<Device>& inDevice, unsigned int inWidth, unsigned int inHeight)
                 {
                     MaiaGraphicSurface* pSurface = maia_graphic_surface_new_from_device (const_cast<MaiaGraphicDevice*> (inDevice->gobj ()), inWidth, inHeight);
@@ -79,23 +79,26 @@ namespace Maia
                     return Glib::RefPtr<Surface> (new Surface (pSurface));
                 }
 
-                _IGNORE(maia_graphic_surface_new_from_device)
-
+                _IGNORE(maia_graphic_surface_new_from_data)
                 static Glib::RefPtr<Surface> create (Surface::Format inFormat, unsigned char* inpData, unsigned int inWidth, unsigned int inHeight)
                 {
                     MaiaGraphicSurface* pSurface = maia_graphic_surface_new_from_data ((MaiaGraphicSurfaceFormat)inFormat, inpData, inWidth, inHeight);
                     return Glib::RefPtr<Surface> (new Surface (pSurface));
                 }
 
-                _IGNORE(maia_graphic_surface_new_from_data)
-
+                _IGNORE(maia_graphic_surface_new_from_native)
                 static Glib::RefPtr<Surface> create (void* inpNative, unsigned int inWidth, unsigned int inHeight)
                 {
                     MaiaGraphicSurface* pSurface = maia_graphic_surface_new_from_native (inpNative, inWidth, inHeight);
                     return Glib::RefPtr<Surface> (new Surface (pSurface));
                 }
 
-                _IGNORE(maia_graphic_surface_new_from_native)
+                _IGNORE(maia_graphic_surface_new_with_format)
+                static Glib::RefPtr<Surface> create (Surface::Format inFormat, unsigned int inWidth, unsigned int inHeight)
+                {
+                    MaiaGraphicSurface* pSurface = maia_graphic_surface_new_with_format ((MaiaGraphicSurfaceFormat)inFormat, inWidth, inHeight);
+                    return Glib::RefPtr<Surface> (new Surface (pSurface));
+                }
 
                 _IGNORE(maia_graphic_surface_set_format)
                 _WRAP_METHOD(Surface::Format get_format () const, maia_graphic_surface_get_format)

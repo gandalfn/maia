@@ -980,6 +980,12 @@
   (gtype-id "MAIA_TYPE_LINE_SHAPE")
 )
 
+(define-object MaiaEllipseShape
+  (parent "MaiaShape")
+  (c-name "MaiaEllipseShape")
+  (gtype-id "MAIA_TYPE_ELLIPSE_SHAPE")
+)
+
 (define-object MaiaShortcut
   (parent "MaiaCoreObject")
   (c-name "MaiaShortcut")
@@ -23227,6 +23233,80 @@
   (return-type "none")
   (parameters
     '("MaiaGraphicPoint*" "value")
+  )
+)
+
+(define-function maia_ellipse_shape_get_type
+  (c-name "maia_ellipse_shape_get_type")
+  (return-type "GType")
+)
+
+(define-function maia_ellipse_shape_new
+  (c-name "maia_ellipse_shape_new")
+  (is-constructor-of "MaiaEllipseShape")
+  (return-type "MaiaEllipseShape*")
+  (parameters
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-function maia_ellipse_shape_construct
+  (c-name "maia_ellipse_shape_construct")
+  (return-type "MaiaEllipseShape*")
+  (parameters
+    '("GType" "object_type")
+    '("const-gchar*" "inId")
+  )
+)
+
+(define-method get_begin
+  (of-object "MaiaEllipseShape")
+  (c-name "maia_ellipse_shape_get_begin")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "result")
+  )
+)
+
+(define-method set_begin
+  (of-object "MaiaEllipseShape")
+  (c-name "maia_ellipse_shape_set_begin")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "value")
+  )
+)
+
+(define-method get_end
+  (of-object "MaiaEllipseShape")
+  (c-name "maia_ellipse_shape_get_end")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "result")
+  )
+)
+
+(define-method set_end
+  (of-object "MaiaEllipseShape")
+  (c-name "maia_ellipse_shape_set_end")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "value")
+  )
+)
+
+(define-method get_radius
+  (of-object "MaiaEllipseShape")
+  (c-name "maia_ellipse_shape_get_radius")
+  (return-type "gdouble")
+)
+
+(define-method set_radius
+  (of-object "MaiaEllipseShape")
+  (c-name "maia_ellipse_shape_set_radius")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
   )
 )
 

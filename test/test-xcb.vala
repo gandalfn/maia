@@ -90,6 +90,18 @@ const string manifest = "Window.test {" +
                         "               line-type: dash;" +
                         "               position: 50, 50;" +
                         "           }" +
+                        "           EllipseShape.ellipse {" +
+                        "               fill-pattern: states(active, #0000FF);" +
+                        "               stroke-pattern: states(normal, #000000, active, #FF0000);" +
+                        "               border: 0;" +
+                        "               caliper-line-width: 2;" +
+                        "               caliper-size: 8, 8;" +
+                        "               line-type: dash;" +
+                        "               position: 50, 50;" +
+                        "               begin: 0, 0;" +
+                        "               end: 50, 25;" +
+                        "               radius: 65;" +
+                        "           }" +
                         "       }" +
                         "       Button.cancel {" +
                         "           yexpand: false;" +

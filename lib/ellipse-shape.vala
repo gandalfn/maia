@@ -1,6 +1,6 @@
 /* -*- Mode: Vala; indent-tabs-mode: nil; c-basic-offset: 4; tab-width: 4 -*- */
 /*
- * line-shape.vala
+ * ellipse-shape.vala
  * Copyright (C) Nicolas Bruguier 2010-2013 <gandalfn@club-internet.fr>
  *
  * maia is free software: you can redistribute it and/or modify it
@@ -17,18 +17,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.LineShape : Shape
+public class Maia.EllipseShape : Shape
 {
     // properties
     private Graphic.Point m_Begin;
     private Graphic.Point m_End;
-    protected bool m_BeginClicked = false;
-    protected bool m_EndClicked = false;
+    private double        m_Radius;
+    protected bool m_BeginClicked   = false;
+    protected bool m_EndClicked     = false;
+    protected bool m_EllipseClicked = false;
 
     // accessors
     internal override string tag {
         get {
-            return "LineShape";
+            return "EllipseShape";
         }
     }
 
@@ -58,21 +60,70 @@ public class Maia.LineShape : Shape
         default = Graphic.Point (-1, -1);
     }
 
+    public double radius {
+        get {
+            return m_Radius;
+        }
+        set {
+            if (m_Radius != value)
+            {
+                m_Radius = double.max (1.0, value);
+            }
+        }
+        default = 1.0;
+    }
+
     // methods
     construct
     {
         stroke_pattern[State.NORMAL] = new Graphic.Color (0, 0, 0);
     }
 
-    public LineShape (string inId)
+    public EllipseShape (string inId)
     {
         GLib.Object (id: GLib.Quark.from_string (inId));
+    }
+
+    private void
+    clamp ()
+    {
+        var pos = position;
+
+        // TODO take care of transform
+        if (m_Begin.x < m_End.x && m_Begin.x >= 0)
+        {
+            pos.x += m_Begin.x;
+            m_End.x -= m_Begin.x;
+            m_Begin.x = 0;
+        }
+        else if (m_Begin.x > m_End.x && m_End.x >= 0)
+        {
+            pos.x += m_End.x;
+            m_Begin.x -= m_End.x;
+            m_End.x = 0;
+        }
+
+        if (m_Begin.y < m_End.y && m_Begin.y >= 0)
+        {
+            pos.y += m_Begin.y;
+            m_End.y -= m_Begin.y;
+            m_Begin.y = 0;
+        }
+        else if (m_Begin.y > m_End.y && m_End.y >= 0)
+        {
+            pos.y += m_End.y;
+            m_Begin.y -= m_End.y;
+            m_End.y = 0;
+        }
+        position = pos;
     }
 
     internal override Graphic.Size
     size_request (Graphic.Size inSize)
     {
         Graphic.Size area = Graphic.Size (0, 0);
+
+        //clamp ();
 
         if (m_Begin.x < 0 && m_Begin.y < 0)
         {
@@ -124,69 +175,57 @@ public class Maia.LineShape : Shape
         }
         else if (m_End.x >= 0 && m_End.y >= 0)
         {
-            double x1 = double.min (m_Begin.x, m_End.x);
-            double y1 = double.min (m_Begin.y, m_End.y);
-            double x2 = double.max (m_Begin.x, m_End.x);
-            double y2 = double.max (m_Begin.y, m_End.y);
+            Graphic.Point center = Graphic.Point ((m_Begin.x + m_End.x) / 2.0, (m_Begin.y + m_End.y) / 2.0);
+            var areaEllipse = Graphic.Rectangle (0, 0, 0, 0);
+            double width = GLib.Math.sqrt (((m_Begin.x - m_End.x) * (m_Begin.x - m_End.x)) + ((m_Begin.y - m_End.y) * (m_Begin.y - m_End.y)));
+            areaEllipse.size.width = width;
+            areaEllipse.size.height = m_Radius;
 
-            if (x1 > 0)
+            double angle = GLib.Math.acos ((double.max (m_End.x, m_Begin.x) - double.min (m_End.x, m_Begin.x)) / areaEllipse.size.width);
+            if (m_End.y < m_Begin.y)
             {
-                var pos = position;
-                pos.x += x1;
-                if (pos.x < 0)
-                {
-                    x1 += -pos.x;
-                    pos.x = 0;
-                }
-                else
-                {
-                    x1 = 0;
-                }
-                position = pos;
+                angle *= -1.0;
+            }
+            if (m_End.x < m_Begin.x)
+            {
+                angle *= -1.0;
+            }
+            var transform = new Graphic.Transform.init_translate (center.x, center.y);
+            transform.rotate (-angle);
+            areaEllipse.transform (transform);
 
-                if (m_Begin.x <= m_End.x)
-                {
-                    m_End.x -= m_Begin.x - x1;
-                    m_Begin.x = x1;
-                }
-                else
-                {
-                    m_Begin.x -= m_End.x - x1;
-                    m_End.x = x1;
-                }
+            //area = Graphic.Size (GLib.Math.fabs (areaEllipse.origin.x) + areaEllipse.size.width, GLib.Math.fabs (areaEllipse.origin.y) + areaEllipse.size.height);
+            area = areaEllipse.size;
+            Graphic.Point new_center = Graphic.Point (area.width / 2.0, area.height / 2.0);
+            
+            double delta_x = new_center.x - center.x;
+            double delta_y = new_center.y - center.y;
+            print (@"center: $center area: $areaEllipse delta_x: $delta_x delta_y: $delta_y\n");
+            position.x -= delta_x;
+            position.y -= delta_y;
+
+
+            var begin = Graphic.Point (center.x - (width / 2.0), center.y);
+            var end = Graphic.Point (center.x + (width / 2.0), center.y);
+
+            transform = new Graphic.Transform.init_translate (new_center.x, new_center.y);
+            transform.rotate (angle);
+            begin.transform (transform);
+            end.transform (transform);
+
+            if (m_Begin.x < m_End.x)
+            {
+                m_Begin = begin.x < end.x ? begin : end;
+                m_End = begin.x < end.x ? end : begin;
+            }
+            else
+            {
+                m_End = begin.x > end.x ? begin : end;
+                m_Begin = begin.x > end.x ? end : begin;
             }
 
-            if (y1 > 0)
-            {
-                var pos = position;
-                pos.y += y1;
-                if (pos.y < 0)
-                {
-                    y1 += -pos.y;
-                    pos.y = 0;
-                }
-                else
-                {
-                    y1 = 0;
-                }
-                position = pos;
-
-                if (m_Begin.y <= m_End.y)
-                {
-                    m_End.y -= m_Begin.y - y1;
-                    m_Begin.y = y1;
-                }
-                else
-                {
-                    m_Begin.y -= m_End.y - y1;
-                    m_End.y = y1;
-                }
-            }
-
-            area = Graphic.Size (double.max (x2 - x1, 0), double.max (y2 - y1, 0));
             area.resize (caliper_size.width + (border * 2), caliper_size.height + (border * 2));
         }
-
 
         return area;
     }
@@ -196,45 +235,72 @@ public class Maia.LineShape : Shape
     {
         inContext.save ();
         {
+            var areaPath = new Graphic.Path ();
+            areaPath.rectangle (0, 0, area.extents.size.width, area.extents.size.height);
+            inContext.pattern = new Graphic.Color (1, 0, 0);
+            inContext.stroke (areaPath);
+
             inContext.translate (Graphic.Point (border + caliper_size.width / 2.0, border + caliper_size.height / 2.0));
 
-            if (m_Begin.x >= 0 && m_Begin.y >= 0 && m_End.x >= 0 && m_End.y >= 0)
+            if (m_Begin.x >= 0 && m_Begin.y >= 0 && m_End.x >= 0 && m_End.y >= 0 && m_Radius >= 0)
             {
-                var line = new Graphic.Path ();
-                line.move_to (m_Begin.x, m_Begin.y);
-                line.line_to (m_End.x, m_End.y);
+                Graphic.Point center = Graphic.Point ((m_Begin.x + m_End.x) / 2.0, (m_Begin.y + m_End.y) / 2.0);
+                var areaEllipse = Graphic.Rectangle (0, 0, 0, 0);
+                areaEllipse.size.width = GLib.Math.sqrt (((m_Begin.x - m_End.x) * (m_Begin.x - m_End.x)) + ((m_Begin.y - m_End.y) * (m_Begin.y - m_End.y)));
+                areaEllipse.size.height = m_Radius;
 
-                if (background_pattern[state] != null)
+                double angle = GLib.Math.acos ((double.max (m_End.x, m_Begin.x) - double.min (m_End.x, m_Begin.x)) / areaEllipse.size.width);
+                if (m_End.y < m_Begin.y)
                 {
-                    inContext.save ();
-                    {
-                        inContext.pattern = background_pattern[state];
-                        inContext.translate (Graphic.Point (-1, 0));
-                        inContext.stroke (line);
-                        inContext.translate (Graphic.Point (1, 0));
-
-                        inContext.pattern = background_pattern[state];
-                        inContext.translate (Graphic.Point (1, 0));
-                        inContext.stroke (line);
-                        inContext.translate (Graphic.Point (-1, 0));
-
-                        inContext.pattern = background_pattern[state];
-                        inContext.translate (Graphic.Point (0, -1));
-                        inContext.stroke (line);
-                        inContext.translate (Graphic.Point (0, 1));
-
-                        inContext.pattern = background_pattern[state];
-                        inContext.translate (Graphic.Point (0, 1));
-                        inContext.stroke (line);
-                        inContext.translate (Graphic.Point (0, -1));
-                    }
-                    inContext.restore ();
+                    angle *= -1.0;
                 }
+                if (m_End.x < m_Begin.x)
+                {
+                    angle *= -1.0;
+                }
+            
+                var ellipse = new Graphic.Path ();
+                ellipse.arc (0, 0, areaEllipse.size.width / 2.0, areaEllipse.size.height / 2.0, 0, 2 * GLib.Math.PI);
 
-                inContext.pattern = stroke_pattern[state];
-                inContext.stroke (line);
+                inContext.save ();
+                {
+                    var transform = new Graphic.Transform.init_translate (center.x, center.y);
+                    transform.rotate (angle);
+                    inContext.transform = transform;
+
+                    if (background_pattern[state] != null)
+                    {
+                        inContext.save ();
+                        {
+                            inContext.pattern = background_pattern[state];
+                            inContext.translate (Graphic.Point (-1, 0));
+                            inContext.stroke (ellipse);
+                            inContext.translate (Graphic.Point (1, 0));
+
+                            inContext.pattern = background_pattern[state];
+                            inContext.translate (Graphic.Point (1, 0));
+                            inContext.stroke (ellipse);
+                            inContext.translate (Graphic.Point (-1, 0));
+
+                            inContext.pattern = background_pattern[state];
+                            inContext.translate (Graphic.Point (0, -1));
+                            inContext.stroke (ellipse);
+                            inContext.translate (Graphic.Point (0, 1));
+
+                            inContext.pattern = background_pattern[state];
+                            inContext.translate (Graphic.Point (0, 1));
+                            inContext.stroke (ellipse);
+                            inContext.translate (Graphic.Point (0, -1));
+                        }
+                        inContext.restore ();
+                    }
+
+                    inContext.pattern = stroke_pattern[state];
+                    inContext.stroke (ellipse);
+                }
+                inContext.restore ();
             }
-
+            
             inContext.save ();
             {
                 var begin_point = Graphic.Point (double.max (m_Begin.x, 0), double.max (m_Begin.y, 0));
@@ -357,63 +423,78 @@ public class Maia.LineShape : Shape
     {
         bool ret = base.on_button_press_event (inButton, inPoint);
 
-        if (inButton == 1 && state == State.ACTIVE)
+        if (state == State.ACTIVE)
         {
-            var begin_area = Graphic.Rectangle (border + m_Begin.x, border + m_Begin.y, caliper_size.width, caliper_size.height);
-            var end_area = Graphic.Rectangle (border + m_End.x, border + m_End.y, caliper_size.width, caliper_size.height);
-
-            if (m_Begin.x < 0 && m_Begin.y < 0)
+            print(@"button: $inButton\n");
+            if (inButton == 1)
             {
-                Graphic.Point moved_point = inPoint;
-                moved_point.x -= border + caliper_size.width / 2.0;
-                moved_point.y -= border + caliper_size.height / 2.0;
-                if (moved_point.x < 0 || moved_point.y < 0)
-                {
-                    position = Graphic.Point (double.max(0, position.x + (moved_point.x < 0 ? moved_point.x : 0)),
-                                              double.max(0, position.y + (moved_point.y < 0 ? moved_point.y : 0)));
-                }
+                var begin_area = Graphic.Rectangle (border + m_Begin.x, border + m_Begin.y, caliper_size.width, caliper_size.height);
+                var end_area = Graphic.Rectangle (border + m_End.x, border + m_End.y, caliper_size.width, caliper_size.height);
 
-                m_Begin = Graphic.Point (double.max (0, moved_point.x), double.max (0, moved_point.y));
+                if (m_Begin.x < 0 && m_Begin.y < 0)
+                {
+                    Graphic.Point moved_point = inPoint;
+                    moved_point.x -= border + caliper_size.width / 2.0;
+                    moved_point.y -= border + caliper_size.height / 2.0;
+                    if (moved_point.x < 0 || moved_point.y < 0)
+                    {
+                        position = Graphic.Point (double.max(0, position.x + (moved_point.x < 0 ? moved_point.x : 0)),
+                                                  double.max(0, position.y + (moved_point.y < 0 ? moved_point.y : 0)));
+                    }
+
+                    m_Begin = Graphic.Point (double.max (0, moved_point.x), double.max (0, moved_point.y));
+                    need_update = true;
+                    geometry = null;
+
+                    m_BeginClicked = true;
+
+                    ret = true;
+                }
+                else if (!ret && m_End.x < 0 && m_End.y < 0)
+                {
+                    Graphic.Point moved_point = inPoint;
+                    Graphic.Point static_point = m_Begin;
+                    moved_point.x -= border + caliper_size.width / 2.0;
+                    moved_point.y -= border + caliper_size.height / 2.0;
+                    if (moved_point.x < 0 || moved_point.y < 0)
+                    {
+                        position = Graphic.Point (double.max(0, position.x + (moved_point.x < 0 ? moved_point.x : 0)),
+                                                  double.max(0, position.y + (moved_point.y < 0 ? moved_point.y : 0)));
+                        static_point.x += moved_point.x < 0 ? -moved_point.x : 0;
+                        static_point.y += moved_point.y < 0 ? -moved_point.y : 0;
+                    }
+
+                    m_Begin = static_point;
+                    m_End = Graphic.Point (double.max (0, moved_point.x), double.max (0, moved_point.y));
+
+                    need_update = true;
+                    geometry = null;
+
+                    m_EndClicked = true;
+
+                    ret = true;
+                }
+                else if (m_Begin.x >= 0 && m_Begin.y >= 0 && inPoint in begin_area)
+                {
+                    m_BeginClicked = true;
+                }
+                else if (m_End.x >= 0 && m_End.y >= 0 && inPoint in end_area)
+                {
+                    m_EndClicked = true;
+                }
+            }
+            else if (inButton == 4)
+            {
+                m_Radius = double.max (m_Radius - 1.0, 1.0);
                 need_update = true;
                 geometry = null;
-
-                m_BeginClicked = true;
-
-                ret = true;
             }
-            else if (!ret && m_End.x < 0 && m_End.y < 0)
+            else if (inButton == 5)
             {
-                Graphic.Point moved_point = inPoint;
-                Graphic.Point static_point = m_Begin;
-                moved_point.x -= border + caliper_size.width / 2.0;
-                moved_point.y -= border + caliper_size.height / 2.0;
-                if (moved_point.x < 0 || moved_point.y < 0)
-                {
-                    position = Graphic.Point (double.max(0, position.x + (moved_point.x < 0 ? moved_point.x : 0)),
-                                              double.max(0, position.y + (moved_point.y < 0 ? moved_point.y : 0)));
-                    static_point.x += moved_point.x < 0 ? -moved_point.x : 0;
-                    static_point.y += moved_point.y < 0 ? -moved_point.y : 0;
-                }
-
-                m_Begin = static_point;
-                m_End = Graphic.Point (double.max (0, moved_point.x), double.max (0, moved_point.y));
-
+                m_Radius += 1.0;
                 need_update = true;
                 geometry = null;
-
-                m_EndClicked = true;
-
-                ret = true;
             }
-            else if (m_Begin.x >= 0 && m_Begin.y >= 0 && inPoint in begin_area)
-            {
-                m_BeginClicked = true;
-            }
-            else if (m_End.x >= 0 && m_End.y >= 0 && inPoint in end_area)
-            {
-                m_EndClicked = true;
-            }
-
         }
 
         return ret;
