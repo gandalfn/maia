@@ -123,7 +123,7 @@ public class Maia.EllipseShape : Shape
     {
         Graphic.Size area = Graphic.Size (0, 0);
 
-        //clamp ();
+        clamp ();
 
         if (m_Begin.x < 0 && m_Begin.y < 0)
         {
@@ -197,32 +197,20 @@ public class Maia.EllipseShape : Shape
             //area = Graphic.Size (GLib.Math.fabs (areaEllipse.origin.x) + areaEllipse.size.width, GLib.Math.fabs (areaEllipse.origin.y) + areaEllipse.size.height);
             area = areaEllipse.size;
             Graphic.Point new_center = Graphic.Point (area.width / 2.0, area.height / 2.0);
-            
+
             double delta_x = new_center.x - center.x;
             double delta_y = new_center.y - center.y;
-            print (@"center: $center area: $areaEllipse delta_x: $delta_x delta_y: $delta_y\n");
-            position.x -= delta_x;
-            position.y -= delta_y;
+            print (@"center: $center new_center: $new_center delta_x: $delta_x delta_y: $delta_y\n");
+            position.x += center.x - new_center.x;
+            position.y += center.y - new_center.y;
 
-
-            var begin = Graphic.Point (center.x - (width / 2.0), center.y);
-            var end = Graphic.Point (center.x + (width / 2.0), center.y);
-
-            transform = new Graphic.Transform.init_translate (new_center.x, new_center.y);
-            transform.rotate (angle);
-            begin.transform (transform);
-            end.transform (transform);
-
-            if (m_Begin.x < m_End.x)
-            {
-                m_Begin = begin.x < end.x ? begin : end;
-                m_End = begin.x < end.x ? end : begin;
-            }
-            else
-            {
-                m_End = begin.x > end.x ? begin : end;
-                m_Begin = begin.x > end.x ? end : begin;
-            }
+            print (@"begin: $m_Begin end: $m_End\n");
+            //m_Begin.translate (Graphic.Point (delta_x, delta_y));
+            //m_End.translate (Graphic.Point (delta_x, delta_y));
+            //m_Begin.y += delta_y;
+            //m_End.x += delta_x;
+            //m_End.y += delta_y;
+            print (@"begin: $m_Begin end: $m_End\n");
 
             area.resize (caliper_size.width + (border * 2), caliper_size.height + (border * 2));
         }
@@ -235,12 +223,11 @@ public class Maia.EllipseShape : Shape
     {
         inContext.save ();
         {
+            var item_area = area;
             var areaPath = new Graphic.Path ();
             areaPath.rectangle (0, 0, area.extents.size.width, area.extents.size.height);
             inContext.pattern = new Graphic.Color (1, 0, 0);
             inContext.stroke (areaPath);
-
-            inContext.translate (Graphic.Point (border + caliper_size.width / 2.0, border + caliper_size.height / 2.0));
 
             if (m_Begin.x >= 0 && m_Begin.y >= 0 && m_End.x >= 0 && m_End.y >= 0 && m_Radius >= 0)
             {
@@ -258,13 +245,13 @@ public class Maia.EllipseShape : Shape
                 {
                     angle *= -1.0;
                 }
-            
+
                 var ellipse = new Graphic.Path ();
                 ellipse.arc (0, 0, areaEllipse.size.width / 2.0, areaEllipse.size.height / 2.0, 0, 2 * GLib.Math.PI);
 
                 inContext.save ();
                 {
-                    var transform = new Graphic.Transform.init_translate (center.x, center.y);
+                    var transform = new Graphic.Transform.init_translate (item_area.extents.size.width / 2.0, item_area.extents.size.height / 2.0);
                     transform.rotate (angle);
                     inContext.transform = transform;
 
@@ -299,8 +286,10 @@ public class Maia.EllipseShape : Shape
                     inContext.stroke (ellipse);
                 }
                 inContext.restore ();
+
+                inContext.translate (Graphic.Point ((item_area.extents.size.width / 2.0) - center.x, (item_area.extents.size.height / 2.0) - center.y));
             }
-            
+
             inContext.save ();
             {
                 var begin_point = Graphic.Point (double.max (m_Begin.x, 0), double.max (m_Begin.y, 0));
@@ -428,8 +417,12 @@ public class Maia.EllipseShape : Shape
             print(@"button: $inButton\n");
             if (inButton == 1)
             {
-                var begin_area = Graphic.Rectangle (border + m_Begin.x, border + m_Begin.y, caliper_size.width, caliper_size.height);
-                var end_area = Graphic.Rectangle (border + m_End.x, border + m_End.y, caliper_size.width, caliper_size.height);
+                var item_area = area;
+                Graphic.Point center = Graphic.Point ((m_Begin.x + m_End.x) / 2.0, (m_Begin.y + m_End.y) / 2.0);
+                var begin_area = Graphic.Rectangle (m_Begin.x - (caliper_size.width / 2.0), m_Begin.y - (caliper_size.height / 2.0), caliper_size.width, caliper_size.height);
+                var end_area = Graphic.Rectangle (m_End.x - (caliper_size.width / 2.0), m_End.y - (caliper_size.height / 2.0), caliper_size.width, caliper_size.height);
+                begin_area.translate (Graphic.Point ((item_area.extents.size.width / 2.0) - center.x, (item_area.extents.size.height / 2.0) - center.y));
+                end_area.translate (Graphic.Point ((item_area.extents.size.width / 2.0) - center.x, (item_area.extents.size.height / 2.0) - center.y));
 
                 if (m_Begin.x < 0 && m_Begin.y < 0)
                 {
@@ -525,10 +518,15 @@ public class Maia.EllipseShape : Shape
         {
             if (m_BeginClicked || m_EndClicked)
             {
+                var item_area = area;
+                Graphic.Point center = Graphic.Point ((m_Begin.x + m_End.x) / 2.0, (m_Begin.y + m_End.y) / 2.0);
                 Graphic.Point moved_point = inPoint;
                 Graphic.Point static_point = m_BeginClicked ? m_End : m_Begin;
-                moved_point.x -= border + caliper_size.width / 2.0;
-                moved_point.y -= border + caliper_size.height / 2.0;
+                moved_point.translate (Graphic.Point (center.x - (item_area.extents.size.width / 2.0), center.y - (item_area.extents.size.height / 2.0)));
+                static_point.translate (Graphic.Point (center.x - (item_area.extents.size.width / 2.0), center.y - (item_area.extents.size.height / 2.0)));
+
+//~                 moved_point.x -= border + caliper_size.width / 2.0;
+//~                 moved_point.y -= border + caliper_size.height / 2.0;
                 if (moved_point.x < 0 || moved_point.y < 0)
                 {
                     var pos = position;
