@@ -22,7 +22,7 @@ public class Maia.EllipseShape : Shape
     // properties
     private Graphic.Point m_Begin;
     private Graphic.Point m_End;
-    private double        m_Radius;
+    private double        m_Radius = 1.0;
     protected bool m_BeginClicked   = false;
     protected bool m_EndClicked     = false;
     protected bool m_EllipseClicked = false;
@@ -175,7 +175,6 @@ public class Maia.EllipseShape : Shape
         }
         else if (m_End.x >= 0 && m_End.y >= 0)
         {
-            Graphic.Point center = Graphic.Point ((m_Begin.x + m_End.x) / 2.0, (m_Begin.y + m_End.y) / 2.0);
             var areaEllipse = Graphic.Rectangle (0, 0, 0, 0);
             double width = GLib.Math.sqrt (((m_Begin.x - m_End.x) * (m_Begin.x - m_End.x)) + ((m_Begin.y - m_End.y) * (m_Begin.y - m_End.y)));
             areaEllipse.size.width = width;
@@ -190,27 +189,16 @@ public class Maia.EllipseShape : Shape
             {
                 angle *= -1.0;
             }
-            var transform = new Graphic.Transform.init_translate (center.x, center.y);
-            transform.rotate (-angle);
+            var transform = new Graphic.Transform.init_translate (areaEllipse.size.width / 2.0, areaEllipse.size.height / 2.0);
+            transform.rotate (angle);
             areaEllipse.transform (transform);
 
-            //area = Graphic.Size (GLib.Math.fabs (areaEllipse.origin.x) + areaEllipse.size.width, GLib.Math.fabs (areaEllipse.origin.y) + areaEllipse.size.height);
+            var begin = Graphic.Point (0, areaEllipse.size.height / 2.0);
+            begin.transform (transform);
+            var end = Graphic.Point (areaEllipse.size.width, areaEllipse.size.height / 2.0);
+            end.transform (transform);
+
             area = areaEllipse.size;
-            Graphic.Point new_center = Graphic.Point (area.width / 2.0, area.height / 2.0);
-
-            double delta_x = new_center.x - center.x;
-            double delta_y = new_center.y - center.y;
-            print (@"center: $center new_center: $new_center delta_x: $delta_x delta_y: $delta_y\n");
-            position.x += center.x - new_center.x;
-            position.y += center.y - new_center.y;
-
-            print (@"begin: $m_Begin end: $m_End\n");
-            //m_Begin.translate (Graphic.Point (delta_x, delta_y));
-            //m_End.translate (Graphic.Point (delta_x, delta_y));
-            //m_Begin.y += delta_y;
-            //m_End.x += delta_x;
-            //m_End.y += delta_y;
-            print (@"begin: $m_Begin end: $m_End\n");
 
             area.resize (caliper_size.width + (border * 2), caliper_size.height + (border * 2));
         }
@@ -224,10 +212,10 @@ public class Maia.EllipseShape : Shape
         inContext.save ();
         {
             var item_area = area;
-            var areaPath = new Graphic.Path ();
-            areaPath.rectangle (0, 0, area.extents.size.width, area.extents.size.height);
-            inContext.pattern = new Graphic.Color (1, 0, 0);
-            inContext.stroke (areaPath);
+//~             var areaPath = new Graphic.Path ();
+//~             areaPath.rectangle (0, 0, area.extents.size.width, area.extents.size.height);
+//~             inContext.pattern = new Graphic.Color (1, 0, 0);
+//~             inContext.stroke (areaPath);
 
             if (m_Begin.x >= 0 && m_Begin.y >= 0 && m_End.x >= 0 && m_End.y >= 0 && m_Radius >= 0)
             {
@@ -288,6 +276,10 @@ public class Maia.EllipseShape : Shape
                 inContext.restore ();
 
                 inContext.translate (Graphic.Point ((item_area.extents.size.width / 2.0) - center.x, (item_area.extents.size.height / 2.0) - center.y));
+            }
+            else
+            {
+                inContext.translate (Graphic.Point (item_area.extents.size.width / 2.0, item_area.extents.size.height / 2.0));
             }
 
             inContext.save ();
@@ -414,7 +406,6 @@ public class Maia.EllipseShape : Shape
 
         if (state == State.ACTIVE)
         {
-            print(@"button: $inButton\n");
             if (inButton == 1)
             {
                 var item_area = area;
@@ -427,8 +418,6 @@ public class Maia.EllipseShape : Shape
                 if (m_Begin.x < 0 && m_Begin.y < 0)
                 {
                     Graphic.Point moved_point = inPoint;
-                    moved_point.x -= border + caliper_size.width / 2.0;
-                    moved_point.y -= border + caliper_size.height / 2.0;
                     if (moved_point.x < 0 || moved_point.y < 0)
                     {
                         position = Graphic.Point (double.max(0, position.x + (moved_point.x < 0 ? moved_point.x : 0)),
@@ -447,8 +436,6 @@ public class Maia.EllipseShape : Shape
                 {
                     Graphic.Point moved_point = inPoint;
                     Graphic.Point static_point = m_Begin;
-                    moved_point.x -= border + caliper_size.width / 2.0;
-                    moved_point.y -= border + caliper_size.height / 2.0;
                     if (moved_point.x < 0 || moved_point.y < 0)
                     {
                         position = Graphic.Point (double.max(0, position.x + (moved_point.x < 0 ? moved_point.x : 0)),
@@ -459,6 +446,7 @@ public class Maia.EllipseShape : Shape
 
                     m_Begin = static_point;
                     m_End = Graphic.Point (double.max (0, moved_point.x), double.max (0, moved_point.y));
+                    m_Radius = double.max (1.0, m_Radius);
 
                     need_update = true;
                     geometry = null;
@@ -522,14 +510,14 @@ public class Maia.EllipseShape : Shape
                 Graphic.Point center = Graphic.Point ((m_Begin.x + m_End.x) / 2.0, (m_Begin.y + m_End.y) / 2.0);
                 Graphic.Point moved_point = inPoint;
                 Graphic.Point static_point = m_BeginClicked ? m_End : m_Begin;
-                moved_point.translate (Graphic.Point (center.x - (item_area.extents.size.width / 2.0), center.y - (item_area.extents.size.height / 2.0)));
-                static_point.translate (Graphic.Point (center.x - (item_area.extents.size.width / 2.0), center.y - (item_area.extents.size.height / 2.0)));
 
-//~                 moved_point.x -= border + caliper_size.width / 2.0;
-//~                 moved_point.y -= border + caliper_size.height / 2.0;
+                moved_point.translate (Graphic.Point (center.x - (item_area.extents.size.width / 2.0), center.y - (item_area.extents.size.height / 2.0)));
+                
                 if (moved_point.x < 0 || moved_point.y < 0)
                 {
                     var pos = position;
+                    var static_pos = pos;
+                    static_pos.translate (static_point);
                     pos.x += moved_point.x < 0 ? moved_point.x : 0;
                     pos.y += moved_point.y < 0 ? moved_point.y : 0;
                     if (pos.x < 0)
@@ -543,8 +531,9 @@ public class Maia.EllipseShape : Shape
                         pos.y = 0;
                     }
                     position = pos;
-                    static_point.x += moved_point.x < 0 ? -moved_point.x : 0;
-                    static_point.y += moved_point.y < 0 ? -moved_point.y : 0;
+
+                    static_point.x = static_pos.x - pos.x;
+                    static_point.y = static_pos.y - pos.y;
                 }
 
                 if (m_BeginClicked)
@@ -558,8 +547,8 @@ public class Maia.EllipseShape : Shape
                 }
                 else if (m_EndClicked)
                 {
-                    m_Begin = static_point;
                     m_End = Graphic.Point (double.max (0, moved_point.x), double.max (0, moved_point.y));
+                    m_Begin = static_point;
                 }
                 need_update = true;
                 geometry = null;

@@ -91,6 +91,17 @@ public struct Maia.Graphic.Point
         y += inOffset.y;
     }
 
+
+    /**
+     * Ceil point
+     */
+    public void
+    ceil ()
+    {
+        x = GLib.Math.ceil (x);
+        y = GLib.Math.ceil (y);
+    }
+
     /**
      * Transform the point by inTransform.
      *

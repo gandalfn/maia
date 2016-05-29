@@ -78,6 +78,7 @@ files_hg = \
     drawable.hg \
     drawing-area.hg \
     entry.hg \
+    ellipse-shape.hg \
     focus-group.hg \
     gesture.hg \
     grid.hg \

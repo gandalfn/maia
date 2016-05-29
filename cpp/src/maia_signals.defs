@@ -8964,6 +8964,44 @@
   (construct-only #f)
 )
 
+;; From MaiaEllipseShape
+
+(define-property tag
+  (of-object "MaiaEllipseShape")
+  (prop-type "GParamString")
+  (docs "tag")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property begin
+  (of-object "MaiaEllipseShape")
+  (prop-type "GParamBoxed")
+  (docs "begin")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property end
+  (of-object "MaiaEllipseShape")
+  (prop-type "GParamBoxed")
+  (docs "end")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property radius
+  (of-object "MaiaEllipseShape")
+  (prop-type "GParamDouble")
+  (docs "radius")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaGeometryEventArgs
 
 (define-property area

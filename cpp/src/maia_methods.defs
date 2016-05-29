@@ -10112,6 +10112,12 @@
   )
 )
 
+(define-method ceil
+  (of-object "MaiaGraphicPoint")
+  (c-name "maia_graphic_point_ceil")
+  (return-type "none")
+)
+
 (define-method transform
   (of-object "MaiaGraphicPoint")
   (c-name "maia_graphic_point_transform")

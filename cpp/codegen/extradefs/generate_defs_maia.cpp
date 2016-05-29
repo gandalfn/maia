@@ -149,6 +149,7 @@ int main (int argc, char** argv)
     std::cout << get_defs (MAIA_TYPE_TABLE_VIEW_COLUMN);
     std::cout << get_defs (MAIA_TYPE_SHAPE);
     std::cout << get_defs (MAIA_TYPE_LINE_SHAPE);
+    std::cout << get_defs (MAIA_TYPE_ELLIPSE_SHAPE);
     std::cout << get_defs (MAIA_TYPE_GEOMETRY_EVENT_ARGS);
     std::cout << get_defs (MAIA_TYPE_MOUSE_EVENT_ARGS);
     std::cout << get_defs (MAIA_GESTURE_TYPE_NOTIFICATION);

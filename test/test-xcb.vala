@@ -97,9 +97,6 @@ const string manifest = "Window.test {" +
                         "               caliper-size: 8, 8;" +
                         "               line-type: dash;" +
                         "               position: 50, 50;" +
-                        "               begin: 0, 0;" +
-                        "               end: 50, 25;" +
-                        "               radius: 65;" +
                         "           }" +
                         "       }" +
                         "       Button.cancel {" +
