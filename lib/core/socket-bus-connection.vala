@@ -186,27 +186,45 @@ public class Maia.Core.SocketBusConnection : BusConnection
 #if MAIA_DEBUG
                 Log.debug (GLib.Log.METHOD, Log.Category.MAIN_BUS, "write message");
 #endif
-                try
+                if (!m_Connection.is_connected ())
                 {
-                    do
-                    {
-                        request.m_Size += m_Connection.output_stream.write (request.m_Data[request.m_Size:request.m_Data.length], request.m_Cancellable);
-                    } while (request.m_Size < request.m_Data.length);
-                }
-                catch (GLib.IOError err)
-                {
-                    Log.error (GLib.Log.METHOD, Log.Category.MAIN_BUS, @"error on write message : $(err.code) $(err.message)");
                     request.m_Size = 0;
-                    if (!request.m_Cancellable.is_cancelled ())
+                    request.m_Status = new BusError.WRITE (@"error on write message : Connection closed");
+                }
+                else
+                {
+                    try
                     {
-                        request.m_Status = new BusError.READ (@"error on write message : $(err.message)");
+                        do
+                        {
+                            request.m_Size += m_Connection.output_stream.write (request.m_Data[request.m_Size:request.m_Data.length], request.m_Cancellable);
+                        } while (request.m_Size > 0 && request.m_Size < request.m_Data.length);
                     }
-                }
+                    catch (GLib.IOError err)
+                    {
+                        Log.error (GLib.Log.METHOD, Log.Category.MAIN_BUS, @"error on write message : $(err.code) $(err.message)");
+                        request.m_Size = 0;
+                        if (!request.m_Cancellable.is_cancelled ())
+                        {
+                            request.m_Status = new BusError.WRITE (@"error on write message : $(err.message)");
+                        }
+                    }
 
-                if (request.m_Cancellable.is_cancelled ())
-                {
-                    request.m_Size = 0;
-                    request.m_Status = new BusError.CANCELLED(@"read request cancelled");
+                    if (request.m_Cancellable.is_cancelled ())
+                    {
+                        request.m_Size = 0;
+                        request.m_Status = new BusError.CANCELLED(@"read request cancelled");
+                    }
+                    else if (request.m_Size == 0)
+                    {
+                        try
+                        {
+                            m_Connection.close ();
+                        }
+                        catch (GLib.IOError err)
+                        {}
+                        request.m_Status = new BusError.CLOSED (@"error on write message : Connection closed");
+                    }
                 }
 
                 request.m_Callback (request);
@@ -234,12 +252,28 @@ public class Maia.Core.SocketBusConnection : BusConnection
     {
         size_t ret = 0;
 
+        if (!m_Connection.is_connected ())
+        {
+            throw new BusError.READ (@"error on read message : Connection closed");
+        }
+
         try
         {
             do
             {
                 ret += m_Connection.input_stream.read (inData[ret:inData.length]);
-            } while (ret < inData.length);
+            } while (ret > 0 && ret < inData.length);
+
+            if (ret == 0)
+            {
+                try
+                {
+                    m_Connection.close ();
+                }
+                catch (GLib.IOError err)
+                {}
+                throw new BusError.CLOSED (@"error on read message : Connection closed");
+            }
         }
         catch (GLib.Error err)
         {
@@ -256,12 +290,17 @@ public class Maia.Core.SocketBusConnection : BusConnection
     {
         size_t ret = 0;
 
+        if (!m_Connection.is_connected ())
+        {
+            throw new BusError.READ (@"error on read message : Connection closed");
+        }
+
         try
         {
             do
             {
                 ret += yield m_Connection.input_stream.read_async (inData[ret:inData.length], GLib.Priority.HIGH_IDLE, inCancellable);
-            } while (ret < inData.length);
+            } while (ret > 0 && ret < inData.length);
         }
         catch (GLib.Error err)
         {
@@ -277,6 +316,16 @@ public class Maia.Core.SocketBusConnection : BusConnection
         {
             throw new BusError.CANCELLED(@"read request cancelled");
         }
+        else if (ret == 0)
+        {
+            try
+            {
+                m_Connection.close ();
+            }
+            catch (GLib.IOError err)
+            {}
+            throw new BusError.CLOSED (@"error on read message : Connection closed");
+        }
 
         return ret;
     }
@@ -284,19 +333,35 @@ public class Maia.Core.SocketBusConnection : BusConnection
     internal override size_t
     write (uint8[] inData) throws BusError
     {
+        if (!m_Connection.is_connected ())
+        {
+            throw new BusError.WRITE (@"error on write message : Connection closed");
+        }
+
         size_t ret = 0;
         try
         {
             do
             {
                 ret += m_Connection.output_stream.write (inData[ret:inData.length]);
-            } while (ret < inData.length);
+            } while (ret > 0 && ret < inData.length);
+
+            if (ret == 0)
+            {
+                try
+                {
+                    m_Connection.close ();
+                }
+                catch (GLib.IOError err)
+                {}
+                throw new BusError.CLOSED (@"error on write message : Connection closed");
+            }
         }
         catch (GLib.Error err)
         {
             Log.error (GLib.Log.METHOD, Log.Category.MAIN_BUS, @"error on write message : $(err.message)");
             ret = 0;
-            throw new BusError.READ (@"error on write message : $(err.message)");
+            throw new BusError.WRITE (@"error on write message : $(err.message)");
         }
 
         return ret;
@@ -305,6 +370,11 @@ public class Maia.Core.SocketBusConnection : BusConnection
     internal override async size_t
     write_async (uint8[] inData, GLib.Cancellable? inCancellable) throws BusError
     {
+        if (!m_Connection.is_connected ())
+        {
+            throw new BusError.WRITE (@"error on write message : Connection closed");
+        }
+
         var request = new Request (inData, () => {
                                                 write_async.callback ();
                                             }, inCancellable);

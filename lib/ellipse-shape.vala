@@ -23,6 +23,7 @@ public class Maia.EllipseShape : Shape
     private Graphic.Point m_Begin;
     private Graphic.Point m_End;
     private double        m_Radius = 1.0;
+    private double        m_Increment = 1.0;
     protected bool m_BeginClicked   = false;
     protected bool m_EndClicked     = false;
     protected bool m_EllipseClicked = false;
@@ -68,6 +69,19 @@ public class Maia.EllipseShape : Shape
             if (m_Radius != value)
             {
                 m_Radius = double.max (1.0, value);
+            }
+        }
+        default = 1.0;
+    }
+
+    public double increment {
+        get {
+            return m_Increment;
+        }
+        set {
+            if (m_Increment != value)
+            {
+                m_Increment = double.max (1.0, value);
             }
         }
         default = 1.0;
@@ -181,14 +195,6 @@ public class Maia.EllipseShape : Shape
             areaEllipse.size.height = m_Radius;
 
             double angle = GLib.Math.acos ((double.max (m_End.x, m_Begin.x) - double.min (m_End.x, m_Begin.x)) / areaEllipse.size.width);
-            if (m_End.y < m_Begin.y)
-            {
-                angle *= -1.0;
-            }
-            if (m_End.x < m_Begin.x)
-            {
-                angle *= -1.0;
-            }
             var transform = new Graphic.Transform.init_translate (areaEllipse.size.width / 2.0, areaEllipse.size.height / 2.0);
             transform.rotate (angle);
             areaEllipse.transform (transform);
@@ -466,13 +472,13 @@ public class Maia.EllipseShape : Shape
             }
             else if (inButton == 4)
             {
-                m_Radius = double.max (m_Radius - 1.0, 1.0);
+                m_Radius = double.max (m_Radius - m_Increment, 1.0);
                 need_update = true;
                 geometry = null;
             }
             else if (inButton == 5)
             {
-                m_Radius += 1.0;
+                m_Radius += m_Increment;
                 need_update = true;
                 geometry = null;
             }
@@ -512,7 +518,7 @@ public class Maia.EllipseShape : Shape
                 Graphic.Point static_point = m_BeginClicked ? m_End : m_Begin;
 
                 moved_point.translate (Graphic.Point (center.x - (item_area.extents.size.width / 2.0), center.y - (item_area.extents.size.height / 2.0)));
-                
+
                 if (moved_point.x < 0 || moved_point.y < 0)
                 {
                     var pos = position;

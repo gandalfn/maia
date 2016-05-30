@@ -1283,6 +1283,7 @@
     '("read" "MAIA_CORE_BUS_ERROR_READ")
     '("write" "MAIA_CORE_BUS_ERROR_WRITE")
     '("cancelled" "MAIA_CORE_BUS_ERROR_CANCELLED")
+    '("closed" "MAIA_CORE_BUS_ERROR_CLOSED")
   )
 )
 
@@ -23310,6 +23311,21 @@
 (define-method set_radius
   (of-object "MaiaEllipseShape")
   (c-name "maia_ellipse_shape_set_radius")
+  (return-type "none")
+  (parameters
+    '("gdouble" "value")
+  )
+)
+
+(define-method get_increment
+  (of-object "MaiaEllipseShape")
+  (c-name "maia_ellipse_shape_get_increment")
+  (return-type "gdouble")
+)
+
+(define-method set_increment
+  (of-object "MaiaEllipseShape")
+  (c-name "maia_ellipse_shape_set_increment")
   (return-type "none")
   (parameters
     '("gdouble" "value")

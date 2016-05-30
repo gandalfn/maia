@@ -9002,6 +9002,15 @@
   (construct-only #f)
 )
 
+(define-property increment
+  (of-object "MaiaEllipseShape")
+  (prop-type "GParamDouble")
+  (docs "increment")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaGeometryEventArgs
 
 (define-property area

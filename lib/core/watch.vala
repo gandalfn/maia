@@ -177,21 +177,22 @@ public abstract class Maia.Core.Watch : Object
         bool ret = false;
 
         ref ();
+
+
         uint64 now = m_Source.get_time ();
         if (timeout >= 0 && (now - m_CurrentTime) / 1000 > timeout)
         {
             m_TimedOut = true;
             ret = true;
         }
-        else if ((m_Fd.revents & GLib.IOCondition.ERR)  == GLib.IOCondition.ERR ||
-                 (m_Fd.revents & GLib.IOCondition.HUP)  == GLib.IOCondition.HUP ||
-                 (m_Fd.revents & GLib.IOCondition.NVAL) == GLib.IOCondition.NVAL)
+        else if ((GLib.IOCondition.ERR in m_Fd.revents)  ||
+                 (GLib.IOCondition.HUP in m_Fd.revents)  ||
+                 (GLib.IOCondition.NVAL in m_Fd.revents))
         {
             on_error ();
         }
-        else if (m_Condition == Condition.IN ? ((m_Fd.revents & GLib.IOCondition.IN)  == GLib.IOCondition.IN ||
-                                                (m_Fd.revents & GLib.IOCondition.PRI) == GLib.IOCondition.PRI)
-                                             : (m_Fd.revents & GLib.IOCondition.OUT)  == GLib.IOCondition.OUT)
+        else if (m_Condition == Condition.IN ? ((GLib.IOCondition.IN in m_Fd.revents) || (GLib.IOCondition.PRI in m_Fd.revents))
+                                             : (GLib.IOCondition.OUT in m_Fd.revents))
         {
             ret = check ();
         }

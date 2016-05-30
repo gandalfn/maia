@@ -248,7 +248,8 @@
 ;; 	MAIA_CORE_BUS_ERROR_CONNECT,
 ;; 	MAIA_CORE_BUS_ERROR_READ,
 ;; 	MAIA_CORE_BUS_ERROR_WRITE,
-;; 	MAIA_CORE_BUS_ERROR_CANCELLED
+;; 	MAIA_CORE_BUS_ERROR_CANCELLED,
+;; 	MAIA_CORE_BUS_ERROR_CLOSED
 ;; } MaiaCoreBusError;
 
 (define-enum-extended CoreBusError
@@ -260,6 +261,7 @@
     '("read" "MAIA_CORE_BUS_ERROR_READ" "2")
     '("write" "MAIA_CORE_BUS_ERROR_WRITE" "3")
     '("cancelled" "MAIA_CORE_BUS_ERROR_CANCELLED" "4")
+    '("closed" "MAIA_CORE_BUS_ERROR_CLOSED" "5")
   )
 )
 

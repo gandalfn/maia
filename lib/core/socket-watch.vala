@@ -76,7 +76,7 @@ public class Maia.Core.SocketWatch : Watch
             return GLib.IOCondition.OUT in status;
         }
 
-        return ((GLib.IOCondition.IN in status) || (GLib.IOCondition.PRI in status)) && m_Socket.get_available_bytes () != 0;
+        return ((GLib.IOCondition.IN in status) || (GLib.IOCondition.PRI in status));
     }
 
     /**

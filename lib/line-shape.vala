@@ -69,10 +69,46 @@ public class Maia.LineShape : Shape
         GLib.Object (id: GLib.Quark.from_string (inId));
     }
 
+    private void
+    clamp ()
+    {
+        var pos = position;
+
+        // TODO take care of transform
+        if (m_Begin.x < m_End.x && m_Begin.x >= 0)
+        {
+            pos.x += m_Begin.x;
+            m_End.x -= m_Begin.x;
+            m_Begin.x = 0;
+        }
+        else if (m_Begin.x > m_End.x && m_End.x >= 0)
+        {
+            pos.x += m_End.x;
+            m_Begin.x -= m_End.x;
+            m_End.x = 0;
+        }
+
+        if (m_Begin.y < m_End.y && m_Begin.y >= 0)
+        {
+            pos.y += m_Begin.y;
+            m_End.y -= m_Begin.y;
+            m_Begin.y = 0;
+        }
+        else if (m_Begin.y > m_End.y && m_End.y >= 0)
+        {
+            pos.y += m_End.y;
+            m_Begin.y -= m_End.y;
+            m_End.y = 0;
+        }
+        position = pos;
+    }
+
     internal override Graphic.Size
     size_request (Graphic.Size inSize)
     {
         Graphic.Size area = Graphic.Size (0, 0);
+
+        clamp ();
 
         if (m_Begin.x < 0 && m_Begin.y < 0)
         {

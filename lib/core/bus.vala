@@ -23,7 +23,8 @@ public errordomain Maia.Core.BusError
     CONNECT,
     READ,
     WRITE,
-    CANCELLED
+    CANCELLED,
+    CLOSED
 }
 
 public abstract class Maia.Core.Bus : Object
