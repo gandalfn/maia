@@ -729,21 +729,16 @@ public abstract class Maia.Core.Object : Any
     public void
     unplug_property (string inProperty, Object inDest, string inDestProperty)
     {
-        unowned PlugProperty? prop = null;
-        if (m_Plugs == null)
+        if (m_Plugs != null)
         {
-            m_Plugs = new Core.Set<PlugProperty> ();
-            m_Plugs.compare_func = PlugProperty.compare;
-        }
-        else
-        {
+            unowned PlugProperty? prop = null;
             PlugProperty.Hash hash = PlugProperty.Hash (inProperty, inDest, inDestProperty);
             prop = m_Plugs.search<PlugProperty.Hash?> (hash, PlugProperty.compare_with_hash);
-        }
 
-        if (prop != null)
-        {
-            m_Plugs.remove (prop);
+            if (prop != null)
+            {
+                m_Plugs.remove (prop);
+            }
         }
     }
 
@@ -757,21 +752,15 @@ public abstract class Maia.Core.Object : Any
     public void
     lock_property (string inProperty, Object inDest, string inDestProperty)
     {
-        unowned PlugProperty? prop = null;
-        if (m_Plugs == null)
+        if (m_Plugs != null)
         {
-            m_Plugs = new Core.Set<PlugProperty> ();
-            m_Plugs.compare_func = PlugProperty.compare;
-        }
-        else
-        {
+            unowned PlugProperty? prop = null;
             PlugProperty.Hash hash = PlugProperty.Hash (inProperty, inDest, inDestProperty);
             prop = m_Plugs.search<PlugProperty.Hash?> (hash, PlugProperty.compare_with_hash);
-        }
-
-        if (prop != null)
-        {
-            prop.lock ();
+            if (prop != null)
+            {
+                prop.lock ();
+            }
         }
     }
 
@@ -785,21 +774,16 @@ public abstract class Maia.Core.Object : Any
     public void
     unlock_property (string inProperty, Object inDest, string inDestProperty)
     {
-        unowned PlugProperty? prop = null;
-        if (m_Plugs == null)
+        if (m_Plugs != null)
         {
-            m_Plugs = new Core.Set<PlugProperty> ();
-            m_Plugs.compare_func = PlugProperty.compare;
-        }
-        else
-        {
+            unowned PlugProperty? prop = null;
             PlugProperty.Hash hash = PlugProperty.Hash (inProperty, inDest, inDestProperty);
             prop = m_Plugs.search<PlugProperty.Hash?> (hash, PlugProperty.compare_with_hash);
-        }
 
-        if (prop != null)
-        {
-            prop.unlock ();
+            if (prop != null)
+            {
+                prop.unlock ();
+            }
         }
     }
 }
