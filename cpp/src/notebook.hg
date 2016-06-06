@@ -26,6 +26,7 @@
 #include <maiamm/core-event.h>
 #include <maiamm/grid.h>
 #include <maiamm/notebook-page.h>
+#include <maiamm/togglegroup.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/grid_p.h)
@@ -68,6 +69,8 @@ namespace Maia
             _WRAP_METHOD(Notebook::Transition get_transition () const, maia_notebook_get_transition)
             _WRAP_METHOD(void set_transition (Notebook::Transition inTransition), maia_notebook_set_transition)
 
+            _WRAP_METHOD(Glib::RefPtr<ToggleGroup> get_toggle_group () const, maia_notebook_get_toggle_group, refreturn)
+
             _WRAP_METHOD(Glib::RefPtr<NotebookPage> get_nth_page (guint inNumPage) const, maia_notebook_get_nth_page)
 
             _WRAP_PROPERTY("page", guint)
@@ -76,6 +79,7 @@ namespace Maia
             _WRAP_PROPERTY("expand-tabs", bool)
             _WRAP_PROPERTY("tab-placement", Placement)
             _WRAP_PROPERTY("transition", Notebook::Transition)
+            _WRAP_PROPERTY("toggle-group", Glib::RefPtr<ToggleGroup>)
 
         private:
             _WRAP_PROPERTY("switch-progress", double)

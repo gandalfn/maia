@@ -230,6 +230,15 @@ public class Maia.Notebook : Grid
     [CCode (notify = false)]
     public Transition transition { get; set; default = Transition.NONE; }
 
+    /**
+     * Notebook toggle group
+     */
+    public ToggleGroup toggle_group {
+        get {
+            return m_TabGroup;
+        }
+    }
+
     // static methods
     static construct
     {

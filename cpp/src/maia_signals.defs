@@ -8331,6 +8331,15 @@
   (construct-only #f)
 )
 
+(define-property toggle-group
+  (of-object "MaiaNotebook")
+  (prop-type "GParamObject")
+  (docs "toggle-group")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
 ;; From MaiaNotebookPage
 
 (define-property tag

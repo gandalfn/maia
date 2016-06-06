@@ -22848,6 +22848,12 @@
   )
 )
 
+(define-method get_toggle_group
+  (of-object "MaiaNotebook")
+  (c-name "maia_notebook_get_toggle_group")
+  (return-type "MaiaToggleGroup*")
+)
+
 (define-function maia_line_get_type
   (c-name "maia_line_get_type")
   (return-type "GType")
