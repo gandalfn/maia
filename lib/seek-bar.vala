@@ -162,11 +162,13 @@ public class Maia.SeekBar : ProgressBar, ItemFocusable
 
             if (orientation == Orientation.HORIZONTAL)
             {
-                adjustment.@value += (diff.x / area.extents.size.width) * (adjustment.upper - adjustment.lower);
+                double val = adjustment.@value + (diff.x / area.extents.size.width) * (adjustment.upper - adjustment.lower);
+                adjustment.@value = double.min (val, adjustment.upper - adjustment.page_size);
             }
             else
             {
-                adjustment.@value += (diff.y / area.extents.size.height) * (adjustment.upper - adjustment.lower);
+                double val = adjustment.@value + (diff.y / area.extents.size.height) * (adjustment.upper - adjustment.lower);
+                adjustment.@value = double.min (val, adjustment.upper - adjustment.page_size);
             }
         }
 

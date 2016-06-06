@@ -122,23 +122,23 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
             m_MouseEvent      = new Core.Event ("mouse",      ((int)m_View.xid).to_pointer ());
             m_KeyboardEvent   = new Core.Event ("keyboard",   ((int)m_View.xid).to_pointer ());
 
-            // Subscribe to damage event
-            m_DamageEvent.object_subscribe (on_view_damage_event);
+            // Subscribe to damage event TODO check damage event outside viewport
+            //m_DamageEvent.object_subscribe (on_damage_event);
 
             // Subscribe to geometry event
-            m_GeometryEvent.object_subscribe (on_view_geometry_event);
+            m_GeometryEvent.object_subscribe (on_geometry_event);
 
             // Subscribe to visibility event
-            m_VisibilityEvent.object_subscribe (on_view_visibility_event);
+            m_VisibilityEvent.object_subscribe (on_visibility_event);
 
             // Subscribe to destroy event
-            m_DestroyEvent.object_subscribe (on_view_destroy_event);
+            m_DestroyEvent.object_subscribe (on_destroy_event);
 
             // Subscribe to mouse event
-            m_MouseEvent.object_subscribe (on_view_mouse_event);
+            m_MouseEvent.object_subscribe (on_mouse_event);
 
             // Subscribe to keyboard event
-            m_KeyboardEvent.object_subscribe (on_view_keyboard_event);
+            m_KeyboardEvent.object_subscribe (on_keyboard_event);
 
             // set parent
             on_main_window_changed ();
@@ -270,57 +270,6 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
         }
     }
 
-    private void
-    on_view_damage_event (Core.EventArgs? inArgs)
-    {
-        unowned DamageEventArgs? damage_args = inArgs as DamageEventArgs;
-
-        if (damage_args != null)
-        {
-            Graphic.Rectangle damage_area = damage_args.area;
-            damage_area.translate (visible_area.origin);
-            damage_event.publish (new DamageEventArgs (damage_area.origin.x, damage_area.origin.y, damage_area.size.width, damage_area.size.height));
-        }
-    }
-
-    private void
-    on_view_geometry_event (Core.EventArgs? inArgs)
-    {
-        geometry_event.publish (inArgs);
-    }
-
-    private void
-    on_view_visibility_event (Core.EventArgs? inArgs)
-    {
-        visibility_event.publish (inArgs);
-    }
-
-    private void
-    on_view_destroy_event (Core.EventArgs? inArgs)
-    {
-        m_View = null;
-        GLib.Signal.emit_by_name (this, "notify::view");
-    }
-
-    private void
-    on_view_mouse_event (Core.EventArgs? inArgs)
-    {
-        unowned MouseEventArgs? mouse_args = inArgs as MouseEventArgs;
-
-        if (mouse_args != null)
-        {
-            var pos = mouse_args.position;
-            pos.translate (visible_area.origin);
-            mouse_event.publish (new MouseEventArgs (mouse_args.flags, mouse_args.button, pos.x, pos.y));
-        }
-    }
-
-    private void
-    on_view_keyboard_event (Core.EventArgs? inArgs)
-    {
-        keyboard_event.publish (inArgs);
-    }
-
     internal override void
     delegate_construct ()
     {
@@ -399,7 +348,19 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
     {
         m_View = null;
 
-        base.on_destroy_event (inArgs);
+        GLib.Signal.emit_by_name (this, "notify::view");
+    }
+
+    internal override void
+    on_mouse_event (Core.EventArgs? inArgs)
+    {
+        unowned MouseEventArgs? mouse_args = inArgs as MouseEventArgs;
+
+        if (mouse_args != null)
+        {
+            var pos = mouse_args.position;
+            base.on_mouse_event (new MouseEventArgs (mouse_args.flags, mouse_args.button, pos.x, pos.y));
+        }
     }
 
     internal override bool

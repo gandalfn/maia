@@ -143,7 +143,7 @@ public class Maia.Viewport : Window
                 damaged_area.intersect (visible_damaged);
             }
 
-            if (!visible_damaged.is_empty ())
+            if (!damaged_area.is_empty ())
             {
                 Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, @"viewport $name damaged draw $(damaged_area.extents)");
 
@@ -167,11 +167,11 @@ public class Maia.Viewport : Window
                     // Clear area
                     ctx.operator = Graphic.Operator.SOURCE;
 
-                    // Clip the damaged area
-                    ctx.clip_region (damaged_area);
-
                     // set visible area offset
                     ctx.translate (visible_area.origin.invert ());
+
+                    // Clip the damaged area
+                    ctx.clip_region (damaged_area);
 
                     ctx.pattern = background_pattern[state] != null ? background_pattern[state] : new Graphic.Color (0, 0, 0, 0);
                     ctx.paint ();
@@ -196,5 +196,23 @@ public class Maia.Viewport : Window
         m_ScrolledDamaged = null;
 
         base.update (inContext, inAllocation);
+    }
+
+    internal override void
+    on_gesture (Gesture.Notification inNotification)
+    {
+        print(@"gesture type: $(inNotification.gesture_type)\n");
+        switch (inNotification.gesture_type)
+        {
+            case Gesture.Type.HSCROLL:
+                scroll_event (inNotification.position.x < 0 ? Scroll.LEFT : Scroll.RIGHT, Graphic.Point (0, 0));
+                inNotification.proceed = true;
+                break;
+
+            case Gesture.Type.VSCROLL:
+                scroll_event (inNotification.position.y < 0 ? Scroll.UP : Scroll.DOWN, Graphic.Point (0, 0));
+                inNotification.proceed = true;
+                break;
+        }
     }
 }
