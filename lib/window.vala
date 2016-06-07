@@ -448,6 +448,7 @@ public class Maia.Window : Group
                     // we have grab pointer item send event
                     if (grab_pointer_item != null)
                     {
+                        print(@"$name motion grab pointer item $grab_pointer_item\n");
                         grab_pointer_item.motion_event (grab_pointer_item.convert_from_window_space (mouse_args.position));
                     }
                     // else send event to window
@@ -502,6 +503,7 @@ public class Maia.Window : Group
                                 m_Animator.start ();
                             }
 
+                            print(@"$name motion\n");
                             motion_event (pos);
                         }
                     }
@@ -513,11 +515,13 @@ public class Maia.Window : Group
                     // we have grab pointer item send event
                     if (grab_pointer_item != null)
                     {
+                        print(@"$name button press grab pointer item $grab_pointer_item\n");
                         grab_pointer_item.button_press_event (mouse_args.button, grab_pointer_item.convert_from_window_space (mouse_args.position));
                     }
                     // else send event to window
                     else
                     {
+                        print(@"$name button press\n");
                         button_press_event (mouse_args.button, pos);
                     }
 
@@ -564,6 +568,7 @@ public class Maia.Window : Group
                     // we have grab pointer item send event
                     if (grab_pointer_item != null)
                     {
+                        print(@"$name button release grab pointer item $grab_pointer_item\n");
                         grab_pointer_item.button_release_event (mouse_args.button, grab_pointer_item.convert_from_window_space (mouse_args.position));
                     }
                     // else send event to window
@@ -573,6 +578,7 @@ public class Maia.Window : Group
                     }
                     else
                     {
+                        print(@"$name button release\n");
                         button_release_event (mouse_args.button, pos);
                     }
                 }

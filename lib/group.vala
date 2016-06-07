@@ -171,6 +171,8 @@ public class Maia.Group : Item
 
                 child = child.prev ();
             }
+
+            ret = true;
         }
 
         return ret;

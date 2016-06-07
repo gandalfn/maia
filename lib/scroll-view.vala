@@ -570,6 +570,8 @@ public class Maia.ScrollView : Item, ItemPackable
 
                 child = child.prev ();
             }
+
+            ret = true;
         }
 
         return ret;

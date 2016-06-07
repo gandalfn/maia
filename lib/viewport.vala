@@ -198,12 +198,91 @@ public class Maia.Viewport : Window
         base.update (inContext, inAllocation);
     }
 
+
+
+    internal override bool
+    on_button_press_event (uint inButton, Graphic.Point inPoint)
+    {
+        bool ret = base.on_button_press_event (inButton, inPoint);
+
+        if (ret)
+        {
+            // parse child from last to first since item has sorted by layer
+            unowned Core.Object? child = last ();
+            while (child != null)
+            {
+                if (child is Item)
+                {
+                    unowned Item item = (Item)child;
+
+                    // Transform point to item coordinate space
+                    Graphic.Point point = convert_to_child_item_space (item, inPoint);
+
+                    // point under child
+                    if (item.button_press_event (inButton, point))
+                    {
+                        // event occurate under child stop signal
+                        //GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
+                        break;
+                    }
+                }
+
+                child = child.prev ();
+            }
+
+            ret = true;
+        }
+
+        return ret;
+    }
+
+    internal override bool
+    on_button_release_event (uint inButton, Graphic.Point inPoint)
+    {
+        bool ret = base.on_button_release_event (inButton, inPoint);
+
+        if (ret)
+        {
+            // parse child from last to first since item has sorted by layer
+            unowned Core.Object? child = last ();
+            while (child != null)
+            {
+                if (child is Item)
+                {
+                    unowned Item item = (Item)child;
+
+                    // Transform point to item coordinate space
+                    Graphic.Point point = convert_to_child_item_space (item, inPoint);
+
+                    // point under child
+                    if (item.button_release_event (inButton, point))
+                    {
+                        // event occurate under child stop signal
+                        //GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
+                        break;
+                    }
+                }
+
+                child = child.prev ();
+            }
+
+            ret = true;
+        }
+
+        return ret;
+    }
+
     internal override void
     on_gesture (Gesture.Notification inNotification)
     {
         print(@"gesture type: $(inNotification.gesture_type)\n");
         switch (inNotification.gesture_type)
         {
+            case Gesture.Type.PRESS:
+            case Gesture.Type.RELEASE:
+                inNotification.proceed = true;
+                break;
+
             case Gesture.Type.HSCROLL:
                 scroll_event (inNotification.position.x < 0 ? Scroll.LEFT : Scroll.RIGHT, Graphic.Point (0, 0));
                 inNotification.proceed = true;

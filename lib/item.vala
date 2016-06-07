@@ -1420,6 +1420,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             ret = inPoint in area;
         }
 
+        if (this is Window)
+        print(@"$name button press event $ret\n");
+
         if (!ret)
         {
             GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
