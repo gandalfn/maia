@@ -19,10 +19,18 @@
 
 public class Maia.Viewport : Window
 {
+    // types
+    private struct ButtonStatus
+    {
+        bool          m_Pressed;
+        Graphic.Point m_Origin;
+    }
+
     // properties
     private Graphic.Rectangle m_VisibleArea = Graphic.Rectangle (0, 0, 0, 0);
     private Graphic.Region    m_ScrolledDamaged = null;
     private bool              m_ScrollDamage = false;
+    private ButtonStatus      m_ButtonStatus;
 
     // accessors
     internal override string tag {
@@ -207,30 +215,8 @@ public class Maia.Viewport : Window
 
         if (ret)
         {
-            // parse child from last to first since item has sorted by layer
-            unowned Core.Object? child = last ();
-            while (child != null)
-            {
-                if (child is Item)
-                {
-                    unowned Item item = (Item)child;
-
-                    // Transform point to item coordinate space
-                    Graphic.Point point = convert_to_child_item_space (item, inPoint);
-
-                    // point under child
-                    if (item.button_press_event (inButton, point))
-                    {
-                        // event occurate under child stop signal
-                        //GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);
-                        break;
-                    }
-                }
-
-                child = child.prev ();
-            }
-
-            ret = true;
+            m_ButtonStatus.m_Pressed = inButton == 1;
+            m_ButtonStatus.m_Origin = inPoint;
         }
 
         return ret;
@@ -241,57 +227,36 @@ public class Maia.Viewport : Window
     {
         bool ret = base.on_button_release_event (inButton, inPoint);
 
-        if (ret)
-        {
-            // parse child from last to first since item has sorted by layer
-            unowned Core.Object? child = last ();
-            while (child != null)
-            {
-                if (child is Item)
-                {
-                    unowned Item item = (Item)child;
+        m_ButtonStatus.m_Pressed = false;
+        m_ButtonStatus.m_Origin = Graphic.Point (0, 0);
 
-                    // Transform point to item coordinate space
-                    Graphic.Point point = convert_to_child_item_space (item, inPoint);
-
-                    // point under child
-                    if (item.button_release_event (inButton, point))
-                    {
-                        // event occurate under child stop signal
-                        //GLib.Signal.stop_emission (this, mc_IdButtonReleaseEvent, 0);
-                        break;
-                    }
-                }
-
-                child = child.prev ();
-            }
-
-            ret = true;
-        }
+        ret = true;
 
         return ret;
     }
 
-    internal override void
-    on_gesture (Gesture.Notification inNotification)
+    internal override bool
+    on_motion_event (Graphic.Point inPoint)
     {
-        print(@"gesture type: $(inNotification.gesture_type)\n");
-        switch (inNotification.gesture_type)
+        bool ret = base.on_motion_event (inPoint);
+
+        if (ret && m_ButtonStatus.m_Pressed)
         {
-            case Gesture.Type.PRESS:
-            case Gesture.Type.RELEASE:
-                inNotification.proceed = true;
-                break;
+            double diffx = inPoint.x - m_ButtonStatus.m_Origin.x;
+            double diffy = inPoint.y - m_ButtonStatus.m_Origin.y;
 
-            case Gesture.Type.HSCROLL:
-                scroll_event (inNotification.position.x < 0 ? Scroll.LEFT : Scroll.RIGHT, Graphic.Point (0, 0));
-                inNotification.proceed = true;
-                break;
-
-            case Gesture.Type.VSCROLL:
-                scroll_event (inNotification.position.y < 0 ? Scroll.UP : Scroll.DOWN, Graphic.Point (0, 0));
-                inNotification.proceed = true;
-                break;
+            if (GLib.Math.fabs (diffx) > GLib.Math.fabs (diffy))
+            {
+                scroll_event (diffx < 0 ? Scroll.LEFT : Scroll.RIGHT, Graphic.Point (0, 0));
+                m_ButtonStatus.m_Origin = inPoint;
+            }
+            else if (GLib.Math.fabs (diffx) < GLib.Math.fabs (diffy))
+            {
+                scroll_event (diffy < 0 ? Scroll.UP : Scroll.DOWN, Graphic.Point (0, 0));
+                m_ButtonStatus.m_Origin = inPoint;
+            }
         }
+
+        return ret;
     }
 }

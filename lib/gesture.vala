@@ -127,7 +127,6 @@ public class Maia.Gesture : Core.Object
             m_ButtonsStatus[inButton].m_Position = inPoint;
             m_ButtonsStatus[inButton].m_Movement = Graphic.Point (0, 0);
 
-            print(@"$(m_Item.name) post press\n");
             notification.post (inButton, Type.PRESS, inPoint);
 
             ret = notification.proceed;
@@ -187,7 +186,6 @@ public class Maia.Gesture : Core.Object
                 }
                 else if (GLib.Math.fabs (diffx) < GLib.Math.fabs (diffy))
                 {
-                    print (@"$(m_Item.name) vertical scroll\n");
                     notification.post (button, Type.VSCROLL, Graphic.Point (0, diffy));
 
                     ret |= notification.proceed;
