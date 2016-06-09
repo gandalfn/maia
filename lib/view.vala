@@ -58,6 +58,7 @@ public class Maia.View : Maia.Grid
     private unowned SetPropertyFunc m_SetPropertyFunc = null;
     private int                     m_RowHightlighted = -1;
     private Manifest.Document       m_Document = null;
+    private int                     m_RowClicked = -1;
 
     // signals
     public signal void row_clicked (uint inRow);
@@ -297,8 +298,26 @@ public class Maia.View : Maia.Grid
             uint row;
             if (get_item_row (item, out row))
             {
+                m_RowClicked = (int)row;
+            }
+        }
+
+        return true;
+    }
+
+    private bool
+    on_item_button_release (Item inItem, uint inButton, Graphic.Point inPoint)
+    {
+        if (inButton == 1)
+        {
+            unowned ItemPackable item = (ItemPackable)inItem;
+            uint row;
+            if (get_item_row (item, out row) && (int)row == m_RowClicked)
+            {
                 row_clicked (row);
             }
+
+            m_RowClicked = -1;
         }
 
         return true;
@@ -447,6 +466,7 @@ public class Maia.View : Maia.Grid
 
             // connect onto cell button press
             item.button_press_event.connect (on_item_button_press);
+            item.button_release_event.connect (on_item_button_release);
         }
         else
         {
@@ -467,6 +487,7 @@ public class Maia.View : Maia.Grid
             {
                 // disconnect from cell button press
                 item.button_press_event.disconnect (on_item_button_press);
+                item.button_release_event.disconnect (on_item_button_release);
 
                 // dettach item
                 item.parent = null;

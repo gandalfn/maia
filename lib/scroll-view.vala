@@ -159,6 +159,11 @@ public class Maia.ScrollView : Item, ItemPackable
 
     public Policy policy { get; set; default = Policy.VERTICAL_SCROLLING | Policy.HORIZONTAL_SCROLLING; }
 
+    /**
+     * View scroll mode
+     */
+    public Viewport.ScrollMode scroll_mode { get; set; default = Viewport.ScrollMode.NONE; }
+
     internal uint   row     { get; set; default = 0; }
     internal uint   column  { get; set; default = 0; }
     internal uint   rows    { get; set; default = 1; }
@@ -252,6 +257,7 @@ public class Maia.ScrollView : Item, ItemPackable
         plug_property("background-pattern", m_Viewport, "background-pattern");
         plug_property("visible", m_Viewport, "visible");
         plug_property("need-update", m_Viewport, "need-update");
+        plug_property("scroll-mode", m_Viewport, "scroll-mode");
 
         m_Viewport.parent = this;
     }

@@ -7170,6 +7170,15 @@
   (construct-only #f)
 )
 
+(define-property scroll-mode
+  (of-object "MaiaViewport")
+  (prop-type "GParamEnum")
+  (docs "scroll-mode")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaToggleGroupChangedEventArgs
 
 (define-property serialize

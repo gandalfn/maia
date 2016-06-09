@@ -77,8 +77,19 @@ public class Maia.TableView : Maia.Grid
                 m_View.add (item);
                 m_Items.insert (item);
                 item.button_press_event.connect (on_item_button_press);
+                item.button_release_event.connect (on_item_button_release);
 
                 cpt++;
+            }
+        }
+
+        ~Row ()
+        {
+            foreach (unowned Item item in m_Items)
+            {
+                item.button_press_event.disconnect (on_item_button_press);
+                item.button_release_event.disconnect (on_item_button_release);
+                item.parent = null;
             }
         }
 
@@ -87,19 +98,26 @@ public class Maia.TableView : Maia.Grid
         {
             if (inButton == 1)
             {
-                m_View.row_clicked (row);
+                m_View.m_RowClicked = (int)row;
             }
 
             return true;
         }
 
-        ~Row ()
+        private bool
+        on_item_button_release (Item inItem, uint inButton, Graphic.Point inPoint)
         {
-            foreach (unowned Item item in m_Items)
+            if (inButton == 1)
             {
-                item.button_press_event.disconnect (on_item_button_press);
-                item.parent = null;
+                if (m_View.m_RowClicked == row)
+                {
+                    m_View.row_clicked (row);
+                }
+
+                m_View.m_RowClicked = -1;
             }
+
+            return true;
         }
 
         internal override int
@@ -132,6 +150,7 @@ public class Maia.TableView : Maia.Grid
     private int                         m_RowHightlighted = -1;
     private Core.Array<TableViewColumn> m_Columns = new Core.Array<TableViewColumn> ();
     private Core.Set<Row>               m_Rows = new Core.Set<Row> ();
+    private int                         m_RowClicked = -1;
 
     // signals
     public signal void row_clicked (uint inRow);

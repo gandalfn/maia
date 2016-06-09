@@ -5092,6 +5092,27 @@
 
 ;; Original typedef:
 ;; typedef enum  {
+;; 	MAIA_VIEWPORT_SCROLL_MODE_NONE,
+;; 	MAIA_VIEWPORT_SCROLL_MODE_PUSH,
+;; 	MAIA_VIEWPORT_SCROLL_MODE_NATURAL_PUSH,
+;; 	MAIA_VIEWPORT_SCROLL_MODE_ACCEL,
+;; 	MAIA_VIEWPORT_SCROLL_MODE_NATURAL_ACCEL
+;; } MaiaViewportScrollMode;
+
+(define-enum-extended ViewportScrollMode
+  (in-module "Maia")
+  (c-name "MaiaViewportScrollMode")
+  (values
+    '("none" "MAIA_VIEWPORT_SCROLL_MODE_NONE" "0")
+    '("push" "MAIA_VIEWPORT_SCROLL_MODE_PUSH" "1")
+    '("natural-push" "MAIA_VIEWPORT_SCROLL_MODE_NATURAL_PUSH" "2")
+    '("accel" "MAIA_VIEWPORT_SCROLL_MODE_ACCEL" "3")
+    '("natural-accel" "MAIA_VIEWPORT_SCROLL_MODE_NATURAL_ACCEL" "4")
+  )
+)
+
+;; Original typedef:
+;; typedef enum  {
 ;; 	MAIA_CHART_VIEW_LEGEND_POSITION_NONE,
 ;; 	MAIA_CHART_VIEW_LEGEND_POSITION_NORTH_EST,
 ;; 	MAIA_CHART_VIEW_LEGEND_POSITION_NORTH,
