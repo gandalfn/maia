@@ -7179,6 +7179,42 @@
   (construct-only #f)
 )
 
+(define-property velocity-min
+  (of-object "MaiaViewport")
+  (prop-type "GParamDouble")
+  (docs "velocity-min")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property velocity-max
+  (of-object "MaiaViewport")
+  (prop-type "GParamDouble")
+  (docs "velocity-max")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property sps
+  (of-object "MaiaViewport")
+  (prop-type "GParamUInt")
+  (docs "sps")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
+(define-property deceleration
+  (of-object "MaiaViewport")
+  (prop-type "GParamDouble")
+  (docs "deceleration")
+  (readable #t)
+  (writable #t)
+  (construct-only #f)
+)
+
 ;; From MaiaToggleGroupChangedEventArgs
 
 (define-property serialize

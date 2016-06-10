@@ -85,6 +85,8 @@ public class Maia.Viewport : Window
     private Graphic.Region    m_ScrolledDamaged = null;
     private bool              m_ScrollDamage = false;
     private ButtonStatus      m_ButtonStatus;
+    private Core.Timeline     m_Timeline;
+    private uint              m_Sps = 20;
 
     // accessors
     internal override string tag {
@@ -150,6 +152,41 @@ public class Maia.Viewport : Window
      */
     public ScrollMode scroll_mode { get; set; default = ScrollMode.NONE; }
 
+    /**
+     * Accel scroll mode velocity min
+     */
+    public double velocity_min { get; construct set; default = 0.0; }
+
+    /**
+     * Accel scroll mode velocity max
+     */
+    public double velocity_max { get; construct set; default = 96.0; }
+
+    /**
+     * Accel scroll per seconds
+     */
+    public uint sps {
+        get {
+            return m_Sps;
+        }
+        set {
+            if (m_Sps != value)
+            {
+                m_Sps = value;
+                if (m_Sps == 0) m_Sps = 20;
+                m_Timeline = new Core.Timeline (m_Sps, m_Sps);
+                m_Timeline.loop = true;
+                m_Timeline.new_frame.add_object_observer (on_new_frame);
+            }
+        }
+        default = 20;
+    }
+
+    /**
+     * Accell scroll deceleration
+     */
+    public double deceleration { get; construct set; default = 0.95; }
+
     // static methods
     static construct
     {
@@ -177,6 +214,11 @@ public class Maia.Viewport : Window
     construct
     {
         not_dumpable_attributes.insert ("visible-area");
+
+        if (m_Sps == 0) m_Sps = 20;
+        m_Timeline = new Core.Timeline (m_Sps, m_Sps);
+        m_Timeline.loop = true;
+        m_Timeline.new_frame.add_object_observer (on_new_frame);
     }
 
     /**
@@ -185,6 +227,44 @@ public class Maia.Viewport : Window
     public Viewport (string inName)
     {
         base (inName, 1, 1);
+    }
+
+    private void
+    on_new_frame (Core.Notification inNotification)
+    {
+        m_ButtonStatus.m_Velocity.x *= deceleration;
+        m_ButtonStatus.m_Velocity.y *= deceleration;
+
+        for (int cpt = 0; cpt < (int)GLib.Math.ceil (GLib.Math.fabs (m_ButtonStatus.m_Velocity.x)); ++cpt)
+        {
+            if (scroll_mode == ScrollMode.ACCEL)
+            {
+                scroll_event (m_ButtonStatus.m_Velocity.x < 0 ? Scroll.LEFT : Scroll.RIGHT, Graphic.Point (0, 0));
+            }
+            else if (scroll_mode == ScrollMode.NATURAL_ACCEL)
+            {
+                scroll_event (m_ButtonStatus.m_Velocity.x < 0 ? Scroll.RIGHT : Scroll.LEFT, Graphic.Point (0, 0));
+            }
+        }
+
+        for (int cpt = 0; cpt < (int)GLib.Math.ceil (GLib.Math.fabs (m_ButtonStatus.m_Velocity.y)); ++cpt)
+        {
+            if (scroll_mode == ScrollMode.ACCEL)
+            {
+                scroll_event (m_ButtonStatus.m_Velocity.y < 0 ? Scroll.UP : Scroll.DOWN, Graphic.Point (0, 0));
+            }
+            else if (scroll_mode == ScrollMode.NATURAL_ACCEL)
+            {
+                scroll_event (m_ButtonStatus.m_Velocity.y < 0 ? Scroll.DOWN : Scroll.UP, Graphic.Point (0, 0));
+            }
+        }
+
+        print(@"x: $((int)GLib.Math.ceil (GLib.Math.fabs (m_ButtonStatus.m_Velocity.x))) y: $((int)GLib.Math.ceil (GLib.Math.fabs (m_ButtonStatus.m_Velocity.y)))\n");
+        if ((int)GLib.Math.ceil (GLib.Math.fabs (m_ButtonStatus.m_Velocity.x))  == 0 &&
+            (int)GLib.Math.ceil (GLib.Math.fabs (m_ButtonStatus.m_Velocity.y)) == 0)
+        {
+            m_Timeline.stop ();
+        }
     }
 
     internal override void
@@ -304,6 +384,11 @@ public class Maia.Viewport : Window
             m_ButtonStatus.m_ClickTime = GLib.get_monotonic_time ();
         }
 
+        if (m_ButtonStatus.m_Pressed && m_Timeline.is_playing)
+        {
+            m_Timeline.stop ();
+        }
+
         return ret;
     }
 
@@ -330,6 +415,12 @@ public class Maia.Viewport : Window
         {
             double diffx = inPoint.x - m_ButtonStatus.m_Position.x;
             double diffy = inPoint.y - m_ButtonStatus.m_Position.y;
+            var item_area = area;
+
+            double dx = inPoint.x - m_ButtonStatus.m_Origin.x;
+            double dy = inPoint.y - m_ButtonStatus.m_Origin.y;
+
+            m_ButtonStatus.m_Position = inPoint;
 
             if (GLib.Math.fabs (diffx) > GLib.Math.fabs (diffy))
             {
@@ -344,15 +435,15 @@ public class Maia.Viewport : Window
                         break;
 
                     case ScrollMode.ACCEL:
-                        scroll_event (diffx < 0 ? Scroll.LEFT : Scroll.RIGHT, Graphic.Point (0, 0));
-                        break;
-
                     case ScrollMode.NATURAL_ACCEL:
-                        scroll_event (diffx < 0 ? Scroll.RIGHT : Scroll.LEFT, Graphic.Point (0, 0));
+                        m_ButtonStatus.m_Velocity.x = GLib.Math.fabs (dx) / item_area.extents.size.width;
+                        if (!m_Timeline.is_playing)
+                        {
+                            m_Timeline.start ();
+                        }
                         break;
 
                 }
-                m_ButtonStatus.m_Position = inPoint;
             }
             else if (GLib.Math.fabs (diffx) < GLib.Math.fabs (diffy))
             {
@@ -367,15 +458,14 @@ public class Maia.Viewport : Window
                         break;
 
                     case ScrollMode.ACCEL:
-                        scroll_event (diffy < 0 ? Scroll.UP : Scroll.DOWN, Graphic.Point (0, 0));
-                        break;
-
                     case ScrollMode.NATURAL_ACCEL:
-                        scroll_event (diffy < 0 ? Scroll.DOWN : Scroll.UP, Graphic.Point (0, 0));
+                        m_ButtonStatus.m_Velocity.y = GLib.Math.fabs (dy) / item_area.extents.size.height;
+                        if (!m_Timeline.is_playing)
+                        {
+                            m_Timeline.start ();
+                        }
                         break;
-
                 }
-                m_ButtonStatus.m_Position = inPoint;
             }
         }
 
