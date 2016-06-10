@@ -75,6 +75,9 @@ public class Maia.Viewport : Window
     {
         bool          m_Pressed;
         Graphic.Point m_Origin;
+        Graphic.Point m_Position;
+        Graphic.Point m_Velocity;
+        int64         m_ClickTime;
     }
 
     // properties
@@ -296,6 +299,9 @@ public class Maia.Viewport : Window
         {
             m_ButtonStatus.m_Pressed = inButton == 1;
             m_ButtonStatus.m_Origin = inPoint;
+            m_ButtonStatus.m_Position = inPoint;
+            m_ButtonStatus.m_Velocity = Graphic.Point (0, 0);
+            m_ButtonStatus.m_ClickTime = GLib.get_monotonic_time ();
         }
 
         return ret;
@@ -308,6 +314,9 @@ public class Maia.Viewport : Window
 
         m_ButtonStatus.m_Pressed = false;
         m_ButtonStatus.m_Origin = Graphic.Point (0, 0);
+        m_ButtonStatus.m_Position = Graphic.Point (0, 0);
+        m_ButtonStatus.m_Velocity = Graphic.Point (0, 0);
+        m_ButtonStatus.m_ClickTime = 0;
 
         return ret;
     }
@@ -319,8 +328,8 @@ public class Maia.Viewport : Window
 
         if (ret && m_ButtonStatus.m_Pressed && scroll_mode != ScrollMode.NONE)
         {
-            double diffx = inPoint.x - m_ButtonStatus.m_Origin.x;
-            double diffy = inPoint.y - m_ButtonStatus.m_Origin.y;
+            double diffx = inPoint.x - m_ButtonStatus.m_Position.x;
+            double diffy = inPoint.y - m_ButtonStatus.m_Position.y;
 
             if (GLib.Math.fabs (diffx) > GLib.Math.fabs (diffy))
             {
@@ -330,12 +339,12 @@ public class Maia.Viewport : Window
                         scroll_event (diffx < 0 ? Scroll.LEFT : Scroll.RIGHT, Graphic.Point (0, 0));
                         break;
 
-                    case ScrollMode.ACCEL:
-                        scroll_event (diffx < 0 ? Scroll.LEFT : Scroll.RIGHT, Graphic.Point (0, 0));
-                        break;
-
                     case ScrollMode.NATURAL_PUSH:
                         scroll_event (diffx < 0 ? Scroll.RIGHT : Scroll.LEFT, Graphic.Point (0, 0));
+                        break;
+
+                    case ScrollMode.ACCEL:
+                        scroll_event (diffx < 0 ? Scroll.LEFT : Scroll.RIGHT, Graphic.Point (0, 0));
                         break;
 
                     case ScrollMode.NATURAL_ACCEL:
@@ -343,7 +352,7 @@ public class Maia.Viewport : Window
                         break;
 
                 }
-                m_ButtonStatus.m_Origin = inPoint;
+                m_ButtonStatus.m_Position = inPoint;
             }
             else if (GLib.Math.fabs (diffx) < GLib.Math.fabs (diffy))
             {
@@ -353,12 +362,12 @@ public class Maia.Viewport : Window
                         scroll_event (diffy < 0 ? Scroll.UP : Scroll.DOWN, Graphic.Point (0, 0));
                         break;
 
-                    case ScrollMode.ACCEL:
-                        scroll_event (diffy < 0 ? Scroll.UP : Scroll.DOWN, Graphic.Point (0, 0));
-                        break;
-
                     case ScrollMode.NATURAL_PUSH:
                         scroll_event (diffy < 0 ? Scroll.DOWN : Scroll.UP, Graphic.Point (0, 0));
+                        break;
+
+                    case ScrollMode.ACCEL:
+                        scroll_event (diffy < 0 ? Scroll.UP : Scroll.DOWN, Graphic.Point (0, 0));
                         break;
 
                     case ScrollMode.NATURAL_ACCEL:
@@ -366,7 +375,7 @@ public class Maia.Viewport : Window
                         break;
 
                 }
-                m_ButtonStatus.m_Origin = inPoint;
+                m_ButtonStatus.m_Position = inPoint;
             }
         }
 
