@@ -232,9 +232,6 @@ public class Maia.Viewport : Window
     private void
     on_new_frame (Core.Notification inNotification)
     {
-        m_ButtonStatus.m_Velocity.x *= deceleration;
-        m_ButtonStatus.m_Velocity.y *= deceleration;
-
         for (int cpt = 0; cpt < (int)GLib.Math.ceil (GLib.Math.fabs (m_ButtonStatus.m_Velocity.x)); ++cpt)
         {
             if (scroll_mode == ScrollMode.ACCEL)
@@ -260,6 +257,10 @@ public class Maia.Viewport : Window
         }
 
         print(@"x: $((int)GLib.Math.ceil (GLib.Math.fabs (m_ButtonStatus.m_Velocity.x))) y: $((int)GLib.Math.ceil (GLib.Math.fabs (m_ButtonStatus.m_Velocity.y)))\n");
+
+        m_ButtonStatus.m_Velocity.x *= deceleration;
+        m_ButtonStatus.m_Velocity.y *= deceleration;
+
         if ((int)GLib.Math.ceil (GLib.Math.fabs (m_ButtonStatus.m_Velocity.x))  == 0 &&
             (int)GLib.Math.ceil (GLib.Math.fabs (m_ButtonStatus.m_Velocity.y)) == 0)
         {
@@ -436,7 +437,8 @@ public class Maia.Viewport : Window
 
                     case ScrollMode.ACCEL:
                     case ScrollMode.NATURAL_ACCEL:
-                        m_ButtonStatus.m_Velocity.x = GLib.Math.fabs (dx) / item_area.extents.size.width;
+                        m_ButtonStatus.m_Velocity.x = ((dx / item_area.extents.size.width) *
+                                                       (velocity_max - velocity_min)) + velocity_min;
                         if (!m_Timeline.is_playing)
                         {
                             m_Timeline.start ();
@@ -459,7 +461,8 @@ public class Maia.Viewport : Window
 
                     case ScrollMode.ACCEL:
                     case ScrollMode.NATURAL_ACCEL:
-                        m_ButtonStatus.m_Velocity.y = GLib.Math.fabs (dy) / item_area.extents.size.height;
+                        m_ButtonStatus.m_Velocity.y = ((dy / item_area.extents.size.height) *
+                                                       (velocity_max - velocity_min)) + velocity_min;
                         if (!m_Timeline.is_playing)
                         {
                             m_Timeline.start ();
