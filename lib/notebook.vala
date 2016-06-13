@@ -68,17 +68,18 @@ public class Maia.Notebook : Grid
     private static GLib.Quark s_QuarkNotebookPageNum;
 
     // properties
-    private uint            m_Page = 0;
-    private uint            m_NbPages = 0;
-    private ToggleGroup     m_TabGroup;
-    private unowned Grid    m_Tab = null;
-    private Placement       m_Placement = Placement.TOP;
-    private Graphic.Surface m_CurrentPage = null;
-    private Graphic.Surface m_PrevPage = null;
-    private Core.Animator   m_SwitchAnimator = null;
-    private uint            m_SwitchTransition = 0;
-    private double          m_SwitchProgress = 1.0;
-    private bool            m_SwitchDirectionUp = false;
+    private uint               m_Page = 0;
+    private uint               m_NbPages = 0;
+    private ToggleGroup        m_TabGroup;
+    private Core.EventListener m_TabGroupChangedListener;
+    private unowned Grid       m_Tab = null;
+    private Placement          m_Placement = Placement.TOP;
+    private Graphic.Surface    m_CurrentPage = null;
+    private Graphic.Surface    m_PrevPage = null;
+    private Core.Animator      m_SwitchAnimator = null;
+    private uint               m_SwitchTransition = 0;
+    private double             m_SwitchProgress = 1.0;
+    private bool               m_SwitchDirectionUp = false;
 
     // accessors
     internal override string tag {
@@ -290,7 +291,7 @@ public class Maia.Notebook : Grid
         // Create tab toggle group
         m_TabGroup = new ToggleGroup (@"$(name)-group");
         m_TabGroup.exclusive = true;
-        m_TabGroup.changed.object_subscribe (on_toggle_changed);
+        m_TabGroupChangedListener = m_TabGroup.changed.object_subscribe (on_toggle_changed);
 
         // Create tab
         var tab = new Grid (@"$(name)-tabs");
@@ -393,13 +394,15 @@ public class Maia.Notebook : Grid
                 if (found != page.toggle)
                 {
                     m_TabGroup.remove_button (found);
+                    page.toggle.toggle_group = m_TabGroup;
+                    page.toggle.set_qdata<uint> (s_QuarkNotebookPageNum, cpt);
+                    page.toggle.active = found.active;
+
                     if (found.parent == m_Tab)
                     {
                         found.parent = null;
                     }
-                    page.toggle.toggle_group = m_TabGroup;
-                    page.toggle.active = true;
-                    page.toggle.set_qdata<uint> (s_QuarkNotebookPageNum, cpt);
+
                     if (page.toggle.parent == null)
                     {
                         if (tab_placement == Placement.TOP || tab_placement == Placement.BOTTOM)
@@ -412,6 +415,8 @@ public class Maia.Notebook : Grid
                         }
                         page.toggle.parent = m_Tab;
                     }
+
+                    break;
                 }
 
                 cpt++;

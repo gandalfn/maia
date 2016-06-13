@@ -256,8 +256,6 @@ public class Maia.Viewport : Window
             }
         }
 
-        print(@"x: $((int)GLib.Math.ceil (GLib.Math.fabs (m_ButtonStatus.m_Velocity.x))) y: $((int)GLib.Math.ceil (GLib.Math.fabs (m_ButtonStatus.m_Velocity.y)))\n");
-
         m_ButtonStatus.m_Velocity.x *= deceleration;
         m_ButtonStatus.m_Velocity.y *= deceleration;
 
