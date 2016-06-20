@@ -546,9 +546,12 @@ internal class Maia.Xcb.Window : Maia.Window
     internal override void
     on_ungrab_pointer (Item inItem)
     {
-        base.on_ungrab_pointer (inItem);
+        if (grab_pointer_item == inItem)
+        {
+            m_View.ungrab_pointer ();
+        }
 
-        m_View.ungrab_pointer ();
+        base.on_ungrab_pointer (inItem);
     }
 
     internal override bool

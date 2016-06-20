@@ -421,8 +421,8 @@ public class Maia.ScrollView : Item, ItemPackable
             area.union_with_rect (Graphic.Rectangle (0, 0, child_position.x + child_size.width, child_position.y + child_size.height));
         }
 
-        hadjustment.configure (area.extents.origin.x, area.extents.size.width, hadjustment.page_size);
-        vadjustment.configure (area.extents.origin.y, area.extents.size.height, vadjustment.page_size);
+        hadjustment.configure (area.extents.origin.x, double.max (area.extents.size.width, hadjustment.page_size), hadjustment.page_size);
+        vadjustment.configure (area.extents.origin.y, double.max (area.extents.size.height, vadjustment.page_size), vadjustment.page_size);
 
 #if MAIA_DEBUG
         Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"scroll-view: $name $(area.extents.size)");

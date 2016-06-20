@@ -727,6 +727,8 @@ public class Maia.Window : Group
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab pointer %s", inItem.name);
 #endif
             grab_pointer_item = inItem;
+
+            print(@"grab pointer $(grab_pointer_item.name)\n");
             ret = true;
         }
 
@@ -741,6 +743,7 @@ public class Maia.Window : Group
 #if MAIA_DEBUG
             Log.debug (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab pointer %s", grab_pointer_item.name);
 #endif
+            print(@"ungrab pointer $(grab_pointer_item.name)\n");
             grab_pointer_item = null;
         }
     }

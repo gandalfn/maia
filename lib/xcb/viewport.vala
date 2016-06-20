@@ -359,6 +359,7 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
         if (mouse_args != null)
         {
             var pos = mouse_args.position;
+            pos.translate (visible_area.origin);
             base.on_mouse_event (new MouseEventArgs (mouse_args.flags, mouse_args.button, pos.x, pos.y));
         }
     }
