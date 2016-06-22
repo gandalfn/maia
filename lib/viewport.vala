@@ -74,6 +74,7 @@ public class Maia.Viewport : Window
     private struct ButtonStatus
     {
         bool          m_Pressed;
+        bool          m_FirstMotion;
         Graphic.Point m_Origin;
         Graphic.Point m_Position;
         Graphic.Point m_Velocity;
@@ -372,11 +373,14 @@ public class Maia.Viewport : Window
     internal override bool
     on_button_press_event (uint inButton, Graphic.Point inPoint)
     {
-        bool ret = base.on_button_press_event (inButton, inPoint);
+        var pos = inPoint;
+        pos.translate (visible_area.origin);
+        bool ret = base.on_button_press_event (inButton, pos);
 
         if (ret && scroll_mode != ScrollMode.NONE)
         {
             m_ButtonStatus.m_Pressed = inButton == 1;
+            m_ButtonStatus.m_FirstMotion = true;
             m_ButtonStatus.m_Origin = inPoint;
             m_ButtonStatus.m_Position = inPoint;
             m_ButtonStatus.m_Velocity = Graphic.Point (0, 0);
@@ -394,7 +398,9 @@ public class Maia.Viewport : Window
     internal override bool
     on_button_release_event (uint inButton, Graphic.Point inPoint)
     {
-        bool ret = base.on_button_release_event (inButton, inPoint);
+        var pos = inPoint;
+        pos.translate (visible_area.origin);
+        bool ret = base.on_button_release_event (inButton, pos);
 
         m_ButtonStatus.m_Pressed = false;
         m_ButtonStatus.m_Origin = Graphic.Point (0, 0);
@@ -408,67 +414,86 @@ public class Maia.Viewport : Window
     internal override bool
     on_motion_event (Graphic.Point inPoint)
     {
-        bool ret = base.on_motion_event (inPoint);
+        var pos = inPoint;
+        pos.translate (visible_area.origin);
+        bool ret = base.on_motion_event (pos);
 
-        if (ret && m_ButtonStatus.m_Pressed && scroll_mode != ScrollMode.NONE)
+        if (ret && m_ButtonStatus.m_Pressed && scroll_mode != ScrollMode.NONE && !m_ButtonStatus.m_FirstMotion)
         {
             double diffx = inPoint.x - m_ButtonStatus.m_Position.x;
             double diffy = inPoint.y - m_ButtonStatus.m_Position.y;
-            var item_area = area;
-
-            double dx = inPoint.x - m_ButtonStatus.m_Origin.x;
-            double dy = inPoint.y - m_ButtonStatus.m_Origin.y;
-
+            
+            if (GLib.Math.fabs (diffx) > 1 || GLib.Math.fabs (diffy) > 1)
+            {
+                var item_area = area;
+    
+                double dx = inPoint.x - m_ButtonStatus.m_Origin.x;
+                double dy = inPoint.y - m_ButtonStatus.m_Origin.y;
+    
+                if (GLib.Math.fabs (diffx) > GLib.Math.fabs (diffy))
+                {
+                    switch (scroll_mode)
+                    {
+                        case ScrollMode.PUSH:
+                            for (int cpt = 0; cpt < (int)(GLib.Math.fabs (diffx / item_area.extents.size.width) * 200); ++cpt)
+                            {
+                                scroll_event (diffx < 0 ? Scroll.LEFT : Scroll.RIGHT, Graphic.Point (0, 0));
+                            }
+                            break;
+    
+                        case ScrollMode.NATURAL_PUSH:
+                            for (int cpt = 0; cpt < (int)(GLib.Math.fabs (diffx / item_area.extents.size.width) * 200); ++cpt)
+                            {
+                                scroll_event (diffx < 0 ? Scroll.RIGHT : Scroll.LEFT, Graphic.Point (0, 0));
+                            }
+                            break;
+    
+                        case ScrollMode.ACCEL:
+                        case ScrollMode.NATURAL_ACCEL:
+                            m_ButtonStatus.m_Velocity.x = ((dx / item_area.extents.size.width) *
+                                                           (velocity_max - velocity_min)) + velocity_min;
+                            if (!m_Timeline.is_playing)
+                            {
+                                m_Timeline.start ();
+                            }
+                            break;
+    
+                    }
+                }
+                else if (GLib.Math.fabs (diffx) < GLib.Math.fabs (diffy))
+                {
+                    switch (scroll_mode)
+                    {
+                        case ScrollMode.PUSH:
+                            for (int cpt = 0; cpt < (int)(GLib.Math.fabs (diffy / item_area.extents.size.height) * 200); ++cpt)
+                            {
+                                scroll_event (diffy < 0 ? Scroll.UP : Scroll.DOWN, Graphic.Point (0, 0));
+                            }
+                            break;
+    
+                        case ScrollMode.NATURAL_PUSH:
+                            for (int cpt = 0; cpt < (int)(GLib.Math.fabs (diffy / item_area.extents.size.height) * 200); ++cpt)
+                            {
+                                scroll_event (diffy < 0 ? Scroll.DOWN : Scroll.UP, Graphic.Point (0, 0));
+                            }
+                            break;
+    
+                        case ScrollMode.ACCEL:
+                        case ScrollMode.NATURAL_ACCEL:
+                            m_ButtonStatus.m_Velocity.y = ((dy / item_area.extents.size.height) *
+                                                           (velocity_max - velocity_min)) + velocity_min;
+                            if (!m_Timeline.is_playing)
+                            {
+                                m_Timeline.start ();
+                            }
+                            break;
+                    }
+                }
+            }
             m_ButtonStatus.m_Position = inPoint;
 
-            if (GLib.Math.fabs (diffx) > GLib.Math.fabs (diffy))
-            {
-                switch (scroll_mode)
-                {
-                    case ScrollMode.PUSH:
-                        scroll_event (diffx < 0 ? Scroll.LEFT : Scroll.RIGHT, Graphic.Point (0, 0));
-                        break;
-
-                    case ScrollMode.NATURAL_PUSH:
-                        scroll_event (diffx < 0 ? Scroll.RIGHT : Scroll.LEFT, Graphic.Point (0, 0));
-                        break;
-
-                    case ScrollMode.ACCEL:
-                    case ScrollMode.NATURAL_ACCEL:
-                        m_ButtonStatus.m_Velocity.x = ((dx / item_area.extents.size.width) *
-                                                       (velocity_max - velocity_min)) + velocity_min;
-                        if (!m_Timeline.is_playing)
-                        {
-                            m_Timeline.start ();
-                        }
-                        break;
-
-                }
-            }
-            else if (GLib.Math.fabs (diffx) < GLib.Math.fabs (diffy))
-            {
-                switch (scroll_mode)
-                {
-                    case ScrollMode.PUSH:
-                        scroll_event (diffy < 0 ? Scroll.UP : Scroll.DOWN, Graphic.Point (0, 0));
-                        break;
-
-                    case ScrollMode.NATURAL_PUSH:
-                        scroll_event (diffy < 0 ? Scroll.DOWN : Scroll.UP, Graphic.Point (0, 0));
-                        break;
-
-                    case ScrollMode.ACCEL:
-                    case ScrollMode.NATURAL_ACCEL:
-                        m_ButtonStatus.m_Velocity.y = ((dy / item_area.extents.size.height) *
-                                                       (velocity_max - velocity_min)) + velocity_min;
-                        if (!m_Timeline.is_playing)
-                        {
-                            m_Timeline.start ();
-                        }
-                        break;
-                }
-            }
         }
+        m_ButtonStatus.m_FirstMotion = false;
 
         return ret;
     }

@@ -351,19 +351,6 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
         GLib.Signal.emit_by_name (this, "notify::view");
     }
 
-    internal override void
-    on_mouse_event (Core.EventArgs? inArgs)
-    {
-        unowned MouseEventArgs? mouse_args = inArgs as MouseEventArgs;
-
-        if (mouse_args != null)
-        {
-            var pos = mouse_args.position;
-            pos.translate (visible_area.origin);
-            base.on_mouse_event (new MouseEventArgs (mouse_args.flags, mouse_args.button, pos.x, pos.y));
-        }
-    }
-
     internal override bool
     on_grab_pointer (Item inItem)
     {
@@ -420,17 +407,6 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
         if (m_View != null)
         {
             m_View.set_pointer_cursor (inCursor);
-        }
-    }
-
-    internal override void
-    on_move_pointer (Graphic.Point inPosition)
-    {
-        if (m_View != null)
-        {
-            var pos = inPosition;
-            pos.translate (visible_area.origin);
-            m_View.move_pointer (pos);
         }
     }
 
