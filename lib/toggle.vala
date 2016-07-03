@@ -386,7 +386,6 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
 
         if (sensitive && ret)
         {
-            print (@"$name grab pointer\n");
             grab_pointer (this);
         }
 
@@ -398,7 +397,6 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
     {
         bool ret = base.on_button_release_event (inButton, inPoint);
 
-        print (@"$name ungrab pointer\n");
         ungrab_pointer (this);
 
         return ret;
@@ -412,15 +410,12 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
             switch (inNotification.gesture_type)
             {
                 case Gesture.Type.PRESS:
-                    print(@"$name press\n");
                     inNotification.proceed = true;
                     break;
 
                 case Gesture.Type.RELEASE:
-                    print(@"$name release $(m_ToggleGroup.active) $(m_ToggleGroup == null) || $(!m_ToggleGroup.exclusive) || $(m_ToggleGroup.active != name)\n");
                     if (m_ToggleGroup == null || !m_ToggleGroup.exclusive || m_ToggleGroup.active != name)
                     {
-                        print(@"$name active: $(active)\n");
                         active = !active;
                     }
                     inNotification.proceed = true;

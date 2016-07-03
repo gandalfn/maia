@@ -359,6 +359,12 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable, ItemFocusable
                 damage.post ();
 
                 GLib.Signal.emit_by_name (this, "notify::text");
+
+
+                if (ChangedMask.EACH_TEXT_UPDATE in changed_mask)
+                {
+                    changed.publish (new ChangedEventArgs (m_Text ?? ""));
+                }
             }
         }
         default = "";
@@ -886,11 +892,6 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable, ItemFocusable
                         check_line_size ();
                     }
                 }
-            }
-
-            if (updated && ChangedMask.EACH_TEXT_UPDATE in changed_mask)
-            {
-                changed.publish (new ChangedEventArgs (text ?? ""));
             }
         }
     }

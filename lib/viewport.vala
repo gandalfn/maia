@@ -368,8 +368,6 @@ public class Maia.Viewport : Window
         base.update (inContext, inAllocation);
     }
 
-
-
     internal override bool
     on_button_press_event (uint inButton, Graphic.Point inPoint)
     {
