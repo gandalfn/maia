@@ -15051,6 +15051,14 @@
   (return-type "GType")
 )
 
+(define-function maia_application_add_backends_path
+  (c-name "maia_application_add_backends_path")
+  (return-type "none")
+  (parameters
+    '("const-gchar*" "inPath")
+  )
+)
+
 (define-function maia_application_new
   (c-name "maia_application_new")
   (is-constructor-of "MaiaApplication")
@@ -15167,6 +15175,18 @@
   (parameters
     '("gboolean" "value")
   )
+)
+
+(define-method get_running_notification
+  (of-object "MaiaApplication")
+  (c-name "maia_application_get_running_notification")
+  (return-type "MaiaCoreNotification*")
+)
+
+(define-method get_new_frame
+  (of-object "MaiaApplication")
+  (c-name "maia_application_get_new_frame")
+  (return-type "MaiaCoreTimelineNewFrameNotification*")
 )
 
 (define-function maia_damage_event_args_get_type

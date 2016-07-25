@@ -101,6 +101,19 @@ public class Maia.Application : Maia.Core.Object
         default = false;
     }
 
+    // notifications
+    public Core.Notification running_notification {
+        get {
+            return notifications["running"];
+        }
+    }
+
+    public Core.Timeline.NewFrameNotification new_frame {
+        get {
+            return notifications["new-frame"] as Core.Timeline.NewFrameNotification;
+        }
+    }
+
     // static methods
     static construct
     {
@@ -154,10 +167,19 @@ public class Maia.Application : Maia.Core.Object
         Manifest.Element.register ("FocusGroup",      typeof (FocusGroup));
     }
 
+    public static void
+    add_backends_path (string inPath)
+    {
+        Backends.add_backends_path (inPath);
+    }
+
     // methods
     construct
     {
         m_Backends = new Backends ();
+
+        notifications.add (new Core.Notification ("running"));
+        notifications.add (new Core.Timeline.NewFrameNotification ("new-frame"));
     }
 
     /**
@@ -171,6 +193,9 @@ public class Maia.Application : Maia.Core.Object
     public Application (string inName, int inFps, string[]? inBackends = null, string inUri = "unix://")
     {
         GLib.Object (id: GLib.Quark.from_string (inName));
+
+        // Create loop
+        m_Loop = new GLib.MainLoop (null, false);
 
         // Load backends
         if (inBackends != null)
@@ -217,6 +242,10 @@ public class Maia.Application : Maia.Core.Object
             Log.critical (GLib.Log.METHOD, Log.Category.MAIN, "option parsing failed: %s", err.message);
         }
 
+        // Create loop
+        m_Loop = new GLib.MainLoop (null, false);
+
+        // load backends
         string[]? backends = null;
         if (s_Backends != null)
         {
@@ -237,9 +266,21 @@ public class Maia.Application : Maia.Core.Object
         }
     }
 
+    private bool
+    on_running ()
+    {
+        running_notification.post ();
+
+        return false;
+    }
+
     private void
     on_new_frame (Core.Notification inNotification)
     {
+        unowned Core.Timeline.NewFrameNotification notification = (Core.Timeline.NewFrameNotification)inNotification;
+
+        new_frame.post (notification.num_frame);
+
         foreach (unowned Core.Object child in this)
         {
             unowned Window window = child as Window;
@@ -415,10 +456,7 @@ public class Maia.Application : Maia.Core.Object
     public void
     run ()
     {
-        if (m_Loop == null)
-        {
-            m_Loop = new GLib.MainLoop (null, false);
-        }
+        GLib.Idle.add (on_running, GLib.Priority.HIGH);
 
         m_Loop.run ();
     }

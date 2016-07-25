@@ -328,7 +328,13 @@ public class Maia.Button : Item, ItemPackable, ItemMovable, ItemFocusable
             vd = 1.05;
             vd2 = 1.15;
         }
-        var button_color = fill_pattern[state] as Graphic.Color ?? new Graphic.Color (0.7, 0.7, 0.7);
+
+        var fpattern = fill_pattern[state];
+        if (fpattern == null)
+        {
+            fpattern = new Graphic.Color (0.7, 0.7, 0.7);
+        }
+        var button_color =  fpattern as Graphic.Color;
         if (button_color != null)
         {
             var beginColor = new Graphic.Color.shade (button_color, vb);
@@ -399,7 +405,7 @@ public class Maia.Button : Item, ItemPackable, ItemMovable, ItemFocusable
             return beginColor;
         }
 
-        return null;
+        return fpattern;
     }
 
     internal override bool

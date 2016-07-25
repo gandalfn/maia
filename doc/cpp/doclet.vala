@@ -24,8 +24,8 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
     private Valadoc.Settings m_Settings;
     private bool in_function = false;
     private bool have_parameters = false;
-    private bool enable_property = false;
-    private bool enable_signal = false;
+    private bool enable_property = true;
+    private bool enable_signal = true;
     private string current_class = null;
 
     public void

@@ -89,6 +89,11 @@ _CONVERSION(`const Glib::RefPtr<TimelineNewFrameNotification>&',`MaiaCoreTimelin
 _CONVERSION(`MaiaCoreTimelineNewFrameNotification*',`const Glib::RefPtr<TimelineNewFrameNotification>&',`Glib::wrap($3)')
 _CONVERSION(`MaiaCoreTimelineNewFrameNotification*',`Glib::RefPtr<TimelineNewFrameNotification>',`Glib::wrap($3)')
 
+_CONVERSION(`Glib::RefPtr<Core::TimelineNewFrameNotification>',`MaiaCoreTimelineNewFrameNotification*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`const Glib::RefPtr<Core::TimelineNewFrameNotification>&',`MaiaCoreTimelineNewFrameNotification*',__CONVERT_REFPTR_TO_P)
+_CONVERSION(`MaiaCoreTimelineNewFrameNotification*',`const Glib::RefPtr<Core::TimelineNewFrameNotification>&',`Glib::wrap($3)')
+_CONVERSION(`MaiaCoreTimelineNewFrameNotification*',`Glib::RefPtr<Core::TimelineNewFrameNotification>',`Glib::wrap($3)')
+
 _CONVERSION(`Glib::RefPtr<ViewItemAddedRemovedNotification>',`MaiaViewItemAddedRemovedNotification*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`const Glib::RefPtr<ViewItemAddedRemovedNotification>&',`MaiaViewItemAddedRemovedNotification*',__CONVERT_REFPTR_TO_P)
 _CONVERSION(`MaiaViewItemAddedRemovedNotification*',`const Glib::RefPtr<ViewItemAddedRemovedNotification>&',`Glib::wrap($3)')

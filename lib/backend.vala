@@ -78,6 +78,16 @@ internal class Maia.Backend : Maia.Core.Extension
 
 internal class Maia.Backends : Maia.Core.ExtensionLoader<Maia.Backend>
 {
+    // static properties
+    static string[] s_BackendsPath = {};
+
+    // static methods
+    public static void
+    add_backends_path (string inPath)
+    {
+        s_BackendsPath += inPath;
+    }
+
     // methods
     public Backends ()
     {
@@ -95,6 +105,11 @@ internal class Maia.Backends : Maia.Core.ExtensionLoader<Maia.Backend>
         else
         {
             paths += global::Config.MAIA_BACKEND_PATH;
+        }
+
+        foreach (unowned string path in s_BackendsPath)
+        {
+            paths += path;
         }
 
         base ("backend", paths);

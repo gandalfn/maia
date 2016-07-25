@@ -9,6 +9,6 @@ includedir=@includedir@/maia-@MAIA_ABI@
 Name: maia-@MAIA_ABI@
 Description: Maia library
 Version: @MAIA_VERSION@
-Requires: glib-2.0 >= @GLIB_REQUIRED@
-Libs: -L${libdir} -lmaia
+Requires: glib-2.0 >= @GLIB_REQUIRED@, gobject-2.0 >= @GLIB_REQUIRED@, gio-2.0 >= @GLIB_REQUIRED@
+Libs: -L${libdir} -lm -lmaia
 Cflags: -I${includedir}

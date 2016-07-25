@@ -1401,6 +1401,24 @@
   (construct-only #f)
 )
 
+(define-property running-notification
+  (of-object "MaiaApplication")
+  (prop-type "GParamObject")
+  (docs "running-notification")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
+(define-property new-frame
+  (of-object "MaiaApplication")
+  (prop-type "GParamObject")
+  (docs "new-frame")
+  (readable #t)
+  (writable #f)
+  (construct-only #f)
+)
+
 ;; From MaiaButton
 
 (define-property tag

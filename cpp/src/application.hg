@@ -19,6 +19,8 @@
 
 #include <maia.h>
 #include <maiamm/core-object.h>
+#include <maiamm/core-notification.h>
+#include <maiamm/core-timeline.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/core-object_p.h)
@@ -64,6 +66,11 @@ namespace Maia
                 return Glib::RefPtr<Application> (new Application (pApplication));
             }
 
+            static void add_backends_path (const Glib::ustring& inPath)
+            {
+                maia_application_add_backends_path (inPath.c_str ());
+            }
+
             _IGNORE(maia_application_new)
 
             static Glib::RefPtr<Application> create (const Glib::ustring& inName, char*** inpArgv, int* inArgc)
@@ -85,10 +92,17 @@ namespace Maia
             _WRAP_METHOD(void run (), maia_application_run)
             _WRAP_METHOD(void quit (), maia_application_quit)
 
+            _WRAP_METHOD(Glib::RefPtr<Core::Notification> running_notification () const, maia_application_get_running_notification, refreturn)
+            _WRAP_METHOD(Glib::RefPtr<Core::TimelineNewFrameNotification> new_frame () const, maia_application_get_new_frame, refreturn)
+
             _WRAP_METHOD(static Glib::RefPtr<Application> get_default (), maia_application_get_default, refreturn)
             _WRAP_METHOD(static void set_default (const Glib::RefPtr<Application>& inApplication), maia_application_set_default)
 
             _WRAP_PROPERTY("refresh-rate", guint)
             _WRAP_PROPERTY("pause", bool)
+
+        private:
+            _WRAP_PROPERTY("running-notification", Glib::RefPtr<Core::Timeline>)
+            _WRAP_PROPERTY("new-frame", Glib::RefPtr<Core::TimelineNewFrameNotification>)
     };
 }
