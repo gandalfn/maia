@@ -517,4 +517,42 @@ public class Maia.Core.Set<V> : Collection<V>
 
         remove_node (iterator.current);
     }
+
+    /**
+     * Returns the first value of the set
+     *
+     * @return the first value of the set
+     */
+    public unowned V?
+    first ()
+    {
+        unowned Node<V> node = m_Root;
+        if (node != null)
+        {
+            while (node.left != null)
+            {
+                node = node.left;
+            }
+        }
+        return node == null ? null : node.val;
+    }
+
+    /**
+     * Returns the last value of the set
+     *
+     * @return the lasr value of the set
+     */
+    public unowned V?
+    last ()
+    {
+        unowned Node<V> node = m_Root;
+        if (node != null)
+        {
+            while (node.right != null)
+            {
+                node = node.right;
+            }
+        }
+        return node == null ? null : node.val;
+    }
 }
