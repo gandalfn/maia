@@ -182,11 +182,12 @@ public class Maia.Graphic.Path : Core.Object
         return 0;
     }
 
-    public new Graphic.Point
+    public new unowned Graphic.Point?
     @get (uint inIndex)
         requires (inIndex < m_Points.length)
     {
-        return m_Points[inIndex];
+        unowned Graphic.Point* point = &m_Points[inIndex];
+        return (Graphic.Point?)point;
     }
 
     public new void
