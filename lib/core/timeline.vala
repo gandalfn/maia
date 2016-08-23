@@ -28,6 +28,7 @@ public class Maia.Core.Timeline : Object
     // types
     public class NewFrameNotification : Core.Notification
     {
+        [CCode (notify = false)]
         public uint num_frame { get; set; default = 0; }
 
         public NewFrameNotification (string inName)
@@ -57,6 +58,11 @@ public class Maia.Core.Timeline : Object
     private uint              m_NFrames = 0;
     private uint              m_Duration = 0;
     private TimeVal           m_PrevFrameTimeVal;
+
+    private unowned Core.Notification    m_StartedNotification;
+    private unowned Core.Notification    m_PausedNotification;
+    private unowned NewFrameNotification m_NewFrameNotification;
+    private unowned Core.Notification    m_CompletedNotification;
 
     /**
      * Timeline direction
@@ -159,25 +165,25 @@ public class Maia.Core.Timeline : Object
     // notifications
     public unowned Core.Notification started {
         get {
-            return notifications["started"];
+            return m_StartedNotification;
         }
     }
 
     public unowned Core.Notification paused {
         get {
-            return notifications["started"];
+            return m_PausedNotification;
         }
     }
 
     public unowned NewFrameNotification new_frame {
         get {
-            return notifications["new-frame"] as NewFrameNotification;
+            return m_NewFrameNotification;
         }
     }
 
     public unowned Core.Notification completed {
         get {
-            return notifications["completed"];
+            return m_CompletedNotification;
         }
     }
 
@@ -198,10 +204,10 @@ public class Maia.Core.Timeline : Object
     // methods
     construct
     {
-        notifications.add (new Core.Notification ("started"));
-        notifications.add (new Core.Notification ("paused"));
-        notifications.add (new NewFrameNotification ("new-frame"));
-        notifications.add (new Core.Notification ("completed"));
+        m_StartedNotification = notifications.add (new Core.Notification ("started"));
+        m_PausedNotification = notifications.add (new Core.Notification ("paused"));
+        m_NewFrameNotification = notifications.add (new NewFrameNotification ("new-frame")) as NewFrameNotification;
+        m_CompletedNotification = notifications.add (new Core.Notification ("completed"));
     }
 
     /**

@@ -311,7 +311,6 @@ internal class Maia.Cairo.Context : Graphic.Context
                         if (child_patch is Graphic.MeshGradient.Patch.CornerColor)
                         {
                             var corner_color = (Graphic.MeshGradient.Patch.CornerColor)child_patch;
-                            Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "%u %s", corner_color.num, corner_color.color.to_string ());
                             mesh_pattern.set_corner_color_rgba (corner_color.num, corner_color.color.red, corner_color.color.green,
                                                                 corner_color.color.blue, corner_color.color.alpha);
                         }
@@ -343,19 +342,14 @@ internal class Maia.Cairo.Context : Graphic.Context
                 break;
 
             case Graphic.Path.DataType.MOVETO:
-                Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "move to %g,%g", inPath.points[0].x, inPath.points[0].y);
                 inPattern.move_to (inPath.points[0].x, inPath.points[0].y);
                 break;
 
             case Graphic.Path.DataType.LINETO:
-                Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "line to %g,%g", inPath.points[0].x, inPath.points[0].y);
                 inPattern.line_to (inPath.points[0].x, inPath.points[0].y);
                 break;
 
             case Graphic.Path.DataType.CURVETO:
-                Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "curve to %g,%g %g,%g %g,%g", inPath.points[0].x, inPath.points[0].y,
-                                                                                                     inPath.points[1].x, inPath.points[1].y,
-                                                                                                     inPath.points[2].x, inPath.points[2].y);
                 inPattern.curve_to (inPath.points[0].x, inPath.points[0].y,
                                     inPath.points[1].x, inPath.points[1].y,
                                     inPath.points[2].x, inPath.points[2].y);
@@ -376,21 +370,16 @@ internal class Maia.Cairo.Context : Graphic.Context
                 break;
 
             case Graphic.Path.DataType.MOVETO:
-                Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "move to %g,%g", inPath.points[0].x, inPath.points[0].y);
                 m_Context.move_to (inPath.points[0].x, inPath.points[0].y);
                 status ();
                 break;
 
             case Graphic.Path.DataType.LINETO:
-                Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "line to %g,%g", inPath.points[0].x, inPath.points[0].y);
                 m_Context.line_to (inPath.points[0].x, inPath.points[0].y);
                 status ();
                 break;
 
             case Graphic.Path.DataType.CURVETO:
-                Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "curve to %g,%g %g,%g %g,%g", inPath.points[0].x, inPath.points[0].y,
-                                                                                                    inPath.points[1].x, inPath.points[1].y,
-                                                                                                    inPath.points[2].x, inPath.points[2].y);
                 m_Context.curve_to (inPath.points[0].x, inPath.points[0].y,
                                     inPath.points[1].x, inPath.points[1].y,
                                     inPath.points[2].x, inPath.points[2].y);
@@ -398,9 +387,6 @@ internal class Maia.Cairo.Context : Graphic.Context
                 break;
 
             case Graphic.Path.DataType.ARC:
-                Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "arc %g,%g %g%g %g,%g", inPath.points[0].x, inPath.points[0].y,
-                                                                                               inPath.points[1].x, inPath.points[1].y,
-                                                                                               inPath.points[2].x, inPath.points[2].y);
                 m_Context.save ();
                 m_Context.translate (inPath.points[0].x, inPath.points[0].y);
                 status ();
@@ -412,9 +398,6 @@ internal class Maia.Cairo.Context : Graphic.Context
                 break;
 
             case Graphic.Path.DataType.ARC_NEGATIVE:
-                Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "arc negative %g,%g %g%g %g,%g", inPath.points[0].x, inPath.points[0].y,
-                                                                                                        inPath.points[1].x, inPath.points[1].y,
-                                                                                                        inPath.points[2].x, inPath.points[2].y);
                 m_Context.save ();
                 m_Context.translate (inPath.points[0].x, inPath.points[0].y);
                 status ();
@@ -426,8 +409,6 @@ internal class Maia.Cairo.Context : Graphic.Context
                 break;
 
             case Graphic.Path.DataType.RECTANGLE:
-                Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_DRAW, "rectangle %g,%g %g,%g", inPath.points[0].x, inPath.points[0].y,
-                                                                                                inPath.points[1].x, inPath.points[1].y);
                 m_Context.rectangle (inPath.points[0].x, inPath.points[0].y,
                                      inPath.points[1].x - inPath.points[0].x,
                                      inPath.points[1].y - inPath.points[0].y);

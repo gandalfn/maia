@@ -50,9 +50,8 @@ namespace Maia
 
                 inline operator Graphic::Point() const
                 {
-                    MaiaGraphicPoint point;
-                    maia_graphic_path_get (m_pPath, m_Index, &point);
-                    return Graphic::Point (point.x, point.y);
+                    MaiaGraphicPoint* point = maia_graphic_path_get (m_pPath, m_Index);
+                    return Graphic::Point (point->x, point->y);
                 }
 
             private:

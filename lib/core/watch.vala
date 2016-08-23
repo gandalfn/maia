@@ -28,6 +28,7 @@ public abstract class Maia.Core.Watch : Object
 
     public class Notification : Core.Notification
     {
+        [CCode (notify = false)]
         public bool @continue { get; set; default = false; }
 
         public Notification (string inName)
@@ -44,6 +45,9 @@ public abstract class Maia.Core.Watch : Object
     private GLib.PollFD       m_Fd = GLib.PollFD ();
     private uint64            m_CurrentTime;
     private bool              m_TimedOut = false;
+
+    private unowned Notification m_ReadyNotification;
+    private unowned Notification m_TimeoutNotification;
 
     // accessors
     /**
@@ -82,8 +86,8 @@ public abstract class Maia.Core.Watch : Object
     // methods
     construct
     {
-        notifications.add (new Notification ("ready"));
-        notifications.add (new Notification ("timeout"));
+        m_ReadyNotification = notifications.add (new Notification ("ready")) as Notification;
+        m_TimeoutNotification = notifications.add (new Notification ("timeout")) as Notification;
     }
 
     /**
@@ -212,10 +216,9 @@ public abstract class Maia.Core.Watch : Object
     protected virtual bool
     on_timeout ()
     {
-        unowned Notification notification = notifications["timeout"] as Notification;
-        notification.@continue = false;
-        notification.post ();
-        return notification.@continue;
+        m_TimeoutNotification.@continue = false;
+        m_TimeoutNotification.post ();
+        return m_TimeoutNotification.@continue;
     }
 
     /**
@@ -224,10 +227,9 @@ public abstract class Maia.Core.Watch : Object
     protected virtual bool
     on_process ()
     {
-        unowned Notification notification = notifications["ready"] as Notification;
-        notification.@continue = false;
-        notification.post ();
-        return notification.@continue;
+        m_ReadyNotification.@continue = false;
+        m_ReadyNotification.post ();
+        return m_ReadyNotification.@continue;
     }
 
     /**

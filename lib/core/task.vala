@@ -213,6 +213,8 @@ public abstract class Maia.Core.Task : Object
     private bool         m_IsRunning = false;
     private bool         m_IsCancelled = false;
 
+    private unowned Notification m_FinishedNotification;
+
     // accessors
     public string name {
         owned get {
@@ -235,14 +237,14 @@ public abstract class Maia.Core.Task : Object
     // notifications
     internal unowned Notification? finished {
         get {
-            return notifications["finished"];
+            return m_FinishedNotification;
         }
     }
 
     // methods
     construct
     {
-        notifications.add (new Notification ("finished"));
+        m_FinishedNotification = notifications.add (new Notification ("finished"));
     }
 
     public Task (string inName)

@@ -47,13 +47,15 @@ namespace Maia
                 NotificationObserver* cpp_obj () { return this; }
 
                 Notification* m_pNotification;
+                int m_Priority;
 
                 static GQuark ObserverQuark;
 
             protected:
-                NotificationObserver (Notification* inpNotification) :
+                NotificationObserver (Notification* inpNotification, int inPriority = 0) :
                     Glib::ObjectBase ("NotificationObserver"),
-                    m_pNotification (inpNotification)
+                    m_pNotification (inpNotification),
+                    m_Priority (inPriority)
                 {
                     ((MaiaCoreAny*)gobj ())->cpp_instance = this;
                     g_object_set_qdata (G_OBJECT (gobj ()), ObserverQuark, this);
@@ -99,9 +101,9 @@ namespace Maia
                 }
 
                 static Glib::RefPtr<NotificationObserver>
-                create (Notification* inpNotification, T_obj* pObj, Handler pFunc)
+                create (Notification* inpNotification, T_obj* pObj, Handler pFunc, int inPriority = 0)
                 {
-                    NotificationObserverFunctor* pRet = new NotificationObserverFunctor (inpNotification, pObj, pFunc);
+                    NotificationObserverFunctor* pRet = new NotificationObserverFunctor (inpNotification, pObj, pFunc, inPriority);
                     if (std::is_base_of<Glib::Object, T_obj>::value)
                     {
                         pRet->m_pGObject = G_OBJECT (pObj->gobj ());
@@ -112,9 +114,9 @@ namespace Maia
                 }
 
             protected:
-                NotificationObserverFunctor (Notification* inpNotification, T_obj* pObj, Handler pFunc) :
+                NotificationObserverFunctor (Notification* inpNotification, T_obj* pObj, Handler pFunc, int inPriority = 0) :
                     Glib::ObjectBase ("NotificationObserverFunctor"),
-                    NotificationObserver (inpNotification),
+                    NotificationObserver (inpNotification, inPriority),
                     m_pObj (pObj),
                     m_Callback (pFunc),
                     m_pGObject (nullptr)
@@ -152,15 +154,15 @@ namespace Maia
                     m_pCallback = nullptr;
                 }
 
-                static Glib::RefPtr<NotificationObserver> create (Notification* inpNotification, const Handler& inSlot)
+                static Glib::RefPtr<NotificationObserver> create (Notification* inpNotification, const Handler& inSlot, int inPriority = 0)
                 {
-                    return Glib::RefPtr<NotificationObserver> (new NotificationObserverSlot (inpNotification, inSlot));
+                    return Glib::RefPtr<NotificationObserver> (new NotificationObserverSlot (inpNotification, inSlot, inPriority));
                 }
 
             protected:
-                NotificationObserverSlot (Notification* inpNotification, const Handler& inSlot) :
+                NotificationObserverSlot (Notification* inpNotification, const Handler& inSlot, int inPriority = 0) :
                     Glib::ObjectBase ("NotificationObserverSlot"),
-                    NotificationObserver (inpNotification),
+                    NotificationObserver (inpNotification, inPriority),
                     m_pCallback (new Handler (inSlot))
                 {
                     m_pCallback->add_destroy_notify_callback (this, &_on_observer_destroy_notify);
@@ -189,9 +191,9 @@ namespace Maia
                 _IGNORE(maia_core_notification_add_observer, maia_core_notification_add_object_observer)
                 template <typename T_obj>
                 Glib::RefPtr<NotificationObserver>
-                add_observer (T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<Notification>& inNotification))
+                add_observer (T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<Notification>& inNotification), int inPriority = 0)
                 {
-                    Glib::RefPtr<NotificationObserver> pObserver = NotificationObserverFunctor<T_obj>::create (this, pObj, pFunc);
+                    Glib::RefPtr<NotificationObserver> pObserver = NotificationObserverFunctor<T_obj>::create (this, pObj, pFunc, inPriority);
 
                     add_observer (pObserver);
 
@@ -199,9 +201,9 @@ namespace Maia
                 }
 
                 Glib::RefPtr<NotificationObserver>
-                add_observer (const sigc::slot<void, Glib::RefPtr<Notification>>& inSlot)
+                add_observer (const sigc::slot<void, Glib::RefPtr<Notification>>& inSlot, int inPriority = 0)
                 {
-                    Glib::RefPtr<NotificationObserver> pObserver = NotificationObserverSlot::create (this, inSlot);
+                    Glib::RefPtr<NotificationObserver> pObserver = NotificationObserverSlot::create (this, inSlot, inPriority);
 
                     add_observer (pObserver);
 

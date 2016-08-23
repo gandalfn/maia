@@ -90,9 +90,11 @@ public class Maia.Gesture : Core.Object
     private Core.Set<uint> m_ButtonMask;
     private ButtonStatus[] m_ButtonsStatus;
 
+    private unowned Notification m_GestureNotification;
+
     public unowned Notification notification {
         get {
-            return notifications["gesture"] as Notification;
+            return m_GestureNotification;
         }
     }
 
@@ -102,7 +104,7 @@ public class Maia.Gesture : Core.Object
         m_ButtonMask = new Core.Set<uint> ();
         m_ButtonsStatus = new ButtonStatus[MAX_BUTTONS];
 
-        notifications.add (new Notification ("gesture"));
+        m_GestureNotification = notifications.add (new Notification ("gesture")) as Notification;
     }
 
     internal Gesture (Item inItem)

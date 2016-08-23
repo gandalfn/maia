@@ -25,6 +25,7 @@ public class Maia.Core.Notification : Object
     public class Observer : Object
     {
         private unowned Notification m_Notification;
+        private int                  m_Priority = 0;
         private unowned RecvFunc     m_Callback;
         private void*                m_Target;
         private unowned GLib.Object? m_TargetObject;
@@ -41,17 +42,18 @@ public class Maia.Core.Notification : Object
             }
         }
 
-        internal Observer (Notification inNotification, RecvFunc inFunc)
+        internal Observer (Notification inNotification, RecvFunc inFunc, int inPriority = 0)
         {
             m_Notification = inNotification;
             m_Callback = inFunc;
             m_Target = (*(void**)((&m_Callback) + 1));
             m_TargetObject = null;
+            m_Priority = inPriority;
         }
 
-        internal Observer.object (Notification inNotification, RecvFunc inFunc)
+        internal Observer.object (Notification inNotification, RecvFunc inFunc, int inPriority = 0)
         {
-            this (inNotification, inFunc);
+            this (inNotification, inFunc, inPriority);
 
             m_TargetObject = m_Target as GLib.Object;
             if (m_TargetObject != null)
@@ -79,8 +81,9 @@ public class Maia.Core.Notification : Object
 
         internal override int
         compare (Core.Object inOther)
+            requires (inOther is Observer)
         {
-            return 0;
+            return m_Priority - (inOther as Observer).m_Priority;
         }
 
         internal bool
@@ -102,7 +105,7 @@ public class Maia.Core.Notification : Object
         internal Observer
         clone (Notification inNotification)
         {
-            return m_TargetObject != null ? new Observer.object (inNotification, m_Callback) : new Observer (inNotification, m_Callback);
+            return m_TargetObject != null ? new Observer.object (inNotification, m_Callback, m_Priority) : new Observer (inNotification, m_Callback, m_Priority);
         }
     }
 
@@ -119,16 +122,16 @@ public class Maia.Core.Notification : Object
     }
 
     public void
-    add_observer (RecvFunc inFunc)
+    add_observer (RecvFunc inFunc, int inPriority = 0)
     {
-        var observer = new Observer (this, inFunc);
+        var observer = new Observer (this, inFunc, inPriority);
         observer.parent = this;
     }
 
     public Observer
-    add_object_observer (RecvFunc inFunc)
+    add_object_observer (RecvFunc inFunc, int inPriority = 0)
     {
-        var observer = new Observer.object (this, inFunc);
+        var observer = new Observer.object (this, inFunc, inPriority);
         observer.parent = this;
         return observer;
     }
@@ -225,53 +228,6 @@ public class Maia.Core.Notifications : GLib.Object
         if (notification != null)
         {
             m_Notifications.remove (notification);
-        }
-    }
-
-    public void
-    post (string inName)
-    {
-        unowned Notification? notification = this[inName];
-        if (notification != null)
-        {
-            notification.post ();
-        }
-    }
-
-    public void
-    add_observer (string inName, Notification.RecvFunc inFunc)
-    {
-        unowned Notification? notification = this[inName];
-        if (notification == null)
-        {
-            var new_notification = new Notification (inName);
-            m_Notifications.insert (new_notification);
-            notification = new_notification;
-        }
-
-        notification.add_observer (inFunc);
-    }
-
-    public void
-    add_object_observer (string inName, Notification.RecvFunc inFunc)
-    {
-        unowned Notification? notification = this[inName];
-        if (notification == null)
-        {
-            var new_notification = new Notification (inName);
-            m_Notifications.insert (new_notification);
-            notification = new_notification;
-        }
-
-        notification.add_object_observer (inFunc);
-    }
-
-    public void
-    remove_observer (Notification.RecvFunc inFunc)
-    {
-        foreach (unowned Notification notification in m_Notifications)
-        {
-            notification.remove_observer (inFunc);
         }
     }
 }

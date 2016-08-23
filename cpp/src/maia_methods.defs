@@ -5034,6 +5034,18 @@
   )
 )
 
+(define-method first
+  (of-object "MaiaCoreSet")
+  (c-name "maia_core_set_first")
+  (return-type "gconstpointer")
+)
+
+(define-method last
+  (of-object "MaiaCoreSet")
+  (c-name "maia_core_set_last")
+  (return-type "gconstpointer")
+)
+
 (define-function maia_core_set_new
   (c-name "maia_core_set_new")
   (is-constructor-of "MaiaCoreSet")
@@ -7109,10 +7121,9 @@
 (define-method get_string
   (of-object "MaiaCoreMessage")
   (c-name "maia_core_message_get_string")
-  (return-type "gchar*")
+  (return-type "const-gchar*")
   (parameters
     '("guint" "inIndex")
-    '("guint" "inLength")
   )
 )
 
@@ -7502,6 +7513,15 @@
   (of-object "MaiaCoreBusMessage")
   (c-name "maia_core_bus_message_get_message_size")
   (return-type "guint32")
+)
+
+(define-method set_message_size
+  (of-object "MaiaCoreBusMessage")
+  (c-name "maia_core_bus_message_set_message_size")
+  (return-type "none")
+  (parameters
+    '("guint32" "value")
+  )
 )
 
 (define-method get_sender
@@ -8599,6 +8619,7 @@
   (parameters
     '("MaiaCoreNotificationRecvFunc" "inFunc")
     '("void*" "inFunc_target")
+    '("gint" "inPriority")
   )
 )
 
@@ -8614,6 +8635,7 @@
   (parameters
     '("MaiaCoreNotificationRecvFunc" "inFunc")
     '("void*" "inFunc_target")
+    '("gint" "inPriority")
   )
 )
 
@@ -8701,47 +8723,6 @@
   (return-type "none")
   (parameters
     '("const-gchar*" "inName")
-  )
-)
-
-(define-method post
-  (of-object "MaiaCoreNotifications")
-  (c-name "maia_core_notifications_post")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "inName")
-  )
-)
-
-(define-method add_observer
-  (of-object "MaiaCoreNotifications")
-  (c-name "maia_core_notifications_add_observer")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "inName")
-    '("MaiaCoreNotificationRecvFunc" "inFunc")
-    '("void*" "inFunc_target")
-  )
-)
-
-(define-method add_object_observer
-  (of-object "MaiaCoreNotifications")
-  (c-name "maia_core_notifications_add_object_observer")
-  (return-type "none")
-  (parameters
-    '("const-gchar*" "inName")
-    '("MaiaCoreNotificationRecvFunc" "inFunc")
-    '("void*" "inFunc_target")
-  )
-)
-
-(define-method remove_observer
-  (of-object "MaiaCoreNotifications")
-  (c-name "maia_core_notifications_remove_observer")
-  (return-type "none")
-  (parameters
-    '("MaiaCoreNotificationRecvFunc" "inFunc")
-    '("void*" "inFunc_target")
   )
 )
 
@@ -11352,10 +11333,9 @@
 (define-method get
   (of-object "MaiaGraphicPath")
   (c-name "maia_graphic_path_get")
-  (return-type "none")
+  (return-type "MaiaGraphicPoint*")
   (parameters
     '("guint" "inIndex")
-    '("MaiaGraphicPoint*" "result")
   )
 )
 

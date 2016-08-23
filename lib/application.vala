@@ -55,6 +55,9 @@ public class Maia.Application : Maia.Core.Object
     private GLib.MainLoop m_Loop;
     private bool          m_Pause = false;
 
+    private unowned Core.Notification                  m_RuningNotification;
+    private unowned Core.Timeline.NewFrameNotification m_NewFrameNotification;
+
     // accessors
     [CCode (notify = false)]
     public uint refresh_rate {
@@ -104,13 +107,13 @@ public class Maia.Application : Maia.Core.Object
     // notifications
     public Core.Notification running_notification {
         get {
-            return notifications["running"];
+            return m_RuningNotification;
         }
     }
 
     public Core.Timeline.NewFrameNotification new_frame {
         get {
-            return notifications["new-frame"] as Core.Timeline.NewFrameNotification;
+            return m_NewFrameNotification;
         }
     }
 
@@ -178,8 +181,8 @@ public class Maia.Application : Maia.Core.Object
     {
         m_Backends = new Backends ();
 
-        notifications.add (new Core.Notification ("running"));
-        notifications.add (new Core.Timeline.NewFrameNotification ("new-frame"));
+        m_RuningNotification = notifications.add (new Core.Notification ("running"));
+        m_NewFrameNotification = notifications.add (new Core.Timeline.NewFrameNotification ("new-frame")) as Core.Timeline.NewFrameNotification;
     }
 
     /**

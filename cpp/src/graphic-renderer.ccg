@@ -77,8 +77,8 @@ namespace Maia
         Renderer::Renderer (const Glib::RefPtr<RendererObject>& inpRenderer) :
             m_pRenderer (inpRenderer)
         {
-            maia_core_notification_add_observer (MAIA_CORE_NOTIFICATION (maia_graphic_renderer_get_initialize (m_pRenderer->gobj ())), _on_initialize, this);
-            maia_core_notification_add_observer (MAIA_CORE_NOTIFICATION (maia_graphic_renderer_get_new_frame (m_pRenderer->gobj ())), _on_new_frame, this);
+            maia_core_notification_add_observer (MAIA_CORE_NOTIFICATION (maia_graphic_renderer_get_initialize (m_pRenderer->gobj ())), _on_initialize, this, 0);
+            maia_core_notification_add_observer (MAIA_CORE_NOTIFICATION (maia_graphic_renderer_get_new_frame (m_pRenderer->gobj ())), _on_new_frame, this, 0);
         }
 
         Renderer::~Renderer ()
