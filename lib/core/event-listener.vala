@@ -35,14 +35,18 @@ internal class Maia.Core.EventListenerPool : Object
     // methods
     public EventListenerPool (Event.Hash inEventHash)
     {
+#if MAIA_DEBUG
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "%s", ((GLib.Quark)inEventHash.id).to_string ());
+#endif
         m_EventHash = inEventHash;
     }
 
     public new void
     notify (EventArgs? inEventArgs)
     {
+#if MAIA_DEBUG
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "%s", ((GLib.Quark)m_EventHash.id).to_string ());
+#endif
         foreach (Object child in this)
         {
             (child as EventListener).notify (inEventArgs);
@@ -150,7 +154,9 @@ public class Maia.Core.EventListener : Object
 
     ~EventListener ()
     {
+#if MAIA_DEBUG
         Log.audit ("~EventListener", Log.Category.MAIN_EVENT,  "");
+#endif
         if (m_Target != null)
         {
             m_Target.weak_unref (on_target_destroy);

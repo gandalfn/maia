@@ -27,7 +27,7 @@ public class Maia.Core.SocketBusConnection : BusConnection
         // properties
         public GLib.Cancellable? m_Cancellable;
         public Callback          m_Callback;
-        public uint8[]           m_Data;
+        public unowned uint8[]   m_Data;
         public size_t            m_Size;
         public BusError          m_Status;
 
@@ -49,10 +49,13 @@ public class Maia.Core.SocketBusConnection : BusConnection
     private SocketWatch           m_SendWatch;
     private Queue<Request>        m_SendQueue;
 
+    private unowned BusConnection.MessageReceivedNotification m_MessageReceivedNotification;
+
     // methods
     construct
     {
         notifications["connected"].add_object_observer (on_connected);
+        m_MessageReceivedNotification = notifications["message-received"] as BusConnection.MessageReceivedNotification;
 
         m_SendQueue = new Queue<Request> ();
     }
@@ -156,9 +159,8 @@ public class Maia.Core.SocketBusConnection : BusConnection
         {
             try
             {
-                unowned BusConnection.MessageReceivedNotification notify = notifications["message-received"] as BusConnection.MessageReceivedNotification;
-                notify.message = recv ();
-                notify.post ();
+                m_MessageReceivedNotification.message = recv ();
+                m_MessageReceivedNotification.post ();
             }
             catch (BusError err)
             {
@@ -195,9 +197,10 @@ public class Maia.Core.SocketBusConnection : BusConnection
                 {
                     try
                     {
+                        unowned GLib.OutputStream stream = m_Connection.output_stream;
                         do
                         {
-                            request.m_Size += m_Connection.output_stream.write (request.m_Data[request.m_Size:request.m_Data.length], request.m_Cancellable);
+                            request.m_Size += stream.write (request.m_Data[request.m_Size:request.m_Data.length], request.m_Cancellable);
                         } while (request.m_Size > 0 && request.m_Size < request.m_Data.length);
                     }
                     catch (GLib.IOError err)
@@ -259,9 +262,10 @@ public class Maia.Core.SocketBusConnection : BusConnection
 
         try
         {
+            unowned GLib.InputStream stream = m_Connection.input_stream;
             do
             {
-                ret += m_Connection.input_stream.read (inData[ret:inData.length]);
+                ret += stream.read (inData[ret:inData.length]);
             } while (ret > 0 && ret < inData.length);
 
             if (ret == 0)
@@ -297,9 +301,10 @@ public class Maia.Core.SocketBusConnection : BusConnection
 
         try
         {
+            unowned GLib.InputStream stream = m_Connection.input_stream;
             do
             {
-                ret += yield m_Connection.input_stream.read_async (inData[ret:inData.length], GLib.Priority.HIGH_IDLE, inCancellable);
+                ret += yield stream.read_async (inData[ret:inData.length], GLib.Priority.HIGH_IDLE, inCancellable);
             } while (ret > 0 && ret < inData.length);
         }
         catch (GLib.Error err)
@@ -341,9 +346,10 @@ public class Maia.Core.SocketBusConnection : BusConnection
         size_t ret = 0;
         try
         {
+            unowned GLib.OutputStream stream = m_Connection.output_stream;
             do
             {
-                ret += m_Connection.output_stream.write (inData[ret:inData.length]);
+                ret += stream.write (inData[ret:inData.length]);
             } while (ret > 0 && ret < inData.length);
 
             if (ret == 0)

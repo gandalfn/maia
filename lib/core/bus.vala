@@ -68,45 +68,49 @@ public abstract class Maia.Core.Bus : Object
     public class Message : Maia.Core.Message
     {
         // constants
-        public const int HEADER_SIZE = 13;
+        public const int HEADER_SIZE = 16;
 
         // static properties
         private static Core.Map<int, GLib.Type> s_Factory = null;
 
         // accessors
+        [CCode (notify = false)]
         public int message_type {
             get {
-                return (int)(get (0));
+                return (int)(get_uint32 (0));
             }
             construct {
-                set (0, (uint8)value);
+                set_uint32 (0, (uint32)value);
             }
         }
 
+        [CCode (notify = false)]
         public uint32 message_size {
             get {
-                return get_uint32 (1);
+                return get_uint32 (4);
             }
-            construct {
-                set_uint32 (1, value);
+            construct set {
+                set_uint32 (4, value);
             }
         }
 
+        [CCode (notify = false)]
         public uint32 sender {
             get {
-                return get_uint32 (5);
+                return get_uint32 (8);
             }
             construct set {
-                set_uint32 (5, value);
+                set_uint32 (8, value);
             }
         }
 
+        [CCode (notify = false)]
         public uint32 destination {
             get {
-                return get_uint32 (9);
+                return get_uint32 (12);
             }
             construct set {
-                set_uint32 (9, value);
+                set_uint32 (12, value);
             }
         }
 

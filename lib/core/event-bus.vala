@@ -140,9 +140,9 @@ public class Maia.Core.EventBus : Object
 
     private class MessageEvent : Bus.Message
     {
-        private bool          m_Parsed = false;
+        private GLib.Variant? m_Data = null;
+        private Event.Hash?   m_Hash = null;
         private bool          m_ArgsParsed = false;
-        private Event.Hash    m_Hash;
         private GLib.Type     m_ArgsType = GLib.Type.INVALID;
         private int           m_Sequence;
         private bool          m_NeedReply = false;
@@ -180,11 +180,14 @@ public class Maia.Core.EventBus : Object
             GLib.Variant data;
             if (inArgs == null)
             {
-                data = new GLib.Variant ("(subsiv)", inName, (uint32)inOwner, false, "", 0, new GLib.Variant ("()"));
+                data = new GLib.Variant ("(@(sub)@(siv))", new GLib.Variant ("(sub)", inName, (uint32)inOwner, false),
+                                                           new GLib.Variant ("(siv)", "", 0, new GLib.Variant ("()")));
             }
             else
             {
-                data = new GLib.Variant ("(subsiv)", inName, (uint32)inOwner, inNeedReply, EventArgs.get_type_name (inArgs.get_type ()), inArgs.sequence, inArgs.serialize);
+                data = new GLib.Variant ("(@(sub)@(siv))", new GLib.Variant ("(sub)", inName, (uint32)inOwner, inNeedReply),
+                                                           new GLib.Variant ("(siv)", EventArgs.get_type_name (inArgs.get_type ()),
+                                                                                      inArgs.sequence, inArgs.serialize));
             }
             uint32 size = (uint32)data.get_size ();
             GLib.Object (message_type: MessageType.EVENT, message_size: size);
@@ -194,34 +197,51 @@ public class Maia.Core.EventBus : Object
         private void
         parse ()
         {
-            if (!m_Parsed)
+            if (m_Data == null)
+            {
+                m_Data = get_variant (Bus.Message.HEADER_SIZE, "((sub)(siv))");
+            }
+
+            if (m_Hash == null)
             {
                 unowned string name;
                 uint32 owner;
-                var data = get_variant (Bus.Message.HEADER_SIZE, "(subsiv)");
-                if (data != null)
+                if (m_Data != null)
                 {
-                    data.get ("(&sub&siv)", out name, out owner, out m_NeedReply, null, null, null);
+                    m_Data.get ("((&sub)r)", out name, out owner, out m_NeedReply, null);
                     m_Hash = new Event.Hash.raw (name, (void*)owner);
                 }
                 else
                 {
                     m_Hash = new Event.Hash.raw ("", null);
                 }
-                m_Parsed = true;
             }
         }
 
         private void
         parse_args ()
         {
+            if (m_Data == null)
+            {
+                m_Data = get_variant (Bus.Message.HEADER_SIZE, "((sub)(siv))");
+            }
+
             if (!m_ArgsParsed)
             {
                 unowned string atype;
-                var data = get_variant (Bus.Message.HEADER_SIZE, "(subsiv)");
-                if (data != null)
+                if (m_Data != null)
                 {
-                    data.get ("(&sub&siv)", null, null, null, out atype, out m_Sequence, out m_Args);
+                    if (m_Hash == null)
+                    {
+                        unowned string name;
+                        uint32 owner;
+                        m_Data.get ("((&sub)(&siv))", out name, out owner, out m_NeedReply, out atype, out m_Sequence, out m_Args);
+                        m_Hash = new Event.Hash.raw (name, (void*)owner);
+                    }
+                    else
+                    {
+                        m_Data.get ("(r(&siv))", null, out atype, out m_Sequence, out m_Args);
+                    }
                     if (atype != "")
                     {
                         m_ArgsType = EventArgs.get_type_from_name (atype);
@@ -637,11 +657,11 @@ public class Maia.Core.EventBus : Object
         public int
         compare (Reply inOther)
         {
-            int ret = (int)(sender - inOther.sender);
+            int ret = (int)sender - (int)inOther.sender;
 
             if (ret == 0)
             {
-                ret = (int)(args.sequence - inOther.args.sequence);
+                ret = (int)args.sequence - (int)inOther.args.sequence;
             }
 
             return ret;
@@ -650,11 +670,11 @@ public class Maia.Core.EventBus : Object
         public int
         compare_with_hash (Hash? inHash)
         {
-            int ret = (int)(sender - inHash.sender);
+            int ret = (int)sender - (int)inHash.sender;
 
             if (ret == 0)
             {
-                ret = (int)(args.sequence - inHash.sequence);
+                ret = (int)args.sequence - (int)inHash.sequence;
             }
 
             return ret;
@@ -744,7 +764,7 @@ public class Maia.Core.EventBus : Object
 
             if (ret == 0)
             {
-                ret = (int)(id - inHash.sequence);
+                ret = (int)id - (int)inHash.sequence;
             }
 
             return ret;
@@ -808,13 +828,13 @@ public class Maia.Core.EventBus : Object
         internal override int
         compare (Object inOther)
         {
-            return (int)(id - inOther.id);
+            return (int)id - (int)inOther.id;
         }
 
         public int
         compare_with_id (uint32 inId)
         {
-            return (int)(id - inId);
+            return (int)id - (int)inId;
         }
 
         public void
@@ -1258,13 +1278,13 @@ public class Maia.Core.EventBus : Object
         public int
         compare (Subscriber inOther)
         {
-            return (int)(id - inOther.id);
+            return (int)id - (int)inOther.id;
         }
 
         public int
         compare_with_id (uint32 inId)
         {
-            return (int)(id - inId);
+            return (int)id - (int)inId;
         }
     }
 
@@ -1426,22 +1446,6 @@ public class Maia.Core.EventBus : Object
                 inBridge.weak_unref (on_bridge_destroy);
                 bridges.erase (iter);
             }
-        }
-
-        public Set<uint32>
-        get_subscriber_destinations ()
-        {
-            Set<uint32> ret = new Set<uint32> ();
-
-            foreach (unowned Subscriber? subscriber in subscribers)
-            {
-                if (subscriber != null)
-                {
-                    ret.insert (subscriber.id);
-                }
-            }
-
-            return ret;
         }
 
         public int
@@ -1650,22 +1654,17 @@ public class Maia.Core.EventBus : Object
                             occurence.add_reply (msg.sender, msg.args);
                         }
 
-                        // Get list of destination of event
-                        Set<uint32> destination = occurence.get_subscriber_destinations ();
-                        if (destination.length > 0)
+                        // Send event for client which is subscribed on
+                        foreach (unowned Core.Object? child in m_EventBus.m_Service)
                         {
-                            // Send event for client which is subscribed on
-                            foreach (unowned Core.Object? child in m_EventBus.m_Service)
+                            unowned BusConnection? client = child as BusConnection;
+                            if (client != null && client.id in occurence)
                             {
-                                unowned BusConnection? client = child as BusConnection;
-                                if (client != null && client.id in destination)
-                                {
 #if MAIA_DEBUG
-                                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge send event $(msg.hash) to client $(client.id)");
+                                Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge send event $(msg.hash) to client $(client.id)");
 #endif
-                                    // send message to client
-                                    client.send_async.begin (message);
-                                }
+                                // send message to client
+                                client.send_async.begin (message);
                             }
                         }
                     }
@@ -1684,22 +1683,17 @@ public class Maia.Core.EventBus : Object
                                 occurence.add_reply (msg.sender, msg.args);
                             }
 
-                            // Get list of destination of event
-                            Set<uint32> destination = occurence.get_subscriber_destinations ();
-                            if (destination.length > 0)
+                            // Send event for client which is subscribed on
+                            foreach (unowned Core.Object? child in m_EventBus.m_Service)
                             {
-                                // Send event for client which is subscribed on
-                                foreach (unowned Core.Object? child in m_EventBus.m_Service)
+                                unowned BusConnection? client = child as BusConnection;
+                                if (client != null && client.id in occurence)
                                 {
-                                    unowned BusConnection? client = child as BusConnection;
-                                    if (client != null && client.id in destination)
-                                    {
 #if MAIA_DEBUG
-                                        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge send event $(msg.hash) to client $(client.id)");
+                                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge send event $(msg.hash) to client $(client.id)");
 #endif
-                                        // send message to client
-                                        client.send_async.begin (message);
-                                    }
+                                    // send message to client
+                                    client.send_async.begin (message);
                                 }
                             }
                         }
@@ -2015,22 +2009,17 @@ public class Maia.Core.EventBus : Object
     private void
     notify_occurence_destroy_event (Occurence inOccurence, Bus.Message inMessage)
     {
-        // Get list of destination of event
-        Set<uint32> destination = inOccurence.get_subscriber_destinations ();
-        if (destination.length > 0)
+        // Send event for client which is subscribed on
+        foreach (unowned Core.Object? child in m_Service)
         {
-            // Send event for client which is subscribed on
-            foreach (unowned Core.Object? child in m_Service)
+            unowned BusConnection? client = child as BusConnection;
+            if (client != null && client.id in inOccurence)
             {
-                unowned BusConnection? client = child as BusConnection;
-                if (client != null && client.id in destination)
-                {
 #if MAIA_DEBUG
-                    Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event destroy $(((MessageDestroyEvent)inMessage).hash) to client $(client.id)");
+                Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event destroy $(((MessageDestroyEvent)inMessage).hash) to client $(client.id)");
 #endif
-                    // send message to client
-                    client.send_async.begin (inMessage);
-                }
+                // send message to client
+                client.send_async.begin (inMessage);
             }
         }
     }
@@ -2096,22 +2085,17 @@ public class Maia.Core.EventBus : Object
                     occurence.add_reply (msg.sender, msg.args);
                 }
 
-                // Get list of destination of event
-                Set<uint32> destination = occurence.get_subscriber_destinations ();
-                if (destination.length > 0)
+                // Send event for client which is subscribed on
+                foreach (unowned Core.Object? child in m_Service)
                 {
-                    // Send event for client which is subscribed on
-                    foreach (unowned Core.Object? child in m_Service)
+                    unowned BusConnection? client = child as BusConnection;
+                    if (client != null && client.id in occurence)
                     {
-                        unowned BusConnection? client = child as BusConnection;
-                        if (client != null && client.id in destination)
-                        {
 #if MAIA_DEBUG
-                            Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event $(msg.hash) to client $(client.id)");
+                        Log.debug (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Send event $(msg.hash) to client $(client.id)");
 #endif
-                            // send message to client
-                            client.send_async.begin (inMessage);
-                        }
+                        // send message to client
+                        client.send_async.begin (inMessage);
                     }
                 }
 

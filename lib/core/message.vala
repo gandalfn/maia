@@ -29,6 +29,7 @@ public class Maia.Core.Message : GLib.Object
         }
     }
 
+    [CCode (notify = false)]
     public uint length {
         get {
             return m_Raw.length;
@@ -383,25 +384,14 @@ public class Maia.Core.Message : GLib.Object
      * Get value at inIndex
      *
      * @param inIndex position index of value to get
-     * @param inLength string length
      *
      * @return value
      */
-    public string
-    get_string (uint inIndex, uint inLength)
-        requires (inIndex + inLength < m_Raw.length)
+    public unowned string
+    get_string (uint inIndex)
+        requires (inIndex < m_Raw.length)
     {
-        if (inLength == 0) inLength = m_Raw.length;
-
-        GLib.StringBuilder builder = new GLib.StringBuilder ();
-
-        for (uint cpt = inIndex; cpt < inLength; ++cpt)
-        {
-            if (m_Raw[cpt] > 0)
-                builder.append_c ((char)m_Raw[cpt]);
-        }
-
-        return builder.str;
+        return (string)(&m_Raw[inIndex]);
     }
 
     /**
@@ -413,7 +403,9 @@ public class Maia.Core.Message : GLib.Object
     public void
     set_string (uint inIndex, string inValue)
     {
-        set_array (inIndex, inValue.data);
+        unowned uint8[] data = inValue.data;
+        set_array (inIndex, data);
+        push_back (0);
     }
 
     /**
@@ -426,7 +418,7 @@ public class Maia.Core.Message : GLib.Object
     {
         uint ret = m_Raw.length;
         set_string (m_Raw.length, inValue);
-        return ret;
+        return ret + 1;
     }
 
     /**
@@ -441,11 +433,11 @@ public class Maia.Core.Message : GLib.Object
     get_variant (uint inIndex, string inFormat)
         requires (inIndex < m_Raw.length)
     {
-        var data = new GLib.ByteArray ();
-        data.append (m_Raw[inIndex:m_Raw.length]);
+        unowned uchar[] data = (uchar[])(&m_Raw[inIndex]);
+        data.length = m_Raw.length - (int)inIndex;
         var type = new GLib.VariantType (inFormat);
 
-        return GLib.Variant.new_from_data<GLib.ByteArray> (type, data.data, true, data);
+        return GLib.Variant.new_from_data<void*> (type, data, true, null);
     }
 
     /**

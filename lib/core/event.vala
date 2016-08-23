@@ -49,7 +49,7 @@ public class Maia.Core.Event : Object
             int ret = direct_compare (owner, inOther.owner);
             if (ret == 0)
             {
-                return (int)(id - inOther.id);
+                return (int)id - (int)inOther.id;
             }
 
             return ret;
