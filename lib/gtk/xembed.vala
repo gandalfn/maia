@@ -22,20 +22,20 @@
 
 namespace XEmbed {
 	/** The version of the XEMBED protocol that this library supports.  */
-	public const int VERSION = 1;
+	internal const int VERSION = 1;
 
 	/** The atom name of the XEMBED message */
-	public const string ATOM = "_XEMBED";
+	internal const string ATOM = "_XEMBED";
 
 	/** Flags for _XEMBED_INFO */
 	[Flags]
-	public enum InfoFlags {
+	internal enum InfoFlags {
 		MAPPED  = (1 << 0),
 		ALL     = 1
 	}
 
 	/** XEMBED messages */
-	public enum MessageType {
+	internal enum MessageType {
 		NOTIFY 					= 0,
 		WINDOW_ACTIVATE			= 1,
 		WINDOW_DEACTIVATE		= 2,
@@ -54,7 +54,7 @@ namespace XEmbed {
 	}
 
 	/** Details for XEMBED_FOCUS_IN */
-	public enum FocusInDetail {
+	internal enum FocusInDetail {
 		FOCUS_CURRENT 	= 0,
 		FOCUS_FIRST		= 1,
 		FOCUS_LAST		= 2
@@ -62,7 +62,7 @@ namespace XEmbed {
 
 	/** Modifiers field for XEMBED_REGISTER_ACCELERATOR */
 	[Flags]
-	public enum AcceleratorModifiers {
+	internal enum AcceleratorModifiers {
 		MODIFIER_SHIFT		= (1 << 0),
 		MODIFIER_CONTROL	= (1 << 1),
 		MODIFIER_ALT		= (1 << 2),
@@ -72,7 +72,7 @@ namespace XEmbed {
 
 	/** Flags for XEMBED_ACTIVATE_ACCELERATOR */
 	[Flags]
-	public enum ActivateAccelerator {
+	internal enum ActivateAccelerator {
 		ACCELERATOR_OVERLOADED	= (1 << 0)
 	}
 }

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Xcb.InputDevice : Maia.InputDevice
+internal class Maia.Xcb.InputDevice : Maia.InputDevice
 {
     // properties
     private string                             m_Name;
@@ -274,7 +274,7 @@ public class Maia.Xcb.InputDevice : Maia.InputDevice
                 ((global::Xcb.Input.AttachSlave?)attach).deviceid = (global::Xcb.Input.DeviceId)id;
                 ((global::Xcb.Input.AttachSlave?)attach).len = (uint16)sizeof (global::Xcb.Input.AttachSlave) / 4;
                 ((global::Xcb.Input.AttachSlave?)attach).master = (global::Xcb.Input.DeviceId)main_id;
-    
+
                 var cookie = ((global::Xcb.Input.Connection)Maia.Xcb.application.connection).xi_change_hierarchy_checked (attach);
                 if (((global::Xcb.Input.Connection)Maia.Xcb.application.connection).request_check (cookie) == null)
                 {

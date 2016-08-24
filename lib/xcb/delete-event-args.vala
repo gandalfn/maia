@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Xcb.DeleteEventArgs : Maia.DeleteEventArgs
+internal class Maia.Xcb.DeleteEventArgs : Maia.DeleteEventArgs
 {
     // constants
     public new const string PROTOBUF = "message DeleteXcb {" +

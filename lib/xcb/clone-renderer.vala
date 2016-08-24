@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Xcb.CloneRenderer : Maia.Graphic.CloneRenderer
+internal class Maia.Xcb.CloneRenderer : Maia.Graphic.CloneRenderer
 {
     // types
     public class Looper : Graphic.CloneRenderer.Looper

@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-public class Maia.Xcb.InputDevices : Maia.InputDevices
+internal class Maia.Xcb.InputDevices : Maia.InputDevices
 {
     // static properties
     static bool s_Initialized = false;
