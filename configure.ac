@@ -43,7 +43,7 @@ dnl ****************************************************************************
 dnl Packages version required
 dnl ****************************************************************************
 GLIB_REQUIRED=2.32.0
-VALA_REQUIRED=0.26.0
+VALA_REQUIRED=0.32.0
 UUID_REQUIRED=2.20.0
 PIXMAN_REQUIRED=0.16.4
 CAIRO_REQUIRED=1.10.2
@@ -81,6 +81,21 @@ dnl Check for libtool
 dnl ****************************************************************************
 LT_PREREQ([2.2])
 LT_INIT([disable-static pic-only])
+
+dnl ****************************************************************************
+dnl Check for bootstrap
+dnl ****************************************************************************
+AC_MSG_CHECKING([bootstrap])
+if test -e ${ac_pwd}/${srcdir}/bootstrap/build
+then
+    bootstrapdir="${ac_pwd}/${srcdir}/bootstrap/build"
+    export PKG_CONFIG_PATH="${bootstrapdir}/lib/pkgconfig"
+    VALAC="${bootstrapdir}/bin/valac"
+    AC_MSG_RESULT([$bootstrapdir])
+else
+    bootstrapdir=""
+    AC_MSG_RESULT([not found ! launch bootstrap.sh build])
+fi
 
 dnl ****************************************************************************
 dnl Check for mm-common
@@ -209,12 +224,9 @@ fi
 dnl ****************************************************************************
 dnl Check for vala
 dnl ****************************************************************************
-vala_0_32=$(which valac-0.32)
-if test ! x"$vala_0_32" = x""; then
-    VALAC=$vala_0_32
-fi
 AM_PROG_VALAC($VALA_REQUIRED)
-VALA_VAPI_PATH=$($PKG_CONFIG --variable=vapidir libvala-0.32)
+unset PKG_CONFIG_PATH
+PKG_CHECK_VAR(VALA_VAPI_PATH, [libvala-0.32], [vapidir])
 AC_SUBST(VALA_VAPI_PATH)
 
 dnl ****************************************************************************
