@@ -587,7 +587,7 @@ public abstract class Maia.Core.Object : Any
      *
      * @return the first child object else null if object have no child
      */
-    public unowned Object?
+    public virtual unowned Object?
     first ()
     {
         return m_Head;
@@ -598,7 +598,7 @@ public abstract class Maia.Core.Object : Any
      *
      * @return the last child object else null if object have no child
      */
-    public unowned Object?
+    public virtual unowned Object?
     last ()
     {
         return m_Tail;
