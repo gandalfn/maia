@@ -44,7 +44,7 @@ namespace Maia
 
                 void transform (const Glib::RefPtr<Transform>& inTransform);
 
-                Glib::ustring to_string ();
+                Glib::ustring to_string () const;
 
                 _MEMBER_GET(x, x, double, double)
                 _MEMBER_SET(x, x, double, double)

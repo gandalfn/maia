@@ -53,9 +53,9 @@ namespace Maia
             maia_graphic_point_transform (&gobject_, const_cast<MaiaGraphicTransform*>(inTransform->gobj ()));
         }
 
-        Glib::ustring Point::to_string ()
+        Glib::ustring Point::to_string () const
         {
-            Glib::ustring ret (maia_graphic_point_to_string (&gobject_));
+            Glib::ustring ret (maia_graphic_point_to_string (const_cast<MaiaGraphicPoint*> (&gobject_)));
             return ret;
         }
     }

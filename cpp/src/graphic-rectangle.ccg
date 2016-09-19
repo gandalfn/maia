@@ -75,9 +75,9 @@ namespace Maia
             return maia_graphic_rectangle_contains (&gobject_, const_cast<MaiaGraphicPoint*>(inPoint.gobj ()));
         }
 
-        Glib::ustring Rectangle::to_string ()
+        Glib::ustring Rectangle::to_string () const
         {
-            Glib::ustring ret (maia_graphic_rectangle_to_string (&gobject_));
+            Glib::ustring ret (maia_graphic_rectangle_to_string (const_cast<MaiaGraphicRectangle*> (&gobject_)));
             return ret;
         }
 

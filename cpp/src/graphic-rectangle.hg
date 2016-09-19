@@ -56,7 +56,7 @@ namespace Maia
 
                 bool contains (const Point& inPoint);
 
-                Glib::ustring to_string ();
+                Glib::ustring to_string () const;
 
                 Point& get_origin() const;
                 void set_origin(const Point& value);
