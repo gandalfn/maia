@@ -497,10 +497,11 @@ internal class Maia.Xcb.InputDevice : Maia.InputDevice
             pos.y += inPosition.y;
 
             ((global::Xcb.Input.Window)inView.screen.xscreen.root).xi_warp_pointer ((global::Xcb.Input.Connection)Maia.Xcb.application.connection,
-                                                                                    (global::Xcb.Input.Window)inView.screen.xscreen.root, 0, 0, 0, 0,
-                                                                                    (global::Xcb.Input.Fp1616)((int32)pos.x << 16),
-                                                                                    (global::Xcb.Input.Fp1616)((int32)pos.y << 16),
-                                                                                    (global::Xcb.Input.DeviceId)m_Attachment);
+                                                                                    (global::Xcb.Input.Window)inView.xid, 
+                                                                                    0, 0, 0, 0,
+                                                                                    (global::Xcb.Input.Fp1616)((int32)inPosition.x << 16),
+                                                                                    (global::Xcb.Input.Fp1616)((int32)inPosition.y << 16),
+                                                                                    (global::Xcb.Input.DeviceId)id);
         }
     }
 }

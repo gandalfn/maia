@@ -3322,8 +3322,7 @@ namespace Xcb.Input
 		}
 		[CCode (array_length = false)]
 		public unowned uint32[] valuator_mask {
-			[CCode (cname = "xcb_i
-nput_motionevent_valuator_mask")]
+			[CCode (cname = "xcb_input_motionevent_valuator_mask")]
 			get;
 		}
 		public uint16 valuators_len;

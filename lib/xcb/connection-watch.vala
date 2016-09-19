@@ -232,6 +232,7 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
                     {
                         var reply = evt_motion_notify.event.query_pointer (m_Connection).reply (m_Connection);
                         if (reply != null)
+
                         {
                             motions[(int)evt_motion_notify.event] = new MouseEventArgs (MouseEventArgs.EventFlags.MOTION,
                                                                                         0,
@@ -327,8 +328,8 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
                             // Add motion event in compressed map events
                             motions[(int)evt_motion_notify.event] = new MouseEventArgs (MouseEventArgs.EventFlags.MOTION,
                                                                                         0,
-                                                                                        evt_motion_notify.event_x >> 16,
-                                                                                        evt_motion_notify.event_y >> 16);
+                                                                                        (int16)((uint32)evt_motion_notify.event_x >> 16),
+                                                                                        (int16)((uint32)evt_motion_notify.event_y >> 16));
                             break;
 
                         // key press event
