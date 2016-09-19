@@ -335,9 +335,14 @@ public class Maia.Core.Array <V> : Collection <V>
     }
 
     /**
-     * {@inheritDoc}
+     * Search if the specified is in this set.
+     *
+     * @param inValue the value to locate in the set
+     * @param inFunc custom compare function
+     *
+     * @return value found or null otherwise
      */
-    internal override unowned V?
+    public inline  unowned V?
     search<A> (A inValue, ValueCompareFunc<V, A> inFunc)
     {
         unowned V? ret = null;

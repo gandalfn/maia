@@ -368,7 +368,7 @@ public class Maia.Combo : Group, ItemPackable, ItemMovable, ItemFocusable
     internal override void
     on_child_resized (Drawable inChild)
     {
-        if (inChild != m_Popup)
+        if (inChild != (Drawable)m_Popup)
         {
             base.on_child_resized (inChild);
         }

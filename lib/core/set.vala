@@ -372,7 +372,15 @@ public class Maia.Core.Set<V> : Collection<V>
         balance (inNode.parent);
     }
 
-    internal inline override unowned V?
+    /**
+     * Search if the specified is in this set.
+     *
+     * @param inValue the value to locate in the set
+     * @param inFunc custom compare function
+     *
+     * @return value found or null otherwise
+     */
+    public inline unowned V?
     search<A> (A inValue, ValueCompareFunc<V, A> inFunc)
     {
         unowned Node<V> node = m_Root;

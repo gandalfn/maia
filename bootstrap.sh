@@ -1,25 +1,23 @@
 #!/bin/bash
 
-VALA_VERSION=0.32.1
 VALA_ABI=$(echo ${VALA_VERSION} | sed -e 's/\([0-9]*\)\.\([0-9]*\)\.\([0-9]*\)/\1\.\2/')
 XCB_VERSION=1.12
 
 function build
 {
-    if [ ! -e vala-${VALA_VERSION} ];
+    if [ ! -e vala ];
     then
-        if [ ! -e vala-${VALA_VERSION}.tar.xz ];
+        if [ ! -e vala ];
         then
-            wget ftp://ftp.gnome.org/pub/gnome/sources/vala/${VALA_ABI}/vala-${VALA_VERSION}.tar.xz
+            git clone git://git.gnome.org/vala
         fi
-        tar xvf vala-${VALA_VERSION}.tar.xz
-        cd vala-${VALA_VERSION}
+        cd vala
         patch -p1 < ../base-set-property.patch
         cd ..
     fi
 
-    cd vala-${VALA_VERSION}
-    ./configure --prefix=$PWD/../build --disable-shared --enable-static
+    cd vala
+    ./autogen.sh --prefix=$PWD/../build --disable-shared --enable-static
     make
     make install
     cd ..
@@ -57,7 +55,7 @@ function build
 
 function clean
 {
-    rm -rf vala-${VALA_VERSION}*
+    rm -rf vala
     rm -rf xcb-proto-${XCB_VERSION}*
     rm -rf libxcb-${XCB_VERSION}*
     rm -rf build

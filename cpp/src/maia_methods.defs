@@ -4568,19 +4568,6 @@
   )
 )
 
-(define-method search
-  (of-object "MaiaCoreCollection")
-  (c-name "maia_core_collection_search")
-  (return-type "gconstpointer")
-  (parameters
-    '("GType" "a_type")
-    '("GBoxedCopyFunc" "a_dup_func")
-    '("GDestroyNotify" "a_destroy_func")
-    '("gconstpointer" "inValue")
-    '("MaiaCoreValueCompareFunc" "inFunc")
-  )
-)
-
 (define-method insert
   (of-object "MaiaCoreCollection")
   (c-name "maia_core_collection_insert")
@@ -4713,6 +4700,19 @@
   (return-type "gint")
   (parameters
     '("gconstpointer" "inValue")
+  )
+)
+
+(define-method search
+  (of-object "MaiaCoreArray")
+  (c-name "maia_core_array_search")
+  (return-type "gconstpointer")
+  (parameters
+    '("GType" "a_type")
+    '("GBoxedCopyFunc" "a_dup_func")
+    '("GDestroyNotify" "a_destroy_func")
+    '("gconstpointer" "inValue")
+    '("MaiaCoreValueCompareFunc" "inFunc")
   )
 )
 
@@ -4987,6 +4987,19 @@
   )
 )
 
+(define-method search
+  (of-object "MaiaCoreList")
+  (c-name "maia_core_list_search")
+  (return-type "gconstpointer")
+  (parameters
+    '("GType" "a_type")
+    '("GBoxedCopyFunc" "a_dup_func")
+    '("GDestroyNotify" "a_destroy_func")
+    '("gconstpointer" "inValue")
+    '("MaiaCoreValueCompareFunc" "inFunc")
+  )
+)
+
 (define-method check
   (of-object "MaiaCoreList")
   (c-name "maia_core_list_check")
@@ -5023,6 +5036,19 @@
 (define-function maia_core_set_get_type
   (c-name "maia_core_set_get_type")
   (return-type "GType")
+)
+
+(define-method search
+  (of-object "MaiaCoreSet")
+  (c-name "maia_core_set_search")
+  (return-type "gconstpointer")
+  (parameters
+    '("GType" "a_type")
+    '("GBoxedCopyFunc" "a_dup_func")
+    '("GDestroyNotify" "a_destroy_func")
+    '("gconstpointer" "inValue")
+    '("MaiaCoreValueCompareFunc" "inFunc")
+  )
 )
 
 (define-method get

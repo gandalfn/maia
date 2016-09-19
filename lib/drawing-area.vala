@@ -126,7 +126,7 @@ public class Maia.DrawingArea : Group, ItemPackable, ItemFocusable
                         m_SelectedItem.damage.post ();
                     }
                 }
-                
+
                 m_SelectedItemState = SelectedItemState.NONE;
                 m_SelectedItem = value;
 
@@ -342,7 +342,7 @@ public class Maia.DrawingArea : Group, ItemPackable, ItemFocusable
             }
 
             // damaged child is the selected item
-            if (inChild == selected || (inChild is Item && selected is Arrow && (selected as Arrow).linked_item == (inChild as Item).name))
+            if (inChild == (Drawable)selected || (inChild is Item && selected is Arrow && (selected as Arrow).linked_item == (inChild as Item).name))
             {
                 // calculate item geometry with border
                 var child_area_pos = inChild.geometry.extents.origin;

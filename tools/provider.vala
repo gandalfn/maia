@@ -20,7 +20,7 @@
 public abstract class CanvasEditor.Provider : GLib.Object, Gtk.SourceCompletionProvider
 {
     // constants
-    public static const unichar[] c_Stoppers = {' ', '\t', '\n', '(', ';', '}', '{', '.'};
+    public const unichar[] c_Stoppers = {' ', '\t', '\n', '(', ';', '}', '{', '.'};
 
     // properties
     protected unowned Gtk.SourceBuffer m_Buffer;

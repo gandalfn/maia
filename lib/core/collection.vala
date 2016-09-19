@@ -52,16 +52,6 @@ public abstract class Maia.Core.Collection<V>
     public abstract bool contains (V inValue);
 
     /**
-     * Search if the specified is in this collection.
-     *
-     * @param inValue the value to locate in the collection
-     * @param inFunc custom compare function
-     *
-     * @return value found or null otherwise
-     */
-    public abstract unowned V? search<A> (A inValue, ValueCompareFunc<V, A> inFunc);
-
-    /**
      * Insert a value to this collection.
      *
      * @param inValue the value to add to the collection

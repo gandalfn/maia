@@ -94,9 +94,9 @@ maia_core_any_constructor (GType inType, guint inNConstructProperties,
     {
         MaiaCoreAnyDelegation* pDelegation;
 
-        pDelegation = maia_core_collection_search (MAIA_CORE_COLLECTION (g_ObjectDelegations),
-                                                                         G_TYPE_GTYPE, NULL, NULL,
-                                                                         inType, maia_core_any_delegation_compare_with_type);
+        pDelegation = maia_core_set_search (g_ObjectDelegations,
+                                            G_TYPE_GTYPE, NULL, NULL,
+                                            inType, maia_core_any_delegation_compare_with_type);
 
         if (pDelegation != NULL && pDelegation->derived != 0)
         {
@@ -158,10 +158,10 @@ maia_core_any_undelegate (GType inObjectType)
     {
         MaiaCoreAnyDelegation* pDelegation;
 
-        pDelegation = maia_core_collection_search (MAIA_CORE_COLLECTION (g_ObjectDelegations),
-                                                                         G_TYPE_GTYPE, NULL, NULL,
-                                                                         inObjectType,
-                                                                         maia_core_any_delegation_compare_with_type);
+        pDelegation = maia_core_set_search (g_ObjectDelegations,
+                                            G_TYPE_GTYPE, NULL, NULL,
+                                            inObjectType,
+                                            maia_core_any_delegation_compare_with_type);
 
         if (pDelegation != NULL)
         {

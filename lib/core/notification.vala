@@ -24,10 +24,26 @@ public class Maia.Core.Notification : Object
 
     public class Observer : Object
     {
+        private struct Func
+        {
+            public unowned RecvFunc m_Func;
+
+            public Func (RecvFunc inFunc)
+            {
+                m_Func = inFunc;
+            }
+
+            public void*
+            get_target ()
+            {
+                return (*(void**)((&m_Func) + 1));
+            }
+        }
+
+        // properties
         private unowned Notification m_Notification;
         private int                  m_Priority = 0;
-        private unowned RecvFunc     m_Callback;
-        private void*                m_Target;
+        private Func?                m_Callback;
         private unowned GLib.Object? m_TargetObject;
 
         /**
@@ -45,8 +61,7 @@ public class Maia.Core.Notification : Object
         internal Observer (Notification inNotification, RecvFunc inFunc, int inPriority = 0)
         {
             m_Notification = inNotification;
-            m_Callback = inFunc;
-            m_Target = (*(void**)((&m_Callback) + 1));
+            m_Callback = Func (inFunc);
             m_TargetObject = null;
             m_Priority = inPriority;
         }
@@ -55,7 +70,7 @@ public class Maia.Core.Notification : Object
         {
             this (inNotification, inFunc, inPriority);
 
-            m_TargetObject = m_Target as GLib.Object;
+            m_TargetObject = m_Callback.get_target () as GLib.Object;
             if (m_TargetObject != null)
             {
                 m_TargetObject.weak_ref (on_target_destroy);
@@ -73,7 +88,6 @@ public class Maia.Core.Notification : Object
         private void
         on_target_destroy ()
         {
-            m_Target = null;
             m_TargetObject = null;
             m_Callback = null;
             parent = null;
@@ -89,8 +103,9 @@ public class Maia.Core.Notification : Object
         internal bool
         equals (RecvFunc inFunc)
         {
-            void* target = (*(void**)((&inFunc) + 1));
-            return  m_Callback == inFunc && m_Target == target;
+            Func func = Func (inFunc);
+            void* target = func.get_target ();
+            return  m_Callback.m_Func == inFunc && m_Callback.get_target () == target;
         }
 
         internal new void
@@ -98,14 +113,14 @@ public class Maia.Core.Notification : Object
         {
             if (!block && m_Callback != null)
             {
-                m_Callback (m_Notification);
+                m_Callback.m_Func (m_Notification);
             }
         }
 
         internal Observer
         clone (Notification inNotification)
         {
-            return m_TargetObject != null ? new Observer.object (inNotification, m_Callback, m_Priority) : new Observer (inNotification, m_Callback, m_Priority);
+            return m_TargetObject != null ? new Observer.object (inNotification, m_Callback.m_Func, m_Priority) : new Observer (inNotification, m_Callback.m_Func, m_Priority);
         }
     }
 

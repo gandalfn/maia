@@ -244,10 +244,10 @@ public class Maia.View : Maia.Grid
             if (m_RowHightlighted >= 0)
             {
                 // Get current item highlighted
-                unowned ItemPackable item = get_item (m_RowHightlighted);
+                unowned ItemPackable? item = get_item (m_RowHightlighted);
 
                 // Item highlighted does not change
-                if (item == item_over_pointer) return;
+                if ((Item?)item == item_over_pointer) return;
 
                 // Damage old item
                 item.damage.post ();
@@ -662,7 +662,7 @@ public class Maia.View : Maia.Grid
 
         foreach (unowned Core.Object child in this)
         {
-            if (child == inItem)
+            if (child == (Core.Object)inItem)
             {
                 if (orientation == Orientation.VERTICAL)
                 {

@@ -37,9 +37,17 @@ public class Maia.TestNotification : Maia.TestCase
             }
             set {
                 m_TestProperty = value;
-                notifications.post ("test-property");
+                if (notifications["test-property"] != null)
+                {
+                    notifications["test-property"].post ();
+                }
             }
             default = null;
+        }
+
+        construct
+        {
+            notifications.add (new Core.Notification ("test-property"));
         }
 
         public TestFoo (uint32 inId)
@@ -150,7 +158,7 @@ public class Maia.TestNotification : Maia.TestCase
     test_notification_object ()
     {
         var foo = new TestFoo (0);
-        foo.notifications.add_object_observer ("test-property", on_test_notification);
+        foo.notifications["test-property"].add_object_observer (on_test_notification);
         foo.test_property = "test-foo";
 
         assert (m_Received.length == 1);
@@ -165,7 +173,7 @@ public class Maia.TestNotification : Maia.TestCase
         m_Notifications["test"].add_object_observer(on_test_notification);
 
         var foo = new TestFoo (0);
-        foo.notifications.add_object_observer ("test-property", on_test_notification);
+        foo.notifications["test-property"].add_object_observer (on_test_notification);
         foo.notifications["test-property"].append_observers (m_Notifications["test"]);
         foo.test_property = "test-foo";
 
@@ -180,7 +188,7 @@ public class Maia.TestNotification : Maia.TestCase
         var foo = new TestFoo (0);
         var foo2 = new TestFoo2 (0);
 
-        foo.notifications.add_object_observer ("test-property", on_test_perf_notification);
+        foo.notifications["test-property"].add_object_observer (on_test_perf_notification);
         foo2.notify["test-property"].connect (on_test_perf_notify);
 
         double elapsed_notification = 0, elapsed_notify = 0;

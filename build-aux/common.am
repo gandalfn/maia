@@ -5,8 +5,16 @@ AM_CPPFLAGS = \
     -DPACKAGE_SRC_DIR=\""$(srcdir)"\" \
     -DPACKAGE_DATA_DIR=\""$(datadir)"\"
 
-#CFLAGS = -O3 -w -ggdb
-CFLAGS = -w -ggdb
+CFLAGS = \
+    -Ofast \
+    -ggdb \
+    -Wno-incompatible-pointer-types \
+    -Wno-int-conversion \
+    -Wno-shift-count-overflow \
+    -Wno-int-to-pointer-cast \
+    -Wno-pointer-to-int-cast \
+    -Wno-discarded-qualifiers \
+    -Wno-deprecated-declarations
 
 EXTRA_DIST =
 
