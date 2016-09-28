@@ -39,7 +39,6 @@ noinst_DATA = \
     cairo.vapi \
     cairo-xcb.vapi \
     valgrind.vapi \
-    gio-2.0.vapi \
     gtk+-2.0.vapi \
     gtk+-2.0.deps \
     libintl.vapi \
