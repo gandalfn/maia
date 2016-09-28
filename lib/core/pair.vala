@@ -52,7 +52,7 @@ public class Maia.Core.Pair <F, S>
         return m_CompareFunc (first, inOther.first);
     }
 
-    internal int
+    internal inline int
     compare_with_first (F inFirst)
     {
         return m_CompareFunc (first, inFirst);

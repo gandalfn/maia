@@ -239,8 +239,7 @@ public class Maia.Cassowary.SimplexSolver : Tableau
 
         unowned Core.Map<AbstractVariable, Double> terms = inExpr.terms;
 
-        foreach (unowned Core.Pair<AbstractVariable, Double> pair in terms)
-        {
+        terms.iterator ().foreach ((pair) => {
             double c = pair.second.@value;
 
             if (foundUnrestricted)
@@ -248,7 +247,10 @@ public class Maia.Cassowary.SimplexSolver : Tableau
                 if (!pair.first.is_restricted)
                 {
                     if (!columns_has_key (pair.first))
-                        return pair.first;
+                    {
+                        subject = pair.first;
+                        return false;
+                    }
                 }
             }
             else
@@ -273,25 +275,34 @@ public class Maia.Cassowary.SimplexSolver : Tableau
                     foundUnrestricted = true;
                 }
             }
-        }
+
+            return true;
+        });
 
         if (subject != null)
             return subject;
 
         double coeff = 0.0;
 
-        foreach (unowned Core.Pair<AbstractVariable, Double> pair in terms)
-        {
+        bool no_luck = false;
+        terms.iterator ().foreach ((pair) => {
             double c = pair.second.@value;
 
             if (!(pair.first is DummyVariable))
-                return null; // nope, no luck
+            {
+                no_luck = true; // nope, no luck
+                return false;
+            }
             if (!columns_has_key (pair.first))
             {
                 subject = pair.first;
                 coeff = c;
             }
-        }
+
+            return true;
+        });
+
+        if (no_luck) return null;
 
         if (!approx(inExpr.constant.@value, 0.0))
         {
@@ -315,15 +326,15 @@ public class Maia.Cassowary.SimplexSolver : Tableau
         SlackVariable eminus = new SlackVariable ();
         SlackVariable eplus = new SlackVariable ();
 
-        foreach (unowned Core.Pair<AbstractVariable, Double> pair in cnExpr.terms)
-        {
+        cnExpr.terms.iterator ().foreach ((pair) => {
             double c = pair.second.@value;
             unowned LinearExpression? e = row_expression (pair.first);
             if (e == null)
                 expr.add_variable (pair.first, c);
             else
                 expr.add_expression (e, c);
-        }
+            return true;
+        });
 
         if (inConstraint is LinearInequality)
         {
@@ -408,23 +419,23 @@ public class Maia.Cassowary.SimplexSolver : Tableau
         while (true)
         {
             double objectiveCoeff = 0;
-            foreach (unowned Core.Pair<AbstractVariable, Double> pair in zRow.terms)
-            {
+            zRow.terms.iterator ().foreach ((pair) => {
                 double c = pair.second.@value;
                 if (pair.first.is_pivotable && c < objectiveCoeff)
                 {
                     objectiveCoeff = c;
                     entryVar = pair.first;
-                    break;
+                    return false;
                 }
-            }
+                return true;
+            });
+
             if (objectiveCoeff >= -m_Epsilon || entryVar == null)
                 return;
 
             double minRatio = double.MAX;
             double r = 0.0;
-            foreach (unowned AbstractVariable variable in m_Columns[entryVar])
-            {
+            m_Columns[entryVar].iterator ().foreach ((variable) => {
                 if (variable.is_pivotable)
                 {
                     unowned LinearExpression? expr = row_expression (variable);
@@ -439,7 +450,8 @@ public class Maia.Cassowary.SimplexSolver : Tableau
                         }
                     }
                 }
-            }
+                return true;
+            });
             if (minRatio == double.MAX)
             {
                 throw new Error.INTERNAL ("Objective function is unbounded in Optimize");
@@ -496,8 +508,7 @@ public class Maia.Cassowary.SimplexSolver : Tableau
 
         unowned Core.Set<AbstractVariable> columnVars = m_Columns[inMinusErrorVar];
 
-        foreach (AbstractVariable basicVar in columnVars)
-        {
+        columnVars.iterator ().foreach ((basicVar) => {
             unowned LinearExpression? expr = row_expression (basicVar);
             double c = expr.coefficient_for (inMinusErrorVar);
             expr.increment_constant (c * inDelta);
@@ -505,7 +516,8 @@ public class Maia.Cassowary.SimplexSolver : Tableau
             {
                 m_InfeasibleRows.insert (basicVar);
             }
-        }
+            return true;
+        });
     }
 
     /**
@@ -531,10 +543,9 @@ public class Maia.Cassowary.SimplexSolver : Tableau
                 if (expr.constant.@value < 0.0)
                 {
                     double ratio = double.MAX;
-                    double r;
+                    double r = 0;
                     unowned Core.Map<AbstractVariable, Double> terms = expr.terms;
-                    foreach (unowned Core.Pair<AbstractVariable, Double> pair in terms)
-                    {
+                    terms.iterator ().foreach ((pair) => {
                         double c = pair.second.@value;
                         if (c > 0.0 && pair.first.is_pivotable)
                         {
@@ -546,7 +557,8 @@ public class Maia.Cassowary.SimplexSolver : Tableau
                                 ratio = r;
                             }
                         }
-                    }
+                        return true;
+                    });
                     if (ratio == double.MAX)
                     {
                         throw new Error.INTERNAL ("ratio == nil (Double.MaxValue) in DualOptimize");
@@ -601,9 +613,15 @@ public class Maia.Cassowary.SimplexSolver : Tableau
     {
         for (int cpt = 0; cpt < m_StayPlusErrorVars.length; ++cpt)
         {
-            unowned LinearExpression? expr = row_expression (m_StayPlusErrorVars[cpt]);
+            unowned AbstractVariable? plusVar = m_StayPlusErrorVars[cpt];
+
+            unowned LinearExpression? expr = row_expression (plusVar);
             if (expr == null)
-                expr = row_expression (m_StayMinusErrorVars[cpt]);
+            {
+                unowned AbstractVariable? minusVar = m_StayMinusErrorVars[cpt];
+                if (minusVar != plusVar)
+                    expr = row_expression (minusVar);
+            }
             if (expr != null)
                 expr.constant.@value = 0.0;
         }
@@ -624,19 +642,19 @@ public class Maia.Cassowary.SimplexSolver : Tableau
     set_external_variables ()
     {
         m_ExternalParametricVars.iterator ().foreach ((variable) => {
-                if (row_expression (variable) != null)
-                    return true;
-
-                ((Variable)variable).@value = 0.0;
-
+            if (variable in m_Rows)
                 return true;
-            });
+
+            ((Variable)variable).@value = 0.0;
+
+            return true;
+        });
 
         m_ExternalRows.iterator ().foreach ((variable) => {
-                unowned LinearExpression? expr = row_expression (variable);
-                ((Variable)variable).@value = expr.constant.@value;
-                return true;
-            });
+            unowned LinearExpression? expr = row_expression (variable);
+            ((Variable)variable).@value = expr.constant.@value;
+            return true;
+        });
 
         m_NeedsSolving = false;
     }
@@ -887,8 +905,7 @@ public class Maia.Cassowary.SimplexSolver : Tableau
 
         if (eVars != null)
         {
-            foreach (unowned AbstractVariable variable in eVars)
-            {
+            eVars.iterator ().foreach ((variable) => {
                 unowned LinearExpression? expr = row_expression (variable);
                 if (expr == null)
                 {
@@ -902,7 +919,8 @@ public class Maia.Cassowary.SimplexSolver : Tableau
                                          -inConstraint.weight * inConstraint.strength.symbolic_weight.to_double (),
                                          m_Objective, this);
                 }
-            }
+                return true;
+            });
         }
 
         if (!(inConstraint in m_MarkerVars))
@@ -920,8 +938,7 @@ public class Maia.Cassowary.SimplexSolver : Tableau
 
             unowned AbstractVariable? exitVar = null;
             double minRatio = 0.0;
-            foreach (unowned AbstractVariable variable in col)
-            {
+            col.iterator ().foreach ((variable) => {
                 if (variable.is_restricted)
                 {
                     unowned LinearExpression? expr = row_expression (variable);
@@ -937,12 +954,12 @@ public class Maia.Cassowary.SimplexSolver : Tableau
                         }
                     }
                 }
-            }
+                return true;
+            });
 
             if (exitVar == null)
             {
-                foreach (unowned AbstractVariable variable in col)
-                {
+                col.iterator ().foreach ((variable) => {
                     if (variable.is_restricted)
                     {
                         unowned LinearExpression? expr = row_expression (variable);
@@ -954,7 +971,8 @@ public class Maia.Cassowary.SimplexSolver : Tableau
                             exitVar = variable;
                         }
                     }
-                }
+                    return true;
+                });
             }
 
             if (exitVar == null)
@@ -986,14 +1004,14 @@ public class Maia.Cassowary.SimplexSolver : Tableau
 
         if (eVars != null)
         {
-            foreach (unowned AbstractVariable variable in eVars)
-            {
+            eVars.iterator ().foreach ((variable) => {
                 // FIXME: decide wether to use equals or !=
                 if (variable.compare (marker) != 0)
                 {
                     remove_column (variable);
                 }
-            }
+                return true;
+            });
         }
 
         if (inConstraint is StayConstraint)
@@ -1059,8 +1077,8 @@ public class Maia.Cassowary.SimplexSolver : Tableau
     internal void
     resolve_pair (Core.Pair<Double, Double> m_NewEditConstants) throws Error
     {
-        foreach (unowned Core.Pair<Variable, EditInfo> pair in m_EditVarMap)
-        {
+        Error? error = null;
+        m_EditVarMap.iterator ().foreach ((pair) => {
             int i = pair.second.index;
             try
             {
@@ -1071,9 +1089,12 @@ public class Maia.Cassowary.SimplexSolver : Tableau
             }
             catch (Error err)
             {
-                throw new Error.INTERNAL ("Error during resolve");
+                error = new Error.INTERNAL ("Error during resolve");
+                return false;
             }
-        }
+            return true;
+        });
+        if (error != null) throw error;
         resolve();
     }
 
@@ -1232,15 +1253,15 @@ public class Maia.Cassowary.SimplexSolver : Tableau
         string result = base.to_string ();
 
         result += "\nm_StayPlusErrorVars: ";
-        foreach (unowned AbstractVariable variable in m_StayPlusErrorVars)
-        {
+        m_StayPlusErrorVars.iterator ().foreach ((variable) => {
             result += "\n" + variable.to_string ();
-        }
+            return true;
+        });
         result += "\nm_StayMinusErrorVars: ";
-        foreach (unowned AbstractVariable variable in m_StayMinusErrorVars)
-        {
+        m_StayMinusErrorVars.iterator ().foreach ((variable) => {
             result += "\n" + variable.to_string ();
-        }
+            return true;
+        });
         result += "\n";
 
         return result;

@@ -134,37 +134,37 @@ public class Maia.Cassowary.Tableau : Core.Object
         string s = "Tableau:\n";
 
         s += "\nRows:";
-        foreach (unowned Core.Pair<AbstractVariable, LinearExpression> pair in m_Rows)
-        {
+        m_Rows.iterator ().foreach ((pair) => {
             s += "\n%s <==> %s".printf (pair.first.to_string (), pair.second.to_string ());
-        }
+            return true;
+        });
 
         s += "\nColumns:";
-        foreach (unowned Core.Pair<AbstractVariable, Core.Set<AbstractVariable>> pair in m_Columns)
-        {
-            foreach (unowned AbstractVariable variable in pair.second)
-            {
+        m_Columns.iterator ().foreach ((pair) => {
+            pair.second.iterator ().foreach ((variable) => {
                 s += "\n%s".printf (variable.to_string());
-            }
-        }
+                return true;
+            });
+            return true;
+        });
 
         s += "\nInfeasible rows:";
-        foreach (unowned AbstractVariable variable in m_InfeasibleRows)
-        {
+        m_InfeasibleRows.iterator ().foreach ((variable) => {
             s += "\n%s".printf (variable.to_string());
-        }
+            return true;
+        });
 
         s += "\nExternal basic variables:";
-        foreach (unowned AbstractVariable variable in m_ExternalRows)
-        {
+        m_ExternalRows.iterator ().foreach ((variable) => {
             s += "\n%s".printf (variable.to_string());
-        }
+            return true;
+        });
 
         s += "\nExternal parametric variables:";
-        foreach (unowned AbstractVariable variable in m_ExternalParametricVars)
-        {
+        m_ExternalParametricVars.iterator ().foreach ((variable) => {
             s += "\n%s".printf (variable.to_string());
-        }
+            return true;
+        });
         return s;
     }
 
@@ -182,15 +182,16 @@ public class Maia.Cassowary.Tableau : Core.Object
         // have that variable in their expression
         m_Rows[inVariable] = inExpr;
 
-        foreach (unowned Core.Pair<AbstractVariable, Double> pair in inExpr.terms)
-        {
+        inExpr.terms.iterator ().foreach ((pair) => {
             insert_col_var (pair.first, inVariable);
 
             if (pair.first.is_external)
             {
                 m_ExternalParametricVars.insert (pair.first);
             }
-        }
+
+            return true;
+        });
 
         if (inVariable.is_external)
         {
@@ -209,11 +210,11 @@ public class Maia.Cassowary.Tableau : Core.Object
         unowned Core.Set<AbstractVariable> rows = m_Columns[inVariable];
         if (rows != null)
         {
-            foreach (AbstractVariable variable in rows)
-            {
+            rows.iterator ().foreach ((variable) => {
                 LinearExpression expr = m_Rows[variable];
                 expr.terms.unset (inVariable);
-            }
+                return true;
+            });
         }
         m_Columns.unset (inVariable);
 
@@ -240,15 +241,16 @@ public class Maia.Cassowary.Tableau : Core.Object
         // For each variable in this expression, update
         // the column mapping and remove the variable from the list
         // of rows it is known to be in.
-        foreach (unowned Core.Pair<AbstractVariable, Double> pair in expr.terms)
-        {
+        expr.terms.iterator ().foreach ((pair) => {
             unowned Core.Set<AbstractVariable>? varset = m_Columns[pair.first];
 
             if (varset != null)
             {
                 varset.remove (inVariable);
             }
-        }
+
+            return true;
+        });
 
         m_InfeasibleRows.remove (inVariable);
 
@@ -271,15 +273,15 @@ public class Maia.Cassowary.Tableau : Core.Object
     {
         unowned Core.Set<AbstractVariable>? varset = m_Columns[inOldVar];
 
-        foreach(unowned AbstractVariable variable in varset)
-        {
+        varset.iterator ().foreach((variable) => {
             unowned LinearExpression row = m_Rows[variable];
             row.substitute_out (inOldVar, inExpr, variable, this);
             if (variable.is_restricted && row.constant.@value < 0.0)
             {
                 m_InfeasibleRows.insert (variable);
             }
-        }
+            return true;
+        });
 
         if (inOldVar.is_external)
         {

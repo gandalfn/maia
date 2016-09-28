@@ -56,10 +56,10 @@ public class Maia.Cassowary.LinearExpression : Core.Object
         constant = (Double) inConstant.clone();
         m_Terms = new Core.Map<AbstractVariable, Double> ();
 
-        foreach (unowned Core.Pair<AbstractVariable, Double> pair in inTerms)
-        {
+        inTerms.iterator ().foreach ((pair) => {
             m_Terms[pair.first] = pair.second.clone();
-        }
+            return true;
+        });
     }
 
     public LinearExpression
@@ -73,10 +73,10 @@ public class Maia.Cassowary.LinearExpression : Core.Object
     {
         constant.@value = constant.@value * inX;
 
-        foreach (unowned Core.Pair<AbstractVariable, Double> pair in m_Terms)
-        {
+        m_Terms.iterator ().foreach ((pair) => {
             pair.second.@value = pair.second.@value * inX;
-        }
+            return true;
+        });
 
         return this;
     }
@@ -175,11 +175,11 @@ public class Maia.Cassowary.LinearExpression : Core.Object
     {
         increment_constant (inN * inExpr.constant.@value);
 
-        foreach (unowned Core.Pair<AbstractVariable, Double> pair in inExpr.m_Terms)
-        {
+        inExpr.m_Terms.iterator ().foreach ((pair) => {
             double coeff = pair.second.@value;
             add_variable (pair.first, coeff * inN, inSubject, inSolver);
-        }
+            return true;
+        });
 
         return this;
     }
@@ -250,15 +250,20 @@ public class Maia.Cassowary.LinearExpression : Core.Object
             throw new Error.INTERNAL ("any_pivotable_variable called on a constant");
         }
 
-        foreach (unowned Core.Pair<AbstractVariable, Double> pair in m_Terms)
-        {
+        AbstractVariable? ret = null;
+
+        m_Terms.iterator ().foreach ((pair) => {
             if (pair.first.is_pivotable)
-                return pair.first;
-        }
+            {
+                ret = pair.first;
+                return false;
+            }
+            return true;
+        });
 
         // No pivotable variables, so just return null, and let the caller
         // error if needed
-        return null;
+        return ret;
     }
 
     /**
@@ -276,8 +281,7 @@ public class Maia.Cassowary.LinearExpression : Core.Object
         m_Terms.unset (inVariable);
         increment_constant (multiplier * inExpr.constant.@value);
 
-        foreach (unowned Core.Pair<AbstractVariable, Double> pair in inExpr.m_Terms)
-        {
+        inExpr.m_Terms.iterator ().foreach ((pair) => {
             double coeff = pair.second.@value;
             unowned Double? d_old_coeff = m_Terms[pair.first];
 
@@ -302,7 +306,8 @@ public class Maia.Cassowary.LinearExpression : Core.Object
                 m_Terms[pair.first] = new Double(multiplier * coeff);
                 inSolver.note_added_variable (pair.first, inSubject);
             }
-        }
+            return true;
+        });
     }
 
     /**
@@ -398,14 +403,14 @@ public class Maia.Cassowary.LinearExpression : Core.Object
             is_first = false;
         }
 
-        foreach (unowned Core.Pair<AbstractVariable, Double> pair in m_Terms)
-        {
+        m_Terms.iterator ().foreach ((pair) => {
             if (is_first)
                 s += "%s*%s".printf (pair.first.to_string (), pair.second.to_string ());
             else
                 s += " + %s*%s".printf (pair.first.to_string (), pair.second.to_string ());
             is_first = false;
-        }
+            return true;
+        });
 
         return s;
     }
