@@ -450,7 +450,7 @@ public class Maia.Document : Item
         }
 
         // emit signal for bind
-        GLib.Signal.emit_by_name (this, "notify::nb_pages");
+        notify_property ("nb_pages");
     }
 
     private static void

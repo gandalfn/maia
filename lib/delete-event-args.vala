@@ -25,6 +25,7 @@ public class Maia.DeleteEventArgs : Maia.Core.EventArgs
                                    "}";
 
     // accessors
+    [CCode (notify = false)]
     public bool cancel {
         get {
             return (bool)this["cancel"];

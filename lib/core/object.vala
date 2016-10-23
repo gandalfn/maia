@@ -231,6 +231,7 @@ public abstract class Maia.Core.Object : Any
     /**
      * Object identifier
      */
+    [CCode (notify = false)]
     public uint32 id { get; construct set; default = 0; }
 
     /**
@@ -492,6 +493,20 @@ public abstract class Maia.Core.Object : Any
     iterator_begin ()
     {
         return iterator ();
+    }
+
+    /**
+     * Calls inFunc for each child of object.
+     *
+     * @param inFunc the function to call for each child element
+     **/
+    public void
+    @foreach (ForeachFunc<Object> inFunc)
+    {
+        for (unowned Object? child = m_Head; child != null; child = child.m_Next)
+        {
+            if (!inFunc (child)) break;
+        }
     }
 
     /**

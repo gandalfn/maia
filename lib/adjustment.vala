@@ -42,7 +42,7 @@ public class Maia.Adjustment : Object
             if (value.clamp (m_Lower, m_Upper) != m_Value)
             {
                 m_Value = value.clamp (m_Lower, m_Upper);
-                GLib.Signal.emit_by_name (this, "notify::value");
+                notify_property ("value");
             }
         }
         default = 0.0;
@@ -60,7 +60,7 @@ public class Maia.Adjustment : Object
             if (m_Step != double.min (value, (m_Upper - m_Lower)))
             {
                 m_Step = double.min (value, (m_Upper - m_Lower));
-                GLib.Signal.emit_by_name (this, "notify::step");
+                notify_property ("step");
             }
         }
         default = 0.0;
@@ -81,7 +81,7 @@ public class Maia.Adjustment : Object
                 m_Lower = double.min (value, m_Upper);
                 m_Value = delta * (m_Upper - m_Lower);
                 m_Step = double.min (m_Step, (m_Upper - m_Lower));
-                GLib.Signal.emit_by_name (this, "notify::lower");
+                notify_property ("lower");
             }
         }
         default = 0.0;
@@ -102,7 +102,7 @@ public class Maia.Adjustment : Object
                 m_Upper = double.max (value, m_Lower);
                 m_Value = delta * (m_Upper - m_Lower);
                 m_Step = double.min (m_Step, (m_Upper - m_Lower));
-                GLib.Signal.emit_by_name (this, "notify::upper");
+                notify_property ("upper");
             }
         }
         default = 0.0;
@@ -120,7 +120,7 @@ public class Maia.Adjustment : Object
             if (m_PageSize != double.min (m_Upper - m_Lower, value))
             {
                 m_PageSize = double.min (m_Upper - m_Lower, value);
-                GLib.Signal.emit_by_name (this, "notify::page-size");
+                notify_property ("page-size");
             }
         }
         default = 0.0;

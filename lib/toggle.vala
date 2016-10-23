@@ -128,7 +128,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
                     Log.warning ("Maia.ToggleButton.group", Log.Category.CANVAS_PARSING, "%s can not find %s group", name, m_Group);
                 }
 
-                GLib.Signal.emit_by_name (this, "notify::group");
+                notify_property ("group");
             }
         }
     }
@@ -201,7 +201,7 @@ public abstract class Maia.Toggle : Group, ItemPackable, ItemMovable
                 m_Active = value;
                 state = m_Active ? State.ACTIVE : State.NORMAL;
 
-                GLib.Signal.emit_by_name (this, "notify::active");
+                notify_property ("active");
 
                 toggled.publish (new ToggledEventArgs (name, active));
 

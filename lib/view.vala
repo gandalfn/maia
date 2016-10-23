@@ -61,6 +61,7 @@ public class Maia.View : Maia.Grid
     private int                     m_RowClicked = -1;
 
     // signals
+    [HasEmitter]
     public signal void row_clicked (uint inRow);
 
     // accessors

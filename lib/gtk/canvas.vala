@@ -47,7 +47,7 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
             if (m_Window != null && m_Root != null)
             {
                 m_Root.parent = m_Window;
-                GLib.Signal.emit_by_name (m_Window, "notify::window");
+                m_Window.notify_property ("window");
             }
 
             queue_resize ();
@@ -234,7 +234,7 @@ internal class Maia.Gtk.Canvas : global::Gtk.Widget, Maia.Canvas
 
         // Set canvas window
         m_Window.set_data<unowned Window?> ("MaiaCanvasWindow", m_WindowGate);
-        GLib.Signal.emit_by_name (m_Window, "notify::window");
+        m_Window.notify_property ("window");
 
         // Set root parent has window
         if (m_Root != null) m_Root.parent = m_Window;

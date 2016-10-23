@@ -71,7 +71,7 @@ public class Maia.NotebookPage : Group, ItemPackable
             {
                 not_dumpable_characters = false;
                 m_Toggle = value;
-                GLib.Signal.emit_by_name (this, "notify::toggle");
+                notify_property ("toggle");
             }
         }
     }

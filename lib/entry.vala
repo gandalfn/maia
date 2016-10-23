@@ -358,7 +358,7 @@ public class Maia.Entry : Item, ItemPackable, ItemMovable, ItemFocusable
                 // Damage area
                 damage.post ();
 
-                GLib.Signal.emit_by_name (this, "notify::text");
+                notify_property ("text");
 
 
                 if (ChangedMask.EACH_TEXT_UPDATE in changed_mask)

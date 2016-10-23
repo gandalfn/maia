@@ -33,6 +33,7 @@ internal class Maia.Core.Timeout : Object
     internal void* data;
     internal new DestroyNotify notify;
 
+    [CCode (notify = false)]
     internal bool ready {
         get {
             return (m_Flags & TimeoutFlags.READY) == TimeoutFlags.READY;

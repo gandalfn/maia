@@ -86,6 +86,7 @@ public abstract class Maia.Core.EventArgs : GLib.Object, Core.Serializable
             }
         }
     }
+    [CCode (notify = false)]
     public int sequence { get; construct; }
 
     // static methods

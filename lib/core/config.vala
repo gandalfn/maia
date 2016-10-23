@@ -73,6 +73,7 @@ public class Maia.Core.Config : GLib.Object
     /**
      * Emitted when the content of config file has been updated
      */
+    [HasEmitter]
     public signal void updated ();
 
     // methods

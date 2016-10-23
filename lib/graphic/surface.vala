@@ -56,7 +56,7 @@ public class Maia.Graphic.Surface : Pattern, Core.Serializable
             if ((uint) (inWidth) >= (int32.MAX - 7) / (uint) (bpp))
                 return -1;
 
-            return (int)((((bpp)*(inWidth) + 7) / 8 + sizeof (uint32) - 1) & -sizeof (uint32));
+            return (int)(((bpp * inWidth + 7) / 8 + sizeof (uint32) - 1) & -sizeof (uint32));
         }
     }
 

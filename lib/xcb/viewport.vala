@@ -37,6 +37,7 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
         }
     }
 
+    [CCode (notify = false)]
     public override uint8 depth {
         get {
             return m_View != null ? m_View.depth : 0;
@@ -55,6 +56,7 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
         }
     }
 
+    [CCode (notify = false)]
     public override Graphic.Rectangle visible_area {
         get {
             return base.visible_area;
@@ -266,7 +268,7 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
 //~                 m_Slices.set (m_View.backbuffer, visible_area.origin, rect);
 //~             }
 
-            m_View.updated ();
+            m_View.updated.post ();
         }
     }
 
@@ -327,7 +329,7 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
 
         m_View.show ();
 
-        GLib.Signal.emit_by_name (this, "notify::view");
+        notify_property ("view");
 
         base.on_show ();
     }
@@ -348,7 +350,7 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
     {
         m_View = null;
 
-        GLib.Signal.emit_by_name (this, "notify::view");
+        notify_property ("view");
     }
 
     internal override bool
@@ -418,7 +420,7 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
         {
             create_view ();
             m_View.show ();
-            GLib.Signal.emit_by_name (this, "notify::view");
+            notify_property ("view");
 
             // update view content from slices
             if (!visible_area.is_empty ())
@@ -443,7 +445,7 @@ internal class Maia.Xcb.Viewport : Maia.Viewport
         {
             create_view ();
             m_View.show ();
-            GLib.Signal.emit_by_name (this, "notify::view");
+            notify_property ("view");
 
             // update view content from slices
             if (!visible_area.is_empty ())

@@ -23,6 +23,7 @@ internal class Maia.Core.EventListenerPool : Object
     private Event.Hash m_EventHash;
 
     // accessors
+    [CCode (notify = false)]
     public bool event_destroyed {
         set {
             foreach (Object child in this)
@@ -47,10 +48,11 @@ internal class Maia.Core.EventListenerPool : Object
 #if MAIA_DEBUG
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "%s", ((GLib.Quark)m_EventHash.id).to_string ());
 #endif
-        foreach (Object child in this)
-        {
+        this.@foreach ((child) => {
             (child as EventListener).notify (inEventArgs);
-        }
+
+            return true;
+        });
     }
 
     internal override bool

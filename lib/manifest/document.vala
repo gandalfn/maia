@@ -53,7 +53,9 @@ public class Maia.Manifest.Document : Core.Parser
 
     public class AttributeBindAddedNotification : Core.Notification
     {
+        [CCode (notify = false)]
         public unowned AttributeBind attribute { get; set; default = null; }
+        [CCode (notify = false)]
         public string                property  { get; set; default = null; }
 
         public AttributeBindAddedNotification (string inName)

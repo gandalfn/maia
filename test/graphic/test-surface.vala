@@ -21,6 +21,7 @@ public class Maia.TestSurfaceEventArgs : Maia.Core.EventArgs
 {
     private Graphic.Surface m_Surface;
 
+    [CCode (notify = false)]
     public Graphic.Surface surface {
         get {
             return m_Surface;
@@ -30,6 +31,7 @@ public class Maia.TestSurfaceEventArgs : Maia.Core.EventArgs
         }
     }
 
+    [CCode (notify = false)]
     internal override GLib.Variant serialize {
         owned get {
             return new GLib.Variant ("(v)", m_Surface.serialize);

@@ -32,7 +32,7 @@ internal class Maia.Xcb.View : Drawable
             m_View = inView;
             m_Sibling = inSibling;
 
-            m_Sibling.updated.connect (on_sibling_updated);
+            m_Sibling.updated.add_object_observer (on_sibling_updated);
 
             m_Sibling.weak_ref (on_sibling_destroyed);
         }
@@ -41,7 +41,7 @@ internal class Maia.Xcb.View : Drawable
         {
             if (m_Sibling != null)
             {
-                m_Sibling.updated.disconnect (on_sibling_updated);
+                m_Sibling.updated.remove_observer (on_sibling_updated);
                 m_Sibling.weak_unref (on_sibling_destroyed);
             }
         }
@@ -113,6 +113,8 @@ internal class Maia.Xcb.View : Drawable
     }
 
     // properties
+    private Core.Notification           m_MappedNotification;
+    private Core.Notification           m_UpdatedNotification;
     private Graphic.Transform           m_Transform = new Graphic.Transform.identity ();
     private Graphic.Transform           m_DeviceTransform = new Graphic.Transform.identity ();
     private unowned View?               m_Parent;
@@ -129,9 +131,18 @@ internal class Maia.Xcb.View : Drawable
     private int                         m_NbGrabsPointer = 0;
     private int                         m_NbGrabsKeyboard = 0;
 
-    // signals
-    public signal void mapped ();
-    public signal void updated ();
+    // notifications
+    public Core.Notification mapped {
+        get {
+            return m_MappedNotification;
+        }
+    }
+
+    public Core.Notification updated {
+        get {
+            return m_UpdatedNotification;
+        }
+    }
 
     // accessors
     public override string backend {
@@ -140,6 +151,7 @@ internal class Maia.Xcb.View : Drawable
         }
     }
 
+    [CCode (notify = false)]
     public override uint8 depth {
         get {
             if (base.depth == 0)
@@ -167,6 +179,7 @@ internal class Maia.Xcb.View : Drawable
         }
     }
 
+    [CCode (notify = false)]
     public bool override_redirect {
         get {
             return m_OverrideRedirect;
@@ -195,6 +208,7 @@ internal class Maia.Xcb.View : Drawable
         }
     }
 
+    [CCode (notify = false)]
     public View? parent {
         get {
             return m_Parent;
@@ -204,7 +218,7 @@ internal class Maia.Xcb.View : Drawable
             {
                 if (m_Parent != null)
                 {
-                    m_Parent.mapped.disconnect (on_parent_mapped);
+                    m_Parent.mapped.remove_observer (on_parent_mapped);
                     m_Parent.m_Func = null;
                 }
 
@@ -212,7 +226,7 @@ internal class Maia.Xcb.View : Drawable
 
                 if (m_Parent != null)
                 {
-                    m_Parent.mapped.connect (on_parent_mapped);
+                    m_Parent.mapped.add_object_observer (on_parent_mapped);
                     m_Parent.m_Func = on_parent_destroyed;
                 }
 
@@ -224,6 +238,7 @@ internal class Maia.Xcb.View : Drawable
         }
     }
 
+    [CCode (notify = false)]
     public View? transient_for {
         get {
             return m_TransientFor;
@@ -319,6 +334,7 @@ internal class Maia.Xcb.View : Drawable
         }
     }
 
+    [CCode (notify = false)]
     public Graphic.Point position {
         get {
             Graphic.Point ret = Graphic.Point (0, 0);
@@ -346,6 +362,7 @@ internal class Maia.Xcb.View : Drawable
         }
     }
 
+    [CCode (notify = false)]
     public Graphic.Point root_position {
         get {
             Graphic.Point p = Graphic.Point (0, 0);
@@ -365,6 +382,7 @@ internal class Maia.Xcb.View : Drawable
         }
     }
 
+    [CCode (notify = false)]
     public override Graphic.Size size {
         get {
             Graphic.Size ret = Graphic.Size (0, 0);
@@ -414,6 +432,7 @@ internal class Maia.Xcb.View : Drawable
         }
     }
 
+    [CCode (notify = false)]
     public Graphic.Transform device_transform {
         get {
             return m_DeviceTransform;
@@ -426,6 +445,7 @@ internal class Maia.Xcb.View : Drawable
         }
     }
 
+    [CCode (notify = false)]
     public Graphic.Transform transform {
         get {
             return m_Transform;
@@ -438,10 +458,13 @@ internal class Maia.Xcb.View : Drawable
         }
     }
 
+    [CCode (notify = false)]
     public Graphic.Region damaged { get; set; default = null; }
 
+    [CCode (notify = false)]
     public bool decorated { get; set; default = true; }
 
+    [CCode (notify = false)]
     public bool managed { get; set; default = true; }
 
     [CCode (notify = false)]
@@ -477,6 +500,10 @@ internal class Maia.Xcb.View : Drawable
     // methods
     construct
     {
+        // create notification
+        m_MappedNotification = new Core.Notification ("mapped");
+        m_UpdatedNotification = new Core.Notification ("updated");
+
         // create siblings windows
         m_Siblings = new Core.Array<Sibling> ();
 
@@ -515,7 +542,7 @@ internal class Maia.Xcb.View : Drawable
 
         if (m_Parent != null)
         {
-            m_Parent.mapped.disconnect (on_parent_mapped);
+            m_Parent.mapped.remove_observer (on_parent_mapped);
             m_Parent.m_Func = null;
         }
         m_Parent = null;
@@ -806,7 +833,7 @@ internal class Maia.Xcb.View : Drawable
                 m_Realized = true;
 
                 // send mapped signal
-                mapped ();
+                mapped.post ();
 
                 // watch input devices events
                 Maia.Xcb.application.input_devices.watch_events (this);

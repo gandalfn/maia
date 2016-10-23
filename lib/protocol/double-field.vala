@@ -25,6 +25,7 @@ internal class Maia.Protocol.DoubleField : Field
         }
     }
 
+    [CCode (notify = false)]
     internal override string @default {
         set {
             base.@default = value ?? "0.0";

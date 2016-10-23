@@ -33,7 +33,7 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable, ItemFocusable
                 return (string)this["name", 0];
             }
         }
-        
+
         /**
          * Active state of step button
          */
@@ -333,7 +333,7 @@ public class Maia.StepButton : Item, ItemMovable, ItemPackable, ItemFocusable
     {
         changed.publish (new ChangedEventArgs (name, m_Active));
 
-        GLib.Signal.emit_by_name (this, "notify::active");
+        notify_property ("active");
     }
 
     internal override Graphic.Size

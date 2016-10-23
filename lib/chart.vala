@@ -227,6 +227,7 @@ public class Maia.Chart : Item
     }
 
     // signals
+    [HasEmitter]
     public signal void changed ();
 
     // static methods

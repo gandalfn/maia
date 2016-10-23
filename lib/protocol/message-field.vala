@@ -27,6 +27,7 @@ internal class Maia.Protocol.MessageField : Field
         }
     }
 
+    [CCode (notify = false)]
     internal override string @default {
         set {
         }

@@ -25,6 +25,7 @@ internal class Maia.Protocol.StringField : Field
         }
     }
 
+    [CCode (notify = false)]
     internal override string @default {
         set {
             base.@default = value ?? "";

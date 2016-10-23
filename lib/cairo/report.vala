@@ -69,10 +69,10 @@ internal class Maia.Cairo.Report : Maia.Report
             document.set_qdata<uint> (Maia.Document.s_PageTotalQuark, nb_pages);
 
             // Notify start page change
-            GLib.Signal.emit_by_name (document, "notify::start_page");
+            document.notify_property ("start_page");
 
             // Notify nb pages changed
-            GLib.Signal.emit_by_name (document, "notify::nb_pages");
+            document.notify_property ("nb_pages");
 
             // Get document size
             doc_size = document.size;
@@ -99,10 +99,10 @@ internal class Maia.Cairo.Report : Maia.Report
             document.set_qdata<uint> (Maia.Document.s_PageTotalQuark, 0);
 
             // Notify nb pages changes
-            GLib.Signal.emit_by_name (document, "notify::start_page");
+            document.notify_property ("start_page");
 
             // Notify nb pages changed
-            GLib.Signal.emit_by_name (document, "notify::nb_pages");
+            document.notify_property ("nb_pages");
 
             // Increment start page
             start += document.nb_pages;

@@ -126,7 +126,7 @@ public class Maia.Label : Item, ItemMovable, ItemPackable, ItemFocusable
 
                 on_layout_property_changed ();
 
-                GLib.Signal.emit_by_name (this, "notify::text");
+                notify_property ("text");
             }
         }
         default = null;

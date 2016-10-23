@@ -5436,6 +5436,16 @@
   (return-type "MaiaCoreObjectIterator*")
 )
 
+(define-method foreach
+  (of-object "MaiaCoreObject")
+  (c-name "maia_core_object_foreach")
+  (return-type "none")
+  (parameters
+    '("MaiaCoreForeachFunc" "inFunc")
+    '("void*" "inFunc_target")
+  )
+)
+
 (define-method iterator_end
   (of-object "MaiaCoreObject")
   (c-name "maia_core_object_iterator_end")
@@ -6808,6 +6818,12 @@
   (parameters
     '("const-gchar*" "value")
   )
+)
+
+(define-method updated
+  (of-object "MaiaCoreConfig")
+  (c-name "maia_core_config_updated")
+  (return-type "none")
 )
 
 (define-function maia_core_extension_error_quark
@@ -10026,15 +10042,6 @@
   (of-object "MaiaGraphicTransform")
   (c-name "maia_graphic_transform_get_is_rotate")
   (return-type "gboolean")
-)
-
-(define-method set_is_rotate
-  (of-object "MaiaGraphicTransform")
-  (c-name "maia_graphic_transform_set_is_rotate")
-  (return-type "none")
-  (parameters
-    '("gboolean" "value")
-  )
 )
 
 (define-method get_have_rotate
@@ -16464,6 +16471,139 @@
   (return-type "MaiaGestureNotification*")
 )
 
+(define-method grab_pointer
+  (of-object "MaiaItem")
+  (c-name "maia_item_grab_pointer")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-method ungrab_pointer
+  (of-object "MaiaItem")
+  (c-name "maia_item_ungrab_pointer")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-method grab_keyboard
+  (of-object "MaiaItem")
+  (c-name "maia_item_grab_keyboard")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-method ungrab_keyboard
+  (of-object "MaiaItem")
+  (c-name "maia_item_ungrab_keyboard")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-method button_press_event
+  (of-object "MaiaItem")
+  (c-name "maia_item_button_press_event")
+  (return-type "gboolean")
+  (parameters
+    '("guint" "inButton")
+    '("MaiaGraphicPoint*" "inPosition")
+  )
+)
+
+(define-method button_release_event
+  (of-object "MaiaItem")
+  (c-name "maia_item_button_release_event")
+  (return-type "gboolean")
+  (parameters
+    '("guint" "inButton")
+    '("MaiaGraphicPoint*" "inPosition")
+  )
+)
+
+(define-method motion_event
+  (of-object "MaiaItem")
+  (c-name "maia_item_motion_event")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaGraphicPoint*" "inPosition")
+  )
+)
+
+(define-method scroll_event
+  (of-object "MaiaItem")
+  (c-name "maia_item_scroll_event")
+  (return-type "gboolean")
+  (parameters
+    '("MaiaScroll" "inScroll")
+    '("MaiaGraphicPoint*" "inPosition")
+  )
+)
+
+(define-method key_press_event
+  (of-object "MaiaItem")
+  (c-name "maia_item_key_press_event")
+  (return-type "none")
+  (parameters
+    '("MaiaModifier" "inModifier")
+    '("MaiaKey" "inKey")
+    '("gunichar" "inChar")
+  )
+)
+
+(define-method key_release_event
+  (of-object "MaiaItem")
+  (c-name "maia_item_key_release_event")
+  (return-type "none")
+  (parameters
+    '("MaiaModifier" "inModifier")
+    '("MaiaKey" "inKey")
+    '("gunichar" "inChar")
+  )
+)
+
+(define-method grab_focus
+  (of-object "MaiaItem")
+  (c-name "maia_item_grab_focus")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
+(define-method set_pointer_cursor
+  (of-object "MaiaItem")
+  (c-name "maia_item_set_pointer_cursor")
+  (return-type "none")
+  (parameters
+    '("MaiaCursor" "inCursor")
+  )
+)
+
+(define-method move_pointer
+  (of-object "MaiaItem")
+  (c-name "maia_item_move_pointer")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicPoint*" "inPosition")
+  )
+)
+
+(define-method scroll_to
+  (of-object "MaiaItem")
+  (c-name "maia_item_scroll_to")
+  (return-type "none")
+  (parameters
+    '("MaiaItem*" "inItem")
+  )
+)
+
 (define-function maia_focus_group_get_type
   (c-name "maia_focus_group_get_type")
   (return-type "GType")
@@ -19880,6 +20020,52 @@
   (return-type "guint")
 )
 
+(define-method value_changed
+  (of-object "MaiaModel")
+  (c-name "maia_model_value_changed")
+  (return-type "none")
+  (parameters
+    '("guint" "inRow")
+  )
+)
+
+(define-method row_added
+  (of-object "MaiaModel")
+  (c-name "maia_model_row_added")
+  (return-type "none")
+  (parameters
+    '("guint" "inRow")
+  )
+)
+
+(define-method row_changed
+  (of-object "MaiaModel")
+  (c-name "maia_model_row_changed")
+  (return-type "none")
+  (parameters
+    '("guint" "inRow")
+  )
+)
+
+(define-method row_deleted
+  (of-object "MaiaModel")
+  (c-name "maia_model_row_deleted")
+  (return-type "none")
+  (parameters
+    '("guint" "inRow")
+  )
+)
+
+(define-method rows_reordered
+  (of-object "MaiaModel")
+  (c-name "maia_model_rows_reordered")
+  (return-type "none")
+  (parameters
+    '("guint*" "inNewOrder")
+    '("int" "inNewOrder_length1")
+  )
+)
+
 (define-function maia_model_column_new
   (c-name "maia_model_column_new")
   (is-constructor-of "MaiaModelColumn")
@@ -20140,6 +20326,15 @@
   (of-object "MaiaView")
   (c-name "maia_view_get_item_removed")
   (return-type "MaiaViewItemAddedRemovedNotification*")
+)
+
+(define-method row_clicked
+  (of-object "MaiaView")
+  (c-name "maia_view_row_clicked")
+  (return-type "none")
+  (parameters
+    '("guint" "inRow")
+  )
 )
 
 (define-method post
@@ -22115,6 +22310,12 @@
   )
 )
 
+(define-method changed
+  (of-object "MaiaChart")
+  (c-name "maia_chart_changed")
+  (return-type "none")
+)
+
 (define-function maia_viewport_get_type
   (c-name "maia_viewport_get_type")
   (return-type "GType")
@@ -23124,6 +23325,15 @@
   (return-type "none")
   (parameters
     '("MaiaGraphicPattern*" "value")
+  )
+)
+
+(define-method row_clicked
+  (of-object "MaiaTableView")
+  (c-name "maia_table_view_row_clicked")
+  (return-type "none")
+  (parameters
+    '("guint" "inRow")
   )
 )
 

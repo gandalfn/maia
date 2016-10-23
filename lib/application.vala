@@ -284,8 +284,7 @@ public class Maia.Application : Maia.Core.Object
 
         new_frame.post (notification.num_frame);
 
-        foreach (unowned Core.Object child in this)
-        {
+        this.@foreach ((child) => {
             unowned Window window = child as Window;
             if (window != null)
             {
@@ -337,7 +336,9 @@ public class Maia.Application : Maia.Core.Object
                     }
                 }
             }
-        }
+
+            return true;
+        });
     }
 
     private void
@@ -345,14 +346,15 @@ public class Maia.Application : Maia.Core.Object
     {
         bool have_visible = false;
 
-        foreach (unowned Core.Object child in this)
-        {
+        this.@foreach ((child) => {
             if (((Window)child).visible)
             {
                 have_visible = true;
-                break;
+                return false;
             }
-        }
+
+            return true;
+        });
 
         if (!have_visible && m_Timeline.is_playing)
         {

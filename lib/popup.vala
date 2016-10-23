@@ -342,7 +342,7 @@ public class Maia.Popup : Group
             {
                 m_Window.input_devices = window.input_devices;
             }
-            GLib.Signal.emit_by_name (m_Window, "notify::window");
+            m_Window.notify_property ("window");
         }
     }
 

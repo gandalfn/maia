@@ -46,12 +46,16 @@ internal class Maia.Xcb.PixmapSlices : GLib.Object
     private Slice[,]     m_Slices = null;
 
     // accessors
+    [CCode (notify = false)]
     public int screen { get; construct; default = 0; }
 
+    [CCode (notify = false)]
     public int depth { get; construct; default = 32; }
 
+    [CCode (notify = false)]
     public Graphic.Size slice_size { get; construct; }
 
+    [CCode (notify = false)]
     public Graphic.Size size {
         get {
             return m_Size;

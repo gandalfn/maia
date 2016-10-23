@@ -43,7 +43,7 @@ dnl ****************************************************************************
 dnl Packages version required
 dnl ****************************************************************************
 GLIB_REQUIRED=2.32.0
-VALA_REQUIRED=0.32.0
+VALA_REQUIRED=0.34.0
 UUID_REQUIRED=2.20.0
 PIXMAN_REQUIRED=0.16.4
 CAIRO_REQUIRED=1.10.2
@@ -90,7 +90,7 @@ if test -e ${ac_pwd}/${srcdir}/bootstrap/build
 then
     bootstrapdir="${ac_pwd}/${srcdir}/bootstrap/build"
     export PKG_CONFIG_PATH="${bootstrapdir}/lib/pkgconfig"
-    VALAC="${bootstrapdir}/bin/valac"
+    VALAC="${bootstrapdir}/bin/valac --vapidir ${bootstrapdir}/share/vala/vapi"
     AC_MSG_RESULT([$bootstrapdir])
 else
     bootstrapdir=""
@@ -225,9 +225,6 @@ dnl ****************************************************************************
 dnl Check for vala
 dnl ****************************************************************************
 AM_PROG_VALAC($VALA_REQUIRED)
-unset PKG_CONFIG_PATH
-PKG_CHECK_VAR(VALA_VAPI_PATH, [libvala-0.32], [vapidir])
-AC_SUBST(VALA_VAPI_PATH)
 
 dnl ****************************************************************************
 dnl Check for valadoc
@@ -239,20 +236,26 @@ AC_ARG_ENABLE(doc,
 
 found_valadoc=no
 if test "x$enabledoc" = "xyes"; then
-    AS_IF([test "x$enable_valadoc" != "xno"], [
-        AC_PATH_PROG(VALADOC, valadoc, :)
-        AS_IF([test -x "$VALADOC"], [
-          found_valadoc=yes
-          AC_SUBST(VALADOC)
-        ], [
-          AS_IF([test "x$enable_valadoc" == "xyes"], AC_MSG_ERROR([Unable to find valadoc]))
-        ])
-      ])
+    AC_PATH_PROG(VALADOC, valadoc, [], [$bootstrapdir/bin$PATH_SEPARATOR$PATH])
+    AS_IF([test -x "$VALADOC"], [
+      found_valadoc=yes
+      AC_SUBST(VALADOC)
+    ], [
+      AC_MSG_ERROR([Unable to find valadoc])
+    ])
+
     PKG_CHECK_MODULES(MAIA_VALADOC, [valadoc-1.0])
     AC_SUBST(MAIA_VALADOC_CFLAGS)
     AC_SUBST(MAIA_VALADOC_LIBS)
 fi
 AM_CONDITIONAL(ENABLE_VALADOC, test x$found_valadoc = xyes)
+
+dnl ****************************************************************************
+dnl Check for vapi
+dnl ****************************************************************************
+unset PKG_CONFIG_PATH
+PKG_CHECK_VAR(VALA_VAPI_PATH, [libvala-0.34], [vapidir])
+AC_SUBST(VALA_VAPI_PATH)
 
 dnl ****************************************************************************
 dnl Define path

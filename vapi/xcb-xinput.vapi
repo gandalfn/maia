@@ -35,22 +35,22 @@ namespace Xcb.Input
 
 	static void set_mask (void** ptr, uint8 event)
 	{
-		((uchar*)(*ptr))[(event)>>3] |=  (1 << ((event) & 7));
+		((uchar*)(*ptr))[event>>3] |=  (1 << (event & 7));
 	}
 
 	static void clear_mask(void** ptr, uint8 event)
 	{
-		((uchar*)(*ptr))[(event)>>3] &= ~(1 << ((event) & 7));
+		((uchar*)(*ptr))[event>>3] &= ~(1 << (event & 7));
 	}
 
 	static void mask_is_set (void** ptr, uint8 event)
 	{
-		((uchar*)(*ptr))[(event)>>3] &   (1 << ((event) & 7));
+		((uchar*)(*ptr))[event>>3] &   (1 << (event & 7));
 	}
 
 	static uint8 mask_len (uint8 event)
 	{
-		return ((event) >> 3) + 1;
+		return (event >> 3) + 1;
 	}
 
 	[Compact, CCode (cname = "xcb_connection_t", free_function = "xcb_disconnect")]

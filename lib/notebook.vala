@@ -111,7 +111,7 @@ public class Maia.Notebook : Grid
             if (m_Page != value)
             {
                 switch_page (value);
-                GLib.Signal.emit_by_name (this, "notify::page");
+                notify_property ("page");
             }
         }
     }

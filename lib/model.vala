@@ -310,9 +310,10 @@ public class Maia.Model : Core.Object, Manifest.Element
     }
 
     // signals
-    [Signal (detailed = true)]
+    [HasEmitter, Signal (detailed = true)]
     public signal void value_changed (uint inRow);
 
+    [HasEmitter]
     public virtual signal void
     row_added (uint inRow)
     {
@@ -327,6 +328,7 @@ public class Maia.Model : Core.Object, Manifest.Element
         }
     }
 
+    [HasEmitter]
     public virtual signal void
     row_changed (uint inRow)
     {
@@ -341,7 +343,9 @@ public class Maia.Model : Core.Object, Manifest.Element
         }
     }
 
+    [HasEmitter]
     public signal void row_deleted    (uint inRow);
+    [HasEmitter]
     public signal void rows_reordered (uint[] inNewOrder);
 
     // static methods

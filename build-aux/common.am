@@ -14,7 +14,8 @@ CFLAGS = \
     -Wno-int-to-pointer-cast \
     -Wno-pointer-to-int-cast \
     -Wno-discarded-qualifiers \
-    -Wno-deprecated-declarations
+    -Wno-deprecated-declarations \
+    -Wno-implicit-function-declaration
 
 EXTRA_DIST =
 

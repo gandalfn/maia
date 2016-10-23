@@ -61,13 +61,9 @@ public class Maia.Graphic.Transform : Core.Object
         }
     }
 
-    [CCode (notify = false)]
     public bool is_rotate {
         get {
             return m_IsRotate;
-        }
-        set {
-            m_IsRotate = value;
         }
     }
 

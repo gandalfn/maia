@@ -41,10 +41,13 @@ internal abstract class Maia.Xcb.Drawable : GLib.Object, Core.Serializable, Grap
         }
     }
 
+    [CCode (notify = false)]
     public uint32 xid { get; construct set; default = 0; }
 
+    [CCode (notify = false)]
     public int screen_num { get; set; default = Maia.Xcb.application.default_screen; }
 
+    [CCode (notify = false)]
     public virtual uint8 depth { get; set; default = 24; }
 
     public uint32 visual {
@@ -53,6 +56,7 @@ internal abstract class Maia.Xcb.Drawable : GLib.Object, Core.Serializable, Grap
         }
     }
 
+    [CCode (notify = false)]
     public virtual Graphic.Size size { get; set; default = Graphic.Size (0, 0); }
 
     public virtual Graphic.Surface? surface {

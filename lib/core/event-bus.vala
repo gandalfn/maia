@@ -2038,9 +2038,9 @@ public class Maia.Core.EventBus : Object
                 unowned Occurence? occurence = m_Occurences.search<Event.Hash> (hash, Occurence.compare_with_event_hash);
                 if (occurence == null)
                 {
-//#if MAIA_DEBUG
+#if MAIA_DEBUG
                     Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Event $(hash) advertise");
-//#endif
+#endif
                     m_Occurences.insert (new Occurence (hash));
                 }
             }

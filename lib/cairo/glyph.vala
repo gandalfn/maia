@@ -111,6 +111,7 @@ internal class Maia.Cairo.Glyph : Graphic.Glyph
         return Pango.EllipsizeMode.NONE;
     }
 
+    [CCode (notify = false)]
     internal override Graphic.Size size {
         get {
             if (m_Layout != null)

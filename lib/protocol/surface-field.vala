@@ -25,6 +25,7 @@ internal class Maia.Protocol.SurfaceField : Field
         }
     }
 
+    [CCode (notify = false)]
     internal override string @default {
         set {
         }

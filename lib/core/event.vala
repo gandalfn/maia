@@ -85,6 +85,7 @@ public class Maia.Core.Event : Object
     /**
      * The owner of event
      */
+    [CCode (notify = false)]
     public void* owner { get; construct; default = null; }
 
     /**

@@ -45,8 +45,7 @@ public class Maia.Group : Item
     {
         Graphic.Region area = new Graphic.Region ();
 
-        foreach (unowned Core.Object child in this)
-        {
+        this.@foreach ((child) => {
             if (child is Item && !(child is Popup))
             {
                 unowned Item item = (Item)child;
@@ -54,7 +53,9 @@ public class Maia.Group : Item
                 Graphic.Size item_size = item.size;
                 area.union_with_rect (Graphic.Rectangle (0, 0, item_position.x + item_size.width, item_position.y + item_size.height));
             }
-        }
+
+            return true;
+        });
 
         return area.extents.size;
     }

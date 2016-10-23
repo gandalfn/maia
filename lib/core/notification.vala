@@ -154,15 +154,16 @@ public class Maia.Core.Notification : Object
     public void
     remove_observer (RecvFunc inFunc)
     {
-        foreach (unowned Core.Object? child in this)
-        {
+        this.@foreach ((child) => {
             unowned Observer? observer = child as Observer;
             if (observer != null && observer.equals (inFunc))
             {
                 observer.parent = null;
-                break;
+                return false;
             }
-        }
+
+            return true;
+        });
     }
 
     public void
@@ -170,14 +171,15 @@ public class Maia.Core.Notification : Object
     {
         ref ();
         {
-            foreach (unowned Core.Object? child in this)
-            {
+            this.@foreach ((child) => {
                 unowned Observer? observer = child as Observer;
                 if (observer != null)
                 {
                     observer.notify ();
                 }
-            }
+
+                return true;
+            });
         }
         unref ();
     }
@@ -185,14 +187,15 @@ public class Maia.Core.Notification : Object
     public virtual void
     append_observers (Notification inNotification)
     {
-        foreach (unowned Object? child in inNotification)
-        {
+        inNotification.@foreach ((child) => {
             unowned Observer? observer = child as Observer;
             if (observer != null && observer.is_clonable)
             {
                 add (observer.clone (this));
             }
-        }
+
+            return true;
+        });
     }
 
     internal override int

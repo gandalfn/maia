@@ -258,6 +258,7 @@ internal abstract class Maia.Protocol.Field : Core.Object, Core.Serializable, Bu
     protected GLib.Value[] m_Values = {};
 
     // accessors
+    [CCode (notify = false)]
     public bool repeated { get; construct; default = false; }
 
     public int length {

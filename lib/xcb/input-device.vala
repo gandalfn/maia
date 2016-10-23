@@ -63,6 +63,7 @@ internal class Maia.Xcb.InputDevice : Maia.InputDevice
         }
     }
 
+    [CCode (notify = false)]
     internal InputDevice master_device {
         set {
             m_MasterDevice = value;
@@ -497,7 +498,7 @@ internal class Maia.Xcb.InputDevice : Maia.InputDevice
             pos.y += inPosition.y;
 
             ((global::Xcb.Input.Window)inView.screen.xscreen.root).xi_warp_pointer ((global::Xcb.Input.Connection)Maia.Xcb.application.connection,
-                                                                                    (global::Xcb.Input.Window)inView.xid, 
+                                                                                    (global::Xcb.Input.Window)inView.xid,
                                                                                     0, 0, 0, 0,
                                                                                     (global::Xcb.Input.Fp1616)((int32)inPosition.x << 16),
                                                                                     (global::Xcb.Input.Fp1616)((int32)inPosition.y << 16),

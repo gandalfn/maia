@@ -25,6 +25,7 @@ internal class Maia.Xcb.Window : Maia.Window
     private int          m_Monitor = -1;
 
     // accessors
+    [CCode (notify = false)]
     public override uint8 depth {
         get {
             return m_View != null ? m_View.depth : 0;
@@ -37,6 +38,7 @@ internal class Maia.Xcb.Window : Maia.Window
         }
     }
 
+    [CCode (notify = false)]
     public override Maia.Window? transient_for {
         get {
             return base.transient_for;
@@ -340,7 +342,7 @@ internal class Maia.Xcb.Window : Maia.Window
             else
                 m_View.damaged = (notification.area ?? area).copy ();
 
-            m_View.updated ();
+            m_View.updated.post ();
         }
     }
 

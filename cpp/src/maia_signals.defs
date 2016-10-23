@@ -903,7 +903,7 @@
   (prop-type "GParamBoolean")
   (docs "is-rotate")
   (readable #t)
-  (writable #t)
+  (writable #f)
   (construct-only #f)
 )
 

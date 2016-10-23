@@ -135,6 +135,7 @@ public class Maia.ButtonTab : Toggle
     /**
      * Indicate if button is highlighted
      */
+    [CCode (notify = false)]
     public bool highlight {
         get {
             return m_Highlight;
@@ -146,7 +147,7 @@ public class Maia.ButtonTab : Toggle
 
                 label_state = m_Highlight ? State.PRELIGHT : state;
 
-                GLib.Signal.emit_by_name (this, "notify::highlight");
+                notify_property ("highlight");
 
                 damage.post ();
             }

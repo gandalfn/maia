@@ -96,7 +96,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             // Send root change notification
             GLib.Signal.emit_by_name (this, "notify::root");
-            GLib.Signal.emit_by_name (this, "notify::window");
+            notify_property ("window");
 
             unref ();
         }
@@ -198,7 +198,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
                 on_visible_changed ();
 
-                GLib.Signal.emit_by_name (this, "notify::visible");
+                notify_property ("visible");
             }
         }
         default = true;
@@ -236,7 +236,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 // not when the geometry has been set
                 if (old_not_empty)
                 {
-                    GLib.Signal.emit_by_name (this, "notify::geometry");
+                    notify_property ("geometry");
                 }
             }
         }
@@ -336,7 +336,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                     not_dumpable_attributes.remove ("position");
                 }
 
-                GLib.Signal.emit_by_name (this, "notify::position");
+                notify_property ("position");
             }
         }
     }
@@ -384,7 +384,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 }
 
                 // Send size notify
-                GLib.Signal.emit_by_name (this, "notify::size");
+                notify_property ("size");
             }
         }
     }
@@ -400,7 +400,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 m_NeedUpdate = value;
 
                 // Only emit need update notify if switch on true
-                if (m_NeedUpdate) GLib.Signal.emit_by_name (this, "notify::need-update");
+                if (m_NeedUpdate) notify_property ("need-update");
             }
         }
     }
@@ -451,7 +451,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             if (get_qdata<unowned Window?> (s_MainWindow) != value)
             {
                 set_qdata<unowned Window?> (s_MainWindow, value);
-                GLib.Signal.emit_by_name (this, "notify::window");
+                notify_property ("window");
             }
         }
     }
@@ -472,19 +472,29 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     }
 
     // signals
+    [HasEmitter]
     public signal bool grab_pointer (Item inItem);
+    [HasEmitter]
     public signal void ungrab_pointer (Item inItem);
+    [HasEmitter]
     public signal bool grab_keyboard (Item inItem);
+    [HasEmitter]
     public signal void ungrab_keyboard (Item inItem);
 
+    [HasEmitter]
     public signal bool button_press_event (uint inButton, Graphic.Point inPosition);
+    [HasEmitter]
     public signal bool button_release_event (uint inButton, Graphic.Point inPosition);
+    [HasEmitter]
     public signal bool motion_event (Graphic.Point inPosition);
+    [HasEmitter]
     public signal bool scroll_event (Scroll inScroll, Graphic.Point inPosition);
+    [HasEmitter]
     public signal void key_press_event (Modifier inModifier, Key inKey, unichar inChar);
+    [HasEmitter]
     public signal void key_release_event (Modifier inModifier, Key inKey, unichar inChar);
 
-    [Signal (run = "first")]
+    [HasEmitter, Signal (run = "first")]
     public virtual signal void
     grab_focus (Item? inItem)
     {
@@ -498,7 +508,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
     }
 
-    [Signal (run = "first")]
+    [HasEmitter, Signal (run = "first")]
     public virtual signal void
     set_pointer_cursor (Cursor inCursor)
     {
@@ -509,7 +519,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
     }
 
-    [Signal (run = "first")]
+    [HasEmitter, Signal (run = "first")]
     public virtual signal void
     move_pointer (Graphic.Point inPosition)
     {
@@ -523,7 +533,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         }
     }
 
-    [Signal (run = "first")]
+    [HasEmitter, Signal (run = "first")]
     public virtual signal void
     scroll_to (Item inItem)
     {
@@ -832,7 +842,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         geometry = null;
         need_update = true;
-        GLib.Signal.emit_by_name (this, "notify::window");
+        notify_property ("window");
     }
 
     private void
@@ -1301,7 +1311,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             need_update = true;
             geometry = null;
 
-            GLib.Signal.emit_by_name (this, "notify::geometry");
+            notify_property ("geometry");
         }
     }
 
@@ -1375,7 +1385,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         need_update = true;
 
         // notify geometry
-        GLib.Signal.emit_by_name (this, "notify::geometry");
+        notify_property ("geometry");
     }
 
     protected virtual void
@@ -1395,7 +1405,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         else
         {
             // notify geometry
-            GLib.Signal.emit_by_name (this, "notify::geometry");
+            notify_property ("geometry");
         }
     }
 
@@ -1590,7 +1600,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             }
             else
             {
-                GLib.Signal.emit_by_name (this, "notify::geometry");
+                notify_property ("geometry");
             }
         }
     }
@@ -1633,7 +1643,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
             }
             else
             {
-                GLib.Signal.emit_by_name (this, "notify::geometry");
+                notify_property ("geometry");
             }
         }
         else

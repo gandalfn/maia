@@ -1,0 +1,15 @@
+diff --git a/codegen/valagtypemodule.vala b/codegen/valagtypemodule.vala
+index 4bbfab6..afa94f9 100644
+--- a/codegen/valagtypemodule.vala
++++ b/codegen/valagtypemodule.vala
+@@ -1896,6 +1896,10 @@ public class Vala.GTypeModule : GErrorModule {
+ 		if (prop.version.deprecated) {
+ 			pflags = "%s%s".printf (pflags, " | G_PARAM_DEPRECATED");
+ 		}
++		if (context.require_glib_version (2, 42) && !prop.get_attribute_bool ("CCode", "notify", true)) {
++			pflags = "%s%s".printf (pflags, " | G_PARAM_EXPLICIT_NOTIFY");
++		}
++
+ 		cspec.add_argument (new CCodeConstant (pflags));
+ 
+ 		return cspec;

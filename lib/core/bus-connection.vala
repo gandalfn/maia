@@ -22,6 +22,7 @@ public abstract class Maia.Core.BusConnection : Bus
     // types
     public class MessageReceivedNotification : Core.Notification
     {
+        [CCode (notify = false)]
         public unowned Bus.Message message { get; set; default = null; }
 
         public MessageReceivedNotification (string inName)

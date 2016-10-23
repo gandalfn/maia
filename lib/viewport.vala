@@ -143,7 +143,7 @@ public class Maia.Viewport : Window
                     m_ScrollDamage = false;
                 }
 
-                GLib.Signal.emit_by_name (this, "notify::visible-area");
+                notify_property ("visible-area");
             }
         }
     }
@@ -420,14 +420,14 @@ public class Maia.Viewport : Window
         {
             double diffx = inPoint.x - m_ButtonStatus.m_Position.x;
             double diffy = inPoint.y - m_ButtonStatus.m_Position.y;
-            
+
             if (GLib.Math.fabs (diffx) > 1 || GLib.Math.fabs (diffy) > 1)
             {
                 var item_area = area;
-    
+
                 double dx = inPoint.x - m_ButtonStatus.m_Origin.x;
                 double dy = inPoint.y - m_ButtonStatus.m_Origin.y;
-    
+
                 if (GLib.Math.fabs (diffx) > GLib.Math.fabs (diffy))
                 {
                     switch (scroll_mode)
@@ -438,14 +438,14 @@ public class Maia.Viewport : Window
                                 scroll_event (diffx < 0 ? Scroll.LEFT : Scroll.RIGHT, Graphic.Point (0, 0));
                             }
                             break;
-    
+
                         case ScrollMode.NATURAL_PUSH:
                             for (int cpt = 0; cpt < (int)(GLib.Math.fabs (diffx / item_area.extents.size.width) * 200); ++cpt)
                             {
                                 scroll_event (diffx < 0 ? Scroll.RIGHT : Scroll.LEFT, Graphic.Point (0, 0));
                             }
                             break;
-    
+
                         case ScrollMode.ACCEL:
                         case ScrollMode.NATURAL_ACCEL:
                             m_ButtonStatus.m_Velocity.x = ((dx / item_area.extents.size.width) *
@@ -455,7 +455,7 @@ public class Maia.Viewport : Window
                                 m_Timeline.start ();
                             }
                             break;
-    
+
                     }
                 }
                 else if (GLib.Math.fabs (diffx) < GLib.Math.fabs (diffy))
@@ -468,14 +468,14 @@ public class Maia.Viewport : Window
                                 scroll_event (diffy < 0 ? Scroll.UP : Scroll.DOWN, Graphic.Point (0, 0));
                             }
                             break;
-    
+
                         case ScrollMode.NATURAL_PUSH:
                             for (int cpt = 0; cpt < (int)(GLib.Math.fabs (diffy / item_area.extents.size.height) * 200); ++cpt)
                             {
                                 scroll_event (diffy < 0 ? Scroll.DOWN : Scroll.UP, Graphic.Point (0, 0));
                             }
                             break;
-    
+
                         case ScrollMode.ACCEL:
                         case ScrollMode.NATURAL_ACCEL:
                             m_ButtonStatus.m_Velocity.y = ((dy / item_area.extents.size.height) *
