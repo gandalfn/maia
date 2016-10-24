@@ -40,6 +40,7 @@ function build
         fi
 
         cd libgee
+	patch -p1 < ../disable-ax-required.patch
         ./autogen.sh \
             CFLAGS="-fPIC" \
             VALAC=$PWD/../build/bin/valac \

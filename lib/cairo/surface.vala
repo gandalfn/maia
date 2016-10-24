@@ -441,19 +441,25 @@ internal class Maia.Cairo.Surface : Graphic.Surface
 
         int w = (int)size.width;
         int h = (int)size.height;
-        int channels = 4;
+        int channels = int.max (1, format.bits_per_pixel () / 8);
 
         if (inRadius > w - 1 || inRadius > h - 1)
             return;
 
-        var original = new Graphic.Surface ((uint)w, (uint)h);
-        var cr = original.context;
+        uint8 *pixels = (uint8*)data;
+        Graphic.Surface? original = null;
+        if (pixels == null)
+        {
+            original = new Graphic.Surface ((uint)w, (uint)h);
+            var cr = original.context;
 
-        cr.operator = Graphic.Operator.SOURCE;
-        cr.pattern = this;
-        cr.paint ();
+            cr.operator = Graphic.Operator.SOURCE;
+            cr.pattern = this;
+            cr.paint ();
 
-        uint8 *pixels = ((global::Cairo.ImageSurface)((Surface)original).m_Surface).get_data ();
+            pixels = ((global::Cairo.ImageSurface)((Surface)original).m_Surface).get_data ();
+            channels = 4;
+        }
         var buffer = new uint8[w * h * channels];
 
         var vmin = new int[int.max (w, h)];
@@ -464,111 +470,201 @@ internal class Maia.Cairo.Surface : Graphic.Surface
         for (var i = 0; i < dv.length; i++)
             dv[i] = (uint8) (i / div);
 
-        while (inProcessCount-- > 0)
+        switch (channels)
         {
-            for (var x = 0; x < w; x++)
-            {
-                vmin[x] = int.min (x + inRadius + 1, w - 1);
-                vmax[x] = int.max (x - inRadius, 0);
-            }
-
-            for (var y = 0; y < h; y++)
-            {
-                var asum = 0, rsum = 0, gsum = 0, bsum = 0;
-
-                uint32 cur_pixel = y * w * channels;
-
-                asum += inRadius * pixels[cur_pixel + 0];
-                rsum += inRadius * pixels[cur_pixel + 1];
-                gsum += inRadius * pixels[cur_pixel + 2];
-                bsum += inRadius * pixels[cur_pixel + 3];
-
-                for (var i = 0; i <= inRadius; i++)
+            case 1:
+                while (inProcessCount-- > 0)
                 {
-                    asum += pixels[cur_pixel + 0];
-                    rsum += pixels[cur_pixel + 1];
-                    gsum += pixels[cur_pixel + 2];
-                    bsum += pixels[cur_pixel + 3];
+                    for (var x = 0; x < w; x++)
+                    {
+                        vmin[x] = int.min (x + inRadius + 1, w - 1);
+                        vmax[x] = int.max (x - inRadius, 0);
+                    }
 
-                    cur_pixel += channels;
+                    for (var y = 0; y < h; y++)
+                    {
+                        var asum = 0;
+
+                        uint32 cur_pixel = y * w * channels;
+
+                        asum += inRadius * pixels[cur_pixel + 0];
+                        
+                        for (var i = 0; i <= inRadius; i++)
+                        {
+                            asum += pixels[cur_pixel + 0];
+
+                            cur_pixel += channels;
+                        }
+
+                        cur_pixel = y * w * channels;
+
+                        for (var x = 0; x < w; x++)
+                        {
+                            uint32 p1 = (y * w + vmin[x]) * channels;
+                            uint32 p2 = (y * w + vmax[x]) * channels;
+
+                            buffer[cur_pixel + 0] = dv[asum];
+
+                            asum += pixels[p1 + 0] - pixels[p2 + 0];
+
+                            cur_pixel += channels;
+                        }
+                    }
+
+                    for (var y = 0; y < h; y++)
+                    {
+                        vmin[y] = int.min (y + inRadius + 1, h - 1) * w;
+                        vmax[y] = int.max (y - inRadius, 0) * w;
+                    }
+
+                    for (var x = 0; x < w; x++)
+                    {
+                        var asum = 0;
+
+                        uint32 cur_pixel = x * channels;
+
+                        asum += inRadius * buffer[cur_pixel + 0];
+
+                        for (var i = 0; i <= inRadius; i++)
+                        {
+                            asum += buffer[cur_pixel + 0];
+
+                            cur_pixel += w * channels;
+                        }
+
+                        cur_pixel = x * channels;
+
+                        for (var y = 0; y < h; y++)
+                        {
+                            uint32 p1 = (x + vmin[y]) * channels;
+                            uint32 p2 = (x + vmax[y]) * channels;
+
+                            pixels[cur_pixel + 0] = dv[asum];
+
+                            asum += buffer[p1 + 0] - buffer[p2 + 0];
+
+                            cur_pixel += w * channels;
+                        }
+                    }
                 }
+                break;
 
-                cur_pixel = y * w * channels;
-
-                for (var x = 0; x < w; x++)
+            case 4:
+                while (inProcessCount-- > 0)
                 {
-                    uint32 p1 = (y * w + vmin[x]) * channels;
-                    uint32 p2 = (y * w + vmax[x]) * channels;
+                    for (var x = 0; x < w; x++)
+                    {
+                        vmin[x] = int.min (x + inRadius + 1, w - 1);
+                        vmax[x] = int.max (x - inRadius, 0);
+                    }
 
-                    buffer[cur_pixel + 0] = dv[asum];
-                    buffer[cur_pixel + 1] = dv[rsum];
-                    buffer[cur_pixel + 2] = dv[gsum];
-                    buffer[cur_pixel + 3] = dv[bsum];
+                    for (var y = 0; y < h; y++)
+                    {
+                        var asum = 0, rsum = 0, gsum = 0, bsum = 0;
 
-                    asum += pixels[p1 + 0] - pixels[p2 + 0];
-                    rsum += pixels[p1 + 1] - pixels[p2 + 1];
-                    gsum += pixels[p1 + 2] - pixels[p2 + 2];
-                    bsum += pixels[p1 + 3] - pixels[p2 + 3];
+                        uint32 cur_pixel = y * w * channels;
 
-                    cur_pixel += channels;
+                        asum += inRadius * pixels[cur_pixel + 0];
+                        rsum += inRadius * pixels[cur_pixel + 1];
+                        gsum += inRadius * pixels[cur_pixel + 2];
+                        bsum += inRadius * pixels[cur_pixel + 3];
+
+                        for (var i = 0; i <= inRadius; i++)
+                        {
+                            asum += pixels[cur_pixel + 0];
+                            rsum += pixels[cur_pixel + 1];
+                            gsum += pixels[cur_pixel + 2];
+                            bsum += pixels[cur_pixel + 3];
+
+                            cur_pixel += channels;
+                        }
+
+                        cur_pixel = y * w * channels;
+
+                        for (var x = 0; x < w; x++)
+                        {
+                            uint32 p1 = (y * w + vmin[x]) * channels;
+                            uint32 p2 = (y * w + vmax[x]) * channels;
+
+                            buffer[cur_pixel + 0] = dv[asum];
+                            buffer[cur_pixel + 1] = dv[rsum];
+                            buffer[cur_pixel + 2] = dv[gsum];
+                            buffer[cur_pixel + 3] = dv[bsum];
+
+                            asum += pixels[p1 + 0] - pixels[p2 + 0];
+                            rsum += pixels[p1 + 1] - pixels[p2 + 1];
+                            gsum += pixels[p1 + 2] - pixels[p2 + 2];
+                            bsum += pixels[p1 + 3] - pixels[p2 + 3];
+
+                            cur_pixel += channels;
+                        }
+                    }
+
+                    for (var y = 0; y < h; y++)
+                    {
+                        vmin[y] = int.min (y + inRadius + 1, h - 1) * w;
+                        vmax[y] = int.max (y - inRadius, 0) * w;
+                    }
+
+                    for (var x = 0; x < w; x++)
+                    {
+                        var asum = 0, rsum = 0, gsum = 0, bsum = 0;
+
+                        uint32 cur_pixel = x * channels;
+
+                        asum += inRadius * buffer[cur_pixel + 0];
+                        rsum += inRadius * buffer[cur_pixel + 1];
+                        gsum += inRadius * buffer[cur_pixel + 2];
+                        bsum += inRadius * buffer[cur_pixel + 3];
+
+                        for (var i = 0; i <= inRadius; i++)
+                        {
+                            asum += buffer[cur_pixel + 0];
+                            rsum += buffer[cur_pixel + 1];
+                            gsum += buffer[cur_pixel + 2];
+                            bsum += buffer[cur_pixel + 3];
+
+                            cur_pixel += w * channels;
+                        }
+
+                        cur_pixel = x * channels;
+
+                        for (var y = 0; y < h; y++)
+                        {
+                            uint32 p1 = (x + vmin[y]) * channels;
+                            uint32 p2 = (x + vmax[y]) * channels;
+
+                            pixels[cur_pixel + 0] = dv[asum];
+                            pixels[cur_pixel + 1] = dv[rsum];
+                            pixels[cur_pixel + 2] = dv[gsum];
+                            pixels[cur_pixel + 3] = dv[bsum];
+
+                            asum += buffer[p1 + 0] - buffer[p2 + 0];
+                            rsum += buffer[p1 + 1] - buffer[p2 + 1];
+                            gsum += buffer[p1 + 2] - buffer[p2 + 2];
+                            bsum += buffer[p1 + 3] - buffer[p2 + 3];
+
+                            cur_pixel += w * channels;
+                        }
+                    }
                 }
-            }
-
-            for (var y = 0; y < h; y++)
-            {
-                vmin[y] = int.min (y + inRadius + 1, h - 1) * w;
-                vmax[y] = int.max (y - inRadius, 0) * w;
-            }
-
-            for (var x = 0; x < w; x++)
-            {
-                var asum = 0, rsum = 0, gsum = 0, bsum = 0;
-
-                uint32 cur_pixel = x * channels;
-
-                asum += inRadius * buffer[cur_pixel + 0];
-                rsum += inRadius * buffer[cur_pixel + 1];
-                gsum += inRadius * buffer[cur_pixel + 2];
-                bsum += inRadius * buffer[cur_pixel + 3];
-
-                for (var i = 0; i <= inRadius; i++)
-                {
-                    asum += buffer[cur_pixel + 0];
-                    rsum += buffer[cur_pixel + 1];
-                    gsum += buffer[cur_pixel + 2];
-                    bsum += buffer[cur_pixel + 3];
-
-                    cur_pixel += w * channels;
-                }
-
-                cur_pixel = x * channels;
-
-                for (var y = 0; y < h; y++)
-                {
-                    uint32 p1 = (x + vmin[y]) * channels;
-                    uint32 p2 = (x + vmax[y]) * channels;
-
-                    pixels[cur_pixel + 0] = dv[asum];
-                    pixels[cur_pixel + 1] = dv[rsum];
-                    pixels[cur_pixel + 2] = dv[gsum];
-                    pixels[cur_pixel + 3] = dv[bsum];
-
-                    asum += buffer[p1 + 0] - buffer[p2 + 0];
-                    rsum += buffer[p1 + 1] - buffer[p2 + 1];
-                    gsum += buffer[p1 + 2] - buffer[p2 + 2];
-                    bsum += buffer[p1 + 3] - buffer[p2 + 3];
-
-                    cur_pixel += w * channels;
-                }
-            }
+                break;
         }
 
-        ((Surface)original).m_Surface.mark_dirty ();
 
-        context.operator = Graphic.Operator.SOURCE;
-        context.pattern  = original;
-        context.paint ();
-        context.operator = Graphic.Operator.OVER;
+        if (data == null && original != null)
+        {
+            ((Surface)original).m_Surface.mark_dirty ();
+
+            context.operator = Graphic.Operator.SOURCE;
+            context.pattern  = original;
+            context.paint ();
+            context.operator = Graphic.Operator.OVER;
+        }
+        else
+        {
+            m_Surface.mark_dirty ();
+        }
     }
 
     internal override void
@@ -690,22 +786,39 @@ internal class Maia.Cairo.Surface : Graphic.Surface
         int width = (int)size.width;
         int height = (int)size.height;
 
-        var original = new Graphic.Surface.with_format (Graphic.Surface.Format.A8, (uint)width, (uint)height);
-        uint8 *src = ((global::Cairo.ImageSurface)((Surface)original).native).get_data ();
+        Graphic.Surface? original = null;
+        uint8 *src = (uint8*)data;
+        int size = 0;
+        if (src == null || format != Graphic.Surface.Format.A8)
+        {
+            original = new Graphic.Surface.with_format (Graphic.Surface.Format.A8, (uint)width, (uint)height);
+            src = ((global::Cairo.ImageSurface)((Surface)original).native).get_data ();
+            size = height * ((global::Cairo.ImageSurface)((Surface)original).native).get_stride ();
+        }
+        else
+        {
+            size = height * ((global::Cairo.ImageSurface)native).get_stride ();
+        }
 
-        var size = height * ((global::Cairo.ImageSurface)((Surface)original).native).get_stride ();
         for (var i = 0; i < size; i++)
         {
             s_Seed = (214013 * s_Seed + 2531011);
             src[i] = (uint8)(((s_Seed >> 16) & 0x7FFF) % 255);
         }
 
-        ((Surface)original).m_Surface.mark_dirty ();
+        if (original != null)
+        {
+            ((Surface)original).m_Surface.mark_dirty ();
 
-        context.operator = Graphic.Operator.SOURCE;
-        context.pattern  = original;
-        context.paint ();
-        context.operator = Graphic.Operator.OVER;
+            context.operator = Graphic.Operator.SOURCE;
+            context.pattern  = original;
+            context.paint ();
+            context.operator = Graphic.Operator.OVER;
+        }
+        else
+        {
+            m_Surface.mark_dirty ();
+        }
     }
 
     internal override void
