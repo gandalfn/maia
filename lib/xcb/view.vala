@@ -352,7 +352,7 @@ internal class Maia.Xcb.View : Drawable
             Graphic.Point pt = value;
             pt.x -= (decorated && parent == null) ? frame_extents.min.x : 0;
             pt.y -= (decorated && parent == null) ? frame_extents.min.y : 0;
-            if (!position.equal (pt))
+            //if (!position.equal (pt))
             {
                 if (m_Realized && !m_Foreign)
                 {

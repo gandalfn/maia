@@ -22,7 +22,7 @@ internal class Maia.Xcb.Window : Maia.Window
     // properties
     private View          m_View;
     private unowned Item? m_ParentWindow = null;
-    private int          m_Monitor = -1;
+    private int           m_Monitor = -1;
 
     // accessors
     [CCode (notify = false)]
@@ -507,12 +507,17 @@ internal class Maia.Xcb.Window : Maia.Window
         if (m_View != null)
         {
             m_View.show ();
+            application.sync ();
             if (m_Monitor >= 0)
             {
                 unowned Monitor? monitor = m_View.screen.get_monitor (m_Monitor);
                 if (monitor != null)
                 {
+                    print(@"$name monitor: $m_Monitor position: $(monitor.geometry.origin)\n");
+                    m_View.position = Graphic.Point (-1, -1);
+                    application.sync ();
                     m_View.position = monitor.geometry.origin;
+                    application.sync ();
                 }
             }
         }

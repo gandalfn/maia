@@ -94,6 +94,7 @@ public class Maia.DrawingArea : Group, ItemPackable, ItemFocusable
 
     internal Graphic.Pattern backcell_pattern { get; set; default = null; }
 
+    [CCode (notify = false)]
     public unowned Item? selected  {
         get {
             return m_SelectedItem;
@@ -136,6 +137,7 @@ public class Maia.DrawingArea : Group, ItemPackable, ItemFocusable
                 // Damage the new selected item
                 if (m_SelectedItem != null)
                 {
+                    print(@"selected: $(m_SelectedItem.name)\n");
                     m_SelectedItem.state = State.ACTIVE;
                     m_SelectedOldLayer = m_SelectedItem.layer;
                     if (!(m_SelectedItem is Shape))
@@ -409,6 +411,7 @@ public class Maia.DrawingArea : Group, ItemPackable, ItemFocusable
                     // point under child
                     if (item.button_press_event (inButton, point))
                     {
+                        print (@"$name item button press $(item.name) selectable: $(item.is_movable || item.is_resizable || item.is_selectable)\n");
                         // event occurate under child stop signal
                         ret = false;
                         GLib.Signal.stop_emission (this, mc_IdButtonPressEvent, 0);

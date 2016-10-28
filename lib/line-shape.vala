@@ -393,12 +393,12 @@ public class Maia.LineShape : Shape
     {
         bool ret = base.on_button_press_event (inButton, inPoint);
 
-        if (inButton == 1 && state == State.ACTIVE)
+        if (inButton == 1)
         {
-            var begin_area = Graphic.Rectangle (border + m_Begin.x, border + m_Begin.y, caliper_size.width, caliper_size.height);
-            var end_area = Graphic.Rectangle (border + m_End.x, border + m_End.y, caliper_size.width, caliper_size.height);
+            var begin_area = Graphic.Rectangle (border + m_Begin.x - caliper_size.width, border + m_Begin.y - caliper_size.height, caliper_size.width * 2.0, caliper_size.height * 2.0);
+            var end_area = Graphic.Rectangle (border + m_End.x - caliper_size.width, border + m_End.y - caliper_size.height, caliper_size.width * 2.0, caliper_size.height * 2.0);
 
-            if (m_Begin.x < 0 && m_Begin.y < 0)
+            if (m_Begin.x < 0 && m_Begin.y < 0 && state == State.ACTIVE)
             {
                 Graphic.Point moved_point = inPoint;
                 moved_point.x -= border + caliper_size.width / 2.0;
@@ -414,10 +414,11 @@ public class Maia.LineShape : Shape
                 geometry = null;
 
                 m_BeginClicked = true;
+                m_EndClicked = false;
 
                 ret = true;
             }
-            else if (!ret && m_End.x < 0 && m_End.y < 0)
+            else if (!ret && m_End.x < 0 && m_End.y < 0 && state == State.ACTIVE)
             {
                 Graphic.Point moved_point = inPoint;
                 Graphic.Point static_point = m_Begin;
@@ -437,6 +438,7 @@ public class Maia.LineShape : Shape
                 need_update = true;
                 geometry = null;
 
+                m_BeginClicked = false;
                 m_EndClicked = true;
 
                 ret = true;
@@ -444,12 +446,23 @@ public class Maia.LineShape : Shape
             else if (m_Begin.x >= 0 && m_Begin.y >= 0 && inPoint in begin_area)
             {
                 m_BeginClicked = true;
+                m_EndClicked = false;
+                ret = true;
             }
             else if (m_End.x >= 0 && m_End.y >= 0 && inPoint in end_area)
             {
+                m_BeginClicked = false;
                 m_EndClicked = true;
+                ret = true;
+            }
+            else
+            {
+                m_BeginClicked = false;
+                m_EndClicked = false;
             }
 
+            print(@"button press begin: $(m_BeginClicked) end: $(m_EndClicked)\n");
+            damage.post ();
         }
 
         return ret;

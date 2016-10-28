@@ -48,6 +48,7 @@ public interface Maia.ItemMovable : Item
                 }
 
                 // set new position
+                print (@"move $(inOffset)  from: $(position) to: $(new_area.origin)");
                 position = new_area.origin;
             }
         }

@@ -448,6 +448,7 @@ public class Maia.Window : Group
                     // we have grab pointer item send event
                     if (grab_pointer_item != null)
                     {
+                        print(@"$name window grab $(grab_pointer_item.name) mouse event: $(pos) position: $(mouse_args.position)\n");
                         grab_pointer_item.motion_event (grab_pointer_item.convert_from_window_space (mouse_args.position));
                     }
                     // else send event to window
@@ -502,6 +503,7 @@ public class Maia.Window : Group
                                 m_Animator.start ();
                             }
 
+                            print(@"$name window mouse event: $(pos) position: $(mouse_args.position)\n");
                             motion_event (pos);
                         }
                     }
@@ -513,11 +515,13 @@ public class Maia.Window : Group
                     // we have grab pointer item send event
                     if (grab_pointer_item != null)
                     {
+                        print(@"$name window grab $(grab_pointer_item.name) button press event: $(pos) position: $(mouse_args.position)\n");
                         grab_pointer_item.button_press_event (mouse_args.button, grab_pointer_item.convert_from_window_space (mouse_args.position));
                     }
                     // else send event to window
                     else
                     {
+                        print(@"$name window button press: $(pos) position: $(mouse_args.position)\n");
                         button_press_event (mouse_args.button, pos);
                     }
 

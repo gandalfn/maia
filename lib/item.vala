@@ -276,6 +276,7 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     [CCode (notify = false)]
     internal Graphic.Region damaged { get; set; default = null; }
 
+    [CCode (notify = false)]
     internal virtual Graphic.Transform transform {
         get {
             return m_Transform;
@@ -304,6 +305,8 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
                 calculate_transform_to_window_space ();
                 calculate_transform_from_window_space ();
             }
+
+            notify_property ("transform");
         }
         default = new Graphic.Transform.identity ();
     }

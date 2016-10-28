@@ -146,7 +146,6 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
     internal override bool
     on_process ()
     {
-        Core.Map<int, MouseEventArgs> motions = new Core.Map<int, MouseEventArgs> ();
         Core.Map<int, GeometryEventArgs> configures = new Core.Map<int, GeometryEventArgs> ();
 
         while (m_LastEvent != null || (m_LastEvent = m_Connection.poll_for_event ()) != null)
@@ -228,26 +227,11 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
                 case global::Xcb.EventType.MOTION_NOTIFY:
                     unowned global::Xcb.MotionNotifyEvent? evt_motion_notify = (global::Xcb.MotionNotifyEvent?)m_LastEvent;
 
-                    if (evt_motion_notify.detail == global::Xcb.Motion.HINT)
-                    {
-                        var reply = evt_motion_notify.event.query_pointer (m_Connection).reply (m_Connection);
-                        if (reply != null)
-
-                        {
-                            motions[(int)evt_motion_notify.event] = new MouseEventArgs (MouseEventArgs.EventFlags.MOTION,
-                                                                                        0,
-                                                                                        reply.win_x,
-                                                                                        reply.win_y);
-                        }
-                    }
-                    else
-                    {
-                        // Add motion event in compressed map events
-                        motions[(int)evt_motion_notify.event] = new MouseEventArgs (MouseEventArgs.EventFlags.MOTION,
-                                                                                    0,
-                                                                                    evt_motion_notify.event_x,
-                                                                                    evt_motion_notify.event_y);
-                    }
+                    Core.EventBus.default.publish ("mouse", ((int)evt_motion_notify.event).to_pointer (),
+                                                   new MouseEventArgs (MouseEventArgs.EventFlags.MOTION,
+                                                                       0,
+                                                                       evt_motion_notify.event_x,
+                                                                       evt_motion_notify.event_y));
                     break;
 
                 // client message event
@@ -325,11 +309,11 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
                         case global::Xcb.Input.EventType.MOTION:
                             unowned global::Xcb.Input.MotionEvent? evt_motion_notify = (global::Xcb.Input.MotionEvent?)m_LastEvent;
 
-                            // Add motion event in compressed map events
-                            motions[(int)evt_motion_notify.event] = new MouseEventArgs (MouseEventArgs.EventFlags.MOTION,
-                                                                                        0,
-                                                                                        (int16)((uint32)evt_motion_notify.event_x >> 16),
-                                                                                        (int16)((uint32)evt_motion_notify.event_y >> 16));
+                            Core.EventBus.default.publish ("mouse", ((int)evt_motion_notify.event).to_pointer (),
+                                                           new MouseEventArgs (MouseEventArgs.EventFlags.MOTION,
+                                                                               0,
+                                                                               (int16)((uint32)evt_motion_notify.event_x >> 16),
+                                                                               (int16)((uint32)evt_motion_notify.event_y >> 16)));
                             break;
 
                         // key press event
@@ -393,11 +377,11 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
                             case global::Xcb.Input.EventType.MOTION:
                                 unowned global::Xcb.MotionNotifyEvent? evt_motion_notify = (global::Xcb.MotionNotifyEvent?)m_LastEvent;
 
-                                // Add motion event in compressed map events
-                                motions[(int)evt_motion_notify.event] = new MouseEventArgs (MouseEventArgs.EventFlags.MOTION,
-                                                                                            0,
-                                                                                            evt_motion_notify.event_x,
-                                                                                            evt_motion_notify.event_y);
+                                Core.EventBus.default.publish ("mouse", ((int)evt_motion_notify.event).to_pointer (),
+                                                               new MouseEventArgs (MouseEventArgs.EventFlags.MOTION,
+                                                                                   0,
+                                                                                   evt_motion_notify.event_x,
+                                                                                   evt_motion_notify.event_y));
                                 break;
 
                             // key press event
@@ -427,12 +411,6 @@ internal class Maia.Xcb.ConnectionWatch : Core.Watch
         foreach (var configure in configures)
         {
             Core.EventBus.default.publish ("geometry", configure.first.to_pointer (), configure.second);
-        }
-
-        // send compressed motion
-        foreach (var motion in motions)
-        {
-            Core.EventBus.default.publish ("mouse", motion.first.to_pointer (), motion.second);
         }
 
         return true;
