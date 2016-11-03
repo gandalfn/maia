@@ -10061,19 +10061,19 @@
   (return-type "MaiaGraphicTransformChangedNotification*")
 )
 
+(define-method post
+  (of-object "MaiaGraphicTransformChangedNotification")
+  (c-name "maia_graphic_transform_changed_notification_post")
+  (return-type "none")
+  (parameters
+    '("MaiaGraphicTransform*" "inTransform")
+  )
+)
+
 (define-method get_transform
   (of-object "MaiaGraphicTransformChangedNotification")
   (c-name "maia_graphic_transform_changed_notification_get_transform")
   (return-type "MaiaGraphicTransform*")
-)
-
-(define-method set_transform
-  (of-object "MaiaGraphicTransformChangedNotification")
-  (c-name "maia_graphic_transform_changed_notification_set_transform")
-  (return-type "none")
-  (parameters
-    '("MaiaGraphicTransform*" "value")
-  )
 )
 
 (define-function maia_graphic_point_get_type

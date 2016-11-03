@@ -488,10 +488,10 @@ internal class Maia.Cairo.Surface : Graphic.Surface
                         uint32 cur_pixel = y * w * channels;
 
                         asum += inRadius * pixels[cur_pixel + 0];
-                        
+
                         for (var i = 0; i <= inRadius; i++)
                         {
-                            asum += pixels[cur_pixel + 0];
+                            asum += pixels[cur_pixel];
 
                             cur_pixel += channels;
                         }
@@ -503,9 +503,9 @@ internal class Maia.Cairo.Surface : Graphic.Surface
                             uint32 p1 = (y * w + vmin[x]) * channels;
                             uint32 p2 = (y * w + vmax[x]) * channels;
 
-                            buffer[cur_pixel + 0] = dv[asum];
+                            buffer[cur_pixel] = dv[asum];
 
-                            asum += pixels[p1 + 0] - pixels[p2 + 0];
+                            asum += pixels[p1] - pixels[p2];
 
                             cur_pixel += channels;
                         }
@@ -523,11 +523,11 @@ internal class Maia.Cairo.Surface : Graphic.Surface
 
                         uint32 cur_pixel = x * channels;
 
-                        asum += inRadius * buffer[cur_pixel + 0];
+                        asum += inRadius * buffer[cur_pixel];
 
                         for (var i = 0; i <= inRadius; i++)
                         {
-                            asum += buffer[cur_pixel + 0];
+                            asum += buffer[cur_pixel];
 
                             cur_pixel += w * channels;
                         }
@@ -539,9 +539,9 @@ internal class Maia.Cairo.Surface : Graphic.Surface
                             uint32 p1 = (x + vmin[y]) * channels;
                             uint32 p2 = (x + vmax[y]) * channels;
 
-                            pixels[cur_pixel + 0] = dv[asum];
+                            pixels[cur_pixel] = dv[asum];
 
-                            asum += buffer[p1 + 0] - buffer[p2 + 0];
+                            asum += buffer[p1] - buffer[p2];
 
                             cur_pixel += w * channels;
                         }

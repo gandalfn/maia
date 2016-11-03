@@ -1262,7 +1262,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
 
             if (!damaged_area.is_empty ())
             {
+#if MAIA_DEBUG
                 Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, @"item $(name) damaged draw $(damaged.extents) $(area.extents)");
+#endif
 
                 inContext.operator = Graphic.Operator.OVER;
                 inContext.save ();

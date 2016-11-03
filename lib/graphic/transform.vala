@@ -29,14 +29,18 @@ public class Maia.Graphic.Transform : Core.Object
             get {
                 return m_Transform;
             }
-            set {
-                m_Transform = value;
-            }
         }
 
         internal ChangedNotification (string inName)
         {
             base (inName);
+        }
+
+        public new void
+        post (Transform inTransform)
+        {
+            m_Transform = inTransform;
+            base.post ();
         }
     }
 
@@ -47,6 +51,7 @@ public class Maia.Graphic.Transform : Core.Object
     private Matrix m_FinalInvertMatrix;
     private int    m_Compare = 0;
     private bool   m_IsRotate = false;
+    private unowned ChangedNotification? m_Changed = null;
 
     // accessors
     public Matrix matrix {
@@ -87,16 +92,14 @@ public class Maia.Graphic.Transform : Core.Object
     // notifications
     public ChangedNotification changed {
         get {
-            unowned ChangedNotification ret = notifications["changed"] as ChangedNotification;
-
-            if (ret == null)
+            if (m_Changed == null)
             {
                 var notification = new ChangedNotification ("changed");
                 notifications.add (notification);
-                ret = notification;
+                m_Changed = notification;
             }
 
-            return ret;
+            return m_Changed;
         }
     }
 
@@ -455,7 +458,7 @@ public class Maia.Graphic.Transform : Core.Object
         }
     }
 
-    private void
+    private inline void
     recalculate_final_matrix ()
     {
         var old = m_FinalMatrix;
@@ -463,18 +466,16 @@ public class Maia.Graphic.Transform : Core.Object
 
         m_FinalMatrix = m_BaseMatrix;
         m_FinalInvertMatrix = m_BaseInvertMatrix;
-        foreach (unowned Core.Object child in this)
-        {
+        this.@foreach ((child) => {
             unowned Transform transform = (Transform)child;
             m_FinalMatrix.post_multiply (transform.m_FinalMatrix);
             m_FinalInvertMatrix.multiply (transform.m_FinalInvertMatrix);
-        }
+            return true;
+        });
 
         if (!old.equal (m_FinalMatrix) || !old_invert.equal (m_FinalInvertMatrix))
         {
-            unowned ChangedNotification notification = changed;
-            notification.transform = this;
-            notification.post ();
+            changed.post (this);
         }
     }
 
@@ -557,10 +558,10 @@ public class Maia.Graphic.Transform : Core.Object
         ret.m_Compare = m_Compare;
         ret.m_IsRotate = m_IsRotate;
 
-        foreach (unowned Core.Object child in this)
-        {
+        this.@foreach ((child) => {
             ret.add (((Transform)child).copy ());
-        }
+            return true;
+        });
 
         return ret;
     }
@@ -706,10 +707,10 @@ public class Maia.Graphic.Transform : Core.Object
             m_BaseInvertMatrix.multiply (Matrix (1, 0, 0, 1, -inCx, -inCy));
             m_FinalInvertMatrix = m_BaseInvertMatrix;
         }
-        foreach (unowned Core.Object child in this)
-        {
+        this.@foreach ((child) => {
             ((Transform)child).apply_center_rotate (inCx, inCy);
-        }
+            return true;
+        });
 
         recalculate_final_matrix ();
     }

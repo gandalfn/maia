@@ -149,10 +149,14 @@ public interface Maia.Drawable : Core.Object
             if (geometry != null)
             {
                 var ext = geometry.extents;
+                var ew = ext.size.width;
+                var gw = ew;
+                var eh = ext.size.height;
+                var gh = eh;
                 ext.reverse_transform (transform);
                 ext.translate (ext.origin.invert ());
-                ext.transform (new Graphic.Transform.init_scale ((ext.size.width / ext.size.height) / (geometry.extents.size.width / geometry.extents.size.height),
-                                                                 (ext.size.height / ext.size.width) / (geometry.extents.size.height / geometry.extents.size.width)));
+                ext.transform (new Graphic.Transform.init_scale ((ew / eh) / (gw / gh),
+                                                                 (eh / ew) / (gh / gw)));
                 ret = new Graphic.Region (ext);
             }
 

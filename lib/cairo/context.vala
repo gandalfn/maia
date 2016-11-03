@@ -342,22 +342,27 @@ internal class Maia.Cairo.Context : Graphic.Context
                 break;
 
             case Graphic.Path.DataType.MOVETO:
-                inPattern.move_to (inPath.points[0].x, inPath.points[0].y);
+                var p0 = inPath.points[0];
+                inPattern.move_to (p0.x, p0.y);
                 break;
 
             case Graphic.Path.DataType.LINETO:
-                inPattern.line_to (inPath.points[0].x, inPath.points[0].y);
+                var p0 = inPath.points[0];
+                inPattern.line_to (p0.x, p0.y);
                 break;
 
             case Graphic.Path.DataType.CURVETO:
-                inPattern.curve_to (inPath.points[0].x, inPath.points[0].y,
-                                    inPath.points[1].x, inPath.points[1].y,
-                                    inPath.points[2].x, inPath.points[2].y);
+                var p0 = inPath.points[0];
+                var p1 = inPath.points[1];
+                var p2 = inPath.points[2];
+                inPattern.curve_to (p0.x, p0.y,
+                                    p1.x, p1.y,
+                                    p2.x, p2.y);
                 break;
         }
     }
 
-    private void
+    private inline void
     set_path (Graphic.Path inPath) throws Graphic.Error
     {
         switch (inPath.data_type)
@@ -365,53 +370,66 @@ internal class Maia.Cairo.Context : Graphic.Context
             case Graphic.Path.DataType.PATH:
                 foreach (unowned Object child in inPath)
                 {
-                    set_path (child as Graphic.Path);
+                    set_path ((Graphic.Path)child);
                 }
                 break;
 
             case Graphic.Path.DataType.MOVETO:
-                m_Context.move_to (inPath.points[0].x, inPath.points[0].y);
+                var p = inPath.points[0];
+                m_Context.move_to (p.x, p.y);
                 status ();
                 break;
 
             case Graphic.Path.DataType.LINETO:
-                m_Context.line_to (inPath.points[0].x, inPath.points[0].y);
+                var p = inPath.points[0];
+                m_Context.line_to (p.x, p.y);
                 status ();
                 break;
 
             case Graphic.Path.DataType.CURVETO:
-                m_Context.curve_to (inPath.points[0].x, inPath.points[0].y,
-                                    inPath.points[1].x, inPath.points[1].y,
-                                    inPath.points[2].x, inPath.points[2].y);
+                var p0 = inPath.points[0];
+                var p1 = inPath.points[1];
+                var p2 = inPath.points[2];
+                m_Context.curve_to (p0.x, p0.y,
+                                    p1.x, p1.y,
+                                    p2.x, p2.y);
                 status ();
                 break;
 
             case Graphic.Path.DataType.ARC:
+                var p0 = inPath.points[0];
+                var p1 = inPath.points[1];
+                var p2 = inPath.points[2];
                 m_Context.save ();
-                m_Context.translate (inPath.points[0].x, inPath.points[0].y);
+                m_Context.translate (p0.x, p0.y);
                 status ();
-                m_Context.scale (inPath.points[1].x, inPath.points[1].y);
+                m_Context.scale (p1.x, p1.y);
                 status ();
-                m_Context.arc (0, 0, 1, inPath.points[2].x, inPath.points[2].y);
+                m_Context.arc (0, 0, 1, p2.x, p2.y);
                 status ();
                 m_Context.restore ();
                 break;
 
             case Graphic.Path.DataType.ARC_NEGATIVE:
+                var p0 = inPath.points[0];
+                var p1 = inPath.points[1];
+                var p2 = inPath.points[2];
                 m_Context.save ();
-                m_Context.translate (inPath.points[0].x, inPath.points[0].y);
+                m_Context.translate (p0.x, p0.y);
                 status ();
-                m_Context.scale (inPath.points[1].x, inPath.points[1].y);
+                m_Context.scale (p1.x, p1.y);
                 status ();
-                m_Context.arc_negative (0, 0, 1, inPath.points[2].x, inPath.points[2].y);
+                m_Context.arc_negative (0, 0, 1, p2.x, p2.y);
                 status ();
                 m_Context.restore ();
                 break;
 
             case Graphic.Path.DataType.RECTANGLE:
-                m_Context.rectangle (inPath.points[0].x, inPath.points[0].y,
-                                     inPath.points[1].x - inPath.points[0].x,
-                                     inPath.points[1].y - inPath.points[0].y);
+                var p0 = inPath.points[0];
+                var p1 = inPath.points[1];
+                m_Context.rectangle (p0.x, p0.y,
+                                     p1.x - p0.x,
+                                     p1.y - p0.y);
                 status ();
                 break;
         }
@@ -569,8 +587,10 @@ internal class Maia.Cairo.Context : Graphic.Context
             foreach (unowned Graphic.Rectangle rect in inRegion)
             {
                 // round rect to bounding integer rect
-                var pos1 = floor_point (rect.origin.x, rect.origin.y);
-                var pos2 = ceil_point (rect.origin.x + rect.size.width, rect.origin.y + rect.size.height);
+                var orig = rect.origin;
+                var size = rect.size;
+                var pos1 = floor_point (orig.x, orig.y);
+                var pos2 = ceil_point (orig.x + size.width, orig.y + size.height);
 
                 m_Context.rectangle (pos1.x, pos1.y, pos2.x - pos1.x, pos2.y - pos1.y);
             }

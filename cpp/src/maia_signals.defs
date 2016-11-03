@@ -932,7 +932,7 @@
   (prop-type "GParamObject")
   (docs "transform")
   (readable #t)
-  (writable #t)
+  (writable #f)
   (construct-only #f)
 )
 

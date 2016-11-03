@@ -14,7 +14,7 @@ function build
         fi
 
         cd vala
-        git checkout staging
+        #git checkout staging
         ./autogen.sh --prefix=$PWD/../build --disable-shared --enable-static --disable-vapigen
         make -j8
         make install

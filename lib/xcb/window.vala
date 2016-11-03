@@ -513,7 +513,6 @@ internal class Maia.Xcb.Window : Maia.Window
                 unowned Monitor? monitor = m_View.screen.get_monitor (m_Monitor);
                 if (monitor != null)
                 {
-                    print(@"$name monitor: $m_Monitor position: $(monitor.geometry.origin)\n");
                     m_View.position = Graphic.Point (-1, -1);
                     application.sync ();
                     m_View.position = monitor.geometry.origin;

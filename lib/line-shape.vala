@@ -461,7 +461,6 @@ public class Maia.LineShape : Shape
                 m_EndClicked = false;
             }
 
-            print(@"button press begin: $(m_BeginClicked) end: $(m_EndClicked)\n");
             damage.post ();
         }
 
