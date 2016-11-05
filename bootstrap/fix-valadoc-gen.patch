@@ -1,0 +1,14 @@
+diff --git a/src/libvaladoc/api/node.vala b/src/libvaladoc/api/node.vala
+index 580828f..d953615 100644
+--- a/src/libvaladoc/api/node.vala
++++ b/src/libvaladoc/api/node.vala
+@@ -120,7 +120,7 @@ public abstract class Valadoc.Api.Node : Item, Browsable, Documentation, Compara
+ 		do_document = true;
+ 
+ 		foreach (Node node in per_name_children.values) {
+-			if (node.is_browsable (settings)) {
++			if (node.name == null || node.is_browsable (settings)) {
+ 				node.parse_comments (settings, parser);
+ 			}
+ 		}
+-

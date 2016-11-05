@@ -31,6 +31,20 @@ EXTRA_DIST = \
     $(BUILD_FILES) \
     $(TOOLS_FILES)
 
+if USE_BOOTSTRAP
+EXTRA_DIST += \
+    bootstrap.sh \
+    bootstrap/vala.tar.xz \
+    bootstrap/libgee.tar.xz \
+    bootstrap/valadoc.tar.xz \
+    bootstrap/libxcb-1.12.tar.gz \
+    bootstrap/xcb-proto-1.12.tar.gz
+    bootstrap/base-set-property.patch \
+    bootstrap/add-explicit-notify.patch \
+    bootstrap/disable-ax-required.patch \
+    bootstap/fix-valadoc-gen.patch
+endif
+
 DISTCLEANFILES = \
     intltool-extract \
     intltool-merge \

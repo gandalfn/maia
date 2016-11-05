@@ -91,11 +91,13 @@ then
     bootstrapdir="${ac_pwd}/${srcdir}/bootstrap/build"
     export PKG_CONFIG_PATH="${bootstrapdir}/lib/pkgconfig"
     VALAC="${bootstrapdir}/bin/valac --vapidir ${bootstrapdir}/share/vala/vapi"
+    use_bootstrap=yes
     AC_MSG_RESULT([$bootstrapdir])
 else
-    bootstrapdir=""
+    use_bootstrap=no
     AC_MSG_RESULT([not found ! launch bootstrap.sh build])
 fi
+AM_CONDITIONAL(USE_BOOTSTRAP, test -e ${ac_pwd}/${srcdir}/bootstrap/build)
 
 dnl ****************************************************************************
 dnl Check for mm-common
