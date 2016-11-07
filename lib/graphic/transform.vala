@@ -78,11 +78,10 @@ public class Maia.Graphic.Transform : Core.Object
 
             if (!ret)
             {
-                foreach (unowned Core.Object child in this)
-                {
+                this.@foreach ((child) => {
                     ret |= ((Transform)child).have_rotate;
-                    if (ret) break;
-                }
+                    return !ret;
+                });
             }
 
             return ret;

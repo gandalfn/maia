@@ -402,8 +402,9 @@ public interface Maia.Drawable : Core.Object
     area_to_child_item_space (Drawable inChild, Graphic.Region? inArea = null)
     {
         Graphic.Region child_area = null;
+        unowned Graphic.Region? child_geometry = inChild.geometry;
 
-        if (geometry != null && inChild.geometry != null)
+        if (geometry != null && child_geometry != null)
         {
             // Transform area to item coordinate space
             if (inArea == null)
@@ -415,29 +416,32 @@ public interface Maia.Drawable : Core.Object
                 child_area = inArea.copy ();
             }
 
-            child_area.intersect (inChild.geometry);
+            child_area.intersect (child_geometry);
 
-            child_area.translate (inChild.geometry.extents.origin.invert ());
+            Graphic.Rectangle child_extents = child_geometry.extents;
+
+            child_area.translate (child_extents.origin.invert ());
 
             try
             {
-                if (inChild.transform.have_rotate)
+                var child_transform = inChild.transform;
+                if (child_transform.have_rotate)
                 {
-                    var t = inChild.transform.copy ();
-                    t.apply_center_rotate (inChild.geometry.extents.size.width / 2.0, inChild.geometry.extents.size.height / 2.0);
+                    var t = child_transform.copy ();
+                    t.apply_center_rotate (child_extents.size.width / 2.0, child_extents.size.height / 2.0);
                     var ti = new Graphic.Transform.invert (t);
 
                     child_area.transform (ti);
 
-                    var temp = inChild.geometry.copy ();
-                    temp.translate (inChild.geometry.extents.origin.invert ());
+                    var temp = child_geometry.copy ();
+                    temp.translate (child_extents.origin.invert ());
                     temp.transform (ti);
 
                     child_area.translate (temp.extents.origin.invert ());
                 }
                 else
                 {
-                    child_area.transform (new Graphic.Transform.invert (inChild.transform));
+                    child_area.transform (new Graphic.Transform.from_matrix (child_transform.matrix_invert));
                 }
             }
             catch (Graphic.Error err)

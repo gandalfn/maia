@@ -68,10 +68,11 @@ internal class Maia.Cairo.Context : Graphic.Context
         set {
             if (m_Context != null)
             {
+                var vmatrix = value.matrix;
                 // convert matrix to cairo format
-                global::Cairo.Matrix matrix = global::Cairo.Matrix (value.matrix.xx, value.matrix.yx,
-                                                                    value.matrix.xy, value.matrix.yy,
-                                                                    value.matrix.x0, value.matrix.y0);
+                global::Cairo.Matrix matrix = global::Cairo.Matrix (vmatrix.xx, vmatrix.yx,
+                                                                    vmatrix.xy, vmatrix.yy,
+                                                                    vmatrix.x0, vmatrix.y0);
 
                 // apply matrix
                 m_Context.transform (matrix);
@@ -221,9 +222,10 @@ internal class Maia.Cairo.Context : Graphic.Context
 
             if (pattern != null)
             {
-                global::Cairo.Matrix matrix = global::Cairo.Matrix (base.pattern.transform.matrix.xx, base.pattern.transform.matrix.yx,
-                                                                    base.pattern.transform.matrix.xy, base.pattern.transform.matrix.yy,
-                                                                    base.pattern.transform.matrix.x0, base.pattern.transform.matrix.y0);
+                var tmatrix = base.pattern.transform.matrix;
+                global::Cairo.Matrix matrix = global::Cairo.Matrix (tmatrix.xx, tmatrix.yx,
+                                                                    tmatrix.xy, tmatrix.yy,
+                                                                    tmatrix.x0, tmatrix.y0);
                 pattern.set_matrix (matrix);
 
                 m_Context.set_source (pattern);
