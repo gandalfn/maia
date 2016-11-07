@@ -12,6 +12,12 @@ doc_input = \
 
 include $(top_srcdir)/build-aux/doc-reference.am
 
-EXTRA_DIST = reference/doxygen.css
+EXTRA_DIST = \
+	doc-install.pl \
+	doc-postprocess.pl \
+	doxygen-extra.css \
+	doxygen.css \
+	tagfile-to-devhelp2.xsl \
+	reference/doxygen.css
 
 endif

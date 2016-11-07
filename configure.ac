@@ -15,7 +15,7 @@ AC_CONFIG_HEADERS(build-aux/config.h)
 dnl ****************************************************************************
 dnl Init automake
 dnl ****************************************************************************
-AM_INIT_AUTOMAKE([1.11  tar-pax silent-rules subdir-objects dist-bzip2])
+AM_INIT_AUTOMAKE([1.11  tar-pax silent-rules subdir-objects dist-xz no-dist-gzip])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 AC_ARG_VAR([ACLOCAL_FLAGS], [aclocal flags, e.g. -I <macro dir>])
 AM_MAINTAINER_MODE
@@ -291,7 +291,8 @@ MM_ARG_ENABLE_WARNINGS([MAIAMM_WXXFLAGS],
 dnl ****************************************************************************
 dnl Check for build docs
 dnl ****************************************************************************
-MMDOCTOOLDIR=/usr/share/mm-common/doctool
+dnl MMDOCTOOLDIR=/usr/share/mm-common/doctool
+MM_CONFIG_DOCTOOL_DIR([cpp/doc])
 MM_ARG_ENABLE_DOCUMENTATION
 
 dnl ****************************************************************************

@@ -57,9 +57,12 @@ public class Maia.TestSurface : Maia.TestCase
     {
         base ("surface");
 
-        add_test ("serialize", test_surface_serialize);
-        add_test ("event", test_surface_event);
-        add_test ("noise", test_surface_noise);
+        if (Test.thorough())
+        {
+            add_test ("serialize", test_surface_serialize);
+            add_test ("event", test_surface_event);
+            add_test ("noise", test_surface_noise);
+        }
     }
 
     public void

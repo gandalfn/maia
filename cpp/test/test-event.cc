@@ -110,6 +110,21 @@ TestEvent::~TestEvent ()
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void
+TestEvent::set_up ()
+{
+    m_pLoop = Glib::MainLoop::create ();
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void
+TestEvent::tear_down ()
+{
+}
+
+////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+void
 TestEvent::test_event_publish ()
 {
     m_Data = 0;
@@ -130,7 +145,7 @@ TestEvent::test_event_publish ()
         pEnd->attach (Glib::MainContext::get_default ());
     }
 
-    Application::get_default ()->run ();
+    m_pLoop->run ();
 
     g_assert (m_Data == 1245);
     g_assert (m_Foo == "toto");
@@ -156,7 +171,7 @@ TestEvent::test_event_publish_with_reply ()
         pEnd->attach (Glib::MainContext::get_default ());
     }
 
-    Application::get_default ()->run ();
+    m_pLoop->run ();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -275,7 +290,7 @@ TestEvent::on_publish ()
 bool
 TestEvent::on_quit ()
 {
-    Application::get_default ()->quit ();
+    m_pLoop->quit ();
 
     return false;
 }

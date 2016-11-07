@@ -52,6 +52,9 @@ test_SOURCES = \
     manifest/test-document.vala \
     cassowary/test-cassowary.vala
 
+test_CFLAGS = \
+    -DTEST_DIR=$(top_srcdir)/test
+
 test_LDADD = \
     $(MAIA_LIBS) \
     $(MAIA_CAIRO_LIBS) \
@@ -130,3 +133,6 @@ CLEANFILES += \
     test_bus_server_vala.stamp \
     test_bus_client_vala.stamp \
     $(VALAFILES:.vala=.c)
+
+EXTRA_DIST += \
+    test.png

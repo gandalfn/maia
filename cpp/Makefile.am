@@ -1,4 +1,10 @@
-SUBDIRS = codegen src maiamm . doc test
+if MAINTAINER_MODE
+src_subdirs = codegen src
+else
+src_subdirs =
+endif
+
+SUBDIRS = $(src_subdirs) maiamm . doc test
 
 MAIA_LIB_NAME = maiamm
 

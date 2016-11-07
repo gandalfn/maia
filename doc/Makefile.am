@@ -40,7 +40,7 @@ cpp/libdoclet.so: cpp/doclet.vala
 	    --pkg gio-2.0 \
 	    --pkg gio-unix-2.0 \
 	    --pkg=valadoc-1.0 -b $(srcdir)/doc/cpp -d $(builddir)/cpp -C $(srcdir)/cpp/doclet.vala && \
-	$(CC) -shared -fPIC -o $(top_builddir)/doc/cpp/libdoclet.so $(MAIA_VALADOC_CFLAGS) $(MAIA_VALADOC_LIBS) $(top_builddir)/doc/cpp/doclet.c
+	$(CC) -shared -fPIC -Wno-discarded-qualifiers -o $(top_builddir)/doc/cpp/libdoclet.so $(MAIA_VALADOC_CFLAGS) $(MAIA_VALADOC_LIBS) $(top_builddir)/doc/cpp/doclet.c
 
 valadoc-html: $(VALADOC_SRCS)
 	$(AM_V_GEN) rm -rf html; \
@@ -74,7 +74,9 @@ install-data-hook: devhelp
 all-local: cpp/libdoclet.so valadoc-html valadoc-devhelp valadoc-mm
 
 EXTRA_DIST = \
-	cpp/doclet.vala
+	cpp/doclet.vala \
+	valadoc-html valadoc-devhelp valadoc-mm \
+	html devhelp mm
 
 .NOTPARALLEL: cpp/libdoclet.so valadoc-html valadoc-devhelp valadoc-mm
 

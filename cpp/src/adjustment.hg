@@ -24,6 +24,9 @@ _PINCLUDE(glibmm/private/object_p.h)
 
 namespace Maia
 {
+    /**
+     * \includedoc MaiaAdjustment.doc
+     */
     class Adjustment : public Glib::Object
     {
         _CLASS_GOBJECT(Adjustment, MaiaAdjustment, MAIA_ADJUSTMENT, Glib::Object, GObject)

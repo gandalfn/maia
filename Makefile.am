@@ -33,16 +33,12 @@ EXTRA_DIST = \
 
 if USE_BOOTSTRAP
 EXTRA_DIST += \
-    bootstrap.sh \
-    bootstrap/vala.tar.xz \
-    bootstrap/libgee.tar.xz \
-    bootstrap/valadoc.tar.xz \
-    bootstrap/libxcb-1.12.tar.gz \
-    bootstrap/xcb-proto-1.12.tar.gz
-    bootstrap/base-set-property.patch \
-    bootstrap/add-explicit-notify.patch \
-    bootstrap/disable-ax-required.patch \
-    bootstap/fix-valadoc-gen.patch
+    $(top_srcdir)/bootstrap.sh \
+    $(top_srcdir)/bootstrap/vala-*.tar.xz \
+    $(top_srcdir)/bootstrap/libgee-*.tar.xz \
+    $(top_srcdir)/bootstrap/valadoc-*.tar.xz \
+    $(top_srcdir)/bootstrap/libxcb-*.tar.gz \
+    $(top_srcdir)/bootstrap/xcb-proto-*.tar.gz
 endif
 
 DISTCLEANFILES = \
@@ -54,7 +50,7 @@ DISTCLEANFILES = \
 ACLOCAL_AMFLAGS = -I build-aux
 
 uninstall-local:
-	-rm -r $(maiadocdir)
+	-rm -rf $(maiadocdir)
 
 dist-hook: gen-ChangeLog
 	for specfile in *.spec; do \
@@ -70,5 +66,8 @@ gen-ChangeLog:
         rm -f $(distdir)/ChangeLog;                          \
         mv $(distdir)/cl-t $(distdir)/ChangeLog;             \
     fi
+
+distcheck-hook:
+	chmod +w $(distdir)/bootstrap && $(distdir)/bootstrap.sh build
 
 DISTCHECK_CONFIGURE_FLAGS = --enable-doc

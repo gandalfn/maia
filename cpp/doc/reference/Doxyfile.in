@@ -106,7 +106,7 @@ EXCLUDE_SYMBOLS        = _* \
                          internal \
                          pair \
                          unary_function
-EXAMPLE_PATH           = "@abs_top_srcdir@/examples"
+EXAMPLE_PATH           = "@abs_top_srcdir@/doc/mm"
 EXAMPLE_PATTERNS       = *.cc \
                          *.h
 EXAMPLE_RECURSIVE      = YES

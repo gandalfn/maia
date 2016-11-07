@@ -37,6 +37,9 @@ namespace Maia
 {
     _WRAP_ENUM(EntryChangedMask, MaiaEntryChangedMask, NO_GTYPE)
 
+    /**
+     * \includedoc MaiaEntryChangedEventArgs.doc
+     */
     class EntryChangedEventArgs : public Core::EventArgs
     {
         _CLASS_GOBJECT(EntryChangedEventArgs, MaiaEntryChangedEventArgs, MAIA_ENTRY_CHANGED_EVENT_ARGS, Core::EventArgs, MaiaCoreEventArgs)
@@ -47,6 +50,9 @@ namespace Maia
             _WRAP_PROPERTY("text", Glib::ustring)
     };
 
+    /**
+     * \includedoc MaiaEntry.doc
+     */
     class Entry : public Item, public ItemPackable, public ItemMovable, public ItemFocusable
     {
         _CLASS_GOBJECT(Entry, MaiaEntry, MAIA_ENTRY, Item, MaiaItem)

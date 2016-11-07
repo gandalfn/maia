@@ -33,6 +33,9 @@ _PINCLUDE(maiamm/private/core-eventargs_p.h)
 
 namespace Maia
 {
+    /**
+     * \includedoc MaiaComboChangedEventArgs.doc
+     */
     class ComboChangedEventArgs : public Core::EventArgs
     {
         _CLASS_GOBJECT(ComboChangedEventArgs, MaiaComboChangedEventArgs, MAIA_COMBO_CHANGED_EVENT_ARGS, Core::EventArgs, MaiaCoreEventArgs)

@@ -30,6 +30,9 @@ namespace Maia
 {
     _WRAP_ENUM(ScrollViewPolicy, MaiaScrollViewPolicy, NO_GTYPE)
 
+    /**
+     * \includedoc MaiaScrollView.doc
+     */
     class ScrollView : public Item, public ItemPackable
     {
         _CLASS_GOBJECT(ScrollView, MaiaScrollView, MAIA_SCROLL_VIEW, Item, MaiaItem)

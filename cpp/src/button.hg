@@ -32,6 +32,9 @@ _PINCLUDE(maiamm/private/item_p.h)
 
 namespace Maia
 {
+    /**
+     * \includedoc MaiaButton.doc
+     */
     class Button : public Item, public ItemPackable, public ItemMovable, public ItemFocusable
     {
         _CLASS_GOBJECT(Button, MaiaButton, MAIA_BUTTON, Item, MaiaItem)
@@ -103,7 +106,7 @@ namespace Maia
             _WRAP_PROPERTY("shade-color", Glib::RefPtr<Graphic::Color>)
             _WRAP_PROPERTY("icon-filename", Glib::ustring)
             _WRAP_PROPERTY("icon-size", Graphic::Size)
-            
+
             _WRAP_PROPERTY("clicked", Glib::RefPtr<Core::Event>)
 
             _WRAP_PROPERTY("can-focus", bool)

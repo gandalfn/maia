@@ -30,8 +30,13 @@ namespace Maia
             TestEvent ();
             virtual ~TestEvent ();
 
+            // override
+            virtual void set_up ();
+            virtual void tear_down ();
+
         private:
             // properties
+            Glib::RefPtr<Glib::MainLoop> m_pLoop;
             Glib::RefPtr<Core::Event> m_pEvent;
             unsigned long m_Data;
             Glib::ustring m_Foo;
