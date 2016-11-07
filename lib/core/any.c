@@ -21,10 +21,9 @@
 #include <glib.h>
 #include <glib-object.h>
 
-#include "../maia.h"
 #include "maia-any.h"
 
-static MaiaCoreSet* g_ObjectDelegations = 0;
+static GQuark quarkDelegation = 0;
 
 typedef struct _MaiaCoreAnyDelegation MaiaCoreAnyDelegation;
 
@@ -87,17 +86,12 @@ maia_core_any_constructor (GType inType, guint inNConstructProperties,
                            GObjectConstructParam* inConstructProperties)
 {
     GObject* object;
-    GObjectClass* parent_class = G_OBJECT_CLASS (maia_core_any_parent_class);
+    GObjectClass* parent_class = (GObjectClass*)maia_core_any_parent_class;
     GType type = inType;
 
-    if (g_ObjectDelegations != NULL)
+    if (inType)
     {
-        MaiaCoreAnyDelegation* pDelegation;
-
-        pDelegation = maia_core_set_search (g_ObjectDelegations,
-                                            G_TYPE_GTYPE, NULL, NULL,
-                                            inType, maia_core_any_delegation_compare_with_type);
-
+        MaiaCoreAnyDelegation* pDelegation = (MaiaCoreAnyDelegation*)g_type_get_qdata (inType, quarkDelegation);
         if (pDelegation != NULL && pDelegation->derived != 0)
         {
             type = pDelegation->derived;
@@ -105,7 +99,7 @@ maia_core_any_constructor (GType inType, guint inNConstructProperties,
     }
 
     object = parent_class->constructor (type, inNConstructProperties, inConstructProperties);
-    maia_core_any_delegate_construct (MAIA_CORE_ANY (object));
+    maia_core_any_delegate_construct ((MaiaCoreAny*)object);
 
     return object;
 }
@@ -119,6 +113,7 @@ maia_core_any_init (MaiaCoreAny* inSelf)
 static void
 maia_core_any_class_init (MaiaCoreAnyClass* inKlass)
 {
+    quarkDelegation = g_quark_from_static_string ("MaiaAnyDelegation");
     inKlass->delegate_construct = NULL;
     G_OBJECT_CLASS (inKlass)->constructor  = maia_core_any_constructor;
 }
@@ -142,30 +137,28 @@ maia_core_any_delegate_construct (MaiaCoreAny* inpSelf)
 void
 maia_core_any_delegate (GType inObjectType, GType inType)
 {
-    if (g_ObjectDelegations == NULL)
+    if (inObjectType)
     {
-        g_ObjectDelegations = maia_core_set_new (G_TYPE_POINTER, (GBoxedCopyFunc)maia_core_any_delegation_ref, maia_core_any_delegation_unref);
-        maia_core_collection_set_compare_func (MAIA_CORE_COLLECTION (g_ObjectDelegations), maia_core_any_delegation_compare);
+        MaiaCoreAnyDelegation* pDelegation = (MaiaCoreAnyDelegation*)g_type_get_qdata (inObjectType, quarkDelegation);
+        if (pDelegation != NULL)
+        {
+            maia_core_any_delegation_unref (pDelegation);
+        }
+        pDelegation = maia_core_any_delegation_new (inObjectType, inType);
+        g_type_set_qdata (inObjectType, quarkDelegation, pDelegation);
     }
-    MaiaCoreAnyDelegation* delegation = maia_core_any_delegation_new (inObjectType, inType);
-    maia_core_collection_insert (MAIA_CORE_COLLECTION (g_ObjectDelegations), delegation);
 }
 
 void
 maia_core_any_undelegate (GType inObjectType)
 {
-    if (g_ObjectDelegations != NULL)
+    if (inObjectType)
     {
-        MaiaCoreAnyDelegation* pDelegation;
-
-        pDelegation = maia_core_set_search (g_ObjectDelegations,
-                                            G_TYPE_GTYPE, NULL, NULL,
-                                            inObjectType,
-                                            maia_core_any_delegation_compare_with_type);
-
+        MaiaCoreAnyDelegation* pDelegation = (MaiaCoreAnyDelegation*)g_type_get_qdata (inObjectType, quarkDelegation);
         if (pDelegation != NULL)
         {
-            maia_core_collection_remove (MAIA_CORE_COLLECTION (g_ObjectDelegations), pDelegation);
+            maia_core_any_delegation_unref (pDelegation);
         }
+        g_type_set_qdata (inObjectType, quarkDelegation, NULL);
     }
 }
