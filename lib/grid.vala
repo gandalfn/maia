@@ -463,7 +463,9 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                     allocation.size.height -= item.top_padding + item.bottom_padding;
 
                                     // update item
+#if MAIA_DEBUG
                                     Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "update %s: %s", item.name, allocation.to_string ());
+#endif
                                     item.update (inContext, new Graphic.Region (allocation));
 
                                     prev_row = item.row;
@@ -744,7 +746,9 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                         }
 
                                         // update item
+#if MAIA_DEBUG
                                         Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "update %s: %s", item.name, allocation.to_string ());
+#endif
 
                                         item.update (inContext, new Graphic.Region (allocation));
 
@@ -1168,7 +1172,9 @@ public class Maia.Grid : Group, ItemPackable, ItemMovable
                                         }
 
                                         // update item
+#if MAIA_DEBUG
                                         Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "update %s: %s", item.name, allocation.to_string ());
+#endif
 
                                         item.update (inContext, new Graphic.Region (allocation));
 

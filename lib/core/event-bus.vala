@@ -1752,7 +1752,9 @@ public class Maia.Core.EventBus : Object
                 {
                     unowned MessageSubscribe? msg = (MessageSubscribe)message;
 
+#if MAIA_DEBUG
                     Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge subscribe $(msg.sender) event $(msg.hash)");
+#endif
 
                     unowned Occurence occurence = m_EventBus.m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
                     if (occurence != null)
@@ -1767,7 +1769,9 @@ public class Maia.Core.EventBus : Object
                 {
                     unowned MessageUnsubscribe? msg = (MessageUnsubscribe)message;
 
+#if MAIA_DEBUG
                     Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Bridge unsubscribe $(msg.sender) event $(msg.hash)");
+#endif
 
                     unowned Occurence occurence = m_EventBus.m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
                     if (occurence != null)
@@ -2181,7 +2185,9 @@ public class Maia.Core.EventBus : Object
             unowned MessageSubscribe? msg = (MessageSubscribe)inMessage;
             bool result = false;
 
+#if MAIA_DEBUG
             Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Subscribe $(msg.sender) event $(msg.hash)");
+#endif
 
             unowned Occurence occurence = m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
             if (occurence != null)
@@ -2224,7 +2230,9 @@ public class Maia.Core.EventBus : Object
         {
             unowned MessageUnsubscribe? msg = (MessageUnsubscribe)inMessage;
 
+#if MAIA_DEBUG
             Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Unsubscribe $(msg.sender) event $(msg.hash)");
+#endif
 
             unowned Occurence occurence = m_Occurences.search<Event.Hash> (msg.hash, Occurence.compare_with_event_hash);
             if (occurence != null)
@@ -2248,7 +2256,9 @@ public class Maia.Core.EventBus : Object
         {
             unowned MessageLinkBus? msg = (MessageLinkBus)inMessage;
 
+#if MAIA_DEBUG
             Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Link to bus $(msg.uri)");
+#endif
 
             unowned Bridge? bridge = m_Bridges.search<string> (msg.uri, Bridge.compare_with_address);
             bool connected = false;
@@ -2352,7 +2362,9 @@ public class Maia.Core.EventBus : Object
         {
             unowned MessageUnlinkBus? msg = (MessageUnlinkBus)inMessage;
 
+#if MAIA_DEBUG
             Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, @"Unlink to bus $(msg.uri)");
+#endif
 
             unowned Bridge? bridge = m_Bridges.search<string> (msg.uri, Bridge.compare_with_address);
             if (bridge != null)

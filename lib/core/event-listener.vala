@@ -216,7 +216,9 @@ public class Maia.Core.EventListener : Object
     internal new void
     notify (EventArgs? inEventArgs)
     {
+#if MAIA_DEBUG
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_EVENT, "");
+#endif
 
         if (!block && block_next_nb_events <= 0 && m_Handler != null)
         {

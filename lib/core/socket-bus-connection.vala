@@ -62,7 +62,9 @@ public class Maia.Core.SocketBusConnection : BusConnection
 
     public SocketBusConnection (string inName, BusAddress inAddress) throws BusError
     {
+#if MAIA_DEBUG
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, @"Connect to bus service $inAddress");
+#endif
 
         try
         {
@@ -97,7 +99,9 @@ public class Maia.Core.SocketBusConnection : BusConnection
 
     internal SocketBusConnection.client (string inName, BusAddress inAddress, GLib.SocketConnection inConnection)
     {
+#if MAIA_DEBUG
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "");
+#endif
 
         base (inName, inAddress);
 
@@ -108,7 +112,9 @@ public class Maia.Core.SocketBusConnection : BusConnection
 
     ~SocketBusConnection ()
     {
+#if MAIA_DEBUG
         Log.audit ("~SocketBusConnection", Log.Category.MAIN_BUS, @"$address");
+#endif
         if (m_Connection != null)
         {
             try
@@ -240,7 +246,9 @@ public class Maia.Core.SocketBusConnection : BusConnection
     private void
     on_closed (Core.Notification inNotification)
     {
+#if MAIA_DEBUG
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "");
+#endif
 
         ref ();
         m_RecvWatch.stop ();

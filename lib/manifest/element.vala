@@ -155,7 +155,9 @@ public interface Maia.Manifest.Element : Core.Object
     public static Element?
     create (string inTag, string inId)
     {
+#if MAIA_DEBUG
         Log.audit (GLib.Log.METHOD, Log.Category.MANIFEST_PARSING, @"tag: $inTag, id: $inId");
+#endif
         Element? node = null;
         if (s_Factory != null)
         {

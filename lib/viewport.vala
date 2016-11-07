@@ -315,7 +315,9 @@ public class Maia.Viewport : Window
 
             if (!damaged_area.is_empty ())
             {
+#if MAIA_DEBUG
                 Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, @"viewport $name damaged draw $(damaged_area.extents)");
+#endif
 
                 ctx.save ();
                 {

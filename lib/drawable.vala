@@ -401,7 +401,7 @@ public interface Maia.Drawable : Core.Object
     public Graphic.Region
     area_to_child_item_space (Drawable inChild, Graphic.Region? inArea = null)
     {
-        Graphic.Region child_area = new Graphic.Region ();
+        Graphic.Region child_area = null;
 
         if (geometry != null && inChild.geometry != null)
         {
@@ -447,7 +447,7 @@ public interface Maia.Drawable : Core.Object
             }
         }
 
-        return child_area;
+        return child_area ?? new Graphic.Region ();
     }
 
     /**

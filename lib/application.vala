@@ -300,8 +300,10 @@ public class Maia.Application : Maia.Core.Object
                                                                               window_size.width,
                                                                               window_size.height));
 
+#if MAIA_DEBUG
                         // set window geometry from its size requested
                         Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, @"window set geometry $(geometry.extents)");
+#endif
 
                         try
                         {

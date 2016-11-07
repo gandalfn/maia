@@ -277,8 +277,6 @@ public abstract class Maia.Core.Object : Any
     // Methods
     ~Object ()
     {
-        Log.audit ("Maia.~Object", Log.Category.CORE_OBJECT, "destroy %s", get_type ().name ());
-
         clear_childs ();
     }
 
@@ -318,8 +316,10 @@ public abstract class Maia.Core.Object : Any
             // set parent property
             inObject.m_Parent = this;
 
+#if MAIA_DEBUG
             // add object to childs of parent
             Log.audit (GLib.Log.METHOD, Log.Category.CORE_OBJECT, "Insert object %s to parent %s", inObject.get_type ().name (), get_type ().name ());
+#endif
 
             // child list is empty insert object has first
             if (m_Head == null && m_Tail == null)
@@ -383,8 +383,9 @@ public abstract class Maia.Core.Object : Any
     {
         if (inObject.parent == this)
         {
+#if MAIA_DEBUG
             Log.audit ("Maia.Object.parent.set", Log.Category.CORE_OBJECT, "Remove object %s from parent %s", inObject.get_type ().name (), get_type ().name ());
-
+#endif
             unowned Object? next = inObject.m_Next;
 
             if (inObject == m_Head)

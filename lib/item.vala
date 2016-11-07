@@ -503,10 +503,12 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         if (parent is Item)
         {
+#if MAIA_DEBUG
             if (inItem == null)
                 Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab focus");
             else
                 Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab focus %s", inItem.name);
+#endif
             ((Item)parent).grab_focus (inItem);
         }
     }
@@ -517,7 +519,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         if (parent is Item)
         {
+#if MAIA_DEBUG
             Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"set cursor $inCursor");
+#endif
             ((Item)parent).set_pointer_cursor (inCursor);
         }
     }
@@ -530,7 +534,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
         {
             var point = convert_to_parent_item_space (inPosition);
 
+#if MAIA_DEBUG
             Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, @"$name move pointer $point");
+#endif
 
             ((Item)parent).move_pointer (point);
         }
@@ -542,7 +548,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         if (parent is Item)
         {
+#if MAIA_DEBUG
             Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "scroll to %s", inItem.name);
+#endif
             ((Item)parent).scroll_to (inItem);
         }
     }
@@ -1195,28 +1203,36 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     private bool
     on_child_grab_pointer (Item inItem)
     {
+#if MAIA_DEBUG
         Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab pointer %s", inItem.name);
+#endif
         return grab_pointer (inItem);
     }
 
     private void
     on_child_ungrab_pointer (Item inItem)
     {
+#if MAIA_DEBUG
         Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab pointer %s", inItem.name);
+#endif
         ungrab_pointer (inItem);
     }
 
     private bool
     on_child_grab_keyboard (Item inItem)
     {
+#if MAIA_DEBUG
         Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "grab keyboard %s", inItem.name);
+#endif
         return grab_keyboard (inItem);
     }
 
     private void
     on_child_ungrab_keyboard (Item inItem)
     {
+#if MAIA_DEBUG
         Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_INPUT, "ungrab keyboard %s", inItem.name);
+#endif
         ungrab_keyboard (inItem);
     }
 
@@ -1780,7 +1796,9 @@ public abstract class Maia.Item : Core.Object, Drawable, Manifest.Element
     {
         if (visible && (geometry == null || !geometry.equal (inAllocation)))
         {
+#if MAIA_DEBUG
             Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_GEOMETRY, "update %s: %s", name, inAllocation.extents.to_string ());
+#endif
 
             geometry = inAllocation;
 

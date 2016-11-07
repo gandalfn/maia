@@ -25,7 +25,9 @@ public class Maia.Core.SocketBusService : BusService
     // methods
     public SocketBusService (string inName, BusAddress inAddress)
     {
+#if MAIA_DEBUG
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Create socket bus service %s", inName);
+#endif
 
         base (inName, inAddress);
 
@@ -77,7 +79,9 @@ public class Maia.Core.SocketBusService : BusService
     private bool
     on_client_connect (GLib.SocketConnection inConnection, GLib.Object? inSource)
     {
+#if MAIA_DEBUG
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Client connected");
+#endif
         var client = new SocketBusConnection.client (BusAddress.uuid_generate (), address, inConnection);
         add (client);
 

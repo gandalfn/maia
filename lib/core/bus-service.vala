@@ -74,7 +74,9 @@ public abstract class Maia.Core.BusService : Bus
     {
         bool ret = false;
 
+#if MAIA_DEBUG
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Check authorization of client");
+#endif
 
         try
         {

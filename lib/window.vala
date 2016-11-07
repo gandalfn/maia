@@ -899,7 +899,9 @@ public class Maia.Window : Group
 
             if (!damaged_area.is_empty ())
             {
+#if MAIA_DEBUG
                 Log.audit (GLib.Log.METHOD, Log.Category.CANVAS_DRAW, @"window $name damaged draw $(damaged_area.extents)");
+#endif
 
                 ctx.save ();
                 {

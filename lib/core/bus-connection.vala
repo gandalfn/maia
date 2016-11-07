@@ -49,7 +49,9 @@ public abstract class Maia.Core.BusConnection : Bus
     {
         bool ret = false;
 
+#if MAIA_DEBUG
         Log.audit (GLib.Log.METHOD, Log.Category.MAIN_BUS, "Connect onto socket bus service");
+#endif
 
         try
         {

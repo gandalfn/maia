@@ -378,7 +378,9 @@ public class Maia.Graphic.Color : Pattern
 
     internal Color.from_rgb_function (Manifest.Function inFunction) throws Manifest.Error
     {
+#if MAIA_DEBUG
         Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_PARSING, "");
+#endif
 
         int cpt = 0;
         foreach (unowned Core.Object child in inFunction)
@@ -414,7 +416,9 @@ public class Maia.Graphic.Color : Pattern
 
     internal Color.from_shade_function (Manifest.Function inFunction) throws Manifest.Error
     {
+#if MAIA_DEBUG
         Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_PARSING, "");
+#endif
 
         Graphic.Color color = null;
         double percent = 0.0;
@@ -449,7 +453,9 @@ public class Maia.Graphic.Color : Pattern
 
     internal Color.from_rgba_function (Manifest.Function inFunction) throws Manifest.Error
     {
+#if MAIA_DEBUG
         Log.audit (GLib.Log.METHOD, Log.Category.GRAPHIC_PARSING, "");
+#endif
 
         int cpt = 0;
         foreach (unowned Core.Object child in inFunction)
