@@ -246,4 +246,5 @@ CLEANFILES += \
 
 EXTRA_DIST += \
     core/maia-any.vapi \
-    core/maia-any.h
+    core/maia-any.h \
+    $(top_builddir)/lib/core/maia-any-$(MAIA_ABI).vapi

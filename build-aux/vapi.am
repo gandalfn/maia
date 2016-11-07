@@ -33,6 +33,8 @@ vapi_DATA = \
 
 EXTRA_DIST += \
     $(MAIA_LIB_NAME).vapi \
+    $(MAIA_LIB_NAME)-$(MAIA_ABI).vapi \
+    $(MAIA_LIB_NAME)-$(MAIA_ABI).deps \
     $(MAIA_EXTRA_VAPIS)
 
 CLEANFILES += \

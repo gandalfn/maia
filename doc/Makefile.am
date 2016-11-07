@@ -1,7 +1,7 @@
 if ENABLE_VALADOC
 
 VALADOC_SRCS = \
-	$(top_builddir)/lib/core/maia-any-$(MAIA_ABI).vapi \
+	$(top_srcdir)/lib/core/maia-any-$(MAIA_ABI).vapi \
     $(top_srcdir)/lib/core/*.vala \
     $(top_srcdir)/lib/protocol/*.vala \
     $(top_srcdir)/lib/cassowary/*.vala \
@@ -19,6 +19,7 @@ VALADOC_FLAGS = \
     --vapidir $(VALA_VAPI_PATH) \
     --vapidir $(top_srcdir)/vapi \
     --vapidir $(top_builddir)/lib/core \
+    --vapidir $(top_srcdir)/lib/core \
     --pkg config \
     --pkg posix \
     --pkg os \
@@ -74,9 +75,7 @@ install-data-hook: devhelp
 all-local: cpp/libdoclet.so valadoc-html valadoc-devhelp valadoc-mm
 
 EXTRA_DIST = \
-	cpp/doclet.vala \
-	valadoc-html valadoc-devhelp valadoc-mm \
-	html devhelp mm
+	cpp/doclet.vala
 
 .NOTPARALLEL: cpp/libdoclet.so valadoc-html valadoc-devhelp valadoc-mm
 
