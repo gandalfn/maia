@@ -270,13 +270,6 @@ AC_SUBST(backenddir)
 AC_SUBST(bindingdir)
 
 dnl ****************************************************************************
-dnl Check for vapi
-dnl ****************************************************************************
-unset PKG_CONFIG_PATH
-PKG_CHECK_VAR(VALA_VAPI_PATH, [libvala-0.34], [vapidir])
-AC_SUBST(VALA_VAPI_PATH)
-
-dnl ****************************************************************************
 dnl Check for mm-common
 dnl ****************************************************************************
 MM_PKG_CONFIG_SUBST([GTHREAD_CFLAGS], [--cflags-only-other gthread-2.0])

@@ -16,7 +16,6 @@ VALADOC_FLAGS = \
     --target-glib=2.32 \
     -b $(top_srcdir)/lib \
     -b $(top_srcdir)/lib/core \
-    --vapidir $(VALA_VAPI_PATH) \
     --vapidir $(top_srcdir)/vapi \
     --vapidir $(top_builddir)/lib/core \
     --vapidir $(top_srcdir)/lib/core \
