@@ -66,6 +66,7 @@ function checkout
         git clone git://git.gnome.org/valadoc
         cd valadoc
         patch -p1 < ../fix-valadoc-gen.patch
+        patch -p1 < ../fix-valadoc-pc.patch
         export PKG_CONFIG_PATH=$(dirname $PWD)/checkout/lib/pkgconfig
         export LD_LIBRARY_PATH="$(dirname $PWD)/checkout/lib"
         ./autogen.sh CFLAGS="-I$(dirname $PWD)/checkout/include -fPIC" \

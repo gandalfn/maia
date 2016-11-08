@@ -1,0 +1,10 @@
+diff --git a/src/libvaladoc/valadoc-1.0.pc.in b/src/libvaladoc/valadoc-1.0.pc.in
+index 8cf9ab0..3a13dc0 100644
+--- a/src/libvaladoc/valadoc-1.0.pc.in
++++ b/src/libvaladoc/valadoc-1.0.pc.in
+@@ -11,4 +11,4 @@ Description: The Vala documentation compiler library
+ Version: @VERSION@
+ Requires: libgvc gee-0.8 gmodule-2.0
+ Libs: -L${libdir} -lvaladoc
+-Cflags: -I${includedir}/valadoc-1.0
++Cflags: -I${includedir}/valadoc-1.0 -I${includedir}
