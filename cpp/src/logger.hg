@@ -31,6 +31,9 @@ namespace Maia
         _WRAP_ENUM(class Level, MaiaLogLevel, s#LOG_LEVEL_##, NO_GTYPE)
         _WRAP_ENUM(Category, MaiaLogCategory, NO_GTYPE)
 
+        /**
+         * \includedoc MaiaLogLogger.doc
+         */
         class Logger : public Glib::Object
         {
             _CLASS_GOBJECT(Logger, MaiaLogLogger, MAIA_LOG_LOGGER, Glib::Object, GObject)
@@ -54,12 +57,17 @@ namespace Maia
                 _WRAP_METHOD(bool get_colorized () const, maia_log_logger_get_colorized)
                 _WRAP_METHOD(void set_colorized (bool inColorized = true), maia_log_logger_set_colorized)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("level", Level)
                 _WRAP_PROPERTY("category", Category)
                 _WRAP_PROPERTY("domain", Glib::ustring)
                 _WRAP_PROPERTY("colorized", bool)
+#endif
         };
 
+        /**
+         * \includedoc MaiaLogFile.doc
+         */
         class File : public Logger
         {
             _CLASS_GOBJECT(File, MaiaLogFile, MAIA_LOG_FILE, Logger, MaiaLogLogger)
@@ -80,6 +88,9 @@ namespace Maia
                 _WRAP_METHOD(void set_close_on_destroy (bool inCloseOnDestroy = true), maia_log_file_set_close_on_destroy)
         };
 
+        /**
+         * \includedoc MaiaLogStdout.doc
+         */
         class Stdout : public File
         {
             _CLASS_GOBJECT(Stdout, MaiaLogStdout, MAIA_LOG_STDOUT, File, MaiaLogFile)
@@ -95,6 +106,9 @@ namespace Maia
                 }
         };
 
+        /**
+         * \includedoc MaiaLogStderr.doc
+         */
         class Stderr : public File
         {
             _CLASS_GOBJECT(Stderr, MaiaLogStderr, MAIA_LOG_STDERR, File, MaiaLogFile)

@@ -53,7 +53,9 @@ namespace Maia
 
                 _WRAP_METHOD(Glib::ustring get () const, maia_manifest_attribute_get)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("owner", Glib::RefPtr<Glib::Object>)
+#endif
 
                 _IGNORE(maia_manifest_attribute_register_transform_func)
                 static void register_transform_func (GType inType, SlotTransformFunc);

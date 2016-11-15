@@ -74,11 +74,13 @@ namespace Maia
                 void add_transition_property (unsigned int inTransition, Glib::Object& inObject, const Glib::ustring& inName, float inFrom, float inTo);
                 void add_transition_property (unsigned int inTransition, Glib::Object& inObject, const Glib::ustring& inName, int inFrom, int inTo);
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("direction", Timeline::Direction)
                 _WRAP_PROPERTY("duration", guint)
                 _WRAP_PROPERTY("speed", guint)
                 _WRAP_PROPERTY("loop", bool)
                 _WRAP_PROPERTY("is-playing", bool)
+#endif
 
             private:
                 struct AnimatorClosure

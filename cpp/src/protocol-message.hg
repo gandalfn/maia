@@ -215,7 +215,9 @@ namespace Maia
                     return Fields (const_cast<MaiaProtocolMessage*> (gobj ()));
                 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("name", Glib::ustring)
+#endif
 
             private:
                 _WRAP_PROPERTY("serialize", Glib::VariantBase)

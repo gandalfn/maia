@@ -36,12 +36,19 @@ namespace Maia
         class Glyph;
         class Surface;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+        typedef Glib::RefPtr<Glyph> GlyphRefPtr;
+        typedef Glib::RefPtr<Surface> SurfaceRefPtr;
+#endif
+
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
         _WRAP_ENUM(class Operator, MaiaGraphicOperator, s#GRAPHIC_OPERATOR_##,  NO_GTYPE)
         _WRAP_ENUM(class LineJoin, MaiaGraphicLineJoin, s#GRAPHIC_LINE_JOIN_##,  NO_GTYPE)
         _WRAP_ENUM(class LineCap,  MaiaGraphicLineCap,  s#GRAPHIC_LINE_CAP_##,  NO_GTYPE)
         _WRAP_GERROR(Error, MaiaGraphicError, MAIA_GRAPHIC_ERROR, NO_GTYPE)
+
+        typedef Glib::RefPtr<class Context> ContextRefPtr;
 
         class Context final : public Core::Object
         {
@@ -50,58 +57,58 @@ namespace Maia
             protected:
                 _CTOR_DEFAULT()
 
-#m4 _CONVERSION(`MaiaGraphicSurface*', `const Glib::RefPtr<Surface>&', `Glib::wrap($3, true)')
-#m4 _CONVERSION(`MaiaGraphicPattern*', `const Glib::RefPtr<Pattern>&', `Glib::wrap($3, true)')
-#m4 _CONVERSION(`MaiaGraphicTransform*', `const Glib::RefPtr<Transform>&', `Glib::wrap($3, true)')
-#m4 _CONVERSION(`MaiaGraphicRegion*', `const Glib::RefPtr<Region>&', `Glib::wrap($3, true)')
-#m4 _CONVERSION(`MaiaGraphicGlyph*', `const Glib::RefPtr<Glyph>&', `Glib::wrap($3, true)')
-#m4 _CONVERSION(`MaiaGraphicPath*', `const Glib::RefPtr<Path>&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaGraphicSurface*', `const SurfaceRefPtr&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaGraphicPattern*', `const PatternRefPtr&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaGraphicTransform*', `const TransformRefPtr&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaGraphicRegion*', `const RegionRefPtr&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaGraphicGlyph*', `const GlyphRefPtr&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaGraphicPath*', `const PathRefPtr&', `Glib::wrap($3, true)')
                 _WRAP_VFUNC(Operator get_operator (), get_operator)
                 _WRAP_VFUNC(void set_operator (Operator inOperator), set_operator)
-                _WRAP_VFUNC(Glib::RefPtr<Surface> get_surface (), get_surface, refreturn_ctype)
-                _WRAP_VFUNC(void set_surface (const Glib::RefPtr<Surface>& inSurface), set_surface)
-                _WRAP_VFUNC(Glib::RefPtr<Pattern> get_pattern (), get_pattern, refreturn_ctype)
-                _WRAP_VFUNC(void set_pattern (const Glib::RefPtr<Pattern>& inPattern), set_pattern)
+                _WRAP_VFUNC(SurfaceRefPtr get_surface (), get_surface, refreturn_ctype)
+                _WRAP_VFUNC(void set_surface (const SurfaceRefPtr& inSurface), set_surface)
+                _WRAP_VFUNC(PatternRefPtr get_pattern (), get_pattern, refreturn_ctype)
+                _WRAP_VFUNC(void set_pattern (const PatternRefPtr& inPattern), set_pattern)
                 _WRAP_VFUNC(double get_line_width (), get_line_width)
                 _WRAP_VFUNC(void set_line_width (gdouble inLineWidth), set_line_width)
                 _WRAP_VFUNC(double* get_dash (int* outLength), get_dash)
                 _WRAP_VFUNC(void set_dash (gdouble* inDashes, int inLength), set_dash)
-                _WRAP_VFUNC(Glib::RefPtr<Transform> get_transform (), get_transform, refreturn_ctype)
-                _WRAP_VFUNC(void set_transform (const Glib::RefPtr<Transform>& inTransform), set_transform)
+                _WRAP_VFUNC(TransformRefPtr get_transform (), get_transform, refreturn_ctype)
+                _WRAP_VFUNC(void set_transform (const TransformRefPtr& inTransform), set_transform)
 
                 _WRAP_VFUNC(void save (), save, errthrow)
                 _WRAP_VFUNC(void restore (), restore, errthrow)
                 _WRAP_VFUNC(void status (), status, errthrow)
                 _WRAP_VFUNC(void translate (const Point& inOffset), translate, errthrow)
-                _WRAP_VFUNC(void clip (const Glib::RefPtr<Path>& inPath), clip, errthrow)
-                _WRAP_VFUNC(void clip_region (const Glib::RefPtr<Region>& inRegion), clip_region, errthrow)
+                _WRAP_VFUNC(void clip (const PathRefPtr& inPath), clip, errthrow)
+                _WRAP_VFUNC(void clip_region (const RegionRefPtr& inRegion), clip_region, errthrow)
                 _WRAP_VFUNC(void paint (), paint, errthrow)
                 _WRAP_VFUNC(void paint_with_alpha (double inAlpha), paint_with_alpha, errthrow)
-                _WRAP_VFUNC(void mask (const Glib::RefPtr<Pattern>& inPath), mask, errthrow)
-                _WRAP_VFUNC(void fill (const Glib::RefPtr<Path>& inPath), fill, errthrow)
-                _WRAP_VFUNC(void stroke (const Glib::RefPtr<Path>&  inPath), stroke, errthrow)
-                _WRAP_VFUNC(void render (const Glib::RefPtr<Glyph>& inGlyph), render, errthrow)
-                _WRAP_VFUNC(void get_path_area (const Glib::RefPtr<Path>& inPath, Rectangle& outResut), get_path_area, errthrow)
-#m4 _CONVERSION(`MaiaGraphicSurface*', `const Glib::RefPtr<Surface>&', `Glib::wrap($3)')
-#m4 _CONVERSION(`MaiaGraphicPattern*', `const Glib::RefPtr<Pattern>&', `Glib::wrap($3)')
-#m4 _CONVERSION(`MaiaGraphicTransform*', `const Glib::RefPtr<Transform>&', `Glib::wrap($3)')
-#m4 _CONVERSION(`MaiaGraphicRegion*', `const Glib::RefPtr<Region>&', `Glib::wrap($3)')
-#m4 _CONVERSION(`MaiaGraphicGlyph*', `const Glib::RefPtr<Glyph>&', `Glib::wrap($3)')
-#m4 _CONVERSION(`MaiaGraphicPath*', `const Glib::RefPtr<Path>&', `Glib::wrap($3)')
+                _WRAP_VFUNC(void mask (const PatternRefPtr& inPath), mask, errthrow)
+                _WRAP_VFUNC(void fill (const PathRefPtr& inPath), fill, errthrow)
+                _WRAP_VFUNC(void stroke (const PathRefPtr&  inPath), stroke, errthrow)
+                _WRAP_VFUNC(void render (const GlyphRefPtr& inGlyph), render, errthrow)
+                _WRAP_VFUNC(void get_path_area (const PathRefPtr& inPath, Rectangle& outResut), get_path_area, errthrow)
+#m4 _CONVERSION(`MaiaGraphicSurface*', `const SurfaceRefPtr&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaGraphicPattern*', `const PatternRefPtr&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaGraphicTransform*', `const TransformRefPtr&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaGraphicRegion*', `const RegionRefPtr&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaGraphicGlyph*', `const GlyphRefPtr&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaGraphicPath*', `const PathRefPtr&', `Glib::wrap($3)')
 
             public:
-                static Glib::RefPtr<Context> create (const Glib::RefPtr<Surface>& inSurface);
+                static ContextRefPtr create (const SurfaceRefPtr& inSurface);
 
                 _WRAP_METHOD(Operator get_operator () const, maia_graphic_context_get_operator)
                 _WRAP_METHOD(void set_operator (Operator inOperator), maia_graphic_context_set_operator)
-                _WRAP_METHOD(Glib::RefPtr<Surface> get_surface () const, maia_graphic_context_get_surface, refreturn)
-                _WRAP_METHOD(void set_surface (const Glib::RefPtr<Surface>& inSurface), maia_graphic_context_set_surface)
-                _WRAP_METHOD(Glib::RefPtr<Pattern> get_pattern () const, maia_graphic_context_get_pattern, refreturn)
-                _WRAP_METHOD(void set_pattern (const Glib::RefPtr<Pattern>& inPattern), maia_graphic_context_set_pattern)
+                _WRAP_METHOD(SurfaceRefPtr get_surface () const, maia_graphic_context_get_surface, refreturn)
+                _WRAP_METHOD(void set_surface (const SurfaceRefPtr& inSurface), maia_graphic_context_set_surface)
+                _WRAP_METHOD(PatternRefPtr get_pattern () const, maia_graphic_context_get_pattern, refreturn)
+                _WRAP_METHOD(void set_pattern (const PatternRefPtr& inPattern), maia_graphic_context_set_pattern)
                 _WRAP_METHOD(double get_line_width () const, maia_graphic_context_get_line_width)
                 _WRAP_METHOD(void set_line_width (double inLineWidth), maia_graphic_context_set_line_width)
-                _WRAP_METHOD(Glib::RefPtr<Transform> get_transform () const, maia_graphic_context_get_transform, refreturn)
-                _WRAP_METHOD(void set_transform (const Glib::RefPtr<Transform>& inTransform), maia_graphic_context_set_transform)
+                _WRAP_METHOD(TransformRefPtr get_transform () const, maia_graphic_context_get_transform, refreturn)
+                _WRAP_METHOD(void set_transform (const TransformRefPtr& inTransform), maia_graphic_context_set_transform)
                 _WRAP_METHOD(LineJoin get_line_join () const, maia_graphic_context_get_line_join)
                 _WRAP_METHOD(void set_line_join (LineJoin inLineJoin), maia_graphic_context_set_line_join)
                 _WRAP_METHOD(LineCap get_line_cap () const, maia_graphic_context_get_line_cap)
@@ -156,24 +163,26 @@ namespace Maia
                 _WRAP_METHOD(void restore (), maia_graphic_context_restore, errthrow)
                 _WRAP_METHOD(void status (), maia_graphic_context_status, errthrow)
                 _WRAP_METHOD(void translate (const Point& inOffset), maia_graphic_context_translate, errthrow)
-                _WRAP_METHOD(void clip (const Glib::RefPtr<Path>& inPath), maia_graphic_context_clip, errthrow)
-                _WRAP_METHOD(void clip_region (const Glib::RefPtr<Region>& inRegion), maia_graphic_context_clip_region, errthrow)
+                _WRAP_METHOD(void clip (const PathRefPtr& inPath), maia_graphic_context_clip, errthrow)
+                _WRAP_METHOD(void clip_region (const RegionRefPtr& inRegion), maia_graphic_context_clip_region, errthrow)
                 _WRAP_METHOD(void paint (), maia_graphic_context_paint, errthrow)
                 _WRAP_METHOD(void paint_with_alpha (double inAlpha), maia_graphic_context_paint_with_alpha, errthrow)
-                _WRAP_METHOD(void mask (const Glib::RefPtr<Pattern>& inPattern), maia_graphic_context_mask, errthrow)
-                _WRAP_METHOD(void fill (const Glib::RefPtr<Path>& inPath), maia_graphic_context_fill, errthrow)
-                _WRAP_METHOD(void stroke (const Glib::RefPtr<Path>&  inPath), maia_graphic_context_stroke, errthrow)
-                _WRAP_METHOD(void render (const Glib::RefPtr<Glyph>& inGlyph), maia_graphic_context_render, errthrow)
-                _WRAP_METHOD(void get_path_area (const Glib::RefPtr<Path>& inPath, Rectangle& outResut), maia_graphic_context_get_path_area, errthrow)
+                _WRAP_METHOD(void mask (const PatternRefPtr& inPattern), maia_graphic_context_mask, errthrow)
+                _WRAP_METHOD(void fill (const PathRefPtr& inPath), maia_graphic_context_fill, errthrow)
+                _WRAP_METHOD(void stroke (const PathRefPtr&  inPath), maia_graphic_context_stroke, errthrow)
+                _WRAP_METHOD(void render (const GlyphRefPtr& inGlyph), maia_graphic_context_render, errthrow)
+                _WRAP_METHOD(void get_path_area (const PathRefPtr& inPath, Rectangle& outResut), maia_graphic_context_get_path_area, errthrow)
 
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY ("operator", Operator)
                 _WRAP_PROPERTY ("line-width", double)
-                _WRAP_PROPERTY ("surface", Glib::RefPtr<Surface>)
-                _WRAP_PROPERTY ("pattern", Glib::RefPtr<Pattern>)
-                _WRAP_PROPERTY ("transform", Glib::RefPtr<Transform>)
+                _WRAP_PROPERTY ("surface", SurfaceRefPtr)
+                _WRAP_PROPERTY ("pattern", PatternRefPtr)
+                _WRAP_PROPERTY ("transform", TransformRefPtr)
                 _WRAP_PROPERTY ("line-join", LineJoin)
                 _WRAP_PROPERTY ("line-cap", LineCap)
+#endif
         };
     }
 }

@@ -62,6 +62,8 @@ namespace Maia
                 PathPointProxy& operator=(const PathPointProxy&) { return *this; }
         };
 
+        typedef Glib::RefPtr<class Path> PathRefPtr;
+
         class Path : public Core::Object
         {
             _CLASS_GOBJECT(Path, MaiaGraphicPath, MAIA_GRAPHIC_PATH, Core::Object, MaiaCoreObject)
@@ -72,22 +74,22 @@ namespace Maia
             public:
                 _WRAP_ENUM(class DataType, MaiaGraphicPathDataType, s#GRAPHIC_PATH_DATA_TYPE_##,  NO_GTYPE)
 
-                static Glib::RefPtr<Path> create ()
+                static PathRefPtr create ()
                 {
                     MaiaGraphicPath* pPath = maia_graphic_path_new ();
-                    return Glib::RefPtr<Path> (new Path (pPath));
+                    return PathRefPtr (new Path (pPath));
                 }
 
-                static Glib::RefPtr<Path> create (const Glib::ustring& inData)
+                static PathRefPtr create (const Glib::ustring& inData)
                 {
                     MaiaGraphicPath* pPath = maia_graphic_path_new_from_data (inData.c_str ());
-                    return Glib::RefPtr<Path> (new Path (pPath));
+                    return PathRefPtr (new Path (pPath));
                 }
 
                 static Glib::RefPtr<Path> create (const Glib::RefPtr<Region>& inRegion)
                 {
                     MaiaGraphicPath* pPath = maia_graphic_path_new_from_region (const_cast<MaiaGraphicRegion*> (inRegion->gobj ()));
-                    return Glib::RefPtr<Path> (new Path (pPath));
+                    return PathRefPtr (new Path (pPath));
                 }
 
                 _IGNORE(maia_graphic_path_new)
@@ -115,8 +117,8 @@ namespace Maia
                     return ret;
                 }
 
-                _WRAP_METHOD(Glib::RefPtr<Path> copy (), maia_graphic_path_copy, refreturn)
-                _WRAP_METHOD(void transform (const Glib::RefPtr<Transform>& inTransform), maia_graphic_path_transform)
+                _WRAP_METHOD(PathRefPtr copy (), maia_graphic_path_copy, refreturn)
+                _WRAP_METHOD(void transform (const TransformRefPtr& inTransform), maia_graphic_path_transform)
 
                 _WRAP_METHOD(void parse (const Glib::ustring& inData), maia_graphic_path_parse)
                 _WRAP_METHOD(void move_to (double inX, double inY), maia_graphic_path_move_to)
@@ -145,8 +147,9 @@ namespace Maia
                     return PathPointProxy (gobj (), inIndex);
                 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY ("data-type", Path::DataType)
+#endif
         };
-
     }
 }

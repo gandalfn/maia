@@ -54,8 +54,8 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_font_description () const, maia_chart_view_get_font_description)
             _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_chart_view_set_font_description)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_font_pattern () const, maia_chart_view_get_font_pattern, refreturn)
-            _WRAP_METHOD(void set_font_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_chart_view_set_font_pattern)
+            _WRAP_METHOD(Graphic::PatternRefPtr get_font_pattern () const, maia_chart_view_get_font_pattern, refreturn)
+            _WRAP_METHOD(void set_font_pattern (const Graphic::PatternRefPtr& inPattern), maia_chart_view_set_font_pattern)
 
             _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_chart_view_get_model, refreturn)
             _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_chart_view_set_model)
@@ -96,11 +96,11 @@ namespace Maia
             _WRAP_METHOD(ChartView::Frame get_frame () const, maia_chart_view_get_frame)
             _WRAP_METHOD(void set_frame (ChartView::Frame inFrame), maia_chart_view_set_frame)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_frame_stroke () const, maia_chart_view_get_frame_stroke, refreturn)
-            _WRAP_METHOD(void set_frame_stroke (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_chart_view_set_frame_stroke)
+            _WRAP_METHOD(Graphic::PatternRefPtr get_frame_stroke () const, maia_chart_view_get_frame_stroke, refreturn)
+            _WRAP_METHOD(void set_frame_stroke (const Graphic::PatternRefPtr& inPattern), maia_chart_view_set_frame_stroke)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_frame_fill () const, maia_chart_view_get_frame_fill, refreturn)
-            _WRAP_METHOD(void set_frame_fill (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_chart_view_set_frame_fill)
+            _WRAP_METHOD(Graphic::PatternRefPtr get_frame_fill () const, maia_chart_view_get_frame_fill, refreturn)
+            _WRAP_METHOD(void set_frame_fill (const Graphic::PatternRefPtr& inPattern), maia_chart_view_set_frame_fill)
 
             _WRAP_METHOD(ChartView::LegendPosition get_legend () const, maia_chart_view_get_legend)
             _WRAP_METHOD(void set_legend (ChartView::LegendPosition inLegendPosition), maia_chart_view_set_legend)
@@ -108,9 +108,10 @@ namespace Maia
             _WRAP_METHOD(double get_legend_border () const, maia_chart_view_get_legend_border)
             _WRAP_METHOD(void set_legend_border (double inBorder), maia_chart_view_set_legend_border)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("title", Glib::ustring)
             _WRAP_PROPERTY("font-description", Glib::ustring)
-            _WRAP_PROPERTY("font-pattern", Glib::RefPtr<Graphic::Pattern>)
+            _WRAP_PROPERTY("font-pattern", Graphic::PatternRefPtr)
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
             _WRAP_PROPERTY("chart-axis", Glib::ustring)
             _WRAP_PROPERTY("border", double)
@@ -124,8 +125,8 @@ namespace Maia
             _WRAP_PROPERTY("y-axis-ticks", double)
             _WRAP_PROPERTY("tick-size", double)
             _WRAP_PROPERTY("frame", ChartView::Frame)
-            _WRAP_PROPERTY("frame-stroke", Glib::RefPtr<Graphic::Pattern>)
-            _WRAP_PROPERTY("frame-fill", Glib::RefPtr<Graphic::Pattern>)
+            _WRAP_PROPERTY("frame-stroke", Graphic::PatternRefPtr)
+            _WRAP_PROPERTY("frame-fill", Graphic::PatternRefPtr)
             _WRAP_PROPERTY("legend", ChartView::LegendPosition)
             _WRAP_PROPERTY("legend-border", double)
 
@@ -152,6 +153,7 @@ namespace Maia
             _WRAP_PROPERTY("left-padding", double)
             _WRAP_PROPERTY("right-padding", double)
 
-            _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
+            _WRAP_PROPERTY("backcell-pattern", Graphic::PatternRefPtr)
+#endif
     };
 }

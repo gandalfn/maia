@@ -54,11 +54,13 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_icon_filename () const, maia_toggle_button_get_icon_filename)
             _WRAP_METHOD(void set_icon_filename (const Glib::ustring& inFilename), maia_toggle_button_set_icon_filename)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("spacing", double)
             _WRAP_PROPERTY("relief", Button::Relief)
             _WRAP_PROPERTY("icon-filename", Glib::ustring)
             _WRAP_PROPERTY("icon-size", Graphic::Size)
 
             _WRAP_PROPERTY("tag", Glib::ustring)
+#endif
     };
 }

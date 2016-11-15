@@ -57,9 +57,11 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<FocusGroup> focus_group () const, maia_item_focusable_get_focus_group, refreturn)
             _WRAP_METHOD(void set_focus_group (const Glib::RefPtr<FocusGroup>& inFocusGroup) const, maia_item_focusable_set_focus_group)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("can-focus", bool)
             _WRAP_PROPERTY("have-focus", bool)
             _WRAP_PROPERTY("focus-order", int)
             _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
+#endif
     };
 }

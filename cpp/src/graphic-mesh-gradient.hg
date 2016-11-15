@@ -34,6 +34,8 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
+        typedef Glib::RefPtr<class MeshGradient> MeshGradientRefPtr;
+
         class MeshGradient : public Gradient
         {
             _CLASS_GOBJECT(MeshGradient, MaiaGraphicMeshGradient, MAIA_GRAPHIC_MESH_GRADIENT, Gradient, MaiaGraphicGradient)
@@ -42,14 +44,16 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                static Glib::RefPtr<MeshGradient> create ()
+                static MeshGradientRefPtr create ()
                 {
                     MaiaGraphicMeshGradient* pGradient = maia_graphic_mesh_gradient_new ();
-                    return Glib::RefPtr<MeshGradient> (new MeshGradient (pGradient));
+                    return MeshGradientRefPtr (new MeshGradient (pGradient));
                 }
 
                 _IGNORE(maia_graphic_mesh_gradient_new)
         };
+
+        typedef Glib::RefPtr<class MeshGradientPatch> MeshGradientPatchRefPtr;
 
         class MeshGradientPatch : public Core::Object
         {
@@ -59,16 +63,18 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                static Glib::RefPtr<MeshGradientPatch> create (const Glib::RefPtr<Path>& inPath)
+                static MeshGradientPatchRefPtr create (const Glib::RefPtr<Path>& inPath)
                 {
                     MaiaGraphicMeshGradientPatch* pGradient = maia_graphic_mesh_gradient_patch_new (const_cast<MaiaGraphicPath*> (inPath->gobj ()));
-                    return Glib::RefPtr<MeshGradientPatch> (new MeshGradientPatch (pGradient));
+                    return MeshGradientPatchRefPtr (new MeshGradientPatch (pGradient));
                 }
 
                 _IGNORE(maia_graphic_mesh_gradient_patch_new)
 
-                _WRAP_METHOD(Glib::RefPtr<Path> get_path () const, maia_graphic_mesh_gradient_patch_get_path, refreturn)
+                _WRAP_METHOD(PathRefPtr get_path () const, maia_graphic_mesh_gradient_patch_get_path, refreturn)
         };
+
+        typedef Glib::RefPtr<class MeshGradientLinePatch> MeshGradientLinePatchRefPtr;
 
         class MeshGradientLinePatch : public MeshGradientPatch
         {
@@ -78,24 +84,26 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                static Glib::RefPtr<MeshGradientLinePatch> create (const Rectangle& inRectangle, const std::vector<Glib::RefPtr<Color> >& inColors)
+                static MeshGradientLinePatchRefPtr create (const Rectangle& inRectangle, const std::vector<ColorRefPtr>& inColors)
                 {
                     int nb = std::min ((int)inColors.size (), 4);
                     MaiaGraphicColor** colors = new MaiaGraphicColor*[nb];
                     int cpt = 0;
 
-                    for (std::vector<Glib::RefPtr<Color> >::const_iterator iter = inColors.begin (); cpt < 4 && iter != inColors.end (); ++iter, ++cpt)
+                    for (std::vector<ColorRefPtr>::const_iterator iter = inColors.begin (); cpt < 4 && iter != inColors.end (); ++iter, ++cpt)
                     {
                         colors[cpt] = const_cast<MaiaGraphicColor*> ((*iter)->gobj ());
                     }
 
                     MaiaGraphicMeshGradientLinePatch* pPatch = maia_graphic_mesh_gradient_line_patch_new (const_cast<MaiaGraphicRectangle*> (inRectangle.gobj ()), colors, nb);
                     delete colors; colors = nullptr;
-                    return Glib::RefPtr<MeshGradientLinePatch> (new MeshGradientLinePatch (pPatch));
+                    return MeshGradientLinePatchRefPtr (new MeshGradientLinePatch (pPatch));
                 }
 
                 _IGNORE(maia_graphic_mesh_gradient_line_patch_new)
         };
+
+        typedef Glib::RefPtr<class MeshGradientArcPatch> MeshGradientArcPatchRefPtr;
 
         class MeshGradientArcPatch : public MeshGradientPatch
         {
@@ -105,13 +113,13 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                static Glib::RefPtr<MeshGradientArcPatch> create (const Point& inCenter, double inStart, double inEnd, double inRadius, const std::vector<Glib::RefPtr<Color> >& inColors)
+                static MeshGradientArcPatchRefPtr create (const Point& inCenter, double inStart, double inEnd, double inRadius, const std::vector<ColorRefPtr>& inColors)
                 {
                     int nb = std::min ((int)inColors.size (), 4);
                     MaiaGraphicColor** colors = new MaiaGraphicColor*[nb];
                     int cpt = 0;
 
-                    for (std::vector<Glib::RefPtr<Color> >::const_iterator iter = inColors.begin (); cpt < 4 && iter != inColors.end (); ++iter, ++cpt)
+                    for (std::vector<ColorRefPtr>::const_iterator iter = inColors.begin (); cpt < 4 && iter != inColors.end (); ++iter, ++cpt)
                     {
                         colors[cpt] = const_cast<MaiaGraphicColor*> ((*iter)->gobj ());
                     }
@@ -119,7 +127,7 @@ namespace Maia
                     MaiaGraphicMeshGradientArcPatch* pPatch = maia_graphic_mesh_gradient_arc_patch_new (const_cast<MaiaGraphicPoint*> (inCenter.gobj ()),
                                                                                                         inStart, inEnd, inRadius, colors, nb);
                     delete colors; colors = nullptr;
-                    return Glib::RefPtr<MeshGradientArcPatch> (new MeshGradientArcPatch (pPatch));
+                    return MeshGradientArcPatchRefPtr (new MeshGradientArcPatch (pPatch));
                 }
 
                 _IGNORE(maia_graphic_mesh_gradient_arc_patch_new)
@@ -130,6 +138,8 @@ namespace Maia
             _CLASS_GOBJECT(MeshGradientPatchControl, MaiaGraphicMeshGradientPatchControl, MAIA_GRAPHIC_MESH_GRADIENT_PATCH_CONTROL, Core::Object, MaiaCoreObject)
         };
 
+        typedef Glib::RefPtr<class MeshGradientPatchControlPoint> MeshGradientPatchControlPointRefPtr;
+
         class MeshGradientPatchControlPoint : public MeshGradientPatchControl
         {
             _CLASS_GOBJECT(MeshGradientPatchControlPoint, MaiaGraphicMeshGradientPatchControlPoint, MAIA_GRAPHIC_MESH_GRADIENT_PATCH_CONTROL_POINT, MeshGradientPatchControl, MaiaGraphicMeshGradientPatchControl)
@@ -138,15 +148,17 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                static Glib::RefPtr<MeshGradientPatchControlPoint> create (unsigned int inNum, const Point& inPoint)
+                static MeshGradientPatchControlPointRefPtr create (unsigned int inNum, const Point& inPoint)
                 {
                     MaiaGraphicMeshGradientPatchControlPoint* pPoint = maia_graphic_mesh_gradient_patch_control_point_new (inNum, const_cast<MaiaGraphicPoint*> (inPoint.gobj ()));
-                    return Glib::RefPtr<MeshGradientPatchControlPoint> (new MeshGradientPatchControlPoint (pPoint));
+                    return MeshGradientPatchControlPointRefPtr (new MeshGradientPatchControlPoint (pPoint));
                 }
 
                 _WRAP_METHOD(guint get_num () const, maia_graphic_mesh_gradient_patch_control_point_get_num)
                 _WRAP_METHOD(void get_point (Point& outPoint) const, maia_graphic_mesh_gradient_patch_control_point_get_point)
         };
+
+        typedef Glib::RefPtr<class MeshGradientPatchCornerColor> MeshGradientPatchCornerColorRefPtr;
 
         class MeshGradientPatchCornerColor : public MeshGradientPatchControl
         {
@@ -156,14 +168,14 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                static Glib::RefPtr<MeshGradientPatchCornerColor> create (unsigned int inNum, const Glib::RefPtr<Color>& inColor)
+                static MeshGradientPatchCornerColorRefPtr create (unsigned int inNum, const ColorRefPtr& inColor)
                 {
                     MaiaGraphicMeshGradientPatchCornerColor* pCorner = maia_graphic_mesh_gradient_patch_corner_color_new (inNum, const_cast<MaiaGraphicColor*> (inColor->gobj ()));
-                    return Glib::RefPtr<MeshGradientPatchCornerColor> (new MeshGradientPatchCornerColor (pCorner));
+                    return MeshGradientPatchCornerColorRefPtr (new MeshGradientPatchCornerColor (pCorner));
                 }
 
                 _WRAP_METHOD(guint get_num () const, maia_graphic_mesh_gradient_patch_corner_color_get_num)
-                _WRAP_METHOD(Glib::RefPtr<Color> get_color () const, maia_graphic_mesh_gradient_patch_corner_color_get_color, refreturn)
+                _WRAP_METHOD(ColorRefPtr get_color () const, maia_graphic_mesh_gradient_patch_corner_color_get_color, refreturn)
         };
     }
 }

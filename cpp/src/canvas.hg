@@ -60,10 +60,12 @@ namespace Maia
             void load_from_file (const Glib::ustring& inFilename);
             void load_from_file (const Glib::ustring& inFilename, const Glib::ustring& inRoot);
 
-            _WRAP_METHOD(Glib::RefPtr<Core::Notifications> notifications (), maia_canvas_get_notifications, refreturn)
+            _WRAP_METHOD(Core::NotificationsRefPtr notifications (), maia_canvas_get_notifications, refreturn)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("root", Glib::RefPtr<Item>)
             _WRAP_PROPERTY("window", Glib::RefPtr<Window>)
-            _WRAP_PROPERTY("notifications", Glib::RefPtr<Core::Notifications>)
+            _WRAP_PROPERTY("notifications", Core::NotificationsRefPtr)
+#endif
     };
 }

@@ -114,9 +114,10 @@ namespace Maia
             _WRAP_METHOD(double get_right_padding () const, maia_item_packable_get_right_padding)
             _WRAP_METHOD(void set_right_padding (double inAlign), maia_item_packable_set_right_padding)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_backcell_pattern () const, maia_item_packable_get_backcell_pattern, refreturn)
-            _WRAP_METHOD(void set_backcell_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_item_packable_set_backcell_pattern)
+            _WRAP_METHOD(Graphic::PatternRefPtr get_backcell_pattern () const, maia_item_packable_get_backcell_pattern, refreturn)
+            _WRAP_METHOD(void set_backcell_pattern (const Graphic::PatternRefPtr& inPattern), maia_item_packable_set_backcell_pattern)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("row", guint)
             _WRAP_PROPERTY("rows", guint)
 
@@ -140,6 +141,7 @@ namespace Maia
             _WRAP_PROPERTY("left-padding", double)
             _WRAP_PROPERTY("right-padding", double)
 
-            _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
+            _WRAP_PROPERTY("backcell-pattern", Graphic::PatternRefPtr)
+#endif
     };
 }

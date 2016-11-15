@@ -31,17 +31,23 @@ namespace Maia
         _GMMPROC_EXTRA_NAMESPACE(Core)
 
         class Notification;
+        class Notifications;
+        class NotificationObserver;
+
+        typedef Glib::RefPtr<NotificationObserver> NotificationObserverRefPtr;
+        typedef Glib::RefPtr<Notification> NotificationRefPtr;
+        typedef Glib::RefPtr<Notifications> NotificationsRefPtr;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
         static void* _on_observer_destroy_notify(gpointer inpData);
         static void _on_observer_gobject_destroy_notify (gpointer inpData, GObject* inpObject);
 #endif
 
-        class NotificationObserver : public Core::Object
+        class NotificationObserver : public Object
         {
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
             public:
-                virtual void operator() (const Glib::RefPtr<Notification>& inpNotification) = 0;
+                virtual void operator() (const NotificationRefPtr& inpNotification) = 0;
                 virtual NotificationObserver* clone () = 0;
                 virtual void finalize () = 0;
                 NotificationObserver* cpp_obj () { return this; }
@@ -67,7 +73,7 @@ namespace Maia
         template <class T_obj>
         class NotificationObserverFunctor : public NotificationObserver
         {
-            typedef void (T_obj::*Handler) (const Glib::RefPtr<Notification>& inpNotification);
+            typedef void (T_obj::*Handler) (const NotificationRefPtr& inpNotification);
 
             public:
                 ~NotificationObserverFunctor ()
@@ -78,7 +84,7 @@ namespace Maia
                     }
                 }
 
-                virtual void operator() (const Glib::RefPtr<Notification>& inpNotification)
+                virtual void operator() (const NotificationRefPtr& inpNotification)
                 {
                     (m_pObj->*m_Callback) (inpNotification);
                 }
@@ -100,7 +106,7 @@ namespace Maia
                     m_pGObject = nullptr;
                 }
 
-                static Glib::RefPtr<NotificationObserver>
+                static NotificationObserverRefPtr
                 create (Notification* inpNotification, T_obj* pObj, Handler pFunc, int inPriority = 0)
                 {
                     NotificationObserverFunctor* pRet = new NotificationObserverFunctor (inpNotification, pObj, pFunc, inPriority);
@@ -110,7 +116,7 @@ namespace Maia
                         g_object_weak_ref (pRet->m_pGObject, &_on_observer_gobject_destroy_notify, pRet);
                     }
 
-                    return Glib::RefPtr<NotificationObserver> (pRet);
+                    return NotificationObserverRefPtr (pRet);
                 }
 
             protected:
@@ -131,7 +137,7 @@ namespace Maia
 
         class NotificationObserverSlot : public NotificationObserver
         {
-            typedef sigc::slot<void, Glib::RefPtr<Notification>> Handler;
+            typedef sigc::slot<void, NotificationRefPtr> Handler;
 
             public:
                 ~NotificationObserverSlot ()
@@ -139,7 +145,7 @@ namespace Maia
                     delete m_pCallback; m_pCallback = nullptr;
                 }
 
-                virtual void operator() (const Glib::RefPtr<Notification>& inpNotification)
+                virtual void operator() (const NotificationRefPtr& inpNotification)
                 {
                     (*m_pCallback) (inpNotification);
                 }
@@ -154,9 +160,9 @@ namespace Maia
                     m_pCallback = nullptr;
                 }
 
-                static Glib::RefPtr<NotificationObserver> create (Notification* inpNotification, const Handler& inSlot, int inPriority = 0)
+                static NotificationObserverRefPtr create (Notification* inpNotification, const Handler& inSlot, int inPriority = 0)
                 {
-                    return Glib::RefPtr<NotificationObserver> (new NotificationObserverSlot (inpNotification, inSlot, inPriority));
+                    return NotificationObserverRefPtr (new NotificationObserverSlot (inpNotification, inSlot, inPriority));
                 }
 
             protected:
@@ -180,30 +186,30 @@ namespace Maia
             _CUSTOM_DTOR
 
             public:
-                static Glib::RefPtr<Notification>
+                static NotificationRefPtr
                 create (const Glib::ustring& inName)
                 {
-                    return Glib::RefPtr<Notification> (new Notification (inName));
+                    return NotificationRefPtr (new Notification (inName));
                 }
 
                 _WRAP_METHOD(void post (), maia_core_notification_post)
 
                 _IGNORE(maia_core_notification_add_observer, maia_core_notification_add_object_observer)
                 template <typename T_obj>
-                Glib::RefPtr<NotificationObserver>
-                add_observer (T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<Notification>& inNotification), int inPriority = 0)
+                NotificationObserverRefPtr
+                add_observer (T_obj* pObj, void (T_obj::*pFunc) (const NotificationRefPtr& inNotification), int inPriority = 0)
                 {
-                    Glib::RefPtr<NotificationObserver> pObserver = NotificationObserverFunctor<T_obj>::create (this, pObj, pFunc, inPriority);
+                    NotificationObserverRefPtr pObserver = NotificationObserverFunctor<T_obj>::create (this, pObj, pFunc, inPriority);
 
                     add_observer (pObserver);
 
                     return pObserver;
                 }
 
-                Glib::RefPtr<NotificationObserver>
-                add_observer (const sigc::slot<void, Glib::RefPtr<Notification>>& inSlot, int inPriority = 0)
+                NotificationObserverRefPtr
+                add_observer (const sigc::slot<void, NotificationRefPtr>& inSlot, int inPriority = 0)
                 {
-                    Glib::RefPtr<NotificationObserver> pObserver = NotificationObserverSlot::create (this, inSlot, inPriority);
+                    NotificationObserverRefPtr pObserver = NotificationObserverSlot::create (this, inSlot, inPriority);
 
                     add_observer (pObserver);
 
@@ -211,16 +217,18 @@ namespace Maia
                 }
 
                 _IGNORE(maia_core_notification_remove_observer)
-                void remove_observer (const Glib::RefPtr<NotificationObserver>& inpObserver);
+                void remove_observer (const NotificationObserverRefPtr& inpObserver);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
                 void remove_observer (NotificationObserver* inpObserver, bool unref = true);
 #endif
                 _WRAP_METHOD(Glib::ustring get_name () const, maia_core_notification_get_name)
 
-                _WRAP_METHOD(void append_observers (const Glib::RefPtr<Notification>& inpNotification), maia_core_notification_append_observers)
+                _WRAP_METHOD(void append_observers (const NotificationRefPtr& inpNotification), maia_core_notification_append_observers)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("name", Glib::ustring)
+#endif
 
             protected:
                 _CUSTOM_CTOR_CAST()
@@ -233,7 +241,7 @@ namespace Maia
                 static void (*append_observers_parent) (MaiaCoreNotification* self, MaiaCoreNotification* inNotification);
                 std::set<NotificationObserver*> m_Observers;
 
-                void add_observer (const Glib::RefPtr<NotificationObserver>& inpObserver);
+                void add_observer (const NotificationObserverRefPtr& inpObserver);
                 static void _append_observers_vfunc_callback(MaiaCoreNotification* self, MaiaCoreNotification* inpNotification);
 
                 friend NotificationObserver;
@@ -246,18 +254,18 @@ namespace Maia
             _CUSTOM_DTOR
 
             public:
-                static Glib::RefPtr<Notifications>
+                static NotificationsRefPtr
                 create ()
                 {
                     MaiaCoreNotifications* pNotifications = maia_core_notifications_new ();
-                    return Glib::RefPtr<Notifications> (new Notifications (pNotifications));
+                    return NotificationsRefPtr (new Notifications (pNotifications));
                 }
 
                 _IGNORE(maia_core_notifications_add_observer, maia_core_notifications_add_object_observer,
                         maia_core_notifications_remove_observer)
 
-                _WRAP_METHOD(Glib::RefPtr<Notification> get (const Glib::ustring& inName) const, maia_core_notifications_get, refreturn)
-                _WRAP_METHOD(void add (const Glib::RefPtr<Notification>& inNotification), maia_core_notifications_add)
+                _WRAP_METHOD(NotificationRefPtr get (const Glib::ustring& inName) const, maia_core_notifications_get, refreturn)
+                _WRAP_METHOD(void add (const NotificationRefPtr& inNotification), maia_core_notifications_add)
                 _WRAP_METHOD(void remove (const Glib::ustring& inName), maia_core_notifications_remove)
                 _WRAP_METHOD(void post (const Glib::ustring& inName), maia_core_notifications_post)
 
@@ -265,6 +273,7 @@ namespace Maia
                 _CUSTOM_CTOR_CAST()
         };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
         static void* _on_observer_destroy_notify (gpointer inpData)
         {
             NotificationObserver* pSelf = (NotificationObserver*)inpData;
@@ -286,5 +295,6 @@ namespace Maia
                 pSelf->finalize ();
             }
         }
+#endif
     }
 }

@@ -267,7 +267,9 @@ namespace Maia
                     maia_core_event_listener_set_block_next_nb_events (gobj (), nb + 1);
                 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("block", bool)
+#endif
 
             protected:
                 _CUSTOM_CTOR_CAST()

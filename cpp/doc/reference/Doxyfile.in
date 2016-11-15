@@ -11,7 +11,7 @@ OUTPUT_DIRECTORY       = reference
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
 BRIEF_MEMBER_DESC      = YES
-REPEAT_BRIEF           = YES
+REPEAT_BRIEF           = NO
 ABBREVIATE_BRIEF       =
 ALWAYS_DETAILED_SEC    = NO
 INLINE_INHERITED_MEMB  = NO
@@ -76,7 +76,7 @@ SHOW_USED_FILES        = YES
 SHOW_FILES             = NO
 SHOW_NAMESPACES        = YES
 FILE_VERSION_FILTER    =
-LAYOUT_FILE            =
+LAYOUT_FILE            = "@abs_top_srcdir@/cpp/doc/layout.xml"
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
 #---------------------------------------------------------------------------
@@ -164,7 +164,7 @@ ENUM_VALUES_PER_LINE   = 1
 GENERATE_TREEVIEW      = NO
 TREEVIEW_WIDTH         = 250
 FORMULA_FONTSIZE       = 10
-SEARCHENGINE           = YES
+SEARCHENGINE           = NO
 #---------------------------------------------------------------------------
 # configuration options related to the LaTeX output
 #---------------------------------------------------------------------------
@@ -259,28 +259,29 @@ PERL_PATH              = @PERL@
 #---------------------------------------------------------------------------
 CLASS_DIAGRAMS         = NO
 MSCGEN_PATH            =
-HIDE_UNDOC_RELATIONS   = NO
+HIDE_UNDOC_RELATIONS   = YES
 HAVE_DOT               = YES
 DOT_FONTNAME           = Sans
 DOT_FONTSIZE           = 10
 DOT_FONTPATH           =
 CLASS_GRAPH            = YES
 COLLABORATION_GRAPH    = NO
-GROUP_GRAPHS           = YES
+GROUP_GRAPHS           = NO
 UML_LOOK               = NO
-TEMPLATE_RELATIONS     = YES
+TEMPLATE_RELATIONS     = NO
 INCLUDE_GRAPH          = NO
 INCLUDED_BY_GRAPH      = NO
 CALL_GRAPH             = NO
 CALLER_GRAPH           = NO
-GRAPHICAL_HIERARCHY    = YES
+GRAPHICAL_HIERARCHY    = NO
 DIRECTORY_GRAPH        = NO
-DOT_IMAGE_FORMAT       = png
+DOT_IMAGE_FORMAT       = svg
+INTERACTIVE_SVG        = NO
 DOT_PATH               =
 DOTFILE_DIRS           =
 DOT_GRAPH_MAX_NODES    = 50
 MAX_DOT_GRAPH_DEPTH    = 0
 DOT_TRANSPARENT        = NO
 DOT_MULTI_TARGETS      = YES
-GENERATE_LEGEND        = YES
+GENERATE_LEGEND        = NO
 DOT_CLEANUP            = YES

@@ -62,22 +62,22 @@ namespace Maia
             _WRAP_VFUNC(Glib::ustring dump_childs (const Glib::ustring& inPrefix), dump_childs)
             _WRAP_VFUNC(Glib::ustring dump_characters (const Glib::ustring& inPrefix), dump_characters)
 
-#m4 _CONVERSION(`MaiaGraphicContext*', `const Glib::RefPtr<Graphic::Context>&', `Glib::wrap($3, true)')
-#m4 _CONVERSION(`MaiaGraphicRegion*', `const Glib::RefPtr<Graphic::Region>&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaGraphicContext*', `const Graphic::ContextRefPtr&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaGraphicRegion*', `const Graphic::RegionRefPtr&', `Glib::wrap($3, true)')
 #m4 _CONVERSION(`MaiaDrawable*', `const Glib::RefPtr<Drawable>&', `Glib::wrap($3, true)')
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3, true)')
-#m4 _CONVERSION(`MaiaGestureNotification*', `const Glib::RefPtr<Gesture::Notification>&', `Glib::wrap($3, true)')
-            _WRAP_VFUNC(void on_gesture (const Glib::RefPtr<Gesture::Notification>& inpNotification), on_gesture)
+#m4 _CONVERSION(`MaiaGestureNotification*', `const Gesture::NotificationRefPtr&', `Glib::wrap($3, true)')
+            _WRAP_VFUNC(void on_gesture (const Gesture::NotificationRefPtr& inpNotification), on_gesture)
 
-            _WRAP_VFUNC(void on_damage (const Glib::RefPtr<Graphic::Region>& inArea), on_damage)
+            _WRAP_VFUNC(void on_damage (const Graphic::RegionRefPtr& inArea), on_damage)
             _WRAP_VFUNC(void on_child_need_update (const Glib::RefPtr<Item>& inChild), on_child_need_update)
-            _WRAP_VFUNC(void on_child_damaged (const Glib::RefPtr<Drawable>& inChild, const Glib::RefPtr<Graphic::Region>& inArea), on_child_damaged)
+            _WRAP_VFUNC(void on_child_damaged (const Glib::RefPtr<Drawable>& inChild, const Graphic::RegionRefPtr& inArea), on_child_damaged)
             _WRAP_VFUNC(void on_child_resized (const Glib::RefPtr<Drawable>& inChild), on_child_resized)
             _WRAP_VFUNC(void on_show (), on_show)
             _WRAP_VFUNC(void on_hide (), on_hide)
             _WRAP_VFUNC(void on_move (), on_move)
             _WRAP_VFUNC(void on_resize (), on_resize)
-            _WRAP_VFUNC(void on_draw (const Glib::RefPtr<Graphic::Context>& inContext, const Glib::RefPtr<Graphic::Region>& inArea), on_draw, errthrow)
+            _WRAP_VFUNC(void on_draw (const Graphic::ContextRefPtr& inContext, const Graphic::RegionRefPtr& inArea), on_draw, errthrow)
             _WRAP_VFUNC(bool on_button_press_event (guint inButton, const Graphic::Point& inPoint), on_button_press_event)
             _WRAP_VFUNC(bool on_button_release_event (guint inButton, const Graphic::Point& inPoint), on_button_release_event)
             _WRAP_VFUNC(bool on_motion_event (const Graphic::Point& inPoint), on_motion_event)
@@ -85,15 +85,15 @@ namespace Maia
             _WRAP_VFUNC(void on_transform_changed (), on_transform_changed)
 
             _WRAP_VFUNC(void size_request (const Graphic::Size& inSize, Graphic::Size& outSize), size_request)
-            _WRAP_VFUNC(void paint (const Glib::RefPtr<Graphic::Context>& inContext, const Glib::RefPtr<Graphic::Region>& inArea), paint, errthrow)
-            _WRAP_VFUNC(void update (const Glib::RefPtr<Graphic::Context>& inContext, const Glib::RefPtr<Graphic::Region>& inAllocation), update, errthrow)
-#m4 _CONVERSION(`MaiaGestureNotification*', `const Glib::RefPtr<Gesture::Notification>&', `Glib::wrap($3)')
-#m4 _CONVERSION(`MaiaGraphicContext*', `const Glib::RefPtr<Graphic::Context>&', `Glib::wrap($3)')
-#m4 _CONVERSION(`MaiaGraphicRegion*', `const Glib::RefPtr<Graphic::Region>&', `Glib::wrap($3)')
+            _WRAP_VFUNC(void paint (const Graphic::ContextRefPtr& inContext, const Graphic::RegionRefPtr& inArea), paint, errthrow)
+            _WRAP_VFUNC(void update (const Graphic::ContextRefPtr& inContext, const Graphic::RegionRefPtr& inAllocation), update, errthrow)
+#m4 _CONVERSION(`MaiaGestureNotification*', `const Gesture::NotificationRefPtr&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaGraphicContext*', `const Graphic::ContextRefPtr&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaGraphicRegion*', `const Graphic::RegionRefPtr&', `Glib::wrap($3)')
 #m4 _CONVERSION(`MaiaDrawable*', `const Glib::RefPtr<Drawable>&', `Glib::wrap($3)')
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3)')
 
-            _WRAP_METHOD(void paint_background (const Glib::RefPtr<Graphic::Context>& inContext), maia_item_paint_background, errthrow)
+            _WRAP_METHOD(void paint_background (const Graphic::ContextRefPtr& inContext), maia_item_paint_background, errthrow)
 
         public:
             typedef sigc::slot<void> SlotRootChanged;
@@ -155,11 +155,11 @@ namespace Maia
             _WRAP_METHOD(State get_state () const, maia_item_get_state)
             _WRAP_METHOD(void set_state (State inState), maia_item_set_state)
 
-            _WRAP_METHOD(Glib::RefPtr<Gesture::Notification> gesture () const, maia_item_get_gesture)
+            _WRAP_METHOD(Gesture::NotificationRefPtr gesture () const, maia_item_get_gesture)
 
             void scroll_to (const Glib::RefPtr<Item>& inItem);
 
-            _WRAP_METHOD(void update (const Glib::RefPtr<Graphic::Context>& inContext, const Glib::RefPtr<Graphic::Region>& inAllocation), maia_item_update, errthrow)
+            _WRAP_METHOD(void update (const Graphic::ContextRefPtr& inContext, const Graphic::RegionRefPtr& inAllocation), maia_item_update, errthrow)
             _WRAP_METHOD(void convert_to_item_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_item_space)
             _WRAP_METHOD(void convert_to_root_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_root_space)
             _WRAP_METHOD(void convert_to_window_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_window_space)
@@ -287,17 +287,18 @@ namespace Maia
             _WRAP_SIGNAL(void scroll_to (const Glib::RefPtr<Item>& inItem), "scroll-to")
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3)')
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("tag", Glib::ustring)
             _WRAP_PROPERTY("style", Glib::ustring)
             _WRAP_PROPERTY("characters", Glib::ustring)
             _WRAP_PROPERTY("manifest-path", Glib::ustring)
             _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
 
-            _WRAP_PROPERTY("gesture", Glib::RefPtr<Gesture::Notification>)
+            _WRAP_PROPERTY("gesture", Gesture::NotificationRefPtr)
 
-            _WRAP_PROPERTY("geometry", Glib::RefPtr<Graphic::Region>)
-            _WRAP_PROPERTY("damaged", Glib::RefPtr<Graphic::Region>)
-            _WRAP_PROPERTY("transform", Glib::RefPtr<Graphic::Transform>)
+            _WRAP_PROPERTY("geometry", Graphic::RegionRefPtr)
+            _WRAP_PROPERTY("damaged", Graphic::RegionRefPtr)
+            _WRAP_PROPERTY("transform", Graphic::TransformRefPtr)
 
             _WRAP_PROPERTY("name", Glib::ustring)
             _WRAP_PROPERTY("window", Glib::RefPtr<Window>)
@@ -320,6 +321,7 @@ namespace Maia
             _WRAP_PROPERTY("chain-visible", Glib::ustring)
 
             _WRAP_PROPERTY("pointer-over", bool)
+#endif
 
         private:
             Glib::ustring m_Tag;

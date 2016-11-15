@@ -49,8 +49,8 @@ namespace Maia
                 return Glib::RefPtr<RendererView> (pView);
             }
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::RendererLooper> get_looper () const, maia_renderer_view_get_looper)
-            _WRAP_METHOD(void set_looper (const Glib::RefPtr<Graphic::RendererLooper>& inpLooper), maia_renderer_view_set_looper)
+            _WRAP_METHOD(Graphic::RendererLooperRefPtr get_looper () const, maia_renderer_view_get_looper)
+            _WRAP_METHOD(void set_looper (const Graphic::RendererLooperRefPtr& inpLooper), maia_renderer_view_set_looper)
 
             _WRAP_METHOD(bool paused () const, maia_renderer_view_get_pause)
             _WRAP_METHOD(void set_pause (bool inPause = true), maia_renderer_view_set_pause)
@@ -60,7 +60,8 @@ namespace Maia
             Glib::RefPtr<Graphic::Renderer> get_renderer ();
             void set_renderer (const Glib::RefPtr<Graphic::Renderer>& inpRenderer);
 
-            _WRAP_PROPERTY("looper", Glib::RefPtr<Graphic::RendererLooper>)
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+            _WRAP_PROPERTY("looper", Graphic::RendererLooperRefPtr)
 
             _WRAP_PROPERTY("pause", bool)
 
@@ -93,6 +94,7 @@ namespace Maia
             _WRAP_PROPERTY("right-padding", double)
 
             _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
+#endif
 
       private:
             Glib::RefPtr<Graphic::Renderer> m_pRenderer;

@@ -29,6 +29,8 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
+        typedef Glib::RefPtr<class Color> ColorRefPtr;
+
         class Color : public Pattern
         {
             _CLASS_GOBJECT(Color, MaiaGraphicColor, MAIA_GRAPHIC_COLOR, Pattern, MaiaGraphicPattern)
@@ -37,22 +39,22 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                static Glib::RefPtr<Color> create (double inRed, double inGreen, double inBlue, double inAlpha = 1.0)
+                static ColorRefPtr create (double inRed, double inGreen, double inBlue, double inAlpha = 1.0)
                 {
                     MaiaGraphicColor* pColor = maia_graphic_color_new (inRed, inGreen, inBlue, inAlpha);
-                    return Glib::RefPtr<Color> (new Color (pColor));
+                    return ColorRefPtr (new Color (pColor));
                 }
 
-                static Glib::RefPtr<Color> create (const Glib::ustring& inValue)
+                static ColorRefPtr create (const Glib::ustring& inValue)
                 {
                     MaiaGraphicColor* pColor = maia_graphic_color_new_parse (inValue.c_str ());
-                    return Glib::RefPtr<Color> (new Color (pColor));
+                    return ColorRefPtr (new Color (pColor));
                 }
 
-                static Glib::RefPtr<Color> create (const Glib::RefPtr<Color> inpColor, double inPercent)
+                static ColorRefPtr create (const ColorRefPtr& inpColor, double inPercent)
                 {
                     MaiaGraphicColor* pColor = maia_graphic_color_new_shade (const_cast<MaiaGraphicColor*> (inpColor->gobj ()), inPercent);
-                    return Glib::RefPtr<Color> (new Color (pColor));
+                    return ColorRefPtr (new Color (pColor));
                 }
 
                 _IGNORE(maia_graphic_color_new)
@@ -67,6 +69,7 @@ namespace Maia
                 _WRAP_METHOD(bool is_set () const, maia_graphic_color_get_is_set)
                 _WRAP_METHOD(guint32 get_argb () const, maia_graphic_color_get_argb)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY ("name", Glib::ustring)
                 _WRAP_PROPERTY ("red", double)
                 _WRAP_PROPERTY ("green", double)
@@ -74,7 +77,7 @@ namespace Maia
                 _WRAP_PROPERTY ("alpha", double)
                 _WRAP_PROPERTY ("is-set", bool)
                 _WRAP_PROPERTY ("argb", guint32)
+#endif
         };
-
     }
 }

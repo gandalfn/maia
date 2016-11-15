@@ -33,6 +33,8 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
+        typedef Glib::RefPtr<class GlyphLine> GlyphLineRefPtr;
+
         class GlyphLine final : public Core::Object
         {
             _CLASS_GOBJECT(GlyphLine, MaiaGraphicGlyphLine, MAIA_GRAPHIC_GLYPH_LINE, Core::Object, MaiaCoreObject)
@@ -44,6 +46,8 @@ namespace Maia
                 _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_glyph_line_get_size)
         };
 
+        typedef Glib::RefPtr<class Glyph> GlyphRefPtr;
+
         class Glyph final : public Core::Object
         {
             _CLASS_GOBJECT(Glyph, MaiaGraphicGlyph, MAIA_GRAPHIC_GLYPH, Core::Object, MaiaCoreObject)
@@ -53,7 +57,7 @@ namespace Maia
 
 #m4 _CONVERSION(`MaiaGraphicContext*', `const Glib::RefPtr<Graphic::Context>&', `Glib::wrap($3, true)')
                 _WRAP_VFUNC(void get_size (Size& outSize), get_size)
-                _WRAP_VFUNC(void update (const Glib::RefPtr<Context>& inContext), update)
+                _WRAP_VFUNC(void update (const ContextRefPtr& inContext), update)
                 _WRAP_VFUNC(void get_cursor_position (int inIndex, Rectangle& outRectangle), get_cursor_position)
 #m4 _CONVERSION(`MaiaGraphicContext*', `const Glib::RefPtr<Graphic::Context>&', `Glib::wrap($3)')
 
@@ -62,10 +66,10 @@ namespace Maia
                 _WRAP_ENUM(class WrapMode, MaiaGraphicGlyphWrapMode, s#GRAPHIC_GLYPH_WRAP_MODE_##,  NO_GTYPE)
                 _WRAP_ENUM(class EllipsizeMode, MaiaGraphicGlyphEllipsizeMode, s#GRAPHIC_GLYPH_ELLIPSIZE_MODE_##,  NO_GTYPE)
 
-                static Glib::RefPtr<Glyph> create (const Glib::ustring& inFontDesc)
+                static GlyphRefPtr create (const Glib::ustring& inFontDesc)
                 {
                     MaiaGraphicGlyph* pGlyph = maia_graphic_glyph_new (inFontDesc.c_str ());
-                    return Glib::RefPtr<Glyph> (new Glyph (pGlyph));
+                    return GlyphRefPtr (new Glyph (pGlyph));
                 }
 
                 _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_glyph_get_size)
@@ -88,9 +92,10 @@ namespace Maia
                 _WRAP_METHOD(void get_line_position (int inIndex, bool inTrailing, int& outLine), maia_graphic_glyph_get_line_position)
                 _WRAP_METHOD(void get_index_from_position (const Graphic::Point& inPosition, int& outIndex, int& trailing), maia_graphic_glyph_get_index_from_position)
 
-                _WRAP_METHOD(void update (const Glib::RefPtr<Context>& inpContext), maia_graphic_glyph_update)
+                _WRAP_METHOD(void update (const ContextRefPtr& inpContext), maia_graphic_glyph_update)
                 _WRAP_METHOD(void get_cursor_position (int inIndex, Rectangle& outRectangle), maia_graphic_glyph_get_cursor_position)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("size", Size)
                 _WRAP_PROPERTY("font-description", Glib::ustring)
                 _WRAP_PROPERTY("use_markup", bool)
@@ -100,7 +105,7 @@ namespace Maia
                 _WRAP_PROPERTY("text", Glib::ustring)
                 _WRAP_PROPERTY("origin", Point)
                 _WRAP_PROPERTY("line-count", int)
+#endif
         };
-
     }
 }

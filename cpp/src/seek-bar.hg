@@ -44,9 +44,11 @@ namespace Maia
                 return Glib::RefPtr<SeekBar> (new SeekBar (pSeekBar));
             }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("can-focus", bool)
             _WRAP_PROPERTY("have-focus", bool)
             _WRAP_PROPERTY("focus-order", int)
             _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
+#endif
     };
 }

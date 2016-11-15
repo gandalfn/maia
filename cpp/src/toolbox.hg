@@ -37,9 +37,10 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Item> get_item () const, maia_toolbox_add_item_event_args_get_item, refreturn)
             _WRAP_METHOD(bool get_parent () const, maia_toolbox_add_item_event_args_get_parent)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("item", Glib::RefPtr<Item>)
             _WRAP_PROPERTY("parent", bool)
-    };
+#endif    };
 
     class ToolboxCurrentItemEventArgs : public Core::EventArgs
     {
@@ -51,10 +52,12 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_parent_name () const, maia_toolbox_current_item_event_args_get_parent_name)
             _WRAP_METHOD(GType get_parent_type () const, maia_toolbox_current_item_event_args_get_parent_type)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("item-name", Glib::ustring)
             _WRAP_PROPERTY("item-type", GType)
             _WRAP_PROPERTY("parent-name", Glib::ustring)
             _WRAP_PROPERTY("parent-type", GType)
+#endif
     };
 
     class Toolbox : public Popup
@@ -78,8 +81,10 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Core::Event> remove_item () const, maia_toolbox_get_remove_item, refreturn)
             _WRAP_METHOD(Glib::RefPtr<Core::Event> current_item () const, maia_toolbox_get_current_item, refreturn)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("add-item", Glib::RefPtr<Core::Event>)
             _WRAP_PROPERTY("remove-item", Glib::RefPtr<Core::Event>)
             _WRAP_PROPERTY("current-item", Glib::RefPtr<Core::Event>)
+#endif
     };
 }

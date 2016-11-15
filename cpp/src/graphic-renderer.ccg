@@ -125,13 +125,13 @@ namespace Maia
             m_pRenderer->set_size (inSize);
         }
 
-        Glib::RefPtr<RendererInitializeNotification>
+        RendererInitializeNotificationRefPtr
         Renderer::initialize_notification () const
         {
             return m_pRenderer->initialize_notification ();
         }
 
-        Glib::RefPtr<RendererNewFrameNotification>
+        RendererNewFrameNotificationRefPtr
         Renderer::new_frame_notification () const
         {
             return m_pRenderer->new_frame_notification ();

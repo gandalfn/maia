@@ -93,6 +93,7 @@ namespace Maia
 
             sigc::connection connect_value_changed (const Glib::ustring& inColumnName, SlotValueChanged inSlot);
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("nb-rows", guint)
 
             _WRAP_PROPERTY("name", Glib::ustring)
@@ -102,6 +103,7 @@ namespace Maia
             _WRAP_PROPERTY("characters", Glib::ustring)
             _WRAP_PROPERTY("manifest-path", Glib::ustring)
             _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
+#endif
 
         private:
             Model* cpp_obj () { return this; }
@@ -148,6 +150,7 @@ namespace Maia
             _IGNORE(maia_model_column_get)
             _IGNORE(maia_model_column_set)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("name", Glib::ustring)
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
             _WRAP_PROPERTY("column", int)
@@ -158,6 +161,7 @@ namespace Maia
             _WRAP_PROPERTY("style", Glib::ustring)
             _WRAP_PROPERTY("manifest-path", Glib::ustring)
             _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
+#endif
     };
 
     class ModelIterator

@@ -26,6 +26,8 @@ _PINCLUDE(maiamm/private/toggle_p.h)
 
 namespace Maia
 {
+    typedef Glib::RefPtr<class ButtonTab> ButtonTabRefPtr;
+
     class ButtonTab : public Toggle
     {
         _CLASS_GOBJECT(ButtonTab, MaiaButtonTab, MAIA_BUTTON_TAB, Toggle, MaiaToggle)
@@ -36,18 +38,18 @@ namespace Maia
             explicit ButtonTab(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<ButtonTab> create (const Glib::ustring& inId)
+            static ButtonTabRefPtr create (const Glib::ustring& inId)
             {
                 MaiaButtonTab* pButton = maia_button_tab_new (inId.c_str (), 0);
 
-                return Glib::RefPtr<ButtonTab> (new ButtonTab (pButton));
+                return ButtonTabRefPtr (new ButtonTab (pButton));
             }
 
-            static Glib::RefPtr<ButtonTab> create (const Glib::ustring& inId, const Glib::ustring& inLabel)
+            static ButtonTabRefPtr create (const Glib::ustring& inId, const Glib::ustring& inLabel)
             {
                 MaiaButtonTab* pButton = maia_button_tab_new (inId.c_str (), inLabel.c_str ());
 
-                return Glib::RefPtr<ButtonTab> (new ButtonTab (pButton));
+                return ButtonTabRefPtr (new ButtonTab (pButton));
             }
 
             _WRAP_METHOD(Placement get_indicator_placement () const, maia_button_tab_get_indicator_placement)
@@ -74,6 +76,7 @@ namespace Maia
             _WRAP_METHOD(bool get_highlight () const, maia_button_tab_get_highlight)
             _WRAP_METHOD(void set_highlight (bool inHighlight), maia_button_tab_set_highlight)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("tag", Glib::ustring)
             _WRAP_PROPERTY("indicator-placement", Placement)
             _WRAP_PROPERTY("indicator-thickness", double)
@@ -83,6 +86,7 @@ namespace Maia
             _WRAP_PROPERTY("icon-size", Graphic::Size)
             _WRAP_PROPERTY("value", Glib::ustring)
             _WRAP_PROPERTY("highlight", bool)
+#endif
 
         private:
             _WRAP_PROPERTY("indicator-progress", double)

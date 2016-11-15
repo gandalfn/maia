@@ -59,11 +59,13 @@ namespace Maia
             _WRAP_METHOD(double get_increment () const, maia_ellipse_shape_get_increment)
             _WRAP_METHOD(void set_increment (double inRadius), maia_ellipse_shape_set_increment)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("begin", Graphic::Point)
             _WRAP_PROPERTY("end", Graphic::Point)
             _WRAP_PROPERTY("radius", double)
             _WRAP_PROPERTY("increment", double)
 
             _WRAP_PROPERTY("tag", Glib::ustring)
+#endif
     };
 }

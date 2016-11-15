@@ -32,6 +32,8 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
+        typedef Glib::RefPtr<class Surface> SurfaceRefPtr;
+
         class Surface final : public Pattern, public Core::Serializable
         {
             _CLASS_GOBJECT(Surface, MaiaGraphicSurface, MAIA_GRAPHIC_SURFACE, Pattern, MaiaGraphicPattern)
@@ -59,54 +61,54 @@ namespace Maia
                 }
 
                 _IGNORE(maia_graphic_surface_new)
-               static Glib::RefPtr<Surface> create (unsigned int inWidth, unsigned int inHeight)
+               static SurfaceRefPtr create (unsigned int inWidth, unsigned int inHeight)
                 {
                     MaiaGraphicSurface* pSurface = maia_graphic_surface_new (inWidth, inHeight);
-                    return Glib::RefPtr<Surface> (new Surface (pSurface));
+                    return SurfaceRefPtr (new Surface (pSurface));
                 }
- 
+
                 _IGNORE(maia_graphic_surface_new_from_device)
-                static Glib::RefPtr<Surface> create (const Glib::RefPtr<Device>& inDevice, unsigned int inWidth, unsigned int inHeight)
+                static SurfaceRefPtr create (const Glib::RefPtr<Device>& inDevice, unsigned int inWidth, unsigned int inHeight)
                 {
                     MaiaGraphicSurface* pSurface = maia_graphic_surface_new_from_device (const_cast<MaiaGraphicDevice*> (inDevice->gobj ()), inWidth, inHeight);
-                    return Glib::RefPtr<Surface> (new Surface (pSurface));
+                    return SurfaceRefPtr (new Surface (pSurface));
                 }
 
                 _IGNORE(maia_graphic_surface_new_similar, maia_graphic_surface_set_surface)
-                static Glib::RefPtr<Surface> create (const Glib::RefPtr<Surface>& inSurface, unsigned int inWidth, unsigned int inHeight)
+                static SurfaceRefPtr create (const Glib::RefPtr<Surface>& inSurface, unsigned int inWidth, unsigned int inHeight)
                 {
                     MaiaGraphicSurface* pSurface = maia_graphic_surface_new_similar (const_cast<MaiaGraphicSurface*> (inSurface->gobj ()), inWidth, inHeight);
-                    return Glib::RefPtr<Surface> (new Surface (pSurface));
+                    return SurfaceRefPtr (new Surface (pSurface));
                 }
 
                 _IGNORE(maia_graphic_surface_new_from_data)
-                static Glib::RefPtr<Surface> create (Surface::Format inFormat, unsigned char* inpData, unsigned int inWidth, unsigned int inHeight)
+                static SurfaceRefPtr create (Surface::Format inFormat, unsigned char* inpData, unsigned int inWidth, unsigned int inHeight)
                 {
                     MaiaGraphicSurface* pSurface = maia_graphic_surface_new_from_data ((MaiaGraphicSurfaceFormat)inFormat, inpData, inWidth, inHeight);
-                    return Glib::RefPtr<Surface> (new Surface (pSurface));
+                    return SurfaceRefPtr (new Surface (pSurface));
                 }
 
                 _IGNORE(maia_graphic_surface_new_from_native)
-                static Glib::RefPtr<Surface> create (void* inpNative, unsigned int inWidth, unsigned int inHeight)
+                static SurfaceRefPtr create (void* inpNative, unsigned int inWidth, unsigned int inHeight)
                 {
                     MaiaGraphicSurface* pSurface = maia_graphic_surface_new_from_native (inpNative, inWidth, inHeight);
-                    return Glib::RefPtr<Surface> (new Surface (pSurface));
+                    return SurfaceRefPtr (new Surface (pSurface));
                 }
 
                 _IGNORE(maia_graphic_surface_new_with_format)
-                static Glib::RefPtr<Surface> create (Surface::Format inFormat, unsigned int inWidth, unsigned int inHeight)
+                static SurfaceRefPtr create (Surface::Format inFormat, unsigned int inWidth, unsigned int inHeight)
                 {
                     MaiaGraphicSurface* pSurface = maia_graphic_surface_new_with_format ((MaiaGraphicSurfaceFormat)inFormat, inWidth, inHeight);
-                    return Glib::RefPtr<Surface> (new Surface (pSurface));
+                    return SurfaceRefPtr (new Surface (pSurface));
                 }
 
                 _IGNORE(maia_graphic_surface_set_format)
                 _WRAP_METHOD(Surface::Format get_format () const, maia_graphic_surface_get_format)
                 _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_surface_get_size)
                 _WRAP_METHOD(void set_size (const Size& inSize), maia_graphic_surface_set_size)
-                _WRAP_METHOD(Glib::RefPtr<Context> get_context () const, maia_graphic_surface_get_context, refreturn)
-                _WRAP_METHOD(Glib::RefPtr<Device> get_device () const, maia_graphic_surface_get_device, refreturn)
-                _WRAP_METHOD(void set_device (const Glib::RefPtr<Device>& inpDevice), maia_graphic_surface_set_device)
+                _WRAP_METHOD(ContextRefPtr get_context () const, maia_graphic_surface_get_context, refreturn)
+                _WRAP_METHOD(DeviceRefPtr get_device () const, maia_graphic_surface_get_device, refreturn)
+                _WRAP_METHOD(void set_device (const DeviceRefPtr& inpDevice), maia_graphic_surface_set_device)
                 _WRAP_METHOD(guchar* get_data () const, maia_graphic_surface_get_data)
                 _WRAP_METHOD(void* get_native () const, maia_graphic_surface_get_native)
                 _WRAP_METHOD(void set_native (void* inpNative), maia_graphic_surface_set_native)
@@ -123,16 +125,18 @@ namespace Maia
 
                 _WRAP_METHOD(void dump (const Glib::ustring& inFilename), maia_graphic_surface_dump, errthrow)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY ("format", Surface::Format)
                 _WRAP_PROPERTY ("size", Size)
-                _WRAP_PROPERTY ("context", Glib::RefPtr<Context>)
-                _WRAP_PROPERTY ("device", Glib::RefPtr<Device>)
+                _WRAP_PROPERTY ("context", ContextRefPtr)
+                _WRAP_PROPERTY ("device", DeviceRefPtr)
                 _WRAP_PROPERTY ("data", guchar*)
                 _WRAP_PROPERTY ("native", void*)
+#endif
 
             private:
                  _WRAP_PROPERTY("serialize", Glib::VariantBase)
-                 _WRAP_PROPERTY("surface", Glib::RefPtr<Surface>)
+                 _WRAP_PROPERTY("surface", SurfaceRefPtr)
         };
 
     }

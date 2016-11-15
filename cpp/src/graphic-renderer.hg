@@ -33,6 +33,8 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
+        typedef Glib::RefPtr<class RendererInitializeNotification> RendererInitializeNotificationRefPtr;
+
         class RendererInitializeNotification : public Core::Notification
         {
             _CLASS_GOBJECT(RendererInitializeNotification, MaiaGraphicRendererInitializeNotification, MAIA_GRAPHIC_RENDERER_INITIALIZE_NOTIFICATION, Core::Notification, MaiaCoreNotification)
@@ -46,8 +48,12 @@ namespace Maia
                 _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_renderer_initialize_notification_get_size)
                 _WRAP_METHOD(void set_size (const Size& outSize) const, maia_graphic_renderer_initialize_notification_set_size)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("size", Size)
+#endif
         };
+
+        typedef Glib::RefPtr<class RendererNewFrameNotification> RendererNewFrameNotificationRefPtr;
 
         class RendererNewFrameNotification : public Core::Notification
         {
@@ -62,8 +68,12 @@ namespace Maia
                 _WRAP_METHOD(guint get_num_frame () const, maia_graphic_renderer_new_frame_notification_get_num_frame)
                 _WRAP_METHOD(void set_num_frame (guint inNumFrame) const, maia_graphic_renderer_new_frame_notification_set_num_frame)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("num-frame", guint)
+#endif
         };
+
+        typedef Glib::RefPtr<class RendererLooper> RendererLooperRefPtr;
 
         class RendererLooper : public Core::Object
         {
@@ -89,6 +99,8 @@ namespace Maia
                 gpointer                      m_pData;
         };
 
+        typedef Glib::RefPtr<class RendererTimelineLooper> RendererTimelineLooperRefPtr;
+
         class RendererTimelineLooper : public RendererLooper
         {
             _CLASS_GOBJECT(RendererTimelineLooper, MaiaGraphicRendererTimelineLooper, MAIA_GRAPHIC_RENDERER_TIMELINE_LOOPER, RendererLooper, MaiaGraphicRendererLooper)
@@ -97,14 +109,16 @@ namespace Maia
                 _CTOR_DEFAULT
 
             public:
-                static Glib::RefPtr<RendererTimelineLooper> create (int inFps, int inNbFrames)
+                static RendererTimelineLooperRefPtr create (int inFps, int inNbFrames)
                 {
                     RendererTimelineLooper* pLooper = new RendererTimelineLooper (maia_graphic_renderer_timeline_looper_new (inFps, inNbFrames));
-                    return Glib::RefPtr<RendererTimelineLooper> (pLooper);
+                    return RendererTimelineLooperRefPtr (pLooper);
                 }
         };
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+        typedef Glib::RefPtr<class RendererObject> RendererObjectRefPtr;
+
         class RendererObject : public Core::Object
         {
             _CLASS_GOBJECT(RendererObject, MaiaGraphicRenderer, MAIA_GRAPHIC_RENDERER, Core::Object, MaiaCoreObject)
@@ -115,27 +129,29 @@ namespace Maia
                 _WRAP_CTOR(RendererObject(const Size& size), maia_graphic_renderer_new)
 
             public:
-                static Glib::RefPtr<RendererObject> create (const Size& inSize)
+                static RendererObjectRefPtr create (const Size& inSize)
                 {
-                    return Glib::RefPtr<RendererObject> (new RendererObject (inSize));
+                    return RendererObjectRefPtr (new RendererObject (inSize));
                 }
 
-                _WRAP_METHOD(Glib::RefPtr<Surface> get_surface () const, maia_graphic_renderer_get_surface, refreturn)
+                _WRAP_METHOD(SurfaceRefPtr get_surface () const, maia_graphic_renderer_get_surface, refreturn)
                 _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_renderer_get_size)
                 _WRAP_METHOD(void set_size (const Size& inSize), maia_graphic_renderer_set_size)
 
-                _WRAP_METHOD(Glib::RefPtr<RendererInitializeNotification> initialize_notification () const, maia_graphic_renderer_get_initialize, refreturn)
-                _WRAP_METHOD(Glib::RefPtr<RendererNewFrameNotification> new_frame_notification () const, maia_graphic_renderer_get_new_frame, refreturn)
+                _WRAP_METHOD(RendererInitializeNotificationRefPtr initialize_notification () const, maia_graphic_renderer_get_initialize, refreturn)
+                _WRAP_METHOD(RendererNewFrameNotificationRefPtr new_frame_notification () const, maia_graphic_renderer_get_new_frame, refreturn)
 
                 _WRAP_METHOD(void initialize (), maia_graphic_renderer_start)
                 _WRAP_METHOD(void render (guint inFrameNum), maia_graphic_renderer_render)
 
-                _WRAP_PROPERTY("surface", Glib::RefPtr<Surface>)
+                _WRAP_PROPERTY("surface", SurfaceRefPtr)
                 _WRAP_PROPERTY("size", Size)
-                _WRAP_PROPERTY("initialize", Glib::RefPtr<RendererInitializeNotification>)
-                _WRAP_PROPERTY("new-frame", Glib::RefPtr<RendererNewFrameNotification>)
+                _WRAP_PROPERTY("initialize", RendererInitializeNotificationRefPtr)
+                _WRAP_PROPERTY("new-frame", RendererNewFrameNotificationRefPtr)
         };
 #endif
+
+        typedef Glib::RefPtr<class Renderer> RendererRefPtr;
 
         class Renderer : public Core::Object
         {
@@ -149,23 +165,23 @@ namespace Maia
                 void set_size (const Size& inSize);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-                Glib::RefPtr<RendererObject> get_renderer () const
+                RendererObjectRefPtr get_renderer () const
                 {
                     return m_pRenderer;
                 }
 #endif
-                Glib::RefPtr<RendererInitializeNotification> initialize_notification () const;
-                Glib::RefPtr<RendererNewFrameNotification> new_frame_notification () const;
+                RendererInitializeNotificationRefPtr initialize_notification () const;
+                RendererNewFrameNotificationRefPtr new_frame_notification () const;
 
-                static Glib::RefPtr<Renderer> create (const Maia::Graphic::Size& inSize)
+                static RendererRefPtr create (const Maia::Graphic::Size& inSize)
                 {
-                    return Glib::RefPtr<Renderer> (new Renderer (inSize));
+                    return RendererRefPtr (new Renderer (inSize));
                 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-                static Glib::RefPtr<Renderer> create (const Glib::RefPtr<RendererObject>& inpRenderer)
+                static RendererRefPtr create (const Glib::RefPtr<RendererObject>& inpRenderer)
                 {
-                    return Glib::RefPtr<Renderer> (new Renderer (inpRenderer));
+                    return RendererRefPtr (new Renderer (inpRenderer));
                 }
 #endif
 

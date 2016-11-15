@@ -47,7 +47,9 @@ namespace Maia
         public:
             _WRAP_METHOD(Glib::ustring get_text () const, maia_entry_changed_event_args_get_text)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("text", Glib::ustring)
+#endif
     };
 
     /**
@@ -121,6 +123,7 @@ namespace Maia
 
             _WRAP_METHOD(Glib::RefPtr<Core::Event> changed () const, maia_entry_get_changed, refreturn)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("font-description", Glib::ustring)
             _WRAP_PROPERTY("text", Glib::ustring)
             _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
@@ -166,5 +169,6 @@ namespace Maia
             _WRAP_PROPERTY("right-padding", double)
 
             _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
+#endif
     };
 }

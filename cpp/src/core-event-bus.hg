@@ -298,7 +298,9 @@ namespace Maia
 
                 _WRAP_METHOD(Glib::ustring get_address () const, maia_core_event_bus_get_address)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("address", Glib::ustring)
+#endif
 
             private:
                 static void _on_publish_reply_callback (MaiaCoreEventArgs* inpArgs, gpointer inpData);

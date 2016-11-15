@@ -42,8 +42,10 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_name () const, maia_step_button_changed_event_args_get_name)
             _WRAP_METHOD(bool get_active () const, maia_step_button_changed_event_args_get_active)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("name", Glib::ustring)
             _WRAP_PROPERTY("active", bool)
+#endif
     };
 
     class StepButton : public Item, public ItemPackable, public ItemMovable, public ItemFocusable
@@ -100,6 +102,7 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Core::Event> clicked () const, maia_step_button_get_clicked, refreturn)
             _WRAP_METHOD(Glib::RefPtr<Core::Event> changed () const, maia_step_button_get_changed, refreturn)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("sensitive", bool)
             _WRAP_PROPERTY("font-description", Glib::ustring)
             _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
@@ -142,6 +145,7 @@ namespace Maia
             _WRAP_PROPERTY("right-padding", double)
 
             _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
+#endif
 
         private:
             _WRAP_PROPERTY("progress", double)

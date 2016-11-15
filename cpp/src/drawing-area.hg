@@ -61,18 +61,19 @@ namespace Maia
             _WRAP_METHOD(double get_selected_border_line_width () const, maia_drawing_area_get_selected_border_line_width)
             _WRAP_METHOD(void set_selected_border_line_width (double inLineWidth), maia_drawing_area_set_selected_border_line_width)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_selected_border_color () const, maia_drawing_area_get_selected_border_color, refreturn)
-            _WRAP_METHOD(void set_selected_border_color (const Glib::RefPtr<Graphic::Color>& inColor), maia_drawing_area_set_selected_border_color)
+            _WRAP_METHOD(Graphic::ColorRefPtr get_selected_border_color () const, maia_drawing_area_get_selected_border_color, refreturn)
+            _WRAP_METHOD(void set_selected_border_color (const Graphic::ColorRefPtr& inColor), maia_drawing_area_set_selected_border_color)
 
             _WRAP_METHOD(bool touchscreen_mode () const, maia_drawing_area_get_touchscreen_mode)
             _WRAP_METHOD(void set_touchscreen_mode (bool inTouchscrenMode = true), maia_drawing_area_set_touchscreen_mode)
 
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("selected", Glib::RefPtr<Item>)
             _WRAP_PROPERTY("anchor-size", double)
             _WRAP_PROPERTY("selected-border", double)
             _WRAP_PROPERTY("selected-border-line-width", double)
-            _WRAP_PROPERTY("selected-border-color", Glib::RefPtr<Graphic::Color>)
+            _WRAP_PROPERTY("selected-border-color", Graphic::ColorRefPtr)
             _WRAP_PROPERTY("touchscreen-mode", bool)
 
             _WRAP_PROPERTY("can-focus", bool)
@@ -104,5 +105,6 @@ namespace Maia
             _WRAP_PROPERTY("right-padding", double)
 
             _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
+#endif
     };
 }

@@ -46,7 +46,9 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Document> get_document () const, maia_document_view_get_document, refreturn)
             _WRAP_METHOD(Glib::RefPtr<Toolbox> get_toolbox () const, maia_document_view_get_toolbox, refreturn)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("document", Glib::RefPtr<Document>)
             _WRAP_PROPERTY("toolbox", Glib::RefPtr<Toolbox>)
+#endif
     };
 }

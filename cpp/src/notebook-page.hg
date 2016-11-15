@@ -61,6 +61,7 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Toggle> get_toggle () const, maia_notebook_page_get_toggle, refreturn)
             _WRAP_METHOD(void set_toggle (const Glib::RefPtr<Toggle>& inLabel), maia_notebook_page_set_toggle)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("font-description", Glib::ustring)
             _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
             _WRAP_PROPERTY("label", Glib::ustring)
@@ -90,5 +91,6 @@ namespace Maia
             _WRAP_PROPERTY("right-padding", double)
 
             _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
+#endif
     };
 }

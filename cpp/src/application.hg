@@ -27,6 +27,8 @@ _PINCLUDE(maiamm/private/core-object_p.h)
 
 namespace Maia
 {
+    typedef Glib::RefPtr<class Application> ApplicationRefPtr;
+
     class Application : public Core::Object
     {
         _CLASS_GOBJECT(Application, MaiaApplication, MAIA_APPLICATION, Core::Object, MaiaCoreObject)
@@ -37,12 +39,12 @@ namespace Maia
             explicit Application(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<Application> create (const Glib::ustring& inName, int inFps = 60)
+            static ApplicationRefPtr create (const Glib::ustring& inName, int inFps = 60)
             {
-                return Glib::RefPtr<Application> (new Application (maia_application_new (inName.c_str(), inFps, 0, 0, "unix://")));
+                return ApplicationRefPtr (new Application (maia_application_new (inName.c_str(), inFps, 0, 0, "unix://")));
             }
 
-            static Glib::RefPtr<Application> create (const Glib::ustring& inName, int inFps, const std::vector<Glib::ustring>& inBackends, const Glib::ustring& inUri = "unix://")
+            static ApplicationRefPtr create (const Glib::ustring& inName, int inFps, const std::vector<Glib::ustring>& inBackends, const Glib::ustring& inUri = "unix://")
             {
                 int length = inBackends.size ();
                 char** backends = nullptr;
@@ -63,22 +65,22 @@ namespace Maia
                     g_free (backends);
                 }
 
-                return Glib::RefPtr<Application> (new Application (pApplication));
+                return ApplicationRefPtr (new Application (pApplication));
             }
+
+            _IGNORE(maia_application_new)
+
+            static ApplicationRefPtr create (const Glib::ustring& inName, char*** inpArgv, int* inArgc)
+            {
+                return ApplicationRefPtr (new Application (maia_application_new_from_args (inName.c_str(), inpArgv, inArgc)));
+            }
+
+            _IGNORE(maia_application_new_from_args)
 
             static void add_backends_path (const Glib::ustring& inPath)
             {
                 maia_application_add_backends_path (inPath.c_str ());
             }
-
-            _IGNORE(maia_application_new)
-
-            static Glib::RefPtr<Application> create (const Glib::ustring& inName, char*** inpArgv, int* inArgc)
-            {
-                return Glib::RefPtr<Application> (new Application (maia_application_new_from_args (inName.c_str(), inpArgv, inArgc)));
-            }
-
-            _IGNORE(maia_application_new_from_args)
 
             _WRAP_METHOD(guint get_refresh_rate () const, maia_application_get_refresh_rate)
             _WRAP_METHOD(void set_refresh_rate (guint inRefreshRate) const, maia_application_set_refresh_rate)
@@ -92,17 +94,19 @@ namespace Maia
             _WRAP_METHOD(void run (), maia_application_run)
             _WRAP_METHOD(void quit (), maia_application_quit)
 
-            _WRAP_METHOD(Glib::RefPtr<Core::Notification> running_notification () const, maia_application_get_running_notification, refreturn)
-            _WRAP_METHOD(Glib::RefPtr<Core::TimelineNewFrameNotification> new_frame () const, maia_application_get_new_frame, refreturn)
+            _WRAP_METHOD(Core::NotificationRefPtr running_notification () const, maia_application_get_running_notification, refreturn)
+            _WRAP_METHOD(Core::TimelineNewFrameNotificationRefPtr new_frame () const, maia_application_get_new_frame, refreturn)
 
-            _WRAP_METHOD(static Glib::RefPtr<Application> get_default (), maia_application_get_default, refreturn)
-            _WRAP_METHOD(static void set_default (const Glib::RefPtr<Application>& inApplication), maia_application_set_default)
+            _WRAP_METHOD(static ApplicationRefPtr get_default (), maia_application_get_default, refreturn)
+            _WRAP_METHOD(static void set_default (const ApplicationRefPtr& inApplication), maia_application_set_default)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("refresh-rate", guint)
             _WRAP_PROPERTY("pause", bool)
+#endif
 
         private:
             _WRAP_PROPERTY("running-notification", Glib::RefPtr<Core::Timeline>)
-            _WRAP_PROPERTY("new-frame", Glib::RefPtr<Core::TimelineNewFrameNotification>)
+            _WRAP_PROPERTY("new-frame", Core::TimelineNewFrameNotificationRefPtr)
     };
 }

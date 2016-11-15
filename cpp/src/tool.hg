@@ -61,8 +61,10 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_sensitive_with () const, maia_tool_get_sensitive_with)
             _WRAP_METHOD(void set_sensitive_with (const Glib::ustring& inCriteria), maia_tool_set_sensitive_with)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("toolbox", Glib::RefPtr<Toolbox>)
             _WRAP_PROPERTY("action", Tool::Action)
             _WRAP_PROPERTY("sensitive-with", Glib::ustring)
+#endif
     };
 }

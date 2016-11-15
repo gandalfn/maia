@@ -28,6 +28,8 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
+        typedef Glib::RefPtr<class Device> DeviceRefPtr;
+
         class Device final : public Glib::Interface
         {
             _CLASS_INTERFACE(Device, MaiaGraphicDevice, MAIA_GRAPHIC_DEVICE, MaiaGraphicDeviceIface)
@@ -39,16 +41,16 @@ namespace Maia
                 const Glib::ustring XCB_WINDOW_BACKEND = "xcb/window";
                 const Glib::ustring XCB_PIXMAP_BACKEND = "xcb/pixmap";
 
-                static Glib::RefPtr<Device> create (const Glib::VariantBase& inVariant);
+                static DeviceRefPtr create (const Glib::VariantBase& inVariant);
 
-                static Glib::RefPtr<Device> create (const Glib::ustring& inBackend)
+                static DeviceRefPtr create (const Glib::ustring& inBackend)
                 {
                     Device* pDevice = new Device (maia_graphic_device_new (inBackend.c_str (), NULL));
-                    return Glib::RefPtr<Device> (pDevice);
+                    return DeviceRefPtr (pDevice);
                 }
 
                 template<typename... Args>
-                static Glib::RefPtr<Device> create (const Glib::ustring& inBackend, const Glib::ustring& inProperty, Args... inArgs)
+                static DeviceRefPtr create (const Glib::ustring& inBackend, const Glib::ustring& inProperty, Args... inArgs)
                 {
                     ParamClosure closure (inBackend);
                     closure.parse (inProperty, inArgs...);
@@ -56,7 +58,7 @@ namespace Maia
                 }
 
                 template<typename... Args>
-                static Glib::RefPtr<Device> create (const Glib::ustring& inBackend, const char* inProperty, Args... inArgs)
+                static DeviceRefPtr create (const Glib::ustring& inBackend, const char* inProperty, Args... inArgs)
                 {
                     ParamClosure closure (inBackend);
                     closure.parse (inProperty, inArgs...);
@@ -66,7 +68,9 @@ namespace Maia
                 _WRAP_METHOD(Glib::ustring get_backend () const, maia_graphic_device_get_backend)
                 _WRAP_METHOD(Glib::VariantBase to_variant () const, maia_graphic_device_to_variant)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY ("backend", Glib::ustring)
+#endif
 
             private:
                 class ParamClosure
@@ -107,10 +111,10 @@ namespace Maia
                             }
                         }
 
-                        Glib::RefPtr<Device> create_device ()
+                        DeviceRefPtr create_device ()
                         {
                             Device* pDevice = new Device (maia_graphic_device_newv (m_Backend.c_str (), m_pParams, m_Size));
-                            return Glib::RefPtr<Device> (pDevice);
+                            return DeviceRefPtr (pDevice);
                         }
 
                     private:

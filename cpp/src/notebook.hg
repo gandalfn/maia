@@ -73,6 +73,7 @@ namespace Maia
 
             _WRAP_METHOD(Glib::RefPtr<NotebookPage> get_nth_page (guint inNumPage) const, maia_notebook_get_nth_page)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("page", guint)
             _WRAP_PROPERTY("n-pages", guint)
             _WRAP_PROPERTY("show-tabs", bool)
@@ -80,6 +81,7 @@ namespace Maia
             _WRAP_PROPERTY("tab-placement", Placement)
             _WRAP_PROPERTY("transition", Notebook::Transition)
             _WRAP_PROPERTY("toggle-group", Glib::RefPtr<ToggleGroup>)
+#endif
 
         private:
             _WRAP_PROPERTY("switch-progress", double)

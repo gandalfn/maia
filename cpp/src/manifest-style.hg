@@ -56,6 +56,7 @@ namespace Maia
 
                 _WRAP_METHOD(void matches (const Glib::RefPtr<Element>& inElement), maia_manifest_style_matches)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("name", Glib::ustring)
                 _WRAP_PROPERTY("match", Glib::ustring)
                 _WRAP_PROPERTY("match-name", Glib::ustring)
@@ -65,6 +66,7 @@ namespace Maia
                 _WRAP_PROPERTY("characters", Glib::ustring)
                 _WRAP_PROPERTY("manifest-path", Glib::ustring)
                 _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Theme>)
+#endif
         };
 
         class StyleProperty : public Core::Object
@@ -87,9 +89,11 @@ namespace Maia
                 _WRAP_METHOD(Glib::RefPtr<AttributeScanner> get_scanner () const, maia_manifest_style_property_get_scanner, refreturn)
                 _WRAP_METHOD(void set_scanner (const Glib::RefPtr<AttributeScanner>& inScanner), maia_manifest_style_property_set_scanner)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("name", Glib::ustring)
                 _WRAP_PROPERTY("scanner", Glib::RefPtr<AttributeScanner>)
                 _WRAP_PROPERTY("is-copy", bool)
+#endif
         };
     }
 }

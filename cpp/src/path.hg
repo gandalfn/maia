@@ -51,6 +51,7 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_path () const, maia_path_get_path)
             _WRAP_METHOD(void set_path (const Glib::ustring& inPath), maia_path_set_path)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("path", Glib::ustring)
 
             _WRAP_PROPERTY("can-focus", bool)
@@ -82,5 +83,6 @@ namespace Maia
             _WRAP_PROPERTY("right-padding", double)
 
             _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
+#endif
     };
 }

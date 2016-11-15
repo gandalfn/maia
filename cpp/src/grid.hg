@@ -63,6 +63,7 @@ namespace Maia
             _WRAP_METHOD(double get_grid_line_width () const, maia_grid_get_grid_line_width)
             _WRAP_METHOD(void set_grid_line_width (double inLineWidth) const, maia_grid_set_grid_line_width)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("layout", Grid::Layout)
             _WRAP_PROPERTY("row-spacing", double)
             _WRAP_PROPERTY("column-spacing", double)
@@ -93,5 +94,6 @@ namespace Maia
             _WRAP_PROPERTY("right-padding", double)
 
             _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
+#endif
     };
 }

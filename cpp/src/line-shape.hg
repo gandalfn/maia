@@ -53,9 +53,11 @@ namespace Maia
             _WRAP_METHOD(void get_end (Graphic::Point& outPoint) const, maia_line_shape_get_end)
             _WRAP_METHOD(void set_end (const Graphic::Point& inPoint), maia_line_shape_set_end)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("begin", Graphic::Point)
             _WRAP_PROPERTY("end", Graphic::Point)
 
             _WRAP_PROPERTY("tag", Glib::ustring)
+#endif
     };
 }

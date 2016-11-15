@@ -54,8 +54,10 @@ namespace Maia
                 _WRAP_METHOD(Glib::ustring get_property () const, maia_manifest_document_attribute_bind_added_notification_get_property)
                 _WRAP_METHOD(void set_property (const Glib::ustring& inProperty), maia_manifest_document_attribute_bind_added_notification_set_property)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("attribute", Glib::RefPtr<AttributeBind>)
                 _WRAP_PROPERTY("property", Glib::ustring)
+#endif
         };
 
         class Document : public Core::Parser
@@ -98,12 +100,14 @@ namespace Maia
                 _WRAP_METHOD(Glib::RefPtr<Element> get (const Glib::ustring& inId) const, maia_manifest_document_get, refreturn, errthrow)
                 Glib::RefPtr<Element> get () const;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("owner", Glib::RefPtr<Glib::Object>)
                 _WRAP_PROPERTY("scanner", Glib::RefPtr<AttributeScanner>)
                 _WRAP_PROPERTY("element-tag", Glib::ustring)
                 _WRAP_PROPERTY("element-id", Glib::ustring)
                 _WRAP_PROPERTY("path", Glib::ustring)
                 _WRAP_PROPERTY("theme", Glib::RefPtr<Manifest::Theme>)
+#endif
         };
     }
 }

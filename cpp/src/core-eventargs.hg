@@ -392,7 +392,9 @@ namespace Maia
                 _WRAP_METHOD(void accumulate (const Glib::RefPtr<EventArgs>& inOther), maia_core_event_args_accumulate)
                 _WRAP_METHOD(Glib::RefPtr<EventArgs> copy () const, maia_core_event_args_copy, refreturn)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("sequence", int)
+#endif
 
                 Fields fields () const
                 {
@@ -680,7 +682,7 @@ namespace Maia
             return value.get ();
         }
 
-        inline EventArgsField::operator Glib::RefPtr<Graphic::Surface> () const
+        inline EventArgsField::operator Graphic::SurfaceRefPtr () const
         {
             GValue* value = maia_core_event_args_get (m_pEventArgs, m_Field.c_str (), m_Index);
             return Glib::wrap (MAIA_GRAPHIC_SURFACE (g_value_get_object (value)), true);
@@ -709,7 +711,7 @@ namespace Maia
             return *this;
         }
 
-        inline EventArgsField& EventArgsField::operator= (const std::vector< Glib::RefPtr<Graphic::Surface> >& inVal)
+        inline EventArgsField& EventArgsField::operator= (const std::vector<Graphic::SurfaceRefPtr>& inVal)
         {
             if (!maia_core_event_args_is_array (m_pEventArgs, m_Field.c_str ()))
             {
@@ -719,7 +721,7 @@ namespace Maia
             }
 
             maia_core_event_args_clear (m_pEventArgs, m_Field.c_str ());
-            for (const Glib::RefPtr<Graphic::Surface>& val : inVal)
+            for (const Graphic::SurfaceRefPtr& val : inVal)
             {
                 GValue value = G_VALUE_INIT;
                 g_value_init (&value, MAIA_GRAPHIC_TYPE_SURFACE);
@@ -757,9 +759,9 @@ namespace Maia
             return ret;
         }
 
-        inline EventArgsField::operator std::vector< Glib::RefPtr<Graphic::Surface> > () const
+        inline EventArgsField::operator std::vector<Graphic::SurfaceRefPtr> () const
         {
-            std::vector< Glib::RefPtr<Graphic::Surface> > ret;
+            std::vector<Graphic::SurfaceRefPtr> ret;
 
             if (!maia_core_event_args_is_array (m_pEventArgs, m_Field.c_str ()))
             {
@@ -794,7 +796,7 @@ namespace Maia
             return maia_core_event_args_add_value (m_pEventArgs, m_Field.c_str (), value.gobj ());
         }
 
-        inline int EventArgsField::push_back (const Glib::RefPtr<Graphic::Surface>& inVal)
+        inline int EventArgsField::push_back (const Graphic::SurfaceRefPtr& inVal)
         {
             if (!maia_core_event_args_is_array (m_pEventArgs, m_Field.c_str ()))
             {

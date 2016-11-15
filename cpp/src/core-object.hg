@@ -34,11 +34,18 @@ namespace Maia
         class Notifications;
         class Notification;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+        typedef Glib::RefPtr<Notification> NotificationRefPtr;
+        typedef Glib::RefPtr<Notifications> NotificationsRefPtr;
+#endif
+
+        typedef Glib::RefPtr<Object> ObjectRefPtr;
+
         class ObjectProxy
         {
             public:
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-                inline ObjectProxy(const Glib::RefPtr<Object>& inpObject) :
+                inline ObjectProxy(const ObjectRefPtr& inpObject) :
                     m_pObject (inpObject)
                 {
                 }
@@ -50,7 +57,7 @@ namespace Maia
                 inline operator Glib::RefPtr<T>() const;
 
             private:
-                Glib::RefPtr<Object> m_pObject;
+                ObjectRefPtr m_pObject;
 
                 // no copy assignment
                 ObjectProxy& operator=(const ObjectProxy&) { return *this; }
@@ -119,15 +126,20 @@ namespace Maia
 
                 explicit Object(const Glib::ustring& inId);
 
-                _WRAP_VFUNC(Glib::RefPtr<Object> get_parent (), get_parent, refreturn_ctype)
-#m4 _CONVERSION(`MaiaCoreObject*', `const Glib::RefPtr<Object>&', `Glib::wrap($3, true)')
-                _WRAP_VFUNC(void set_parent (const Glib::RefPtr<Object>& inObject), set_parent)
-                _WRAP_VFUNC(void insert_child (const Glib::RefPtr<Object>& inObject), insert_child)
-                _WRAP_VFUNC(void remove_child (const Glib::RefPtr<Object>& inObject), remove_child)
-                _WRAP_VFUNC(bool can_append_child (const Glib::RefPtr<Object>& inObject), can_append_child)
-                _WRAP_VFUNC(int compare (const Glib::RefPtr<Object>& inObject), compare)
+                _WRAP_VFUNC(ObjectRefPtr get_parent (), get_parent, refreturn_ctype)
+#m4 _CONVERSION(`MaiaCoreObject*', `const ObjectRefPtr&', `Glib::wrap($3, true)')
+                _WRAP_VFUNC(void set_parent (const ObjectRefPtr& inObject), set_parent)
+                _WRAP_VFUNC(void insert_child (const ObjectRefPtr& inObject), insert_child)
+                _WRAP_VFUNC(void remove_child (const ObjectRefPtr& inObject), remove_child)
+                _WRAP_VFUNC(bool can_append_child (const ObjectRefPtr& inObject), can_append_child)
+                _WRAP_VFUNC(int compare (const ObjectRefPtr& inObject), compare)
                 _WRAP_VFUNC(Glib::ustring to_string (), to_string)
-#m4 _CONVERSION(`MaiaCoreObject*', `const Glib::RefPtr<Object>&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaCoreObject*', `const ObjectRefPtr&', `Glib::wrap($3)')
+
+                _WRAP_METHOD(void plug_property (const Glib::ustring& inProperty, Object* inpDst, const Glib::ustring& inDstProperty), maia_core_object_plug_property)
+                _WRAP_METHOD(void unplug_property (const Glib::ustring& inProperty, Object* inpDst, const Glib::ustring& inDstProperty), maia_core_object_unplug_property)
+                _WRAP_METHOD(void lock_property (const Glib::ustring& inProperty, Object* inpDst, const Glib::ustring& inDstProperty), maia_core_object_lock_property)
+                _WRAP_METHOD(void unlock_property (const Glib::ustring& inProperty, Object* inpDst, const Glib::ustring& inDstProperty), maia_core_object_unlock_property)
 
                 _IGNORE(maia_core_object_remove_child)
                 _IGNORE(maia_core_object_insert_child)
@@ -138,22 +150,22 @@ namespace Maia
                 _WRAP_METHOD(Glib::QueryQuark get_id () const, maia_core_object_get_id)
                 _WRAP_METHOD(void set_id (Glib::QueryQuark inId), maia_core_object_set_id)
 
-                _WRAP_METHOD(Glib::RefPtr<Object> get_parent () const, maia_core_object_get_parent, refreturn)
-                _WRAP_METHOD(void set_parent (const Glib::RefPtr<Object>& inParent), maia_core_object_set_parent)
+                _WRAP_METHOD(ObjectRefPtr get_parent () const, maia_core_object_get_parent, refreturn)
+                _WRAP_METHOD(void set_parent (const ObjectRefPtr& inParent), maia_core_object_set_parent)
 
                 inline void unparent ()
                 {
-                    set_parent (Glib::RefPtr<Object> (0));
+                    set_parent (ObjectRefPtr (0));
                 }
 
-                _WRAP_METHOD(bool can_append_child (const Glib::RefPtr<Object>& inObject), maia_core_object_can_append_child)
-                _WRAP_METHOD(void add (const Glib::RefPtr<Object>& inObject), maia_core_object_add)
-                _WRAP_METHOD(bool contains (const Glib::RefPtr<Object>& inObject), maia_core_object_contains)
+                _WRAP_METHOD(bool can_append_child (const ObjectRefPtr& inObject), maia_core_object_can_append_child)
+                _WRAP_METHOD(void add (const ObjectRefPtr& inObject), maia_core_object_add)
+                _WRAP_METHOD(bool contains (const ObjectRefPtr& inObject), maia_core_object_contains)
 
                 _IGNORE(maia_core_object_find)
                 inline ObjectProxy find (const Glib::ustring& inName, bool inRecurse = true)
                 {
-                    Glib::RefPtr<Object> pObject;
+                    ObjectRefPtr pObject;
                     find (inName, pObject, inRecurse);
                     return ObjectProxy (pObject);
                 }
@@ -181,37 +193,35 @@ namespace Maia
                 _WRAP_METHOD (Object::iterator begin (), maia_core_object_iterator_begin)
                 _WRAP_METHOD (Object::iterator end (), maia_core_object_iterator_end)
 
-                _WRAP_METHOD(Glib::RefPtr<Object> next (), maia_core_object_next, refreturn)
-                _WRAP_METHOD(Glib::RefPtr<Object> prev (), maia_core_object_prev, refreturn)
-                _WRAP_METHOD(Glib::RefPtr<Object> first (), maia_core_object_first, refreturn)
-                _WRAP_METHOD(Glib::RefPtr<Object> last (), maia_core_object_last, refreturn)
+                _WRAP_METHOD(ObjectRefPtr next (), maia_core_object_next, refreturn)
+                _WRAP_METHOD(ObjectRefPtr prev (), maia_core_object_prev, refreturn)
+                _WRAP_METHOD(ObjectRefPtr first (), maia_core_object_first, refreturn)
+                _WRAP_METHOD(ObjectRefPtr last (), maia_core_object_last, refreturn)
 
                 _WRAP_METHOD(void clear_childs (), maia_core_object_clear_childs)
                 _WRAP_METHOD(void reorder (), maia_core_object_reorder)
                 _WRAP_METHOD(Glib::ustring to_string () const, maia_core_object_to_string)
 
-                _WRAP_METHOD(Glib::RefPtr<Notifications> notifications () const, maia_core_object_get_notifications, refreturn)
+                _WRAP_METHOD(NotificationsRefPtr notifications () const, maia_core_object_get_notifications, refreturn)
 
                 _WRAP_METHOD(bool is_plugged_property (const Glib::ustring& inProperty) const, maia_core_object_is_plugged_property)
-                _WRAP_METHOD(void plug_property (const Glib::ustring& inProperty, const Glib::RefPtr<Object>& inpDst, const Glib::ustring& inDstProperty), maia_core_object_plug_property)
-                _WRAP_METHOD(void plug_property (const Glib::ustring& inProperty, Object* inpDst, const Glib::ustring& inDstProperty), maia_core_object_plug_property)
-                _WRAP_METHOD(void unplug_property (const Glib::ustring& inProperty, const Glib::RefPtr<Object>& inpDst, const Glib::ustring& inDstProperty), maia_core_object_unplug_property)
-                _WRAP_METHOD(void unplug_property (const Glib::ustring& inProperty, Object* inpDst, const Glib::ustring& inDstProperty), maia_core_object_unplug_property)
-                _WRAP_METHOD(void lock_property (const Glib::ustring& inProperty, const Glib::RefPtr<Object>& inpDst, const Glib::ustring& inDstProperty), maia_core_object_lock_property)
-                _WRAP_METHOD(void lock_property (const Glib::ustring& inProperty, Object* inpDst, const Glib::ustring& inDstProperty), maia_core_object_lock_property)
-                _WRAP_METHOD(void unlock_property (const Glib::ustring& inProperty, const Glib::RefPtr<Object>& inpDst, const Glib::ustring& inDstProperty), maia_core_object_unlock_property)
-                _WRAP_METHOD(void unlock_property (const Glib::ustring& inProperty, Object* inpDst, const Glib::ustring& inDstProperty), maia_core_object_unlock_property)
+                _WRAP_METHOD(void plug_property (const Glib::ustring& inProperty, const ObjectRefPtr& inpDst, const Glib::ustring& inDstProperty), maia_core_object_plug_property)
+                _WRAP_METHOD(void unplug_property (const Glib::ustring& inProperty, const ObjectRefPtr& inpDst, const Glib::ustring& inDstProperty), maia_core_object_unplug_property)
+                _WRAP_METHOD(void lock_property (const Glib::ustring& inProperty, const ObjectRefPtr& inpDst, const Glib::ustring& inDstProperty), maia_core_object_lock_property)
+                _WRAP_METHOD(void unlock_property (const Glib::ustring& inProperty, const ObjectRefPtr& inpDst, const Glib::ustring& inDstProperty), maia_core_object_unlock_property)
 
                 _IGNORE(maia_core_object_compare)
                 _WRAP_COMPARE(maia_core_object_compare, unconst)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("id", Glib::QueryQuark)
-                _WRAP_PROPERTY("parent", Glib::RefPtr<Object>)
-                _WRAP_PROPERTY("notifications", Glib::RefPtr<Notifications>)
+                _WRAP_PROPERTY("parent", ObjectRefPtr)
+                _WRAP_PROPERTY("notifications", NotificationsRefPtr)
+#endif
 
             private:
                 template <class T>
-                inline void find (const Glib::RefPtr<Object>& inpObject, std::vector<Glib::RefPtr<T> >& inoutList, bool inRecurse);
+                inline void find (const ObjectRefPtr& inpObject, std::vector<Glib::RefPtr<T> >& inoutList, bool inRecurse);
         };
 
         class ObjectIterator
@@ -231,7 +241,7 @@ namespace Maia
                     return *this;
                 }
 
-                inline Glib::RefPtr<Object> operator*()
+                inline ObjectRefPtr operator*()
                 {
                     return get ();
                 }
@@ -246,9 +256,9 @@ namespace Maia
                     return get () != rhs.get ();
                 }
 
-                _WRAP_METHOD(Glib::RefPtr<Object> next_value (), maia_core_object_iterator_next_value, refreturn)
+                _WRAP_METHOD(ObjectRefPtr next_value (), maia_core_object_iterator_next_value, refreturn)
                 _WRAP_METHOD(bool is_end (), maia_core_object_iterator_is_end)
-                _WRAP_METHOD(Glib::RefPtr<Object> get () const, maia_core_object_iterator_get, refreturn)
+                _WRAP_METHOD(ObjectRefPtr get () const, maia_core_object_iterator_get, refreturn)
         };
 
         template <typename T>
@@ -268,7 +278,7 @@ namespace Maia
         {
             for (iterator iter = begin (); iter != end (); ++iter)
             {
-                Glib::RefPtr<Object> pObject = *iter;
+                ObjectRefPtr pObject = *iter;
                 Glib::RefPtr<T> pChild = Glib::RefPtr<T>::cast_dynamic (pObject);
 
                 if (pChild)
@@ -284,11 +294,11 @@ namespace Maia
 
         template <typename T>
         inline void
-        Object::find (const Glib::RefPtr<Object>& inpObject, std::vector<Glib::RefPtr<T> >& inoutList, bool inRecurse)
+        Object::find (const ObjectRefPtr& inpObject, std::vector<Glib::RefPtr<T> >& inoutList, bool inRecurse)
         {
             for (iterator iter = inpObject->begin (); iter != end (); ++iter)
             {
-                Glib::RefPtr<Object> pObject = *iter;
+                ObjectRefPtr pObject = *iter;
                 Glib::RefPtr<T> pChild = Glib::RefPtr<T>::cast_dynamic (pObject);
 
                 if (pChild)
@@ -305,7 +315,7 @@ namespace Maia
         template <typename T>
         inline ObjectProxy& ObjectProxy::operator=(const Glib::RefPtr<T>& inpObject)
         {
-            m_pObject = Glib::RefPtr<Object>::cast_dynamic (inpObject);
+            m_pObject = ObjectRefPtr::cast_dynamic (inpObject);
             return *this;
         }
 

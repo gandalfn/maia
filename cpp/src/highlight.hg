@@ -45,8 +45,10 @@ namespace Maia
             _WRAP_METHOD(Graphic::Glyph::Alignment get_alignment () const, maia_highlight_get_alignment)
             _WRAP_METHOD(void set_alignment (Graphic::Glyph::Alignment inAlignment), maia_highlight_set_alignment)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
             _WRAP_PROPERTY("tag", Glib::ustring)
+#endif
 
         private:
             _WRAP_PROPERTY("highlight-progress", double)

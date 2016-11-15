@@ -42,6 +42,7 @@ namespace Maia
                 return Glib::RefPtr<Line> (new Line (pLine));
             }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("row", guint)
             _WRAP_PROPERTY("rows", guint)
 
@@ -66,5 +67,6 @@ namespace Maia
             _WRAP_PROPERTY("right-padding", double)
 
             _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
+#endif
     };
 }

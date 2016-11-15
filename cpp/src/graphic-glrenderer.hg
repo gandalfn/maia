@@ -30,6 +30,8 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
+        typedef Glib::RefPtr<class GLRenderer> GLRendererRefPtr;
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
         class GLRendererObject final : public RendererObject
         {
@@ -55,9 +57,9 @@ namespace Maia
 
                 virtual ~GLRenderer ();
 
-                static Glib::RefPtr<GLRenderer> create (const Size& inSize, int inGLMajorVersion, int inGLMinorVersion, const std::vector<uint32_t>& inAttributes)
+                static GLRendererRefPtr create (const Size& inSize, int inGLMajorVersion, int inGLMinorVersion, const std::vector<uint32_t>& inAttributes)
                 {
-                    return Glib::RefPtr<GLRenderer> (new GLRenderer (inSize, inGLMajorVersion, inGLMinorVersion, inAttributes));
+                    return GLRendererRefPtr (new GLRenderer (inSize, inGLMajorVersion, inGLMinorVersion, inAttributes));
                 }
 
             protected:

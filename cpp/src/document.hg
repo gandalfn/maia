@@ -47,7 +47,7 @@ namespace Maia
             }
 
             _WRAP_METHOD(static void format_to_size (PageFormat inFormat, double inDpi, Graphic::Size& outSize), maia_page_format_to_size)
-            _WRAP_METHOD(static Glib::RefPtr<Graphic::Region> format_to_region (PageFormat inFormat, double inDpi), maia_page_format_to_region)
+            _WRAP_METHOD(static Graphic::RegionRefPtr format_to_region (PageFormat inFormat, double inDpi), maia_page_format_to_region)
 
             _WRAP_METHOD(PageFormat get_format () const, maia_document_get_format)
             _WRAP_METHOD(void set_format (PageFormat inFormat), maia_document_set_format)
@@ -78,7 +78,7 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Item> get_item_over_pointer () const, maia_document_get_item_over_pointer, refreturn)
             _WRAP_METHOD(void set_pointer_over_pointer (const Glib::RefPtr<Item>& inItem), maia_document_set_item_over_pointer)
 
-            _WRAP_METHOD(void draw_page (const Glib::RefPtr<Graphic::Context>& inContext, guint inNumPage), maia_document_draw_page, errthrow)
+            _WRAP_METHOD(void draw_page (const Graphic::ContextRefPtr& inContext, guint inNumPage), maia_document_draw_page, errthrow)
 
             _IGNORE(maia_document_save)
             void save (const Glib::ustring& inFilename, double inDpi = 96);
@@ -90,6 +90,7 @@ namespace Maia
             _IGNORE(maia_document_save_finish)
             void save_finish (const Glib::RefPtr<Gio::AsyncResult>& inResult);
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("format", PageFormat)
             _WRAP_PROPERTY("top-margin", double)
             _WRAP_PROPERTY("bottom-margin", double)
@@ -101,5 +102,6 @@ namespace Maia
             _WRAP_PROPERTY("header", Glib::ustring)
             _WRAP_PROPERTY("footer", Glib::ustring)
             _WRAP_PROPERTY("item-over-pointer", Glib::RefPtr<Item>)
+#endif
     };
 }

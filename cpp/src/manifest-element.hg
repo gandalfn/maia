@@ -96,11 +96,13 @@ namespace Maia
                 _IGNORE(maia_manifest_element_register_create_func)
                 static void register_create_func (const Glib::ustring& inTag, SlotCreateFunc inFunc);
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("tag", Glib::ustring)
                 _WRAP_PROPERTY("style", Glib::ustring)
                 _WRAP_PROPERTY("characters", Glib::ustring)
                 _WRAP_PROPERTY("manifest-path", Glib::ustring)
                 _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
+#endif
 
             private:
                 Glib::ustring m_Tag;

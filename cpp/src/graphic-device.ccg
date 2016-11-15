@@ -23,10 +23,10 @@ namespace Maia
 {
     namespace Graphic
     {
-        Glib::RefPtr<Device> Device::create (const Glib::VariantBase& inVariant)
+        DeviceRefPtr Device::create (const Glib::VariantBase& inVariant)
         {
             MaiaGraphicDevice* pDevice = maia_graphic_device_from_variant (const_cast<GVariant*> (inVariant.gobj ()));
-            return Glib::RefPtr<Device> (new Device (pDevice));
+            return DeviceRefPtr (new Device (pDevice));
         }
     }
 }

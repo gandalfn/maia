@@ -61,11 +61,13 @@ namespace Maia
 
             _WRAP_METHOD(Glib::RefPtr<ItemPackable> get_header () const, maia_table_view_column_get_header, refreturn)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("font-description", Glib::ustring)
             _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
             _WRAP_PROPERTY("label", Glib::ustring)
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("header", Glib::RefPtr<ItemPackable>)
+#endif
     };
 }

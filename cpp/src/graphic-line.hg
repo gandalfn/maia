@@ -44,10 +44,10 @@ namespace Maia
                 double length ();
 
                 bool intersect (const Line& inLine);
-                
+
                 bool intersect (const Line& inLine, Point& outPoint);
 
-                void transform (const Glib::RefPtr<Transform>& inTransform);
+                void transform (const TransformRefPtr& inTransform);
 
                 Glib::ustring to_string ();
 

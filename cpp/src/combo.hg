@@ -76,6 +76,7 @@ namespace Maia
 
             _WRAP_METHOD(Glib::RefPtr<Core::Event> changed () const, maia_combo_get_changed, refreturn)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("view", Glib::RefPtr<View>)
             _WRAP_PROPERTY("active-row", gint)
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
@@ -111,5 +112,6 @@ namespace Maia
             _WRAP_PROPERTY("right-padding", double)
 
             _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
+#endif
     };
 }

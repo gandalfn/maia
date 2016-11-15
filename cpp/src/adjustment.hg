@@ -24,27 +24,29 @@ _PINCLUDE(glibmm/private/object_p.h)
 
 namespace Maia
 {
+    typedef Glib::RefPtr<class Adjustment> AdjustmentRefPtr;
+
     /**
      * \includedoc MaiaAdjustment.doc
      */
     class Adjustment : public Glib::Object
     {
-        _CLASS_GOBJECT(Adjustment, MaiaAdjustment, MAIA_ADJUSTMENT, Glib::Object, GObject)
+       _CLASS_GOBJECT(Adjustment, MaiaAdjustment, MAIA_ADJUSTMENT, Glib::Object, GObject)
 
         protected:
             _CTOR_DEFAULT()
 
         public:
-            static Glib::RefPtr<Adjustment> create ()
+            static AdjustmentRefPtr create ()
             {
                 MaiaAdjustment* pAdjustment = maia_adjustment_new ();
-                return Glib::RefPtr<Adjustment> (new Adjustment (pAdjustment));
+                return AdjustmentRefPtr (new Adjustment (pAdjustment));
             }
 
-            static Glib::RefPtr<Adjustment> create (double inLower, double inUpper, double inPageSize, double inStep = 1.0)
+            static AdjustmentRefPtr create (double inLower, double inUpper, double inPageSize, double inStep = 1.0)
             {
                 MaiaAdjustment* pAdjustment = maia_adjustment_new_with_properties (inLower, inUpper, inPageSize, inStep);
-                return Glib::RefPtr<Adjustment> (new Adjustment (pAdjustment));
+                return AdjustmentRefPtr (new Adjustment (pAdjustment));
             }
 
             _WRAP_METHOD(void set_value(double inValue), maia_adjustment_set_value)
@@ -60,10 +62,12 @@ namespace Maia
 
             _WRAP_METHOD(void configure (double inLower, double inUpper, double inPageSize, double inStep), maia_adjustment_configure)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("value", double)
             _WRAP_PROPERTY("lower", double)
             _WRAP_PROPERTY("upper", double)
             _WRAP_PROPERTY("page-size", double)
             _WRAP_PROPERTY("step", double)
+#endif
     };
 }

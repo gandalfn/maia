@@ -56,6 +56,7 @@ namespace Maia
             _WRAP_METHOD(double get_caliper_line_width () const, maia_shape_get_caliper_line_width)
             _WRAP_METHOD(void set_caliper_line_width (double inWidth), maia_shape_set_caliper_line_width)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("caliper", Shape::Caliper)
             _WRAP_PROPERTY("caliper-size", Graphic::Size)
@@ -65,5 +66,6 @@ namespace Maia
             _WRAP_PROPERTY("have-focus", bool)
             _WRAP_PROPERTY("focus-order", int)
             _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
+#endif
     };
 }

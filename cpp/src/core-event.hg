@@ -146,9 +146,11 @@ namespace Maia
                 _WRAP_METHOD(Glib::ustring get_name () const, maia_core_event_get_name)
                 _WRAP_METHOD(Glib::RefPtr<EventBus> get_bus () const, maia_core_event_get_bus, refreturn)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("name", Glib::ustring)
                 _WRAP_PROPERTY("owner", void*)
                 _WRAP_PROPERTY("bus", Glib::RefPtr<EventBus>)
+#endif
 
             private:
                 static void _on_publish_reply_callback (MaiaCoreEventArgs* inpArgs, gpointer inpData);

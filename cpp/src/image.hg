@@ -59,6 +59,7 @@ namespace Maia
 
             _IGNORE(maia_image_create_image)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("filename", Glib::ustring)
 
             _WRAP_PROPERTY("can-focus", bool)
@@ -90,5 +91,6 @@ namespace Maia
             _WRAP_PROPERTY("right-padding", double)
 
             _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
+#endif
     };
 }

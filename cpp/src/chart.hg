@@ -83,8 +83,8 @@ namespace Maia
             _WRAP_METHOD(bool get_smoothing () const, maia_chart_get_smoothing)
             _WRAP_METHOD(void set_smoothing (bool inSmoothing = true), maia_chart_set_smoothing)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Path> get_path () const, maia_chart_get_path, refreturn)
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Path> get_reverse_path () const, maia_chart_get_reverse_path, refreturn)
+            _WRAP_METHOD(Graphic::PathRefPtr get_path () const, maia_chart_get_path, refreturn)
+            _WRAP_METHOD(Graphic::PathRefPtr get_reverse_path () const, maia_chart_get_reverse_path, refreturn)
             _WRAP_METHOD(void get_first_point (Graphic::Point& outPoint) const, maia_chart_get_first_point)
             _WRAP_METHOD(void get_last_point (Graphic::Point& outPoint) const, maia_chart_get_last_point)
 
@@ -92,6 +92,7 @@ namespace Maia
 
             _WRAP_SIGNAL(void changed (), "changed", no_default_handler)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("title", Glib::ustring)
             _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
@@ -100,9 +101,10 @@ namespace Maia
             _WRAP_PROPERTY("range", Graphic::Range)
             _WRAP_PROPERTY("direction", Chart::Direction)
             _WRAP_PROPERTY("smoothing", bool)
-            _WRAP_PROPERTY("path", Glib::RefPtr<Graphic::Path>)
-            _WRAP_PROPERTY("reverse-path", Glib::RefPtr<Graphic::Path>)
+            _WRAP_PROPERTY("path", Graphic::PathRefPtr)
+            _WRAP_PROPERTY("reverse-path", Graphic::PathRefPtr)
             _WRAP_PROPERTY("first-point", Graphic::Point)
             _WRAP_PROPERTY("last-point", Graphic::Point)
+#endif
     };
 }

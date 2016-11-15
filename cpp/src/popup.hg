@@ -50,8 +50,8 @@ namespace Maia
             _WRAP_METHOD(WindowBorder get_shadow_border () const, maia_popup_get_shadow_border)
             _WRAP_METHOD(void set_shadow_border (WindowBorder inBorder), maia_popup_set_shadow_border)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_shadow_color () const, maia_popup_get_shadow_color, refreturn)
-            _WRAP_METHOD(void set_shadow_color (const Glib::RefPtr<Graphic::Color>& inColor), maia_popup_set_shadow_color)
+            _WRAP_METHOD(Graphic::ColorRefPtr get_shadow_color () const, maia_popup_get_shadow_color, refreturn)
+            _WRAP_METHOD(void set_shadow_color (const Graphic::ColorRefPtr& inColor), maia_popup_set_shadow_color)
 
             _WRAP_METHOD(double get_round_corner () const, maia_popup_get_round_corner)
             _WRAP_METHOD(void set_round_corner (double inWidth), maia_popup_set_round_corner)
@@ -80,10 +80,11 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Window> get_bin_window () const, maia_popup_get_bin_window, refreturn)
 
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("shadow-width", double)
             _WRAP_PROPERTY("shadow-border", WindowBorder)
-            _WRAP_PROPERTY("shadow-color", Glib::RefPtr<Graphic::Color>)
+            _WRAP_PROPERTY("shadow-color", Graphic::ColorRefPtr)
             _WRAP_PROPERTY("round-corner", double)
             _WRAP_PROPERTY("close-button", bool)
             _WRAP_PROPERTY("placement", Popup::Placement)
@@ -93,6 +94,7 @@ namespace Maia
             _WRAP_PROPERTY("window-type", Window::Type)
             _WRAP_PROPERTY("position-policy", WindowPositionPolicy)
             _WRAP_PROPERTY("bin-window", Glib::RefPtr<Window>)
+#endif
 
         private:
             _WRAP_PROPERTY("x", double)

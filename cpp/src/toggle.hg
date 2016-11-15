@@ -40,8 +40,10 @@ namespace Maia
             _WRAP_METHOD(bool get_active () const, maia_toggle_toggled_event_args_get_active)
             _WRAP_METHOD(Glib::ustring get_button_name () const, maia_toggle_toggled_event_args_get_button_name)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("active", bool)
             _WRAP_PROPERTY("button-name", Glib::ustring)
+#endif
     };
 
     class ToggleGroup;
@@ -73,8 +75,8 @@ namespace Maia
             _WRAP_METHOD(double get_border () const, maia_toggle_get_border)
             _WRAP_METHOD(void set_border (double inBorder), maia_toggle_set_border)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Color> get_shade_color () const, maia_toggle_get_shade_color, refreturn)
-            _WRAP_METHOD(void set_shade_color (const Glib::RefPtr<Graphic::Color>& inColor), maia_toggle_set_shade_color)
+            _WRAP_METHOD(Graphic::ColorRefPtr get_shade_color () const, maia_toggle_get_shade_color, refreturn)
+            _WRAP_METHOD(void set_shade_color (const Graphic::ColorRefPtr& inColor), maia_toggle_set_shade_color)
 
             _WRAP_METHOD(bool get_sensitive () const, maia_toggle_get_sensitive)
             _WRAP_METHOD(void set_sensitive (bool inSensitive = true), maia_toggle_set_sensitive)
@@ -96,9 +98,10 @@ namespace Maia
 
             _WRAP_METHOD(Glib::RefPtr<Core::Event> toggled () const, maia_toggle_get_toggled, refreturn)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("sensitive", bool)
             _WRAP_PROPERTY("border", double)
-            _WRAP_PROPERTY("shade-color", Glib::RefPtr<Graphic::Color>)
+            _WRAP_PROPERTY("shade-color", Graphic::ColorRefPtr)
 
             _WRAP_PROPERTY("toggled", Glib::RefPtr<Core::Event>)
 
@@ -133,6 +136,7 @@ namespace Maia
             _WRAP_PROPERTY("right-padding", double)
 
             _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
+#endif
 
         private:
             _WRAP_PROPERTY("main-data", Glib::ustring)

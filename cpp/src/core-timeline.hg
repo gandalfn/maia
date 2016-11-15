@@ -32,6 +32,8 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Core)
 
+        typedef Glib::RefPtr<class TimelineNewFrameNotification> TimelineNewFrameNotificationRefPtr;
+
         class TimelineNewFrameNotification : public Core::Notification
         {
             _CLASS_GOBJECT(TimelineNewFrameNotification, MaiaCoreTimelineNewFrameNotification, MAIA_CORE_TIMELINE_NEW_FRAME_NOTIFICATION, Core::Notification, MaiaCoreNotification)
@@ -45,7 +47,9 @@ namespace Maia
 
                 _WRAP_METHOD(void post (guint inNumFrame), maia_core_timeline_new_frame_notification_post)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("num-frame", guint)
+#endif
         };
 
         class Timeline : public Object
@@ -92,11 +96,12 @@ namespace Maia
                 _WRAP_METHOD(void skip(gint n_frames), maia_core_timeline_skip)
                 _WRAP_METHOD(void advance(guint frame_num), maia_core_timeline_advance)
 
-                _WRAP_METHOD(Glib::RefPtr<Core::Notification> completed () const, maia_core_timeline_get_completed, refreturn)
-                _WRAP_METHOD(Glib::RefPtr<TimelineNewFrameNotification> new_frame () const, maia_core_timeline_get_new_frame, refreturn)
-                _WRAP_METHOD(Glib::RefPtr<Core::Notification> paused () const, maia_core_timeline_get_paused, refreturn)
-                _WRAP_METHOD(Glib::RefPtr<Core::Notification> started () const, maia_core_timeline_get_started, refreturn)
+                _WRAP_METHOD(NotificationRefPtr completed () const, maia_core_timeline_get_completed, refreturn)
+                _WRAP_METHOD(TimelineNewFrameNotificationRefPtr new_frame () const, maia_core_timeline_get_new_frame, refreturn)
+                _WRAP_METHOD(NotificationRefPtr paused () const, maia_core_timeline_get_paused, refreturn)
+                _WRAP_METHOD(NotificationRefPtr started () const, maia_core_timeline_get_started, refreturn)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("direction", Timeline::Direction)
                 _WRAP_PROPERTY("duration", guint)
                 _WRAP_PROPERTY("speed", guint)
@@ -105,12 +110,13 @@ namespace Maia
                 _WRAP_PROPERTY("progress", gdouble)
                 _WRAP_PROPERTY("current-frame", guint)
                 _WRAP_PROPERTY("is-playing", bool)
+#endif
 
             private:
-                _WRAP_PROPERTY("completed", Glib::RefPtr<Core::Notification>)
-                _WRAP_PROPERTY("new-frame", Glib::RefPtr<TimelineNewFrameNotification>)
-                _WRAP_PROPERTY("paused", Glib::RefPtr<Core::Notification>)
-                _WRAP_PROPERTY("started", Glib::RefPtr<Core::Notification>)
+                _WRAP_PROPERTY("completed", NotificationRefPtr)
+                _WRAP_PROPERTY("new-frame", TimelineNewFrameNotificationRefPtr)
+                _WRAP_PROPERTY("paused", NotificationRefPtr)
+                _WRAP_PROPERTY("started", NotificationRefPtr)
         };
     }
 }

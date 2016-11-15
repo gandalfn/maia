@@ -39,7 +39,9 @@ namespace Maia
         public:
             _WRAP_METHOD(Glib::ustring get_active () const, maia_toggle_group_changed_event_args_get_active)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("active", Glib::ustring)
+#endif
     };
 
 
@@ -79,6 +81,7 @@ namespace Maia
 
             std::vector<Glib::RefPtr<Toggle>> get_toggles () const;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("name", Glib::ustring)
             _WRAP_PROPERTY("active", Glib::ustring)
             _WRAP_PROPERTY("hideall-if-noactive", bool)
@@ -90,5 +93,6 @@ namespace Maia
             _WRAP_PROPERTY("manifest-path", Glib::ustring)
             _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
             _WRAP_PROPERTY("changed", Glib::RefPtr<Core::Event>)
+#endif
     };
 }

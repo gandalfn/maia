@@ -81,6 +81,7 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<StatePatterns> get_step_stroke_pattern () const, maia_scale_bar_get_step_stroke_pattern)
             _WRAP_METHOD(void set_step_stroke_pattern (const Glib::RefPtr<StatePatterns>& inPattern), maia_scale_bar_set_step_stroke_pattern)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("adjustment", Glib::RefPtr<Adjustment>)
             _WRAP_PROPERTY("font-description", Glib::ustring)
             _WRAP_PROPERTY("placement", Placement)
@@ -122,5 +123,6 @@ namespace Maia
             _WRAP_PROPERTY("right-padding", double)
 
             _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
+#endif
     };
 }

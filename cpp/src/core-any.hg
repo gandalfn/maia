@@ -28,6 +28,8 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Core)
 
+        typedef Glib::RefPtr<class Any> AnyRefPtr;
+
         class Any : public Glib::Object
         {
             _CLASS_GOBJECT(Any, MaiaCoreAny, MAIA_CORE_ANY, Glib::Object, GObject)

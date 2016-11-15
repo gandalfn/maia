@@ -59,6 +59,7 @@ namespace Maia
             _WRAP_METHOD(void prev () const, maia_focus_group_prev)
             _WRAP_METHOD(void next () const, maia_focus_group_next)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("name", Glib::ustring)
             _WRAP_PROPERTY("current", Glib::RefPtr<ItemFocusable>)
 
@@ -67,5 +68,6 @@ namespace Maia
             _WRAP_PROPERTY("characters", Glib::ustring)
             _WRAP_PROPERTY("manifest-path", Glib::ustring)
             _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
+#endif
     };
 }

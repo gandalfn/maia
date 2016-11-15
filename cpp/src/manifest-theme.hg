@@ -59,12 +59,14 @@ namespace Maia
                 _WRAP_METHOD(Glib::ustring get_name () const, maia_manifest_theme_get_name)
                 _WRAP_METHOD(void apply (const Glib::RefPtr<Element>& inElement) const, maia_manifest_theme_apply, errthrow)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("name", Glib::ustring)
                 _WRAP_PROPERTY("tag", Glib::ustring)
                 _WRAP_PROPERTY("style", Glib::ustring)
                 _WRAP_PROPERTY("characters", Glib::ustring)
                 _WRAP_PROPERTY("manifest-path", Glib::ustring)
                 _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Theme>)
+#endif
         };
     }
 }

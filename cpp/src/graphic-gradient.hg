@@ -31,10 +31,14 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
+        typedef Glib::RefPtr<class Gradient> GradientRefPtr;
+
         class Gradient : public Pattern
         {
             _CLASS_GOBJECT(Gradient, MaiaGraphicGradient, MAIA_GRAPHIC_GRADIENT, Pattern, MaiaGraphicPattern)
         };
+
+        typedef Glib::RefPtr<class GradientColorStop> GradientColorStopRefPtr;
 
         class GradientColorStop : public Core::Object
         {
@@ -44,18 +48,18 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                static Glib::RefPtr<GradientColorStop> create (double inOffset, const Glib::RefPtr<Color>& inColor)
+                static GradientColorStopRefPtr create (double inOffset, const Glib::RefPtr<Color>& inColor)
                 {
                     MaiaGraphicGradientColorStop* pColorStop = maia_graphic_gradient_color_stop_new (inOffset, const_cast<MaiaGraphicColor*> (inColor->gobj ()));
-                    return Glib::RefPtr<GradientColorStop> (new GradientColorStop (pColorStop));
+                    return GradientColorStopRefPtr (new GradientColorStop (pColorStop));
                 }
 
                 _IGNORE(maia_graphic_gradient_color_stop_new)
 
                 _WRAP_METHOD(double get_offset () const, maia_graphic_gradient_color_stop_get_offset)
                 _WRAP_METHOD(void set_offset (double inOffset), maia_graphic_gradient_color_stop_set_offset)
-                _WRAP_METHOD(Glib::RefPtr<Color> get_color () const, maia_graphic_gradient_color_stop_get_color, refreturn)
-                _WRAP_METHOD(void set_color (const Glib::RefPtr<Color>& inColor), maia_graphic_gradient_color_stop_set_color)
+                _WRAP_METHOD(ColorRefPtr get_color () const, maia_graphic_gradient_color_stop_get_color, refreturn)
+                _WRAP_METHOD(void set_color (const ColorRefPtr& inColor), maia_graphic_gradient_color_stop_set_color)
         };
 
     }

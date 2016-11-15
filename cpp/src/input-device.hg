@@ -41,8 +41,10 @@ namespace Maia
             _WRAP_METHOD(bool get_master () const, maia_input_device_get_master)
             _WRAP_METHOD(void set_master (bool inMaster = true), maia_input_device_set_master)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY ("name", Glib::ustring)
             _WRAP_PROPERTY ("device-type", InputDevice::Type)
             _WRAP_PROPERTY ("master", bool)
+#endif
     };
 }

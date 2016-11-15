@@ -45,6 +45,8 @@ namespace Maia
             _WRAP_METHOD(void get_visible_area(Graphic::Rectangle& outVisibleArea), maia_viewport_get_visible_area)
             _WRAP_METHOD(void set_visible_area(const Graphic::Rectangle& inVisibleArea), maia_viewport_set_visible_area)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("visible-area", Graphic::Rectangle)
+#endif
     };
 }

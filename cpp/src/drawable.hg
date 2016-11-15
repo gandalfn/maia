@@ -31,6 +31,8 @@ namespace Maia
 {
     class Drawable;
 
+    typedef Glib::RefPtr<class DrawableDamageNotification> DrawableDamageNotificationRefPtr;
+
     class DrawableDamageNotification : public Core::Notification
     {
         _CLASS_GOBJECT(DrawableDamageNotification, MaiaDrawableDamageNotification, MAIA_DRAWABLE_DAMAGE_NOTIFICATION, Core::Notification, MaiaCoreNotification)
@@ -40,9 +42,9 @@ namespace Maia
 
         public:
             _WRAP_METHOD(Glib::RefPtr<Drawable> get_drawable () const, maia_drawable_damage_notification_get_drawable, refreturn)
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Region> get_area () const, maia_drawable_damage_notification_get_area, refreturn)
+            _WRAP_METHOD(Graphic::RegionRefPtr get_area () const, maia_drawable_damage_notification_get_area, refreturn)
 
-            _WRAP_METHOD(void post (const Glib::RefPtr<Graphic::Region>& inArea), maia_drawable_damage_notification_post)
+            _WRAP_METHOD(void post (const Graphic::RegionRefPtr& inArea), maia_drawable_damage_notification_post)
             void post ()
             {
                 maia_drawable_damage_notification_post (gobj (), nullptr);
@@ -50,8 +52,10 @@ namespace Maia
 
         private:
             _WRAP_PROPERTY("drawable", Glib::RefPtr<Drawable>)
-            _WRAP_PROPERTY("area", Glib::RefPtr<Graphic::Region>)
+            _WRAP_PROPERTY("area", Graphic::RegionRefPtr)
     };
+
+    typedef Glib::RefPtr<class DrawableRepairNotification> DrawableRepairNotificationRefPtr;
 
     class DrawableRepairNotification : public Core::Notification
     {
@@ -62,9 +66,9 @@ namespace Maia
 
         public:
             _WRAP_METHOD(Glib::RefPtr<Drawable> get_drawable () const, maia_drawable_repair_notification_get_drawable, refreturn)
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Region> get_area () const, maia_drawable_repair_notification_get_area, refreturn)
+            _WRAP_METHOD(Graphic::RegionRefPtr get_area () const, maia_drawable_repair_notification_get_area, refreturn)
 
-            _WRAP_METHOD(void post (const Glib::RefPtr<Graphic::Region>& inArea), maia_drawable_repair_notification_post)
+            _WRAP_METHOD(void post (const Graphic::RegionRefPtr& inArea), maia_drawable_repair_notification_post)
             void post ()
             {
                 maia_drawable_repair_notification_post (gobj (), nullptr);
@@ -72,7 +76,7 @@ namespace Maia
 
         private:
             _WRAP_PROPERTY("drawable", Glib::RefPtr<Drawable>)
-            _WRAP_PROPERTY("area", Glib::RefPtr<Graphic::Region>)
+            _WRAP_PROPERTY("area", Graphic::RegionRefPtr)
     };
 
     class Drawable : public Glib::Interface
@@ -82,62 +86,64 @@ namespace Maia
         _IGNORE(maia_drawable_on_damage_area)
 
         protected:
-#m4 _CONVERSION(`MaiaGraphicRegion*', `const Glib::RefPtr<Graphic::Region>&', `Glib::wrap($3, true)')
-#m4 _CONVERSION(`MaiaGraphicTransform*', `const Glib::RefPtr<Graphic::Transform>&', `Glib::wrap($3, true)')
-#m4 _CONVERSION(`MaiaGraphicContext*', `const Glib::RefPtr<Graphic::Context>&', `Glib::wrap($3, true)')
-            _WRAP_VFUNC(Glib::RefPtr<Graphic::Region> get_geometry (), get_geometry, refreturn_ctype)
-            _WRAP_VFUNC(void set_geometry (const Glib::RefPtr<Graphic::Region>& inGeometry), set_geometry)
-            _WRAP_VFUNC(Glib::RefPtr<Graphic::Region> get_damaged (), get_damaged, refreturn_ctype)
-            _WRAP_VFUNC(void set_damaged (const Glib::RefPtr<Graphic::Region>& inArea), set_damaged)
-            _WRAP_VFUNC(Glib::RefPtr<Graphic::Transform> get_transform (), get_transform, refreturn_ctype)
-            _WRAP_VFUNC(void set_transform (const Glib::RefPtr<Graphic::Transform>& inTransform), set_transform)
-            _WRAP_VFUNC(void draw (const Glib::RefPtr<Graphic::Context>& inContext, const Glib::RefPtr<Graphic::Region>& inArea), draw, errthrow)
-#m4 _CONVERSION(`MaiaGraphicRegion*', `const Glib::RefPtr<Graphic::Region>&', `Glib::wrap($3)')
-#m4 _CONVERSION(`MaiaGraphicTransform*', `const Glib::RefPtr<Graphic::Transform>&', `Glib::wrap($3)')
-#m4 _CONVERSION(`MaiaGraphicContext*', `const Glib::RefPtr<Graphic::Context>&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaGraphicRegion*', `const Graphic::RegionRefPtr&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaGraphicTransform*', `const Graphic::TransformRefPtr&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaGraphicContext*', `const Graphic::ContextRefPtr&', `Glib::wrap($3, true)')
+            _WRAP_VFUNC(Graphic::RegionRefPtr get_geometry (), get_geometry, refreturn_ctype)
+            _WRAP_VFUNC(void set_geometry (const Graphic::RegionRefPtr& inGeometry), set_geometry)
+            _WRAP_VFUNC(Graphic::RegionRefPtr get_damaged (), get_damaged, refreturn_ctype)
+            _WRAP_VFUNC(void set_damaged (const Graphic::RegionRefPtr& inArea), set_damaged)
+            _WRAP_VFUNC(Graphic::TransformRefPtr get_transform (), get_transform, refreturn_ctype)
+            _WRAP_VFUNC(void set_transform (const Graphic::TransformRefPtr& inTransform), set_transform)
+            _WRAP_VFUNC(void draw (const Graphic::ContextRefPtr& inContext, const Graphic::RegionRefPtr& inArea), draw, errthrow)
+#m4 _CONVERSION(`MaiaGraphicRegion*', `const Graphic::RegionRefPtr&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaGraphicTransform*', `const Graphic::TransformRefPtr&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaGraphicContext*', `const Graphic::ContextRefPtr&', `Glib::wrap($3)')
 
-            _WRAP_METHOD(void set_geometry (const Glib::RefPtr<Graphic::Region>& inGeometry), maia_drawable_set_geometry)
-            _WRAP_METHOD(void set_damaged (const Glib::RefPtr<Graphic::Region>& inArea), maia_drawable_set_damaged)
+            _WRAP_METHOD(void set_geometry (const Graphic::RegionRefPtr& inGeometry), maia_drawable_set_geometry)
+            _WRAP_METHOD(void set_damaged (const Graphic::RegionRefPtr& inArea), maia_drawable_set_damaged)
 
         public:
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Region> get_geometry () const, maia_drawable_get_geometry, refreturn)
-            _WRAP_METHOD(void get_geometry (const Glib::RefPtr<Graphic::Region>& inGeometry), maia_drawable_set_geometry)
+            _WRAP_METHOD(Graphic::RegionRefPtr get_geometry () const, maia_drawable_get_geometry, refreturn)
+            _WRAP_METHOD(void get_geometry (const Graphic::RegionRefPtr& inGeometry), maia_drawable_set_geometry)
 
             inline void unset_geometry ()
             {
                 maia_drawable_set_geometry (gobj(), 0);
             }
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Region> get_area () const, maia_drawable_get_area)
+            _WRAP_METHOD(Graphic::RegionRefPtr get_area () const, maia_drawable_get_area)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Region> get_damaged () const, maia_drawable_get_damaged, refreturn)
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Transform> get_transform () const, maia_drawable_get_transform, refreturn)
-            _WRAP_METHOD(void set_transform (const Glib::RefPtr<Graphic::Transform>& inTransform), maia_drawable_set_transform)
+            _WRAP_METHOD(Graphic::RegionRefPtr get_damaged () const, maia_drawable_get_damaged, refreturn)
+            _WRAP_METHOD(Graphic::TransformRefPtr get_transform () const, maia_drawable_get_transform, refreturn)
+            _WRAP_METHOD(void set_transform (const Graphic::TransformRefPtr& inTransform), maia_drawable_set_transform)
 
-            _WRAP_METHOD(void draw (const Glib::RefPtr<Graphic::Context>& inContext, const Glib::RefPtr<Graphic::Region>& inArea), maia_drawable_draw, errthrow)
+            _WRAP_METHOD(void draw (const Graphic::ContextRefPtr& inContext, const Graphic::RegionRefPtr& inArea), maia_drawable_draw, errthrow)
 
-            _WRAP_METHOD(Glib::RefPtr<DrawableDamageNotification> damage () const, maia_drawable_get_damage, refreturn)
-            _WRAP_METHOD(Glib::RefPtr<DrawableRepairNotification> repair () const, maia_drawable_get_repair, refreturn)
+            _WRAP_METHOD(DrawableDamageNotificationRefPtr damage () const, maia_drawable_get_damage, refreturn)
+            _WRAP_METHOD(DrawableRepairNotificationRefPtr repair () const, maia_drawable_get_repair, refreturn)
 
             void damage_area ()
             {
                 maia_drawable_damage_area (gobj (), 0);
             }
-            _WRAP_METHOD(void damage_area (const Glib::RefPtr<Graphic::Region>& inArea), maia_drawable_damage_area)
+            _WRAP_METHOD(void damage_area (const Graphic::RegionRefPtr& inArea), maia_drawable_damage_area)
 
             void repair_area ()
             {
                 maia_drawable_repair_area (gobj (), 0);
             }
-            _WRAP_METHOD(void repair_area (const Glib::RefPtr<Graphic::Region>& inArea), maia_drawable_repair_area)
+            _WRAP_METHOD(void repair_area (const Graphic::RegionRefPtr& inArea), maia_drawable_repair_area)
 
             _WRAP_METHOD(void convert_to_child_item_space (const Glib::RefPtr<Drawable>& inChild, const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_drawable_convert_to_child_item_space)
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Region> area_to_child_item_space (const Glib::RefPtr<Drawable>& inChild, const Glib::RefPtr<Graphic::Region>& inArea), maia_drawable_area_to_child_item_space, refreturn)
+            _WRAP_METHOD(Graphic::RegionRefPtr area_to_child_item_space (const Glib::RefPtr<Drawable>& inChild, const Graphic::RegionRefPtr& inArea), maia_drawable_area_to_child_item_space, refreturn)
             _WRAP_METHOD(void convert_to_parent_item_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_drawable_convert_to_parent_item_space)
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Region> area_to_parent_item_space (const Glib::RefPtr<Graphic::Region>& inArea), maia_drawable_area_to_parent_item_space, refreturn)
+            _WRAP_METHOD(Graphic::RegionRefPtr area_to_parent_item_space (const Graphic::RegionRefPtr& inArea), maia_drawable_area_to_parent_item_space, refreturn)
 
-            _WRAP_PROPERTY("geometry", Glib::RefPtr<Graphic::Region>)
-            _WRAP_PROPERTY("damaged", Glib::RefPtr<Graphic::Region>)
-            _WRAP_PROPERTY("transform", Glib::RefPtr<Graphic::Transform>)
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+            _WRAP_PROPERTY("geometry", Graphic::RegionRefPtr)
+            _WRAP_PROPERTY("damaged", Graphic::RegionRefPtr)
+            _WRAP_PROPERTY("transform", Graphic::TransformRefPtr)
+#endif
     };
 }

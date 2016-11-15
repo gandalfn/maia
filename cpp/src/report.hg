@@ -59,8 +59,10 @@ namespace Maia
 
             void save_finish (const Glib::RefPtr<Gio::AsyncResult>& inResult);
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("filename", Glib::ustring)
             _WRAP_PROPERTY("resolution", double)
             _WRAP_PROPERTY("documents", Core::Array<Document>)
+#endif
     };
 }

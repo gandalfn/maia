@@ -69,12 +69,13 @@ namespace Maia
             _WRAP_METHOD(double get_stroke_width () const, maia_chart_point_get_stroke_width)
             _WRAP_METHOD(void set_stroke_width (double inWidth), maia_chart_point_set_stroke_width)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_stroke_pattern () const, maia_chart_point_get_stroke_pattern, refreturn)
-            _WRAP_METHOD(void set_stroke_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_chart_point_set_stroke_pattern)
+            _WRAP_METHOD(Graphic::PatternRefPtr get_stroke_pattern () const, maia_chart_point_get_stroke_pattern, refreturn)
+            _WRAP_METHOD(void set_stroke_pattern (const Graphic::PatternRefPtr& inPattern), maia_chart_point_set_stroke_pattern)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_fill_pattern () const, maia_chart_point_get_fill_pattern, refreturn)
-            _WRAP_METHOD(void set_fill_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_chart_point_set_fill_pattern)
+            _WRAP_METHOD(Graphic::PatternRefPtr get_fill_pattern () const, maia_chart_point_get_fill_pattern, refreturn)
+            _WRAP_METHOD(void set_fill_pattern (const Graphic::PatternRefPtr& inPattern), maia_chart_point_set_fill_pattern)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("tag", Glib::ustring)
             _WRAP_PROPERTY("style", Glib::ustring)
             _WRAP_PROPERTY("characters", Glib::ustring)
@@ -88,7 +89,8 @@ namespace Maia
             _WRAP_PROPERTY("size", Graphic::Size)
             _WRAP_PROPERTY("line-type", Graphic::LineType)
             _WRAP_PROPERTY("stroke-width", double)
-            _WRAP_PROPERTY("stroke-pattern", Glib::RefPtr<Graphic::Pattern>)
-            _WRAP_PROPERTY("fill-pattern", Glib::RefPtr<Graphic::Pattern>)
+            _WRAP_PROPERTY("stroke-pattern", Graphic::PatternRefPtr)
+            _WRAP_PROPERTY("fill-pattern", Graphic::PatternRefPtr)
+#endif
     };
 }

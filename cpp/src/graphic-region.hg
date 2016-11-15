@@ -29,6 +29,8 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
+        typedef Glib::RefPtr<class Region> RegionRefPtr;
+
         class RegionIterator
         {
             _CLASS_BOXEDTYPE(RegionIterator, MaiaGraphicRegionIterator, NONE, (MaiaGraphicRegionIterator*)maia_graphic_region_iterator_ref, maia_graphic_region_iterator_unref)
@@ -77,16 +79,16 @@ namespace Maia
 
                 typedef RegionIterator iterator;
 
-                static Glib::RefPtr<Region> create (double inX, double inY, double inWidth, double inHeight)
+                static RegionRefPtr create (double inX, double inY, double inWidth, double inHeight)
                 {
                     MaiaGraphicRectangle ext;
                     maia_graphic_rectangle_init (&ext, inX, inY, inWidth, inHeight);
                     MaiaGraphicRegion* pRegion = maia_graphic_region_new (&ext);
 
-                    return Glib::RefPtr<Region> (new Region (pRegion));
+                    return RegionRefPtr (new Region (pRegion));
                 }
 
-                _WRAP_METHOD(Glib::RefPtr<Region> copy (), maia_graphic_region_copy, refreturn)
+                _WRAP_METHOD(RegionRefPtr copy (), maia_graphic_region_copy, refreturn)
 
                 _WRAP_METHOD(void get_extents(Rectangle& outRect), maia_graphic_region_get_extents)
                 _WRAP_METHOD(void set_extents(Rectangle inRect), maia_graphic_region_set_extents)
@@ -106,56 +108,57 @@ namespace Maia
                 _WRAP_METHOD(Region::iterator end (), maia_graphic_region_iterator_end)
 
                 _IGNORE(maia_graphic_region_equal)
-                inline bool operator== (const Glib::RefPtr<Region>& rhs)
+                inline bool operator== (const RegionRefPtr& rhs)
                 {
                     return maia_graphic_region_equal (gobj (), const_cast<MaiaGraphicRegion*> (rhs->gobj ()));
                 }
 
-                inline bool operator!= (const Glib::RefPtr<Region>& rhs)
+                inline bool operator!= (const RegionRefPtr& rhs)
                 {
                     return !maia_graphic_region_equal (gobj (), const_cast<MaiaGraphicRegion*> (rhs->gobj ()));
                 }
 
                 _WRAP_METHOD(void translate (const Point& inOffset), maia_graphic_region_translate)
                 _WRAP_METHOD(void resize (const Size& inSize), maia_graphic_region_resize)
-                _WRAP_METHOD(void transform (const Glib::RefPtr<Transform>& inTransform), maia_graphic_region_transform)
+                _WRAP_METHOD(void transform (const TransformRefPtr& inTransform), maia_graphic_region_transform)
 
-                _WRAP_METHOD(void union_ (const Glib::RefPtr<Region>& inOther), maia_graphic_region_union_)
+                _WRAP_METHOD(void union_ (const RegionRefPtr& inOther), maia_graphic_region_union_)
                 _WRAP_METHOD(void union_with_rect (const Rectangle& inRectangle), maia_graphic_region_union_with_rect)
-                _WRAP_METHOD(void intersect (const Glib::RefPtr<Region>& inOther), maia_graphic_region_intersect)
-                _WRAP_METHOD(void subtract (const Glib::RefPtr<Region>& inOther), maia_graphic_region_subtract)
-                _WRAP_METHOD(void xor_ (const Glib::RefPtr<Region>& inOther), maia_graphic_region_xor_)
+                _WRAP_METHOD(void intersect (const RegionRefPtr& inOther), maia_graphic_region_intersect)
+                _WRAP_METHOD(void subtract (const RegionRefPtr& inOther), maia_graphic_region_subtract)
+                _WRAP_METHOD(void xor_ (const RegionRefPtr& inOther), maia_graphic_region_xor_)
 
                 _WRAP_METHOD(bool contains (const Point& inPoint), maia_graphic_region_contains)
                 _WRAP_METHOD(Region::Overlap contains_rectangle (const Rectangle& inRectangle), maia_graphic_region_contains_rectangle)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY ("extents", Rectangle)
                 _WRAP_PROPERTY ("length", int)
-
+#endif
             protected:
                 _CTOR_DEFAULT()
 
-#m4 _CONVERSION(`MaiaGraphicRegion*', `const Glib::RefPtr<Region>&', `Glib::wrap($3, true)')
-#m4 _CONVERSION(`MaiaGraphicTransform*', `const Glib::RefPtr<Transform>&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaGraphicRegion*', `const RegionRefPtr&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaGraphicTransform*', `const TransformRefPtr&', `Glib::wrap($3, true)')
                 _WRAP_VFUNC(void get_extents(Rectangle& outRect), get_extents)
                 _WRAP_VFUNC(void set_extents(Rectangle inRect), set_extents)
                 _WRAP_VFUNC(int get_length (), get_length)
                 _WRAP_VFUNC(bool is_empty (), is_empty)
                 _WRAP_VFUNC(void translate (const Point& inOffset), translate)
-                _WRAP_VFUNC(void transform (const Glib::RefPtr<Transform>& inTransform), transform)
+                _WRAP_VFUNC(void transform (const TransformRefPtr& inTransform), transform)
                 _WRAP_VFUNC(bool contains (const Point& inPoint), contains)
                 _WRAP_VFUNC(void get (int inIndex, Rectangle& outRectangle), get)
-                _WRAP_VFUNC(Glib::RefPtr<Region> copy (), copy, refreturn_ctype)
-                _WRAP_VFUNC(bool equal (const Glib::RefPtr<Region>& inOther), equal)
-                _WRAP_VFUNC(void union_ (const Glib::RefPtr<Region>& inOther), union_)
+                _WRAP_VFUNC(RegionRefPtr copy (), copy, refreturn_ctype)
+                _WRAP_VFUNC(bool equal (const RegionRefPtr& inOther), equal)
+                _WRAP_VFUNC(void union_ (const RegionRefPtr& inOther), union_)
                 _WRAP_VFUNC(void union_with_rect (const Rectangle& inRectangle), union_with_rect)
-                _WRAP_VFUNC(void intersect (const Glib::RefPtr<Region>& inOther), intersect)
-                _WRAP_VFUNC(void subtract (const Glib::RefPtr<Region>& inOther), subtract)
-                _WRAP_VFUNC(void xor_ (const Glib::RefPtr<Region>& inOther), xor_)
+                _WRAP_VFUNC(void intersect (const RegionRefPtr& inOther), intersect)
+                _WRAP_VFUNC(void subtract (const RegionRefPtr& inOther), subtract)
+                _WRAP_VFUNC(void xor_ (const RegionRefPtr& inOther), xor_)
                 _WRAP_VFUNC(Region::Overlap contains_rectangle (const Rectangle& inRectangle), contains_rectangle)
                 _WRAP_VFUNC(void resize (const Size& inSize), resize)
-#m4 _CONVERSION(`MaiaGraphicTransform*', `const Glib::RefPtr<Transform>&', `Glib::wrap($3)')
-#m4 _CONVERSION(`MaiaGraphicRegion*', `const Glib::RefPtr<Graphic::Region>&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaGraphicTransform*', `const TransformRefPtr&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaGraphicRegion*', `const RegionRefPtr&', `Glib::wrap($3)')
         };
 
     }

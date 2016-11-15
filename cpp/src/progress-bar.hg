@@ -57,6 +57,7 @@ namespace Maia
             _WRAP_METHOD(Orientation get_orientation () const, maia_progress_bar_get_orientation)
             _WRAP_METHOD(void set_orientation (Orientation inOrientation), maia_progress_bar_set_orientation)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("adjustment", Glib::RefPtr<Adjustment>)
             _WRAP_PROPERTY("slider-area", Graphic::Rectangle)
             _WRAP_PROPERTY("round-border", double)
@@ -86,5 +87,6 @@ namespace Maia
             _WRAP_PROPERTY("right-padding", double)
 
             _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
+#endif
     };
 }

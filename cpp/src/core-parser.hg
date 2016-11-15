@@ -57,12 +57,14 @@ namespace Maia
                 _WRAP_METHOD(Parser::iterator begin (), maia_core_parser_iterator)
                 _WRAP_METHOD(Parser::iterator end (), maia_core_parser_iterator_end)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY ("element", Glib::ustring)
                 _WRAP_PROPERTY ("characters", Glib::ustring)
                 _WRAP_PROPERTY ("attribute", Glib::ustring)
                 _WRAP_PROPERTY ("val", Glib::ustring)
                 _WRAP_PROPERTY ("line", int)
                 _WRAP_PROPERTY ("column", int)
+#endif
 
             protected:
                 _WRAP_METHOD(void next_char (), maia_core_parser_next_char)

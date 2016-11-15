@@ -65,11 +65,13 @@ namespace Maia
 
                 _WRAP_METHOD(Glib::RefPtr<Message> get (const Glib::ustring& inId) const, maia_protocol_buffer_get, refreturn)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("message", Glib::ustring)
                 _WRAP_PROPERTY("attribute-name", Glib::ustring)
                 _WRAP_PROPERTY("attribute-rule", Glib::ustring)
                 _WRAP_PROPERTY("attribute-type", Glib::ustring)
                 _WRAP_PROPERTY("attribute-options", Glib::ustring)
+#endif
         };
     }
 }

@@ -51,9 +51,10 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_second_chart () const, maia_chart_intersect_get_second_chart)
             _WRAP_METHOD(void set_second_chart (const Glib::ustring& inChart), maia_chart_intersect_set_second_chart)
 
-            _WRAP_METHOD(Glib::RefPtr<Graphic::Pattern> get_fill_pattern () const, maia_chart_intersect_get_fill_pattern, refreturn)
-            _WRAP_METHOD(void set_fill_pattern (const Glib::RefPtr<Graphic::Pattern>& inPattern), maia_chart_intersect_set_fill_pattern)
+            _WRAP_METHOD(Graphic::PatternRefPtr get_fill_pattern () const, maia_chart_intersect_get_fill_pattern, refreturn)
+            _WRAP_METHOD(void set_fill_pattern (const Graphic::PatternRefPtr& inPattern), maia_chart_intersect_set_fill_pattern)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("tag", Glib::ustring)
             _WRAP_PROPERTY("style", Glib::ustring)
             _WRAP_PROPERTY("characters", Glib::ustring)
@@ -62,6 +63,7 @@ namespace Maia
 
             _WRAP_PROPERTY("first-chart", Glib::ustring)
             _WRAP_PROPERTY("second-chart", Glib::ustring)
-            _WRAP_PROPERTY("fill-pattern", Glib::RefPtr<Graphic::Pattern>)
+            _WRAP_PROPERTY("fill-pattern", Graphic::PatternRefPtr)
+#endif
     };
 }
