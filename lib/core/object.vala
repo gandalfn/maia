@@ -196,7 +196,7 @@ public abstract class Maia.Core.Object : Any
         {
             unowned Object? ret = m_Current;
 
-            if (m_Current != null)
+            if (ret != null)
                 m_Current = m_Current.m_Next;
 
             return ret;
@@ -484,11 +484,10 @@ public abstract class Maia.Core.Object : Any
     }
 
     /**
-     * Returns a Iterator that can be used for simple iteration over
-     * childs object.
+     * Returns an iterator pointing to the first child object of this object.
+
      *
-     * @return a Iterator that can be used for simple iteration over childs
-     *         object
+     * @return Iterator to begining
      */
     public virtual Iterator
     iterator_begin ()

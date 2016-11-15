@@ -97,7 +97,7 @@ public class Maia.Core.Notification : Object
         compare (Core.Object inOther)
             requires (inOther is Observer)
         {
-            return m_Priority - (inOther as Observer).m_Priority;
+            return m_Priority - ((Observer)inOther).m_Priority;
         }
 
         internal bool
@@ -155,7 +155,7 @@ public class Maia.Core.Notification : Object
     remove_observer (RecvFunc inFunc)
     {
         this.@foreach ((child) => {
-            unowned Observer? observer = child as Observer;
+            unowned Observer? observer = (Observer)child;
             if (observer != null && observer.equals (inFunc))
             {
                 observer.parent = null;
@@ -172,7 +172,7 @@ public class Maia.Core.Notification : Object
         ref ();
         {
             this.@foreach ((child) => {
-                unowned Observer? observer = child as Observer;
+                unowned Observer? observer = (Observer)child;
                 if (observer != null)
                 {
                     observer.notify ();
@@ -188,7 +188,7 @@ public class Maia.Core.Notification : Object
     append_observers (Notification inNotification)
     {
         inNotification.@foreach ((child) => {
-            unowned Observer? observer = child as Observer;
+            unowned Observer? observer = (Observer)child;
             if (observer != null && observer.is_clonable)
             {
                 add (observer.clone (this));

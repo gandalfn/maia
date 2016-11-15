@@ -285,7 +285,7 @@ public class Maia.Application : Maia.Core.Object
         new_frame.post (notification.num_frame);
 
         this.@foreach ((child) => {
-            unowned Window window = child as Window;
+            unowned Window window = (Window)child;
             if (window != null)
             {
                 if (window.visible)

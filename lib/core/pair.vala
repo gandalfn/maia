@@ -32,16 +32,16 @@ public class Maia.Core.Pair <F, S>
     // methods
     public Pair (F inFirst, S inSecond)
     {
-        first = inFirst;
-        second = inSecond;
+        _first = inFirst;
+        _second = inSecond;
 
         m_CompareFunc = get_compare_func_for<F> ();
     }
 
     public Pair.empty ()
     {
-        first = null;
-        second = null;
+        _first = null;
+        _second = null;
 
         m_CompareFunc = get_compare_func_for<F> ();
     }
@@ -49,12 +49,12 @@ public class Maia.Core.Pair <F, S>
     public int
     compare (Pair<F, S> inOther)
     {
-        return m_CompareFunc (first, inOther.first);
+        return m_CompareFunc (_first, inOther._first);
     }
 
     internal inline int
     compare_with_first (F inFirst)
     {
-        return m_CompareFunc (first, inFirst);
+        return m_CompareFunc (_first, inFirst);
     }
 }

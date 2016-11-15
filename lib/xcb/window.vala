@@ -260,7 +260,7 @@ internal class Maia.Xcb.Window : Maia.Window
     private void
     on_viewport_parent_visible_area_changed ()
     {
-        unowned Viewport? parent_viewport = m_ParentWindow as Viewport;
+        unowned Viewport? parent_viewport = (Viewport)m_ParentWindow;
         if (parent_viewport != null && m_View != null)
         {
             if (m_View.override_redirect || window_type == Type.POPUP)
@@ -334,7 +334,7 @@ internal class Maia.Xcb.Window : Maia.Window
     {
         if (m_View != null)
         {
-            unowned Maia.Drawable.RepairNotification notification = inNotification as Maia.Drawable.RepairNotification;
+            unowned Maia.Drawable.RepairNotification notification = (Maia.Drawable.RepairNotification)inNotification;
 
             // Add swap damaged
             if (m_View.damaged != null)

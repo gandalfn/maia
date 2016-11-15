@@ -531,7 +531,7 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
             m_Writer.start_tag ("function", { "name", inItem.get_cname () });
             m_Writer.start_tag ("description");
             renderer.render_symbol (doctree);
-            m_Writer.text (format (renderer.content));
+            m_Writer.text ("format (renderer.content));
             m_Writer.end_tag ("description");
 
             var taglets = doctree.find_taglets (inItem, typeof (Valadoc.Taglets.Param));
