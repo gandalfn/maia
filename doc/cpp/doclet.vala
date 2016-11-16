@@ -61,7 +61,7 @@ public class Valadoc.Cpp.DoxygenComment : Valadoc.Content.ContentVisitor
     public override void
     visit_embedded (Valadoc.Content.Embedded em)
     {
-        current_builder.append_printf ("\\image %s", em.url);
+        current_builder.append_printf ("@image %s", em.url);
         if (em.caption != null)
         {
             current_builder.append_printf (" \"%s\"", em.caption);
@@ -74,7 +74,7 @@ public class Valadoc.Cpp.DoxygenComment : Valadoc.Content.ContentVisitor
     public override void
     visit_headline (Valadoc.Content.Headline hl)
     {
-        current_builder.append ("\\par ");
+        current_builder.append ("@par ");
         hl.accept_children (this);
         current_builder.append ("\n");
     }
@@ -95,15 +95,15 @@ public class Valadoc.Cpp.DoxygenComment : Valadoc.Content.ContentVisitor
     public override void
     visit_link (Valadoc.Content.Link link)
     {
-        current_builder.append_printf ("\\htmlonly <a href=\"%s\">", link.url);
+        current_builder.append_printf ("@htmlonly <a href=\"%s\">", link.url);
         link.accept_children (this);
-        current_builder.append ("</a>\\endhtmlonly\n");
+        current_builder.append ("</a>@endhtmlonly\n");
     }
 
     public override void
     visit_symbol_link (Valadoc.Content.SymbolLink sl)
     {
-        current_builder.append_printf ("\\link %s", sl.given_symbol_name);
+        current_builder.append_printf ("@link %s", sl.given_symbol_name);
     }
 
     public override void
@@ -115,7 +115,7 @@ public class Valadoc.Cpp.DoxygenComment : Valadoc.Content.ContentVisitor
     public override void
     visit_list_item (Valadoc.Content.ListItem item)
     {
-        current_builder.append ("\\li ");
+        current_builder.append ("@li ");
         item.accept_children (this);
         current_builder.append ("\n");
     }
@@ -125,7 +125,7 @@ public class Valadoc.Cpp.DoxygenComment : Valadoc.Content.ContentVisitor
     {
         if (!in_brief_comment)
         {
-            current_builder.append ("\\par \n");
+            current_builder.append ("@par \n");
         }
         para.accept_children (this);
 
@@ -144,7 +144,7 @@ public class Valadoc.Cpp.DoxygenComment : Valadoc.Content.ContentVisitor
     public override void
     visit_warning (Valadoc.Content.Warning element)
     {
-        current_builder.append ("\\warning ");
+        current_builder.append ("@warning ");
         element.accept_children (this);
         current_builder.append ("\n");
     }
@@ -152,7 +152,7 @@ public class Valadoc.Cpp.DoxygenComment : Valadoc.Content.ContentVisitor
     public override void
     visit_note (Valadoc.Content.Note element)
     {
-        current_builder.append ("\\note ");
+        current_builder.append ("@note ");
         element.accept_children (this);
         current_builder.append ("\n");
     }
@@ -169,18 +169,18 @@ public class Valadoc.Cpp.DoxygenComment : Valadoc.Content.ContentVisitor
         switch (run.style)
         {
             case Valadoc.Content.Run.Style.BOLD:
-                current_builder.append ("\\b ");
+                current_builder.append ("@b ");
                 break;
 
             case Valadoc.Content.Run.Style.ITALIC:
-                current_builder.append ("\\e ");
+                current_builder.append ("@e ");
                 break;
 
             case Valadoc.Content.Run.Style.UNDERLINED:
                 break;
 
             case Valadoc.Content.Run.Style.MONOSPACED:
-                current_builder.append ("\\c ");
+                current_builder.append ("@c ");
                 break;
         }
         run.accept_children (this);
@@ -189,9 +189,9 @@ public class Valadoc.Cpp.DoxygenComment : Valadoc.Content.ContentVisitor
     public override void
     visit_source_code (Valadoc.Content.SourceCode code)
     {
-        current_builder.append ("\\code");
+        current_builder.append ("@code");
         current_builder.append (code.code);
-        current_builder.append ("\\endcode\n");
+        current_builder.append ("@endcode\n");
     }
 
     public override void
@@ -203,7 +203,7 @@ public class Valadoc.Cpp.DoxygenComment : Valadoc.Content.ContentVisitor
     public override void
     visit_table_row (Valadoc.Content.TableRow row)
     {
-        current_builder.append ("\\li ");
+        current_builder.append ("@li ");
         row.accept_children (this);
         current_builder.append ("\n");
     }
@@ -223,7 +223,7 @@ public class Valadoc.Cpp.DoxygenComment : Valadoc.Content.ContentVisitor
         t.accept_children (this);
         if (t is Valadoc.Taglets.Param)
         {
-            parameters.add ("\\param %s %s\n".printf (((Valadoc.Taglets.Param)t).parameter_name, current_builder.str));
+            parameters.add ("@param %s %s\n".printf (((Valadoc.Taglets.Param)t).parameter_name, current_builder.str));
         }
         else if (t is Valadoc.Taglets.InheritDoc)
         {
@@ -231,21 +231,21 @@ public class Valadoc.Cpp.DoxygenComment : Valadoc.Content.ContentVisitor
         }
         else if (t is Valadoc.Taglets.Return)
         {
-            returns = "\\return %s\n".printf (current_builder.str);
+            returns = "@return %s\n".printf (current_builder.str);
         }
         else if (t is Valadoc.Taglets.Since)
         {
-            versioning.add ("\\since %s\n".printf (((Taglets.Since)t).version));
+            versioning.add ("@since %s\n".printf (((Taglets.Since)t).version));
         }
         else if (t is Valadoc.Taglets.Deprecated)
         {
-            versioning.add ("\\deprecated %s\n".printf (current_builder.str));
+            versioning.add ("@deprecated %s\n".printf (current_builder.str));
         }
         else if (t is Valadoc.Taglets.See)
         {
             var see = (Valadoc.Taglets.See)t;
             var see_also = this.see_also; // vala bug
-            see_also += "\\link %s\n".printf (see.symbol_name);
+            see_also += "@link %s\n".printf (see.symbol_name);
         }
         else if (t is Valadoc.Taglets.Link)
         {
@@ -255,7 +255,7 @@ public class Valadoc.Cpp.DoxygenComment : Valadoc.Content.ContentVisitor
         {
             var taglet = (Taglets.Throws) t;
             var link = taglet.error_domain_name;
-            old_builder.append_printf ("\throws %s %s\n",
+            old_builder.append_printf ("@throws %s %s\n",
                                        link,
                                        current_builder.str);
         }
@@ -294,6 +294,10 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
         ret = ret.replace ("</blockquote>", "“");
         ret = ret.replace ("“\n", "“");
         ret = ret.replace ("“ ", "“");
+        if (ret[ret.length - 1] != '.')
+        {
+            ret += ".";
+        }
         return Valadoc.MarkupWriter.escape (ret.strip ());
     }
 
@@ -442,7 +446,7 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
             {
                 string[] attributes = {};
                 attributes += "name";
-                attributes += current_class + "::" + inItem.get_cname ();
+                attributes += current_class + ":" + inItem.get_cname ();
                 m_Writer.start_tag ("property", attributes);
                 m_Writer.start_tag ("description");
                 renderer.render (doctree);
@@ -531,7 +535,7 @@ public class Valadoc.Cpp.Doclet : Valadoc.Api.Visitor, Valadoc.Doclet
             m_Writer.start_tag ("function", { "name", inItem.get_cname () });
             m_Writer.start_tag ("description");
             renderer.render_symbol (doctree);
-            m_Writer.text ("format (renderer.content));
+            m_Writer.text (format (renderer.content));
             m_Writer.end_tag ("description");
 
             var taglets = doctree.find_taglets (inItem, typeof (Valadoc.Taglets.Param));

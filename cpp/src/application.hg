@@ -100,13 +100,10 @@ namespace Maia
             _WRAP_METHOD(static ApplicationRefPtr get_default (), maia_application_get_default, refreturn)
             _WRAP_METHOD(static void set_default (const ApplicationRefPtr& inApplication), maia_application_set_default)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("refresh-rate", guint)
             _WRAP_PROPERTY("pause", bool)
-#endif
 
-        private:
-            _WRAP_PROPERTY("running-notification", Glib::RefPtr<Core::Timeline>)
-            _WRAP_PROPERTY("new-frame", Core::TimelineNewFrameNotificationRefPtr)
+            _IGNORE_PROPERTY("running-notification")
+            _IGNORE_PROPERTY("new-frame")
     };
 }

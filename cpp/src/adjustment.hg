@@ -27,7 +27,7 @@ namespace Maia
     typedef Glib::RefPtr<class Adjustment> AdjustmentRefPtr;
 
     /**
-     * \includedoc MaiaAdjustment.doc
+     * @includedoc MaiaAdjustment.doc
      */
     class Adjustment : public Glib::Object
     {
@@ -49,25 +49,23 @@ namespace Maia
                 return AdjustmentRefPtr (new Adjustment (pAdjustment));
             }
 
-            _WRAP_METHOD(void set_value(double inValue), maia_adjustment_set_value)
             _WRAP_METHOD(double get_value() const, maia_adjustment_get_value)
-            _WRAP_METHOD(void set_lower(double inLower), maia_adjustment_set_lower)
+            _WRAP_METHOD(void set_value(double inValue), maia_adjustment_set_value)
             _WRAP_METHOD(double get_lower() const, maia_adjustment_get_lower)
-            _WRAP_METHOD(void set_upper(double inUpper), maia_adjustment_set_upper)
+            _WRAP_METHOD(void set_lower(double inLower), maia_adjustment_set_lower)
             _WRAP_METHOD(double get_upper() const, maia_adjustment_get_upper)
-            _WRAP_METHOD(void set_page_size(double inPageSize), maia_adjustment_set_page_size)
+            _WRAP_METHOD(void set_upper(double inUpper), maia_adjustment_set_upper)
             _WRAP_METHOD(double get_page_size() const, maia_adjustment_get_page_size)
-            _WRAP_METHOD(void set_step(double inPageSize), maia_adjustment_set_step)
+            _WRAP_METHOD(void set_page_size(double inPageSize), maia_adjustment_set_page_size)
             _WRAP_METHOD(double get_step() const, maia_adjustment_get_step)
+            _WRAP_METHOD(void set_step(double inPageSize), maia_adjustment_set_step)
 
             _WRAP_METHOD(void configure (double inLower, double inUpper, double inPageSize, double inStep), maia_adjustment_configure)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("value", double)
             _WRAP_PROPERTY("lower", double)
             _WRAP_PROPERTY("upper", double)
             _WRAP_PROPERTY("page-size", double)
             _WRAP_PROPERTY("step", double)
-#endif
     };
 }
