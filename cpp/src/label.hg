@@ -62,8 +62,8 @@ namespace Maia
             _WRAP_METHOD(Graphic::Glyph::EllipsizeMode get_ellipsize_mode () const, maia_label_get_ellipsize_mode)
             _WRAP_METHOD(void set_ellipsize_mode (Graphic::Glyph::EllipsizeMode inMode), maia_label_set_ellipsize_mode)
 
-            _WRAP_METHOD(Graphic::ColorRefPtr get_shade_color () const, maia_label_get_shade_color, refreturn)
-            _WRAP_METHOD(void set_shade_color (const Graphic::ColorRefPtr& inColor), maia_label_set_shade_color)
+            _WRAP_METHOD(Graphic::Color::RefPtr get_shade_color () const, maia_label_get_shade_color, refreturn)
+            _WRAP_METHOD(void set_shade_color (const Graphic::Color::RefPtr& inColor), maia_label_set_shade_color)
 
             _WRAP_METHOD(bool get_translatable () const, maia_label_get_translatable)
             _WRAP_METHOD(void set_translatable (bool inTranslatable = true), maia_label_set_translatable)
@@ -74,45 +74,43 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_text () const, maia_label_get_text)
             _WRAP_METHOD(void set_text (const Glib::ustring& inLabel), maia_label_set_text)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("font-description", Glib::ustring)
             _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
             _WRAP_PROPERTY("wrap-mode", Graphic::Glyph::WrapMode)
             _WRAP_PROPERTY("ellipsize-mode", Graphic::Glyph::EllipsizeMode)
-            _WRAP_PROPERTY("shade-color", Graphic::ColorRefPtr)
+            _WRAP_PROPERTY("shade-color", Graphic::Color::RefPtr)
             _WRAP_PROPERTY("translatable", bool)
             _WRAP_PROPERTY("text", Glib::ustring)
             _WRAP_PROPERTY("hide-if-empty", bool)
 
-            _WRAP_PROPERTY("can-focus", bool)
-            _WRAP_PROPERTY("have-focus", bool)
-            _WRAP_PROPERTY("focus-order", int)
-            _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
+            _IGNORE_PROPERTY("can-focus")
+            _IGNORE_PROPERTY("have-focus")
+            _IGNORE_PROPERTY("focus-order")
+            _IGNORE_PROPERTY("focus-group")
 
-            _WRAP_PROPERTY("row", guint)
-            _WRAP_PROPERTY("rows", guint)
+            _IGNORE_PROPERTY("row")
+            _IGNORE_PROPERTY("rows")
 
-            _WRAP_PROPERTY("column", guint)
-            _WRAP_PROPERTY("columns", guint)
+            _IGNORE_PROPERTY("column")
+            _IGNORE_PROPERTY("columns")
 
-            _WRAP_PROPERTY("xexpand", bool)
-            _WRAP_PROPERTY("xfill", bool)
-            _WRAP_PROPERTY("xshrink", bool)
-            _WRAP_PROPERTY("xlimp", bool)
-            _WRAP_PROPERTY("xalign", double)
+            _IGNORE_PROPERTY("xexpand")
+            _IGNORE_PROPERTY("xfill")
+            _IGNORE_PROPERTY("xshrink")
+            _IGNORE_PROPERTY("xlimp")
+            _IGNORE_PROPERTY("xalign")
 
-            _WRAP_PROPERTY("yexpand", bool)
-            _WRAP_PROPERTY("yfill", bool)
-            _WRAP_PROPERTY("yshrink", bool)
-            _WRAP_PROPERTY("ylimp", bool)
-            _WRAP_PROPERTY("yalign", double)
+            _IGNORE_PROPERTY("yexpand")
+            _IGNORE_PROPERTY("yfill")
+            _IGNORE_PROPERTY("yshrink")
+            _IGNORE_PROPERTY("ylimp")
+            _IGNORE_PROPERTY("yalign")
 
-            _WRAP_PROPERTY("top-padding", double)
-            _WRAP_PROPERTY("bottom-padding", double)
-            _WRAP_PROPERTY("left-padding", double)
-            _WRAP_PROPERTY("right-padding", double)
+            _IGNORE_PROPERTY("top-padding")
+            _IGNORE_PROPERTY("bottom-padding")
+            _IGNORE_PROPERTY("left-padding")
+            _IGNORE_PROPERTY("right-padding")
 
-            _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
-#endif
+            _IGNORE_PROPERTY("backcell-pattern")
     };
 }

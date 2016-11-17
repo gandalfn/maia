@@ -48,11 +48,9 @@ namespace Maia
                 return Glib::RefPtr<Rectangle> (new Rectangle (pRectangle));
             }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-            _WRAP_PROPERTY("can-focus", bool)
-            _WRAP_PROPERTY("have-focus", bool)
-            _WRAP_PROPERTY("focus-order", int)
-            _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
-#endif
+            _IGNORE_PROPERTY("can-focus")
+            _IGNORE_PROPERTY("have-focus")
+            _IGNORE_PROPERTY("focus-order")
+            _IGNORE_PROPERTY("focus-group")
     };
 }

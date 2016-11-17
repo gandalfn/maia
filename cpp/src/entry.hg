@@ -45,11 +45,11 @@ namespace Maia
         _CLASS_GOBJECT(EntryChangedEventArgs, MaiaEntryChangedEventArgs, MAIA_ENTRY_CHANGED_EVENT_ARGS, Core::EventArgs, MaiaCoreEventArgs)
 
         public:
+            using RefPtr = Glib::RefPtr<EntryChangedEventArgs>;
+
             _WRAP_METHOD(Glib::ustring get_text () const, maia_entry_changed_event_args_get_text)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("text", Glib::ustring)
-#endif
     };
 
     /**
@@ -68,18 +68,20 @@ namespace Maia
             explicit Entry(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<Entry> create (const Glib::ustring& inId)
+            using RefPtr = Glib::RefPtr<Entry>;
+
+            static Entry::RefPtr create (const Glib::ustring& inId)
             {
                 MaiaEntry* pEntry = maia_entry_new (inId.c_str (), 0);
 
-                return Glib::RefPtr<Entry> (new Entry (pEntry));
+                return Entry::RefPtr (new Entry (pEntry));
             }
 
-            static Glib::RefPtr<Entry> create (const Glib::ustring& inId, const Glib::ustring& inText)
+            static Entry::RefPtr create (const Glib::ustring& inId, const Glib::ustring& inText)
             {
                 MaiaEntry* pEntry = maia_entry_new (inId.c_str (), inText.c_str ());
 
-                return Glib::RefPtr<Entry> (new Entry (pEntry));
+                return Entry::RefPtr (new Entry (pEntry));
             }
 
             _WRAP_METHOD(Glib::ustring get_font_description () const, maia_entry_get_font_description)
@@ -91,11 +93,11 @@ namespace Maia
             _WRAP_METHOD(Graphic::Glyph::Alignment get_alignment () const, maia_entry_get_alignment)
             _WRAP_METHOD(void set_alignment (Graphic::Glyph::Alignment inAlignment), maia_entry_set_alignment)
 
-            _WRAP_METHOD(guint get_lines () const, maia_entry_get_lines)
-            _WRAP_METHOD(void set_lines (guint inLines), maia_entry_set_lines)
+            _WRAP_METHOD(unsigned int get_lines () const, maia_entry_get_lines)
+            _WRAP_METHOD(void set_lines (unsigned int inLines), maia_entry_set_lines)
 
-            _WRAP_METHOD(guint get_width_in_chars () const, maia_entry_get_width_in_chars)
-            _WRAP_METHOD(void set_width_in_chars (guint inChars), maia_entry_set_width_in_chars)
+            _WRAP_METHOD(unsigned int get_width_in_chars () const, maia_entry_get_width_in_chars)
+            _WRAP_METHOD(void set_width_in_chars (unsigned int inChars), maia_entry_set_width_in_chars)
 
             _WRAP_METHOD(double get_underline_width () const, maia_entry_get_underline_width)
             _WRAP_METHOD(void set_underline_width (double inWidth), maia_entry_set_underline_width)
@@ -123,12 +125,11 @@ namespace Maia
 
             _WRAP_METHOD(Glib::RefPtr<Core::Event> changed () const, maia_entry_get_changed, refreturn)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("font-description", Glib::ustring)
             _WRAP_PROPERTY("text", Glib::ustring)
             _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
-            _WRAP_PROPERTY("lines", guint)
-            _WRAP_PROPERTY("width-in-chars", guint)
+            _WRAP_PROPERTY("lines", unsigned int)
+            _WRAP_PROPERTY("width-in-chars", unsigned int)
             _WRAP_PROPERTY("underline-width", Glib::ustring)
             _WRAP_PROPERTY("only-numeric", bool)
             _WRAP_PROPERTY("changed-mask", EntryChangedMask)
@@ -138,37 +139,36 @@ namespace Maia
             _WRAP_PROPERTY("labelled-by", Glib::RefPtr<Label>)
             _WRAP_PROPERTY("cursor", int)
 
-            _WRAP_PROPERTY("changed", Glib::RefPtr<Core::Event>)
+            _IGNORE_PROPERTY("changed")
 
-            _WRAP_PROPERTY("can-focus", bool)
-            _WRAP_PROPERTY("have-focus", bool)
-            _WRAP_PROPERTY("focus-order", int)
-            _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
+            _IGNORE_PROPERTY("can-focus")
+            _IGNORE_PROPERTY("have-focus")
+            _IGNORE_PROPERTY("focus-order")
+            _IGNORE_PROPERTY("focus-group")
 
-            _WRAP_PROPERTY("row", guint)
-            _WRAP_PROPERTY("rows", guint)
+            _IGNORE_PROPERTY("row")
+            _IGNORE_PROPERTY("rows")
 
-            _WRAP_PROPERTY("column", guint)
-            _WRAP_PROPERTY("columns", guint)
+            _IGNORE_PROPERTY("column")
+            _IGNORE_PROPERTY("columns")
 
-            _WRAP_PROPERTY("xexpand", bool)
-            _WRAP_PROPERTY("xfill", bool)
-            _WRAP_PROPERTY("xshrink", bool)
-            _WRAP_PROPERTY("xlimp", bool)
-            _WRAP_PROPERTY("xalign", double)
+            _IGNORE_PROPERTY("xexpand")
+            _IGNORE_PROPERTY("xfill")
+            _IGNORE_PROPERTY("xshrink")
+            _IGNORE_PROPERTY("xlimp")
+            _IGNORE_PROPERTY("xalign")
 
-            _WRAP_PROPERTY("yexpand", bool)
-            _WRAP_PROPERTY("yfill", bool)
-            _WRAP_PROPERTY("yshrink", bool)
-            _WRAP_PROPERTY("ylimp", bool)
-            _WRAP_PROPERTY("yalign", double)
+            _IGNORE_PROPERTY("yexpand")
+            _IGNORE_PROPERTY("yfill")
+            _IGNORE_PROPERTY("yshrink")
+            _IGNORE_PROPERTY("ylimp")
+            _IGNORE_PROPERTY("yalign")
 
-            _WRAP_PROPERTY("top-padding", double)
-            _WRAP_PROPERTY("bottom-padding", double)
-            _WRAP_PROPERTY("left-padding", double)
-            _WRAP_PROPERTY("right-padding", double)
+            _IGNORE_PROPERTY("top-padding")
+            _IGNORE_PROPERTY("bottom-padding")
+            _IGNORE_PROPERTY("left-padding")
+            _IGNORE_PROPERTY("right-padding")
 
-            _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
-#endif
+            _IGNORE_PROPERTY("backcell-pattern")
     };
 }

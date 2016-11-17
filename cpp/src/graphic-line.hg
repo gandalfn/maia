@@ -47,7 +47,7 @@ namespace Maia
 
                 bool intersect (const Line& inLine, Point& outPoint);
 
-                void transform (const TransformRefPtr& inTransform);
+                void transform (const Transform::RefPtr& inTransform);
 
                 Glib::ustring to_string ();
 

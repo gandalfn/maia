@@ -30,8 +30,6 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
-        typedef Glib::RefPtr<class Image> ImageRefPtr;
-
         class Image : public Pattern
         {
             _CLASS_GOBJECT(Image, MaiaGraphicImage, MAIA_GRAPHIC_IMAGE, Pattern, MaiaGraphicPattern)
@@ -43,16 +41,18 @@ namespace Maia
                 _WRAP_VFUNC(void get_size (Size& outSize) const, get_size)
                 _WRAP_VFUNC(void set_size (const Size& inSize), set_size)
 
-                _WRAP_VFUNC(SurfaceRefPtr get_surface () const, get_surface, refreturn_ctype)
+                _WRAP_VFUNC(Surface::RefPtr get_surface () const, get_surface, refreturn_ctype)
 
             protected:
                 _CTOR_DEFAULT()
 
             public:
-                static ImageRefPtr create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
+                using RefPtr = Glib::RefPtr<Image>;
+
+                static Image::RefPtr create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
                 {
                     MaiaGraphicImage* pImage = maia_graphic_image_create (inFilename.c_str (), const_cast<MaiaGraphicSize*> (inSize.gobj ()));
-                    return ImageRefPtr (new Image (pImage));
+                    return Image::RefPtr (new Image (pImage));
                 }
 
                 _IGNORE(maia_graphic_image_create)
@@ -63,82 +63,82 @@ namespace Maia
                 _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_image_get_size)
                 _WRAP_METHOD(void set_size (const Size& inSize), maia_graphic_image_set_size)
 
-                _WRAP_METHOD(SurfaceRefPtr get_surface () const, maia_graphic_image_get_surface, refreturn)
+                _WRAP_METHOD(Surface::RefPtr get_surface () const, maia_graphic_image_get_surface, refreturn)
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY ("filename", Glib::ustring)
                 _WRAP_PROPERTY ("size", Size)
-                _WRAP_PROPERTY ("surface", SurfaceRefPtr)
+                _WRAP_PROPERTY ("surface", Surface::RefPtr)
 #endif
         };
-
-        typedef Glib::RefPtr<class ImageGif> ImageGifRefPtr;
 
         class ImageGif final : public Image
         {
             _CLASS_GOBJECT(ImageGif, MaiaGraphicImageGif, MAIA_GRAPHIC_IMAGE_GIF, Image, MaiaGraphicImage)
 
             public:
+                using RefPtr = Glib::RefPtr<ImageGif>;
+
                 _CTOR_DEFAULT()
 
-                static ImageGifRefPtr create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
+                static ImageGif::RefPtr create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
                 {
                     MaiaGraphicImageGif* pImage = maia_graphic_image_gif_new (inFilename.c_str (), const_cast<MaiaGraphicSize*> (inSize.gobj ()));
-                    return ImageGifRefPtr (new ImageGif (pImage));
+                    return ImageGif::RefPtr (new ImageGif (pImage));
                 }
         };
-
-        typedef Glib::RefPtr<class ImageJpg> ImageJpgRefPtr;
 
         class ImageJpg final : public Image
         {
             _CLASS_GOBJECT(ImageJpg, MaiaGraphicImageJpg, MAIA_GRAPHIC_IMAGE_JPG, Image, MaiaGraphicImage)
 
             public:
+                using RefPtr = Glib::RefPtr<ImageJpg>;
+
                 _CTOR_DEFAULT()
 
-                static ImageJpgRefPtr create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
+                static ImageJpg::RefPtr create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
                 {
                     MaiaGraphicImageJpg* pImage = maia_graphic_image_jpg_new (inFilename.c_str (), const_cast<MaiaGraphicSize*> (inSize.gobj ()));
-                    return ImageJpgRefPtr (new ImageJpg (pImage));
+                    return ImageJpg::RefPtr (new ImageJpg (pImage));
                 }
         };
-
-        typedef Glib::RefPtr<class ImagePng> ImagePngRefPtr;
 
         class ImagePng final : public Image
         {
             _CLASS_GOBJECT(ImagePng, MaiaGraphicImagePng, MAIA_GRAPHIC_IMAGE_PNG, Image, MaiaGraphicImage)
 
             public:
+                using RefPtr = Glib::RefPtr<ImagePng>;
+
                 _CTOR_DEFAULT()
 
-                static ImagePngRefPtr create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
+                static ImagePng::RefPtr create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
                 {
                     MaiaGraphicImagePng* pImage = maia_graphic_image_png_new (inFilename.c_str (), const_cast<MaiaGraphicSize*> (inSize.gobj ()));
-                    return ImagePngRefPtr (new ImagePng (pImage));
+                    return ImagePng::RefPtr (new ImagePng (pImage));
                 }
         };
-
-        typedef Glib::RefPtr<class ImageSvg> ImageSvgRefPtr;
 
         class ImageSvg final : public Image
         {
             _CLASS_GOBJECT(ImageSvg, MaiaGraphicImageSvg, MAIA_GRAPHIC_IMAGE_SVG, Image, MaiaGraphicImage)
 
             public:
+                using RefPtr = Glib::RefPtr<ImageSvg>;
+
                 _CTOR_DEFAULT()
 
-                static ImageSvgRefPtr create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
+                static ImageSvg::RefPtr create (const Glib::ustring& inFilename, const Size& inSize = Size (0, 0))
                 {
                     MaiaGraphicImageSvg* pImage = maia_graphic_image_svg_new (inFilename.c_str (), const_cast<MaiaGraphicSize*> (inSize.gobj ()));
-                    return ImageSvgRefPtr (new ImageSvg (pImage));
+                    return ImageSvg::RefPtr (new ImageSvg (pImage));
                 }
 
-                static ImageSvgRefPtr create_from_data (const Glib::ustring& inData, const Size& inSize = Size (0, 0))
+                static ImageSvg::RefPtr create_from_data (const Glib::ustring& inData, const Size& inSize = Size (0, 0))
                 {
                     MaiaGraphicImageSvg* pImage = maia_graphic_image_svg_new_from_data (inData.c_str (), const_cast<MaiaGraphicSize*> (inSize.gobj ()));
-                    return ImageSvgRefPtr (new ImageSvg (pImage));
+                    return ImageSvg::RefPtr (new ImageSvg (pImage));
                 }
         };
     }

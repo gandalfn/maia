@@ -38,16 +38,17 @@ namespace Maia
             explicit Document(const Glib::ustring& inId);
 
         public:
-            typedef sigc::slot<void, Glib::RefPtr<Document>, Glib::RefPtr<Gio::AsyncResult> > SlotSaveFinished;
+            using RefPtr = Glib::RefPtr<Document>;
+            using SlotSaveFinished = sigc::slot<void, Document::RefPtr, Glib::RefPtr<Gio::AsyncResult>> ;
 
-            static Glib::RefPtr<Document> create (const Glib::ustring& inId, PageFormat inFormat)
+            static Document::RefPtr create (const Glib::ustring& inId, PageFormat inFormat)
             {
                 MaiaDocument* pDocument = maia_document_new (inId.c_str(), (MaiaPageFormat)inFormat);
-                return Glib::RefPtr<Document> (new Document (pDocument));
+                return Document::RefPtr (new Document (pDocument));
             }
 
             _WRAP_METHOD(static void format_to_size (PageFormat inFormat, double inDpi, Graphic::Size& outSize), maia_page_format_to_size)
-            _WRAP_METHOD(static Graphic::RegionRefPtr format_to_region (PageFormat inFormat, double inDpi), maia_page_format_to_region)
+            _WRAP_METHOD(static Graphic::Region::RefPtr format_to_region (PageFormat inFormat, double inDpi), maia_page_format_to_region)
 
             _WRAP_METHOD(PageFormat get_format () const, maia_document_get_format)
             _WRAP_METHOD(void set_format (PageFormat inFormat), maia_document_set_format)
@@ -61,13 +62,13 @@ namespace Maia
             _WRAP_METHOD(double get_right_margin () const, maia_document_get_right_margin)
             _WRAP_METHOD(void set_right_margin (double inAlign), maia_document_set_right_margin)
 
-            _WRAP_METHOD(guint get_resolution () const, maia_document_get_resolution)
-            _WRAP_METHOD(void set_resolution (guint inResolution), maia_document_set_resolution)
+            _WRAP_METHOD(unsigned int get_resolution () const, maia_document_get_resolution)
+            _WRAP_METHOD(void set_resolution (unsigned int inResolution), maia_document_set_resolution)
 
             _WRAP_METHOD(int get_border_width () const, maia_document_get_border_width)
             _WRAP_METHOD(void set_border_width (int inBorderWidth), maia_document_set_border_width)
 
-            _WRAP_METHOD(guint get_nb_pages () const, maia_document_get_nb_pages)
+            _WRAP_METHOD(unsigned int get_nb_pages () const, maia_document_get_nb_pages)
 
             _WRAP_METHOD(Glib::ustring get_header () const, maia_document_get_header)
             _WRAP_METHOD(void set_header (const Glib::ustring& inName), maia_document_set_header)
@@ -75,10 +76,10 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_footer () const, maia_document_get_footer)
             _WRAP_METHOD(void set_footer (const Glib::ustring& inName), maia_document_set_footer)
 
-            _WRAP_METHOD(Glib::RefPtr<Item> get_item_over_pointer () const, maia_document_get_item_over_pointer, refreturn)
-            _WRAP_METHOD(void set_pointer_over_pointer (const Glib::RefPtr<Item>& inItem), maia_document_set_item_over_pointer)
+            _WRAP_METHOD(Item::RefPtr get_item_over_pointer () const, maia_document_get_item_over_pointer, refreturn)
+            _WRAP_METHOD(void set_pointer_over_pointer (const Item::RefPtr& inItem), maia_document_set_item_over_pointer)
 
-            _WRAP_METHOD(void draw_page (const Graphic::ContextRefPtr& inContext, guint inNumPage), maia_document_draw_page, errthrow)
+            _WRAP_METHOD(void draw_page (const Graphic::Context::RefPtr& inContext, unsigned int inNumPage), maia_document_draw_page, errthrow)
 
             _IGNORE(maia_document_save)
             void save (const Glib::ustring& inFilename, double inDpi = 96);
@@ -90,18 +91,16 @@ namespace Maia
             _IGNORE(maia_document_save_finish)
             void save_finish (const Glib::RefPtr<Gio::AsyncResult>& inResult);
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("format", PageFormat)
             _WRAP_PROPERTY("top-margin", double)
             _WRAP_PROPERTY("bottom-margin", double)
             _WRAP_PROPERTY("left-margin", double)
             _WRAP_PROPERTY("right-margin", double)
-            _WRAP_PROPERTY("resolution", guint)
+            _WRAP_PROPERTY("resolution", unsigned int)
             _WRAP_PROPERTY("border-width", int)
-            _WRAP_PROPERTY("nb-pages", guint)
+            _WRAP_PROPERTY("nb-pages", unsigned int)
             _WRAP_PROPERTY("header", Glib::ustring)
             _WRAP_PROPERTY("footer", Glib::ustring)
-            _WRAP_PROPERTY("item-over-pointer", Glib::RefPtr<Item>)
-#endif
+            _WRAP_PROPERTY("item-over-pointer", Item::RefPtr)
     };
 }

@@ -44,8 +44,7 @@ namespace Maia
                 _WRAP_METHOD(Glib::VariantBase serialize (), maia_core_serializable_get_serialize)
                 _WRAP_METHOD(void unserialize (const Glib::VariantBase& inData), maia_core_serializable_set_serialize)
 
-            private:
-                _WRAP_PROPERTY("serialize", Glib::VariantBase)
+                _IGNORE_PROPERTY("serialize")
         };
     }
 }

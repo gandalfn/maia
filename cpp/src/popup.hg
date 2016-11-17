@@ -50,8 +50,8 @@ namespace Maia
             _WRAP_METHOD(WindowBorder get_shadow_border () const, maia_popup_get_shadow_border)
             _WRAP_METHOD(void set_shadow_border (WindowBorder inBorder), maia_popup_set_shadow_border)
 
-            _WRAP_METHOD(Graphic::ColorRefPtr get_shadow_color () const, maia_popup_get_shadow_color, refreturn)
-            _WRAP_METHOD(void set_shadow_color (const Graphic::ColorRefPtr& inColor), maia_popup_set_shadow_color)
+            _WRAP_METHOD(Graphic::Color::RefPtr get_shadow_color () const, maia_popup_get_shadow_color, refreturn)
+            _WRAP_METHOD(void set_shadow_color (const Graphic::Color::RefPtr& inColor), maia_popup_set_shadow_color)
 
             _WRAP_METHOD(double get_round_corner () const, maia_popup_get_round_corner)
             _WRAP_METHOD(void set_round_corner (double inWidth), maia_popup_set_round_corner)
@@ -62,14 +62,14 @@ namespace Maia
             _WRAP_METHOD(Popup::Placement get_placement () const, maia_popup_get_placement)
             _WRAP_METHOD(void set_placement (Popup::Placement inPlacement), maia_popup_set_placement)
 
-            _WRAP_METHOD(Glib::RefPtr<Item> get_content () const, maia_popup_get_content, refreturn)
-            _WRAP_METHOD(void set_content (const Glib::RefPtr<Item>& inItem), maia_popup_set_content)
+            _WRAP_METHOD(Item::RefPtr get_content () const, maia_popup_get_content, refreturn)
+            _WRAP_METHOD(void set_content (const Item::RefPtr& inItem), maia_popup_set_content)
 
             _WRAP_METHOD(bool get_animation () const, maia_popup_get_animation)
             _WRAP_METHOD(void set_animation (bool inAnimation = true), maia_popup_set_animation)
 
-            _WRAP_METHOD(Glib::RefPtr<Window> get_transient_for () const, maia_popup_get_transient_for, refreturn)
-            _WRAP_METHOD(void set_transient_for (const Glib::RefPtr<Window>& inTransientFor), maia_popup_set_transient_for)
+            _WRAP_METHOD(Window::RefPtr get_transient_for () const, maia_popup_get_transient_for, refreturn)
+            _WRAP_METHOD(void set_transient_for (const Window::RefPtr& inTransientFor), maia_popup_set_transient_for)
 
             _WRAP_METHOD(Window::Type get_window_type () const, maia_popup_get_window_type)
             _WRAP_METHOD(void set_window_type (Window::Type inType), maia_popup_set_window_type)
@@ -77,27 +77,24 @@ namespace Maia
             _WRAP_METHOD(WindowPositionPolicy get_position_policy () const, maia_popup_get_position_policy)
             _WRAP_METHOD(void set_position_policy (WindowPositionPolicy inPolicy), maia_popup_set_position_policy)
 
-            _WRAP_METHOD(Glib::RefPtr<Window> get_bin_window () const, maia_popup_get_bin_window, refreturn)
+            _WRAP_METHOD(Window::RefPtr get_bin_window () const, maia_popup_get_bin_window, refreturn)
 
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("shadow-width", double)
             _WRAP_PROPERTY("shadow-border", WindowBorder)
-            _WRAP_PROPERTY("shadow-color", Graphic::ColorRefPtr)
+            _WRAP_PROPERTY("shadow-color", Graphic::Color::RefPtr)
             _WRAP_PROPERTY("round-corner", double)
             _WRAP_PROPERTY("close-button", bool)
             _WRAP_PROPERTY("placement", Popup::Placement)
-            _WRAP_PROPERTY("content", Glib::RefPtr<Item>)
+            _WRAP_PROPERTY("content", Item::RefPtr)
             _WRAP_PROPERTY("animation", bool)
-            _WRAP_PROPERTY("transient-for", Glib::RefPtr<Window>)
+            _WRAP_PROPERTY("transient-for", Window::RefPtr)
             _WRAP_PROPERTY("window-type", Window::Type)
             _WRAP_PROPERTY("position-policy", WindowPositionPolicy)
-            _WRAP_PROPERTY("bin-window", Glib::RefPtr<Window>)
-#endif
+            _WRAP_PROPERTY("bin-window", Window::RefPtr)
 
-        private:
-            _WRAP_PROPERTY("x", double)
-            _WRAP_PROPERTY("y", double)
+            _IGNORE_PROPERTY("x")
+            _IGNORE_PROPERTY("y")
     };
 }

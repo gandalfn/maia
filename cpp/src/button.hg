@@ -32,8 +32,6 @@ _PINCLUDE(maiamm/private/item_p.h)
 
 namespace Maia
 {
-    typedef Glib::RefPtr<class Button> ButtonRefPtr;
-
     /**
      * \includedoc MaiaButton.doc
      */
@@ -50,20 +48,22 @@ namespace Maia
             explicit Button(const Glib::ustring& inId);
 
         public:
+            using RefPtr = Glib::RefPtr<class Button>;
+
             _WRAP_ENUM(class Relief, MaiaButtonRelief, s#BUTTON_RELIEF_##, NO_GTYPE)
 
-            static ButtonRefPtr create (const Glib::ustring& inId)
+            static Button::RefPtr create (const Glib::ustring& inId)
             {
                 MaiaButton* pButton = maia_button_new (inId.c_str (), 0);
 
-                return ButtonRefPtr (new Button (pButton));
+                return Button::RefPtr (new Button (pButton));
             }
 
-            static ButtonRefPtr create (const Glib::ustring& inId, const Glib::ustring& inLabel)
+            static Button::RefPtr create (const Glib::ustring& inId, const Glib::ustring& inLabel)
             {
                 MaiaButton* pButton = maia_button_new (inId.c_str (), inLabel.c_str ());
 
-                return ButtonRefPtr (new Button (pButton));
+                return Button::RefPtr (new Button (pButton));
             }
 
             _WRAP_METHOD(bool get_sensitive () const, maia_button_get_sensitive)
@@ -90,8 +90,8 @@ namespace Maia
             _WRAP_METHOD(double get_spacing () const, maia_button_get_spacing)
             _WRAP_METHOD(void set_spacing (double inSpacing), maia_button_set_spacing)
 
-            _WRAP_METHOD(Graphic::ColorRefPtr get_shade_color () const, maia_button_get_shade_color, refreturn)
-            _WRAP_METHOD(void set_shade_color (const Graphic::ColorRefPtr& inColor), maia_button_set_shade_color)
+            _WRAP_METHOD(Graphic::Color::RefPtr get_shade_color () const, maia_button_get_shade_color, refreturn)
+            _WRAP_METHOD(void set_shade_color (const Graphic::Color::RefPtr& inColor), maia_button_set_shade_color)
 
             _WRAP_METHOD(Glib::ustring get_icon_filename () const, maia_button_get_icon_filename)
             _WRAP_METHOD(void set_icon_filename (const Glib::ustring& inFilename), maia_button_set_icon_filename)
@@ -105,7 +105,7 @@ namespace Maia
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("relief", Button::Relief)
             _WRAP_PROPERTY("spacing", double)
-            _WRAP_PROPERTY("shade-color", Graphic::ColorRefPtr)
+            _WRAP_PROPERTY("shade-color", Graphic::Color::RefPtr)
             _WRAP_PROPERTY("icon-filename", Glib::ustring)
             _WRAP_PROPERTY("icon-size", Graphic::Size)
 

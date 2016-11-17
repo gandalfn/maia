@@ -76,42 +76,40 @@ namespace Maia
 
             _WRAP_METHOD(Glib::RefPtr<Core::Event> changed () const, maia_combo_get_changed, refreturn)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("view", Glib::RefPtr<View>)
             _WRAP_PROPERTY("active-row", gint)
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
 
-            _WRAP_PROPERTY("changed", Glib::RefPtr<Core::Event>)
+            _IGNORE_PROPERTY("changed")
 
-            _WRAP_PROPERTY("can-focus", bool)
-            _WRAP_PROPERTY("have-focus", bool)
-            _WRAP_PROPERTY("focus-order", int)
-            _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
+            _IGNORE_PROPERTY("can-focus")
+            _IGNORE_PROPERTY("have-focus")
+            _IGNORE_PROPERTY("focus-order")
+            _IGNORE_PROPERTY("focus-group")
 
-            _WRAP_PROPERTY("row", guint)
-            _WRAP_PROPERTY("rows", guint)
+            _IGNORE_PROPERTY("row")
+            _IGNORE_PROPERTY("rows")
 
-            _WRAP_PROPERTY("column", guint)
-            _WRAP_PROPERTY("columns", guint)
+            _IGNORE_PROPERTY("column")
+            _IGNORE_PROPERTY("columns")
 
-            _WRAP_PROPERTY("xexpand", bool)
-            _WRAP_PROPERTY("xshrink", bool)
-            _WRAP_PROPERTY("xfill", bool)
-            _WRAP_PROPERTY("xlimp", bool)
-            _WRAP_PROPERTY("xalign", double)
+            _IGNORE_PROPERTY("xexpand")
+            _IGNORE_PROPERTY("xshrink")
+            _IGNORE_PROPERTY("xfill")
+            _IGNORE_PROPERTY("xlimp")
+            _IGNORE_PROPERTY("xalign")
 
-            _WRAP_PROPERTY("yexpand", bool)
-            _WRAP_PROPERTY("yshrink", bool)
-            _WRAP_PROPERTY("yfill", bool)
-            _WRAP_PROPERTY("ylimp", bool)
-            _WRAP_PROPERTY("yalign", double)
+            _IGNORE_PROPERTY("yexpand")
+            _IGNORE_PROPERTY("yshrink")
+            _IGNORE_PROPERTY("yfill")
+            _IGNORE_PROPERTY("ylimp")
+            _IGNORE_PROPERTY("yalign")
 
-            _WRAP_PROPERTY("top-padding", double)
-            _WRAP_PROPERTY("bottom-padding", double)
-            _WRAP_PROPERTY("left-padding", double)
-            _WRAP_PROPERTY("right-padding", double)
+            _IGNORE_PROPERTY("top-padding")
+            _IGNORE_PROPERTY("bottom-padding")
+            _IGNORE_PROPERTY("left-padding")
+            _IGNORE_PROPERTY("right-padding")
 
-            _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
-#endif
+            _IGNORE_PROPERTY("backcell-pattern")
     };
 }

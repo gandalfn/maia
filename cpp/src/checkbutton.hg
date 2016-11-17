@@ -45,13 +45,13 @@ namespace Maia
             _WRAP_METHOD(double get_spacing () const, maia_check_button_get_spacing)
             _WRAP_METHOD(void set_spacing (double inSpacing), maia_check_button_set_spacing)
 
-            _WRAP_METHOD(Glib::RefPtr<StatePatterns> get_line_pattern () const, maia_check_button_get_line_pattern, refreturn)
-            _WRAP_METHOD(void set_line_pattern (const Glib::RefPtr<StatePatterns>& inPattern), maia_check_button_set_line_pattern)
+            _WRAP_METHOD(StatePatterns::RefPtr get_line_pattern () const, maia_check_button_get_line_pattern, refreturn)
+            _WRAP_METHOD(void set_line_pattern (const StatePatterns::RefPtr& inPattern), maia_check_button_set_line_pattern)
 
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("spacing", double)
-            _WRAP_PROPERTY("line-pattern", Glib::RefPtr<StatePatterns>)
+            _WRAP_PROPERTY("line-pattern", StatePatterns::RefPtr)
 
             _WRAP_PROPERTY("tag", Glib::ustring)
 #endif

@@ -28,8 +28,6 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
-        typedef Glib::RefPtr<class Device> DeviceRefPtr;
-
         class Device final : public Glib::Interface
         {
             _CLASS_INTERFACE(Device, MaiaGraphicDevice, MAIA_GRAPHIC_DEVICE, MaiaGraphicDeviceIface)
@@ -38,19 +36,21 @@ namespace Maia
                 _WRAP_VFUNC(Glib::ustring get_backend (), get_backend)
 
             public:
+                using RefPtr = Glib::RefPtr<class Device>;
+
                 const Glib::ustring XCB_WINDOW_BACKEND = "xcb/window";
                 const Glib::ustring XCB_PIXMAP_BACKEND = "xcb/pixmap";
 
-                static DeviceRefPtr create (const Glib::VariantBase& inVariant);
+                static Device::RefPtr create (const Glib::VariantBase& inVariant);
 
-                static DeviceRefPtr create (const Glib::ustring& inBackend)
+                static Device::RefPtr create (const Glib::ustring& inBackend)
                 {
                     Device* pDevice = new Device (maia_graphic_device_new (inBackend.c_str (), NULL));
-                    return DeviceRefPtr (pDevice);
+                    return Device::RefPtr (pDevice);
                 }
 
                 template<typename... Args>
-                static DeviceRefPtr create (const Glib::ustring& inBackend, const Glib::ustring& inProperty, Args... inArgs)
+                static Device::RefPtr create (const Glib::ustring& inBackend, const Glib::ustring& inProperty, Args... inArgs)
                 {
                     ParamClosure closure (inBackend);
                     closure.parse (inProperty, inArgs...);
@@ -58,7 +58,7 @@ namespace Maia
                 }
 
                 template<typename... Args>
-                static DeviceRefPtr create (const Glib::ustring& inBackend, const char* inProperty, Args... inArgs)
+                static Device::RefPtr create (const Glib::ustring& inBackend, const char* inProperty, Args... inArgs)
                 {
                     ParamClosure closure (inBackend);
                     closure.parse (inProperty, inArgs...);
@@ -111,10 +111,10 @@ namespace Maia
                             }
                         }
 
-                        DeviceRefPtr create_device ()
+                        Device::RefPtr create_device ()
                         {
                             Device* pDevice = new Device (maia_graphic_device_newv (m_Backend.c_str (), m_pParams, m_Size));
-                            return DeviceRefPtr (pDevice);
+                            return Device::RefPtr (pDevice);
                         }
 
                     private:

@@ -23,13 +23,13 @@ namespace Maia
 {
     namespace Graphic
     {
-        CloneRendererObject::CloneRendererObject (const Rectangle& inArea, const Glib::RefPtr<Device>& inpDevice) :
+        CloneRendererObject::CloneRendererObject (const Rectangle& inArea, const Device::RefPtr& inpDevice) :
             CloneRendererObject(Glib::ConstructParams(clonerendererobject_class_.init(), "size",const_cast<MaiaGraphicSize*> (inArea.get_size ().gobj ()), "position",const_cast<MaiaGraphicPoint*> (inArea.get_origin ().gobj ()), static_cast<char*>(0)))
         {
             maia_graphic_clone_renderer_init (gobj(), const_cast<MaiaGraphicDevice*> (inpDevice->gobj ()));
         }
 
-        CloneRenderer::CloneRenderer (const Rectangle& inArea, const Glib::RefPtr<Device>& inpDevice) :
+        CloneRenderer::CloneRenderer (const Rectangle& inArea, const Device::RefPtr& inpDevice) :
             Renderer (CloneRendererObject::create (inArea, inpDevice))
         {
         }

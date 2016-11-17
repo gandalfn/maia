@@ -42,7 +42,7 @@ namespace Maia
 
                 void translate (const Point& inOffset);
 
-                void transform (const Glib::RefPtr<Transform>& inTransform);
+                void transform (const Transform::RefPtr& inTransform);
 
                 Glib::ustring to_string () const;
 

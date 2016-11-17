@@ -29,18 +29,17 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
-        typedef Glib::RefPtr<class Pattern> PatternRefPtr;
-
         class Pattern : public Core::Object
         {
             _CLASS_GOBJECT(Pattern, MaiaGraphicPattern, MAIA_GRAPHIC_PATTERN, Core::Object, MaiaCoreObject)
 
-            _WRAP_METHOD(TransformRefPtr get_transform () const, maia_graphic_pattern_get_transform, refreturn)
-            _WRAP_METHOD(void set_transform (const TransformRefPtr& inTransform) const, maia_graphic_pattern_set_transform)
+            public:
+                using RefPtr = Glib::RefPtr<Pattern>;
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-            _WRAP_PROPERTY ("transform", TransformRefPtr)
-#endif
+                _WRAP_METHOD(Transform::RefPtr get_transform () const, maia_graphic_pattern_get_transform, refreturn)
+                _WRAP_METHOD(void set_transform (const Transform::RefPtr& inTransform), maia_graphic_pattern_set_transform)
+
+                _WRAP_PROPERTY ("transform", Transform::RefPtr)
         };
 
     }

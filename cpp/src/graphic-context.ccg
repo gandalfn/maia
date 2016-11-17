@@ -25,10 +25,10 @@ namespace Maia
 {
     namespace Graphic
     {
-        ContextRefPtr Context::create (const Glib::RefPtr<Surface>& inSurface)
+        Context::RefPtr Context::create (const Glib::RefPtr<Surface>& inSurface)
         {
             MaiaGraphicContext* pContext = maia_graphic_context_new (const_cast<MaiaGraphicSurface*> (inSurface->gobj ()));
-            return ContextRefPtr (new Context (pContext));
+            return Context::RefPtr (new Context (pContext));
         }
     }
 }

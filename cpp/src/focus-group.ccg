@@ -19,8 +19,6 @@
 
 #include <maia.h>
 
-#include <maiamm/item-focusable.h>
-
 namespace Maia
 {
     FocusGroup::FocusGroup(const Glib::ustring& inId) :

@@ -144,21 +144,13 @@ namespace Maia
 
 namespace Glib
 {
-    /** A Glib::wrap() method for this object.
-     *
-     * @param object The C instance.
-     * @param take_copy False if the result should take ownership of the C instance. True if it should take a new copy or ref.
-     * @result A C++ instance that wraps this C instance.
-     *
-     * @relates Maia::Core::Collection
-     */
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     template<typename T>
     Maia::Core::Collection<T> wrap(MaiaCoreCollection* object, bool take_copy)
     {
         return Maia::Core::Collection<T> (object, take_copy);
     }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
     template <typename T>
     class Value<Maia::Core::Collection<T> > : public Glib::Value_Boxed<Maia::Core::Collection<T> >
     {};

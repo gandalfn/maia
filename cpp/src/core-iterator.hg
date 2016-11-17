@@ -66,6 +66,7 @@ namespace Maia
                     maia_core_iterator_unref(gobject_);
             }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             void swap(Iterator<T>& other)
             {
                 MaiaCoreIterator *const temp = gobject_;
@@ -87,6 +88,7 @@ namespace Maia
             {
                 return (MaiaCoreIterator*)maia_core_iterator_ref(gobject_);
             }
+#endif
 
             public:
                 inline Iterator<T>& operator++()
@@ -127,9 +129,13 @@ namespace Maia
                 }
 
             protected:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
                 MaiaCoreObjectIterator* gobject_;
+#endif
        };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
         /** @relates Maia::Core::Iterator
          * @param lhs The left-hand side
          * @param rhs The right-hand side
@@ -139,11 +145,13 @@ namespace Maia
         {
             lhs.swap(rhs);
         }
+#endif
     }
 }
 
 namespace Glib
 {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     /** A Glib::wrap() method for this object.
      *
      * @param object The C instance.
@@ -158,7 +166,6 @@ namespace Glib
         return Maia::Core::Iterator<T> (object, take_copy);
     }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
     template <typename T>
     class Value<Maia::Core::Iterator<T> > : public Glib::Value_Boxed<Maia::Core::Iterator<T> >
     {};

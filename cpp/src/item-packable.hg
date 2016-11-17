@@ -30,15 +30,15 @@ namespace Maia
         _CLASS_INTERFACE(ItemPackable, MaiaItemPackable, MAIA_ITEM_PACKABLE, MaiaItemPackableIface)
 
         protected:
-            _WRAP_VFUNC(guint get_row (), get_row)
-            _WRAP_VFUNC(void set_row (guint inRow), set_row)
-            _WRAP_VFUNC(guint get_rows (), get_rows)
-            _WRAP_VFUNC(void set_rows (guint inRows), set_rows)
+            _WRAP_VFUNC(unsigned int get_row (), get_row)
+            _WRAP_VFUNC(void set_row (unsigned int inRow), set_row)
+            _WRAP_VFUNC(unsigned int get_rows (), get_rows)
+            _WRAP_VFUNC(void set_rows (unsigned int inRows), set_rows)
 
-            _WRAP_VFUNC(guint get_column (), get_column)
-            _WRAP_VFUNC(void set_column (guint inColumn), set_column)
-            _WRAP_VFUNC(guint get_columns (), get_columns)
-            _WRAP_VFUNC(void set_columns (guint inColumns), set_columns)
+            _WRAP_VFUNC(unsigned int get_column (), get_column)
+            _WRAP_VFUNC(void set_column (unsigned int inColumn), set_column)
+            _WRAP_VFUNC(unsigned int get_columns (), get_columns)
+            _WRAP_VFUNC(void set_columns (unsigned int inColumns), set_columns)
 
             _WRAP_VFUNC(bool get_xexpand (), get_xexpand)
             _WRAP_VFUNC(void set_xexpand (bool inExpand), set_xexpand)
@@ -73,15 +73,15 @@ namespace Maia
 
 
         public:
-            _WRAP_METHOD(guint get_row () const, maia_item_packable_get_row)
-            _WRAP_METHOD(void set_row (guint inRow), maia_item_packable_set_row)
-            _WRAP_METHOD(guint get_rows () const, maia_item_packable_get_rows)
-            _WRAP_METHOD(void set_rows (guint inRows), maia_item_packable_set_rows)
+            _WRAP_METHOD(unsigned int get_row () const, maia_item_packable_get_row)
+            _WRAP_METHOD(void set_row (unsigned int inRow), maia_item_packable_set_row)
+            _WRAP_METHOD(unsigned int get_rows () const, maia_item_packable_get_rows)
+            _WRAP_METHOD(void set_rows (unsigned int inRows), maia_item_packable_set_rows)
 
-            _WRAP_METHOD(guint get_column () const, maia_item_packable_get_column)
-            _WRAP_METHOD(void set_column (guint inColumn), maia_item_packable_set_column)
-            _WRAP_METHOD(guint get_columns () const, maia_item_packable_get_columns)
-            _WRAP_METHOD(void set_columns (guint inColumns), maia_item_packable_set_columns)
+            _WRAP_METHOD(unsigned int get_column () const, maia_item_packable_get_column)
+            _WRAP_METHOD(void set_column (unsigned int inColumn), maia_item_packable_set_column)
+            _WRAP_METHOD(unsigned int get_columns () const, maia_item_packable_get_columns)
+            _WRAP_METHOD(void set_columns (unsigned int inColumns), maia_item_packable_set_columns)
 
             _WRAP_METHOD(bool get_xexpand () const, maia_item_packable_get_xexpand)
             _WRAP_METHOD(void set_xexpand (bool inExpand), maia_item_packable_set_xexpand)
@@ -114,15 +114,14 @@ namespace Maia
             _WRAP_METHOD(double get_right_padding () const, maia_item_packable_get_right_padding)
             _WRAP_METHOD(void set_right_padding (double inAlign), maia_item_packable_set_right_padding)
 
-            _WRAP_METHOD(Graphic::PatternRefPtr get_backcell_pattern () const, maia_item_packable_get_backcell_pattern, refreturn)
-            _WRAP_METHOD(void set_backcell_pattern (const Graphic::PatternRefPtr& inPattern), maia_item_packable_set_backcell_pattern)
+            _WRAP_METHOD(Graphic::Pattern::RefPtr get_backcell_pattern () const, maia_item_packable_get_backcell_pattern, refreturn)
+            _WRAP_METHOD(void set_backcell_pattern (const Graphic::Pattern::RefPtr& inPattern), maia_item_packable_set_backcell_pattern)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-            _WRAP_PROPERTY("row", guint)
-            _WRAP_PROPERTY("rows", guint)
+            _WRAP_PROPERTY("row", unsigned int)
+            _WRAP_PROPERTY("rows", unsigned int)
 
-            _WRAP_PROPERTY("column", guint)
-            _WRAP_PROPERTY("columns", guint)
+            _WRAP_PROPERTY("column", unsigned int)
+            _WRAP_PROPERTY("columns", unsigned int)
 
             _WRAP_PROPERTY("xexpand", bool)
             _WRAP_PROPERTY("xfill", bool)
@@ -141,7 +140,6 @@ namespace Maia
             _WRAP_PROPERTY("left-padding", double)
             _WRAP_PROPERTY("right-padding", double)
 
-            _WRAP_PROPERTY("backcell-pattern", Graphic::PatternRefPtr)
-#endif
+            _WRAP_PROPERTY("backcell-pattern", Graphic::Pattern::RefPtr)
     };
 }

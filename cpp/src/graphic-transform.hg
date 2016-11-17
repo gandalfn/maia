@@ -35,9 +35,6 @@ namespace Maia
 
         class Transform;
 
-        typedef Glib::RefPtr<class Transform> TransformRefPtr;
-        typedef Glib::RefPtr<class TransformChangedNotification> TransformChangedNotificationRefPtr;
-
         class TransformChangedNotification : public Core::Notification
         {
             _CLASS_GOBJECT(TransformChangedNotification, MaiaGraphicTransformChangedNotification, MAIA_GRAPHIC_TRANSFORM_CHANGED_NOTIFICATION, Core::Notification, MaiaCoreNotification)
@@ -46,12 +43,11 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                _WRAP_METHOD(TransformRefPtr get_transform () const, maia_graphic_transform_changed_notification_get_transform, refreturn)
-                _WRAP_METHOD(void set_transform (const TransformRefPtr& inTransform) const, maia_graphic_transform_changed_notification_set_transform)
+                using RefPtr = Glib::RefPtr<TransformChangedNotification>;
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-                _WRAP_PROPERTY("transform", TransformRefPtr)
-#endif
+                _WRAP_METHOD(Glib::RefPtr<Transform> get_transform () const, maia_graphic_transform_changed_notification_get_transform, refreturn)
+
+                _WRAP_PROPERTY("transform", Transform::RefPtr)
         };
 
         class Transform : public Core::Object
@@ -62,33 +58,35 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
+                using RefPtr = Glib::RefPtr<Transform>;
+
                 _IGNORE(maia_graphic_transform_init)
-                static TransformRefPtr create ()
+                static Transform::RefPtr create ()
                 {
                     MaiaGraphicTransform* pTransform = maia_graphic_transform_new_identity ();
-                    return TransformRefPtr (new Transform (pTransform));
+                    return Transform::RefPtr (new Transform (pTransform));
                 }
 
-                static TransformRefPtr create (const Matrix& inMatrix)
+                static Transform::RefPtr create (const Matrix& inMatrix)
                 {
                     MaiaGraphicTransform* pTransform = maia_graphic_transform_new_from_matrix (const_cast<MaiaGraphicMatrix*> (inMatrix.gobj ()));
-                    return TransformRefPtr (new Transform (pTransform));
+                    return Transform::RefPtr (new Transform (pTransform));
                 }
 
-                static TransformRefPtr create (double inXX, double inYX, double inXY, double inYY, double inX0, double inY0)
+                static Transform::RefPtr create (double inXX, double inYX, double inXY, double inYY, double inX0, double inY0)
                 {
                     MaiaGraphicTransform* pTransform = maia_graphic_transform_new (inXX, inYX, inXY, inYY, inX0, inY0);
-                    return TransformRefPtr (new Transform (pTransform));
+                    return Transform::RefPtr (new Transform (pTransform));
                 }
 
                 _IGNORE(maia_graphic_transform_new_invert)
-                static TransformRefPtr create_invert (const TransformRefPtr& inTransform)
+                static Transform::RefPtr create_invert (const Transform::RefPtr& inTransform)
                 {
                     GError* gerror = 0;
 
                     MaiaGraphicTransform* pTransform = maia_graphic_transform_new_invert (const_cast<MaiaGraphicTransform*> (inTransform->gobj ()), &(gerror));
                     if(gerror) ::Glib::Error::throw_exception(gerror);
-                    return TransformRefPtr (new Transform (pTransform));
+                    return Transform::RefPtr (new Transform (pTransform));
                 }
 
                 _IGNORE(maia_graphic_transform_get_matrix)
@@ -109,18 +107,17 @@ namespace Maia
                     return Matrix (&matrix);
                 }
 
-                _WRAP_METHOD(TransformRefPtr copy () const, maia_graphic_transform_copy)
-                _WRAP_METHOD(TransformRefPtr link () const, maia_graphic_transform_link)
+                _WRAP_METHOD(Transform::RefPtr copy () const, maia_graphic_transform_copy)
+                _WRAP_METHOD(Transform::RefPtr link () const, maia_graphic_transform_link)
 
-                _WRAP_METHOD(TransformChangedNotificationRefPtr changed (), maia_graphic_transform_get_changed)
+                _WRAP_METHOD(TransformChangedNotification::RefPtr changed (), maia_graphic_transform_get_changed)
 
                 _WRAP_METHOD(bool have_rotate () const, maia_graphic_transform_get_have_rotate)
 
                 _WRAP_METHOD(bool is_rotate () const, maia_graphic_transform_get_is_rotate)
-                _WRAP_METHOD(void set_is_rotate (bool inIsRotate = true) const, maia_graphic_transform_set_is_rotate)
 
-                _WRAP_METHOD(void append (const TransformRefPtr& inTransform), maia_graphic_transform_append)
-                _WRAP_METHOD(void prepend (const TransformRefPtr& inTransform), maia_graphic_transform_prepend)
+                _WRAP_METHOD(void append (const Transform::RefPtr& inTransform), maia_graphic_transform_append)
+                _WRAP_METHOD(void prepend (const Transform::RefPtr& inTransform), maia_graphic_transform_prepend)
 
                 _WRAP_METHOD(void translate (double inX, double inY), maia_graphic_transform_translate)
                 _WRAP_METHOD(void scale (double inSx, double inSy), maia_graphic_transform_scale)
@@ -130,11 +127,10 @@ namespace Maia
                 _WRAP_METHOD(void apply (const Matrix& inMatrix), maia_graphic_transform_apply)
                 _WRAP_METHOD(void apply_center_rotate (double inCx, double inCy), maia_graphic_transform_apply_center_rotate)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("is-rotate", bool)
                 _WRAP_PROPERTY("have-rotate", bool)
-                _WRAP_PROPERTY("changed", TransformChangedNotificationRefPtr)
-#endif
+
+                _IGNORE_PROPERTY("changed")
         };
     }
 }

@@ -32,8 +32,6 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Core)
 
-        typedef Glib::RefPtr<class TimelineNewFrameNotification> TimelineNewFrameNotificationRefPtr;
-
         class TimelineNewFrameNotification : public Core::Notification
         {
             _CLASS_GOBJECT(TimelineNewFrameNotification, MaiaCoreTimelineNewFrameNotification, MAIA_CORE_TIMELINE_NEW_FRAME_NOTIFICATION, Core::Notification, MaiaCoreNotification)
@@ -42,14 +40,14 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                _WRAP_METHOD(guint get_num_frame () const, maia_core_timeline_new_frame_notification_get_num_frame)
-                _WRAP_METHOD(void set_num_frame (guint inNumFrame) const, maia_core_timeline_new_frame_notification_set_num_frame)
+                using RefPtr =  Glib::RefPtr<class TimelineNewFrameNotification>;
 
-                _WRAP_METHOD(void post (guint inNumFrame), maia_core_timeline_new_frame_notification_post)
+                _WRAP_METHOD(unsigned int get_num_frame () const, maia_core_timeline_new_frame_notification_get_num_frame)
+                _WRAP_METHOD(void set_num_frame (unsigned int inNumFrame) const, maia_core_timeline_new_frame_notification_set_num_frame)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-                _WRAP_PROPERTY("num-frame", guint)
-#endif
+                _WRAP_METHOD(void post (unsigned int inNumFrame), maia_core_timeline_new_frame_notification_post)
+
+                _WRAP_PROPERTY("num-frame", unsigned int)
         };
 
         class Timeline : public Object
@@ -60,33 +58,35 @@ namespace Maia
                 _CTOR_DEFAULT
 
             public:
+                using RefPtr = Glib::RefPtr<Timeline>;
+
                 _WRAP_ENUM(class Direction, MaiaCoreTimelineDirection, s#CORE_TIMELINE_DIRECTION_##,  NO_GTYPE)
 
-                static Glib::RefPtr<Timeline> create (unsigned int inNbFrames, unsigned int inFps)
+                static Timeline::RefPtr create (unsigned int inNbFrames, unsigned int inFps)
                 {
                     MaiaCoreTimeline* pTimeline = maia_core_timeline_new (inNbFrames, inFps);
-                    return Glib::RefPtr<Timeline> (new Timeline (pTimeline));
+                    return Timeline::RefPtr (new Timeline (pTimeline));
                 }
 
-                static Glib::RefPtr<Timeline> create (unsigned int inDuration)
+                static Timeline::RefPtr create (unsigned int inDuration)
                 {
                     MaiaCoreTimeline* pTimeline = maia_core_timeline_new_for_duration (inDuration);
-                    return Glib::RefPtr<Timeline> (new Timeline (pTimeline));
+                    return Timeline::RefPtr (new Timeline (pTimeline));
                 }
 
                 _WRAP_METHOD(Timeline::Direction get_direction() const, maia_core_timeline_get_direction)
                 _WRAP_METHOD(void set_direction(Timeline::Direction direction), maia_core_timeline_set_direction)
-                _WRAP_METHOD(guint get_speed() const, maia_core_timeline_get_speed)
-                _WRAP_METHOD(void set_speed(guint fps), maia_core_timeline_set_speed)
-                _WRAP_METHOD(guint get_n_frames() const, maia_core_timeline_get_n_frames)
-                _WRAP_METHOD(void set_n_frames(guint n_frames), maia_core_timeline_set_n_frames)
-                _WRAP_METHOD(guint get_duration() const, maia_core_timeline_get_duration)
-                _WRAP_METHOD(void set_duration(guint msecs), maia_core_timeline_set_duration)
+                _WRAP_METHOD(unsigned int get_speed() const, maia_core_timeline_get_speed)
+                _WRAP_METHOD(void set_speed(unsigned int fps), maia_core_timeline_set_speed)
+                _WRAP_METHOD(unsigned int get_n_frames() const, maia_core_timeline_get_n_frames)
+                _WRAP_METHOD(void set_n_frames(unsigned int n_frames), maia_core_timeline_set_n_frames)
+                _WRAP_METHOD(unsigned int get_duration() const, maia_core_timeline_get_duration)
+                _WRAP_METHOD(void set_duration(unsigned int msecs), maia_core_timeline_set_duration)
                 _WRAP_METHOD(bool get_loop() const, maia_core_timeline_get_loop)
                 _WRAP_METHOD(void set_loop(bool loop = true), maia_core_timeline_set_loop)
 
                 _WRAP_METHOD(bool is_playing() const, maia_core_timeline_get_is_playing)
-                _WRAP_METHOD(guint get_current_frame() const, maia_core_timeline_get_current_frame)
+                _WRAP_METHOD(unsigned int get_current_frame() const, maia_core_timeline_get_current_frame)
                 _WRAP_METHOD(double get_progress() const, maia_core_timeline_get_progress)
 
                 _WRAP_METHOD(void start(), maia_core_timeline_start)
@@ -94,29 +94,26 @@ namespace Maia
                 _WRAP_METHOD(void stop(), maia_core_timeline_stop)
                 _WRAP_METHOD(void rewind(), maia_core_timeline_rewind)
                 _WRAP_METHOD(void skip(gint n_frames), maia_core_timeline_skip)
-                _WRAP_METHOD(void advance(guint frame_num), maia_core_timeline_advance)
+                _WRAP_METHOD(void advance(unsigned int frame_num), maia_core_timeline_advance)
 
-                _WRAP_METHOD(NotificationRefPtr completed () const, maia_core_timeline_get_completed, refreturn)
-                _WRAP_METHOD(TimelineNewFrameNotificationRefPtr new_frame () const, maia_core_timeline_get_new_frame, refreturn)
-                _WRAP_METHOD(NotificationRefPtr paused () const, maia_core_timeline_get_paused, refreturn)
-                _WRAP_METHOD(NotificationRefPtr started () const, maia_core_timeline_get_started, refreturn)
+                _WRAP_METHOD(Notification::RefPtr completed () const, maia_core_timeline_get_completed, refreturn)
+                _WRAP_METHOD(TimelineNewFrameNotification::RefPtr new_frame () const, maia_core_timeline_get_new_frame, refreturn)
+                _WRAP_METHOD(Notification::RefPtr paused () const, maia_core_timeline_get_paused, refreturn)
+                _WRAP_METHOD(Notification::RefPtr started () const, maia_core_timeline_get_started, refreturn)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("direction", Timeline::Direction)
-                _WRAP_PROPERTY("duration", guint)
-                _WRAP_PROPERTY("speed", guint)
+                _WRAP_PROPERTY("duration", unsigned int)
+                _WRAP_PROPERTY("speed", unsigned int)
                 _WRAP_PROPERTY("loop", bool)
-                _WRAP_PROPERTY("n-frames", guint)
-                _WRAP_PROPERTY("progress", gdouble)
-                _WRAP_PROPERTY("current-frame", guint)
+                _WRAP_PROPERTY("n-frames", unsigned int)
+                _WRAP_PROPERTY("progress", double)
+                _WRAP_PROPERTY("current-frame", unsigned int)
                 _WRAP_PROPERTY("is-playing", bool)
-#endif
 
-            private:
-                _WRAP_PROPERTY("completed", NotificationRefPtr)
-                _WRAP_PROPERTY("new-frame", TimelineNewFrameNotificationRefPtr)
-                _WRAP_PROPERTY("paused", NotificationRefPtr)
-                _WRAP_PROPERTY("started", NotificationRefPtr)
+                _IGNORE_PROPERTY("completed")
+                _IGNORE_PROPERTY("new-frame")
+                _IGNORE_PROPERTY("paused")
+                _IGNORE_PROPERTY("started")
         };
     }
 }

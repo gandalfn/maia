@@ -26,7 +26,7 @@ code {
 }
 
 html, body, .headertitle {
-	background-color: #FDF6E3;
+	background-color: #FFFFFF;
 }
 
 .title {
@@ -37,16 +37,33 @@ html, body, .headertitle {
 }
 
 .title,#projectname {
+	font: 400 1.5em/1.7em sans-serif;
+	font-size: 180%;
+	font-weight: bold;
+	margin: 10px 2px;
+}
+
+.title,#projectname {
 	color: #CB4B16;
 }
 
+h2 {
+	border-bottom: 1px solid #CB4B16;
+	color: #CB4B16;
+	font-size: 150%;
+	font-weight: normal;
+	margin-top: 1.75em;
+	padding-top: 8px;
+	padding-bottom: 4px;
+	width: 100%;
+}
 
 pre.fragment {
         border: 3px solid #8C9F8C;
 	border-radius: 15px;
 	color: #FFF;
-        background-color: #404040;
-        padding: 16px;
+        background-color: #FBFCFD;
+	padding: 16px;
         margin: 4px 8px 4px 2px;
         overflow: auto;
         word-wrap: break-word;
@@ -56,6 +73,12 @@ pre.fragment {
         font-size: 1.6em;
 }
 
+div.fragment {
+        padding: 4px;
+        margin: 4px;
+	background-color: #FBFCFD;
+	border: 1px solid #C4CFE5;
+}
 
 body {
 	color: black;
@@ -288,6 +311,10 @@ table.memberdecls {
         display: none;
 }
 
+.inherit_header {
+        display: none;
+}
+
 /* @end */
 
 /* @group Member Details */
@@ -328,7 +355,7 @@ table.memberdecls {
         border-top-width: 0;
         background-image:url('nav_g.png');
         background-repeat:repeat-x;
-        background-color: #FFFFFF;
+        background-color: #FDF6E3;
         /* opera specific markup */
         border-bottom-left-radius: 15px;
         border-bottom-right-radius: 5px;
@@ -429,7 +456,7 @@ a.SelectItem:active {
 }
 
 a.SelectItem:hover {
-    color: #FFFFFF;
+    color: #FDF6E3;
     background-color: #3D578C;
     outline-style: none;
     text-decoration: none;

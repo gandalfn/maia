@@ -21,9 +21,6 @@
 #include <maia.h>
 #include <maiamm/core-object.h>
 
-_DEFS(maiamm,maia)
-_PINCLUDE(maiamm/private/core-object_p.h)
-
 namespace Maia
 {
     namespace Core

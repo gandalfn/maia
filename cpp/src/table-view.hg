@@ -55,8 +55,8 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_table_view_get_model, refreturn)
             _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_table_view_set_model)
 
-            _WRAP_METHOD(Graphic::PatternRefPtr get_header_pattern () const, maia_table_view_get_header_pattern, refreturn)
-            _WRAP_METHOD(void set_header_pattern (const Graphic::PatternRefPtr& inPattern), maia_table_view_set_header_pattern)
+            _WRAP_METHOD(Graphic::Pattern::RefPtr get_header_pattern () const, maia_table_view_get_header_pattern, refreturn)
+            _WRAP_METHOD(void set_header_pattern (const Graphic::Pattern::RefPtr& inPattern), maia_table_view_set_header_pattern)
 
 
             inline bool get_item_row (const Glib::RefPtr<ItemPackable>& inpItem, Maia::Model::Row& outRow) const
@@ -82,7 +82,7 @@ namespace Maia
             _WRAP_PROPERTY("highlighted-row", gint)
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
             _WRAP_PROPERTY("hide-if-model-empty", bool)
-            _WRAP_PROPERTY("header-pattern", Graphic::PatternRefPtr)
+            _WRAP_PROPERTY("header-pattern", Graphic::Pattern::RefPtr)
 #endif
 
         protected:

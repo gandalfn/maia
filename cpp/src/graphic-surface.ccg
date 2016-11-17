@@ -19,6 +19,8 @@
 
 #include <maia.h>
 
+#include <maiamm/graphic-context.h>
+
 namespace Maia
 {
     namespace Graphic

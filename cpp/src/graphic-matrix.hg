@@ -75,13 +75,16 @@ namespace Maia
                 void set_y0(const double& value);
 
             protected:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 MaiaGraphicMatrix gobject_;
+#endif
         };
     }
 }
 
 namespace Glib
 {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     /** @relates Maia::Graphic::Matrix
      * @param object The C instance
      * @result A C++ instance that wraps this C instance.
@@ -94,7 +97,6 @@ namespace Glib
      */
     const Maia::Graphic::Matrix& wrap(const MaiaGraphicMatrix* object);
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
     template <>
     class Value<Maia::Graphic::Matrix> : public Glib::Value_Boxed<Maia::Graphic::Matrix>
     {};

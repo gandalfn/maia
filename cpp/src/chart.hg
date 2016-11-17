@@ -41,16 +41,17 @@ namespace Maia
 
         public:
             _WRAP_ENUM(class Direction, MaiaChartDirection, s#CHART_DIRECTION_##, NO_GTYPE)
+            using RefPtr = Glib::RefPtr<Chart>;
 
-            static Glib::RefPtr<Chart> create (const Glib::ustring& inId, const Glib::ustring& inTitle = "")
+            static Chart::RefPtr create (const Glib::ustring& inId, const Glib::ustring& inTitle = "")
             {
                 MaiaChart* pChart = maia_chart_new (inId.c_str(), inTitle.c_str ());
-                return Glib::RefPtr<Chart> (new Chart (pChart));
+                return Chart::RefPtr (new Chart (pChart));
             }
-            static Glib::RefPtr<Chart> create (const Glib::ustring& inId, const Glib::ustring& inXColumn, const Glib::ustring& inYColumn, const Graphic::Range& inRange, Graphic::LineType inLineType, double inLineWidth, const Glib::ustring& inTitle)
+            static Chart::RefPtr create (const Glib::ustring& inId, const Glib::ustring& inXColumn, const Glib::ustring& inYColumn, const Graphic::Range& inRange, Graphic::LineType inLineType, double inLineWidth, const Glib::ustring& inTitle)
             {
                 MaiaChart* pChart = maia_chart_new (inId.c_str(), inTitle.c_str ());
-                Glib::RefPtr<Chart> pCppChart = Glib::RefPtr<Chart> (new Chart (pChart));
+                Chart::RefPtr pCppChart = Chart::RefPtr (new Chart (pChart));
                 pCppChart->set_x_axis (inXColumn);
                 pCppChart->set_y_axis (inYColumn);
                 pCppChart->set_range (inRange);
@@ -83,16 +84,16 @@ namespace Maia
             _WRAP_METHOD(bool get_smoothing () const, maia_chart_get_smoothing)
             _WRAP_METHOD(void set_smoothing (bool inSmoothing = true), maia_chart_set_smoothing)
 
-            _WRAP_METHOD(Graphic::PathRefPtr get_path () const, maia_chart_get_path, refreturn)
-            _WRAP_METHOD(Graphic::PathRefPtr get_reverse_path () const, maia_chart_get_reverse_path, refreturn)
+            _WRAP_METHOD(Graphic::Path::RefPtr get_path () const, maia_chart_get_path, refreturn)
+            _WRAP_METHOD(Graphic::Path::RefPtr get_reverse_path () const, maia_chart_get_reverse_path, refreturn)
             _WRAP_METHOD(void get_first_point (Graphic::Point& outPoint) const, maia_chart_get_first_point)
             _WRAP_METHOD(void get_last_point (Graphic::Point& outPoint) const, maia_chart_get_last_point)
 
             _WRAP_METHOD(static void range_from_model(const Glib::RefPtr<Model>& inpModel, const Glib::ustring& inXColumn, const Glib::ustring& inYColumn, Graphic::Range& outRange), maia_chart_range_from_model)
 
+            _IGNORE(maia_chart_changed);
             _WRAP_SIGNAL(void changed (), "changed", no_default_handler)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("title", Glib::ustring)
             _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
@@ -101,10 +102,9 @@ namespace Maia
             _WRAP_PROPERTY("range", Graphic::Range)
             _WRAP_PROPERTY("direction", Chart::Direction)
             _WRAP_PROPERTY("smoothing", bool)
-            _WRAP_PROPERTY("path", Graphic::PathRefPtr)
-            _WRAP_PROPERTY("reverse-path", Graphic::PathRefPtr)
+            _WRAP_PROPERTY("path", Graphic::Path::RefPtr)
+            _WRAP_PROPERTY("reverse-path", Graphic::Path::RefPtr)
             _WRAP_PROPERTY("first-point", Graphic::Point)
             _WRAP_PROPERTY("last-point", Graphic::Point)
-#endif
     };
 }

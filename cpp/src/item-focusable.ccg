@@ -19,6 +19,8 @@
 
 #include <maia.h>
 
+#include <maiamm/focus-group.h>
+
 namespace Maia
 {
 }

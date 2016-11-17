@@ -39,10 +39,12 @@ namespace Maia
             explicit ChartIntersect(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<ChartIntersect> create (const Glib::ustring& inId, const Glib::ustring& inFirst, const Glib::ustring& inSecond)
+            using RefPtr = Glib::RefPtr<ChartIntersect>;
+
+            static ChartIntersect::RefPtr create (const Glib::ustring& inId, const Glib::ustring& inFirst, const Glib::ustring& inSecond)
             {
                 MaiaChartIntersect* pChartIntersect = maia_chart_intersect_new (inId.c_str(), inFirst.c_str (), inSecond.c_str ());
-                return Glib::RefPtr<ChartIntersect> (new ChartIntersect (pChartIntersect));
+                return ChartIntersect::RefPtr (new ChartIntersect (pChartIntersect));
             }
 
             _WRAP_METHOD(Glib::ustring get_first_chart () const, maia_chart_intersect_get_first_chart)
@@ -51,19 +53,17 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_second_chart () const, maia_chart_intersect_get_second_chart)
             _WRAP_METHOD(void set_second_chart (const Glib::ustring& inChart), maia_chart_intersect_set_second_chart)
 
-            _WRAP_METHOD(Graphic::PatternRefPtr get_fill_pattern () const, maia_chart_intersect_get_fill_pattern, refreturn)
-            _WRAP_METHOD(void set_fill_pattern (const Graphic::PatternRefPtr& inPattern), maia_chart_intersect_set_fill_pattern)
+            _WRAP_METHOD(Graphic::Pattern::RefPtr get_fill_pattern () const, maia_chart_intersect_get_fill_pattern, refreturn)
+            _WRAP_METHOD(void set_fill_pattern (const Graphic::Pattern::RefPtr& inPattern), maia_chart_intersect_set_fill_pattern)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-            _WRAP_PROPERTY("tag", Glib::ustring)
-            _WRAP_PROPERTY("style", Glib::ustring)
-            _WRAP_PROPERTY("characters", Glib::ustring)
-            _WRAP_PROPERTY("manifest-path", Glib::ustring)
-            _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
+            _IGNORE_PROPERTY("tag")
+            _IGNORE_PROPERTY("style")
+            _IGNORE_PROPERTY("characters")
+            _IGNORE_PROPERTY("manifest-path")
+            _IGNORE_PROPERTY("manifest-theme")
 
             _WRAP_PROPERTY("first-chart", Glib::ustring)
             _WRAP_PROPERTY("second-chart", Glib::ustring)
-            _WRAP_PROPERTY("fill-pattern", Graphic::PatternRefPtr)
-#endif
+            _WRAP_PROPERTY("fill-pattern", Graphic::Pattern::RefPtr)
     };
 }

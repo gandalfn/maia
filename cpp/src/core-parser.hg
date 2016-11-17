@@ -41,7 +41,8 @@ namespace Maia
             public:
                 _WRAP_ENUM(class Token, MaiaCoreParserToken, s#CORE_PARSER_TOKEN_##, s#EOF#END_OF_FILE#, NO_GTYPE)
 
-                typedef ParserIterator iterator;
+                using RefPtr = Glib::RefPtr<Parser>;
+                using iterator = ParserIterator;
 
                 _WRAP_METHOD(Glib::ustring get_element () const, maia_core_parser_get_element)
                 _WRAP_METHOD(Glib::ustring get_attribute () const, maia_core_parser_get_attribute)
@@ -57,14 +58,14 @@ namespace Maia
                 _WRAP_METHOD(Parser::iterator begin (), maia_core_parser_iterator)
                 _WRAP_METHOD(Parser::iterator end (), maia_core_parser_iterator_end)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY ("element", Glib::ustring)
                 _WRAP_PROPERTY ("characters", Glib::ustring)
                 _WRAP_PROPERTY ("attribute", Glib::ustring)
                 _WRAP_PROPERTY ("val", Glib::ustring)
                 _WRAP_PROPERTY ("line", int)
                 _WRAP_PROPERTY ("column", int)
-#endif
+
+                _IGNORE_PROPERTY ("attributes")
 
             protected:
                 _WRAP_METHOD(void next_char (), maia_core_parser_next_char)
@@ -74,9 +75,6 @@ namespace Maia
 
                 _WRAP_VFUNC(Parser::Token next_token (), next_token, errthrow)
                 _WRAP_METHOD(Parser::Token next_token (), maia_core_parser_next_token, errthrow)
-
-            private:
-                _WRAP_PROPERTY ("attributes", void*)
         };
 
         class ParserIterator

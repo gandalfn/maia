@@ -33,8 +33,6 @@ namespace Maia
 {
     _WRAP_ENUM(class Orientation, MaiaOrientation, s#ORIENTATION_##, NO_GTYPE)
 
-    typedef Glib::RefPtr<class ViewItemAddedRemovedNotification> ViewItemAddedRemovedNotificationRefPtr;
-
     class ViewItemAddedRemovedNotification : public Core::Notification
     {
         _CLASS_GOBJECT(ViewItemAddedRemovedNotification, MaiaViewItemAddedRemovedNotification, MAIA_VIEW_ITEM_ADDED_REMOVED_NOTIFICATION, Core::Notification, MaiaCoreNotification)
@@ -43,13 +41,13 @@ namespace Maia
             _CTOR_DEFAULT()
 
         public:
-            _WRAP_METHOD(Glib::RefPtr<Item> get_item () const, maia_view_item_added_removed_notification_get_item, refreturn)
+            using RefPtr = Glib::RefPtr<ViewItemAddedRemovedNotification>;
 
-            _WRAP_METHOD(void post (const Glib::RefPtr<Item>& inItem), maia_view_item_added_removed_notification_post)
+            _WRAP_METHOD(Item::RefPtr get_item () const, maia_view_item_added_removed_notification_get_item, refreturn)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-            _WRAP_PROPERTY("item", Glib::RefPtr<Item>)
-#endif
+            _WRAP_METHOD(void post (const Item::RefPtr& inItem), maia_view_item_added_removed_notification_post)
+
+            _WRAP_PROPERTY("item", Item::RefPtr)
     };
 
     class View : public Grid
@@ -69,8 +67,8 @@ namespace Maia
                 return Glib::RefPtr<View> (new View (pView));
             }
 
-            _WRAP_METHOD(ViewItemAddedRemovedNotificationRefPtr item_added () const, maia_view_get_item_added, refreturn)
-            _WRAP_METHOD(ViewItemAddedRemovedNotificationRefPtr item_removed () const, maia_view_get_item_removed, refreturn)
+            _WRAP_METHOD(ViewItemAddedRemovedNotification::RefPtr item_added () const, maia_view_get_item_added, refreturn)
+            _WRAP_METHOD(ViewItemAddedRemovedNotification::RefPtr item_removed () const, maia_view_get_item_removed, refreturn)
 
             _WRAP_METHOD(guint get_lines () const, maia_view_get_lines)
             _WRAP_METHOD(void set_lines (guint inLines), maia_view_set_lines)
@@ -116,13 +114,14 @@ namespace Maia
 
             _WRAP_SIGNAL(void row_clicked (guint inRow), "row-clicked", no_default_handler)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("lines", guint)
             _WRAP_PROPERTY("highlighted-row", gint)
             _WRAP_PROPERTY("orientation", Orientation)
             _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
             _WRAP_PROPERTY("hide-if-model-empty", bool)
-#endif
+
+            _IGNORE_PROPERTY("item-added")
+            _IGNORE_PROPERTY("item-removed")
 
         protected:
             View ();
@@ -137,8 +136,5 @@ namespace Maia
 
             static gboolean set_property_func_callback (GObject* inpObject, const char* inProperty, const char* inColumn, guint inRow, void* inpData);
             static void set_property_func_destroy (void* inpData);
-
-            _WRAP_PROPERTY("item-added", ViewItemAddedRemovedNotificationRefPtr)
-            _WRAP_PROPERTY("item-removed", ViewItemAddedRemovedNotificationRefPtr)
     };
 }

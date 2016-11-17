@@ -27,8 +27,6 @@ _PINCLUDE(maiamm/private/core-object_p.h)
 
 namespace Maia
 {
-    typedef Glib::RefPtr<class Application> ApplicationRefPtr;
-
     class Application : public Core::Object
     {
         _CLASS_GOBJECT(Application, MaiaApplication, MAIA_APPLICATION, Core::Object, MaiaCoreObject)
@@ -39,12 +37,9 @@ namespace Maia
             explicit Application(const Glib::ustring& inId);
 
         public:
-            static ApplicationRefPtr create (const Glib::ustring& inName, int inFps = 60)
-            {
-                return ApplicationRefPtr (new Application (maia_application_new (inName.c_str(), inFps, 0, 0, "unix://")));
-            }
+            using RefPtr = Glib::RefPtr<Application>;
 
-            static ApplicationRefPtr create (const Glib::ustring& inName, int inFps, const std::vector<Glib::ustring>& inBackends, const Glib::ustring& inUri = "unix://")
+            static Application::RefPtr create (const Glib::ustring& inName, int inFps, const std::vector<Glib::ustring>& inBackends, const Glib::ustring& inUri = "unix://")
             {
                 int length = inBackends.size ();
                 char** backends = nullptr;
@@ -65,14 +60,14 @@ namespace Maia
                     g_free (backends);
                 }
 
-                return ApplicationRefPtr (new Application (pApplication));
+                return Application::RefPtr (new Application (pApplication));
             }
 
             _IGNORE(maia_application_new)
 
-            static ApplicationRefPtr create (const Glib::ustring& inName, char*** inpArgv, int* inArgc)
+            static Application::RefPtr create (const Glib::ustring& inName, char*** inpArgv, int* inArgc)
             {
-                return ApplicationRefPtr (new Application (maia_application_new_from_args (inName.c_str(), inpArgv, inArgc)));
+                return Application::RefPtr (new Application (maia_application_new_from_args (inName.c_str(), inpArgv, inArgc)));
             }
 
             _IGNORE(maia_application_new_from_args)
@@ -94,11 +89,11 @@ namespace Maia
             _WRAP_METHOD(void run (), maia_application_run)
             _WRAP_METHOD(void quit (), maia_application_quit)
 
-            _WRAP_METHOD(Core::NotificationRefPtr running_notification () const, maia_application_get_running_notification, refreturn)
-            _WRAP_METHOD(Core::TimelineNewFrameNotificationRefPtr new_frame () const, maia_application_get_new_frame, refreturn)
+            _WRAP_METHOD(Core::Notification::RefPtr running_notification () const, maia_application_get_running_notification, refreturn)
+            _WRAP_METHOD(Core::TimelineNewFrameNotification::RefPtr new_frame () const, maia_application_get_new_frame, refreturn)
 
-            _WRAP_METHOD(static ApplicationRefPtr get_default (), maia_application_get_default, refreturn)
-            _WRAP_METHOD(static void set_default (const ApplicationRefPtr& inApplication), maia_application_set_default)
+            _WRAP_METHOD(static Application::RefPtr get_default (), maia_application_get_default, refreturn)
+            _WRAP_METHOD(static void set_default (const Application::RefPtr& inApplication), maia_application_set_default)
 
             _WRAP_PROPERTY("refresh-rate", guint)
             _WRAP_PROPERTY("pause", bool)

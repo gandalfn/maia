@@ -30,8 +30,6 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
-        typedef Glib::RefPtr<class RadialGradient> RadialGradientRefPtr;
-
         class RadialGradient : public Gradient
         {
             _CLASS_GOBJECT(RadialGradient, MaiaGraphicRadialGradient, MAIA_GRAPHIC_RADIAL_GRADIENT, Gradient, MaiaGraphicGradient)
@@ -40,13 +38,15 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                static RadialGradientRefPtr create (const Point& inStart, double inStartRadius, const Point& inEnd, double inEndRadius)
+                using RefPtr = Glib::RefPtr<RadialGradient>;
+
+                static RadialGradient::RefPtr create (const Point& inStart, double inStartRadius, const Point& inEnd, double inEndRadius)
                 {
                     MaiaGraphicRadialGradient* pGradient = maia_graphic_radial_gradient_new (const_cast<MaiaGraphicPoint*> (inStart.gobj ()),
                                                                                              inStartRadius,
                                                                                              const_cast<MaiaGraphicPoint*> (inEnd.gobj ()),
                                                                                              inEndRadius);
-                    return RadialGradientRefPtr (new RadialGradient (pGradient));
+                    return RadialGradient::RefPtr (new RadialGradient (pGradient));
                 }
 
                 _IGNORE(maia_graphic_radial_gradient_new)
@@ -56,12 +56,10 @@ namespace Maia
                 _WRAP_METHOD(void get_end (Point& outPoint) const, maia_graphic_radial_gradient_get_end)
                 _WRAP_METHOD(double get_end_radius () const, maia_graphic_radial_gradient_get_end_radius)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY ("start", Point)
                 _WRAP_PROPERTY ("start-radius", double)
                 _WRAP_PROPERTY ("end", Point)
                 _WRAP_PROPERTY ("end-radius", double)
-#endif
         };
     }
 }

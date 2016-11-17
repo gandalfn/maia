@@ -46,11 +46,9 @@ namespace Maia
                 return Glib::RefPtr<Group> (new Group (pGroup));
             }
 
-            _WRAP_METHOD(Glib::RefPtr<Item> get_item_over_pointer () const, maia_group_get_item_over_pointer, refreturn)
-            _WRAP_METHOD(void set_pointer_over_pointer (const Glib::RefPtr<Item>& inItem), maia_group_set_item_over_pointer)
+            _WRAP_METHOD(Item::RefPtr get_item_over_pointer () const, maia_group_get_item_over_pointer, refreturn)
+            _WRAP_METHOD(void set_pointer_over_pointer (const Item::RefPtr& inItem), maia_group_set_item_over_pointer)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-            _WRAP_PROPERTY("item-over-pointer", Glib::RefPtr<Item>)
-#endif
+            _WRAP_PROPERTY("item-over-pointer", Item::RefPtr)
     };
 }

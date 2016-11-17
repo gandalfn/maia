@@ -33,8 +33,6 @@ namespace Maia
 
         _WRAP_ENUM(class Type, MaiaGestureType, s#GESTURE_TYPE_##,  NO_GTYPE)
 
-        typedef Glib::RefPtr<class Notification> NotificationRefPtr;
-
         class Notification : public Core::Notification
         {
             _CLASS_GOBJECT(Notification, MaiaGestureNotification, MAIA_GESTURE_NOTIFICATION, Core::Notification, MaiaCoreNotification)
@@ -43,6 +41,8 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
+                using RefPtr = Glib::RefPtr<Notification>;
+
                 _WRAP_METHOD(guint get_button () const, maia_gesture_notification_get_button)
 
                 _WRAP_METHOD(Gesture::Type get_gesture_type () const, maia_gesture_notification_get_gesture_type)
@@ -54,12 +54,10 @@ namespace Maia
 
                 _WRAP_METHOD(void post (guint inButton, Gesture::Type inType, const Graphic::Point& inPosition), maia_gesture_notification_post)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("button", guint)
                 _WRAP_PROPERTY("gesture-type", Gesture::Type)
                 _WRAP_PROPERTY("position", Graphic::Point)
                 _WRAP_PROPERTY("proceed", bool)
-#endif
         };
     }
 }

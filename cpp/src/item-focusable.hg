@@ -18,13 +18,14 @@
  */
 
 #include <maia.h>
-#include <maiamm/focus-group.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(glibmm/private/object_p.h)
 
 namespace Maia
 {
+    class FocusGroup;
+
     class ItemFocusable : public Glib::Interface
     {
         _CLASS_INTERFACE(ItemFocusable, MaiaItemFocusable, MAIA_ITEM_FOCUSABLE, MaiaItemFocusableIface)
@@ -45,6 +46,8 @@ namespace Maia
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<FocusGroup>&', `Glib::wrap($3)')
 
         public:
+            using RefPtr = Glib::RefPtr<ItemFocusable>;
+
             _WRAP_METHOD(bool can_focus () const, maia_item_focusable_get_can_focus)
             _WRAP_METHOD(void set_can_focus (bool inCanFocus = true), maia_item_focusable_set_can_focus)
 
@@ -57,11 +60,9 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<FocusGroup> focus_group () const, maia_item_focusable_get_focus_group, refreturn)
             _WRAP_METHOD(void set_focus_group (const Glib::RefPtr<FocusGroup>& inFocusGroup) const, maia_item_focusable_set_focus_group)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("can-focus", bool)
             _WRAP_PROPERTY("have-focus", bool)
             _WRAP_PROPERTY("focus-order", int)
             _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
-#endif
     };
 }

@@ -27,8 +27,6 @@ _PINCLUDE(maiamm/private/item_p.h)
 
 namespace Maia
 {
-    typedef Glib::RefPtr<class Arrow> ArrowRefPtr;
-
     class Arrow : public Item, public ItemMovable
     {
         _CLASS_GOBJECT(Arrow, MaiaArrow, MAIA_ARROW, Item, MaiaItem)
@@ -40,11 +38,13 @@ namespace Maia
             explicit Arrow(const Glib::ustring& inId);
 
         public:
-            static ArrowRefPtr create (const Glib::ustring& inId)
+            using RefPtr = Glib::RefPtr<Arrow>;
+
+            static Arrow::RefPtr create (const Glib::ustring& inId)
             {
                 MaiaArrow* pArrow = maia_arrow_new (inId.c_str ());
 
-                return ArrowRefPtr (new Arrow (pArrow));
+                return Arrow::RefPtr (new Arrow (pArrow));
             }
 
             _WRAP_METHOD(void get_start (Graphic::Point& outStart) const, maia_arrow_get_start)
@@ -61,12 +61,10 @@ namespace Maia
             _WRAP_METHOD(double get_arrow_angle () const, maia_arrow_get_arrow_angle)
             _WRAP_METHOD(void set_arrow_angle (double inArrowAngle), maia_arrow_set_arrow_angle)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("start", Graphic::Point)
             _WRAP_PROPERTY("end", Graphic::Point)
             _WRAP_PROPERTY("linked-item", Glib::ustring)
             _WRAP_PROPERTY("arrow-width", double)
             _WRAP_PROPERTY("arrow-angle", double)
-#endif
     };
 }

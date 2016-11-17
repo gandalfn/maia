@@ -103,26 +103,27 @@ namespace Maia
 
         public:
             _WRAP_ENUM(class Type, MaiaWindowType, s#WINDOW_TYPE_##, NO_GTYPE)
+            using RefPtr = Glib::RefPtr<Window>;
 
-            static Glib::RefPtr<Window> create (const Glib::ustring& inId, unsigned int inWidth, unsigned int inHeight)
+            static Window::RefPtr create (const Glib::ustring& inId, unsigned int inWidth, unsigned int inHeight)
             {
                 MaiaWindow* pWindow = maia_window_new (inId.c_str(), inWidth, inHeight);
-                return Glib::RefPtr<Window> (new Window (pWindow));
+                return Window::RefPtr (new Window (pWindow));
             }
 
             _WRAP_METHOD(void swap_buffer (), maia_window_swap_buffer)
             _WRAP_METHOD(void flush (), maia_window_flush)
 
-            _WRAP_METHOD(Glib::RefPtr<ItemFocusable> get_focus_item () const, maia_window_get_focus_item, refreturn)
-            _WRAP_METHOD(void set_focus_item (const Glib::RefPtr<ItemFocusable>& inItem), maia_window_set_focus_item)
+            _WRAP_METHOD(ItemFocusable::RefPtr get_focus_item () const, maia_window_get_focus_item, refreturn)
+            _WRAP_METHOD(void set_focus_item (const ItemFocusable::RefPtr& inItem), maia_window_set_focus_item)
 
-            _WRAP_METHOD(Glib::RefPtr<Item> get_grab_pointer_item () const, maia_window_get_grab_pointer_item, refreturn)
-            _WRAP_METHOD(void set_grab_pointer_item (const Glib::RefPtr<Item>& inItem), maia_window_set_grab_pointer_item)
+            _WRAP_METHOD(Item::RefPtr get_grab_pointer_item () const, maia_window_get_grab_pointer_item, refreturn)
+            _WRAP_METHOD(void set_grab_pointer_item (const Item::RefPtr& inItem), maia_window_set_grab_pointer_item)
 
-            _WRAP_METHOD(Glib::RefPtr<Item> get_grab_keyboard_item () const, maia_window_get_grab_keyboard_item, refreturn)
-            _WRAP_METHOD(void set_grab_keyboard_item (const Glib::RefPtr<Item>& inItem), maia_window_set_grab_keyboard_item)
+            _WRAP_METHOD(Item::RefPtr get_grab_keyboard_item () const, maia_window_get_grab_keyboard_item, refreturn)
+            _WRAP_METHOD(void set_grab_keyboard_item (const Item::RefPtr& inItem), maia_window_set_grab_keyboard_item)
 
-            _WRAP_METHOD(Graphic::SurfaceRefPtr get_surface () const, maia_window_get_surface, refreturn)
+            _WRAP_METHOD(Graphic::Surface::RefPtr get_surface () const, maia_window_get_surface, refreturn)
 
             _WRAP_METHOD(double get_border () const, maia_window_get_border)
             _WRAP_METHOD(void set_border (double inBorder), maia_window_set_border)
@@ -133,8 +134,8 @@ namespace Maia
             _WRAP_METHOD(WindowBorder get_shadow_border () const, maia_window_get_shadow_border)
             _WRAP_METHOD(void set_shadow_border (WindowBorder inBorder), maia_window_set_shadow_border)
 
-            _WRAP_METHOD(Graphic::ColorRefPtr get_shadow_color () const, maia_window_get_shadow_color, refreturn)
-            _WRAP_METHOD(void set_shadow_color (const Graphic::ColorRefPtr& inColor), maia_window_set_shadow_color)
+            _WRAP_METHOD(Graphic::Color::RefPtr get_shadow_color () const, maia_window_get_shadow_color, refreturn)
+            _WRAP_METHOD(void set_shadow_color (const Graphic::Color::RefPtr& inColor), maia_window_set_shadow_color)
 
             _WRAP_METHOD(double get_round_corner () const, maia_window_get_round_corner)
             _WRAP_METHOD(void set_round_corner (double inWidth), maia_window_set_round_corner)
@@ -148,11 +149,11 @@ namespace Maia
             _WRAP_METHOD(guint8 get_depth () const, maia_window_get_depth)
             _WRAP_METHOD(void set_depth (guint8 inDepth), maia_window_set_depth)
 
-            _WRAP_METHOD(Glib::RefPtr<Window> get_transient_for () const, maia_window_get_transient_for, refreturn)
-            _WRAP_METHOD(void set_transient_for (const Glib::RefPtr<Window>& inTransientFor), maia_window_set_transient_for)
+            _WRAP_METHOD(Window::RefPtr get_transient_for () const, maia_window_get_transient_for, refreturn)
+            _WRAP_METHOD(void set_transient_for (const Window::RefPtr& inTransientFor), maia_window_set_transient_for)
 
-            _WRAP_METHOD(Graphic::TransformRefPtr get_device_transform () const, maia_window_get_device_transform, refreturn)
-            _WRAP_METHOD(void set_device_transform (const Graphic::TransformRefPtr& inTransform), maia_window_set_device_transform)
+            _WRAP_METHOD(Graphic::Transform::RefPtr get_device_transform () const, maia_window_get_device_transform, refreturn)
+            _WRAP_METHOD(void set_device_transform (const Graphic::Transform::RefPtr& inTransform), maia_window_set_device_transform)
 
             _WRAP_METHOD(Window::Type get_window_type () const, maia_window_get_window_type)
             _WRAP_METHOD(void set_window_type (Window::Type inType), maia_window_set_window_type)
@@ -178,42 +179,42 @@ namespace Maia
             _WRAP_METHOD(Glib::RefPtr<Core::Event> mouse_event () const, maia_window_get_mouse_event, refreturn)
             _WRAP_METHOD(Glib::RefPtr<Core::Event> keyboard_event () const, maia_window_get_keyboard_event, refreturn)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-            _WRAP_PROPERTY("surface", Graphic::SurfaceRefPtr)
+            _WRAP_PROPERTY("surface", Graphic::Surface::RefPtr)
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("shadow-width", double)
             _WRAP_PROPERTY("shadow-border", WindowBorder)
-            _WRAP_PROPERTY("shadow-color", Graphic::ColorRefPtr)
+            _WRAP_PROPERTY("shadow-color", Graphic::Color::RefPtr)
             _WRAP_PROPERTY("round-corner", double)
             _WRAP_PROPERTY("close-button", bool)
             _WRAP_PROPERTY("decorated", bool)
             _WRAP_PROPERTY("depth", guint8)
-            _WRAP_PROPERTY("device-transform", Graphic::TransformRefPtr)
-            _WRAP_PROPERTY("transient-for", Glib::RefPtr<Window>)
+            _WRAP_PROPERTY("device-transform", Graphic::Transform::RefPtr)
+            _WRAP_PROPERTY("transient-for", Window::RefPtr)
             _WRAP_PROPERTY("popup", Glib::RefPtr<Popup>)
             _WRAP_PROPERTY("foreign", guint32)
-            _WRAP_PROPERTY("focus-item", Glib::RefPtr<Item>)
-            _WRAP_PROPERTY("grab-pointer-item", Glib::RefPtr<Item>)
-            _WRAP_PROPERTY("grab-keyboard-item", Glib::RefPtr<Item>)
-            _WRAP_PROPERTY("damage-event", Glib::RefPtr<Core::Event>)
-            _WRAP_PROPERTY("geometry-event", Glib::RefPtr<Core::Event>)
-            _WRAP_PROPERTY("visibility-event", Glib::RefPtr<Core::Event>)
-            _WRAP_PROPERTY("destroy-event", Glib::RefPtr<Core::Event>)
-            _WRAP_PROPERTY("delete-event", Glib::RefPtr<Core::Event>)
-            _WRAP_PROPERTY("mouse-event", Glib::RefPtr<Core::Event>)
-            _WRAP_PROPERTY("keyboard-event", Glib::RefPtr<Core::Event>)
+            _WRAP_PROPERTY("focus-item", Item::RefPtr)
+            _WRAP_PROPERTY("grab-pointer-item", Item::RefPtr)
+            _WRAP_PROPERTY("grab-keyboard-item", Item::RefPtr)
             _WRAP_PROPERTY("window-type", Window::Type)
             _WRAP_PROPERTY("position-policy", WindowPositionPolicy)
-#endif
+
+            _IGNORE_PROPERTY("damage-event")
+            _IGNORE_PROPERTY("geometry-event")
+            _IGNORE_PROPERTY("visibility-event")
+            _IGNORE_PROPERTY("destroy-event")
+            _IGNORE_PROPERTY("delete-event")
+            _IGNORE_PROPERTY("mouse-event")
+            _IGNORE_PROPERTY("keyboard-event")
+            _IGNORE_PROPERTY("close-button-scale")
 
         protected:
             _CTOR_DEFAULT()
 
             explicit Window(const Glib::ustring& inId);
 
-            _WRAP_VFUNC(Graphic::SurfaceRefPtr get_surface (), get_surface, refreturn_ctype)
+            _WRAP_VFUNC(Graphic::Surface::RefPtr get_surface (), get_surface, refreturn_ctype)
 
-#m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaItem*', `const Item::RefPtr&', `Glib::wrap($3, true)')
 #m4 _CONVERSION(`MaiaCoreEvent*', `const Glib::RefPtr<Event>&', `Glib::wrap($3, true)')
 #m4 _CONVERSION(`MaiaCoreEventArgs*', `const Glib::RefPtr<EventArgs>&', `Glib::wrap($3, true)')
             _WRAP_VFUNC(void on_damage_event(const Glib::RefPtr<Core::EventArgs>& inArgs), on_damage_event)
@@ -226,12 +227,12 @@ namespace Maia
 
             _WRAP_VFUNC(void on_set_pointer_cursor(Cursor inCursor), on_set_pointer_cursor)
             _WRAP_VFUNC(void on_move_pointer(const Graphic::Point& inPosition), on_move_pointer)
-            _WRAP_VFUNC(void on_scroll_to(const Glib::RefPtr<Item>& inItem), on_scroll_to)
-            _WRAP_VFUNC(void on_grab_focus(const Glib::RefPtr<Item>& inItem), on_grab_focus)
-            _WRAP_VFUNC(bool on_grab_pointer(const Glib::RefPtr<Item>& inItem), on_grab_pointer)
-            _WRAP_VFUNC(void on_ungrab_pointer(const Glib::RefPtr<Item>& inItem), on_ungrab_pointer)
-            _WRAP_VFUNC(bool on_grab_keyboard(const Glib::RefPtr<Item>& inItem), on_grab_keyboard)
-            _WRAP_VFUNC(void on_ungrab_keyboard(const Glib::RefPtr<Item>& inItem), on_ungrab_keyboard)
+            _WRAP_VFUNC(void on_scroll_to(const Item::RefPtr& inItem), on_scroll_to)
+            _WRAP_VFUNC(void on_grab_focus(const Item::RefPtr& inItem), on_grab_focus)
+            _WRAP_VFUNC(bool on_grab_pointer(const Item::RefPtr& inItem), on_grab_pointer)
+            _WRAP_VFUNC(void on_ungrab_pointer(const Item::RefPtr& inItem), on_ungrab_pointer)
+            _WRAP_VFUNC(bool on_grab_keyboard(const Item::RefPtr& inItem), on_grab_keyboard)
+            _WRAP_VFUNC(void on_ungrab_keyboard(const Item::RefPtr& inItem), on_ungrab_keyboard)
 
             _WRAP_METHOD(void set_damage_event (const Glib::RefPtr<Core::Event>& inEvent), maia_window_set_damage_event)
             _WRAP_METHOD(void set_geometry_event (const Glib::RefPtr<Core::Event>& inEvent), maia_window_set_geometry_event)
@@ -240,11 +241,8 @@ namespace Maia
             _WRAP_METHOD(void set_delete_event (const Glib::RefPtr<Core::Event>& inEvent), maia_window_set_delete_event)
             _WRAP_METHOD(void set_mouse_event (const Glib::RefPtr<Core::Event>& inEvent), maia_window_set_mouse_event)
             _WRAP_METHOD(void set_keyboard_event (const Glib::RefPtr<Core::Event>& inEvent), maia_window_set_keyboard_event)
-#m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaItem*', `const Item::RefPtr&', `Glib::wrap($3)')
 #m4 _CONVERSION(`MaiaCoreEvent*', `const Glib::RefPtr<Event>&', `Glib::wrap($3)')
 #m4 _CONVERSION(`MaiaCoreEventArgs*', `const Glib::RefPtr<EventArgs>&', `Glib::wrap($3)')
-
-        private:
-            _WRAP_PROPERTY("close-button-scale", double)
     };
 }

@@ -24,29 +24,29 @@ _PINCLUDE(glibmm/private/object_p.h)
 
 namespace Maia
 {
-    typedef Glib::RefPtr<class Adjustment> AdjustmentRefPtr;
-
     /**
      * @includedoc MaiaAdjustment.doc
      */
     class Adjustment : public Glib::Object
     {
-       _CLASS_GOBJECT(Adjustment, MaiaAdjustment, MAIA_ADJUSTMENT, Glib::Object, GObject)
+        _CLASS_GOBJECT(Adjustment, MaiaAdjustment, MAIA_ADJUSTMENT, Glib::Object, GObject)
 
         protected:
             _CTOR_DEFAULT()
 
         public:
-            static AdjustmentRefPtr create ()
+            using RefPtr = Glib::RefPtr<Adjustment>;
+
+            static Adjustment::RefPtr create ()
             {
                 MaiaAdjustment* pAdjustment = maia_adjustment_new ();
-                return AdjustmentRefPtr (new Adjustment (pAdjustment));
+                return Adjustment::RefPtr (new Adjustment (pAdjustment));
             }
 
-            static AdjustmentRefPtr create (double inLower, double inUpper, double inPageSize, double inStep = 1.0)
+            static Adjustment::RefPtr create (double inLower, double inUpper, double inPageSize, double inStep = 1.0)
             {
                 MaiaAdjustment* pAdjustment = maia_adjustment_new_with_properties (inLower, inUpper, inPageSize, inStep);
-                return AdjustmentRefPtr (new Adjustment (pAdjustment));
+                return Adjustment::RefPtr (new Adjustment (pAdjustment));
             }
 
             _WRAP_METHOD(double get_value() const, maia_adjustment_get_value)
@@ -59,7 +59,6 @@ namespace Maia
             _WRAP_METHOD(void set_page_size(double inPageSize), maia_adjustment_set_page_size)
             _WRAP_METHOD(double get_step() const, maia_adjustment_get_step)
             _WRAP_METHOD(void set_step(double inPageSize), maia_adjustment_set_step)
-
             _WRAP_METHOD(void configure (double inLower, double inUpper, double inPageSize, double inStep), maia_adjustment_configure)
 
             _WRAP_PROPERTY("value", double)

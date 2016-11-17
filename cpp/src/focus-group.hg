@@ -21,6 +21,7 @@
 #include <maiamm/core-object.h>
 #include <maiamm/manifest-element.h>
 #include <maiamm/manifest-theme.h>
+#include <maiamm/item-focusable.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(maiamm/private/core-object_p.h)
@@ -42,32 +43,34 @@ namespace Maia
             explicit FocusGroup(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<FocusGroup> create ()
+            using RefPtr = Glib::RefPtr<FocusGroup>;
+
+            static FocusGroup::RefPtr create ()
             {
-                return Glib::RefPtr<FocusGroup> (new FocusGroup ());
+                return FocusGroup::RefPtr (new FocusGroup ());
             }
 
             _WRAP_METHOD(Glib::ustring get_name () const, maia_focus_group_get_name)
 
-            _WRAP_METHOD(void add (const Glib::RefPtr<ItemFocusable>& inItem), maia_focus_group_add)
-            _WRAP_METHOD(void remove (const Glib::RefPtr<ItemFocusable>& inItem), maia_focus_group_remove)
+            _WRAP_METHOD(void add (const ItemFocusable::RefPtr& inItem), maia_focus_group_add)
+            _WRAP_METHOD(void remove (const ItemFocusable::RefPtr& inItem), maia_focus_group_remove)
 
-            std::vector<Glib::RefPtr<ItemFocusable>> get_items () const;
+            std::vector<ItemFocusable::RefPtr> get_items () const;
 
-            _WRAP_METHOD(Glib::RefPtr<ItemFocusable> current () const, maia_focus_group_get_current, refreturn)
+            _WRAP_METHOD(ItemFocusable::RefPtr current () const, maia_focus_group_get_current, refreturn)
 
             _WRAP_METHOD(void prev () const, maia_focus_group_prev)
             _WRAP_METHOD(void next () const, maia_focus_group_next)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("name", Glib::ustring)
-            _WRAP_PROPERTY("current", Glib::RefPtr<ItemFocusable>)
+            _WRAP_PROPERTY("current", ItemFocusable::RefPtr)
 
-            _WRAP_PROPERTY("tag", Glib::ustring)
-            _WRAP_PROPERTY("style", Glib::ustring)
-            _WRAP_PROPERTY("characters", Glib::ustring)
-            _WRAP_PROPERTY("manifest-path", Glib::ustring)
-            _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
-#endif
+            _IGNORE_PROPERTY("items")
+
+            _IGNORE_PROPERTY("tag")
+            _IGNORE_PROPERTY("style")
+            _IGNORE_PROPERTY("characters")
+            _IGNORE_PROPERTY("manifest-path")
+            _IGNORE_PROPERTY("manifest-theme")
     };
 }

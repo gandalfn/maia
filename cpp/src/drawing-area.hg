@@ -42,15 +42,17 @@ namespace Maia
             explicit DrawingArea(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<DrawingArea> create (const Glib::ustring& inId)
+            using RefPtr = Glib::RefPtr<DrawingArea>;
+
+            static DrawingArea::RefPtr create (const Glib::ustring& inId)
             {
                 MaiaDrawingArea* pDrawingArea = maia_drawing_area_new (inId.c_str ());
 
-                return Glib::RefPtr<DrawingArea> (new DrawingArea (pDrawingArea));
+                return DrawingArea::RefPtr (new DrawingArea (pDrawingArea));
             }
 
-            _WRAP_METHOD(Glib::RefPtr<Item> get_selected () const, maia_drawing_area_get_selected, refreturn)
-            _WRAP_METHOD(void set_selected (const Glib::RefPtr<Item>& inSelected), maia_drawing_area_set_selected)
+            _WRAP_METHOD(Item::RefPtr get_selected () const, maia_drawing_area_get_selected, refreturn)
+            _WRAP_METHOD(void set_selected (const Item::RefPtr& inSelected), maia_drawing_area_set_selected)
 
             _WRAP_METHOD(double get_anchor_size () const, maia_drawing_area_get_anchor_size)
             _WRAP_METHOD(void set_anchor_size (double inSize), maia_drawing_area_set_anchor_size)
@@ -61,50 +63,48 @@ namespace Maia
             _WRAP_METHOD(double get_selected_border_line_width () const, maia_drawing_area_get_selected_border_line_width)
             _WRAP_METHOD(void set_selected_border_line_width (double inLineWidth), maia_drawing_area_set_selected_border_line_width)
 
-            _WRAP_METHOD(Graphic::ColorRefPtr get_selected_border_color () const, maia_drawing_area_get_selected_border_color, refreturn)
-            _WRAP_METHOD(void set_selected_border_color (const Graphic::ColorRefPtr& inColor), maia_drawing_area_set_selected_border_color)
+            _WRAP_METHOD(Graphic::Color::RefPtr get_selected_border_color () const, maia_drawing_area_get_selected_border_color, refreturn)
+            _WRAP_METHOD(void set_selected_border_color (const Graphic::Color::RefPtr& inColor), maia_drawing_area_set_selected_border_color)
 
             _WRAP_METHOD(bool touchscreen_mode () const, maia_drawing_area_get_touchscreen_mode)
             _WRAP_METHOD(void set_touchscreen_mode (bool inTouchscrenMode = true), maia_drawing_area_set_touchscreen_mode)
 
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-            _WRAP_PROPERTY("selected", Glib::RefPtr<Item>)
+            _WRAP_PROPERTY("selected", Item::RefPtr)
             _WRAP_PROPERTY("anchor-size", double)
             _WRAP_PROPERTY("selected-border", double)
             _WRAP_PROPERTY("selected-border-line-width", double)
-            _WRAP_PROPERTY("selected-border-color", Graphic::ColorRefPtr)
+            _WRAP_PROPERTY("selected-border-color", Graphic::Color::RefPtr)
             _WRAP_PROPERTY("touchscreen-mode", bool)
 
-            _WRAP_PROPERTY("can-focus", bool)
-            _WRAP_PROPERTY("have-focus", bool)
-            _WRAP_PROPERTY("focus-order", int)
-            _WRAP_PROPERTY("focus-group", Glib::RefPtr<FocusGroup>)
+            _IGNORE_PROPERTY("can-focus")
+            _IGNORE_PROPERTY("have-focus")
+            _IGNORE_PROPERTY("focus-order")
+            _IGNORE_PROPERTY("focus-group")
 
-            _WRAP_PROPERTY("row", guint)
-            _WRAP_PROPERTY("rows", guint)
+            _IGNORE_PROPERTY("row")
+            _IGNORE_PROPERTY("rows")
 
-            _WRAP_PROPERTY("column", guint)
-            _WRAP_PROPERTY("columns", guint)
+            _IGNORE_PROPERTY("column")
+            _IGNORE_PROPERTY("columns")
 
-            _WRAP_PROPERTY("xexpand", bool)
-            _WRAP_PROPERTY("xfill", bool)
-            _WRAP_PROPERTY("xshrink", bool)
-            _WRAP_PROPERTY("xlimp", bool)
-            _WRAP_PROPERTY("xalign", double)
+            _IGNORE_PROPERTY("xexpand")
+            _IGNORE_PROPERTY("xfill")
+            _IGNORE_PROPERTY("xshrink")
+            _IGNORE_PROPERTY("xlimp")
+            _IGNORE_PROPERTY("xalign")
 
-            _WRAP_PROPERTY("yexpand", bool)
-            _WRAP_PROPERTY("yfill", bool)
-            _WRAP_PROPERTY("yshrink", bool)
-            _WRAP_PROPERTY("ylimp", bool)
-            _WRAP_PROPERTY("yalign", double)
+            _IGNORE_PROPERTY("yexpand")
+            _IGNORE_PROPERTY("yfill")
+            _IGNORE_PROPERTY("yshrink")
+            _IGNORE_PROPERTY("ylimp")
+            _IGNORE_PROPERTY("yalign")
 
-            _WRAP_PROPERTY("top-padding", double)
-            _WRAP_PROPERTY("bottom-padding", double)
-            _WRAP_PROPERTY("left-padding", double)
-            _WRAP_PROPERTY("right-padding", double)
+            _IGNORE_PROPERTY("top-padding")
+            _IGNORE_PROPERTY("bottom-padding")
+            _IGNORE_PROPERTY("left-padding")
+            _IGNORE_PROPERTY("right-padding")
 
-            _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
-#endif
+            _IGNORE_PROPERTY("backcell-pattern")
     };
 }

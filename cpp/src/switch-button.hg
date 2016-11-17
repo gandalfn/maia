@@ -54,15 +54,15 @@ namespace Maia
             _WRAP_METHOD(double get_spacing () const, maia_switch_button_get_spacing)
             _WRAP_METHOD(void set_spacing (double inSpacing), maia_switch_button_set_spacing)
 
-            _WRAP_METHOD(Glib::RefPtr<StatePatterns> get_shadow_pattern () const, maia_switch_button_get_shadow_pattern, refreturn)
-            _WRAP_METHOD(void set_shadow_pattern (const Glib::RefPtr<StatePatterns>& inPattern), maia_switch_button_set_shadow_pattern)
+            _WRAP_METHOD(StatePatterns::RefPtr get_shadow_pattern () const, maia_switch_button_get_shadow_pattern, refreturn)
+            _WRAP_METHOD(void set_shadow_pattern (const StatePatterns::RefPtr& inPattern), maia_switch_button_set_shadow_pattern)
 
-            _WRAP_METHOD(Graphic::PatternRefPtr get_line_pattern () const, maia_switch_button_get_line_pattern, refreturn)
-            _WRAP_METHOD(void set_line_pattern (const Graphic::PatternRefPtr& inPattern), maia_switch_button_set_line_pattern)
+            _WRAP_METHOD(Graphic::Pattern::RefPtr get_line_pattern () const, maia_switch_button_get_line_pattern, refreturn)
+            _WRAP_METHOD(void set_line_pattern (const Graphic::Pattern::RefPtr& inPattern), maia_switch_button_set_line_pattern)
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("spacing", double)
-            _WRAP_PROPERTY("shadow-pattern", Glib::RefPtr<StatePatterns>)
+            _WRAP_PROPERTY("shadow-pattern", StatePatterns::RefPtr)
             _WRAP_PROPERTY("line-pattern", Graphic::Pattern)
 
             _WRAP_PROPERTY("tag", Glib::ustring)

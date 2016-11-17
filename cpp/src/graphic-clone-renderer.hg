@@ -19,6 +19,7 @@
 
 #include <maia.h>
 #include <maiamm/graphic-renderer.h>
+#include <maiamm/graphic-rectangle.h>
 
 _DEFS(maiamm,maia)
 _PINCLUDE(glibmm/private/object_p.h)
@@ -30,8 +31,6 @@ namespace Maia
     {
         _GMMPROC_EXTRA_NAMESPACE(Graphic)
 
-        typedef Glib::RefPtr<class CloneRendererLooper> CloneRendererLooperRefPtr;
-
         class CloneRendererLooper final : public RendererLooper
         {
             _CLASS_GOBJECT(CloneRendererLooper, MaiaGraphicCloneRendererLooper, MAIA_GRAPHIC_CLONE_RENDERER_LOOPER, RendererLooper, MaiaGraphicRendererLooper)
@@ -40,10 +39,12 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                static CloneRendererLooperRefPtr create (const DeviceRefPtr& inpDevice)
+                using RefPtr = Glib::RefPtr<CloneRendererLooper>;
+
+                static CloneRendererLooper::RefPtr create (const Device::RefPtr& inpDevice)
                 {
                     CloneRendererLooper* pLooper = new CloneRendererLooper (maia_graphic_clone_renderer_looper_new (const_cast<MaiaGraphicDevice*> (inpDevice->gobj ())));
-                    return CloneRendererLooperRefPtr (pLooper);
+                    return CloneRendererLooper::RefPtr (pLooper);
                 }
         };
 
@@ -55,30 +56,30 @@ namespace Maia
             protected:
                 _CTOR_DEFAULT()
 
-                CloneRendererObject (const Rectangle& inArea, const DeviceRefPtr& inpDevice);
+                CloneRendererObject (const Rectangle& inArea, const Device::RefPtr& inpDevice);
 
             public:
-                static Glib::RefPtr<CloneRendererObject> create (const Rectangle& inArea, const DeviceRefPtr& inpDevice)
+                static Glib::RefPtr<CloneRendererObject> create (const Rectangle& inArea, const Device::RefPtr& inpDevice)
                 {
                     return Glib::RefPtr<CloneRendererObject> (new CloneRendererObject (inArea, inpDevice));
                 }
         };
 #endif
 
-        typedef Glib::RefPtr<class CloneRenderer> CloneRendererRefPtr;
-
         class CloneRenderer : public Renderer
         {
             public:
+                using RefPtr = Glib::RefPtr<class CloneRenderer>;
+
                 virtual ~CloneRenderer ();
 
-                static CloneRendererRefPtr create (const Rectangle& inArea, const DeviceRefPtr& inpDevice)
+                static CloneRenderer::RefPtr create (const Rectangle& inArea, const Device::RefPtr& inpDevice)
                 {
-                    return CloneRendererRefPtr (new CloneRenderer (inArea, inpDevice));
+                    return CloneRenderer::RefPtr (new CloneRenderer (inArea, inpDevice));
                 }
 
             protected:
-                CloneRenderer (const Rectangle& inArea, const DeviceRefPtr& inpDevice);
+                CloneRenderer (const Rectangle& inArea, const Device::RefPtr& inpDevice);
         };
     }
 }

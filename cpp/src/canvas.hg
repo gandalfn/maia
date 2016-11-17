@@ -34,11 +34,11 @@ namespace Maia
         _CLASS_INTERFACE(Canvas, MaiaCanvas, MAIA_CANVAS, MaiaCanvasIface)
 
         protected:
-#m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3, true)')
-            _WRAP_VFUNC(Glib::RefPtr<Item> get_root (), get_root, refreturn_ctype)
-            _WRAP_VFUNC(void set_root (const Glib::RefPtr<Item>& inRoot), set_root)
-            _WRAP_VFUNC(Glib::RefPtr<Window> get_window (), get_window, refreturn_ctype)
-#m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<Item>&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaItem*', `const Item::RefPtr&', `Glib::wrap($3, true)')
+            _WRAP_VFUNC(Item::RefPtr get_root (), get_root, refreturn_ctype)
+            _WRAP_VFUNC(void set_root (const Item::RefPtr& inRoot), set_root)
+            _WRAP_VFUNC(Window::RefPtr get_window (), get_window, refreturn_ctype)
+#m4 _CONVERSION(`MaiaItem*', `const Item::RefPtr&', `Glib::wrap($3)')
 
         public:
             static Canvas* create ()
@@ -46,9 +46,9 @@ namespace Maia
                 return new Canvas (maia_canvas_create ());
             }
 
-            _WRAP_METHOD(Glib::RefPtr<Item> get_root () const, maia_canvas_get_root, refreturn)
-            _WRAP_METHOD(void set_root (const Glib::RefPtr<Item>& inRoot), maia_canvas_set_root)
-            _WRAP_METHOD(Glib::RefPtr<Window> get_window () const, maia_canvas_get_window, refreturn)
+            _WRAP_METHOD(Item::RefPtr get_root () const, maia_canvas_get_root, refreturn)
+            _WRAP_METHOD(void set_root (const Item::RefPtr& inRoot), maia_canvas_set_root)
+            _WRAP_METHOD(Window::RefPtr get_window () const, maia_canvas_get_window, refreturn)
 
             _WRAP_METHOD(void clear (), maia_canvas_clear)
 
@@ -60,12 +60,11 @@ namespace Maia
             void load_from_file (const Glib::ustring& inFilename);
             void load_from_file (const Glib::ustring& inFilename, const Glib::ustring& inRoot);
 
-            _WRAP_METHOD(Core::NotificationsRefPtr notifications (), maia_canvas_get_notifications, refreturn)
+            _WRAP_METHOD(Core::Notifications::RefPtr notifications (), maia_canvas_get_notifications, refreturn)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-            _WRAP_PROPERTY("root", Glib::RefPtr<Item>)
-            _WRAP_PROPERTY("window", Glib::RefPtr<Window>)
-            _WRAP_PROPERTY("notifications", Core::NotificationsRefPtr)
-#endif
+            _WRAP_PROPERTY("root", Item::RefPtr)
+            _WRAP_PROPERTY("window", Window::RefPtr)
+
+            _IGNORE_PROPERTY("notifications")
     };
 }
