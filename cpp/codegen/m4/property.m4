@@ -12,7 +12,7 @@ dnl
 define(`_PROPERTY_PROXY',
     `dnl
     pushdef(`__GET_ACCESSOR__',`dnl
-ifelse(m4_index(`$2', `is_'),0, $2(), `ifelse(m4_index(`$2', `have_'),0, $2(), `ifelse(m4_index(`$2', `can_'),0, $2(), `ifelse(m4_index(`$2', `have_'),0, $2(), get_$2())')')')dnl
+ifelse(m4_index(`$2', `is_'),0, $2(), `ifelse(m4_index(`$2', `have_'),0, $2(), `ifelse(m4_index(`$2', `can_'),0, $2(), `ifelse(m4_index(`$2', `have_'),0, $2(), `ifelse(`$2', `visible', $2(), `ifelse(m4_index(`$2', `need_'),0, $2(), get_$2())')')')')')dnl
 'dnl
 )dnl
     pushdef(`__SET_ACCESSOR__',`dnl
