@@ -34,9 +34,9 @@ namespace Maia
             maia_graphic_size_set (&gobject_, const_cast<MaiaGraphicSize*>(&inOther.gobject_));
         }
 
-        bool Size::is_empty ()
+        bool Size::is_empty () const
         {
-            return maia_graphic_size_is_empty (&gobject_);
+            return maia_graphic_size_is_empty (const_cast<MaiaGraphicSize*>(&gobject_));
         }
 
         void Size::resize (double inWidth, double inHeight)
@@ -49,14 +49,14 @@ namespace Maia
             maia_graphic_size_transform (&gobject_, const_cast<MaiaGraphicTransform*>(inTransform->gobj ()));
         }
 
-        bool Size::contains (const Point& inPoint)
+        bool Size::contains (const Point& inPoint) const
         {
-            return maia_graphic_size_contains (&gobject_, const_cast<MaiaGraphicPoint*>(inPoint.gobj ()));
+            return maia_graphic_size_contains (const_cast<MaiaGraphicSize*>(&gobject_), const_cast<MaiaGraphicPoint*>(inPoint.gobj ()));
         }
 
-        Glib::ustring Size::to_string ()
+        std::string Size::to_string () const
         {
-            Glib::ustring ret (maia_graphic_size_to_string (&gobject_));
+            std::string ret (maia_graphic_size_to_string (const_cast<MaiaGraphicSize*>(&gobject_)));
             return ret;
         }
     }

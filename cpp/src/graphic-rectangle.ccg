@@ -35,9 +35,9 @@ namespace Maia
             return Rectangle (rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
         }
 
-        bool Rectangle::is_empty ()
+        bool Rectangle::is_empty () const
         {
-            return maia_graphic_rectangle_is_empty (&gobject_);
+            return maia_graphic_rectangle_is_empty (const_cast<MaiaGraphicRectangle*>(&gobject_));
         }
 
         void Rectangle::intersect (const Rectangle& inRectangle)
@@ -75,9 +75,9 @@ namespace Maia
             return maia_graphic_rectangle_contains (&gobject_, const_cast<MaiaGraphicPoint*>(inPoint.gobj ()));
         }
 
-        Glib::ustring Rectangle::to_string () const
+        std::string Rectangle::to_string () const
         {
-            Glib::ustring ret (maia_graphic_rectangle_to_string (const_cast<MaiaGraphicRectangle*> (&gobject_)));
+            std::string ret (maia_graphic_rectangle_to_string (const_cast<MaiaGraphicRectangle*> (&gobject_)));
             return ret;
         }
 

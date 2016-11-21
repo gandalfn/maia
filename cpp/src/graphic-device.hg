@@ -66,13 +66,18 @@ namespace Maia
                 }
 
                 _WRAP_METHOD(Glib::ustring get_backend () const, maia_graphic_device_get_backend)
-                _WRAP_METHOD(Glib::VariantBase to_variant () const, maia_graphic_device_to_variant)
+                inline operator Glib::VariantBase () const
+                {
+                    return to_variant ();
+                }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY ("backend", Glib::ustring)
 #endif
 
             private:
+                _WRAP_METHOD(Glib::VariantBase to_variant () const, maia_graphic_device_to_variant)
+
                 class ParamClosure
                 {
                     public:

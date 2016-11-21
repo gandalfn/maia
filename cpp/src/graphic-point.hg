@@ -44,12 +44,15 @@ namespace Maia
 
                 void transform (const Transform::RefPtr& inTransform);
 
-                Glib::ustring to_string () const;
-
                 _MEMBER_GET(x, x, double, double)
                 _MEMBER_SET(x, x, double, double)
                 _MEMBER_GET(y, y, double, double)
                 _MEMBER_SET(y, y, double, double)
+
+                inline operator std::string () const
+                {
+                    return to_string ();
+                }
 
                 inline bool operator== (const Point& inOther)
                 {
@@ -60,6 +63,9 @@ namespace Maia
                 {
                     return get_x () != inOther.get_x () || get_y () != inOther.get_y ();
                 }
+
+            private:
+                std::string to_string () const;
         };
     }
 }

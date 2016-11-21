@@ -44,7 +44,14 @@ namespace Maia
             public:
                 using RefPtr = Glib::RefPtr<GlyphLine>;
 
-                _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_glyph_line_get_size)
+                _IGNORE(maia_graphic_glyph_line_get_size)
+                _WRAP_METHOD_DOCS_ONLY(maia_graphic_glyph_line_get_size)
+                Size get_size () const
+                {
+                    Size ret;
+                    maia_graphic_glyph_line_get_size (const_cast<MaiaGraphicGlyphLine*> (gobj ()), ret.gobj ());
+                    return ret;
+                }
         };
 
         class Glyph final : public Core::Object
@@ -77,7 +84,14 @@ namespace Maia
                     return Glyph::RefPtr (new Glyph (pGlyph));
                 }
 
-                _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_glyph_get_size)
+                _IGNORE(maia_graphic_glyph_get_size)
+                _WRAP_METHOD_DOCS_ONLY(maia_graphic_glyph_get_size)
+                Size get_size () const
+                {
+                    Size ret;
+                    maia_graphic_glyph_get_size (const_cast<MaiaGraphicGlyph*> (gobj ()), ret.gobj ());
+                    return ret;
+                }
                 _WRAP_METHOD(void set_size (const Size& outSize) const, maia_graphic_glyph_set_size)
                 _WRAP_METHOD(Glib::ustring get_font_description () const, maia_graphic_glyph_get_font_description)
 
@@ -98,21 +112,42 @@ namespace Maia
                 _WRAP_METHOD(Glib::ustring get_text () const, maia_graphic_glyph_get_text)
                 _WRAP_METHOD(void set_text (const Glib::ustring& inText), maia_graphic_glyph_set_text)
 
-                _WRAP_METHOD(void get_origin (Point& outPoint) const, maia_graphic_glyph_get_origin)
+                _IGNORE(maia_graphic_glyph_get_origin)
+                _WRAP_METHOD_DOCS_ONLY(maia_graphic_glyph_get_origin)
+                Point get_origin () const
+                {
+                    Point ret;
+                    maia_graphic_glyph_get_origin (const_cast<MaiaGraphicGlyph*> (gobj ()), ret.gobj ());
+                    return ret;
+                }
                 _WRAP_METHOD(void set_origin (const Point& inPoint), maia_graphic_glyph_set_origin)
 
                 _WRAP_METHOD(int get_line_count () const, maia_graphic_glyph_get_line_count)
 
-                _WRAP_METHOD(void get_line_position (int inIndex, bool inTrailing, int& outLine), maia_graphic_glyph_get_line_position)
+                _IGNORE(maia_graphic_glyph_get_line_position)
+                _WRAP_METHOD_DOCS_ONLY(maia_graphic_glyph_get_line_position)
+                int get_line_position (int inIndex, bool inTrailing) const
+                {
+                    int ret;
+                    maia_graphic_glyph_get_line_position (const_cast<MaiaGraphicGlyph*> (gobj ()), inIndex, inTrailing, &ret);
+                    return ret;
+                }
 
-                _WRAP_METHOD(void get_index_from_position (const Graphic::Point& inPosition, int& outIndex, int& trailing), maia_graphic_glyph_get_index_from_position)
+                _WRAP_METHOD(void get_index_from_position (const Graphic::Point& inPosition, int& outIndex, int& outTrailing) const, maia_graphic_glyph_get_index_from_position)
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_METHOD(void update (const Glib::RefPtr<Context>& inpContext), maia_graphic_glyph_update)
 #else
                 void update (const Context::RefPtr& inpContext);
 #endif
-                _WRAP_METHOD(void get_cursor_position (int inIndex, Rectangle& outRectangle), maia_graphic_glyph_get_cursor_position)
+                _IGNORE(maia_graphic_glyph_get_cursor_position)
+                _WRAP_METHOD_DOCS_ONLY(maia_graphic_glyph_get_cursor_position)
+                Rectangle get_cursor_position (int inIndex) const
+                {
+                    Rectangle ret;
+                    maia_graphic_glyph_get_cursor_position (const_cast<MaiaGraphicGlyph*> (gobj ()), inIndex, ret.gobj ());
+                    return ret;
+                }
 
                 _WRAP_PROPERTY("size", Size)
                 _WRAP_PROPERTY("font-description", Glib::ustring)

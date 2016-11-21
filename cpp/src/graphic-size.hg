@@ -39,7 +39,7 @@ namespace Maia
 
                 void set (const Size& inOther);
 
-                bool is_empty ();
+                bool is_empty () const;
 
                 void resize (double inDx, double inDy);
 
@@ -55,14 +55,20 @@ namespace Maia
                     return !maia_graphic_size_equal (&gobject_, const_cast <MaiaGraphicSize*> (&rhs.gobject_));
                 }
 
-                bool contains (const Point& inPoint);
+                bool contains (const Point& inPoint) const;
 
-                Glib::ustring to_string ();
+                inline operator std::string () const
+                {
+                    return to_string ();
+                }
 
                 _MEMBER_GET(width, width, double, double)
                 _MEMBER_SET(width, width, double, double)
                 _MEMBER_GET(height, height, double, double)
                 _MEMBER_SET(height, height, double, double)
+
+            private:
+                std::string to_string () const;
         };
     }
 }
