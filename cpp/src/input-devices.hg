@@ -43,7 +43,7 @@ namespace Maia
             }
 
             _IGNORE(maia_input_devices_iterator_get)
-            inline Glib::RefPtr<InputDevice> operator*()
+            inline InputDevice::RefPtr operator*()
             {
                 return Glib::wrap (maia_input_devices_iterator_get (gobject_), true);
             }
@@ -71,18 +71,19 @@ namespace Maia
             _CTOR_DEFAULT()
 
         public:
-            typedef InputDevicesIterator iterator;
+            using RefPtr = Glib::RefPtr<InputDevices>;
+            using iterator = InputDevicesIterator;
 
-            static Glib::RefPtr<InputDevices> create ()
+            static InputDevices::RefPtr create ()
             {
                 MaiaInputDevices* pInputDevices = maia_input_devices_new ();
-                return Glib::RefPtr<InputDevices> (new InputDevices (pInputDevices));
+                return InputDevices::RefPtr (new InputDevices (pInputDevices));
             }
 
             _WRAP_METHOD(int size (), maia_input_devices_get_length)
 
             _IGNORE(maia_input_devices_get)
-            inline Glib::RefPtr<InputDevice>
+            inline InputDevice::RefPtr
             at (int inIndex)
             {
                 return Glib::wrap (maia_input_devices_get (gobj (), inIndex), true);
@@ -91,8 +92,8 @@ namespace Maia
             _WRAP_METHOD(InputDevices::iterator begin (), maia_input_devices_iterator_begin)
             _WRAP_METHOD(InputDevices::iterator end (), maia_input_devices_iterator_end)
 
-            _WRAP_METHOD(void add (const Glib::RefPtr<InputDevice>& inpDevice), maia_input_devices_add)
-            _WRAP_METHOD(void remove (const Glib::RefPtr<InputDevice>& inpDevice), maia_input_devices_remove)
+            _WRAP_METHOD(void add (const InputDevice::RefPtr& inpDevice), maia_input_devices_add)
+            _WRAP_METHOD(void remove (const InputDevice::RefPtr& inpDevice), maia_input_devices_remove)
 
             _WRAP_PROPERTY ("length", int)
     };

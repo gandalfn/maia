@@ -37,13 +37,13 @@ namespace Maia
         _CLASS_GOBJECT(ToggleToggledEventArgs, MaiaToggleToggledEventArgs, MAIA_TOGGLE_TOGGLED_EVENT_ARGS, Core::EventArgs, MaiaCoreEventArgs)
 
         public:
+            using RefPtr = Glib::RefPtr<ToggleToggledEventArgs>;
+
             _WRAP_METHOD(bool get_active () const, maia_toggle_toggled_event_args_get_active)
             _WRAP_METHOD(Glib::ustring get_button_name () const, maia_toggle_toggled_event_args_get_button_name)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("active", bool)
             _WRAP_PROPERTY("button-name", Glib::ustring)
-#endif
     };
 
     class ToggleGroup;
@@ -69,8 +69,15 @@ namespace Maia
             _WRAP_VFUNC(void set_active (bool inActive), set_active)
 
         public:
+            using RefPtr = Glib::RefPtr<Toggle>;
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_METHOD(Glib::RefPtr<ToggleGroup> get_toggle_group () const, maia_toggle_get_toggle_group, refreturn)
             _WRAP_METHOD(void set_toggle_group (const Glib::RefPtr<ToggleGroup>& inToggleGroup), maia_toggle_set_toggle_group)
+#else
+            ToggleGroup::RefPtr get_toggle_group () const;
+            void set_toggle_group (const ToggleGroup::RefPtr& inToggleGroup);
+#endif
 
             _WRAP_METHOD(double get_border () const, maia_toggle_get_border)
             _WRAP_METHOD(void set_border (double inBorder), maia_toggle_set_border)
@@ -96,16 +103,16 @@ namespace Maia
             _WRAP_METHOD(bool get_hide_if_inactive () const, maia_toggle_get_hide_if_inactive)
             _WRAP_METHOD(void set_hide_if_inactive (bool inHideIfEmpty = true), maia_toggle_set_hide_if_inactive)
 
-            _WRAP_METHOD(Glib::RefPtr<Core::Event> toggled () const, maia_toggle_get_toggled, refreturn)
+            _WRAP_METHOD(Core::Event::RefPtr toggled () const, maia_toggle_get_toggled, refreturn)
 
             _WRAP_PROPERTY("sensitive", bool)
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("shade-color", Graphic::Color::RefPtr)
 
-            _WRAP_PROPERTY("toggled", Glib::RefPtr<Core::Event>)
+            _IGNORE_PROPERTY("toggled")
 
             _WRAP_PROPERTY("group", Glib::ustring)
-            _WRAP_PROPERTY("toggle-group", Glib::RefPtr<ToggleGroup>)
+            _WRAP_PROPERTY("toggle-group", ToggleGroup::RefPtr)
             _WRAP_PROPERTY("font-description", Glib::ustring)
             _WRAP_PROPERTY("label", Glib::ustring)
             _WRAP_PROPERTY("active", bool)

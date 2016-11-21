@@ -41,32 +41,33 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                static Glib::RefPtr<Theme> create (const Glib::ustring& inName)
+                using RefPtr = Glib::RefPtr<Theme>;
+
+                static Theme::RefPtr create (const Glib::ustring& inName)
                 {
                     MaiaManifestTheme* pTheme = maia_manifest_theme_new (inName.c_str ());
-                    return Glib::RefPtr<Theme> (new Theme (pTheme));
+                    return Theme::RefPtr (new Theme (pTheme));
                 }
 
-                static Glib::RefPtr<Theme> create_from_file (const Glib::ustring& inFilename)
+                static Theme::RefPtr create_from_file (const Glib::ustring& inFilename)
                 {
                     GError* gerror = 0;
 
                     MaiaManifestTheme* pTheme = maia_manifest_theme_create_from_file (inFilename.c_str (), &gerror);
                     if(gerror) ::Glib::Error::throw_exception(gerror);
-                    return Glib::RefPtr<Theme> (new Theme (pTheme));
+                    return Theme::RefPtr (new Theme (pTheme));
                 }
 
                 _WRAP_METHOD(Glib::ustring get_name () const, maia_manifest_theme_get_name)
-                _WRAP_METHOD(void apply (const Glib::RefPtr<Element>& inElement) const, maia_manifest_theme_apply, errthrow)
+                _WRAP_METHOD(void apply (const Element::RefPtr& inElement) const, maia_manifest_theme_apply, errthrow)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("name", Glib::ustring)
-                _WRAP_PROPERTY("tag", Glib::ustring)
-                _WRAP_PROPERTY("style", Glib::ustring)
-                _WRAP_PROPERTY("characters", Glib::ustring)
-                _WRAP_PROPERTY("manifest-path", Glib::ustring)
-                _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Theme>)
-#endif
+
+                _IGNORE_PROPERTY("tag")
+                _IGNORE_PROPERTY("style")
+                _IGNORE_PROPERTY("characters")
+                _IGNORE_PROPERTY("manifest-path")
+                _IGNORE_PROPERTY("manifest-theme")
         };
     }
 }

@@ -43,13 +43,13 @@ TestProtocol::~TestProtocol ()
 void
 TestProtocol::test_buffer_simple ()
 {
-    Glib::RefPtr<Maia::Protocol::Buffer> pBuffer = Maia::Protocol::Buffer::create ("message Simple {"
-                                                                                   "    uint32 val;"
-                                                                                   "    string str;"
-                                                                                   "}");
+    Maia::Protocol::Buffer::RefPtr pBuffer = Maia::Protocol::Buffer::create ("message Simple {"
+                                                                             "    uint32 val;"
+                                                                             "    string str;"
+                                                                             "}");
     g_assert (pBuffer);
 
-    Glib::RefPtr<Maia::Protocol::Message> pMessage = pBuffer->get ("Simple");
+    Maia::Protocol::Message::RefPtr pMessage = pBuffer->get ("Simple");
 
     g_assert (pMessage);
 
@@ -72,16 +72,16 @@ TestProtocol::test_buffer_simple ()
 void
 TestProtocol::test_buffer_sub ()
 {
-    Glib::RefPtr<Maia::Protocol::Buffer> pBuffer = Maia::Protocol::Buffer::create ("message Sub {"
-                                                                                   "    uint32 val;"
-                                                                                   "    string str;"
-                                                                                   "}"
-                                                                                   "message Test {"
-                                                                                   "    Sub sub;"
-                                                                                   "}");
+    Maia::Protocol::Buffer::RefPtr pBuffer = Maia::Protocol::Buffer::create ("message Sub {"
+                                                                             "    uint32 val;"
+                                                                             "    string str;"
+                                                                             "}"
+                                                                             "message Test {"
+                                                                             "    Sub sub;"
+                                                                             "}");
     g_assert (pBuffer);
 
-    Glib::RefPtr<Maia::Protocol::Message> pMessage = pBuffer->get ("Test");
+    Maia::Protocol::Message::RefPtr pMessage = pBuffer->get ("Test");
 
     g_assert (pMessage);
 

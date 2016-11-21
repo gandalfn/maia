@@ -65,7 +65,7 @@ TestModel::tear_down ()
 void
 TestModel::test_model_create ()
 {
-    Glib::RefPtr<Maia::Model> pModel = Maia::Model::create ("test");
+    Maia::Model::RefPtr pModel = Maia::Model::create ("test");
     g_assert (pModel);
 }
 
@@ -74,22 +74,25 @@ TestModel::test_model_create ()
 void
 TestModel::test_model_create_with_columns ()
 {
-    Glib::RefPtr<Maia::Model> pModel = Maia::Model::create ("test", { Maia::Model::Column::create<int> ("column1"), Maia::Model::Column::create<Glib::ustring> ("column2") });
+    Maia::Model::RefPtr pModel = Maia::Model::create ("test", {
+                                                                  Maia::Model::Column::create<int> ("column1"),
+                                                                  Maia::Model::Column::create<Glib::ustring> ("column2")
+                                                              });
     g_assert (pModel);
 
     int cpt = 0;
     for (Maia::Core::Object::iterator iter = pModel->begin (); iter != pModel->end (); ++iter, ++cpt)
     {
-        Glib::RefPtr<Maia::Model::Column> column = Glib::RefPtr<Maia::Model::Column>::cast_dynamic (*iter);
+        Maia::Model::Column::RefPtr column = Maia::Model::Column::RefPtr::cast_dynamic (*iter);
         g_assert (column);
     }
 
     g_assert (cpt == 2);
 
-    Glib::RefPtr<Maia::Model::Column> pColumn1 = pModel->find ("column1");
+    Maia::Model::Column::RefPtr pColumn1 = pModel->find ("column1");
     g_assert (pColumn1);
 
-    Glib::RefPtr<Maia::Model::Column> pColumn2 = pModel->find ("column2");
+    Maia::Model::Column::RefPtr pColumn2 = pModel->find ("column2");
     g_assert (pColumn2);
 }
 
@@ -98,7 +101,7 @@ TestModel::test_model_create_with_columns ()
 void
 TestModel::test_model_append ()
 {
-    Glib::RefPtr<Maia::Model> pModel = Maia::Model::create ("test",
+    Maia::Model::RefPtr pModel = Maia::Model::create ("test",
                                                             {
                                                                 Maia::Model::Column::create<int> ("column1"),
                                                                 Maia::Model::Column::create<Glib::ustring> ("column2")
@@ -108,7 +111,7 @@ TestModel::test_model_append ()
     int cpt = 0;
     for (Maia::Core::Object::iterator iter = pModel->begin (); iter != pModel->end (); ++iter, ++cpt)
     {
-        Glib::RefPtr<Maia::Model::Column> column = Glib::RefPtr<Maia::Model::Column>::cast_dynamic (*iter);
+        Maia::Model::Column::RefPtr column = Maia::Model::Column::RefPtr::cast_dynamic (*iter);
         g_assert (column);
     }
 
@@ -145,13 +148,16 @@ TestModel::test_model_append ()
 void
 TestModel::test_model_remove ()
 {
-    Glib::RefPtr<Maia::Model> pModel = Maia::Model::create ("test", { Maia::Model::Column::create<int> ("column1"), Maia::Model::Column::create<Glib::ustring> ("column2") });
+    Maia::Model::RefPtr pModel = Maia::Model::create ("test", {
+                                                                 Maia::Model::Column::create<int> ("column1"),
+                                                                 Maia::Model::Column::create<Glib::ustring> ("column2")
+                                                              });
     g_assert (pModel);
 
     int cpt = 0;
     for (Maia::Core::Object::iterator iter = pModel->begin (); iter != pModel->end (); ++iter, ++cpt)
     {
-        Glib::RefPtr<Maia::Model::Column> column = Glib::RefPtr<Maia::Model::Column>::cast_dynamic (*iter);
+        Maia::Model::Column::RefPtr column = Maia::Model::Column::RefPtr::cast_dynamic (*iter);
         g_assert (column);
     }
 
@@ -194,13 +200,16 @@ TestModel::test_model_remove ()
 void
 TestModel::test_model_clear ()
 {
-    Glib::RefPtr<Maia::Model> pModel = Maia::Model::create ("test", { Maia::Model::Column::create<int> ("column1"), Maia::Model::Column::create<Glib::ustring> ("column2") });
+    Maia::Model::RefPtr pModel = Maia::Model::create ("test", {
+                                                                 Maia::Model::Column::create<int> ("column1"),
+                                                                 Maia::Model::Column::create<Glib::ustring> ("column2")
+                                                              });
     g_assert (pModel);
 
     int cpt = 0;
     for (Maia::Core::Object::iterator iter = pModel->begin (); iter != pModel->end (); ++iter, ++cpt)
     {
-        Glib::RefPtr<Maia::Model::Column> column = Glib::RefPtr<Maia::Model::Column>::cast_dynamic (*iter);
+        Maia::Model::Column::RefPtr column = Maia::Model::Column::RefPtr::cast_dynamic (*iter);
         g_assert (column);
     }
 
@@ -240,13 +249,16 @@ TestModel::test_model_clear ()
 void
 TestModel::test_model_set_values ()
 {
-    Glib::RefPtr<Maia::Model> pModel = Maia::Model::create ("test", { Maia::Model::Column::create<int> ("column1"), Maia::Model::Column::create<Glib::ustring> ("column2") });
+    Maia::Model::RefPtr pModel = Maia::Model::create ("test", {
+                                                                 Maia::Model::Column::create<int> ("column1"),
+                                                                 Maia::Model::Column::create<Glib::ustring> ("column2")
+                                                              });
     g_assert (pModel);
 
     int cpt = 0;
     for (Maia::Core::Object::iterator iter = pModel->begin (); iter != pModel->end (); ++iter, ++cpt)
     {
-        Glib::RefPtr<Maia::Model::Column> column = Glib::RefPtr<Maia::Model::Column>::cast_dynamic (*iter);
+        Maia::Model::Column::RefPtr column = Maia::Model::Column::RefPtr::cast_dynamic (*iter);
         g_assert (column);
     }
 
@@ -282,7 +294,7 @@ TestModel::test_model_set_values ()
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 bool
-TestModel::on_filter_func (const Glib::RefPtr<Maia::Model>& inpModel, const Maia::Model::iterator& inIter)
+TestModel::on_filter_func (const Maia::Model::RefPtr& inpModel, const Maia::Model::iterator& inIter)
 {
     const Maia::Model::Row& row = *inIter;
 
@@ -296,15 +308,15 @@ TestModel::on_filter_func (const Glib::RefPtr<Maia::Model>& inpModel, const Maia
 void
 TestModel::test_model_filter ()
 {
-    Glib::RefPtr<Maia::Model> pModel = Maia::Model::create ("test",
-                                                            {
-                                                                Maia::Model::Column::create<int> ("column1"),
-                                                                Maia::Model::Column::create<Glib::ustring> ("column2")
-                                                            });
+    Maia::Model::RefPtr pModel = Maia::Model::create ("test",
+                                                      {
+                                                          Maia::Model::Column::create<int> ("column1"),
+                                                          Maia::Model::Column::create<Glib::ustring> ("column2")
+                                                      });
     g_assert (pModel);
 
 
-    Glib::RefPtr<Maia::Model> pFilterModel = Maia::Model::create ("filter", pModel, sigc::mem_fun (this, &TestModel::on_filter_func));
+    Maia::Model::RefPtr pFilterModel = Maia::Model::create ("filter", pModel, sigc::mem_fun (this, &TestModel::on_filter_func));
     g_assert (pFilterModel);
 
     Maia::Model::iterator iter = pModel->append_row ();
@@ -387,8 +399,8 @@ TestModel::test_model_parse ()
 
     try
     {
-        Glib::RefPtr<Manifest::Document> pDocument = Manifest::Document::create_from_buffer (data);
-        Glib::RefPtr<Maia::Model> pModel = Glib::RefPtr<Maia::Model>::cast_dynamic (pDocument->get("test"));
+        Manifest::Document::RefPtr pDocument = Manifest::Document::create_from_buffer (data);
+        Maia::Model::RefPtr pModel = Maia::Model::RefPtr::cast_dynamic (pDocument->get("test"));
 
         g_assert (pModel->get_nb_rows () == 3);
 

@@ -73,6 +73,8 @@ namespace Maia
 
 
         public:
+            using RefPtr = Glib::RefPtr<ItemPackable>;
+
             _WRAP_METHOD(unsigned int get_row () const, maia_item_packable_get_row)
             _WRAP_METHOD(void set_row (unsigned int inRow), maia_item_packable_set_row)
             _WRAP_METHOD(unsigned int get_rows () const, maia_item_packable_get_rows)

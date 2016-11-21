@@ -39,13 +39,15 @@ namespace Maia
             explicit ChartView(const Glib::ustring& inId);
 
         public:
+            using RefPtr = Glib::RefPtr<ChartView>;
+
             _WRAP_ENUM(class LegendPosition, MaiaChartViewLegendPosition, s#CHART_VIEW_LEGEND_POSITION_##, NO_GTYPE)
             _WRAP_ENUM(class Frame, MaiaChartViewFrame, s#CHART_VIEW_FRAME_##, NO_GTYPE)
 
-            static Glib::RefPtr<ChartView> create (const Glib::ustring& inId, const Glib::ustring& inTitle = "")
+            static ChartView::RefPtr create (const Glib::ustring& inId, const Glib::ustring& inTitle = "")
             {
                 MaiaChartView* pChartView = maia_chart_view_new (inId.c_str(), inTitle.c_str ());
-                return Glib::RefPtr<ChartView> (new ChartView (pChartView));
+                return ChartView::RefPtr (new ChartView (pChartView));
             }
 
             _WRAP_METHOD(Glib::ustring get_title () const, maia_chart_view_get_title)
@@ -57,8 +59,8 @@ namespace Maia
             _WRAP_METHOD(Graphic::Pattern::RefPtr get_font_pattern () const, maia_chart_view_get_font_pattern, refreturn)
             _WRAP_METHOD(void set_font_pattern (const Graphic::Pattern::RefPtr& inPattern), maia_chart_view_set_font_pattern)
 
-            _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_chart_view_get_model, refreturn)
-            _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_chart_view_set_model)
+            _WRAP_METHOD(Model::RefPtr get_model () const, maia_chart_view_get_model, refreturn)
+            _WRAP_METHOD(void set_model (const Model::RefPtr& inModel), maia_chart_view_set_model)
 
             _WRAP_METHOD(Glib::ustring get_chart_axis () const, maia_chart_view_get_chart_axis)
             _WRAP_METHOD(void set_chart_axis (const Glib::ustring& inChartName), maia_chart_view_set_chart_axis)
@@ -111,7 +113,7 @@ namespace Maia
             _WRAP_PROPERTY("title", Glib::ustring)
             _WRAP_PROPERTY("font-description", Glib::ustring)
             _WRAP_PROPERTY("font-pattern", Graphic::Pattern::RefPtr)
-            _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
+            _WRAP_PROPERTY("model", Model::RefPtr)
             _WRAP_PROPERTY("chart-axis", Glib::ustring)
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("grid-visible", bool)

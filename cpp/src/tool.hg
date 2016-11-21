@@ -38,22 +38,23 @@ namespace Maia
 
         public:
             _WRAP_ENUM(class Action, MaiaToolAction, s#TOOL_ACTION_##, NO_GTYPE)
+            using RefPtr = Tool::RefPtr;
 
-            static Glib::RefPtr<Tool> create (const Glib::ustring& inId)
+            static Tool::RefPtr create (const Glib::ustring& inId)
             {
                 MaiaTool* pTool = maia_tool_new (inId.c_str (), 0);
 
-                return Glib::RefPtr<Tool> (new Tool (pTool));
+                return Tool::RefPtr (new Tool (pTool));
             }
 
-            static Glib::RefPtr<Tool> create (const Glib::ustring& inId, const Glib::ustring& inLabel)
+            static Tool::RefPtr create (const Glib::ustring& inId, const Glib::ustring& inLabel)
             {
                 MaiaTool* pTool = maia_tool_new (inId.c_str (), inLabel.c_str ());
 
-                return Glib::RefPtr<Tool> (new Tool (pTool));
+                return Tool::RefPtr (new Tool (pTool));
             }
 
-            _WRAP_METHOD(Glib::RefPtr<Toolbox> get_toolbox () const, maia_tool_get_toolbox, refreturn)
+            _WRAP_METHOD(Toolbox::RefPtr get_toolbox () const, maia_tool_get_toolbox, refreturn)
 
             _WRAP_METHOD(Tool::Action get_action () const, maia_tool_get_action)
             _WRAP_METHOD(void set_action (Tool::Action inAction), maia_tool_set_action)
@@ -61,10 +62,8 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_sensitive_with () const, maia_tool_get_sensitive_with)
             _WRAP_METHOD(void set_sensitive_with (const Glib::ustring& inCriteria), maia_tool_set_sensitive_with)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-            _WRAP_PROPERTY("toolbox", Glib::RefPtr<Toolbox>)
+            _WRAP_PROPERTY("toolbox", Toolbox::RefPtr)
             _WRAP_PROPERTY("action", Tool::Action)
             _WRAP_PROPERTY("sensitive-with", Glib::ustring)
-#endif
     };
 }

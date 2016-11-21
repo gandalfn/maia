@@ -28,6 +28,9 @@ _PINCLUDE(maiamm/private/core-object_p.h)
 
 namespace Maia
 {
+    /**
+     * @includedoc MaiaChartIntersect.doc
+     */
     class ChartIntersect : public Core::Object, public Manifest::Element
     {
         _CLASS_GOBJECT(ChartIntersect, MaiaChartIntersect, MAIA_CHART_INTERSECT, Core::Object, MaiaCoreObject)

@@ -36,10 +36,12 @@ namespace Maia
             explicit ToggleButton(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<ToggleButton> create (const Glib::ustring& inId, const Glib::ustring& inLabel)
+            using RefPtr = Glib::RefPtr<ToggleButton>;
+
+            static ToggleButton::RefPtr create (const Glib::ustring& inId, const Glib::ustring& inLabel)
             {
                 MaiaToggleButton* pButton = maia_toggle_button_new (inId.c_str(), inLabel.c_str ());
-                return Glib::RefPtr<ToggleButton> (new ToggleButton (pButton));
+                return ToggleButton::RefPtr (new ToggleButton (pButton));
             }
 
             _WRAP_METHOD(double get_spacing () const, maia_toggle_button_get_spacing)
@@ -54,13 +56,11 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_icon_filename () const, maia_toggle_button_get_icon_filename)
             _WRAP_METHOD(void set_icon_filename (const Glib::ustring& inFilename), maia_toggle_button_set_icon_filename)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("spacing", double)
             _WRAP_PROPERTY("relief", Button::Relief)
             _WRAP_PROPERTY("icon-filename", Glib::ustring)
             _WRAP_PROPERTY("icon-size", Graphic::Size)
 
-            _WRAP_PROPERTY("tag", Glib::ustring)
-#endif
+            _IGNORE_PROPERTY("tag")
     };
 }

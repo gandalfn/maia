@@ -36,21 +36,20 @@ namespace Maia
             explicit Highlight(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<Highlight> create (const Glib::ustring& inId, const Glib::ustring& inLabel)
+            using RefPtr = Glib::RefPtr<Highlight>;
+
+            static Highlight::RefPtr create (const Glib::ustring& inId, const Glib::ustring& inLabel)
             {
                 MaiaHighlight* pButton = maia_highlight_new (inId.c_str(), inLabel.c_str ());
-                return Glib::RefPtr<Highlight> (new Highlight (pButton));
+                return Highlight::RefPtr (new Highlight (pButton));
             }
 
             _WRAP_METHOD(Graphic::Glyph::Alignment get_alignment () const, maia_highlight_get_alignment)
             _WRAP_METHOD(void set_alignment (Graphic::Glyph::Alignment inAlignment), maia_highlight_set_alignment)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
-            _WRAP_PROPERTY("tag", Glib::ustring)
-#endif
 
-        private:
-            _WRAP_PROPERTY("highlight-progress", double)
+            _IGNORE_PROPERTY("tag")
+            _IGNORE_PROPERTY("highlight-progress")
     };
 }

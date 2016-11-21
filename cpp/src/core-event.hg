@@ -40,47 +40,54 @@ namespace Maia
             _IGNORE(maia_core_event_get_owner, maia_core_event_publish_with_reply, maia_core_event_object_publish_with_reply)
 
             public:
-                typedef sigc::slot<void, Glib::RefPtr<EventArgs>> SlotReplyCallback;
+                using RefPtr = Glib::RefPtr<Event>;
+                using SlotReplyCallback = sigc::slot<void, EventArgs::RefPtr>;
 
-                static Glib::RefPtr<Event>
-                create (const Glib::ustring& inName, const Glib::RefPtr<EventBus>& inpBus = EventBus::get_default ())
+                static Event::RefPtr
+                create (const Glib::ustring& inName, const EventBus::RefPtr& inpBus = EventBus::get_default ())
                 {
                     MaiaCoreEvent* pEvent = maia_core_event_new (inName.c_str (), 0, const_cast<MaiaCoreEventBus*> (inpBus->gobj ()));
-                    return Glib::RefPtr<Event> (new Event (pEvent));
+                    return Event::RefPtr (new Event (pEvent));
                 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 template <typename T_obj>
-                static typename std::enable_if<!std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<Event>>::type
-                create (const Glib::ustring& inName, const T_obj& obj, const Glib::RefPtr<EventBus>& inpBus = EventBus::get_default ())
+                static typename std::enable_if<!std::is_base_of<Glib::Object, T_obj>::value, Event::RefPtr>::type
+                create (const Glib::ustring& inName, const T_obj& obj, const EventBus::RefPtr& inpBus = EventBus::get_default ())
                 {
                     MaiaCoreEvent* pEvent = maia_core_event_new (inName.c_str (), (void*)&obj, const_cast<MaiaCoreEventBus*> (inpBus->gobj ()));
-                    return Glib::RefPtr<Event> (new Event (pEvent));
+                    return Event::RefPtr (new Event (pEvent));
                 }
 
                 template <typename T_obj>
-                static typename std::enable_if<std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<Event>>::type
-                create (const Glib::ustring& inName, const T_obj& obj, const Glib::RefPtr<EventBus>& inpBus = EventBus::get_default ())
+                static typename std::enable_if<std::is_base_of<Glib::Object, T_obj>::value, Event::RefPtr>::type
+                create (const Glib::ustring& inName, const T_obj& obj, const EventBus::RefPtr& inpBus = EventBus::get_default ())
                 {
                     MaiaCoreEvent* pEvent = maia_core_event_new (inName.c_str (), (void*)(obj.gobj()), const_cast<MaiaCoreEventBus*> (inpBus->gobj ()));
-                    return Glib::RefPtr<Event> (new Event (pEvent));
+                    return Event::RefPtr (new Event (pEvent));
                 }
+#else
+                template <typename T_obj>
+                static Event::RefPtr create (const Glib::ustring& inName, const T_obj& obj, const EventBus::RefPtr& inpBus = EventBus::get_default ());
+#endif
 
                 template<class T_obj>
-                static Glib::RefPtr<Event>
-                create (const Glib::ustring& inName, const Glib::RefPtr<T_obj>& pObj, const Glib::RefPtr<EventBus>& inpBus = EventBus::get_default ())
+                static Event::RefPtr
+                create (const Glib::ustring& inName, const Glib::RefPtr<T_obj>& pObj, const EventBus::RefPtr& inpBus = EventBus::get_default ())
                 {
                     MaiaCoreEvent* pEvent = maia_core_event_new (inName.c_str (), (void*)(pObj->gobj ()), const_cast<MaiaCoreEventBus*> (inpBus->gobj ()));
-                    return Glib::RefPtr<Event> (new Event (pEvent));
+                    return Event::RefPtr (new Event (pEvent));
                 }
 
                 _IGNORE(maia_core_event_subscribe, maia_core_event_object_subscribe)
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 template <typename T_obj>
-                typename std::enable_if<!std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<EventListener>>::type
-                subscribe (T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
+                typename std::enable_if<!std::is_base_of<Glib::Object, T_obj>::value, EventListener::RefPtr>::type
+                subscribe (T_obj* pObj, void (T_obj::*pFunc) (const EventArgs::RefPtr& inpArgs))
                 {
                     Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerFunctor<T_obj>::create (pObj, pFunc);
 
-                    Glib::RefPtr<EventListener> pListener = EventListener::create (this, pFunctor);
+                    EventListener::RefPtr pListener = EventListener::create (this, pFunctor);
 
                     get_bus ()->subscribe (pListener);
 
@@ -88,12 +95,12 @@ namespace Maia
                 }
 
                 template <typename T_obj>
-                typename std::enable_if<std::is_base_of<Glib::Object, T_obj>::value, Glib::RefPtr<EventListener>>::type
-                subscribe (T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
+                typename std::enable_if<std::is_base_of<Glib::Object, T_obj>::value, EventListener::RefPtr>::type
+                subscribe (T_obj* pObj, void (T_obj::*pFunc) (const EventArgs::RefPtr& inpArgs))
                 {
                     Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerFunctor<T_obj>::create (pObj, pFunc);
 
-                    Glib::RefPtr<EventListener> pListener = EventListener::create (this, pFunctor);
+                    EventListener::RefPtr pListener = EventListener::create (this, pFunctor);
 
                     pListener->add_gobject_watch (pObj);
 
@@ -101,29 +108,34 @@ namespace Maia
 
                     return pListener;
                 }
+#else
+                template <typename T_obj>
+                EventListener::RefPtr subscribe (T_obj* pObj, void (T_obj::*pFunc) (const EventArgs::RefPtr& inpArgs));
+#endif
 
-                Glib::RefPtr<EventListener>
-                subscribe (const sigc::slot<void, Glib::RefPtr<EventArgs>>& inSlot)
+                EventListener::RefPtr
+                subscribe (const sigc::slot<void, EventArgs::RefPtr>& inSlot)
                 {
                     Glib::RefPtr<EventListenerFunctorBase> pFunctor = EventListenerSigcFunctor::create (inSlot);
 
-                    Glib::RefPtr<EventListener> pListener = EventListener::create (this, pFunctor);
+                    EventListener::RefPtr pListener = EventListener::create (this, pFunctor);
 
                     get_bus ()->subscribe (pListener);
 
                     return pListener;
                 }
 
-                _WRAP_METHOD(void publish (const Glib::RefPtr<EventArgs>& inpArgs), maia_core_event_publish)
+                _WRAP_METHOD(void publish (const EventArgs::RefPtr& inpArgs), maia_core_event_publish)
 
                 void publish ()
                 {
                     maia_core_event_publish (gobj (), 0);
                 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 template <typename T_obj>
                 typename std::enable_if<!std::is_base_of<Glib::Object, T_obj>::value, void>::type
-                publish_with_reply (const Glib::RefPtr<EventArgs>& inpArgs, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
+                publish_with_reply (const EventArgs::RefPtr& inpArgs, T_obj* pObj, void (T_obj::*pFunc) (const EventArgs::RefPtr& inpArgs))
                 {
                     EventReplyObject<T_obj>* pHandler = new EventReplyObject<T_obj> (pObj, pFunc);
                     maia_core_event_object_publish_with_reply (gobj (), const_cast<MaiaCoreEventArgs*> (inpArgs->gobj ()), &Event::_on_publish_reply_callback, (gpointer)pHandler);
@@ -131,26 +143,28 @@ namespace Maia
 
                 template <typename T_obj>
                 typename std::enable_if<std::is_base_of<Glib::Object, T_obj>::value, void>::type
-                publish_with_reply (const Glib::RefPtr<EventArgs>& inpArgs, T_obj* pObj, void (T_obj::*pFunc) (const Glib::RefPtr<EventArgs>& inpArgs))
+                publish_with_reply (const EventArgs::RefPtr& inpArgs, T_obj* pObj, void (T_obj::*pFunc) (const EventArgs::RefPtr& inpArgs))
                 {
                     EventReplyGObject<T_obj>* pHandler = new EventReplyGObject<T_obj> (pObj, pFunc);
                     maia_core_event_object_publish_with_reply (gobj (), const_cast<MaiaCoreEventArgs*> (inpArgs->gobj ()), &Event::_on_publish_reply_callback, (gpointer)pHandler);
                 }
+#else
+                template <typename T_obj>
+                void publish_with_reply (const EventArgs::RefPtr& inpArgs, T_obj* pObj, void (T_obj::*pFunc) (const EventArgs::RefPtr& inpArgs));
+#endif
 
-                void publish_with_reply (const Glib::RefPtr<EventArgs>& inpArgs, SlotReplyCallback inSlot)
+                void publish_with_reply (const EventArgs::RefPtr& inpArgs, SlotReplyCallback inSlot)
                 {
                     EventReplySigcFunctor* pHandler = new EventReplySigcFunctor (inSlot);
                     maia_core_event_object_publish_with_reply (gobj (), const_cast<MaiaCoreEventArgs*> (inpArgs->gobj ()), &Event::_on_publish_reply_callback, (gpointer)pHandler);
                 }
 
                 _WRAP_METHOD(Glib::ustring get_name () const, maia_core_event_get_name)
-                _WRAP_METHOD(Glib::RefPtr<EventBus> get_bus () const, maia_core_event_get_bus, refreturn)
+                _WRAP_METHOD(EventBus::RefPtr get_bus () const, maia_core_event_get_bus, refreturn)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("name", Glib::ustring)
                 _WRAP_PROPERTY("owner", void*)
-                _WRAP_PROPERTY("bus", Glib::RefPtr<EventBus>)
-#endif
+                _WRAP_PROPERTY("bus", EventBus::RefPtr)
 
             private:
                 static void _on_publish_reply_callback (MaiaCoreEventArgs* inpArgs, gpointer inpData);

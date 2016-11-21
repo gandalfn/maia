@@ -34,12 +34,15 @@ namespace Maia
         {
             _CLASS_INTERFACE(BufferChild, MaiaProtocolBufferChild, MAIA_PROTOCOL_BUFFER_CHILD, MaiaProtocolBufferChildIface)
 
+            public:
+                using RefPtr = Glib::RefPtr<BufferChild>;
+
             protected:
-                _WRAP_VFUNC(Glib::RefPtr<BufferChild> copy (), copy)
+                _WRAP_VFUNC(BufferChild::RefPtr copy (), copy)
 
             public:
-                _WRAP_METHOD(Glib::RefPtr<Buffer> get_buffer () const, maia_protocol_buffer_child_get_buffer, refreturn)
-                _WRAP_METHOD(Glib::RefPtr<BufferChild> copy (), maia_protocol_buffer_child_copy, refreturn)
+                _WRAP_METHOD(Buffer::RefPtr get_buffer () const, maia_protocol_buffer_child_get_buffer, refreturn)
+                _WRAP_METHOD(BufferChild::RefPtr copy (), maia_protocol_buffer_child_copy, refreturn)
         };
     }
 }

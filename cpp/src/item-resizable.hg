@@ -31,7 +31,8 @@ namespace Maia
         _CLASS_INTERFACE(ItemResizable, MaiaItemResizable, MAIA_ITEM_RESIZABLE, MaiaItemResizableIface)
 
         public:
-            _WRAP_METHOD(void resize (const Graphic::Point& inDelta), maia_item_resizable_resize)
+            using RefPtr = Glib::RefPtr<ItemResizable>;
 
+            _WRAP_METHOD(void resize (const Graphic::Point& inDelta), maia_item_resizable_resize)
     };
 }

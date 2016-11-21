@@ -41,7 +41,7 @@ namespace Maia
             _WRAP_VFUNC(void set_focus_order (int inFocusOrder), set_focus_order)
 
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<FocusGroup>&', `Glib::wrap($3, true)')
-            _WRAP_VFUNC(Glib::RefPtr<FocusGroup> focus_group () const, get_focus_group)
+            _WRAP_VFUNC(Glib::RefPtr<FocusGroup> get_focus_group () const, get_focus_group)
             _WRAP_VFUNC(void set_focus_group (const Glib::RefPtr<FocusGroup>& inFocusGroup) const, set_focus_group)
 #m4 _CONVERSION(`MaiaItem*', `const Glib::RefPtr<FocusGroup>&', `Glib::wrap($3)')
 
@@ -57,7 +57,7 @@ namespace Maia
             _WRAP_METHOD(int get_focus_order () const, maia_item_focusable_get_focus_order)
             _WRAP_METHOD(void set_focus_order (int inFocusOrder), maia_item_focusable_set_focus_order)
 
-            _WRAP_METHOD(Glib::RefPtr<FocusGroup> focus_group () const, maia_item_focusable_get_focus_group, refreturn)
+            _WRAP_METHOD(Glib::RefPtr<FocusGroup> get_focus_group () const, maia_item_focusable_get_focus_group, refreturn)
             _WRAP_METHOD(void set_focus_group (const Glib::RefPtr<FocusGroup>& inFocusGroup) const, maia_item_focusable_set_focus_group)
 
             _WRAP_PROPERTY("can-focus", bool)

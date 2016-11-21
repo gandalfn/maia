@@ -96,7 +96,7 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_icon_filename () const, maia_button_get_icon_filename)
             _WRAP_METHOD(void set_icon_filename (const Glib::ustring& inFilename), maia_button_set_icon_filename)
 
-            _WRAP_METHOD(Glib::RefPtr<Core::Event> clicked () const, maia_button_get_clicked, refreturn)
+            _WRAP_METHOD(Core::Event::RefPtr clicked () const, maia_button_get_clicked, refreturn)
 
             _WRAP_PROPERTY("sensitive", bool)
             _WRAP_PROPERTY("font-description", Glib::ustring)

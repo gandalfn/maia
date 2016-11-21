@@ -44,9 +44,11 @@ namespace Maia
                     Set<Pair<F, S> > ()
                 {}
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 explicit Map(MaiaCoreMap* gobject, bool make_a_copy = true) :
                     Set<Pair<F, S> > (MAIA_CORE_SET (gobject), make_a_copy)
                 {}
+#endif
 
                 Map(const Map<F, S>& other) :
                     Set<Pair<F, S> > (other)

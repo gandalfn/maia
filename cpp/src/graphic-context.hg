@@ -112,6 +112,7 @@ namespace Maia
                 _WRAP_METHOD(void set_line_cap (LineCap inLineCap), maia_graphic_context_set_line_cap)
 
                 _IGNORE(maia_graphic_context_get_dash)
+                _WRAP_METHOD_DOCS_ONLY(maia_graphic_context_get_dash)
                 std::vector<double> get_dash () const
                 {
                     std::vector<double> ret;
@@ -132,6 +133,7 @@ namespace Maia
                 }
 
                 _IGNORE(maia_graphic_context_set_dash)
+                _WRAP_METHOD_DOCS_ONLY(maia_graphic_context_set_dash)
                 void set_dash (std::vector<double> inDashes)
                 {
                     if (!inDashes.empty ())

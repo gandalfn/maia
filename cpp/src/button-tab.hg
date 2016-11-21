@@ -26,6 +26,9 @@ _PINCLUDE(maiamm/private/toggle_p.h)
 
 namespace Maia
 {
+    /**
+     * @includedoc MaiaButtonTab.doc
+     */
     class ButtonTab : public Toggle
     {
         _CLASS_GOBJECT(ButtonTab, MaiaButtonTab, MAIA_BUTTON_TAB, Toggle, MaiaToggle)

@@ -43,6 +43,7 @@ namespace Maia
 
         public:
             _WRAP_ENUM(class Caliper, MaiaShapeCaliper, s#SHAPE_CALIPER_##, NO_GTYPE)
+            using RefPtr = Glib::RefPtr<Shape>;
 
             _WRAP_METHOD(double get_border () const, maia_shape_get_border)
             _WRAP_METHOD(void set_border (double inBorder), maia_shape_set_border)

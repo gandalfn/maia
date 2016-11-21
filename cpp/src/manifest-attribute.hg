@@ -34,7 +34,8 @@ namespace Maia
             _CLASS_GOBJECT(Attribute, MaiaManifestAttribute, MAIA_MANIFEST_ATTRIBUTE, Core::Object, MaiaCoreObject)
 
             public:
-                typedef sigc::slot<void, Glib::RefPtr<Attribute>, Glib::ValueBase& > SlotTransformFunc;
+                using RefPtr = Glib::RefPtr<Attribute>;
+                using SlotTransformFunc = sigc::slot<void, Attribute::RefPtr, Glib::ValueBase&>;
 
                 _IGNORE(maia_manifest_attribute_transform)
 
@@ -53,9 +54,7 @@ namespace Maia
 
                 _WRAP_METHOD(Glib::ustring get () const, maia_manifest_attribute_get)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("owner", Glib::RefPtr<Glib::Object>)
-#endif
 
                 _IGNORE(maia_manifest_attribute_register_transform_func)
                 static void register_transform_func (GType inType, SlotTransformFunc);

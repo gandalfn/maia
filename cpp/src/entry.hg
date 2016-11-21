@@ -117,13 +117,13 @@ namespace Maia
             _WRAP_METHOD(bool always_active () const, maia_entry_get_always_active)
             _WRAP_METHOD(void set_always_active (bool inAlwaysActive = true), maia_entry_set_always_active)
 
-            _WRAP_METHOD(Glib::RefPtr<Label> labelled_by () const, maia_entry_get_labelled_by, refreturn)
-            _WRAP_METHOD(void set_labelled_by (const Glib::RefPtr<Label>& inLabel), maia_entry_set_labelled_by)
+            _WRAP_METHOD(Label::RefPtr labelled_by () const, maia_entry_get_labelled_by, refreturn)
+            _WRAP_METHOD(void set_labelled_by (const Label::RefPtr& inLabel), maia_entry_set_labelled_by)
 
             _WRAP_METHOD(int get_cursor () const, maia_entry_get_cursor)
             _WRAP_METHOD(void set_cursor (int inCursor), maia_entry_set_cursor)
 
-            _WRAP_METHOD(Glib::RefPtr<Core::Event> changed () const, maia_entry_get_changed, refreturn)
+            _WRAP_METHOD(Core::Event::RefPtr changed () const, maia_entry_get_changed, refreturn)
 
             _WRAP_PROPERTY("font-description", Glib::ustring)
             _WRAP_PROPERTY("text", Glib::ustring)
@@ -136,7 +136,7 @@ namespace Maia
             _WRAP_PROPERTY("hide-if-empty", bool)
             _WRAP_PROPERTY("touchscreen-mode", bool)
             _WRAP_PROPERTY("always-active", bool)
-            _WRAP_PROPERTY("labelled-by", Glib::RefPtr<Label>)
+            _WRAP_PROPERTY("labelled-by", Label::RefPtr)
             _WRAP_PROPERTY("cursor", int)
 
             _IGNORE_PROPERTY("changed")

@@ -41,11 +41,13 @@ namespace Maia
             explicit Rectangle(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<Rectangle> create (const Glib::ustring& inId)
+            using RefPtr = Glib::RefPtr<Rectangle>;
+
+            static Rectangle::RefPtr create (const Glib::ustring& inId)
             {
                 MaiaRectangle* pRectangle = maia_rectangle_new (inId.c_str ());
 
-                return Glib::RefPtr<Rectangle> (new Rectangle (pRectangle));
+                return Rectangle::RefPtr (new Rectangle (pRectangle));
             }
 
             _IGNORE_PROPERTY("can-focus")

@@ -42,14 +42,16 @@ namespace Maia
             explicit ScaleBar(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<ScaleBar> create (const Glib::ustring& inId)
+            using RefPtr = Glib::RefPtr<ScaleBar>;
+
+            static ScaleBar::RefPtr create (const Glib::ustring& inId)
             {
                 MaiaScaleBar* pScaleBar = maia_scale_bar_new (inId.c_str());
-                return Glib::RefPtr<ScaleBar> (new ScaleBar (pScaleBar));
+                return ScaleBar::RefPtr (new ScaleBar (pScaleBar));
             }
 
-            _WRAP_METHOD(Glib::RefPtr<Adjustment> get_adjustment () const, maia_scale_bar_get_adjustment, refreturn)
-            _WRAP_METHOD(void set_adjustment (const Glib::RefPtr<Adjustment>& inAdjustment), maia_scale_bar_set_adjustment)
+            _WRAP_METHOD(Adjustment::RefPtr get_adjustment () const, maia_scale_bar_get_adjustment, refreturn)
+            _WRAP_METHOD(void set_adjustment (const Adjustment::RefPtr& inAdjustment), maia_scale_bar_set_adjustment)
 
             _WRAP_METHOD(Glib::ustring get_font_description () const, maia_scale_bar_get_font_description)
             _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_scale_bar_set_font_description)
@@ -81,7 +83,7 @@ namespace Maia
             _WRAP_METHOD(StatePatterns::RefPtr get_step_stroke_pattern () const, maia_scale_bar_get_step_stroke_pattern)
             _WRAP_METHOD(void set_step_stroke_pattern (const StatePatterns::RefPtr& inPattern), maia_scale_bar_set_step_stroke_pattern)
 
-            _WRAP_PROPERTY("adjustment", Glib::RefPtr<Adjustment>)
+            _WRAP_PROPERTY("adjustment", Adjustment::RefPtr)
             _WRAP_PROPERTY("font-description", Glib::ustring)
             _WRAP_PROPERTY("placement", Placement)
             _WRAP_PROPERTY("display-slide-label", bool)

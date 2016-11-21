@@ -39,13 +39,13 @@ namespace Maia
         _CLASS_GOBJECT(StepButtonChangedEventArgs, MaiaStepButtonChangedEventArgs, MAIA_STEP_BUTTON_CHANGED_EVENT_ARGS, Core::EventArgs, MaiaCoreEventArgs)
 
         public:
+            using RefPtr = Glib::RefPtr<StepButtonChangedEventArgs>;
+
             _WRAP_METHOD(Glib::ustring get_name () const, maia_step_button_changed_event_args_get_name)
             _WRAP_METHOD(bool get_active () const, maia_step_button_changed_event_args_get_active)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("name", Glib::ustring)
             _WRAP_PROPERTY("active", bool)
-#endif
     };
 
     class StepButton : public Item, public ItemPackable, public ItemMovable, public ItemFocusable
@@ -65,11 +65,13 @@ namespace Maia
             _WRAP_VFUNC(void on_active_changed (), on_active_changed)
 
         public:
-            static Glib::RefPtr<StepButton> create (const Glib::ustring& inId)
+            using RefPtr = Glib::RefPtr<StepButton>;
+
+            static StepButton::RefPtr create (const Glib::ustring& inId)
             {
                 MaiaStepButton* pButton = maia_step_button_new (inId.c_str ());
 
-                return Glib::RefPtr<StepButton> (new StepButton (pButton));
+                return StepButton::RefPtr (new StepButton (pButton));
             }
 
             _WRAP_METHOD(bool get_sensitive () const, maia_step_button_get_sensitive)
@@ -93,14 +95,14 @@ namespace Maia
             _WRAP_METHOD(guint get_active () const, maia_step_button_get_active)
             _WRAP_METHOD(void set_active (guint inActive), maia_step_button_set_active)
 
-            _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_step_button_get_model, refreturn)
-            _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_step_button_set_model)
+            _WRAP_METHOD(Model::RefPtr get_model () const, maia_step_button_get_model, refreturn)
+            _WRAP_METHOD(void set_model (const Model::RefPtr& inModel), maia_step_button_set_model)
 
             _WRAP_METHOD(bool get_separator () const, maia_step_button_get_separator)
             _WRAP_METHOD(void set_separator (bool inSeparator = true), maia_step_button_set_separator)
 
-            _WRAP_METHOD(Glib::RefPtr<Core::Event> clicked () const, maia_step_button_get_clicked, refreturn)
-            _WRAP_METHOD(Glib::RefPtr<Core::Event> changed () const, maia_step_button_get_changed, refreturn)
+            _WRAP_METHOD(Core::Event::RefPtr clicked () const, maia_step_button_get_clicked, refreturn)
+            _WRAP_METHOD(Core::Event::RefPtr changed () const, maia_step_button_get_changed, refreturn)
 
             _WRAP_PROPERTY("sensitive", bool)
             _WRAP_PROPERTY("font-description", Glib::ustring)
@@ -109,7 +111,7 @@ namespace Maia
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("spacing", double)
             _WRAP_PROPERTY("active", guint)
-            _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
+            _WRAP_PROPERTY("model", Model::RefPtr)
             _WRAP_PROPERTY("separator", bool)
 
             _IGNORE_PROPERTY("clicked")

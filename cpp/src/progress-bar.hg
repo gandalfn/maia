@@ -39,15 +39,17 @@ namespace Maia
             explicit ProgressBar(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<ProgressBar> create (const Glib::ustring& inId)
+            using RefPtr = Glib::RefPtr<ProgressBar>;
+
+            static ProgressBar::RefPtr create (const Glib::ustring& inId)
             {
                 MaiaProgressBar* pProgressBar = maia_progress_bar_new (inId.c_str ());
 
-                return Glib::RefPtr<ProgressBar> (new ProgressBar (pProgressBar));
+                return ProgressBar::RefPtr (new ProgressBar (pProgressBar));
             }
 
-            _WRAP_METHOD(Glib::RefPtr<Adjustment> get_adjustment () const, maia_progress_bar_get_adjustment, refreturn)
-            _WRAP_METHOD(void set_adjustment (const Glib::RefPtr<Adjustment>& inAdjustment), maia_progress_bar_set_adjustment)
+            _WRAP_METHOD(Adjustment::RefPtr get_adjustment () const, maia_progress_bar_get_adjustment, refreturn)
+            _WRAP_METHOD(void set_adjustment (const Adjustment::RefPtr& inAdjustment), maia_progress_bar_set_adjustment)
 
             _WRAP_METHOD(void get_slider_area (Graphic::Rectangle& outRect), maia_progress_bar_get_slider_area)
 
@@ -57,36 +59,34 @@ namespace Maia
             _WRAP_METHOD(Orientation get_orientation () const, maia_progress_bar_get_orientation)
             _WRAP_METHOD(void set_orientation (Orientation inOrientation), maia_progress_bar_set_orientation)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-            _WRAP_PROPERTY("adjustment", Glib::RefPtr<Adjustment>)
+            _WRAP_PROPERTY("adjustment", Adjustment::RefPtr)
             _WRAP_PROPERTY("slider-area", Graphic::Rectangle)
             _WRAP_PROPERTY("round-border", double)
             _WRAP_PROPERTY("orientation", Orientation)
 
-            _WRAP_PROPERTY("row", guint)
-            _WRAP_PROPERTY("rows", guint)
+            _IGNORE_PROPERTY("row")
+            _IGNORE_PROPERTY("rows")
 
-            _WRAP_PROPERTY("column", guint)
-            _WRAP_PROPERTY("columns", guint)
+            _IGNORE_PROPERTY("column")
+            _IGNORE_PROPERTY("columns")
 
-            _WRAP_PROPERTY("xexpand", bool)
-            _WRAP_PROPERTY("xfill", bool)
-            _WRAP_PROPERTY("xshrink", bool)
-            _WRAP_PROPERTY("xlimp", bool)
-            _WRAP_PROPERTY("xalign", double)
+            _IGNORE_PROPERTY("xexpand")
+            _IGNORE_PROPERTY("xfill")
+            _IGNORE_PROPERTY("xshrink")
+            _IGNORE_PROPERTY("xlimp")
+            _IGNORE_PROPERTY("xalign")
 
-            _WRAP_PROPERTY("yexpand", bool)
-            _WRAP_PROPERTY("yfill", bool)
-            _WRAP_PROPERTY("yshrink", bool)
-            _WRAP_PROPERTY("ylimp", bool)
-            _WRAP_PROPERTY("yalign", double)
+            _IGNORE_PROPERTY("yexpand")
+            _IGNORE_PROPERTY("yfill")
+            _IGNORE_PROPERTY("yshrink")
+            _IGNORE_PROPERTY("ylimp")
+            _IGNORE_PROPERTY("yalign")
 
-            _WRAP_PROPERTY("top-padding", double)
-            _WRAP_PROPERTY("bottom-padding", double)
-            _WRAP_PROPERTY("left-padding", double)
-            _WRAP_PROPERTY("right-padding", double)
+            _IGNORE_PROPERTY("top-padding")
+            _IGNORE_PROPERTY("bottom-padding")
+            _IGNORE_PROPERTY("left-padding")
+            _IGNORE_PROPERTY("right-padding")
 
-            _WRAP_PROPERTY("backcell-pattern", Glib::RefPtr<Graphic::Pattern>)
-#endif
+            _IGNORE_PROPERTY("backcell-pattern")
     };
 }

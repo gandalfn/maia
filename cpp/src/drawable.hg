@@ -41,7 +41,11 @@ namespace Maia
         public:
             using RefPtr = Glib::RefPtr<DrawableDamageNotification>;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_METHOD(Glib::RefPtr<Drawable> get_drawable () const, maia_drawable_damage_notification_get_drawable, refreturn)
+#else
+            Drawable::RefPtr get_drawable () const;
+#endif
             _WRAP_METHOD(Graphic::Region::RefPtr get_area () const, maia_drawable_damage_notification_get_area, refreturn)
 
             _WRAP_METHOD(void post (const Graphic::Region::RefPtr& inArea), maia_drawable_damage_notification_post)
@@ -51,7 +55,7 @@ namespace Maia
             }
 
         private:
-            _WRAP_PROPERTY("drawable", Glib::RefPtr<Drawable>)
+            _WRAP_PROPERTY("drawable", Drawable::RefPtr)
             _WRAP_PROPERTY("area", Graphic::Region::RefPtr)
     };
 
@@ -65,7 +69,11 @@ namespace Maia
         public:
             using RefPtr = Glib::RefPtr<DrawableRepairNotification>;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_METHOD(Glib::RefPtr<Drawable> get_drawable () const, maia_drawable_repair_notification_get_drawable, refreturn)
+#else
+            Drawable::RefPtr get_drawable () const;
+#endif
             _WRAP_METHOD(Graphic::Region::RefPtr get_area () const, maia_drawable_repair_notification_get_area, refreturn)
 
             _WRAP_METHOD(void post (const Graphic::Region::RefPtr& inArea), maia_drawable_repair_notification_post)
@@ -75,7 +83,7 @@ namespace Maia
             }
 
         private:
-            _WRAP_PROPERTY("drawable", Glib::RefPtr<Drawable>)
+            _WRAP_PROPERTY("drawable", Drawable::RefPtr)
             _WRAP_PROPERTY("area", Graphic::Region::RefPtr)
     };
 

@@ -65,11 +65,9 @@ namespace Maia
 
                 _WRAP_METHOD(Surface::RefPtr get_surface () const, maia_graphic_image_get_surface, refreturn)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY ("filename", Glib::ustring)
                 _WRAP_PROPERTY ("size", Size)
                 _WRAP_PROPERTY ("surface", Surface::RefPtr)
-#endif
         };
 
         class ImageGif final : public Image

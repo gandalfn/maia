@@ -45,15 +45,17 @@ MAIA_CORE_EVENT_ARGS_REGISTER("message TestReply {"
 class TestEventArgs : public Core::EventArgs
 {
     public:
+        using RefPtr = Glib::RefPtr<TestEventArgs>;
+
         // methods
         unsigned long get_data  () const { return m_Data;  }
         Glib::ustring get_foo   () const { return m_Foo;   }
         int           get_count () const { return m_Count; }
 
         // static methods
-        static Glib::RefPtr<TestEventArgs> create (unsigned long inData, const Glib::ustring& inFoo, int inCount)
+        static TestEventArgs::RefPtr create (unsigned long inData, const Glib::ustring& inFoo, int inCount)
         {
-            return Glib::RefPtr<TestEventArgs> (new TestEventArgs (inData, inFoo, inCount));
+            return TestEventArgs::RefPtr (new TestEventArgs (inData, inFoo, inCount));
         }
 
     protected:
@@ -132,7 +134,7 @@ TestEvent::test_event_publish ()
     m_Count = 0;
 
     m_pEvent = Core::Event::create ("test-event");
-    Glib::RefPtr<Core::EventListener> pListener = Core::EventListener::create (m_pEvent, this, &TestEvent::on_event);
+    Core::EventListener::RefPtr pListener = Core::EventListener::create (m_pEvent, this, &TestEvent::on_event);
     Core::EventBus::get_default ()->subscribe (pListener);
 
     {
@@ -177,10 +179,10 @@ TestEvent::test_event_publish_with_reply ()
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void
-TestEvent::on_event (const Glib::RefPtr<Core::EventArgs>& inpArgs)
+TestEvent::on_event (const Core::EventArgs::RefPtr& inpArgs)
 {
     g_test_message ("Receive test-event");
-    Glib::RefPtr<TestEventArgs> pArgs = Glib::RefPtr<TestEventArgs>::cast_static (inpArgs);
+    TestEventArgs::RefPtr pArgs = TestEventArgs::RefPtr::cast_static (inpArgs);
     if (pArgs)
     {
         m_Data = pArgs->get_data ();
@@ -193,7 +195,7 @@ TestEvent::on_event (const Glib::RefPtr<Core::EventArgs>& inpArgs)
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void
-TestEvent::on_event_reply (const Glib::RefPtr<Core::EventArgs>& inpArgs)
+TestEvent::on_event_reply (const Core::EventArgs::RefPtr& inpArgs)
 {
     uint32_t val = inpArgs->fields ()["cpt"];
     g_test_message ("Receive test-event-reply recv %u", val);
@@ -209,7 +211,7 @@ TestEvent::on_publish_with_reply ()
 {
     static int cpt = 0;
 
-    Glib::RefPtr<TestReplyEventArgs> pArgs = TestReplyEventArgs::create ("cpt", (uint32_t)g_test_rand_int_range (0, 100));
+    TestReplyEventArgs::RefPtr pArgs = TestReplyEventArgs::create ("cpt", (uint32_t)g_test_rand_int_range (0, 100));
 
     Maia::Core::EventBus::get_default ()->publish_with_reply ("test-event-reply", pArgs, this, &TestEvent::on_reply);
     ++cpt;
@@ -219,7 +221,7 @@ TestEvent::on_publish_with_reply ()
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 void
-TestEvent::on_reply (const Glib::RefPtr<Core::EventArgs>& inpArgs)
+TestEvent::on_reply (const Core::EventArgs::RefPtr& inpArgs)
 {
     g_test_message ("Receive reply test-event-reply");
     uint32_t val = inpArgs->fields ()["cpt"];
@@ -233,7 +235,7 @@ TestEvent::on_publish ()
 {
     static int cpt = 0;
 
-    Glib::RefPtr<TestProtobufEventArgs> pProtobufArgs = TestProtobufEventArgs::create ();
+    TestProtobufEventArgs::RefPtr pProtobufArgs = TestProtobufEventArgs::create ();
     Core::EventArgs::Fields fields = pProtobufArgs->fields ();
     fields["data"] = (unsigned long long)1234;
     fields["foo"] = (Glib::ustring)"toto";
@@ -265,7 +267,7 @@ TestEvent::on_publish ()
     g_assert ((int)fields["array"][1] == 76);
     g_assert ((int)fields["array"][2] == 54);
 
-    Glib::RefPtr<TestProtobufEventArgs> pProtobufArgs2 = TestProtobufEventArgs::create ("data", 1234ULL, "foo", "toto", "array", val);
+    TestProtobufEventArgs::RefPtr pProtobufArgs2 = TestProtobufEventArgs::create ("data", 1234ULL, "foo", "toto", "array", val);
     Core::EventArgs::Fields fields2 = pProtobufArgs2->fields ();
     unsigned long long data2 = fields2["data"];
     Glib::ustring foo2 = fields2["foo"];
@@ -277,7 +279,7 @@ TestEvent::on_publish ()
     g_assert (array2[1] == 76);
     g_assert (array2[2] == 54);
 
-    Glib::RefPtr<TestEventArgs> pArgs = TestEventArgs::create (1245, "toto", ++cpt);
+    TestEventArgs::RefPtr pArgs = TestEventArgs::create (1245, "toto", ++cpt);
     g_test_message ("Send test-event \"toto\" 1245 %i %u", cpt, G_OBJECT (Core::EventBus::get_default ()->gobj ())->ref_count);
 
     Core::EventBus::get_default ()->publish ("test-event", pArgs);

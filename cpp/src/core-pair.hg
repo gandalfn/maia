@@ -64,6 +64,7 @@ namespace Maia
                         maia_core_pair_unref(gobject_);
                 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 void swap(Pair<F, S>& other)
                 {
                     MaiaCorePair *const temp = gobject_;
@@ -85,6 +86,7 @@ namespace Maia
                 {
                     return (MaiaCorePair*)maia_core_pair_ref(gobject_);
                 }
+#endif
 
                 inline F& first () const
                 {
@@ -97,18 +99,18 @@ namespace Maia
                 }
 
             protected:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 MaiaCorePair* gobject_;
+#endif
        };
 
-        /** @relates Maia::Core::Pair
-         * @param lhs The left-hand side
-         * @param rhs The right-hand side
-         */
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
         template<typename F, typename S>
         inline void swap(Pair<F, S>& lhs, Pair<F, S>& rhs)
         {
             lhs.swap(rhs);
         }
+#endif
     }
 }
 

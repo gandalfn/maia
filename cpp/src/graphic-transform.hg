@@ -45,7 +45,17 @@ namespace Maia
             public:
                 using RefPtr = Glib::RefPtr<TransformChangedNotification>;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_METHOD(Glib::RefPtr<Transform> get_transform () const, maia_graphic_transform_changed_notification_get_transform, refreturn)
+#else
+                Transform::RefPtr get_transform () const;
+#endif
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+                _WRAP_METHOD(void post (const Glib::RefPtr<Transform>& inpTransform), maia_graphic_transform_changed_notification_post)
+#else
+                void post (const Transform::RefPtr& inpTransform);
+#endif
 
                 _WRAP_PROPERTY("transform", Transform::RefPtr)
         };

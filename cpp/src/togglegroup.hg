@@ -37,11 +37,11 @@ namespace Maia
         _CLASS_GOBJECT(ToggleGroupChangedEventArgs, MaiaToggleGroupChangedEventArgs, MAIA_TOGGLE_GROUP_CHANGED_EVENT_ARGS, Core::EventArgs, MaiaCoreEventArgs)
 
         public:
+            using RefPtr = Glib::RefPtr<ToggleGroupChangedEventArgs>;
+
             _WRAP_METHOD(Glib::ustring get_active () const, maia_toggle_group_changed_event_args_get_active)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("active", Glib::ustring)
-#endif
     };
 
 
@@ -58,13 +58,15 @@ namespace Maia
             explicit ToggleGroup(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<ToggleGroup> create ()
+            using RefPtr = Glib::RefPtr<ToggleGroup>;
+
+            static ToggleGroup::RefPtr create ()
             {
-                return Glib::RefPtr<ToggleGroup> (new ToggleGroup ());
+                return ToggleGroup::RefPtr (new ToggleGroup ());
             }
 
-            _WRAP_METHOD(void add_button (const Glib::RefPtr<Toggle>& inButtton), maia_toggle_group_add_button)
-            _WRAP_METHOD(void remove_button (const Glib::RefPtr<Toggle>& inButtton), maia_toggle_group_remove_button)
+            _WRAP_METHOD(void add_button (const Toggle::RefPtr& inButtton), maia_toggle_group_add_button)
+            _WRAP_METHOD(void remove_button (const Toggle::RefPtr& inButtton), maia_toggle_group_remove_button)
 
             _WRAP_METHOD(Glib::ustring get_name () const, maia_toggle_group_get_name)
 
@@ -77,22 +79,20 @@ namespace Maia
             _WRAP_METHOD(bool get_exclusive () const, maia_toggle_group_get_exclusive)
             _WRAP_METHOD(void set_exclusive (bool inExclusive = true), maia_toggle_group_set_exclusive)
 
-            _WRAP_METHOD(Glib::RefPtr<Core::Event> changed () const, maia_toggle_group_get_changed, refreturn)
+            _WRAP_METHOD(Core::Event::RefPtr changed () const, maia_toggle_group_get_changed, refreturn)
 
-            std::vector<Glib::RefPtr<Toggle>> get_toggles () const;
+            std::vector<Toggle::RefPtr> get_toggles () const;
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("name", Glib::ustring)
             _WRAP_PROPERTY("active", Glib::ustring)
             _WRAP_PROPERTY("hideall-if-noactive", bool)
             _WRAP_PROPERTY("exclusive", bool)
 
-            _WRAP_PROPERTY("tag", Glib::ustring)
-            _WRAP_PROPERTY("style", Glib::ustring)
-            _WRAP_PROPERTY("characters", Glib::ustring)
-            _WRAP_PROPERTY("manifest-path", Glib::ustring)
-            _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
-            _WRAP_PROPERTY("changed", Glib::RefPtr<Core::Event>)
-#endif
+            _IGNORE_PROPERTY("tag")
+            _IGNORE_PROPERTY("style")
+            _IGNORE_PROPERTY("characters")
+            _IGNORE_PROPERTY("manifest-path")
+            _IGNORE_PROPERTY("manifest-theme")
+            _IGNORE_PROPERTY("changed")
     };
 }

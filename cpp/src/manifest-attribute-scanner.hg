@@ -34,7 +34,8 @@ namespace Maia
             _CLASS_GOBJECT(AttributeScanner, MaiaManifestAttributeScanner, MAIA_MANIFEST_ATTRIBUTE_SCANNER, Core::Parser, MaiaCoreParser)
 
             public:
-                typedef sigc::slot<void, Glib::RefPtr<AttributeScanner>, Glib::ValueBase& > SlotTransformFunc;
+                using RefPtr = Glib::RefPtr<AttributeScanner>;
+                using SlotTransformFunc = sigc::slot<void, AttributeScanner::RefPtr, Glib::ValueBase&>;
 
                 _IGNORE(maia_manifest_attribute_scanner_transform)
 

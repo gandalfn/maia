@@ -37,18 +37,20 @@ namespace Maia
             explicit SwitchButton(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<SwitchButton> create (const Glib::ustring& inId)
+            using RefPtr = Glib::RefPtr<SwitchButton>;
+
+            static SwitchButton::RefPtr create (const Glib::ustring& inId)
             {
                 MaiaSwitchButton* pButton = maia_switch_button_new (inId.c_str (), 0);
 
-                return Glib::RefPtr<SwitchButton> (new SwitchButton (pButton));
+                return SwitchButton::RefPtr (new SwitchButton (pButton));
             }
 
-            static Glib::RefPtr<SwitchButton> create (const Glib::ustring& inId, const Glib::ustring& inLabel)
+            static SwitchButton::RefPtr create (const Glib::ustring& inId, const Glib::ustring& inLabel)
             {
                 MaiaSwitchButton* pButton = maia_switch_button_new (inId.c_str (), inLabel.c_str ());
 
-                return Glib::RefPtr<SwitchButton> (new SwitchButton (pButton));
+                return SwitchButton::RefPtr (new SwitchButton (pButton));
             }
 
             _WRAP_METHOD(double get_spacing () const, maia_switch_button_get_spacing)
@@ -60,15 +62,11 @@ namespace Maia
             _WRAP_METHOD(Graphic::Pattern::RefPtr get_line_pattern () const, maia_switch_button_get_line_pattern, refreturn)
             _WRAP_METHOD(void set_line_pattern (const Graphic::Pattern::RefPtr& inPattern), maia_switch_button_set_line_pattern)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("spacing", double)
             _WRAP_PROPERTY("shadow-pattern", StatePatterns::RefPtr)
             _WRAP_PROPERTY("line-pattern", Graphic::Pattern)
 
-            _WRAP_PROPERTY("tag", Glib::ustring)
-#endif
-
-        private:
-            _WRAP_PROPERTY("switch-progress", double)
+            _IGNORE_PROPERTY("tag")
+            _IGNORE_PROPERTY("switch-progress")
     };
 }

@@ -33,9 +33,6 @@ main (int argc, char** argv)
 {
     Maia::init ();
 
-    std::vector<Glib::ustring> backends;
-    backends.push_back ("gtk");
-
     // Init test units
     g_test_init (&argc, &argv, 0);
 
@@ -46,7 +43,7 @@ main (int argc, char** argv)
     }
 
     // Create maia application
-    Glib::RefPtr<Maia::Application> pApp = Maia::Application::create ("test-cpp", 60, backends);
+    Maia::Application::RefPtr pApp = Maia::Application::create ("test-cpp", 60, { "gtk" });
 
     // Get root suite
     Maia::TestSuite root;

@@ -42,11 +42,13 @@ namespace Maia
             explicit RendererView(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<RendererView> create (const Glib::ustring& inName, const Glib::RefPtr<Graphic::Renderer>& inpRenderer)
+            using RefPtr = Glib::RefPtr<RendererView>;
+
+            static RendererView::RefPtr create (const Glib::ustring& inName, const Graphic::Renderer::RefPtr& inpRenderer)
             {
                 RendererView* pView = new RendererView (maia_renderer_view_new (inName.c_str (), const_cast<MaiaGraphicRenderer*> (inpRenderer->get_renderer ()->gobj ())));
                 pView->m_pRenderer = inpRenderer;
-                return Glib::RefPtr<RendererView> (pView);
+                return RendererView::RefPtr (pView);
             }
 
             _WRAP_METHOD(Graphic::RendererLooper::RefPtr get_looper () const, maia_renderer_view_get_looper)
@@ -57,7 +59,7 @@ namespace Maia
 
             _IGNORE (maia_renderer_view_get_renderer, maia_renderer_view_set_renderer)
 
-            Glib::RefPtr<Graphic::Renderer> get_renderer ();
+            Graphic::Renderer::RefPtr get_renderer ();
             void set_renderer (const Graphic::Renderer::RefPtr& inpRenderer);
 
             _WRAP_PROPERTY("looper", Graphic::RendererLooper::RefPtr)
@@ -95,7 +97,7 @@ namespace Maia
             _IGNORE_PROPERTY("backcell-pattern")
 
       private:
-            Glib::RefPtr<Graphic::Renderer> m_pRenderer;
+            Graphic::Renderer::RefPtr m_pRenderer;
 
             _IGNORE_PROPERTY("renderer")
     };

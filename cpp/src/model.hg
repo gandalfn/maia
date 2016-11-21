@@ -44,21 +44,34 @@ namespace Maia
         protected:
             _CTOR_DEFAULT()
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             Model (const Glib::ustring& inId, const std::vector<Glib::RefPtr<ModelColumn>>& inColumns);
+#else
+            Model (const Glib::ustring& inId, const std::vector<Model::Column::RefPtr>& inColumns);
+#endif
 
         public:
-            typedef ModelIterator iterator;
-            typedef ModelRow Row;
-            typedef ModelRows Rows;
-            typedef ModelColumn Column;
-            typedef sigc::slot<void, guint> SlotValueChanged;
-            typedef sigc::slot<bool, Glib::RefPtr<Model>, iterator> SlotFilterFunc;
+            using RefPtr = Glib::RefPtr<Model>;
+            using iterator = ModelIterator;
+            using Row = ModelRow;
+            using Rows = ModelRows;
+            using Column = ModelColumn;
+            using SlotValueChanged = sigc::slot<void, unsigned int>;
+            using SlotFilterFunc = sigc::slot<bool, Model::RefPtr, iterator>;
 
-            static Glib::RefPtr<Model> create (const Glib::ustring& inId);
-            static Glib::RefPtr<Model> create (const Glib::ustring& inId, const std::vector<Glib::RefPtr<Model::Column>>& inColumns);
-            static Glib::RefPtr<Model> create (const Glib::ustring& inId, const Glib::RefPtr<Model>& inpModel, SlotFilterFunc inFunc);
-            static Glib::RefPtr<Model> create_foreign (const Glib::ustring& inId, ...);
-            static Glib::RefPtr<Model> create_foreign (const Glib::ustring& inId, const std::vector<Glib::RefPtr<Model::Column>>& inColumns, ...);
+            static Model::RefPtr create (const Glib::ustring& inId);
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+            static Model::RefPtr create (const Glib::ustring& inId, const std::vector<Glib::RefPtr<Model::Column>>& inColumns);
+#else
+            static Model::RefPtr create (const Glib::ustring& inId, const std::vector<Model::Column::RefPtr>& inColumns);
+#endif
+            static Model::RefPtr create (const Glib::ustring& inId, const Model::RefPtr& inpModel, SlotFilterFunc inFunc);
+            static Model::RefPtr create_foreign (const Glib::ustring& inId, ...);
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+            static Model::RefPtr create_foreign (const Glib::ustring& inId, const std::vector<Glib::RefPtr<Model::Column>>& inColumns, ...);
+#else
+            static Model::RefPtr create_foreign (const Glib::ustring& inId, const std::vector<Model::Column::RefPtr>& inColumns, ...);
+#endif
 
             _WRAP_METHOD(void refilter (), maia_model_refilter)
 
@@ -66,8 +79,12 @@ namespace Maia
 
             Model::Rows rows () const;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_METHOD(Glib::RefPtr<Model::Column> get (const Glib::ustring& inColumnName) const, maia_model_get, refreturn)
-            _WRAP_METHOD(guint get_nb_rows () const, maia_model_get_nb_rows)
+#else
+            Model::Column::RefPtr get (const Glib::ustring& inColumnName) const;
+#endif
+            _WRAP_METHOD(unsigned int get_nb_rows () const, maia_model_get_nb_rows)
 
             _IGNORE (maia_model_append_row)
             Model::iterator append_row ();
@@ -85,31 +102,29 @@ namespace Maia
 
             inline void clear ();
 
-            _WRAP_SIGNAL(void value_changed (guint inRow), "value-changed", no_default_handler)
-            _WRAP_SIGNAL(void row_added (guint inRow), "row-added")
-            _WRAP_SIGNAL(void row_changed (guint inRow), "row-changed")
-            _WRAP_SIGNAL(void row_deleted (guint inRow), "row-deleted", no_default_handler)
+            _WRAP_SIGNAL(void value_changed (unsigned int inRow), "value-changed", no_default_handler)
+            _WRAP_SIGNAL(void row_added (unsigned int inRow), "row-added")
+            _WRAP_SIGNAL(void row_changed (unsigned int inRow), "row-changed")
+            _WRAP_SIGNAL(void row_deleted (unsigned int inRow), "row-deleted", no_default_handler)
             _WRAP_SIGNAL(void rows_reordered (gpointer inNewOrder, int inLength), "rows-reordered", no_default_handler)
 
             sigc::connection connect_value_changed (const Glib::ustring& inColumnName, SlotValueChanged inSlot);
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-            _WRAP_PROPERTY("nb-rows", guint)
+            _WRAP_PROPERTY("nb-rows", unsigned int)
 
             _WRAP_PROPERTY("name", Glib::ustring)
 
-            _WRAP_PROPERTY("tag", Glib::ustring)
-            _WRAP_PROPERTY("style", Glib::ustring)
-            _WRAP_PROPERTY("characters", Glib::ustring)
-            _WRAP_PROPERTY("manifest-path", Glib::ustring)
-            _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
-#endif
+            _IGNORE_PROPERTY("tag")
+            _IGNORE_PROPERTY("style")
+            _IGNORE_PROPERTY("characters")
+            _IGNORE_PROPERTY("manifest-path")
+            _IGNORE_PROPERTY("manifest-theme")
 
         private:
             Model* cpp_obj () { return this; }
             SlotFilterFunc* m_pFilterFunc;
 
-            static gboolean filter_func_callback (MaiaModel* inpModel, guint inRow, void* inpData);
+            static gboolean filter_func_callback (MaiaModel* inpModel, unsigned int inRow, void* inpData);
             static void filter_func_destroy_notify_handler (void* inpData);
     };
 
@@ -122,26 +137,28 @@ namespace Maia
             _CTOR_DEFAULT()
 
         public:
-            static Glib::RefPtr<Model::Column> create (const Glib::ustring& inName)
+            using RefPtr = Glib::RefPtr<Model::Column>;
+
+            static Model::Column::RefPtr create (const Glib::ustring& inName)
             {
-                return Glib::RefPtr<Model::Column> (new ModelColumn (maia_model_column_new (inName.c_str())));
+                return Model::Column::RefPtr (new ModelColumn (maia_model_column_new (inName.c_str())));
             }
 
             template <typename T>
-            static Glib::RefPtr<Model::Column> create (const Glib::ustring& inName)
+            static Model::Column::RefPtr create (const Glib::ustring& inName)
             {
                 GType type = Glib::Value<T>::value_type ();
 
-                return Glib::RefPtr<Model::Column> (new ModelColumn (maia_model_column_new_with_type (inName.c_str(), type)));
+                return Model::Column::RefPtr (new ModelColumn (maia_model_column_new_with_type (inName.c_str(), type)));
             }
 
-            static Glib::RefPtr<Model::Column> create (const Glib::ustring& inName, int inColumn)
+            static Model::Column::RefPtr create (const Glib::ustring& inName, int inColumn)
             {
-                return Glib::RefPtr<Model::Column> (new ModelColumn (maia_model_column_new_with_column (inName.c_str(), inColumn)));
+                return Model::Column::RefPtr (new ModelColumn (maia_model_column_new_with_column (inName.c_str(), inColumn)));
             }
 
             _WRAP_METHOD(Glib::ustring get_name () const, maia_model_column_get_name)
-            _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_model_column_get_model, refreturn)
+            _WRAP_METHOD(Model::RefPtr get_model () const, maia_model_column_get_model, refreturn)
             _WRAP_METHOD(int get_column () const, maia_model_column_get_column)
             _WRAP_METHOD(void set_column (int inColumn) const, maia_model_column_set_column)
             _WRAP_METHOD(Glib::ustring get_column_type () const, maia_model_column_get_column_type)
@@ -150,18 +167,16 @@ namespace Maia
             _IGNORE(maia_model_column_get)
             _IGNORE(maia_model_column_set)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("name", Glib::ustring)
-            _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
+            _WRAP_PROPERTY("model", Model::RefPtr)
             _WRAP_PROPERTY("column", int)
             _WRAP_PROPERTY("column-type", Glib::ustring)
 
-            _WRAP_PROPERTY("tag", Glib::ustring)
-            _WRAP_PROPERTY("characters", Glib::ustring)
-            _WRAP_PROPERTY("style", Glib::ustring)
-            _WRAP_PROPERTY("manifest-path", Glib::ustring)
-            _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
-#endif
+            _IGNORE_PROPERTY("tag")
+            _IGNORE_PROPERTY("style")
+            _IGNORE_PROPERTY("characters")
+            _IGNORE_PROPERTY("manifest-path")
+            _IGNORE_PROPERTY("manifest-theme")
     };
 
     class ModelIterator
@@ -646,6 +661,7 @@ namespace Maia
             Model* m_pModel;
     };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     template<typename T, typename... Args>
     inline Model::iterator Model::append_values (const T& inValue, Args... inArgs)
     {
@@ -707,4 +723,5 @@ namespace Maia
 
         return value.get ();
     }
+#endif
 }

@@ -43,7 +43,7 @@ namespace Maia
         EventBus::_on_publish_reply_callback (MaiaCoreEventArgs* inpArgs, gpointer inpData)
         {
             EventReplyFunctorBase* pFunctor = (EventReplyFunctorBase*)g_object_get_data (G_OBJECT (inpData), "EventReplyCpp");
-            Glib::RefPtr<EventArgs> pArgs = Glib::wrap(inpArgs, true);
+            EventArgs::RefPtr pArgs = Glib::wrap(inpArgs, true);
 
             (*pFunctor)(pArgs);
 

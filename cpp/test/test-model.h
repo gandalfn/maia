@@ -44,7 +44,7 @@ namespace Maia
             void test_model_set_values ();
             void test_model_filter ();
             void test_model_parse ();
-            bool on_filter_func (const Glib::RefPtr<Maia::Model>& inpModel, const Maia::Model::iterator& inIter);
+            bool on_filter_func (const Maia::Model::RefPtr& inpModel, const Maia::Model::iterator& inIter);
     };
 }
 

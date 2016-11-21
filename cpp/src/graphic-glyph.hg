@@ -56,7 +56,11 @@ namespace Maia
 
 #m4 _CONVERSION(`MaiaGraphicContext*', `const Glib::RefPtr<Graphic::Context>&', `Glib::wrap($3, true)')
                 _WRAP_VFUNC(void get_size (Size& outSize), get_size)
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_VFUNC(void update (const Glib::RefPtr<Context>& inContext), update)
+#else
+                virtual void update_vfunc (const Context::RefPtr& inContext);
+#endif
                 _WRAP_VFUNC(void get_cursor_position (int inIndex, Rectangle& outRectangle), get_cursor_position)
 #m4 _CONVERSION(`MaiaGraphicContext*', `const Glib::RefPtr<Graphic::Context>&', `Glib::wrap($3)')
 
@@ -76,24 +80,38 @@ namespace Maia
                 _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_glyph_get_size)
                 _WRAP_METHOD(void set_size (const Size& outSize) const, maia_graphic_glyph_set_size)
                 _WRAP_METHOD(Glib::ustring get_font_description () const, maia_graphic_glyph_get_font_description)
+
                 _WRAP_METHOD(void set_font_description (const Glib::ustring& inFontDesc), maia_graphic_glyph_set_font_description)
+
                 _WRAP_METHOD(bool get_use_markup () const, maia_graphic_glyph_get_use_markup)
                 _WRAP_METHOD(void set_use_markup (bool inUseMarkup = true), maia_graphic_glyph_set_use_markup)
+
                 _WRAP_METHOD(Glyph::Alignment get_alignment () const, maia_graphic_glyph_get_alignment)
                 _WRAP_METHOD(void set_alignment (Glyph::Alignment inAlignment), maia_graphic_glyph_set_alignment)
+
                 _WRAP_METHOD(Glyph::WrapMode get_wrap () const, maia_graphic_glyph_get_wrap)
                 _WRAP_METHOD(void set_wrap (Glyph::WrapMode inMode), maia_graphic_glyph_set_wrap)
+
                 _WRAP_METHOD(Glyph::EllipsizeMode get_ellipsize () const, maia_graphic_glyph_get_ellipsize)
                 _WRAP_METHOD(void set_ellipsize (Glyph::EllipsizeMode inMode), maia_graphic_glyph_set_ellipsize)
+
                 _WRAP_METHOD(Glib::ustring get_text () const, maia_graphic_glyph_get_text)
                 _WRAP_METHOD(void set_text (const Glib::ustring& inText), maia_graphic_glyph_set_text)
+
                 _WRAP_METHOD(void get_origin (Point& outPoint) const, maia_graphic_glyph_get_origin)
                 _WRAP_METHOD(void set_origin (const Point& inPoint), maia_graphic_glyph_set_origin)
+
                 _WRAP_METHOD(int get_line_count () const, maia_graphic_glyph_get_line_count)
+
                 _WRAP_METHOD(void get_line_position (int inIndex, bool inTrailing, int& outLine), maia_graphic_glyph_get_line_position)
+
                 _WRAP_METHOD(void get_index_from_position (const Graphic::Point& inPosition, int& outIndex, int& trailing), maia_graphic_glyph_get_index_from_position)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_METHOD(void update (const Glib::RefPtr<Context>& inpContext), maia_graphic_glyph_update)
+#else
+                void update (const Context::RefPtr& inpContext);
+#endif
                 _WRAP_METHOD(void get_cursor_position (int inIndex, Rectangle& outRectangle), maia_graphic_glyph_get_cursor_position)
 
                 _WRAP_PROPERTY("size", Size)

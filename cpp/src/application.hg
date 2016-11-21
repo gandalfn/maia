@@ -27,6 +27,9 @@ _PINCLUDE(maiamm/private/core-object_p.h)
 
 namespace Maia
 {
+    /**
+     * @includedoc MaiaApplication.doc
+     */
     class Application : public Core::Object
     {
         _CLASS_GOBJECT(Application, MaiaApplication, MAIA_APPLICATION, Core::Object, MaiaCoreObject)
@@ -72,6 +75,7 @@ namespace Maia
 
             _IGNORE(maia_application_new_from_args)
 
+            _WRAP_METHOD_DOCS_ONLY(maia_application_add_backends_path)
             static void add_backends_path (const Glib::ustring& inPath)
             {
                 maia_application_add_backends_path (inPath.c_str ());

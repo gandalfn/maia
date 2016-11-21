@@ -191,7 +191,9 @@ ifdef(`__BOOL_CUSTOM_DEFAULT_CTOR__',,`dnl else
 ')dnl
 
 ifdef(`__BOOL_CUSTOM_CTOR_CAST__',,`dnl else
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   explicit __CPPNAME__`'(const __CNAME__* gobject); // always takes a copy
+#endif
 ')dnl
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS

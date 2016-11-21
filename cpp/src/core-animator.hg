@@ -45,7 +45,12 @@ namespace Maia
                 using SlotTransitionCallback = sigc::slot<bool, double>;
                 using SlotTransitionFinished = sigc::slot<void>;
 
-                _WRAP_CREATE(unsigned int speed, unsigned int duration)
+                static Animator::RefPtr
+                create (unsigned int inSpeed, unsigned int inDuration)
+                {
+                    Animator* pAnimator = new Animator (inSpeed, inDuration);
+                    return Animator::RefPtr (pAnimator);
+                }
 
                 _IGNORE (maia_core_animator_add_transition)
                 _IGNORE (maia_core_animator_remove_transition)
@@ -64,11 +69,13 @@ namespace Maia
                 _WRAP_METHOD(void start(), maia_core_animator_start)
                 _WRAP_METHOD(void stop(), maia_core_animator_stop)
 
+                _WRAP_METHOD_DOCS_ONLY(maia_core_animator_add_transition)
                 unsigned int add_transition (double inFrom, double inTo, Animator::ProgressType inType, SlotTransitionCallback inCallback, SlotTransitionFinished inFinished);
                 unsigned int add_transition (double inFrom, double inTo, Animator::ProgressType inType, SlotTransitionCallback inCallback);
                 unsigned int add_transition (double inFrom, double inTo, Animator::ProgressType inType, SlotTransitionFinished inFinished);
                 unsigned int add_transition (double inFrom, double inTo, Animator::ProgressType inType);
 
+                _WRAP_METHOD_DOCS_ONLY(maia_core_animator_remove_transition)
                 void remove_transition (unsigned int inTransition);
 
                 void add_transition_property (unsigned int inTransition, Glib::Object& inObject, const Glib::ustring& inName, double inFrom, double inTo);

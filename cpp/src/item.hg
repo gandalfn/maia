@@ -103,10 +103,19 @@ namespace Maia
 
             _WRAP_METHOD(Glib::ustring get_name () const, maia_item_get_name)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_METHOD(Glib::RefPtr<Window> get_window () const, maia_item_get_window, refreturn)
             _WRAP_METHOD(void set_window (const Glib::RefPtr<Window>& inNativeWindow), maia_item_set_window)
+#else
+            Window::RefPtr get_window () const;
+            void set_window (const Window::RefPtr& inNativeWindow);
+#endif
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_METHOD(Glib::RefPtr<Window> get_toplevel () const, maia_item_get_toplevel, refreturn)
+#else
+            Window::RefPtr get_toplevel () const;
+#endif
 
             _WRAP_METHOD(bool is_packable () const, maia_item_get_is_packable)
 
@@ -317,8 +326,8 @@ namespace Maia
             _IGNORE_PROPERTY("transform")
 
             _WRAP_PROPERTY("name", Glib::ustring)
-            _WRAP_PROPERTY("window", Glib::RefPtr<Window>)
-            _WRAP_PROPERTY("toplevel", Glib::RefPtr<Window>)
+            _WRAP_PROPERTY("window", Window::RefPtr)
+            _WRAP_PROPERTY("toplevel", Window::RefPtr)
             _WRAP_PROPERTY("state", State)
             _WRAP_PROPERTY("is-packable", bool)
             _WRAP_PROPERTY("is-movable", bool)

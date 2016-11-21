@@ -41,20 +41,22 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                static Glib::RefPtr<Buffer> create_from_filename (const Glib::ustring& inFilename)
+                using RefPtr = Glib::RefPtr<Buffer>;
+
+                static Buffer::RefPtr create_from_filename (const Glib::ustring& inFilename)
                 {
                     GError* gerror = 0;
                     MaiaProtocolBuffer* pBuffer = maia_protocol_buffer_new (inFilename.c_str(), &gerror);
                     if (gerror) ::Glib::Error::throw_exception(gerror);
-                    return Glib::RefPtr<Buffer> (new Buffer (pBuffer));
+                    return Buffer::RefPtr (new Buffer (pBuffer));
                 }
 
-                static Glib::RefPtr<Buffer> create (const Glib::ustring& inBuffer)
+                static Buffer::RefPtr create (const Glib::ustring& inBuffer)
                 {
                     GError* gerror = 0;
                     MaiaProtocolBuffer* pBuffer = maia_protocol_buffer_new_from_data (inBuffer.c_str(), inBuffer.size (), &gerror);
                     if (gerror) ::Glib::Error::throw_exception(gerror);
-                    return Glib::RefPtr<Buffer> (new Buffer (pBuffer));
+                    return Buffer::RefPtr (new Buffer (pBuffer));
                 }
 
                 _WRAP_METHOD(Glib::ustring get_message () const, maia_protocol_buffer_get_message)
@@ -63,15 +65,17 @@ namespace Maia
                 _WRAP_METHOD(Glib::ustring get_attribute_type () const, maia_protocol_buffer_get_attribute_type)
                 _WRAP_METHOD(Glib::ustring get_attribute_options () const, maia_protocol_buffer_get_attribute_options)
 
-                _WRAP_METHOD(Glib::RefPtr<Message> get (const Glib::ustring& inId) const, maia_protocol_buffer_get, refreturn)
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+                _WRAP_METHOD(Glib::RefPtr<Message> get (const Glib::ustring& inId) const, maia_protocol_buffer_get, refreturn)
+#else
+                Message::RefPtr get (const Glib::ustring& inId) const;
+#endif
+
                 _WRAP_PROPERTY("message", Glib::ustring)
                 _WRAP_PROPERTY("attribute-name", Glib::ustring)
                 _WRAP_PROPERTY("attribute-rule", Glib::ustring)
                 _WRAP_PROPERTY("attribute-type", Glib::ustring)
                 _WRAP_PROPERTY("attribute-options", Glib::ustring)
-#endif
         };
     }
 }

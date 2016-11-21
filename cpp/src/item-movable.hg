@@ -31,6 +31,8 @@ namespace Maia
         _CLASS_INTERFACE(ItemMovable, MaiaItemMovable, MAIA_ITEM_MOVABLE, MaiaItemMovableIface)
 
         public:
+            using RefPtr = Glib::RefPtr<ItemMovable>;
+
             _WRAP_METHOD(void move (const Graphic::Point& inPosition), maia_item_movable_move)
 
     };

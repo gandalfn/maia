@@ -70,7 +70,7 @@ TestManifest::test_create ()
                             "}");
     try
     {
-        Glib::RefPtr<Manifest::Document> pDocument = Manifest::Document::create_from_buffer (manifest);
+        Manifest::Document::RefPtr pDocument = Manifest::Document::create_from_buffer (manifest);
     }
     catch (Glib::Error& err)
     {
@@ -96,7 +96,7 @@ TestManifest::test_parse ()
                             "}");
     try
     {
-        Glib::RefPtr<Manifest::Document> pDocument = Manifest::Document::create_from_buffer (manifest);
+        Manifest::Document::RefPtr pDocument = Manifest::Document::create_from_buffer (manifest);
 
         for (Core::Parser::iterator iter = pDocument->begin (); iter != pDocument->end (); ++iter)
         {

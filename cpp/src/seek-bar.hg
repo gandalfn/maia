@@ -37,11 +37,13 @@ namespace Maia
             explicit SeekBar(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<SeekBar> create (const Glib::ustring& inId)
+            using RefPtr = Glib::RefPtr<SeekBar>;
+
+            static SeekBar::RefPtr create (const Glib::ustring& inId)
             {
                 MaiaSeekBar* pSeekBar = maia_seek_bar_new (inId.c_str ());
 
-                return Glib::RefPtr<SeekBar> (new SeekBar (pSeekBar));
+                return SeekBar::RefPtr (new SeekBar (pSeekBar));
             }
 
             _IGNORE_PROPERTY("can-focus")

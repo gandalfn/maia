@@ -36,17 +36,17 @@ namespace Maia
             explicit Viewport(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<Viewport> create (const Glib::ustring& inId)
+            using RefPtr = Glib::RefPtr<Viewport>;
+
+            static Viewport::RefPtr create (const Glib::ustring& inId)
             {
                 MaiaViewport* pViewport = maia_viewport_new (inId.c_str());
-                return Glib::RefPtr<Viewport> (new Viewport (pViewport));
+                return Viewport::RefPtr (new Viewport (pViewport));
             }
 
             _WRAP_METHOD(void get_visible_area(Graphic::Rectangle& outVisibleArea), maia_viewport_get_visible_area)
             _WRAP_METHOD(void set_visible_area(const Graphic::Rectangle& inVisibleArea), maia_viewport_set_visible_area)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("visible-area", Graphic::Rectangle)
-#endif
     };
 }

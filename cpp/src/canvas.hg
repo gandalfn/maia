@@ -29,6 +29,9 @@ _PINCLUDE(glibmm/private/object_p.h)
 
 namespace Maia
 {
+    /**
+     * @includedoc MaiaCanvas.doc
+     */
     class Canvas : public Glib::Interface
     {
         _CLASS_INTERFACE(Canvas, MaiaCanvas, MAIA_CANVAS, MaiaCanvasIface)
@@ -54,10 +57,12 @@ namespace Maia
 
             _IGNORE(maia_canvas_load)
             void load (const Glib::ustring& inManifest);
+            _WRAP_METHOD_DOCS_ONLY(maia_canvas_load)
             void load (const Glib::ustring& inManifest, const Glib::ustring& inRoot);
 
             _IGNORE(maia_canvas_load_from_file)
             void load_from_file (const Glib::ustring& inFilename);
+            _WRAP_METHOD_DOCS_ONLY(maia_canvas_load_from_file)
             void load_from_file (const Glib::ustring& inFilename, const Glib::ustring& inRoot);
 
             _WRAP_METHOD(Core::Notifications::RefPtr notifications (), maia_canvas_get_notifications, refreturn)

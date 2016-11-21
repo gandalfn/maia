@@ -42,16 +42,18 @@ namespace Maia
                 _WRAP_VFUNC(void set_characters (const Glib::ustring& inCharacters), set_characters)
 
             public:
-                typedef sigc::slot<Glib::RefPtr<Element>, const Glib::ustring& > SlotCreateFunc;
+                using RefPtr = Glib::RefPtr<Element>;
+
+                typedef sigc::slot<Element::RefPtr, const Glib::ustring& > SlotCreateFunc;
 
                 _IGNORE(maia_manifest_element_create)
-                static Glib::RefPtr<Element> create (const Glib::ustring& inTag, const Glib::ustring& inId)
+                static Element::RefPtr create (const Glib::ustring& inTag, const Glib::ustring& inId)
                 {
                     MaiaManifestElement* pElement = maia_manifest_element_create (inTag.c_str (), inId.c_str ());
                     if (pElement)
-                        return Glib::RefPtr<Element> (new Element (pElement));
+                        return Element::RefPtr (new Element (pElement));
 
-                    return Glib::RefPtr<Element> (0);
+                    return Element::RefPtr (0);
                 }
 
                 _WRAP_METHOD(Glib::ustring get_tag () const, maia_manifest_element_get_tag)
@@ -65,12 +67,21 @@ namespace Maia
                 _WRAP_METHOD(Glib::ustring get_manifest_path () const, maia_manifest_element_get_manifest_path)
                 _WRAP_METHOD(void set_manifest_path (const Glib::ustring& inPath) const, maia_manifest_element_set_manifest_path)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_METHOD(Glib::RefPtr<Theme> get_manifest_theme () const, maia_manifest_element_get_manifest_theme, refreturn)
                 _WRAP_METHOD(void set_manifest_theme (const Glib::RefPtr<Theme>& inStyles), maia_manifest_element_set_manifest_theme)
+#else
+                Theme::RefPtr get_manifest_theme () const;
+                void set_manifest_theme (const Theme::RefPtr& inStyles);
+#endif
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_METHOD(static Glib::RefPtr<Theme> get_current_theme (), maia_manifest_element_get_current_theme, refreturn)
+#else
+                static Theme::RefPtr get_current_theme ();
+#endif
 
-                _WRAP_METHOD(Glib::RefPtr<Element> get_root () const, maia_manifest_element_get_root, refreturn)
+                _WRAP_METHOD(Element::RefPtr get_root () const, maia_manifest_element_get_root, refreturn)
 
                 _IGNORE(maia_manifest_element_get_not_dumpable_attributes)
                 inline void add_not_dumpable_attribute (const Glib::ustring& inAttribute)
@@ -88,21 +99,19 @@ namespace Maia
                 _WRAP_METHOD(void set_not_dumpable_characters (bool inNotDumpableCharacters) const, maia_manifest_element_set_not_dumpable_characters)
 
                 _IGNORE(maia_manifest_element_duplicate, maia_manifest_element_duplicate_with_notification)
-                Glib::RefPtr<Element> duplicate (const Glib::ustring& inId);
+                Element::RefPtr duplicate (const Glib::ustring& inId);
 
-                _WRAP_METHOD(void read_manifest (const Glib::RefPtr<Document>& inDocument), maia_manifest_element_read_manifest, errthrow)
+                _WRAP_METHOD(void read_manifest (const Document::RefPtr& inDocument), maia_manifest_element_read_manifest, errthrow)
                 _WRAP_METHOD(Glib::ustring dump (const Glib::ustring& inPrefix), maia_manifest_element_dump)
 
                 _IGNORE(maia_manifest_element_register_create_func)
                 static void register_create_func (const Glib::ustring& inTag, SlotCreateFunc inFunc);
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("tag", Glib::ustring)
                 _WRAP_PROPERTY("style", Glib::ustring)
                 _WRAP_PROPERTY("characters", Glib::ustring)
                 _WRAP_PROPERTY("manifest-path", Glib::ustring)
-                _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
-#endif
+                _WRAP_PROPERTY("manifest-theme", Theme::RefPtr)
 
             private:
                 Glib::ustring m_Tag;

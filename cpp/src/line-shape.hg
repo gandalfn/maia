@@ -41,10 +41,12 @@ namespace Maia
             void set_end_clicked (bool inClicked);
 
         public:
-            static Glib::RefPtr<LineShape> create (const Glib::ustring& inId)
+            using RefPtr = Glib::RefPtr<LineShape>;
+
+            static LineShape::RefPtr create (const Glib::ustring& inId)
             {
                 MaiaLineShape* pLine = maia_line_shape_new (inId.c_str ());
-                return Glib::RefPtr<LineShape> (new LineShape (pLine));
+                return LineShape::RefPtr (new LineShape (pLine));
             }
 
             _WRAP_METHOD(void get_begin (Graphic::Point& outPoint) const, maia_line_shape_get_begin)
@@ -53,11 +55,9 @@ namespace Maia
             _WRAP_METHOD(void get_end (Graphic::Point& outPoint) const, maia_line_shape_get_end)
             _WRAP_METHOD(void set_end (const Graphic::Point& inPoint), maia_line_shape_set_end)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("begin", Graphic::Point)
             _WRAP_PROPERTY("end", Graphic::Point)
 
-            _WRAP_PROPERTY("tag", Glib::ustring)
-#endif
+            _IGNORE_PROPERTY("tag")
     };
 }

@@ -39,8 +39,9 @@ namespace Maia
             public:
                 Matrix ();
                 Matrix (double inXX, double inYX, double inXY, double inYY, double inX0, double inY0);
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 explicit Matrix(const MaiaGraphicMatrix* gobject);
-
+#endif
                 inline bool operator== (const Matrix& rhs)
                 {
                     return maia_graphic_matrix_equal (gobj (), const_cast<MaiaGraphicMatrix*>(rhs.gobj ()));
@@ -58,8 +59,10 @@ namespace Maia
 
                 Glib::ustring to_string ();
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 MaiaGraphicMatrix*       gobj()       { return &gobject_; }
                 const MaiaGraphicMatrix* gobj() const { return &gobject_; }
+#endif
 
                 double get_xx() const;
                 void set_xx(const double& value);

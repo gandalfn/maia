@@ -49,11 +49,16 @@ namespace Maia
             public:
                 using RefPtr = Glib::RefPtr<class GradientColorStop>;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 static GradientColorStop::RefPtr create (double inOffset, const Glib::RefPtr<Color>& inColor)
                 {
                     MaiaGraphicGradientColorStop* pColorStop = maia_graphic_gradient_color_stop_new (inOffset, const_cast<MaiaGraphicColor*> (inColor->gobj ()));
                     return GradientColorStop::RefPtr (new GradientColorStop (pColorStop));
                 }
+#else
+                static GradientColorStop::RefPtr create (double inOffset, const Color::RefPtr& inColor);
+#endif
+
 
                 _IGNORE(maia_graphic_gradient_color_stop_new)
 

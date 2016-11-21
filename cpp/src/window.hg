@@ -44,19 +44,20 @@ namespace Maia
         _CLASS_GOBJECT(GeometryEventArgs, MaiaGeometryEventArgs, MAIA_GEOMETRY_EVENT_ARGS, Core::EventArgs, MaiaCoreEventArgs)
 
         public:
-            static Glib::RefPtr<GeometryEventArgs> create (double inX, double inY, double inWidth, double inHeight)
+            using RefPtr = Glib::RefPtr<GeometryEventArgs>;
+
+            static GeometryEventArgs::RefPtr create (double inX, double inY, double inWidth, double inHeight)
             {
                 MaiaGeometryEventArgs* pArgs = maia_geometry_event_args_new (inX, inY, inWidth, inHeight);
-                return Glib::RefPtr<GeometryEventArgs> (new GeometryEventArgs (pArgs));
+                return GeometryEventArgs::RefPtr (new GeometryEventArgs (pArgs));
             }
 
             _WRAP_METHOD(void get_area (Graphic::Rectangle& outArea), maia_geometry_event_args_get_area)
 
+            _WRAP_PROPERTY("area", Graphic::Rectangle)
+
         protected:
             _CTOR_DEFAULT()
-
-        private:
-            _WRAP_PROPERTY("area", Graphic::Rectangle)
     };
 
     class MouseEventArgs : public Core::EventArgs
@@ -71,23 +72,24 @@ namespace Maia
                 MOTION          = 1 << 2
             };
 
-            static Glib::RefPtr<MouseEventArgs> create (guint8 inFlags, guint8 inButton, double inX, double inY)
+            using RefPtr = Glib::RefPtr<MouseEventArgs>;
+
+            static MouseEventArgs::RefPtr create (guint8 inFlags, guint8 inButton, double inX, double inY)
             {
                 MaiaMouseEventArgs* pArgs = maia_mouse_event_args_new (inFlags, inButton, inX, inY);
-                return Glib::RefPtr<MouseEventArgs> (new MouseEventArgs (pArgs));
+                return MouseEventArgs::RefPtr (new MouseEventArgs (pArgs));
             }
 
             _WRAP_METHOD(guint8 get_button () const, maia_mouse_event_args_get_button)
             _WRAP_METHOD(guint8 get_flags () const, maia_mouse_event_args_get_flags)
             _WRAP_METHOD(void get_position (Graphic::Point& outPosition) const, maia_mouse_event_args_get_position)
 
-        protected:
-            _CTOR_DEFAULT()
-
-        private:
             _WRAP_PROPERTY("button", guint8)
             _WRAP_PROPERTY("flags", guint8)
             _WRAP_PROPERTY("position", Graphic::Point)
+
+        protected:
+            _CTOR_DEFAULT()
     };
 
     class Window : public Group
@@ -171,13 +173,13 @@ namespace Maia
             std::vector<Glib::RefPtr<InputDevice>> input_devices () const;
             void set_input_devices (const std::vector<Glib::RefPtr<InputDevice>>& inDevices);
 
-            _WRAP_METHOD(Glib::RefPtr<Core::Event> damage_event () const, maia_window_get_damage_event, refreturn)
-            _WRAP_METHOD(Glib::RefPtr<Core::Event> geometry_event () const, maia_window_get_geometry_event, refreturn)
-            _WRAP_METHOD(Glib::RefPtr<Core::Event> visibility_event () const, maia_window_get_visibility_event, refreturn)
-            _WRAP_METHOD(Glib::RefPtr<Core::Event> destroy_event () const, maia_window_get_destroy_event, refreturn)
-            _WRAP_METHOD(Glib::RefPtr<Core::Event> delete_event () const, maia_window_get_delete_event, refreturn)
-            _WRAP_METHOD(Glib::RefPtr<Core::Event> mouse_event () const, maia_window_get_mouse_event, refreturn)
-            _WRAP_METHOD(Glib::RefPtr<Core::Event> keyboard_event () const, maia_window_get_keyboard_event, refreturn)
+            _WRAP_METHOD(Core::Event::RefPtr damage_event () const, maia_window_get_damage_event, refreturn)
+            _WRAP_METHOD(Core::Event::RefPtr geometry_event () const, maia_window_get_geometry_event, refreturn)
+            _WRAP_METHOD(Core::Event::RefPtr visibility_event () const, maia_window_get_visibility_event, refreturn)
+            _WRAP_METHOD(Core::Event::RefPtr destroy_event () const, maia_window_get_destroy_event, refreturn)
+            _WRAP_METHOD(Core::Event::RefPtr delete_event () const, maia_window_get_delete_event, refreturn)
+            _WRAP_METHOD(Core::Event::RefPtr mouse_event () const, maia_window_get_mouse_event, refreturn)
+            _WRAP_METHOD(Core::Event::RefPtr keyboard_event () const, maia_window_get_keyboard_event, refreturn)
 
             _WRAP_PROPERTY("surface", Graphic::Surface::RefPtr)
             _WRAP_PROPERTY("border", double)
@@ -215,15 +217,15 @@ namespace Maia
             _WRAP_VFUNC(Graphic::Surface::RefPtr get_surface (), get_surface, refreturn_ctype)
 
 #m4 _CONVERSION(`MaiaItem*', `const Item::RefPtr&', `Glib::wrap($3, true)')
-#m4 _CONVERSION(`MaiaCoreEvent*', `const Glib::RefPtr<Event>&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaCoreEvent*', `const Event::RefPtr&', `Glib::wrap($3, true)')
 #m4 _CONVERSION(`MaiaCoreEventArgs*', `const Glib::RefPtr<EventArgs>&', `Glib::wrap($3, true)')
-            _WRAP_VFUNC(void on_damage_event(const Glib::RefPtr<Core::EventArgs>& inArgs), on_damage_event)
-            _WRAP_VFUNC(void on_delete_event(const Glib::RefPtr<Core::EventArgs>& inArgs), on_delete_event)
-            _WRAP_VFUNC(void on_destroy_event(const Glib::RefPtr<Core::EventArgs>& inArgs), on_destroy_event)
-            _WRAP_VFUNC(void on_geometry_event(const Glib::RefPtr<Core::EventArgs>& inArgs), on_geometry_event)
-            _WRAP_VFUNC(void on_visibility_event(const Glib::RefPtr<Core::EventArgs>& inArgs), on_visibility_event)
-            _WRAP_VFUNC(void on_mouse_event(const Glib::RefPtr<Core::EventArgs>& inArgs), on_mouse_event)
-            _WRAP_VFUNC(void on_keyboard_event(const Glib::RefPtr<Core::EventArgs>& inArgs), on_keyboard_event)
+            _WRAP_VFUNC(void on_damage_event(const Core::EventArgs::RefPtr& inArgs), on_damage_event)
+            _WRAP_VFUNC(void on_delete_event(const Core::EventArgs::RefPtr& inArgs), on_delete_event)
+            _WRAP_VFUNC(void on_destroy_event(const Core::EventArgs::RefPtr& inArgs), on_destroy_event)
+            _WRAP_VFUNC(void on_geometry_event(const Core::EventArgs::RefPtr& inArgs), on_geometry_event)
+            _WRAP_VFUNC(void on_visibility_event(const Core::EventArgs::RefPtr& inArgs), on_visibility_event)
+            _WRAP_VFUNC(void on_mouse_event(const Core::EventArgs::RefPtr& inArgs), on_mouse_event)
+            _WRAP_VFUNC(void on_keyboard_event(const Core::EventArgs::RefPtr& inArgs), on_keyboard_event)
 
             _WRAP_VFUNC(void on_set_pointer_cursor(Cursor inCursor), on_set_pointer_cursor)
             _WRAP_VFUNC(void on_move_pointer(const Graphic::Point& inPosition), on_move_pointer)
@@ -234,15 +236,15 @@ namespace Maia
             _WRAP_VFUNC(bool on_grab_keyboard(const Item::RefPtr& inItem), on_grab_keyboard)
             _WRAP_VFUNC(void on_ungrab_keyboard(const Item::RefPtr& inItem), on_ungrab_keyboard)
 
-            _WRAP_METHOD(void set_damage_event (const Glib::RefPtr<Core::Event>& inEvent), maia_window_set_damage_event)
-            _WRAP_METHOD(void set_geometry_event (const Glib::RefPtr<Core::Event>& inEvent), maia_window_set_geometry_event)
-            _WRAP_METHOD(void set_visibility_event (const Glib::RefPtr<Core::Event>& inEvent), maia_window_set_visibility_event)
-            _WRAP_METHOD(void set_destroy_event (const Glib::RefPtr<Core::Event>& inEvent), maia_window_set_destroy_event)
-            _WRAP_METHOD(void set_delete_event (const Glib::RefPtr<Core::Event>& inEvent), maia_window_set_delete_event)
-            _WRAP_METHOD(void set_mouse_event (const Glib::RefPtr<Core::Event>& inEvent), maia_window_set_mouse_event)
-            _WRAP_METHOD(void set_keyboard_event (const Glib::RefPtr<Core::Event>& inEvent), maia_window_set_keyboard_event)
+            _WRAP_METHOD(void set_damage_event (const Core::Event::RefPtr& inEvent), maia_window_set_damage_event)
+            _WRAP_METHOD(void set_geometry_event (const Core::Event::RefPtr& inEvent), maia_window_set_geometry_event)
+            _WRAP_METHOD(void set_visibility_event (const Core::Event::RefPtr& inEvent), maia_window_set_visibility_event)
+            _WRAP_METHOD(void set_destroy_event (const Core::Event::RefPtr& inEvent), maia_window_set_destroy_event)
+            _WRAP_METHOD(void set_delete_event (const Core::Event::RefPtr& inEvent), maia_window_set_delete_event)
+            _WRAP_METHOD(void set_mouse_event (const Core::Event::RefPtr& inEvent), maia_window_set_mouse_event)
+            _WRAP_METHOD(void set_keyboard_event (const Core::Event::RefPtr& inEvent), maia_window_set_keyboard_event)
 #m4 _CONVERSION(`MaiaItem*', `const Item::RefPtr&', `Glib::wrap($3)')
-#m4 _CONVERSION(`MaiaCoreEvent*', `const Glib::RefPtr<Event>&', `Glib::wrap($3)')
+#m4 _CONVERSION(`MaiaCoreEvent*', `const Event::RefPtr&', `Glib::wrap($3)')
 #m4 _CONVERSION(`MaiaCoreEventArgs*', `const Glib::RefPtr<EventArgs>&', `Glib::wrap($3)')
     };
 }

@@ -38,6 +38,7 @@ namespace Maia
 
         public:
             _WRAP_ENUM(class Placement, MaiaPopupPlacement, s#POPUP_PLACEMENT_##, NO_GTYPE)
+            using RefPtr = Glib::RefPtr<Popup>;
 
             _IGNORE(maia_popup_get_window_transform)
 
@@ -78,7 +79,6 @@ namespace Maia
             _WRAP_METHOD(void set_position_policy (WindowPositionPolicy inPolicy), maia_popup_set_position_policy)
 
             _WRAP_METHOD(Window::RefPtr get_bin_window () const, maia_popup_get_bin_window, refreturn)
-
 
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("shadow-width", double)

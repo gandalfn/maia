@@ -37,11 +37,13 @@ namespace Maia
             _CTOR_DEFAULT()
 
         public:
-            static Glib::RefPtr<TableViewColumn> create (const Glib::ustring& inId, const Glib::RefPtr<Model>& inpModel)
+            using RefPtr = Glib::RefPtr<TableViewColumn>;
+
+            static TableViewColumn::RefPtr create (const Glib::ustring& inId, const Model::RefPtr& inpModel)
             {
                 MaiaTableViewColumn* pColumn = maia_table_view_column_new (inId.c_str (), const_cast<MaiaModel*> (inpModel->gobj ()));
 
-                return Glib::RefPtr<TableViewColumn> (new TableViewColumn (pColumn));
+                return TableViewColumn::RefPtr (new TableViewColumn (pColumn));
             }
 
             _WRAP_METHOD(Glib::ustring get_font_description () const, maia_table_view_column_get_font_description)
@@ -56,18 +58,16 @@ namespace Maia
             _WRAP_METHOD(double get_border () const, maia_table_view_column_get_border)
             _WRAP_METHOD(void set_border (double inBorder), maia_table_view_column_set_border)
 
-            _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_table_view_column_get_model, refreturn)
-            _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_table_view_column_set_model)
+            _WRAP_METHOD(Model::RefPtr get_model () const, maia_table_view_column_get_model, refreturn)
+            _WRAP_METHOD(void set_model (const Model::RefPtr& inModel), maia_table_view_column_set_model)
 
-            _WRAP_METHOD(Glib::RefPtr<ItemPackable> get_header () const, maia_table_view_column_get_header, refreturn)
+            _WRAP_METHOD(ItemPackable::RefPtr get_header () const, maia_table_view_column_get_header, refreturn)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("font-description", Glib::ustring)
             _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
             _WRAP_PROPERTY("label", Glib::ustring)
-            _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
+            _WRAP_PROPERTY("model", Model::RefPtr)
             _WRAP_PROPERTY("border", double)
-            _WRAP_PROPERTY("header", Glib::RefPtr<ItemPackable>)
-#endif
+            _WRAP_PROPERTY("header", ItemPackable::RefPtr)
     };
 }

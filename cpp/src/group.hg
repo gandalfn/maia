@@ -39,11 +39,13 @@ namespace Maia
             _WRAP_VFUNC(void childs_size_request (Graphic::Size& outSize), childs_size_request)
 
         public:
-            static Glib::RefPtr<Group> create (const Glib::ustring& inId)
+            using RefPtr = Glib::RefPtr<Group>;
+
+            static Group::RefPtr create (const Glib::ustring& inId)
             {
                 MaiaGroup* pGroup = maia_group_new (inId.c_str ());
 
-                return Glib::RefPtr<Group> (new Group (pGroup));
+                return Group::RefPtr (new Group (pGroup));
             }
 
             _WRAP_METHOD(Item::RefPtr get_item_over_pointer () const, maia_group_get_item_over_pointer, refreturn)

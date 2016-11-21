@@ -66,29 +66,39 @@ namespace Maia
                 template <typename T>
                 inline MessageField& operator=(const T& inVal);
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 inline MessageField& operator=(const Glib::RefPtr<Graphic::Surface>& inVal);
 
                 inline MessageField& operator=(const char* inVal);
+#endif
 
                 template <typename T>
                 inline operator T() const;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 inline operator Glib::RefPtr<Graphic::Surface>() const;
+#endif
 
                 template <typename T>
                 inline MessageField& operator=(const std::vector<T>& inVal);
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 inline MessageField& operator=(const std::vector< Glib::RefPtr<Graphic::Surface> >& inVal);
+#endif
 
                 template <typename T>
                 inline operator std::vector<T>() const;
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 inline operator std::vector< Glib::RefPtr<Graphic::Surface> >() const;
+#endif
 
                 template <typename T>
                 inline int push_back (const T& inVal);
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 inline int push_back (const Glib::RefPtr<Graphic::Surface>& inVal);
+#endif
 
                 int size () const
                 {
@@ -204,8 +214,9 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                typedef MessageField Field;
-                typedef MessageFields Fields;
+                using RefPtr = Glib::RefPtr<Message>;
+                using Field = MessageField;
+                using Fields = MessageFields;
 
                 _WRAP_METHOD(Glib::ustring get_name () const, maia_protocol_message_get_name)
                 _WRAP_METHOD(bool contains (const Glib::ustring& inName) const, maia_protocol_message_contains)
@@ -215,14 +226,11 @@ namespace Maia
                     return Fields (const_cast<MaiaProtocolMessage*> (gobj ()));
                 }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("name", Glib::ustring)
-#endif
-
-            private:
-                _WRAP_PROPERTY("serialize", Glib::VariantBase)
+                _IGNORE_PROPERTY("serialize")
         };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
         template <typename T>
         inline MessageField& MessageField::operator= (const T& inVal)
         {
@@ -396,5 +404,6 @@ namespace Maia
             g_value_take_object (&value, const_cast<MaiaGraphicSurface*> (inVal->gobj ()));
             return maia_protocol_message_add_value (m_pMessage, m_Field.c_str (), &value);
         }
+#endif
     }
 }

@@ -79,17 +79,18 @@ struct MaiaCoreEventArgsLoadVector
     class klass : public Maia::Core::EventArgs                                 \
     {                                                                          \
         public:                                                                \
-            static Glib::RefPtr< klass > create ()                             \
+            using RefPtr = Glib::RefPtr< klass >;                              \
+            static klass ::RefPtr create ()                                    \
             {                                                                  \
-                return Glib::RefPtr< klass > (new klass ());                   \
+                return klass ::RefPtr (new klass ());                          \
             }                                                                  \
             template<typename T, typename... Args>                             \
-            static Glib::RefPtr< klass > create (const T& inVal, Args... inArgs)\
+            static klass ::RefPtr create (const T& inVal, Args... inArgs)      \
             {                                                                  \
                 klass * pThis = new klass ();                                  \
                 FieldsClosure closure (pThis);                                 \
                 closure.add_field_value (inVal, inArgs...);                    \
-                return Glib::RefPtr< klass > (pThis);                          \
+                return klass ::RefPtr (pThis);                                 \
             }                                                                  \
             static Glib::ObjectBase* wrap_new(GObject* object)                 \
             {                                                                  \
@@ -141,17 +142,18 @@ struct MaiaCoreEventArgsLoadVector
     class klass : public Maia::Core::EventArgs                                 \
     {                                                                          \
         public:                                                                \
-            static Glib::RefPtr< klass > create ()                             \
+            using RefPtr = Glib::RefPtr< klass >;                              \
+            static klass ::RefPtr create ()                                    \
             {                                                                  \
-                return Glib::RefPtr< klass > (new klass ());                   \
+                return klass ::RefPtr (new klass ());                          \
             }                                                                  \
             template<typename T, typename... Args>                             \
-            static Glib::RefPtr< klass > create (const T& inVal, Args... inArgs)\
+            static klass ::RefPtr create (const T& inVal, Args... inArgs)      \
             {                                                                  \
                 klass * pThis = new klass ();                                  \
                 FieldsClosure closure (pThis);                                 \
                 closure.add_field_value (inVal, inArgs...);                    \
-                return Glib::RefPtr< klass > (pThis);                          \
+                return klass ::RefPtr (pThis);                                 \
             }                                                                  \
             static Glib::ObjectBase* wrap_new(GObject* object)                 \
             {                                                                  \
@@ -221,27 +223,36 @@ namespace Maia
                 template <typename T>
                 inline EventArgsField& operator=(const T& inVal);
 
-                inline EventArgsField& operator=(const Glib::RefPtr<Graphic::Surface>& inVal);
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+                inline EventArgsField& operator=(const Graphic::Surface::RefPtr& inVal);
+#endif
                 template <typename T>
                 inline operator T() const;
 
-                inline operator Glib::RefPtr<Graphic::Surface>() const;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+                inline operator Graphic::Surface::RefPtr() const;
+#endif
 
                 template <typename T>
                 inline EventArgsField& operator=(const std::vector<T>& inVal);
 
-                inline EventArgsField& operator=(const std::vector< Glib::RefPtr<Graphic::Surface> >& inVal);
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+                inline EventArgsField& operator=(const std::vector<Graphic::Surface::RefPtr>& inVal);
+#endif
 
                 template <typename T>
                 inline operator std::vector<T>() const;
 
-                inline operator std::vector< Glib::RefPtr<Graphic::Surface> >() const;
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+                inline operator std::vector<Graphic::Surface::RefPtr>() const;
+#endif
 
                 template <typename T>
                 inline int push_back (const T& inVal);
 
-                inline int push_back (const Glib::RefPtr<Graphic::Surface>& inVal);
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+                inline int push_back (const Graphic::Surface::RefPtr& inVal);
+#endif
 
                 int size () const
                 {
@@ -356,17 +367,20 @@ namespace Maia
                     maia_core_event_args_contains, maia_core_event_args_is_array, maia_core_event_args_add_value,
                     maia_core_event_args_get_field_length, maia_core_event_args_clear, maia_core_event_args_resize)
 
+            public:
+                using RefPtr = Glib::RefPtr<EventArgs>;
+
             protected:
                 explicit EventArgs (Glib::WrapNewFunction inWrapFunc);
                 explicit EventArgs (const Glib::ustring& inSignature, Glib::WrapNewFunction inWrapFunc);
 
 #m4 _CONVERSION(`Glib::VariantBase',`GVariant*',`g_variant_ref (($3).gobj())')
 #m4 _CONVERSION(`GVariant*',`const Glib::VariantBase&',`Glib::wrap($3, true)')
-#m4 _CONVERSION(`MaiaCoreEventArgs*', `const Glib::RefPtr<EventArgs>&', `Glib::wrap($3, true)')
+#m4 _CONVERSION(`MaiaCoreEventArgs*', `const EventArgs::RefPtr&', `Glib::wrap($3, true)')
                 _WRAP_VFUNC(Glib::VariantBase serialize (), get_serialize)
                 _WRAP_VFUNC(void unserialize (const Glib::VariantBase& inData), set_serialize, custom_vfunc_callback)
-                _WRAP_VFUNC(void accumulate (const Glib::RefPtr<EventArgs>& inOther), accumulate)
-#m4 _CONVERSION(`MaiaCoreEventArgs*', `const Glib::RefPtr<EventArgs>&', `Glib::wrap($3)')
+                _WRAP_VFUNC(void accumulate (const EventArgs::RefPtr& inOther), accumulate)
+#m4 _CONVERSION(`MaiaCoreEventArgs*', `const EventArgs::RefPtr&', `Glib::wrap($3)')
 
                 template<typename T>
                 Glib::VariantBase serialize (T inVal);
@@ -389,12 +403,10 @@ namespace Maia
                 _WRAP_METHOD(int get_sequence (), maia_core_event_args_get_sequence)
                 _WRAP_METHOD(Glib::VariantBase serialize (), maia_core_event_args_get_serialize)
                 _WRAP_METHOD(void unserialize (const Glib::VariantBase& inData), maia_core_event_args_set_serialize)
-                _WRAP_METHOD(void accumulate (const Glib::RefPtr<EventArgs>& inOther), maia_core_event_args_accumulate)
-                _WRAP_METHOD(Glib::RefPtr<EventArgs> copy () const, maia_core_event_args_copy, refreturn)
+                _WRAP_METHOD(void accumulate (const EventArgs::RefPtr& inOther), maia_core_event_args_accumulate)
+                _WRAP_METHOD(EventArgs::RefPtr copy () const, maia_core_event_args_copy, refreturn)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("sequence", int)
-#endif
 
                 Fields fields () const
                 {
@@ -531,10 +543,9 @@ namespace Maia
                         }
                 };
 #endif
+                _IGNORE_PROPERTY("serialize")
 
             private:
-                _WRAP_PROPERTY("serialize", Glib::VariantBase)
-
                 class SerializeClosure
                 {
                     public:
@@ -590,6 +601,7 @@ namespace Maia
                 SerializeClosure*   m_pSerialize;
         };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
         template<typename T>
         Glib::VariantBase EventArgs::serialize (T inVal)
         {
@@ -810,5 +822,6 @@ namespace Maia
             g_value_take_object (&value, const_cast<MaiaGraphicSurface*> (inVal->gobj ()));
             return maia_core_event_args_add_value (m_pEventArgs, m_Field.c_str (), &value);
         }
+#endif
     }
 }

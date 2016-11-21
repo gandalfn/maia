@@ -39,7 +39,7 @@ namespace Maia
             public:
                 Range (double inXMin, double inYMin, double inXMax, double inYMax);
 
-                Range (const Glib::RefPtr<Model>& inpModel, const Glib::ustring& inXColumn, const Glib::ustring& inYColumn);
+                Range (const Model::RefPtr& inpModel, const Glib::ustring& inXColumn, const Glib::ustring& inYColumn);
 
                 Graphic::Size size () const;
 

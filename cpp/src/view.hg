@@ -59,12 +59,13 @@ namespace Maia
         _IGNORE(maia_view_set_property_func)
 
         public:
-            typedef sigc::slot<bool, Glib::RefPtr<Glib::Object>, Glib::ustring, Glib::ustring, unsigned int> SlotSetProperty;
+            using RefPtr = Glib::RefPtr<View>;
+            using SlotSetProperty = sigc::slot<bool, Glib::RefPtr<Glib::Object>, Glib::ustring, Glib::ustring, unsigned int>;
 
-            static Glib::RefPtr<View> create (const Glib::ustring& inId)
+            static View::RefPtr create (const Glib::ustring& inId)
             {
                 MaiaView* pView = maia_view_new (inId.c_str());
-                return Glib::RefPtr<View> (new View (pView));
+                return View::RefPtr (new View (pView));
             }
 
             _WRAP_METHOD(ViewItemAddedRemovedNotification::RefPtr item_added () const, maia_view_get_item_added, refreturn)
@@ -82,20 +83,20 @@ namespace Maia
             _WRAP_METHOD(bool get_hide_if_model_empty () const, maia_view_get_hide_if_model_empty)
             _WRAP_METHOD(void set_hide_if_model_empty (bool inHideIfEmpty = true), maia_view_set_hide_if_model_empty)
 
-            _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_view_get_model, refreturn)
-            _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_view_set_model)
+            _WRAP_METHOD(Model::RefPtr get_model () const, maia_view_get_model, refreturn)
+            _WRAP_METHOD(void set_model (const Model::RefPtr& inModel), maia_view_set_model)
 
-            inline Glib::RefPtr<ItemPackable> operator[] (unsigned int inRow) const
+            inline ItemPackable::RefPtr operator[] (unsigned int inRow) const
             {
                 return get_item (inRow);
             }
 
-            inline Glib::RefPtr<ItemPackable> get_item (const Maia::Model::Row& inRow) const
+            inline ItemPackable::RefPtr get_item (const Maia::Model::Row& inRow) const
             {
                 return get_item (inRow.num ());
             }
 
-            inline bool get_item_row (const Glib::RefPtr<ItemPackable>& inpItem, Maia::Model::Row& outRow) const
+            inline bool get_item_row (const ItemPackable::RefPtr& inpItem, Maia::Model::Row& outRow) const
             {
                 bool ret = false;
                 unsigned int row;
@@ -117,7 +118,7 @@ namespace Maia
             _WRAP_PROPERTY("lines", guint)
             _WRAP_PROPERTY("highlighted-row", gint)
             _WRAP_PROPERTY("orientation", Orientation)
-            _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
+            _WRAP_PROPERTY("model", Model::RefPtr)
             _WRAP_PROPERTY("hide-if-model-empty", bool)
 
             _IGNORE_PROPERTY("item-added")
@@ -131,8 +132,8 @@ namespace Maia
         private:
             SlotSetProperty* m_pSlot;
 
-            _WRAP_METHOD(Glib::RefPtr<ItemPackable> get_item (guint inRow) const, maia_view_get_item, refreturn)
-            _WRAP_METHOD(bool get_item_row (const Glib::RefPtr<ItemPackable>& inpItem, guint& inRow) const, maia_view_get_item_row)
+            _WRAP_METHOD(ItemPackable::RefPtr get_item (guint inRow) const, maia_view_get_item, refreturn)
+            _WRAP_METHOD(bool get_item_row (const ItemPackable::RefPtr& inpItem, guint& inRow) const, maia_view_get_item_row)
 
             static gboolean set_property_func_callback (GObject* inpObject, const char* inProperty, const char* inColumn, guint inRow, void* inpData);
             static void set_property_func_destroy (void* inpData);

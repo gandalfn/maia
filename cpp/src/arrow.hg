@@ -27,6 +27,9 @@ _PINCLUDE(maiamm/private/item_p.h)
 
 namespace Maia
 {
+    /**
+     * @includedoc MaiaArrow.doc
+     */
     class Arrow : public Item, public ItemMovable
     {
         _CLASS_GOBJECT(Arrow, MaiaArrow, MAIA_ARROW, Item, MaiaItem)

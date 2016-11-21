@@ -41,11 +41,13 @@ namespace Maia
             explicit Path(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<Path> create (const Glib::ustring& inId, const Glib::ustring& inPath)
+            using RefPtr = Glib::RefPtr<Path>;
+
+            static Path::RefPtr create (const Glib::ustring& inId, const Glib::ustring& inPath)
             {
                 MaiaPath* pPath = maia_path_new (inId.c_str (), inPath.c_str ());
 
-                return Glib::RefPtr<Path> (new Path (pPath));
+                return Path::RefPtr (new Path (pPath));
             }
 
             _WRAP_METHOD(Glib::ustring get_path () const, maia_path_get_path)

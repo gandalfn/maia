@@ -43,11 +43,13 @@ namespace Maia
             explicit Label(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<Label> create (const Glib::ustring& inId, const Glib::ustring& inText)
+            using RefPtr = Glib::RefPtr<Label>;
+
+            static Label::RefPtr create (const Glib::ustring& inId, const Glib::ustring& inText)
             {
                 MaiaLabel* pLabel = maia_label_new (inId.c_str (), inText.c_str ());
 
-                return Glib::RefPtr<Label> (new Label (pLabel));
+                return Label::RefPtr (new Label (pLabel));
             }
 
             _WRAP_METHOD(Glib::ustring get_font_description () const, maia_label_get_font_description)

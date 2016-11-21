@@ -66,8 +66,8 @@ namespace Maia
             _WRAP_METHOD(Graphic::Glyph::Alignment get_alignment () const, maia_chart_get_alignment)
             _WRAP_METHOD(void set_alignment (Graphic::Glyph::Alignment inAlignment), maia_chart_set_alignment)
 
-            _WRAP_METHOD(Glib::RefPtr<Model> get_model () const, maia_chart_get_model, refreturn)
-            _WRAP_METHOD(void set_model (const Glib::RefPtr<Model>& inModel), maia_chart_set_model)
+            _WRAP_METHOD(Model::RefPtr get_model () const, maia_chart_get_model, refreturn)
+            _WRAP_METHOD(void set_model (const Model::RefPtr& inModel), maia_chart_set_model)
 
             _WRAP_METHOD(Glib::ustring get_x_axis () const, maia_chart_get_x_axis)
             _WRAP_METHOD(void set_x_axis (const Glib::ustring& inColumnName), maia_chart_set_x_axis)
@@ -89,14 +89,14 @@ namespace Maia
             _WRAP_METHOD(void get_first_point (Graphic::Point& outPoint) const, maia_chart_get_first_point)
             _WRAP_METHOD(void get_last_point (Graphic::Point& outPoint) const, maia_chart_get_last_point)
 
-            _WRAP_METHOD(static void range_from_model(const Glib::RefPtr<Model>& inpModel, const Glib::ustring& inXColumn, const Glib::ustring& inYColumn, Graphic::Range& outRange), maia_chart_range_from_model)
+            _WRAP_METHOD(static void range_from_model(const Model::RefPtr& inpModel, const Glib::ustring& inXColumn, const Glib::ustring& inYColumn, Graphic::Range& outRange), maia_chart_range_from_model)
 
             _IGNORE(maia_chart_changed);
             _WRAP_SIGNAL(void changed (), "changed", no_default_handler)
 
             _WRAP_PROPERTY("title", Glib::ustring)
             _WRAP_PROPERTY("alignment", Graphic::Glyph::Alignment)
-            _WRAP_PROPERTY("model", Glib::RefPtr<Model>)
+            _WRAP_PROPERTY("model", Model::RefPtr)
             _WRAP_PROPERTY("x-axis", Glib::ustring)
             _WRAP_PROPERTY("y-axis", Glib::ustring)
             _WRAP_PROPERTY("range", Graphic::Range)

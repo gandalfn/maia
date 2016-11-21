@@ -44,9 +44,11 @@ namespace Maia
                     Collection<T> ()
                 {}
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 explicit Set(MaiaCoreSet* gobject, bool make_a_copy = true) :
                     Collection<T> (MAIA_CORE_COLLECTION (gobject), make_a_copy)
                 {}
+#endif
 
                 Set(const Set<T>& other) :
                     Collection<T> (other)

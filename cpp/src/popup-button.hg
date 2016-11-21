@@ -36,10 +36,12 @@ namespace Maia
             explicit PopupButton(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<PopupButton> create (const Glib::ustring& inId, const Glib::ustring& inLabel)
+            using RefPtr = Glib::RefPtr<PopupButton>;
+
+            static PopupButton::RefPtr create (const Glib::ustring& inId, const Glib::ustring& inLabel)
             {
                 MaiaPopupButton* pButton = maia_popup_button_new (inId.c_str(), inLabel.c_str ());
-                return Glib::RefPtr<PopupButton> (new PopupButton (pButton));
+                return PopupButton::RefPtr (new PopupButton (pButton));
             }
 
             _WRAP_METHOD(double get_popup_border () const, maia_popup_button_get_popup_border)

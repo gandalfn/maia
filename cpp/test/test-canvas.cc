@@ -105,12 +105,12 @@ TestCanvas::test_parse_child ()
         Maia::Canvas* pCanvas = Maia::Canvas::create ();
         pCanvas->load (manifest, Glib::ustring ("document"));
 
-        Glib::RefPtr<Item> pRoot = pCanvas->get_root ();
+        Item::RefPtr pRoot = pCanvas->get_root ();
         g_assert (pRoot);
 
         for (Core::Object::iterator iter = pRoot->begin (); iter != pRoot->end (); ++iter)
         {
-            Glib::RefPtr<Core::Object> pObject = *iter;
+            Core::Object::RefPtr pObject = *iter;
             g_assert (pObject);
 
             g_test_message ("obj ref_count %u", G_OBJECT (pObject->gobj ())->ref_count);
@@ -145,18 +145,18 @@ TestCanvas::test_find ()
     {
         pCanvas->load (manifest, Glib::ustring ("document"));
 
-        Glib::RefPtr<Item> pRoot = pCanvas->get_root ();
+        Item::RefPtr pRoot = pCanvas->get_root ();
         g_assert (pRoot);
 
-        Glib::RefPtr<Label> pLabel = pRoot->find ("label");
+        Label::RefPtr pLabel = pRoot->find ("label");
         g_assert (pLabel);
         g_test_message ("obj ref_count %u", G_OBJECT (pLabel->gobj ())->ref_count);
 
-        Glib::RefPtr<CheckButton> pCheckButton = pRoot->find ("checkbutton");
+        CheckButton::RefPtr pCheckButton = pRoot->find ("checkbutton");
         g_assert (pCheckButton);
         g_test_message ("obj ref_count %u", G_OBJECT (pCheckButton->gobj ())->ref_count);
 
-        Glib::RefPtr<Entry> pEntry = pRoot->find ("entry");
+        Entry::RefPtr pEntry = pRoot->find ("entry");
         g_assert (pEntry);
         g_test_message ("obj ref_count %u", G_OBJECT (pEntry->gobj ())->ref_count);
 

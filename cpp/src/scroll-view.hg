@@ -44,15 +44,17 @@ namespace Maia
             explicit ScrollView(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<ScrollView> create (const Glib::ustring& inId)
+            using RefPtr = Glib::RefPtr<ScrollView>;
+
+            static ScrollView::RefPtr create (const Glib::ustring& inId)
             {
                 MaiaScrollView* pScrollView = maia_scroll_view_new (inId.c_str ());
 
-                return Glib::RefPtr<ScrollView> (new ScrollView (pScrollView));
+                return ScrollView::RefPtr (new ScrollView (pScrollView));
             }
 
-            _WRAP_METHOD(Glib::RefPtr<Adjustment> get_hadjustment () const, maia_scroll_view_get_hadjustment)
-            _WRAP_METHOD(Glib::RefPtr<Adjustment> get_vadjustment () const, maia_scroll_view_get_vadjustment)
+            _WRAP_METHOD(Adjustment::RefPtr get_hadjustment () const, maia_scroll_view_get_hadjustment)
+            _WRAP_METHOD(Adjustment::RefPtr get_vadjustment () const, maia_scroll_view_get_vadjustment)
             _WRAP_METHOD(double get_scroll_x () const, maia_scroll_view_get_scroll_x)
             _WRAP_METHOD(void set_scroll_x (double inValue), maia_scroll_view_set_scroll_x)
             _WRAP_METHOD(double get_scroll_y () const, maia_scroll_view_get_scroll_y)

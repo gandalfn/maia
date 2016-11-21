@@ -34,7 +34,6 @@ namespace Maia
     {
         class Theme;
         class Element;
-        class Style;
 
         _GMMPROC_EXTRA_NAMESPACE(Manifest)
 
@@ -48,16 +47,16 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                _WRAP_METHOD(Glib::RefPtr<AttributeBind> get_attribute () const, maia_manifest_document_attribute_bind_added_notification_get_attribute, refreturn)
-                _WRAP_METHOD(void set_attribute (const Glib::RefPtr<AttributeBind>& inpAttribute), maia_manifest_document_attribute_bind_added_notification_set_attribute)
+                using RefPtr = Glib::RefPtr<DocumentAttributeBindAddedNotification>;
+
+                _WRAP_METHOD(AttributeBind::RefPtr get_attribute () const, maia_manifest_document_attribute_bind_added_notification_get_attribute, refreturn)
+                _WRAP_METHOD(void set_attribute (const AttributeBind::RefPtr& inpAttribute), maia_manifest_document_attribute_bind_added_notification_set_attribute)
 
                 _WRAP_METHOD(Glib::ustring get_property () const, maia_manifest_document_attribute_bind_added_notification_get_property)
                 _WRAP_METHOD(void set_property (const Glib::ustring& inProperty), maia_manifest_document_attribute_bind_added_notification_set_property)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-                _WRAP_PROPERTY("attribute", Glib::RefPtr<AttributeBind>)
+                _WRAP_PROPERTY("attribute", AttributeBind::RefPtr)
                 _WRAP_PROPERTY("property", Glib::ustring)
-#endif
         };
 
         class Document : public Core::Parser
@@ -68,20 +67,22 @@ namespace Maia
                 _CTOR_DEFAULT()
 
             public:
-                static Glib::RefPtr<Document> create (const Glib::ustring& inFilename)
+                using RefPtr = Glib::RefPtr<Document>;
+
+                static Document::RefPtr create (const Glib::ustring& inFilename)
                 {
                     GError* gerror = 0;
                     MaiaManifestDocument* pDocument = maia_manifest_document_new (inFilename.c_str(), &gerror);
                     if (gerror) ::Glib::Error::throw_exception(gerror);
-                    return Glib::RefPtr<Document> (new Document (pDocument));
+                    return Document::RefPtr (new Document (pDocument));
                 }
 
-                static Glib::RefPtr<Document> create_from_buffer (const Glib::ustring& inBuffer)
+                static Document::RefPtr create_from_buffer (const Glib::ustring& inBuffer)
                 {
                     GError* gerror = 0;
                     MaiaManifestDocument* pDocument = maia_manifest_document_new_from_buffer (inBuffer.c_str(), inBuffer.size (), &gerror);
                     if (gerror) ::Glib::Error::throw_exception(gerror);
-                    return Glib::RefPtr<Document> (new Document (pDocument));
+                    return Document::RefPtr (new Document (pDocument));
                 }
 
                 _WRAP_METHOD(Glib::RefPtr<Glib::Object> get_owner () const, maia_manifest_document_get_owner, refreturn)
@@ -90,24 +91,32 @@ namespace Maia
                 _WRAP_METHOD(Glib::ustring get_path () const, maia_manifest_document_get_path)
                 _WRAP_METHOD(void set_path (const Glib::ustring& inPath) const, maia_manifest_document_set_path)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_METHOD(Glib::RefPtr<Theme> get_theme () const, maia_manifest_document_get_theme)
                 _WRAP_METHOD(void set_theme (const Glib::RefPtr<Theme>& inTheme), maia_manifest_document_set_theme)
+#else
+                Theme::RefPtr get_theme () const;
+                void set_theme (const Theme::RefPtr& inTheme);
+#endif
 
-                _WRAP_METHOD(Glib::RefPtr<AttributeScanner> get_scanner () const, maia_manifest_document_get_scanner, refreturn)
+                _WRAP_METHOD(AttributeScanner::RefPtr get_scanner () const, maia_manifest_document_get_scanner, refreturn)
                 _WRAP_METHOD(Glib::ustring get_element_tag () const, maia_manifest_document_get_element_tag)
                 _WRAP_METHOD(Glib::ustring get_element_id () const, maia_manifest_document_get_element_id)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_METHOD(Glib::RefPtr<Element> get (const Glib::ustring& inId) const, maia_manifest_document_get, refreturn, errthrow)
                 Glib::RefPtr<Element> get () const;
+#else
+                Element::RefPtr get (const Glib::ustring& inId) const;
+                Element::RefPtr get () const;
+#endif
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY("owner", Glib::RefPtr<Glib::Object>)
-                _WRAP_PROPERTY("scanner", Glib::RefPtr<AttributeScanner>)
+                _WRAP_PROPERTY("scanner", AttributeScanner::RefPtr)
                 _WRAP_PROPERTY("element-tag", Glib::ustring)
                 _WRAP_PROPERTY("element-id", Glib::ustring)
                 _WRAP_PROPERTY("path", Glib::ustring)
-                _WRAP_PROPERTY("theme", Glib::RefPtr<Manifest::Theme>)
-#endif
+                _WRAP_PROPERTY("theme", Theme::RefPtr)
         };
     }
 }

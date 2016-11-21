@@ -36,10 +36,12 @@ namespace Maia
             explicit CheckButton(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<CheckButton> create (const Glib::ustring& inId, const Glib::ustring& inLabel)
+            using RefPtr = Glib::RefPtr<CheckButton>;
+
+            static CheckButton::RefPtr create (const Glib::ustring& inId, const Glib::ustring& inLabel)
             {
                 MaiaCheckButton* pButton = maia_check_button_new (inId.c_str(), inLabel.c_str ());
-                return Glib::RefPtr<CheckButton> (new CheckButton (pButton));
+                return CheckButton::RefPtr (new CheckButton (pButton));
             }
 
             _WRAP_METHOD(double get_spacing () const, maia_check_button_get_spacing)
@@ -48,15 +50,10 @@ namespace Maia
             _WRAP_METHOD(StatePatterns::RefPtr get_line_pattern () const, maia_check_button_get_line_pattern, refreturn)
             _WRAP_METHOD(void set_line_pattern (const StatePatterns::RefPtr& inPattern), maia_check_button_set_line_pattern)
 
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("spacing", double)
             _WRAP_PROPERTY("line-pattern", StatePatterns::RefPtr)
 
-            _WRAP_PROPERTY("tag", Glib::ustring)
-#endif
-
-        private:
-            _WRAP_PROPERTY("check-progress", double)
+            _IGNORE_PROPERTY("tag")
+            _IGNORE_PROPERTY("check-progress")
     };
 }

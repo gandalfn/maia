@@ -39,10 +39,12 @@ namespace Maia
             explicit Shortcut(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<Shortcut> create ()
+            using RefPtr = Glib::RefPtr<Shortcut>;
+
+            static Shortcut::RefPtr create ()
             {
                 MaiaShortcut* pShortcut = maia_shortcut_new ();
-                return Glib::RefPtr<Shortcut> (new Shortcut (pShortcut));
+                return Shortcut::RefPtr (new Shortcut (pShortcut));
             }
 
             _WRAP_METHOD(Glib::ustring get_section () const, maia_shortcut_get_section)
@@ -51,15 +53,13 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_label () const, maia_shortcut_get_label)
             _WRAP_METHOD(void set_label (const Glib::ustring& inLabel), maia_shortcut_set_label)
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-            _WRAP_PROPERTY("tag", Glib::ustring)
-            _WRAP_PROPERTY("style", Glib::ustring)
-            _WRAP_PROPERTY("characters", Glib::ustring)
-            _WRAP_PROPERTY("manifest-path", Glib::ustring)
-            _WRAP_PROPERTY("manifest-theme", Glib::RefPtr<Manifest::Theme>)
+            _IGNORE_PROPERTY("tag")
+            _IGNORE_PROPERTY("style")
+            _IGNORE_PROPERTY("characters")
+            _IGNORE_PROPERTY("manifest-path")
+            _IGNORE_PROPERTY("manifest-theme")
 
             _WRAP_PROPERTY("section", Glib::ustring)
             _WRAP_PROPERTY("label", Glib::ustring)
-#endif
     };
 }

@@ -48,9 +48,11 @@ namespace Maia
                     gobject_ (0)
                 {}
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 explicit Collection(MaiaCoreCollection* gobject, bool make_a_copy = true) :
                     gobject_ ((make_a_copy && gobject) ? (MaiaCoreCollection*)maia_core_collection_ref(gobject) : gobject)
                 {}
+#endif
 
                 Collection(const Collection<T>& other) :
                     gobject_ ((other.gobject_) ? (MaiaCoreCollection*)maia_core_collection_ref(other.gobject_) : 0)
@@ -69,6 +71,7 @@ namespace Maia
                         maia_core_collection_unref(gobject_);
                 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 void swap(Collection<T>& other)
                 {
                     MaiaCoreCollection *const temp = gobject_;
@@ -90,6 +93,7 @@ namespace Maia
                 {
                     return (MaiaCoreCollection*)maia_core_collection_ref(gobject_);
                 }
+#endif
 
                 int length () const
                 {
@@ -127,9 +131,12 @@ namespace Maia
                 }
 
             protected:
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 MaiaCoreCollection* gobject_;
+#endif
        };
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
         /** @relates Maia::Core::Collection
          * @param lhs The left-hand side
          * @param rhs The right-hand side
@@ -139,6 +146,7 @@ namespace Maia
         {
             lhs.swap(rhs);
         }
+#endif
     }
 }
 

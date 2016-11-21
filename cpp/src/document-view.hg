@@ -37,16 +37,18 @@ namespace Maia
             explicit DocumentView(const Glib::ustring& inId);
 
         public:
-            static Glib::RefPtr<DocumentView> create (const Glib::ustring& inId)
+            using RefPtr = Glib::RefPtr<DocumentView>;
+
+            static DocumentView::RefPtr create (const Glib::ustring& inId)
             {
                 MaiaDocumentView* pDocumentView = maia_document_view_new (inId.c_str());
-                return Glib::RefPtr<DocumentView> (new DocumentView (pDocumentView));
+                return DocumentView::RefPtr (new DocumentView (pDocumentView));
             }
 
             _WRAP_METHOD(Document::RefPtr get_document () const, maia_document_view_get_document, refreturn)
-            _WRAP_METHOD(Glib::RefPtr<Toolbox> get_toolbox () const, maia_document_view_get_toolbox, refreturn)
+            _WRAP_METHOD(Toolbox::RefPtr get_toolbox () const, maia_document_view_get_toolbox, refreturn)
 
             _WRAP_PROPERTY("document", Document::RefPtr)
-            _WRAP_PROPERTY("toolbox", Glib::RefPtr<Toolbox>)
+            _WRAP_PROPERTY("toolbox", Toolbox::RefPtr)
     };
 }

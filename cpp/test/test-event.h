@@ -37,7 +37,7 @@ namespace Maia
         private:
             // properties
             Glib::RefPtr<Glib::MainLoop> m_pLoop;
-            Glib::RefPtr<Core::Event> m_pEvent;
+            Core::Event::RefPtr m_pEvent;
             unsigned long m_Data;
             Glib::ustring m_Foo;
             int m_Count;
@@ -45,11 +45,11 @@ namespace Maia
             // methods
             void test_event_publish ();
             void test_event_publish_with_reply ();
-            void on_event_reply (const Glib::RefPtr<Core::EventArgs>& inpArgs);
-            void on_event (const Glib::RefPtr<Core::EventArgs>& inpArgs);
+            void on_event_reply (const Core::EventArgs::RefPtr& inpArgs);
+            void on_event (const Core::EventArgs::RefPtr& inpArgs);
             bool on_publish ();
             bool on_publish_with_reply ();
-            void on_reply (const Glib::RefPtr<Core::EventArgs>& inpArgs);
+            void on_reply (const Core::EventArgs::RefPtr& inpArgs);
             bool on_quit ();
     };
 }
