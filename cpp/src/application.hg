@@ -81,8 +81,8 @@ namespace Maia
                 maia_application_add_backends_path (inPath.c_str ());
             }
 
-            _WRAP_METHOD(guint get_refresh_rate () const, maia_application_get_refresh_rate)
-            _WRAP_METHOD(void set_refresh_rate (guint inRefreshRate) const, maia_application_set_refresh_rate)
+            _WRAP_METHOD(unsigned int get_refresh_rate () const, maia_application_get_refresh_rate)
+            _WRAP_METHOD(void set_refresh_rate (unsigned int inRefreshRate) const, maia_application_set_refresh_rate)
 
             _WRAP_METHOD(bool get_pause () const, maia_application_get_pause)
             _WRAP_METHOD(void set_pause (bool inPause) const, maia_application_set_pause)
@@ -99,7 +99,7 @@ namespace Maia
             _WRAP_METHOD(static Application::RefPtr get_default (), maia_application_get_default, refreturn)
             _WRAP_METHOD(static void set_default (const Application::RefPtr& inApplication), maia_application_set_default)
 
-            _WRAP_PROPERTY("refresh-rate", guint)
+            _WRAP_PROPERTY("refresh-rate", unsigned int)
             _WRAP_PROPERTY("pause", bool)
 
             _IGNORE_PROPERTY("running-notification")

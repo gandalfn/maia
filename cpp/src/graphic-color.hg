@@ -67,7 +67,7 @@ namespace Maia
                 _WRAP_METHOD(double get_blue () const, maia_graphic_color_get_blue)
                 _WRAP_METHOD(double get_alpha () const, maia_graphic_color_get_alpha)
                 _WRAP_METHOD(bool is_set () const, maia_graphic_color_get_is_set)
-                _WRAP_METHOD(guint32 get_argb () const, maia_graphic_color_get_argb)
+                _WRAP_METHOD(uint32_t get_argb () const, maia_graphic_color_get_argb)
 
                 _WRAP_PROPERTY ("name", Glib::ustring)
                 _WRAP_PROPERTY ("red", double)
@@ -75,7 +75,7 @@ namespace Maia
                 _WRAP_PROPERTY ("blue", double)
                 _WRAP_PROPERTY ("alpha", double)
                 _WRAP_PROPERTY ("is-set", bool)
-                _WRAP_PROPERTY ("argb", guint32)
+                _WRAP_PROPERTY ("argb", uint32_t)
         };
     }
 }

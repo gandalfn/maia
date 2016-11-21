@@ -75,7 +75,14 @@ namespace Maia
             _WRAP_METHOD(Graphic::Glyph::Alignment get_alignment () const, maia_button_get_alignment)
             _WRAP_METHOD(void set_alignment (Graphic::Glyph::Alignment inAlignment), maia_button_set_alignment)
 
-            _WRAP_METHOD(void get_icon_size (Graphic::Size& outSize) const, maia_button_get_icon_size)
+            _IGNORE(maia_button_get_icon_size)
+            _WRAP_METHOD_DOCS_ONLY(maia_button_get_icon_size)
+            Graphic::Size get_icon_size () const
+            {
+                Graphic::Size ret;
+                maia_button_get_icon_size(const_cast<MaiaButton*> (gobj ()), ret.gobj ());
+                return ret;
+            }
             _WRAP_METHOD(void set_icon_size (const Graphic::Size& inSize), maia_button_set_icon_size)
 
             _WRAP_METHOD(Glib::ustring get_label () const, maia_button_get_label)

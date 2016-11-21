@@ -6,7 +6,8 @@ AM_CPPFLAGS = \
     -DPACKAGE_DATA_DIR=\""$(datadir)"\"
 
 CFLAGS = \
-    -Ofast \
+    -O2 \
+    -fomit-frame-pointer \
     -ggdb \
     -Wno-incompatible-pointer-types \
     -Wno-int-conversion \

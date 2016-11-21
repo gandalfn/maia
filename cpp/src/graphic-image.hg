@@ -60,7 +60,14 @@ namespace Maia
                 _WRAP_METHOD(Glib::ustring get_filename () const, maia_graphic_image_get_filename)
                 _WRAP_METHOD(void set_filename (const Glib::ustring& inFilename), maia_graphic_image_set_filename)
 
-                _WRAP_METHOD(void get_size (Size& outSize) const, maia_graphic_image_get_size)
+                _IGNORE(maia_graphic_image_get_size)
+                _WRAP_METHOD_DOCS_ONLY(maia_graphic_image_get_size)
+                Size get_size () const
+                {
+                    Size ret;
+                    maia_graphic_image_get_size(const_cast<MaiaGraphicImage*> (gobj ()), ret.gobj ());
+                    return ret;
+                }
                 _WRAP_METHOD(void set_size (const Size& inSize), maia_graphic_image_set_size)
 
                 _WRAP_METHOD(Surface::RefPtr get_surface () const, maia_graphic_image_get_surface, refreturn)

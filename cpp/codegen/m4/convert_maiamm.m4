@@ -1,8 +1,10 @@
 _CONVERSION(`const char*',`const Glib::ustring&',`$3')
 _CONVERSION(`unsigned int',`guint',`$3')
 _CONVERSION(`guint',`unsigned int',`$3')
-_CONVERSION(`unsigned short',`guint8',`$3')
-_CONVERSION(`guint8',`unsigned short',`$3')
+_CONVERSION(`uint8_t',`guint8',`$3')
+_CONVERSION(`guint8',`uint8_t',`$3')
+_CONVERSION(`uint32_t',`guint32',`$3')
+_CONVERSION(`guint32',`uint32_t',`$3')
 _CONVERSION(`unsigned char*',`guchar*',`$3')
 _CONVERSION(`guchar*',`unsigned char*',`$3')
 

@@ -59,10 +59,24 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_path () const, maia_chart_point_get_path)
             _WRAP_METHOD(void set_path (const Glib::ustring& inPath), maia_chart_point_set_path)
 
-            _WRAP_METHOD(void get_position (Graphic::Point& outPosition) const, maia_chart_point_get_position)
+            _IGNORE(maia_chart_point_get_position)
+            _WRAP_METHOD_DOCS_ONLY(maia_chart_point_get_position)
+            Graphic::Point get_position () const
+            {
+                Graphic::Point ret;
+                maia_chart_point_get_position(const_cast<MaiaChartPoint*> (gobj ()), ret.gobj ());
+                return ret;
+            }
             _WRAP_METHOD(void set_position (const Graphic::Point& inPosition), maia_chart_point_set_position)
 
-            _WRAP_METHOD(void get_size (Graphic::Size& outSize) const, maia_chart_point_get_size)
+            _IGNORE(maia_chart_point_get_size)
+            _WRAP_METHOD_DOCS_ONLY(maia_chart_point_get_size)
+            Graphic::Size get_size () const
+            {
+                Graphic::Size ret;
+                maia_chart_point_get_size(const_cast<MaiaChartPoint*> (gobj ()), ret.gobj ());
+                return ret;
+            }
             _WRAP_METHOD(void set_size (const Graphic::Size& inSize), maia_chart_point_set_size)
 
             _WRAP_METHOD(Graphic::LineType get_line_type () const, maia_chart_point_get_line_type)

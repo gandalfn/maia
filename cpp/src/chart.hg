@@ -86,8 +86,23 @@ namespace Maia
 
             _WRAP_METHOD(Graphic::Path::RefPtr get_path () const, maia_chart_get_path, refreturn)
             _WRAP_METHOD(Graphic::Path::RefPtr get_reverse_path () const, maia_chart_get_reverse_path, refreturn)
-            _WRAP_METHOD(void get_first_point (Graphic::Point& outPoint) const, maia_chart_get_first_point)
-            _WRAP_METHOD(void get_last_point (Graphic::Point& outPoint) const, maia_chart_get_last_point)
+
+            _IGNORE(maia_chart_get_first_point)
+            _WRAP_METHOD_DOCS_ONLY(maia_chart_get_first_point)
+            Graphic::Point get_first_point () const
+            {
+                Graphic::Point ret;
+                maia_chart_get_first_point(const_cast<MaiaChart*> (gobj ()), ret.gobj ());
+                return ret;
+            }
+            _IGNORE(maia_chart_get_last_point)
+            _WRAP_METHOD_DOCS_ONLY(maia_chart_get_last_point)
+            Graphic::Point get_last_point () const
+            {
+                Graphic::Point ret;
+                maia_chart_get_last_point(const_cast<MaiaChart*> (gobj ()), ret.gobj ());
+                return ret;
+            }
 
             _WRAP_METHOD(static void range_from_model(const Model::RefPtr& inpModel, const Glib::ustring& inXColumn, const Glib::ustring& inYColumn, Graphic::Range& outRange), maia_chart_range_from_model)
 

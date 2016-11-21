@@ -80,7 +80,7 @@ namespace Maia
                 return InputDevices::RefPtr (new InputDevices (pInputDevices));
             }
 
-            _WRAP_METHOD(int size (), maia_input_devices_get_length)
+            _WRAP_METHOD(int length (), maia_input_devices_get_length)
 
             _IGNORE(maia_input_devices_get)
             inline InputDevice::RefPtr

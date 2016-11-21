@@ -51,9 +51,24 @@ namespace Maia
 
                 _IGNORE(maia_graphic_radial_gradient_new)
 
-                _WRAP_METHOD(void get_start (Point& outPoint) const, maia_graphic_radial_gradient_get_start)
+                _IGNORE(maia_graphic_radial_gradient_get_start)
+                _WRAP_METHOD_DOCS_ONLY(maia_graphic_radial_gradient_get_start)
+                Point get_start () const
+                {
+                    Point ret;
+                    maia_graphic_radial_gradient_get_start(const_cast<MaiaGraphicRadialGradient*> (gobj ()), ret.gobj ());
+                    return ret;
+                }
                 _WRAP_METHOD(double get_start_radius () const, maia_graphic_radial_gradient_get_start_radius)
-                _WRAP_METHOD(void get_end (Point& outPoint) const, maia_graphic_radial_gradient_get_end)
+
+                _IGNORE(maia_graphic_radial_gradient_get_end)
+                _WRAP_METHOD_DOCS_ONLY(maia_graphic_radial_gradient_get_end)
+                Point get_end () const
+                {
+                    Point ret;
+                    maia_graphic_radial_gradient_get_end(const_cast<MaiaGraphicRadialGradient*> (gobj ()), ret.gobj ());
+                    return ret;
+                }
                 _WRAP_METHOD(double get_end_radius () const, maia_graphic_radial_gradient_get_end_radius)
 
                 _WRAP_PROPERTY ("start", Point)

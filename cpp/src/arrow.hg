@@ -50,10 +50,24 @@ namespace Maia
                 return Arrow::RefPtr (new Arrow (pArrow));
             }
 
-            _WRAP_METHOD(void get_start (Graphic::Point& outStart) const, maia_arrow_get_start)
+            _IGNORE(maia_arrow_get_start)
+            _WRAP_METHOD_DOCS_ONLY(maia_arrow_get_start)
+            Graphic::Point get_start () const
+            {
+                Graphic::Point ret;
+                maia_arrow_get_start(const_cast<MaiaArrow*> (gobj ()), ret.gobj ());
+                return ret;
+            }
             _WRAP_METHOD(void set_start (const Graphic::Point& inStart), maia_arrow_set_start)
 
-            _WRAP_METHOD(void get_end (Graphic::Point& outEnd) const, maia_arrow_get_end)
+            _IGNORE(maia_arrow_get_end)
+            _WRAP_METHOD_DOCS_ONLY(maia_arrow_get_end)
+            Graphic::Point get_end () const
+            {
+                Graphic::Point ret;
+                maia_arrow_get_end(const_cast<MaiaArrow*> (gobj ()), ret.gobj ());
+                return ret;
+            }
 
             _WRAP_METHOD(Glib::ustring get_linked_item () const, maia_arrow_get_linked_item)
             _WRAP_METHOD(void set_linked_item (const Glib::ustring& inLinkedItemName), maia_arrow_set_linked_item)

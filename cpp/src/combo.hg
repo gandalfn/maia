@@ -72,7 +72,7 @@ namespace Maia
 
             _WRAP_METHOD(View::RefPtr get_view () const, maia_combo_get_view, refreturn)
 
-            _WRAP_METHOD(gint get_active_row () const, maia_combo_get_active_row)
+            _WRAP_METHOD(int get_active_row () const, maia_combo_get_active_row)
             _WRAP_METHOD(void set_active_row (int inRow), maia_combo_set_active_row)
 
             _WRAP_METHOD(Model::RefPtr get_model () const, maia_combo_get_model, refreturn)
@@ -81,7 +81,7 @@ namespace Maia
             _WRAP_METHOD(Core::Event::RefPtr changed () const, maia_combo_get_changed, refreturn)
 
             _WRAP_PROPERTY("view", View::RefPtr)
-            _WRAP_PROPERTY("active-row", gint)
+            _WRAP_PROPERTY("active-row", int)
             _WRAP_PROPERTY("model", Model::RefPtr)
 
             _IGNORE_PROPERTY("changed")

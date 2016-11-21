@@ -71,9 +71,7 @@ namespace Maia
                     return to_variant ();
                 }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
                 _WRAP_PROPERTY ("backend", Glib::ustring)
-#endif
 
             private:
                 _WRAP_METHOD(Glib::VariantBase to_variant () const, maia_graphic_device_to_variant)

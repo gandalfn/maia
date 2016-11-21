@@ -70,7 +70,14 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_icon_filename () const, maia_button_tab_get_icon_filename)
             _WRAP_METHOD(void set_icon_filename (const Glib::ustring& inFilename), maia_button_tab_set_icon_filename)
 
-            _WRAP_METHOD(void get_icon_size (Graphic::Size& outSize) const, maia_button_tab_get_icon_size)
+            _IGNORE(maia_button_tab_get_icon_size)
+            _WRAP_METHOD_DOCS_ONLY(maia_button_tab_get_icon_size)
+            Graphic::Size get_icon_size () const
+            {
+                Graphic::Size ret;
+                maia_button_tab_get_icon_size(const_cast<MaiaButtonTab*> (gobj ()), ret.gobj ());
+                return ret;
+            }
             _WRAP_METHOD(void set_icon_size (const Graphic::Size& inSize), maia_button_tab_set_icon_size)
 
             _WRAP_METHOD(Glib::ustring get_value () const, maia_button_tab_get_value)

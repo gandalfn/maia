@@ -49,10 +49,24 @@ namespace Maia
                 return EllipseShape::RefPtr (new EllipseShape (pLine));
             }
 
-            _WRAP_METHOD(void get_begin (Graphic::Point& outPoint) const, maia_ellipse_shape_get_begin)
+            _IGNORE(maia_ellipse_shape_get_begin)
+            _WRAP_METHOD_DOCS_ONLY(maia_ellipse_shape_get_begin)
+            Graphic::Point get_begin () const
+            {
+                Graphic::Point ret;
+                maia_ellipse_shape_get_begin(const_cast<MaiaEllipseShape*> (gobj ()), ret.gobj ());
+                return ret;
+            }
             _WRAP_METHOD(void set_begin (const Graphic::Point& inPoint), maia_ellipse_shape_set_begin)
 
-            _WRAP_METHOD(void get_end (Graphic::Point& outPoint) const, maia_ellipse_shape_get_end)
+            _IGNORE(maia_ellipse_shape_get_end)
+            _WRAP_METHOD_DOCS_ONLY(maia_ellipse_shape_get_end)
+            Graphic::Point get_end () const
+            {
+                Graphic::Point ret;
+                maia_ellipse_shape_get_end(const_cast<MaiaEllipseShape*> (gobj ()), ret.gobj ());
+                return ret;
+            }
             _WRAP_METHOD(void set_end (const Graphic::Point& inPoint), maia_ellipse_shape_set_end)
 
             _WRAP_METHOD(double get_radius () const, maia_ellipse_shape_get_radius)

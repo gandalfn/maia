@@ -86,11 +86,11 @@ namespace Maia
             _WRAP_METHOD(Glib::ustring get_y_axis_unit () const, maia_chart_view_get_y_axis_unit)
             _WRAP_METHOD(void set_y_axis_unit (const Glib::ustring& inLabelName), maia_chart_view_set_y_axis_unit)
 
-            _WRAP_METHOD(guint get_x_axis_ticks () const, maia_chart_view_get_x_axis_ticks)
-            _WRAP_METHOD(void set_x_axis_ticks (guint inMaxTicks), maia_chart_view_set_x_axis_ticks)
+            _WRAP_METHOD(unsigned int get_x_axis_ticks () const, maia_chart_view_get_x_axis_ticks)
+            _WRAP_METHOD(void set_x_axis_ticks (unsigned int inMaxTicks), maia_chart_view_set_x_axis_ticks)
 
-            _WRAP_METHOD(guint get_y_axis_ticks () const, maia_chart_view_get_y_axis_ticks)
-            _WRAP_METHOD(void set_y_axis_ticks (guint inMaxTicks), maia_chart_view_set_y_axis_ticks)
+            _WRAP_METHOD(unsigned int get_y_axis_ticks () const, maia_chart_view_get_y_axis_ticks)
+            _WRAP_METHOD(void set_y_axis_ticks (unsigned int inMaxTicks), maia_chart_view_set_y_axis_ticks)
 
             _WRAP_METHOD(double get_tick_size () const, maia_chart_view_get_tick_size)
             _WRAP_METHOD(void set_tick_size (double inBorder), maia_chart_view_set_tick_size)

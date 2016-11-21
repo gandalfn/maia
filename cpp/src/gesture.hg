@@ -47,9 +47,16 @@ namespace Maia
 
                 _WRAP_METHOD(Gesture::Type get_gesture_type () const, maia_gesture_notification_get_gesture_type)
 
-                _WRAP_METHOD(void get_position (Graphic::Point& outPosition) const, maia_gesture_notification_get_position)
+                _IGNORE(maia_gesture_notification_get_position)
+                _WRAP_METHOD_DOCS_ONLY(maia_gesture_notification_get_position)
+                Graphic::Point get_position () const
+                {
+                    Graphic::Point ret;
+                    maia_gesture_notification_get_position(const_cast<MaiaGestureNotification*> (gobj ()), ret.gobj ());
+                    return ret;
+                }
 
-                _WRAP_METHOD(bool is_proceed () const, maia_gesture_notification_get_proceed)
+                _WRAP_METHOD(bool proceed () const, maia_gesture_notification_get_proceed)
                 _WRAP_METHOD(void set_proceed (bool inProceed = true), maia_gesture_notification_set_proceed)
 
                 _WRAP_METHOD(void post (guint inButton, Gesture::Type inType, const Graphic::Point& inPosition), maia_gesture_notification_post)
