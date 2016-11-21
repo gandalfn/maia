@@ -157,7 +157,7 @@ namespace Maia
                     return MeshGradientPatchControlPoint::RefPtr (new MeshGradientPatchControlPoint (pPoint));
                 }
 
-                _WRAP_METHOD(guint get_num () const, maia_graphic_mesh_gradient_patch_control_point_get_num)
+                _WRAP_METHOD(unsigned int get_num () const, maia_graphic_mesh_gradient_patch_control_point_get_num)
                 _WRAP_METHOD(void get_point (Point& outPoint) const, maia_graphic_mesh_gradient_patch_control_point_get_point)
         };
 
@@ -177,7 +177,7 @@ namespace Maia
                     return MeshGradientPatchCornerColor::RefPtr (new MeshGradientPatchCornerColor (pCorner));
                 }
 
-                _WRAP_METHOD(guint get_num () const, maia_graphic_mesh_gradient_patch_corner_color_get_num)
+                _WRAP_METHOD(unsigned int get_num () const, maia_graphic_mesh_gradient_patch_corner_color_get_num)
                 _WRAP_METHOD(Color::RefPtr get_color () const, maia_graphic_mesh_gradient_patch_corner_color_get_color, refreturn)
         };
     }

@@ -92,8 +92,8 @@ namespace Maia
             _WRAP_METHOD(double get_spacing () const, maia_step_button_get_spacing)
             _WRAP_METHOD(void set_spacing (double inSpacing), maia_step_button_set_spacing)
 
-            _WRAP_METHOD(guint get_active () const, maia_step_button_get_active)
-            _WRAP_METHOD(void set_active (guint inActive), maia_step_button_set_active)
+            _WRAP_METHOD(unsigned int get_active () const, maia_step_button_get_active)
+            _WRAP_METHOD(void set_active (unsigned int inActive), maia_step_button_set_active)
 
             _WRAP_METHOD(Model::RefPtr get_model () const, maia_step_button_get_model, refreturn)
             _WRAP_METHOD(void set_model (const Model::RefPtr& inModel), maia_step_button_set_model)
@@ -110,7 +110,7 @@ namespace Maia
             _WRAP_PROPERTY("label", Glib::ustring)
             _WRAP_PROPERTY("border", double)
             _WRAP_PROPERTY("spacing", double)
-            _WRAP_PROPERTY("active", guint)
+            _WRAP_PROPERTY("active", unsigned int)
             _WRAP_PROPERTY("model", Model::RefPtr)
             _WRAP_PROPERTY("separator", bool)
 

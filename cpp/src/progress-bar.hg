@@ -51,7 +51,14 @@ namespace Maia
             _WRAP_METHOD(Adjustment::RefPtr get_adjustment () const, maia_progress_bar_get_adjustment, refreturn)
             _WRAP_METHOD(void set_adjustment (const Adjustment::RefPtr& inAdjustment), maia_progress_bar_set_adjustment)
 
-            _WRAP_METHOD(void get_slider_area (Graphic::Rectangle& outRect), maia_progress_bar_get_slider_area)
+            _IGNORE(maia_progress_bar_get_slider_area)
+            _WRAP_METHOD_DOCS_ONLY(maia_progress_bar_get_slider_area)
+            Graphic::Rectangle get_slider_area () const
+            {
+                Graphic::Rectangle ret;
+                maia_progress_bar_get_slider_area(const_cast<MaiaProgressBar*> (gobj ()), ret.gobj ());
+                return ret;
+            }
 
             _WRAP_METHOD(double get_round_border () const, maia_progress_bar_get_round_border)
             _WRAP_METHOD(void set_round_border (double inBorder), maia_progress_bar_set_round_border)

@@ -157,7 +157,7 @@ namespace Maia
     }
 
     gboolean
-    Model::filter_func_callback (MaiaModel* inpModel, guint inRow, void* inpData)
+    Model::filter_func_callback (MaiaModel* inpModel, unsigned int inRow, void* inpData)
     {
         if (inpData)
         {
@@ -213,7 +213,7 @@ namespace Maia
     }
 
     static void
-    value_changed_callback (GObject*, guint inRow, void* inpData)
+    value_changed_callback (GObject*, unsigned int inRow, void* inpData)
     {
         if (inpData)
         {

@@ -53,10 +53,10 @@ namespace Maia
                 return Notebook::RefPtr (new Notebook (pNotebook));
             }
 
-            _WRAP_METHOD(guint get_page () const, maia_notebook_get_page)
-            _WRAP_METHOD(void set_page (guint inPage), maia_notebook_set_page)
+            _WRAP_METHOD(unsigned int get_page () const, maia_notebook_get_page)
+            _WRAP_METHOD(void set_page (unsigned int inPage), maia_notebook_set_page)
 
-            _WRAP_METHOD(guint get_n_pages () const, maia_notebook_get_n_pages)
+            _WRAP_METHOD(unsigned int get_n_pages () const, maia_notebook_get_n_pages)
 
             _WRAP_METHOD(bool get_show_tabs () const, maia_notebook_get_show_tabs)
             _WRAP_METHOD(void set_show_tabs (bool inShowTabs = true), maia_notebook_set_show_tabs)
@@ -72,10 +72,10 @@ namespace Maia
 
             _WRAP_METHOD(ToggleGroup::RefPtr get_toggle_group () const, maia_notebook_get_toggle_group, refreturn)
 
-            _WRAP_METHOD(NotebookPage::RefPtr get_nth_page (guint inNumPage) const, maia_notebook_get_nth_page)
+            _WRAP_METHOD(NotebookPage::RefPtr get_nth_page (unsigned int inNumPage) const, maia_notebook_get_nth_page)
 
-            _WRAP_PROPERTY("page", guint)
-            _WRAP_PROPERTY("n-pages", guint)
+            _WRAP_PROPERTY("page", unsigned int)
+            _WRAP_PROPERTY("n-pages", unsigned int)
             _WRAP_PROPERTY("show-tabs", bool)
             _WRAP_PROPERTY("expand-tabs", bool)
             _WRAP_PROPERTY("tab-placement", Placement)

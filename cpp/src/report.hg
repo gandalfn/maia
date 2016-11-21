@@ -38,19 +38,22 @@ namespace Maia
             explicit Report(const Glib::ustring& inId);
 
         public:
-            typedef sigc::slot<void, Glib::RefPtr<Report>, Glib::RefPtr<Gio::AsyncResult> > SlotSaveFinished;
+            using RefPtr = Glib::RefPtr<Report>;
+            using SlotSaveFinished = sigc::slot<void, Report::RefPtr, Glib::RefPtr<Gio::AsyncResult>>;
 
-            static Glib::RefPtr<Report> create (const Glib::ustring& inFilename, double inDpi = 96)
+            static Report::RefPtr create (const Glib::ustring& inFilename, double inDpi = 96)
             {
-                return Glib::RefPtr<Report> (new Report (maia_report_new (inFilename.c_str(), inDpi)));
+                return Report::RefPtr (new Report (maia_report_new (inFilename.c_str(), inDpi)));
             }
             _IGNORE(maia_report_new, maia_report_save, maia_report_save_finish)
 
-            _WRAP_METHOD(void add_document (const Glib::RefPtr<Document>& inpDocument) const, maia_report_add_document)
-            _WRAP_METHOD(void remove_document (const Glib::RefPtr<Document>& inpDocument) const, maia_report_remove_document)
+            _WRAP_METHOD(void add_document (const Document::RefPtr& inpDocument) const, maia_report_add_document)
+            _WRAP_METHOD(void remove_document (const Document::RefPtr& inpDocument) const, maia_report_remove_document)
 
             _WRAP_METHOD(Glib::ustring get_filename () const, maia_report_get_filename)
+
             _WRAP_METHOD(double get_resolution () const, maia_report_get_resolution)
+
             _WRAP_METHOD(Core::Array<Document> get_documents () const, maia_report_get_documents)
 
             void save ();
@@ -59,10 +62,9 @@ namespace Maia
 
             void save_finish (const Glib::RefPtr<Gio::AsyncResult>& inResult);
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_PROPERTY("filename", Glib::ustring)
             _WRAP_PROPERTY("resolution", double)
-            _WRAP_PROPERTY("documents", Core::Array<Document>)
-#endif
+
+            _IGNORE_PROPERTY("documents")
     };
 }

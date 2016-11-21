@@ -49,10 +49,24 @@ namespace Maia
                 return LineShape::RefPtr (new LineShape (pLine));
             }
 
-            _WRAP_METHOD(void get_begin (Graphic::Point& outPoint) const, maia_line_shape_get_begin)
+            _IGNORE(maia_line_shape_get_begin)
+            _WRAP_METHOD_DOCS_ONLY(maia_line_shape_get_begin)
+            Graphic::Point get_begin () const
+            {
+                Graphic::Point ret;
+                maia_line_shape_get_begin(const_cast<MaiaLineShape*> (gobj ()), ret.gobj ());
+                return ret;
+            }
             _WRAP_METHOD(void set_begin (const Graphic::Point& inPoint), maia_line_shape_set_begin)
 
-            _WRAP_METHOD(void get_end (Graphic::Point& outPoint) const, maia_line_shape_get_end)
+            _IGNORE(maia_line_shape_get_end)
+            _WRAP_METHOD_DOCS_ONLY(maia_line_shape_get_end)
+            Graphic::Point get_end () const
+            {
+                Graphic::Point ret;
+                maia_line_shape_get_end(const_cast<MaiaLineShape*> (gobj ()), ret.gobj ());
+                return ret;
+            }
             _WRAP_METHOD(void set_end (const Graphic::Point& inPoint), maia_line_shape_set_end)
 
             _WRAP_PROPERTY("begin", Graphic::Point)

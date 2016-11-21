@@ -134,10 +134,24 @@ namespace Maia
             _WRAP_METHOD(bool need_update () const, maia_item_get_need_update)
             _WRAP_METHOD(void set_need_update (bool inNeedUpdate = true), maia_item_set_need_update)
 
-            _WRAP_METHOD(void get_position (Graphic::Point& outPoint) const, maia_item_get_position)
+            _IGNORE(maia_item_get_position)
+            _WRAP_METHOD_DOCS_ONLY(maia_item_get_position)
+            Graphic::Point get_position () const
+            {
+                Graphic::Point ret;
+                maia_item_get_position(const_cast<MaiaItem*> (gobj ()), ret.gobj ());
+                return ret;
+            }
             _WRAP_METHOD(void set_position (const Graphic::Point& inPosition), maia_item_set_position)
 
-            _WRAP_METHOD(void get_size (Graphic::Size& outSize) const, maia_item_get_size)
+            _IGNORE(maia_item_get_size)
+            _WRAP_METHOD_DOCS_ONLY(maia_item_get_size)
+            Graphic::Size get_size () const
+            {
+                Graphic::Size ret;
+                maia_item_get_size(const_cast<MaiaItem*> (gobj ()), ret.gobj ());
+                return ret;
+            }
             _WRAP_METHOD(void set_size (const Graphic::Size& inSize), maia_item_set_size)
 
             _WRAP_METHOD(unsigned int get_layer () const, maia_item_get_layer)
@@ -172,10 +186,38 @@ namespace Maia
             void scroll_to (const Item::RefPtr& inItem);
 
             _WRAP_METHOD(void update (const Graphic::Context::RefPtr& inContext, const Graphic::Region::RefPtr& inAllocation), maia_item_update, errthrow)
-            _WRAP_METHOD(void convert_to_item_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_item_space)
-            _WRAP_METHOD(void convert_to_root_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_root_space)
-            _WRAP_METHOD(void convert_to_window_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_to_window_space)
-            _WRAP_METHOD(void convert_from_window_space (const Graphic::Point& inPoint, Graphic::Point& outPoint), maia_item_convert_from_window_space)
+            _IGNORE(maia_item_convert_to_item_space)
+            _WRAP_METHOD_DOCS_ONLY(maia_item_convert_to_item_space)
+            Graphic::Point convert_to_item_space (const Graphic::Point& inPoint) const
+            {
+                Graphic::Point ret;
+                maia_item_convert_to_item_space(const_cast<MaiaItem*> (gobj ()), const_cast<MaiaGraphicPoint*> (inPoint.gobj ()), ret.gobj ());
+                return ret;
+            }
+            _IGNORE(maia_item_convert_to_root_space)
+            _WRAP_METHOD_DOCS_ONLY(maia_item_convert_to_root_space)
+            Graphic::Point convert_to_root_space (const Graphic::Point& inPoint) const
+            {
+                Graphic::Point ret;
+                maia_item_convert_to_root_space(const_cast<MaiaItem*> (gobj ()), const_cast<MaiaGraphicPoint*> (inPoint.gobj ()), ret.gobj ());
+                return ret;
+            }
+            _IGNORE(maia_item_convert_to_window_space)
+            _WRAP_METHOD_DOCS_ONLY(maia_item_convert_to_window_space)
+            Graphic::Point convert_to_window_space (const Graphic::Point& inPoint) const
+            {
+                Graphic::Point ret;
+                maia_item_convert_to_window_space(const_cast<MaiaItem*> (gobj ()), const_cast<MaiaGraphicPoint*> (inPoint.gobj ()), ret.gobj ());
+                return ret;
+            }
+            _IGNORE(maia_item_convert_from_window_space)
+            _WRAP_METHOD_DOCS_ONLY(maia_item_convert_from_window_space)
+            Graphic::Point convert_from_window_space (const Graphic::Point& inPoint) const
+            {
+                Graphic::Point ret;
+                maia_item_convert_from_window_space(const_cast<MaiaItem*> (gobj ()), const_cast<MaiaGraphicPoint*> (inPoint.gobj ()), ret.gobj ());
+                return ret;
+            }
 
             sigc::connection connect_root_changed (SlotRootChanged inSlot);
 

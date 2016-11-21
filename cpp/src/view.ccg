@@ -22,7 +22,7 @@
 namespace Maia
 {
     gboolean
-    View::set_property_func_callback (GObject* inpObject, const char* inProperty, const char* inColumn, guint inRow, void* inpData)
+    View::set_property_func_callback (GObject* inpObject, const char* inProperty, const char* inColumn, unsigned int inRow, void* inpData)
     {
         View::SlotSetProperty* pSlot = (View::SlotSetProperty*)inpData;
 

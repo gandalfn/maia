@@ -50,7 +50,14 @@ namespace Maia
             _WRAP_METHOD(Button::Relief get_relief () const, maia_toggle_button_get_relief)
             _WRAP_METHOD(void set_relief (Button::Relief inRelief), maia_toggle_button_set_relief)
 
-            _WRAP_METHOD(void get_icon_size (Graphic::Size& outSize) const, maia_toggle_button_get_icon_size)
+            _IGNORE(maia_toggle_button_get_icon_size)
+            _WRAP_METHOD_DOCS_ONLY(maia_toggle_button_get_icon_size)
+            Graphic::Size get_icon_size() const
+            {
+                Graphic::Size ret;
+                maia_toggle_button_get_icon_size(const_cast<MaiaToggleButton*> (gobj ()), ret.gobj ());
+                return ret;
+            }
             _WRAP_METHOD(void set_icon_size (const Graphic::Size& inSize), maia_toggle_button_set_icon_size)
 
             _WRAP_METHOD(Glib::ustring get_icon_filename () const, maia_toggle_button_get_icon_filename)

@@ -74,18 +74,18 @@ namespace Maia
 
             using RefPtr = Glib::RefPtr<MouseEventArgs>;
 
-            static MouseEventArgs::RefPtr create (guint8 inFlags, guint8 inButton, double inX, double inY)
+            static MouseEventArgs::RefPtr create (uint8_t inFlags, uint8_t inButton, double inX, double inY)
             {
                 MaiaMouseEventArgs* pArgs = maia_mouse_event_args_new (inFlags, inButton, inX, inY);
                 return MouseEventArgs::RefPtr (new MouseEventArgs (pArgs));
             }
 
-            _WRAP_METHOD(guint8 get_button () const, maia_mouse_event_args_get_button)
-            _WRAP_METHOD(guint8 get_flags () const, maia_mouse_event_args_get_flags)
+            _WRAP_METHOD(uint8_t get_button () const, maia_mouse_event_args_get_button)
+            _WRAP_METHOD(uint8_t get_flags () const, maia_mouse_event_args_get_flags)
             _WRAP_METHOD(void get_position (Graphic::Point& outPosition) const, maia_mouse_event_args_get_position)
 
-            _WRAP_PROPERTY("button", guint8)
-            _WRAP_PROPERTY("flags", guint8)
+            _WRAP_PROPERTY("button", uint8_t)
+            _WRAP_PROPERTY("flags", uint8_t)
             _WRAP_PROPERTY("position", Graphic::Point)
 
         protected:
@@ -148,8 +148,8 @@ namespace Maia
             _WRAP_METHOD(bool get_decorated () const, maia_window_get_decorated)
             _WRAP_METHOD(void set_decorated (bool inDecorated = true), maia_window_set_decorated)
 
-            _WRAP_METHOD(guint8 get_depth () const, maia_window_get_depth)
-            _WRAP_METHOD(void set_depth (guint8 inDepth), maia_window_set_depth)
+            _WRAP_METHOD(uint8_t get_depth () const, maia_window_get_depth)
+            _WRAP_METHOD(void set_depth (uint8_t inDepth), maia_window_set_depth)
 
             _WRAP_METHOD(Window::RefPtr get_transient_for () const, maia_window_get_transient_for, refreturn)
             _WRAP_METHOD(void set_transient_for (const Window::RefPtr& inTransientFor), maia_window_set_transient_for)
@@ -163,15 +163,19 @@ namespace Maia
             _WRAP_METHOD(WindowPositionPolicy get_position_policy () const, maia_window_get_position_policy)
             _WRAP_METHOD(void set_position_policy (WindowPositionPolicy inPolicy), maia_window_set_position_policy)
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
             _WRAP_METHOD(Glib::RefPtr<Popup> get_popup () const, maia_window_get_popup, refreturn)
+#else
+            Popup::RefPtr get_popup () const;
+#endif
 
-            _WRAP_METHOD(guint32 get_foreign () const, maia_window_get_foreign)
+            _WRAP_METHOD(uint32_t get_foreign () const, maia_window_get_foreign)
 
             _WRAP_METHOD(void grab_key (Modifier inModifier, Key inKey) const, maia_window_grab_key)
             _WRAP_METHOD(void ungrab_key (Modifier inModifier, Key inKey) const, maia_window_ungrab_key)
 
-            std::vector<Glib::RefPtr<InputDevice>> input_devices () const;
-            void set_input_devices (const std::vector<Glib::RefPtr<InputDevice>>& inDevices);
+            std::vector<InputDevice::RefPtr> input_devices () const;
+            void set_input_devices (const std::vector<InputDevice::RefPtr>& inDevices);
 
             _WRAP_METHOD(Core::Event::RefPtr damage_event () const, maia_window_get_damage_event, refreturn)
             _WRAP_METHOD(Core::Event::RefPtr geometry_event () const, maia_window_get_geometry_event, refreturn)
@@ -189,11 +193,11 @@ namespace Maia
             _WRAP_PROPERTY("round-corner", double)
             _WRAP_PROPERTY("close-button", bool)
             _WRAP_PROPERTY("decorated", bool)
-            _WRAP_PROPERTY("depth", guint8)
+            _WRAP_PROPERTY("depth", uint8_t)
             _WRAP_PROPERTY("device-transform", Graphic::Transform::RefPtr)
             _WRAP_PROPERTY("transient-for", Window::RefPtr)
-            _WRAP_PROPERTY("popup", Glib::RefPtr<Popup>)
-            _WRAP_PROPERTY("foreign", guint32)
+            _WRAP_PROPERTY("popup", Popup::RefPtr)
+            _WRAP_PROPERTY("foreign", uint32_t)
             _WRAP_PROPERTY("focus-item", Item::RefPtr)
             _WRAP_PROPERTY("grab-pointer-item", Item::RefPtr)
             _WRAP_PROPERTY("grab-keyboard-item", Item::RefPtr)
@@ -208,6 +212,7 @@ namespace Maia
             _IGNORE_PROPERTY("mouse-event")
             _IGNORE_PROPERTY("keyboard-event")
             _IGNORE_PROPERTY("close-button-scale")
+            _IGNORE_PROPERTY("input-devices")
 
         protected:
             _CTOR_DEFAULT()

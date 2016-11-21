@@ -71,11 +71,11 @@ namespace Maia
             _WRAP_METHOD(ViewItemAddedRemovedNotification::RefPtr item_added () const, maia_view_get_item_added, refreturn)
             _WRAP_METHOD(ViewItemAddedRemovedNotification::RefPtr item_removed () const, maia_view_get_item_removed, refreturn)
 
-            _WRAP_METHOD(guint get_lines () const, maia_view_get_lines)
-            _WRAP_METHOD(void set_lines (guint inLines), maia_view_set_lines)
+            _WRAP_METHOD(unsigned int get_lines () const, maia_view_get_lines)
+            _WRAP_METHOD(void set_lines (unsigned int inLines), maia_view_set_lines)
 
-            _WRAP_METHOD(gint get_highlighted_row () const, maia_view_get_highlighted_row)
-            _WRAP_METHOD(void set_highlighted_row (gint inRow), maia_view_set_highlighted_row)
+            _WRAP_METHOD(int get_highlighted_row () const, maia_view_get_highlighted_row)
+            _WRAP_METHOD(void set_highlighted_row (int inRow), maia_view_set_highlighted_row)
 
             _WRAP_METHOD(Orientation get_orientation () const, maia_view_get_orientation)
             _WRAP_METHOD(void set_orientation (Orientation inOrientation), maia_view_set_orientation)
@@ -113,10 +113,11 @@ namespace Maia
 
             void set_property_func (SlotSetProperty inSplot);
 
-            _WRAP_SIGNAL(void row_clicked (guint inRow), "row-clicked", no_default_handler)
+            _IGNORE(maia_view_row_clicked)
+            _WRAP_SIGNAL(void row_clicked (unsigned int inRow), "row-clicked", no_default_handler)
 
-            _WRAP_PROPERTY("lines", guint)
-            _WRAP_PROPERTY("highlighted-row", gint)
+            _WRAP_PROPERTY("lines", unsigned int)
+            _WRAP_PROPERTY("highlighted-row", int)
             _WRAP_PROPERTY("orientation", Orientation)
             _WRAP_PROPERTY("model", Model::RefPtr)
             _WRAP_PROPERTY("hide-if-model-empty", bool)
@@ -132,10 +133,10 @@ namespace Maia
         private:
             SlotSetProperty* m_pSlot;
 
-            _WRAP_METHOD(ItemPackable::RefPtr get_item (guint inRow) const, maia_view_get_item, refreturn)
-            _WRAP_METHOD(bool get_item_row (const ItemPackable::RefPtr& inpItem, guint& inRow) const, maia_view_get_item_row)
+            _WRAP_METHOD(ItemPackable::RefPtr get_item (unsigned int inRow) const, maia_view_get_item, refreturn)
+            _WRAP_METHOD(bool get_item_row (const ItemPackable::RefPtr& inpItem, unsigned int& inRow) const, maia_view_get_item_row)
 
-            static gboolean set_property_func_callback (GObject* inpObject, const char* inProperty, const char* inColumn, guint inRow, void* inpData);
+            static gboolean set_property_func_callback (GObject* inpObject, const char* inProperty, const char* inColumn, unsigned int inRow, void* inpData);
             static void set_property_func_destroy (void* inpData);
     };
 }

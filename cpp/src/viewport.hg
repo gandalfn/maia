@@ -44,7 +44,14 @@ namespace Maia
                 return Viewport::RefPtr (new Viewport (pViewport));
             }
 
-            _WRAP_METHOD(void get_visible_area(Graphic::Rectangle& outVisibleArea), maia_viewport_get_visible_area)
+            _IGNORE(maia_viewport_get_visible_area)
+            _WRAP_METHOD_DOCS_ONLY(maia_viewport_get_visible_area)
+            Graphic::Rectangle get_visible_area() const
+            {
+                Graphic::Rectangle ret;
+                maia_viewport_get_visible_area(const_cast<MaiaViewport*> (gobj ()), ret.gobj ());
+                return ret;
+            }
             _WRAP_METHOD(void set_visible_area(const Graphic::Rectangle& inVisibleArea), maia_viewport_set_visible_area)
 
             _WRAP_PROPERTY("visible-area", Graphic::Rectangle)

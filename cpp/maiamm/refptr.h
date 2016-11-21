@@ -24,6 +24,7 @@
 
 namespace Maia
 {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
     template <class T, class OK = void>
     class Proxy
     {
@@ -57,6 +58,7 @@ namespace Maia
                 return pCppObject->operator[] (inName);
             }
     };
+#endif
 }
 
 #endif /* _MAIAMM_REFPTR_H */

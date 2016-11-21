@@ -51,7 +51,14 @@ namespace Maia
             _WRAP_METHOD(Shape::Caliper get_caliper () const, maia_shape_get_caliper)
             _WRAP_METHOD(void set_caliper (Shape::Caliper inCaliper), maia_shape_set_caliper)
 
-            _WRAP_METHOD(void get_caliper_size (Graphic::Size& outSize) const, maia_shape_get_caliper_size)
+            _IGNORE(maia_shape_get_caliper_size)
+            _WRAP_METHOD_DOCS_ONLY(maia_shape_get_caliper_size)
+            Graphic::Size get_caliper_size() const
+            {
+                Graphic::Size ret;
+                maia_shape_get_caliper_size(const_cast<MaiaShape*> (gobj ()), ret.gobj ());
+                return ret;
+            }
             _WRAP_METHOD(void set_caliper_size (const Graphic::Size& inSize), maia_shape_set_caliper_size)
 
             _WRAP_METHOD(double get_caliper_line_width () const, maia_shape_get_caliper_line_width)
