@@ -94,6 +94,7 @@ namespace Maia
             public:
                 using RefPtr = Glib::RefPtr<Context>;
 
+                _WRAP_METHOD_DOCS_ONLY(maia_graphic_context_new)
                 static Context::RefPtr create (const Surface::RefPtr& inSurface);
 
                 _WRAP_METHOD(Operator get_operator () const, maia_graphic_context_get_operator)

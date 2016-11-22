@@ -20,12 +20,32 @@
 public class Maia.Graphic.Surface : Pattern, Core.Serializable
 {
     // types
+    /**
+     *  Format is used to identify the memory format of surface data.
+     */
     public enum Format
     {
+        /**
+         * no such format exists or is supported.
+         */
         INVALID,
+        /**
+         * each pixel is a 1-bit quantity holding an alpha value.
+         */
         A1,
+        /**
+         * each pixel is a 8-bit quantity holding an alpha value.
+         */
         A8,
+        /**
+         * each pixel is a 32-bit quantity, with the upper 8 bits unused,
+         * red, green, and blue are stored in the remaining 24 bits in that order.
+         */
         RGB24,
+        /**
+         * each pixel is a 32-bit quantity, with alpha in the upper 8 bits,
+         * then red, then green, then blue.
+         */
         ARGB32;
 
         public int
@@ -64,24 +84,45 @@ public class Maia.Graphic.Surface : Pattern, Core.Serializable
     private Context m_Context;
 
     // accessors
+    /**
+     * Size of the surface
+     */
     [CCode (notify = false)]
     public virtual Graphic.Size size { get; construct set; default = Graphic.Size (0, 0); }
 
+    /**
+     * Format of the surface
+     */
     [CCode (notify = false)]
     public Format format { get; construct set; default = Format.INVALID; }
 
+    /**
+     * Get a pointer to the data of the surface, for direct inspection or modification.
+     */
     [CCode (notify = false)]
     public uchar* data { get; construct; default = null; }
 
+    /**
+     * The native pointer of the surface
+     */
     [CCode (notify = false)]
     public virtual void* native { get; construct set; }
 
+    /**
+     * The Device of the surface
+     */
     [CCode (notify = false)]
     public virtual unowned Device? device { get; construct set; default = null; }
 
+    /**
+     * The base Surface of the surface
+     */
     [CCode (notify = false)]
     public virtual Graphic.Surface surface { construct set {} }
 
+    /**
+     * The Context of the surface
+     */
     [CCode (notify = false)]
     public Context context {
         get {
