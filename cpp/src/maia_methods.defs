@@ -7132,34 +7132,6 @@
   )
 )
 
-(define-method get_double
-  (of-object "MaiaCoreMessage")
-  (c-name "maia_core_message_get_double")
-  (return-type "gdouble")
-  (parameters
-    '("guint" "inIndex")
-  )
-)
-
-(define-method set_double
-  (of-object "MaiaCoreMessage")
-  (c-name "maia_core_message_set_double")
-  (return-type "none")
-  (parameters
-    '("guint" "inIndex")
-    '("gdouble" "inValue")
-  )
-)
-
-(define-method push_back_double
-  (of-object "MaiaCoreMessage")
-  (c-name "maia_core_message_push_back_double")
-  (return-type "guint")
-  (parameters
-    '("gdouble" "inValue")
-  )
-)
-
 (define-method get_string
   (of-object "MaiaCoreMessage")
   (c-name "maia_core_message_get_string")

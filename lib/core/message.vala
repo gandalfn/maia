@@ -342,51 +342,6 @@ public class Maia.Core.Message : GLib.Object
      *
      * @return value
      */
-    public double
-    get_double (uint inIndex)
-        requires (inIndex + 3 < m_Raw.length)
-    {
-        uint32 val = get_uint32 (inIndex);
-
-        return *((double*)(&val));
-    }
-
-    /**
-     * Set inValue at inPos
-     *
-     * @param inIndex position index of value to set
-     * @param inValue the new value
-     */
-    public void
-    set_double (uint inIndex, double inValue)
-    {
-        if (inIndex + 3 >= m_Raw.length)
-        {
-            m_Raw.resize ((int)inIndex + 4);
-        }
-        set_uint32 (inIndex, *((uint32*)(&inValue)));
-    }
-
-    /**
-     * Set inValue at end of message
-     *
-     * @param inValue the new value
-     */
-    public uint
-    push_back_double (double inValue)
-    {
-        uint ret = m_Raw.length;
-        set_double (m_Raw.length, inValue);
-        return ret;
-    }
-
-    /**
-     * Get value at inIndex
-     *
-     * @param inIndex position index of value to get
-     *
-     * @return value
-     */
     public unowned string
     get_string (uint inIndex)
         requires (inIndex < m_Raw.length)
