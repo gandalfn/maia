@@ -192,7 +192,7 @@ namespace Maia
             bool operator== (const Model::iterator& rhs);
             bool operator!= (const Model::iterator& rhs);
             inline const ModelRow& operator* () const;
-            inline const ModelRow* operator-> () const;
+            inline ModelRow* operator-> ();
             bool end () const;
             inline operator bool () const
             {
@@ -696,9 +696,9 @@ namespace Maia
         return static_cast<const Model::Row&> (*this);
     }
 
-    inline const Model::Row* ModelIterator::operator-> () const
+    inline Model::Row* ModelIterator::operator-> ()
     {
-        return static_cast<const Model::Row*> (this);
+        return static_cast<Model::Row*> (this);
     }
 
     template <typename T>
