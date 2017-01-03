@@ -23,7 +23,7 @@ public class Maia.Core.Map <K, V> : Set <Pair <K, V>>
     private inline unowned Pair<K, V>?
     search_for_key (K inKey)
     {
-        return search<K> (inKey, (ValueCompareFunc<K>)Pair.compare_with_first);
+        return search<K> (inKey, Pair.compare_with_first);
     }
 
     /**
