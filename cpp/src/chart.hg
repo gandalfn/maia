@@ -106,7 +106,7 @@ namespace Maia
 
             _WRAP_METHOD(static void range_from_model(const Model::RefPtr& inpModel, const Glib::ustring& inXColumn, const Glib::ustring& inYColumn, Graphic::Range& outRange), maia_chart_range_from_model)
 
-            _IGNORE(maia_chart_changed);
+            _IGNORE(maia_chart_changed)
             _WRAP_SIGNAL(void changed (), "changed", no_default_handler)
 
             _WRAP_PROPERTY("title", Glib::ustring)
