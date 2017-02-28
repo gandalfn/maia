@@ -133,9 +133,8 @@ namespace GLX
 	public static Pixmap create_pixmap (X.Display dpy, Xcb.Glx.Fbconfig config, Pixmap pixmap, [CCode (array_length = false)] int[]? attribList);
 	[CCode (cname = "glXDestroyPixmap")]
 	public static void destroy_pixmap (X.Display dpy, Pixmap pixmap);
-
-	[CCode (cname = "glXCreateContextAttribsARB")]
-	public static Context create_context_attribs_arb (void* dpy, Xcb.Glx.Fbconfig config, Context? share_context, bool direct, [CCode (array_length = false)] int[] attrib_list);
+	[CCode (cname = "glXGetProcAddress")]
+	public static void* get_proc_address(string procName);
 
 	[CCode (cname = "glXWaitGL")]
 	public static void wait_gl ();

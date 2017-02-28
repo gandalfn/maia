@@ -19,6 +19,8 @@
 
 internal class Maia.Xcb.GLRenderer : Maia.Graphic.GLRenderer
 {
+    public delegate GLX.Context glXCreateContextAttribsARB (global::X.Display dpy, global::Xcb.Glx.Fbconfig config, GLX.Context? share_context, bool direct, [CCode (array_length = false)] int[] attrib_list);
+
     // static methods
     static uint32 attribute_to_glx (Graphic.GLRenderer.Attribute inAttribute)
     {
@@ -181,7 +183,8 @@ internal class Maia.Xcb.GLRenderer : Maia.Graphic.GLRenderer
 
         ctx_attribs += 0;
 
-        m_GLXContext = GLX.create_context_attribs_arb (m_Display, m_FBConfig, null, true, ctx_attribs);
+        unowned glXCreateContextAttribsARB? create_context = (glXCreateContextAttribsARB?)GLX.get_proc_address("glXCreateContextAttribsARB");
+        m_GLXContext = create_context (m_Display, m_FBConfig, null, true, ctx_attribs);
 
         create_surface ();
     }
