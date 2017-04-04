@@ -68,6 +68,8 @@ gen-ChangeLog:
     fi
 
 distcheck-hook:
+if USE_BOOTSTRAP
 	chmod +w $(distdir)/bootstrap && $(distdir)/bootstrap.sh build
+endif
 
 DISTCHECK_CONFIGURE_FLAGS = --enable-doc

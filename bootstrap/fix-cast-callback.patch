@@ -1,0 +1,19 @@
+diff --git a/codegen/valaccodemethodcallmodule.vala b/codegen/valaccodemethodcallmodule.vala
+index c047a527..a83476c0 100644
+--- a/codegen/valaccodemethodcallmodule.vala
++++ b/codegen/valaccodemethodcallmodule.vala
+@@ -446,11 +450,14 @@ public class Vala.CCodeMethodCallModule : CCodeAssignmentModule {
+ 
+ 					if (get_ccode_type (param) != null) {
+ 						cexpr = new CCodeCastExpression (cexpr, get_ccode_type (param));
++					} else if (param.variable_type is DelegateType) {
++						cexpr = new CCodeCastExpression (cexpr, get_ccode_name(param.variable_type));
+ 					}
+ 				} else {
+ 					cexpr = handle_struct_argument (null, arg, cexpr);
+ 				}
+ 				arg_pos = get_param_pos (get_ccode_pos (param), ellipsis);
++
+ 			} else {
+ 				// default argument position
+ 				cexpr = handle_struct_argument (null, arg, cexpr);

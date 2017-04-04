@@ -45,7 +45,7 @@ namespace Maia.Core
     public static inline int
     double_compare (double inA, double inB)
     {
-        return (int)((int)(inA * 65535) - (int)(inB * 65535));
+        return ((int)(inA * 65535.0) - (int)(inB * 65535.0));
     }
 
     public static inline CompareFunc<V>

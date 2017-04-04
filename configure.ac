@@ -1,6 +1,6 @@
 m4_define(maia_version_major, 0)
 m4_define(maia_version_minor, 4)
-m4_define(maia_version_micro, 1)
+m4_define(maia_version_micro, 2)
 AC_INIT([maia],[maia_version_major.maia_version_minor.maia_version_micro])
 AC_PREREQ(2.63)
 
@@ -43,7 +43,7 @@ dnl ****************************************************************************
 dnl Packages version required
 dnl ****************************************************************************
 GLIB_REQUIRED=2.32.0
-VALA_REQUIRED=0.34.0
+VALA_REQUIRED=0.36.0
 UUID_REQUIRED=2.20.0
 PIXMAN_REQUIRED=0.16.4
 CAIRO_REQUIRED=1.10.2

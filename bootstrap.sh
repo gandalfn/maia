@@ -32,8 +32,8 @@ function checkout
         make clean
 
         rm -f */*.vala.stamp
-        patch -p1 < ../base-set-property.patch
         patch -p1 < ../add-explicit-notify.patch
+        patch -p1 < ../fix-cast-callback.patch
         ./configure \
             CFLAGS="-fPIC" \
             VALAC=$(dirname $PWD)/checkout/bin/valac \
